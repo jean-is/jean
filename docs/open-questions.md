@@ -1,5 +1,7 @@
 # Open questions
 
+Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
+
 ## Name and domain (decide before the public launch)
 
 - **Working name:** Jean. The user isn't attached to it. It likes the "Jean-Claude" pun, and it suits a delegate ("ask Jean").
@@ -14,35 +16,17 @@
   - `.li` can't be checked automatically. The user found `leap.li`, `blur.li`, `span.li` and `leap.is` available, but none convinced.
 - **Handles:** on GitHub, `jean` and `jeancx` are taken and `jean-cx` exists but is empty (whose?). On npm, `jean` is an old IoC library.
 - **Criteria for an alternative:** a first name (a person you delegate to), 1–2 syllables, said the same way in English and French, unused in AI, with a short domain.
-
-## Reflex backend
-
-Kev-0.6B (Transformers.js, trained in English) or Laya multilingual (laya-ts, 100+ languages, runs on CPU)? Decide with the multilingual test set. A fine-tuned "Jean reflexes" checkpoint is the fallback plan.
-
-## On-device brain
-
-- **The model:** Gemma 4 E2B (~2 GB, WebGPU) is the default candidate. Is there a smaller multilingual model with reliable tool calling for weak machines?
-- **The download:** what does the first-run experience look like while 2 GB downloads, alongside the "start right now with a free account" alternative?
+- **Also depends on it:** the collaboration relay's subdomain (D45).
 
 ## Pyodide sandbox loading
 
-Host `/vendor/pyodide/` with CORS (option a), or transfer the files from the parent document with `connect-src 'none'` (option b)? There is a spike planned in 0.4; see [architecture.md](architecture.md#security).
-
-## Launch languages (~30)
-
-**Candidate list:** am, ar, bn, de, en, es, fa, fr, ha, he, hi, id, it, ja, ko, mr, ms, nl, pl, pt, ru, sw, ta, te, th, tl, tr, uk, ur, vi, yo, zh-Hans, zh-Hant.
-
-**To decide:** who reviews each language.
+Where the files come from is settled (D43). How the opaque-origin sandbox loads them is not: host `vendor/pyodide/` with CORS (option a), or have the parent document transfer the files with `connect-src 'none'` (option b)? The spike is planned in 0.4; see [architecture.md](architecture.md#security).
 
 ## Display face
 
-Instrument Serif was chosen provisionally in 0.1 (see D34). Revisit if a face with broader script coverage fits the budget.
+Instrument Serif ships for now (D34). Fraunces will probably replace it. To check before switching: a static instance (fixed optical size, softness and "wonk"), Latin subset, regular and italic, within the 30 KB budget.
 
 ## Smaller questions
 
-- Should the old devs.new domain redirect at the 0.3 launch or earlier? And should DEVS be archived with a pointer?
-- **License:** assumed MIT, like DEVS.
-- **Minimum Safari version:** 16.4, implied by sync access handles. Confirm with real usage data.
+- **First run while the brain downloads:** what do people see during the ~3 GB download, alongside "start right now with a free account"? Can the download resume after the tab closes?
 - **MCP client:** write a minimal Streamable HTTP client, or load the official SDK on demand (0.5)?
-- **Collaboration relay:** who hosts the public one, if anyone (later)?
-- **Visual identity:** verify how OpenAI Dots look, to make sure the "light" concept stays distinct.

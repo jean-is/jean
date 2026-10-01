@@ -197,7 +197,7 @@ Dictation and read-aloud are available from day one for accessibility. Live conv
 
 ## Languages
 
-- **Coverage.** About 30 languages at launch. They cover Arabic, Hebrew, Persian and Urdu (right-to-left), Chinese, Japanese and Korean, the major Indic and Southeast Asian languages, and Swahili, Hausa, Yoruba and Amharic.
+- **Coverage.** 33 locales at launch. They cover Arabic, Hebrew, Persian and Urdu (right-to-left), Chinese, Japanese and Korean, the major Indic and Southeast Asian languages, and Swahili, Hausa, Yoruba and Amharic. Translations are machine-made, with no per-language review (D44).
 - **Instant switching.** The language changes immediately, with no reload, including in past conversations (activity labels are rendered from structured data).
 - **Conversations.** Jean replies in the language of the user's last message, and otherwise in the UI language.
 

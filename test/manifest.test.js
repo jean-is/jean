@@ -1,13 +1,16 @@
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
+import { countLines } from '../scripts/budgets.js'
 import {
-  countLines, extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
-} from '../scripts/budgets.js'
+  extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
+} from '../scripts/graph.js'
 import {
-  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, isShipped, plan, stampVersion,
+  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, plan, stampPreloads,
+  stampVersion,
 } from '../scripts/manifest.js'
 import { resolveRequest } from '../scripts/serve.js'
 import { stripSourceMaps } from '../scripts/vendor.js'
@@ -110,9 +113,23 @@ describe('manifest: outputs', () => {
     assert.equal(manifest.icons[0].src, 'icons/icon.svg')
   })
 
-  it('builds capabilities.json in format 1 with an empty capability map', () => {
-    const data = JSON.parse(buildCapabilities('v1', ['a.js'], ['locales/en.json']))
-    assert.deepEqual(data, { format: 1, version: 'v1', shell: ['a.js'], locales: ['locales/en.json'], capabilities: {} })
+  it('builds capabilities.json in format 2 with integrity values and an empty capability map', () => {
+    const data = JSON.parse(buildCapabilities('v1', ['a.js'], ['locales/en.json'], { 'a.js': 'sha256-x' }))
+    assert.deepEqual(data, {
+      format: 2, version: 'v1', shell: ['a.js'], locales: ['locales/en.json'], integrity: { 'a.js': 'sha256-x' }, capabilities: {},
+    })
+  })
+
+  it('turns a hex SHA-256 into a Subresource Integrity value', () => {
+    assert.equal(integrityOf(createHash('sha256').update('a').digest('hex')), `sha256-${createHash('sha256').update('a').digest('base64')}`)
+  })
+
+  it('replaces modulepreload links with one per path, just before the module script', () => {
+    const html = '<head>\n<link rel="modulepreload" href="old.js">\n<script type="module" src="ui/app.js"></script>\n</head>\n'
+    assert.equal(stampPreloads(html, ['ui/app.js', 'core/a.js']),
+      '<head>\n<link rel="modulepreload" href="ui/app.js">\n<link rel="modulepreload" href="core/a.js">\n<script type="module" src="ui/app.js"></script>\n</head>\n')
+    assert.equal(stampPreloads(stampPreloads(html, ['x.js']) ?? '', ['x.js']), stampPreloads(html, ['x.js']))
+    assert.equal(stampPreloads('<head></head>', ['x.js']), null)
   })
 
   it('plans every output without writing, and the version tracks content', async () => {
@@ -127,6 +144,23 @@ describe('manifest: outputs', () => {
     assert.match(first.outputs['sw.js'], new RegExp(`^const VERSION = '${first.version}'$`, 'm'))
     assert.equal(JSON.parse(first.outputs['manifest.webmanifest']).name, 'Planned')
     assert.deepEqual(JSON.parse(first.outputs['capabilities.json']).shell, ['brand.js', 'core/a.js', 'manifest.webmanifest'])
+    assert.equal(first.outputs['index.html'], undefined)
+  })
+
+  it('preloads the first-load graph and hashes index.html as written', async () => {
+    const root = await fixture({
+      'brand.js': 'export const BRAND = { name: "P", domain: "x.test" }\n',
+      'sw.js': "const VERSION = 'dev'\n",
+      'index.html': '<script type="importmap">{"imports":{}}</script>\n<script type="module" src="ui/app.js"></script>\n',
+      'ui/app.js': "import '../core/a.js'\nconst lazy = () => import('./lazy.js')\n",
+      'ui/lazy.js': '',
+      'core/a.js': '',
+    })
+    const { outputs } = await plan(root)
+    assert.match(outputs['index.html'], /href="ui\/app.js">\n<link rel="modulepreload" href="core\/a.js">\n<script type="module"/)
+    assert.doesNotMatch(outputs['index.html'], /lazy/)
+    const { integrity } = JSON.parse(outputs['capabilities.json'])
+    assert.equal(integrity['index.html'], `sha256-${createHash('sha256').update(outputs['index.html']).digest('base64')}`)
   })
 })
 

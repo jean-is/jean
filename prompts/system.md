@@ -34,7 +34,7 @@ Reply in the language of the user's last message. If that is unclear, use {uiLan
 
 ## Sections added when present
 
-Each section is independently replaceable. When something changes (language, project, memory), only that section is updated. This is the pi approach, and it keeps provider prompt caches warm.
+These are filled in once, when a conversation starts, and then frozen with the rest of the prompt (D46). Editing any of them later would make the provider re-read the whole conversation at full price, and would throw away an on-device brain's KV cache.
 
 ```text
 <project>
@@ -57,12 +57,24 @@ Each section is independently replaceable. When something changes (language, pro
 </skills>
 ```
 
+## System notes
+
+When something changes during a conversation, Jean appends a short note to the transcript instead of editing the prompt (see [architecture.md](../docs/architecture.md#prompt-tools-and-caching)). Notes are plain and factual, in English, one change per line:
+
+```text
+The interface language is now French.
+New tools are available through run: tools.chart(data, kind). Use find_tools for details.
+The user changed a rule: deleting files now needs their approval.
+Today is 2026-10-03.
+```
+
 ## Lines contributed by capabilities (examples)
 
 | Capability | Tool line | Rule |
 |---|---|---|
 | Files | `read: read a file the user shared` / `write: create or replace a file` / `edit: change part of a file` | Results the user asked for are files. Say their names. |
-| Calculations | `run: run JavaScript in a sandbox with no network` | Compute exact numbers instead of estimating them. |
+| Calculations | `run: run JavaScript in a sandbox with no network; it can call tools.<name>(), searchTools(), models.decide() and models.image()` | Compute exact numbers instead of estimating them. |
+| Deferred tools | `find_tools: find tools that aren't listed here and get their signatures` | — |
 | Sources | — | Cite sources as [n], using only the numbered sources you were given. |
 | Memory | `remember: save one lasting fact or preference, in the user's language` | Only offered on turns where the reflex model detected a lasting fact. |
 | Suggestions | — | End with up to 3 short follow-up suggestions inside `<suggestions>`, one per line. |

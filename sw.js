@@ -1,6 +1,6 @@
 // Service worker: offline shell and per-capability caches (classic script).
 // VERSION is rewritten by scripts/manifest.js whenever any shipped file changes.
-const VERSION = '1bf8ab855f3e'
+const VERSION = '6b8c1880db0e'
 const SHELL = `app-shell-${VERSION}`
 const CAPABILITY = 'app-cap-'
 const LOCAL = ['localhost', '127.0.0.1'].includes(self.location.hostname)
@@ -23,9 +23,28 @@ async function precacheShell () {
   if (!response.ok) throw new Error(`capabilities.json: HTTP ${response.status}`)
   const cache = await caches.open(SHELL)
   await cache.put(url('capabilities.json'), response.clone())
-  const { shell = [], locales = [] } = await response.json()
-  const paths = ['./', ...shell, ...locales]
-  await cache.addAll(paths.map((path) => new Request(url(path), { cache: 'no-cache' })))
+  const { shell = [], locales = [], integrity = {} } = await response.json()
+  const root = await fetch(url('./'), { cache: 'no-cache' })
+  if (!root.ok) throw new Error(`./: HTTP ${root.status}`)
+  const files = await Promise.all([...shell, ...locales].map((path) => fetchVerified(path, integrity[path])))
+  await cache.put(url('./'), root)
+  await Promise.all(files.map(([path, file]) => cache.put(url(path), file)))
+}
+
+/**
+ * Fetches through the HTTP cache, which the page has usually just filled, so
+ * precaching costs no extra download. The integrity check catches a stale
+ * cached copy; the file is then fetched again from the network.
+ * @returns {Promise<[string, Response]>}
+ */
+async function fetchVerified (path, integrity) {
+  if (integrity) {
+    const cached = await fetch(url(path), { integrity }).catch(() => null)
+    if (cached?.ok) return [path, cached]
+  }
+  const fresh = await fetch(url(path), { cache: 'reload' })
+  if (!fresh.ok) throw new Error(`${path}: HTTP ${fresh.status}`)
+  return [path, fresh]
 }
 
 async function deleteOldShells () {
@@ -48,10 +67,11 @@ self.addEventListener('message', (event) => {
 async function cacheCapability (id) {
   try {
     const listing = await (await caches.open(SHELL)).match(url('capabilities.json'))
-    const { capabilities = {} } = listing ? await listing.json() : {}
+    const { capabilities = {}, integrity = {} } = listing ? await listing.json() : {}
     if (typeof id !== 'string' || !Object.hasOwn(capabilities, id)) return false
+    const files = await Promise.all(capabilities[id].files.map((path) => fetchVerified(path, integrity[path])))
     const cache = await caches.open(`${CAPABILITY}${id}`)
-    await cache.addAll(capabilities[id].files.map((path) => new Request(url(path), { cache: 'no-cache' })))
+    await Promise.all(files.map(([path, file]) => cache.put(url(path), file)))
     return true
   } catch {
     return false

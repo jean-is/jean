@@ -9,7 +9,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 ## Non-negotiables
 
 1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI. Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
-2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. What is in the repo is what ships. Deploying means copying the folder.
+2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code ships exactly as written. The one exception to "what is in the repo is what ships" is third-party code: `vendor/` is never committed, and `npm run dev`, `npm start`, `npm run build` and `npm run check` fill it from Jean's own `node_modules`. Deploying means `npm ci && npm run build`, then copying the folder.
 3. **Three runtime dependencies are loaded upfront:** `@preact/signals-core`, `lit-html` and `marked` (lexer only). Everything else loads on demand inside a capability module. Adding a dependency requires an entry in [docs/decisions.md](docs/decisions.md).
 4. **Standards before inventions:**
    - **Model APIs:** OpenAI-compatible and Anthropic Messages.
@@ -19,6 +19,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
    - **Reflexes:** the Jev-style Decisions API.
    - **Everything else:** `Intl` and Web Platform APIs before any library.
 5. **The core is host-agnostic.** `core/` uses only web-standard APIs (fetch, streams, Web Crypto, WebAssembly) and never touches the DOM. Core tests run with `node --test`.
+6. **Self-contained.** Jean is its own project, not a part of DEVS. Nothing in this repository reads, imports or copies files from outside it. Scripts resolve packages from this repository's `node_modules` only, never a parent folder's.
 
 ## Security rules
 
@@ -57,6 +58,8 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 The base prompt lives in [prompts/system.md](prompts/system.md) and stays around 150 tokens. Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
 
+The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read.
+
 ## Testing
 
 - Use `node --test` for `core/`, test-first for `core/` and storage.
@@ -66,7 +69,9 @@ The base prompt lives in [prompts/system.md](prompts/system.md) and stays around
 ## Commands
 
 ```bash
-npm run check   # manifest, tsc --noEmit (strict), tests, budgets
+npm run dev     # copy runtimes into vendor/, then serve (npm start does the same)
+npm run build   # copy runtimes into vendor/, regenerate the manifest
+npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
-npm run serve   # any static file server
+npm run serve   # serve the folder as it is
 ```

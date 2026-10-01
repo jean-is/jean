@@ -1,4 +1,5 @@
-// Generates manifest.webmanifest and capabilities.json (content hashes), and
+// Generates manifest.webmanifest and capabilities.json (content hashes), writes
+// a modulepreload link for every module of the first load into index.html, and
 // stamps the resulting version into sw.js so that any asset change produces a
 // byte-different service worker, which is what triggers an update.
 // Usage: npm run manifest              write the outputs
@@ -7,12 +8,14 @@ import { createHash } from 'node:crypto'
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { moduleGraph, parseImportMap } from './graph.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
 export const SHELL_FILES = ['index.html', 'brand.js', 'manifest.webmanifest']
 export const SHELL_DIRS = ['core', 'ui', 'vendor', 'fonts', 'icons']
 export const WEBMANIFEST = 'manifest.webmanifest'
+export const ENTRY = 'ui/app.js'
 export const VERSION_LINE = /^const VERSION = '.*'$/m
 
 /** @param {unknown} error */
@@ -112,12 +115,37 @@ export function buildWebmanifest (brand) {
 }
 
 /**
+ * Subresource Integrity value for a hex SHA-256.
+ * @param {string} hex
+ */
+export const integrityOf = (hex) => `sha256-${Buffer.from(hex, 'hex').toString('base64')}`
+
+/**
  * @param {string} version
  * @param {string[]} shell
  * @param {string[]} locales
+ * @param {Record<string, string>} integrity  path → Subresource Integrity value
  */
-export function buildCapabilities (version, shell, locales) {
-  return `${JSON.stringify({ format: 1, version, shell, locales, capabilities: {} }, null, 2)}\n`
+export function buildCapabilities (version, shell, locales, integrity = {}) {
+  return `${JSON.stringify({ format: 2, version, shell, locales, integrity, capabilities: {} }, null, 2)}\n`
+}
+
+const PRELOAD_LINE = /^<link rel="modulepreload" href="[^"]*">\n/gm
+const MODULE_SCRIPT = /^<script type="module"/m
+
+/**
+ * Replaces index.html's modulepreload links with one per path, just before the
+ * module script, so the browser fetches the whole first-load graph in one round
+ * trip instead of discovering it one import level at a time. Returns null if
+ * there is no module script.
+ * @param {string} html
+ * @param {string[]} paths
+ */
+export function stampPreloads (html, paths) {
+  const stripped = html.replace(PRELOAD_LINE, '')
+  if (!MODULE_SCRIPT.test(stripped)) return null
+  const links = paths.map((path) => `<link rel="modulepreload" href="${path}">\n`).join('')
+  return stripped.replace(MODULE_SCRIPT, (tag) => links + tag)
 }
 
 /**
@@ -136,15 +164,26 @@ export function stampVersion (source, version) {
  */
 export async function plan (root = ROOT) {
   const { BRAND } = await import(pathToFileURL(join(root, 'brand.js')).href)
-  const webmanifest = buildWebmanifest(BRAND)
+  /** @type {Record<string, string>} */
+  const generated = { [WEBMANIFEST]: buildWebmanifest(BRAND) }
+  const html = (await readOrNull(root, 'index.html'))?.toString('utf8')
+  if (html) {
+    /** @param {string} path */
+    const read = async (path) => (await readOrNull(root, path))?.toString('utf8') ?? null
+    const { found } = await moduleGraph(ENTRY, parseImportMap(html), read)
+    const stamped = stampPreloads(html, found)
+    if (!stamped) throw new Error('index.html has no <script type="module"> line')
+    generated['index.html'] = stamped
+  }
   const { shell, locales } = await collectFiles(root)
   /** @type {Array<[string, string]>} */
   const hashes = []
   for (const path of [...shell, ...locales]) {
-    const data = path === WEBMANIFEST ? webmanifest : await readFile(join(root, path))
+    const data = generated[path] ?? await readFile(join(root, path))
     hashes.push([path, sha256(data)])
   }
   const version = computeVersion(hashes)
+  const integrity = Object.fromEntries(hashes.map(([path, hash]) => [path, integrityOf(hash)]))
   const sw = await readOrNull(root, 'sw.js')
   const stamped = sw && stampVersion(sw.toString('utf8'), version)
   if (!stamped) throw new Error("sw.js is missing or has no `const VERSION = '…'` line")
@@ -152,8 +191,8 @@ export async function plan (root = ROOT) {
     version,
     files: shell.length + locales.length,
     outputs: {
-      [WEBMANIFEST]: webmanifest,
-      'capabilities.json': buildCapabilities(version, shell, locales),
+      ...generated,
+      'capabilities.json': buildCapabilities(version, shell, locales, integrity),
       'sw.js': stamped,
     },
   }

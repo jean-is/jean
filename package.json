@@ -6,13 +6,16 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "dev": "npm run vendor && node scripts/serve.js",
+    "start": "npm run vendor && node scripts/serve.js",
+    "build": "npm run vendor && npm run manifest",
     "serve": "node scripts/serve.js",
     "test": "node --test test/*.test.js",
     "vendor": "node scripts/vendor.js",
     "manifest": "node scripts/manifest.js",
     "budgets": "node scripts/budgets.js",
     "typecheck": "tsc --noEmit -p .",
-    "check": "npm run manifest && npm run typecheck && npm test && npm run budgets"
+    "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets"
   },
   "dependencies": {
     "@preact/signals-core": "^1.14.4",

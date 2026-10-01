@@ -2,7 +2,7 @@
 
 > An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.
 
-This folder holds the plan for rebooting DEVS from scratch under the working name **Jean**, and its code. The plan comes out of a strategy session held on 2026-10-01; version 0.1 ("Talk") was built on 2026-10-02.
+This repository holds **Jean** (a working name): its plan and its code. Jean is a standalone project that revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from scratch; it started inside the DEVS repository and moved out on 2026-10-02, keeping its history (D50). The plan comes out of a strategy session held on 2026-10-01; version 0.1 ("Talk") was built on 2026-10-02.
 
 |  |  |
 |---|---|
@@ -11,6 +11,7 @@ This folder holds the plan for rebooting DEVS from scratch under the working nam
 | Domain candidate | jean.cx (unregistered as of 2026-10-01) |
 | First user | A non-technical knowledge worker |
 | Goal | Open source and reputation first; revenue is secondary |
+| License | [MIT](LICENSE) |
 
 ## Read in this order
 
@@ -38,12 +39,15 @@ Also here:
 No build step. Any static file server works; for development:
 
 ```bash
-npm install          # dev tools only (TypeScript); runtime libraries are already in vendor/
-npm run serve        # http://127.0.0.1:4173
+npm install          # Jean's own packages
+npm run dev          # copy runtimes into vendor/, then serve http://127.0.0.1:4173
 npm run check        # manifest, strict typecheck, tests, budgets
+npm run build        # copy runtimes into vendor/ and regenerate the manifest, ready to deploy
 node test/fixtures/fake-brain.js   # a fake brain: connect "On your computer" → Other → http://127.0.0.1:4174/v1
 ```
 
-## Moving this folder
+Nothing in `vendor/` is committed. `npm run dev`, `npm start`, `npm run build` and `npm run check` copy the three upfront libraries (and, from 0.4, Pyodide) in from Jean's own `node_modules` (D43, D51).
 
-Everything here is self-contained and uses relative links. When Jean gets its own repository, move the folder as it is and it becomes the root.
+## Self-contained
+
+Everything here uses relative links, and nothing reads, imports or copies files from outside this repository (D38).

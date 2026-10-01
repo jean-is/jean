@@ -23,11 +23,9 @@ A nod to *A Dark Room*. **Jean is the light source, not an object on screen.** I
 | Waiting for approval | Steady warm pulse on the approval card |
 | Done | Settles |
 
-**Caution:** don't embody Jean as a single glowing orb. OpenAI's Dots (2026) make that read as derivative. The environment carries the presence.
-
 ## Typography
 
-- **One expressive display face** for the name and big statements. Variable, OFL-licensed, Latin subset ≤ 30 KB. The choice is still open (see [open-questions.md](open-questions.md)).
+- **One expressive display face** for the name and big statements: OFL-licensed, Latin subset, ≤ 30 KB. Instrument Serif ships for now (D34); Fraunces will probably replace it, as a static instance (see [open-questions.md](open-questions.md)).
 - **The system UI font for everything else.** It covers every script with zero bytes, so there's no 10 MB CJK font.
 - **The wordmark is `BRAND.name` set in the display face,** so it survives a rename.
 - **Big editorial type at the start.** The first question is huge and shrinks into place once the conversation begins.

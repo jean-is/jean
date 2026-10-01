@@ -1,9 +1,13 @@
-// Copies the three upfront runtime dependencies from node_modules into vendor/.
+// Copies the three upfront runtime dependencies from node_modules into vendor/,
+// which is gitignored (D51): npm run dev, start, build and check all run this first.
+// From lit-html, only the files Jean's code can reach are copied.
 // Usage: npm run vendor
-import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gzipSync } from 'node:zlib'
+import { moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
+import { walk } from './manifest.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const MODULES = join(ROOT, 'node_modules')
@@ -25,11 +29,6 @@ export function licenseName (name) {
   return `${name.replace(/^@/, '').replace(/\//g, '-')}.txt`
 }
 
-/** @param {string} name */
-export function isProductionJs (name) {
-  return name.endsWith('.js') && !name.endsWith('.d.ts')
-}
-
 /** @param {number} bytes */
 const kb = (bytes) => `${(bytes / 1024).toFixed(1)} KB`
 
@@ -47,21 +46,36 @@ async function copyJs (from, to) {
   return { raw, gzip }
 }
 
-/** @param {string} dir */
-async function jsFilesIn (dir) {
-  const entries = await readdir(dir, { withFileTypes: true })
-  return entries.filter((e) => e.isFile() && isProductionJs(e.name)).map((e) => e.name).sort()
+const LIT_HTML = 'vendor/lit-html/'
+const LIT_SPECIFIER = /['"](lit-html(?:\/[^'"\s]+)?)['"]/g
+
+/**
+ * The lit-html files Jean's code can reach: every `lit-html` specifier in its
+ * sources (static, dynamic or in JSDoc), plus what those files import in turn.
+ * @returns {Promise<string[]>}  root-relative paths under vendor/lit-html/
+ */
+async function litHtmlFiles () {
+  const importMap = parseImportMap(await readFile(join(ROOT, 'index.html'), 'utf8'))
+  const sources = (await Promise.all(['core', 'ui', 'caps'].map((dir) => walk(ROOT, dir)))).flat()
+  const entries = new Set()
+  for (const path of sources.filter((p) => /\.m?js$/.test(p))) {
+    for (const [, specifier] of (await readFile(join(ROOT, path), 'utf8')).matchAll(LIT_SPECIFIER)) {
+      const target = resolveSpecifier(specifier, path, importMap)
+      if (target?.startsWith(LIT_HTML)) entries.add(target)
+    }
+  }
+  /** @param {string} path */
+  const read = (path) => readFile(join(MODULES, 'lit-html', path.slice(LIT_HTML.length)), 'utf8').catch(() => null)
+  const { found, problems } = await moduleGraph([...entries], importMap, read)
+  if (problems.length) throw new Error(`lit-html: ${problems.join('; ')}`)
+  return found.sort()
 }
 
 async function copyLitHtml () {
-  const source = join(MODULES, 'lit-html')
-  const target = join(VENDOR, 'lit-html')
-  await rm(target, { recursive: true, force: true })
+  await rm(join(VENDOR, 'lit-html'), { recursive: true, force: true })
   const results = []
-  for (const sub of ['', 'directives']) {
-    for (const name of await jsFilesIn(join(source, sub))) {
-      results.push(await copyJs(join(source, sub, name), join(target, sub, name)))
-    }
+  for (const path of await litHtmlFiles()) {
+    results.push(await copyJs(join(MODULES, 'lit-html', path.slice(LIT_HTML.length)), join(ROOT, path)))
   }
   return results
 }

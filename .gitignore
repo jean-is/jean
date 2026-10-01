@@ -1,2 +1,4 @@
 node_modules/
 .DS_Store
+# Third-party code copied in from node_modules by npm run dev/start/build/check, never committed (D43, D51)
+vendor/
