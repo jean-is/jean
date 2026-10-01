@@ -1,12 +1,12 @@
-# Jean — planning folder
+# Jean
 
 > An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.
 
-This folder holds the plan for rebooting DEVS from scratch under the working name **Jean**. It comes out of a strategy session held on 2026-10-01. No code exists yet.
+This folder holds the plan for rebooting DEVS from scratch under the working name **Jean**, and its code. The plan comes out of a strategy session held on 2026-10-01; version 0.1 ("Talk") was built on 2026-10-02.
 
 |  |  |
 |---|---|
-| Status | Planning |
+| Status | 0.1 "Talk" built: chat with any brain, three languages, offline, conversations as plain files |
 | Working name | Jean — a variable, not final (see [open questions](docs/open-questions.md)) |
 | Domain candidate | jean.cx (unregistered as of 2026-10-01) |
 | First user | A non-technical knowledge worker |
@@ -32,6 +32,17 @@ Also here:
 - [AGENTS.md](AGENTS.md) — the rules any coding agent (or human) follows when writing Jean's code
 - [prompts/system.md](prompts/system.md) — the draft system prompt
 - [budgets.json](budgets.json) — size limits that CI will enforce
+
+## Running it
+
+No build step. Any static file server works; for development:
+
+```bash
+npm install          # dev tools only (TypeScript); runtime libraries are already in vendor/
+npm run serve        # http://127.0.0.1:4173
+npm run check        # manifest, strict typecheck, tests, budgets
+node test/fixtures/fake-brain.js   # a fake brain: connect "On your computer" → Other → http://127.0.0.1:4174/v1
+```
 
 ## Moving this folder
 

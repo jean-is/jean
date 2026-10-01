@@ -203,11 +203,11 @@ Two HTML documents, each with its own CSP in a `<meta>` tag, which works on any 
 **`index.html`** runs only Jean's own code:
 
 ```text
-default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self';
+default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<import map>'; style-src 'self';
 img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self';
 connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*;
-worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';
-require-trusted-types-for 'script'; trusted-types lit-html app-markdown
+worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';
+require-trusted-types-for 'script'; trusted-types lit-html app-urls
 ```
 
 - **Why `connect-src` is broad:** users can add any OpenAI-compatible endpoint, and untrusted code never runs in this document. Organisations tighten it with an HTTP header (see [enterprise.md](enterprise.md)).

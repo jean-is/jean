@@ -1,6 +1,6 @@
 # AGENTS.md — building Jean
 
-> Status: planning, no code yet. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
+> Status: 0.1 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
 
 ## What Jean is
 
@@ -63,10 +63,10 @@ The base prompt lives in [prompts/system.md](prompts/system.md) and stays around
 - Add one Playwright smoke test per capability once there is UI.
 - Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
 
-## Planned commands
+## Commands
 
 ```bash
-npm run check   # tsc --noEmit, lint, budgets
-npm test        # node --test
+npm run check   # manifest, tsc --noEmit (strict), tests, budgets
+npm test        # node --test test/*.test.js
 npm run serve   # any static file server
 ```

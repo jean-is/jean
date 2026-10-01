@@ -31,3 +31,18 @@ Made on 2026-10-01 unless stated otherwise. Each entry gives the decision, why, 
 | D25 | **i18n built in everywhere,** with instant switching, ~30 languages | Jean is for every region; signals make switching free | English-first with translations later |
 | D26 | **Dictation and read-aloud from day one;** live conversation discovered | Accessibility first | Voice entirely gated |
 | D27 | **Data bound to the origin:** settle the domain before launch | A domain change means migrating everyone's data | Launching on a temporary domain |
+
+## Added while building 0.1 (2026-10-02)
+
+| # | Decision | Why | Rejected |
+|---|---|---|---|
+| D28 | **Trusted Types on, with one extra policy, `app-urls`,** that only allows same-origin script URLs (the storage worker, the service worker) | Without it, Trusted Types blocks `new Worker()` and service-worker registration; with it, no other script URL can ever be created | Dropping `require-trusted-types-for` |
+| D29 | **The inline import map is allowed by its SHA-256 hash in the CSP,** guarded by `test/html.test.js` | Browsers don't support external import maps; a hash keeps `'unsafe-inline'` out | `'unsafe-inline'`; a bundler |
+| D30 | **Organisation policy is opt-in** via `<meta name="app-policy" content="policy.json">` | No 404 noise for everyone else; organisations already edit `index.html` and send headers | Always fetching `policy.json` |
+| D31 | **Tool calls are emitted at the end of each model step,** not mid-stream | After an Anthropic mid-stream refusal fallback, earlier tool calls must not run | Streaming tool calls as they complete |
+| D32 | **Anthropic defaults:** `claude-opus-5-5`, adaptive thinking with summarized display, server-side refusal fallbacks (`fallbacks: "default"`), eager tool-input streaming; OpenAI gets `max_completion_tokens` | Current API guidance; summaries feed the activity view | SDKs; `budget_tokens` (rejected by current models) |
+| D33 | **Provider endpoints in `PROVIDERS` and the OpenRouter OAuth URLs are provider identities,** not hidden dependencies: every base URL can be overridden in settings or policy | The "no hard-coded third-party URL" rule targets services Jean depends on, not the provider a user explicitly picks | Configuring every provider by hand |
+| D34 | **Display face: Instrument Serif (OFL), regular and italic Latin subsets** (15 KB each); Arabic headings use the system font | Warm, editorial, memorable; within the 30 KB budget | Variable fonts with many axes (too heavy) |
+| D35 | **Markdown images from model output are never loaded,** only their alt text is shown | An image URL is a classic way for injected instructions to leak data | Rendering images |
+| D36 | **Brain entries store provider and model as data;** labels are rendered in the current language | Switching language relabels history, as planned for the activity view | Storing only the rendered title |
+| D37 | **Development uses a deterministic fake brain** (`test/fixtures/fake-brain.js`) | End-to-end checks without keys, downloads or network | Testing only against real providers |

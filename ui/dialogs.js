@@ -1,0 +1,240 @@
+// History, brain and settings dialogs (native <dialog>: focus trap and Escape for free).
+import { html, nothing } from 'lit-html'
+import { repeat } from 'lit-html/directives/repeat.js'
+import { live } from 'lit-html/directives/live.js'
+import { signal } from '@preact/signals-core'
+import { Element, define } from './base.js'
+import {
+  app, effective, activeBrain, LOCALES, setLocale, setRule, setVoice, connectBrain, continueWithBrain,
+  removeBrain, useBrain, loadModels, startOpenRouter, newConversation, openConversation, removeConversation, showError,
+} from './state.js'
+import { BRAND } from '../brand.js'
+import { PROVIDERS } from '../core/llm.js'
+import { RULE_KINDS, resolveRule } from '../core/rules.js'
+import { t, locale, languageName, relativeTime } from '../core/i18n.js'
+import { voicesFor } from './speech.js'
+import { icons } from './icons.js'
+
+/** @param {Element} host @param {string} name */
+function syncDialog(host, name) {
+  const dialog = host.querySelector('dialog')
+  const open = app.dialog.value === name
+  if (open && !dialog?.open) dialog?.showModal()
+  else if (!open && dialog?.open) dialog.close()
+}
+
+const close = () => { app.dialog.value = null }
+/** @param {MouseEvent} event */
+const backdrop = (event) => { if (event.target === event.currentTarget) close() }
+
+/** @param {string} title */
+const head = (title) => html`<header class="dialog-head">
+  <h2>${title}</h2>
+  <button class="icon-button" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
+</header>`
+
+// ─── History ─────────────────────────────────────────────────────────────────
+
+class History extends Element {
+  render() {
+    const list = app.conversations.value
+    const currentId = app.current.value?.id
+    return html`<dialog class="drawer" @close=${close} @click=${backdrop}>
+      ${head(t('history.title'))}
+      <button class="button wide" @click=${newConversation}>${icons.plus} ${t('action.new')}</button>
+      ${list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => html`
+        <li class=${item.id === currentId ? 'is-current' : ''}>
+          <button class="history-item" @click=${() => openConversation(item.path)}>
+            <span class="history-title" dir="auto">${item.title || t('conversation.untitled')}</span>
+            <time datetime=${item.updatedAt}>${relativeTime(item.updatedAt)}</time>
+          </button>
+          <button class="icon-button subtle" aria-label=${t('action.delete')} title=${t('action.delete')}
+            @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}</button>
+        </li>`)}</ol>` : html`<p class="muted">${t('history.empty')}</p>`}
+    </dialog>`
+  }
+
+  updated() {
+    syncDialog(this, 'history')
+  }
+}
+
+// ─── Brains ──────────────────────────────────────────────────────────────────
+
+const status = signal(/** @type {{ kind: 'busy' | 'error', message: string } | null} */ (null))
+const localProvider = signal(/** @type {'ollama' | 'lmstudio' | 'custom'} */ ('ollama'))
+
+/** @param {() => Promise<unknown>} task */
+async function attempt(task) {
+  status.value = { kind: 'busy', message: t('brain.connecting') }
+  try {
+    await task()
+    status.value = null
+    continueWithBrain()
+  } catch (error) {
+    const code = /** @type {any} */ (error)?.code ?? 'unknown'
+    status.value = { kind: 'error', message: t(`error.${code}`, { brain: t('brain.this'), origin: location.origin }) }
+  }
+}
+
+/** @param {SubmitEvent} event */
+function connectKey(event) {
+  event.preventDefault()
+  const form = new FormData(/** @type {HTMLFormElement} */ (event.target))
+  const provider = /** @type {'openai' | 'anthropic' | 'openrouter'} */ (form.get('provider'))
+  attempt(() => connectBrain({ provider, apiKey: String(form.get('key')).trim() }))
+}
+
+/** @param {SubmitEvent} event */
+function connectLocal(event) {
+  event.preventDefault()
+  const form = new FormData(/** @type {HTMLFormElement} */ (event.target))
+  attempt(() => connectBrain({ provider: localProvider.value, baseURL: String(form.get('baseURL')).trim() }))
+}
+
+class BrainDialog extends Element {
+  render() {
+    const { settings, locked } = effective.value
+    const brainsLocked = locked.has('brains')
+    return html`<dialog class="sheet" @close=${close} @click=${backdrop}>
+      ${head(t('brain.title'))}
+      <p class="lede">${t('brain.lede', { name: BRAND.name })}</p>
+      ${settings.brains.length ? this.#connected(settings.brains, brainsLocked) : nothing}
+      ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : html`
+        <section class="choice">
+          <h3>${icons.spark} ${t('brain.quick.title')}</h3>
+          <p>${t('brain.quick.text')}</p>
+          <button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button>
+        </section>
+        <section class="choice">
+          <h3>${icons.key} ${t('brain.key.title')}</h3>
+          <p>${t('brain.key.text')}</p>
+          <form class="stack" @submit=${connectKey}>
+            <label>${t('brain.key.provider')}
+              <select name="provider">${['openai', 'anthropic', 'openrouter'].map((id) => html`<option value=${id}>${t(`provider.${id}`)}</option>`)}</select>
+            </label>
+            <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
+            <button class="button">${t('brain.connect')}</button>
+          </form>
+        </section>
+        <section class="choice">
+          <h3>${icons.computer} ${t('brain.local.title')}</h3>
+          <p>${t('brain.local.text')}</p>
+          <form class="stack" @submit=${connectLocal}>
+            <label>${t('brain.local.app')}
+              <select @change=${(/** @type {Event} */ e) => { localProvider.value = /** @type {any} */ (e.target).value }}>
+                ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
+              </select>
+            </label>
+            <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" placeholder="http://localhost:11434/v1" .value=${live(PROVIDERS[localProvider.value].baseURL)}></label>
+            <button class="button">${t('brain.connect')}</button>
+          </form>
+          <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
+        </section>`}
+      ${status.value ? html`<p class="status is-${status.value.kind}" role="status">${status.value.message}</p>` : nothing}
+    </dialog>`
+  }
+
+  /** @param {import('../core/types.js').BrainConfig[]} brains @param {boolean} brainsLocked */
+  #connected(brains, brainsLocked) {
+    const active = activeBrain.value
+    return html`<section class="connected">
+      <h3>${t('brain.connectedTitle')}</h3>
+      <ul>${brains.map((brain) => html`<li class=${brain.id === active?.id ? 'is-active' : ''}>
+        <label class="radio">
+          <input type="radio" name="active-brain" .checked=${brain.id === active?.id} @change=${() => useBrain(brain.id)}>
+          <span>${t(`provider.${brain.provider}`)}</span>
+        </label>
+        <input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" aria-label=${t('brain.model')}
+          @change=${(/** @type {Event} */ e) => useBrain(brain.id, /** @type {HTMLInputElement} */ (e.target).value.trim())}>
+        <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>
+        ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')}
+          @click=${() => removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
+      </li>`)}</ul>
+    </section>`
+  }
+
+  updated() {
+    syncDialog(this, 'brain')
+    if (app.dialog.value === 'brain') for (const brain of effective.value.settings.brains) loadModels(brain)
+    else if (status.value?.kind === 'error') status.value = null
+  }
+}
+
+// ─── Settings ────────────────────────────────────────────────────────────────
+
+const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: boolean } | null} */ (null))
+
+class Settings extends Element {
+  render() {
+    const { settings, locked } = effective.value
+    const voices = voicesFor(locale.value)
+    const usage = storage.value?.usage
+    return html`<dialog class="sheet" @close=${close} @click=${backdrop}>
+      ${head(t('settings.title'))}
+      <section>
+        <h3>${t('settings.language')}</h3>
+        <select aria-label=${t('settings.language')} ?disabled=${locked.has('locale')}
+          @change=${(/** @type {Event} */ e) => setLocale(/** @type {HTMLSelectElement} */ (e.target).value)}>
+          ${LOCALES.map((code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`)}
+        </select>
+      </section>
+      <section>
+        <h3>${t('settings.rules')}</h3>
+        <p class="muted">${t('settings.rulesText', { name: BRAND.name })}</p>
+        <ul class="rules">${RULE_KINDS.map((kind) => this.#rule(kind, locked.has(`rules.${kind}`)))}</ul>
+      </section>
+      ${voices.length ? html`<section>
+        <h3>${t('settings.voice')}</h3>
+        <select aria-label=${t('settings.voice')} @change=${(/** @type {Event} */ e) => setVoice(/** @type {HTMLSelectElement} */ (e.target).value || null)}>
+          <option value="">${t('settings.voiceDefault')}</option>
+          ${voices.map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}
+        </select>
+      </section>` : nothing}
+      <section>
+        <h3>${t('settings.storage')}</h3>
+        <p>${app.ephemeral.value ? t('storage.ephemeral') : usage === undefined ? '' : t('storage.usage', { name: BRAND.name, size: formatBytes(usage) })}</p>
+        ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>`
+          : app.ephemeral.value ? nothing
+          : html`<button class="button" @click=${persist}>${t('storage.persist')}</button>`}
+      </section>
+      <section class="about"><p class="muted">${BRAND.name} 0.1 · ${t('settings.about')}</p></section>
+    </dialog>`
+  }
+
+  /** @param {string} kind @param {boolean} isLocked */
+  #rule(kind, isLocked) {
+    const current = resolveRule(kind, { user: effective.value.settings.rules })
+    return html`<li>
+      <span class="rule-kind">${t(`kind.${kind}.label`)}</span>
+      <span class="segmented" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>
+        ${(/** @type {const} */ (['allow', 'ask', 'never'])).map((option) => html`<label>
+          <input type="radio" name=${`rule-${kind}`} .checked=${current === option} ?disabled=${isLocked} @change=${() => setRule(kind, option)}>
+          <span>${t(`rules.${option}`)}</span>
+        </label>`)}
+      </span>
+      ${isLocked ? html`<span class="muted small">${t('policy.locked')}</span>` : nothing}
+    </li>`
+  }
+
+  updated() {
+    syncDialog(this, 'settings')
+    if (app.dialog.value === 'settings' && !storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
+  }
+}
+
+async function persist() {
+  const persisted = await navigator.storage?.persist?.()
+  storage.value = { ...storage.value, persisted: Boolean(persisted) }
+}
+
+/** @param {number} bytes */
+function formatBytes(bytes) {
+  const megabytes = bytes / 1e6
+  return new Intl.NumberFormat(locale.value, { style: 'unit', unit: megabytes < 1 ? 'kilobyte' : 'megabyte', maximumFractionDigits: 1 })
+    .format(megabytes < 1 ? bytes / 1e3 : megabytes)
+}
+
+define('app-history', History)
+define('app-brain-dialog', BrainDialog)
+define('app-settings', Settings)

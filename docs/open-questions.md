@@ -36,7 +36,7 @@ Host `/vendor/pyodide/` with CORS (option a), or transfer the files from the par
 
 ## Display face
 
-A variable, OFL-licensed face with a Latin subset ≤ 30 KB that carries the "light" concept. Not chosen yet.
+Instrument Serif was chosen provisionally in 0.1 (see D34). Revisit if a face with broader script coverage fits the budget.
 
 ## Smaller questions
 

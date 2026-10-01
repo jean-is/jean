@@ -1,0 +1,28 @@
+{
+  "name": "jean",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "serve": "node scripts/serve.js",
+    "test": "node --test test/*.test.js",
+    "vendor": "node scripts/vendor.js",
+    "manifest": "node scripts/manifest.js",
+    "budgets": "node scripts/budgets.js",
+    "typecheck": "tsc --noEmit -p .",
+    "check": "npm run manifest && npm run typecheck && npm test && npm run budgets"
+  },
+  "dependencies": {
+    "@preact/signals-core": "^1.14.4",
+    "lit-html": "^3.3.3",
+    "marked": "^18.0.14"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
