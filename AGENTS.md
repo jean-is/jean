@@ -1,0 +1,72 @@
+# AGENTS.md — building Jean
+
+> Status: planning, no code yet. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
+
+## What Jean is
+
+An AI agent that runs in a browser tab, for non-technical knowledge workers anywhere in the world. No install, no account, no Jean server. Data lives on the device as plain files. Capabilities reveal themselves progressively, like a game.
+
+## Non-negotiables
+
+1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI. Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
+2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. What is in the repo is what ships. Deploying means copying the folder.
+3. **Three runtime dependencies are loaded upfront:** `@preact/signals-core`, `lit-html` and `marked` (lexer only). Everything else loads on demand inside a capability module. Adding a dependency requires an entry in [docs/decisions.md](docs/decisions.md).
+4. **Standards before inventions:**
+   - **Model APIs:** OpenAI-compatible and Anthropic Messages.
+   - **Connections:** MCP.
+   - **Routines:** `SKILL.md`.
+   - **Activity events:** ACP `session/update`.
+   - **Reflexes:** the Jev-style Decisions API.
+   - **Everything else:** `Intl` and Web Platform APIs before any library.
+5. **The core is host-agnostic.** `core/` uses only web-standard APIs (fetch, streams, Web Crypto, WebAssembly) and never touches the DOM. Core tests run with `node --test`.
+
+## Security rules
+
+- Never combine `allow-scripts` and `allow-same-origin` on an iframe.
+- Untrusted code (JavaScript or Python written by a model) runs only in the sandbox worker started by `sandbox.html`, never in the main document.
+- In the main document: no `innerHTML`, no `eval`, no `new Function`. Markdown is rendered from `marked` tokens into lit-html templates. Trusted Types is enforced.
+- No hard-coded third-party URL. Every external address comes from settings or policy.
+- Secrets never enter backups, exports, syncs or shares.
+- Default action rules: reading and writing Jean's own files → do it; sending, sharing, deleting, anything external → ask first; passwords and payments → never.
+
+## Data rules
+
+- Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder).
+- **Files and names:**
+  - One file per entity, named with a ULID and never renamed.
+  - Conversations are append-only JSONL of ACP records.
+  - Attachments are named by content hash.
+- **Indexes:** there is no central index of record. Indexes live in `.cache/` and can always be rebuilt.
+- **Metadata:** every entity carries `author` and timestamps, and every file carries a `format` version.
+- **`BRAND` is for display only.** Never use it in storage keys, file paths, cache names, CSS classes or element names. The element prefix is `app-`.
+
+## UI rules
+
+- **Components:** custom elements, light DOM, prefix `app-`. One module per capability defines its elements and registers its tools; unlocking a capability means `import()`-ing that module.
+- **Strings:**
+  - Every user-facing string goes through `t()`.
+  - Never build sentences by concatenating strings.
+  - Plurals use `Intl.PluralRules`; dates, numbers and lists use `Intl.*`.
+  - Never make a translation agree grammatically with the assistant's name.
+- **Bidirectional text:** CSS uses logical properties only (`margin-inline-start`, never `margin-left`), and every message element gets `dir="auto"`.
+- **Vocabulary:** none of these words appear in the UI: "agent", "model", "MCP", "skill", "token". See the vocabulary in [docs/product.md](docs/product.md).
+- **Accessibility:** respect `prefers-reduced-motion`, `prefers-contrast` and `forced-colors`. Contrast meets WCAG AA everywhere, including in the dark first-run state.
+- **Text input:** never send on Enter while an IME is composing (`event.isComposing`).
+
+## Prompts
+
+The base prompt lives in [prompts/system.md](prompts/system.md) and stays around 150 tokens. Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
+
+## Testing
+
+- Use `node --test` for `core/`, test-first for `core/` and storage.
+- Add one Playwright smoke test per capability once there is UI.
+- Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
+
+## Planned commands
+
+```bash
+npm run check   # tsc --noEmit, lint, budgets
+npm test        # node --test
+npm run serve   # any static file server
+```
