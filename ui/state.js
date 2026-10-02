@@ -28,6 +28,7 @@ import { chooseBrain, isLocal, TIERS } from './auto.js'
 /** @typedef {import('../core/settings.js').Settings} Settings */
 /** @typedef {import('../core/settings.js').Project} Project */
 /** @typedef {'idle' | 'listening' | 'thinking' | 'answering' | 'done'} Presence */
+/** @typedef {'light' | 'dark'} Theme */
 
 // The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
 export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
@@ -52,6 +53,9 @@ export const app = {
   /** @type {import('@preact/signals-core').Signal<{ code: string, message: string } | null>} */
   error: signal(null),
   presence: signal(/** @type {Presence} */ ('idle')),
+  /** Light or dark: what the device shows (ui/app.js follows it), and the user's pick on this device, if any. */
+  deviceTheme: signal(/** @type {Theme} */ ('dark')),
+  chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | 'knows' | 'project' | null>} */
   dialog: signal(null),
   draft: signal(''),
@@ -85,6 +89,8 @@ export const activeBrain = computed(() => {
   const { settings } = effective.value
   return settings.brains.find((brain) => brain.id === settings.activeBrain) ?? settings.brains[0] ?? null
 })
+
+export const theme = computed(() => app.chosenTheme.value ?? app.deviceTheme.value)
 
 /** What the chip in the box says. */
 export const chipLabel = computed(() => {
@@ -138,6 +144,18 @@ export async function setRule(kind, value) {
 /** @param {string | null} voice */
 export async function setVoice(voice) {
   await updateSettings({ voice })
+}
+
+// The pick belongs to this device, like the device's own mode, so it lives in localStorage:
+// index.html reads it before the first paint, and the room never flashes the other colour.
+export const THEME_KEY = 'app.theme'
+
+/** Light to dark and back. Picking what the device shows follows the device again. */
+export function toggleTheme() {
+  const next = theme.value === 'light' ? 'dark' : 'light'
+  app.chosenTheme.value = next === app.deviceTheme.value ? null : next
+  if (app.chosenTheme.value) localStorage.setItem(THEME_KEY, next)
+  else localStorage.removeItem(THEME_KEY)
 }
 
 /** @param {Partial<Pick<Settings, 'auto' | 'cloud'>>} patch */

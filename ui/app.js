@@ -6,7 +6,7 @@ import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
+import { app, effective, activeBrain, theme, THEME_KEY, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import { registerServiceWorker } from './shell.js'
 import { startRouter } from './router.js'
@@ -37,6 +37,23 @@ async function start() {
     root.dir = dir(locale.value)
   })
   effect(() => { root.dataset.presence = app.presence.value })
+  // Light or dark: the device's mode, until the user picks the other one (index.html applies it
+  // before the first paint). It switches at once: the room's slow fade is for its warmth, and
+  // the text would change colour two seconds before its background.
+  const daylight = matchMedia('(prefers-color-scheme: light)')
+  const follow = () => { app.deviceTheme.value = daylight.matches ? 'light' : 'dark' }
+  daylight.addEventListener('change', follow)
+  follow()
+  const chosen = localStorage.getItem(THEME_KEY)
+  app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
+  const browserBar = document.querySelector('meta[name="theme-color"]')
+  effect(() => {
+    root.style.transition = 'none'
+    root.dataset.theme = theme.value
+    void getComputedStyle(root).backgroundColor // switched, before the fade comes back
+    root.style.removeProperty('transition')
+    browserBar?.setAttribute('content', theme.value === 'light' ? '#fbf6ee' : '#120c08')
+  })
   // The room warms a step with each discovery (docs/design.md): a brain, a first
   // conversation, then every capability (CSSOM, which the CSP allows; style attributes it doesn't).
   effect(() => {

@@ -90,6 +90,8 @@
   "settings.language": "שפה",
   "settings.languagesYours": "השפות שלך",
   "settings.languagesOther": "שפות אחרות",
+  "theme.light": "מעבר למצב בהיר",
+  "theme.dark": "מעבר למצב כהה",
   "settings.rules": "מה דורש את אישורך",
   "settings.rulesText": "בחרו מה מתבצע בלי לשאול, מה דורש קודם את אישורכם ומה אסור לעולם.",
   "settings.voice": "קול ההקראה",

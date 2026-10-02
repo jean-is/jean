@@ -90,6 +90,8 @@
   "settings.language": "Idioma",
   "settings.languagesYours": "Os teus idiomas",
   "settings.languagesOther": "Outros idiomas",
+  "theme.light": "Mudar para o modo claro",
+  "theme.dark": "Mudar para o modo escuro",
   "settings.rules": "O que precisa da tua aprovação",
   "settings.rulesText": "Escolhe o que {name} pode fazer sem perguntar, o que deve perguntar-te antes e o que nunca deve fazer.",
   "settings.voice": "Voz de leitura",

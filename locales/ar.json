@@ -90,6 +90,8 @@
   "settings.language": "اللغة",
   "settings.languagesYours": "لغاتك",
   "settings.languagesOther": "لغات أخرى",
+  "theme.light": "التبديل إلى الوضع الفاتح",
+  "theme.dark": "التبديل إلى الوضع الداكن",
   "settings.rules": "ما يحتاج إلى موافقتك",
   "settings.rulesText": "اختر ما يُنفَّذ تلقائيًا، وما يتطلّب موافقتك أولًا، وما يُمنع دائمًا.",
   "settings.voice": "صوت القراءة",

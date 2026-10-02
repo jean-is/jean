@@ -90,6 +90,8 @@
   "settings.language": "زبان",
   "settings.languagesYours": "زبان‌های شما",
   "settings.languagesOther": "زبان‌های دیگر",
+  "theme.light": "رفتن به حالت روشن",
+  "theme.dark": "رفتن به حالت تیره",
   "settings.rules": "کارهایی که تأیید شما را لازم دارند",
   "settings.rulesText": "انتخاب کنید {name} چه کارهایی را خودش انجام دهد، دربارهٔ چه چیزهایی اول از شما بپرسد و چه کارهایی را هرگز انجام ندهد.",
   "settings.voice": "صدای خواندن",

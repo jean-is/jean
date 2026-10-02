@@ -1,5 +1,5 @@
 // Talk (0.1) and reply suggestions (0.3): an answer streams in, its follow-ups become
-// buttons, and the room flips to right-to-left in Arabic.
+// buttons, the room flips to right-to-left in Arabic, and from dark to light.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask } from './helpers.js'
 
@@ -24,4 +24,24 @@ test('Arabic: right to left, and the answer in Arabic', async ({ page }) => {
   await ask(page, 'ما هي عاصمة فرنسا؟')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('إليك ما وجدته')
   await expect(page.locator('.follow-ups .follow-up').first()).toHaveText('اعرضه كرسم بياني')
+})
+
+test('light or dark: the device’s, until the user picks the other', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await start(page)
+  const root = page.locator('html')
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  await page.locator('.bar .theme').click()
+  await expect(root).toHaveAttribute('data-theme', 'light')
+  // Remembered on this device, and applied before any module runs: no flash of the night.
+  await page.route('**/ui/app.js', (route) => route.abort())
+  await page.reload()
+  await expect(root).toHaveAttribute('data-theme', 'light')
+  await page.unroute('**/ui/app.js')
+  await page.reload()
+  // Picking what the device shows follows the device again.
+  await page.locator('.bar .theme').click()
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(root).toHaveAttribute('data-theme', 'light')
 })

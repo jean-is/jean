@@ -90,6 +90,8 @@
   "settings.language": "Èdè",
   "settings.languagesYours": "Àwọn èdè yín",
   "settings.languagesOther": "Àwọn èdè mìíràn",
+  "theme.light": "Yí padà sí ipò ìmọ́lẹ̀",
+  "theme.dark": "Yí padà sí ipò òkùnkùn",
   "settings.rules": "Ohun tí ó nílò ìfọwọ́sí yín",
   "settings.rulesText": "Ẹ yan ohun tí {name} lè ṣe fúnra rẹ̀, ohun tí ó yẹ kí ó kọ́kọ́ bi yín nípa rẹ̀, àti ohun tí kò gbọdọ̀ ṣe láé.",
   "settings.voice": "Ohùn kíkà",

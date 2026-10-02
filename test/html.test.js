@@ -1,5 +1,5 @@
-// index.html guards: the CSP must allow exactly the inline import map, and keep
-// the protections Jean relies on.
+// index.html guards: the CSP must allow exactly the inline import map and the
+// light-or-dark line, and keep the protections Jean relies on.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
@@ -13,6 +13,21 @@ test('the CSP hash matches the inline import map', () => {
   const hash = createHash('sha256').update(map).digest('base64')
   assert.ok(csp.includes(`'sha256-${hash}'`), `update the CSP script-src hash to 'sha256-${hash}'`)
   assert.doesNotThrow(() => JSON.parse(map))
+})
+
+test('the CSP allows exactly the inline scripts there are', () => {
+  const inline = [...html.matchAll(/<script(?:\s+type="importmap")?>([\s\S]*?)<\/script>/g)].map((match) => match[1])
+  const hashes = inline.map((code) => `'sha256-${createHash('sha256').update(code).digest('base64')}'`)
+  for (const hash of hashes) assert.ok(csp.includes(hash), `add ${hash} to the CSP script-src`)
+  assert.equal(csp.match(/'sha256-/g)?.length, hashes.length, 'remove the CSP hashes of scripts that are gone')
+})
+
+test('light or dark is set before the first paint, with the key ui/state.js uses', async () => {
+  const theme = /<script>([\s\S]*?)<\/script>/.exec(html)
+  assert.ok(theme && theme.index < html.indexOf('<link rel="stylesheet"'), 'before the stylesheet, which would hold it back')
+  const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
+  const key = /THEME_KEY = '([^']+)'/.exec(state)?.[1]
+  assert.ok(key && theme[1].includes(`localStorage.getItem('${key}')`))
 })
 
 test('the CSP keeps its protections', () => {

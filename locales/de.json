@@ -90,6 +90,8 @@
   "settings.language": "Sprache",
   "settings.languagesYours": "Deine Sprachen",
   "settings.languagesOther": "Weitere Sprachen",
+  "theme.light": "Zum hellen Modus wechseln",
+  "theme.dark": "Zum dunklen Modus wechseln",
   "settings.rules": "Was deine Zustimmung braucht",
   "settings.rulesText": "Lege fest, was {name} selbst tun darf, wonach zuerst gefragt werden soll und was nie passieren darf.",
   "settings.voice": "Vorlesestimme",

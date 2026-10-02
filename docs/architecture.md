@@ -55,7 +55,7 @@
 ## Layout
 
 ```
-index.html        CSP <meta>, import map, shell
+index.html        CSP <meta>, light or dark (D85), import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
@@ -231,7 +231,7 @@ Two HTML documents, each with its own CSP in a `<meta>` tag, which works on any 
 **`index.html`** runs only Jean's own code:
 
 ```text
-default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<import map>'; style-src 'self';
+default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<import map>' 'sha256-<light or dark>'; style-src 'self';
 img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self';
 connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*;
 worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';

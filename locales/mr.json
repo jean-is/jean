@@ -90,6 +90,8 @@
   "settings.language": "भाषा",
   "settings.languagesYours": "तुमच्या भाषा",
   "settings.languagesOther": "इतर भाषा",
+  "theme.light": "लाइट मोडवर जा",
+  "theme.dark": "डार्क मोडवर जा",
   "settings.rules": "कशासाठी तुमची मंजुरी लागते",
   "settings.rulesText": "कोणती कामे आपोआप व्हावीत, कोणत्या कामांसाठी आधी तुम्हाला विचारावे आणि कोणती कधीच होऊ नयेत ते निवडा.",
   "settings.voice": "वाचनाचा आवाज",

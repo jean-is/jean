@@ -90,6 +90,8 @@
   "settings.language": "Bahasa",
   "settings.languagesYours": "Bahasa Anda",
   "settings.languagesOther": "Bahasa lainnya",
+  "theme.light": "Beralih ke mode terang",
+  "theme.dark": "Beralih ke mode gelap",
   "settings.rules": "Yang memerlukan persetujuan Anda",
   "settings.rulesText": "Pilih apa yang boleh dilakukan {name} sendiri, apa yang harus ditanyakan dulu, dan apa yang tidak boleh dilakukan.",
   "settings.voice": "Suara pembaca",

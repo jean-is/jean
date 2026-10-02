@@ -11,7 +11,7 @@
 @property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.74 0.17 54); }
 
 :root {
-  color-scheme: dark light;
+  color-scheme: dark;
   --room-2: oklch(0.19 0.02 52);
   --ink: oklch(0.93 0.018 80);
   --ink-soft: oklch(0.93 0.018 80 / 0.68);
@@ -34,35 +34,33 @@
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --room-2: oklch(0.94 0.02 80);
-    --ink: oklch(0.24 0.02 50);
-    --ink-soft: oklch(0.24 0.02 50 / 0.72);
-    --ink-faint: oklch(0.24 0.02 50 / 0.5);
-    --line: oklch(0.2 0.02 50 / 0.1);
-    --line-strong: oklch(0.2 0.02 50 / 0.2);
-    --glass: oklch(1 0 0 / 0.72);
-    --flame: oklch(0.7 0.16 58);
-    --flame-deep: oklch(0.55 0.16 45);
-    --on-flame: oklch(0.99 0.01 85);
-    --ember-off: oklch(0.24 0.02 50 / 0.2);
-    --glow: oklch(0.86 0.12 75);
-    --glow-alpha: 0.7;
-  }
+/* By day: the device's light mode, or the user's choice (data-theme, set before the first paint by index.html). */
+[data-theme='light'] {
+  color-scheme: light;
+  --room-2: oklch(0.94 0.02 80);
+  --ink: oklch(0.24 0.02 50);
+  --ink-soft: oklch(0.24 0.02 50 / 0.72);
+  --ink-faint: oklch(0.24 0.02 50 / 0.5);
+  --line: oklch(0.2 0.02 50 / 0.1);
+  --line-strong: oklch(0.2 0.02 50 / 0.2);
+  --glass: oklch(1 0 0 / 0.72);
+  --flame: oklch(0.7 0.16 58);
+  --flame-deep: oklch(0.55 0.16 45);
+  --on-flame: oklch(0.99 0.01 85);
+  --ember-off: oklch(0.24 0.02 50 / 0.2);
+  --glow: oklch(0.86 0.12 75);
+  --glow-alpha: 0.7;
 }
 
 /* A project's light colours the room (the same amber by default: 54 + 11 = 65, 54 + 21 = 75). */
 @supports (color: oklch(from red l c h)) {
   :root { --glow: oklch(from var(--tint) 0.78 0.16 calc(h + 11)); }
-  @media (prefers-color-scheme: light) { :root { --glow: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); } }
+  [data-theme='light'] { --glow: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); }
 }
 
 /* The room warms a step with each discovery: --warmth counts them (ui/app.js). */
 :root { --room: oklch(calc(0.15 + min(var(--warmth, 0), 9) * 0.0045) calc(0.014 + min(var(--warmth, 0), 9) * 0.0012) 52); }
-@media (prefers-color-scheme: light) {
-  :root { --room: oklch(calc(0.975 - min(var(--warmth, 0), 9) * 0.0015) calc(0.012 + min(var(--warmth, 0), 9) * 0.0016) 82); }
-}
+[data-theme='light'] { --room: oklch(calc(0.975 - min(var(--warmth, 0), 9) * 0.0015) calc(0.012 + min(var(--warmth, 0), 9) * 0.0016) 82); }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { background: var(--room); transition: background-color 2s var(--ease), --tint 1.6s var(--ease); scrollbar-color: var(--line-strong) transparent; }
@@ -128,9 +126,8 @@ app-persona {
   color: oklch(from var(--tint) 0.26 0.05 calc(h - 14));
   --persona-halo: oklch(from var(--tint) 0.78 0.16 calc(h + 11));
 }
-@media (prefers-color-scheme: light) {
-  app-persona { --persona-halo: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); --persona-rim: oklch(from var(--tint) 0.55 0.16 calc(h - 9)); }
-}
+/* :where() leaves prefers-contrast's ink rim on top. */
+:where([data-theme='light']) app-persona { --persona-halo: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); --persona-rim: oklch(from var(--tint) 0.55 0.16 calc(h - 9)); }
 app-persona::before {
   content: '';
   position: absolute;

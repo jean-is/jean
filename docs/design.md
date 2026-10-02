@@ -10,7 +10,7 @@ A nod to *A Dark Room*. **Jean is the light source.** Its presence is felt in ho
 - **Discovery lights the house.** Each discovered capability "catches the light": its surface warms in from the shadow, and the palette warms a step. When everything has been discovered, the house is in full daylight. People feel their progress instead of counting it.
 - **Each project is a room** with its own light colour. Switching project feels like walking into another room, with the ambient light cross-fading.
 - **The collection page is the house.** Discovered rooms and capabilities are lit; the rest are silhouettes in shadow.
-- **Light mode tells the same story by day,** with paper and ink: progression shows as warmth and ink density.
+- **Light mode tells the same story by day,** with paper and ink: progression shows as warmth and ink density. Jean follows the device's light or dark mode; a button in the header switches to the other one, and that choice is kept on the device (D85).
 
 ### How Jean's presence shows state
 

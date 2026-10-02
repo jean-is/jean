@@ -90,6 +90,8 @@
   "settings.language": "Ngôn ngữ",
   "settings.languagesYours": "Ngôn ngữ của bạn",
   "settings.languagesOther": "Ngôn ngữ khác",
+  "theme.light": "Chuyển sang chế độ sáng",
+  "theme.dark": "Chuyển sang chế độ tối",
   "settings.rules": "Những gì cần bạn cho phép",
   "settings.rulesText": "Chọn những gì {name} được tự làm, những gì phải hỏi bạn trước, và những gì không bao giờ được làm.",
   "settings.voice": "Giọng đọc",

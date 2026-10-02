@@ -90,6 +90,8 @@
   "settings.language": "Мова",
   "settings.languagesYours": "Ваші мови",
   "settings.languagesOther": "Інші мови",
+  "theme.light": "Перейти до світлої теми",
+  "theme.dark": "Перейти до темної теми",
   "settings.rules": "Що потребує вашого дозволу",
   "settings.rulesText": "Оберіть, що {name} може робити без вашої участі, про що спершу питати і чого не робити ніколи.",
   "settings.voice": "Голос для читання",

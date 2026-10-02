@@ -90,6 +90,8 @@
   "settings.language": "Taal",
   "settings.languagesYours": "Je talen",
   "settings.languagesOther": "Andere talen",
+  "theme.light": "Overschakelen naar lichte modus",
+  "theme.dark": "Overschakelen naar donkere modus",
   "settings.rules": "Wat je toestemming nodig heeft",
   "settings.rulesText": "Kies wat {name} zelf mag doen, waarover eerst gevraagd moet worden en wat nooit mag.",
   "settings.voice": "Voorleesstem",

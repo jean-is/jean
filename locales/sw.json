@@ -90,6 +90,8 @@
   "settings.language": "Lugha",
   "settings.languagesYours": "Lugha zako",
   "settings.languagesOther": "Lugha nyingine",
+  "theme.light": "Badilisha hadi hali ya mwanga",
+  "theme.dark": "Badilisha hadi hali ya giza",
   "settings.rules": "Kinachohitaji idhini yako",
   "settings.rulesText": "Chagua {name} anaweza kufanya nini mwenyewe, aulize nini kwanza, na asifanye nini kamwe.",
   "settings.voice": "Sauti ya kusoma",

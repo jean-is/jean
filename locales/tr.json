@@ -90,6 +90,8 @@
   "settings.language": "Dil",
   "settings.languagesYours": "Dillerin",
   "settings.languagesOther": "Diğer diller",
+  "theme.light": "Açık moda geç",
+  "theme.dark": "Koyu moda geç",
   "settings.rules": "Onayını gerektirenler",
   "settings.rulesText": "{name} için neyin kendiliğinden yapılabileceğini, neyin önce sorulacağını ve neyin asla yapılmayacağını seç.",
   "settings.voice": "Okuma sesi",

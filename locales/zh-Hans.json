@@ -90,6 +90,8 @@
   "settings.language": "语言",
   "settings.languagesYours": "你的语言",
   "settings.languagesOther": "其他语言",
+  "theme.light": "切换到浅色模式",
+  "theme.dark": "切换到深色模式",
   "settings.rules": "哪些事需要你同意",
   "settings.rulesText": "选择 {name} 可以自行去做的事、需要先问你的事，以及绝不能做的事。",
   "settings.voice": "朗读声音",
