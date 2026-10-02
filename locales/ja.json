@@ -100,8 +100,6 @@
   "settings.language": "言語",
   "settings.languagesYours": "あなたの言語",
   "settings.languagesOther": "その他の言語",
-  "theme.light": "ライトモードに切り替え",
-  "theme.dark": "ダークモードに切り替え",
   "settings.rules": "承認が必要なこと",
   "settings.rulesText": "{name} が自分で行ってよいこと、先に確認すべきこと、決してしてはいけないことを選んでください。",
   "settings.voice": "読み上げの声",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "{count} ページ"
   },
+  "files.picture": "画像",
   "files.remove": "{name} を外す",
   "files.open": "ファイルを開く",
   "files.stillReading": "まだファイルを読み込んでいます…",
@@ -142,6 +141,9 @@
   "files.unreadable": "このファイルを読めませんでした",
   "files.failed": "{name} を読めませんでした",
   "files.missing": "{name} はこの端末にもうありません",
+  "capture.start": "画面をキャプチャ",
+  "capture.name": "画面キャプチャ {time}",
+  "capture.failed": "画面をキャプチャできませんでした",
   "read.title": {
     "other": "この回答のために読んだもの：{count} 件のファイル"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "表計算ファイル（CSV）としてダウンロード",
   "made.csvNumbered": "表 {count} を表計算ファイル（CSV）としてダウンロード",
   "made.tableFile": "表 {count}",
-  "made.print": "印刷または PDF として保存",
   "dictation.start": "音声入力",
   "dictation.stop": "音声入力を止める",
   "dictation.listening": "聞いています…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "合う道具を探しました",
   "tool.decide": "判断しました",
   "cap.files.name": "ファイル",
-  "cap.files.offer": "ファイルをここにドロップできます：PDF、Word、Excel、PowerPoint、CSV、テキスト。",
+  "cap.files.offer": "ファイルをここにドロップできます：PDF、Word、Excel、PowerPoint、CSV、テキスト、画像。画面をキャプチャすることもできます。",
   "cap.files.yes": "わかりました",
   "cap.made.name": "コピー・表計算・印刷",
   "cap.compute.name": "計算",

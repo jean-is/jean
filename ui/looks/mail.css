@@ -1,0 +1,112 @@
+/* Mail: the conversations in a list beside the one open, like an email inbox (D111). Over
+   ui/style.css, which comes after it, so every rule here starts with :root[data-look='mail'].
+   Wide: a rail, the list, the conversation. Narrower: the list and the conversation. On a
+   phone: the room's layout, with the list in its drawer. Logical properties only. */
+
+:root[data-look='mail'] {
+  --room: oklch(0.13 0.002 254);
+  --room-2: oklch(0.19 0.003 254);
+  --ink: oklch(0.97 0.002 254);
+  --ink-soft: oklch(0.76 0.004 254);
+  --ink-faint: oklch(0.64 0.004 254);
+  --line: oklch(1 0 0 / 0.08);
+  --line-strong: oklch(1 0 0 / 0.15);
+  --glass: oklch(0.19 0.003 254 / 0.92);
+  --flame: oklch(0.72 0.15 254);
+  --flame-deep: oklch(0.64 0.18 256);
+  --on-flame: oklch(0.16 0.02 256);
+  --ember-off: oklch(1 0 0 / 0.22);
+  --glow: var(--room);
+  --picked: oklch(0.27 0.0015 254);
+  --display: var(--sans);
+  --radius: 1rem;
+  --rail: 0rem;
+  --list: 0rem;
+}
+:root[data-look='mail'][data-theme='light'] {
+  --room: oklch(0.97 0.0015 254);
+  --room-2: oklch(1 0 0);
+  --ink: oklch(0.21 0.002 254);
+  --ink-soft: oklch(0.44 0.004 254);
+  --ink-faint: oklch(0.52 0.004 254);
+  --line: oklch(0.21 0.002 254 / 0.09);
+  --line-strong: oklch(0.21 0.002 254 / 0.17);
+  --glass: oklch(1 0 0 / 0.92);
+  --flame: oklch(0.54 0.2 258);
+  --flame-deep: oklch(0.48 0.2 258);
+  --on-flame: oklch(0.99 0 0);
+  --ember-off: oklch(0.21 0.002 254 / 0.2);
+  --picked: oklch(0.92 0.0015 254);
+}
+
+/* No room light: flat surfaces, plain type. The little light stays, at the name. */
+:root[data-look='mail'] .room { display: none; }
+:root[data-look='mail'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; font-weight: 600; letter-spacing: -0.01em; text-shadow: none; }
+:root[data-look='mail'] .wordmark { font-size: 1.1rem; }
+:root[data-look='mail'] .hero-question { font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1.2; background: none; color: var(--ink); }
+:root[data-look='mail'] .conversation-title { font-size: 1.3rem; color: var(--ink); }
+:root[data-look='mail'] .dialog-head h2 { font-size: 1.3rem; }
+:root[data-look='mail'] .welcome app-persona { --persona-size: 3.5rem; margin-block-end: 0; }
+:root[data-look='mail'] .msg-user { border: 1px solid var(--line); background: var(--room-2); border-end-end-radius: var(--radius); }
+:root[data-look='mail'] .composer { border-radius: var(--radius); background: var(--room-2); backdrop-filter: none; box-shadow: 0 0.75rem 1.5rem -1.25rem oklch(0 0 0 / 0.5); }
+:root[data-look='mail'] .composer:focus-within { border-color: oklch(from var(--flame) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.18); }
+:root[data-look='mail'] :is(.send, .caret) { box-shadow: none; }
+
+/* The list: the drawer's, kept open. */
+:root[data-look='mail'] .inbox {
+  position: fixed;
+  z-index: 3;
+  inset-block: 0;
+  inset-inline-start: var(--rail);
+  display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+  inline-size: var(--list);
+  padding: 0.9rem 0.75rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-inline-end: 1px solid var(--line);
+  background: var(--room);
+}
+:root[data-look='mail'] .inbox > .button { justify-content: flex-start; border-radius: 0.8rem; }
+:root[data-look='mail'] .inbox .history-list { margin: 0; }
+:root[data-look='mail'] .history-list li { border-radius: 0.8rem; }
+:root[data-look='mail'] .history-list li.is-current { background: var(--picked); }
+:root[data-look='mail'] .history-item { padding: 0.5rem 0.75rem; }
+:root[data-look='mail'] .history-title { font-size: 0.9rem; font-weight: 500; }
+:root[data-look='mail'] .toasts { inset-inline-start: calc(var(--rail) + var(--list)); }
+
+@media (min-width: 48rem) {
+  :root[data-look='mail'] { --list: 20rem; }
+  :root[data-look='mail'] app-shell { padding-inline-start: calc(var(--rail) + var(--list)); }
+  :root[data-look='mail'] .inbox { display: flex; }
+  /* The drawer's button: its list is in view. */
+  :root[data-look='mail'] .bar > .icon-button:first-child { display: none; }
+}
+
+/* The header becomes the rail: the name, what Jean can do, and the rest at the foot. */
+@media (min-width: 64rem) {
+  :root[data-look='mail'] { --rail: 14rem; }
+  :root[data-look='mail'] .bar {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: var(--rail);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 0.9rem 0.75rem;
+    border-inline-end: 1px solid var(--line);
+    background: var(--room);
+  }
+  :root[data-look='mail'] .wordmark { justify-content: flex-start; padding: 0.35rem 0.5rem; }
+  :root[data-look='mail'] .bar-actions { flex: 1; flex-wrap: wrap; align-content: space-between; margin: 0; }
+  :root[data-look='mail'] .bar-actions > :first-child { display: flex; flex-basis: 100%; justify-content: flex-start; gap: 0.75rem; inline-size: auto; padding-inline: 0.75rem; border-radius: 0.8rem; font-size: 0.9rem; font-weight: 500; }
+  :root[data-look='mail'] .bar-actions > :first-child::after { content: attr(title); }
+  :root[data-look='mail'] main { padding-block-start: 1.5rem; }
+}
+
+@media print {
+  :root[data-look='mail'] .inbox { display: none; }
+  :root[data-look='mail'] app-shell { padding: 0; }
+}

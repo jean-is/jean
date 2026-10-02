@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../core/fs.js'
 import { crc32, readZip, writeZip } from '../core/zip.js'
 import { decodeText, docx, extractPages, extractable, paginate, sheetRows, slideText } from '../caps/files/extract.js'
-import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages } from '../core/files.js'
+import { addFile, documentPart, estimateTokens, fileMeta, fileText, isPicture, joinPages, pagesThatFit, parsePages, readTool, splitPages } from '../core/files.js'
 import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
 
 const enc = new TextEncoder()
@@ -142,6 +142,16 @@ test('documentPart shows the recorded pages and says how to read the rest', () =
   assert.match(documentPart(link, null).text, /no longer available/)
 })
 
+test('a picture is shown to a brain that can see, and named to one that can’t', () => {
+  /** @type {import('../core/types.js').ResourceLink} */
+  const link = { type: 'resource_link', uri: 'files/s.png', name: 'Screen.png', mimeType: 'image/png', _meta: { source: 3 } }
+  assert.ok(isPicture(link) && isPicture({ ...link, mimeType: 'image/jpeg' }))
+  assert.ok(!isPicture({ ...link, mimeType: 'image/svg+xml' }) && !isPicture({ ...link, mimeType: undefined }))
+  assert.deepEqual(documentPart(link, joinPages(['']), 'iVBORw0K'), { name: 'Screen.png', source: 3, text: '(The picture follows.)', image: { mimeType: 'image/png', data: 'iVBORw0K' } })
+  assert.match(documentPart(link, joinPages([''])).text, /^\(A picture\. You cannot see pictures/)
+  assert.match(documentPart(link, null, 'iVBORw0K').text, /no longer available/)
+})
+
 test('parsePages', () => {
   assert.deepEqual(parsePages(undefined, 9), [1, 9])
   assert.deepEqual(parsePages('3', 9), [3, 3])
@@ -162,6 +172,8 @@ test('the read tool finds files by name and cuts long reads', async () => {
   assert.match(out, /^Big\.pdf, pages 2–2 of 5\. Pages 3–5 are not shown\./)
   assert.ok(out.includes('[[page 2]]') && !out.includes('[[page 3]]'))
   await assert.rejects(tool.run({ file: 'other.pdf' }, {}), /No file named "other\.pdf"\. Files: Big\.pdf\./)
+  const shot = await addFile(fs, { projectDir: 'p', name: 'Screen.png', mimeType: 'image/png', bytes: enc.encode('PNG'), pages: [''], by: 'd' })
+  await assert.rejects(readTool({ fs, projectDir: () => 'p', files: () => [shot] }).run({ file: 'screen.png' }, {}), /"Screen\.png" is a picture/)
 })
 
 // ─── Backup ──────────────────────────────────────────────────────────────────

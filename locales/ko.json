@@ -100,8 +100,6 @@
   "settings.language": "언어",
   "settings.languagesYours": "내 언어",
   "settings.languagesOther": "다른 언어",
-  "theme.light": "라이트 모드로 전환",
-  "theme.dark": "다크 모드로 전환",
   "settings.rules": "승인이 필요한 일",
   "settings.rulesText": "{name}에게 스스로 할 일, 먼저 물어볼 일, 절대 하지 말아야 할 일을 정하세요.",
   "settings.voice": "읽기 목소리",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "{count}쪽"
   },
+  "files.picture": "이미지",
   "files.remove": "{name} 제거",
   "files.open": "파일 열기",
   "files.stillReading": "아직 파일을 읽는 중이에요…",
@@ -142,6 +141,9 @@
   "files.unreadable": "이 파일을 읽을 수 없어요",
   "files.failed": "읽을 수 없음: {name}",
   "files.missing": "이 기기에 더 이상 없음: {name}",
+  "capture.start": "화면 캡처",
+  "capture.name": "화면 캡처 {time}",
+  "capture.failed": "화면을 캡처할 수 없어요",
   "read.title": {
     "other": "이 답변을 위해 읽은 파일: {count}개"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "스프레드시트로 다운로드(CSV)",
   "made.csvNumbered": "표 {count}을(를) 스프레드시트로 다운로드(CSV)",
   "made.tableFile": "표 {count}",
-  "made.print": "인쇄 또는 PDF로 저장",
   "dictation.start": "받아쓰기",
   "dictation.stop": "받아쓰기 중지",
   "dictation.listening": "듣는 중…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "알맞은 도구를 찾음",
   "tool.decide": "결정을 따져 봄",
   "cap.files.name": "파일",
-  "cap.files.offer": "파일을 여기에 놓을 수 있어요: PDF, Word, Excel, PowerPoint, CSV, 텍스트.",
+  "cap.files.offer": "파일을 여기에 놓을 수 있어요: PDF, Word, Excel, PowerPoint, CSV, 텍스트, 이미지. 화면을 캡처할 수도 있어요.",
   "cap.files.yes": "알겠어요",
   "cap.made.name": "복사·스프레드시트·인쇄",
   "cap.compute.name": "계산",

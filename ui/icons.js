@@ -1,4 +1,4 @@
-// Forty inline icons, 24×24, drawn with the current colour.
+// Thirty-nine inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -8,10 +8,9 @@ export const icons = {
   send: icon(svg`<path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/>`),
   stop: icon(svg`<rect x="7" y="7" width="10" height="10" rx="2"/>`),
   plus: icon(svg`<path d="M12 5v14M5 12h14"/>`),
-  history: icon(svg`<path d="M4 6h16M4 12h16M4 18h10"/>`),
+  history: icon(svg`<path d="M4 6h16M4 12h16M4 18h10"/>`, 'flip-rtl'),
   globe: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.4 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.4-3.6-8.5s1.1-5.9 3.6-8.5Z"/>`),
-  contrast: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor"/>`),
-  gear: icon(svg`<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/>`),
+  gear: icon(svg`<path d="M10.3 5.2L10.4 3.1A9 9 0 0 1 13.6 3.1L13.7 5.2A7 7 0 0 1 15.6 6L17.2 4.6A9 9 0 0 1 19.4 6.8L18 8.4A7 7 0 0 1 18.8 10.3L20.9 10.4A9 9 0 0 1 20.9 13.6L18.8 13.7A7 7 0 0 1 18 15.6L19.4 17.2A9 9 0 0 1 17.2 19.4L15.6 18A7 7 0 0 1 13.7 18.8L13.6 20.9A9 9 0 0 1 10.4 20.9L10.3 18.8A7 7 0 0 1 8.4 18L6.8 19.4A9 9 0 0 1 4.6 17.2L6 15.6A7 7 0 0 1 5.2 13.7L3.1 13.6A9 9 0 0 1 3.1 10.4L5.2 10.3A7 7 0 0 1 6 8.4L4.6 6.8A9 9 0 0 1 6.8 4.6L8.4 6A7 7 0 0 1 10.3 5.2Z"/><circle cx="12" cy="12" r="3"/>`),
   close: icon(svg`<path d="M6 6l12 12M18 6 6 18"/>`),
   speaker: icon(svg`<path d="M4 10v4h3.5L12 18V6L7.5 10H4Z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>`),
   copy: icon(svg`<rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>`),
@@ -28,9 +27,8 @@ export const icons = {
   file: icon(svg`<path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M9 13h6M9 16.5h4"/>`),
   download: icon(svg`<path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/>`),
   upload: icon(svg`<path d="M12 15.5v-11M7 9l5-5 5 5M5 19.5h14"/>`),
-  print: icon(svg`<path d="M7 9V4h10v5M7 17H5a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 5 9h14a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 19 17h-2"/><rect x="7" y="14" width="10" height="6" rx="1"/>`),
   table: icon(svg`<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M4 14.5h16M10 5v14"/>`),
-  house: icon(svg`<path d="M4 11.5 12 5l8 6.5M6 10v9.5h12V10"/><path d="M10.5 19.5v-4.5h3v4.5"/>`),
+  tiles: icon(svg`<rect x="4" y="4" width="7" height="7" rx="2" fill="currentColor"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>`, 'flip-rtl'),
   calc: icon(svg`<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7M8.5 12h1M11.5 12h1M14.5 12h1M8.5 16h1M11.5 16h1M14.5 16h1"/>`),
   lamp: icon(svg`<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/>`),
   note: icon(svg`<path d="M6 3.5h9l3.5 3.5v13.5H6Z"/><path d="M9 10h6M9 13.5h6M9 17h3.5"/>`),
@@ -45,4 +43,5 @@ export const icons = {
   tag: icon(svg`<path d="M4 12.5V4.5h8l8 8-8 8Z"/><circle cx="8.5" cy="9" r="1.4"/>`, 'flip-rtl'),
   wave: icon(svg`<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>`),
   chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),
+  capture: icon(svg`<path d="M4 8.5V6a2 2 0 0 1 2-2h2.5M15.5 4H18a2 2 0 0 1 2 2v2.5M20 15.5V18a2 2 0 0 1-2 2h-2.5M8.5 20H6a2 2 0 0 1-2-2v-2.5"/><circle cx="12" cy="12" r="3"/>`),
 }

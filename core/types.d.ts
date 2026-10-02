@@ -30,8 +30,8 @@ export type ToolCall = { id: string, name: string, args: any }
 export type ToolSpec = { name: string, description: string, parameters: object, native?: 'web_search' }
 /** Outside content the brain can cite as [n]: a web page, an email, a document from a connection. */
 export type Source = { title: string, url?: string, quote?: string }
-/** A shared file's text, as the brain sees it. */
-export type DocumentPart = { name: string, text: string, source?: number }
+/** A shared file's text, as the brain sees it; image: a picture, base64, for brains that can see. */
+export type DocumentPart = { name: string, text: string, source?: number, image?: { mimeType: string, data: string } }
 export type UserMessage = { role: 'user', content: string, documents?: DocumentPart[] }
 /**
  * raw = provider-native content blocks, echoed verbatim to the model in rawModel only
@@ -56,8 +56,8 @@ export type StreamEvent =
   | { type: 'cite', sources: Source[] }
   | { type: 'done', stopReason: StopReason, usage?: Usage, message: AssistantMessage }
 
-/** pricing in USD per token when known; output: what it can make (OpenRouter), e.g. ['text', 'image']. */
-export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number }, output?: string[] }
+/** pricing in USD per token when known; input and output: what it can read and make (OpenRouter), e.g. ['text', 'image']. */
+export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number }, input?: string[], output?: string[] }
 
 // Requests made by llm.js and anthropic.js.
 export type LLMErrorCode = 'auth' | 'rate_limit' | 'network' | 'cors_or_offline' | 'bad_request' | 'not_found' | 'server' | 'aborted' | 'bad_response' | 'refusal' | 'too_long'

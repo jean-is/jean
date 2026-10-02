@@ -100,8 +100,6 @@
   "settings.language": "Harshe",
   "settings.languagesYours": "Harsunanka",
   "settings.languagesOther": "Sauran harsuna",
-  "theme.light": "Canza zuwa yanayin haske",
-  "theme.dark": "Canza zuwa yanayin duhu",
   "settings.rules": "Abubuwan da ke buƙatar amincewarka",
   "settings.rulesText": "Zaɓi abin da za a yi kai tsaye, abin da za a fara tambayarka, da abin da ba za a taɓa yi ba.",
   "settings.voice": "Muryar karatu",
@@ -134,6 +132,7 @@
     "one": "shafi {count}",
     "other": "shafuka {count}"
   },
+  "files.picture": "Hoto",
   "files.remove": "Cire {name}",
   "files.open": "Buɗe fayil",
   "files.stillReading": "Har yanzu ana karanta fayilolinka…",
@@ -143,6 +142,9 @@
   "files.unreadable": "Ba a iya karanta wannan fayil ba",
   "files.failed": "Ba a iya karanta {name} ba",
   "files.missing": "{name} ba ya kan wannan na'urar kuma",
+  "capture.start": "Ɗauki hoton allonka",
+  "capture.name": "Hoton allo {time}",
+  "capture.failed": "Ba a iya ɗaukar hoton allo ba",
   "read.title": {
     "one": "An karanta don wannan amsa: fayil {count}",
     "other": "An karanta don wannan amsa: fayiloli {count}"
@@ -154,7 +156,6 @@
   "made.csvTitle": "Sauke a matsayin takardar lissafi (CSV)",
   "made.csvNumbered": "Sauke tebur {count} a matsayin takardar lissafi (CSV)",
   "made.tableFile": "Tebur {count}",
-  "made.print": "Buga ko adana a matsayin PDF",
   "dictation.start": "Rubutu da murya",
   "dictation.stop": "Daina rubutu da murya",
   "dictation.listening": "Ana saurare…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "An nemo kayan aikin da ya dace",
   "tool.decide": "An auna wani shawara",
   "cap.files.name": "Fayiloli",
-  "cap.files.offer": "Za ka iya jefa min fayiloli: PDF, Word, Excel, PowerPoint, CSV ko rubutu.",
+  "cap.files.offer": "Za ka iya jefa min fayiloli: PDF, Word, Excel, PowerPoint, CSV, rubutu ko hotuna. Za ka iya kuma ɗaukar hoton allonka.",
   "cap.files.yes": "Na gane",
   "cap.made.name": "Kwafa, takardar lissafi, bugawa",
   "cap.compute.name": "Lissafi",

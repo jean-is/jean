@@ -100,8 +100,6 @@
   "settings.language": "Sprache",
   "settings.languagesYours": "Deine Sprachen",
   "settings.languagesOther": "Weitere Sprachen",
-  "theme.light": "Zum hellen Modus wechseln",
-  "theme.dark": "Zum dunklen Modus wechseln",
   "settings.rules": "Was deine Zustimmung braucht",
   "settings.rulesText": "Lege fest, was {name} selbst tun darf, wonach zuerst gefragt werden soll und was nie passieren darf.",
   "settings.voice": "Vorlesestimme",
@@ -134,6 +132,7 @@
     "one": "{count} Seite",
     "other": "{count} Seiten"
   },
+  "files.picture": "Bild",
   "files.remove": "{name} entfernen",
   "files.open": "Datei öffnen",
   "files.stillReading": "Deine Dateien werden noch gelesen…",
@@ -143,6 +142,9 @@
   "files.unreadable": "Diese Datei konnte nicht gelesen werden",
   "files.failed": "{name} konnte nicht gelesen werden",
   "files.missing": "{name} ist nicht mehr auf diesem Gerät",
+  "capture.start": "Bildschirmfoto aufnehmen",
+  "capture.name": "Bildschirmfoto {time}",
+  "capture.failed": "Bildschirmfoto konnte nicht aufgenommen werden",
   "read.title": {
     "one": "Für diese Antwort gelesen: {count} Datei",
     "other": "Für diese Antwort gelesen: {count} Dateien"
@@ -154,7 +156,6 @@
   "made.csvTitle": "Als Tabelle herunterladen (CSV)",
   "made.csvNumbered": "Tabelle {count} als Tabellendatei herunterladen (CSV)",
   "made.tableFile": "Tabelle {count}",
-  "made.print": "Drucken oder als PDF speichern",
   "dictation.start": "Diktieren",
   "dictation.stop": "Diktat beenden",
   "dictation.listening": "Höre zu…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "Das passende Werkzeug gesucht",
   "tool.decide": "Eine Entscheidung abgewogen",
   "cap.files.name": "Dateien",
-  "cap.files.offer": "Du kannst Dateien bei mir ablegen: PDF, Word, Excel, PowerPoint, CSV oder Text.",
+  "cap.files.offer": "Du kannst Dateien bei mir ablegen: PDF, Word, Excel, PowerPoint, CSV, Text oder Bilder. Du kannst auch ein Bildschirmfoto aufnehmen.",
   "cap.files.yes": "Gut zu wissen",
   "cap.made.name": "Kopieren, Tabellen, Drucken",
   "cap.compute.name": "Berechnungen",

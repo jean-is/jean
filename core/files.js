@@ -78,14 +78,21 @@ export function pagesThatFit(pages, budgetTokens) {
   return [1, Math.max(last, 1)]
 }
 
+/** A picture brains that can see take as it is: PNG, JPEG, WebP or GIF. @param {ResourceLink} link */
+export const isPicture = (link) => /^image\/(png|jpeg|webp|gif)$/.test(link.mimeType ?? '')
+
 /**
- * The text the brain reads for a linked file, using the pages recorded on the link.
+ * The text the brain reads for a linked file, using the pages recorded on the link. A picture
+ * comes with its bytes for a brain that can see, and is only named to one that can't.
  * @param {ResourceLink} link @param {string | null} text the file's extracted text
+ * @param {string} [picture] a picture's bytes, base64
  * @returns {DocumentPart}
  */
-export function documentPart(link, text) {
+export function documentPart(link, text, picture) {
   const part = { name: link.name, ...(link._meta?.source && { source: link._meta.source }) }
   if (text === null) return { ...part, text: '(This file is no longer available.)' }
+  if (isPicture(link) && picture) return { ...part, text: '(The picture follows.)', image: { mimeType: String(link.mimeType), data: picture } }
+  if (isPicture(link)) return { ...part, text: '(A picture. You cannot see pictures: say so if the user asks about it.)' }
   const pages = splitPages(text)
   const [first, last] = link._meta?.pages ?? [1, pages.length]
   if (first === 1 && last >= pages.length) return { ...part, text: pages.length > 1 ? joinPages(pages) : pages[0] }
@@ -149,6 +156,7 @@ export function readTool({ fs, projectDir, files, maxTokens = 6000 }) {
     run: async (args) => {
       const link = find(args)
       if (!link) throw new Error(`No file named "${args?.file}". Files: ${files().map((f) => f.name).join(', ') || 'none'}.`)
+      if (isPicture(link)) throw new Error(`"${link.name}" is a picture, with the message it came in: it has no text to read.`)
       const text = await fileText(fs, projectDir(), link.uri)
       if (text === null) throw new Error(`"${link.name}" is no longer available.`)
       const pages = splitPages(text)

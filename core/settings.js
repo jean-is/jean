@@ -21,6 +21,13 @@ import { ulid } from './ulid.js'
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
+ * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
+ */
+
+/**
+ * A look by its id (the room when absent), and what the user changed over it: colours as
+ * `#rrggbb`, a text size as a share of the browser's, a typeface, and their own CSS.
+ * @typedef {{ id?: string, accent?: string, background?: string, size?: number, font?: string, css?: string }} Look
  */
 
 /** @typedef {{ id: string, name: string, url: string, auth: 'none' | 'key' | 'oauth' }} Connection */

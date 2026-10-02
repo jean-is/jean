@@ -100,8 +100,6 @@
   "settings.language": "భాష",
   "settings.languagesYours": "మీ భాషలు",
   "settings.languagesOther": "ఇతర భాషలు",
-  "theme.light": "లైట్ మోడ్‌కు మారండి",
-  "theme.dark": "డార్క్ మోడ్‌కు మారండి",
   "settings.rules": "మీ ఆమోదం అవసరమైనవి",
   "settings.rulesText": "ఏవి వాటంతట అవే జరగొచ్చో, వేటికి ముందు మిమ్మల్ని అడగాలో, ఏవి ఎప్పటికీ జరగకూడదో ఎంచుకోండి.",
   "settings.voice": "చదివే గొంతు",
@@ -134,6 +132,7 @@
     "one": "{count} పేజీ",
     "other": "{count} పేజీలు"
   },
+  "files.picture": "చిత్రం",
   "files.remove": "{name} తీసివేయి",
   "files.open": "ఫైల్ తెరువు",
   "files.stillReading": "మీ ఫైళ్లు ఇంకా చదవబడుతున్నాయి…",
@@ -143,6 +142,9 @@
   "files.unreadable": "ఈ ఫైల్‌ను చదవలేకపోయాం",
   "files.failed": "{name} చదవలేకపోయాం",
   "files.missing": "{name} ఇక ఈ పరికరంలో లేదు",
+  "capture.start": "స్క్రీన్‌ను ఫోటో తీయి",
+  "capture.name": "స్క్రీన్ ఫోటో {time}",
+  "capture.failed": "స్క్రీన్‌ను ఫోటో తీయలేకపోయాం",
   "read.title": {
     "one": "ఈ జవాబు కోసం చదివినది: {count} ఫైల్",
     "other": "ఈ జవాబు కోసం చదివినవి: {count} ఫైళ్లు"
@@ -154,7 +156,6 @@
   "made.csvTitle": "స్ప్రెడ్‌షీట్‌గా డౌన్‌లోడ్ చేయి (CSV)",
   "made.csvNumbered": "పట్టిక {count} ను స్ప్రెడ్‌షీట్‌గా డౌన్‌లోడ్ చేయి (CSV)",
   "made.tableFile": "పట్టిక {count}",
-  "made.print": "ప్రింట్ చేయి లేదా PDF గా సేవ్ చేయి",
   "dictation.start": "మాట్లాడి రాయించు",
   "dictation.stop": "మాట్లాడి రాయించడం ఆపు",
   "dictation.listening": "వినడం జరుగుతోంది…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "సరైన సాధనం వెతకబడింది",
   "tool.decide": "ఒక నిర్ణయం తూచబడింది",
   "cap.files.name": "ఫైళ్లు",
-  "cap.files.offer": "మీరు ఇక్కడ ఫైళ్లు వదలొచ్చు: PDF, Word, Excel, PowerPoint, CSV లేదా టెక్స్ట్.",
+  "cap.files.offer": "మీరు ఇక్కడ ఫైళ్లు వదలొచ్చు: PDF, Word, Excel, PowerPoint, CSV, టెక్స్ట్ లేదా చిత్రాలు. మీ స్క్రీన్‌ను కూడా ఫోటో తీయొచ్చు.",
   "cap.files.yes": "తెలుసుకున్నాను",
   "cap.made.name": "కాపీ, స్ప్రెడ్‌షీట్, ప్రింట్",
   "cap.compute.name": "లెక్కలు",

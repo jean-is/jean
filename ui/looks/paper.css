@@ -1,0 +1,50 @@
+/* Paper: ink on paper, in a classic typeface, without the glow (D111). Over ui/style.css, which
+   comes after it, so every rule here starts with :root[data-look='paper']. */
+
+:root[data-look='paper'] {
+  --room: oklch(0.2 0.006 70);
+  --room-2: oklch(0.245 0.006 70);
+  --ink: oklch(0.91 0.012 85);
+  --ink-soft: oklch(0.78 0.01 85);
+  --ink-faint: oklch(0.66 0.01 85);
+  --line: oklch(0.91 0.012 85 / 0.12);
+  --line-strong: oklch(0.91 0.012 85 / 0.26);
+  --glass: oklch(0.245 0.006 70 / 0.94);
+  --flame: oklch(0.75 0.13 34);
+  --flame-deep: oklch(0.67 0.14 32);
+  --on-flame: oklch(0.2 0.02 32);
+  --ember-off: oklch(0.91 0.012 85 / 0.25);
+  --glow: var(--room);
+  --sans: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Noto Serif', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --radius: 0.3rem;
+  --column: min(100% - 2.5rem, 40rem);
+}
+:root[data-look='paper'][data-theme='light'] {
+  --room: oklch(0.975 0.008 85);
+  --room-2: oklch(0.993 0.004 85);
+  --ink: oklch(0.22 0.012 60);
+  --ink-soft: oklch(0.4 0.012 60);
+  --ink-faint: oklch(0.5 0.01 60);
+  --line: oklch(0.22 0.012 60 / 0.12);
+  --line-strong: oklch(0.22 0.012 60 / 0.28);
+  --glass: oklch(0.993 0.004 85 / 0.94);
+  --flame: oklch(0.5 0.17 30);
+  --flame-deep: oklch(0.44 0.15 30);
+  --on-flame: oklch(0.99 0.004 85);
+  --ember-off: oklch(0.22 0.012 60 / 0.22);
+}
+
+/* No light in the room and no halo: a page, with a rule under the masthead. */
+:root[data-look='paper'] .room, :root[data-look='paper'] app-persona::before { display: none; }
+:root[data-look='paper'] .bar { background: var(--room); border-block-end: 1px solid var(--line); }
+:root[data-look='paper'] :is(.wordmark, .wordmark:hover) { text-shadow: none; }
+:root[data-look='paper'] .hero-question { background: none; color: var(--ink); }
+:root[data-look='paper'] .prose { line-height: 1.78; }
+/* What the user asked reads as a quotation, in the margin's red. */
+:root[data-look='paper'] .msg-user { align-self: stretch; max-inline-size: none; padding-block: 0.1rem; padding-inline: 1rem 0; border-inline-start: 2px solid var(--flame); border-radius: 0; background: none; color: var(--ink-soft); }
+:root[data-look='paper'] .msg-files { align-self: flex-start; justify-content: flex-start; }
+:root[data-look='paper'] .composer { border-radius: var(--radius); background: var(--room-2); backdrop-filter: none; box-shadow: none; }
+:root[data-look='paper'] .composer:focus-within { border-color: var(--ink-soft); box-shadow: none; }
+:root[data-look='paper'] :is(.send, .caret) { box-shadow: none; }
+/* Corners: cut, not rounded. */
+:root[data-look='paper'] :is(.button, .starter, .follow-up, .brain-chip, .segmented, .segmented span, .send, .icon-button, .language, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .room-card, .service, .sheet, .history-list li, .projects li, .prose pre, .prose .table, .status, input, select, textarea) { border-radius: var(--radius); }

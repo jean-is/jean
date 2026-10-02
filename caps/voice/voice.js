@@ -16,6 +16,10 @@ const SILERO = 'onnx-community/silero-vad'
 const OFFER = 'voice.download'
 const Recognition = /** @type {any} */ (globalThis).SpeechRecognition ?? /** @type {any} */ (globalThis).webkitSpeechRecognition
 
+/** How long the browser gets to install its on-device recognition, and to end once stopped. */
+const INSTALL_MS = 15_000
+const STOP_MS = 2_000
+
 /** @type {{ stop: () => void } | null} */
 let session = null
 // Set when the browser's own recognition failed or heard nothing: use Whisper from then on.
@@ -48,10 +52,16 @@ async function onDevice(lang) {
   const options = { langs: [lang], processLocally: true }
   const status = await Recognition.available(options).catch(() => 'unavailable')
   if (status === 'available') return true
-  if (status !== 'downloadable' && status !== 'downloading') return false
+  // Whisper already on this device beats a second download.
+  if ((status !== 'downloadable' && status !== 'downloading') || effective.value.settings.offers[OFFER]) return false
   dictation.value = { state: 'preparing' }
-  const installed = Boolean(await Recognition.install(options).catch(() => false))
+  // Some Chromium browsers (Arc) offer the download, then never finish it.
+  const installed = Boolean(await Promise.race([
+    Recognition.install(options).catch(() => false),
+    new Promise((resolve) => setTimeout(resolve, INSTALL_MS, false)),
+  ]))
   dictation.value = { state: 'idle' }
+  if (!installed) onDeviceFailed = true
   return installed
 }
 
@@ -101,7 +111,10 @@ function listen(lang) {
     console.warn('Dictation', event.error)
     error = event.error
   }
-  recognition.onend = () => {
+  let ended = false
+  const end = () => {
+    if (ended) return
+    ended = true
     session = null
     dictation.value = { state: 'idle' }
     if (error === 'not-allowed' || error === 'service-not-allowed') return notify(t('dictation.denied'))
@@ -111,7 +124,17 @@ function listen(lang) {
     onDeviceFailed = true
     notify(t(error === 'no-speech' ? 'dictation.nothing' : 'dictation.retry'))
   }
-  session = { stop: () => recognition.stop() }
+  recognition.onend = end
+  // Nor do they always end when asked: the button never stays stuck on "listening".
+  const stop = () => {
+    recognition.stop()
+    setTimeout(() => {
+      if (ended) return
+      recognition.abort()
+      end()
+    }, STOP_MS)
+  }
+  session = { stop }
   dictation.value = { state: 'listening' }
   recognition.start()
 }

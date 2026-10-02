@@ -97,7 +97,7 @@ export async function listModels({ brain, apiKey, signal, fetch = globalThis.fet
   if (!Array.isArray(json?.data)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
   return json.data.map((/** @type {any} */ m) => (anthropic
     ? { id: m.id, name: m.display_name, contextLength: m.max_input_tokens }
-    : { id: m.id, name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined, output: m.architecture?.output_modalities }))
+    : { id: m.id, name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined, input: m.architecture?.input_modalities, output: m.architecture?.output_modalities }))
 }
 
 /**
@@ -155,8 +155,10 @@ export function openaiMessages(system, messages, { systemNotes, argsAsObject = f
       if (systemNotes) out.push({ role: 'system', content: m.content })
       else notes.push(m.content)
     } else if (m.role === 'user') {
-      const parts = [...notes.map(noteBlock), ...(m.documents ?? []).map(documentBlock), m.content].filter(Boolean)
-      out.push({ role: 'user', content: parts.join('\n\n') })
+      const parts = [...notes.map(noteBlock), ...(m.documents ?? []).flatMap((doc) => (doc.image ? [documentBlock(doc), doc.image] : [documentBlock(doc)])), m.content].filter((part) => part !== '')
+      // A picture makes the content a list of parts; text alone stays one string, as every server takes.
+      out.push({ role: 'user', content: parts.every((part) => typeof part === 'string') ? parts.join('\n\n')
+        : parts.map((part) => (typeof part === 'string' ? { type: 'text', text: part } : { type: 'image_url', image_url: { url: `data:${part.mimeType};base64,${part.data}` } })) })
       notes = []
     } else if (m.role === 'tool') {
       const content = m.isError ? `Error: ${m.content}` : m.content

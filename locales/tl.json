@@ -100,8 +100,6 @@
   "settings.language": "Wika",
   "settings.languagesYours": "Ang mga wika mo",
   "settings.languagesOther": "Iba pang wika",
-  "theme.light": "Lumipat sa light mode",
-  "theme.dark": "Lumipat sa dark mode",
   "settings.rules": "Ang kailangan ng pahintulot mo",
   "settings.rulesText": "Piliin kung ano ang puwedeng gawin ng {name} nang kusa, ano ang dapat munang itanong sa iyo, at ano ang hindi kailanman dapat gawin.",
   "settings.voice": "Boses sa pagbasa",
@@ -134,6 +132,7 @@
     "one": "{count} pahina",
     "other": "{count} pahina"
   },
+  "files.picture": "Larawan",
   "files.remove": "Alisin ang {name}",
   "files.open": "Buksan ang file",
   "files.stillReading": "Binabasa pa ang mga file mo…",
@@ -143,6 +142,9 @@
   "files.unreadable": "Hindi mabasa ang file na ito",
   "files.failed": "Hindi mabasa ang {name}",
   "files.missing": "Wala na sa device na ito ang {name}",
+  "capture.start": "Kunan ng larawan ang screen mo",
+  "capture.name": "Screenshot {time}",
+  "capture.failed": "Hindi makunan ng larawan ang screen",
   "read.title": {
     "one": "Binasa para sa sagot na ito: {count} file",
     "other": "Binasa para sa sagot na ito: {count} file"
@@ -154,7 +156,6 @@
   "made.csvTitle": "I-download bilang spreadsheet (CSV)",
   "made.csvNumbered": "I-download ang talahanayan {count} bilang spreadsheet (CSV)",
   "made.tableFile": "Talahanayan {count}",
-  "made.print": "I-print o i-save bilang PDF",
   "dictation.start": "Magdikta",
   "dictation.stop": "Itigil ang pagdidikta",
   "dictation.listening": "Nakikinig…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "Hinanap ang tamang kasangkapan",
   "tool.decide": "Tinimbang ang isang desisyon",
   "cap.files.name": "Mga file",
-  "cap.files.offer": "Puwede kang maghulog ng mga file sa akin: PDF, Word, Excel, PowerPoint, CSV o teksto.",
+  "cap.files.offer": "Puwede kang maghulog ng mga file sa akin: PDF, Word, Excel, PowerPoint, CSV, teksto o larawan. Puwede mo ring kunan ng larawan ang screen mo.",
   "cap.files.yes": "Mabuting malaman",
   "cap.made.name": "Kopya, spreadsheet, pag-print",
   "cap.compute.name": "Pagkuwenta",

@@ -100,8 +100,6 @@
   "settings.language": "மொழி",
   "settings.languagesYours": "உங்கள் மொழிகள்",
   "settings.languagesOther": "பிற மொழிகள்",
-  "theme.light": "ஒளி பயன்முறைக்கு மாறு",
-  "theme.dark": "இருண்ட பயன்முறைக்கு மாறு",
   "settings.rules": "உங்கள் ஒப்புதல் தேவைப்படுபவை",
   "settings.rulesText": "எவை தானாக நடக்கலாம், எவற்றுக்கு முதலில் உங்களைக் கேட்க வேண்டும், எவை ஒருபோதும் நடக்கக்கூடாது என்பதைத் தேர்ந்தெடுங்கள்.",
   "settings.voice": "படிக்கும் குரல்",
@@ -134,6 +132,7 @@
     "one": "{count} பக்கம்",
     "other": "{count} பக்கங்கள்"
   },
+  "files.picture": "படம்",
   "files.remove": "{name} அகற்று",
   "files.open": "கோப்பைத் திற",
   "files.stillReading": "உங்கள் கோப்புகள் இன்னும் படிக்கப்படுகின்றன…",
@@ -143,6 +142,9 @@
   "files.unreadable": "இந்தக் கோப்பைப் படிக்க முடியவில்லை",
   "files.failed": "{name} படிக்க முடியவில்லை",
   "files.missing": "{name} இனி இந்தச் சாதனத்தில் இல்லை",
+  "capture.start": "திரையைப் படம் எடு",
+  "capture.name": "திரைப் படம் {time}",
+  "capture.failed": "திரையைப் படம் எடுக்க முடியவில்லை",
   "read.title": {
     "one": "இந்தப் பதிலுக்காகப் படித்தது: {count} கோப்பு",
     "other": "இந்தப் பதிலுக்காகப் படித்தவை: {count} கோப்புகள்"
@@ -154,7 +156,6 @@
   "made.csvTitle": "விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.csvNumbered": "அட்டவணை {count} ஐ விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.tableFile": "அட்டவணை {count}",
-  "made.print": "அச்சிடு அல்லது PDF ஆகச் சேமி",
   "dictation.start": "பேசி எழுது",
   "dictation.stop": "பேசி எழுதுவதை நிறுத்து",
   "dictation.listening": "கேட்கப்படுகிறது…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "சரியான கருவி தேடப்பட்டது",
   "tool.decide": "ஒரு முடிவு எடைபோடப்பட்டது",
   "cap.files.name": "கோப்புகள்",
-  "cap.files.offer": "நீங்கள் இங்கே கோப்புகளை விடலாம்: PDF, Word, Excel, PowerPoint, CSV அல்லது உரை.",
+  "cap.files.offer": "நீங்கள் இங்கே கோப்புகளை விடலாம்: PDF, Word, Excel, PowerPoint, CSV, உரை அல்லது படங்கள். உங்கள் திரையையும் படம் எடுக்கலாம்.",
   "cap.files.yes": "தெரிந்துகொண்டேன்",
   "cap.made.name": "நகல், விரிதாள், அச்சு",
   "cap.compute.name": "கணக்கீடுகள்",

@@ -39,7 +39,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
   if (!ephemeral) {
     await other.waitForEvent('load')
-    await other.locator('.bar-actions button[aria-label="Conversations"]').click()
+    await other.locator('.bar button[aria-label="Conversations"]').click()
     await other.locator('app-history .history-item').first().click()
     await expect(other.locator('.msg-user').first()).toContainText('Explain photosynthesis')
   }

@@ -100,8 +100,6 @@
   "settings.language": "Dil",
   "settings.languagesYours": "Dillerin",
   "settings.languagesOther": "Diğer diller",
-  "theme.light": "Açık moda geç",
-  "theme.dark": "Koyu moda geç",
   "settings.rules": "Onayını gerektirenler",
   "settings.rulesText": "{name} için neyin kendiliğinden yapılabileceğini, neyin önce sorulacağını ve neyin asla yapılmayacağını seç.",
   "settings.voice": "Okuma sesi",
@@ -134,6 +132,7 @@
     "one": "{count} sayfa",
     "other": "{count} sayfa"
   },
+  "files.picture": "Resim",
   "files.remove": "Kaldır: {name}",
   "files.open": "Dosyayı aç",
   "files.stillReading": "Dosyaların hâlâ okunuyor…",
@@ -143,6 +142,9 @@
   "files.unreadable": "Bu dosya okunamadı",
   "files.failed": "Okunamadı: {name}",
   "files.missing": "Artık bu cihazda yok: {name}",
+  "capture.start": "Ekran görüntüsü al",
+  "capture.name": "Ekran görüntüsü {time}",
+  "capture.failed": "Ekran görüntüsü alınamadı",
   "read.title": {
     "one": "Bu yanıt için okunan: {count} dosya",
     "other": "Bu yanıt için okunan: {count} dosya"
@@ -154,7 +156,6 @@
   "made.csvTitle": "Tablo olarak indir (CSV)",
   "made.csvNumbered": "{count}. tabloyu indir (CSV)",
   "made.tableFile": "Tablo {count}",
-  "made.print": "Yazdır ya da PDF olarak kaydet",
   "dictation.start": "Dikte et",
   "dictation.stop": "Dikteyi durdur",
   "dictation.listening": "Dinliyor…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "Doğru araç arandı",
   "tool.decide": "Bir karar tartıldı",
   "cap.files.name": "Dosyalar",
-  "cap.files.offer": "Bana dosya bırakabilirsin: PDF, Word, Excel, PowerPoint, CSV ya da metin.",
+  "cap.files.offer": "Bana dosya bırakabilirsin: PDF, Word, Excel, PowerPoint, CSV, metin ya da resim. Ekran görüntüsü de alabilirsin.",
   "cap.files.yes": "Bilmek güzel",
   "cap.made.name": "Kopyalama, tablolar, yazdırma",
   "cap.compute.name": "Hesaplamalar",

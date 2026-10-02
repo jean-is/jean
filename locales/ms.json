@@ -100,8 +100,6 @@
   "settings.language": "Bahasa",
   "settings.languagesYours": "Bahasa anda",
   "settings.languagesOther": "Bahasa lain",
-  "theme.light": "Tukar ke mod cerah",
-  "theme.dark": "Tukar ke mod gelap",
   "settings.rules": "Perkara yang memerlukan kelulusan anda",
   "settings.rulesText": "Pilih apa yang boleh dilakukan {name} sendiri, apa yang perlu ditanya dahulu, dan apa yang tidak boleh dilakukan langsung.",
   "settings.voice": "Suara bacaan",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "{count} halaman"
   },
+  "files.picture": "Gambar",
   "files.remove": "Buang {name}",
   "files.open": "Buka fail",
   "files.stillReading": "Masih membaca fail anda…",
@@ -142,6 +141,9 @@
   "files.unreadable": "Fail ini tidak dapat dibaca",
   "files.failed": "Tidak dapat membaca {name}",
   "files.missing": "{name} tiada lagi pada peranti ini",
+  "capture.start": "Tangkap skrin anda",
+  "capture.name": "Tangkapan skrin {time}",
+  "capture.failed": "Skrin tidak dapat ditangkap",
   "read.title": {
     "other": "Dibaca untuk jawapan ini: {count} fail"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "Muat turun sebagai hamparan (CSV)",
   "made.csvNumbered": "Muat turun jadual {count} sebagai hamparan (CSV)",
   "made.tableFile": "Jadual {count}",
-  "made.print": "Cetak atau simpan sebagai PDF",
   "dictation.start": "Imlak",
   "dictation.stop": "Berhenti mengimlak",
   "dictation.listening": "Mendengar…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "Mencari alat yang sesuai",
   "tool.decide": "Menimbang keputusan",
   "cap.files.name": "Fail",
-  "cap.files.offer": "Anda boleh melepaskan fail kepada saya: PDF, Word, Excel, PowerPoint, CSV atau teks.",
+  "cap.files.offer": "Anda boleh melepaskan fail kepada saya: PDF, Word, Excel, PowerPoint, CSV, teks atau gambar. Anda juga boleh menangkap skrin.",
   "cap.files.yes": "Baik",
   "cap.made.name": "Salin, hamparan, cetak",
   "cap.compute.name": "Pengiraan",

@@ -5,8 +5,8 @@
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 /** @typedef {'only' | 'private' | 'personal' | 'demand' | 'unhappy' | 'default'} Reason */
 /**
- * What the reflexes made of a message, when they're on (ui/discovery.js).
- * @typedef {{ demand?: number, personal?: boolean, unhappy?: boolean }} Signals  demand: 0 (chat) to 3 (expert)
+ * What the reflexes made of a message, when they're on (ui/discovery.js), and whether it shares a picture.
+ * @typedef {{ demand?: number, personal?: boolean, unhappy?: boolean, pictures?: boolean }} Signals  demand: 0 (chat) to 3 (expert)
  */
 
 /**
@@ -27,15 +27,18 @@ export const tierFor = (demand) => [0, 1, 1, 2][Math.min(3, Math.max(0, Math.rou
 
 /**
  * @param {{ brains: BrainConfig[], preferred?: string | null, cloud?: boolean, signals?: Signals,
- *   floor?: number, has?: (brain: BrainConfig, model: string) => boolean, tiers?: Record<string, string[]> }} input
- *   floor: the level already used in this conversation; cloud false: "never send to the cloud"
+ *   floor?: number, has?: (brain: BrainConfig, model: string) => boolean, sees?: (brain: BrainConfig) => boolean,
+ *   tiers?: Record<string, string[]> }} input
+ *   floor: the level already used in this conversation; cloud false: "never send to the cloud";
+ *   sees: whether a brain is shown pictures
  * @returns {{ brain: BrainConfig, level: number, reason: Reason } | null}
  */
-export function chooseBrain({ brains, preferred, cloud = true, signals = {}, floor = 0, has = () => true, tiers = TIERS }) {
-  const local = brains.find((brain) => brain.api === 'device') ?? brains.find(isLocal)
+export function chooseBrain({ brains, preferred, cloud = true, signals = {}, floor = 0, has = () => true, sees = () => true, tiers = TIERS }) {
+  // The device's brain first, unless a picture needs a private brain that can see it.
+  const local = (signals.pictures && brains.find((brain) => isLocal(brain) && sees(brain))) || brains.find((brain) => brain.api === 'device') || brains.find(isLocal)
   const remote = cloud ? [brains.find((brain) => brain.id === preferred), ...brains].find((brain) => brain && !isLocal(brain)) : undefined
   if (!remote) return local ? { brain: local, level: floor, reason: cloud ? 'only' : 'private' } : null
-  if (local && signals.personal) return { brain: local, level: floor, reason: 'personal' }
+  if (local && signals.personal && (!signals.pictures || sees(local))) return { brain: local, level: floor, reason: 'personal' }
   const level = Math.min(2, Math.max(floor, (signals.demand === undefined ? 1 : tierFor(signals.demand)) + (signals.unhappy ? 1 : 0)))
   const model = tiers[remote.provider]?.[level]
   const reason = signals.unhappy ? 'unhappy' : signals.demand !== undefined ? 'demand' : 'default'

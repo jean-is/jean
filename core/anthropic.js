@@ -141,7 +141,8 @@ function toAnthropic(messages, model) {
 /** @param {Exclude<ChatMessage, SystemNote>} m @param {string} model @returns {AnthropicMessage} */
 function toAnthropicMessage(m, model) {
   if (m.role === 'user') {
-    const documents = (m.documents ?? []).map((doc) => ({ type: 'text', text: documentBlock(doc) }))
+    const documents = (m.documents ?? []).flatMap((doc) => [{ type: 'text', text: documentBlock(doc) },
+      ...(doc.image ? [{ type: 'image', source: { type: 'base64', media_type: doc.image.mimeType, data: doc.image.data } }] : [])])
     return { role: 'user', content: m.content ? [...documents, { type: 'text', text: m.content }] : documents }
   }
   if (m.role === 'tool') {

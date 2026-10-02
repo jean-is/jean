@@ -15,6 +15,7 @@ import { mcpClient, MCPError } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor } from './directory.js'
 import { slug } from '../../core/settings.js'
+import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, locale } from '../../core/i18n.js'
@@ -66,8 +67,8 @@ const list = (connections = all()) => Promise.all(connections.map(async (connect
   status.value = { ...status.value, [connection.id]: now }
 }))
 
-/** The name the brain calls a tool by: `mail_search_emails`. @param {Connection} connection @param {string} name */
-const toolName = (connection, name) => `${slug(connection.name).replace(/-/g, '_').slice(0, 16) || 'service'}_${name}`.replace(/[^\w-]/g, '_').slice(0, 64)
+/** The name the brain calls a tool by, in a script too: `mail_search_emails`. @param {Connection} connection @param {string} name */
+const toolName = (connection, name) => identifier(`${slug(connection.name).slice(0, 16) || 'service'}_${name}`).slice(0, 64)
 
 /** @param {Connection} connection @param {McpTool} tool @returns {import('../../core/loop.js').Tool} */
 function asTool(connection, tool) {

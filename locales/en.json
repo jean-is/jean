@@ -100,8 +100,6 @@
   "settings.language": "Language",
   "settings.languagesYours": "Your languages",
   "settings.languagesOther": "Other languages",
-  "theme.light": "Switch to light mode",
-  "theme.dark": "Switch to dark mode",
   "settings.rules": "What needs your approval",
   "settings.rulesText": "Choose what {name} can do on its own, what it should ask you about first, and what it must never do.",
   "settings.voice": "Reading voice",
@@ -134,6 +132,7 @@
     "one": "{count} page",
     "other": "{count} pages"
   },
+  "files.picture": "Picture",
   "files.remove": "Remove {name}",
   "files.open": "Open the file",
   "files.stillReading": "Still reading your files…",
@@ -143,6 +142,9 @@
   "files.unreadable": "Couldn’t read this file",
   "files.failed": "Couldn’t read {name}",
   "files.missing": "{name} is no longer on this device",
+  "capture.start": "Capture your screen",
+  "capture.name": "Screen capture {time}",
+  "capture.failed": "Couldn’t capture the screen",
   "read.title": {
     "one": "Read for this answer: {count} file",
     "other": "Read for this answer: {count} files"
@@ -154,7 +156,6 @@
   "made.csvTitle": "Download as a spreadsheet (CSV)",
   "made.csvNumbered": "Download table {count} as a spreadsheet (CSV)",
   "made.tableFile": "Table {count}",
-  "made.print": "Print or save as PDF",
   "dictation.start": "Dictate",
   "dictation.stop": "Stop dictating",
   "dictation.listening": "Listening…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "Looked for the right tool",
   "tool.decide": "Weighed a decision",
   "cap.files.name": "Files",
-  "cap.files.offer": "You can drop files on me: PDFs, Word, Excel, PowerPoint, CSV or text.",
+  "cap.files.offer": "You can drop files on me: PDFs, Word, Excel, PowerPoint, CSV, text or pictures. You can also capture your screen.",
   "cap.files.yes": "Good to know",
   "cap.made.name": "Copy, spreadsheets, print",
   "cap.compute.name": "Calculations",

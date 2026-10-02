@@ -75,7 +75,7 @@ body {
 :lang(ar) body { font-size: 1.06rem; }
 /* dir="auto" boxes take their direction from what is typed; empty, the placeholder follows the page. */
 :root[dir='rtl'] textarea:placeholder-shown { direction: rtl; }
-::selection { background: oklch(0.8 0.15 68 / 0.35); }
+::selection { background: oklch(from var(--flame) l c h / 0.35); }
 :focus-visible { outline: 2px solid var(--flame); outline-offset: 3px; border-radius: 0.5rem; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -201,7 +201,7 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
   z-index: 3;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.25rem;
   padding: 0.9rem clamp(1rem, 3vw, 1.75rem);
   background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0));
 }
@@ -220,7 +220,8 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
 }
 .wordmark:hover { text-shadow: 0 0 2rem oklch(from var(--glow) l c h / 0.8); }
 .wordmark-project { max-inline-size: 10rem; overflow: hidden; padding-inline-start: 0.5rem; border-inline-start: 1px solid var(--line-strong); font: 400 0.95rem/1.3 var(--sans); text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); text-shadow: none; }
-.bar-actions { display: flex; align-items: center; gap: 0.25rem; }
+/* The conversations button leads, on the side its drawer opens from; the rest sit at the end. */
+.bar-actions { display: flex; align-items: center; gap: 0.25rem; margin-inline-start: auto; }
 
 .icon-button {
   display: inline-grid;
@@ -366,6 +367,10 @@ app-made:not(:defined) { display: none; }
 .attachment[data-status='failed'] { border-color: oklch(from var(--danger) l c h / 0.6); }
 .attachment[data-status='failed'] > .icon, .attachment[data-status='failed'] .attachment-note { color: var(--danger); }
 .attachment .icon-button.subtle { inline-size: 1.8rem; block-size: 1.8rem; }
+/* A picture waiting to be sent shows what it is, and opens whole. */
+.attachment:has(.attachment-preview) { padding-block: 0.25rem; padding-inline-start: 0.25rem; }
+.attachment-preview { flex: none; padding: 0; border: 0; border-radius: 0.45rem; background: none; }
+.attachment-preview img { display: block; block-size: 2.4rem; inline-size: auto; max-inline-size: 4rem; border: 1px solid var(--line); border-radius: 0.45rem; object-fit: cover; }
 .read-list { font-size: 0.86rem; color: var(--ink-soft); }
 .read-list summary { display: inline-flex; align-items: center; gap: 0.45rem; list-style: none; cursor: pointer; border-radius: 0.5rem; }
 .read-list summary::-webkit-details-marker { display: none; }
@@ -717,7 +722,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 .project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .project app-persona { --persona-size: 1.6rem; }
 .swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
-.swatches legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
+.swatches legend, .looks legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
 .swatch { position: relative; display: grid; place-items: center; inline-size: 2.9rem; block-size: 2.9rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
 .swatch input { position: absolute; opacity: 0; }
 .swatch app-persona { --persona-size: 2rem; }
@@ -735,6 +740,23 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 .routines summary { display: grid; cursor: pointer; }
 .routines summary small { color: var(--ink-soft); font-size: 0.82rem; }
 .routines textarea { margin-block: 0.6rem 0.3rem; font: 0.86rem/1.5 var(--mono); }
+
+/* Looks (D111): each with a thumbnail of itself, then the user's touches. */
+.looks { display: grid; gap: 0.45rem; margin: 1rem 0 0.75rem; padding: 0; border: 0; }
+.look { position: relative; cursor: pointer; }
+.look input { position: absolute; opacity: 0; }
+.look:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }
+.look:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
+.look .look-preview { flex: none; display: block; inline-size: 3.4rem; block-size: 2.4rem; border: 1px solid var(--line-strong); border-radius: 0.55rem; }
+:dir(rtl) .look-preview { scale: -1 1; }
+[data-look-preview='room'] { background: radial-gradient(70% 90% at 50% 25%, oklch(0.74 0.17 54 / 0.8), transparent 70%) oklch(0.17 0.02 52); }
+[data-look-preview='mail'] { background: linear-gradient(oklch(0.62 0.19 256) 0 0) 42% 26% / 14% 14% no-repeat, linear-gradient(90deg, oklch(0.24 0 0) 0 24%, oklch(0.17 0 0) 24% 58%, oklch(0.12 0 0) 58%); }
+[data-look-preview='paper'] { background: linear-gradient(oklch(0.5 0.17 30) 0 0) 26% 50% / 2px 56% no-repeat, linear-gradient(90deg, transparent 32%, oklch(0.22 0.01 60 / 0.25) 32% 74%, transparent 74%) 0 38% / 100% 2px no-repeat, oklch(0.975 0.008 85); }
+.look-colours { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.look-size { display: flex; justify-content: space-between; gap: 1rem; }
+input[type='color'] { block-size: 2.6rem; padding: 0.2rem; cursor: pointer; }
+input[type='range'] { padding: 0; border: 0; background: none; accent-color: var(--flame); }
+.sheet .look-css { font: 0.82rem/1.5 var(--mono); }
 
 /* ─── Toasts ────────────────────────────────────────────────────────────── */
 
@@ -760,7 +782,8 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 /* ─── Paper: print, or save as PDF ──────────────────────────────────────── */
 
 @media print {
-  :root { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: #8a4a12; }
+  /* Also over a look's colours (ui/looks/), which outrank :root alone. */
+  :root, :root[data-look][data-theme] { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: #8a4a12; }
   html, body { background: #fff; }
   .room, .bar, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups { display: none !important; }
   main { inline-size: auto; }
@@ -768,9 +791,6 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
   .msg-user { background: none; border: 1px solid var(--line); }
   .prose pre { background: none; }
   .read-list ul { display: grid; }
-  :root[data-printing] main * { visibility: hidden; }
-  :root[data-printing] .is-printing, :root[data-printing] .is-printing * { visibility: visible; }
-  :root[data-printing] .is-printing { position: absolute; inset-block-start: 0; inset-inline: 0; }
 }
 
 /* ─── Preferences ───────────────────────────────────────────────────────── */
@@ -781,7 +801,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
   :view-transition-group(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {
-  :root { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
+  :root, :root[data-look][data-theme] { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
   app-persona { --persona-rim: var(--ink); }
 }
 @media (forced-colors: active) {
@@ -790,7 +810,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
   .persona-body { fill: Canvas; stroke: CanvasText; }
   .persona-sparks { fill: CanvasText; }
   .send, .button.primary, .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
-  .choice-option.is-selected, .room-card.is-lit, .swatch:has(input:checked) { border: 2px solid Highlight; }
+  .choice-option.is-selected, .look:has(input:checked), .room-card.is-lit, .swatch:has(input:checked) { border: 2px solid Highlight; }
   .hero-question { color: CanvasText; background: none; }
 }
 @media (max-width: 40rem) {

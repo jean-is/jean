@@ -100,8 +100,6 @@
   "settings.language": "ቋንቋ",
   "settings.languagesYours": "ቋንቋዎችዎ",
   "settings.languagesOther": "ሌሎች ቋንቋዎች",
-  "theme.light": "ወደ ብሩህ ገጽታ ይቀይሩ",
-  "theme.dark": "ወደ ጨለማ ገጽታ ይቀይሩ",
   "settings.rules": "የእርስዎን ፈቃድ የሚሹ ነገሮች",
   "settings.rulesText": "ያለ ፈቃድዎ ምን ሊደረግ እንደሚችል፣ መጀመሪያ ስለ ምን እንደሚጠየቁ፣ እና ምን በፍጹም መደረግ እንደሌለበት ይምረጡ።",
   "settings.voice": "የንባብ ድምፅ",
@@ -134,6 +132,7 @@
     "one": "{count} ገጽ",
     "other": "{count} ገጾች"
   },
+  "files.picture": "ምስል",
   "files.remove": "ያስወግዱ፦ {name}",
   "files.open": "ፋይሉን ይክፈቱ",
   "files.stillReading": "ፋይሎችዎ አሁንም በመነበብ ላይ ናቸው…",
@@ -143,6 +142,9 @@
   "files.unreadable": "ይህን ፋይል ማንበብ አልተቻለም",
   "files.failed": "ማንበብ አልተቻለም፦ {name}",
   "files.missing": "{name}፦ ከአሁን በኋላ በዚህ መሣሪያ ላይ የለም",
+  "capture.start": "ማያ ገጽዎን ያንሱ",
+  "capture.name": "የማያ ገጽ ምስል {time}",
+  "capture.failed": "ማያ ገጹን ማንሳት አልተቻለም",
   "read.title": {
     "one": "ለዚህ መልስ የተነበበ፦ {count} ፋይል",
     "other": "ለዚህ መልስ የተነበቡ፦ {count} ፋይሎች"
@@ -154,7 +156,6 @@
   "made.csvTitle": "በተመን ሉህ መልክ ያውርዱ (CSV)",
   "made.csvNumbered": "ሰንጠረዥ {count} በተመን ሉህ መልክ ያውርዱ (CSV)",
   "made.tableFile": "ሰንጠረዥ {count}",
-  "made.print": "ያትሙ ወይም እንደ PDF ያስቀምጡ",
   "dictation.start": "በድምፅ ይጻፉ",
   "dictation.stop": "በድምፅ መጻፍን ያቁሙ",
   "dictation.listening": "በማዳመጥ ላይ…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "ተገቢው መገልገያ ተፈልጓል",
   "tool.decide": "ውሳኔ ተመዝኗል",
   "cap.files.name": "ፋይሎች",
-  "cap.files.offer": "ፋይሎችን እዚህ ሊጥሉልኝ ይችላሉ፦ PDF፣ Word፣ Excel፣ PowerPoint፣ CSV ወይም ጽሑፍ።",
+  "cap.files.offer": "ፋይሎችን እዚህ ሊጥሉልኝ ይችላሉ፦ PDF፣ Word፣ Excel፣ PowerPoint፣ CSV፣ ጽሑፍ ወይም ምስሎች። ማያ ገጽዎንም ማንሳት ይችላሉ።",
   "cap.files.yes": "ጥሩ፣ ገባኝ",
   "cap.made.name": "መቅዳት፣ የተመን ሉሆች፣ ማተም",
   "cap.compute.name": "ስሌቶች",

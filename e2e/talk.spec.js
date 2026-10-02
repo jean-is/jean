@@ -31,7 +31,7 @@ test('light or dark: the device’s, until the user picks the other', async ({ p
   await start(page)
   const root = page.locator('html')
   await expect(root).toHaveAttribute('data-theme', 'dark')
-  await page.locator('.bar .theme').click()
+  await pickTheme(page, 'Light')
   await expect(root).toHaveAttribute('data-theme', 'light')
   // Remembered on this device, and applied before any module runs: no flash of the night.
   await page.route('**/ui/app.js', (route) => route.abort())
@@ -40,8 +40,15 @@ test('light or dark: the device’s, until the user picks the other', async ({ p
   await page.unroute('**/ui/app.js')
   await page.reload()
   // Picking what the device shows follows the device again.
-  await page.locator('.bar .theme').click()
+  await pickTheme(page, 'Dark')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(root).toHaveAttribute('data-theme', 'light')
 })
+
+/** Light or dark is picked in Settings. @param {import('@playwright/test').Page} page @param {string} name */
+async function pickTheme(page, name) {
+  await page.locator('.bar-actions button[aria-label="Settings"]').click()
+  await page.locator('app-settings dialog[open]').getByRole('radio', { name, exact: true }).check()
+  await page.keyboard.press('Escape')
+}

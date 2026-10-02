@@ -1,6 +1,6 @@
 // Things Jean made: an answer copied as rich text (pastes formatted into Word, Outlook
-// and Google Docs), its tables as CSV (opens in Excel), or the answer printed or saved
-// as PDF. Browser features only; no file-format library.
+// and Google Docs), or its tables as CSV (opens in Excel). Browser features only; no
+// file-format library.
 import { html, nothing, render } from 'lit-html'
 import { lexer } from 'marked'
 import { Element, define } from '../../ui/base.js'
@@ -22,8 +22,7 @@ class Made extends Element {
       <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('made.copyTitle')} @click=${() => copyRich(source)}>${icons.copy}</button>
       ${tables.map((table, i) => html`<button class="icon-button subtle" title=${t('made.csvTitle')}
         aria-label=${tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle')}
-        @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}
-      <button class="icon-button subtle" aria-label=${t('made.print')} title=${t('made.print')} @click=${() => printAnswer(this)}>${icons.print}</button>`
+        @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}`
   }
 }
 
@@ -105,23 +104,6 @@ export function toCSV(table, lang) {
 /** @param {Table} table @param {number} index */
 function downloadCSV(table, index) {
   save(new Blob([toCSV(table, locale.value)], { type: 'text/csv;charset=utf-8' }), `${t('made.tableFile', { count: index })}.csv`)
-}
-
-// ─── Print ───────────────────────────────────────────────────────────────────
-
-/** Prints only this answer; the print styles show it on paper colours. @param {HTMLElement} from */
-function printAnswer(from) {
-  const answer = from.closest('.msg-jean')
-  if (!answer) return
-  const root = document.documentElement
-  answer.classList.add('is-printing')
-  root.dataset.printing = 'one'
-  const done = () => {
-    answer.classList.remove('is-printing')
-    delete root.dataset.printing
-  }
-  addEventListener('afterprint', done, { once: true })
-  print()
 }
 
 define('app-made', Made)

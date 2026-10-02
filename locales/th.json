@@ -100,8 +100,6 @@
   "settings.language": "ภาษา",
   "settings.languagesYours": "ภาษาของคุณ",
   "settings.languagesOther": "ภาษาอื่นๆ",
-  "theme.light": "สลับเป็นโหมดสว่าง",
-  "theme.dark": "สลับเป็นโหมดมืด",
   "settings.rules": "สิ่งที่ต้องได้รับการอนุมัติ",
   "settings.rulesText": "เลือกว่า {name} ทำอะไรได้เอง อะไรต้องถามคุณก่อน และอะไรห้ามทำเด็ดขาด",
   "settings.voice": "เสียงอ่าน",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "{count} หน้า"
   },
+  "files.picture": "รูปภาพ",
   "files.remove": "นำ {name} ออก",
   "files.open": "เปิดไฟล์",
   "files.stillReading": "ยังอ่านไฟล์ของคุณอยู่…",
@@ -142,6 +141,9 @@
   "files.unreadable": "อ่านไฟล์นี้ไม่ได้",
   "files.failed": "อ่าน {name} ไม่ได้",
   "files.missing": "{name} ไม่อยู่บนอุปกรณ์นี้แล้ว",
+  "capture.start": "จับภาพหน้าจอ",
+  "capture.name": "ภาพหน้าจอ {time}",
+  "capture.failed": "จับภาพหน้าจอไม่ได้",
   "read.title": {
     "other": "อ่านเพื่อคำตอบนี้: {count} ไฟล์"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "ดาวน์โหลดเป็นสเปรดชีต (CSV)",
   "made.csvNumbered": "ดาวน์โหลดตาราง {count} เป็นสเปรดชีต (CSV)",
   "made.tableFile": "ตาราง {count}",
-  "made.print": "พิมพ์หรือบันทึกเป็น PDF",
   "dictation.start": "พูดเพื่อพิมพ์",
   "dictation.stop": "หยุดพูดเพื่อพิมพ์",
   "dictation.listening": "กำลังฟัง…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "หาเครื่องมือที่เหมาะสม",
   "tool.decide": "ชั่งน้ำหนักการตัดสินใจ",
   "cap.files.name": "ไฟล์",
-  "cap.files.offer": "คุณวางไฟล์ให้ฉันได้: PDF, Word, Excel, PowerPoint, CSV หรือข้อความ",
+  "cap.files.offer": "คุณวางไฟล์ให้ฉันได้: PDF, Word, Excel, PowerPoint, CSV, ข้อความ หรือรูปภาพ และยังจับภาพหน้าจอได้ด้วย",
   "cap.files.yes": "เข้าใจแล้ว",
   "cap.made.name": "คัดลอก สเปรดชีต พิมพ์",
   "cap.compute.name": "การคำนวณ",

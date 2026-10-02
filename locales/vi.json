@@ -100,8 +100,6 @@
   "settings.language": "Ngôn ngữ",
   "settings.languagesYours": "Ngôn ngữ của bạn",
   "settings.languagesOther": "Ngôn ngữ khác",
-  "theme.light": "Chuyển sang chế độ sáng",
-  "theme.dark": "Chuyển sang chế độ tối",
   "settings.rules": "Những gì cần bạn cho phép",
   "settings.rulesText": "Chọn những gì {name} được tự làm, những gì phải hỏi bạn trước, và những gì không bao giờ được làm.",
   "settings.voice": "Giọng đọc",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "{count} trang"
   },
+  "files.picture": "Hình ảnh",
   "files.remove": "Gỡ {name}",
   "files.open": "Mở tệp",
   "files.stillReading": "Vẫn đang đọc tệp của bạn…",
@@ -142,6 +141,9 @@
   "files.unreadable": "Không đọc được tệp này",
   "files.failed": "Không đọc được {name}",
   "files.missing": "{name} không còn trên thiết bị này",
+  "capture.start": "Chụp màn hình",
+  "capture.name": "Ảnh chụp màn hình {time}",
+  "capture.failed": "Không chụp được màn hình",
   "read.title": {
     "other": "Đã đọc cho câu trả lời này: {count} tệp"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "Tải xuống dạng bảng tính (CSV)",
   "made.csvNumbered": "Tải bảng {count} xuống dạng bảng tính (CSV)",
   "made.tableFile": "Bảng {count}",
-  "made.print": "In hoặc lưu thành PDF",
   "dictation.start": "Đọc chính tả",
   "dictation.stop": "Dừng đọc chính tả",
   "dictation.listening": "Đang nghe…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "Đã tìm công cụ phù hợp",
   "tool.decide": "Đã cân nhắc một quyết định",
   "cap.files.name": "Tệp",
-  "cap.files.offer": "Bạn có thể thả tệp cho tôi: PDF, Word, Excel, PowerPoint, CSV hoặc văn bản.",
+  "cap.files.offer": "Bạn có thể thả tệp cho tôi: PDF, Word, Excel, PowerPoint, CSV, văn bản hoặc hình ảnh. Bạn cũng có thể chụp màn hình.",
   "cap.files.yes": "Đã hiểu",
   "cap.made.name": "Sao chép, bảng tính, in",
   "cap.compute.name": "Tính toán",

@@ -5,6 +5,7 @@ import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions } from '../core/events.js'
+import { isPicture } from '../core/files.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
@@ -92,7 +93,7 @@ function turnView(turn, live, files, upTo, last, sources) {
     ${since?.kind === 'since' ? html`<p class="since">${icons.clock}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
-      <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>
+      <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${isPicture(link) ? icons.image : icons.file}<span dir="auto">${link.name}</span></button>
     </li>`)}</ul>` : nothing}
     ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${turn.user.text}</p>` : nothing}
     ${streaming || text || entries.length ? html`
@@ -373,7 +374,7 @@ function question({ question, from, resolve }) {
 /** @param {string} id @param {string} text */
 function actions(id, text) {
   const isSpeaking = speaking.value === id
-  // Copy, CSV and print belong to "Things Jean made", which loads with the first answer.
+  // Copy and CSV belong to "Things Jean made", which loads with the first answer.
   unlock('made')
   return html`<div class="msg-actions">
     <app-made .source=${text}></app-made>

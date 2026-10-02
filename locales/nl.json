@@ -100,8 +100,6 @@
   "settings.language": "Taal",
   "settings.languagesYours": "Je talen",
   "settings.languagesOther": "Andere talen",
-  "theme.light": "Overschakelen naar lichte modus",
-  "theme.dark": "Overschakelen naar donkere modus",
   "settings.rules": "Wat je toestemming nodig heeft",
   "settings.rulesText": "Kies wat {name} zelf mag doen, waarover eerst gevraagd moet worden en wat nooit mag.",
   "settings.voice": "Voorleesstem",
@@ -134,6 +132,7 @@
     "one": "{count} pagina",
     "other": "{count} pagina's"
   },
+  "files.picture": "Afbeelding",
   "files.remove": "{name} weghalen",
   "files.open": "Het bestand openen",
   "files.stillReading": "Je bestanden worden nog gelezen…",
@@ -143,6 +142,9 @@
   "files.unreadable": "Dit bestand kon niet gelezen worden",
   "files.failed": "{name} kon niet gelezen worden",
   "files.missing": "{name} staat niet meer op dit apparaat",
+  "capture.start": "Je scherm vastleggen",
+  "capture.name": "Schermafbeelding {time}",
+  "capture.failed": "Het scherm kon niet worden vastgelegd",
   "read.title": {
     "one": "Gelezen voor dit antwoord: {count} bestand",
     "other": "Gelezen voor dit antwoord: {count} bestanden"
@@ -154,7 +156,6 @@
   "made.csvTitle": "Downloaden als spreadsheet (CSV)",
   "made.csvNumbered": "Tabel {count} downloaden als spreadsheet (CSV)",
   "made.tableFile": "Tabel {count}",
-  "made.print": "Afdrukken of opslaan als pdf",
   "dictation.start": "Dicteren",
   "dictation.stop": "Stoppen met dicteren",
   "dictation.listening": "Luistert…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "Het juiste gereedschap gezocht",
   "tool.decide": "Een beslissing afgewogen",
   "cap.files.name": "Bestanden",
-  "cap.files.offer": "Je kunt bestanden bij me neerzetten: pdf, Word, Excel, PowerPoint, CSV of tekst.",
+  "cap.files.offer": "Je kunt bestanden bij me neerzetten: pdf, Word, Excel, PowerPoint, CSV, tekst of afbeeldingen. Je kunt ook je scherm vastleggen.",
   "cap.files.yes": "Goed om te weten",
   "cap.made.name": "Kopiëren, spreadsheets, afdrukken",
   "cap.compute.name": "Berekeningen",

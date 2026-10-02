@@ -100,8 +100,6 @@
   "settings.language": "Èdè",
   "settings.languagesYours": "Àwọn èdè yín",
   "settings.languagesOther": "Àwọn èdè mìíràn",
-  "theme.light": "Yí padà sí ipò ìmọ́lẹ̀",
-  "theme.dark": "Yí padà sí ipò òkùnkùn",
   "settings.rules": "Ohun tí ó nílò ìfọwọ́sí yín",
   "settings.rulesText": "Ẹ yan ohun tí {name} lè ṣe fúnra rẹ̀, ohun tí ó yẹ kí ó kọ́kọ́ bi yín nípa rẹ̀, àti ohun tí kò gbọdọ̀ ṣe láé.",
   "settings.voice": "Ohùn kíkà",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "ojú-ìwé {count}"
   },
+  "files.picture": "Àwòrán",
   "files.remove": "Yọ {name} kúrò",
   "files.open": "Ṣí fáìlì náà",
   "files.stillReading": "Ó ṣì ń ka àwọn fáìlì yín…",
@@ -142,6 +141,9 @@
   "files.unreadable": "A kò lè ka fáìlì yìí",
   "files.failed": "A kò lè ka {name}",
   "files.missing": "{name} kò sí lórí ẹ̀rọ yìí mọ́",
+  "capture.start": "Ya àwòrán ojú-ìbòjú yín",
+  "capture.name": "Àwòrán ojú-ìbòjú {time}",
+  "capture.failed": "A kò lè ya àwòrán ojú-ìbòjú",
   "read.title": {
     "other": "Ohun tí a kà fún ìdáhùn yìí: fáìlì {count}"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "Gbà á sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.csvNumbered": "Gba tábìlì {count} sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.tableFile": "Tábìlì {count}",
-  "made.print": "Tẹ̀ ẹ́ jáde tàbí fi pamọ́ bí PDF",
   "dictation.start": "Kọ pẹ̀lú ohùn",
   "dictation.stop": "Dá kíkọ pẹ̀lú ohùn dúró",
   "dictation.listening": "Ó ń tẹ́tí…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "Ó wá irinṣẹ́ tí ó yẹ",
   "tool.decide": "Ó wọn ìpinnu kan",
   "cap.files.name": "Àwọn fáìlì",
-  "cap.files.offer": "Ẹ lè ju fáìlì sí mi: PDF, Word, Excel, PowerPoint, CSV tàbí ọ̀rọ̀.",
+  "cap.files.offer": "Ẹ lè ju fáìlì sí mi: PDF, Word, Excel, PowerPoint, CSV, ọ̀rọ̀ tàbí àwòrán. Ẹ sì lè ya àwòrán ojú-ìbòjú yín.",
   "cap.files.yes": "Ó dáa láti mọ̀",
   "cap.made.name": "Ẹ̀dà, ìwé ìṣirò, títẹ̀ jáde",
   "cap.compute.name": "Ìṣirò",

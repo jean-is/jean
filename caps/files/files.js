@@ -1,10 +1,13 @@
-// Files: the user drops, pastes or picks files; Jean extracts their text, keeps the
-// original in the project's library, and the next message links to them. Adds the
-// `read` tool for pages that didn't fit in the message.
+// Files: the user drops, pastes or picks files, or captures their screen; Jean extracts their
+// text, keeps the original in the project's library, and the next message links to them.
+// Pictures have no text: brains that can see are shown them. Adds the `read` tool for pages
+// that didn't fit in the message.
+import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, currentFiles, rememberText, warm, notify } from '../../ui/state.js'
-import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
+import { addFile, readTool, fileText, splitPages, isPicture } from '../../core/files.js'
 import { extractPages } from './extract.js'
+import { fitPicture } from './pictures.js'
 import { t } from '../../core/i18n.js'
 
 const MAX_BYTES = 100 * 1024 * 1024
@@ -70,13 +73,10 @@ async function readOne(file) {
   app.attachments.value = [...app.attachments.value, { key, name: file.name, status: 'reading' }]
   try {
     if (file.size > MAX_BYTES) throw new Error(t('files.tooBig'))
-    const bytes = new Uint8Array(await file.arrayBuffer())
-    const pages = await pagesOf(file, bytes)
-    if (!pages) throw new Error(t('files.unsupported'))
-    if (!pages.some((page) => page.trim())) throw new Error(t('files.noText'))
-    const link = await addFile(app.fs, { projectDir: app.projectDir, name: file.name, mimeType: file.type, bytes, pages, by: app.deviceId })
+    const { name, mimeType, bytes, pages } = await contents(file)
+    const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType, bytes, pages, by: app.deviceId })
     rememberText(link, pages)
-    update({ status: 'ready', link, pages })
+    update({ status: 'ready', link, pages, ...(isPicture(link) && { preview: URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType })) }) })
   } catch (error) {
     console.warn(file.name, error)
     const message = error instanceof Error && error.message ? error.message : t('files.unreadable')
@@ -85,11 +85,25 @@ async function readOne(file) {
   }
 }
 
-/** @param {File} file @param {Uint8Array} bytes */
-async function pagesOf(file, bytes) {
-  if (/\.pdf$/i.test(file.name) || file.type === 'application/pdf') {
-    const { pdfPages } = await import('./pdf.js')
-    return pdfPages(bytes)
+/** What a file keeps: its bytes and its text's pages, or a picture as brains take it, with one empty page. @param {File} file */
+async function contents(file) {
+  if (file.type.startsWith('image/')) {
+    const picture = await fitPicture(file)
+    if (!picture) throw new Error(t('files.unsupported'))
+    return { ...picture, pages: [''] }
   }
-  return extractPages(file.name, bytes)
+  const bytes = new Uint8Array(await file.arrayBuffer())
+  const pdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf'
+  const pages = await (pdf ? import('./pdf.js').then((module) => module.pdfPages(bytes)) : extractPages(file.name, bytes))
+  if (!pages) throw new Error(t('files.unsupported'))
+  if (!pages.some((page) => page.trim())) throw new Error(t('files.noText'))
+  return { name: file.name, mimeType: file.type, bytes, pages }
 }
+
+// A picture's preview lives as long as its attachment: removed or sent, it is let go.
+let previews = new Set()
+effect(() => {
+  const shown = new Set(app.attachments.value.flatMap((item) => (item.preview ? [item.preview] : [])))
+  for (const url of previews) if (!shown.has(url)) URL.revokeObjectURL(url)
+  previews = shown
+})

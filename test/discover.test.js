@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { runTurn } from '../core/loop.js'
 import { toChatMessages, splitSuggestions, userRecords, noteRecord } from '../core/events.js'
 import { changeNotes, frozenPrompt, promptRecord } from '../core/prompt.js'
-import { findTools, signature } from '../core/deferred.js'
+import { findTools, signature, identifier } from '../core/deferred.js'
 import { bm25, words } from '../core/search.js'
 import { KEV, pack, answers, render } from '../core/decide.js'
 import { documentPart, sourceNumber } from '../core/files.js'
@@ -99,6 +99,37 @@ test('find_tools declares what it finds from the next request on, unless run can
   assert.equal(signature(tool('t')), 't({ x: number }): t things')
 })
 
+test('a deferred tool called by its name runs under the rules, or says how to call it; a hidden one stays unknown', async () => {
+  const notion = tool('notion_notion_search', { deferred: true })
+  const call = (/** @type {string} */ id, /** @type {string} */ name, /** @type {any} */ args) => [{ type: 'tool_call', call: { id, name, args } }, done('tool_use', { role: 'assistant', content: '', toolCalls: [{ id, name, args }] })]
+  const { stream, requests } = fakeStream([
+    call('a', 'notion_notion_search', { query: 'Income details' }),
+    call('b', 'notion_notion_search', { x: 3 }),
+    call('c', 'secret', { x: 1 }),
+    [done('end', { role: 'assistant', content: 'done' })],
+  ])
+  /** @type {any[]} */
+  const persisted = []
+  let asked = 0
+  await runTurn({
+    brain, system: 's', history: [{ role: 'user', content: 'q' }], stream, tools: [tool('find_tools'), notion, tool('secret', { hidden: true })], declared: ['find_tools'],
+    rule: () => 'ask', askPermission: async () => { asked++; return 'allow_once' }, persist: async (records) => { persisted.push(...records) },
+  })
+  const output = (/** @type {string} */ id) => persisted.find((record) => record.update?.toolCallId === id).update
+  assert.equal(output('a').rawOutput, 'It needs x. Call it like this:\nnotion_notion_search({ x: number }): notion_notion_search things')
+  assert.equal(output('b').rawOutput, 'notion_notion_search:3')
+  assert.equal(output('b').title, 'notion_notion_search')
+  assert.equal(output('c').rawOutput, 'There is no tool named "secret". Use find_tools to look for one.')
+  assert.equal(asked, 1, 'only the call that runs asks first')
+  assert.ok(requests.every((request) => request.tools.length === 1), 'nothing new is declared: the cache holds')
+})
+
+test('a tool name is one a script can write as tools.<name>', () => {
+  assert.equal(identifier('notion_notion-ai-search'), 'notion_notion_ai_search')
+  assert.equal(identifier('1password_get-item'), '_1password_get_item')
+  assert.equal(identifier('mail_search_emails'), 'mail_search_emails')
+})
+
 test('a capability that arrives mid-conversation is deferred, then declared by find_tools', () => {
   const start = { language: 'English', date: '2026-10-02', tools: ['find_tools', 'read'] }
   const records = [promptRecord('dev', 'sys', start)]
@@ -143,6 +174,14 @@ test('Auto: cheapest brain that can do it, private when personal, never steps do
   assert.equal(chooseBrain({ brains: [cloud], cloud: false }), null)
   assert.equal(chooseBrain({ brains: [cloud], signals: { demand: 0, unhappy: true } })?.level, 1)
   assert.equal(chooseBrain({ brains: [cloud], has: () => false })?.brain.model, 'claude-opus-5-5', 'unknown tier models fall back')
+  // A picture goes to a brain that can see it: a private one if there is one, never the cloud when told so.
+  const llava = { ...device, id: 'o', provider: /** @type {const} */ ('ollama'), api: /** @type {const} */ ('openai'), baseURL: 'http://localhost:11434/v1', model: 'llava' }
+  const sees = (/** @type {{ api: string }} */ candidate) => candidate.api !== 'device'
+  assert.equal(chooseBrain({ brains: [cloud, device], signals: { personal: true, pictures: true }, sees })?.brain.id, 'c')
+  assert.equal(chooseBrain({ brains: [cloud, device, llava], signals: { personal: true, pictures: true }, sees })?.brain.id, 'o')
+  assert.equal(chooseBrain({ brains: [device, llava], cloud: false, signals: { pictures: true }, sees })?.brain.id, 'o')
+  assert.equal(chooseBrain({ brains: [cloud, device], cloud: false, signals: { pictures: true }, sees })?.brain.id, 'd')
+  assert.equal(chooseBrain({ brains: [cloud, device, llava], signals: { personal: true } })?.brain.id, 'd', 'the device first, without pictures')
   assert.deepEqual([0, 1, 2, 3].map(tierFor), [0, 1, 1, 2])
   assert.ok(isLocal({ ...brain, baseURL: 'http://127.0.0.1:11434/v1' }))
   assert.ok(!isLocal(brain))

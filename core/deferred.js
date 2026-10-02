@@ -5,7 +5,10 @@ import { bm25 } from './search.js'
 
 /** @typedef {import('./loop.js').Tool} Tool */
 
-/** One line a brain can call from: `name({ file: string, pages?: string }): what it does`. @param {Tool} tool */
+/** A tool name a script can write as `tools.<name>`: `notion-search` would read as a subtraction (D106). @param {string} name */
+export const identifier = (name) => name.replace(/\W/g, '_').replace(/^\d/, '_$&')
+
+/** One line a brain can call from:`name({ file: string, pages?: string }): what it does`. @param {Tool} tool */
 export function signature({ spec }) {
   const { properties = {}, required = [] } = /** @type {any} */ (spec.parameters)
   const args = Object.entries(properties).map(([name, schema]) => `${name}${required.includes(name) ? '' : '?'}: ${/** @type {any} */ (schema).type ?? 'any'}`)

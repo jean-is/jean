@@ -1,6 +1,8 @@
 // Which modules use which strings: every quoted key, and every template that builds one
 // (`cap.${id}.name`). Used to check where each string lives (D97).
 import { readFile, readdir } from 'node:fs/promises'
+import { join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const ROOT = new URL('../../', import.meta.url)
 const DIRS = ['core', 'ui', 'caps']
@@ -12,7 +14,8 @@ export async function sources() {
   for (const dir of DIRS) {
     for (const entry of await readdir(new URL(`${dir}/`, ROOT), { recursive: true, withFileTypes: true })) {
       if (!entry.isFile() || !entry.name.endsWith('.js')) continue
-      const path = `${entry.parentPath.slice(new URL(ROOT).pathname.length)}/${entry.name}`.replace(/^\//, '')
+      // parentPath ends with a slash for a folder's own files in some Node versions.
+      const path = relative(fileURLToPath(ROOT), join(entry.parentPath, entry.name)).replaceAll('\\', '/')
       found[path] = await readFile(new URL(path, ROOT), 'utf8')
     }
   }

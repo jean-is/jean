@@ -100,8 +100,6 @@
   "settings.language": "语言",
   "settings.languagesYours": "你的语言",
   "settings.languagesOther": "其他语言",
-  "theme.light": "切换到浅色模式",
-  "theme.dark": "切换到深色模式",
   "settings.rules": "哪些事需要你同意",
   "settings.rulesText": "选择 {name} 可以自行去做的事、需要先问你的事，以及绝不能做的事。",
   "settings.voice": "朗读声音",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "{count} 页"
   },
+  "files.picture": "图片",
   "files.remove": "移除 {name}",
   "files.open": "打开文件",
   "files.stillReading": "仍在读取你的文件…",
@@ -142,6 +141,9 @@
   "files.unreadable": "无法读取此文件",
   "files.failed": "无法读取 {name}",
   "files.missing": "{name} 已不在这台设备上",
+  "capture.start": "截取屏幕",
+  "capture.name": "屏幕截图 {time}",
+  "capture.failed": "无法截取屏幕",
   "read.title": {
     "other": "为此回答读取了 {count} 个文件"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "下载为电子表格（CSV）",
   "made.csvNumbered": "将表格 {count} 下载为电子表格（CSV）",
   "made.tableFile": "表格 {count}",
-  "made.print": "打印或另存为 PDF",
   "dictation.start": "听写",
   "dictation.stop": "停止听写",
   "dictation.listening": "正在听…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "寻找了合适的工具",
   "tool.decide": "权衡了一个决定",
   "cap.files.name": "文件",
-  "cap.files.offer": "你可以把文件拖给我：PDF、Word、Excel、PowerPoint、CSV 或文本。",
+  "cap.files.offer": "你可以把文件拖给我：PDF、Word、Excel、PowerPoint、CSV、文本或图片。也可以截取屏幕。",
   "cap.files.yes": "知道了",
   "cap.made.name": "复制、表格、打印",
   "cap.compute.name": "计算",

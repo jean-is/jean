@@ -100,8 +100,6 @@
   "settings.language": "Bahasa",
   "settings.languagesYours": "Bahasa Anda",
   "settings.languagesOther": "Bahasa lainnya",
-  "theme.light": "Beralih ke mode terang",
-  "theme.dark": "Beralih ke mode gelap",
   "settings.rules": "Yang memerlukan persetujuan Anda",
   "settings.rulesText": "Pilih apa yang boleh dilakukan {name} sendiri, apa yang harus ditanyakan dulu, dan apa yang tidak boleh dilakukan.",
   "settings.voice": "Suara pembaca",
@@ -133,6 +131,7 @@
   "files.pages": {
     "other": "{count} halaman"
   },
+  "files.picture": "Gambar",
   "files.remove": "Buang {name}",
   "files.open": "Buka file",
   "files.stillReading": "Masih membaca file Anda…",
@@ -142,6 +141,9 @@
   "files.unreadable": "File ini tidak bisa dibaca",
   "files.failed": "Tidak bisa membaca {name}",
   "files.missing": "{name} sudah tidak ada di perangkat ini",
+  "capture.start": "Tangkap layar Anda",
+  "capture.name": "Tangkapan layar {time}",
+  "capture.failed": "Layar tidak bisa ditangkap",
   "read.title": {
     "other": "Dibaca untuk jawaban ini: {count} file"
   },
@@ -152,7 +154,6 @@
   "made.csvTitle": "Unduh sebagai spreadsheet (CSV)",
   "made.csvNumbered": "Unduh tabel {count} sebagai spreadsheet (CSV)",
   "made.tableFile": "Tabel {count}",
-  "made.print": "Cetak atau simpan sebagai PDF",
   "dictation.start": "Dikte",
   "dictation.stop": "Berhenti mendikte",
   "dictation.listening": "Mendengarkan…",
@@ -217,7 +218,7 @@
   "tool.find_tools": "Mencari alat yang tepat",
   "tool.decide": "Menimbang keputusan",
   "cap.files.name": "File",
-  "cap.files.offer": "Anda bisa meletakkan file di sini: PDF, Word, Excel, PowerPoint, CSV, atau teks.",
+  "cap.files.offer": "Anda bisa meletakkan file di sini: PDF, Word, Excel, PowerPoint, CSV, teks, atau gambar. Anda juga bisa menangkap layar.",
   "cap.files.yes": "Baik",
   "cap.made.name": "Salin, spreadsheet, cetak",
   "cap.compute.name": "Perhitungan",

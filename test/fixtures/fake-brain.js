@@ -12,7 +12,8 @@
 // up citing each one, and draws with models.image; /images/generations answers with a picture.
 // From 0.6 it splits a "briefing" between two helpers (each finds the mail tool, asks first, and
 // reports one email), answers Double-check's requests by comparing words, and gives a brief of
-// what's new when told the user is back.
+// what's new when told the user is back. It sees pictures (a capture of the screen): it says how
+// big the last one is, read from its PNG header.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -103,6 +104,15 @@ createServer(async (req, res) => {
   const serialized = JSON.stringify(messages)
   const cached = sharedPrefix(previous, serialized)
   previous = serialized
+  // A message with pictures is a list of parts: the text is read as one, the pictures apart.
+  /** @type {string[]} */
+  const pictures = []
+  for (const message of messages) {
+    if (!Array.isArray(message.content)) continue
+    pictures.push(...message.content.flatMap((/** @type {any} */ part) => (part.type === 'image_url' ? [part.image_url.url] : [])))
+    message.content = message.content.flatMap((/** @type {any} */ part) => (part.type === 'text' ? [part.text] : [])).join('\n\n')
+  }
+  const png = Buffer.from(pictures.at(-1)?.replace(/^data:image\/png;base64,/, '') ?? '', 'base64')
   const declared = new Set(tools.map((/** @type {any} */ tool) => tool.function.name))
   const lastUser = [...messages].reverse().find((message) => message.role === 'user')?.content ?? ''
   const last = messages.at(-1)
@@ -189,7 +199,8 @@ createServer(async (req, res) => {
     const { by, of, totals } = JSON.parse(last.content.slice(8).split('\n\nLog:')[0])
     const rows = Object.entries(totals).map(([key, value]) => `| ${key} | ${value} |`).join('\n')
     answer = `${TOTALS[lang](of, by)}${cite(table)}:\n\n| ${by} | ${of} |\n|---|---:|\n${rows}`
-  } else if (documents.length) {
+  } else if (png.length > 24 && last.role === 'user') answer = `I can see your picture: ${png.readUInt32BE(16)} × ${png.readUInt32BE(20)} pixels.`
+  else if (documents.length) {
     const doc = documents.at(-1)
     answer = `I read **${doc?.[2]}**${cite(doc)}. It starts with: “${doc?.[3].replace(/\[\[page \d+\]\]\n/g, '').slice(0, 120).trim()}”\n\nYou asked: *${question.slice(0, 80)}*`
   } else answer = REPLIES[lang](question.slice(0, 80))

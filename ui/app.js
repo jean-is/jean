@@ -7,6 +7,7 @@ import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
 import { app, effective, activeBrain, theme, THEME_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
+import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import { registerServiceWorker } from './shell.js'
 import { startRouter } from './router.js'
@@ -47,13 +48,37 @@ async function start() {
   const chosen = localStorage.getItem(THEME_KEY)
   app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
   const browserBar = document.querySelector('meta[name="theme-color"]')
+  app.look.value = lookId(root.dataset.look)
   effect(() => {
     root.style.transition = 'none'
     root.dataset.theme = theme.value
+    if (app.look.value === 'room') delete root.dataset.look
+    else root.dataset.look = app.look.value
     void getComputedStyle(root).backgroundColor // switched, before the fade comes back
     root.style.removeProperty('transition')
-    browserBar?.setAttribute('content', theme.value === 'light' ? '#fbf6ee' : '#120c08')
+    browserBar?.setAttribute('content', LOOKS[app.look.value].bar[theme.value === 'light' ? 1 : 0])
   })
+  // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
+  // stays on the device for index.html; the user's touches go over it, in a sheet of their own
+  // (CSSOM, which the CSP allows), with their code loaded only once there are some.
+  let dressing = Promise.resolve()
+  effect(() => {
+    const id = lookId(effective.value.settings.look?.id)
+    if (id === 'room') localStorage.removeItem(LOOK_KEY)
+    else localStorage.setItem(LOOK_KEY, id)
+    dressing = lookSheet(id).then(() => { if (id === lookId(app.settings.value.look?.id)) app.look.value = id })
+  })
+  const touches = new CSSStyleSheet()
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, touches]
+  let touching = Promise.resolve()
+  effect(() => {
+    if (!touched(effective.value.settings.look)) {
+      touches.replaceSync('')
+      return
+    }
+    touching = import('./touches.js').then(({ customCSS }) => touches.replaceSync(customCSS(effective.peek().settings.look)))
+  })
+  await Promise.all([dressing, touching])
   // The room warms a step with each discovery (docs/design.md): a brain, a first
   // conversation, then every capability (CSSOM, which the CSP allows; style attributes it doesn't).
   effect(() => {
@@ -91,6 +116,23 @@ async function start() {
   const connected = back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()
   if (!connected && back.has('code')) await (await import('./brains.js')).finishOpenRouter()
   registerServiceWorker()
+}
+
+/**
+ * A look's style sheet, loaded once (index.html adds the first). It goes before ui/style.css,
+ * whose rules it outranks with :root[data-look]; ties go to the room's (print, more contrast).
+ * @param {import('./looks.js').LookId} id
+ */
+function lookSheet(id) {
+  const href = `ui/looks/${id}.css`
+  if (id === 'room' || [...document.styleSheets].some((sheet) => sheet.href?.endsWith(href))) return Promise.resolve()
+  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href })
+  const loaded = new Promise((resolve) => {
+    link.addEventListener('load', resolve, { once: true })
+    link.addEventListener('error', resolve, { once: true })
+  })
+  document.querySelector('link[href="ui/style.css"]')?.before(link)
+  return loaded
 }
 
 start().catch((error) => {

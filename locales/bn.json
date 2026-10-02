@@ -100,8 +100,6 @@
   "settings.language": "ভাষা",
   "settings.languagesYours": "আপনার ভাষা",
   "settings.languagesOther": "অন্যান্য ভাষা",
-  "theme.light": "লাইট মোডে যান",
-  "theme.dark": "ডার্ক মোডে যান",
   "settings.rules": "কোন কাজে আপনার অনুমোদন লাগবে",
   "settings.rulesText": "{name} নিজে থেকে কী করতে পারবে, কী আগে আপনাকে জিজ্ঞেস করবে আর কী কখনোই করবে না, তা বেছে নিন।",
   "settings.voice": "পড়ার কণ্ঠ",
@@ -134,6 +132,7 @@
     "one": "{count} পৃষ্ঠা",
     "other": "{count} পৃষ্ঠা"
   },
+  "files.picture": "ছবি",
   "files.remove": "{name} সরান",
   "files.open": "ফাইল খুলুন",
   "files.stillReading": "এখনো আপনার ফাইলগুলো পড়া হচ্ছে…",
@@ -143,6 +142,9 @@
   "files.unreadable": "এই ফাইলটি পড়া যায়নি",
   "files.failed": "{name} পড়া যায়নি",
   "files.missing": "{name} আর এই ডিভাইসে নেই",
+  "capture.start": "স্ক্রিনের ছবি নিন",
+  "capture.name": "স্ক্রিনের ছবি {time}",
+  "capture.failed": "স্ক্রিনের ছবি নেওয়া যায়নি",
   "read.title": {
     "one": "এই উত্তরের জন্য পড়া হয়েছে: {count}টি ফাইল",
     "other": "এই উত্তরের জন্য পড়া হয়েছে: {count}টি ফাইল"
@@ -154,7 +156,6 @@
   "made.csvTitle": "স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",
   "made.csvNumbered": "সারণি {count} স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",
   "made.tableFile": "সারণি {count}",
-  "made.print": "প্রিন্ট করুন বা PDF হিসেবে সংরক্ষণ করুন",
   "dictation.start": "বলে লেখান",
   "dictation.stop": "বলে লেখানো থামান",
   "dictation.listening": "শোনা হচ্ছে…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "সঠিক টুল খোঁজা হয়েছে",
   "tool.decide": "একটি সিদ্ধান্ত বিবেচনা করা হয়েছে",
   "cap.files.name": "ফাইল",
-  "cap.files.offer": "আপনি আমাকে ফাইল দিতে পারেন: PDF, Word, Excel, PowerPoint, CSV বা টেক্সট।",
+  "cap.files.offer": "আপনি আমাকে ফাইল দিতে পারেন: PDF, Word, Excel, PowerPoint, CSV, টেক্সট বা ছবি। চাইলে স্ক্রিনের ছবিও নিতে পারেন।",
   "cap.files.yes": "জেনে ভালো লাগল",
   "cap.made.name": "কপি, স্প্রেডশিট, প্রিন্ট",
   "cap.compute.name": "হিসাব",

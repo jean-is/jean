@@ -1,12 +1,11 @@
 // History, brain and settings dialogs (native <dialog>: focus trap and Escape for free).
 import { html, nothing } from 'lit-html'
-import { repeat } from 'lit-html/directives/repeat.js'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, setVoice, notify, loadModels,
-  newConversation, openConversation, removeConversation, showError,
+  newConversation, showError, theme, setTheme, setLook,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, startOpenRouter } from './brains.js'
 import { unlock, isDenied } from './caps.js'
@@ -14,10 +13,13 @@ import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { t, locale, relativeTime, formatBytes, useStrings } from '../core/i18n.js'
+import { t, locale, formatBytes, useStrings } from '../core/i18n.js'
 import { voicesFor } from './speech.js'
 import { icons } from './icons.js'
 import { languageOptions } from './shell.js'
+import { conversationList } from './inbox.js'
+import { LOOKS, lookId, touched } from './looks.js'
+import { FONTS, SIZES } from './touches.js'
 
 // The dialogs' own strings come with them (D97): every module that shows a dialog imports this one.
 await useStrings('dialogs')
@@ -46,21 +48,11 @@ export const head = (title) => html`<header class="dialog-head">
 
 class History extends Element {
   render() {
-    const list = app.conversations.value
-    const currentId = app.current.value?.id
     return html`<dialog class="drawer" @close=${closed('history')} @click=${backdrop}>
       ${head(t('history.title'))}
       <app-projects></app-projects>
       <button class="button wide" @click=${newConversation}>${icons.plus} ${t('action.new')}</button>
-      ${list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => html`
-        <li class=${item.id === currentId ? 'is-current' : ''}>
-          <button class="history-item" @click=${() => openConversation(item.path)}>
-            <span class="history-title" dir="auto">${item.title || t('conversation.untitled')}</span>
-            <time datetime=${item.updatedAt}>${relativeTime(item.updatedAt)}</time>
-          </button>
-          <button class="icon-button subtle" aria-label=${t('action.delete')} title=${t('action.delete')}
-            @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}</button>
-        </li>`)}</ol>` : html`<p class="muted">${t('history.empty')}</p>`}
+      ${conversationList()}
     </dialog>`
   }
 
@@ -250,6 +242,16 @@ class Settings extends Element {
         </select>
       </section>
       <section>
+        <h3>${t('settings.appearance')}</h3>
+        <span class="segmented" role="radiogroup" aria-label=${t('settings.appearance')}>
+          ${(/** @type {const} */ (['light', 'dark'])).map((option) => html`<label>
+            <input type="radio" name="theme" .checked=${theme.value === option} @change=${() => setTheme(option)}>
+            <span>${t(`theme.${option}`)}</span>
+          </label>`)}
+        </span>
+        ${looks(settings.look)}
+      </section>
+      <section>
         <h3>${t('settings.rules')}</h3>
         <p class="muted">${t('settings.rulesText', { name: BRAND.name })}</p>
         <ul class="rules">${RULE_KINDS.map((kind) => this.#rule(kind, locked.has(`rules.${kind}`)))}</ul>
@@ -309,6 +311,51 @@ class Settings extends Element {
     syncDialog(this, 'settings')
     if (app.dialog.value === 'settings' && !storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
   }
+}
+
+/** @typedef {import('../core/settings.js').Look} Look */
+/** @param {Event} event */
+const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
+
+/** Jean's looks, then the user's touches over the one chosen, shown as they change (D111). @param {Look} [look] */
+function looks(look = {}) {
+  const chosen = lookId(look.id)
+  const size = look.size ?? 1
+  return html`<fieldset class="looks">
+      <legend>${t('look.title')}</legend>
+      ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
+        <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
+        <span class="look-preview" data-look-preview=${id} aria-hidden="true"></span>
+        <span><strong>${t(`look.${id}`)}</strong><small>${t(`look.${id}.text`)}</small></span>
+      </label>`)}
+    </fieldset>
+    <details class="other">
+      <summary>${t('look.custom')}</summary>
+      <div class="stack">
+        <div class="look-colours">
+          <label>${t('look.accent')}<input type="color" .value=${live(look.accent ?? LOOKS[chosen].accent)}
+            @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}></label>
+          <label>${t('look.background')}<input type="color" .value=${live(look.background ?? LOOKS[chosen].bar[theme.value === 'light' ? 1 : 0])}
+            @input=${(/** @type {Event} */ e) => setLook({ background: valueOf(e) }, { later: true })}></label>
+        </div>
+        <label><span class="look-size">${t('look.size')}<output>${new Intl.NumberFormat(locale.value, { style: 'percent' }).format(size)}</output></span>
+          <input type="range" min=${SIZES.min} max=${SIZES.max} step=${SIZES.step} .value=${live(String(size))}
+            @input=${(/** @type {Event} */ e) => setLook({ size: Number(valueOf(e)) }, { later: true })}></label>
+        <label>${t('look.font')}
+          <select @change=${(/** @type {Event} */ e) => setLook({ font: valueOf(e) || undefined })}>
+            <option value="">${t('look.font.look')}</option>
+            ${Object.keys(FONTS).map((id) => html`<option value=${id} ?selected=${id === look.font}>${t(`look.font.${id}`)}</option>`)}
+          </select></label>
+        <label>${t('look.css')}<textarea class="look-css" rows="6" dir="ltr" spellcheck="false" autocapitalize="off" .value=${live(look.css ?? '')}
+          @input=${(/** @type {Event} */ e) => setLook({ css: valueOf(e) || undefined }, { later: true })}></textarea></label>
+        <p class="hint">${t('look.cssHint')}</p>
+        <div class="row"><button class="button subtle" ?disabled=${!touched(look)} @click=${(/** @type {Event} */ e) => {
+          const summary = /** @type {HTMLElement} */ (e.currentTarget).closest('details')?.querySelector('summary')
+          setLook(null)
+          summary?.focus()
+        }}>${t('look.reset')}</button></div>
+      </div>
+    </details>`
 }
 
 export async function backup() {

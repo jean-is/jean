@@ -7,7 +7,7 @@ import { userRecords, metaRecord, toChatMessages, applyUpdate, titleOf, linkedFi
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { t, locale, useLocale, languageName, firstWords } from '../core/i18n.js'
-import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber } from '../core/files.js'
+import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, isPicture } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import { chooseBrain, isLocal, TIERS } from './auto.js'
@@ -15,8 +15,9 @@ import { chooseBrain, isLocal, TIERS } from './auto.js'
 /** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Turn } from '../core/events.js' */
 /**
- * A file the user is about to send. `pages` holds its extracted text, page by page.
- * @typedef {{ key: string, name: string, status: 'reading' | 'ready' | 'failed', link?: ResourceLink, pages?: string[], error?: string }} Attachment
+ * A file the user is about to send. `pages` holds its extracted text, page by page; `preview`
+ * a picture's address while it waits.
+ * @typedef {{ key: string, name: string, status: 'reading' | 'ready' | 'failed', link?: ResourceLink, pages?: string[], error?: string, preview?: string }} Attachment
  */
 /** @import { Settings, Project } from '../core/settings.js' */
 /** @typedef {'idle' | 'listening' | 'thinking' | 'answering' | 'done'} Presence */
@@ -54,6 +55,8 @@ export const app = {
   /** Light or dark: what the device shows (ui/app.js follows it), and the user's pick on this device, if any. */
   deviceTheme: signal(/** @type {Theme} */ ('dark')),
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
+  /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
+  look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
   /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | 'knows' | 'project' | 'connections' | null>} */
   dialog: signal(null),
   draft: signal(''),
@@ -158,12 +161,25 @@ export async function setVoice(voice) {
 // index.html reads it before the first paint, and the room never flashes the other colour.
 export const THEME_KEY = 'app.theme'
 
-/** Light to dark and back. Picking what the device shows follows the device again. */
-export function toggleTheme() {
-  const next = theme.value === 'light' ? 'dark' : 'light'
+/** Light or dark. Picking what the device shows follows the device again. @param {Theme} next */
+export function setTheme(next) {
   app.chosenTheme.value = next === app.deviceTheme.value ? null : next
   if (app.chosenTheme.value) localStorage.setItem(THEME_KEY, next)
   else localStorage.removeItem(THEME_KEY)
+}
+
+let lookWrite = 0
+/**
+ * Another look, or a touch over it (D111), shown at once. `later` waits for a pause before
+ * writing settings.json, for a slider being dragged or CSS being typed.
+ * @param {import('../core/settings.js').Look | null} patch  null: back to the look as it comes
+ * @param {{ later?: boolean }} [options]
+ */
+export function setLook(patch, { later = false } = {}) {
+  const look = app.settings.value.look ?? {}
+  app.settings.value = { ...app.settings.value, look: patch ? { ...look, ...patch } : { id: look.id } }
+  clearTimeout(lookWrite)
+  lookWrite = setTimeout(() => saveSettings(app.fs, app.settings.value).catch(showError), later ? 500 : 0)
 }
 
 /** @param {Partial<Pick<Settings, 'auto' | 'cloud'>>} patch */
@@ -288,12 +304,38 @@ export function rememberText(link, pages) {
   texts.set(link.uri, pages.map((page, i) => `[[page ${i + 1}]]\n${page}`).join('\n\n'))
 }
 
-/** @param {Envelope[]} records */
-async function documents(records) {
+/** @type {Map<string, string | undefined>} uri → a picture's bytes, base64, for brains that can see */
+const pictures = new Map()
+
+/** What the brain reads for each linked file, and the pictures it sees if it can. @param {Envelope[]} records @param {BrainConfig} brain */
+async function documents(records, brain) {
+  const sees = seesPictures(brain)
   for (const link of linkedFiles(records)) {
     if (!texts.has(link.uri)) texts.set(link.uri, await fileText(app.fs, app.projectDir, link.uri))
+    if (sees && isPicture(link) && !pictures.has(link.uri)) pictures.set(link.uri, await base64(await app.fs.readBytes(`${app.projectDir}/${link.uri}`)))
   }
-  return (/** @type {ResourceLink} */ link) => documentPart(link, texts.get(link.uri) ?? null)
+  return (/** @type {ResourceLink} */ link) => documentPart(link, texts.get(link.uri) ?? null, sees ? pictures.get(link.uri) : undefined)
+}
+
+/** @param {Uint8Array | null} bytes @returns {Promise<string | undefined>} */
+function base64(bytes) {
+  return new Promise((resolve) => {
+    if (!bytes) return resolve(undefined)
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result).replace(/^[^,]*,/, ''))
+    reader.onerror = () => resolve(undefined)
+    reader.readAsDataURL(new Blob([/** @type {BlobPart} */ (bytes)]))
+  })
+}
+
+/**
+ * Whether a brain is shown pictures: not the one on this device yet (its eyes come later, D42),
+ * nor a model its provider lists as reading text only. Others are trusted to see.
+ * @param {BrainConfig} brain
+ */
+export function seesPictures(brain) {
+  const input = app.models.value[brain.id]?.find((model) => model.id === brain.model)?.input
+  return brain.api !== 'device' && (!input || input.includes('image'))
 }
 
 /** @param {BrainConfig} brain */
@@ -428,9 +470,11 @@ async function pickBrain(text, records, boost = 0) {
     brains: settings.brains,
     preferred: settings.activeBrain,
     cloud: cloudAllowed(),
-    signals,
+    // A conversation with a picture needs a brain that can see it.
+    signals: { ...signals, pictures: currentFiles().some(isPicture) },
     floor: Math.min(2, autoLevel(records) + boost),
     has: (brain, model) => (app.models.value[brain.id] ?? []).some((info) => info.id === model),
+    sees: seesPictures,
     tiers: app.policy.tiers ?? TIERS,
   })
   return choice && { brain: choice.brain, meta: { auto: { level: choice.level, reason: choice.reason } } }
@@ -504,7 +548,7 @@ async function runAgent(brain, meta) {
   // The loop and the brains' adapters load with the first message, not with the first screen.
   const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
   const frozen = frozenPrompt(current.records)
-  const messages = toChatMessages(current.records, await documents(current.records))
+  const messages = toChatMessages(current.records, await documents(current.records, brain))
   const lastUser = messages.findLastIndex((message) => message.role === 'user')
   if (brain.api === 'device') await unlock('brain-local')
   const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
@@ -638,7 +682,7 @@ export async function warm() {
     const frozen = frozenPrompt(all)
     const declared = frozen?.state.tools ?? []
     const tools = contributions().tools.filter((tool) => declared.includes(tool.spec.name)).map((tool) => tool.spec)
-    const messages = toChatMessages(all, await documents(all))
+    const messages = toChatMessages(all, await documents(all, brain))
     const { warmCache } = await import('../core/llm.js')
     await warmCache({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined, system: frozen?.system, messages, tools })
   } catch (error) {

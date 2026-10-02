@@ -2,6 +2,7 @@
 // back, repeat. Emits live ACP updates and persists settled records.
 import { streamChat as defaultStream } from './llm.js'
 import { envelope } from './events.js'
+import { signature } from './deferred.js'
 
 /** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCallInfo, RuleValue, Source } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
@@ -131,7 +132,9 @@ export async function runTurn(options) {
     if (stopReason !== 'tool_use' || !calls.length) return { stopReason, usage, text }
 
     for (const call of calls) {
-      const result = await runTool(call, declared.has(call.name) ? ctx.byName.get(call.name) : undefined, step, ctx)
+      // A deferred tool called by the name <connections> gives it runs all the same (D104); a hidden one stays for scripts.
+      const tool = ctx.byName.get(call.name)
+      const result = await runTool(call, declared.has(call.name) || !tool?.hidden ? tool : undefined, step, ctx)
       history.push({ role: 'tool', toolCallId: call.id, name: call.name, content: result.output, ...(result.failed && { isError: true }) })
     }
   }
@@ -205,6 +208,8 @@ async function runTool(call, tool, step, ctx, parent) {
   }
   if (!tool) output = `There is no tool named "${call.name}".${ctx.declared.has('find_tools') ? ' Use find_tools to look for one.' : ''}`
   else if (call.args && typeof call.args === 'object' && '__invalidJSON' in call.args) output = 'The arguments were not valid JSON. Try again.'
+  // The brain hasn't seen a deferred tool's schema: without what it requires, it learns how to call it.
+  else if (!parent && !ctx.declared.has(call.name) && lacking(tool, call.args).length) output = `It needs ${lacking(tool, call.args).join(', ')}. Call it like this:\n${signature(tool)}`
   else {
     let decision = rule(tool.kind, Boolean(tool.reserved))
     if (decision === 'ask') {
@@ -242,6 +247,9 @@ async function runTool(call, tool, step, ctx, parent) {
  * @param {T} update @param {string} parent @returns {T}
  */
 const under = (update, parent) => ({ ...update, toolCallId: `${parent}/${update.toolCallId}`, _meta: { ...update._meta, raw: undefined, parent: update._meta?.parent ? `${parent}/${update._meta.parent}` : parent } })
+
+/** The arguments a tool requires that a call leaves out. @param {Tool} tool @param {any} args @returns {string[]} */
+const lacking = ({ spec }, args) => (/** @type {any} */ (spec.parameters).required ?? []).filter((/** @type {string} */ name) => args?.[name] == null)
 
 /** @template T @param {() => T} fn @param {T} fallback */
 function safe(fn, fallback) {

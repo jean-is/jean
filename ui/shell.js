@@ -2,12 +2,13 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, theme, toggleTheme, setLocale, newConversation, assistantName, LOCALES } from './state.js'
+import { app, setLocale, newConversation, assistantName, LOCALES } from './state.js'
 import { SIZES } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
+import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
 import './chat.js'
 import './persona.js'
@@ -18,16 +19,14 @@ class Shell extends Element {
   render() {
     const current = app.current.value
     const { data } = app.project.value
-    const other = theme.value === 'light' ? 'dark' : 'light'
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
+        <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
         <button class="wordmark" @click=${newConversation} title=${t('action.new')}><app-persona></app-persona>${assistantName()}${data.default === true ? nothing
           : html`<span class="wordmark-project" dir="auto">${data.name}</span>`}</button>
         <nav class="bar-actions" aria-label=${t('a11y.menu')}>
-          <button class="icon-button" @click=${openCollection} aria-label=${t('collection.title', { name: BRAND.name })} title=${t('collection.title', { name: BRAND.name })}>${icons.house}</button>
-          <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
-          <button class="icon-button theme" @click=${toggleTheme} aria-label=${t(`theme.${other}`)} title=${t(`theme.${other}`)}>${icons.contrast}</button>
+          <button class="icon-button" @click=${openCollection} aria-label=${t('collection.title', { name: BRAND.name })} title=${t('collection.title', { name: BRAND.name })}>${icons.tiles}</button>
           <label class="language" title=${t('settings.language')}>
             ${icons.globe}<span class="visually-hidden">${t('settings.language')}</span>
             <select @change=${(/** @type {Event} */ e) => setLocale(/** @type {HTMLSelectElement} */ (e.target).value)}>
@@ -37,6 +36,7 @@ class Shell extends Element {
           <button class="icon-button" @click=${() => { app.dialog.value = 'settings' }} aria-label=${t('settings.title')} title=${t('settings.title')}>${icons.gear}</button>
         </nav>
       </header>
+      ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
       <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : welcome()}</main>
       ${offerAside()}
@@ -54,10 +54,11 @@ class Shell extends Element {
   }
 }
 
-// The dialogs above are defined the first time one opens, and upgrade then.
+// The dialogs above are defined the first time one opens, and upgrade then; Mail's list too (D111).
 effect(() => {
   if (app.dialog.value) import('./dialogs.js')
   if (app.dialog.value === 'knows') import('./knows.js')
+  if (LOOKS[app.look.value].list) import('./inbox.js')
 })
 
 const discovery = () => import('./discovery.js')

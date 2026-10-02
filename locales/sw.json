@@ -100,8 +100,6 @@
   "settings.language": "Lugha",
   "settings.languagesYours": "Lugha zako",
   "settings.languagesOther": "Lugha nyingine",
-  "theme.light": "Badilisha hadi hali ya mwanga",
-  "theme.dark": "Badilisha hadi hali ya giza",
   "settings.rules": "Kinachohitaji idhini yako",
   "settings.rulesText": "Chagua {name} anaweza kufanya nini mwenyewe, aulize nini kwanza, na asifanye nini kamwe.",
   "settings.voice": "Sauti ya kusoma",
@@ -134,6 +132,7 @@
     "one": "ukurasa {count}",
     "other": "kurasa {count}"
   },
+  "files.picture": "Picha",
   "files.remove": "Ondoa {name}",
   "files.open": "Fungua faili",
   "files.stillReading": "Bado inasoma faili zako…",
@@ -143,6 +142,9 @@
   "files.unreadable": "Faili hii haikuweza kusomwa",
   "files.failed": "Imeshindwa kusoma {name}",
   "files.missing": "{name} haipo tena kwenye kifaa hiki",
+  "capture.start": "Piga picha ya skrini yako",
+  "capture.name": "Picha ya skrini {time}",
+  "capture.failed": "Imeshindwa kupiga picha ya skrini",
   "read.title": {
     "one": "Imesomwa kwa jibu hili: faili {count}",
     "other": "Zimesomwa kwa jibu hili: faili {count}"
@@ -154,7 +156,6 @@
   "made.csvTitle": "Pakua kama lahajedwali (CSV)",
   "made.csvNumbered": "Pakua jedwali {count} kama lahajedwali (CSV)",
   "made.tableFile": "Jedwali {count}",
-  "made.print": "Chapisha au hifadhi kama PDF",
   "dictation.start": "Imla",
   "dictation.stop": "Acha imla",
   "dictation.listening": "Inasikiliza…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "Imetafuta zana inayofaa",
   "tool.decide": "Imepima uamuzi",
   "cap.files.name": "Faili",
-  "cap.files.offer": "Unaweza kunidondoshea faili: PDF, Word, Excel, PowerPoint, CSV au maandishi.",
+  "cap.files.offer": "Unaweza kunidondoshea faili: PDF, Word, Excel, PowerPoint, CSV, maandishi au picha. Unaweza pia kupiga picha ya skrini yako.",
   "cap.files.yes": "Vizuri kujua",
   "cap.made.name": "Nakili, lahajedwali, chapisha",
   "cap.compute.name": "Hesabu",

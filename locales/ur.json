@@ -100,8 +100,6 @@
   "settings.language": "زبان",
   "settings.languagesYours": "آپ کی زبانیں",
   "settings.languagesOther": "دیگر زبانیں",
-  "theme.light": "لائٹ موڈ پر جائیں",
-  "theme.dark": "ڈارک موڈ پر جائیں",
   "settings.rules": "کن کاموں کے لیے آپ کی منظوری درکار ہے",
   "settings.rulesText": "منتخب کریں کہ کون سے کام خودبخود ہوں، کن کے لیے پہلے آپ سے پوچھا جائے، اور کون سے کبھی نہ ہوں۔",
   "settings.voice": "پڑھنے کی آواز",
@@ -134,6 +132,7 @@
     "one": "{count} صفحہ",
     "other": "{count} صفحات"
   },
+  "files.picture": "تصویر",
   "files.remove": "{name} ہٹائیں",
   "files.open": "فائل کھولیں",
   "files.stillReading": "فائلیں ابھی پڑھی جا رہی ہیں…",
@@ -143,6 +142,9 @@
   "files.unreadable": "یہ فائل پڑھی نہیں جا سکی",
   "files.failed": "{name} پڑھی نہیں جا سکی",
   "files.missing": "{name} اب اس آلے پر موجود نہیں",
+  "capture.start": "اسکرین کی تصویر لیں",
+  "capture.name": "اسکرین کی تصویر {time}",
+  "capture.failed": "اسکرین کی تصویر نہیں لی جا سکی",
   "read.title": {
     "one": "اس جواب کے لیے پڑھی گئی: {count} فائل",
     "other": "اس جواب کے لیے پڑھی گئیں: {count} فائلیں"
@@ -154,7 +156,6 @@
   "made.csvTitle": "اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",
   "made.csvNumbered": "جدول {count} کو اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",
   "made.tableFile": "جدول {count}",
-  "made.print": "پرنٹ کریں یا PDF کے طور پر محفوظ کریں",
   "dictation.start": "بول کر لکھوائیں",
   "dictation.stop": "لکھوانا روکیں",
   "dictation.listening": "سنا جا رہا ہے…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "مناسب آلہ تلاش کیا گیا",
   "tool.decide": "فیصلہ تولا گیا",
   "cap.files.name": "فائلیں",
-  "cap.files.offer": "آپ یہاں فائلیں چھوڑ سکتے ہیں: PDF، Word، Excel، PowerPoint، CSV یا متن۔",
+  "cap.files.offer": "آپ یہاں فائلیں چھوڑ سکتے ہیں: PDF، Word، Excel، PowerPoint، CSV، متن یا تصویریں۔ آپ اپنی اسکرین کی تصویر بھی لے سکتے ہیں۔",
   "cap.files.yes": "جان کر اچھا لگا",
   "cap.made.name": "کاپی، اسپریڈشیٹ، پرنٹ",
   "cap.compute.name": "حساب کتاب",

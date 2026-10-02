@@ -100,8 +100,6 @@
   "settings.language": "زبان",
   "settings.languagesYours": "زبان‌های شما",
   "settings.languagesOther": "زبان‌های دیگر",
-  "theme.light": "رفتن به حالت روشن",
-  "theme.dark": "رفتن به حالت تیره",
   "settings.rules": "کارهایی که تأیید شما را لازم دارند",
   "settings.rulesText": "انتخاب کنید {name} چه کارهایی را خودش انجام دهد، دربارهٔ چه چیزهایی اول از شما بپرسد و چه کارهایی را هرگز انجام ندهد.",
   "settings.voice": "صدای خواندن",
@@ -134,6 +132,7 @@
     "one": "{count} صفحه",
     "other": "{count} صفحه"
   },
+  "files.picture": "تصویر",
   "files.remove": "برداشتن {name}",
   "files.open": "باز کردن فایل",
   "files.stillReading": "هنوز در حال خواندن فایل‌های شما…",
@@ -143,6 +142,9 @@
   "files.unreadable": "این فایل خوانده نشد",
   "files.failed": "خواندن {name} ممکن نشد",
   "files.missing": "{name} دیگر روی این دستگاه نیست",
+  "capture.start": "گرفتن تصویر صفحه",
+  "capture.name": "تصویر صفحه {time}",
+  "capture.failed": "تصویر صفحه گرفته نشد",
   "read.title": {
     "one": "برای این پاسخ خوانده شد: {count} فایل",
     "other": "برای این پاسخ خوانده شد: {count} فایل"
@@ -154,7 +156,6 @@
   "made.csvTitle": "بارگیری به‌صورت صفحه‌گسترده (CSV)",
   "made.csvNumbered": "بارگیری جدول {count} به‌صورت صفحه‌گسترده (CSV)",
   "made.tableFile": "جدول {count}",
-  "made.print": "چاپ یا ذخیره به‌صورت PDF",
   "dictation.start": "دیکته",
   "dictation.stop": "توقف دیکته",
   "dictation.listening": "در حال گوش دادن…",
@@ -221,7 +222,7 @@
   "tool.find_tools": "ابزار مناسب جست‌وجو شد",
   "tool.decide": "یک تصمیم سنجیده شد",
   "cap.files.name": "فایل‌ها",
-  "cap.files.offer": "می‌توانید فایل‌ها را اینجا رها کنید: PDF، Word، Excel، PowerPoint، CSV یا متن.",
+  "cap.files.offer": "می‌توانید فایل‌ها را اینجا رها کنید: PDF، Word، Excel، PowerPoint، CSV، متن یا تصویر. می‌توانید از صفحه‌تان هم تصویر بگیرید.",
   "cap.files.yes": "خوب است بدانم",
   "cap.made.name": "رونوشت، صفحه‌گسترده، چاپ",
   "cap.compute.name": "محاسبات",

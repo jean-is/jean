@@ -1,9 +1,10 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line.
-// Files can be picked, pasted or dropped anywhere on the page; dictation writes into it.
+// Files can be picked, pasted or dropped anywhere on the page, and a screen captured;
+// dictation writes into it.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, chipLabel, effective, send, stop, setPresence, warm, removeAttachment } from './state.js'
+import { app, activeBrain, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify } from './state.js'
 import { unlock, isDenied, loaded } from './caps.js'
 import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -26,10 +27,11 @@ class Composer extends Element {
       <form class="composer" @submit=${this.#submit}>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
           <li class="attachment" data-status=${item.status} title=${item.error ?? ''}>
-            ${icons.file}<span class="attachment-name" dir="auto">${item.name}</span>
+            ${item.preview && item.link ? html`<button type="button" class="attachment-preview" title=${t('files.open')} @click=${() => item.link && openFile(item.link)}>
+              <img src=${item.preview} alt=""></button>` : icons.file}<span class="attachment-name" dir="auto">${item.name}</span>
             <span class="attachment-note">${item.status === 'reading' ? t('files.reading')
               : item.status === 'failed' ? item.error ?? t('files.unreadable')
-              : t('files.pages', { count: item.pages?.length ?? 0 })}</span>
+              : item.preview ? t('files.picture') : t('files.pages', { count: item.pages?.length ?? 0 })}</span>
             <button type="button" class="icon-button subtle" aria-label=${t('files.remove', { name: item.name })} title=${t('action.remove')}
               @click=${() => removeAttachment(item.key)}>${icons.close}</button>
           </li>`)}</ul>` : nothing}
@@ -46,6 +48,8 @@ class Composer extends Element {
               ${icons.attach}<span class="visually-hidden">${t('files.attach')}</span>
               <input type="file" multiple class="visually-hidden" aria-label=${t('files.attach')} @change=${this.#pick}>
             </label>`}
+            ${isDenied('files') || !CAPTURE ? nothing : html`<button type="button" class="icon-button"
+              aria-label=${t('capture.start')} title=${t('capture.start')} @click=${captureScreen}>${icons.capture}</button>`}
             ${dictation.value.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
               aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')} title=${t(listening ? 'dictation.stop' : 'dictation.start')}
@@ -120,12 +124,35 @@ class Composer extends Element {
 }
 
 const LONG_PASTE = 2000
+/** Whether this browser can share a screen (not phones). */
+const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
 /** The brain picker, or choosing a first brain. */
 async function openPicker() {
   if (!effective.value.settings.brains.length) return void (app.dialog.value = 'brain')
   await import('./picker.js')
   app.dialog.value = 'picker'
+}
+
+/**
+ * A picture of a screen, window or tab the user picks, for the next message. The browser asks
+ * at once (it wants the click), and what makes the picture loads meanwhile.
+ */
+async function captureScreen() {
+  const controller = 'CaptureController' in globalThis ? new (/** @type {any} */ (globalThis).CaptureController)() : undefined
+  // Stay in Jean once something is picked: Chrome would bring it to the front.
+  try { controller?.setFocusBehavior?.('no-focus-change') } catch {}
+  const asked = navigator.mediaDevices.getDisplayMedia(/** @type {DisplayMediaStreamOptions} */ ({ video: true, audio: false, selfBrowserSurface: 'exclude', controller }))
+  const pictures = unlock('files').then((ok) => (ok ? import('../caps/files/pictures.js') : null))
+  try {
+    const stream = await asked
+    const module = await pictures
+    if (module) attachFiles([await module.screenshot(stream)])
+    else for (const track of stream.getTracks()) track.stop()
+  } catch (error) {
+    // Closing the browser's picker isn't a failure.
+    if (/** @type {any} */ (error)?.name !== 'NotAllowedError') notify(t('capture.failed'))
+  }
 }
 
 /** @param {File[]} files */

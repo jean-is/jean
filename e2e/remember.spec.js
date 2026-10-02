@@ -40,7 +40,7 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 
   // Another project knows nothing of it.
-  await page.locator('.bar-actions button').nth(1).click()
+  await page.locator('.bar button[aria-label="Conversations"]').click()
   await page.locator('app-history .projects .button').click()
   await createProject(page, 'Garden')
   await ask(page, 'What do you know?')
@@ -51,7 +51,7 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await page.keyboard.press('Escape')
 
   // Back in the bakery, it is there, on the page and in the brain's context.
-  await page.locator('.bar-actions button').nth(1).click()
+  await page.locator('.bar button[aria-label="Conversations"]').click()
   await page.locator('app-history .project', { hasText: 'Bakery' }).click()
   await page.keyboard.press('Escape')
   await expect(page.locator('.wordmark-project')).toHaveText('Bakery')

@@ -22,6 +22,7 @@ The UI never says "agent", "model", "MCP", "skill" or "token".
 | Sub-agent | Helper |
 | Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
+| Look (`ui/looks/`, D111) | Theme (Room, Mail, Paper); light or dark is separate |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
 
@@ -46,7 +47,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Capability | Offered when… | What appears |
 |---|---|---|
 | Files | The user pastes long text (over 2,000 characters), drops a file, or a reflex or the brain says a document would help | "You can drop files on me," plus a file shelf |
-| Things Jean made | The first table or document is produced | A "Made by Jean" shelf: copy as rich text, CSV, print to PDF |
+| Things Jean made | The first table or document is produced | A "Made by Jean" shelf: copy as rich text, CSV (D108) |
 | Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
 | Calculations | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | Jean computes instead of guessing (QuickJS) |
 | Intuition | After two conversations with a brain | "Let Jean get a feel for what you need?" A small helper on this device (about 345 MB, once) picks the brain and suggests next steps |
@@ -158,10 +159,10 @@ Organisation policy can hide or lock any of these.
 ## Files and outputs
 
 - **Dropped files are kept** in the project's library. Each file is stored as the original, an extracted text version and a metadata file; files are named by content hash, so duplicates are stored once. Conversations reference files rather than copying them.
+- **Pictures and the screen.** A picture is shared like any file, and a button in the box captures the screen, a window or a tab: one frame, shown as a thumbnail before it is sent. Brains that can see are shown it (D105).
 - **Outputs fit office life without any dependency:**
   - Copy as rich text, which pastes formatted into Word, Outlook and Google Docs
   - CSV, which opens in Excel
-  - Print to PDF
 - **Later:** `.docx` and `.xlsx` writers arrive as unlocks.
 
 ## Sources and citations
@@ -198,7 +199,7 @@ When no route exists, Jean says so and suggests connecting a cloud brain. A shar
 | Need | Default (private) | Option |
 |---|---|---|
 | Dictation (speech to text) | A Whisper-class multilingual model in the page, through Transformers.js (99 languages) | Chrome's on-device recognition (`processLocally: true`) where available; cloud speech-to-text from the connected provider |
-| Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
+| Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true, in the answer's own language (D109) | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
 | Live conversation | A chain: Silero voice detection → speech-to-text → brain (streamed) → speech, sentence by sentence; speaking over Jean interrupts it. Works with any brain. | Real-time speech models from the connected provider (OpenAI Realtime over WebRTC with the user's key, Gemini Live) |
 
 Dictation and read-aloud are available from day one for accessibility. Live conversation is discovered: built in 0.5 as the private chain above, offered after three dictations (D93).

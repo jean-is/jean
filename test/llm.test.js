@@ -639,6 +639,25 @@ describe('system notes, documents and caching (D46, D49)', () => {
     assert.equal(out[2].name, 'read')
   })
 
+  test('a picture follows its document: an image_url part, or an Anthropic image block', async () => {
+    const picture = { name: 'Screen.png', source: 2, text: '(The picture follows.)', image: { mimeType: 'image/png', data: 'iVBORw0K' } }
+    const asked = [{ role: 'user', content: 'What is this?', documents: [doc, picture] }]
+    const tag = '<document source="2" name="Screen.png">\n(The picture follows.)\n</document>'
+    const [message] = openaiMessages(undefined, asked, { systemNotes: true })
+    assert.deepEqual(message.content, [
+      { type: 'text', text: '<document name="Report  Q3 .pdf">\n[[page 1]]\nRevenue grew.\n</document>' },
+      { type: 'text', text: tag },
+      { type: 'image_url', image_url: { url: 'data:image/png;base64,iVBORw0K' } },
+      { type: 'text', text: 'What is this?' },
+    ])
+    const { request } = await run(brains.anthropic, textTurn(), { messages: asked })
+    assert.deepEqual(request.body.messages[0].content.slice(1), [
+      { type: 'text', text: tag },
+      { type: 'image', source: { type: 'base64', media_type: 'image/png', data: 'iVBORw0K' } },
+      { type: 'text', text: 'What is this?' },
+    ])
+  })
+
   test('raw blocks are replayed only to the model that made them', async () => {
     const raw = [{ type: 'thinking', thinking: 'Hm.', signature: 'sig' }, { type: 'text', text: 'Yes.' }]
     const messages = [{ role: 'user', content: 'Q' }, { role: 'assistant', content: 'Yes.', raw, rawModel: 'claude-opus-5-5' }, { role: 'user', content: 'Q2' }]
@@ -824,15 +843,15 @@ describe('listModels', () => {
   test('OpenAI-compatible (OpenRouter): pricing as numbers, provider order kept', async () => {
     const data = [
       { id: 'z/model', name: 'Z Model', context_length: 128000, pricing: { prompt: '0.000003', completion: '0.000015' } },
-      { id: 'a/model', name: 'A Model', context_length: 8192, pricing: { prompt: '0', completion: '0' }, architecture: { output_modalities: ['image', 'text'] } },
+      { id: 'a/model', name: 'A Model', context_length: 8192, pricing: { prompt: '0', completion: '0' }, architecture: { input_modalities: ['text', 'image'], output_modalities: ['image', 'text'] } },
     ]
     const { fetch, calls } = mockFetch(() => Response.json({ data }))
     const models = await listModels({ brain: brains.openrouter, apiKey: 'sk-or', fetch })
     assert.equal(calls[0].url, 'https://openrouter.ai/api/v1/models')
     assert.deepEqual(calls[0].headers, { authorization: 'Bearer sk-or' })
     assert.deepEqual(models, [
-      { id: 'z/model', name: 'Z Model', contextLength: 128000, pricing: { prompt: 0.000003, completion: 0.000015 }, output: undefined },
-      { id: 'a/model', name: 'A Model', contextLength: 8192, pricing: { prompt: 0, completion: 0 }, output: ['image', 'text'] },
+      { id: 'z/model', name: 'Z Model', contextLength: 128000, pricing: { prompt: 0.000003, completion: 0.000015 }, input: undefined, output: undefined },
+      { id: 'a/model', name: 'A Model', contextLength: 8192, pricing: { prompt: 0, completion: 0 }, input: ['text', 'image'], output: ['image', 'text'] },
     ])
   })
 
@@ -841,7 +860,7 @@ describe('listModels', () => {
     const models = await listModels({ brain: brains.ollama, fetch })
     assert.equal(calls[0].url, 'http://localhost:11434/v1/models')
     assert.deepEqual(calls[0].headers, {})
-    assert.deepEqual(models, [{ id: 'qwen3', name: undefined, contextLength: undefined, pricing: undefined, output: undefined }])
+    assert.deepEqual(models, [{ id: 'qwen3', name: undefined, contextLength: undefined, pricing: undefined, input: undefined, output: undefined }])
   })
 
   test('Anthropic', async () => {

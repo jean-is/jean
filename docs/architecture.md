@@ -55,7 +55,7 @@
 ## Layout
 
 ```
-index.html        CSP <meta>, light or dark (D85), import map, shell
+index.html        CSP <meta>, light or dark (D85) and the look (D111) before the first paint, import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
 manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but the light-or-dark line
 sw.js             offline cache, per-capability caching
@@ -65,7 +65,9 @@ core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js ev
                   capability uses lives with it, D96)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
                   discovery.js collection.js auto.js picker.js, dialogs.js and brains.js (loaded when a dialog opens, D76),
-                  knows.js ("What Jean knows about you", 0.4), sandbox.js (the sandbox client, 0.4)
+                  knows.js ("What Jean knows about you", 0.4), sandbox.js (the sandbox client, 0.4),
+                  looks.js (the themes, D111), touches.js (the user's own, loaded once there are some), inbox.js (Mail's list),
+                  looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
                   memory/ projects/ routines/ python/           (0.4)
@@ -313,7 +315,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 - **Always findable.** `find_tools` and `offer` come from the `discovery` capability, which is always loaded, so every new conversation declares them (D63).
 - **Finding them.** `find_tools(query)` ranks the tools that aren't declared by name and description, with the BM25 engine in `core/search.js`, and returns up to five signatures (`name({ file: string, pages?: string }): what it does`).
 - **The note.** A capability turned on mid-conversation adds the system note "New tools can be found with find_tools: run." (`data: { kind: 'tools', added, deferred: true }`). A conversation from 0.2, which has no `find_tools`, gets "New tools are available: …" and the tools declared instead.
-- **Calling them.** With `run` declared, deferred tools are called from a script, so the declared list never changes. Otherwise `find_tools` (or an accepted offer) declares the tools it found from the next request on, at the cost of one cache miss. The tool call records this as `_meta.declare`, so replaying the transcript rebuilds the declared list.
+- **Calling them.** With `run` declared, deferred tools are called from a script, so the declared list never changes. Otherwise `find_tools` (or an accepted offer) declares the tools it found from the next request on, at the cost of one cache miss. The tool call records this as `_meta.declare`, so replaying the transcript rebuilds the declared list. A brain that calls a deferred tool by its exact name, as `<connections>` gives it, gets it run under the rules without declaring anything; if a required argument is missing, it gets the tool's signature back instead (D104).
 - **Hidden tools** are never declared and exist only for scripts: `file` (a shared file's whole text) and `decide` (the reflexes) (D64).
 - **Native deferral.** Where a provider supports it (Anthropic's `defer_loading` with tool additions), the adapter may use it instead. The behaviour stays the same.
 - **The next conversation** declares the newly unlocked capability's tools directly. Connection tools stay deferred (`deferred: true`): `<connections>` names them, `find_tools` finds them, a script calls them (D89). Pinning a connection's tools comes later.
@@ -354,7 +356,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 - **Extraction:**
   - DOCX, XLSX and PPTX are zip files of XML: about 100 lines with `DecompressionStream` and `DOMParser`.
   - PDFs use pdf.js, loaded on demand.
-  - Scans and images go to the brain's vision ability (Gemma 4 E2B accepts images).
+  - Pictures (PNG, JPEG, WebP or GIF), dropped, pasted, picked or captured from the screen, are kept no larger than 1,568 pixels on a side and go to brains that can see: an image part right after their `<document>` tag (`image_url` for Chat Completions, an `image` block for Anthropic). A brain that can't see, such as the device's until its image encoder loads (D42), is told there is a picture it can't see. Auto picks a brain that can see when the conversation has one (D105).
 - **Retrieval, without a vector database:**
   1. If a document fits within about 25% of the active brain's context, include it whole. Provider prompt caching makes that cheap. Otherwise its first pages go in, up to that budget, and the `read(file, pages)` tool reaches the rest. The choice is made once, when the message is sent, and recorded on the file's link, so the prefix never changes (D55).
   2. Otherwise, the brain searches like a person, with `search(query)` and `read(file, pages)`. Search is a BM25 index over page-aware chunks, with `Intl.Segmenter` splitting words and a reflex re-ranking the results. A French question about an English PDF works because the brain writes its search query in the document's language.
@@ -404,7 +406,7 @@ Built in 0.5 (D87–D89). A connection is an address and, when the service asks 
 - **The client** (`caps/connections/mcp.js`) speaks Streamable HTTP: the stateless 2026-07-28 revision first, and the `initialize` handshake and session of 2025-03-26 to 2025-11-25 when a server answers like an earlier one.
 - **Signing in** (`caps/connections/auth.js`) follows MCP authorization from the browser: protected resource and authorization server metadata, dynamic registration as a public client, PKCE with a `resource` indicator, the `iss` check. The redirect comes back to Jean's own address with `?state=`. Client ID Metadata Documents wait for the domain (D27).
 - **Secrets.** Keys and tokens are encrypted in `.secrets/` like brain keys, never backed up; tokens are renewed before they expire.
-- **Tools** are named `<service>_<tool>`, deferred, and listed in `<connections>`. A read-only tool is "Using the internet" (`fetch`); any other is "Sending and sharing" (`other`); both ask first by default. Policy can add connections (`connections`).
+- **Tools** are named `<service>_<tool>`, made JavaScript identifiers so a script can write `tools.<name>()` (D106), deferred, and listed in `<connections>`. A read-only tool is "Using the internet" (`fetch`); any other is "Sending and sharing" (`other`); both ask first by default. Policy can add connections (`connections`).
 - **The browser's limits.** A service has to answer with CORS for a browser to reach it, and expose `Mcp-Session-Id` (2025 sessions) and, ideally, `WWW-Authenticate`. When it doesn't, Jean says it couldn't connect; there is no proxy (D23).
 
 ## Voice pipeline

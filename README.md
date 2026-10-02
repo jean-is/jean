@@ -9,9 +9,9 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
 ## What Jean does
 
 - **Talks in 33 languages,** right to left included, and you can switch languages mid-conversation.
-- **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and plain text.
+- **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and plain text. Pictures, and captures of your screen taken from the message box, go to brains that can see.
 - **Does the maths instead of guessing.** Calculations run as real code in a sandbox, with JavaScript (QuickJS) or Python's standard library (Pyodide).
-- **Hands back things you can use.** Copy an answer with its formatting, download a table as a spreadsheet, or print an answer and save it as a PDF.
+- **Hands back things you can use.** Copy an answer with its formatting, or download a table as a spreadsheet.
 - **Remembers, if you want it to:**
   - what it should know about you, on a page where you can read and change it;
   - standing instructions;
@@ -24,6 +24,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - Double-check compares each cited claim with its source.
   - When you come back, Jean tells you what changed since last time.
 - **Listens and speaks:** dictation, read-aloud, and a live voice conversation, with speech recognised on your device.
+- **Looks the way you like:** the lit room, a mail-style layout with your conversations listed beside the one you read, or ink on paper, each by day or by night. Your own colours, text size, typeface or CSS go on top.
 - **Asks first.** For each kind of action you choose *Do it*, *Ask me first* or *Never*. By default Jean reads and writes its own files freely, asks before sending, sharing, deleting or anything external, and never touches passwords or payments.
 
 Jean starts as a single box. Everything above is offered when you need it, like a game that teaches itself, and the "What Jean can do" page lights up as you find things.

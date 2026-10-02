@@ -10,7 +10,7 @@ A nod to *A Dark Room*. **Jean is the light source.** Its presence is felt in ho
 - **Discovery lights the house.** Each discovered capability "catches the light": its surface warms in from the shadow, and the palette warms a step. When everything has been discovered, the house is in full daylight. People feel their progress instead of counting it.
 - **Each project is a room** with its own light colour. Switching project feels like walking into another room, with the ambient light cross-fading.
 - **The collection page is the house.** Discovered rooms and capabilities are lit; the rest are silhouettes in shadow.
-- **Light mode tells the same story by day,** with paper and ink: progression shows as warmth and ink density. Jean follows the device's light or dark mode; a button in the header switches to the other one, and that choice is kept on the device (D85).
+- **Light mode tells the same story by day,** with paper and ink: progression shows as warmth and ink density. Jean follows the device's light or dark mode; Settings offer the other one, and that choice is kept on the device (D85, D107).
 
 ### How Jean's presence shows state
 
@@ -36,6 +36,16 @@ Jean's persona is the room's light, drawn small: a soft flame with a curled tip,
 - **It is not in the prompt.** The base prompt stays free of personas (AGENTS.md); the little light is purely visual and decorative (`aria-hidden`).
 - **A project's light tints it.** Every colour of the little light comes from one custom property, `--tint`: Jean's amber by default, any CSS colour otherwise. Only the hue is taken, so the face keeps its contrast whatever the colour. Projects (0.4) set it from the `colour` in `project.md`: on the root for the room you are in, or on one `<app-persona>` (a project's card in the house).
 - **It is the app icon.** `icons/icon.svg` is the same drawing, idle, in the dark room, inside the maskable safe zone.
+
+## Looks
+
+The room is Jean's own look, and the default. Settings → Appearance offers two more, each in light and dark (D111):
+
+- **Room:** everything above. A dark, warm room lit by the little light, the display face, and the room warming with each discovery.
+- **Mail:** after the devs.new task inbox. Conversations sit in a list beside the one open, as in an email client: on a wide screen a rail (the name, what Jean can do, then language and Settings at its foot), the list and the conversation; narrower, the list and the conversation; on a phone, the room's layout with the list in its drawer. Neutral greys, one blue accent, the system face, flat surfaces. The little light stays at the name.
+- **Paper:** ink on paper. A serif for everything, a rule under the masthead, the user's words set as a quotation in the margin's red, square corners, no glow.
+
+**Make it yours** adds an accent colour, a background colour, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the little light and the room's glow, unless a project has a light of its own.
 
 ## Typography
 
@@ -69,7 +79,7 @@ Jean's persona is the room's light, drawn small: a soft flame with a curled tip,
 
 | Item | Limit |
 |---|---|
-| CSS | ≤ 12 KB gzipped |
+| CSS | ≤ 12 KB gzipped for the room; another look adds its own file only when chosen |
 | Display font | ≤ 30 KB |
 | Images | 0 |
 | Icons | ~20 inline SVGs |
