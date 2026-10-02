@@ -9,6 +9,7 @@ import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { scriptURL } from './trusted.js'
 import './chat.js'
+import './persona.js'
 
 const STARTERS = ['summarize', 'email', 'explain']
 
@@ -18,7 +19,7 @@ class Shell extends Element {
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
-        <button class="wordmark" @click=${newConversation} title=${t('action.new')}>${BRAND.name}</button>
+        <button class="wordmark" @click=${newConversation} title=${t('action.new')}><app-persona></app-persona>${BRAND.name}</button>
         <nav class="bar-actions" aria-label=${t('a11y.menu')}>
           <button class="icon-button" @click=${openCollection} aria-label=${t('collection.title', { name: BRAND.name })} title=${t('collection.title', { name: BRAND.name })}>${icons.house}</button>
           <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
@@ -89,6 +90,7 @@ export function formatBytes(bytes) {
 
 function welcome() {
   return html`<section class="welcome">
+    <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>
     <ul class="starters">${STARTERS.map((key) => html`<li>
       <button class="starter" @click=${() => { app.draft.value = t(`starter.${key}.prompt`); focusComposer() }}>${t(`starter.${key}`)}</button>

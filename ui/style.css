@@ -47,6 +47,7 @@
     --ember-off: oklch(0.24 0.02 50 / 0.2);
     --glow: oklch(0.86 0.12 75);
     --glow-alpha: 0.7;
+    --persona-rim: var(--flame-deep);
   }
 }
 
@@ -103,6 +104,78 @@ button { cursor: pointer; }
 @keyframes warm { from { --light: 0.62; } to { --light: 0.78; } }
 @keyframes settle { from { --light: 0.75; } to { --light: 0.42; } }
 
+/* ─── The little light (ui/persona.js) ──────────────────────────────────── */
+/* The light, with a face. The same colours by night and by day; by day it is drawn in ink. */
+
+app-persona {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  inline-size: var(--persona-size, 2rem);
+  aspect-ratio: 1;
+  container-type: inline-size;
+}
+app-persona::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, oklch(from var(--glow) l c h / var(--glow-alpha)), transparent);
+  opacity: 0.5;
+  transition: opacity 0.8s var(--ease);
+  animation: glow 4s ease-in-out infinite alternate;
+}
+.persona { position: relative; display: block; inline-size: 100%; block-size: 100%; overflow: visible; }
+.persona * { transition: opacity 0.3s, translate 0.6s var(--ease), scale 0.4s var(--ease); }
+.persona-flame { transform-origin: 50px 91px; animation: sway 3s ease-in-out infinite alternate; }
+.persona-body, .persona-sparks { fill: oklch(0.74 0.17 54); }
+.persona-body { stroke: var(--persona-rim, none); stroke-width: 3; paint-order: stroke; }
+.persona-inner { fill: oklch(0.91 0.115 84); }
+.persona-eyes { fill: oklch(0.26 0.05 40); transform-origin: 50px 62px; animation: blink 5s infinite; }
+.persona-eyes circle { fill: oklch(1 0 0 / 0.9); }
+.persona-face path { fill: none; stroke: oklch(0.26 0.05 40); stroke-width: 2.4; stroke-linecap: round; transform-origin: 50px 71px; }
+.persona-cheeks { fill: oklch(0.69 0.16 27 / 0.5); }
+.persona-sparks circle, .persona-happy { opacity: 0; }
+@container (inline-size < 2.6rem) { .persona-cheeks, .persona-eyes circle { display: none; } }
+
+app-persona[data-presence='listening']::before { opacity: 0.8; }
+app-persona[data-presence='listening'] .persona-face { translate: 0 2.5px; }
+app-persona[data-presence='thinking']::before { animation-duration: 0.9s; }
+app-persona[data-presence='thinking'] .persona-flame { animation-duration: 0.8s; }
+app-persona[data-presence='thinking'] .persona-face { animation: ponder 2.4s ease-in-out infinite alternate; }
+app-persona[data-presence='thinking'] .persona-mouth { scale: 0.55 0.8; }
+app-persona[data-presence='thinking'] .persona-sparks circle { animation: rise 1.8s ease-out infinite; }
+app-persona[data-presence='thinking'] .persona-sparks circle:nth-child(2) { animation-delay: 0.6s; }
+app-persona[data-presence='thinking'] .persona-sparks circle:nth-child(3) { animation-delay: 1.2s; }
+app-persona[data-presence='answering']::before { opacity: 1; }
+app-persona[data-presence='answering'] .persona { animation: bob 0.8s ease-in-out infinite alternate; }
+app-persona[data-presence='done']::before { opacity: 0.8; }
+app-persona[data-presence='done'] .persona { animation: hop 0.8s var(--ease); }
+app-persona[data-presence='done'] .persona-eyes { opacity: 0; }
+app-persona[data-presence='done'] .persona-happy { opacity: 1; }
+app-persona[data-presence='waiting']::before { animation-duration: 0.9s; }
+app-persona[data-presence='waiting'] .persona-face { translate: 2px 2.5px; }
+app-persona[data-presence='waiting'] .persona-mouth { scale: 0.7 1; }
+app-persona[data-presence='oops']::before { opacity: 0.25; }
+app-persona[data-presence='oops'] .persona-flame { scale: 1.03 0.94; animation-play-state: paused; }
+app-persona[data-presence='oops'] .persona-face { translate: -2px 2px; }
+app-persona[data-presence='oops'] .persona-mouth { scale: 0.6 -0.7; }
+
+@keyframes glow { from { scale: 0.92; } to { scale: 1.06; } }
+@keyframes sway { from { transform: skewX(2deg) scale(1, 0.98); } to { transform: skewX(-2.5deg) scale(1, 1.03); } }
+@keyframes blink { 0%, 93%, 100% { scale: 1; } 96% { scale: 1 0.1; } }
+@keyframes ponder { from { translate: -3px -3.5px; } to { translate: 2px -3.5px; } }
+@keyframes rise { from { opacity: 0; translate: 0 4px; } 25% { opacity: 1; } to { opacity: 0; translate: 2px -16px; } }
+@keyframes bob { from { translate: 0 1%; } to { translate: 0 -3%; } }
+@keyframes hop { 40% { translate: 0 -12%; } }
+
+/* On the first screen it sits above the question; once the conversation begins it flies into the header. */
+.welcome app-persona { --persona-size: clamp(4.5rem, 11vw, 7rem); margin-block-end: -1rem; margin-inline-start: calc(var(--persona-size) * -0.17); }
+.wordmark app-persona { margin-block-start: -0.35rem; }
+app-shell:has(.welcome) .wordmark app-persona { display: none; }
+.welcome app-persona, .wordmark app-persona { view-transition-name: persona; }
+:view-transition-group(persona) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
+
 /* ─── Frame ─────────────────────────────────────────────────────────────── */
 
 app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
@@ -120,6 +193,9 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
   background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0));
 }
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   border: 0;
   background: none;
   padding: 0.1rem 0.25rem;
@@ -610,10 +686,14 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
   :view-transition-group(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {
-  :root { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
+  :root { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); --persona-rim: var(--ink); }
 }
 @media (forced-colors: active) {
-  .room { display: none; }
+  .room, app-persona::before, .persona-inner, .persona-cheeks, .persona-eyes circle { display: none; }
+  app-persona { forced-color-adjust: none; }
+  .persona-body { fill: Canvas; stroke: CanvasText; }
+  .persona-eyes, .persona-sparks { fill: CanvasText; }
+  .persona-face path { stroke: CanvasText; }
   .send, .button.primary, .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   .choice-option.is-selected, .room-card.is-lit { border: 2px solid Highlight; }
   .hero-question { color: CanvasText; background: none; }
