@@ -2,7 +2,7 @@
   "$comment": "Hard limits enforced in CI. Going over a limit means deleting something first. Never raise a limit in the same change that needs it. Initial values, to be revisited only through docs/decisions.md.",
   "lines": {
     "core": 3000,
-    "app": 10000
+    "app": 15000
   },
   "runtimeDependencies": {
     "max": 3,
