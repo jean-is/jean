@@ -25,3 +25,21 @@ test('the CSP keeps its protections', () => {
 test('the CSP meta comes before any script', () => {
   assert.ok(html.indexOf('Content-Security-Policy') < html.indexOf('<script'))
 })
+
+const sandbox = await readFile(new URL('../sandbox.html', import.meta.url), 'utf8')
+const sandboxCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(sandbox)?.[1] ?? ''
+
+test('the sandbox allows exactly its inline relay, and no network', () => {
+  const relay = /<script>([\s\S]*?)<\/script>/.exec(sandbox)?.[1] ?? ''
+  const hash = createHash('sha256').update(relay).digest('base64')
+  assert.ok(sandboxCSP.includes(`'sha256-${hash}'`), `update the sandbox's script-src hash to 'sha256-${hash}'`)
+  for (const directive of ["default-src 'none'", "connect-src 'none'", 'worker-src blob:', "base-uri 'none'"]) assert.ok(sandboxCSP.includes(directive), directive)
+  assert.ok(!/'self'|unsafe-inline|unsafe-eval'|https?:/.test(sandboxCSP.replace("'wasm-unsafe-eval'", '')), 'nothing to load from anywhere')
+  assert.ok(sandbox.indexOf('Content-Security-Policy') < sandbox.indexOf('<script'))
+})
+
+test('the sandbox is only ever framed without allow-same-origin', async () => {
+  const compute = await readFile(new URL('../caps/compute/compute.js', import.meta.url), 'utf8')
+  assert.match(compute, /setAttribute\('sandbox', 'allow-scripts'\)/)
+  assert.doesNotMatch(compute, /allow-same-origin'/)
+})

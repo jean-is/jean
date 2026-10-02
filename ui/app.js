@@ -7,7 +7,7 @@ import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
 import { app, effective, activeBrain, LOCALES, refreshConversations, finishOpenRouter, rememberUnlocked } from './state.js'
-import { configureCapabilities, unlock } from './caps.js'
+import { configureCapabilities, unlock, loaded } from './caps.js'
 import { registerServiceWorker } from './shell.js'
 import { startRouter } from './router.js'
 
@@ -37,7 +37,12 @@ async function start() {
     root.dir = dir(locale.value)
   })
   effect(() => { root.dataset.presence = app.presence.value })
-  effect(() => { root.dataset.lit = String(activeBrain.value ? (app.conversations.value.length ? 2 : 1) : 0) })
+  // The room warms a step with each discovery (docs/design.md): a brain, a first
+  // conversation, then every capability (CSSOM, which the CSP allows; style attributes it doesn't).
+  effect(() => {
+    const discovered = [...loaded.value.keys()].filter((id) => id !== 'discovery' && id !== 'voice').length
+    root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
+  })
 
   app.projectDir = await ensureHome(app.fs, { by: app.deviceId })
   await refreshConversations()
@@ -47,7 +52,7 @@ async function start() {
   document.body.append(document.createElement('app-shell'))
   root.classList.add('is-ready')
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
-  app.ready = Promise.all([...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock))
+  app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
   await finishOpenRouter()
   registerServiceWorker()
 }

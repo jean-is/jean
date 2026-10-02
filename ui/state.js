@@ -3,17 +3,18 @@ import { signal, computed } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL } from '../core/settings.js'
 import { createConversation, appendRecords, loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
-import { userRecords, metaRecord, toChatMessages, applyUpdate, titleOf, linkedFiles } from '../core/events.js'
+import { userRecords, metaRecord, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns } from '../core/events.js'
 import { runTurn } from '../core/loop.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { t, locale, useLocale, languageName, firstWords } from '../core/i18n.js'
 import { PROVIDERS, listModels, warmCache } from '../core/llm.js'
-import { fileText, documentPart, splitPages, pagesThatFit, estimateTokens } from '../core/files.js'
+import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber } from '../core/files.js'
 import { createVerifier, challengeS256, openRouterAuthURL, exchangeOpenRouterCode } from '../core/oauth.js'
 import { ulid } from '../core/ulid.js'
 import { getSecret, setSecret, deleteSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
+import { chooseBrain, isLocal, TIERS } from './auto.js'
 
 /** @typedef {import('../core/types.js').FS} FS */
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
@@ -29,7 +30,8 @@ import { loaded, unlock, contributions } from './caps.js'
 /** @typedef {import('../core/settings.js').Settings} Settings */
 /** @typedef {'idle' | 'listening' | 'thinking' | 'answering' | 'done'} Presence */
 
-export const LOCALES = ['en', 'fr', 'ar', 'ja']
+// The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
+export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
 
 export const app = {
   fs: /** @type {FS} */ (/** @type {unknown} */ (null)),
@@ -48,7 +50,7 @@ export const app = {
   /** @type {import('@preact/signals-core').Signal<{ code: string, message: string } | null>} */
   error: signal(null),
   presence: signal(/** @type {Presence} */ ('idle')),
-  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | null>} */
   dialog: signal(null),
   draft: signal(''),
   /** @type {import('@preact/signals-core').Signal<{ toolCall: ToolCallInfo, resolve: (option: any) => void } | null>} */
@@ -59,6 +61,12 @@ export const app = {
   toast: signal(null),
   models: signal(/** @type {Record<string, ModelInfo[]>} */ ({})),
   attachments: signal(/** @type {Attachment[]} */ ([])),
+  /** A capability offered above the box (progressive discovery), with its download's progress. */
+  offer: signal(/** @type {{ id: string, progress?: number } | null} */ (null)),
+  /** The brain's offer, waiting in the reply for the user's answer. */
+  offering: signal(/** @type {{ id: string, resolve: (yes: boolean) => void } | null} */ (null)),
+  /** Follow-ups the reflexes picked from the catalogue, by the answer's turn. */
+  actions: signal(/** @type {Record<string, string[]>} */ ({})),
   /** Capabilities the user turned on and policy's preUnlock, loaded at start. */
   ready: /** @type {Promise<unknown>} */ (Promise.resolve()),
 }
@@ -74,6 +82,13 @@ export const effective = computed(() => applyPolicy(app.settings.value, app.poli
 export const activeBrain = computed(() => {
   const { settings } = effective.value
   return settings.brains.find((brain) => brain.id === settings.activeBrain) ?? settings.brains[0] ?? null
+})
+
+/** What the chip in the box says. */
+export const chipLabel = computed(() => {
+  const { settings } = effective.value
+  if (!settings.brains.length) return t('brain.choose')
+  return settings.auto ? t('auto.name') : brainLabel(/** @type {BrainConfig} */ (activeBrain.value))
 })
 
 /** @param {BrainConfig} brain */
@@ -120,6 +135,11 @@ export async function setRule(kind, value) {
 /** @param {string | null} voice */
 export async function setVoice(voice) {
   await updateSettings({ voice })
+}
+
+/** @param {Partial<Pick<Settings, 'auto' | 'cloud'>>} patch */
+export async function setBrainMode(patch) {
+  await updateSettings(patch)
 }
 
 /** @param {string} id */
@@ -311,9 +331,9 @@ export function contextTokens(brain) {
 /**
  * Links for the files about to be sent. Each records which pages go into the context,
  * decided now against the brain's budget and then frozen (files.js).
- * @param {BrainConfig} brain
+ * @param {BrainConfig} brain @param {Envelope[]} records
  */
-function attachedLinks(brain) {
+function attachedLinks(brain, records) {
   let budget = contextTokens(brain) * DOCUMENT_SHARE
   /** @type {ResourceLink[]} */
   const links = []
@@ -321,7 +341,9 @@ function attachedLinks(brain) {
     if (item.status !== 'ready' || !item.link || !item.pages) continue
     const [first, last] = pagesThatFit(item.pages, Math.max(budget, 1))
     budget -= item.pages.slice(0, last).reduce((sum, page) => sum + estimateTokens(page), 0)
-    links.push(last < item.pages.length ? { ...item.link, _meta: { pages: [first, last], of: item.pages.length } } : item.link)
+    // The number the brain cites it by, kept if the same file was shared before.
+    const source = sourceNumber([...linkedFiles(records), ...links], item.link)
+    links.push({ ...item.link, _meta: { ...(last < item.pages.length && { pages: [first, last], of: item.pages.length }), source } })
   }
   return links
 }
@@ -336,26 +358,85 @@ function attachedLinks(brain) {
 async function prepare(text, brain, records) {
   await app.ready
   const { tools, lines, rules } = contributions()
-  const now = promptState({ language: languageName(locale.value, 'en'), tools: tools.map((tool) => tool.spec.name) })
+  const names = tools.filter((tool) => !tool.hidden).map((tool) => tool.spec.name)
+  const now = promptState({ language: languageName(locale.value, 'en'), tools: names })
   const frozen = frozenPrompt(records)
   const head = frozen
     ? changeNotes(frozen.state, now)
     : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: BRAND.name, uiLanguage: now.language, tools: lines, rules, now: new Date() }), now)]
-  return [...head, ...userRecords(text, attachedLinks(brain), app.deviceId)]
+  return [...head, ...userRecords(text, attachedLinks(brain, records), app.deviceId)]
 }
 
-/** @param {string} text */
-export async function send(text) {
-  const brain = activeBrain.value
+// ─── Auto ────────────────────────────────────────────────────────────────────
+
+/** The highest level Auto used in a conversation: it never steps down within one. @param {Envelope[]} records */
+const autoLevel = (records) => Math.max(0, ...records.map((record) => /** @type {any} */ (record.update)?.rawInput?.auto?.level ?? 0))
+
+/** The last answer's text, for "is the user unhappy with it?". @param {Envelope[]} records */
+const lastAnswer = (records) => {
+  const update = records.findLast((record) => record.update?.sessionUpdate === 'agent_message_chunk')?.update
+  return update?.sessionUpdate === 'agent_message_chunk' ? update.content.text : undefined
+}
+
+/**
+ * The brain for the next answer: the one the user picked, or Auto's choice from what the
+ * reflexes make of the message (they also offer a capability when one would help).
+ * @param {string} text @param {Envelope[]} records @param {number} [boost] levels above the last one
+ * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any> } | null>}
+ */
+async function pickBrain(text, records, boost = 0) {
+  const { settings } = effective.value
+  const { sense } = await import('./discovery.js')
+  const signals = await sense(text, lastAnswer(records))
+  if (!settings.auto) {
+    const brain = activeBrain.value
+    return brain && (settings.cloud || isLocal(brain)) ? { brain } : null
+  }
+  await Promise.all(settings.brains.filter((brain) => !isLocal(brain)).map(loadModels))
+  const choice = chooseBrain({
+    brains: settings.brains,
+    preferred: settings.activeBrain,
+    cloud: settings.cloud,
+    signals,
+    floor: Math.min(2, autoLevel(records) + boost),
+    has: (brain, model) => (app.models.value[brain.id] ?? []).some((info) => info.id === model),
+    tiers: app.policy.tiers ?? TIERS,
+  })
+  return choice && { brain: choice.brain, meta: { auto: { level: choice.level, reason: choice.reason } } }
+}
+
+/** Whether "Ask a smarter brain" can step up from an answer Auto chose. @param {ToolCallInfo | undefined} entry */
+export function canStepUp(entry) {
+  const { settings } = effective.value
+  return settings.auto && settings.cloud && (entry?.rawInput?.auto?.level ?? 2) < 2 && settings.brains.some((brain) => !isLocal(brain))
+}
+
+/** Asks again, one level up. */
+export function askSmarter() {
+  send(t('auto.smarter.prompt'), 1)
+}
+
+/** @param {string} text @param {number} [boost] Auto: levels above the last answer's */
+export async function send(text, boost = 0) {
   const files = app.attachments.value
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
-  if (!brain) {
+  if (!effective.value.settings.brains.length) {
     app.draft.value = text
     app.dialog.value = 'brain'
     return
   }
   let current = app.current.value
+  app.busy.value = true
+  setPresence('thinking')
+  const picked = await pickBrain(text.trim(), current?.records ?? [], boost).finally(() => { app.busy.value = false })
+  if (!picked) {
+    setPresence('idle')
+    notify(t('auto.noPrivate'))
+    app.dialog.value = 'picker'
+    return
+  }
+  const { brain, meta } = picked
   const added = await prepare(text.trim(), brain, current?.records ?? [])
   app.draft.value = ''
   app.attachments.value = []
@@ -369,24 +450,24 @@ export async function send(text) {
   // The big welcome question morphs into the conversation title.
   if (!current.records.length && document.startViewTransition) await document.startViewTransition(show).updateCallbackDone
   else show()
-  await runAgent(brain)
+  await runAgent(brain, meta)
 }
 
 /** Run the agent on the current conversation, up to its last user message. */
 export async function retry() {
-  const brain = activeBrain.value
-  if (brain && app.current.value && !app.busy.value) await runAgent(brain)
+  const current = app.current.value
+  if (!current || app.busy.value) return
+  const picked = await pickBrain('', current.records)
+  if (picked) await runAgent(picked.brain, picked.meta)
 }
 
-/** @param {BrainConfig} brain */
-async function runAgent(brain) {
+/** @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it */
+async function runAgent(brain, meta) {
   const current = /** @type {NonNullable<typeof app.current.value>} */ (app.current.value)
   await app.ready
   const frozen = frozenPrompt(current.records)
   const messages = toChatMessages(current.records, await documents(current.records))
   const lastUser = messages.findLastIndex((message) => message.role === 'user')
-  const declared = frozen?.state.tools ?? []
-  const tools = contributions().tools.filter((tool) => declared.includes(tool.spec.name))
   if (brain.api === 'device') await unlock('brain-local')
   const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
   lastRequestAt = Date.now()
@@ -414,9 +495,12 @@ async function runAgent(brain) {
       apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
       system: frozen?.system ?? '',
       history: messages.slice(0, lastUser + 1),
-      tools,
+      // Every tool can be called from a script; the brain sees the declared ones (D47).
+      tools: () => contributions().tools,
+      declared: frozen?.state.tools ?? [],
       ...(stream && { stream }),
       label: brainLabel(brain),
+      meta,
       signal: controller.signal,
       rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => new Promise((resolve) => {
@@ -450,6 +534,7 @@ async function runAgent(brain) {
     app.busy.value = false
     app.live.value = null
     app.permission.value?.resolve('reject_once')
+    app.offering.value?.resolve(false)
     let records = [...current.records, ...settled]
     if (!titleOf(records)) {
       const chunks = records.flatMap((record) => (record.update?.sessionUpdate === 'user_message_chunk' ? [record.update.content] : []))
@@ -465,7 +550,17 @@ async function runAgent(brain) {
     if (app.current.value?.path === current.path) app.current.value = { ...current, records }
     await refreshConversations()
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
+    const answer = lastAnswer(settled)
+    const at = foldTurns(records).at(-1)?.at
+    if (answer && at) suggestActions(at, answer)
   }
+}
+
+/** Follow-ups from the catalogue, picked by the reflexes when they're on. @param {string} at @param {string} answer */
+async function suggestActions(at, answer) {
+  const { followUps } = await import('./discovery.js')
+  const ids = await followUps(answer)
+  if (ids.length) app.actions.value = { ...app.actions.value, [at]: ids }
 }
 
 /** @param {unknown} error */

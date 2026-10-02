@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Mon médecin m'a dit que mon taux de sucre dans le sang était trop élevé. Comment changer mon alimentation ?",
+  "p2": "Je gagne 3 200 euros par mois et je dois 14 000 euros sur ma carte de crédit. En combien de temps puis-je rembourser ?",
+  "p3": "C'est confidentiel : ma collègue Anna va être licenciée le mois prochain. Comment l'annoncer à l'équipe ?",
+  "p4": "Depuis mon divorce, je n'arrive plus à dormir et je suis tout le temps anxieux. Que puis-je faire ?",
+  "p5": "Quelle est la capitale de l'Australie ?",
+  "p6": "Écris un court poème sur les feuilles d'automne.",
+  "p7": "Comment transformer un document Word en PDF ?",
+  "p8": "Résume les principales causes de la Révolution française.",
+  "d1": "Salut ! Comment vas-tu aujourd'hui ?",
+  "d2": "Dans quel fuseau horaire se trouve Tokyo ?",
+  "d3": "Résume cet article en trois points.",
+  "d4": "Réécris ce paragraphe pour qu'il soit plus poli.",
+  "d5": "Compare ces trois devis de fournisseurs, additionne les coûts annuels et recommande-m'en un.",
+  "d6": "Passe ces factures en revue, trouve les doublons et dis-moi combien nous avons payé en trop.",
+  "d7": "Analyse les risques de responsabilité de cette clause de contrat en droit commercial allemand et propose une formulation plus sûre.",
+  "d8": "Conçois un test statistique pour vérifier si le résultat de notre test A/B est significatif avec des groupes de tailles différentes.",
+  "u1": [
+   "La réunion est mardi à 15 h.",
+   "C'est faux, je t'ai dit qu'elle avait été déplacée à jeudi."
+  ],
+  "u2": [
+   "Voici un résumé détaillé du rapport, section par section.",
+   "Beaucoup trop long. Je t'ai demandé deux lignes."
+  ],
+  "u3": [
+   "Le total s'élève à 4 200 euros.",
+   "Ça ne tombe pas juste. Vérifie encore."
+  ],
+  "u4": [
+   "Madame, Monsieur, je souhaite par la présente vous informer de mon absence.",
+   "C'est raide et robotique, ça ne me ressemble pas du tout."
+  ],
+  "u5": [
+   "La réunion est mardi à 15 h.",
+   "Super, merci ! Tu peux aussi préparer l'ordre du jour ?"
+  ],
+  "u6": [
+   "Le total s'élève à 4 200 euros.",
+   "Parfait. Maintenant, répartis-le par mois."
+  ],
+  "u7": [
+   "Voici trois idées pour le déjeuner d'équipe.",
+   "J'aime bien la deuxième. Où pourrait-on réserver ?"
+  ],
+  "u8": [
+   "Paris est la capitale de la France.",
+   "Et pour l'Italie ?"
+  ],
+  "c1": "Quelle est la moyenne exacte de 12,5, 18,25, 7, 31,75 et 9 ?",
+  "c2": "Calcule la mensualité d'un prêt de 200 000 à 3,4 % sur 25 ans.",
+  "c3": "Quel produit a le plus progressé entre les deux trimestres dans mon tableau des ventes ?",
+  "c4": "Tu peux lire le bail que mon propriétaire m'a envoyé et me dire le délai de préavis ?",
+  "c5": "J'ai le compte rendu de la réunion en PDF. Tu peux le résumer ?",
+  "c6": "Écris un message d'anniversaire pour ma sœur.",
+  "c7": "Quel serait un bon nom pour une boulangerie ?",
+  "c8": "Comment dit-on « merci beaucoup » en espagnol ?",
+  "t1": "En janvier, nous avons vendu 120 unités à Lyon, 95 à Paris et 80 à Lille. En février, 130 à Lyon, 101 à Paris et 76 à Lille. En mars, 142 à Lyon, 99 à Paris et 90 à Lille.",
+  "t2": "L'offre de base coûte 9 euros par mois avec 10 Go de stockage, l'offre standard 15 euros avec 100 Go, et l'offre premium 25 euros avec 1 To et une assistance prioritaire.",
+  "t3": "Votre congé du 3 au 14 août est accepté. Prévenez votre équipe et transmettez vos dossiers en cours à Marie avant de partir.",
+  "t4": "Paris est la capitale de la France.",
+  "e1": "Votre congé du 3 au 14 août est accepté. Prévenez votre équipe et transmettez vos dossiers en cours à Marie avant de partir.",
+  "e2": "Les bureaux seront fermés le vendredi 12 mai pour maintenance : tout le monde devra travailler depuis chez soi ce jour-là.",
+  "e3": "Le tableau d'amortissement applique une méthode dégressive avec un taux annuel effectif capitalisé mensuellement, si bien que la part de capital de chaque échéance augmente de façon géométrique.",
+  "e4": "La photosynthèse est le processus par lequel les organismes chlorophylliens convertissent l'énergie lumineuse en énergie chimique grâce aux réactions photochimiques et au cycle de Calvin, en fixant le CO2 sous forme de trioses phosphates."
+ }
+}

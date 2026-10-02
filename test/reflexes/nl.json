@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Mijn arts zei dat mijn bloedsuiker te hoog is. Hoe moet ik mijn eetpatroon aanpassen?",
+  "p2": "Ik verdien 3.200 euro per maand en heb 14.000 euro schuld op mijn creditcard. Hoe snel kan ik dat afbetalen?",
+  "p3": "Dit is vertrouwelijk: mijn collega Anna wordt volgende maand ontslagen. Hoe vertel ik het aan het team?",
+  "p4": "Sinds mijn scheiding kan ik niet slapen en ben ik voortdurend angstig. Wat kan ik doen?",
+  "p5": "Wat is de hoofdstad van Australië?",
+  "p6": "Schrijf een kort gedicht over herfstbladeren.",
+  "p7": "Hoe zet ik een Word-document om naar pdf?",
+  "p8": "Vat de belangrijkste oorzaken van de Franse Revolutie samen.",
+  "d1": "Hoi! Hoe gaat het vandaag?",
+  "d2": "In welke tijdzone ligt Tokio?",
+  "d3": "Vat dit artikel samen in drie punten.",
+  "d4": "Herschrijf deze alinea zodat hij beleefder klinkt.",
+  "d5": "Vergelijk deze drie offertes van leveranciers, tel de jaarlijkse kosten op en raad er één aan.",
+  "d6": "Loop deze facturen na, zoek de dubbele en vertel me hoeveel we te veel hebben betaald.",
+  "d7": "Beoordeel deze contractclausule op aansprakelijkheidsrisico's volgens het Duitse handelsrecht en stel een veiligere formulering voor.",
+  "d8": "Ontwerp een statistische toets om na te gaan of de uitkomst van onze A/B-test significant is bij ongelijke groepsgroottes.",
+  "u1": [
+   "De vergadering is dinsdag om 15.00 uur.",
+   "Dat klopt niet, ik zei toch dat hij naar donderdag is verplaatst."
+  ],
+  "u2": [
+   "Hier is een uitgebreide samenvatting van het rapport, per hoofdstuk.",
+   "Veel te lang. Ik vroeg om twee regels."
+  ],
+  "u3": [
+   "Het totaal komt op 4.200 euro.",
+   "Dat klopt niet. Reken het nog eens na."
+  ],
+  "u4": [
+   "Geachte heer, mevrouw, hierbij wil ik u op de hoogte stellen van mijn afwezigheid.",
+   "Dit klinkt stijf en robotachtig, helemaal niet zoals ik ben."
+  ],
+  "u5": [
+   "De vergadering is dinsdag om 15.00 uur.",
+   "Top, bedankt! Kun je ook de agenda opstellen?"
+  ],
+  "u6": [
+   "Het totaal komt op 4.200 euro.",
+   "Perfect. Verdeel het nu per maand."
+  ],
+  "u7": [
+   "Hier zijn drie ideeën voor de teamlunch.",
+   "De tweede vind ik leuk. Waar kunnen we reserveren?"
+  ],
+  "u8": [
+   "Parijs is de hoofdstad van Frankrijk.",
+   "En die van Italië?"
+  ],
+  "c1": "Wat is het precieze gemiddelde van 12,5, 18,25, 7, 31,75 en 9?",
+  "c2": "Bereken de maandlast van een lening van 200.000 tegen 3,4% over 25 jaar.",
+  "c3": "Welk product is tussen de twee kwartalen in mijn verkooptabel het meest gegroeid?",
+  "c4": "Kun je het huurcontract lezen dat mijn verhuurder stuurde en me de opzegtermijn vertellen?",
+  "c5": "Ik heb de notulen van de vergadering als pdf. Kun je ze samenvatten?",
+  "c6": "Schrijf een verjaardagsbericht voor mijn zus.",
+  "c7": "Wat is een goede naam voor een bakkerij?",
+  "c8": "Hoe zeg je 'heel erg bedankt' in het Spaans?",
+  "t1": "In januari verkochten we 120 stuks in Lyon, 95 in Parijs en 80 in Lille. In februari 130 in Lyon, 101 in Parijs en 76 in Lille. In maart 142 in Lyon, 99 in Parijs en 90 in Lille.",
+  "t2": "Het basisabonnement kost 9 euro per maand met 10 GB opslag, het standaardabonnement 15 euro met 100 GB en het premiumabonnement 25 euro met 1 TB en voorrang bij ondersteuning.",
+  "t3": "Je verlof van 3 tot 14 augustus is goedgekeurd. Laat het je team weten en draag je lopende dossiers vóór je vertrek over aan Marie.",
+  "t4": "Parijs is de hoofdstad van Frankrijk.",
+  "e1": "Je verlof van 3 tot 14 augustus is goedgekeurd. Laat het je team weten en draag je lopende dossiers vóór je vertrek over aan Marie.",
+  "e2": "Het kantoor is op vrijdag 12 mei gesloten voor onderhoud, dus die dag werkt iedereen thuis.",
+  "e3": "Het aflossingsschema past een degressieve methode toe met een maandelijks samengestelde effectieve jaarrente, zodat het aflossingsdeel van elke termijn geometrisch toeneemt.",
+  "e4": "Fotosynthese is het proces waarbij organismen met bladgroen lichtenergie via de lichtafhankelijke reacties en de Calvincyclus omzetten in chemische energie, waarbij CO2 wordt vastgelegd in triosefosfaten."
+ }
+}

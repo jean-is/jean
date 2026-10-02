@@ -22,6 +22,8 @@ Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend
 
 Where the files come from is settled (D43). How the opaque-origin sandbox loads them is not: host `vendor/pyodide/` with CORS (option a), or have the parent document transfer the files with `connect-src 'none'` (option b)? The spike is planned in 0.4; see [architecture.md](architecture.md#security).
 
+Since 0.3, QuickJS already uses option (b) in `sandbox.html` (D65): the parent transfers the files, the sandbox has `connect-src 'none'`, and a classic worker loads them from blob URLs. The 0.4 spike only has to check that Pyodide's loader accepts files handed to it the same way.
+
 ## Display face
 
 Instrument Serif ships for now (D34). Fraunces will probably replace it. To check before switching: a static instance (fixed optical size, softness and "wonk"), Latin subset, regular and italic, within the 30 KB budget.

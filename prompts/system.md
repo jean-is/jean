@@ -8,7 +8,7 @@ Inspired by pi's prompt (earendil-works/pi, `packages/coding-agent/src/core/syst
 
 ## Base
 
-Budget: about 150 tokens (hard limit in [budgets.json](../budgets.json)). Instructions stay in English, because models (small ones especially) follow English instructions best. Replies follow the user's language.
+Budget: 200 tokens, a hard limit in [budgets.json](../budgets.json); the base prompt is 182 tokens as of 0.3. The text lives in `core/prompt.js`. Instructions stay in English, because models (small ones especially) follow English instructions best. Replies follow the user's language.
 
 ```text
 You are {assistantName}, an assistant that does work for people, right in their web browser.
@@ -23,7 +23,9 @@ You read the files they share, work things out, and hand back results they can u
 - Do the work first, then say briefly what you did and where the result is.
 - If the request is unclear, ask one short question. Otherwise, proceed.
 - Never invent facts, numbers, quotes or sources. Say when you are unsure.
+- Cite numbered sources as [n].
 - Be concise.
+- End with up to 3 short requests the user might send next, inside <suggestions>, one per line.
 {rules contributed by unlocked capabilities}
 </rules>
 
@@ -55,6 +57,10 @@ These are filled in once, when a conversation starts, and then frozen with the r
 <skills>
 {name: when to use it — read the file before using it}
 </skills>
+
+<context>
+Today is {date}.
+</context>
 ```
 
 ## System notes
@@ -63,26 +69,28 @@ When something changes during a conversation, Jean appends a short note to the t
 
 ```text
 The interface language is now French.
-New tools are available through run: tools.chart(data, kind). Use find_tools for details.
-The user changed a rule: deleting files now needs their approval.
 Today is 2026-10-03.
+New tools can be found with find_tools: run.
 ```
 
-Shared files appear in the user's message as `<document name="…">…</document>` blocks, with `[[page N]]` lines. On brains whose chat template accepts a system message only at the start, notes arrive as `<system-note>…</system-note>` at the top of the next user message.
+Built so far: language, date and new tools (`core/prompt.js`, `changeNotes`). New tools are deferred: the brain finds them with `find_tools` (D63). A conversation from 0.2, which has no `find_tools`, gets "New tools are available: run." and the tools declared instead. Notes for rules, instructions and memory come later, in the same style (for example "The user changed a rule: deleting files now needs their approval.").
 
-## Lines contributed by capabilities (examples)
+Shared files appear in the user's message as `<document source="n" name="…">…</document>` blocks, with `[[page N]]` lines; `n` is the number the brain cites the file by (D71). The `read` tool's output starts with "Source [n]:". On brains whose chat template accepts a system message only at the start, notes arrive as `<system-note>…</system-note>` at the top of the next user message.
+
+## Lines contributed by capabilities
+
+Each line appears in `<tools>` as `- name: line`. The tool's own description, sent with its schema, carries the details (for `run`, every global a script can use), so the prompt line stays short. Budget: 40 tokens per capability.
 
 | Capability | Tool line | Rule |
 |---|---|---|
 | Files (0.2) | `read: read pages of a file the user shared` | Shared files are in the message, sometimes only their first pages. Use read for the others. |
+| Calculations (0.3) | `run: run JavaScript in a sandbox to work things out exactly; scripts can read shared files and call tools` | Compute numbers with run instead of estimating them. |
+| Discovery (0.3, always on) | `find_tools: find tools that aren't listed here, and how to call them` / `offer: suggest turning on something the user has not discovered yet` | Offer at most one new thing per reply, and only when it clearly helps. |
 | Files (later) | `write: create or replace a file` / `edit: change part of a file` | Results the user asked for are files. Say their names. |
-| Calculations | `run: run JavaScript in a sandbox with no network; it can call tools.<name>(), searchTools(), models.decide() and models.image()` | Compute exact numbers instead of estimating them. |
-| Deferred tools | `find_tools: find tools that aren't listed here and get their signatures` | — |
-| Sources | — | Cite sources as [n], using only the numbered sources you were given. |
-| Memory | `remember: save one lasting fact or preference, in the user's language` | Only offered on turns where the reflex model detected a lasting fact. |
-| Suggestions | — | End with up to 3 short follow-up suggestions inside `<suggestions>`, one per line. |
-| Discovery | `offer: suggest a capability the user has not discovered yet` | Offer at most one new capability per reply, only when it clearly helps. |
-| Helpers | `delegate: hand a self-contained part of the task to a helper` | Use helpers only for independent parts of a large task. |
+| Memory (later) | `remember: save one lasting fact or preference, in the user's language` | Only offered on turns where the reflex model detected a lasting fact. |
+| Helpers (later) | `delegate: hand a self-contained part of the task to a helper` | Use helpers only for independent parts of a large task. |
+
+Sources and suggestions were planned as capability rules; in 0.3 they became base rules, because every answer can cite a shared file and end with follow-ups. Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).
 
 ## Notes
 

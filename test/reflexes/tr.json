@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Doktorum kan şekerimin çok yüksek olduğunu söyledi. Beslenmemi nasıl değiştirmeliyim?",
+  "p2": "Ayda 3.200 euro kazanıyorum ve kredi kartıma 14.000 borcum var. Ne kadar sürede ödeyebilirim?",
+  "p3": "Bu gizli: iş arkadaşım Anna gelecek ay işten çıkarılacak. Bunu ekibe nasıl söylerim?",
+  "p4": "Boşandığımdan beri uyuyamıyorum ve sürekli kaygılıyım. Ne yapabilirim?",
+  "p5": "Avustralya'nın başkenti neresidir?",
+  "p6": "Sonbahar yaprakları hakkında kısa bir şiir yaz.",
+  "p7": "Bir Word belgesini nasıl PDF'ye çeviririm?",
+  "p8": "Fransız Devrimi'nin başlıca nedenlerini özetle.",
+  "d1": "Merhaba! Bugün nasılsın?",
+  "d2": "Tokyo hangi saat dilimindedir?",
+  "d3": "Bu makaleyi üç maddede özetle.",
+  "d4": "Bu paragrafı daha kibar olacak şekilde yeniden yaz.",
+  "d5": "Bu üç tedarikçi teklifini karşılaştır, yıllık maliyetleri topla ve birini öner.",
+  "d6": "Bu faturaları incele, mükerrer olanları bul ve ne kadar fazla ödediğimizi söyle.",
+  "d7": "Bu sözleşme maddesini Alman ticaret hukukuna göre sorumluluk riskleri açısından incele ve daha güvenli bir ifade öner.",
+  "d8": "Grup büyüklükleri farklıyken A/B testi sonucumuzun anlamlı olup olmadığını kontrol edecek bir istatistiksel test tasarla.",
+  "u1": [
+   "Toplantı salı günü saat 15:00'te.",
+   "Yanlış, sana perşembeye alındığını söylemiştim."
+  ],
+  "u2": [
+   "İşte raporun bölüm bölüm ayrıntılı özeti.",
+   "Çok uzun. İki satır istemiştim."
+  ],
+  "u3": [
+   "Toplam 4.200 euro ediyor.",
+   "Bu tutmuyor. Bir daha kontrol et."
+  ],
+  "u4": [
+   "Sayın Yetkili, işbu yazı ile size yokluğumu bildirmek isterim.",
+   "Bu çok resmi ve robot gibi, hiç bana benzemiyor."
+  ],
+  "u5": [
+   "Toplantı salı günü saat 15:00'te.",
+   "Harika, teşekkürler! Gündemi de hazırlayabilir misin?"
+  ],
+  "u6": [
+   "Toplam 4.200 euro ediyor.",
+   "Mükemmel. Şimdi aylara böl."
+  ],
+  "u7": [
+   "İşte ekip öğle yemeği için üç fikir.",
+   "İkincisini beğendim. Nerede rezervasyon yapabiliriz?"
+  ],
+  "u8": [
+   "Paris, Fransa'nın başkentidir.",
+   "Peki ya İtalya'nınki?"
+  ],
+  "c1": "12,5, 18,25, 7, 31,75 ve 9'un tam ortalaması nedir?",
+  "c2": "200.000'lik bir kredinin yüzde 3,4 faizle 25 yıllık aylık taksitini hesapla.",
+  "c3": "Satış tablomda iki çeyrek arasında en çok hangi ürün büyüdü?",
+  "c4": "Ev sahibimin gönderdiği kira sözleşmesini okuyup bana ihbar süresini söyleyebilir misin?",
+  "c5": "Toplantı tutanağı PDF olarak elimde. Özetleyebilir misin?",
+  "c6": "Kız kardeşim için bir doğum günü mesajı yaz.",
+  "c7": "Bir fırın için güzel bir isim ne olabilir?",
+  "c8": "İspanyolcada 'çok teşekkür ederim' nasıl denir?",
+  "t1": "Ocak ayında Lyon'da 120, Paris'te 95 ve Lille'de 80 adet sattık. Şubatta Lyon'da 130, Paris'te 101 ve Lille'de 76. Martta Lyon'da 142, Paris'te 99 ve Lille'de 90.",
+  "t2": "Temel paket 10 GB depolama ile ayda 9 euro, standart paket 100 GB ile 15 euro, premium paket ise 1 TB ve öncelikli destek ile 25 euro.",
+  "t3": "3-14 Ağustos arasındaki iznin onaylandı. Lütfen ekibine haber ver ve gitmeden önce açık işlerini Marie'ye devret.",
+  "t4": "Paris, Fransa'nın başkentidir.",
+  "e1": "3-14 Ağustos arasındaki iznin onaylandı. Lütfen ekibine haber ver ve gitmeden önce açık işlerini Marie'ye devret.",
+  "e2": "Ofis bakım nedeniyle 12 Mayıs Cuma günü kapalı olacak, bu yüzden o gün herkes evden çalışacak.",
+  "e3": "Amortisman planı, aylık bileşik efektif yıllık faizle azalan bakiye yöntemini uygular, bu nedenle her taksitteki anapara payı geometrik olarak artar.",
+  "e4": "Fotosentez, klorofil içeren canlıların ışık enerjisini ışığa bağımlı tepkimeler ve Calvin döngüsü yoluyla kimyasal enerjiye dönüştürdüğü ve CO2'yi trioz fosfatlara bağladığı süreçtir."
+ }
+}

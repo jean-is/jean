@@ -5,14 +5,35 @@ import { html, nothing } from 'lit-html'
 import { lexer } from 'marked'
 
 /** @typedef {import('marked').Token} Token */
+/** @typedef {Map<number, { name: string, label: string, open: () => void }>} Sources  by the number the brain cites */
 
-/** @param {string} source */
-export function markdown(source) {
+/** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
+let cited = null
+
+/** @param {string} source @param {Sources} [sources] */
+export function markdown(source, sources) {
+  cited = sources ?? null
   try {
     return blocks(lexer(source))
   } catch {
     return html`<p>${source}</p>`
+  } finally {
+    cited = null
   }
+}
+
+/** "[1]" or "[1, 3]" → source chips; anything else stays text. @param {string} text */
+function cite(text) {
+  const sources = cited
+  if (!sources?.size || !/\[\d/.test(text)) return text
+  return text.split(/(\[\d+(?:,\s*\d+)*\])/).map((part) => {
+    const numbers = /^\[([\d,\s]+)\]$/.exec(part)?.[1].split(/,\s*/).map(Number)
+    if (!numbers?.every((n) => sources.has(n))) return part
+    return numbers.map((n) => {
+      const source = /** @type {{ name: string, label: string, open: () => void }} */ (sources.get(n))
+      return html`<button class="cite" title=${source.name} aria-label=${source.label} @click=${source.open}>${n}</button>`
+    })
+  })
 }
 
 /** @param {Token[]} tokens */
@@ -29,7 +50,7 @@ function block(token) {
     case 'table': return table(token)
     case 'hr': return html`<hr>`
     case 'space': return nothing
-    case 'text': return html`<p>${token.tokens ? inline(token.tokens) : decode(token.text)}</p>`
+    case 'text': return html`<p>${token.tokens ? inline(token.tokens) : cite(decode(token.text))}</p>`
     default: return html`<p>${token.raw}</p>`
   }
 }
@@ -50,7 +71,7 @@ function list(token) {
 /** @param {any} item */
 function listItem(item) {
   if (item.loose) return blocks(item.tokens)
-  return item.tokens.map((/** @type {any} */ token) => (token.type === 'text' ? (token.tokens ? inline(token.tokens) : decode(token.text)) : block(token)))
+  return item.tokens.map((/** @type {any} */ token) => (token.type === 'text' ? (token.tokens ? inline(token.tokens) : cite(decode(token.text))) : block(token)))
 }
 
 /** @param {any} token */
@@ -67,7 +88,7 @@ function table(token) {
 function inline(tokens = []) {
   return tokens.map((/** @type {any} */ token) => {
     switch (token.type) {
-      case 'text': return token.tokens ? inline(token.tokens) : decode(token.text)
+      case 'text': return token.tokens ? inline(token.tokens) : cite(decode(token.text))
       case 'strong': return html`<strong>${inline(token.tokens)}</strong>`
       case 'em': return html`<em>${inline(token.tokens)}</em>`
       case 'del': return html`<del>${inline(token.tokens)}</del>`

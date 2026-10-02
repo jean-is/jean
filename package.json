@@ -1,13 +1,13 @@
 {
   "name": "jean",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "npm run vendor && node scripts/serve.js",
-    "start": "npm run vendor && node scripts/serve.js",
+    "dev": "npm run build && node scripts/serve.js",
+    "start": "npm run build && node scripts/serve.js",
     "build": "npm run vendor && npm run manifest",
     "serve": "node scripts/serve.js",
     "test": "node --test test/*.test.js",
@@ -15,7 +15,9 @@
     "manifest": "node scripts/manifest.js",
     "budgets": "node scripts/budgets.js",
     "typecheck": "tsc --noEmit -p .",
-    "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets"
+    "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
+    "e2e": "playwright test -c e2e",
+    "reflexes": "node scripts/reflexes.js"
   },
   "dependencies": {
     "@preact/signals-core": "^1.14.4",
@@ -23,6 +25,7 @@
     "marked": "^18.0.14"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "typescript": "^5.8.0"
   },
   "engines": {
@@ -30,6 +33,8 @@
   },
   "optionalDependencies": {
     "@huggingface/transformers": "4.3.0",
-    "pdfjs-dist": "6.3.289"
+    "@jitl/quickjs-wasmfile-release-sync": "0.32.0",
+    "pdfjs-dist": "6.3.289",
+    "quickjs-emscripten-core": "0.32.0"
   }
 }

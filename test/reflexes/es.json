@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Mi médico me dijo que tengo el azúcar en sangre demasiado alto. ¿Cómo debería cambiar lo que como?",
+  "p2": "Gano 3.200 euros al mes y debo 14.000 en la tarjeta de crédito. ¿En cuánto tiempo puedo pagarlo?",
+  "p3": "Es confidencial: a mi compañera Anna la van a despedir el mes que viene. ¿Cómo se lo digo al equipo?",
+  "p4": "Desde mi divorcio no puedo dormir y estoy ansioso todo el tiempo. ¿Qué puedo hacer?",
+  "p5": "¿Cuál es la capital de Australia?",
+  "p6": "Escribe un poema corto sobre las hojas de otoño.",
+  "p7": "¿Cómo convierto un documento de Word en PDF?",
+  "p8": "Resume las principales causas de la Revolución francesa.",
+  "d1": "¡Hola! ¿Qué tal estás hoy?",
+  "d2": "¿En qué zona horaria está Tokio?",
+  "d3": "Resume este artículo en tres puntos.",
+  "d4": "Reescribe este párrafo para que suene más educado.",
+  "d5": "Compara estos tres presupuestos de proveedores, suma los costes anuales y recomiéndame uno.",
+  "d6": "Revisa estas facturas, encuentra las duplicadas y dime cuánto hemos pagado de más.",
+  "d7": "Revisa esta cláusula del contrato en busca de riesgos de responsabilidad según el derecho mercantil alemán y propón una redacción más segura.",
+  "d8": "Diseña una prueba estadística para comprobar si el resultado de nuestro test A/B es significativo con grupos de tamaños distintos.",
+  "u1": [
+   "La reunión es el martes a las 15:00.",
+   "Eso está mal, te dije que se movió al jueves."
+  ],
+  "u2": [
+   "Aquí tienes un resumen detallado del informe, sección por sección.",
+   "Demasiado largo. Te pedí dos líneas."
+  ],
+  "u3": [
+   "El total asciende a 4.200 euros.",
+   "Eso no cuadra. Revísalo otra vez."
+  ],
+  "u4": [
+   "Estimados señores, por la presente deseo informarles de mi ausencia.",
+   "Suena rígido y robótico, nada que ver conmigo."
+  ],
+  "u5": [
+   "La reunión es el martes a las 15:00.",
+   "¡Genial, gracias! ¿Puedes preparar también el orden del día?"
+  ],
+  "u6": [
+   "El total asciende a 4.200 euros.",
+   "Perfecto. Ahora divídelo por meses."
+  ],
+  "u7": [
+   "Aquí tienes tres ideas para la comida del equipo.",
+   "Me gusta la segunda. ¿Dónde podríamos reservar?"
+  ],
+  "u8": [
+   "París es la capital de Francia.",
+   "¿Y la de Italia?"
+  ],
+  "c1": "¿Cuál es la media exacta de 12,5, 18,25, 7, 31,75 y 9?",
+  "c2": "Calcula la cuota mensual de un préstamo de 200.000 al 3,4 % a 25 años.",
+  "c3": "¿Qué producto creció más entre los dos trimestres en mi tabla de ventas?",
+  "c4": "¿Puedes leer el contrato de alquiler que me envió el casero y decirme el plazo de preaviso?",
+  "c5": "Tengo el acta de la reunión en PDF. ¿Puedes resumirla?",
+  "c6": "Escribe un mensaje de cumpleaños para mi hermana.",
+  "c7": "¿Qué nombre estaría bien para una panadería?",
+  "c8": "¿Cómo se dice «muchas gracias» en francés?",
+  "t1": "En enero vendimos 120 unidades en Lyon, 95 en París y 80 en Lille. En febrero, 130 en Lyon, 101 en París y 76 en Lille. En marzo, 142 en Lyon, 99 en París y 90 en Lille.",
+  "t2": "El plan básico cuesta 9 euros al mes con 10 GB de almacenamiento, el plan estándar 15 euros con 100 GB y el plan premium 25 euros con 1 TB y soporte prioritario.",
+  "t3": "Tus vacaciones del 3 al 14 de agosto están aprobadas. Avisa a tu equipo y pasa tus asuntos pendientes a Marie antes de irte.",
+  "t4": "París es la capital de Francia.",
+  "e1": "Tus vacaciones del 3 al 14 de agosto están aprobadas. Avisa a tu equipo y pasa tus asuntos pendientes a Marie antes de irte.",
+  "e2": "La oficina estará cerrada el viernes 12 de mayo por mantenimiento, así que ese día todos trabajarán desde casa.",
+  "e3": "El cuadro de amortización aplica un método de saldo decreciente con una tasa anual efectiva capitalizada mensualmente, de modo que la parte de capital de cada cuota aumenta geométricamente.",
+  "e4": "La fotosíntesis es el proceso por el cual los organismos con clorofila convierten la energía luminosa en energía química mediante las reacciones dependientes de la luz y el ciclo de Calvin, fijando el CO2 en triosas fosfato."
+ }
+}

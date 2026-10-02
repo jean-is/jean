@@ -88,12 +88,22 @@ export function pagesThatFit(pages, budgetTokens) {
  * @returns {DocumentPart}
  */
 export function documentPart(link, text) {
-  if (text === null) return { name: link.name, text: '(This file is no longer available.)' }
+  const part = { name: link.name, ...(link._meta?.source && { source: link._meta.source }) }
+  if (text === null) return { ...part, text: '(This file is no longer available.)' }
   const pages = splitPages(text)
   const [first, last] = link._meta?.pages ?? [1, pages.length]
-  if (first === 1 && last >= pages.length) return { name: link.name, text: pages.length > 1 ? joinPages(pages) : pages[0] }
+  if (first === 1 && last >= pages.length) return { ...part, text: pages.length > 1 ? joinPages(pages) : pages[0] }
   const shown = pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')
-  return { name: link.name, text: `${shown}\n\n(Pages ${first}–${last} of ${pages.length}. Use read for the others.)` }
+  return { ...part, text: `${shown}\n\n(Pages ${first}–${last} of ${pages.length}. Use read for the others.)` }
+}
+
+/**
+ * The number each file is cited by: the one it was first shared with, else the next one.
+ * @param {ResourceLink[]} earlier links already in the conversation @param {ResourceLink} link
+ */
+export function sourceNumber(earlier, link) {
+  const numbers = earlier.map((other) => other._meta?.source ?? 0)
+  return earlier.find((other) => other.uri === link.uri && other._meta?.source)?._meta?.source ?? Math.max(0, ...numbers) + 1
 }
 
 /**
@@ -156,7 +166,8 @@ export function readTool({ fs, projectDir, files, maxTokens = 6000 }) {
         last = n
       }
       const more = last < pages.length ? ` Pages ${last + 1}–${pages.length} are not shown.` : ''
-      return `${link.name}, pages ${first}–${last} of ${pages.length}.${more}\n\n${out.trim()}`
+      const source = link._meta?.source ? `Source [${link._meta.source}]: ` : ''
+      return `${source}${link.name}, pages ${first}–${last} of ${pages.length}.${more}\n\n${out.trim()}`
     },
   }
 }

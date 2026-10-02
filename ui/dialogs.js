@@ -18,19 +18,19 @@ import { voicesFor } from './speech.js'
 import { icons } from './icons.js'
 
 /** @param {Element} host @param {string} name */
-function syncDialog(host, name) {
+export function syncDialog(host, name) {
   const dialog = host.querySelector('dialog')
   const open = app.dialog.value === name
   if (open && !dialog?.open) dialog?.showModal()
   else if (!open && dialog?.open) dialog.close()
 }
 
-const close = () => { app.dialog.value = null }
+export const close = () => { app.dialog.value = null }
 /** @param {MouseEvent} event */
-const backdrop = (event) => { if (event.target === event.currentTarget) close() }
+export const backdrop = (event) => { if (event.target === event.currentTarget) close() }
 
 /** @param {string} title */
-const head = (title) => html`<header class="dialog-head">
+export const head = (title) => html`<header class="dialog-head">
   <h2>${title}</h2>
   <button class="icon-button" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
 </header>`
@@ -114,6 +114,8 @@ function deviceChoice(hasDevice) {
   </section>`
 }
 const localProvider = signal(/** @type {'ollama' | 'lmstudio' | 'custom'} */ ('ollama'))
+// What the user typed survives re-renders; picking another app resets it to that app's default.
+const localAddress = signal(PROVIDERS.ollama.baseURL)
 
 /** @param {() => Promise<unknown>} task */
 async function attempt(task) {
@@ -174,11 +176,15 @@ class BrainDialog extends Element {
           <p>${t('brain.local.text')}</p>
           <form class="stack" @submit=${connectLocal}>
             <label>${t('brain.local.app')}
-              <select @change=${(/** @type {Event} */ e) => { localProvider.value = /** @type {any} */ (e.target).value }}>
+              <select @change=${(/** @type {Event} */ e) => {
+                localProvider.value = /** @type {any} */ (e.target).value
+                localAddress.value = PROVIDERS[localProvider.value].baseURL
+              }}>
                 ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
               </select>
             </label>
-            <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" placeholder="http://localhost:11434/v1" .value=${live(PROVIDERS[localProvider.value].baseURL)}></label>
+            <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" placeholder="http://localhost:11434/v1"
+              .value=${live(localAddress.value)} @input=${(/** @type {Event} */ e) => { localAddress.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>
             <button class="button">${t('brain.connect')}</button>
           </form>
           <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
@@ -262,7 +268,12 @@ class Settings extends Element {
             </label>
           </div>`}
       </section>
-      <section class="about"><p class="muted">${BRAND.name} 0.2 · ${t('settings.about')}</p></section>
+      ${isDenied('compute') ? nothing : html`<section>
+        <h3>${t('collection.title', { name: BRAND.name })}</h3>
+        <p class="muted">${t('collection.lede', { name: BRAND.name })}</p>
+        <button class="button" @click=${async () => (await import('./discovery.js')).unlockAll()}>${t('collection.all')}</button>
+      </section>`}
+      <section class="about"><p class="muted">${BRAND.name} 0.3 · ${t('settings.about')}</p></section>
     </dialog>`
   }
 

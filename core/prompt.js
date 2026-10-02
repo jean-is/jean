@@ -15,7 +15,9 @@ const RULES = [
   'Do the work first, then say briefly what you did and where the result is.',
   'If the request is unclear, ask one short question. Otherwise, proceed.',
   'Never invent facts, numbers, quotes or sources. Say when you are unsure.',
+  'Cite numbered sources as [n].',
   'Be concise.',
+  'End with up to 3 short requests the user might send next, inside <suggestions>, one per line.',
 ]
 
 /**
@@ -82,21 +84,27 @@ export function promptRecord(by, system, state) {
 export function frozenPrompt(records) {
   const first = records.find((record) => record.meta?.prompt)?.meta?.prompt
   if (!first) return null
-  const state = { ...first.state, tools: [...first.state.tools] }
+  const state = { ...first.state, tools: [...first.state.tools], deferred: [...first.state.deferred ?? []] }
+  /** @param {'tools' | 'deferred'} list @param {string[]} names */
+  const add = (list, names) => { state[list] = [...new Set([...state[list], ...names])].sort() }
   for (const record of records) {
     const update = record.update
+    // find_tools and accepted offers declare tools from the next request on (D47).
+    if (update?.sessionUpdate === 'tool_call' && update._meta?.declare) add('tools', update._meta.declare)
     if (update?.sessionUpdate !== '_system_note') continue
     const { data } = update
     if (data.kind === 'language') state.language = data.language
     else if (data.kind === 'date') state.date = data.date
-    else if (data.kind === 'tools') state.tools = [...new Set([...state.tools, ...data.added])].sort()
+    else if (data.kind === 'tools') add(data.deferred ? 'deferred' : 'tools', data.added)
   }
-  return { system: first.system, state }
+  const { deferred, ...declared } = state
+  return { system: first.system, state: deferred.length ? state : declared }
 }
 
 /**
  * Notes for whatever changed between what the brain knows and now, one change per note.
- * Tools are only ever added: a tool the brain has seen stays declared (D47).
+ * Tools are only ever added. New ones are deferred: found with find_tools (D47). A
+ * conversation that started without find_tools (0.2) declares them instead.
  * @param {PromptState} known @param {PromptState} now
  * @returns {Envelope[]}
  */
@@ -106,9 +114,9 @@ export function changeNotes(known, now) {
     notes.push(noteRecord(`The interface language is now ${now.language}.`, { kind: 'language', language: now.language }))
   }
   if (now.date !== known.date) notes.push(noteRecord(`Today is ${now.date}.`, { kind: 'date', date: now.date }))
-  const added = now.tools.filter((name) => !known.tools.includes(name))
-  if (added.length) {
-    notes.push(noteRecord(`New tools are available: ${added.join(', ')}.`, { kind: 'tools', added }))
-  }
+  const added = now.tools.filter((name) => !known.tools.includes(name) && !known.deferred?.includes(name))
+  if (added.length && known.tools.includes('find_tools')) {
+    notes.push(noteRecord(`New tools can be found with find_tools: ${added.join(', ')}.`, { kind: 'tools', added, deferred: true }))
+  } else if (added.length) notes.push(noteRecord(`New tools are available: ${added.join(', ')}.`, { kind: 'tools', added }))
   return notes
 }

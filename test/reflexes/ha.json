@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Likitana ya ce mini sukarin jinina ya yi yawa sosai. Ta yaya zan canza abincin da nake ci?",
+  "p2": "Ina samun yuro 3,200 a wata kuma ina bin bashin 14,000 a katin bashi. Da sauri nawa zan iya biya?",
+  "p3": "Wannan sirri ne: za a kori abokiyar aikina Anna a wata mai zuwa. Yaya zan gaya wa ƙungiya?",
+  "p4": "Tun bayan rabuwar aurena ba na iya barci kuma kullum ina cikin damuwa. Me zan iya yi?",
+  "p5": "Mene ne babban birnin Ostiraliya?",
+  "p6": "Rubuta gajeren waƙa game da ganyen kaka.",
+  "p7": "Ta yaya zan mayar da takardar Word zuwa PDF?",
+  "p8": "Taƙaita manyan dalilan Juyin Juya Halin Faransa.",
+  "d1": "Sannu! Yaya kake yau?",
+  "d2": "Tokyo tana cikin wane yankin lokaci?",
+  "d3": "Taƙaita wannan labarin a cikin batutuwa uku.",
+  "d4": "Sake rubuta wannan sakin layi don ya fi kasancewa da ladabi.",
+  "d5": "Kwatanta waɗannan farashin masu kawo kaya guda uku, ka haɗa kuɗin shekara, sannan ka ba da shawarar ɗaya.",
+  "d6": "Duba waɗannan takardun biyan kuɗi, nemo waɗanda aka maimaita, ka gaya min nawa muka biya fiye da kima.",
+  "d7": "Bincika wannan sashe na kwangila game da haɗarin alhaki a ƙarƙashin dokar kasuwanci ta Jamus, ka ba da shawarar kalmomi masu aminci.",
+  "d8": "Tsara gwajin ƙididdiga don duba ko sakamakon gwajin A/B ɗinmu yana da muhimmanci idan girman rukunonin bai daidaita ba.",
+  "u1": [
+   "Taron a ranar Talata ne da ƙarfe 3 na rana.",
+   "Ba haka ba ne, na gaya maka an mayar da shi ranar Alhamis."
+  ],
+  "u2": [
+   "Ga cikakken taƙaitaccen rahoton, sashe bayan sashe.",
+   "Ya yi tsayi sosai. Layi biyu na nema."
+  ],
+  "u3": [
+   "Jimillar ita ce yuro 4,200.",
+   "Lissafin bai daidaita ba. Sake dubawa."
+  ],
+  "u4": [
+   "Ya Shugaba, ta wannan wasiƙa ina so in sanar da kai rashin zuwana.",
+   "Wannan yana da tauri kuma kamar na'ura, ko kaɗan ba kamar ni ba ne."
+  ],
+  "u5": [
+   "Taron a ranar Talata ne da ƙarfe 3 na rana.",
+   "Madalla, na gode! Za ka iya rubuta ajandar ma?"
+  ],
+  "u6": [
+   "Jimillar ita ce yuro 4,200.",
+   "Daidai. Yanzu raba ta bisa wata."
+  ],
+  "u7": [
+   "Ga ra'ayoyi uku don abincin rana na ƙungiya.",
+   "Na fi son na biyu. A ina za mu iya yin ajiyar wuri?"
+  ],
+  "u8": [
+   "Paris ce babban birnin Faransa.",
+   "Ita kuma Italiya fa?"
+  ],
+  "c1": "Mene ne ainihin matsakaicin 12.5, 18.25, 7, 31.75 da 9?",
+  "c2": "Lissafa kuɗin biya na kowane wata na rancen 200,000 da ruwa 3.4% na shekaru 25.",
+  "c3": "Wane kaya ne ya fi girma tsakanin kwata biyu a teburin tallace-tallacena?",
+  "c4": "Za ka iya karanta kwangilar haya da mai gida ya aiko min ka gaya min lokacin sanarwa?",
+  "c5": "Ina da bayanan taro a PDF. Za ka iya taƙaita shi?",
+  "c6": "Rubuta saƙon taya murnar ranar haihuwa ga 'yar uwata.",
+  "c7": "Wane suna ne mai kyau ga gidan burodi?",
+  "c8": "Yaya ake cewa 'na gode sosai' a harshen Sifaniyanci?",
+  "t1": "A watan Janairu mun sayar da guda 120 a Lyon, 95 a Paris da 80 a Lille. A Fabrairu 130 a Lyon, 101 a Paris da 76 a Lille. A Maris 142 a Lyon, 99 a Paris da 90 a Lille.",
+  "t2": "Tsarin asali yana kashe yuro 9 a wata da ma'aji na 10 GB, tsarin tsaka-tsaki yuro 15 da 100 GB, sannan tsarin na musamman yuro 25 da 1 TB da tallafi na fifiko.",
+  "t3": "An amince da hutunka daga 3 zuwa 14 ga Agusta. Da fatan za ka sanar da ƙungiyarka kuma ka miƙa ayyukanka da ba a gama ba ga Marie kafin ka tafi.",
+  "t4": "Paris ce babban birnin Faransa.",
+  "e1": "An amince da hutunka daga 3 zuwa 14 ga Agusta. Da fatan za ka sanar da ƙungiyarka kuma ka miƙa ayyukanka da ba a gama ba ga Marie kafin ka tafi.",
+  "e2": "Za a rufe ofis ranar Juma'a 12 ga Mayu don gyara, don haka kowa zai yi aiki daga gida a wannan rana.",
+  "e3": "Jadawalin biyan bashi yana amfani da hanyar ragowar da ke raguwa tare da ingantaccen ƙimar shekara da ake haɗawa kowane wata, don haka ɓangaren babban kuɗi a kowane kashi yana ƙaruwa a tsarin geometry.",
+  "e4": "Photosynthesis shi ne tsarin da halittun da ke da chlorophyll ke mayar da makamashin haske zuwa makamashin sinadarai ta hanyar halayen da suka dogara da haske da zagayen Calvin, suna ɗaure CO2 zuwa triose phosphates."
+ }
+}

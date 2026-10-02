@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Dokter bilang gula darah saya terlalu tinggi. Bagaimana saya harus mengubah pola makan?",
+  "p2": "Penghasilan saya 3.200 euro per bulan dan utang kartu kredit saya 14.000. Seberapa cepat saya bisa melunasinya?",
+  "p3": "Ini rahasia: rekan kerja saya Anna akan diberhentikan bulan depan. Bagaimana cara memberi tahu tim?",
+  "p4": "Sejak bercerai saya tidak bisa tidur dan selalu cemas. Apa yang bisa saya lakukan?",
+  "p5": "Apa ibu kota Australia?",
+  "p6": "Tulis puisi pendek tentang daun musim gugur.",
+  "p7": "Bagaimana cara mengubah dokumen Word menjadi PDF?",
+  "p8": "Ringkas penyebab utama Revolusi Prancis.",
+  "d1": "Hai! Apa kabar hari ini?",
+  "d2": "Tokyo berada di zona waktu apa?",
+  "d3": "Ringkas artikel ini dalam tiga poin.",
+  "d4": "Tulis ulang paragraf ini agar terdengar lebih sopan.",
+  "d5": "Bandingkan tiga penawaran pemasok ini, jumlahkan biaya tahunannya, lalu rekomendasikan satu.",
+  "d6": "Periksa faktur-faktur ini, temukan yang ganda, dan beri tahu berapa kelebihan pembayaran kita.",
+  "d7": "Tinjau klausul kontrak ini untuk risiko tanggung jawab menurut hukum dagang Jerman dan usulkan kata-kata yang lebih aman.",
+  "d8": "Rancang uji statistik untuk memeriksa apakah hasil uji A/B kita signifikan dengan ukuran kelompok yang tidak sama.",
+  "u1": [
+   "Rapatnya hari Selasa pukul 15.00.",
+   "Salah, saya sudah bilang rapatnya dipindah ke Kamis."
+  ],
+  "u2": [
+   "Berikut ringkasan rinci laporan, bagian demi bagian.",
+   "Terlalu panjang. Saya minta dua baris saja."
+  ],
+  "u3": [
+   "Totalnya 4.200 euro.",
+   "Hitungannya tidak cocok. Periksa lagi."
+  ],
+  "u4": [
+   "Dengan hormat, bersama ini saya bermaksud memberitahukan ketidakhadiran saya.",
+   "Ini terdengar kaku dan seperti robot, sama sekali bukan gaya saya."
+  ],
+  "u5": [
+   "Rapatnya hari Selasa pukul 15.00.",
+   "Bagus, terima kasih! Bisa sekalian buat agendanya?"
+  ],
+  "u6": [
+   "Totalnya 4.200 euro.",
+   "Sempurna. Sekarang bagi per bulan."
+  ],
+  "u7": [
+   "Berikut tiga ide untuk makan siang tim.",
+   "Saya suka yang kedua. Di mana kita bisa memesan tempat?"
+  ],
+  "u8": [
+   "Paris adalah ibu kota Prancis.",
+   "Kalau Italia?"
+  ],
+  "c1": "Berapa rata-rata tepat dari 12,5, 18,25, 7, 31,75, dan 9?",
+  "c2": "Hitung cicilan bulanan pinjaman 200.000 dengan bunga 3,4% selama 25 tahun.",
+  "c3": "Produk mana yang paling tumbuh di antara dua kuartal di tabel penjualan saya?",
+  "c4": "Bisa bacakan kontrak sewa yang dikirim pemilik rumah dan beri tahu masa pemberitahuannya?",
+  "c5": "Saya punya notulen rapat dalam bentuk PDF. Bisa diringkas?",
+  "c6": "Tulis ucapan ulang tahun untuk adik perempuan saya.",
+  "c7": "Apa nama yang bagus untuk toko roti?",
+  "c8": "Bagaimana bilang 'terima kasih banyak' dalam bahasa Spanyol?",
+  "t1": "Pada Januari kami menjual 120 unit di Lyon, 95 di Paris, dan 80 di Lille. Pada Februari 130 di Lyon, 101 di Paris, dan 76 di Lille. Pada Maret 142 di Lyon, 99 di Paris, dan 90 di Lille.",
+  "t2": "Paket dasar seharga 9 euro per bulan dengan penyimpanan 10 GB, paket standar 15 euro dengan 100 GB, dan paket premium 25 euro dengan 1 TB serta dukungan prioritas.",
+  "t3": "Cuti Anda dari 3 sampai 14 Agustus telah disetujui. Harap beri tahu tim Anda dan serahkan pekerjaan yang masih berjalan kepada Marie sebelum berangkat.",
+  "t4": "Paris adalah ibu kota Prancis.",
+  "e1": "Cuti Anda dari 3 sampai 14 Agustus telah disetujui. Harap beri tahu tim Anda dan serahkan pekerjaan yang masih berjalan kepada Marie sebelum berangkat.",
+  "e2": "Kantor akan tutup pada Jumat, 12 Mei, untuk pemeliharaan, jadi hari itu semua orang bekerja dari rumah.",
+  "e3": "Jadwal amortisasi menerapkan metode saldo menurun dengan suku bunga efektif tahunan yang dimajemukkan bulanan, sehingga porsi pokok setiap angsuran meningkat secara geometris.",
+  "e4": "Fotosintesis adalah proses ketika organisme berklorofil mengubah energi cahaya menjadi energi kimia melalui reaksi terang dan siklus Calvin, dengan mengikat CO2 menjadi triosa fosfat."
+ }
+}

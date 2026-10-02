@@ -1,0 +1,232 @@
+{
+  "format": 1,
+  "about": "Reflex test set (docs/architecture.md#reflexes). English source with labels; every other file holds the same states in its language (machine-translated, D44). Unhappy states are [previous answer, new message].",
+  "labels": {
+    "p1": [
+      "personal",
+      true
+    ],
+    "p2": [
+      "personal",
+      true
+    ],
+    "p3": [
+      "personal",
+      true
+    ],
+    "p4": [
+      "personal",
+      true
+    ],
+    "p5": [
+      "personal",
+      false
+    ],
+    "p6": [
+      "personal",
+      false
+    ],
+    "p7": [
+      "personal",
+      false
+    ],
+    "p8": [
+      "personal",
+      false
+    ],
+    "d1": [
+      "demand",
+      0
+    ],
+    "d2": [
+      "demand",
+      0
+    ],
+    "d3": [
+      "demand",
+      1
+    ],
+    "d4": [
+      "demand",
+      1
+    ],
+    "d5": [
+      "demand",
+      2
+    ],
+    "d6": [
+      "demand",
+      2
+    ],
+    "d7": [
+      "demand",
+      3
+    ],
+    "d8": [
+      "demand",
+      3
+    ],
+    "u1": [
+      "unhappy",
+      true
+    ],
+    "u2": [
+      "unhappy",
+      true
+    ],
+    "u3": [
+      "unhappy",
+      true
+    ],
+    "u4": [
+      "unhappy",
+      true
+    ],
+    "u5": [
+      "unhappy",
+      false
+    ],
+    "u6": [
+      "unhappy",
+      false
+    ],
+    "u7": [
+      "unhappy",
+      false
+    ],
+    "u8": [
+      "unhappy",
+      false
+    ],
+    "c1": [
+      "capability",
+      "compute"
+    ],
+    "c2": [
+      "capability",
+      "compute"
+    ],
+    "c3": [
+      "capability",
+      "compute"
+    ],
+    "c4": [
+      "capability",
+      "files"
+    ],
+    "c5": [
+      "capability",
+      "files"
+    ],
+    "c6": [
+      "capability",
+      "none"
+    ],
+    "c7": [
+      "capability",
+      "none"
+    ],
+    "c8": [
+      "capability",
+      "none"
+    ],
+    "t1": [
+      "table",
+      true
+    ],
+    "t2": [
+      "table",
+      true
+    ],
+    "t3": [
+      "table",
+      false
+    ],
+    "t4": [
+      "table",
+      false
+    ],
+    "e1": [
+      "email",
+      true
+    ],
+    "e2": [
+      "email",
+      true
+    ],
+    "e3": [
+      "email",
+      false
+    ],
+    "e4": [
+      "email",
+      false
+    ]
+  },
+  "states": {
+    "p1": "My doctor told me my blood sugar is too high. How should I change what I eat?",
+    "p2": "I earn 3,200 euros a month and owe 14,000 on my credit card. How fast can I pay it off?",
+    "p3": "This is confidential: my colleague Anna is being laid off next month. How do I tell the team?",
+    "p4": "Since my divorce I can't sleep and I feel anxious all the time. What can I do?",
+    "p5": "What is the capital of Australia?",
+    "p6": "Write a short poem about autumn leaves.",
+    "p7": "How do I turn a Word document into a PDF?",
+    "p8": "Summarise the main causes of the French Revolution.",
+    "d1": "Hi! How are you today?",
+    "d2": "What time zone is Tokyo in?",
+    "d3": "Summarise this article in three bullet points.",
+    "d4": "Rewrite this paragraph so it sounds more polite.",
+    "d5": "Compare these three supplier quotes, add up the yearly costs and recommend one.",
+    "d6": "Go through these invoices, find the duplicates and tell me how much we overpaid.",
+    "d7": "Review this contract clause for liability risks under German commercial law and suggest safer wording.",
+    "d8": "Design a statistical test to check whether our A/B test result is significant with unequal group sizes.",
+    "u1": [
+      "The meeting is on Tuesday at 3 pm.",
+      "That's wrong, I told you it moved to Thursday."
+    ],
+    "u2": [
+      "Here is a detailed summary of the report, section by section.",
+      "Way too long. I asked for two lines."
+    ],
+    "u3": [
+      "The total comes to 4,200 euros.",
+      "That doesn't add up. Check it again."
+    ],
+    "u4": [
+      "Dear Sir or Madam, I hereby wish to inform you of my absence.",
+      "This sounds stiff and robotic, nothing like me."
+    ],
+    "u5": [
+      "The meeting is on Tuesday at 3 pm.",
+      "Great, thanks! Can you draft the agenda too?"
+    ],
+    "u6": [
+      "The total comes to 4,200 euros.",
+      "Perfect. Now split it by month."
+    ],
+    "u7": [
+      "Here are three ideas for the team lunch.",
+      "I like the second one. Where could we book?"
+    ],
+    "u8": [
+      "Paris is the capital of France.",
+      "And what about Italy?"
+    ],
+    "c1": "What is the exact average of 12.5, 18.25, 7, 31.75 and 9?",
+    "c2": "Work out the monthly payment on a 200,000 loan at 3.4% over 25 years.",
+    "c3": "Which product grew the most between the two quarters in my sales table?",
+    "c4": "Can you read the lease my landlord sent me and tell me the notice period?",
+    "c5": "I have the meeting minutes as a PDF. Can you summarise them?",
+    "c6": "Write a birthday message for my sister.",
+    "c7": "What's a good name for a bakery?",
+    "c8": "How do you say 'thank you very much' in Spanish?",
+    "t1": "In January we sold 120 units in Lyon, 95 in Paris and 80 in Lille. In February we sold 130 in Lyon, 101 in Paris and 76 in Lille. In March, 142 in Lyon, 99 in Paris and 90 in Lille.",
+    "t2": "The basic plan costs 9 euros a month with 10 GB of storage, the standard plan costs 15 euros with 100 GB, and the premium plan costs 25 euros with 1 TB and priority support.",
+    "t3": "Your leave from 3 to 14 August is approved. Please let your team know and hand your open files over to Marie before you go.",
+    "t4": "Paris is the capital of France.",
+    "e1": "Your leave from 3 to 14 August is approved. Please let your team know and hand your open files over to Marie before you go.",
+    "e2": "The office will be closed on Friday 12 May for maintenance, so everyone should work from home that day.",
+    "e3": "The amortisation schedule applies a declining-balance method with an effective annual rate compounded monthly, so the principal component of each instalment increases geometrically.",
+    "e4": "Photosynthesis is the process by which chlorophyll-containing organisms convert light energy into chemical energy through the light-dependent reactions and the Calvin cycle, fixing CO2 into triose phosphates."
+  }
+}

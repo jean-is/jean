@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Mein Arzt hat gesagt, dass mein Blutzucker zu hoch ist. Wie sollte ich meine Ernährung umstellen?",
+  "p2": "Ich verdiene 3.200 Euro im Monat und habe 14.000 Euro Schulden auf meiner Kreditkarte. Wie schnell kann ich das abbezahlen?",
+  "p3": "Das ist vertraulich: Meiner Kollegin Anna wird nächsten Monat gekündigt. Wie sage ich es dem Team?",
+  "p4": "Seit meiner Scheidung kann ich nicht schlafen und bin ständig ängstlich. Was kann ich tun?",
+  "p5": "Was ist die Hauptstadt von Australien?",
+  "p6": "Schreib ein kurzes Gedicht über Herbstblätter.",
+  "p7": "Wie wandle ich ein Word-Dokument in ein PDF um?",
+  "p8": "Fasse die wichtigsten Ursachen der Französischen Revolution zusammen.",
+  "d1": "Hallo! Wie geht es dir heute?",
+  "d2": "In welcher Zeitzone liegt Tokio?",
+  "d3": "Fasse diesen Artikel in drei Stichpunkten zusammen.",
+  "d4": "Formuliere diesen Absatz höflicher.",
+  "d5": "Vergleiche diese drei Lieferantenangebote, rechne die jährlichen Kosten zusammen und empfiehl eines.",
+  "d6": "Geh diese Rechnungen durch, finde die doppelten und sag mir, wie viel wir zu viel bezahlt haben.",
+  "d7": "Prüfe diese Vertragsklausel auf Haftungsrisiken nach deutschem Handelsrecht und schlage eine sicherere Formulierung vor.",
+  "d8": "Entwirf einen statistischen Test, um zu prüfen, ob das Ergebnis unseres A/B-Tests bei ungleich großen Gruppen signifikant ist.",
+  "u1": [
+   "Das Meeting ist am Dienstag um 15 Uhr.",
+   "Das stimmt nicht, ich habe dir gesagt, dass es auf Donnerstag verschoben wurde."
+  ],
+  "u2": [
+   "Hier ist eine ausführliche Zusammenfassung des Berichts, Abschnitt für Abschnitt.",
+   "Viel zu lang. Ich wollte zwei Zeilen."
+  ],
+  "u3": [
+   "Die Summe beträgt 4.200 Euro.",
+   "Das geht nicht auf. Prüf es noch einmal."
+  ],
+  "u4": [
+   "Sehr geehrte Damen und Herren, hiermit möchte ich Sie über meine Abwesenheit informieren.",
+   "Das klingt steif und roboterhaft, überhaupt nicht nach mir."
+  ],
+  "u5": [
+   "Das Meeting ist am Dienstag um 15 Uhr.",
+   "Super, danke! Kannst du auch die Tagesordnung entwerfen?"
+  ],
+  "u6": [
+   "Die Summe beträgt 4.200 Euro.",
+   "Perfekt. Jetzt teil sie nach Monaten auf."
+  ],
+  "u7": [
+   "Hier sind drei Ideen für das Teamessen.",
+   "Die zweite gefällt mir. Wo könnten wir reservieren?"
+  ],
+  "u8": [
+   "Paris ist die Hauptstadt von Frankreich.",
+   "Und wie ist es bei Italien?"
+  ],
+  "c1": "Was ist der genaue Durchschnitt von 12,5, 18,25, 7, 31,75 und 9?",
+  "c2": "Berechne die monatliche Rate für einen Kredit über 200.000 zu 3,4 % auf 25 Jahre.",
+  "c3": "Welches Produkt ist zwischen den beiden Quartalen in meiner Verkaufstabelle am stärksten gewachsen?",
+  "c4": "Kannst du den Mietvertrag lesen, den mir mein Vermieter geschickt hat, und mir die Kündigungsfrist sagen?",
+  "c5": "Ich habe das Besprechungsprotokoll als PDF. Kannst du es zusammenfassen?",
+  "c6": "Schreib eine Geburtstagsnachricht für meine Schwester.",
+  "c7": "Was wäre ein guter Name für eine Bäckerei?",
+  "c8": "Wie sagt man „vielen Dank“ auf Spanisch?",
+  "t1": "Im Januar haben wir 120 Stück in Lyon, 95 in Paris und 80 in Lille verkauft. Im Februar 130 in Lyon, 101 in Paris und 76 in Lille. Im März 142 in Lyon, 99 in Paris und 90 in Lille.",
+  "t2": "Der Basistarif kostet 9 Euro im Monat mit 10 GB Speicher, der Standardtarif 15 Euro mit 100 GB und der Premiumtarif 25 Euro mit 1 TB und bevorzugtem Support.",
+  "t3": "Dein Urlaub vom 3. bis 14. August ist genehmigt. Bitte informiere dein Team und übergib deine offenen Vorgänge vor deiner Abreise an Marie.",
+  "t4": "Paris ist die Hauptstadt von Frankreich.",
+  "e1": "Dein Urlaub vom 3. bis 14. August ist genehmigt. Bitte informiere dein Team und übergib deine offenen Vorgänge vor deiner Abreise an Marie.",
+  "e2": "Das Büro bleibt am Freitag, dem 12. Mai, wegen Wartungsarbeiten geschlossen, daher arbeiten an diesem Tag alle von zu Hause.",
+  "e3": "Der Tilgungsplan wendet eine degressive Methode mit einem monatlich kapitalisierten effektiven Jahreszins an, sodass der Tilgungsanteil jeder Rate geometrisch steigt.",
+  "e4": "Die Photosynthese ist der Prozess, bei dem chlorophyllhaltige Organismen Lichtenergie über die lichtabhängigen Reaktionen und den Calvin-Zyklus in chemische Energie umwandeln und dabei CO2 in Triosephosphate fixieren."
+ }
+}

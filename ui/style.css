@@ -10,7 +10,6 @@
 
 :root {
   color-scheme: dark light;
-  --room: oklch(0.15 0.014 50);
   --room-2: oklch(0.19 0.02 52);
   --ink: oklch(0.93 0.018 80);
   --ink-soft: oklch(0.93 0.018 80 / 0.68);
@@ -35,7 +34,6 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --room: oklch(0.975 0.012 85);
     --room-2: oklch(0.94 0.02 80);
     --ink: oklch(0.24 0.02 50);
     --ink-soft: oklch(0.24 0.02 50 / 0.72);
@@ -52,12 +50,10 @@
   }
 }
 
-/* The room warms a step with each discovery. */
-:root[data-lit='1'] { --room: oklch(0.165 0.018 52); }
-:root[data-lit='2'] { --room: oklch(0.18 0.022 54); }
+/* The room warms a step with each discovery: --warmth counts them (ui/app.js). */
+:root { --room: oklch(calc(0.15 + min(var(--warmth, 0), 9) * 0.0045) calc(0.014 + min(var(--warmth, 0), 9) * 0.0012) 52); }
 @media (prefers-color-scheme: light) {
-  :root[data-lit='1'] { --room: oklch(0.97 0.016 82); }
-  :root[data-lit='2'] { --room: oklch(0.965 0.02 80); }
+  :root { --room: oklch(calc(0.975 - min(var(--warmth, 0), 9) * 0.0015) calc(0.012 + min(var(--warmth, 0), 9) * 0.0016) 82); }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -167,7 +163,12 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 .welcome { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2.5rem; padding-block: 8vh 4vh; }
 .hero-question, .conversation-title { view-transition-name: hero; }
 .hero-question {
-  margin: 0;
+  /* background-clip: text paints only inside the box, which a 0.98 line height
+     would leave short of descenders and the italic overhang: pad, then cancel. */
+  margin-block: 0 -0.15em;
+  margin-inline: 0 -0.15em;
+  padding-block: 0 0.15em;
+  padding-inline: 0 0.15em;
   font: italic 400 clamp(2.8rem, 9vw, 6.2rem)/0.98 var(--display);
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -283,6 +284,42 @@ app-made:not(:defined) { display: none; }
 .read-list ul { display: grid; gap: 0.25rem; margin: 0.4rem 0 0; padding-inline-start: 1.45rem; }
 .read-list li { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .link-button { padding: 0; border: 0; background: none; color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; }
+.cite {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 1.4em;
+  block-size: 1.4em;
+  margin-inline: 0.1em;
+  padding: 0 0.3em;
+  border: 1px solid oklch(from var(--flame) l c h / 0.55);
+  border-radius: 999px;
+  background: oklch(from var(--flame) l c h / 0.12);
+  font-size: 0.72em;
+  font-weight: 650;
+  line-height: 1;
+  vertical-align: 0.15em;
+}
+.cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
+
+/* ─── Follow-ups ────────────────────────────────────────────────────────── */
+
+.follow-ups { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.follow-up {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: oklch(from var(--room-2) l c h / 0.5);
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  text-align: start;
+  transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+  animation: arrive 0.5s var(--ease) both;
+}
+.follow-up:hover { border-color: oklch(from var(--flame) l c h / 0.6); color: var(--ink); box-shadow: 0 0 1.2rem -0.4rem oklch(from var(--glow) l c h / 0.6); }
+.follow-up .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
 html[data-dropping] .drop-zone { opacity: 1; }
 .drop-zone {
   position: fixed;
@@ -314,6 +351,7 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .activity[open] summary .icon { rotate: 180deg; }
 .activity-list { margin: 0.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
 .activity-list li { display: flex; align-items: center; gap: 0.55rem; }
+.activity-list li.is-nested { padding-inline-start: 1.1rem; }
 .thought { margin-block-start: 0.6rem; padding-inline-start: 0.9rem; border-inline-start: 1px solid var(--line-strong); color: var(--ink-faint); font-size: 0.88rem; }
 .thought p { margin-block: 0 0.5rem; }
 .ember { inline-size: 0.5rem; block-size: 0.5rem; flex: none; border-radius: 50%; background: var(--ember-off); }
@@ -383,6 +421,7 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
 }
 .brain-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .brain-chip .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.brain-chip .icon:last-child { inline-size: 0.85rem; block-size: 0.85rem; color: inherit; margin-inline-start: -0.15rem; }
 .brain-chip:hover { color: var(--ink); border-color: var(--line-strong); }
 .send {
   display: grid;
@@ -487,6 +526,38 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .segmented input:checked + span { background: var(--flame); color: var(--on-flame); }
 .segmented input:focus-visible + span { outline: 2px solid var(--flame); outline-offset: 2px; }
 .segmented input:disabled + span { cursor: not-allowed; opacity: 0.6; }
+
+/* The brain picker and the house of what Jean can do. */
+.choices, .rooms { display: grid; gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+.choice-option { display: flex; align-items: center; gap: 0.75rem; inline-size: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; text-align: start; }
+.choice-option:hover { border-color: var(--line-strong); background: var(--line); }
+.choice-option.is-selected { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }
+.choice-option > span { flex: 1; display: grid; min-inline-size: 0; }
+.choice-option small { color: var(--ink-soft); font-size: 0.8rem; overflow-wrap: anywhere; }
+.choice-option .icon { flex: none; color: var(--flame); }
+.toggle { display: flex; align-items: center; gap: 0.6rem; margin-block-end: 0.5rem; font-size: 0.95rem; color: var(--ink); cursor: pointer; }
+input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: var(--flame); }
+.room-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 1.1rem;
+  transition: background-color 1.2s var(--ease), border-color 1.2s var(--ease), box-shadow 1.2s var(--ease);
+}
+.sheet .room-card h3 { margin: 0 0 0.1rem; }
+.sheet .room-card p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
+.room-icon { display: grid; place-items: center; inline-size: 2.6rem; block-size: 2.6rem; border-radius: 50%; background: var(--line); color: var(--ink-faint); transition: inherit; }
+.room-card.is-lit { border-style: solid; border-color: oklch(from var(--flame) l c h / 0.45); background: oklch(from var(--flame) l c h / 0.07); box-shadow: 0 0 2rem -1.2rem oklch(from var(--glow) l c h / 0.7); }
+.room-card.is-lit .room-icon { background: oklch(from var(--flame) l c h / 0.2); color: var(--flame); box-shadow: 0 0 1rem -0.2rem oklch(from var(--glow) l c h / 0.8); }
+.room-on { display: grid; color: var(--flame); }
+@media (max-width: 30rem) {
+  .room-card { grid-template-columns: auto 1fr; }
+  .room-card > .button, .room-on { grid-column: 2; justify-self: start; }
+}
+
 .history-list { display: grid; gap: 0.15rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .history-list li { display: flex; align-items: center; border-radius: 0.9rem; }
 .history-list li:hover, .history-list li.is-current { background: var(--line); }
@@ -520,7 +591,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 @media print {
   :root { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: #8a4a12; }
   html, body { background: #fff; }
-  .room, .bar, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip { display: none !important; }
+  .room, .bar, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups { display: none !important; }
   main { inline-size: auto; }
   .msg { animation: none; }
   .msg-user { background: none; border: 1px solid var(--line); }
@@ -544,6 +615,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 @media (forced-colors: active) {
   .room { display: none; }
   .send, .button.primary, .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .choice-option.is-selected, .room-card.is-lit { border: 2px solid Highlight; }
   .hero-question { color: CanvasText; background: none; }
 }
 @media (max-width: 40rem) {

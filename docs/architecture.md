@@ -25,7 +25,7 @@
 
 | Loaded on demand | Used by |
 |---|---|
-| `quickjs-emscripten` (~1 MB) | Calculations and codemode |
+| `quickjs-emscripten-core` with the `@jitl/quickjs-wasmfile-release-sync` variant (~600 KB with its wasm) | Calculations and codemode. Copied flat into `vendor/quickjs/` and handed to the sandbox by the parent (D65, D66) |
 | Pyodide | Data toolkit (Python). Copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`, never committed (D43) |
 | `@huggingface/transformers` with `onnxruntime-web` | On-device brain (Gemma 4 E2B), reflexes (Kev-0.6B), dictation (Whisper base), voice detection (Silero). Copied into `vendor/transformers/` (D52) |
 | `pdfjs-dist` (legacy build) | Reading PDFs. Copied into `vendor/pdfjs/` with its character maps and standard fonts (D52) |
@@ -36,7 +36,7 @@
 
 - **Text extraction** from DOCX/XLSX/PPTX: zip via `DecompressionStream` and a small tag scanner (not `DOMParser`, so it also runs in workers and under `node --test`).
 - **Backup zip writer:** `CompressionStream`.
-- **BM25 search:** with `Intl.Segmenter` for word splitting.
+- **BM25 search** (`core/search.js`): with `Intl.Segmenter` for word splitting. It ranks deferred tools now, and documents later.
 - **ULIDs:** generated with `crypto.getRandomValues`.
 - **Voices:** operating-system voices.
 - **Coordination:** Web Locks and BroadcastChannel.
@@ -56,18 +56,22 @@
 
 ```
 index.html        CSP <meta>, import map, shell
-sandbox.html      strict CSP <meta>; runs untrusted code in a worker
+sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65)
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
-core/             llm.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js …
-                  (standard web APIs only; decide.js and skills.js come later)
-ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css
+core/             llm.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js
+                  deferred.js search.js decide.js …   (standard web APIs only; skills.js comes later)
+ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
+                  discovery.js collection.js auto.js picker.js
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2)
-                  compute/ python/ memory/ routines/ projects/ search/ connections/ helpers/ reflexes/
-                  suggestions/ sources/                         (later)
-locales/          en.json fr.json ar.json …
+                  compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
+                  python/ memory/ routines/ projects/ search/ connections/ helpers/   (later)
+locales/          the 33 launch languages: en.json fr.json ar.json ja.json …
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
-scripts/          vendor.js, manifest.js (content hashes → capabilities.json), translate.js, budgets.js
+scripts/          vendor.js, manifest.js (content hashes → capabilities.json), graph.js, budgets.js, serve.js,
+                  reflexes.js (measures Kev on the test set)
+test/             node --test suites; fixtures/fake-brain.js; reflexes/ (the multilingual reflex test set and results.md)
+e2e/              Playwright smoke tests, Chromium and WebKit (npm run e2e)
 ```
 
 ## Brand
@@ -85,14 +89,18 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 
 ## Core
 
-- **`loop.js`** (~200 lines): stream the reply, run tool calls, feed results back, repeat. Rules (Do it / Ask me first / Never) are checked before each tool runs. The prompt and the declared tools are frozen for the conversation; changes arrive as system notes (see [Prompt, tools and caching](#prompt-tools-and-caching)).
+- **`loop.js`** (~220 lines): stream the reply, run tool calls, feed results back, repeat. Rules (Do it / Ask me first / Never) are checked before each tool runs, including calls made from scripts. The prompt and the declared tools are frozen for the conversation; changes arrive as system notes (see [Prompt, tools and caching](#prompt-tools-and-caching)).
+  - `tools` is every tool that can be called; it may be a function, read again at each step, so a capability turned on mid-turn can be called at once. `declared` is the subset the brain sees, and `hidden` tools are never declared (D64).
+  - `meta` is recorded on the brain entry; Auto uses it to say why it chose that brain (D70).
 - **`llm.js`** (~400 lines): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `search`, `recall`, `remember`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred by default).
-- **`events.js`:** the ACP event stream (see [Activity events](#activity-events)).
-- **`skills.js`:** loads `SKILL.md` folders and lists only their name and description in the prompt. The full file is read when relevant.
-- **`decide.js`:** reflexes (see below).
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `search`, `recall`, `remember`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred by default). Two hidden tools, `file` and `decide`, are only for scripts (D64). Built so far: `read`, `run`, `find_tools`, `offer`, `file`, `decide`.
+- **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
+- **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
+- **`search.js`:** BM25 over short texts.
+- **`decide.js`:** the reflex mechanism: Kev's input sequence and its answers in the Decisions API shape (see [Reflexes](#reflexes)). The questions themselves are product policy and live in `caps/reflexes/questions.js` (D62).
+- **`skills.js`** (0.4): loads `SKILL.md` folders and lists only their name and description in the prompt. The full file is read when relevant.
 - Prompt: [prompts/system.md](../prompts/system.md).
 
 ## Brain ladder
@@ -110,45 +118,55 @@ Not used: the browsers' built-in models (too experimental) and native OS models 
 `decide(state, questions)` uses the Jev/Decisions API shape: typed questions (`noul`, `choice`, `score`) in, calibrated probabilities out. That shape is now shared by Jev, Clef, Strands Decider, Laya, Kev, Ollaya and OpenRouter's `/api/alpha/decisions`, so backends can be swapped freely.
 
 ```js
-const { answers } = await decide(userMessage, {
-  capability: { type: 'choice', instructions: 'Which capability, if any, would help now?', criteria: { files: '…', compute: '…', none: 'nothing new' } },
-  lasting:    { type: 'noul',   instructions: 'Does the user state a lasting fact, preference or correction?' },
-  demand:     { type: 'score',  instructions: 'How demanding is this request?', criteria: ['chat', 'reading', 'multi-step', 'expert'] },
+// ui/discovery.js, with the questions from caps/reflexes/questions.js
+const { demand, personal, capability } = await decide(message, {
+  demand:     { type: 'score',  instructions: 'How demanding is this request?', criteria: ['a quick chat or a simple fact', 'reading, writing or summarising', 'several steps of work or analysis', 'expert reasoning'] },
+  personal:   { type: 'noul',   instructions: 'Does the message share personal, health, financial or confidential information?' },
+  capability: { type: 'choice', instructions: 'Which of these would help with this message, if any?', criteria: { compute: 'exact numbers, maths, or analysing a table of data', none: 'nothing new is needed' } },
 })
 ```
 
+The mechanism is in `core/decide.js`; which questions are asked, and how answers are read, is product policy in `caps/reflexes/questions.js` (D62). In the UI, reflexes are called **Intuition**.
+
 | Backend | When |
 |---|---|
-| **Kev-0.6B** through Transformers.js | Default (D41): ~340 MB, no extra runtime, because it shares the on-device brain's library |
+| **Kev-0.6B** through Transformers.js | Default (D41), built in 0.3 (D67): q4f16 on WebGPU when the adapter has `shader-f16`, otherwise q4 on WebAssembly. About 345 MB, downloaded once with consent; no extra runtime, because it shares the on-device brain's library. About 60 ms per message on WebGPU after warm-up. |
 | Jev through OpenRouter | When a cloud brain is connected (browser calls with the user's key are untested) |
 | Ollaya (local server) | Advanced users |
 | The brain itself, with constrained JSON | Last resort |
 
+**How Kev is asked (D67).** All of a state's questions go into one forward pass: the state, then each question with its options between Kev's delimiters, whose ids come from its `config.json` (the model card's sample code escapes them by mistake, which makes every score flat). Each option's score is softmaxed within its question. A score is read as its most likely level, not its expected value, because Kev hedges toward the middle. A yes, or an offer, needs 0.6. Every message gets one pass for demand, personal and capability, and a second for "unhappy" with the previous answer; both are capped at 2.5 s.
+
 **Measuring Kev.** Kev was trained in English on a multilingual base (Qwen3), so it has to prove itself in every launch language:
 
-1. Build a multilingual test set: the 33 launch languages × each reflex question × examples, generated by a frontier model. There is no native-speaker review (D44).
-2. Measure Kev on it, language by language.
+1. ✅ Build a multilingual test set: `test/reflexes/<lang>.json`, 40 labelled examples per launch language (personal, unhappy, demand and capability 8 each; table and email 4 each), machine-translated from the English source. There is no native-speaker review (D44).
+2. ✅ Measure Kev on it, language by language: `npm run reflexes` runs Kev on the CPU under Node, with Jean's own questions and thresholds, and writes [test/reflexes/results.md](../test/reflexes/results.md).
 3. Where Kev falls short, fine-tune a "Jean reflexes" checkpoint from it on synthetic multilingual data and publish it under Apache 2.0.
+
+**What the measurement showed (D68):** 53–78% by language, 67% overall. Table is reliable everywhere (95%); capability and email are fine in the major languages. Personal and unhappy are near chance, because Kev mostly says no, so Jean behaves as if Intuition were off for them: harmless, but useless. The low-resource languages (Amharic, Hausa, Swahili, Yoruba, Malay) score lowest. Rewording showed the 0.6B model can't judge "wordy" or "jargon" at all. Step 3 is needed before launch.
 
 The test set is the lasting asset, because this category will change monthly.
 
 **Reflex questions:**
 
-| Question | Type |
-|---|---|
-| Which capability, if any, would help? | choice |
-| Does this need current information from the web? | yes/no |
-| How demanding is the request? | score |
-| Personal, health, financial or confidential content? | yes/no |
-| A lasting fact, preference or correction? | yes/no |
-| About the person in general, or about this project? | choice |
-| Same kind of task as an earlier one? | yes/no |
-| Is this action irreversible? | score |
-| Does this passage help answer the question? (re-ranking) | yes/no |
-| Does source [n] support this sentence? | yes/no |
-| Which suggestions from the catalogue fit? | choice |
-| Is the user unhappy with the last answer? | yes/no |
-| Is this a separate ongoing project? | yes/no |
+| Question | Type | Status |
+|---|---|---|
+| Which capability, if any, would help? | choice | 0.3 |
+| How demanding is the request? | score | 0.3 |
+| Personal, health, financial or confidential content? | yes/no | 0.3 |
+| Is the user unhappy with the last answer? | yes/no | 0.3 |
+| Does this text compare numbers across several items? ("As a table") | yes/no | 0.3 |
+| Is this a decision or announcement to pass on? ("Draft an email") | yes/no | 0.3 |
+| Does this need current information from the web? | yes/no | Later |
+| A lasting fact, preference or correction? | yes/no | Later |
+| About the person in general, or about this project? | choice | Later |
+| Same kind of task as an earlier one? | yes/no | Later |
+| Is this action irreversible? | score | Later |
+| Does this passage help answer the question? (re-ranking) | yes/no | Later |
+| Does source [n] support this sentence? | yes/no | Later |
+| Is this a separate ongoing project? | yes/no | Later |
+
+Follow-ups are one yes/no question each rather than one choice over the catalogue, because several can fit (D69).
 
 ## Data and persistence
 
@@ -196,7 +214,7 @@ There is always a default project, hidden until the Projects capability is disco
 
 ## Service worker
 
-- **On install:** cache the shell and *all* locale files (a few KB each), so switching language is instant, even offline. Files are fetched through the HTTP cache, which the page has just filled, and checked against the integrity hashes in `capabilities.json`; a stale copy is fetched again from the network.
+- **On install:** cache the shell (`sandbox.html` included) and *all* locale files (a few KB each), so switching language is instant, even offline. Files are fetched through the HTTP cache, which the page has just filled, and checked against the integrity hashes in `capabilities.json`; a stale copy is fetched again from the network.
 - **On unlock:** cache the capability's files, listed in `capabilities.json`, which `scripts/manifest.js` generates with content hashes. The cache itself is the record of what has been unlocked.
 - **On update:** download the new shell and new versions of *unlocked* capabilities only, then delete old caches.
 - **Model weights** live in their own cache, separate from app versions, so an app update never re-downloads 3 GB.
@@ -219,17 +237,26 @@ require-trusted-types-for 'script'; trusted-types lit-html app-urls
 - **Why `connect-src` is broad:** users can add any OpenAI-compatible endpoint, and untrusted code never runs in this document. Organisations tighten it with an HTTP header (see [enterprise.md](enterprise.md)).
 - **If an on-demand runtime turns out to need `'unsafe-eval'`,** give it its own worker document rather than loosening `index.html`.
 
-**`sandbox.html`** is loaded in `<iframe sandbox="allow-scripts">` (never with `allow-same-origin`):
+**`sandbox.html`** is loaded in `<iframe sandbox="allow-scripts">` (never with `allow-same-origin`). As built in 0.3 (D65):
+
+```text
+default-src 'none'; script-src 'sha256-<relay>' blob: 'wasm-unsafe-eval'; worker-src blob:;
+connect-src 'none'; base-uri 'none'; form-action 'none'
+```
 
 - **No access to Jean's storage.** Its origin is opaque.
+- **No network at all.** The document holds only a small inline relay, allowed by its hash; it loads nothing from anywhere, so how `'self'` behaves in an opaque origin never matters. `test/html.test.js` checks the hash and that the frame never gets `allow-same-origin`.
+- **The parent sends everything in.** `caps/compute/compute.js` fetches the worker's source and QuickJS's files (their list comes from `capabilities.json`) and posts them to the relay.
 - **Untrusted code only ever runs in a Worker** created from a `blob:` URL, so it inherits the sandbox's strict CSP. Workers have no navigation, no WebRTC and no `sendBeacon`, so every network path goes through `connect-src`.
-- **Pyodide and QuickJS both run here.** QuickJS also restricts code to the functions Jean hands it, with memory and time limits.
+- **A classic worker.** Browsers refuse module workers from `blob:` URLs in an opaque origin (checked in Chromium). A classic worker can still `import()` blob modules and compile wasm: it turns each QuickJS module into a blob URL, leaves first, and passes `wasmBinary` and `wasmLocation`, so Emscripten never resolves a URL against a `blob:` base.
+- **QuickJS limits:** 64 MB of memory, 20 s of computing time (time spent waiting on Jean or on the user's approval doesn't count), a 40 s watchdog in the parent, 20 s to start, and 8,000 characters of output. A script reaches only the functions Jean hands it (see [Codemode](#prompt-tools-and-caching)).
+- **Pyodide will run here too** (0.4).
 - **Where Pyodide's files come from** (D43): Jean's own pinned `pyodide` npm package, copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`. They are never committed and never taken from outside Jean's folder. The capability manifest lists them under the Python capability, never in the shell.
 - **Engineering spike (0.4):** choose between two ways of giving Pyodide its files inside the sandbox.
   - **(a)** The host serves `/vendor/pyodide/` with `Access-Control-Allow-Origin: *`, and the sandbox's `connect-src` is limited to that path, stamped with the deployment origin.
   - **(b)** The parent document transfers Pyodide's files as buffers, and the sandbox runs with `connect-src 'none'`.
 
-  Prefer (b) if Pyodide's loader allows it. Verify how `'self'` behaves in an opaque-origin sandbox in every browser before relying on it. If Pyodide needs `'unsafe-eval'`, that is acceptable *inside the sandbox only*: there is nothing to steal and nowhere to send it.
+  QuickJS already uses (b), and the spike can reuse its relay and loader; prefer (b) if Pyodide's loader allows it. If Pyodide needs `'unsafe-eval'`, that is acceptable *inside the sandbox only*: there is nothing to steal and nowhere to send it.
 
 **Output previews** (charts, HTML) use separate iframes with `sandbox="allow-scripts"` only, and they never receive secrets.
 
@@ -245,9 +272,10 @@ require-trusted-types-for 'script'; trusted-types lit-html app-urls
   - Enter never sends while an IME is composing (`isComposing`).
   - `Intl.Segmenter` handles counting and truncation in Chinese, Japanese, Korean and Thai.
   - Fonts: the system font for every script, plus the display face only where it applies (see [design.md](design.md)).
-- **Translation.** An LLM translates from English with a script. There are about 150 strings, and no per-language human review (D44): anyone can fix a string with a PR.
-- **Shipped so far:** en, fr, ar, ja (Japanese early, for CJK checks: D60).
-- **Launch languages (33):** am, ar, bn, de, en, es, fa, fr, ha, he, hi, id, it, ja, ko, mr, ms, nl, pl, pt, ru, sw, ta, te, th, tl, tr, uk, ur, vi, yo, zh-Hans, zh-Hant.
+- **Translation.** An LLM translates from English. There are about 230 strings, and no per-language human review (D44): anyone can fix a string with a PR.
+  - Sentences are rephrased so nothing agrees grammatically with `{name}` (in Polish, Russian, Ukrainian, Italian, Portuguese, Hebrew, Urdu, Hindi and Marathi, and with Korean particles, among others).
+  - `test/locales.test.js` checks that every catalogue has the same keys and placeholders as English, that each plural covers every category the language uses (from `Intl.PluralRules`; current CLDR gives French a "many" form), and that the language menu matches the catalogues.
+- **Shipped:** all 33 launch languages, since 0.3 (`LOCALES` in `ui/state.js`): am, ar, bn, de, en, es, fa, fr, ha, he, hi, id, it, ja, ko, mr, ms, nl, pl, pt, ru, sw, ta, te, th, tl, tr, uk, ur, vi, yo, zh-Hans, zh-Hant.
 - **Conversations.** The system prompt stays in English, with a `<language>` section. Changing the UI language mid-conversation appends a system note rather than editing that section (D46), and Jean's next reply follows.
 
 ## Prompt, tools and caching
@@ -267,25 +295,31 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 
 **Deferred tools (D47).** The conversation declares only the tools that were unlocked when it started. Anything that arrives later is deferred: a capability discovered mid-conversation, and every connection's tools (connections can bring hundreds).
 
-- **Finding them.** `find_tools(query)` searches deferred tools by name and description, with the same BM25 engine as document search. It returns their signatures.
-- **Calling them.** Deferred tools are called through codemode, so the declared list never changes. If codemode isn't loaded yet, `find_tools` declares the tools it found from the next request on, at the cost of one cache miss.
+- **Always findable.** `find_tools` and `offer` come from the `discovery` capability, which is always loaded, so every new conversation declares them (D63).
+- **Finding them.** `find_tools(query)` ranks the tools that aren't declared by name and description, with the BM25 engine in `core/search.js`, and returns up to five signatures (`name({ file: string, pages?: string }): what it does`).
+- **The note.** A capability turned on mid-conversation adds the system note "New tools can be found with find_tools: run." (`data: { kind: 'tools', added, deferred: true }`). A conversation from 0.2, which has no `find_tools`, gets "New tools are available: …" and the tools declared instead.
+- **Calling them.** With `run` declared, deferred tools are called from a script, so the declared list never changes. Otherwise `find_tools` (or an accepted offer) declares the tools it found from the next request on, at the cost of one cache miss. The tool call records this as `_meta.declare`, so replaying the transcript rebuilds the declared list.
+- **Hidden tools** are never declared and exist only for scripts: `file` (a shared file's whole text) and `decide` (the reflexes) (D64).
 - **Native deferral.** Where a provider supports it (Anthropic's `defer_loading` with tool additions), the adapter may use it instead. The behaviour stays the same.
 - **The next conversation** declares the newly unlocked capability's tools directly. Connection tools stay deferred unless the user pins them.
 
-**Codemode (D48).** The `run` tool (Calculations) executes a JavaScript snippet in QuickJS. Inside it, Jean exposes what the user has granted, and nothing else, as async functions:
+**Codemode (D48).** The `run` tool (Calculations) executes a JavaScript snippet in QuickJS. Top-level `await` works, and the result is what the script returns or, as in a console, its last expression. Inside it, Jean exposes what the user has granted, and nothing else:
 
 | Global | What it does |
 |---|---|
-| `tools.<name>(args)` | Calls any granted tool: Jean's own, and connection tools, deferred ones included |
+| `file(name)` | The whole text of a shared file (spreadsheets as tab-separated rows), through the hidden `file` tool |
+| `csv(text)` | Turns CSV or tab-separated text into rows: objects keyed by the header, numbers as numbers |
+| `tools.<name>(args)` | Calls any granted tool, deferred ones included; later, connection tools too. `run` and `offer` can't be called from a script. |
 | `searchTools(query)` | Same as `find_tools`, from inside a script |
-| `models.decide(state, questions)` | Asks a decision model: Kev on the device, or Jev when a cloud brain is connected (the [Reflexes](#reflexes) shape) |
-| `models.image(prompt)` | Generates an image with the connected provider's image model |
+| `models.decide(state, questions)` | Asks Kev on the device, when Intuition is on, through the hidden `decide` tool (the [Reflexes](#reflexes) shape); Jev when a cloud brain is connected, later |
+| `models.image(prompt)` | Generates an image with the connected provider's image model (0.5) |
 
-- **Same rules.** Every nested call goes through Do it / Ask me first / Never. A call that needs approval pauses the script until the user answers.
-- **Visible.** Each nested call shows in the activity view as a child of the `run` call.
+- **Same rules.** Every nested call goes through Do it / Ask me first / Never (`ctx.call` in `core/loop.js`). A call that needs approval pauses the script until the user answers, and that wait doesn't count against its computing time.
+- **Visible.** Each nested call carries `_meta.parent` and shows in the activity view as a child of the `run` call.
+- **Out of the brain's context.** `toChatMessages` leaves nested calls out: the script's result already holds what matters (D64).
 - **Keys stay outside.** The script runs in the sandbox (see [Security](#security)). Each call crosses to Jean as a message, and Jean makes it with its own keys, so the sandbox never sees a secret.
 - **Direct calls stay.** Declared tools remain callable without code, because small brains call tools more reliably than they write scripts. Codemode pays off with strong brains, many tools and data-heavy work.
-- **Short description.** The `run` tool line names each global in one line and points to a reference the brain reads only when it needs it, like a routine.
+- **Short description.** The `run` line in the prompt is one sentence; the tool's own description names each global.
 
 **Thinking blocks are kept (D54).** Anthropic's thinking blocks are stored on each step's brain entry and replayed unchanged to the model that wrote them, because current models bind them to the conversation: dropping them is an edit, which costs the cache from that point on.
 
@@ -311,6 +345,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
   2. Otherwise, the brain searches like a person, with `search(query)` and `read(file, pages)`. Search is a BM25 index over page-aware chunks, with `Intl.Segmenter` splitting words and a reflex re-ranking the results. A French question about an English PDF works because the brain writes its search query in the document's language.
   3. A multilingual embedding model is added only if the test set proves it necessary.
 - **One engine, three uses:** project files, past conversations (`recall`) and memory.
+- **Source numbers (D71).** When a message is sent, each shared file gets a number on its link (`_meta.source`), kept if the same file was shared before. The brain sees `<document source="n" name="…">`, and `read` output starts with "Source [n]:". The UI turns `[n]` into a chip only when n is a known source; clicking it opens the file.
 
 ## Activity events
 
@@ -327,7 +362,8 @@ Jean's internal event format is ACP's `session/update` vocabulary: `user_message
 - **Plain-language, translated labels.** The UI renders each label from `kind` plus `locations` with a translated template, so switching language relabels history instantly. `title` (required by ACP) is kept as a fallback in the original language.
 - **Approvals map directly onto rules.** `allow_always` writes a "Do it" rule, `reject_always` writes "Never", and the "once" options keep "Ask me first".
 - **Outside the vocabulary:** actions such as sending an email through MCP use `kind: "other"` plus a namespaced extension field.
-- **Reflex decisions** shown to the user appear as collapsed `think` entries.
+- **Reflex decisions** shown to the user appear as collapsed `think` entries. Auto's choice is recorded on the brain entry (`rawInput.auto: { level, reason }`) and shown in plain words, such as "kept on this device: personal content" (D70).
+- **A script's calls** are tool calls with `_meta.parent` set to their `run` call, shown nested under it.
 - **Helpers** are child sessions, referenced from the parent's tool call.
 - **Enterprise audit:** a ~50-line adapter maps the stream to OpenTelemetry GenAI conventions (`invoke_agent`, `execute_tool`, `chat`).
 - **AG-UI** is the better fit when a UI fronts an agent running on a server, which Jean's is not. A bridge from ACP to AG-UI exists if that is ever needed.

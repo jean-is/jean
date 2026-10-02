@@ -95,8 +95,9 @@ async function copyLicense (pkg) {
 
 /**
  * On-demand runtimes (D52), each in its own folder. `rewrite` maps bare specifiers to
- * files in the same folder, because import maps don't reach into workers.
- * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string]>, rewrite?: Record<string, string> }[]}
+ * files in the same folder, because import maps don't reach into workers. A folder entry
+ * may keep only the files matching a pattern.
+ * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string> }[]}
  */
 export const RUNTIMES = [
   {
@@ -118,6 +119,19 @@ export const RUNTIMES = [
     ],
     rewrite: { 'onnxruntime-web/webgpu': './ort.webgpu.bundle.min.mjs', 'onnxruntime-common': './ort.webgpu.bundle.min.mjs' },
   },
+  {
+    // QuickJS for Calculations (D13, D48): flat, so the sandbox can load it from blob URLs.
+    dir: 'vendor/quickjs',
+    packages: ['quickjs-emscripten-core', '@jitl/quickjs-wasmfile-release-sync', '@jitl/quickjs-ffi-types'],
+    files: [
+      ['@jitl/quickjs-ffi-types/dist/index.mjs', 'ffi-types.mjs'],
+      ['@jitl/quickjs-wasmfile-release-sync/dist/ffi.mjs', 'ffi.mjs'],
+      ['@jitl/quickjs-wasmfile-release-sync/dist/emscripten-module.browser.mjs', 'emscripten-module.mjs'],
+      ['@jitl/quickjs-wasmfile-release-sync/dist/emscripten-module.wasm', 'emscripten-module.wasm'],
+    ],
+    folders: [['quickjs-emscripten-core/dist', '.', /\.mjs$/]],
+    rewrite: { '@jitl/quickjs-ffi-types': './ffi-types.mjs' },
+  },
 ]
 
 /**
@@ -136,7 +150,8 @@ async function copyRuntime (runtime) {
   await rm(target, { recursive: true, force: true })
   await mkdir(target, { recursive: true })
   let raw = 0
-  for (const [from, to] of runtime.files) {
+  /** @param {string} from @param {string} to */
+  const copy = async (from, to) => {
     if (/\.m?js$/.test(to)) {
       const text = rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {})
       await writeFile(join(target, to), text)
@@ -146,12 +161,10 @@ async function copyRuntime (runtime) {
       raw += (await readFile(join(target, to))).length
     }
   }
-  for (const [from, to] of runtime.folders ?? []) {
+  for (const [from, to] of runtime.files) await copy(from, to)
+  for (const [from, to, only] of runtime.folders ?? []) {
     await mkdir(join(target, to), { recursive: true })
-    for (const name of await readdir(join(MODULES, from))) {
-      await copyFile(join(MODULES, from, name), join(target, to, name))
-      raw += (await readFile(join(target, to, name))).length
-    }
+    for (const name of await readdir(join(MODULES, from))) if (!only || only.test(name)) await copy(join(from, name), join(to, name))
   }
   for (const pkg of runtime.packages) await copyLicense(pkg)
   console.log(`${`${runtime.dir}/ (on demand)`.padEnd(48)} ${kb(raw).padStart(9)}`)

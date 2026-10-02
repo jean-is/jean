@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Bác sĩ nói đường huyết của tôi quá cao. Tôi nên thay đổi chế độ ăn thế nào?",
+  "p2": "Tôi kiếm được 3.200 euro mỗi tháng và nợ thẻ tín dụng 14.000. Bao lâu tôi có thể trả hết?",
+  "p3": "Chuyện này là bí mật: đồng nghiệp Anna của tôi sẽ bị cho nghỉ việc vào tháng tới. Tôi nên nói với nhóm thế nào?",
+  "p4": "Từ khi ly hôn, tôi mất ngủ và lúc nào cũng lo âu. Tôi có thể làm gì?",
+  "p5": "Thủ đô của Úc là gì?",
+  "p6": "Viết một bài thơ ngắn về lá mùa thu.",
+  "p7": "Làm sao để chuyển tài liệu Word sang PDF?",
+  "p8": "Tóm tắt những nguyên nhân chính của Cách mạng Pháp.",
+  "d1": "Chào bạn! Hôm nay bạn thế nào?",
+  "d2": "Tokyo thuộc múi giờ nào?",
+  "d3": "Tóm tắt bài viết này thành ba ý.",
+  "d4": "Viết lại đoạn này cho lịch sự hơn.",
+  "d5": "So sánh ba báo giá của nhà cung cấp, cộng chi phí hằng năm và đề xuất một bên.",
+  "d6": "Xem các hóa đơn này, tìm những hóa đơn trùng và cho tôi biết chúng ta đã trả dư bao nhiêu.",
+  "d7": "Xem xét điều khoản hợp đồng này về rủi ro trách nhiệm theo luật thương mại Đức và đề xuất cách diễn đạt an toàn hơn.",
+  "d8": "Thiết kế một kiểm định thống kê để xem kết quả thử nghiệm A/B của chúng ta có ý nghĩa không khi các nhóm có kích thước khác nhau.",
+  "u1": [
+   "Cuộc họp vào thứ Ba lúc 3 giờ chiều.",
+   "Sai rồi, tôi đã nói là dời sang thứ Năm."
+  ],
+  "u2": [
+   "Đây là bản tóm tắt chi tiết của báo cáo, từng phần một.",
+   "Dài quá. Tôi chỉ cần hai dòng."
+  ],
+  "u3": [
+   "Tổng cộng là 4.200 euro.",
+   "Con số không khớp. Kiểm tra lại đi."
+  ],
+  "u4": [
+   "Kính gửi Quý ông/bà, tôi xin trân trọng thông báo về việc vắng mặt của tôi.",
+   "Nghe cứng nhắc và máy móc quá, chẳng giống tôi chút nào."
+  ],
+  "u5": [
+   "Cuộc họp vào thứ Ba lúc 3 giờ chiều.",
+   "Tuyệt, cảm ơn! Bạn soạn luôn chương trình họp được không?"
+  ],
+  "u6": [
+   "Tổng cộng là 4.200 euro.",
+   "Hoàn hảo. Giờ chia theo từng tháng."
+  ],
+  "u7": [
+   "Đây là ba ý tưởng cho bữa trưa của nhóm.",
+   "Tôi thích ý thứ hai. Có thể đặt chỗ ở đâu?"
+  ],
+  "u8": [
+   "Paris là thủ đô của Pháp.",
+   "Còn Ý thì sao?"
+  ],
+  "c1": "Trung bình chính xác của 12,5, 18,25, 7, 31,75 và 9 là bao nhiêu?",
+  "c2": "Tính số tiền trả hằng tháng cho khoản vay 200.000 lãi suất 3,4% trong 25 năm.",
+  "c3": "Trong bảng doanh số của tôi, sản phẩm nào tăng trưởng nhiều nhất giữa hai quý?",
+  "c4": "Bạn đọc giúp hợp đồng thuê nhà mà chủ nhà gửi cho tôi và cho biết thời hạn báo trước được không?",
+  "c5": "Tôi có biên bản cuộc họp dạng PDF. Bạn tóm tắt giúp được không?",
+  "c6": "Viết lời chúc sinh nhật cho em gái tôi.",
+  "c7": "Đặt tên gì hay cho một tiệm bánh?",
+  "c8": "'Cảm ơn rất nhiều' trong tiếng Tây Ban Nha nói thế nào?",
+  "t1": "Tháng Một chúng tôi bán được 120 sản phẩm ở Lyon, 95 ở Paris và 80 ở Lille. Tháng Hai 130 ở Lyon, 101 ở Paris và 76 ở Lille. Tháng Ba 142 ở Lyon, 99 ở Paris và 90 ở Lille.",
+  "t2": "Gói cơ bản giá 9 euro mỗi tháng với 10 GB dung lượng, gói tiêu chuẩn 15 euro với 100 GB, và gói cao cấp 25 euro với 1 TB cùng hỗ trợ ưu tiên.",
+  "t3": "Kỳ nghỉ của bạn từ ngày 3 đến 14 tháng 8 đã được duyệt. Hãy báo cho nhóm và bàn giao các việc đang dở cho Marie trước khi đi.",
+  "t4": "Paris là thủ đô của Pháp.",
+  "e1": "Kỳ nghỉ của bạn từ ngày 3 đến 14 tháng 8 đã được duyệt. Hãy báo cho nhóm và bàn giao các việc đang dở cho Marie trước khi đi.",
+  "e2": "Văn phòng sẽ đóng cửa vào thứ Sáu ngày 12 tháng 5 để bảo trì, vì vậy hôm đó mọi người làm việc tại nhà.",
+  "e3": "Lịch trả nợ áp dụng phương pháp số dư giảm dần với lãi suất thực tế hằng năm ghép lãi hằng tháng, nên phần gốc trong mỗi kỳ trả tăng theo cấp số nhân.",
+  "e4": "Quang hợp là quá trình các sinh vật có diệp lục chuyển năng lượng ánh sáng thành năng lượng hóa học qua các phản ứng phụ thuộc ánh sáng và chu trình Calvin, cố định CO2 thành triose phosphate."
+ }
+}

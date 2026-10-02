@@ -12,7 +12,7 @@ import { moduleGraph, parseImportMap } from './graph.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
-export const SHELL_FILES = ['index.html', 'brand.js', 'manifest.webmanifest']
+export const SHELL_FILES = ['index.html', 'sandbox.html', 'brand.js', 'manifest.webmanifest']
 export const SHELL_DIRS = ['core', 'ui', 'vendor', 'fonts', 'icons']
 export const WEBMANIFEST = 'manifest.webmanifest'
 export const ENTRY = 'ui/app.js'
@@ -21,6 +21,8 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   files: ['vendor/pdfjs'],
   'brain-local': ['vendor/transformers'],
   voice: ['vendor/transformers'],
+  reflexes: ['vendor/transformers'],
+  compute: ['vendor/quickjs'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
 export const VERSION_LINE = /^const VERSION = '.*'$/m

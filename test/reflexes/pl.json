@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Lekarz powiedział mi, że mam za wysoki cukier we krwi. Jak powinienem zmienić to, co jem?",
+  "p2": "Zarabiam 3200 euro miesięcznie i mam 14 000 długu na karcie kredytowej. Jak szybko mogę go spłacić?",
+  "p3": "To poufne: moja koleżanka Anna zostanie zwolniona w przyszłym miesiącu. Jak powiedzieć o tym zespołowi?",
+  "p4": "Od rozwodu nie mogę spać i cały czas czuję niepokój. Co mogę zrobić?",
+  "p5": "Jaka jest stolica Australii?",
+  "p6": "Napisz krótki wiersz o jesiennych liściach.",
+  "p7": "Jak zamienić dokument Word na PDF?",
+  "p8": "Podsumuj główne przyczyny rewolucji francuskiej.",
+  "d1": "Cześć! Jak się dziś masz?",
+  "d2": "W jakiej strefie czasowej jest Tokio?",
+  "d3": "Streść ten artykuł w trzech punktach.",
+  "d4": "Przepisz ten akapit, żeby brzmiał uprzejmiej.",
+  "d5": "Porównaj te trzy oferty dostawców, zsumuj roczne koszty i poleć jedną.",
+  "d6": "Przejrzyj te faktury, znajdź duplikaty i powiedz, ile przepłaciliśmy.",
+  "d7": "Oceń tę klauzulę umowy pod kątem ryzyka odpowiedzialności według niemieckiego prawa handlowego i zaproponuj bezpieczniejsze sformułowanie.",
+  "d8": "Zaprojektuj test statystyczny, który sprawdzi, czy wynik naszego testu A/B jest istotny przy grupach różnej wielkości.",
+  "u1": [
+   "Spotkanie jest we wtorek o 15:00.",
+   "To nieprawda, mówiłem ci, że przeniesiono je na czwartek."
+  ],
+  "u2": [
+   "Oto szczegółowe podsumowanie raportu, rozdział po rozdziale.",
+   "O wiele za długie. Prosiłem o dwie linijki."
+  ],
+  "u3": [
+   "Suma wynosi 4200 euro.",
+   "To się nie zgadza. Sprawdź jeszcze raz."
+  ],
+  "u4": [
+   "Szanowni Państwo, niniejszym pragnę poinformować o mojej nieobecności.",
+   "To brzmi sztywno i jak robot, zupełnie nie jak ja."
+  ],
+  "u5": [
+   "Spotkanie jest we wtorek o 15:00.",
+   "Super, dzięki! Możesz też przygotować porządek obrad?"
+  ],
+  "u6": [
+   "Suma wynosi 4200 euro.",
+   "Świetnie. Teraz rozbij to na miesiące."
+  ],
+  "u7": [
+   "Oto trzy pomysły na lunch zespołu.",
+   "Podoba mi się drugi. Gdzie moglibyśmy zarezerwować?"
+  ],
+  "u8": [
+   "Paryż jest stolicą Francji.",
+   "A stolica Włoch?"
+  ],
+  "c1": "Jaka jest dokładna średnia z 12,5, 18,25, 7, 31,75 i 9?",
+  "c2": "Oblicz miesięczną ratę kredytu 200 000 na 3,4% na 25 lat.",
+  "c3": "Który produkt najbardziej urósł między dwoma kwartałami w mojej tabeli sprzedaży?",
+  "c4": "Możesz przeczytać umowę najmu, którą przysłał mi właściciel, i powiedzieć mi, jaki jest okres wypowiedzenia?",
+  "c5": "Mam protokół ze spotkania w PDF. Możesz go streścić?",
+  "c6": "Napisz życzenia urodzinowe dla mojej siostry.",
+  "c7": "Jaka byłaby dobra nazwa dla piekarni?",
+  "c8": "Jak powiedzieć „dziękuję bardzo” po hiszpańsku?",
+  "t1": "W styczniu sprzedaliśmy 120 sztuk w Lyonie, 95 w Paryżu i 80 w Lille. W lutym 130 w Lyonie, 101 w Paryżu i 76 w Lille. W marcu 142 w Lyonie, 99 w Paryżu i 90 w Lille.",
+  "t2": "Plan podstawowy kosztuje 9 euro miesięcznie z 10 GB miejsca, plan standardowy 15 euro ze 100 GB, a plan premium 25 euro z 1 TB i priorytetowym wsparciem.",
+  "t3": "Twój urlop od 3 do 14 sierpnia został zatwierdzony. Poinformuj zespół i przed wyjazdem przekaż otwarte sprawy Marie.",
+  "t4": "Paryż jest stolicą Francji.",
+  "e1": "Twój urlop od 3 do 14 sierpnia został zatwierdzony. Poinformuj zespół i przed wyjazdem przekaż otwarte sprawy Marie.",
+  "e2": "Biuro będzie zamknięte w piątek 12 maja z powodu prac konserwacyjnych, więc tego dnia wszyscy pracują z domu.",
+  "e3": "Harmonogram spłat stosuje metodę degresywną z efektywną roczną stopą kapitalizowaną co miesiąc, przez co część kapitałowa każdej raty rośnie geometrycznie.",
+  "e4": "Fotosynteza to proces, w którym organizmy zawierające chlorofil przekształcają energię świetlną w chemiczną dzięki reakcjom zależnym od światła i cyklowi Calvina, wiążąc CO2 w fosforanach trioz."
+ }
+}

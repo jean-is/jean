@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Daktari wangu aliniambia sukari yangu ya damu iko juu sana. Nibadilishe vipi ninachokula?",
+  "p2": "Ninapata euro 3,200 kwa mwezi na nina deni la 14,000 kwenye kadi ya mkopo. Ninaweza kulilipa kwa haraka kiasi gani?",
+  "p3": "Hii ni siri: mwenzangu Anna ataachishwa kazi mwezi ujao. Nitaiambiaje timu?",
+  "p4": "Tangu talaka yangu siwezi kulala na nina wasiwasi kila wakati. Ninaweza kufanya nini?",
+  "p5": "Mji mkuu wa Australia ni upi?",
+  "p6": "Andika shairi fupi kuhusu majani ya vuli.",
+  "p7": "Ninabadilishaje hati ya Word kuwa PDF?",
+  "p8": "Fupisha sababu kuu za Mapinduzi ya Ufaransa.",
+  "d1": "Habari! Hujambo leo?",
+  "d2": "Tokyo iko katika saa za eneo gani?",
+  "d3": "Fupisha makala hii kwa hoja tatu.",
+  "d4": "Andika upya aya hii ili isikike kwa adabu zaidi.",
+  "d5": "Linganisha nukuu hizi tatu za wasambazaji, jumlisha gharama za mwaka na upendekeze moja.",
+  "d6": "Pitia ankara hizi, tafuta zilizojirudia na uniambie tulilipa zaidi kiasi gani.",
+  "d7": "Kagua kifungu hiki cha mkataba kwa hatari za dhima chini ya sheria ya biashara ya Ujerumani na upendekeze maneno salama zaidi.",
+  "d8": "Buni jaribio la takwimu kuangalia kama matokeo ya jaribio letu la A/B ni muhimu wakati makundi yana ukubwa tofauti.",
+  "u1": [
+   "Mkutano ni Jumanne saa 9 alasiri.",
+   "Si kweli, nilikuambia umehamishiwa Alhamisi."
+  ],
+  "u2": [
+   "Huu ni muhtasari wa kina wa ripoti, sehemu kwa sehemu.",
+   "Ni mrefu mno. Niliomba mistari miwili."
+  ],
+  "u3": [
+   "Jumla ni euro 4,200.",
+   "Hesabu hiyo haiko sawa. Kagua tena."
+  ],
+  "u4": [
+   "Kwa Bwana au Bibi, kwa barua hii napenda kukujulisha kuhusu kutokuwepo kwangu.",
+   "Inasikika ngumu na kama roboti, si mimi kabisa."
+  ],
+  "u5": [
+   "Mkutano ni Jumanne saa 9 alasiri.",
+   "Safi, asante! Unaweza kuandaa ajenda pia?"
+  ],
+  "u6": [
+   "Jumla ni euro 4,200.",
+   "Kamili. Sasa igawe kwa mwezi."
+  ],
+  "u7": [
+   "Haya ni mawazo matatu kwa chakula cha mchana cha timu.",
+   "Napenda la pili. Tunaweza kuweka nafasi wapi?"
+  ],
+  "u8": [
+   "Paris ni mji mkuu wa Ufaransa.",
+   "Na wa Italia je?"
+  ],
+  "c1": "Wastani kamili wa 12.5, 18.25, 7, 31.75 na 9 ni upi?",
+  "c2": "Hesabu malipo ya kila mwezi ya mkopo wa 200,000 kwa riba ya 3.4% kwa miaka 25.",
+  "c3": "Ni bidhaa gani ilikua zaidi kati ya robo mbili kwenye jedwali langu la mauzo?",
+  "c4": "Unaweza kusoma mkataba wa pango alionitumia mwenye nyumba na kuniambia muda wa notisi?",
+  "c5": "Nina kumbukumbu za mkutano kwa PDF. Unaweza kuzifupisha?",
+  "c6": "Andika ujumbe wa siku ya kuzaliwa kwa dada yangu.",
+  "c7": "Jina zuri la duka la mikate lingekuwa lipi?",
+  "c8": "Unasemaje 'asante sana' kwa Kihispania?",
+  "t1": "Mwezi Januari tuliuza vipande 120 Lyon, 95 Paris na 80 Lille. Februari 130 Lyon, 101 Paris na 76 Lille. Machi 142 Lyon, 99 Paris na 90 Lille.",
+  "t2": "Mpango wa msingi unagharimu euro 9 kwa mwezi pamoja na hifadhi ya GB 10, mpango wa kawaida euro 15 na GB 100, na mpango wa hadhi ya juu euro 25 na TB 1 pamoja na msaada wa kipaumbele.",
+  "t3": "Likizo yako kuanzia tarehe 3 hadi 14 Agosti imeidhinishwa. Tafadhali ijulishe timu yako na umkabidhi Marie kazi zako zinazoendelea kabla ya kuondoka.",
+  "t4": "Paris ni mji mkuu wa Ufaransa.",
+  "e1": "Likizo yako kuanzia tarehe 3 hadi 14 Agosti imeidhinishwa. Tafadhali ijulishe timu yako na umkabidhi Marie kazi zako zinazoendelea kabla ya kuondoka.",
+  "e2": "Ofisi itafungwa Ijumaa tarehe 12 Mei kwa matengenezo, kwa hivyo siku hiyo kila mtu atafanya kazi kutoka nyumbani.",
+  "e3": "Ratiba ya ulipaji hutumia mbinu ya salio linalopungua kwa kiwango halisi cha mwaka kinachoongezeka kila mwezi, kwa hivyo sehemu ya mtaji katika kila awamu huongezeka kijiometri.",
+  "e4": "Usanisinuru ni mchakato ambao viumbe wenye klorofili hubadilisha nishati ya mwanga kuwa nishati ya kemikali kupitia athari zinazotegemea mwanga na mzunguko wa Calvin, wakifunga CO2 kuwa fosfeti za triosi."
+ }
+}

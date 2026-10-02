@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Sabi ng doktor ko, masyadong mataas ang blood sugar ko. Paano ko dapat baguhin ang kinakain ko?",
+  "p2": "Kumikita ako ng 3,200 euro kada buwan at may utang akong 14,000 sa credit card. Gaano kabilis ko itong mababayaran?",
+  "p3": "Kumpidensyal ito: tatanggalin sa trabaho ang katrabaho kong si Anna sa susunod na buwan. Paano ko sasabihin sa team?",
+  "p4": "Mula nang maghiwalay kami, hindi na ako makatulog at lagi akong balisa. Ano ang puwede kong gawin?",
+  "p5": "Ano ang kabisera ng Australia?",
+  "p6": "Sumulat ng maikling tula tungkol sa mga dahon ng taglagas.",
+  "p7": "Paano ko gagawing PDF ang isang Word document?",
+  "p8": "Ibuod ang mga pangunahing sanhi ng Rebolusyong Pranses.",
+  "d1": "Hi! Kumusta ka ngayon?",
+  "d2": "Anong time zone ang Tokyo?",
+  "d3": "Ibuod ang artikulong ito sa tatlong punto.",
+  "d4": "Isulat muli ang talatang ito para mas magalang ang dating.",
+  "d5": "Ikumpara ang tatlong quotation ng supplier na ito, pagsamahin ang taunang gastos, at magrekomenda ng isa.",
+  "d6": "Suriin ang mga invoice na ito, hanapin ang mga doble, at sabihin kung magkano ang sobra nating naibayad.",
+  "d7": "Suriin ang sugnay ng kontratang ito para sa mga panganib sa pananagutan sa ilalim ng batas pangkomersiyo ng Germany at magmungkahi ng mas ligtas na pananalita.",
+  "d8": "Magdisenyo ng statistical test para malaman kung makabuluhan ang resulta ng A/B test natin kahit hindi pareho ang laki ng mga grupo.",
+  "u1": [
+   "Ang meeting ay sa Martes, alas-3 ng hapon.",
+   "Mali, sinabi ko sa iyo na inilipat ito sa Huwebes."
+  ],
+  "u2": [
+   "Narito ang detalyadong buod ng ulat, bawat seksyon.",
+   "Masyadong mahaba. Dalawang linya lang ang hiningi ko."
+  ],
+  "u3": [
+   "Ang kabuuan ay 4,200 euro.",
+   "Hindi tugma 'yan. Suriin mo ulit."
+  ],
+  "u4": [
+   "Mahal na Ginoo o Ginang, sa pamamagitan nito ay ipinapaalam ko ang aking pagliban.",
+   "Ang tigas at parang robot, hindi talaga ako ganyan."
+  ],
+  "u5": [
+   "Ang meeting ay sa Martes, alas-3 ng hapon.",
+   "Ayos, salamat! Puwede mo rin bang gawin ang agenda?"
+  ],
+  "u6": [
+   "Ang kabuuan ay 4,200 euro.",
+   "Perpekto. Ngayon hatiin mo kada buwan."
+  ],
+  "u7": [
+   "Narito ang tatlong ideya para sa tanghalian ng team.",
+   "Gusto ko ang pangalawa. Saan tayo puwedeng magpa-book?"
+  ],
+  "u8": [
+   "Ang Paris ang kabisera ng France.",
+   "E ang sa Italy?"
+  ],
+  "c1": "Ano ang eksaktong average ng 12.5, 18.25, 7, 31.75 at 9?",
+  "c2": "Kuwentahin ang buwanang hulog ng 200,000 na utang sa 3.4% sa loob ng 25 taon.",
+  "c3": "Aling produkto ang pinakalumago sa pagitan ng dalawang quarter sa sales table ko?",
+  "c4": "Puwede mo bang basahin ang kontrata sa upa na ipinadala ng landlord ko at sabihin ang notice period?",
+  "c5": "May minutes ako ng meeting na naka-PDF. Puwede mo bang ibuod?",
+  "c6": "Sumulat ng mensahe sa kaarawan para sa kapatid kong babae.",
+  "c7": "Ano ang magandang pangalan para sa isang panaderya?",
+  "c8": "Paano sabihin ang 'maraming salamat' sa Espanyol?",
+  "t1": "Noong Enero, nakabenta kami ng 120 piraso sa Lyon, 95 sa Paris at 80 sa Lille. Noong Pebrero, 130 sa Lyon, 101 sa Paris at 76 sa Lille. Noong Marso, 142 sa Lyon, 99 sa Paris at 90 sa Lille.",
+  "t2": "Ang basic plan ay 9 euro kada buwan na may 10 GB na storage, ang standard plan ay 15 euro na may 100 GB, at ang premium plan ay 25 euro na may 1 TB at priority support.",
+  "t3": "Naaprubahan na ang leave mo mula Agosto 3 hanggang 14. Pakisabihan ang team mo at ipasa kay Marie ang mga bukas mong gawain bago ka umalis.",
+  "t4": "Ang Paris ang kabisera ng France.",
+  "e1": "Naaprubahan na ang leave mo mula Agosto 3 hanggang 14. Pakisabihan ang team mo at ipasa kay Marie ang mga bukas mong gawain bago ka umalis.",
+  "e2": "Sarado ang opisina sa Biyernes, Mayo 12, para sa maintenance, kaya lahat ay magtatrabaho mula sa bahay sa araw na iyon.",
+  "e3": "Gumagamit ang amortization schedule ng declining-balance method na may effective annual rate na compounded buwan-buwan, kaya ang bahagi ng principal sa bawat hulog ay lumalaki nang geometric.",
+  "e4": "Ang potosintesis ay ang proseso kung saan ginagawang kemikal na enerhiya ng mga organismong may chlorophyll ang enerhiya ng liwanag sa pamamagitan ng light-dependent reactions at Calvin cycle, na nagfi-fix ng CO2 bilang triose phosphates."
+ }
+}

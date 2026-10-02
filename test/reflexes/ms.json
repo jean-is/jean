@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Doktor saya kata gula dalam darah saya terlalu tinggi. Bagaimana saya patut ubah pemakanan saya?",
+  "p2": "Saya berpendapatan 3,200 euro sebulan dan berhutang 14,000 pada kad kredit. Berapa cepat saya boleh langsaikannya?",
+  "p3": "Ini sulit: rakan sekerja saya Anna akan diberhentikan bulan depan. Bagaimana saya mahu beritahu pasukan?",
+  "p4": "Sejak bercerai saya tidak boleh tidur dan sentiasa cemas. Apa yang boleh saya lakukan?",
+  "p5": "Apakah ibu negara Australia?",
+  "p6": "Tulis sajak pendek tentang daun musim luruh.",
+  "p7": "Bagaimana hendak tukar dokumen Word kepada PDF?",
+  "p8": "Ringkaskan punca utama Revolusi Perancis.",
+  "d1": "Hai! Apa khabar hari ini?",
+  "d2": "Tokyo berada dalam zon waktu apa?",
+  "d3": "Ringkaskan artikel ini dalam tiga perkara.",
+  "d4": "Tulis semula perenggan ini supaya kedengaran lebih sopan.",
+  "d5": "Bandingkan tiga sebut harga pembekal ini, jumlahkan kos tahunan dan cadangkan satu.",
+  "d6": "Semak invois-invois ini, cari yang berulang dan beritahu berapa banyak kita terlebih bayar.",
+  "d7": "Semak klausa kontrak ini untuk risiko liabiliti di bawah undang-undang komersial Jerman dan cadangkan perkataan yang lebih selamat.",
+  "d8": "Reka satu ujian statistik untuk menyemak sama ada keputusan ujian A/B kita signifikan dengan saiz kumpulan yang tidak sama.",
+  "u1": [
+   "Mesyuarat pada hari Selasa pukul 3 petang.",
+   "Salah, saya dah beritahu ia dipindahkan ke Khamis."
+  ],
+  "u2": [
+   "Ini ringkasan terperinci laporan, bahagian demi bahagian.",
+   "Terlalu panjang. Saya minta dua baris sahaja."
+  ],
+  "u3": [
+   "Jumlahnya 4,200 euro.",
+   "Kiraan itu tak betul. Semak sekali lagi."
+  ],
+  "u4": [
+   "Tuan/Puan, dengan ini saya ingin memaklumkan ketidakhadiran saya.",
+   "Bunyinya kaku dan seperti robot, langsung bukan gaya saya."
+  ],
+  "u5": [
+   "Mesyuarat pada hari Selasa pukul 3 petang.",
+   "Bagus, terima kasih! Boleh sediakan agenda juga?"
+  ],
+  "u6": [
+   "Jumlahnya 4,200 euro.",
+   "Sempurna. Sekarang pecahkan mengikut bulan."
+  ],
+  "u7": [
+   "Ini tiga idea untuk makan tengah hari pasukan.",
+   "Saya suka yang kedua. Di mana kita boleh tempah?"
+  ],
+  "u8": [
+   "Paris ialah ibu negara Perancis.",
+   "Bagaimana dengan Itali?"
+  ],
+  "c1": "Berapakah purata tepat bagi 12.5, 18.25, 7, 31.75 dan 9?",
+  "c2": "Kira bayaran bulanan pinjaman 200,000 pada kadar 3.4% selama 25 tahun.",
+  "c3": "Produk mana yang paling berkembang antara dua suku tahun dalam jadual jualan saya?",
+  "c4": "Boleh baca perjanjian sewa yang tuan rumah hantar dan beritahu tempoh notisnya?",
+  "c5": "Saya ada minit mesyuarat dalam PDF. Boleh ringkaskan?",
+  "c6": "Tulis ucapan hari jadi untuk adik perempuan saya.",
+  "c7": "Apa nama yang sesuai untuk kedai roti?",
+  "c8": "Bagaimana sebut 'terima kasih banyak-banyak' dalam bahasa Sepanyol?",
+  "t1": "Pada Januari kami menjual 120 unit di Lyon, 95 di Paris dan 80 di Lille. Pada Februari 130 di Lyon, 101 di Paris dan 76 di Lille. Pada Mac 142 di Lyon, 99 di Paris dan 90 di Lille.",
+  "t2": "Pelan asas berharga 9 euro sebulan dengan storan 10 GB, pelan standard 15 euro dengan 100 GB dan pelan premium 25 euro dengan 1 TB serta sokongan keutamaan.",
+  "t3": "Cuti anda dari 3 hingga 14 Ogos telah diluluskan. Sila maklumkan pasukan anda dan serahkan kerja yang belum selesai kepada Marie sebelum pergi.",
+  "t4": "Paris ialah ibu negara Perancis.",
+  "e1": "Cuti anda dari 3 hingga 14 Ogos telah diluluskan. Sila maklumkan pasukan anda dan serahkan kerja yang belum selesai kepada Marie sebelum pergi.",
+  "e2": "Pejabat akan ditutup pada hari Jumaat, 12 Mei, untuk penyelenggaraan, jadi semua orang bekerja dari rumah pada hari itu.",
+  "e3": "Jadual pelunasan menggunakan kaedah baki berkurangan dengan kadar tahunan berkesan yang dikompaun setiap bulan, jadi bahagian pokok setiap ansuran meningkat secara geometri.",
+  "e4": "Fotosintesis ialah proses organisma berklorofil menukar tenaga cahaya kepada tenaga kimia melalui tindak balas bergantung cahaya dan kitaran Calvin, sambil mengikat CO2 menjadi triosa fosfat."
+ }
+}

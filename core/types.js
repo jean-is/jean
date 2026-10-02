@@ -25,7 +25,7 @@ export {}
 /**
  * @typedef {{ id: string, name: string, args: any }} ToolCall
  * @typedef {{ name: string, description: string, parameters: object }} ToolSpec  parameters = JSON Schema
- * @typedef {{ name: string, text: string }} DocumentPart  a shared file's text, as the brain sees it
+ * @typedef {{ name: string, text: string, source?: number }} DocumentPart  a shared file's text, as the brain sees it
  * @typedef {{ role: 'user', content: string, documents?: DocumentPart[] }} UserMessage
  * @typedef {{ role: 'assistant', content: string, toolCalls?: ToolCall[], raw?: any, rawModel?: string }} AssistantMessage
  *   raw = provider-native content blocks, echoed verbatim to the model in rawModel only
@@ -75,9 +75,10 @@ export {}
 
 /**
  * ACP content blocks (subset). A resource link points at a file in the project (uri relative
- * to the project folder); `_meta.pages` records which pages went into the brain's context.
+ * to the project folder); `_meta.pages` records which pages went into the brain's context,
+ * `_meta.source` the number the brain cites it by.
  * @typedef {{ type: 'text', text: string }} TextBlock
- * @typedef {{ type: 'resource_link', uri: string, name: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number], of?: number } }} ResourceLink
+ * @typedef {{ type: 'resource_link', uri: string, name: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number], of?: number, source?: number } }} ResourceLink
  * @typedef {TextBlock | ResourceLink} ContentBlock
  * @typedef {'read'|'edit'|'delete'|'move'|'search'|'execute'|'think'|'fetch'|'switch_mode'|'other'} ToolKind
  * @typedef {'pending'|'in_progress'|'completed'|'failed'} ToolStatus
@@ -116,13 +117,14 @@ export {}
  * What a system note changed, for the UI label; `text` is what the brain reads (D46).
  * @typedef {{ kind: 'language', language: string }
  *   | { kind: 'date', date: string }
- *   | { kind: 'tools', added: string[] }
+ *   | { kind: 'tools', added: string[], deferred?: boolean }
  * } SystemNoteData
  */
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.
- * @typedef {{ language: string, date: string, tools: string[] }} PromptState
+ * @typedef {{ language: string, date: string, tools: string[], deferred?: string[] }} PromptState
+ *   tools: declared to the brain; deferred: known to exist, reached with find_tools (D47)
  */
 
 /**

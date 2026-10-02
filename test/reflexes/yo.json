@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Dókítà mi sọ pé ṣúgà inú ẹ̀jẹ̀ mi ga jù. Báwo ni mo ṣe yẹ kí n yí oúnjẹ mi padà?",
+  "p2": "Mo ń gba yúrò 3,200 lóṣù, mo sì jẹ gbèsè 14,000 lórí káàdì kirẹ́dítì. Báwo ni mo ṣe lè san án tán kíákíá?",
+  "p3": "Àṣírí ni èyí: wọ́n máa lé Anna, alábàáṣiṣẹ́ mi, kúrò lẹ́nu iṣẹ́ lóṣù tó ń bọ̀. Báwo ni mo ṣe máa sọ fún ẹgbẹ́?",
+  "p4": "Láti ìgbà ìkọ̀sílẹ̀ mi, mi ò lè sùn, ọkàn mi sì máa ń dààmú ní gbogbo ìgbà. Kí ni mo lè ṣe?",
+  "p5": "Kí ni olú-ìlú Ọsirélíà?",
+  "p6": "Kọ ewì kúkúrú nípa àwọn ewé ìgbà ìwọ́wé.",
+  "p7": "Báwo ni mo ṣe lè yí ìwé Word padà sí PDF?",
+  "p8": "Ṣe àkópọ̀ àwọn ìdí pàtàkì Ìyípadà Ńlá ilẹ̀ Faransé.",
+  "d1": "Báwo ni! Ṣé dáadáa ni lónìí?",
+  "d2": "Àgbègbè àkókò wo ni Tokyo wà?",
+  "d3": "Ṣe àkópọ̀ àpilẹ̀kọ yìí ní kókó mẹ́ta.",
+  "d4": "Tún ìpínrọ̀ yìí kọ kí ó dún ní ọ̀wọ̀ sí i.",
+  "d5": "Fi àwọn ìdíyelé olùpèsè mẹ́ta yìí wé ara wọn, ṣe àròpọ̀ ìnáwó ọdọọdún, kí o sì dábàá ọ̀kan.",
+  "d6": "Yẹ àwọn ìwé ìsanwó yìí wò, wá àwọn tó jẹ́ ẹ̀dà méjì, kí o sì sọ iye tí a san ju bó ṣe yẹ lọ.",
+  "d7": "Ṣàyẹ̀wò abala àdéhùn yìí fún ewu ẹ̀tọ́ àti ojúṣe lábẹ́ òfin ìṣòwò Jámánì, kí o sì dábàá ọ̀rọ̀ tó dáàbò bò ju.",
+  "d8": "Ṣe ìdánwò ìṣirò láti mọ̀ bóyá àbájáde ìdánwò A/B wa ṣe pàtàkì nígbà tí àwọn ẹgbẹ́ kò dọ́gba ní iye.",
+  "u1": [
+   "Ìpàdé náà jẹ́ ní ọjọ́ Ìṣẹ́gun ní agogo mẹ́ta ọ̀sán.",
+   "Ìyẹn kò tọ̀nà, mo sọ fún ọ pé wọ́n ti gbé e lọ sí ọjọ́bọ̀."
+  ],
+  "u2": [
+   "Èyí ni àkópọ̀ kíkún ìròyìn náà, abala kọ̀ọ̀kan.",
+   "Ó gùn jù. Ìlà méjì ni mo béèrè."
+  ],
+  "u3": [
+   "Àpapọ̀ rẹ̀ jẹ́ yúrò 4,200.",
+   "Ìṣirò yẹn kò bá a mu. Tún un yẹ̀ wò."
+  ],
+  "u4": [
+   "Sí Ọ̀gá tàbí Ìyá, mo fi lẹ́tà yìí sọ fún yín nípa àìsí mi níbi iṣẹ́.",
+   "Èyí le gan-an ó sì dà bí ẹ̀rọ, kò jọ mí rárá."
+  ],
+  "u5": [
+   "Ìpàdé náà jẹ́ ní ọjọ́ Ìṣẹ́gun ní agogo mẹ́ta ọ̀sán.",
+   "Ó dáa, ẹ ṣé! Ṣé o lè kọ ètò ìpàdé náà pẹ̀lú?"
+  ],
+  "u6": [
+   "Àpapọ̀ rẹ̀ jẹ́ yúrò 4,200.",
+   "Ó pé. Wàyí, pín in sí oṣù kọ̀ọ̀kan."
+  ],
+  "u7": [
+   "Èyí ni èrò mẹ́ta fún oúnjẹ ọ̀sán ẹgbẹ́.",
+   "Mo fẹ́ràn èkejì. Níbo la ti lè gba àyè?"
+  ],
+  "u8": [
+   "Paris ni olú-ìlú ilẹ̀ Faransé.",
+   "Ti Italy ńkọ́?"
+  ],
+  "c1": "Kí ni àròpín gidi ti 12.5, 18.25, 7, 31.75 àti 9?",
+  "c2": "Ṣírò ìsanwó oṣooṣù fún ẹ̀yáwó 200,000 ní èlé 3.4% fún ọdún 25.",
+  "c3": "Ọjà wo ló dàgbà jù lọ láàárín ìdá-mẹ́rin ọdún méjì nínú tábìlì títà mi?",
+  "c4": "Ṣé o lè ka àdéhùn ilé gbígbé tí onílé fi ránṣẹ́ sí mi kí o sì sọ àkókò ìkìlọ̀ fún mi?",
+  "c5": "Mo ní àkọsílẹ̀ ìpàdé ní PDF. Ṣé o lè ṣe àkópọ̀ rẹ̀?",
+  "c6": "Kọ ọ̀rọ̀ ìkíni ọjọ́ ìbí fún àbúrò mi obìnrin.",
+  "c7": "Orúkọ wo ló dára fún ilé búrẹ́dì?",
+  "c8": "Báwo la ṣe ń sọ 'ẹ ṣé púpọ̀' ní èdè Sípáníìṣì?",
+  "t1": "Ní oṣù Ṣẹ́rẹ́ a ta ẹyọ 120 ní Lyon, 95 ní Paris àti 80 ní Lille. Ní Èrèlè, 130 ní Lyon, 101 ní Paris àti 76 ní Lille. Ní Ẹrẹ̀nà, 142 ní Lyon, 99 ní Paris àti 90 ní Lille.",
+  "t2": "Ètò ìpìlẹ̀ jẹ́ yúrò 9 lóṣù pẹ̀lú ibi ìpamọ́ 10 GB, ètò àárín jẹ́ yúrò 15 pẹ̀lú 100 GB, ètò àkànṣe sì jẹ́ yúrò 25 pẹ̀lú 1 TB àti ìrànlọ́wọ́ àkọ́kọ́.",
+  "t3": "A ti fọwọ́ sí ìsinmi rẹ láti ọjọ́ 3 sí 14 oṣù Ògún. Jọ̀wọ́ sọ fún ẹgbẹ́ rẹ kí o sì fi àwọn iṣẹ́ tí kò tíì parí lé Marie lọ́wọ́ kí o tó lọ.",
+  "t4": "Paris ni olú-ìlú ilẹ̀ Faransé.",
+  "e1": "A ti fọwọ́ sí ìsinmi rẹ láti ọjọ́ 3 sí 14 oṣù Ògún. Jọ̀wọ́ sọ fún ẹgbẹ́ rẹ kí o sì fi àwọn iṣẹ́ tí kò tíì parí lé Marie lọ́wọ́ kí o tó lọ.",
+  "e2": "Ọ́fíìsì máa wà ní títì ní ọjọ́ Ẹtì, ọjọ́ 12 oṣù Èbìbí, fún àtúnṣe, nítorí náà gbogbo ènìyàn máa ṣiṣẹ́ láti ilé ní ọjọ́ náà.",
+  "e3": "Ètò ìsanpadà ẹ̀yáwó ń lo ọ̀nà ìyókù tó ń dín kù pẹ̀lú èlé ọdọọdún gidi tí a ń ṣàkópọ̀ lóṣooṣù, nítorí náà ìpín olú-owó nínú ìsanwó kọ̀ọ̀kan ń pọ̀ sí i ní ìlọ́po.",
+  "e4": "Photosynthesis ni ìlànà tí àwọn ẹ̀dá alààyè tó ní chlorophyll fi ń yí agbára ìmọ́lẹ̀ padà sí agbára kẹ́míkà nípasẹ̀ àwọn ìhùwàsí tó gbára lé ìmọ́lẹ̀ àti àyíká Calvin, tí wọ́n sì ń so CO2 mọ́ triose phosphate."
+ }
+}

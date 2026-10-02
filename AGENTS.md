@@ -1,6 +1,6 @@
 # AGENTS.md — building Jean
 
-> Status: 0.2 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
+> Status: 0.3 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
 
 ## What Jean is
 
@@ -56,22 +56,24 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Prompts
 
-The base prompt lives in [prompts/system.md](prompts/system.md) and stays around 150 tokens. Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
+The base prompt lives in [prompts/system.md](prompts/system.md) and stays within its 200-token budget (182 as of 0.3). Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
 
 The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read.
 
 ## Testing
 
 - Use `node --test` for `core/`, test-first for `core/` and storage.
-- Add one Playwright smoke test per capability once there is UI.
+- One Playwright smoke test per capability, in `e2e/`, run in Chromium and WebKit against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers.
 - Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
 
 ## Commands
 
 ```bash
-npm run dev     # copy runtimes into vendor/, then serve (npm start does the same)
+npm run dev     # build (vendor + manifest), then serve (npm start does the same)
 npm run build   # copy runtimes into vendor/, regenerate the manifest
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
+npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
+npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
 npm run serve   # serve the folder as it is
 ```

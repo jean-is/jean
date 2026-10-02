@@ -240,7 +240,7 @@ export function openaiMessages(system, messages, { systemNotes, argsAsObject = f
 const noteBlock = (text) => `<system-note>\n${text}\n</system-note>`
 
 /** @param {DocumentPart} doc */
-const documentBlock = (doc) => `<document name="${doc.name.replace(/["\n]/g, ' ')}">\n${doc.text}\n</document>`
+const documentBlock = (doc) => `<document${doc.source ? ` source="${doc.source}"` : ''} name="${doc.name.replace(/["\n]/g, ' ')}">\n${doc.text}\n</document>`
 
 /** @param {AsyncIterable<SSEEvent>} events @returns {AsyncGenerator<StreamEvent, void, undefined>} */
 async function* readOpenAI(events) {

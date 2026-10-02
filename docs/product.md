@@ -20,6 +20,7 @@ The UI never says "agent", "model", "MCP", "skill" or "token".
 | Artifact / output | Things Jean made |
 | Project folder | **Project** — "anything you keep coming back to" |
 | Sub-agent | Helper |
+| Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
@@ -44,10 +45,11 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 
 | Capability | Offered when… | What appears |
 |---|---|---|
-| Files | The user pastes long text, mentions a document, or drops a file | "You can drop files on me," plus a file shelf |
+| Files | The user pastes long text (over 2,000 characters), drops a file, or a reflex or the brain says a document would help | "You can drop files on me," plus a file shelf |
 | Things Jean made | The first table or document is produced | A "Made by Jean" shelf: copy as rich text, CSV, print to PDF |
-| Backup | After the first few conversations | "Keep a copy of everything?" plus a request for persistent storage |
-| Calculations | A question needs exact numbers | Jean computes instead of guessing (QuickJS) |
+| Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
+| Calculations | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | Jean computes instead of guessing (QuickJS) |
+| Intuition | After two conversations with a brain | "Let Jean get a feel for what you need?" A small helper on this device (about 345 MB, once) picks the brain and suggests next steps |
 | Data toolkit | Spreadsheet work goes beyond simple maths | Python, after asking ("about 30 MB, once") |
 | Bigger brain | A task outgrows the current brain | The next rung of the brain ladder |
 | Memory | The user states a lasting preference or correction | "Want me to remember things like this from now on?" |
@@ -134,7 +136,7 @@ A chip in the message box reads **Auto ▾**. It offers:
 - **Auto** (recommended)
 - **On this device:** private, free, works offline
 - **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name in small print and a plain cost ("about 1¢ per answer"), using prices from the provider's catalogue (OpenRouter `/models`, or models.dev).
-- **All models…**
+- **All brains**
 - **Never send to the cloud,** an explicit switch
 
 Organisation policy can hide or lock any of these.
@@ -148,7 +150,8 @@ Organisation policy can hide or lock any of these.
 | Does it need the web or image input? | Only brains that support it |
 | Is the user unhappy with the last answer? | Step up a level |
 
-- **Stable choices.** Auto steps up when needed and steps down only at natural breaks. This keeps the provider's cache warm and the tool-call format consistent.
+- **Stable choices.** Auto steps up when needed and never steps down within a conversation; a new conversation starts again from the bottom. This keeps the provider's cache warm and the tool-call format consistent.
+- **Without Intuition,** Auto picks the Smart level (D70).
 - **Visible.** Every answer shows where it came from ("answered on this device"), with a one-tap "Ask a smarter brain".
 - **Optional budget.** A monthly budget cap can be set.
 
@@ -180,8 +183,12 @@ When no route exists, Jean says so and suggests connecting a cloud brain. A shar
 
 ## Reply suggestions
 
-- **Actions from a translated catalogue:** "Shorter", "As a table", "Simpler", "Draft an email", "Translate"… The reflex model picks the relevant ones. Free, instant, works in every language.
-- **Follow-ups tied to the content:** the brain ends its reply with up to 3 follow-ups in a hidden block, and the UI turns them into buttons. They cost a few output tokens and are automatically in the user's language.
+- **Actions from a translated catalogue** (as built in 0.3, D69):
+  - "Shorter" when the answer is over 220 words. That is a length, so it works in every language, with or without Intuition.
+  - "As a table" and "Draft an email" when Intuition says they fit.
+  - "Simpler" and "Translate" were dropped: the small reflex model can't tell whether a text is wordy or full of jargon, and the language to translate into is the user's call.
+- **Follow-ups tied to the content:** the brain ends its reply with up to 3 follow-ups in a hidden block, and the UI turns them into buttons under the last answer. They cost a few output tokens and are automatically in the user's language.
+- **"Ask a smarter brain"** sits with them when Auto chose the brain and a higher level is available.
 - **Starters on the first screen** help non-technical users begin.
 - **Suggestions double as discovery.** A "Chart this" button is how Calculations gets discovered.
 

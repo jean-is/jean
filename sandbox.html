@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-i14PSNsWEnCMHtFyWYpbPlJVyXw3pB0Ld4yLZSYV8y0=' blob: 'wasm-unsafe-eval'; worker-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Sandbox</title>
+<!-- Untrusted code runs only here (AGENTS.md): loaded in <iframe sandbox="allow-scripts">, so its
+     origin is opaque and it can't read Jean's storage; it has no network (connect-src 'none').
+     The parent sends a worker's source and runtime files; this relay creates the worker from a
+     blob, so it inherits this policy, and passes messages both ways. A classic worker: browsers
+     refuse module workers from blob: URLs in an opaque origin (it can still import() them). -->
+<script>let worker
+onmessage = ({ data, source }) => {
+  if (source !== parent) return
+  try {
+    if (data.type === 'boot' && !worker) {
+      worker = new Worker(URL.createObjectURL(new Blob([data.source], { type: 'text/javascript' })))
+      worker.onmessage = (event) => parent.postMessage(event.data, '*')
+      worker.onerror = (event) => parent.postMessage({ type: 'failed', error: event.message || 'The sandbox stopped' }, '*')
+    }
+    worker?.postMessage(data)
+  } catch (error) {
+    parent.postMessage({ type: 'failed', error: String(error) }, '*')
+  }
+}
+</script>
+</html>

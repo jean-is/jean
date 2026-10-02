@@ -136,7 +136,8 @@ export function toChatMessages(records, document = (link) => ({ name: link.name,
       messages.push({ role: 'user', content: turn.user.text, ...(documents.length && { documents }) })
     }
     for (const step of [...turn.steps].sort((a, b) => a.index - b.index)) {
-      const calls = step.tools.filter((tool) => tool.name && tool.status !== 'pending' && tool.status !== 'in_progress')
+      // A script's own calls (codemode) are part of its result, not of the brain's turn.
+      const calls = step.tools.filter((tool) => tool.name && !tool._meta?.parent && tool.status !== 'pending' && tool.status !== 'in_progress')
       if (!step.text && !calls.length) continue
       const brain = step.tools.find((tool) => tool.kind === 'think' && !tool.name && tool._meta?.raw)
       messages.push({
@@ -160,6 +161,19 @@ export function toChatMessages(records, document = (link) => ({ name: link.name,
 function stringify(value) {
   if (value === undefined || value === null) return ''
   return typeof value === 'string' ? value : JSON.stringify(value)
+}
+
+/**
+ * A reply's text without the follow-ups the brain suggested in a trailing <suggestions>
+ * block, which is hidden from its opening tag on (even mid-stream), and those follow-ups.
+ * @param {string} text
+ */
+export function splitSuggestions(text) {
+  const at = text.search(/<suggestions>|<s(u(g(g(e(s(t(i(o(n(s)?)?)?)?)?)?)?)?)?)?$/i)
+  if (at < 0) return { text, suggestions: [] }
+  const lines = text.slice(at).replace(/<\/?suggestions>?/gi, '').split('\n')
+  const suggestions = lines.map((line) => line.replace(/^\s*(?:[-*•]|\d+[.)])?\s*/, '').trim()).filter((line) => line && !line.startsWith('<'))
+  return { text: text.slice(0, at).trimEnd(), suggestions: suggestions.slice(0, 3) }
 }
 
 /** Latest title from meta records. @param {Envelope[]} records */

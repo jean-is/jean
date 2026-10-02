@@ -2,11 +2,11 @@
 
 > An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.
 
-This repository holds **Jean** (a working name): its plan and its code. Jean is a standalone project that revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from scratch; it started inside the DEVS repository and moved out on 2026-10-02, keeping its history (D50). The plan comes out of a strategy session held on 2026-10-01; version 0.1 ("Talk") was built on 2026-10-02.
+This repository holds **Jean** (a working name): its plan and its code. Jean is a standalone project that revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from scratch; it started inside the DEVS repository and moved out on 2026-10-02, keeping its history (D50). The plan comes out of a strategy session held on 2026-10-01; versions 0.1 ("Talk") to 0.3 ("Discover") were built on 2026-10-02.
 
 |  |  |
 |---|---|
-| Status | 0.2 "Read and keep" built: files in (PDF, Office), a brain on the device, prompt caching, backups, dictation. 0.1 "Talk": chat with any brain, three languages, offline, conversations as plain files |
+| Status | 0.3 "Discover" built: calculations in a sandbox (QuickJS) with codemode, Intuition (reflexes on the device), discovery and the "What Jean can do" page, Auto mode, reply suggestions, source chips, 33 languages. 0.2 "Read and keep": files in (PDF, Office), a brain on the device, prompt caching, backups, dictation. 0.1 "Talk": chat with any brain, offline, conversations as plain files |
 | Working name | Jean — a variable, not final (see [open questions](docs/open-questions.md)) |
 | Domain candidate | jean.cx (unregistered as of 2026-10-01) |
 | First user | A non-technical knowledge worker |
@@ -40,13 +40,15 @@ No build step. Any static file server works; for development:
 
 ```bash
 npm install          # Jean's own packages
-npm run dev          # copy runtimes into vendor/, then serve http://127.0.0.1:4173
+npm run dev          # build (vendor + manifest), then serve http://127.0.0.1:4173
 npm run check        # manifest, strict typecheck, tests, budgets
 npm run build        # copy runtimes into vendor/ and regenerate the manifest, ready to deploy
+npm run e2e          # smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
+npm run reflexes     # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
 node test/fixtures/fake-brain.js   # a fake brain: connect "On your computer" → Other → http://127.0.0.1:4174/v1
 ```
 
-Nothing in `vendor/` is committed. `npm run dev`, `npm start`, `npm run build` and `npm run check` copy the three upfront libraries, and the on-demand runtimes (pdf.js, Transformers.js; from 0.4, Pyodide), in from Jean's own `node_modules` (D43, D51, D52).
+Nothing in `vendor/` is committed. `npm run dev`, `npm start`, `npm run build` and `npm run check` copy the three upfront libraries, and the on-demand runtimes (pdf.js, Transformers.js, QuickJS; from 0.4, Pyodide), in from Jean's own `node_modules` (D43, D51, D52, D66).
 
 ## Self-contained
 

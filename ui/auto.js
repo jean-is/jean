@@ -1,0 +1,43 @@
+// Auto: the cheapest brain that can do the job, chosen from reflex answers (docs/product.md,
+// "Brains: picker and Auto"). Within a conversation it steps up, never down, so the
+// provider's cache stays warm; a new conversation starts again from the bottom.
+
+/** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
+/** @typedef {'only' | 'private' | 'personal' | 'demand' | 'unhappy' | 'default'} Reason */
+/**
+ * What the reflexes made of a message, when they're on (ui/discovery.js).
+ * @typedef {{ demand?: number, personal?: boolean, unhappy?: boolean }} Signals  demand: 0 (chat) to 3 (expert)
+ */
+
+/**
+ * Fast, smart and best, per provider: provider identities (D33), replaceable by policy, and
+ * used only when the provider's own list has them.
+ */
+export const TIERS = /** @type {Record<string, string[]>} */ ({
+  anthropic: ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'],
+  openrouter: ['google/gemini-3.8-flash', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
+  openai: ['gpt-6-luna', 'gpt-6-sol', 'gpt-6-astra'],
+})
+
+/** A brain that never leaves this computer. @param {BrainConfig} brain */
+export const isLocal = (brain) => brain.api === 'device' || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
+
+/** Demand (0 chat → 3 expert) to a tier: fast, smart, smart, best. @param {number} demand */
+export const tierFor = (demand) => [0, 1, 1, 2][Math.min(3, Math.max(0, Math.round(demand)))]
+
+/**
+ * @param {{ brains: BrainConfig[], preferred?: string | null, cloud?: boolean, signals?: Signals,
+ *   floor?: number, has?: (brain: BrainConfig, model: string) => boolean, tiers?: Record<string, string[]> }} input
+ *   floor: the level already used in this conversation; cloud false: "never send to the cloud"
+ * @returns {{ brain: BrainConfig, level: number, reason: Reason } | null}
+ */
+export function chooseBrain({ brains, preferred, cloud = true, signals = {}, floor = 0, has = () => true, tiers = TIERS }) {
+  const local = brains.find((brain) => brain.api === 'device') ?? brains.find(isLocal)
+  const remote = cloud ? [brains.find((brain) => brain.id === preferred), ...brains].find((brain) => brain && !isLocal(brain)) : undefined
+  if (!remote) return local ? { brain: local, level: floor, reason: cloud ? 'only' : 'private' } : null
+  if (local && signals.personal) return { brain: local, level: floor, reason: 'personal' }
+  const level = Math.min(2, Math.max(floor, (signals.demand === undefined ? 1 : tierFor(signals.demand)) + (signals.unhappy ? 1 : 0)))
+  const model = tiers[remote.provider]?.[level]
+  const reason = signals.unhappy ? 'unhappy' : signals.demand !== undefined ? 'demand' : 'default'
+  return { brain: model && has(remote, model) ? { ...remote, model } : remote, level, reason }
+}

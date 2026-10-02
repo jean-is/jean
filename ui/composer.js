@@ -3,7 +3,7 @@
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainLabel, send, stop, setPresence, warm, removeAttachment } from './state.js'
+import { app, activeBrain, chipLabel, effective, send, stop, setPresence, warm, removeAttachment } from './state.js'
 import { unlock, isDenied } from './caps.js'
 import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -50,8 +50,8 @@ class Composer extends Element {
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
               aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')} title=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
-            <button type="button" class="brain-chip" @click=${() => { app.dialog.value = 'brain' }}>
-              ${brain?.api === 'device' ? icons.chip : icons.spark}<span>${brain ? brainLabel(brain) : t('brain.choose')}</span>
+            <button type="button" class="brain-chip" aria-haspopup="dialog" @click=${openPicker}>
+              ${brain?.api === 'device' && !effective.value.settings.auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
             </button>
           </div>
           ${busy
@@ -97,6 +97,8 @@ class Composer extends Element {
   /** @param {ClipboardEvent} event */
   #paste = (event) => {
     const files = [...(event.clipboardData?.files ?? [])]
+    // A long paste is a document in disguise: offer files (an event, so any language works).
+    if (!files.length && (event.clipboardData?.getData('text').length ?? 0) > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files'))
     if (!files.length) return
     event.preventDefault()
     attachFiles(files)
@@ -114,6 +116,15 @@ class Composer extends Element {
     event.preventDefault()
     if (!app.busy.value) send(app.draft.value)
   }
+}
+
+const LONG_PASTE = 2000
+
+/** The brain picker, or choosing a first brain. */
+async function openPicker() {
+  if (!effective.value.settings.brains.length) return void (app.dialog.value = 'brain')
+  await import('./picker.js')
+  app.dialog.value = 'picker'
 }
 
 /** @param {File[]} files */

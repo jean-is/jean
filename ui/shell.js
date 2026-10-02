@@ -1,15 +1,14 @@
 // The room: header, welcome or conversation, composer, dialogs, toasts.
 import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
-import { app, LOCALES, setLocale, newConversation, effective, answerOffer } from './state.js'
-import { isDenied } from './caps.js'
+import { app, LOCALES, setLocale, newConversation } from './state.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { scriptURL } from './trusted.js'
+import { formatBytes } from './dialogs.js'
 import './chat.js'
-import './dialogs.js'
 
 const STARTERS = ['summarize', 'email', 'explain']
 
@@ -21,6 +20,7 @@ class Shell extends Element {
       <header class="bar">
         <button class="wordmark" @click=${newConversation} title=${t('action.new')}>${BRAND.name}</button>
         <nav class="bar-actions" aria-label=${t('a11y.menu')}>
+          <button class="icon-button" @click=${openCollection} aria-label=${t('collection.title', { name: BRAND.name })} title=${t('collection.title', { name: BRAND.name })}>${icons.house}</button>
           <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
           <label class="language" title=${t('settings.language')}>
             ${icons.globe}<span class="visually-hidden">${t('settings.language')}</span>
@@ -32,29 +32,38 @@ class Shell extends Element {
         </nav>
       </header>
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
-      ${backupOffer()}
       <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : welcome()}</main>
+      ${offerAside()}
       <app-composer></app-composer>
       <app-history></app-history>
       <app-brain-dialog></app-brain-dialog>
       <app-settings></app-settings>
+      <app-picker></app-picker>
+      <app-collection></app-collection>
       ${toasts()}
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
 }
 
-// Offered once there is something worth keeping (docs/product.md, "Backup").
-const BACKUP_AFTER = 3
+const discovery = () => import('./discovery.js')
 
-function backupOffer() {
-  const { settings } = effective.value
-  if (app.ephemeral.value || isDenied('backup') || settings.offers.backup || app.conversations.value.length < BACKUP_AFTER) return nothing
+export async function openCollection() {
+  await import('./collection.js')
+  app.dialog.value = 'collection'
+}
+
+/** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
+function offerAside() {
+  const offer = app.offer.value
+  if (!offer) return nothing
+  const { id, progress } = offer
+  const params = { name: BRAND.name, size: formatBytes(345e6) }
   return html`<aside class="offer" role="status">
-    <p>${t('backup.offer', { name: BRAND.name })}</p>
-    <div class="row">
-      <button class="button primary" @click=${async () => (await import('./dialogs.js')).backup()}>${t('backup.offerYes')}</button>
-      <button class="button subtle" @click=${() => answerOffer('backup')}>${t('backup.offerNo')}</button>
-    </div>
+    <p>${t(`cap.${id}.offer`, params)}</p>
+    ${progress === undefined ? html`<div class="row">
+      <button class="button primary" @click=${() => discovery().then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
+      <button class="button subtle" @click=${() => discovery().then((module) => module.decline(id))}>${t('offer.no')}</button>
+    </div>` : html`<progress max="1" value=${progress} aria-label=${t('cap.reflexes.downloading')}></progress>`}
   </aside>`
 }
 

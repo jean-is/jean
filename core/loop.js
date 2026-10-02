@@ -16,9 +16,18 @@ import { envelope } from './events.js'
  * @property {import('./types.js').ToolSpec} spec
  * @property {import('./types.js').ToolKind} kind
  * @property {boolean} [reserved]   passwords, payments: never done by Jean
+ * @property {boolean} [hidden]     never declared to the brain; scripts can call it (codemode, D48)
  * @property {(args: any) => string} title
  * @property {(args: any) => import('./types.js').ToolCallLocation[]} [locations]
- * @property {(args: any, ctx: { signal?: AbortSignal }) => Promise<string>} run
+ * @property {(args: any, ctx: ToolContext) => Promise<string>} run
+ */
+
+/**
+ * @typedef {Object} ToolContext
+ * @property {AbortSignal} [signal]
+ * @property {string[]} declared                                 tools the brain can call directly
+ * @property {(name: string, args: any) => Promise<string>} call  a nested call, under the same rules
+ * @property {(names: string[]) => void} declare                  declares tools from the next request on (D47)
  */
 
 /**
@@ -27,8 +36,11 @@ import { envelope } from './events.js'
  * @property {string} [apiKey]
  * @property {string} system
  * @property {ChatMessage[]} history                 includes the new user message
- * @property {Tool[]} [tools]
+ * @property {Tool[] | (() => Tool[])} [tools]      every tool that can be called, directly or from a script;
+ *   a function is read again at each step, so a capability turned on mid-turn can be called
+ * @property {string[]} [declared]                   the ones the brain sees (default: all but hidden ones)
  * @property {string} [label]                        shown on the brain entry
+ * @property {Record<string, any>} [meta]            recorded on the brain entry (why Auto chose it)
  * @property {(kind: string, reserved: boolean) => RuleValue} [rule]
  * @property {(request: { toolCall: ToolCallInfo, step: number }) => Promise<PermissionOption>} [askPermission]
  * @property {(update: AcpUpdate, step: number) => void} [onUpdate]   live, including deltas
@@ -41,17 +53,20 @@ import { envelope } from './events.js'
 /** @param {TurnOptions} options */
 export async function runTurn(options) {
   const {
-    brain, apiKey, system, tools = [], label, signal, maxSteps = 12, stream = defaultStream,
+    brain, apiKey, system, label, meta, signal, maxSteps = 12, stream = defaultStream,
     rule = () => 'ask', askPermission = async () => 'reject_once',
     onUpdate = () => {}, persist = async () => {},
   } = options
   const history = [...options.history]
-  const byName = new Map(tools.map((tool) => [tool.spec.name, tool]))
+  const tools = () => (typeof options.tools === 'function' ? options.tools() : options.tools ?? [])
+  const declared = new Set(options.declared ?? tools().filter((tool) => !tool.hidden).map((tool) => tool.spec.name))
+  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(), declared, tools }
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 }
 
   for (let step = 0; step < maxSteps; step++) {
     /** @type {ToolCallInfo} */
-    const brainEntry = { toolCallId: `brain-${step}-${Date.now().toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model } }
+    const brainEntry = { toolCallId: `brain-${step}-${Date.now().toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, ...meta } }
+    ctx.byName = new Map(tools().map((tool) => [tool.spec.name, tool]))
     onUpdate({ sessionUpdate: 'tool_call', ...brainEntry }, step)
 
     let text = ''
@@ -61,7 +76,8 @@ export async function runTurn(options) {
     /** @type {Extract<import('./types.js').StreamEvent, { type: 'done' }> | null} */
     let done = null
     try {
-      const events = stream({ brain, apiKey, system, messages: history, tools: tools.map((tool) => tool.spec), signal })
+      const specs = [...ctx.byName.values()].filter((tool) => declared.has(tool.spec.name)).map((tool) => tool.spec)
+      const events = stream({ brain, apiKey, system, messages: history, tools: specs, signal })
       for await (const event of events) {
         if (event.type === 'text') {
           text += event.delta
@@ -96,8 +112,7 @@ export async function runTurn(options) {
     if (stopReason !== 'tool_use' || !calls.length) return { stopReason, usage, text }
 
     for (const call of calls) {
-      const result = await runTool(call, byName.get(call.name), step, { rule, askPermission, onUpdate, signal })
-      await persist([envelope('jean', { sessionUpdate: 'tool_call', ...result.info }, step)])
+      const result = await runTool(call, declared.has(call.name) ? ctx.byName.get(call.name) : undefined, step, ctx)
       history.push({ role: 'tool', toolCallId: call.id, name: call.name, content: result.output, ...(result.failed && { isError: true }) })
     }
   }
@@ -117,12 +132,16 @@ function stepRecords(step, brainEntry, thought, text) {
 }
 
 /**
+ * Runs one call under the rules and persists its final record. Scripts' calls are nested:
+ * they carry their parent's id, and the brain's context leaves them out.
  * @param {import('./types.js').ToolCall} call
  * @param {Tool | undefined} tool
  * @param {number} step
- * @param {Pick<Required<TurnOptions>, 'rule' | 'askPermission' | 'onUpdate'> & { signal?: AbortSignal }} ctx
+ * @param {Pick<Required<TurnOptions>, 'rule' | 'askPermission' | 'onUpdate' | 'persist'> & { signal?: AbortSignal, byName: Map<string, Tool>, declared: Set<string>, tools: () => Tool[] }} ctx
+ * @param {string} [parent]
  */
-async function runTool(call, tool, step, { rule, askPermission, onUpdate, signal }) {
+async function runTool(call, tool, step, ctx, parent) {
+  const { rule, askPermission, onUpdate, signal } = ctx
   /** @type {ToolCallInfo} */
   const info = {
     toolCallId: call.id,
@@ -131,12 +150,31 @@ async function runTool(call, tool, step, { rule, askPermission, onUpdate, signal
     kind: tool?.kind ?? 'other',
     rawInput: call.args,
     ...(tool?.locations && { locations: safe(() => tool.locations?.(call.args) ?? [], []) }),
+    ...(parent && { _meta: { parent } }),
   }
   onUpdate({ sessionUpdate: 'tool_call', ...info, status: 'pending' }, step)
 
   let output = ''
   let failed = true
-  if (!tool) output = `There is no tool named "${call.name}".`
+  /** @type {string[]} */
+  const declares = []
+  let nested = 0
+  /** @type {ToolContext} */
+  const context = {
+    signal,
+    declared: [...ctx.declared],
+    call: async (name, args) => {
+      const known = ctx.tools().find((candidate) => candidate.spec.name === name)
+      const result = await runTool({ id: `${call.id}.${++nested}`, name, args }, known, step, ctx, call.id)
+      if (result.failed) throw new Error(result.output)
+      return result.output
+    },
+    declare: (names) => {
+      for (const name of names) ctx.declared.add(name)
+      declares.push(...names)
+    },
+  }
+  if (!tool) output = `There is no tool named "${call.name}".${ctx.declared.has('find_tools') ? ' Use find_tools to look for one.' : ''}`
   else if (call.args && typeof call.args === 'object' && '__invalidJSON' in call.args) output = 'The arguments were not valid JSON. Try again.'
   else {
     let decision = rule(tool.kind, Boolean(tool.reserved))
@@ -148,7 +186,7 @@ async function runTool(call, tool, step, { rule, askPermission, onUpdate, signal
     else {
       onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, status: 'in_progress' }, step)
       try {
-        output = await tool.run(call.args, { signal })
+        output = await tool.run(call.args, context)
         failed = false
       } catch (error) {
         output = `Error: ${error instanceof Error ? error.message : String(error)}`
@@ -160,8 +198,10 @@ async function runTool(call, tool, step, { rule, askPermission, onUpdate, signal
     status: /** @type {'failed' | 'completed'} */ (failed ? 'failed' : 'completed'),
     rawOutput: output,
     content: [{ type: /** @type {const} */ ('content'), content: { type: /** @type {const} */ ('text'), text: output } }],
+    ...(declares.length && { _meta: { ...info._meta, declare: declares } }),
   }
   onUpdate({ sessionUpdate: 'tool_call_update', ...final }, step)
+  await ctx.persist([envelope('jean', { sessionUpdate: 'tool_call', ...final }, step)])
   return { info: final, output, failed }
 }
 

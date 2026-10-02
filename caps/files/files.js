@@ -3,15 +3,40 @@
 // `read` tool for pages that didn't fit in the message.
 import { register } from '../../ui/caps.js'
 import { app, currentFiles, rememberText, warm, notify } from '../../ui/state.js'
-import { addFile, readTool } from '../../core/files.js'
+import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
 import { extractPages } from '../../core/extract.js'
 import { t } from '../../core/i18n.js'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
+/** @param {any} args */
+const find = (args) => {
+  const wanted = String(args?.file ?? '').trim().toLowerCase()
+  return currentFiles().findLast((link) => link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted)
+}
+
+/** A shared file's whole text, for scripts (codemode): never declared to the brain. @type {import('../../core/loop.js').Tool} */
+const fileTool = {
+  spec: { name: 'file', description: 'The whole text of a shared file.', parameters: { type: 'object', properties: { file: { type: 'string' } }, required: ['file'] } },
+  kind: 'read',
+  hidden: true,
+  title: (args) => `Read ${args?.file ?? ''}`,
+  locations: (args) => {
+    const link = find(args)
+    return link ? [{ path: link.uri }] : []
+  },
+  run: async (args) => {
+    const link = find(args)
+    if (!link) throw new Error(`No file named "${args?.file}". Files: ${currentFiles().map((f) => f.name).join(', ') || 'none'}.`)
+    const text = await fileText(app.fs, app.projectDir, link.uri)
+    if (text === null) throw new Error(`"${link.name}" is no longer available.`)
+    return splitPages(text).join('\n')
+  },
+}
+
 register({
   id: 'files',
-  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: currentFiles })],
+  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: currentFiles }), fileTool],
   lines: [{ name: 'read', line: 'read pages of a file the user shared' }],
   rules: ['Shared files are in the message, sometimes only their first pages. Use read for the others.'],
 })

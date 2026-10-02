@@ -15,6 +15,8 @@ import { ulid } from './ulid.js'
  * @property {Record<string, RuleValue>} rules
  * @property {string | null} voice
  * @property {string[]} unlocked              capabilities discovered so far
+ * @property {boolean} auto                   Auto picks the brain for each message
+ * @property {boolean} cloud                  false: never send to the cloud
  * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  */
@@ -34,7 +36,7 @@ export function serviceURL(name, settings, policy = {}) {
 }
 
 /** @type {Settings} */
-export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {} }
+export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
 
 /** @param {FS} fs @returns {Promise<Settings>} */
 export async function loadSettings(fs) {

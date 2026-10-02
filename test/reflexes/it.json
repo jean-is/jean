@@ -1,0 +1,69 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Il mio medico mi ha detto che ho la glicemia troppo alta. Come dovrei cambiare la mia alimentazione?",
+  "p2": "Guadagno 3.200 euro al mese e ho un debito di 14.000 sulla carta di credito. Quanto tempo mi serve per estinguerlo?",
+  "p3": "È riservato: la mia collega Anna verrà licenziata il mese prossimo. Come lo dico al team?",
+  "p4": "Dal mio divorzio non riesco a dormire e sono sempre in ansia. Cosa posso fare?",
+  "p5": "Qual è la capitale dell'Australia?",
+  "p6": "Scrivi una breve poesia sulle foglie d'autunno.",
+  "p7": "Come trasformo un documento Word in PDF?",
+  "p8": "Riassumi le principali cause della Rivoluzione francese.",
+  "d1": "Ciao! Come stai oggi?",
+  "d2": "In che fuso orario si trova Tokyo?",
+  "d3": "Riassumi questo articolo in tre punti.",
+  "d4": "Riscrivi questo paragrafo in modo più cortese.",
+  "d5": "Confronta questi tre preventivi dei fornitori, somma i costi annuali e consigliamene uno.",
+  "d6": "Controlla queste fatture, trova i duplicati e dimmi quanto abbiamo pagato in più.",
+  "d7": "Esamina questa clausola contrattuale per i rischi di responsabilità secondo il diritto commerciale tedesco e proponi una formulazione più sicura.",
+  "d8": "Progetta un test statistico per verificare se il risultato del nostro test A/B è significativo con gruppi di dimensioni diverse.",
+  "u1": [
+   "La riunione è martedì alle 15.",
+   "Sbagliato, ti ho detto che è stata spostata a giovedì."
+  ],
+  "u2": [
+   "Ecco un riassunto dettagliato del rapporto, sezione per sezione.",
+   "Troppo lungo. Ti avevo chiesto due righe."
+  ],
+  "u3": [
+   "Il totale è di 4.200 euro.",
+   "Non torna. Ricontrolla."
+  ],
+  "u4": [
+   "Gentili Signori, con la presente desidero informarvi della mia assenza.",
+   "Suona rigido e robotico, per niente da me."
+  ],
+  "u5": [
+   "La riunione è martedì alle 15.",
+   "Perfetto, grazie! Puoi preparare anche l'ordine del giorno?"
+  ],
+  "u6": [
+   "Il totale è di 4.200 euro.",
+   "Perfetto. Ora dividilo per mese."
+  ],
+  "u7": [
+   "Ecco tre idee per il pranzo di squadra.",
+   "Mi piace la seconda. Dove potremmo prenotare?"
+  ],
+  "u8": [
+   "Parigi è la capitale della Francia.",
+   "E l'Italia?"
+  ],
+  "c1": "Qual è la media esatta di 12,5, 18,25, 7, 31,75 e 9?",
+  "c2": "Calcola la rata mensile di un mutuo di 200.000 al 3,4% in 25 anni.",
+  "c3": "Quale prodotto è cresciuto di più tra i due trimestri nella mia tabella delle vendite?",
+  "c4": "Puoi leggere il contratto d'affitto che mi ha mandato il proprietario e dirmi il preavviso?",
+  "c5": "Ho il verbale della riunione in PDF. Puoi riassumerlo?",
+  "c6": "Scrivi un messaggio di compleanno per mia sorella.",
+  "c7": "Quale sarebbe un bel nome per una panetteria?",
+  "c8": "Come si dice «grazie mille» in spagnolo?",
+  "t1": "A gennaio abbiamo venduto 120 unità a Lione, 95 a Parigi e 80 a Lilla. A febbraio 130 a Lione, 101 a Parigi e 76 a Lilla. A marzo 142 a Lione, 99 a Parigi e 90 a Lilla.",
+  "t2": "Il piano base costa 9 euro al mese con 10 GB di spazio, il piano standard 15 euro con 100 GB e il piano premium 25 euro con 1 TB e assistenza prioritaria.",
+  "t3": "Le tue ferie dal 3 al 14 agosto sono approvate. Avvisa il tuo team e passa le pratiche aperte a Marie prima di partire.",
+  "t4": "Parigi è la capitale della Francia.",
+  "e1": "Le tue ferie dal 3 al 14 agosto sono approvate. Avvisa il tuo team e passa le pratiche aperte a Marie prima di partire.",
+  "e2": "L'ufficio resterà chiuso venerdì 12 maggio per manutenzione, quindi quel giorno tutti lavoreranno da casa.",
+  "e3": "Il piano di ammortamento applica un metodo a quote decrescenti con un tasso annuo effettivo capitalizzato mensilmente, per cui la quota capitale di ogni rata cresce in modo geometrico.",
+  "e4": "La fotosintesi è il processo con cui gli organismi dotati di clorofilla convertono l'energia luminosa in energia chimica attraverso le reazioni dipendenti dalla luce e il ciclo di Calvin, fissando la CO2 in triosi fosfato."
+ }
+}

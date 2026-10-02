@@ -12,6 +12,7 @@ import { signal } from '@preact/signals-core'
  * @property {{ name: string, line: string }[]} [lines]  one line per tool, for the prompt
  * @property {string[]} [rules]                           a few prompt rules
  * @property {typeof import('../core/llm.js').streamChat} [stream]  a brain that runs here (the on-device brain)
+ * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
  */
 
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
@@ -20,6 +21,8 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   backup: () => import('../caps/backup/backup.js'),
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
   voice: () => import('../caps/voice/voice.js'),
+  compute: () => import('../caps/compute/compute.js'),
+  reflexes: () => import('../caps/reflexes/reflexes.js'),
 })
 
 /** Capabilities whose modules have loaded, by id. */
