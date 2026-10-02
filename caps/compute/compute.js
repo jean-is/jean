@@ -22,9 +22,10 @@ const ROOT = new URL('../../', import.meta.url)
 let sandbox = null
 let lastRun = 0
 
-/** For debugging, in the browser console (filter on "Sandbox"): what goes in and comes out of each run. */
-const trace = (/** @type {string} */ what, /** @type {unknown[]} */ ...details) => console.info(`Sandbox ${what}`, ...details)
-const since = (/** @type {number} */ began) => `${Math.round(performance.now() - began)} ms`
+// The sandbox's lines in the browser console start with ▣: → is what goes in, ← what
+// comes out. 1 is a run, 1.2 its second call to Jean (the call goes out, its answer in).
+const trace = (/** @type {string} */ label, /** @type {unknown[]} */ ...details) => console.info(`▣ ${label}`, ...details)
+const since = (/** @type {number} */ began) => `(${Math.round(performance.now() - began)} ms)`
 
 /** Loads the sandbox document and boots QuickJS in its worker, with files sent from here. */
 async function start() {
@@ -48,7 +49,7 @@ async function start() {
   const box = { frame, runs: new Map(), reset: false }
   return new Promise((resolve, reject) => {
     const fail = (/** @type {string} */ message) => {
-      console.warn('Sandbox', message)
+      console.warn('▣', message)
       clearTimeout(slow)
       frame.remove()
       removeEventListener('message', listen)
@@ -61,11 +62,11 @@ async function start() {
       if (from !== frame.contentWindow || !data) return
       if (data.type === 'ready') {
         clearTimeout(slow)
-        trace(`started in ${since(began)}`)
+        trace('ready', since(began))
         resolve(box)
       } else if (data.type === 'failed') fail(data.error)
       else if (data.type === 'reset') {
-        trace('needs a fresh start after a stopped script')
+        trace('reset')
         box.reset = true
       } else box.runs.get(data.run)?.(data)
     }
@@ -105,7 +106,7 @@ async function execute(code, ctx) {
       clearTimeout(timer)
       box.runs.delete(id)
       ctx.signal?.removeEventListener('abort', abort)
-      if (kill) trace(`run ${id} stopped after ${since(began)}:`, error?.message)
+      if (kill) trace(`${id} ←`, error?.message, since(began))
       if (kill || box.reset) stopSandbox()
       if (error) reject(error)
       else resolve(output)
@@ -114,12 +115,11 @@ async function execute(code, ctx) {
     box.runs.set(id, async (/** @type {any} */ message) => {
       if (message.type === 'done') {
         const text = report(message)
-        // What the script returned as is, then the text the brain reads back.
-        trace(`run ${id} out after ${since(began)}:`, message.ok ? message.result : message.error, message.logs, `\n${text}`)
+        trace(`${id} ←`, message.ok ? message.result : message.error, ...(message.logs.length ? [message.logs] : []), since(began))
         return message.ok ? finish(null, false, text) : finish(new Error(text))
       }
       if (message.type !== 'call') return
-      trace(`run ${id} calls ${message.name} (#${message.id}):`, message.args)
+      trace(`${id}.${message.id} ←`, message.name, message.args)
       waiting++
       watch()
       let answer
@@ -131,11 +131,11 @@ async function execute(code, ctx) {
       }
       waiting--
       watch()
-      trace(`run ${id} ${message.name} (#${message.id}) answered:`, answer.ok ? answer.value : `Error: ${answer.error}`)
+      trace(`${id}.${message.id} →`, answer.ok ? answer.value : `Error: ${answer.error}`)
       post({ type: 'answer', run: id, id: message.id, ...answer })
     })
     // The code as an argument, not in the label, so a "%" in it is not read as a format.
-    trace(`run ${id} in:`, `\n${code}`)
+    trace(`${id} →`, code)
     post({ type: 'run', run: id, code, limits: LIMITS })
     watch()
   })

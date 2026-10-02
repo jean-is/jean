@@ -68,7 +68,7 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2)
                   python/ memory/ routines/ projects/ search/ connections/ helpers/   (later)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
-scripts/          vendor.js, manifest.js (content hashes → capabilities.json), graph.js, budgets.js, serve.js,
+scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
                   reflexes.js (measures Kev on the test set)
 test/             node --test suites; fixtures/fake-brain.js; reflexes/ (the multilingual reflex test set and results.md)
 e2e/              Playwright smoke tests, Chromium and WebKit (npm run e2e)

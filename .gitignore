@@ -2,6 +2,9 @@ node_modules/
 .DS_Store
 # Third-party code copied in from node_modules by npm run dev/start/build/check, never committed (D43, D51)
 vendor/
+# Written by npm run manifest from the files above, never committed (D74)
+capabilities.json
+manifest.webmanifest
 # Playwright output (npm run e2e)
 test-results/
 playwright-report/

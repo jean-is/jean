@@ -3,7 +3,7 @@
 // stamps the resulting version into sw.js so that any asset change produces a
 // byte-different service worker, which is what triggers an update.
 // Usage: npm run manifest              write the outputs
-//        npm run manifest -- --check   exit 1 if any output is stale (CI)
+//        npm run manifest -- --check   exit 1 if a committed output is stale (CI)
 import { createHash } from 'node:crypto'
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -15,6 +15,8 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url))
 export const SHELL_FILES = ['index.html', 'sandbox.html', 'brand.js', 'manifest.webmanifest']
 export const SHELL_DIRS = ['core', 'ui', 'vendor', 'fonts', 'icons']
 export const WEBMANIFEST = 'manifest.webmanifest'
+/** Outputs that are entirely generated and never committed (D74); `--check` skips them. */
+export const UNCOMMITTED = [WEBMANIFEST, 'capabilities.json']
 export const ENTRY = 'ui/app.js'
 /** On-demand runtimes (D52) belong to the capabilities that use them, never to the shell. */
 export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
@@ -225,6 +227,7 @@ async function main (argv) {
   const { version, files, outputs } = await plan()
   const stale = []
   for (const [path, content] of Object.entries(outputs)) {
+    if (check && UNCOMMITTED.includes(path)) continue
     const current = await readOrNull(ROOT, path)
     if (current?.toString('utf8') === content) continue
     stale.push(path)

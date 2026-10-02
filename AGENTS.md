@@ -9,7 +9,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 ## Non-negotiables
 
 1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI. Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
-2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code ships exactly as written. The one exception to "what is in the repo is what ships" is third-party code: `vendor/` is never committed, and `npm run dev`, `npm start`, `npm run build` and `npm run check` fill it from Jean's own `node_modules`. Deploying means `npm ci && npm run build`, then copying the folder.
+2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code ships exactly as written. There are two exceptions to "what is in the repo is what ships", and neither is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json` and `manifest.webmanifest`. Deploying means `npm ci && npm run build`, then copying the folder.
 3. **Three runtime dependencies are loaded upfront:** `@preact/signals-core`, `lit-html` and `marked` (lexer only). Everything else loads on demand inside a capability module. Adding a dependency requires an entry in [docs/decisions.md](docs/decisions.md).
 4. **Standards before inventions:**
    - **Model APIs:** OpenAI-compatible and Anthropic Messages.
