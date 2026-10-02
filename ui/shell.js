@@ -38,6 +38,7 @@ class Shell extends Element {
       <app-knows></app-knows>
       <app-project-dialog></app-project-dialog>
       <app-connections></app-connections>
+      <app-skill-finder></app-skill-finder>
       ${toasts()}
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
@@ -47,6 +48,7 @@ class Shell extends Element {
 effect(() => {
   if (app.dialog.value) import('./dialogs.js')
   if (app.dialog.value === 'knows') import('./knows.js')
+  if (app.dialog.value === 'skills') import('../caps/skills/finder.js')
   if (LOOKS[app.look.value].list) import('./inbox.js')
 })
 

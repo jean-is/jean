@@ -227,6 +227,7 @@
   "skills.open": "查看",
   "suggest.skill": "儲存為技能",
   "suggest.skill.prompt": "把你剛才做的儲存為技能，下次照同樣的方式來做。",
+  "suggest.ready-made": "使用現成的技能",
   "tool.remember": "已記下備用",
   "tool.recall": "查看了先前的對話",
   "tool.skill": "使用了技能",

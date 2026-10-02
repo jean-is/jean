@@ -16,7 +16,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - what it should know about you, on a page where you can read and change it;
   - standing instructions;
   - projects, each with its own memory, files and light;
-  - skills it learns from requests you repeat, saved as `SKILL.md`.
+  - skills it learns from requests you repeat, or that others publish, saved as `SKILL.md`.
 - **Reaches your services and the web.** Connections over MCP sign in from the browser. Web search uses the brain's own search, or Wikipedia. Every source becomes a numbered citation.
 - **Takes on bigger tasks:**
   - Helpers split a large task and work on its parts at the same time.

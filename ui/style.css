@@ -776,6 +776,9 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 .skills summary { display: grid; cursor: pointer; }
 .skills summary small { color: var(--ink-soft); font-size: 0.82rem; }
 .skills textarea { margin-block: 0.6rem 0.3rem; font: 0.86rem/1.5 var(--mono); }
+.finder-search { margin-block-end: 0.75rem; }
+.finder .services li { grid-column: 1 / -1; }
+.reader-steps { max-block-size: 45vh; overflow: auto; margin-block: 0.75rem; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 0.9rem; font-size: 0.95rem; }
 
 /* Looks (D111): each with a thumbnail of itself, then the user's touches. */
 .looks { display: grid; gap: 0.45rem; margin: 0 0 0.75rem; padding: 0; border: 0; }

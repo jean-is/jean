@@ -227,6 +227,7 @@
   "skills.open": "ดู",
   "suggest.skill": "บันทึกเป็นทักษะ",
   "suggest.skill.prompt": "บันทึกสิ่งที่เพิ่งทำเป็นทักษะ ครั้งหน้าจะได้ทำแบบเดิม",
+  "suggest.ready-made": "ใช้ทักษะสำเร็จรูป",
   "tool.remember": "จดไว้ใช้ทีหลัง",
   "tool.recall": "ดูบทสนทนาก่อนหน้า",
   "tool.skill": "ใช้ทักษะ",

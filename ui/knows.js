@@ -151,9 +151,12 @@ class Knows extends Element {
             @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
           <button class="button subtle" @click=${() => removeSkill(skill)}>${icons.trash} ${t('action.delete')}</button>
         </details></li>`)}</ul>` : html`<p class="muted small">${t('skills.none')}</p>`}
-        <label class="button subtle">${icons.upload} ${t('skills.add')}
-          <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}>
-        </label>
+        <div class="row">
+          <button class="button subtle" @click=${() => import('../caps/skills/finder.js').then((finder) => finder.findFor(''))}>${icons.globe} ${t('skills.find')}</button>
+          <label class="button subtle">${icons.upload} ${t('skills.add')}
+            <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}>
+          </label>
+        </div>
       </section>` : nothing}` : nothing}
     </dialog>`
   }

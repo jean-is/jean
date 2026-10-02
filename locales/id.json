@@ -227,6 +227,7 @@
   "skills.open": "Lihat",
   "suggest.skill": "Simpan sebagai keterampilan",
   "suggest.skill.prompt": "Simpan yang barusan dilakukan sebagai keterampilan, supaya lain kali dikerjakan dengan cara yang sama.",
+  "suggest.ready-made": "Gunakan keterampilan siap pakai",
   "tool.remember": "Dicatat untuk nanti",
   "tool.recall": "Melihat percakapan sebelumnya",
   "tool.skill": "Menggunakan keterampilan",

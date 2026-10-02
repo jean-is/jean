@@ -238,17 +238,29 @@ async function repeated(records) {
 }
 
 /**
+ * Whether a place to find skills lists one for this kind of request (D120): from the indexes
+ * read before, compared on the device, so the request goes nowhere.
+ * @param {import('../core/types.js').Envelope[]} records
+ */
+async function readyMadeFor(records) {
+  const [{ cachedIndexes, offered, places, readyMade }, { skills }] = await Promise.all([import('../caps/skills/sources.js'), import('../caps/skills/skills.js')])
+  const { usable } = offered(await cachedIndexes(app.fs), places(app.settings.value, app.policy))
+  return usable.length > 0 && readyMade(firstWords(openingOf(records)), usable, (await skills()).map((skill) => skill.name)).length > 0
+}
+
+/**
  * Follow-ups from the translated catalogue that fit an answer: "Shorter" for a long one;
  * "Save this as a skill" for the third request of a kind (offered above the box until skills
- * are on); and, when the reflexes are on, "As a table" and "Draft an email" when they fit.
+ * are on), after "Use a ready-made skill" when a place lists one; and, when the reflexes are
+ * on, "As a table" and "Draft an email" when they fit.
  * @param {string} answer @param {import('../core/types.js').Envelope[]} records the conversation
  * @returns {Promise<string[]>}
  */
 export async function followUps(answer, records) {
   const ids = words(answer).length > LONG_ANSWER ? ['shorter'] : []
   if (!isDenied('skills') && await repeated(records)) {
-    if (loaded.value.has('skills')) ids.push('skill')
-    else offerOnce('skills')
+    if (!loaded.value.has('skills')) offerOnce('skills')
+    else ids.push(...(await readyMadeFor(records) ? ['ready-made'] : []), 'skill')
   }
   const decide = loaded.value.get('reflexes')?.decide
   const result = decide ? await quickly(decide(clip(answer), FOLLOW_UPS), 4000) : null

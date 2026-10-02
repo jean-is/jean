@@ -71,7 +71,8 @@ ui/               base element, shell, chat, activity view, caps.js (the unlock 
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
-                  memory/ projects/ skills/ python/             (0.4; skills/ was routines/ until D115)
+                  memory/ projects/ skills/ python/             (0.4; skills/ was routines/ until D115; skills/sources.js reads
+                                                                discovery indexes and finder.js is "Find a skill", D120)
                   search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
                   helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, and dialogs/ with the dialogs' strings (D97)
@@ -190,7 +191,8 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
   settings.json
   instructions.md                global, written by the user (front matter: format; body: the instructions)
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
-  skills/<name>/SKILL.md         global skills (Agent Skills; metadata: format, author, created, D83)
+  skills/<name>/SKILL.md         global skills (Agent Skills; metadata: format, author, created, D83; one from
+                                 elsewhere keeps its license, and metadata source and digest, D120)
   projects/
     <ulid>-<slug>/
       project.md                 front matter: format, name, colour, default (home), cloud: false, createdAt, by,
@@ -203,7 +205,7 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
       files/sha256-<hash>.meta.json
       conversations/<ulid>.jsonl
   .secrets/                      encrypted; never exported, synced or shared
-  .cache/                        disposable: search index, thumbnails
+  .cache/                        disposable: search index, thumbnails, the skill indexes read (skills/indexes.json, D120)
 ```
 
 There is always a default project, hidden until the Projects capability is discovered. One code path handles everything.

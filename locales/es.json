@@ -235,6 +235,7 @@
   "skills.open": "Verla",
   "suggest.skill": "Guardar como habilidad",
   "suggest.skill.prompt": "Guarda lo que acabas de hacer como habilidad, para que la próxima vez se haga igual.",
+  "suggest.ready-made": "Usar una habilidad ya hecha",
   "tool.remember": "Anotado para más tarde",
   "tool.recall": "Repasó conversaciones anteriores",
   "tool.skill": "Usó una habilidad",

@@ -227,6 +227,7 @@
   "skills.open": "見る",
   "suggest.skill": "スキルとして保存",
   "suggest.skill.prompt": "今やったことをスキルとして保存して、次も同じやり方でできるようにして。",
+  "suggest.ready-made": "用意されたスキルを使う",
   "tool.remember": "後のためにメモ",
   "tool.recall": "以前の会話を確認",
   "tool.skill": "スキルを使用",

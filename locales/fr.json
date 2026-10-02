@@ -235,6 +235,7 @@
   "skills.open": "Voir",
   "suggest.skill": "Enregistrer comme compétence",
   "suggest.skill.prompt": "Enregistre ce que tu viens de faire comme compétence, pour que ce soit fait de la même façon la prochaine fois.",
+  "suggest.ready-made": "Utiliser une compétence toute prête",
   "tool.remember": "Noté pour plus tard",
   "tool.recall": "A parcouru les conversations précédentes",
   "tool.skill": "A utilisé une compétence",

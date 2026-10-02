@@ -227,6 +227,7 @@
   "skills.open": "보기",
   "suggest.skill": "스킬로 저장하기",
   "suggest.skill.prompt": "방금 한 일을 스킬로 저장해서, 다음에도 같은 방식으로 해 줘.",
+  "suggest.ready-made": "준비된 스킬 사용하기",
   "tool.remember": "나중을 위해 기록함",
   "tool.recall": "이전 대화를 살펴봄",
   "tool.skill": "스킬을 사용함",

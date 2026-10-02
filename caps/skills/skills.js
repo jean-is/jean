@@ -2,16 +2,16 @@
 // Agent Skill (core/skills.js), so it is done the same way every time. The prompt lists each
 // skill's name and when to use it; `skill` reads its steps when a request matches, and
 // `save_skill` writes one when the user asks for it, typically after "Save this as a skill",
-// suggested when the same kind of request comes up a third time (ui/discovery.js).
-// They were called routines until D115.
+// suggested when the same kind of request comes up a third time (ui/discovery.js). Skills
+// others publish are found and added in finder.js (D120). They were called routines until D115.
 import { register } from '../../ui/caps.js'
 import { app, notify } from '../../ui/state.js'
 import { listSkills, saveSkill, skillLines } from '../../core/skills.js'
 import { slug } from '../../core/settings.js'
 import { t } from '../../core/i18n.js'
 
-/** Global skills, then the project's, which win a name. */
-const folders = () => (app.project.value.data.default === true ? [''] : ['', app.projectDir])
+/** Global skills, then the project's, which win a name; new ones go to the last. */
+export const folders = () => (app.project.value.data.default === true ? [''] : ['', app.projectDir])
 
 /** The skills of the room. */
 export const skills = () => listSkills(app.fs, folders())

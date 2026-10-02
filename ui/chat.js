@@ -122,7 +122,8 @@ function followUps(at, suggestions, brain) {
   if (!suggestions.length && !actions.length && !smarter) return nothing
   return html`<ul class="follow-ups" aria-label=${t('suggest.title')}>
     ${suggestions.map((suggestion) => html`<li><button class="follow-up" dir="auto" @click=${() => send(suggestion)}>${suggestion}</button></li>`)}
-    ${actions.map((id) => html`<li><button class="follow-up" @click=${() => send(t(`suggest.${id}.prompt`))}>${t(`suggest.${id}`)}</button></li>`)}
+    ${actions.map((id) => html`<li><button class="follow-up" @click=${() => (id === 'ready-made' ? import('../caps/skills/finder.js').then((finder) => finder.findFor())
+      : send(t(`suggest.${id}.prompt`)))}>${t(`suggest.${id}`)}</button></li>`)}
     ${smarter ? html`<li><button class="follow-up is-smarter" @click=${askSmarter}>${icons.spark}${t('auto.smarter')}</button></li>` : nothing}
   </ul>`
 }

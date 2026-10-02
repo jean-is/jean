@@ -6,6 +6,7 @@ import { defineConfig, devices } from '@playwright/test'
 const APP = 4180
 const BRAIN = 4181
 const MAIL = 4182
+const SKILLS = 4183
 
 export default defineConfig({
   testDir: '.',
@@ -21,5 +22,6 @@ export default defineConfig({
     { command: 'node scripts/serve.js', cwd: '..', port: APP, env: { PORT: String(APP) }, reuseExistingServer: false },
     { command: 'node test/fixtures/fake-brain.js', cwd: '..', port: BRAIN, env: { PORT: String(BRAIN) }, reuseExistingServer: false },
     { command: 'node test/fixtures/fake-mail.js', cwd: '..', port: MAIL, env: { PORT: String(MAIL) }, reuseExistingServer: false },
+    { command: 'node test/fixtures/fake-skills.js', cwd: '..', port: SKILLS, env: { PORT: String(SKILLS) }, reuseExistingServer: false },
   ],
 })

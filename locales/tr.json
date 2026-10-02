@@ -231,6 +231,7 @@
   "skills.open": "Gör",
   "suggest.skill": "Bunu beceri olarak kaydet",
   "suggest.skill.prompt": "Az önce yaptığını bir beceri olarak kaydet ki bir dahaki sefere aynı şekilde yapılsın.",
+  "suggest.ready-made": "Hazır bir beceri kullan",
   "tool.remember": "Sonrası için not alındı",
   "tool.recall": "Önceki konuşmalara bakıldı",
   "tool.skill": "Bir beceri kullanıldı",
