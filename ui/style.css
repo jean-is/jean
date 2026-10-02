@@ -187,7 +187,7 @@ app-persona[data-presence='oops'] .persona-mouth { scale: 0.6 -0.7; }
 .wordmark app-persona { margin-block-start: -0.35rem; }
 app-shell:has(.welcome) .wordmark app-persona { display: none; }
 .welcome app-persona, .wordmark app-persona { view-transition-name: persona; }
-:view-transition-group(persona) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
+::view-transition-group(persona) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
 
 /* ─── Frame ─────────────────────────────────────────────────────────────── */
 
@@ -672,7 +672,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 .toast:not(:has(button)) { padding-inline-end: 1.1rem; }
 
 .noscript { padding: 2rem; text-align: center; }
-:view-transition-group(hero) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
+::view-transition-group(hero) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
 
 /* ─── Paper: print, or save as PDF ──────────────────────────────────────── */
 
@@ -693,7 +693,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .room { --light: 0.42; }
-  :view-transition-group(*) { animation: none !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {
   :root, :root[data-look][data-theme] { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
