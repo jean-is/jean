@@ -18,6 +18,7 @@ import { ulid } from './ulid.js'
  * @property {boolean} auto                   Auto picks the brain for each message
  * @property {boolean} cloud                  false: never send to the cloud
  * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)
+ * @property {boolean} [memory]               false: Jean neither notes nor reads what it noticed
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  */
 
@@ -76,40 +77,75 @@ export function applyPolicy(settings, policy = {}) {
 }
 
 /**
- * The default project, created on first run. Invisible until projects are discovered.
- * @param {FS} fs @param {{ by: string, name?: string }} options
+ * A project folder, `projects/<ulid>-<slug>`, and its project.md: front matter (format, name,
+ * colour, default for the home project, cloud: false to keep it on this device) and a body.
+ * @typedef {{ dir: string, id: string, data: FrontMatter, body: string }} Project
  */
-export async function ensureHome(fs, { by, name = 'Home' }) {
+
+/** Every project, oldest first (folders start with a ULID). @param {FS} fs @returns {Promise<Project[]>} */
+export async function listProjects(fs) {
+  /** @type {Project[]} */
+  const projects = []
   for (const entry of await fs.list('projects')) {
-    if (entry.kind !== 'directory') continue
-    const text = await fs.read(`projects/${entry.name}/project.md`)
-    if (text && parseFrontMatter(text).data.default === true) return `projects/${entry.name}`
+    const text = entry.kind === 'directory' ? await fs.read(`projects/${entry.name}/project.md`) : null
+    if (text) projects.push({ dir: `projects/${entry.name}`, id: entry.name.slice(0, 26), ...parseFrontMatter(text) })
   }
-  const dir = `projects/${ulid()}-home`
-  const data = { format: 1, default: true, name, createdAt: new Date().toISOString(), by }
+  return projects
+}
+
+/**
+ * @param {FS} fs @param {{ name: string, by: string, colour?: string, home?: boolean, now?: Date }} options
+ * @returns {Promise<string>} its folder
+ */
+export async function createProject(fs, { name, by, colour, home = false, now = new Date() }) {
+  const dir = `projects/${ulid(now.getTime())}-${home ? 'home' : slug(name) || 'project'}`
+  const data = { format: 1, ...(home && { default: true }), name, ...(colour && { colour }), createdAt: now.toISOString(), by }
   await fs.write(`${dir}/project.md`, stringifyFrontMatter(data, ''))
   return dir
 }
 
 /**
- * Minimal front matter: `key: value` scalars between --- lines.
+ * The default project, created on first run. Invisible until projects are discovered.
+ * @param {FS} fs @param {{ by: string, name?: string }} options
+ */
+export async function ensureHome(fs, { by, name = 'Home' }) {
+  return (await listProjects(fs)).find((project) => project.data.default === true)?.dir ?? createProject(fs, { name, by, home: true })
+}
+
+/** Lower-case Latin letters, digits and single hyphens, for folder names: "Été à Paris!" → "ete-a-paris". @param {string} text */
+export const slug = (text) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64).replace(/-$/, '')
+
+/**
+ * @typedef {string | number | boolean | null} Scalar
+ * @typedef {Record<string, any>} FrontMatter  scalars, and maps of scalars one level deep
+ */
+
+/**
+ * Minimal front matter: `key: value` scalars between --- lines, and maps one level deep
+ * (`key:` then indented `key: value` lines).
  * @param {string} text
- * @returns {{ data: Record<string, string | number | boolean | null>, body: string }}
+ * @returns {{ data: FrontMatter, body: string }}
  */
 export function parseFrontMatter(text) {
   const match = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(text.replace(/\r\n/g, '\n'))
   if (!match) return { data: {}, body: text }
-  /** @type {Record<string, string | number | boolean | null>} */
+  /** @type {FrontMatter} */
   const data = {}
+  /** @type {Record<string, Scalar> | null} */
+  let map = null
   for (const line of match[1].split('\n')) {
     const at = line.indexOf(':')
     if (at < 1) continue
-    data[line.slice(0, at).trim()] = scalar(line.slice(at + 1).trim())
+    const key = line.slice(0, at).trim()
+    const raw = line.slice(at + 1).trim()
+    if (map && /^\s/.test(line)) map[key] = scalar(raw)
+    else if (raw) [data[key], map] = [scalar(raw), null]
+    else data[key] = map = {}
   }
   return { data, body: match[2] }
 }
 
-/** @param {string} raw */
+/** @param {string} raw @returns {Scalar} */
 function scalar(raw) {
   if (raw === 'true') return true
   if (raw === 'false') return false
@@ -119,10 +155,13 @@ function scalar(raw) {
   return raw
 }
 
-/** @param {Record<string, string | number | boolean | null>} data @param {string} body */
+/** Quoted when it would read as something else. @param {Scalar} value */
+const yaml = (value) => (typeof value === 'string' && /[:#"'\n]|^\s|\s$|^$|^(true|false|null|-?\d+(\.\d+)?)$/.test(value) ? JSON.stringify(value) : value)
+
+/** @param {FrontMatter} data @param {string} body */
 export function stringifyFrontMatter(data, body) {
-  const lines = Object.entries(data).map(([key, value]) =>
-    `${key}: ${typeof value === 'string' && /[:#"'\n]|^\s|\s$/.test(value) ? JSON.stringify(value) : value}`,
-  )
+  const lines = Object.entries(data).map(([key, value]) => (value && typeof value === 'object'
+    ? [`${key}:`, ...Object.entries(value).map(([name, item]) => `  ${name}: ${yaml(item)}`)].join('\n')
+    : `${key}: ${yaml(value)}`))
   return `---\n${lines.join('\n')}\n---\n${body}`
 }

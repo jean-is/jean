@@ -1,24 +1,30 @@
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
-// few conversations), reflexes, and the brain's own offer tool, never keywords (D6). Also
-// find_tools, so tools that arrive mid-conversation can be reached (D47).
+// few conversations, the same kind of request a third time), reflexes, and the brain's own
+// offer tool, never keywords (D6). Also find_tools, so tools that arrive mid-conversation
+// can be reached (D47).
 import { effect } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions } from './caps.js'
-import { app, effective, answerOffer, notify } from './state.js'
+import { app, effective, answerOffer, notify, send } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
-import { words } from '../core/search.js'
+import { words, alike } from '../core/search.js'
+import { foldTurns, titleOf } from '../core/events.js'
 import { t } from '../core/i18n.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'routines', 'python', 'backup', 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
   files: 'reading files the user shares: PDF, Word, Excel, PowerPoint, CSV, text',
   compute: 'exact calculations and data analysis, by running code',
+  memory: 'remembering lasting facts and preferences the user states, from one conversation to the next',
+  projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
+  routines: 'saving how a task the user repeats is done, to do it the same way every time',
+  python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
 })
 
 /** The tools a capability brings, by name. @param {string} id */
@@ -44,6 +50,7 @@ const offerTool = {
         return 'The user said not now. Do not offer it again in this conversation.'
       }
       if (!(await unlock(id))) return 'It could not be turned on.'
+      if (id === 'projects') begin(id)
     }
     const names = toolsOf(id).filter((name) => !ctx.declared.includes(name))
     return names.length ? `It is on. New tools: ${names.join(', ')}. ${reach(names, ctx)}` : 'It is on.'
@@ -84,6 +91,14 @@ export async function accept(id) {
   if (id === 'reflexes') return downloadReflexes()
   app.offer.value = null
   notify(t('offer.on', { name: t(`cap.${id}.name`) }))
+  // Offered after the same kind of request a third time: make this one the first routine.
+  if (id === 'routines') send(t('suggest.routine.prompt'))
+  else begin(id)
+}
+
+/** What a capability leads to as soon as it is on: a project to name. @param {string} id */
+export async function begin(id) {
+  if (id === 'projects') (await import('../caps/projects/projects.js')).newProject()
 }
 
 /** @param {string} id */
@@ -153,17 +168,21 @@ export async function sense(text, previous) {
   const decide = loaded.value.get('reflexes')?.decide
   if (!decide || !text) return {}
   const { offers } = effective.value.settings
-  const candidates = Object.fromEntries(Object.entries(CAPABILITIES).filter(([id]) => !loaded.value.has(id) && !isDenied(id) && !offers[id]))
+  const open = (/** @type {string} */ id) => !loaded.value.has(id) && !isDenied(id) && !offers[id]
+  const candidates = Object.fromEntries(Object.entries(CAPABILITIES).filter(([id]) => open(id)))
   const [about, after] = await Promise.all([
     quickly(decide(clip(text), {
       demand: REFLEXES.demand,
       personal: REFLEXES.personal,
       ...(Object.keys(candidates).length && { capability: REFLEXES.capability(candidates) }),
+      ...(open('memory') && { lasting: REFLEXES.lasting }),
     })),
     previous ? quickly(decide(exchange(clip(previous), clip(text)), { unhappy: REFLEXES.unhappy })) : null,
   ])
-  const { demand, personal, capability } = about ?? {}
+  const { demand, personal, capability, lasting } = about ?? {}
   if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(capability.choice)
+  // A lasting fact, preference or correction: memory could keep it.
+  if (lasting?.type === 'noul' && lasting.noul >= YES) offerOnce('memory')
   return {
     ...(demand?.type === 'score' && { demand: likeliest(demand.probabilities) }),
     ...(personal?.type === 'noul' && { personal: personal.noul >= YES }),
@@ -174,13 +193,37 @@ export async function sense(text, previous) {
 // Past this many words, "Shorter" is offered: a length, so it works in every language.
 const LONG_ANSWER = 220
 
+// Requests whose first words are at least this alike are the same kind (core/search.js).
+const SAME_KIND = 0.5
+
 /**
- * Follow-ups from the translated catalogue that fit an answer: "Shorter" for a long one,
- * and, when the reflexes are on, "As a table" and "Draft an email" when they fit.
- * @param {string} answer @returns {Promise<string[]>}
+ * Whether the request that opened this conversation is the third of its kind: two earlier
+ * conversations in this project began alike, and no routine covers it yet. The user's own
+ * requests compared word by word, so it works in every language, with no keyword (D6).
+ * @param {import('../core/types.js').Envelope[]} records
  */
-export async function followUps(answer) {
+async function repeated(records) {
+  const title = titleOf(records)
+  if (!title || foldTurns(records).length !== 1) return false
+  const others = app.conversations.value.filter((item) => item.id !== app.current.value?.id && item.title).map((item) => item.title)
+  if (alike(title, others).filter((score) => score >= SAME_KIND).length < 2) return false
+  const known = loaded.value.has('routines') ? await (await import('../caps/routines/routines.js')).routines() : []
+  return alike(title, known.map((skill) => `${skill.name.replace(/-/g, ' ')} ${skill.title} ${skill.description}`)).every((score) => score < SAME_KIND)
+}
+
+/**
+ * Follow-ups from the translated catalogue that fit an answer: "Shorter" for a long one;
+ * "Make this a routine" for the third request of a kind (offered above the box until routines
+ * are on); and, when the reflexes are on, "As a table" and "Draft an email" when they fit.
+ * @param {string} answer @param {import('../core/types.js').Envelope[]} records the conversation
+ * @returns {Promise<string[]>}
+ */
+export async function followUps(answer, records) {
   const ids = words(answer).length > LONG_ANSWER ? ['shorter'] : []
+  if (!isDenied('routines') && await repeated(records)) {
+    if (loaded.value.has('routines')) ids.push('routine')
+    else offerOnce('routines')
+  }
   const decide = loaded.value.get('reflexes')?.decide
   const result = decide ? await quickly(decide(clip(answer), FOLLOW_UPS), 4000) : null
   for (const [id, answer] of Object.entries(result ?? {})) if (answer.type === 'noul' && answer.noul >= YES) ids.push(id)

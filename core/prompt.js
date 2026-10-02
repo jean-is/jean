@@ -21,31 +21,33 @@ const RULES = [
 ]
 
 /**
+ * The context a conversation starts with, in prompt order: the project's name, the user's
+ * instructions (organisation, global, project), what Jean noticed, the routines ("name: when
+ * to use it"). Each is frozen with the rest, then changed by notes.
+ * @typedef {Partial<Record<'project' | 'instructions' | 'memory' | 'skills', string>>} Sections
+ */
+const SECTIONS = /** @type {const} */ (['project', 'instructions', 'memory', 'skills'])
+
+/**
  * @typedef {Object} PromptInput
  * @property {string} assistantName
  * @property {string} uiLanguage          language name in English, e.g. "French"
  * @property {{ name: string, line: string }[]} [tools]
  * @property {string[]} [rules]          contributed by capabilities
- * @property {string} [project]          project name and short persona
- * @property {string[]} [instructions]   org (locked), global, project
- * @property {string[]} [memory]
- * @property {string[]} [skills]         "name: when to use it"
+ * @property {Sections} [sections]
  * @property {Date} [now]
  */
 
 /** @param {PromptInput} input */
 export function buildSystemPrompt(input) {
-  const { assistantName, uiLanguage, tools = [], rules = [], project, instructions = [], memory = [], skills = [], now } = input
-  const sections = [PREAMBLE.replace('{name}', assistantName)]
-  if (tools.length) sections.push(tag('tools', tools.map((tool) => `- ${tool.name}: ${tool.line}`).join('\n')))
-  sections.push(tag('rules', [...RULES, ...rules].map((rule) => `- ${rule}`).join('\n')))
-  sections.push(tag('language', `Reply in the language of the user's last message. If that is unclear, use ${uiLanguage}.`))
-  if (project) sections.push(tag('project', project))
-  if (instructions.length) sections.push(tag('instructions', instructions.join('\n\n')))
-  if (memory.length) sections.push(tag('memory', memory.join('\n')))
-  if (skills.length) sections.push(tag('skills', skills.map((skill) => `- ${skill}`).join('\n')))
-  if (now) sections.push(tag('context', `Today is ${localDate(now)}.`))
-  return sections.join('\n\n')
+  const { assistantName, uiLanguage, tools = [], rules = [], sections = {}, now } = input
+  const parts = [PREAMBLE.replace('{name}', assistantName)]
+  if (tools.length) parts.push(tag('tools', tools.map((tool) => `- ${tool.name}: ${tool.line}`).join('\n')))
+  parts.push(tag('rules', [...RULES, ...rules].map((rule) => `- ${rule}`).join('\n')))
+  parts.push(tag('language', `Reply in the language of the user's last message. If that is unclear, use ${uiLanguage}.`))
+  for (const name of SECTIONS) if (sections[name]) parts.push(tag(name, /** @type {string} */ (sections[name])))
+  if (now) parts.push(tag('context', `Today is ${localDate(now)}.`))
+  return parts.join('\n\n')
 }
 
 /** @param {string} name @param {string} body */
@@ -59,12 +61,21 @@ export function basePromptForBudget() {
 }
 
 /**
- * What the brain is told about the world at this moment.
- * @param {{ language: string, tools: string[], now?: Date }} input language in English, e.g. "French"
+ * What the brain is told about the world at this moment. Sections are kept as fingerprints,
+ * enough to notice that one changed.
+ * @param {{ language: string, tools: string[], now?: Date, sections?: Sections }} input language in English, e.g. "French"
  * @returns {PromptState}
  */
-export function promptState({ language, tools, now = new Date() }) {
-  return { language, date: localDate(now), tools: [...tools].sort() }
+export function promptState({ language, tools, now = new Date(), sections = {} }) {
+  const prints = Object.fromEntries(SECTIONS.flatMap((name) => (sections[name] ? [[name, fingerprint(/** @type {string} */ (sections[name]))]] : [])))
+  return { language, date: localDate(now), tools: [...tools].sort(), ...(Object.keys(prints).length && { sections: prints }) }
+}
+
+/** FNV-1a, in base 36. @param {string} text */
+function fingerprint(text) {
+  let hash = 0x811c9dc5
+  for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 0x01000193)
+  return (hash >>> 0).toString(36)
 }
 
 /** YYYY-MM-DD in the device's time zone. @param {Date} date */
@@ -84,7 +95,7 @@ export function promptRecord(by, system, state) {
 export function frozenPrompt(records) {
   const first = records.find((record) => record.meta?.prompt)?.meta?.prompt
   if (!first) return null
-  const state = { ...first.state, tools: [...first.state.tools], deferred: [...first.state.deferred ?? []] }
+  const state = { ...first.state, tools: [...first.state.tools], deferred: [...first.state.deferred ?? []], sections: { ...first.state.sections } }
   /** @param {'tools' | 'deferred'} list @param {string[]} names */
   const add = (list, names) => { state[list] = [...new Set([...state[list], ...names])].sort() }
   for (const record of records) {
@@ -96,24 +107,32 @@ export function frozenPrompt(records) {
     if (data.kind === 'language') state.language = data.language
     else if (data.kind === 'date') state.date = data.date
     else if (data.kind === 'tools') add(data.deferred ? 'deferred' : 'tools', data.added)
+    else if (data.kind === 'section') state.sections[data.name] = data.version
   }
-  const { deferred, ...declared } = state
-  return { system: first.system, state: deferred.length ? state : declared }
+  const { deferred, sections, ...rest } = state
+  return { system: first.system, state: { ...rest, ...(deferred.length && { deferred }), ...(Object.keys(sections).length && { sections }) } }
 }
 
 /**
  * Notes for whatever changed between what the brain knows and now, one change per note.
- * Tools are only ever added. New ones are deferred: found with find_tools (D47). A
- * conversation that started without find_tools (0.2) declares them instead.
- * @param {PromptState} known @param {PromptState} now
+ * A section that changed is given whole. Tools are only ever added. New ones are deferred:
+ * found with find_tools (D47). A conversation that started without find_tools (0.2)
+ * declares them instead.
+ * @param {PromptState} known @param {PromptState} now @param {Sections} [sections] their text now
  * @returns {Envelope[]}
  */
-export function changeNotes(known, now) {
+export function changeNotes(known, now, sections = {}) {
   const notes = []
   if (now.language !== known.language) {
     notes.push(noteRecord(`The interface language is now ${now.language}.`, { kind: 'language', language: now.language }))
   }
   if (now.date !== known.date) notes.push(noteRecord(`Today is ${now.date}.`, { kind: 'date', date: now.date }))
+  for (const name of SECTIONS) {
+    const version = now.sections?.[name] ?? ''
+    if (version === (known.sections?.[name] ?? '')) continue
+    const text = version ? `The <${name}> section is now:\n${sections[name]}` : `The <${name}> section is now empty.`
+    notes.push(noteRecord(text, { kind: 'section', name, version }))
+  }
   const added = now.tools.filter((name) => !known.tools.includes(name) && !known.deferred?.includes(name))
   if (added.length && known.tools.includes('find_tools')) {
     notes.push(noteRecord(`New tools can be found with find_tools: ${added.join(', ')}.`, { kind: 'tools', added, deferred: true }))

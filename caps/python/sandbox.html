@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-i14PSNsWEnCMHtFyWYpbPlJVyXw3pB0Ld4yLZSYV8y0=' blob: 'wasm-unsafe-eval' 'unsafe-eval'; worker-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Python sandbox</title>
+<!-- The Python sandbox (D80): sandbox.html's relay and policy, plus 'unsafe-eval', which
+     Pyodide's runtime needs to start (Emscripten builds some of its functions with eval). Code
+     here can still reach nothing: an opaque origin (the frame never gets allow-same-origin), no
+     network (connect-src 'none'), and only the files Jean sends in. -->
+<script>let worker
+onmessage = ({ data, source }) => {
+  if (source !== parent) return
+  try {
+    if (data.type === 'boot' && !worker) {
+      worker = new Worker(URL.createObjectURL(new Blob([data.source], { type: 'text/javascript' })))
+      worker.onmessage = (event) => parent.postMessage(event.data, '*')
+      worker.onerror = (event) => parent.postMessage({ type: 'failed', error: event.message || 'The sandbox stopped' }, '*')
+    }
+    worker?.postMessage(data)
+  } catch (error) {
+    parent.postMessage({ type: 'failed', error: String(error) }, '*')
+  }
+}
+</script>
+</html>

@@ -114,6 +114,12 @@ function languageAndScript(code) {
   }
 }
 
+/** "14 MB", in the current locale. @param {number} bytes */
+export function formatBytes(bytes) {
+  const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', bytes / 1e3]
+  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
+}
+
 /** "3 minutes ago", in the current locale. @param {string | number | Date} when */
 export function relativeTime(when, now = Date.now()) {
   const seconds = Math.round((new Date(when).getTime() - now) / 1000)

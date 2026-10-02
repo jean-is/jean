@@ -7,6 +7,8 @@
 @property --light-x { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
 @property --light-y { syntax: '<percentage>'; inherits: true; initial-value: 34%; }
 @property --light-size { syntax: '<length>'; inherits: true; initial-value: 70vmax; }
+/* The light's colour: Jean's amber, or a project's own (D78), cross-fading between rooms. */
+@property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.74 0.17 54); }
 
 :root {
   color-scheme: dark light;
@@ -50,6 +52,12 @@
   }
 }
 
+/* A project's light colours the room (the same amber by default: 54 + 11 = 65, 54 + 21 = 75). */
+@supports (color: oklch(from red l c h)) {
+  :root { --glow: oklch(from var(--tint) 0.78 0.16 calc(h + 11)); }
+  @media (prefers-color-scheme: light) { :root { --glow: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); } }
+}
+
 /* The room warms a step with each discovery: --warmth counts them (ui/app.js). */
 :root { --room: oklch(calc(0.15 + min(var(--warmth, 0), 9) * 0.0045) calc(0.014 + min(var(--warmth, 0), 9) * 0.0012) 52); }
 @media (prefers-color-scheme: light) {
@@ -57,7 +65,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--room); transition: background-color 2s var(--ease); scrollbar-color: var(--line-strong) transparent; }
+html { background: var(--room); transition: background-color 2s var(--ease), --tint 1.6s var(--ease); scrollbar-color: var(--line-strong) transparent; }
 body {
   margin: 0;
   min-height: 100dvh;
@@ -67,6 +75,8 @@ body {
   text-rendering: optimizeLegibility;
 }
 :lang(ar) body { font-size: 1.06rem; }
+/* dir="auto" boxes take their direction from what is typed; empty, the placeholder follows the page. */
+:root[dir='rtl'] textarea:placeholder-shown { direction: rtl; }
 ::selection { background: oklch(0.8 0.15 68 / 0.35); }
 :focus-visible { outline: 2px solid var(--flame); outline-offset: 3px; border-radius: 0.5rem; }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -212,6 +222,7 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
   transition: text-shadow 0.6s var(--ease);
 }
 .wordmark:hover { text-shadow: 0 0 2rem oklch(from var(--glow) l c h / 0.8); }
+.wordmark-project { max-inline-size: 10rem; overflow: hidden; padding-inline-start: 0.5rem; border-inline-start: 1px solid var(--line-strong); font: 400 0.95rem/1.3 var(--sans); text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); text-shadow: none; }
 .bar-actions { display: flex; align-items: center; gap: 0.25rem; }
 
 .icon-button {
@@ -647,6 +658,35 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 .history-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .history-item time { font-size: 0.78rem; color: var(--ink-faint); }
 
+/* ─── Projects, and what Jean knows ─────────────────────────────────────── */
+
+.projects { margin-block-end: 0.75rem; padding-block-end: 0.5rem; border-block-end: 1px solid var(--line); }
+.projects ul, .noticed, .routines { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
+.projects li, .noticed li { display: flex; align-items: center; gap: 0.25rem; border-radius: 0.9rem; }
+.projects li.is-current, .projects li:hover, .noticed li:hover, .noticed li:focus-within { background: var(--line); }
+.project { flex: 1; display: flex; align-items: center; gap: 0.6rem; min-inline-size: 0; padding: 0.45rem 0.6rem; border: 0; background: none; text-align: start; }
+.project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.project app-persona { --persona-size: 1.6rem; }
+.swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
+.swatches legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
+.swatch { position: relative; display: grid; place-items: center; inline-size: 2.9rem; block-size: 2.9rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
+.swatch input { position: absolute; opacity: 0; }
+.swatch app-persona { --persona-size: 2rem; }
+.swatch:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: var(--line); }
+.swatch:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
+.button.danger { color: var(--danger); }
+.sheet h4 { margin: 0.9rem 0 0.35rem; font-size: 0.88rem; font-weight: 600; color: var(--ink-soft); }
+.sheet textarea { inline-size: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--line-strong); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); color: var(--ink); line-height: 1.5; resize: vertical; }
+.sheet textarea:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
+.locked { padding-inline-start: 0.8rem; border-inline-start: 2px solid var(--line-strong); white-space: pre-wrap; }
+.sheet .noticed-text { flex: 1; min-inline-size: 0; padding: 0.4rem 0.6rem; border-color: transparent; background: transparent; field-sizing: content; resize: none; }
+.sheet .noticed-text:focus { border-color: var(--line-strong); background: oklch(from var(--room) l c h / 0.6); }
+.noticed-actions { display: flex; flex: none; align-items: center; }
+.routines details { padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+.routines summary { display: grid; cursor: pointer; }
+.routines summary small { color: var(--ink-soft); font-size: 0.82rem; }
+.routines textarea { margin-block: 0.6rem 0.3rem; font: 0.86rem/1.5 var(--mono); }
+
 /* ─── Toasts ────────────────────────────────────────────────────────────── */
 
 .toasts { position: fixed; inset-inline: 0; inset-block-end: 7.5rem; z-index: 5; display: grid; justify-items: center; gap: 0.5rem; pointer-events: none; }
@@ -701,7 +741,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
   .persona-body { fill: Canvas; stroke: CanvasText; }
   .persona-sparks { fill: CanvasText; }
   .send, .button.primary, .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
-  .choice-option.is-selected, .room-card.is-lit { border: 2px solid Highlight; }
+  .choice-option.is-selected, .room-card.is-lit, .swatch:has(input:checked) { border: 2px solid Highlight; }
   .hero-question { color: CanvasText; background: none; }
 }
 @media (max-width: 40rem) {

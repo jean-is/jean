@@ -64,6 +64,10 @@
   "e1": "Votre congé du 3 au 14 août est accepté. Prévenez votre équipe et transmettez vos dossiers en cours à Marie avant de partir.",
   "e2": "Les bureaux seront fermés le vendredi 12 mai pour maintenance : tout le monde devra travailler depuis chez soi ce jour-là.",
   "e3": "Le tableau d'amortissement applique une méthode dégressive avec un taux annuel effectif capitalisé mensuellement, si bien que la part de capital de chaque échéance augmente de façon géométrique.",
-  "e4": "La photosynthèse est le processus par lequel les organismes chlorophylliens convertissent l'énergie lumineuse en énergie chimique grâce aux réactions photochimiques et au cycle de Calvin, en fixant le CO2 sous forme de trioses phosphates."
+  "e4": "La photosynthèse est le processus par lequel les organismes chlorophylliens convertissent l'énergie lumineuse en énergie chimique grâce aux réactions photochimiques et au cycle de Calvin, en fixant le CO2 sous forme de trioses phosphates.",
+  "l1": "Désormais, donne-moi toujours les totaux en euros, pas en dollars.",
+  "l2": "Au fait, ma responsable s’appelle Priya, et notre équipe est à Nairobi.",
+  "l3": "Quelle est la capitale de l’Australie ?",
+  "l4": "Tu peux raccourcir ce paragraphe ?"
  }
 }

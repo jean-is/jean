@@ -1,7 +1,7 @@
 // Application state (signals) and the actions that change it.
 import { signal, computed } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
-import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL } from '../core/settings.js'
+import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter } from '../core/settings.js'
 import { createConversation, appendRecords, loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
 import { userRecords, metaRecord, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns } from '../core/events.js'
 import { runTurn } from '../core/loop.js'
@@ -26,6 +26,7 @@ import { chooseBrain, isLocal, TIERS } from './auto.js'
  * @typedef {{ key: string, name: string, status: 'reading' | 'ready' | 'failed', link?: ResourceLink, pages?: string[], error?: string }} Attachment
  */
 /** @typedef {import('../core/settings.js').Settings} Settings */
+/** @typedef {import('../core/settings.js').Project} Project */
 /** @typedef {'idle' | 'listening' | 'thinking' | 'answering' | 'done'} Presence */
 
 // The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
@@ -34,7 +35,10 @@ export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'h
 export const app = {
   fs: /** @type {FS} */ (/** @type {unknown} */ (null)),
   deviceId: '',
-  projectDir: '',
+  /** Every project, and the one the room is in: its conversations, files, memory and light. */
+  projects: signal(/** @type {Project[]} */ ([])),
+  project: signal(/** @type {Project} */ ({ dir: '', id: '', data: {}, body: '' })),
+  get projectDir() { return app.project.value.dir },
   /** @type {Record<string, any>} */
   policy: {},
   ephemeral: signal(false),
@@ -48,14 +52,14 @@ export const app = {
   /** @type {import('@preact/signals-core').Signal<{ code: string, message: string } | null>} */
   error: signal(null),
   presence: signal(/** @type {Presence} */ ('idle')),
-  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | 'knows' | 'project' | null>} */
   dialog: signal(null),
   draft: signal(''),
   /** @type {import('@preact/signals-core').Signal<{ toolCall: ToolCallInfo, resolve: (option: any) => void } | null>} */
   permission: signal(null),
   /** @type {import('@preact/signals-core').Signal<ServiceWorker | null>} */
   updateReady: signal(null),
-  /** @type {import('@preact/signals-core').Signal<string | null>} */
+  /** @type {import('@preact/signals-core').Signal<{ message: string, action?: { label: string, run: () => void } } | null>} */
   toast: signal(null),
   models: signal(/** @type {Record<string, ModelInfo[]>} */ ({})),
   attachments: signal(/** @type {Attachment[]} */ ([])),
@@ -109,12 +113,13 @@ export function setPresence(presence) {
   app.presence.value = presence
 }
 
-/** @param {string} message */
-export function notify(message) {
-  app.toast.value = message
+/** @param {string} message @param {{ label: string, run: () => void }} [action] e.g. Undo */
+export function notify(message, action) {
+  const toast = { message, action }
+  app.toast.value = toast
   setTimeout(() => {
-    if (app.toast.value === message) app.toast.value = null
-  }, 2600)
+    if (app.toast.value === toast) app.toast.value = null
+  }, action ? 6000 : 2600)
 }
 
 // ─── Language and rules ──────────────────────────────────────────────────────
@@ -163,6 +168,26 @@ export async function loadModels(brain) {
     app.models.value = { ...app.models.value, [brain.id]: [] }
   }
 }
+
+// ─── Projects ────────────────────────────────────────────────────────────────
+
+/** Reads every project.md again, and the room's own. */
+export async function refreshProjects() {
+  app.projects.value = await listProjects(app.fs)
+  app.project.value = app.projects.value.find((project) => project.dir === app.projectDir) ?? app.project.value
+}
+
+/** Walks into another project's room. @param {Project} project */
+export async function enterProject(project) {
+  if (project.dir === app.projectDir) return
+  newConversation()
+  app.project.value = project
+  app.conversations.value = []
+  await refreshConversations()
+}
+
+/** Whether this message may go to the cloud: the user's switch, and the project's. */
+const cloudAllowed = () => effective.value.settings.cloud && app.project.value.data.cloud !== false
 
 // ─── Conversations ───────────────────────────────────────────────────────────
 
@@ -269,6 +294,22 @@ function attachedLinks(brain, records) {
 
 // ─── Sending ─────────────────────────────────────────────────────────────────
 
+/** The body of one of Jean's Markdown files ('' when missing). @param {string} path */
+export const readBody = async (path) => parseFrontMatter((await app.fs.read(path)) ?? '').body.trim()
+
+/**
+ * What the brain knows of the user and the room: the project, the instructions (the
+ * organisation's, the user's, the project's), and what capabilities add (memory, routines).
+ * @returns {Promise<import('../core/prompt.js').Sections>}
+ */
+async function context() {
+  const { dir, data } = app.project.value
+  const home = data.default === true
+  const instructions = [app.policy.instructions, await readBody('instructions.md'), home ? '' : await readBody(`${dir}/instructions.md`)].filter(Boolean).join('\n\n')
+  const added = await Promise.all(contributions().sections.map((section) => section()))
+  return Object.assign({ ...(!home && { project: String(data.name) }), ...(instructions && { instructions }) }, ...added)
+}
+
 /**
  * The records a message adds: the frozen prompt when the conversation has none yet, or
  * notes for what changed since (D46), then the user message itself.
@@ -278,11 +319,12 @@ async function prepare(text, brain, records) {
   await app.ready
   const { tools, lines, rules } = contributions()
   const names = tools.filter((tool) => !tool.hidden).map((tool) => tool.spec.name)
-  const now = promptState({ language: languageName(locale.value, 'en'), tools: names })
+  const sections = await context()
+  const now = promptState({ language: languageName(locale.value, 'en'), tools: names, sections })
   const frozen = frozenPrompt(records)
   const head = frozen
-    ? changeNotes(frozen.state, now)
-    : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: BRAND.name, uiLanguage: now.language, tools: lines, rules, now: new Date() }), now)]
+    ? changeNotes(frozen.state, now, sections)
+    : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: BRAND.name, uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
   return [...head, ...userRecords(text, attachedLinks(brain, records), app.deviceId)]
 }
 
@@ -309,13 +351,13 @@ async function pickBrain(text, records, boost = 0) {
   const signals = await sense(text, lastAnswer(records))
   if (!settings.auto) {
     const brain = activeBrain.value
-    return brain && (settings.cloud || isLocal(brain)) ? { brain } : null
+    return brain && (cloudAllowed() || isLocal(brain)) ? { brain } : null
   }
   await Promise.all(settings.brains.filter((brain) => !isLocal(brain)).map(loadModels))
   const choice = chooseBrain({
     brains: settings.brains,
     preferred: settings.activeBrain,
-    cloud: settings.cloud,
+    cloud: cloudAllowed(),
     signals,
     floor: Math.min(2, autoLevel(records) + boost),
     has: (brain, model) => (app.models.value[brain.id] ?? []).some((info) => info.id === model),
@@ -327,7 +369,7 @@ async function pickBrain(text, records, boost = 0) {
 /** Whether "Ask a smarter brain" can step up from an answer Auto chose. @param {ToolCallInfo | undefined} entry */
 export function canStepUp(entry) {
   const { settings } = effective.value
-  return settings.auto && settings.cloud && (entry?.rawInput?.auto?.level ?? 2) < 2 && settings.brains.some((brain) => !isLocal(brain))
+  return settings.auto && cloudAllowed() && (entry?.rawInput?.auto?.level ?? 2) < 2 && settings.brains.some((brain) => !isLocal(brain))
 }
 
 /** Asks again, one level up. */
@@ -471,14 +513,17 @@ async function runAgent(brain, meta) {
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const answer = lastAnswer(settled)
     const at = foldTurns(records).at(-1)?.at
-    if (answer && at) suggestActions(at, answer)
+    if (answer && at) suggestActions(at, answer, records)
   }
 }
 
-/** Follow-ups from the catalogue, picked by the reflexes when they're on. @param {string} at @param {string} answer */
-async function suggestActions(at, answer) {
+/**
+ * Follow-ups from the catalogue, picked by the reflexes when they're on.
+ * @param {string} at @param {string} answer @param {Envelope[]} records
+ */
+async function suggestActions(at, answer, records) {
   const { followUps } = await import('./discovery.js')
-  const ids = await followUps(answer)
+  const ids = await followUps(answer, records)
   if (ids.length) app.actions.value = { ...app.actions.value, [at]: ids }
 }
 

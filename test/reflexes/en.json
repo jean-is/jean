@@ -161,6 +161,22 @@
     "e4": [
       "email",
       false
+    ],
+    "l1": [
+      "lasting",
+      true
+    ],
+    "l2": [
+      "lasting",
+      true
+    ],
+    "l3": [
+      "lasting",
+      false
+    ],
+    "l4": [
+      "lasting",
+      false
     ]
   },
   "states": {
@@ -227,6 +243,10 @@
     "e1": "Your leave from 3 to 14 August is approved. Please let your team know and hand your open files over to Marie before you go.",
     "e2": "The office will be closed on Friday 12 May for maintenance, so everyone should work from home that day.",
     "e3": "The amortisation schedule applies a declining-balance method with an effective annual rate compounded monthly, so the principal component of each instalment increases geometrically.",
-    "e4": "Photosynthesis is the process by which chlorophyll-containing organisms convert light energy into chemical energy through the light-dependent reactions and the Calvin cycle, fixing CO2 into triose phosphates."
+    "e4": "Photosynthesis is the process by which chlorophyll-containing organisms convert light energy into chemical energy through the light-dependent reactions and the Calvin cycle, fixing CO2 into triose phosphates.",
+    "l1": "From now on, always give me the totals in euros, not dollars.",
+    "l2": "By the way, my manager is called Priya, and our team is in Nairobi.",
+    "l3": "What is the capital of Australia?",
+    "l4": "Can you make this paragraph shorter?"
   }
 }

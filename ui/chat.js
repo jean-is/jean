@@ -3,9 +3,9 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter } from './state.js'
-import { unlock } from './caps.js'
+import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions } from '../core/events.js'
-import { t, locale } from '../core/i18n.js'
+import { t, locale, formatBytes } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
@@ -193,7 +193,7 @@ function autoReason({ level, reason }) {
 function offerCard({ id, resolve }) {
   return html`<div class="approval" role="group" aria-label=${t('offer.title')}>
     <p><strong>${t(`cap.${id}.name`)}</strong></p>
-    <p>${t(`cap.${id}.offer`, { name: BRAND.name })}</p>
+    <p>${t(`cap.${id}.offer`, { name: BRAND.name, size: formatBytes(SIZES[id] ?? 0) })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve(true)}>${t('offer.yes')}</button>
       <button class="button subtle" @click=${() => resolve(false)}>${t('offer.no')}</button>

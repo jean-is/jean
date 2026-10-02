@@ -14,7 +14,7 @@ import { tierFor } from '../ui/auto.js'
 
 const DIR = fileURLToPath(new URL('../test/reflexes/', import.meta.url))
 const MODEL = 'onnx-community/kev-0.6b-ONNX'
-const KINDS = ['personal', 'unhappy', 'demand', 'capability', 'table', 'email']
+const KINDS = ['personal', 'unhappy', 'demand', 'capability', 'lasting', 'table', 'email']
 
 /** @typedef {import('../core/decide.js').Question} Question */
 
@@ -24,6 +24,7 @@ const QUESTIONS = {
   unhappy: REFLEXES.unhappy,
   demand: REFLEXES.demand,
   capability: REFLEXES.capability(CAPABILITIES),
+  lasting: REFLEXES.lasting,
   ...FOLLOW_UPS,
 }
 

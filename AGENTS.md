@@ -1,6 +1,6 @@
 # AGENTS.md — building Jean
 
-> Status: 0.3 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
+> Status: 0.4 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
 
 ## What Jean is
 
@@ -56,7 +56,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Prompts
 
-The base prompt lives in [prompts/system.md](prompts/system.md) and stays within its 200-token budget (182 as of 0.3). Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
+The base prompt lives in [prompts/system.md](prompts/system.md) and stays within its 200-token budget (182 as of 0.4). Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
 
 The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read.
 

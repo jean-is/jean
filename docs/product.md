@@ -50,12 +50,12 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
 | Calculations | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | Jean computes instead of guessing (QuickJS) |
 | Intuition | After two conversations with a brain | "Let Jean get a feel for what you need?" A small helper on this device (about 345 MB, once) picks the brain and suggests next steps |
-| Data toolkit | Spreadsheet work goes beyond simple maths | Python, after asking ("about 30 MB, once") |
+| Data toolkit | Spreadsheet work goes beyond simple maths (the brain offers it) | Python with its standard library, after asking ("about 14 MB, once") |
 | Bigger brain | A task outgrows the current brain | The next rung of the brain ladder |
 | Memory | The user states a lasting preference or correction | "Want me to remember things like this from now on?" |
 | Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
-| Routines | The same kind of request comes up a third time | "Make this a routine?" (saved as `SKILL.md`) |
-| Projects | A distinct ongoing project shows up, or memories conflict across contexts | "Shall I make the bakery a project? I'll keep its notes and files separate." |
+| Routines | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Make this a routine?" (saved as `SKILL.md`); once on, "Make this a routine" among the follow-ups |
+| Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
 | Assistant name | After some use inside a project | "Want to give this project's assistant a name?" |
 | Web search | A request needs fresh information | Uses the brain's own search, or suggests connecting a brain that has one |
 | Connections | The user mentions Gmail, Drive, Notion… | Connect it (MCP behind the scenes) |
@@ -91,12 +91,12 @@ One page, **"What Jean knows about you"**, in two parts:
 
 **Memory that switches itself on:**
 
-- **Detecting.** Every turn, a reflex question asks whether the message states a lasting fact, preference or correction. It runs locally, costs nothing and works in any language.
-- **Writing.** Only on turns where that answer is yes does the brain get a `remember(text)` tool. It writes one line in the user's language, and a toast shows "Remembered: … · Undo".
-- **Opting in.** The first time, it is an offer. Once accepted, memory runs automatically. It can be switched off in settings, and any conversation can be made private.
+- **Detecting.** Before memory is on, a reflex question asks whether the message states a lasting fact, preference or correction, and offers memory when it does; the brain can offer it too (D79, D84).
+- **Writing.** Once memory is on, the brain has a `remember(text, scope)` tool in every new conversation, with one rule: remember only what will still matter later. It writes one line in the user's language, about the person or about the current project, and a toast shows "Remembered: … · Undo". (Giving the tool only on turns a reflex flagged would change the declared tools mid-conversation, D46.)
+- **Opting in.** The first time, it is an offer. Once accepted, memory runs automatically. It can be switched off on "What Jean knows about you". Private conversations come later.
 - **Reading back.**
-  - `memory.md` is injected whole while it stays under about 1k tokens (about 500 for the on-device brain).
-  - Past that, Jean occasionally consolidates it, keeping the previous version for undo. The reflex model selects the relevant lines.
+  - `memory.md` is injected while it stays under about 1k tokens, the newest lines first when it doesn't fit (0.4, the same budget for every brain).
+  - Later: past that, Jean occasionally consolidates it, keeping the previous version for undo, and the reflex model selects the relevant lines.
   - `recall(query)` searches past conversations with the same engine as documents.
 - **Transparency.** Memory is a local file. With a cloud brain it is sent as context, and the memory page says so plainly.
 

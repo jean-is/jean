@@ -130,12 +130,15 @@ export type SystemNoteData =
   | { kind: 'language', language: string }
   | { kind: 'date', date: string }
   | { kind: 'tools', added: string[], deferred?: boolean }
+  /** version: the section's fingerprint now, '' when it is empty */
+  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills', version: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.
- * tools: declared to the brain; deferred: known to exist, reached with find_tools (D47)
+ * tools: declared to the brain; deferred: known to exist, reached with find_tools (D47);
+ * sections: a fingerprint of each context section the brain has (project, instructions, memory, skills)
  */
-export type PromptState = { language: string, date: string, tools: string[], deferred?: string[] }
+export type PromptState = { language: string, date: string, tools: string[], deferred?: string[], sections?: Record<string, string> }
 
 /** One JSONL line after the header. Exactly one of update/meta is present. */
 export interface Envelope {

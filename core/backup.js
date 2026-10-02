@@ -3,7 +3,7 @@
 // a conversation that is longer in the backup (conversations only ever grow).
 import { walk } from './fs.js'
 import { readZip, writeZip } from './zip.js'
-import { parseFrontMatter } from './settings.js'
+import { listProjects } from './settings.js'
 
 /** @typedef {import('./types.js').FS} FS */
 
@@ -68,16 +68,7 @@ function startsWith(bytes, prefix) {
 }
 
 /** @param {FS} fs */
-async function defaultProjects(fs) {
-  /** @type {string[]} */
-  const dirs = []
-  for (const entry of await fs.list('projects')) {
-    if (entry.kind !== 'directory') continue
-    const text = await fs.read(`projects/${entry.name}/project.md`)
-    if (text && parseFrontMatter(text).data.default === true) dirs.push(`projects/${entry.name}`)
-  }
-  return dirs
-}
+const defaultProjects = async (fs) => (await listProjects(fs)).filter((project) => project.data.default === true).map((project) => project.dir)
 
 /** @param {FS} fs @param {string} dir */
 async function isEmptyProject(fs, dir) {

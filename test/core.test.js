@@ -73,7 +73,7 @@ test('prompt: sections, language, budget', () => {
   const prompt = buildSystemPrompt({
     assistantName: 'Margot', uiLanguage: 'French',
     tools: [{ name: 'read', line: 'read a file the user shared' }],
-    memory: ['Prefers short answers.'], now: new Date('2026-10-01T12:00:00Z'),
+    sections: { memory: 'Prefers short answers.' }, now: new Date('2026-10-01T12:00:00Z'),
   })
   assert.match(prompt, /^You are Margot,/)
   assert.match(prompt, /<tools>\n- read: read a file the user shared\n<\/tools>/)

@@ -5,6 +5,8 @@
 // provider's prefix cache: usage reports how much of each request repeats the previous one.
 // With a shared table of data it works like a real brain would in 0.3: it offers
 // Calculations if they're off, then runs a script that reads the file and totals it.
+// From 0.4 it remembers what follows "Remember", says what its <memory> holds when asked
+// "What do you know?", and saves a routine when asked to (finding the tool first if needed).
 import { createServer } from 'node:http'
 
 const PORT = Number(process.env.PORT) || 4174
@@ -75,7 +77,21 @@ createServer(async (req, res) => {
   /** @type {{ name: string, args: object } | null} */
   let call = null
   let answer = ''
-  if (table && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: totalsScript(table[2]) } }
+  // What the brain was told it knows: the frozen <memory>, or the latest note about it.
+  const memory = [system, ...messages.map((m) => (typeof m.content === 'string' ? m.content : ''))].flatMap((text) => [...text.matchAll(/<memory>\n([\s\S]*?)\n<\/memory>|The <memory> section is now:\n((?:- .*\n?)*)/g)]).map((m) => (m[1] ?? m[2]).trim()).at(-1) ?? ''
+  // Chat Completions tool results carry the call's id, not the tool's name.
+  const toolName = last.role === 'tool' ? messages.flatMap((m) => m.tool_calls ?? []).find((c) => c.id === last.tool_call_id)?.function?.name : undefined
+  const remember = /^(?:remember|retiens|覚えて)[:：,]?\s*(.+)/i.exec(question.trim())
+  const routine = /routine/i.test(question) && last.role === 'user'
+  const steps = '# Weekly sales summary\n\n1. Read the shared sales file.\n2. Total the sales by region.\n3. Answer with a short table.'
+  if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
+  else if (toolName === 'remember') answer = 'Noted.'
+  else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
+  else if (routine && declared.has('save_routine')) call = { name: 'save_routine', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
+  else if (routine && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a routine' } }
+  else if (toolName === 'find_tools' && /save_routine\(/.test(last.content)) call = { name: 'save_routine', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
+  else if (toolName === 'save_routine') answer = 'Done: it is a routine now.'
+  else if (table && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: totalsScript(table[2]) } }
   else if (table && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'compute' } }
   else if (table && last.role === 'tool' && /It is on/.test(last.content)) call = { name: 'run', args: { code: totalsScript(table[2]) } }
   else if (last.role === 'tool' && /^Result: /.test(last.content)) {

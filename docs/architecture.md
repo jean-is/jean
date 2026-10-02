@@ -26,7 +26,7 @@
 | Loaded on demand | Used by |
 |---|---|
 | `quickjs-emscripten-core` with the `@jitl/quickjs-wasmfile-release-sync` variant (~600 KB with its wasm) | Calculations and codemode. Copied flat into `vendor/quickjs/` and handed to the sandbox by the parent (D65, D66) |
-| Pyodide | Data toolkit (Python). Copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`, never committed (D43) |
+| `pyodide` 314.0.7 (about 13 MB: loader, runtime, standard library, lock file) | Data toolkit (Python), in its own sandbox document. Copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`, never committed (D43, D80) |
 | `@huggingface/transformers` with `onnxruntime-web` | On-device brain (Gemma 4 E2B), reflexes (Kev-0.6B), dictation (Whisper base), voice detection (Silero). Copied into `vendor/transformers/` (D52) |
 | `pdfjs-dist` (legacy build) | Reading PDFs. Copied into `vendor/pdfjs/` with its character maps and standard fonts (D52) |
 | `kokoro-js` | Optional natural voices |
@@ -36,12 +36,12 @@
 
 - **Text extraction** from DOCX/XLSX/PPTX: zip via `DecompressionStream` and a small tag scanner (not `DOMParser`, so it also runs in workers and under `node --test`).
 - **Backup zip writer:** `CompressionStream`.
-- **BM25 search** (`core/search.js`): with `Intl.Segmenter` for word splitting. It ranks deferred tools now, and documents later.
+- **BM25 search** (`core/search.js`): with `Intl.Segmenter` for word splitting. It ranks deferred tools and past conversations (`recall`), and `alike()` tells requests of the same kind apart (D83).
 - **ULIDs:** generated with `crypto.getRandomValues`.
 - **Voices:** operating-system voices.
 - **Coordination:** Web Locks and BroadcastChannel.
 
-**Routing is one hash** (`#/c/<conversation ulid>`, D59), read by `ui/router.js`: enough to reload or go back to the same conversation, on any static host.
+**Routing is one hash** (`#/c/<conversation ulid>`, D59; in a project other than home, `#/p/<project ulid>/c/<conversation ulid>`, D82), read by `ui/router.js`: enough to reload or go back to the same conversation, on any static host.
 
 **Components are custom elements (light DOM, prefix `app-`).** Each capability is one module that defines its elements and registers its tools. Unlocking means calling `import()`, and any `<app-chart>` already on the page upgrades automatically. `:not(:defined)` styles undiscovered elements. The browser itself provides progressive discovery.
 
@@ -56,16 +56,18 @@
 
 ```
 index.html        CSP <meta>, import map, shell
-sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65)
+sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
 core/             llm.js anthropic.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js
-                  deferred.js search.js decide.js … types.d.ts   (standard web APIs only; skills.js comes later)
+                  deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
-                  discovery.js collection.js auto.js picker.js, dialogs.js and brains.js (loaded when a dialog opens, D76)
+                  discovery.js collection.js auto.js picker.js, dialogs.js and brains.js (loaded when a dialog opens, D76),
+                  knows.js ("What Jean knows about you", 0.4), sandbox.js (the sandbox client, 0.4)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
-                  python/ memory/ routines/ projects/ search/ connections/ helpers/   (later)
+                  memory/ projects/ routines/ python/           (0.4)
+                  search/ connections/ helpers/                 (later)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
@@ -95,12 +97,13 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `search`, `recall`, `remember`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred by default). Two hidden tools, `file` and `decide`, are only for scripts (D64). Built so far: `read`, `run`, `find_tools`, `offer`, `file`, `decide`.
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `recall`, `remember`, `routine`, `save_routine`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred by default). Two hidden tools, `file` and `decide`, are only for scripts (D64). Built so far: `read`, `run`, `python`, `find_tools`, `offer`, `remember`, `recall`, `routine`, `save_routine`, `file`, `decide`.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
 - **`search.js`:** BM25 over short texts.
 - **`decide.js`:** the reflex mechanism: Kev's input sequence and its answers in the Decisions API shape (see [Reflexes](#reflexes)). The questions themselves are product policy and live in `caps/reflexes/questions.js` (D62).
-- **`skills.js`** (0.4): loads `SKILL.md` folders and lists only their name and description in the prompt. The full file is read when relevant.
+- **`skills.js`** (0.4): reads and writes `SKILL.md` folders (routines, D83); only their name and description go into the prompt, and the `routine` tool reads the steps when relevant.
+- **`memory.js`** (0.4): the `memory.md` format, one line per entry with where it came from, and the newest lines that fit the prompt (D79).
 - Prompt: [prompts/system.md](../prompts/system.md).
 
 ## Brain ladder
@@ -158,7 +161,7 @@ The test set is the lasting asset, because this category will change monthly.
 | Does this text compare numbers across several items? ("As a table") | yes/no | 0.3 |
 | Is this a decision or announcement to pass on? ("Draft an email") | yes/no | 0.3 |
 | Does this need current information from the web? | yes/no | Later |
-| A lasting fact, preference or correction? | yes/no | Later |
+| A lasting fact, preference or correction? (offers Memory) | yes/no | 0.4 |
 | About the person in general, or about this project? | choice | Later |
 | Same kind of task as an earlier one? | yes/no | Later |
 | Is this action irreversible? | score | Later |
@@ -173,14 +176,15 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
 ```
 /                                OPFS root (or a mirrored real folder)
   settings.json
-  instructions.md                global, written by the user
-  memory.md                      global, curated by Jean
-  skills/<name>/SKILL.md         global routines
+  instructions.md                global, written by the user (front matter: format; body: the instructions)
+  memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
+  skills/<name>/SKILL.md         global routines (Agent Skills; metadata: format, author, created, D83)
   projects/
     <ulid>-<slug>/
-      project.md                 front matter: name, assistantName, colour, brain, rules; body: short persona
+      project.md                 front matter: format, name, colour, default (home), cloud: false, createdAt, by
+                                 (later: assistantName, brain, rules; body: short persona)
       instructions.md
-      memory.md
+      memory.md                  this project's (the home project uses the global one)
       skills/<name>/SKILL.md
       files/sha256-<hash>.<ext>  original
       files/sha256-<hash>.md     extracted text, a "[[page N]]" line before each page
@@ -250,13 +254,10 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
 - **Untrusted code only ever runs in a Worker** created from a `blob:` URL, so it inherits the sandbox's strict CSP. Workers have no navigation, no WebRTC and no `sendBeacon`, so every network path goes through `connect-src`.
 - **A classic worker.** Browsers refuse module workers from `blob:` URLs in an opaque origin (checked in Chromium). A classic worker can still `import()` blob modules and compile wasm: it turns each QuickJS module into a blob URL, leaves first, and passes `wasmBinary` and `wasmLocation`, so Emscripten never resolves a URL against a `blob:` base.
 - **QuickJS limits:** 64 MB of memory, 20 s of computing time (time spent waiting on Jean or on the user's approval doesn't count), a 40 s watchdog in the parent, 20 s to start, and 8,000 characters of output. A script reaches only the functions Jean hands it (see [Codemode](#prompt-tools-and-caching)).
-- **Pyodide will run here too** (0.4).
+- **Pyodide runs in a twin document** (0.4, D80): `caps/python/sandbox.html`, the same relay and policy plus `'unsafe-eval'`, which Pyodide's runtime needs when it starts (Emscripten builds some functions with `eval`). There is still nothing to steal and nowhere to send it, and Calculations keep the stricter `sandbox.html`.
 - **Where Pyodide's files come from** (D43): Jean's own pinned `pyodide` npm package, copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`. They are never committed and never taken from outside Jean's folder. The capability manifest lists them under the Python capability, never in the shell.
-- **Engineering spike (0.4):** choose between two ways of giving Pyodide its files inside the sandbox.
-  - **(a)** The host serves `/vendor/pyodide/` with `Access-Control-Allow-Origin: *`, and the sandbox's `connect-src` is limited to that path, stamped with the deployment origin.
-  - **(b)** The parent document transfers Pyodide's files as buffers, and the sandbox runs with `connect-src 'none'`.
-
-  QuickJS already uses (b), and the spike can reuse its relay and loader; prefer (b) if Pyodide's loader allows it. If Pyodide needs `'unsafe-eval'`, that is acceptable *inside the sandbox only*: there is nothing to steal and nowhere to send it.
+- **How it gets them** (the 0.4 spike chose option (b), D80): the parent sends the files in, as for QuickJS, and the worker's `fetch` serves only those, under an address that never resolves; `connect-src 'none'` stays. Option (a), serving `vendor/pyodide/` with CORS to the sandbox, was not needed.
+- **Python's limits:** the standard library only (no package can be fetched); `import js` reaches an empty object; no cap on memory or computing time inside Pyodide (it would need a cross-origin isolated page), so the parent's 40 s watchdog stops a script that goes quiet; 60 s to start. `ui/sandbox.js` is the client both runtimes share.
 
 **Output previews** (charts, HTML) use separate iframes with `sandbox="allow-scripts"` only, and they never receive secrets.
 
@@ -286,7 +287,9 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 
 **A frozen prefix (D46).** When a conversation starts, Jean fixes the system prompt and the list of declared tools. Neither changes until the conversation ends. Providers cache prompts by prefix (Anthropic reads tools, then system, then messages), so a single changed byte at the front re-bills the whole conversation. On-device, the same rule lets the runtime keep its KV cache between turns, which matters most on weak graphics chips.
 
-**System notes (D46).** When something changes mid-conversation, Jean appends a system note to the transcript at that point instead of editing the prompt. Changes include the language, rules, instructions, memory, the project, newly unlocked tools and the date.
+**System notes (D46).** When something changes mid-conversation, Jean appends a system note to the transcript at that point instead of editing the prompt. Changes include the language, rules, instructions, memory, routines, the project, newly unlocked tools and the date.
+
+- **Sections (D81).** The project, instructions, memory and routines are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …").
 
 - **Recorded in the transcript.** A note is a record in the conversation JSONL, an ACP extension update (`_system_note`) holding the English text the brain sees and structured data for the UI label. Replaying the file rebuilds exactly what the brain was told, and when.
 - **Rendered per adapter:**

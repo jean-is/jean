@@ -1,6 +1,6 @@
 # Open questions
 
-Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
+Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). Answered while building 0.4: how the sandbox loads Pyodide (D80). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
 
 ## Name and domain (decide before the public launch)
 
@@ -17,12 +17,6 @@ Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend
 - **Handles:** on GitHub, `jean` and `jeancx` are taken and `jean-cx` exists but is empty (whose?). On npm, `jean` is an old IoC library.
 - **Criteria for an alternative:** a first name (a person you delegate to), 1–2 syllables, said the same way in English and French, unused in AI, with a short domain.
 - **Also depends on it:** the collaboration relay's subdomain (D45).
-
-## Pyodide sandbox loading
-
-Where the files come from is settled (D43). How the opaque-origin sandbox loads them is not: host `vendor/pyodide/` with CORS (option a), or have the parent document transfer the files with `connect-src 'none'` (option b)? The spike is planned in 0.4; see [architecture.md](architecture.md#security).
-
-Since 0.3, QuickJS already uses option (b) in `sandbox.html` (D65): the parent transfers the files, the sandbox has `connect-src 'none'`, and a classic worker loads them from blob URLs. The 0.4 spike only has to check that Pyodide's loader accepts files handed to it the same way.
 
 ## Display face
 

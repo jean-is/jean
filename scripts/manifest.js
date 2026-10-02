@@ -25,6 +25,7 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   voice: ['vendor/transformers'],
   reflexes: ['vendor/transformers'],
   compute: ['vendor/quickjs'],
+  python: ['vendor/pyodide'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
 export const VERSION_LINE = /^const VERSION = '.*'$/m

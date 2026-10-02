@@ -3,7 +3,7 @@
 // computing-time limits (D13). Every call it makes crosses back to Jean as a message, and
 // Jean makes it under the same rules as the brain's own calls (D48).
 //
-// { type: 'boot', files: { name: text }, wasm }                → { type: 'ready' }
+// { type: 'boot', files: { name: text | bytes } }              → { type: 'ready' }
 // { type: 'run', run, code, limits: { memory, cpu, output } }   → { type: 'call', run, id, name, args }…,
 //                                                                  { type: 'done', run, ok, result, logs, error }
 // { type: 'answer', run, id, ok, value, error }                 the result of a call
@@ -21,7 +21,7 @@ const runs = new Map()
 self.onmessage = async ({ data }) => {
   try {
     if (data.type === 'boot') {
-      quickjs ??= await load(data.files, data.wasm)
+      quickjs ??= await load(data.files)
       self.postMessage({ type: 'ready' })
     } else if (data.type === 'run') await run(data)
     else if (data.type === 'answer') runs.get(data.run)?.answer(data)
@@ -31,11 +31,14 @@ self.onmessage = async ({ data }) => {
 }
 
 /**
- * The runtime arrives as text: each module gets a blob URL, leaves first, with its
+ * The runtime arrives as files: each module gets a blob URL, leaves first, with its
  * `./name.mjs` imports pointed at the URLs of the files they name.
- * @param {Record<string, string>} files @param {ArrayBuffer} wasm
+ * @param {Record<string, string | ArrayBuffer>} all
  */
-async function load(files, wasm) {
+async function load(all) {
+  const wasm = all['emscripten-module.wasm']
+  /** @type {Record<string, string>} */
+  const files = Object.fromEntries(Object.entries(all).filter(([name]) => name.endsWith('.mjs')))
   /** @type {Record<string, string>} */
   const urls = {}
   const pending = Object.keys(files)

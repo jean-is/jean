@@ -1,4 +1,4 @@
-// About twenty-five inline icons, 24×24, drawn with the current colour.
+// About thirty inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -32,5 +32,10 @@ export const icons = {
   house: icon(svg`<path d="M4 11.5 12 5l8 6.5M6 10v9.5h12V10"/><path d="M10.5 19.5v-4.5h3v4.5"/>`),
   calc: icon(svg`<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7M8.5 12h1M11.5 12h1M14.5 12h1M8.5 16h1M11.5 16h1M14.5 16h1"/>`),
   lamp: icon(svg`<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/>`),
+  note: icon(svg`<path d="M6 3.5h9l3.5 3.5v13.5H6Z"/><path d="M9 10h6M9 13.5h6M9 17h3.5"/>`),
+  pin: icon(svg`<path d="M9 4h6l-1 5 3 3v2H7v-2l3-3Z"/><path d="M12 14v6"/>`),
+  repeat: icon(svg`<path d="M5 11V9.5A3.5 3.5 0 0 1 8.5 6H19M16 3l3 3-3 3M19 13v1.5a3.5 3.5 0 0 1-3.5 3.5H5M8 21l-3-3 3-3"/>`, 'flip-rtl'),
+  rooms: icon(svg`<path d="M3.5 10.5 12 4l8.5 6.5V20h-17Z"/><path d="M12 20v-6M3.5 14h17"/>`),
+  code: icon(svg`<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>`),
   chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),
 }

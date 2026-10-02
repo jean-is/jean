@@ -132,6 +132,13 @@ export const RUNTIMES = [
     folders: [['quickjs-emscripten-core/dist', '.', /\.mjs$/]],
     rewrite: { '@jitl/quickjs-ffi-types': './ffi-types.mjs' },
   },
+  {
+    // Pyodide for the data toolkit (D43): the loader, the runtime, the standard library and the
+    // lock file, which the Python sandbox receives from Jean instead of fetching them (D80).
+    dir: 'vendor/pyodide',
+    packages: ['pyodide'],
+    files: ['pyodide.mjs', 'pyodide.asm.mjs', 'pyodide.asm.wasm', 'python_stdlib.zip', 'pyodide-lock.json'].map((name) => [`pyodide/${name}`, name]),
+  },
 ]
 
 /**

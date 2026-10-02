@@ -39,7 +39,18 @@ test('the sandbox allows exactly its inline relay, and no network', () => {
 })
 
 test('the sandbox is only ever framed without allow-same-origin', async () => {
-  const compute = await readFile(new URL('../caps/compute/compute.js', import.meta.url), 'utf8')
-  assert.match(compute, /setAttribute\('sandbox', 'allow-scripts'\)/)
-  assert.doesNotMatch(compute, /allow-same-origin'/)
+  const client = await readFile(new URL('../ui/sandbox.js', import.meta.url), 'utf8')
+  assert.match(client, /setAttribute\('sandbox', 'allow-scripts'\)/)
+  assert.doesNotMatch(client, /allow-same-origin'/)
+})
+
+const python = await readFile(new URL('../caps/python/sandbox.html', import.meta.url), 'utf8')
+const pythonCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(python)?.[1] ?? ''
+
+test('the Python sandbox has the same relay and no network; eval is allowed there only (D80)', () => {
+  const relay = /<script>([\s\S]*?)<\/script>/.exec(python)?.[1] ?? ''
+  assert.equal(relay, /<script>([\s\S]*?)<\/script>/.exec(sandbox)?.[1], 'the same relay as sandbox.html')
+  assert.equal(pythonCSP, sandboxCSP.replace("'wasm-unsafe-eval'", "'wasm-unsafe-eval' 'unsafe-eval'"))
+  assert.ok(!/unsafe-eval'/.test(sandboxCSP.replace("'wasm-unsafe-eval'", '')), 'Calculations never get eval')
+  assert.ok(python.indexOf('Content-Security-Policy') < python.indexOf('<script'))
 })

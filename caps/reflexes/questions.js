@@ -12,6 +12,8 @@ export const REFLEXES = {
   personal: { type: 'noul', instructions: 'Does the message share personal, health, financial or confidential information?' },
   /** @type {Question} */
   unhappy: { type: 'noul', instructions: 'Is the user unhappy with the previous answer?' },
+  /** Memory is offered on a yes. @type {Question} */
+  lasting: { type: 'noul', instructions: 'Does the message state a lasting fact about the user, a preference or a correction?' },
 }
 
 /**

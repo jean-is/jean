@@ -2,11 +2,11 @@
 import { effect } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { memoryFS } from '../core/fs.js'
-import { loadSettings, ensureHome } from '../core/settings.js'
+import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, LOCALES, refreshConversations, rememberUnlocked } from './state.js'
+import { app, effective, activeBrain, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import { registerServiceWorker } from './shell.js'
 import { startRouter } from './router.js'
@@ -44,10 +44,18 @@ async function start() {
     root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
   })
 
-  app.projectDir = await ensureHome(app.fs, { by: app.deviceId })
+  const home = await ensureHome(app.fs, { by: app.deviceId })
+  app.projects.value = await listProjects(app.fs)
+  app.project.value = app.projects.value.find((project) => project.dir === home) ?? app.project.value
+  // A project's light tints the little light and the room (D78), any CSS colour from project.md.
+  effect(() => {
+    const colour = app.project.value.data.colour
+    if (typeof colour === 'string' && CSS.supports('color', colour)) root.style.setProperty('--tint', colour)
+    else root.style.removeProperty('--tint')
+  })
   await refreshConversations()
   await startRouter()
-  app.fs.watch?.(() => refreshConversations())
+  app.fs.watch?.((path) => (path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
 
   document.body.append(document.createElement('app-shell'))
   root.classList.add('is-ready')

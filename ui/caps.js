@@ -11,12 +11,17 @@ import { signal } from '@preact/signals-core'
  * @property {import('../core/loop.js').Tool[]} [tools]
  * @property {{ name: string, line: string }[]} [lines]  one line per tool, for the prompt
  * @property {string[]} [rules]                           a few prompt rules
+ * @property {() => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, routines)
  * @property {typeof import('../core/llm.js').streamChat} [stream]  a brain that runs here (the on-device brain)
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
  */
 
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   files: () => import('../caps/files/files.js'),
+  memory: () => import('../caps/memory/memory.js'),
+  projects: () => import('../caps/projects/projects.js'),
+  routines: () => import('../caps/routines/routines.js'),
+  python: () => import('../caps/python/python.js'),
   made: () => import('../caps/made/made.js'),
   backup: () => import('../caps/backup/backup.js'),
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
@@ -24,6 +29,9 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   compute: () => import('../caps/compute/compute.js'),
   reflexes: () => import('../caps/reflexes/reflexes.js'),
 })
+
+/** What turning a capability on downloads, once, in bytes: shown when it is offered. */
+export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, python: 14e6 })
 
 /** Capabilities whose modules have loaded, by id. */
 export const loaded = signal(/** @type {Map<string, Capability>} */ (new Map()))
@@ -44,7 +52,7 @@ export const isDenied = (id) => gate.deny.includes(id)
 
 /** Called by a capability module when it loads. @param {Capability} capability */
 export function register(capability) {
-  loaded.value = new Map(loaded.value).set(capability.id, capability)
+  loaded.value = new Map(loaded.peek()).set(capability.id, capability)
 }
 
 /**
@@ -70,12 +78,13 @@ export function unlock(id) {
   return pending
 }
 
-/** Tools, their prompt lines and rules from every loaded capability, in a stable order. */
+/** Tools, their prompt lines, rules and context sections from every loaded capability, in a stable order. */
 export function contributions() {
   const caps = [...loaded.value.values()].sort((a, b) => (a.id < b.id ? -1 : 1))
   return {
     tools: caps.flatMap((cap) => cap.tools ?? []),
     lines: caps.flatMap((cap) => cap.lines ?? []),
     rules: caps.flatMap((cap) => cap.rules ?? []),
+    sections: caps.flatMap((cap) => (cap.sections ? [cap.sections] : [])),
   }
 }

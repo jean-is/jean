@@ -3,8 +3,9 @@ import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, setLocale, newConversation, LOCALES } from './state.js'
+import { SIZES } from './caps.js'
 import { BRAND } from '../brand.js'
-import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
+import { t, locale, languageName, preferredLocales, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { scriptURL } from './trusted.js'
@@ -16,10 +17,12 @@ const STARTERS = ['summarize', 'email', 'explain']
 class Shell extends Element {
   render() {
     const current = app.current.value
+    const { data } = app.project.value
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
-        <button class="wordmark" @click=${newConversation} title=${t('action.new')}><app-persona></app-persona>${BRAND.name}</button>
+        <button class="wordmark" @click=${newConversation} title=${t('action.new')}><app-persona></app-persona>${BRAND.name}${data.default === true ? nothing
+          : html`<span class="wordmark-project" dir="auto">${data.name}</span>`}</button>
         <nav class="bar-actions" aria-label=${t('a11y.menu')}>
           <button class="icon-button" @click=${openCollection} aria-label=${t('collection.title', { name: BRAND.name })} title=${t('collection.title', { name: BRAND.name })}>${icons.house}</button>
           <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
@@ -41,6 +44,8 @@ class Shell extends Element {
       <app-settings></app-settings>
       <app-picker></app-picker>
       <app-collection></app-collection>
+      <app-knows></app-knows>
+      <app-project-dialog></app-project-dialog>
       ${toasts()}
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
@@ -49,6 +54,7 @@ class Shell extends Element {
 // The dialogs above are defined the first time one opens, and upgrade then.
 effect(() => {
   if (app.dialog.value) import('./dialogs.js')
+  if (app.dialog.value === 'knows') import('./knows.js')
 })
 
 const discovery = () => import('./discovery.js')
@@ -63,7 +69,7 @@ function offerAside() {
   const offer = app.offer.value
   if (!offer) return nothing
   const { id, progress } = offer
-  const params = { name: BRAND.name, size: formatBytes(345e6) }
+  const params = { name: BRAND.name, size: formatBytes(SIZES[id] ?? 0) }
   return html`<aside class="offer" role="status">
     <p>${t(`cap.${id}.offer`, params)}</p>
     ${progress === undefined ? html`<div class="row">
@@ -82,12 +88,6 @@ export function languageOptions() {
     <optgroup label=${t('settings.languagesOther')}>${LOCALES.filter((code) => !yours.includes(code)).map(option)}</optgroup>`
 }
 
-/** @param {number} bytes */
-export function formatBytes(bytes) {
-  const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', bytes / 1e3]
-  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
-}
-
 function welcome() {
   return html`<section class="welcome">
     <app-persona></app-persona>
@@ -100,11 +100,13 @@ function welcome() {
 
 function toasts() {
   const waiting = app.updateReady.value
-  const message = app.toast.value
+  const toast = app.toast.value
+  const act = (/** @type {() => void} */ run) => () => { app.toast.value = null; run() }
   return html`<div class="toasts" role="status" aria-live="polite">
     ${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
       <button class="button primary" @click=${() => applyUpdate(waiting)}>${t('update.reload')}</button></p>` : nothing}
-    ${message ? html`<p class="toast">${message}</p>` : nothing}
+    ${toast ? html`<p class="toast"><span dir="auto">${toast.message}</span>${toast.action
+      ? html`<button class="button" @click=${act(toast.action.run)}>${toast.action.label}</button>` : nothing}</p>` : nothing}
   </div>`
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "jean",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.",
   "license": "MIT",
@@ -35,6 +35,7 @@
     "@huggingface/transformers": "4.3.0",
     "@jitl/quickjs-wasmfile-release-sync": "0.32.0",
     "pdfjs-dist": "6.3.289",
+    "pyodide": "314.0.7",
     "quickjs-emscripten-core": "0.32.0"
   }
 }

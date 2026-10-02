@@ -14,10 +14,10 @@ import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { t, locale, relativeTime } from '../core/i18n.js'
+import { t, locale, relativeTime, formatBytes } from '../core/i18n.js'
 import { voicesFor } from './speech.js'
 import { icons } from './icons.js'
-import { formatBytes, languageOptions } from './shell.js'
+import { languageOptions } from './shell.js'
 
 /** @param {Element} host @param {string} name */
 export function syncDialog(host, name) {
@@ -28,6 +28,8 @@ export function syncDialog(host, name) {
 }
 
 export const close = () => { app.dialog.value = null }
+/** A dialog closed (Escape, or another one opening): forget it only if it is still the open one. @param {string} name */
+export const closed = (name) => () => { if (app.dialog.value === name) app.dialog.value = null }
 /** @param {MouseEvent} event */
 export const backdrop = (event) => { if (event.target === event.currentTarget) close() }
 
@@ -43,8 +45,9 @@ class History extends Element {
   render() {
     const list = app.conversations.value
     const currentId = app.current.value?.id
-    return html`<dialog class="drawer" @close=${close} @click=${backdrop}>
+    return html`<dialog class="drawer" @close=${closed('history')} @click=${backdrop}>
       ${head(t('history.title'))}
+      <app-projects></app-projects>
       <button class="button wide" @click=${newConversation}>${icons.plus} ${t('action.new')}</button>
       ${list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => html`
         <li class=${item.id === currentId ? 'is-current' : ''}>
@@ -151,7 +154,7 @@ class BrainDialog extends Element {
   render() {
     const { settings, locked } = effective.value
     const brainsLocked = locked.has('brains')
-    return html`<dialog class="sheet" @close=${close} @click=${backdrop}>
+    return html`<dialog class="sheet" @close=${closed('brain')} @click=${backdrop}>
       ${head(t('brain.title'))}
       <p class="lede">${t('brain.lede', { name: BRAND.name })}</p>
       ${settings.brains.length ? this.#connected(settings.brains, brainsLocked) : nothing}
@@ -234,7 +237,7 @@ class Settings extends Element {
     const { settings, locked } = effective.value
     const voices = voicesFor(locale.value)
     const usage = storage.value?.usage
-    return html`<dialog class="sheet" @close=${close} @click=${backdrop}>
+    return html`<dialog class="sheet" @close=${closed('settings')} @click=${backdrop}>
       ${head(t('settings.title'))}
       <section>
         <h3>${t('settings.language')}</h3>
@@ -270,12 +273,17 @@ class Settings extends Element {
             </label>
           </div>`}
       </section>
+      <section>
+        <h3>${t('knows.title', { name: BRAND.name })}</h3>
+        <p class="muted">${t('knows.lede', { name: BRAND.name })}</p>
+        <button class="button" @click=${() => { app.dialog.value = 'knows' }}>${t('collection.open')}</button>
+      </section>
       ${isDenied('compute') ? nothing : html`<section>
         <h3>${t('collection.title', { name: BRAND.name })}</h3>
         <p class="muted">${t('collection.lede', { name: BRAND.name })}</p>
         <button class="button" @click=${async () => (await import('./discovery.js')).unlockAll()}>${t('collection.all')}</button>
       </section>`}
-      <section class="about"><p class="muted">${BRAND.name} 0.3 · ${t('settings.about')}</p></section>
+      <section class="about"><p class="muted">${BRAND.name} 0.4 · ${t('settings.about')}</p></section>
     </dialog>`
   }
 

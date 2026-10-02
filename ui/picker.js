@@ -5,7 +5,7 @@ import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
 import { app, effective, activeBrain, brainLabel, setBrainMode, loadModels } from './state.js'
 import { useBrain } from './brains.js'
-import { syncDialog, close, backdrop, head } from './dialogs.js'
+import { syncDialog, closed, close, backdrop, head } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -51,7 +51,7 @@ class Picker extends Element {
     const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
     const offered = tiers.filter((model) => models.some((info) => info.id === model))
     const manual = (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => !settings.auto && active?.id === brain.id && active.model === model
-    return html`<dialog class="sheet picker" @close=${close} @click=${backdrop}>
+    return html`<dialog class="sheet picker" @close=${closed('picker')} @click=${backdrop}>
       ${head(t('picker.title'))}
       <ul class="choices">
         ${option(t('auto.name'), t('auto.text'), settings.auto, () => setBrainMode({ auto: true }).then(close))}
