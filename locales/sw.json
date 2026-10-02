@@ -88,6 +88,8 @@
   "provider.custom": "Nyingine",
   "settings.title": "Mipangilio",
   "settings.language": "Lugha",
+  "settings.languagesYours": "Lugha zako",
+  "settings.languagesOther": "Lugha nyingine",
   "settings.rules": "Kinachohitaji idhini yako",
   "settings.rulesText": "Chagua {name} anaweza kufanya nini mwenyewe, aulize nini kwanza, na asifanye nini kamwe.",
   "settings.voice": "Sauti ya kusoma",

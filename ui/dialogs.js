@@ -13,7 +13,7 @@ import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { t, locale, languageName, relativeTime } from '../core/i18n.js'
+import { t, locale, languageName, preferredLocales, relativeTime } from '../core/i18n.js'
 import { voicesFor } from './speech.js'
 import { icons } from './icons.js'
 
@@ -238,7 +238,7 @@ class Settings extends Element {
         <h3>${t('settings.language')}</h3>
         <select aria-label=${t('settings.language')} ?disabled=${locked.has('locale')}
           @change=${(/** @type {Event} */ e) => setLocale(/** @type {HTMLSelectElement} */ (e.target).value)}>
-          ${LOCALES.map((code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`)}
+          ${languageOptions()}
         </select>
       </section>
       <section>
@@ -317,6 +317,15 @@ async function restore(event) {
 async function persist() {
   const persisted = await navigator.storage?.persist?.()
   storage.value = { ...storage.value, persisted: Boolean(persisted) }
+}
+
+/** The language menu: the browser's languages first, in its order, then the others. */
+export function languageOptions() {
+  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
+  const yours = preferredLocales(LOCALES, navigator.languages)
+  if (!yours.length) return LOCALES.map(option)
+  return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
+    <optgroup label=${t('settings.languagesOther')}>${LOCALES.filter((code) => !yours.includes(code)).map(option)}</optgroup>`
 }
 
 /** @param {number} bytes */

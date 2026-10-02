@@ -88,6 +88,8 @@
   "provider.custom": "อื่นๆ",
   "settings.title": "การตั้งค่า",
   "settings.language": "ภาษา",
+  "settings.languagesYours": "ภาษาของคุณ",
+  "settings.languagesOther": "ภาษาอื่นๆ",
   "settings.rules": "สิ่งที่ต้องได้รับการอนุมัติ",
   "settings.rulesText": "เลือกว่า {name} ทำอะไรได้เอง อะไรต้องถามคุณก่อน และอะไรห้ามทำเด็ดขาด",
   "settings.voice": "เสียงอ่าน",

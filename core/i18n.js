@@ -71,18 +71,42 @@ export function languageName(/** @type {string} */ code, inLang = code) {
 }
 
 /**
+ * Available locales that match the user's preferences, in their order, without repeats.
+ * @param {string[]} available
+ * @param {readonly string[]} preferred e.g. navigator.languages
+ */
+export function preferredLocales(available, preferred) {
+  /** @type {string[]} */
+  const found = []
+  for (const wanted of preferred) {
+    const match = available.find((code) => code.toLowerCase() === wanted.toLowerCase())
+      ?? available.find((code) => languageAndScript(code) === languageAndScript(wanted))
+    if (match && !found.includes(match)) found.push(match)
+  }
+  return found
+}
+
+/**
  * Best available locale for the user's preferences.
  * @param {string[]} available
  * @param {readonly string[]} preferred e.g. navigator.languages
  */
 export function pickLocale(available, preferred) {
-  for (const wanted of preferred) {
-    const exact = available.find((code) => code.toLowerCase() === wanted.toLowerCase())
-    if (exact) return exact
-    const base = available.find((code) => code === wanted.split('-')[0].toLowerCase())
-    if (base) return base
+  return preferredLocales(available, preferred)[0] ?? (available.includes('en') ? 'en' : available[0])
+}
+
+// Browsers say "fil" for the Filipino that the "tl" catalogue is written in.
+/** @type {Record<string, string>} */
+const SAME_LANGUAGE = { fil: 'tl' }
+
+/** Language and likely script, so zh-TW meets zh-Hant and pt-BR meets pt. @param {string} code */
+function languageAndScript(code) {
+  try {
+    const { language, script } = new Intl.Locale(code).maximize()
+    return `${SAME_LANGUAGE[language] ?? language}-${script}`
+  } catch {
+    return null
   }
-  return available.includes('en') ? 'en' : available[0]
 }
 
 /** "3 minutes ago", in the current locale. @param {string | number | Date} when */

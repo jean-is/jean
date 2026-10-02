@@ -88,6 +88,8 @@
   "provider.custom": "Lainnya",
   "settings.title": "Pengaturan",
   "settings.language": "Bahasa",
+  "settings.languagesYours": "Bahasa Anda",
+  "settings.languagesOther": "Bahasa lainnya",
   "settings.rules": "Yang memerlukan persetujuan Anda",
   "settings.rulesText": "Pilih apa yang boleh dilakukan {name} sendiri, apa yang harus ditanyakan dulu, dan apa yang tidak boleh dilakukan.",
   "settings.voice": "Suara pembaca",

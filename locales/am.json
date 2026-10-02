@@ -88,6 +88,8 @@
   "provider.custom": "ሌላ",
   "settings.title": "ቅንብሮች",
   "settings.language": "ቋንቋ",
+  "settings.languagesYours": "ቋንቋዎችዎ",
+  "settings.languagesOther": "ሌሎች ቋንቋዎች",
   "settings.rules": "የእርስዎን ፈቃድ የሚሹ ነገሮች",
   "settings.rulesText": "ያለ ፈቃድዎ ምን ሊደረግ እንደሚችል፣ መጀመሪያ ስለ ምን እንደሚጠየቁ፣ እና ምን በፍጹም መደረግ እንደሌለበት ይምረጡ።",
   "settings.voice": "የንባብ ድምፅ",

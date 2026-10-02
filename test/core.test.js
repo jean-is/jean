@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { addCatalog, useLocale, t, dir, pickLocale, languageName, firstWords, locale } from '../core/i18n.js'
+import { addCatalog, useLocale, t, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { buildSystemPrompt, basePromptForBudget } from '../core/prompt.js'
 import { foldTurns, toChatMessages, userRecord, envelope, metaRecord, titleOf } from '../core/events.js'
@@ -27,6 +27,11 @@ test('i18n: interpolation, plurals, fallback and direction', async () => {
 test('i18n: locale picking, language names, first words', async () => {
   assert.equal(pickLocale(['en', 'fr', 'ar'], ['fr-BE', 'en']), 'fr')
   assert.equal(pickLocale(['en', 'fr', 'ar'], ['de-DE']), 'en')
+  assert.equal(pickLocale(['en', 'zh-Hans', 'zh-Hant'], ['zh-CN']), 'zh-Hans')
+  const available = ['en', 'fr', 'he', 'pt', 'tl', 'zh-Hans', 'zh-Hant']
+  assert.deepEqual(preferredLocales(available, ['fr-BE', 'zh-TW', 'en-US', 'fr', 'de', 'en']), ['fr', 'zh-Hant', 'en'])
+  assert.deepEqual(preferredLocales(available, ['pt-BR', 'iw', 'fil-PH', 'zh']), ['pt', 'he', 'tl', 'zh-Hans'])
+  assert.deepEqual(preferredLocales(available, ['', '*', 'de']), [])
   assert.equal(languageName('fr'), 'Français')
   assert.equal(languageName('ar', 'en'), 'Arabic')
   await useLocale('en')

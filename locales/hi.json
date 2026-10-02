@@ -88,6 +88,8 @@
   "provider.custom": "अन्य",
   "settings.title": "सेटिंग्स",
   "settings.language": "भाषा",
+  "settings.languagesYours": "आपकी भाषाएँ",
+  "settings.languagesOther": "अन्य भाषाएँ",
   "settings.rules": "किन कामों के लिए आपकी मंज़ूरी चाहिए",
   "settings.rulesText": "चुनें कि कौन-से काम अपने आप हों, किनके लिए पहले आपसे पूछा जाए, और कौन-से कभी न हों।",
   "settings.voice": "पढ़ने की आवाज़",

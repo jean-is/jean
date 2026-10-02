@@ -1,13 +1,13 @@
 // The room: header, welcome or conversation, composer, dialogs, toasts.
 import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
-import { app, LOCALES, setLocale, newConversation } from './state.js'
+import { app, setLocale, newConversation } from './state.js'
 import { BRAND } from '../brand.js'
-import { t, locale, languageName } from '../core/i18n.js'
+import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { scriptURL } from './trusted.js'
-import { formatBytes } from './dialogs.js'
+import { formatBytes, languageOptions } from './dialogs.js'
 import './chat.js'
 
 const STARTERS = ['summarize', 'email', 'explain']
@@ -25,7 +25,7 @@ class Shell extends Element {
           <label class="language" title=${t('settings.language')}>
             ${icons.globe}<span class="visually-hidden">${t('settings.language')}</span>
             <select @change=${(/** @type {Event} */ e) => setLocale(/** @type {HTMLSelectElement} */ (e.target).value)}>
-              ${LOCALES.map((code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`)}
+              ${languageOptions()}
             </select>
           </label>
           <button class="icon-button" @click=${() => { app.dialog.value = 'settings' }} aria-label=${t('settings.title')} title=${t('settings.title')}>${icons.gear}</button>

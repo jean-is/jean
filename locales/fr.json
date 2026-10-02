@@ -88,6 +88,8 @@
   "provider.custom": "Autre",
   "settings.title": "Réglages",
   "settings.language": "Langue",
+  "settings.languagesYours": "Vos langues",
+  "settings.languagesOther": "Autres langues",
   "settings.rules": "Ce qui demande votre accord",
   "settings.rulesText": "Choisissez ce que {name} peut faire sans vous demander, ce qui nécessite d’abord votre accord, et ce qui est interdit.",
   "settings.voice": "Voix de lecture",

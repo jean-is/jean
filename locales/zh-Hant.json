@@ -88,6 +88,8 @@
   "provider.custom": "其他",
   "settings.title": "設定",
   "settings.language": "語言",
+  "settings.languagesYours": "你的語言",
+  "settings.languagesOther": "其他語言",
   "settings.rules": "哪些事需要你同意",
   "settings.rulesText": "選擇 {name} 可以自行去做的事、需要先問你的事，以及絕不能做的事。",
   "settings.voice": "朗讀聲音",

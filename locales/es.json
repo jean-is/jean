@@ -88,6 +88,8 @@
   "provider.custom": "Otro",
   "settings.title": "Ajustes",
   "settings.language": "Idioma",
+  "settings.languagesYours": "Tus idiomas",
+  "settings.languagesOther": "Otros idiomas",
   "settings.rules": "Qué necesita tu aprobación",
   "settings.rulesText": "Elige qué puede hacer {name} por su cuenta, qué debe preguntarte antes y qué no debe hacer nunca.",
   "settings.voice": "Voz de lectura",

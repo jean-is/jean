@@ -88,6 +88,8 @@
   "provider.custom": "その他",
   "settings.title": "設定",
   "settings.language": "言語",
+  "settings.languagesYours": "あなたの言語",
+  "settings.languagesOther": "その他の言語",
   "settings.rules": "承認が必要なこと",
   "settings.rulesText": "{name} が自分で行ってよいこと、先に確認すべきこと、決してしてはいけないことを選んでください。",
   "settings.voice": "読み上げの声",

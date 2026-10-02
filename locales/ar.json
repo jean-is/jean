@@ -88,6 +88,8 @@
   "provider.custom": "غير ذلك",
   "settings.title": "الإعدادات",
   "settings.language": "اللغة",
+  "settings.languagesYours": "لغاتك",
+  "settings.languagesOther": "لغات أخرى",
   "settings.rules": "ما يحتاج إلى موافقتك",
   "settings.rulesText": "اختر ما يُنفَّذ تلقائيًا، وما يتطلّب موافقتك أولًا، وما يُمنع دائمًا.",
   "settings.voice": "صوت القراءة",

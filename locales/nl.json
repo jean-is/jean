@@ -88,6 +88,8 @@
   "provider.custom": "Andere",
   "settings.title": "Instellingen",
   "settings.language": "Taal",
+  "settings.languagesYours": "Je talen",
+  "settings.languagesOther": "Andere talen",
   "settings.rules": "Wat je toestemming nodig heeft",
   "settings.rulesText": "Kies wat {name} zelf mag doen, waarover eerst gevraagd moet worden en wat nooit mag.",
   "settings.voice": "Voorleesstem",

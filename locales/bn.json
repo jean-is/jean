@@ -88,6 +88,8 @@
   "provider.custom": "অন্যান্য",
   "settings.title": "সেটিংস",
   "settings.language": "ভাষা",
+  "settings.languagesYours": "আপনার ভাষা",
+  "settings.languagesOther": "অন্যান্য ভাষা",
   "settings.rules": "কোন কাজে আপনার অনুমোদন লাগবে",
   "settings.rulesText": "{name} নিজে থেকে কী করতে পারবে, কী আগে আপনাকে জিজ্ঞেস করবে আর কী কখনোই করবে না, তা বেছে নিন।",
   "settings.voice": "পড়ার কণ্ঠ",

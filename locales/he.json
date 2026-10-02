@@ -88,6 +88,8 @@
   "provider.custom": "אחר",
   "settings.title": "הגדרות",
   "settings.language": "שפה",
+  "settings.languagesYours": "השפות שלך",
+  "settings.languagesOther": "שפות אחרות",
   "settings.rules": "מה דורש את אישורך",
   "settings.rulesText": "בחרו מה מתבצע בלי לשאול, מה דורש קודם את אישורכם ומה אסור לעולם.",
   "settings.voice": "קול ההקראה",

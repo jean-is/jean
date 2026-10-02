@@ -88,6 +88,8 @@
   "provider.custom": "Andere",
   "settings.title": "Einstellungen",
   "settings.language": "Sprache",
+  "settings.languagesYours": "Deine Sprachen",
+  "settings.languagesOther": "Weitere Sprachen",
   "settings.rules": "Was deine Zustimmung braucht",
   "settings.rulesText": "Lege fest, was {name} selbst tun darf, wonach zuerst gefragt werden soll und was nie passieren darf.",
   "settings.voice": "Vorlesestimme",

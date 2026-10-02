@@ -88,6 +88,8 @@
   "provider.custom": "Diğer",
   "settings.title": "Ayarlar",
   "settings.language": "Dil",
+  "settings.languagesYours": "Dillerin",
+  "settings.languagesOther": "Diğer diller",
   "settings.rules": "Onayını gerektirenler",
   "settings.rulesText": "{name} için neyin kendiliğinden yapılabileceğini, neyin önce sorulacağını ve neyin asla yapılmayacağını seç.",
   "settings.voice": "Okuma sesi",

@@ -88,6 +88,8 @@
   "provider.custom": "Inny",
   "settings.title": "Ustawienia",
   "settings.language": "Język",
+  "settings.languagesYours": "Twoje języki",
+  "settings.languagesOther": "Inne języki",
   "settings.rules": "Co wymaga twojej zgody",
   "settings.rulesText": "Wybierz, co {name} może robić samodzielnie, o co ma najpierw zapytać, a czego nie może robić nigdy.",
   "settings.voice": "Głos czytania",

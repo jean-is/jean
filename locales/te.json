@@ -88,6 +88,8 @@
   "provider.custom": "ఇతర",
   "settings.title": "సెట్టింగ్‌లు",
   "settings.language": "భాష",
+  "settings.languagesYours": "మీ భాషలు",
+  "settings.languagesOther": "ఇతర భాషలు",
   "settings.rules": "మీ ఆమోదం అవసరమైనవి",
   "settings.rulesText": "ఏవి వాటంతట అవే జరగొచ్చో, వేటికి ముందు మిమ్మల్ని అడగాలో, ఏవి ఎప్పటికీ జరగకూడదో ఎంచుకోండి.",
   "settings.voice": "చదివే గొంతు",

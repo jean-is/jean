@@ -88,6 +88,8 @@
   "provider.custom": "Інше",
   "settings.title": "Налаштування",
   "settings.language": "Мова",
+  "settings.languagesYours": "Ваші мови",
+  "settings.languagesOther": "Інші мови",
   "settings.rules": "Що потребує вашого дозволу",
   "settings.rulesText": "Оберіть, що {name} може робити без вашої участі, про що спершу питати і чого не робити ніколи.",
   "settings.voice": "Голос для читання",

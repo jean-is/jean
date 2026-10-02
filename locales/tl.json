@@ -88,6 +88,8 @@
   "provider.custom": "Iba pa",
   "settings.title": "Mga setting",
   "settings.language": "Wika",
+  "settings.languagesYours": "Ang mga wika mo",
+  "settings.languagesOther": "Iba pang wika",
   "settings.rules": "Ang kailangan ng pahintulot mo",
   "settings.rulesText": "Piliin kung ano ang puwedeng gawin ng {name} nang kusa, ano ang dapat munang itanong sa iyo, at ano ang hindi kailanman dapat gawin.",
   "settings.voice": "Boses sa pagbasa",

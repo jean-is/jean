@@ -88,6 +88,8 @@
   "provider.custom": "기타",
   "settings.title": "설정",
   "settings.language": "언어",
+  "settings.languagesYours": "내 언어",
+  "settings.languagesOther": "다른 언어",
   "settings.rules": "승인이 필요한 일",
   "settings.rulesText": "{name}에게 스스로 할 일, 먼저 물어볼 일, 절대 하지 말아야 할 일을 정하세요.",
   "settings.voice": "읽기 목소리",

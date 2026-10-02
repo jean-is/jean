@@ -88,6 +88,8 @@
   "provider.custom": "Lain-lain",
   "settings.title": "Tetapan",
   "settings.language": "Bahasa",
+  "settings.languagesYours": "Bahasa anda",
+  "settings.languagesOther": "Bahasa lain",
   "settings.rules": "Perkara yang memerlukan kelulusan anda",
   "settings.rulesText": "Pilih apa yang boleh dilakukan {name} sendiri, apa yang perlu ditanya dahulu, dan apa yang tidak boleh dilakukan langsung.",
   "settings.voice": "Suara bacaan",

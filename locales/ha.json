@@ -88,6 +88,8 @@
   "provider.custom": "Wani",
   "settings.title": "Saituna",
   "settings.language": "Harshe",
+  "settings.languagesYours": "Harsunanka",
+  "settings.languagesOther": "Sauran harsuna",
   "settings.rules": "Abubuwan da ke buƙatar amincewarka",
   "settings.rulesText": "Zaɓi abin da za a yi kai tsaye, abin da za a fara tambayarka, da abin da ba za a taɓa yi ba.",
   "settings.voice": "Muryar karatu",

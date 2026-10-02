@@ -266,6 +266,7 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
   - Plurals use `Intl.PluralRules` (Arabic has six forms).
   - Dates, numbers, lists and relative times use `Intl`.
   - Language names come from `Intl.DisplayNames`, so each language appears in its own name with no extra data.
+- **Choosing.** `preferredLocales` matches `navigator.languages` to the catalogues on language and likely script (`Intl.Locale.maximize`), so `zh-TW` finds `zh-Hant`, `pt-BR` finds `pt` and `iw` finds `he`. The first match is the starting language, and the language menu lists every match first, in the browser's order, under "Your languages".
 - **Instant switching.** The locale is a signal, so every bound piece of text re-renders. `<html lang dir>` flips with it, and CSS uses logical properties only, so right-to-left layouts mirror immediately.
 - **Details that are easy to miss:**
   - Every message element gets `dir="auto"`, so an English reply renders correctly in an Arabic UI.
