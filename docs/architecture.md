@@ -392,6 +392,7 @@ There is no Jean proxy by default. Fetching an arbitrary URL hits the same CORS 
 
 Built in 0.5 (D87–D89). A connection is an address and, when the service asks for one, a key or a sign-in.
 
+- **The directory** (`caps/connections/directory.js`, D95) lists the services Jean knows: tiles for those a browser can reach and sign in to, and a muted list of the ones that can't yet. Policy merges into it by `id`: an address (a gateway), a `clientId` used instead of dynamic registration, `hidden`, `ready`. `npm run directory` checks every entry from an unknown origin, without registering anything.
 - **The client** (`caps/connections/mcp.js`) speaks Streamable HTTP: the stateless 2026-07-28 revision first, and the `initialize` handshake and session of 2025-03-26 to 2025-11-25 when a server answers like an earlier one.
 - **Signing in** (`caps/connections/auth.js`) follows MCP authorization from the browser: protected resource and authorization server metadata, dynamic registration as a public client, PKCE with a `resource` indicator, the `iss` check. The redirect comes back to Jean's own address with `?state=`. Client ID Metadata Documents wait for the domain (D27).
 - **Secrets.** Keys and tokens are encrypted in `.secrets/` like brain keys, never backed up; tokens are renewed before they expire.

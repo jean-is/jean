@@ -70,6 +70,8 @@ Budgets at the end of the build: core 2,963 of 3,000 lines, app 9,190 of 10,000,
 
 Built: Connections over MCP, with Jean's own client for both protocol eras (the stateless 2026-07-28, and the handshake and sessions of 2025, D87) and sign-in with OAuth from the browser, or a key (D88). A connection's tools are deferred, listed in a frozen `<connections>` section, found with `find_tools` or called from a script, and ask first by default (D89). Every source a tool or the brain's own search brings in is numbered by the loop and becomes a chip, with a "Sources" list under the answer (D90). Web search: the brain's own (Anthropic, OpenRouter), otherwise Wikipedia in the user's language (D91). `models.image` in codemode, kept in the project and shown in the answer (D92). Live conversation: Silero and Whisper on the device, the answer read aloud as it streams, interrupted by speaking (D93). The loop and the brains' adapters now load with the first message (D94), and the app's line budget is 15,000 (D86, decided before 0.5). 25 new strings in all 33 languages. Also fixed: "Not now" on an offer above the box (Backup, Intuition, now Live conversation) no longer brings the offer straight back.
 
+Added after 0.5: a directory of the services Jean knows, in Connections (D95). Notion, Canva, Miro and Granola connect in one click. Gmail, Google Drive, Google Calendar, Microsoft 365, Slack, Dropbox, Google Chat, Google Meet, Google Tasks, Figma and Atlassian are listed as not available yet, and policy can turn them on with a gateway or a registered client. `npm run directory` checks them again. 4 new strings in all 33 languages.
+
 Checked end to end, with `npm run e2e` in Chromium and WebKit against the fake brain and a fake mail service (`test/fixtures/fake-mail.js`):
 
 - The done-when: Jean signs in to the mail service (discovery, registration, PKCE, the issuer check), finds its tool with `find_tools`, asks before reading, and sums up the three latest emails, each cited as a chip with its subject, and listed under Sources.
@@ -82,7 +84,7 @@ Checked end to end, with `npm run e2e` in Chromium and WebKit against the fake b
 
 Still to check by hand:
 
-- [ ] A real remote MCP server from a browser: whether it answers with CORS, exposes `Mcp-Session-Id` and `WWW-Authenticate`, accepts dynamic registration, and renews tokens
+- [ ] A real remote MCP server from a browser: whether it answers with CORS, exposes `Mcp-Session-Id` and `WWW-Authenticate`, accepts dynamic registration, and renews tokens. CORS and registration are checked for the directory's services (`npm run directory`, D95). Still to do: a real sign-in to each ready one (Notion, Canva, Miro, Granola), and a token renewal
 - [ ] Anthropic's own web search against the real API: citations as chips, a second question replaying the results, `pause_turn` on a long search
 - [ ] OpenRouter's web search: where its annotations arrive in the stream. If they all come at the end, the `[n]` marks land after the follow-ups, where they are hidden, and only the Sources list shows them
 - [ ] `models.image` with OpenAI and OpenRouter keys

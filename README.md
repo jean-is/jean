@@ -45,6 +45,7 @@ npm run check        # manifest, strict typecheck, tests, budgets
 npm run build        # copy runtimes into vendor/ and regenerate the manifest, ready to deploy
 npm run e2e          # smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes     # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
+npm run directory    # check from a browser's point of view which known services Jean can connect to
 node test/fixtures/fake-brain.js   # a fake brain: connect "On your computer" → Other → http://127.0.0.1:4174/v1
 ```
 

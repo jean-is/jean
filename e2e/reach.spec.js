@@ -7,10 +7,12 @@ import { start, connectFakeBrain, ask, turnOn, MAIL_URL } from './helpers.js'
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
 
-/** Connects a service from the house, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */
+/** Connects a service from the house by its address, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */
 async function connect(page, url) {
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-connections dialog[open]')
+  // The services Jean knows come first; an address is one step down.
+  await dialog.locator('details.other summary').click()
   await dialog.locator('input[name="url"]').fill(url)
   await dialog.locator('input[name="name"]').fill('Mail')
   await dialog.locator('.button.primary').click()
@@ -42,6 +44,47 @@ test('Jean sums up the latest emails through a connection, with citations', asyn
   // The tools were deferred: found with find_tools, never in the frozen prompt's tool list.
   expect(await system(page)).toContain('<connections>\n- Mail: mail_search_emails, mail_read_email, mail_send_email\n</connections>')
   await expect(page.locator('.activity-list')).toContainText('Looked for the right tool')
+})
+
+/**
+ * Serves Jean with an organisation's policy (docs/enterprise.md), as `<meta name="app-policy">`
+ * does, so it is still there when the sign-in comes back.
+ * @param {import('@playwright/test').Page} page @param {any} policy
+ */
+async function withPolicy(page, policy) {
+  await page.route((url) => url.pathname === '/policy.json', (route) => route.fulfill({ json: policy }))
+  // Added once the page is parsed, before its modules run. (Rewriting the page itself would make
+  // Chromium treat it as a public site, which may not reach the fake service on this computer.)
+  await page.addInitScript(() => document.addEventListener('readystatechange', () => {
+    if (document.readyState === 'interactive') document.head.append(Object.assign(document.createElement('meta'), { name: 'app-policy', content: 'policy.json' }))
+  }, { once: true }))
+}
+
+test('a service Jean knows connects in one click; the ones not available yet are only listed', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
+  await start(page)
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-connections dialog[open]')
+  await expect(dialog.getByRole('button', { name: 'Notion', exact: true })).toBeVisible()
+  await expect(dialog.locator('.is-later')).toContainText('Gmail')
+  await expect(dialog.locator('.is-later')).toContainText('Microsoft 365')
+  await expect(dialog.locator('.is-later button')).toHaveCount(0)
+  await expect(dialog.locator('details.other')).not.toHaveAttribute('open')
+  // Signing in leaves the page and comes back to the dialog.
+  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  const back = page.locator('app-connections dialog[open]')
+  await expect(back.locator('.connection')).toContainText('Search emails · Read an email · Send an email')
+  await expect(back.getByRole('button', { name: 'Mail', exact: true })).toHaveCount(0)
+})
+
+test('a service that can’t register Jean signs in with the client its organisation registered', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/fixed/mcp`, clientId: 'jean-test' }] })
+  await start(page)
+  await turnOn(page, 'Connections')
+  await page.locator('app-connections dialog[open]').getByRole('button', { name: 'Mail', exact: true }).click()
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  await expect(page.locator('app-connections dialog[open] .connection')).toContainText('Search emails')
 })
 
 test('a service of the earlier MCP revision, reached from a script', async ({ page }) => {

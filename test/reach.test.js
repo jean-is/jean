@@ -230,6 +230,7 @@ describe('the <connections> section', () => {
 import { createFakeMail } from './fixtures/fake-mail.js'
 import { mcpClient, paramHeaders, headerValue } from '../caps/connections/mcp.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh } from '../caps/connections/auth.js'
+import { DIRECTORY, known, knownFor } from '../caps/connections/directory.js'
 import { listener, speakable } from '../caps/live/turns.js'
 
 /** @returns {Promise<{ origin: string, server: ReturnType<typeof createFakeMail>, close: () => Promise<void> }>} */
@@ -332,6 +333,55 @@ describe('signing in to a connection', () => {
       const hostile = /** @type {typeof fetch} */ (async (url) => Response.json(String(url).includes('protected-resource') ? { authorization_servers: ['https://as.example'] }
         : { issuer: 'https://as.example', authorization_endpoint: 'javascript:alert(1)', token_endpoint: 'https://as.example/token' }))
       await assert.rejects(discover('https://mcp.example/mcp', { fetch: hostile }), /could not be found/)
+    } finally {
+      await close()
+    }
+  })
+})
+
+describe('the services Jean knows (D95)', () => {
+  test('ready ones have a web address; the rest are listed as not yet', () => {
+    assert.equal(new Set(DIRECTORY.map((entry) => entry.id)).size, DIRECTORY.length)
+    const { ready, later } = known()
+    assert.deepEqual(ready.map((entry) => entry.id), ['notion', 'canva', 'miro', 'granola'])
+    for (const entry of ready) assert.match(String(entry.url), /^https:\/\//)
+    assert.ok(later.some((entry) => entry.id === 'microsoft-365' && entry.url === 'https://microsoft365.mcp.claude.com/mcp'))
+    assert.ok(later.some((entry) => entry.id === 'google-meet' && !entry.url))
+  })
+
+  test('policy merges by id: a gateway and a client id switch one on; it can hide one, add one, or hold one back', () => {
+    const policy = { directory: [
+      { id: 'microsoft-365', url: 'https://mcp.m365.corp.example/mcp', clientId: 'corp-app' },
+      { id: 'figma', hidden: true },
+      { id: 'crm', name: 'CRM', url: 'https://mcp.crm.corp.example/mcp' },
+      { id: 'canva', ready: false },
+      { id: 'nameless', url: 'https://nowhere.example/mcp' },
+    ] }
+    const { ready, later } = known(policy)
+    const m365 = ready.find((entry) => entry.id === 'microsoft-365')
+    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], clientId: 'corp-app', ready: true })
+    assert.ok(ready.some((entry) => entry.id === 'crm'))
+    assert.ok(later.some((entry) => entry.id === 'canva'))
+    assert.ok(![...ready, ...later].some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
+    assert.equal(knownFor('https://mcp.m365.corp.example/mcp', policy)?.clientId, 'corp-app')
+    assert.equal(knownFor('https://mcp.canva.com/mcp', policy), undefined)
+  })
+
+  test('a service that can\'t register Jean signs in with the client the organisation registered there', async () => {
+    const { origin, close } = await fakeMail()
+    try {
+      let challenge = null
+      await mcpClient({ url: `${origin}/fixed/mcp`, client: jean }).listTools().catch((/** @type {any} */ error) => { challenge = error.challenge })
+      const metadata = await discover(`${origin}/fixed/mcp`, { challenge })
+      assert.equal(metadata.issuer, `${origin}/fixed`)
+      const redirectURI = 'http://127.0.0.1:4180/'
+      await assert.rejects(registerClient(metadata, { redirectURI, name: 'Jean' }), /only accepts apps it registered/)
+      const { url, pending } = await authorization(metadata, { clientId: 'jean-test', redirectURI })
+      const back = new URL(/** @type {string} */ ((await fetch(url, { redirect: 'manual' })).headers.get('location')))
+      const tokens = await finish(back.searchParams, pending)
+      assert.equal(tokens.clientId, 'jean-test')
+      const mcp = mcpClient({ url: `${origin}/fixed/mcp`, client: jean, authorization: async () => `Bearer ${tokens.access}` })
+      assert.equal((await mcp.listTools()).length, 3)
     } finally {
       await close()
     }

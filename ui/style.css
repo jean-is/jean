@@ -616,6 +616,21 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .connection-text { display: grid; min-inline-size: 0; }
 .connection-text small { font-size: 0.8rem; color: var(--ink-soft); overflow-wrap: anywhere; }
 .connection-text .is-error { color: var(--danger); }
+/* The services Jean knows: tiles to connect, then the ones not available yet (D95). */
+.services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+.services li:has(small) { grid-column: span 2; }
+.service { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; text-align: start; }
+.service:hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
+.service:disabled { cursor: progress; opacity: 0.6; }
+.service > span:last-child { flex: 1; display: grid; min-inline-size: 0; }
+.service small { color: var(--ink-soft); font-size: 0.78rem; overflow-wrap: anywhere; }
+.monogram { flex: none; display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; border: 1px solid transparent; border-radius: 0.6rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
+.later h4 { margin-block-start: 0; }
+.services.is-later { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0; color: var(--ink-soft); font-size: 0.88rem; }
+.is-later li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.is-later .monogram { inline-size: 1.5rem; block-size: 1.5rem; border-radius: 0.45rem; background: var(--line); color: inherit; font-size: 0.78rem; }
+.other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
+.other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .radio { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.95rem; }
 .model-input { font: 0.85rem var(--mono); }
 .rules li { display: grid; gap: 0.35rem; }

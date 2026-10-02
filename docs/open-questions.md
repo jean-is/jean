@@ -26,3 +26,9 @@ Instrument Serif ships for now (D34). Fraunces will probably replace it. To chec
 
 - **First run while the brain downloads:** what do people see during the ~3 GB download, alongside "start right now with a free account"? Can the download resume after the tab closes?
 - **Client ID Metadata Documents for Connections:** publish one at Jean's domain once it is chosen, so services without dynamic registration accept Jean (D88)?
+- **The services not available yet (D95):** what would let each one in, once Jean has its domain?
+  - **Microsoft 365** (`microsoft365.mcp.claude.com`): Anthropic accepting Jean's origin, and a single-page-app redirect for Jean's domain on its Entra app.
+  - **Gmail, Google Drive, Google Calendar and Google Chat:** Google ending the developer preview, and its servers answering browsers.
+  - **Slack and Dropbox:** CORS, plus open registration for Slack. Dropbox, like Figma, registers only the apps on its list: ask both to add Jean.
+  - **Atlassian:** naming `Authorization` in its CORS, and publishing where to sign in.
+  - **Google Meet and Google Tasks:** a server at all.

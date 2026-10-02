@@ -13,14 +13,16 @@ import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { mcpClient, MCPError } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
+import { known, knownFor } from './directory.js'
 import { slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
-import { t } from '../../core/i18n.js'
+import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
 
 /** @import { Connection } from '../../core/settings.js' */
 /** @import { McpTool, CallResult } from './mcp.js' */
+/** @import { Known } from './directory.js' */
 
 // Kept in this tab while the user signs in elsewhere.
 const PENDING = 'app.connect'
@@ -138,28 +140,40 @@ async function save(connection, tools) {
   notify(t('connections.connected', { service: connection.name }))
 }
 
-/** @param {SubmitEvent} event */
-async function add(event) {
-  event.preventDefault()
-  const form = /** @type {HTMLFormElement} */ (event.target)
-  const { url, key, name } = Object.fromEntries([...new FormData(form)].map(([field, value]) => [field, String(value).trim()]))
+/** Why it didn't connect: an address to check, or, for a service Jean knows, just that. @param {Connection} connection @param {string} key */
+const failed = (connection, key) => (knownFor(connection.url, app.policy) ? t('connections.failedKnown', { service: connection.name }) : t(key))
+
+/**
+ * Connects a service; one that wants a sign-in sends the user there. True once it is connected.
+ * @param {string} url @param {string} name @param {string} [key]
+ */
+async function connectTo(url, name, key = '') {
   // Tool names start with the service's: two services need two names.
-  let unique = name || nameFor(url)
-  for (let n = 2; all().some((other) => slug(other.name) === slug(unique)); n++) unique = `${name || nameFor(url)} ${n}`
+  let unique = name
+  for (let n = 2; all().some((other) => slug(other.name) === slug(unique)); n++) unique = `${name} ${n}`
   /** @type {Connection} */
   const connection = { id: ulid(), name: unique, url, auth: key ? 'key' : 'none' }
   message.value = { kind: 'busy', text: t('brain.connecting') }
   try {
     if (key) await setSecret(app.fs, connection.id, key)
     await save(connection, await client(connection).listTools())
-    form.reset()
+    return true
   } catch (error) {
     clients.delete(connection.id)
     if (key) await deleteSecret(app.fs, connection.id)
-    else if (error instanceof MCPError && error.auth) return signIn(connection, error.challenge)
+    else if (error instanceof MCPError && error.auth) return signIn(connection, error.challenge).then(() => false)
     console.warn(url, error)
-    message.value = { kind: 'error', text: t('connections.failed') }
+    message.value = { kind: 'error', text: failed(connection, 'connections.failed') }
+    return false
   }
+}
+
+/** @param {SubmitEvent} event */
+async function add(event) {
+  event.preventDefault()
+  const form = /** @type {HTMLFormElement} */ (event.target)
+  const { url, key, name } = Object.fromEntries([...new FormData(form)].map(([field, value]) => [field, String(value).trim()]))
+  if (await connectTo(url, name || nameFor(url), key)) form.reset()
 }
 
 /** Sends the user to the service's sign-in; they come back here with a code. @param {Connection} connection @param {string | null} [challenge] its 401's */
@@ -168,12 +182,14 @@ async function signIn(connection, challenge) {
   try {
     const metadata = await discover(connection.url, { challenge })
     const redirectURI = location.origin + location.pathname
-    const { url, pending } = await authorization(metadata, { clientId: await registerClient(metadata, { redirectURI, name: BRAND.name }), redirectURI })
+    // A service that can't register Jean takes the client the organisation registered there.
+    const clientId = knownFor(connection.url, app.policy)?.clientId ?? await registerClient(metadata, { redirectURI, name: BRAND.name })
+    const { url, pending } = await authorization(metadata, { clientId, redirectURI })
     sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, connection: { ...connection, auth: 'oauth' }, route: location.hash, draft: app.draft.value }))
     location.assign(url)
   } catch (error) {
     console.warn(connection.url, error)
-    message.value = { kind: 'error', text: t('connections.needsKey') }
+    message.value = { kind: 'error', text: failed(connection, 'connections.needsKey') }
   }
 }
 
@@ -192,7 +208,7 @@ export async function finishSignIn() {
     await save(saved.connection, await client(saved.connection).listTools())
   } catch (error) {
     console.warn(error)
-    message.value = { kind: 'error', text: t('connections.failed') }
+    message.value = { kind: 'error', text: failed(saved.connection, 'connections.failed') }
   }
   return true
 }
@@ -213,9 +229,18 @@ export const connect = () => new Promise((resolve) => {
   })
 })
 
+/** A service's first letter, in place of its logo. @param {Known} entry */
+const monogram = (entry) => html`<span class="monogram" aria-hidden="true">${[...entry.name][0]}</span>`
+
+/** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
+const products = (names) => new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)
+
 class Connections extends Element {
   render() {
     const shown = message.value
+    const { ready, later } = known(app.policy)
+    // A service already connected leaves the tiles.
+    const offered = ready.filter((entry) => !all().some((connection) => connection.url === entry.url))
     return html`<dialog class="sheet" @close=${closed('connections')} @click=${backdrop}>
       ${head(t('cap.connections.name'))}
       <p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
@@ -230,13 +255,25 @@ class Connections extends Element {
               title=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}
         </li>`
       })}</ul></section>` : nothing}
-      <form class="stack" @submit=${add}>
-        <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
-        <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
-        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
-        <p class="hint">${t('connections.keyHint')}</p>
-        <button class="button primary">${t('brain.connect')}</button>
-      </form>
+      ${offered.length ? html`<ul class="services">${offered.map((entry) => html`<li>
+        <button class="service" ?disabled=${shown?.kind === 'busy'} @click=${() => connectTo(/** @type {string} */ (entry.url), entry.name)}>
+          ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${entry.includes ? html`<small>${products(entry.includes)}</small>` : nothing}</span>
+        </button></li>`)}</ul>` : nothing}
+      ${later.length ? html`<section class="later">
+        <h4>${t('connections.notYet')}</h4>
+        <p class="hint">${t('connections.later')}</p>
+        <ul class="services is-later">${later.map((entry) => html`<li>${monogram(entry)}<span dir="auto">${entry.name}</span></li>`)}</ul>
+      </section>` : nothing}
+      <details class="other" ?open=${!ready.length}>
+        <summary>${t('connections.other')}</summary>
+        <form class="stack" @submit=${add}>
+          <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
+          <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
+          <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
+          <p class="hint">${t('connections.keyHint')}</p>
+          <button class="button primary">${t('brain.connect')}</button>
+        </form>
+      </details>
       ${shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing}
     </dialog>`
   }

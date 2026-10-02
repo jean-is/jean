@@ -58,7 +58,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
 | Assistant name | After some use inside a project | "Want to give this project's assistant a name?" |
 | Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
-| Connections | A request needs one of the user's services, like their email (the brain offers it, and the answer waits while they connect it) | "Connect a service": an address, then a sign-in or a key (MCP behind the scenes, D87–D89) |
+| Connections | A request needs one of the user's services, like their email (the brain offers it, and the answer waits while they connect it) | "Connect a service": pick one Jean knows and sign in, or give an address, then a sign-in or a key (MCP behind the scenes, D87–D89, D95) |
 | Live conversation | The user has dictated three times | Hands-free: it listens, answers aloud, stops when they speak (about 82 MB, once, D93) |
 | Helpers | A big request with several parts | Jean splits the work; helpers appear nested in the activity view |
 | Double-check | Citations are in regular use | Jean checks claims against their sources |

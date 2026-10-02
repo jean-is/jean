@@ -4,6 +4,8 @@
 //                  authorization server metadata, dynamic client registration, an authorize page
 //                  that approves at once and sends the browser back, and a token endpoint (PKCE)
 //   /open/mcp      the same tools, no sign-in
+//   /fixed/mcp     the same tools, behind a sign-in server that can't register apps: it only
+//                  knows the client `jean-test`, registered for any address (D95)
 //   /legacy/mcp    MCP 2025-11-25: initialize, then a session (Mcp-Session-Id)
 //   /wiki/{lang}/w/api.php   a few pages in the shape of Wikipedia's search API
 import { createServer } from 'node:http'
@@ -45,8 +47,8 @@ function call(name, args = {}) {
 const b64url = (/** @type {Buffer} */ bytes) => bytes.toString('base64url')
 
 export function createFakeMail() {
-  /** @type {Map<string, { redirect: string }>} */
-  const clients = new Map()
+  /** @type {Map<string, { redirect: string | null }>} null: any address */
+  const clients = new Map([['jean-test', { redirect: null }]])
   /** @type {Map<string, { challenge: string, client: string, redirect: string, resource: string }>} */
   const codes = new Map()
   const tokens = new Set(['test-token'])
@@ -69,9 +71,15 @@ export function createFakeMail() {
     log.push(`${req.method} ${url.pathname} ${req.headers['mcp-method'] ?? ''} ${req.headers['mcp-param-email'] ?? ''}`.trim())
 
     // ─── Signing in ───
-    if (url.pathname === '/.well-known/oauth-protected-resource/mcp') return json(200, { resource: `${origin}/mcp`, authorization_servers: [origin], scopes_supported: ['mail.read'] })
-    if (url.pathname === '/.well-known/oauth-authorization-server') {
-      return json(200, { issuer: origin, authorization_endpoint: `${origin}/authorize`, token_endpoint: `${origin}/token`, registration_endpoint: `${origin}/register`, code_challenge_methods_supported: ['S256'], authorization_response_iss_parameter_supported: true, scopes_supported: ['mail.read', 'offline_access'] })
+    const fixed = url.pathname.endsWith('/fixed') || url.pathname.endsWith('/fixed/mcp')
+    if (/^\/\.well-known\/oauth-protected-resource(\/fixed)?\/mcp$/.test(url.pathname)) {
+      return json(200, { resource: `${origin}${fixed ? '/fixed' : ''}/mcp`, authorization_servers: [`${origin}${fixed ? '/fixed' : ''}`], scopes_supported: ['mail.read'] })
+    }
+    if (/^\/\.well-known\/oauth-authorization-server(\/fixed)?$/.test(url.pathname)) {
+      return json(200, {
+        issuer: `${origin}${fixed ? '/fixed' : ''}`, authorization_endpoint: `${origin}/authorize`, token_endpoint: `${origin}/token`, ...(!fixed && { registration_endpoint: `${origin}/register` }),
+        code_challenge_methods_supported: ['S256'], authorization_response_iss_parameter_supported: true, scopes_supported: ['mail.read', 'offline_access'],
+      })
     }
     if (url.pathname === '/register') {
       const request = JSON.parse(body)
@@ -82,13 +90,14 @@ export function createFakeMail() {
     if (url.pathname === '/authorize') {
       const query = Object.fromEntries(url.searchParams)
       const client = clients.get(query.client_id)
-      if (!client || client.redirect !== query.redirect_uri || query.code_challenge_method !== 'S256' || query.resource !== `${origin}/mcp`) return json(400, { error: 'invalid_request' })
+      const resource = [`${origin}/mcp`, `${origin}/fixed/mcp`].find((one) => one === query.resource)
+      if (!client || (client.redirect ?? query.redirect_uri) !== query.redirect_uri || query.code_challenge_method !== 'S256' || !resource) return json(400, { error: 'invalid_request' })
       const code = randomUUID()
       codes.set(code, { challenge: query.code_challenge, client: query.client_id, redirect: query.redirect_uri, resource: query.resource })
       const back = new URL(query.redirect_uri)
       back.searchParams.set('code', code)
       back.searchParams.set('state', query.state)
-      back.searchParams.set('iss', origin)
+      back.searchParams.set('iss', resource.replace(/\/mcp$/, ''))
       return res.writeHead(302, { location: back.href }).end()
     }
     if (url.pathname === '/token') {
@@ -112,7 +121,7 @@ export function createFakeMail() {
     }
 
     // ─── MCP ───
-    if (!/^\/(open\/|legacy\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
+    if (!/^\/(open\/|legacy\/|fixed\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
     if (req.method !== 'POST') return res.writeHead(405).end()
     const message = JSON.parse(body)
     const reply = (/** @type {any} */ result) => json(200, { jsonrpc: '2.0', id: message.id, result })
@@ -130,8 +139,8 @@ export function createFakeMail() {
       if (!sessions.has(String(req.headers['mcp-session-id']))) return fail(404, -32001, 'Session not found')
       if (message.method === 'notifications/initialized') return res.writeHead(202).end()
     } else {
-      if (url.pathname === '/mcp' && !tokens.has(String(req.headers.authorization ?? '').replace(/^Bearer /, ''))) {
-        return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/mcp", scope="mail.read"` })
+      if (url.pathname !== '/open/mcp' && !tokens.has(String(req.headers.authorization ?? '').replace(/^Bearer /, ''))) {
+        return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource${fixed ? '/fixed' : ''}/mcp", scope="mail.read"` })
       }
       const version = message.params?._meta?.['io.modelcontextprotocol/protocolVersion']
       if (version !== '2026-07-28') return fail(400, -32022, 'Unsupported protocol version', { supported: ['2026-07-28'], requested: version })

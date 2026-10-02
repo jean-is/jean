@@ -49,6 +49,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "instructions": "Use British English. Never put client names in titles.",
   "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "search": "https://search.corp.example", "relay": "wss://relay.corp.example" },
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }],
+  "directory": [{ "id": "microsoft-365", "url": "https://mcp.m365.corp.example/mcp", "clientId": "4f1c…" }, { "id": "figma", "hidden": true }],
   "images": { "openai": ["gpt-image-1"] },
   "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces" }
 }

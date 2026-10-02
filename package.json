@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit -p .",
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
     "e2e": "playwright test -c e2e",
-    "reflexes": "node scripts/reflexes.js"
+    "reflexes": "node scripts/reflexes.js",
+    "directory": "node scripts/directory.js"
   },
   "dependencies": {
     "@preact/signals-core": "^1.14.4",
