@@ -4,8 +4,8 @@ export {}
 // ─── Brains (model providers) ────────────────────────────────────────────────
 
 /**
- * @typedef {'openrouter'|'openai'|'anthropic'|'ollama'|'lmstudio'|'custom'} ProviderId
- * @typedef {'openai'|'anthropic'} WireApi  Wire protocol spoken by the provider.
+ * @typedef {'device'|'openrouter'|'openai'|'anthropic'|'ollama'|'lmstudio'|'custom'} ProviderId
+ * @typedef {'device'|'openai'|'anthropic'} WireApi  Wire protocol spoken by the provider ('device': the on-device brain).
  */
 
 /**
@@ -25,18 +25,21 @@ export {}
 /**
  * @typedef {{ id: string, name: string, args: any }} ToolCall
  * @typedef {{ name: string, description: string, parameters: object }} ToolSpec  parameters = JSON Schema
- * @typedef {{ role: 'user', content: string }} UserMessage
- * @typedef {{ role: 'assistant', content: string, toolCalls?: ToolCall[], raw?: any }} AssistantMessage
- *   raw = provider-native assistant message, echoed verbatim inside a single tool loop
- *   (Anthropic thinking blocks must come back unchanged). Never persisted.
+ * @typedef {{ name: string, text: string }} DocumentPart  a shared file's text, as the brain sees it
+ * @typedef {{ role: 'user', content: string, documents?: DocumentPart[] }} UserMessage
+ * @typedef {{ role: 'assistant', content: string, toolCalls?: ToolCall[], raw?: any, rawModel?: string }} AssistantMessage
+ *   raw = provider-native content blocks, echoed verbatim to the model in rawModel only
+ *   (Anthropic thinking blocks must come back unchanged, or the cache breaks).
  * @typedef {{ role: 'tool', toolCallId: string, name: string, content: string, isError?: boolean }} ToolMessage
- * @typedef {UserMessage | AssistantMessage | ToolMessage} ChatMessage
+ * @typedef {{ role: 'system', content: string }} SystemNote  a mid-conversation note (D46); never the first message
+ * @typedef {UserMessage | AssistantMessage | ToolMessage | SystemNote} ChatMessage
  */
 
 /**
  * Events yielded by llm.streamChat().
  * @typedef {'end'|'tool_use'|'max_tokens'|'refusal'|'other'} StopReason
- * @typedef {{ inputTokens?: number, outputTokens?: number }} Usage
+ * @typedef {{ inputTokens?: number, outputTokens?: number, cacheReadTokens?: number, cacheWriteTokens?: number }} Usage
+ *   inputTokens counts every input token, cached ones included.
  * @typedef {{ type: 'text', delta: string }
  *   | { type: 'thinking', delta: string }
  *   | { type: 'tool_call', call: ToolCall }
@@ -57,7 +60,9 @@ export {}
  * @typedef {{ name: string, kind: 'file'|'directory' }} DirEntry
  * @typedef {Object} FS
  * @property {(path: string) => Promise<string|null>} read      null when missing
+ * @property {(path: string) => Promise<Uint8Array|null>} readBytes  null when missing
  * @property {(path: string, text: string) => Promise<void>} write   whole-file replace, parents created
+ * @property {(path: string, bytes: Uint8Array) => Promise<void>} writeBytes  whole-file replace, parents created
  * @property {(path: string, text: string) => Promise<void>} append  appends text as-is, parents created
  * @property {(dir: string) => Promise<DirEntry[]>} list        [] when missing; "" lists the root
  * @property {(path: string) => Promise<void>} remove           file or directory (recursive); no-op when missing
@@ -69,12 +74,15 @@ export {}
 // ─── Conversations (JSONL) and ACP events ────────────────────────────────────
 
 /**
- * ACP content block (subset).
- * @typedef {{ type: 'text', text: string }} ContentBlock
+ * ACP content blocks (subset). A resource link points at a file in the project (uri relative
+ * to the project folder); `_meta.pages` records which pages went into the brain's context.
+ * @typedef {{ type: 'text', text: string }} TextBlock
+ * @typedef {{ type: 'resource_link', uri: string, name: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number], of?: number } }} ResourceLink
+ * @typedef {TextBlock | ResourceLink} ContentBlock
  * @typedef {'read'|'edit'|'delete'|'move'|'search'|'execute'|'think'|'fetch'|'switch_mode'|'other'} ToolKind
  * @typedef {'pending'|'in_progress'|'completed'|'failed'} ToolStatus
  * @typedef {{ path: string, line?: number }} ToolCallLocation
- * @typedef {{ type: 'content', content: ContentBlock }} ToolCallContent
+ * @typedef {{ type: 'content', content: TextBlock }} ToolCallContent
  * @typedef {{ content: string, priority: 'high'|'medium'|'low', status: 'pending'|'in_progress'|'completed' }} PlanEntry
  */
 
@@ -89,17 +97,32 @@ export {}
  * @property {ToolCallLocation[]} [locations]
  * @property {any} [rawInput]
  * @property {any} [rawOutput]
+ * @property {Record<string, any>} [_meta]  ACP extension data, e.g. { raw } on brain entries
  */
 
 /**
  * ACP session/update payloads used by Jean (https://agentclientprotocol.com).
  * @typedef {{ sessionUpdate: 'user_message_chunk', content: ContentBlock }
- *   | { sessionUpdate: 'agent_message_chunk', content: ContentBlock }
- *   | { sessionUpdate: 'agent_thought_chunk', content: ContentBlock }
+ *   | { sessionUpdate: 'agent_message_chunk', content: TextBlock }
+ *   | { sessionUpdate: 'agent_thought_chunk', content: TextBlock }
  *   | ({ sessionUpdate: 'tool_call' } & ToolCallInfo)
  *   | ({ sessionUpdate: 'tool_call_update' } & Partial<ToolCallInfo> & { toolCallId: string })
  *   | { sessionUpdate: 'plan', entries: PlanEntry[] }
+ *   | { sessionUpdate: '_system_note', text: string, data: SystemNoteData }
  * } AcpUpdate
+ */
+
+/**
+ * What a system note changed, for the UI label; `text` is what the brain reads (D46).
+ * @typedef {{ kind: 'language', language: string }
+ *   | { kind: 'date', date: string }
+ *   | { kind: 'tools', added: string[] }
+ * } SystemNoteData
+ */
+
+/**
+ * What a conversation's brain was told, frozen at its start (D46), then changed by notes.
+ * @typedef {{ language: string, date: string, tools: string[] }} PromptState
  */
 
 /**
@@ -109,7 +132,7 @@ export {}
  * @property {string} by     'user' | 'jean' | a device id
  * @property {number} [step] agent records only: model call index within the turn
  * @property {AcpUpdate} [update]
- * @property {{ title?: string, brain?: string, model?: string, [key: string]: any }} [meta]
+ * @property {{ title?: string, prompt?: { system: string, state: PromptState }, [key: string]: any }} [meta]
  */
 
 /**

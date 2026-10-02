@@ -27,19 +27,21 @@
 |---|---|
 | `quickjs-emscripten` (~1 MB) | Calculations and codemode |
 | Pyodide | Data toolkit (Python). Copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`, never committed (D43) |
-| `@huggingface/transformers` | On-device brain (Gemma 4 E2B), reflexes (Kev-0.6B), dictation (Whisper-class), voice detection (Silero) |
-| `pdfjs-dist` | Reading PDFs |
+| `@huggingface/transformers` with `onnxruntime-web` | On-device brain (Gemma 4 E2B), reflexes (Kev-0.6B), dictation (Whisper base), voice detection (Silero). Copied into `vendor/transformers/` (D52) |
+| `pdfjs-dist` (legacy build) | Reading PDFs. Copied into `vendor/pdfjs/` with its character maps and standard fonts (D52) |
 | `kokoro-js` | Optional natural voices |
 | MCP client (own minimal Streamable HTTP client, or the official SDK) | Connections; to be decided in 0.5 |
 
 **Built on browser features, no dependency:**
 
-- **Text extraction** from DOCX/XLSX/PPTX: zip + XML via `DecompressionStream` and `DOMParser`.
+- **Text extraction** from DOCX/XLSX/PPTX: zip via `DecompressionStream` and a small tag scanner (not `DOMParser`, so it also runs in workers and under `node --test`).
 - **Backup zip writer:** `CompressionStream`.
 - **BM25 search:** with `Intl.Segmenter` for word splitting.
 - **ULIDs:** generated with `crypto.getRandomValues`.
 - **Voices:** operating-system voices.
 - **Coordination:** Web Locks and BroadcastChannel.
+
+**Routing is one hash** (`#/c/<conversation ulid>`, D59), read by `ui/router.js`: enough to reload or go back to the same conversation, on any static host.
 
 **Components are custom elements (light DOM, prefix `app-`).** Each capability is one module that defines its elements and registers its tools. Unlocking means calling `import()`, and any `<app-chart>` already on the page upgrades automatically. `:not(:defined)` styles undiscovered elements. The browser itself provides progressive discovery.
 
@@ -57,10 +59,12 @@ index.html        CSP <meta>, import map, shell
 sandbox.html      strict CSP <meta>; runs untrusted code in a worker
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
-core/             llm.js loop.js decide.js fs.js skills.js i18n.js events.js   (standard web APIs only)
-ui/               base element, shell, chat, activity view, collection page, style.css
-caps/             files/ made/ backup/ compute/ python/ memory/ routines/ projects/ search/
-                  connections/ voice/ helpers/ brain-local/ reflexes/ suggestions/ sources/
+core/             llm.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js …
+                  (standard web APIs only; decide.js and skills.js come later)
+ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css
+caps/             files/ made/ backup/ brain-local/ voice/        (0.2)
+                  compute/ python/ memory/ routines/ projects/ search/ connections/ helpers/ reflexes/
+                  suggestions/ sources/                         (later)
 locales/          en.json fr.json ar.json …
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json), translate.js, budgets.js
@@ -161,7 +165,7 @@ The test set is the lasting asset, because this category will change monthly.
       memory.md
       skills/<name>/SKILL.md
       files/sha256-<hash>.<ext>  original
-      files/sha256-<hash>.md     extracted text with page markers
+      files/sha256-<hash>.md     extracted text, a "[[page N]]" line before each page
       files/sha256-<hash>.meta.json
       conversations/<ulid>.jsonl
   .secrets/                      encrypted; never exported, synced or shared
@@ -242,6 +246,7 @@ require-trusted-types-for 'script'; trusted-types lit-html app-urls
   - `Intl.Segmenter` handles counting and truncation in Chinese, Japanese, Korean and Thai.
   - Fonts: the system font for every script, plus the display face only where it applies (see [design.md](design.md)).
 - **Translation.** An LLM translates from English with a script. There are about 150 strings, and no per-language human review (D44): anyone can fix a string with a PR.
+- **Shipped so far:** en, fr, ar, ja (Japanese early, for CJK checks: D60).
 - **Launch languages (33):** am, ar, bn, de, en, es, fa, fr, ha, he, hi, id, it, ja, ko, mr, ms, nl, pl, pt, ru, sw, ta, te, th, tl, tr, uk, ur, vi, yo, zh-Hans, zh-Hant.
 - **Conversations.** The system prompt stays in English, with a `<language>` section. Changing the UI language mid-conversation appends a system note rather than editing that section (D46), and Jean's next reply follows.
 
@@ -282,6 +287,8 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 - **Direct calls stay.** Declared tools remain callable without code, because small brains call tools more reliably than they write scripts. Codemode pays off with strong brains, many tools and data-heavy work.
 - **Short description.** The `run` tool line names each global in one line and points to a reference the brain reads only when it needs it, like a routine.
 
+**Thinking blocks are kept (D54).** Anthropic's thinking blocks are stored on each step's brain entry and replayed unchanged to the model that wrote them, because current models bind them to the conversation: dropping them is an edit, which costs the cache from that point on.
+
 **Prompt caching and warming on Anthropic (D49).**
 
 - **Breakpoints.** One explicit `cache_control` breakpoint on the last block of the system prompt, plus top-level automatic caching for the growing conversation.
@@ -291,6 +298,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
   - Its breakpoint sits on the last message already in the conversation, never on the placeholder.
   - **Skipped** when the prefix is below the model's minimum cacheable size (a short new conversation) or a request went out recently.
 - **Other providers.** OpenAI caches automatically. Local servers keep their own KV cache, which the frozen prefix keeps valid.
+- **On the device (D58).** The brain's worker keeps the text and tokens it has read; a prompt that continues them only reads the new part. A follow-up question about a long document starts as fast as a short one.
 
 ## Retrieval and extraction
 
@@ -299,7 +307,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
   - PDFs use pdf.js, loaded on demand.
   - Scans and images go to the brain's vision ability (Gemma 4 E2B accepts images).
 - **Retrieval, without a vector database:**
-  1. If a document fits within about 25% of the active brain's context, include it whole. Provider prompt caching makes that cheap.
+  1. If a document fits within about 25% of the active brain's context, include it whole. Provider prompt caching makes that cheap. Otherwise its first pages go in, up to that budget, and the `read(file, pages)` tool reaches the rest. The choice is made once, when the message is sent, and recorded on the file's link, so the prefix never changes (D55).
   2. Otherwise, the brain searches like a person, with `search(query)` and `read(file, pages)`. Search is a BM25 index over page-aware chunks, with `Intl.Segmenter` splitting words and a reflex re-ranking the results. A French question about an English PDF works because the brain writes its search query in the document's language.
   3. A multilingual embedding model is added only if the test set proves it necessary.
 - **One engine, three uses:** project files, past conversations (`recall`) and memory.

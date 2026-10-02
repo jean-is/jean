@@ -6,7 +6,7 @@ This repository holds **Jean** (a working name): its plan and its code. Jean is 
 
 |  |  |
 |---|---|
-| Status | 0.1 "Talk" built: chat with any brain, three languages, offline, conversations as plain files |
+| Status | 0.2 "Read and keep" built: files in (PDF, Office), a brain on the device, prompt caching, backups, dictation. 0.1 "Talk": chat with any brain, three languages, offline, conversations as plain files |
 | Working name | Jean — a variable, not final (see [open questions](docs/open-questions.md)) |
 | Domain candidate | jean.cx (unregistered as of 2026-10-01) |
 | First user | A non-technical knowledge worker |
@@ -46,7 +46,7 @@ npm run build        # copy runtimes into vendor/ and regenerate the manifest, r
 node test/fixtures/fake-brain.js   # a fake brain: connect "On your computer" → Other → http://127.0.0.1:4174/v1
 ```
 
-Nothing in `vendor/` is committed. `npm run dev`, `npm start`, `npm run build` and `npm run check` copy the three upfront libraries (and, from 0.4, Pyodide) in from Jean's own `node_modules` (D43, D51).
+Nothing in `vendor/` is committed. `npm run dev`, `npm start`, `npm run build` and `npm run check` copy the three upfront libraries, and the on-demand runtimes (pdf.js, Transformers.js; from 0.4, Pyodide), in from Jean's own `node_modules` (D43, D51, D52).
 
 ## Self-contained
 

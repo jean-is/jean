@@ -13,7 +13,7 @@ import {
   stampVersion,
 } from '../scripts/manifest.js'
 import { resolveRequest } from '../scripts/serve.js'
-import { stripSourceMaps } from '../scripts/vendor.js'
+import { rewriteSpecifiers, stripSourceMaps } from '../scripts/vendor.js'
 
 const IMPORT_MAP = {
   imports: {
@@ -76,6 +76,33 @@ describe('manifest: file filters', () => {
     const { shell, locales } = await collectFiles(root)
     assert.deepEqual(shell, ['brand.js', 'core/a.js', 'core/b.js', 'index.html', 'manifest.webmanifest', 'ui/app.js'])
     assert.deepEqual(locales, ['locales/en.json', 'locales/fr.json'])
+  })
+})
+
+describe('manifest: capabilities', () => {
+  it('lists each capability with its runtimes, and keeps runtimes out of the shell', async () => {
+    const root = await fixture({
+      'brand.js': '',
+      'vendor/signals-core.mjs': '',
+      'vendor/pdfjs/pdf.min.mjs': '',
+      'vendor/pdfjs/cmaps/UniJIS-UTF16-H.bcmap': '',
+      'vendor/transformers/ort.wasm': '',
+      'caps/files/files.js': '',
+      'caps/files/notes.md': '',
+      'caps/made/made.js': '',
+    })
+    const { shell, capabilities } = await collectFiles(root)
+    assert.deepEqual(shell, ['brand.js', 'manifest.webmanifest', 'vendor/signals-core.mjs'])
+    assert.deepEqual(capabilities, {
+      files: { files: ['caps/files/files.js', 'vendor/pdfjs/cmaps/UniJIS-UTF16-H.bcmap', 'vendor/pdfjs/pdf.min.mjs'] },
+      made: { files: ['caps/made/made.js'] },
+    })
+  })
+
+  it('points bare specifiers of a vendored runtime at local files', () => {
+    const map = { 'onnxruntime-web/webgpu': './ort.mjs', 'onnxruntime-common': './ort.mjs' }
+    assert.equal(rewriteSpecifiers('import*as a from"onnxruntime-web/webgpu";import{Tensor as b}from "onnxruntime-common";x("onnxruntime-common")', map),
+      'import*as a from"./ort.mjs";import{Tensor as b}from "./ort.mjs";x("onnxruntime-common")')
   })
 })
 

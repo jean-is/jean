@@ -61,16 +61,29 @@ function assertText(text) {
   if (typeof text !== 'string') throw new TypeError(`File content must be a string, got ${typeof text}`)
 }
 
+/** @param {unknown} bytes */
+function assertBytes(bytes) {
+  if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array')
+}
+
+const encoder = new TextEncoder()
+const decoder = new TextDecoder()
+
 /**
  * FS backed by a Map. Directories are implicit: one exists while a file lives under it.
  * Mirrors OPFS type conflicts (a file where a directory is expected, or the reverse).
- * @param {Record<string, string>} [initial] seed files, keyed by path
+ * @param {Record<string, string | Uint8Array>} [initial] seed files, keyed by path
  * @returns {FS}
  */
 export function memoryFS(initial = {}) {
-  /** @type {Map<string, string>} */
+  /** @type {Map<string, string | Uint8Array>} */
   const files = new Map()
-  for (const [path, text] of Object.entries(initial)) files.set(normalizePath(path), text)
+  /** @param {string} key */
+  const text = (key) => {
+    const value = files.get(key)
+    return value === undefined ? null : typeof value === 'string' ? value : decoder.decode(value)
+  }
+  for (const [path, value] of Object.entries(initial)) files.set(normalizePath(path), value)
 
   /** @param {string} path */
   const isDir = (path) => {
@@ -88,19 +101,29 @@ export function memoryFS(initial = {}) {
 
   return {
     async read(path) {
-      return files.get(normalizePath(path)) ?? null
+      return text(normalizePath(path))
     },
-    async write(path, text) {
-      const key = normalizePath(path)
-      assertText(text)
-      assertWritable(key)
-      files.set(key, text)
+    async readBytes(path) {
+      const value = files.get(normalizePath(path))
+      return value === undefined ? null : typeof value === 'string' ? encoder.encode(value) : value.slice()
     },
-    async append(path, text) {
+    async write(path, value) {
       const key = normalizePath(path)
-      assertText(text)
+      assertText(value)
       assertWritable(key)
-      files.set(key, (files.get(key) ?? '') + text)
+      files.set(key, value)
+    },
+    async writeBytes(path, bytes) {
+      const key = normalizePath(path)
+      assertBytes(bytes)
+      assertWritable(key)
+      files.set(key, bytes.slice())
+    },
+    async append(path, value) {
+      const key = normalizePath(path)
+      assertText(value)
+      assertWritable(key)
+      files.set(key, (text(key) ?? '') + value)
     },
     async list(dir) {
       const normalized = normalizeDir(dir)
@@ -127,10 +150,26 @@ export function memoryFS(initial = {}) {
     watch: () => () => {},
     async estimate() {
       let usage = 0
-      for (const text of files.values()) usage += text.length
+      for (const value of files.values()) usage += value.length
       return { usage }
     },
   }
+}
+
+/**
+ * Every file under `dir`, recursively, as paths relative to the root.
+ * @param {FS} fs @param {string} [dir]
+ * @returns {Promise<string[]>}
+ */
+export async function walk(fs, dir = '') {
+  /** @type {string[]} */
+  const paths = []
+  for (const entry of await fs.list(dir)) {
+    const path = join(dir, entry.name)
+    if (entry.kind === 'directory') paths.push(...await walk(fs, path))
+    else paths.push(path)
+  }
+  return paths
 }
 
 /**

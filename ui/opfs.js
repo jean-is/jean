@@ -31,7 +31,9 @@ export async function opfsFS({ workerURL = new URL('./storage-worker.js', import
   }
   return {
     read: async (path) => call('read', normalizePath(path)),
+    readBytes: async (path) => call('readBytes', normalizePath(path)),
     write: async (path, text) => call('write', normalizePath(path), assertText(text)),
+    writeBytes: async (path, bytes) => call('writeBytes', normalizePath(path), assertBytes(bytes)),
     append: async (path, text) => call('append', normalizePath(path), assertText(text)),
     list: async (dir) => call('list', normalizeDir(dir)),
     remove: async (path) => call('remove', normalizePath(path)),
@@ -56,8 +58,14 @@ function assertText(text) {
   return text
 }
 
+/** @param {unknown} bytes */
+function assertBytes(bytes) {
+  if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array')
+  return bytes
+}
+
 /**
- * @typedef {(op: string, path?: string, text?: string) => Promise<any>} Call
+ * @typedef {(op: string, path?: string, text?: string | Uint8Array) => Promise<any>} Call
  * @param {Worker} worker
  * @param {string} from this tab's client id, so watch() can skip our own changes
  * @returns {Call}

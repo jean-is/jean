@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseSSE } from '../core/sse.js'
-import { PROVIDERS, LLMError, headersFor, streamChat, listModels } from '../core/llm.js'
+import { PROVIDERS, LLMError, headersFor, streamChat, listModels, warmCache, minimumCacheable, openaiMessages } from '../core/llm.js'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -516,7 +516,8 @@ describe('streamChat (Anthropic)', () => {
       model: 'claude-opus-5-5',
       max_tokens: 64000,
       stream: true,
-      system: 'Be brief.',
+      system: [{ type: 'text', text: 'Be brief.', cache_control: { type: 'ephemeral' } }],
+      cache_control: { type: 'ephemeral' },
       thinking: { type: 'adaptive', display: 'summarized' },
       fallbacks: 'default',
       messages: [{ role: 'user', content: [{ type: 'text', text: 'Hi' }] }],
@@ -550,7 +551,7 @@ describe('streamChat (Anthropic)', () => {
 
   test('omits system and tools when empty', async () => {
     const { request } = await run(anthropicWith('claude-haiku-4-5'), textTurn())
-    assert.deepEqual(Object.keys(request.body).sort(), ['max_tokens', 'messages', 'model', 'stream'])
+    assert.deepEqual(Object.keys(request.body).sort(), ['cache_control', 'max_tokens', 'messages', 'model', 'stream'])
   })
 
   test('converts messages: raw echo, grouped tool results, merged roles', async () => {
@@ -590,6 +591,128 @@ describe('streamChat (Anthropic)', () => {
 })
 
 // ─── Errors ──────────────────────────────────────────────────────────────────
+
+describe('system notes, documents and caching (D46, D49)', () => {
+  const doc = { name: 'Report "Q3".pdf', text: '[[page 1]]\nRevenue grew.' }
+  const conversation = [
+    { role: 'user', content: 'Summarise.', documents: [doc] },
+    { role: 'assistant', content: 'It grew.' },
+    { role: 'system', content: 'The interface language is now French.' },
+    { role: 'user', content: 'Et maintenant ?' },
+  ]
+
+  test('Anthropic: native system messages after the next user message, documents as blocks', async () => {
+    const { request } = await run(brains.anthropic, textTurn(), { system: 'Be brief.', messages: conversation })
+    assert.deepEqual(request.body.messages, [
+      { role: 'user', content: [{ type: 'text', text: '<document name="Report  Q3 .pdf">\n[[page 1]]\nRevenue grew.\n</document>' }, { type: 'text', text: 'Summarise.' }] },
+      { role: 'assistant', content: [{ type: 'text', text: 'It grew.' }] },
+      { role: 'user', content: [{ type: 'text', text: 'Et maintenant ?' }] },
+      { role: 'system', content: 'The interface language is now French.' },
+    ])
+  })
+
+  test('Anthropic: a tagged block on models without mid-conversation system messages', async () => {
+    const { request } = await run(anthropicWith('claude-sonnet-5'), textTurn(), { messages: conversation })
+    assert.deepEqual(request.body.messages.at(-1), {
+      role: 'user',
+      content: [{ type: 'text', text: '<system-note>\nThe interface language is now French.\n</system-note>' }, { type: 'text', text: 'Et maintenant ?' }],
+    })
+  })
+
+  test('OpenAI and OpenRouter take system messages where they fall; local servers get a tagged block', () => {
+    const native = openaiMessages('Be brief.', conversation, { systemNotes: true })
+    assert.deepEqual(native.map((m) => m.role), ['system', 'user', 'assistant', 'system', 'user'])
+    assert.match(native[1].content, /^<document name="Report  Q3 \.pdf">\n\[\[page 1\]\]\nRevenue grew\.\n<\/document>\n\nSummarise\.$/)
+    const tagged = openaiMessages(undefined, conversation, { systemNotes: false })
+    assert.deepEqual(tagged.map((m) => m.role), ['user', 'assistant', 'user'])
+    assert.equal(tagged[2].content, '<system-note>\nThe interface language is now French.\n</system-note>\n\nEt maintenant ?')
+  })
+
+  test('chat-template messages keep arguments as objects and name tool results', () => {
+    const out = openaiMessages(undefined, [
+      { role: 'user', content: 'Go' },
+      { role: 'assistant', content: '', toolCalls: [{ id: 'c1', name: 'read', args: { file: 'a' } }] },
+      { role: 'tool', toolCallId: 'c1', name: 'read', content: 'A' },
+    ], { systemNotes: false, argsAsObject: true })
+    assert.deepEqual(out[1].tool_calls[0].function.arguments, { file: 'a' })
+    assert.equal(out[2].name, 'read')
+  })
+
+  test('raw blocks are replayed only to the model that made them', async () => {
+    const raw = [{ type: 'thinking', thinking: 'Hm.', signature: 'sig' }, { type: 'text', text: 'Yes.' }]
+    const messages = [{ role: 'user', content: 'Q' }, { role: 'assistant', content: 'Yes.', raw, rawModel: 'claude-opus-5-5' }, { role: 'user', content: 'Q2' }]
+    const same = await run(brains.anthropic, textTurn(), { messages })
+    assert.deepEqual(same.request.body.messages[1].content, raw)
+    const other = await run(anthropicWith('claude-sonnet-5-5'), textTurn(), { messages })
+    assert.deepEqual(other.request.body.messages[1].content, [{ type: 'text', text: 'Yes.' }])
+  })
+
+  test('a stale thinking signature is retried once without the earlier reasoning', async () => {
+    const raw = [{ type: 'thinking', thinking: 'Hm.', signature: 'sig' }, { type: 'text', text: 'Yes.' }]
+    const messages = [{ role: 'user', content: 'Q' }, { role: 'assistant', content: 'Yes.', raw, rawModel: 'claude-opus-5-5' }, { role: 'user', content: 'Q2' }]
+    let n = 0
+    const { fetch, calls } = mockFetch(() => (n++ === 0
+      ? new Response(JSON.stringify({ error: { message: 'messages.1.content.0: Invalid `signature` in `thinking` block.' } }), { status: 400 })
+      : sseResponse(textTurn())()))
+    const events = await collect(streamChat({ brain: brains.anthropic, apiKey: 'k', messages, fetch }))
+    assert.equal(calls.length, 2)
+    assert.deepEqual(calls[1].body.messages[1].content, [{ type: 'text', text: 'Yes.' }])
+    assert.equal(events.at(-1).type, 'done')
+  })
+
+  test('cache usage: Anthropic counts cached input apart, Usage counts all of it', async () => {
+    const start = { type: 'message_start', message: { usage: { input_tokens: 10, cache_read_input_tokens: 900, cache_creation_input_tokens: 50, output_tokens: 1 } } }
+    const sse = anthropicSSE([start, blockStart(0, { type: 'text', text: '' }), blockDelta(0, { type: 'text_delta', text: 'Hi' }), messageDelta('end_turn', 7), messageStop])
+    const { events } = await run(brains.anthropic, sse)
+    assert.deepEqual(events.at(-1).usage, { inputTokens: 960, outputTokens: 7, cacheReadTokens: 900, cacheWriteTokens: 50 })
+  })
+
+  test('cache usage: OpenAI reports cached prompt tokens', async () => {
+    const sse = openaiSSE([
+      { choices: [{ index: 0, delta: { content: 'Hi' }, finish_reason: 'stop' }] },
+      { choices: [], usage: { prompt_tokens: 1200, completion_tokens: 3, prompt_tokens_details: { cached_tokens: 1024 } } },
+    ])
+    const { events } = await run(brains.openai, sse)
+    assert.deepEqual(events.at(-1).usage, { inputTokens: 1200, outputTokens: 3, cacheReadTokens: 1024 })
+  })
+
+  test('warmCache: max_tokens 0, unstreamed, breakpoint on the last shared block, placeholder after it', async () => {
+    const { fetch, calls } = mockFetch(() => new Response(JSON.stringify({ content: [], stop_reason: 'max_tokens', usage: { input_tokens: 3, cache_creation_input_tokens: 4000, output_tokens: 0 } })))
+    const big = { name: 'big.pdf', text: 'word '.repeat(4000) }
+    const messages = [
+      { role: 'user', content: 'Hello' },
+      { role: 'assistant', content: 'Hi.' },
+      { role: 'system', content: 'Today is 2026-10-03.' },
+      { role: 'user', content: '', documents: [big] },
+    ]
+    const usage = await warmCache({ brain: brains.anthropic, apiKey: 'k', system: 'Be brief.', messages, fetch })
+    assert.deepEqual(usage, { inputTokens: 4003, outputTokens: 0, cacheWriteTokens: 4000 })
+    const body = calls[0].body
+    assert.equal(body.max_tokens, 0)
+    assert.ok(!('stream' in body) && !('cache_control' in body) && !('fallbacks' in body))
+    assert.deepEqual(body.thinking, { type: 'adaptive', display: 'summarized' })
+    const last = body.messages.at(-1)
+    assert.equal(last.role, 'user')
+    assert.deepEqual(last.content.map((b) => [b.type, Boolean(b.cache_control)]), [['text', true], ['text', false]])
+    assert.equal(last.content[1].text, '…')
+    assert.ok(last.content[0].text.startsWith('<document name="big.pdf">'))
+  })
+
+  test('warmCache skips prefixes too small to cache and brains that are not Anthropic', async () => {
+    const { fetch, calls } = mockFetch(() => new Response('{}'))
+    assert.equal(await warmCache({ brain: brains.anthropic, messages: [{ role: 'user', content: 'Hi' }], fetch }), null)
+    assert.equal(await warmCache({ brain: brains.openai, messages: [{ role: 'user', content: 'Hi' }], fetch }), null)
+    assert.equal(calls.length, 0)
+    assert.equal(minimumCacheable('claude-opus-5-5'), 512)
+    assert.equal(minimumCacheable('claude-opus-4-8'), 1024)
+    assert.equal(minimumCacheable('claude-haiku-4-5'), 4096)
+  })
+
+  test('the device brain is refused by the HTTP adapters', async () => {
+    const brain = { id: 'd', provider: 'device', api: 'device', baseURL: '', model: 'gemma' }
+    await rejectsWith(collect(streamChat({ brain, messages: [] })), { code: 'bad_request' })
+  })
+})
 
 describe('errors', () => {
   const statuses = {

@@ -47,7 +47,7 @@ export async function runTurn(options) {
   } = options
   const history = [...options.history]
   const byName = new Map(tools.map((tool) => [tool.spec.name, tool]))
-  const usage = { inputTokens: 0, outputTokens: 0 }
+  const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 }
 
   for (let step = 0; step < maxSteps; step++) {
     /** @type {ToolCallInfo} */
@@ -83,8 +83,12 @@ export async function runTurn(options) {
     if (done?.usage) {
       usage.inputTokens += done.usage.inputTokens ?? 0
       usage.outputTokens += done.usage.outputTokens ?? 0
+      usage.cacheReadTokens += done.usage.cacheReadTokens ?? 0
     }
     const completed = { ...brainEntry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage } }
+    // Thinking blocks are kept so later turns replay them unchanged (the cache depends on it).
+    const raw = done?.message.raw
+    if (Array.isArray(raw) && raw.some((block) => /thinking/.test(block?.type))) Object.assign(completed, { _meta: { raw } })
     onUpdate({ sessionUpdate: 'tool_call_update', ...completed }, step)
     await persist(stepRecords(step, completed, thought, text))
     history.push(done?.message ?? { role: 'assistant', content: text, toolCalls: calls })

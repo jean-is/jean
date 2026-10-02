@@ -1,6 +1,7 @@
 // Storage worker: the only code that touches OPFS. Started as a module worker by ui/opfs.js,
 // but written classic-compatible (no import/export, no top-level await) for older engines.
 // Request { id, op, path, text, from } → { id, result } | { id, error: { name, message } }.
+// `text` is a Uint8Array for writeBytes; readBytes answers with one (its buffer transferred).
 // Paths arrive normalized (see core/fs.js); '' is the root and is only valid for list.
 
 const channel = new BroadcastChannel('app-fs')
@@ -44,14 +45,25 @@ function locked(path, mode, fn) {
   return navigator.locks ? navigator.locks.request('app-fs:' + path, { mode }, /** @type {any} */ (fn)) : fn()
 }
 
-/** @param {string} path @returns {Promise<string|null>} */
-async function readText(path) {
+/** @param {string} path @returns {Promise<File|null>} */
+async function readFile(path) {
   try {
-    return await (await (await fileHandle(path, false)).getFile()).text()
+    return await (await fileHandle(path, false)).getFile()
   } catch (err) {
     if (isMissing(err)) return null
     throw err
   }
+}
+
+/** @param {string} path @returns {Promise<string|null>} */
+async function readText(path) {
+  return (await readFile(path))?.text() ?? null
+}
+
+/** @param {string} path @returns {Promise<Uint8Array|null>} */
+async function readBytes(path) {
+  const file = await readFile(path)
+  return file ? new Uint8Array(await file.arrayBuffer()) : null
 }
 
 /**
@@ -134,7 +146,19 @@ async function exists(path) {
   }
 }
 
-/** @type {Record<string, (path: string, text: string) => Promise<any>>} */
+/**
+ * Whole-file replace through a tmp copy, so a crash never leaves the file empty.
+ * @param {string} path @param {Uint8Array} bytes
+ */
+function replace(path, bytes) {
+  return locked(path, 'exclusive', async () => {
+    await writeBytes(path + '.tmp', bytes, false)
+    await writeBytes(path, bytes, false)
+    await removeEntry(path + '.tmp')
+  })
+}
+
+/** @type {Record<string, (path: string, text: any) => Promise<any>>} */
 const ops = {
   ping: async () => {
     await rootPromise
@@ -147,13 +171,14 @@ const ops = {
       if (text) return text
       return (await readText(path + '.tmp')) ?? text
     }),
-  write: (path, text) =>
-    locked(path, 'exclusive', async () => {
-      const bytes = encoder.encode(text)
-      await writeBytes(path + '.tmp', bytes, false)
-      await writeBytes(path, bytes, false)
-      await removeEntry(path + '.tmp')
+  readBytes: (path) =>
+    locked(path, 'shared', async () => {
+      const bytes = await readBytes(path)
+      if (bytes?.length) return bytes
+      return (await readBytes(path + '.tmp')) ?? bytes
     }),
+  write: (path, text) => replace(path, encoder.encode(text)),
+  writeBytes: (path, bytes) => replace(path, bytes),
   append: (path, text) => locked(path, 'exclusive', () => writeBytes(path, encoder.encode(text), true)),
   // Also drop a leftover tmp copy, or read() would bring the file back.
   remove: (path) =>
@@ -165,7 +190,7 @@ const ops = {
   exists,
 }
 
-const MUTATIONS = ['write', 'append', 'remove']
+const MUTATIONS = ['write', 'writeBytes', 'append', 'remove']
 
 self.onmessage = async ({ data }) => {
   const { id, op, path, text, from } = data ?? {}
@@ -173,7 +198,7 @@ self.onmessage = async ({ data }) => {
     if (!Object.hasOwn(ops, op)) throw new TypeError(`Unknown storage op: ${op}`)
     const result = await ops[op](path, text)
     if (MUTATIONS.includes(op)) channel.postMessage({ path, from })
-    self.postMessage({ id, result })
+    self.postMessage({ id, result }, result instanceof Uint8Array ? [result.buffer] : [])
   } catch (err) {
     const { name = 'Error', message = String(err) } = /** @type {any} */ (err) ?? {}
     self.postMessage({ id, error: { name, message } })

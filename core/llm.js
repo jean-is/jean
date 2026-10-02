@@ -16,8 +16,9 @@ import { parseSSE } from './sse.js'
  * @typedef {import('./types.js').Usage} Usage
  * @typedef {import('./types.js').ModelInfo} ModelInfo
  * @typedef {import('./sse.js').SSEEvent} SSEEvent
- * @typedef {'auth'|'rate_limit'|'network'|'cors_or_offline'|'bad_request'|'not_found'|'server'|'aborted'|'bad_response'|'refusal'} LLMErrorCode
+ * @typedef {'auth'|'rate_limit'|'network'|'cors_or_offline'|'bad_request'|'not_found'|'server'|'aborted'|'bad_response'|'refusal'|'too_long'} LLMErrorCode
  * @typedef {{ brain: BrainConfig, apiKey?: string, signal?: AbortSignal, fetch?: typeof globalThis.fetch }} Connection
+ * @typedef {import('./types.js').DocumentPart} DocumentPart
  * @typedef {{ system?: string, messages: ChatMessage[], tools?: ToolSpec[], maxTokens?: number }} Prompt
  * @typedef {{ url: string, headers: Record<string, string>, body: Record<string, any> }} WireRequest
  * @typedef {{ role: 'user'|'assistant', content: any[] }} AnthropicMessage
@@ -25,6 +26,7 @@ import { parseSSE } from './sse.js'
 
 /** @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean }>} */
 export const PROVIDERS = {
+  device: { api: 'device', baseURL: '', defaultModel: null, needsKey: false },
   openrouter: { api: 'openai', baseURL: 'https://openrouter.ai/api/v1', defaultModel: 'openrouter/auto', needsKey: true },
   openai: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true },
   anthropic: { api: 'anthropic', baseURL: 'https://api.anthropic.com/v1', defaultModel: 'claude-opus-5-5', needsKey: true },
@@ -49,6 +51,8 @@ export class LLMError extends Error {
 const ANTHROPIC_VERSION = '2023-06-01'
 // Adaptive thinking exists from Claude 4.6 on, except Haiku; older models reject it.
 const ADAPTIVE_THINKING = /^claude-(fable|mythos|opus|sonnet)-(5|4-[6-9])/
+// Models that accept role "system" messages mid-conversation; others get a tagged block.
+const MID_SYSTEM = /^claude-(opus-5|opus-4-8|fable-5|mythos-5|sonnet-5-5)/
 // Models that accept server-side refusal fallbacks routed by refusal category.
 const FALLBACK_MODELS = new Set(['claude-fable-5-1', 'claude-opus-5-5', 'claude-opus-5', 'claude-sonnet-5-5'])
 const FALLBACK_BETA = 'server-side-fallback-2026-07-01'
@@ -88,12 +92,64 @@ export function headersFor(brain, apiKey) {
  * @returns {AsyncGenerator<StreamEvent, void, undefined>}
  */
 export async function* streamChat({ signal, fetch = globalThis.fetch, ...options }) {
+  if (options.brain.api === 'device') throw new LLMError('The on-device brain has its own runtime', { code: 'bad_request' })
   const anthropic = options.brain.api === 'anthropic'
-  const { url, headers, body } = anthropic ? anthropicRequest(options) : openaiRequest(options)
-  const res = await fetchOrThrow(fetch, url, { method: 'POST', headers, body: JSON.stringify(body) }, signal)
+  const send = (/** @type {Prompt} */ prompt) => {
+    const { url, headers, body } = anthropic ? anthropicRequest({ ...options, ...prompt }) : openaiRequest({ ...options, ...prompt })
+    return fetchOrThrow(fetch, url, { method: 'POST', headers, body: JSON.stringify(body) }, signal)
+  }
+  let res
+  try {
+    res = await send(options)
+  } catch (error) {
+    // A replayed thinking block whose signature no longer matches (the conversation was
+    // edited elsewhere): answer this once without the earlier reasoning.
+    if (!(anthropic && isStaleThinking(error) && options.messages.some((m) => m.role === 'assistant' && m.raw))) throw error
+    res = await send({ ...options, messages: options.messages.map((m) => (m.role === 'assistant' ? { ...m, raw: undefined } : m)) })
+  }
   if (!res.body) throw new LLMError('The response has no body', { code: 'bad_response' })
   const events = sseEvents(res.body, signal)
   yield* anthropic ? readAnthropic(events) : readOpenAI(events)
+}
+
+/** @param {unknown} error */
+const isStaleThinking = (error) => error instanceof LLMError && error.code === 'bad_request' && /signature|thinking/i.test(error.message)
+
+/**
+ * Writes the prompt cache for a conversation the user is about to continue (D49), so the
+ * real reply starts sooner. Anthropic only; `messages` ends with the user message being
+ * written (its text may still be empty). Returns null when warming isn't worth it.
+ * @param {Connection & Prompt} options
+ * @returns {Promise<Usage | null>}
+ */
+export async function warmCache({ signal, fetch = globalThis.fetch, ...options }) {
+  if (options.brain.api !== 'anthropic') return null
+  const { url, headers, body } = anthropicRequest(options)
+  delete body.cache_control
+  delete body.stream
+  delete body.fallbacks
+  body.max_tokens = 0
+  // The breakpoint goes on the last block the real request will share: never on the placeholder.
+  while (body.messages.at(-1)?.role === 'system') body.messages.pop()
+  const last = body.messages.at(-1)
+  if (last?.role === 'user' && last.content.at(-1)?.type === 'text' && !last.content.at(-1).text) last.content.pop()
+  const block = body.messages.at(-1)?.content.at(-1)
+  if (!block) return null
+  if (JSON.stringify(body).length / 4 < minimumCacheable(options.brain.model)) return null
+  body.messages.at(-1).content[body.messages.at(-1).content.length - 1] = { ...block, cache_control: { type: 'ephemeral' } }
+  if (body.messages.at(-1).role === 'user') body.messages.at(-1).content.push({ type: 'text', text: '…' })
+  else body.messages.push({ role: 'user', content: [{ type: 'text', text: '…' }] })
+  const res = await fetchOrThrow(fetch, url, { method: 'POST', headers, body: JSON.stringify(body) }, signal)
+  const json = await res.json().catch(() => null)
+  return json?.usage ? anthropicUsage(json.usage) : null
+}
+
+/** Smallest prefix Anthropic caches, in tokens; shorter ones silently aren't. @param {string} model */
+export function minimumCacheable(model) {
+  if (/^claude-(opus-5|fable-5|mythos-5|sonnet-5-5)/.test(model)) return 512
+  if (/^claude-(opus-4-7|mythos-preview|3-5-haiku|haiku-3-5)/.test(model)) return 2048
+  if (/^claude-(opus-4-[56]|opus-4-5|haiku-4-5)/.test(model)) return 4096
+  return 1024
 }
 
 /** Lists models in provider order. @param {Connection} options @returns {Promise<ModelInfo[]>} */
@@ -130,9 +186,10 @@ export async function fetchOrThrow(fetch, url, init, signal) {
 
 /** @param {Connection & Prompt} options @returns {WireRequest} */
 function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens }) {
-  const prompt = system ? [{ role: 'system', content: system }] : []
+  // OpenAI and OpenRouter take system messages anywhere; local servers' chat templates often don't.
+  const systemNotes = brain.provider === 'openai' || brain.provider === 'openrouter'
   /** @type {Record<string, any>} */
-  const body = { model: brain.model, stream: true, messages: [...prompt, ...messages.map(toOpenAI)] }
+  const body = { model: brain.model, stream: true, messages: openaiMessages(system, messages, { systemNotes }) }
   if (tools.length) {
     body.tools = tools.map(({ name, description, parameters }) => ({ type: 'function', function: { name, description, parameters } }))
   }
@@ -142,17 +199,48 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens 
   return { url: endpoint(brain, '/chat/completions'), headers: headersFor(brain, apiKey), body }
 }
 
-/** @param {ChatMessage} m */
-function toOpenAI(m) {
-  if (m.role === 'user') return { role: 'user', content: m.content }
-  if (m.role === 'tool') return { role: 'tool', tool_call_id: m.toolCallId, content: m.isError ? `Error: ${m.content}` : m.content }
-  /** @type {Record<string, any>} */
-  const out = { role: 'assistant', content: m.content }
-  if (m.toolCalls?.length) {
-    out.tool_calls = m.toolCalls.map(({ id, name, args }) => ({ id, type: 'function', function: { name, arguments: JSON.stringify(args ?? {}) } }))
+/**
+ * Chat Completions messages, also fed to the on-device brain's chat template. System notes
+ * become system messages where they fall, or a tagged block at the top of the next user turn.
+ * @param {string | undefined} system @param {ChatMessage[]} messages
+ * @param {{ systemNotes: boolean, argsAsObject?: boolean }} options argsAsObject: for chat templates
+ * @returns {Record<string, any>[]}
+ */
+export function openaiMessages(system, messages, { systemNotes, argsAsObject = false }) {
+  /** @type {Record<string, any>[]} */
+  const out = system ? [{ role: 'system', content: system }] : []
+  /** @type {string[]} */
+  let notes = []
+  for (const m of messages) {
+    if (m.role === 'system') {
+      if (systemNotes) out.push({ role: 'system', content: m.content })
+      else notes.push(m.content)
+    } else if (m.role === 'user') {
+      const parts = [...notes.map(noteBlock), ...(m.documents ?? []).map(documentBlock), m.content].filter(Boolean)
+      out.push({ role: 'user', content: parts.join('\n\n') })
+      notes = []
+    } else if (m.role === 'tool') {
+      const content = m.isError ? `Error: ${m.content}` : m.content
+      out.push({ role: 'tool', tool_call_id: m.toolCallId, ...(argsAsObject && { name: m.name }), content })
+    } else {
+      /** @type {Record<string, any>} */
+      const message = { role: 'assistant', content: m.content }
+      if (m.toolCalls?.length) {
+        message.tool_calls = m.toolCalls.map(({ id, name, args }) => ({
+          id, type: 'function', function: { name, arguments: argsAsObject ? args ?? {} : JSON.stringify(args ?? {}) },
+        }))
+      }
+      out.push(message)
+    }
   }
   return out
 }
+
+/** @param {string} text */
+const noteBlock = (text) => `<system-note>\n${text}\n</system-note>`
+
+/** @param {DocumentPart} doc */
+const documentBlock = (doc) => `<document name="${doc.name.replace(/["\n]/g, ' ')}">\n${doc.text}\n</document>`
 
 /** @param {AsyncIterable<SSEEvent>} events @returns {AsyncGenerator<StreamEvent, void, undefined>} */
 async function* readOpenAI(events) {
@@ -168,7 +256,10 @@ async function* readOpenAI(events) {
     const chunk = parseData(data)
     received = true
     if (chunk.error) throw streamError(chunk.error)
-    if (chunk.usage) usage = { inputTokens: chunk.usage.prompt_tokens, outputTokens: chunk.usage.completion_tokens }
+    if (chunk.usage) {
+      const cached = chunk.usage.prompt_tokens_details?.cached_tokens
+      usage = { inputTokens: chunk.usage.prompt_tokens, outputTokens: chunk.usage.completion_tokens, ...(cached && { cacheReadTokens: cached }) }
+    }
     const choice = chunk.choices?.[0]
     if (!choice) continue
     const delta = choice.delta ?? {}
@@ -214,7 +305,10 @@ function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxToke
   const headers = headersFor(brain, apiKey)
   /** @type {Record<string, any>} */
   const body = { model: brain.model, max_tokens: maxTokens ?? 64000, stream: true }
-  if (system) body.system = system
+  // One breakpoint at the end of the frozen system prompt (tools come before it), and
+  // automatic caching for the growing conversation (D49).
+  if (system) body.system = [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }]
+  body.cache_control = { type: 'ephemeral' }
   // Summaries are shown to the user. budget_tokens and {type:'disabled'} are rejected by current models.
   if (ADAPTIVE_THINKING.test(brain.model)) body.thinking = { type: 'adaptive', display: 'summarized' }
   if (FALLBACK_MODELS.has(brain.model)) {
@@ -222,37 +316,57 @@ function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxToke
     body.fallbacks = 'default'
     headers['anthropic-beta'] = [headers['anthropic-beta'], FALLBACK_BETA].filter(Boolean).join(',')
   }
-  body.messages = toAnthropic(messages)
+  body.messages = toAnthropic(messages, brain.model)
   if (tools.length) {
     body.tools = tools.map((t) => ({ name: t.name, description: t.description, input_schema: t.parameters, eager_input_streaming: true }))
   }
   return { url: endpoint(brain, '/messages'), headers, body }
 }
 
-/** @param {ChatMessage[]} messages */
-function toAnthropic(messages) {
-  /** @type {AnthropicMessage[]} */
+/**
+ * System notes become role "system" messages right after the next user message (the API
+ * wants one there) on models that take them, and a tagged block at its top elsewhere.
+ * @param {ChatMessage[]} messages @param {string} model
+ */
+function toAnthropic(messages, model) {
+  const native = MID_SYSTEM.test(model)
+  /** @type {(AnthropicMessage | { role: 'system', content: string })[]} */
   const out = []
+  /** @type {string[]} */
+  let notes = []
   for (const message of messages) {
-    const next = toAnthropicMessage(message)
+    if (message.role === 'system') {
+      notes.push(message.content)
+      continue
+    }
+    const next = toAnthropicMessage(message, model)
+    if (message.role === 'user' && notes.length && !native) next.content.unshift(...notes.map((text) => ({ type: 'text', text: noteBlock(text) })))
     if (!next.content.length) continue
     const prev = out.at(-1)
     // Roles must alternate: consecutive tool results become one user message.
-    if (prev?.role === next.role) prev.content = [...prev.content, ...next.content]
+    if (prev?.role === next.role) /** @type {AnthropicMessage} */ (prev).content = [.../** @type {any[]} */ (prev.content), ...next.content]
     else out.push(next)
+    if (message.role === 'user' && notes.length) {
+      if (native) for (const text of notes) out.push({ role: 'system', content: text })
+      notes = []
+    }
   }
   return out
 }
 
-/** @param {ChatMessage} m @returns {AnthropicMessage} */
-function toAnthropicMessage(m) {
-  if (m.role === 'user') return { role: 'user', content: m.content ? [{ type: 'text', text: m.content }] : [] }
+/** @param {ChatMessage} m @param {string} model @returns {AnthropicMessage} */
+function toAnthropicMessage(m, model) {
+  if (m.role === 'user') {
+    const documents = (m.documents ?? []).map((doc) => ({ type: 'text', text: documentBlock(doc) }))
+    return { role: 'user', content: m.content ? [...documents, { type: 'text', text: m.content }] : documents }
+  }
+  if (m.role === 'system') return { role: 'user', content: [{ type: 'text', text: noteBlock(m.content) }] }
   if (m.role === 'tool') {
     const result = { type: 'tool_result', tool_use_id: m.toolCallId, content: m.content }
     return { role: 'user', content: [m.isError ? { ...result, is_error: true } : result] }
   }
-  // Within a tool loop, thinking blocks must come back exactly as they were received.
-  if (Array.isArray(m.raw)) return { role: 'assistant', content: m.raw }
+  // Thinking blocks must come back exactly as they were received, to the model that made them.
+  if (Array.isArray(m.raw) && (!m.rawModel || m.rawModel === model)) return { role: 'assistant', content: m.raw }
   /** @type {any[]} */
   const content = m.content ? [{ type: 'text', text: m.content }] : []
   for (const c of m.toolCalls ?? []) content.push({ type: 'tool_use', id: c.id, name: c.name, input: c.args ?? {} })
@@ -263,15 +377,15 @@ function toAnthropicMessage(m) {
 async function* readAnthropic(events) {
   /** @type {any[]} */
   const blocks = []
-  /** @type {Usage} */
-  const usage = {}
+  /** @type {Record<string, number>} */
+  let usage = {}
   let stop = ''
   let finished = false
   for await (const { event, data } of events) {
     const d = parseData(data)
     const type = d.type ?? event
     if (type === 'error') throw streamError(d.error)
-    if (type === 'message_start') usage.inputTokens = d.message?.usage?.input_tokens
+    if (type === 'message_start') usage = { ...d.message?.usage }
     if (type === 'content_block_start') blocks[d.index] = startBlock(d.content_block)
     if (type === 'content_block_delta') {
       const out = applyDelta(blocks[d.index], d.delta)
@@ -279,8 +393,8 @@ async function* readAnthropic(events) {
     }
     if (type === 'message_delta') {
       stop = d.delta?.stop_reason ?? stop
-      if (d.usage?.input_tokens != null) usage.inputTokens = d.usage.input_tokens
-      if (d.usage?.output_tokens != null) usage.outputTokens = d.usage.output_tokens
+      // Later counts are cumulative and may restate earlier ones.
+      for (const [key, value] of Object.entries(d.usage ?? {})) if (typeof value === 'number') usage[key] = value
     }
     if (type === 'message_stop') finished = true
   }
@@ -290,7 +404,7 @@ async function* readAnthropic(events) {
   const toolCalls = raw.filter((b) => b.type === 'tool_use').map((b) => ({ id: b.id, name: b.name, args: b.input }))
   for (const call of toolCalls) yield { type: 'tool_call', call }
   const text = raw.filter((b) => b.type === 'text').map((b) => b.text).join('')
-  yield doneEvent(ANTHROPIC_STOP.get(stop) ?? 'other', usage, text, toolCalls, raw)
+  yield doneEvent(ANTHROPIC_STOP.get(stop) ?? 'other', anthropicUsage(usage), text, toolCalls, raw)
 }
 
 /** @param {any} block */
@@ -333,6 +447,21 @@ function finishBlock(block) {
     case 'tool_use': return { type: 'tool_use', id: block.id, name: block.name, input: parseArgs(block.json) }
     default: return null
   }
+}
+
+/**
+ * Anthropic counts cached input apart; Usage.inputTokens counts all of it.
+ * @param {any} u @returns {Usage}
+ */
+function anthropicUsage(u) {
+  const read = u.cache_read_input_tokens ?? 0
+  const write = u.cache_creation_input_tokens ?? 0
+  /** @type {Usage} */
+  const usage = { inputTokens: (u.input_tokens ?? 0) + read + write }
+  if (u.output_tokens != null) usage.outputTokens = u.output_tokens
+  if (read) usage.cacheReadTokens = read
+  if (write) usage.cacheWriteTokens = write
+  return usage
 }
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────

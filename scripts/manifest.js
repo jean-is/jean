@@ -16,6 +16,13 @@ export const SHELL_FILES = ['index.html', 'brand.js', 'manifest.webmanifest']
 export const SHELL_DIRS = ['core', 'ui', 'vendor', 'fonts', 'icons']
 export const WEBMANIFEST = 'manifest.webmanifest'
 export const ENTRY = 'ui/app.js'
+/** On-demand runtimes (D52) belong to the capabilities that use them, never to the shell. */
+export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
+  files: ['vendor/pdfjs'],
+  'brain-local': ['vendor/transformers'],
+  voice: ['vendor/transformers'],
+})
+const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
 export const VERSION_LINE = /^const VERSION = '.*'$/m
 
 /** @param {unknown} error */
@@ -70,8 +77,9 @@ async function readOrNull (root, path) {
 }
 
 /**
- * Collects the files the service worker precaches. The web manifest is always
- * listed, because this script generates it.
+ * Collects the files the service worker precaches: the shell and locales on install,
+ * each capability's files (its runtimes included) when it is unlocked. The web
+ * manifest is always listed, because this script generates it.
  * @param {string} root
  */
 export async function collectFiles (root) {
@@ -80,9 +88,18 @@ export async function collectFiles (root) {
     if (file === WEBMANIFEST || await readOrNull(root, file) !== null) top.push(file)
   }
   const nested = (await Promise.all(SHELL_DIRS.map((dir) => walk(root, dir)))).flat()
-  const shell = [...top, ...nested].filter(isShipped).sort()
+  const inRuntime = (/** @type {string} */ path) => RUNTIME_DIRS.some((dir) => path.startsWith(`${dir}/`))
+  const shell = [...top, ...nested].filter((path) => isShipped(path) && !inRuntime(path)).sort()
   const locales = (await walk(root, 'locales')).filter((p) => /^locales\/[^/]+\.json$/.test(p)).sort()
-  return { shell, locales }
+  /** @type {Record<string, { files: string[] }>} */
+  const capabilities = {}
+  for (const entry of await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])) {
+    if (!entry.isDirectory() || entry.name.startsWith('.')) continue
+    const dirs = [`caps/${entry.name}`, ...(CAPABILITY_RUNTIMES[entry.name] ?? [])]
+    const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter(isShipped).sort()
+    capabilities[entry.name] = { files }
+  }
+  return { shell, locales, capabilities: Object.fromEntries(Object.entries(capabilities).sort(([a], [b]) => (a < b ? -1 : 1))) }
 }
 
 /** @param {string | Uint8Array} data */
@@ -125,9 +142,10 @@ export const integrityOf = (hex) => `sha256-${Buffer.from(hex, 'hex').toString('
  * @param {string[]} shell
  * @param {string[]} locales
  * @param {Record<string, string>} integrity  path → Subresource Integrity value
+ * @param {Record<string, { files: string[] }>} [capabilities]
  */
-export function buildCapabilities (version, shell, locales, integrity = {}) {
-  return `${JSON.stringify({ format: 2, version, shell, locales, integrity, capabilities: {} }, null, 2)}\n`
+export function buildCapabilities (version, shell, locales, integrity = {}, capabilities = {}) {
+  return `${JSON.stringify({ format: 2, version, shell, locales, integrity, capabilities }, null, 2)}\n`
 }
 
 const PRELOAD_LINE = /^<link rel="modulepreload" href="[^"]*">\n/gm
@@ -175,10 +193,11 @@ export async function plan (root = ROOT) {
     if (!stamped) throw new Error('index.html has no <script type="module"> line')
     generated['index.html'] = stamped
   }
-  const { shell, locales } = await collectFiles(root)
+  const { shell, locales, capabilities } = await collectFiles(root)
+  const capabilityFiles = [...new Set(Object.values(capabilities).flatMap((c) => c.files))].sort()
   /** @type {Array<[string, string]>} */
   const hashes = []
-  for (const path of [...shell, ...locales]) {
+  for (const path of [...shell, ...locales, ...capabilityFiles]) {
     const data = generated[path] ?? await readFile(join(root, path))
     hashes.push([path, sha256(data)])
   }
@@ -189,10 +208,10 @@ export async function plan (root = ROOT) {
   if (!stamped) throw new Error("sw.js is missing or has no `const VERSION = '…'` line")
   return {
     version,
-    files: shell.length + locales.length,
+    files: shell.length + locales.length + capabilityFiles.length,
     outputs: {
       ...generated,
-      'capabilities.json': buildCapabilities(version, shell, locales, integrity),
+      'capabilities.json': buildCapabilities(version, shell, locales, integrity, capabilities),
       'sw.js': stamped,
     },
   }

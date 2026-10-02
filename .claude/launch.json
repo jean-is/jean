@@ -4,9 +4,20 @@
     {
       "name": "jean",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 4173,
       "autoPort": true
+    },
+    {
+      "name": "fake-brain",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "test/fixtures/fake-brain.js"
+      ],
+      "port": 4174
     }
   ]
 }

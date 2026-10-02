@@ -14,10 +14,27 @@ import { ulid } from './ulid.js'
  * @property {string | null} activeBrain
  * @property {Record<string, RuleValue>} rules
  * @property {string | null} voice
+ * @property {string[]} unlocked              capabilities discovered so far
+ * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)
+ * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  */
 
+/**
+ * Addresses of services Jean can use, each replaceable in settings and by policy
+ * (`urls` in policy.json). Model weights are a provider identity, like a brain's URL (D33, D53).
+ */
+export const DEFAULT_URLS = Object.freeze({ modelWeights: 'https://huggingface.co/' })
+
+/**
+ * @param {keyof typeof DEFAULT_URLS} name
+ * @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy]
+ */
+export function serviceURL(name, settings, policy = {}) {
+  return policy.urls?.[name] ?? settings.urls?.[name] ?? DEFAULT_URLS[name]
+}
+
 /** @type {Settings} */
-export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null }
+export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {} }
 
 /** @param {FS} fs @returns {Promise<Settings>} */
 export async function loadSettings(fs) {

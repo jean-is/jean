@@ -1,8 +1,11 @@
 // Service worker: offline shell and per-capability caches (classic script).
 // VERSION is rewritten by scripts/manifest.js whenever any shipped file changes.
-const VERSION = '6b8c1880db0e'
+const VERSION = 'ced7b6036b73'
 const SHELL = `app-shell-${VERSION}`
+// Capability caches carry the version too: an update re-caches every unlocked capability,
+// copying unchanged files over, so old code is never served next to a new shell.
 const CAPABILITY = 'app-cap-'
+const capabilityCache = (id) => `${CAPABILITY}${VERSION}-${id}`
 const LOCAL = ['localhost', '127.0.0.1'].includes(self.location.hostname)
 
 /** Resolves an app-relative path against the scope, so sub-path deploys work. */
@@ -11,11 +14,11 @@ const url = (path) => new URL(path, self.registration.scope).href
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(precacheShell())
+  event.waitUntil(precacheShell().then(recacheCapabilities))
 })
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(deleteOldShells().then(() => self.clients.claim()))
+  event.waitUntil(deleteOldCaches().then(() => self.clients.claim()))
 })
 
 async function precacheShell () {
@@ -47,10 +50,27 @@ async function fetchVerified (path, integrity) {
   return [path, fresh]
 }
 
-async function deleteOldShells () {
+async function deleteOldCaches () {
   const names = await caches.keys()
-  const old = names.filter((name) => name.startsWith('app-shell-') && name !== SHELL)
+  const current = (name) => name === SHELL || name.startsWith(`${CAPABILITY}${VERSION}-`)
+  const old = names.filter((name) => (name.startsWith('app-shell-') || name.startsWith(CAPABILITY)) && !current(name))
   await Promise.all(old.map((name) => caches.delete(name)))
+}
+
+/** Capabilities unlocked under any earlier version, read from their cache names. */
+async function unlockedCapabilities () {
+  const ids = new Set()
+  for (const name of await caches.keys()) {
+    if (!name.startsWith(CAPABILITY)) continue
+    const rest = name.slice(CAPABILITY.length)
+    // 0.1 named them app-cap-<id>; since 0.2 they are app-cap-<version>-<id>.
+    ids.add(/^[0-9a-f]{12}-/.test(rest) ? rest.slice(13) : rest)
+  }
+  return [...ids]
+}
+
+async function recacheCapabilities () {
+  for (const id of await unlockedCapabilities()) await cacheCapability(id)
 }
 
 // ─── Messages from the page ──────────────────────────────────────────────────
@@ -69,13 +89,34 @@ async function cacheCapability (id) {
     const listing = await (await caches.open(SHELL)).match(url('capabilities.json'))
     const { capabilities = {}, integrity = {} } = listing ? await listing.json() : {}
     if (typeof id !== 'string' || !Object.hasOwn(capabilities, id)) return false
-    const files = await Promise.all(capabilities[id].files.map((path) => fetchVerified(path, integrity[path])))
-    const cache = await caches.open(`${CAPABILITY}${id}`)
-    await Promise.all(files.map(([path, file]) => cache.put(url(path), file)))
+    const cache = await caches.open(capabilityCache(id))
+    // One file at a time: runtimes include a 27 MB wasm.
+    for (const path of capabilities[id].files) {
+      if (await cache.match(url(path))) continue
+      const [, file] = (await fromEarlierCache(path, integrity[path])) ?? await fetchVerified(path, integrity[path])
+      await cache.put(url(path), file)
+    }
     return true
   } catch {
     return false
   }
+}
+
+/**
+ * An unchanged file from an earlier version's capability cache, so updates don't
+ * download big runtimes again. Checked against the new integrity value.
+ * @returns {Promise<[string, Response] | null>}
+ */
+async function fromEarlierCache (path, integrity) {
+  if (!integrity) return null
+  for (const name of await caches.keys()) {
+    if (!name.startsWith(CAPABILITY) || name.startsWith(`${CAPABILITY}${VERSION}-`)) continue
+    const hit = await (await caches.open(name)).match(url(path))
+    if (!hit) continue
+    const digest = await crypto.subtle.digest('SHA-256', await hit.clone().arrayBuffer())
+    if (`sha256-${btoa(String.fromCharCode(...new Uint8Array(digest)))}` === integrity) return [path, hit]
+  }
+  return null
 }
 
 // ─── Fetch ───────────────────────────────────────────────────────────────────
@@ -105,7 +146,7 @@ async function networkFirst (request) {
 async function fromCache (request) {
   const navigation = request.mode === 'navigate'
   const keys = navigation && isAppRoot(request.url) ? [url('index.html'), url('./')] : [request]
-  const names = (await caches.keys()).filter((n) => n === SHELL || n.startsWith(CAPABILITY))
+  const names = (await caches.keys()).filter((n) => n === SHELL || n.startsWith(`${CAPABILITY}${VERSION}-`))
   for (const key of keys) {
     for (const name of names) {
       const hit = await (await caches.open(name)).match(key, { ignoreSearch: navigation })

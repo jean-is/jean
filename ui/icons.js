@@ -1,4 +1,4 @@
-// About twenty inline icons, 24×24, drawn with the current colour.
+// About twenty-five inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -22,4 +22,12 @@ export const icons = {
   key: icon(svg`<circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2 2"/>`),
   computer: icon(svg`<rect x="3.5" y="5" width="17" height="11" rx="2"/><path d="M9 20h6M12 16v4"/>`),
   arrow: icon(svg`<path d="M5 12h14M13 6l6 6-6 6"/>`, 'flip-rtl'),
+  attach: icon(svg`<path d="m19 11.5-7.1 7.1a4.5 4.5 0 0 1-6.4-6.4l7.4-7.4a3 3 0 0 1 4.2 4.2l-7.3 7.3a1.5 1.5 0 0 1-2.1-2.1l6.6-6.6"/>`),
+  mic: icon(svg`<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>`),
+  file: icon(svg`<path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M9 13h6M9 16.5h4"/>`),
+  download: icon(svg`<path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/>`),
+  upload: icon(svg`<path d="M12 15.5v-11M7 9l5-5 5 5M5 19.5h14"/>`),
+  print: icon(svg`<path d="M7 9V4h10v5M7 17H5a1.5 1.5 0 0 1-1.5-1.5v-5A1.5 1.5 0 0 1 5 9h14a1.5 1.5 0 0 1 1.5 1.5v5A1.5 1.5 0 0 1 19 17h-2"/><rect x="7" y="14" width="10" height="6" rx="1"/>`),
+  table: icon(svg`<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M4 14.5h16M10 5v14"/>`),
+  chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),
 }

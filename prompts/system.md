@@ -68,11 +68,14 @@ The user changed a rule: deleting files now needs their approval.
 Today is 2026-10-03.
 ```
 
+Shared files appear in the user's message as `<document name="…">…</document>` blocks, with `[[page N]]` lines. On brains whose chat template accepts a system message only at the start, notes arrive as `<system-note>…</system-note>` at the top of the next user message.
+
 ## Lines contributed by capabilities (examples)
 
 | Capability | Tool line | Rule |
 |---|---|---|
-| Files | `read: read a file the user shared` / `write: create or replace a file` / `edit: change part of a file` | Results the user asked for are files. Say their names. |
+| Files (0.2) | `read: read pages of a file the user shared` | Shared files are in the message, sometimes only their first pages. Use read for the others. |
+| Files (later) | `write: create or replace a file` / `edit: change part of a file` | Results the user asked for are files. Say their names. |
 | Calculations | `run: run JavaScript in a sandbox with no network; it can call tools.<name>(), searchTools(), models.decide() and models.image()` | Compute exact numbers instead of estimating them. |
 | Deferred tools | `find_tools: find tools that aren't listed here and get their signatures` | — |
 | Sources | — | Cite sources as [n], using only the numbered sources you were given. |

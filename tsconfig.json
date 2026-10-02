@@ -11,6 +11,6 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["brand.js", "core/**/*.js", "ui/**/*.js"],
-  "exclude": ["ui/storage-worker.js", "node_modules", "vendor"]
+  "include": ["brand.js", "core/**/*.js", "ui/**/*.js", "caps/**/*.js"],
+  "exclude": ["ui/storage-worker.js", "caps/**/*-worker.js", "node_modules", "vendor"]
 }

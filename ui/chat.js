@@ -2,15 +2,18 @@
 import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, retry, notify, effective, brainLabel } from './state.js'
-import { foldTurns, titleOf } from '../core/events.js'
+import { app, retry, effective, brainLabel, openFile } from './state.js'
+import { unlock } from './caps.js'
+import { foldTurns, titleOf, linkedFiles } from '../core/events.js'
 import { t, locale } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
+import { BRAND } from '../brand.js'
 
 /** @typedef {import('../core/events.js').Turn} Turn */
 /** @typedef {import('../core/types.js').ToolCallInfo} ToolCallInfo */
+/** @typedef {import('../core/types.js').ResourceLink} ResourceLink */
 
 class Conversation extends Element {
   #follow = true
@@ -33,12 +36,13 @@ class Conversation extends Element {
     const current = app.current.value
     if (!current) return nothing
     const turns = foldTurns(current.records)
+    const files = linkedFiles(current.records)
     const live = app.live.value
     const error = app.error.value
     return html`
       <h1 class="conversation-title" dir="auto">${titleOf(current.records) || t('conversation.untitled')}</h1>
       <ol class="turns">
-        ${repeat(turns, (turn) => turn.at, (turn, index) => turnView(turn, index === turns.length - 1 ? live?.turn ?? null : null))}
+        ${repeat(turns, (turn) => turn.at, (turn, index) => turnView(turn, index === turns.length - 1 ? live?.turn ?? null : null, files, turns.slice(0, index + 1)))}
       </ol>
       ${error ? errorView(error) : nothing}`
   }
@@ -48,22 +52,59 @@ class Conversation extends Element {
   }
 }
 
-/** @param {Turn} turn @param {Turn | null} live */
-function turnView(turn, live) {
+/**
+ * @param {Turn} turn @param {Turn | null} live
+ * @param {ResourceLink[]} files every file in the conversation @param {Turn[]} upTo this turn and those before it
+ */
+function turnView(turn, live, files, upTo) {
   const steps = live ? [...turn.steps, ...live.steps] : turn.steps
   const text = steps.map((step) => step.text).filter(Boolean).join('\n\n')
   const thought = steps.map((step) => step.thought).filter(Boolean).join('\n\n')
   const entries = steps.flatMap((step) => step.tools)
   const streaming = Boolean(live)
+  const read = whatJeanRead(upTo, entries, files)
   return html`<li class="turn">
-    ${turn.user ? html`<p class="msg msg-user" dir="auto">${turn.user.text}</p>` : nothing}
+    ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
+      <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>
+    </li>`)}</ul>` : nothing}
+    ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${turn.user.text}</p>` : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
         ${activity(entries, thought, text, streaming)}
         ${text ? html`<div class="prose" dir="auto">${markdown(text)}${streaming ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>` : nothing}
+        ${!streaming && read.length ? readView(read) : nothing}
         ${!streaming && text ? actions(turn.at, text) : nothing}
       </article>` : nothing}
   </li>`
+}
+
+/**
+ * "What Jean read", from what actually went to the brain for this answer: the files shared
+ * so far (with the pages that fit) and this turn's completed reads. Honest even when a small
+ * brain cites badly.
+ * @param {Turn[]} upTo @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
+ * @returns {{ link: ResourceLink, range?: [number, number], of?: number }[]}
+ */
+function whatJeanRead(upTo, entries, files) {
+  const items = upTo.flatMap((turn) => turn.user?.files ?? []).map((link) => ({ link, range: link._meta?.pages, of: link._meta?.of }))
+  for (const tool of entries) {
+    if (tool.name !== 'read' || tool.status !== 'completed') continue
+    const link = files.findLast((file) => file.uri === tool.locations?.[0]?.path)
+    const match = /pages (\d+)–(\d+) of (\d+)/.exec(String(tool.rawOutput ?? ''))
+    if (link) items.push({ link, range: match ? [Number(match[1]), Number(match[2])] : undefined, of: match ? Number(match[3]) : undefined })
+  }
+  return items
+}
+
+/** @param {ReturnType<typeof whatJeanRead>} items */
+function readView(items) {
+  return html`<details class="read-list">
+    <summary>${icons.file}<span>${t('read.title', { name: BRAND.name, count: items.length })}</span>${icons.chevron}</summary>
+    <ul>${items.map(({ link, range, of }) => html`<li>
+      <button class="link-button" @click=${() => openFile(link)} dir="auto">${link.name}</button>
+      <span class="muted">${range && of ? t('read.pages', { first: range[0], last: range[1], total: of }) : t('read.whole')}</span>
+    </li>`)}</ul>
+  </details>`
 }
 
 /**
@@ -87,6 +128,7 @@ function activity(entries, thought, text, streaming) {
       <ol class="activity-list">
         ${brains.map((brain) => html`<li data-status=${brain.status ?? 'pending'}>
           <span class="ember" aria-hidden="true"></span>${t('activity.brain', { brain: brainName(brain) })}
+          ${brain.rawOutput?.usage?.cacheReadTokens ? html`<span class="muted"> · ${t('activity.cached')}</span>` : nothing}
           ${brain.status === 'failed' && brain.rawOutput?.error ? html`<span class="muted"> — ${brain.rawOutput.error}</span>` : nothing}
         </li>`)}
         ${tools.map((tool) => html`<li data-status=${tool.status ?? 'pending'}>
@@ -101,7 +143,7 @@ function activity(entries, thought, text, streaming) {
 /** Brain label rendered in the current language from structured data. @param {ToolCallInfo} entry */
 function brainName(entry) {
   const { provider, model } = entry.rawInput ?? {}
-  return provider && model ? brainLabel(/** @type {any} */ ({ provider, model })) : entry.title
+  return provider && model ? brainLabel(/** @type {any} */ ({ provider, model, api: provider === 'device' ? 'device' : '' })) : entry.title
 }
 
 /** Plain-language label from the kind and the first location. @param {ToolCallInfo} tool */
@@ -127,9 +169,10 @@ function approval(permission) {
 /** @param {string} id @param {string} text */
 function actions(id, text) {
   const isSpeaking = speaking.value === id
+  // Copy, CSV and print belong to "Things Jean made", which loads with the first answer.
+  unlock('made')
   return html`<div class="msg-actions">
-    <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
-      @click=${async () => { await navigator.clipboard.writeText(text); notify(t('toast.copied')) }}>${icons.copy}</button>
+    <app-made .source=${text}></app-made>
     ${canSpeak() ? html`<button class="icon-button subtle ${isSpeaking ? 'is-active' : ''}" aria-pressed=${isSpeaking ? 'true' : 'false'}
       aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')} title=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
       @click=${() => toggleSpeech(id, plainText(text), locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}

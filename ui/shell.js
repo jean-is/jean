@@ -1,7 +1,8 @@
 // The room: header, welcome or conversation, composer, dialogs, toasts.
 import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
-import { app, LOCALES, setLocale, newConversation } from './state.js'
+import { app, LOCALES, setLocale, newConversation, effective, answerOffer } from './state.js'
+import { isDenied } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -31,13 +32,30 @@ class Shell extends Element {
         </nav>
       </header>
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
+      ${backupOffer()}
       <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : welcome()}</main>
       <app-composer></app-composer>
       <app-history></app-history>
       <app-brain-dialog></app-brain-dialog>
       <app-settings></app-settings>
-      ${toasts()}`
+      ${toasts()}
+      <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
+}
+
+// Offered once there is something worth keeping (docs/product.md, "Backup").
+const BACKUP_AFTER = 3
+
+function backupOffer() {
+  const { settings } = effective.value
+  if (app.ephemeral.value || isDenied('backup') || settings.offers.backup || app.conversations.value.length < BACKUP_AFTER) return nothing
+  return html`<aside class="offer" role="status">
+    <p>${t('backup.offer', { name: BRAND.name })}</p>
+    <div class="row">
+      <button class="button primary" @click=${async () => (await import('./dialogs.js')).backup()}>${t('backup.offerYes')}</button>
+      <button class="button subtle" @click=${() => answerOffer('backup')}>${t('backup.offerNo')}</button>
+    </div>
+  </aside>`
 }
 
 function welcome() {

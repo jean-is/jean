@@ -6,8 +6,10 @@ import { loadSettings, ensureHome } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, LOCALES, refreshConversations, finishOpenRouter } from './state.js'
+import { app, effective, activeBrain, LOCALES, refreshConversations, finishOpenRouter, rememberUnlocked } from './state.js'
+import { configureCapabilities, unlock } from './caps.js'
 import { registerServiceWorker } from './shell.js'
+import { startRouter } from './router.js'
 
 async function start() {
   const fs = await opfsFS().catch(() => null)
@@ -19,6 +21,8 @@ async function start() {
   const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
   app.policy = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response.json() : {})).catch(() => ({})) : {}
   app.settings.value = await loadSettings(app.fs)
+  const { deny = [], preUnlock = [] } = app.policy.capabilities ?? {}
+  configureCapabilities({ deny, remember: rememberUnlocked })
 
   setLoader(async (lang) => {
     const response = await fetch(`locales/${lang}.json`)
@@ -37,10 +41,13 @@ async function start() {
 
   app.projectDir = await ensureHome(app.fs, { by: app.deviceId })
   await refreshConversations()
+  await startRouter()
   app.fs.watch?.(() => refreshConversations())
 
   document.body.append(document.createElement('app-shell'))
   root.classList.add('is-ready')
+  // What the user discovered before (and what policy unlocks) comes back, after first paint.
+  app.ready = Promise.all([...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock))
   await finishOpenRouter()
   registerServiceWorker()
 }

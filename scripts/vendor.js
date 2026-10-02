@@ -1,8 +1,9 @@
 // Copies the three upfront runtime dependencies from node_modules into vendor/,
 // which is gitignored (D51): npm run dev, start, build and check all run this first.
-// From lit-html, only the files Jean's code can reach are copied.
+// From lit-html, only the files Jean's code can reach are copied. The on-demand
+// runtimes (D52) go into their own folders, which only their capabilities cache.
 // Usage: npm run vendor
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gzipSync } from 'node:zlib'
@@ -84,7 +85,76 @@ async function copyLitHtml () {
 async function copyLicense (pkg) {
   const to = join(VENDOR, 'LICENSES', licenseName(pkg))
   await mkdir(dirname(to), { recursive: true })
-  await writeFile(to, await readFile(join(MODULES, pkg, 'LICENSE')))
+  const text = await readFile(join(MODULES, pkg, 'LICENSE')).catch(async () => {
+    // Some packages (onnxruntime-web) ship no LICENSE file: record what package.json declares.
+    const { name, version, license, repository } = JSON.parse(await readFile(join(MODULES, pkg, 'package.json'), 'utf8'))
+    return `${name} ${version} is distributed under the ${license} license.\nSource: ${repository?.url ?? repository ?? ''}\n`
+  })
+  await writeFile(to, text)
+}
+
+/**
+ * On-demand runtimes (D52), each in its own folder. `rewrite` maps bare specifiers to
+ * files in the same folder, because import maps don't reach into workers.
+ * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string]>, rewrite?: Record<string, string> }[]}
+ */
+export const RUNTIMES = [
+  {
+    dir: 'vendor/pdfjs',
+    packages: ['pdfjs-dist'],
+    // The legacy build runs on Safari 16.4 (D40). Character maps are needed to read CJK
+    // text, and the standard fonts' metrics to space text set in them.
+    files: [['pdfjs-dist/legacy/build/pdf.min.mjs', 'pdf.min.mjs'], ['pdfjs-dist/legacy/build/pdf.worker.min.mjs', 'pdf.worker.min.mjs']],
+    folders: [['pdfjs-dist/cmaps', 'cmaps'], ['pdfjs-dist/standard_fonts', 'standard_fonts']],
+  },
+  {
+    dir: 'vendor/transformers',
+    packages: ['@huggingface/transformers', 'onnxruntime-web'],
+    files: [
+      ['@huggingface/transformers/dist/transformers.web.min.js', 'transformers.web.min.js'],
+      ['onnxruntime-web/dist/ort.webgpu.bundle.min.mjs', 'ort.webgpu.bundle.min.mjs'],
+      ['onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.mjs', 'ort-wasm-simd-threaded.asyncify.mjs'],
+      ['onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.wasm', 'ort-wasm-simd-threaded.asyncify.wasm'],
+    ],
+    rewrite: { 'onnxruntime-web/webgpu': './ort.webgpu.bundle.min.mjs', 'onnxruntime-common': './ort.webgpu.bundle.min.mjs' },
+  },
+]
+
+/**
+ * Points bare import specifiers at local files: `from"x"` and `from "x"`.
+ * @param {string} text @param {Record<string, string>} map
+ */
+export function rewriteSpecifiers (text, map) {
+  let out = text
+  for (const [from, to] of Object.entries(map)) out = out.replace(new RegExp(`(\\bfrom\\s*)(["'])${from.replace(/[/.]/g, '\\$&')}\\2`, 'g'), `$1$2${to}$2`)
+  return out
+}
+
+/** @param {(typeof RUNTIMES)[number]} runtime */
+async function copyRuntime (runtime) {
+  const target = join(ROOT, runtime.dir)
+  await rm(target, { recursive: true, force: true })
+  await mkdir(target, { recursive: true })
+  let raw = 0
+  for (const [from, to] of runtime.files) {
+    if (/\.m?js$/.test(to)) {
+      const text = rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {})
+      await writeFile(join(target, to), text)
+      raw += Buffer.byteLength(text)
+    } else {
+      await copyFile(join(MODULES, from), join(target, to))
+      raw += (await readFile(join(target, to))).length
+    }
+  }
+  for (const [from, to] of runtime.folders ?? []) {
+    await mkdir(join(target, to), { recursive: true })
+    for (const name of await readdir(join(MODULES, from))) {
+      await copyFile(join(MODULES, from, name), join(target, to, name))
+      raw += (await readFile(join(target, to, name))).length
+    }
+  }
+  for (const pkg of runtime.packages) await copyLicense(pkg)
+  console.log(`${`${runtime.dir}/ (on demand)`.padEnd(48)} ${kb(raw).padStart(9)}`)
 }
 
 async function main () {
@@ -97,6 +167,11 @@ async function main () {
   const raw = results.reduce((sum, r) => sum + r.raw, 0)
   const gzip = results.reduce((sum, r) => sum + r.gzip, 0)
   console.log(`${`${results.length} files`.padEnd(48)} ${kb(raw).padStart(9)} ${kb(gzip).padStart(9)} gz`)
+  for (const runtime of RUNTIMES) {
+    // Optional dependencies (D52): without them, their capability is simply unavailable.
+    if (await readFile(join(MODULES, runtime.packages[0], 'package.json')).catch(() => null)) await copyRuntime(runtime)
+    else console.log(`${runtime.dir}/: ${runtime.packages[0]} is not installed; skipped`)
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

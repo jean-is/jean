@@ -5,9 +5,11 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, activeBrain, LOCALES, setLocale, setRule, setVoice, connectBrain, continueWithBrain,
+  app, effective, activeBrain, LOCALES, setLocale, setRule, setVoice, connectBrain, continueWithBrain, addBrain, notify,
   removeBrain, useBrain, loadModels, startOpenRouter, newConversation, openConversation, removeConversation, showError,
 } from './state.js'
+import { unlock, isDenied } from './caps.js'
+import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
@@ -62,6 +64,55 @@ class History extends Element {
 // ─── Brains ──────────────────────────────────────────────────────────────────
 
 const status = signal(/** @type {{ kind: 'busy' | 'error', message: string } | null} */ (null))
+/** The on-device brain's module, loaded when the dialog first opens to check this device. */
+const local = signal(/** @type {typeof import('../caps/brain-local/brain-local.js') | null} */ (null))
+const deviceCheck = signal(/** @type {{ ok: boolean, reason?: string } | null} */ (null))
+let checking = false
+
+async function checkDevice() {
+  if (checking || isDenied('brain-local')) return
+  checking = true
+  try {
+    const module = await import('../caps/brain-local/brain-local.js')
+    local.value = module
+    deviceCheck.value = await module.checkDevice()
+  } catch (error) {
+    console.warn('Device check', error)
+    deviceCheck.value = { ok: false }
+  }
+}
+
+async function useDevice() {
+  const module = local.value
+  if (!module || !(await unlock('brain-local'))) return
+  try {
+    await module.prepare()
+    await addBrain({ id: ulid(), provider: 'device', api: 'device', baseURL: '', model: module.GEMMA.model })
+    notify(t('brain.device.ready'))
+    continueWithBrain()
+  } catch (error) {
+    console.warn('On-device brain', error)
+  }
+}
+
+/** The first rung: shown only where the brain can run. @param {boolean} hasDevice */
+function deviceChoice(hasDevice) {
+  const module = local.value
+  if (!module || !deviceCheck.value?.ok || hasDevice) return nothing
+  const progress = module.download.value
+  return html`<section class="choice is-device">
+    <h3>${icons.chip} ${t('brain.device.title')}</h3>
+    <p>${t('brain.device.text', { name: BRAND.name })}</p>
+    ${progress.state === 'downloading' ? html`
+      <progress max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
+      <p class="hint">${t('brain.device.progress', { done: formatBytes(progress.loaded), total: formatBytes(progress.total) })}</p>`
+    : progress.state === 'loading' ? html`<p class="status" role="status">${t('brain.device.loading')}</p>`
+    : html`
+      ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
+      <button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(module.GEMMA.bytes) })}</button>
+      <p class="hint">${t('brain.device.alternative')}</p>`}
+  </section>`
+}
 const localProvider = signal(/** @type {'ollama' | 'lmstudio' | 'custom'} */ ('ollama'))
 
 /** @param {() => Promise<unknown>} task */
@@ -101,6 +152,7 @@ class BrainDialog extends Element {
       <p class="lede">${t('brain.lede', { name: BRAND.name })}</p>
       ${settings.brains.length ? this.#connected(settings.brains, brainsLocked) : nothing}
       ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : html`
+        ${deviceChoice(settings.brains.some((brain) => brain.provider === 'device'))}
         <section class="choice">
           <h3>${icons.spark} ${t('brain.quick.title')}</h3>
           <p>${t('brain.quick.text')}</p>
@@ -145,9 +197,10 @@ class BrainDialog extends Element {
           <input type="radio" name="active-brain" .checked=${brain.id === active?.id} @change=${() => useBrain(brain.id)}>
           <span>${t(`provider.${brain.provider}`)}</span>
         </label>
-        <input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" aria-label=${t('brain.model')}
-          @change=${(/** @type {Event} */ e) => useBrain(brain.id, /** @type {HTMLInputElement} */ (e.target).value.trim())}>
-        <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>
+        ${brain.api === 'device' ? html`<span class="muted small">${t('brain.device.private')}</span>` : html`
+          <input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" aria-label=${t('brain.model')}
+            @change=${(/** @type {Event} */ e) => useBrain(brain.id, /** @type {HTMLInputElement} */ (e.target).value.trim())}>
+          <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
         ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')}
           @click=${() => removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
       </li>`)}</ul>
@@ -156,7 +209,10 @@ class BrainDialog extends Element {
 
   updated() {
     syncDialog(this, 'brain')
-    if (app.dialog.value === 'brain') for (const brain of effective.value.settings.brains) loadModels(brain)
+    if (app.dialog.value === 'brain') {
+      checkDevice()
+      for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
+    }
     else if (status.value?.kind === 'error') status.value = null
   }
 }
@@ -197,8 +253,16 @@ class Settings extends Element {
         ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>`
           : app.ephemeral.value ? nothing
           : html`<button class="button" @click=${persist}>${t('storage.persist')}</button>`}
+        ${isDenied('backup') ? nothing : html`
+          <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
+          <div class="row">
+            <button class="button" @click=${backup}>${icons.download} ${t('backup.download')}</button>
+            <label class="button subtle">${icons.upload} ${t('backup.restore')}
+              <input type="file" accept=".zip,application/zip" class="visually-hidden" @change=${restore}>
+            </label>
+          </div>`}
       </section>
-      <section class="about"><p class="muted">${BRAND.name} 0.1 · ${t('settings.about')}</p></section>
+      <section class="about"><p class="muted">${BRAND.name} 0.2 · ${t('settings.about')}</p></section>
     </dialog>`
   }
 
@@ -223,16 +287,31 @@ class Settings extends Element {
   }
 }
 
+export async function backup() {
+  if (!(await unlock('backup'))) return
+  const { downloadBackup } = await import('../caps/backup/backup.js')
+  await downloadBackup()
+}
+
+/** @param {Event} event */
+async function restore(event) {
+  const input = /** @type {HTMLInputElement} */ (event.target)
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file || !confirm(t('backup.confirmRestore')) || !(await unlock('backup'))) return
+  const { restoreBackup } = await import('../caps/backup/backup.js')
+  await restoreBackup(file)
+}
+
 async function persist() {
   const persisted = await navigator.storage?.persist?.()
   storage.value = { ...storage.value, persisted: Boolean(persisted) }
 }
 
 /** @param {number} bytes */
-function formatBytes(bytes) {
-  const megabytes = bytes / 1e6
-  return new Intl.NumberFormat(locale.value, { style: 'unit', unit: megabytes < 1 ? 'kilobyte' : 'megabyte', maximumFractionDigits: 1 })
-    .format(megabytes < 1 ? bytes / 1e3 : megabytes)
+export function formatBytes(bytes) {
+  const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', bytes / 1e3]
+  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
 }
 
 define('app-history', History)
