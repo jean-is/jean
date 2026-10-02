@@ -1,6 +1,6 @@
 # Open questions
 
-Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). Answered while building 0.4: how the sandbox loads Pyodide (D80). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
+Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). Answered while building 0.4: how the sandbox loads Pyodide (D80). Answered while building 0.5: the MCP client, Jean's own (D87). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
 
 ## Name and domain (decide before the public launch)
 
@@ -25,4 +25,4 @@ Instrument Serif ships for now (D34). Fraunces will probably replace it. To chec
 ## Smaller questions
 
 - **First run while the brain downloads:** what do people see during the ~3 GB download, alongside "start right now with a free account"? Can the download resume after the tab closes?
-- **MCP client:** write a minimal Streamable HTTP client, or load the official SDK on demand (0.5)?
+- **Client ID Metadata Documents for Connections:** publish one at Jean's domain once it is chosen, so services without dynamic registration accept Jean (D88)?

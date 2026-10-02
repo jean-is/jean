@@ -28,10 +28,13 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   voice: () => import('../caps/voice/voice.js'),
   compute: () => import('../caps/compute/compute.js'),
   reflexes: () => import('../caps/reflexes/reflexes.js'),
+  search: () => import('../caps/search/search.js'),
+  connections: () => import('../caps/connections/connections.js'),
+  live: () => import('../caps/live/live.js'),
 })
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
-export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, python: 14e6 })
+export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, python: 14e6, live: 82e6 })
 
 /** Capabilities whose modules have loaded, by id. */
 export const loaded = signal(/** @type {Map<string, Capability>} */ (new Map()))

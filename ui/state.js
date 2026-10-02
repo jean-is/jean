@@ -4,29 +4,21 @@ import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter } from '../core/settings.js'
 import { createConversation, appendRecords, loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
 import { userRecords, metaRecord, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns } from '../core/events.js'
-import { runTurn } from '../core/loop.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { t, locale, useLocale, languageName, firstWords } from '../core/i18n.js'
-import { listModels, warmCache } from '../core/llm.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import { chooseBrain, isLocal, TIERS } from './auto.js'
 
-/** @typedef {import('../core/types.js').FS} FS */
-/** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
-/** @typedef {import('../core/types.js').Envelope} Envelope */
-/** @typedef {import('../core/types.js').ModelInfo} ModelInfo */
-/** @typedef {import('../core/types.js').ToolCallInfo} ToolCallInfo */
-/** @typedef {import('../core/events.js').Turn} Turn */
-/** @typedef {import('../core/types.js').ResourceLink} ResourceLink */
+/** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
+/** @import { Turn } from '../core/events.js' */
 /**
  * A file the user is about to send. `pages` holds its extracted text, page by page.
  * @typedef {{ key: string, name: string, status: 'reading' | 'ready' | 'failed', link?: ResourceLink, pages?: string[], error?: string }} Attachment
  */
-/** @typedef {import('../core/settings.js').Settings} Settings */
-/** @typedef {import('../core/settings.js').Project} Project */
+/** @import { Settings, Project } from '../core/settings.js' */
 /** @typedef {'idle' | 'listening' | 'thinking' | 'answering' | 'done'} Presence */
 /** @typedef {'light' | 'dark'} Theme */
 
@@ -56,7 +48,7 @@ export const app = {
   /** Light or dark: what the device shows (ui/app.js follows it), and the user's pick on this device, if any. */
   deviceTheme: signal(/** @type {Theme} */ ('dark')),
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
-  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | 'knows' | 'project' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | 'knows' | 'project' | 'connections' | null>} */
   dialog: signal(null),
   draft: signal(''),
   /** @type {import('@preact/signals-core').Signal<{ toolCall: ToolCallInfo, resolve: (option: any) => void } | null>} */
@@ -180,6 +172,7 @@ export async function answerOffer(id) {
 export async function loadModels(brain) {
   if (app.models.value[brain.id]) return
   try {
+    const { listModels } = await import('../core/llm.js')
     const models = await listModels({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined })
     app.models.value = { ...app.models.value, [brain.id]: models }
   } catch {
@@ -205,7 +198,7 @@ export async function enterProject(project) {
 }
 
 /** Whether this message may go to the cloud: the user's switch, and the project's. */
-const cloudAllowed = () => effective.value.settings.cloud && app.project.value.data.cloud !== false
+export const cloudAllowed = () => effective.value.settings.cloud && app.project.value.data.cloud !== false
 
 // ─── Conversations ───────────────────────────────────────────────────────────
 
@@ -336,7 +329,8 @@ async function context() {
 async function prepare(text, brain, records) {
   await app.ready
   const { tools, lines, rules } = contributions()
-  const names = tools.filter((tool) => !tool.hidden).map((tool) => tool.spec.name)
+  // Connections' tools are deferred: found with find_tools, never declared upfront (D47).
+  const names = tools.filter((tool) => !tool.hidden && !tool.deferred).map((tool) => tool.spec.name)
   const sections = await context()
   const now = promptState({ language: languageName(locale.value, 'en'), tools: names, sections })
   const frozen = frozenPrompt(records)
@@ -350,6 +344,10 @@ async function prepare(text, brain, records) {
 
 /** The highest level Auto used in a conversation: it never steps down within one. @param {Envelope[]} records */
 const autoLevel = (records) => Math.max(0, ...records.map((record) => /** @type {any} */ (record.update)?.rawInput?.auto?.level ?? 0))
+
+/** The number the turn's first new source is cited by: after every file and source so far (D71). @param {Envelope[]} records */
+const nextSource = (records) => 1 + Math.max(0, ...records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link'
+  ? [update.content._meta?.source ?? 0] : update?.sessionUpdate === 'tool_call' ? (update._meta?.sources ?? []).map((source) => source.n) : [])))
 
 /** The last answer's text, for "is the user unhappy with it?". @param {Envelope[]} records */
 const lastAnswer = (records) => {
@@ -443,7 +441,8 @@ export async function retry() {
 /** @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it */
 async function runAgent(brain, meta) {
   const current = /** @type {NonNullable<typeof app.current.value>} */ (app.current.value)
-  await app.ready
+  // The loop and the brains' adapters load with the first message, not with the first screen.
+  const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
   const frozen = frozenPrompt(current.records)
   const messages = toChatMessages(current.records, await documents(current.records))
   const lastUser = messages.findLastIndex((message) => message.role === 'user')
@@ -480,6 +479,7 @@ async function runAgent(brain, meta) {
       ...(stream && { stream }),
       label: brainLabel(brain),
       meta,
+      firstSource: nextSource(current.records),
       signal: controller.signal,
       rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => new Promise((resolve) => {
@@ -577,6 +577,7 @@ export async function warm() {
     const declared = frozen?.state.tools ?? []
     const tools = contributions().tools.filter((tool) => declared.includes(tool.spec.name)).map((tool) => tool.spec)
     const messages = toChatMessages(all, await documents(all))
+    const { warmCache } = await import('../core/llm.js')
     await warmCache({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined, system: frozen?.system, messages, tools })
   } catch (error) {
     console.debug('Cache warm-up skipped', error)

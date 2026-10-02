@@ -1,6 +1,5 @@
 // Do it / Ask me first / Never — per kind of action.
-/** @typedef {import('./types.js').RuleValue} RuleValue */
-/** @typedef {import('./types.js').ToolKind} ToolKind */
+/** @import { RuleValue, ToolKind } from './types.js' */
 
 /** Kinds shown in settings, in display order. */
 export const RULE_KINDS = /** @type {const} */ (['read', 'edit', 'search', 'execute', 'fetch', 'move', 'delete', 'other'])

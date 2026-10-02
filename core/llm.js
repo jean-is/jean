@@ -97,7 +97,7 @@ export async function listModels({ brain, apiKey, signal, fetch = globalThis.fet
   if (!Array.isArray(json?.data)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
   return json.data.map((/** @type {any} */ m) => (anthropic
     ? { id: m.id, name: m.display_name, contextLength: m.max_input_tokens }
-    : { id: m.id, name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined }))
+    : { id: m.id, name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined, output: m.architecture?.output_modalities }))
 }
 
 /**
@@ -128,7 +128,9 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens 
   /** @type {Record<string, any>} */
   const body = { model: brain.model, stream: true, messages: openaiMessages(system, messages, { systemNotes }) }
   if (tools.length) {
-    body.tools = tools.map(({ name, description, parameters }) => ({ type: 'function', function: { name, description, parameters } }))
+    // OpenRouter runs the brain's own web search itself, and cites pages in annotations.
+    body.tools = tools.map(({ name, description, parameters, native }) => (native && brain.provider === 'openrouter'
+      ? { type: 'openrouter:web_search', parameters: { max_uses: 3 } } : { type: 'function', function: { name, description, parameters } }))
   }
   // OpenAI's own API rejects max_tokens on its reasoning models; other servers only know max_tokens.
   if (maxTokens != null) body[brain.provider === 'openai' ? 'max_completion_tokens' : 'max_tokens'] = maxTokens
@@ -208,6 +210,8 @@ async function* readOpenAI(events) {
     const thought = [delta.reasoning, delta.reasoning_content].find(isText)
     if (thought) yield { type: 'thinking', delta: thought }
     for (const call of delta.tool_calls ?? []) addToolDelta(slots, call)
+    const cited = (delta.annotations ?? []).flatMap((/** @type {any} */ a) => (a.url_citation?.url ? [{ title: a.url_citation.title || a.url_citation.url, url: a.url_citation.url, quote: a.url_citation.content }] : []))
+    if (cited.length) yield { type: 'cite', sources: cited }
     if (choice.finish_reason) finish = choice.finish_reason
   }
   if (!received) throw new LLMError('The server sent no response', { code: 'bad_response' })

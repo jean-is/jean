@@ -2,9 +2,7 @@
 import { readJSON, writeJSON } from './fs.js'
 import { ulid } from './ulid.js'
 
-/** @typedef {import('./types.js').FS} FS */
-/** @typedef {import('./types.js').BrainConfig} BrainConfig */
-/** @typedef {import('./types.js').RuleValue} RuleValue */
+/** @import { FS, BrainConfig, RuleValue } from './types.js' */
 
 /**
  * @typedef {Object} Settings
@@ -19,14 +17,19 @@ import { ulid } from './ulid.js'
  * @property {boolean} cloud                  false: never send to the cloud
  * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)
  * @property {boolean} [memory]               false: Jean neither notes nor reads what it noticed
+ * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)
+ * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  */
 
+/** @typedef {{ id: string, name: string, url: string, auth: 'none' | 'key' | 'oauth' }} Connection */
+
 /**
  * Addresses of services Jean can use, each replaceable in settings and by policy
- * (`urls` in policy.json). Model weights are a provider identity, like a brain's URL (D33, D53).
+ * (`urls` in policy.json). Model weights are a provider identity, like a brain's URL (D33, D53);
+ * so is Wikipedia, which web search reads in the user's language ({lang}).
  */
-export const DEFAULT_URLS = Object.freeze({ modelWeights: 'https://huggingface.co/' })
+export const DEFAULT_URLS = Object.freeze({ modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php' })
 
 /**
  * @param {keyof typeof DEFAULT_URLS} name

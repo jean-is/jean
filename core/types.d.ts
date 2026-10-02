@@ -23,8 +23,13 @@ export interface BrainConfig {
 // ─── Provider-neutral chat ───────────────────────────────────────────────────
 
 export type ToolCall = { id: string, name: string, args: any }
-/** parameters = JSON Schema */
-export type ToolSpec = { name: string, description: string, parameters: object }
+/**
+ * parameters = JSON Schema. native: an adapter whose provider runs this tool itself renders it
+ * as the provider's own (the brain's own web search); others declare it as a function.
+ */
+export type ToolSpec = { name: string, description: string, parameters: object, native?: 'web_search' }
+/** Outside content the brain can cite as [n]: a web page, an email, a document from a connection. */
+export type Source = { title: string, url?: string, quote?: string }
 /** A shared file's text, as the brain sees it. */
 export type DocumentPart = { name: string, text: string, source?: number }
 export type UserMessage = { role: 'user', content: string, documents?: DocumentPart[] }
@@ -39,17 +44,20 @@ export type SystemNote = { role: 'system', content: string }
 export type ChatMessage = UserMessage | AssistantMessage | ToolMessage | SystemNote
 
 // Events yielded by llm.streamChat().
-export type StopReason = 'end' | 'tool_use' | 'max_tokens' | 'refusal' | 'other'
+/** pause: the provider paused its own tools' loop (Anthropic's pause_turn); sending the reply back resumes it. */
+export type StopReason = 'end' | 'tool_use' | 'max_tokens' | 'refusal' | 'pause' | 'other'
 /** inputTokens counts every input token, cached ones included. */
 export type Usage = { inputTokens?: number, outputTokens?: number, cacheReadTokens?: number, cacheWriteTokens?: number }
 export type StreamEvent =
   | { type: 'text', delta: string }
   | { type: 'thinking', delta: string }
   | { type: 'tool_call', call: ToolCall }
+  /** sources the text just written cites (the brain's own search) */
+  | { type: 'cite', sources: Source[] }
   | { type: 'done', stopReason: StopReason, usage?: Usage, message: AssistantMessage }
 
-/** pricing in USD per token when known. */
-export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number } }
+/** pricing in USD per token when known; output: what it can make (OpenRouter), e.g. ['text', 'image']. */
+export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number }, output?: string[] }
 
 // Requests made by llm.js and anthropic.js.
 export type LLMErrorCode = 'auth' | 'rate_limit' | 'network' | 'cors_or_offline' | 'bad_request' | 'not_found' | 'server' | 'aborted' | 'bad_response' | 'refusal' | 'too_long'
@@ -111,8 +119,11 @@ export interface ToolCallInfo {
   locations?: ToolCallLocation[]
   rawInput?: any
   rawOutput?: any
-  /** ACP extension data, e.g. { raw } on brain entries */
-  _meta?: Record<string, any>
+  /**
+   * ACP extension data, e.g. { raw } on brain entries; sources: what it brought in, by the
+   * number the brain cites (D71); image: a picture it made, as a project file
+   */
+  _meta?: Record<string, any> & { sources?: (Source & { n: number })[], image?: { uri: string, name: string } }
 }
 
 /** ACP session/update payloads used by Jean (https://agentclientprotocol.com). */
@@ -131,7 +142,7 @@ export type SystemNoteData =
   | { kind: 'date', date: string }
   | { kind: 'tools', added: string[], deferred?: boolean }
   /** version: the section's fingerprint now, '' when it is empty */
-  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills', version: string }
+  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections', version: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

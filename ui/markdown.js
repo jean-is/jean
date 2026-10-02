@@ -5,7 +5,7 @@ import { html, nothing } from 'lit-html'
 import { lexer } from 'marked'
 
 /** @typedef {import('marked').Token} Token */
-/** @typedef {Map<number, { name: string, label: string, open: () => void }>} Sources  by the number the brain cites */
+/** @typedef {Map<number, { name: string, label: string, open?: () => void }>} Sources  by the number the brain cites; some can't be opened */
 
 /** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
 let cited = null
@@ -30,8 +30,9 @@ function cite(text) {
     const numbers = /^\[([\d,\s]+)\]$/.exec(part)?.[1].split(/,\s*/).map(Number)
     if (!numbers?.every((n) => sources.has(n))) return part
     return numbers.map((n) => {
-      const source = /** @type {{ name: string, label: string, open: () => void }} */ (sources.get(n))
-      return html`<button class="cite" title=${source.name} aria-label=${source.label} @click=${source.open}>${n}</button>`
+      const source = /** @type {{ name: string, label: string, open?: () => void }} */ (sources.get(n))
+      return source.open ? html`<button class="cite" title=${source.name} aria-label=${source.label} @click=${source.open}>${n}</button>`
+        : html`<span class="cite" title=${source.name}>${n}</span>`
     })
   })
 }

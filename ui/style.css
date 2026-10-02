@@ -389,7 +389,12 @@ app-made:not(:defined) { display: none; }
   line-height: 1;
   vertical-align: 0.15em;
 }
-.cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
+button.cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
+.read-list .cite { margin: 0; font-size: 0.8em; }
+/* A picture Jean made (codemode's models.image), with a button to save it. */
+app-image figure { position: relative; inline-size: fit-content; margin: 0; }
+app-image img { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+app-image .icon-button { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; background: var(--glass); }
 
 /* ─── Follow-ups ────────────────────────────────────────────────────────── */
 
@@ -494,6 +499,8 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
 .composer-tools > label.icon-button { cursor: pointer; }
 .composer-tools > label.icon-button:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
 .is-working { animation: pulse 1.1s ease-in-out infinite; }
+.live-state { padding-inline: 0.4rem; font-size: 0.8rem; color: var(--ink-soft); white-space: nowrap; }
+app-live { display: contents; }
 .is-listening { color: var(--flame); box-shadow: 0 0 1rem -0.2rem oklch(from var(--glow) l c h / 0.8); animation: pulse 1.6s ease-in-out infinite; }
 .brain-chip {
   display: inline-flex;
@@ -605,6 +612,10 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .connected ul, .rules { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
 .connected li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem; }
 .connected li.is-active .radio span { color: var(--ink); font-weight: 600; }
+.connection > .icon { color: var(--flame); }
+.connection-text { display: grid; min-inline-size: 0; }
+.connection-text small { font-size: 0.8rem; color: var(--ink-soft); overflow-wrap: anywhere; }
+.connection-text .is-error { color: var(--danger); }
 .radio { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.95rem; }
 .model-input { font: 0.85rem var(--mono); }
 .rules li { display: grid; gap: 0.35rem; }

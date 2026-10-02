@@ -15,7 +15,7 @@
 
 **No build step.** Plain ES modules and an import map; types in JSDoc, checked by `tsc --noEmit` during development only. Deploying means copying the folder, and view-source *is* the source.
 
-**First load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the whole graph in one round trip instead of discovering it one import level at a time. Only the lit-html files Jean imports are vendored. CI fails if the links are stale.
+**First load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the whole graph in one round trip instead of discovering it one import level at a time. Only the lit-html files Jean imports are vendored. CI fails if the links are stale. The first screen loads only what it shows: the dialogs, the Anthropic adapter (D76), and since 0.5 the agent loop and the other adapters (D94) load when first needed.
 
 | Loaded upfront (3) | Size | Why |
 |---|---|---|
@@ -27,10 +27,10 @@
 |---|---|
 | `quickjs-emscripten-core` with the `@jitl/quickjs-wasmfile-release-sync` variant (~600 KB with its wasm) | Calculations and codemode. Copied flat into `vendor/quickjs/` and handed to the sandbox by the parent (D65, D66) |
 | `pyodide` 314.0.7 (about 13 MB: loader, runtime, standard library, lock file) | Data toolkit (Python), in its own sandbox document. Copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`, never committed (D43, D80) |
-| `@huggingface/transformers` with `onnxruntime-web` | On-device brain (Gemma 4 E2B), reflexes (Kev-0.6B), dictation (Whisper base), voice detection (Silero). Copied into `vendor/transformers/` (D52) |
+| `@huggingface/transformers` with `onnxruntime-web` | On-device brain (Gemma 4 E2B), reflexes (Kev-0.6B), dictation and live conversation (Whisper base, and Silero for voice detection). Copied into `vendor/transformers/` (D52) |
 | `pdfjs-dist` (legacy build) | Reading PDFs. Copied into `vendor/pdfjs/` with its character maps and standard fonts (D52) |
 | `kokoro-js` | Optional natural voices |
-| MCP client (own minimal Streamable HTTP client, or the official SDK) | Connections; to be decided in 0.5 |
+| No MCP SDK: Jean's own client, `caps/connections/mcp.js` (about 150 lines, both protocol eras, D87) | Connections |
 
 **Built on browser features, no dependency:**
 
@@ -59,7 +59,7 @@ index.html        CSP <meta>, light or dark (D85), import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
-core/             llm.js anthropic.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js
+core/             llm.js anthropic.js images.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js
                   deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
                   discovery.js collection.js auto.js picker.js, dialogs.js and brains.js (loaded when a dialog opens, D76),
@@ -67,12 +67,14 @@ ui/               base element, shell, chat, activity view, caps.js (the unlock 
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
                   memory/ projects/ routines/ python/           (0.4)
-                  search/ connections/ helpers/                 (later)
+                  search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
+                  helpers/                                      (later)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
                   reflexes.js (measures Kev on the test set)
-test/             node --test suites; fixtures/fake-brain.js; reflexes/ (the multilingual reflex test set and results.md)
+test/             node --test suites; fixtures/fake-brain.js and fake-mail.js (an MCP mail service with OAuth sign-in);
+                  reflexes/ (the multilingual reflex test set and results.md)
 e2e/              Playwright smoke tests, Chromium and WebKit (npm run e2e)
 ```
 
@@ -94,10 +96,12 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`loop.js`** (~220 lines): stream the reply, run tool calls, feed results back, repeat. Rules (Do it / Ask me first / Never) are checked before each tool runs, including calls made from scripts. The prompt and the declared tools are frozen for the conversation; changes arrive as system notes (see [Prompt, tools and caching](#prompt-tools-and-caching)).
   - `tools` is every tool that can be called; it may be a function, read again at each step, so a capability turned on mid-turn can be called at once. `declared` is the subset the brain sees, and `hidden` tools are never declared (D64).
   - `meta` is recorded on the brain entry; Auto uses it to say why it chose that brain (D70).
+  - Sources are numbered from `firstSource`: tools call `ctx.cite()`, and the brain's own search sends `cite` events that become ` [n]` after the cited text; both are recorded as `_meta.sources` (D90). A tool can record more in `ctx.meta` (a picture). A `pause` from the provider (Anthropic's `pause_turn`) is sent back and resumed.
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `recall`, `remember`, `routine`, `save_routine`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred by default). Two hidden tools, `file` and `decide`, are only for scripts (D64). Built so far: `read`, `run`, `python`, `find_tools`, `offer`, `remember`, `recall`, `routine`, `save_routine`, `file`, `decide`.
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `routine`, `save_routine`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92). Built so far: `read`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `routine`, `save_routine`, `file`, `decide`, `image`, and every connection's tools.
+- **`images.js`** (0.5): pictures from the provider's image model, for `models.image` (D92), imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
 - **`search.js`:** BM25 over short texts.
@@ -289,7 +293,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 
 **System notes (D46).** When something changes mid-conversation, Jean appends a system note to the transcript at that point instead of editing the prompt. Changes include the language, rules, instructions, memory, routines, the project, newly unlocked tools and the date.
 
-- **Sections (D81).** The project, instructions, memory and routines are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …").
+- **Sections (D81).** The project, instructions, memory, routines and, since 0.5, the connected services (`<connections>`, D89) are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …").
 
 - **Recorded in the transcript.** A note is a record in the conversation JSONL, an ACP extension update (`_system_note`) holding the English text the brain sees and structured data for the UI label. Replaying the file rebuilds exactly what the brain was told, and when.
 - **Rendered per adapter:**
@@ -306,7 +310,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 - **Calling them.** With `run` declared, deferred tools are called from a script, so the declared list never changes. Otherwise `find_tools` (or an accepted offer) declares the tools it found from the next request on, at the cost of one cache miss. The tool call records this as `_meta.declare`, so replaying the transcript rebuilds the declared list.
 - **Hidden tools** are never declared and exist only for scripts: `file` (a shared file's whole text) and `decide` (the reflexes) (D64).
 - **Native deferral.** Where a provider supports it (Anthropic's `defer_loading` with tool additions), the adapter may use it instead. The behaviour stays the same.
-- **The next conversation** declares the newly unlocked capability's tools directly. Connection tools stay deferred unless the user pins them.
+- **The next conversation** declares the newly unlocked capability's tools directly. Connection tools stay deferred (`deferred: true`): `<connections>` names them, `find_tools` finds them, a script calls them (D89). Pinning a connection's tools comes later.
 
 **Codemode (D48).** The `run` tool (Calculations) executes a JavaScript snippet in QuickJS. Top-level `await` works, and the result is what the script returns or, as in a console, its last expression. Inside it, Jean exposes what the user has granted, and nothing else:
 
@@ -317,7 +321,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 | `tools.<name>(args)` | Calls any granted tool, deferred ones included; later, connection tools too. `run` and `offer` can't be called from a script. |
 | `searchTools(query)` | Same as `find_tools`, from inside a script |
 | `models.decide(state, questions)` | Asks Kev on the device, when Intuition is on, through the hidden `decide` tool (the [Reflexes](#reflexes) shape); Jev when a cloud brain is connected, later |
-| `models.image(prompt)` | Generates an image with the connected provider's image model (0.5) |
+| `models.image(description)` | Makes a picture with the image model of a connected brain's provider, kept in the project's files and shown under the answer, through the hidden `image` tool (0.5, D92) |
 
 - **Same rules.** Every nested call goes through Do it / Ask me first / Never (`ctx.call` in `core/loop.js`). A call that needs approval pauses the script until the user answers, and that wait doesn't count against its computing time.
 - **Visible.** Each nested call carries `_meta.parent` and shows in the activity view as a child of the `run` call.
@@ -351,6 +355,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
   3. A multilingual embedding model is added only if the test set proves it necessary.
 - **One engine, three uses:** project files, past conversations (`recall`) and memory.
 - **Source numbers (D71).** When a message is sent, each shared file gets a number on its link (`_meta.source`), kept if the same file was shared before. The brain sees `<document source="n" name="…">`, and `read` output starts with "Source [n]:". The UI turns `[n]` into a chip only when n is a known source; clicking it opens the file.
+- **Sources from tools and the web (D90).** Each turn continues the numbering. A connection's result lists every page, email or document it brings in as "Source [n]: …" (a result that names none is one source); Wikipedia's results do the same; the brain's own search cites pages, and the loop writes ` [n]` after the cited text. Chips for web pages open them in a new tab; others show their title. A "Sources" list follows the answer.
 
 ## Activity events
 
@@ -366,7 +371,7 @@ Jean's internal event format is ACP's `session/update` vocabulary: `user_message
   - The transcript is therefore a standard, readable record that can be replayed, and the brain's context is derived from that same file.
 - **Plain-language, translated labels.** The UI renders each label from `kind` plus `locations` with a translated template, so switching language relabels history instantly. `title` (required by ACP) is kept as a fallback in the original language.
 - **Approvals map directly onto rules.** `allow_always` writes a "Do it" rule, `reject_always` writes "Never", and the "once" options keep "Ask me first".
-- **Outside the vocabulary:** actions such as sending an email through MCP use `kind: "other"` plus a namespaced extension field.
+- **Outside the vocabulary:** a connection's tools that change something, such as sending an email, use `kind: "other"`; read-only ones use `fetch` (D89). The brain's own web searches are shown from its kept blocks, under the brain entry.
 - **Reflex decisions** shown to the user appear as collapsed `think` entries. Auto's choice is recorded on the brain entry (`rawInput.auto: { level, reason }`) and shown in plain words, such as "kept on this device: personal content" (D70).
 - **A script's calls** are tool calls with `_meta.parent` set to their `run` call, shown nested under it.
 - **Helpers** are child sessions, referenced from the parent's tool call.
@@ -377,17 +382,27 @@ Jean's internal event format is ACP's `session/update` vocabulary: `user_message
 
 In order of preference:
 
-1. The connected brain's own search
-2. Wikipedia and Wikidata, which browsers can call directly
-3. An endpoint set in settings or policy (SearXNG with CORS enabled, or Brave, Tavily or Exa with the user's keys)
+1. The connected brain's own search. Built in 0.5 (D91): the `web_search` tool is marked `native`, and the adapter declares the provider's own tool in its place: Anthropic's `web_search_20260209` (dynamic filtering) from Claude 4.6 on and `web_search_20250305` before, or OpenRouter's `openrouter:web_search`. Anthropic's search blocks are kept on the brain entry and replayed as received; an organisation that turned search off gets Wikipedia instead.
+2. Wikipedia, which browsers can call directly: built in 0.5, in the user's language, for every other brain, the device's included. Its address is `DEFAULT_URLS.wikipedia`, replaceable in settings or policy (`urls.wikipedia`).
+3. An endpoint set in settings or policy (SearXNG with CORS enabled, or Brave, Tavily or Exa with the user's keys): later.
 
 There is no Jean proxy by default. Fetching an arbitrary URL hits the same CORS wall and follows the same order.
+
+## Connections (MCP)
+
+Built in 0.5 (D87–D89). A connection is an address and, when the service asks for one, a key or a sign-in.
+
+- **The client** (`caps/connections/mcp.js`) speaks Streamable HTTP: the stateless 2026-07-28 revision first, and the `initialize` handshake and session of 2025-03-26 to 2025-11-25 when a server answers like an earlier one.
+- **Signing in** (`caps/connections/auth.js`) follows MCP authorization from the browser: protected resource and authorization server metadata, dynamic registration as a public client, PKCE with a `resource` indicator, the `iss` check. The redirect comes back to Jean's own address with `?state=`. Client ID Metadata Documents wait for the domain (D27).
+- **Secrets.** Keys and tokens are encrypted in `.secrets/` like brain keys, never backed up; tokens are renewed before they expire.
+- **Tools** are named `<service>_<tool>`, deferred, and listed in `<connections>`. A read-only tool is "Using the internet" (`fetch`); any other is "Sending and sharing" (`other`); both ask first by default. Policy can add connections (`connections`).
+- **The browser's limits.** A service has to answer with CORS for a browser to reach it, and expose `Mcp-Session-Id` (2025 sessions) and, ideally, `WWW-Authenticate`. When it doesn't, Jean says it couldn't connect; there is no proxy (D23).
 
 ## Voice pipeline
 
 - **Speech to text:** a Whisper-class model through Transformers.js (shared runtime), or Chrome's on-device recognition where available.
 - **Text to speech:** `speechSynthesis` with local voices, or Kokoro.
-- **Live conversation:** Silero voice detection (~2 MB ONNX) → speech-to-text → brain (streamed) → speech, sentence by sentence. Speaking over Jean interrupts it.
+- **Live conversation** (0.5, D93): an AudioWorklet feeds 16 kHz audio to Silero voice detection (~2 MB ONNX) in dictation's worker → Whisper → the brain (streamed) → the system's voices, sentence by sentence. A turn starts after 250 ms of speech and ends after 800 ms of silence; speaking over Jean for half a second interrupts it. `caps/live/turns.js` holds the turn-taking, tested under `node --test`.
 - **Real-time speech models** come from the provider (OpenAI Realtime over WebRTC, Gemini Live); `wss:` is already allowed in `connect-src`.
 
 ## Sources

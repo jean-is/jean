@@ -16,7 +16,11 @@ const FALLBACK_MODELS = new Set(['claude-fable-5-1', 'claude-opus-5-5', 'claude-
 const FALLBACK_BETA = 'server-side-fallback-2026-07-01'
 
 /** @type {Map<string, StopReason>} */
-const STOP = new Map([['end_turn', 'end'], ['tool_use', 'tool_use'], ['max_tokens', 'max_tokens'], ['refusal', 'refusal']])
+const STOP = new Map([['end_turn', 'end'], ['tool_use', 'tool_use'], ['max_tokens', 'max_tokens'], ['refusal', 'refusal'], ['pause_turn', 'pause']])
+// The provider's own tools and their results: echoed back whole in later requests.
+const SERVER_BLOCK = /^server_tool_use$|_tool_result$/
+// Set when the organisation turned web search off (a 400 says so): Jean's own search from then on.
+let searchOff = false
 
 /**
  * streamChat() for Anthropic brains.
@@ -29,10 +33,12 @@ export async function* streamAnthropic({ signal, fetch = globalThis.fetch, ...op
   try {
     res = await send(options.messages)
   } catch (error) {
+    const off = !searchOff && error instanceof LLMError && error.code === 'bad_request' && /web.?search/i.test(error.message)
     // A replayed thinking block whose signature no longer matches (the conversation was
     // edited elsewhere): answer this once without the earlier reasoning.
-    if (!(isStaleThinking(error) && options.messages.some((m) => m.role === 'assistant' && m.raw))) throw error
-    res = await send(options.messages.map((m) => (m.role === 'assistant' ? { ...m, raw: undefined } : m)))
+    if (!off && !(isStaleThinking(error) && options.messages.some((m) => m.role === 'assistant' && m.raw))) throw error
+    searchOff ||= off
+    res = await send(off ? options.messages : options.messages.map((m) => (m.role === 'assistant' ? { ...m, raw: undefined } : m)))
   }
   yield* readAnthropic(sseEvents(res, signal))
 }
@@ -92,8 +98,11 @@ function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxToke
     headers['anthropic-beta'] = [headers['anthropic-beta'], FALLBACK_BETA].filter(Boolean).join(',')
   }
   body.messages = toAnthropic(messages, brain.model)
+  // The brain's own web search runs on Anthropic's side: with dynamic filtering from Claude 4.6 on.
+  const search = { type: ADAPTIVE_THINKING.test(brain.model) ? 'web_search_20260209' : 'web_search_20250305', name: 'web_search', max_uses: 5 }
   if (tools.length) {
-    body.tools = tools.map((t) => ({ name: t.name, description: t.description, input_schema: t.parameters, eager_input_streaming: true }))
+    body.tools = tools.map((t) => (t.native === 'web_search' && !searchOff ? search
+      : { name: t.name, description: t.description, input_schema: t.parameters, eager_input_streaming: true }))
   }
   return { url: endpoint(brain, '/messages'), headers, body }
 }
@@ -165,6 +174,9 @@ async function* readAnthropic(events) {
       const out = applyDelta(blocks[d.index], d.delta)
       if (out) yield out
     }
+    // Text that cites web pages: the sources follow it, as [n] once numbered.
+    const cited = type === 'content_block_stop' ? blocks[d.index]?.citations?.filter((/** @type {any} */ c) => c.url) : null
+    if (cited?.length) yield { type: 'cite', sources: cited.map((/** @type {any} */ c) => ({ title: c.title || c.url, url: c.url, quote: c.cited_text })) }
     if (type === 'message_delta') {
       stop = d.delta?.stop_reason ?? stop
       // Later counts are cumulative and may restate earlier ones.
@@ -188,7 +200,8 @@ function startBlock(block = {}) {
     case 'thinking': return { type: 'thinking', thinking: block.thinking ?? '', signature: block.signature ?? '' }
     case 'redacted_thinking': return { type: 'redacted_thinking', data: block.data }
     case 'tool_use': return { type: 'tool_use', id: block.id, name: block.name, json: '' }
-    default: return { type: block.type } // e.g. 'fallback': a marker, never echoed back
+    // Server tools (the brain's own search) and their results; 'fallback' is a marker, never echoed back.
+    default: return SERVER_BLOCK.test(block.type) ? { ...block, json: '' } : { type: block.type }
   }
 }
 
@@ -197,6 +210,7 @@ function applyDelta(block, delta) {
   if (!block || !delta) return null
   if (delta.type === 'signature_delta') block.signature += delta.signature
   if (delta.type === 'input_json_delta') block.json += delta.partial_json
+  if (delta.type === 'citations_delta') (block.citations ??= []).push(delta.citation)
   // text_delta carries `text` and thinking_delta carries `thinking`, like the blocks they extend.
   const kind = delta.type === 'text_delta' ? 'text' : delta.type === 'thinking_delta' ? 'thinking' : null
   if (!kind || !delta[kind]) return null
@@ -219,7 +233,11 @@ function finishBlock(block) {
   switch (block.type) {
     case 'text': case 'thinking': case 'redacted_thinking': return block
     case 'tool_use': return { type: 'tool_use', id: block.id, name: block.name, input: parseArgs(block.json) }
-    default: return null
+    default: {
+      if (!SERVER_BLOCK.test(block.type)) return null
+      const { json, ...rest } = block
+      return json ? { ...rest, input: parseArgs(json) } : rest
+    }
   }
 }
 

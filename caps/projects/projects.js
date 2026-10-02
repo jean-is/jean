@@ -15,7 +15,7 @@ import { BRAND } from '../../brand.js'
 import { t } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
 
-/** @typedef {import('../../ui/state.js').Project} Project */
+/** @typedef {import('../../core/settings.js').Project} Project */
 
 /** A room's light: Jean's amber, then around the colour wheel. Only the hue tints the little light. */
 const COLOURS = Object.entries({ amber: 54, coral: 28, rose: 355, violet: 305, blue: 255, teal: 200, green: 150, olive: 105 })

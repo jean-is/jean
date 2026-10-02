@@ -11,10 +11,11 @@ import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 
 const ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', projects: 'rooms', routines: 'repeat', python: 'code', backup: 'download', 'brain-local': 'chip',
+  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', projects: 'rooms', routines: 'repeat', python: 'code',
+  search: 'globe', connections: 'plug', live: 'wave', backup: 'download', 'brain-local': 'chip',
 })
 /** Where a lit room leads. */
-const OPENS = /** @type {Record<string, typeof app.dialog.value>} */ ({ memory: 'knows', routines: 'knows', projects: 'history' })
+const OPENS = /** @type {Record<string, typeof app.dialog.value>} */ ({ memory: 'knows', routines: 'knows', projects: 'history', connections: 'connections' })
 
 /** @param {string} id */
 async function turnOn(id) {

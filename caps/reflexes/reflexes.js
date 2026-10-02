@@ -7,12 +7,18 @@ import { register } from '../../ui/caps.js'
 import { weightsHost } from '../../ui/state.js'
 import { scriptURL } from '../../ui/trusted.js'
 
-/** @typedef {import('../../core/decide.js').Question} Question */
-/** @typedef {import('../brain-local/brain-local.js').Download} Download */
+/** @import { Question } from '../../core/decide.js' */
+/** @import { Download } from '../brain-local/brain-local.js' */
 
 export const KEV = Object.freeze({ model: 'onnx-community/kev-0.6b-ONNX', bytes: 3.45e8 })
 
 export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
+
+// The reflexes' lines in the browser console start with ◈, a flowchart's decision: → is the
+// state and questions going in, ← the answers coming out. 1 is the first decision.
+const trace = (/** @type {string} */ label, /** @type {unknown[]} */ ...details) => console.info(`◈ ${label}`, ...details)
+const since = (/** @type {number} */ began) => `(${Math.round(performance.now() - began)} ms)`
+let decisions = 0
 
 /** WebGPU with fp16 shaders runs the q4f16 graph; everything else the q4 one on WebAssembly. */
 async function backend() {
@@ -38,8 +44,17 @@ export async function isDownloaded() {
  * @returns {Promise<Record<string, import('../../core/decide.js').Answer>>}
  */
 async function decide(state, questions) {
-  const { answers } = await call({ type: 'decide', state, questions })
-  return answers
+  const id = ++decisions
+  const began = performance.now()
+  trace(`${id} →`, state, questions)
+  try {
+    const { answers } = await call({ type: 'decide', state, questions })
+    trace(`${id} ←`, answers, since(began))
+    return answers
+  } catch (error) {
+    trace(`${id} ←`, error instanceof Error ? error.message : error, since(began))
+    throw error
+  }
 }
 
 /** Downloads (first time) and loads Kev; reflexes are on once this resolves. */
@@ -47,15 +62,20 @@ export async function prepare() {
   if (download.value.state === 'ready') return
   download.value = { state: 'downloading', loaded: 0, total: KEV.bytes }
   navigator.storage?.persist?.().catch(() => {})
+  const began = performance.now()
   try {
-    await call({ type: 'load', host: weightsHost(), model: KEV.model, ...await backend() }, (message) => {
+    const { device, dtype } = await backend()
+    await call({ type: 'load', host: weightsHost(), model: KEV.model, device, dtype }, (message) => {
       if (message.type !== 'progress') return
       download.value = message.loaded >= message.total * 0.999 ? { state: 'loading' } : { state: 'downloading', loaded: message.loaded, total: Math.max(message.total, KEV.bytes) }
     })
+    trace('ready', device, since(began))
     download.value = { state: 'ready' }
     register({ ...capability, decide })
   } catch (error) {
-    download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
+    const message = error instanceof Error ? error.message : String(error)
+    console.warn('◈', message)
+    download.value = { state: 'failed', message }
     throw error
   }
 }
@@ -78,8 +98,8 @@ const decideTool = {
 
 const capability = { id: 'reflexes', tools: [decideTool] }
 register(capability)
-// Downloaded on an earlier visit: load it in the background.
-isDownloaded().then((yes) => (yes ? prepare() : undefined)).catch((error) => console.warn('Reflexes', error))
+// Downloaded on an earlier visit: load it in the background. A failure is logged in prepare().
+isDownloaded().then((yes) => (yes ? prepare() : undefined)).catch(() => {})
 
 // ─── Worker ──────────────────────────────────────────────────────────────────
 

@@ -4,7 +4,7 @@ import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, chipLabel, effective, send, stop, setPresence, warm, removeAttachment } from './state.js'
-import { unlock, isDenied } from './caps.js'
+import { unlock, isDenied, loaded } from './caps.js'
 import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { dictation, toggleDictation } from './dictation.js'
@@ -50,6 +50,7 @@ class Composer extends Element {
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
               aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')} title=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
+            ${loaded.value.has('live') ? html`<app-live></app-live>` : nothing}
             <button type="button" class="brain-chip" aria-haspopup="dialog" @click=${openPicker}>
               ${brain?.api === 'device' && !effective.value.settings.auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
             </button>

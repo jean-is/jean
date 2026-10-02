@@ -433,7 +433,7 @@ describe('streamChat (Anthropic)', () => {
   })
 
   test('maps stop reasons', async () => {
-    const cases = { end_turn: 'end', tool_use: 'tool_use', max_tokens: 'max_tokens', refusal: 'refusal', pause_turn: 'other', stop_sequence: 'other' }
+    const cases = { end_turn: 'end', tool_use: 'tool_use', max_tokens: 'max_tokens', refusal: 'refusal', pause_turn: 'pause', stop_sequence: 'other' }
     for (const [stop, expected] of Object.entries(cases)) {
       const { events } = await run(brains.anthropic, textTurn(stop))
       assert.equal(events.at(-1).stopReason, expected, stop)
@@ -824,15 +824,15 @@ describe('listModels', () => {
   test('OpenAI-compatible (OpenRouter): pricing as numbers, provider order kept', async () => {
     const data = [
       { id: 'z/model', name: 'Z Model', context_length: 128000, pricing: { prompt: '0.000003', completion: '0.000015' } },
-      { id: 'a/model', name: 'A Model', context_length: 8192, pricing: { prompt: '0', completion: '0' } },
+      { id: 'a/model', name: 'A Model', context_length: 8192, pricing: { prompt: '0', completion: '0' }, architecture: { output_modalities: ['image', 'text'] } },
     ]
     const { fetch, calls } = mockFetch(() => Response.json({ data }))
     const models = await listModels({ brain: brains.openrouter, apiKey: 'sk-or', fetch })
     assert.equal(calls[0].url, 'https://openrouter.ai/api/v1/models')
     assert.deepEqual(calls[0].headers, { authorization: 'Bearer sk-or' })
     assert.deepEqual(models, [
-      { id: 'z/model', name: 'Z Model', contextLength: 128000, pricing: { prompt: 0.000003, completion: 0.000015 } },
-      { id: 'a/model', name: 'A Model', contextLength: 8192, pricing: { prompt: 0, completion: 0 } },
+      { id: 'z/model', name: 'Z Model', contextLength: 128000, pricing: { prompt: 0.000003, completion: 0.000015 }, output: undefined },
+      { id: 'a/model', name: 'A Model', contextLength: 8192, pricing: { prompt: 0, completion: 0 }, output: ['image', 'text'] },
     ])
   })
 
@@ -841,7 +841,7 @@ describe('listModels', () => {
     const models = await listModels({ brain: brains.ollama, fetch })
     assert.equal(calls[0].url, 'http://localhost:11434/v1/models')
     assert.deepEqual(calls[0].headers, {})
-    assert.deepEqual(models, [{ id: 'qwen3', name: undefined, contextLength: undefined, pricing: undefined }])
+    assert.deepEqual(models, [{ id: 'qwen3', name: undefined, contextLength: undefined, pricing: undefined, output: undefined }])
   })
 
   test('Anthropic', async () => {

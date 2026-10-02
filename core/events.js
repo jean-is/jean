@@ -1,14 +1,6 @@
 // ACP records: building them, folding them for display, and deriving the
 // model's context from them. One log, two readers.
-/** @typedef {import('./types.js').Envelope} Envelope */
-/** @typedef {import('./types.js').AcpUpdate} AcpUpdate */
-/** @typedef {import('./types.js').ToolCallInfo} ToolCallInfo */
-/** @typedef {import('./types.js').ChatMessage} ChatMessage */
-/** @typedef {import('./types.js').ToolMessage} ToolMessage */
-/** @typedef {import('./types.js').PlanEntry} PlanEntry */
-/** @typedef {import('./types.js').ResourceLink} ResourceLink */
-/** @typedef {import('./types.js').DocumentPart} DocumentPart */
-/** @typedef {import('./types.js').SystemNoteData} SystemNoteData */
+/** @import { Envelope, AcpUpdate, ToolCallInfo, ChatMessage, ToolMessage, PlanEntry, ResourceLink, DocumentPart, SystemNoteData } from './types.js' */
 
 /**
  * @param {string} by @param {AcpUpdate} update @param {number} [step]

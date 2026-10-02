@@ -78,8 +78,10 @@ async function start() {
   root.classList.add('is-ready')
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  // Back from the OpenRouter sign-in with ?code=…
-  if (new URLSearchParams(location.search).has('code')) await (await import('./brains.js')).finishOpenRouter()
+  // Back from signing in: to a connection (?state=…), or to OpenRouter (?code=…).
+  const back = new URLSearchParams(location.search)
+  const connected = back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()
+  if (!connected && back.has('code')) await (await import('./brains.js')).finishOpenRouter()
   registerServiceWorker()
 }
 

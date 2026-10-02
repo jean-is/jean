@@ -1,14 +1,7 @@
 // Memory, projects and routines (0.4), the version's done-when: two projects keep separate
 // memories, and a routine is created from repeated requests. Plus "What Jean knows about you".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
-
-/** Turns a capability on from the house. @param {import('@playwright/test').Page} page @param {string} name */
-async function turnOn(page, name) {
-  await page.locator('.bar-actions button').first().click()
-  const house = page.locator('app-collection dialog[open]')
-  await house.locator('.room-card', { hasText: name }).locator('.button').click()
-}
+import { start, connectFakeBrain, ask, turnOn } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page @param {string} name */
 async function createProject(page, name) {

@@ -4,8 +4,7 @@
 // See prompts/system.md.
 import { metaRecord, noteRecord } from './events.js'
 
-/** @typedef {import('./types.js').Envelope} Envelope */
-/** @typedef {import('./types.js').PromptState} PromptState */
+/** @import { Envelope, PromptState } from './types.js' */
 
 const PREAMBLE = `You are {name}, an assistant that does work for people, right in their web browser.
 You read the files they share, work things out, and hand back results they can use.`
@@ -23,10 +22,11 @@ const RULES = [
 /**
  * The context a conversation starts with, in prompt order: the project's name, the user's
  * instructions (organisation, global, project), what Jean noticed, the routines ("name: when
- * to use it"). Each is frozen with the rest, then changed by notes.
- * @typedef {Partial<Record<'project' | 'instructions' | 'memory' | 'skills', string>>} Sections
+ * to use it"), the connected services and their tools. Each is frozen with the rest, then
+ * changed by notes.
+ * @typedef {Partial<Record<'project' | 'instructions' | 'memory' | 'skills' | 'connections', string>>} Sections
  */
-const SECTIONS = /** @type {const} */ (['project', 'instructions', 'memory', 'skills'])
+const SECTIONS = /** @type {const} */ (['project', 'instructions', 'memory', 'skills', 'connections'])
 
 /**
  * @typedef {Object} PromptInput

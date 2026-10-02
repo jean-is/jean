@@ -5,13 +5,8 @@
 import { join } from './fs.js'
 import { ulid } from './ulid.js'
 
-/**
- * @typedef {import('./types.js').FS} FS
- * @typedef {import('./types.js').Envelope} Envelope
- * @typedef {import('./types.js').ConversationHeader} ConversationHeader
- * @typedef {import('./types.js').ConversationSummary} ConversationSummary
- * @typedef {{ header: ConversationHeader, records: Envelope[], title: string, updatedAt: string }} Conversation
- */
+/** @import { FS, Envelope, ConversationHeader, ConversationSummary } from './types.js' */
+/** @typedef {{ header: ConversationHeader, records: Envelope[], title: string, updatedAt: string }} Conversation */
 
 // Paths known to end with '\n', per FS. Before the first append to any other path we check
 // for a torn last line, so the next record starts on its own line instead of being glued to it.

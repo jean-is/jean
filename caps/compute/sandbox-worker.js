@@ -65,7 +65,10 @@ async function load(all) {
 const PRELUDE = `
 globalThis.tools = new Proxy({}, { get: (_, name) => (args = {}) => __call(String(name), JSON.stringify(args)) })
 globalThis.searchTools = (query) => tools.find_tools({ query })
-globalThis.models = { decide: async (state, questions) => JSON.parse(await tools.decide({ state, questions })) }
+globalThis.models = {
+  decide: async (state, questions) => JSON.parse(await tools.decide({ state, questions })),
+  image: async (prompt) => JSON.parse(await tools.image({ prompt })),
+}
 globalThis.file = (name) => tools.file({ file: name })
 globalThis.csv = (text) => {
   const lines = String(text).replace(/\\r\\n?/g, '\\n').split('\\n').filter((line) => line.trim())

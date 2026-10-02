@@ -57,9 +57,9 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Routines | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Make this a routine?" (saved as `SKILL.md`); once on, "Make this a routine" among the follow-ups |
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
 | Assistant name | After some use inside a project | "Want to give this project's assistant a name?" |
-| Web search | A request needs fresh information | Uses the brain's own search, or suggests connecting a brain that has one |
-| Connections | The user mentions Gmail, Drive, Notion… | Connect it (MCP behind the scenes) |
-| Live conversation | The user dictates often | Hands-free voice mode |
+| Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
+| Connections | A request needs one of the user's services, like their email (the brain offers it, and the answer waits while they connect it) | "Connect a service": an address, then a sign-in or a key (MCP behind the scenes, D87–D89) |
+| Live conversation | The user has dictated three times | Hands-free: it listens, answers aloud, stops when they speak (about 82 MB, once, D93) |
 | Helpers | A big request with several parts | Jean splits the work; helpers appear nested in the activity view |
 | Double-check | Citations are in regular use | Jean checks claims against their sources |
 | Since last time | The user returns after time away and has connections | A read-only brief when Jean opens |
@@ -168,6 +168,7 @@ Organisation policy can hide or lock any of these.
 
 - **Numbered sources.** Every tool that brings in outside content returns numbered sources (file and page, URL and title, memory item, past conversation). The brain cites them as `[n]`, and the UI shows each as a chip: hover shows the passage, clicking opens the file at that page or the URL.
 - **One format for all providers.** Provider citations (Anthropic Citations, `url_citation` annotations, Gemini grounding) are converted into the same format.
+- **As built in 0.5 (D90).** Shared files, a connection's emails and documents, Wikipedia's pages and the brain's own search share one numbering per conversation. A web page's chip opens it in a new tab; an email's shows its title. Each answer lists its sources under "Sources".
 - **Honest even with small brains.** Small on-device brains cite unreliably, so a "What Jean read" list is always built from the actual tool calls.
 - **Later unlock: Double-check.** The reflex model asks whether source [n] supports each claim.
 
@@ -175,8 +176,8 @@ Organisation policy can hide or lock any of these.
 
 There is no Jean server, so search comes from something the user or their organisation already has:
 
-1. The connected cloud brain's own search (OpenRouter's web plugin, Anthropic, OpenAI, Gemini grounding). Sources come back with the answer.
-2. Wikipedia and Wikidata for everyone, including on the on-device brain: free, browsers can call them directly, 300+ languages.
+1. The connected cloud brain's own search (OpenRouter's search tool, Anthropic, OpenAI, Gemini grounding). Sources come back with the answer. Built in 0.5 for Anthropic and OpenRouter, which search only when a question needs it.
+2. Wikipedia and Wikidata for everyone, including on the on-device brain: free, browsers can call them directly, 300+ languages. Built in 0.5 for Wikipedia, in the user's language.
 3. A configurable search endpoint (their own SearXNG, or Brave, Tavily or Exa with their own keys), set by the user or by policy.
 
 When no route exists, Jean says so and suggests connecting a cloud brain. A shared community proxy should only be considered if real demand appears; DEVS's `proxy.devs.new` is the warning.
@@ -200,7 +201,7 @@ When no route exists, Jean says so and suggests connecting a cloud brain. A shar
 | Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
 | Live conversation | A chain: Silero voice detection → speech-to-text → brain (streamed) → speech, sentence by sentence; speaking over Jean interrupts it. Works with any brain. | Real-time speech models from the connected provider (OpenAI Realtime over WebRTC with the user's key, Gemini Live) |
 
-Dictation and read-aloud are available from day one for accessibility. Live conversation is discovered.
+Dictation and read-aloud are available from day one for accessibility. Live conversation is discovered: built in 0.5 as the private chain above, offered after three dictations (D93).
 
 ## Languages
 

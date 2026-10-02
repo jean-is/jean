@@ -15,7 +15,7 @@ import { t } from '../core/i18n.js'
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'routines', 'python', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'routines', 'python', 'search', 'connections', 'live', 'backup', 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -25,6 +25,8 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
   routines: 'saving how a task the user repeats is done, to do it the same way every time',
   python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
+  search: 'searching the web, when a question needs current or specific facts',
+  connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
 })
 
 /** The tools a capability brings, by name. @param {string} id */
@@ -50,7 +52,8 @@ const offerTool = {
         return 'The user said not now. Do not offer it again in this conversation.'
       }
       if (!(await unlock(id))) return 'It could not be turned on.'
-      if (id === 'projects') begin(id)
+      // A project to name, or a service to connect: the answer waits for the user.
+      await begin(id)
     }
     const names = toolsOf(id).filter((name) => !ctx.declared.includes(name))
     return names.length ? `It is on. New tools: ${names.join(', ')}. ${reach(names, ctx)}` : 'It is on.'
@@ -75,7 +78,8 @@ const AMBIENT = new Set(['backup', 'reflexes'])
 /** Offers a capability above the box, once, unless something more relevant is on offer. @param {string} id */
 export function offerOnce(id) {
   const { settings } = effective.value
-  const shown = app.offer.value
+  // Peeked: an effect that offers must not run again because the offer it showed went away.
+  const shown = app.offer.peek()
   if ((shown && (shown.progress !== undefined || !AMBIENT.has(shown.id) || AMBIENT.has(id))) || isDenied(id) || loaded.value.has(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
   app.offer.value = { id }
 }
@@ -96,9 +100,11 @@ export async function accept(id) {
   else begin(id)
 }
 
-/** What a capability leads to as soon as it is on: a project to name. @param {string} id */
+/** What a capability leads to as soon as it is on: a project to name, a service to connect, a conversation to have. @param {string} id */
 export async function begin(id) {
   if (id === 'projects') (await import('../caps/projects/projects.js')).newProject()
+  if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
+  if (id === 'live') await (await import('../caps/live/live.js')).toggle()
 }
 
 /** @param {string} id */
@@ -144,6 +150,10 @@ effect(() => {
   const count = app.conversations.value.length
   if (count >= 3) offerOnce('backup')
   else if (count >= 2 && effective.value.settings.brains.length) offerOnce('reflexes')
+})
+effect(() => {
+  // Someone who dictates often may rather talk.
+  if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')
 })
 effect(() => {
   // Rows of data: exact numbers are a script away.

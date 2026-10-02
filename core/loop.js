@@ -3,12 +3,7 @@
 import { streamChat as defaultStream } from './llm.js'
 import { envelope } from './events.js'
 
-/** @typedef {import('./types.js').BrainConfig} BrainConfig */
-/** @typedef {import('./types.js').ChatMessage} ChatMessage */
-/** @typedef {import('./types.js').AcpUpdate} AcpUpdate */
-/** @typedef {import('./types.js').Envelope} Envelope */
-/** @typedef {import('./types.js').ToolCallInfo} ToolCallInfo */
-/** @typedef {import('./types.js').RuleValue} RuleValue */
+/** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCallInfo, RuleValue, Source } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
 
 /**
@@ -17,6 +12,7 @@ import { envelope } from './events.js'
  * @property {import('./types.js').ToolKind} kind
  * @property {boolean} [reserved]   passwords, payments: never done by Jean
  * @property {boolean} [hidden]     never declared to the brain; scripts can call it (codemode, D48)
+ * @property {boolean} [deferred]   not declared when a conversation starts: found with find_tools (connections, D47)
  * @property {(args: any) => string} title
  * @property {(args: any) => import('./types.js').ToolCallLocation[]} [locations]
  * @property {(args: any, ctx: ToolContext) => Promise<string>} run
@@ -28,6 +24,8 @@ import { envelope } from './events.js'
  * @property {string[]} declared                                 tools the brain can call directly
  * @property {(name: string, args: any) => Promise<string>} call  a nested call, under the same rules
  * @property {(names: string[]) => void} declare                  declares tools from the next request on (D47)
+ * @property {(sources: Source[]) => number[]} cite               numbers what the result brings in, as the brain cites it
+ * @property {Record<string, any>} meta                           kept on the call's record (`_meta`), e.g. a picture it made
  */
 
 /**
@@ -41,6 +39,7 @@ import { envelope } from './events.js'
  * @property {string[]} [declared]                   the ones the brain sees (default: all but hidden ones)
  * @property {string} [label]                        shown on the brain entry
  * @property {Record<string, any>} [meta]            recorded on the brain entry (why Auto chose it)
+ * @property {number} [firstSource]                  the number the turn's first new source is cited by (D71)
  * @property {(kind: string, reserved: boolean) => RuleValue} [rule]
  * @property {(request: { toolCall: ToolCallInfo, step: number }) => Promise<PermissionOption>} [askPermission]
  * @property {(update: AcpUpdate, step: number) => void} [onUpdate]   live, including deltas
@@ -60,7 +59,15 @@ export async function runTurn(options) {
   const history = [...options.history]
   const tools = () => (typeof options.tools === 'function' ? options.tools() : options.tools ?? [])
   const declared = new Set(options.declared ?? tools().filter((tool) => !tool.hidden).map((tool) => tool.spec.name))
-  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(), declared, tools }
+  // Sources are numbered as they come in (one cited again keeps its number), and recorded in `meta`.
+  const numbers = /** @type {Map<string, number>} */ (new Map())
+  /** @param {Source[]} sources @param {Record<string, any>} meta */
+  const cite = (sources, meta) => sources.map((source) => {
+    const key = source.url ?? source.title
+    if (!numbers.has(key)) (meta.sources ??= []).push({ ...source, n: numbers.set(key, numbers.size + (options.firstSource ?? 1)).get(key) })
+    return /** @type {number} */ (numbers.get(key))
+  })
+  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(), declared, tools, cite }
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 }
 
   for (let step = 0; step < maxSteps; step++) {
@@ -71,6 +78,7 @@ export async function runTurn(options) {
 
     let text = ''
     let thought = ''
+    const cited = /** @type {Record<string, any>} */ ({})
     /** @type {import('./types.js').ToolCall[]} */
     const calls = []
     /** @type {Extract<import('./types.js').StreamEvent, { type: 'done' }> | null} */
@@ -85,6 +93,11 @@ export async function runTurn(options) {
         } else if (event.type === 'thinking') {
           thought += event.delta
           onUpdate({ sessionUpdate: 'agent_thought_chunk', content: { type: 'text', text: event.delta } }, step)
+        } else if (event.type === 'cite') {
+          // The brain's own search cites pages after what it just wrote.
+          const marks = ` [${[...new Set(cite(event.sources, cited))].join(', ')}]`
+          text += marks
+          onUpdate({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: marks } }, step)
         } else if (event.type === 'tool_call') calls.push(event.call)
         else if (event.type === 'done') done = event
       }
@@ -101,14 +114,15 @@ export async function runTurn(options) {
       usage.outputTokens += done.usage.outputTokens ?? 0
       usage.cacheReadTokens += done.usage.cacheReadTokens ?? 0
     }
-    const completed = { ...brainEntry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage } }
-    // Thinking blocks are kept so later turns replay them unchanged (the cache depends on it).
+    // Thinking blocks and the provider's own search results are replayed unchanged by later turns.
     const raw = done?.message.raw
-    if (Array.isArray(raw) && raw.some((block) => /thinking/.test(block?.type))) Object.assign(completed, { _meta: { raw } })
+    const kept = { ...cited, ...(Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }) }
+    const completed = { ...brainEntry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, ...(Object.keys(kept).length && { _meta: kept }) }
     onUpdate({ sessionUpdate: 'tool_call_update', ...completed }, step)
     await persist(stepRecords(step, completed, thought, text))
     history.push(done?.message ?? { role: 'assistant', content: text, toolCalls: calls })
 
+    if (stopReason === 'pause') continue
     if (stopReason !== 'tool_use' || !calls.length) return { stopReason, usage, text }
 
     for (const call of calls) {
@@ -137,7 +151,8 @@ function stepRecords(step, brainEntry, thought, text) {
  * @param {import('./types.js').ToolCall} call
  * @param {Tool | undefined} tool
  * @param {number} step
- * @param {Pick<Required<TurnOptions>, 'rule' | 'askPermission' | 'onUpdate' | 'persist'> & { signal?: AbortSignal, byName: Map<string, Tool>, declared: Set<string>, tools: () => Tool[] }} ctx
+ * @param {Pick<Required<TurnOptions>, 'rule' | 'askPermission' | 'onUpdate' | 'persist'> & { signal?: AbortSignal, byName: Map<string, Tool>, declared: Set<string>, tools: () => Tool[],
+ *   cite: (sources: Source[], meta: Record<string, any>) => number[] }} ctx
  * @param {string} [parent]
  */
 async function runTool(call, tool, step, ctx, parent) {
@@ -156,12 +171,12 @@ async function runTool(call, tool, step, ctx, parent) {
 
   let output = ''
   let failed = true
-  /** @type {string[]} */
-  const declares = []
   let nested = 0
   /** @type {ToolContext} */
   const context = {
     signal,
+    meta: {},
+    cite: (sources) => ctx.cite(sources, context.meta),
     declared: [...ctx.declared],
     call: async (name, args) => {
       const known = ctx.tools().find((candidate) => candidate.spec.name === name)
@@ -171,7 +186,7 @@ async function runTool(call, tool, step, ctx, parent) {
     },
     declare: (names) => {
       for (const name of names) ctx.declared.add(name)
-      declares.push(...names)
+      ;(context.meta.declare ??= []).push(...names)
     },
   }
   if (!tool) output = `There is no tool named "${call.name}".${ctx.declared.has('find_tools') ? ' Use find_tools to look for one.' : ''}`
@@ -198,7 +213,7 @@ async function runTool(call, tool, step, ctx, parent) {
     status: /** @type {'failed' | 'completed'} */ (failed ? 'failed' : 'completed'),
     rawOutput: output,
     content: [{ type: /** @type {const} */ ('content'), content: { type: /** @type {const} */ ('text'), text: output } }],
-    ...(declares.length && { _meta: { ...info._meta, declare: declares } }),
+    ...(Object.keys(context.meta).length && { _meta: { ...info._meta, ...context.meta } }),
   }
   onUpdate({ sessionUpdate: 'tool_call_update', ...final }, step)
   await ctx.persist([envelope('jean', { sessionUpdate: 'tool_call', ...final }, step)])

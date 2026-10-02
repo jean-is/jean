@@ -48,6 +48,7 @@ class Shell extends Element {
       <app-collection></app-collection>
       <app-knows></app-knows>
       <app-project-dialog></app-project-dialog>
+      <app-connections></app-connections>
       ${toasts()}
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }

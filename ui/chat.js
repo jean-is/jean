@@ -11,9 +11,8 @@ import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
 import { BRAND } from '../brand.js'
 
-/** @typedef {import('../core/events.js').Turn} Turn */
-/** @typedef {import('../core/types.js').ToolCallInfo} ToolCallInfo */
-/** @typedef {import('../core/types.js').ResourceLink} ResourceLink */
+/** @import { Turn } from '../core/events.js' */
+/** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
 
 class Conversation extends Element {
   #follow = true
@@ -39,7 +38,7 @@ class Conversation extends Element {
     const files = linkedFiles(current.records)
     const live = app.live.value
     const error = app.error.value
-    const sources = citable(files)
+    const sources = citable(files, live ? [...turns, live.turn] : turns)
     return html`
       <h1 class="conversation-title" dir="auto">${titleOf(current.records) || t('conversation.untitled')}</h1>
       <ol class="turns">
@@ -57,18 +56,25 @@ class Conversation extends Element {
 }
 
 /**
- * Shared files by the number the brain cites them with (source chips).
- * @param {ResourceLink[]} files @returns {import('./markdown.js').Sources}
+ * Everything the brain may cite, by number (source chips): shared files, which open, and what
+ * tools and the brain's own search brought in, where a web page opens in a new tab.
+ * @param {ResourceLink[]} files @param {Turn[]} turns @returns {import('./markdown.js').Sources}
  */
-function citable(files) {
+function citable(files, turns) {
   /** @type {import('./markdown.js').Sources} */
   const sources = new Map()
   for (const link of files) {
     const number = link._meta?.source
     if (number && !sources.has(number)) sources.set(number, { name: link.name, label: t('sources.open', { name: link.name }), open: () => openFile(link) })
   }
+  for (const { n, title, url } of turns.flatMap((turn) => turn.steps.flatMap((step) => step.tools.flatMap((tool) => tool._meta?.sources ?? [])))) {
+    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { open: () => open(url, '_blank', 'noopener') }) })
+  }
   return sources
 }
+
+/** Only web addresses become links: a tool's result could name any scheme. @param {string | undefined} url @returns {url is string} */
+const web = (url) => /^https?:\/\//i.test(url ?? '')
 
 /**
  * @param {Turn} turn @param {Turn | null} live
@@ -92,7 +98,9 @@ function turnView(turn, live, files, upTo, last, sources) {
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
         ${activity(entries, thought, text, streaming, files)}
         ${text ? html`<div class="prose" dir="auto">${markdown(text, sources)}${streaming ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>` : nothing}
+        ${entries.flatMap(({ _meta, rawInput }) => (_meta?.image ? [html`<app-image uri=${_meta.image.uri} name=${_meta.image.name} alt=${rawInput?.prompt ?? ''}></app-image>`] : []))}
         ${!streaming && read.length ? readView(read) : nothing}
+        ${!streaming && entries.some((entry) => entry._meta?.sources) ? sourcesView(entries.flatMap((entry) => entry._meta?.sources ?? [])) : nothing}
         ${!streaming && text ? actions(turn.at, text) : nothing}
       </article>` : nothing}
     ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name)) : nothing}
@@ -144,6 +152,15 @@ function readView(items) {
   </details>`
 }
 
+/** What tools and the brain's own search brought in for this answer, by number. @param {{ n: number, title: string, url?: string }[]} cited */
+function sourcesView(cited) {
+  return html`<details class="read-list">
+    <summary>${icons.globe}<span>${t('sources.title')}</span>${icons.chevron}</summary>
+    <ul>${cited.map(({ n, title, url }) => html`<li><span class="cite">${n}</span>${web(url)
+      ? html`<a class="link-button" href=${url} target="_blank" rel="noopener noreferrer" dir="auto">${title}</a>` : html`<span dir="auto">${title}</span>`}</li>`)}</ul>
+  </details>`
+}
+
 /**
  * "What Jean is doing", from the turn's ACP records. A script's own calls show under it.
  * @param {ToolCallInfo[]} entries @param {string} thought @param {string} text @param {boolean} streaming
@@ -170,12 +187,15 @@ function activity(entries, thought, text, streaming, files) {
     <details class="activity" data-status=${status}>
       <summary><span class="ember" aria-hidden="true"></span><span>${summary}</span>${icons.chevron}</summary>
       <ol class="activity-list">
-        ${brains.map((brain) => html`<li data-status=${brain.status ?? 'pending'}>
+        ${brains.map((brain) => [html`<li data-status=${brain.status ?? 'pending'}>
           <span class="ember" aria-hidden="true"></span><span>${t('activity.brain', { brain: brainName(brain) })}
           ${brain.rawInput?.auto ? html`<span class="muted"> · ${autoReason(brain.rawInput.auto)}</span>` : nothing}
           ${brain.rawOutput?.usage?.cacheReadTokens ? html`<span class="muted"> · ${t('activity.cached')}</span>` : nothing}
           ${brain.status === 'failed' && brain.rawOutput?.error ? html`<span class="muted"> — ${brain.rawOutput.error}</span>` : nothing}</span>
-        </li>`)}
+        </li>`,
+        // The brain's own searches, kept with its reply.
+        ...(brain._meta?.raw ?? []).filter((/** @type {any} */ block) => block.type === 'server_tool_use' && block.name === 'web_search')
+          .map((/** @type {any} */ block) => item({ toolCallId: block.id, title: '', name: 'web_search', status: 'completed', rawInput: block.input }, true))])}
         ${top.map((tool) => [item(tool), ...tools.filter((child) => child._meta?.parent === tool.toolCallId).map((child) => item(child, true))])}
       </ol>
       ${thought ? html`<div class="thought" dir="auto">${markdown(thought)}</div>` : nothing}
@@ -217,6 +237,7 @@ function toolLabel(tool, files = []) {
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${tool.rawInput?.capability}.name`) })
+  if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   const key = `tool.${tool.name}`
   return t(key) === key ? tool.title : t(key)
 }

@@ -7,7 +7,11 @@
 // Calculations if they're off, then runs a script that reads the file and totals it.
 // From 0.4 it remembers what follows "Remember", says what its <memory> holds when asked
 // "What do you know?", and saves a routine when asked to (finding the tool first if needed).
+// From 0.5 it searches the web when asked to, reads the user's latest emails through a
+// connection (finding its tool first, or from a script when Calculations are on) and sums them
+// up citing each one, and draws with models.image; /images/generations answers with a picture.
 import { createServer } from 'node:http'
+import { deflateSync, crc32 } from 'node:zlib'
 
 const PORT = Number(process.env.PORT) || 4174
 let previous = ''
@@ -48,13 +52,31 @@ for (const row of rows) totals[row[by]] = (totals[row[by]] ?? 0) + row[of]
 console.log(rows.length + ' rows')
 return { by, of, totals }`
 
+/** A small PNG: a warm gradient. */
+function picture(width = 96, height = 64) {
+  const rows = Buffer.concat(Array.from({ length: height }, (_, y) => Buffer.from([0, ...Array.from({ length: width }, (_, x) => [200 - y, 110 + x, 70]).flat()])))
+  const chunk = (/** @type {string} */ type, /** @type {Buffer} */ data) => {
+    const body = Buffer.concat([Buffer.from(type), data])
+    return Buffer.concat([Buffer.from(new Uint32Array([data.length]).buffer).reverse(), body, Buffer.from(new Uint32Array([crc32(body)]).buffer).reverse()])
+  }
+  const header = Buffer.from([0, 0, 0, width, 0, 0, 0, height, 8, 2, 0, 0, 0])
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', header), chunk('IDAT', deflateSync(rows)), chunk('IEND', Buffer.alloc(0))]).toString('base64')
+}
+
+/** Sources a tool's result lists: `Source [n]: title (address)` and what follows. @param {string} text */
+const sourcesIn = (text) => [...text.matchAll(/Source \[(\d+)\]: (.+?) \(([^)]+)\)\n?([^\n]*)/g)].map((m) => ({ n: m[1], title: m[2], url: m[3], more: m[4] }))
+
 createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Headers', '*')
   if (req.method === 'OPTIONS') return res.end()
   if (req.url?.endsWith('/models')) {
     res.setHeader('Content-Type', 'application/json')
-    return res.end(JSON.stringify({ data: [{ id: 'fake-brain-1' }, { id: 'fake-brain-2' }] }))
+    return res.end(JSON.stringify({ data: [{ id: 'fake-brain-1' }, { id: 'fake-brain-2' }, { id: 'fake-image-1' }] }))
+  }
+  if (req.url?.endsWith('/images/generations')) {
+    res.setHeader('Content-Type', 'application/json')
+    return res.end(JSON.stringify({ data: [{ b64_json: picture() }] }))
   }
   if (!req.url?.endsWith('/chat/completions')) return res.writeHead(404).end()
 
@@ -83,8 +105,23 @@ createServer(async (req, res) => {
   const toolName = last.role === 'tool' ? messages.flatMap((m) => m.tool_calls ?? []).find((c) => c.id === last.tool_call_id)?.function?.name : undefined
   const remember = /^(?:remember|retiens|覚えて)[:：,]?\s*(.+)/i.exec(question.trim())
   const routine = /routine/i.test(question) && last.role === 'user'
+  // A connected mail service's tools, by name: declared, or listed in <connections>.
+  const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
+  const emails = /e-?mails?|inbox|courriels?/i.test(question)
+  const fromScript = (/** @type {string} */ name) => ({ name: 'run', args: { code: `return await tools.${name}({ limit: 3 })` } })
+  const found = sourcesIn(last.role === 'tool' ? last.content : '')
   const steps = '# Weekly sales summary\n\n1. Read the shared sales file.\n2. Total the sales by region.\n3. Answer with a short table.'
-  if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
+  if (emails && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { limit: 3 } }
+  else if (emails && last.role === 'user' && mailTool && declared.has('run')) call = fromScript(mailTool)
+  else if (emails && last.role === 'user' && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'search the latest emails' } }
+  else if (toolName === 'find_tools' && mailTool && /_search_emails\(/.test(last.content)) call = /inside run/.test(last.content) ? fromScript(mailTool) : { name: mailTool, args: { limit: 3 } }
+  else if (found.length && /^mail:/.test(found[0].url)) {
+    answer = `Your ${found.length} latest emails:\n\n${found.map((email) => `- **${email.title}**, ${email.more.replace(/:.*$/, '')} [${email.n}]`).join('\n')}`
+  } else if (/search the web|look up/i.test(question) && last.role === 'user' && declared.has('web_search')) call = { name: 'web_search', args: { query: question.replace(/.*(?:search the web for|look up)\s*/i, '').replace(/[?.!]$/, '') } }
+  else if (toolName === 'web_search') answer = found.length ? `Here is what the web says:\n\n${found.map((page) => `- **${page.title}**: ${page.more.slice(0, 90)} [${page.n}]`).join('\n')}` : 'I found nothing on the web.'
+  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: `return await models.image(${JSON.stringify(question)})` } }
+  else if (toolName === 'run' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
+  else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
   else if (routine && declared.has('save_routine')) call = { name: 'save_routine', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }

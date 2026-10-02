@@ -18,6 +18,14 @@
         "test/fixtures/fake-brain.js"
       ],
       "port": 4174
+    },
+    {
+      "name": "fake-mail",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "test/fixtures/fake-mail.js"
+      ],
+      "port": 4182
     }
   ]
 }

@@ -10,7 +10,7 @@ Each version is deployed as soon as it is ready. The loud public launch happens 
 | **0.2** ✅ | Read and keep | Frozen prompt per conversation with system notes; Anthropic prompt caching and warming (D46, D49). On-device brain (Gemma 4 E2B, q4f16) behind a device check, which fulfils the out-of-the-box promise. Files in: extraction for OOXML and PDF. Things Jean made: rich-text copy, CSV, print. Backup export/import plus `persist()`. "What Jean read". Dictation. | Jean answers questions about a dropped PDF with no account and no key, and a second question about it is served from the cache |
 | **0.3** ✅ | Discover — **public launch** | Reflexes (Kev-0.6B, measured on the multilingual test set). Discovery mechanics and the collection page. Deferred tools and `find_tools` (D47). Calculations (QuickJS) with codemode and `models.decide` (D48). Reply suggestions. Auto mode. Source chips. 33 locales. | The "drop a CSV, get a report" demo works on a managed Windows laptop, in three languages |
 | **0.4** ✅ | Remember | Memory (switches itself on), the "What Jean knows about you" page, instructions, projects (each with its light colour, which tints the little light: `--tint`, D78), routines (`SKILL.md`), `recall`. Python sandbox (after the Pyodide spike), with Pyodide copied in by `npm run dev`/`start`/`build` (D43). | Two projects keep separate memories, and a routine is created from repeated requests |
-| **0.5** | Reach | Connections (MCP), deferred and reachable from codemode by default. Web search (the brain's own search plus Wikipedia). `models.image` in codemode. Live voice conversation. | Jean summarises the user's latest emails through a connection, with citations |
+| **0.5** ✅ | Reach | Connections (MCP), deferred and reachable from codemode by default. Web search (the brain's own search plus Wikipedia). `models.image` in codemode. Live voice conversation. | Jean summarises the user's latest emails through a connection, with citations |
 | **0.6** | Delegate | Helpers, decision inbox, "Since last time", assistant names, Double-check | A large task is split, approved step by step, and the result is verified against its sources |
 | Later | Together | Sync (folder or drive), share (fragment links, Web Share), collaboration (an end-to-end-encrypted relay hosted on Jean's domain, self-hostable; Yjs for shared documents), enterprise policy hardening, OTel export, managed configuration | — |
 
@@ -65,6 +65,31 @@ Still to check by hand:
 - [ ] A project's light at every stage of the room's warmth, by day and by night, and with `prefers-contrast: more`
 
 Budgets at the end of the build: core 2,963 of 3,000 lines, app 9,190 of 10,000, first load 96.6 of 100 KB gzipped (the largest catalogue is now Russian), CSS 9.1 of 12 KB, base prompt 182 of 200 tokens. The first load has 3.4 KB left: 0.5 will need room.
+
+## 0.5 status (2026-10-02)
+
+Built: Connections over MCP, with Jean's own client for both protocol eras (the stateless 2026-07-28, and the handshake and sessions of 2025, D87) and sign-in with OAuth from the browser, or a key (D88). A connection's tools are deferred, listed in a frozen `<connections>` section, found with `find_tools` or called from a script, and ask first by default (D89). Every source a tool or the brain's own search brings in is numbered by the loop and becomes a chip, with a "Sources" list under the answer (D90). Web search: the brain's own (Anthropic, OpenRouter), otherwise Wikipedia in the user's language (D91). `models.image` in codemode, kept in the project and shown in the answer (D92). Live conversation: Silero and Whisper on the device, the answer read aloud as it streams, interrupted by speaking (D93). The loop and the brains' adapters now load with the first message (D94), and the app's line budget is 15,000 (D86, decided before 0.5). 25 new strings in all 33 languages. Also fixed: "Not now" on an offer above the box (Backup, Intuition, now Live conversation) no longer brings the offer straight back.
+
+Checked end to end, with `npm run e2e` in Chromium and WebKit against the fake brain and a fake mail service (`test/fixtures/fake-mail.js`):
+
+- The done-when: Jean signs in to the mail service (discovery, registration, PKCE, the issuer check), finds its tool with `find_tools`, asks before reading, and sums up the three latest emails, each cited as a chip with its subject, and listed under Sources.
+- A service of the 2025 revision, reached from a script: the handshake, the session, the nested call under `run`.
+- Web search through Wikipedia's address in settings: two web pages as chips that open; the search in the activity view.
+- `models.image` from a script, through the Images API of an OpenAI-compatible server: the picture kept and shown, ready to save.
+- The live conversation offer after three dictations, in English, Arabic and Japanese, and its button once on.
+- Under `node --test`: both MCP eras, header mirroring, a forgotten session, the whole sign-in against the fake service (and a hostile one), Anthropic's search blocks and citations, its fallback when an organisation turns search off, OpenRouter's annotations, `pause_turn`, the numbering of sources, pictures from both providers, and live conversation's turn-taking.
+- The Connections dialog, the approval and the cited answer by eye, in English, Arabic (right to left) and Japanese.
+
+Still to check by hand:
+
+- [ ] A real remote MCP server from a browser: whether it answers with CORS, exposes `Mcp-Session-Id` and `WWW-Authenticate`, accepts dynamic registration, and renews tokens
+- [ ] Anthropic's own web search against the real API: citations as chips, a second question replaying the results, `pause_turn` on a long search
+- [ ] OpenRouter's web search: where its annotations arrive in the stream. If they all come at the end, the `[n]` marks land after the follow-ups, where they are hidden, and only the Sources list shows them
+- [ ] `models.image` with OpenAI and OpenRouter keys
+- [ ] Live conversation on a real microphone: Silero's thresholds, whether Jean's voice through speakers interrupts it (echo cancellation doesn't reach system voices everywhere), Safari's `AudioContext` at 16 kHz
+- [ ] Signing in to a connection from a private Safari window: with no OPFS, anything set up before the redirect is lost
+
+Budgets at the end of the build: core 2,999 of 3,000 lines, app 10,222 of 15,000 (D86), first load 90.2 of 100 KB gzipped (D94), CSS 9.3 of 12 KB, the largest catalogues 7.5 of 8 KB (Russian and Ukrainian), base prompt 182 of 200 tokens. The core and the catalogues are nearly full: 0.6 will need to make room in both.
 
 ## Before the public launch (0.3)
 

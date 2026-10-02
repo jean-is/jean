@@ -3,12 +3,8 @@
 // same file dropped twice is stored once. Conversations link to files, never copy them.
 import { join, readJSON, writeJSON } from './fs.js'
 
-/**
- * @typedef {import('./types.js').FS} FS
- * @typedef {import('./types.js').ResourceLink} ResourceLink
- * @typedef {import('./types.js').DocumentPart} DocumentPart
- * @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string }} FileMeta
- */
+/** @import { FS, ResourceLink, DocumentPart } from './types.js' */
+/** @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string }} FileMeta */
 
 const MARKER = /^\[\[page (\d+)\]\]$/m
 

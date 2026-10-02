@@ -2,6 +2,7 @@
 import { expect } from '@playwright/test'
 
 export const BRAIN_URL = 'http://127.0.0.1:4181/v1'
+export const MAIL_URL = 'http://127.0.0.1:4182'
 export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,Feb,1340\nSouth,Feb,1010\nEast,Jan,700\nEast,Feb,815\n'
 
 /** @param {import('@playwright/test').Page} page @param {string} [lang] */
@@ -27,4 +28,11 @@ export async function connectFakeBrain(page) {
 export async function ask(page, text) {
   await page.locator('#prompt').fill(text)
   await page.locator('#prompt').press('Enter')
+}
+
+/** Turns a capability on from the house ("What Jean can do"). @param {import('@playwright/test').Page} page @param {string} name */
+export async function turnOn(page, name) {
+  await page.locator('.bar-actions button').first().click()
+  const house = page.locator('app-collection dialog[open]')
+  await house.locator('.room-card', { hasText: name }).locator('.button').click()
 }

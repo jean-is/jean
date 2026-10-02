@@ -8,8 +8,7 @@ import { scriptURL } from '../../ui/trusted.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { gemmaParser } from './gemma.js'
 
-/** @typedef {import('../../core/types.js').StreamEvent} StreamEvent */
-/** @typedef {import('../../core/types.js').ToolCall} ToolCall */
+/** @import { StreamEvent, ToolCall } from '../../core/types.js' */
 
 export const GEMMA = Object.freeze({
   model: 'onnx-community/gemma-4-E2B-it-ONNX',

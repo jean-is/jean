@@ -20,7 +20,7 @@ export function placeIn(hash) {
 /** @param {string} hash @returns {string | null} the conversation id in an address */
 export const conversationIn = (hash) => placeIn(hash).conversation
 
-/** @param {import('./state.js').Project} project @param {string | null} id */
+/** @param {import('../core/settings.js').Project} project @param {string | null} id */
 export function hashFor(project, id) {
   const base = project.data.default === true || !project.id ? '#/' : `#/p/${project.id}/`
   return id ? `${base}c/${id}` : base

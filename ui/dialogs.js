@@ -283,7 +283,7 @@ class Settings extends Element {
         <p class="muted">${t('collection.lede', { name: BRAND.name })}</p>
         <button class="button" @click=${async () => (await import('./discovery.js')).unlockAll()}>${t('collection.all')}</button>
       </section>`}
-      <section class="about"><p class="muted">${BRAND.name} 0.4 · ${t('settings.about')}</p></section>
+      <section class="about"><p class="muted">${BRAND.name} 0.5 · ${t('settings.about')}</p></section>
     </dialog>`
   }
 

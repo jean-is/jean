@@ -1,4 +1,4 @@
-// About thirty inline icons, 24×24, drawn with the current colour.
+// About thirty-five inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -38,5 +38,8 @@ export const icons = {
   repeat: icon(svg`<path d="M5 11V9.5A3.5 3.5 0 0 1 8.5 6H19M16 3l3 3-3 3M19 13v1.5a3.5 3.5 0 0 1-3.5 3.5H5M8 21l-3-3 3-3"/>`, 'flip-rtl'),
   rooms: icon(svg`<path d="M3.5 10.5 12 4l8.5 6.5V20h-17Z"/><path d="M12 20v-6M3.5 14h17"/>`),
   code: icon(svg`<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>`),
+  plug: icon(svg`<path d="M9 3.5V8M15 3.5V8M6.5 8h11v3a5.5 5.5 0 0 1-11 0ZM12 16.5V21"/>`),
+  image: icon(svg`<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>`),
+  wave: icon(svg`<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>`),
   chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),
 }

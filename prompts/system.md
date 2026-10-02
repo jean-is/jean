@@ -59,6 +59,10 @@ As built in 0.4 (D81), `<project>` holds the project's name; the assistant's nam
 {- name: when to use it; the routine tool reads its steps}
 </skills>
 
+<connections>
+{- service: the names of its tools, which find_tools finds and scripts call (0.5, D89)}
+</connections>
+
 <context>
 Today is {date}.
 </context>
@@ -90,6 +94,8 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Memory (0.4) | `recall: search earlier conversations` / `remember: save a lasting fact, preference or correction the user states` | Remember only what will still matter in later conversations. |
 | Routines (0.4) | `routine: read the steps of a routine before following it` / `save_routine: save how a repeated task is done, when the user asks` | When a request matches a routine, read it and follow its steps. |
 | Data toolkit (0.4) | `python: run Python (its standard library only) in a sandbox, for data work beyond simple maths` | — |
+| Web search (0.5) | `web_search: search the web for facts the conversation does not hold` (a provider that searches by itself gets its own tool instead, D91) | — |
+| Connections (0.5) | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |
 | Files (later) | `write: create or replace a file` / `edit: change part of a file` | Results the user asked for are files. Say their names. |
 | Helpers (later) | `delegate: hand a self-contained part of the task to a helper` | Use helpers only for independent parts of a large task. |
 
