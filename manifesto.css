@@ -43,5 +43,3 @@
 @media (forced-colors: active) {
   .manifesto li::before { background: CanvasText; box-shadow: none; }
 }
-/* By day the flame is too pale for text on paper: its deeper rim reads at AA. */
-[data-theme='light'] .manifesto h2 { color: var(--flame-deep); }
