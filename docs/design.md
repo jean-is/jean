@@ -34,7 +34,8 @@ Jean's persona is the room's light, drawn small: a soft flame with a curled tip,
 - **At every size.** From about 7 rem down to a 1.5 rem favicon-sized flame; below 2.6 rem the cheeks and the eye highlights drop out (a container query).
 - **It has no words and no gender.** It never speaks, never carries text, and nothing in the interface agrees with it grammatically. It is not tied to the name either, so it survives a rename.
 - **It is not in the prompt.** The base prompt stays free of personas (AGENTS.md); the little light is purely visual and decorative (`aria-hidden`).
-- **A project's light could tint it** (each project is a room with its own light colour), by overriding its colours.
+- **A project's light tints it.** Every colour of the little light comes from one custom property, `--tint`: Jean's amber by default, any CSS colour otherwise. Only the hue is taken, so the face keeps its contrast whatever the colour. Projects (0.4) set it from the `colour` in `project.md`: on the root for the room you are in, or on one `<app-persona>` (a project's card in the house).
+- **It is the app icon.** `icons/icon.svg` is the same drawing, idle, in the dark room, inside the maskable safe zone.
 
 ## Typography
 

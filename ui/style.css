@@ -47,7 +47,6 @@
     --ember-off: oklch(0.24 0.02 50 / 0.2);
     --glow: oklch(0.86 0.12 75);
     --glow-alpha: 0.7;
-    --persona-rim: var(--flame-deep);
   }
 }
 
@@ -105,8 +104,10 @@ button { cursor: pointer; }
 @keyframes settle { from { --light: 0.75; } to { --light: 0.42; } }
 
 /* ─── The little light (ui/persona.js) ──────────────────────────────────── */
-/* The light, with a face. The same colours by night and by day; by day it is drawn in ink. */
+/* The light, with a face. Every colour comes from --tint, the light's colour: Jean's amber, or a
+   project's own (any CSS colour, on the root or on one element). By day it is drawn in ink. */
 
+:root { --tint: oklch(0.74 0.17 54); }
 app-persona {
   position: relative;
   display: inline-block;
@@ -114,13 +115,18 @@ app-persona {
   inline-size: var(--persona-size, 2rem);
   aspect-ratio: 1;
   container-type: inline-size;
+  color: oklch(from var(--tint) 0.26 0.05 calc(h - 14));
+  --persona-halo: oklch(from var(--tint) 0.78 0.16 calc(h + 11));
+}
+@media (prefers-color-scheme: light) {
+  app-persona { --persona-halo: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); --persona-rim: oklch(from var(--tint) 0.55 0.16 calc(h - 9)); }
 }
 app-persona::before {
   content: '';
   position: absolute;
   inset: -40%;
   border-radius: 50%;
-  background: radial-gradient(closest-side, oklch(from var(--glow) l c h / var(--glow-alpha)), transparent);
+  background: radial-gradient(closest-side, oklch(from var(--persona-halo) l c h / var(--glow-alpha)), transparent);
   opacity: 0.5;
   transition: opacity 0.8s var(--ease);
   animation: glow 4s ease-in-out infinite alternate;
@@ -128,12 +134,12 @@ app-persona::before {
 .persona { position: relative; display: block; inline-size: 100%; block-size: 100%; overflow: visible; }
 .persona * { transition: opacity 0.3s, translate 0.6s var(--ease), scale 0.4s var(--ease); }
 .persona-flame { transform-origin: 50px 91px; animation: sway 3s ease-in-out infinite alternate; }
-.persona-body, .persona-sparks { fill: oklch(0.74 0.17 54); }
+.persona-body, .persona-sparks { fill: oklch(from var(--tint) 0.74 0.17 h); }
 .persona-body { stroke: var(--persona-rim, none); stroke-width: 3; paint-order: stroke; }
-.persona-inner { fill: oklch(0.91 0.115 84); }
-.persona-eyes { fill: oklch(0.26 0.05 40); transform-origin: 50px 62px; animation: blink 5s infinite; }
+.persona-inner { fill: oklch(from var(--tint) 0.91 0.115 calc(h + 30)); }
+.persona-eyes { fill: currentColor; transform-origin: 50px 62px; animation: blink 5s infinite; }
 .persona-eyes circle { fill: oklch(1 0 0 / 0.9); }
-.persona-face path { fill: none; stroke: oklch(0.26 0.05 40); stroke-width: 2.4; stroke-linecap: round; transform-origin: 50px 71px; }
+.persona-face path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; transform-origin: 50px 71px; }
 .persona-cheeks { fill: oklch(0.69 0.16 27 / 0.5); }
 .persona-sparks circle, .persona-happy { opacity: 0; }
 @container (inline-size < 2.6rem) { .persona-cheeks, .persona-eyes circle { display: none; } }
@@ -686,14 +692,14 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
   :view-transition-group(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {
-  :root { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); --persona-rim: var(--ink); }
+  :root { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
+  app-persona { --persona-rim: var(--ink); }
 }
 @media (forced-colors: active) {
   .room, app-persona::before, .persona-inner, .persona-cheeks, .persona-eyes circle { display: none; }
-  app-persona { forced-color-adjust: none; }
+  app-persona { forced-color-adjust: none; color: CanvasText; }
   .persona-body { fill: Canvas; stroke: CanvasText; }
-  .persona-eyes, .persona-sparks { fill: CanvasText; }
-  .persona-face path { stroke: CanvasText; }
+  .persona-sparks { fill: CanvasText; }
   .send, .button.primary, .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   .choice-option.is-selected, .room-card.is-lit { border: 2px solid Highlight; }
   .hero-question { color: CanvasText; background: none; }
