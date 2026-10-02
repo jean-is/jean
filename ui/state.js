@@ -21,6 +21,12 @@ import { chooseBrain, isLocal, TIERS } from './auto.js'
 /** @import { Settings, Project } from '../core/settings.js' */
 /** @typedef {'idle' | 'listening' | 'thinking' | 'answering' | 'done'} Presence */
 /** @typedef {'light' | 'dark'} Theme */
+/** @typedef {import('../core/loop.js').PermissionOption} PermissionOption */
+/**
+ * A decision waiting for the user, in the decision inbox: an approval, or a helper's question.
+ * @typedef {{ id: number, toolCall: ToolCallInfo, resolve: (option: PermissionOption) => void }
+ *   | { id: number, question: string, from: string, resolve: (answer: string | null) => void }} Decision
+ */
 
 // The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
 export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
@@ -51,8 +57,8 @@ export const app = {
   /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | 'knows' | 'project' | 'connections' | null>} */
   dialog: signal(null),
   draft: signal(''),
-  /** @type {import('@preact/signals-core').Signal<{ toolCall: ToolCallInfo, resolve: (option: any) => void } | null>} */
-  permission: signal(null),
+  /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
+  decisions: signal(/** @type {Decision[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<ServiceWorker | null>} */
   updateReady: signal(null),
   /** @type {import('@preact/signals-core').Signal<{ message: string, action?: { label: string, run: () => void } } | null>} */
@@ -67,12 +73,22 @@ export const app = {
   actions: signal(/** @type {Record<string, string[]>} */ ({})),
   /** Capabilities the user turned on and policy's preUnlock, loaded at start. */
   ready: /** @type {Promise<unknown>} */ (Promise.resolve()),
+  /** When the user was last here, if Jean opened after time away ("Since last time"); 0 otherwise. */
+  back: signal(0),
 }
 
 // A shared file's share of the brain's context (see docs/architecture.md#retrieval-and-extraction).
 const DOCUMENT_SHARE = 0.25
 const DEVICE_CONTEXT = 32768
 const DEFAULT_CONTEXT = 128000
+// Answers citing their sources before Double-check is offered.
+export const CITED = 3
+// Opening Jean this long after it was last on screen is coming back after time away.
+export const AWAY_MS = 8 * 3600_000
+// Kept on the device, like its id: when Jean was last on screen here.
+export const SEEN_KEY = 'app.seen'
+// What a read-only turn may do ("Since last time"): read, search, look things up, work things out.
+const READING = new Set(['read', 'search', 'fetch', 'think', 'execute'])
 // Anthropic's default cache lifetime is 5 minutes (D49).
 const CACHE_TTL_MS = 5 * 60_000
 
@@ -197,6 +213,9 @@ export async function enterProject(project) {
   await refreshConversations()
 }
 
+/** What the assistant is called in this room: the name the project gave it, or Jean's. */
+export const assistantName = () => String(app.project.value.data.assistantName || BRAND.name)
+
 /** Whether this message may go to the cloud: the user's switch, and the project's. */
 export const cloudAllowed = () => effective.value.settings.cloud && app.project.value.data.cloud !== false
 
@@ -303,6 +322,39 @@ function attachedLinks(brain, records) {
   return links
 }
 
+// ─── The decision inbox ──────────────────────────────────────────────────────
+
+let decisionId = 0
+
+/**
+ * Queues a decision for the user and waits for the answer. Helpers keep working meanwhile,
+ * so several can wait at once, each answered on its own.
+ * @param {Omit<Decision, 'id' | 'resolve'>} decision @returns {Promise<any>}
+ */
+function queue(decision) {
+  return new Promise((resolve) => {
+    const item = /** @type {Decision} */ ({ ...decision, id: ++decisionId, resolve: (/** @type {any} */ answer) => {
+      app.decisions.value = app.decisions.value.filter((other) => other !== item)
+      resolve(answer)
+    } })
+    app.decisions.value = [...app.decisions.value, item]
+  })
+}
+
+/** A helper's question; null when the user doesn't answer. @param {string} question @param {string} from @returns {Promise<string | null>} */
+export const askUser = (question, from) => queue({ question, from })
+
+/** An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then follow. @param {ToolCallInfo} toolCall */
+async function approve(toolCall) {
+  const option = /** @type {PermissionOption} */ (await queue({ toolCall }))
+  const rule = ruleFromPermission(option)
+  if (rule && toolCall.kind) {
+    await setRule(toolCall.kind, rule)
+    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')
+  }
+  return option
+}
+
 // ─── Sending ─────────────────────────────────────────────────────────────────
 
 /** The body of one of Jean's Markdown files ('' when missing). @param {string} path */
@@ -314,19 +366,21 @@ export const readBody = async (path) => parseFrontMatter((await app.fs.read(path
  * @returns {Promise<import('../core/prompt.js').Sections>}
  */
 async function context() {
-  const { dir, data } = app.project.value
+  const { dir, data, body } = app.project.value
   const home = data.default === true
   const instructions = [app.policy.instructions, await readBody('instructions.md'), home ? '' : await readBody(`${dir}/instructions.md`)].filter(Boolean).join('\n\n')
   const added = await Promise.all(contributions().sections.map((section) => section()))
-  return Object.assign({ ...(!home && { project: String(data.name) }), ...(instructions && { instructions }) }, ...added)
+  // The project's name, then what the user calls its assistant there and how it should be.
+  const project = [String(data.name), ...(data.assistantName ? [`The user calls you ${data.assistantName} here.`] : []), ...(body.trim() ? [`How to be: ${body.trim()}`] : [])].join('\n')
+  return Object.assign({ ...(!home && { project }), ...(instructions && { instructions }) }, ...added)
 }
 
 /**
  * The records a message adds: the frozen prompt when the conversation has none yet, or
- * notes for what changed since (D46), then the user message itself.
- * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records
+ * notes for what changed since (D46), any notes the message comes with, then the message itself.
+ * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes]
  */
-async function prepare(text, brain, records) {
+async function prepare(text, brain, records, notes = []) {
   await app.ready
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47).
@@ -336,8 +390,8 @@ async function prepare(text, brain, records) {
   const frozen = frozenPrompt(records)
   const head = frozen
     ? changeNotes(frozen.state, now, sections)
-    : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: BRAND.name, uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
-  return [...head, ...userRecords(text, attachedLinks(brain, records), app.deviceId)]
+    : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
+  return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records), app.deviceId)]
 }
 
 // ─── Auto ────────────────────────────────────────────────────────────────────
@@ -390,11 +444,15 @@ export function canStepUp(entry) {
 
 /** Asks again, one level up. */
 export function askSmarter() {
-  send(t('auto.smarter.prompt'), 1)
+  send(t('auto.smarter.prompt'), { boost: 1 })
 }
 
-/** @param {string} text @param {number} [boost] Auto: levels above the last answer's */
-export async function send(text, boost = 0) {
+/**
+ * @param {string} text
+ * @param {{ boost?: number, notes?: Envelope[] }} [options] boost: Auto's levels above the last
+ *   answer's; notes: what the brain is told just before the message ("Since last time")
+ */
+export async function send(text, { boost = 0, notes = [] } = {}) {
   const files = app.attachments.value
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
@@ -414,7 +472,7 @@ export async function send(text, boost = 0) {
     return
   }
   const { brain, meta } = picked
-  const added = await prepare(text.trim(), brain, current?.records ?? [])
+  const added = await prepare(text.trim(), brain, current?.records ?? [], notes)
   app.draft.value = ''
   app.attachments.value = []
   if (!current) {
@@ -441,6 +499,8 @@ export async function retry() {
 /** @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it */
 async function runAgent(brain, meta) {
   const current = /** @type {NonNullable<typeof app.current.value>} */ (app.current.value)
+  // A brief of what's new since last time only reads, whatever the rules say.
+  const readOnly = foldTurns(current.records).at(-1)?.notes.some((note) => note.data.kind === 'since')
   // The loop and the brains' adapters load with the first message, not with the first screen.
   const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
   const frozen = frozenPrompt(current.records)
@@ -481,18 +541,8 @@ async function runAgent(brain, meta) {
       meta,
       firstSource: nextSource(current.records),
       signal: controller.signal,
-      rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
-      askPermission: (request) => new Promise((resolve) => {
-        app.permission.value = {
-          toolCall: request.toolCall,
-          resolve: (option) => {
-            app.permission.value = null
-            const rule = ruleFromPermission(option)
-            if (rule && request.toolCall.kind) setRule(request.toolCall.kind, rule)
-            resolve(option)
-          },
-        }
-      }),
+      rule: (kind, reserved) => (readOnly && !READING.has(kind) ? 'never' : resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved })),
+      askPermission: (request) => approve(request.toolCall),
       onUpdate: (update, step) => {
         if (update.sessionUpdate === 'agent_message_chunk') setPresence('answering')
         applyUpdate(turn, update, step)
@@ -512,7 +562,7 @@ async function runAgent(brain, meta) {
     controller = null
     app.busy.value = false
     app.live.value = null
-    app.permission.value?.resolve('reject_once')
+    for (const decision of app.decisions.value) 'toolCall' in decision ? decision.resolve('reject_once') : decision.resolve(null)
     app.offering.value?.resolve(false)
     let records = [...current.records, ...settled]
     if (!titleOf(records)) {
@@ -532,7 +582,19 @@ async function runAgent(brain, meta) {
     const answer = lastAnswer(settled)
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records)
+    if (answer && at && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) cited(current.path, at, records)
   }
+}
+
+/**
+ * An answer that cites its sources: Double-check checks it, and until it is on, citations in
+ * regular use offer it (counted, an event with no language, D6).
+ * @param {string} path @param {string} at @param {Envelope[]} records
+ */
+async function cited(path, at, records) {
+  if (loaded.value.has('check')) return (await import('../caps/check/check.js')).check(path, at, records)
+  const count = effective.value.settings.cited ?? 0
+  if (count < CITED) await updateSettings({ cited: count + 1 })
 }
 
 /**

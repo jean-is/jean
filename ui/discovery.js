@@ -5,7 +5,7 @@
 // can be reached (D47).
 import { effect } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions } from './caps.js'
-import { app, effective, answerOffer, notify, send } from './state.js'
+import { app, effective, answerOffer, notify, send, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
 import { words, alike } from '../core/search.js'
@@ -15,7 +15,7 @@ import { t } from '../core/i18n.js'
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'routines', 'python', 'search', 'connections', 'live', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'routines', 'python', 'search', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -27,6 +27,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
   search: 'searching the web, when a question needs current or specific facts',
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
+  helpers: 'helpers that do the independent parts of a large task at the same time',
 })
 
 /** The tools a capability brings, by name. @param {string} id */
@@ -100,9 +101,10 @@ export async function accept(id) {
   else begin(id)
 }
 
-/** What a capability leads to as soon as it is on: a project to name, a service to connect, a conversation to have. @param {string} id */
+/** What a capability leads to as soon as it is on: a project or an assistant to name, a service to connect, a conversation to have. @param {string} id */
 export async function begin(id) {
   if (id === 'projects') (await import('../caps/projects/projects.js')).newProject()
+  if (id === 'names' && !app.project.value.data.default) (await import('../caps/projects/projects.js')).editProject(app.project.value)
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
 }
@@ -154,6 +156,19 @@ effect(() => {
 effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')
+})
+effect(() => {
+  // Back after time away, with services connected: what's new there?
+  if (app.back.value && ((effective.value.settings.connections ?? []).length || (app.policy.connections ?? []).length)) offerOnce('since')
+})
+effect(() => {
+  // Some use inside a project: its assistant could have a name.
+  const { data } = app.project.value
+  if (!data.default && data.name && !data.assistantName && app.conversations.value.length >= 3) offerOnce('names')
+})
+effect(() => {
+  // Citations in regular use: each answer could be checked against them.
+  if ((effective.value.settings.cited ?? 0) >= CITED) offerOnce('check')
 })
 effect(() => {
   // Rows of data: exact numbers are a script away.

@@ -41,7 +41,7 @@ export const imageTool = {
     if (!prompt) throw new Error('Describe the picture to make.')
     const found = await painter()
     if (!found) throw new Error('None of the connected brains can make pictures.')
-    const { generateImage } = await import('../../core/images.js')
+    const { generateImage } = await import('./picture.js')
     const { bytes, mimeType } = await generateImage({ ...found, apiKey: (await getSecret(app.fs, found.brain.id)) ?? undefined, prompt, signal: ctx.signal })
     const name = `${slug(prompt).slice(0, 40) || 'picture'}.${mimeType.split('/')[1].replace('jpeg', 'jpg')}`
     const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType, bytes, pages: [prompt], by: 'jean' })

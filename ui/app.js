@@ -6,7 +6,7 @@ import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, theme, THEME_KEY, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
+import { app, effective, activeBrain, theme, THEME_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import { registerServiceWorker } from './shell.js'
 import { startRouter } from './router.js'
@@ -24,8 +24,8 @@ async function start() {
   const { deny = [], preUnlock = [] } = app.policy.capabilities ?? {}
   configureCapabilities({ deny, remember: rememberUnlocked })
 
-  setLoader(async (lang) => {
-    const response = await fetch(`locales/${lang}.json`)
+  setLoader(async (lang, part) => {
+    const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
     return response.ok ? response.json() : null
   })
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, navigator.languages))
@@ -73,6 +73,14 @@ async function start() {
   await refreshConversations()
   await startRouter()
   app.fs.watch?.((path) => (path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
+
+  // Opened after time away: "Since last time" (an event with no language). Each device keeps its own.
+  const seen = Number(localStorage.getItem(SEEN_KEY)) || 0
+  if (seen && Date.now() - seen > AWAY_MS) app.back.value = seen
+  const stamp = () => localStorage.setItem(SEEN_KEY, String(Date.now()))
+  stamp()
+  addEventListener('pagehide', stamp)
+  document.addEventListener('visibilitychange', stamp)
 
   document.body.append(document.createElement('app-shell'))
   root.classList.add('is-ready')

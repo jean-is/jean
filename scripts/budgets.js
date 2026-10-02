@@ -117,7 +117,7 @@ async function checkDependencies (budgets) {
   return [measure('runtimeDependencies', max, names.length, extra.map((n) => `not allowed: ${n}`))]
 }
 
-/** Each person loads one catalog, their own (core/i18n.js), so the first load counts the largest. */
+/** Each person loads one catalog, their own (core/i18n.js), so the first load counts the largest. Its dialogs' part loads with them (D97). */
 async function largestLocale () {
   let largest = 'locales/en.json'
   let size = 0
@@ -170,7 +170,7 @@ function perItem (name, limit, items) {
 
 /** @param {any} budgets */
 async function checkAssets (budgets) {
-  const locales = (await filesIn(['locales'], /^locales\/[^/]+\.json$/)).sort()
+  const locales = (await filesIn(['locales'], /^locales\/(dialogs\/)?[^/]+\.json$/)).sort()
   const caps = await subdirectories('caps')
   const fonts = (await filesIn(['fonts'], /^fonts\/[^/]+\.woff2$/)).sort()
   /** @type {Array<[string, number]>} */

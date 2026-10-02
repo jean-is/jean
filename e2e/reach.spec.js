@@ -2,24 +2,10 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, MAIL_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, MAIL_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
-
-/** Connects a service from the house by its address, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */
-async function connect(page, url) {
-  await turnOn(page, 'Connections')
-  const dialog = page.locator('app-connections dialog[open]')
-  // The services Jean knows come first; an address is one step down.
-  await dialog.locator('details.other summary').click()
-  await dialog.locator('input[name="url"]').fill(url)
-  await dialog.locator('input[name="name"]').fill('Mail')
-  await dialog.locator('.button.primary').click()
-  await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect(page.locator('app-connections dialog[open] .connection')).toContainText('Search emails · Read an email · Send an email')
-  await page.keyboard.press('Escape')
-}
 
 test('Jean sums up the latest emails through a connection, with citations', async ({ page }) => {
   await start(page)

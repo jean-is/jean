@@ -4,7 +4,7 @@
 import { register } from '../../ui/caps.js'
 import { app, currentFiles, rememberText, warm, notify } from '../../ui/state.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
-import { extractPages } from '../../core/extract.js'
+import { extractPages } from './extract.js'
 import { t } from '../../core/i18n.js'
 
 const MAX_BYTES = 100 * 1024 * 1024

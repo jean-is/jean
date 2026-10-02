@@ -2,7 +2,7 @@
 // on the device (they are never part of a backup). Restoring adds what is missing.
 import { register } from '../../ui/caps.js'
 import { app, answerOffer, notify, showError } from '../../ui/state.js'
-import { exportBackup, importBackup } from '../../core/backup.js'
+import { exportBackup, importBackup } from './archive.js'
 import { save } from '../../ui/save.js'
 import { t } from '../../core/i18n.js'
 

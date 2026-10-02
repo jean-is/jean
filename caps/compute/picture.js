@@ -1,9 +1,9 @@
 // Pictures from the brain's provider, for codemode's models.image (D48), imported on first use.
-import { LLMError, headersFor, post, endpoint } from './llm.js'
+import { LLMError, headersFor, post, endpoint } from '../../core/llm.js'
 
 /**
  * OpenAI's Images API, which compatible servers share, or an OpenRouter model that answers with images.
- * @param {import('./types.js').Connection & { model: string, prompt: string }} options
+ * @param {import('../../core/types.js').Connection & { model: string, prompt: string }} options
  * @returns {Promise<{ bytes: Uint8Array, mimeType: string }>}
  */
 export async function generateImage({ brain, apiKey, model, prompt, signal, fetch = globalThis.fetch }) {

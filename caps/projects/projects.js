@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
-import { register } from '../../ui/caps.js'
+import { register, loaded } from '../../ui/caps.js'
 import { app, enterProject, refreshProjects } from '../../ui/state.js'
 import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
 import { createProject, stringifyFrontMatter } from '../../core/settings.js'
@@ -30,6 +30,12 @@ export function newProject() {
 }
 
 /** @param {Project} project */
+export function editProject(project) {
+  editing.value = project
+  app.dialog.value = 'project'
+}
+
+/** @param {Project} project */
 const nameOf = (project) => (project.data.default === true ? t('projects.home') : String(project.data.name))
 
 /** Each little light in a list shows its project's colour (CSSOM: the CSP allows no style attribute). @param {HTMLElement} host */
@@ -48,7 +54,7 @@ class Projects extends Element {
           <span dir="auto">${nameOf(project)}</span>
         </button>
         ${project.dir === here.dir && project.data.default !== true ? html`<button class="icon-button subtle" title=${t('projects.edit')}
-          aria-label=${t('projects.edit')} @click=${() => { editing.value = project; app.dialog.value = 'project' }}>${icons.gear}</button>` : nothing}
+          aria-label=${t('projects.edit')} @click=${() => editProject(project)}>${icons.gear}</button>` : nothing}
       </li>`)}</ul>
       <button class="button subtle" @click=${newProject}>${icons.plus} ${t('projects.new')}</button>
     </nav>`
@@ -59,10 +65,10 @@ class Projects extends Element {
   }
 }
 
-/** @param {Project} project @param {Record<string, any>} patch @param {string[]} [drop] */
-async function rewrite(project, patch, drop = []) {
+/** @param {Project} project @param {Record<string, any>} patch @param {string[]} [drop] @param {string} [body] how its assistant should be */
+async function rewrite(project, patch, drop = [], body = project.body) {
   const data = Object.fromEntries(Object.entries({ ...project.data, ...patch }).filter(([key]) => !drop.includes(key)))
-  await app.fs.write(`${project.dir}/project.md`, stringifyFrontMatter(data, project.body))
+  await app.fs.write(`${project.dir}/project.md`, stringifyFrontMatter(data, body))
 }
 
 /** @param {SubmitEvent} event */
@@ -72,6 +78,10 @@ async function save(event) {
   const name = String(form.get('name') ?? '').trim()
   const colour = String(form.get('colour') ?? COLOURS[0][1])
   const local = form.get('local') === 'on'
+  // Its assistant's name, and how it should be (assistant names, once discovered).
+  const named = form.has('assistant')
+  const assistant = String(form.get('assistant') ?? '').trim()
+  const persona = String(form.get('persona') ?? '').trim()
   if (!name) return
   let project = editing.value
   if (!project) {
@@ -79,7 +89,8 @@ async function save(event) {
     await refreshProjects()
     project = app.projects.value.find((candidate) => candidate.dir === dir) ?? null
   }
-  if (project) await rewrite(project, { name, colour, ...(local && { cloud: false }) }, local ? [] : ['cloud'])
+  const drop = [...(local ? [] : ['cloud']), ...(named && !assistant ? ['assistantName'] : [])]
+  if (project) await rewrite(project, { name, colour, ...(local && { cloud: false }), ...(assistant && { assistantName: assistant }) }, drop, named ? (persona && `${persona}\n`) : project.body)
   await refreshProjects()
   const entered = app.projects.value.find((candidate) => candidate.dir === project?.dir)
   if (entered) await enterProject(entered)
@@ -107,6 +118,12 @@ class ProjectDialog extends Element {
         <label>${t('projects.name')}
           <input name="name" required maxlength="80" dir="auto" autocomplete="off" autofocus .value=${live(project ? String(project.data.name) : '')}>
         </label>
+        ${loaded.value.has('names') ? html`<label>${t('projects.assistant')}
+          <input name="assistant" maxlength="40" dir="auto" autocomplete="off" placeholder=${BRAND.name} .value=${live(String(project?.data.assistantName ?? ''))}>
+        </label>
+        <label>${t('projects.persona')}
+          <textarea name="persona" rows="2" maxlength="300" dir="auto" placeholder=${t('projects.personaHint')} .value=${live(project?.body.trim() ?? '')}></textarea>
+        </label>` : nothing}
         <fieldset class="swatches">
           <legend>${t('projects.colour')}</legend>
           ${COLOURS.map(([name, value]) => html`<label class="swatch" title=${t(`colour.${name}`)}>

@@ -43,7 +43,7 @@ const clients = new Map()
 function client(connection) {
   const found = clients.get(connection.id)
   if (found?.url === connection.url) return found.mcp
-  const mcp = mcpClient({ url: connection.url, client: { name: BRAND.name, version: '0.5' }, authorization: () => credential(connection) })
+  const mcp = mcpClient({ url: connection.url, client: { name: BRAND.name, version: '0.6' }, authorization: () => credential(connection) })
   clients.set(connection.id, { url: connection.url, mcp })
   return mcp
 }
@@ -120,7 +120,8 @@ effect(() => register({
     return lines.length ? { connections: lines.map(([name, ...tools]) => `- ${name}${tools.length ? `: ${tools.join(', ')}` : ''}`).join('\n') } : {}
   },
 }))
-list()
+/** Every connection's tools, asked for once this module loads (a brief waits for them). */
+export const listed = list()
 
 // ─── Connecting ──────────────────────────────────────────────────────────────
 

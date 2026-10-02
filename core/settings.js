@@ -19,6 +19,7 @@ import { ulid } from './ulid.js'
  * @property {boolean} [memory]               false: Jean neither notes nor reads what it noticed
  * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
+ * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  */
 

@@ -11,7 +11,7 @@ Each version is deployed as soon as it is ready. The loud public launch happens 
 | **0.3** ✅ | Discover — **public launch** | Reflexes (Kev-0.6B, measured on the multilingual test set). Discovery mechanics and the collection page. Deferred tools and `find_tools` (D47). Calculations (QuickJS) with codemode and `models.decide` (D48). Reply suggestions. Auto mode. Source chips. 33 locales. | The "drop a CSV, get a report" demo works on a managed Windows laptop, in three languages |
 | **0.4** ✅ | Remember | Memory (switches itself on), the "What Jean knows about you" page, instructions, projects (each with its light colour, which tints the little light: `--tint`, D78), routines (`SKILL.md`), `recall`. Python sandbox (after the Pyodide spike), with Pyodide copied in by `npm run dev`/`start`/`build` (D43). | Two projects keep separate memories, and a routine is created from repeated requests |
 | **0.5** ✅ | Reach | Connections (MCP), deferred and reachable from codemode by default. Web search (the brain's own search plus Wikipedia). `models.image` in codemode. Live voice conversation. | Jean summarises the user's latest emails through a connection, with citations |
-| **0.6** | Delegate | Helpers, decision inbox, "Since last time", assistant names, Double-check | A large task is split, approved step by step, and the result is verified against its sources |
+| **0.6** ✅ | Delegate | Helpers, decision inbox, "Since last time", assistant names, Double-check | A large task is split, approved step by step, and the result is verified against its sources |
 | Later | Together | Sync (folder or drive), share (fragment links, Web Share), collaboration (an end-to-end-encrypted relay hosted on Jean's domain, self-hostable; Yjs for shared documents), enterprise policy hardening, OTel export, managed configuration | — |
 
 ## 0.2 status (2026-10-02)
@@ -92,6 +92,32 @@ Still to check by hand:
 - [ ] Signing in to a connection from a private Safari window: with no OPFS, anything set up before the redirect is lost
 
 Budgets at the end of the build: core 2,999 of 3,000 lines, app 10,222 of 15,000 (D86), first load 90.2 of 100 KB gzipped (D94), CSS 9.3 of 12 KB, the largest catalogues 7.5 of 8 KB (Russian and Ukrainian), base prompt 182 of 200 tokens. The core and the catalogues are nearly full: 0.6 will need to make room in both.
+
+## 0.6 status (2026-10-02)
+
+Made room first, raising no limit: three modules that only one capability uses moved into it, and the core went from 2,999 to 2,577 lines (D96). Each language's catalogue split in two, the room's and the dialogs', which load with the dialogs: the largest first catalogue went from 7.6 to 5.9 KB (D97).
+
+Built: Helpers, with `delegate` splitting a large task into up to five parts that helpers do at the same time, each a child turn with the same brain, rules and source numbers, recorded under its part and shown as a tree in the activity view (D98). The decision inbox: approvals and helpers' questions wait as cards under the answer, answered in any order, with "Always allow" settling the other cards of its kind (D99). Double-check: the claims of an answer that cite sources are checked against those sources by the brain that answered, one request outside the conversation, and shown under the answer with a way to correct what isn't supported (D100). "Since last time": opened after 8 hours away with services connected, Jean starts with a brief of what's new there, in a turn that can only read (D101). Assistant names: a project's assistant gets a name and a few words on how to be, in the header and the prompt (D102). 33 new strings in all 33 languages.
+
+Checked end to end, with `npm run e2e` in Chromium and WebKit against the fake brain and the fake mail service:
+
+- The done-when: a briefing is split between two helpers; each finds the mail tool and asks before reading, so two cards wait in the inbox, approved one at a time; the answer cites three emails, and Double-check finds two claims in their sources and one that isn't ("The bakery is closed on Monday"), with the follow-up to correct it.
+- A helper's question in the inbox beside an approval, answered first; the answer uses it.
+- Back after two days: the brief opens in a new conversation, asks before reading, and a send the brain tries is refused without a card (Chromium only: WebKit runs here like a private window, with nothing kept for the next visit).
+- A project's assistant named Margot, with a way of being: the header, the prompt's first line and its `<project>` section.
+- Double-check offered after three cited answers, in English, Arabic and Japanese.
+- Under `node --test`: a helper's turn (its own history, approvals named under its call, its records under the delegate call at the parent's step, no thinking blocks, shared numbering, nothing in the parent's context but its report), the claims of an answer (lists, tables, Japanese), passages from long sources, a tool result's numbered sources, verdicts, a helper's declarations kept its own, and the catalogue parts.
+- The inbox, the checked answer, the house, the project dialog and the brief by eye, in English (dark, and at phone width), Arabic (right to left) and Japanese.
+
+Still to check by hand:
+
+- [ ] Helpers with real brains: does a strong cloud brain split only large tasks, and give each part everything it needs? Does the on-device brain ever call `delegate`?
+- [ ] Three helpers at once against providers' rate limits (OpenRouter's free models especially)
+- [ ] Double-check with real brains: one verdict per line, in any language of the claims; its cost on long answers
+- [ ] "Since last time" with a real service after a real night away, and in Safari (whether `pagehide` stamps the visit)
+- [ ] The inbox with a screen reader: cards arriving while another is focused
+
+Budgets at the end of the build: core 2,616 of 3,000 lines, app 10,914 of 15,000, first load 92.7 of 100 KB gzipped, CSS 9.9 of 12 KB, the largest catalogues 6.5 of 8 KB (Russian, Ukrainian and Telugu; their dialogs' part 3.0), base prompt 182 of 200 tokens.
 
 ## Before the public launch (0.3)
 

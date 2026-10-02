@@ -59,21 +59,23 @@ index.html        CSP <meta>, light or dark (D85), import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
-core/             llm.js anthropic.js images.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js
-                  deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only)
+core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js events.js i18n.js
+                  deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only; a module only one
+                  capability uses lives with it, D96)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
                   discovery.js collection.js auto.js picker.js, dialogs.js and brains.js (loaded when a dialog opens, D76),
                   knows.js ("What Jean knows about you", 0.4), sandbox.js (the sandbox client, 0.4)
-caps/             files/ made/ backup/ brain-local/ voice/        (0.2)
+caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
                   memory/ projects/ routines/ python/           (0.4)
                   search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
-                  helpers/                                      (later)
-locales/          the 33 launch languages: en.json fr.json ar.json ja.json …
+                  helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
+locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, and dialogs/ with the dialogs' strings (D97)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
                   reflexes.js (measures Kev on the test set)
-test/             node --test suites; fixtures/fake-brain.js and fake-mail.js (an MCP mail service with OAuth sign-in);
+test/             node --test suites; fixtures/fake-brain.js and fake-mail.js (an MCP mail service with OAuth sign-in), keys.js (which
+                  modules use which strings);
                   reflexes/ (the multilingual reflex test set and results.md)
 e2e/              Playwright smoke tests, Chromium and WebKit (npm run e2e)
 ```
@@ -93,15 +95,16 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 
 ## Core
 
-- **`loop.js`** (~220 lines): stream the reply, run tool calls, feed results back, repeat. Rules (Do it / Ask me first / Never) are checked before each tool runs, including calls made from scripts. The prompt and the declared tools are frozen for the conversation; changes arrive as system notes (see [Prompt, tools and caching](#prompt-tools-and-caching)).
+- **`loop.js`** (~250 lines): stream the reply, run tool calls, feed results back, repeat; a tool can run a helper's turn under its call. Rules (Do it / Ask me first / Never) are checked before each tool runs, including calls made from scripts. The prompt and the declared tools are frozen for the conversation; changes arrive as system notes (see [Prompt, tools and caching](#prompt-tools-and-caching)).
   - `tools` is every tool that can be called; it may be a function, read again at each step, so a capability turned on mid-turn can be called at once. `declared` is the subset the brain sees, and `hidden` tools are never declared (D64).
   - `meta` is recorded on the brain entry; Auto uses it to say why it chose that brain (D70).
   - Sources are numbered from `firstSource`: tools call `ctx.cite()`, and the brain's own search sends `cite` events that become ` [n]` after the cited text; both are recorded as `_meta.sources` (D90). A tool can record more in `ctx.meta` (a picture). A `pause` from the provider (Anthropic's `pause_turn`) is sent back and resumed.
+  - Helpers (0.6, D98): a tool can run `ctx.turn()`, a child turn with the same brain, rules, approvals and source numbers (`numbers`), its own prompt, history and tools. Its brain entries and calls are recorded under the calling tool's record (ids prefixed with it, `_meta.parent`, no thinking blocks) at the parent's step; its text is the call's result.
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `routine`, `save_routine`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92). Built so far: `read`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `routine`, `save_routine`, `file`, `decide`, `image`, and every connection's tools.
-- **`images.js`** (0.5): pictures from the provider's image model, for `models.image` (D92), imported on first use.
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `routine`, `save_routine`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). Built so far: `read`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `routine`, `save_routine`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools.
+- Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
 - **`search.js`:** BM25 over short texts.
@@ -170,7 +173,7 @@ The test set is the lasting asset, because this category will change monthly.
 | Same kind of task as an earlier one? | yes/no | Later |
 | Is this action irreversible? | score | Later |
 | Does this passage help answer the question? (re-ranking) | yes/no | Later |
-| Does source [n] support this sentence? | yes/no | Later |
+| Does source [n] support this sentence? | yes/no | Asked of the brain that answered instead (Double-check, D100) |
 | Is this a separate ongoing project? | yes/no | Later |
 
 Follow-ups are one yes/no question each rather than one choice over the catalogue, because several can fit (D69).
@@ -185,8 +188,8 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
   skills/<name>/SKILL.md         global routines (Agent Skills; metadata: format, author, created, D83)
   projects/
     <ulid>-<slug>/
-      project.md                 front matter: format, name, colour, default (home), cloud: false, createdAt, by
-                                 (later: assistantName, brain, rules; body: short persona)
+      project.md                 front matter: format, name, colour, default (home), cloud: false, createdAt, by,
+                                 assistantName (0.6); body: how its assistant should be (0.6); later: brain, rules
       instructions.md
       memory.md                  this project's (the home project uses the global one)
       skills/<name>/SKILL.md
@@ -272,7 +275,7 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
   - Dates, numbers, lists and relative times use `Intl`.
   - Language names come from `Intl.DisplayNames`, so each language appears in its own name with no extra data.
 - **Choosing.** `preferredLocales` matches `navigator.languages` to the catalogues on language and likely script (`Intl.Locale.maximize`), so `zh-TW` finds `zh-Hant`, `pt-BR` finds `pt` and `iw` finds `he`. The first match is the starting language, and the language menu lists every match first, in the browser's order, under "Your languages".
-- **One catalogue per person.** `useLocale()` fetches only the chosen language's catalogue; English, the fallback, is fetched only when that one can't be (D76). The first-load budget counts the largest catalogue.
+- **One catalogue per person, in two parts.** `useLocale()` fetches only the chosen language's catalogue; English, the fallback, is fetched only when that one can't be (D76). The strings only dialogs show are in a second part, `locales/dialogs/<lang>.json`, which `ui/dialogs.js` loads with `useStrings('dialogs')`; every module that shows a dialog imports it (D97). The first-load budget counts the largest first part; each part has the per-file budget.
 - **Instant switching.** The locale is a signal, so every bound piece of text re-renders. `<html lang dir>` flips with it, and CSS uses logical properties only, so right-to-left layouts mirror immediately.
 - **Details that are easy to miss:**
   - Every message element gets `dir="auto"`, so an English reply renders correctly in an Arabic UI.
@@ -281,7 +284,7 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
   - Fonts: the system font for every script, plus the display face only where it applies (see [design.md](design.md)).
 - **Translation.** An LLM translates from English. There are about 230 strings, and no per-language human review (D44): anyone can fix a string with a PR.
   - Sentences are rephrased so nothing agrees grammatically with `{name}` (in Polish, Russian, Ukrainian, Italian, Portuguese, Hebrew, Urdu, Hindi and Marathi, and with Korean particles, among others).
-  - `test/locales.test.js` checks that every catalogue has the same keys and placeholders as English, that each plural covers every category the language uses (from `Intl.PluralRules`; current CLDR gives French a "many" form), and that the language menu matches the catalogues.
+  - `test/locales.test.js` checks that every catalogue has the same keys and placeholders as English, part by part, that each plural covers every category the language uses (from `Intl.PluralRules`; current CLDR gives French a "many" form), that the language menu matches the catalogues, that every string is used, and that a dialogs string is used only by modules that import `ui/dialogs.js`.
 - **Shipped:** all 33 launch languages, since 0.3 (`LOCALES` in `ui/state.js`): am, ar, bn, de, en, es, fa, fr, ha, he, hi, id, it, ja, ko, mr, ms, nl, pl, pt, ru, sw, ta, te, th, tl, tr, uk, ur, vi, yo, zh-Hans, zh-Hant.
 - **Conversations.** The system prompt stays in English, with a `<language>` section. Changing the UI language mid-conversation appends a system note rather than editing that section (D46), and Jean's next reply follows.
 
@@ -293,7 +296,8 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 
 **System notes (D46).** When something changes mid-conversation, Jean appends a system note to the transcript at that point instead of editing the prompt. Changes include the language, rules, instructions, memory, routines, the project, newly unlocked tools and the date.
 
-- **Sections (D81).** The project, instructions, memory, routines and, since 0.5, the connected services (`<connections>`, D89) are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …").
+- **Sections (D81).** The project, instructions, memory, routines and, since 0.5, the connected services (`<connections>`, D89) are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …"). Since 0.6 the project's section also holds what the user calls its assistant and how it should be (D102).
+- **Notes a message comes with.** A brief of what's new ("Since last time", D101) starts with a note saying when the user was last here; the turn that answers it can only read.
 
 - **Recorded in the transcript.** A note is a record in the conversation JSONL, an ACP extension update (`_system_note`) holding the English text the brain sees and structured data for the UI label. Replaying the file rebuilds exactly what the brain was told, and when.
 - **Rendered per adapter:**
@@ -318,7 +322,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 |---|---|
 | `file(name)` | The whole text of a shared file (spreadsheets as tab-separated rows), through the hidden `file` tool |
 | `csv(text)` | Turns CSV or tab-separated text into rows: objects keyed by the header, numbers as numbers |
-| `tools.<name>(args)` | Calls any granted tool, deferred ones included; later, connection tools too. `run` and `offer` can't be called from a script. |
+| `tools.<name>(args)` | Calls any granted tool, deferred ones included, and connection tools. `run`, `python`, `offer` and `delegate` can't be called from a script. |
 | `searchTools(query)` | Same as `find_tools`, from inside a script |
 | `models.decide(state, questions)` | Asks Kev on the device, when Intuition is on, through the hidden `decide` tool (the [Reflexes](#reflexes) shape); Jev when a cloud brain is connected, later |
 | `models.image(description)` | Makes a picture with the image model of a connected brain's provider, kept in the project's files and shown under the answer, through the hidden `image` tool (0.5, D92) |
@@ -374,7 +378,8 @@ Jean's internal event format is ACP's `session/update` vocabulary: `user_message
 - **Outside the vocabulary:** a connection's tools that change something, such as sending an email, use `kind: "other"`; read-only ones use `fetch` (D89). The brain's own web searches are shown from its kept blocks, under the brain entry.
 - **Reflex decisions** shown to the user appear as collapsed `think` entries. Auto's choice is recorded on the brain entry (`rawInput.auto: { level, reason }`) and shown in plain words, such as "kept on this device: personal content" (D70).
 - **A script's calls** are tool calls with `_meta.parent` set to their `run` call, shown nested under it.
-- **Helpers** are child sessions, referenced from the parent's tool call.
+- **Helpers** are child turns recorded under their call (D98): `delegate`, then a `helper` call per part, then each helper's brain entries and calls, ids prefixed with their parent's. The view draws the tree, parts in the order they were split.
+- **The decision inbox** (D99): approvals (`session/request_permission`) and helpers' questions queue as cards under the live answer, answered in any order; an "Always" or "Never" answer settles the other cards of that kind.
 - **Enterprise audit:** a ~50-line adapter maps the stream to OpenTelemetry GenAI conventions (`invoke_agent`, `execute_tool`, `chat`).
 - **AG-UI** is the better fit when a UI fronts an agent running on a server, which Jean's is not. A bridge from ACP to AG-UI exists if that is ever needed.
 

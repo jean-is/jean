@@ -14,10 +14,13 @@ import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { t, locale, relativeTime, formatBytes } from '../core/i18n.js'
+import { t, locale, relativeTime, formatBytes, useStrings } from '../core/i18n.js'
 import { voicesFor } from './speech.js'
 import { icons } from './icons.js'
 import { languageOptions } from './shell.js'
+
+// The dialogs' own strings come with them (D97): every module that shows a dialog imports this one.
+await useStrings('dialogs')
 
 /** @param {Element} host @param {string} name */
 export function syncDialog(host, name) {

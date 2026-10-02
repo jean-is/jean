@@ -1,6 +1,6 @@
 # Open questions
 
-Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). Answered while building 0.4: how the sandbox loads Pyodide (D80). Answered while building 0.5: the MCP client, Jean's own (D87). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
+Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). Answered while building 0.4: how the sandbox loads Pyodide (D80). Answered while building 0.5: the MCP client, Jean's own (D87). Answered while building 0.6: where helpers' transcripts live (in their parent's, D98), and what checks claims against sources (the brain that answered, D100). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
 
 ## Name and domain (decide before the public launch)
 
@@ -32,3 +32,5 @@ Instrument Serif ships for now (D34). Fraunces will probably replace it. To chec
   - **Slack and Dropbox:** CORS, plus open registration for Slack. Dropbox, like Figma, registers only the apps on its list: ask both to add Jean.
   - **Atlassian:** naming `Authorization` in its CORS, and publishing where to sign in.
   - **Google Meet and Google Tasks:** a server at all.
+- **Helpers on a cheaper brain?** Helpers use the brain that delegated (D98). Auto could give them a lighter tier: cheaper, but one answer would then mix two models' work. To decide with real tasks.
+- **Double-check with Intuition one day?** If the fine-tuned "Jean reflexes" checkpoint (D68) learns "does this passage support this sentence?" in every launch language, checks could stay on the device and cost nothing (D100).

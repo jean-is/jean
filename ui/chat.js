@@ -2,14 +2,13 @@
 import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter } from './state.js'
+import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions } from '../core/events.js'
-import { t, locale, formatBytes } from '../core/i18n.js'
+import { t, locale, formatBytes, relativeTime } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
-import { BRAND } from '../brand.js'
 
 /** @import { Turn } from '../core/events.js' */
 /** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -89,7 +88,10 @@ function turnView(turn, live, files, upTo, last, sources) {
   const entries = steps.flatMap((step) => step.tools)
   const streaming = Boolean(live)
   const read = whatJeanRead(upTo, entries, files)
+  const since = turn.notes.map((note) => note.data).find((data) => data.kind === 'since')
   return html`<li class="turn">
+    ${since?.kind === 'since' ? html`<p class="since">${icons.clock}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
+      <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
       <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>
     </li>`)}</ul>` : nothing}
@@ -101,9 +103,10 @@ function turnView(turn, live, files, upTo, last, sources) {
         ${entries.flatMap(({ _meta, rawInput }) => (_meta?.image ? [html`<app-image uri=${_meta.image.uri} name=${_meta.image.name} alt=${rawInput?.prompt ?? ''}></app-image>`] : []))}
         ${!streaming && read.length ? readView(read) : nothing}
         ${!streaming && entries.some((entry) => entry._meta?.sources) ? sourcesView(entries.flatMap((entry) => entry._meta?.sources ?? [])) : nothing}
+        ${!streaming && text ? html`<app-check at=${turn.at}></app-check>` : nothing}
         ${!streaming && text ? actions(turn.at, text) : nothing}
       </article>` : nothing}
-    ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name)) : nothing}
+    ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
   </li>`
 }
 
@@ -144,7 +147,7 @@ function whatJeanRead(upTo, entries, files) {
 /** @param {ReturnType<typeof whatJeanRead>} items */
 function readView(items) {
   return html`<details class="read-list">
-    <summary>${icons.file}<span>${t('read.title', { name: BRAND.name, count: items.length })}</span>${icons.chevron}</summary>
+    <summary>${icons.file}<span>${t('read.title', { name: assistantName(), count: items.length })}</span>${icons.chevron}</summary>
     <ul>${items.map(({ link, range, of }) => html`<li>
       <button class="link-button" @click=${() => openFile(link)} dir="auto">${link.name}</button>
       <span class="muted">${range && of ? t('read.pages', { first: range[0], last: range[1], total: of }) : t('read.whole')}</span>
@@ -162,13 +165,14 @@ function sourcesView(cited) {
 }
 
 /**
- * "What Jean is doing", from the turn's ACP records. A script's own calls show under it.
+ * "What Jean is doing", from the turn's ACP records. What a script or a helper did shows under
+ * it, as a tree: a helper's brain, its calls, and their scripts' calls.
  * @param {ToolCallInfo[]} entries @param {string} thought @param {string} text @param {boolean} streaming
  * @param {ResourceLink[]} files
  */
 function activity(entries, thought, text, streaming, files) {
-  const brains = entries.filter((entry) => entry.kind === 'think' && !entry.name)
-  const tools = entries.filter((entry) => entry.name)
+  const brains = entries.filter((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)
+  const tools = entries.filter((entry) => entry.name || entry._meta?.parent)
   const top = tools.filter((tool) => !tool._meta?.parent)
   const last = brains.at(-1)
   const failed = last?.status === 'failed'
@@ -177,12 +181,19 @@ function activity(entries, thought, text, streaming, files) {
   const summary = streaming
     ? t(working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
     : failed ? t('activity.failed') : t('activity.answeredWith', { brain: last ? brainName(last) : '' })
-  const permission = app.permission.value
   const offering = app.offering.value
-  /** @param {ToolCallInfo} tool @param {boolean} [nested] */
-  const item = (tool, nested = false) => html`<li data-status=${tool.status ?? 'pending'} class=${nested ? 'is-nested' : ''}>
+  /** @param {ToolCallInfo} tool @param {number} [depth] */
+  const item = (tool, depth = 0) => html`<li data-status=${tool.status ?? 'pending'} class=${depth ? 'is-nested' : ''} data-depth=${depth}>
     <span class="ember" aria-hidden="true"></span><span dir="auto">${toolLabel(tool, files)}</span>
   </li>`
+  // Parts in the order the work was split (their calls are kept in the order they finished).
+  const order = (/** @type {ToolCallInfo} */ tool) => Number(/\.(\d+)$/.exec(tool.toolCallId)?.[1] ?? 0)
+  /** @param {ToolCallInfo} tool @param {number} depth @returns {unknown[]} */
+  const tree = (tool, depth) => {
+    const children = tools.filter((child) => child._meta?.parent === tool.toolCallId)
+    if (tool.name === 'delegate') children.sort((a, b) => order(a) - order(b))
+    return [item(tool, depth), ...children.flatMap((child) => tree(child, depth + 1))]
+  }
   return html`
     <details class="activity" data-status=${status}>
       <summary><span class="ember" aria-hidden="true"></span><span>${summary}</span>${icons.chevron}</summary>
@@ -195,14 +206,33 @@ function activity(entries, thought, text, streaming, files) {
         </li>`,
         // The brain's own searches, kept with its reply.
         ...(brain._meta?.raw ?? []).filter((/** @type {any} */ block) => block.type === 'server_tool_use' && block.name === 'web_search')
-          .map((/** @type {any} */ block) => item({ toolCallId: block.id, title: '', name: 'web_search', status: 'completed', rawInput: block.input }, true))])}
-        ${top.map((tool) => [item(tool), ...tools.filter((child) => child._meta?.parent === tool.toolCallId).map((child) => item(child, true))])}
+          .map((/** @type {any} */ block) => item({ toolCallId: block.id, title: '', name: 'web_search', status: 'completed', rawInput: block.input }, 1))])}
+        ${top.map((tool) => tree(tool, 0))}
       </ol>
       ${thought ? html`<div class="thought" dir="auto">${markdown(thought)}</div>` : nothing}
     </details>
-    ${streaming && permission ? approval(permission) : nothing}
+    ${streaming ? inbox(entries, files) : nothing}
     ${streaming && offering ? offerCard(offering) : nothing}`
 }
+
+/**
+ * The decision inbox: approvals and helpers' questions wait here as cards, one each, while the
+ * rest of the work goes on, and are answered in any order.
+ * @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
+ */
+function inbox(entries, files) {
+  const waiting = app.decisions.value
+  if (!waiting.length) return nothing
+  // Which helper is asking: the one whose call the request sits under.
+  const from = (/** @type {string} */ id) => entries.find((entry) => entry.name === 'helper' && id.startsWith(`${entry.toolCallId}/`))?.rawInput?.title
+  return html`<section class="inbox" aria-label=${t('inbox.waiting', { count: waiting.length })}>
+    ${waiting.length > 1 ? html`<p class="inbox-count">${t('inbox.waiting', { count: waiting.length })}</p>` : nothing}
+    ${repeat(waiting, (decision) => decision.id, (decision) => ('toolCall' in decision ? approval(decision, from(decision.toolCall.toolCallId), files) : question(decision)))}
+  </section>`
+}
+
+/** Who a card is from, when a helper asks. @param {string | undefined} helper */
+const asking = (helper) => (helper ? html`<p class="approval-from">${icons.helpers}<span dir="auto">${helper}</span></p>` : nothing)
 
 /** Why Auto chose a brain, in plain words. @param {{ level: number, reason: string }} auto */
 function autoReason({ level, reason }) {
@@ -213,7 +243,7 @@ function autoReason({ level, reason }) {
 function offerCard({ id, resolve }) {
   return html`<div class="approval" role="group" aria-label=${t('offer.title')}>
     <p><strong>${t(`cap.${id}.name`)}</strong></p>
-    <p>${t(`cap.${id}.offer`, { name: BRAND.name, size: formatBytes(SIZES[id] ?? 0) })}</p>
+    <p>${t(`cap.${id}.offer`, { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve(true)}>${t('offer.yes')}</button>
       <button class="button subtle" @click=${() => resolve(false)}>${t('offer.no')}</button>
@@ -233,20 +263,26 @@ function brainName(entry) {
  * @param {ToolCallInfo} tool @param {ResourceLink[]} [files]
  */
 function toolLabel(tool, files = []) {
+  if (!tool.name) return t('activity.brain', { brain: brainName(tool) })
+  if (tool.name === 'helper') return tool.rawInput?.title ?? tool.title
   const path = tool.locations?.[0]?.path
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${tool.rawInput?.capability}.name`) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
+  if (tool.name === 'ask_user') return `${t('tool.ask_user')} · ${tool.rawInput?.question ?? ''}`
   const key = `tool.${tool.name}`
   return t(key) === key ? tool.title : t(key)
 }
 
-/** @param {NonNullable<typeof app.permission.value>} permission */
-function approval(permission) {
-  const { toolCall, resolve } = permission
+/**
+ * @param {Extract<import('./state.js').Decision, { toolCall: any }>} decision
+ * @param {string | undefined} helper @param {ResourceLink[]} files
+ */
+function approval({ toolCall, resolve }, helper, files) {
   return html`<div class="approval" role="group" aria-label=${t('approval.title')}>
-    <p>${t('approval.question', { action: toolLabel(toolCall, linkedFiles(app.current.value?.records ?? [])) })}</p>
+    ${asking(helper)}
+    <p>${t('approval.question', { action: toolLabel(toolCall, files) })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve('allow_once')}>${t('approval.allowOnce')}</button>
       <button class="button" @click=${() => resolve('allow_always')}>${t('approval.allowAlways')}</button>
@@ -254,6 +290,24 @@ function approval(permission) {
       <button class="button subtle" @click=${() => resolve('reject_always')}>${t('approval.rejectAlways')}</button>
     </div>
   </div>`
+}
+
+/** A helper's question. @param {Extract<import('./state.js').Decision, { question: string }>} decision */
+function question({ question, from, resolve }) {
+  /** @param {SubmitEvent} event */
+  const submit = (event) => {
+    event.preventDefault()
+    resolve(String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('answer') ?? '').trim() || null)
+  }
+  return html`<form class="approval" @submit=${submit}>
+    ${asking(from)}
+    <p dir="auto">${question}</p>
+    <input name="answer" required dir="auto" autocomplete="off" aria-label=${t('inbox.answer')}>
+    <div class="approval-actions">
+      <button class="button primary">${t('action.send')}</button>
+      <button class="button subtle" type="button" @click=${() => resolve(null)}>${t('approval.rejectOnce')}</button>
+    </div>
+  </form>`
 }
 
 /** @param {string} id @param {string} text */

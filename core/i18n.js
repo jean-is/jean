@@ -8,33 +8,54 @@ export const locale = signal('en')
 
 /** @type {Map<string, Record<string, any>>} */
 const catalogs = new Map()
-/** @type {(lang: string) => Promise<Record<string, any> | null>} */
+/** @type {(lang: string, part: string) => Promise<Record<string, any> | null>} */
 let loader = async () => null
+// A catalog comes in parts: the room's (''), then others the first time a module asks for
+// them (the dialogs', D97). `${lang}/${part}` for each part loaded.
+const parts = new Set([''])
+const fetched = new Set()
 
-/** @param {(lang: string) => Promise<Record<string, any> | null>} fn */
+/** @param {(lang: string, part: string) => Promise<Record<string, any> | null>} fn */
 export function setLoader(fn) {
   loader = fn
 }
 
 /** @param {string} lang @param {Record<string, any>} messages */
+const merge = (lang, messages) => catalogs.set(lang, { ...catalogs.get(lang), ...messages })
+
+/** @param {string} lang @param {Record<string, any>} messages */
 export function addCatalog(lang, messages) {
-  catalogs.set(lang, messages)
+  merge(lang, messages)
+  fetched.add(`${lang}/`)
 }
 
 /**
- * Load a catalog then switch. Every catalog has every key (test/locales.test.js), so English,
- * the fallback, is only fetched when the catalog itself can't be.
- * @param {string} lang
+ * Every catalog has every key (test/locales.test.js), so English, the fallback, is only
+ * fetched when the catalog itself can't be. @param {string} lang @param {string} part
  */
-export async function useLocale(lang) {
+async function load(lang, part) {
   for (const code of [lang, 'en']) {
-    if (!catalogs.has(code)) {
-      const messages = await loader(code)
-      if (messages) catalogs.set(code, messages)
+    if (!fetched.has(`${code}/${part}`)) {
+      const messages = await loader(code, part)
+      if (messages) {
+        merge(code, messages)
+        fetched.add(`${code}/${part}`)
+      }
     }
-    if (catalogs.has(code)) break
+    if (fetched.has(`${code}/${part}`)) break
   }
+}
+
+/** Load every part in use, then switch. @param {string} lang */
+export async function useLocale(lang) {
+  await Promise.all([...parts].map((part) => load(lang, part)))
   locale.value = lang
+}
+
+/** Loads a part of the catalog, in the current language and every later one. @param {string} part */
+export async function useStrings(part) {
+  parts.add(part)
+  await load(locale.peek(), part)
 }
 
 /**

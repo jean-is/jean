@@ -35,4 +35,20 @@ export async function turnOn(page, name) {
   await page.locator('.bar-actions button').first().click()
   const house = page.locator('app-collection dialog[open]')
   await house.locator('.room-card', { hasText: name }).locator('.button').click()
+  // Lit once its module has loaded, so a message sent next declares its tools.
+  await expect(page.locator('app-collection .room-card.is-lit', { hasText: name })).toHaveCount(1)
+}
+
+/** Connects a service from the house by its address, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */
+export async function connect(page, url) {
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-connections dialog[open]')
+  // The services Jean knows come first; an address is one step down.
+  await dialog.locator('details.other summary').click()
+  await dialog.locator('input[name="url"]').fill(url)
+  await dialog.locator('input[name="name"]').fill('Mail')
+  await dialog.locator('.button.primary').click()
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  await expect(page.locator('app-connections dialog[open] .connection')).toContainText('Search emails · Read an email · Send an email')
+  await page.keyboard.press('Escape')
 }

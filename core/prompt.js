@@ -100,8 +100,8 @@ export function frozenPrompt(records) {
   const add = (list, names) => { state[list] = [...new Set([...state[list], ...names])].sort() }
   for (const record of records) {
     const update = record.update
-    // find_tools and accepted offers declare tools from the next request on (D47).
-    if (update?.sessionUpdate === 'tool_call' && update._meta?.declare) add('tools', update._meta.declare)
+    // find_tools and accepted offers declare tools from the next request on (D47); a helper's, for itself.
+    if (update?.sessionUpdate === 'tool_call' && update._meta?.declare && !update._meta.parent) add('tools', update._meta.declare)
     if (update?.sessionUpdate !== '_system_note') continue
     const { data } = update
     if (data.kind === 'language') state.language = data.language

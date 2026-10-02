@@ -143,6 +143,8 @@ export type SystemNoteData =
   | { kind: 'tools', added: string[], deferred?: boolean }
   /** version: the section's fingerprint now, '' when it is empty */
   | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections', version: string }
+  /** the user came back: a read-only brief of what is new since then ("Since last time") */
+  | { kind: 'since', since: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

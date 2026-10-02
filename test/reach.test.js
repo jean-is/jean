@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { runTurn } from '../core/loop.js'
 import { toChatMessages, userRecord } from '../core/events.js'
 import { PROVIDERS, streamChat } from '../core/llm.js'
-import { generateImage } from '../core/images.js'
+import { generateImage } from '../caps/compute/picture.js'
 import { buildSystemPrompt, promptState, changeNotes } from '../core/prompt.js'
 
 const encoder = new TextEncoder()

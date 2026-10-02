@@ -96,7 +96,7 @@ export async function collectFiles (root) {
   const nested = (await Promise.all(SHELL_DIRS.map((dir) => walk(root, dir)))).flat()
   const inRuntime = (/** @type {string} */ path) => RUNTIME_DIRS.some((dir) => path.startsWith(`${dir}/`))
   const shell = [...top, ...nested].filter((path) => isShipped(path) && !inRuntime(path)).sort()
-  const locales = (await walk(root, 'locales')).filter((p) => /^locales\/[^/]+\.json$/.test(p)).sort()
+  const locales = (await walk(root, 'locales')).filter((p) => /^locales\/(dialogs\/)?[^/]+\.json$/.test(p)).sort()
   /** @type {Record<string, { files: string[] }>} */
   const capabilities = {}
   for (const entry of await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])) {

@@ -68,6 +68,7 @@ describe('manifest: file filters', () => {
       'vendor/x.js.map': '',
       'locales/fr.json': '{}',
       'locales/en.json': '{}',
+      'locales/dialogs/en.json': '{}',
       'locales/README.md': '',
       'docs/x.js': '',
       'test/x.test.js': '',
@@ -75,7 +76,7 @@ describe('manifest: file filters', () => {
     })
     const { shell, locales } = await collectFiles(root)
     assert.deepEqual(shell, ['brand.js', 'core/a.js', 'core/b.js', 'index.html', 'manifest.webmanifest', 'ui/app.js'])
-    assert.deepEqual(locales, ['locales/en.json', 'locales/fr.json'])
+    assert.deepEqual(locales, ['locales/dialogs/en.json', 'locales/en.json', 'locales/fr.json'])
   })
 })
 

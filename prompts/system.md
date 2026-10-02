@@ -38,11 +38,13 @@ Reply in the language of the user's last message. If that is unclear, use {uiLan
 
 These are filled in once, when a conversation starts, and then frozen with the rest of the prompt (D46). Editing any of them later would make the provider re-read the whole conversation at full price, and would throw away an on-device brain's KV cache.
 
-As built in 0.4 (D81), `<project>` holds the project's name; the assistant's name and persona come with 0.6.
+As built in 0.4 (D81), `<project>` holds the project's name; since 0.6 (D102), also what the user calls the assistant there and how it should be, in the user's own words.
 
 ```text
 <project>
-{project name; the assistant's name and short persona if the user set one}
+{project name}
+The user calls you {assistant name} here.        (when the user named it)
+How to be: {a few words from the user}           (when the user wrote some)
 </project>
 
 <instructions>
@@ -78,7 +80,7 @@ Today is 2026-10-03.
 New tools can be found with find_tools: run.
 ```
 
-Built so far: language, date, new tools, and since 0.4 the sections (`core/prompt.js`, `changeNotes`). New tools are deferred: the brain finds them with `find_tools` (D63). A conversation from 0.2, which has no `find_tools`, gets "New tools are available: run." and the tools declared instead. A section that changed (the project, instructions, memory or routines) is given whole: "The <memory> section is now:\n- …", or "The <instructions> section is now empty." (D81). Notes for rules come later, in the same style (for example "The user changed a rule: deleting files now needs their approval.").
+Built so far: language, date, new tools, and since 0.4 the sections (`core/prompt.js`, `changeNotes`). Since 0.6 a message can come with its own note: a brief of what's new starts with "The user is back; they were last here on … Start with a short brief of what is new in their connected services since then. Only read: never send, change or delete anything." (D101). New tools are deferred: the brain finds them with `find_tools` (D63). A conversation from 0.2, which has no `find_tools`, gets "New tools are available: run." and the tools declared instead. A section that changed (the project, instructions, memory or routines) is given whole: "The <memory> section is now:\n- …", or "The <instructions> section is now empty." (D81). Notes for rules come later, in the same style (for example "The user changed a rule: deleting files now needs their approval.").
 
 Shared files appear in the user's message as `<document source="n" name="…">…</document>` blocks, with `[[page N]]` lines; `n` is the number the brain cites the file by (D71). The `read` tool's output starts with "Source [n]:". On brains whose chat template accepts a system message only at the start, notes arrive as `<system-note>…</system-note>` at the top of the next user message.
 
@@ -97,12 +99,13 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Web search (0.5) | `web_search: search the web for facts the conversation does not hold` (a provider that searches by itself gets its own tool instead, D91) | — |
 | Connections (0.5) | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |
 | Files (later) | `write: create or replace a file` / `edit: change part of a file` | Results the user asked for are files. Say their names. |
-| Helpers (later) | `delegate: hand a self-contained part of the task to a helper` | Use helpers only for independent parts of a large task. |
+| Helpers (0.6) | `delegate: hand independent parts of a large task to helpers, who do them at the same time` | Use helpers only for independent parts of a large task. |
 
 Sources and suggestions were planned as capability rules; in 0.3 they became base rules, because every answer can cite a shared file and end with follow-ups. Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).
 
 ## Notes
 
-- `{assistantName}` defaults to `BRAND.name`. A project can override it.
+- `{assistantName}` defaults to `BRAND.name`. A project can override it (D102).
+- Helpers get a prompt of their own (`caps/helpers/helpers.js`): they do one part of a larger task and report to the assistant, not to the user, citing sources as the tools number them, with `ask_user` for what they can't go on without (D98). Double-check's request has its own short system prompt too (`caps/check/claims.js`, D100).
 - Memory is injected whole while it stays under about 1,000 tokens (about 500 for the on-device model). Past that, it is consolidated or filtered by the reflex model.
 - What the old DEVS agents knew (presentation design and so on) is mined into `SKILL.md` procedures. It does not come back as personas.

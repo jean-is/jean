@@ -21,7 +21,7 @@ const face = html`<svg class="persona" viewBox="0 0 100 100" aria-hidden="true" 
 class Persona extends Element {
   render() {
     // Beyond the room's presence: waiting for the user's approval, and sorry after an error.
-    this.dataset.presence = app.permission.value ? 'waiting' : app.error.value ? 'oops' : app.presence.value
+    this.dataset.presence = app.decisions.value.length ? 'waiting' : app.error.value ? 'oops' : app.presence.value
     return face
   }
 }

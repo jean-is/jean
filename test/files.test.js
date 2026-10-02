@@ -2,9 +2,9 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../core/fs.js'
 import { crc32, readZip, writeZip } from '../core/zip.js'
-import { decodeText, docx, extractPages, extractable, paginate, sheetRows, slideText } from '../core/extract.js'
+import { decodeText, docx, extractPages, extractable, paginate, sheetRows, slideText } from '../caps/files/extract.js'
 import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages } from '../core/files.js'
-import { exportBackup, importBackup, isBackedUp } from '../core/backup.js'
+import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
 
 const enc = new TextEncoder()
 const dec = new TextDecoder()

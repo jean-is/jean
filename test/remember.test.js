@@ -8,7 +8,7 @@ import { parseMemory, stringifyMemory, memoryText } from '../core/memory.js'
 import { parseSkill, listSkills, saveSkill, skillLines } from '../core/skills.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { alike } from '../core/search.js'
-import { importBackup, exportBackup } from '../core/backup.js'
+import { importBackup, exportBackup } from '../caps/backup/archive.js'
 
 test('front matter: one level of nesting, and strings that look like something else stay strings', () => {
   const text = stringifyFrontMatter({ name: 'weekly-report', description: 'true', count: '12', empty: '', metadata: { author: 'jean', format: '1' } }, '# Steps\n')

@@ -1,6 +1,6 @@
 # AGENTS.md — building Jean
 
-> Status: 0.5 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
+> Status: 0.6 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
 
 ## What Jean is
 
@@ -49,6 +49,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
   - Never build sentences by concatenating strings.
   - Plurals use `Intl.PluralRules`; dates, numbers and lists use `Intl.*`.
   - Never make a translation agree grammatically with the assistant's name.
+  - A string that only dialogs show lives in `locales/dialogs/<lang>.json`, loaded with them; the rest in `locales/<lang>.json`. `test/locales.test.js` checks which modules use each one (D97).
 - **Bidirectional text:** CSS uses logical properties only (`margin-inline-start`, never `margin-left`), and every message element gets `dir="auto"`.
 - **Vocabulary:** none of these words appear in the UI: "agent", "model", "MCP", "skill", "token". See the vocabulary in [docs/product.md](docs/product.md).
 - **Accessibility:** respect `prefers-reduced-motion`, `prefers-contrast` and `forced-colors`. Contrast meets WCAG AA everywhere, including in the dark first-run state.

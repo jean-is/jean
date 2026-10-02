@@ -41,6 +41,24 @@ test('i18n: only the chosen catalog is fetched, and English only when it cannot 
   assert.equal(i18n.t('hello'), 'en')
 })
 
+test('i18n: the dialogs’ part loads when asked for, then with every language switch', async () => {
+  const i18n = await import('../core/i18n.js?parts')
+  /** @type {string[]} */
+  const fetched = []
+  i18n.setLoader(async (lang, part) => {
+    fetched.push(`${lang}/${part}`)
+    return part ? { title: `${lang} dialog` } : { hello: lang }
+  })
+  await i18n.useLocale('fr')
+  assert.equal(i18n.t('title'), 'title')
+  await i18n.useStrings('dialogs')
+  assert.equal(i18n.t('title'), 'fr dialog')
+  await i18n.useLocale('ja')
+  assert.deepEqual(fetched, ['fr/', 'fr/dialogs', 'ja/', 'ja/dialogs'])
+  assert.equal(i18n.t('hello'), 'ja')
+  assert.equal(i18n.t('title'), 'ja dialog')
+})
+
 test('i18n: locale picking, language names, first words', async () => {
   assert.equal(pickLocale(['en', 'fr', 'ar'], ['fr-BE', 'en']), 'fr')
   assert.equal(pickLocale(['en', 'fr', 'ar'], ['de-DE']), 'en')

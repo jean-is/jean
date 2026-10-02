@@ -31,6 +31,10 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   search: () => import('../caps/search/search.js'),
   connections: () => import('../caps/connections/connections.js'),
   live: () => import('../caps/live/live.js'),
+  helpers: () => import('../caps/helpers/helpers.js'),
+  check: () => import('../caps/check/check.js'),
+  since: () => import('../caps/since/since.js'),
+  names: () => import('../caps/names/names.js'),
 })
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */

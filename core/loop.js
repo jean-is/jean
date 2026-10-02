@@ -26,6 +26,8 @@ import { envelope } from './events.js'
  * @property {(names: string[]) => void} declare                  declares tools from the next request on (D47)
  * @property {(sources: Source[]) => number[]} cite               numbers what the result brings in, as the brain cites it
  * @property {Record<string, any>} meta                           kept on the call's record (`_meta`), e.g. a picture it made
+ * @property {(child: Partial<TurnOptions>) => Promise<{ stopReason: string, text: string }>} turn
+ *   a helper's turn: the same brain, rules and source numbers, its calls recorded under this one
  */
 
 /**
@@ -40,6 +42,7 @@ import { envelope } from './events.js'
  * @property {string} [label]                        shown on the brain entry
  * @property {Record<string, any>} [meta]            recorded on the brain entry (why Auto chose it)
  * @property {number} [firstSource]                  the number the turn's first new source is cited by (D71)
+ * @property {Map<string, number>} [numbers]         sources numbered so far: a helper shares its parent's
  * @property {(kind: string, reserved: boolean) => RuleValue} [rule]
  * @property {(request: { toolCall: ToolCallInfo, step: number }) => Promise<PermissionOption>} [askPermission]
  * @property {(update: AcpUpdate, step: number) => void} [onUpdate]   live, including deltas
@@ -60,14 +63,14 @@ export async function runTurn(options) {
   const tools = () => (typeof options.tools === 'function' ? options.tools() : options.tools ?? [])
   const declared = new Set(options.declared ?? tools().filter((tool) => !tool.hidden).map((tool) => tool.spec.name))
   // Sources are numbered as they come in (one cited again keeps its number), and recorded in `meta`.
-  const numbers = /** @type {Map<string, number>} */ (new Map())
+  const numbers = options.numbers ?? new Map()
   /** @param {Source[]} sources @param {Record<string, any>} meta */
   const cite = (sources, meta) => sources.map((source) => {
     const key = source.url ?? source.title
     if (!numbers.has(key)) (meta.sources ??= []).push({ ...source, n: numbers.set(key, numbers.size + (options.firstSource ?? 1)).get(key) })
     return /** @type {number} */ (numbers.get(key))
   })
-  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(), declared, tools, cite }
+  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(), declared, tools, cite, options, numbers }
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 }
 
   for (let step = 0; step < maxSteps; step++) {
@@ -152,7 +155,7 @@ function stepRecords(step, brainEntry, thought, text) {
  * @param {Tool | undefined} tool
  * @param {number} step
  * @param {Pick<Required<TurnOptions>, 'rule' | 'askPermission' | 'onUpdate' | 'persist'> & { signal?: AbortSignal, byName: Map<string, Tool>, declared: Set<string>, tools: () => Tool[],
- *   cite: (sources: Source[], meta: Record<string, any>) => number[] }} ctx
+ *   cite: (sources: Source[], meta: Record<string, any>) => number[], options: TurnOptions, numbers: Map<string, number> }} ctx
  * @param {string} [parent]
  */
 async function runTool(call, tool, step, ctx, parent) {
@@ -188,6 +191,13 @@ async function runTool(call, tool, step, ctx, parent) {
       for (const name of names) ctx.declared.add(name)
       ;(context.meta.declare ??= []).push(...names)
     },
+    // A helper's text is its result; its calls are kept, under this one.
+    turn: (child) => runTurn({
+      ...ctx.options, label: undefined, meta: undefined, ...child, numbers: ctx.numbers,
+      askPermission: (request) => ctx.askPermission({ ...request, toolCall: under(request.toolCall, call.id) }),
+      onUpdate: (update) => 'toolCallId' in update && onUpdate(under(update, call.id), step),
+      persist: (records) => ctx.persist(records.flatMap(({ update, ...record }) => (update && 'toolCallId' in update ? [{ ...record, step, update: under(update, call.id) }] : []))),
+    }),
   }
   if (!tool) output = `There is no tool named "${call.name}".${ctx.declared.has('find_tools') ? ' Use find_tools to look for one.' : ''}`
   else if (call.args && typeof call.args === 'object' && '__invalidJSON' in call.args) output = 'The arguments were not valid JSON. Try again.'
@@ -219,6 +229,13 @@ async function runTool(call, tool, step, ctx, parent) {
   await ctx.persist([envelope('jean', { sessionUpdate: 'tool_call', ...final }, step)])
   return { info: final, output, failed }
 }
+
+/**
+ * A helper's call under the one that started it: its own id, prefixed so helpers never clash,
+ * and without what a brain keeps for replay. @template {{ toolCallId: string, _meta?: Record<string, any> }} T
+ * @param {T} update @param {string} parent @returns {T}
+ */
+const under = (update, parent) => ({ ...update, toolCallId: `${parent}/${update.toolCallId}`, _meta: { ...update._meta, raw: undefined, parent: update._meta?.parent ? `${parent}/${update._meta.parent}` : parent } })
 
 /** @template T @param {() => T} fn @param {T} fallback */
 function safe(fn, fallback) {

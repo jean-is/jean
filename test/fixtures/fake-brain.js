@@ -10,6 +10,9 @@
 // From 0.5 it searches the web when asked to, reads the user's latest emails through a
 // connection (finding its tool first, or from a script when Calculations are on) and sums them
 // up citing each one, and draws with models.image; /images/generations answers with a picture.
+// From 0.6 it splits a "briefing" between two helpers (each finds the mail tool, asks first, and
+// reports one email), answers Double-check's requests by comparing words, and gives a brief of
+// what's new when told the user is back.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -63,6 +66,20 @@ function picture(width = 96, height = 64) {
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', header), chunk('IDAT', deflateSync(rows)), chunk('IEND', Buffer.alloc(0))]).toString('base64')
 }
 
+/**
+ * Double-check's verdicts: a claim is supported when most of its longer words are in its sources.
+ * @param {string} text "Claim 1: …\nSource [n]: …" blocks
+ */
+function checked(text) {
+  const words = (/** @type {string} */ part) => part.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu) ?? []
+  return text.split(/\n\n(?=Claim \d+:)/).map((block, i) => {
+    const [claim, ...sources] = block.split('\n')
+    const said = new Set(words(sources.join(' ')))
+    const own = words(claim.replace(/^Claim \d+:/, ''))
+    return `${i + 1}: ${own.filter((word) => said.has(word)).length >= own.length * 0.6 ? 'supported' : 'missing'}`
+  }).join('\n')
+}
+
 /** Sources a tool's result lists: `Source [n]: title (address)` and what follows. @param {string} text */
 const sourcesIn = (text) => [...text.matchAll(/Source \[(\d+)\]: (.+?) \(([^)]+)\)\n?([^\n]*)/g)].map((m) => ({ n: m[1], title: m[2], url: m[3], more: m[4] }))
 
@@ -107,11 +124,48 @@ createServer(async (req, res) => {
   const routine = /routine/i.test(question) && last.role === 'user'
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
-  const emails = /e-?mails?|inbox|courriels?/i.test(question)
+  const emails = /e-?mails?|inbox|courriels?/i.test(question) || /The user is back/.test(serialized)
   const fromScript = (/** @type {string} */ name) => ({ name: 'run', args: { code: `return await tools.${name}({ limit: 3 })` } })
   const found = sourcesIn(last.role === 'tool' ? last.content : '')
+  // 0.6: a helper's turn, the briefing it is part of, and Double-check's requests.
+  const helper = system.startsWith('You are a helper of')
+  const task = helper ? messages.find((m) => m.role === 'user')?.content ?? '' : ''
+  const topic = /invoice/i.test(task) ? 'invoice' : 'croissant'
+  // A party to plan: one helper needs the number of guests from the user.
+  const party = /party/i.test(question) && !helper
+  const briefing = /briefing/i.test(question) && !helper
+  // A brief of what's new: it reads the emails, then tries to answer one, which must be refused.
+  const back = /The user is back/.test(serialized)
+  const sendTool = mailTool?.replace(/_search_emails$/, '_send_email')
+  const searched = sourcesIn([...messages].reverse().find((m) => m.role === 'tool' && /^Source \[/m.test(m.content))?.content ?? '')
   const steps = '# Weekly sales summary\n\n1. Read the shared sales file.\n2. Total the sales by region.\n3. Answer with a short table.'
-  if (emails && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { limit: 3 } }
+  if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  else if (helper && /how many/i.test(task) && last.role === 'user') call = { name: 'ask_user', args: { question: 'How many people are coming?' } }
+  else if (helper && toolName === 'ask_user') answer = /did not answer/.test(last.content) ? 'Nobody said; I assumed 10 people.' : `${last.content.trim()} people are coming.`
+  else if (helper && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { query: topic, limit: 1 } }
+  else if (helper && last.role === 'user') call = { name: 'find_tools', args: { query: 'search emails' } }
+  else if (helper && toolName === 'find_tools' && mailTool) call = { name: mailTool, args: { query: topic, limit: 1 } }
+  else if (helper && found.length) answer = topic === 'invoice' ? `Invoice 2041, for 912 euros, is due on Friday 4 October [${found[0].n}].` : `Margot asks to confirm an order of 120 croissants for Saturday morning [${found[0].n}].`
+  else if (helper) answer = 'I could not find it.'
+  else if (briefing && last.role === 'user' && declared.has('delegate')) {
+    call = { name: 'delegate', args: { parts: [
+      { title: 'Bakery orders', task: 'Find the latest email about the croissant order and say what it asks.' },
+      { title: 'Bills to pay', task: 'Find the latest email about an invoice and say what is due, and when.' },
+    ] } }
+  } else if (party && last.role === 'user' && declared.has('delegate')) {
+    call = { name: 'delegate', args: { parts: [
+      { title: 'Guests', task: 'Ask the user how many people are coming.' },
+      { title: 'Bills to pay', task: 'Find the latest email about an invoice and say what is due, and when.' },
+    ] } }
+  } else if (toolName === 'delegate') {
+    const reports = [...last.content.matchAll(/^Part \d+, [^:]*:\n(.+)$/gm)].map((m) => m[1])
+    const first = /\[(\d+)\]/.exec(reports[0] ?? '')?.[1] ?? '1'
+    answer = `Your Monday briefing:\n\n${reports.map((report) => `- ${report}`).join('\n')}\n- The bakery is closed on Monday [${first}].`
+  } else if (back && last.role === 'user') call = { name: 'find_tools', args: { query: 'search or send emails' } }
+  else if (back && toolName === 'find_tools') call = { name: String(mailTool), args: { limit: 3 } }
+  else if (back && toolName === mailTool && sendTool && declared.has(sendTool)) call = { name: sendTool, args: { to: 'margot@bakery.example', body: 'Confirmed.' } }
+  else if (back && toolName === sendTool) answer = `Your ${searched.length} latest emails:\n\n${searched.map((email) => `- **${email.title}** [${email.n}]`).join('\n')}`
+  else if (emails && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { limit: 3 } }
   else if (emails && last.role === 'user' && mailTool && declared.has('run')) call = fromScript(mailTool)
   else if (emails && last.role === 'user' && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'search the latest emails' } }
   else if (toolName === 'find_tools' && mailTool && /_search_emails\(/.test(last.content)) call = /inside run/.test(last.content) ? fromScript(mailTool) : { name: mailTool, args: { limit: 3 } }

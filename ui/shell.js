@@ -2,7 +2,7 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, theme, toggleTheme, setLocale, newConversation, LOCALES } from './state.js'
+import { app, theme, toggleTheme, setLocale, newConversation, assistantName, LOCALES } from './state.js'
 import { SIZES } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales, formatBytes } from '../core/i18n.js'
@@ -22,7 +22,7 @@ class Shell extends Element {
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
-        <button class="wordmark" @click=${newConversation} title=${t('action.new')}><app-persona></app-persona>${BRAND.name}${data.default === true ? nothing
+        <button class="wordmark" @click=${newConversation} title=${t('action.new')}><app-persona></app-persona>${assistantName()}${data.default === true ? nothing
           : html`<span class="wordmark-project" dir="auto">${data.name}</span>`}</button>
         <nav class="bar-actions" aria-label=${t('a11y.menu')}>
           <button class="icon-button" @click=${openCollection} aria-label=${t('collection.title', { name: BRAND.name })} title=${t('collection.title', { name: BRAND.name })}>${icons.house}</button>
@@ -72,7 +72,7 @@ function offerAside() {
   const offer = app.offer.value
   if (!offer) return nothing
   const { id, progress } = offer
-  const params = { name: BRAND.name, size: formatBytes(SIZES[id] ?? 0) }
+  const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
   return html`<aside class="offer" role="status">
     <p>${t(`cap.${id}.offer`, params)}</p>
     ${progress === undefined ? html`<div class="row">

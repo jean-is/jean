@@ -1,11 +1,11 @@
 // Backups: every file of Jean's folder in one zip, secrets and caches left out.
 // Importing never deletes or overwrites what is already here, with one exception:
 // a conversation that is longer in the backup (conversations only ever grow).
-import { walk } from './fs.js'
-import { readZip, writeZip } from './zip.js'
-import { listProjects } from './settings.js'
+import { walk } from '../../core/fs.js'
+import { readZip, writeZip } from '../../core/zip.js'
+import { listProjects } from '../../core/settings.js'
 
-/** @typedef {import('./types.js').FS} FS */
+/** @typedef {import('../../core/types.js').FS} FS */
 
 const MANIFEST = 'backup.json'
 

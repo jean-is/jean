@@ -56,13 +56,13 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
 | Routines | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Make this a routine?" (saved as `SKILL.md`); once on, "Make this a routine" among the follow-ups |
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
-| Assistant name | After some use inside a project | "Want to give this project's assistant a name?" |
+| Assistant name | After some use inside a project (three conversations, D102) | "Want to give this project's assistant a name?" A name and a few words on how it should be, in the project's dialog; the header shows the name |
 | Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
 | Connections | A request needs one of the user's services, like their email (the brain offers it, and the answer waits while they connect it) | "Connect a service": pick one Jean knows and sign in, or give an address, then a sign-in or a key (MCP behind the scenes, D87–D89, D95) |
 | Live conversation | The user has dictated three times | Hands-free: it listens, answers aloud, stops when they speak (about 82 MB, once, D93) |
-| Helpers | A big request with several parts | Jean splits the work; helpers appear nested in the activity view |
-| Double-check | Citations are in regular use | Jean checks claims against their sources |
-| Since last time | The user returns after time away and has connections | A read-only brief when Jean opens |
+| Helpers | A big request with several parts (the brain offers it) | Jean splits the work into parts that helpers do at the same time; they appear nested in the activity view, and their approvals and questions wait in the decision inbox (D98, D99) |
+| Double-check | Citations are in regular use (three answers that cite sources, D100) | Jean checks each claim against the source it cites, and shows what the sources don't support |
+| Since last time | The user returns after time away (8 hours) and has connections | A read-only brief when Jean opens, in a conversation of its own (D101) |
 | Sync / Share / Collaborate | Another device is mentioned / the user wants to send something / someone opens a shared item | See [enterprise.md](enterprise.md) |
 
 ## Projects
@@ -125,8 +125,8 @@ A live, inspectable activity view built from standard ACP events:
 
 Jean's "computer" is the user's own browser, so the view can show everything: files read, code run, sources used, files made.
 
-- **Decision inbox.** During long tasks or work by helpers, questions and approvals queue up as cards instead of blocking the chat.
-- **Since last time.** On opening, a read-only pass over connections and changed files produces a short brief. Jean cannot work while the tab is closed, and says so.
+- **Decision inbox.** During long tasks or work by helpers, questions and approvals queue up as cards instead of blocking the chat. As built in 0.6 (D99): the cards wait under the answer being written, each saying which part it is for, and are answered in any order while the helpers go on.
+- **Since last time.** On opening, a read-only pass over connections produces a short brief. Jean cannot work while the tab is closed, and says so. As built in 0.6 (D101), the brief reads connected services only: files change only when the user shares them, until sync.
 - **Explanations for Auto.** Auto mode explains its choices in collapsed "thinking" entries ("Chose the on-device brain: personal content").
 
 ## Brains: picker and Auto
@@ -170,7 +170,7 @@ Organisation policy can hide or lock any of these.
 - **One format for all providers.** Provider citations (Anthropic Citations, `url_citation` annotations, Gemini grounding) are converted into the same format.
 - **As built in 0.5 (D90).** Shared files, a connection's emails and documents, Wikipedia's pages and the brain's own search share one numbering per conversation. A web page's chip opens it in a new tab; an email's shows its title. Each answer lists its sources under "Sources".
 - **Honest even with small brains.** Small on-device brains cite unreliably, so a "What Jean read" list is always built from the actual tool calls.
-- **Later unlock: Double-check.** The reflex model asks whether source [n] supports each claim.
+- **Double-check** (0.6, D100). Each sentence that cites a source is checked against that source's words by the brain that wrote the answer, in one short request outside the conversation; the reflex model was not up to it. The verdicts show under the answer: what matches, what the source doesn't say or contradicts, and a follow-up to correct it.
 
 ## Web search
 

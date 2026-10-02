@@ -15,8 +15,8 @@
 // No word from the sandbox for this long, while no call is waiting on Jean: stop it.
 const WATCHDOG_MS = 40_000
 const MAX_OUTPUT = 8000
-// A script can't start another script, or interrupt the user with an offer.
-const NOT_FROM_SCRIPTS = new Set(['run', 'python', 'offer'])
+// A script can't start another script, hand work to helpers, or interrupt the user with an offer.
+const NOT_FROM_SCRIPTS = new Set(['run', 'python', 'offer', 'delegate', 'helper'])
 
 const ROOT = new URL('../', import.meta.url)
 
