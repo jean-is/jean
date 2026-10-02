@@ -442,23 +442,32 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .activity { font-size: 0.86rem; color: var(--ink-soft); }
 .activity summary { display: inline-flex; align-items: center; gap: 0.5rem; list-style: none; cursor: pointer; padding: 0.15rem 0.1rem; border-radius: 0.5rem; }
 .activity summary::-webkit-details-marker { display: none; }
-.activity summary .icon { inline-size: 1rem; block-size: 1rem; transition: rotate 0.3s var(--ease); }
-.activity[open] summary .icon { rotate: 180deg; }
-.activity-list { margin: 0.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
-.activity-list li { display: flex; align-items: center; gap: 0.55rem; }
+.activity summary .icon { inline-size: 1rem; block-size: 1rem; flex: none; transition: rotate 0.3s var(--ease); }
+.activity[open] > summary .icon, .step[open] > summary .icon { rotate: 180deg; }
+.activity-list { margin: 0.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.2rem; }
+.activity-list li { min-inline-size: 0; }
 .activity-list li.is-nested { padding-inline-start: 1.1rem; }
 .activity-list li[data-depth='2'] { padding-inline-start: 2.2rem; }
 .activity-list li[data-depth='3'] { padding-inline-start: 3.3rem; }
-.thought { margin-block-start: 0.6rem; padding-inline-start: 0.9rem; border-inline-start: 1px solid var(--line-strong); color: var(--ink-faint); font-size: 0.88rem; }
+/* Each line opens on what it was given and what came back. */
+.step > summary { display: flex; gap: 0.55rem; }
+.step > summary .icon { inline-size: 0.85rem; block-size: 0.85rem; opacity: 0.45; }
+.step > summary:hover .icon, .step[open] > summary .icon { opacity: 1; }
+.step-body { display: grid; gap: 0.3rem; margin: 0.2rem 0 0.6rem; padding-inline-start: 1.15rem; min-inline-size: 0; }
+.step-body p { margin: 0; }
+.step-facts, .step-label { font-size: 0.8rem; color: var(--ink-faint); }
+.step-facts code { font-family: var(--mono); }
+.step-body pre { margin: 0; padding: 0.5rem 0.7rem; max-block-size: 18rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.78rem/1.5 var(--mono); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 0.6rem; background: oklch(from var(--ink) l c h / 0.04); }
+.thought { padding-inline-start: 0.9rem; border-inline-start: 1px solid var(--line-strong); color: var(--ink-faint); font-size: 0.88rem; }
 .thought p { margin-block: 0 0.5rem; }
 .ember { inline-size: 0.5rem; block-size: 0.5rem; flex: none; border-radius: 50%; background: var(--ember-off); }
-[data-status='thinking'] > summary .ember, [data-status='working'] > summary .ember, [data-status='in_progress'] > .ember, [data-status='pending'] > .ember {
+[data-status='thinking'] > summary .ember, [data-status='working'] > summary .ember, [data-status='in_progress'] > .step > summary .ember, [data-status='pending'] > .step > summary .ember {
   background: var(--flame);
   box-shadow: 0 0 0.6rem oklch(from var(--glow) l c h / 0.9);
   animation: pulse 1.1s ease-in-out infinite;
 }
-[data-status='completed'] > summary .ember, [data-status='completed'] > .ember { background: oklch(from var(--flame) l c h / 0.55); }
-[data-status='failed'] > summary .ember, [data-status='failed'] > .ember { background: var(--danger); }
+[data-status='completed'] > summary .ember, [data-status='completed'] > .step > summary .ember { background: oklch(from var(--flame) l c h / 0.55); }
+[data-status='failed'] > summary .ember, [data-status='failed'] > .step > summary .ember { background: var(--danger); }
 @keyframes pulse { 50% { opacity: 0.4; scale: 0.8; } }
 
 .approval { padding: 1rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.5); border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.08); animation: arrive 0.4s var(--ease) both; }

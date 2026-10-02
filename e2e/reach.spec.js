@@ -83,7 +83,7 @@ test('a service of the earlier MCP revision, reached from a script', async ({ pa
   // The sandbox starts first: as in compute.spec.js, that can take a while on a busy machine.
   await page.locator('.approval .button.primary').click({ timeout: 30_000 })
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Lunch on Thursday?', { timeout: 30_000 })
-  await page.locator('.activity summary').last().click()
+  await page.locator('.activity > summary').last().click()
   await expect(page.locator('.activity-list .is-nested')).toContainText('Mail: Search emails')
 })
 

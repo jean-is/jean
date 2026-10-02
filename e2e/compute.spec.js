@@ -27,8 +27,13 @@ for (const [lang, [question, expected]] of Object.entries(QUESTIONS)) {
     await expect(answer.locator('.cite')).toHaveText('1')
     await expect(page.locator('aside.offer')).toHaveCount(0)
     // The script's own read shows under the calculation.
-    await page.locator('.activity summary').last().click()
+    await page.locator('.activity > summary').last().click()
     await expect(page.locator('.activity-list li.is-nested').last()).toContainText('sales.csv')
+    // Each line opens on what it was given and what came back.
+    const script = page.locator('.activity-list li[data-depth="0"]', { has: page.locator('code', { hasText: /^run$/ }) }).last()
+    await script.locator('.step > summary').click()
+    await expect(script.locator('.step-body pre').first()).toContainText('code:')
+    await expect(script.locator('.step-body pre').last()).toContainText('2540')
   })
 }
 

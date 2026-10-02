@@ -74,6 +74,9 @@ test('loop: tool call allowed by rule, then final answer; records replay as cont
   const toolRecord = persisted.find((record) => record.update?.toolCallId === 'c1')
   assert.equal(toolRecord.update.status, 'completed')
   assert.equal(toolRecord.update.title, 'Read a.csv')
+  // How long the brain and the tool took, for the activity view.
+  assert.equal(typeof persisted[1].update._meta.ms, 'number')
+  assert.equal(typeof toolRecord.update._meta.ms, 'number')
   assert.deepEqual(toChatMessages(persisted).map((message) => message.role), ['user', 'assistant', 'tool', 'assistant'])
 })
 
@@ -116,6 +119,7 @@ test('loop: stream errors persist partial output and rethrow', async () => {
   )
   assert.equal(persisted[0].update.status, 'failed')
   assert.equal(persisted[0].update.rawOutput.code, 'cors_or_offline')
+  assert.equal(typeof persisted[0].update._meta.ms, 'number')
   assert.equal(persisted[1].update.content.text, 'Partial')
 })
 

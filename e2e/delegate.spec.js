@@ -44,7 +44,7 @@ test('a large task is split among helpers, approved step by step, and checked ag
   await expect(check.locator('.follow-up')).toHaveText('Correct what the sources don’t support')
 
   // What each helper did, under its part, in the activity view.
-  await page.locator('.activity summary').last().click()
+  await page.locator('.activity > summary').last().click()
   await expect(page.locator('.activity-list li[data-depth="0"]')).toContainText(['Split the work among helpers'])
   await expect(page.locator('.activity-list li[data-depth="1"]')).toContainText(['Bakery orders', 'Bills to pay'])
   await expect(page.locator('.activity-list li[data-depth="2"]', { hasText: 'Mail: Search emails' })).toHaveCount(2)
@@ -92,7 +92,7 @@ test('back after time away, Jean starts with a brief of what’s new, reading on
   await page.locator('.inbox .approval', { hasText: 'Mail: Search emails' }).locator('.button.primary').click()
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Your 3 latest emails')
   await expect(page.locator('.inbox')).toHaveCount(0)
-  await page.locator('.activity summary').last().click()
+  await page.locator('.activity > summary').last().click()
   await expect(page.locator('.activity-list li[data-status="failed"]')).toContainText('Mail: Send an email')
 })
 

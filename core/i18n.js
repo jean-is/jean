@@ -141,6 +141,12 @@ export function formatBytes(bytes) {
   return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
 }
 
+/** "1.2 sec", in the current locale. @param {number} ms */
+export function formatDuration(ms) {
+  const [unit, size] = ms >= 6e4 ? ['minute', ms / 6e4] : ms >= 1e3 ? ['second', ms / 1e3] : ['millisecond', ms]
+  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
+}
+
 /** "3 minutes ago", in the current locale. @param {string | number | Date} when */
 export function relativeTime(when, now = Date.now()) {
   const seconds = Math.round((new Date(when).getTime() - now) / 1000)

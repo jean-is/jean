@@ -91,7 +91,7 @@ test('find_tools declares what it finds from the next request on, unless run can
   assert.deepEqual(requests.map((request) => request.tools.map((/** @type {any} */ spec) => spec.name)), [['find_tools', 'read'], ['find_tools', 'read', 'chart'], ['find_tools', 'read', 'chart']])
   const found = persisted.find((record) => record.update?.toolCallId === 'f').update
   assert.match(found.rawOutput, /^chart\(\{ x: number \}\): chart things/)
-  assert.deepEqual(found._meta, { declare: ['chart'] })
+  assert.deepEqual(found._meta.declare, ['chart'])
   assert.equal(persisted.find((record) => record.update?.toolCallId === 'g').update.rawOutput, 'chart:3')
 
   const viaRun = await finder.run({ query: 'chart' }, { declared: ['find_tools', 'run'], call: async () => '', declare: () => assert.fail('nothing to declare') })

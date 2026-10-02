@@ -74,8 +74,9 @@ export async function runTurn(options) {
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 }
 
   for (let step = 0; step < maxSteps; step++) {
+    const started = Date.now()
     /** @type {ToolCallInfo} */
-    const brainEntry = { toolCallId: `brain-${step}-${Date.now().toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, ...meta } }
+    const brainEntry = { toolCallId: `brain-${step}-${started.toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, ...meta } }
     ctx.byName = new Map(tools().map((tool) => [tool.spec.name, tool]))
     onUpdate({ sessionUpdate: 'tool_call', ...brainEntry }, step)
 
@@ -105,7 +106,7 @@ export async function runTurn(options) {
         else if (event.type === 'done') done = event
       }
     } catch (error) {
-      const failed = { ...brainEntry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error) }
+      const failed = { ...brainEntry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ms: Date.now() - started } }
       onUpdate({ sessionUpdate: 'tool_call_update', ...failed }, step)
       await persist(stepRecords(step, failed, thought, text))
       throw error
@@ -118,9 +119,10 @@ export async function runTurn(options) {
       usage.cacheReadTokens += done.usage.cacheReadTokens ?? 0
     }
     // Thinking blocks and the provider's own search results are replayed unchanged by later turns.
+    // How long it took is kept for the activity view.
     const raw = done?.message.raw
-    const kept = { ...cited, ...(Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }) }
-    const completed = { ...brainEntry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, ...(Object.keys(kept).length && { _meta: kept }) }
+    const kept = { ...cited, ...(Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }), ms: Date.now() - started }
+    const completed = { ...brainEntry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, _meta: kept }
     onUpdate({ sessionUpdate: 'tool_call_update', ...completed }, step)
     await persist(stepRecords(step, completed, thought, text))
     history.push(done?.message ?? { role: 'assistant', content: text, toolCalls: calls })
@@ -175,6 +177,8 @@ async function runTool(call, tool, step, ctx, parent) {
   let output = ''
   let failed = true
   let nested = 0
+  /** @type {number | undefined} how long it ran, for the activity view */
+  let ms
   /** @type {ToolContext} */
   const context = {
     signal,
@@ -210,12 +214,14 @@ async function runTool(call, tool, step, ctx, parent) {
     if (decision === 'never') output = 'The user declined this action.'
     else {
       onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, status: 'in_progress' }, step)
+      const started = Date.now()
       try {
         output = await tool.run(call.args, context)
         failed = false
       } catch (error) {
         output = `Error: ${error instanceof Error ? error.message : String(error)}`
       }
+      ms = Date.now() - started
     }
   }
   const final = {
@@ -223,7 +229,7 @@ async function runTool(call, tool, step, ctx, parent) {
     status: /** @type {'failed' | 'completed'} */ (failed ? 'failed' : 'completed'),
     rawOutput: output,
     content: [{ type: /** @type {const} */ ('content'), content: { type: /** @type {const} */ ('text'), text: output } }],
-    ...(Object.keys(context.meta).length && { _meta: { ...info._meta, ...context.meta } }),
+    ...((ms !== undefined || Object.keys(context.meta).length) && { _meta: { ...info._meta, ...context.meta, ms } }),
   }
   onUpdate({ sessionUpdate: 'tool_call_update', ...final }, step)
   await ctx.persist([envelope('jean', { sessionUpdate: 'tool_call', ...final }, step)])

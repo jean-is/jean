@@ -119,7 +119,7 @@ Every kind of action has one of three settings: **Do it / Ask me first / Never**
 A live, inspectable activity view built from standard ACP events:
 
 - **The plan:** steps, each with a status.
-- **Each action:** a plain-language label, the files it touched (clickable), its status and its output.
+- **Each action:** a plain-language label, the files it touched (clickable), its status and its output. As built (D103), every line opens on what it was given and what came back, so a step that went wrong can be looked into.
 - **Approval cards.**
 - **Pause and stop.**
 

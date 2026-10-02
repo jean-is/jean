@@ -85,5 +85,5 @@ test('blocks without thinking are not kept', async () => {
   /** @type {any[]} */
   const persisted = []
   await runTurn({ brain, system: 's', history: [], stream: /** @type {any} */ (stream), persist: async (r) => { persisted.push(...r) } })
-  assert.equal(persisted[0].update._meta, undefined)
+  assert.equal(persisted[0].update._meta.raw, undefined)
 })

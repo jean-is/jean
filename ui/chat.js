@@ -5,12 +5,12 @@ import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions } from '../core/events.js'
-import { t, locale, formatBytes, relativeTime } from '../core/i18n.js'
+import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
 
-/** @import { Turn } from '../core/events.js' */
+/** @import { Turn, Step } from '../core/events.js' */
 /** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
 
 class Conversation extends Element {
@@ -84,7 +84,6 @@ function turnView(turn, live, files, upTo, last, sources) {
   const steps = live ? [...turn.steps, ...live.steps] : turn.steps
   // The brain's follow-ups come in a trailing block, hidden from the answer itself.
   const { text, suggestions } = splitSuggestions(steps.map((step) => step.text).filter(Boolean).join('\n\n'))
-  const thought = steps.map((step) => step.thought).filter(Boolean).join('\n\n')
   const entries = steps.flatMap((step) => step.tools)
   const streaming = Boolean(live)
   const read = whatJeanRead(upTo, entries, files)
@@ -98,7 +97,7 @@ function turnView(turn, live, files, upTo, last, sources) {
     ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${turn.user.text}</p>` : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
-        ${activity(entries, thought, text, streaming, files)}
+        ${activity(steps, text, streaming, files)}
         ${text ? html`<div class="prose" dir="auto">${markdown(text, sources)}${streaming ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>` : nothing}
         ${entries.flatMap(({ _meta, rawInput }) => (_meta?.image ? [html`<app-image uri=${_meta.image.uri} name=${_meta.image.name} alt=${rawInput?.prompt ?? ''}></app-image>`] : []))}
         ${!streaming && read.length ? readView(read) : nothing}
@@ -165,54 +164,116 @@ function sourcesView(cited) {
 }
 
 /**
- * "What Jean is doing", from the turn's ACP records. What a script or a helper did shows under
- * it, as a tree: a helper's brain, its calls, and their scripts' calls.
- * @param {ToolCallInfo[]} entries @param {string} thought @param {string} text @param {boolean} streaming
- * @param {ResourceLink[]} files
+ * "What Jean is doing", from the turn's ACP records, in the order it happened: each time the
+ * brain was asked, then the calls it made. What a script or a helper did shows under its call,
+ * as a tree: a helper's brain, its calls, and their scripts' calls. Each line opens on what it
+ * was given and what came back, so a step that went wrong can be looked into.
+ * @param {Step[]} steps @param {string} text @param {boolean} streaming @param {ResourceLink[]} files
  */
-function activity(entries, thought, text, streaming, files) {
-  const brains = entries.filter((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)
+function activity(steps, text, streaming, files) {
+  const entries = steps.flatMap((step) => step.tools)
   const tools = entries.filter((entry) => entry.name || entry._meta?.parent)
-  const top = tools.filter((tool) => !tool._meta?.parent)
-  const last = brains.at(-1)
+  const last = entries.findLast((entry) => !entry.name && !entry._meta?.parent)
   const failed = last?.status === 'failed'
+  // Asked for tools and never read what they returned: out of steps, or closed in the middle.
+  const unfinished = !streaming && last?.rawOutput?.stopReason === 'tool_use'
   const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
-  const status = streaming ? (working ? 'working' : 'thinking') : failed ? 'failed' : 'completed'
+  const status = streaming ? (working ? 'working' : 'thinking') : failed || unfinished ? 'failed' : 'completed'
   const summary = streaming
     ? t(working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
-    : failed ? t('activity.failed') : t('activity.answeredWith', { brain: last ? brainName(last) : '' })
+    : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : t('activity.answeredWith', { brain: last ? brainName(last) : '' })
   const offering = app.offering.value
-  /** @param {ToolCallInfo} tool @param {number} [depth] */
-  const item = (tool, depth = 0) => html`<li data-status=${tool.status ?? 'pending'} class=${depth ? 'is-nested' : ''} data-depth=${depth}>
-    <span class="ember" aria-hidden="true"></span><span dir="auto">${toolLabel(tool, files)}</span>
-  </li>`
+  // What each brain step thought and wrote.
+  const said = new Map(steps.map((step) => [step.tools.find((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
   // Parts in the order the work was split (their calls are kept in the order they finished).
   const order = (/** @type {ToolCallInfo} */ tool) => Number(/\.(\d+)$/.exec(tool.toolCallId)?.[1] ?? 0)
-  /** @param {ToolCallInfo} tool @param {number} depth @returns {unknown[]} */
-  const tree = (tool, depth) => {
-    const children = tools.filter((child) => child._meta?.parent === tool.toolCallId)
-    if (tool.name === 'delegate') children.sort((a, b) => order(a) - order(b))
-    return [item(tool, depth), ...children.flatMap((child) => tree(child, depth + 1))]
+  /** @type {{ entry: ToolCallInfo, depth: number, key: string }[]} */
+  const rows = []
+  // Keys stay with their line as lines arrive, so one that is open stays open (a brain may reuse an id).
+  const seen = new Map()
+  /** @param {ToolCallInfo} entry @param {number} depth */
+  const add = (entry, depth) => {
+    seen.set(entry.toolCallId, (seen.get(entry.toolCallId) ?? 0) + 1)
+    rows.push({ entry, depth, key: `${entry.toolCallId}#${seen.get(entry.toolCallId)}` })
+    // The brain's own searches, kept with its reply.
+    for (const block of entry._meta?.raw ?? []) {
+      if (block.type === 'server_tool_use' && block.name === 'web_search') add({ toolCallId: block.id, title: '', name: 'web_search', status: 'completed', rawInput: block.input }, depth + 1)
+    }
+    const children = tools.filter((child) => child._meta?.parent === entry.toolCallId)
+    if (entry.name === 'delegate') children.sort((a, b) => order(a) - order(b))
+    for (const child of children) add(child, depth + 1)
   }
+  for (const entry of entries) if (!entry._meta?.parent) add(entry, 0)
   return html`
     <details class="activity" data-status=${status}>
       <summary><span class="ember" aria-hidden="true"></span><span>${summary}</span>${icons.chevron}</summary>
       <ol class="activity-list">
-        ${brains.map((brain) => [html`<li data-status=${brain.status ?? 'pending'}>
-          <span class="ember" aria-hidden="true"></span><span>${t('activity.brain', { brain: brainName(brain) })}
-          ${brain.rawInput?.auto ? html`<span class="muted"> · ${autoReason(brain.rawInput.auto)}</span>` : nothing}
-          ${brain.rawOutput?.usage?.cacheReadTokens ? html`<span class="muted"> · ${t('activity.cached')}</span>` : nothing}
-          ${brain.status === 'failed' && brain.rawOutput?.error ? html`<span class="muted"> — ${brain.rawOutput.error}</span>` : nothing}</span>
-        </li>`,
-        // The brain's own searches, kept with its reply.
-        ...(brain._meta?.raw ?? []).filter((/** @type {any} */ block) => block.type === 'server_tool_use' && block.name === 'web_search')
-          .map((/** @type {any} */ block) => item({ toolCallId: block.id, title: '', name: 'web_search', status: 'completed', rawInput: block.input }, 1))])}
-        ${top.map((tool) => tree(tool, 0))}
+        ${repeat(rows, (row) => row.key, ({ entry, depth }) => html`<li data-status=${entry.status ?? 'pending'} class=${depth ? 'is-nested' : ''}
+          data-depth=${entry.name || depth ? depth : nothing}>
+          <details class="step">
+            <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${entry.name ? toolLabel(entry, files) : brainLine(entry)}</span>${icons.chevron}</summary>
+            ${entry.name ? toolDetails(entry) : brainDetails(entry, said.get(entry.toolCallId))}
+          </details>
+        </li>`)}
       </ol>
-      ${thought ? html`<div class="thought" dir="auto">${markdown(thought)}</div>` : nothing}
     </details>
     ${streaming ? inbox(entries, files) : nothing}
     ${streaming && offering ? offerCard(offering) : nothing}`
+}
+
+/** Which brain was asked, and why Auto chose it. @param {ToolCallInfo} brain */
+function brainLine(brain) {
+  return html`${t('activity.brain', { brain: brainName(brain) })}
+    ${brain.rawInput?.auto ? html`<span class="muted"> · ${autoReason(brain.rawInput.auto)}</span>` : nothing}
+    ${brain.rawOutput?.usage?.cacheReadTokens ? html`<span class="muted"> · ${t('activity.cached')}</span>` : nothing}
+    ${brain.status === 'failed' && brain.rawOutput?.error ? html`<span class="muted"> — ${brain.rawOutput.error}</span>` : nothing}`
+}
+
+const STOPS = ['end', 'tool_use', 'max_tokens', 'refusal', 'pause', 'other']
+
+/**
+ * What the brain thought and wrote that time, exactly as written, then how it stopped, how long
+ * it took and how much it read and wrote (or the error's code and status).
+ * @param {ToolCallInfo} brain @param {Step | undefined} step
+ */
+function brainDetails(brain, step) {
+  const { stopReason, usage, code, status } = brain.rawOutput ?? {}
+  const facts = [
+    STOPS.includes(stopReason) ? t(`activity.stop.${stopReason}`) : '',
+    brain._meta?.ms === undefined ? '' : formatDuration(brain._meta.ms),
+    usage?.inputTokens ? t('activity.size', { input: usage.inputTokens, output: usage.outputTokens ?? 0 }) : '',
+    code ?? '', status ?? '',
+  ].filter(Boolean)
+  return html`<div class="step-body">
+    ${step?.thought ? html`<div class="thought" dir="auto">${markdown(step.thought)}</div>` : nothing}
+    ${step?.text ? html`<pre tabindex="0" dir="auto">${step.text}</pre>` : nothing}
+    ${facts.length ? html`<p class="step-facts">${facts.join(' · ')}</p>` : nothing}
+  </div>`
+}
+
+/** What a call was given and what came back, as the brain saw them. @param {ToolCallInfo} tool */
+function toolDetails(tool) {
+  const input = shown(tool.rawInput)
+  const output = shown(tool.rawOutput)
+  return html`<div class="step-body">
+    <p class="step-facts"><code dir="ltr">${tool.name}</code>${tool._meta?.ms === undefined ? nothing : ` · ${formatDuration(tool._meta.ms)}`}</p>
+    ${input ? html`<p class="step-label">${t('activity.input')}</p><pre tabindex="0" dir="auto">${input}</pre>` : nothing}
+    ${output ? html`<p class="step-label">${t('activity.output')}</p><pre tabindex="0" dir="auto">${output}</pre>` : nothing}
+  </div>`
+}
+
+/**
+ * Arguments and results as text: strings as they are, so code stays readable, the rest as JSON.
+ * @param {unknown} value @returns {string}
+ */
+function shown(value) {
+  if (value === undefined || value === null) return ''
+  if (typeof value === 'string') return value
+  if (typeof value !== 'object' || Array.isArray(value)) return JSON.stringify(value, null, 2)
+  return Object.entries(value).map(([key, item]) => {
+    const text = typeof item === 'string' ? item : JSON.stringify(item, null, 2) ?? ''
+    return text.includes('\n') ? `${key}:\n${text.replace(/^/gm, '  ')}` : `${key}: ${text}`
+  }).join('\n')
 }
 
 /**
@@ -263,7 +324,6 @@ function brainName(entry) {
  * @param {ToolCallInfo} tool @param {ResourceLink[]} [files]
  */
 function toolLabel(tool, files = []) {
-  if (!tool.name) return t('activity.brain', { brain: brainName(tool) })
   if (tool.name === 'helper') return tool.rawInput?.title ?? tool.title
   const path = tool.locations?.[0]?.path
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
