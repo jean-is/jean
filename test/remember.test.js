@@ -1,9 +1,9 @@
-// 0.4 "Remember": projects, instructions, memory and routines as plain files, and the
+// 0.4 "Remember": projects, instructions, memory and skills as plain files, and the
 // sections of the frozen prompt that change through system notes (D46).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS } from '../core/fs.js'
-import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, ensureHome, slug } from '../core/settings.js'
+import { memoryFS, writeJSON } from '../core/fs.js'
+import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, ensureHome, slug, loadSettings, renamed } from '../core/settings.js'
 import { parseMemory, stringifyMemory, memoryText } from '../core/memory.js'
 import { parseSkill, listSkills, saveSkill, skillLines } from '../core/skills.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
@@ -71,7 +71,7 @@ test('memory: the brain reads the newest lines that fit', () => {
   assert.equal(memoryText([]), '')
 })
 
-test('routines are SKILL.md folders: name and description up front, steps read when needed', async () => {
+test('skills are SKILL.md folders: name and description up front, steps read when needed', async () => {
   const fs = memoryFS()
   const path = await saveSkill(fs, '', {
     name: 'weekly-sales', description: 'When the weekly sales CSV is shared: totals by region.',
@@ -85,7 +85,7 @@ test('routines are SKILL.md folders: name and description up front, steps read w
   assert.equal(skill?.description, 'When the weekly sales CSV is shared: totals by region.')
   await assert.rejects(saveSkill(fs, '', { name: 'Not Valid', description: 'x', body: '', by: 'jean' }))
 
-  // A project's routine with the same name replaces the global one; folders that don't match their name are skipped.
+  // A project's skill with the same name replaces the global one; folders that don't match their name are skipped.
   await saveSkill(fs, 'projects/p', { name: 'weekly-sales', description: 'The bakery’s version.', body: 'Steps', by: 'jean' })
   await fs.write('skills/other/SKILL.md', '---\nname: mismatch\ndescription: d\n---\n')
   await fs.write('skills/broken/SKILL.md', 'no front matter')
@@ -95,7 +95,20 @@ test('routines are SKILL.md folders: name and description up front, steps read w
   assert.equal(skillLines(skills), '- weekly-sales: The bakery’s version.')
 })
 
-test('the prompt holds project, instructions, memory and routines, frozen; changes come as notes', () => {
+test('skills were routines: settings and policy that name them so are read with the new names (D115)', async () => {
+  const fs = memoryFS()
+  await writeJSON(fs, 'settings.json', { format: 1, unlocked: ['files', 'routines', 'memory'], offers: { routines: '2026-10-02T10:00:00.000Z', backup: '2026-10-01T09:00:00.000Z' } })
+  const settings = await loadSettings(fs)
+  assert.deepEqual(settings.unlocked, ['files', 'skills', 'memory'])
+  assert.deepEqual(settings.offers, { skills: '2026-10-02T10:00:00.000Z', backup: '2026-10-01T09:00:00.000Z' })
+  assert.deepEqual((await loadSettings(memoryFS())).unlocked, [], 'no settings yet: the defaults')
+  // Policy lists capabilities by id, and older conversations name the tools they were given.
+  assert.deepEqual(['python', 'routines'].map(renamed), ['python', 'skills'])
+  assert.deepEqual(['routine', 'save_routine', 'read'].map(renamed), ['skill', 'save_skill', 'read'])
+  assert.equal(renamed('toString'), 'toString', 'only names that changed')
+})
+
+test('the prompt holds project, instructions, memory and skills, frozen; changes come as notes', () => {
   const sections = { project: 'Bakery', instructions: 'Use metric units.', memory: '- Opens at 7.' }
   const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: 'English', sections })
   assert.match(system, /<project>\nBakery\n<\/project>\n\n<instructions>\nUse metric units\.\n<\/instructions>\n\n<memory>\n- Opens at 7\.\n<\/memory>/)

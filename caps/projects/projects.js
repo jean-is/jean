@@ -1,5 +1,5 @@
 // Projects (docs/product.md, "Projects"): anything the user keeps coming back to gets its own
-// folder, with its conversations, files, instructions, memory and routines, and its own light:
+// folder, with its conversations, files, instructions, memory and skills, and its own light:
 // the room and the little light take its colour (D78). The home project is always there; once
 // projects are discovered, the conversations drawer lists them, and walking into one is a click.
 // A project can be kept on this device, whatever brain Auto would otherwise pick.
@@ -97,7 +97,7 @@ async function save(event) {
   close()
 }
 
-/** Deleting a project deletes its folder: conversations, files, memory and routines. @param {Project} project */
+/** Deleting a project deletes its folder: conversations, files, memory and skills. @param {Project} project */
 async function remove(project) {
   if (!confirm(t('projects.confirmDelete', { name: String(project.data.name) }))) return
   const home = app.projects.value.find((candidate) => candidate.data.default === true)

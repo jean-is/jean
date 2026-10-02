@@ -16,7 +16,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - what it should know about you, on a page where you can read and change it;
   - standing instructions;
   - projects, each with its own memory, files and light;
-  - routines, saved as `SKILL.md`.
+  - skills it learns from requests you repeat, saved as `SKILL.md`.
 - **Reaches your services and the web.** Connections over MCP sign in from the browser. Web search uses the brain's own search, or Wikipedia. Every source becomes a numbered citation.
 - **Takes on bigger tasks:**
   - Helpers split a large task and work on its parts at the same time.
@@ -27,7 +27,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
 - **Looks the way you like:** the lit room, a mail-style layout with your conversations listed beside the one you read, or ink on paper, each by day or by night. Your own colours, text size, typeface or CSS go on top.
 - **Asks first.** For each kind of action you choose *Do it*, *Ask me first* or *Never*. By default Jean reads and writes its own files freely, asks before sending, sharing, deleting or anything external, and never touches passwords or payments.
 
-Jean starts as a single box. Everything above is offered when you need it, like a game that teaches itself, and the "What Jean can do" page lights up as you find things.
+Jean starts as a single box. Everything above is offered when you need it, like a game that teaches itself, and "What Jean can do", in Settings, lights up as you find things.
 
 ## Private by design
 
@@ -57,7 +57,7 @@ These limits live in [budgets.json](budgets.json), and CI fails when one is exce
 Jean builds on standards, not inventions:
 - **Brains:** the OpenAI-compatible and Anthropic Messages APIs.
 - **Connections:** MCP.
-- **Routines:** Agent Skills (`SKILL.md`).
+- **Skills:** Agent Skills (`SKILL.md`).
 - **Activity:** ACP `session/update` events.
 - **Intuition** (the small on-device helper that picks a brain and suggests next steps): the Decisions API.
 - **Everything else:** `Intl` and the Web Platform.

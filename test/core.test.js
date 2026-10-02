@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { addCatalog, useLocale, t, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { buildSystemPrompt, basePromptForBudget } from '../core/prompt.js'
-import { foldTurns, toChatMessages, userRecord, envelope, metaRecord, titleOf } from '../core/events.js'
+import { foldTurns, toChatMessages, userRecord, envelope, metaRecord, titleOf, openingOf } from '../core/events.js'
 import { parseFrontMatter, stringifyFrontMatter, applyPolicy, DEFAULT_SETTINGS } from '../core/settings.js'
 import { ulid, ulidTime } from '../core/ulid.js'
 
@@ -119,6 +119,7 @@ test('events: fold turns and derive the model context', () => {
   assert.equal(turns[0].steps.length, 2)
   assert.equal(turns[0].steps[0].tools.length, 2)
   assert.equal(titleOf(records), 'Sums')
+  assert.equal(openingOf(records), 'Sum the file')
 
   assert.deepEqual(toChatMessages(records), [
     { role: 'user', content: 'Sum the file' },

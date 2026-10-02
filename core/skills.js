@@ -1,7 +1,7 @@
-// Routines are Agent Skills (https://agentskills.io): a folder per routine, skills/<name>/SKILL.md,
+// Skills are Agent Skills (https://agentskills.io): a folder per skill, skills/<name>/SKILL.md,
 // whose front matter holds its name and when to use it. Only those go into the prompt; the
 // steps are read when a request calls for them. Global ones live at the root, a project's in
-// its own folder, and a project's routine replaces a global one with the same name.
+// its own folder, and a project's skill replaces a global one with the same name.
 import { join } from './fs.js'
 import { parseFrontMatter, stringifyFrontMatter } from './settings.js'
 
@@ -20,7 +20,7 @@ export function parseSkill(text, path) {
   return { name, description, title: /^#\s+(.+)$/m.exec(body)?.[1].trim() ?? name.replace(/-/g, ' '), body: body.trim(), path }
 }
 
-/** Every routine in these folders' skills/, by name. @param {FS} fs @param {string[]} dirs @returns {Promise<Skill[]>} */
+/** Every skill in these folders' skills/, by name. @param {FS} fs @param {string[]} dirs @returns {Promise<Skill[]>} */
 export async function listSkills(fs, dirs) {
   /** @type {Map<string, Skill>} */
   const found = new Map()

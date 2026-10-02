@@ -1,6 +1,6 @@
 // "What Jean knows about you" (docs/product.md): the user's instructions, which Jean always
 // follows, and what Jean noticed, which the user can edit, delete or turn into an instruction;
-// then the routines. Everything here is a plain file (instructions.md, memory.md, SKILL.md).
+// then the skills. Everything here is a plain file (instructions.md, memory.md, SKILL.md).
 // Loaded the first time the page opens.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -33,7 +33,7 @@ async function load() {
   page.value = {
     instructions: Object.fromEntries(await Promise.all(dirs.map(async (dir) => [dir, await readBody(join(dir, 'instructions.md'))]))),
     memory: await Promise.all(dirs.map(async (dir) => ({ path: join(dir, 'memory.md'), entries: parseMemory(await app.fs.read(join(dir, 'memory.md'))) }))),
-    skills: loaded.value.has('routines') ? await listSkills(app.fs, dirs) : [],
+    skills: loaded.value.has('skills') ? await listSkills(app.fs, dirs) : [],
   }
 }
 
@@ -77,26 +77,26 @@ async function openFrom(path) {
 }
 
 /** @param {Event} event */
-async function addRoutine(event) {
+async function addSkill(event) {
   const input = /** @type {HTMLInputElement} */ (event.target)
   const file = input.files?.[0]
   input.value = ''
   const skill = file && parseSkill(await file.text(), file.name)
-  if (!skill) return notify(t('routines.invalid'))
+  if (!skill) return notify(t('skills.invalid'))
   await saveSkill(app.fs, folders().at(-1) ?? '', { ...skill, by: app.deviceId })
   await load()
-  notify(t('routines.added', { title: skill.title }))
+  notify(t('skills.added', { title: skill.title }))
 }
 
 /** @param {import('../core/skills.js').Skill} skill @param {string} body */
-async function editRoutine(skill, body) {
+async function editSkill(skill, body) {
   await saveSkill(app.fs, dirname(dirname(dirname(skill.path))), { ...skill, body, by: app.deviceId })
   await load()
 }
 
 /** @param {import('../core/skills.js').Skill} skill */
-async function removeRoutine(skill) {
-  if (!confirm(t('routines.confirmDelete', { title: skill.title }))) return
+async function removeSkill(skill) {
+  if (!confirm(t('skills.confirmDelete', { title: skill.title }))) return
   await app.fs.remove(dirname(skill.path))
   await load()
 }
@@ -142,17 +142,17 @@ class Knows extends Element {
             </li>`)}</ul>` : html`<p class="muted small">${t('knows.nothing')}</p>`}`)}
           <p class="muted small">${t('knows.cloud', { name: BRAND.name })}</p>`}
       </section>
-      ${loaded.value.has('routines') ? html`<section>
-        <h3>${icons.repeat} ${t('cap.routines.name')}</h3>
-        <p class="muted small">${t('routines.text', { name: BRAND.name })}</p>
-        ${state.skills.length ? html`<ul class="routines">${state.skills.map((skill) => html`<li><details>
+      ${loaded.value.has('skills') ? html`<section>
+        <h3>${icons.repeat} ${t('cap.skills.name')}</h3>
+        <p class="muted small">${t('skills.text', { name: BRAND.name })}</p>
+        ${state.skills.length ? html`<ul class="skills">${state.skills.map((skill) => html`<li><details>
           <summary><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small></summary>
-          <textarea rows="8" dir="auto" aria-label=${t('routines.steps')} .value=${live(skill.body)}
-            @change=${(/** @type {Event} */ e) => editRoutine(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
-          <button class="button subtle" @click=${() => removeRoutine(skill)}>${icons.trash} ${t('action.delete')}</button>
-        </details></li>`)}</ul>` : html`<p class="muted small">${t('routines.none')}</p>`}
-        <label class="button subtle">${icons.upload} ${t('routines.add')}
-          <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addRoutine}>
+          <textarea rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}
+            @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
+          <button class="button subtle" @click=${() => removeSkill(skill)}>${icons.trash} ${t('action.delete')}</button>
+        </details></li>`)}</ul>` : html`<p class="muted small">${t('skills.none')}</p>`}
+        <label class="button subtle">${icons.upload} ${t('skills.add')}
+          <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}>
         </label>
       </section>` : nothing}` : nothing}
     </dialog>`

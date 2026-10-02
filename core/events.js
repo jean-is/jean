@@ -174,3 +174,9 @@ export function titleOf(records) {
   for (const record of records) if (record.meta?.title) title = record.meta.title
   return title
 }
+
+/** The words of the request that opened the conversation. @param {Envelope[]} records */
+export function openingOf(records) {
+  for (const { update } of records) if (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text' && update.content.text) return update.content.text
+  return ''
+}

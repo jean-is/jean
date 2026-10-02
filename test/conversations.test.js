@@ -142,7 +142,7 @@ test('appendRecords refuses to create a conversation without a header', async ()
   await assert.rejects(appendRecords(memoryFS(), 'c/missing.jsonl', [say('x', 'y')]), /not found/)
 })
 
-test('listConversations sorts by updatedAt desc and skips unreadable files', async (t) => {
+test('listConversations sorts by updatedAt desc, keeps how each opened, and skips unreadable files', async (t) => {
   const warn = t.mock.method(console, 'warn', () => {})
   const fs = memoryFS()
   const a = await createConversation(fs, { projectDir, by: 'd', now: new Date('2026-01-01T00:00:00.000Z') })
@@ -156,9 +156,9 @@ test('listConversations sorts by updatedAt desc and skips unreadable files', asy
 
   const list = await listConversations(fs, projectDir)
   assert.deepEqual(list, [
-    { id: a.id, path: a.path, title: 'A', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-05T00:00:00.000Z' },
-    { id: b.id, path: b.path, title: '', createdAt: '2026-01-02T00:00:00.000Z', updatedAt: '2026-01-04T00:00:00.000Z' },
-    { id: c.id, path: c.path, title: '', createdAt: '2026-01-03T00:00:00.000Z', updatedAt: '2026-01-03T00:00:00.000Z' },
+    { id: a.id, path: a.path, title: 'A', opening: '', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-05T00:00:00.000Z' },
+    { id: b.id, path: b.path, title: '', opening: 'hi', createdAt: '2026-01-02T00:00:00.000Z', updatedAt: '2026-01-04T00:00:00.000Z' },
+    { id: c.id, path: c.path, title: '', opening: '', createdAt: '2026-01-03T00:00:00.000Z', updatedAt: '2026-01-03T00:00:00.000Z' },
   ])
   assert.equal(warn.mock.callCount(), 1)
   assert.deepEqual(await listConversations(fs, 'projects/none'), [])

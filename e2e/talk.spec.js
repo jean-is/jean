@@ -1,12 +1,15 @@
-// Talk (0.1) and reply suggestions (0.3): an answer streams in, its follow-ups become
+// Talk (0.1) and reply suggestions (0.3): an answer streams in, titled meanwhile, its follow-ups become
 // buttons, the room flips to right-to-left in Arabic, and from dark to light.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
 
 test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
+  // Its title comes from a second request, while the answer is still being written.
+  await expect(page.locator('.conversation-title')).toHaveText('Explain photosynthesis simple')
+  await expect(page.locator('.send.is-stop')).toBeVisible()
   const answer = page.locator('.msg-jean .prose').last()
   await expect(answer).toContainText('Here is what I found')
   await expect(answer).not.toContainText('suggestions')
@@ -23,6 +26,7 @@ test('Arabic: right to left, and the answer in Arabic', async ({ page }) => {
   await connectFakeBrain(page)
   await ask(page, 'ما هي عاصمة فرنسا؟')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('إليك ما وجدته')
+  await expect(page.locator('.conversation-title')).toHaveText('عاصمة فرنسا')
   await expect(page.locator('.follow-ups .follow-up').first()).toHaveText('اعرضه كرسم بياني')
 })
 
@@ -46,9 +50,8 @@ test('light or dark: the device’s, until the user picks the other', async ({ p
   await expect(root).toHaveAttribute('data-theme', 'light')
 })
 
-/** Light or dark is picked in Settings. @param {import('@playwright/test').Page} page @param {string} name */
+/** Light or dark is picked in Settings' Appearance. @param {import('@playwright/test').Page} page @param {string} name */
 async function pickTheme(page, name) {
-  await page.locator('.bar-actions button[aria-label="Settings"]').click()
-  await page.locator('app-settings dialog[open]').getByRole('radio', { name, exact: true }).check()
+  await (await openSettings(page, 'Appearance')).getByRole('radio', { name, exact: true }).check()
   await page.keyboard.press('Escape')
 }

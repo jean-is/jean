@@ -9,8 +9,12 @@ export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,F
 export async function start(page, lang = 'en') {
   await page.goto('./')
   await expect(page.locator('.hero-question')).toBeVisible()
-  await page.locator('.bar .language select').selectOption(lang)
+  // The language is picked in Settings, its first choice.
+  const settings = await openSettings(page)
+  await settings.locator('.settings-panel select').first().selectOption(lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
+  await page.keyboard.press('Escape')
+  await expect(settings).toBeHidden()
 }
 
 /** Connects the fake brain through "On your computer" → Other. @param {import('@playwright/test').Page} page */
@@ -30,13 +34,30 @@ export async function ask(page, text) {
   await page.locator('#prompt').press('Enter')
 }
 
-/** Turns a capability on from the house ("What Jean can do"). @param {import('@playwright/test').Page} page @param {string} name */
+/**
+ * Opens Settings from the foot of the conversations: Mail's list when it is in view, otherwise
+ * the drawer (D115). On one of its sections when named as its menu says (D113).
+ * @param {import('@playwright/test').Page} page @param {string} [section]
+ */
+export async function openSettings(page, section) {
+  const list = page.locator('app-inbox .sidebar-settings')
+  if (await list.isVisible()) await list.click()
+  else {
+    await page.locator('.bar > .icon-button').first().click()
+    await page.locator('app-history dialog[open] .sidebar-settings').click()
+  }
+  const settings = page.locator('app-settings dialog[open]')
+  await expect(settings).toBeVisible()
+  if (section) await settings.locator('.settings-nav button', { hasText: section }).click()
+  return settings
+}
+
+/** Turns a capability on from the house ("What Jean can do", in Settings). @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
-  await page.locator('.bar-actions button').first().click()
-  const house = page.locator('app-collection dialog[open]')
+  const house = (await openSettings(page, 'Capabilities')).locator('.house')
   await house.locator('.room-card', { hasText: name }).locator('.button').click()
   // Lit once its module has loaded, so a message sent next declares its tools.
-  await expect(page.locator('app-collection .room-card.is-lit', { hasText: name })).toHaveCount(1)
+  await expect(page.locator('app-settings .room-card.is-lit', { hasText: name })).toHaveCount(1)
 }
 
 /** Connects a service from the house by its address, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */

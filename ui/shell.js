@@ -2,10 +2,10 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, setLocale, newConversation, assistantName, LOCALES } from './state.js'
+import { app, newConversation, assistantName } from './state.js'
 import { SIZES } from './caps.js'
 import { BRAND } from '../brand.js'
-import { t, locale, languageName, preferredLocales, formatBytes } from '../core/i18n.js'
+import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { LOOKS } from './looks.js'
@@ -23,18 +23,8 @@ class Shell extends Element {
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
         <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
-        <button class="wordmark" @click=${newConversation} title=${t('action.new')}><app-persona></app-persona>${assistantName()}${data.default === true ? nothing
+        <button class="wordmark" @click=${newConversation} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}${data.default === true ? nothing
           : html`<span class="wordmark-project" dir="auto">${data.name}</span>`}</button>
-        <nav class="bar-actions" aria-label=${t('a11y.menu')}>
-          <button class="icon-button" @click=${openCollection} aria-label=${t('collection.title', { name: BRAND.name })} title=${t('collection.title', { name: BRAND.name })}>${icons.tiles}</button>
-          <label class="language" title=${t('settings.language')}>
-            ${icons.globe}<span class="visually-hidden">${t('settings.language')}</span>
-            <select @change=${(/** @type {Event} */ e) => setLocale(/** @type {HTMLSelectElement} */ (e.target).value)}>
-              ${languageOptions()}
-            </select>
-          </label>
-          <button class="icon-button" @click=${() => { app.dialog.value = 'settings' }} aria-label=${t('settings.title')} title=${t('settings.title')}>${icons.gear}</button>
-        </nav>
       </header>
       ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
@@ -45,7 +35,6 @@ class Shell extends Element {
       <app-brain-dialog></app-brain-dialog>
       <app-settings></app-settings>
       <app-picker></app-picker>
-      <app-collection></app-collection>
       <app-knows></app-knows>
       <app-project-dialog></app-project-dialog>
       <app-connections></app-connections>
@@ -63,10 +52,30 @@ effect(() => {
 
 const discovery = () => import('./discovery.js')
 
-export async function openCollection() {
-  await import('./collection.js')
-  app.dialog.value = 'collection'
-}
+// ─── Shortcuts ───────────────────────────────────────────────────────────────
+
+// As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
+// systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
+const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
+const MODIFIER = APPLE ? 'Meta' : 'Control'
+/** For aria-keyshortcuts. */
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N` }
+/** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n' })
+
+document.addEventListener('keydown', (event) => {
+  const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
+  if (!command || event.altKey || event.shiftKey || event.isComposing) return
+  const key = /^[ -~]$/.test(event.key) ? event.key.toLowerCase() : PLACES[event.code]
+  if (key === ',') {
+    event.preventDefault()
+    if (app.dialog.value !== 'settings') import('./dialogs.js').then((module) => module.openSettings())
+  } else if (key === 'n') {
+    event.preventDefault()
+    newConversation()
+    focusComposer()
+  }
+})
 
 /** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
 function offerAside() {
@@ -81,15 +90,6 @@ function offerAside() {
       <button class="button subtle" @click=${() => discovery().then((module) => module.decline(id))}>${t('offer.no')}</button>
     </div>` : html`<progress max="1" value=${progress} aria-label=${t('cap.reflexes.downloading')}></progress>`}
   </aside>`
-}
-
-/** The language menu: the browser's languages first, in its order, then the others. */
-export function languageOptions() {
-  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
-  const yours = preferredLocales(LOCALES, navigator.languages)
-  if (!yours.length) return LOCALES.map(option)
-  return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
-    <optgroup label=${t('settings.languagesOther')}>${LOCALES.filter((code) => !yours.includes(code)).map(option)}</optgroup>`
 }
 
 function welcome() {

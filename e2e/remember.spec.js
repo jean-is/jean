@@ -1,7 +1,7 @@
-// Memory, projects and routines (0.4), the version's done-when: two projects keep separate
-// memories, and a routine is created from repeated requests. Plus "What Jean knows about you".
+// Memory, projects and skills (0.4), the version's done-when: two projects keep separate
+// memories, and a skill is created from repeated requests. Plus "What Jean knows about you".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page @param {string} name */
 async function createProject(page, name) {
@@ -16,8 +16,7 @@ async function createProject(page, name) {
 
 /** @param {import('@playwright/test').Page} page */
 async function openKnows(page) {
-  await page.locator('.bar-actions button').last().click()
-  await page.locator('app-settings dialog[open] .button', { hasText: 'Open' }).first().click()
+  await (await openSettings(page)).locator('.button', { hasText: 'Open' }).first().click()
   const knows = page.locator('app-knows dialog[open]')
   await expect(knows).toBeVisible()
   return knows
@@ -75,7 +74,7 @@ test('two projects keep separate memories, each in its own light', async ({ page
   expect(system).toContain('<memory>\n- the bakery opens at 7\n</memory>')
 })
 
-test('the third request of a kind becomes a routine', async ({ page }) => {
+test('the third request of a kind becomes a skill', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   for (let i = 0; i < 3; i++) {
@@ -84,15 +83,16 @@ test('the third request of a kind becomes a routine', async ({ page }) => {
     await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
     await expect(page.locator('.follow-ups')).toBeVisible()
   }
-  // Offered above the box; accepting turns routines on and asks for this one.
+  // Offered above the box; accepting turns skills on and asks for this one.
   const offer = page.locator('aside.offer')
   await expect(offer).toContainText('third time')
+  await expect(offer.locator('.button.primary')).toHaveText('Save it as a skill')
   await offer.locator('.button.primary').click()
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a routine now')
-  await expect(page.locator('.toast')).toContainText('Saved the routine “Weekly sales summary”')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a skill now')
+  await expect(page.locator('.toast')).toContainText('Saved the skill “Weekly sales summary”')
 
   const knows = await openKnows(page)
-  await expect(knows.locator('.routines summary')).toContainText('Weekly sales summary')
+  await expect(knows.locator('.skills summary')).toContainText('Weekly sales summary')
   await page.keyboard.press('Escape')
 
   // The next conversation lists it, and a fourth request of the kind suggests nothing new.
@@ -101,5 +101,5 @@ test('the third request of a kind becomes a routine', async ({ page }) => {
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   const system = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
   expect(system).toContain('<skills>\n- weekly-sales-summary: When the user asks for a summary of the weekly sales by region.\n</skills>')
-  await expect(page.locator('.follow-up', { hasText: 'Make this a routine' })).toHaveCount(0)
+  await expect(page.locator('.follow-up', { hasText: 'Save this as a skill' })).toHaveCount(0)
 })

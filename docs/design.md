@@ -9,8 +9,9 @@ A nod to *A Dark Room*. **Jean is the light source.** Its presence is felt in ho
 - **First visit.** A dark, warm room, the little light, and one line of very large type: the question. Nothing else.
 - **Discovery lights the house.** Each discovered capability "catches the light": its surface warms in from the shadow, and the palette warms a step. When everything has been discovered, the house is in full daylight. People feel their progress instead of counting it.
 - **Each project is a room** with its own light colour. Switching project feels like walking into another room, with the ambient light cross-fading.
-- **The collection page is the house.** Discovered rooms and capabilities are lit; the rest are silhouettes in shadow.
+- **What Jean can do is the house.** Discovered rooms and capabilities are lit; the rest are silhouettes in shadow. It is Settings' Capabilities section (D113).
 - **Light mode tells the same story by day,** with paper and ink: progression shows as warmth and ink density. Jean follows the device's light or dark mode; Settings offer the other one, and that choice is kept on the device (D85, D107).
+- **Settings is a menu beside the section open,** like the Claude apps': General, Appearance, Capabilities, Approvals, Your data. Each setting is a row, what it is on one side and its control on the other, with a thin line between rows. Each item starts with an icon. On a phone the menu is a strip of pills above the section (D113). Settings opens from the foot of the conversations, the drawer's or Mail's list; the header holds only the conversations button and the name (D117).
 
 ### How Jean's presence shows state
 
@@ -42,7 +43,7 @@ Jean's persona is the room's light, drawn small: a soft flame with a curled tip,
 The room is Jean's own look, and the default. Settings → Appearance offers two more, each in light and dark (D111):
 
 - **Room:** everything above. A dark, warm room lit by the little light, the display face, and the room warming with each discovery.
-- **Mail:** after the devs.new task inbox. Conversations sit in a list beside the one open, as in an email client: on a wide screen a rail (the name, what Jean can do, then language and Settings at its foot), the list and the conversation; narrower, the list and the conversation; on a phone, the room's layout with the list in its drawer. Neutral greys, one blue accent, the system face, flat surfaces. The little light stays at the name.
+- **Mail:** after the devs.new task inbox. Conversations sit in a list beside the one open, as in an email client: wider than a phone, one sidebar, as in the Claude apps, with the name at its top, the list, and Settings at its foot (D117); on a phone, the room's layout with the list in its drawer. Neutral greys, one blue accent, the system face, flat surfaces. The little light stays at the name.
 - **Paper:** ink on paper. A serif for everything, a rule under the masthead, the user's words set as a quotation in the margin's red, square corners, no glow.
 
 **Make it yours** adds an accent colour, a background colour, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the little light and the room's glow, unless a project has a light of its own.
@@ -73,7 +74,7 @@ The room is Jean's own look, and the default. Settings → Appearance offers two
 - **`prefers-reduced-motion`:** a still glow, with no movement. The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces.
 - **`forced-colors`** is supported. The little light becomes an outline drawing in the system colours.
-- **Keyboard:** fully navigable, with focus that is always visible.
+- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings and ⌘N a new conversation, Ctrl outside Apple's systems (D118).
 
 ## Budget
 

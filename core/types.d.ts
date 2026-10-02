@@ -177,7 +177,7 @@ export interface ConversationHeader {
   by: string
 }
 
-export type ConversationSummary = { id: string, path: string, title: string, createdAt: string, updatedAt: string }
+export type ConversationSummary = { id: string, path: string, title: string, opening: string, createdAt: string, updatedAt: string }
 
 // ─── Rules ───────────────────────────────────────────────────────────────────
 

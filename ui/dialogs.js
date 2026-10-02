@@ -1,23 +1,26 @@
-// History, brain and settings dialogs (native <dialog>: focus trap and Escape for free).
+// History, brain and settings dialogs (native <dialog>: focus trap and Escape for free), and the
+// house of what Jean can do, in Settings.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, setVoice, notify, loadModels,
-  newConversation, showError, theme, setTheme, setLook,
+  newConversation, showError, theme, setTheme, setLook, LOCALES,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, startOpenRouter } from './brains.js'
-import { unlock, isDenied } from './caps.js'
+import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
+import { CATALOGUE, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { t, locale, formatBytes, useStrings } from '../core/i18n.js'
-import { voicesFor } from './speech.js'
+import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
+import { deviceVoices } from './voices.js'
+import { rankVoices } from '../core/language.js'
 import { icons } from './icons.js'
-import { languageOptions } from './shell.js'
-import { conversationList } from './inbox.js'
+import { conversationList, settingsEntry } from './inbox.js'
+import { SHORTCUTS } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
 
@@ -51,8 +54,9 @@ class History extends Element {
     return html`<dialog class="drawer" @close=${closed('history')} @click=${backdrop}>
       ${head(t('history.title'))}
       <app-projects></app-projects>
-      <button class="button wide" @click=${newConversation}>${icons.plus} ${t('action.new')}</button>
+      <button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${newConversation}>${icons.plus} ${t('action.new')}</button>
       ${conversationList()}
+      ${settingsEntry()}
     </dialog>`
   }
 
@@ -227,90 +231,175 @@ class BrainDialog extends Element {
 
 const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: boolean } | null} */ (null))
 
-class Settings extends Element {
-  render() {
-    const { settings, locked } = effective.value
-    const voices = voicesFor(locale.value)
-    const usage = storage.value?.usage
-    return html`<dialog class="sheet" @close=${closed('settings')} @click=${backdrop}>
-      ${head(t('settings.title'))}
-      <section>
-        <h3>${t('settings.language')}</h3>
-        <select aria-label=${t('settings.language')} ?disabled=${locked.has('locale')}
-          @change=${(/** @type {Event} */ e) => setLocale(/** @type {HTMLSelectElement} */ (e.target).value)}>
-          ${languageOptions()}
-        </select>
-      </section>
-      <section>
-        <h3>${t('settings.appearance')}</h3>
-        <span class="segmented" role="radiogroup" aria-label=${t('settings.appearance')}>
-          ${(/** @type {const} */ (['light', 'dark'])).map((option) => html`<label>
-            <input type="radio" name="theme" .checked=${theme.value === option} @change=${() => setTheme(option)}>
-            <span>${t(`theme.${option}`)}</span>
+/** The language menu: the browser's languages first, in its order, then the others. */
+function languageOptions() {
+  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
+  const yours = preferredLocales(LOCALES, navigator.languages)
+  if (!yours.length) return LOCALES.map(option)
+  return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
+    <optgroup label=${t('settings.languagesOther')}>${LOCALES.filter((code) => !yours.includes(code)).map(option)}</optgroup>`
+}
+
+/** A setting: what it is on one side, how it is set on the other. @param {unknown} label @param {unknown} text @param {unknown} control */
+const setting = (label, text, control) => html`<section class="setting">
+  <div><h3>${label}</h3>${text ? html`<p class="muted">${text}</p>` : nothing}</div>
+  ${control}
+</section>`
+
+function general() {
+  const { settings, locked } = effective.value
+  const voices = deviceVoices()
+  return html`
+    ${setting(t('settings.language'), null, html`<select aria-label=${t('settings.language')} ?disabled=${locked.has('locale')}
+      @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select>`)}
+    ${voices.some((voice) => voice.localService) ? setting(t('settings.voice'), t('settings.voiceText'),
+      html`<select aria-label=${t('settings.voice')} @change=${(/** @type {Event} */ e) => setVoice(valueOf(e) || null)}>
+        <option value="">${t('settings.voiceAuto')}</option>
+        ${rankVoices(voices, locale.value, [locale.value, ...navigator.languages])
+          .map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}
+      </select>`) : nothing}
+    ${setting(t('knows.title', { name: BRAND.name }), t('knows.lede', { name: BRAND.name }),
+      html`<button class="button" @click=${() => { app.dialog.value = 'knows' }}>${t('collection.open')}</button>`)}
+    <p class="about muted small"><a href="manifesto.html" target="_blank" rel="noopener">${BRAND.name} 0.6</a> · ${t('settings.about')}</p>`
+}
+
+const appearance = () => html`
+  ${setting(t('settings.mode'), null, html`<span class="segmented" role="radiogroup" aria-label=${t('settings.mode')}>
+    ${(/** @type {const} */ (['light', 'dark'])).map((option) => html`<label>
+      <input type="radio" name="theme" .checked=${theme.value === option} @change=${() => setTheme(option)}>
+      <span>${t(`theme.${option}`)}</span>
+    </label>`)}
+  </span>`)}
+  <section>${looks(effective.value.settings.look)}</section>`
+
+function approvals() {
+  const { settings, locked } = effective.value
+  return html`<section>
+    <h3>${t('settings.rules')}</h3>
+    <p class="muted">${t('settings.rulesText', { name: BRAND.name })}</p>
+    <ul class="rules">${RULE_KINDS.map((kind) => {
+      const current = resolveRule(kind, { user: settings.rules })
+      const isLocked = locked.has(`rules.${kind}`)
+      return html`<li class="setting">
+        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}</span>
+        <span class="segmented" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>
+          ${(/** @type {const} */ (['allow', 'ask', 'never'])).map((option) => html`<label>
+            <input type="radio" name=${`rule-${kind}`} .checked=${current === option} ?disabled=${isLocked} @change=${() => setRule(kind, option)}>
+            <span>${t(`rules.${option}`)}</span>
           </label>`)}
         </span>
-        ${looks(settings.look)}
-      </section>
-      <section>
-        <h3>${t('settings.rules')}</h3>
-        <p class="muted">${t('settings.rulesText', { name: BRAND.name })}</p>
-        <ul class="rules">${RULE_KINDS.map((kind) => this.#rule(kind, locked.has(`rules.${kind}`)))}</ul>
-      </section>
-      ${voices.length ? html`<section>
-        <h3>${t('settings.voice')}</h3>
-        <select aria-label=${t('settings.voice')} @change=${(/** @type {Event} */ e) => setVoice(/** @type {HTMLSelectElement} */ (e.target).value || null)}>
-          <option value="">${t('settings.voiceDefault')}</option>
-          ${voices.map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}
-        </select>
-      </section>` : nothing}
-      <section>
-        <h3>${t('settings.storage')}</h3>
-        <p>${app.ephemeral.value ? t('storage.ephemeral') : usage === undefined ? '' : t('storage.usage', { name: BRAND.name, size: formatBytes(usage) })}</p>
-        ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>`
-          : app.ephemeral.value ? nothing
-          : html`<button class="button" @click=${persist}>${t('storage.persist')}</button>`}
-        ${isDenied('backup') ? nothing : html`
-          <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
-          <div class="row">
-            <button class="button" @click=${backup}>${icons.download} ${t('backup.download')}</button>
-            <label class="button subtle">${icons.upload} ${t('backup.restore')}
-              <input type="file" accept=".zip,application/zip" class="visually-hidden" @change=${restore}>
-            </label>
-          </div>`}
-      </section>
-      <section>
-        <h3>${t('knows.title', { name: BRAND.name })}</h3>
-        <p class="muted">${t('knows.lede', { name: BRAND.name })}</p>
-        <button class="button" @click=${() => { app.dialog.value = 'knows' }}>${t('collection.open')}</button>
-      </section>
-      ${isDenied('compute') ? nothing : html`<section>
-        <h3>${t('collection.title', { name: BRAND.name })}</h3>
-        <p class="muted">${t('collection.lede', { name: BRAND.name })}</p>
-        <button class="button" @click=${async () => (await import('./discovery.js')).unlockAll()}>${t('collection.all')}</button>
-      </section>`}
-      <section class="about"><p class="muted"><a href="manifesto.html" target="_blank" rel="noopener">${BRAND.name} 0.6</a> · ${t('settings.about')}</p></section>
+      </li>`
+    })}</ul>
+  </section>`
+}
+
+function data() {
+  const usage = storage.value?.usage
+  return html`
+    ${setting(t('storage.title'), app.ephemeral.value ? t('storage.ephemeral') : usage === undefined ? '' : t('storage.usage', { name: BRAND.name, size: formatBytes(usage) }),
+      storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>`
+        : app.ephemeral.value ? nothing
+        : html`<button class="button" @click=${persist}>${t('storage.persist')}</button>`)}
+    ${isDenied('backup') ? nothing : html`<section>
+      <h3>${t('cap.backup.name')}</h3>
+      <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
+      <div class="row">
+        <button class="button" @click=${backup}>${icons.download} ${t('backup.download')}</button>
+        <label class="button subtle">${icons.upload} ${t('backup.restore')}
+          <input type="file" accept=".zip,application/zip" class="visually-hidden" @change=${restore}>
+        </label>
+      </div>
+    </section>`}`
+}
+
+/** Settings is a menu beside the section open, like the Claude apps' (D113): each section's label, icon and what it shows. */
+const SECTIONS = {
+  general: { label: 'settings.general', icon: icons.gear, show: general },
+  appearance: { label: 'settings.appearance', icon: icons.contrast, show: appearance },
+  capabilities: { label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
+  approvals: { label: 'settings.approvals', icon: icons.shield, show: approvals },
+  data: { label: 'settings.storage', icon: icons.data, show: data },
+}
+/** @typedef {keyof typeof SECTIONS} Section */
+const section = signal(/** @type {Section} */ ('general'))
+
+/** Opens Settings on one of its sections. @param {Section} [name] */
+export function openSettings(name = 'general') {
+  section.value = name
+  app.dialog.value = 'settings'
+}
+
+class Settings extends Element {
+  render() {
+    const open = section.value
+    return html`<dialog class="sheet settings" @close=${closed('settings')} @click=${backdrop}>
+      ${head(t('settings.title'))}
+      <nav class="settings-nav" aria-label=${t('settings.title')}>
+        ${(/** @type {Section[]} */ (Object.keys(SECTIONS))).map((id) => html`<button aria-current=${id === open ? 'page' : 'false'}
+          @click=${() => { section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
+      </nav>
+      <div class="settings-panel">${SECTIONS[open].show()}</div>
     </dialog>`
   }
 
-  /** @param {string} kind @param {boolean} isLocked */
-  #rule(kind, isLocked) {
-    const current = resolveRule(kind, { user: effective.value.settings.rules })
-    return html`<li>
-      <span class="rule-kind">${t(`kind.${kind}.label`)}</span>
-      <span class="segmented" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>
-        ${(/** @type {const} */ (['allow', 'ask', 'never'])).map((option) => html`<label>
-          <input type="radio" name=${`rule-${kind}`} .checked=${current === option} ?disabled=${isLocked} @change=${() => setRule(kind, option)}>
-          <span>${t(`rules.${option}`)}</span>
-        </label>`)}
-      </span>
-      ${isLocked ? html`<span class="muted small">${t('policy.locked')}</span>` : nothing}
-    </li>`
-  }
+  #shown = ''
 
   updated() {
     syncDialog(this, 'settings')
-    if (app.dialog.value === 'settings' && !storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
+    if (app.dialog.value !== 'settings') return
+    if (!storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
+    // On a phone the menu is a strip: the section open stays in view.
+    if (this.#shown !== section.value) this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    this.#shown = section.value
   }
+}
+
+// ─── What Jean can do ────────────────────────────────────────────────────────
+
+// The house (docs/design.md), in Settings: discovered capabilities are lit rooms; the rest wait
+// in the shadow, like a game's collection screen, and can be turned on early.
+const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
+  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', projects: 'rooms', skills: 'repeat', python: 'code',
+  search: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
+})
+/** Where a lit room leads. */
+const OPENS = /** @type {Record<string, typeof app.dialog.value>} */ ({ memory: 'knows', skills: 'knows', projects: 'history', connections: 'connections' })
+
+/** @param {string} id */
+async function turnOn(id) {
+  if (id === 'reflexes') return accept('reflexes')
+  if (!(await unlock(id))) return
+  if (id === 'brain-local') app.dialog.value = 'brain'
+  else begin(id)
+}
+
+/** Whether a lit capability still waits for a download (Intuition's weights). @param {string} id */
+function waiting(id) {
+  const module = loaded.value.get(id)
+  return id === 'reflexes' && module && !module.decide
+}
+
+function capabilities() {
+  const lit = loaded.value
+  const ids = CATALOGUE.filter((id) => !isDenied(id))
+  const count = ids.filter((id) => lit.has(id)).length
+  return html`<section class="house">
+    <h3>${t('collection.title', { name: BRAND.name })}</h3>
+    <p class="muted">${t('collection.lede', { name: BRAND.name })}</p>
+    <p class="muted small">${t('collection.count', { count, total: ids.length })}</p>
+    <ul class="rooms">${ids.map((id) => html`<li class="room-card ${lit.has(id) ? 'is-lit' : ''}">
+      <span class="room-icon" aria-hidden="true">${icons[ROOM_ICONS[id]]}</span>
+      <div class="room-text">
+        <h3>${t(`cap.${id}.name`)}</h3>
+        <p>${t(`cap.${id}.text`, { name: BRAND.name, size: formatBytes(BYTES[id] ?? 0) })}</p>
+      </div>
+      ${!lit.has(id) ? html`<button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button>`
+        : waiting(id) && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t('cap.reflexes.yes', { size: formatBytes(BYTES.reflexes) })}</button>`
+        : OPENS[id] ? html`<button class="button" @click=${() => { app.dialog.value = OPENS[id] }}>${t('collection.open')}</button>`
+        : html`<span class="room-on">${icons.check}<span class="visually-hidden">${t('collection.on')}</span></span>`}
+    </li>`)}</ul>
+    ${count < ids.length ? html`<button class="button wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
+  </section>`
 }
 
 /** @typedef {import('../core/settings.js').Look} Look */

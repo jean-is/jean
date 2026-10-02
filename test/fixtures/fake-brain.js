@@ -6,14 +6,14 @@
 // With a shared table of data it works like a real brain would in 0.3: it offers
 // Calculations if they're off, then runs a script that reads the file and totals it.
 // From 0.4 it remembers what follows "Remember", says what its <memory> holds when asked
-// "What do you know?", and saves a routine when asked to (finding the tool first if needed).
+// "What do you know?", and saves a skill when asked to (finding the tool first if needed).
 // From 0.5 it searches the web when asked to, reads the user's latest emails through a
 // connection (finding its tool first, or from a script when Calculations are on) and sums them
 // up citing each one, and draws with models.image; /images/generations answers with a picture.
 // From 0.6 it splits a "briefing" between two helpers (each finds the mail tool, asks first, and
 // reports one email), answers Double-check's requests by comparing words, and gives a brief of
 // what's new when told the user is back. It sees pictures (a capture of the screen): it says how
-// big the last one is, read from its PNG header.
+// big the last one is, read from its PNG header. It titles conversations with their first longer words.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -101,6 +101,13 @@ createServer(async (req, res) => {
   let body = ''
   for await (const chunk of req) body += chunk
   const { messages, tools = [] } = JSON.parse(body)
+  // A conversation's title, asked beside the answer: its first three longer words.
+  if (messages[0]?.role === 'system' && messages[0].content.startsWith('Write a title')) {
+    const title = (messages.at(-1).content.match(/[\p{L}\p{N}]{5,}/gu) ?? []).slice(0, 3).join(' ')
+    res.writeHead(200, { 'Content-Type': 'text/event-stream' })
+    res.write(`data: ${JSON.stringify({ choices: [{ index: 0, delta: { content: `"${title}."` }, finish_reason: 'stop' }] })}\n\n`)
+    return res.end('data: [DONE]\n\n')
+  }
   const serialized = JSON.stringify(messages)
   const cached = sharedPrefix(previous, serialized)
   previous = serialized
@@ -131,7 +138,7 @@ createServer(async (req, res) => {
   // Chat Completions tool results carry the call's id, not the tool's name.
   const toolName = last.role === 'tool' ? messages.flatMap((m) => m.tool_calls ?? []).find((c) => c.id === last.tool_call_id)?.function?.name : undefined
   const remember = /^(?:remember|retiens|覚えて)[:：,]?\s*(.+)/i.exec(question.trim())
-  const routine = /routine/i.test(question) && last.role === 'user'
+  const skill = /\bskill\b/i.test(question) && last.role === 'user'
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
   const emails = /e-?mails?|inbox|courriels?/i.test(question) || /The user is back/.test(serialized)
@@ -188,10 +195,10 @@ createServer(async (req, res) => {
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
-  else if (routine && declared.has('save_routine')) call = { name: 'save_routine', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
-  else if (routine && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a routine' } }
-  else if (toolName === 'find_tools' && /save_routine\(/.test(last.content)) call = { name: 'save_routine', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
-  else if (toolName === 'save_routine') answer = 'Done: it is a routine now.'
+  else if (skill && declared.has('save_skill')) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
+  else if (skill && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a skill' } }
+  else if (toolName === 'find_tools' && /save_skill\(/.test(last.content)) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
+  else if (toolName === 'save_skill') answer = 'Done: it is a skill now.'
   else if (table && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: totalsScript(table[2]) } }
   else if (table && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'compute' } }
   else if (table && last.role === 'tool' && /It is on/.test(last.content)) call = { name: 'run', args: { code: totalsScript(table[2]) } }

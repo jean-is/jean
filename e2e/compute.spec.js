@@ -26,6 +26,8 @@ for (const [lang, [question, expected]] of Object.entries(QUESTIONS)) {
     for (const total of ['2540', '1960', '1515']) await expect(answer).toContainText(total)
     await expect(answer.locator('.cite')).toHaveText('1')
     await expect(page.locator('aside.offer')).toHaveCount(0)
+    // Opened once the answer has settled (its follow-ups show): it is drawn anew then.
+    await expect(page.locator('.follow-ups')).toBeVisible()
     // The script's own read shows under the calculation.
     await page.locator('.activity > summary').last().click()
     await expect(page.locator('.activity-list li.is-nested').last()).toContainText('sales.csv')

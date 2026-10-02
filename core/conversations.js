@@ -4,6 +4,7 @@
 
 import { join } from './fs.js'
 import { ulid } from './ulid.js'
+import { openingOf } from './events.js'
 
 /** @import { FS, Envelope, ConversationHeader, ConversationSummary } from './types.js' */
 /** @typedef {{ header: ConversationHeader, records: Envelope[], title: string, updatedAt: string }} Conversation */
@@ -109,8 +110,9 @@ async function summarize(fs, path, id) {
   try {
     const conversation = await loadConversation(fs, path)
     if (!conversation) return null
-    const { header, title, updatedAt } = conversation
-    return { id, path, title, createdAt: header.createdAt, updatedAt }
+    const { header, records, title, updatedAt } = conversation
+    // The opening request's start, for "the third request of a kind" (D83).
+    return { id, path, title, opening: openingOf(records).slice(0, 200), createdAt: header.createdAt, updatedAt }
   } catch (err) {
     console.warn(`Skipping unreadable conversation ${path}`, err)
     return null

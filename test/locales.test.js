@@ -51,8 +51,9 @@ test('every string is used, and the dialogs’ strings only by modules that show
   }
 })
 
-test('the UI never says "model", "agent", "token" or "skill" in English', () => {
+// A skill is a skill (D115): "routine" is kept for tasks Jean will do on a schedule.
+test('the UI never says "model", "agent", "token" or "routine" in English', () => {
   for (const [key, value] of Object.entries({ ...english[''], ...english['dialogs/'] })) {
-    assert.doesNotMatch(String(value), /\b(models?|agents?|tokens?|skills?|MCP)\b/i, key)
+    assert.doesNotMatch(String(value), /\b(models?|agents?|tokens?|routines?|MCP)\b/i, key)
   }
 })

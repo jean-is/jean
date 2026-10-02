@@ -10,12 +10,14 @@
 
 ## Vocabulary
 
-The UI never says "agent", "model", "MCP", "skill" or "token".
+The UI never says "agent", "model", "MCP" or "token".
 
 | Concept | Word in the UI |
 |---|---|
 | Model / provider | Jean's brain |
-| Skill (`SKILL.md`) | Routine |
+| Capability (a module unlocked by discovery) | What Jean can do; skills are one of them |
+| Skill (`SKILL.md`) | Skill (D115) |
+| Task on a schedule (not built yet) | Routine: the word is kept for it (D115) |
 | MCP server / connector | Connection |
 | Artifact / output | Things Jean made |
 | Project folder | **Project** — "anything you keep coming back to" |
@@ -37,7 +39,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
   2. Reflex questions answered by a local multilingual decision model (see [architecture.md](architecture.md#reflexes)).
   3. The model's own `offer(capability)` tool, as a backstop.
 - **Offers are short.** Jean introduces a capability in one sentence. If the user accepts, that capability's code loads and its tools join the conversation. Once discovered, it stays visible.
-- **A "What Jean can do" page** shows discovered capabilities lit and undiscovered ones as silhouettes, like a game's collection screen. Curious users can unlock things early, and power users can unlock everything at once.
+- **"What Jean can do"**, Settings' Capabilities section, shows discovered capabilities lit and undiscovered ones as silhouettes, like a game's collection screen. Curious users can unlock things early, and power users can unlock everything at once.
 - **Discovery and code loading are one decision.** Each capability is a module loaded on demand, so the simple first screen and the 100 KB first load are the same thing.
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
@@ -55,7 +57,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Bigger brain | A task outgrows the current brain | The next rung of the brain ladder |
 | Memory | The user states a lasting preference or correction | "Want me to remember things like this from now on?" |
 | Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
-| Routines | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Make this a routine?" (saved as `SKILL.md`); once on, "Make this a routine" among the follow-ups |
+| Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups. Later, a ready-made skill from elsewhere when one fits (D116) |
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
 | Assistant name | After some use inside a project (three conversations, D102) | "Want to give this project's assistant a name?" A name and a few words on how it should be, in the project's dialog; the header shows the name |
 | Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
@@ -68,7 +70,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 
 ## Projects
 
-A project is a self-contained folder with its own files, conversations, instructions, memory, routines, rules and preferred brain. **A project that has been given a name and persona is what other products call an agent.**
+A project is a self-contained folder with its own files, conversations, instructions, memory, skills, rules and preferred brain. **A project that has been given a name and persona is what other products call an agent.**
 
 | Level | Lifetime | Has its own |
 |---|---|---|
@@ -199,7 +201,7 @@ When no route exists, Jean says so and suggests connecting a cloud brain. A shar
 | Need | Default (private) | Option |
 |---|---|---|
 | Dictation (speech to text) | A Whisper-class multilingual model in the page, through Transformers.js (99 languages) | Chrome's on-device recognition (`processLocally: true`) where available; cloud speech-to-text from the connected provider |
-| Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true, in the answer's own language (D109) | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
+| Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true, in the answer's own language (D109), by the most natural voice there for it; when none speaks it, Jean says so (D114) | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
 | Live conversation | A chain: Silero voice detection → speech-to-text → brain (streamed) → speech, sentence by sentence; speaking over Jean interrupts it. Works with any brain. | Real-time speech models from the connected provider (OpenAI Realtime over WebRTC with the user's key, Gemini Live) |
 
 Dictation and read-aloud are available from day one for accessibility. Live conversation is discovered: built in 0.5 as the private chain above, offered after three dictations (D93).

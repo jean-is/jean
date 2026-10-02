@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { languageOf } from '../core/language.js'
+import { languageOf, rankVoices } from '../core/language.js'
 
 test('a script only one language writes says which language it is', () => {
   assert.equal(languageOf('안녕하세요, 무엇을 도와드릴까요?', 'en'), 'ko')
@@ -45,4 +45,50 @@ test('when nothing tells, the language the user reads Jean in wins', () => {
   assert.equal(languageOf('Merci !', 'fr-CA'), 'fr')
   // Malay and Indonesian share most words: a Malay reader keeps Malay.
   assert.equal(languageOf('Saya akan menghantar fail itu kepada anda dan dia.', 'ms'), 'ms')
+})
+
+/** A voice as browsers list them. @param {string} name @param {string} lang @param {Partial<import('../core/language.js').Voice>} [more] */
+const voice = (name, lang, more = {}) => ({ name, lang, localService: true, default: false, voiceURI: name, ...more })
+const names = (/** @type {{ name: string }[]} */ voices) => voices.map((found) => found.name)
+
+// Chrome on a Mac lists the system's default voice, then the others in alphabetical order, novelty and retro ones
+// included, then Google's online ones.
+const MAC_CHROME = [
+  voice('Samantha', 'en-US', { default: true }), voice('Albert', 'en-US'), voice('Amélie', 'fr-CA'), voice('Bubbles', 'en-US'), voice('Daniel', 'en-GB'),
+  voice('Eddy (English (US))', 'en-US'), voice('Eddy (French (France))', 'fr-FR'), voice('Kyoko', 'ja-JP'),
+  voice('Meijia', 'zh-TW'), voice('Thomas', 'fr-FR'), voice('Tingting', 'zh-CN'),
+  voice('Google français', 'fr-FR', { localService: false }), voice('Google 한국의', 'ko-KR', { localService: false }),
+]
+
+test('a voice for the language: the user’s variety first, retro and novelty voices last, never one in the cloud', () => {
+  assert.deepEqual(names(rankVoices(MAC_CHROME, 'en', ['en-US', 'en'])), ['Samantha', 'Daniel', 'Eddy (English (US))', 'Albert', 'Bubbles'])
+  assert.deepEqual(names(rankVoices(MAC_CHROME, 'en', ['fr-FR', 'en-GB'])), ['Daniel', 'Samantha', 'Eddy (English (US))', 'Albert', 'Bubbles'])
+  assert.deepEqual(names(rankVoices(MAC_CHROME, 'fr', ['fr-FR'])), ['Thomas', 'Amélie', 'Eddy (French (France))'])
+  assert.deepEqual(names(rankVoices(MAC_CHROME, 'fr', ['fr-CA'])), ['Amélie', 'Thomas', 'Eddy (French (France))'])
+  assert.deepEqual(names(rankVoices(MAC_CHROME, 'ja', ['en-US'])), ['Kyoko'])
+  // Only Google's online voice reads Korean here: none that stays on the device.
+  assert.deepEqual(rankVoices(MAC_CHROME, 'ko', ['ko-KR']), [])
+  // Traditional Chinese readers hear Taiwan's voice first; the others, the mainland's (the system's order).
+  assert.deepEqual(names(rankVoices(MAC_CHROME, 'zh', ['zh-Hant'])), ['Meijia', 'Tingting'])
+  assert.deepEqual(names(rankVoices(MAC_CHROME, 'zh', ['zh-Hans'])), ['Tingting', 'Meijia'])
+})
+
+test('a downloaded natural voice before a compact one, then the system’s default', () => {
+  const safari = [
+    voice('Samantha', 'en-US', { voiceURI: 'com.apple.voice.compact.en-US.Samantha', default: true }),
+    voice('Zoe (Premium)', 'en-US', { voiceURI: 'com.apple.voice.premium.en-US.Zoe' }),
+    voice('Aaron', 'en-US', { voiceURI: 'com.apple.voice.compact.en-US.Aaron' }),
+    voice('Grandma', 'en-US', { voiceURI: 'com.apple.eloquence.en-US.Grandma' }),
+  ]
+  assert.deepEqual(names(rankVoices(safari, 'en', ['en-US'])), ['Zoe (Premium)', 'Samantha', 'Aaron', 'Grandma'])
+})
+
+test('voices tagged the old way, or with underscores, still speak their language', () => {
+  const android = [voice('fil-ph-x-fie-local', 'fil_PH'), voice('he-il-x-heb-local', 'iw_IL'), voice('nb-no-x-cfs-local', 'no_NO'), voice('id-id-x-idc-local', 'in_ID')]
+  assert.deepEqual(names(rankVoices(android, 'tl')), ['fil-ph-x-fie-local'])
+  assert.deepEqual(names(rankVoices(android, 'he')), ['he-il-x-heb-local'])
+  assert.deepEqual(names(rankVoices(android, 'nb')), ['nb-no-x-cfs-local'])
+  assert.deepEqual(names(rankVoices(android, 'id')), ['id-id-x-idc-local'])
+  // Finnish isn't Filipino, though "fil" starts with "fi".
+  assert.deepEqual(rankVoices(android, 'fi'), [])
 })

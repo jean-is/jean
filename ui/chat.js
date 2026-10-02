@@ -6,6 +6,7 @@ import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarte
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions } from '../core/events.js'
 import { isPicture } from '../core/files.js'
+import { renamed } from '../core/settings.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
@@ -329,10 +330,11 @@ function toolLabel(tool, files = []) {
   const path = tool.locations?.[0]?.path
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
-  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${tool.rawInput?.capability}.name`) })
+  // Older conversations name what has been renamed since (D115) by its old name.
+  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${renamed(String(tool.rawInput?.capability))}.name`) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   if (tool.name === 'ask_user') return `${t('tool.ask_user')} · ${tool.rawInput?.question ?? ''}`
-  const key = `tool.${tool.name}`
+  const key = `tool.${renamed(String(tool.name))}`
   return t(key) === key ? tool.title : t(key)
 }
 

@@ -1,13 +1,13 @@
-// Discovery (0.3): the collection page lights up, "turn on everything" works, and the brain
-// picker offers Auto, the connected brains and "never send to the cloud".
+// Discovery (0.3): the house lights up (Settings' Capabilities), "turn on everything" works, and
+// the brain picker offers Auto, the connected brains and "never send to the cloud".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain } from './helpers.js'
+import { start, connectFakeBrain, openSettings } from './helpers.js'
 
 test('the house lights up as capabilities are turned on', async ({ page }) => {
   await start(page)
-  await page.locator('.bar-actions button').first().click()
-  const house = page.locator('app-collection dialog[open]')
+  const house = (await openSettings(page, 'Capabilities')).locator('.house')
   await expect(house).toBeVisible()
+  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
   const lit = house.locator('.room-card.is-lit')
   const before = await lit.count()
   await house.locator('.room-card:not(.is-lit) .button').first().click()

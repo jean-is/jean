@@ -64,13 +64,14 @@ core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js ev
                   deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only; a module only one
                   capability uses lives with it, D96)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
-                  discovery.js collection.js auto.js picker.js, dialogs.js and brains.js (loaded when a dialog opens, D76),
+                  discovery.js auto.js picker.js, dialogs.js (Settings, with the house in it, D113) and brains.js (loaded
+                  when a dialog opens, D76), speech.js (read-aloud) and voices.js (the voice for each answer, loaded with it, D114),
                   knows.js ("What Jean knows about you", 0.4), sandbox.js (the sandbox client, 0.4),
                   looks.js (the themes, D111), touches.js (the user's own, loaded once there are some), inbox.js (Mail's list),
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
-                  memory/ projects/ routines/ python/           (0.4)
+                  memory/ projects/ skills/ python/             (0.4; skills/ was routines/ until D115)
                   search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
                   helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, and dialogs/ with the dialogs' strings (D97)
@@ -107,13 +108,13 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `routine`, `save_routine`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). Built so far: `read`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `routine`, `save_routine`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools.
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. Built so far: `read`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools.
 - Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
 - **`search.js`:** BM25 over short texts.
 - **`decide.js`:** the reflex mechanism: Kev's input sequence and its answers in the Decisions API shape (see [Reflexes](#reflexes)). The questions themselves are product policy and live in `caps/reflexes/questions.js` (D62).
-- **`skills.js`** (0.4): reads and writes `SKILL.md` folders (routines, D83); only their name and description go into the prompt, and the `routine` tool reads the steps when relevant.
+- **`skills.js`** (0.4): reads and writes `SKILL.md` folders (skills, D83, D115); only their name and description go into the prompt, and the `skill` tool reads the steps when relevant.
 - **`memory.js`** (0.4): the `memory.md` format, one line per entry with where it came from, and the newest lines that fit the prompt (D79).
 - Prompt: [prompts/system.md](../prompts/system.md).
 
@@ -189,7 +190,7 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
   settings.json
   instructions.md                global, written by the user (front matter: format; body: the instructions)
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
-  skills/<name>/SKILL.md         global routines (Agent Skills; metadata: format, author, created, D83)
+  skills/<name>/SKILL.md         global skills (Agent Skills; metadata: format, author, created, D83)
   projects/
     <ulid>-<slug>/
       project.md                 front matter: format, name, colour, default (home), cloud: false, createdAt, by,
@@ -298,9 +299,9 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 
 **A frozen prefix (D46).** When a conversation starts, Jean fixes the system prompt and the list of declared tools. Neither changes until the conversation ends. Providers cache prompts by prefix (Anthropic reads tools, then system, then messages), so a single changed byte at the front re-bills the whole conversation. On-device, the same rule lets the runtime keep its KV cache between turns, which matters most on weak graphics chips.
 
-**System notes (D46).** When something changes mid-conversation, Jean appends a system note to the transcript at that point instead of editing the prompt. Changes include the language, rules, instructions, memory, routines, the project, newly unlocked tools and the date.
+**System notes (D46).** When something changes mid-conversation, Jean appends a system note to the transcript at that point instead of editing the prompt. Changes include the language, rules, instructions, memory, skills, the project, newly unlocked tools and the date.
 
-- **Sections (D81).** The project, instructions, memory, routines and, since 0.5, the connected services (`<connections>`, D89) are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …"). Since 0.6 the project's section also holds what the user calls its assistant and how it should be (D102).
+- **Sections (D81).** The project, instructions, memory, skills and, since 0.5, the connected services (`<connections>`, D89) are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …"). Since 0.6 the project's section also holds what the user calls its assistant and how it should be (D102).
 - **Notes a message comes with.** A brief of what's new ("Since last time", D101) starts with a note saying when the user was last here; the turn that answers it can only read.
 
 - **Recorded in the transcript.** A note is a record in the conversation JSONL, an ACP extension update (`_system_note`) holding the English text the brain sees and structured data for the UI label. Replaying the file rebuilds exactly what the brain was told, and when.
@@ -412,7 +413,7 @@ Built in 0.5 (D87–D89). A connection is an address and, when the service asks 
 ## Voice pipeline
 
 - **Speech to text:** a Whisper-class model through Transformers.js (shared runtime), or Chrome's on-device recognition where available.
-- **Text to speech:** `speechSynthesis` with local voices, or Kokoro.
+- **Text to speech:** `speechSynthesis` with local voices, or Kokoro. Each answer is read in its own language (D109), by the voice `rankVoices()` in `core/language.js` puts first: the user's variety, then the most natural (D114).
 - **Live conversation** (0.5, D93): an AudioWorklet feeds 16 kHz audio to Silero voice detection (~2 MB ONNX) in dictation's worker → Whisper → the brain (streamed) → the system's voices, sentence by sentence. A turn starts after 250 ms of speech and ends after 800 ms of silence; speaking over Jean for half a second interrupts it. `caps/live/turns.js` holds the turn-taking, tested under `node --test`.
 - **Real-time speech models** come from the provider (OpenAI Realtime over WebRTC, Gemini Live); `wss:` is already allowed in `connect-src`.
 

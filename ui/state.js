@@ -3,10 +3,10 @@ import { signal, computed } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter } from '../core/settings.js'
 import { createConversation, appendRecords, loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
-import { userRecords, metaRecord, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns } from '../core/events.js'
+import { userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
-import { t, locale, useLocale, languageName, firstWords } from '../core/i18n.js'
+import { t, locale, useLocale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, isPicture } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
@@ -57,7 +57,7 @@ export const app = {
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
   look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
-  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'collection' | 'picker' | 'knows' | 'project' | 'connections' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'picker' | 'knows' | 'project' | 'connections' | null>} */
   dialog: signal(null),
   draft: signal(''),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
@@ -404,7 +404,7 @@ export const readBody = async (path) => parseFrontMatter((await app.fs.read(path
 
 /**
  * What the brain knows of the user and the room: the project, the instructions (the
- * organisation's, the user's, the project's), and what capabilities add (memory, routines).
+ * organisation's, the user's, the project's), and what capabilities add (memory, skills).
  * @returns {Promise<import('../core/prompt.js').Sections>}
  */
 async function context() {
@@ -529,6 +529,8 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
   // The big welcome question morphs into the conversation title.
   if (!current.records.length && document.startViewTransition) await document.startViewTransition(show).updateCallbackDone
   else show()
+  // The title is written alongside the answer (D112).
+  if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
   await runAgent(brain, meta)
 }
 
@@ -608,18 +610,9 @@ async function runAgent(brain, meta) {
     app.live.value = null
     for (const decision of app.decisions.value) 'toolCall' in decision ? decision.resolve('reject_once') : decision.resolve(null)
     app.offering.value?.resolve(false)
-    let records = [...current.records, ...settled]
-    if (!titleOf(records)) {
-      const chunks = records.flatMap((record) => (record.update?.sessionUpdate === 'user_message_chunk' ? [record.update.content] : []))
-      const words = chunks.find((chunk) => chunk.type === 'text' && chunk.text)
-      const file = chunks.find((chunk) => chunk.type === 'resource_link')
-      const title = words?.type === 'text' ? firstWords(words.text) : file?.type === 'resource_link' ? file.name : ''
-      if (title) {
-        const meta = metaRecord(app.deviceId, { title })
-        await appendRecords(app.fs, current.path, [meta])
-        records = [...records, meta]
-      }
-    }
+    // What was kept meanwhile, like the title, stays.
+    const latest = app.current.peek()
+    const records = [...(latest?.path === current.path ? latest.records : current.records), ...settled]
     if (app.current.value?.path === current.path) app.current.value = { ...current, records }
     await refreshConversations()
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)

@@ -11,7 +11,7 @@ import { signal } from '@preact/signals-core'
  * @property {import('../core/loop.js').Tool[]} [tools]
  * @property {{ name: string, line: string }[]} [lines]  one line per tool, for the prompt
  * @property {string[]} [rules]                           a few prompt rules
- * @property {() => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, routines)
+ * @property {() => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, skills)
  * @property {typeof import('../core/llm.js').streamChat} [stream]  a brain that runs here (the on-device brain)
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
  */
@@ -20,7 +20,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   files: () => import('../caps/files/files.js'),
   memory: () => import('../caps/memory/memory.js'),
   projects: () => import('../caps/projects/projects.js'),
-  routines: () => import('../caps/routines/routines.js'),
+  skills: () => import('../caps/skills/skills.js'),
   python: () => import('../caps/python/python.js'),
   made: () => import('../caps/made/made.js'),
   backup: () => import('../caps/backup/backup.js'),

@@ -2,7 +2,7 @@
 // (here, a fresh browser context) without deleting anything that was already there.
 import { test, expect } from '@playwright/test'
 import { readZip } from '../core/zip.js'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
 
 test('a backup holds the conversations but no key, and restores on a fresh device', async ({ page, browser }) => {
   await start(page)
@@ -12,8 +12,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   // A key, as the brain dialog would keep it: never part of a backup.
   await page.evaluate(async () => (await import('/ui/state.js')).app.fs.write('.secrets/keys.json', '{"format":1}\n'))
 
-  await page.locator('.bar-actions button[aria-label="Settings"]').click()
-  const settings = page.locator('app-settings dialog[open]')
+  const settings = await openSettings(page, 'Your data')
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     settings.getByRole('button', { name: 'Download a backup' }).click(),
@@ -32,8 +31,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   const other = await context.newPage()
   await start(other)
   other.on('dialog', (dialog) => dialog.accept())
-  await other.locator('.bar-actions button[aria-label="Settings"]').click()
-  await other.locator('app-settings dialog[open] input[type="file"]').setInputFiles(path)
+  await (await openSettings(other, 'Your data')).locator('input[type="file"]').setInputFiles(path)
   await expect(other.locator('.toast')).toContainText(/Restored \d+ files/)
   const ephemeral = await other.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
   // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
@@ -49,7 +47,6 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
 test('a file that isn’t a backup is refused, and nothing changes', async ({ page }) => {
   await start(page)
   page.on('dialog', (dialog) => dialog.accept())
-  await page.locator('.bar-actions button[aria-label="Settings"]').click()
-  await page.locator('app-settings dialog[open] input[type="file"]').setInputFiles({ name: 'notes.zip', mimeType: 'application/zip', buffer: Buffer.from('not a zip') })
+  await (await openSettings(page, 'Your data')).locator('input[type="file"]').setInputFiles({ name: 'notes.zip', mimeType: 'application/zip', buffer: Buffer.from('not a zip') })
   await expect(page.locator('.toast')).toContainText('This file isn’t a backup.')
 })

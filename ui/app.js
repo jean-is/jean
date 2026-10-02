@@ -2,7 +2,7 @@
 import { effect } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { memoryFS } from '../core/fs.js'
-import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
+import { loadSettings, ensureHome, listProjects, renamed } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
@@ -22,7 +22,8 @@ async function start() {
   const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
   app.policy = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response.json() : {})).catch(() => ({})) : {}
   app.settings.value = await loadSettings(app.fs)
-  const { deny = [], preUnlock = [] } = app.policy.capabilities ?? {}
+  // A policy may still name a capability by its id from before D115.
+  const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => (app.policy.capabilities?.[list] ?? []).map(renamed))
   configureCapabilities({ deny, remember: rememberUnlocked })
 
   setLoader(async (lang, part) => {

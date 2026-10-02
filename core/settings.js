@@ -50,10 +50,20 @@ export function serviceURL(name, settings, policy = {}) {
 /** @type {Settings} */
 export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
 
+/**
+ * Names that changed (D115): the Skills capability and its tools were Routines. Settings,
+ * policy and earlier conversations still use the old names.
+ */
+const RENAMED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ routines: 'skills', routine: 'skill', save_routine: 'save_skill' }))
+
+/** A capability's or a tool's name as it is now. @param {string} name */
+export const renamed = (name) => (Object.hasOwn(RENAMED, name) ? RENAMED[name] : name)
+
 /** @param {FS} fs @returns {Promise<Settings>} */
 export async function loadSettings(fs) {
-  const saved = await readJSON(fs, 'settings.json', null)
-  return { ...DEFAULT_SETTINGS, ...(saved ?? {}) }
+  const settings = { ...DEFAULT_SETTINGS, ...(await readJSON(fs, 'settings.json', null) ?? {}) }
+  const offers = Object.fromEntries(Object.entries(settings.offers).map(([id, when]) => [renamed(id), when]))
+  return { ...settings, unlocked: settings.unlocked.map(renamed), offers }
 }
 
 /** @param {FS} fs @param {Settings} settings */

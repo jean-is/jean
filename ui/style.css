@@ -220,8 +220,6 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
 }
 .wordmark:hover { text-shadow: 0 0 2rem oklch(from var(--glow) l c h / 0.8); }
 .wordmark-project { max-inline-size: 10rem; overflow: hidden; padding-inline-start: 0.5rem; border-inline-start: 1px solid var(--line-strong); font: 400 0.95rem/1.3 var(--sans); text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); text-shadow: none; }
-/* The conversations button leads, on the side its drawer opens from; the rest sit at the end. */
-.bar-actions { display: flex; align-items: center; gap: 0.25rem; margin-inline-start: auto; }
 
 .icon-button {
   display: inline-grid;
@@ -240,10 +238,6 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
 .icon { inline-size: 1.25rem; block-size: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 :dir(rtl) .flip-rtl { transform: scaleX(-1); }
 
-.language { position: relative; display: inline-grid; place-items: center; inline-size: 2.5rem; block-size: 2.5rem; border-radius: 50%; color: var(--ink-soft); }
-.language:hover { background: var(--line); color: var(--ink); }
-.language select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.language:has(select:focus-visible) { outline: 2px solid var(--flame); outline-offset: 3px; }
 
 .notice { inline-size: var(--column); margin: 0 auto; padding: 0.5rem 0.9rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.85rem; text-align: center; color: var(--ink-soft); }
 
@@ -616,6 +610,8 @@ dialog[open] { @starting-style { opacity: 0; translate: 0 1rem; } }
 dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .sheet { inline-size: min(100% - 2rem, 34rem); max-block-size: min(88dvh, 52rem); padding: 1.25rem 1.5rem 1.5rem; border-radius: 1.6rem; }
 .drawer {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   margin-inline-start: 0;
   inset-block: 0;
@@ -628,6 +624,22 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
   border-radius: 0;
 }
 .drawer[open] { @starting-style { opacity: 0; translate: -1rem 0; } }
+/* Settings, at the foot of the conversations, as in the Claude apps (D115). */
+.sidebar-settings {
+  position: sticky;
+  inset-block-end: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-block-start: auto;
+  padding: 0.6rem 0.75rem;
+  border: 0;
+  border-radius: 0.9rem;
+  background: inherit;
+  color: var(--ink-soft);
+  text-align: start;
+}
+.sidebar-settings:hover { color: var(--ink); box-shadow: inset 0 0 0 100vmax var(--line); }
 :dir(rtl) .drawer[open] { @starting-style { translate: 1rem 0; } }
 .dialog-head { display: flex; align-items: center; justify-content: space-between; margin-block-end: 0.75rem; }
 .dialog-head h2 { margin: 0; font: italic 400 1.9rem/1.1 var(--display); }
@@ -637,6 +649,30 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .sheet h3 .icon { color: var(--flame); }
 .sheet p { margin: 0 0 0.75rem; }
 .lede { color: var(--ink-soft); }
+/* Settings: a menu beside the section open, like the Claude apps' (D113); a strip above it on a phone. */
+.settings { display: grid; grid-template: auto 1fr / 13rem 1fr; inline-size: min(100% - 2rem, 52rem); block-size: min(88dvh, 44rem); padding: 0; }
+/* Laid out whether open or closing, so they fade out as they were. */
+:is(.settings, .drawer):not([open]) { display: none; }
+.settings .dialog-head { grid-column: 1 / -1; margin: 0; padding-block: 1.25rem 0.75rem; padding-inline: 1.5rem 1.25rem; }
+.settings-nav { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.25rem 0.75rem 1rem; overflow: auto; scrollbar-width: none; }
+.settings-nav button { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.85rem; border: 0; border-radius: 0.8rem; background: none; color: var(--ink-soft); text-align: start; }
+.settings-nav .icon { inline-size: 1.1rem; block-size: 1.1rem; }
+.settings-nav button:hover, .settings-nav [aria-current='page'] { background: var(--line); color: var(--ink); }
+.settings-nav [aria-current='page'] { font-weight: 600; }
+.settings-panel { overflow: auto; padding-block-end: 1.5rem; padding-inline: 0.75rem 1.5rem; }
+.settings-panel > :first-child { border-block-start: 0; padding-block-start: 0.25rem; }
+.setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
+.setting p { margin: 0; }
+.setting select { inline-size: 15rem; }
+.about { padding-block-start: 1rem; border-block-start: 1px solid var(--line); }
+@media (max-width: 40rem) {
+  .settings { grid-template: auto auto 1fr / 1fr; }
+  .settings-nav { flex-direction: row; padding: 0 1rem 0.75rem; }
+  .settings-nav button { border-radius: 999px; }
+  .settings-panel { padding-inline: 1.25rem; }
+  .setting { grid-template-columns: 1fr; justify-items: start; }
+  .setting select { inline-size: 100%; }
+}
 .hint { font-size: 0.82rem; color: var(--ink-faint); overflow-wrap: anywhere; }
 .status { padding: 0.6rem 0.9rem; border-radius: 0.8rem; background: var(--line); }
 .status.is-error { background: oklch(from var(--danger) l c h / 0.12); color: var(--ink); }
@@ -664,7 +700,6 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .radio { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.95rem; }
 .model-input { font: 0.85rem var(--mono); }
-.rules li { display: grid; gap: 0.35rem; }
 .rule-kind { font-size: 0.92rem; }
 .segmented { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
 .segmented label { display: block; position: relative; }
@@ -715,14 +750,15 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 /* ─── Projects, and what Jean knows ─────────────────────────────────────── */
 
 .projects { margin-block-end: 0.75rem; padding-block-end: 0.5rem; border-block-end: 1px solid var(--line); }
-.projects ul, .noticed, .routines { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
+.projects ul, .noticed, .skills { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
 .projects li, .noticed li { display: flex; align-items: center; gap: 0.25rem; border-radius: 0.9rem; }
 .projects li.is-current, .projects li:hover, .noticed li:hover, .noticed li:focus-within { background: var(--line); }
 .project { flex: 1; display: flex; align-items: center; gap: 0.6rem; min-inline-size: 0; padding: 0.45rem 0.6rem; border: 0; background: none; text-align: start; }
 .project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .project app-persona { --persona-size: 1.6rem; }
 .swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
-.swatches legend, .looks legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
+.swatches legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
+.looks legend { margin-block-end: 0.4rem; font-weight: 600; }
 .swatch { position: relative; display: grid; place-items: center; inline-size: 2.9rem; block-size: 2.9rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
 .swatch input { position: absolute; opacity: 0; }
 .swatch app-persona { --persona-size: 2rem; }
@@ -736,13 +772,13 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 .sheet .noticed-text { flex: 1; min-inline-size: 0; padding: 0.4rem 0.6rem; border-color: transparent; background: transparent; field-sizing: content; resize: none; }
 .sheet .noticed-text:focus { border-color: var(--line-strong); background: oklch(from var(--room) l c h / 0.6); }
 .noticed-actions { display: flex; flex: none; align-items: center; }
-.routines details { padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 0.9rem; }
-.routines summary { display: grid; cursor: pointer; }
-.routines summary small { color: var(--ink-soft); font-size: 0.82rem; }
-.routines textarea { margin-block: 0.6rem 0.3rem; font: 0.86rem/1.5 var(--mono); }
+.skills details { padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+.skills summary { display: grid; cursor: pointer; }
+.skills summary small { color: var(--ink-soft); font-size: 0.82rem; }
+.skills textarea { margin-block: 0.6rem 0.3rem; font: 0.86rem/1.5 var(--mono); }
 
 /* Looks (D111): each with a thumbnail of itself, then the user's touches. */
-.looks { display: grid; gap: 0.45rem; margin: 1rem 0 0.75rem; padding: 0; border: 0; }
+.looks { display: grid; gap: 0.45rem; margin: 0 0 0.75rem; padding: 0; border: 0; }
 .look { position: relative; cursor: pointer; }
 .look input { position: absolute; opacity: 0; }
 .look:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }

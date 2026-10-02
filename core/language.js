@@ -1,5 +1,5 @@
-// Which language a text is in, to pick a voice that can read it aloud. Offline and small:
-// the script tells most languages apart; where several share one, their commonest words
+// Which language a text is in, and which of the device's voices reads it best. Offline and
+// small: the script tells most languages apart; where several share one, their commonest words
 // (and letters only one of them uses) do. Not a translator's tool, only a reader's.
 
 /** Scripts one language writes, among those Jean meets. */
@@ -92,4 +92,63 @@ export function languageOf(text, hint) {
   }
   if (best.score) return best.lang
   return WORDS[script].some(([lang]) => lang === base) ? base : WORDS[script][0][0]
+}
+
+// ─── Voices ──────────────────────────────────────────────────────────────────
+
+/** @typedef {{ name: string, lang: string, localService: boolean, default: boolean, voiceURI: string }} Voice */
+
+/** Apple's novelty voices (Bells, Zarvox…) and its old robotic ones: last, whatever their language. */
+const NOVELTY = new Set(['Albert', 'Bad News', 'Bahh', 'Bells', 'Boing', 'Bubbles', 'Cellos', 'Fred', 'Good News', 'Jester',
+  'Junior', 'Kathy', 'Organ', 'Ralph', 'Superstar', 'Trinoids', 'Whisper', 'Wobble', 'Zarvox'])
+/** Apple's retro Eloquence voices, in many languages: understandable, but flat. */
+const RETRO = new Set(['Eddy', 'Flo', 'Grandma', 'Grandpa', 'Reed', 'Rocko', 'Sandy', 'Shelley'])
+
+/** A tag's locale ("en_US" → en-US), canonical (iw → he, tl → fil), or null. @param {string} tag */
+function localeOf(tag) {
+  try {
+    return new Intl.Locale(tag.replace(/_/g, '-'))
+  } catch {
+    return null
+  }
+}
+
+/** The language of a locale, Norwegian whichever way it is tagged. @param {Intl.Locale | null} locale */
+const languageOfLocale = (locale) => (locale?.language === 'no' ? 'nb' : locale?.language)
+
+/** How natural a voice sounds, from what its name and address say. @param {Voice} voice */
+function sound(voice) {
+  const name = voice.name.split(' (')[0]
+  const id = `${voice.name} ${voice.voiceURI}`.toLowerCase()
+  if (NOVELTY.has(name)) return -2
+  if (RETRO.has(name) || id.includes('eloquence')) return -1
+  if (/premium|enhanced|natural|neural/.test(id)) return 2
+  return id.includes('compact') ? 0 : 1
+}
+
+/**
+ * The voices on this device that speak `lang`, the best first: the user's own variety (fr-CA
+ * before fr-FR), then the most natural-sounding, then the system's default. Retro and novelty
+ * voices come after the others, and voices that send the text elsewhere (localService false)
+ * never (D109).
+ * @param {readonly Voice[]} voices @param {string} lang a language, as languageOf gives it
+ * @param {readonly string[]} [tags] the languages the user reads, as tags ("fr-CA", "zh-Hant")
+ */
+export function rankVoices(voices, lang, tags = []) {
+  const language = languageOfLocale(localeOf(lang))
+  // Only tags that name a variety: "en" says nothing between en-GB and en-US.
+  const varieties = /** @type {Intl.Locale[]} */ (tags.map(localeOf))
+    .filter((locale) => locale && languageOfLocale(locale) === language && (locale.region || locale.script))
+  /** @param {Voice} voice */
+  const rank = (voice) => {
+    const locale = localeOf(voice.lang)?.maximize()
+    const own = varieties.some((wanted) => (!wanted.region || wanted.region === locale?.region) && (!wanted.script || wanted.script === locale?.script))
+    const natural = sound(voice)
+    return [Math.min(natural, 0), own, natural, voice.default].map(Number)
+  }
+  const ranked = voices
+    .filter((voice) => voice.localService && languageOfLocale(localeOf(voice.lang)) === language)
+    .map((voice) => ({ voice, rank: rank(voice) }))
+  // Ties keep the system's order (sort is stable).
+  return ranked.sort((a, b) => b.rank.map((value, i) => value - a.rank[i]).find(Boolean) ?? 0).map(({ voice }) => voice)
 }
