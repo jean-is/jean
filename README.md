@@ -2,55 +2,113 @@
 
 > An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.
 
-This repository holds **Jean** (a working name): its plan and its code. Jean is a standalone project that revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from scratch; it started inside the DEVS repository and moved out on 2026-10-02, keeping its history (D50). The plan comes out of a strategy session held on 2026-10-01; versions 0.1 ("Talk") to 0.6 ("Delegate") were built on 2026-10-02.
+Jean is for people who will never open a terminal. You open a page, give it a task and your files, and it reads them, works things out with real calculations, and hands back something you can use: a summary, a table, a document. It shows what it is doing while it works, and it asks before anything that matters.
 
-|  |  |
+There is no Jean server. Everything Jean keeps lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Read the [manifesto](MANIFESTO.md) for why. Jean is a working name: the final name and domain are still [open](docs/open-questions.md).
+
+## What Jean does
+
+- **Talks in 33 languages,** right to left included, and you can switch languages mid-conversation.
+- **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and plain text.
+- **Does the maths instead of guessing.** Calculations run as real code in a sandbox, with JavaScript (QuickJS) or Python's standard library (Pyodide).
+- **Hands back things you can use.** Copy an answer with its formatting, download a table as a spreadsheet, or print an answer and save it as a PDF.
+- **Remembers, if you want it to:**
+  - what it should know about you, on a page where you can read and change it;
+  - standing instructions;
+  - projects, each with its own memory, files and light;
+  - routines, saved as `SKILL.md`.
+- **Reaches your services and the web.** Connections over MCP sign in from the browser. Web search uses the brain's own search, or Wikipedia. Every source becomes a numbered citation.
+- **Takes on bigger tasks:**
+  - Helpers split a large task and work on its parts at the same time.
+  - Their approvals and questions wait in one inbox, where you answer them in any order.
+  - Double-check compares each cited claim with its source.
+  - When you come back, Jean tells you what changed since last time.
+- **Listens and speaks:** dictation, read-aloud, and a live voice conversation, with speech recognised on your device.
+- **Asks first.** For each kind of action you choose *Do it*, *Ask me first* or *Never*. By default Jean reads and writes its own files freely, asks before sending, sharing, deleting or anything external, and never touches passwords or payments.
+
+Jean starts as a single box. Everything above is offered when you need it, like a game that teaches itself, and the "What Jean can do" page lights up as you find things.
+
+## Private by design
+
+- **Your data stays on your device.** It lives in the browser's private file system as plain files:
+  - one file per thing, with conversations as append-only JSONL;
+  - backups are one zip you keep wherever you like;
+  - keys are encrypted on the device and never part of a backup.
+- **You choose the brain:**
+  - **On this device:** Gemma 4 E2B on WebGPU, about 3.1 GB, downloaded once if you agree. It is offered only where it can run.
+  - **One click:** sign in with OpenRouter.
+  - **Your own key** (Anthropic, OpenAI or any OpenAI-compatible service), or a **local server** such as Ollama or LM Studio.
+  - **Auto** picks a brain for each request. Once Intuition is on, that is the cheapest brain that can do the job, and the device's brain for personal content. A switch keeps everything off the cloud.
+- **Code a brain writes never runs in the page.** It runs in a sandboxed worker with an opaque origin and no network. The page itself has a strict Content Security Policy with Trusted Types, and never uses `innerHTML` or `eval`.
+
+## Small on purpose
+
+| | 0.6 |
 |---|---|
-| Status | 0.6 "Delegate" built: helpers that split a large task and work at the same time, a decision inbox where their approvals and questions wait, Double-check of every cited claim against its source, a read-only brief of what's new when you come back ("Since last time"), and a name and a way of being for a project's assistant. 0.5 "Reach": connections to the user's services over MCP, with sign-in from the browser; web search (the brain's own, or Wikipedia); numbered sources from every tool; pictures from codemode (`models.image`); live voice conversation on the device. 0.4 "Remember": memory that switches itself on, "What Jean knows about you", instructions, projects with their own light, routines (`SKILL.md`), `recall`, and Python in a sandbox. 0.3 "Discover": calculations in a sandbox (QuickJS) with codemode, Intuition (reflexes on the device), discovery and the "What Jean can do" page, Auto mode, reply suggestions, source chips, 33 languages. 0.2 "Read and keep": files in (PDF, Office), a brain on the device, prompt caching, backups, dictation. 0.1 "Talk": chat with any brain, offline, conversations as plain files |
-| Working name | Jean — a variable, not final (see [open questions](docs/open-questions.md)) |
-| Domain candidate | jean.cx (unregistered as of 2026-10-01) |
-| First user | A non-technical knowledge worker |
-| Goal | Open source and reputation first; revenue is secondary |
-| License | [MIT](LICENSE) |
+| Jean's own code | 13,530 lines (core 2,616, app 10,914) |
+| First load | 92.7 KB gzipped, in the language with the largest catalogue |
+| Libraries loaded up front | 3: `@preact/signals-core`, `lit-html`, `marked` |
+| Build step | None: plain ES modules and an import map |
+| Base prompt | 182 tokens |
 
-## Read in this order
+These limits live in [budgets.json](budgets.json), and CI fails when one is exceeded. Everything else loads only when a capability is turned on, including QuickJS, Pyodide and Transformers.js.
 
-| # | Document | What's in it |
-|---|---|---|
-| 1 | [MANIFESTO.md](MANIFESTO.md) | Why Jean exists, in one page |
-| 2 | [docs/assessment.md](docs/assessment.md) | An honest look at DEVS, and what carries over |
-| 3 | [docs/landscape.md](docs/landscape.md) | Competitors and the standards Jean builds on, as of 2026-10-01 |
-| 4 | [docs/product.md](docs/product.md) | User, vocabulary, progressive discovery, how every feature behaves |
-| 5 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, models, languages, events |
-| 6 | [docs/design.md](docs/design.md) | Art direction and its budget |
-| 7 | [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, and what the architecture allows later |
-| 8 | [docs/roadmap.md](docs/roadmap.md) | Build order and launch |
-| 9 | [docs/decisions.md](docs/decisions.md) | Decision log, with the alternatives that were rejected |
-| 10 | [docs/open-questions.md](docs/open-questions.md) | What is still undecided |
+Jean builds on standards, not inventions:
+- **Brains:** the OpenAI-compatible and Anthropic Messages APIs.
+- **Connections:** MCP.
+- **Routines:** Agent Skills (`SKILL.md`).
+- **Activity:** ACP `session/update` events.
+- **Intuition** (the small on-device helper that picks a brain and suggests next steps): the Decisions API.
+- **Everything else:** `Intl` and the Web Platform.
 
-Also here:
+## Run it
 
-- [AGENTS.md](AGENTS.md) — the rules any coding agent (or human) follows when writing Jean's code
-- [prompts/system.md](prompts/system.md) — the draft system prompt
-- [budgets.json](budgets.json) — size limits that CI will enforce
-
-## Running it
-
-No build step. Any static file server works; for development:
+Jean needs Node 22 or later to develop, and a browser no older than Chrome or Edge 108, Safari 16.4 or Firefox 111. The brain on this device also needs WebGPU with `shader-f16`.
 
 ```bash
-npm install          # Jean's own packages
-npm run dev          # build (vendor + manifest), then serve http://127.0.0.1:4173
-npm run check        # manifest, strict typecheck, tests, budgets
-npm run build        # copy runtimes into vendor/ and regenerate the manifest, ready to deploy
-npm run e2e          # smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
-npm run reflexes     # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
-npm run directory    # check from a browser's point of view which known services Jean can connect to
-node test/fixtures/fake-brain.js   # a fake brain: connect "On your computer" → Other → http://127.0.0.1:4174/v1
+npm install
 ```
 
-Nothing in `vendor/` is committed. `npm run dev`, `npm start`, `npm run build` and `npm run check` copy the three upfront libraries, and the on-demand runtimes (pdf.js, Transformers.js, QuickJS, Pyodide), in from Jean's own `node_modules` (D43, D51, D52, D66, D80).
+```bash
+npm run dev
+```
 
-## Self-contained
+Then open http://127.0.0.1:4173 and pick a brain. To try Jean without any account, start the fake brain used by the tests, and connect it under *On your computer → Other* at `http://127.0.0.1:4174/v1`:
 
-Everything here uses relative links, and nothing reads, imports or copies files from outside this repository (D38).
+```bash
+node test/fixtures/fake-brain.js
+```
+
+**Deploying:** run `npm ci && npm run build`, then copy the folder to any static host served over HTTPS. Jean's code ships exactly as written. Only third-party code (copied into `vendor/`) and two generated listings are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once.
+
+## Develop
+
+| Command | What it does |
+|---|---|
+| `npm run check` | Builds, type-checks (strict JSDoc with `tsc --noEmit`), runs the tests and checks the budgets |
+| `npm test` | The core and storage tests, with `node --test` |
+| `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
+| `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
+| `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to |
+
+CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on every push and merge request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.
+
+## Read more
+
+| Document | What's in it |
+|---|---|
+| [MANIFESTO.md](MANIFESTO.md) | Why Jean exists, in one page (also served as `manifesto.html`) |
+| [docs/product.md](docs/product.md) | The user, the vocabulary, progressive discovery, and how every feature behaves |
+| [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
+| [docs/design.md](docs/design.md) | The room that lights up, and the little light |
+| [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, and what the architecture allows later |
+| [docs/roadmap.md](docs/roadmap.md) | Build order, what each version shipped, and what is still to check by hand |
+| [docs/decisions.md](docs/decisions.md) | Every decision, with the alternatives that were rejected |
+| [docs/open-questions.md](docs/open-questions.md) | What is still undecided |
+| [docs/assessment.md](docs/assessment.md), [docs/landscape.md](docs/landscape.md) | Where Jean comes from, and the field as of 2026-10-01 |
+
+Jean revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from scratch. It started inside the DEVS repository and moved out on 2026-10-02 with its history (D50). It is self-contained: nothing here reads, imports or copies files from outside this repository.
+
+## License
+
+[MIT](LICENSE)

@@ -23,7 +23,7 @@ Checked end to end with the fake brain: a dropped PDF is answered, and the secon
 - [x] The done-when on a real device: a PDF answered by Gemma 4 E2B with no account and no key (checked by hand, 2026-10-02)
 - [ ] Anthropic cache reads and warming against the real API (`cache_read_input_tokens` on the second question)
 - [ ] Whisper dictation (an 80 MB download) and Chrome's on-device recognition where available. A first test on Arc found dictation silent; fixed by D61 and the Whisper `dtype` (`q8`), to check again
-- [x] Playwright smoke tests (AGENTS.md): written in 0.3 (`npm run e2e`, D66). They cover talking, files and calculations, the collection page (where every capability is turned on) and the picker; backup, Things Jean made, dictation and the on-device brain have no flow of their own yet
+- [x] Playwright smoke tests (AGENTS.md): written in 0.3 (`npm run e2e`, D66). They cover talking, files and calculations, the collection page (where every capability is turned on) and the picker. Since 0.6, backup, Things Jean made, dictation and the on-device brain have theirs too (`backup`, `made`, `voice` and `device` specs), with the browser's recogniser and Gemma's worker replaced by fakes
 
 ## 0.3 status (2026-10-02)
 
@@ -124,9 +124,9 @@ Budgets at the end of the build: core 2,616 of 3,000 lines, app 10,914 of 15,000
 - [ ] Final name and domain chosen and registered, because data is bound to the origin (see [open-questions.md](open-questions.md))
 - [x] Multilingual reflex test set built; Kev measured in every launch language (D68)
 - [ ] Kev fine-tuned where it falls short: personal and unhappy everywhere, and the low-resource languages (D68)
-- [ ] Budgets enforced in CI and met (met in `npm run check`; there is no CI yet)
+- [x] Budgets enforced in CI and met: `.gitlab-ci.yml` runs `npm run check` and `npm run e2e` (Chromium and WebKit) on every push and merge request. It runs once the repository has a GitLab remote
 - [ ] CSP verified in Chrome, Edge, Firefox and Safari, including the sandbox document (Chromium and WebKit done through the smoke tests)
 - [ ] Tested on a managed Windows laptop with a weak graphics chip, and on Safari 16.4+
 - [ ] Contrast audited at every lighting stage; reduced-motion path checked
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds
-- [ ] Manifesto and README published; the line count on the homepage
+- [ ] Manifesto and README published; the line count on the homepage. Ready since 0.6: `manifesto.html` (linked from Settings) and a README for visitors both give the line count; publishing waits for the name and domain

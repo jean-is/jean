@@ -309,7 +309,7 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 .prose ul { list-style-type: disc; }
 .prose ul ul { list-style-type: circle; }
 .prose li + li { margin-block-start: 0.25rem; }
-.prose a { color: var(--flame); text-underline-offset: 0.2em; }
+.prose a, .about a { color: var(--flame); text-underline-offset: 0.2em; }
 .prose code { font: 0.9em var(--mono); padding: 0.1em 0.35em; border-radius: 0.35rem; background: oklch(from var(--ink) l c h / 0.08); }
 .prose pre { padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 0.9rem; background: oklch(0 0 0 / 0.28); overflow-x: auto; }
 .prose pre code { padding: 0; background: none; font-size: 0.86rem; line-height: 1.55; }

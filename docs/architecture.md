@@ -57,6 +57,7 @@
 ```
 index.html        CSP <meta>, light or dark (D85), import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
+manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but the light-or-dark line
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
 core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js events.js i18n.js
@@ -78,6 +79,7 @@ test/             node --test suites; fixtures/fake-brain.js and fake-mail.js (a
                   modules use which strings);
                   reflexes/ (the multilingual reflex test set and results.md)
 e2e/              Playwright smoke tests, Chromium and WebKit (npm run e2e)
+.gitlab-ci.yml    CI: npm run check and npm run e2e, side by side, in Playwright's image
 ```
 
 ## Brand
