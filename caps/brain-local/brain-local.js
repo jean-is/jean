@@ -74,7 +74,7 @@ export async function prepare() {
 
 /**
  * Same events as core/llm.js streamChat, from the worker.
- * @param {import('../../core/llm.js').Connection & import('../../core/llm.js').Prompt} options
+ * @param {import('../../core/types.js').Connection & import('../../core/types.js').Prompt} options
  * @returns {AsyncGenerator<StreamEvent, void, undefined>}
  */
 export async function* stream({ system, messages, tools = [], maxTokens, signal }) {

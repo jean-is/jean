@@ -6,7 +6,7 @@ import { loadSettings, ensureHome } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, LOCALES, refreshConversations, finishOpenRouter, rememberUnlocked } from './state.js'
+import { app, effective, activeBrain, LOCALES, refreshConversations, rememberUnlocked } from './state.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import { registerServiceWorker } from './shell.js'
 import { startRouter } from './router.js'
@@ -53,7 +53,8 @@ async function start() {
   root.classList.add('is-ready')
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  await finishOpenRouter()
+  // Back from the OpenRouter sign-in with ?code=…
+  if (new URLSearchParams(location.search).has('code')) await (await import('./brains.js')).finishOpenRouter()
   registerServiceWorker()
 }
 

@@ -5,17 +5,19 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, activeBrain, LOCALES, setLocale, setRule, setVoice, connectBrain, continueWithBrain, addBrain, notify,
-  removeBrain, useBrain, loadModels, startOpenRouter, newConversation, openConversation, removeConversation, showError,
+  app, effective, activeBrain, setLocale, setRule, setVoice, notify, loadModels,
+  newConversation, openConversation, removeConversation, showError,
 } from './state.js'
+import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, startOpenRouter } from './brains.js'
 import { unlock, isDenied } from './caps.js'
 import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { t, locale, languageName, preferredLocales, relativeTime } from '../core/i18n.js'
+import { t, locale, relativeTime } from '../core/i18n.js'
 import { voicesFor } from './speech.js'
 import { icons } from './icons.js'
+import { formatBytes, languageOptions } from './shell.js'
 
 /** @param {Element} host @param {string} name */
 export function syncDialog(host, name) {
@@ -317,21 +319,6 @@ async function restore(event) {
 async function persist() {
   const persisted = await navigator.storage?.persist?.()
   storage.value = { ...storage.value, persisted: Boolean(persisted) }
-}
-
-/** The language menu: the browser's languages first, in its order, then the others. */
-export function languageOptions() {
-  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
-  const yours = preferredLocales(LOCALES, navigator.languages)
-  if (!yours.length) return LOCALES.map(option)
-  return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
-    <optgroup label=${t('settings.languagesOther')}>${LOCALES.filter((code) => !yours.includes(code)).map(option)}</optgroup>`
-}
-
-/** @param {number} bytes */
-export function formatBytes(bytes) {
-  const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', bytes / 1e3]
-  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
 }
 
 define('app-history', History)

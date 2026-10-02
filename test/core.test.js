@@ -24,6 +24,23 @@ test('i18n: interpolation, plurals, fallback and direction', async () => {
   assert.equal(dir('fr-CA'), 'ltr')
 })
 
+test('i18n: only the chosen catalog is fetched, and English only when it cannot be', async () => {
+  const i18n = await import('../core/i18n.js?fresh') // its own catalogs, without the ones added above
+  /** @type {string[]} */
+  const fetched = []
+  i18n.setLoader(async (lang) => {
+    fetched.push(lang)
+    return lang === 'xx' ? null : { hello: lang }
+  })
+  await i18n.useLocale('fr')
+  assert.deepEqual(fetched, ['fr'])
+  assert.equal(i18n.t('hello'), 'fr')
+  await i18n.useLocale('xx')
+  assert.deepEqual(fetched, ['fr', 'xx', 'en'])
+  assert.equal(i18n.locale.value, 'xx')
+  assert.equal(i18n.t('hello'), 'en')
+})
+
 test('i18n: locale picking, language names, first words', async () => {
   assert.equal(pickLocale(['en', 'fr', 'ar'], ['fr-BE', 'en']), 'fr')
   assert.equal(pickLocale(['en', 'fr', 'ar'], ['de-DE']), 'en')

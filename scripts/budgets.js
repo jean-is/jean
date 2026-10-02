@@ -117,6 +117,17 @@ async function checkDependencies (budgets) {
   return [measure('runtimeDependencies', max, names.length, extra.map((n) => `not allowed: ${n}`))]
 }
 
+/** Each person loads one catalog, their own (core/i18n.js), so the first load counts the largest. */
+async function largestLocale () {
+  let largest = 'locales/en.json'
+  let size = 0
+  for (const path of await filesIn(['locales'], /^locales\/[^/]+\.json$/)) {
+    const { bytes } = await gzipTotal([path])
+    if (bytes > size) [largest, size] = [path, bytes]
+  }
+  return largest
+}
+
 /** @param {any} budgets */
 async function checkFirstLoad (budgets) {
   const html = await readText('index.html')
@@ -136,10 +147,11 @@ async function checkFirstLoad (budgets) {
   const styles = linkedStylesheets(html)
   const graph = await moduleGraph(ENTRY, importMap, readText)
   const css = await gzipTotal(styles)
-  const rest = await gzipTotal(['index.html', 'locales/en.json', ...graph.found])
+  const locale = await largestLocale()
+  const rest = await gzipTotal(['index.html', locale, ...graph.found])
   notes.push(...css.missing, ...rest.missing, ...graph.problems)
   return [
-    measure('gzipKB.firstLoad', budgets.gzipKB.firstLoad * KB, css.bytes + rest.bytes, notes, kb),
+    measure(`gzipKB.firstLoad with ${locale}`, budgets.gzipKB.firstLoad * KB, css.bytes + rest.bytes, notes, kb),
     measure('gzipKB.css', budgets.gzipKB.css * KB, css.bytes, css.missing, kb),
   ]
 }

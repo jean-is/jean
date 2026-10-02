@@ -3,7 +3,8 @@
 // small print and a plain cost, every other brain, and "never send to the cloud".
 import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
-import { app, effective, activeBrain, brainLabel, useBrain, setBrainMode, loadModels } from './state.js'
+import { app, effective, activeBrain, brainLabel, setBrainMode, loadModels } from './state.js'
+import { useBrain } from './brains.js'
 import { syncDialog, close, backdrop, head } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'

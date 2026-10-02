@@ -1,0 +1,169 @@
+// Shared types for core/ and ui/, referenced from JSDoc as import('./types.js').Name.
+
+// ─── Brains (model providers) ────────────────────────────────────────────────
+
+export type ProviderId = 'device' | 'openrouter' | 'openai' | 'anthropic' | 'ollama' | 'lmstudio' | 'custom'
+/** Wire protocol spoken by the provider ('device': the on-device brain). */
+export type WireApi = 'device' | 'openai' | 'anthropic'
+
+/** A connected brain. Secrets (API keys) are never stored here; see ui/secrets.js. */
+export interface BrainConfig {
+  /** ULID */
+  id: string
+  provider: ProviderId
+  api: WireApi
+  /** e.g. https://openrouter.ai/api/v1, https://api.anthropic.com/v1, http://localhost:11434/v1 */
+  baseURL: string
+  model: string
+  label?: string
+  /** Extra non-secret headers */
+  headers?: Record<string, string>
+}
+
+// ─── Provider-neutral chat ───────────────────────────────────────────────────
+
+export type ToolCall = { id: string, name: string, args: any }
+/** parameters = JSON Schema */
+export type ToolSpec = { name: string, description: string, parameters: object }
+/** A shared file's text, as the brain sees it. */
+export type DocumentPart = { name: string, text: string, source?: number }
+export type UserMessage = { role: 'user', content: string, documents?: DocumentPart[] }
+/**
+ * raw = provider-native content blocks, echoed verbatim to the model in rawModel only
+ * (Anthropic thinking blocks must come back unchanged, or the cache breaks).
+ */
+export type AssistantMessage = { role: 'assistant', content: string, toolCalls?: ToolCall[], raw?: any, rawModel?: string }
+export type ToolMessage = { role: 'tool', toolCallId: string, name: string, content: string, isError?: boolean }
+/** A mid-conversation note (D46); never the first message. */
+export type SystemNote = { role: 'system', content: string }
+export type ChatMessage = UserMessage | AssistantMessage | ToolMessage | SystemNote
+
+// Events yielded by llm.streamChat().
+export type StopReason = 'end' | 'tool_use' | 'max_tokens' | 'refusal' | 'other'
+/** inputTokens counts every input token, cached ones included. */
+export type Usage = { inputTokens?: number, outputTokens?: number, cacheReadTokens?: number, cacheWriteTokens?: number }
+export type StreamEvent =
+  | { type: 'text', delta: string }
+  | { type: 'thinking', delta: string }
+  | { type: 'tool_call', call: ToolCall }
+  | { type: 'done', stopReason: StopReason, usage?: Usage, message: AssistantMessage }
+
+/** pricing in USD per token when known. */
+export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number } }
+
+// Requests made by llm.js and anthropic.js.
+export type LLMErrorCode = 'auth' | 'rate_limit' | 'network' | 'cors_or_offline' | 'bad_request' | 'not_found' | 'server' | 'aborted' | 'bad_response' | 'refusal' | 'too_long'
+export type Connection = { brain: BrainConfig, apiKey?: string, signal?: AbortSignal, fetch?: typeof globalThis.fetch }
+export type Prompt = { system?: string, messages: ChatMessage[], tools?: ToolSpec[], maxTokens?: number }
+export type WireRequest = { url: string, headers: Record<string, string>, body: Record<string, any> }
+
+// ─── Storage ─────────────────────────────────────────────────────────────────
+
+/**
+ * Paths are relative POSIX paths without a leading slash, e.g. "projects/01J…-home/project.md".
+ * Segments "", "." and ".." are rejected.
+ */
+export type DirEntry = { name: string, kind: 'file' | 'directory' }
+export interface FS {
+  /** null when missing */
+  read: (path: string) => Promise<string | null>
+  /** null when missing */
+  readBytes: (path: string) => Promise<Uint8Array | null>
+  /** whole-file replace, parents created */
+  write: (path: string, text: string) => Promise<void>
+  /** whole-file replace, parents created */
+  writeBytes: (path: string, bytes: Uint8Array) => Promise<void>
+  /** appends text as-is, parents created */
+  append: (path: string, text: string) => Promise<void>
+  /** [] when missing; "" lists the root */
+  list: (dir: string) => Promise<DirEntry[]>
+  /** file or directory (recursive); no-op when missing */
+  remove: (path: string) => Promise<void>
+  exists: (path: string) => Promise<boolean>
+  /** changes made by other tabs; returns unsubscribe */
+  watch?: (cb: (path: string) => void) => () => void
+  estimate?: () => Promise<{ usage?: number, quota?: number, persisted?: boolean }>
+}
+
+// ─── Conversations (JSONL) and ACP events ────────────────────────────────────
+
+/*
+ * ACP content blocks (subset). A resource link points at a file in the project (uri relative
+ * to the project folder); `_meta.pages` records which pages went into the brain's context,
+ * `_meta.source` the number the brain cites it by.
+ */
+export type TextBlock = { type: 'text', text: string }
+export type ResourceLink = { type: 'resource_link', uri: string, name: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number], of?: number, source?: number } }
+export type ContentBlock = TextBlock | ResourceLink
+export type ToolKind = 'read' | 'edit' | 'delete' | 'move' | 'search' | 'execute' | 'think' | 'fetch' | 'switch_mode' | 'other'
+export type ToolStatus = 'pending' | 'in_progress' | 'completed' | 'failed'
+export type ToolCallLocation = { path: string, line?: number }
+export type ToolCallContent = { type: 'content', content: TextBlock }
+export type PlanEntry = { content: string, priority: 'high' | 'medium' | 'low', status: 'pending' | 'in_progress' | 'completed' }
+
+export interface ToolCallInfo {
+  toolCallId: string
+  title: string
+  name?: string
+  kind?: ToolKind
+  status?: ToolStatus
+  content?: ToolCallContent[]
+  locations?: ToolCallLocation[]
+  rawInput?: any
+  rawOutput?: any
+  /** ACP extension data, e.g. { raw } on brain entries */
+  _meta?: Record<string, any>
+}
+
+/** ACP session/update payloads used by Jean (https://agentclientprotocol.com). */
+export type AcpUpdate =
+  | { sessionUpdate: 'user_message_chunk', content: ContentBlock }
+  | { sessionUpdate: 'agent_message_chunk', content: TextBlock }
+  | { sessionUpdate: 'agent_thought_chunk', content: TextBlock }
+  | ({ sessionUpdate: 'tool_call' } & ToolCallInfo)
+  | ({ sessionUpdate: 'tool_call_update' } & Partial<ToolCallInfo> & { toolCallId: string })
+  | { sessionUpdate: 'plan', entries: PlanEntry[] }
+  | { sessionUpdate: '_system_note', text: string, data: SystemNoteData }
+
+/** What a system note changed, for the UI label; `text` is what the brain reads (D46). */
+export type SystemNoteData =
+  | { kind: 'language', language: string }
+  | { kind: 'date', date: string }
+  | { kind: 'tools', added: string[], deferred?: boolean }
+
+/**
+ * What a conversation's brain was told, frozen at its start (D46), then changed by notes.
+ * tools: declared to the brain; deferred: known to exist, reached with find_tools (D47)
+ */
+export type PromptState = { language: string, date: string, tools: string[], deferred?: string[] }
+
+/** One JSONL line after the header. Exactly one of update/meta is present. */
+export interface Envelope {
+  /** ISO timestamp */
+  at: string
+  /** 'user' | 'jean' | a device id */
+  by: string
+  /** agent records only: model call index within the turn */
+  step?: number
+  update?: AcpUpdate
+  meta?: { title?: string, prompt?: { system: string, state: PromptState }, [key: string]: any }
+}
+
+/** First JSONL line of a conversation file. */
+export interface ConversationHeader {
+  format: 1
+  kind: 'conversation'
+  /** ULID */
+  id: string
+  /** ISO timestamp */
+  createdAt: string
+  /** device id */
+  by: string
+}
+
+export type ConversationSummary = { id: string, path: string, title: string, createdAt: string, updatedAt: string }
+
+// ─── Rules ───────────────────────────────────────────────────────────────────
+
+/** UI: "Do it" / "Ask me first" / "Never" */
+export type RuleValue = 'allow' | 'ask' | 'never'

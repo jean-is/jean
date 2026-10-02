@@ -8,11 +8,9 @@ import { runTurn } from '../core/loop.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { t, locale, useLocale, languageName, firstWords } from '../core/i18n.js'
-import { PROVIDERS, listModels, warmCache } from '../core/llm.js'
+import { listModels, warmCache } from '../core/llm.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber } from '../core/files.js'
-import { createVerifier, challengeS256, openRouterAuthURL, exchangeOpenRouterCode } from '../core/oauth.js'
-import { ulid } from '../core/ulid.js'
-import { getSecret, setSecret, deleteSecret } from './secrets.js'
+import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import { chooseBrain, isLocal, TIERS } from './auto.js'
 
@@ -101,7 +99,7 @@ export function brainLabel(brain) {
 export const weightsHost = () => serviceURL('modelWeights', app.settings.value, app.policy)
 
 /** @param {Partial<Settings>} patch */
-async function updateSettings(patch) {
+export async function updateSettings(patch) {
   app.settings.value = { ...app.settings.value, ...patch }
   await saveSettings(app.fs, app.settings.value)
 }
@@ -153,55 +151,7 @@ export async function answerOffer(id) {
 }
 
 // ─── Brains ──────────────────────────────────────────────────────────────────
-
-/**
- * Connect a brain: validate by listing its models, store the key encrypted.
- * @param {{ provider: BrainConfig['provider'], apiKey?: string, baseURL?: string, model?: string }} input
- */
-export async function connectBrain({ provider, apiKey, baseURL, model }) {
-  const defaults = PROVIDERS[provider]
-  /** @type {BrainConfig} */
-  const brain = {
-    id: ulid(),
-    provider,
-    api: /** @type {BrainConfig['api']} */ (defaults.api),
-    baseURL: (baseURL || defaults.baseURL).replace(/\/+$/, ''),
-    model: model ?? defaults.defaultModel ?? '',
-    ...(provider === 'openrouter' && { headers: { 'HTTP-Referer': location.origin, 'X-Title': BRAND.name } }),
-  }
-  const models = await listModels({ brain, apiKey })
-  if (!brain.model) brain.model = models[0]?.id ?? ''
-  if (apiKey) await setSecret(app.fs, brain.id, apiKey)
-  app.models.value = { ...app.models.value, [brain.id]: models }
-  await updateSettings({ brains: [...app.settings.value.brains, brain], activeBrain: brain.id })
-  return brain
-}
-
-/** Adds a brain that needs no connection check (the on-device one) and makes it active. @param {BrainConfig} brain */
-export async function addBrain(brain) {
-  const others = app.settings.value.brains.filter((existing) => existing.provider !== brain.provider || brain.provider !== 'device')
-  await updateSettings({ brains: [...others, brain], activeBrain: brain.id })
-}
-
-/** After connecting a brain: close the dialog and send what the user had typed. */
-export function continueWithBrain() {
-  app.dialog.value = null
-  const pending = app.draft.value.trim()
-  if (pending && !app.current.value?.records.length) send(pending)
-}
-
-/** @param {string} id */
-export async function removeBrain(id) {
-  await deleteSecret(app.fs, id)
-  const brains = app.settings.value.brains.filter((brain) => brain.id !== id)
-  await updateSettings({ brains, activeBrain: brains[0]?.id ?? null })
-}
-
-/** @param {string} id @param {string} [model] */
-export async function useBrain(id, model) {
-  const brains = app.settings.value.brains.map((brain) => (brain.id === id && model ? { ...brain, model } : brain))
-  await updateSettings({ brains, activeBrain: id })
-}
+// Connecting, choosing and removing them is in brains.js, loaded with the dialogs.
 
 /** Models offered by a connected brain (cached). @param {BrainConfig} brain */
 export async function loadModels(brain) {
@@ -211,37 +161,6 @@ export async function loadModels(brain) {
     app.models.value = { ...app.models.value, [brain.id]: models }
   } catch {
     app.models.value = { ...app.models.value, [brain.id]: [] }
-  }
-}
-
-export async function startOpenRouter() {
-  const verifier = createVerifier()
-  sessionStorage.setItem('app.pkce', verifier)
-  sessionStorage.setItem('app.draft', app.draft.value)
-  sessionStorage.setItem('app.route', location.hash)
-  const callbackURL = location.origin + location.pathname
-  location.assign(openRouterAuthURL({ callbackURL, challenge: await challengeS256(verifier) }))
-}
-
-/** Finish the OpenRouter sign-in when the page comes back with ?code=… */
-export async function finishOpenRouter() {
-  const params = new URLSearchParams(location.search)
-  const code = params.get('code')
-  const verifier = sessionStorage.getItem('app.pkce')
-  if (!code || !verifier) return
-  sessionStorage.removeItem('app.pkce')
-  app.draft.value = sessionStorage.getItem('app.draft') ?? ''
-  sessionStorage.removeItem('app.draft')
-  history.replaceState(null, '', location.pathname + (sessionStorage.getItem('app.route') ?? ''))
-  sessionStorage.removeItem('app.route')
-  dispatchEvent(new HashChangeEvent('hashchange'))
-  try {
-    const apiKey = await exchangeOpenRouterCode({ code, verifier })
-    await connectBrain({ provider: 'openrouter', apiKey })
-    notify(t('brain.connected'))
-    continueWithBrain()
-  } catch (error) {
-    showError(error)
   }
 }
 

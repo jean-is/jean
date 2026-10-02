@@ -1,5 +1,5 @@
 // Paths, an in-memory FS (tests, fallback), and JSON helpers.
-// The browser FS lives in ui/opfs.js; both implement the FS typedef in types.js.
+// The browser FS lives in ui/opfs.js; both implement the FS type in types.d.ts.
 
 /**
  * @typedef {import('./types.js').FS} FS

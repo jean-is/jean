@@ -59,10 +59,10 @@ index.html        CSP <meta>, import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65)
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
-core/             llm.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js
-                  deferred.js search.js decide.js …   (standard web APIs only; skills.js comes later)
+core/             llm.js anthropic.js loop.js fs.js files.js extract.js zip.js backup.js prompt.js events.js i18n.js
+                  deferred.js search.js decide.js … types.d.ts   (standard web APIs only; skills.js comes later)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
-                  discovery.js collection.js auto.js picker.js
+                  discovery.js collection.js auto.js picker.js, dialogs.js and brains.js (loaded when a dialog opens, D76)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
                   python/ memory/ routines/ projects/ search/ connections/ helpers/   (later)
@@ -92,7 +92,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`loop.js`** (~220 lines): stream the reply, run tool calls, feed results back, repeat. Rules (Do it / Ask me first / Never) are checked before each tool runs, including calls made from scripts. The prompt and the declared tools are frozen for the conversation; changes arrive as system notes (see [Prompt, tools and caching](#prompt-tools-and-caching)).
   - `tools` is every tool that can be called; it may be a function, read again at each step, so a capability turned on mid-turn can be called at once. `declared` is the subset the brain sees, and `hidden` tools are never declared (D64).
   - `meta` is recorded on the brain entry; Auto uses it to say why it chose that brain (D70).
-- **`llm.js`** (~400 lines): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
+- **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
 - **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `search`, `recall`, `remember`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred by default). Two hidden tools, `file` and `decide`, are only for scripts (D64). Built so far: `read`, `run`, `find_tools`, `offer`, `file`, `decide`.
@@ -267,6 +267,7 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
   - Dates, numbers, lists and relative times use `Intl`.
   - Language names come from `Intl.DisplayNames`, so each language appears in its own name with no extra data.
 - **Choosing.** `preferredLocales` matches `navigator.languages` to the catalogues on language and likely script (`Intl.Locale.maximize`), so `zh-TW` finds `zh-Hant`, `pt-BR` finds `pt` and `iw` finds `he`. The first match is the starting language, and the language menu lists every match first, in the browser's order, under "Your languages".
+- **One catalogue per person.** `useLocale()` fetches only the chosen language's catalogue; English, the fallback, is fetched only when that one can't be (D76). The first-load budget counts the largest catalogue.
 - **Instant switching.** The locale is a signal, so every bound piece of text re-renders. `<html lang dir>` flips with it, and CSS uses logical properties only, so right-to-left layouts mirror immediately.
 - **Details that are easy to miss:**
   - Every message element gets `dir="auto"`, so an English reply renders correctly in an Arabic UI.

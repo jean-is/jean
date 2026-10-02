@@ -1,13 +1,13 @@
 // The room: header, welcome or conversation, composer, dialogs, toasts.
 import { html, nothing } from 'lit-html'
+import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, setLocale, newConversation } from './state.js'
+import { app, setLocale, newConversation, LOCALES } from './state.js'
 import { BRAND } from '../brand.js'
-import { t } from '../core/i18n.js'
+import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { scriptURL } from './trusted.js'
-import { formatBytes, languageOptions } from './dialogs.js'
 import './chat.js'
 
 const STARTERS = ['summarize', 'email', 'explain']
@@ -45,6 +45,11 @@ class Shell extends Element {
   }
 }
 
+// The dialogs above are defined the first time one opens, and upgrade then.
+effect(() => {
+  if (app.dialog.value) import('./dialogs.js')
+})
+
 const discovery = () => import('./discovery.js')
 
 export async function openCollection() {
@@ -65,6 +70,21 @@ function offerAside() {
       <button class="button subtle" @click=${() => discovery().then((module) => module.decline(id))}>${t('offer.no')}</button>
     </div>` : html`<progress max="1" value=${progress} aria-label=${t('cap.reflexes.downloading')}></progress>`}
   </aside>`
+}
+
+/** The language menu: the browser's languages first, in its order, then the others. */
+export function languageOptions() {
+  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
+  const yours = preferredLocales(LOCALES, navigator.languages)
+  if (!yours.length) return LOCALES.map(option)
+  return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
+    <optgroup label=${t('settings.languagesOther')}>${LOCALES.filter((code) => !yours.includes(code)).map(option)}</optgroup>`
+}
+
+/** @param {number} bytes */
+export function formatBytes(bytes) {
+  const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', bytes / 1e3]
+  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
 }
 
 function welcome() {

@@ -1,27 +1,13 @@
-// Model adapters over fetch + SSE: OpenAI-compatible Chat Completions and Anthropic Messages.
+// Model adapters over fetch + SSE: OpenAI-compatible Chat Completions here, and Anthropic
+// Messages in anthropic.js, imported the first time an Anthropic brain is used.
 // No SDKs on purpose (zero dependencies). Together these two wire formats reach almost every model.
 
 import { parseSSE } from './sse.js'
 
 /**
- * @typedef {import('./types.js').ProviderId} ProviderId
- * @typedef {import('./types.js').WireApi} WireApi
- * @typedef {import('./types.js').BrainConfig} BrainConfig
- * @typedef {import('./types.js').ChatMessage} ChatMessage
- * @typedef {import('./types.js').AssistantMessage} AssistantMessage
- * @typedef {import('./types.js').ToolCall} ToolCall
- * @typedef {import('./types.js').ToolSpec} ToolSpec
- * @typedef {import('./types.js').StreamEvent} StreamEvent
- * @typedef {import('./types.js').StopReason} StopReason
- * @typedef {import('./types.js').Usage} Usage
- * @typedef {import('./types.js').ModelInfo} ModelInfo
- * @typedef {import('./sse.js').SSEEvent} SSEEvent
- * @typedef {'auth'|'rate_limit'|'network'|'cors_or_offline'|'bad_request'|'not_found'|'server'|'aborted'|'bad_response'|'refusal'|'too_long'} LLMErrorCode
- * @typedef {{ brain: BrainConfig, apiKey?: string, signal?: AbortSignal, fetch?: typeof globalThis.fetch }} Connection
- * @typedef {import('./types.js').DocumentPart} DocumentPart
- * @typedef {{ system?: string, messages: ChatMessage[], tools?: ToolSpec[], maxTokens?: number }} Prompt
- * @typedef {{ url: string, headers: Record<string, string>, body: Record<string, any> }} WireRequest
- * @typedef {{ role: 'user'|'assistant', content: any[] }} AnthropicMessage
+ * @import { ProviderId, WireApi, ChatMessage, AssistantMessage, ToolCall, StreamEvent, StopReason, Usage, ModelInfo,
+ *   DocumentPart, LLMErrorCode, Connection, Prompt, WireRequest } from './types.js'
+ * @import { SSEEvent } from './sse.js'
  */
 
 /** @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean }>} */
@@ -48,35 +34,26 @@ export class LLMError extends Error {
   }
 }
 
-const ANTHROPIC_VERSION = '2023-06-01'
-// Adaptive thinking exists from Claude 4.6 on, except Haiku; older models reject it.
-const ADAPTIVE_THINKING = /^claude-(fable|mythos|opus|sonnet)-(5|4-[6-9])/
-// Models that accept role "system" messages mid-conversation; others get a tagged block.
-const MID_SYSTEM = /^claude-(opus-5|opus-4-8|fable-5|mythos-5|sonnet-5-5)/
-// Models that accept server-side refusal fallbacks routed by refusal category.
-const FALLBACK_MODELS = new Set(['claude-fable-5-1', 'claude-opus-5-5', 'claude-opus-5', 'claude-sonnet-5-5'])
-const FALLBACK_BETA = 'server-side-fallback-2026-07-01'
-
 /** @type {Map<string, StopReason>} */
 const OPENAI_STOP = new Map([['stop', 'end'], ['tool_calls', 'tool_use'], ['length', 'max_tokens'], ['content_filter', 'refusal']])
-/** @type {Map<string, StopReason>} */
-const ANTHROPIC_STOP = new Map([['end_turn', 'end'], ['tool_use', 'tool_use'], ['max_tokens', 'max_tokens'], ['refusal', 'refusal']])
 /** @type {Map<string, LLMErrorCode>} */
-const ANTHROPIC_ERRORS = new Map([
+const STREAM_ERRORS = new Map([
   ['overloaded_error', 'server'], ['api_error', 'server'], ['rate_limit_error', 'rate_limit'],
   ['authentication_error', 'auth'], ['permission_error', 'auth'],
   ['invalid_request_error', 'bad_request'], ['not_found_error', 'not_found'],
 ])
+/** @type {Map<number, LLMErrorCode>} */
+const HTTP_ERRORS = new Map([[400, 'bad_request'], [401, 'auth'], [403, 'auth'], [404, 'not_found'], [422, 'bad_request'], [429, 'rate_limit']])
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
-/** @param {BrainConfig} brain @param {string} [apiKey] @returns {Record<string, string>} */
+/** @param {import('./types.js').BrainConfig} brain @param {string} [apiKey] @returns {Record<string, string>} */
 export function headersFor(brain, apiKey) {
   /** @type {Record<string, string>} */
   const headers = { 'content-type': 'application/json' }
   if (brain.api === 'anthropic') {
     if (apiKey) headers['x-api-key'] = apiKey
-    headers['anthropic-version'] = ANTHROPIC_VERSION
+    headers['anthropic-version'] = '2023-06-01'
     // Without this header Anthropic rejects CORS requests from browsers.
     headers['anthropic-dangerous-direct-browser-access'] = 'true'
   } else if (apiKey) {
@@ -93,63 +70,19 @@ export function headersFor(brain, apiKey) {
  */
 export async function* streamChat({ signal, fetch = globalThis.fetch, ...options }) {
   if (options.brain.api === 'device') throw new LLMError('The on-device brain has its own runtime', { code: 'bad_request' })
-  const anthropic = options.brain.api === 'anthropic'
-  const send = (/** @type {Prompt} */ prompt) => {
-    const { url, headers, body } = anthropic ? anthropicRequest({ ...options, ...prompt }) : openaiRequest({ ...options, ...prompt })
-    return fetchOrThrow(fetch, url, { method: 'POST', headers, body: JSON.stringify(body) }, signal)
-  }
-  let res
-  try {
-    res = await send(options)
-  } catch (error) {
-    // A replayed thinking block whose signature no longer matches (the conversation was
-    // edited elsewhere): answer this once without the earlier reasoning.
-    if (!(anthropic && isStaleThinking(error) && options.messages.some((m) => m.role === 'assistant' && m.raw))) throw error
-    res = await send({ ...options, messages: options.messages.map((m) => (m.role === 'assistant' ? { ...m, raw: undefined } : m)) })
-  }
-  if (!res.body) throw new LLMError('The response has no body', { code: 'bad_response' })
-  const events = sseEvents(res.body, signal)
-  yield* anthropic ? readAnthropic(events) : readOpenAI(events)
+  if (options.brain.api === 'anthropic') return yield* (await import('./anthropic.js')).streamAnthropic({ signal, fetch, ...options })
+  const res = await post(fetch, openaiRequest(options), signal)
+  yield* readOpenAI(sseEvents(res, signal))
 }
-
-/** @param {unknown} error */
-const isStaleThinking = (error) => error instanceof LLMError && error.code === 'bad_request' && /signature|thinking/i.test(error.message)
 
 /**
  * Writes the prompt cache for a conversation the user is about to continue (D49), so the
- * real reply starts sooner. Anthropic only; `messages` ends with the user message being
- * written (its text may still be empty). Returns null when warming isn't worth it.
+ * real reply starts sooner. Anthropic only; null for other brains or when it isn't worth it.
  * @param {Connection & Prompt} options
  * @returns {Promise<Usage | null>}
  */
-export async function warmCache({ signal, fetch = globalThis.fetch, ...options }) {
-  if (options.brain.api !== 'anthropic') return null
-  const { url, headers, body } = anthropicRequest(options)
-  delete body.cache_control
-  delete body.stream
-  delete body.fallbacks
-  body.max_tokens = 0
-  // The breakpoint goes on the last block the real request will share: never on the placeholder.
-  while (body.messages.at(-1)?.role === 'system') body.messages.pop()
-  const last = body.messages.at(-1)
-  if (last?.role === 'user' && last.content.at(-1)?.type === 'text' && !last.content.at(-1).text) last.content.pop()
-  const block = body.messages.at(-1)?.content.at(-1)
-  if (!block) return null
-  if (JSON.stringify(body).length / 4 < minimumCacheable(options.brain.model)) return null
-  body.messages.at(-1).content[body.messages.at(-1).content.length - 1] = { ...block, cache_control: { type: 'ephemeral' } }
-  if (body.messages.at(-1).role === 'user') body.messages.at(-1).content.push({ type: 'text', text: '…' })
-  else body.messages.push({ role: 'user', content: [{ type: 'text', text: '…' }] })
-  const res = await fetchOrThrow(fetch, url, { method: 'POST', headers, body: JSON.stringify(body) }, signal)
-  const json = await res.json().catch(() => null)
-  return json?.usage ? anthropicUsage(json.usage) : null
-}
-
-/** Smallest prefix Anthropic caches, in tokens; shorter ones silently aren't. @param {string} model */
-export function minimumCacheable(model) {
-  if (/^claude-(opus-5|fable-5|mythos-5|sonnet-5-5)/.test(model)) return 512
-  if (/^claude-(opus-4-7|mythos-preview|3-5-haiku|haiku-3-5)/.test(model)) return 2048
-  if (/^claude-(opus-4-[56]|opus-4-5|haiku-4-5)/.test(model)) return 4096
-  return 1024
+export async function warmCache(options) {
+  return options.brain.api === 'anthropic' ? (await import('./anthropic.js')).warmCache(options) : null
 }
 
 /** Lists models in provider order. @param {Connection} options @returns {Promise<ModelInfo[]>} */
@@ -157,13 +90,14 @@ export async function listModels({ brain, apiKey, signal, fetch = globalThis.fet
   const anthropic = brain.api === 'anthropic'
   const headers = headersFor(brain, apiKey)
   delete headers['content-type'] // a GET has no body
-  const url = endpoint(brain, anthropic ? '/models?limit=100' : '/models')
-  const res = await fetchOrThrow(fetch, url, { headers }, signal)
+  const res = await fetchOrThrow(fetch, endpoint(brain, anthropic ? '/models?limit=100' : '/models'), { headers }, signal)
   const json = await res.json().catch((e) => {
     throw wrapError(e, signal, 'bad_response')
   })
   if (!Array.isArray(json?.data)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
-  return json.data.map(anthropic ? fromAnthropicModel : fromOpenAIModel)
+  return json.data.map((/** @type {any} */ m) => (anthropic
+    ? { id: m.id, name: m.display_name, contextLength: m.max_input_tokens }
+    : { id: m.id, name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined }))
 }
 
 /**
@@ -181,6 +115,9 @@ export async function fetchOrThrow(fetch, url, init, signal) {
   if (!res.ok) throw await httpError(res)
   return res
 }
+
+/** @param {typeof globalThis.fetch} fetch @param {WireRequest} request @param {AbortSignal} [signal] */
+export const post = (fetch, { url, headers, body }, signal) => fetchOrThrow(fetch, url, { method: 'POST', headers, body: JSON.stringify(body) }, signal)
 
 // ─── OpenAI-compatible Chat Completions ──────────────────────────────────────
 
@@ -237,10 +174,10 @@ export function openaiMessages(system, messages, { systemNotes, argsAsObject = f
 }
 
 /** @param {string} text */
-const noteBlock = (text) => `<system-note>\n${text}\n</system-note>`
+export const noteBlock = (text) => `<system-note>\n${text}\n</system-note>`
 
 /** @param {DocumentPart} doc */
-const documentBlock = (doc) => `<document${doc.source ? ` source="${doc.source}"` : ''} name="${doc.name.replace(/["\n]/g, ' ')}">\n${doc.text}\n</document>`
+export const documentBlock = (doc) => `<document${doc.source ? ` source="${doc.source}"` : ''} name="${doc.name.replace(/["\n]/g, ' ')}">\n${doc.text}\n</document>`
 
 /** @param {AsyncIterable<SSEEvent>} events @returns {AsyncGenerator<StreamEvent, void, undefined>} */
 async function* readOpenAI(events) {
@@ -298,183 +235,16 @@ function addToolDelta(slots, delta) {
   if (args != null) slot.args += typeof args === 'string' ? args : JSON.stringify(args)
 }
 
-// ─── Anthropic Messages ──────────────────────────────────────────────────────
+// ─── Shared with anthropic.js ────────────────────────────────────────────────
 
-/** @param {Connection & Prompt} options @returns {WireRequest} */
-function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxTokens }) {
-  const headers = headersFor(brain, apiKey)
-  /** @type {Record<string, any>} */
-  const body = { model: brain.model, max_tokens: maxTokens ?? 64000, stream: true }
-  // One breakpoint at the end of the frozen system prompt (tools come before it), and
-  // automatic caching for the growing conversation (D49).
-  if (system) body.system = [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }]
-  body.cache_control = { type: 'ephemeral' }
-  // Summaries are shown to the user. budget_tokens and {type:'disabled'} are rejected by current models.
-  if (ADAPTIVE_THINKING.test(brain.model)) body.thinking = { type: 'adaptive', display: 'summarized' }
-  if (FALLBACK_MODELS.has(brain.model)) {
-    // On a safety refusal, the API continues on a fallback model inside the same stream.
-    body.fallbacks = 'default'
-    headers['anthropic-beta'] = [headers['anthropic-beta'], FALLBACK_BETA].filter(Boolean).join(',')
-  }
-  body.messages = toAnthropic(messages, brain.model)
-  if (tools.length) {
-    body.tools = tools.map((t) => ({ name: t.name, description: t.description, input_schema: t.parameters, eager_input_streaming: true }))
-  }
-  return { url: endpoint(brain, '/messages'), headers, body }
-}
+/** @param {import('./types.js').BrainConfig} brain @param {string} path */
+export const endpoint = (brain, path) => brain.baseURL.replace(/\/+$/, '') + path
 
-/**
- * System notes become role "system" messages right after the next user message (the API
- * wants one there) on models that take them, and a tagged block at its top elsewhere.
- * @param {ChatMessage[]} messages @param {string} model
- */
-function toAnthropic(messages, model) {
-  const native = MID_SYSTEM.test(model)
-  /** @type {(AnthropicMessage | { role: 'system', content: string })[]} */
-  const out = []
-  /** @type {string[]} */
-  let notes = []
-  for (const message of messages) {
-    if (message.role === 'system') {
-      notes.push(message.content)
-      continue
-    }
-    const next = toAnthropicMessage(message, model)
-    if (message.role === 'user' && notes.length && !native) next.content.unshift(...notes.map((text) => ({ type: 'text', text: noteBlock(text) })))
-    if (!next.content.length) continue
-    const prev = out.at(-1)
-    // Roles must alternate: consecutive tool results become one user message.
-    if (prev?.role === next.role) /** @type {AnthropicMessage} */ (prev).content = [.../** @type {any[]} */ (prev.content), ...next.content]
-    else out.push(next)
-    if (message.role === 'user' && notes.length) {
-      if (native) for (const text of notes) out.push({ role: 'system', content: text })
-      notes = []
-    }
-  }
-  return out
-}
-
-/** @param {ChatMessage} m @param {string} model @returns {AnthropicMessage} */
-function toAnthropicMessage(m, model) {
-  if (m.role === 'user') {
-    const documents = (m.documents ?? []).map((doc) => ({ type: 'text', text: documentBlock(doc) }))
-    return { role: 'user', content: m.content ? [...documents, { type: 'text', text: m.content }] : documents }
-  }
-  if (m.role === 'system') return { role: 'user', content: [{ type: 'text', text: noteBlock(m.content) }] }
-  if (m.role === 'tool') {
-    const result = { type: 'tool_result', tool_use_id: m.toolCallId, content: m.content }
-    return { role: 'user', content: [m.isError ? { ...result, is_error: true } : result] }
-  }
-  // Thinking blocks must come back exactly as they were received, to the model that made them.
-  if (Array.isArray(m.raw) && (!m.rawModel || m.rawModel === model)) return { role: 'assistant', content: m.raw }
-  /** @type {any[]} */
-  const content = m.content ? [{ type: 'text', text: m.content }] : []
-  for (const c of m.toolCalls ?? []) content.push({ type: 'tool_use', id: c.id, name: c.name, input: c.args ?? {} })
-  return { role: 'assistant', content }
-}
-
-/** @param {AsyncIterable<SSEEvent>} events @returns {AsyncGenerator<StreamEvent, void, undefined>} */
-async function* readAnthropic(events) {
-  /** @type {any[]} */
-  const blocks = []
-  /** @type {Record<string, number>} */
-  let usage = {}
-  let stop = ''
-  let finished = false
-  for await (const { event, data } of events) {
-    const d = parseData(data)
-    const type = d.type ?? event
-    if (type === 'error') throw streamError(d.error)
-    if (type === 'message_start') usage = { ...d.message?.usage }
-    if (type === 'content_block_start') blocks[d.index] = startBlock(d.content_block)
-    if (type === 'content_block_delta') {
-      const out = applyDelta(blocks[d.index], d.delta)
-      if (out) yield out
-    }
-    if (type === 'message_delta') {
-      stop = d.delta?.stop_reason ?? stop
-      // Later counts are cumulative and may restate earlier ones.
-      for (const [key, value] of Object.entries(d.usage ?? {})) if (typeof value === 'number') usage[key] = value
-    }
-    if (type === 'message_stop') finished = true
-  }
-  if (!finished) throw new LLMError('The response stream ended early', { code: 'network' })
-  // Tool calls are emitted only now, so a refusal fallback can't leave one the final message lacks.
-  const raw = keepAfterFallback(blocks.filter(Boolean)).map(finishBlock).filter(Boolean)
-  const toolCalls = raw.filter((b) => b.type === 'tool_use').map((b) => ({ id: b.id, name: b.name, args: b.input }))
-  for (const call of toolCalls) yield { type: 'tool_call', call }
-  const text = raw.filter((b) => b.type === 'text').map((b) => b.text).join('')
-  yield doneEvent(ANTHROPIC_STOP.get(stop) ?? 'other', anthropicUsage(usage), text, toolCalls, raw)
-}
-
-/** @param {any} block */
-function startBlock(block = {}) {
-  switch (block.type) {
-    case 'text': return { type: 'text', text: block.text ?? '' }
-    case 'thinking': return { type: 'thinking', thinking: block.thinking ?? '', signature: block.signature ?? '' }
-    case 'redacted_thinking': return { type: 'redacted_thinking', data: block.data }
-    case 'tool_use': return { type: 'tool_use', id: block.id, name: block.name, json: '' }
-    default: return { type: block.type } // e.g. 'fallback': a marker, never echoed back
-  }
-}
-
-/** @param {any} block @param {any} delta @returns {StreamEvent|null} */
-function applyDelta(block, delta) {
-  if (!block || !delta) return null
-  if (delta.type === 'signature_delta') block.signature += delta.signature
-  if (delta.type === 'input_json_delta') block.json += delta.partial_json
-  // text_delta carries `text` and thinking_delta carries `thinking`, like the blocks they extend.
-  const kind = delta.type === 'text_delta' ? 'text' : delta.type === 'thinking_delta' ? 'thinking' : null
-  if (!kind || !delta[kind]) return null
-  block[kind] += delta[kind]
-  return { type: kind, delta: delta[kind] }
-}
-
-/**
- * After a mid-output refusal, the API keeps the declined partial and marks the switch with a
- * 'fallback' block. Only its text may be echoed back; thinking and tool calls before it are dropped.
- * @param {any[]} blocks
- */
-function keepAfterFallback(blocks) {
-  const cut = blocks.map((b) => b.type).lastIndexOf('fallback')
-  return blocks.filter((b, i) => i > cut || b.type === 'text')
-}
-
-/** @param {any} block */
-function finishBlock(block) {
-  switch (block.type) {
-    case 'text': case 'thinking': case 'redacted_thinking': return block
-    case 'tool_use': return { type: 'tool_use', id: block.id, name: block.name, input: parseArgs(block.json) }
-    default: return null
-  }
-}
-
-/**
- * Anthropic counts cached input apart; Usage.inputTokens counts all of it.
- * @param {any} u @returns {Usage}
- */
-function anthropicUsage(u) {
-  const read = u.cache_read_input_tokens ?? 0
-  const write = u.cache_creation_input_tokens ?? 0
-  /** @type {Usage} */
-  const usage = { inputTokens: (u.input_tokens ?? 0) + read + write }
-  if (u.output_tokens != null) usage.outputTokens = u.output_tokens
-  if (read) usage.cacheReadTokens = read
-  if (write) usage.cacheWriteTokens = write
-  return usage
-}
-
-// ─── Shared helpers ──────────────────────────────────────────────────────────
-
-/** @param {BrainConfig} brain @param {string} path */
-function endpoint(brain, path) {
-  return brain.baseURL.replace(/\/+$/, '') + path
-}
-
-/** @param {ReadableStream<Uint8Array>} body @param {AbortSignal} [signal] @returns {AsyncGenerator<SSEEvent, void, undefined>} */
-async function* sseEvents(body, signal) {
+/** @param {Response} res @param {AbortSignal} [signal] @returns {AsyncGenerator<SSEEvent, void, undefined>} */
+export async function* sseEvents(res, signal) {
+  if (!res.body) throw new LLMError('The response has no body', { code: 'bad_response' })
   try {
-    for await (const event of parseSSE(body)) {
+    for await (const event of parseSSE(res.body)) {
       if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
       yield event
     }
@@ -484,7 +254,7 @@ async function* sseEvents(body, signal) {
 }
 
 /** @param {string} data @returns {any} */
-function parseData(data) {
+export function parseData(data) {
   try {
     return JSON.parse(data)
   } catch (e) {
@@ -493,7 +263,7 @@ function parseData(data) {
 }
 
 /** Strict parse. Invalid arguments are kept so the agent loop can report them to the model. @param {string} raw */
-function parseArgs(raw) {
+export function parseArgs(raw) {
   if (!raw.trim()) return {}
   try {
     return JSON.parse(raw)
@@ -502,31 +272,17 @@ function parseArgs(raw) {
   }
 }
 
-/** @param {unknown} value @returns {value is string} */
-function isText(value) {
-  return typeof value === 'string' && value !== ''
-}
+/** @type {(value: unknown) => value is string} */
+const isText = (value) => typeof value === 'string' && value !== ''
 
 /**
  * @param {StopReason} stopReason @param {Usage|undefined} usage @param {string} content
  * @param {ToolCall[]} toolCalls @param {any[]} [raw] @returns {StreamEvent}
  */
-function doneEvent(stopReason, usage, content, toolCalls, raw) {
+export function doneEvent(stopReason, usage, content, toolCalls, raw) {
   /** @type {AssistantMessage} */
-  const message = { role: 'assistant', content }
-  if (toolCalls.length) message.toolCalls = toolCalls
-  if (raw) message.raw = raw
+  const message = { role: 'assistant', content, ...(toolCalls.length && { toolCalls }), ...(raw && { raw }) }
   return { type: 'done', stopReason, usage, message }
-}
-
-/** @param {number} status @returns {LLMErrorCode} */
-function codeForStatus(status) {
-  if (status === 401 || status === 403) return 'auth'
-  if (status === 404) return 'not_found'
-  if (status === 429) return 'rate_limit'
-  if (status === 400 || status === 422) return 'bad_request'
-  if (status >= 500) return 'server'
-  return 'bad_response'
 }
 
 /** @param {Response} res */
@@ -535,6 +291,9 @@ async function httpError(res) {
   const message = detail ? `HTTP ${res.status}: ${detail}` : `HTTP ${res.status}`
   return new LLMError(message, { status: res.status, code: codeForStatus(res.status) })
 }
+
+/** @param {number} status @returns {LLMErrorCode} */
+const codeForStatus = (status) => HTTP_ERRORS.get(status) ?? (status >= 500 ? 'server' : 'bad_response')
 
 /** @param {string} text */
 function errorDetail(text) {
@@ -547,9 +306,9 @@ function errorDetail(text) {
 }
 
 /** An error object inside a stream: OpenRouter's { code, message } or Anthropic's { type, message }. @param {any} error */
-function streamError(error) {
+export function streamError(error) {
   const status = typeof error?.code === 'number' ? error.code : undefined
-  const code = ANTHROPIC_ERRORS.get(error?.type) ?? (status ? codeForStatus(status) : 'bad_response')
+  const code = STREAM_ERRORS.get(error?.type) ?? (status ? codeForStatus(status) : 'bad_response')
   return new LLMError(error?.message || 'The provider reported an error', { status, code })
 }
 
@@ -559,15 +318,4 @@ function wrapError(error, signal, code) {
   const e = /** @type {any} */ (error)
   if (signal?.aborted || e?.name === 'AbortError') return new LLMError('Request aborted', { code: 'aborted', cause: error })
   return new LLMError(e?.message || String(error), { code, cause: error })
-}
-
-/** @param {any} m @returns {ModelInfo} */
-function fromOpenAIModel(m) {
-  const pricing = m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined
-  return { id: m.id, name: m.name, contextLength: m.context_length, pricing }
-}
-
-/** @param {any} m @returns {ModelInfo} */
-function fromAnthropicModel(m) {
-  return { id: m.id, name: m.display_name, contextLength: m.max_input_tokens }
 }

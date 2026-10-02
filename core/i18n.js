@@ -21,13 +21,18 @@ export function addCatalog(lang, messages) {
   catalogs.set(lang, messages)
 }
 
-/** Load a catalog (and the English fallback) then switch. @param {string} lang */
+/**
+ * Load a catalog then switch. Every catalog has every key (test/locales.test.js), so English,
+ * the fallback, is only fetched when the catalog itself can't be.
+ * @param {string} lang
+ */
 export async function useLocale(lang) {
-  for (const code of new Set(['en', lang])) {
+  for (const code of [lang, 'en']) {
     if (!catalogs.has(code)) {
       const messages = await loader(code)
       if (messages) catalogs.set(code, messages)
     }
+    if (catalogs.has(code)) break
   }
   locale.value = lang
 }
