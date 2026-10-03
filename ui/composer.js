@@ -127,7 +127,8 @@ class Composer extends Element {
   /** @param {Event} event */
   #submit = (event) => {
     event.preventDefault()
-    if (!app.busy.value) send(app.draft.value)
+    // send() waits for a page being turned, which frees the box, before it looks whether it is busy.
+    send(app.draft.value)
   }
 }
 

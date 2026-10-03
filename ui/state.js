@@ -242,7 +242,7 @@ export async function refreshConversations() {
 }
 
 export function newConversation() {
-  stop()
+  leave()
   app.current.value = null
   lastRequestAt = 0
   app.error.value = null
@@ -273,7 +273,7 @@ let turning = Promise.resolve()
 
 /** @param {string} path */
 export async function openConversation(path) {
-  stop()
+  leave()
   const loaded = await loadConversation(app.fs, path)
   app.error.value = null
   app.dialog.value = null
@@ -288,12 +288,32 @@ export async function removeConversation(path) {
   await refreshConversations()
 }
 
-/** @type {AbortController | null} */
+/** The run whose answer is on screen: it has the box until it ends, even once stopped. @type {AbortController | null} */
 let controller = null
 
+/** Stops the answer being written. What it waits for (a card, a question, an offer) is declined, so it ends now. */
 export function stop() {
   controller?.abort()
+  decline()
+}
+
+/** Declines what waits for the user's answer. */
+function decline() {
+  for (const decision of app.decisions.value) 'toolCall' in decision ? decision.resolve('reject_once') : decision.resolve(null)
+  app.offering.value?.resolve(false)
+}
+
+/**
+ * Leaves the conversation on screen while it is being answered. The answer stops and winds down
+ * out of sight, and the box is free at once: a message sent next is neither held up nor dropped.
+ */
+function leave() {
+  if (!controller) return
+  stop()
   controller = null
+  app.busy.value = false
+  app.live.value = null
+  setPresence('idle')
 }
 
 // ─── Files ───────────────────────────────────────────────────────────────────
@@ -583,15 +603,18 @@ async function runAgent(brain, meta) {
   const settled = []
   /** @type {Turn} */
   const turn = { user: null, notes: [], steps: [], at: new Date().toISOString() }
+  const run = new AbortController()
+  // Once the user has gone to another conversation, nothing on screen is this run's any more.
+  const shown = () => controller === run
   let frame = 0
   const repaint = () => {
     frame ||= requestAnimationFrame(() => {
       frame = 0
-      app.live.value = { turn }
+      if (shown()) app.live.value = { turn }
     })
   }
 
-  controller = new AbortController()
+  controller = run
   app.busy.value = true
   app.error.value = null
   app.live.value = { turn }
@@ -610,10 +633,11 @@ async function runAgent(brain, meta) {
       label: brainLabel(brain),
       meta,
       firstSource: nextSource(current.records),
-      signal: controller.signal,
+      signal: run.signal,
       rule: (kind, reserved) => (readOnly && !READING.has(kind) ? 'never' : resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved })),
       askPermission: (request) => approve(request.toolCall),
       onUpdate: (update, step) => {
+        if (!shown()) return
         if (update.sessionUpdate === 'agent_message_chunk') setPresence('answering')
         applyUpdate(turn, update, step)
         repaint()
@@ -623,17 +647,21 @@ async function runAgent(brain, meta) {
         await appendRecords(app.fs, current.path, records)
       },
     })
-    setPresence('done')
+    if (shown()) setPresence('done')
   } catch (error) {
-    setPresence('idle')
-    if (/** @type {any} */ (error)?.code !== 'aborted') showError(error)
+    if (shown()) {
+      setPresence('idle')
+      if (/** @type {any} */ (error)?.code !== 'aborted') showError(error)
+    }
   } finally {
     cancelAnimationFrame(frame)
-    controller = null
-    app.busy.value = false
-    app.live.value = null
-    for (const decision of app.decisions.value) 'toolCall' in decision ? decision.resolve('reject_once') : decision.resolve(null)
-    app.offering.value?.resolve(false)
+    // Unless the user went to another conversation: the box is theirs already, and maybe another run's.
+    if (shown()) {
+      controller = null
+      app.busy.value = false
+      app.live.value = null
+      decline()
+    }
     // What was kept meanwhile, like the title, stays.
     const latest = app.current.peek()
     const records = [...(latest?.path === current.path ? latest.records : current.records), ...settled]

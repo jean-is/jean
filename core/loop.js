@@ -1,6 +1,6 @@
 // The agent loop: stream a reply, run tool calls under the rules, feed results
 // back, repeat. Emits live ACP updates and persists settled records.
-import { streamChat as defaultStream } from './llm.js'
+import { streamChat as defaultStream, LLMError } from './llm.js'
 import { envelope } from './events.js'
 import { signature } from './deferred.js'
 
@@ -165,6 +165,8 @@ function stepRecords(step, brainEntry, thought, text) {
  */
 async function runTool(call, tool, step, ctx, parent) {
   const { rule, askPermission, onUpdate, signal } = ctx
+  // Stopped: nothing more runs, and nothing more is asked.
+  if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
   /** @type {ToolCallInfo} */
   const info = {
     toolCallId: call.id,

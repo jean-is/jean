@@ -123,6 +123,35 @@ test('loop: stream errors persist partial output and rethrow', async () => {
   assert.equal(persisted[1].update.content.text, 'Partial')
 })
 
+test('loop: once stopped, it runs and asks for nothing more', async () => {
+  const first = { id: 'a', name: 'read', args: { path: 'a' } }
+  const second = { id: 'b', name: 'read', args: { path: 'b' } }
+  const { stream, calls } = fakeStream([[
+    { type: 'tool_call', call: first },
+    { type: 'tool_call', call: second },
+    done('tool_use', { role: 'assistant', content: '', toolCalls: [first, second] }),
+  ]])
+  const controller = new AbortController()
+  /** @type {string[]} */
+  const asked = []
+  /** @type {any[]} */
+  const persisted = []
+  // Stopped while the first card waits, which is then declined: the second is never shown.
+  await assert.rejects(runTurn({
+    brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [readTool], stream: /** @type {any} */ (stream), signal: controller.signal,
+    rule: () => 'ask',
+    askPermission: async (request) => {
+      asked.push(request.toolCall.toolCallId)
+      controller.abort()
+      return 'reject_once'
+    },
+    persist: async (records) => { persisted.push(...records) },
+  }), { code: 'aborted' })
+  assert.deepEqual(asked, ['a'])
+  assert.equal(calls.length, 1)
+  assert.deepEqual(persisted.filter((record) => record.update?.name).map((record) => record.update.toolCallId), ['a'])
+})
+
 test('loop: stops after maxSteps', async () => {
   const call = { id: 'x', name: 'read', args: { path: 'a' } }
   const step = [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })]
