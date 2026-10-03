@@ -670,7 +670,7 @@ async function runAgent(brain, meta) {
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const answer = lastAnswer(settled)
     const at = foldTurns(records).at(-1)?.at
-    if (answer && at) suggestActions(at, answer, records)
+    if (answer && at) suggestActions(at, answer, records, current)
     if (answer && at && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) cited(current.path, at, records)
   }
 }
@@ -689,10 +689,11 @@ async function cited(path, at, records) {
 /**
  * Follow-ups from the catalogue, picked by the reflexes when they're on.
  * @param {string} at @param {string} answer @param {Envelope[]} records
+ * @param {{ id: string, path: string }} conversation the one answered, which may no longer be on screen
  */
-async function suggestActions(at, answer, records) {
+async function suggestActions(at, answer, records, conversation) {
   const { followUps } = await import('./discovery.js')
-  const ids = await followUps(answer, records)
+  const ids = await followUps(answer, records, conversation)
   if (ids.length) app.actions.value = { ...app.actions.value, [at]: ids }
 }
 

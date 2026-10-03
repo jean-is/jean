@@ -229,14 +229,14 @@ export const SAME_KIND = 0.5
  * conversations in this project began alike. The user's own requests compared word by word,
  * so it works in every language, with no keyword (D6). Returns its first words and when each
  * request of the kind was made, oldest first.
- * @param {import('../core/types.js').Envelope[]} records
+ * @param {import('../core/types.js').Envelope[]} records @param {string | undefined} id its own, left out of the count
  * @returns {{ opening: string, times: Date[] } | null}
  */
-function sameKind(records) {
+function sameKind(records, id) {
   // Not the titles: a brain writes those, and this one may still be on its way.
   const opening = firstWords(openingOf(records))
   if (!opening || foldTurns(records).length !== 1) return null
-  const others = app.conversations.value.filter((item) => item.id !== app.current.value?.id && item.opening)
+  const others = app.conversations.value.filter((item) => item.id !== id && item.opening)
   const scores = alike(opening, others.map((item) => firstWords(item.opening)))
   const kind = others.filter((_, i) => scores[i] >= SAME_KIND)
   if (kind.length < 2) return null
@@ -257,12 +257,12 @@ const habitual = (times) => new Set(times.map((time) => time.toDateString())).si
  * the requests came on three different days; a skill the brain suggested; and, when the
  * reflexes are on, "As a table" and "Draft an email" when they fit.
  * @param {string} answer @param {import('../core/types.js').Envelope[]} records the conversation
+ * @param {{ id: string, path: string }} conversation the one answered, which may no longer be on screen
  * @returns {Promise<string[]>}
  */
-export async function followUps(answer, records) {
+export async function followUps(answer, records, { id, path }) {
   const ids = words(answer).length > LONG_ANSWER ? ['shorter'] : []
-  const path = app.current.peek()?.path
-  const kind = sameKind(records)
+  const kind = sameKind(records, id)
   const skills = loaded.value.has('skills') ? await import('../caps/skills/skills.js') : null
   if (kind && !isDenied('skills') && !covered(kind.opening, (await skills?.skills() ?? []).map((skill) => `${skill.name.replace(/-/g, ' ')} ${skill.title} ${skill.description}`))) {
     const found = skills && path ? await skills.lookFor(kind.opening).catch(() => null) : null
@@ -295,7 +295,7 @@ export async function follow(id) {
     if (found) (await import('../caps/skills/ready.js')).preview(found)
     return
   }
-  const times = id === 'routine' ? sameKind(app.current.peek()?.records ?? [])?.times : null
+  const times = id === 'routine' ? sameKind(app.current.peek()?.records ?? [], app.current.peek()?.id)?.times : null
   const stamps = (times ?? []).map((time) => time.toString().slice(0, 21))
   const notes = stamps.length ? [noteRecord(`Requests like this one were made on ${stamps.join(', ')} (local time).`, { kind: 'habit', at: (times ?? []).map((time) => time.toISOString()) })] : []
   send(t(`suggest.${id}.prompt`), { notes })
