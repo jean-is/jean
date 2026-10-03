@@ -6,16 +6,28 @@
 /**
  * Each look, with what the page needs before its style sheet says it: the browser bar's colour
  * by night and by day, and its accent, where the colour pickers start. Mail keeps the
- * conversations in view, beside the one open (`list`).
+ * conversations in view, beside the one open (`list`). Jean's own three first, then (D120) the
+ * refined, the playful and the familiar.
  */
-/** @type {Readonly<Record<'room' | 'mail' | 'paper', { bar: [string, string], accent: string, list?: boolean }>>} */
+/** @typedef {'room' | 'mail' | 'paper' | 'minimal' | 'swiss' | 'fjord' | 'velvet' | 'terminal' | 'neon' | 'notebook' | 'depth' | 'classic' | 'pixel' | 'blueprint' | 'mondrian'} LookId */
+/** @type {Readonly<Record<LookId, { bar: [string, string], accent: string, list?: boolean }>>} */
 export const LOOKS = Object.freeze({
   room: { bar: ['#120c08', '#fbf6ee'], accent: '#f29d38' },
   mail: { bar: ['#060708', '#f4f5f7'], accent: '#3d82f6', list: true },
   paper: { bar: ['#211e1a', '#faf7f0'], accent: '#b23a2a' },
+  minimal: { bar: ['#0a0a0a', '#fdfdfd'], accent: '#161616' },
+  swiss: { bar: ['#0d0d0d', '#fdfdfd'], accent: '#d81618' },
+  fjord: { bar: ['#2d333f', '#eef0f5'], accent: '#88cada' },
+  velvet: { bar: ['#1e0a16', '#f9f5ec'], accent: '#e5bf6d' },
+  terminal: { bar: ['#07120a', '#f8fbf6'], accent: '#9aff81' },
+  neon: { bar: ['#13062a', '#ffeffa'], accent: '#ff62be' },
+  notebook: { bar: ['#1b3125', '#fcfcf9'], accent: '#cc272e' },
+  depth: { bar: ['#060b18', '#f1f3f7'], accent: '#fca942' },
+  classic: { bar: ['#2c2e31', '#c1c1c1'], accent: '#0126a3' },
+  pixel: { bar: ['#202126', '#d0cec7'], accent: '#9bbc0f' },
+  blueprint: { bar: ['#0c3c75', '#f2f8fc'], accent: '#fde56f' },
+  mondrian: { bar: ['#100f0d', '#fbfaf6'], accent: '#d01e1c' },
 })
-
-/** @typedef {keyof typeof LOOKS} LookId */
 
 /** The look's id, also kept on this device: index.html applies it before the first paint, like light or dark (D85). */
 export const LOOK_KEY = 'app.look'

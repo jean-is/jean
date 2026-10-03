@@ -1,0 +1,96 @@
+/* Neon: an Eighties night. A sun going down behind a grid on the horizon, pink and cyan light,
+   chrome letters; by day, the pastels of a beach town (D120). Over ui/style.css, which comes
+   after it, so every rule here starts with :root[data-look='neon']. */
+
+:root[data-look='neon'] {
+  --room: oklch(0.17 0.07 295);
+  --room-2: oklch(0.22 0.08 295);
+  --ink: oklch(0.96 0.02 320);
+  --ink-soft: oklch(0.86 0.05 315);
+  --ink-faint: oklch(0.77 0.07 305);
+  --line: oklch(0.86 0.14 200 / 0.2);
+  --line-strong: oklch(0.86 0.14 200 / 0.45);
+  --glass: oklch(0.2 0.08 295 / 0.72);
+  --flame: oklch(0.74 0.22 350);
+  --flame-deep: oklch(0.64 0.25 350);
+  --on-flame: oklch(0.15 0.06 295);
+  --ember-off: oklch(0.96 0.02 320 / 0.25);
+  --cyan: oklch(0.86 0.14 200);
+  --sun: oklch(0.87 0.16 85);
+  --tint: oklch(0.72 0.22 350);
+  --glow: oklch(0.72 0.22 350);
+  --glow-alpha: 0.5;
+  --display: Futura, 'Avenir Next', 'Century Gothic', 'Trebuchet MS', system-ui, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  --horizon: 80%;
+}
+:root[data-look='neon'][data-theme='light'] {
+  --room: oklch(0.97 0.025 340);
+  --room-2: oklch(0.995 0.008 340);
+  --ink: oklch(0.27 0.09 300);
+  --ink-soft: oklch(0.4 0.09 300);
+  --ink-faint: oklch(0.49 0.08 300);
+  --line: oklch(0.55 0.12 215 / 0.25);
+  --line-strong: oklch(0.55 0.12 215 / 0.5);
+  --glass: oklch(0.995 0.008 340 / 0.72);
+  --flame: oklch(0.55 0.22 355);
+  --flame-deep: oklch(0.5 0.21 355);
+  --on-flame: oklch(0.99 0.008 340);
+  --ember-off: oklch(0.27 0.09 300 / 0.22);
+  --cyan: oklch(0.5 0.11 215);
+  --sun: oklch(0.86 0.13 70);
+  --glow: oklch(0.86 0.12 350);
+  --glow-alpha: 0.55;
+}
+
+/* The sky warms towards the horizon; the sun, striped as it sets, brightens as Jean answers. */
+:root[data-look='neon'] .room {
+  background:
+    radial-gradient(50vmax 22vmax at 50% var(--horizon), oklch(from var(--glow) l c h / calc(var(--light) * var(--glow-alpha))), transparent 70%),
+    linear-gradient(transparent 25%, oklch(from var(--flame) l c h / 0.18) var(--horizon), oklch(from var(--room) l c h / 0) var(--horizon));
+}
+:root[data-look='neon'] .room::before {
+  content: '';
+  position: absolute;
+  inset-block-start: calc(var(--horizon) - 18vmin);
+  inset-inline: 0;
+  inline-size: 36vmin;
+  block-size: 18vmin;
+  margin-inline: auto;
+  border-radius: 18vmin 18vmin 0 0;
+  background: linear-gradient(var(--sun) 15%, var(--flame) 95%);
+  mask: linear-gradient(#000 0 0) top / 100% 50% no-repeat, repeating-linear-gradient(#000 0 1.6vmin, transparent 1.6vmin 2.4vmin);
+  opacity: calc(0.25 + var(--light) * 0.7);
+}
+:root[data-look='neon'] .room::after {
+  content: '';
+  position: absolute;
+  inset-block: var(--horizon) 0;
+  inset-inline: -50%;
+  background:
+    linear-gradient(oklch(from var(--cyan) l c h / 0.55) 1px, transparent 1px) 0 0 / 100% 2.5rem,
+    linear-gradient(90deg, oklch(from var(--cyan) l c h / 0.55) 1px, transparent 1px) 50% 0 / 2.5rem 100%;
+  mask: linear-gradient(transparent, #000 35%);
+  transform: perspective(12rem) rotateX(50deg);
+  transform-origin: top;
+}
+/* Once a conversation runs, the sun sinks back so the words stay readable over it. */
+:root[data-look='neon']:has(app-conversation) .room::before { opacity: 0.14; }
+:root[data-look='neon'] app-composer { background: linear-gradient(transparent, oklch(from var(--room) l c h / 0.7) 45%); }
+
+:root[data-look='neon'] :is(.wordmark, .wordmark:hover) { font-size: 1.6rem; font-weight: 700; text-shadow: 0 0 0.7rem oklch(from var(--flame) l c h / 0.8); }
+:root[data-look='neon'] :is(.hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-weight: 800; }
+:root[data-look='neon']:not(:lang(ar), :lang(fa), :lang(ur)) :is(.hero-question, .wordmark) { letter-spacing: -0.03em; }
+/* Chrome letters, with a horizon line through them. */
+:root[data-look='neon'] .hero-question {
+  background-image: linear-gradient(oklch(0.99 0.02 230) 18%, var(--cyan) 49%, oklch(0.7 0.15 300) 50%, var(--flame) 62%, var(--sun) 100%);
+  filter: drop-shadow(0 0 0.5rem oklch(from var(--flame) l c h / 0.5));
+}
+:root[data-look='neon'][data-theme='light'] .hero-question { background-image: linear-gradient(170deg, var(--ink) 30%, var(--flame) 85%); filter: none; }
+:root[data-look='neon'] .conversation-title { color: var(--ink); }
+:root[data-look='neon'] .prose a { color: var(--cyan); }
+:root[data-look='neon'] .msg-user { border: 1px solid oklch(from var(--flame) l c h / 0.5); background: oklch(from var(--flame) l c h / 0.14); }
+:root[data-look='neon'] .starter, :root[data-look='neon'] .follow-up { background: var(--glass); backdrop-filter: blur(10px); }
+:root[data-look='neon'] .starter:hover, :root[data-look='neon'] .follow-up:hover { border-color: var(--cyan); box-shadow: 0 0 1.3rem -0.3rem var(--cyan); }
+:root[data-look='neon'] .composer:focus-within { border-color: var(--cyan); box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.6), 0 0 1.8rem -0.5rem var(--cyan); }
+:root[data-look='neon'] :is(.send, .button.primary, .caret) { box-shadow: 0 0 1.2rem -0.2rem var(--flame); }
+:root[data-look='neon'] :focus-visible { outline-color: var(--cyan); }

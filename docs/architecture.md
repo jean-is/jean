@@ -74,6 +74,7 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/ex
                   memory/ projects/ skills/ python/             (0.4; skills/ was routines/ until D115)
                   search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
                   helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
+                  routines/                                     (0.7; routines/schedule.js and skills/sources.js, discovery indexes, tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, and dialogs/ with the dialogs' strings (D97)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
@@ -108,13 +109,13 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. Built so far: `read`, `write`, `edit`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119).
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. `schedule` makes a routine (D122); `suggest_skill` is deferred, found with `find_tools` (D121). Built so far: `read`, `write`, `edit`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `suggest_skill`, `schedule`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119).
 - Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
 - **`search.js`:** BM25 over short texts.
 - **`decide.js`:** the reflex mechanism: Kev's input sequence and its answers in the Decisions API shape (see [Reflexes](#reflexes)). The questions themselves are product policy and live in `caps/reflexes/questions.js` (D62).
-- **`skills.js`** (0.4): reads and writes `SKILL.md` folders (skills, D83, D115); only their name and description go into the prompt, and the `skill` tool reads the steps when relevant.
+- **`skills.js`** (0.4): reads and writes `SKILL.md` folders (skills, D83, D115); only their name and description go into the prompt, and the `skill` tool reads the steps when relevant. A skill from elsewhere keeps its `source` and `digest` in its `metadata` (D121).
 - **`memory.js`** (0.4): the `memory.md` format, one line per entry with where it came from, and the newest lines that fit the prompt (D79).
 - Prompt: [prompts/system.md](../prompts/system.md).
 
@@ -187,10 +188,11 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
 
 ```
 /                                OPFS root (or a mirrored real folder)
-  settings.json
+  settings.json                  format 2 since D122: capability ids as they are now
   instructions.md                global, written by the user (front matter: format; body: the instructions)
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
-  skills/<name>/SKILL.md         global skills (Agent Skills; metadata: format, author, created, D83)
+  skills/<name>/SKILL.md         global skills (Agent Skills; metadata: format, author, created, D83; source, digest, D121)
+  routines/<ulid>.md             the home project's routines (front matter: the schedule, lastRun; body: the request, D122)
   projects/
     <ulid>-<slug>/
       project.md                 front matter: format, name, colour, default (home), cloud: false, createdAt, by,
@@ -198,12 +200,13 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
       instructions.md
       memory.md                  this project's (the home project uses the global one)
       skills/<name>/SKILL.md
+      routines/<ulid>.md
       files/sha256-<hash>.<ext>  original
       files/sha256-<hash>.md     extracted text, a "[[page N]]" line before each page
       files/sha256-<hash>.meta.json
       conversations/<ulid>.jsonl
   .secrets/                      encrypted; never exported, synced or shared
-  .cache/                        disposable: search index, thumbnails
+  .cache/                        disposable: search index, thumbnails, skills indexes (skills/, a day each, D121)
 ```
 
 There is always a default project, hidden until the Projects capability is discovered. One code path handles everything.
@@ -409,6 +412,13 @@ Built in 0.5 (D87–D89). A connection is an address and, when the service asks 
 - **Secrets.** Keys and tokens are encrypted in `.secrets/` like brain keys, never backed up; tokens are renewed before they expire.
 - **Tools** are named `<service>_<tool>`, made JavaScript identifiers so a script can write `tools.<name>()` (D106), deferred, and listed in `<connections>`. A read-only tool is "Using the internet" (`fetch`); any other is "Sending and sharing" (`other`); both ask first by default. Policy can add connections (`connections`).
 - **The browser's limits.** A service has to answer with CORS for a browser to reach it, and expose `Mcp-Session-Id` (2025 sessions) and, ideally, `WWW-Authenticate`. When it doesn't, Jean says it couldn't connect; there is no proxy (D23).
+
+## Skills from elsewhere and routines
+
+Built in 0.7.
+
+- **Skills from elsewhere** (D121). `caps/skills/sources.js` reads Agent Skills discovery indexes (`/.well-known/agent-skills/index.json`, schema 0.2.0) from policy (`skills.sources`, `skills.only`) and the user's list (`settings.sources`, the hand-picked defaults until changed), compares their descriptions with requests on the device (`alike()`), and checks a download against its digest with Web Crypto. It unpacks `.tar.gz` (`DecompressionStream` and a small tar reader) and `.zip` (`core/zip.js`). Only instructions come in: `SKILL.md` and text beside it; a script, a program, a link or a path that leaves the folder refuses the skill. `caps/skills/ready.js` shows one before the user adds it. `npm run directory` checks the default sources too.
+- **Routines** (D122). `caps/routines/schedule.js` reads and writes `routines/<ulid>.md` and says when one falls due, in local time, with working days from `Intl.Locale`'s week information; missed times make one run. `caps/routines/routines.js` looks every half minute and when Jean comes free, runs a due routine of the room's project once Jean is free and the user isn't reading (Web Locks keep it to one tab), and sends its request after a `routine` note. There is no runner while the tab is closed: one that fell due meanwhile runs at the next visit.
 
 ## Voice pipeline
 

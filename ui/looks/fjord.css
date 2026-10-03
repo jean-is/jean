@@ -1,0 +1,56 @@
+/* Fjord: the calm of a northern winter. Polar night and snow, frost for the accent, and a faint
+   aurora where the room's light was, which stirs as Jean works (D120). Over ui/style.css, which
+   comes after it, so every rule here starts with :root[data-look='fjord']. */
+
+:root[data-look='fjord'] {
+  --room: oklch(0.32 0.023 264);
+  --room-2: oklch(0.37 0.028 266);
+  --ink: oklch(0.95 0.007 264);
+  --ink-soft: oklch(0.87 0.016 262);
+  --ink-faint: oklch(0.78 0.02 262);
+  --line: oklch(0.95 0.007 264 / 0.1);
+  --line-strong: oklch(0.95 0.007 264 / 0.22);
+  --glass: oklch(0.37 0.028 266 / 0.75);
+  --flame: oklch(0.8 0.07 215);
+  --flame-deep: oklch(0.68 0.08 250);
+  --on-flame: oklch(0.27 0.02 264);
+  --ember-off: oklch(0.95 0.007 264 / 0.25);
+  --danger: oklch(0.74 0.11 20);
+  --tint: oklch(0.8 0.08 200);
+  --glow: oklch(from var(--tint) 0.76 0.1 calc(h - 25));
+  --glow-alpha: 0.8;
+  --display: 'Avenir Next', Avenir, 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  --radius: 1rem;
+}
+:root[data-look='fjord'][data-theme='light'] {
+  --room: oklch(0.955 0.007 264);
+  --room-2: oklch(0.985 0.004 264);
+  --ink: oklch(0.32 0.023 264);
+  --ink-soft: oklch(0.43 0.03 262);
+  --ink-faint: oklch(0.5 0.03 262);
+  --line: oklch(0.32 0.023 264 / 0.1);
+  --line-strong: oklch(0.32 0.023 264 / 0.22);
+  --glass: oklch(0.985 0.004 264 / 0.75);
+  --flame: oklch(0.5 0.09 250);
+  --flame-deep: oklch(0.45 0.09 250);
+  --on-flame: oklch(0.99 0.003 264);
+  --ember-off: oklch(0.32 0.023 264 / 0.2);
+  --danger: oklch(0.52 0.15 20);
+  --glow: oklch(from var(--tint) 0.84 0.08 calc(h - 25));
+  --glow-alpha: 0.9;
+}
+
+/* The aurora: two veils at the top of the sky, breathing with the room's light. */
+:root[data-look='fjord'] .room {
+  background:
+    radial-gradient(var(--light-size) calc(var(--light-size) * 0.4) at 62% 0%, oklch(from var(--glow) l c h / calc(var(--light) * var(--glow-alpha))), transparent 70%),
+    radial-gradient(calc(var(--light-size) * 0.6) calc(var(--light-size) * 0.3) at 26% 4%, oklch(from var(--glow) l c calc(h + 90) / calc(var(--light) * var(--glow-alpha) * 0.8)), transparent 70%);
+}
+:root[data-look='fjord'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; }
+:root[data-look='fjord'] :is(.wordmark, .wordmark:hover) { font-size: 1.5rem; font-weight: 500; text-shadow: none; }
+:root[data-look='fjord'] .hero-question { font-weight: 400; line-height: 1.08; }
+:root[data-look='fjord'] :is(.conversation-title, .dialog-head h2) { font-weight: 500; }
+:root[data-look='fjord'] .msg-user { background: oklch(from var(--flame) l c h / 0.14); }
+:root[data-look='fjord'] .starter:hover, :root[data-look='fjord'] .follow-up:hover { box-shadow: 0 0 1.5rem -0.5rem oklch(from var(--flame) l c h / 0.6); }
+:root[data-look='fjord'] .composer:focus-within { box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.5), 0 0 0 3px oklch(from var(--flame) l c h / 0.22); }
+:root[data-look='fjord'] :is(.send, .caret) { box-shadow: 0 0 1rem -0.2rem oklch(from var(--flame) l c h / 0.6); }

@@ -1,0 +1,253 @@
+/* What only the dialogs show, loaded with them (ui/dialogs.js), so the first load doesn't carry it
+   (D120, like their strings, D97). Placed after ui/style.css. */
+
+/* ─── Dialogs ───────────────────────────────────────────────────────────── */
+
+dialog {
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  background: var(--room-2);
+  box-shadow: 0 2rem 5rem -2rem oklch(0 0 0 / 0.7), 0 0 4rem -2rem oklch(from var(--glow) l c h / 0.4);
+  transition: opacity 0.35s var(--ease), translate 0.35s var(--ease), display 0.35s allow-discrete, overlay 0.35s allow-discrete;
+}
+dialog::backdrop { background: oklch(0.1 0.01 50 / 0.55); backdrop-filter: blur(6px); transition: opacity 0.35s, display 0.35s allow-discrete, overlay 0.35s allow-discrete; }
+dialog:not([open]), dialog:not([open])::backdrop { opacity: 0; }
+dialog[open] { @starting-style { opacity: 0; translate: 0 1rem; } }
+dialog[open]::backdrop { @starting-style { opacity: 0; } }
+.sheet { inline-size: min(100% - 2rem, 34rem); max-block-size: min(88dvh, 52rem); padding: 1.25rem 1.5rem 1.5rem; border-radius: 1.6rem; }
+.drawer {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  margin-inline-start: 0;
+  inset-block: 0;
+  inline-size: min(22rem, 88vw);
+  max-block-size: none;
+  block-size: 100dvh;
+  padding: 1rem 1rem 1.5rem;
+  border-block: 0;
+  border-inline-start: 0;
+  border-radius: 0;
+}
+.drawer[open] { @starting-style { opacity: 0; translate: -1rem 0; } }
+:dir(rtl) .drawer[open] { @starting-style { translate: 1rem 0; } }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; margin-block-end: 0.75rem; }
+.dialog-head h2 { margin: 0; font: italic 400 1.9rem/1.1 var(--display); }
+:is(:lang(ar), :lang(ja)) .dialog-head h2 { font-family: var(--sans); font-style: normal; font-size: 1.5rem; font-weight: 600; }
+.sheet section { padding-block: 1rem; border-block-start: 1px solid var(--line); }
+.sheet h3 { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.4rem; font-size: 1rem; font-weight: 600; }
+.sheet h3 .icon { color: var(--flame); }
+.sheet p { margin: 0 0 0.75rem; }
+.lede { color: var(--ink-soft); }
+/* Settings: a menu beside the section open, like the Claude apps' (D113); a strip above it on a phone. */
+.settings { display: grid; grid-template: auto 1fr / 13rem 1fr; inline-size: min(100% - 2rem, 52rem); block-size: min(88dvh, 44rem); padding: 0; }
+/* Laid out whether open or closing, so they fade out as they were. */
+:is(.settings, .drawer):not([open]) { display: none; }
+.settings .dialog-head { grid-column: 1 / -1; margin: 0; padding-block: 1.25rem 0.75rem; padding-inline: 1.5rem 1.25rem; }
+.settings-nav { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.25rem 0.75rem 1rem; overflow: auto; scrollbar-width: none; }
+.settings-nav button { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.85rem; border: 0; border-radius: 0.8rem; background: none; color: var(--ink-soft); text-align: start; }
+.settings-nav .icon { inline-size: 1.1rem; block-size: 1.1rem; }
+.settings-nav button:hover, .settings-nav [aria-current='page'] { background: var(--line); color: var(--ink); }
+.settings-nav [aria-current='page'] { font-weight: 600; }
+.settings-panel { overflow: auto; padding-block-end: 1.5rem; padding-inline: 0.75rem 1.5rem; }
+.settings-panel > :first-child { border-block-start: 0; padding-block-start: 0.25rem; }
+.setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
+.setting p { margin: 0; }
+.setting select { inline-size: 15rem; }
+.about { padding-block-start: 1rem; border-block-start: 1px solid var(--line); }
+@media (max-width: 40rem) {
+  .settings { grid-template: auto auto 1fr / 1fr; }
+  .settings-nav { flex-direction: row; padding: 0 1rem 0.75rem; }
+  .settings-nav button { border-radius: 999px; }
+  .settings-panel { padding-inline: 1.25rem; }
+  .setting { grid-template-columns: 1fr; justify-items: start; }
+  .setting select { inline-size: 100%; }
+  .sheet { inline-size: 100%; max-inline-size: 100%; margin-block-end: 0; border-end-start-radius: 0; border-end-end-radius: 0; }
+}
+.hint { font-size: 0.82rem; color: var(--ink-faint); overflow-wrap: anywhere; }
+.status { padding: 0.6rem 0.9rem; border-radius: 0.8rem; background: var(--line); }
+.status.is-error { background: oklch(from var(--danger) l c h / 0.12); color: var(--ink); }
+.connected ul, .rules { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.connected li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem; }
+.connected li.is-active .radio span { color: var(--ink); font-weight: 600; }
+.connection > .icon { color: var(--flame); }
+.connection-text { display: grid; min-inline-size: 0; }
+.connection-text small { font-size: 0.8rem; color: var(--ink-soft); overflow-wrap: anywhere; }
+.connection-text .is-error { color: var(--danger); }
+/* The services Jean knows: tiles to connect, then the ones not available yet (D95). */
+.services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+.services li:has(small) { grid-column: span 2; }
+.service { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; text-align: start; }
+.service:hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
+.service:disabled { cursor: progress; opacity: 0.6; }
+.service > span:last-child { flex: 1; display: grid; min-inline-size: 0; }
+.service small { color: var(--ink-soft); font-size: 0.78rem; overflow-wrap: anywhere; }
+.monogram { flex: none; display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; border: 1px solid transparent; border-radius: 0.6rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
+.later h4 { margin-block-start: 0; }
+.services.is-later { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0; color: var(--ink-soft); font-size: 0.88rem; }
+.is-later li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.is-later .monogram { inline-size: 1.5rem; block-size: 1.5rem; border-radius: 0.45rem; background: var(--line); color: inherit; font-size: 0.78rem; }
+.other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
+.other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
+.radio { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.95rem; }
+.model-input { font: 0.85rem var(--mono); }
+.rule-kind { font-size: 0.92rem; }
+.segmented { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
+.segmented label { display: block; position: relative; }
+.segmented input { position: absolute; opacity: 0; }
+.segmented span { display: block; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.84rem; color: var(--ink-soft); cursor: pointer; }
+.segmented input:checked + span { background: var(--flame); color: var(--on-flame); }
+.segmented input:focus-visible + span { outline: 2px solid var(--flame); outline-offset: 2px; }
+.segmented input:disabled + span { cursor: not-allowed; opacity: 0.6; }
+
+/* The brain picker and the house of what Jean can do. */
+.choices, .rooms { display: grid; gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
+.choice-option { display: flex; align-items: center; gap: 0.75rem; inline-size: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; text-align: start; }
+.choice-option:hover { border-color: var(--line-strong); background: var(--line); }
+.choice-option.is-selected { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }
+.choice-option > span { flex: 1; display: grid; min-inline-size: 0; }
+.choice-option small { color: var(--ink-soft); font-size: 0.8rem; overflow-wrap: anywhere; }
+.choice-option .icon { flex: none; color: var(--flame); }
+.toggle { display: flex; align-items: center; gap: 0.6rem; margin-block-end: 0.5rem; font-size: 0.95rem; color: var(--ink); cursor: pointer; }
+.room-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 1.1rem;
+  transition: background-color 1.2s var(--ease), border-color 1.2s var(--ease), box-shadow 1.2s var(--ease);
+}
+.sheet .room-card h3 { margin: 0 0 0.1rem; }
+.sheet .room-card p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
+.room-icon { display: grid; place-items: center; inline-size: 2.6rem; block-size: 2.6rem; border-radius: 50%; background: var(--line); color: var(--ink-faint); transition: inherit; }
+.room-card.is-lit { border-style: solid; border-color: oklch(from var(--flame) l c h / 0.45); background: oklch(from var(--flame) l c h / 0.07); box-shadow: 0 0 2rem -1.2rem oklch(from var(--glow) l c h / 0.7); }
+.room-card.is-lit .room-icon { background: oklch(from var(--flame) l c h / 0.2); color: var(--flame); box-shadow: 0 0 1rem -0.2rem oklch(from var(--glow) l c h / 0.8); }
+.room-on { display: grid; color: var(--flame); }
+@media (max-width: 30rem) {
+  .room-card { grid-template-columns: auto 1fr; }
+  .room-card > .button, .room-on { grid-column: 2; justify-self: start; }
+}
+
+/* ─── Projects, and what Jean knows ─────────────────────────────────────── */
+
+.noticed, .skills { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
+.noticed li { display: flex; align-items: center; gap: 0.25rem; border-radius: 0.9rem; }
+.noticed li:hover, .noticed li:focus-within { background: var(--line); }
+.swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
+.swatches legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
+.swatch { position: relative; display: grid; place-items: center; inline-size: 2.9rem; block-size: 2.9rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
+.swatch input { position: absolute; opacity: 0; }
+.swatch app-persona { --persona-size: 2rem; }
+.swatch:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: var(--line); }
+.swatch:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
+.button.danger { color: var(--danger); }
+.sheet h4 { margin: 0.9rem 0 0.35rem; font-size: 0.88rem; font-weight: 600; color: var(--ink-soft); }
+.sheet textarea { inline-size: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--line-strong); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); color: var(--ink); line-height: 1.5; resize: vertical; }
+.sheet textarea:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
+.locked { padding-inline-start: 0.8rem; border-inline-start: 2px solid var(--line-strong); white-space: pre-wrap; }
+.sheet .noticed-text { flex: 1; min-inline-size: 0; padding: 0.4rem 0.6rem; border-color: transparent; background: transparent; field-sizing: content; resize: none; }
+.sheet .noticed-text:focus { border-color: var(--line-strong); background: oklch(from var(--room) l c h / 0.6); }
+.noticed-actions { display: flex; flex: none; align-items: center; }
+.skills details { padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+.skills summary { display: grid; cursor: pointer; }
+.skills summary small { color: var(--ink-soft); font-size: 0.82rem; }
+.skills textarea { margin-block: 0.6rem 0.3rem; font: 0.86rem/1.5 var(--mono); }
+/* Skills from elsewhere, each source with what it offers (D121); a routine's schedule on one line (D122). */
+.source h4 { display: flex; align-items: center; gap: 0.3rem; }
+.source li { display: grid; justify-items: start; padding: 0.3rem 0.8rem; }
+.source li small, .skill-ready .muted { color: var(--ink-soft); font-size: 0.82rem; }
+.sources form > input, .sheet .routine-when > * { flex: 1 1 9rem; inline-size: auto; }
+.sheet .routine-when { margin-block: 0.6rem 0; }
+.skill-steps { max-block-size: 45vh; overflow: auto; padding: 0.2rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+
+/* ─── Looks (D111, D120) ────────────────────────────────────────────────── */
+/* A gallery of cards, each with a small picture of the look in the mode on screen: what the user
+   asked, Jean's answer as lines, and the box with its button. Each look gives its picture a few
+   colours (--p-*), and maybe something of its own over them (--p-art). */
+
+.looks { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.6rem; margin: 0 0 0.75rem; padding: 0; border: 0; }
+.looks legend { margin-block-end: 0.5rem; font-weight: 600; }
+.look { position: relative; flex-direction: column; align-items: stretch; gap: 0.6rem; padding: 0.45rem 0.45rem 0.7rem; cursor: pointer; }
+.look input { position: absolute; opacity: 0; }
+.look:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }
+.look:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
+.look > span:last-child { padding-inline: 0.3rem; }
+.look .look-preview {
+  --p-ink: oklch(from var(--p-text) l c h / 0.55);
+  position: relative;
+  display: block;
+  flex: none;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  direction: ltr;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.6rem;
+  background: var(--p-art, none), var(--p-room);
+  forced-color-adjust: none;
+}
+:dir(rtl) .look-preview { scale: -1 1; }
+.look-preview span { position: absolute; }
+.look-preview span:nth-child(1) { inset-block-start: 14%; inset-inline-end: 9%; inline-size: 38%; block-size: 13%; border: var(--p-edge, 0 none); border-radius: var(--p-r, 0.35rem); background: var(--p-bubble); rotate: var(--p-tilt, 0deg); }
+.look-preview span:nth-child(2) {
+  inset-block-start: 37%;
+  inset-inline-start: calc(9% + var(--p-inset, 0%));
+  inline-size: 58%;
+  block-size: 22%;
+  background: linear-gradient(var(--p-ink) 0 0) 0 0 / 100% 2px no-repeat, linear-gradient(var(--p-ink) 0 0) 0 50% / 86% 2px no-repeat, linear-gradient(var(--p-ink) 0 0) 0 100% / 52% 2px no-repeat;
+}
+.look-preview span:nth-child(3) { inset-block-end: 9%; inset-inline: calc(8% + var(--p-inset, 0%)) 8%; block-size: 17%; border: 1px solid var(--p-line, oklch(from var(--p-text) l c h / 0.3)); border-radius: var(--p-r, 0.35rem); background: var(--p-box, var(--p-room)); }
+.look-preview span:nth-child(3)::after { content: ''; position: absolute; inset-block: 16%; inset-inline-end: 3%; aspect-ratio: 1; border-radius: var(--p-dot, 50%); background: var(--p-flame); }
+
+[data-look-preview='room'] { --p-room: oklch(0.17 0.02 52); --p-art: radial-gradient(70% 90% at 50% 20%, oklch(0.74 0.17 54 / 0.55), transparent 70%); --p-text: oklch(0.93 0.018 80); --p-bubble: oklch(0.93 0.018 80 / 0.1); --p-box: oklch(0.2 0.02 52 / 0.8); --p-flame: oklch(0.8 0.15 68); --p-r: 0.5rem; }
+[data-theme='light'] [data-look-preview='room'] { --p-room: oklch(0.97 0.014 82); --p-art: radial-gradient(70% 90% at 50% 20%, oklch(0.86 0.12 75 / 0.7), transparent 70%); --p-text: oklch(0.24 0.02 50); --p-bubble: oklch(0.24 0.02 50 / 0.07); --p-box: oklch(1 0 0 / 0.75); --p-flame: oklch(0.7 0.16 58); }
+[data-look-preview='mail'] { --p-room: oklch(0.13 0.002 254); --p-art: linear-gradient(oklch(0.27 0.0015 254) 0 0) 3% 14% / 19% 10% no-repeat, linear-gradient(oklch(1 0 0 / 0.1) 0 0) 25% 0 / 1px 100% no-repeat; --p-inset: 20%; --p-text: oklch(0.97 0.002 254); --p-bubble: oklch(0.19 0.003 254); --p-edge: 1px solid oklch(1 0 0 / 0.1); --p-box: oklch(0.19 0.003 254); --p-flame: oklch(0.72 0.15 254); --p-r: 0.5rem; }
+[data-theme='light'] [data-look-preview='mail'] { --p-room: oklch(0.97 0.0015 254); --p-art: linear-gradient(oklch(0.92 0.0015 254) 0 0) 3% 14% / 19% 10% no-repeat, linear-gradient(oklch(0 0 0 / 0.1) 0 0) 25% 0 / 1px 100% no-repeat; --p-text: oklch(0.21 0.002 254); --p-bubble: oklch(1 0 0); --p-edge: 1px solid oklch(0 0 0 / 0.1); --p-box: oklch(1 0 0); --p-flame: oklch(0.54 0.2 258); }
+[data-look-preview='paper'] { --p-room: oklch(0.2 0.006 70); --p-text: oklch(0.91 0.012 85); --p-bubble: linear-gradient(var(--p-flame) 0 0) 0 0 / 2px 100% no-repeat; --p-box: oklch(0.245 0.006 70); --p-flame: oklch(0.75 0.13 34); --p-r: 0.15rem; }
+[data-theme='light'] [data-look-preview='paper'] { --p-room: oklch(0.975 0.008 85); --p-text: oklch(0.22 0.012 60); --p-box: oklch(0.993 0.004 85); --p-flame: oklch(0.5 0.17 30); }
+[data-look-preview='minimal'] { --p-room: oklch(0.145 0 0); --p-text: oklch(0.93 0 0); --p-bubble: linear-gradient(oklch(0.74 0 0) 0 0) 100% 50% / 72% 2px no-repeat; --p-line: oklch(0.93 0 0 / 0.2); --p-flame: oklch(0.93 0 0); --p-r: 0.3rem; }
+[data-theme='light'] [data-look-preview='minimal'] { --p-room: oklch(0.995 0 0); --p-text: oklch(0.2 0 0); --p-bubble: linear-gradient(oklch(0.44 0 0) 0 0) 100% 50% / 72% 2px no-repeat; --p-line: oklch(0.2 0 0 / 0.18); --p-flame: oklch(0.2 0 0); }
+[data-look-preview='swiss'] { --p-room: oklch(0.16 0 0); --p-art: linear-gradient(var(--p-flame) 0 0) 9% 9% / 12% 4% no-repeat; --p-text: oklch(0.97 0 0); --p-bubble: linear-gradient(var(--p-text) 0 0) 0 0 / 100% 2px no-repeat; --p-line: var(--p-text); --p-flame: oklch(0.66 0.22 28); --p-r: 0; --p-dot: 0; }
+[data-theme='light'] [data-look-preview='swiss'] { --p-room: oklch(0.995 0 0); --p-text: oklch(0.14 0 0); --p-flame: oklch(0.56 0.22 28); }
+[data-look-preview='fjord'] { --p-room: oklch(0.32 0.023 264); --p-art: radial-gradient(70% 45% at 65% 0%, oklch(0.76 0.1 175 / 0.5), transparent 70%), radial-gradient(45% 32% at 22% 0%, oklch(0.72 0.1 265 / 0.45), transparent 70%); --p-text: oklch(0.95 0.007 264); --p-bubble: oklch(0.8 0.07 215 / 0.2); --p-box: oklch(0.37 0.028 266); --p-flame: oklch(0.8 0.07 215); --p-r: 0.5rem; }
+[data-theme='light'] [data-look-preview='fjord'] { --p-room: oklch(0.955 0.007 264); --p-art: radial-gradient(70% 45% at 65% 0%, oklch(0.84 0.08 175 / 0.6), transparent 70%), radial-gradient(45% 32% at 22% 0%, oklch(0.84 0.08 265 / 0.55), transparent 70%); --p-text: oklch(0.32 0.023 264); --p-bubble: oklch(0.5 0.09 250 / 0.13); --p-box: oklch(0.985 0.004 264); --p-flame: oklch(0.5 0.09 250); }
+[data-look-preview='velvet'] { --p-room: oklch(0.18 0.04 345); --p-art: radial-gradient(45% 75% at 50% -10%, oklch(0.8 0.09 80 / 0.4), transparent 72%); --p-text: oklch(0.94 0.02 85); --p-bubble: transparent; --p-edge: 1px solid oklch(0.82 0.11 85 / 0.6); --p-line: oklch(0.82 0.11 85 / 0.45); --p-flame: oklch(0.82 0.11 85); --p-r: 0.5rem; }
+[data-theme='light'] [data-look-preview='velvet'] { --p-room: oklch(0.97 0.012 85); --p-art: radial-gradient(45% 75% at 50% -10%, oklch(0.88 0.08 80 / 0.6), transparent 72%); --p-text: oklch(0.24 0.05 345); --p-edge: 1px solid oklch(0.55 0.1 75 / 0.6); --p-line: oklch(0.55 0.1 75 / 0.5); --p-flame: oklch(0.48 0.1 65); }
+[data-look-preview='terminal'] { --p-room: oklch(0.17 0.025 150); --p-art: repeating-linear-gradient(transparent 0 2px, oklch(0 0 0 / 0.35) 2px 3px), radial-gradient(80% 70% at 50% 45%, oklch(0.8 0.2 145 / 0.2), transparent); --p-text: oklch(0.88 0.19 145); --p-bubble: transparent; --p-edge: 1px solid oklch(0.88 0.19 145 / 0.6); --p-flame: oklch(0.93 0.2 140); --p-r: 0; --p-dot: 0; }
+[data-theme='light'] [data-look-preview='terminal'] { --p-room: oklch(0.985 0.008 130); --p-art: radial-gradient(circle, oklch(0.84 0.005 130) 28%, transparent 34%) 0 0 / 7% 11% repeat-y, radial-gradient(circle, oklch(0.84 0.005 130) 28%, transparent 34%) 100% 0 / 7% 11% repeat-y, repeating-linear-gradient(oklch(0.93 0.045 150) 0 11%, transparent 11% 22%); --p-text: oklch(0.24 0.02 150); --p-edge: 1px solid oklch(0.24 0.02 150 / 0.5); --p-box: oklch(0.995 0.004 130); --p-flame: oklch(0.45 0.12 150); }
+[data-look-preview='neon'] { --p-room: oklch(0.17 0.07 295); --p-art: radial-gradient(circle at 50% 100%, oklch(0.87 0.16 85) 15%, oklch(0.74 0.22 350) 68%, transparent 70%) 50% 72% / 36% 24% no-repeat, repeating-linear-gradient(oklch(0.86 0.14 200 / 0.5) 0 1px, transparent 1px 7px) 0 100% / 100% 30% no-repeat, repeating-linear-gradient(90deg, oklch(0.86 0.14 200 / 0.5) 0 1px, transparent 1px 12px) 0 100% / 100% 30% no-repeat; --p-text: oklch(0.96 0.02 320); --p-bubble: oklch(0.74 0.22 350 / 0.2); --p-edge: 1px solid oklch(0.74 0.22 350 / 0.7); --p-box: oklch(0.2 0.08 295 / 0.75); --p-line: oklch(0.86 0.14 200 / 0.6); --p-flame: oklch(0.74 0.22 350); --p-r: 0.5rem; }
+[data-theme='light'] [data-look-preview='neon'] { --p-room: oklch(0.97 0.025 340); --p-art: radial-gradient(circle at 50% 100%, oklch(0.86 0.13 70) 15%, oklch(0.75 0.17 355) 68%, transparent 70%) 50% 72% / 36% 24% no-repeat, repeating-linear-gradient(oklch(0.6 0.12 215 / 0.45) 0 1px, transparent 1px 7px) 0 100% / 100% 30% no-repeat, repeating-linear-gradient(90deg, oklch(0.6 0.12 215 / 0.45) 0 1px, transparent 1px 12px) 0 100% / 100% 30% no-repeat; --p-text: oklch(0.27 0.09 300); --p-bubble: oklch(0.55 0.22 355 / 0.15); --p-edge: 1px solid oklch(0.55 0.22 355 / 0.6); --p-box: oklch(0.995 0.008 340 / 0.8); --p-line: oklch(0.55 0.12 215 / 0.6); --p-flame: oklch(0.55 0.22 355); }
+[data-look-preview='notebook'] { --p-room: oklch(0.29 0.035 160); --p-art: radial-gradient(45% 30% at 25% 35%, oklch(1 0 0 / 0.07), transparent), radial-gradient(40% 35% at 75% 65%, oklch(1 0 0 / 0.05), transparent); --p-text: oklch(0.96 0.01 100); --p-bubble: oklch(0.92 0.12 98); --p-tilt: -3deg; --p-box: oklch(0.33 0.035 160); --p-flame: oklch(0.89 0.13 95); --p-r: 0.1rem; }
+[data-theme='light'] [data-look-preview='notebook'] { --p-room: oklch(0.99 0.004 95); --p-art: linear-gradient(oklch(0.62 0.18 20 / 0.6) 0 0) 5% 0 / 1.5px 100% no-repeat, linear-gradient(oklch(0.72 0.07 240 / 0.35) 1px, transparent 1px) 0 0 / 100% 8px, linear-gradient(90deg, oklch(0.72 0.07 240 / 0.35) 1px, transparent 1px) 0 0 / 8px 100%; --p-text: oklch(0.33 0.12 262); --p-box: oklch(0.995 0.002 95); --p-flame: oklch(0.55 0.2 25); }
+[data-look-preview='depth'] {
+  --p-room: oklch(0.15 0.03 265);
+  --p-grid: oklch(0.78 0.11 250 / 0.45);
+  --p-art: radial-gradient(60% 14% at 50% 56%, oklch(0.78 0.16 65 / 0.55), transparent 70%), repeating-conic-gradient(from 90deg at 50% 0%, var(--p-grid) 0 0.7deg, transparent 0.7deg 10deg) 0 100% / 100% 44% no-repeat, linear-gradient(transparent 58.5%, var(--p-grid) 58.5% 59%, transparent 59% 62%, var(--p-grid) 62% 62.6%, transparent 62.6% 68%, var(--p-grid) 68% 68.8%, transparent 68.8% 78%, var(--p-grid) 78% 79%, transparent 79% 94%, var(--p-grid) 94% 95.2%, transparent 95.2%), linear-gradient(oklch(0.15 0.03 265) 8%, oklch(0.24 0.045 262) 56%, oklch(0.15 0.03 265));
+  --p-text: oklch(0.96 0.01 260);
+  --p-bubble: oklch(0.22 0.04 265 / 0.8);
+  --p-edge: 1px solid oklch(0.85 0.06 250 / 0.2);
+  --p-box: oklch(0.22 0.04 265 / 0.85);
+  --p-flame: oklch(0.8 0.15 68);
+  --p-r: 0.5rem;
+}
+[data-theme='light'] [data-look-preview='depth'] { --p-room: oklch(0.965 0.005 260); --p-grid: oklch(0.45 0.04 260 / 0.3); --p-art: radial-gradient(60% 14% at 50% 56%, oklch(0.86 0.12 75 / 0.7), transparent 70%), repeating-conic-gradient(from 90deg at 50% 0%, var(--p-grid) 0 0.7deg, transparent 0.7deg 10deg) 0 100% / 100% 44% no-repeat, linear-gradient(transparent 58.5%, var(--p-grid) 58.5% 59%, transparent 59% 62%, var(--p-grid) 62% 62.6%, transparent 62.6% 68%, var(--p-grid) 68% 68.8%, transparent 68.8% 78%, var(--p-grid) 78% 79%, transparent 79% 94%, var(--p-grid) 94% 95.2%, transparent 95.2%), linear-gradient(oklch(0.965 0.005 260) 8%, oklch(1 0 0) 56%, oklch(0.965 0.005 260)); --p-text: oklch(0.22 0.02 265); --p-bubble: oklch(1 0 0 / 0.85); --p-edge: 1px solid oklch(0.22 0.02 265 / 0.12); --p-box: oklch(1 0 0 / 0.9); --p-flame: oklch(0.52 0.15 52); }
+[data-look-preview='classic'] { --p-room: oklch(0.33 0.06 250); --p-art: linear-gradient(90deg, oklch(0.3 0.13 265), oklch(0.46 0.13 250)) 50% 6.5% / 88% 7% no-repeat, linear-gradient(oklch(0.3 0.006 260) 0 0) 50% 16% / 88% 62% no-repeat; --p-text: oklch(0.97 0 0); --p-bubble: oklch(0.98 0.04 105); --p-edge: 1px solid oklch(0 0 0); --p-box: oklch(0.3 0.006 260); --p-line: oklch(0.5 0.005 260); --p-flame: oklch(0.8 0.11 245); --p-r: 0; --p-dot: 0; }
+[data-theme='light'] [data-look-preview='classic'] { --p-room: oklch(0.54 0.093 195); --p-art: linear-gradient(90deg, oklch(0.27 0.19 264), oklch(0.48 0.14 248)) 50% 6.5% / 88% 7% no-repeat, linear-gradient(oklch(0.81 0 0) 0 0) 50% 16% / 88% 62% no-repeat; --p-text: oklch(0 0 0); --p-box: oklch(0.81 0 0); --p-line: oklch(1 0 0); --p-flame: oklch(0.36 0.2 264); }
+[data-look-preview='pixel'] { --p-room: oklch(0.25 0.008 270); --p-art: linear-gradient(oklch(0.29 0.05 145) 0 0) 50% 26% / 80% 58% no-repeat, linear-gradient(oklch(0.17 0.008 270) 0 0) 50% 18.75% / 90% 68% no-repeat; --p-text: oklch(0.86 0.13 122); --p-bubble: oklch(0.38 0.07 140); --p-edge: 2px solid var(--p-text); --p-line: transparent; --p-flame: oklch(0.5 0.17 358); --p-r: 0; }
+[data-theme='light'] [data-look-preview='pixel'] { --p-room: oklch(0.85 0.01 95); --p-art: linear-gradient(oklch(0.82 0.11 122) 0 0) 50% 26% / 80% 58% no-repeat, linear-gradient(oklch(0.42 0.015 270) 0 0) 50% 18.75% / 90% 68% no-repeat; --p-text: oklch(0.29 0.06 145); --p-bubble: oklch(0.74 0.12 125); --p-flame: oklch(0.47 0.17 358); }
+[data-look-preview='blueprint'] { --p-room: oklch(0.36 0.11 256); --p-art: linear-gradient(oklch(1 0 0 / 0.16) 1px, transparent 1px) 0 0 / 100% 25%, linear-gradient(90deg, oklch(1 0 0 / 0.16) 1px, transparent 1px) 0 0 / 16% 100%, linear-gradient(oklch(1 0 0 / 0.07) 1px, transparent 1px) 0 0 / 100% 5%, linear-gradient(90deg, oklch(1 0 0 / 0.07) 1px, transparent 1px) 0 0 / 3.2% 100%; --p-text: oklch(0.98 0.01 240); --p-bubble: oklch(0.36 0.11 256); --p-edge: 1px dashed oklch(0.98 0.01 240 / 0.8); --p-line: oklch(0.98 0.01 240 / 0.7); --p-flame: oklch(0.92 0.14 98); --p-r: 0; --p-dot: 0; }
+[data-theme='light'] [data-look-preview='blueprint'] { --p-room: oklch(0.975 0.008 240); --p-art: linear-gradient(oklch(0.5 0.1 250 / 0.18) 1px, transparent 1px) 0 0 / 100% 25%, linear-gradient(90deg, oklch(0.5 0.1 250 / 0.18) 1px, transparent 1px) 0 0 / 16% 100%, linear-gradient(oklch(0.5 0.1 250 / 0.08) 1px, transparent 1px) 0 0 / 100% 5%, linear-gradient(90deg, oklch(0.5 0.1 250 / 0.08) 1px, transparent 1px) 0 0 / 3.2% 100%; --p-text: oklch(0.32 0.11 258); --p-bubble: oklch(0.975 0.008 240); --p-edge: 1px dashed oklch(0.32 0.11 258 / 0.8); --p-line: oklch(0.32 0.11 258 / 0.7); --p-flame: oklch(0.53 0.19 28); }
+[data-look-preview='mondrian'] { --p-room: oklch(0.22 0.004 95); --p-rule: oklch(0.97 0.004 95); --p-art: linear-gradient(var(--p-rule) 0 0) 0 8% / 100% 2px no-repeat, linear-gradient(var(--p-rule) 0 0) 6% 0 / 2px 100% no-repeat, linear-gradient(var(--p-rule) 0 0) 94% 0 / 2px 100% no-repeat, linear-gradient(var(--p-rule) 0 0) 0 55% / 6% 2px no-repeat, linear-gradient(oklch(0.55 0.21 28) 0 0) 0 25% / 6% 32% no-repeat, linear-gradient(oklch(0.88 0.16 95) 0 0) 0 100% / 6% 30% no-repeat, linear-gradient(oklch(0.47 0.15 258) 0 0) 100% 100% / 6% 45% no-repeat; --p-text: var(--p-rule); --p-bubble: oklch(0.88 0.16 95); --p-edge: 2px solid var(--p-rule); --p-line: var(--p-rule); --p-flame: oklch(0.68 0.2 28); --p-r: 0; --p-dot: 0; }
+[data-theme='light'] [data-look-preview='mondrian'] { --p-room: oklch(1 0 0); --p-rule: oklch(0.16 0 0); --p-flame: oklch(0.55 0.21 28); }
+
+.look-colours { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.look-size { display: flex; justify-content: space-between; gap: 1rem; }
+input[type='color'] { block-size: 2.6rem; padding: 0.2rem; cursor: pointer; }
+input[type='range'] { padding: 0; border: 0; background: none; accent-color: var(--flame); }
+.sheet .look-css { font: 0.82rem/1.5 var(--mono); }
+
+@media (forced-colors: active) {
+  .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .choice-option.is-selected, .room-card.is-lit, .swatch:has(input:checked), .look:has(input:checked) { border: 2px solid Highlight; }
+}

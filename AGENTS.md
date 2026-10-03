@@ -1,6 +1,6 @@
 # AGENTS.md — building Jean
 
-> Status: 0.6 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
+> Status: 0.7 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
 
 ## What Jean is
 
@@ -51,7 +51,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
   - Never make a translation agree grammatically with the assistant's name.
   - A string that only dialogs show lives in `locales/dialogs/<lang>.json`, loaded with them; the rest in `locales/<lang>.json`. `test/locales.test.js` checks which modules use each one (D97).
 - **Bidirectional text:** CSS uses logical properties only (`margin-inline-start`, never `margin-left`), and every message element gets `dir="auto"`.
-- **Vocabulary:** none of these words appear in the UI: "agent", "model", "MCP", "token". A `SKILL.md` is a skill. "Routine" is kept for tasks Jean will do on a schedule (D115). See the vocabulary in [docs/product.md](docs/product.md).
+- **Vocabulary:** none of these words appear in the UI: "agent", "model", "MCP", "token". A `SKILL.md` is a skill. A routine is a task Jean does on a schedule (D115, D122). See the vocabulary in [docs/product.md](docs/product.md).
 - **Accessibility:** respect `prefers-reduced-motion`, `prefers-contrast` and `forced-colors`. Contrast meets WCAG AA everywhere, including in the dark first-run state.
 - **Text input:** never send on Enter while an IME is composing (`event.isComposing`).
 
@@ -76,6 +76,6 @@ npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
-npm run directory # check from a browser's point of view which known services Jean can connect to
+npm run directory # check from a browser's point of view which known services and sources of skills Jean can reach
 npm run serve   # serve the folder as it is
 ```

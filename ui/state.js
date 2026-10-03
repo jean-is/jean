@@ -57,7 +57,7 @@ export const app = {
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
   look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
-  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'picker' | 'knows' | 'project' | 'connections' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'picker' | 'knows' | 'project' | 'connections' | 'skill' | null>} */
   dialog: signal(null),
   draft: signal(''),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
@@ -103,11 +103,11 @@ export const activeBrain = computed(() => {
 
 export const theme = computed(() => app.chosenTheme.value ?? app.deviceTheme.value)
 
-/** What the chip in the box says. */
+/** What the chip in the box says: Auto, or the brain's own name (its provider is in the picker). */
 export const chipLabel = computed(() => {
-  const { settings } = effective.value
-  if (!settings.brains.length) return t('brain.choose')
-  return settings.auto ? t('auto.name') : brainLabel(/** @type {BrainConfig} */ (activeBrain.value))
+  const brain = activeBrain.value
+  if (!brain) return t('brain.choose')
+  return effective.value.settings.auto ? t('auto.name') : brain.api === 'device' ? t('provider.device') : brain.model.split('/').at(-1)
 })
 
 /** @param {BrainConfig} brain */
@@ -248,6 +248,28 @@ export function newConversation() {
   app.error.value = null
   app.dialog.value = null
 }
+
+/**
+ * A page the user asked for, as a view transition where there is one (D120): the title morphs, a
+ * look may stage it. It turns a frame later: what is typed meanwhile is the new page's draft, and
+ * a message sent meanwhile waits. Code that needs the new page at once changes it directly.
+ * @param {() => unknown} change
+ */
+export async function turnPage(change) {
+  if (!document.startViewTransition) return change()
+  const before = app.draft.peek()
+  const transition = document.startViewTransition(async () => {
+    const typed = app.draft.peek()
+    if (typed !== before) app.draft.value = before
+    await change()
+    if (typed !== before) app.draft.value = typed
+  })
+  transition.ready.catch(() => {}) // skipped in a hidden tab, the change made all the same
+  turning = transition.updateCallbackDone.catch(() => {})
+  await transition.updateCallbackDone
+}
+/** The page change under way, which a message waits for. */
+let turning = Promise.resolve()
 
 /** @param {string} path */
 export async function openConversation(path) {
@@ -498,6 +520,7 @@ export function askSmarter() {
  *   answer's; notes: what the brain is told just before the message ("Since last time")
  */
 export async function send(text, { boost = 0, notes = [] } = {}) {
+  await turning
   const files = app.attachments.value
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))

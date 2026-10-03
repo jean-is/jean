@@ -1,0 +1,130 @@
+/* Depth: a scene in three dimensions. A floor in true perspective runs to the horizon under a
+   cool night (a white studio by day), Jean's light glows where they meet, and the floor glides
+   forward while Jean thinks. Pages pass like places on a journey: the one left rushes past, the
+   next comes up from the distance, the question tumbles into the conversation's title (view
+   transitions, D120); dialogs swing in like panels, messages rise from the floor, and
+   suggestions lift under the pointer. Nothing moves for those who ask for less motion. Over
+   ui/style.css, which comes after it, so every rule here starts with :root[data-look='depth'],
+   and its keyframes are named depth-*. */
+
+:root[data-look='depth'] {
+  --room: oklch(0.15 0.03 265);
+  --room-2: oklch(0.2 0.035 265);
+  --ink: oklch(0.96 0.01 260);
+  --ink-soft: oklch(0.84 0.02 260);
+  --ink-faint: oklch(0.74 0.025 260);
+  --line: oklch(0.85 0.06 250 / 0.12);
+  --line-strong: oklch(0.85 0.06 250 / 0.26);
+  --glass: oklch(0.22 0.04 265 / 0.62);
+  --flame: oklch(0.8 0.15 68);
+  --flame-deep: oklch(0.66 0.17 50);
+  --on-flame: oklch(0.2 0.03 50);
+  --ember-off: oklch(0.96 0.01 260 / 0.25);
+  --glow-alpha: 0.65;
+  --grid: oklch(0.78 0.11 250 / 0.32);
+  --haze: oklch(0.24 0.045 262);
+  --lift: inset 0 1px 0 oklch(1 0 0 / 0.08), 0 1.5rem 2.5rem -1.25rem oklch(0 0 0 / 0.7), 0 3.5rem 5rem -3rem oklch(0 0 0 / 0.6);
+  --display: 'SF Pro Display', 'Segoe UI Variable Display', 'Avenir Next', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  --radius: 1.1rem;
+}
+:root[data-look='depth'][data-theme='light'] {
+  --room: oklch(0.965 0.005 260);
+  --room-2: oklch(0.995 0.002 260);
+  --ink: oklch(0.22 0.02 265);
+  --ink-soft: oklch(0.42 0.02 265);
+  --ink-faint: oklch(0.5 0.02 265);
+  --line: oklch(0.22 0.02 265 / 0.1);
+  --line-strong: oklch(0.22 0.02 265 / 0.2);
+  --glass: oklch(1 0 0 / 0.66);
+  --flame: oklch(0.52 0.15 52);
+  --flame-deep: oklch(0.47 0.14 48);
+  --on-flame: oklch(0.99 0.004 85);
+  --ember-off: oklch(0.22 0.02 265 / 0.2);
+  --glow-alpha: 0.8;
+  --grid: oklch(0.45 0.04 260 / 0.2);
+  --haze: oklch(1 0 0);
+  --lift: inset 0 1px 0 oklch(1 0 0), 0 1.5rem 2.5rem -1.25rem oklch(0.3 0.04 265 / 0.28), 0 3.5rem 5rem -3rem oklch(0.3 0.04 265 / 0.22);
+}
+
+/* The scene: a haze along the horizon, Jean's light where the floor meets the sky, and the floor,
+   seen from a little above, sinking into the haze. The camera leans in while the user writes. */
+:root[data-look='depth'] .room {
+  overflow: hidden;
+  perspective: 36rem;
+  perspective-origin: 50% 56%;
+  background:
+    radial-gradient(var(--light-size) calc(var(--light-size) * 0.28) at 50% 56%, oklch(from var(--glow) l c h / calc(var(--light) * var(--glow-alpha))), transparent 70%),
+    linear-gradient(var(--room) 8%, var(--haze) 56%, var(--room) 100%);
+  transition: perspective-origin 1.6s var(--ease);
+  view-transition-name: depth-scene;
+}
+:root[data-look='depth'][data-presence='listening'] .room { perspective-origin: 50% 63%; }
+:root[data-look='depth'][data-presence='answering'] .room { perspective-origin: 50% 52%; }
+:root[data-look='depth'] .room::before {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: -150%;
+  block-size: 500vh;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 100% 3rem,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 50% 0 / 3rem 100%;
+  mask: linear-gradient(transparent, #000 70%);
+  transform: rotateX(90deg);
+  transform-origin: 50% 100%;
+}
+/* While Jean thinks the floor glides forward, and slows as the answer comes. */
+:root[data-look='depth'][data-presence='thinking'] .room::before { animation: depth-glide 0.9s linear infinite; }
+:root[data-look='depth'][data-presence='answering'] .room::before { animation: depth-glide 2.8s linear infinite; }
+@keyframes depth-glide { to { background-position: 0 3rem, 50% 0; } }
+
+/* Things float: glass with an edge of light and a shadow on the floor. */
+:root[data-look='depth'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; }
+:root[data-look='depth'] :is(.wordmark, .wordmark:hover) { font-size: 1.45rem; font-weight: 600; }
+:root[data-look='depth'] .hero-question { font-weight: 650; line-height: 1.04; }
+:root[data-look='depth'] :is(.conversation-title, .dialog-head h2) { font-weight: 600; }
+:root[data-look='depth']:not(:lang(ar), :lang(fa), :lang(ur)) :is(.hero-question, .conversation-title) { letter-spacing: -0.03em; }
+:root[data-look='depth'] .msg-user { border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(14px); box-shadow: var(--lift); }
+:root[data-look='depth'] .composer { background: var(--glass); box-shadow: var(--lift); }
+:root[data-look='depth'] .composer:focus-within { box-shadow: var(--lift), 0 0 2.5rem -0.8rem oklch(from var(--glow) l c h / 0.6); }
+:root[data-look='depth'] app-composer { background: linear-gradient(transparent, oklch(from var(--room) l c h / 0.75) 55%); }
+:root[data-look='depth'] :is(.starter, .follow-up) { background: var(--glass); backdrop-filter: blur(10px); transition: transform 0.35s var(--ease), border-color 0.3s, color 0.3s, box-shadow 0.3s; }
+:root[data-look='depth'] :is(.starter, .follow-up):hover { transform: perspective(30rem) translateZ(1.2rem) rotateX(14deg); box-shadow: var(--lift); }
+:root[data-look='depth'] .look { transition: transform 0.35s var(--ease), border-color 0.2s, background-color 0.2s; }
+:root[data-look='depth'] .look:hover { transform: perspective(40rem) translateZ(0.8rem) rotateX(10deg); }
+/* Messages rise from the floor as they arrive. */
+:root[data-look='depth'] .msg { animation: depth-rise 0.7s var(--ease) both; }
+@keyframes depth-rise { from { opacity: 0; transform: perspective(50rem) translateZ(-10rem) rotateX(24deg); } }
+
+/* Dialogs swing up like panels; the conversations swing open like a door from their side. */
+:root[data-look='depth'] dialog { transform-origin: 50% 100%; transition: opacity 0.45s var(--ease), translate 0.45s var(--ease), transform 0.6s var(--ease), display 0.6s allow-discrete, overlay 0.6s allow-discrete; }
+:root[data-look='depth'] dialog:not([open]) { transform: perspective(70rem) rotateX(-28deg) translateZ(-14rem); }
+@starting-style {
+  :root[data-look='depth'] dialog[open] { transform: perspective(70rem) rotateX(-28deg) translateZ(-14rem); }
+  :root[data-look='depth'] .drawer[open] { transform: perspective(70rem) rotateY(70deg); }
+  :root[data-look='depth'][dir='rtl'] .drawer[open] { transform: perspective(70rem) rotateY(-70deg); }
+}
+:root[data-look='depth'] .drawer { transform-origin: 0 50%; }
+:root[data-look='depth'] .drawer:not([open]) { transform: perspective(70rem) rotateY(70deg); }
+:root[data-look='depth'][dir='rtl'] .drawer { transform-origin: 100% 50%; }
+:root[data-look='depth'][dir='rtl'] .drawer:not([open]) { transform: perspective(70rem) rotateY(-70deg); }
+
+/* Another page: the scene stays, the page left rushes past the camera, the next one comes up
+   from the distance, and the title tumbles over as it moves into place. The page's snapshot is
+   opaque, so the scene goes over it, blended: the page's background is pure black by night (white
+   by day), and the lighter (darker) of the two shows, the scene or the page's words. */
+:root[data-look='depth'] { background: oklch(0 0 0); }
+:root[data-look='depth'][data-theme='light'] { background: oklch(1 0 0); }
+:root[data-look='depth']::view-transition-group(depth-scene) { mix-blend-mode: lighten; }
+:root[data-look='depth'][data-theme='light']::view-transition-group(depth-scene) { mix-blend-mode: darken; }
+:root[data-look='depth']::view-transition-old(root) { animation: depth-pass 0.55s cubic-bezier(0.5, 0, 0.75, 0) both; }
+:root[data-look='depth']::view-transition-new(root) { animation: depth-arrive 0.8s var(--ease) 0.1s both; }
+:root[data-look='depth']::view-transition-old(hero) { animation: depth-tumble-out 0.35s ease-in both; }
+:root[data-look='depth']::view-transition-new(hero) { animation: depth-tumble-in 0.45s var(--ease) 0.3s both; }
+@keyframes depth-pass { to { opacity: 0; filter: blur(6px); transform: perspective(60rem) translateZ(20rem) rotateX(-8deg); } }
+@keyframes depth-arrive { from { opacity: 0; transform: perspective(60rem) translateZ(-45rem) rotateX(14deg); } }
+@keyframes depth-tumble-out { to { opacity: 0; transform: perspective(40rem) rotateX(85deg); } }
+@keyframes depth-tumble-in { from { opacity: 0; transform: perspective(40rem) rotateX(-85deg); } }
+@media (prefers-reduced-motion: reduce) {
+  :root[data-look='depth']::view-transition-old(*), :root[data-look='depth']::view-transition-new(*) { animation: none !important; }
+}

@@ -6,7 +6,10 @@ import { join } from './fs.js'
 import { parseFrontMatter, stringifyFrontMatter } from './settings.js'
 
 /** @typedef {import('./types.js').FS} FS */
-/** @typedef {{ name: string, description: string, title: string, body: string, path: string }} Skill  title: the first heading, in the user's language */
+/**
+ * @typedef {{ name: string, description: string, title: string, body: string, path: string, source?: string }} Skill
+ *   title: the first heading, in the user's language; source: where a skill from elsewhere came from (D121)
+ */
 
 /** The standard's names: lower-case letters, digits and single hyphens, up to 64 characters. */
 const NAME = /^(?=.{1,64}$)[a-z0-9]+(-[a-z0-9]+)*$/
@@ -17,7 +20,8 @@ export function parseSkill(text, path) {
   const name = String(data.name ?? '')
   const description = typeof data.description === 'string' ? data.description.trim() : ''
   if (!NAME.test(name) || !description) return null
-  return { name, description, title: /^#\s+(.+)$/m.exec(body)?.[1].trim() ?? name.replace(/-/g, ' '), body: body.trim(), path }
+  const source = typeof data.metadata?.source === 'string' ? data.metadata.source : undefined
+  return { name, description, title: /^#\s+(.+)$/m.exec(body)?.[1].trim() ?? name.replace(/-/g, ' '), body: body.trim(), path, ...(source && { source }) }
 }
 
 /** Every skill in these folders' skills/, by name. @param {FS} fs @param {string[]} dirs @returns {Promise<Skill[]>} */
@@ -38,14 +42,15 @@ export async function listSkills(fs, dirs) {
 export const skillLines = (skills) => skills.map((skill) => `- ${skill.name}: ${skill.description}`).join('\n')
 
 /**
- * Writes skills/<name>/SKILL.md in a folder ('' for the global ones).
+ * Writes skills/<name>/SKILL.md in a folder ('' for the global ones). A skill from elsewhere keeps
+ * where it came from and the digest it was checked against (D121).
  * @param {FS} fs @param {string} dir
- * @param {{ name: string, description: string, body: string, by: string, now?: Date }} skill
+ * @param {{ name: string, description: string, body: string, by: string, now?: Date, source?: string, digest?: string }} skill
  */
-export async function saveSkill(fs, dir, { name, description, body, by, now = new Date() }) {
+export async function saveSkill(fs, dir, { name, description, body, by, now = new Date(), source, digest }) {
   if (!NAME.test(name)) throw new Error(`"${name}" is not a valid name: use lower-case letters, digits and hyphens.`)
   const path = join(dir, 'skills', name, 'SKILL.md')
-  const about = { format: '1', author: by, created: now.toISOString() }
+  const about = { format: '1', author: by, created: now.toISOString(), ...(source && { source }), ...(digest && { digest }) }
   await fs.write(path, stringifyFrontMatter({ name, description: description.replace(/\s+/g, ' ').trim().slice(0, 1024), metadata: about }, `${body.trim()}\n`))
   return path
 }

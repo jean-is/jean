@@ -1,0 +1,72 @@
+/* Blueprint: an architect's drawing. White lines on Prussian blue over a squared grid, condensed
+   capitals for the headings, a title block for the conversation's name, and a yellow pencil; by
+   day, a whiteprint, blue lines on white with a red pencil (D120). Over ui/style.css, which
+   comes after it, so every rule here starts with :root[data-look='blueprint']. */
+
+:root[data-look='blueprint'] {
+  --room: oklch(0.36 0.11 256);
+  --room-2: oklch(0.4 0.11 256);
+  --ink: oklch(0.98 0.01 240);
+  --ink-soft: oklch(0.92 0.03 240);
+  --ink-faint: oklch(0.86 0.04 240);
+  --line: oklch(0.98 0.01 240 / 0.22);
+  --line-strong: oklch(0.98 0.01 240 / 0.55);
+  --glass: oklch(0.36 0.11 256 / 0.94);
+  --flame: oklch(0.92 0.14 98);
+  --flame-deep: oklch(0.86 0.15 90);
+  --on-flame: oklch(0.3 0.1 256);
+  --ember-off: oklch(0.98 0.01 240 / 0.3);
+  --danger: oklch(0.84 0.11 30);
+  --glow: var(--room);
+  --grid: oklch(0.98 0.01 240 / 0.07);
+  --grid-strong: oklch(0.98 0.01 240 / 0.17);
+  --display: 'DIN Condensed', 'Bahnschrift Condensed', 'Avenir Next Condensed', 'Roboto Condensed', 'Arial Narrow', system-ui, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  --radius: 0;
+}
+:root[data-look='blueprint'][data-theme='light'] {
+  --room: oklch(0.975 0.008 240);
+  --room-2: oklch(0.995 0.004 240);
+  --ink: oklch(0.32 0.11 258);
+  --ink-soft: oklch(0.42 0.1 258);
+  --ink-faint: oklch(0.5 0.09 258);
+  --line: oklch(0.32 0.11 258 / 0.18);
+  --line-strong: oklch(0.32 0.11 258 / 0.5);
+  --glass: oklch(0.995 0.004 240 / 0.94);
+  --flame: oklch(0.53 0.19 28);
+  --flame-deep: oklch(0.48 0.18 28);
+  --on-flame: oklch(0.99 0.004 240);
+  --ember-off: oklch(0.32 0.11 258 / 0.22);
+  --danger: oklch(0.53 0.19 28);
+  --grid: oklch(0.5 0.1 250 / 0.08);
+  --grid-strong: oklch(0.5 0.1 250 / 0.18);
+}
+
+/* The sheet: a fine grid every centimetre-ish, a bold one every five, scrolling with the page. */
+:root[data-look='blueprint'] {
+  background-image:
+    linear-gradient(var(--grid-strong) 1px, transparent 1px), linear-gradient(90deg, var(--grid-strong) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 5rem 5rem, 5rem 5rem, 1rem 1rem, 1rem 1rem;
+}
+/* The print, darker at its edges. */
+:root[data-look='blueprint'] .room { background: radial-gradient(120% 90% at 50% 40%, transparent 50%, oklch(0.22 0.1 256 / 0.45)); animation: none; }
+:root[data-look='blueprint'][data-theme='light'] .room { display: none; }
+:root[data-look='blueprint'] app-persona::before { display: none; }
+:root[data-look='blueprint'] .bar { background: var(--room); border-block-end: 1px solid var(--line-strong); }
+:root[data-look='blueprint'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; font-weight: 700; text-transform: uppercase; }
+:root[data-look='blueprint']:not(:lang(ar), :lang(fa), :lang(ur)) :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .starter, .follow-up, .button) { letter-spacing: 0.04em; }
+:root[data-look='blueprint'] :is(.wordmark, .wordmark:hover) { font-size: 1.5rem; text-shadow: none; }
+:root[data-look='blueprint'] .hero-question { font-size: clamp(2.6rem, 8vw, 5.2rem); line-height: 1; background: none; color: var(--ink); }
+/* The conversation's name in a title block. */
+:root[data-look='blueprint'] .conversation-title { inline-size: fit-content; max-inline-size: 100%; padding: 0.45rem 0.8rem 0.3rem; border: 2px solid var(--ink-soft); font-size: 1.5rem; color: var(--ink); }
+:root[data-look='blueprint'] :is(.starter, .follow-up, .button) { font-family: var(--display); font-size: 1.05rem; text-transform: uppercase; }
+:root[data-look='blueprint'] .starter, :root[data-look='blueprint'] .follow-up { background: var(--room); color: var(--ink); }
+:root[data-look='blueprint'] .starter:hover, :root[data-look='blueprint'] .follow-up:hover { border-color: var(--flame); color: var(--ink); box-shadow: none; }
+:root[data-look='blueprint'] .msg-user { border: 1px dashed var(--ink-soft); background: var(--room); }
+:root[data-look='blueprint'] .composer { border-width: 2px; border-color: var(--ink-soft); background: var(--room); backdrop-filter: none; box-shadow: none; }
+:root[data-look='blueprint'] .composer:focus-within { border-color: var(--flame); box-shadow: none; }
+:root[data-look='blueprint'] :is(.send, .caret, .button.primary) { box-shadow: none; }
+:root[data-look='blueprint'] .prose pre { border-style: dashed; background: oklch(0 0 0 / 0.12); }
+:root[data-look='blueprint'] .prose :is(h3, h4, h5) { font-family: var(--display); font-size: 1.2rem; text-transform: uppercase; }
+:root[data-look='blueprint'] dialog { border-width: 2px; box-shadow: none; }
+:root[data-look='blueprint'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .menu button, .segmented, .segmented span, .send, .icon-button, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .room-card, .service, .sheet, .settings-nav button, .sidebar-settings, .history-list li, .projects li, .prose pre, .prose .table, .status, input, select, textarea, .composer, .msg-user, .prose code, .monogram, .skills details, .noticed li) { border-radius: 0; }

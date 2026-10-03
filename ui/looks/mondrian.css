@@ -1,0 +1,90 @@
+/* Mondrian: De Stijl. Thick black lines, white planes and the three primaries: the page is one
+   white plane framed in the grid, what the user asked fills a coloured one, and a composition
+   fills the margins on a wide screen; by night, the lines turn white on black (D120). Over
+   ui/style.css, which comes after it, so every rule here starts with :root[data-look='mondrian']. */
+
+:root[data-look='mondrian'] {
+  --room: oklch(0.17 0.004 95);
+  --room-2: oklch(0.22 0.004 95);
+  --ink: oklch(0.97 0.004 95);
+  --ink-soft: oklch(0.84 0.004 95);
+  --ink-faint: oklch(0.75 0.004 95);
+  --line: oklch(0.97 0.004 95 / 0.18);
+  --line-strong: oklch(0.97 0.004 95 / 0.5);
+  --glass: oklch(0.17 0.004 95 / 0.96);
+  --flame: oklch(0.68 0.2 28);
+  --flame-deep: oklch(0.62 0.21 28);
+  --on-flame: oklch(0.15 0 0);
+  --ember-off: oklch(0.97 0.004 95 / 0.25);
+  --glow: var(--room);
+  --red: oklch(0.55 0.21 28);
+  --blue: oklch(0.47 0.15 258);
+  --yellow: oklch(0.88 0.16 95);
+  --on-colour: oklch(1 0 0);
+  --on-yellow: oklch(0.15 0 0);
+  --rule: var(--ink);
+  --stroke: 0.4rem;
+  --display: Futura, 'Avenir Next', 'Century Gothic', 'Trebuchet MS', system-ui, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  --radius: 0;
+  --column: min(100% - 2.5rem, 48rem);
+}
+:root[data-look='mondrian'][data-theme='light'] {
+  --room: oklch(0.985 0.005 95);
+  --room-2: oklch(1 0 0);
+  --ink: oklch(0.16 0 0);
+  --ink-soft: oklch(0.34 0 0);
+  --ink-faint: oklch(0.45 0 0);
+  --line: oklch(0.16 0 0 / 0.16);
+  --line-strong: oklch(0.16 0 0 / 0.55);
+  --glass: oklch(1 0 0 / 0.96);
+  --flame: oklch(0.55 0.21 28);
+  --flame-deep: oklch(0.5 0.2 28);
+  --on-flame: oklch(1 0 0);
+  --ember-off: oklch(0.16 0 0 / 0.22);
+}
+
+:root[data-look='mondrian'] .room { display: none; }
+:root[data-look='mondrian'] app-persona::before { display: none; }
+/* The grid: a line under the header, two down the sides of the page. */
+:root[data-look='mondrian'] .bar { background: var(--room); border-block-end: var(--stroke) solid var(--rule); }
+:root[data-look='mondrian'] main { padding-inline: 1.5rem; border-inline: var(--stroke) solid var(--rule); background: var(--room-2); }
+:root[data-look='mondrian'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; font-weight: 800; }
+:root[data-look='mondrian'] :is(.wordmark, .wordmark:hover) { font-size: 1.5rem; text-shadow: none; }
+:root[data-look='mondrian'] .hero-question { font-size: clamp(2.5rem, 7.5vw, 5rem); line-height: 1.02; background: none; color: var(--ink); }
+:root[data-look='mondrian'] .conversation-title { color: var(--ink); }
+:root[data-look='mondrian']:not(:lang(ar), :lang(fa), :lang(ur)) :is(.hero-question, .conversation-title) { letter-spacing: -0.02em; }
+/* What the user asked: a plane of colour, yellow, blue, red in turn. */
+:root[data-look='mondrian'] .msg-user { border: calc(var(--stroke) * 0.75) solid var(--rule); background: var(--yellow); color: var(--on-yellow); }
+:root[data-look='mondrian'] .turn:nth-child(3n + 2) .msg-user { background: var(--blue); color: var(--on-colour); }
+:root[data-look='mondrian'] .turn:nth-child(3n) .msg-user { background: var(--red); color: var(--on-colour); }
+:root[data-look='mondrian'] :is(.starter, .follow-up) { border: calc(var(--stroke) * 0.6) solid var(--rule); background: var(--room-2); color: var(--ink); }
+:root[data-look='mondrian'] :is(.starter, .follow-up):hover { background: var(--yellow); color: var(--on-yellow); box-shadow: none; }
+:root[data-look='mondrian'] li:nth-child(3n + 2) > :is(.starter, .follow-up):hover { background: var(--blue); color: var(--on-colour); }
+:root[data-look='mondrian'] li:nth-child(3n) > :is(.starter, .follow-up):hover { background: var(--red); color: var(--on-colour); }
+:root[data-look='mondrian'] app-composer { background: linear-gradient(transparent, var(--room-2) 45%) 50% 0 / var(--column) 100% no-repeat; }
+:root[data-look='mondrian'] .composer { border: var(--stroke) solid var(--rule); background: var(--room-2); backdrop-filter: none; box-shadow: none; }
+:root[data-look='mondrian'] .composer:focus-within { border-color: var(--rule); box-shadow: 0 0 0 var(--stroke) var(--yellow); }
+:root[data-look='mondrian'] :is(.send, .caret, .button.primary) { box-shadow: none; }
+:root[data-look='mondrian'] .settings-nav [aria-current='page'] { background: var(--yellow); color: var(--on-yellow); }
+:root[data-look='mondrian'] dialog { border: var(--stroke) solid var(--rule); box-shadow: none; }
+:root[data-look='mondrian'] .prose blockquote { border-inline-start: var(--stroke) solid var(--blue); }
+:root[data-look='mondrian'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .menu button, .segmented, .segmented span, .send, .icon-button, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .room-card, .service, .sheet, .settings-nav button, .sidebar-settings, .history-list li, .projects li, .prose pre, .prose .table, .status, input, select, textarea, .composer, .msg-user, .prose code, .monogram, .skills details, .noticed li) { border-radius: 0; }
+/* A composition in the margins, where there is room for one. */
+@media (min-width: 64rem) {
+  :root[data-look='mondrian'] .room {
+    display: block;
+    background:
+      linear-gradient(var(--rule) 0 0) 9vw 0 / var(--stroke) 100% no-repeat,
+      linear-gradient(var(--rule) 0 0) 0 34vh / 9vw var(--stroke) no-repeat,
+      linear-gradient(var(--rule) 0 0) 0 78vh / 9vw var(--stroke) no-repeat,
+      linear-gradient(var(--rule) 0 0) 4vw 34vh / var(--stroke) 44vh no-repeat,
+      linear-gradient(var(--rule) 0 0) 91vw 0 / var(--stroke) 100% no-repeat,
+      linear-gradient(var(--rule) 0 0) 91vw 22vh / 9vw var(--stroke) no-repeat,
+      linear-gradient(var(--rule) 0 0) 91vw 64vh / 9vw var(--stroke) no-repeat,
+      linear-gradient(var(--red) 0 0) 0 0 / 9vw 34vh no-repeat,
+      linear-gradient(var(--yellow) 0 0) 0 78vh / 4vw 22vh no-repeat,
+      linear-gradient(var(--blue) 0 0) 91vw 64vh / 9vw 36vh no-repeat,
+      linear-gradient(var(--yellow) 0 0) 91vw 0 / 9vw 22vh no-repeat;
+    animation: none;
+  }
+}

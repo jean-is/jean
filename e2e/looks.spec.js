@@ -1,8 +1,10 @@
-// Looks (D111): Mail keeps the conversations in view, in one sidebar with the name at its top and
+// Looks (D111, D120): each one in Settings' gallery, with its thumbnail, dresses the page when
+// picked. Mail keeps the conversations in view, in one sidebar with the name at its top and
 // Settings at its foot (D115), and is back before the first paint; the user's own CSS shows as it
 // is typed; right to left, the sidebar changes sides.
 import { test, expect } from '@playwright/test'
 import { start, openSettings } from './helpers.js'
+import { LOOKS } from '../ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
 
@@ -37,4 +39,19 @@ test('right to left, Mail’s sidebar sits on the right, the name at its top', a
   expect(list?.x).toBeGreaterThan(640)
   expect(top?.x).toBe(list?.x)
   expect(top?.y).toBeLessThan(list?.y ?? 0)
+})
+
+test('every theme is in the gallery with its thumbnail, and dresses the page when picked', async ({ page }) => {
+  await start(page)
+  const settings = await openSettings(page, 'Appearance')
+  await expect(settings.locator('.look')).toHaveCount(Object.keys(LOOKS).length)
+  for (const id of Object.keys(LOOKS).reverse()) {
+    const card = settings.locator('.look', { has: page.locator(`[data-look-preview='${id}']`) })
+    expect((await card.locator('.look-preview').boundingBox())?.height).toBeGreaterThan(40)
+    await card.click()
+    if (id === 'room') await expect(page.locator('html')).not.toHaveAttribute('data-look')
+    else await expect(page.locator('html')).toHaveAttribute('data-look', id)
+    await expect(card.locator('input')).toBeChecked()
+  }
+  await expect.poll(() => savedLook(page)).toMatchObject({ id: 'room' })
 })

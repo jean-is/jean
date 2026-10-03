@@ -2,8 +2,8 @@
 // sections of the frozen prompt that change through system notes (D46).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS, writeJSON } from '../core/fs.js'
-import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, ensureHome, slug, loadSettings, renamed } from '../core/settings.js'
+import { memoryFS } from '../core/fs.js'
+import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, ensureHome, slug } from '../core/settings.js'
 import { parseMemory, stringifyMemory, memoryText } from '../core/memory.js'
 import { parseSkill, listSkills, saveSkill, skillLines } from '../core/skills.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
@@ -93,19 +93,6 @@ test('skills are SKILL.md folders: name and description up front, steps read whe
   assert.deepEqual(skills.map((s) => [s.name, s.description, s.path]), [['weekly-sales', 'The bakery’s version.', 'projects/p/skills/weekly-sales/SKILL.md']])
   assert.equal(skills[0].title, 'weekly sales', 'without a heading, the name')
   assert.equal(skillLines(skills), '- weekly-sales: The bakery’s version.')
-})
-
-test('skills were routines: settings and policy that name them so are read with the new names (D115)', async () => {
-  const fs = memoryFS()
-  await writeJSON(fs, 'settings.json', { format: 1, unlocked: ['files', 'routines', 'memory'], offers: { routines: '2026-10-02T10:00:00.000Z', backup: '2026-10-01T09:00:00.000Z' } })
-  const settings = await loadSettings(fs)
-  assert.deepEqual(settings.unlocked, ['files', 'skills', 'memory'])
-  assert.deepEqual(settings.offers, { skills: '2026-10-02T10:00:00.000Z', backup: '2026-10-01T09:00:00.000Z' })
-  assert.deepEqual((await loadSettings(memoryFS())).unlocked, [], 'no settings yet: the defaults')
-  // Policy lists capabilities by id, and older conversations name the tools they were given.
-  assert.deepEqual(['python', 'routines'].map(renamed), ['python', 'skills'])
-  assert.deepEqual(['routine', 'save_routine', 'read'].map(renamed), ['skill', 'save_skill', 'read'])
-  assert.equal(renamed('toString'), 'toString', 'only names that changed')
 })
 
 test('the prompt holds project, instructions, memory and skills, frozen; changes come as notes', () => {

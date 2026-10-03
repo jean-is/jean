@@ -21,6 +21,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   memory: () => import('../caps/memory/memory.js'),
   projects: () => import('../caps/projects/projects.js'),
   skills: () => import('../caps/skills/skills.js'),
+  routines: () => import('../caps/routines/routines.js'),
   python: () => import('../caps/python/python.js'),
   made: () => import('../caps/made/made.js'),
   backup: () => import('../caps/backup/backup.js'),

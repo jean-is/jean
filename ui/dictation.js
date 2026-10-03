@@ -13,6 +13,10 @@ const possible = typeof speech?.available === 'function' || (typeof WebAssembly 
 
 export const dictation = signal(/** @type {Dictation} */ ({ state: possible ? 'idle' : 'unavailable' }))
 
+/** @typedef {'off' | 'preparing' | 'listening' | 'thinking' | 'speaking'} Live */
+// Live conversation's state (caps/live/live.js), here so the box shows it in its own button and words.
+export const live = signal(/** @type {Live} */ ('off'))
+
 export async function toggleDictation() {
   if (dictation.value.state === 'unavailable' || !(await unlock('voice'))) return
   const voice = await import('../caps/voice/voice.js')

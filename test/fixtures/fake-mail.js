@@ -8,8 +8,11 @@
 //                  knows the client `jean-test`, registered for any address (D95)
 //   /legacy/mcp    MCP 2025-11-25: initialize, then a session (Mcp-Session-Id)
 //   /wiki/{lang}/w/api.php   a few pages in the shape of Wikipedia's search API
+//   /.well-known/agent-skills/index.json   a skills discovery index (D121): a SKILL.md, an archive
+//                  with a file beside its steps, one whose digest is wrong, and one holding a script
 import { createServer } from 'node:http'
 import { createHash, randomUUID } from 'node:crypto'
+import { gzipSync } from 'node:zlib'
 import { pathToFileURL } from 'node:url'
 
 const EMAILS = [
@@ -46,6 +49,37 @@ function call(name, args = {}) {
 
 const b64url = (/** @type {Buffer} */ bytes) => bytes.toString('base64url')
 
+// ─── Skills from elsewhere ───
+
+/** A tar.gz of these files. @param {Record<string, string>} files */
+function targz(files) {
+  const blocks = Object.entries(files).flatMap(([path, text]) => {
+    const head = Buffer.alloc(512)
+    head.write(path, 0)
+    head.write(`${Buffer.byteLength(text).toString(8).padStart(11, '0')}\0`, 124)
+    head.write('0', 156)
+    head.write('ustar\x0000', 257)
+    const body = Buffer.alloc(Math.ceil(Buffer.byteLength(text) / 512) * 512)
+    body.write(text)
+    return [head, body]
+  })
+  return gzipSync(Buffer.concat([...blocks, Buffer.alloc(1024)]))
+}
+
+const skillFile = (/** @type {string} */ name, /** @type {string} */ description, /** @type {string} */ steps) => `---\nname: ${name}\ndescription: ${description}\n---\n${steps}\n`
+const SKILLS = {
+  'weekly-sales-report': { type: 'skill-md', description: 'Summarize the weekly sales by region from a spreadsheet, with totals.', bytes: Buffer.from(skillFile('weekly-sales-report', 'Summarize the weekly sales by region.', '# Weekly sales report\n\n1. Read the spreadsheet.\n2. Total the sales by region.\n3. Say which region grew most.')) },
+  'meeting-notes': { type: 'archive', description: 'Turn meeting notes into decisions and action items, each with an owner.', bytes: targz({ 'SKILL.md': skillFile('meeting-notes', 'Meeting notes.', '# Meeting notes\n\n1. List the decisions.\n2. List the action items, each with an owner.\n3. Use references/template.md.'), 'references/template.md': '## Decisions\n\n## Action items\n' }) },
+  'invoice-check': { type: 'skill-md', description: 'Check an invoice against the purchase order.', bytes: Buffer.from(skillFile('invoice-check', 'Invoices.', '# Invoice check')), wrong: true },
+  'pdf-forms': { type: 'archive', description: 'Fill in PDF forms.', bytes: targz({ 'SKILL.md': skillFile('pdf-forms', 'PDF forms.', '# PDF forms\n\nRun scripts/fill.py.'), 'scripts/fill.py': 'print("filled")\n' }) },
+}
+const sha = (/** @type {Buffer} */ bytes) => `sha256:${createHash('sha256').update(bytes).digest('hex')}`
+const INDEX = { $schema: 'https://schemas.agentskills.io/discovery/0.2.0/schema.json', skills: Object.entries(SKILLS).map(([name, skill]) => ({
+  name, type: skill.type, description: skill.description,
+  url: skill.type === 'archive' ? `/.well-known/agent-skills/${name}.tar.gz` : `/.well-known/agent-skills/${name}/SKILL.md`,
+  digest: skill.wrong ? sha(Buffer.from('something else')) : sha(skill.bytes),
+})) }
+
 export function createFakeMail() {
   /** @type {Map<string, { redirect: string | null }>} null: any address */
   const clients = new Map([['jean-test', { redirect: null }]])
@@ -69,6 +103,11 @@ export function createFakeMail() {
     for await (const chunk of req) body += chunk
     const json = (/** @type {number} */ status, /** @type {any} */ value, headers = {}) => res.writeHead(status, { 'content-type': 'application/json', ...headers }).end(JSON.stringify(value))
     log.push(`${req.method} ${url.pathname} ${req.headers['mcp-method'] ?? ''} ${req.headers['mcp-param-email'] ?? ''}`.trim())
+
+    // ─── Skills from elsewhere ───
+    if (url.pathname === '/.well-known/agent-skills/index.json') return json(200, INDEX)
+    const skill = /^\/\.well-known\/agent-skills\/([a-z-]+)(?:\/SKILL\.md|\.tar\.gz)$/.exec(url.pathname)
+    if (skill && Object.hasOwn(SKILLS, skill[1])) return res.writeHead(200, { 'content-type': url.pathname.endsWith('.gz') ? 'application/gzip' : 'text/markdown' }).end(SKILLS[/** @type {keyof typeof SKILLS} */ (skill[1])].bytes)
 
     // ─── Signing in ───
     const fixed = url.pathname.endsWith('/fixed') || url.pathname.endsWith('/fixed/mcp')

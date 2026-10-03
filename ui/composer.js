@@ -1,28 +1,35 @@
-// The box. Enter sends (never while an IME is composing), Shift+Enter adds a line.
-// Files can be picked, pasted or dropped anywhere on the page, and a screen captured;
-// dictation writes into it.
+// The box. Enter sends (never while an IME is composing), Shift+Enter adds a line. Under it (D123):
+// + (files, a capture of the screen) and dictation; then the brain, and one button to go.
 import { html, nothing } from 'lit-html'
-import { live } from 'lit-html/directives/live.js'
+import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify } from './state.js'
 import { unlock, isDenied, loaded } from './caps.js'
 import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
-import { dictation, toggleDictation } from './dictation.js'
+import { dictation, toggleDictation, live } from './dictation.js'
+
+const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening', thinking: 'activity.thinking', speaking: 'live.speaking' }
 
 class Composer extends Element {
   render() {
     const busy = app.busy.value
     const brain = activeBrain.value
+    const { auto } = effective.value.settings
     const attachments = app.attachments.value
     const empty = !app.draft.value.trim() && !attachments.some((item) => item.status === 'ready')
     const voice = dictation.value
     const listening = voice.state === 'listening'
     const working = voice.state === 'preparing' || voice.state === 'transcribing'
     const downloading = voice.progress !== undefined && voice.progress < 1
-    const placeholder = listening ? t('dictation.listening')
+    const hands = live.value
+    // What the voice is doing is said in the box, not beside it.
+    const status = hands !== 'off' ? t(LIVE[hands])
+      : listening ? t('dictation.listening')
       : working ? (downloading ? t('dictation.downloading', { percent: Math.round((voice.progress ?? 0) * 100) }) : t(`dictation.${voice.state}`))
-      : t('composer.placeholder')
+      : ''
+    const files = !isDenied('files')
+    const add = t(CAPTURE ? 'composer.add' : 'files.attach')
     return html`
       <form class="composer" @submit=${this.#submit}>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
@@ -37,32 +44,31 @@ class Composer extends Element {
           </li>`)}</ul>` : nothing}
         <label class="visually-hidden" for="prompt">${t('composer.label')}</label>
         <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send"
-          placeholder=${placeholder}
-          .value=${live(app.draft.value)}
+          placeholder=${status || t('composer.placeholder')}
+          .value=${current(app.draft.value)}
           @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}
           @focus=${() => !busy && setPresence('listening')}
           @blur=${() => app.presence.value === 'listening' && setPresence('idle')}></textarea>
+        <span class="visually-hidden" role="status">${status}</span>
         <div class="composer-row">
           <div class="composer-tools">
-            ${isDenied('files') ? nothing : html`<label class="icon-button" title=${t('files.attach')}>
-              ${icons.attach}<span class="visually-hidden">${t('files.attach')}</span>
-              <input type="file" multiple class="visually-hidden" aria-label=${t('files.attach')} @change=${this.#pick}>
-            </label>`}
-            ${isDenied('files') || !CAPTURE ? nothing : html`<button type="button" class="icon-button"
-              aria-label=${t('capture.start')} title=${t('capture.start')} @click=${captureScreen}>${icons.capture}</button>`}
-            ${dictation.value.state === 'unavailable' ? nothing : html`<button type="button"
+            ${files ? html`<button type="button" class="icon-button add" aria-label=${add} title=${add}
+              popovertarget=${CAPTURE ? 'add-menu' : nothing} @click=${CAPTURE ? undefined : this.#files}>${icons.plus}</button>` : nothing}
+            ${files && CAPTURE ? html`<div id="add-menu" class="menu" popover>
+              <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button>
+              <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>
+            </div>` : nothing}
+            ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
               aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')} title=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
-            ${loaded.value.has('live') ? html`<app-live></app-live>` : nothing}
-            <button type="button" class="brain-chip" aria-haspopup="dialog" @click=${openPicker}>
-              ${brain?.api === 'device' && !effective.value.settings.auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
-            </button>
           </div>
-          ${busy
-            ? html`<button type="button" class="send is-stop" @click=${stop} aria-label=${t('action.stop')} title=${t('action.stop')}>${icons.stop}</button>`
-            : html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')} title=${t('action.send')}>${icons.send}</button>`}
+          <button type="button" class="brain-chip" aria-haspopup="dialog" @click=${openPicker}>
+            ${brain?.api === 'device' && !auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
+          </button>
+          ${primary(busy, empty, hands)}
         </div>
+        ${files ? html`<input type="file" multiple class="visually-hidden" tabindex="-1" aria-hidden="true" @change=${this.#pick}>` : nothing}
       </form>`
   }
 
@@ -109,6 +115,8 @@ class Composer extends Element {
     attachFiles(files)
   }
 
+  #files = () => /** @type {HTMLInputElement | null} */ (this.querySelector('input[type="file"]'))?.click()
+
   /** @param {Event} event */
   #pick = (event) => {
     const input = /** @type {HTMLInputElement} */ (event.target)
@@ -123,8 +131,21 @@ class Composer extends Element {
   }
 }
 
+/**
+ * Stop, send, or, while the box is empty, start and end a live conversation (D123).
+ * @param {boolean} busy @param {boolean} empty @param {import('./dictation.js').Live} hands
+ */
+function primary(busy, empty, hands) {
+  const on = hands !== 'off'
+  if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-label=${t('action.stop')} title=${t('action.stop')}>${icons.stop}</button>`
+  if (empty ? on || loaded.value.has('live') : on && busy) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
+    aria-label=${t(on ? 'live.stop' : 'live.start')} title=${t(on ? 'live.stop' : 'live.start')}
+    @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`
+  return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')} title=${t('action.send')}>${icons.send}</button>`
+}
+
 const LONG_PASTE = 2000
-/** Whether this browser can share a screen (not phones). */
+/** Whether this browser can share a screen (not phones, where + only adds files). */
 const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
 /** The brain picker, or choosing a first brain. */

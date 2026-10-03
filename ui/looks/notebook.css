@@ -1,0 +1,82 @@
+/* Notebook: school. Squared paper, a red margin, a blue pen, handwriting and sticky notes by day;
+   a blackboard and chalk by night (D120). Over ui/style.css, which comes after it, so every rule
+   here starts with :root[data-look='notebook']. */
+
+:root[data-look='notebook'] {
+  --room: oklch(0.29 0.035 160);
+  --room-2: oklch(0.33 0.035 160);
+  --ink: oklch(0.96 0.01 100);
+  --ink-soft: oklch(0.87 0.012 100);
+  --ink-faint: oklch(0.79 0.015 100);
+  --line: oklch(0.96 0.01 100 / 0.14);
+  --line-strong: oklch(0.96 0.01 100 / 0.34);
+  --glass: oklch(0.33 0.035 160 / 0.94);
+  --flame: oklch(0.89 0.13 95);
+  --flame-deep: oklch(0.82 0.14 85);
+  --on-flame: oklch(0.26 0.035 160);
+  --ember-off: oklch(0.96 0.01 100 / 0.25);
+  --danger: oklch(0.8 0.12 25);
+  --glow: var(--room);
+  --note: oklch(0.92 0.12 98);
+  --note-2: oklch(0.9 0.07 350);
+  --on-note: oklch(0.28 0.04 80);
+  --display: 'Chalkboard SE', 'Segoe Print', 'Ink Free', 'Bradley Hand', 'Comic Sans MS', 'Comic Neue', 'Hiragino Maru Gothic ProN', 'Noto Sans', 'Noto Sans Arabic', sans-serif;
+  --sans: ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', 'Arial Rounded MT Bold', system-ui, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', sans-serif;
+  --radius: 0.5rem;
+}
+:root[data-look='notebook'][data-theme='light'] {
+  --room: oklch(0.99 0.004 95);
+  --room-2: oklch(0.995 0.002 95);
+  --ink: oklch(0.33 0.12 262);
+  --ink-soft: oklch(0.42 0.09 262);
+  --ink-faint: oklch(0.5 0.06 262);
+  --line: oklch(0.6 0.08 240 / 0.24);
+  --line-strong: oklch(0.6 0.08 240 / 0.5);
+  --glass: oklch(0.995 0.002 95 / 0.94);
+  --flame: oklch(0.55 0.2 25);
+  --flame-deep: oklch(0.5 0.19 25);
+  --on-flame: oklch(0.99 0.004 95);
+  --ember-off: oklch(0.33 0.12 262 / 0.22);
+  --danger: oklch(0.5 0.19 25);
+  --grid: oklch(0.72 0.07 240 / 0.3);
+  --margin: oklch(0.62 0.18 20 / 0.6);
+  --display: 'Bradley Hand', 'Segoe Print', 'Ink Free', 'Chalkboard SE', 'Comic Sans MS', 'Comic Neue', 'Hiragino Maru Gothic ProN', 'Noto Sans', 'Noto Sans Arabic', sans-serif;
+}
+
+/* The board: chalk dust where it was wiped. */
+:root[data-look='notebook'] .room {
+  background:
+    radial-gradient(45% 30% at 22% 30%, oklch(1 0 0 / 0.05), transparent),
+    radial-gradient(40% 35% at 78% 62%, oklch(1 0 0 / 0.04), transparent),
+    radial-gradient(30% 20% at 55% 12%, oklch(1 0 0 / 0.03), transparent);
+  animation: none;
+}
+:root[data-look='notebook'] body { text-shadow: 0 0 1px oklch(from var(--ink) l c h / 0.5); }
+/* The page: squares that scroll with it, and a margin beside the writing. */
+:root[data-look='notebook'][data-theme='light'] {
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 1.25rem 1.25rem;
+}
+:root[data-look='notebook'][data-theme='light'] .room { display: none; }
+:root[data-look='notebook'][data-theme='light'] body { text-shadow: none; }
+:root[data-look='notebook'][data-theme='light'] main { padding-inline-start: 1rem; border-inline-start: 2px solid var(--margin); }
+
+:root[data-look='notebook'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; letter-spacing: 0; }
+:root[data-look='notebook'] :is(.wordmark, .wordmark:hover) { font-size: 1.7rem; text-shadow: none; }
+:root[data-look='notebook'] .hero-question { font-size: clamp(2.5rem, 7.5vw, 4.8rem); line-height: 1.12; background: none; color: var(--ink); }
+:root[data-look='notebook'] .conversation-title { color: var(--ink); }
+/* The title gone over with a highlighter. */
+:root[data-look='notebook'][data-theme='light'] .conversation-title { inline-size: fit-content; padding-inline: 0.2em; background: linear-gradient(transparent 55%, oklch(0.93 0.14 100 / 0.8) 55% 92%, transparent 92%); }
+/* What the user asked: a sticky note, a little askew. */
+:root[data-look='notebook'] .msg-user { padding: 0.85rem 1.1rem; border-radius: 0.15rem 0.15rem 1.2rem 0.15rem / 0.15rem 0.15rem 0.5rem 0.15rem; background: var(--note); color: var(--on-note); box-shadow: 0 0.7rem 0.9rem -0.6rem oklch(0 0 0 / 0.45); rotate: -0.8deg; text-shadow: none; }
+:root[data-look='notebook'] .turn:nth-child(even) .msg-user { background: var(--note-2); rotate: 0.9deg; }
+/* Buttons drawn by hand. */
+:root[data-look='notebook'] :is(.starter, .follow-up, .button, .brain-chip) { border-width: 2px; border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; }
+:root[data-look='notebook'] .starter, :root[data-look='notebook'] .follow-up { background: var(--room-2); color: var(--ink); }
+:root[data-look='notebook'] .starter:hover, :root[data-look='notebook'] .follow-up:hover { border-color: var(--flame); box-shadow: none; }
+:root[data-look='notebook'] .send { border-radius: 50% 45% 55% 50% / 50% 55% 45% 50%; box-shadow: none; }
+/* The box: a sheet held on by a strip of tape. */
+:root[data-look='notebook'] .composer { position: relative; border-radius: 0.3rem; background: var(--room-2); backdrop-filter: none; box-shadow: 0 0.8rem 1.5rem -1rem oklch(0 0 0 / 0.45); }
+:root[data-look='notebook'] .composer::before { content: ''; position: absolute; inset-block-start: -0.65rem; inset-inline: 0; inline-size: 5.5rem; block-size: 1.2rem; margin-inline: auto; background: oklch(0.95 0.035 95 / 0.62); rotate: -2deg; }
+:root[data-look='notebook'] .composer:focus-within { border-color: var(--flame); box-shadow: 0 0.8rem 1.5rem -1rem oklch(0 0 0 / 0.45); }
+:root[data-look='notebook'] .caret { box-shadow: none; }

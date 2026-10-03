@@ -1,0 +1,62 @@
+/* Minimal: nothing but the words. One grey scale and no accent colour, hairlines, no light, no
+   halo, no shadows; the little light stays small in the header and the first screen is the
+   question alone (D120). Over ui/style.css, which comes after it, so every rule here starts with
+   :root[data-look='minimal']. */
+
+:root[data-look='minimal'] {
+  --room: oklch(0.145 0 0);
+  --room-2: oklch(0.18 0 0);
+  --ink: oklch(0.93 0 0);
+  --ink-soft: oklch(0.74 0 0);
+  --ink-faint: oklch(0.64 0 0);
+  --line: oklch(0.93 0 0 / 0.1);
+  --line-strong: oklch(0.93 0 0 / 0.2);
+  --glass: oklch(0.145 0 0 / 0.96);
+  --flame: oklch(0.93 0 0);
+  --flame-deep: oklch(0.74 0 0);
+  --on-flame: oklch(0.145 0 0);
+  --ember-off: oklch(0.93 0 0 / 0.2);
+  --glow: var(--room);
+  --display: var(--sans);
+  --radius: 0.6rem;
+  --column: min(100% - 2.5rem, 38rem);
+}
+:root[data-look='minimal'][data-theme='light'] {
+  --room: oklch(0.995 0 0);
+  --room-2: oklch(0.97 0 0);
+  --ink: oklch(0.2 0 0);
+  --ink-soft: oklch(0.44 0 0);
+  --ink-faint: oklch(0.52 0 0);
+  --line: oklch(0.2 0 0 / 0.09);
+  --line-strong: oklch(0.2 0 0 / 0.18);
+  --glass: oklch(0.995 0 0 / 0.96);
+  --flame: oklch(0.2 0 0);
+  --flame-deep: oklch(0.44 0 0);
+  --on-flame: oklch(0.995 0 0);
+  --ember-off: oklch(0.2 0 0 / 0.18);
+}
+
+:root[data-look='minimal'] .room, :root[data-look='minimal'] app-persona::before, :root[data-look='minimal'] .welcome app-persona { display: none; }
+/* The little light keeps its place in the header, even on the first screen. */
+:root[data-look='minimal'] app-shell:has(.welcome) .wordmark app-persona { display: inline-block; }
+:root[data-look='minimal'] .wordmark app-persona { --persona-size: 1.4rem; margin-block-start: 0; }
+:root[data-look='minimal'] :is(.wordmark, .wordmark:hover) { font-size: 1rem; font-weight: 500; text-shadow: none; }
+:root[data-look='minimal'] :is(.hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; font-weight: 400; letter-spacing: 0; }
+:root[data-look='minimal'] .hero-question { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.25; background: none; color: var(--ink); }
+:root[data-look='minimal'] .welcome { gap: 1.5rem; }
+:root[data-look='minimal'] .conversation-title { font-size: 1.15rem; font-weight: 500; color: var(--ink); }
+:root[data-look='minimal'] .dialog-head h2 { font-size: 1.15rem; font-weight: 500; }
+:root[data-look='minimal'] .prose { line-height: 1.78; }
+/* Suggestions as plain words; what the user asked, in grey, without a bubble. */
+:root[data-look='minimal'] :is(.starter, .follow-up) { padding-inline: 0; border-color: transparent; background: none; color: var(--ink-soft); }
+:root[data-look='minimal'] .starters { gap: 0.4rem 1.5rem; }
+:root[data-look='minimal'] :is(.starter, .follow-up):hover { border-color: transparent; color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; box-shadow: none; }
+:root[data-look='minimal'] .follow-up .icon { color: var(--ink-faint); }
+:root[data-look='minimal'] .msg-user { padding: 0; background: none; color: var(--ink-soft); }
+:root[data-look='minimal'] .composer { border-color: var(--line-strong); background: var(--room); backdrop-filter: none; box-shadow: none; }
+:root[data-look='minimal'] .composer:focus-within { border-color: var(--ink-faint); box-shadow: none; }
+:root[data-look='minimal'] .brain-chip { border-color: transparent; }
+:root[data-look='minimal'] :is(.send, .caret, .button.primary, .ember) { box-shadow: none; }
+:root[data-look='minimal'] .icon { stroke-width: 1.4; }
+:root[data-look='minimal'] dialog { box-shadow: none; }
+:root[data-look='minimal'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .segmented, .toast, .notice, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .room-card, .service, .sheet, .prose pre, .prose .table, .status, input, select, textarea, .composer) { border-radius: var(--radius); }

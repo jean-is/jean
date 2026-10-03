@@ -1,4 +1,4 @@
-// Forty-two inline icons, 24×24, drawn with the current colour.
+// Forty-three inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -43,6 +43,7 @@ export const icons = {
   image: icon(svg`<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>`),
   helpers: icon(svg`<circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14.5 14.6a4.5 4.5 0 0 1 6 4.9"/>`),
   clock: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`),
+  calendar: icon(svg`<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>`),
   tag: icon(svg`<path d="M4 12.5V4.5h8l8 8-8 8Z"/><circle cx="8.5" cy="9" r="1.4"/>`, 'flip-rtl'),
   wave: icon(svg`<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>`),
   chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),

@@ -3,12 +3,20 @@
 // skill's name and when to use it; `skill` reads its steps when a request matches, and
 // `save_skill` writes one when the user asks for it, typically after "Save this as a skill",
 // suggested when the same kind of request comes up a third time (ui/discovery.js).
+// Skills from elsewhere (D121): the indexes in settings and policy are read on the device
+// (./sources.js); the third request of a kind looks there first, and `suggest_skill` lets the
+// brain look. Either way the user reads the steps and adds the skill (./ready.js), or not.
 // They were called routines until D115.
 import { register } from '../../ui/caps.js'
-import { app, notify } from '../../ui/state.js'
+import { app, effective, notify } from '../../ui/state.js'
+import { SAME_KIND } from '../../ui/discovery.js'
 import { listSkills, saveSkill, skillLines } from '../../core/skills.js'
 import { slug } from '../../core/settings.js'
+import { dirname, join, walk } from '../../core/fs.js'
 import { t } from '../../core/i18n.js'
+import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, unpack } from './sources.js'
+
+/** @typedef {import('./sources.js').Entry} Entry */
 
 /** Global skills, then the project's, which win a name. */
 const folders = () => (app.project.value.data.default === true ? [''] : ['', app.projectDir])
@@ -26,10 +34,19 @@ const skillTool = {
   kind: 'read',
   title: (args) => `Skill ${args?.name ?? ''}`,
   run: async (args) => {
+    // "name/references/forms.md" reads a file that came with a skill from elsewhere.
+    const [name, ...rest] = String(args?.name ?? '').trim().split('/')
     const all = await skills()
-    const skill = all.find((candidate) => candidate.name === String(args?.name ?? '').trim())
-    if (!skill) throw new Error(`There is no skill named "${args?.name}". Skills: ${all.map((candidate) => candidate.name).join(', ') || 'none'}.`)
-    return skill.body
+    const skill = all.find((candidate) => candidate.name === name)
+    if (!skill) throw new Error(`There is no skill named "${name}". Skills: ${all.map((candidate) => candidate.name).join(', ') || 'none'}.`)
+    const folder = dirname(skill.path)
+    if (rest.length) {
+      const text = rest.includes('..') ? null : await app.fs.read(join(folder, ...rest))
+      if (text === null) throw new Error(`The skill "${name}" has no file "${rest.join('/')}".`)
+      return text
+    }
+    const beside = (await walk(app.fs, folder)).map((path) => path.slice(folder.length + 1)).filter((path) => path !== 'SKILL.md')
+    return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
   },
 }
 
@@ -58,6 +75,77 @@ const saveTool = {
   },
 }
 
+// ─── Skills from elsewhere (D121) ────────────────────────────────────────────
+
+/** @param {readonly unknown[]} addresses @returns {string[]} the indexes’ addresses */
+const indexes = (addresses) => addresses.flatMap((address) => {
+  try {
+    return [indexURL(String(address))]
+  } catch {
+    return []
+  }
+})
+
+/** The organisation's sources of skills, which the user can't remove (D121). */
+export const locked = () => indexes(app.policy.skills?.sources ?? [])
+
+/**
+ * The indexes read: the organisation's, then the user's list (the hand-picked defaults until they
+ * change it). Policy can keep to its own (`skills.only`).
+ */
+export const sources = () => [...new Set([...locked(), ...app.policy.skills?.only ? [] : indexes(effective.peek().settings.sources ?? DEFAULT_SOURCES)])]
+
+/** What the sources offer, as last read (a day's cache in .cache/). @param {{ again?: boolean }} [options] */
+export const offered = (options) => readIndexes(app.fs, sources(), options)
+
+/** A skill from elsewhere suggested in a conversation, by the conversation's path, shown under its answers. @type {Map<string, Entry>} */
+export const suggested = new Map()
+
+/** The skill from elsewhere that fits a request, if one does and the user doesn't have it. @param {string} request */
+export async function lookFor(request) {
+  const have = (await skills()).map((skill) => skill.name)
+  return bestFit(request, (await offered()).flatMap((index) => index.skills), have, SAME_KIND)
+}
+
+/** Downloads a skill and checks it against its digest (SkillError when it can't be added). @param {Entry} entry */
+export async function download(entry) {
+  const response = await fetch(entry.url)
+  if (!response.ok) throw new Error(`The skill answered ${response.status}.`)
+  return unpack(entry, new Uint8Array(await response.arrayBuffer()))
+}
+
+/**
+ * Adds a skill from elsewhere as the user saw it: its steps and the text beside them, with where
+ * it came from and the digest it was checked against. Its suggestions go.
+ * @param {Entry} entry @param {{ body: string, files: { path: string, text: string }[] }} unpacked
+ */
+export async function adopt(entry, { body, files }) {
+  const dir = folders().at(-1) ?? ''
+  for (const file of files) await app.fs.write(join(dir, 'skills', entry.name, file.path), file.text)
+  await saveSkill(app.fs, dir, { name: entry.name, description: entry.description, body, by: app.deviceId, source: entry.url, digest: entry.digest })
+  for (const [path, other] of suggested) if (other.name === entry.name) suggested.delete(path)
+  app.actions.value = Object.fromEntries(Object.entries(app.actions.value).map(([at, ids]) => [at, ids.filter((id) => id !== 'ready')]))
+}
+
+/** @type {import('../../core/loop.js').Tool} */
+const suggestTool = {
+  spec: {
+    name: 'suggest_skill',
+    description: 'Look for a ready-made skill for a task among those the user’s sources publish, and suggest the one that fits to the user, who reads its steps and decides whether to add it. task: what to do, in a few words, in English and in the user’s language.',
+    parameters: { type: 'object', properties: { task: { type: 'string' } }, required: ['task'] },
+  },
+  kind: 'search',
+  deferred: true,
+  title: (args) => `Look for a skill: ${args?.task ?? ''}`,
+  run: async (args) => {
+    const path = app.current.peek()?.path
+    const found = path ? await lookFor(String(args?.task ?? '')) : null
+    if (!path || !found) return 'No ready-made skill fits that.'
+    suggested.set(path, found)
+    return `Found "${found.name}" on ${siteOf(found.url)}: ${found.description}\nA button under your answer lets the user read its steps and add it. It isn't added unless they do.`
+  },
+}
+
 // Conversations started before D115 declared `routine` and `save_routine`, and their tools are
 // frozen (D46): the same tools answer to those names, with the specs those conversations know.
 const aliases = [
@@ -67,7 +155,7 @@ const aliases = [
 
 register({
   id: 'skills',
-  tools: [skillTool, saveTool, ...aliases],
+  tools: [skillTool, saveTool, suggestTool, ...aliases],
   lines: [
     { name: 'skill', line: 'read the steps of a skill before following it' },
     { name: 'save_skill', line: 'save how a repeated task is done, when the user asks' },

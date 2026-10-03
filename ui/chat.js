@@ -90,9 +90,12 @@ function turnView(turn, live, files, upTo, last, sources) {
   const streaming = Boolean(live)
   const read = whatJeanRead(upTo, entries, files)
   const since = turn.notes.map((note) => note.data).find((data) => data.kind === 'since')
+  // A routine's request, sent by Jean on its schedule (D122).
+  const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
   return html`<li class="turn">
     ${since?.kind === 'since' ? html`<p class="since">${icons.clock}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
+    ${routine?.kind === 'routine' ? html`<p class="since">${icons.calendar}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></p>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
       <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${isPicture(link) ? icons.image : icons.file}<span dir="auto">${link.name}</span></button>
     </li>`)}</ul>` : nothing}
@@ -123,7 +126,7 @@ function followUps(at, suggestions, brain) {
   if (!suggestions.length && !actions.length && !smarter) return nothing
   return html`<ul class="follow-ups" aria-label=${t('suggest.title')}>
     ${suggestions.map((suggestion) => html`<li><button class="follow-up" dir="auto" @click=${() => send(suggestion)}>${suggestion}</button></li>`)}
-    ${actions.map((id) => html`<li><button class="follow-up" @click=${() => send(t(`suggest.${id}.prompt`))}>${t(`suggest.${id}`)}</button></li>`)}
+    ${actions.map((id) => html`<li><button class="follow-up" @click=${() => import('./discovery.js').then((module) => module.follow(id))}>${t(`suggest.${id}`)}</button></li>`)}
     ${smarter ? html`<li><button class="follow-up is-smarter" @click=${askSmarter}>${icons.spark}${t('auto.smarter')}</button></li>` : nothing}
   </ul>`
 }
@@ -332,7 +335,8 @@ function toolLabel(tool, files = []) {
   const path = tool.locations?.[0]?.path
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
-  // Older conversations name what has been renamed since (D115) by its old name.
+  // Older conversations name tools renamed since (D115) by their old names; an offer of `routines`
+  // made then reads as Routines, as it was called at the time (D122).
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${renamed(String(tool.rawInput?.capability))}.name`) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   if (tool.name === 'ask_user') return `${t('tool.ask_user')} · ${tool.rawInput?.question ?? ''}`

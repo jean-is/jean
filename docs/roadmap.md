@@ -12,7 +12,7 @@ Each version is deployed as soon as it is ready. The loud public launch happens 
 | **0.4** ✅ | Remember | Memory (switches itself on), the "What Jean knows about you" page, instructions, projects (each with its light colour, which tints the little light: `--tint`, D78), skills (`SKILL.md`, called routines until D115), `recall`. Python sandbox (after the Pyodide spike), with Pyodide copied in by `npm run dev`/`start`/`build` (D43). | Two projects keep separate memories, and a skill is created from repeated requests |
 | **0.5** ✅ | Reach | Connections (MCP), deferred and reachable from codemode by default. Web search (the brain's own search plus Wikipedia). `models.image` in codemode. Live voice conversation. | Jean summarises the user's latest emails through a connection, with citations |
 | **0.6** ✅ | Delegate | Helpers, decision inbox, "Since last time", assistant names, Double-check | A large task is split, approved step by step, and the result is verified against its sources |
-| Later | Learn and repeat | Skills from elsewhere: discovery indexes from settings and policy, compared with requests on the device, a skill added only by the user after seeing its steps (D116). Routines: tasks on a schedule, run while Jean is open or caught up at the next visit (D115) | — |
+| **0.7** ✅ | Learn and repeat | Skills from elsewhere: discovery indexes from settings and policy, compared with requests on the device, a skill added only by the user after seeing its steps (D116, D121). Routines: tasks on a schedule, run while Jean is open or caught up at the next visit (D115, D122) | A repeated request finds a ready-made skill, which the user adds after reading its steps; a routine asked for in a conversation runs on its own, and one that fell due while Jean was closed runs once at the next visit |
 | Later | Together | Sync (folder or drive), share (fragment links, Web Share), collaboration (an end-to-end-encrypted relay hosted on Jean's domain, self-hostable; Yjs for shared documents), enterprise policy hardening, OTel export, managed configuration | — |
 
 ## 0.2 status (2026-10-02)
@@ -121,6 +121,28 @@ Still to check by hand:
 Budgets at the end of the build: core 2,616 of 3,000 lines, app 10,914 of 15,000, first load 92.7 of 100 KB gzipped, CSS 9.9 of 12 KB, the largest catalogues 6.5 of 8 KB (Russian, Ukrainian and Telugu; their dialogs' part 3.0), base prompt 182 of 200 tokens.
 
 Added after 0.6: Jean hands back files (D119). `write` makes a Word document from Markdown, a spreadsheet from CSV or Markdown tables (typed cells, formulas that only compute, totals saved with their result), or a text file; `edit` changes one passage, as a new version. They come with Things Jean made, which now loads with the first message, and scripts reach them too. Files show under the answer and save with a click; a drawing shows as a picture. Checked by Jean's own reader under `node --test`, in Chromium and WebKit (a Word document from the first message, then changed; a spreadsheet written by a script), by eye in English, Arabic and Japanese, light and dark, and in macOS's Quick Look and its Word reader. 4 strings in all 33 languages, 2 of them new. Still to check by hand: the files in Word, Excel, Numbers, Google Docs and LibreOffice on Windows; whether real brains pick `write` for a document, and write Markdown and CSV the way the tool asks. Budgets: app 12,532 of 15,000 lines, first load 99.2 of 100 KB gzipped, CSS 11.1 of 12 KB, Things Jean made 14.4 of 40 KB (its writers load with the first file made).
+
+## 0.7 status (2026-10-03)
+
+Built: skills from elsewhere (D121). Jean reads Agent Skills discovery indexes (schema 0.2.0) from the organisation's policy and the user's list, keeps them a day in `.cache/`, and compares their descriptions with requests on the device. The third request of a kind looks there before offering to make a skill, and the brain can look with `suggest_skill`. A skill is added only by the user, from a preview that shows where it comes from and its steps, once its download matches its digest and holds only instructions (a `SKILL.md`, or a `.tar.gz` or `.zip` of text). "What Jean knows about you" lists the sources and what they offer. `npm run directory` checks the default sources from a browser's point of view; no public index for everyday work answers browsers yet, so the defaults are developers' (Cloudflare's documentation, Hugging Face, Neon). Routines (D122): requests Jean sends itself every day, working day, week or month, one Markdown file each, made by the brain's `schedule` and changed on "What Jean knows about you". They run while Jean is open, once it is free and nobody is reading, and one that fell due while it was closed runs once at the next visit. They are offered when requests of a kind come on three different days, at the time they were made. Settings are now format 2, so `routines` names the new capability (D115's mapping stays for older files). 37 new strings in all 33 languages.
+
+Checked end to end, with `npm run e2e` in Chromium and WebKit against the fake brain and a fake skills index (in `test/fixtures/fake-mail.js`):
+
+- A source added on the page: of its four skills, one whose download doesn't match its digest and one that holds a script can't be added; one made of instructions shows its steps and the file beside them, and is kept with its source and digest.
+- The third request of a kind offers "See a ready-made skill for this" instead of "Save this as a skill"; once added, the next conversation lists it in `<skills>`.
+- The done-when: "Every day at 08:00…" makes a routine; the page shows when it runs next and changes its day and time; due, it runs in a conversation of its own as soon as Jean is free, and a routine that fell due while Jean was closed runs at the next visit, once (Chromium only: WebKit runs here like a private window).
+- Requests of a kind on three different days offer a routine, made at the time they were made.
+- Under `node --test`: index addresses and parsing, digests, unpacking `.tar.gz` and `.zip` (links, paths that leave the folder and programs refused), the day's cache, matching a request with a description, schedules (working days where the weekend is elsewhere, the 31st of a short month, times missed making one run), routine files, and settings of format 1.
+- The page, the preview and a routine's run by eye, in English, Arabic (right to left) and Japanese.
+
+Still to check by hand:
+
+- [ ] An organisation's own index, with skills for office work, served with CORS
+- [ ] Real brains: do they call `schedule` with the right day and time ("every Monday morning"), and `suggest_skill` when a task could use one?
+- [ ] Routines over real days: a laptop that sleeps, a tab the browser freezes or discards (a hidden tab's timers can run a minute late; a discarded one catches up at the next visit), two tabs open at the time it falls due
+- [ ] Working days in Firefox, which has no week information in `Intl.Locale` yet (Saturday and Sunday are assumed)
+
+Budgets at the end of the build: core 2,841 of 3,000 lines, app 14,479 of 15,000 (with files of D119 and the looks of D120), first load 98.8 of 100 KB gzipped, CSS 8.8 of 12 KB, the largest catalogues 6.4 of 8 KB (Russian) and their dialogs' part 5.5 (Hindi and Marathi), base prompt 182 of 200 tokens. The first load has 1.2 KB left and the app 521 lines: the next version will need to make room first.
 
 ## Before the public launch (0.3)
 

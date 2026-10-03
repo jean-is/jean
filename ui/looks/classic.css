@@ -1,0 +1,99 @@
+/* Classic: a desktop computer of the Nineties. Grey windows with raised and sunken edges on a
+   teal desktop, blue title bars, a start button for the name, and what the user asked in a
+   tooltip's yellow; by night, the same in charcoal (D120). Over ui/style.css, which comes after
+   it, so every rule here starts with :root[data-look='classic']. */
+
+:root[data-look='classic'] {
+  --desktop: oklch(0.33 0.06 250);
+  --room: oklch(0.3 0.006 260);
+  --room-2: oklch(0.3 0.006 260);
+  --ink: oklch(0.97 0 0);
+  --ink-soft: oklch(0.86 0 0);
+  --ink-faint: oklch(0.79 0 0);
+  --line: oklch(0.97 0 0 / 0.12);
+  --line-strong: oklch(0.97 0 0 / 0.3);
+  --glass: var(--room);
+  --flame: oklch(0.8 0.11 245);
+  --flame-deep: oklch(0.42 0.14 262);
+  --on-flame: oklch(0.2 0.05 260);
+  --ember-off: oklch(0.97 0 0 / 0.25);
+  --glow: var(--room);
+  --hi: oklch(0.5 0.005 260);
+  --hi-2: oklch(0.4 0.005 260);
+  --lo: oklch(0.12 0 0);
+  --lo-2: oklch(0.2 0 0);
+  --field: oklch(0.2 0.004 260);
+  --tip: oklch(0.98 0.04 105);
+  --title-dir: 90deg;
+  --title: linear-gradient(var(--title-dir), oklch(0.3 0.13 265), oklch(0.46 0.13 250));
+  --raised: inset -1px -1px var(--lo), inset 1px 1px var(--hi), inset -2px -2px var(--lo-2), inset 2px 2px var(--hi-2);
+  --sunken: inset -1px -1px var(--hi), inset 1px 1px var(--lo-2), inset -2px -2px var(--hi-2), inset 2px 2px var(--lo);
+  --sans: Tahoma, 'MS Sans Serif', 'Microsoft Sans Serif', Geneva, Verdana, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+  --display: var(--sans);
+  --radius: 0;
+}
+:root[data-look='classic'][data-theme='light'] {
+  --desktop: oklch(0.54 0.093 195);
+  --room: oklch(0.81 0 0);
+  --room-2: oklch(0.81 0 0);
+  --ink: oklch(0 0 0);
+  --ink-soft: oklch(0.28 0 0);
+  --ink-faint: oklch(0.34 0 0);
+  --line: oklch(0 0 0 / 0.18);
+  --line-strong: oklch(0 0 0 / 0.42);
+  --flame: oklch(0.36 0.2 264);
+  --flame-deep: oklch(0.3 0.17 264);
+  --on-flame: oklch(1 0 0);
+  --ember-off: oklch(0 0 0 / 0.25);
+  --hi: oklch(1 0 0);
+  --hi-2: oklch(0.9 0 0);
+  --lo: oklch(0.1 0 0);
+  --lo-2: oklch(0.6 0 0);
+  --field: oklch(1 0 0);
+  --title: linear-gradient(var(--title-dir), oklch(0.27 0.19 264), oklch(0.48 0.14 248));
+}
+:root[data-look='classic'][dir='rtl'] { --title-dir: 270deg; }
+
+/* The desktop, and no light in the room. */
+:root[data-look='classic'] { background: var(--desktop); }
+:root[data-look='classic'] .room, :root[data-look='classic'] app-persona::before { display: none; }
+:root[data-look='classic'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; letter-spacing: 0; }
+/* The header: a taskbar, with the name as its start button. */
+:root[data-look='classic'] .bar { padding-block: 0.3rem; background: var(--room); box-shadow: var(--raised); }
+:root[data-look='classic'] :is(.wordmark, .wordmark:hover) { padding: 0.25rem 0.6rem; background: var(--room); box-shadow: var(--raised); font-size: 1rem; font-weight: 700; text-shadow: none; }
+:root[data-look='classic'] .wordmark app-persona { --persona-size: 1.4rem; margin-block-start: 0; }
+/* The page: a window, with its title bar; a conversation's title sits in it. */
+:root[data-look='classic'] main { margin-block: 0.75rem; padding: 2.4rem 1.25rem 1.25rem; background: var(--title) 3px 3px / calc(100% - 6px) 1.6rem no-repeat, var(--room); box-shadow: var(--raised); }
+:root[data-look='classic'] .conversation-title { margin: -2.4rem -1.25rem 1rem; padding: 0 0.5rem; overflow: hidden; color: oklch(1 0 0); font-size: 1rem; font-weight: 700; line-height: calc(1.6rem + 6px); text-overflow: ellipsis; white-space: nowrap; }
+:root[data-look='classic'] .welcome { padding-block: 4vh; }
+:root[data-look='classic'] .hero-question { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; line-height: 1.15; background: none; color: var(--ink); }
+:root[data-look='classic'] app-composer { background: linear-gradient(transparent, var(--desktop) 45%); }
+:root[data-look='classic'] .composer { border: 0; padding: 0.5rem; background: var(--room); backdrop-filter: none; box-shadow: var(--raised); }
+:root[data-look='classic'] .composer:focus-within { box-shadow: var(--raised); }
+:root[data-look='classic'] .composer textarea { padding: 0.35rem 0.5rem; background: var(--field); box-shadow: var(--sunken); }
+/* Buttons stand out of the grey, and go in when pressed. */
+:root[data-look='classic'] :is(.button, .starter, .follow-up, .brain-chip, .send, .segmented span) { border: 0; background: var(--room); color: var(--ink); box-shadow: var(--raised); }
+:root[data-look='classic'] :is(.button, .starter, .follow-up, .brain-chip, .send):active { box-shadow: var(--sunken); }
+:root[data-look='classic'] :is(.button, .starter, .follow-up):hover { background: var(--room); box-shadow: var(--raised); }
+:root[data-look='classic'] .button.primary { font-weight: 700; box-shadow: 0 0 0 1px var(--lo), var(--raised); }
+:root[data-look='classic'] .send:is(.is-stop, .is-live) { background: var(--room); }
+:root[data-look='classic'] .segmented { border: 0; padding: 0; gap: 0.3rem; }
+:root[data-look='classic'] .segmented input:checked + span { background: var(--room); color: var(--ink); font-weight: 700; box-shadow: var(--sunken); }
+:root[data-look='classic'] :is(input:not([type='radio'], [type='checkbox'], [type='range']), select, .sheet textarea, .prose pre) { border: 0; background: var(--field); box-shadow: var(--sunken); }
+:root[data-look='classic'] :focus-visible { outline: 2px dotted var(--ink); outline-offset: -5px; }
+/* A selected line: white on blue. */
+:root[data-look='classic'] :is(.settings-nav [aria-current='page'], .history-list li.is-current, .projects li.is-current) { background: var(--flame-deep); color: oklch(1 0 0); }
+:root[data-look='classic'] .history-list li.is-current :is(.history-item, time, .icon-button) { color: oklch(1 0 0); }
+:root[data-look='classic'] ::selection { background: var(--flame-deep); color: oklch(1 0 0); }
+/* What the user asked: a tooltip. */
+:root[data-look='classic'] .msg-user { border: 1px solid oklch(0 0 0); background: var(--tip); color: oklch(0 0 0); }
+/* Dialogs are windows too. */
+:root[data-look='classic'] dialog { border: 0; background: var(--room); box-shadow: var(--raised); }
+:root[data-look='classic'] .dialog-head { margin: calc(-1.25rem + 3px) calc(-1.5rem + 3px) 0.75rem; padding: 0.15rem 0.2rem 0.15rem 0.5rem; background: var(--title); color: oklch(1 0 0); }
+:root[data-look='classic'] .drawer .dialog-head { margin: calc(-1rem + 3px) calc(-1rem + 3px) 0.75rem; }
+:root[data-look='classic'] .settings .dialog-head { margin: 3px; padding: 0.15rem 0.2rem 0.15rem 0.5rem; }
+:root[data-look='classic'] .dialog-head h2 { font-size: 1rem; font-weight: 700; color: oklch(1 0 0); }
+:root[data-look='classic'] .dialog-head .icon-button { inline-size: 1.5rem; block-size: 1.35rem; background: var(--room); color: var(--ink); box-shadow: var(--raised); }
+:root[data-look='classic'] :is(.toast, .notice, .menu, .approval, .offer) { border: 0; background: var(--room); box-shadow: var(--raised); backdrop-filter: none; }
+:root[data-look='classic'] .notice { color: var(--ink); }
+:root[data-look='classic'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .menu button, .segmented, .segmented span, .send, .icon-button, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .room-card, .service, .sheet, .settings-nav button, .sidebar-settings, .history-list li, .projects li, .prose pre, .prose .table, .status, input, select, textarea, .composer, .msg-user, .prose code, .monogram, .skills details, .noticed li) { border-radius: 0; }

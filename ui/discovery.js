@@ -1,21 +1,21 @@
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
-// few conversations, the same kind of request a third time), reflexes, and the brain's own
-// offer tool, never keywords (D6). Also find_tools, so tools that arrive mid-conversation
-// can be reached (D47).
+// few conversations, the same kind of request a third time, or on three different days),
+// reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
+// that arrive mid-conversation can be reached (D47).
 import { effect } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions } from './caps.js'
 import { app, effective, answerOffer, notify, send, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
 import { words, alike } from '../core/search.js'
-import { foldTurns, openingOf } from '../core/events.js'
+import { foldTurns, openingOf, noteRecord } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'skills', 'python', 'search', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'skills', 'routines', 'python', 'search', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -24,6 +24,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   memory: 'remembering lasting facts and preferences the user states, from one conversation to the next',
   projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
   skills: 'saving how a task the user repeats is done, to do it the same way every time',
+  routines: 'doing a task on its own on a schedule (every day, week or month), while the user has you open or as soon as they are back',
   python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
   search: 'searching the web, when a question needs current or specific facts',
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
@@ -96,8 +97,9 @@ export async function accept(id) {
   if (id === 'reflexes') return downloadReflexes()
   app.offer.value = null
   notify(t('offer.on', { name: t(`cap.${id}.name`) }))
-  // Offered after the same kind of request a third time: make this one the first skill.
-  if (id === 'skills') send(t('suggest.skill.prompt'))
+  // Offered after the same kind of request a third time: make this one the first skill, or the
+  // first routine when it came on three different days.
+  if (id === 'skills' || id === 'routines') follow(id === 'skills' ? 'skill' : 'routine')
   else begin(id)
 }
 
@@ -218,40 +220,83 @@ export async function sense(text, previous) {
 // Past this many words, "Shorter" is offered: a length, so it works in every language.
 const LONG_ANSWER = 220
 
-// Requests whose first words are at least this alike are the same kind (core/search.js).
-const SAME_KIND = 0.5
+// Requests whose first words are at least this alike are the same kind (core/search.js); so are
+// a request and a skill's description (D121).
+export const SAME_KIND = 0.5
 
 /**
  * Whether the request that opened this conversation is the third of its kind: two earlier
- * conversations in this project began alike, and no skill covers it yet. The user's own
- * requests compared word by word, so it works in every language, with no keyword (D6).
+ * conversations in this project began alike. The user's own requests compared word by word,
+ * so it works in every language, with no keyword (D6). Returns its first words and when each
+ * request of the kind was made, oldest first.
  * @param {import('../core/types.js').Envelope[]} records
+ * @returns {{ opening: string, times: Date[] } | null}
  */
-async function repeated(records) {
+function sameKind(records) {
   // Not the titles: a brain writes those, and this one may still be on its way.
   const opening = firstWords(openingOf(records))
-  if (!opening || foldTurns(records).length !== 1) return false
-  const others = app.conversations.value.filter((item) => item.id !== app.current.value?.id && item.opening).map((item) => firstWords(item.opening))
-  if (alike(opening, others).filter((score) => score >= SAME_KIND).length < 2) return false
-  const known = loaded.value.has('skills') ? await (await import('../caps/skills/skills.js')).skills() : []
-  return alike(opening, known.map((skill) => `${skill.name.replace(/-/g, ' ')} ${skill.title} ${skill.description}`)).every((score) => score < SAME_KIND)
+  if (!opening || foldTurns(records).length !== 1) return null
+  const others = app.conversations.value.filter((item) => item.id !== app.current.value?.id && item.opening)
+  const scores = alike(opening, others.map((item) => firstWords(item.opening)))
+  const kind = others.filter((_, i) => scores[i] >= SAME_KIND)
+  if (kind.length < 2) return null
+  const times = [...kind.map((item) => new Date(item.createdAt)), new Date(records[0]?.at ?? Date.now())]
+  return { opening, times: times.sort((a, b) => a.getTime() - b.getTime()) }
 }
 
+/** Whether something the user keeps already covers a request: one of these texts is of its kind. @param {string} opening @param {string[]} texts */
+const covered = (opening, texts) => alike(opening, texts).some((score) => score >= SAME_KIND)
+
+/** Requests made on three different days look like a habit a routine could keep (D122). @param {Date[]} times */
+const habitual = (times) => new Set(times.map((time) => time.toDateString())).size >= 3
+
 /**
- * Follow-ups from the translated catalogue that fit an answer: "Shorter" for a long one;
- * "Save this as a skill" for the third request of a kind (offered above the box until skills
- * are on); and, when the reflexes are on, "As a table" and "Draft an email" when they fit.
+ * Follow-ups from the translated catalogue that fit an answer: "Shorter" for a long one; for
+ * the third request of a kind, a ready-made skill from elsewhere when one fits, otherwise "Save
+ * this as a skill" (offered above the box until skills are on), and "Make this a routine" when
+ * the requests came on three different days; a skill the brain suggested; and, when the
+ * reflexes are on, "As a table" and "Draft an email" when they fit.
  * @param {string} answer @param {import('../core/types.js').Envelope[]} records the conversation
  * @returns {Promise<string[]>}
  */
 export async function followUps(answer, records) {
   const ids = words(answer).length > LONG_ANSWER ? ['shorter'] : []
-  if (!isDenied('skills') && await repeated(records)) {
-    if (loaded.value.has('skills')) ids.push('skill')
+  const path = app.current.peek()?.path
+  const kind = sameKind(records)
+  const skills = loaded.value.has('skills') ? await import('../caps/skills/skills.js') : null
+  if (kind && !isDenied('skills') && !covered(kind.opening, (await skills?.skills() ?? []).map((skill) => `${skill.name.replace(/-/g, ' ')} ${skill.title} ${skill.description}`))) {
+    const found = skills && path ? await skills.lookFor(kind.opening).catch(() => null) : null
+    if (found && path) skills?.suggested.set(path, found)
+    else if (skills) ids.push('skill')
     else offerOnce('skills')
   }
+  if (kind && habitual(kind.times) && !isDenied('routines')) {
+    const routines = loaded.value.has('routines') ? await import('../caps/routines/routines.js') : null
+    if (!routines) offerOnce('routines')
+    else if (!covered(kind.opening, (await routines.routines()).map((routine) => `${routine.title} ${routine.request}`))) ids.push('routine')
+  }
+  if (path && skills?.suggested.has(path)) ids.push('ready')
   const decide = loaded.value.get('reflexes')?.decide
   const result = decide ? await quickly(decide(clip(answer), FOLLOW_UPS), 4000) : null
   for (const [id, answer] of Object.entries(result ?? {})) if (answer.type === 'noul' && answer.noul >= YES) ids.push(id)
   return ids
+}
+
+/**
+ * A follow-up from the catalogue, taken: its request is sent; a ready-made skill opens to be read.
+ * "Make this a routine" tells the brain when requests of the kind were made, so the routine fits
+ * the habit (D122).
+ * @param {string} id
+ */
+export async function follow(id) {
+  const path = app.current.peek()?.path
+  if (id === 'ready') {
+    const found = path && loaded.value.has('skills') ? (await import('../caps/skills/skills.js')).suggested.get(path) : null
+    if (found) (await import('../caps/skills/ready.js')).preview(found)
+    return
+  }
+  const times = id === 'routine' ? sameKind(app.current.peek()?.records ?? [])?.times : null
+  const stamps = (times ?? []).map((time) => time.toString().slice(0, 21))
+  const notes = stamps.length ? [noteRecord(`Requests like this one were made on ${stamps.join(', ')} (local time).`, { kind: 'habit', at: (times ?? []).map((time) => time.toISOString()) })] : []
+  send(t(`suggest.${id}.prompt`), { notes })
 }

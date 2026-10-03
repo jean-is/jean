@@ -2,7 +2,7 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, assistantName } from './state.js'
+import { app, newConversation, turnPage, assistantName } from './state.js'
 import { SIZES } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
@@ -23,7 +23,7 @@ class Shell extends Element {
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
         <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
-        <button class="wordmark" @click=${newConversation} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}${data.default === true ? nothing
+        <button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}${data.default === true ? nothing
           : html`<span class="wordmark-project" dir="auto">${data.name}</span>`}</button>
       </header>
       ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
@@ -72,7 +72,7 @@ document.addEventListener('keydown', (event) => {
     if (app.dialog.value !== 'settings') import('./dialogs.js').then((module) => module.openSettings())
   } else if (key === 'n') {
     event.preventDefault()
-    newConversation()
+    turnPage(newConversation)
     focusComposer()
   }
 })

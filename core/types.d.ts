@@ -145,6 +145,10 @@ export type SystemNoteData =
   | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
+  /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due */
+  | { kind: 'routine', routine: string, title: string, due: string }
+  /** when requests like this one were made before, for a routine to fit the habit (D122) */
+  | { kind: 'habit', at: string[] }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

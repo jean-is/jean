@@ -3,10 +3,9 @@
 // is read aloud sentence by sentence while it streams. Speaking over Jean interrupts it. Voice
 // detection and speech to text run on this device, in dictation's worker (about 82 MB, once);
 // reading aloud uses the system's voices, like read-aloud, in the answer's own language.
-import { html, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
-import { Element, define } from '../../ui/base.js'
+import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
+import { live } from '../../ui/dictation.js'
 import { app, effective, send, stop, notify, setPresence } from '../../ui/state.js'
 import { prepare, transcribe, detect } from '../voice/voice.js'
 import { listener, speakable } from './turns.js'
@@ -15,12 +14,7 @@ import { plainText } from '../../ui/markdown.js'
 import { listed, voiceFor, noVoice } from '../../ui/voices.js'
 import { locale, t } from '../../core/i18n.js'
 import { scriptURL } from '../../ui/trusted.js'
-import { icons } from '../../ui/icons.js'
 
-/** @typedef {'off' | 'preparing' | 'listening' | 'thinking' | 'speaking'} State */
-export const live = signal(/** @type {State} */ ('off'))
-
-const LABELS = { preparing: 'dictation.preparing', listening: 'dictation.listening', thinking: 'activity.thinking', speaking: 'live.speaking' }
 // Silero reads 512 samples at a time (32 ms); this many come before speech is sure, so its start isn't lost.
 const FRAME = 512
 const PREROLL = 20
@@ -153,15 +147,4 @@ effect(() => {
   if (live.value === 'listening' && !app.busy.peek()) setPresence('listening')
 })
 
-class Live extends Element {
-  render() {
-    const state = live.value
-    const on = state !== 'off'
-    return html`<button type="button" class="icon-button ${on ? 'is-active is-listening' : ''}" aria-pressed=${on ? 'true' : 'false'}
-      aria-label=${t(on ? 'live.stop' : 'live.start')} title=${t(on ? 'live.stop' : 'live.start')} @click=${toggle}>${icons.wave}</button>
-      ${on ? html`<span class="live-state" role="status">${t(LABELS[state])}</span>` : nothing}`
-  }
-}
-
-define('app-live', Live)
 register({ id: 'live' })

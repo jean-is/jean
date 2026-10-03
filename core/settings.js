@@ -6,7 +6,7 @@ import { ulid } from './ulid.js'
 
 /**
  * @typedef {Object} Settings
- * @property {1} format
+ * @property {2} format                      2 since D122: capability ids are today's
  * @property {string | null} locale
  * @property {BrainConfig[]} brains
  * @property {string | null} activeBrain
@@ -22,6 +22,7 @@ import { ulid } from './ulid.js'
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
+ * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
  */
 
 /**
@@ -48,22 +49,28 @@ export function serviceURL(name, settings, policy = {}) {
 }
 
 /** @type {Settings} */
-export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
+export const DEFAULT_SETTINGS = { format: 2, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
 
 /**
- * Names that changed (D115): the Skills capability and its tools were Routines. Settings,
- * policy and earlier conversations still use the old names.
+ * Names that changed (D115): the Skills capability and its tools were Routines. Earlier
+ * conversations still name the tools they were given so.
  */
-const RENAMED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ routines: 'skills', routine: 'skill', save_routine: 'save_skill' }))
+const RENAMED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ routine: 'skill', save_routine: 'save_skill' }))
 
-/** A capability's or a tool's name as it is now. @param {string} name */
+/** A tool's name as it is now. @param {string} name */
 export const renamed = (name) => (Object.hasOwn(RENAMED, name) ? RENAMED[name] : name)
 
-/** @param {FS} fs @returns {Promise<Settings>} */
+/**
+ * Settings, upgraded when read: in a file of format 1, `routines` is the capability now called
+ * skills (D115); since format 2 it is the tasks Jean does on a schedule (D122).
+ * @param {FS} fs @returns {Promise<Settings>}
+ */
 export async function loadSettings(fs) {
-  const settings = { ...DEFAULT_SETTINGS, ...(await readJSON(fs, 'settings.json', null) ?? {}) }
-  const offers = Object.fromEntries(Object.entries(settings.offers).map(([id, when]) => [renamed(id), when]))
-  return { ...settings, unlocked: settings.unlocked.map(renamed), offers }
+  const saved = await readJSON(fs, 'settings.json', null)
+  const settings = { ...DEFAULT_SETTINGS, ...saved ?? {}, format: /** @type {2} */ (2) }
+  if ((saved?.format ?? 2) > 1) return settings
+  const now = (/** @type {string} */ id) => (id === 'routines' ? 'skills' : id)
+  return { ...settings, unlocked: settings.unlocked.map(now), offers: Object.fromEntries(Object.entries(settings.offers).map(([id, when]) => [now(id), when])) }
 }
 
 /** @param {FS} fs @param {Settings} settings */

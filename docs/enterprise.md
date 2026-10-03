@@ -20,7 +20,7 @@ Nothing planned is ruled out by the architecture:
 | Disable capabilities | ✅ Comes for free | The policy feeds the unlock gate. A denied capability is never offered and its code is never downloaded. Admins can also unlock capabilities in advance. |
 | Config for managed browsers | ✅ Chrome and Edge only | `ManagedConfigurationPerOrigin` pushes JSON to web apps that IT has installed, read with `navigator.managed.getManagedConfiguration()`. It is a second policy source alongside `policy.json`. |
 | White-label | ✅ Comes for free | Change `BRAND` and it becomes "Acme Assistant". |
-| Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy points to (D116, not built yet). |
+| Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy points to (`skills.sources`, which users can't remove; `skills.only` keeps to it), and users add them after reading their steps (D121). |
 | Audit | ✅ Best effort | The ACP event stream is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector. The gateway's log remains the authoritative one. |
 
 ## What it cannot do, by design
@@ -30,7 +30,7 @@ These follow from keeping data on the device with no server. Companies already c
 - Guarantee anything on unmanaged devices. Rules inside the browser are advisory; real enforcement is the CSP header, network filtering and the gateway.
 - Provide an authoritative audit of local actions.
 - Remotely wipe or revoke data already on a device.
-- Run scheduled jobs while no tab is open; that would need an optional runner.
+- Run scheduled jobs while no tab is open; that would need an optional runner. Routines run while Jean is open, and catch up at the next visit (D122).
 
 ## Policy model (sketch)
 
@@ -49,6 +49,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "instructions": "Use British English. Never put client names in titles.",
   "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "search": "https://search.corp.example", "relay": "wss://relay.corp.example" },
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }],
+  "skills": { "sources": ["https://skills.corp.example"], "only": true },
   "directory": [{ "id": "microsoft-365", "url": "https://mcp.m365.corp.example/mcp", "clientId": "4f1c…" }, { "id": "figma", "hidden": true }],
   "images": { "openai": ["gpt-image-1"] },
   "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces" }

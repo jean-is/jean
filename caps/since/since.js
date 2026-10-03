@@ -15,18 +15,21 @@ export const connected = () => Boolean((effective.peek().settings.connections ??
 /** What the brain is told, in English like every prompt, with when the user was last here. @param {Date} since */
 const note = (since) => noteRecord(`The user is back; they were last here on ${since.toISOString().slice(0, 16).replace('T', ' ')} UTC. Start with a short brief of what is new in their connected services since then. Only read: never send, change or delete anything.`, { kind: 'since', since: since.toISOString() })
 
-/** The brief, in a conversation of its own. @param {number} [since] when the user was last here */
+/**
+ * The brief, in a conversation of its own. Until it starts, Jean is back from time away
+ * (`app.back`), which routines wait for (D122). @param {number} [since] when the user was last here
+ */
 export async function brief(since = app.back.peek()) {
-  app.back.value = 0
-  if (!since || !connected() || !effective.peek().settings.brains.length || app.busy.peek()) return
+  if (!since || !connected() || !effective.peek().settings.brains.length || app.busy.peek()) return void (app.back.value = 0)
   // The services' tools have to be listed before the brain is told about them.
   await (await import('../connections/connections.js')).listed
+  app.back.value = 0
   newConversation()
   await send(t('since.prompt'), { notes: [note(new Date(since))] })
 }
 
 effect(() => {
-  if (app.back.value && connected()) queueMicrotask(() => brief())
+  if (app.back.value) queueMicrotask(() => brief())
 })
 
 register({ id: 'since' })

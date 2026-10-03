@@ -1,6 +1,7 @@
 // "What Jean knows about you" (docs/product.md): the user's instructions, which Jean always
 // follows, and what Jean noticed, which the user can edit, delete or turn into an instruction;
-// then the skills. Everything here is a plain file (instructions.md, memory.md, SKILL.md).
+// then the skills, with those published elsewhere (D121), and the routines (D122). Everything
+// here is a plain file (instructions.md, memory.md, SKILL.md, routines/*.md).
 // Loaded the first time the page opens.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -14,13 +15,21 @@ import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
-import { t, relativeTime } from '../core/i18n.js'
+import { t, relativeTime, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
 
 /** @typedef {import('../core/memory.js').Entry} Entry */
-/** @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[], skills: import('../core/skills.js').Skill[] }} Page */
+/** @typedef {import('../caps/routines/schedule.js').Routine} Routine */
+/**
+ * @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[], skills: import('../core/skills.js').Skill[], routines: Routine[] }} Page
+ */
 
 const page = signal(/** @type {Page | null} */ (null))
+/** The modules of Skills and Routines, once on. */
+let skillsModule = /** @type {typeof import('../caps/skills/skills.js') | null} */ (null)
+let routinesModule = /** @type {typeof import('../caps/routines/routines.js') | null} */ (null)
+/** What the sources of skills offer, read when their list is opened. */
+const elsewhere = signal(/** @type {import('../caps/skills/sources.js').Index[] | null} */ (null))
 
 /** Where the room's files are: the person's at the root, the project's in its folder. */
 function folders() {
@@ -30,10 +39,13 @@ function folders() {
 
 async function load() {
   const dirs = folders()
+  if (loaded.value.has('skills')) skillsModule = await import('../caps/skills/skills.js')
+  if (loaded.value.has('routines')) routinesModule = await import('../caps/routines/routines.js')
   page.value = {
     instructions: Object.fromEntries(await Promise.all(dirs.map(async (dir) => [dir, await readBody(join(dir, 'instructions.md'))]))),
     memory: await Promise.all(dirs.map(async (dir) => ({ path: join(dir, 'memory.md'), entries: parseMemory(await app.fs.read(join(dir, 'memory.md'))) }))),
     skills: loaded.value.has('skills') ? await listSkills(app.fs, dirs) : [],
+    routines: (await routinesModule?.routines()) ?? [],
   }
 }
 
@@ -101,6 +113,126 @@ async function removeSkill(skill) {
   await load()
 }
 
+// ─── Skills from elsewhere (D121) ────────────────────────────────────────────
+
+/** Reads what the sources offer (from the day's cache unless asked again). @param {boolean} [again] */
+async function browse(again = false) {
+  elsewhere.value = (await skillsModule?.offered({ again })) ?? []
+}
+
+/** The user's own list of sources: the defaults until they change it. */
+async function ownSources() {
+  const { DEFAULT_SOURCES } = await import('../caps/skills/sources.js')
+  return effective.value.settings.sources ?? [...DEFAULT_SOURCES]
+}
+
+/** @param {SubmitEvent} event */
+async function addSource(event) {
+  event.preventDefault()
+  const form = /** @type {HTMLFormElement} */ (event.target)
+  const address = String(new FormData(form).get('address') ?? '').trim()
+  const { indexURL } = await import('../caps/skills/sources.js')
+  try {
+    indexURL(address)
+  } catch {
+    return notify(t('skills.unreachable', { source: address }))
+  }
+  form.reset()
+  await updateSettings({ sources: [...new Set([...await ownSources(), address])] })
+  await browse(true)
+}
+
+/** @param {string} url an index's address */
+async function removeSource(url) {
+  const { indexURL } = await import('../caps/skills/sources.js')
+  await updateSettings({ sources: (await ownSources()).filter((address) => indexURL(address) !== url) })
+  await browse()
+}
+
+/** @param {import('../caps/skills/sources.js').Entry} entry */
+const preview = async (entry) => (await import('../caps/skills/ready.js')).preview(entry)
+
+/** The sources, what each offers that the user doesn't have, and a way to add one. @param {Page} state */
+function sourcesView(state) {
+  const locked = skillsModule?.locked() ?? []
+  const have = state.skills.map((skill) => skill.name)
+  return html`<details class="other sources" @toggle=${(/** @type {Event} */ e) => /** @type {HTMLDetailsElement} */ (e.target).open && !elsewhere.value && browse()}>
+    <summary>${t('skills.elsewhere')}</summary>
+    <p class="muted small">${t('skills.elsewhereText')}</p>
+    ${elsewhere.value?.map((index) => {
+      const site = new URL(index.url).host
+      return html`<section class="source">
+        <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${t('policy.locked')}</span>`
+          : html`<button class="icon-button subtle" title=${t('action.remove')} aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
+        ${index.error ? html`<p class="muted small">${t('skills.unreachable', { source: site })}</p>` : nothing}
+        <ul class="skills">${index.skills.filter((entry) => !have.includes(entry.name)).map((entry) => html`<li>
+          <button class="link-button" @click=${() => preview(entry)}><strong>${entry.name}</strong></button>
+          <small dir="auto">${entry.description}</small>
+        </li>`)}</ul>
+      </section>`
+    }) ?? nothing}
+    ${app.policy.skills?.only ? nothing : html`<form class="row" @submit=${addSource}>
+      <input name="address" required dir="ltr" inputmode="url" autocomplete="off" spellcheck="false" placeholder="example.com" aria-label=${t('skills.source')}>
+      <button class="button">${t('skills.sourceAdd')}</button>
+    </form>`}
+  </details>`
+}
+
+// ─── Routines (D122) ─────────────────────────────────────────────────────────
+
+let changing = Promise.resolve()
+
+/**
+ * Changes a routine's schedule or request, kept only when the schedule is one. Changes made in
+ * quick succession apply one after the other, each to the routine as it is kept.
+ * @param {Routine} routine @param {Partial<Routine>} change
+ */
+function changeRoutine(routine, change) {
+  changing = changing.then(async () => {
+    const { schedule, writeRoutine } = await import('../caps/routines/schedule.js')
+    const kept = (await routinesModule?.routines())?.find((other) => other.path === routine.path)
+    if (!kept) return
+    const changed = { ...kept, ...change }
+    // A week or a month needs its day: today's, until the user picks another.
+    const today = new Date()
+    const plan = schedule({ ...changed, on: changed.every === kept.every ? changed.on : changed.every === 'week' ? today.getDay() : today.getDate() })
+    if (plan && changed.request.trim()) await writeRoutine(app.fs, { ...changed, on: undefined, ...plan })
+  }).then(load, (error) => console.warn('Routine', error))
+  return changing
+}
+
+/** @param {Routine} routine */
+async function removeRoutine(routine) {
+  if (!confirm(t('routines.confirmDelete', { title: routine.title }))) return
+  await app.fs.remove(routine.path)
+  await load()
+}
+
+/** @param {Routine} routine */
+function routineView(routine) {
+  const module = /** @type {NonNullable<typeof routinesModule>} */ (routinesModule)
+  const next = module.next(routine)
+  const { first } = module.week()
+  const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(locale.value, { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
+  const value = (/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).value
+  return html`<li><details>
+    <summary><strong dir="auto">${routine.title}</strong>${next ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</summary>
+    <div class="row routine-when">
+      <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { every: /** @type {any} */ (value(e)) })}>
+        ${(/** @type {const} */ (['day', 'weekday', 'week', 'month'])).map((every) => html`<option value=${every} ?selected=${every === routine.every}>${t(`routines.every.${every}`)}</option>`)}
+      </select>
+      ${routine.every === 'week' ? html`<select aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>
+        ${[0, 1, 2, 3, 4, 5, 6].map((i) => (first + i) % 7).map((day) => html`<option value=${day} ?selected=${day === routine.on}>${dayName(day)}</option>`)}
+      </select>` : routine.every === 'month' ? html`<input type="number" min="1" max="31" .value=${live(String(routine.on ?? 1))} aria-label=${t('routines.on')}
+        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : nothing}
+      <input type="time" .value=${live(routine.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>
+    </div>
+    <textarea rows="3" dir="auto" aria-label=${t('routines.request')} .value=${live(routine.request)}
+      @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea>
+    <button class="button subtle" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button>
+  </details></li>`
+}
+
 class Knows extends Element {
   render() {
     const { data } = app.project.value
@@ -146,7 +278,8 @@ class Knows extends Element {
         <h3>${icons.repeat} ${t('cap.skills.name')}</h3>
         <p class="muted small">${t('skills.text', { name: BRAND.name })}</p>
         ${state.skills.length ? html`<ul class="skills">${state.skills.map((skill) => html`<li><details>
-          <summary><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small></summary>
+          <summary><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small>${skill.source
+            ? html`<small>${icons.globe} ${t('skills.from', { source: new URL(skill.source).host })}</small>` : nothing}</summary>
           <textarea rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}
             @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
           <button class="button subtle" @click=${() => removeSkill(skill)}>${icons.trash} ${t('action.delete')}</button>
@@ -154,6 +287,12 @@ class Knows extends Element {
         <label class="button subtle">${icons.upload} ${t('skills.add')}
           <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}>
         </label>
+        ${sourcesView(state)}
+      </section>` : nothing}
+      ${loaded.value.has('routines') && routinesModule ? html`<section>
+        <h3>${icons.calendar} ${t('cap.routines.name')}</h3>
+        <p class="muted small">${t('routines.text')}</p>
+        ${state.routines.length ? html`<ul class="skills routines">${state.routines.map(routineView)}</ul>` : html`<p class="muted small">${t('routines.none')}</p>`}
       </section>` : nothing}` : nothing}
     </dialog>`
   }

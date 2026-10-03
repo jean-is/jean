@@ -16,7 +16,8 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - what it should know about you, on a page where you can read and change it;
   - standing instructions;
   - projects, each with its own memory, files and light;
-  - skills it learns from requests you repeat, saved as `SKILL.md`.
+  - skills it learns from requests you repeat, saved as `SKILL.md`, or ready-made ones that sites and your organisation publish, added only after you read their steps.
+- **Repeats on a schedule.** A routine is a request Jean sends itself every day, working day, week or month. It runs while Jean is open, and what fell due while it was closed runs when you're back.
 - **Reaches your services and the web.** Connections over MCP sign in from the browser. Web search uses the brain's own search, or Wikipedia. Every source becomes a numbered citation.
 - **Takes on bigger tasks:**
   - Helpers split a large task and work on its parts at the same time.
@@ -44,10 +45,10 @@ Jean starts as a single box. Everything above is offered when you need it, like 
 
 ## Small on purpose
 
-| | 0.6 |
+| | 0.7 |
 |---|---|
-| Jean's own code | 13,530 lines (core 2,616, app 10,914) |
-| First load | 92.7 KB gzipped, in the language with the largest catalogue |
+| Jean's own code | 17,320 lines (core 2,841, app 14,479) |
+| First load | 98.8 KB gzipped, in the language with the largest catalogue |
 | Libraries loaded up front | 3: `@preact/signals-core`, `lit-html`, `marked` |
 | Build step | None: plain ES modules and an import map |
 | Base prompt | 182 tokens |
@@ -90,7 +91,7 @@ node test/fixtures/fake-brain.js
 | `npm test` | The core and storage tests, with `node --test` |
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
-| `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to |
+| `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to and which sources of skills it can read |
 
 CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on every push and merge request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.
 

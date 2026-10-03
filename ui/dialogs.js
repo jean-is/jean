@@ -6,7 +6,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, setVoice, notify, loadModels,
-  newConversation, showError, theme, setTheme, setLook, LOCALES,
+  newConversation, turnPage, showError, theme, setTheme, setLook, LOCALES,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, startOpenRouter } from './brains.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
@@ -24,8 +24,14 @@ import { SHORTCUTS } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
 
-// The dialogs' own strings come with them (D97): every module that shows a dialog imports this one.
-await useStrings('dialogs')
+// The dialogs' own strings and style sheet come with them (D97, D120): every module that shows a
+// dialog imports this one. The sheet goes after ui/style.css, so its rules win a tie.
+await Promise.all([useStrings('dialogs'), new Promise((resolve) => {
+  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: 'ui/dialogs.css' })
+  link.addEventListener('load', resolve, { once: true })
+  link.addEventListener('error', resolve, { once: true })
+  document.head.append(link)
+})])
 
 /** @param {Element} host @param {string} name */
 export function syncDialog(host, name) {
@@ -54,7 +60,7 @@ class History extends Element {
     return html`<dialog class="drawer" @close=${closed('history')} @click=${backdrop}>
       ${head(t('history.title'))}
       <app-projects></app-projects>
-      <button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${newConversation}>${icons.plus} ${t('action.new')}</button>
+      <button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${() => turnPage(newConversation)}>${icons.plus} ${t('action.new')}</button>
       ${conversationList()}
       ${settingsEntry()}
     </dialog>`
@@ -260,7 +266,7 @@ function general() {
       </select>`) : nothing}
     ${setting(t('knows.title', { name: BRAND.name }), t('knows.lede', { name: BRAND.name }),
       html`<button class="button" @click=${() => { app.dialog.value = 'knows' }}>${t('collection.open')}</button>`)}
-    <p class="about muted small"><a href="manifesto.html" target="_blank" rel="noopener">${BRAND.name} 0.6</a> · ${t('settings.about')}</p>`
+    <p class="about muted small"><a href="manifesto.html" target="_blank" rel="noopener">${BRAND.name} 0.7</a> · ${t('settings.about')}</p>`
 }
 
 const appearance = () => html`
@@ -359,11 +365,11 @@ class Settings extends Element {
 // The house (docs/design.md), in Settings: discovered capabilities are lit rooms; the rest wait
 // in the shadow, like a game's collection screen, and can be turned on early.
 const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', projects: 'rooms', skills: 'repeat', python: 'code',
+  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', projects: 'rooms', skills: 'repeat', routines: 'calendar', python: 'code',
   search: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
 })
 /** Where a lit room leads. */
-const OPENS = /** @type {Record<string, typeof app.dialog.value>} */ ({ memory: 'knows', skills: 'knows', projects: 'history', connections: 'connections' })
+const OPENS = /** @type {Record<string, typeof app.dialog.value>} */ ({ memory: 'knows', skills: 'knows', routines: 'knows', projects: 'history', connections: 'connections' })
 
 /** @param {string} id */
 async function turnOn(id) {
@@ -414,7 +420,7 @@ function looks(look = {}) {
       <legend>${t('look.title')}</legend>
       ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
-        <span class="look-preview" data-look-preview=${id} aria-hidden="true"></span>
+        <span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>
         <span><strong>${t(`look.${id}`)}</strong><small>${t(`look.${id}.text`)}</small></span>
       </label>`)}
     </fieldset>

@@ -3,7 +3,7 @@
 import { html } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, newConversation, openConversation, removeConversation } from './state.js'
+import { app, newConversation, openConversation, removeConversation, turnPage } from './state.js'
 import { t, relativeTime } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { SHORTCUTS } from './shell.js'
@@ -14,7 +14,7 @@ export function conversationList() {
   const currentId = app.current.value?.id
   return list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => html`
     <li class=${item.id === currentId ? 'is-current' : ''}>
-      <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'} @click=${() => openConversation(item.path)}>
+      <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'} @click=${() => turnPage(() => openConversation(item.path))}>
         <span class="history-title" dir="auto">${item.title || t('conversation.untitled')}</span>
         <time datetime=${item.updatedAt}>${relativeTime(item.updatedAt)}</time>
       </button>
@@ -30,7 +30,7 @@ export const settingsEntry = () => html`<button class="sidebar-settings" aria-ke
 
 class Inbox extends Element {
   render() {
-    return html`<button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${newConversation}>${icons.plus} ${t('action.new')}</button>
+    return html`<button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${() => turnPage(newConversation)}>${icons.plus} ${t('action.new')}</button>
       <app-projects></app-projects>
       ${conversationList()}
       ${settingsEntry()}`

@@ -123,8 +123,13 @@ for (const [lang, dir] of [['en', 'ltr'], ['ar', 'rtl'], ['ja', 'ltr']]) {
     await expect(page.locator('html')).toHaveAttribute('dir', dir)
     await page.locator('aside.offer .button.subtle').click()
     await expect(page.locator('aside.offer')).toBeHidden()
-    // Once on, it is a button in the box (starting it needs a microphone and a download).
+    // Once on, it is the box's button while the box is empty, and send once something is typed
+    // (starting it needs a microphone and a download, D123).
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('live'))
-    await expect(page.locator('app-live button')).toBeVisible()
+    const button = page.locator('.composer .send')
+    const label = await page.evaluate(async () => (await import('/core/i18n.js')).t('live.start'))
+    await expect(button).toHaveAttribute('aria-label', label)
+    await page.locator('#prompt').fill('Hello')
+    await expect(button).not.toHaveAttribute('aria-label', label)
   })
 }

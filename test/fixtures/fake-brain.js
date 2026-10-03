@@ -16,6 +16,8 @@
 // big the last one is, read from its PNG header. It titles conversations with their first longer words.
 // It writes a "Word document" when asked for one, adds a step to it when asked to, and makes a
 // spreadsheet of a shared table's totals from a script (D119).
+// From 0.7 it makes a routine when asked for something "every" day or for a routine, at the time
+// asked, or else at the time Jean says requests of the kind were made.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -163,6 +165,10 @@ createServer(async (req, res) => {
   const sendTool = mailTool?.replace(/_search_emails$/, '_send_email')
   const searched = sourcesIn([...messages].reverse().find((m) => m.role === 'tool' && /^Source \[/m.test(m.content))?.content ?? '')
   const steps = '# Weekly sales summary\n\n1. Read the shared sales file.\n2. Total the sales by region.\n3. Answer with a short table.'
+  // 0.7: a routine, at the time asked, or at the time of the habit Jean noticed.
+  const regularly = (/^every\b/i.test(question.trim()) || /\broutine\b/i.test(question)) && last.role === 'user'
+  const habit = /Requests like this one were made on \w{3} \w{3} \d\d \d{4} (\d\d:\d\d)/.exec(serialized)?.[1]
+  const routine = { title: 'Weekly sales', request: 'Summarize the weekly sales by region', every: 'day', at: /\bat (\d\d:\d\d)/.exec(question)?.[1] ?? habit ?? '09:00' }
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
   else if (helper && /how many/i.test(task) && last.role === 'user') call = { name: 'ask_user', args: { question: 'How many people are coming?' } }
   else if (helper && toolName === 'ask_user') answer = /did not answer/.test(last.content) ? 'Nobody said; I assumed 10 people.' : `${last.content.trim()} people are coming.`
@@ -205,6 +211,10 @@ createServer(async (req, res) => {
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
+  else if (regularly && declared.has('schedule')) call = { name: 'schedule', args: routine }
+  else if (regularly && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'make a routine on a schedule' } }
+  else if (toolName === 'find_tools' && /schedule\(/.test(last.content)) call = { name: 'schedule', args: routine }
+  else if (toolName === 'schedule') answer = 'Done: it is a routine now.'
   else if (skill && declared.has('save_skill')) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
   else if (skill && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a skill' } }
   else if (toolName === 'find_tools' && /save_skill\(/.test(last.content)) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }

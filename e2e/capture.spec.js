@@ -57,8 +57,10 @@ for (const lang of ['en', 'ar', 'ja']) {
     await expect(page.locator('.msg-jean .prose').last()).toContainText('I can see your picture: 1568 × 784 pixels.', { timeout: 30_000 })
     await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 
-    // A capture of the screen: one frame, and the sharing stops at once.
+    // A capture of the screen, from the + menu: one frame, and the sharing stops at once.
+    await page.getByRole('button', { name: strings['composer.add'] }).click()
     await page.getByRole('button', { name: strings['capture.start'] }).click()
+    await expect(page.locator('#add-menu')).toBeHidden()
     await expect(chip).toHaveCount(1)
     await expect(chip.locator('.attachment-name')).toContainText(strings['capture.name'].replace(/\s*\{time\}\s*/, ''))
     expect(await page.evaluate(() => /** @type {any} */ (window).shared.getTracks().every((/** @type {MediaStreamTrack} */ track) => track.readyState === 'ended'))).toBe(true)

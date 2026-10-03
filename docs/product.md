@@ -17,14 +17,14 @@ The UI never says "agent", "model", "MCP" or "token".
 | Model / provider | Jean's brain |
 | Capability (a module unlocked by discovery) | What Jean can do; skills are one of them |
 | Skill (`SKILL.md`) | Skill (D115) |
-| Task on a schedule (not built yet) | Routine: the word is kept for it (D115) |
+| Task on a schedule | Routine (D115, D122) |
 | MCP server / connector | Connection |
 | Artifact / output | Things Jean made |
 | Project folder | **Project** — "anything you keep coming back to" |
 | Sub-agent | Helper |
 | Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
-| Look (`ui/looks/`, D111) | Theme (Room, Mail, Paper); light or dark is separate |
+| Look (`ui/looks/`, D111, D120) | Theme (Room, Mail, Paper and twelve more, in a gallery); light or dark is separate |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
 
@@ -57,7 +57,8 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Bigger brain | A task outgrows the current brain | The next rung of the brain ladder |
 | Memory | The user states a lasting preference or correction | "Want me to remember things like this from now on?" |
 | Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
-| Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups. Later, a ready-made skill from elsewhere when one fits (D116) |
+| Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups, or "See a ready-made skill for this" when one from elsewhere fits, read before it is added (D121) |
+| Routines | The same kind of request on three different days (D122), or the brain offers it when the user wants something done regularly | "Make it a routine?": Jean sends the request itself, every day, working day, week or month, while it is open or as soon as the user is back |
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
 | Assistant name | After some use inside a project (three conversations, D102) | "Want to give this project's assistant a name?" A name and a few words on how it should be, in the project's dialog; the header shows the name |
 | Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
@@ -91,6 +92,8 @@ One page, **"What Jean knows about you"**, in two parts:
 
 1. **Your instructions** (`instructions.md`). Written by the user, authoritative, always included. They come in three layers: organisation policy (locked), then global, then project.
 2. **What Jean noticed** (`memory.md`). Curated by Jean. Every entry links to the conversation it came from and can be edited or deleted.
+
+Once they are on, the same page lists the skills, each saying where it came from, the sources of skills from elsewhere and what they offer (D121), and the routines, with when each runs next (D122).
 
 **Memory that switches itself on:**
 
@@ -130,11 +133,12 @@ Jean's "computer" is the user's own browser, so the view can show everything: fi
 
 - **Decision inbox.** During long tasks or work by helpers, questions and approvals queue up as cards instead of blocking the chat. As built in 0.6 (D99): the cards wait under the answer being written, each saying which part it is for, and are answered in any order while the helpers go on.
 - **Since last time.** On opening, a read-only pass over connections produces a short brief. Jean cannot work while the tab is closed, and says so. As built in 0.6 (D101), the brief reads connected services only: files change only when the user shares them, until sync.
+- **Routines** (0.7, D122). Requests Jean sends itself on a schedule, each in a conversation of its own that opens with the routine's name, under the same rules as any. They run while the tab is open, once Jean is free and the user isn't reading; one that fell due while it was closed runs at the next visit, once.
 - **Explanations for Auto.** Auto mode explains its choices in collapsed "thinking" entries ("Chose the on-device brain: personal content").
 
 ## Brains: picker and Auto
 
-A chip in the message box reads **Auto ▾**. It offers:
+A chip in the message box, beside its send button, reads **Auto ▾**, or the name of the brain picked by hand (its provider is in the picker). It offers:
 
 - **Auto** (recommended)
 - **On this device:** private, free, works offline
@@ -161,7 +165,7 @@ Organisation policy can hide or lock any of these.
 ## Files and outputs
 
 - **Dropped files are kept** in the project's library. Each file is stored as the original, an extracted text version and a metadata file; files are named by content hash, so duplicates are stored once. Conversations reference files rather than copying them.
-- **Pictures and the screen.** A picture is shared like any file, and a button in the box captures the screen, a window or a tab: one frame, shown as a thumbnail before it is sent. Brains that can see are shown it (D105).
+- **Pictures and the screen.** A picture is shared like any file, and the box's + menu captures the screen, a window or a tab: one frame, shown as a thumbnail before it is sent. Brains that can see are shown it (D105).
 - **Outputs fit office life without any dependency:**
   - Copy as rich text, which pastes formatted into Word, Outlook and Google Docs
   - CSV, which opens in Excel
@@ -204,7 +208,7 @@ When no route exists, Jean says so and suggests connecting a cloud brain. A shar
 | Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true, in the answer's own language (D109), by the most natural voice there for it; when none speaks it, Jean says so (D114) | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
 | Live conversation | A chain: Silero voice detection → speech-to-text → brain (streamed) → speech, sentence by sentence; speaking over Jean interrupts it. Works with any brain. | Real-time speech models from the connected provider (OpenAI Realtime over WebRTC with the user's key, Gemini Live) |
 
-Dictation and read-aloud are available from day one for accessibility. Live conversation is discovered: built in 0.5 as the private chain above, offered after three dictations (D93).
+Dictation and read-aloud are available from day one for accessibility. Live conversation is discovered: built in 0.5 as the private chain above, offered after three dictations (D93). Once on, it starts from the box's send button while the box is empty, and its state shows in the box (D123).
 
 ## Languages
 

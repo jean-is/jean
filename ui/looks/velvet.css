@@ -1,0 +1,62 @@
+/* Velvet: an evening out. Deep plum velvet and gold leaf by night, ivory and bronze by day, a
+   Didone for the headings, a spotlight where the room's light was, and the first screen set in
+   the middle like a programme (D120). Over ui/style.css, which comes after it, so every rule here
+   starts with :root[data-look='velvet']. */
+
+:root[data-look='velvet'] {
+  --room: oklch(0.18 0.04 345);
+  --room-2: oklch(0.23 0.045 345);
+  --ink: oklch(0.94 0.02 85);
+  --ink-soft: oklch(0.84 0.025 80);
+  --ink-faint: oklch(0.74 0.03 75);
+  --line: oklch(0.82 0.1 85 / 0.16);
+  --line-strong: oklch(0.82 0.1 85 / 0.36);
+  --glass: oklch(0.23 0.045 345 / 0.82);
+  --flame: oklch(0.82 0.11 85);
+  --flame-deep: oklch(0.72 0.12 75);
+  --on-flame: oklch(0.2 0.045 345);
+  --ember-off: oklch(0.94 0.02 85 / 0.25);
+  --tint: oklch(0.8 0.12 80);
+  --glow: oklch(0.8 0.09 80);
+  --glow-alpha: 0.3;
+  --display: Didot, 'Bodoni 72', 'Bodoni MT', 'Noto Serif Display', 'Iowan Old Style', Georgia, 'Noto Serif', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  --sans: Optima, Candara, 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+}
+:root[data-look='velvet'][data-theme='light'] {
+  --room: oklch(0.97 0.012 85);
+  --room-2: oklch(0.995 0.006 85);
+  --ink: oklch(0.24 0.05 345);
+  --ink-soft: oklch(0.38 0.05 345);
+  --ink-faint: oklch(0.48 0.045 345);
+  --line: oklch(0.55 0.1 75 / 0.22);
+  --line-strong: oklch(0.55 0.1 75 / 0.48);
+  --glass: oklch(0.995 0.006 85 / 0.82);
+  --flame: oklch(0.48 0.1 65);
+  --flame-deep: oklch(0.42 0.09 60);
+  --on-flame: oklch(0.99 0.006 85);
+  --ember-off: oklch(0.24 0.05 345 / 0.2);
+  --glow: oklch(0.88 0.08 80);
+  --glow-alpha: 0.55;
+}
+
+/* A spotlight from above, and the velvet darker at the edges. */
+:root[data-look='velvet'] .room {
+  background:
+    radial-gradient(calc(var(--light-size) * 0.45) calc(var(--light-size) * 0.7) at 50% -12%, oklch(from var(--glow) l c h / calc(var(--light) * var(--glow-alpha))), transparent 72%),
+    radial-gradient(120% 100% at 50% 40%, transparent 55%, oklch(0.1 0.04 345 / 0.4));
+}
+:root[data-look='velvet'][data-theme='light'] .room { background: radial-gradient(calc(var(--light-size) * 0.45) calc(var(--light-size) * 0.7) at 50% -12%, oklch(from var(--glow) l c h / calc(var(--light) * var(--glow-alpha))), transparent 72%); }
+:root[data-look='velvet'] :is(.wordmark, .wordmark:hover) { font-size: 1.7rem; text-shadow: none; }
+:root[data-look='velvet']:not(:lang(ar), :lang(fa), :lang(ur)) .wordmark { font-variant-caps: all-small-caps; letter-spacing: 0.12em; }
+:root[data-look='velvet'] .bar { border-block-end: 1px solid var(--line); background: var(--room); }
+:root[data-look='velvet'] .welcome { align-items: center; text-align: center; }
+:root[data-look='velvet'] .welcome app-persona { margin-inline: 0; }
+:root[data-look='velvet'] .starters { justify-content: center; }
+:root[data-look='velvet'] .hero-question { margin-inline: 0; padding-inline: 0.15em; font-weight: 400; }
+:root[data-look='velvet'] .prose :is(h3, h4) { font-family: var(--display); font-weight: 600; font-size: 1.2rem; }
+:root[data-look='velvet'] .msg-user { border: 1px solid var(--line-strong); background: oklch(from var(--flame) l c h / 0.07); }
+:root[data-look='velvet'] .starter, :root[data-look='velvet'] .follow-up { background: none; }
+:root[data-look='velvet'] .starter:hover, :root[data-look='velvet'] .follow-up:hover { border-color: var(--flame); box-shadow: 0 0 1.5rem -0.6rem oklch(from var(--flame) l c h / 0.7); }
+:root[data-look='velvet'] .composer { border-color: var(--line-strong); }
+:root[data-look='velvet'] .composer:focus-within { border-color: oklch(from var(--flame) l c h / 0.7); }
+:root[data-look='velvet'] dialog { border-color: var(--line-strong); }
