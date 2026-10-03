@@ -8,13 +8,17 @@ import { t, relativeTime } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { SHORTCUTS } from './shell.js'
 
-/** The conversations, newest first, the open one marked: in the drawer, or in Mail's list. */
+/**
+ * The conversations, newest first, the open one marked: in the drawer, or in Mail's list. One
+ * started before the open one (ULIDs sort by time), or any from a new page, is back (D125).
+ */
 export function conversationList() {
   const list = app.conversations.value
   const currentId = app.current.value?.id
   return list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => html`
     <li class=${item.id === currentId ? 'is-current' : ''}>
-      <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'} @click=${() => turnPage(() => openConversation(item.path))}>
+      <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'}
+        @click=${() => turnPage(() => openConversation(item.path), !currentId || item.id < currentId)}>
         <span class="history-title" dir="auto">${item.title || t('conversation.untitled')}</span>
         <time datetime=${item.updatedAt}>${relativeTime(item.updatedAt)}</time>
       </button>
