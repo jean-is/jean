@@ -9,7 +9,7 @@
   "picker.neverCloud": "Huwag kailanman ipadala sa cloud",
   "picker.all": "Lahat ng utak",
   "cap.files.text": "Ihulog ang mga PDF, Word, Excel, PowerPoint, CSV o text file, at babasahin ito ng {name}. Ang mga larawan at screenshot ay napupunta sa mga utak na nakakakita.",
-  "cap.made.text": "Kopyahin ang mga sagot nang may format, i-download ang mga talahanayan para sa Excel, i-print o i-save bilang PDF.",
+  "cap.made.text": "Humingi ng Word na dokumento, spreadsheet o ibang file, at i-save ito sa isang click. Kopyahin ang mga sagot nang may format, i-download ang mga talahanayan para sa Excel.",
   "cap.compute.text": "Eksaktong kinukuwenta ng {name} ang mga numero sa pamamagitan ng maliliit na program sa isang nakahiwalay na lugar, walang internet.",
   "cap.reflexes.text": "Isang maliit na katulong sa device na ito ({size}, isang beses) na nakadarama kung ano ang kailangan mo: ang tamang utak para sa bawat mensahe, mga mungkahi, mga bagong susubukan. Walang lalabas sa device na ito.",
   "cap.backup.text": "Magtago ng kopya ng lahat sa iisang file, at i-restore ito sa kahit anong device.",

@@ -9,7 +9,7 @@
   "picker.neverCloud": "클라우드로 절대 보내지 않기",
   "picker.all": "모든 두뇌",
   "cap.files.text": "PDF, Word, Excel, PowerPoint, CSV, 텍스트 파일을 놓으면 {name}에서 읽어요. 이미지와 화면 캡처는 볼 수 있는 두뇌에게 전달돼요.",
-  "cap.made.text": "답변을 서식째 복사하고, 표를 Excel용으로 다운로드하고, 인쇄하거나 PDF로 저장하세요.",
+  "cap.made.text": "Word 문서, 스프레드시트 등 파일을 요청하고 클릭 한 번으로 저장하세요. 답변을 서식째 복사하고, 표를 Excel용으로 다운로드하세요.",
   "cap.compute.text": "인터넷이 차단된 격리 환경에서 작은 프로그램을 실행해 숫자를 정확하게 계산해요.",
   "cap.reflexes.text": "이 기기의 작은 도우미({size}, 한 번만)가 필요한 것을 알아채요: 메시지마다 알맞은 두뇌, 추천, 새로 써 볼 기능. 아무것도 이 기기를 떠나지 않아요.",
   "cap.backup.text": "모든 것을 파일 하나에 복사해 두고 어느 기기에서든 복원하세요.",

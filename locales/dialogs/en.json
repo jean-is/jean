@@ -9,7 +9,7 @@
   "picker.neverCloud": "Never send to the cloud",
   "picker.all": "All brains",
   "cap.files.text": "Drop in PDFs, Word, Excel, PowerPoint, CSV or text files, and {name} reads them. Pictures and captures of your screen go to brains that can see.",
-  "cap.made.text": "Copy answers with their formatting, download tables for Excel, print or save as PDF.",
+  "cap.made.text": "Ask for a Word document, a spreadsheet or another file, and save it with a click. Copy answers with their formatting, and download tables for Excel.",
   "cap.compute.text": "{name} works numbers out exactly by running small programs in a sandbox, with no internet access.",
   "cap.reflexes.text": "A small helper on this device ({size}, once) that senses what you need: the right brain for each message, suggestions, new things to try. Nothing leaves this device.",
   "cap.backup.text": "Keep a copy of everything in one file, and restore it on any device.",

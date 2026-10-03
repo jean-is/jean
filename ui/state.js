@@ -423,7 +423,8 @@ async function context() {
  * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes]
  */
 async function prepare(text, brain, records, notes = []) {
-  await app.ready
+  // Things Jean made comes with the first message, so a file can be made from the start (D119).
+  await Promise.all([app.ready, unlock('made')])
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred).map((tool) => tool.spec.name)

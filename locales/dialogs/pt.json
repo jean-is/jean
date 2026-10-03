@@ -9,7 +9,7 @@
   "picker.neverCloud": "Nunca enviar para a nuvem",
   "picker.all": "Todos os cérebros",
   "cap.files.text": "Larga ficheiros PDF, Word, Excel, PowerPoint, CSV ou de texto, e {name} lê-os. As imagens e as capturas de ecrã vão para os cérebros que conseguem ver.",
-  "cap.made.text": "Copia respostas com a formatação, transfere tabelas para o Excel, imprime ou guarda em PDF.",
+  "cap.made.text": "Pede um documento Word, uma folha de cálculo ou outro ficheiro, e guarda-o com um clique. Copia respostas com a formatação e transfere tabelas para o Excel.",
   "cap.compute.text": "{name} calcula os números com exatidão executando pequenos programas num ambiente isolado, sem acesso à internet.",
   "cap.reflexes.text": "Um pequeno assistente neste dispositivo ({size}, uma só vez) que pressente o que precisas: o cérebro certo para cada mensagem, sugestões, coisas novas para experimentar. Nada sai deste dispositivo.",
   "cap.backup.text": "Guarda uma cópia de tudo num só ficheiro e restaura-a em qualquer dispositivo.",

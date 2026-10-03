@@ -120,6 +120,8 @@ Still to check by hand:
 
 Budgets at the end of the build: core 2,616 of 3,000 lines, app 10,914 of 15,000, first load 92.7 of 100 KB gzipped, CSS 9.9 of 12 KB, the largest catalogues 6.5 of 8 KB (Russian, Ukrainian and Telugu; their dialogs' part 3.0), base prompt 182 of 200 tokens.
 
+Added after 0.6: Jean hands back files (D119). `write` makes a Word document from Markdown, a spreadsheet from CSV or Markdown tables (typed cells, formulas that only compute, totals saved with their result), or a text file; `edit` changes one passage, as a new version. They come with Things Jean made, which now loads with the first message, and scripts reach them too. Files show under the answer and save with a click; a drawing shows as a picture. Checked by Jean's own reader under `node --test`, in Chromium and WebKit (a Word document from the first message, then changed; a spreadsheet written by a script), by eye in English, Arabic and Japanese, light and dark, and in macOS's Quick Look and its Word reader. 4 strings in all 33 languages, 2 of them new. Still to check by hand: the files in Word, Excel, Numbers, Google Docs and LibreOffice on Windows; whether real brains pick `write` for a document, and write Markdown and CSV the way the tool asks. Budgets: app 12,532 of 15,000 lines, first load 99.2 of 100 KB gzipped, CSS 11.1 of 12 KB, Things Jean made 14.4 of 40 KB (its writers load with the first file made).
+
 ## Before the public launch (0.3)
 
 - [ ] Final name and domain chosen and registered, because data is bound to the origin (see [open-questions.md](open-questions.md))

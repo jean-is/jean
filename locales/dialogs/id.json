@@ -9,7 +9,7 @@
   "picker.neverCloud": "Jangan pernah kirim ke cloud",
   "picker.all": "Semua otak",
   "cap.files.text": "Letakkan file PDF, Word, Excel, PowerPoint, CSV, atau teks, dan {name} akan membacanya. Gambar dan tangkapan layar dikirim ke otak yang bisa melihat.",
-  "cap.made.text": "Salin jawaban beserta formatnya, unduh tabel untuk Excel, cetak atau simpan sebagai PDF.",
+  "cap.made.text": "Minta dokumen Word, spreadsheet, atau file lain, lalu simpan dengan sekali klik. Salin jawaban beserta formatnya, unduh tabel untuk Excel.",
   "cap.compute.text": "{name} menghitung angka dengan tepat dengan menjalankan program kecil di lingkungan terisolasi tanpa akses internet.",
   "cap.reflexes.text": "Pembantu kecil di perangkat ini ({size}, sekali saja) yang merasakan apa yang Anda butuhkan: otak yang tepat untuk setiap pesan, saran, hal baru untuk dicoba. Tidak ada yang keluar dari perangkat ini.",
   "cap.backup.text": "Simpan salinan semuanya dalam satu file, dan pulihkan di perangkat mana pun.",

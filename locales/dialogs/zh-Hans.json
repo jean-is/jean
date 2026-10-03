@@ -9,7 +9,7 @@
   "picker.neverCloud": "从不发送到云端",
   "picker.all": "所有大脑",
   "cap.files.text": "拖入 PDF、Word、Excel、PowerPoint、CSV 或文本文件，{name} 就会阅读它们。图片和屏幕截图会交给能看图的大脑。",
-  "cap.made.text": "带格式复制回答，下载表格用于 Excel，打印或另存为 PDF。",
+  "cap.made.text": "要一份 Word 文档、表格或其他文件，一键即可保存。带格式复制回答，下载表格用于 Excel。",
   "cap.compute.text": "{name} 在无法联网的隔离环境中运行小程序，精确地算出数字。",
   "cap.reflexes.text": "这台设备上的一个小助手（{size}，仅一次），能察觉你的需要：为每条消息选合适的大脑、给出建议、推荐可以尝试的新功能。任何内容都不会离开这台设备。",
   "cap.backup.text": "把所有内容复制到一个文件中，并可在任何设备上恢复。",

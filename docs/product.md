@@ -49,7 +49,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Capability | Offered when… | What appears |
 |---|---|---|
 | Files | The user pastes long text (over 2,000 characters), drops a file, or a reflex or the brain says a document would help | "You can drop files on me," plus a file shelf |
-| Things Jean made | The first table or document is produced | A "Made by Jean" shelf: copy as rich text, CSV (D108) |
+| Things Jean made | The first message (D119) | Files Jean writes, under the answer and saved with a click: Word documents, spreadsheets, text and drawings, changed on request (D119). Copy as rich text, CSV (D108) |
 | Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
 | Calculations | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | Jean computes instead of guessing (QuickJS) |
 | Intuition | After two conversations with a brain | "Let Jean get a feel for what you need?" A small helper on this device (about 345 MB, once) picks the brain and suggests next steps |

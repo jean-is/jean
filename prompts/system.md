@@ -98,7 +98,7 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Data toolkit (0.4) | `python: run Python (its standard library only) in a sandbox, for data work beyond simple maths` | — |
 | Web search (0.5) | `web_search: search the web for facts the conversation does not hold` (a provider that searches by itself gets its own tool instead, D91) | — |
 | Connections (0.5) | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |
-| Files (later) | `write: create or replace a file` / `edit: change part of a file` | Results the user asked for are files. Say their names. |
+| Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. |
 | Helpers (0.6) | `delegate: hand independent parts of a large task to helpers, who do them at the same time` | Use helpers only for independent parts of a large task. |
 
 Sources and suggestions were planned as capability rules; in 0.3 they became base rules, because every answer can cite a shared file and end with follow-ups. Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).

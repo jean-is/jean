@@ -9,7 +9,7 @@
   "picker.neverCloud": "從不傳送到雲端",
   "picker.all": "所有大腦",
   "cap.files.text": "拖入 PDF、Word、Excel、PowerPoint、CSV 或文字檔，{name} 就會閱讀它們。圖片和螢幕截圖會交給看得見的大腦。",
-  "cap.made.text": "連同格式複製回答，下載表格給 Excel 使用，列印或儲存為 PDF。",
+  "cap.made.text": "要一份 Word 文件、試算表或其他檔案，一鍵即可儲存。連同格式複製回答，下載表格給 Excel 使用。",
   "cap.compute.text": "{name} 在無法連網的隔離環境中執行小程式，精確地算出數字。",
   "cap.reflexes.text": "這台裝置上的一個小幫手（{size}，只需一次），能察覺你的需要：為每則訊息選合適的大腦、提供建議、推薦可以嘗試的新功能。任何內容都不會離開這台裝置。",
   "cap.backup.text": "把所有內容複製到一個檔案中，並可在任何裝置上還原。",

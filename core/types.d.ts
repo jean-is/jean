@@ -121,9 +121,9 @@ export interface ToolCallInfo {
   rawOutput?: any
   /**
    * ACP extension data, e.g. { raw } on brain entries; sources: what it brought in, by the
-   * number the brain cites (D71); image: a picture it made, as a project file
+   * number the brain cites (D71); image: a picture it made, as a project file; file: a file it made (D119)
    */
-  _meta?: Record<string, any> & { sources?: (Source & { n: number })[], image?: { uri: string, name: string } }
+  _meta?: Record<string, any> & { sources?: (Source & { n: number })[], image?: { uri: string, name: string }, file?: { uri: string, name: string, mimeType: string, size: number } }
 }
 
 /** ACP session/update payloads used by Jean (https://agentclientprotocol.com). */

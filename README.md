@@ -11,7 +11,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
 - **Talks in 33 languages,** right to left included, and you can switch languages mid-conversation.
 - **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and plain text. Pictures, and captures of your screen taken from the message box, go to brains that can see.
 - **Does the maths instead of guessing.** Calculations run as real code in a sandbox, with JavaScript (QuickJS) or Python's standard library (Pyodide).
-- **Hands back things you can use.** Copy an answer with its formatting, or download a table as a spreadsheet.
+- **Hands back things you can use.** Word documents, Excel spreadsheets and other files, made on request and saved with a click, with no file-format library. Or copy an answer with its formatting, or download a table as a spreadsheet.
 - **Remembers, if you want it to:**
   - what it should know about you, on a page where you can read and change it;
   - standing instructions;

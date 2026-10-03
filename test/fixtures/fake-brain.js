@@ -14,6 +14,8 @@
 // reports one email), answers Double-check's requests by comparing words, and gives a brief of
 // what's new when told the user is back. It sees pictures (a capture of the screen): it says how
 // big the last one is, read from its PNG header. It titles conversations with their first longer words.
+// It writes a "Word document" when asked for one, adds a step to it when asked to, and makes a
+// spreadsheet of a shared table's totals from a script (D119).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -55,6 +57,11 @@ const totals = {}
 for (const row of rows) totals[row[by]] = (totals[row[by]] ?? 0) + row[of]
 console.log(rows.length + ' rows')
 return { by, of, totals }`
+
+/** The same totals, also written as a spreadsheet from the script (codemode, D119). @param {string} name */
+const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of, totals }',
+  "await tools.write({ name: 'Totals.xlsx', content: [[by, of], ...Object.entries(totals)].map((row) => row.join(',')).join('\\n') })\nreturn { by, of, totals }")
+const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 
 /** A small PNG: a warm gradient. */
 function picture(width = 96, height = 64) {
@@ -192,6 +199,9 @@ createServer(async (req, res) => {
   else if (toolName === 'web_search') answer = found.length ? `Here is what the web says:\n\n${found.map((page) => `- **${page.title}**: ${page.more.slice(0, 90)} [${page.n}]`).join('\n')}` : 'I found nothing on the web.'
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: `return await models.image(${JSON.stringify(question)})` } }
   else if (toolName === 'run' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
+  else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }
+  else if (/add a step/i.test(question) && last.role === 'user' && declared.has('edit')) call = { name: 'edit', args: { file: 'Bakery plan.docx', old: '2. Deliver them', new: '2. Deliver them\n3. Sell the rest' } }
+  else if (toolName === 'write' || toolName === 'edit') answer = /^(?:Saved|Changed) /.test(last.content) ? `Done: **${/^(?:Saved|Changed) (.+?)\. /.exec(last.content)?.[1]}** is under this answer.` : `That didn't work: ${last.content}`
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
@@ -199,6 +209,7 @@ createServer(async (req, res) => {
   else if (skill && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a skill' } }
   else if (toolName === 'find_tools' && /save_skill\(/.test(last.content)) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
   else if (toolName === 'save_skill') answer = 'Done: it is a skill now.'
+  else if (table && /spreadsheet/i.test(question) && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: spreadsheetScript(table[2]) } }
   else if (table && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: totalsScript(table[2]) } }
   else if (table && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'compute' } }
   else if (table && last.role === 'tool' && /It is on/.test(last.content)) call = { name: 'run', args: { code: totalsScript(table[2]) } }

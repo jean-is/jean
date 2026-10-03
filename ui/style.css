@@ -394,6 +394,10 @@ button.cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c
 app-image figure { position: relative; inline-size: fit-content; margin: 0; }
 app-image img { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 app-image .icon-button { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; background: var(--glass); }
+/* A file Jean made (write, D119): saved with a click; a drawing shows above its name. */
+app-file { display: grid; justify-items: start; gap: 0.4rem; }
+app-file img { max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; background: white; }
+.file-size { flex: none; color: var(--ink-faint); }
 
 /* ─── Follow-ups ────────────────────────────────────────────────────────── */
 

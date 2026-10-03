@@ -1,7 +1,9 @@
 // Things Jean made (0.2): an answer copied as rich text, and its table downloaded as CSV the way
-// this locale's spreadsheets read it.
+// this locale's spreadsheets read it. Files the brain writes (D119): a Word document from the
+// first message on, changed in place, and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, SALES } from './helpers.js'
+import { extractPages } from '../caps/files/extract.js'
 
 test.beforeEach(async ({ page }) => {
   // The clipboard is the browser's: record what reaches it.
@@ -52,9 +54,65 @@ test('in French, a table downloads with semicolons, as Excel reads it there', as
   expect(csv).toBe('﻿Région;Total\r\nNord;"2540,5"\r\n')
 })
 
+test('a Word document from the first message, saved, then changed', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Write the bakery plan as a Word document')
+  const first = page.locator('.msg-jean').first()
+  await expect(first.locator('.prose')).toContainText('Bakery plan.docx is under this answer')
+  await expect(first.locator('app-file')).toHaveCount(1)
+  await first.locator('.activity > summary').click()
+  await expect(first.locator('.activity-list')).toContainText('Create Bakery plan.docx')
+  const plan = await saved(page, first, 'Save Bakery plan.docx')
+  expect(plan.name).toBe('Bakery plan.docx')
+  expect(plan.text).toContain('# Bakery plan\nBake 120 croissants\nDeliver them\n| Day | Croissants |\n| Saturday | 120 |')
+
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  await ask(page, 'Add a step to it')
+  const second = page.locator('.msg-jean').nth(1)
+  await expect(second.locator('.prose')).toContainText('Bakery plan.docx is under this answer')
+  expect((await saved(page, second, 'Save Bakery plan.docx')).text).toContain('Deliver them\nSell the rest')
+  // The first answer keeps the version it made.
+  expect((await saved(page, first, 'Save Bakery plan.docx')).text).not.toContain('Sell the rest')
+})
+
+test('a spreadsheet written by a script, with exact totals', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Calculations')
+  await page.keyboard.press('Escape')
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Make the totals by region a spreadsheet')
+  const answer = page.locator('.msg-jean').last()
+  // The sandbox starts first: as in compute.spec.js, that can take a while on a busy machine.
+  await expect(answer.locator('.prose')).toContainText('2540', { timeout: 30_000 })
+  const totals = await saved(page, answer, 'Save Totals.xlsx')
+  expect(totals.text).toBe('Sheet: Totals\nregion\tsales\nNorth\t2540\nSouth\t1960\nEast\t1515')
+  // The script's write shows under the calculation.
+  await answer.locator('.activity > summary').click()
+  await expect(answer.locator('.activity-list li.is-nested')).toContainText(['Create Totals.xlsx'])
+})
+
+/**
+ * Saves a file from under an answer, and reads it back as Jean reads a shared file.
+ * @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} answer @param {string} button
+ */
+async function saved(page, answer, button) {
+  const [download] = await Promise.all([page.waitForEvent('download'), answer.getByRole('button', { name: button }).click()])
+  const name = download.suggestedFilename()
+  const bytes = await streamBytes(download)
+  return { name, text: (await extractPages(name, new Uint8Array(bytes)) ?? []).join('\n') }
+}
+
 /** @param {import('@playwright/test').Download} download */
-async function streamText(download) {
+async function streamBytes(download) {
   const chunks = []
   for await (const chunk of await download.createReadStream()) chunks.push(chunk)
-  return Buffer.concat(chunks).toString('utf8')
+  return Buffer.concat(chunks)
+}
+
+/** @param {import('@playwright/test').Download} download */
+async function streamText(download) {
+  return (await streamBytes(download)).toString('utf8')
 }

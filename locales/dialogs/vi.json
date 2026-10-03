@@ -9,7 +9,7 @@
   "picker.neverCloud": "Không bao giờ gửi lên đám mây",
   "picker.all": "Tất cả bộ não",
   "cap.files.text": "Thả tệp PDF, Word, Excel, PowerPoint, CSV hoặc văn bản, và {name} sẽ đọc chúng. Hình ảnh và ảnh chụp màn hình được gửi đến những bộ não nhìn được.",
-  "cap.made.text": "Sao chép câu trả lời kèm định dạng, tải bảng cho Excel, in hoặc lưu thành PDF.",
+  "cap.made.text": "Yêu cầu một tài liệu Word, bảng tính hoặc tệp khác, rồi lưu chỉ bằng một cú nhấp. Sao chép câu trả lời kèm định dạng, tải bảng cho Excel.",
   "cap.compute.text": "{name} tính chính xác bằng cách chạy các chương trình nhỏ trong môi trường cách ly, không truy cập internet.",
   "cap.reflexes.text": "Một trợ thủ nhỏ trên thiết bị này ({size}, một lần) cảm nhận điều bạn cần: bộ não phù hợp cho từng tin nhắn, gợi ý, những điều mới để thử. Không gì rời khỏi thiết bị này.",
   "cap.backup.text": "Giữ bản sao mọi thứ trong một tệp, và khôi phục trên bất kỳ thiết bị nào.",
