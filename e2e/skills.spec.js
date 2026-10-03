@@ -1,6 +1,7 @@
-// Skills from elsewhere (D120), against a fake publisher (test/fixtures/fake-skills.js): a place to
-// look added by its address, skills read before they are added and added only as listed, and the
-// third request of a kind pointed to a ready-made skill, found on the device.
+// Skills from elsewhere (D121, D122), against a fake publisher (test/fixtures/fake-skills.js): a
+// place to look added by its address, skills read before they are added and added only as listed,
+// the third request of a kind pointed to a ready-made skill, and the brain finding, adding and
+// following a skill for know-how it lacks. The known places are set aside: tests stay offline.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn } from './helpers.js'
 
@@ -8,12 +9,18 @@ const PLACE = 'http://127.0.0.1:4183'
 
 /** Opens "Find a skill" from "What Jean knows about you", with Skills on. @param {import('@playwright/test').Page} page */
 async function openFinder(page) {
+  await places(page, [])
   await turnOn(page, 'Skills')
   await page.locator('app-settings .room-card', { hasText: 'Skills' }).locator('.button').click()
   await page.locator('app-knows dialog[open] .button', { hasText: 'Find a skill' }).click()
   const finder = page.locator('app-skill-finder dialog[open]')
   await expect(finder).toBeVisible()
   return finder
+}
+
+/** Where to look, instead of the known places. @param {import('@playwright/test').Page} page @param {string[]} list */
+async function places(page, list) {
+  await page.evaluate(async (skillIndexes) => (await import('/ui/state.js')).updateSettings({ skillIndexes }), list)
 }
 
 /** @param {import('@playwright/test').Locator} finder */
@@ -81,4 +88,26 @@ test('the third request of a kind points to a ready-made skill', async ({ page }
   const finder = page.locator('app-skill-finder dialog[open]')
   await expect(finder.locator('input[type="search"]')).toHaveValue('Summarize the weekly sales by region')
   await expect(finder.locator('.service').first()).toContainText('Weekly sales summary')
+})
+
+test('know-how Jean lacks: the brain finds a published skill, adds it once allowed, and follows it', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await places(page, [PLACE])
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  await ask(page, 'Write a reminder for the unpaid invoice from ACME')
+  // Searching what places publish needs no approval; adding a skill uses the internet: it asks first.
+  const card = page.locator('.approval')
+  await expect(card).toContainText('Allow this? Add a skill · invoice-chase')
+  await card.locator('.button.primary').click()
+  await expect(page.locator('.toast')).toContainText('Saved the skill “Invoice reminders”.')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Following the skill, step one: Find the invoice and how late it is.')
+  const file = await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('skills/invoice-chase/SKILL.md'))
+  expect(file).toContain('source: "http://127.0.0.1:4183/.well-known/agent-skills/invoice-chase/SKILL.md"')
+  // The activity view says what was searched and what was added.
+  const activity = page.locator('details.activity').last()
+  await activity.locator('summary').first().click()
+  await expect(activity).toContainText('Looked for skills · reminders for unpaid invoices')
+  await expect(activity).toContainText('Add a skill · invoice-chase')
 })

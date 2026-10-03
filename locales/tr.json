@@ -236,6 +236,8 @@
   "tool.recall": "Önceki konuşmalara bakıldı",
   "tool.skill": "Bir beceri kullanıldı",
   "tool.save_skill": "Bir beceri kaydedildi",
+  "tool.find_skills": "Beceri arandı",
+  "tool.add_skill": "Beceri ekle",
   "tool.python": "Python ile hesaplandı",
   "cap.search.name": "Web araması",
   "cap.search.offer": "Bunun için webe bakmak gerek. Bir soru gerektirdiğinde aransın mı? Yanıtlar kaynaklarını gösterir.",

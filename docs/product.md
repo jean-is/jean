@@ -18,7 +18,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Capability (a module unlocked by discovery) | What Jean can do; skills are one of them |
 | Skill (`SKILL.md`) | Skill (D115) |
 | Task on a schedule (not built yet) | Routine: the word is kept for it (D115) |
-| Skill discovery index (`/.well-known/agent-skills/`) | A place to look, in "Find a skill" (D120) |
+| Skill discovery index (`/.well-known/agent-skills/`) | A place to look, in "Find a skill" (D121) |
 | MCP server / connector | Connection |
 | Artifact / output | Things Jean made |
 | Project folder | **Project** — "anything you keep coming back to" |
@@ -58,7 +58,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Bigger brain | A task outgrows the current brain | The next rung of the brain ladder |
 | Memory | The user states a lasting preference or correction | "Want me to remember things like this from now on?" |
 | Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
-| Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups, after "Use a ready-made skill" when a place to look lists one that fits (D120). "Find a skill" reads skills others publish before they are added (D116, D120) |
+| Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups, after "Use a ready-made skill" when a place to look lists one that fits (D121). "Find a skill" reads skills others publish before they are added (D116, D121). When a task needs know-how no skill gives, the brain looks for one where skills are published, adds it once allowed ("Using the internet") and follows it, in the same answer; it can offer Skills for that too (D122) |
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
 | Assistant name | After some use inside a project (three conversations, D102) | "Want to give this project's assistant a name?" A name and a few words on how it should be, in the project's dialog; the header shows the name |
 | Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |

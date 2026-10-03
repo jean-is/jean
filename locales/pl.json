@@ -244,6 +244,8 @@
   "tool.recall": "Przejrzano wcześniejsze rozmowy",
   "tool.skill": "Użyto umiejętności",
   "tool.save_skill": "Zapisano umiejętność",
+  "tool.find_skills": "Wyszukano umiejętności",
+  "tool.add_skill": "Dodaj umiejętność",
   "tool.python": "Obliczono w Pythonie",
   "cap.search.name": "Wyszukiwanie w sieci",
   "cap.search.offer": "Tu przyda się sieć. Szukać, gdy pytanie tego wymaga? Odpowiedzi pokażą swoje źródła.",

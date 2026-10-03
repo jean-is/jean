@@ -94,7 +94,7 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Calculations (0.3) | `run: run JavaScript in a sandbox to work things out exactly; scripts can read shared files and call tools` | Compute numbers with run instead of estimating them. |
 | Discovery (0.3, always on) | `find_tools: find tools that aren't listed here, and how to call them` / `offer: suggest turning on something the user has not discovered yet` | Offer at most one new thing per reply, and only when it clearly helps. |
 | Memory (0.4) | `recall: search earlier conversations` / `remember: save a lasting fact, preference or correction the user states` | Remember only what will still matter in later conversations. |
-| Skills (0.4; Routines until D115) | `skill: read the steps of a skill before following it` / `save_skill: save how a repeated task is done, when the user asks` | When a request matches a skill, read it and follow its steps. |
+| Skills (0.4; Routines until D115) | `skill: read a fitting skill’s steps, then follow them` / `save_skill: save how a repeated task is done, if asked` / `find_skills: look for a published skill` (D122; `add_skill` has no line: what `find_skills` answers explains it) | — (folded into `skill`’s line, to fit 40 tokens) |
 | Data toolkit (0.4) | `python: run Python (its standard library only) in a sandbox, for data work beyond simple maths` | — |
 | Web search (0.5) | `web_search: search the web for facts the conversation does not hold` (a provider that searches by itself gets its own tool instead, D91) | — |
 | Connections (0.5) | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |

@@ -1,4 +1,4 @@
-// A fake publisher of skills for local end-to-end checks of "Find a skill" (D120): an Agent Skills
+// A fake publisher of skills for local end-to-end checks of "Find a skill" (D121): an Agent Skills
 // discovery index (schema 0.2) and the SKILL.md files it lists, open to any origin.
 // Usage: node test/fixtures/fake-skills.js   (PORT=4183 by default)
 //   /.well-known/agent-skills/index.json   two skills, one whose file changed since it was

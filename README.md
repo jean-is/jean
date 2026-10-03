@@ -91,6 +91,7 @@ node test/fixtures/fake-brain.js
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
 | `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to |
+| `npm run skills` | Checks, from a browser's point of view, the places Jean looks for skills by default |
 
 CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on every push and merge request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.
 

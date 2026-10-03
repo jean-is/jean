@@ -1,4 +1,4 @@
-// "Find a skill" (D120): the skills published at the places in settings or policy, searched on
+// "Find a skill" (D121): the skills published at the places in settings or policy, searched on
 // the device. A skill is read before it is added, and added only as its publisher listed it,
 // with where it came from. Loaded the first time the dialog opens.
 import { html, nothing } from 'lit-html'
@@ -10,7 +10,7 @@ import { markdown } from '../../ui/markdown.js'
 import { saveSkill } from '../../core/skills.js'
 import { openingOf } from '../../core/events.js'
 import { skills, folders } from './skills.js'
-import { indexURL, places, refreshIndexes, cachedIndexes, offered, searchSkills, fetchSkill, SkillError } from './sources.js'
+import { indexURL, places, ownPlaces, refreshIndexes, cachedIndexes, offered, searchSkills, fetchSkill, SkillError } from './sources.js'
 import { BRAND } from '../../brand.js'
 import { t } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
@@ -26,6 +26,8 @@ const reading = signal(/** @type {{ entry: Entry, skill?: Skill } | null} */ (nu
 const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
 
 const where = () => places(app.settings.value, app.policy)
+/** The places the user can remove: their own, the known ones until they change the list (D122). */
+const own = () => ownPlaces(app.settings.value, app.policy).map(indexURL)
 const host = (/** @type {string} */ url) => new URL(url).host
 const have = (/** @type {Entry} */ entry) => installed.value.some((skill) => skill.source === entry.url)
 
@@ -59,11 +61,11 @@ async function addPlace(event) {
   indexes.value = { ...indexes.value, ...read }
   message.value = null
   form.reset()
-  if (!where().includes(url)) await updateSettings({ skillIndexes: [...(app.settings.value.skillIndexes ?? []), url] })
+  if (!where().includes(url)) await updateSettings({ skillIndexes: [...own().flatMap((other) => other ?? []), url] })
 }
 
 /** @param {string} url */
-const removePlace = (url) => updateSettings({ skillIndexes: (app.settings.value.skillIndexes ?? []).filter((other) => other !== url) })
+const removePlace = (url) => updateSettings({ skillIndexes: own().flatMap((other) => (other && other !== url ? [other] : [])) })
 
 /** Fetches a skill to read it: only the one its publisher listed. @param {Entry} entry */
 async function look(entry) {
@@ -106,7 +108,7 @@ function reader({ entry, skill }) {
 class Finder extends Element {
   render() {
     const urls = where()
-    const mine = app.settings.value.skillIndexes ?? []
+    const mine = own()
     const { usable, other } = offered(indexes.value, urls)
     const found = searchSkills(query.value, usable)
     const shown = message.value

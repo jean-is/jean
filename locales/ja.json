@@ -232,6 +232,8 @@
   "tool.recall": "以前の会話を確認",
   "tool.skill": "スキルを使用",
   "tool.save_skill": "スキルを保存",
+  "tool.find_skills": "スキルを検索",
+  "tool.add_skill": "スキルを追加",
   "tool.python": "Pythonで計算",
   "cap.search.name": "ウェブ検索",
   "cap.search.offer": "ウェブで調べる必要があります。質問に必要なときに検索しますか？答えには出典が表示されます。",

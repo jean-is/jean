@@ -236,6 +236,8 @@
   "tool.recall": "Mazungumzo ya awali yamepitiwa",
   "tool.skill": "Ujuzi umetumika",
   "tool.save_skill": "Ujuzi umehifadhiwa",
+  "tool.find_skills": "Ujuzi umetafutwa",
+  "tool.add_skill": "Ongeza ujuzi",
   "tool.python": "Imekokotolewa kwa Python",
   "cap.search.name": "Utafutaji wa wavuti",
   "cap.search.offer": "Hili linahitaji kutafuta kwenye wavuti. Itafute swali linapohitaji? Majibu yataonyesha vyanzo vyake.",

@@ -236,6 +236,8 @@
   "tool.recall": "Looked through earlier conversations",
   "tool.skill": "Used a skill",
   "tool.save_skill": "Saved a skill",
+  "tool.find_skills": "Looked for skills",
+  "tool.add_skill": "Add a skill",
   "tool.python": "Worked it out in Python",
   "cap.search.name": "Web search",
   "cap.search.offer": "This needs a look on the web. Search when a question needs it? Answers will show their sources.",

@@ -236,6 +236,8 @@
   "tool.recall": "ቀደም ያሉ ውይይቶች ታይተዋል",
   "tool.skill": "ክህሎት ጥቅም ላይ ውሏል",
   "tool.save_skill": "ክህሎት ተቀምጧል",
+  "tool.find_skills": "ክህሎቶች ተፈልገዋል",
+  "tool.add_skill": "ክህሎት ያክሉ",
   "tool.python": "በPython ተሰልቷል",
   "cap.search.name": "የድር ፍለጋ",
   "cap.search.offer": "ይህ በድር ላይ መፈለግ ይፈልጋል። ጥያቄ ሲፈልገው ይፈለግ? መልሶች ምንጫቸውን ያሳያሉ።",

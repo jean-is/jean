@@ -232,6 +232,8 @@
   "tool.recall": "ดูบทสนทนาก่อนหน้า",
   "tool.skill": "ใช้ทักษะ",
   "tool.save_skill": "บันทึกทักษะ",
+  "tool.find_skills": "ค้นหาทักษะ",
+  "tool.add_skill": "เพิ่มทักษะ",
   "tool.python": "คำนวณด้วย Python",
   "cap.search.name": "ค้นหาบนเว็บ",
   "cap.search.offer": "เรื่องนี้ต้องค้นบนเว็บ ให้ค้นหาเมื่อคำถามจำเป็นไหม คำตอบจะแสดงแหล่งที่มา",

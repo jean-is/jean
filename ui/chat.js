@@ -333,11 +333,14 @@ function toolLabel(tool, files = []) {
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
   // Older conversations name what has been renamed since (D115) by its old name.
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${renamed(String(tool.rawInput?.capability))}.name`) })
-  if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
-  if (tool.name === 'ask_user') return `${t('tool.ask_user')} · ${tool.rawInput?.question ?? ''}`
   const key = `tool.${renamed(String(tool.name))}`
+  const detail = DETAIL[String(tool.name)]
+  if (detail) return `${t(key)} · ${tool.rawInput?.[detail] ?? ''}`
   return t(key) === key ? tool.title : t(key)
 }
+
+/** What a label shows after some tools' names: what was searched, asked or added. */
+const DETAIL = /** @type {Record<string, string>} */ ({ web_search: 'query', ask_user: 'question', find_skills: 'query', add_skill: 'name' })
 
 /**
  * @param {Extract<import('./state.js').Decision, { toolCall: any }>} decision

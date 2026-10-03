@@ -236,6 +236,8 @@
   "tool.recall": "Frühere Gespräche durchgesehen",
   "tool.skill": "Eine Fähigkeit genutzt",
   "tool.save_skill": "Fähigkeit gespeichert",
+  "tool.find_skills": "Fähigkeiten gesucht",
+  "tool.add_skill": "Fähigkeit hinzufügen",
   "tool.python": "Mit Python berechnet",
   "cap.search.name": "Websuche",
   "cap.search.offer": "Hier hilft ein Blick ins Web. Suchen, wenn eine Frage es braucht? Antworten zeigen ihre Quellen.",

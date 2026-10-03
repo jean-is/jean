@@ -7,6 +7,7 @@
 // Calculations if they're off, then runs a script that reads the file and totals it.
 // From 0.4 it remembers what follows "Remember", says what its <memory> holds when asked
 // "What do you know?", and saves a skill when asked to (finding the tool first if needed).
+// Asked for reminders about an unpaid invoice, it finds a published skill, adds it and follows it.
 // From 0.5 it searches the web when asked to, reads the user's latest emails through a
 // connection (finding its tool first, or from a script when Calculations are on) and sums them
 // up citing each one, and draws with models.image; /images/generations answers with a picture.
@@ -139,6 +140,8 @@ createServer(async (req, res) => {
   const toolName = last.role === 'tool' ? messages.flatMap((m) => m.tool_calls ?? []).find((c) => c.id === last.tool_call_id)?.function?.name : undefined
   const remember = /^(?:remember|retiens|覚えて)[:：,]?\s*(.+)/i.exec(question.trim())
   const skill = /\bskill\b/i.test(question) && last.role === 'user'
+  // Know-how it lacks (D122): it looks for a published skill, adds it, and follows its steps.
+  const reminder = /unpaid invoice/i.test(question) && last.role === 'user'
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
   const emails = /e-?mails?|inbox|courriels?/i.test(question) || /The user is back/.test(serialized)
@@ -199,6 +202,9 @@ createServer(async (req, res) => {
   else if (skill && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a skill' } }
   else if (toolName === 'find_tools' && /save_skill\(/.test(last.content)) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
   else if (toolName === 'save_skill') answer = 'Done: it is a skill now.'
+  else if (reminder && declared.has('find_skills')) call = { name: 'find_skills', args: { query: 'reminders for unpaid invoices' } }
+  else if (toolName === 'find_skills' && /^- invoice-chase /m.test(last.content)) call = { name: 'add_skill', args: { name: 'invoice-chase' } }
+  else if (toolName === 'add_skill') answer = /^Added/.test(last.content) ? `Following the skill, step one: ${/^1\. (.+)$/m.exec(last.content)?.[1]}` : 'I could not add the skill.'
   else if (table && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: totalsScript(table[2]) } }
   else if (table && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'compute' } }
   else if (table && last.role === 'tool' && /It is on/.test(last.content)) call = { name: 'run', args: { code: totalsScript(table[2]) } }

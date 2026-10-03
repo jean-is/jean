@@ -232,6 +232,8 @@
   "tool.recall": "查看了之前的对话",
   "tool.skill": "使用了技能",
   "tool.save_skill": "保存了技能",
+  "tool.find_skills": "查找了技能",
+  "tool.add_skill": "添加技能",
   "tool.python": "用 Python 计算",
   "cap.search.name": "网络搜索",
   "cap.search.offer": "这需要上网查一查。在问题需要时进行搜索？回答会显示来源。",

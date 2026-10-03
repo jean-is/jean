@@ -20,7 +20,7 @@ Nothing planned is ruled out by the architecture:
 | Disable capabilities | ✅ Comes for free | The policy feeds the unlock gate. A denied capability is never offered and its code is never downloaded. Admins can also unlock capabilities in advance. |
 | Config for managed browsers | ✅ Chrome and Edge only | `ManagedConfigurationPerOrigin` pushes JSON to web apps that IT has installed, read with `navigator.managed.getManagedConfiguration()`. It is a second policy source alongside `policy.json`. |
 | White-label | ✅ Comes for free | Change `BRAND` and it becomes "Acme Assistant". |
-| Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy lists in `skillIndexes`: everyone finds them in "Find a skill", and no one can remove the place (D120). CSP's `connect-src` decides which other places can be read. |
+| Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy lists in `skillIndexes`: everyone finds them, in "Find a skill" or through the brain, and no one can remove the place (D121). Those places replace the ones Jean knows (D122), and CSP's `connect-src` decides which others can be read. Whether the brain may add a skill is the `fetch` rule ("Using the internet"), which policy can lock. |
 | Audit | ✅ Best effort | The ACP event stream is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector. The gateway's log remains the authoritative one. |
 
 ## What it cannot do, by design

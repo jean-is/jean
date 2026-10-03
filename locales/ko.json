@@ -232,6 +232,8 @@
   "tool.recall": "이전 대화를 살펴봄",
   "tool.skill": "스킬을 사용함",
   "tool.save_skill": "스킬을 저장함",
+  "tool.find_skills": "스킬을 찾음",
+  "tool.add_skill": "스킬 추가",
   "tool.python": "Python으로 계산함",
   "cap.search.name": "웹 검색",
   "cap.search.offer": "웹에서 찾아봐야 해요. 질문에 필요할 때 검색할까요? 답에 출처가 표시돼요.",

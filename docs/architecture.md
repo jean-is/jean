@@ -72,7 +72,7 @@ ui/               base element, shell, chat, activity view, caps.js (the unlock 
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
                   memory/ projects/ skills/ python/             (0.4; skills/ was routines/ until D115; skills/sources.js reads
-                                                                discovery indexes and finder.js is "Find a skill", D120)
+                                                                discovery indexes and finder.js is "Find a skill", D121)
                   search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
                   helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, and dialogs/ with the dialogs' strings (D97)
@@ -109,7 +109,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. Built so far: `read`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools.
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `find_skills`, `add_skill`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. Built so far: `read`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `find_skills`, `add_skill`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools.
 - Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
@@ -192,7 +192,7 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
   instructions.md                global, written by the user (front matter: format; body: the instructions)
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
   skills/<name>/SKILL.md         global skills (Agent Skills; metadata: format, author, created, D83; one from
-                                 elsewhere keeps its license, and metadata source and digest, D120)
+                                 elsewhere keeps its license, and metadata source and digest, D121)
   projects/
     <ulid>-<slug>/
       project.md                 front matter: format, name, colour, default (home), cloud: false, createdAt, by,
@@ -205,7 +205,7 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
       files/sha256-<hash>.meta.json
       conversations/<ulid>.jsonl
   .secrets/                      encrypted; never exported, synced or shared
-  .cache/                        disposable: search index, thumbnails, the skill indexes read (skills/indexes.json, D120)
+  .cache/                        disposable: search index, thumbnails, the skill indexes read (skills/indexes.json, D121)
 ```
 
 There is always a default project, hidden until the Projects capability is discovered. One code path handles everything.

@@ -236,6 +236,8 @@
   "tool.recall": "Eerdere gesprekken doorzocht",
   "tool.skill": "Een vaardigheid gebruikt",
   "tool.save_skill": "Een vaardigheid opgeslagen",
+  "tool.find_skills": "Vaardigheden gezocht",
+  "tool.add_skill": "Een vaardigheid toevoegen",
   "tool.python": "Berekend met Python",
   "cap.search.name": "Zoeken op het web",
   "cap.search.offer": "Hiervoor is het web nodig. Zoeken als een vraag erom vraagt? Antwoorden tonen hun bronnen.",

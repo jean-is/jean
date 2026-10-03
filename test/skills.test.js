@@ -1,11 +1,12 @@
-// Skills from elsewhere (D116, D120): discovery indexes read, checked and cached; a skill added
-// only as its publisher listed it; skills matched with the user's requests on the device.
+// Skills from elsewhere (D116, D121, D122): discovery indexes read, checked and cached; a skill
+// added only as its publisher listed it; skills matched with the user's requests on the device,
+// and found by the brain when a task needs know-how it lacks.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS } from '../core/fs.js'
 import { parseFrontMatter } from '../core/settings.js'
 import { parseSkill, saveSkill, skillLines } from '../core/skills.js'
-import { indexURL, places, parseIndex, fetchSkill, refreshIndexes, cachedIndexes, offered, readyMade, searchSkills } from '../caps/skills/sources.js'
+import { indexURL, places, ownPlaces, KNOWN_PLACES, parseIndex, fetchSkill, refreshIndexes, cachedIndexes, offered, readyMade, searchSkills, findSkills, foundText, listed } from '../caps/skills/sources.js'
 
 const SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json'
 const INDEX = 'https://example.com/.well-known/agent-skills/index.json'
@@ -135,4 +136,36 @@ test('skills are found on the device: by a request like the one that keeps comin
   assert.deepEqual(readyMade('What is the capital of France?', usable, []), [])
   assert.deepEqual(searchSkills('invoices', usable).map((e) => e.name), ['invoice-chase'])
   assert.deepEqual(searchSkills('  ', usable).map((e) => e.name), ['weekly-sales-summary', 'invoice-chase'], 'no search: all of them')
+})
+
+test('Jean knows where skills are published, until the user or the organisation says otherwise (D122)', () => {
+  const known = places({}, {})
+  assert.equal(known.length, KNOWN_PLACES.length)
+  assert.ok(known.every((url) => /^https:\/\/[^/]+\/\.well-known\/agent-skills\/index\.json$/.test(url)), 'each a site’s index, over https')
+  assert.deepEqual(ownPlaces({}, {}), KNOWN_PLACES)
+  assert.deepEqual(places({ skillIndexes: [] }, {}), [], 'the user removed them all')
+  assert.deepEqual(places({}, { skillIndexes: ['corp.example'] }), ['https://corp.example/.well-known/agent-skills/index.json'], 'an organisation’s places replace them')
+  assert.deepEqual(ownPlaces({}, { skillIndexes: ['corp.example'] }), [])
+})
+
+test('find_skills tells the brain what fits, what it has already, and what it can’t use (D122)', () => {
+  const other = 'https://other.example/.well-known/agent-skills/index.json'
+  const indexes = {
+    [INDEX]: { at: '', entries: [entry('invoice-chase', 'Write polite reminders for unpaid invoices.'), entry('pptx', 'Create and edit PowerPoint presentations.', 'archive'),
+      entry('weekly-sales', 'Summarize the weekly sales.')] },
+    [other]: { at: '', entries: [{ ...entry('invoice-chase', 'Chase unpaid invoices by phone.'), url: 'https://other.example/invoice-chase/SKILL.md', index: other }] },
+  }
+  const urls = [INDEX, other]
+  assert.equal(foundText(findSkills('unpaid invoices', indexes, urls), []),
+    'Skills that may fit; add one with add_skill, then follow the steps it returns:\n'
+    + '- invoice-chase (other.example): Chase unpaid invoices by phone.\n- invoice-chase (example.com): Write polite reminders for unpaid invoices.', 'both places, best first')
+  assert.equal(foundText(findSkills('PowerPoint presentations', indexes, urls), []),
+    'No published skill you can use fits.\nThese need tools you don’t have: pptx (example.com).')
+  assert.equal(foundText(findSkills('weekly sales', indexes, urls), ['weekly-sales']), 'No published skill you can use fits.\nAlready added, read with skill: weekly-sales.')
+  assert.equal(foundText(findSkills('anything', {}, urls), []), 'No published skill you can use fits.')
+
+  assert.equal(listed('invoice-chase', '', indexes, urls)?.index, INDEX, 'the first place wins a name')
+  assert.equal(listed('invoice-chase', 'other.example', indexes, urls)?.index, other)
+  assert.equal(listed('invoice-chase', '', indexes, [other])?.index, other, 'only from places listed now')
+  assert.equal(listed('nothing-here', '', indexes, urls), null)
 })

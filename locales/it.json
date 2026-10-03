@@ -240,6 +240,8 @@
   "tool.recall": "Consultate le conversazioni precedenti",
   "tool.skill": "Usata un’abilità",
   "tool.save_skill": "Salvata un’abilità",
+  "tool.find_skills": "Cercate abilità",
+  "tool.add_skill": "Aggiungi un’abilità",
   "tool.python": "Calcolato con Python",
   "cap.search.name": "Ricerca sul web",
   "cap.search.offer": "Qui servirebbe una ricerca sul web. Cercare quando una domanda lo richiede? Le risposte mostreranno le fonti.",

@@ -77,5 +77,6 @@ npm test        # node --test test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
 npm run directory # check from a browser's point of view which known services Jean can connect to
+npm run skills    # check from a browser's point of view the places Jean looks for skills by default
 npm run serve   # serve the folder as it is
 ```

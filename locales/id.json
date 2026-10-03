@@ -232,6 +232,8 @@
   "tool.recall": "Melihat percakapan sebelumnya",
   "tool.skill": "Menggunakan keterampilan",
   "tool.save_skill": "Menyimpan keterampilan",
+  "tool.find_skills": "Mencari keterampilan",
+  "tool.add_skill": "Tambahkan keterampilan",
   "tool.python": "Dihitung dengan Python",
   "cap.search.name": "Pencarian web",
   "cap.search.offer": "Ini perlu dicari di web. Cari saat pertanyaan memerlukannya? Jawaban akan menunjukkan sumbernya.",

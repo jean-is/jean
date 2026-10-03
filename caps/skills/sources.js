@@ -1,4 +1,4 @@
-// Skills from elsewhere (D116, D120). A place to find skills is an Agent Skills discovery index,
+// Skills from elsewhere (D116, D121). A place to find skills is an Agent Skills discovery index,
 // /.well-known/agent-skills/index.json (schema 0.2), named in settings or by policy. Indexes are
 // kept in .cache/ and read again after a day; a skill is fetched when the user looks at it, and
 // added only if its bytes are the ones its index lists (SHA-256). Requests are compared with what
@@ -58,11 +58,22 @@ export function indexURL(address) {
 }
 
 /**
- * Where to look: the organisation's places (policy), which stay, then the user's.
- * @param {{ skillIndexes?: string[] }} settings @param {{ skillIndexes?: string[] }} policy
+ * Sites that publish skills a browser can read (D122): provider identities, like the directory of
+ * connections (D95), checked again by `npm run skills`. Settings and policy replace them.
+ */
+export const KNOWN_PLACES = Object.freeze(['apify.com', 'clerk.com', 'developers.cloudflare.com', 'evilmartians.com', 'huggingface.co', 'neon.com', 'redocly.com'])
+
+/** @typedef {{ skillIndexes?: string[] }} Places */
+
+/** The user's places: their own list once they changed it, else the known ones, unless their organisation names its own. @param {Places} settings @param {Places} policy */
+export const ownPlaces = (settings, policy) => settings.skillIndexes ?? (policy.skillIndexes ? [] : KNOWN_PLACES)
+
+/**
+ * Where to look: the organisation's places, which stay, then the user's.
+ * @param {Places} settings @param {Places} policy
  * @returns {string[]}
  */
-export const places = (settings, policy) => [...new Set([...(policy.skillIndexes ?? []), ...(settings.skillIndexes ?? [])].map(indexURL).filter((url) => url !== null))]
+export const places = (settings, policy) => [...new Set([...(policy.skillIndexes ?? []), ...ownPlaces(settings, policy)].map(indexURL).filter((url) => url !== null))]
 
 /** The skills an index lists that Jean can check: a valid name, a kind it knows, a digest. @param {unknown} data @param {string} base where it was read */
 export function parseIndex(data, base) {
@@ -138,6 +149,38 @@ export function readyMade(text, entries, installed) {
 
 /** The skills a search finds, best first; all of them for no search. @param {string} query @param {Entry[]} entries */
 export const searchSkills = (query, entries) => (query.trim() ? bm25(entries.map(about), query).map(({ index }) => entries[index]) : entries)
+
+/**
+ * What the places listed now publish for a task, of every kind: the best matches, and those
+ * nearly as good, up to six (D122).
+ * @param {string} query @param {Record<string, Index>} indexes @param {string[]} urls
+ */
+export function findSkills(query, indexes, urls) {
+  const entries = urls.flatMap((url) => indexes[url]?.entries ?? [])
+  const hits = query.trim() ? bm25(entries.map(about), query) : []
+  return hits.filter((hit) => hit.score >= hits[0].score * 0.4).slice(0, 6).map(({ index }) => entries[index])
+}
+
+/** The skill a place lists by that name, from the places listed now; the first place wins. @param {string} name @param {string} place its host, if two have it @param {Record<string, Index>} indexes @param {string[]} urls */
+export const listed = (name, place, indexes, urls) => urls.flatMap((url) => indexes[url]?.entries ?? [])
+  .find((entry) => entry.name === name && (!place || new URL(entry.index).host === place || entry.index === place)) ?? null
+
+/**
+ * What find_skills tells the brain: the skills it can add, those it has already, those it can't use.
+ * @param {Entry[]} found @param {string[]} installed
+ */
+export function foundText(found, installed) {
+  const at = (/** @type {Entry} */ entry) => `${entry.name} (${new URL(entry.index).host})`
+  const usable = found.filter((entry) => entry.type === 'skill-md' && !installed.includes(entry.name))
+  const have = [...new Set(found.filter((entry) => installed.includes(entry.name)).map((entry) => entry.name))]
+  const other = found.filter((entry) => entry.type !== 'skill-md' && !installed.includes(entry.name))
+  return [
+    usable.length ? `Skills that may fit; add one with add_skill, then follow the steps it returns:\n${usable.map((entry) => `- ${at(entry)}: ${entry.description.slice(0, 300)}`).join('\n')}`
+      : 'No published skill you can use fits.',
+    ...(have.length ? [`Already added, read with skill: ${have.join(', ')}.`] : []),
+    ...(other.length ? [`These need tools you don’t have: ${other.map(at).join(', ')}.`] : []),
+  ].join('\n')
+}
 
 /** @param {ArrayBuffer} buffer */
 const hex = (buffer) => [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, '0')).join('')

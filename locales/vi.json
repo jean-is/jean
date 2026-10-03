@@ -232,6 +232,8 @@
   "tool.recall": "Đã xem các cuộc trò chuyện trước",
   "tool.skill": "Đã dùng một kỹ năng",
   "tool.save_skill": "Đã lưu kỹ năng",
+  "tool.find_skills": "Đã tìm kỹ năng",
+  "tool.add_skill": "Thêm kỹ năng",
   "tool.python": "Đã tính bằng Python",
   "cap.search.name": "Tìm trên web",
   "cap.search.offer": "Việc này cần xem trên web. Tìm kiếm khi câu hỏi cần đến? Câu trả lời sẽ ghi rõ nguồn.",

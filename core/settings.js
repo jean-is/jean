@@ -22,7 +22,7 @@ import { ulid } from './ulid.js'
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
- * @property {string[]} [skillIndexes]          places to find skills (D120)
+ * @property {string[]} [skillIndexes]          places to find skills (D121)
  */
 
 /**

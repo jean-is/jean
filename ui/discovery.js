@@ -23,7 +23,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   compute: 'exact calculations and data analysis, by running code',
   memory: 'remembering lasting facts and preferences the user states, from one conversation to the next',
   projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
-  skills: 'saving how a task the user repeats is done, to do it the same way every time',
+  skills: 'saving how a task the user repeats is done, and finding skills others publish when a task needs know-how you lack',
   python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
   search: 'searching the web, when a question needs current or specific facts',
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
@@ -238,7 +238,7 @@ async function repeated(records) {
 }
 
 /**
- * Whether a place to find skills lists one for this kind of request (D120): from the indexes
+ * Whether a place to find skills lists one for this kind of request (D121): from the indexes
  * read before, compared on the device, so the request goes nowhere.
  * @param {import('../core/types.js').Envelope[]} records
  */

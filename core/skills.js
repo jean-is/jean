@@ -8,16 +8,16 @@ import { parseFrontMatter, stringifyFrontMatter } from './settings.js'
 /** @typedef {import('./types.js').FS} FS */
 /**
  * @typedef {{ name: string, description: string, title: string, body: string, path: string, license?: string, source?: string, digest?: string }} Skill
- * title: the first heading, in the user's language; source and digest: where one from elsewhere came from, as listed (D120)
+ * title: the first heading, in the user's language; source and digest: where one from elsewhere came from, as listed (D121)
  */
 
 /** The standard's names: lower-case letters, digits and single hyphens, up to 64 characters. */
 export const NAME = /^(?=.{1,64}$)[a-z0-9]+(-[a-z0-9]+)*$/
-// What each description adds to <skills> (D120): a published one can run to a page.
+// What each description adds to <skills> (D121): a published one can run to a page.
 const DESCRIBED = 300
 
 /**
- * A published skill's front matter in the subset parseFrontMatter reads (D120): its folded (`>`)
+ * A published skill's front matter in the subset parseFrontMatter reads (D121): its folded (`>`)
  * or literal (`|`) blocks and its single-quoted strings become double-quoted ones.
  * @param {string} text
  */
