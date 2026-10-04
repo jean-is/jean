@@ -157,10 +157,26 @@ function frameTo(url) {
 /** A page loaded in the frame: the one asked for, or one the site went to by itself, which shows it shows. @param {string} url */
 function loaded(url) {
   loading.value = false
+  settled = Date.now() + HOLD_MS
   if (trail.loaded(history.length)) shows.add(siteOf(url))
   unsure.value = !shows.has(siteOf(url))
   bump()
 }
+
+// Some browsers put a page that refuses to show in a frame in the place of the page around it:
+// Arc takes Jean's tab to the site, with no script or header of the site's, past the sandbox. So
+// while a page opens in the frame, and a moment after it loads, Jean's tab keeps to Jean: going to
+// the site on show is called off where the Navigation API lets it be, and leaving otherwise asks.
+const HOLD_MS = 3000
+/** Until when, once the page in the frame has loaded, Jean's tab keeps to Jean. */
+let settled = 0
+const holds = () => open.peek() && page.peek()?.own === false && (loading.peek() || Date.now() < settled)
+const navigation = /** @type {any} */ (globalThis).navigation
+navigation?.addEventListener('navigate', (/** @type {any} */ event) => {
+  const shown = page.peek()
+  if (event.cancelable && holds() && shown && new URL(event.destination.url).origin === new URL(shown.url).origin) event.preventDefault()
+})
+addEventListener('beforeunload', (event) => { if (holds()) event.preventDefault() })
 
 let guard = { until: 0, undo: 0 }
 /** Whether Jean's own history may have been walked back since (before this loaded, it may have been). */

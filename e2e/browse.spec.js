@@ -110,6 +110,13 @@ test('a site that refuses to be framed opens in a tab of its own, and Jean recom
   await page.keyboard.press('Escape')
   const pane = page.locator('app-browser .browser')
   await go(page, `${SITE}/refuses.html`)
+  // Some browsers (Arc) put a refused page in Jean's place: while it opens, Jean's tab keeps to Jean.
+  await page.evaluate((url) => {
+    /** @type {any} */ (window).stayed = true
+    location.assign(url)
+  }, `${SITE}/refuses.html`)
+  await page.waitForTimeout(500)
+  expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true)
   // The browser hides the refusal from Jean; the way out is there all the same.
   const strip = pane.locator('.browser-strip')
   await expect(strip).toContainText('Page not showing?')
