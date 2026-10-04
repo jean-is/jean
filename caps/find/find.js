@@ -11,7 +11,7 @@ import { signal, computed } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
 import { app, newConversation, openConversation, enterProject, turnPage, openFile } from '../../ui/state.js'
-import { syncDialog, closed, backdrop, openSettings, SECTIONS } from '../../ui/dialogs.js'
+import { syncDialog, closed, backdrop, openSettings, SECTIONS, sections } from '../../ui/dialogs.js'
 import { focusComposer } from '../../ui/composer.js'
 import { icons } from '../../ui/icons.js'
 import { loadConversation } from '../../core/conversations.js'
@@ -198,12 +198,10 @@ function groups(words) {
   }
   const all = (/** @type {string} */ text) => words.every((word) => fold(text.normalize('NFC')).includes(word))
   const lit = (/** @type {string} */ text) => marked(text, ranges(fold(text), words))
-  // Settings' sections, by their names or Settings' own, and what Jean knows about you.
+  // Settings' sections shown now, by their names, what else they go by, or Settings' own.
   const settings = t('settings.title')
-  const places = [
-    ...(/** @type {(keyof typeof SECTIONS)[]} */ (Object.keys(SECTIONS))).map((id) => ({ label: t(SECTIONS[id].label), icon: SECTIONS[id].icon, go: () => openSettings(id) })),
-    { label: t('knows.title', { name: BRAND.name }), icon: icons.note, go: () => { app.dialog.value = 'knows' } },
-  ].filter((place) => all(`${place.label} ${settings}`))
+  const places = sections().map((id) => ({ label: t(SECTIONS[id].label), icon: SECTIONS[id].icon, go: () => openSettings(id), also: SECTIONS[id].also?.() ?? '' }))
+    .filter((place) => all(`${place.label} ${place.also} ${settings}`))
   const projects = loaded.value.has('projects') ? app.projects.value.filter((project) => all(nameOf(project))) : []
   const { conversations = [], files = [] } = library.value ?? {}
   return [

@@ -4,13 +4,6 @@
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, MAIL_URL } from './helpers.js'
 
-/** @param {import('@playwright/test').Page} page */
-async function openKnows(page) {
-  await (await openSettings(page)).locator('.button', { hasText: 'Open' }).first().click()
-  const knows = page.locator('app-knows dialog[open]')
-  await expect(knows).toBeVisible()
-  return knows
-}
 
 /** A new conversation, once the page has turned to it. @param {import('@playwright/test').Page} page */
 async function newConversation(page) {
@@ -41,7 +34,7 @@ test('a skill from elsewhere is checked, shown, and added only by the user', asy
   await turnOn(page, 'Skills')
   await page.keyboard.press('Escape')
   await useSources(page, [])
-  const knows = await openKnows(page)
+  const knows = await openSettings(page, 'Skills')
   const elsewhere = knows.locator('details.sources')
   await elsewhere.locator('summary').click()
   await elsewhere.locator('input[name="address"]').fill(MAIL_URL)
@@ -68,7 +61,7 @@ test('a skill from elsewhere is checked, shown, and added only by the user', asy
   await expect(ready).toContainText('With these files: references/template.md')
   await ready.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Meeting notes”.')
-  await expect(knows.locator('.skills summary', { hasText: 'Meeting notes' })).toContainText('From 127.0.0.1:4182')
+  await expect(knows.locator('.list summary', { hasText: 'Meeting notes' })).toContainText('From 127.0.0.1:4182')
   await expect(source.getByRole('button', { name: 'meeting-notes' })).toHaveCount(0)
   const [steps, beside] = await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
@@ -119,7 +112,7 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await expect(page.locator('.toast')).toContainText('Made the routine “Weekly sales”.')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a routine now')
 
-  const knows = await openKnows(page)
+  const knows = await openSettings(page, 'Routines')
   const routine = knows.locator('.routines li')
   await expect(routine.locator('summary')).toContainText('Weekly sales')
   await expect(routine.locator('summary small')).toContainText('Next:')

@@ -14,11 +14,10 @@ async function createProject(page, name) {
   await expect(page.locator('app-projects .wordmark')).toHaveText(name)
 }
 
-/** @param {import('@playwright/test').Page} page */
+/** Settings' About you, once it has read what Jean knows (D134). @param {import('@playwright/test').Page} page */
 async function openKnows(page) {
-  await (await openSettings(page)).locator('.button', { hasText: 'Open' }).first().click()
-  const knows = page.locator('app-knows dialog[open]')
-  await expect(knows).toBeVisible()
+  const knows = await openSettings(page, 'About you')
+  await expect(knows.locator('.lede')).toContainText('Your instructions')
   return knows
 }
 
@@ -91,8 +90,8 @@ test('the third request of a kind becomes a skill', async ({ page }) => {
   await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a skill now')
   await expect(page.locator('.toast')).toContainText('Saved the skill “Weekly sales summary”')
 
-  const knows = await openKnows(page)
-  await expect(knows.locator('.skills summary')).toContainText('Weekly sales summary')
+  const skills = await openSettings(page, 'Skills')
+  await expect(skills.locator('.list summary')).toContainText('Weekly sales summary')
   await page.keyboard.press('Escape')
 
   // The next conversation lists it, and a fourth request of the kind suggests nothing new.

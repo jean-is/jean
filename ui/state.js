@@ -57,7 +57,7 @@ export const app = {
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
   look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
-  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'picker' | 'knows' | 'project' | 'connections' | 'skill' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'picker' | 'project' | 'skill' | null>} */
   dialog: signal(null),
   draft: signal(''),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */

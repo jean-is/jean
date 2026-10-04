@@ -1,15 +1,14 @@
-// "What Jean knows about you" (docs/product.md): the user's instructions, which Jean always
-// follows, and what Jean noticed, which the user can edit, delete or turn into an instruction;
-// then the skills, with those published elsewhere (D121), and the routines (D122). Everything
-// here is a plain file (instructions.md, memory.md, SKILL.md, routines/*.md).
-// Loaded the first time the page opens.
+// "What Jean knows about you" (docs/product.md), Settings' About you: the user's instructions,
+// which Jean always follows, and what Jean noticed, which the user can edit, delete or turn into
+// an instruction. Then, once each is on, Settings' Skills, with those published elsewhere (D121),
+// and Routines (D122). Everything here is a plain file (instructions.md, memory.md, SKILL.md,
+// routines/*.md). Loaded the first time one of the three sections is shown (D134).
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
-import { Element, define } from './base.js'
 import { app, effective, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
-import { syncDialog, closed, close, backdrop, head } from './dialogs.js'
+import { setting } from './dialogs.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
 import { stringifyFrontMatter } from '../core/settings.js'
@@ -37,7 +36,8 @@ function folders() {
   return data.default === true ? [''] : ['', dir]
 }
 
-async function load() {
+/** Reads the files again: each time one of the three sections is entered. */
+export async function refresh() {
   const dirs = folders()
   if (loaded.value.has('skills')) skillsModule = await import('../caps/skills/skills.js')
   if (loaded.value.has('routines')) routinesModule = await import('../caps/routines/routines.js')
@@ -52,13 +52,13 @@ async function load() {
 /** @param {string} dir @param {string} text */
 async function writeInstructions(dir, text) {
   await app.fs.write(join(dir, 'instructions.md'), stringifyFrontMatter({ format: 1, kind: 'instructions' }, text.trim() ? `${text.trim()}\n` : ''))
-  await load()
+  await refresh()
 }
 
 /** @param {string} path @param {Entry} entry @param {(entries: Entry[]) => Entry[]} change */
 async function changeEntry(path, entry, change) {
   await changeMemory(app.fs, path, change)
-  await load()
+  await refresh()
 }
 
 /** Edits a line in place; emptied, it goes. @param {string} path @param {Entry} entry @param {string} value */
@@ -96,21 +96,21 @@ async function addSkill(event) {
   const skill = file && parseSkill(await file.text(), file.name)
   if (!skill) return notify(t('skills.invalid'))
   await saveSkill(app.fs, folders().at(-1) ?? '', { ...skill, by: app.deviceId })
-  await load()
+  await refresh()
   notify(t('skills.added', { title: skill.title }))
 }
 
 /** @param {import('../core/skills.js').Skill} skill @param {string} body */
 async function editSkill(skill, body) {
   await saveSkill(app.fs, dirname(dirname(dirname(skill.path))), { ...skill, body, by: app.deviceId })
-  await load()
+  await refresh()
 }
 
 /** @param {import('../core/skills.js').Skill} skill */
 async function removeSkill(skill) {
   if (!confirm(t('skills.confirmDelete', { title: skill.title }))) return
   await app.fs.remove(dirname(skill.path))
-  await load()
+  await refresh()
 }
 
 // ─── Skills from elsewhere (D121) ────────────────────────────────────────────
@@ -197,7 +197,7 @@ function changeRoutine(routine, change) {
     const today = new Date()
     const plan = schedule({ ...changed, on: changed.every === kept.every ? changed.on : changed.every === 'week' ? today.getDay() : today.getDate() })
     if (plan && changed.request.trim()) await writeRoutine(app.fs, { ...changed, on: undefined, ...plan })
-  }).then(load, (error) => console.warn('Routine', error))
+  }).then(refresh, (error) => console.warn('Routine', error))
   return changing
 }
 
@@ -205,7 +205,7 @@ function changeRoutine(routine, change) {
 async function removeRoutine(routine) {
   if (!confirm(t('routines.confirmDelete', { title: routine.title }))) return
   await app.fs.remove(routine.path)
-  await load()
+  await refresh()
 }
 
 /** @param {Routine} routine */
@@ -216,92 +216,97 @@ function routineView(routine) {
   const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(locale.value, { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
   const value = (/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).value
   return html`<li><details>
-    <summary><strong dir="auto">${routine.title}</strong>${next ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</summary>
-    <div class="row routine-when">
-      <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { every: /** @type {any} */ (value(e)) })}>
-        ${(/** @type {const} */ (['day', 'weekday', 'week', 'month'])).map((every) => html`<option value=${every} ?selected=${every === routine.every}>${t(`routines.every.${every}`)}</option>`)}
-      </select>
-      ${routine.every === 'week' ? html`<select aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>
-        ${[0, 1, 2, 3, 4, 5, 6].map((i) => (first + i) % 7).map((day) => html`<option value=${day} ?selected=${day === routine.on}>${dayName(day)}</option>`)}
-      </select>` : routine.every === 'month' ? html`<input type="number" min="1" max="31" .value=${live(String(routine.on ?? 1))} aria-label=${t('routines.on')}
-        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : nothing}
-      <input type="time" .value=${live(routine.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>
+    <summary><span class="item-icon">${icons.alarm}</span><span class="item-text"><strong dir="auto">${routine.title}</strong>${next
+      ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</span>${icons.chevron}</summary>
+    <div class="item-body">
+      <div class="row routine-when">
+        <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { every: /** @type {any} */ (value(e)) })}>
+          ${(/** @type {const} */ (['day', 'weekday', 'week', 'month'])).map((every) => html`<option value=${every} ?selected=${every === routine.every}>${t(`routines.every.${every}`)}</option>`)}
+        </select>
+        ${routine.every === 'week' ? html`<select aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>
+          ${[0, 1, 2, 3, 4, 5, 6].map((i) => (first + i) % 7).map((day) => html`<option value=${day} ?selected=${day === routine.on}>${dayName(day)}</option>`)}
+        </select>` : routine.every === 'month' ? html`<input type="number" min="1" max="31" .value=${live(String(routine.on ?? 1))} aria-label=${t('routines.on')}
+          @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : nothing}
+        <input type="time" .value=${live(routine.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>
+      </div>
+      <label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
+        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>
+      <div class="row"><button class="button subtle danger" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button></div>
     </div>
-    <textarea rows="3" dir="auto" aria-label=${t('routines.request')} .value=${live(routine.request)}
-      @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea>
-    <button class="button subtle" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button>
   </details></li>`
 }
 
-class Knows extends Element {
-  render() {
-    const { data } = app.project.value
-    const state = page.value
-    const memoryOn = loaded.value.has('memory') && effective.value.settings.memory !== false
-    const label = (/** @type {string} */ dir) => (dir ? t('knows.forProject', { project: String(data.name) }) : t('knows.forYou'))
-    return html`<dialog class="sheet knows" @close=${closed('knows')} @click=${backdrop}>
-      ${head(t('knows.title', { name: BRAND.name }))}
-      <p class="lede">${t('knows.lede', { name: BRAND.name })}</p>
-      ${state ? html`
-      <section>
-        <h3>${icons.pin} ${t('knows.instructions')}</h3>
-        <p class="muted small">${t('knows.instructionsText', { name: BRAND.name })}</p>
-        ${app.policy.instructions ? html`<p class="locked" dir="auto">${app.policy.instructions}</p><p class="muted small">${t('policy.locked')}</p>` : nothing}
-        ${Object.entries(state.instructions).map(([dir, text]) => html`<label>${label(dir)}
-          <textarea rows="3" dir="auto" placeholder=${t('knows.instructionsPlaceholder')} .value=${live(text)}
-            @change=${(/** @type {Event} */ e) => writeInstructions(dir, /** @type {HTMLTextAreaElement} */ (e.target).value).then(() => notify(t('knows.saved')))}></textarea>
-        </label>`)}
-      </section>
-      <section>
-        <h3>${icons.note} ${t('knows.noticed', { name: BRAND.name })}</h3>
-        ${!loaded.value.has('memory') ? html`
-          <p class="muted">${t('cap.memory.text', { name: BRAND.name })}</p>
-          ${isDenied('memory') ? nothing : html`<button class="button" @click=${() => unlock('memory')}>${t('cap.memory.yes')}</button>`}` : html`
-          <label class="toggle">
-            <input type="checkbox" .checked=${memoryOn} @change=${(/** @type {Event} */ e) => updateSettings({ memory: /** @type {HTMLInputElement} */ (e.target).checked })}>
-            <span>${t('knows.memoryOn', { name: BRAND.name })}</span>
-          </label>
-          ${state.memory.map(({ path, entries }) => html`<h4>${label(dirname(path))}</h4>
-            ${entries.length ? html`<ul class="noticed">${entries.map((entry) => html`<li>
-              <textarea class="noticed-text" rows="1" dir="auto" aria-label=${t('knows.edit')} .value=${live(entry.text)}
-                @change=${(/** @type {Event} */ e) => edit(path, entry, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
-              <span class="noticed-actions">
-                ${entry.conversation ? html`<button class="link-button small" title=${t('knows.from')}
-                  @click=${() => openFrom(/** @type {string} */ (entry.conversation))}>${entry.at ? relativeTime(entry.at) : t('knows.from')}</button>` : nothing}
-                <button class="icon-button subtle" title=${t('knows.promote')} aria-label=${t('knows.promote')} @click=${() => promote(path, entry)}>${icons.pin}</button>
-                <button class="icon-button subtle" title=${t('action.delete')} aria-label=${t('action.delete')} @click=${() => forget(path, entry)}>${icons.trash}</button>
-              </span>
-            </li>`)}</ul>` : html`<p class="muted small">${t('knows.nothing')}</p>`}`)}
-          <p class="muted small">${t('knows.cloud', { name: BRAND.name })}</p>`}
-      </section>
-      ${loaded.value.has('skills') ? html`<section>
-        <h3>${icons.scroll} ${t('cap.skills.name')}</h3>
-        <p class="muted small">${t('skills.text', { name: BRAND.name })}</p>
-        ${state.skills.length ? html`<ul class="skills">${state.skills.map((skill) => html`<li><details>
-          <summary><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small>${skill.source
-            ? html`<small>${icons.globe} ${t('skills.from', { source: new URL(skill.source).host })}</small>` : nothing}</summary>
-          <textarea rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}
-            @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
-          <button class="button subtle" @click=${() => removeSkill(skill)}>${icons.trash} ${t('action.delete')}</button>
-        </details></li>`)}</ul>` : html`<p class="muted small">${t('skills.none')}</p>`}
-        <label class="button subtle">${icons.upload} ${t('skills.add')}
-          <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}>
-        </label>
-        ${sourcesView(state)}
-      </section>` : nothing}
-      ${loaded.value.has('routines') && routinesModule ? html`<section>
-        <h3>${icons.alarm} ${t('cap.routines.name')}</h3>
-        <p class="muted small">${t('routines.text')}</p>
-        ${state.routines.length ? html`<ul class="skills routines">${state.routines.map(routineView)}</ul>` : html`<p class="muted small">${t('routines.none')}</p>`}
-      </section>` : nothing}` : nothing}
-    </dialog>`
-  }
+// ─── The three sections ──────────────────────────────────────────────────────
 
-  updated() {
-    const open = app.dialog.value === 'knows'
-    if (open && !this.querySelector('dialog')?.open) load()
-    syncDialog(this, 'knows')
-  }
+/** Whose a file is, when there are two (in a project): the person's, everywhere, or the project's. @param {string} dir */
+const scope = (dir) => (dir ? t('knows.forProject', { project: String(app.project.value.data.name) }) : t('knows.forYou'))
+
+/** Settings' About you: the instructions, then what Jean noticed, or memory to turn on. */
+export function you() {
+  const state = page.value
+  if (!state) return nothing
+  const both = folders().length > 1
+  const noticed = html`${icons.note} ${t('knows.noticed', { name: BRAND.name })}`
+  return html`<p class="lede">${t('knows.lede', { name: BRAND.name })}</p>
+    <section>
+      <h3>${icons.pin} ${t('knows.instructions')}</h3>
+      <p class="muted small">${t('knows.instructionsText', { name: BRAND.name })}</p>
+      ${app.policy.instructions ? html`<p class="locked" dir="auto">${app.policy.instructions}</p><p class="muted small">${t('policy.locked')}</p>` : nothing}
+      ${Object.entries(state.instructions).map(([dir, text]) => html`<label>${both ? scope(dir) : nothing}
+        <textarea rows="3" dir="auto" aria-label=${both ? nothing : t('knows.instructions')} placeholder=${t('knows.instructionsPlaceholder')} .value=${live(text)}
+          @change=${(/** @type {Event} */ e) => writeInstructions(dir, /** @type {HTMLTextAreaElement} */ (e.target).value).then(() => notify(t('knows.saved')))}></textarea>
+      </label>`)}
+    </section>
+    ${!loaded.value.has('memory') ? setting(noticed, t('cap.memory.text', { name: BRAND.name }),
+      isDenied('memory') ? nothing : html`<button class="button" @click=${() => unlock('memory').then(refresh)}>${t('cap.memory.yes')}</button>`) : html`
+      <section>
+        <div class="setting">
+          <div><h3>${noticed}</h3><p class="muted">${t('knows.memoryOn', { name: BRAND.name })}</p></div>
+          <input type="checkbox" class="switch" role="switch" aria-label=${t('knows.memoryOn', { name: BRAND.name })} .checked=${effective.value.settings.memory !== false}
+            @change=${(/** @type {Event} */ e) => updateSettings({ memory: /** @type {HTMLInputElement} */ (e.target).checked })}>
+        </div>
+        ${state.memory.map(({ path, entries }) => html`${both ? html`<h4>${scope(dirname(path))}</h4>` : nothing}
+          ${entries.length ? html`<ul class="list noticed">${entries.map((entry) => html`<li>
+            <textarea class="noticed-text" rows="1" dir="auto" aria-label=${t('knows.edit')} .value=${live(entry.text)}
+              @change=${(/** @type {Event} */ e) => edit(path, entry, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
+            <span class="noticed-actions">
+              ${entry.conversation ? html`<button class="link-button small" title=${t('knows.from')}
+                @click=${() => openFrom(/** @type {string} */ (entry.conversation))}>${entry.at ? relativeTime(entry.at) : t('knows.from')}</button>` : nothing}
+              <button class="icon-button subtle" title=${t('knows.promote')} aria-label=${t('knows.promote')} @click=${() => promote(path, entry)}>${icons.pin}</button>
+              <button class="icon-button subtle" title=${t('action.delete')} aria-label=${t('action.delete')} @click=${() => forget(path, entry)}>${icons.trash}</button>
+            </span>
+          </li>`)}</ul>` : html`<p class="muted small">${t('knows.nothing')}</p>`}`)}
+        <p class="hint">${t('knows.cloud', { name: BRAND.name })}</p>
+      </section>`}`
 }
 
-define('app-knows', Knows)
+/** Settings' Skills: each one's steps to read or change, one from a file, and those from elsewhere. */
+export function skills() {
+  const state = page.value
+  if (!state) return nothing
+  return html`<p class="lede">${t('skills.text', { name: BRAND.name })}</p>
+    <section>
+      ${state.skills.length ? html`<ul class="list">${state.skills.map((skill) => html`<li><details>
+        <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small>${skill.source
+          ? html`<small>${icons.globe} ${t('skills.from', { source: new URL(skill.source).host })}</small>` : nothing}</span>${icons.chevron}</summary>
+        <div class="item-body">
+          <textarea class="steps" rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}
+            @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
+          <div class="row"><button class="button subtle danger" @click=${() => removeSkill(skill)}>${icons.trash} ${t('action.delete')}</button></div>
+        </div>
+      </details></li>`)}</ul>` : html`<p class="muted small">${t('skills.none')}</p>`}
+      <label class="button">${icons.upload} ${t('skills.add')}
+        <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}>
+      </label>
+    </section>
+    ${sourcesView(state)}`
+}
+
+/** Settings' Routines: each one's schedule and request, to change or delete. */
+export function routines() {
+  const state = page.value
+  if (!state || !routinesModule) return nothing
+  return html`<p class="lede">${t('routines.text')}</p>
+    <section>${state.routines.length ? html`<ul class="list routines">${state.routines.map(routineView)}</ul>`
+      : html`<p class="muted small">${t('routines.none')}</p>`}</section>`
+}

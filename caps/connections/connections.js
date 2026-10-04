@@ -4,13 +4,13 @@
 // deferred (D47): <connections> names them, and the brain finds them with find_tools or calls
 // them from a script. Reading through a connection is "Using the internet", anything else
 // "Sending and sharing": both "Ask me first" by default. What they bring in is cited by number.
+// They are a section of Settings, once on (D134).
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
+import { openSettings } from '../../ui/dialogs.js'
 import { mcpClient, MCPError } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor } from './directory.js'
@@ -120,6 +120,7 @@ effect(() => register({
     const lines = all().map((connection) => [connection.name, ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
     return lines.length ? { connections: lines.map(([name, ...tools]) => `- ${name}${tools.length ? `: ${tools.join(', ')}` : ''}`).join('\n') } : {}
   },
+  panel,
 }))
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()
@@ -204,7 +205,7 @@ export async function finishSignIn() {
   history.replaceState(null, '', location.pathname + (saved.route ?? ''))
   dispatchEvent(new HashChangeEvent('hashchange'))
   app.draft.value = saved.draft ?? ''
-  app.dialog.value = 'connections'
+  openSettings('connections')
   try {
     await setSecret(app.fs, saved.connection.id, JSON.stringify(await finish(params, saved)))
     await save(saved.connection, await client(saved.connection).listTools())
@@ -223,12 +224,17 @@ async function remove(connection) {
   await updateSettings({ connections: (app.settings.value.connections ?? []).filter((other) => other.id !== connection.id) })
 }
 
-/** Opens the connections; resolves when they close (the brain's offer waits for it). */
+/** Opens Settings on Connections; resolves when it closes (the brain's offer waits for it). */
 export const connect = () => new Promise((resolve) => {
-  app.dialog.value = 'connections'
+  openSettings('connections')
   const stop = effect(() => {
-    if (app.dialog.value !== 'connections') queueMicrotask(() => resolve(stop()))
+    if (app.dialog.value !== 'settings') queueMicrotask(() => resolve(stop()))
   })
+})
+
+// A service that failed to connect is forgotten once Settings closes.
+effect(() => {
+  if (app.dialog.value !== 'settings' && message.peek()?.kind === 'error') message.value = null
 })
 
 /** A service's first letter, in place of its logo. @param {Known} entry */
@@ -237,53 +243,48 @@ const monogram = (entry) => html`<span class="monogram" aria-hidden="true">${[..
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
 const products = (names) => new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)
 
-class Connections extends Element {
-  render() {
-    const shown = message.value
-    const { ready, later } = known(app.policy)
-    // A service already connected leaves the tiles.
-    const offered = ready.filter((entry) => !all().some((connection) => connection.url === entry.url))
-    return html`<dialog class="sheet" @close=${closed('connections')} @click=${backdrop}>
-      ${head(t('cap.connections.name'))}
-      <p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
-      ${all().length ? html`<section class="connected"><ul>${all().map((connection) => {
-        const { tools, error } = status.value[connection.id] ?? {}
-        return html`<li class="connection">${icons.plug}
-          <span class="connection-text"><strong dir="auto">${connection.name}</strong>
-            <small dir="ltr">${error ? new URL(connection.url).host : tools?.map((tool) => tool.title ?? tool.name).join(' · ') ?? '…'}</small>
-            ${error ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : nothing}</span>
-          ${error === 'auth' ? html`<button class="button" @click=${() => signIn(connection)}>${t('brain.connect')}</button>`
-            : (app.settings.value.connections ?? []).includes(connection) ? html`<button class="icon-button subtle" aria-label=${t('action.remove')}
-              title=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}
-        </li>`
-      })}</ul></section>` : nothing}
+/**
+ * Settings' Connections: the services connected, each with what it offers or why it can't, then
+ * the services Jean knows, one click each, those not available yet, and any other by its address.
+ */
+function panel() {
+  const shown = message.value
+  const { ready, later } = known(app.policy)
+  // A service already connected leaves the tiles.
+  const offered = ready.filter((entry) => !all().some((connection) => connection.url === entry.url))
+  return html`<p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
+    ${all().length ? html`<section><ul class="list">${all().map((connection) => {
+      const { tools, error } = status.value[connection.id] ?? {}
+      return html`<li class="connection">
+        <span class="item"><span class="item-icon" aria-hidden="true">${[...connection.name][0]}</span><span class="item-text"><strong><bdi>${connection.name}</bdi></strong>
+          <small dir="ltr">${error ? new URL(connection.url).host : tools?.map((tool) => tool.title ?? tool.name).join(' · ') ?? '…'}</small>
+          ${error ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : nothing}</span></span>
+        ${error === 'auth' ? html`<button class="button" @click=${() => signIn(connection)}>${t('brain.connect')}</button>`
+          : (app.settings.value.connections ?? []).includes(connection) ? html`<button class="icon-button subtle" aria-label=${t('action.remove')}
+            title=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}
+      </li>`
+    })}</ul></section>` : nothing}
+    ${offered.length || later.length ? html`<section>
+      <h3>${t('cap.connections.yes')}</h3>
       ${offered.length ? html`<ul class="services">${offered.map((entry) => html`<li>
         <button class="service" ?disabled=${shown?.kind === 'busy'} @click=${() => connectTo(/** @type {string} */ (entry.url), entry.name)}>
           ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${entry.includes ? html`<small>${products(entry.includes)}</small>` : nothing}</span>
         </button></li>`)}</ul>` : nothing}
-      ${later.length ? html`<section class="later">
+      ${later.length ? html`<div class="later">
         <h4>${t('connections.notYet')}</h4>
         <p class="hint">${t('connections.later')}</p>
         <ul class="services is-later">${later.map((entry) => html`<li>${monogram(entry)}<span dir="auto">${entry.name}</span></li>`)}</ul>
-      </section>` : nothing}
-      <details class="other" ?open=${!ready.length}>
-        <summary>${t('connections.other')}</summary>
-        <form class="stack" @submit=${add}>
-          <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
-          <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
-          <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
-          <p class="hint">${t('connections.keyHint')}</p>
-          <button class="button primary">${t('brain.connect')}</button>
-        </form>
-      </details>
-      ${shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing}
-    </dialog>`
-  }
-
-  updated() {
-    syncDialog(this, 'connections')
-    if (app.dialog.value !== 'connections' && message.value?.kind === 'error') message.value = null
-  }
+      </div>` : nothing}
+    </section>` : nothing}
+    <details class="other" ?open=${!ready.length}>
+      <summary>${t('connections.other')}</summary>
+      <form class="stack" @submit=${add}>
+        <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
+        <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
+        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
+        <p class="hint">${t('connections.keyHint')}</p>
+        <div class="row"><button class="button primary">${t('brain.connect')}</button></div>
+      </form>
+    </details>
+    ${shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing}`
 }
-
-define('app-connections', Connections)

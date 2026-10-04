@@ -49,16 +49,20 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .settings-nav .icon { inline-size: 1.1rem; block-size: 1.1rem; }
 .settings-nav button:hover, .settings-nav [aria-current='page'] { background: var(--line); color: var(--ink); }
 .settings-nav [aria-current='page'] { font-weight: 600; }
+/* The menu's three groups (D134): Jean itself; what it knows and can do; what it may do and keeps. */
+.settings-nav hr { flex: none; margin: 0.45rem 0.85rem; border: 0; border-block-start: 1px solid var(--line); }
 .settings-panel { overflow: auto; padding-block-end: 1.5rem; padding-inline: 0.75rem 1.5rem; }
 .settings-panel > :first-child { border-block-start: 0; padding-block-start: 0.25rem; }
 .setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
 .setting p { margin: 0; }
+div.setting { margin-block-end: 0.75rem; }
 .setting select { inline-size: 15rem; }
 .about { padding-block-start: 1rem; border-block-start: 1px solid var(--line); }
 @media (max-width: 40rem) {
   .settings { grid-template: auto auto 1fr / 1fr; }
   .settings-nav { flex-direction: row; padding: 0 1rem 0.75rem; }
   .settings-nav button { border-radius: 999px; }
+  .settings-nav hr { margin: 0.4rem 0.1rem; border-block-start: 0; border-inline-start: 1px solid var(--line); }
   .settings-panel { padding-inline: 1.25rem; }
   .setting { grid-template-columns: 1fr; justify-items: start; }
   .setting select { inline-size: 100%; }
@@ -67,13 +71,40 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .hint { font-size: 0.82rem; color: var(--ink-faint); overflow-wrap: anywhere; }
 .status { padding: 0.6rem 0.9rem; border-radius: 0.8rem; background: var(--line); }
 .status.is-error { background: oklch(from var(--danger) l c h / 0.12); color: var(--ink); }
-.connected ul, .rules { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
-.connected li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.6rem; }
-.connected li.is-active .radio span { color: var(--ink); font-weight: 600; }
-.connection > .icon { color: var(--flame); }
-.connection-text { display: grid; min-inline-size: 0; }
-.connection-text small { font-size: 0.8rem; color: var(--ink-soft); overflow-wrap: anywhere; }
-.connection-text .is-error { color: var(--danger); }
+.rules { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+/* A list in Settings (D134): the brains, the services, the skills, the routines, what Jean noticed.
+   Rows in one rounded group, a hairline between them: an icon, what it is and a line about it, then
+   its controls; a row that opens shows the rest under it. */
+.list { display: grid; margin: 0 0 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 1rem; list-style: none; }
+.list > * { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; min-inline-size: 0; padding: 0.65rem 0.9rem; }
+.list > * + * { border-block-start: 1px solid var(--line); }
+.list > :first-child { border-start-start-radius: inherit; border-start-end-radius: inherit; }
+.list > :last-child { border-end-start-radius: inherit; border-end-end-radius: inherit; }
+.list > :has(> details) { display: block; padding: 0; }
+.list details { border-radius: inherit; }
+.item, .list summary { flex: 1 1 14rem; display: flex; align-items: center; gap: 0.75rem; min-inline-size: 0; color: var(--ink); font-size: 0.95rem; }
+label.item, .list summary { cursor: pointer; }
+.list summary { padding: 0.65rem 0.9rem; border-radius: inherit; list-style: none; }
+.list summary::-webkit-details-marker { display: none; }
+.list summary:hover { background: var(--line); }
+.list summary:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
+.list summary > .icon:last-child { flex: none; color: var(--ink-faint); transition: rotate 0.25s var(--ease); }
+.list details[open] > summary > .icon:last-child { rotate: 180deg; }
+.item-icon { flex: none; display: grid; place-items: center; inline-size: 2.2rem; aspect-ratio: 1; border-radius: 0.7rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
+.item-icon .icon { color: var(--flame); }
+.item-text { flex: 1; display: grid; min-inline-size: 0; }
+.item-text small { color: var(--ink-soft); font-size: 0.8rem; overflow-wrap: anywhere; }
+.item-text .icon { inline-size: 0.85rem; block-size: 0.85rem; vertical-align: -0.1em; }
+.item-text .is-error { color: var(--danger); }
+.item-body { display: grid; gap: 0.75rem; padding-block: 0.15rem 1rem; padding-inline: calc(0.9rem + 2.2rem + 0.75rem) 0.9rem; }
+.sheet .item-body p { margin: 0; }
+@media (max-width: 30rem) { .item-body { padding-inline-start: 0.9rem; } }
+/* Brains: who answers is a choice, the one chosen tinted; each brain's version beside it. */
+.brains > * { padding-inline-start: 0.75rem; }
+.brains input[type='radio'] { flex: none; margin: 0; }
+.brains .is-selected { background: oklch(from var(--flame) l c h / 0.08); }
+.brains .item { flex-basis: 12rem; }
+.brains .model-input { flex: 1 1 13rem; max-inline-size: 20rem; padding-block: 0.4rem; }
 /* The services Jean knows: tiles to connect, then the ones not available yet (D95). */
 .services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
 .services li:has(small) { grid-column: span 2; }
@@ -83,13 +114,12 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .service > span:last-child { flex: 1; display: grid; min-inline-size: 0; }
 .service small { color: var(--ink-soft); font-size: 0.78rem; overflow-wrap: anywhere; }
 .monogram { flex: none; display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; border: 1px solid transparent; border-radius: 0.6rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
-.later h4 { margin-block-start: 0; }
+.later h4 { margin-block-start: 0.5rem; }
 .services.is-later { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0; color: var(--ink-soft); font-size: 0.88rem; }
 .is-later li { display: inline-flex; align-items: center; gap: 0.4rem; }
 .is-later .monogram { inline-size: 1.5rem; block-size: 1.5rem; border-radius: 0.45rem; background: var(--line); color: inherit; font-size: 0.78rem; }
 .other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
-.radio { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.95rem; }
 .model-input { font: 0.85rem var(--mono); }
 .rule-kind { font-size: 0.92rem; }
 .segmented { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
@@ -109,6 +139,13 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .choice-option small { color: var(--ink-soft); font-size: 0.8rem; overflow-wrap: anywhere; }
 .choice-option .icon { flex: none; color: var(--flame); }
 .toggle { display: flex; align-items: center; gap: 0.6rem; margin-block-end: 0.5rem; font-size: 0.95rem; color: var(--ink); cursor: pointer; }
+/* A switch, for what is on or off; off, its track is as dark as a hint, so it shows at 3:1. */
+input.switch { appearance: none; position: relative; flex: none; inline-size: 2.6rem; block-size: 1.5rem; margin: 0; border-radius: 999px; background: var(--ink-faint); cursor: pointer; transition: background-color 0.2s; }
+input.switch::before { content: ''; position: absolute; inset-block: 0.15rem; inset-inline-start: 0.15rem; aspect-ratio: 1; border-radius: 50%; background: oklch(1 0 0); box-shadow: 0 1px 3px oklch(0 0 0 / 0.35); transition: translate 0.2s var(--ease); }
+input.switch:checked { background: var(--flame); }
+input.switch:checked::before { translate: 1.1rem; }
+:dir(rtl) input.switch:checked::before { translate: -1.1rem; }
+input.switch:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
 /* The house of what Jean can do, a case of trophies (D127): the light's rank in its ring (the light grows with each), the medals, the plaque. */
 .house-head { display: flex; align-items: center; gap: 1.25rem; margin-block-end: 1rem; }
 .house-light { position: relative; display: grid; place-items: center; flex: none; inline-size: 6.5rem; aspect-ratio: 1; }
@@ -142,8 +179,8 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 
 /* ─── Projects, and what Jean knows ─────────────────────────────────────── */
 
-.noticed, .skills { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
-.noticed li { display: flex; align-items: center; gap: 0.25rem; border-radius: 0.9rem; }
+.skills { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
+.noticed li { flex-wrap: nowrap; gap: 0.25rem; padding-block: 0.25rem; padding-inline: 0.4rem 0.25rem; }
 .noticed li:hover, .noticed li:focus-within { background: var(--line); }
 .swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
 .swatches legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
@@ -160,16 +197,12 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .sheet .noticed-text { flex: 1; min-inline-size: 0; padding: 0.4rem 0.6rem; border-color: transparent; background: transparent; field-sizing: content; resize: none; }
 .sheet .noticed-text:focus { border-color: var(--line-strong); background: oklch(from var(--room) l c h / 0.6); }
 .noticed-actions { display: flex; flex: none; align-items: center; }
-.skills details { padding: 0.6rem 0.8rem; border: 1px solid var(--line); border-radius: 0.9rem; }
-.skills summary { display: grid; cursor: pointer; }
-.skills summary small { color: var(--ink-soft); font-size: 0.82rem; }
-.skills textarea { margin-block: 0.6rem 0.3rem; font: 0.86rem/1.5 var(--mono); }
+.sheet .steps { font: 0.86rem/1.5 var(--mono); }
 /* Skills from elsewhere, each source with what it offers (D121); a routine's schedule on one line (D122). */
 .source h4 { display: flex; align-items: center; gap: 0.3rem; }
 .source li { display: grid; justify-items: start; padding: 0.3rem 0.8rem; }
 .source li small, .skill-ready .muted { color: var(--ink-soft); font-size: 0.82rem; }
 .sources form > input, .sheet .routine-when > * { flex: 1 1 9rem; inline-size: auto; }
-.sheet .routine-when { margin-block: 0.6rem 0; }
 .skill-steps { max-block-size: 45vh; overflow: auto; padding: 0.2rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 
 /* ─── Looks (D111, D120) ────────────────────────────────────────────────── */
@@ -261,6 +294,7 @@ input[type='range'] { padding: 0; border: 0; background: none; accent-color: var
 
 @media (forced-colors: active) {
   .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  input.switch { border: 1px solid ButtonText; } input.switch::before { background: ButtonText; } input.switch:checked { background: Highlight; }
   .choice-option.is-selected, .is-lit > .medal, .trophy[aria-pressed='true'], .swatch:has(input:checked), .look:has(input:checked) { border: 2px solid Highlight; }
   .house-ring { stroke: GrayText; } .house-ring .is-lit, .pips .is-lit { stroke: Highlight; background: Highlight; }
 }

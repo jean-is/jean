@@ -50,16 +50,16 @@ test('a service Jean knows connects in one click; the ones not available yet are
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
   await start(page)
   await turnOn(page, 'Connections')
-  const dialog = page.locator('app-connections dialog[open]')
+  const dialog = page.locator('app-settings dialog[open]')
   await expect(dialog.getByRole('button', { name: 'Notion', exact: true })).toBeVisible()
   await expect(dialog.locator('.is-later')).toContainText('Gmail')
   await expect(dialog.locator('.is-later')).toContainText('Microsoft 365')
   await expect(dialog.locator('.is-later button')).toHaveCount(0)
   await expect(dialog.locator('details.other')).not.toHaveAttribute('open')
-  // Signing in leaves the page and comes back to the dialog.
+  // Signing in leaves the page and comes back to Settings' Connections.
   await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  const back = page.locator('app-connections dialog[open]')
+  const back = page.locator('app-settings dialog[open]')
   await expect(back.locator('.connection')).toContainText('Search emails · Read an email · Send an email')
   await expect(back.getByRole('button', { name: 'Mail', exact: true })).toHaveCount(0)
 })
@@ -68,9 +68,9 @@ test('a service that can’t register Jean signs in with the client its organisa
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/fixed/mcp`, clientId: 'jean-test' }] })
   await start(page)
   await turnOn(page, 'Connections')
-  await page.locator('app-connections dialog[open]').getByRole('button', { name: 'Mail', exact: true }).click()
+  await page.locator('app-settings dialog[open]').getByRole('button', { name: 'Mail', exact: true }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect(page.locator('app-connections dialog[open] .connection')).toContainText('Search emails')
+  await expect(page.locator('app-settings dialog[open] .connection')).toContainText('Search emails')
 })
 
 test('a service of the earlier MCP revision, reached from a script', async ({ page }) => {

@@ -65,9 +65,9 @@ core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js ev
                   deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only; a module only one
                   capability uses lives with it, D96)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
-                  discovery.js auto.js picker.js, dialogs.js (Settings, with the brains and the house in it, D113, D128) and brains.js (loaded
+                  discovery.js auto.js picker.js, dialogs.js (Settings, with the brains and the house in it, D113, D128, D134) and brains.js (loaded
                   when a dialog opens, D76), speech.js (read-aloud) and voices.js (the voice for each answer, loaded with it, D114),
-                  knows.js ("What Jean knows about you", 0.4), sandbox.js (the sandbox client, 0.4),
+                  knows.js (Settings' About you, Skills and Routines, 0.4, D134), sandbox.js (the sandbox client, 0.4),
                   looks.js (the themes, D111), touches.js (the user's own, loaded once there are some), inbox.js (Mail's list),
                   preview.js and preview.css (a file, as what it is, beside the conversation; loaded when one first opens, D126),
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)

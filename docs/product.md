@@ -89,23 +89,23 @@ A project is a self-contained folder with its own files, conversations, instruct
 
 ## Instructions and memory
 
-One page, **"What Jean knows about you"**, in two parts:
+One section of Settings, **About you** ("What Jean knows about you"), in two parts (D134):
 
 1. **Your instructions** (`instructions.md`). Written by the user, authoritative, always included. They come in three layers: organisation policy (locked), then global, then project.
 2. **What Jean noticed** (`memory.md`). Curated by Jean. Every entry links to the conversation it came from and can be edited or deleted.
 
-Once they are on, the same page lists the skills, each saying where it came from, the sources of skills from elsewhere and what they offer (D121), and the routines, with when each runs next (D122).
+Once they are on, Settings' Skills lists the skills, each saying where it came from, the sources of skills from elsewhere and what they offer (D121), and Routines the routines, with when each runs next (D122).
 
 **Memory that switches itself on:**
 
 - **Detecting.** Before memory is on, a reflex question asks whether the message states a lasting fact, preference or correction, and offers memory when it does; the brain can offer it too (D79, D84).
 - **Writing.** Once memory is on, the brain has a `remember(text, scope)` tool in every new conversation, with one rule: remember only what will still matter later. It writes one line in the user's language, about the person or about the current project, and a toast shows "Remembered: … · Undo". (Giving the tool only on turns a reflex flagged would change the declared tools mid-conversation, D46.)
-- **Opting in.** The first time, it is an offer. Once accepted, memory runs automatically. It can be switched off on "What Jean knows about you". Private conversations come later.
+- **Opting in.** The first time, it is an offer. Once accepted, memory runs automatically. It can be switched off in About you. Private conversations come later.
 - **Reading back.**
   - `memory.md` is injected while it stays under about 1k tokens, the newest lines first when it doesn't fit (0.4, the same budget for every brain).
   - Later: past that, Jean occasionally consolidates it, keeping the previous version for undo, and the reflex model selects the relevant lines.
   - `recall(query)` searches past conversations with the same engine as documents.
-- **Transparency.** Memory is a local file. With a cloud brain it is sent as context, and the memory page says so plainly.
+- **Transparency.** Memory is a local file. With a cloud brain it is sent as context, and About you says so plainly.
 
 ## Rules and approvals
 

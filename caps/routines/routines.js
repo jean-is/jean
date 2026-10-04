@@ -3,8 +3,8 @@
 // rules as any (approvals wait in the inbox). There is no server: a routine runs while Jean is
 // open, once it is free and the user has left it alone for a minute, or as soon as Jean is opened
 // after it fell due, and the times missed meanwhile make one run. A routine runs in its project,
-// when the room is there. The brain makes one with `schedule` when the user asks; "What Jean
-// knows about you" lists, changes and deletes them.
+// when the room is there. The brain makes one with `schedule` when the user asks; Settings'
+// Routines lists, changes and deletes them.
 import { effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, effective, newConversation, notify, send } from '../../ui/state.js'
@@ -53,7 +53,7 @@ const scheduleTool = {
     if (!plan) throw new Error('A routine needs every (day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday) or a month (1–31).')
     if (!title || !request) throw new Error('A routine needs a title and a request.')
     await writeRoutine(app.fs, newRoutine(folder(), { title, request, by: 'jean', ...plan }))
-    notify(t('routines.saved', { title }), { label: t('skills.open'), run: () => { app.dialog.value = 'knows' } })
+    notify(t('routines.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('routines')) })
     return `Made the routine "${title}": ${inEnglish(plan)}. It runs while the user has you open, or as soon as they open you after it falls due.`
   },
 }

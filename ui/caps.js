@@ -14,6 +14,7 @@ import { signal } from '@preact/signals-core'
  * @property {() => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, skills)
  * @property {typeof import('../core/llm.js').streamChat} [stream]  a brain that runs here (the on-device brain)
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
+ * @property {() => unknown} [panel]                      its section of Settings (connections)
  */
 
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({

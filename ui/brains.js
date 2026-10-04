@@ -53,6 +53,11 @@ export async function removeBrain(id) {
   await updateSettings({ brains, activeBrain: brains[0]?.id ?? null })
 }
 
+/** Changes a brain's version, without choosing it. @param {string} id @param {string} model */
+export async function setVersion(id, model) {
+  if (model) await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, model } : brain)) })
+}
+
 /** @param {string} id @param {string} [model] */
 export async function useBrain(id, model) {
   const brains = app.settings.value.brains.map((brain) => (brain.id === id && model ? { ...brain, model } : brain))

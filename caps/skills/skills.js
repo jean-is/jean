@@ -70,7 +70,7 @@ const saveTool = {
     if (!description || !steps) throw new Error('A skill needs a description and steps.')
     await saveSkill(app.fs, folders().at(-1) ?? '', { name, description, body: steps, by: 'jean' })
     const title = /^#\s+(.+)$/m.exec(steps)?.[1].trim() ?? name
-    notify(t('skills.saved', { title }), { label: t('skills.open'), run: () => { app.dialog.value = 'knows' } })
+    notify(t('skills.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('skills')) })
     return `Saved the skill "${name}". It is listed for the next conversations.`
   },
 }

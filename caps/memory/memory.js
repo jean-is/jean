@@ -2,7 +2,7 @@
 // and corrections the user states, one line each in their language, in memory.md: the person's
 // at the root, a project's in its folder. Every new conversation reads them (the newest that fit
 // about 1,000 tokens), and a change during one arrives as a note (D46). The user sees, edits and
-// deletes them on "What Jean knows about you". Also recall: searching earlier conversations.
+// deletes them in Settings' About you. Also recall: searching earlier conversations.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, effective, notify } from '../../ui/state.js'

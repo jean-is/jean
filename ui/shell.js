@@ -34,9 +34,7 @@ class Shell extends Element {
       <app-find></app-find>
       <app-settings></app-settings>
       <app-picker></app-picker>
-      <app-knows></app-knows>
       <app-project-dialog></app-project-dialog>
-      <app-connections></app-connections>
       ${toasts()}
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
@@ -45,7 +43,6 @@ class Shell extends Element {
 // The dialogs above are defined the first time one opens, and upgrade then; Mail's list too (D111).
 effect(() => {
   if (app.dialog.value) import('./dialogs.js')
-  if (app.dialog.value === 'knows') import('./knows.js')
   if (LOOKS[app.look.value].list) import('./inbox.js')
 })
 

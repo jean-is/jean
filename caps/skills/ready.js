@@ -16,7 +16,7 @@ import { siteOf } from './sources.js'
 /** @typedef {{ body: string, files: { path: string, text: string }[] }} Unpacked */
 
 const shown = signal(/** @type {{ entry: Entry, unpacked?: Unpacked, failed?: string } | null} */ (null))
-/** The dialog it was opened from ("What Jean knows about you"), which it goes back to. */
+/** The dialog it was opened from (Settings, on Skills), which it goes back to. */
 let from = /** @type {typeof app.dialog.value} */ (null)
 const back = () => { app.dialog.value = from }
 
