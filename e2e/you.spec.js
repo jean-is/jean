@@ -1,6 +1,6 @@
 // The user at the foot of the conversations (D150): "You" until their name is known, opening a
 // menu above them with Settings, About you, the language, the theme, dark mode, what Jean can do
-// and the manifesto. A language or a theme picked there applies and the menu stays on its page,
+// and the manifesto, the themes as thumbnails. A language or a theme picked there applies and the menu stays on its page,
 // following the foot between Mail's list and the drawer (D153). Jean notes the name the user
 // gives for themselves in a conversation, while they have never set one, and says so with an
 // Undo; they change it in About you. A long title stays inside the list.
@@ -17,6 +17,9 @@ test('the user’s menu changes the theme, the language and the mode, staying op
   const menu = await openProfile(page)
   await menu.locator('[data-page="looks"]').click()
   await expect(menu.locator('[aria-current="true"]')).toBeFocused()
+  // Each theme a small thumbnail and its name (D154), drawn once the dialogs' style sheet is in.
+  await expect(menu.locator('.look-tile')).toHaveCount(16)
+  await expect(menu.locator('.look-tile .look-preview').first()).toHaveCSS('aspect-ratio', '16 / 10')
   await menu.locator('button', { hasText: /^Mail$/ }).click()
   await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
   const list = page.locator('#profile-list:popover-open')

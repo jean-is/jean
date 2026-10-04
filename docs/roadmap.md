@@ -169,6 +169,8 @@ Added after 0.7: the user at the foot of the conversations (D150). In the drawer
 
 Added after 0.7: the theme in the user's menu, which stays open (D153). A Theme page beside Language lists the sixteen themes; a language or a theme picked there applies at once and the menu stays on its page, following the user's foot when a theme moves it between Mail's or Glass's list and the drawer. A long conversation title ends in an ellipsis again, inside the list, in every theme. Checked with `npm run e2e` in Chromium and WebKit: Mail and back from the menu, the menu moving with the foot; French picked with the menu still on its languages; a long title inside the list. By eye in Glass, Swiss and Mail, and in Arabic. 17 strings move from the dialogs' catalogue to the room's; the first load is 0.4 KB heavier.
 
+Added after 0.7: the themes in the user's menu are thumbnails (D154), Settings' small pictures of each, three to a row with their names, the one chosen ringed. They come with the dialogs' style sheet, loaded as the page opens, so the first load doesn't change. Checked with `npm run e2e` in Chromium and WebKit, and by eye in Glass, the room by day, Classic in Japanese and Arabic.
+
 Budgets now (2026-10-04): core 2,788 of 3,000 lines, app 17,694 of 20,000, first load 88.4 of 100 KB gzipped, CSS 9.8 of 12 KB, the largest catalogues 6.5 of 8 KB (Russian and Ukrainian) and their dialogs' part 7.4 (Russian and Ukrainian), base prompt 182 of 200 tokens. The dialogs' catalogues are the next to fill: 0.8's strings for the dialogs will need room there first.
 
 ## Before the public launch (0.3)
