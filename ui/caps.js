@@ -40,6 +40,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   names: () => import('../caps/names/names.js'),
   browser: () => import('../caps/browser/browser.js'),
   ask: () => import('../caps/ask/ask.js'),
+  you: () => import('../caps/you/you.js'),
 })
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */

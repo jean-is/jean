@@ -1,6 +1,6 @@
 // Looks (D111, D120): each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view, in one sidebar with the name at its top and
-// Settings at its foot (D115), and is back before the first paint; the user's own CSS shows as it
+// the user at its foot (D115, D150), and is back before the first paint; the user's own CSS shows as it
 // is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
 import { test, expect } from '@playwright/test'
 import { start, openSettings } from './helpers.js'
@@ -17,7 +17,7 @@ test('Mail lists the conversations beside the open one, with the user’s touche
   await settings.locator('.look', { hasText: 'Mail' }).click()
   await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
   await expect(page.locator('.inbox')).toBeVisible()
-  await expect(page.locator('.inbox .sidebar-settings')).toBeVisible()
+  await expect(page.locator('.inbox .profile')).toBeVisible()
   await settings.locator('details.other summary').click()
   await settings.locator('.look-css').fill('.hero-question { outline: 3px solid rgb(255, 0, 0); }')
   await expect(page.locator('.hero-question')).toHaveCSS('outline-color', 'rgb(255, 0, 0)')

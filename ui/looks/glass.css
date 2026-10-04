@@ -133,9 +133,9 @@
 :root[data-look='glass'] .segmented span { padding: 0.25rem 0.875rem; color: var(--ink); font-size: 0.8125rem; }
 :root[data-look='glass'] .segmented input:checked + span { background: var(--seg); color: var(--ink); font-weight: 500; box-shadow: 0 0.5px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06); }
 :root[data-look='glass'] .menu { padding: 0.3125rem; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--panel); backdrop-filter: blur(30px) saturate(1.8); box-shadow: var(--float); }
-:root[data-look='glass'] .menu button { gap: 0.5rem; padding: 0.25rem 0.625rem; border-radius: 0.4375rem; font-size: 0.8125rem; }
-:root[data-look='glass'] .menu button:hover { background: var(--fill); color: oklch(1 0 0); }
-:root[data-look='glass'] .menu button:hover .icon { color: inherit; }
+:root[data-look='glass'] .menu :is(button, a) { gap: 0.5rem; padding: 0.25rem 0.625rem; border-radius: 0.4375rem; font-size: 0.8125rem; }
+:root[data-look='glass'] .menu :is(button, a):hover { background: var(--fill); color: oklch(1 0 0); }
+:root[data-look='glass'] .menu :is(button, a):hover .icon { color: inherit; }
 :root[data-look='glass'] .menu .icon { inline-size: 1rem; block-size: 1rem; }
 
 /* The conversations: rows in the sidebar or the drawer, the open one filled with blue. */
@@ -242,7 +242,7 @@
   :root[data-look='glass'] { --list: 17.5rem; }
   :root[data-look='glass'] app-shell { padding-inline-start: var(--list); background: var(--room) content-box; }
   /* The sidebar, from edge to edge: the name at its top, the conversations,
-     Settings at its foot. The drawer's button goes, its list is in view. */
+     the user at its foot. The drawer's button goes, its list is in view. */
   :root[data-look='glass'] :is(.bar, app-inbox) { position: fixed; z-index: 3; inset-inline-start: 0; inline-size: var(--list); border-inline-end: 1px solid var(--line); background: var(--side); backdrop-filter: none; }
   :root[data-look='glass'] .bar { inset-block-start: 0; block-size: var(--top); padding: 0 0.75rem; border-block-end: 0; }
   :root[data-look='glass'] .bar > .icon-button:first-child { display: none; }

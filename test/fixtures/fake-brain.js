@@ -24,6 +24,7 @@
 // it's off) and answers from the page; asked to "give me a link", it answers with one.
 // Asked for a letter, it first asks three questions at once (D146): the tone, recommending one,
 // what the letter asks for, several at once, and who signs it; then it says what it was told.
+// Told "I'm Marie" (or "je m'appelle Marie"), it saves the name while it may (D150).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -184,6 +185,7 @@ createServer(async (req, res) => {
   // Chat Completions tool results carry the call's id, not the tool's name.
   const toolName = last.role === 'tool' ? messages.flatMap((m) => m.tool_calls ?? []).find((c) => c.id === last.tool_call_id)?.function?.name : undefined
   const remember = /^(?:remember|retiens|覚えて)[:：,]?\s*(.+)/i.exec(question.trim())
+  const introduced = /^(?:i'm|i am|my name is|je m'appelle)\s+([\p{L}-]+)/iu.exec(question.trim())
   const skill = /\bskill\b/i.test(question) && last.role === 'user'
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
@@ -254,6 +256,8 @@ createServer(async (req, res) => {
   else if (/svg logo/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Logo.svg', content: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f6e7cf"/><circle cx="60" cy="60" r="38" fill="#c8691c"/></svg>' } }
   else if (/add a step/i.test(question) && last.role === 'user' && declared.has('edit')) call = { name: 'edit', args: { file: 'Bakery plan.docx', old: '2. Deliver them', new: '2. Deliver them\n3. Sell the rest' } }
   else if (toolName === 'write' || toolName === 'edit') answer = /^(?:Saved|Changed) /.test(last.content) ? `Done: **${/^(?:Saved|Changed) (.+?)\. /.exec(last.content)?.[1]}** is under this answer.` : `That didn't work: ${last.content}`
+  else if (introduced && last.role === 'user' && declared.has('save_name')) call = { name: 'save_name', args: { name: introduced[1] } }
+  else if (toolName === 'save_name') answer = `Nice to meet you, ${introduced?.[1] ?? 'friend'}.`
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'

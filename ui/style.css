@@ -578,9 +578,12 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
 .menu:not(:popover-open) { opacity: 0; translate: 0 0.4rem; }
 .menu:popover-open { @starting-style { opacity: 0; translate: 0 0.4rem; } }
 @supports not (anchor-name: --add) { .menu { inset: auto 0 7rem; margin-inline: auto; } }
-.menu button { display: flex; align-items: center; gap: 0.7rem; inline-size: 100%; padding: 0.6rem 1rem 0.6rem 0.75rem; border: 0; border-radius: 0.8rem; background: none; text-align: start; white-space: nowrap; }
-.menu button:hover { background: var(--line); }
+.menu :is(button, a) { display: flex; align-items: center; gap: 0.7rem; inline-size: 100%; padding: 0.6rem 1rem 0.6rem 0.75rem; border: 0; border-radius: 0.8rem; background: none; color: inherit; text-align: start; text-decoration: none; white-space: nowrap; }
+.menu :is(button, a):hover { background: var(--line); }
 .menu .icon { color: var(--ink-soft); }
+.menu hr { margin: 0.35rem 0.5rem; border: 0; border-block-start: 1px solid var(--line); }
+.menu kbd { margin-inline-start: auto; padding-inline-start: 1.5rem; font: inherit; font-size: 0.78rem; color: var(--ink-faint); }
+@media (pointer: coarse) { .menu kbd { display: none; } }
 
 /* ─── Buttons and forms ─────────────────────────────────────────────────── */
 
@@ -618,7 +621,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 
 /* ─── The conversations, in the drawer or Mail's list ───────────────────── */
 
-/* Settings, at the foot of the conversations, as in the Claude apps (D115). */
+/* At the foot of the conversations, as in the Claude apps (D115): the user (D150), and Search (D133). */
 .sidebar-settings {
   position: sticky;
   inset-block-end: 0;
@@ -634,6 +637,35 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
   text-align: start;
 }
 .sidebar-settings:hover { color: var(--ink); box-shadow: inset 0 0 0 100vmax var(--line); }
+/* The user, there: their initial (or a silhouette) and their name, a menu above them (D150). */
+.profile { flex: none; padding-block: 0.45rem; color: var(--ink); }
+.profile > .icon { flex: none; inline-size: 1.15rem; block-size: 1.15rem; margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
+.avatar { flex: none; display: grid; place-items: center; inline-size: 1.85rem; block-size: 1.85rem; border: 1px solid transparent; border-radius: 50%; background: oklch(from var(--flame) l c h / 0.2); font-size: 0.85rem; font-weight: 600; line-height: 1; }
+.avatar .icon { inline-size: 1.05rem; block-size: 1.05rem; }
+.profile-name { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile[popovertarget='profile-drawer'] { anchor-name: --profile-drawer; }
+.profile[popovertarget='profile-list'] { anchor-name: --profile-list; }
+#profile-drawer { position-anchor: --profile-drawer; }
+#profile-list { position-anchor: --profile-list; }
+.profile-menu { min-inline-size: 15rem; min-inline-size: anchor-size(inline); max-block-size: min(70dvh, 34rem); overflow-y: auto; }
+@supports not (anchor-name: --add) { .profile-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
+.menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; }
+.submenu > .icon:last-child { inline-size: 1rem; rotate: -90deg; }
+:dir(rtl) .submenu > .icon:last-child { rotate: 90deg; }
+.profile-menu .back > .icon { rotate: 180deg; }
+.profile-menu .back { font-weight: 600; }
+.profile-menu a > .icon:last-child { inline-size: 1rem; margin-inline-start: auto; }
+.profile-menu [aria-current='true'] { font-weight: 600; }
+.profile-menu [aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
+.menu button:disabled { opacity: 0.5; cursor: default; }
+.menu button:disabled:hover { background: none; }
+/* Dark mode: a switch, like Settings' (ui/dialogs.css), drawn after its words. */
+.menu [role='switch']::after { content: ''; flex: none; margin-inline-start: auto; inline-size: 1.9rem; block-size: 1.15rem; border-radius: 999px; background: radial-gradient(closest-side, oklch(1 0 0) 80%, transparent 95%) no-repeat 0.1rem 50% / 0.95rem 0.95rem, var(--ink-faint); }
+.menu [role='switch']:has(kbd)::after { margin-inline-start: 0.75rem; }
+@media (pointer: coarse) { .menu [role='switch']:has(kbd)::after { margin-inline-start: auto; } }
+.menu [role='switch'][aria-checked='true']::after { background-color: var(--flame); background-position: calc(100% - 0.1rem) 50%; }
+:dir(rtl) .menu [role='switch']::after { background-position: calc(100% - 0.1rem) 50%; }
+:dir(rtl) .menu [role='switch'][aria-checked='true']::after { background-position: 0.1rem 50%; }
 .history-list { display: grid; gap: 0.15rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .history-list li { display: flex; align-items: center; border-radius: 0.9rem; }
 .history-list li:hover, .history-list li.is-current { background: var(--line); }
@@ -654,7 +686,6 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
 .project-menu:not(:popover-open) { translate: 0 -0.4rem; }
 .project-menu:popover-open { @starting-style { translate: 0 -0.4rem; } }
 @supports not (anchor-name: --project) { .project-menu { inset: 4rem auto auto; inset-inline-start: 1rem; margin: 0; } }
-.project-menu hr { margin: 0.35rem 0.5rem; border: 0; border-block-start: 1px solid var(--line); }
 .project-menu span { max-inline-size: 16rem; overflow: hidden; text-overflow: ellipsis; }
 .project-menu [aria-current='true'] { background: var(--line); }
 .project app-persona { --persona-size: 1.4rem; margin-inline-start: -0.1rem; }
@@ -716,6 +747,8 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
   .persona-sparks { fill: CanvasText; }
   .send, .button.primary { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   .history-item .ember { forced-color-adjust: none; background: CanvasText; }
+  .menu [role='switch']::after { forced-color-adjust: none; background-color: GrayText; }
+  .menu [role='switch'][aria-checked='true']::after { background-color: Highlight; }
   .hero-question { color: CanvasText; background: none; }
 }
 @media (max-width: 40rem) { .msg-user { max-inline-size: 92%; } }

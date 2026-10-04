@@ -2,7 +2,7 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, turnPage, assistantName, theme, setTheme } from './state.js'
+import { app, newConversation, turnPage, assistantName, switchTheme } from './state.js'
 import { SIZES, loaded } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
@@ -24,7 +24,7 @@ class Shell extends Element {
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
         ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
-          aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.window}</button>` : nothing}
+          aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
       </header>
       ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
@@ -75,9 +75,7 @@ document.addEventListener('keydown', (event) => {
     focusComposer()
   } else if (key === 'l' && event.shiftKey) {
     event.preventDefault()
-    // Switching back to what the device shows is Auto again (D85).
-    const next = theme.value === 'light' ? 'dark' : 'light'
-    setTheme(next === app.deviceTheme.value ? null : next)
+    switchTheme()
   } else if (key === 'k' && !event.shiftKey && loaded.value.has('find')) {
     event.preventDefault()
     app.dialog.value = app.dialog.value === 'find' ? null : 'find'
