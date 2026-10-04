@@ -37,7 +37,7 @@
   "cap.skills.hint": "同じ種類のことを3回頼む。",
   "cap.routines.hint": "同じ種類のことを別々の3日に頼む。",
   "cap.python.hint": "簡単な計算を超えてデータを扱う。",
-  "cap.search.hint": "今日のニュースなど、ウェブにしかないことを尋ねる。",
+  "cap.search.hint": "会話を5回してから、今日のニュースなど、ウェブにしかないことを尋ねる。",
   "cap.connections.hint": "メールなど、使っているサービスでのことを頼む。",
   "cap.helpers.hint": "いくつかの部分からなる大きな作業を頼む。",
   "cap.check.hint": "出典を示す回答を3回受け取る。",

@@ -11,7 +11,7 @@ import {
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, startOpenRouter } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
-import { CATALOGUE, FINDABLE, BROWSED, accept, begin, unlockAll } from './discovery.js'
+import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
@@ -583,7 +583,7 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [app.conversations.value.length, 2], backup: () => [app.conversations.value.length, 3],
-  find: () => [app.conversations.value.length, FINDABLE],
+  find: () => [app.conversations.value.length, FINDABLE], search: () => [app.conversations.value.length, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED] })
 const picked = signal('')

@@ -37,7 +37,7 @@
   "cap.skills.hint": "同一类事情请求三次。",
   "cap.routines.hint": "在三个不同的日子请求同一类事情。",
   "cap.python.hint": "用你的数据做超出简单计算的事。",
-  "cap.search.hint": "问一件只有网上才知道的事，比如今天的新闻。",
+  "cap.search.hint": "进行五次对话，然后问一件只有网上才知道的事，比如今天的新闻。",
   "cap.connections.hint": "请求在你使用的服务里做点事，比如你的邮箱。",
   "cap.helpers.hint": "交给一个包含多个部分的大任务。",
   "cap.check.hint": "得到三个引用了来源的回答。",

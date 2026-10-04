@@ -48,6 +48,7 @@ const offerTool = {
   run: async (args, ctx) => {
     const id = String(args?.capability ?? '')
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
+    if (id === 'search' && !loaded.value.has(id) && app.conversations.value.length < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (!loaded.value.has(id)) {
       const yes = await new Promise((resolve) => { app.offering.value = { id, resolve } })
       app.offering.value = null
@@ -161,6 +162,8 @@ effect(() => {
 })
 /** Conversations before search is offered: plenty to look back on, what was asked, answered and shared (D133). */
 export const FINDABLE = 10
+/** Conversations before the brain may offer web search, so the first ones show what Jean does on its own (D145). */
+export const SEARCHABLE = 5
 effect(() => {
   if (app.conversations.value.length >= FINDABLE) offerOnce('find')
 })
