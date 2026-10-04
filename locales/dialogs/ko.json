@@ -13,6 +13,7 @@
   "cap.compute.text": "인터넷이 차단된 격리 환경에서 작은 프로그램을 실행해 숫자를 정확하게 계산해요.",
   "cap.reflexes.text": "이 기기의 작은 도우미({size}, 한 번만)가 필요한 것을 알아채요: 메시지마다 알맞은 두뇌, 추천, 새로 써 볼 기능. 아무것도 이 기기를 떠나지 않아요.",
   "cap.backup.text": "모든 것을 파일 하나에 복사해 두고 어느 기기에서든 복원하세요.",
+  "cap.sync.text": "OneDrive, Dropbox, iCloud Drive, Google Drive가 동기화하는 폴더를 통해 대화, 파일, 기억을 다른 컴퓨터에서도 똑같이 유지해요.",
   "cap.brain-local.text": "비공개, 무료, 오프라인: 성능이 충분하면 이 컴퓨터에서 돌아가는 두뇌예요.",
   "collection.count": {
     "other": "{total}개 중 {count}개 발견"
@@ -45,6 +46,7 @@
   "cap.names.hint": "프로젝트에서 대화를 몇 번 나눠 보세요.",
   "cap.live.hint": "받아쓰기를 세 번 사용해 보세요.",
   "cap.backup.hint": "대화를 세 번 나눠 보세요.",
+  "cap.sync.hint": "다른 컴퓨터도 쓴다고 말해 보세요.",
   "cap.brain-local.hint": "이 기기에서 실행되는 두뇌를 골라 보세요.",
   "knows.instructions": "내 지침",
   "knows.instructionsText": "내가 직접 쓰고, 모든 대화에서 지켜져요.",

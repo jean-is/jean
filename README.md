@@ -12,6 +12,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
 - **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and plain text. Pictures, and captures of your screen taken from the message box, go to brains that can see.
 - **Does the maths instead of guessing.** Calculations run as real code in a sandbox, with JavaScript (QuickJS) or Python's standard library (Pyodide).
 - **Works on your folders where they are.** Open a conversation or a project on a folder of your computer, a synced folder of contracts or a folder of code: Jean finds, reads and changes its files in place, Word documents and PDFs included, shows you each change before making it, and undoes it if you ask. In Chrome and Edge; elsewhere it works on a copy, and you save what changed.
+- **Follows you from one computer to another.** Choose a new folder in OneDrive, Dropbox, iCloud Drive or Google Drive, then the same folder on your other computers: your conversations, files and memory stay the same on each, while settings and keys stay where they are. In Chrome and Edge.
 - **Hands back things you can use.** Word documents, Excel spreadsheets and other files, made on request, seen beside the conversation and saved with a click, with no file-format library. Files you share open there too: a PDF's pages, a deck's slides, a spreadsheet's grid. Or copy an answer with its formatting, or download a table as a spreadsheet.
 - **Remembers, if you want it to:**
   - what it should know about you, on a page where you can read and change it;

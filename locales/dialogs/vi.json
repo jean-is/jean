@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} tính chính xác bằng cách chạy các chương trình nhỏ trong môi trường cách ly, không truy cập internet.",
   "cap.reflexes.text": "Một trợ thủ nhỏ trên thiết bị này ({size}, một lần) cảm nhận điều bạn cần: bộ não phù hợp cho từng tin nhắn, gợi ý, những điều mới để thử. Không gì rời khỏi thiết bị này.",
   "cap.backup.text": "Giữ bản sao mọi thứ trong một tệp, và khôi phục trên bất kỳ thiết bị nào.",
+  "cap.sync.text": "Giữ các cuộc trò chuyện, tệp và trí nhớ của bạn giống nhau trên các máy tính khác, qua một thư mục được OneDrive, Dropbox, iCloud Drive hoặc Google Drive đồng bộ.",
   "cap.brain-local.text": "Riêng tư, miễn phí và ngoại tuyến: một bộ não chạy trên máy tính này, nếu máy đủ mạnh.",
   "collection.count": {
     "other": "Đã khám phá {count}/{total}"
@@ -45,6 +46,7 @@
   "cap.names.hint": "Có vài cuộc trò chuyện trong một dự án.",
   "cap.live.hint": "Dùng tính năng đọc chính tả ba lần.",
   "cap.backup.hint": "Có ba cuộc trò chuyện.",
+  "cap.sync.hint": "Nhắc rằng bạn cũng dùng một máy tính khác.",
   "cap.brain-local.hint": "Chọn bộ não chạy trên thiết bị này.",
   "knows.instructions": "Chỉ dẫn của bạn",
   "knows.instructionsText": "Do bạn viết, và được làm theo trong mọi cuộc trò chuyện.",

@@ -13,6 +13,7 @@
   "cap.compute.text": "{name}, internet erişimi olmayan yalıtılmış bir ortamda küçük programlar çalıştırarak sayıları tam olarak hesaplar.",
   "cap.reflexes.text": "Bu cihazda küçük bir yardımcı ({size}, bir kez) neye ihtiyacın olduğunu sezer: her mesaj için doğru beyin, öneriler, denenecek yeni şeyler. Hiçbir şey bu cihazdan çıkmaz.",
   "cap.backup.text": "Her şeyin bir kopyasını tek bir dosyada tut ve herhangi bir cihazda geri yükle.",
+  "cap.sync.text": "Konuşmalarını, dosyalarını ve hafızayı diğer bilgisayarlarında aynı tutar; bunu OneDrive, Dropbox, iCloud Drive veya Google Drive’ın eşitlediği bir klasörle yapar.",
   "cap.brain-local.text": "Gizli, ücretsiz ve çevrimdışı: yeterince güçlüyse bu bilgisayarda çalışan bir beyin.",
   "collection.count": {
     "one": "{total} içinden {count} keşfedildi",
@@ -47,6 +48,7 @@
   "cap.names.hint": "Bir projede birkaç sohbet yap.",
   "cap.live.hint": "Dikteyi üç kez kullan.",
   "cap.backup.hint": "Üç sohbet yap.",
+  "cap.sync.hint": "Başka bir bilgisayar da kullandığından bahset.",
   "cap.brain-local.hint": "Bu cihazda çalışan beyni seç.",
   "knows.instructions": "Talimatların",
   "knows.instructionsText": "Senin yazdığın ve her konuşmada uyulan talimatlar.",

@@ -1,0 +1,12 @@
+{
+  "sync.text": "在 OneDrive、Dropbox、iCloud Drive 或 Google Drive 裡新增一個資料夾，在這裡選擇它，再在你的其他電腦上選擇同一個資料夾。對話、檔案和記憶隨你而行；設定和金鑰留在各自的電腦上。",
+  "sync.choose": "選擇資料夾…",
+  "sync.syncing": "正在與 {folder} 同步…",
+  "sync.done": "已與 {folder} 同步 · {when}",
+  "sync.waiting": "允許存取 {folder}，以便繼續與你的其他電腦同步。",
+  "sync.allow": "允許存取",
+  "sync.failed": "無法存取 {folder}。它還在這台電腦上嗎？",
+  "sync.refused": "{folder} 裡有其他檔案。請選擇一個新的空資料夾，或你在另一台電腦上同步的那個資料夾。",
+  "sync.now": "立即同步",
+  "sync.stop": "停止同步"
+}

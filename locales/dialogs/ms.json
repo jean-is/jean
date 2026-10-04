@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} mengira nombor dengan tepat dengan menjalankan program kecil dalam persekitaran terasing tanpa akses internet.",
   "cap.reflexes.text": "Pembantu kecil pada peranti ini ({size}, sekali sahaja) yang dapat merasakan keperluan anda: otak yang sesuai untuk setiap mesej, cadangan, perkara baharu untuk dicuba. Tiada apa keluar dari peranti ini.",
   "cap.backup.text": "Simpan salinan semuanya dalam satu fail, dan pulihkannya pada mana-mana peranti.",
+  "cap.sync.text": "Mengekalkan perbualan, fail dan memori anda sama pada komputer anda yang lain, melalui folder yang disegerakkan oleh OneDrive, Dropbox, iCloud Drive atau Google Drive.",
   "cap.brain-local.text": "Peribadi, percuma dan di luar talian: otak yang berjalan pada komputer ini, jika cukup berkuasa.",
   "collection.count": {
     "other": "{count} daripada {total} ditemui"
@@ -45,6 +46,7 @@
   "cap.names.hint": "Adakan beberapa perbualan dalam sebuah projek.",
   "cap.live.hint": "Gunakan imlak tiga kali.",
   "cap.backup.hint": "Adakan tiga perbualan.",
+  "cap.sync.hint": "Sebutkan bahawa anda juga menggunakan komputer lain.",
   "cap.brain-local.hint": "Pilih otak yang berjalan pada peranti ini.",
   "knows.instructions": "Arahan anda",
   "knows.instructionsText": "Ditulis oleh anda, dan dipatuhi dalam setiap perbualan.",

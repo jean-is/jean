@@ -1,0 +1,12 @@
+{
+  "sync.text": "Crea una cartella in OneDrive, Dropbox, iCloud Drive o Google Drive, sceglila qui e poi la stessa cartella sugli altri tuoi computer. Conversazioni, file e memoria ti seguono; impostazioni e chiavi restano su ciascun computer.",
+  "sync.choose": "Scegli una cartella…",
+  "sync.syncing": "Sincronizzazione con {folder}…",
+  "sync.done": "Sincronizzato con {folder} · {when}",
+  "sync.waiting": "Consenti l’accesso a {folder} per continuare a sincronizzare con gli altri tuoi computer.",
+  "sync.allow": "Consenti l’accesso",
+  "sync.failed": "{folder} non è raggiungibile. È ancora su questo computer?",
+  "sync.refused": "{folder} contiene altri file. Scegli una cartella nuova e vuota, o quella che sincronizzi su un altro computer.",
+  "sync.now": "Sincronizza ora",
+  "sync.stop": "Interrompi la sincronizzazione"
+}

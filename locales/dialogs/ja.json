@@ -13,6 +13,7 @@
   "cap.compute.text": "{name}はインターネットに接続しない安全な環境で小さなプログラムを動かし、数字を正確に計算します。",
   "cap.reflexes.text": "この端末上の小さなヘルパー（{size}、1回のみ）が、必要なものを感じ取ります。メッセージごとに合う頭脳、提案、試すべき新機能。何も端末の外に出ません。",
   "cap.backup.text": "すべてを1つのファイルに保存し、どの端末でも復元できます。",
+  "cap.sync.text": "OneDrive、Dropbox、iCloud Drive、Google Drive が同期するフォルダーを通して、会話、ファイル、記憶をほかのコンピューターでも同じに保ちます。",
   "cap.brain-local.text": "プライベート、無料、オフライン。十分な性能があれば、このコンピューターで動く頭脳です。",
   "collection.count": {
     "other": "{total}件中{count}件を発見"
@@ -45,6 +46,7 @@
   "cap.names.hint": "プロジェクトでいくつか会話する。",
   "cap.live.hint": "音声入力を3回使う。",
   "cap.backup.hint": "会話を3回する。",
+  "cap.sync.hint": "ほかのコンピューターも使っていると伝えます。",
   "cap.brain-local.hint": "このデバイスで動く頭脳を選ぶ。",
   "knows.instructions": "あなたの指示",
   "knows.instructionsText": "あなたが書き、すべての会話で守られます。",

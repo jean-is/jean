@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} ń ṣe ìṣirò ní pàtó nípa mímú àwọn ètò kékeré ṣiṣẹ́ nínú àyè tí a yà sọ́tọ̀, láìsí íntánẹ́ẹ̀tì.",
   "cap.reflexes.text": "Olùrànlọ́wọ́ kékeré kan lórí ẹ̀rọ yìí ({size}, lẹ́ẹ̀kan ṣoṣo) tí ó ń ní ìmọ̀lára ohun tí ẹ nílò: ọpọlọ tí ó yẹ fún ọ̀rọ̀ kọ̀ọ̀kan, àwọn àbá, àwọn ohun tuntun láti gbìyànjú. Kò sí ohun tí yóò kúrò lórí ẹ̀rọ yìí.",
   "cap.backup.text": "Ẹ pa ẹ̀dà ohun gbogbo mọ́ sínú fáìlì kan, kí ẹ sì dá a padà lórí ẹ̀rọ èyíkéyìí.",
+  "cap.sync.text": "Ó ń jẹ́ kí àwọn ìjíròrò, fáìlì àti ìrántí yín jẹ́ bákan náà lórí àwọn kọ̀ǹpútà yín mìíràn, nípasẹ̀ fódà kan tí OneDrive, Dropbox, iCloud Drive tàbí Google Drive ń mú ṣọ̀kan.",
   "cap.brain-local.text": "Àdáni, ọ̀fẹ́, ó sì ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì: ọpọlọ tí ó ń ṣiṣẹ́ lórí kọ̀ǹpútà yìí, bí ó bá lágbára tó.",
   "collection.count": {
     "other": "A ti ṣàwárí {count} nínú {total}"
@@ -45,6 +46,7 @@
   "cap.names.hint": "Ẹ ṣe ìjíròrò díẹ̀ nínú iṣẹ́ àkànṣe kan.",
   "cap.live.hint": "Ẹ lo kíkọ pẹ̀lú ohùn ní ẹ̀ẹ̀mẹta.",
   "cap.backup.hint": "Ẹ ṣe ìjíròrò mẹ́ta.",
+  "cap.sync.hint": "Ẹ sọ pé ẹ tún ń lo kọ̀ǹpútà mìíràn.",
   "cap.brain-local.hint": "Ẹ yan ọpọlọ tí ń ṣiṣẹ́ lórí ẹ̀rọ yìí.",
   "knows.instructions": "Àwọn ìtọ́sọ́nà yín",
   "knows.instructionsText": "Ẹ̀yin ni ẹ kọ wọ́n, a sì ń tẹ̀lé wọn nínú gbogbo ìjíròrò.",

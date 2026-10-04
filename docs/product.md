@@ -70,7 +70,8 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Helpers | A big request with several parts (the brain offers it) | Jean splits the work into parts that helpers do at the same time; they appear nested in the activity view, and their approvals and questions wait in the decision inbox (D98, D99) |
 | Double-check | Citations are in regular use (three answers that cite sources, D100) | Jean checks each claim against the source it cites, and shows what the sources don't support |
 | Since last time | The user returns after time away (8 hours) and has connections | A read-only brief when Jean opens, in a conversation of its own (D101) |
-| Sync / Share / Collaborate | Another device is mentioned / the user wants to send something / someone opens a shared item | See [enterprise.md](enterprise.md) |
+| Sync | Another computer is mentioned (the brain offers it), in Chrome or Edge on a computer | "Keep your conversations, files and memory the same on your other computers?" A folder their cloud drive syncs (OneDrive, Dropbox, iCloud Drive, Google Drive), chosen on each computer; settings and keys stay on each (D157) |
+| Share / Collaborate | The user wants to send something / someone opens a shared item | See [enterprise.md](enterprise.md) |
 
 ## Projects
 

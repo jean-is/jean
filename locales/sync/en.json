@@ -1,0 +1,12 @@
+{
+  "sync.text": "Make a new folder in OneDrive, Dropbox, iCloud Drive or Google Drive, choose it here, then the same folder on your other computers. Conversations, files and memory follow you; settings and keys stay on each computer.",
+  "sync.choose": "Choose a folder…",
+  "sync.syncing": "Syncing with {folder}…",
+  "sync.done": "Synced with {folder} · {when}",
+  "sync.waiting": "Allow access to {folder} to go on syncing with your other computers.",
+  "sync.allow": "Allow access",
+  "sync.failed": "{folder} can’t be reached. Is it still on this computer?",
+  "sync.refused": "{folder} holds other files. Choose a new, empty folder, or the one you sync with on another computer.",
+  "sync.now": "Sync now",
+  "sync.stop": "Stop syncing"
+}

@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} calcola i numeri con precisione eseguendo piccoli programmi in un ambiente isolato, senza accesso a internet.",
   "cap.reflexes.text": "Un piccolo aiutante su questo dispositivo ({size}, una volta sola) che intuisce ciò che ti serve: il cervello giusto per ogni messaggio, suggerimenti, cose nuove da provare. Nulla lascia questo dispositivo.",
   "cap.backup.text": "Conserva una copia di tutto in un solo file e ripristinala su qualsiasi dispositivo.",
+  "cap.sync.text": "Mantiene le tue conversazioni, i tuoi file e la memoria uguali sugli altri tuoi computer, tramite una cartella che OneDrive, Dropbox, iCloud Drive o Google Drive sincronizza.",
   "cap.brain-local.text": "Privato, gratuito e offline: un cervello che gira su questo computer, se è abbastanza potente.",
   "collection.count": {
     "one": "{count} su {total} scoperto",
@@ -49,6 +50,7 @@
   "cap.names.hint": "Fai qualche conversazione in un progetto.",
   "cap.live.hint": "Usa la dettatura tre volte.",
   "cap.backup.hint": "Fai tre conversazioni.",
+  "cap.sync.hint": "Accenna al fatto che usi anche un altro computer.",
   "cap.brain-local.hint": "Scegli il cervello che funziona su questo dispositivo.",
   "knows.instructions": "Le tue istruzioni",
   "knows.instructionsText": "Scritte da te e seguite in ogni conversazione.",

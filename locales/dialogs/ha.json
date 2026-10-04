@@ -13,6 +13,7 @@
   "cap.compute.text": "Ana lissafa lambobi daidai ta hanyar gudanar da ƙananan shirye-shirye a wani keɓaɓɓen wuri, ba tare da intanet ba.",
   "cap.reflexes.text": "Ƙaramin mataimaki a wannan na'urar ({size}, sau ɗaya) wanda ke gane abin da kake buƙata: ƙwaƙwalwar da ta dace da kowane saƙo, shawarwari, sababbin abubuwan gwadawa. Babu abin da zai bar wannan na'urar.",
   "cap.backup.text": "Ajiye kwafin komai a cikin fayil ɗaya, kuma ka maido da shi a kowace na'ura.",
+  "cap.sync.text": "Ana ajiye tattaunawarka, fayilolinka da tunawa iri ɗaya a sauran kwamfutocinka, ta hanyar fayil ɗin ajiya da OneDrive, Dropbox, iCloud Drive ko Google Drive ke daidaitawa.",
   "cap.brain-local.text": "Na sirri, kyauta kuma ba tare da intanet ba: ƙwaƙwalwar da ke aiki a kan wannan kwamfuta, idan tana da ƙarfi isasshe.",
   "collection.count": {
     "one": "An gano {count} cikin {total}",
@@ -47,6 +48,7 @@
   "cap.names.hint": "Yi ’yan hira a cikin wani aiki.",
   "cap.live.hint": "Yi amfani da rubutu ta murya sau uku.",
   "cap.backup.hint": "Yi hira uku.",
+  "cap.sync.hint": "Ambaci cewa kana amfani da wata kwamfuta ma.",
   "cap.brain-local.hint": "Zaɓi ƙwaƙwalwar da ke aiki a wannan na’ura.",
   "knows.instructions": "Umarnoninka",
   "knows.instructionsText": "Kai ne ka rubuta su, kuma ana bin su a kowace tattaunawa.",

@@ -1,0 +1,12 @@
+{
+  "sync.text": "Créez un dossier dans OneDrive, Dropbox, iCloud Drive ou Google Drive, choisissez-le ici, puis le même dossier sur vos autres ordinateurs. Les conversations, les fichiers et la mémoire vous suivent ; les réglages et les clés restent sur chaque ordinateur.",
+  "sync.choose": "Choisir un dossier…",
+  "sync.syncing": "Synchronisation avec {folder}…",
+  "sync.done": "Synchronisé avec {folder} · {when}",
+  "sync.waiting": "Autorisez l’accès à {folder} pour continuer à synchroniser avec vos autres ordinateurs.",
+  "sync.allow": "Autoriser l’accès",
+  "sync.failed": "{folder} est introuvable. Est-il toujours sur cet ordinateur ?",
+  "sync.refused": "{folder} contient d’autres fichiers. Choisissez un nouveau dossier vide, ou celui que vous synchronisez sur un autre ordinateur.",
+  "sync.now": "Synchroniser maintenant",
+  "sync.stop": "Arrêter la synchronisation"
+}

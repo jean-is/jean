@@ -16,7 +16,7 @@ import { t, firstWords } from '../core/i18n.js'
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'python', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'python', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...('showDirectoryPicker' in globalThis ? ['sync'] : []), 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -32,6 +32,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
   helpers: 'helpers that do the independent parts of a large task at the same time',
+  ...('showDirectoryPicker' in globalThis && { sync: 'keeping their conversations, files and memory the same on their other computers, through a folder their cloud drive syncs' }),
 })
 
 /** The tools a capability brings, by name. @param {string} id */
@@ -118,9 +119,9 @@ export async function begin(id) {
   if (id === 'find') app.dialog.value = 'find'
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   // A folder to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
-  if (id === 'folders') {
-    const { choose } = await import('../caps/folders/folders.js')
-    if (navigator.userActivation?.isActive === false) notify(t('cap.folders.offer'), { label: t('cap.folders.yes'), run: () => choose() })
+  if (id === 'folders' || id === 'sync') {
+    const { choose } = await (id === 'sync' ? import('../caps/sync/sync.js') : import('../caps/folders/folders.js'))
+    if (navigator.userActivation?.isActive === false) notify(t(`cap.${id}.offer`), { label: t(`cap.${id}.yes`), run: () => choose() })
     else await choose()
   }
 }

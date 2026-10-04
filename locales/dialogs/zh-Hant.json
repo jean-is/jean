@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} 在無法連網的隔離環境中執行小程式，精確地算出數字。",
   "cap.reflexes.text": "這台裝置上的一個小幫手（{size}，只需一次），能察覺你的需要：為每則訊息選合適的大腦、提供建議、推薦可以嘗試的新功能。任何內容都不會離開這台裝置。",
   "cap.backup.text": "把所有內容複製到一個檔案中，並可在任何裝置上還原。",
+  "cap.sync.text": "透過 OneDrive、Dropbox、iCloud Drive 或 Google Drive 同步的資料夾，讓你的對話、檔案和記憶在其他電腦上保持一致。",
   "cap.brain-local.text": "私密、免費、離線：如果電腦效能足夠，就能在這台電腦上執行的大腦。",
   "collection.count": {
     "other": "已發現 {count} / {total}"
@@ -45,6 +46,7 @@
   "cap.names.hint": "在一個專案裡進行幾次對話。",
   "cap.live.hint": "使用三次語音輸入。",
   "cap.backup.hint": "進行三次對話。",
+  "cap.sync.hint": "提到你也在用另一台電腦。",
   "cap.brain-local.hint": "選擇在這台裝置上執行的大腦。",
   "knows.instructions": "你的指示",
   "knows.instructionsText": "由你撰寫，在每次對話中都會遵循。",

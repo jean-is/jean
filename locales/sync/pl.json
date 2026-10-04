@@ -1,0 +1,12 @@
+{
+  "sync.text": "Utwórz nowy folder w OneDrive, Dropbox, iCloud Drive lub Google Drive, wybierz go tutaj, a potem ten sam folder na innych komputerach. Rozmowy, pliki i pamięć idą za tobą; ustawienia i klucze zostają na każdym komputerze.",
+  "sync.choose": "Wybierz folder…",
+  "sync.syncing": "Synchronizacja z folderem {folder}…",
+  "sync.done": "Zsynchronizowano z folderem {folder} · {when}",
+  "sync.waiting": "Zezwól na dostęp do folderu {folder}, aby dalej synchronizować z innymi komputerami.",
+  "sync.allow": "Zezwól na dostęp",
+  "sync.failed": "Nie można dotrzeć do folderu {folder}. Czy nadal jest na tym komputerze?",
+  "sync.refused": "W folderze {folder} są inne pliki. Wybierz nowy, pusty folder albo ten, z którym synchronizujesz na innym komputerze.",
+  "sync.now": "Synchronizuj teraz",
+  "sync.stop": "Zatrzymaj synchronizację"
+}

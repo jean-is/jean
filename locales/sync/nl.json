@@ -1,0 +1,12 @@
+{
+  "sync.text": "Maak een nieuwe map in OneDrive, Dropbox, iCloud Drive of Google Drive, kies hem hier en daarna dezelfde map op je andere computers. Gesprekken, bestanden en het geheugen gaan met je mee; instellingen en sleutels blijven op elke computer.",
+  "sync.choose": "Een map kiezen…",
+  "sync.syncing": "Synchroniseren met {folder}…",
+  "sync.done": "Gesynchroniseerd met {folder} · {when}",
+  "sync.waiting": "Sta toegang tot {folder} toe om te blijven synchroniseren met je andere computers.",
+  "sync.allow": "Toegang toestaan",
+  "sync.failed": "{folder} is niet bereikbaar. Staat de map nog op deze computer?",
+  "sync.refused": "In {folder} staan andere bestanden. Kies een nieuwe, lege map, of de map die je op een andere computer synchroniseert.",
+  "sync.now": "Nu synchroniseren",
+  "sync.stop": "Stoppen met synchroniseren"
+}

@@ -1,0 +1,12 @@
+{
+  "sync.text": "Unda folda mpya kwenye OneDrive, Dropbox, iCloud Drive au Google Drive, uichague hapa, kisha uchague folda hiyo hiyo kwenye kompyuta zako nyingine. Mazungumzo, faili na kumbukumbu hukufuata; mipangilio na funguo hubaki kwenye kila kompyuta.",
+  "sync.choose": "Chagua folda…",
+  "sync.syncing": "Inasawazisha na {folder}…",
+  "sync.done": "Imesawazishwa na {folder} · {when}",
+  "sync.waiting": "Ruhusu ufikiaji wa {folder} ili kuendelea kusawazisha na kompyuta zako nyingine.",
+  "sync.allow": "Ruhusu ufikiaji",
+  "sync.failed": "{folder} haifikiki. Je, bado iko kwenye kompyuta hii?",
+  "sync.refused": "{folder} ina faili nyingine. Chagua folda mpya isiyo na kitu, au ile unayosawazisha kwenye kompyuta nyingine.",
+  "sync.now": "Sawazisha sasa",
+  "sync.stop": "Acha kusawazisha"
+}

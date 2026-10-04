@@ -1,0 +1,12 @@
+{
+  "sync.text": "Buat folder baharu dalam OneDrive, Dropbox, iCloud Drive atau Google Drive, pilihnya di sini, kemudian folder yang sama pada komputer anda yang lain. Perbualan, fail dan memori mengikut anda; tetapan dan kunci kekal pada setiap komputer.",
+  "sync.choose": "Pilih folder…",
+  "sync.syncing": "Menyegerakkan dengan {folder}…",
+  "sync.done": "Disegerakkan dengan {folder} · {when}",
+  "sync.waiting": "Benarkan akses kepada {folder} untuk terus menyegerakkan dengan komputer anda yang lain.",
+  "sync.allow": "Benarkan akses",
+  "sync.failed": "{folder} tidak dapat dicapai. Adakah ia masih pada komputer ini?",
+  "sync.refused": "{folder} mengandungi fail lain. Pilih folder baharu yang kosong, atau folder yang anda segerakkan pada komputer lain.",
+  "sync.now": "Segerakkan sekarang",
+  "sync.stop": "Hentikan penyegerakan"
+}

@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} hukokotoa namba kwa usahihi kwa kuendesha programu ndogo katika mazingira yaliyotengwa, bila intaneti.",
   "cap.reflexes.text": "Msaidizi mdogo kwenye kifaa hiki ({size}, mara moja) anayehisi unachohitaji: ubongo unaofaa kwa kila ujumbe, mapendekezo, mambo mapya ya kujaribu. Hakuna kinachotoka kwenye kifaa hiki.",
   "cap.backup.text": "Weka nakala ya kila kitu katika faili moja, na uirejeshe kwenye kifaa chochote.",
+  "cap.sync.text": "Hufanya mazungumzo, faili na kumbukumbu zako zibaki sawa kwenye kompyuta zako nyingine, kupitia folda ambayo OneDrive, Dropbox, iCloud Drive au Google Drive husawazisha.",
   "cap.brain-local.text": "Faragha, bure na bila mtandao: ubongo unaoendeshwa kwenye kompyuta hii, ikiwa ina nguvu ya kutosha.",
   "collection.count": {
     "one": "{count} kati ya {total} imegunduliwa",
@@ -47,6 +48,7 @@
   "cap.names.hint": "Fanya mazungumzo machache katika mradi.",
   "cap.live.hint": "Tumia uandishi kwa sauti mara tatu.",
   "cap.backup.hint": "Fanya mazungumzo matatu.",
+  "cap.sync.hint": "Taja kwamba unatumia pia kompyuta nyingine.",
   "cap.brain-local.hint": "Chagua ubongo unaofanya kazi kwenye kifaa hiki.",
   "knows.instructions": "Maagizo yako",
   "knows.instructionsText": "Umeyaandika wewe, na yanafuatwa katika kila mazungumzo.",

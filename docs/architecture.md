@@ -92,8 +92,11 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/ex
                                                                 copy.js is a folder's copy where it can't be opened in place,
                                                                 site.js puts a page of it together for the browser (D156), all
                                                                 tested in Node)
+                  sync/                                         (after 0.8: Jean's files mirrored into a folder a drive syncs, D157;
+                                                                mirror.js is a round on any two FS, tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, dialogs/ with the dialogs' strings (D97), and browser/,
-                  ask/ and folders/ with the browser's, the questions' and Folders' own, loaded and cached with them (D140, D146, D152)
+                  ask/, folders/ and sync/ with the browser's, the questions', Folders' and Sync's own, loaded and cached with them (D140,
+                  D146, D152, D157)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
                   reflexes.js (measures Kev on the test set)
@@ -225,7 +228,7 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
       files/sha256-<hash>.meta.json
       conversations/<ulid>.jsonl
   .secrets/                      encrypted; never exported, synced or shared
-  .cache/                        disposable: search index, thumbnails, skills indexes (skills/, a day each, D121)
+  .cache/                        disposable: search index, thumbnails, skills indexes (skills/, a day each, D121), sync.json (D157)
 ```
 
 There is always a default project, hidden until the Projects capability is discovered. One code path handles everything.
@@ -240,7 +243,7 @@ There is always a default project, hidden until the Projects capability is disco
   - Browsers delete *all* of a site's data at once when they evict it, so call `navigator.storage.persist()`.
   - Encourage installing the app: Safari can wipe sites that haven't been visited for 7 days unless they are installed.
   - Offer backup early.
-  - On Chrome and Edge, mirroring to a real folder is continuous backup, with the folder access that Folders brings (D141).
+  - On Chrome and Edge, mirroring to a real folder is continuous backup, with the folder access that Folders brings (D141): built as Sync (D157), into a folder that a cloud drive keeps the same on the user's other computers.
   - Show usage in plain words ("Jean uses 340 MB on this device").
   - When space runs low, evict model weights first and never user data.
 - **Secrets.** API keys and tokens are encrypted with a non-extractable `CryptoKey` kept in IndexedDB. They are never included in exports, syncs or shares. Nor are the folder handles of projects and conversations (D141, D149), which can't be kept in a file or encrypted: IndexedDB keeps them (D152).
@@ -481,6 +484,16 @@ Built in 0.7.
 - **Permission.** The browser asks once a visit: at the first message sent in a conversation with a folder, or from a card when a call finds the folder shut. Reading the handles back is guarded by a mark in IndexedDB: a start that finds the mark of a read that never finished keeps folders for the visit only (Chrome 153 went down reading a handle back in a private context).
 
 ## Voice pipeline
+
+## Sync
+
+After 0.8, D157. `caps/sync/sync.js` is the capability: the folder the user picked (its handle in IndexedDB's `app-sync`, the browser's permission asked again once a visit unless allowed on every visit), when rounds run, what shows once something came in, and its part of Settings' Your data. `caps/sync/mirror.js` does the work on any two `FS`: here, Jean's private file system; there, the folder, through `folderFS` (`ui/opfs.js`), as Folders opens one.
+
+- **The folder.** Empty when first chosen, then marked with `mirror.json`; a folder of other files is refused. It holds Jean's tree as it is, without `settings.json`, `.secrets/` or `.cache/`, and the round never takes in what drives and systems leave in a folder.
+- **A round.** Each file's size and date on each side, compared with the last round's (`.cache/sync.json`), says which side changed: that side's version goes to the other, a deletion too, and a change beats a deletion. Changed on both sides: a conversation's longer version wins, two that went apart both stay (the mirror's as a new conversation), anything else the newer wins. A side that holds none of what it held takes nothing away. Each write checks that what it replaces hasn't moved since it was looked at; a conversation being answered waits.
+- **When.** As Jean opens, every minute on screen, after each answer, and as the page goes out of sight, one tab at a time (Web Locks).
+- **Two homes.** Two computers that each made a home project keep the oldest as the home; `settleHomes` removes a newer, empty one, or keeps it as a project.
+- **Not yet.** A drive's own API, for Safari, Firefox and phones, waits for the domain (D27); it would be another `FS`.
 
 - **Speech to text:** a Whisper-class model through Transformers.js (shared runtime), or Chrome's on-device recognition where available.
 - **Text to speech:** `speechSynthesis` with local voices, or Kokoro. Each answer is read in its own language (D109), by the voice `rankVoices()` in `ui/language.js` puts first: the user's variety, then the most natural (D114).

@@ -1,0 +1,12 @@
+{
+  "sync.text": "在 OneDrive、Dropbox、iCloud Drive 或 Google Drive 里新建一个文件夹，在这里选择它，再在你的其他电脑上选择同一个文件夹。对话、文件和记忆随你而行；设置和密钥留在各自的电脑上。",
+  "sync.choose": "选择文件夹…",
+  "sync.syncing": "正在与 {folder} 同步…",
+  "sync.done": "已与 {folder} 同步 · {when}",
+  "sync.waiting": "允许访问 {folder}，以便继续与你的其他电脑同步。",
+  "sync.allow": "允许访问",
+  "sync.failed": "无法访问 {folder}。它还在这台电脑上吗？",
+  "sync.refused": "{folder} 里有其他文件。请选择一个新的空文件夹，或你在另一台电脑上同步的那个文件夹。",
+  "sync.now": "立即同步",
+  "sync.stop": "停止同步"
+}

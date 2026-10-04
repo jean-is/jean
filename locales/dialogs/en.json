@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} works numbers out exactly by running small programs in a sandbox, with no internet access.",
   "cap.reflexes.text": "A small helper on this device ({size}, once) that senses what you need: the right brain for each message, suggestions, new things to try. Nothing leaves this device.",
   "cap.backup.text": "Keep a copy of everything in one file, and restore it on any device.",
+  "cap.sync.text": "Keeps your conversations, files and memory the same on your other computers, through a folder that OneDrive, Dropbox, iCloud Drive or Google Drive syncs.",
   "cap.brain-local.text": "Private, free and offline: a brain that runs on this computer, if it is powerful enough.",
   "collection.count": {
     "one": "{count} of {total} discovered",
@@ -47,6 +48,7 @@
   "cap.names.hint": "Have a few conversations in a project.",
   "cap.live.hint": "Use dictation three times.",
   "cap.backup.hint": "Have three conversations.",
+  "cap.sync.hint": "Mention that you also use another computer.",
   "cap.brain-local.hint": "Choose the brain that runs on this device.",
   "knows.instructions": "Your instructions",
   "knows.instructionsText": "Written by you, and followed in every conversation.",

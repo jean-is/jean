@@ -1,0 +1,12 @@
+{
+  "sync.text": "Ƙirƙiri sabon fayil ɗin ajiya a OneDrive, Dropbox, iCloud Drive ko Google Drive, ka zaɓe shi a nan, sannan ka zaɓi wannan fayil ɗin ajiya a sauran kwamfutocinka. Tattaunawa, fayiloli da tunawa za su bi ka; saituna da makullai za su zauna a kowace kwamfuta.",
+  "sync.choose": "Zaɓi fayil ɗin ajiya…",
+  "sync.syncing": "Ana daidaitawa da {folder}…",
+  "sync.done": "An daidaita da {folder} · {when}",
+  "sync.waiting": "Ka ba da izinin shiga {folder} don ci gaba da daidaitawa da sauran kwamfutocinka.",
+  "sync.allow": "A bari a shiga",
+  "sync.failed": "Ba a iya kaiwa ga {folder} ba. Har yanzu yana wannan kwamfuta?",
+  "sync.refused": "{folder} na da wasu fayiloli. Zaɓi sabon fayil ɗin ajiya marar komai, ko wanda kake daidaitawa a wata kwamfuta.",
+  "sync.now": "Daidaita yanzu",
+  "sync.stop": "Dakatar da daidaitawa"
+}

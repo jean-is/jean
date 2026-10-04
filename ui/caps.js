@@ -14,7 +14,7 @@ import { signal } from '@preact/signals-core'
  * @property {() => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, skills)
  * @property {typeof import('../core/llm.js').streamChat} [stream]  a brain that runs here (the on-device brain)
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
- * @property {() => unknown} [panel]                      its section of Settings (connections)
+ * @property {() => unknown} [panel]                      its section of Settings (connections), or its part of one (sync)
  * @property {(conversation: { id: string, path: string }) => Promise<void>} [started]  a conversation was just made by its first message (a folder it keeps, D149)
  */
 
@@ -28,6 +28,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   python: () => import('../caps/python/python.js'),
   made: () => import('../caps/made/made.js'),
   backup: () => import('../caps/backup/backup.js'),
+  sync: () => import('../caps/sync/sync.js'),
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
   voice: () => import('../caps/voice/voice.js'),
   compute: () => import('../caps/compute/compute.js'),

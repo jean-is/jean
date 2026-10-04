@@ -1,0 +1,12 @@
+{
+  "sync.text": "OneDrive, Dropbox, iCloud Drive veya Google Drive’da yeni bir klasör oluştur, onu burada seç, sonra diğer bilgisayarlarında aynı klasörü seç. Konuşmalar, dosyalar ve hafıza seninle gelir; ayarlar ve anahtarlar her bilgisayarda kalır.",
+  "sync.choose": "Bir klasör seç…",
+  "sync.syncing": "{folder} ile eşitleniyor…",
+  "sync.done": "{folder} ile eşitlendi · {when}",
+  "sync.waiting": "Diğer bilgisayarlarınla eşitlemeye devam etmek için {folder} klasörüne erişime izin ver.",
+  "sync.allow": "Erişime izin ver",
+  "sync.failed": "{folder} klasörüne ulaşılamıyor. Hâlâ bu bilgisayarda mı?",
+  "sync.refused": "{folder} klasöründe başka dosyalar var. Yeni ve boş bir klasör ya da başka bir bilgisayarda eşitlediğin klasörü seç.",
+  "sync.now": "Şimdi eşitle",
+  "sync.stop": "Eşitlemeyi durdur"
+}

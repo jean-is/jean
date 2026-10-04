@@ -1,0 +1,12 @@
+{
+  "sync.text": "OneDrive, Dropbox, iCloud Drive, Google Drive에 새 폴더를 만들어 여기서 고른 다음, 다른 컴퓨터에서도 같은 폴더를 고르세요. 대화, 파일, 기억은 어디서나 같고, 설정과 키는 각 컴퓨터에 남아요.",
+  "sync.choose": "폴더 선택…",
+  "sync.syncing": "{folder} 폴더와 동기화하는 중…",
+  "sync.done": "{folder} 폴더와 동기화됨 · {when}",
+  "sync.waiting": "다른 컴퓨터와 계속 동기화하려면 {folder} 폴더에 대한 접근을 허용하세요.",
+  "sync.allow": "접근 허용",
+  "sync.failed": "{folder} 폴더에 접근할 수 없어요. 아직 이 컴퓨터에 있나요?",
+  "sync.refused": "{folder} 폴더에 다른 파일이 있어요. 비어 있는 새 폴더나, 다른 컴퓨터에서 동기화하는 폴더를 고르세요.",
+  "sync.now": "지금 동기화",
+  "sync.stop": "동기화 중지"
+}

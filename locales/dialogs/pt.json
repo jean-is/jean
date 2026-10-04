@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} calcula os números com exatidão executando pequenos programas num ambiente isolado, sem acesso à internet.",
   "cap.reflexes.text": "Um pequeno assistente neste dispositivo ({size}, uma só vez) que pressente o que precisas: o cérebro certo para cada mensagem, sugestões, coisas novas para experimentar. Nada sai deste dispositivo.",
   "cap.backup.text": "Guarda uma cópia de tudo num só ficheiro e restaura-a em qualquer dispositivo.",
+  "cap.sync.text": "Mantém as tuas conversas, os teus ficheiros e a memória iguais nos teus outros computadores, através de uma pasta que o OneDrive, o Dropbox, o iCloud Drive ou o Google Drive sincroniza.",
   "cap.brain-local.text": "Privado, gratuito e sem ligação: um cérebro que funciona neste computador, se for potente o suficiente.",
   "collection.count": {
     "one": "{count} de {total} descoberto",
@@ -49,6 +50,7 @@
   "cap.names.hint": "Tem algumas conversas num projeto.",
   "cap.live.hint": "Usa o ditado três vezes.",
   "cap.backup.hint": "Tem três conversas.",
+  "cap.sync.hint": "Menciona que também usas outro computador.",
   "cap.brain-local.hint": "Escolhe o cérebro que funciona neste dispositivo.",
   "knows.instructions": "As tuas instruções",
   "knows.instructionsText": "Escritas por ti e seguidas em todas as conversas.",

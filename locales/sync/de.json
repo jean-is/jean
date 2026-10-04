@@ -1,0 +1,12 @@
+{
+  "sync.text": "Leg in OneDrive, Dropbox, iCloud Drive oder Google Drive einen neuen Ordner an, wähle ihn hier und dann denselben Ordner auf deinen anderen Computern. Gespräche, Dateien und das Gedächtnis begleiten dich; Einstellungen und Schlüssel bleiben auf jedem Computer.",
+  "sync.choose": "Ordner wählen …",
+  "sync.syncing": "Synchronisiere mit {folder} …",
+  "sync.done": "Synchronisiert mit {folder} · {when}",
+  "sync.waiting": "Erlaube den Zugriff auf {folder}, um weiter mit deinen anderen Computern zu synchronisieren.",
+  "sync.allow": "Zugriff erlauben",
+  "sync.failed": "{folder} ist nicht erreichbar. Ist der Ordner noch auf diesem Computer?",
+  "sync.refused": "In {folder} liegen andere Dateien. Wähle einen neuen, leeren Ordner oder den, mit dem du auf einem anderen Computer synchronisierst.",
+  "sync.now": "Jetzt synchronisieren",
+  "sync.stop": "Synchronisierung beenden"
+}

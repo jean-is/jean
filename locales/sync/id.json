@@ -1,0 +1,12 @@
+{
+  "sync.text": "Buat folder baru di OneDrive, Dropbox, iCloud Drive, atau Google Drive, pilih di sini, lalu pilih folder yang sama di komputer Anda yang lain. Percakapan, file, dan memori mengikuti Anda; pengaturan dan kunci tetap di setiap komputer.",
+  "sync.choose": "Pilih folder…",
+  "sync.syncing": "Menyinkronkan dengan {folder}…",
+  "sync.done": "Tersinkron dengan {folder} · {when}",
+  "sync.waiting": "Izinkan akses ke {folder} untuk terus menyinkronkan dengan komputer Anda yang lain.",
+  "sync.allow": "Izinkan akses",
+  "sync.failed": "{folder} tidak dapat dijangkau. Apakah masih ada di komputer ini?",
+  "sync.refused": "{folder} berisi file lain. Pilih folder baru yang kosong, atau folder yang Anda sinkronkan di komputer lain.",
+  "sync.now": "Sinkronkan sekarang",
+  "sync.stop": "Hentikan sinkronisasi"
+}

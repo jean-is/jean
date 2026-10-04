@@ -1,0 +1,12 @@
+{
+  "sync.text": "OneDrive、Dropbox、iCloud Drive、Google Drive に新しいフォルダーを作ってここで選び、ほかのコンピューターでも同じフォルダーを選びます。会話、ファイル、記憶はどこでも同じになり、設定とキーはそれぞれのコンピューターに残ります。",
+  "sync.choose": "フォルダーを選ぶ…",
+  "sync.syncing": "{folder} と同期しています…",
+  "sync.done": "{folder} と同期済み · {when}",
+  "sync.waiting": "ほかのコンピューターとの同期を続けるには、{folder} へのアクセスを許可してください。",
+  "sync.allow": "アクセスを許可",
+  "sync.failed": "{folder} にアクセスできません。まだこのコンピューターにありますか？",
+  "sync.refused": "{folder} にはほかのファイルがあります。新しい空のフォルダーか、別のコンピューターで同期しているフォルダーを選んでください。",
+  "sync.now": "今すぐ同期",
+  "sync.stop": "同期を停止"
+}

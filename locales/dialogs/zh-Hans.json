@@ -13,6 +13,7 @@
   "cap.compute.text": "{name} 在无法联网的隔离环境中运行小程序，精确地算出数字。",
   "cap.reflexes.text": "这台设备上的一个小助手（{size}，仅一次），能察觉你的需要：为每条消息选合适的大脑、给出建议、推荐可以尝试的新功能。任何内容都不会离开这台设备。",
   "cap.backup.text": "把所有内容复制到一个文件中，并可在任何设备上恢复。",
+  "cap.sync.text": "通过 OneDrive、Dropbox、iCloud Drive 或 Google Drive 同步的文件夹，让你的对话、文件和记忆在其他电脑上保持一致。",
   "cap.brain-local.text": "私密、免费、离线：如果电脑性能足够，就能在这台电脑上运行的大脑。",
   "collection.count": {
     "other": "已发现 {count} / {total}"
@@ -45,6 +46,7 @@
   "cap.names.hint": "在一个项目里进行几次对话。",
   "cap.live.hint": "使用三次语音输入。",
   "cap.backup.hint": "进行三次对话。",
+  "cap.sync.hint": "提到你也在用另一台电脑。",
   "cap.brain-local.hint": "选择在这台设备上运行的大脑。",
   "knows.instructions": "你的指示",
   "knows.instructionsText": "由你撰写，在每次对话中都会遵循。",

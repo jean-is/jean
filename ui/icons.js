@@ -1,4 +1,4 @@
-// Forty-nine inline icons, 24×24, drawn with the current colour.
+// Fifty inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -31,6 +31,7 @@ export const icons = {
   attach: icon(svg`<path d="m19 11.5-7.1 7.1a4.5 4.5 0 0 1-6.4-6.4l7.4-7.4a3 3 0 0 1 4.2 4.2l-7.3 7.3a1.5 1.5 0 0 1-2.1-2.1l6.6-6.6"/>`),
   mic: icon(svg`<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>`),
   file: icon(svg`<path d="M14 3.5H7.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V8Z"/><path d="M14 3.5V8h4.5M9 13h6M9 16.5h4"/>`),
+  sync: icon(svg`<path d="M4.5 12a7.5 7.5 0 0 1 13.1-5M19.5 12a7.5 7.5 0 0 1-13.1 5M17.6 3.5V7h-3.5M6.4 20.5V17h3.5"/>`),
   download: icon(svg`<path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/>`),
   upload: icon(svg`<path d="M12 15.5v-11M7 9l5-5 5 5M5 19.5h14"/>`),
   table: icon(svg`<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M4 14.5h16M10 5v14"/>`),
