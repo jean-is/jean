@@ -8,5 +8,6 @@
   "sync.failed": "Ba a iya kaiwa ga {folder} ba. Har yanzu yana wannan kwamfuta?",
   "sync.refused": "{folder} na da wasu fayiloli. Zaɓi sabon fayil ɗin ajiya marar komai, ko wanda kake daidaitawa a wata kwamfuta.",
   "sync.now": "Daidaita yanzu",
+  "sync.show": "Nuna {folder} a wannan kwamfuta",
   "sync.stop": "Dakatar da daidaitawa"
 }

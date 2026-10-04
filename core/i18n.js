@@ -75,6 +75,13 @@ export function t(key, params = {}) {
   )
 }
 
+/** t(), with values that aren't text (a link, a time) kept where the translation puts them, never joined to strings. @param {string} key @param {Record<string, unknown>} params */
+export function tParts(key, params) {
+  const kept = /** @type {unknown[]} */ ([])
+  const text = t(key, Object.fromEntries(Object.entries(params).map(([name, value]) => [name, typeof value === 'string' || typeof value === 'number' ? value : `\u0000${kept.push(value) - 1}\u0000`])))
+  return text.split(/\u0000(\d+)\u0000/).map((part, i) => (i % 2 ? kept[Number(part)] : part))
+}
+
 /** @param {string | number} value @param {string} lang */
 function format(value, lang) {
   return typeof value === 'number' ? new Intl.NumberFormat(lang).format(value) : value

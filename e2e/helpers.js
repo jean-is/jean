@@ -90,6 +90,6 @@ export async function connect(page, url) {
   await dialog.locator('input[name="name"]').fill('Mail')
   await dialog.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect(dialog.locator('.connection')).toContainText('Search emails · Read an email · Send an email')
+  await expect(dialog.locator('.connection')).toContainText('3 actions')
   await page.keyboard.press('Escape')
 }

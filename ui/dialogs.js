@@ -522,8 +522,9 @@ class Settings extends Element {
   render() {
     const shown = sections()
     const open = shown.find((id) => id === app.section.value) ?? 'general'
-    return html`<dialog class="sheet settings" @close=${closed('settings')} @click=${backdrop}>
-      ${head(t('settings.title'))}
+    // No title: the menu says where the user is. Closing sits above it, where the eye starts.
+    return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
+      <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')} title=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map((id) => html`${SECTIONS[id].group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
           @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}

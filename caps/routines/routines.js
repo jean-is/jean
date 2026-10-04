@@ -75,9 +75,9 @@ function free() {
     && (document.hidden || !app.current.peek() || Date.now() - touched > ALONE_MS)
 }
 
-/** What the brain reads before the request: whose it is, how often, and when it fell due. @param {Routine} routine @param {Date} time */
-const note = (routine, time) => noteRecord(`The next message is the user's routine "${routine.title}", which you send yourself ${inEnglish(routine)}; it fell due on ${localStamp(time)}, local time. The user may not be watching.`,
-  { kind: 'routine', routine: routine.path, title: routine.title, due: time.toISOString() })
+/** What the brain reads before the request: whose it is, how often, and when it fell due, or that the user ran it. @param {Routine} routine @param {Date} time */
+const note = (routine, time, asked = false) => noteRecord(`The next message is the user's routine "${routine.title}", which you send yourself ${inEnglish(routine)}; ${asked
+  ? 'the user ran it now' : `it fell due on ${localStamp(time)}, local time. The user may not be watching`}.`, { kind: 'routine', routine: routine.path, title: routine.title, due: time.toISOString() })
 
 let checking = false
 
@@ -95,15 +95,17 @@ export async function check(now = new Date()) {
   }
 }
 
-/** @param {string} path @param {Date} now */
-async function run(path, now) {
+/** A routine that fell due, or one the user asked for now (Settings' Routines), which counts as the run due. @param {string} path @param {Date} now */
+async function run(path, now, asked = false) {
   const routine = (await routines()).find((candidate) => candidate.path === path)
-  const time = routine && due(routine, now, week().weekend)
-  if (!routine || !time || !free()) return
+  const time = asked ? now : routine && due(routine, now, week().weekend)
+  if (!routine || !time || !(asked || free())) return
   await writeRoutine(app.fs, { ...routine, lastRun: now.toISOString() })
   newConversation()
-  await send(routine.request, { notes: [note(routine, time)] })
+  await send(routine.request, { notes: [note(routine, time, asked)] })
 }
+/** @param {string} path */
+export const runNow = (path) => run(path, new Date(), true)
 
 let soon = 0
 const later = () => {

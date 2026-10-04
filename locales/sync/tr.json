@@ -8,5 +8,6 @@
   "sync.failed": "{folder} klasörüne ulaşılamıyor. Hâlâ bu bilgisayarda mı?",
   "sync.refused": "{folder} klasöründe başka dosyalar var. Yeni ve boş bir klasör ya da başka bir bilgisayarda eşitlediğin klasörü seç.",
   "sync.now": "Şimdi eşitle",
+  "sync.show": "{folder} klasörünü bu bilgisayarda göster",
   "sync.stop": "Eşitlemeyi durdur"
 }

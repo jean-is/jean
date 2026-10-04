@@ -8,5 +8,6 @@
   "sync.failed": "Không thể truy cập {folder}. Thư mục này còn trên máy tính này không?",
   "sync.refused": "{folder} chứa các tệp khác. Hãy chọn một thư mục mới, trống, hoặc thư mục bạn đồng bộ trên máy tính khác.",
   "sync.now": "Đồng bộ ngay",
+  "sync.show": "Hiện {folder} trên máy tính này",
   "sync.stop": "Dừng đồng bộ"
 }

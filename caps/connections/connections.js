@@ -33,6 +33,8 @@ const MAX_OUTPUT = 12_000
 /** What each connection offers now: its tools, or why they couldn't be listed. */
 const status = signal(/** @type {Record<string, { tools?: McpTool[], error?: 'auth' | 'failed' }>} */ ({}))
 const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
+/** Where what was clicked says how it went: under the services, or under the address typed. */
+let place = /** @type {'top' | 'other'} */ ('top')
 
 /** The organisation's connections (policy), then the user's. @returns {Connection[]} */
 const all = () => [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])]
@@ -237,54 +239,61 @@ effect(() => {
   if (app.dialog.value !== 'settings' && message.peek()?.kind === 'error') message.value = null
 })
 
+// Declared, not assigned, as the panel is: Settings may show it before this module has run to its end.
 /** A service's first letter, in place of its logo. @param {Known} entry */
-const monogram = (entry) => html`<span class="monogram" aria-hidden="true">${[...entry.name][0]}</span>`
-
+function monogram(entry) { return html`<span class="monogram" aria-hidden="true">${[...entry.name][0]}</span>` }
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
-const products = (names) => new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)
+function products(names) { return new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names) }
 
-/**
- * Settings' Connections: the services connected, each with what it offers or why it can't, then
- * the services Jean knows, one click each, those not available yet, and any other by its address.
- */
+/** A service connected, opened to what it can do and to disconnect it; or why it can't be reached, and what fixes it. @param {Connection} connection */
+function row(connection) {
+  const { tools, error } = status.value[connection.id] ?? {}
+  const own = (app.settings.value.connections ?? []).includes(connection)
+  const head = html`<span class="item-icon" aria-hidden="true">${[...connection.name][0]}</span><span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
+    ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}</small>`}</span>`
+  if (error || !tools) {
+    return html`<li class="connection"><span class="item">${head}</span>${error === 'auth' ? html`<button class="button" @click=${() => { place = 'top'; signIn(connection) }}>${t('brain.connect')}</button>`
+      : error ? html`<button class="icon-button subtle" aria-label=${t('action.retry')} title=${t('action.retry')} @click=${() => list([connection])}>${icons.retry}</button>` : nothing}
+      ${own ? html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}</li>`
+  }
+  return html`<li class="connection"><details><summary>${head}${icons.chevron}</summary><div class="item-body">
+    <ul class="chips">${tools.map((tool) => html`<li>${tool.title ?? tool.annotations?.title ?? tool.name}</li>`)}</ul>
+    <div class="row"><small class="muted" dir="ltr">${new URL(connection.url).host}</small>${own
+      ? html`<button class="button subtle danger" @click=${() => remove(connection)}>${t('connections.disconnect')}</button>` : html`<small class="muted">${t('policy.locked')}</small>`}</div>
+  </div></details></li>`
+}
+
+/** Settings' Connections: the services connected, then those Jean knows, a tile each to connect in one click, those not yet, and any other by its address. */
 function panel() {
   const shown = message.value
+  const said = shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing
   const { ready, later } = known(app.policy)
   // A service already connected leaves the tiles.
   const offered = ready.filter((entry) => !all().some((connection) => connection.url === entry.url))
   return html`<p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
-    ${all().length ? html`<section><ul class="list">${all().map((connection) => {
-      const { tools, error } = status.value[connection.id] ?? {}
-      return html`<li class="connection">
-        <span class="item"><span class="item-icon" aria-hidden="true">${[...connection.name][0]}</span><span class="item-text"><strong><bdi>${connection.name}</bdi></strong>
-          <small dir="ltr">${error ? new URL(connection.url).host : tools?.map((tool) => tool.title ?? tool.name).join(' · ') ?? '…'}</small>
-          ${error ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : nothing}</span></span>
-        ${error === 'auth' ? html`<button class="button" @click=${() => signIn(connection)}>${t('brain.connect')}</button>`
-          : (app.settings.value.connections ?? []).includes(connection) ? html`<button class="icon-button subtle" aria-label=${t('action.remove')}
-            title=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}
-      </li>`
-    })}</ul></section>` : nothing}
+    ${all().length ? html`<section><h3>${t('connections.yours')}</h3><ul class="list connections">${all().map(row)}</ul></section>` : nothing}
+    ${place === 'top' ? said : nothing}
     ${offered.length || later.length ? html`<section>
       <h3>${t('cap.connections.yes')}</h3>
       ${offered.length ? html`<ul class="services">${offered.map((entry) => html`<li>
-        <button class="service" ?disabled=${shown?.kind === 'busy'} @click=${() => connectTo(/** @type {string} */ (entry.url), entry.name)}>
-          ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${entry.includes ? html`<small>${products(entry.includes)}</small>` : nothing}</span>
+        <button class="service" ?disabled=${shown?.kind === 'busy'} @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name) }}>
+          ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${entry.includes ? html`<small>${products(entry.includes)}</small>` : nothing}</span>${icons.plus}
         </button></li>`)}</ul>` : nothing}
       ${later.length ? html`<div class="later">
         <h4>${t('connections.notYet')}</h4>
-        <p class="hint">${t('connections.later')}</p>
         <ul class="services is-later">${later.map((entry) => html`<li>${monogram(entry)}<span dir="auto">${entry.name}</span></li>`)}</ul>
+        <p class="hint">${t('connections.later')}</p>
       </div>` : nothing}
     </section>` : nothing}
     <details class="other" ?open=${!ready.length}>
       <summary>${t('connections.other')}</summary>
-      <form class="stack" @submit=${add}>
+      <form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => { place = 'other'; add(e) }}>
         <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
         <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
         <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
         <p class="hint">${t('connections.keyHint')}</p>
         <div class="row"><button class="button primary">${t('brain.connect')}</button></div>
+        ${place === 'other' ? said : nothing}
       </form>
-    </details>
-    ${shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing}`
+    </details>`
 }

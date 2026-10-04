@@ -8,5 +8,6 @@
   "sync.failed": "無法存取 {folder}。它還在這台電腦上嗎？",
   "sync.refused": "{folder} 裡有其他檔案。請選擇一個新的空資料夾，或你在另一台電腦上同步的那個資料夾。",
   "sync.now": "立即同步",
+  "sync.show": "在這台電腦上顯示 {folder}",
   "sync.stop": "停止同步"
 }

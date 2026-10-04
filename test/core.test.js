@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { addCatalog, useLocale, t, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../core/i18n.js'
+import { addCatalog, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { buildSystemPrompt, basePromptForBudget } from '../core/prompt.js'
 import { foldTurns, toChatMessages, userRecord, envelope, metaRecord, titleOf, openingOf } from '../core/events.js'
@@ -22,6 +22,18 @@ test('i18n: interpolation, plurals, fallback and direction', async () => {
   assert.equal(t('onlyEn'), 'English')
   assert.equal(dir('ar'), 'rtl')
   assert.equal(dir('fr-CA'), 'ltr')
+})
+
+test('i18n: a value that isn’t text stays itself, where the translation puts it', async () => {
+  addCatalog('en', { synced: 'Synced with {folder} · {when}' })
+  addCatalog('ja', { synced: '{when}に{folder}と同期しました' })
+  const folder = { link: 'Drive' }
+  const when = { time: 'now' }
+  await useLocale('en')
+  assert.deepEqual(tParts('synced', { folder, when }), ['Synced with ', folder, ' · ', when, ''])
+  await useLocale('ja')
+  assert.deepEqual(tParts('synced', { folder, when }), ['', when, 'に', folder, 'と同期しました'])
+  assert.deepEqual(tParts('synced', { folder: 'Drive', when: 3 }), ['3にDriveと同期しました'])
 })
 
 test('i18n: only the chosen catalog is fetched, and English only when it cannot be', async () => {

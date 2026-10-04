@@ -8,5 +8,6 @@
   "sync.failed": "{folder} is niet bereikbaar. Staat de map nog op deze computer?",
   "sync.refused": "In {folder} staan andere bestanden. Kies een nieuwe, lege map, of de map die je op een andere computer synchroniseert.",
   "sync.now": "Nu synchroniseren",
+  "sync.show": "{folder} op deze computer tonen",
   "sync.stop": "Stoppen met synchroniseren"
 }

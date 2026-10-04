@@ -8,5 +8,6 @@
   "sync.failed": "Hindi maabot ang {folder}. Nasa computer pa ba ito?",
   "sync.refused": "May ibang file sa {folder}. Pumili ng bago at walang lamang folder, o ang folder na sini-sync mo sa ibang computer.",
   "sync.now": "I-sync ngayon",
+  "sync.show": "Ipakita ang {folder} sa computer na ito",
   "sync.stop": "Ihinto ang pag-sync"
 }

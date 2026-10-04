@@ -35,8 +35,8 @@ test('a skill from elsewhere is checked, shown, and added only by the user', asy
   await page.keyboard.press('Escape')
   await useSources(page, [])
   const knows = await openSettings(page, 'Skills')
-  const elsewhere = knows.locator('details.sources')
-  await elsewhere.locator('summary').click()
+  const elsewhere = knows.locator('section.sources')
+  await elsewhere.getByRole('button', { name: 'Browse them' }).click()
   await elsewhere.locator('input[name="address"]').fill(MAIL_URL)
   await elsewhere.locator('form .button').click()
   const source = elsewhere.locator('.source')
@@ -114,9 +114,9 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
 
   const knows = await openSettings(page, 'Routines')
   const routine = knows.locator('.routines li')
-  await expect(routine.locator('summary')).toContainText('Weekly sales')
-  await expect(routine.locator('summary small')).toContainText('Next:')
-  await routine.locator('summary').click()
+  await expect(routine.locator('button.item')).toContainText('Weekly sales')
+  await expect(routine.locator('button.item small')).toContainText('Next:')
+  await routine.locator('button.item').click()
   await expect(routine.locator('select').first()).toHaveValue('day')
   await expect(routine.locator('input[type="time"]')).toHaveValue('08:00')
   await expect(routine.locator('textarea')).toHaveValue('Summarize the weekly sales by region')
@@ -137,7 +137,20 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   const note = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update)
   expect(note.text).toMatch(/^The next message is the user's routine "Weekly sales", which you send yourself every day at 00:00; it fell due on \d{4}-\d\d-\d\d 00:00 \(\w+day\), local time\./)
-  expect((await routines(page))[0].lastRun).toBeTruthy()
+  const ran = (await routines(page))[0].lastRun
+  expect(ran).toBeTruthy()
+
+  // Run now, from Settings: again, in a conversation of its own, the brain told the user asked.
+  const current = () => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.id)
+  const before = await current()
+  await (await openSettings(page, 'Routines')).getByRole('button', { name: 'Run now' }).click()
+  await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+  await expect.poll(current).not.toBe(before)
+  await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
+  const asked = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update)
+  expect(asked.text).toMatch(/every day at 00:00; the user ran it now\.$/)
+  expect((await routines(page))[0].lastRun > ran).toBe(true)
 })
 
 test('a routine that fell due while Jean was closed runs at the next visit, once', async ({ page, browserName }) => {

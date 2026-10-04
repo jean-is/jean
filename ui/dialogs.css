@@ -43,15 +43,15 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .settings { display: grid; grid-template: auto 1fr / 13rem 1fr; inline-size: min(100% - 2rem, 52rem); block-size: min(88dvh, 44rem); padding: 0; }
 /* Laid out whether open or closing, so they fade out as they were. */
 :is(.settings, .drawer):not([open]) { display: none; }
-.settings .dialog-head { grid-column: 1 / -1; margin: 0; padding-block: 1.25rem 0.75rem; padding-inline: 1.5rem 1.25rem; }
-.settings-nav { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.25rem 0.75rem 1rem; overflow: auto; scrollbar-width: none; }
+.settings-close { grid-area: 1 / 1; justify-self: start; margin-block: 1rem 0.5rem; margin-inline-start: 1.1rem; }
+.settings-nav { grid-area: 2 / 1; display: flex; flex-direction: column; gap: 0.15rem; padding: 0.25rem 0.75rem 1rem; overflow: auto; scrollbar-width: none; }
 .settings-nav button { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.85rem; border: 0; border-radius: 0.8rem; background: none; color: var(--ink-soft); text-align: start; }
 .settings-nav .icon { inline-size: 1.1rem; block-size: 1.1rem; }
 .settings-nav button:hover, .settings-nav [aria-current='page'] { background: var(--line); color: var(--ink); }
 .settings-nav [aria-current='page'] { font-weight: 600; }
 /* The menu's three groups (D134): Jean itself; what it knows and can do; what it may do and keeps. */
 .settings-nav hr { flex: none; margin: 0.45rem 0.85rem; border: 0; border-block-start: 1px solid var(--line); }
-.settings-panel { overflow: auto; padding-block-end: 1.5rem; padding-inline: 0.75rem 1.5rem; }
+.settings-panel { grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; }
 .settings-panel > :first-child { border-block-start: 0; padding-block-start: 0.25rem; }
 .setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
 .setting p { margin: 0; }
@@ -59,8 +59,10 @@ div.setting { margin-block-end: 0.75rem; }
 .setting :is(select, .you-name) { inline-size: 15rem; }
 .about { padding-block-start: 1rem; border-block-start: 1px solid var(--line); }
 @media (max-width: 40rem) {
-  .settings { grid-template: auto auto 1fr / 1fr; }
-  .settings-nav { flex-direction: row; padding: 0 1rem 0.75rem; }
+  .settings { grid-template: auto 1fr / auto 1fr; }
+  .settings-close { align-self: center; margin: 0; margin-inline-start: 0.75rem; }
+  .settings-nav { grid-area: 1 / 2; flex-direction: row; padding-block: 0.75rem; padding-inline: 0.25rem 1rem; }
+  .settings-panel { grid-area: 2 / 1 / 3 / 3; padding-block-start: 0.5rem; }
   .settings-nav button { border-radius: 999px; }
   .settings-nav hr { margin: 0.4rem 0.1rem; border-block-start: 0; border-inline-start: 1px solid var(--line); }
   .settings-panel { padding-inline: 1.25rem; }
@@ -88,8 +90,11 @@ label.item, .list summary { cursor: pointer; }
 .list summary::-webkit-details-marker { display: none; }
 .list summary:hover { background: var(--line); }
 .list summary:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
-.list summary > .icon:last-child { flex: none; color: var(--ink-faint); transition: rotate 0.25s var(--ease); }
-.list details[open] > summary > .icon:last-child { rotate: 180deg; }
+.list :is(summary, button.item) > .icon:last-child { flex: none; color: var(--ink-faint); transition: rotate 0.25s var(--ease); }
+.list :is(details[open] > summary, [aria-expanded='true']) > .icon:last-child { rotate: 180deg; }
+/* A routine: its name opens its schedule and request, Run now beside it. */
+.routines > li { padding: 0.25rem; gap: 0.5rem; } .routines li > .button { margin-inline-end: 0.4rem; } .routines .item-body { flex-basis: 100%; padding-block-start: 0.4rem; }
+.routines button.item { padding: 0.4rem 0.65rem; border: 0; border-radius: 0.75rem; background: none; text-align: start; } .routines button.item:hover { background: var(--line); }
 .item-icon { flex: none; display: grid; place-items: center; inline-size: 2.2rem; aspect-ratio: 1; border-radius: 0.7rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
 .item-icon .icon { color: var(--flame); }
 .item-text { flex: 1; display: grid; min-inline-size: 0; }
@@ -108,13 +113,16 @@ label.item, .list summary { cursor: pointer; }
 /* The services Jean knows: tiles to connect, then the ones not available yet (D95). */
 .services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
 .services li:has(small) { grid-column: span 2; }
-.service { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; text-align: start; }
-.service:hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
+:is(.service, .card) { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; color: var(--ink); text-align: start; }
+:is(.service, .card):hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
 .service:disabled { cursor: progress; opacity: 0.6; }
-.service > span:last-child { flex: 1; display: grid; min-inline-size: 0; }
+.service > span:not(.monogram) { flex: 1; display: grid; min-inline-size: 0; }
+.service > .icon { flex: none; color: var(--ink-faint); } .service:hover:not(:disabled) > .icon { color: var(--flame); }
+/* A service connected: a dot while it answers; opened, what it can do as chips. */
+.connections .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); } .connections .item-body .row { justify-content: space-between; }
 .service small { color: var(--ink-soft); font-size: 0.78rem; overflow-wrap: anywhere; }
 .monogram { flex: none; display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; border: 1px solid transparent; border-radius: 0.6rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
-.later h4 { margin-block-start: 0.5rem; }
+.later h4 { margin-block-start: 0.5rem; } .later .hint { margin-block: 0.5rem 0; }
 .services.is-later { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0; color: var(--ink-soft); font-size: 0.88rem; }
 .is-later li { display: inline-flex; align-items: center; gap: 0.4rem; }
 .is-later .monogram { inline-size: 1.5rem; block-size: 1.5rem; border-radius: 0.45rem; background: var(--line); color: inherit; font-size: 0.78rem; }
@@ -150,8 +158,8 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 /* The sites a web page's code may reach (D143): chips, then the look's own field on the same line. */
 .reach { grid-column: 1 / -1; display: grid; gap: 0.35rem; }
 .sites { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
-.sites ul { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
-.sites li { display: flex; align-items: center; gap: 0.1rem; padding: 0.2rem 0.65rem; border-radius: 999px; background: var(--line); font-size: 0.88rem; }
+.sites ul, .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.sites li, .chips li { display: flex; align-items: center; gap: 0.1rem; padding: 0.2rem 0.65rem; border-radius: 999px; background: var(--line); font-size: 0.88rem; }
 .sites li:has(button) { padding-inline-end: 0.2rem; }
 .sites .icon-button { inline-size: 1.4rem; block-size: 1.4rem; padding: 0.2rem; }
 .sites input { flex: 1; min-inline-size: 10rem; inline-size: auto; }
@@ -189,7 +197,9 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 
 /* ─── Projects, and what Jean knows ─────────────────────────────────────── */
 
-.skills { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
+/* A section's name, its action at the other end; a list with nothing yet. */
+.section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin-block-end: 0.6rem; } .sheet .section-head h3 { margin: 0; }
+.sheet .empty { padding: 1rem; border: 1px dashed var(--line-strong); border-radius: 1rem; text-align: center; }
 .noticed li { flex-wrap: nowrap; gap: 0.25rem; padding-block: 0.25rem; padding-inline: 0.4rem 0.25rem; }
 .noticed li:hover, .noticed li:focus-within { background: var(--line); }
 .swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
@@ -215,10 +225,13 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .key-steps a svg:dir(rtl) { transform: scaleX(-1); }
 .key-command { display: flex; align-items: center; gap: 0.3rem; margin-block-start: 0.2rem; }
 .key-command code { padding: 0.2rem 0.45rem; border-radius: 0.35rem; background: var(--line); font: 0.82rem var(--mono); overflow-wrap: anywhere; }
-/* Skills from elsewhere, each source with what it offers (D121); a routine's schedule on one line (D122). */
+/* Skills from elsewhere, each source with what it offers as cards, narrowed by a search (D121); a routine's schedule on one line (D122). */
 .source h4 { display: flex; align-items: center; gap: 0.3rem; }
-.source li { display: grid; justify-items: start; padding: 0.3rem 0.8rem; }
-.source li small, .skill-ready .muted { color: var(--ink-soft); font-size: 0.82rem; }
+.skill-ready .muted { color: var(--ink-soft); font-size: 0.82rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.45rem; margin: 0 0 0.75rem; padding: 0; list-style: none; }
+.card { display: grid; align-content: start; gap: 0.25rem; padding: 0.7rem 0.85rem; } .card strong { font-size: 0.9rem; overflow-wrap: anywhere; }
+.card small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; color: var(--ink-soft); font-size: 0.8rem; line-height: 1.4; }
+.sheet .sources-search { inline-size: 100%; margin-block-end: 0.75rem; }
 .sources form > input, .sheet .routine-when > * { flex: 1 1 9rem; inline-size: auto; }
 .skill-steps { max-block-size: 45vh; overflow: auto; padding: 0.2rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 

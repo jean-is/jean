@@ -27,8 +27,9 @@ const page = signal(/** @type {Page | null} */ (null))
 /** The modules of Skills and Routines, once on. */
 let skillsModule = /** @type {typeof import('../caps/skills/skills.js') | null} */ (null)
 let routinesModule = /** @type {typeof import('../caps/routines/routines.js') | null} */ (null)
-/** What the sources of skills offer, read when their list is opened. */
+/** What the sources of skills offer, read when asked, and what the user typed to narrow it; the routine whose schedule shows. */
 const elsewhere = signal(/** @type {import('../caps/skills/sources.js').Index[] | null} */ (null))
+const [query, opened] = [signal(''), signal('')]
 
 /** Where the room's files are: the person's at the root, the project's in its folder. */
 function folders() {
@@ -152,30 +153,34 @@ async function removeSource(url) {
 /** @param {import('../caps/skills/sources.js').Entry} entry */
 const preview = async (entry) => (await import('../caps/skills/ready.js')).preview(entry)
 
-/** The sources, what each offers that the user doesn't have, and a way to add one. @param {Page} state */
+/** Skills from elsewhere, read when asked: each source's the user hasn't, as cards, narrowed by what is typed; a source is removed where it shows. @param {Page} state */
 function sourcesView(state) {
   const locked = skillsModule?.locked() ?? []
   const have = state.skills.map((skill) => skill.name)
-  return html`<details class="other sources" @toggle=${(/** @type {Event} */ e) => /** @type {HTMLDetailsElement} */ (e.target).open && !elsewhere.value && browse()}>
-    <summary>${t('skills.elsewhere')}</summary>
+  const words = query.value.trim().toLocaleLowerCase(locale.value)
+  const offered = elsewhere.value?.map((index) => ({ index, entries: index.skills.filter((entry) => !have.includes(entry.name)
+    && `${entry.name} ${entry.description}`.toLocaleLowerCase(locale.value).includes(words)) }))
+  return html`<section class="sources">
+    <h3>${t('skills.elsewhere')}</h3>
     <p class="muted small">${t('skills.elsewhereText')}</p>
-    ${elsewhere.value?.map((index) => {
-      const site = new URL(index.url).host
-      return html`<section class="source">
-        <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${t('policy.locked')}</span>`
-          : html`<button class="icon-button subtle" title=${t('action.remove')} aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
-        ${index.error ? html`<p class="muted small">${t('skills.unreachable', { source: site })}</p>` : nothing}
-        <ul class="skills">${index.skills.filter((entry) => !have.includes(entry.name)).map((entry) => html`<li>
-          <button class="link-button" @click=${() => preview(entry)}><strong>${entry.name}</strong></button>
-          <small dir="auto">${entry.description}</small>
-        </li>`)}</ul>
-      </section>`
-    }) ?? nothing}
-    ${app.policy.skills?.only ? nothing : html`<form class="row" @submit=${addSource}>
-      <input name="address" required dir="ltr" inputmode="url" autocomplete="off" spellcheck="false" placeholder="example.com" aria-label=${t('skills.source')}>
-      <button class="button">${t('skills.sourceAdd')}</button>
-    </form>`}
-  </details>`
+    ${!offered ? html`<button class="button" @click=${(/** @type {Event} */ e) => { /** @type {HTMLButtonElement} */ (e.currentTarget).disabled = true; browse() }}>${icons.globe} ${t('skills.browse')}</button>` : html`
+      ${elsewhere.value?.some((index) => index.skills.length > 6) ? html`<input type="search" class="sources-search" dir="auto" .value=${live(query.value)}
+        placeholder=${t('skills.search')} aria-label=${t('skills.search')} @input=${(/** @type {Event} */ e) => { query.value = /** @type {HTMLInputElement} */ (e.target).value }}>` : nothing}
+      ${words && !offered.some(({ entries }) => entries.length) ? html`<p class="muted small">${t('find.none', { query: query.value.trim() })}</p>` : nothing}
+      ${offered.filter(({ index, entries }) => entries.length || index.error || !words).map(({ index, entries }) => {
+        const site = new URL(index.url).host
+        return html`<div class="source">
+          <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${t('policy.locked')}</span>`
+            : html`<button class="icon-button subtle" title=${t('action.remove')} aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
+          ${index.error ? html`<p class="muted small">${t('skills.unreachable', { source: site })}</p>` : nothing}
+          <ul class="cards">${entries.map((entry) => html`<li><button class="card" @click=${() => preview(entry)}><strong dir="ltr">${entry.name}</strong><small dir="auto">${entry.description}</small></button></li>`)}</ul>
+        </div>`
+      })}
+      ${app.policy.skills?.only ? nothing : html`<form class="row" @submit=${addSource}>
+        <input name="address" required dir="ltr" inputmode="url" autocomplete="off" spellcheck="false" placeholder="example.com" aria-label=${t('skills.source')}>
+        <button class="button">${t('skills.sourceAdd')}</button>
+      </form>`}`}
+  </section>`
 }
 
 // ─── Routines (D122) ─────────────────────────────────────────────────────────
@@ -215,10 +220,13 @@ function routineView(routine) {
   const { first } = module.week()
   const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(locale.value, { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
   const value = (/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).value
-  return html`<li><details>
-    <summary><span class="item-icon">${icons.alarm}</span><span class="item-text"><strong dir="auto">${routine.title}</strong>${next
-      ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</span>${icons.chevron}</summary>
-    <div class="item-body">
+  const open = opened.value === routine.path
+  // Run now beside the routine's name, so the row can't be a <details>: its summary would hold a button.
+  return html`<li>
+    <button class="item" aria-expanded=${open} @click=${() => { opened.value = open ? '' : routine.path }}><span class="item-icon">${icons.alarm}</span><span class="item-text">
+      <strong dir="auto">${routine.title}</strong>${next ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</span>${icons.chevron}</button>
+    <button class="button" ?disabled=${app.busy.value} @click=${() => module.runNow(routine.path)}>${t('routines.run')}</button>
+    ${open ? html`<div class="item-body">
       <div class="row routine-when">
         <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { every: /** @type {any} */ (value(e)) })}>
           ${(/** @type {const} */ (['day', 'weekday', 'week', 'month'])).map((every) => html`<option value=${every} ?selected=${every === routine.every}>${t(`routines.every.${every}`)}</option>`)}
@@ -232,8 +240,8 @@ function routineView(routine) {
       <label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
         @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>
       <div class="row"><button class="button subtle danger" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button></div>
-    </div>
-  </details></li>`
+    </div>` : nothing}
+  </li>`
 }
 
 // ─── The three sections ──────────────────────────────────────────────────────
@@ -290,6 +298,8 @@ export function skills() {
   if (!state) return nothing
   return html`<p class="lede">${t('skills.text', { name: BRAND.name })}</p>
     <section>
+      <div class="section-head"><h3>${t('skills.yours')}</h3><label class="button subtle">${icons.upload} ${t('skills.add')}
+        <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}></label></div>
       ${state.skills.length ? html`<ul class="list">${state.skills.map((skill) => html`<li><details>
         <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small>${skill.source
           ? html`<small>${icons.globe} ${t('skills.from', { source: new URL(skill.source).host })}</small>` : nothing}</span>${icons.chevron}</summary>
@@ -298,10 +308,7 @@ export function skills() {
             @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
           <div class="row"><button class="button subtle danger" @click=${() => removeSkill(skill)}>${icons.trash} ${t('action.delete')}</button></div>
         </div>
-      </details></li>`)}</ul>` : html`<p class="muted small">${t('skills.none')}</p>`}
-      <label class="button">${icons.upload} ${t('skills.add')}
-        <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}>
-      </label>
+      </details></li>`)}</ul>` : html`<p class="empty muted small">${t('skills.none')}</p>`}
     </section>
     ${sourcesView(state)}`
 }

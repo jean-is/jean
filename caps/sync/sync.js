@@ -11,7 +11,7 @@ import { app, notify, refreshProjects, refreshConversations } from '../../ui/sta
 import { folderFS } from '../../ui/opfs.js'
 import { icons } from '../../ui/icons.js'
 import { loadConversation } from '../../core/conversations.js'
-import { t, useStrings, relativeTime } from '../../core/i18n.js'
+import { t, tParts, useStrings, relativeTime, locale } from '../../core/i18n.js'
 import { claim, syncRound, settleHomes, BASE } from './mirror.js'
 
 await useStrings('sync')
@@ -129,13 +129,17 @@ async function allow() {
   if (handle && (await allowed(handle, true))) await round()
 }
 
-/** Sync's part of Settings' Your data. */
+// A page can't open the system's file manager: its file picker, opened in the folder, shows what it holds. What is picked changes nothing.
+/** @param {FileSystemDirectoryHandle} handle */
+const reveal = (handle) => /** @type {any} */ (window).showOpenFilePicker({ startIn: handle }).catch(() => {})
+
+/** Sync's part of Settings' Your data: the folder named in it opens, the time it was last in step shows on hover. */
 function panel() {
   const { handle, status, at } = state.value
-  const folder = handle?.name ?? ''
+  const folder = handle && html`<button class="link-button" title=${t('sync.show', { folder: handle.name })} @click=${() => reveal(handle)}>${handle.name}</button>`
+  const when = at && html`<time datetime=${new Date(at).toISOString()} title=${new Intl.DateTimeFormat(locale.value, { dateStyle: 'full', timeStyle: 'medium' }).format(at)}>${relativeTime(at)}</time>`
   const said = !handle ? t('sync.text')
-    : status === 'waiting' ? t('sync.waiting', { folder }) : status === 'failed' ? t('sync.failed', { folder })
-    : at ? t('sync.done', { folder, when: relativeTime(at) }) : t('sync.syncing', { folder })
+    : tParts(status === 'waiting' ? 'sync.waiting' : status === 'failed' ? 'sync.failed' : at ? 'sync.done' : 'sync.syncing', { folder, when })
   return html`<section class="sync">
     <h3>${t('cap.sync.name')}</h3>
     <p class="muted">${said}</p>

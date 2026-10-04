@@ -60,7 +60,10 @@ test('a service Jean knows connects in one click; the ones not available yet are
   await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   const back = page.locator('app-settings dialog[open]')
-  await expect(back.locator('.connection')).toContainText('Search emails · Read an email · Send an email')
+  const mail = back.locator('.connection')
+  await expect(mail).toContainText('3 actions')
+  await mail.locator('summary').click()
+  await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email'])
   await expect(back.getByRole('button', { name: 'Mail', exact: true })).toHaveCount(0)
 })
 

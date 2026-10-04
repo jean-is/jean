@@ -8,5 +8,6 @@
   "sync.failed": "{folder} can’t be reached. Is it still on this computer?",
   "sync.refused": "{folder} holds other files. Choose a new, empty folder, or the one you sync with on another computer.",
   "sync.now": "Sync now",
+  "sync.show": "Show {folder} on this computer",
   "sync.stop": "Stop syncing"
 }

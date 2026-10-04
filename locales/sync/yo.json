@@ -8,5 +8,6 @@
   "sync.failed": "A kò lè dé {folder}. Ṣé ó ṣì wà lórí kọ̀ǹpútà yìí?",
   "sync.refused": "Àwọn fáìlì mìíràn wà nínú {folder}. Ẹ yan fódà tuntun tí ó ṣófo, tàbí èyí tí ẹ ń mú ṣọ̀kan lórí kọ̀ǹpútà mìíràn.",
   "sync.now": "Mú ṣọ̀kan báyìí",
+  "sync.show": "Fi {folder} hàn lórí kọ̀ǹpútà yìí",
   "sync.stop": "Dá ìmúṣọ̀kan dúró"
 }

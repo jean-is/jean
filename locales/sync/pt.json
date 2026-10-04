@@ -8,5 +8,6 @@
   "sync.failed": "Não é possível aceder a {folder}. Ainda está neste computador?",
   "sync.refused": "{folder} contém outros ficheiros. Escolhe uma pasta nova e vazia, ou a que sincronizas noutro computador.",
   "sync.now": "Sincronizar agora",
+  "sync.show": "Mostrar {folder} neste computador",
   "sync.stop": "Parar a sincronização"
 }
