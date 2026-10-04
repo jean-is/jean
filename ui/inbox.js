@@ -58,9 +58,11 @@ const initial = (name) => ([...new Intl.Segmenter(locale.value).segment(name)][0
 const toSettings = (/** @type {import('./dialogs.js').Section} */ section) => () => import('./dialogs.js').then((module) => module.openSettings(section))
 
 /** Shows another page of the menu, with the keyboard on what it is about: the choice made, or the row it came from. @param {Event} event @param {Page} next */
-function turn(event, next) {
+async function turn(event, next) {
   const menu = /** @type {HTMLElement} */ (event.currentTarget).closest('[popover]')
   const from = page.value
+  // The themes' thumbnails are drawn by the dialogs' style sheet, which comes with them (D120, D154).
+  if (next === 'looks') await import('./dialogs.js')
   page.value = next
   requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(next === 'actions' ? `[data-page="${from}"]` : '[aria-current="true"]'))?.focus())
 }
@@ -104,11 +106,11 @@ function languages() {
     ${LOCALES.filter((code) => !yours.includes(code)).map(option)}`)
 }
 
-/** The looks, as Settings' Appearance shows them (D111). */
+/** The looks, each a small thumbnail and its name, as Settings' Appearance shows them (D111, D154). */
 function looks() {
   const chosen = chosenLook()
-  return choices(t('look.title'), (/** @type {import('./looks.js').LookId[]} */ (Object.keys(LOOKS)))
-    .map((id) => choice(id === chosen, () => pickLook(id), t(`look.${id}.name`))))
+  return choices(t('look.title'), html`<div class="look-tiles">${(/** @type {import('./looks.js').LookId[]} */ (Object.keys(LOOKS))).map((id) => html`<button
+    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>${t(`look.${id}.name`)}</button>`)}</div>`)
 }
 
 /**
