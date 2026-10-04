@@ -1,7 +1,7 @@
 // Connecting, choosing and removing brains, and the OpenRouter sign-in. Loaded with the
 // dialogs, or when the page comes back from signing in; Auto's loadModels() stays in state.js.
 import { BRAND } from '../brand.js'
-import { PROVIDERS, listModels } from '../core/llm.js'
+import { PROVIDERS, listModels, checkKey } from '../core/llm.js'
 import { createVerifier, challengeS256, openRouterAuthURL, exchangeOpenRouterCode } from '../core/oauth.js'
 import { t } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
@@ -25,6 +25,7 @@ export async function connectBrain({ provider, apiKey, baseURL, model }) {
     model: model ?? defaults.defaultModel ?? '',
     ...(provider === 'openrouter' && { headers: { 'HTTP-Referer': location.origin, 'X-Title': BRAND.name } }),
   }
+  await checkKey({ brain, apiKey })
   const models = await listModels({ brain, apiKey })
   if (!brain.model) brain.model = models[0]?.id ?? ''
   if (apiKey) await setSecret(app.fs, brain.id, apiKey)

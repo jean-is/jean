@@ -237,6 +237,8 @@
   "brain.key.text": "ቁልፍዎ ተመስጥሮ በዚህ መሣሪያ ላይ ይቆያል።",
   "brain.key.provider": "አገልግሎት",
   "brain.key.label": "ቁልፍ",
+  "brain.key.project": "የGoogle Cloud ፕሮጀክት",
+  "brain.key.vertex": "በGoogle Cloud CLI ውስጥ {command} እዚህ የሚለጠፈውን ቁልፍ ያሳያል። ለአንድ ሰዓት ይሰራል።",
   "brain.local.title": "በኮምፒውተርዎ ላይ",
   "brain.local.text": "በOllama ወይም በLM Studio አማካኝነት በራስዎ ኮምፒውተር ላይ የሚሠራ አንጎል ይጠቀሙ።",
   "brain.local.app": "መተግበሪያ",

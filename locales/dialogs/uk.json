@@ -241,6 +241,8 @@
   "brain.key.text": "Ваш ключ залишається на цьому пристрої в зашифрованому вигляді.",
   "brain.key.provider": "Сервіс",
   "brain.key.label": "Ключ",
+  "brain.key.project": "Проєкт Google Cloud",
+  "brain.key.vertex": "У Google Cloud CLI команда {command} показує ключ, який треба вставити сюди. Він діє годину.",
   "brain.local.title": "На вашому комп'ютері",
   "brain.local.text": "Використовуйте мозок, що працює на вашому комп'ютері, через Ollama або LM Studio.",
   "brain.local.app": "Застосунок",

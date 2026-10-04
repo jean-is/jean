@@ -237,6 +237,8 @@
   "brain.key.text": "Your key stays on this device, encrypted.",
   "brain.key.provider": "Service",
   "brain.key.label": "Key",
+  "brain.key.project": "Google Cloud project",
+  "brain.key.vertex": "In the Google Cloud CLI, {command} prints the key to paste here. It lasts an hour.",
   "brain.local.title": "On your computer",
   "brain.local.text": "Use a brain that runs on your own machine, with Ollama or LM Studio.",
   "brain.local.app": "App",

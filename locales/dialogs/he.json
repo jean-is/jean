@@ -240,6 +240,8 @@
   "brain.key.text": "המפתח נשאר במכשיר הזה, מוצפן.",
   "brain.key.provider": "שירות",
   "brain.key.label": "מפתח",
+  "brain.key.project": "פרויקט Google Cloud",
+  "brain.key.vertex": "ב-Google Cloud CLI, הפקודה {command} מציגה את המפתח להדבקה כאן. הוא תקף לשעה.",
   "brain.local.title": "במחשב שלך",
   "brain.local.text": "שימוש במוח שרץ על המחשב שלך, עם Ollama או LM Studio.",
   "brain.local.app": "אפליקציה",

@@ -237,6 +237,8 @@
   "brain.key.text": "మీ కీ ఎన్‌క్రిప్ట్ అయి ఈ పరికరంలోనే ఉంటుంది.",
   "brain.key.provider": "సేవ",
   "brain.key.label": "కీ",
+  "brain.key.project": "Google Cloud ప్రాజెక్ట్",
+  "brain.key.vertex": "Google Cloud CLIలో {command} ఇక్కడ అతికించాల్సిన కీని చూపిస్తుంది. ఇది ఒక గంట పనిచేస్తుంది.",
   "brain.local.title": "మీ కంప్యూటర్‌లో",
   "brain.local.text": "Ollama లేదా LM Studio తో మీ సొంత కంప్యూటర్‌లో నడిచే మెదడును వాడండి.",
   "brain.local.app": "యాప్",

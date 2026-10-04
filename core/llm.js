@@ -10,12 +10,26 @@ import { parseSSE } from './sse.js'
  * @import { SSEEvent } from './sse.js'
  */
 
-/** @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean }>} */
+/**
+ * keyCheck: where the model list is public, an address that refuses a wrong key.
+ * @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean, keyCheck?: string }>}
+ */
 export const PROVIDERS = {
   device: { api: 'device', baseURL: '', defaultModel: null, needsKey: false },
-  openrouter: { api: 'openai', baseURL: 'https://openrouter.ai/api/v1', defaultModel: 'openrouter/auto', needsKey: true },
+  openrouter: { api: 'openai', baseURL: 'https://openrouter.ai/api/v1', defaultModel: 'openrouter/auto', needsKey: true, keyCheck: 'https://openrouter.ai/api/v1/key' },
   openai: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true },
   anthropic: { api: 'anthropic', baseURL: 'https://api.anthropic.com/v1', defaultModel: 'claude-opus-5-5', needsKey: true },
+  gemini: { api: 'openai', baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai', defaultModel: 'gemini-3.8-flash', needsKey: true },
+  // {project} is the user's Google Cloud project; the key is an hour-long OAuth access token.
+  vertex: { api: 'openai', baseURL: 'https://aiplatform.googleapis.com/v1/projects/{project}/locations/global/endpoints/openapi', defaultModel: 'google/gemini-3.8-flash', needsKey: true },
+  mistral: { api: 'openai', baseURL: 'https://api.mistral.ai/v1', defaultModel: 'mistral-medium-latest', needsKey: true },
+  huggingface: { api: 'openai', baseURL: 'https://router.huggingface.co/v1', defaultModel: null, needsKey: true, keyCheck: 'https://huggingface.co/api/whoami-v2' },
+  vercel: { api: 'openai', baseURL: 'https://ai-gateway.vercel.sh/v1', defaultModel: 'anthropic/claude-sonnet-5.5', needsKey: true, keyCheck: 'https://ai-gateway.vercel.sh/v1/credits' },
+  groq: { api: 'openai', baseURL: 'https://api.groq.com/openai/v1', defaultModel: null, needsKey: true },
+  cerebras: { api: 'openai', baseURL: 'https://api.cerebras.ai/v1', defaultModel: null, needsKey: true },
+  together: { api: 'openai', baseURL: 'https://api.together.xyz/v1', defaultModel: null, needsKey: true },
+  fireworks: { api: 'openai', baseURL: 'https://api.fireworks.ai/inference/v1', defaultModel: null, needsKey: true },
+  xai: { api: 'openai', baseURL: 'https://api.x.ai/v1', defaultModel: null, needsKey: true },
   ollama: { api: 'openai', baseURL: 'http://localhost:11434/v1', defaultModel: null, needsKey: false },
   lmstudio: { api: 'openai', baseURL: 'http://localhost:1234/v1', defaultModel: null, needsKey: false },
   custom: { api: 'openai', baseURL: '', defaultModel: null, needsKey: false },
@@ -88,16 +102,28 @@ export async function warmCache(options) {
 /** Lists models in provider order. @param {Connection} options @returns {Promise<ModelInfo[]>} */
 export async function listModels({ brain, apiKey, signal, fetch = globalThis.fetch }) {
   const anthropic = brain.api === 'anthropic'
+  // Vertex AI's Chat Completions has no model list: Google's catalogue of its own Gemini stands in.
+  const vertex = brain.provider === 'vertex'
   const headers = headersFor(brain, apiKey)
   delete headers['content-type'] // a GET has no body
-  const res = await fetchOrThrow(fetch, endpoint(brain, anthropic ? '/models?limit=100' : '/models'), { headers }, signal)
+  const url = vertex ? `${new URL(brain.baseURL).origin}/v1beta1/publishers/google/models` : endpoint(brain, anthropic ? '/models?limit=100' : '/models')
+  const res = await fetchOrThrow(fetch, url, { headers }, signal)
   const json = await res.json().catch((e) => {
     throw wrapError(e, signal, 'bad_response')
   })
-  if (!Array.isArray(json?.data)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
-  return json.data.map((/** @type {any} */ m) => (anthropic
+  const list = vertex ? json?.publisherModels : json?.data
+  if (!Array.isArray(list)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
+  if (vertex) return list.map((/** @type {any} */ m) => ({ id: `google/${String(m.name).split('/').at(-1)}` })).filter((m) => m.id.includes('gemini'))
+  return list.map((/** @type {any} */ m) => (anthropic
     ? { id: m.id, name: m.display_name, contextLength: m.max_input_tokens }
-    : { id: m.id, name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined, input: m.architecture?.input_modalities, output: m.architecture?.output_modalities }))
+    // Gemini lists its models as models/gemini-…, and answers to the bare name too.
+    : { id: m.id.replace(/^models\//, ''), name: m.name, contextLength: m.context_length, pricing: m.pricing ? { prompt: Number(m.pricing.prompt), completion: Number(m.pricing.completion) } : undefined, input: m.architecture?.input_modalities, output: m.architecture?.output_modalities }))
+}
+
+/** Throws an 'auth' LLMError when the provider refuses the key; listing models can't tell where the list is public. @param {Connection} options */
+export async function checkKey({ brain, apiKey, signal, fetch = globalThis.fetch }) {
+  const url = PROVIDERS[brain.provider]?.keyCheck
+  if (url) await fetchOrThrow(fetch, url, { headers: { authorization: `Bearer ${apiKey}` } }, signal)
 }
 
 /**
@@ -295,7 +321,9 @@ export function doneEvent(stopReason, usage, content, toolCalls, raw) {
 async function httpError(res) {
   const detail = errorDetail(await res.text().catch(() => ''))
   const message = detail ? `HTTP ${res.status}: ${detail}` : `HTTP ${res.status}`
-  return new LLMError(message, { status: res.status, code: codeForStatus(res.status) })
+  // Gemini and xAI answer a wrong key with 400: "Please pass a valid API key", "Incorrect API key provided".
+  const code = res.status === 400 && /(valid|incorrect) API key/i.test(detail) ? 'auth' : codeForStatus(res.status)
+  return new LLMError(message, { status: res.status, code })
 }
 
 /** @param {number} status @returns {LLMErrorCode} */

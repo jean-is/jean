@@ -237,6 +237,8 @@
   "brain.key.text": "آپ کی کلید اس آلے پر خفیہ شکل میں رہتی ہے۔",
   "brain.key.provider": "سروس",
   "brain.key.label": "کلید",
+  "brain.key.project": "Google Cloud پروجیکٹ",
+  "brain.key.vertex": "Google Cloud CLI میں {command} وہ کلید دکھاتا ہے جو یہاں پیسٹ کرنی ہے۔ یہ ایک گھنٹہ چلتی ہے۔",
   "brain.local.title": "آپ کے کمپیوٹر پر",
   "brain.local.text": "Ollama یا LM Studio کے ذریعے اپنے کمپیوٹر پر چلنے والا دماغ استعمال کریں۔",
   "brain.local.app": "ایپ",

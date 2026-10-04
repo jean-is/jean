@@ -239,6 +239,8 @@
   "brain.key.text": "Votre clé reste sur cet appareil, chiffrée.",
   "brain.key.provider": "Service",
   "brain.key.label": "Clé",
+  "brain.key.project": "Projet Google Cloud",
+  "brain.key.vertex": "Dans la CLI Google Cloud, {command} affiche la clé à coller ici. Elle dure une heure.",
   "brain.local.title": "Sur votre ordinateur",
   "brain.local.text": "Utilisez un cerveau qui fonctionne sur votre propre machine, avec Ollama ou LM Studio.",
   "brain.local.app": "Application",

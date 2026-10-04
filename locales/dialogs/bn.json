@@ -237,6 +237,8 @@
   "brain.key.text": "আপনার কী এনক্রিপ্ট করা অবস্থায় এই ডিভাইসেই থাকে।",
   "brain.key.provider": "সেবা",
   "brain.key.label": "কী",
+  "brain.key.project": "Google Cloud প্রকল্প",
+  "brain.key.vertex": "Google Cloud CLI-তে {command} এখানে পেস্ট করার কী দেখায়। এটি এক ঘণ্টা কাজ করে।",
   "brain.local.title": "আপনার কম্পিউটারে",
   "brain.local.text": "Ollama বা LM Studio দিয়ে নিজের মেশিনে চলা একটি মস্তিষ্ক ব্যবহার করুন।",
   "brain.local.app": "অ্যাপ",

@@ -237,6 +237,8 @@
   "brain.key.text": "Makullinka yana kan wannan na'urar, a ɓoye.",
   "brain.key.provider": "Sabis",
   "brain.key.label": "Makulli",
+  "brain.key.project": "Aikin Google Cloud",
+  "brain.key.vertex": "A cikin Google Cloud CLI, {command} yana nuna makullin da za ka liƙa a nan. Yana aiki na awa ɗaya.",
   "brain.local.title": "A kan kwamfutarka",
   "brain.local.text": "Yi amfani da ƙwaƙwalwar da ke aiki a kan na'urarka, ta Ollama ko LM Studio.",
   "brain.local.app": "Manhaja",

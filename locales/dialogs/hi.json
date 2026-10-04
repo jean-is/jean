@@ -237,6 +237,8 @@
   "brain.key.text": "आपकी कुंजी इसी डिवाइस पर एन्क्रिप्ट होकर रहती है।",
   "brain.key.provider": "सेवा",
   "brain.key.label": "कुंजी",
+  "brain.key.project": "Google Cloud प्रोजेक्ट",
+  "brain.key.vertex": "Google Cloud CLI में {command} वह कुंजी दिखाता है जिसे यहाँ पेस्ट करना है। यह एक घंटे चलती है।",
   "brain.local.title": "आपके कंप्यूटर पर",
   "brain.local.text": "Ollama या LM Studio से अपनी ही मशीन पर चलने वाला दिमाग़ इस्तेमाल करें।",
   "brain.local.app": "ऐप",

@@ -235,6 +235,8 @@
   "brain.key.text": "Kọ́kọ́rọ́ yín máa wà lórí ẹ̀rọ yìí, a sì ti fi àṣírí dì í.",
   "brain.key.provider": "Olùpèsè",
   "brain.key.label": "Kọ́kọ́rọ́",
+  "brain.key.project": "Iṣẹ́ akanṣe Google Cloud",
+  "brain.key.vertex": "Nínú Google Cloud CLI, {command} máa ń fi kọ́kọ́rọ́ tí o máa lẹ̀ síbí hàn. Ó máa ń ṣiṣẹ́ fún wákàtí kan.",
   "brain.local.title": "Lórí kọ̀ǹpútà yín",
   "brain.local.text": "Lo ọpọlọ tí ó ń ṣiṣẹ́ lórí ẹ̀rọ tiyín, pẹ̀lú Ollama tàbí LM Studio.",
   "brain.local.app": "Áàpù",

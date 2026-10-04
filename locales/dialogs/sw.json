@@ -237,6 +237,8 @@
   "brain.key.text": "Ufunguo wako unabaki kwenye kifaa hiki, ukiwa umesimbwa.",
   "brain.key.provider": "Huduma",
   "brain.key.label": "Ufunguo",
+  "brain.key.project": "Mradi wa Google Cloud",
+  "brain.key.vertex": "Katika Google Cloud CLI, {command} huonyesha ufunguo wa kubandika hapa. Unafanya kazi kwa saa moja.",
   "brain.local.title": "Kwenye kompyuta yako",
   "brain.local.text": "Tumia ubongo unaoendeshwa kwenye mashine yako mwenyewe, kwa Ollama au LM Studio.",
   "brain.local.app": "Programu",

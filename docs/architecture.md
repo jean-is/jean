@@ -128,7 +128,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
    - **Offered only where it runs:** WebGPU with `shader-f16`, enough memory (3–5 GB while answering) and enough free storage. Other devices, including Safari before 26 (no WebGPU), skip this rung.
    - **Not chosen:** Qwen3-0.6B. It is six times smaller, but too weak for multi-step tool use and document answers in most launch languages, and it can't read images. Kev covers the small, runs-everywhere slot (D42).
 2. **One click:** OpenRouter or Hugging Face sign-in. No key to paste.
-3. **Advanced:** the user's own key, or a local server (Ollama, LM Studio, any OpenAI-compatible endpoint).
+3. **Advanced:** the user's own key (OpenAI, Anthropic, Google Gemini, Vertex AI, Mistral AI, OpenRouter, Vercel AI Gateway, Hugging Face, Groq, Cerebras, Together AI, Fireworks AI, xAI; D136), or a local server (Ollama, LM Studio, any OpenAI-compatible endpoint).
 
 Not used: the browsers' built-in models (too experimental) and native OS models such as Apple Foundation Models (not lean).
 

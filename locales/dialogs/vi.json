@@ -235,6 +235,8 @@
   "brain.key.text": "Khóa của bạn được mã hóa và ở lại trên thiết bị này.",
   "brain.key.provider": "Dịch vụ",
   "brain.key.label": "Khóa",
+  "brain.key.project": "Dự án Google Cloud",
+  "brain.key.vertex": "Trong Google Cloud CLI, {command} hiển thị khóa để dán vào đây. Khóa dùng được một giờ.",
   "brain.local.title": "Trên máy tính của bạn",
   "brain.local.text": "Dùng một bộ não chạy trên máy của chính bạn, với Ollama hoặc LM Studio.",
   "brain.local.app": "Ứng dụng",

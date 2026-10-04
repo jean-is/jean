@@ -237,6 +237,8 @@
   "brain.key.text": "உங்கள் சாவி மறையாக்கம் செய்யப்பட்டு இந்தச் சாதனத்திலேயே இருக்கும்.",
   "brain.key.provider": "சேவை",
   "brain.key.label": "சாவி",
+  "brain.key.project": "Google Cloud திட்டம்",
+  "brain.key.vertex": "Google Cloud CLI-இல் {command} இங்கே ஒட்ட வேண்டிய சாவியைக் காட்டும். அது ஒரு மணி நேரம் செல்லும்.",
   "brain.local.title": "உங்கள் கணினியில்",
   "brain.local.text": "Ollama அல்லது LM Studio மூலம் உங்கள் சொந்தக் கணினியில் இயங்கும் மூளையைப் பயன்படுத்துங்கள்.",
   "brain.local.app": "செயலி",

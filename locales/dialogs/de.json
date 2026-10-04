@@ -237,6 +237,8 @@
   "brain.key.text": "Dein Schlüssel bleibt verschlüsselt auf diesem Gerät.",
   "brain.key.provider": "Dienst",
   "brain.key.label": "Schlüssel",
+  "brain.key.project": "Google-Cloud-Projekt",
+  "brain.key.vertex": "In der Google Cloud CLI gibt {command} den Schlüssel aus, den du hier einfügst. Er gilt eine Stunde.",
   "brain.local.title": "Auf deinem Computer",
   "brain.local.text": "Nutze ein Gehirn, das auf deinem eigenen Rechner läuft, mit Ollama oder LM Studio.",
   "brain.local.app": "App",

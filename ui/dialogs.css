@@ -198,6 +198,13 @@ input.switch:focus-visible { outline: 2px solid var(--flame); outline-offset: 2p
 .sheet .noticed-text:focus { border-color: var(--line-strong); background: oklch(from var(--room) l c h / 0.6); }
 .noticed-actions { display: flex; flex: none; align-items: center; }
 .sheet .steps { font: 0.86rem/1.5 var(--mono); }
+/* How to get a key (D136): numbered, with the service's page one click away. */
+.key-steps { margin: 0; padding-inline-start: 1.3rem; display: grid; gap: 0.3rem; font-size: 0.88rem; color: var(--ink-soft); }
+.key-steps a { color: var(--ink); text-underline-offset: 0.2em; }
+.key-steps a svg { inline-size: 0.9em; block-size: 0.9em; vertical-align: -0.1em; }
+.key-steps a svg:dir(rtl) { transform: scaleX(-1); }
+.key-command { display: flex; align-items: center; gap: 0.3rem; margin-block-start: 0.2rem; }
+.key-command code { padding: 0.2rem 0.45rem; border-radius: 0.35rem; background: var(--line); font: 0.82rem var(--mono); overflow-wrap: anywhere; }
 /* Skills from elsewhere, each source with what it offers (D121); a routine's schedule on one line (D122). */
 .source h4 { display: flex; align-items: center; gap: 0.3rem; }
 .source li { display: grid; justify-items: start; padding: 0.3rem 0.8rem; }

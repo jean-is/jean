@@ -237,6 +237,8 @@
   "brain.key.text": "Anahtarın şifrelenmiş olarak bu cihazda kalır.",
   "brain.key.provider": "Hizmet",
   "brain.key.label": "Anahtar",
+  "brain.key.project": "Google Cloud projesi",
+  "brain.key.vertex": "Google Cloud CLI’da {command} buraya yapıştıracağın anahtarı gösterir. Bir saat geçerlidir.",
   "brain.local.title": "Bilgisayarında",
   "brain.local.text": "Ollama veya LM Studio ile kendi bilgisayarında çalışan bir beyin kullan.",
   "brain.local.app": "Uygulama",

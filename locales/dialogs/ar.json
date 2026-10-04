@@ -245,6 +245,8 @@
   "brain.key.text": "يبقى مفتاحك على هذا الجهاز، مشفّرًا.",
   "brain.key.provider": "الخدمة",
   "brain.key.label": "المفتاح",
+  "brain.key.project": "مشروع Google Cloud",
+  "brain.key.vertex": "في Google Cloud CLI، يعرض الأمر {command} المفتاح الذي تلصقه هنا. يعمل لمدة ساعة.",
   "brain.local.title": "على حاسوبك",
   "brain.local.text": "استخدم عقلًا يعمل على جهازك أنت، عبر Ollama أو LM Studio.",
   "brain.local.app": "التطبيق",

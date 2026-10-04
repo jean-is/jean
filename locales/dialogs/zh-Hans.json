@@ -235,6 +235,8 @@
   "brain.key.text": "你的密钥加密保存在这台设备上。",
   "brain.key.provider": "服务",
   "brain.key.label": "密钥",
+  "brain.key.project": "Google Cloud 项目",
+  "brain.key.vertex": "在 Google Cloud CLI 中，{command} 会显示要粘贴到这里的密钥。有效期为一小时。",
   "brain.local.title": "在你的电脑上",
   "brain.local.text": "通过 Ollama 或 LM Studio，使用在你自己电脑上运行的大脑。",
   "brain.local.app": "应用",

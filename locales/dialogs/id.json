@@ -235,6 +235,8 @@
   "brain.key.text": "Kunci Anda tetap di perangkat ini, terenkripsi.",
   "brain.key.provider": "Layanan",
   "brain.key.label": "Kunci",
+  "brain.key.project": "Proyek Google Cloud",
+  "brain.key.vertex": "Di Google Cloud CLI, {command} menampilkan kunci untuk ditempel di sini. Kunci ini berlaku satu jam.",
   "brain.local.title": "Di komputer Anda",
   "brain.local.text": "Gunakan otak yang berjalan di mesin Anda sendiri, dengan Ollama atau LM Studio.",
   "brain.local.app": "Aplikasi",

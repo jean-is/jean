@@ -235,6 +235,8 @@
   "brain.key.text": "Kunci anda kekal pada peranti ini, disulitkan.",
   "brain.key.provider": "Perkhidmatan",
   "brain.key.label": "Kunci",
+  "brain.key.project": "Projek Google Cloud",
+  "brain.key.vertex": "Dalam Google Cloud CLI, {command} memaparkan kunci untuk ditampal di sini. Ia sah selama sejam.",
   "brain.local.title": "Pada komputer anda",
   "brain.local.text": "Guna otak yang berjalan pada mesin anda sendiri, dengan Ollama atau LM Studio.",
   "brain.local.app": "Aplikasi",

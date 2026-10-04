@@ -237,6 +237,8 @@
   "brain.key.text": "तुमची की कूटबद्ध स्वरूपात याच उपकरणावर राहते.",
   "brain.key.provider": "सेवा",
   "brain.key.label": "की",
+  "brain.key.project": "Google Cloud प्रकल्प",
+  "brain.key.vertex": "Google Cloud CLI मध्ये {command} इथे पेस्ट करायची की दाखवते. ती एक तास चालते.",
   "brain.local.title": "तुमच्या संगणकावर",
   "brain.local.text": "Ollama किंवा LM Studio वापरून तुमच्याच संगणकावर चालणारा मेंदू वापरा.",
   "brain.local.app": "अ‍ॅप",

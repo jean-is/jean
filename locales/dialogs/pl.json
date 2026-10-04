@@ -241,6 +241,8 @@
   "brain.key.text": "Twój klucz zostaje na tym urządzeniu, zaszyfrowany.",
   "brain.key.provider": "Usługa",
   "brain.key.label": "Klucz",
+  "brain.key.project": "Projekt Google Cloud",
+  "brain.key.vertex": "W Google Cloud CLI polecenie {command} wyświetla klucz do wklejenia tutaj. Działa przez godzinę.",
   "brain.local.title": "Na twoim komputerze",
   "brain.local.text": "Użyj mózgu działającego na twoim własnym komputerze, z Ollama lub LM Studio.",
   "brain.local.app": "Aplikacja",

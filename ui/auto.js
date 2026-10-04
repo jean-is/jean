@@ -17,6 +17,10 @@ export const TIERS = /** @type {Record<string, string[]>} */ ({
   anthropic: ['claude-haiku-4-5', 'claude-sonnet-5-5', 'claude-opus-5-5'],
   openrouter: ['google/gemini-3.8-flash', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
   openai: ['gpt-6-luna', 'gpt-6-sol', 'gpt-6-astra'],
+  gemini: ['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.1-pro-preview'],
+  vertex: ['google/gemini-3.5-flash-lite', 'google/gemini-3.8-flash', 'google/gemini-3.1-pro-preview'],
+  mistral: ['mistral-small-latest', 'mistral-medium-latest', 'mistral-large-latest'],
+  vercel: ['anthropic/claude-haiku-4.5', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
 })
 
 /** A brain that never leaves this computer. @param {BrainConfig} brain */

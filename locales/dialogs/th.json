@@ -235,6 +235,8 @@
   "brain.key.text": "คีย์ของคุณถูกเข้ารหัสและอยู่บนอุปกรณ์นี้",
   "brain.key.provider": "บริการ",
   "brain.key.label": "คีย์",
+  "brain.key.project": "โปรเจกต์ Google Cloud",
+  "brain.key.vertex": "ใน Google Cloud CLI คำสั่ง {command} จะแสดงคีย์ที่ต้องวางที่นี่ ใช้ได้หนึ่งชั่วโมง",
   "brain.local.title": "บนคอมพิวเตอร์ของคุณ",
   "brain.local.text": "ใช้สมองที่ทำงานบนเครื่องของคุณเอง ผ่าน Ollama หรือ LM Studio",
   "brain.local.app": "แอป",

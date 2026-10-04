@@ -139,8 +139,10 @@ async function attempt(way, name, task) {
 function connectKey(event) {
   event.preventDefault()
   const form = new FormData(/** @type {HTMLFormElement} */ (event.target))
-  const provider = /** @type {'openai' | 'anthropic' | 'openrouter'} */ (form.get('provider'))
-  attempt('key', t(`provider.${provider}`), () => connectBrain({ provider, apiKey: String(form.get('key')).trim() }))
+  const provider = /** @type {BrainConfig['provider']} */ (form.get('provider'))
+  const project = String(form.get('project') ?? '').trim()
+  const baseURL = provider === 'vertex' ? PROVIDERS.vertex.baseURL.replace('{project}', encodeURIComponent(project)) : undefined
+  attempt('key', t(`provider.${provider}`), () => connectBrain({ provider, apiKey: String(form.get('key')).trim(), baseURL }))
 }
 
 /** @param {SubmitEvent} event */
@@ -220,11 +222,52 @@ const way = (id, icon, title, needs, open, body) => html`<li><details name="brai
   </div>
 </details></li>`
 
-/** The services whose key can be pasted. */
-const KEYED = ['openai', 'anthropic', 'openrouter']
+/** The services whose key can be pasted: each takes requests from a browser, under its own published terms. */
+const KEYED = ['openai', 'anthropic', 'gemini', 'vertex', 'mistral', 'openrouter', 'vercel', 'huggingface', 'groq', 'cerebras', 'together', 'fireworks', 'xai']
+/** The service picked in the key's form: Vertex AI also needs the Google Cloud project. */
+const keyProvider = signal('openai')
+
+/** Where each service makes keys, signing in first (provider identities, D33). Hugging Face's comes ready to call its providers. */
+const KEY_PAGES = /** @type {Record<string, string>} */ ({
+  openai: 'https://platform.openai.com/api-keys',
+  anthropic: 'https://platform.claude.com/settings/keys',
+  gemini: 'https://aistudio.google.com/apikey',
+  mistral: 'https://console.mistral.ai/api-keys',
+  openrouter: 'https://openrouter.ai/settings/keys',
+  vercel: 'https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai-gateway%2Fapi-keys',
+  huggingface: 'https://huggingface.co/settings/tokens/new?ownUserPermissions=inference.serverless.write&tokenType=fineGrained',
+  groq: 'https://console.groq.com/keys',
+  cerebras: 'https://cloud.cerebras.ai/platform',
+  together: 'https://api.together.ai/settings/api-keys',
+  fireworks: 'https://app.fireworks.ai/settings/users/api-keys',
+  xai: 'https://console.x.ai',
+})
+const VERTEX_COMMAND = 'gcloud auth print-access-token'
+
+/** @param {string} href @param {string} text */
+const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.arrow}</a>`
+
+/** How to get a key for the service picked, for whoever has none yet. @param {string} id */
+function keySteps(id) {
+  if (id === 'vertex') {
+    return html`<ol class="key-steps">
+      <li>${outside('https://console.cloud.google.com/vertex-ai', t('brain.key.vertexOn'))}</li>
+      <li>${outside('https://shell.cloud.google.com/?show=terminal', t('brain.key.shell'))}</li>
+      <li>${t('brain.key.type')}
+        <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+          @click=${() => navigator.clipboard.writeText(VERTEX_COMMAND).then(() => notify(t('toast.copied')), showError)}>${icons.copy}</button></span></li>
+      <li>${t('brain.key.hour')}</li>
+    </ol>`
+  }
+  return html`<ol class="key-steps">
+    <li>${outside(KEY_PAGES[id], t('brain.key.open', { service: t(`provider.${id}`) }))}</li>
+    <li>${t('brain.key.create')}</li>
+    <li>${t('brain.key.paste')}</li>
+  </ol>`
+}
 
 /** "OpenAI, Anthropic, OpenRouter", in the user's language. @param {string[]} ids */
-const providers = (ids) => new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(ids.map((id) => t(`provider.${id}`)))
+const providers = (ids) => new Intl.ListFormat(locale.value, { type: 'conjunction', style: 'narrow' }).format(ids.map((id) => t(`provider.${id}`)))
 
 /**
  * The ways to add a brain. Before the first, one is open once this device is checked (a way
@@ -257,8 +300,13 @@ function ways(first) {
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}>
         <label>${t('brain.key.provider')}
-          <select name="provider">${KEYED.map((id) => html`<option value=${id}>${t(`provider.${id}`)}</option>`)}</select>
+          <select name="provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}>
+            ${KEYED.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${t(`provider.${id}`)}</option>`)}
+          </select>
         </label>
+        ${keySteps(keyProvider.value)}
+        ${keyProvider.value === 'vertex' ? html`
+          <label>${t('brain.key.project')}<input name="project" required autocomplete="off" spellcheck="false" dir="ltr"></label>` : nothing}
         <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>`)}

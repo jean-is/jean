@@ -237,6 +237,8 @@
   "brain.key.text": "Nananatili ang susi mo sa device na ito, naka-encrypt.",
   "brain.key.provider": "Serbisyo",
   "brain.key.label": "Susi",
+  "brain.key.project": "Proyekto sa Google Cloud",
+  "brain.key.vertex": "Sa Google Cloud CLI, ipinapakita ng {command} ang susing ipe-paste dito. Gumagana ito nang isang oras.",
   "brain.local.title": "Sa computer mo",
   "brain.local.text": "Gumamit ng utak na tumatakbo sa sarili mong makina, gamit ang Ollama o LM Studio.",
   "brain.local.app": "App",

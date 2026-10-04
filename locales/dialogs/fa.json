@@ -237,6 +237,8 @@
   "brain.key.text": "کلید شما رمزگذاری‌شده روی همین دستگاه می‌ماند.",
   "brain.key.provider": "سرویس",
   "brain.key.label": "کلید",
+  "brain.key.project": "پروژهٔ Google Cloud",
+  "brain.key.vertex": "در Google Cloud CLI، فرمان {command} کلیدی را که باید اینجا بچسبانید نشان می‌دهد. یک ساعت کار می‌کند.",
   "brain.local.title": "روی رایانهٔ شما",
   "brain.local.text": "از مغزی استفاده کنید که روی دستگاه خودتان اجرا می‌شود، با Ollama یا LM Studio.",
   "brain.local.app": "برنامه",

@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseSSE } from '../core/sse.js'
-import { PROVIDERS, LLMError, headersFor, streamChat, listModels, warmCache, openaiMessages } from '../core/llm.js'
+import { PROVIDERS, LLMError, headersFor, streamChat, listModels, checkKey, warmCache, openaiMessages } from '../core/llm.js'
 import { minimumCacheable } from '../core/anthropic.js'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -861,6 +861,40 @@ describe('listModels', () => {
     assert.equal(calls[0].url, 'http://localhost:11434/v1/models')
     assert.deepEqual(calls[0].headers, {})
     assert.deepEqual(models, [{ id: 'qwen3', name: undefined, contextLength: undefined, pricing: undefined, input: undefined, output: undefined }])
+  })
+
+  test('Gemini: models/ dropped from ids, which it answers to bare', async () => {
+    const brain = { id: 'g', provider: 'gemini', api: 'openai', baseURL: PROVIDERS.gemini.baseURL, model: '' }
+    const { fetch, calls } = mockFetch(() => Response.json({ object: 'list', data: [{ id: 'models/gemini-3.8-flash', object: 'model', owned_by: 'google' }] }))
+    const models = await listModels({ brain, apiKey: 'AIza', fetch })
+    assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/openai/models')
+    assert.equal(models[0].id, 'gemini-3.8-flash')
+  })
+
+  test('Gemini: a wrong key, answered with 400, is still a refused key', async () => {
+    const brain = { id: 'g', provider: 'gemini', api: 'openai', baseURL: PROVIDERS.gemini.baseURL, model: '' }
+    const { fetch } = mockFetch(() => Response.json({ error: { code: 400, message: 'Please pass a valid API key', status: 'INVALID_ARGUMENT' } }, { status: 400 }))
+    await rejectsWith(listModels({ brain, apiKey: 'nope', fetch }), { code: 'auth' })
+  })
+
+  test('Vertex AI: Google’s own Gemini from its catalogue, named as Chat Completions takes them', async () => {
+    const brain = { id: 'v', provider: 'vertex', api: 'openai', baseURL: PROVIDERS.vertex.baseURL.replace('{project}', 'acme'), model: '' }
+    const publisherModels = [{ name: 'publishers/google/models/gemini-3.8-flash' }, { name: 'publishers/google/models/imagen-5' }]
+    const { fetch, calls } = mockFetch(() => Response.json({ publisherModels }))
+    const models = await listModels({ brain, apiKey: 'ya29', fetch })
+    assert.equal(calls[0].url, 'https://aiplatform.googleapis.com/v1beta1/publishers/google/models')
+    assert.deepEqual(calls[0].headers, { authorization: 'Bearer ya29' })
+    assert.deepEqual(models, [{ id: 'google/gemini-3.8-flash' }])
+  })
+
+  test('a key is checked where the model list is public, and nowhere else', async () => {
+    const huggingface = { id: 'h', provider: 'huggingface', api: 'openai', baseURL: PROVIDERS.huggingface.baseURL, model: '' }
+    const refused = mockFetch(() => Response.json({ error: 'Invalid username or password.' }, { status: 401 }))
+    await rejectsWith(checkKey({ brain: huggingface, apiKey: 'hf_wrong', fetch: refused.fetch }), { code: 'auth' })
+    assert.equal(refused.calls[0].url, 'https://huggingface.co/api/whoami-v2')
+    const untouched = mockFetch(() => Response.json({}))
+    await checkKey({ brain: brains.openai, apiKey: 'sk', fetch: untouched.fetch })
+    assert.equal(untouched.calls.length, 0)
   })
 
   test('Anthropic', async () => {
