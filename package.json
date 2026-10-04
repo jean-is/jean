@@ -9,6 +9,8 @@
     "dev": "npm run build && node scripts/serve.js",
     "start": "npm run build && node scripts/serve.js",
     "build": "npm run vendor && npm run manifest",
+    "build:desktop": "npm run build && node scripts/desktop.js",
+    "build:dmg": "npm run build && node scripts/desktop.js dmg",
     "serve": "node scripts/serve.js",
     "test": "node --test test/*.test.js",
     "vendor": "node scripts/vendor.js",
@@ -27,6 +29,7 @@
     "marked": "^18.0.14"
   },
   "devDependencies": {
+    "@neutralinojs/neu": "^11.7.2",
     "@playwright/test": "1.63.0",
     "typescript": "^7.0.2"
   },

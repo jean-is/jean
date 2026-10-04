@@ -87,6 +87,8 @@ node test/fixtures/fake-brain.js
 
 **Deploying:** run `npm ci && npm run build`, then copy the folder to any static host served over HTTPS. Jean's code ships exactly as written. Only third-party code (copied into `vendor/`) and two generated listings are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once.
 
+**Desktop:** `npm run build:desktop` puts the same files in an app for macOS, Windows and Linux, in `dist/desktop/`: a window of the system's own web view, with Jean's files inside, made with [Neutralino](https://neutralino.js.org). It needs nothing else on macOS and Windows; Linux needs WebKitGTK. Jean doesn't know it is in a window (D155). On a Mac, `npm run build:dmg` also makes the disk image to hand out.
+
 ## Develop
 
 | Command | What it does |
@@ -95,6 +97,8 @@ node test/fixtures/fake-brain.js
 | `npm test` | The core and storage tests, with `node --test` |
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
+| `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
+| `npm run build:dmg` | The same, then the macOS disk image to hand out, on a Mac |
 | `npm run icons` | Draws the PNG icons that Android and iOS install with from `icons/icon.svg`, after changing it |
 | `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to and which sources of skills it can read |
 

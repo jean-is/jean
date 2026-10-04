@@ -79,6 +79,8 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 ```bash
 npm run dev     # build (vendor + manifest), then serve (npm start does the same)
 npm run build   # copy runtimes into vendor/, regenerate the manifest
+npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
+npm run build:dmg      # the same, then the macOS disk image, on a Mac
 npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js

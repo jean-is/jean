@@ -241,4 +241,4 @@ Dictation and read-aloud are available from day one for accessibility. Live conv
 - Controlling the user's computer outside the browser
 - A proprietary app catalogue (Jean uses MCP)
 - Persona-heavy prompts and multi-agent role-play
-- Built-in browser models (`LanguageModel`) and native/desktop hosts, for now
+- Built-in browser models (`LanguageModel`), and native code beyond the window the desktop version opens (D155), for now

@@ -98,7 +98,9 @@ locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, 
                   ask/, folders/ and sync/ with the browser's, the questions', Folders' and Sync's own, loaded and cached with them (D140,
                   D146, D152, D157)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
+desktop/          dmg-background.svg, the macOS disk image's window, drawn when the image is made (D155)
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
+                  desktop.js (the desktop apps in dist/desktop/, with Neutralino, D155; never committed),
                   reflexes.js (measures Kev on the test set)
 test/             node --test suites; fixtures/fake-brain.js and fake-mail.js (an MCP mail service with OAuth sign-in), keys.js (which
                   modules use which strings);
@@ -483,8 +485,6 @@ Built in 0.7.
 - **Reads and changes.** Each read keeps the file's size and date on its call (`_meta.read`, `_meta.folder`); a change is refused unless the file is as the conversation last read it. A change is ACP `diff` content on its call, asked first with it (the loop's `check`) unless the folder is always allowed; Undo puts the file back while it is as Jean left it, and a note of kind `undone` tells the brain.
 - **Permission.** The browser asks once a visit: at the first message sent in a conversation with a folder, or from a card when a call finds the folder shut. Reading the handles back is guarded by a mark in IndexedDB: a start that finds the mark of a read that never finished keeps folders for the visit only (Chrome 153 went down reading a handle back in a private context).
 
-## Voice pipeline
-
 ## Sync
 
 After 0.8, D157. `caps/sync/sync.js` is the capability: the folder the user picked (its handle in IndexedDB's `app-sync`, the browser's permission asked again once a visit unless allowed on every visit), when rounds run, what shows once something came in, and its part of Settings' Your data. `caps/sync/mirror.js` does the work on any two `FS`: here, Jean's private file system; there, the folder, through `folderFS` (`ui/opfs.js`), as Folders opens one.
@@ -494,6 +494,8 @@ After 0.8, D157. `caps/sync/sync.js` is the capability: the folder the user pick
 - **When.** As Jean opens, every minute on screen, after each answer, and as the page goes out of sight, one tab at a time (Web Locks).
 - **Two homes.** Two computers that each made a home project keep the oldest as the home; `settleHomes` removes a newer, empty one, or keeps it as a project.
 - **Not yet.** A drive's own API, for Safari, Firefox and phones, waits for the domain (D27); it would be another `FS`.
+
+## Voice pipeline
 
 - **Speech to text:** a Whisper-class model through Transformers.js (shared runtime), or Chrome's on-device recognition where available.
 - **Text to speech:** `speechSynthesis` with local voices, or Kokoro. Each answer is read in its own language (D109), by the voice `rankVoices()` in `ui/language.js` puts first: the user's variety, then the most natural (D114).
