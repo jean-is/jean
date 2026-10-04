@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
 import { countLines } from '../scripts/budgets.js'
+import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
 import {
   extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
 } from '../scripts/graph.js'
@@ -73,9 +74,11 @@ describe('manifest: file filters', () => {
       'docs/x.js': '',
       'test/x.test.js': '',
       'scripts/x.js': '',
+      'icons/icon.svg': '',
+      'icons/icon-512.png': '',
     })
     const { shell, locales } = await collectFiles(root)
-    assert.deepEqual(shell, ['brand.js', 'core/a.js', 'core/b.js', 'index.html', 'manifest.webmanifest', 'ui/app.js'])
+    assert.deepEqual(shell, ['brand.js', 'core/a.js', 'core/b.js', 'icons/icon.svg', 'index.html', 'manifest.webmanifest', 'ui/app.js'])
     assert.deepEqual(locales, ['locales/dialogs/en.json', 'locales/en.json', 'locales/fr.json'])
   })
 })
@@ -133,12 +136,23 @@ describe('manifest: outputs', () => {
   })
 
   it('builds a web manifest that works under a sub-path', () => {
-    const manifest = JSON.parse(buildWebmanifest({ name: 'Test' }))
+    const manifest = JSON.parse(buildWebmanifest({ name: 'Test' }, 'One sentence.'))
     assert.equal(manifest.name, 'Test')
     assert.equal(manifest.short_name, 'Test')
+    assert.equal(manifest.description, 'One sentence.')
+    assert.equal(manifest.id, './')
     assert.equal(manifest.start_url, './')
     assert.equal(manifest.scope, './')
     assert.equal(manifest.icons[0].src, 'icons/icon.svg')
+    assert.equal(JSON.parse(buildWebmanifest({ name: 'Test' })).description, undefined)
+  })
+
+  it('lists PNG icons Android can install with, one of them maskable, and none "any maskable"', () => {
+    const { icons } = JSON.parse(buildWebmanifest({ name: 'Test' }))
+    const png = (/** @type {string} */ sizes) => icons.some((/** @type {any} */ icon) => icon.type === 'image/png' && icon.sizes === sizes && !icon.purpose)
+    assert.ok(png('192x192') && png('512x512'))
+    assert.ok(icons.some((/** @type {any} */ icon) => icon.type === 'image/png' && icon.purpose === 'maskable'))
+    assert.ok(icons.every((/** @type {any} */ icon) => !icon.purpose || icon.purpose === 'maskable'))
   })
 
   it('builds capabilities.json in format 2 with integrity values and an empty capability map', () => {
@@ -189,6 +203,29 @@ describe('manifest: outputs', () => {
     assert.doesNotMatch(outputs['index.html'], /lazy/)
     const { integrity } = JSON.parse(outputs['capabilities.json'])
     assert.equal(integrity['index.html'], `sha256-${createHash('sha256').update(outputs['index.html']).digest('base64')}`)
+  })
+})
+
+describe('manifest: icons', () => {
+  const read = (/** @type {string} */ path) => readFile(new URL(`../${path}`, import.meta.url))
+
+  it('draws every PNG that the web manifest and index.html name, at its size, from today\'s icon.svg', async () => {
+    const html = (await read('index.html')).toString('utf8')
+    const touch = /<link rel="apple-touch-icon" href="([^"]+)">/.exec(html)?.[1]
+    assert.equal(touch && PNGS[touch], 180, 'iOS wants a 180 pixel apple-touch-icon')
+    const named = [touch, ...JSON.parse(buildWebmanifest({ name: 'Test' })).icons.map((/** @type {any} */ icon) => icon.src)]
+    for (const path of named.filter((path) => path?.endsWith('.png'))) assert.ok(path && PNGS[path], `${path} is drawn by scripts/icons.js`)
+    const source = sourceOf(await read('icons/icon.svg'))
+    for (const [path, size] of Object.entries(PNGS)) {
+      assert.deepEqual(describePng(await read(path)), { width: size, height: size, source }, `${path} is stale: run \`npm run icons\``)
+    }
+  })
+
+  it('records the drawing in a chunk that keeps the PNG readable', () => {
+    const header = Buffer.from('0000000d49484452000000100000000808020000000000000000', 'hex')
+    const png = Buffer.concat([Buffer.from('89504e470d0a1a0a', 'hex'), header, Buffer.from('0000000049454e44ae426082', 'hex')])
+    assert.deepEqual(describePng(png), { width: 16, height: 8, source: null })
+    assert.deepEqual(describePng(recordSource(png, 'x sha256:1')), { width: 16, height: 8, source: 'x sha256:1' })
   })
 })
 

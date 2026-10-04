@@ -11,7 +11,7 @@ async function createProject(page, name) {
   await dialog.locator('.swatch').nth(4).click()
   await dialog.locator('.button.primary').click()
   await expect(dialog).toBeHidden()
-  await expect(page.locator('.wordmark-project')).toHaveText(name)
+  await expect(page.locator('app-projects .wordmark')).toHaveText(name)
 }
 
 /** @param {import('@playwright/test').Page} page */
@@ -39,8 +39,8 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 
   // Another project knows nothing of it.
-  await page.locator('.bar button[aria-label="Conversations"]').click()
-  await page.locator('app-history .projects .button').click()
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu button', { hasText: 'New project' }).click()
   await createProject(page, 'Garden')
   await ask(page, 'What do you know?')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Nothing yet.')
@@ -50,10 +50,9 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await page.keyboard.press('Escape')
 
   // Back in the bakery, it is there, on the page and in the brain's context.
-  await page.locator('.bar button[aria-label="Conversations"]').click()
-  await page.locator('app-history .project', { hasText: 'Bakery' }).click()
-  await page.keyboard.press('Escape')
-  await expect(page.locator('.wordmark-project')).toHaveText('Bakery')
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu .project', { hasText: 'Bakery' }).click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
   await ask(page, 'What do you know?')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('the bakery opens at 7')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
@@ -65,7 +64,8 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await bakery.locator('textarea').first().blur()
   await expect(page.locator('.toast')).toContainText('Saved')
   await page.keyboard.press('Escape')
-  await page.locator('.wordmark').click()
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu button', { hasText: 'New conversation' }).click()
   await ask(page, 'Hello')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   const system = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)

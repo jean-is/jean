@@ -1,0 +1,302 @@
+// Search (D133), as in the Claude apps: once there is plenty to look back on, ⌘K, or Search
+// under a new conversation, finds a conversation in any project by its title or its words, a
+// file shared or made by its name or its text, a project by its name, and a section of
+// Settings, as people type: part of a word is enough, case and accents aside, in any script.
+// It reads every conversation each time it opens, as the list does (an index in .cache/ can
+// come later), and each file once (they are named by their content). Empty, it offers a new
+// conversation and the room's latest ones.
+import { html, nothing } from 'lit-html'
+import { live } from 'lit-html/directives/live.js'
+import { signal, computed } from '@preact/signals-core'
+import { Element, define } from '../../ui/base.js'
+import { register, loaded } from '../../ui/caps.js'
+import { app, newConversation, openConversation, enterProject, turnPage, openFile } from '../../ui/state.js'
+import { syncDialog, closed, backdrop, openSettings, SECTIONS } from '../../ui/dialogs.js'
+import { focusComposer } from '../../ui/composer.js'
+import { icons } from '../../ui/icons.js'
+import { loadConversation } from '../../core/conversations.js'
+import { foldTurns, splitSuggestions } from '../../core/events.js'
+import { fold, terms, ranges, passage } from '../../core/search.js'
+import { join, readJSON } from '../../core/fs.js'
+import { t, locale, relativeTime } from '../../core/i18n.js'
+import { BRAND } from '../../brand.js'
+
+/** @typedef {import('../../core/settings.js').Project} Project */
+/** @typedef {import('../../core/types.js').ResourceLink} ResourceLink */
+/**
+ * A conversation or a file as search reads it: its words (what was asked and answered, or the
+ * file's text), composed (NFC), with its title, both also folded to the same length.
+ * @typedef {{ path: string, dir: string, id: string, title: string, at: string, size: number, text: string, folded: string, foldedTitle: string, link?: ResourceLink }} Entry
+ */
+/**
+ * One thing that can be picked: its words, what was found in them marked, and where it leads.
+ * @typedef {{ icon: unknown, title: unknown, snippet?: unknown, aside?: string, when?: string, go: () => unknown }} Option
+ */
+
+// Its style sheet comes with it, not with the first screen.
+await new Promise((resolve) => {
+  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('find.css', import.meta.url).href })
+  link.addEventListener('load', resolve, { once: true })
+  link.addEventListener('error', resolve, { once: true })
+  document.head.append(link)
+})
+
+const RECENT = 8
+const MOST = 30
+
+const query = signal('')
+const active = signal(0)
+/** Every conversation and every file of every project, newest first, once read. */
+const library = signal(/** @type {{ conversations: Entry[], files: Entry[] } | null} */ (null))
+/** What was read before, by path: a conversation with as many records, or any file, is the same one. @type {Map<string, Entry>} */
+const kept = new Map()
+/** @type {Promise<void> | null} */
+let reading = null
+
+/** @param {Entry} a @param {Entry} b */
+const newest = (a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0)
+
+function read() {
+  reading ??= Promise.all(app.projects.peek().map(async ({ dir }) => {
+    const [talks, files] = await Promise.all(['conversations', 'files'].map((folder) => app.fs.list(join(dir, folder))))
+    const names = files.map((file) => file.name)
+    return Promise.all([
+      ...talks.filter((file) => file.kind === 'file' && file.name.endsWith('.jsonl')).map((file) => conversation(dir, join(dir, 'conversations', file.name))),
+      ...names.filter((name) => name.endsWith('.meta.json')).map((name) => shared(dir, name.slice(0, -'.meta.json'.length), names)),
+    ])
+  })).then((lists) => {
+    const entries = lists.flat().filter((item) => item !== null)
+    kept.clear()
+    for (const item of entries) kept.set(item.path, item)
+    library.value = {
+      conversations: entries.filter((item) => !item.link).sort(newest),
+      files: entries.filter((item) => item.link).sort(newest),
+    }
+  }).catch((error) => console.warn('Search', error)).finally(() => { reading = null })
+  return reading
+}
+
+/** @param {string} title @param {string} text @returns {Pick<Entry, 'title' | 'text' | 'folded' | 'foldedTitle'>} */
+function readable(title, text) {
+  // Markdown's marks are not words.
+  const plain = text.normalize('NFC').replace(/[*`#|]+/g, ' ')
+  const named = title.normalize('NFC')
+  return { title: named, text: plain, folded: fold(plain), foldedTitle: fold(named) }
+}
+
+/** What was asked, the files shared, and what was answered. @param {string} dir the project's @param {string} path @returns {Promise<Entry | null>} */
+async function conversation(dir, path) {
+  const talk = await loadConversation(app.fs, path).catch(() => null)
+  if (!talk) return null
+  const known = kept.get(path)
+  if (known?.size === talk.records.length) return known
+  /** @type {string[]} */
+  const parts = []
+  for (const turn of foldTurns(talk.records)) {
+    if (turn.user) parts.push(...turn.user.files.map((file) => file.name), turn.user.text)
+    parts.push(splitSuggestions(turn.steps.map((step) => step.text).join('\n')).text)
+  }
+  return { path, dir, id: talk.header.id, at: talk.updatedAt, size: talk.records.length, ...readable(talk.title, parts.filter(Boolean).join('\n')) }
+}
+
+/**
+ * A file shared or made (core/files.js): its name, and the text read from it.
+ * @param {string} dir the project's @param {string} base `sha256-<hash>` @param {string[]} names the files folder's
+ * @returns {Promise<Entry | null>}
+ */
+async function shared(dir, base, names) {
+  const path = join(dir, 'files', `${base}.meta.json`)
+  const known = kept.get(path)
+  if (known) return known
+  const meta = /** @type {import('../../core/files.js').FileMeta | null} */ (await readJSON(app.fs, path))
+  const original = names.find((name) => name.startsWith(`${base}.`) && !name.endsWith('.md') && !name.endsWith('.meta.json'))
+  if (!meta?.name || !original) return null
+  const text = (await app.fs.read(join(dir, 'files', `${base}.md`)) ?? '').replace(/^\[\[page \d+\]\]$/gm, '')
+  /** @type {ResourceLink} */
+  const link = { type: 'resource_link', uri: `files/${original}`, name: meta.name, ...(meta.mimeType && { mimeType: meta.mimeType }), size: meta.size }
+  return { path, dir, id: base, at: meta.createdAt, size: meta.size, link, ...readable(meta.name, text) }
+}
+
+/** A text with what was found in it marked. @param {string} text @param {[number, number][]} found */
+function marked(text, found) {
+  /** @type {unknown[]} */
+  const parts = []
+  let at = 0
+  for (const [start, end] of found) {
+    parts.push(text.slice(at, start), html`<mark>${text.slice(start, end)}</mark>`)
+    at = end
+  }
+  parts.push(text.slice(at))
+  return parts
+}
+
+/** The home project is the assistant's own room, and goes by its name. @param {Project | undefined} project */
+const nameOf = (project) => String(project?.data.default === true ? project.data.assistantName || BRAND.name : project?.data.name ?? '')
+
+/** Where something is: in the room, or in another project, which is walked into first. @param {string} dir */
+const elsewhere = (dir) => (dir === app.projectDir ? undefined : app.projects.value.find((project) => project.dir === dir))
+
+/** A conversation, as the list opens one (D125): one started before the open one, or any from a new page, is back. @param {{ id: string, path: string, dir: string }} item */
+function opening({ id, path, dir }) {
+  const current = app.current.value?.id
+  const project = elsewhere(dir)
+  return () => turnPage(async () => {
+    if (project) await enterProject(project)
+    await openConversation(path)
+  }, Boolean(project) || !current || id < current)
+}
+
+/** A file, in the preview beside the conversation (D126). @param {Entry} item */
+const showing = (item) => async () => {
+  app.dialog.value = null
+  const project = elsewhere(item.dir)
+  if (project) await enterProject(project)
+  if (item.link) await openFile(item.link)
+}
+
+/**
+ * Conversations or files with every word, in their titles first, then the newest.
+ * @param {Entry[]} entries @param {string[]} words
+ */
+function matching(entries, words) {
+  /** @type {{ item: Entry, score: number }[]} */
+  const hits = []
+  for (const item of entries) {
+    let score = 0
+    for (const word of words) {
+      const points = item.foldedTitle.includes(word) ? 3 : item.folded.includes(word) ? 1 : 0
+      if (!points) { score = 0; break }
+      score += points
+    }
+    if (score) hits.push({ item, score })
+  }
+  return hits.sort((a, b) => b.score - a.score).slice(0, MOST).map(({ item }) => item)
+}
+
+/** What was found in an entry: its title marked, and a passage of its words where they are. @param {Entry} item @param {string[]} words */
+function found(item, words) {
+  const first = Math.min(...words.map((word) => item.folded.indexOf(word)).filter((at) => at >= 0))
+  const [start, end] = Number.isFinite(first) ? passage(item.text, first) : [0, 0]
+  const projects = loaded.value.has('projects')
+  return {
+    title: item.title ? marked(item.title, ranges(item.foldedTitle, words)) : t('conversation.untitled'),
+    snippet: end ? [start ? '…' : '', ...marked(item.text.slice(start, end), ranges(item.folded.slice(start, end), words))] : undefined,
+    aside: projects && item.dir !== app.projectDir ? nameOf(elsewhere(item.dir)) : undefined,
+    when: item.at,
+  }
+}
+
+/** @param {string[]} words @returns {{ heading: string, options: Option[] }[]} */
+function groups(words) {
+  if (!words.length) {
+    return [
+      { heading: '', options: [{ icon: icons.plus, title: t('action.new'), go: () => turnPage(newConversation).then(focusComposer) }] },
+      { heading: t('history.title'), options: app.conversations.value.slice(0, RECENT).map((item) => ({
+        icon: icons.history, title: item.title || t('conversation.untitled'), when: item.updatedAt, go: opening({ ...item, dir: app.projectDir }),
+      })) },
+    ]
+  }
+  const all = (/** @type {string} */ text) => words.every((word) => fold(text.normalize('NFC')).includes(word))
+  const lit = (/** @type {string} */ text) => marked(text, ranges(fold(text), words))
+  // Settings' sections, by their names or Settings' own, and what Jean knows about you.
+  const settings = t('settings.title')
+  const places = [
+    ...(/** @type {(keyof typeof SECTIONS)[]} */ (Object.keys(SECTIONS))).map((id) => ({ label: t(SECTIONS[id].label), icon: SECTIONS[id].icon, go: () => openSettings(id) })),
+    { label: t('knows.title', { name: BRAND.name }), icon: icons.note, go: () => { app.dialog.value = 'knows' } },
+  ].filter((place) => all(`${place.label} ${settings}`))
+  const projects = loaded.value.has('projects') ? app.projects.value.filter((project) => all(nameOf(project))) : []
+  const { conversations = [], files = [] } = library.value ?? {}
+  return [
+    { heading: settings, options: places.map((place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
+    { heading: t('cap.projects.name'), options: projects.map((project) => ({
+      icon: icons.folder, title: lit(nameOf(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
+    })) },
+    { heading: t('history.title'), options: matching(conversations, words).map((item) => ({ icon: icons.history, ...found(item, words), go: opening(item) })) },
+    { heading: t('cap.files.name'), options: matching(files, words).map((item) => ({
+      icon: item.link?.mimeType?.startsWith('image/') ? icons.image : icons.file, ...found(item, words), go: showing(item),
+    })) },
+  ]
+}
+
+/** What was typed, and what it finds; only the option picked changes as the pointer moves. */
+const results = computed(() => {
+  const words = terms(query.value, locale.value)
+  const shown = groups(words).filter((group) => group.options.length)
+  return { words, shown, options: shown.flatMap((group) => group.options) }
+})
+
+/** @param {Event} event */
+function typed(event) {
+  query.value = /** @type {HTMLInputElement} */ (event.target).value
+  active.value = 0
+}
+
+/** Up and down move through what was found, Enter opens it; never while an IME composes. @param {KeyboardEvent} event @param {Option[]} options */
+function keydown(event, options) {
+  if (event.isComposing || event.keyCode === 229 || !options.length) return
+  const step = event.key === 'ArrowDown' ? 1 : event.key === 'ArrowUp' ? -1 : 0
+  if (step) {
+    event.preventDefault()
+    active.value = (Math.min(active.value, options.length - 1) + step + options.length) % options.length
+  } else if (event.key === 'Enter') {
+    event.preventDefault()
+    options[Math.min(active.value, options.length - 1)].go()
+  }
+}
+
+class Find extends Element {
+  render() {
+    const { words, shown, options } = results.value
+    const at = Math.min(active.value, options.length - 1)
+    const none = words.length > 0 && !options.length && library.value !== null
+    let index = 0
+    /** @param {Option} option */
+    const row = (option) => {
+      const i = index++
+      return html`<li role="option" id="find-${i}" class="find-option" aria-selected=${i === at ? 'true' : 'false'}
+        @click=${option.go} @pointermove=${() => { active.value = i }}>
+        ${option.icon}
+        <span class="find-title" dir="auto">${option.title}</span>
+        <span class="find-aside">${option.aside ? html`<span dir="auto">${option.aside}</span>` : nothing}${option.when
+          ? html`<time datetime=${option.when}>${relativeTime(option.when)}</time>` : nothing}</span>
+        ${option.snippet ? html`<span class="find-snippet" dir="auto">${option.snippet}</span>` : nothing}
+      </li>`
+    }
+    return html`<dialog class="sheet find" aria-label=${t('cap.find.name')} @close=${this.#closed} @click=${backdrop}>
+      <div class="find-field">
+        ${icons.search}
+        <input type="text" role="combobox" aria-expanded="true" aria-controls="find-results" aria-autocomplete="list"
+          aria-activedescendant=${options.length ? `find-${at}` : nothing} aria-label=${t('cap.find.name')}
+          placeholder=${t('find.placeholder')} autocomplete="off" spellcheck="false" enterkeyhint="go" dir="auto" autofocus
+          .value=${live(query.value)} @input=${typed} @keydown=${(/** @type {KeyboardEvent} */ e) => keydown(e, options)}>
+      </div>
+      <div id="find-results" class="find-results" role="listbox" aria-label=${t('cap.find.name')} aria-busy=${words.length && !library.value ? 'true' : 'false'}>
+        ${shown.map((group, g) => group.heading
+          ? html`<ul role="group" aria-labelledby="find-group-${g}"><li role="presentation" id="find-group-${g}" class="find-heading">${group.heading}</li>${group.options.map(row)}</ul>`
+          : html`<ul role="none">${group.options.map(row)}</ul>`)}
+      </div>
+      ${none ? html`<p class="find-none" role="status">${t('find.none', { query: `⁨${query.value.trim()}⁩` })}</p>` : nothing}
+    </dialog>`
+  }
+
+  #open = false
+  #closed = () => {
+    active.value = 0
+    closed('find')()
+  }
+
+  updated() {
+    syncDialog(this, 'find')
+    const open = app.dialog.value === 'find'
+    if (open && !this.#open) {
+      // Each time it opens: what was searched last, ready to be typed over, and everything read again.
+      this.querySelector('input')?.select()
+      read()
+    }
+    this.#open = open
+    if (open) this.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
+  }
+}
+
+define('app-find', Find)
+register({ id: 'find' })

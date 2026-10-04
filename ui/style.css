@@ -220,7 +220,6 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
   transition: text-shadow 0.6s var(--ease);
 }
 .wordmark:hover { text-shadow: 0 0 2rem oklch(from var(--glow) l c h / 0.8); }
-.wordmark-project { max-inline-size: 10rem; overflow: hidden; padding-inline-start: 0.5rem; border-inline-start: 1px solid var(--line-strong); font: 400 0.95rem/1.3 var(--sans); text-overflow: ellipsis; white-space: nowrap; color: var(--ink-soft); text-shadow: none; }
 
 .icon-button {
   display: inline-grid;
@@ -395,10 +394,6 @@ button.cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c
 app-image figure { position: relative; inline-size: fit-content; margin: 0; }
 app-image img { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 app-image .icon-button { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; background: var(--glass); }
-/* A file Jean made (write, D119): saved with a click; a drawing shows above its name. */
-app-file { display: grid; justify-items: start; gap: 0.4rem; }
-app-file img { max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; background: white; }
-.file-size { flex: none; color: var(--ink-faint); }
 
 /* ─── Follow-ups ────────────────────────────────────────────────────────── */
 
@@ -646,13 +641,19 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 
 /* ─── Projects ──────────────────────────────────────────────────────────── */
 
-.projects { margin-block-end: 0.75rem; padding-block-end: 0.5rem; border-block-end: 1px solid var(--line); }
-.projects ul { display: grid; gap: 0.15rem; margin: 0 0 0.5rem; padding: 0; list-style: none; }
-.projects li { display: flex; align-items: center; gap: 0.25rem; border-radius: 0.9rem; }
-.projects li.is-current, .projects li:hover { background: var(--line); }
-.project { flex: 1; display: flex; align-items: center; gap: 0.6rem; min-inline-size: 0; padding: 0.45rem 0.6rem; border: 0; background: none; text-align: start; }
-.project span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.project app-persona { --persona-size: 1.6rem; }
+/* The header shows the room the user is in, and opens on a menu below it (D82). */
+app-projects { display: contents; }
+app-projects .wordmark { anchor-name: --project; min-inline-size: 0; }
+app-projects .wordmark span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--ink-soft); }
+.project-menu { position-anchor: --project; position-area: block-end span-inline-end; margin: 0.25rem 0 0; max-block-size: 70dvh; overflow-y: auto; }
+.project-menu:not(:popover-open) { translate: 0 -0.4rem; }
+.project-menu:popover-open { @starting-style { translate: 0 -0.4rem; } }
+@supports not (anchor-name: --project) { .project-menu { inset: 4rem auto auto; inset-inline-start: 1rem; margin: 0; } }
+.project-menu hr { margin: 0.35rem 0.5rem; border: 0; border-block-start: 1px solid var(--line); }
+.project-menu span { max-inline-size: 16rem; overflow: hidden; text-overflow: ellipsis; }
+.project-menu [aria-current='true'] { background: var(--line); }
+.project app-persona { --persona-size: 1.4rem; margin-inline-start: -0.1rem; }
 
 /* ─── Toasts ────────────────────────────────────────────────────────────── */
 

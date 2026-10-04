@@ -1,19 +1,20 @@
 // Projects (docs/product.md, "Projects"): anything the user keeps coming back to gets its own
 // folder, with its conversations, files, instructions, memory and skills, and its own light:
 // the room and the little light take its colour (D78). The home project is always there; once
-// projects are discovered, the conversations drawer lists them, and walking into one is a click.
+// projects are discovered, the header shows the one the user is in, and opens on the others.
 // A project can be kept on this device, whatever brain Auto would otherwise pick.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
-import { app, enterProject, refreshProjects } from '../../ui/state.js'
+import { app, enterProject, refreshProjects, newConversation, turnPage } from '../../ui/state.js'
 import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
 import { createProject, stringifyFrontMatter } from '../../core/settings.js'
 import { BRAND } from '../../brand.js'
 import { t } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
+import { SHORTCUTS } from '../../ui/shell.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 
@@ -35,29 +36,38 @@ export function editProject(project) {
   app.dialog.value = 'project'
 }
 
-/** @param {Project} project */
-const nameOf = (project) => (project.data.default === true ? t('projects.home') : String(project.data.name))
+/** The home project is the assistant's own room, and goes by its name. @param {Project} project */
+const nameOf = (project) => String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name)
 
 /** Each little light in a list shows its project's colour (CSSOM: the CSP allows no style attribute). @param {HTMLElement} host */
 function tint(host) {
   for (const persona of host.querySelectorAll('app-persona[data-tint]')) /** @type {HTMLElement} */ (persona).style.setProperty('--tint', /** @type {string} */ (persona.getAttribute('data-tint')))
 }
 
-/** The list of rooms, at the top of the conversations drawer. */
+/**
+ * The header, once projects are on: the room the user is in, which opens a menu to start a
+ * conversation, walk into another room, make one, or set this one up.
+ */
 class Projects extends Element {
   render() {
     const here = app.project.value
-    return html`<nav class="projects" aria-label=${t('cap.projects.name')}>
-      <ul>${app.projects.value.map((project) => html`<li class=${project.dir === here.dir ? 'is-current' : ''}>
-        <button class="project" aria-current=${project.dir === here.dir ? 'true' : 'false'} @click=${() => enterProject(project)}>
+    return html`<button class="wordmark" popovertarget="project-menu" title=${t('cap.projects.name')}>
+        <app-persona></app-persona><span dir="auto">${nameOf(here)}</span>${icons.chevron}
+      </button>
+      <div id="project-menu" class="menu project-menu" popover>
+        <button type="button" popovertarget="project-menu" popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.new}
+          @click=${() => turnPage(newConversation)}>${icons.plus}${t('action.new')}</button>
+        <hr>
+        ${app.projects.value.map((project) => html`<button type="button" class="project" popovertarget="project-menu" popovertargetaction="hide"
+          aria-current=${project.dir === here.dir ? 'true' : 'false'} @click=${() => enterProject(project)}>
           <app-persona data-tint=${typeof project.data.colour === 'string' ? project.data.colour : COLOURS[0][1]}></app-persona>
           <span dir="auto">${nameOf(project)}</span>
-        </button>
-        ${project.dir === here.dir && project.data.default !== true ? html`<button class="icon-button subtle" title=${t('projects.edit')}
-          aria-label=${t('projects.edit')} @click=${() => editProject(project)}>${icons.gear}</button>` : nothing}
-      </li>`)}</ul>
-      <button class="button subtle" @click=${newProject}>${icons.plus} ${t('projects.new')}</button>
-    </nav>`
+        </button>`)}
+        <hr>
+        <button type="button" popovertarget="project-menu" popovertargetaction="hide" @click=${newProject}>${icons.folder}${t('projects.new')}</button>
+        ${here.data.default !== true ? html`<button type="button" popovertarget="project-menu" popovertargetaction="hide"
+          @click=${() => editProject(here)}>${icons.gear}${t('projects.edit')}</button>` : nothing}
+      </div>`
   }
 
   updated() {

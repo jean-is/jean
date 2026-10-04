@@ -151,7 +151,7 @@ const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
 /** The brain picker, or choosing a first brain. */
 async function openPicker() {
-  if (!effective.value.settings.brains.length) return void (app.dialog.value = 'brain')
+  if (!effective.value.settings.brains.length) return (await import('./dialogs.js')).openSettings('brains')
   await import('./picker.js')
   app.dialog.value = 'picker'
 }

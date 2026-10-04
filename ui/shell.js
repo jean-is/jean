@@ -2,8 +2,8 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, turnPage, assistantName } from './state.js'
-import { SIZES } from './caps.js'
+import { app, newConversation, turnPage, assistantName, theme, setTheme } from './state.js'
+import { SIZES, loaded } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -18,13 +18,12 @@ const STARTERS = ['summarize', 'email', 'explain']
 class Shell extends Element {
   render() {
     const current = app.current.value
-    const { data } = app.project.value
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
         <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
-        <button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}${data.default === true ? nothing
-          : html`<span class="wordmark-project" dir="auto">${data.name}</span>`}</button>
+        ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
+          : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
       </header>
       ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
@@ -32,7 +31,7 @@ class Shell extends Element {
       ${offerAside()}
       <app-composer></app-composer>
       <app-history></app-history>
-      <app-brain-dialog></app-brain-dialog>
+      <app-find></app-find>
       <app-settings></app-settings>
       <app-picker></app-picker>
       <app-knows></app-knows>
@@ -56,24 +55,31 @@ const discovery = () => import('./discovery.js')
 
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
 // systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
+// ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133).
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
-  if (!command || event.altKey || event.shiftKey || event.isComposing) return
+  if (!command || event.altKey || event.isComposing) return
   const key = /^[ -~]$/.test(event.key) ? event.key.toLowerCase() : PLACES[event.code]
-  if (key === ',') {
+  if (key === ',' && !event.shiftKey) {
     event.preventDefault()
     if (app.dialog.value !== 'settings') import('./dialogs.js').then((module) => module.openSettings())
-  } else if (key === 'n') {
+  } else if (key === 'n' && !event.shiftKey) {
     event.preventDefault()
     turnPage(newConversation)
     focusComposer()
+  } else if (key === 'l' && event.shiftKey) {
+    event.preventDefault()
+    setTheme(theme.value === 'light' ? 'dark' : 'light')
+  } else if (key === 'k' && !event.shiftKey && loaded.value.has('find')) {
+    event.preventDefault()
+    app.dialog.value = app.dialog.value === 'find' ? null : 'find'
   }
 })
 

@@ -17,10 +17,10 @@ export async function start(page, lang = 'en') {
   await expect(settings).toBeHidden()
 }
 
-/** Connects the fake brain through "On your computer" → Other. @param {import('@playwright/test').Page} page */
+/** Connects the fake brain through Settings' Brains, "On your computer" → Other. @param {import('@playwright/test').Page} page */
 export async function connectFakeBrain(page) {
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-brain-dialog dialog[open]')
+  const dialog = page.locator('app-settings dialog[open]')
   const local = dialog.locator('.choice').filter({ has: page.locator('input[name="baseURL"]') })
   await local.locator('select').selectOption('custom')
   await local.locator('input[name="baseURL"]').fill(BRAIN_URL)
@@ -52,12 +52,13 @@ export async function openSettings(page, section) {
   return settings
 }
 
-/** Turns a capability on from the house ("What Jean can do", in Settings). @param {import('@playwright/test').Page} page @param {string} name */
+/** Turns a capability on from the house ("What Jean can do", in Settings): its trophy, then its plaque. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
   const house = (await openSettings(page, 'Capabilities')).locator('.house')
-  await house.locator('.room-card', { hasText: name }).locator('.button').click()
+  await house.locator('.trophy', { hasText: name }).click()
+  await house.locator('.plaque .button').click()
   // Lit once its module has loaded, so a message sent next declares its tools.
-  await expect(page.locator('app-settings .room-card.is-lit', { hasText: name })).toHaveCount(1)
+  await expect(page.locator('app-settings .trophy.is-lit', { hasText: name })).toHaveCount(1)
 }
 
 /** Connects a service from the house by its address, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */

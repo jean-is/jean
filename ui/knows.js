@@ -275,7 +275,7 @@ class Knows extends Element {
           <p class="muted small">${t('knows.cloud', { name: BRAND.name })}</p>`}
       </section>
       ${loaded.value.has('skills') ? html`<section>
-        <h3>${icons.repeat} ${t('cap.skills.name')}</h3>
+        <h3>${icons.scroll} ${t('cap.skills.name')}</h3>
         <p class="muted small">${t('skills.text', { name: BRAND.name })}</p>
         ${state.skills.length ? html`<ul class="skills">${state.skills.map((skill) => html`<li><details>
           <summary><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small>${skill.source
@@ -290,7 +290,7 @@ class Knows extends Element {
         ${sourcesView(state)}
       </section>` : nothing}
       ${loaded.value.has('routines') && routinesModule ? html`<section>
-        <h3>${icons.calendar} ${t('cap.routines.name')}</h3>
+        <h3>${icons.alarm} ${t('cap.routines.name')}</h3>
         <p class="muted small">${t('routines.text')}</p>
         ${state.routines.length ? html`<ul class="skills routines">${state.routines.map(routineView)}</ul>` : html`<p class="muted small">${t('routines.none')}</p>`}
       </section>` : nothing}` : nothing}

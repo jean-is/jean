@@ -9,7 +9,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
-  // A key, as the brain dialog would keep it: never part of a backup.
+  // A key, as Settings' Brains would keep it: never part of a backup.
   await page.evaluate(async () => (await import('/ui/state.js')).app.fs.write('.secrets/keys.json', '{"format":1}\n'))
 
   const settings = await openSettings(page, 'Your data')

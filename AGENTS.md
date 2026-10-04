@@ -72,6 +72,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 ```bash
 npm run dev     # build (vendor + manifest), then serve (npm start does the same)
 npm run build   # copy runtimes into vendor/, regenerate the manifest
+npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)

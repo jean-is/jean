@@ -13,6 +13,7 @@
     "test": "node --test test/*.test.js",
     "vendor": "node scripts/vendor.js",
     "manifest": "node scripts/manifest.js",
+    "icons": "node scripts/icons.js",
     "budgets": "node scripts/budgets.js",
     "typecheck": "tsc --noEmit -p .",
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
@@ -27,7 +28,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
-    "typescript": "^5.8.0"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=22"
@@ -35,7 +36,7 @@
   "optionalDependencies": {
     "@huggingface/transformers": "4.3.0",
     "@jitl/quickjs-wasmfile-release-sync": "0.32.0",
-    "pdfjs-dist": "6.3.289",
+    "pdfjs-dist": "6.4.299",
     "pyodide": "314.0.7",
     "quickjs-emscripten-core": "0.32.0"
   }

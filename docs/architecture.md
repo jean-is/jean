@@ -36,7 +36,7 @@
 
 - **Text extraction** from DOCX/XLSX/PPTX: zip via `DecompressionStream` and a small tag scanner (not `DOMParser`, so it also runs in workers and under `node --test`).
 - **Backup zip writer:** `CompressionStream`.
-- **BM25 search** (`core/search.js`): with `Intl.Segmenter` for word splitting. It ranks deferred tools and past conversations (`recall`), and `alike()` tells requests of the same kind apart (D83).
+- **BM25 search** (`core/search.js`): with `Intl.Segmenter` for word splitting. It ranks deferred tools and past conversations (`recall`), and `alike()` tells requests of the same kind apart (D83). Search as people type matches parts of words in a fold of the text as long as the text, case and accents aside (`fold()`, `ranges()`, D133).
 - **ULIDs:** generated with `crypto.getRandomValues`.
 - **Voices:** operating-system voices.
 - **Coordination:** Web Locks and BroadcastChannel.
@@ -57,6 +57,7 @@
 ```
 index.html        CSP <meta>, light or dark (D85) and the look (D111) before the first paint, import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
+preview.html      an HTML file in the preview: a hash-allowed relay writes it in place of itself, under a policy that runs none of its scripts (D126)
 manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but the light-or-dark line
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
@@ -64,10 +65,11 @@ core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js ev
                   deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only; a module only one
                   capability uses lives with it, D96)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
-                  discovery.js auto.js picker.js, dialogs.js (Settings, with the house in it, D113) and brains.js (loaded
+                  discovery.js auto.js picker.js, dialogs.js (Settings, with the brains and the house in it, D113, D128) and brains.js (loaded
                   when a dialog opens, D76), speech.js (read-aloud) and voices.js (the voice for each answer, loaded with it, D114),
                   knows.js ("What Jean knows about you", 0.4), sandbox.js (the sandbox client, 0.4),
                   looks.js (the themes, D111), touches.js (the user's own, loaded once there are some), inbox.js (Mail's list),
+                  preview.js and preview.css (a file, as what it is, beside the conversation; loaded when one first opens, D126),
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
@@ -75,6 +77,7 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/ex
                   search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
                   helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
                   routines/                                     (0.7; routines/schedule.js and skills/sources.js, discovery indexes, tested in Node)
+                  find/                                         (after 0.7: search, ⌘K, D133)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, and dialogs/ with the dialogs' strings (D97)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
@@ -113,7 +116,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
-- **`search.js`:** BM25 over short texts.
+- **`search.js`:** BM25 over short texts, and matching as people type (D133).
 - **`decide.js`:** the reflex mechanism: Kev's input sequence and its answers in the Decisions API shape (see [Reflexes](#reflexes)). The questions themselves are product policy and live in `caps/reflexes/questions.js` (D62).
 - **`skills.js`** (0.4): reads and writes `SKILL.md` folders (skills, D83, D115); only their name and description go into the prompt, and the `skill` tool reads the steps when relevant. A skill from elsewhere keeps its `source` and `digest` in its `metadata` (D121).
 - **`memory.js`** (0.4): the `memory.md` format, one line per entry with where it came from, and the newest lines that fit the prompt (D79).
@@ -233,7 +236,7 @@ There is always a default project, hidden until the Projects capability is disco
 
 ## Service worker
 
-- **On install:** cache the shell (`sandbox.html` included) and *all* locale files (a few KB each), so switching language is instant, even offline. Files are fetched through the HTTP cache, which the page has just filled, and checked against the integrity hashes in `capabilities.json`; a stale copy is fetched again from the network.
+- **On install:** cache the shell (`sandbox.html` and `preview.html` included) and *all* locale files (a few KB each), so switching language is instant, even offline. Files are fetched through the HTTP cache, which the page has just filled, and checked against the integrity hashes in `capabilities.json`; a stale copy is fetched again from the network. The PNG icons drawn for installs stay out: only the browser or the system fetches them, once (D131).
 - **On unlock:** cache the capability's files, listed in `capabilities.json`, which `scripts/manifest.js` generates with content hashes. The cache itself is the record of what has been unlocked.
 - **On update:** download the new shell and new versions of *unlocked* capabilities only, then delete old caches.
 - **Model weights** live in their own cache, separate from app versions, so an app update never re-downloads 3 GB.
@@ -274,7 +277,16 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
 - **How it gets them** (the 0.4 spike chose option (b), D80): the parent sends the files in, as for QuickJS, and the worker's `fetch` serves only those, under an address that never resolves; `connect-src 'none'` stays. Option (a), serving `vendor/pyodide/` with CORS to the sandbox, was not needed.
 - **Python's limits:** the standard library only (no package can be fetched); `import js` reaches an empty object; no cap on memory or computing time inside Pyodide (it would need a cross-origin isolated page), so the parent's 40 s watchdog stops a script that goes quiet; 60 s to start. `ui/sandbox.js` is the client both runtimes share.
 
-**Output previews** (charts, HTML) use separate iframes with `sandbox="allow-scripts"` only, and they never receive secrets.
+**The preview** (D126) shows an HTML file in `preview.html`, framed with `sandbox="allow-scripts"` only, so its origin is opaque, and given nothing but the page. A relay allowed by its hash writes the page in place of itself, and the page keeps that policy:
+
+```text
+default-src 'none'; script-src 'sha256-<relay>'; style-src 'unsafe-inline'; img-src data:; media-src data:; font-src data:;
+connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'
+```
+
+- **Its styles apply; its scripts never run.** In a document, unlike the sandbox's worker, a script would have WebRTC, which no policy closes (Chromium and WebKit ignore `webrtc 'block'`).
+- **Nowhere to go.** No network, no form, no pop-up, and `index.html`'s `frame-src 'self'` refuses to take the frame to any other address; its links move only within the page. `test/html.test.js` checks the hash, the policy, `frame-src 'self'` and the frame's one sandbox flag.
+- **Everything else shows in Jean's own document,** from what Jean keeps: pictures as pictures (a drawing as an `<img>`, where its scripts never run), a PDF's pages drawn by pdf.js with the options it reads them with, and documents, spreadsheets and decks from their text, through lit-html.
 
 ## Languages (i18n)
 

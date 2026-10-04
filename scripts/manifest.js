@@ -12,7 +12,7 @@ import { moduleGraph, parseImportMap } from './graph.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
-export const SHELL_FILES = ['index.html', 'sandbox.html', 'brand.js', 'manifest.webmanifest']
+export const SHELL_FILES = ['index.html', 'sandbox.html', 'preview.html', 'brand.js', 'manifest.webmanifest']
 export const SHELL_DIRS = ['core', 'ui', 'vendor', 'fonts', 'icons']
 export const WEBMANIFEST = 'manifest.webmanifest'
 /** Outputs that are entirely generated and never committed (D74); `--check` skips them. */
@@ -29,6 +29,18 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   live: ['vendor/transformers'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
+/** Drawn for installs (D131): only the browser or the system fetches them, once, so the shell doesn't precache them. */
+const INSTALL_ICON = /^icons\/.+\.png$/
+/**
+ * The SVG for desktops, PNGs for Android, which can't install with an SVG (`npm run icons`
+ * draws them). The drawing sits inside the maskable safe zone (D78), so the 512 serves both.
+ */
+export const ICONS = [
+  { src: 'icons/icon.svg', sizes: 'any', type: 'image/svg+xml' },
+  { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+  { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+  { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+]
 export const VERSION_LINE = /^const VERSION = '.*'$/m
 
 /** @param {unknown} error */
@@ -95,7 +107,7 @@ export async function collectFiles (root) {
   }
   const nested = (await Promise.all(SHELL_DIRS.map((dir) => walk(root, dir)))).flat()
   const inRuntime = (/** @type {string} */ path) => RUNTIME_DIRS.some((dir) => path.startsWith(`${dir}/`))
-  const shell = [...top, ...nested].filter((path) => isShipped(path) && !inRuntime(path)).sort()
+  const shell = [...top, ...nested].filter((path) => isShipped(path) && !inRuntime(path) && !INSTALL_ICON.test(path)).sort()
   const locales = (await walk(root, 'locales')).filter((p) => /^locales\/(dialogs\/)?[^/]+\.json$/.test(p)).sort()
   /** @type {Record<string, { files: string[] }>} */
   const capabilities = {}
@@ -122,17 +134,23 @@ export function computeVersion (entries) {
   return sha256(lines.join('\n')).slice(0, 12)
 }
 
-/** @param {{ name: string }} brand */
-export function buildWebmanifest (brand) {
+/**
+ * `id` is what browsers already derive from `start_url`, so installs made before it keep theirs.
+ * @param {{ name: string }} brand
+ * @param {string} [description]  index.html's, so the page and the install say the same sentence
+ */
+export function buildWebmanifest (brand, description) {
   const manifest = {
+    id: './',
     name: brand.name,
     short_name: brand.name,
+    ...(description ? { description } : {}),
     start_url: './',
     scope: './',
     display: 'standalone',
     background_color: '#120c08',
     theme_color: '#120c08',
-    icons: [{ src: 'icons/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
+    icons: ICONS,
   }
   return `${JSON.stringify(manifest, null, 2)}\n`
 }
@@ -188,9 +206,10 @@ export function stampVersion (source, version) {
  */
 export async function plan (root = ROOT) {
   const { BRAND } = await import(pathToFileURL(join(root, 'brand.js')).href)
-  /** @type {Record<string, string>} */
-  const generated = { [WEBMANIFEST]: buildWebmanifest(BRAND) }
   const html = (await readOrNull(root, 'index.html'))?.toString('utf8')
+  const description = html && /<meta name="description" content="([^"]*)">/.exec(html)?.[1]
+  /** @type {Record<string, string>} */
+  const generated = { [WEBMANIFEST]: buildWebmanifest(BRAND, description || undefined) }
   if (html) {
     /** @param {string} path */
     const read = async (path) => (await readOrNull(root, path))?.toString('utf8') ?? null

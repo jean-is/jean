@@ -9,9 +9,9 @@ A nod to *A Dark Room*. **Jean is the light source.** Its presence is felt in ho
 - **First visit.** A dark, warm room, the little light, and one line of very large type: the question. Nothing else.
 - **Discovery lights the house.** Each discovered capability "catches the light": its surface warms in from the shadow, and the palette warms a step. When everything has been discovered, the house is in full daylight. People feel their progress instead of counting it.
 - **Each project is a room** with its own light colour. Switching project feels like walking into another room, with the ambient light cross-fading.
-- **What Jean can do is the house.** Discovered rooms and capabilities are lit; the rest are silhouettes in shadow. It is Settings' Capabilities section (D113).
+- **What Jean can do is the house, kept as a case of trophies** (D113, D127). In Settings' Capabilities section, the little light sits in a ring with a segment for each capability, lit as each is found. Beside it is its rank, which rises a quarter of the case at a time: Spark, Candle, Lantern, Hearth, then Daylight once everything is found. The light grows a size with each rank. Below, each capability is a medal: amber once found, catching the light one after another as the section opens; a dashed silhouette until then, with pips when it is found by counting (two conversations, three dictations). A plaque shows the medal picked, at first the next one to find: how to find it, what it does, and what it offers.
 - **Light mode tells the same story by day,** with paper and ink: progression shows as warmth and ink density. Jean follows the device's light or dark mode; Settings offer the other one, and that choice is kept on the device (D85, D107).
-- **Settings is a menu beside the section open,** like the Claude apps': General, Appearance, Capabilities, Approvals, Your data. Each setting is a row, what it is on one side and its control on the other, with a thin line between rows. Each item starts with an icon. On a phone the menu is a strip of pills above the section (D113). Settings opens from the foot of the conversations, the drawer's or Mail's list; the header holds only the conversations button and the name (D117).
+- **Settings is a menu beside the section open,** like the Claude apps': General, Brains, Appearance, Capabilities, Approvals, Your data. Each setting is a row, what it is on one side and its control on the other, with a thin line between rows. Each item starts with an icon. On a phone the menu is a strip of pills above the section (D113). Brains holds the brains connected and the ways to connect one, and opens whenever a brain is needed (D128). Settings opens from the foot of the conversations, the drawer's or Mail's list; the header holds only the conversations button and the name (D117).
 
 ### How Jean's presence shows state
 
@@ -36,7 +36,7 @@ Jean's persona is the room's light, drawn small: a soft flame with a curled tip,
 - **It has no words and no gender.** It never speaks, never carries text, and nothing in the interface agrees with it grammatically. It is not tied to the name either, so it survives a rename.
 - **It is not in the prompt.** The base prompt stays free of personas (AGENTS.md); the little light is purely visual and decorative (`aria-hidden`).
 - **A project's light tints it.** Every colour of the little light comes from one custom property, `--tint`: Jean's amber by default, any CSS colour otherwise. Only the hue is taken, so the face keeps its contrast whatever the colour. Projects (0.4) set it from the `colour` in `project.md`: on the root for the room you are in, or on one `<app-persona>` (a project's card in the house).
-- **It is the app icon.** `icons/icon.svg` is the same drawing, idle, in the dark room, inside the maskable safe zone.
+- **It is the app icon.** `icons/icon.svg` is the same drawing, idle, in the dark room, inside the maskable safe zone. `npm run icons` draws it as the PNGs that Android and iOS install with (D131).
 
 ## Looks
 
@@ -74,7 +74,7 @@ The room is Jean's own look, and the default. Settings → Appearance offers two
 - **`prefers-reduced-motion`:** a still glow, with no movement. The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces.
 - **`forced-colors`** is supported. The little light becomes an outline drawing in the system colours.
-- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings and ⌘N a new conversation, Ctrl outside Apple's systems (D118).
+- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘N a new conversation, ⌘⇧L switches between light and dark, and ⌘K opens search once it is found, Ctrl outside Apple's systems (D118, D130, D133).
 
 ## Budget
 

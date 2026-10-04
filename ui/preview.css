@@ -1,0 +1,47 @@
+/* The preview (ui/preview.js, D126): beside the conversation on a wide screen, over it on a
+   narrow one. Loaded with it, after ui/style.css, so its colours are the look's. A web page, a
+   picture and a PDF keep the white they were made on. Logical properties only. */
+
+:root { --pane: min(50vw, 52rem); }
+:root[data-preview] app-shell { margin-inline-end: var(--pane); }
+
+.preview {
+  position: fixed;
+  z-index: 5;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding-block: env(safe-area-inset-top) env(safe-area-inset-bottom);
+  background: var(--room-2);
+  color: var(--ink);
+  animation: preview-in 0.35s var(--ease);
+}
+:root[data-preview] .preview { inset-inline-start: auto; inline-size: var(--pane); border-inline-start: 1px solid var(--line-strong); }
+@keyframes preview-in { from { opacity: 0; translate: 0 1rem; } }
+
+.preview-head { display: flex; align-items: center; gap: 0.25rem; padding-block: 0.6rem; padding-inline: 1.25rem 0.75rem; border-block-end: 1px solid var(--line); }
+.preview-head h2 { flex: 1; min-inline-size: 0; margin: 0; overflow: hidden; font: 600 1rem/1.4 var(--sans); text-overflow: ellipsis; white-space: nowrap; }
+.preview-body { flex: 1; min-block-size: 0; display: flex; flex-direction: column; gap: 1.25rem; padding: 1.25rem; overflow: auto; container-type: inline-size; }
+.preview-frame { flex: 1; margin: -1.25rem; border: 0; background: white; color-scheme: light; }
+.preview-picture { align-self: center; max-inline-size: 100%; block-size: auto; border: 1px solid var(--line); border-radius: 0.6rem; background: white; }
+.preview-pages { display: grid; gap: 1rem; }
+.preview-pages canvas { display: block; inline-size: 100%; block-size: auto; border-radius: 0.3rem; background: white; box-shadow: 0 0.5rem 1.5rem -0.75rem oklch(0 0 0 / 0.5); }
+
+/* A document on a sheet; a deck's slides; a spreadsheet's grid; any other text as it is. */
+.preview-sheet { padding: clamp(1.25rem, 6cqi, 3rem); border: 1px solid var(--line); border-radius: 0.6rem; background: var(--room); }
+.preview-sheet > p { margin-block: 0 0.75em; }
+.preview-slides { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; counter-reset: slide; }
+.preview-slides li { position: relative; aspect-ratio: 16 / 9; overflow: hidden; padding: 5% 6%; border: 1px solid var(--line-strong); border-radius: 0.6rem; background: var(--room); font-size: max(0.75rem, 2.6cqi); counter-increment: slide; }
+.preview-slides li::after { content: counter(slide); position: absolute; inset-block-end: 4%; inset-inline-end: 4%; color: var(--ink-faint); font-size: 0.75em; }
+.preview-slides h3 { margin: 0 0 0.6em; font-size: 1.6em; line-height: 1.2; }
+.preview-slides p { margin: 0 0 0.3em; }
+.preview-grid { flex: none; max-inline-size: 100%; overflow-x: auto; }
+.preview-grid h3 { margin: 0 0 0.5rem; font-size: 1rem; }
+.preview-grid table { border-collapse: collapse; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.preview-grid :is(th, td) { padding: 0.25rem 0.6rem; border: 1px solid var(--line-strong); white-space: nowrap; text-align: start; }
+.preview-grid th { background: var(--room); color: var(--ink-soft); font-weight: 500; text-align: center; }
+.preview-grid tbody tr:first-child td { font-weight: 600; }
+.preview-grid td.number { text-align: end; }
+.preview-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }
+
+@media print { .preview { display: none; } :root[data-preview] app-shell { margin: 0; } }

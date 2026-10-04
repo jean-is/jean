@@ -1,5 +1,5 @@
 // PDF text, page by page, with pdf.js (loaded on demand; its legacy build covers Safari 16.4).
-// Text only: no fonts are rendered, so pdf.js never needs eval. Character maps let it
+// No font faces: glyphs are drawn as shapes, so pdf.js never needs eval. Character maps let it
 // read Chinese, Japanese and Korean text; standard font metrics keep words apart.
 import { scriptURL } from '../../ui/trusted.js'
 
@@ -17,13 +17,9 @@ function pdfjs() {
   return library
 }
 
-/**
- * @param {Uint8Array} bytes
- * @returns {Promise<string[]>} one string per page
- */
-export async function pdfPages(bytes) {
-  const pdf = await pdfjs()
-  const task = pdf.getDocument({
+/** A PDF, opened: its text is read here, its pages drawn by the preview (ui/preview.js, D126). @param {Uint8Array} bytes */
+export async function openPdf(bytes) {
+  return (await pdfjs()).getDocument({
     data: bytes.slice(), // the buffer is transferred to the worker
     cMapUrl: new URL('cmaps/', BASE).href,
     cMapPacked: true,
@@ -32,6 +28,14 @@ export async function pdfPages(bytes) {
     disableFontFace: true,
     useSystemFonts: false,
   })
+}
+
+/**
+ * @param {Uint8Array} bytes
+ * @returns {Promise<string[]>} one string per page
+ */
+export async function pdfPages(bytes) {
+  const task = await openPdf(bytes)
   const doc = await task.promise
   try {
     /** @type {string[]} */

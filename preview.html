@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-DIMZeEpKbgn6m5aHA0Ph9VVaAdpYfxZi22E0up+ydAw='; style-src 'unsafe-inline'; img-src data:; media-src data:; font-src data:; connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Preview</title>
+<!-- An HTML file, seen in Jean's preview (D126): loaded in <iframe sandbox="allow-scripts">, so its
+     origin is opaque and it can't read Jean's storage. The page Jean sends replaces this one and
+     keeps its policy: its own styles apply, but nothing loads from anywhere, and its scripts never
+     run (only this relay, allowed by its hash), so it has no way out: not the network, a form, a
+     pop-up, nor WebRTC, which no policy can close. Jean's own frame-src keeps the frame from being
+     taken elsewhere; its links lead nowhere from here, except within the page. -->
+<script>onmessage = ({ data, source }) => {
+  if (source !== parent || typeof data !== 'string') return
+  document.open()
+  document.write(data)
+  document.close()
+  document.addEventListener('click', (event) => { if (event.target.closest?.('a[href]:not([href^="#"])')) event.preventDefault() })
+}
+</script>
+</html>

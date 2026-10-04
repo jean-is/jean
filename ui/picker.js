@@ -5,7 +5,7 @@ import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
 import { app, effective, activeBrain, brainLabel, setBrainMode, loadModels } from './state.js'
 import { useBrain } from './brains.js'
-import { syncDialog, closed, close, backdrop, head } from './dialogs.js'
+import { syncDialog, closed, close, backdrop, head, openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -66,7 +66,7 @@ class Picker extends Element {
         <input type="checkbox" .checked=${!settings.cloud} @change=${(/** @type {Event} */ e) => setBrainMode({ cloud: !(/** @type {HTMLInputElement} */ (e.target).checked) })}>
         <span>${t('picker.neverCloud')}</span>
       </label>
-      <button class="button subtle wide" @click=${() => { app.dialog.value = 'brain' }}>${t('picker.all')} ${icons.arrow}</button>
+      <button class="button subtle wide" @click=${() => openSettings('brains')}>${t('picker.all')} ${icons.arrow}</button>
     </dialog>`
   }
 

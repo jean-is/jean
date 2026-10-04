@@ -1,5 +1,6 @@
 // Keyboard shortcuts (D118), as in the Claude apps: ⌘, opens Settings and ⌘N starts a new
 // conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet.
+// ⌘⇧L switches between light and dark (D130).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask } from './helpers.js'
 
@@ -26,4 +27,20 @@ test('⌘, opens Settings, and ⌘N starts a new conversation from anywhere', as
   await expect(settings).toBeHidden()
   await expect(page.locator('.hero-question')).toBeVisible()
   await expect(page.locator('#prompt')).toBeFocused()
+})
+
+test('⌘⇧L switches between light and dark, even mid-sentence', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await start(page)
+  const root = page.locator('html')
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('data-theme', 'light')
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
+  // Back to what the device shows, Jean follows the device again (D85).
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(root).toHaveAttribute('data-theme', 'light')
 })

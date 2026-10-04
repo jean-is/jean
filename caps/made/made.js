@@ -15,6 +15,14 @@ import { t, locale, formatBytes } from '../../core/i18n.js'
 
 /** @typedef {{ uri: string, name: string, mimeType: string, size: number }} MadeFile what a call that made a file records (`_meta.file`) */
 
+// The cards' style sheet comes with them, not with the first screen (D126).
+await new Promise((resolve) => {
+  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('made.css', import.meta.url).href })
+  link.addEventListener('load', resolve, { once: true })
+  link.addEventListener('error', resolve, { once: true })
+  document.head.append(link)
+})
+
 // ─── Writing files ───────────────────────────────────────────────────────────
 
 /** Where paper is letter-sized: the user's region, as the browser gives it. */
@@ -114,9 +122,14 @@ register({
   rules: ['Documents and spreadsheets the user asks for are files.'],
 })
 
+/** The kinds of file Jean makes, by extension, in words people use (any other shows its extension), each with its icon. */
+const KINDS = /** @type {Record<string, string>} */ ({ docx: 'document', xlsx: 'sheet', csv: 'sheet', tsv: 'sheet', html: 'page', htm: 'page', svg: 'drawing', txt: 'text', md: 'text', markdown: 'text' })
+const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, text: icons.note })
+
 /**
- * A file Jean made, under the answer: its name and size, saved with a click. A drawing (.svg)
- * shows too, as a picture, where its scripts never run.
+ * A file Jean made, under the answer: a card with its name, the kind of file it is and its size,
+ * opened in the preview (D126) or saved. A drawing (.svg) is its own tile, a picture where its
+ * scripts never run.
  */
 class FileMade extends Element {
   // A newer version of the file can take this one's place under the answer.
@@ -126,12 +139,18 @@ class FileMade extends Element {
   render() {
     const name = this.getAttribute('name') ?? ''
     const type = this.getAttribute('type') ?? ''
+    const ext = /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() ?? ''
+    const kind = KINDS[ext]
     const label = t('made.save', { name })
-    return html`${this.#url ? html`<img src=${this.#url} alt=${name}>` : nothing}
-      <button class="file-chip" title=${label} aria-label=${label} @click=${() => this.#save(name, type)}>
-        ${/sheet|csv|tab-separated/.test(type) ? icons.table : type.startsWith('image/') ? icons.image : icons.file}<span dir="auto">${name}</span>
-        <span class="file-size">${formatBytes(Number(this.getAttribute('size')) || 0)}</span>${icons.download}
-      </button>`
+    const open = () => import('../../ui/preview.js').then((module) => module.preview({ uri: this.getAttribute('uri') ?? '', name, mimeType: type }))
+    // The whole card opens the file for a pointer; its Open button is the one keyboards and screen readers reach.
+    return html`<div class="file-card" @click=${(/** @type {MouseEvent} */ event) => /** @type {HTMLElement} */ (event.target).closest('button') || open()}>
+      <span class="file-tile" aria-hidden="true">${this.#url ? html`<img src=${this.#url} alt="">` : TILES[kind] ?? icons.file}</span>
+      <span class="file-about"><span class="file-name"><span dir="auto">${name}</span></span>
+        <span class="file-meta"><span>${kind ? t(`made.kind.${kind}`) : ext.toUpperCase()}</span><span>${formatBytes(Number(this.getAttribute('size')) || 0)}</span></span></span>
+      <button class="icon-button" title=${label} aria-label=${label} @click=${() => this.#save(name, type)}>${icons.download}</button>
+      <button class="button" aria-label=${t('sources.open', { name })} @click=${open}>${t('made.open')}</button>
+    </div>`
   }
 
   connectedCallback() {

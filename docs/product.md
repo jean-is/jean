@@ -39,7 +39,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
   2. Reflex questions answered by a local multilingual decision model (see [architecture.md](architecture.md#reflexes)).
   3. The model's own `offer(capability)` tool, as a backstop.
 - **Offers are short.** Jean introduces a capability in one sentence. If the user accepts, that capability's code loads and its tools join the conversation. Once discovered, it stays visible.
-- **"What Jean can do"**, Settings' Capabilities section, shows discovered capabilities lit and undiscovered ones as silhouettes, like a game's collection screen. Curious users can unlock things early, and power users can unlock everything at once.
+- **"What Jean can do"**, Settings' Capabilities section, is a case of trophies (D127). Each capability is a medal, lit once found. Each undiscovered one is a silhouette that says how it is found ("Share a spreadsheet"), so the case doubles as a list of things to try. A rank shows how far the house is lit, and how many more it takes to reach the next. Curious users can turn a trophy on early from its plaque, and power users can unlock everything at once.
 - **Discovery and code loading are one decision.** Each capability is a module loaded on demand, so the simple first screen and the 100 KB first load are the same thing.
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
@@ -49,8 +49,9 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Capability | Offered when… | What appears |
 |---|---|---|
 | Files | The user pastes long text (over 2,000 characters), drops a file, or a reflex or the brain says a document would help | "You can drop files on me," plus a file shelf |
-| Things Jean made | The first message (D119) | Files Jean writes, under the answer and saved with a click: Word documents, spreadsheets, text and drawings, changed on request (D119). Copy as rich text, CSV (D108) |
+| Things Jean made | The first message (D119) | Files Jean writes, as cards under the answer that say what each is, seen beside the conversation and saved with a click: Word documents, spreadsheets, text and drawings, changed on request (D119, D126). Copy as rich text, CSV (D108) |
 | Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
+| Search | After ten conversations | ⌘K, or Search under a new conversation: the conversations of every project, files shared or made, and Settings, found as you type, part of a word enough, in any script (D133) |
 | Calculations | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | Jean computes instead of guessing (QuickJS) |
 | Intuition | After two conversations with a brain | "Let Jean get a feel for what you need?" A small helper on this device (about 345 MB, once) picks the brain and suggests next steps |
 | Data toolkit | Spreadsheet work goes beyond simple maths (the brain offers it) | Python with its standard library, after asking ("about 14 MB, once") |
@@ -59,7 +60,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
 | Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups, or "See a ready-made skill for this" when one from elsewhere fits, read before it is added (D121) |
 | Routines | The same kind of request on three different days (D122), or the brain offers it when the user wants something done regularly | "Make it a routine?": Jean sends the request itself, every day, working day, week or month, while it is open or as soon as the user is back |
-| Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, listed in the conversations drawer |
+| Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, shown in the header, which opens on the others |
 | Assistant name | After some use inside a project (three conversations, D102) | "Want to give this project's assistant a name?" A name and a few words on how it should be, in the project's dialog; the header shows the name |
 | Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
 | Connections | A request needs one of the user's services, like their email (the brain offers it, and the answer waits while they connect it) | "Connect a service": pick one Jean knows and sign in, or give an address, then a sign-in or a key (MCP behind the scenes, D87–D89, D95) |
@@ -166,6 +167,7 @@ Organisation policy can hide or lock any of these.
 
 - **Dropped files are kept** in the project's library. Each file is stored as the original, an extracted text version and a metadata file; files are named by content hash, so duplicates are stored once. Conversations reference files rather than copying them.
 - **Pictures and the screen.** A picture is shared like any file, and the box's + menu captures the screen, a window or a tab: one frame, shown as a thumbnail before it is sent. Brains that can see are shown it (D105).
+- **Seen without leaving Jean** (D126). A file Jean made, or one the user shared, opens in a preview beside the conversation (over it on a phone), as what it is: a picture, a PDF's pages, a document on a sheet, a spreadsheet's grid, a deck's slides, a web page with its own look but none of its scripts. A file being changed shows its new version as it comes, so the next request can be made while looking at it.
 - **Outputs fit office life without any dependency:**
   - Copy as rich text, which pastes formatted into Word, Outlook and Google Docs
   - CSV, which opens in Excel

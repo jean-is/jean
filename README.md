@@ -11,12 +11,13 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
 - **Talks in 33 languages,** right to left included, and you can switch languages mid-conversation.
 - **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and plain text. Pictures, and captures of your screen taken from the message box, go to brains that can see.
 - **Does the maths instead of guessing.** Calculations run as real code in a sandbox, with JavaScript (QuickJS) or Python's standard library (Pyodide).
-- **Hands back things you can use.** Word documents, Excel spreadsheets and other files, made on request and saved with a click, with no file-format library. Or copy an answer with its formatting, or download a table as a spreadsheet.
+- **Hands back things you can use.** Word documents, Excel spreadsheets and other files, made on request, seen beside the conversation and saved with a click, with no file-format library. Files you share open there too: a PDF's pages, a deck's slides, a spreadsheet's grid. Or copy an answer with its formatting, or download a table as a spreadsheet.
 - **Remembers, if you want it to:**
   - what it should know about you, on a page where you can read and change it;
   - standing instructions;
   - projects, each with its own memory, files and light;
-  - skills it learns from requests you repeat, saved as `SKILL.md`, or ready-made ones that sites and your organisation publish, added only after you read their steps.
+  - skills it learns from requests you repeat, saved as `SKILL.md`, or ready-made ones that sites and your organisation publish, added only after you read their steps;
+  - and once there's plenty to look back on, ⌘K finds any conversation, file or setting as you type.
 - **Repeats on a schedule.** A routine is a request Jean sends itself every day, working day, week or month. It runs while Jean is open, and what fell due while it was closed runs when you're back.
 - **Reaches your services and the web.** Connections over MCP sign in from the browser. Web search uses the brain's own search, or Wikipedia. Every source becomes a numbered citation.
 - **Takes on bigger tasks:**
@@ -91,6 +92,7 @@ node test/fixtures/fake-brain.js
 | `npm test` | The core and storage tests, with `node --test` |
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
+| `npm run icons` | Draws the PNG icons that Android and iOS install with from `icons/icon.svg`, after changing it |
 | `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to and which sources of skills it can read |
 
 CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on every push and merge request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.

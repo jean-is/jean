@@ -100,7 +100,7 @@ async function checkLines (budgets) {
   const core = await filesIn(['core'], /\.m?js$/)
   const app = [
     ...await filesIn(['core', 'ui', 'caps'], /\.(m?js|html|css)$/),
-    ...['brand.js', 'sw.js', 'index.html', 'sandbox.html'],
+    ...['brand.js', 'sw.js', 'index.html', 'sandbox.html', 'preview.html'],
   ]
   return [
     measure('lines.core', budgets.lines.core, await totalLines(core)),

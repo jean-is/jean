@@ -40,7 +40,7 @@ test('offered where it can run, downloaded with consent, then answering on the d
 
   await start(page)
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-brain-dialog dialog[open]')
+  const dialog = page.locator('app-settings dialog[open]')
   const device = dialog.locator('.choice.is-device')
   await expect(device).toContainText('On this device')
   await device.locator('.button.primary').click()
@@ -65,7 +65,7 @@ test('not offered where it can’t run', async ({ page }) => {
   })
   await start(page)
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-brain-dialog dialog[open]')
+  const dialog = page.locator('app-settings dialog[open]')
   await expect(dialog.locator('input[name="baseURL"]')).toBeVisible()
   // The check has run once the module is in; without shader-f16 there is nothing to offer.
   await expect.poll(() => page.evaluate(async () => (await import('/caps/brain-local/brain-local.js')).checkDevice())).toEqual({ ok: false, reason: 'f16' })

@@ -1,6 +1,6 @@
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
-// few conversations, the same kind of request a third time, or on three different days),
+// few conversations, plenty of them, the same kind of request a third time, or on three different days),
 // reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
 // that arrive mid-conversation can be reached (D47).
 import { effect } from '@preact/signals-core'
@@ -15,7 +15,7 @@ import { t, firstWords } from '../core/i18n.js'
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'projects', 'skills', 'routines', 'python', 'search', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'skills', 'routines', 'python', 'search', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -75,7 +75,7 @@ register({
 // ─── Offers above the box ────────────────────────────────────────────────────
 
 // Offers about nothing in particular give way to one about what the user is doing now.
-const AMBIENT = new Set(['backup', 'reflexes'])
+const AMBIENT = new Set(['backup', 'reflexes', 'find'])
 
 /** Offers a capability above the box, once, unless something more relevant is on offer. @param {string} id */
 export function offerOnce(id) {
@@ -109,6 +109,7 @@ export async function begin(id) {
   if (id === 'names' && !app.project.value.data.default) (await import('../caps/projects/projects.js')).editProject(app.project.value)
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
+  if (id === 'find') app.dialog.value = 'find'
 }
 
 /** @param {string} id */
@@ -154,6 +155,11 @@ effect(() => {
   const count = app.conversations.value.length
   if (count >= 3) offerOnce('backup')
   else if (count >= 2 && effective.value.settings.brains.length) offerOnce('reflexes')
+})
+/** Conversations before search is offered: plenty to look back on, what was asked, answered and shared (D133). */
+export const FINDABLE = 10
+effect(() => {
+  if (app.conversations.value.length >= FINDABLE) offerOnce('find')
 })
 effect(() => {
   // Someone who dictates often may rather talk.

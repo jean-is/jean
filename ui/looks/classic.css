@@ -82,7 +82,7 @@
 :root[data-look='classic'] :is(input:not([type='radio'], [type='checkbox'], [type='range']), select, .sheet textarea, .prose pre) { border: 0; background: var(--field); box-shadow: var(--sunken); }
 :root[data-look='classic'] :focus-visible { outline: 2px dotted var(--ink); outline-offset: -5px; }
 /* A selected line: white on blue. */
-:root[data-look='classic'] :is(.settings-nav [aria-current='page'], .history-list li.is-current, .projects li.is-current) { background: var(--flame-deep); color: oklch(1 0 0); }
+:root[data-look='classic'] :is(.settings-nav [aria-current='page'], .history-list li.is-current) { background: var(--flame-deep); color: oklch(1 0 0); }
 :root[data-look='classic'] .history-list li.is-current :is(.history-item, time, .icon-button) { color: oklch(1 0 0); }
 :root[data-look='classic'] ::selection { background: var(--flame-deep); color: oklch(1 0 0); }
 /* What the user asked: a tooltip. */
@@ -96,4 +96,4 @@
 :root[data-look='classic'] .dialog-head .icon-button { inline-size: 1.5rem; block-size: 1.35rem; background: var(--room); color: var(--ink); box-shadow: var(--raised); }
 :root[data-look='classic'] :is(.toast, .notice, .menu, .approval, .offer) { border: 0; background: var(--room); box-shadow: var(--raised); backdrop-filter: none; }
 :root[data-look='classic'] .notice { color: var(--ink); }
-:root[data-look='classic'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .menu button, .segmented, .segmented span, .send, .icon-button, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .room-card, .service, .sheet, .settings-nav button, .sidebar-settings, .history-list li, .projects li, .prose pre, .prose .table, .status, input, select, textarea, .composer, .msg-user, .prose code, .monogram, .skills details, .noticed li) { border-radius: 0; }
+:root[data-look='classic'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .menu button, .segmented, .segmented span, .send, .icon-button, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .trophy, .plaque, .service, .sheet, .settings-nav button, .sidebar-settings, .history-list li, .prose pre, .prose .table, .status, input, select, textarea, .composer, .msg-user, .prose code, .monogram, .skills details, .noticed li) { border-radius: 0; }

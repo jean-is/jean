@@ -69,3 +69,27 @@ test('the Python sandbox has the same relay and no network; eval is allowed ther
   assert.ok(!/unsafe-eval'/.test(sandboxCSP.replace("'wasm-unsafe-eval'", '')), 'Calculations never get eval')
   assert.ok(python.indexOf('Content-Security-Policy') < python.indexOf('<script'))
 })
+
+const preview = await readFile(new URL('../preview.html', import.meta.url), 'utf8')
+const previewCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(preview)?.[1] ?? ''
+
+test('the preview shows a page without running its scripts, and with nothing to reach (D126)', () => {
+  const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
+  const hash = createHash('sha256').update(relay).digest('base64')
+  assert.ok(previewCSP.includes(`script-src 'sha256-${hash}';`), `the relay alone: update the preview's script-src hash to 'sha256-${hash}'`)
+  for (const directive of ["default-src 'none'", "connect-src 'none'", "frame-src 'none'", "base-uri 'none'", "form-action 'none'"]) assert.ok(previewCSP.includes(directive), directive)
+  assert.ok(!/'self'|https?:|\*|blob:|unsafe-eval/.test(previewCSP), 'nothing to load from anywhere')
+  assert.ok(preview.indexOf('Content-Security-Policy') < preview.indexOf('<script'))
+  // What keeps the frame from being taken elsewhere is the page around it.
+  assert.ok(csp.includes("frame-src 'self'"), "index.html's frame-src stays 'self'")
+})
+
+test('the preview is only ever framed without allow-same-origin, and the page never opens in a tab', async () => {
+  const client = await readFile(new URL('../ui/preview.js', import.meta.url), 'utf8')
+  const frames = [...client.matchAll(/<iframe\b[^>]*>/g)].map((match) => match[0])
+  assert.equal(frames.length, 1)
+  assert.match(frames[0], /\ssandbox="allow-scripts"\s/, 'scripts, and nothing else: no same origin, pop-ups, forms or top navigation')
+  assert.doesNotMatch(client, /srcdoc|setAttribute\('sandbox'/, 'srcdoc would take index.html\'s policy instead of the preview\'s')
+  const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
+  assert.doesNotMatch(state, /createObjectURL[\s\S]{0,200}open\(/, 'a file in a tab of Jean\'s origin would run its scripts there')
+})

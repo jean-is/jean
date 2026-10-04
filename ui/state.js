@@ -57,7 +57,7 @@ export const app = {
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
   look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
-  /** @type {import('@preact/signals-core').Signal<'brain' | 'settings' | 'history' | 'picker' | 'knows' | 'project' | 'connections' | 'skill' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'picker' | 'knows' | 'project' | 'connections' | 'skill' | null>} */
   dialog: signal(null),
   draft: signal(''),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
@@ -334,13 +334,9 @@ export function currentFiles() {
   return [...linkedFiles(app.current.value?.records ?? []), ...pending]
 }
 
-/** Opens a shared file in a new tab (or downloads it, for types the browser can't show). @param {ResourceLink} link */
-export async function openFile(link) {
-  const bytes = await app.fs.readBytes(`${app.projectDir}/${link.uri}`)
-  if (!bytes) return notify(t('files.missing', { name: link.name }))
-  const url = URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: link.mimeType || 'application/octet-stream' }))
-  open(url, '_blank', 'noopener')
-  setTimeout(() => URL.revokeObjectURL(url), 60_000)
+/** Opens a file in the preview (D126), never in a tab of Jean's own origin, where a page would run. @param {ResourceLink} link */
+export function openFile(link) {
+  return import('./preview.js').then((module) => module.preview(link))
 }
 
 /** @param {string} key */
@@ -556,7 +552,7 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!effective.value.settings.brains.length) {
     app.draft.value = text
-    app.dialog.value = 'brain'
+    import('./dialogs.js').then((module) => module.openSettings('brains'))
     return
   }
   let current = app.current.value

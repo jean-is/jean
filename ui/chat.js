@@ -95,7 +95,7 @@ function turnView(turn, live, files, upTo, last, sources) {
   return html`<li class="turn">
     ${since?.kind === 'since' ? html`<p class="since">${icons.clock}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
-    ${routine?.kind === 'routine' ? html`<p class="since">${icons.calendar}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></p>` : nothing}
+    ${routine?.kind === 'routine' ? html`<p class="since">${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></p>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
       <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${isPicture(link) ? icons.image : icons.file}<span dir="auto">${link.name}</span></button>
     </li>`)}</ul>` : nothing}
@@ -399,7 +399,7 @@ function errorView(error) {
     <p>${error.message}</p>
     <div class="msg-error-actions">
       <button class="button" @click=${retry}>${icons.retry} ${t('action.retry')}</button>
-      ${fixable ? html`<button class="button subtle" @click=${() => { app.dialog.value = 'brain' }}>${t('brain.manage')}</button>` : nothing}
+      ${fixable ? html`<button class="button subtle" @click=${() => import('./dialogs.js').then((module) => module.openSettings('brains'))}>${t('brain.manage')}</button>` : nothing}
     </div>
   </div>`
 }

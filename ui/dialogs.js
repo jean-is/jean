@@ -1,16 +1,16 @@
-// History, brain and settings dialogs (native <dialog>: focus trap and Escape for free), and the
-// house of what Jean can do, in Settings.
-import { html, nothing } from 'lit-html'
+// History and settings dialogs (native <dialog>: focus trap and Escape for free), and the brains
+// and the house of what Jean can do, in Settings.
+import { html, svg, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, setVoice, notify, loadModels,
-  newConversation, turnPage, showError, theme, setTheme, setLook, LOCALES,
+  newConversation, turnPage, showError, theme, setTheme, setLook, LOCALES, CITED,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, startOpenRouter } from './brains.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
-import { CATALOGUE, accept, begin, unlockAll } from './discovery.js'
+import { CATALOGUE, FINDABLE, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
@@ -19,7 +19,7 @@ import { t, locale, formatBytes, useStrings, languageName, preferredLocales } fr
 import { deviceVoices } from './voices.js'
 import { rankVoices } from '../core/language.js'
 import { icons } from './icons.js'
-import { conversationList, settingsEntry } from './inbox.js'
+import { conversationList, findEntry, settingsEntry } from './inbox.js'
 import { SHORTCUTS } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
@@ -59,8 +59,8 @@ class History extends Element {
   render() {
     return html`<dialog class="drawer" @close=${closed('history')} @click=${backdrop}>
       ${head(t('history.title'))}
-      <app-projects></app-projects>
       <button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${() => turnPage(newConversation)}>${icons.plus} ${t('action.new')}</button>
+      ${findEntry()}
       ${conversationList()}
       ${settingsEntry()}
     </dialog>`
@@ -74,7 +74,7 @@ class History extends Element {
 // ─── Brains ──────────────────────────────────────────────────────────────────
 
 const status = signal(/** @type {{ kind: 'busy' | 'error', message: string } | null} */ (null))
-/** The on-device brain's module, loaded when the dialog first opens to check this device. */
+/** The on-device brain's module, loaded when Brains first opens to check this device. */
 const local = signal(/** @type {typeof import('../caps/brain-local/brain-local.js') | null} */ (null))
 const deviceCheck = signal(/** @type {{ ok: boolean, reason?: string } | null} */ (null))
 let checking = false
@@ -155,82 +155,69 @@ function connectLocal(event) {
   attempt(() => connectBrain({ provider: localProvider.value, baseURL: String(form.get('baseURL')).trim() }))
 }
 
-class BrainDialog extends Element {
-  render() {
-    const { settings, locked } = effective.value
-    const brainsLocked = locked.has('brains')
-    return html`<dialog class="sheet" @close=${closed('brain')} @click=${backdrop}>
-      ${head(t('brain.title'))}
-      <p class="lede">${t('brain.lede', { name: BRAND.name })}</p>
-      ${settings.brains.length ? this.#connected(settings.brains, brainsLocked) : nothing}
-      ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : html`
-        ${deviceChoice(settings.brains.some((brain) => brain.provider === 'device'))}
-        <section class="choice">
-          <h3>${icons.spark} ${t('brain.quick.title')}</h3>
-          <p>${t('brain.quick.text')}</p>
-          <button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button>
-        </section>
-        <section class="choice">
-          <h3>${icons.key} ${t('brain.key.title')}</h3>
-          <p>${t('brain.key.text')}</p>
-          <form class="stack" @submit=${connectKey}>
-            <label>${t('brain.key.provider')}
-              <select name="provider">${['openai', 'anthropic', 'openrouter'].map((id) => html`<option value=${id}>${t(`provider.${id}`)}</option>`)}</select>
-            </label>
-            <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
-            <button class="button">${t('brain.connect')}</button>
-          </form>
-        </section>
-        <section class="choice">
-          <h3>${icons.computer} ${t('brain.local.title')}</h3>
-          <p>${t('brain.local.text')}</p>
-          <form class="stack" @submit=${connectLocal}>
-            <label>${t('brain.local.app')}
-              <select @change=${(/** @type {Event} */ e) => {
-                localProvider.value = /** @type {any} */ (e.target).value
-                localAddress.value = PROVIDERS[localProvider.value].baseURL
-              }}>
-                ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
-              </select>
-            </label>
-            <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" placeholder="http://localhost:11434/v1"
-              .value=${live(localAddress.value)} @input=${(/** @type {Event} */ e) => { localAddress.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>
-            <button class="button">${t('brain.connect')}</button>
-          </form>
-          <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
-        </section>`}
-      ${status.value ? html`<p class="status is-${status.value.kind}" role="status">${status.value.message}</p>` : nothing}
-    </dialog>`
-  }
+/** Settings' Brains: those connected, then the ways to connect one. */
+function brains() {
+  const { settings, locked } = effective.value
+  const brainsLocked = locked.has('brains')
+  return html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>
+    ${settings.brains.length ? connected(settings.brains, brainsLocked) : nothing}
+    ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : html`
+      ${deviceChoice(settings.brains.some((brain) => brain.provider === 'device'))}
+      <section class="choice">
+        <h3>${icons.spark} ${t('brain.quick.title')}</h3>
+        <p>${t('brain.quick.text')}</p>
+        <button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button>
+      </section>
+      <section class="choice">
+        <h3>${icons.key} ${t('brain.key.title')}</h3>
+        <p>${t('brain.key.text')}</p>
+        <form class="stack" @submit=${connectKey}>
+          <label>${t('brain.key.provider')}
+            <select name="provider">${['openai', 'anthropic', 'openrouter'].map((id) => html`<option value=${id}>${t(`provider.${id}`)}</option>`)}</select>
+          </label>
+          <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
+          <button class="button">${t('brain.connect')}</button>
+        </form>
+      </section>
+      <section class="choice">
+        <h3>${icons.computer} ${t('brain.local.title')}</h3>
+        <p>${t('brain.local.text')}</p>
+        <form class="stack" @submit=${connectLocal}>
+          <label>${t('brain.local.app')}
+            <select @change=${(/** @type {Event} */ e) => {
+              localProvider.value = /** @type {any} */ (e.target).value
+              localAddress.value = PROVIDERS[localProvider.value].baseURL
+            }}>
+              ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
+            </select>
+          </label>
+          <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" placeholder="http://localhost:11434/v1"
+            .value=${live(localAddress.value)} @input=${(/** @type {Event} */ e) => { localAddress.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>
+          <button class="button">${t('brain.connect')}</button>
+        </form>
+        <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
+      </section>`}
+    ${status.value ? html`<p class="status is-${status.value.kind}" role="status">${status.value.message}</p>` : nothing}`
+}
 
-  /** @param {import('../core/types.js').BrainConfig[]} brains @param {boolean} brainsLocked */
-  #connected(brains, brainsLocked) {
-    const active = activeBrain.value
-    return html`<section class="connected">
-      <h3>${t('brain.connectedTitle')}</h3>
-      <ul>${brains.map((brain) => html`<li class=${brain.id === active?.id ? 'is-active' : ''}>
-        <label class="radio">
-          <input type="radio" name="active-brain" .checked=${brain.id === active?.id} @change=${() => useBrain(brain.id)}>
-          <span>${t(`provider.${brain.provider}`)}</span>
-        </label>
-        ${brain.api === 'device' ? html`<span class="muted small">${t('brain.device.private')}</span>` : html`
-          <input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" aria-label=${t('brain.model')}
-            @change=${(/** @type {Event} */ e) => useBrain(brain.id, /** @type {HTMLInputElement} */ (e.target).value.trim())}>
-          <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
-        ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')}
-          @click=${() => removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
-      </li>`)}</ul>
-    </section>`
-  }
-
-  updated() {
-    syncDialog(this, 'brain')
-    if (app.dialog.value === 'brain') {
-      checkDevice()
-      for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
-    }
-    else if (status.value?.kind === 'error') status.value = null
-  }
+/** @param {import('../core/types.js').BrainConfig[]} brains @param {boolean} brainsLocked */
+function connected(brains, brainsLocked) {
+  const active = activeBrain.value
+  return html`<section class="connected">
+    <h3>${t('brain.connectedTitle')}</h3>
+    <ul>${brains.map((brain) => html`<li class=${brain.id === active?.id ? 'is-active' : ''}>
+      <label class="radio">
+        <input type="radio" name="active-brain" .checked=${brain.id === active?.id} @change=${() => useBrain(brain.id)}>
+        <span>${t(`provider.${brain.provider}`)}</span>
+      </label>
+      ${brain.api === 'device' ? html`<span class="muted small">${t('brain.device.private')}</span>` : html`
+        <input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" aria-label=${t('brain.model')}
+          @change=${(/** @type {Event} */ e) => useBrain(brain.id, /** @type {HTMLInputElement} */ (e.target).value.trim())}>
+        <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
+      ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')}
+        @click=${() => removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
+    </li>`)}</ul>
+  </section>`
 }
 
 // ─── Settings ────────────────────────────────────────────────────────────────
@@ -270,7 +257,7 @@ function general() {
 }
 
 const appearance = () => html`
-  ${setting(t('settings.mode'), null, html`<span class="segmented" role="radiogroup" aria-label=${t('settings.mode')}>
+  ${setting(t('settings.mode'), null, html`<span class="segmented" role="radiogroup" aria-label=${t('settings.mode')} aria-keyshortcuts=${SHORTCUTS.theme}>
     ${(/** @type {const} */ (['light', 'dark'])).map((option) => html`<label>
       <input type="radio" name="theme" .checked=${theme.value === option} @change=${() => setTheme(option)}>
       <span>${t(`theme.${option}`)}</span>
@@ -303,9 +290,7 @@ function data() {
   const usage = storage.value?.usage
   return html`
     ${setting(t('storage.title'), app.ephemeral.value ? t('storage.ephemeral') : usage === undefined ? '' : t('storage.usage', { name: BRAND.name, size: formatBytes(usage) }),
-      storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>`
-        : app.ephemeral.value ? nothing
-        : html`<button class="button" @click=${persist}>${t('storage.persist')}</button>`)}
+      storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : nothing)}
     ${isDenied('backup') ? nothing : html`<section>
       <h3>${t('cap.backup.name')}</h3>
       <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
@@ -319,8 +304,9 @@ function data() {
 }
 
 /** Settings is a menu beside the section open, like the Claude apps' (D113): each section's label, icon and what it shows. */
-const SECTIONS = {
+export const SECTIONS = {
   general: { label: 'settings.general', icon: icons.gear, show: general },
+  brains: { label: 'settings.brains', icon: icons.spark, show: brains },
   appearance: { label: 'settings.appearance', icon: icons.contrast, show: appearance },
   capabilities: { label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
   approvals: { label: 'settings.approvals', icon: icons.shield, show: approvals },
@@ -352,61 +338,111 @@ class Settings extends Element {
 
   updated() {
     syncDialog(this, 'settings')
-    if (app.dialog.value !== 'settings') return
+    const open = app.dialog.value === 'settings'
+    // A brain that failed to connect is forgotten once Brains is left.
+    if (!(open && section.value === 'brains') && status.value?.kind === 'error') status.value = null
+    if (!open) { this.#shown = ''; return }
     if (!storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
-    // On a phone the menu is a strip: the section open stays in view.
-    if (this.#shown !== section.value) this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    if (section.value === 'brains') {
+      checkDevice()
+      for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
+    }
+    if (this.#shown !== section.value) {
+      // A section entered opens at its top, and on a phone, where the menu is a strip, its button stays in view.
+      const panel = this.querySelector('.settings-panel')
+      if (panel) panel.scrollTop = 0
+      this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    }
     this.#shown = section.value
+    // The trophies found catch the light one after another (CSSOM: the CSP forbids style attributes).
+    this.querySelectorAll('.trophy').forEach((trophy, i) => /** @type {HTMLElement} */ (trophy).style.setProperty('--i', String(i)))
   }
 }
 
 // ─── What Jean can do ────────────────────────────────────────────────────────
 
-// The house (docs/design.md), in Settings: discovered capabilities are lit rooms; the rest wait
-// in the shadow, like a game's collection screen, and can be turned on early.
+// The house (docs/design.md), in Settings, is a case of trophies (D127): each capability is one,
+// lit once found, a silhouette until then that says how it is found. A ring of a segment each
+// circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
+// trophy picked, at first the next to find, shows on a plaque that stays in view.
 const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', projects: 'rooms', skills: 'repeat', routines: 'calendar', python: 'code',
+  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', skills: 'scroll', routines: 'alarm', python: 'code',
   search: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
 })
 /** Where a lit room leads. */
-const OPENS = /** @type {Record<string, typeof app.dialog.value>} */ ({ memory: 'knows', skills: 'knows', routines: 'knows', projects: 'history', connections: 'connections' })
+const OPENS = /** @type {Record<string, typeof app.dialog.value>} */ ({ memory: 'knows', find: 'find', skills: 'knows', routines: 'knows', connections: 'connections' })
+const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
+/** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
+const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [app.conversations.value.length, 2], backup: () => [app.conversations.value.length, 3],
+  find: () => [app.conversations.value.length, FINDABLE],
+  live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED] })
+const picked = signal('')
 
 /** @param {string} id */
 async function turnOn(id) {
+  picked.value = id
   if (id === 'reflexes') return accept('reflexes')
   if (!(await unlock(id))) return
-  if (id === 'brain-local') app.dialog.value = 'brain'
+  if (id === 'brain-local') openSettings('brains')
   else begin(id)
 }
 
-/** Whether a lit capability still waits for a download (Intuition's weights). @param {string} id */
-function waiting(id) {
-  const module = loaded.value.get(id)
-  return id === 'reflexes' && module && !module.decide
+/** How far along a trophy found by counting is, a pip a step. @param {string} id */
+function pips(id) {
+  const [done = 0, goal = 0] = COUNTED[id]?.() ?? []
+  return goal ? html`<span class="pips" role="progressbar" aria-labelledby="trophy-how" aria-valuemax=${goal} aria-valuenow=${Math.min(done, goal)}>
+    ${Array.from({ length: goal }, (_, i) => html`<i class=${i < done ? 'is-lit' : ''}></i>`)}</span>` : nothing
 }
 
 function capabilities() {
   const lit = loaded.value
   const ids = CATALOGUE.filter((id) => !isDenied(id))
   const count = ids.filter((id) => lit.has(id)).length
-  return html`<section class="house">
-    <h3>${t('collection.title', { name: BRAND.name })}</h3>
-    <p class="muted">${t('collection.lede', { name: BRAND.name })}</p>
-    <p class="muted small">${t('collection.count', { count, total: ids.length })}</p>
-    <ul class="rooms">${ids.map((id) => html`<li class="room-card ${lit.has(id) ? 'is-lit' : ''}">
-      <span class="room-icon" aria-hidden="true">${icons[ROOM_ICONS[id]]}</span>
-      <div class="room-text">
-        <h3>${t(`cap.${id}.name`)}</h3>
-        <p>${t(`cap.${id}.text`, { name: BRAND.name, size: formatBytes(BYTES[id] ?? 0) })}</p>
+  const total = ids.length
+  const rank = count === total ? 4 : Math.floor((4 * count) / total)
+  const shown = ids.includes(picked.value) ? picked.value : ids.find((id) => !lit.has(id)) ?? ids[0]
+  // The ring starts at the top: a segment a trophy, in the order of the case, with a gap after each.
+  const arc = (2 * Math.PI * 46) / total
+  return html`<section class="house" data-rank=${rank}>
+    <header class="house-head">
+      <span class="house-light">
+        <svg class="house-ring" viewBox="0 0 100 100" aria-hidden="true">${ids.map((id, i) => svg`<circle cx="50" cy="50" r="46"
+          stroke-dasharray="${arc * 0.8} ${arc * total}" stroke-dashoffset=${-i * arc} class=${lit.has(id) ? 'is-lit' : ''}/>`)}</svg>
+        <app-persona></app-persona>
+      </span>
+      <div>
+        <h3>${t('collection.title', { name: BRAND.name })}</h3>
+        <p class="house-rank">${t(`collection.rank.${RANKS[rank]}`)}</p>
+        <p class="muted small">${t('collection.count', { count, total })}${rank < 4 ? html` · ${t('collection.next', {
+          count: Math.ceil(((rank + 1) * total) / 4) - count, rank: t(`collection.rank.${RANKS[rank + 1]}`) })}` : nothing}</p>
       </div>
-      ${!lit.has(id) ? html`<button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button>`
-        : waiting(id) && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t('cap.reflexes.yes', { size: formatBytes(BYTES.reflexes) })}</button>`
-        : OPENS[id] ? html`<button class="button" @click=${() => { app.dialog.value = OPENS[id] }}>${t('collection.open')}</button>`
-        : html`<span class="room-on">${icons.check}<span class="visually-hidden">${t('collection.on')}</span></span>`}
-    </li>`)}</ul>
-    ${count < ids.length ? html`<button class="button wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
+    </header>
+    <ul class="trophies">${ids.map((id) => html`<li><button class="trophy ${lit.has(id) ? 'is-lit' : ''}" aria-pressed=${id === shown}
+      @click=${() => { picked.value = id; document.querySelector('.plaque')?.scrollIntoView({ block: 'nearest' }) }}>
+      <span class="medal">${icons[ROOM_ICONS[id]]}</span>${t(`cap.${id}.name`)}
+      ${lit.has(id) ? html`<span class="visually-hidden">${t('collection.on')}</span>` : pips(id)}
+    </button></li>`)}</ul>
+    ${shown ? plaque(shown, lit.has(shown)) : nothing}
+    ${count < total ? html`<button class="button subtle wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
   </section>`
 }
+
+/**
+ * The trophy picked: how it is found, what it does, and what it offers now: to turn it on early,
+ * Intuition's download while it waits for one, or where it leads. @param {string} id @param {boolean} on
+ */
+const plaque = (id, on) => html`<article class="plaque ${on ? 'is-lit' : ''}" aria-live="polite">
+  <span class="medal">${icons[ROOM_ICONS[id]]}</span>
+  <div>
+    <h3>${t(`cap.${id}.name`)}</h3>
+    ${on ? nothing : html`<p class="plaque-how" id="trophy-how"><span>${t('collection.how')}</span>${t(`cap.${id}.hint`)}</p>${pips(id)}`}
+    <p>${t(`cap.${id}.text`, { name: BRAND.name, size: formatBytes(BYTES[id] ?? 0) })}</p>
+  </div>
+  ${!on ? html`<button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button>`
+    : id === 'reflexes' && !loaded.value.get(id)?.decide && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t('cap.reflexes.yes', { size: formatBytes(BYTES.reflexes) })}</button>`
+    : OPENS[id] ? html`<button class="button" @click=${() => { app.dialog.value = OPENS[id] }}>${t('collection.open')}</button>`
+    : html`<span class="plaque-on">${icons.check} ${t('collection.on')}</span>`}
+</article>`
 
 /** @typedef {import('../core/settings.js').Look} Look */
 /** @param {Event} event */
@@ -469,11 +505,5 @@ async function restore(event) {
   await restoreBackup(file)
 }
 
-async function persist() {
-  const persisted = await navigator.storage?.persist?.()
-  storage.value = { ...storage.value, persisted: Boolean(persisted) }
-}
-
 define('app-history', History)
-define('app-brain-dialog', BrainDialog)
 define('app-settings', Settings)

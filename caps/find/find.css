@@ -1,0 +1,36 @@
+/* Search (D133): loaded with it (caps/find/find.js), after ui/style.css and ui/dialogs.css. */
+
+/* A row like Settings', under a new conversation, with its key where there is a keyboard. */
+.sidebar-find { position: static; margin-block-start: 0.5rem; }
+.sidebar-find kbd { margin-inline-start: auto; font: inherit; font-size: 0.78rem; color: var(--ink-faint); }
+@media (pointer: coarse) { .sidebar-find kbd { display: none; } }
+:root[data-look='mail'] .inbox > .sidebar-find { margin: 0; }
+
+/* A sheet near the top: its field, then what it found, grouped, the one picked lit. On a phone it hangs from the top, above the keyboard. */
+.find { margin-block-start: 12dvh; padding: 0; inline-size: min(100% - 2rem, 38rem); max-block-size: min(76dvh, 40rem); overflow: hidden; }
+.find[open] { display: flex; flex-direction: column; }
+.find-field { display: flex; align-items: center; gap: 0.7rem; padding: 0.95rem 1.25rem; border-block-end: 1px solid var(--line); }
+.find-field:focus-within { box-shadow: inset 0 -2px oklch(from var(--flame) l c h / 0.7); }
+.find-field .icon { flex: none; color: var(--ink-soft); }
+.find-field input { padding: 0; border: 0; background: none; font-size: 1.1rem; }
+.find-field input:focus-visible { outline: 0; }
+.find-results { overflow-y: auto; overscroll-behavior: contain; padding: 0.4rem 0.6rem 0.6rem; }
+.find-results:empty { display: none; }
+.find-results ul { margin: 0; padding: 0; list-style: none; }
+.find-heading { padding: 0.7rem 0.75rem 0.3rem; font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); }
+.find-option { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.15rem 0.75rem; padding: 0.55rem 0.75rem; border-radius: 0.8rem; cursor: pointer; }
+.find-option[aria-selected='true'] { background: var(--line); }
+.find-option > .icon { inline-size: 1.1rem; block-size: 1.1rem; color: var(--ink-soft); }
+.find-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.find-aside { display: flex; gap: 0.4rem; font-size: 0.78rem; color: var(--ink-faint); white-space: nowrap; }
+.find-aside > * + *::before { content: '·'; margin-inline-end: 0.4rem; }
+.find-snippet { grid-column: 2 / -1; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 0.85rem; color: var(--ink-soft); }
+.find mark { border-radius: 0.2rem; background: oklch(from var(--flame) l c h / 0.3); color: inherit; }
+.find-none { margin: 0; padding: 1.5rem 1.25rem; text-align: center; color: var(--ink-soft); }
+@media (max-width: 40rem) {
+  .find { inline-size: 100%; margin-block: 0 auto; max-block-size: 80dvh; border-block-start: 0; border-radius: 0 0 1.6rem 1.6rem; }
+}
+@media (forced-colors: active) {
+  .find-option[aria-selected='true'] { outline: 2px solid Highlight; }
+  .find mark { forced-color-adjust: none; background: Mark; color: MarkText; }
+}

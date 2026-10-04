@@ -1,9 +1,10 @@
 // Mail's list (D111): the drawer's conversations, kept in view beside the one open, with the
-// header's name above it and Settings at its foot, like the Claude apps' sidebar (D115).
-import { html } from 'lit-html'
+// header's name above it, Search under a new one once it is found (D133) and Settings at its foot, like the Claude apps' sidebar (D115).
+import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
 import { app, newConversation, openConversation, removeConversation, turnPage } from './state.js'
+import { loaded } from './caps.js'
 import { t, relativeTime } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { SHORTCUTS } from './shell.js'
@@ -27,6 +28,10 @@ export function conversationList() {
     </li>`)}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
 }
 
+/** Search, under a new conversation once it is found, with its key shown as in the Claude apps (D133). */
+export const findEntry = () => (loaded.value.has('find') ? html`<button class="sidebar-settings sidebar-find" aria-keyshortcuts=${SHORTCUTS.find}
+  @click=${() => { app.dialog.value = 'find' }}>${icons.search}${t('cap.find.name')}<kbd aria-hidden="true">${SHORTCUTS.find.startsWith('Meta') ? '⌘K' : 'Ctrl+K'}</kbd></button>` : nothing)
+
 /** Settings, at the foot of the conversations: in the drawer, or in Mail's list (D115). */
 export const settingsEntry = () => html`<button class="sidebar-settings" aria-keyshortcuts=${SHORTCUTS.settings}
   @click=${() => import('./dialogs.js').then((module) => module.openSettings())}>
@@ -35,7 +40,7 @@ export const settingsEntry = () => html`<button class="sidebar-settings" aria-ke
 class Inbox extends Element {
   render() {
     return html`<button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${() => turnPage(newConversation)}>${icons.plus} ${t('action.new')}</button>
-      <app-projects></app-projects>
+      ${findEntry()}
       ${conversationList()}
       ${settingsEntry()}`
   }

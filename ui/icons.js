@@ -1,4 +1,4 @@
-// Forty-three inline icons, 24×24, drawn with the current colour.
+// Forty-four inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -9,6 +9,7 @@ export const icons = {
   stop: icon(svg`<rect x="7" y="7" width="10" height="10" rx="2"/>`),
   plus: icon(svg`<path d="M12 5v14M5 12h14"/>`),
   history: icon(svg`<path d="M4 6h16M4 12h16M4 18h10"/>`, 'flip-rtl'),
+  search: icon(svg`<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 4.5 4.5"/>`),
   globe: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.4 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.4-3.6-8.5s1.1-5.9 3.6-8.5Z"/>`),
   gear: icon(svg`<path d="M10.3 5.2L10.4 3.1A9 9 0 0 1 13.6 3.1L13.7 5.2A7 7 0 0 1 15.6 6L17.2 4.6A9 9 0 0 1 19.4 6.8L18 8.4A7 7 0 0 1 18.8 10.3L20.9 10.4A9 9 0 0 1 20.9 13.6L18.8 13.7A7 7 0 0 1 18 15.6L19.4 17.2A9 9 0 0 1 17.2 19.4L15.6 18A7 7 0 0 1 13.7 18.8L13.6 20.9A9 9 0 0 1 10.4 20.9L10.3 18.8A7 7 0 0 1 8.4 18L6.8 19.4A9 9 0 0 1 4.6 17.2L6 15.6A7 7 0 0 1 5.2 13.7L3.1 13.6A9 9 0 0 1 3.1 10.4L5.2 10.3A7 7 0 0 1 6 8.4L4.6 6.8A9 9 0 0 1 6.8 4.6L8.4 6A7 7 0 0 1 10.3 5.2Z"/><circle cx="12" cy="12" r="3"/>`),
   close: icon(svg`<path d="M6 6l12 12M18 6 6 18"/>`),
@@ -36,14 +37,14 @@ export const icons = {
   lamp: icon(svg`<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"/>`),
   note: icon(svg`<path d="M6 3.5h9l3.5 3.5v13.5H6Z"/><path d="M9 10h6M9 13.5h6M9 17h3.5"/>`),
   pin: icon(svg`<path d="M9 4h6l-1 5 3 3v2H7v-2l3-3Z"/><path d="M12 14v6"/>`),
-  repeat: icon(svg`<path d="M5 11V9.5A3.5 3.5 0 0 1 8.5 6H19M16 3l3 3-3 3M19 13v1.5a3.5 3.5 0 0 1-3.5 3.5H5M8 21l-3-3 3-3"/>`, 'flip-rtl'),
-  rooms: icon(svg`<path d="M3.5 10.5 12 4l8.5 6.5V20h-17Z"/><path d="M12 20v-6M3.5 14h17"/>`),
+  scroll: icon(svg`<path d="M17.5 17V6a2 2 0 0 0-2-2h-10a2 2 0 0 0-2 2v1.5h4M7.5 6v12.5a2 2 0 0 0 4 0V17h9v1.5a2 2 0 0 1-2 2h-9M10.5 8.5h4M10.5 12h4"/>`),
+  folder: icon(svg`<path d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3.5 11h17"/>`),
   code: icon(svg`<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>`),
   plug: icon(svg`<path d="M9 3.5V8M15 3.5V8M6.5 8h11v3a5.5 5.5 0 0 1-11 0ZM12 16.5V21"/>`),
   image: icon(svg`<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>`),
   helpers: icon(svg`<circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14.5 14.6a4.5 4.5 0 0 1 6 4.9"/>`),
   clock: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`),
-  calendar: icon(svg`<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>`),
+  alarm: icon(svg`<circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 1.5M4 7.5 7 4.5M20 7.5l-3-3M7.5 19 6 20.5M16.5 19l1.5 1.5"/>`),
   tag: icon(svg`<path d="M4 12.5V4.5h8l8 8-8 8Z"/><circle cx="8.5" cy="9" r="1.4"/>`, 'flip-rtl'),
   wave: icon(svg`<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>`),
   chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),

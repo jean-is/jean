@@ -19,6 +19,7 @@ import { signal } from '@preact/signals-core'
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   files: () => import('../caps/files/files.js'),
   memory: () => import('../caps/memory/memory.js'),
+  find: () => import('../caps/find/find.js'),
   projects: () => import('../caps/projects/projects.js'),
   skills: () => import('../caps/skills/skills.js'),
   routines: () => import('../caps/routines/routines.js'),
