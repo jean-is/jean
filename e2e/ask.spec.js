@@ -1,4 +1,4 @@
-// Questions for the user (D143): the brain asks everything it needs at once, and the card in the
+// Questions for the user (D146): the brain asks everything it needs at once, and the card in the
 // decision inbox takes the questions one at a time, the answer Jean recommends picked already,
 // with room for the user's own words, Skip and Back; then every answer goes back to the brain.
 // The fake brain asks three questions before writing a letter.

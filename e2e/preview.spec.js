@@ -1,15 +1,17 @@
 // The preview (D126): a file Jean made or the user shared opens beside the conversation, as what
-// it is. A web page shows with its style, but its script never runs and nothing leaves; a Word
-// document shows on a sheet and follows its new version; a spreadsheet is a grid, a PDF its drawn
-// pages, a deck its slides. On a phone it covers the conversation; right to left, it sits on the left.
+// it is. A web page shows with its style and runs its script, but nothing leaves, and with its
+// code off in Settings the script never runs (D143); a Word document shows on a sheet and follows
+// its new version; a spreadsheet is a grid, a PDF its drawn pages, a deck its slides. On a phone
+// it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, SALES } from './helpers.js'
 import { writeZip } from '../core/zip.js'
 
-test('a web page Jean made shows in the preview, and can send nothing away', async ({ page }) => {
+test('a web page Jean made shows in the preview and runs its script, which can send nothing away', async ({ page }) => {
   /** @type {string[]} */
   const leaks = []
-  page.on('request', (request) => { if (request.url().includes('/leak')) leaks.push(request.url()) })
+  // What reached the leak address: Chromium also reports a picture's request that the policy then refuses.
+  page.on('response', (response) => { if (response.url().includes('/leak')) leaks.push(response.url()) })
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Make a web page for the bakery')
@@ -20,18 +22,81 @@ test('a web page Jean made shows in the preview, and can send nothing away', asy
   const pane = page.locator('app-preview .preview')
   await expect(pane.locator('h2')).toHaveText('Bakery.html')
   const frame = page.frameLocator('.preview-frame')
-  // Its style applies; its script, with its fetch, its picture and its move away, never runs.
+  // Its style applies and its script runs, in standards mode; its fetch and its picture never leave.
   await expect(frame.locator('h1')).toHaveCSS('color', 'rgb(180, 70, 20)')
-  await expect(frame.locator('#out')).toHaveText('Waiting')
-  // A link leads nowhere from here: the page stays.
+  await expect(frame.locator('#out')).toHaveText('Baked by a script CSS1Compat')
+  // A link leads nowhere from here: the page stays. Nor can its script take it away.
   await frame.locator('#away').click()
   await page.waitForTimeout(800)
   await expect(frame.locator('h1')).toHaveText('Bakery')
+  await frame.locator('#go').click()
+  await page.waitForTimeout(800)
   expect(leaks).toEqual([])
   // Beside the conversation, the box still takes a message.
   await expect(page.locator('#prompt')).toBeEditable()
+  // With its code off in Settings, the page shows again, and its script never runs (D143).
+  const settings = await openSettings(page, 'Approvals')
+  const code = settings.getByRole('switch', { name: 'Run its code' })
+  await expect(code).toBeChecked()
+  await expect(settings.getByRole('switch', { name: 'Send and receive over the internet' })).not.toBeChecked()
+  await code.click()
+  await expect(settings.getByRole('switch', { name: 'Send and receive over the internet' })).toBeDisabled()
+  await page.keyboard.press('Escape')
+  await expect(frame.locator('h1')).toHaveCSS('color', 'rgb(180, 70, 20)')
+  await expect(frame.locator('#out')).toHaveText('Waiting')
+  expect(leaks).toEqual([])
   await pane.getByRole('button', { name: 'Close' }).click()
   await expect(pane).toHaveCount(0)
+})
+
+test('the sites a page’s code may reach: any by default, each one added with Enter (D143)', async ({ page }) => {
+  /** @type {string[]} */
+  const reached = []
+  page.on('response', (response) => { if (response.url().includes('/leak')) reached.push(response.url()) })
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Make a web page for the bakery')
+  await page.locator('.msg-jean').last().getByRole('button', { name: 'Open Bakery.html' }).click()
+  const policy = page.frameLocator('.preview-frame').locator('meta[http-equiv="Content-Security-Policy"]').first()
+  await expect(policy).toHaveAttribute('content', /connect-src 'none';/)
+  const settings = await openSettings(page, 'Approvals')
+  await settings.getByRole('switch', { name: 'Send and receive over the internet' }).click()
+  const sites = settings.getByRole('list', { name: 'Sites its code may reach' })
+  await expect(sites.getByRole('listitem')).toHaveText(['*'])
+  await expect(sites.getByRole('button')).toHaveCount(0)
+  // Only Enter adds, and only a site.
+  const field = settings.getByRole('textbox', { name: 'Add a site' })
+  await field.fill('not a site')
+  await field.press('Enter')
+  await expect(field).toHaveAttribute('aria-invalid', 'true')
+  await expect(sites.getByRole('listitem')).toHaveText(['*'])
+  await field.fill('https://API.example.com/v1')
+  await expect(field).not.toHaveAttribute('aria-invalid')
+  await field.press('Tab')
+  await expect(sites.getByRole('listitem')).toHaveText(['*'])
+  await field.press('Shift+Tab')
+  await field.press('Enter')
+  await expect(field).toHaveValue('')
+  // The first site named takes the place of any; the next ones join it, inline.
+  await expect(sites.getByRole('listitem')).toHaveText(['api.example.com'])
+  for (const typed of ['*.com', 'localhost:*']) {
+    await field.fill(typed)
+    await field.press('Enter')
+  }
+  await expect(sites.getByRole('listitem')).toHaveText(['api.example.com', '*.com', 'localhost:*'])
+  await expect(policy).toHaveAttribute('content', /connect-src https:\/\/api\.example\.com https:\/\/\*\.com http:\/\/localhost:\*;/)
+  await sites.getByRole('button', { name: 'Remove api.example.com' }).click()
+  await expect(field).toBeFocused()
+  await expect(sites.getByRole('listitem')).toHaveText(['*.com', 'localhost:*'])
+  // A server on this computer, by its port: the page's own fetch reaches it now, and nothing else does.
+  expect(reached).toEqual([])
+  await field.fill('127.0.0.1:4182')
+  await field.press('Enter')
+  await expect(policy).toHaveAttribute('content', /connect-src https:\/\/\*\.com http:\/\/localhost:\* http:\/\/127\.0\.0\.1:4182;/)
+  await expect.poll(() => reached).toEqual(['http://127.0.0.1:4182/leak?fetch'])
+  for (const name of ['*.com', 'localhost:*', '127.0.0.1:4182']) await sites.getByRole('button', { name: `Remove ${name}` }).click()
+  await expect(sites.getByRole('listitem')).toHaveText(['*'])
+  await expect(policy).toHaveAttribute('content', /connect-src https:;/)
 })
 
 test('a Word document on a sheet, following its new version, saved from the preview', async ({ page }) => {

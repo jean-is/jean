@@ -22,7 +22,7 @@
 // For the browser (D140) it serves a bakery's site, whose page links to its menu, and a page that
 // refuses to be framed; asked for "the bakery site", it opens it (offering the browser first if
 // it's off) and answers from the page; asked to "give me a link", it answers with one.
-// Asked for a letter, it first asks three questions at once (D143): the tone, recommending one,
+// Asked for a letter, it first asks three questions at once (D146): the tone, recommending one,
 // what the letter asks for, several at once, and who signs it; then it says what it was told.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
@@ -63,7 +63,7 @@ const SUGGESTIONS = {
   ja: ['グラフで見せて', '一番伸びたのはどれ？', '短い要約を書いて'],
 }
 
-/** What a letter needs (D143). */
+/** What a letter needs (D146). */
 const LETTER = [
   { question: 'Which tone should the letter have?', options: [{ label: 'Formal', description: 'For a bank or an office', recommended: true }, { label: 'Friendly' }] },
   { question: 'What should it ask for?', options: [{ label: 'A meeting' }, { label: 'A refund' }, { label: 'More time' }], multiple: true },
@@ -93,12 +93,12 @@ const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of,
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 /** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. */
 const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p>
-<a id="away" href="http://127.0.0.1:4182/leak?link">Away</a>
-<script>document.getElementById('out').textContent = 'Baked by a script'
+<a id="away" href="http://127.0.0.1:4182/leak?link">Away</a> <button id="go">Go</button>
+<script>document.getElementById('out').textContent = 'Baked by a script ' + document.compatMode
 const leak = 'http://127.0.0.1:4182/leak?'
 fetch(leak + 'fetch').catch(() => {})
 new Image().src = leak + 'image'
-setTimeout(() => { location.href = leak + 'navigate' }, 200)</script>`
+document.getElementById('go').onclick = () => { location.href = leak + 'navigate' }</script>`
 
 /** A small PNG: a warm gradient. */
 function picture(width = 96, height = 64) {

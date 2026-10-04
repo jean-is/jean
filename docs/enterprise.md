@@ -72,6 +72,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "reflexes": { "backend": "local" },
   "capabilities": { "deny": ["connections", "python"], "preUnlock": ["files", "memory", "projects"] },
   "rules": { "send": "ask", "share": "never" },
+  "pages": { "scripts": true, "web": false, "network": true, "sites": ["api.corp.example", "*.corp.example"] },
   "instructions": "Use British English. Never put client names in titles.",
   "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "search": "https://search.corp.example", "relay": "wss://relay.corp.example" },
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }],

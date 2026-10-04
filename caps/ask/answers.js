@@ -1,4 +1,4 @@
-// Questions for the user (D143), as text: what the brain asked, read the way small brains write
+// Questions for the user (D146), as text: what the brain asked, read the way small brains write
 // it, how each question starts on its card, and the answers it gets back, as JSON. No DOM, so it
 // runs under `node --test`.
 
@@ -27,7 +27,7 @@ function list(value) {
 
 /**
  * The questions asked, without what can't be shown: empty ones, answers without words, and more
- * than the card holds. A lone `{ question }`, as helpers asked before D143, is one question.
+ * than the card holds. A lone `{ question }`, as helpers asked before D146, is one question.
  * A single choice recommends one answer at most.
  * @param {any} args @returns {Question[]}
  */

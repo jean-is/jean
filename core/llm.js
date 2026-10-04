@@ -304,7 +304,7 @@ export function parseArgs(raw) {
   }
 }
 
-/** @type {(value: unknown) => value is string} */
+/** @param {unknown} value @returns {value is string} */
 const isText = (value) => typeof value === 'string' && value !== ''
 
 /**

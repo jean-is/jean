@@ -283,7 +283,7 @@ function shown(value) {
 }
 
 /**
- * The decision inbox: approvals and questions, Jean's or its helpers' (caps/ask, D143), wait here
+ * The decision inbox: approvals and questions, Jean's or its helpers' (caps/ask, D146), wait here
  * as cards, one each, while the rest of the work goes on, and are answered in any order.
  * @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
  */
@@ -340,7 +340,7 @@ function toolLabel(tool, files = []) {
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${renamed(String(tool.rawInput?.capability))}.name`) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   if (tool.name === 'ask_user') {
-    // A helper's lone question, from before questions came in lists (D143).
+    // A helper's lone question, from before questions came in lists (D146).
     const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : [tool.rawInput]
     return `${t('tool.ask_user', { count: asked.length })} · ${asked[0]?.question ?? ''}`
   }

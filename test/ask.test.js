@@ -1,4 +1,4 @@
-// Questions for the user (D143): what the brain asks, how each question starts on its card, and
+// Questions for the user (D146): what the brain asks, how each question starts on its card, and
 // the answers it gets back. The card itself is in e2e/ask.spec.js.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'

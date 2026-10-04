@@ -1,18 +1,20 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-DIMZeEpKbgn6m5aHA0Ph9VVaAdpYfxZi22E0up+ydAw='; style-src 'unsafe-inline'; img-src data:; media-src data:; font-src data:; connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https:; style-src 'unsafe-inline' https:; img-src data: https:; media-src data: https:; font-src data: https:; connect-src https: http://localhost:* http://127.0.0.1:*; frame-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Preview</title>
 <!-- An HTML file, seen in Jean's preview (D126): loaded in <iframe sandbox="allow-scripts">, so its
      origin is opaque and it can't read Jean's storage. The page Jean sends replaces this one and
-     keeps its policy: its own styles apply, but nothing loads from anywhere, and its scripts never
-     run (only this relay, allowed by its hash), so it has no way out: not the network, a form, a
-     pop-up, nor WebRTC, which no policy can close. Jean's own frame-src keeps the frame from being
-     taken elsewhere; its links lead nowhere from here, except within the page. -->
+     keeps its policy, the most Settings can allow (D143). The relay writes the policy Jean sends
+     ahead of the page, which adds to this one: by default the page's own scripts run, but nothing
+     loads from anywhere and nothing is sent, and no form or pop-up opens. Jean's own frame-src
+     keeps the frame from being taken elsewhere; its links lead nowhere from here, except within
+     the page. A doctype first, or the policy would put every page in quirks mode. -->
 <script>onmessage = ({ data, source }) => {
-  if (source !== parent || typeof data !== 'string') return
+  if (source !== parent || typeof data?.page !== 'string' || typeof data?.policy !== 'string') return
   document.open()
-  document.write(data)
+  document.write(`<!doctype html><meta http-equiv="Content-Security-Policy" content="${data.policy.replaceAll('"', '&quot;')}">`)
+  document.write(data.page)
   document.close()
   document.addEventListener('click', (event) => { if (event.target.closest?.('a[href]:not([href^="#"])')) event.preventDefault() })
 }

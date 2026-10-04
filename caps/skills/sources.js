@@ -164,7 +164,7 @@ const cachePath = (url) => `.cache/skills/${[...url].reduce((hash, char) => Math
  * Every index, as last read: from .cache/ when it was read less than a day ago, otherwise
  * fetched again (an index that can't be read keeps what was read before, and says why).
  * @param {FS} fs @param {string[]} urls indexes' addresses
- * @param {{ fetch?: typeof fetch, now?: Date, again?: boolean }} [options] again: whatever the cache holds
+ * @param {{ fetch?: typeof globalThis.fetch, now?: Date, again?: boolean }} [options] again: whatever the cache holds
  * @returns {Promise<Index[]>}
  */
 export function readIndexes(fs, urls, { fetch = globalThis.fetch, now = new Date(), again = false } = {}) {

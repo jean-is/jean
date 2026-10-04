@@ -2,7 +2,7 @@
 // screen. Links from answers open there once it's found, after three opened elsewhere; the brain
 // opens a page there and reads it; the page on show reaches the brain's next note. A site that
 // refuses to be framed opens in a tab of its own from then on, and Jean recommends installing it
-// as an app. Right to left, the pane mirrors; in Japanese, its strings are Japanese.
+// as an app. ⌘⇧B opens and closes it. Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, BRAIN_URL } from './helpers.js'
 
@@ -21,9 +21,20 @@ async function go(page, address) {
 test('the user browses beside the conversation: back, forward, reload, full screen', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
-  // Once on, the header's button opens it, empty, its address field ready.
-  await page.locator('.bar .browser-toggle').click()
+  // Once on, ⌘⇧B opens and closes it, and from a dialog, closes the dialog (D142).
   const pane = page.locator('app-browser .browser')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await expect(pane).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await expect(pane).toHaveCount(0)
+  const settings = await openSettings(page)
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await expect(settings).toBeHidden()
+  await expect(pane).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await expect(pane).toHaveCount(0)
+  // The header's button opens it, empty, its address field ready.
+  await page.locator('.bar .browser-toggle').click()
   await expect(pane.locator('.browser-note')).toContainText('Pages open here')
   await expect(pane.locator('.browser-bar input')).toHaveAttribute('placeholder', 'Type an address, or words to look up')
   await expect(pane.getByRole('button', { name: 'Back' })).toBeDisabled()
@@ -53,7 +64,7 @@ test('the user browses beside the conversation: back, forward, reload, full scre
   await page.evaluate(() => { /** @type {any} */ (window).stayed = true })
   await go(page, `${SITE}/bakery.html`)
   await expect(site(page).locator('h1')).toHaveText('The bakery')
-  const settings = await openSettings(page)
+  await openSettings(page)
   await page.keyboard.press('Escape')
   await expect(settings).toBeHidden()
   await site(page).getByRole('link', { name: 'Menu' }).click()

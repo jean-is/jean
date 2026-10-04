@@ -146,6 +146,16 @@ input.switch:checked { background: var(--flame); }
 input.switch:checked::before { translate: 1.1rem; }
 :dir(rtl) input.switch:checked::before { translate: -1.1rem; }
 input.switch:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
+input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
+/* The sites a web page's code may reach (D143): chips, then the look's own field on the same line. */
+.reach { grid-column: 1 / -1; display: grid; gap: 0.35rem; }
+.sites { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+.sites ul { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.sites li { display: flex; align-items: center; gap: 0.1rem; padding: 0.2rem 0.65rem; border-radius: 999px; background: var(--line); font-size: 0.88rem; }
+.sites li:has(button) { padding-inline-end: 0.2rem; }
+.sites .icon-button { inline-size: 1.4rem; block-size: 1.4rem; padding: 0.2rem; }
+.sites input { flex: 1; min-inline-size: 10rem; inline-size: auto; }
+.sites input[aria-invalid='true'] { color: var(--danger); text-decoration: underline wavy var(--danger); }
 /* The house of what Jean can do, a case of trophies (D127): the light's rank in its ring (the light grows with each), the medals, the plaque. */
 .house-head { display: flex; align-items: center; gap: 1.25rem; margin-block-end: 1rem; }
 .house-light { position: relative; display: grid; place-items: center; flex: none; inline-size: 6.5rem; aspect-ratio: 1; }

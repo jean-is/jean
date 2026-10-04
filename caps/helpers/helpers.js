@@ -74,7 +74,7 @@ const helperTool = {
   hidden: true,
   title: (args) => String(args?.title ?? ''),
   run: async (args, ctx) => {
-    // Its questions say which part they are for (D143).
+    // Its questions say which part they are for (D146).
     const ask = askTool(String(args?.title ?? ''))
     const { text, stopReason } = await ctx.turn({
       system: prompt(assistantName()),

@@ -24,7 +24,7 @@ class Shell extends Element {
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
         ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
-          aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')}>${icons.window}</button>` : nothing}
+          aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.window}</button>` : nothing}
       </header>
       ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
@@ -53,13 +53,14 @@ const discovery = () => import('./discovery.js')
 
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
 // systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
-// ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133).
+// ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
+// ⌘⇧B opens the browser once it is found, or closes it (D142).
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
@@ -80,6 +81,12 @@ document.addEventListener('keydown', (event) => {
   } else if (key === 'k' && !event.shiftKey && loaded.value.has('find')) {
     event.preventDefault()
     app.dialog.value = app.dialog.value === 'find' ? null : 'find'
+  } else if (key === 'b' && event.shiftKey && loaded.value.has('browser')) {
+    event.preventDefault()
+    // A dialog over the room closes, and the pane shows.
+    const over = app.dialog.value
+    app.dialog.value = null
+    import('../caps/browser/browser.js').then((module) => (over ? module.show() : module.toggle()))
   }
 })
 

@@ -57,12 +57,12 @@
 ```
 index.html        CSP <meta>, light or dark (D85) and the look (D111) before the first paint, import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
-preview.html      an HTML file in the preview: a hash-allowed relay writes it in place of itself, under a policy that runs none of its scripts (D126)
+preview.html      an HTML file in the preview: a relay writes it in place of itself, under the policy Settings gives it, by default its own scripts and no network (D126, D143)
 manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but index.html's first-paint line
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
 core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js events.js i18n.js
-                  deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only; a module only one
+                  deferred.js search.js decide.js memory.js skills.js csp.js … types.d.ts   (standard web APIs only; a module only one
                   capability uses lives with it, D96)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
                   discovery.js auto.js picker.js, dialogs.js (Settings, with the brains and the house in it, D113, D128, D134) and brains.js (loaded
@@ -80,10 +80,10 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/ex
                   find/                                         (after 0.7: search, ⌘K, D133)
                   browser/                                      (after 0.7: pages beside the conversation, D140; browser.html frames
                                                                 other sites, pages.js is tested in Node)
-                  ask/                                          (after 0.7: questions for the user, always there, D143; answers.js
+                  ask/                                          (after 0.7: questions for the user, always there, D146; answers.js
                                                                 is tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, dialogs/ with the dialogs' strings (D97), and browser/
-                  and ask/ with the browser's and the questions' own, loaded and cached with them (D140, D143)
+                  and ask/ with the browser's and the questions' own, loaded and cached with them (D140, D146)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
                   reflexes.js (measures Kev on the test set)
@@ -117,7 +117,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `browse`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`. `ask_user` asks the user questions, from Jean or, saying which part it is for, from a helper (D98, D143); scripts can't call it. `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. `schedule` makes a routine (D122); `suggest_skill` is deferred, found with `find_tools` (D121). Built so far: `read`, `write`, `edit`, `run`, `python`, `web_search`, `browse` (D140), `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `suggest_skill`, `schedule`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119).
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `browse`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`. `ask_user` asks the user questions, from Jean or, saying which part it is for, from a helper (D98, D146); scripts can't call it. `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. `schedule` makes a routine (D122); `suggest_skill` is deferred, found with `find_tools` (D121). Built so far: `read`, `write`, `edit`, `run`, `python`, `web_search`, `browse` (D140), `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `suggest_skill`, `schedule`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119).
 - Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
@@ -283,15 +283,23 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
 - **How it gets them** (the 0.4 spike chose option (b), D80): the parent sends the files in, as for QuickJS, and the worker's `fetch` serves only those, under an address that never resolves; `connect-src 'none'` stays. Option (a), serving `vendor/pyodide/` with CORS to the sandbox, was not needed.
 - **Python's limits:** the standard library only (no package can be fetched); `import js` reaches an empty object; no cap on memory or computing time inside Pyodide (it would need a cross-origin isolated page), so the parent's 40 s watchdog stops a script that goes quiet; 60 s to start. `ui/sandbox.js` is the client both runtimes share.
 
-**The preview** (D126) shows an HTML file in `preview.html`, framed with `sandbox="allow-scripts"` only, so its origin is opaque, and given nothing but the page. A relay allowed by its hash writes the page in place of itself, and the page keeps that policy:
+**The preview** (D126) shows an HTML file in `preview.html`, framed with `sandbox="allow-scripts"` only, so its origin is opaque, and given nothing but the page and its policy. `preview.html`'s own policy is the most Settings can allow (D143):
 
 ```text
-default-src 'none'; script-src 'sha256-<relay>'; style-src 'unsafe-inline'; img-src data:; media-src data:; font-src data:;
-connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'
+default-src 'none'; script-src 'unsafe-inline' https:; style-src 'unsafe-inline' https:; img-src data: https:; media-src data: https:;
+font-src data: https:; connect-src https: http://localhost:* http://127.0.0.1:*; frame-src 'none'; base-uri 'none'; form-action 'none'
 ```
 
-- **Its styles apply; its scripts never run.** In a document, unlike the sandbox's worker, a script would have WebRTC, which no policy closes (Chromium and WebKit ignore `webrtc 'block'`).
-- **Nowhere to go.** No network, no form, no pop-up, and `index.html`'s `frame-src 'self'` refuses to take the frame to any other address; its links move only within the page. `test/html.test.js` checks the hash, the policy, `frame-src 'self'` and the frame's one sandbox flag.
+Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), writes a doctype, then the policy Jean sent as a `<meta>`, then the page. The page keeps the document's policy and adds that one, so it gets exactly what Settings allows. `core/csp.js` makes it from three switches in Approvals, which `pages` in `policy.json` can set and lock:
+
+| Switch | Default | Adds |
+|---|---|---|
+| Run its code | on | `script-src 'unsafe-inline'` |
+| Load things from the internet | off | `https:` for pictures, sounds, fonts, styles and, when they run, scripts |
+| Send and receive over the internet | off | `connect-src`: any https site (`*`), or only the sites listed under the switch, each added with Enter: `example.com`, `*.example.com`, `*.com`, and this computer over http (`localhost:3000`, `localhost:*`) |
+
+- **Its styles apply; its scripts run unless switched off.** In a document, unlike the sandbox's worker, a script has WebRTC, which no policy closes (Chromium and WebKit ignore `webrtc 'block'`): the risk D126 avoided, now accepted for pages that are charts and buttons (D143).
+- **Nowhere to go.** No network, no form, no pop-up, and `index.html`'s `frame-src 'self'` refuses to take the frame to any other address; its links move only within the page. `test/html.test.js` checks the policy each switch and list makes, which sites are taken as typed, that `preview.html`'s is the loosest, that the relay writes the policy before the page, `frame-src 'self'` and the frame's one sandbox flag.
 - **Everything else shows in Jean's own document,** from what Jean keeps: pictures as pictures (a drawing as an `<img>`, where its scripts never run), a PDF's pages drawn by pdf.js with the options it reads them with, and documents, spreadsheets and decks from their text, through lit-html.
 
 **The browser** (D140) frames other sites' pages in `caps/browser/browser.html`, a document with no script, whose policy alone lets a frame show another site, so `index.html` keeps `frame-src 'self'`:
@@ -313,7 +321,7 @@ base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted
   - Dates, numbers, lists and relative times use `Intl`.
   - Language names come from `Intl.DisplayNames`, so each language appears in its own name with no extra data.
 - **Choosing.** `preferredLocales` matches `navigator.languages` to the catalogues on language and likely script (`Intl.Locale.maximize`), so `zh-TW` finds `zh-Hant`, `pt-BR` finds `pt` and `iw` finds `he`. The first match is the starting language, and the language menu lists every match first, in the browser's order, under "Your languages".
-- **One catalogue per person, in parts.** `useLocale()` fetches only the chosen language's catalogue; English, the fallback, is fetched only when that one can't be (D76). The strings only dialogs show are in a second part, `locales/dialogs/<lang>.json`, which `ui/dialogs.js` loads with `useStrings('dialogs')`; every module that shows a dialog imports it (D97). A capability whose strings would weigh on the first load brings its own part, `locales/<id>/<lang>.json`, loaded with `useStrings(id)` and cached with the capability; the browser is the first (D140), questions the second (D143). The first-load budget counts the largest first part; each part has the per-file budget.
+- **One catalogue per person, in parts.** `useLocale()` fetches only the chosen language's catalogue; English, the fallback, is fetched only when that one can't be (D76). The strings only dialogs show are in a second part, `locales/dialogs/<lang>.json`, which `ui/dialogs.js` loads with `useStrings('dialogs')`; every module that shows a dialog imports it (D97). A capability whose strings would weigh on the first load brings its own part, `locales/<id>/<lang>.json`, loaded with `useStrings(id)` and cached with the capability; the browser is the first (D140), questions the second (D146). The first-load budget counts the largest first part; each part has the per-file budget.
 - **Instant switching.** The locale is a signal, so every bound piece of text re-renders. `<html lang dir>` flips with it, and CSS uses logical properties only, so right-to-left layouts mirror immediately.
 - **Details that are easy to miss:**
   - Every message element gets `dir="auto"`, so an English reply renders correctly in an Arabic UI.
@@ -418,8 +426,8 @@ Jean's internal event format is ACP's `session/update` vocabulary: `user_message
 - **A script's calls** are tool calls with `_meta.parent` set to their `run` call, shown nested under it.
 - **Every line opens** on what went in and what came back (D103): a call's tool name, arguments, result and duration; a brain step's thought and text as written, how it stopped, its duration and how much it read and wrote. The loop records durations in `_meta.ms`. Lines follow the order things happened.
 - **Helpers** are child turns recorded under their call (D98): `delegate`, then a `helper` call per part, then each helper's brain entries and calls, ids prefixed with their parent's. The view draws the tree, parts in the order they were split.
-- **The decision inbox** (D99): approvals (`session/request_permission`) and questions, Jean's or its helpers' (`ask_user`, D143), queue as cards under the live answer, answered in any order; an "Always" or "Never" answer settles the other cards of that kind.
-- **Questions** (D143): `ask_user` takes up to five questions, each with up to six answers to pick from (`label`, `description`, `recommended`), one or several (`multiple`). Its card shows one question at a time, what the brain recommends picked already, a field for the user's own words, then Next, Skip and Back; the last question sends. The result is JSON, `{"answers":[{"question","chose"|"wrote"|"skipped"}]}`, with `chose` a list when several could be picked. `caps/ask/answers.js` reads what the brain wrote (a lone `question`, options as plain strings, the list as JSON text) and writes the answers. The capability is always there, like the inbox: loaded with the first message, like Things Jean made, so every conversation declares the tool.
+- **The decision inbox** (D99): approvals (`session/request_permission`) and questions, Jean's or its helpers' (`ask_user`, D146), queue as cards under the live answer, answered in any order; an "Always" or "Never" answer settles the other cards of that kind.
+- **Questions** (D146): `ask_user` takes up to five questions, each with up to six answers to pick from (`label`, `description`, `recommended`), one or several (`multiple`). Its card shows one question at a time, what the brain recommends picked already, a field for the user's own words, then Next, Skip and Back; the last question sends. The result is JSON, `{"answers":[{"question","chose"|"wrote"|"skipped"}]}`, with `chose` a list when several could be picked. `caps/ask/answers.js` reads what the brain wrote (a lone `question`, options as plain strings, the list as JSON text) and writes the answers. The capability is always there, like the inbox: loaded with the first message, like Things Jean made, so every conversation declares the tool.
 - **Enterprise audit:** a ~50-line adapter maps the stream to OpenTelemetry GenAI conventions (`invoke_agent`, `execute_tool`, `chat`).
 - **AG-UI** is the better fit when a UI fronts an agent running on a server, which Jean's is not. A bridge from ACP to AG-UI exists if that is ever needed.
 

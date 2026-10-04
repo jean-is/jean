@@ -1,4 +1,4 @@
-// Questions for the user (D143): when Jean, or one of its helpers, needs the user's choices to go
+// Questions for the user (D146): when Jean, or one of its helpers, needs the user's choices to go
 // on, it asks them all at once with `ask_user`, and the card waits in the decision inbox, under
 // the answer being written (D99). One question at a time: the answers to pick from, the one Jean
 // recommends picked already, and room for the user's own words. Skip leaves a question

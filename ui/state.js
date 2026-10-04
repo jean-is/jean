@@ -24,7 +24,7 @@ import { loaded, unlock, contributions } from './caps.js'
 /** @typedef {import('../core/loop.js').PermissionOption} PermissionOption */
 /**
  * A decision waiting for the user, in the decision inbox: an approval, or questions from Jean or
- * one of its helpers (`from`, the part it works on; D143).
+ * one of its helpers (`from`, the part it works on; D146).
  * @typedef {{ id: number, toolCall: ToolCallInfo, resolve: (option: PermissionOption) => void }
  *   | { id: number, questions: Question[], from?: string, resolve: (answers: Answer[] | null) => void }} Decision
  */
@@ -474,7 +474,7 @@ async function context() {
  */
 async function prepare(text, brain, records, notes = []) {
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
-  // so do questions, so the brain can ask from the start (D143).
+  // so do questions, so the brain can ask from the start (D146).
   await Promise.all([app.ready, unlock('made'), unlock('ask')])
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47).

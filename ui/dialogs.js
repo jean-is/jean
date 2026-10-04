@@ -5,7 +5,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, activeBrain, setLocale, setRule, setVoice, setBrainMode, notify, loadModels,
+  app, effective, activeBrain, setLocale, setRule, setVoice, setBrainMode, updateSettings, notify, loadModels,
   newConversation, turnPage, showError, theme, setTheme, setLook, LOCALES, CITED,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, startOpenRouter } from './brains.js'
@@ -16,6 +16,7 @@ import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
+import { PAGE_DEFAULTS, pageRights, site } from '../core/csp.js'
 import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices } from './voices.js'
 import { rankVoices } from '../core/language.js'
@@ -396,7 +397,63 @@ function approvals() {
         </span>
       </li>`
     })}</ul>
+  </section>
+  ${pages()}`
+}
+
+/** What a web page may do when it opens beside the conversation (D143), each unless the organisation set it. */
+function pages() {
+  const rights = pageRights(app.settings.value, app.policy)
+  const { allows, locked } = rights
+  return html`<section>
+    <h3>${t('pages.title')}</h3>
+    <p class="muted">${t('pages.text')}</p>
+    <ul class="rules">${(/** @type {import('../core/csp.js').PageRight[]} */ (Object.keys(PAGE_DEFAULTS))).map((right) => html`<li class="setting">
+      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? t('policy.locked') : t(`pages.${right}Text`)}</p></div>
+      <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]}
+        ?disabled=${locked.has(right) || (right === 'network' && !allows.scripts)}
+        @change=${(/** @type {Event} */ e) => setPages({ [right]: /** @type {HTMLInputElement} */ (e.target).checked })}>
+      ${right === 'network' && allows.scripts && allows.network ? reach(rights) : nothing}
+    </li>`)}</ul>
   </section>`
+}
+
+/** @param {import('../core/csp.js').PageSettings} change */
+const setPages = (change) => updateSettings({ pages: { ...app.settings.value.pages, ...change } })
+
+/**
+ * The sites a page's code may reach, inline after one another: `*`, any, until one is named.
+ * Enter adds what is typed when it is a site, and nothing else adds it; × takes one away.
+ * @param {ReturnType<typeof pageRights>} rights
+ */
+function reach({ sites, locked }) {
+  const fixed = locked.has('sites')
+  /** @param {KeyboardEvent} event */
+  const add = (event) => {
+    if (event.key !== 'Enter' || event.isComposing || event.keyCode === 229) return
+    event.preventDefault()
+    const input = /** @type {HTMLInputElement} */ (event.target)
+    const typed = site(input.value)
+    input.setAttribute('aria-invalid', String(!typed))
+    if (!typed) return
+    input.value = ''
+    setPages({ sites: typed === '*' ? [] : [...new Set([...sites, typed])] })
+  }
+  /** @param {Event} event @param {string} gone */
+  const remove = (event, gone) => {
+    /** @type {HTMLElement} */ (event.currentTarget).closest('.sites')?.querySelector('input')?.focus()
+    setPages({ sites: sites.filter((other) => other !== gone) })
+  }
+  return html`<div class="reach">
+    <div class="sites">
+      <ul aria-label=${t('pages.sites')}>${(sites.length ? sites : ['*']).map((entry) => html`<li><bdi>${entry}</bdi>${sites.length && !fixed
+        ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })} title=${t('pages.siteRemove', { site: entry })}
+          @click=${(/** @type {Event} */ e) => remove(e, entry)}>${icons.close}</button>` : nothing}</li>`)}</ul>
+      ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
+        @keydown=${add} @input=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).removeAttribute('aria-invalid')}>`}
+    </div>
+    <p class="muted small" id="sites-hint">${fixed ? t('policy.locked') : t('pages.sitesText')}</p>
+  </div>`
 }
 
 function data() {

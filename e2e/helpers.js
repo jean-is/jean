@@ -9,6 +9,8 @@ export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,F
 export async function start(page, lang = 'en') {
   await page.goto('./')
   await expect(page.locator('.hero-question')).toBeVisible()
+  // The box has the keyboard from the start.
+  await expect(page.locator('#prompt')).toBeFocused()
   // The language is picked in Settings, its first choice.
   const settings = await openSettings(page)
   await settings.locator('.settings-panel select').first().selectOption(lang)
