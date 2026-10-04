@@ -64,6 +64,8 @@
   "knows.cloud": "Ana aika wannan tare da saƙonninka zuwa ƙwaƙwalwar da kake amfani da ita. Idan wannan ƙwaƙwalwar tana cikin girgije, mai samar da ita ma yana karɓa.",
   "cap.memory.text": "Ana tuna abubuwan dindindin da ka ambata: abubuwan da kake so, gaskiya, gyare-gyare. Za ka iya gani da canza duka.",
   "cap.projects.text": "Duk abin da kake yawan komawa gare shi yana samun ɗakinsa: tattaunawa, fayiloli, bayanai da haskensa.",
+  "cap.folders.hint": "Jefa fayil ɗin ajiya a cikin tattaunawa.",
+  "cap.folders.text": "Ana buɗe tattaunawa ko aiki a kan fayil ɗin ajiya na wannan kwamfuta: ana nemo, karanta da canza fayilolinsa a inda suke, kuma ana nuna maka kowane canji tukuna.",
   "cap.skills.text": "Idan ka nemi irin abu ɗaya akai-akai, ana iya ajiye yadda ake yin sa, kuma a yi shi haka kowane lokaci.",
   "cap.routines.text": "Ayyukan da kake so a yi akai-akai, ana yin su da kansu kowace rana, mako ko wata: muddin wannan shafi a buɗe yake, ko da zarar ka dawo.",
   "cap.python.text": "Ana kuma iya aiki da bayananka da Python, harshen masu nazari, a cikin akwatin kariya ɗaya ba tare da intanet ba. Kusan {size}, sau ɗaya.",

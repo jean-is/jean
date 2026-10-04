@@ -145,6 +145,7 @@ class ProjectDialog extends Element {
           <input type="checkbox" name="local" .checked=${live(project?.data.cloud === false)}>
           <span>${t('projects.local')}</span>
         </label>
+        ${project && loaded.value.has('folders') ? html`<app-folder-field .project=${project}></app-folder-field>` : nothing}
         <button class="button primary">${t(project ? 'projects.save' : 'projects.create')}</button>
       </form>
       ${project ? html`<button class="button subtle danger" @click=${() => remove(project)}>${icons.trash} ${t('projects.delete')}</button>` : nothing}

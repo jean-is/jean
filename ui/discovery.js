@@ -16,7 +16,7 @@ import { t, firstWords } from '../core/i18n.js'
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'skills', 'routines', 'python', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'python', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -24,6 +24,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   compute: 'exact calculations and data analysis, by running code',
   memory: 'remembering lasting facts and preferences the user states, from one conversation to the next',
   projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
+  folders: 'opening a folder of their computer, to find, read and change its files where they are, showing each change first',
   skills: 'saving how a task the user repeats is done, to do it the same way every time',
   routines: 'doing a task on its own on a schedule (every day, week or month), while the user has you open or as soon as they are back',
   python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
@@ -116,6 +117,12 @@ export async function begin(id) {
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
   if (id === 'find') app.dialog.value = 'find'
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
+  // A folder to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
+  if (id === 'folders') {
+    const { choose } = await import('../caps/folders/folders.js')
+    if (navigator.userActivation?.isActive === false) notify(t('cap.folders.offer'), { label: t('cap.folders.yes'), run: () => choose() })
+    else await choose()
+  }
 }
 
 /** @param {string} id */

@@ -64,6 +64,8 @@
   "knows.cloud": "Bu, mesajlarınla birlikte kullandığın beyne gider. O beyin buluttaysa, sağlayıcısı da bunu alır.",
   "cap.memory.text": "{name}, bahsettiğin kalıcı şeyleri hatırlar: tercihler, bilgiler, düzeltmeler. Hepsini görebilir ve değiştirebilirsin.",
   "cap.projects.text": "Sık sık döndüğün her şeyin kendi odası olur: konuşmaları, dosyaları, notları ve ışığı.",
+  "cap.folders.hint": "Sohbete bir klasör bırak.",
+  "cap.folders.text": "Bir sohbeti ya da projeyi bu bilgisayardaki bir klasörde açar: {name} dosyalarını bulundukları yerde bulur, okur ve değiştirir; her değişikliği önce sana gösterir.",
   "cap.skills.text": "Aynı türden bir şeyi tekrar tekrar istediğinde, nasıl yapıldığı kaydedilebilir ve her seferinde aynı şekilde yapılır.",
   "cap.routines.text": "Düzenli yapılmasını istediğin işler, her gün, hafta ya da ay kendiliğinden: bu sekme açıkken ya da döner dönmez.",
   "cap.python.text": "Verilerin Python ile de işlenebilir: analistlerin dili, internet erişimi olmayan aynı korumalı alanda. Yaklaşık {size}, bir kez.",

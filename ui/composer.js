@@ -1,5 +1,5 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line. Under it (D123):
-// + (files, a capture of the screen) and dictation; then the brain, and one button to go.
+// + (files, a folder once Folders is on, a capture of the screen) and dictation; then the brain, and one button to go.
 import { html, nothing } from 'lit-html'
 import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
@@ -29,7 +29,10 @@ class Composer extends Element {
       : working ? (downloading ? t('dictation.downloading', { percent: Math.round((voice.progress ?? 0) * 100) }) : t(`dictation.${voice.state}`))
       : ''
     const files = !isDenied('files')
-    const add = t(CAPTURE ? 'composer.add' : 'files.attach')
+    // A menu when + adds more than files.
+    const folders = loaded.value.has('folders')
+    const menu = CAPTURE || folders
+    const add = t(menu ? 'composer.add' : 'files.attach')
     return html`
       <form class="composer" @submit=${this.#submit}>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
@@ -53,10 +56,12 @@ class Composer extends Element {
         <div class="composer-row">
           <div class="composer-tools">
             ${files ? html`<button type="button" class="icon-button add" aria-label=${add} title=${add}
-              popovertarget=${CAPTURE ? 'add-menu' : nothing} @click=${CAPTURE ? undefined : this.#files}>${icons.plus}</button>` : nothing}
-            ${files && CAPTURE ? html`<div id="add-menu" class="menu" popover>
+              popovertarget=${menu ? 'add-menu' : nothing} @click=${menu ? undefined : this.#files}>${icons.plus}</button>` : nothing}
+            ${files && menu ? html`<div id="add-menu" class="menu" popover>
               <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button>
-              <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>
+              ${folders ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
+                @click=${() => import('../caps/folders/folders.js').then((module) => module.choose())}>${icons.folder}${t('composer.folder')}</button>` : nothing}
+              ${CAPTURE ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` : nothing}
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
@@ -205,7 +210,18 @@ function onDrop(event) {
   delete document.documentElement.dataset.dropping
   if (!hasFiles(event)) return
   event.preventDefault()
-  attachFiles([...(event.dataTransfer?.files ?? [])])
+  /** @type {File[]} */
+  const files = []
+  /** @type {{ entry: FileSystemDirectoryEntry, handle?: Promise<FileSystemHandle | null> }[]} */
+  const folders = []
+  // A folder is worked on where it is (D141). What the drop holds can only be asked for during it.
+  for (const item of event.dataTransfer?.items ?? []) {
+    const entry = item.kind === 'file' ? item.webkitGetAsEntry?.() : null
+    if (entry?.isDirectory) folders.push({ entry: /** @type {FileSystemDirectoryEntry} */ (entry), handle: /** @type {any} */ (item).getAsFileSystemHandle?.() })
+    else if (item.kind === 'file') files.push(...[item.getAsFile()].filter((file) => file !== null))
+  }
+  if (folders.length) unlock('folders').then(async (ok) => { if (ok) (await import('../caps/folders/folders.js')).dropped(folders[0]) })
+  attachFiles(files)
 }
 
 export function focusComposer() {

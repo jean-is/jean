@@ -64,6 +64,8 @@
   "knows.cloud": "Das wird mit deinen Nachrichten an das Gehirn geschickt, das du nutzt. Liegt dieses Gehirn in der Cloud, erhält es auch dessen Anbieter.",
   "cap.memory.text": "{name} merkt sich Dauerhaftes, das du erwähnst: Vorlieben, Fakten, Korrekturen. Du kannst alles sehen und ändern.",
   "cap.projects.text": "Alles, worauf du immer wieder zurückkommst, bekommt einen eigenen Raum: Gespräche, Dateien, Notizen und Licht.",
+  "cap.folders.hint": "Zieh einen Ordner in die Unterhaltung.",
+  "cap.folders.text": "Öffnet eine Unterhaltung oder ein Projekt in einem Ordner dieses Computers: {name} findet, liest und ändert seine Dateien dort, wo sie liegen, und zeigt dir jede Änderung vorher.",
   "cap.skills.text": "Wenn du immer wieder dasselbe brauchst, kann {name} festhalten, wie es gemacht wird, und es jedes Mal genauso machen.",
   "cap.routines.text": "Aufgaben, die regelmäßig anfallen, von selbst erledigt – jeden Tag, jede Woche oder jeden Monat: solange dieser Tab offen ist, oder sobald du zurück bist.",
   "cap.python.text": "{name} kann deine Daten auch in Python bearbeiten, der Sprache der Analysten, in derselben Sandbox ohne Internetzugang. Etwa {size}, einmalig.",

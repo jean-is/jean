@@ -65,6 +65,15 @@ How to be: {a few words from the user}           (when the user wrote some)
 {- service: the names of its tools, which find_tools finds and scripts call (0.5, D89)}
 </connections>
 
+<folder>
+The user's folder "{name}" is open in this conversation, on their computer[, as a copy: what you change is kept for the user to save].   (0.8, D141, D149, D152)
+Its top level:
+{its first entries, folders ending with "/"}
+Work on its files where they are, by their path, with list({ path?, depth? }), find_in_files({ text, path? }), open({ path, lines? }) and change({ path, old, new }). The user sees each change first.
+[Its AGENTS.md, which the user asked you to follow here:
+{the file}]
+</folder>
+
 <page>
 The browser beside the conversation shows {address}[, or a page the user went to from there].   (D140)
 </page>
@@ -105,6 +114,7 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. |
 | Helpers (0.6) | `delegate: hand independent parts of a large task to helpers, who do them at the same time` | Use helpers only for independent parts of a large task. |
 | Browser (D140) | `browse: show the user a web page beside the conversation, and read it when the site allows` | — (`<page>` says which page is open) |
+| Folders (0.8, D141) | none: its tools are deferred, and `<folder>` names them with their arguments, for the conversation's folder only | — |
 | Questions (D146, always on) | `ask_user: ask the user questions, with answers to pick from` | Ask with ask_user only what you need, all at once, recommending an answer to each. |
 
 Sources and suggestions were planned as capability rules; in 0.3 they became base rules, because every answer can cite a shared file and end with follow-ups. Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).

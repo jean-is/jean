@@ -62,6 +62,8 @@
   "knows.cloud": "Èyí máa ń bá àwọn ìfiránṣẹ́ yín lọ sí ọpọlọ tí ẹ ń lò. Bí ọpọlọ náà bá wà ní ìkùukùu, olùpèsè rẹ̀ náà á gbà á.",
   "cap.memory.text": "{name} máa ń rántí àwọn nǹkan pípẹ́ tí ẹ mẹ́nu bà: ohun tí ẹ fẹ́, òtítọ́, àtúnṣe. Ẹ lè rí gbogbo rẹ̀, kí ẹ sì yí i padà.",
   "cap.projects.text": "Gbogbo ohun tí ẹ máa ń padà sí ní yàrá tirẹ̀: ìjíròrò, fáìlì, àkọsílẹ̀ àti ìmọ́lẹ̀ rẹ̀.",
+  "cap.folders.hint": "Ju fódà kan sínú ìjíròrò náà.",
+  "cap.folders.text": "Ó ń ṣí ìjíròrò tàbí iṣẹ́ àkànṣe lórí fódà kan ti kọ̀ǹpútà yìí: {name} ń wá, ń kà, ó sì ń yí àwọn fáìlì rẹ̀ padà níbi tí wọ́n wà, ó sì ń fi gbogbo àyípadà hàn yín ní àkọ́kọ́.",
   "cap.skills.text": "Tí ẹ bá ń béèrè irú nǹkan kan náà léraléra, {name} lè fi bí a ṣe ń ṣe é pamọ́, kí ó sì máa ṣe é bákan náà nígbà gbogbo.",
   "cap.routines.text": "Àwọn iṣẹ́ tí ẹ fẹ́ kí a máa ṣe déédéé, tí ó ń ṣe ara wọn lójoojúmọ́, lọ́sọ̀ọ̀sẹ̀ tàbí lóṣooṣù: nígbà tí táàbù yìí bá ṣí, tàbí gbàrà tí ẹ bá padà.",
   "cap.python.text": "{name} tún lè ṣiṣẹ́ lórí dátà yín pẹ̀lú Python, èdè àwọn olùṣàyẹ̀wò, nínú àpótí ààbò kan náà tí kò ní íńtánẹ́ẹ̀tì. Nǹkan bí {size}, ẹ̀ẹ̀kan ṣoṣo.",

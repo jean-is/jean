@@ -24,6 +24,9 @@
 // it's off) and answers from the page; asked to "give me a link", it answers with one.
 // Asked for a letter, it first asks three questions at once (D146): the tone, recommending one,
 // what the letter asks for, several at once, and who signs it; then it says what it was told.
+// In a conversation opened on a folder (D141), it finds which files mention something, lists the
+// folder, and changes a file when asked to change "this" to "that" in it: it opens the file first,
+// then changes it, and asks again when told the folder is open now.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -206,7 +209,22 @@ createServer(async (req, res) => {
   const regularly = (/^every\b/i.test(question.trim()) || /\broutine\b/i.test(question)) && last.role === 'user'
   const habit = /Requests like this one were made on \w{3} \w{3} \d\d \d{4} (\d\d:\d\d)/.exec(serialized)?.[1]
   const routine = { title: 'Weekly sales', request: 'Summarize the weekly sales by region', every: 'day', at: /\bat (\d\d:\d\d)/.exec(question)?.[1] ?? habit ?? '09:00' }
+  // 0.8: a folder's files, by the names <folder> gives its tools (D104, D141).
+  const folder = /The user's folder /.test(serialized)
+  const mentions = /\bmention(?:s)?\s+(?:the\s+)?["“]?(.+?)["”]?(?:\s+clause)?\?*$/i.exec(question.trim())?.[1]
+  const edit = /\bin\s+(\S+),\s*change\s+["“](.+?)["”]\s+to\s+["“](.+?)["”]/i.exec(question)
+  // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
+  const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  else if (folder && mentions && last.role === 'user') call = { name: 'find_in_files', args: { text: mentions } }
+  else if (toolName === 'find_in_files') answer = /^Not found/.test(last.content) ? 'No file there mentions it.' : `These files mention it:\n\n${[...new Set([...last.content.matchAll(/^(.+?):(\d+): /gm)].map((m) => m[1]))].map((path) => `- **${path}**`).join('\n')}`
+  else if (folder && /what is in the folder/i.test(question) && last.role === 'user') call = { name: 'list', args: {} }
+  else if (toolName === 'list') answer = `The folder holds:\n\n${last.content.split('\n').map((line) => `- ${line}`).join('\n')}`
+  else if (folder && edit && last.role === 'user') call = { name: opened(edit[1]) ? 'change' : 'open', args: opened(edit[1]) ? { path: edit[1], old: edit[2], new: edit[3] } : { path: edit[1] } }
+  else if (edit && toolName === 'open' && !last.content.startsWith('Error')) call = { name: 'change', args: { path: edit[1], old: edit[2], new: edit[3] } }
+  else if (edit && toolName === 'change' && /is open now/.test(last.content)) call = { name: 'change', args: { path: edit[1], old: edit[2], new: edit[3] } }
+  else if (edit && toolName === 'change' && /changed since you read it/.test(last.content)) call = { name: 'open', args: { path: edit[1] } }
+  else if (toolName === 'change' || (edit && toolName === 'open')) answer = /^(Changed|Made) /.test(last.content) ? `Done: ${last.content}` : `That didn't work: ${last.content}`
   else if (helper && /how many/i.test(task) && last.role === 'user') call = { name: 'ask_user', args: { questions: [{ question: 'How many people are coming?' }] } }
   else if (helper && toolName === 'ask_user') answer = /did not answer|"skipped"/.test(last.content) ? 'Nobody said; I assumed 10 people.' : `${JSON.parse(last.content).answers[0].wrote} people are coming.`
   else if (helper && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { query: topic, limit: 1 } }

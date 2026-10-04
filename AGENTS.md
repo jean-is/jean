@@ -1,6 +1,6 @@
 # AGENTS.md — building Jean
 
-> Status: 0.7 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
+> Status: 0.8 built. This file is the contract for any coding agent (or human) who writes Jean's code. Read [README.md](README.md) first, then [docs/architecture.md](docs/architecture.md).
 
 ## What Jean is
 

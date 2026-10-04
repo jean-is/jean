@@ -152,6 +152,48 @@ test('loop: once stopped, it runs and asks for nothing more', async () => {
   assert.deepEqual(persisted.filter((record) => record.update?.name).map((record) => record.update.toolCallId), ['a'])
 })
 
+test('loop: a check asks even where the rules allow, shows its diff on the card, and the run gets the answer and keeps the diff (D141)', async () => {
+  const diff = { type: /** @type {const} */ ('diff'), path: 'a.txt', oldText: 'one', newText: 'two' }
+  /** @type {any[]} */
+  const answers = []
+  const changeTool = {
+    spec: { name: 'change', description: 'change a file', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('edit'),
+    title: () => 'Change a.txt',
+    check: async (/** @type {any} */ args) => (args.broken ? Promise.reject(new Error('no folder')) : { ask: !args.trusted, meta: { folder: 'Clients' }, content: [diff] }),
+    run: async (/** @type {any} */ args, /** @type {any} */ ctx) => {
+      if (args.broken) throw new Error('No folder is open.')
+      answers.push(ctx.answer)
+      ctx.content.push(diff)
+      return 'Changed a.txt.'
+    },
+  }
+  const cases = [
+    { args: {}, answer: 'allow_always', asked: 1, output: 'Changed a.txt.' },
+    { args: {}, answer: 'reject_once', asked: 1, output: 'The user declined this action.' },
+    { args: { trusted: true }, answer: 'reject_once', asked: 0, output: 'Changed a.txt.' },
+    { args: { broken: true }, answer: 'allow_once', asked: 0, output: 'Error: No folder is open.' },
+  ]
+  for (const { args, answer, asked, output } of cases) {
+    const call = { id: 'c', name: 'change', args }
+    const { stream, calls } = fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })], [done('end', { role: 'assistant', content: 'ok' })]])
+    /** @type {any[]} */
+    const cards = []
+    /** @type {any[]} */
+    const persisted = []
+    await runTurn({
+      brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [changeTool], stream: /** @type {any} */ (stream), rule: () => 'allow',
+      askPermission: async ({ toolCall }) => { cards.push(toolCall); return /** @type {any} */ (answer) }, persist: async (records) => { persisted.push(...records) },
+    })
+    assert.equal(calls[1].at(-1).content, output)
+    assert.equal(cards.length, asked)
+    if (asked) assert.deepEqual([cards[0].content, cards[0]._meta.folder], [[diff], 'Clients'])
+    const record = persisted.find((item) => item.update?.toolCallId === 'c').update
+    assert.deepEqual(record.content.map((/** @type {any} */ part) => part.type), output.startsWith('Changed') ? ['diff', 'content'] : ['content'])
+  }
+  assert.deepEqual(answers, ['allow_always', undefined])
+})
+
 test('loop: stops after maxSteps', async () => {
   const call = { id: 'x', name: 'read', args: { path: 'a' } }
   const step = [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })]

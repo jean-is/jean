@@ -66,6 +66,8 @@
   "knows.cloud": "Questo accompagna i tuoi messaggi verso il cervello che usi. Se quel cervello è nel cloud, lo riceve anche il suo fornitore.",
   "cap.memory.text": "{name} ricorda le cose durature che menzioni: preferenze, fatti, correzioni. Puoi vedere e cambiare tutto.",
   "cap.projects.text": "Tutto ciò a cui torni spesso ha una sua stanza: conversazioni, file, note e luce.",
+  "cap.folders.hint": "Trascina una cartella nella conversazione.",
+  "cap.folders.text": "Apre una conversazione o un progetto su una cartella di questo computer: {name} trova, legge e modifica i suoi file dove si trovano, e ti mostra prima ogni modifica.",
   "cap.skills.text": "Quando chiedi più volte lo stesso tipo di cosa, {name} può salvare il modo in cui si fa e rifarla allo stesso modo ogni volta.",
   "cap.routines.text": "Compiti da fare regolarmente, svolti da soli ogni giorno, settimana o mese: finché questa scheda è aperta, o appena torni.",
   "cap.python.text": "{name} può lavorare sui tuoi dati anche in Python, il linguaggio degli analisti, nello stesso ambiente isolato senza accesso a internet. Circa {size}, una volta sola.",

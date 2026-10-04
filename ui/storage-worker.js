@@ -3,12 +3,16 @@
 // Request { id, op, path, text, from } → { id, result } | { id, error: { name, message } }.
 // `text` is a Uint8Array for writeBytes; readBytes answers with one (its buffer transferred).
 // Paths arrive normalized (see core/fs.js); '' is the root and is only valid for list.
+// Started on a folder of the user's instead (`root`, D141), it works there in place: no .tmp copy,
+// which would show in the folder, and no word to Jean's tabs, whose files these aren't.
 
 const channel = new BroadcastChannel('app-fs')
 const encoder = new TextEncoder()
 /** @type {Promise<FileSystemDirectoryHandle>} */
-const rootPromise = Promise.resolve().then(() => navigator.storage.getDirectory())
+let rootPromise = Promise.resolve().then(() => navigator.storage.getDirectory())
 rootPromise.catch(() => {}) // surfaced by ping and every op
+/** Whether it works in a folder of the user's. */
+let direct = false
 
 /** @param {any} err */
 const isMissing = (err) => err?.name === 'NotFoundError' || err?.name === 'TypeMismatchError'
@@ -42,7 +46,7 @@ async function fileHandle(path, create) {
  * @returns {Promise<T>}
  */
 function locked(path, mode, fn) {
-  return navigator.locks ? navigator.locks.request('app-fs:' + path, { mode }, /** @type {any} */ (fn)) : fn()
+  return navigator.locks ? navigator.locks.request((direct ? 'app-folder:' : 'app-fs:') + path, { mode }, /** @type {any} */ (fn)) : fn()
 }
 
 /** @param {string} path @returns {Promise<File|null>} */
@@ -68,7 +72,8 @@ async function readBytes(path) {
 
 /**
  * Sync access handles work from Safari 16.4 (whose methods became synchronous then; `await`
- * also copes with the older promise-returning ones). createWritable is the fallback.
+ * also copes with the older promise-returning ones). createWritable is the fallback, and the way
+ * in a folder of the user's, which has no sync access handles; it swaps the file in when done.
  * @param {string} path
  * @param {Uint8Array} bytes
  * @param {boolean} append
@@ -76,7 +81,7 @@ async function readBytes(path) {
 async function writeBytes(path, bytes, append) {
   /** @type {any} */
   const handle = await fileHandle(path, true)
-  if (typeof handle.createSyncAccessHandle === 'function') {
+  if (!direct && typeof handle.createSyncAccessHandle === 'function') {
     const access = await handle.createSyncAccessHandle()
     try {
       if (!append) await access.truncate(0)
@@ -121,7 +126,8 @@ async function list(dir) {
   /** @type {{ name: string, kind: 'file'|'directory' }[]} */
   const entries = []
   for await (const entry of handle.values()) {
-    if (!entry.name.endsWith('.tmp')) entries.push({ name: entry.name, kind: entry.kind })
+    // A file being written in a folder of the user's has a swap file beside it meanwhile.
+    if (!entry.name.endsWith(direct ? '.crswap' : '.tmp')) entries.push({ name: entry.name, kind: entry.kind })
   }
   return entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
 }
@@ -152,6 +158,7 @@ async function exists(path) {
  */
 function replace(path, bytes) {
   return locked(path, 'exclusive', async () => {
+    if (direct) return writeBytes(path, bytes, false)
     await writeBytes(path + '.tmp', bytes, false)
     await writeBytes(path, bytes, false)
     await removeEntry(path + '.tmp')
@@ -164,17 +171,26 @@ const ops = {
     await rootPromise
     return true
   },
+  root: async (_, handle) => {
+    rootPromise = Promise.resolve(handle)
+    direct = true
+    return true
+  },
+  stat: async (path) => {
+    const file = await readFile(path)
+    return file && { size: file.size, lastModified: file.lastModified }
+  },
   // A crash between truncating the target and writing it leaves it empty: fall back to the tmp copy.
   read: (path) =>
     locked(path, 'shared', async () => {
       const text = await readText(path)
-      if (text) return text
+      if (text || direct) return text
       return (await readText(path + '.tmp')) ?? text
     }),
   readBytes: (path) =>
     locked(path, 'shared', async () => {
       const bytes = await readBytes(path)
-      if (bytes?.length) return bytes
+      if (bytes?.length || direct) return bytes
       return (await readBytes(path + '.tmp')) ?? bytes
     }),
   write: (path, text) => replace(path, encoder.encode(text)),
@@ -184,7 +200,7 @@ const ops = {
   remove: (path) =>
     locked(path, 'exclusive', async () => {
       await removeEntry(path)
-      await removeEntry(path + '.tmp')
+      if (!direct) await removeEntry(path + '.tmp')
     }),
   list,
   exists,
@@ -197,7 +213,7 @@ self.onmessage = async ({ data }) => {
   try {
     if (!Object.hasOwn(ops, op)) throw new TypeError(`Unknown storage op: ${op}`)
     const result = await ops[op](path, text)
-    if (MUTATIONS.includes(op)) channel.postMessage({ path, from })
+    if (MUTATIONS.includes(op) && !direct) channel.postMessage({ path, from })
     self.postMessage({ id, result }, result instanceof Uint8Array ? [result.buffer] : [])
   } catch (err) {
     const { name = 'Error', message = String(err) } = /** @type {any} */ (err) ?? {}

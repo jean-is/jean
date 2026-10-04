@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = new URL('../../', import.meta.url)
 const DIRS = ['core', 'ui', 'caps']
-/** Capabilities that bring their own part of the catalogue, locales/<id>/, loaded with them (D140, D146). */
-export const PARTS = ['browser', 'ask']
+/** Capabilities that bring their own part of the catalogue, locales/<id>/, loaded with them (D140, D146, D141). */
+export const PARTS = ['browser', 'ask', 'folders']
 
 /** Every module of Jean's, with its text. @returns {Promise<Record<string, string>>} */
 export async function sources() {

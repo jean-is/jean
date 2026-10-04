@@ -68,6 +68,8 @@
   "knows.cloud": "To trafia razem z twoimi wiadomościami do mózgu, którego używasz. Jeśli ten mózg jest w chmurze, otrzymuje to też jego dostawca.",
   "cap.memory.text": "{name} zapamiętuje trwałe rzeczy, o których wspominasz: preferencje, fakty, poprawki. Wszystko możesz zobaczyć i zmienić.",
   "cap.projects.text": "Wszystko, do czego często wracasz, dostaje własny pokój: rozmowy, pliki, notatki i światło.",
+  "cap.folders.hint": "Upuść folder na rozmowę.",
+  "cap.folders.text": "Otwiera rozmowę lub projekt w folderze tego komputera: {name} znajduje, czyta i zmienia jego pliki tam, gdzie są, i najpierw pokazuje ci każdą zmianę.",
   "cap.skills.text": "Gdy prosisz wciąż o to samo, {name} może zapisać, jak to się robi, i za każdym razem robić to tak samo.",
   "cap.routines.text": "Zadania, które mają być wykonywane regularnie, same, co dzień, co tydzień lub co miesiąc: gdy ta karta jest otwarta albo zaraz po twoim powrocie.",
   "cap.python.text": "{name} może też pracować na twoich danych w Pythonie, języku analityków, w tej samej piaskownicy bez dostępu do internetu. Około {size}, jednorazowo.",

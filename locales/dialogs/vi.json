@@ -62,6 +62,8 @@
   "knows.cloud": "Nội dung này được gửi kèm tin nhắn của bạn tới bộ não bạn dùng. Nếu bộ não đó ở trên đám mây, nhà cung cấp của nó cũng nhận được.",
   "cap.memory.text": "{name} ghi nhớ những điều lâu dài bạn nhắc đến: sở thích, sự thật, chỉnh sửa. Bạn có thể xem và thay đổi tất cả.",
   "cap.projects.text": "Mọi thứ bạn hay quay lại đều có căn phòng riêng: cuộc trò chuyện, tệp, ghi chú và ánh sáng riêng.",
+  "cap.folders.hint": "Thả một thư mục vào cuộc trò chuyện.",
+  "cap.folders.text": "Mở một cuộc trò chuyện hoặc dự án trên một thư mục của máy tính này: {name} tìm, đọc và sửa các tệp của nó ngay tại chỗ, và cho bạn xem trước mọi thay đổi.",
   "cap.skills.text": "Khi bạn yêu cầu cùng một loại việc nhiều lần, {name} có thể lưu cách làm và làm theo đúng cách đó mỗi lần.",
   "cap.routines.text": "Những việc bạn muốn làm đều đặn, tự làm mỗi ngày, mỗi tuần hoặc mỗi tháng: khi thẻ này đang mở, hoặc ngay khi bạn quay lại.",
   "cap.python.text": "{name} cũng có thể xử lý dữ liệu của bạn bằng Python, ngôn ngữ của các nhà phân tích, trong cùng hộp cát không có internet. Khoảng {size}, một lần.",

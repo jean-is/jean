@@ -3,7 +3,7 @@
 // Pictures have no text: brains that can see are shown them. Adds the `read` tool for pages
 // that didn't fit in the message.
 import { effect } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { register, loaded } from '../../ui/caps.js'
 import { app, currentFiles, warm, notify } from '../../ui/state.js'
 import { rememberText } from '../../ui/send.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
@@ -20,9 +20,9 @@ const find = (args, signal) => {
   return currentFiles(signal).findLast((link) => link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted)
 }
 
-/** A shared file's whole text, for scripts (codemode): never declared to the brain. @type {import('../../core/loop.js').Tool} */
+/** A shared file's whole text, or a file's in the conversation's folder (D141), for scripts (codemode): never declared to the brain. @type {import('../../core/loop.js').Tool} */
 const fileTool = {
-  spec: { name: 'file', description: 'The whole text of a shared file.', parameters: { type: 'object', properties: { file: { type: 'string' } }, required: ['file'] } },
+  spec: { name: 'file', description: 'The whole text of a shared file, or of a file in the folder by its path.', parameters: { type: 'object', properties: { file: { type: 'string' } }, required: ['file'] } },
   kind: 'read',
   hidden: true,
   title: (args) => `Read ${args?.file ?? ''}`,
@@ -32,6 +32,8 @@ const fileTool = {
   },
   run: async (args, ctx) => {
     const link = find(args, ctx.signal)
+    const inFolder = !link && loaded.value.has('folders') ? await (await import('../folders/folders.js')).scriptFile(String(args?.file ?? ''), ctx) : null
+    if (inFolder !== null) return inFolder
     if (!link) throw new Error(`No file named "${args?.file}". Files: ${currentFiles(ctx.signal).map((f) => f.name).join(', ') || 'none'}.`)
     const text = await fileText(app.fs, app.projectDir, link.uri)
     if (text === null) throw new Error(`"${link.name}" is no longer available.`)

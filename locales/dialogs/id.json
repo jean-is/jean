@@ -62,6 +62,8 @@
   "knows.cloud": "Ini ikut terkirim bersama pesan Anda ke otak yang Anda gunakan. Jika otak itu ada di cloud, penyedianya juga menerimanya.",
   "cap.memory.text": "{name} mengingat hal-hal yang bertahan lama yang Anda sebutkan: preferensi, fakta, koreksi. Anda bisa melihat dan mengubah semuanya.",
   "cap.projects.text": "Semua yang sering Anda kunjungi lagi mendapat ruangnya sendiri: percakapan, file, catatan, dan cahayanya.",
+  "cap.folders.hint": "Letakkan sebuah folder di percakapan.",
+  "cap.folders.text": "Membuka percakapan atau proyek pada folder di komputer ini: {name} mencari, membaca, dan mengubah file-nya di tempatnya, dan menunjukkan setiap perubahan kepada Anda lebih dulu.",
   "cap.skills.text": "Saat Anda meminta hal yang sama berulang kali, {name} bisa menyimpan cara mengerjakannya dan melakukannya dengan cara yang sama setiap kali.",
   "cap.routines.text": "Tugas yang ingin dikerjakan secara rutin, dikerjakan sendiri setiap hari, minggu, atau bulan: selama tab ini terbuka, atau begitu Anda kembali.",
   "cap.python.text": "{name} juga bisa mengolah data Anda dengan Python, bahasa para analis, di sandbox yang sama tanpa akses internet. Sekitar {size}, sekali saja.",

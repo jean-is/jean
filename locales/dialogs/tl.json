@@ -64,6 +64,8 @@
   "knows.cloud": "Kasama itong ipinapadala ng mga mensahe mo sa utak na ginagamit mo. Kung nasa cloud ang utak na iyon, natatanggap din ito ng provider nito.",
   "cap.memory.text": "Tinatandaan ng {name} ang mga pangmatagalang bagay na binabanggit mo: mga gusto, katotohanan, pagwawasto. Makikita at mababago mo ang lahat.",
   "cap.projects.text": "Lahat ng madalas mong balikan ay may sariling kuwarto: mga usapan, file, tala at liwanag.",
+  "cap.folders.hint": "Mag-drop ng folder sa usapan.",
+  "cap.folders.text": "Binubuksan ang isang usapan o proyekto sa isang folder ng computer na ito: hinahanap, binabasa at binabago ni {name} ang mga file nito kung nasaan sila, at ipinapakita muna sa iyo ang bawat pagbabago.",
   "cap.skills.text": "Kapag paulit-ulit kang humihingi ng parehong uri ng bagay, puwedeng i-save ng {name} kung paano ito ginagawa at gawin ito nang pareho sa bawat pagkakataon.",
   "cap.routines.text": "Mga gawaing gusto mong gawin nang regular, kusang ginagawa araw-araw, linggo-linggo o buwan-buwan: habang bukas ang tab na ito, o pagbalik mo.",
   "cap.python.text": "Kaya rin ng {name} na gamitin ang Python, ang wika ng mga analyst, sa data mo, sa parehong sandbox na walang internet. Mga {size}, isang beses lang.",

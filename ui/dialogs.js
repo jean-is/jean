@@ -571,7 +571,7 @@ class Settings extends Element {
 // circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', skills: 'scroll', routines: 'alarm', python: 'code',
+  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm', python: 'code',
   search: 'globe', browser: 'window', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
@@ -579,6 +579,7 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
   connections: () => openSettings('connections'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
+  folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */

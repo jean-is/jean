@@ -75,12 +75,21 @@ const decoder = new TextDecoder()
 export function memoryFS(initial = {}) {
   /** @type {Map<string, string | Uint8Array>} */
   const files = new Map()
+  // When each file last changed: always later than before, even within a millisecond.
+  /** @type {Map<string, number>} */
+  const changed = new Map()
+  let clock = 0
+  /** @param {string} key @param {string | Uint8Array} value */
+  const put = (key, value) => {
+    files.set(key, value)
+    changed.set(key, (clock = Math.max(clock + 1, Date.now())))
+  }
   /** @param {string} key */
   const text = (key) => {
     const value = files.get(key)
     return value === undefined ? null : typeof value === 'string' ? value : decoder.decode(value)
   }
-  for (const [path, value] of Object.entries(initial)) files.set(normalizePath(path), value)
+  for (const [path, value] of Object.entries(initial)) put(normalizePath(path), value)
 
   /** @param {string} path */
   const isDir = (path) => {
@@ -108,19 +117,19 @@ export function memoryFS(initial = {}) {
       const key = normalizePath(path)
       assertText(value)
       assertWritable(key)
-      files.set(key, value)
+      put(key, value)
     },
     async writeBytes(path, bytes) {
       const key = normalizePath(path)
       assertBytes(bytes)
       assertWritable(key)
-      files.set(key, bytes.slice())
+      put(key, bytes.slice())
     },
     async append(path, value) {
       const key = normalizePath(path)
       assertText(value)
       assertWritable(key)
-      files.set(key, (text(key) ?? '') + value)
+      put(key, (text(key) ?? '') + value)
     },
     async list(dir) {
       const normalized = normalizeDir(dir)
@@ -143,6 +152,11 @@ export function memoryFS(initial = {}) {
     async exists(path) {
       const key = normalizePath(path)
       return files.has(key) || isDir(key)
+    },
+    async stat(path) {
+      const key = normalizePath(path)
+      const value = files.get(key)
+      return value === undefined ? null : { size: typeof value === 'string' ? encoder.encode(value).length : value.length, lastModified: changed.get(key) ?? 0 }
     },
     watch: () => () => {},
     async estimate() {

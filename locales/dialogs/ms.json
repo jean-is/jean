@@ -62,6 +62,8 @@
   "knows.cloud": "Ini dihantar bersama mesej anda kepada otak yang anda gunakan. Jika otak itu berada di awan, penyedianya turut menerimanya.",
   "cap.memory.text": "{name} mengingati perkara berkekalan yang anda sebut: pilihan, fakta, pembetulan. Anda boleh melihat dan mengubah semuanya.",
   "cap.projects.text": "Apa sahaja yang anda kerap kembali kepadanya mendapat biliknya sendiri: perbualan, fail, nota dan cahayanya.",
+  "cap.folders.hint": "Lepaskan folder pada perbualan.",
+  "cap.folders.text": "Membuka perbualan atau projek pada folder komputer ini: {name} mencari, membaca dan mengubah failnya di tempatnya, dan menunjukkan setiap perubahan kepada anda dahulu.",
   "cap.skills.text": "Apabila anda meminta perkara yang sama berulang kali, {name} boleh menyimpan cara melakukannya dan melakukannya dengan cara yang sama setiap kali.",
   "cap.routines.text": "Tugas yang anda mahu dibuat dengan kerap, dibuat sendiri setiap hari, minggu atau bulan: selagi tab ini terbuka, atau sebaik sahaja anda kembali.",
   "cap.python.text": "{name} juga boleh mengolah data anda dalam Python, bahasa para penganalisis, dalam kotak pasir yang sama tanpa akses internet. Kira-kira {size}, sekali sahaja.",

@@ -28,6 +28,8 @@ const DEFAULT_CONTEXT = 128000
 const READING = new Set(['read', 'search', 'fetch', 'think', 'execute'])
 // Anthropic's default cache lifetime is 5 minutes (D49).
 const CACHE_TTL_MS = 5 * 60_000
+// Work in a folder takes more steps than a turn's usual 12 (D141).
+const FOLDER_STEPS = 40
 
 // ─── Files ───────────────────────────────────────────────────────────────────
 
@@ -121,13 +123,21 @@ function queue(decision) {
 /** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @param {AbortSignal} [signal] @returns {Promise<Answer[] | null>} */
 export const askUser = (questions, from, signal) => queue({ questions, from, conversation: conversationOf(signal)?.path })
 
-/** An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then follow. @param {ToolCallInfo} toolCall @param {string} conversation */
+/**
+ * An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then
+ * follow. In the user's folder, "Always allow" holds for that folder only, which its tool keeps (D141).
+ * @param {ToolCallInfo} toolCall @param {string} conversation
+ */
 async function approve(toolCall, conversation) {
   const option = /** @type {PermissionOption} */ (await queue({ toolCall, conversation }))
-  const rule = ruleFromPermission(option)
+  const folder = toolCall._meta?.folder
+  if (folder && option === 'allow_always') {
+    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.name === toolCall.name && other.toolCall._meta?.folder === folder) other.resolve('allow_once')
+  }
+  const rule = folder ? null : ruleFromPermission(option)
   if (rule && toolCall.kind) {
     await setRule(toolCall.kind, rule)
-    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')
+    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind && !other.toolCall._meta?.folder) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')
   }
   return option
 }
@@ -248,6 +258,8 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
   if (!current) {
     const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
     current = { id: created.id, path: created.path, records: [] }
+    // What it keeps from the start, like the folder it starts on (D149).
+    await Promise.all([...loaded.value.values()].map((capability) => capability.started?.(created)))
   }
   await appendRecords(app.fs, current.path, added)
   // Listed at once, to come back to.
@@ -312,6 +324,7 @@ async function runAgent(conversation, brain, meta) {
       label: brainLabel(brain),
       meta,
       firstSource: nextSource(sent),
+      ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
       signal: run.controller.signal,
       rule: (kind, reserved) => (readOnly && !READING.has(kind) ? 'never' : resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved })),
       askPermission: (request) => approve(request.toolCall, path),

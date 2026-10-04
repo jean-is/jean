@@ -1,5 +1,6 @@
 // FS backed by the origin private file system. All I/O runs in ui/storage-worker.js,
-// which can use synchronous access handles; this module is a thin RPC client.
+// which can use synchronous access handles; this module is a thin RPC client. The same worker
+// works in a folder of the user's, on its handle (D141).
 
 import { normalizeDir, normalizePath } from '../core/fs.js'
 import { scriptURL } from './trusted.js'
@@ -30,14 +31,7 @@ export async function opfsFS({ workerURL = new URL('./storage-worker.js', import
     return null
   }
   return {
-    read: async (path) => call('read', normalizePath(path)),
-    readBytes: async (path) => call('readBytes', normalizePath(path)),
-    write: async (path, text) => call('write', normalizePath(path), assertText(text)),
-    writeBytes: async (path, bytes) => call('writeBytes', normalizePath(path), assertBytes(bytes)),
-    append: async (path, text) => call('append', normalizePath(path), assertText(text)),
-    list: async (dir) => call('list', normalizeDir(dir)),
-    remove: async (path) => call('remove', normalizePath(path)),
-    exists: async (path) => call('exists', normalizePath(path)),
+    ...files(call),
     watch(cb) {
       const channel = new BroadcastChannel('app-fs')
       channel.onmessage = ({ data }) => {
@@ -52,6 +46,32 @@ export async function opfsFS({ workerURL = new URL('./storage-worker.js', import
   }
 }
 
+/**
+ * FS on a folder of the user's (D141): the storage worker works there, in place. Nothing is probed,
+ * since nothing of Jean's is ever written into the folder.
+ * @param {FileSystemDirectoryHandle} handle @param {{ workerURL?: URL | string }} [options]
+ * @returns {Promise<FS & { close: () => void }>}
+ */
+export async function folderFS(handle, { workerURL = new URL('./storage-worker.js', import.meta.url) } = {}) {
+  const worker = new Worker(scriptURL(workerURL), { type: 'module' })
+  const call = rpc(worker, crypto.randomUUID())
+  await call('root', '', handle)
+  return { ...files(call), close: () => worker.terminate() }
+}
+
+/** @param {Call} call @returns {FS} */
+const files = (call) => ({
+  read: async (path) => call('read', normalizePath(path)),
+  readBytes: async (path) => call('readBytes', normalizePath(path)),
+  write: async (path, text) => call('write', normalizePath(path), assertText(text)),
+  writeBytes: async (path, bytes) => call('writeBytes', normalizePath(path), assertBytes(bytes)),
+  append: async (path, text) => call('append', normalizePath(path), assertText(text)),
+  list: async (dir) => call('list', normalizeDir(dir)),
+  remove: async (path) => call('remove', normalizePath(path)),
+  exists: async (path) => call('exists', normalizePath(path)),
+  stat: async (path) => call('stat', normalizePath(path)),
+})
+
 /** @param {unknown} text */
 function assertText(text) {
   if (typeof text !== 'string') throw new TypeError(`File content must be a string, got ${typeof text}`)
@@ -65,7 +85,7 @@ function assertBytes(bytes) {
 }
 
 /**
- * @typedef {(op: string, path?: string, text?: string | Uint8Array) => Promise<any>} Call
+ * @typedef {(op: string, path?: string, text?: string | Uint8Array | FileSystemDirectoryHandle) => Promise<any>} Call
  * @param {Worker} worker
  * @param {string} from this tab's client id, so watch() can skip our own changes
  * @returns {Call}

@@ -15,6 +15,7 @@ import { signal } from '@preact/signals-core'
  * @property {typeof import('../core/llm.js').streamChat} [stream]  a brain that runs here (the on-device brain)
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
  * @property {() => unknown} [panel]                      its section of Settings (connections)
+ * @property {(conversation: { id: string, path: string }) => Promise<void>} [started]  a conversation was just made by its first message (a folder it keeps, D149)
  */
 
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
@@ -40,6 +41,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   names: () => import('../caps/names/names.js'),
   browser: () => import('../caps/browser/browser.js'),
   ask: () => import('../caps/ask/ask.js'),
+  folders: () => import('../caps/folders/folders.js'),
 })
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */

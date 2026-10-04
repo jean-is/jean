@@ -16,8 +16,12 @@ import { signature } from './deferred.js'
  * @property {boolean} [deferred]   not declared when a conversation starts: found with find_tools (connections, D47)
  * @property {(args: any) => string} title
  * @property {(args: any) => import('./types.js').ToolCallLocation[]} [locations]
+ * @property {(args: any, ctx: ToolContext) => Promise<Check | void>} [check]
+ *   before a call the rules don't refuse: what its card shows, and whether to ask even if they allow it (a change in the user's folder, D141)
  * @property {(args: any, ctx: ToolContext) => Promise<string>} run
  */
+
+/** @typedef {{ ask?: boolean, meta?: Record<string, any>, content?: import('./types.js').ToolCallContent[] }} Check */
 
 /**
  * @typedef {Object} ToolContext
@@ -27,6 +31,8 @@ import { signature } from './deferred.js'
  * @property {(names: string[]) => void} declare                  declares tools from the next request on (D47)
  * @property {(sources: Source[]) => number[]} cite               numbers what the result brings in, as the brain cites it
  * @property {Record<string, any>} meta                           kept on the call's record (`_meta`), e.g. a picture it made
+ * @property {import('./types.js').ToolCallContent[]} content     kept on the call's record before its result, e.g. the diff of a change (D141)
+ * @property {PermissionOption} [answer]                          what the user answered, when the call was asked
  * @property {(child: Partial<TurnOptions>) => Promise<{ stopReason: string, text: string }>} turn
  *   a helper's turn: the same brain, rules and source numbers, its calls recorded under this one
  */
@@ -188,6 +194,7 @@ async function runTool(call, tool, step, ctx, parent) {
   const context = {
     signal,
     meta: {},
+    content: [],
     cite: (sources) => ctx.cite(sources, context.meta),
     declared: [...ctx.declared],
     call: async (name, args) => {
@@ -214,9 +221,12 @@ async function runTool(call, tool, step, ctx, parent) {
   else if (!parent && !ctx.declared.has(call.name) && lacking(tool, call.args).length) output = `It needs ${lacking(tool, call.args).join(', ')}. Call it like this:\n${signature(tool)}`
   else {
     let decision = rule(tool.kind, Boolean(tool.reserved))
-    if (decision === 'ask') {
-      const answer = await askPermission({ toolCall: info, step })
-      decision = answer.startsWith('allow') ? 'allow' : 'never'
+    // A check that fails asks nothing: the run says what is wrong.
+    const checked = decision === 'never' ? undefined : await tool.check?.(call.args, context).catch(() => undefined)
+    if (checked?.meta) info._meta = { ...info._meta, ...checked.meta }
+    if (decision === 'ask' || checked?.ask) {
+      context.answer = await askPermission({ toolCall: { ...info, ...(checked?.content && { content: checked.content }) }, step })
+      decision = context.answer.startsWith('allow') ? 'allow' : 'never'
     }
     if (decision === 'never') output = 'The user declined this action.'
     else {
@@ -235,7 +245,7 @@ async function runTool(call, tool, step, ctx, parent) {
     ...info,
     status: /** @type {'failed' | 'completed'} */ (failed ? 'failed' : 'completed'),
     rawOutput: output,
-    content: [{ type: /** @type {const} */ ('content'), content: { type: /** @type {const} */ ('text'), text: output } }],
+    content: [...(failed ? [] : context.content), { type: /** @type {const} */ ('content'), content: { type: /** @type {const} */ ('text'), text: output } }],
     ...((ms !== undefined || Object.keys(context.meta).length) && { _meta: { ...info._meta, ...context.meta, ms } }),
   }
   onUpdate({ sessionUpdate: 'tool_call_update', ...final }, step)

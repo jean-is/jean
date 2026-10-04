@@ -64,6 +64,8 @@
   "knows.cloud": "Hiki kinatumwa pamoja na ujumbe wako kwa ubongo unaotumia. Ubongo huo ukiwa wingu, mtoa huduma wake naye hukipokea.",
   "cap.memory.text": "{name} hukumbuka mambo ya kudumu unayotaja: unachopendelea, ukweli, masahihisho. Unaweza kuona na kubadilisha yote.",
   "cap.projects.text": "Kila jambo unalorudia mara kwa mara linapata chumba chake: mazungumzo, faili, maelezo na mwanga wake.",
+  "cap.folders.hint": "Dondosha folda kwenye mazungumzo.",
+  "cap.folders.text": "Hufungua mazungumzo au mradi kwenye folda ya kompyuta hii: {name} hutafuta, husoma na hubadilisha faili zake pale zilipo, na hukuonyesha kila badiliko kwanza.",
   "cap.skills.text": "Unapoomba jambo la aina moja tena na tena, {name} anaweza kuhifadhi jinsi linavyofanywa na kulifanya vivyo hivyo kila wakati.",
   "cap.routines.text": "Kazi unazotaka zifanywe mara kwa mara, zinazofanyika zenyewe kila siku, wiki au mwezi: kichupo hiki kikiwa wazi, au mara tu unaporudi.",
   "cap.python.text": "{name} anaweza pia kufanya kazi na data yako kwa Python, lugha ya wachambuzi, katika sanduku lilelile lisilo na intaneti. Takriban {size}, mara moja.",

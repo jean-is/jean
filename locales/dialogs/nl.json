@@ -64,6 +64,8 @@
   "knows.cloud": "Dit gaat mee met je berichten naar het brein dat je gebruikt. Staat dat brein in de cloud, dan krijgt de aanbieder het ook.",
   "cap.memory.text": "{name} onthoudt blijvende dingen die je noemt: voorkeuren, feiten, correcties. Je kunt alles zien en aanpassen.",
   "cap.projects.text": "Alles waar je steeds op terugkomt, krijgt een eigen kamer: gesprekken, bestanden, notities en licht.",
+  "cap.folders.hint": "Sleep een map naar het gesprek.",
+  "cap.folders.text": "Opent een gesprek of een project op een map van deze computer: {name} zoekt, leest en wijzigt de bestanden waar ze staan, en laat je elke wijziging eerst zien.",
   "cap.skills.text": "Als je steeds om hetzelfde soort ding vraagt, kan {name} vastleggen hoe het moet en het elke keer op dezelfde manier doen.",
   "cap.routines.text": "Taken die je regelmatig gedaan wilt hebben, vanzelf elke dag, week of maand: zolang dit tabblad open is, of zodra je terug bent.",
   "cap.python.text": "{name} kan ook met je gegevens werken in Python, de taal van analisten, in dezelfde sandbox zonder internettoegang. Ongeveer {size}, eenmalig.",

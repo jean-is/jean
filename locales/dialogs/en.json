@@ -64,6 +64,8 @@
   "knows.cloud": "This goes along with your messages to the brain you use. When that brain is in the cloud, its provider receives it too.",
   "cap.memory.text": "{name} remembers the lasting things you mention, like preferences, facts and corrections. You can see and change all of it.",
   "cap.projects.text": "Anything you keep coming back to gets its own room: its conversations, files, notes and light.",
+  "cap.folders.hint": "Drop a folder on the conversation.",
+  "cap.folders.text": "Opens a conversation or a project on a folder of this computer: {name} finds, reads and changes its files where they are, and shows you each change first.",
   "cap.skills.text": "When you ask for the same kind of thing again and again, {name} can save how it is done, and do it the same way every time.",
   "cap.routines.text": "Tasks you want done regularly, done on their own every day, week or month: while this tab is open, or as soon as you’re back.",
   "cap.python.text": "{name} can also work on your data in Python, the language analysts use, in the same sandbox with no internet access. About {size}, once.",

@@ -89,6 +89,8 @@ export interface FS {
   /** file or directory (recursive); no-op when missing */
   remove: (path: string) => Promise<void>
   exists: (path: string) => Promise<boolean>
+  /** a file's size and when it last changed, in ms; null when missing (a folder's, D141) */
+  stat?: (path: string) => Promise<{ size: number, lastModified: number } | null>
   /** changes made by other tabs; returns unsubscribe */
   watch?: (cb: (path: string) => void) => () => void
   estimate?: () => Promise<{ usage?: number, quota?: number, persisted?: boolean }>
@@ -107,7 +109,8 @@ export type ContentBlock = TextBlock | ResourceLink
 export type ToolKind = 'read' | 'edit' | 'delete' | 'move' | 'search' | 'execute' | 'think' | 'fetch' | 'switch_mode' | 'other'
 export type ToolStatus = 'pending' | 'in_progress' | 'completed' | 'failed'
 export type ToolCallLocation = { path: string, line?: number }
-export type ToolCallContent = { type: 'content', content: TextBlock }
+/** diff: a file changed in the user's folder (D141), as it was (null: made) and as it is now */
+export type ToolCallContent = { type: 'content', content: TextBlock } | { type: 'diff', path: string, oldText: string | null, newText: string }
 export type PlanEntry = { content: string, priority: 'high' | 'medium' | 'low', status: 'pending' | 'in_progress' | 'completed' }
 
 export interface ToolCallInfo {
@@ -143,13 +146,15 @@ export type SystemNoteData =
   | { kind: 'date', date: string }
   | { kind: 'tools', added: string[], deferred?: boolean }
   /** version: the section's fingerprint now, '' when it is empty */
-  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'page', version: string }
+  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'folder' | 'page', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
   /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due */
   | { kind: 'routine', routine: string, title: string, due: string }
   /** when requests like this one were made before, for a routine to fit the habit (D122) */
   | { kind: 'habit', at: string[] }
+  /** the user undid a change made in their folder, by its call (D141) */
+  | { kind: 'undone', call: string, path: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.
