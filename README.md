@@ -105,7 +105,7 @@ CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on 
 | [docs/product.md](docs/product.md) | The user, the vocabulary, progressive discovery, and how every feature behaves |
 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
 | [docs/design.md](docs/design.md) | The room that lights up, and the little light |
-| [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, and what the architecture allows later |
+| [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, what is open and what is enterprise, and what the architecture allows later |
 | [docs/roadmap.md](docs/roadmap.md) | Build order, what each version shipped, and what is still to check by hand |
 | [docs/decisions.md](docs/decisions.md) | Every decision, with the alternatives that were rejected |
 | [docs/open-questions.md](docs/open-questions.md) | What is still undecided |
@@ -115,4 +115,4 @@ Jean revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from 
 
 ## License
 
-[MIT](LICENSE)
+Jean is open source under the [MIT license](LICENSE). The enterprise integrations in [`ee/`](ee/) are under the [Elastic License 2.0](ee/LICENSE) and need a key. An [additional grant](ee/GRANT.md) makes them MIT if keys can't be bought for twelve months (D139).
