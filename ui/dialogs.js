@@ -247,6 +247,12 @@ const VERTEX_COMMAND = 'gcloud auth print-access-token'
 /** @param {string} href @param {string} text */
 const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.arrow}</a>`
 
+/** Copies the command, or, where the browser won't, selects it to copy by hand. @param {Event} event */
+function copyCommand(event) {
+  const code = /** @type {HTMLElement} */ (event.currentTarget).previousElementSibling
+  navigator.clipboard.writeText(VERTEX_COMMAND).then(() => notify(t('toast.copied')), () => code && getSelection()?.selectAllChildren(code))
+}
+
 /** How to get a key for the service picked, for whoever has none yet. @param {string} id */
 function keySteps(id) {
   if (id === 'vertex') {
@@ -255,7 +261,7 @@ function keySteps(id) {
       <li>${outside('https://shell.cloud.google.com/?show=terminal', t('brain.key.shell'))}</li>
       <li>${t('brain.key.type')}
         <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
-          @click=${() => navigator.clipboard.writeText(VERTEX_COMMAND).then(() => notify(t('toast.copied')), showError)}>${icons.copy}</button></span></li>
+          @click=${copyCommand}>${icons.copy}</button></span></li>
       <li>${t('brain.key.hour')}</li>
     </ol>`
   }
