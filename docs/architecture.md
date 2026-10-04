@@ -57,12 +57,12 @@
 ```
 index.html        CSP <meta>, light or dark (D85) and the look (D111) before the first paint, import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
-preview.html      an HTML file in the preview: a hash-allowed relay writes it in place of itself, under a policy that runs none of its scripts (D126)
+preview.html      an HTML file in the preview: a relay writes it in place of itself, under the policy Settings gives it, by default its own scripts and no network (D126, D143)
 manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but index.html's first-paint line
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
 core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js events.js i18n.js
-                  deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only; a module only one
+                  deferred.js search.js decide.js memory.js skills.js csp.js … types.d.ts   (standard web APIs only; a module only one
                   capability uses lives with it, D96)
 ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
                   discovery.js auto.js picker.js, dialogs.js (Settings, with the brains and the house in it, D113, D128, D134) and brains.js (loaded
@@ -281,15 +281,23 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
 - **How it gets them** (the 0.4 spike chose option (b), D80): the parent sends the files in, as for QuickJS, and the worker's `fetch` serves only those, under an address that never resolves; `connect-src 'none'` stays. Option (a), serving `vendor/pyodide/` with CORS to the sandbox, was not needed.
 - **Python's limits:** the standard library only (no package can be fetched); `import js` reaches an empty object; no cap on memory or computing time inside Pyodide (it would need a cross-origin isolated page), so the parent's 40 s watchdog stops a script that goes quiet; 60 s to start. `ui/sandbox.js` is the client both runtimes share.
 
-**The preview** (D126) shows an HTML file in `preview.html`, framed with `sandbox="allow-scripts"` only, so its origin is opaque, and given nothing but the page. A relay allowed by its hash writes the page in place of itself, and the page keeps that policy:
+**The preview** (D126) shows an HTML file in `preview.html`, framed with `sandbox="allow-scripts"` only, so its origin is opaque, and given nothing but the page and its policy. `preview.html`'s own policy is the most Settings can allow (D143):
 
 ```text
-default-src 'none'; script-src 'sha256-<relay>'; style-src 'unsafe-inline'; img-src data:; media-src data:; font-src data:;
-connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'
+default-src 'none'; script-src 'unsafe-inline' https:; style-src 'unsafe-inline' https:; img-src data: https:; media-src data: https:;
+font-src data: https:; connect-src https: http://localhost:* http://127.0.0.1:*; frame-src 'none'; base-uri 'none'; form-action 'none'
 ```
 
-- **Its styles apply; its scripts never run.** In a document, unlike the sandbox's worker, a script would have WebRTC, which no policy closes (Chromium and WebKit ignore `webrtc 'block'`).
-- **Nowhere to go.** No network, no form, no pop-up, and `index.html`'s `frame-src 'self'` refuses to take the frame to any other address; its links move only within the page. `test/html.test.js` checks the hash, the policy, `frame-src 'self'` and the frame's one sandbox flag.
+Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), writes a doctype, then the policy Jean sent as a `<meta>`, then the page. The page keeps the document's policy and adds that one, so it gets exactly what Settings allows. `core/csp.js` makes it from three switches in Approvals, which `pages` in `policy.json` can set and lock:
+
+| Switch | Default | Adds |
+|---|---|---|
+| Run its code | on | `script-src 'unsafe-inline'` |
+| Load things from the internet | off | `https:` for pictures, sounds, fonts, styles and, when they run, scripts |
+| Send and receive over the internet | off | `connect-src`: any https site (`*`), or only the sites listed under the switch, each added with Enter: `example.com`, `*.example.com`, `*.com`, and this computer over http (`localhost:3000`, `localhost:*`) |
+
+- **Its styles apply; its scripts run unless switched off.** In a document, unlike the sandbox's worker, a script has WebRTC, which no policy closes (Chromium and WebKit ignore `webrtc 'block'`): the risk D126 avoided, now accepted for pages that are charts and buttons (D143).
+- **Nowhere to go.** No network, no form, no pop-up, and `index.html`'s `frame-src 'self'` refuses to take the frame to any other address; its links move only within the page. `test/html.test.js` checks the policy each switch and list makes, which sites are taken as typed, that `preview.html`'s is the loosest, that the relay writes the policy before the page, `frame-src 'self'` and the frame's one sandbox flag.
 - **Everything else shows in Jean's own document,** from what Jean keeps: pictures as pictures (a drawing as an `<img>`, where its scripts never run), a PDF's pages drawn by pdf.js with the options it reads them with, and documents, spreadsheets and decks from their text, through lit-html.
 
 **The browser** (D140) frames other sites' pages in `caps/browser/browser.html`, a document with no script, whose policy alone lets a frame show another site, so `index.html` keeps `frame-src 'self'`:

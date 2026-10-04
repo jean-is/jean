@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { sources } from './fixtures/keys.js'
+import { pageRights, pagePolicy, site } from '../core/csp.js'
 
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8')
 const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? ''
@@ -77,13 +78,41 @@ test('the Python sandbox has the same relay and no network; eval is allowed ther
 const preview = await readFile(new URL('../preview.html', import.meta.url), 'utf8')
 const previewCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(preview)?.[1] ?? ''
 
-test('the preview shows a page without running its scripts, and with nothing to reach (D126)', () => {
-  const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
-  const hash = createHash('sha256').update(relay).digest('base64')
-  assert.ok(previewCSP.includes(`script-src 'sha256-${hash}';`), `the relay alone: update the preview's script-src hash to 'sha256-${hash}'`)
-  for (const directive of ["default-src 'none'", "connect-src 'none'", "frame-src 'none'", "base-uri 'none'", "form-action 'none'"]) assert.ok(previewCSP.includes(directive), directive)
-  assert.ok(!/'self'|https?:|\*|blob:|unsafe-eval/.test(previewCSP), 'nothing to load from anywhere')
+test('a page runs its own scripts by default, and reaches nothing unless Settings or policy lets it (D143)', () => {
+  const { allows, locked } = pageRights({})
+  assert.deepEqual(allows, { scripts: true, web: false, network: false })
+  assert.equal(locked.size, 0)
+  const policy = pagePolicy(allows)
+  for (const directive of ["default-src 'none'", "script-src 'unsafe-inline';", "connect-src 'none'", "frame-src 'none'", "base-uri 'none'", "form-action 'none'"]) assert.ok(policy.includes(directive), directive)
+  assert.ok(!/'self'|https?:|\*|blob:|unsafe-eval|sha256-|nonce-/.test(policy), 'nothing to load from anywhere, and no hash, which would turn unsafe-inline off')
+  assert.match(pagePolicy({ scripts: false, web: true, network: true }), /script-src 'none';.*img-src data: https:;/, 'no script runs, not even from the web')
+  assert.match(pagePolicy({ scripts: true, web: false, network: true }), /script-src 'unsafe-inline';.*connect-src https:;/)
+  // The user's choice, then the organisation's, which is locked.
+  const set = pageRights({ pages: { web: true, scripts: false, sites: ['a.example'] } }, { pages: { scripts: true, sites: ['corp.example'] } })
+  assert.deepEqual(set.allows, { scripts: true, web: true, network: false })
+  assert.deepEqual(set.sites, ['corp.example'])
+  assert.deepEqual([...set.locked], ['scripts', 'sites'])
+})
+
+test('a page reaches any site, or only those listed, as typed or pasted (D143)', () => {
+  for (const [typed, normal] of [['*', '*'], [' API.Example.com ', 'api.example.com'], ['*.example.org', '*.example.org'],
+    ['https://example.com:8443/path?q', 'example.com:8443'], ['café.fr', 'xn--caf-dma.fr'], ['*.com', '*.com'], ['example.com:*', 'example.com:*'],
+    ['localhost:3000', 'localhost:3000'], ['localhost:*', 'localhost:*'], ['http://localhost:3000/app', 'localhost:3000'], ['127.0.0.1:8080', '127.0.0.1:8080'], ['localhost', 'localhost']]) assert.equal(site(typed), normal, typed)
+  for (const typed of ['', 'example', 'com', '*.', 'localhost:3000:*', 'ftp://localhost', 'http://example.com', 'wss://example.com', 'ex*ample.com', 'a b.com', 'user@example.com', "x.com; script-src *"]) assert.equal(site(typed), null, typed)
+  const on = { scripts: true, web: false, network: true }
+  assert.match(pagePolicy(on), /connect-src https:;/, 'any site by default')
+  assert.match(pagePolicy(on, ['api.example.com', '*.example.org']), /connect-src https:\/\/api\.example\.com https:\/\/\*\.example\.org;/)
+  assert.match(pagePolicy(on, ['x.com; script-src *']), /connect-src 'none';/, 'a list with nothing valid in it reaches nothing')
+  assert.match(pagePolicy(on, ['localhost:3000', '127.0.0.1:*']), /connect-src http:\/\/localhost:3000 http:\/\/127\.0\.0\.1:\*;/, 'this computer over http, which covers https')
+  assert.match(pagePolicy({ ...on, network: false }, ['api.example.com']), /connect-src 'none';/)
+})
+
+test('the preview frame allows at most what Settings can, and its relay writes the policy first (D126, D143)', () => {
+  assert.equal(previewCSP, pagePolicy({ scripts: true, web: true, network: true }, ['*', 'localhost:*', '127.0.0.1:*']), "preview.html's policy is the loosest a page can be given")
   assert.ok(preview.indexOf('Content-Security-Policy') < preview.indexOf('<script'))
+  const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
+  assert.ok(relay.indexOf('http-equiv="Content-Security-Policy"') < relay.indexOf('document.write(data.page)'), "the page's policy, before the page")
+  assert.match(relay, /typeof data\?\.policy !== 'string'/, 'no page without its policy')
   // What keeps the frame from being taken elsewhere is the page around it.
   assert.ok(csp.includes("frame-src 'self'"), "index.html's frame-src stays 'self'")
 })

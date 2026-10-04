@@ -1,17 +1,18 @@
 // The preview (D126): a file Jean made or the user shared, seen beside the conversation, or over
 // it on a narrow screen, with a button to save it. Each kind shows as what it is: a picture or a
-// drawing as a picture; a web page in a frame where its scripts run without any network
-// (preview.html); a PDF's pages drawn by pdf.js; a document on a sheet; a spreadsheet as a grid;
-// a deck as its slides' text. A file being changed shows its new version as it comes. Loaded the
-// first time a file is opened, with its style sheet.
+// drawing as a picture; a web page in a frame of its own (preview.html), doing what Settings lets
+// it (D143), by default running its scripts without any network; a PDF's pages drawn by pdf.js; a
+// document on a sheet; a spreadsheet as a grid; a deck as its slides' text. A file being changed
+// shows its new version as it comes. Loaded the first time a file is opened, with its style sheet.
 import { html, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
+import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, notify } from './state.js'
+import { app, effective, notify } from './state.js'
 import { save } from './save.js'
 import { markdown } from './markdown.js'
 import { icons } from './icons.js'
 import { fileMeta, fileText, splitPages } from '../core/files.js'
+import { pageRights, pagePolicy } from '../core/csp.js'
 import { t } from '../core/i18n.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string }} Shown */
@@ -33,6 +34,12 @@ const view = signal(/** @type {unknown} */ (nothing))
 const WIDE = matchMedia('(min-width: 60rem)')
 const wide = signal(WIDE.matches)
 WIDE.addEventListener('change', () => { wide.value = WIDE.matches })
+
+// What a web page may do, as Settings and policy have it (D143).
+const policy = computed(() => {
+  const { allows, sites } = pageRights(effective.value.settings, app.policy)
+  return pagePolicy(allows, sites)
+})
 
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
@@ -78,16 +85,18 @@ async function download(file) {
   else notify(t('files.missing', { name: file.name }))
 }
 
-// What the file shows as, read again when another file (or a new version) is shown. What a view
-// holds on to (a picture's address, a PDF) is let go with it, or at once if it came too late.
+// What the file shows as, read again when another file (or a new version) is shown, or when what
+// a web page may do changes. What a view holds on to (a picture's address, a PDF) is let go with
+// it, or at once if it came too late.
 effect(() => {
   const file = shown.value
+  const rules = policy.value
   /** @type {(() => void)[]} */
   const holds = []
   const release = () => { for (const run of holds.splice(0)) run() }
   view.value = nothing
   if (file) {
-    show(file, holds).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
+    show(file, holds, rules).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
       if (shown.peek() !== file) release()
       else if (template === null) close()
       else view.value = template
@@ -112,10 +121,10 @@ effect(() => {
 })
 
 /**
- * @param {Shown} file @param {(() => void)[]} holds
+ * @param {Shown} file @param {(() => void)[]} holds @param {string} rules a web page's policy
  * @returns {Promise<unknown>} null when the file is no longer there, or can't be read
  */
-async function show(file, holds) {
+async function show(file, holds, rules) {
   const dir = app.project.peek().dir
   const bytes = await app.fs.readBytes(`${dir}/${file.uri}`)
   if (!bytes) {
@@ -128,7 +137,7 @@ async function show(file, holds) {
     holds.push(() => URL.revokeObjectURL(url))
     return html`<img class="preview-picture" src=${url} alt=${file.name}>`
   }
-  if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), file.name)
+  if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), file.name, rules)
   if (ext === 'pdf') {
     try {
       return await pdf(bytes, holds)
@@ -157,11 +166,11 @@ function slide(text) {
 
 /**
  * A web page, in a frame of its own: an opaque origin (scripts, never with allow-same-origin)
- * whose policy lets nothing in or out. The page goes in once, when the frame is ready.
- * @param {string} source @param {string} name
+ * whose relay writes the policy ahead of the page. Both go in once, when the frame is ready.
+ * @param {string} source @param {string} name @param {string} policy
  */
-function frame(source, name) {
-  const send = { once: true, handleEvent: (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage(source, '*') }
+function frame(source, name, policy) {
+  const send = { once: true, handleEvent: (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage({ page: source, policy }, '*') }
   return html`<iframe class="preview-frame" sandbox="allow-scripts" src=${FRAME} title=${name} @load=${send}></iframe>`
 }
 
