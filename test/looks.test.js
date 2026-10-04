@@ -74,11 +74,12 @@ for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
   })
 }
 
+// Its name is in the room's catalogue, for the user's menu too (D153); its sentence in the dialogs'.
 test('every look has a name, a sentence and a thumbnail in Settings', async () => {
-  const strings = JSON.parse(await readFile(new URL('../locales/dialogs/en.json', import.meta.url), 'utf8'))
+  const [room, dialogs] = await Promise.all(['../locales/en.json', '../locales/dialogs/en.json'].map(async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8'))))
   const sheet = await readFile(new URL('../ui/dialogs.css', import.meta.url), 'utf8')
   for (const id of Object.keys(LOOKS)) {
-    assert.ok(strings[`look.${id}`] && strings[`look.${id}.text`], id)
+    assert.ok(room[`look.${id}.name`] && dialogs[`look.${id}.text`], id)
     assert.ok(sheet.includes(`[data-look-preview='${id}'] {`) && sheet.includes(`[data-theme='light'] [data-look-preview='${id}'] {`), id)
   }
 })

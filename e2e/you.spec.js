@@ -1,23 +1,43 @@
 // The user at the foot of the conversations (D150): "You" until their name is known, opening a
-// menu above them with Settings, About you, the language, dark mode, what Jean can do and the
-// manifesto. Jean notes the name the user gives for themselves in a conversation, while they
-// have never set one, and says so with an Undo; they change it in About you.
+// menu above them with Settings, About you, the language, the theme, dark mode, what Jean can do
+// and the manifesto. A language or a theme picked there applies and the menu stays on its page,
+// following the foot between Mail's list and the drawer (D153). Jean notes the name the user
+// gives for themselves in a conversation, while they have never set one, and says so with an
+// Undo; they change it in About you. A long title stays inside the list.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openProfile, openSettings } from './helpers.js'
 
 /** What settings.json holds for the name. @param {import('@playwright/test').Page} page */
 const savedName = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').name)
 
-test('the user’s menu changes the language and the mode, and opens Settings', async ({ page }) => {
+test('the user’s menu changes the theme, the language and the mode, staying open, and opens Settings', async ({ page }) => {
   await start(page)
   await expect(page.locator('app-history .profile-name')).toHaveText('You')
+  // A theme with a list beside the conversation takes the foot, and the menu, there; one without brings them back.
   const menu = await openProfile(page)
-  await menu.locator('.submenu').click()
-  // The languages, the current one first among the browser's, with the keyboard on it.
-  await expect(menu.locator('button[lang="en"]')).toBeFocused()
-  await menu.locator('button[lang="fr"]').click()
+  await menu.locator('[data-page="looks"]').click()
+  await expect(menu.locator('[aria-current="true"]')).toBeFocused()
+  await menu.locator('button', { hasText: /^Mail$/ }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
+  const list = page.locator('#profile-list:popover-open')
+  await expect(list.locator('[aria-current="true"]')).toHaveText('Mail')
+  await expect(page.locator('app-history dialog[open]')).toHaveCount(0)
+  await list.locator('button', { hasText: /^Room$/ }).click()
+  await expect(page.locator('html')).not.toHaveAttribute('data-look', 'mail')
+  await expect(page.locator('#profile-drawer:popover-open [aria-current="true"]')).toHaveText('Room')
+  await page.locator('#profile-drawer .back').click()
+
+  // The languages, the current one first among the browser's, with the keyboard on it; one picked
+  // shows at once, and the page stays.
+  const languages = page.locator('#profile-drawer:popover-open')
+  await languages.locator('[data-page="languages"]').click()
+  await expect(languages.locator('button[lang="en"]')).toBeFocused()
+  await languages.locator('button[lang="fr"]').click()
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
-  await expect(menu).toBeHidden()
+  await expect(languages.locator('.back')).toHaveText('Langue')
+  await expect(languages.locator('button[lang="fr"]')).toHaveAttribute('aria-current', 'true')
+  await page.keyboard.press('Escape')
+  await expect(languages).toBeHidden()
   await expect(page.locator('app-history .profile-name')).toHaveText('Vous')
 
   const again = await openProfile(page)
@@ -56,4 +76,16 @@ test('Jean notes the name the user gives, once, and the user changes it in About
   await expect.poll(() => savedName(page)).toBe('Mia')
   await page.keyboard.press('Escape')
   await expect(page.locator('app-history .profile-name')).toHaveText('Mia')
+
+  // A title longer than the list ends in an ellipsis, inside it.
+  await page.evaluate(async () => {
+    const [{ app, refreshConversations }, { appendRecords }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    await appendRecords(app.fs, app.conversations.value[0].path, [metaRecord(app.deviceId, { title: 'A plan for the week, day by day, with every meeting and every errand' })])
+    await refreshConversations()
+  })
+  await page.locator('.bar > .icon-button').first().click()
+  const row = page.locator('app-history dialog[open] .history-list li').first()
+  await expect(row).toContainText('A plan for the week')
+  const [listWidth, rowWidth] = await row.evaluate((li) => [/** @type {HTMLElement} */ (li.parentElement).getBoundingClientRect().width, li.getBoundingClientRect().width])
+  expect(rowWidth).toBeLessThanOrEqual(listWidth)
 })

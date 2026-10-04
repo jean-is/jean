@@ -666,7 +666,8 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 .menu [role='switch'][aria-checked='true']::after { background-color: var(--flame); background-position: calc(100% - 0.1rem) 50%; }
 :dir(rtl) .menu [role='switch']::after { background-position: calc(100% - 0.1rem) 50%; }
 :dir(rtl) .menu [role='switch'][aria-checked='true']::after { background-position: 0.1rem 50%; }
-.history-list { display: grid; gap: 0.15rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+/* One column no wider than the list: a long title ends in an ellipsis, its delete button in view. */
+.history-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.15rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .history-list li { display: flex; align-items: center; border-radius: 0.9rem; }
 .history-list li:hover, .history-list li.is-current { background: var(--line); }
 .history-item { flex: 1; display: flex; align-items: center; gap: 0.5rem; min-inline-size: 0; padding: 0.55rem 0.75rem; border: 0; background: none; text-align: start; }

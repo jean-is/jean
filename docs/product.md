@@ -44,7 +44,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
 
-**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. The language and light or dark are also in the user's menu, at the foot of the conversations, with Settings (D150).
+**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. The language, the theme and light or dark are also in the user's menu, at the foot of the conversations, with Settings, and change there while it stays open (D150, D153).
 
 | Capability | Offered when… | What appears |
 |---|---|---|
