@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr" data-presence="idle">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-AVkAeWFclsxbwt9flrhS75Lc2bBapPCIrquC+SzWpws=' 'sha256-jWVt1ZxAxvIOeFOOOkbvMn/fURMkhVajfwsvyrKz7gs='; style-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-AVkAeWFclsxbwt9flrhS75Lc2bBapPCIrquC+SzWpws=' 'sha256-jWVt1ZxAxvIOeFOOOkbvMn/fURMkhVajfwsvyrKz7gs='; style-src 'self' 'sha256-4TQiNejSsY6HYV6I9ZeOSbTB4w4ILCsQdptk1OWhWoI='; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#120c08">
@@ -16,6 +16,7 @@ if (/^[a-z]+$/.test(look ?? '')) {root.dataset.look = look; document.head.append
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preload" href="fonts/display-italic.woff2" as="font" type="font/woff2" crossorigin>
+<style>@view-transition { navigation: auto; types: update; }</style>
 <link rel="stylesheet" href="ui/style.css">
 <script type="importmap">{"imports":{"@preact/signals-core":"./vendor/signals-core.mjs","lit-html":"./vendor/lit-html/lit-html.js","lit-html/":"./vendor/lit-html/","marked":"./vendor/marked.esm.js"}}</script>
 <link rel="modulepreload" href="ui/app.js">

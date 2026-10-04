@@ -83,7 +83,7 @@
   "settings.title": "Réglages",
   "storage.ephemeral": "Fenêtre privée : rien ne sera conservé après sa fermeture.",
   "update.ready": "Une nouvelle version de {name} est prête.",
-  "update.reload": "Recharger",
+  "update.reload": "Actualiser",
   "error.auth": "{brain} a refusé la clé. Vérifiez-la, ou connectez un autre cerveau.",
   "error.rate_limit": "{brain} est occupé ou votre limite est atteinte. Patientez un instant puis réessayez.",
   "error.network": "La connexion a été coupée. Réessayez.",

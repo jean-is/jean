@@ -238,7 +238,7 @@ There is always a default project, hidden until the Projects capability is disco
 
 - **On install:** cache the shell (`sandbox.html` and `preview.html` included) and *all* locale files (a few KB each), so switching language is instant, even offline. Files are fetched through the HTTP cache, which the page has just filled, and checked against the integrity hashes in `capabilities.json`; a stale copy is fetched again from the network. The PNG icons drawn for installs stay out: only the browser or the system fetches them, once (D131).
 - **On unlock:** cache the capability's files, listed in `capabilities.json`, which `scripts/manifest.js` generates with content hashes. The cache itself is the record of what has been unlocked.
-- **On update:** download the new shell and new versions of *unlocked* capabilities only, then delete old caches.
+- **On update:** download the new shell and new versions of *unlocked* capabilities only, then delete old caches. When the user lets it in, the new version takes the page's place where it was, behind a view transition that holds the page left until the new one is drawn (`ui/update.js`, D138).
 - **Model weights** live in their own cache, separate from app versions, so an app update never re-downloads 3 GB.
 - **Offline:** history, files and the on-device brain keep working. If only a cloud brain is connected, Jean says so plainly.
 

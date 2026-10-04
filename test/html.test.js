@@ -1,5 +1,5 @@
-// index.html guards: the CSP must allow exactly the inline import map and the
-// light-or-dark line, and keep the protections Jean relies on.
+// index.html guards: the CSP must allow exactly the inline import map, the light-or-dark
+// line and the opt-in to view transitions, and keep the protections Jean relies on.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
@@ -15,11 +15,14 @@ test('the CSP hash matches the inline import map', () => {
   assert.doesNotThrow(() => JSON.parse(map))
 })
 
-test('the CSP allows exactly the inline scripts there are', () => {
-  const inline = [...html.matchAll(/<script(?:\s+type="importmap")?>([\s\S]*?)<\/script>/g)].map((match) => match[1])
-  const hashes = inline.map((code) => `'sha256-${createHash('sha256').update(code).digest('base64')}'`)
-  for (const hash of hashes) assert.ok(csp.includes(hash), `add ${hash} to the CSP script-src`)
-  assert.equal(csp.match(/'sha256-/g)?.length, hashes.length, 'remove the CSP hashes of scripts that are gone')
+test('the CSP allows exactly the inline scripts and styles there are', () => {
+  const hashes = (/** @type {RegExp} */ pattern) => [...html.matchAll(pattern)].map((match) => `'sha256-${createHash('sha256').update(match[1]).digest('base64')}'`)
+  const directive = (/** @type {string} */ name) => csp.split(';').map((part) => part.trim()).find((part) => part.startsWith(`${name} `)) ?? ''
+  const scripts = hashes(/<script(?:\s+type="importmap")?>([\s\S]*?)<\/script>/g)
+  const styles = hashes(/<style>([\s\S]*?)<\/style>/g)
+  for (const hash of scripts) assert.ok(directive('script-src').includes(hash), `add ${hash} to the CSP script-src`)
+  for (const hash of styles) assert.ok(directive('style-src').includes(hash), `add ${hash} to the CSP style-src`)
+  assert.equal(csp.match(/'sha256-/g)?.length, scripts.length + styles.length, 'remove the CSP hashes of scripts and styles that are gone')
 })
 
 test('light or dark is set before the first paint, with the key ui/state.js uses', async () => {

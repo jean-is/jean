@@ -676,6 +676,10 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
 
 .noscript { padding: 2rem; text-align: center; }
 ::view-transition-group(hero) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
+/* A new version comes in (index.html, ui/update.js): the page left holds, even with less motion. */
+:active-view-transition-type(update)::view-transition-old(*) { animation: hold 4s !important; }
+:active-view-transition-type(update)::view-transition-new(*) { animation: none; opacity: 0; }
+@keyframes hold { to { opacity: 1; } }
 
 /* ─── Paper: print, or save as PDF ──────────────────────────────────────── */
 
