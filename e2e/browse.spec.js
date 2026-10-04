@@ -4,7 +4,7 @@
 // refuses to be framed opens in a tab of its own from then on, and Jean recommends installing it
 // as an app. Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, BRAIN_URL } from './helpers.js'
 
 const SITE = BRAIN_URL.replace(/\/v1$/, '/site')
 
@@ -20,10 +20,10 @@ async function go(page, address) {
 
 test('the user browses beside the conversation: back, forward, reload, full screen', async ({ page }) => {
   await start(page)
-  await turnOn(page, 'Browser')
-  await page.keyboard.press('Escape')
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
+  // Once on, the header's button opens it, empty, its address field ready.
+  await page.locator('.bar .browser-toggle').click()
   const pane = page.locator('app-browser .browser')
-  // Turned on from the house, it opens, empty, its address field ready.
   await expect(pane.locator('.browser-note')).toContainText('Pages open here')
   await expect(pane.locator('.browser-bar input')).toHaveAttribute('placeholder', 'Type an address, or words to look up')
   await expect(pane.getByRole('button', { name: 'Back' })).toBeDisabled()
@@ -47,6 +47,27 @@ test('the user browses beside the conversation: back, forward, reload, full scre
   await go(page, 'fresh croissants')
   await expect(site(page).locator('h1')).toHaveText('Menu')
   await expect(pane.locator('.browser-bar input')).toHaveValue(`${SITE}/menu.html?q=fresh%20croissants`)
+  // Settings closing walks Jean's own history back, which leaves an entry ahead. A link followed in
+  // the page on show then takes its place without growing the history: it is never walked back to
+  // (WebKit would reload Jean to get there), and Back stays in Jean, on the address before.
+  await page.evaluate(() => { /** @type {any} */ (window).stayed = true })
+  await go(page, `${SITE}/bakery.html`)
+  await expect(site(page).locator('h1')).toHaveText('The bakery')
+  const settings = await openSettings(page)
+  await page.keyboard.press('Escape')
+  await expect(settings).toBeHidden()
+  await site(page).getByRole('link', { name: 'Menu' }).click()
+  await expect(site(page).locator('h1')).toHaveText('Menu')
+  await pane.getByRole('button', { name: 'Back' }).click()
+  await expect(pane.locator('.browser-bar input')).toHaveValue(`${SITE}/menu.html?q=fresh%20croissants`)
+  await expect(site(page).locator('h1')).toHaveText('Menu')
+  // The next address opens after an entry that drops what was ahead: its pages count again.
+  await go(page, `${SITE}/bakery.html`)
+  await site(page).getByRole('link', { name: 'Menu' }).click()
+  await expect(site(page).locator('h1')).toHaveText('Menu')
+  await pane.getByRole('button', { name: 'Back' }).click()
+  await expect(site(page).locator('h1')).toHaveText('The bakery')
+  expect(await page.evaluate(() => /** @type {any} */ (window).stayed)).toBe(true)
   // Full screen, or the whole window where a page can't go full screen.
   await pane.getByRole('button', { name: 'Full screen' }).click()
   await expect(pane.getByRole('button', { name: 'Exit full screen' })).toBeVisible()
@@ -58,7 +79,7 @@ test('the user browses beside the conversation: back, forward, reload, full scre
   await expect(pane).toHaveCount(0)
   // The header's button brings it back on the same page.
   await page.locator('.bar .browser-toggle').click()
-  await expect(site(page).locator('h1')).toHaveText('Menu')
+  await expect(site(page).locator('h1')).toHaveText('The bakery')
 })
 
 test('a site that refuses to be framed opens in a tab of its own, and Jean recommends installing it', async ({ page }) => {

@@ -1,7 +1,7 @@
 // Application state (signals) and the actions that change it.
 import { signal, computed } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
-import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter } from '../core/settings.js'
+import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal } from '../core/settings.js'
 import { createConversation, appendRecords, loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
 import { userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
@@ -10,7 +10,6 @@ import { t, locale, useLocale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, isPicture } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
-import { chooseBrain, isLocal, TIERS } from './auto.js'
 
 /** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Turn } from '../core/events.js' */
@@ -503,7 +502,8 @@ const lastAnswer = (records) => {
 
 /**
  * The brain for the next answer: the one the user picked, or Auto's choice from what the
- * reflexes make of the message (they also offer a capability when one would help).
+ * reflexes make of the message (they also offer a capability when one would help). Auto
+ * loads with the first message, not with the first screen (D140).
  * @param {string} text @param {Envelope[]} records @param {number} [boost] levels above the last one
  * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any> } | null>}
  */
@@ -515,7 +515,7 @@ async function pickBrain(text, records, boost = 0) {
     const brain = activeBrain.value
     return brain && (cloudAllowed() || isLocal(brain)) ? { brain } : null
   }
-  await Promise.all(settings.brains.filter((brain) => !isLocal(brain)).map(loadModels))
+  const [{ chooseBrain, TIERS }] = await Promise.all([import('./auto.js'), ...settings.brains.filter((brain) => !isLocal(brain)).map(loadModels)])
   const choice = chooseBrain({
     brains: settings.brains,
     preferred: settings.activeBrain,

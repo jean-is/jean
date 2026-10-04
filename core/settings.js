@@ -50,6 +50,9 @@ export function serviceURL(name, settings, policy = {}) {
   return policy.urls?.[name] ?? settings.urls?.[name] ?? DEFAULT_URLS[name]
 }
 
+/** A brain that never leaves this computer. @param {BrainConfig} brain */
+export const isLocal = (brain) => brain.api === 'device' || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
+
 /** @type {Settings} */
 export const DEFAULT_SETTINGS = { format: 2, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
 

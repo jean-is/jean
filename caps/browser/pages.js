@@ -100,9 +100,12 @@ const WALK_MS = 3000
 /**
  * Where Back and Forward lead (D140). The addresses Jean opened, each in a fresh frame, are its own
  * list. A link followed in a page adds to the tab's history, which only the browser can walk, and
- * only while those entries are known to be the site's: a page that loaded without adding one (it
- * replaced itself, or the browser's own buttons moved it), or any change of Jean's own, and Back
- * goes to Jean's list instead, so it can never take Jean somewhere else. A cross-origin frame's
+ * only while those entries are known to be the site's: the history grew by them, and nothing of
+ * Jean's moved it since. A page that loaded without growing it (it replaced itself, the browser's
+ * own buttons moved it, or it took the place of entries ahead, which WebKit then walks back by
+ * reloading Jean), or a change of Jean's own (another conversation, Settings closing), and Back
+ * goes to Jean's list instead, so it can never take Jean somewhere else. (So that a fresh frame's
+ * pages count after Jean's own walk back, caps/browser/browser.js first drops what is ahead.) A cross-origin frame's
  * address can't be read: a page it went to is known only as one it went to.
  */
 export class Trail {
@@ -163,7 +166,7 @@ export class Trail {
     Object.assign(this, { behind: this.behind + length - this.length, ahead: 0, length })
   }
 
-  /** The tab's history changed elsewhere (another conversation): it is no longer the site's to walk. */
+  /** The tab's history changed elsewhere (another conversation, Settings closing): it is no longer the site's to walk. */
   elsewhere() { Object.assign(this, { replaced: this.moved, behind: 0, ahead: 0, length: -1, until: 0 }) }
 
   /** @param {number} [now] @returns {'history' | string | null} walk the tab's history, open this address, or nothing */

@@ -1,6 +1,7 @@
 // Auto: the cheapest brain that can do the job, chosen from reflex answers (docs/product.md,
 // "Brains: picker and Auto"). Within a conversation it steps up, never down, so the
 // provider's cache stays warm; a new conversation starts again from the bottom.
+import { isLocal } from '../core/settings.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 /** @typedef {'only' | 'private' | 'personal' | 'demand' | 'unhappy' | 'default'} Reason */
@@ -23,8 +24,8 @@ export const TIERS = /** @type {Record<string, string[]>} */ ({
   vercel: ['anthropic/claude-haiku-4.5', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
 })
 
-/** A brain that never leaves this computer. @param {BrainConfig} brain */
-export const isLocal = (brain) => brain.api === 'device' || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
+// Whether a brain never leaves this computer is a setting's matter, known before Auto loads (D140).
+export { isLocal }
 
 /** Demand (0 chat → 3 expert) to a tier: fast, smart, smart, best. @param {number} demand */
 export const tierFor = (demand) => [0, 1, 1, 2][Math.min(3, Math.max(0, Math.round(demand)))]

@@ -122,3 +122,21 @@ test('Back never walks history that may not be the site’s own', () => {
   assert.equal(trail.back(10200), 'history')
   assert.equal(trail.back(10300), 'https://a.example/')
 })
+
+test('a page that takes the place of entries ahead is never walked back to', () => {
+  const trail = new Trail()
+  trail.open('https://a.example/')
+  trail.loaded(10, 0)
+  // After Back, a link takes the place of what was ahead: the length stays, and WebKit would walk
+  // back to it by reloading Jean. Back goes to the addresses Jean opened instead.
+  trail.loaded(11, 100)
+  assert.equal(trail.back(200), 'history')
+  trail.loaded(11, 300)
+  assert.equal(trail.loaded(11, 9000), true)
+  assert.ok(trail.moved)
+  assert.equal(trail.back(9100), null)
+  // A page after it that grows the history is walked back, to that one.
+  trail.loaded(12, 9200)
+  assert.equal(trail.back(9300), 'history')
+  assert.equal(trail.back(9400), null)
+})

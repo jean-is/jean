@@ -15,7 +15,7 @@
 
 **No build step.** Plain ES modules and an import map; types in JSDoc, checked by `tsc --noEmit` during development only. Deploying means copying the folder, and view-source *is* the source.
 
-**First load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the whole graph in one round trip instead of discovering it one import level at a time. Only the lit-html files Jean imports are vendored. CI fails if the links are stale. The first screen loads only what it shows: the dialogs, the Anthropic adapter (D76), and since 0.5 the agent loop and the other adapters (D94) load when first needed.
+**First load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the whole graph in one round trip instead of discovering it one import level at a time. Only the lit-html files Jean imports are vendored. CI fails if the links are stale. The first screen loads only what it shows: the dialogs, the Anthropic adapter (D76), since 0.5 the agent loop and the other adapters (D94), and since D140 Auto's choice of a brain load when first needed.
 
 | Loaded upfront (3) | Size | Why |
 |---|---|---|
@@ -300,7 +300,7 @@ base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted
 
 - **Jean puts each page's frame in it**, from its own document and origin: a fresh frame for each address, with no referrer, `sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads allow-storage-access-by-user-activation"`, and never top navigation, so the site keeps its own origin and storage but can't take Jean's place.
 - **The one frame with both flags.** It only ever holds another site: Jean never opens one of its own addresses there, and the policy refuses a blob or data. For another site's page, both flags are strictly safer than no `sandbox` at all. `test/html.test.js` checks the policy, that no other module combines them, and that the flags have no top navigation.
-- **What Jean can't see.** The page's address once it moves on, its title, and whether it refused to be framed (`X-Frame-Options`, `frame-ancestors`): browsers hide all of these from the framing page. Back walks the tab's history only while its entries are known to be the site's (`caps/browser/pages.js`). A way out, a new tab, stays under a site's page until the site shows it works.
+- **What Jean can't see.** The page's address once it moves on, its title, and whether it refused to be framed (`X-Frame-Options`, `frame-ancestors`): browsers hide all of these from the framing page. Back walks the tab's history only while its entries are known to be the site's (`caps/browser/pages.js`); a fresh frame first drops what is ahead of Jean's entry, which closing Settings leaves. A way out, a new tab, stays under a site's page until the site shows it works.
 - **What the brain reads** of a page, `browse` fetches without cookies, and only where the site allows other sites to read it (CORS).
 
 ## Languages (i18n)

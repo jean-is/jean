@@ -136,6 +136,12 @@ function frameTo(url) {
   const doc = host?.contentDocument
   if (!doc?.body) return void (pending = url)
   pending = null
+  // Jean walked its own history (Settings closing goes back): an entry may be ahead, which the
+  // site's first page would take the place of without growing the history. One entry of Jean's
+  // own address drops it, so the site's pages count from here. The Navigation API says whether
+  // there is one; without it, the walks seen since this loaded, and any before, are guessed.
+  if (/** @type {any} */ (globalThis).navigation?.canGoForward ?? ahead) history.pushState(history.state, '', location.href)
+  ahead = false
   doc.body.replaceChildren()
   frame = doc.createElement('iframe')
   frame.setAttribute('sandbox', SANDBOX)
@@ -158,6 +164,8 @@ function loaded(url) {
 }
 
 let guard = { until: 0, undo: 0 }
+/** Whether Jean's own history may have been walked back since (before this loaded, it may have been). */
+let ahead = true
 
 /** @param {'back' | 'forward'} way */
 function walk(way) {
@@ -177,6 +185,7 @@ function walk(way) {
 addEventListener('popstate', () => {
   if (Date.now() < guard.until) history.go(guard.undo)
   guard.until = 0
+  ahead = true
   trail.elsewhere()
   bump()
 })
