@@ -199,7 +199,7 @@ When no route exists, Jean says so and suggests connecting a cloud brain. A shar
 
 Once it is found (D140), pages open in a pane beside the conversation, or over it on a phone, so the user can look while they talk:
 
-- **What it has:** back, forward and reload; an address field that takes an address, a site's name or words to look up (Wikipedia's search by default, set by the user or the organisation); a new tab; full screen; and a button in the header that opens and closes it.
+- **What it has:** back, forward and reload; an address field that takes an address, a site's name or words to look up (Wikipedia's search by default, set by the user or the organisation); a new tab; full screen; and a button in the header that opens and closes it, as ⌘⇧B does (D142).
 - **What opens there:** links from answers, their sources included, and pages Jean opens with `browse`. Jean asks first, since an address it picks could carry something away, and reads the page's words when the site allows it.
 - **What Jean knows:** which page is open, by its address. It can't see the page itself, nor where it went once the user follows a link in it.
 - **Sites that won't show.** Many sites refuse to be shown inside another page, and many accounts only work in their own site's tab. The browser can't tell, so a page from a site not seen working yet comes with "Page not showing?" and a new tab. A site opened that way opens in a tab of its own from then on, and Jean recommends installing it as an app, which gives it its own window and a place on the desktop, with the steps for the browser in use. Where the browser can't install sites (Firefox on a computer), Jean suggests a bookmark. "Try here again" undoes it.

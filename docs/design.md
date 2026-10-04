@@ -74,7 +74,7 @@ The room is Jean's own look, and the default. Settings → Appearance offers two
 - **`prefers-reduced-motion`:** a still glow, with no movement. The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces.
 - **`forced-colors`** is supported. The little light becomes an outline drawing in the system colours.
-- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘N a new conversation, ⌘⇧L switches between light and dark, and ⌘K opens search once it is found, Ctrl outside Apple's systems (D118, D130, D133).
+- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘N a new conversation, ⌘⇧L switches between light and dark, ⌘K opens search once it is found and ⌘⇧B the browser, Ctrl outside Apple's systems (D118, D130, D133, D142).
 
 ## Budget
 
