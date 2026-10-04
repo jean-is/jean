@@ -10,11 +10,11 @@ import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import * as dock from './dock.js'
 import { app, effective, notify } from './state.js'
-import { save } from './save.js'
+import { save, savePage } from './save.js'
 import { markdown } from './markdown.js'
 import { icons } from './icons.js'
 import { fileMeta, fileText, splitPages } from '../core/files.js'
-import { pageRights, pagePolicy } from './csp.js'
+import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string }} Shown */
@@ -33,10 +33,13 @@ await new Promise((resolve) => {
 const shown = signal(/** @type {Shown | null} */ (null))
 const view = signal(/** @type {unknown} */ (nothing))
 
-// What a web page may do, as Settings and policy have it (D143).
-const policy = computed(() => {
-  const { allows, sites } = pageRights(effective.value.settings, app.policy)
-  return pagePolicy(allows, sites)
+// What a web page may do, as Settings and policy have it (D143, D158): its policy, and what its frame allows.
+const rights = computed(() => pageRights(effective.value.settings, app.policy))
+const policy = computed(() => pagePolicy(rights.value.allows, rights.value.sites))
+const allow = computed(() => pageAllow(rights.value.allows))
+// A file the page made, saved for it.
+addEventListener('message', ({ source, data }) => {
+  if (source && source === document.querySelector('app-preview')?.querySelector('iframe')?.contentWindow) savePage(data, rights.peek().allows.downloads)
 })
 
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
@@ -75,12 +78,13 @@ async function download(file) {
 effect(() => {
   const file = shown.value
   const rules = policy.value
+  const allows = allow.value
   /** @type {(() => void)[]} */
   const holds = []
   const release = () => { for (const run of holds.splice(0)) run() }
   view.value = nothing
   if (file) {
-    show(file, holds, rules).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
+    show(file, holds, rules, allows).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
       if (shown.peek() !== file) release()
       else if (template === null) close()
       else view.value = template
@@ -106,9 +110,10 @@ effect(() => {
 
 /**
  * @param {Shown} file @param {(() => void)[]} holds @param {string} rules a web page's policy
+ * @param {string} allows what its frame allows
  * @returns {Promise<unknown>} null when the file is no longer there, or can't be read
  */
-async function show(file, holds, rules) {
+async function show(file, holds, rules, allows) {
   const dir = app.project.peek().dir
   const bytes = await app.fs.readBytes(`${dir}/${file.uri}`)
   if (!bytes) {
@@ -121,7 +126,7 @@ async function show(file, holds, rules) {
     holds.push(() => URL.revokeObjectURL(url))
     return html`<img class="preview-picture" src=${url} alt=${file.name}>`
   }
-  if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), file.name, rules)
+  if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), file.name, rules, allows)
   if (ext === 'pdf') {
     try {
       return await pdf(bytes, holds)
@@ -150,12 +155,13 @@ function slide(text) {
 
 /**
  * A web page, in a frame of its own: an opaque origin (scripts, never with allow-same-origin)
- * whose relay writes the policy ahead of the page. Both go in once, when the frame is ready.
- * @param {string} source @param {string} name @param {string} policy
+ * whose relay writes the policy ahead of the page. Both go in once, when the frame is ready. What
+ * it allows is set before its address, since a frame takes it as it loads (D158).
+ * @param {string} source @param {string} name @param {string} policy @param {string} allow
  */
-function frame(source, name, policy) {
+function frame(source, name, policy, allow) {
   const send = { once: true, handleEvent: (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage({ page: source, policy }, '*') }
-  return html`<iframe class="preview-frame" sandbox="allow-scripts" src=${FRAME} title=${name} @load=${send}></iframe>`
+  return html`<iframe class="preview-frame" sandbox="allow-scripts" allow=${allow} src=${FRAME} title=${name} @load=${send}></iframe>`
 }
 
 /**

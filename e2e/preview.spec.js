@@ -1,6 +1,7 @@
 // The preview (D126): a file Jean made or the user shared opens beside the conversation, as what
 // it is. A web page shows with its style and runs its script, but nothing leaves, and with its
-// code off in Settings the script never runs (D143); a Word document shows on a sheet and follows
+// code off in Settings the script never runs (D143); it fills the screen and saves a file until
+// Settings says no (D158); a Word document shows on a sheet and follows
 // its new version; a spreadsheet is a grid, a PDF its drawn pages, a deck its slides. On a phone
 // it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
@@ -47,6 +48,39 @@ test('a web page Jean made shows in the preview and runs its script, which can s
   expect(leaks).toEqual([])
   await pane.getByRole('button', { name: 'Close' }).click()
   await expect(pane).toHaveCount(0)
+})
+
+test('a page fills the screen and saves a file, until Settings says no (D158)', async ({ page }) => {
+  /** @type {string[]} */
+  const saved = []
+  page.on('download', (download) => saved.push(download.suggestedFilename()))
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Make a web page for the bakery')
+  await page.locator('.msg-jean').last().getByRole('button', { name: 'Open Bakery.html' }).click()
+  const frame = page.frameLocator('.preview-frame')
+  await frame.locator('#big').click()
+  await expect(frame.locator('#out')).toHaveText('Full screen')
+  // A link to a file the page made, and one its code makes and clicks off the page: Jean saves both.
+  await frame.locator('#keep').click()
+  await expect.poll(() => saved).toEqual(['Prices.csv'])
+  await frame.locator('#export').click()
+  await expect.poll(() => saved).toEqual(['Prices.csv', 'Prices.json'])
+  const settings = await openSettings(page, 'Approvals')
+  for (const name of ['Go full screen', 'Save files']) {
+    await expect(settings.getByRole('switch', { name })).toBeChecked()
+    await settings.getByRole('switch', { name }).click()
+  }
+  await page.keyboard.press('Escape')
+  // The page shows again, in a frame that can do neither.
+  await expect(frame.locator('#out')).toHaveText('Baked by a script CSS1Compat')
+  await frame.locator('#big').click()
+  await expect(frame.locator('#out')).toHaveText('TypeError')
+  await frame.locator('#keep').click()
+  await frame.locator('#export').click()
+  await page.waitForTimeout(800)
+  expect(saved).toEqual(['Prices.csv', 'Prices.json'])
+  await expect(frame.locator('h1')).toHaveText('Bakery')
 })
 
 test('the sites a page’s code may reach: any by default, each one added with Enter (D143)', async ({ page }) => {

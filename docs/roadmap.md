@@ -214,6 +214,8 @@ Still to check by hand:
 
 Budgets now: core 2,812 of 3,000 lines, app 19,904 of 20,000, first load 89.7 of 100 KB gzipped, the largest catalogues 6.7 of 8 KB (Russian and Ukrainian) and their dialogs' part 7.6, Sync's own code 5.9 of 40 KB. The app has 96 lines left: the next feature will need to make room first.
 
+Added after 0.8: a web page may fill the screen and save files (D158). A made page's own full-screen button failed in the preview, since its frame delegated nothing. Settings › Approvals › Web pages now has Go full screen and Save files, both on, which an organisation can lock (`pages`), for a page in the preview and a page of the conversation's folder in the browser; copying always works. Saving goes through Jean, which saves what the page hands it on a click, since Safari refuses a framed page's own download under Jean's policy. Checked with `npm run e2e` in Chromium and WebKit: the bakery page fills the screen and saves a CSV from a link and a JSON file its code made off the page, and with both switches off does neither. Under `node --test`: what the frame allows for each switch, and both sides of saving. By eye in Arabic by day and Japanese by night, at desktop and phone width. 4 new strings in all 33 languages. Still to check by hand: Firefox; Safari on an iPhone, where only a video goes full screen; real brains' pages that save with SheetJS or jsPDF. Budgets now: app 19,951 of 20,000 lines, the dialogs' largest catalogues 7.7 of 8 KB (Russian and Ukrainian); the first load is unchanged.
+
 ## Before the public launch (0.3)
 
 - [ ] Final name and domain chosen and registered, because data is bound to the origin (see [open-questions.md](open-questions.md))

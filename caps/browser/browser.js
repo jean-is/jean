@@ -27,7 +27,8 @@ import * as dock from '../../ui/dock.js'
 import { register, loaded as unlocked } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/icons.js'
-import { pageRights, pagePolicy } from '../../ui/csp.js'
+import { pageRights, pagePolicy, pageAllow } from '../../ui/csp.js'
+import { savePage } from '../../ui/save.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { addressOf, showable, siteOf, pageText, installer, Trail } from './pages.js'
@@ -82,11 +83,10 @@ const foldersOn = async () => (unlocked.peek().has('folders') ? (folders = await
 effect(() => {
   if (unlocked.value.has('folders') && !folders) foldersOn().then(() => bump())
 })
-// What a page may do, as Settings and policy have it (D143), with its scripts as data.
-const policy = computed(() => {
-  const { allows, sites } = pageRights(effective.value.settings, app.policy)
-  return pagePolicy(allows, sites, true)
-})
+// What a page may do, as Settings and policy have it (D143, D158), with its scripts as data.
+const rights = computed(() => pageRights(effective.value.settings, app.policy))
+const policy = computed(() => pagePolicy(rights.value.allows, rights.value.sites, true))
+const allow = computed(() => pageAllow(rights.value.allows))
 
 /** The browser.html frame, once loaded, and the site's frame in it. @type {HTMLIFrameElement | null} */
 let host = null
@@ -206,16 +206,18 @@ async function folderTo(url, click = false) {
   if (at !== asked) return
   loading.value = false
   const [folder, ...path] = address.split('/')
-  local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), address) } : { note: t(`browser.${shown.note}`, { folder, page: path.join('/') }) }
+  local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), allow.peek(), address) } : { note: t(`browser.${shown.note}`, { folder, page: path.join('/') }) }
 }
 
 /**
- * A page of the folder in a frame of the preview's kind (D126, D143): an opaque origin, which can't
- * read Jean's storage, its policy written ahead of it. @param {string} source @param {string} rules @param {string} title
+ * A page of the folder in a frame of the preview's kind (D126, D143, D158): an opaque origin, which
+ * can't read Jean's storage, its policy written ahead of it, what it allows set before its address.
+ * @param {string} source @param {string} rules @param {string} allows @param {string} title
  */
-function pageFrame(source, rules, title) {
+function pageFrame(source, rules, allows, title) {
   const element = Object.assign(document.createElement('iframe'), { className: 'browser-page', title })
   element.setAttribute('sandbox', 'allow-scripts')
+  element.setAttribute('allow', allows)
   element.addEventListener('load', () => element.contentWindow?.postMessage({ page: source, policy: rules }, '*'), { once: true })
   element.src = PAGE
   return element
@@ -223,15 +225,17 @@ function pageFrame(source, rules, title) {
 // What a page may do changed in Settings: the page on show comes again under it.
 effect(() => {
   const rules = policy.value
+  const allows = allow.value
   const shown = local.peek()
-  if (shown && 'html' in shown) local.value = { ...shown, frame: pageFrame(shown.html, rules, shown.frame.title) }
+  if (shown && 'html' in shown) local.value = { ...shown, frame: pageFrame(shown.html, rules, allows, shown.frame.title) }
 })
 
-// A link followed in a page of the folder: another of its pages, or a site.
+// A link followed in a page of the folder: another of its pages, or a site; or a file it made, saved (D158).
 addEventListener('message', ({ source, data }) => {
   const shown = local.peek()
   const [folder] = (page.peek()?.url ?? '').slice(FOLDER.length).split('/')
-  if (!shown || !('frame' in shown) || source !== shown.frame.contentWindow || typeof data?.open !== 'string') return
+  if (!shown || !('frame' in shown) || source !== shown.frame.contentWindow) return
+  if (typeof data?.open !== 'string') return savePage(data, rights.peek().allows.downloads)
   const base = new URL(shown.path.split('/').map(encodeURIComponent).join('/'), 'https://folder.invalid/')
   const to = new URL(data.open, base)
   if (to.origin === base.origin) visit(`${FOLDER}${folder}/${decodeURIComponent(to.pathname.slice(1))}`, { click: true })

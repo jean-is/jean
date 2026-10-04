@@ -10,10 +10,28 @@
      ahead of the page, which adds to this one: by default the page's own scripts run, but nothing
      loads from anywhere and nothing is sent, and no form or pop-up opens. Jean's own frame-src
      keeps the frame from being taken elsewhere; its links lead nowhere from here, except within
-     the page: the browser is told where they lead, and may follow. A doctype first, or the policy
-     would put every page in quirks mode. -->
+     the page: the browser is told where they lead, and may follow. A link that saves a file the
+     page made (a blob or data, with `download`) hands the file to Jean, which saves it when Settings
+     lets it (D158): a frame's own download is a navigation, which Jean's frame-src refuses in
+     WebKit. A link its code clicks off the page, as most code that saves a file does, too. A
+     doctype first, or the policy would put every page in quirks mode. -->
 <script>onmessage = ({ data, source }) => {
   if (source !== parent || typeof data?.page !== 'string' || typeof data?.policy !== 'string') return
+  const made = new Map()
+  const { createObjectURL, revokeObjectURL } = URL
+  URL.createObjectURL = (object) => { const url = createObjectURL(object); made.set(url, object); return url }
+  URL.revokeObjectURL = (url) => { made.delete(url); revokeObjectURL(url) }
+  const saved = (link) => {
+    if (!link.hasAttribute('download')) return false
+    const [, type, base64, text] = /^data:([^,]*?)(;base64)?,(.*)$/s.exec(link.href) ?? []
+    const file = made.get(link.href) ?? (text === undefined ? null : new Blob([base64 ? Uint8Array.from(atob(decodeURIComponent(text)), (c) => c.charCodeAt(0)) : decodeURIComponent(text)], { type }))
+    if (file) parent.postMessage({ save: file, name: link.download }, '*')
+    return Boolean(file)
+  }
+  const { click } = HTMLAnchorElement.prototype
+  const { dispatchEvent } = EventTarget.prototype
+  HTMLAnchorElement.prototype.click = function () { if (this.isConnected || !saved(this)) click.call(this) }
+  HTMLAnchorElement.prototype.dispatchEvent = function (event) { return event.type === 'click' && !this.isConnected && saved(this) ? false : dispatchEvent.call(this, event) }
   document.open()
   document.write(`<!doctype html><meta http-equiv="Content-Security-Policy" content="${data.policy.replaceAll('"', '&quot;')}">`)
   document.write(data.page)
@@ -22,7 +40,7 @@
     const link = event.target.closest?.('a[href]:not([href^="#"])')
     if (!link || event.defaultPrevented) return
     event.preventDefault()
-    parent.postMessage({ open: link.getAttribute('href') }, '*')
+    if (!saved(link)) parent.postMessage({ open: link.getAttribute('href') }, '*')
   })
 }
 </script>

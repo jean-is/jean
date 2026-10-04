@@ -306,14 +306,18 @@ default-src 'none'; script-src 'unsafe-inline' data: https:; style-src 'unsafe-i
 font-src data: https:; connect-src https: http://localhost:* http://127.0.0.1:*; frame-src 'none'; base-uri 'none'; form-action 'none'
 ```
 
-Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), writes a doctype, then the policy Jean sent as a `<meta>`, then the page. The page keeps the document's policy and adds that one, so it gets exactly what Settings allows. `ui/csp.js` makes it from three switches in Approvals, which `pages` in `policy.json` can set and lock:
+Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), writes a doctype, then the policy Jean sent as a `<meta>`, then the page. The page keeps the document's policy and adds that one, so it gets exactly what Settings allows. `ui/csp.js` makes it, and what the frame allows, from five switches in Approvals, which `pages` in `policy.json` can set and lock:
 
 | Switch | Default | Adds |
 |---|---|---|
 | Run its code | on | `script-src 'unsafe-inline'`, and `data:` for a page of the user's folder (D156) |
+| Go full screen | on | `fullscreen *` in the frame's `allow` (D158) |
+| Save files | on | Jean saves a file the page hands it, on a click (D158) |
 | Load things from the internet | off | `https:` for pictures, sounds, fonts, styles and, when they run, scripts |
 | Send and receive over the internet | off | `connect-src`: any https site (`*`), or only the sites listed under the switch, each added with Enter: `example.com`, `*.example.com`, `*.com`, and this computer over http (`localhost:3000`, `localhost:*`) |
 
+- **What the frame allows** (D158): `allow="clipboard-write *"`, and `fullscreen *` when switched on, set before its address since a frame takes it as it loads. `*`, because WebKit doesn't take an opaque origin for its address's (`'src'`, the default); only Jean's addresses show in the frame. Copying is no switch: `execCommand('copy')` already works on a click, and WebKit doesn't ask for `writeText`.
+- **Saving a file goes through Jean** (D158). The sandbox never has `allow-downloads`: WebKit takes a frame's download for a navigation, which `index.html`'s `frame-src 'self'` refuses for `blob:` and `data:`. So the relay watches `URL.createObjectURL` before the page runs, and a link with `download` to a `blob:` or `data:` address, clicked or clicked by the page's code while off the page (`click()`, or `dispatchEvent` as FileSaver does), hands the file to Jean, which saves it with `save()` when Save files is on and the user has just clicked (`navigator.userActivation`).
 - **Its styles apply; its scripts run unless switched off.** In a document, unlike the sandbox's worker, a script has WebRTC, which no policy closes (Chromium and WebKit ignore `webrtc 'block'`): the risk D126 avoided, now accepted for pages that are charts and buttons (D143).
 - **Nowhere to go.** No network, no form, no pop-up, and `index.html`'s `frame-src 'self'` refuses to take the frame to any other address; its links move only within the page. `test/html.test.js` checks the policy each switch and list makes, which sites are taken as typed, that `preview.html`'s is the loosest, that the relay writes the policy before the page, `frame-src 'self'` and the frame's one sandbox flag.
 - **Everything else shows in Jean's own document,** from what Jean keeps: pictures as pictures (a drawing as an `<img>`, where its scripts never run), a PDF's pages drawn by pdf.js with the options it reads them with, and documents, spreadsheets and decks from their text, through lit-html.

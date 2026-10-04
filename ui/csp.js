@@ -1,8 +1,9 @@
-// What a web page in the preview may do (D143), and the policy it is written under. preview.html's
-// own policy is the most these can allow; the relay adds this one ahead of the page.
+// What a web page in the preview may do (D143, D158), the policy it is written under, and what its
+// frame allows. preview.html's own policy is the most these can allow; the relay adds this one
+// ahead of the page.
 
-/** Its own scripts run; nothing comes from the web, and nothing goes to it. */
-export const PAGE_DEFAULTS = Object.freeze({ scripts: true, web: false, network: false })
+/** Its own scripts run, and it may fill the screen and save files; nothing comes from the web, and nothing goes to it. */
+export const PAGE_DEFAULTS = Object.freeze({ scripts: true, fullscreen: true, downloads: true, web: false, network: false })
 
 /** @typedef {keyof typeof PAGE_DEFAULTS} PageRight */
 /** @typedef {Partial<Record<PageRight, boolean>> & { sites?: string[] }} PageSettings  sites: what its code may reach, any when empty */
@@ -57,3 +58,12 @@ export function pagePolicy({ scripts, web, network }, sites = [], folder = false
     "frame-src 'none'", "base-uri 'none'", "form-action 'none'",
   ].join('; ')
 }
+
+/**
+ * What the frame lets its page use (D158): full screen when allowed, and copying always, as any
+ * page can already copy on a click (`execCommand`) and WebKit doesn't ask. `*`, since WebKit doesn't
+ * take the frame's opaque origin for its address's; only Jean's addresses show there (frame-src).
+ * Saving a file isn't the frame's: the relay hands it to Jean.
+ * @param {Record<PageRight, boolean>} allows
+ */
+export const pageAllow = ({ fullscreen }) => (fullscreen ? 'fullscreen *; clipboard-write *' : 'clipboard-write *')

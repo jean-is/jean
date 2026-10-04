@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { sources } from './fixtures/keys.js'
-import { pageRights, pagePolicy, site } from '../ui/csp.js'
+import { pageRights, pagePolicy, pageAllow, site } from '../ui/csp.js'
 
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8')
 const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? ''
@@ -80,7 +80,7 @@ const previewCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec
 
 test('a page runs its own scripts by default, and reaches nothing unless Settings or policy lets it (D143)', () => {
   const { allows, locked } = pageRights({})
-  assert.deepEqual(allows, { scripts: true, web: false, network: false })
+  assert.deepEqual(allows, { scripts: true, fullscreen: true, downloads: true, web: false, network: false })
   assert.equal(locked.size, 0)
   const policy = pagePolicy(allows)
   for (const directive of ["default-src 'none'", "script-src 'unsafe-inline';", "connect-src 'none'", "frame-src 'none'", "base-uri 'none'", "form-action 'none'"]) assert.ok(policy.includes(directive), directive)
@@ -89,7 +89,7 @@ test('a page runs its own scripts by default, and reaches nothing unless Setting
   assert.match(pagePolicy({ scripts: true, web: false, network: true }), /script-src 'unsafe-inline';.*connect-src https:;/)
   // The user's choice, then the organisation's, which is locked.
   const set = pageRights({ pages: { web: true, scripts: false, sites: ['a.example'] } }, { pages: { scripts: true, sites: ['corp.example'] } })
-  assert.deepEqual(set.allows, { scripts: true, web: true, network: false })
+  assert.deepEqual(set.allows, { scripts: true, fullscreen: true, downloads: true, web: true, network: false })
   assert.deepEqual(set.sites, ['corp.example'])
   assert.deepEqual([...set.locked], ['scripts', 'sites'])
 })
@@ -118,11 +118,28 @@ test('the preview frame allows at most what Settings can, and its relay writes t
   assert.ok(csp.includes("frame-src 'self'"), "index.html's frame-src stays 'self'")
 })
 
+test('a page may fill the screen and save files unless Settings says no; it can always copy (D158)', async () => {
+  const { allows } = pageRights({})
+  assert.equal(pageAllow(allows), 'fullscreen *; clipboard-write *')
+  assert.equal(pageAllow({ ...allows, fullscreen: false }), 'clipboard-write *')
+  const locked = pageRights({ pages: { fullscreen: true } }, { pages: { fullscreen: false, downloads: false } })
+  assert.equal(pageAllow(locked.allows), 'clipboard-write *')
+  assert.deepEqual([...locked.locked], ['fullscreen', 'downloads'])
+  // Saving isn't the frame's (no allow-downloads): the relay hands the file to Jean, which saves it when allowed, on a click.
+  const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
+  assert.ok(relay.indexOf('URL.createObjectURL =') < relay.indexOf('document.write(data.page)'), 'what the page makes is known before it runs')
+  assert.match(relay, /if \(!saved\(link\)\) parent\.postMessage\(\{ open: /)
+  const save = await readFile(new URL('../ui/save.js', import.meta.url), 'utf8')
+  assert.match(save, /if \(allowed && blob instanceof Blob && navigator\.userActivation\?\.isActive !== false\) save\(/)
+  const client = await readFile(new URL('../ui/preview.js', import.meta.url), 'utf8')
+  assert.match(client, /savePage\(data, rights\.peek\(\)\.allows\.downloads\)/)
+})
+
 test('the preview is only ever framed without allow-same-origin, and the page never opens in a tab', async () => {
   const client = await readFile(new URL('../ui/preview.js', import.meta.url), 'utf8')
   const frames = [...client.matchAll(/<iframe\b[^>]*>/g)].map((match) => match[0])
   assert.equal(frames.length, 1)
-  assert.match(frames[0], /\ssandbox="allow-scripts"\s/, 'scripts, and nothing else: no same origin, pop-ups, forms or top navigation')
+  assert.match(frames[0], /\ssandbox="allow-scripts" allow=\$\{allow\} src=\$\{FRAME\}\s/, 'scripts, and nothing else: no same origin, pop-ups, forms or top navigation; what it allows set before its address (D158)')
   assert.doesNotMatch(client, /srcdoc|setAttribute\('sandbox'/, 'srcdoc would take index.html\'s policy instead of the preview\'s')
   const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
   assert.doesNotMatch(state, /createObjectURL[\s\S]{0,200}open\(/, 'a file in a tab of Jean\'s origin would run its scripts there')
@@ -157,5 +174,5 @@ test('only the browser’s frame keeps its site’s origin, and the site can nev
   // A page of the user's folder never goes there: it is in a frame of the preview's kind, scripts only, an opaque origin (D156).
   assert.match(browser, /function frameTo\(url, click = false\) \{\n  if \(isLocal\(url\)\) return void folderTo\(url, click\)/)
   assert.match(browser, /const PAGE = new URL\('\.\.\/\.\.\/preview\.html', import\.meta\.url\)/)
-  assert.match(browser, /element\.setAttribute\('sandbox', 'allow-scripts'\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
+  assert.match(browser, /element\.setAttribute\('sandbox', 'allow-scripts'\)\n  element\.setAttribute\('allow', allows\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
 })

