@@ -176,6 +176,7 @@
   "policy.locked": "Ingesteld door je organisatie",
   "knows.title": "Wat {name} over je weet",
   "knows.lede": "Je instructies, die altijd gevolgd worden, en wat {name} onderweg opviel. Alles blijft op dit apparaat en je kunt alles aanpassen.",
+  "theme.auto": "Auto",
   "theme.light": "Licht",
   "theme.dark": "Donker",
   "look.title": "Thema",

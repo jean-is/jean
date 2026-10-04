@@ -176,6 +176,7 @@
   "policy.locked": "Imewekwa na shirika lako",
   "knows.title": "Kile {name} anachojua kukuhusu",
   "knows.lede": "Maagizo yako, yanayofuatwa kila wakati, na mambo {name} aliyoyaona njiani. Kila kitu kinabaki kwenye kifaa hiki, na unaweza kubadilisha chochote.",
+  "theme.auto": "Otomatiki",
   "theme.light": "Mwanga",
   "theme.dark": "Giza",
   "look.title": "Mandhari",

@@ -30,11 +30,13 @@ test('Arabic: right to left, and the answer in Arabic', async ({ page }) => {
   await expect(page.locator('.follow-ups .follow-up').first()).toHaveText('اعرضه كرسم بياني')
 })
 
-test('light or dark: the device’s, until the user picks the other', async ({ page }) => {
+test('light or dark: Auto follows the device, Light and Dark stay put', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
   await start(page)
   const root = page.locator('html')
   await expect(root).toHaveAttribute('data-theme', 'dark')
+  await expect((await openSettings(page, 'Appearance')).getByRole('radio', { name: 'Auto', exact: true })).toBeChecked()
+  await page.keyboard.press('Escape')
   await pickTheme(page, 'Light')
   await expect(root).toHaveAttribute('data-theme', 'light')
   // Remembered on this device, and applied before any module runs: no flash of the night.
@@ -43,11 +45,16 @@ test('light or dark: the device’s, until the user picks the other', async ({ p
   await expect(root).toHaveAttribute('data-theme', 'light')
   await page.unroute('**/ui/app.js')
   await page.reload()
-  // Picking what the device shows follows the device again.
+  // Dark is kept even when the device shows it, and when the device changes.
   await pickTheme(page, 'Dark')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.emulateMedia({ colorScheme: 'light' })
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  // Auto follows the device again.
+  await pickTheme(page, 'Auto')
   await expect(root).toHaveAttribute('data-theme', 'light')
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(root).toHaveAttribute('data-theme', 'dark')
 })
 
 /** Light or dark is picked in Settings' Appearance. @param {import('@playwright/test').Page} page @param {string} name */

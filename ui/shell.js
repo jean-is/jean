@@ -73,7 +73,9 @@ document.addEventListener('keydown', (event) => {
     focusComposer()
   } else if (key === 'l' && event.shiftKey) {
     event.preventDefault()
-    setTheme(theme.value === 'light' ? 'dark' : 'light')
+    // Switching back to what the device shows is Auto again (D85).
+    const next = theme.value === 'light' ? 'dark' : 'light'
+    setTheme(next === app.deviceTheme.value ? null : next)
   } else if (key === 'k' && !event.shiftKey && loaded.value.has('find')) {
     event.preventDefault()
     app.dialog.value = app.dialog.value === 'find' ? null : 'find'

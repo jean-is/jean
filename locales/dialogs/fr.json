@@ -178,6 +178,7 @@
   "policy.locked": "Défini par votre organisation",
   "knows.title": "Ce que {name} sait de vous",
   "knows.lede": "Vos instructions, toujours suivies, et ce que {name} a remarqué en chemin. Tout reste sur cet appareil, et vous pouvez tout modifier.",
+  "theme.auto": "Auto",
   "theme.light": "Clair",
   "theme.dark": "Sombre",
   "look.title": "Thème",

@@ -180,6 +180,7 @@
   "policy.locked": "Ustawione przez twoją organizację",
   "knows.title": "Co {name} wie o tobie",
   "knows.lede": "Twoje instrukcje, zawsze przestrzegane, i to, co udało się zauważyć po drodze. Wszystko zostaje na tym urządzeniu i możesz wszystko zmienić.",
+  "theme.auto": "Auto",
   "theme.light": "Jasny",
   "theme.dark": "Ciemny",
   "look.title": "Motyw",

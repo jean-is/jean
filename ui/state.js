@@ -52,7 +52,7 @@ export const app = {
   /** @type {import('@preact/signals-core').Signal<{ code: string, message: string } | null>} */
   error: signal(null),
   presence: signal(/** @type {Presence} */ ('idle')),
-  /** Light or dark: what the device shows (ui/app.js follows it), and the user's pick on this device, if any. */
+  /** Light or dark: what the device shows (ui/app.js follows it), and the user's pick on this device; null is Auto. */
   deviceTheme: signal(/** @type {Theme} */ ('dark')),
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
@@ -161,10 +161,10 @@ export async function setVoice(voice) {
 // index.html reads it before the first paint, and the room never flashes the other colour.
 export const THEME_KEY = 'app.theme'
 
-/** Light or dark. Picking what the device shows follows the device again. @param {Theme} next */
+/** Light or dark, kept on this device, or null: Auto, what the device shows. @param {Theme | null} next */
 export function setTheme(next) {
-  app.chosenTheme.value = next === app.deviceTheme.value ? null : next
-  if (app.chosenTheme.value) localStorage.setItem(THEME_KEY, next)
+  app.chosenTheme.value = next
+  if (next) localStorage.setItem(THEME_KEY, next)
   else localStorage.removeItem(THEME_KEY)
 }
 

@@ -174,6 +174,7 @@
   "policy.locked": "Do tổ chức của bạn thiết lập",
   "knows.title": "Những gì {name} biết về bạn",
   "knows.lede": "Chỉ dẫn của bạn, luôn được làm theo, và những điều {name} nhận thấy trên đường đi. Mọi thứ ở lại trên thiết bị này, và bạn có thể thay đổi bất cứ điều gì.",
+  "theme.auto": "Tự động",
   "theme.light": "Sáng",
   "theme.dark": "Tối",
   "look.title": "Chủ đề",

@@ -176,6 +176,7 @@
   "policy.locked": "Itinakda ng organisasyon mo",
   "knows.title": "Ang alam ng {name} tungkol sa iyo",
   "knows.lede": "Ang mga tagubilin mo, na laging sinusunod, at ang mga napansin ng {name} habang nag-uusap. Lahat ay nananatili sa device na ito, at puwede mong baguhin ang kahit ano.",
+  "theme.auto": "Auto",
   "theme.light": "Maliwanag",
   "theme.dark": "Madilim",
   "look.title": "Tema",

@@ -176,6 +176,7 @@
   "policy.locked": "Set by your organization",
   "knows.title": "What {name} knows about you",
   "knows.lede": "Your instructions, always followed, and what {name} noticed along the way. It all stays on this device, and you can change any of it.",
+  "theme.auto": "Auto",
   "theme.light": "Light",
   "theme.dark": "Dark",
   "look.title": "Theme",

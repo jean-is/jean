@@ -317,8 +317,8 @@ function general() {
 
 const appearance = () => html`
   ${setting(t('settings.mode'), null, html`<span class="segmented" role="radiogroup" aria-label=${t('settings.mode')} aria-keyshortcuts=${SHORTCUTS.theme}>
-    ${(/** @type {const} */ (['light', 'dark'])).map((option) => html`<label>
-      <input type="radio" name="theme" .checked=${theme.value === option} @change=${() => setTheme(option)}>
+    ${(/** @type {const} */ (['auto', 'light', 'dark'])).map((option) => html`<label>
+      <input type="radio" name="theme" .checked=${(app.chosenTheme.value ?? 'auto') === option} @change=${() => setTheme(option === 'auto' ? null : option)}>
       <span>${t(`theme.${option}`)}</span>
     </label>`)}
   </span>`)}
