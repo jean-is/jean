@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { languageOf, rankVoices } from '../core/language.js'
+import { languageOf, rankVoices } from '../ui/language.js'
 
 test('a script only one language writes says which language it is', () => {
   assert.equal(languageOf('안녕하세요, 무엇을 도와드릴까요?', 'en'), 'ko')
@@ -47,7 +47,7 @@ test('when nothing tells, the language the user reads Jean in wins', () => {
   assert.equal(languageOf('Saya akan menghantar fail itu kepada anda dan dia.', 'ms'), 'ms')
 })
 
-/** A voice as browsers list them. @param {string} name @param {string} lang @param {Partial<import('../core/language.js').Voice>} [more] */
+/** A voice as browsers list them. @param {string} name @param {string} lang @param {Partial<import('../ui/language.js').Voice>} [more] */
 const voice = (name, lang, more = {}) => ({ name, lang, localService: true, default: false, voiceURI: name, ...more })
 const names = (/** @type {{ name: string }[]} */ voices) => voices.map((found) => found.name)
 

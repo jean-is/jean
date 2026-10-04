@@ -4,8 +4,10 @@
 // that didn't fit in the message.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { app, currentFiles, rememberText, warm, notify } from '../../ui/state.js'
-import { addFile, readTool, fileText, splitPages, isPicture } from '../../core/files.js'
+import { app, currentFiles, warm, notify } from '../../ui/state.js'
+import { rememberText } from '../../ui/send.js'
+import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
+import { isPicture } from '../../core/events.js'
 import { extractPages } from './extract.js'
 import { fitPicture } from './pictures.js'
 import { t } from '../../core/i18n.js'

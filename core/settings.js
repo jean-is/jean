@@ -23,7 +23,7 @@ import { ulid } from './ulid.js'
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
  * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
  * @property {{ width?: number, sizes?: Record<string, number> }} [dock]  how wide the dock is (a share of the window) and each pane's share of it, as the user set them (D144)
- * @property {import('./csp.js').PageSettings} [pages]  what a web page in the preview may do, and which sites it may reach (D143)
+ * @property {{ scripts?: boolean, web?: boolean, network?: boolean, sites?: string[] }} [pages]  what a web page in the preview may do, and which sites it may reach (D143)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)

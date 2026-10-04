@@ -16,10 +16,10 @@ import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { PAGE_DEFAULTS, pageRights, site } from '../core/csp.js'
+import { PAGE_DEFAULTS, pageRights, site } from './csp.js'
 import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices } from './voices.js'
-import { rankVoices } from '../core/language.js'
+import { rankVoices } from './language.js'
 import { icons } from './icons.js'
 import { conversationList, findEntry, settingsEntry } from './inbox.js'
 import { SHORTCUTS } from './shell.js'
@@ -408,7 +408,7 @@ function pages() {
   return html`<section>
     <h3>${t('pages.title')}</h3>
     <p class="muted">${t('pages.text')}</p>
-    <ul class="rules">${(/** @type {import('../core/csp.js').PageRight[]} */ (Object.keys(PAGE_DEFAULTS))).map((right) => html`<li class="setting">
+    <ul class="rules">${(/** @type {import('./csp.js').PageRight[]} */ (Object.keys(PAGE_DEFAULTS))).map((right) => html`<li class="setting">
       <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? t('policy.locked') : t(`pages.${right}Text`)}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]}
         ?disabled=${locked.has(right) || (right === 'network' && !allows.scripts)}
@@ -418,7 +418,7 @@ function pages() {
   </section>`
 }
 
-/** @param {import('../core/csp.js').PageSettings} change */
+/** @param {import('./csp.js').PageSettings} change */
 const setPages = (change) => updateSettings({ pages: { ...app.settings.value.pages, ...change } })
 
 /**

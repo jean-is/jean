@@ -1,8 +1,8 @@
-// The device's voices, and the one that reads a text best (core/language.js): loaded with the
+// The device's voices, and the one that reads a text best (language.js): loaded with the
 // first answer that can be read aloud, outside the first load. Only voices that run on the
 // device; when none speaks a text's language, Jean says so rather than read it in another's.
 import { signal } from '@preact/signals-core'
-import { languageOf, rankVoices } from '../core/language.js'
+import { languageOf, rankVoices } from './language.js'
 import { t, locale } from '../core/i18n.js'
 import { notify } from './state.js'
 import { speaking } from './speech.js'

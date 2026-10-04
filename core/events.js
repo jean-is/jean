@@ -91,6 +91,9 @@ export function linkedFiles(records) {
   return links
 }
 
+/** A picture brains that can see take as it is: PNG, JPEG, WebP or GIF. @param {ResourceLink} link */
+export const isPicture = (link) => /^image\/(png|jpeg|webp|gif)$/.test(link.mimeType ?? '')
+
 /** @param {Turn} turn @param {AcpUpdate} update @param {number} index */
 export function applyUpdate(turn, update, index) {
   if (update.sessionUpdate === 'plan') {

@@ -155,6 +155,8 @@ Added after 0.7: what a web page may do in the preview (D143). A page's own scri
 
 Added after 0.7: one side for the preview and the browser (D144). What opens beside the conversation shares a dock: one pane fills it, two share it one above the other (side by side on a phone held sideways), and neither covers the other. A divider between them and the dock's edge resize them, by dragging or with the arrow keys, and what the user sets is kept. In Glass both are floating cards with the three lights.
 
+Made room for 0.8, raising no limit (D148): what a message needs on its way (the prompt, the files the brain reads, the run and its approvals, cache warming) left the first load for a module that loads as the user starts typing, and the first load went from 100.0 to 87.0 KB; the modules only reading aloud and the preview use left the core, which went from 2,998 to 2,787 lines. Checked with `npm run e2e` in Chromium and WebKit.
+
 ## Before the public launch (0.3)
 
 - [ ] Final name and domain chosen and registered, because data is bound to the origin (see [open-questions.md](open-questions.md))

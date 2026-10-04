@@ -2,6 +2,7 @@
 // with a [[page N]] line before each page) and .meta.json. Named by content, so the
 // same file dropped twice is stored once. Conversations link to files, never copy them.
 import { join, readJSON, writeJSON } from './fs.js'
+import { isPicture } from './events.js'
 
 /** @import { FS, ResourceLink, DocumentPart } from './types.js' */
 /** @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string }} FileMeta */
@@ -77,9 +78,6 @@ export function pagesThatFit(pages, budgetTokens) {
   }
   return [1, Math.max(last, 1)]
 }
-
-/** A picture brains that can see take as it is: PNG, JPEG, WebP or GIF. @param {ResourceLink} link */
-export const isPicture = (link) => /^image\/(png|jpeg|webp|gif)$/.test(link.mimeType ?? '')
 
 /**
  * The text the brain reads for a linked file, using the pages recorded on the link. A picture

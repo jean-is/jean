@@ -15,7 +15,7 @@
 
 **No build step.** Plain ES modules and an import map; types in JSDoc, checked by `tsc --noEmit` during development only. Deploying means copying the folder, and view-source *is* the source.
 
-**First load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the whole graph in one round trip instead of discovering it one import level at a time. Only the lit-html files Jean imports are vendored. CI fails if the links are stale. The first screen loads only what it shows: the dialogs, the Anthropic adapter (D76), since 0.5 the agent loop and the other adapters (D94), and since D140 Auto's choice of a brain load when first needed.
+**First load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the whole graph in one round trip instead of discovering it one import level at a time. Only the lit-html files Jean imports are vendored. CI fails if the links are stale. The first screen loads only what it shows: the dialogs, the Anthropic adapter (D76), since 0.5 the agent loop and the other adapters (D94), since D140 Auto's choice of a brain, and since D148 the rest of what a message needs on its way (`ui/send.js`: the prompt, what the brain reads of the files, the run and its approvals, cache warming) load when first needed, sending as soon as the user types.
 
 | Loaded upfront (3) | Size | Why |
 |---|---|---|
@@ -62,14 +62,17 @@ manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
 core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js events.js i18n.js
-                  deferred.js search.js decide.js memory.js skills.js csp.js … types.d.ts   (standard web APIs only; a module only one
-                  capability uses lives with it, D96)
-ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css,
+                  deferred.js search.js decide.js memory.js skills.js … types.d.ts   (standard web APIs only; a module only one
+                  capability, or one part of the UI, uses lives with it, D96, D148)
+ui/               base element, shell, chat, activity view, caps.js (the unlock gate), style.css, state.js, send.js (a message
+                  on its way and its answer, loaded once the user types, D148),
                   discovery.js auto.js picker.js, dialogs.js (Settings, with the brains and the house in it, D113, D128, D134) and brains.js (loaded
-                  when a dialog opens, D76), speech.js (read-aloud) and voices.js (the voice for each answer, loaded with it, D114),
+                  when a dialog opens, D76), speech.js (read-aloud) and voices.js (the voice for each answer, loaded with it, D114;
+                  language.js tells the answer's language and ranks the voices, tested in Node),
                   knows.js (Settings' About you, Skills and Routines, 0.4, D134), sandbox.js (the sandbox client, 0.4),
                   looks.js (the themes, D111), touches.js (the user's own, loaded once there are some), inbox.js (Mail's list),
-                  preview.js and preview.css (a file, as what it is, beside the conversation; loaded when one first opens, D126),
+                  preview.js and preview.css (a file, as what it is, beside the conversation; loaded when one first opens, D126;
+                  csp.js writes a web page's policy, D143, tested in Node),
                   dock.js and dock.css (the side of the window the preview and the browser share, tiled and resized; loaded with the first, D144),
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
@@ -291,7 +294,7 @@ default-src 'none'; script-src 'unsafe-inline' https:; style-src 'unsafe-inline'
 font-src data: https:; connect-src https: http://localhost:* http://127.0.0.1:*; frame-src 'none'; base-uri 'none'; form-action 'none'
 ```
 
-Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), writes a doctype, then the policy Jean sent as a `<meta>`, then the page. The page keeps the document's policy and adds that one, so it gets exactly what Settings allows. `core/csp.js` makes it from three switches in Approvals, which `pages` in `policy.json` can set and lock:
+Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), writes a doctype, then the policy Jean sent as a `<meta>`, then the page. The page keeps the document's policy and adds that one, so it gets exactly what Settings allows. `ui/csp.js` makes it from three switches in Approvals, which `pages` in `policy.json` can set and lock:
 
 | Switch | Default | Adds |
 |---|---|---|
@@ -465,7 +468,7 @@ Built in 0.7.
 ## Voice pipeline
 
 - **Speech to text:** a Whisper-class model through Transformers.js (shared runtime), or Chrome's on-device recognition where available.
-- **Text to speech:** `speechSynthesis` with local voices, or Kokoro. Each answer is read in its own language (D109), by the voice `rankVoices()` in `core/language.js` puts first: the user's variety, then the most natural (D114).
+- **Text to speech:** `speechSynthesis` with local voices, or Kokoro. Each answer is read in its own language (D109), by the voice `rankVoices()` in `ui/language.js` puts first: the user's variety, then the most natural (D114).
 - **Live conversation** (0.5, D93): an AudioWorklet feeds 16 kHz audio to Silero voice detection (~2 MB ONNX) in dictation's worker → Whisper → the brain (streamed) → the system's voices, sentence by sentence. A turn starts after 250 ms of speech and ends after 800 ms of silence; speaking over Jean for half a second interrupts it. `caps/live/turns.js` holds the turn-taking, tested under `node --test`.
 - **Real-time speech models** come from the provider (OpenAI Realtime over WebRTC, Gemini Live); `wss:` is already allowed in `connect-src`.
 

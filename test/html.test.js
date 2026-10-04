@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { sources } from './fixtures/keys.js'
-import { pageRights, pagePolicy, site } from '../core/csp.js'
+import { pageRights, pagePolicy, site } from '../ui/csp.js'
 
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8')
 const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? ''

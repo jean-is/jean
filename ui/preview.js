@@ -14,7 +14,7 @@ import { save } from './save.js'
 import { markdown } from './markdown.js'
 import { icons } from './icons.js'
 import { fileMeta, fileText, splitPages } from '../core/files.js'
-import { pageRights, pagePolicy } from '../core/csp.js'
+import { pageRights, pagePolicy } from './csp.js'
 import { t } from '../core/i18n.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string }} Shown */
