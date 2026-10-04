@@ -1,0 +1,23 @@
+{
+  "browser.address": "Địa chỉ",
+  "browser.back": "Quay lại",
+  "browser.forward": "Tiến tới",
+  "browser.reload": "Tải lại",
+  "browser.placeholder": "Nhập địa chỉ, hoặc từ cần tra",
+  "browser.tab": "Mở trong thẻ mới",
+  "browser.fullscreen": "Toàn màn hình",
+  "browser.exitFullscreen": "Thoát toàn màn hình",
+  "browser.empty": "Các trang mở ở đây, bên cạnh cuộc trò chuyện, để vừa xem vừa nói chuyện.",
+  "browser.blank": "Trang không hiện? Một số trang web không cho phép hiển thị bên trong trang khác.",
+  "browser.refused": "Không mở được địa chỉ này.",
+  "browser.own.title": "{site} mở trong thẻ riêng",
+  "browser.own.text": "Một số trang web không thể hiển thị bên cạnh cuộc trò chuyện: chúng không cho phép, hoặc tài khoản của bạn chỉ hoạt động trong thẻ riêng của chúng.",
+  "browser.retry": "Thử lại ở đây",
+  "browser.install": "Dùng thường xuyên? Cài đặt nó như một ứng dụng: nó sẽ có cửa sổ riêng và một chỗ trên màn hình nền, và chạy đúng như mong đợi.",
+  "browser.install.chrome": "Trong Chrome: mở trang web, rồi menu ⋮, Truyền, lưu và chia sẻ, và Cài đặt trang dưới dạng ứng dụng.",
+  "browser.install.edge": "Trong Edge: mở trang web, rồi menu …, Ứng dụng, và Cài đặt trang web này dưới dạng ứng dụng.",
+  "browser.install.safari": "Trong Safari: mở trang web, rồi Tệp, và Thêm vào Dock.",
+  "browser.install.phone": "Trên điện thoại: mở trang web, rồi Chia sẻ hoặc menu, và Thêm vào Màn hình chính.",
+  "browser.install.other": "Trong trình duyệt của bạn: mở trang web, rồi tìm trong menu mục Cài đặt hoặc Tạo lối tắt.",
+  "browser.install.none": "Trình duyệt này không cài được trang web thành ứng dụng: hãy lưu trang vào dấu trang."
+}

@@ -78,7 +78,10 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/ex
                   helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
                   routines/                                     (0.7; routines/schedule.js and skills/sources.js, discovery indexes, tested in Node)
                   find/                                         (after 0.7: search, ⌘K, D133)
-locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, and dialogs/ with the dialogs' strings (D97)
+                  browser/                                      (after 0.7: pages beside the conversation, D140; browser.html frames
+                                                                other sites, pages.js is tested in Node)
+locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, dialogs/ with the dialogs' strings (D97), and browser/
+                  with the browser's own, loaded and cached with it (D140)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 scripts/          vendor.js, manifest.js (content hashes → capabilities.json; generated, never committed), graph.js, budgets.js, serve.js,
                   reflexes.js (measures Kev on the test set)
@@ -112,7 +115,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. `schedule` makes a routine (D122); `suggest_skill` is deferred, found with `find_tools` (D121). Built so far: `read`, `write`, `edit`, `run`, `python`, `web_search`, `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `suggest_skill`, `schedule`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119).
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `browse`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`, and `ask_user` exists only in helpers' turns (D98). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. `schedule` makes a routine (D122); `suggest_skill` is deferred, found with `find_tools` (D121). Built so far: `read`, `write`, `edit`, `run`, `python`, `web_search`, `browse` (D140), `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `suggest_skill`, `schedule`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119).
 - Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
@@ -288,6 +291,18 @@ connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'
 - **Nowhere to go.** No network, no form, no pop-up, and `index.html`'s `frame-src 'self'` refuses to take the frame to any other address; its links move only within the page. `test/html.test.js` checks the hash, the policy, `frame-src 'self'` and the frame's one sandbox flag.
 - **Everything else shows in Jean's own document,** from what Jean keeps: pictures as pictures (a drawing as an `<img>`, where its scripts never run), a PDF's pages drawn by pdf.js with the options it reads them with, and documents, spreadsheets and decks from their text, through lit-html.
 
+**The browser** (D140) frames other sites' pages in `caps/browser/browser.html`, a document with no script, whose policy alone lets a frame show another site, so `index.html` keeps `frame-src 'self'`:
+
+```text
+default-src 'none'; style-src 'sha256-<its style>'; frame-src https: http://localhost:* http://127.0.0.1:*;
+base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'
+```
+
+- **Jean puts each page's frame in it**, from its own document and origin: a fresh frame for each address, with no referrer, `sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads allow-storage-access-by-user-activation"`, and never top navigation, so the site keeps its own origin and storage but can't take Jean's place.
+- **The one frame with both flags.** It only ever holds another site: Jean never opens one of its own addresses there, and the policy refuses a blob or data. For another site's page, both flags are strictly safer than no `sandbox` at all. `test/html.test.js` checks the policy, that no other module combines them, and that the flags have no top navigation.
+- **What Jean can't see.** The page's address once it moves on, its title, and whether it refused to be framed (`X-Frame-Options`, `frame-ancestors`): browsers hide all of these from the framing page. Back walks the tab's history only while its entries are known to be the site's (`caps/browser/pages.js`). A way out, a new tab, stays under a site's page until the site shows it works.
+- **What the brain reads** of a page, `browse` fetches without cookies, and only where the site allows other sites to read it (CORS).
+
 ## Languages (i18n)
 
 - **Strings.** They live in `locales/<lang>.json`, with English as the source and `{name}` placeholders.
@@ -295,7 +310,7 @@ connect-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'
   - Dates, numbers, lists and relative times use `Intl`.
   - Language names come from `Intl.DisplayNames`, so each language appears in its own name with no extra data.
 - **Choosing.** `preferredLocales` matches `navigator.languages` to the catalogues on language and likely script (`Intl.Locale.maximize`), so `zh-TW` finds `zh-Hant`, `pt-BR` finds `pt` and `iw` finds `he`. The first match is the starting language, and the language menu lists every match first, in the browser's order, under "Your languages".
-- **One catalogue per person, in two parts.** `useLocale()` fetches only the chosen language's catalogue; English, the fallback, is fetched only when that one can't be (D76). The strings only dialogs show are in a second part, `locales/dialogs/<lang>.json`, which `ui/dialogs.js` loads with `useStrings('dialogs')`; every module that shows a dialog imports it (D97). The first-load budget counts the largest first part; each part has the per-file budget.
+- **One catalogue per person, in parts.** `useLocale()` fetches only the chosen language's catalogue; English, the fallback, is fetched only when that one can't be (D76). The strings only dialogs show are in a second part, `locales/dialogs/<lang>.json`, which `ui/dialogs.js` loads with `useStrings('dialogs')`; every module that shows a dialog imports it (D97). A capability whose strings would weigh on the first load brings its own part, `locales/<id>/<lang>.json`, loaded with `useStrings(id)` and cached with the capability; the browser is the first (D140). The first-load budget counts the largest first part; each part has the per-file budget.
 - **Instant switching.** The locale is a signal, so every bound piece of text re-renders. `<html lang dir>` flips with it, and CSS uses logical properties only, so right-to-left layouts mirror immediately.
 - **Details that are easy to miss:**
   - Every message element gets `dir="auto"`, so an English reply renders correctly in an Arabic UI.
@@ -316,7 +331,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 
 **System notes (D46).** When something changes mid-conversation, Jean appends a system note to the transcript at that point instead of editing the prompt. Changes include the language, rules, instructions, memory, skills, the project, newly unlocked tools and the date.
 
-- **Sections (D81).** The project, instructions, memory, skills and, since 0.5, the connected services (`<connections>`, D89) are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …"). Since 0.6 the project's section also holds what the user calls its assistant and how it should be (D102).
+- **Sections (D81).** The project, instructions, memory, skills and, since 0.5, the connected services (`<connections>`, D89) are sections of the frozen prompt; the prompt state keeps a fingerprint of each, and a section that changed arrives whole in a note ("The <memory> section is now: …"). Since 0.6 the project's section also holds what the user calls its assistant and how it should be (D102). Since D140, `<page>` says which page the browser beside the conversation shows.
 - **Notes a message comes with.** A brief of what's new ("Since last time", D101) starts with a note saying when the user was last here; the turn that answers it can only read.
 
 - **Recorded in the transcript.** A note is a record in the conversation JSONL, an ACP extension update (`_system_note`) holding the English text the brain sees and structured data for the UI label. Replaying the file rebuilds exactly what the brain was told, and when.
@@ -379,7 +394,7 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
   3. A multilingual embedding model is added only if the test set proves it necessary.
 - **One engine, three uses:** project files, past conversations (`recall`) and memory.
 - **Source numbers (D71).** When a message is sent, each shared file gets a number on its link (`_meta.source`), kept if the same file was shared before. The brain sees `<document source="n" name="…">`, and `read` output starts with "Source [n]:". The UI turns `[n]` into a chip only when n is a known source; clicking it opens the file.
-- **Sources from tools and the web (D90).** Each turn continues the numbering. A connection's result lists every page, email or document it brings in as "Source [n]: …" (a result that names none is one source); Wikipedia's results do the same; the brain's own search cites pages, and the loop writes ` [n]` after the cited text. Chips for web pages open them in a new tab; others show their title. A "Sources" list follows the answer.
+- **Sources from tools and the web (D90).** Each turn continues the numbering. A connection's result lists every page, email or document it brings in as "Source [n]: …" (a result that names none is one source); Wikipedia's results do the same; the brain's own search cites pages, and the loop writes ` [n]` after the cited text. Chips for web pages are links: they open in a new tab, or beside the conversation once the browser is on (D140); others show their title. A "Sources" list follows the answer.
 
 ## Activity events
 

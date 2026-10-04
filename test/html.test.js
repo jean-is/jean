@@ -4,6 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
+import { sources } from './fixtures/keys.js'
 
 const html = await readFile(new URL('../index.html', import.meta.url), 'utf8')
 const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? ''
@@ -92,4 +93,32 @@ test('the preview is only ever framed without allow-same-origin, and the page ne
   assert.doesNotMatch(client, /srcdoc|setAttribute\('sandbox'/, 'srcdoc would take index.html\'s policy instead of the preview\'s')
   const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
   assert.doesNotMatch(state, /createObjectURL[\s\S]{0,200}open\(/, 'a file in a tab of Jean\'s origin would run its scripts there')
+})
+
+const host = await readFile(new URL('../caps/browser/browser.html', import.meta.url), 'utf8')
+const hostCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(host)?.[1] ?? ''
+
+test('the browser’s frame is in a document with no script, whose policy lets a frame show another site (D140)', () => {
+  const style = /<style>([\s\S]*?)<\/style>/.exec(host)?.[1] ?? ''
+  const hash = createHash('sha256').update(style).digest('base64')
+  assert.ok(hostCSP.includes(`style-src 'sha256-${hash}';`), `its style alone: update the browser's style-src hash to 'sha256-${hash}'`)
+  assert.doesNotMatch(host, /<script/i, 'no script: Jean puts the frame in')
+  assert.doesNotMatch(hostCSP, /script-src|'unsafe|blob:|data:|\s\*[\s;]/, "default-src 'none' keeps scripts out; no blob, data or any address shows here")
+  for (const directive of ["default-src 'none'", 'frame-src https: http://localhost:* http://127.0.0.1:*;', "base-uri 'none'", "form-action 'none'", "require-trusted-types-for 'script'", "trusted-types 'none'"]) {
+    assert.ok(hostCSP.includes(directive), directive)
+  }
+  assert.ok(host.indexOf('Content-Security-Policy') < host.indexOf('<style'))
+})
+
+test('only the browser’s frame keeps its site’s origin, and the site can never take Jean’s place (D140)', async () => {
+  // Code lines only: comments say where it is never given.
+  const code = Object.entries(await sources()).filter(([, text]) => text.split('\n').some((line) => line.includes('allow-same-origin') && !/^\s*(\/\/|\*|\/\*)/.test(line)))
+  assert.deepEqual(code.map(([path]) => path), ['caps/browser/browser.js'])
+  const browser = code[0][1]
+  const flags = /const SANDBOX = '([^']+)'/.exec(browser)?.[1].split(' ') ?? []
+  assert.ok(flags.includes('allow-scripts') && flags.includes('allow-same-origin'))
+  assert.ok(!flags.some((flag) => flag.startsWith('allow-top-navigation')), 'the site never navigates Jean')
+  assert.match(browser, /frame = doc\.createElement\('iframe'\)/, 'made in browser.html, whose policy alone lets it show another site')
+  assert.match(browser, /setAttribute\('sandbox', SANDBOX\)/)
+  assert.match(browser, /if \(!showable\(url, location\.href\)/, 'never one of Jean\'s own pages')
 })

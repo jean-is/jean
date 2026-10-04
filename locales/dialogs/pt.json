@@ -121,6 +121,8 @@
   "skills.ready.invalid": "Isto não é uma competência que se possa adicionar.",
   "skills.ready.unreachable": "Não foi possível transferir esta competência.",
   "cap.search.text": "Quando faltam factos para responder, procura-se na web, e vê-se de onde vem cada resposta.",
+  "cap.browser.hint": "Abre três links das respostas.",
+  "cap.browser.text": "Mostra páginas web ao lado da conversa, com retroceder, avançar e recarregar. {name} também pode abrir páginas aí, e sabe qual está aberta.",
   "cap.connections.text": "Liga os serviços que usas, como o e-mail ou os documentos. Lá só se lê e se age com a tua autorização.",
   "cap.live.text": "Fala sem usar as mãos: as respostas são lidas em voz alta e param assim que falas. Cerca de {size}, uma única vez.",
   "connections.address": "Endereço do serviço",

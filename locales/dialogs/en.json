@@ -119,6 +119,8 @@
   "skills.ready.invalid": "This isn’t a skill that can be added.",
   "skills.ready.unreachable": "This skill couldn’t be downloaded.",
   "cap.search.text": "{name} looks things up on the web when a question needs facts it doesn’t have, and shows where each answer comes from.",
+  "cap.browser.hint": "Open three links from answers.",
+  "cap.browser.text": "Shows web pages beside the conversation, with back, forward and reload. {name} can open pages there too, and knows which one is open.",
   "cap.connections.text": "Connect the services you use, like your email or documents. {name} reads and acts there only with your approval.",
   "cap.live.text": "Talk with {name} hands-free: it listens, answers aloud, and stops when you speak. About {size}, once.",
   "connections.address": "Address of the service",

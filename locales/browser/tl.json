@@ -1,0 +1,23 @@
+{
+  "browser.address": "Address",
+  "browser.back": "Bumalik",
+  "browser.forward": "Abante",
+  "browser.reload": "I-reload",
+  "browser.placeholder": "Mag-type ng address, o mga salitang hahanapin",
+  "browser.tab": "Buksan sa bagong tab",
+  "browser.fullscreen": "Full screen",
+  "browser.exitFullscreen": "Lumabas sa full screen",
+  "browser.empty": "Dito nagbubukas ang mga page, sa tabi ng usapan, para makita mo habang nag-uusap.",
+  "browser.blank": "Hindi lumalabas ang page? May mga site na ayaw ipakita sa loob ng ibang site.",
+  "browser.refused": "Hindi mabubuksan ang address na iyon.",
+  "browser.own.title": "Nagbubukas ang {site} sa sarili nitong tab",
+  "browser.own.text": "May mga site na hindi maipapakita sa tabi ng usapan: hindi nila ito pinapayagan, o gumagana lang ang account mo sa sarili nilang tab.",
+  "browser.retry": "Subukan ulit dito",
+  "browser.install": "Madalas mo bang gamitin? I-install ito bilang app: magkakaroon ito ng sariling window at puwesto sa desktop mo, at gagana ito roon nang maayos.",
+  "browser.install.chrome": "Sa Chrome: buksan ang site, tapos ang ⋮ menu, I-cast, i-save at ibahagi, at I-install ang page bilang app.",
+  "browser.install.edge": "Sa Edge: buksan ang site, tapos ang … menu, Mga App, at I-install ang site na ito bilang app.",
+  "browser.install.safari": "Sa Safari: buksan ang site, tapos File, at Add to Dock.",
+  "browser.install.phone": "Sa telepono: buksan ang site, tapos ang Ibahagi o ang menu, at Idagdag sa Home Screen.",
+  "browser.install.other": "Sa browser mo: buksan ang site, tapos hanapin sa menu nito ang I-install o Gumawa ng shortcut.",
+  "browser.install.none": "Hindi kayang mag-install ng site bilang app ng browser na ito: i-bookmark na lang ang site."
+}

@@ -119,6 +119,8 @@
   "skills.ready.invalid": "Hindi ito kasanayang maidaragdag.",
   "skills.ready.unreachable": "Hindi ma-download ang kasanayang ito.",
   "cap.search.text": "Naghahanap ang {name} sa web kapag kailangan ng tanong ang mga katotohanang wala pa, at ipinapakita kung saan galing ang bawat sagot.",
+  "cap.browser.hint": "Magbukas ng tatlong link mula sa mga sagot.",
+  "cap.browser.text": "Ipinapakita ang mga web page sa tabi ng usapan, may balik, abante at reload. Kaya rin ni {name} na magbukas ng page doon, at alam niya kung alin ang bukas.",
   "cap.connections.text": "Ikonekta ang mga serbisyong ginagamit mo, gaya ng email o mga dokumento. Nagbabasa at kumikilos doon ang {name} nang may pahintulot mo lang.",
   "cap.live.text": "Makipag-usap nang hindi gumagamit ng kamay: binabasa nang malakas ang mga sagot at tumitigil kapag nagsalita ka. Mga {size}, isang beses.",
   "connections.address": "Address ng serbisyo",

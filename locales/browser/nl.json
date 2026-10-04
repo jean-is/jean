@@ -1,0 +1,23 @@
+{
+  "browser.address": "Adres",
+  "browser.back": "Terug",
+  "browser.forward": "Vooruit",
+  "browser.reload": "Vernieuwen",
+  "browser.placeholder": "Typ een adres, of woorden om op te zoeken",
+  "browser.tab": "Openen in een nieuw tabblad",
+  "browser.fullscreen": "Volledig scherm",
+  "browser.exitFullscreen": "Volledig scherm sluiten",
+  "browser.empty": "Pagina’s openen hier, naast het gesprek, zodat je ze kunt bekijken terwijl je praat.",
+  "browser.blank": "Verschijnt de pagina niet? Sommige sites staan niet toe dat ze in een andere worden getoond.",
+  "browser.refused": "Dat adres kan niet worden geopend.",
+  "browser.own.title": "{site} opent in een eigen tabblad",
+  "browser.own.text": "Sommige sites kunnen niet naast het gesprek worden getoond: ze staan het niet toe, of je account werkt alleen in hun eigen tabblad.",
+  "browser.retry": "Hier opnieuw proberen",
+  "browser.install": "Gebruik je het vaak? Installeer het als app: het krijgt een eigen venster en een plek op je bureaublad, en werkt daar zoals het hoort.",
+  "browser.install.chrome": "In Chrome: open de site, dan het menu ⋮, Casten, opslaan en delen, en Pagina installeren als app.",
+  "browser.install.edge": "In Edge: open de site, dan het menu …, Apps, en Deze site installeren als app.",
+  "browser.install.safari": "In Safari: open de site, dan Archief, en Voeg toe aan Dock.",
+  "browser.install.phone": "Op een telefoon: open de site, dan Delen of het menu, en Zet op beginscherm.",
+  "browser.install.other": "In je browser: open de site en zoek in het menu naar Installeren of Snelkoppeling maken.",
+  "browser.install.none": "Deze browser kan sites niet als app installeren: bewaar de site in je bladwijzers."
+}

@@ -1,0 +1,23 @@
+{
+  "browser.address": "Endereço",
+  "browser.back": "Retroceder",
+  "browser.forward": "Avançar",
+  "browser.reload": "Recarregar",
+  "browser.placeholder": "Escreve um endereço, ou palavras a pesquisar",
+  "browser.tab": "Abrir num novo separador",
+  "browser.fullscreen": "Ecrã inteiro",
+  "browser.exitFullscreen": "Sair do ecrã inteiro",
+  "browser.empty": "As páginas abrem aqui, ao lado da conversa, para as veres enquanto falas.",
+  "browser.blank": "A página não aparece? Alguns sites não permitem ser mostrados dentro de outro.",
+  "browser.refused": "Esse endereço não pode ser aberto.",
+  "browser.own.title": "{site} abre num separador próprio",
+  "browser.own.text": "Alguns sites não podem ser mostrados ao lado da conversa: não o permitem, ou a tua conta só funciona no separador deles.",
+  "browser.retry": "Tentar aqui de novo",
+  "browser.install": "Usas muito? Instala-o como uma app: fica com uma janela própria e um lugar no teu ambiente de trabalho, e funciona lá como deve.",
+  "browser.install.chrome": "No Chrome: abre o site, depois o menu ⋮, Transmitir, guardar e partilhar, e Instalar página como app.",
+  "browser.install.edge": "No Edge: abre o site, depois o menu …, Aplicações, e Instalar este site como uma aplicação.",
+  "browser.install.safari": "No Safari: abre o site, depois Ficheiro, e Adicionar à Dock.",
+  "browser.install.phone": "Num telemóvel: abre o site, depois Partilhar ou o menu, e Adicionar ao ecrã principal.",
+  "browser.install.other": "No teu navegador: abre o site e procura no menu Instalar ou Criar atalho.",
+  "browser.install.none": "Este navegador não instala sites como apps: guarda o site nos teus marcadores."
+}

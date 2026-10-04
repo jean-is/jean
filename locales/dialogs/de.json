@@ -119,6 +119,8 @@
   "skills.ready.invalid": "Das ist keine Fähigkeit, die hinzugefügt werden kann.",
   "skills.ready.unreachable": "Diese Fähigkeit konnte nicht heruntergeladen werden.",
   "cap.search.text": "{name} sucht im Web, wenn für eine Frage Fakten fehlen, und zeigt, woher jede Antwort stammt.",
+  "cap.browser.hint": "Öffne drei Links aus Antworten.",
+  "cap.browser.text": "Zeigt Webseiten neben dem Gespräch, mit Zurück, Vor und Neu laden. {name} kann dort auch Seiten öffnen und weiß, welche offen ist.",
   "cap.connections.text": "Verbinde die Dienste, die du nutzt, etwa deine E-Mail oder Dokumente. {name} liest und handelt dort nur mit deiner Zustimmung.",
   "cap.live.text": "Sprich freihändig: Antworten werden vorgelesen und verstummen, sobald du sprichst. Etwa {size}, einmalig.",
   "connections.address": "Adresse des Dienstes",

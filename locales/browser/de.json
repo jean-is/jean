@@ -1,0 +1,23 @@
+{
+  "browser.address": "Adresse",
+  "browser.back": "Zurück",
+  "browser.forward": "Vor",
+  "browser.reload": "Neu laden",
+  "browser.placeholder": "Adresse oder Suchbegriffe eingeben",
+  "browser.tab": "In neuem Tab öffnen",
+  "browser.fullscreen": "Vollbild",
+  "browser.exitFullscreen": "Vollbild beenden",
+  "browser.empty": "Seiten öffnen sich hier, neben dem Gespräch, damit du sie beim Reden ansehen kannst.",
+  "browser.blank": "Seite wird nicht angezeigt? Manche Websites lassen sich nicht in einer anderen anzeigen.",
+  "browser.refused": "Diese Adresse lässt sich nicht öffnen.",
+  "browser.own.title": "{site} öffnet sich in einem eigenen Tab",
+  "browser.own.text": "Manche Websites lassen sich nicht neben dem Gespräch anzeigen: Sie erlauben es nicht, oder dein Konto funktioniert nur in ihrem eigenen Tab.",
+  "browser.retry": "Hier noch einmal versuchen",
+  "browser.install": "Oft genutzt? Installiere sie als App: Sie bekommt ein eigenes Fenster und einen Platz auf deinem Desktop und funktioniert dort, wie sie soll.",
+  "browser.install.chrome": "In Chrome: Website öffnen, dann das Menü ⋮, Streamen, speichern und teilen, und Seite als App installieren.",
+  "browser.install.edge": "In Edge: Website öffnen, dann das Menü …, Apps, und Diese Website als App installieren.",
+  "browser.install.safari": "In Safari: Website öffnen, dann Ablage, und Zum Dock hinzufügen.",
+  "browser.install.phone": "Auf dem Handy: Website öffnen, dann Teilen oder das Menü, und Zum Home-Bildschirm.",
+  "browser.install.other": "In deinem Browser: Website öffnen, dann im Menü nach Installieren oder Verknüpfung erstellen suchen.",
+  "browser.install.none": "Dieser Browser kann Websites nicht als Apps installieren: Speichere die Website stattdessen in deinen Lesezeichen."
+}

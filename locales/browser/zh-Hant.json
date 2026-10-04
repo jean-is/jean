@@ -1,0 +1,23 @@
+{
+  "browser.address": "網址",
+  "browser.back": "上一頁",
+  "browser.forward": "下一頁",
+  "browser.reload": "重新整理",
+  "browser.placeholder": "輸入網址，或要查詢的字詞",
+  "browser.tab": "在新分頁中開啟",
+  "browser.fullscreen": "全螢幕",
+  "browser.exitFullscreen": "結束全螢幕",
+  "browser.empty": "網頁會在這裡開啟，就在對話旁邊，方便邊聊邊看。",
+  "browser.blank": "網頁沒有顯示？有些網站不允許顯示在其他網站裡。",
+  "browser.refused": "無法開啟這個網址。",
+  "browser.own.title": "{site} 會在獨立的分頁中開啟",
+  "browser.own.text": "有些網站無法顯示在對話旁邊：它們不允許，或者你的帳號只能在它們自己的分頁裡使用。",
+  "browser.retry": "在這裡重試",
+  "browser.install": "經常使用？把它安裝成應用程式：它會有自己的視窗和桌面上的位置，並能在那裡正常運作。",
+  "browser.install.chrome": "在 Chrome 中：開啟網站，然後依序選擇 ⋮ 選單、「投放、儲存及分享」、「將網頁安裝為應用程式」。",
+  "browser.install.edge": "在 Edge 中：開啟網站，然後依序選擇 … 選單、「應用程式」、「將此網站安裝為應用程式」。",
+  "browser.install.safari": "在 Safari 中：開啟網站，然後依序選擇「檔案」、「加入 Dock」。",
+  "browser.install.phone": "在手機上：開啟網站，然後點「分享」或選單，再選「加入主畫面」。",
+  "browser.install.other": "在你的瀏覽器中：開啟網站，然後在選單中找「安裝」或「建立捷徑」。",
+  "browser.install.none": "這個瀏覽器無法把網站安裝成應用程式：請改為把網站加入書籤。"
+}

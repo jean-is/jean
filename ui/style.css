@@ -388,7 +388,8 @@ app-made:not(:defined) { display: none; }
   line-height: 1;
   vertical-align: 0.15em;
 }
-button.cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
+a.cite { color: inherit; text-decoration: none; }
+:is(a, button).cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
 .read-list .cite { margin: 0; font-size: 0.8em; }
 /* A picture Jean made (codemode's models.image), with a button to save it. */
 app-image figure { position: relative; inline-size: fit-content; margin: 0; }

@@ -1,0 +1,23 @@
+{
+  "browser.address": "アドレス",
+  "browser.back": "戻る",
+  "browser.forward": "進む",
+  "browser.reload": "再読み込み",
+  "browser.placeholder": "アドレスまたは調べたい言葉を入力",
+  "browser.tab": "新しいタブで開く",
+  "browser.fullscreen": "全画面表示",
+  "browser.exitFullscreen": "全画面表示を終了",
+  "browser.empty": "ページはここ、会話の横に開くので、話しながら見られます。",
+  "browser.blank": "ページが表示されませんか？ほかのサイトの中での表示を許可していないサイトもあります。",
+  "browser.refused": "このアドレスは開けません。",
+  "browser.own.title": "{site} は専用のタブで開きます",
+  "browser.own.text": "会話の横に表示できないサイトもあります。表示が許可されていないか、アカウントがそのサイト自身のタブでしか使えないためです。",
+  "browser.retry": "ここでもう一度試す",
+  "browser.install": "よく使いますか？アプリとしてインストールすると、専用のウィンドウとデスクトップ上の場所ができ、本来どおりに動きます。",
+  "browser.install.chrome": "Chrome の場合：サイトを開き、⋮ メニューから「キャスト、保存、共有」、「ページをアプリとしてインストール」の順に選びます。",
+  "browser.install.edge": "Edge の場合：サイトを開き、… メニューから「アプリ」、「このサイトをアプリとしてインストール」の順に選びます。",
+  "browser.install.safari": "Safari の場合：サイトを開き、「ファイル」から「Dock に追加」を選びます。",
+  "browser.install.phone": "スマートフォンの場合：サイトを開き、共有またはメニューから「ホーム画面に追加」を選びます。",
+  "browser.install.other": "お使いのブラウザで：サイトを開き、メニューで「インストール」または「ショートカットを作成」を探します。",
+  "browser.install.none": "このブラウザはサイトをアプリとしてインストールできません。代わりにブックマークに保存してください。"
+}

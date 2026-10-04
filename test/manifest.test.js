@@ -84,7 +84,7 @@ describe('manifest: file filters', () => {
 })
 
 describe('manifest: capabilities', () => {
-  it('lists each capability with its runtimes, and keeps runtimes out of the shell', async () => {
+  it('lists each capability with its runtimes and its own strings, and keeps them out of the shell', async () => {
     const root = await fixture({
       'brand.js': '',
       'vendor/signals-core.mjs': '',
@@ -94,10 +94,15 @@ describe('manifest: capabilities', () => {
       'caps/files/files.js': '',
       'caps/files/notes.md': '',
       'caps/made/made.js': '',
+      'caps/browser/browser.js': '',
+      'locales/en.json': '{}',
+      'locales/browser/en.json': '{}',
     })
-    const { shell, capabilities } = await collectFiles(root)
+    const { shell, locales, capabilities } = await collectFiles(root)
     assert.deepEqual(shell, ['brand.js', 'manifest.webmanifest', 'vendor/signals-core.mjs'])
+    assert.deepEqual(locales, ['locales/en.json'], 'a capability\'s own strings come with it (D140)')
     assert.deepEqual(capabilities, {
+      browser: { files: ['caps/browser/browser.js', 'locales/browser/en.json'] },
       files: { files: ['caps/files/files.js', 'vendor/pdfjs/cmaps/UniJIS-UTF16-H.bcmap', 'vendor/pdfjs/pdf.min.mjs'] },
       made: { files: ['caps/made/made.js'] },
     })

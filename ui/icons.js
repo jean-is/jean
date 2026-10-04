@@ -1,4 +1,4 @@
-// Forty-four inline icons, 24×24, drawn with the current colour.
+// Forty-five inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -10,6 +10,7 @@ export const icons = {
   plus: icon(svg`<path d="M12 5v14M5 12h14"/>`),
   history: icon(svg`<path d="M4 6h16M4 12h16M4 18h10"/>`, 'flip-rtl'),
   search: icon(svg`<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 4.5 4.5"/>`),
+  window: icon(svg`<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 9h17M6.5 6.8h.01M9 6.8h.01"/>`),
   globe: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.4 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.4-3.6-8.5s1.1-5.9 3.6-8.5Z"/>`),
   gear: icon(svg`<path d="M10.3 5.2L10.4 3.1A9 9 0 0 1 13.6 3.1L13.7 5.2A7 7 0 0 1 15.6 6L17.2 4.6A9 9 0 0 1 19.4 6.8L18 8.4A7 7 0 0 1 18.8 10.3L20.9 10.4A9 9 0 0 1 20.9 13.6L18.8 13.7A7 7 0 0 1 18 15.6L19.4 17.2A9 9 0 0 1 17.2 19.4L15.6 18A7 7 0 0 1 13.7 18.8L13.6 20.9A9 9 0 0 1 10.4 20.9L10.3 18.8A7 7 0 0 1 8.4 18L6.8 19.4A9 9 0 0 1 4.6 17.2L6 15.6A7 7 0 0 1 5.2 13.7L3.1 13.6A9 9 0 0 1 3.1 10.4L5.2 10.3A7 7 0 0 1 6 8.4L4.6 6.8A9 9 0 0 1 6.8 4.6L8.4 6A7 7 0 0 1 10.3 5.2Z"/><circle cx="12" cy="12" r="3"/>`),
   close: icon(svg`<path d="M6 6l12 12M18 6 6 18"/>`),

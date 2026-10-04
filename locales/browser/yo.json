@@ -1,0 +1,23 @@
+{
+  "browser.address": "Àdírẹ́sì",
+  "browser.back": "Padà",
+  "browser.forward": "Síwájú",
+  "browser.reload": "Tún-un gbé",
+  "browser.placeholder": "Ẹ tẹ àdírẹ́sì, tàbí ọ̀rọ̀ láti wá",
+  "browser.tab": "Ṣí nínú táàbù tuntun",
+  "browser.fullscreen": "Ojú-ìbòjú kíkún",
+  "browser.exitFullscreen": "Jáde kúrò nínú ojú-ìbòjú kíkún",
+  "browser.empty": "Àwọn ojú-ewé ń ṣí níbí, lẹ́gbẹ̀ẹ́ ìjíròrò, kí ẹ lè wò wọ́n bí ẹ ṣe ń sọ̀rọ̀.",
+  "browser.blank": "Ojú-ewé kò hàn? Àwọn ojú-òpó kan kò gbà kí a fi wọ́n hàn nínú òmíràn.",
+  "browser.refused": "A kò lè ṣí àdírẹ́sì yẹn.",
+  "browser.own.title": "{site} ń ṣí nínú táàbù tirẹ̀",
+  "browser.own.text": "A kò lè fi àwọn ojú-òpó kan hàn lẹ́gbẹ̀ẹ́ ìjíròrò: wọn kò gbà, tàbí àkáǹtì yín ń ṣiṣẹ́ nínú táàbù tiwọn nìkan.",
+  "browser.retry": "Tún gbìyànjú níbí",
+  "browser.install": "Ṣé ẹ máa ń lò ó dáadáa? Ẹ fi sórí ẹ̀rọ bí áàpù: yóò ní fèrèsé tirẹ̀ àti ààyè lórí tábìlì ẹ̀rọ yín, yóò sì ṣiṣẹ́ bí ó ti yẹ níbẹ̀.",
+  "browser.install.chrome": "Nínú Chrome: ẹ ṣí ojú-òpó náà, lẹ́yìn náà mẹ́nù ⋮, Cast, save and share, àti Install page as app.",
+  "browser.install.edge": "Nínú Edge: ẹ ṣí ojú-òpó náà, lẹ́yìn náà mẹ́nù …, Apps, àti Install this site as an app.",
+  "browser.install.safari": "Nínú Safari: ẹ ṣí ojú-òpó náà, lẹ́yìn náà File, àti Add to Dock.",
+  "browser.install.phone": "Lórí fóònù: ẹ ṣí ojú-òpó náà, lẹ́yìn náà Share tàbí mẹ́nù, àti Add to Home Screen.",
+  "browser.install.other": "Nínú aṣàwákiri yín: ẹ ṣí ojú-òpó náà, lẹ́yìn náà ẹ wá Install tàbí Create shortcut nínú mẹ́nù rẹ̀.",
+  "browser.install.none": "Aṣàwákiri yìí kò lè fi ojú-òpó sórí ẹ̀rọ bí áàpù: ẹ fi ojú-òpó náà pamọ́ sínú àmì-ìwé dípò rẹ̀."
+}

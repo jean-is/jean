@@ -1,0 +1,23 @@
+{
+  "browser.address": "Anwani",
+  "browser.back": "Rudi",
+  "browser.forward": "Mbele",
+  "browser.reload": "Pakia upya",
+  "browser.placeholder": "Andika anwani, au maneno ya kutafuta",
+  "browser.tab": "Fungua kwenye kichupo kipya",
+  "browser.fullscreen": "Skrini nzima",
+  "browser.exitFullscreen": "Toka kwenye skrini nzima",
+  "browser.empty": "Kurasa hufunguka hapa, kando ya mazungumzo, ili uzitazame mnapozungumza.",
+  "browser.blank": "Ukurasa hauonekani? Baadhi ya tovuti haziruhusu kuonyeshwa ndani ya tovuti nyingine.",
+  "browser.refused": "Anwani hiyo haiwezi kufunguliwa.",
+  "browser.own.title": "{site} hufunguka kwenye kichupo chake",
+  "browser.own.text": "Baadhi ya tovuti haziwezi kuonyeshwa kando ya mazungumzo: haziruhusu, au akaunti yako inafanya kazi tu kwenye kichupo chao.",
+  "browser.retry": "Jaribu tena hapa",
+  "browser.install": "Unaitumia mara nyingi? Isakinishe kama programu: itapata dirisha lake na nafasi kwenye eneo-kazi lako, na itafanya kazi ipasavyo hapo.",
+  "browser.install.chrome": "Kwenye Chrome: fungua tovuti, kisha menyu ya ⋮, Tuma, hifadhi na shiriki, na Sakinisha ukurasa kama programu.",
+  "browser.install.edge": "Kwenye Edge: fungua tovuti, kisha menyu ya …, Programu, na Sakinisha tovuti hii kama programu.",
+  "browser.install.safari": "Kwenye Safari: fungua tovuti, kisha File, na Add to Dock.",
+  "browser.install.phone": "Kwenye simu: fungua tovuti, kisha Shiriki au menyu, na Ongeza kwenye Skrini ya Kwanza.",
+  "browser.install.other": "Kwenye kivinjari chako: fungua tovuti, kisha tafuta Sakinisha au Unda njia ya mkato kwenye menyu yake.",
+  "browser.install.none": "Kivinjari hiki hakiwezi kusakinisha tovuti kama programu: badala yake hifadhi tovuti kwenye alamisho."
+}

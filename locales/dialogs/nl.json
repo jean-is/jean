@@ -119,6 +119,8 @@
   "skills.ready.invalid": "Dit is geen vaardigheid die kan worden toegevoegd.",
   "skills.ready.unreachable": "Deze vaardigheid kon niet worden gedownload.",
   "cap.search.text": "{name} zoekt op het web als een vraag feiten nodig heeft die er niet zijn, en laat zien waar elk antwoord vandaan komt.",
+  "cap.browser.hint": "Open drie links uit antwoorden.",
+  "cap.browser.text": "Toont webpagina’s naast het gesprek, met terug, vooruit en vernieuwen. {name} kan er ook pagina’s openen, en weet welke open is.",
   "cap.connections.text": "Verbind de diensten die je gebruikt, zoals je e-mail of documenten. {name} leest en handelt daar alleen met jouw toestemming.",
   "cap.live.text": "Praat handsfree: antwoorden worden voorgelezen en stoppen zodra jij praat. Ongeveer {size}, één keer.",
   "connections.address": "Adres van de dienst",

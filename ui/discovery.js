@@ -1,11 +1,12 @@
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
-// few conversations, plenty of them, the same kind of request a third time, or on three different days),
+// few conversations, plenty of them, the same kind of request a third time, or on three different days,
+// links opened from answers),
 // reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
 // that arrive mid-conversation can be reached (D47).
 import { effect } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions } from './caps.js'
-import { app, effective, answerOffer, notify, send, CITED } from './state.js'
+import { app, effective, answerOffer, notify, send, updateSettings, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
 import { words, alike } from '../core/search.js'
@@ -15,7 +16,7 @@ import { t, firstWords } from '../core/i18n.js'
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'skills', 'routines', 'python', 'search', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
+export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'skills', 'routines', 'python', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -27,6 +28,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   routines: 'doing a task on its own on a schedule (every day, week or month), while the user has you open or as soon as they are back',
   python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
   search: 'searching the web, when a question needs current or specific facts',
+  browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
   helpers: 'helpers that do the independent parts of a large task at the same time',
 })
@@ -110,6 +112,7 @@ export async function begin(id) {
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
   if (id === 'find') app.dialog.value = 'find'
+  if (id === 'browser') (await import('../caps/browser/browser.js')).show()
 }
 
 /** @param {string} id */
@@ -173,6 +176,15 @@ effect(() => {
   // Some use inside a project: its assistant could have a name.
   const { data } = app.project.value
   if (!data.default && data.name && !data.assistantName && app.conversations.value.length >= 3) offerOnce('names')
+})
+/** Links opened from answers before the browser is offered: pages could open beside the conversation (D140). */
+export const BROWSED = 3
+document.addEventListener('click', (event) => {
+  if (loaded.value.has('browser') || !(event.target instanceof Element) || !event.target.closest('app-conversation a[href^="http"]')) return
+  updateSettings({ browsed: (app.settings.value.browsed ?? 0) + 1 })
+})
+effect(() => {
+  if ((effective.value.settings.browsed ?? 0) >= BROWSED) offerOnce('browser')
 })
 effect(() => {
   // Citations in regular use: each answer could be checked against them.

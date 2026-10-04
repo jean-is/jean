@@ -143,7 +143,7 @@ export type SystemNoteData =
   | { kind: 'date', date: string }
   | { kind: 'tools', added: string[], deferred?: boolean }
   /** version: the section's fingerprint now, '' when it is empty */
-  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections', version: string }
+  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'page', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
   /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due */

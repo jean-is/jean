@@ -1,0 +1,23 @@
+{
+  "browser.address": "Dirección",
+  "browser.back": "Atrás",
+  "browser.forward": "Adelante",
+  "browser.reload": "Recargar",
+  "browser.placeholder": "Escribe una dirección, o palabras para buscar",
+  "browser.tab": "Abrir en una pestaña nueva",
+  "browser.fullscreen": "Pantalla completa",
+  "browser.exitFullscreen": "Salir de pantalla completa",
+  "browser.empty": "Las páginas se abren aquí, junto a la conversación, para que las veas mientras hablas.",
+  "browser.blank": "¿La página no aparece? Algunos sitios no permiten mostrarse dentro de otro.",
+  "browser.refused": "Esa dirección no se puede abrir.",
+  "browser.own.title": "{site} se abre en su propia pestaña",
+  "browser.own.text": "Algunos sitios no pueden mostrarse junto a la conversación: no lo permiten, o tu cuenta solo funciona en su propia pestaña.",
+  "browser.retry": "Volver a intentarlo aquí",
+  "browser.install": "¿Lo usas a menudo? Instálalo como una aplicación: tendrá su propia ventana y un lugar en tu escritorio, y allí funcionará como debe.",
+  "browser.install.chrome": "En Chrome: abre el sitio, luego el menú ⋮, Enviar, guardar y compartir, e Instalar página como aplicación.",
+  "browser.install.edge": "En Edge: abre el sitio, luego el menú …, Aplicaciones, e Instalar este sitio como una aplicación.",
+  "browser.install.safari": "En Safari: abre el sitio, luego Archivo, y Añadir al Dock.",
+  "browser.install.phone": "En un teléfono: abre el sitio, luego Compartir o el menú, y Añadir a pantalla de inicio.",
+  "browser.install.other": "En tu navegador: abre el sitio y busca en su menú Instalar o Crear acceso directo.",
+  "browser.install.none": "Este navegador no puede instalar sitios como aplicaciones: guarda el sitio en tus marcadores."
+}

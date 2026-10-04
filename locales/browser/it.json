@@ -1,0 +1,23 @@
+{
+  "browser.address": "Indirizzo",
+  "browser.back": "Indietro",
+  "browser.forward": "Avanti",
+  "browser.reload": "Ricarica",
+  "browser.placeholder": "Scrivi un indirizzo, o parole da cercare",
+  "browser.tab": "Apri in una nuova scheda",
+  "browser.fullscreen": "Schermo intero",
+  "browser.exitFullscreen": "Esci da schermo intero",
+  "browser.empty": "Le pagine si aprono qui, accanto alla conversazione, così puoi guardarle mentre parli.",
+  "browser.blank": "La pagina non si vede? Alcuni siti non permettono di essere mostrati dentro un altro.",
+  "browser.refused": "Questo indirizzo non si può aprire.",
+  "browser.own.title": "{site} si apre in una scheda tutta sua",
+  "browser.own.text": "Alcuni siti non possono essere mostrati accanto alla conversazione: non lo permettono, oppure il tuo account funziona solo nella loro scheda.",
+  "browser.retry": "Riprova qui",
+  "browser.install": "Lo usi spesso? Installalo come app: avrà una finestra tutta sua e un posto sul desktop, e lì funzionerà come deve.",
+  "browser.install.chrome": "In Chrome: apri il sito, poi il menu ⋮, Trasmetti, salva e condividi, e Installa pagina come app.",
+  "browser.install.edge": "In Edge: apri il sito, poi il menu …, App, e Installa questo sito come app.",
+  "browser.install.safari": "In Safari: apri il sito, poi File, e Aggiungi al Dock.",
+  "browser.install.phone": "Su un telefono: apri il sito, poi Condividi o il menu, e Aggiungi alla schermata Home.",
+  "browser.install.other": "Nel tuo browser: apri il sito, poi cerca nel menu Installa o Crea scorciatoia.",
+  "browser.install.none": "Questo browser non può installare siti come app: salva il sito nei preferiti."
+}

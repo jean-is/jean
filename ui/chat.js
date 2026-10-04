@@ -58,7 +58,7 @@ class Conversation extends Element {
 
 /**
  * Everything the brain may cite, by number (source chips): shared files, which open, and what
- * tools and the brain's own search brought in, where a web page opens in a new tab.
+ * tools and the brain's own search brought in, where a web page is a link.
  * @param {ResourceLink[]} files @param {Turn[]} turns @returns {import('./markdown.js').Sources}
  */
 function citable(files, turns) {
@@ -69,7 +69,7 @@ function citable(files, turns) {
     if (number && !sources.has(number)) sources.set(number, { name: link.name, label: t('sources.open', { name: link.name }), open: () => openFile(link) })
   }
   for (const { n, title, url } of turns.flatMap((turn) => turn.steps.flatMap((step) => step.tools.flatMap((tool) => tool._meta?.sources ?? [])))) {
-    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { open: () => open(url, '_blank', 'noopener') }) })
+    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { url }) })
   }
   return sources
 }

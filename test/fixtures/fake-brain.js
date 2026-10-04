@@ -19,11 +19,21 @@
 // whose script would send what it holds away, as an injected page would (D126), and an "SVG logo" as a drawing.
 // From 0.7 it makes a routine when asked for something "every" day or for a routine, at the time
 // asked, or else at the time Jean says requests of the kind were made.
+// For the browser (D140) it serves a bakery's site, whose page links to its menu, and a page that
+// refuses to be framed; asked for "the bakery site", it opens it (offering the browser first if
+// it's off) and answers from the page; asked to "give me a link", it answers with one.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
 const PORT = Number(process.env.PORT) || 4174
 let previous = ''
+const BAKERY = `http://127.0.0.1:${PORT}/site/bakery.html`
+/** @type {Record<string, { body: string, headers?: Record<string, string> }>} */
+const SITE = {
+  '/site/bakery.html': { body: '<!doctype html><title>The bakery</title><h1>The bakery</h1><p>Fresh bread every morning, from 7 am.</p><p><a href="menu.html">Menu</a></p>' },
+  '/site/menu.html': { body: '<!doctype html><title>Menu</title><h1>Menu</h1><p>Croissants and baguettes.</p>' },
+  '/site/refuses.html': { body: '<!doctype html><title>Refuses</title><h1>Never in a frame</h1>', headers: { 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "frame-ancestors 'none'" } },
+}
 
 /** @param {string} a @param {string} b */
 function sharedPrefix(a, b) {
@@ -114,6 +124,8 @@ createServer(async (req, res) => {
     res.setHeader('Content-Type', 'application/json')
     return res.end(JSON.stringify({ data: [{ b64_json: picture() }] }))
   }
+  const page = SITE[req.url?.split('?')[0] ?? '']
+  if (page) return res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', ...page.headers }).end(page.body)
   if (!req.url?.endsWith('/chat/completions')) return res.writeHead(404).end()
 
   let body = ''
@@ -212,6 +224,11 @@ createServer(async (req, res) => {
     answer = `Your ${found.length} latest emails:\n\n${found.map((email) => `- **${email.title}**, ${email.more.replace(/:.*$/, '')} [${email.n}]`).join('\n')}`
   } else if (/search the web|look up/i.test(question) && last.role === 'user' && declared.has('web_search')) call = { name: 'web_search', args: { query: question.replace(/.*(?:search the web for|look up)\s*/i, '').replace(/[?.!]$/, '') } }
   else if (toolName === 'web_search') answer = found.length ? `Here is what the web says:\n\n${found.map((page) => `- **${page.title}**: ${page.more.slice(0, 90)} [${page.n}]`).join('\n')}` : 'I found nothing on the web.'
+  else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('browse')) call = { name: 'browse', args: { url: BAKERY } }
+  else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'browser' } }
+  else if (/bakery site/i.test(question) && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'browse', args: { url: BAKERY } }
+  else if (toolName === 'browse') answer = found.length ? `The bakery’s page is open beside our conversation. ${/Fresh bread[^\n]*/.exec(last.content)?.[0]} [${found[0].n}]` : `That didn't work: ${last.content}`
+  else if (/give me a link/i.test(question) && last.role === 'user') answer = `Here it is: [the bakery](${BAKERY}).`
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: `return await models.image(${JSON.stringify(question)})` } }
   else if (toolName === 'run' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
   else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }

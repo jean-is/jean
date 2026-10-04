@@ -65,6 +65,10 @@ How to be: {a few words from the user}           (when the user wrote some)
 {- service: the names of its tools, which find_tools finds and scripts call (0.5, D89)}
 </connections>
 
+<page>
+The browser beside the conversation shows {address}[, or a page the user went to from there].   (D140)
+</page>
+
 <context>
 Today is {date}.
 </context>
@@ -100,6 +104,7 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Connections (0.5) | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |
 | Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. |
 | Helpers (0.6) | `delegate: hand independent parts of a large task to helpers, who do them at the same time` | Use helpers only for independent parts of a large task. |
+| Browser (D140) | `browse: show the user a web page beside the conversation, and read it when the site allows` | — (`<page>` says which page is open) |
 
 Sources and suggestions were planned as capability rules; in 0.3 they became base rules, because every answer can cite a shared file and end with follow-ups. Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).
 

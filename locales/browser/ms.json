@@ -1,0 +1,23 @@
+{
+  "browser.address": "Alamat",
+  "browser.back": "Undur",
+  "browser.forward": "Maju",
+  "browser.reload": "Muat semula",
+  "browser.placeholder": "Taip alamat, atau perkataan untuk dicari",
+  "browser.tab": "Buka dalam tab baharu",
+  "browser.fullscreen": "Skrin penuh",
+  "browser.exitFullscreen": "Keluar daripada skrin penuh",
+  "browser.empty": "Halaman dibuka di sini, di sebelah perbualan, supaya boleh dilihat sambil berbual.",
+  "browser.blank": "Halaman tidak muncul? Sesetengah tapak tidak membenarkan dipaparkan di dalam tapak lain.",
+  "browser.refused": "Alamat itu tidak boleh dibuka.",
+  "browser.own.title": "{site} dibuka dalam tabnya sendiri",
+  "browser.own.text": "Sesetengah tapak tidak boleh dipaparkan di sebelah perbualan: ia tidak membenarkannya, atau akaun anda hanya berfungsi dalam tabnya sendiri.",
+  "browser.retry": "Cuba lagi di sini",
+  "browser.install": "Kerap guna? Pasang sebagai apl: ia akan ada tetingkap sendiri dan tempat di desktop anda, dan berfungsi dengan sepatutnya di situ.",
+  "browser.install.chrome": "Dalam Chrome: buka tapak itu, kemudian menu ⋮, Hantar, simpan dan kongsi, dan Pasang halaman sebagai apl.",
+  "browser.install.edge": "Dalam Edge: buka tapak itu, kemudian menu …, Apl, dan Pasang tapak ini sebagai apl.",
+  "browser.install.safari": "Dalam Safari: buka tapak itu, kemudian Fail, dan Tambah ke Dock.",
+  "browser.install.phone": "Pada telefon: buka tapak itu, kemudian Kongsi atau menu, dan Tambah ke Skrin Utama.",
+  "browser.install.other": "Dalam pelayar anda: buka tapak itu, kemudian cari Pasang atau Cipta pintasan dalam menunya.",
+  "browser.install.none": "Pelayar ini tidak boleh memasang tapak sebagai apl: simpan tapak itu dalam penanda buku."
+}

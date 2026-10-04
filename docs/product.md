@@ -63,6 +63,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, shown in the header, which opens on the others |
 | Assistant name | After some use inside a project (three conversations, D102) | "Want to give this project's assistant a name?" A name and a few words on how it should be, in the project's dialog; the header shows the name |
 | Web search | A request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
+| Browser | The user has opened three links from answers, or a request is about a web page or site (the brain offers it) | Pages open beside the conversation, with back, forward, reload, an address or words to look up, a new tab and full screen; links from answers open there, and Jean can open a page there and read it (D140) |
 | Connections | A request needs one of the user's services, like their email (the brain offers it, and the answer waits while they connect it) | "Connect a service": pick one Jean knows and sign in, or give an address, then a sign-in or a key (MCP behind the scenes, D87–D89, D95) |
 | Live conversation | The user has dictated three times | Hands-free: it listens, answers aloud, stops when they speak (about 82 MB, once, D93) |
 | Helpers | A big request with several parts (the brain offers it) | Jean splits the work into parts that helpers do at the same time; they appear nested in the activity view, and their approvals and questions wait in the decision inbox (D98, D99) |
@@ -177,7 +178,7 @@ Organisation policy can hide or lock any of these.
 
 - **Numbered sources.** Every tool that brings in outside content returns numbered sources (file and page, URL and title, memory item, past conversation). The brain cites them as `[n]`, and the UI shows each as a chip: hover shows the passage, clicking opens the file at that page or the URL.
 - **One format for all providers.** Provider citations (Anthropic Citations, `url_citation` annotations, Gemini grounding) are converted into the same format.
-- **As built in 0.5 (D90).** Shared files, a connection's emails and documents, Wikipedia's pages and the brain's own search share one numbering per conversation. A web page's chip opens it in a new tab; an email's shows its title. Each answer lists its sources under "Sources".
+- **As built in 0.5 (D90).** Shared files, a connection's emails and documents, Wikipedia's pages and the brain's own search share one numbering per conversation. A web page's chip opens it in a new tab, or beside the conversation once the browser is on (D140); an email's shows its title. Each answer lists its sources under "Sources".
 - **Honest even with small brains.** Small on-device brains cite unreliably, so a "What Jean read" list is always built from the actual tool calls.
 - **Double-check** (0.6, D100). Each sentence that cites a source is checked against that source's words by the brain that wrote the answer, in one short request outside the conversation; the reflex model was not up to it. The verdicts show under the answer: what matches, what the source doesn't say or contradicts, and a follow-up to correct it.
 
@@ -190,6 +191,15 @@ There is no Jean server, so search comes from something the user or their organi
 3. A configurable search endpoint (their own SearXNG, or Brave, Tavily or Exa with their own keys), set by the user or by policy.
 
 When no route exists, Jean says so and suggests connecting a cloud brain. A shared community proxy should only be considered if real demand appears; DEVS's `proxy.devs.new` is the warning.
+
+## Browser
+
+Once it is found (D140), pages open in a pane beside the conversation, or over it on a phone, so the user can look while they talk:
+
+- **What it has:** back, forward and reload; an address field that takes an address, a site's name or words to look up (Wikipedia's search by default, set by the user or the organisation); a new tab; full screen; and a button in the header that opens and closes it.
+- **What opens there:** links from answers, their sources included, and pages Jean opens with `browse`. Jean asks first, since an address it picks could carry something away, and reads the page's words when the site allows it.
+- **What Jean knows:** which page is open, by its address. It can't see the page itself, nor where it went once the user follows a link in it.
+- **Sites that won't show.** Many sites refuse to be shown inside another page, and many accounts only work in their own site's tab. The browser can't tell, so a page from a site not seen working yet comes with "Page not showing?" and a new tab. A site opened that way opens in a tab of its own from then on, and Jean recommends installing it as an app, which gives it its own window and a place on the desktop, with the steps for the browser in use. Where the browser can't install sites (Firefox on a computer), Jean suggests a bookmark. "Try here again" undoes it.
 
 ## Reply suggestions
 

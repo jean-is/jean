@@ -20,6 +20,8 @@ import { ulid } from './ulid.js'
  * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
+ * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
+ * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
@@ -36,9 +38,9 @@ import { ulid } from './ulid.js'
 /**
  * Addresses of services Jean can use, each replaceable in settings and by policy
  * (`urls` in policy.json). Model weights are a provider identity, like a brain's URL (D33, D53);
- * so is Wikipedia, which web search reads in the user's language ({lang}).
+ * so is Wikipedia, which web search reads in the user's language ({lang}), and where the browser looks words up.
  */
-export const DEFAULT_URLS = Object.freeze({ modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php' })
+export const DEFAULT_URLS = Object.freeze({ modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php', searchPage: 'https://{lang}.wikipedia.org/w/index.php?search={query}' })
 
 /**
  * @param {keyof typeof DEFAULT_URLS} name

@@ -97,8 +97,10 @@ test('web search answers with sources that open', async ({ page }) => {
   await ask(page, 'Search the web for lighthouse')
   const answer = page.locator('.msg-jean .prose').last()
   await expect(answer).toContainText('Here is what the web says')
-  await expect(answer.locator('button.cite')).toHaveCount(2)
-  await expect(answer.locator('button.cite').first()).toHaveAttribute('title', 'Lighthouse')
+  // A web page's chip is a link (D140).
+  await expect(answer.locator('a.cite')).toHaveCount(2)
+  await expect(answer.locator('a.cite').first()).toHaveAttribute('title', 'Lighthouse')
+  await expect(answer.locator('a.cite').first()).toHaveAttribute('href', /^https:\/\/en\.wikipedia\.org\/wiki\//)
   await expect(page.locator('.activity-list')).toContainText('Searched the web · lighthouse')
 })
 

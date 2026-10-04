@@ -117,6 +117,8 @@
   "skills.ready.invalid": "Đây không phải kỹ năng có thể thêm.",
   "skills.ready.unreachable": "Không tải xuống được kỹ năng này.",
   "cap.search.text": "{name} tìm trên web khi câu hỏi cần những thông tin chưa có, và cho biết mỗi câu trả lời đến từ đâu.",
+  "cap.browser.hint": "Mở ba liên kết từ câu trả lời.",
+  "cap.browser.text": "Hiển thị trang web bên cạnh cuộc trò chuyện, có quay lại, tiến tới và tải lại. {name} cũng có thể mở trang ở đó, và biết trang nào đang mở.",
   "cap.connections.text": "Kết nối các dịch vụ bạn dùng, như email hay tài liệu. {name} chỉ đọc và thao tác ở đó khi bạn đồng ý.",
   "cap.live.text": "Nói chuyện mà không cần dùng tay: câu trả lời được đọc to và dừng lại khi bạn nói. Khoảng {size}, một lần.",
   "connections.address": "Địa chỉ của dịch vụ",

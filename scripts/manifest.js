@@ -96,8 +96,8 @@ async function readOrNull (root, path) {
 
 /**
  * Collects the files the service worker precaches: the shell and locales on install,
- * each capability's files (its runtimes included) when it is unlocked. The web
- * manifest is always listed, because this script generates it.
+ * each capability's files (its runtimes and its own strings, locales/<id>/, included) when
+ * it is unlocked. The web manifest is always listed, because this script generates it.
  * @param {string} root
  */
 export async function collectFiles (root) {
@@ -113,7 +113,7 @@ export async function collectFiles (root) {
   const capabilities = {}
   for (const entry of await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])) {
     if (!entry.isDirectory() || entry.name.startsWith('.')) continue
-    const dirs = [`caps/${entry.name}`, ...(CAPABILITY_RUNTIMES[entry.name] ?? [])]
+    const dirs = [`caps/${entry.name}`, `locales/${entry.name}`, ...(CAPABILITY_RUNTIMES[entry.name] ?? [])]
     const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter(isShipped).sort()
     capabilities[entry.name] = { files }
   }

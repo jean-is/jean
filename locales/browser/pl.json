@@ -1,0 +1,23 @@
+{
+  "browser.address": "Adres",
+  "browser.back": "Wstecz",
+  "browser.forward": "Dalej",
+  "browser.reload": "Odśwież",
+  "browser.placeholder": "Wpisz adres lub słowa do wyszukania",
+  "browser.tab": "Otwórz w nowej karcie",
+  "browser.fullscreen": "Pełny ekran",
+  "browser.exitFullscreen": "Zamknij pełny ekran",
+  "browser.empty": "Strony otwierają się tutaj, obok rozmowy: można je oglądać w jej trakcie.",
+  "browser.blank": "Strona się nie wyświetla? Niektóre witryny nie pozwalają pokazywać się wewnątrz innej.",
+  "browser.refused": "Tego adresu nie da się otworzyć.",
+  "browser.own.title": "{site} otwiera się we własnej karcie",
+  "browser.own.text": "Niektórych witryn nie da się pokazać obok rozmowy: nie pozwalają na to albo twoje konto działa tylko w ich własnej karcie.",
+  "browser.retry": "Spróbuj tu jeszcze raz",
+  "browser.install": "Często z niej korzystasz? Zainstaluj ją jako aplikację: dostanie własne okno i miejsce na pulpicie, i będzie tam działać jak należy.",
+  "browser.install.chrome": "W Chrome: otwórz witrynę, potem menu ⋮, Przesyłaj, zapisz i udostępnij, i Zainstaluj stronę jako aplikację.",
+  "browser.install.edge": "W Edge: otwórz witrynę, potem menu …, Aplikacje, i Zainstaluj tę witrynę jako aplikację.",
+  "browser.install.safari": "W Safari: otwórz witrynę, potem Plik, i Dodaj do Docka.",
+  "browser.install.phone": "Na telefonie: otwórz witrynę, potem Udostępnij lub menu, i Dodaj do ekranu głównego.",
+  "browser.install.other": "W przeglądarce: otwórz witrynę i poszukaj w menu opcji Zainstaluj lub Utwórz skrót.",
+  "browser.install.none": "Ta przeglądarka nie instaluje witryn jako aplikacji: zapisz witrynę w zakładkach."
+}

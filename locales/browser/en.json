@@ -1,0 +1,23 @@
+{
+  "browser.address": "Address",
+  "browser.back": "Back",
+  "browser.forward": "Forward",
+  "browser.reload": "Reload",
+  "browser.placeholder": "Type an address, or words to look up",
+  "browser.tab": "Open in a new tab",
+  "browser.fullscreen": "Full screen",
+  "browser.exitFullscreen": "Exit full screen",
+  "browser.empty": "Pages open here, beside the conversation, so you can look while you talk.",
+  "browser.blank": "Page not showing? Some sites don’t allow being shown inside another one.",
+  "browser.refused": "That address can’t be opened.",
+  "browser.own.title": "{site} opens in a tab of its own",
+  "browser.own.text": "Some sites can’t be shown beside the conversation: they don’t allow it, or your account only works in their own tab.",
+  "browser.retry": "Try here again",
+  "browser.install": "Use it often? Install it as an app: it gets a window of its own and a place on your desktop, and works there as it should.",
+  "browser.install.chrome": "In Chrome: open the site, then the ⋮ menu, Cast, save and share, and Install page as app.",
+  "browser.install.edge": "In Edge: open the site, then the … menu, Apps, and Install this site as an app.",
+  "browser.install.safari": "In Safari: open the site, then File, and Add to Dock.",
+  "browser.install.phone": "On a phone: open the site, then Share or the menu, and Add to Home Screen.",
+  "browser.install.other": "In your browser: open the site, then look in its menu for Install or Create shortcut.",
+  "browser.install.none": "This browser can’t install sites as apps: keep the site in your bookmarks instead."
+}

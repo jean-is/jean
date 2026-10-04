@@ -1,0 +1,23 @@
+{
+  "browser.address": "አድራሻ",
+  "browser.back": "ተመለስ",
+  "browser.forward": "ወደፊት",
+  "browser.reload": "እንደገና ጫን",
+  "browser.placeholder": "አድራሻ፣ ወይም የሚፈለጉ ቃላትን ይጻፉ",
+  "browser.tab": "በአዲስ ትር ክፈት",
+  "browser.fullscreen": "ሙሉ ማያ ገጽ",
+  "browser.exitFullscreen": "ከሙሉ ማያ ገጽ ውጣ",
+  "browser.empty": "ገጾች እዚህ፣ ከውይይቱ ጎን ይከፈታሉ፣ እያወሩ እንዲያዩዋቸው።",
+  "browser.blank": "ገጹ አይታይም? አንዳንድ ጣቢያዎች በሌላ ጣቢያ ውስጥ እንዲታዩ አይፈቅዱም።",
+  "browser.refused": "ይህ አድራሻ ሊከፈት አይችልም።",
+  "browser.own.title": "{site} በራሱ ትር ውስጥ ይከፈታል",
+  "browser.own.text": "አንዳንድ ጣቢያዎች ከውይይቱ ጎን ሊታዩ አይችሉም፦ አይፈቅዱም፣ ወይም መለያዎ የሚሠራው በራሳቸው ትር ውስጥ ብቻ ነው።",
+  "browser.retry": "እዚህ እንደገና ይሞክሩ",
+  "browser.install": "ብዙ ጊዜ ይጠቀሙበታል? እንደ መተግበሪያ ይጫኑት፦ የራሱ መስኮት እና በዴስክቶፕዎ ላይ ቦታ ያገኛል፣ እዚያም በትክክል ይሠራል።",
+  "browser.install.chrome": "በChrome ውስጥ፦ ጣቢያውን ይክፈቱ፣ ከዚያ ⋮ ምናሌ፣ Cast, save and share፣ እና Install page as app።",
+  "browser.install.edge": "በEdge ውስጥ፦ ጣቢያውን ይክፈቱ፣ ከዚያ … ምናሌ፣ Apps፣ እና Install this site as an app።",
+  "browser.install.safari": "በSafari ውስጥ፦ ጣቢያውን ይክፈቱ፣ ከዚያ File፣ እና Add to Dock።",
+  "browser.install.phone": "በስልክ ላይ፦ ጣቢያውን ይክፈቱ፣ ከዚያ Share ወይም ምናሌ፣ እና Add to Home Screen።",
+  "browser.install.other": "በአሳሽዎ ውስጥ፦ ጣቢያውን ይክፈቱ፣ ከዚያ በምናሌው ውስጥ Install ወይም Create shortcut ይፈልጉ።",
+  "browser.install.none": "ይህ አሳሽ ጣቢያዎችን እንደ መተግበሪያ መጫን አይችልም፦ በምትኩ ጣቢያውን በዕልባቶች ውስጥ ያስቀምጡ።"
+}

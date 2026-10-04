@@ -119,6 +119,8 @@
   "skills.ready.invalid": "Bu, eklenebilecek bir beceri değil.",
   "skills.ready.unreachable": "Bu beceri indirilemedi.",
   "cap.search.text": "{name}, bir soru elde olmayan bilgiler gerektirdiğinde webde arar ve her yanıtın nereden geldiğini gösterir.",
+  "cap.browser.hint": "Yanıtlardan üç bağlantı aç.",
+  "cap.browser.text": "Web sayfalarını sohbetin yanında; geri, ileri ve yenile düğmeleriyle gösterir. Sayfalar oraya yanıt sırasında da açılabilir ve hangi sayfanın açık olduğu bilinir.",
   "cap.connections.text": "Kullandığın hizmetleri bağla; e-postan ya da belgelerin gibi. {name} oralarda yalnızca senin onayınla okur ve işlem yapar.",
   "cap.live.text": "Elleri serbest konuş: yanıtlar sesli okunur ve sen konuşunca susar. Yaklaşık {size}, bir kez.",
   "connections.address": "Hizmetin adresi",

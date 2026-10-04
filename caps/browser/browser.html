@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-HHWcoreVc20MG5iCJgoAObMR8WPyGeLbIsvI8nFlIY4='; frame-src https: http://localhost:* http://127.0.0.1:*; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
+<title>Browser</title>
+<!-- The browser's frame (D140): the one document whose policy lets a frame show another site, so
+     index.html keeps frame-src 'self' for the sandbox and the preview. It has no script: Jean,
+     its parent and of its origin, puts the site's frame in it, one fresh frame per address, kept
+     in the site's own origin and unable to take Jean's place (caps/browser/browser.js). Jean never
+     opens its own pages here, this policy refuses a blob or data, and the site can't reach this
+     document. -->
+<style>html, body { margin: 0; block-size: 100%; background: white; color-scheme: light; } iframe { display: block; inline-size: 100%; block-size: 100%; border: 0; }</style>
+</html>

@@ -170,7 +170,7 @@ function perItem (name, limit, items) {
 
 /** @param {any} budgets */
 async function checkAssets (budgets) {
-  const locales = (await filesIn(['locales'], /^locales\/(dialogs\/)?[^/]+\.json$/)).sort()
+  const locales = (await filesIn(['locales'], /^locales\/([\w-]+\/)?[^/]+\.json$/)).sort()
   const caps = await subdirectories('caps')
   const fonts = (await filesIn(['fonts'], /^fonts\/[^/]+\.woff2$/)).sort()
   /** @type {Array<[string, number]>} */

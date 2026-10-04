@@ -11,7 +11,7 @@ import {
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, startOpenRouter } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
-import { CATALOGUE, FINDABLE, accept, begin, unlockAll } from './discovery.js'
+import { CATALOGUE, FINDABLE, BROWSED, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
@@ -513,18 +513,20 @@ class Settings extends Element {
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', skills: 'scroll', routines: 'alarm', python: 'code',
-  search: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
+  search: 'globe', browser: 'window', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
 })
-/** Where a lit room leads: its section of Settings, or search. */
+/** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
   connections: () => openSettings('connections'), find: () => { app.dialog.value = 'find' },
+  browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
 })
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [app.conversations.value.length, 2], backup: () => [app.conversations.value.length, 3],
   find: () => [app.conversations.value.length, FINDABLE],
-  live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED] })
+  live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
+  browser: () => [effective.value.settings.browsed ?? 0, BROWSED] })
 const picked = signal('')
 
 /** @param {string} id */

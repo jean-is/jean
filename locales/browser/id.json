@@ -1,0 +1,23 @@
+{
+  "browser.address": "Alamat",
+  "browser.back": "Kembali",
+  "browser.forward": "Maju",
+  "browser.reload": "Muat ulang",
+  "browser.placeholder": "Ketik alamat, atau kata untuk dicari",
+  "browser.tab": "Buka di tab baru",
+  "browser.fullscreen": "Layar penuh",
+  "browser.exitFullscreen": "Keluar dari layar penuh",
+  "browser.empty": "Halaman terbuka di sini, di samping percakapan, agar bisa dilihat sambil mengobrol.",
+  "browser.blank": "Halaman tidak muncul? Beberapa situs tidak mengizinkan ditampilkan di dalam situs lain.",
+  "browser.refused": "Alamat itu tidak bisa dibuka.",
+  "browser.own.title": "{site} terbuka di tabnya sendiri",
+  "browser.own.text": "Beberapa situs tidak bisa ditampilkan di samping percakapan: situs itu tidak mengizinkannya, atau akun Anda hanya berfungsi di tabnya sendiri.",
+  "browser.retry": "Coba lagi di sini",
+  "browser.install": "Sering dipakai? Instal sebagai aplikasi: situs ini akan punya jendela sendiri dan tempat di desktop Anda, dan berjalan sebagaimana mestinya.",
+  "browser.install.chrome": "Di Chrome: buka situsnya, lalu menu ⋮, Transmisikan, simpan, dan bagikan, lalu Instal halaman sebagai aplikasi.",
+  "browser.install.edge": "Di Edge: buka situsnya, lalu menu …, Aplikasi, lalu Instal situs ini sebagai aplikasi.",
+  "browser.install.safari": "Di Safari: buka situsnya, lalu File, lalu Tambahkan ke Dock.",
+  "browser.install.phone": "Di ponsel: buka situsnya, lalu Bagikan atau menu, lalu Tambahkan ke Layar Utama.",
+  "browser.install.other": "Di browser Anda: buka situsnya, lalu cari Instal atau Buat pintasan di menunya.",
+  "browser.install.none": "Browser ini tidak bisa menginstal situs sebagai aplikasi: simpan situsnya di bookmark saja."
+}

@@ -119,6 +119,8 @@
   "skills.ready.invalid": "Wannan ba ƙwarewa ce da za a iya ƙarawa ba.",
   "skills.ready.unreachable": "Ba a iya sauke wannan ƙwarewa ba.",
   "cap.search.text": "Idan tambaya na bukatar bayanan da babu a hannu, ana bincika a yanar gizo, kuma ana nuna inda kowace amsa ta fito.",
+  "cap.browser.hint": "Buɗe hanyoyin haɗi uku daga amsoshi.",
+  "cap.browser.text": "Yana nuna shafukan yanar gizo a gefen tattaunawa, tare da baya, gaba da sake lodawa. Ana iya buɗe shafuka a can yayin amsa, kuma ana sanin wane shafi ne a buɗe.",
   "cap.connections.text": "Haɗa ayyukan da kake amfani da su, kamar imel ko takardu. Ana karantawa da yin aiki a can ne kawai da izininka.",
   "cap.live.text": "Yi magana ba tare da hannu ba: ana karanta amsoshi da babbar murya, kuma suna tsayawa idan ka yi magana. Kusan {size}, sau ɗaya.",
   "connections.address": "Adireshin aikin",

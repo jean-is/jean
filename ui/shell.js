@@ -24,6 +24,8 @@ class Shell extends Element {
         <button class="icon-button" @click=${() => { app.dialog.value = 'history' }} aria-label=${t('history.title')} title=${t('history.title')}>${icons.history}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
+        ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
+          aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')}>${icons.window}</button>` : nothing}
       </header>
       ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}

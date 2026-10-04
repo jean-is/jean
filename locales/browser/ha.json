@@ -1,0 +1,23 @@
+{
+  "browser.address": "Adireshi",
+  "browser.back": "Baya",
+  "browser.forward": "Gaba",
+  "browser.reload": "Sake lodawa",
+  "browser.placeholder": "Rubuta adireshi, ko kalmomin da za a nema",
+  "browser.tab": "Buɗe a sabon shafi",
+  "browser.fullscreen": "Cikakken allo",
+  "browser.exitFullscreen": "Fita daga cikakken allo",
+  "browser.empty": "Shafuka suna buɗewa a nan, a gefen tattaunawa, don ka gan su yayin magana.",
+  "browser.blank": "Shafin ba ya bayyana? Wasu shafuka ba sa yarda a nuna su a cikin wani shafi.",
+  "browser.refused": "Ba za a iya buɗe wannan adireshi ba.",
+  "browser.own.title": "{site} yana buɗewa a shafinsa na kansa",
+  "browser.own.text": "Ba za a iya nuna wasu shafuka a gefen tattaunawa ba: ba sa yarda, ko asusunka yana aiki ne kawai a cikin shafinsu na kansu.",
+  "browser.retry": "Sake gwadawa a nan",
+  "browser.install": "Kana yawan amfani da shi? Saka shi a matsayin manhaja: zai sami tagarsa da wuri a kan tebur ɗinka, kuma zai yi aiki yadda ya kamata a can.",
+  "browser.install.chrome": "A Chrome: buɗe shafin, sannan menu ⋮, Cast, save and share, da Install page as app.",
+  "browser.install.edge": "A Edge: buɗe shafin, sannan menu …, Apps, da Install this site as an app.",
+  "browser.install.safari": "A Safari: buɗe shafin, sannan File, da Add to Dock.",
+  "browser.install.phone": "A waya: buɗe shafin, sannan Share ko menu, da Add to Home Screen.",
+  "browser.install.other": "A burauzarka: buɗe shafin, sannan nemi Install ko Create shortcut a cikin menu.",
+  "browser.install.none": "Wannan burauza ba ta iya saka shafuka a matsayin manhaja: a maimakon haka ajiye shafin a cikin alamomi."
+}

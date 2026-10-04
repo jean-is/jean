@@ -23,7 +23,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Security rules
 
-- Never combine `allow-scripts` and `allow-same-origin` on an iframe.
+- Never combine `allow-scripts` and `allow-same-origin` on an iframe that could hold Jean's own origin: code a brain wrote, a file, Jean's pages. The browser's frame, which only ever holds another site, is the one exception (D140).
 - Untrusted code (JavaScript or Python written by a model) runs only in the sandbox worker started by `sandbox.html`, never in the main document.
 - In the main document: no `innerHTML`, no `eval`, no `new Function`. Markdown is rendered from `marked` tokens into lit-html templates. Trusted Types is enforced.
 - No hard-coded third-party URL. Every external address comes from settings or policy.

@@ -121,6 +121,8 @@
   "skills.ready.invalid": "Ce n’est pas une compétence qui peut être ajoutée.",
   "skills.ready.unreachable": "Impossible de télécharger cette compétence.",
   "cap.search.text": "{name} cherche sur le web quand une question demande des faits qui manquent, et montre d’où vient chaque réponse.",
+  "cap.browser.hint": "Ouvrez trois liens depuis des réponses.",
+  "cap.browser.text": "Affiche les pages web à côté de la conversation, avec précédent, suivant et actualiser. {name} peut aussi y ouvrir des pages, et sait laquelle est ouverte.",
   "cap.connections.text": "Connectez les services que vous utilisez, comme vos e-mails ou vos documents. {name} n’y lit et n’y agit qu’avec votre accord.",
   "cap.live.text": "Parlez les mains libres : les réponses sont lues à voix haute et s’arrêtent dès que vous parlez. Environ {size}, une seule fois.",
   "connections.address": "Adresse du service",

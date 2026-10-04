@@ -117,6 +117,8 @@
   "skills.ready.invalid": "Èyí kì í ṣe ọgbọ́n tí a lè fi kún un.",
   "skills.ready.unreachable": "A kò lè gba ọgbọ́n yìí sílẹ̀.",
   "cap.search.text": "{name} máa ń wá a lórí wẹ́ẹ̀bù nígbà tí ìbéèrè bá nílò òtítọ́ tí kò sí lọ́wọ́, ó sì ń fi ibi tí ìdáhùn kọ̀ọ̀kan ti wá hàn.",
+  "cap.browser.hint": "Ẹ ṣí ìjápọ̀ mẹ́ta láti inú àwọn ìdáhùn.",
+  "cap.browser.text": "Ó ń fi àwọn ojú-ewé wẹ́ẹ̀bù hàn lẹ́gbẹ̀ẹ́ ìjíròrò, pẹ̀lú padà, síwájú àti tún-un gbé. A tún lè ṣí ojú-ewé síbẹ̀ nígbà ìdáhùn, a sì mọ ojú-ewé tí ó ṣí sílẹ̀.",
   "cap.connections.text": "Ẹ so àwọn iṣẹ́ tí ẹ ń lò pọ̀, bíi ímeèlì tàbí àwọn ìwé yín. {name} máa ń kà, ó sì ń ṣiṣẹ́ níbẹ̀ pẹ̀lú àṣẹ yín nìkan.",
   "cap.live.text": "Ẹ sọ̀rọ̀ láìlo ọwọ́: a máa ń ka àwọn ìdáhùn sókè, wọ́n sì máa ń dúró nígbà tí ẹ bá ń sọ̀rọ̀. Nǹkan bí {size}, lẹ́ẹ̀kan.",
   "connections.address": "Àdírẹ́sì iṣẹ́ náà",

@@ -121,6 +121,8 @@
   "skills.ready.invalid": "Esto no es una habilidad que se pueda añadir.",
   "skills.ready.unreachable": "No se pudo descargar esta habilidad.",
   "cap.search.text": "{name} busca en la web cuando una pregunta necesita datos que no tiene, y muestra de dónde sale cada respuesta.",
+  "cap.browser.hint": "Abre tres enlaces de las respuestas.",
+  "cap.browser.text": "Muestra páginas web junto a la conversación, con atrás, adelante y recargar. {name} también puede abrir páginas ahí, y sabe cuál está abierta.",
   "cap.connections.text": "Conecta los servicios que usas, como tu correo o tus documentos. {name} lee y actúa en ellos solo con tu permiso.",
   "cap.live.text": "Habla sin usar las manos: las respuestas se leen en voz alta y se detienen en cuanto hablas. Unos {size}, una sola vez.",
   "connections.address": "Dirección del servicio",

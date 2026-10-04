@@ -123,6 +123,8 @@
   "skills.ready.invalid": "To nie jest umiejętność, którą można dodać.",
   "skills.ready.unreachable": "Nie udało się pobrać tej umiejętności.",
   "cap.search.text": "Gdy do odpowiedzi brakuje faktów, są wyszukiwane w sieci, a przy każdej odpowiedzi widać, skąd pochodzi.",
+  "cap.browser.hint": "Otwórz trzy linki z odpowiedzi.",
+  "cap.browser.text": "Pokazuje strony internetowe obok rozmowy, z przyciskami wstecz, dalej i odśwież. {name} też może tam otwierać strony i wie, która jest otwarta.",
   "cap.connections.text": "Połącz usługi, z których korzystasz, np. pocztę czy dokumenty. Odczyt i działania w nich tylko za twoją zgodą.",
   "cap.live.text": "Rozmawiaj głosem, bez użycia rąk: odpowiedzi są czytane na głos i milkną, gdy zaczynasz mówić. Około {size}, jednorazowo.",
   "connections.address": "Adres usługi",

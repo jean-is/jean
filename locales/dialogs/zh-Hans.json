@@ -117,6 +117,8 @@
   "skills.ready.invalid": "这不是可以添加的技能。",
   "skills.ready.unreachable": "无法下载此技能。",
   "cap.search.text": "当问题需要手头没有的事实时，{name} 会上网搜索，并显示每个回答的出处。",
+  "cap.browser.hint": "打开回答中的三个链接。",
+  "cap.browser.text": "在对话旁边显示网页，可以后退、前进和刷新。{name} 也能在那里打开网页，并且知道打开的是哪一页。",
   "cap.connections.text": "连接你常用的服务，比如邮箱或文档。{name} 只有在你同意时才会在那里读取和操作。",
   "cap.live.text": "不用动手，直接说话：回答会被朗读，你一开口就停下。约 {size}，只需一次。",
   "connections.address": "服务地址",

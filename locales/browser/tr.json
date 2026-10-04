@@ -1,0 +1,23 @@
+{
+  "browser.address": "Adres",
+  "browser.back": "Geri",
+  "browser.forward": "İleri",
+  "browser.reload": "Yenile",
+  "browser.placeholder": "Bir adres ya da aranacak sözcükler yaz",
+  "browser.tab": "Yeni sekmede aç",
+  "browser.fullscreen": "Tam ekran",
+  "browser.exitFullscreen": "Tam ekrandan çık",
+  "browser.empty": "Sayfalar burada, sohbetin yanında açılır; konuşurken bakabilirsin.",
+  "browser.blank": "Sayfa görünmüyor mu? Bazı siteler başka bir sitenin içinde gösterilmeye izin vermez.",
+  "browser.refused": "Bu adres açılamaz.",
+  "browser.own.title": "{site} kendi sekmesinde açılır",
+  "browser.own.text": "Bazı siteler sohbetin yanında gösterilemez: buna izin vermezler ya da hesabın yalnızca kendi sekmelerinde çalışır.",
+  "browser.retry": "Burada yeniden dene",
+  "browser.install": "Sık mı kullanıyorsun? Uygulama olarak yükle: kendi penceresi ve masaüstünde bir yeri olur, orada olması gerektiği gibi çalışır.",
+  "browser.install.chrome": "Chrome’da: siteyi aç, sonra ⋮ menüsü, Yayınla, kaydet ve paylaş, ve Sayfayı uygulama olarak yükle.",
+  "browser.install.edge": "Edge’de: siteyi aç, sonra … menüsü, Uygulamalar, ve Bu siteyi uygulama olarak yükle.",
+  "browser.install.safari": "Safari’de: siteyi aç, sonra Dosya, ve Dock’a Ekle.",
+  "browser.install.phone": "Telefonda: siteyi aç, sonra Paylaş ya da menü, ve Ana Ekrana Ekle.",
+  "browser.install.other": "Tarayıcında: siteyi aç, sonra menüde Yükle ya da Kısayol oluştur seçeneğini ara.",
+  "browser.install.none": "Bu tarayıcı siteleri uygulama olarak yükleyemez: siteyi yer işaretlerine kaydet."
+}

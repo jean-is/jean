@@ -1,0 +1,23 @@
+{
+  "browser.address": "주소",
+  "browser.back": "뒤로",
+  "browser.forward": "앞으로",
+  "browser.reload": "새로고침",
+  "browser.placeholder": "주소나 찾아볼 단어를 입력하세요",
+  "browser.tab": "새 탭에서 열기",
+  "browser.fullscreen": "전체 화면",
+  "browser.exitFullscreen": "전체 화면 종료",
+  "browser.empty": "페이지는 여기, 대화 옆에 열려서 이야기하면서 볼 수 있어요.",
+  "browser.blank": "페이지가 보이지 않나요? 다른 사이트 안에 표시되는 것을 허용하지 않는 사이트도 있어요.",
+  "browser.refused": "이 주소는 열 수 없어요.",
+  "browser.own.title": "자체 탭에서 열리는 사이트: {site}",
+  "browser.own.text": "대화 옆에 보여 줄 수 없는 사이트도 있어요. 허용하지 않거나, 계정이 그 사이트의 탭에서만 작동하기 때문이에요.",
+  "browser.retry": "여기서 다시 시도",
+  "browser.install": "자주 쓰나요? 앱으로 설치하면 자체 창과 바탕 화면의 자리가 생기고, 그곳에서 제대로 작동해요.",
+  "browser.install.chrome": "Chrome에서: 사이트를 열고 ⋮ 메뉴, 전송, 저장, 공유, 페이지를 앱으로 설치 순서로 선택하세요.",
+  "browser.install.edge": "Edge에서: 사이트를 열고 … 메뉴, 앱, 이 사이트를 앱으로 설치 순서로 선택하세요.",
+  "browser.install.safari": "Safari에서: 사이트를 열고 파일, Dock에 추가를 선택하세요.",
+  "browser.install.phone": "휴대폰에서: 사이트를 열고 공유 또는 메뉴에서 홈 화면에 추가를 선택하세요.",
+  "browser.install.other": "사용 중인 브라우저에서: 사이트를 열고 메뉴에서 설치 또는 바로가기 만들기를 찾으세요.",
+  "browser.install.none": "이 브라우저는 사이트를 앱으로 설치할 수 없어요. 대신 북마크에 저장하세요."
+}
