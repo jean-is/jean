@@ -10,6 +10,7 @@ import { app, effective, activeBrain, theme, THEME_KEY, SEEN_KEY, AWAY_MS, LOCAL
 import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import './shell.js'
+import { focusComposer } from './composer.js'
 import { startRouter } from './router.js'
 
 async function start() {
@@ -110,6 +111,8 @@ async function start() {
 
   document.body.append(document.createElement('app-shell'))
   root.classList.add('is-ready')
+  // The box has the keyboard from the start; not on a touchscreen, where it would raise one over the welcome.
+  if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
   // Back from signing in: to a connection (?state=…), or to OpenRouter (?code=…).
