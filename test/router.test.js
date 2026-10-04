@@ -26,3 +26,24 @@ test('a project other than home is in the address too', async () => {
   assert.equal(hashFor(bakery, null), `#/p/${project}/`)
   assert.equal(hashFor(bakery, id), `#/p/${project}/c/${id}`)
 })
+
+test('Settings is in the address over any place, on its section', async () => {
+  const { placeIn, settingsIn, withSettings } = await import('../ui/router.js')
+  const id = '01M3XN7APTVD76G6T68W6FRKC8'
+  const project = '01M3XN7APTVD76G6T68W6FRKC9'
+  assert.equal(withSettings('#/', 'general'), '#/settings')
+  assert.equal(withSettings('#/', 'brains'), '#/settings/brains')
+  assert.equal(withSettings(`#/c/${id}`, 'appearance'), `#/c/${id}/settings/appearance`)
+  assert.equal(withSettings(`#/p/${project}/`, 'general'), `#/p/${project}/settings`)
+  assert.equal(withSettings(`#/p/${project}/c/${id}`, null), `#/p/${project}/c/${id}`)
+  for (const place of ['#/', `#/c/${id}`, `#/p/${project}/`, `#/p/${project}/c/${id}`]) {
+    for (const section of ['general', 'brains']) {
+      const address = withSettings(place, section)
+      assert.equal(settingsIn(address), section, address)
+      assert.deepEqual(placeIn(address), placeIn(place), address)
+    }
+    assert.equal(settingsIn(place), null, place)
+  }
+  assert.equal(settingsIn(''), null)
+  assert.equal(settingsIn('#/settings/../../x'), 'general', 'a section is lower-case letters')
+})

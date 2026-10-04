@@ -41,7 +41,7 @@
 - **Voices:** operating-system voices.
 - **Coordination:** Web Locks and BroadcastChannel.
 
-**Routing is one hash** (`#/c/<conversation ulid>`, D59; in a project other than home, `#/p/<project ulid>/c/<conversation ulid>`, D82), read by `ui/router.js`: enough to reload or go back to the same conversation, on any static host.
+**Routing is one hash** (`#/c/<conversation ulid>`, D59; in a project other than home, `#/p/<project ulid>/c/<conversation ulid>`, D82; Settings open over either, `…/settings/<section>`, D137), read by `ui/router.js`: enough to reload or go back to the same conversation and the same section of Settings, on any static host.
 
 **Components are custom elements (light DOM, prefix `app-`).** Each capability is one module that defines its elements and registers its tools. Unlocking means calling `import()`, and any `<app-chart>` already on the page upgrades automatically. `:not(:defined)` styles undiscovered elements. The browser itself provides progressive discovery.
 

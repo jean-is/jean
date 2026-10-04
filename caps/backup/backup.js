@@ -27,7 +27,9 @@ export async function restoreBackup(file) {
   try {
     const { added, updated } = await importBackup(app.fs, new Uint8Array(await file.arrayBuffer()))
     notify(t('backup.restored', { count: added + updated }))
-    // Projects and conversations are read at start; begin again from the restored folder.
+    // Projects and conversations are read at start; begin again from the restored folder, in the
+    // room (Settings is in the address, D137).
+    app.dialog.value = null
     setTimeout(() => location.reload(), 1200)
   } catch (error) {
     console.warn('Restore', error)

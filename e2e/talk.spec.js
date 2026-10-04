@@ -1,5 +1,6 @@
 // Talk (0.1) and reply suggestions (0.3): an answer streams in, titled meanwhile, its follow-ups become
-// buttons, the room flips to right-to-left in Arabic, and from dark to light.
+// buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
+// the conversation, in the address (D137).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
 
@@ -28,6 +29,43 @@ test('Arabic: right to left, and the answer in Arabic', async ({ page }) => {
   await expect(page.locator('.msg-jean .prose').last()).toContainText('إليك ما وجدته')
   await expect(page.locator('.conversation-title')).toHaveText('عاصمة فرنسا')
   await expect(page.locator('.follow-ups .follow-up').first()).toHaveText('اعرضه كرسم بياني')
+})
+
+test('Settings opens over the conversation, in the address: Back closes it, a reload keeps it', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  const place = new URL(page.url()).hash
+  expect(place).toMatch(/^#\/c\/[0-9A-Z]{26}$/)
+  const settings = await openSettings(page, 'Appearance')
+  await expect(page).toHaveURL(`./${place}/settings/appearance`)
+  // Back closes it over the same conversation, and Forward opens it again on the same section.
+  await page.goBack()
+  await expect(settings).toBeHidden()
+  await expect(page).toHaveURL(`./${place}`)
+  await expect(page.locator('.msg-user')).toHaveText('Explain photosynthesis in simple words')
+  await page.goForward()
+  await expect(settings.locator('[aria-current="page"]')).toHaveText('Appearance')
+  // Closed, it leaves no entry behind: Back goes to where the conversation started.
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL(`./${place}`)
+  await page.goBack()
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(settings).toBeHidden()
+  await page.goForward()
+  await expect(page.locator('.msg-user')).toHaveText('Explain photosynthesis in simple words')
+  // A reload shows it again, on the same section, over the same conversation.
+  await openSettings(page, 'Brains')
+  await expect(page).toHaveURL(`./${place}/settings/brains`)
+  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
+  const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
+  await page.reload()
+  await expect(settings.locator('[aria-current="page"]')).toHaveText('Brains')
+  if (ephemeral) return expect(page).toHaveURL('./#/settings/brains')
+  await expect(page.locator('.msg-user')).toHaveText('Explain photosynthesis in simple words')
+  await page.keyboard.press('Escape')
+  await expect(page).toHaveURL(`./${place}`)
 })
 
 test('light or dark: Auto follows the device, Light and Dark stay put', async ({ page }) => {

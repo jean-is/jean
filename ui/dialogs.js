@@ -453,23 +453,22 @@ export const SECTIONS = {
 }
 /** The sections shown now. */
 export const sections = () => /** @type {Section[]} */ (Object.keys(SECTIONS)).filter((id) => SECTIONS[id].when?.() ?? true)
-const section = signal(/** @type {Section} */ ('general'))
 
 /** Opens Settings on one of its sections. @param {Section} [name] */
 export function openSettings(name = 'general') {
-  section.value = name
+  app.section.value = name
   app.dialog.value = 'settings'
 }
 
 class Settings extends Element {
   render() {
     const shown = sections()
-    const open = shown.includes(section.value) ? section.value : 'general'
+    const open = shown.find((id) => id === app.section.value) ?? 'general'
     return html`<dialog class="sheet settings" @close=${closed('settings')} @click=${backdrop}>
       ${head(t('settings.title'))}
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map((id) => html`${SECTIONS[id].group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
-          @click=${() => { section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
+          @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
       </nav>
       <div class="settings-panel">${SECTIONS[open].show()}</div>
     </dialog>`
@@ -481,16 +480,19 @@ class Settings extends Element {
     syncDialog(this, 'settings')
     const open = app.dialog.value === 'settings'
     // A brain that failed to connect is forgotten once Brains is left.
-    if (!(open && section.value === 'brains') && status.value?.kind === 'error') status.value = null
+    if (!(open && app.section.value === 'brains') && status.value?.kind === 'error') status.value = null
     if (!open) { this.#shown = ''; return }
+    // An address may name a section not shown, or not yet (capabilities come back after the first paint): then General.
+    const missing = () => !sections().some((id) => id === app.section.value)
+    if (missing()) app.ready.then(() => { if (missing()) app.section.value = 'general' })
     if (!storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
-    if (section.value === 'brains') {
+    if (app.section.value === 'brains') {
       checkDevice()
       for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
     }
-    if (this.#shown !== section.value) {
+    if (this.#shown !== app.section.value) {
       // What Jean knows, its skills and routines are read again each time one is entered.
-      if (KNOWN.includes(section.value)) {
+      if (KNOWN.includes(app.section.value)) {
         knowing ??= import('./knows.js').then((module) => (knows.value = module))
         knowing.then((module) => module.refresh())
       }
@@ -499,7 +501,7 @@ class Settings extends Element {
       if (panel) panel.scrollTop = 0
       this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
     }
-    this.#shown = section.value
+    this.#shown = app.section.value
     // The trophies found catch the light one after another (CSSOM: the CSP forbids style attributes).
     this.querySelectorAll('.trophy').forEach((trophy, i) => /** @type {HTMLElement} */ (trophy).style.setProperty('--i', String(i)))
   }
