@@ -218,15 +218,16 @@ There is always a default project, hidden until the Projects capability is disco
   - Conversations are append-only, so a crash costs at most a half-written last line, which is ignored on read.
   - Files that get rewritten whole are written to a temporary file first, then swapped in.
 - **Several tabs.** Web Locks serialise writes per file; BroadcastChannel tells other tabs to refresh their signals.
+- **A project's folder** (0.8, D141). A project can be opened on a folder of the user's computer. Its files are read and changed there, through a second `FS` whose storage worker starts from the folder's handle instead of the private root. It writes with `createWritable`, without the temporary copy, which would show in the user's folder. Everything in the tree above stays in the private file system. This needs Chromium; elsewhere a dropped folder is a read-only copy.
 - **Format changes.** Every file carries a `format` version and is upgraded lazily when read.
 - **Preventing loss:**
   - Browsers delete *all* of a site's data at once when they evict it, so call `navigator.storage.persist()`.
   - Encourage installing the app: Safari can wipe sites that haven't been visited for 7 days unless they are installed.
   - Offer backup early.
-  - On Chrome and Edge, mirroring to a real folder is continuous backup.
+  - On Chrome and Edge, mirroring to a real folder is continuous backup, with the folder access a project's folder brings (D141).
   - Show usage in plain words ("Jean uses 340 MB on this device").
   - When space runs low, evict model weights first and never user data.
-- **Secrets.** API keys and tokens are encrypted with a non-extractable `CryptoKey` kept in IndexedDB (the only use of IndexedDB). They are never included in exports, syncs or shares.
+- **Secrets.** API keys and tokens are encrypted with a non-extractable `CryptoKey` kept in IndexedDB. Its one other use will be a project's folder handle (D141), which can't be kept in a file. They are never included in exports, syncs or shares.
 - **Layout rules that keep sync possible:**
   - One file per entity, named by ULID and never renamed.
   - Attachments named by content hash.
