@@ -2,9 +2,10 @@
 // screen. Links from answers open there once it's found, after three opened elsewhere; the brain
 // opens a page there and reads it; the page on show reaches the brain's next note. A site that
 // refuses to be framed opens in a tab of its own from then on, and Jean recommends installing it
-// as an app. ⌘⇧B opens and closes it. Right to left, the pane mirrors; in Japanese, its strings are Japanese.
+// as an app. ⌘⇧B opens and closes it. It shares the side of the window with a file's preview, neither
+// covering the other, and its edge and the divider between them resize them (D144). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, BRAIN_URL, SALES } from './helpers.js'
 
 const SITE = BRAIN_URL.replace(/\/v1$/, '/site')
 
@@ -16,6 +17,16 @@ async function go(page, address) {
   const field = page.locator('.browser-bar input')
   await field.fill(address)
   await field.press('Enter')
+}
+
+/** Drags a handle by so much, in steps, as a hand would. @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} handle @param {number} dx @param {number} dy */
+async function drag(page, handle, dx, dy) {
+  const box = await handle.boundingBox()
+  const [x, y] = [(box?.x ?? 0) + (box?.width ?? 0) / 2, (box?.y ?? 0) + (box?.height ?? 0) / 2]
+  await page.mouse.move(x, y)
+  await page.mouse.down()
+  await page.mouse.move(x + dx, y + dy, { steps: 5 })
+  await page.mouse.up()
 }
 
 test('the user browses beside the conversation: back, forward, reload, full screen', async ({ page }) => {
@@ -159,6 +170,62 @@ test('the brain offers the browser, then opens a page there and reads it, asking
   const notes = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
     .flatMap((record) => (record.update?.sessionUpdate === '_system_note' ? [record.update.text] : [])))
   expect(notes).toContain(`The <page> section is now:\nThe browser beside the conversation shows ${SITE}/bakery.html.`)
+})
+
+test('the browser and a file share the side of the window, neither covering the other', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Here is my table')
+  await page.locator('.msg-files .file-chip').click()
+  const preview = page.locator('app-preview .preview')
+  const pane = page.locator('app-browser .browser')
+  await expect(preview.locator('.preview-grid')).toBeVisible()
+  const alone = await preview.boundingBox()
+  // The browser comes after the file: one above the other, as wide, and the file's still in view.
+  await page.locator('.bar .browser-toggle').click()
+  await go(page, `${SITE}/bakery.html`)
+  await expect(site(page).locator('h1')).toHaveText('The bakery')
+  let [first, second] = await Promise.all([preview.boundingBox(), pane.boundingBox()])
+  expect(first?.width).toBe(second?.width)
+  expect((first?.y ?? 0) + (first?.height ?? 0)).toBeLessThanOrEqual(second?.y ?? 0)
+  await expect(preview.locator('.preview-grid')).toBeInViewport()
+  // Beside the conversation, the box still takes a message.
+  await expect(page.locator('#prompt')).toBeEditable()
+  // The divider between them is dragged, over the page too, or moved with the keys.
+  const divider = page.locator('.dock-divider')
+  await expect(divider).toHaveAttribute('aria-orientation', 'horizontal')
+  await drag(page, divider, 0, 100)
+  expect((await preview.boundingBox())?.height).toBeCloseTo((first?.height ?? 0) + 100, 0)
+  await divider.press('ArrowUp')
+  expect((await preview.boundingBox())?.height).toBeCloseTo((first?.height ?? 0) + 100 - 32, 0)
+  // The dock's edge sets how wide it is, wider than tall too, the panes still one above the other,
+  // and what the user set is kept; a double click puts each back.
+  const dock = page.locator('.dock')
+  const width = (await dock.boundingBox())?.width ?? 0
+  await drag(page, page.locator('.dock-edge'), -100, 0)
+  expect((await dock.boundingBox())?.width).toBeCloseTo(width + 100, 0)
+  expect((await pane.boundingBox())?.width).toBeCloseTo(width + 100 - 1, 0)
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.dock?.width)).toBeCloseTo((width + 100) / 1280, 2)
+  await divider.dblclick()
+  await page.locator('.dock-edge').dblclick()
+  expect(await preview.boundingBox()).toEqual(first)
+  // Over it, in a window wider than tall: side by side.
+  await page.setViewportSize({ width: 844, height: 390 })
+  await expect(page.locator('app-shell')).toHaveJSProperty('inert', true)
+  ;[first, second] = await Promise.all([preview.boundingBox(), pane.boundingBox()])
+  expect((first?.x ?? 0) + (first?.width ?? 0)).toBeLessThanOrEqual(second?.x ?? 0)
+  // Closing one gives the other the whole side; closing both gives the conversation back.
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await pane.locator('.browser-bar').getByRole('button', { name: 'Close' }).click()
+  await expect(pane).toHaveCount(0)
+  expect(await preview.boundingBox()).toEqual(alone)
+  await preview.getByRole('button', { name: 'Close' }).click()
+  await expect(preview).toHaveCount(0)
+  await expect(page.locator('app-shell')).toHaveJSProperty('inert', false)
 })
 
 for (const [lang, back, placeholder] of [['ar', 'رجوع', 'اكتب عنوانًا، أو كلمات للبحث عنها'], ['ja', '戻る', 'アドレスまたは調べたい言葉を入力']]) {

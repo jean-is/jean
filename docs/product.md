@@ -204,6 +204,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 - **What opens there:** links from answers, their sources included, and pages Jean opens with `browse`. Jean asks first, since an address it picks could carry something away, and reads the page's words when the site allows it.
 - **What Jean knows:** which page is open, by its address. It can't see the page itself, nor where it went once the user follows a link in it.
 - **Sites that won't show.** Many sites refuse to be shown inside another page, and many accounts only work in their own site's tab. The browser can't tell, so a page from a site not seen working yet comes with "Page not showing?" and a new tab. A site opened that way opens in a tab of its own from then on, and Jean recommends installing it as an app, which gives it its own window and a place on the desktop, with the steps for the browser in use. Where the browser can't install sites (Firefox on a computer), Jean suggests a bookmark. "Try here again" undoes it.
+- **Beside a file.** A file opened while a page shows doesn't cover it: the two share the side of the window, one above the other (side by side on a phone held sideways), and closing one gives the other its room. Dragging the line between them shares it differently, and dragging the side's edge makes it wider or narrower; the arrow keys do it too, a double click puts it back, and Jean remembers (D144).
 
 ## Reply suggestions
 

@@ -20,6 +20,7 @@
   "action.retry": "もう一度試す",
   "action.readAloud": "読み上げる",
   "action.stopReading": "読み上げを止める",
+  "dock.resize": "サイズを変更",
   "speech.noVoice": "このデバイスには{language}を読み上げられる声がありません。システムの設定で追加できます。",
   "toast.copied": "コピーしました",
   "conversation.untitled": "新しい会話",

@@ -20,6 +20,7 @@
   "action.retry": "Jaribu tena",
   "action.readAloud": "Soma kwa sauti",
   "action.stopReading": "Acha kusoma",
+  "dock.resize": "Badilisha ukubwa",
   "speech.noVoice": "Hakuna sauti kwenye kifaa hiki inayoweza kusoma lugha hii ({language}). Unaweza kuongeza moja katika mipangilio ya mfumo wako.",
   "toast.copied": "Imenakiliwa",
   "conversation.untitled": "Mazungumzo mapya",

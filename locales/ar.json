@@ -20,6 +20,7 @@
   "action.retry": "حاول مرة أخرى",
   "action.readAloud": "قراءة بصوت عالٍ",
   "action.stopReading": "إيقاف القراءة",
+  "dock.resize": "تغيير الحجم",
   "speech.noVoice": "لا يوجد على هذا الجهاز صوت يقرأ هذه اللغة ({language}). يمكنك إضافة صوت من إعدادات نظامك.",
   "toast.copied": "تم النسخ",
   "conversation.untitled": "محادثة جديدة",

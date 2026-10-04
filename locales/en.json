@@ -20,6 +20,7 @@
   "action.retry": "Try again",
   "action.readAloud": "Read aloud",
   "action.stopReading": "Stop reading",
+  "dock.resize": "Resize",
   "speech.noVoice": "No voice on this device can read {language}. Your system’s settings can add one.",
   "toast.copied": "Copied",
   "conversation.untitled": "New conversation",

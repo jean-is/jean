@@ -20,6 +20,7 @@
   "action.retry": "Subukang muli",
   "action.readAloud": "Basahin nang malakas",
   "action.stopReading": "Itigil ang pagbasa",
+  "dock.resize": "Baguhin ang laki",
   "speech.noVoice": "Walang boses sa device na ito na kayang bumasa ng {language}. Puwede kang magdagdag sa settings ng system mo.",
   "toast.copied": "Nakopya",
   "conversation.untitled": "Bagong usapan",

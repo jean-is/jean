@@ -70,6 +70,7 @@ ui/               base element, shell, chat, activity view, caps.js (the unlock 
                   knows.js (Settings' About you, Skills and Routines, 0.4, D134), sandbox.js (the sandbox client, 0.4),
                   looks.js (the themes, D111), touches.js (the user's own, loaded once there are some), inbox.js (Mail's list),
                   preview.js and preview.css (a file, as what it is, beside the conversation; loaded when one first opens, D126),
+                  dock.js and dock.css (the side of the window the preview and the browser share, tiled and resized; loaded with the first, D144),
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)

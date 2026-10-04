@@ -20,6 +20,7 @@
   "action.retry": "Спробувати ще",
   "action.readAloud": "Прочитати вголос",
   "action.stopReading": "Зупинити читання",
+  "dock.resize": "Змінити розмір",
   "speech.noVoice": "На цьому пристрої немає голосу для цієї мови ({language}). Його можна додати в налаштуваннях системи.",
   "toast.copied": "Скопійовано",
   "conversation.untitled": "Нова розмова",

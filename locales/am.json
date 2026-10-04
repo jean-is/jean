@@ -20,6 +20,7 @@
   "action.retry": "እንደገና ይሞክሩ",
   "action.readAloud": "በድምፅ ማንበብ",
   "action.stopReading": "ንባቡን ያቁሙ",
+  "dock.resize": "መጠን ቀይር",
   "speech.noVoice": "በዚህ መሣሪያ ላይ {language} ማንበብ የሚችል ድምፅ የለም። በስርዓትዎ ቅንብሮች ውስጥ ማከል ይችላሉ።",
   "toast.copied": "ተቀድቷል",
   "conversation.untitled": "አዲስ ውይይት",

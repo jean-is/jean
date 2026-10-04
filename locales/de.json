@@ -20,6 +20,7 @@
   "action.retry": "Erneut versuchen",
   "action.readAloud": "Vorlesen",
   "action.stopReading": "Vorlesen beenden",
+  "dock.resize": "Größe ändern",
   "speech.noVoice": "Keine Stimme auf diesem Gerät kann {language} vorlesen. In den Systemeinstellungen kannst du eine hinzufügen.",
   "toast.copied": "Kopiert",
   "conversation.untitled": "Neues Gespräch",

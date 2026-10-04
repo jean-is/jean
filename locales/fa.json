@@ -20,6 +20,7 @@
   "action.retry": "تلاش دوباره",
   "action.readAloud": "خواندن با صدا",
   "action.stopReading": "توقف خواندن",
+  "dock.resize": "تغییر اندازه",
   "speech.noVoice": "هیچ صدایی روی این دستگاه نمی‌تواند این زبان ({language}) را بخواند. می‌توانید از تنظیمات سیستم خود یکی اضافه کنید.",
   "toast.copied": "رونوشت شد",
   "conversation.untitled": "گفت‌وگوی تازه",

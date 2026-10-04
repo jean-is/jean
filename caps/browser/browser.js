@@ -1,5 +1,6 @@
-// The browser (D140): web pages beside the conversation, or over it on a narrow screen, with back,
-// forward and reload, an address or words to look up, a new tab and full screen. Links in answers
+// The browser (D140): web pages beside the conversation, or over it on a narrow screen, in a pane
+// of the dock (D144) that a file's preview shares, with back, forward and reload, an address or
+// words to look up, a new tab and full screen. Links in answers
 // open there, and the brain opens pages there with `browse`, which reads a page's words when its
 // site lets other sites read it. The page on show is the prompt's <page> section, so the brain
 // knows what the user is looking at.
@@ -17,6 +18,7 @@ import { html, svg, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
+import * as dock from '../../ui/dock.js'
 import { register } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { icons } from '../../ui/icons.js'
@@ -62,9 +64,6 @@ const moves = signal(0)
 const trail = new Trail()
 /** Sites seen showing in the frame, this visit: a page of theirs went on by itself. */
 const shows = new Set()
-const WIDE = matchMedia('(min-width: 60rem)')
-const wide = signal(WIDE.matches)
-WIDE.addEventListener('change', () => { wide.value = WIDE.matches })
 
 /** The browser.html frame, once loaded, and the site's frame in it. @type {HTMLIFrameElement | null} */
 let host = null
@@ -246,9 +245,6 @@ async function retry(url) {
 }
 
 class Browser extends Element {
-  /** @type {HTMLElement | null} what had focus before the pane opened */
-  #opener = null
-
   render() {
     if (!open.value) return nothing
     void moves.value
@@ -256,8 +252,8 @@ class Browser extends Element {
     const address = shown?.url ?? ''
     const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => unknown} */ run, disabled = false) => html`<button class="icon-button"
       title=${label} aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
-    return html`<aside class="browser ${full.value ? 'is-full' : ''}" aria-label=${t('cap.browser.name')}>
-      <header class="browser-bar">
+    return html`<aside class="pane browser ${full.value ? 'is-full' : ''}" aria-label=${t('cap.browser.name')}>
+      <header class="pane-head browser-bar">
         ${button(t('browser.back'), GLYPHS.back, () => walk('back'), !trail.canBack)}
         ${button(t('browser.forward'), icons.arrow, () => walk('forward'), !trail.canForward)}
         ${button(t('browser.reload'), icons.retry, reload, !shown)}
@@ -287,18 +283,8 @@ class Browser extends Element {
   }
 
   updated() {
-    const shown = open.value
-    document.documentElement.toggleAttribute('data-browser', shown && wide.value)
-    // Over the conversation, the pane is all there is until it closes.
-    const shell = /** @type {HTMLElement | null} */ (document.querySelector('app-shell'))
-    if (shell) shell.inert = shown && !wide.value
-    if (shown && !this.#opener) {
-      this.#opener = /** @type {HTMLElement} */ (document.activeElement ?? document.body)
-      if (!page.value) /** @type {HTMLInputElement | null} */ (this.querySelector('.browser-bar input'))?.focus()
-    } else if (!shown && this.#opener) {
-      this.#opener.focus()
-      this.#opener = null
-    }
+    // Opened empty, it takes an address.
+    if (dock.place(this, open.value) && !page.value) /** @type {HTMLInputElement | null} */ (this.querySelector('.browser-bar input'))?.focus()
   }
 }
 
@@ -412,4 +398,4 @@ register({
 })
 
 define('app-browser', Browser)
-document.body.append(document.createElement('app-browser'))
+dock.join(document.createElement('app-browser'))

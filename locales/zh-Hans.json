@@ -20,6 +20,7 @@
   "action.retry": "重试",
   "action.readAloud": "朗读",
   "action.stopReading": "停止朗读",
+  "dock.resize": "调整大小",
   "speech.noVoice": "这台设备上没有能朗读{language}的声音。你可以在系统设置中添加。",
   "toast.copied": "已复制",
   "conversation.untitled": "新对话",

@@ -20,6 +20,7 @@
   "action.retry": "மீண்டும் முயல்",
   "action.readAloud": "உரக்கப் படி",
   "action.stopReading": "படிப்பதை நிறுத்து",
+  "dock.resize": "அளவை மாற்று",
   "speech.noVoice": "இந்தச் சாதனத்தில் {language} படிக்கக்கூடிய குரல் எதுவும் இல்லை. உங்கள் கணினி அமைப்புகளில் ஒன்றைச் சேர்க்கலாம்.",
   "toast.copied": "நகலெடுக்கப்பட்டது",
   "conversation.untitled": "புதிய உரையாடல்",

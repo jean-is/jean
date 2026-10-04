@@ -20,6 +20,7 @@
   "action.retry": "ניסיון חוזר",
   "action.readAloud": "הקראה",
   "action.stopReading": "עצירת ההקראה",
+  "dock.resize": "שינוי גודל",
   "speech.noVoice": "אין במכשיר הזה קול שיכול להקריא את השפה הזו ({language}). אפשר להוסיף קול בהגדרות המערכת.",
   "toast.copied": "הועתק",
   "conversation.untitled": "שיחה חדשה",

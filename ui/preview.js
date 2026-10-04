@@ -1,12 +1,14 @@
 // The preview (D126): a file Jean made or the user shared, seen beside the conversation, or over
-// it on a narrow screen, with a button to save it. Each kind shows as what it is: a picture or a
-// drawing as a picture; a web page in a frame of its own (preview.html), doing what Settings lets
-// it (D143), by default running its scripts without any network; a PDF's pages drawn by pdf.js; a
-// document on a sheet; a spreadsheet as a grid; a deck as its slides' text. A file being changed
-// shows its new version as it comes. Loaded the first time a file is opened, with its style sheet.
+// it on a narrow screen, in a pane of the dock (D144), with a button to save it. Each kind shows
+// as what it is: a picture or a drawing as a picture; a web page in a frame of its own
+// (preview.html), doing what Settings lets it (D143), by default running its scripts without any
+// network; a PDF's pages drawn by pdf.js; a document on a sheet; a spreadsheet as a grid; a deck
+// as its slides' text. A file being changed shows its new version as it comes. Loaded the first
+// time a file is opened, with its style sheet.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
+import * as dock from './dock.js'
 import { app, effective, notify } from './state.js'
 import { save } from './save.js'
 import { markdown } from './markdown.js'
@@ -30,10 +32,6 @@ await new Promise((resolve) => {
 
 const shown = signal(/** @type {Shown | null} */ (null))
 const view = signal(/** @type {unknown} */ (nothing))
-// Wide enough to keep the conversation beside the file; narrower, the file covers it.
-const WIDE = matchMedia('(min-width: 60rem)')
-const wide = signal(WIDE.matches)
-WIDE.addEventListener('change', () => { wide.value = WIDE.matches })
 
 // What a web page may do, as Settings and policy have it (D143).
 const policy = computed(() => {
@@ -45,15 +43,12 @@ export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
 
 class Preview extends Element {
-  /** @type {HTMLElement | null} what had focus before the preview opened */
-  #opener = null
-
   render() {
     const file = shown.value
     if (!file) return nothing
     const label = t('made.save', { name: file.name })
-    return html`<aside class="preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && close()}>
-      <header class="preview-head">
+    return html`<aside class="pane preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && close()}>
+      <header class="pane-head">
         <h2><span dir="auto">${file.name}</span></h2>
         <button class="icon-button" title=${label} aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
         <button class="icon-button" title=${t('action.close')} aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
@@ -63,18 +58,7 @@ class Preview extends Element {
   }
 
   updated() {
-    const open = Boolean(shown.value)
-    document.documentElement.toggleAttribute('data-preview', open && wide.value)
-    // Over the conversation, the preview is all there is until it closes.
-    const shell = /** @type {HTMLElement | null} */ (document.querySelector('app-shell'))
-    if (shell) shell.inert = open && !wide.value
-    if (open && !this.#opener) {
-      this.#opener = /** @type {HTMLElement} */ (document.activeElement ?? document.body)
-      this.querySelector('button')?.focus()
-    } else if (!open && this.#opener) {
-      this.#opener.focus()
-      this.#opener = null
-    }
+    if (dock.place(this, Boolean(shown.value))) this.querySelector('button')?.focus()
   }
 }
 
@@ -252,4 +236,4 @@ function grids(list) {
 const letters = (index) => (index >= 26 ? letters(Math.floor(index / 26) - 1) : '') + String.fromCharCode(65 + (index % 26))
 
 define('app-preview', Preview)
-document.body.append(document.createElement('app-preview'))
+dock.join(document.createElement('app-preview'))

@@ -20,6 +20,7 @@
   "action.retry": "फिर से कोशिश करें",
   "action.readAloud": "ज़ोर से पढ़ें",
   "action.stopReading": "पढ़ना रोकें",
+  "dock.resize": "आकार बदलें",
   "speech.noVoice": "इस डिवाइस पर कोई आवाज़ {language} नहीं पढ़ सकती। आप अपने सिस्टम की सेटिंग्स में एक जोड़ सकते हैं।",
   "toast.copied": "कॉपी हो गया",
   "conversation.untitled": "नई बातचीत",

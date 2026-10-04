@@ -20,6 +20,7 @@
   "action.retry": "Coba lagi",
   "action.readAloud": "Bacakan",
   "action.stopReading": "Berhenti membacakan",
+  "dock.resize": "Ubah ukuran",
   "speech.noVoice": "Tidak ada suara di perangkat ini yang bisa membaca bahasa {language}. Anda bisa menambahkannya di pengaturan sistem.",
   "toast.copied": "Disalin",
   "conversation.untitled": "Percakapan baru",

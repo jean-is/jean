@@ -20,6 +20,7 @@
   "action.retry": "Opnieuw proberen",
   "action.readAloud": "Voorlezen",
   "action.stopReading": "Stoppen met voorlezen",
+  "dock.resize": "Formaat wijzigen",
   "speech.noVoice": "Geen stem op dit apparaat kan {language} voorlezen. Je kunt er een toevoegen in de instellingen van je systeem.",
   "toast.copied": "Gekopieerd",
   "conversation.untitled": "Nieuw gesprek",

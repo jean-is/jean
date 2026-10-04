@@ -20,6 +20,7 @@
   "action.retry": "Cuba lagi",
   "action.readAloud": "Baca dengan kuat",
   "action.stopReading": "Berhenti membaca",
+  "dock.resize": "Ubah saiz",
   "speech.noVoice": "Tiada suara pada peranti ini yang boleh membaca bahasa {language}. Anda boleh menambahnya dalam tetapan sistem anda.",
   "toast.copied": "Disalin",
   "conversation.untitled": "Perbualan baharu",

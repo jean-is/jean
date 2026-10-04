@@ -20,6 +20,7 @@
   "action.retry": "Tekrar dene",
   "action.readAloud": "Sesli oku",
   "action.stopReading": "Okumayı durdur",
+  "dock.resize": "Yeniden boyutlandır",
   "speech.noVoice": "Bu cihazda bu dili ({language}) okuyabilen bir ses yok. Sistem ayarlarından bir ses ekleyebilirsin.",
   "toast.copied": "Kopyalandı",
   "conversation.untitled": "Yeni konuşma",

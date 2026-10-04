@@ -20,6 +20,7 @@
   "action.retry": "మళ్లీ ప్రయత్నించు",
   "action.readAloud": "బిగ్గరగా చదువు",
   "action.stopReading": "చదవడం ఆపు",
+  "dock.resize": "పరిమాణం మార్చు",
   "speech.noVoice": "ఈ పరికరంలో {language} చదవగల గొంతు లేదు. మీ సిస్టమ్ సెట్టింగ్‌లలో ఒకదాన్ని జోడించవచ్చు.",
   "toast.copied": "కాపీ అయింది",
   "conversation.untitled": "కొత్త సంభాషణ",

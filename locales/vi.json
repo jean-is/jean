@@ -20,6 +20,7 @@
   "action.retry": "Thử lại",
   "action.readAloud": "Đọc to",
   "action.stopReading": "Dừng đọc",
+  "dock.resize": "Đổi kích thước",
   "speech.noVoice": "Không có giọng nào trên thiết bị này đọc được {language}. Bạn có thể thêm giọng trong phần cài đặt hệ thống.",
   "toast.copied": "Đã sao chép",
   "conversation.untitled": "Cuộc trò chuyện mới",

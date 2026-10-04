@@ -1,31 +1,12 @@
-/* The browser (D140): loaded with it (caps/browser/browser.js), after ui/style.css, so its colours
-   are the look's. Beside the conversation on a wide screen, over it on a narrow one, as the
-   preview is (ui/preview.css), which opens over it. A page keeps the white it was made on.
-   Logical properties only. */
+/* The browser (D140): loaded with it (caps/browser/browser.js), after ui/style.css and the dock's
+   (ui/dock.css, D144), so its colours are the look's. A pane of the dock, as a file's preview is,
+   beside the conversation on a wide screen, over it on a narrow one. A page keeps the white it
+   was made on. Logical properties only. */
 
-:root { --pane: min(50vw, 52rem); }
-:root[data-browser] app-shell { margin-inline-end: var(--pane); }
-/* The welcome's question is sized by the window: beside the pane, it has half of it. */
-:root[data-browser] .hero-question { font-size: clamp(2.4rem, 4.5vw, 4.2rem); }
 .bar .browser-toggle { margin-inline-start: auto; }
 
-.browser {
-  position: fixed;
-  z-index: 4;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  padding-block: env(safe-area-inset-top) env(safe-area-inset-bottom);
-  background: var(--room-2);
-  color: var(--ink);
-  animation: browser-in 0.35s var(--ease);
-}
-:root[data-browser] .browser:not(:fullscreen, .is-full) { inset-inline-start: auto; inline-size: var(--pane); border-inline-start: 1px solid var(--line-strong); }
-.browser:fullscreen { padding: 0; }
-@keyframes browser-in { from { opacity: 0; translate: 0 1rem; } }
-
 /* Back, forward and reload, the address, then a new tab, full screen and close. */
-.browser-bar { display: flex; align-items: center; gap: 0.15rem; padding: 0.45rem 0.5rem; border-block-end: 1px solid var(--line); }
+.browser-bar { gap: 0.15rem; padding: 0.45rem 0.5rem; }
 .browser-bar .icon-button { flex: none; inline-size: 2.25rem; block-size: 2.25rem; }
 .browser-bar .icon-button:disabled { opacity: 0.35; background: none; }
 .browser-bar form { flex: 1; min-inline-size: 0; margin-inline: 0.25rem; }
@@ -52,5 +33,4 @@
 .browser-strip p { flex: 1 1 14rem; margin: 0; }
 .browser-strip .button { padding-block: 0.3rem; }
 
-@media print { .browser { display: none; } :root[data-browser] app-shell { margin: 0; } }
 @media (forced-colors: active) { .browser-loading::after { background: Highlight; } }

@@ -20,6 +20,7 @@
   "action.retry": "Sake gwadawa",
   "action.readAloud": "Karanta da murya",
   "action.stopReading": "Daina karantawa",
+  "dock.resize": "Canza girma",
   "speech.noVoice": "Babu murya a wannan na'ura da za ta iya karanta wannan harshe ({language}). Za ka iya ƙara ɗaya a saitunan tsarinka.",
   "toast.copied": "An kwafa",
   "conversation.untitled": "Sabuwar tattaunawa",
