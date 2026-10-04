@@ -240,8 +240,10 @@ effect(() => {
 })
 
 // Declared, not assigned, as the panel is: Settings may show it before this module has run to its end.
-/** A service's first letter, in place of its logo. @param {Known} entry */
-function monogram(entry) { return html`<span class="monogram" aria-hidden="true">${[...entry.name][0]}</span>` }
+/** A service's logo (D159), or else its first letter. @param {Pick<Known, 'name' | 'logo'>} entry @param {string} [kind] */
+function monogram({ name, logo }, kind = 'monogram') {
+  return logo ? html`<img class="${kind} is-logo" src=${new URL(`logos/${logo}`, import.meta.url).href} alt="">` : html`<span class=${kind} aria-hidden="true">${[...name][0]}</span>`
+}
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
 function products(names) { return new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names) }
 
@@ -249,7 +251,7 @@ function products(names) { return new Intl.ListFormat(locale.value, { type: 'uni
 function row(connection) {
   const { tools, error } = status.value[connection.id] ?? {}
   const own = (app.settings.value.connections ?? []).includes(connection)
-  const head = html`<span class="item-icon" aria-hidden="true">${[...connection.name][0]}</span><span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
+  const head = html`${monogram({ name: connection.name, logo: knownFor(connection.url, app.policy)?.logo }, 'item-icon')}<span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
     ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}</small>`}</span>`
   if (error || !tools) {
     return html`<li class="connection"><span class="item">${head}</span>${error === 'auth' ? html`<button class="button" @click=${() => { place = 'top'; signIn(connection) }}>${t('brain.connect')}</button>`

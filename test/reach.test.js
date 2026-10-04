@@ -3,6 +3,7 @@
 // signing in), Wikipedia, and live conversation's turn-taking.
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
 import { runTurn } from '../core/loop.js'
 import { toChatMessages, userRecord } from '../core/events.js'
 import { PROVIDERS, streamChat } from '../core/llm.js'
@@ -349,6 +350,16 @@ describe('the services Jean knows (D95)', () => {
     assert.ok(later.some((entry) => entry.id === 'google-meet' && !entry.url))
   })
 
+  test('each service Jean knows has its brand\'s logo, its own file: a plain drawing, or a picture (D159)', async () => {
+    for (const { id, logo } of DIRECTORY) {
+      assert.match(String(logo), /^[\w-]+\.(svg|png)$/, id)
+      const file = await readFile(new URL(`../caps/connections/logos/${logo}`, import.meta.url))
+      if (logo?.endsWith('.png')) { assert.deepEqual([...file.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47], id); continue }
+      assert.match(String(file), /^<svg [^>]*xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, id)
+      assert.doesNotMatch(String(file), /<script|<foreignObject|<image|href=|url\((?!#)/i, id)
+    }
+  })
+
   test('policy merges by id: a gateway and a client id switch one on; it can hide one, add one, or hold one back', () => {
     const policy = { directory: [
       { id: 'microsoft-365', url: 'https://mcp.m365.corp.example/mcp', clientId: 'corp-app' },
@@ -359,7 +370,7 @@ describe('the services Jean knows (D95)', () => {
     ] }
     const { ready, later } = known(policy)
     const m365 = ready.find((entry) => entry.id === 'microsoft-365')
-    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], clientId: 'corp-app', ready: true })
+    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], logo: 'microsoft-365.svg', clientId: 'corp-app', ready: true })
     assert.ok(ready.some((entry) => entry.id === 'crm'))
     assert.ok(later.some((entry) => entry.id === 'canva'))
     assert.ok(![...ready, ...later].some((entry) => entry.id === 'figma' || entry.id === 'nameless'))

@@ -110,7 +110,7 @@ label.item, .list summary { cursor: pointer; }
 .brains .is-selected { background: oklch(from var(--flame) l c h / 0.08); }
 .brains .item { flex-basis: 12rem; }
 .brains .model-input { flex: 1 1 13rem; max-inline-size: 20rem; padding-block: 0.4rem; }
-/* The services Jean knows: tiles to connect, then the ones not available yet (D95). */
+/* The services Jean knows: tiles to connect, then the ones not available yet (D95); a brand's logo, its own file in its own shape; a picture is an app icon, rounded as the system would (D159). */
 .services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
 .services li:has(small) { grid-column: span 2; }
 :is(.service, .card) { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; color: var(--ink); text-align: start; }
@@ -126,6 +126,7 @@ label.item, .list summary { cursor: pointer; }
 .services.is-later { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0; color: var(--ink-soft); font-size: 0.88rem; }
 .is-later li { display: inline-flex; align-items: center; gap: 0.4rem; }
 .is-later .monogram { inline-size: 1.5rem; block-size: 1.5rem; border-radius: 0.45rem; background: var(--line); color: inherit; font-size: 0.78rem; }
+:is(.monogram, .item-icon).is-logo { border: 0; border-radius: 0; background: none; object-fit: contain; } .is-logo[src$='.png'] { border-radius: 22%; }
 .other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .model-input { font: 0.85rem var(--mono); }
