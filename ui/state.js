@@ -24,9 +24,9 @@ import { loaded, unlock, contributions } from './caps.js'
 /** @typedef {import('../core/loop.js').PermissionOption} PermissionOption */
 /**
  * A decision waiting for the user, in the decision inbox: an approval, or questions from Jean or
- * one of its helpers (`from`, the part it works on; D146).
- * @typedef {{ id: number, toolCall: ToolCallInfo, resolve: (option: PermissionOption) => void }
- *   | { id: number, questions: Question[], from?: string, resolve: (answers: Answer[] | null) => void }} Decision
+ * one of its helpers (`from`, the part it works on; D146), in the conversation at `conversation` (D147).
+ * @typedef {{ id: number, conversation?: string, toolCall: ToolCallInfo, resolve: (option: PermissionOption) => void }
+ *   | { id: number, conversation?: string, questions: Question[], from?: string, resolve: (answers: Answer[] | null) => void }} Decision
  */
 /** @import { Question, Answer } from '../caps/ask/answers.js' */
 
@@ -50,6 +50,8 @@ export const app = {
   /** @type {import('@preact/signals-core').Signal<{ turn: Turn } | null>} */
   live: signal(null),
   busy: signal(false),
+  /** The conversations being answered, on screen or not, by path (D147). */
+  running: signal(/** @type {string[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<{ code: string, message: string } | null>} */
   error: signal(null),
   presence: signal(/** @type {Presence} */ ('idle')),
@@ -73,7 +75,7 @@ export const app = {
   /** A capability offered above the box (progressive discovery), with its download's progress. */
   offer: signal(/** @type {{ id: string, progress?: number } | null} */ (null)),
   /** The brain's offer, waiting in the reply for the user's answer. */
-  offering: signal(/** @type {{ id: string, resolve: (yes: boolean) => void } | null} */ (null)),
+  offering: signal(/** @type {{ id: string, conversation?: string, resolve: (yes: boolean) => void } | null} */ (null)),
   /** Follow-ups the reflexes picked from the catalogue, by the answer's turn. */
   actions: signal(/** @type {Record<string, string[]>} */ ({})),
   /** Capabilities the user turned on and policy's preUnlock, loaded at start. */
@@ -225,6 +227,8 @@ export async function refreshProjects() {
 /** Walks into another project's room. @param {Project} project */
 export async function enterProject(project) {
   if (project.dir === app.projectDir) return
+  // What is under way stops: its calls work in the room on screen.
+  for (const run of runs.values()) halt(run)
   newConversation()
   app.project.value = project
   app.conversations.value = []
@@ -244,11 +248,11 @@ export async function refreshConversations() {
 }
 
 export function newConversation() {
-  leave()
   app.current.value = null
   lastRequestAt = 0
   app.error.value = null
   app.dialog.value = null
+  showRun()
 }
 
 /**
@@ -285,55 +289,81 @@ let lastTurn = null
 
 /** @param {string} path */
 export async function openConversation(path) {
-  leave()
-  const loaded = await loadConversation(app.fs, path)
+  const was = runs.get(path)
+  let loaded = await loadConversation(app.fs, path)
+  // Its answer ended while it was read: read all of it.
+  if (was && !runs.has(path)) loaded = await loadConversation(app.fs, path)
+  const run = runs.get(path)
+  // What its answer kept so far shows as the live answer.
+  const kept = new Set(run?.settled.map((record) => JSON.stringify(record)))
   app.error.value = null
   app.dialog.value = null
-  if (loaded) app.current.value = { id: loaded.header.id, path, records: loaded.records }
+  if (loaded) app.current.value = { id: loaded.header.id, path, records: loaded.records.filter((record) => !kept.has(JSON.stringify(record))) }
+  showRun()
   lastRequestAt = 0
 }
 
 /** @param {string} path */
 export async function removeConversation(path) {
+  halt(runs.get(path))
   await deleteConversation(app.fs, path)
-  if (app.current.value?.path === path) app.current.value = null
+  if (app.current.value?.path === path) {
+    app.current.value = null
+    showRun()
+  }
   await refreshConversations()
 }
 
-/** The run whose answer is on screen: it has the box until it ends, even once stopped. @type {AbortController | null} */
-let controller = null
-
-/** Stops the answer being written. What it waits for (a card, a question, an offer) is declined, so it ends now. */
-export function stop() {
-  controller?.abort()
-  decline()
-}
-
-/** Declines what waits for the user's answer. */
-function decline() {
-  for (const decision of app.decisions.value) 'toolCall' in decision ? decision.resolve('reject_once') : decision.resolve(null)
-  app.offering.value?.resolve(false)
-}
+/**
+ * A conversation being answered, on screen or not (D147): `records` as sent, `turn` the answer so far, `settled` what of it is in the file.
+ * @typedef {{ id: string, path: string, records: Envelope[], turn: Turn, settled: Envelope[], controller: AbortController }} Run
+ */
+/** @type {Map<string, Run>} by path */
+const runs = new Map()
 
 /**
- * Leaves the conversation on screen while it is being answered. The answer stops and winds down
- * out of sight, and the box is free at once: a message sent next is neither held up nor dropped.
+ * The conversation a call works for, by its run's signal (D147); without one, the one on screen.
+ * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], turn?: Turn } | null}
  */
-function leave() {
-  if (!controller) return
-  stop()
-  controller = null
-  app.busy.value = false
-  app.live.value = null
-  setPresence('idle')
+export function conversationOf(signal) {
+  for (const run of runs.values()) if (run.controller.signal === signal) return run
+  return app.current.peek()
+}
+
+/** Stops the answer on screen. */
+export const stop = () => halt(runs.get(app.current.peek()?.path ?? ''))
+
+/** Stops a run. What it waits for (a card, a question, an offer) is declined, so it ends now. @param {Run | undefined} run */
+function halt(run) {
+  run?.controller.abort()
+  if (run) decline(run.path)
+}
+
+/** Declines what waits for the user's answer in a conversation. @param {string} path */
+function decline(path) {
+  for (const decision of app.decisions.value) if (decision.conversation === path) 'toolCall' in decision ? decision.resolve('reject_once') : decision.resolve(null)
+  if (app.offering.value?.conversation === path) app.offering.value.resolve(false)
+}
+
+/** The decisions waiting in the conversation on screen. */
+export const decisionsHere = () => app.decisions.value.filter((decision) => decision.conversation === app.current.value?.path)
+
+/** The box, the live answer and the presence follow the conversation on screen: its run's, if any. It has the box until it ends. */
+function showRun() {
+  const run = runs.get(app.current.peek()?.path ?? '')
+  app.busy.value = Boolean(run)
+  app.live.value = run ? { turn: run.turn } : null
+  if (run) setPresence('thinking')
+  else if (['thinking', 'answering'].includes(app.presence.peek())) setPresence('idle')
 }
 
 // ─── Files ───────────────────────────────────────────────────────────────────
 
-/** Every file the brain may read in this conversation: linked ones, then those about to be sent. */
-export function currentFiles() {
-  const pending = app.attachments.value.flatMap((item) => (item.link ? [item.link] : []))
-  return [...linkedFiles(app.current.value?.records ?? []), ...pending]
+/** Every file the brain may read in a conversation (a run's, by its signal): linked ones, then those about to be sent. @param {AbortSignal} [signal] */
+export function currentFiles(signal) {
+  const conversation = conversationOf(signal)
+  const pending = conversation === app.current.peek() ? app.attachments.value.flatMap((item) => (item.link ? [item.link] : [])) : []
+  return [...linkedFiles(conversation?.records ?? []), ...pending]
 }
 
 /** Opens a file in the preview (D126), never in a tab of Jean's own origin, where a page would run. @param {ResourceLink} link */
@@ -421,7 +451,7 @@ let decisionId = 0
 /**
  * Queues a decision for the user and waits for the answer. Helpers keep working meanwhile,
  * so several can wait at once, each answered on its own.
- * @param {Omit<Decision, 'id' | 'resolve'>} decision @returns {Promise<any>}
+ * @param {Partial<Decision>} decision @returns {Promise<any>}
  */
 function queue(decision) {
   return new Promise((resolve) => {
@@ -433,12 +463,12 @@ function queue(decision) {
   })
 }
 
-/** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @returns {Promise<Answer[] | null>} */
-export const askUser = (questions, from) => queue({ questions, from })
+/** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @param {AbortSignal} [signal] @returns {Promise<Answer[] | null>} */
+export const askUser = (questions, from, signal) => queue({ questions, from, conversation: conversationOf(signal)?.path })
 
-/** An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then follow. @param {ToolCallInfo} toolCall */
-async function approve(toolCall) {
-  const option = /** @type {PermissionOption} */ (await queue({ toolCall }))
+/** An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then follow. @param {ToolCallInfo} toolCall @param {string} conversation */
+async function approve(toolCall, conversation) {
+  const option = /** @type {PermissionOption} */ (await queue({ toolCall, conversation }))
   const rule = ruleFromPermission(option)
   if (rule && toolCall.kind) {
     await setRule(toolCall.kind, rule)
@@ -560,6 +590,7 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
     return
   }
   let current = app.current.value
+  const from = current?.path
   app.busy.value = true
   setPresence('thinking')
   const picked = await pickBrain(text.trim(), current?.records ?? [], boost).finally(() => { app.busy.value = false })
@@ -578,14 +609,19 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
     current = { id: created.id, path: created.path, records: [] }
   }
   await appendRecords(app.fs, current.path, added)
+  // Listed at once, to come back to.
+  if (!current.records.length) refreshConversations()
   const next = { ...current, records: [...current.records, ...added] }
   const show = () => { app.current.value = next }
-  // The big welcome question morphs into the conversation title.
-  if (!current.records.length && document.startViewTransition) await document.startViewTransition(show).updateCallbackDone
-  else show()
+  // Unless the user went elsewhere meanwhile: then it is answered out of sight (D147).
+  if (app.current.peek()?.path === from) {
+    // The big welcome question morphs into the conversation title.
+    if (!current.records.length && document.startViewTransition) await document.startViewTransition(show).updateCallbackDone
+    else show()
+  }
   // The title is written alongside the answer (D112).
   if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
-  await runAgent(brain, meta)
+  await runAgent(next, brain, meta)
 }
 
 /** Run the agent on the current conversation, up to its last user message. */
@@ -593,29 +629,15 @@ export async function retry() {
   const current = app.current.value
   if (!current || app.busy.value) return
   const picked = await pickBrain('', current.records)
-  if (picked) await runAgent(picked.brain, picked.meta)
+  if (picked) await runAgent(current, picked.brain, picked.meta)
 }
 
-/** @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it */
-async function runAgent(brain, meta) {
-  const current = /** @type {NonNullable<typeof app.current.value>} */ (app.current.value)
-  // A brief of what's new since last time only reads, whatever the rules say.
-  const readOnly = foldTurns(current.records).at(-1)?.notes.some((note) => note.data.kind === 'since')
-  // The loop and the brains' adapters load with the first message, not with the first screen.
-  const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
-  const frozen = frozenPrompt(current.records)
-  const messages = toChatMessages(current.records, await documents(current.records, brain))
-  const lastUser = messages.findLastIndex((message) => message.role === 'user')
-  if (brain.api === 'device') await unlock('brain-local')
-  const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
-  lastRequestAt = Date.now()
-  /** @type {Envelope[]} */
-  const settled = []
-  /** @type {Turn} */
-  const turn = { user: null, notes: [], steps: [], at: new Date().toISOString() }
-  const run = new AbortController()
-  // Once the user has gone to another conversation, nothing on screen is this run's any more.
-  const shown = () => controller === run
+/** Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it */
+async function runAgent(conversation, brain, meta) {
+  /** @type {Run} */
+  const run = { ...conversation, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
+  const { path, records: sent, turn, settled } = run
+  const shown = () => app.current.peek()?.path === path
   let frame = 0
   const repaint = () => {
     frame ||= requestAnimationFrame(() => {
@@ -624,13 +646,24 @@ async function runAgent(brain, meta) {
     })
   }
 
-  controller = run
-  app.busy.value = true
-  app.error.value = null
-  app.live.value = { turn }
-  setPresence('thinking')
-  const { settings } = effective.value
+  runs.set(path, run)
+  app.running.value = [...runs.keys()]
+  if (shown()) {
+    app.error.value = null
+    showRun()
+  }
   try {
+    // A brief of what's new since last time only reads, whatever the rules say.
+    const readOnly = foldTurns(sent).at(-1)?.notes.some((note) => note.data.kind === 'since')
+    // The loop and the brains' adapters load with the first message, not with the first screen.
+    const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
+    const frozen = frozenPrompt(sent)
+    const messages = toChatMessages(sent, await documents(sent, brain))
+    const lastUser = messages.findLastIndex((message) => message.role === 'user')
+    if (brain.api === 'device') await unlock('brain-local')
+    const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
+    lastRequestAt = Date.now()
+    const { settings } = effective.value
     await runTurn({
       brain,
       apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
@@ -642,19 +675,18 @@ async function runAgent(brain, meta) {
       ...(stream && { stream }),
       label: brainLabel(brain),
       meta,
-      firstSource: nextSource(current.records),
-      signal: run.signal,
+      firstSource: nextSource(sent),
+      signal: run.controller.signal,
       rule: (kind, reserved) => (readOnly && !READING.has(kind) ? 'never' : resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved })),
-      askPermission: (request) => approve(request.toolCall),
+      askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
-        if (!shown()) return
-        if (update.sessionUpdate === 'agent_message_chunk') setPresence('answering')
+        if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
         applyUpdate(turn, update, step)
         repaint()
       },
       persist: async (records) => {
         settled.push(...records)
-        await appendRecords(app.fs, current.path, records)
+        await appendRecords(app.fs, path, records)
       },
     })
     if (shown()) setPresence('done')
@@ -665,23 +697,23 @@ async function runAgent(brain, meta) {
     }
   } finally {
     cancelAnimationFrame(frame)
-    // Unless the user went to another conversation: the box is theirs already, and maybe another run's.
-    if (shown()) {
-      controller = null
-      app.busy.value = false
-      app.live.value = null
-      decline()
-    }
+    runs.delete(path)
+    app.running.value = [...runs.keys()]
+    decline(path)
     // What was kept meanwhile, like the title, stays.
     const latest = app.current.peek()
-    const records = [...(latest?.path === current.path ? latest.records : current.records), ...settled]
-    if (app.current.value?.path === current.path) app.current.value = { ...current, records }
+    const records = [...(latest?.path === path ? latest.records : sent), ...settled]
+    if (shown()) {
+      app.current.value = { ...conversation, records }
+      app.busy.value = false
+      app.live.value = null
+    }
     await refreshConversations()
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const answer = lastAnswer(settled)
     const at = foldTurns(records).at(-1)?.at
-    if (answer && at) suggestActions(at, answer, records, current)
-    if (answer && at && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) cited(current.path, at, records)
+    if (answer && at) suggestActions(at, answer, records, conversation)
+    if (answer && at && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) cited(path, at, records)
   }
 }
 

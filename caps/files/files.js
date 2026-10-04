@@ -12,10 +12,10 @@ import { t } from '../../core/i18n.js'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
-/** @param {any} args */
-const find = (args) => {
+/** @param {any} args @param {AbortSignal} [signal] the run's, for its conversation's files */
+const find = (args, signal) => {
   const wanted = String(args?.file ?? '').trim().toLowerCase()
-  return currentFiles().findLast((link) => link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted)
+  return currentFiles(signal).findLast((link) => link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted)
 }
 
 /** A shared file's whole text, for scripts (codemode): never declared to the brain. @type {import('../../core/loop.js').Tool} */
@@ -28,9 +28,9 @@ const fileTool = {
     const link = find(args)
     return link ? [{ path: link.uri }] : []
   },
-  run: async (args) => {
-    const link = find(args)
-    if (!link) throw new Error(`No file named "${args?.file}". Files: ${currentFiles().map((f) => f.name).join(', ') || 'none'}.`)
+  run: async (args, ctx) => {
+    const link = find(args, ctx.signal)
+    if (!link) throw new Error(`No file named "${args?.file}". Files: ${currentFiles(ctx.signal).map((f) => f.name).join(', ') || 'none'}.`)
     const text = await fileText(app.fs, app.projectDir, link.uri)
     if (text === null) throw new Error(`"${link.name}" is no longer available.`)
     return splitPages(text).join('\n')

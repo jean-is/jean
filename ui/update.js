@@ -30,7 +30,8 @@ export function start() {
 export function apply(worker) {
   app.updateReady.value = null
   effect(() => {
-    if (updating || app.busy.value || !['idle', 'done'].includes(app.presence.value)) return
+    // Nor while a conversation is answered out of sight (D147).
+    if (updating || app.busy.value || app.running.value.length || !['idle', 'done'].includes(app.presence.value)) return
     updating = true
     worker.postMessage({ type: 'SKIP_WAITING' })
   })

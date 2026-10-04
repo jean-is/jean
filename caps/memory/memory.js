@@ -5,7 +5,7 @@
 // deletes them in Settings' About you. Also recall: searching earlier conversations.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { app, effective, notify } from '../../ui/state.js'
+import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { changeMemory, parseMemory, memoryText, oneLine } from '../../core/memory.js'
 import { listConversations, loadConversation } from '../../core/conversations.js'
 import { foldTurns, splitSuggestions } from '../../core/events.js'
@@ -29,12 +29,13 @@ const rememberTool = {
   },
   kind: 'edit',
   title: (args) => `Remember: ${args?.text ?? ''}`,
-  run: async (args) => {
+  run: async (args, ctx) => {
     const text = oneLine(String(args?.text ?? ''))
     if (!text) throw new Error('There is nothing to remember.')
     const files = memoryFiles()
     const path = args?.scope === 'project' ? files[files.length - 1] : files[0]
-    const entry = { text, at: new Date().toISOString(), by: 'jean', ...(app.current.value && { conversation: app.current.value.path }) }
+    const conversation = conversationOf(ctx.signal)?.path
+    const entry = { text, at: new Date().toISOString(), by: 'jean', ...(conversation && { conversation }) }
     let known = false
     await changeMemory(app.fs, path, (entries) => ((known = entries.some((other) => other.text.toLowerCase() === text.toLowerCase())) ? entries : [...entries, entry]))
     if (known) return 'This was already remembered.'
@@ -54,11 +55,12 @@ const recallTool = {
   },
   kind: 'search',
   title: (args) => `Recall: ${args?.query ?? ''}`,
-  run: async (args) => {
+  run: async (args, ctx) => {
     /** @type {{ title: string, at: string, user: string, answer: string }[]} */
     const passages = []
+    const own = conversationOf(ctx.signal)?.path
     for (const { path, title } of await listConversations(app.fs, app.projectDir)) {
-      if (path === app.current.value?.path) continue
+      if (path === own) continue
       const conversation = await loadConversation(app.fs, path).catch(() => null)
       for (const turn of foldTurns(conversation?.records ?? [])) {
         const answer = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n')).text

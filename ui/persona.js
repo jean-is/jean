@@ -2,7 +2,7 @@
 // Decorative. It mirrors the presence, and CSS does all the moving (ui/style.css).
 import { html } from 'lit-html'
 import { Element, define } from './base.js'
-import { app } from './state.js'
+import { app, decisionsHere } from './state.js'
 
 const face = html`<svg class="persona" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
   <g class="persona-sparks"><circle cx="57" cy="4" r="2.6"/><circle cx="50" cy="3" r="2"/><circle cx="63" cy="5" r="1.6"/></g>
@@ -20,8 +20,8 @@ const face = html`<svg class="persona" viewBox="0 0 100 100" aria-hidden="true" 
 
 class Persona extends Element {
   render() {
-    // Beyond the room's presence: waiting for the user's approval, and sorry after an error.
-    this.dataset.presence = app.decisions.value.length ? 'waiting' : app.error.value ? 'oops' : app.presence.value
+    // Beyond the room's presence: waiting for the user's approval here, and sorry after an error.
+    this.dataset.presence = decisionsHere().length ? 'waiting' : app.error.value ? 'oops' : app.presence.value
     return face
   }
 }

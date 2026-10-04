@@ -5,27 +5,32 @@ import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
 import { app, newConversation, openConversation, removeConversation, turnPage } from './state.js'
 import { loaded } from './caps.js'
-import { t, relativeTime } from '../core/i18n.js'
+import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { SHORTCUTS } from './shell.js'
 
 /**
  * The conversations, newest first, the open one marked: in the drawer, or in Mail's list. One
  * started before the open one (ULIDs sort by time), or any from a new page, is back (D125).
+ * One being answered has a light before its name, ringed while a decision waits there (D147).
  */
 export function conversationList() {
   const list = app.conversations.value
   const currentId = app.current.value?.id
-  return list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => html`
-    <li class=${item.id === currentId ? 'is-current' : ''}>
+  const running = app.running.value
+  const waiting = [...app.decisions.value.map((decision) => decision.conversation), app.offering.value?.conversation]
+  return list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => {
+    const asks = running.includes(item.path) ? waiting.filter((path) => path === item.path).length : -1
+    return html`<li class=${item.id === currentId ? 'is-current' : ''}>
       <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'}
         @click=${() => turnPage(() => openConversation(item.path), !currentId || item.id < currentId)}>
+        ${asks < 0 ? nothing : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
         <span class="history-title" dir="auto">${item.title || t('conversation.untitled')}</span>
-        <time datetime=${item.updatedAt}>${relativeTime(item.updatedAt)}</time>
       </button>
       <button class="icon-button subtle" aria-label=${t('action.delete')} title=${t('action.delete')}
         @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}</button>
-    </li>`)}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
+    </li>`
+  })}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
 }
 
 /** Search, under a new conversation once it is found, with its key shown as in the Claude apps (D133). */

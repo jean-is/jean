@@ -86,7 +86,8 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   let wake = null
   /** @type {{ usage?: any, error?: any } | null} */
   let finished = null
-  const onAbort = () => worker?.postMessage({ type: 'abort' })
+  const id = ++nextId
+  const onAbort = () => worker?.postMessage({ type: 'abort', id })
   signal?.addEventListener('abort', onAbort, { once: true })
   /** @param {any[]} events */
   const push = (events) => {
@@ -101,7 +102,7 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
     contextTokens: CONTEXT,
   }, (message) => {
     if (message.type === 'chunk') push(parser.feed(message.text))
-  }).then((done) => {
+  }, id).then((done) => {
     push(parser.end())
     finished = { usage: done.usage }
   }, (error) => {
@@ -151,10 +152,9 @@ let nextId = 0
 /** @type {Map<number, { resolve: (value: any) => void, reject: (error: any) => void, onMessage: (message: any) => void }>} */
 const pending = new Map()
 
-/** @param {Record<string, any>} message @param {(message: any) => void} onMessage @returns {Promise<any>} */
-function call(message, onMessage) {
+/** @param {Record<string, any>} message @param {(message: any) => void} onMessage @param {number} [id] @returns {Promise<any>} */
+function call(message, onMessage, id = ++nextId) {
   const target = (worker ??= start())
-  const id = ++nextId
   return new Promise((resolve, reject) => {
     pending.set(id, { resolve, reject, onMessage })
     target.postMessage({ ...message, id })

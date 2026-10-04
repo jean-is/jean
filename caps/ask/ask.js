@@ -160,10 +160,10 @@ export const askTool = (from) => ({
   // A helper's is added to its own turn, never declared in the conversation.
   ...(from !== undefined && { hidden: true }),
   title: (args) => questionsOf(args).map((item) => item.question).join(' · '),
-  run: async (args) => {
+  run: async (args, ctx) => {
     const questions = questionsOf(args)
     if (!questions.length) throw new Error('Give at least one question, with its text.')
-    const answers = await askUser(questions, from)
+    const answers = await askUser(questions, from, ctx.signal)
     return answers ? reply(questions, answers) : 'The user did not answer. Do your best, and say what you assumed.'
   },
 })

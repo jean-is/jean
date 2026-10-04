@@ -6,7 +6,7 @@ import { html, nothing, render } from 'lit-html'
 import { lexer } from 'marked'
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
-import { app, notify } from '../../ui/state.js'
+import { app, notify, conversationOf } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
 import { markdown } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
@@ -35,10 +35,14 @@ function paper() {
   }
 }
 
-/** Files made in the open conversation, oldest first: those of earlier answers, then this one's. @returns {MadeFile[]} */
-function madeFiles() {
-  const earlier = (app.current.peek()?.records ?? []).flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' && update._meta?.file ? [update._meta.file] : []))
-  const now = (app.live.peek()?.turn.steps ?? []).flatMap((step) => step.tools.flatMap((tool) => (tool._meta?.file ? [tool._meta.file] : [])))
+/**
+ * Files made in the conversation a call works for, oldest first: those of earlier answers, then this one's.
+ * @param {AbortSignal} [signal] its run's @returns {MadeFile[]}
+ */
+function madeFiles(signal) {
+  const conversation = conversationOf(signal)
+  const earlier = (conversation?.records ?? []).flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' && update._meta?.file ? [update._meta.file] : []))
+  const now = (conversation?.turn?.steps ?? []).flatMap((step) => step.tools.flatMap((tool) => (tool._meta?.file ? [tool._meta.file] : [])))
   return [...earlier, ...now]
 }
 
@@ -100,7 +104,7 @@ const editTool = {
   title: (args) => `Edit ${args?.file ?? ''}`,
   locations: (args) => [{ path: String(args?.file ?? '') }],
   run: async (args, ctx) => {
-    const files = madeFiles()
+    const files = madeFiles(ctx.signal)
     const wanted = String(args?.file ?? '').trim().toLowerCase()
     const found = files.findLast((file) => file.name.toLowerCase() === wanted)
     if (!found) throw new Error(`No file named "${args?.file}" was made in this conversation. Made: ${[...new Set(files.map((file) => file.name))].join(', ') || 'none'}. Use write to make it.`)

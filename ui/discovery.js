@@ -6,7 +6,7 @@
 // that arrive mid-conversation can be reached (D47).
 import { effect } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions } from './caps.js'
-import { app, effective, answerOffer, notify, send, updateSettings, CITED } from './state.js'
+import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
 import { words, alike } from '../core/search.js'
@@ -50,7 +50,9 @@ const offerTool = {
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
     if (id === 'search' && !loaded.value.has(id) && app.conversations.value.length < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (!loaded.value.has(id)) {
-      const yes = await new Promise((resolve) => { app.offering.value = { id, resolve } })
+      // One offer waits at a time, in the conversation that made it (D147).
+      if (app.offering.peek()) return 'Another offer is waiting for the user. Go on without it.'
+      const yes = await new Promise((resolve) => { app.offering.value = { id, conversation: conversationOf(ctx.signal)?.path, resolve } })
       app.offering.value = null
       if (!yes) {
         await answerOffer(id)

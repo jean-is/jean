@@ -145,10 +145,10 @@
 :root[data-look='glass'] .history-list { gap: 0.125rem; margin: 0.25rem 0 0; }
 :root[data-look='glass'] .history-list li { border-radius: 0.625rem; }
 :root[data-look='glass'] .history-list li.is-current { background: var(--fill); color: oklch(1 0 0); }
-:root[data-look='glass'] .history-list li.is-current :is(time, .icon-button) { color: oklch(1 0 0); }
-:root[data-look='glass'] .history-item { gap: 0; padding: 0.4375rem 0.625rem; }
+:root[data-look='glass'] .history-list li.is-current .icon-button { color: oklch(1 0 0); }
+:root[data-look='glass'] .history-list li.is-current .ember { background: currentColor; }
+:root[data-look='glass'] .history-item { padding: 0.4375rem 0.625rem; }
 :root[data-look='glass'] .history-title { font-size: 0.875rem; font-weight: 500; }
-:root[data-look='glass'] .history-item time { font-size: 0.75rem; }
 @media (hover: hover) {
   :root[data-look='glass'] .history-list li .icon-button { opacity: 0; }
   :root[data-look='glass'] .history-list li:is(:hover, :focus-within) .icon-button { opacity: 1; }

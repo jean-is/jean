@@ -2,7 +2,7 @@
 import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName } from './state.js'
+import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions } from '../core/events.js'
 import { isPicture } from '../core/files.js'
@@ -188,7 +188,8 @@ function activity(steps, text, streaming, files) {
   const summary = streaming
     ? t(working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
     : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : t('activity.answeredWith', { brain: last ? brainName(last) : '' })
-  const offering = app.offering.value
+  // The offer made here, not in a conversation out of sight (D147).
+  const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // What each brain step thought and wrote.
   const said = new Map(steps.map((step) => [step.tools.find((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
   // Parts in the order the work was split (their calls are kept in the order they finished).
@@ -288,7 +289,7 @@ function shown(value) {
  * @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
  */
 function inbox(entries, files) {
-  const waiting = app.decisions.value
+  const waiting = decisionsHere()
   if (!waiting.length) return nothing
   // Which helper is asking: the one whose call the request sits under.
   const from = (/** @type {string} */ id) => entries.find((entry) => entry.name === 'helper' && id.startsWith(`${entry.toolCallId}/`))?.rawInput?.title

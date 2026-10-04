@@ -8,7 +8,7 @@
 // brain look. Either way the user reads the steps and adds the skill (./ready.js), or not.
 // They were called routines until D115.
 import { register } from '../../ui/caps.js'
-import { app, effective, notify } from '../../ui/state.js'
+import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { SAME_KIND } from '../../ui/discovery.js'
 import { listSkills, saveSkill, skillLines } from '../../core/skills.js'
 import { slug } from '../../core/settings.js'
@@ -137,8 +137,8 @@ const suggestTool = {
   kind: 'search',
   deferred: true,
   title: (args) => `Look for a skill: ${args?.task ?? ''}`,
-  run: async (args) => {
-    const path = app.current.peek()?.path
+  run: async (args, ctx) => {
+    const path = conversationOf(ctx.signal)?.path
     const found = path ? await lookFor(String(args?.task ?? '')) : null
     if (!path || !found) return 'No ready-made skill fits that.'
     suggested.set(path, found)

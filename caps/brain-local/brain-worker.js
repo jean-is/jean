@@ -5,7 +5,7 @@
 //
 // { type: 'load', host, model, dtype }                → progress…, { type: 'ready' }
 // { type: 'generate', messages, tools, maxTokens }    → { type: 'chunk', text }…, { type: 'done', usage }
-// { type: 'abort' }                                    stops the current generation
+// { type: 'abort', id }                                stops that generation, or drops it while it waits its turn
 import { env, AutoTokenizer, Gemma4ForCausalLM, TextStreamer, InterruptableStoppingCriteria, Tensor } from '../../vendor/transformers/transformers.web.min.js'
 
 const RUNTIME = new URL('../../vendor/transformers/', import.meta.url)
@@ -22,9 +22,12 @@ let cached = /** @type {{ text: string, ids: number[], cache: any } | null} */ (
 /** @type {any} */
 let stopping = null
 let busy = Promise.resolve()
+/** The generation under way, and those stopped before their turn: two conversations can be answered at once (D147). */
+let current = 0
+const dropped = new Set()
 
 self.onmessage = ({ data }) => {
-  if (data.type === 'abort') return stopping?.interrupt()
+  if (data.type === 'abort') return data.id === current ? stopping?.interrupt() : dropped.add(data.id)
   // One generation at a time: they share the cache.
   busy = busy.then(() => handle(data)).catch(() => {})
 }
@@ -36,7 +39,9 @@ async function handle(data) {
       await load(data, id)
       self.postMessage({ id, type: 'ready' })
     } else if (type === 'generate') {
-      const usage = await generate(data, id)
+      if (dropped.delete(id)) throw Object.assign(new Error('Request aborted'), { code: 'aborted' })
+      current = id
+      const usage = await generate(data, id).finally(() => { current = 0 })
       self.postMessage({ id, type: 'done', usage })
     }
   } catch (error) {
