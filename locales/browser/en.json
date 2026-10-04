@@ -19,5 +19,10 @@
   "browser.install.safari": "In Safari: open the site, then File, and Add to Dock.",
   "browser.install.phone": "On a phone: open the site, then Share or the menu, and Add to Home Screen.",
   "browser.install.other": "In your browser: open the site, then look in its menu for Install or Create shortcut.",
-  "browser.install.none": "This browser can’t install sites as apps: keep the site in your bookmarks instead."
+  "browser.install.none": "This browser can’t install sites as apps: keep the site in your bookmarks instead.",
+  "browser.folder": "Show {folder}",
+  "browser.missing": "{page} isn’t in {folder}.",
+  "browser.unshown": "{page} can’t be shown here.",
+  "browser.elsewhere": "{folder} isn’t open in this conversation.",
+  "browser.shut": "Your browser didn’t allow opening {folder}. Reload to ask again."
 }

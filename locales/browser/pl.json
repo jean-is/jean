@@ -19,5 +19,10 @@
   "browser.install.safari": "W Safari: otwórz witrynę, potem Plik, i Dodaj do Docka.",
   "browser.install.phone": "Na telefonie: otwórz witrynę, potem Udostępnij lub menu, i Dodaj do ekranu głównego.",
   "browser.install.other": "W przeglądarce: otwórz witrynę i poszukaj w menu opcji Zainstaluj lub Utwórz skrót.",
-  "browser.install.none": "Ta przeglądarka nie instaluje witryn jako aplikacji: zapisz witrynę w zakładkach."
+  "browser.install.none": "Ta przeglądarka nie instaluje witryn jako aplikacji: zapisz witrynę w zakładkach.",
+  "browser.folder": "Pokaż {folder}",
+  "browser.missing": "{page} nie ma w folderze {folder}.",
+  "browser.unshown": "Nie da się tu pokazać {page}.",
+  "browser.elsewhere": "Folder {folder} nie jest otwarty w tej rozmowie.",
+  "browser.shut": "Twoja przeglądarka nie pozwoliła otworzyć folderu {folder}. Odśwież, aby zapytała ponownie."
 }

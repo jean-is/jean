@@ -19,5 +19,10 @@
   "browser.install.safari": "Dans Safari : ouvrez le site, puis Fichier, et Ajouter au Dock.",
   "browser.install.phone": "Sur un téléphone : ouvrez le site, puis Partager ou le menu, et Sur l’écran d’accueil.",
   "browser.install.other": "Dans votre navigateur : ouvrez le site, puis cherchez dans son menu Installer ou Créer un raccourci.",
-  "browser.install.none": "Ce navigateur ne peut pas installer de sites comme applications : gardez plutôt le site dans vos favoris."
+  "browser.install.none": "Ce navigateur ne peut pas installer de sites comme applications : gardez plutôt le site dans vos favoris.",
+  "browser.folder": "Afficher {folder}",
+  "browser.missing": "{page} n’est pas dans {folder}.",
+  "browser.unshown": "{page} ne peut pas être affiché ici.",
+  "browser.elsewhere": "{folder} n’est pas ouvert dans cette conversation.",
+  "browser.shut": "Votre navigateur n’a pas permis d’ouvrir {folder}. Actualisez pour qu’il le demande à nouveau."
 }

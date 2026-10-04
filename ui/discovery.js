@@ -198,6 +198,8 @@ document.addEventListener('click', (event) => {
 effect(() => {
   if ((effective.value.settings.browsed ?? 0) >= BROWSED) offerOnce('browser')
 })
+// A web page made or changed in the conversation's folder could show there too (D156).
+document.addEventListener('app-folder-changed', (event) => { if (/\.html?$/i.test(/** @type {CustomEvent} */ (event).detail.path)) offerOnce('browser') })
 effect(() => {
   // Citations in regular use: each answer could be checked against them.
   if ((effective.value.settings.cited ?? 0) >= CITED) offerOnce('check')

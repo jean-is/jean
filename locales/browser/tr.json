@@ -19,5 +19,10 @@
   "browser.install.safari": "Safari’de: siteyi aç, sonra Dosya, ve Dock’a Ekle.",
   "browser.install.phone": "Telefonda: siteyi aç, sonra Paylaş ya da menü, ve Ana Ekrana Ekle.",
   "browser.install.other": "Tarayıcında: siteyi aç, sonra menüde Yükle ya da Kısayol oluştur seçeneğini ara.",
-  "browser.install.none": "Bu tarayıcı siteleri uygulama olarak yükleyemez: siteyi yer işaretlerine kaydet."
+  "browser.install.none": "Bu tarayıcı siteleri uygulama olarak yükleyemez: siteyi yer işaretlerine kaydet.",
+  "browser.folder": "{folder} klasörünü göster",
+  "browser.missing": "{page}, {folder} içinde yok.",
+  "browser.unshown": "{page} burada gösterilemez.",
+  "browser.elsewhere": "{folder} bu sohbette açık değil.",
+  "browser.shut": "Tarayıcın {folder} klasörünün açılmasına izin vermedi. Yeniden sorması için Yenile’ye bas."
 }

@@ -19,5 +19,10 @@
   "browser.install.safari": "In Safari: open de site, dan Archief, en Voeg toe aan Dock.",
   "browser.install.phone": "Op een telefoon: open de site, dan Delen of het menu, en Zet op beginscherm.",
   "browser.install.other": "In je browser: open de site en zoek in het menu naar Installeren of Snelkoppeling maken.",
-  "browser.install.none": "Deze browser kan sites niet als app installeren: bewaar de site in je bladwijzers."
+  "browser.install.none": "Deze browser kan sites niet als app installeren: bewaar de site in je bladwijzers.",
+  "browser.folder": "{folder} tonen",
+  "browser.missing": "{page} staat niet in {folder}.",
+  "browser.unshown": "{page} kan hier niet worden getoond.",
+  "browser.elsewhere": "{folder} is niet geopend in dit gesprek.",
+  "browser.shut": "Je browser stond niet toe dat {folder} werd geopend. Vernieuw om het opnieuw te laten vragen."
 }

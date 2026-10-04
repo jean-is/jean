@@ -14,19 +14,29 @@
 // The page is framed in caps/browser/browser.html, whose policy alone lets a frame show another
 // site. Its frame keeps the site's own origin (allow-scripts with allow-same-origin, the one frame
 // that has both: it never holds Jean's origin, a blob or data), and can't take Jean's place.
+//
+// The conversation's folder shows there too (D156), at "<folder>/<path>": a page put together by
+// Folders (caps/folders/site.js) in a frame of the preview's kind (preview.html, scripts only), its
+// links followed here. A page Jean makes or changes there opens by itself, and the page on show
+// comes again when a file it was made of changes, whoever changed it.
 import { html, svg, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
-import { signal, effect } from '@preact/signals-core'
+import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
-import { register } from '../../ui/caps.js'
-import { app, effective, updateSettings, notify } from '../../ui/state.js'
+import { register, loaded as unlocked } from '../../ui/caps.js'
+import { app, effective, updateSettings, notify, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/icons.js'
+import { pageRights, pagePolicy } from '../../ui/csp.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { addressOf, showable, siteOf, pageText, installer, Trail } from './pages.js'
 
 const HOST = new URL('browser.html', import.meta.url).href
+const PAGE = new URL('../../preview.html', import.meta.url).href
+/** What an address of the conversation's folder starts with, before "<folder>/<path>". */
+const FOLDER = 'folder:'
+const isLocal = (/** @type {string} */ url) => url.startsWith(FOLDER)
 // Scripts, forms and pop-ups in the site's own origin; never the top: the site can't take Jean's place.
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads allow-storage-access-by-user-activation'
 const ALLOW = 'fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture'
@@ -64,6 +74,19 @@ const moves = signal(0)
 const trail = new Trail()
 /** Sites seen showing in the frame, this visit: a page of theirs went on by itself. */
 const shows = new Set()
+/** The folder's page on show: its frame, the path its links start from, the files it was made of, by size and date; or why it can't show. */
+const local = signal(/** @type {{ frame: HTMLIFrameElement, html: string, path: string, files: Record<string, string> } | { note: string } | null} */ (null))
+/** Folders' module, once it is on: the conversation's folder, and its pages. @type {typeof import('../folders/folders.js') | null} */
+let folders = null
+const foldersOn = async () => (unlocked.peek().has('folders') ? (folders = await import('../folders/folders.js')) : null)
+effect(() => {
+  if (unlocked.value.has('folders') && !folders) foldersOn().then(() => bump())
+})
+// What a page may do, as Settings and policy have it (D143), with its scripts as data.
+const policy = computed(() => {
+  const { allows, sites } = pageRights(effective.value.settings, app.policy)
+  return pagePolicy(allows, sites, true)
+})
 
 /** The browser.html frame, once loaded, and the site's frame in it. @type {HTMLIFrameElement | null} */
 let host = null
@@ -82,7 +105,19 @@ export function show() {
   if (open.peek()) return
   open.value = true
   const shown = page.peek()
-  if (shown && !shown.own) pending = trail.reload()
+  const made = shown ? null : lastMade()
+  if (shown && isLocal(shown.url)) frameTo(shown.url)
+  else if (shown && !shown.own) pending = trail.reload()
+  else if (made) visit(made)
+}
+
+/** The last web page Jean made or changed in this conversation's folder, which the browser opens on. */
+function lastMade() {
+  const records = (app.current.peek()?.records ?? []).flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' ? [/** @type {import('../../core/types.js').ToolCallInfo} */ (update)] : []))
+  const calls = [...records, ...(app.live.peek()?.turn.steps ?? []).flatMap((/** @type {any} */ step) => step.tools)]
+  const path = (/** @type {any} */ call) => call.content?.find((/** @type {any} */ part) => part.type === 'diff')?.path ?? ''
+  const made = calls.findLast((call) => call.name === 'change' && call.status !== 'failed' && call._meta?.folder && /\.html?$/i.test(path(call)))
+  return made && `${FOLDER}${made._meta?.folder}/${path(made)}`
 }
 
 export function close() {
@@ -90,6 +125,7 @@ export function close() {
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {})
   full.value = false
   host = frame = null
+  local.value = null
   loading.value = false
 }
 
@@ -103,7 +139,7 @@ export const toggle = () => (open.peek() ? close() : show())
  */
 export function visit(url, { click = false } = {}) {
   typed.value = null
-  if (!showable(url, location.href) || windowed().includes(siteOf(url))) {
+  if (!isLocal(url) && (!showable(url, location.href) || windowed().includes(siteOf(url)))) {
     if (click) openTab(url)
     if (!click || open.peek()) {
       page.value = { url, own: true }
@@ -117,7 +153,7 @@ export function visit(url, { click = false } = {}) {
   trail.open(url)
   page.value = { url, own: false }
   open.value = true
-  frameTo(url)
+  frameTo(url, click)
   return true
 }
 
@@ -127,9 +163,11 @@ const openTab = (url) => window.open(url, '_blank', 'noopener,noreferrer')
 /**
  * A fresh frame for each address, so the tab's history holds only this site's pages. A site not
  * seen showing yet has its way out from the start: a refused page may never say it loaded.
- * @param {string} url
+ * @param {string} url @param {boolean} [click] a click of the user's, which lets the browser ask to open a folder
  */
-function frameTo(url) {
+function frameTo(url, click = false) {
+  if (isLocal(url)) return void folderTo(url, click)
+  local.value = null
   unsure.value = !shows.has(siteOf(url))
   bump()
   const doc = host?.contentDocument
@@ -153,6 +191,66 @@ function frameTo(url) {
   doc.body.append(frame)
   loading.value = true
 }
+
+let asked = 0
+/** A page of the conversation's folder, put together anew in a fresh frame; or why it can't show. @param {string} url @param {boolean} [click] */
+async function folderTo(url, click = false) {
+  frame?.remove()
+  frame = null
+  unsure.value = false
+  loading.value = true
+  bump()
+  const at = ++asked
+  const address = url.slice(FOLDER.length)
+  const shown = await (await foldersOn())?.folderPage(address, click).catch((/** @type {unknown} */ error) => console.warn('Browser', error)) ?? { note: 'elsewhere' }
+  if (at !== asked) return
+  loading.value = false
+  const [folder, ...path] = address.split('/')
+  local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), address) } : { note: t(`browser.${shown.note}`, { folder, page: path.join('/') }) }
+}
+
+/**
+ * A page of the folder in a frame of the preview's kind (D126, D143): an opaque origin, which can't
+ * read Jean's storage, its policy written ahead of it. @param {string} source @param {string} rules @param {string} title
+ */
+function pageFrame(source, rules, title) {
+  const element = Object.assign(document.createElement('iframe'), { className: 'browser-page', title })
+  element.setAttribute('sandbox', 'allow-scripts')
+  element.addEventListener('load', () => element.contentWindow?.postMessage({ page: source, policy: rules }, '*'), { once: true })
+  element.src = PAGE
+  return element
+}
+// What a page may do changed in Settings: the page on show comes again under it.
+effect(() => {
+  const rules = policy.value
+  const shown = local.peek()
+  if (shown && 'html' in shown) local.value = { ...shown, frame: pageFrame(shown.html, rules, shown.frame.title) }
+})
+
+// A link followed in a page of the folder: another of its pages, or a site.
+addEventListener('message', ({ source, data }) => {
+  const shown = local.peek()
+  const [folder] = (page.peek()?.url ?? '').slice(FOLDER.length).split('/')
+  if (!shown || !('frame' in shown) || source !== shown.frame.contentWindow || typeof data?.open !== 'string') return
+  const base = new URL(shown.path.split('/').map(encodeURIComponent).join('/'), 'https://folder.invalid/')
+  const to = new URL(data.open, base)
+  if (to.origin === base.origin) visit(`${FOLDER}${folder}/${decodeURIComponent(to.pathname.slice(1))}`, { click: true })
+  else if (/^https?:$/.test(to.protocol)) visit(to.href, { click: true })
+})
+
+// A page Jean made or changed in the folder opens; the page on show comes again when a file it was
+// made of changed since: Jean's change, the user's own editor, a sync.
+document.addEventListener('app-folder-changed', (event) => {
+  const { folder, path } = /** @type {CustomEvent} */ (event).detail
+  const url = `${FOLDER}${folder}/${path}`
+  if (/\.html?$/i.test(path)) (open.peek() && page.peek()?.url === url ? frameTo(url) : visit(url))
+})
+setInterval(async () => {
+  const shown = page.peek()
+  const made = local.peek()
+  if (!open.peek() || !shown || !isLocal(shown.url) || !made || !('files' in made) || document.hidden || loading.peek()) return
+  if ((await (await foldersOn())?.pageMoved(shown.url.slice(FOLDER.length).split('/')[0], made.files)) && local.peek() === made) frameTo(shown.url)
+}, 1500)
 
 /** A page loaded in the frame: the one asked for, or one the site went to by itself, which shows it shows. @param {string} url */
 function loaded(url) {
@@ -192,7 +290,7 @@ function walk(way) {
     history.go(-guard.undo)
   } else if (step) {
     page.value = { url: step, own: false }
-    frameTo(step)
+    frameTo(step, true)
   }
   bump()
 }
@@ -222,7 +320,7 @@ function reload() {
   const shown = page.peek()
   if (!shown) return
   if (shown.own) return void visit(shown.url)
-  frameTo(trail.reload())
+  frameTo(trail.reload(), true)
 }
 
 async function fullscreen() {
@@ -238,7 +336,9 @@ document.addEventListener('fullscreenchange', () => { full.value = Boolean(docum
 function submit(event) {
   event.preventDefault()
   const text = String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('address') ?? '')
-  const url = addressOf(text, searchPage(), locale.peek().split('-')[0])
+  // The conversation's folder, by its name, or the web.
+  const folder = folders?.folderOf(app.current.peek())?.name
+  const url = folder && `${text.trim()}/`.startsWith(`${folder}/`) ? `${FOLDER}${text.trim() === folder ? `${folder}/` : text.trim()}` : addressOf(text, searchPage(), locale.peek().split('-')[0])
   const field = /** @type {HTMLInputElement | null} */ (document.querySelector('.browser-bar input'))
   field?.blur()
   if (url) visit(url, { click: true })
@@ -265,7 +365,9 @@ class Browser extends Element {
     if (!open.value) return nothing
     void moves.value
     const shown = page.value
-    const address = shown?.url ?? ''
+    const here = shown && isLocal(shown.url) ? local.value : null
+    const address = shown && isLocal(shown.url) ? shown.url.slice(FOLDER.length) : shown?.url ?? ''
+    const folder = folders?.folderOf(app.current.value)
     const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => unknown} */ run, disabled = false) => html`<button class="icon-button"
       title=${label} aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
     return html`<aside class="pane browser ${full.value ? 'is-full' : ''}" aria-label=${t('cap.browser.name')}>
@@ -281,15 +383,17 @@ class Browser extends Element {
             @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.isComposing) typed.value = null }}
             @blur=${() => { typed.value = null }}>
         </form>
-        ${button(t('browser.tab'), GLYPHS.tab, () => openTab(address), !shown)}
+        ${button(t('browser.tab'), GLYPHS.tab, () => openTab(address), !shown || isLocal(shown.url))}
         ${button(full.value ? t('browser.exitFullscreen') : t('browser.fullscreen'), full.value ? GLYPHS.exit : GLYPHS.full, fullscreen)}
         ${button(t('action.close'), icons.close, close)}
       </header>
       <div class="browser-body">
         ${loading.value ? html`<div class="browser-loading" role="progressbar" aria-label=${t('browser.reload')}></div>` : nothing}
-        <iframe class="browser-host" src=${HOST} title=${address || t('cap.browser.name')} allow="fullscreen" ?hidden=${!shown || shown.own} @load=${hosted}></iframe>
-        ${!shown ? html`<div class="browser-note"><p>${t('browser.empty')}</p></div>` : shown.own ? own(shown.url) : nothing}
-        ${shown && !shown.own && unsure.value ? html`<div class="browser-strip" role="status">
+        <iframe class="browser-host" src=${HOST} title=${address || t('cap.browser.name')} allow="fullscreen" ?hidden=${!shown || shown.own || isLocal(shown.url)} @load=${hosted}></iframe>
+        ${!shown ? html`<div class="browser-note"><p>${t('browser.empty')}</p>
+          ${folder ? html`<div class="row"><button class="button" @click=${() => visit(`${FOLDER}${folder.name}/`, { click: true })}>${icons.folder} ${t('browser.folder', { folder: folder.name })}</button></div>` : nothing}</div>`
+        : shown.own ? own(shown.url) : here ? ('frame' in here ? here.frame : html`<div class="browser-note"><p>${here.note}</p></div>`) : nothing}
+        ${shown && !shown.own && !isLocal(shown.url) && unsure.value ? html`<div class="browser-strip" role="status">
           <p>${t('browser.blank')}</p>
           <button class="button" @click=${() => ownTab(shown.url)}>${GLYPHS.tab} ${t('browser.tab')}</button>
           <button class="icon-button subtle" title=${t('action.close')} aria-label=${t('action.close')} @click=${() => { shows.add(siteOf(shown.url)); unsure.value = false }}>${icons.close}</button>
@@ -372,16 +476,27 @@ async function read(url, signal) {
 const browseTool = {
   spec: {
     name: 'browse',
-    description: 'Show the user a web page in the browser beside the conversation, and read its text when the site allows it: the text is a numbered source to cite. Or go back, forward or reload there. <page> says which page is open.',
+    description: 'Show the user a web page in the browser beside the conversation, and read its text when the site allows it: the text is a numbered source to cite. Or show a file of the conversation\'s folder there by its path (a page you make or change there shows by itself). Or go back, forward or reload there. <page> says which page is open.',
     parameters: {
       type: 'object',
-      properties: { url: { type: 'string', description: 'The address to open, e.g. https://example.com' }, go: { type: 'string', enum: ['back', 'forward', 'reload'] } },
+      properties: {
+        url: { type: 'string', description: 'The address to open, e.g. https://example.com' },
+        path: { type: 'string', description: 'A file of the conversation\'s folder, e.g. site/index.html; empty for the folder' },
+        go: { type: 'string', enum: ['back', 'forward', 'reload'] },
+      },
     },
   },
   kind: 'fetch',
   // The address itself: what the user approves, in any language.
-  title: (args) => (args?.go ? `${args.go}` : String(args?.url ?? '')),
+  title: (args) => (args?.go ? `${args.go}` : String(args?.path ?? args?.url ?? '')),
   run: async (args, ctx) => {
+    if (typeof args?.path === 'string') {
+      const folder = folders?.folderOf(conversationOf(ctx.signal))?.name
+      if (!folder) throw new Error('No folder is open in this conversation.')
+      const path = args.path.trim().replace(/^\.?\/+/, '')
+      visit(`${FOLDER}${folder}/${path}`)
+      return `Showing ${path || 'the folder'} from "${folder}" beside the conversation.`
+    }
     if (args?.go) {
       if (!page.peek()) return 'Nothing is open in the browser.'
       if (args.go === 'reload') reload()
@@ -409,6 +524,7 @@ register({
   sections: async () => {
     const shown = page.peek()
     if (!open.peek() || !shown || shown.own) return {}
+    if (isLocal(shown.url)) return { page: `The browser beside the conversation shows ${shown.url.slice(FOLDER.length)}, from the user's folder.` }
     return { page: `The browser beside the conversation shows ${shown.url.split('#')[0]}${trail.moved ? ', or a page the user went to from there' : ''}.` }
   },
 })

@@ -19,5 +19,10 @@
   "browser.install.safari": "在 Safari 中：打开网站，然后依次选择“文件”、“添加到程序坞”。",
   "browser.install.phone": "在手机上：打开网站，然后点“分享”或菜单，再选“添加到主屏幕”。",
   "browser.install.other": "在你的浏览器中：打开网站，然后在菜单中找“安装”或“创建快捷方式”。",
-  "browser.install.none": "此浏览器无法把网站安装为应用：请改为把网站加入书签。"
+  "browser.install.none": "此浏览器无法把网站安装为应用：请改为把网站加入书签。",
+  "browser.folder": "显示 {folder}",
+  "browser.missing": "{folder} 中没有 {page}。",
+  "browser.unshown": "{page} 无法在这里显示。",
+  "browser.elsewhere": "{folder} 没有在这个对话中打开。",
+  "browser.shut": "你的浏览器没有允许打开 {folder}。刷新后它会再次询问。"
 }

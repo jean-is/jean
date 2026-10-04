@@ -19,5 +19,10 @@
   "browser.install.safari": "In Safari: apri il sito, poi File, e Aggiungi al Dock.",
   "browser.install.phone": "Su un telefono: apri il sito, poi Condividi o il menu, e Aggiungi alla schermata Home.",
   "browser.install.other": "Nel tuo browser: apri il sito, poi cerca nel menu Installa o Crea scorciatoia.",
-  "browser.install.none": "Questo browser non può installare siti come app: salva il sito nei preferiti."
+  "browser.install.none": "Questo browser non può installare siti come app: salva il sito nei preferiti.",
+  "browser.folder": "Mostra {folder}",
+  "browser.missing": "{page} non è in {folder}.",
+  "browser.unshown": "{page} non si può mostrare qui.",
+  "browser.elsewhere": "{folder} non è aperta in questa conversazione.",
+  "browser.shut": "Il tuo browser non ha permesso di aprire {folder}. Ricarica perché lo chieda di nuovo."
 }

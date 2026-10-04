@@ -108,7 +108,8 @@ test('a page reaches any site, or only those listed, as typed or pasted (D143)',
 })
 
 test('the preview frame allows at most what Settings can, and its relay writes the policy first (D126, D143)', () => {
-  assert.equal(previewCSP, pagePolicy({ scripts: true, web: true, network: true }, ['*', 'localhost:*', '127.0.0.1:*']), "preview.html's policy is the loosest a page can be given")
+  assert.equal(previewCSP, pagePolicy({ scripts: true, web: true, network: true }, ['*', 'localhost:*', '127.0.0.1:*'], true), "preview.html's policy is the loosest a page can be given, a folder's included")
+  assert.match(pagePolicy({ scripts: true, web: false, network: false }, [], true), /script-src 'unsafe-inline' data:;/, "a folder's page: its scripts and modules as data (D156)")
   assert.ok(preview.indexOf('Content-Security-Policy') < preview.indexOf('<script'))
   const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
   assert.ok(relay.indexOf('http-equiv="Content-Security-Policy"') < relay.indexOf('document.write(data.page)'), "the page's policy, before the page")
@@ -152,5 +153,9 @@ test('only the browser’s frame keeps its site’s origin, and the site can nev
   assert.ok(!flags.some((flag) => flag.startsWith('allow-top-navigation')), 'the site never navigates Jean')
   assert.match(browser, /frame = doc\.createElement\('iframe'\)/, 'made in browser.html, whose policy alone lets it show another site')
   assert.match(browser, /setAttribute\('sandbox', SANDBOX\)/)
-  assert.match(browser, /if \(!showable\(url, location\.href\)/, 'never one of Jean\'s own pages')
+  assert.match(browser, /if \(!isLocal\(url\) && \(!showable\(url, location\.href\)/, 'never one of Jean\'s own pages')
+  // A page of the user's folder never goes there: it is in a frame of the preview's kind, scripts only, an opaque origin (D156).
+  assert.match(browser, /function frameTo\(url, click = false\) \{\n  if \(isLocal\(url\)\) return void folderTo\(url, click\)/)
+  assert.match(browser, /const PAGE = new URL\('\.\.\/\.\.\/preview\.html', import\.meta\.url\)/)
+  assert.match(browser, /element\.setAttribute\('sandbox', 'allow-scripts'\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
 })

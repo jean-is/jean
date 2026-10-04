@@ -19,5 +19,10 @@
   "browser.install.safari": "Dalam Safari: buka tapak itu, kemudian Fail, dan Tambah ke Dock.",
   "browser.install.phone": "Pada telefon: buka tapak itu, kemudian Kongsi atau menu, dan Tambah ke Skrin Utama.",
   "browser.install.other": "Dalam pelayar anda: buka tapak itu, kemudian cari Pasang atau Cipta pintasan dalam menunya.",
-  "browser.install.none": "Pelayar ini tidak boleh memasang tapak sebagai apl: simpan tapak itu dalam penanda buku."
+  "browser.install.none": "Pelayar ini tidak boleh memasang tapak sebagai apl: simpan tapak itu dalam penanda buku.",
+  "browser.folder": "Tunjukkan {folder}",
+  "browser.missing": "{page} tiada dalam {folder}.",
+  "browser.unshown": "{page} tidak boleh dipaparkan di sini.",
+  "browser.elsewhere": "{folder} tidak dibuka dalam perbualan ini.",
+  "browser.shut": "Pelayar anda tidak membenarkan {folder} dibuka. Muat semula supaya ia bertanya lagi."
 }

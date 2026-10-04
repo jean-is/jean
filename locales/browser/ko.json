@@ -19,5 +19,10 @@
   "browser.install.safari": "Safari에서: 사이트를 열고 파일, Dock에 추가를 선택하세요.",
   "browser.install.phone": "휴대폰에서: 사이트를 열고 공유 또는 메뉴에서 홈 화면에 추가를 선택하세요.",
   "browser.install.other": "사용 중인 브라우저에서: 사이트를 열고 메뉴에서 설치 또는 바로가기 만들기를 찾으세요.",
-  "browser.install.none": "이 브라우저는 사이트를 앱으로 설치할 수 없어요. 대신 북마크에 저장하세요."
+  "browser.install.none": "이 브라우저는 사이트를 앱으로 설치할 수 없어요. 대신 북마크에 저장하세요.",
+  "browser.folder": "{folder} 보기",
+  "browser.missing": "{page}은(는) {folder}에 없어요.",
+  "browser.unshown": "{page}은(는) 여기에서 보여 줄 수 없어요.",
+  "browser.elsewhere": "{folder}은(는) 이 대화에서 열려 있지 않아요.",
+  "browser.shut": "브라우저가 {folder} 열기를 허용하지 않았어요. 다시 묻도록 새로고침하세요."
 }

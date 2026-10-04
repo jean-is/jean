@@ -89,7 +89,8 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/ex
                   you/                                          (after 0.7: noting the user's name while there is none, always there, D150)
                   folders/                                      (0.8: a folder of the computer, D141, D149, D152; work.js lists,
                                                                 finds, reads and changes, word.js changes a Word document in place,
-                                                                copy.js is a folder's copy where it can't be opened in place, all
+                                                                copy.js is a folder's copy where it can't be opened in place,
+                                                                site.js puts a page of it together for the browser (D156), all
                                                                 tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, dialogs/ with the dialogs' strings (D97), and browser/,
                   ask/ and folders/ with the browser's, the questions' and Folders' own, loaded and cached with them (D140, D146, D152)
@@ -296,7 +297,7 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
 **The preview** (D126) shows an HTML file in `preview.html`, framed with `sandbox="allow-scripts"` only, so its origin is opaque, and given nothing but the page and its policy. `preview.html`'s own policy is the most Settings can allow (D143):
 
 ```text
-default-src 'none'; script-src 'unsafe-inline' https:; style-src 'unsafe-inline' https:; img-src data: https:; media-src data: https:;
+default-src 'none'; script-src 'unsafe-inline' data: https:; style-src 'unsafe-inline' https:; img-src data: https:; media-src data: https:;
 font-src data: https:; connect-src https: http://localhost:* http://127.0.0.1:*; frame-src 'none'; base-uri 'none'; form-action 'none'
 ```
 
@@ -304,7 +305,7 @@ Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), 
 
 | Switch | Default | Adds |
 |---|---|---|
-| Run its code | on | `script-src 'unsafe-inline'` |
+| Run its code | on | `script-src 'unsafe-inline'`, and `data:` for a page of the user's folder (D156) |
 | Load things from the internet | off | `https:` for pictures, sounds, fonts, styles and, when they run, scripts |
 | Send and receive over the internet | off | `connect-src`: any https site (`*`), or only the sites listed under the switch, each added with Enter: `example.com`, `*.example.com`, `*.com`, and this computer over http (`localhost:3000`, `localhost:*`) |
 
@@ -325,6 +326,7 @@ base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted
 - **What Jean can't see.** The page's address once it moves on, its title, and whether it refused to be framed (`X-Frame-Options`, `frame-ancestors`): browsers hide all of these from the framing page. Back walks the tab's history only while its entries are known to be the site's (`caps/browser/pages.js`); a fresh frame first drops what is ahead of Jean's entry, which closing Settings leaves. A way out, a new tab, stays under a site's page until the site shows it works.
 - **What the brain reads** of a page, `browse` fetches without cookies, and only where the site allows other sites to read it (CORS).
 
+- **The conversation's folder** (D156) shows there at `<folder>/<path>`, never in that frame: in a frame of the preview's kind (`preview.html`, `sandbox="allow-scripts"`), under the page policy plus `data:` for scripts. No service worker serves an opaque origin (checked in Chromium and WebKit), and a frame of Jean's origin with scripts is never allowed, so Folders puts the page together (`caps/folders/site.js`): its style sheets as `<style>`, imports inside; scripts, pictures, sounds and fonts as `data:` addresses; modules through an import map of `data:` addresses, their relative imports made absolute first; and the data files its scripts name, which a small `fetch` in front of the page serves. Only files inside the folder whose names don't start with a dot. A folder shows its `index.html` or the list of what it holds; a picture, a film, a sound or a text shows as itself. The relay tells the browser where a link leads, and the browser follows it: another of the folder's pages, or a site. A page made or changed by `change` in the conversation on screen opens there (or, before the browser is on, has it offered), and the page on show comes again when one of the files it was made of changes size or date, checked every 1.5 s while it shows.
 ## Languages (i18n)
 
 - **Strings.** They live in `locales/<lang>.json`, with English as the source and `{name}` placeholders.

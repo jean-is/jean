@@ -19,5 +19,10 @@
   "browser.install.safari": "Trong Safari: mở trang web, rồi Tệp, và Thêm vào Dock.",
   "browser.install.phone": "Trên điện thoại: mở trang web, rồi Chia sẻ hoặc menu, và Thêm vào Màn hình chính.",
   "browser.install.other": "Trong trình duyệt của bạn: mở trang web, rồi tìm trong menu mục Cài đặt hoặc Tạo lối tắt.",
-  "browser.install.none": "Trình duyệt này không cài được trang web thành ứng dụng: hãy lưu trang vào dấu trang."
+  "browser.install.none": "Trình duyệt này không cài được trang web thành ứng dụng: hãy lưu trang vào dấu trang.",
+  "browser.folder": "Hiện {folder}",
+  "browser.missing": "{page} không có trong {folder}.",
+  "browser.unshown": "Không thể hiển thị {page} ở đây.",
+  "browser.elsewhere": "{folder} không được mở trong cuộc trò chuyện này.",
+  "browser.shut": "Trình duyệt của bạn chưa cho phép mở {folder}. Hãy tải lại để nó hỏi lại."
 }

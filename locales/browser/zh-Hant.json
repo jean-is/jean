@@ -19,5 +19,10 @@
   "browser.install.safari": "在 Safari 中：開啟網站，然後依序選擇「檔案」、「加入 Dock」。",
   "browser.install.phone": "在手機上：開啟網站，然後點「分享」或選單，再選「加入主畫面」。",
   "browser.install.other": "在你的瀏覽器中：開啟網站，然後在選單中找「安裝」或「建立捷徑」。",
-  "browser.install.none": "這個瀏覽器無法把網站安裝成應用程式：請改為把網站加入書籤。"
+  "browser.install.none": "這個瀏覽器無法把網站安裝成應用程式：請改為把網站加入書籤。",
+  "browser.folder": "顯示 {folder}",
+  "browser.missing": "{folder} 中沒有 {page}。",
+  "browser.unshown": "{page} 無法在這裡顯示。",
+  "browser.elsewhere": "{folder} 沒有在這個對話中開啟。",
+  "browser.shut": "你的瀏覽器沒有允許開啟 {folder}。重新整理後它會再次詢問。"
 }

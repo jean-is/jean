@@ -19,5 +19,10 @@
   "browser.install.safari": "Nínú Safari: ẹ ṣí ojú-òpó náà, lẹ́yìn náà File, àti Add to Dock.",
   "browser.install.phone": "Lórí fóònù: ẹ ṣí ojú-òpó náà, lẹ́yìn náà Share tàbí mẹ́nù, àti Add to Home Screen.",
   "browser.install.other": "Nínú aṣàwákiri yín: ẹ ṣí ojú-òpó náà, lẹ́yìn náà ẹ wá Install tàbí Create shortcut nínú mẹ́nù rẹ̀.",
-  "browser.install.none": "Aṣàwákiri yìí kò lè fi ojú-òpó sórí ẹ̀rọ bí áàpù: ẹ fi ojú-òpó náà pamọ́ sínú àmì-ìwé dípò rẹ̀."
+  "browser.install.none": "Aṣàwákiri yìí kò lè fi ojú-òpó sórí ẹ̀rọ bí áàpù: ẹ fi ojú-òpó náà pamọ́ sínú àmì-ìwé dípò rẹ̀.",
+  "browser.folder": "Fi {folder} hàn",
+  "browser.missing": "{page} kò sí nínú {folder}.",
+  "browser.unshown": "A kò lè fi {page} hàn níbí.",
+  "browser.elsewhere": "A kò ṣí {folder} nínú ìjíròrò yìí.",
+  "browser.shut": "Aṣàwákiri rẹ kò gbà kí a ṣí {folder}. Tún-un gbé kí ó tún béèrè."
 }

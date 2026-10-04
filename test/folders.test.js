@@ -9,6 +9,7 @@ import {
 } from '../caps/folders/work.js'
 import { replaceInWord } from '../caps/folders/word.js'
 import { copyFS, pickedFiles } from '../caps/folders/copy.js'
+import { sitePage, inFolder, SITE } from '../caps/folders/site.js'
 
 const encoder = new TextEncoder()
 const contract = (/** @type {string} */ name, /** @type {string} */ clause) => makeFile(`${name}.docx`, `# Contract with ${name}\n\nThe parties agree as follows.\n\n${clause}\n\nSigned in Lyon.`).then((made) => made.bytes)
@@ -162,4 +163,93 @@ test('a copy of a folder picked where it can’t be opened in place: read as it 
   assert.deepEqual(fs.changed(), ['notes.txt'])
   const zip = readZip(await fs.zip())
   assert.deepEqual([zip.map((entry) => entry.name), new TextDecoder().decode(await zip[0].read())], [['notes.txt'], 'Friday'])
+})
+
+// ─── Pages of the folder, for the browser (D156) ─────────────────────────────
+
+/** The text behind a data address. @param {string} url */
+const behind = (url) => Buffer.from(url.slice(url.indexOf(',') + 1), 'base64').toString('utf8')
+/** Every data address in a page, by its type. @param {string} html @param {string} type */
+const addresses = (html, type) => [...html.matchAll(new RegExp(`data:${type.replace('/', '\\/')};base64,[A-Za-z0-9+/=]+`, 'g'))].map((m) => m[0])
+
+test('inFolder: a reference as a path of the folder, never another site, a hidden file or above the top', () => {
+  assert.equal(inFolder('style.css', 'site/index.html'), 'site/style.css')
+  assert.equal(inFolder('../img/a%20b.png?v=2#top', 'site/pages/about.html'), 'site/img/a b.png')
+  assert.equal(inFolder('/logo.svg', 'site/index.html'), 'logo.svg')
+  assert.equal(inFolder('../../../../etc/passwd', 'site/index.html'), 'etc/passwd')
+  for (const ref of ['https://cdn.example/x.js', '//cdn.example/x.js', 'data:image/png;base64,AA', '#top', '', '.env', 'js/.secret.js', 'mailto:a@b.c']) assert.equal(inFolder(ref, 'index.html'), null, ref)
+})
+
+test('a page of the folder comes with what it uses: styles, pictures, fonts, scripts, modules and the data its scripts fetch', async () => {
+  const fs = memoryFS({
+    'site/index.html': `<!doctype html><html><head><link rel="stylesheet" href="css/main.css" media="screen"><link rel="stylesheet" href="https://cdn.example/x.css">
+<style>h1 { background: url('img/bg.png') }</style><script src="js/app.js" defer integrity="sha384-x"></script><script src="https://cdn.example/lib.js"></script>
+<script type="module" src="js/main.js"></script><script type="module">import { two } from './js/two.js'; document.title = two</script>
+<script type="application/json">{"src": "x.png"}</script></head>
+<body><img src="img/a.png" alt="a > b" srcset="img/a.png 1x, img/a2.png 2x"><div style="background: url(img/bg.png)"></div><a href="about.html">About</a>
+<img src="../.env"><img src="missing.png"><textarea><img src="img/a.png"></textarea><svg><image href="img/a.png"/></svg></body></html>`,
+    'site/css/main.css': '@import "base.css";\n@font-face { font-family: F; src: url(../fonts/f.woff2) }',
+    'site/css/base.css': 'body { background: url("../img/bg.png") }',
+    'site/img/a.png': new Uint8Array([137, 80, 78, 71]), 'site/img/a2.png': new Uint8Array([1]), 'site/img/bg.png': new Uint8Array([2]), 'site/fonts/f.woff2': new Uint8Array([3]),
+    'site/js/app.js': 'fetch("data/sales.csv").then((r) => r.text())',
+    'site/js/main.js': "import { one } from './one.js'\nimport('./lazy.js')\nexport * from 'https://cdn.example/m.js'",
+    'site/js/one.js': "import { two } from './two.js'\nexport const one = two + 1",
+    'site/js/two.js': "import { one } from './one.js'\nexport const two = 2",
+    'site/js/lazy.js': 'export default 1',
+    'site/data/sales.csv': 'region,sales\nNorth,12\n',
+    'site/.env': 'KEY=secret', 'site/about.html': '<h1>About</h1>',
+  })
+  const shown = await sitePage(fs, 'site/index.html')
+  assert.ok('html' in shown)
+  const { html, path, files } = shown
+  assert.equal(path, 'site/index.html')
+  // Styles inline, their imports and what they use inside; another site's left to the page's policy.
+  assert.match(html, /<style media="screen">body \{ background: url\("data:image\/png;base64,Ag=="\) \}\n@font-face \{ font-family: F; src: url\("data:font\/woff2;base64,Aw=="\) \}<\/style>/)
+  assert.match(html, /<link rel="stylesheet" href="https:\/\/cdn.example\/x.css">/)
+  assert.match(html, /h1 \{ background: url\("data:image\/png;base64,Ag=="\) \}/)
+  assert.match(html, /<div style="background: url\(&quot;data:image\/png;base64,Ag==&quot;\)">/)
+  // Pictures as data, a set of them too, in an SVG as well; not in a textarea, never a hidden file.
+  assert.match(html, /<img src="data:image\/png;base64,iVBORw==" alt="a > b" srcset="data:image\/png;base64,iVBORw== 1x, data:image\/png;base64,AQ== 2x">/)
+  assert.match(html, /<image href="data:image\/png;base64,iVBORw=="\/>/)
+  assert.match(html, /<textarea><img src="img\/a.png"><\/textarea>/)
+  assert.match(html, /<img src="\.\.\/\.env"><img src="missing.png">/)
+  assert.ok(!html.includes(Buffer.from('KEY=secret').toString('base64')))
+  // A classic script as data, deferred still, without an integrity it no longer has; another site's as it was.
+  const app = /<script src="(data:text\/javascript;base64,[^"]+)" defer><\/script>/.exec(html)?.[1] ?? ''
+  assert.equal(behind(app), 'fetch("data/sales.csv").then((r) => r.text())')
+  assert.match(html, /<script src="https:\/\/cdn.example\/lib.js"><\/script>/)
+  // Modules: imports made absolute, each in the import map once, cycles included; another site's kept.
+  const map = JSON.parse(/<script type="importmap">(.*?)<\/script>/.exec(html)?.[1] ?? '{}').imports
+  assert.deepEqual(Object.keys(map).sort(), ['js/lazy.js', 'js/one.js', 'js/two.js'].map((file) => `${SITE}site/${file}`))
+  assert.equal(behind(map[`${SITE}site/js/one.js`]), `import { two } from '${SITE}site/js/two.js'\nexport const one = two + 1`)
+  assert.equal(behind(map[`${SITE}site/js/two.js`]), `import { one } from '${SITE}site/js/one.js'\nexport const two = 2`)
+  const main = addresses(html, 'text/javascript').map(behind).find((text) => text.includes('lazy'))
+  assert.equal(main, `import { one } from '${SITE}site/js/one.js'\nimport('${SITE}site/js/lazy.js')\nexport * from 'https://cdn.example/m.js'`)
+  assert.match(html, new RegExp(`<script type="module">import \\{ two \\} from '${SITE}site/js/two.js'; document.title = two</script>`))
+  assert.match(html, /<script type="application\/json">\{"src": "x.png"\}<\/script>/)
+  // The data its scripts name, for its fetch(), resolved from the page; links stay for the browser.
+  assert.match(html, /const files = \{"site\/data\/sales.csv":"data:text\/csv;base64,/)
+  assert.match(html, /<a href="about.html">About<\/a>/)
+  assert.deepEqual(Object.keys(files).sort(), ['site/css/base.css', 'site/css/main.css', 'site/data/sales.csv', 'site/fonts/f.woff2', 'site/img/a.png', 'site/img/a2.png', 'site/img/bg.png', 'site/index.html', 'site/js/app.js', 'site/js/lazy.js', 'site/js/main.js', 'site/js/one.js', 'site/js/two.js'])
+  assert.match(files['site/index.html'], /^\d+:\d+$/)
+})
+
+test('the folder itself: its index.html, or what it holds; a picture, a text as themselves; what isn’t a page, or isn’t there', async () => {
+  const fs = memoryFS({ 'site/index.html': '<h1>Home</h1>', 'notes/a <b>.txt': 'x < y', 'notes/b.png': new Uint8Array([1]), 'notes/c.docx': new Uint8Array([2]), 'notes/sub/d.md': '#', 'notes/.hidden': 'h', '.gitignore': 'build/\n', 'build/x.js': 'x' })
+  assert.deepEqual(await sitePage(fs, 'site'), { html: '<h1>Home</h1>', path: 'site/index.html', files: { 'site/index.html': (await sitePage(fs, 'site/')).files['site/index.html'] } })
+  const top = await sitePage(fs, '', 'Work')
+  assert.ok('html' in top && top.path === '')
+  assert.match(top.html, /<h1 dir="auto">Work<\/h1><ul><li><a href="notes\/" dir="auto">notes\/<\/a><\/li><li><a href="site\/" dir="auto">site\/<\/a><\/li><\/ul>/)
+  const notes = await sitePage(fs, 'notes/', 'Work')
+  assert.ok('html' in notes && notes.path === 'notes/')
+  assert.match(notes.html, /<li><a href="\.\.\/">\.\.<\/a><\/li><li><a href="sub\/" dir="auto">sub\/<\/a><\/li><li><a href="a%20%3Cb%3E.txt" dir="auto">a &#60;b&#62;.txt<\/a><\/li>/)
+  assert.ok(!notes.html.includes('hidden'))
+  const text = await sitePage(fs, 'notes/a <b>.txt')
+  assert.ok('html' in text && text.html.includes('<pre dir="auto">x &#60; y</pre>'))
+  const picture = await sitePage(fs, 'notes/b.png')
+  assert.ok('html' in picture && picture.html.includes('<img src="data:image/png;base64,AQ==" alt="b.png">'))
+  assert.deepEqual(await sitePage(fs, 'notes/c.docx'), { note: 'unshown' })
+  assert.deepEqual(await sitePage(fs, 'notes/nope.html'), { note: 'missing' })
+  assert.deepEqual(await sitePage(fs, 'nope/'), { note: 'missing' })
+  assert.deepEqual(await sitePage(fs, 'notes/.hidden'), { note: 'missing' })
 })

@@ -19,5 +19,10 @@
   "browser.install.safari": "A Safari: buɗe shafin, sannan File, da Add to Dock.",
   "browser.install.phone": "A waya: buɗe shafin, sannan Share ko menu, da Add to Home Screen.",
   "browser.install.other": "A burauzarka: buɗe shafin, sannan nemi Install ko Create shortcut a cikin menu.",
-  "browser.install.none": "Wannan burauza ba ta iya saka shafuka a matsayin manhaja: a maimakon haka ajiye shafin a cikin alamomi."
+  "browser.install.none": "Wannan burauza ba ta iya saka shafuka a matsayin manhaja: a maimakon haka ajiye shafin a cikin alamomi.",
+  "browser.folder": "Nuna {folder}",
+  "browser.missing": "{page} ba ya cikin {folder}.",
+  "browser.unshown": "Ba za a iya nuna {page} a nan ba.",
+  "browser.elsewhere": "Ba a buɗe {folder} a wannan tattaunawar ba.",
+  "browser.shut": "Burauzarka bai bari a buɗe {folder} ba. Sake lodawa don ya sake tambaya."
 }

@@ -19,5 +19,10 @@
   "browser.install.safari": "In Safari: Website öffnen, dann Ablage, und Zum Dock hinzufügen.",
   "browser.install.phone": "Auf dem Handy: Website öffnen, dann Teilen oder das Menü, und Zum Home-Bildschirm.",
   "browser.install.other": "In deinem Browser: Website öffnen, dann im Menü nach Installieren oder Verknüpfung erstellen suchen.",
-  "browser.install.none": "Dieser Browser kann Websites nicht als Apps installieren: Speichere die Website stattdessen in deinen Lesezeichen."
+  "browser.install.none": "Dieser Browser kann Websites nicht als Apps installieren: Speichere die Website stattdessen in deinen Lesezeichen.",
+  "browser.folder": "{folder} anzeigen",
+  "browser.missing": "{page} ist nicht in {folder}.",
+  "browser.unshown": "{page} lässt sich hier nicht anzeigen.",
+  "browser.elsewhere": "{folder} ist in diesem Gespräch nicht geöffnet.",
+  "browser.shut": "Dein Browser hat das Öffnen von {folder} nicht erlaubt. Lade neu, damit er noch einmal fragt."
 }

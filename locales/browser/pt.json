@@ -19,5 +19,10 @@
   "browser.install.safari": "No Safari: abre o site, depois Ficheiro, e Adicionar à Dock.",
   "browser.install.phone": "Num telemóvel: abre o site, depois Partilhar ou o menu, e Adicionar ao ecrã principal.",
   "browser.install.other": "No teu navegador: abre o site e procura no menu Instalar ou Criar atalho.",
-  "browser.install.none": "Este navegador não instala sites como apps: guarda o site nos teus marcadores."
+  "browser.install.none": "Este navegador não instala sites como apps: guarda o site nos teus marcadores.",
+  "browser.folder": "Mostrar {folder}",
+  "browser.missing": "{page} não está em {folder}.",
+  "browser.unshown": "{page} não pode ser mostrado aqui.",
+  "browser.elsewhere": "{folder} não está aberta nesta conversa.",
+  "browser.shut": "O teu navegador não permitiu abrir {folder}. Recarrega para que volte a perguntar."
 }

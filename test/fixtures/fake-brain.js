@@ -27,7 +27,8 @@
 // Told "I'm Marie" (or "je m'appelle Marie"), it saves the name while it may (D150).
 // In a conversation opened on a folder (D141), it finds which files mention something, lists the
 // folder, and changes a file when asked to change "this" to "that" in it: it opens the file first,
-// then changes it, and asks again when told the folder is open now.
+// then changes it, and asks again when told the folder is open now. Asked to make a page "saying"
+// something, it makes it there, as a heading (D156).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -215,6 +216,7 @@ createServer(async (req, res) => {
   const folder = /The user's folder /.test(serialized)
   const mentions = /\bmention(?:s)?\s+(?:the\s+)?["“]?(.+?)["”]?(?:\s+clause)?\?*$/i.exec(question.trim())?.[1]
   const edit = /\bin\s+(\S+),\s*change\s+["“](.+?)["”]\s+to\s+["“](.+?)["”]/i.exec(question)
+  const make = /\bmake\s+(\S+\.html?)\s+saying\s+["“](.+?)["”]/i.exec(question)
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
@@ -222,6 +224,7 @@ createServer(async (req, res) => {
   else if (toolName === 'find_in_files') answer = /^Not found/.test(last.content) ? 'No file there mentions it.' : `These files mention it:\n\n${[...new Set([...last.content.matchAll(/^(.+?):(\d+): /gm)].map((m) => m[1]))].map((path) => `- **${path}**`).join('\n')}`
   else if (folder && /what is in the folder/i.test(question) && last.role === 'user') call = { name: 'list', args: {} }
   else if (toolName === 'list') answer = `The folder holds:\n\n${last.content.split('\n').map((line) => `- ${line}`).join('\n')}`
+  else if (folder && make && last.role === 'user') call = { name: 'change', args: { path: make[1], old: '', new: `<h1>${make[2]}</h1>\n` } }
   else if (folder && edit && last.role === 'user') call = { name: opened(edit[1]) ? 'change' : 'open', args: opened(edit[1]) ? { path: edit[1], old: edit[2], new: edit[3] } : { path: edit[1] } }
   else if (edit && toolName === 'open' && !last.content.startsWith('Error')) call = { name: 'change', args: { path: edit[1], old: edit[2], new: edit[3] } }
   else if (edit && toolName === 'change' && /is open now/.test(last.content)) call = { name: 'change', args: { path: edit[1], old: edit[2], new: edit[3] } }

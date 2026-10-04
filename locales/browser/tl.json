@@ -19,5 +19,10 @@
   "browser.install.safari": "Sa Safari: buksan ang site, tapos File, at Add to Dock.",
   "browser.install.phone": "Sa telepono: buksan ang site, tapos ang Ibahagi o ang menu, at Idagdag sa Home Screen.",
   "browser.install.other": "Sa browser mo: buksan ang site, tapos hanapin sa menu nito ang I-install o Gumawa ng shortcut.",
-  "browser.install.none": "Hindi kayang mag-install ng site bilang app ng browser na ito: i-bookmark na lang ang site."
+  "browser.install.none": "Hindi kayang mag-install ng site bilang app ng browser na ito: i-bookmark na lang ang site.",
+  "browser.folder": "Ipakita ang {folder}",
+  "browser.missing": "Wala ang {page} sa {folder}.",
+  "browser.unshown": "Hindi maipapakita rito ang {page}.",
+  "browser.elsewhere": "Hindi bukas ang {folder} sa usapang ito.",
+  "browser.shut": "Hindi pinayagan ng browser mo na buksan ang {folder}. Mag-reload para magtanong ulit ito."
 }

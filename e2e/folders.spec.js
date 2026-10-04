@@ -22,6 +22,21 @@ const CLIENTS = {
   'notes.txt': 'Call Dana on Monday.\n',
 }
 const MAIN = 'const greeting = "Hello"\r\nconsole.log(greeting)\r\n'
+// A small site, as Jean or the user may have made it (D156): a style sheet, a picture, a script that
+// fetches data, a module importing another, a second page and a folder without an index.
+const BAKERY = {
+  'index.html': `<!doctype html><html><head><link rel="stylesheet" href="style.css"><script type="module" src="js/main.js"></script></head>
+<body><h1>The bakery</h1><img src="img/bread.svg" alt="Bread"><p id="classic"></p><p id="module"></p><p id="data"></p><a href="menu.html">Menu</a>
+<script src="js/classic.js"></script></body></html>`,
+  'style.css': 'h1 { color: rgb(128, 0, 0) }',
+  'img/bread.svg': '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20"><rect width="40" height="20" fill="peru"/></svg>',
+  'js/classic.js': "document.getElementById('classic').textContent = 'classic ran'\nfetch('data/sales.csv').then((r) => r.text()).then((text) => { document.getElementById('data').textContent = text.trim().split('\\n')[1].replace(',', ': ') })",
+  'js/main.js': "import { two } from './two.js'\ndocument.getElementById('module').textContent = `module ran: ${two}`",
+  'js/two.js': 'export const two = 2',
+  'data/sales.csv': 'region,sales\nNorth,12\n',
+  'menu.html': '<h1>Menu</h1><a href="notes/">Notes</a>',
+  'notes/todo.txt': 'Order flour',
+}
 const APP = { 'main.js': MAIN, '.gitignore': 'dist/\n', 'dist/bundle.js': 'built', 'AGENTS.md': '# How to work here\n\nUse two spaces, never tabs.\n' }
 
 /** Puts a folder where the picker finds it: Word documents written from Markdown by Jean's own writer. @param {import('@playwright/test').Page} page @param {string} name @param {Record<string, string>} files */
@@ -40,6 +55,34 @@ async function folder(page, name, files) {
       await writable.close()
     }
   }, { name, files })
+}
+
+/** A file of a picked folder written elsewhere: the user's own editor, a sync. @param {import('@playwright/test').Page} page @param {string} path @param {string} text */
+async function write(page, path, text) {
+  await page.evaluate(async ({ path, text }) => {
+    const parts = path.split('/')
+    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')
+    for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
+    const writable = await (await dir.getFileHandle(String(parts.at(-1)))).createWritable()
+    await writable.write(text)
+    await writable.close()
+  }, { path, text })
+}
+
+/** Types an address in the browser's field. @param {import('@playwright/test').Page} page @param {string} address */
+async function go(page, address) {
+  await page.locator('.browser-bar input').fill(address)
+  await page.locator('.browser-bar input').press('Enter')
+}
+
+/** The bakery's site in the browser: its style, picture, scripts, module and the data it fetches. @param {import('@playwright/test').FrameLocator} shown */
+async function bakery(shown) {
+  await expect(shown.locator('h1')).toHaveText('The bakery')
+  await expect(shown.locator('#classic')).toHaveText('classic ran')
+  await expect(shown.locator('#module')).toHaveText('module ran: 2')
+  await expect(shown.locator('#data')).toHaveText('North: 12')
+  expect(await shown.locator('h1').evaluate((h1) => getComputedStyle(h1).color)).toBe('rgb(128, 0, 0)')
+  await expect.poll(() => shown.locator('img').evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBe(40)
 }
 
 /** A file of a picked folder, as bytes. @param {import('@playwright/test').Page} page @param {string} path */
@@ -250,6 +293,48 @@ test.describe('in place', () => {
     await answer(page)
     await context.close()
   })
+  test('the folder’s site shows in the browser as from a server; a page Jean makes or changes opens by itself, and one changed elsewhere comes again', async ({ page }) => {
+    await start(page)
+    await connectFakeBrain(page)
+    await folder(page, 'Site', BAKERY)
+    await willPick(page, 'Site')
+    await turnOn(page, 'Folders')
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.folder-name')).toHaveText('Site')
+    // A page Jean makes there: the browser is offered, and opens on it.
+    await ask(page, 'Make news.html saying "Fresh bread today"')
+    await page.locator('app-folder-approval').getByRole('button', { name: 'Change it' }).click()
+    await expect(await answer(page)).toContainText('Done: Made news.html.')
+    await page.locator('.offer', { hasText: 'Open web pages beside the conversation' }).getByRole('button', { name: 'Turn on the browser' }).click()
+    const pane = page.locator('app-browser .browser')
+    const shown = page.frameLocator('.browser-page')
+    await expect(shown.locator('h1')).toHaveText('Fresh bread today')
+    await expect(pane.locator('.browser-bar input')).toHaveValue('Site/news.html')
+    await expect(pane.getByRole('button', { name: 'Open in a new tab' })).toBeDisabled()
+    // The folder by its name: its index.html, with all it uses.
+    await go(page, 'Site')
+    await bakery(shown)
+    // Its links lead to its other pages, and to a folder's list; Back comes back.
+    await shown.getByRole('link', { name: 'Menu' }).click()
+    await expect(shown.locator('h1')).toHaveText('Menu')
+    await expect(pane.locator('.browser-bar input')).toHaveValue('Site/menu.html')
+    await shown.getByRole('link', { name: 'Notes' }).click()
+    await shown.getByRole('link', { name: 'todo.txt' }).click()
+    await expect(shown.locator('pre')).toHaveText('Order flour')
+    await go(page, 'Site/nothing.html')
+    await expect(pane.locator('.browser-note')).toContainText('nothing.html isn’t in Site.')
+    for (const _ of [1, 2, 3, 4]) await pane.getByRole('button', { name: 'Back' }).click()
+    await bakery(shown)
+    // The page on show changed by Jean comes again by itself; changed in the user's own editor too.
+    await ask(page, 'In index.html, change "The bakery" to "The new bakery"')
+    await page.locator('app-folder-approval').getByRole('button', { name: 'Change it' }).click()
+    await expect(shown.locator('h1')).toHaveText('The new bakery')
+    await expect(pane.locator('.browser-bar input')).toHaveValue('Site/index.html')
+    await write(page, 'Site/style.css', 'h1 { color: rgb(0, 0, 128) }')
+    await expect.poll(() => shown.locator('h1').evaluate((h1) => getComputedStyle(h1).color)).toBe('rgb(0, 0, 128)')
+    // The brain knows what is on show.
+    expect(await page.evaluate(async () => (await (await import('/ui/caps.js')).loaded.value.get('browser')?.sections?.())?.page)).toBe('The browser beside the conversation shows Site/index.html, from the user\'s folder.')
+  })
 })
 
 test('where a folder can’t be opened in place, Jean works on a copy and the changed files are saved as one zip', async ({ page, browserName }, info) => {
@@ -280,6 +365,31 @@ test('where a folder can’t be opened in place, Jean works on a copy and the ch
   const zip = readZip(new Uint8Array(await streamBytes(download)))
   expect(zip.map((entry) => entry.name)).toEqual(['notes.txt'])
   expect(new TextDecoder().decode(await zip[0].read())).toBe('Call Dana on Friday.\n')
+})
+
+test('where a folder is a copy, its site shows in the browser too, and a page Jean changes there comes again', async ({ page, browserName }, info) => {
+  test.skip(browserName === 'chromium', 'Chromium opens a folder in place (above)')
+  const top = info.outputPath('Site')
+  for (const [path, content] of Object.entries(BAKERY)) {
+    await mkdir(dirname(join(top, path)), { recursive: true })
+    await writeFile(join(top, path), content)
+  }
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Browser')
+  await page.keyboard.press('Escape')
+  const chooser = page.waitForEvent('filechooser')
+  await turnOn(page, 'Folders')
+  await (await chooser).setFiles(top)
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.folder-name')).toHaveText('Site')
+  // The browser, open since it was turned on, shows the conversation's folder.
+  await page.locator('app-browser .browser-note').getByRole('button', { name: 'Show Site' }).click()
+  const shown = page.frameLocator('.browser-page')
+  await bakery(shown)
+  await ask(page, 'In index.html, change "The bakery" to "The new bakery"')
+  await expect(await answer(page)).toContainText('Done: Changed index.html.')
+  await expect(shown.locator('h1')).toHaveText('The new bakery')
 })
 
 /** @param {import('@playwright/test').Download} download */

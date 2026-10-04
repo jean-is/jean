@@ -19,5 +19,10 @@
   "browser.install.safari": "En Safari: abre el sitio, luego Archivo, y Añadir al Dock.",
   "browser.install.phone": "En un teléfono: abre el sitio, luego Compartir o el menú, y Añadir a pantalla de inicio.",
   "browser.install.other": "En tu navegador: abre el sitio y busca en su menú Instalar o Crear acceso directo.",
-  "browser.install.none": "Este navegador no puede instalar sitios como aplicaciones: guarda el sitio en tus marcadores."
+  "browser.install.none": "Este navegador no puede instalar sitios como aplicaciones: guarda el sitio en tus marcadores.",
+  "browser.folder": "Mostrar {folder}",
+  "browser.missing": "{page} no está en {folder}.",
+  "browser.unshown": "{page} no se puede mostrar aquí.",
+  "browser.elsewhere": "{folder} no está abierta en esta conversación.",
+  "browser.shut": "Tu navegador no permitió abrir {folder}. Recarga para que vuelva a preguntar."
 }

@@ -27,6 +27,7 @@ import { t, useStrings } from '../../core/i18n.js'
 import { walkFolder, listingText, findInFolder, openText, planChange, diffLines, lastRead, topLevel, readText, exactText } from './work.js'
 import { copyFS, pickedFiles, droppedFiles } from './copy.js'
 import { replaceInWord } from './word.js'
+import { sitePage } from './site.js'
 
 /** @import { Envelope, ToolCallInfo, FS } from '../../core/types.js' */
 /** @typedef {import('./copy.js').CopyFS} CopyFS */
@@ -562,6 +563,8 @@ const changeTool = {
     const now = await fs.stat?.(change.path)
     if (now) stamp(ctx, folder, { [change.path]: [now.size, now.lastModified] })
     ctx.content.push({ type: 'diff', path: change.path, oldText: change.before, newText: change.after })
+    // A page made or changed in the conversation on screen shows in the browser, or has it offered (D156).
+    if (conversation?.id === app.current.peek()?.id) document.dispatchEvent(new CustomEvent('app-folder-changed', { detail: { folder: folder.name, path: change.path } }))
     if (ctx.answer === 'allow_always' && folder.handle) {
       trusted = [...trusted, folder.handle]
       await stored('readwrite', (store) => store.put(trusted, ALWAYS))
@@ -594,6 +597,33 @@ register({
   },
   started,
 })
+
+// ─── Its pages, in the browser ───────────────────────────────────────────────
+
+/**
+ * What an address of the conversation's folder, "<folder>/<path>", shows in the browser (D156), when
+ * it is this conversation's folder and open: a click on the way to it may let the browser ask.
+ * @param {string} address @param {boolean} [ask] @returns {Promise<import('./site.js').Shown | { note: 'elsewhere' | 'shut' }>}
+ */
+export async function folderPage(address, ask = false) {
+  const folder = folderOf(app.current.peek())
+  const [name, ...path] = address.split('/')
+  if (!folder || folder.name !== name || (!folder.handle && !folder.copy)) return { note: 'elsewhere' }
+  if (!(await isOpen(folder)) && !(ask && (await permit(folder)))) return { note: 'shut' }
+  return sitePage(await fsOf(folder), path.join('/'), name)
+}
+
+/** Whether a file a page was made of changed since: by Jean, the user's own editor or a sync. @param {string} name @param {Record<string, string>} files */
+export async function pageMoved(name, files) {
+  const folder = folderOf(app.current.peek())
+  if (folder?.name !== name || !(await isOpen(folder))) return false
+  const fs = await fsOf(folder)
+  for (const [path, stamp] of Object.entries(files)) {
+    const now = await fs.stat?.(path)
+    if (`${now?.size}:${now?.lastModified}` !== stamp) return true
+  }
+  return false
+}
 
 // ─── Undoing a change ────────────────────────────────────────────────────────
 

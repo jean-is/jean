@@ -19,5 +19,10 @@
   "browser.install.safari": "Kwenye Safari: fungua tovuti, kisha File, na Add to Dock.",
   "browser.install.phone": "Kwenye simu: fungua tovuti, kisha Shiriki au menyu, na Ongeza kwenye Skrini ya Kwanza.",
   "browser.install.other": "Kwenye kivinjari chako: fungua tovuti, kisha tafuta Sakinisha au Unda njia ya mkato kwenye menyu yake.",
-  "browser.install.none": "Kivinjari hiki hakiwezi kusakinisha tovuti kama programu: badala yake hifadhi tovuti kwenye alamisho."
+  "browser.install.none": "Kivinjari hiki hakiwezi kusakinisha tovuti kama programu: badala yake hifadhi tovuti kwenye alamisho.",
+  "browser.folder": "Onyesha {folder}",
+  "browser.missing": "{page} haimo katika {folder}.",
+  "browser.unshown": "{page} haiwezi kuonyeshwa hapa.",
+  "browser.elsewhere": "{folder} haijafunguliwa katika mazungumzo haya.",
+  "browser.shut": "Kivinjari chako hakikuruhusu kufungua {folder}. Pakia upya ili kiulize tena."
 }

@@ -19,5 +19,10 @@
   "browser.install.safari": "Safari の場合：サイトを開き、「ファイル」から「Dock に追加」を選びます。",
   "browser.install.phone": "スマートフォンの場合：サイトを開き、共有またはメニューから「ホーム画面に追加」を選びます。",
   "browser.install.other": "お使いのブラウザで：サイトを開き、メニューで「インストール」または「ショートカットを作成」を探します。",
-  "browser.install.none": "このブラウザはサイトをアプリとしてインストールできません。代わりにブックマークに保存してください。"
+  "browser.install.none": "このブラウザはサイトをアプリとしてインストールできません。代わりにブックマークに保存してください。",
+  "browser.folder": "{folder} を表示",
+  "browser.missing": "{page} は {folder} にありません。",
+  "browser.unshown": "{page} はここでは表示できません。",
+  "browser.elsewhere": "{folder} はこの会話で開かれていません。",
+  "browser.shut": "ブラウザーが {folder} を開くことを許可しませんでした。再読み込みすると、もう一度確認されます。"
 }
