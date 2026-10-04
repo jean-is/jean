@@ -41,7 +41,7 @@
 - **Voices:** operating-system voices.
 - **Coordination:** Web Locks and BroadcastChannel.
 
-**Routing is one hash** (`#/c/<conversation ulid>`, D59; in a project other than home, `#/p/<project ulid>/c/<conversation ulid>`, D82), read by `ui/router.js`: enough to reload or go back to the same conversation, on any static host.
+**Routing is one hash** (`#/c/<conversation ulid>`, D59; in a project other than home, `#/p/<project ulid>/c/<conversation ulid>`, D82; Settings open over either, `…/settings/<section>`, D137), read by `ui/router.js`: enough to reload or go back to the same conversation and the same section of Settings, on any static host.
 
 **Components are custom elements (light DOM, prefix `app-`).** Each capability is one module that defines its elements and registers its tools. Unlocking means calling `import()`, and any `<app-chart>` already on the page upgrades automatically. `:not(:defined)` styles undiscovered elements. The browser itself provides progressive discovery.
 
@@ -58,7 +58,7 @@
 index.html        CSP <meta>, light or dark (D85) and the look (D111) before the first paint, import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
 preview.html      an HTML file in the preview: a hash-allowed relay writes it in place of itself, under a policy that runs none of its scripts (D126)
-manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but the light-or-dark line
+manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but index.html's first-paint line
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
 core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js events.js i18n.js
@@ -241,7 +241,7 @@ There is always a default project, hidden until the Projects capability is disco
 
 - **On install:** cache the shell (`sandbox.html` and `preview.html` included) and *all* locale files (a few KB each), so switching language is instant, even offline. Files are fetched through the HTTP cache, which the page has just filled, and checked against the integrity hashes in `capabilities.json`; a stale copy is fetched again from the network. The PNG icons drawn for installs stay out: only the browser or the system fetches them, once (D131).
 - **On unlock:** cache the capability's files, listed in `capabilities.json`, which `scripts/manifest.js` generates with content hashes. The cache itself is the record of what has been unlocked.
-- **On update:** download the new shell and new versions of *unlocked* capabilities only, then delete old caches.
+- **On update:** download the new shell and new versions of *unlocked* capabilities only, then delete old caches. When the user lets it in, the new version takes the page's place where it was, behind a view transition that holds the page left until the new one is drawn (`ui/update.js`, D138).
 - **Model weights** live in their own cache, separate from app versions, so an app update never re-downloads 3 GB.
 - **Offline:** history, files and the on-device brain keep working. If only a cloud brain is connected, Jean says so plainly.
 

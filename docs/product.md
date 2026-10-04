@@ -6,7 +6,7 @@
 - **First user:** a non-technical knowledge worker. Assume a managed Windows laptop running Edge or Chrome, a weak graphics chip and IT policies.
 - **The job:** drop in files (CSVs, PDFs, a folder of invoices). Jean reads them, works things out by running real code, and hands back files: a report, a spreadsheet, a chart.
 - **The browser is the security model.** The category's biggest problem is agents with shell access on your laptop. Jean stays inside the most battle-tested sandbox there is.
-- **Open source and reputation come first.** Revenue is secondary. Plain files and optional hosts keep a door open for paid services later (the Obsidian model), but nothing is designed for that now.
+- **Open source and reputation come first.** Revenue is secondary. Everything a person or a team uses is MIT. Organisations pay only for the enterprise integrations their IT, security or compliance teams ask for, in `ee/` (open core, D139).
 
 ## Vocabulary
 

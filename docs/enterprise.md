@@ -32,6 +32,32 @@ These follow from keeping data on the device with no server. Companies already c
 - Remotely wipe or revoke data already on a device.
 - Run scheduled jobs while no tab is open; that would need an optional runner. Routines run while Jean is open, and catch up at the next visit (D122).
 
+## Open and enterprise
+
+Jean is open core (D139). Everything a person or a team uses is MIT. What only an organisation's IT, security or compliance team asks for lives in `ee/`, under the [Elastic License 2.0](../ee/LICENSE) plus an [additional grant](../ee/GRANT.md), and needs a key.
+
+| Area | Open (MIT) | Enterprise (`ee/`) |
+|---|---|---|
+| Sign-in | OAuth and OIDC with PKCE against any standard provider, one resource at a time, as MCP sign-in does today | Entra in depth: Conditional Access, more groups than a token holds, admin consent, government clouds, Azure OpenAI without keys. Custom authorization servers: token exchange (RFC 8693), one sign-in for the gateway and every connection. Teams and Outlook (nested app authentication). |
+| Policy | `policy.json` beside `index.html`: allowed and locked brains, action rules, addresses, denied capabilities | Policy from managed configuration, a signed central file or identity-provider groups. Routing by sensitivity ("Confidential" only goes to the on-premises brain). Checks before sending (data-loss classifiers, Purview labels). Private skill catalogues with approval. A command that checks and simulates a policy. |
+| Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group |
+| Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
+| Records | Backup, export, a mirrored folder | Retention and legal hold by policy, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
+| Audit | The ACP event stream | OpenTelemetry export with identities, a hash-chained log, usage reports |
+| Deployment | Copy the folder; the headers are documented | Deployment kits (hosting, app registration, Intune), embedding in Teams, Outlook and SharePoint |
+
+Long-term-support releases, signed builds, SBOMs, security questionnaires and accessibility reports come with a subscription. They are services, not code.
+
+**Promises.** The person's own security is never paid for. Features never move from open to `ee/`; they may move the other way. Without a key, enterprise features don't appear at all, so the unlock game never shows a paywall.
+
+**Keys.**
+- CODENAME SAS signs them (JWS, ES256). Jean checks them offline with Web Crypto and reads them from policy; it never calls home. The check lives in `ee/`.
+- A subscription key unlocks every version released before its end date, forever. When a subscription lapses, a running deployment keeps working; only upgrades of `ee/` stop.
+- A trial key is free for 30 days. An organisation generates one on a page CODENAME SAS runs. It is bound to the deployment's addresses, one trial per address, and has no fallback.
+- A policy that asks for enterprise features without a valid key stops Jean with a message for IT. Its rules are never dropped silently; removing those sections gives back the open version.
+- On `localhost`, no key is needed. Small organisations, non-profits and schools get free keys.
+- If no key can be bought for twelve consecutive months, every version of `ee/` published until then becomes MIT.
+
 ## Policy model (sketch)
 
 Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fields are labelled "set by your organization". The policy is empty on day one, but every capability and brain choice already checks it.

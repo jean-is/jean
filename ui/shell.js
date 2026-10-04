@@ -9,7 +9,6 @@ import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { LOOKS } from './looks.js'
-import { scriptURL } from './trusted.js'
 import './chat.js'
 import './persona.js'
 
@@ -115,29 +114,10 @@ function toasts() {
   const act = (/** @type {() => void} */ run) => () => { app.toast.value = null; run() }
   return html`<div class="toasts" role="status" aria-live="polite">
     ${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
-      <button class="button primary" @click=${() => applyUpdate(waiting)}>${t('update.reload')}</button></p>` : nothing}
+      <button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(waiting))}>${t('update.reload')}</button></p>` : nothing}
     ${toast ? html`<p class="toast"><span dir="auto">${toast.message}</span>${toast.action
       ? html`<button class="button" @click=${act(toast.action.run)}>${toast.action.label}</button>` : nothing}</p>` : nothing}
   </div>`
-}
-
-let updating = false
-/** @param {ServiceWorker} worker */
-function applyUpdate(worker) {
-  updating = true
-  worker.postMessage({ type: 'SKIP_WAITING' })
-}
-
-export function registerServiceWorker() {
-  if (!('serviceWorker' in navigator)) return
-  navigator.serviceWorker.addEventListener('controllerchange', () => updating && location.reload())
-  navigator.serviceWorker.register(scriptURL('./sw.js')).then((registration) => {
-    const check = () => {
-      if (registration.waiting && navigator.serviceWorker.controller) app.updateReady.value = registration.waiting
-    }
-    check()
-    registration.addEventListener('updatefound', () => registration.installing?.addEventListener('statechange', check))
-  }).catch((error) => console.warn('Service worker', error))
 }
 
 define('app-shell', Shell)

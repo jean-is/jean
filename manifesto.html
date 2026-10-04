@@ -1,14 +1,17 @@
 <!doctype html>
 <!-- The manifesto as a page, in English. Its text is MANIFESTO.md's (test/manifesto.test.js keeps
-     them the same), so like that file it names Jean in its words: a rename changes both. -->
+     them the same), so like that file it names Jean in its words: a rename changes both. It wears
+     the user's light or dark and look (D111) with index.html's own first-paint line, the same bytes. -->
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-mfdJW1eAxhGgjUYXPhcFPCTYV1ICeF/a7k31mLh66s4='; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-jWVt1ZxAxvIOeFOOOkbvMn/fURMkhVajfwsvyrKz7gs='; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#120c08">
-<script>document.documentElement.dataset.theme = localStorage.getItem('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')</script>
+<script>{const root = document.documentElement, look = localStorage.getItem('app.look')
+root.dataset.theme = localStorage.getItem('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+if (/^[a-z]+$/.test(look ?? '')) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.">
 <title>Jean · Manifesto</title>

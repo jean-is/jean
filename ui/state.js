@@ -59,6 +59,7 @@ export const app = {
   look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
   /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'picker' | 'project' | 'skill' | null>} */
   dialog: signal(null),
+  section: signal('general'),
   draft: signal(''),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
   decisions: signal(/** @type {Decision[]} */ ([])),

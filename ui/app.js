@@ -9,7 +9,7 @@ import { opfsFS } from './opfs.js'
 import { app, effective, activeBrain, theme, THEME_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
 import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
-import { registerServiceWorker } from './shell.js'
+import './shell.js'
 import { startRouter } from './router.js'
 
 async function start() {
@@ -116,7 +116,8 @@ async function start() {
   const back = new URLSearchParams(location.search)
   const connected = back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()
   if (!connected && back.has('code')) await (await import('./brains.js')).finishOpenRouter()
-  registerServiceWorker()
+  // Watching for a new version, or finishing to bring one in.
+  import('./update.js').then((update) => update.start())
 }
 
 /**
