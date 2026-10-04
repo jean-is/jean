@@ -39,6 +39,10 @@ test('a large task is split among helpers, approved step by step, and checked ag
   // Verified against the sources: two claims are in their email, one isn't.
   const check = page.locator('app-check .check')
   await expect(check.locator('summary')).toHaveText('2 claims match their sources · 1 claim isn’t supported by its source')
+  // Folded until opened, even with a claim that isn't supported.
+  await expect(check).not.toHaveAttribute('open')
+  await check.locator('summary').click()
+  await expect(check.locator('.follow-up')).toBeVisible()
   await expect(check.locator('[data-verdict="supported"]')).toHaveCount(2)
   await expect(check.locator('[data-verdict="missing"]')).toContainText('The bakery is closed on Monday')
   await expect(check.locator('.follow-up')).toHaveText('Correct what the sources don’t support')

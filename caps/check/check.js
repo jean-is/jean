@@ -110,7 +110,7 @@ class Check extends Element {
     const off = claims?.filter((claim) => OFF.has(claim.verdict)) ?? []
     if (!claims || !(ok.length + off.length)) return nothing
     const last = foldTurns(records).at(-1)?.at === at && !app.busy.value
-    return html`<details class="read-list check ${off.length ? 'is-off' : ''}" ?open=${off.length > 0}>
+    return html`<details class="read-list check ${off.length ? 'is-off' : ''}">
       <summary>${icons[off.length ? 'close' : 'check']}<span>${[ok.length ? t('check.supported', { count: ok.length }) : '', off.length ? t('check.unsupported', { count: off.length }) : ''].filter(Boolean).join(' · ')}</span>${icons.chevron}</summary>
       <ul>${claims.map((claim) => html`<li data-verdict=${claim.verdict}>
         <span class="verdict" title=${t(`check.is.${claim.verdict}`)}>${MARKS[claim.verdict] ? icons[MARKS[claim.verdict]] : '?'}<span class="visually-hidden">${t(`check.is.${claim.verdict}`)}</span></span>
