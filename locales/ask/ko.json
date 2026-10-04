@@ -1,0 +1,8 @@
+{
+  "ask.step": "질문 {n}/{count}",
+  "ask.recommended": "추천",
+  "ask.own": "기타",
+  "ask.next": "다음",
+  "ask.skip": "건너뛰기",
+  "ask.back": "이전"
+}

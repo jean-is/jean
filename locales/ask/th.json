@@ -1,0 +1,8 @@
+{
+  "ask.step": "คำถาม {n} จาก {count}",
+  "ask.recommended": "แนะนำ",
+  "ask.own": "อย่างอื่น",
+  "ask.next": "ถัดไป",
+  "ask.skip": "ข้าม",
+  "ask.back": "ย้อนกลับ"
+}

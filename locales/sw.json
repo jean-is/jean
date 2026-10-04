@@ -269,7 +269,10 @@
   "cap.find.offer": "Sasa kuna mengi ya kurejea. Utafute mazungumzo na faili zako zote mahali pamoja?",
   "cap.find.yes": "Washa utafutaji",
   "tool.delegate": "Gawa kazi kwa wasaidizi",
-  "tool.ask_user": "Swali kwako",
+  "tool.ask_user": {
+    "one": "Swali kwako",
+    "other": "Maswali {count} kwako"
+  },
   "inbox.waiting": {
     "one": "Uamuzi {count} unakusubiri",
     "other": "Maamuzi {count} yanakusubiri"

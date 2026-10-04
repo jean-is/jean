@@ -105,12 +105,13 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. |
 | Helpers (0.6) | `delegate: hand independent parts of a large task to helpers, who do them at the same time` | Use helpers only for independent parts of a large task. |
 | Browser (D140) | `browse: show the user a web page beside the conversation, and read it when the site allows` | — (`<page>` says which page is open) |
+| Questions (D143, always on) | `ask_user: ask the user questions, with answers to pick from` | Ask with ask_user only what you need, all at once, recommending an answer to each. |
 
 Sources and suggestions were planned as capability rules; in 0.3 they became base rules, because every answer can cite a shared file and end with follow-ups. Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).
 
 ## Notes
 
 - `{assistantName}` defaults to `BRAND.name`. A project can override it (D102).
-- Helpers get a prompt of their own (`caps/helpers/helpers.js`): they do one part of a larger task and report to the assistant, not to the user, citing sources as the tools number them, with `ask_user` for what they can't go on without (D98). Double-check's request has its own short system prompt too (`caps/check/claims.js`, D100).
+- Helpers get a prompt of their own (`caps/helpers/helpers.js`): they do one part of a larger task and report to the assistant, not to the user, citing sources as the tools number them, with `ask_user` for what they can't go on without (D98), the same questions as Jean's own, saying which part they are for (D143). Double-check's request has its own short system prompt too (`caps/check/claims.js`, D100).
 - Memory is injected whole while it stays under about 1,000 tokens (about 500 for the on-device model). Past that, it is consolidated or filtered by the reflex model.
 - What the old DEVS agents knew (presentation design and so on) is mined into `SKILL.md` procedures. It does not come back as personas.

@@ -4,8 +4,9 @@
 // the decision inbox, and each reports back with its sources, numbered as the answer cites them.
 // What each did shows in the activity view, under its part.
 import { register, contributions } from '../../ui/caps.js'
-import { askUser, assistantName } from '../../ui/state.js'
+import { assistantName } from '../../ui/state.js'
 import { splitSuggestions } from '../../core/events.js'
+import { askTool } from '../ask/ask.js'
 
 /** @typedef {import('../../core/loop.js').Tool} Tool */
 
@@ -66,19 +67,6 @@ const delegateTool = {
   },
 }
 
-/** A helper's question, answered in the decision inbox. @param {string} from the part it works on @returns {Tool} */
-const askTool = (from) => ({
-  spec: {
-    name: 'ask_user',
-    description: 'Ask the user one short question, in their language, when you cannot go on without the answer. Returns their answer, or that they did not answer.',
-    parameters: { type: 'object', properties: { question: { type: 'string' } }, required: ['question'] },
-  },
-  kind: 'think',
-  hidden: true,
-  title: (args) => String(args?.question ?? ''),
-  run: async (args) => (await askUser(String(args?.question ?? ''), from)) ?? 'The user did not answer. Do your best, and say what you assumed.',
-})
-
 /** One part, done by a helper: its own turn, recorded under this call. @type {Tool} */
 const helperTool = {
   spec: { name: 'helper', description: 'A helper doing one part of a task (delegate starts them).', parameters: { type: 'object', properties: { title: { type: 'string' }, task: { type: 'string' } }, required: ['task'] } },
@@ -86,6 +74,7 @@ const helperTool = {
   hidden: true,
   title: (args) => String(args?.title ?? ''),
   run: async (args, ctx) => {
+    // Its questions say which part they are for (D143).
     const ask = askTool(String(args?.title ?? ''))
     const { text, stopReason } = await ctx.turn({
       system: prompt(assistantName()),

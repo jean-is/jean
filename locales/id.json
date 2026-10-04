@@ -265,7 +265,9 @@
   "cap.find.offer": "Sekarang sudah banyak yang bisa dilihat kembali. Cari di semua percakapan dan file Anda dari satu tempat?",
   "cap.find.yes": "Aktifkan pencarian",
   "tool.delegate": "Membagi pekerjaan ke pembantu tugas",
-  "tool.ask_user": "Pertanyaan untuk Anda",
+  "tool.ask_user": {
+    "other": "{count} pertanyaan untuk Anda"
+  },
   "inbox.waiting": {
     "other": "{count} keputusan menunggu Anda"
   },

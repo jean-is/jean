@@ -1,0 +1,8 @@
+{
+  "ask.step": "Soru {n}/{count}",
+  "ask.recommended": "Önerilen",
+  "ask.own": "Başka bir şey",
+  "ask.next": "İleri",
+  "ask.skip": "Atla",
+  "ask.back": "Geri"
+}

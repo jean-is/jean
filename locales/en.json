@@ -269,7 +269,10 @@
   "cap.find.offer": "There’s a lot to look back on now. Search all your conversations and files in one place?",
   "cap.find.yes": "Turn on search",
   "tool.delegate": "Split the work among helpers",
-  "tool.ask_user": "A question for you",
+  "tool.ask_user": {
+    "one": "A question for you",
+    "other": "{count} questions for you"
+  },
   "inbox.waiting": {
     "one": "{count} decision is waiting for you",
     "other": "{count} decisions are waiting for you"

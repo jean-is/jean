@@ -1,0 +1,8 @@
+{
+  "ask.step": "質問 {n} / {count}",
+  "ask.recommended": "おすすめ",
+  "ask.own": "その他",
+  "ask.next": "次へ",
+  "ask.skip": "スキップ",
+  "ask.back": "戻る"
+}

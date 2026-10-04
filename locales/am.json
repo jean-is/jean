@@ -269,7 +269,10 @@
   "cap.find.offer": "አሁን ወደኋላ የሚታይ ብዙ ነገር አለ። ሁሉንም ውይይቶችዎን እና ፋይሎችዎን በአንድ ቦታ ይፈልጉ?",
   "cap.find.yes": "ፍለጋን ያብሩ",
   "tool.delegate": "ሥራውን ለአጋዦች ማከፋፈል",
-  "tool.ask_user": "ለእርስዎ ጥያቄ",
+  "tool.ask_user": {
+    "one": "ለእርስዎ ጥያቄ",
+    "other": "{count} ጥያቄዎች ለእርስዎ"
+  },
   "inbox.waiting": {
     "one": "{count} ውሳኔ እርስዎን እየጠበቀ ነው",
     "other": "{count} ውሳኔዎች እርስዎን እየጠበቁ ናቸው"

@@ -269,7 +269,10 @@
   "cap.find.offer": "Es gibt jetzt einiges, auf das du zurückblicken kannst. Alle Gespräche und Dateien an einem Ort durchsuchen?",
   "cap.find.yes": "Suche einschalten",
   "tool.delegate": "Arbeit auf Helfer verteilen",
-  "tool.ask_user": "Eine Frage an dich",
+  "tool.ask_user": {
+    "one": "Eine Frage an dich",
+    "other": "{count} Fragen an dich"
+  },
   "inbox.waiting": {
     "one": "{count} Entscheidung wartet auf dich",
     "other": "{count} Entscheidungen warten auf dich"

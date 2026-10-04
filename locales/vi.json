@@ -265,7 +265,9 @@
   "cap.find.offer": "Giờ đã có nhiều thứ để xem lại. Tìm trong mọi cuộc trò chuyện và tệp của bạn ở một nơi nhé?",
   "cap.find.yes": "Bật tìm kiếm",
   "tool.delegate": "Chia việc cho những người phụ giúp",
-  "tool.ask_user": "Một câu hỏi cho bạn",
+  "tool.ask_user": {
+    "other": "{count} câu hỏi cho bạn"
+  },
   "inbox.waiting": {
     "other": "{count} quyết định đang chờ bạn"
   },

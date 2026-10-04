@@ -265,7 +265,9 @@
   "cap.find.offer": "振り返れるものが増えてきました。すべての会話とファイルをまとめて検索できるようにしますか？",
   "cap.find.yes": "検索をオンにする",
   "tool.delegate": "作業をヘルパーに分担",
-  "tool.ask_user": "あなたへの質問",
+  "tool.ask_user": {
+    "other": "{count} 件の質問があります"
+  },
   "inbox.waiting": {
     "other": "{count} 件の判断があなたを待っています"
   },

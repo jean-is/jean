@@ -269,7 +269,10 @@
   "cap.find.offer": "Artık dönüp bakacak çok şey var. Tüm konuşmalarında ve dosyalarında tek yerden arama yapılsın mı?",
   "cap.find.yes": "Aramayı aç",
   "tool.delegate": "İşi yardımcılara bölüştür",
-  "tool.ask_user": "Sana bir soru",
+  "tool.ask_user": {
+    "one": "Sana bir soru",
+    "other": "Sana {count} soru"
+  },
   "inbox.waiting": {
     "one": "Seni bekleyen {count} karar var",
     "other": "Seni bekleyen {count} karar var"

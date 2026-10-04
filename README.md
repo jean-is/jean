@@ -27,6 +27,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - When you come back, Jean tells you what changed since last time.
 - **Listens and speaks:** dictation, read-aloud, and a live voice conversation, with speech recognised on your device.
 - **Looks the way you like:** the lit room, a mail-style layout with your conversations listed beside the one you read, or ink on paper, each by day or by night. Your own colours, text size, typeface or CSS go on top.
+- **Asks when it needs to.** When a task depends on your choices, Jean asks everything at once, one question at a time, with answers to pick from, the one it recommends picked already, and room for your own words.
 - **Asks first.** For each kind of action you choose *Do it*, *Ask me first* or *Never*. By default Jean reads and writes its own files freely, asks before sending, sharing, deleting or anything external, and never touches passwords or payments.
 
 Jean starts as a single box. Everything above is offered when you need it, like a game that teaches itself, and "What Jean can do", in Settings, lights up as you find things.

@@ -273,7 +273,11 @@
   "cap.find.offer": "Ya tienes mucho a lo que volver. ¿Buscar en todas tus conversaciones y archivos desde un solo lugar?",
   "cap.find.yes": "Activar la búsqueda",
   "tool.delegate": "Repartir el trabajo entre ayudantes",
-  "tool.ask_user": "Una pregunta para ti",
+  "tool.ask_user": {
+    "one": "Una pregunta para ti",
+    "many": "{count} preguntas para ti",
+    "other": "{count} preguntas para ti"
+  },
   "inbox.waiting": {
     "one": "{count} decisión te espera",
     "many": "{count} decisiones te esperan",

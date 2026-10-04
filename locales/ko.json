@@ -265,7 +265,9 @@
   "cap.find.offer": "이제 돌아볼 것이 많아졌어요. 모든 대화와 파일을 한곳에서 검색할까요?",
   "cap.find.yes": "검색 켜기",
   "tool.delegate": "작업을 도우미들에게 나누기",
-  "tool.ask_user": "드릴 질문",
+  "tool.ask_user": {
+    "other": "드릴 질문 {count}개"
+  },
   "inbox.waiting": {
     "other": "결정 {count}개가 기다리고 있어요"
   },

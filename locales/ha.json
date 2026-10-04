@@ -269,7 +269,10 @@
   "cap.find.offer": "Yanzu akwai abubuwa da yawa da za ka waiwaya. A bincika duk tattaunawarka da fayilolinka a wuri ɗaya?",
   "cap.find.yes": "Kunna bincike",
   "tool.delegate": "Raba aiki ga mataimaka",
-  "tool.ask_user": "Tambaya gare ka",
+  "tool.ask_user": {
+    "one": "Tambaya gare ka",
+    "other": "Tambayoyi {count} gare ka"
+  },
   "inbox.waiting": {
     "one": "Shawara {count} na jiranka",
     "other": "Shawarwari {count} na jiranka"

@@ -273,7 +273,11 @@
   "cap.find.offer": "Il y a maintenant beaucoup à retrouver. Chercher dans toutes vos conversations et vos fichiers au même endroit ?",
   "cap.find.yes": "Activer la recherche",
   "tool.delegate": "Répartir le travail entre assistants d’appoint",
-  "tool.ask_user": "Une question pour vous",
+  "tool.ask_user": {
+    "one": "Une question pour vous",
+    "many": "{count} questions pour vous",
+    "other": "{count} questions pour vous"
+  },
   "inbox.waiting": {
     "one": "{count} décision vous attend",
     "many": "{count} décisions vous attendent",

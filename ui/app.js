@@ -81,9 +81,10 @@ async function start() {
   })
   await Promise.all([dressing, touching])
   // The room warms a step with each discovery (docs/design.md): a brain, a first
-  // conversation, then every capability (CSSOM, which the CSP allows; style attributes it doesn't).
+  // conversation, then every capability, but not what is always there (CSSOM, which the CSP
+  // allows; style attributes it doesn't).
   effect(() => {
-    const discovered = [...loaded.value.keys()].filter((id) => id !== 'discovery' && id !== 'voice').length
+    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask'].includes(id)).length
     root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
   })
 

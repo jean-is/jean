@@ -1,0 +1,8 @@
+{
+  "ask.step": "Vraag {n} van {count}",
+  "ask.recommended": "Aanbevolen",
+  "ask.own": "Iets anders",
+  "ask.next": "Volgende",
+  "ask.skip": "Overslaan",
+  "ask.back": "Terug"
+}

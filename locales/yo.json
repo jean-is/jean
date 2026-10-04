@@ -265,7 +265,9 @@
   "cap.find.offer": "Ohun púpọ̀ wà láti wo padà báyìí. Ṣé kí ẹ wá gbogbo ìjíròrò àti fáìlì yín ní ibì kan?",
   "cap.find.yes": "Tan ìwádìí",
   "tool.delegate": "Pín iṣẹ́ fún àwọn olùrànlọ́wọ́",
-  "tool.ask_user": "Ìbéèrè kan fún yín",
+  "tool.ask_user": {
+    "other": "Ìbéèrè {count} fún yín"
+  },
   "inbox.waiting": {
     "other": "Ìpinnu {count} ń dúró dè yín"
   },

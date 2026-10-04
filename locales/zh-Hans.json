@@ -265,7 +265,9 @@
   "cap.find.offer": "现在可回顾的内容已经不少了。要在一个地方搜索你所有的对话和文件吗？",
   "cap.find.yes": "开启搜索",
   "tool.delegate": "把工作分给帮手",
-  "tool.ask_user": "有个问题要问你",
+  "tool.ask_user": {
+    "other": "有 {count} 个问题要问你"
+  },
   "inbox.waiting": {
     "other": "有 {count} 个决定在等你"
   },

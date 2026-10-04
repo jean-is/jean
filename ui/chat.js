@@ -283,8 +283,8 @@ function shown(value) {
 }
 
 /**
- * The decision inbox: approvals and helpers' questions wait here as cards, one each, while the
- * rest of the work goes on, and are answered in any order.
+ * The decision inbox: approvals and questions, Jean's or its helpers' (caps/ask, D143), wait here
+ * as cards, one each, while the rest of the work goes on, and are answered in any order.
  * @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
  */
 function inbox(entries, files) {
@@ -294,7 +294,7 @@ function inbox(entries, files) {
   const from = (/** @type {string} */ id) => entries.find((entry) => entry.name === 'helper' && id.startsWith(`${entry.toolCallId}/`))?.rawInput?.title
   return html`<section class="inbox" aria-label=${t('inbox.waiting', { count: waiting.length })}>
     ${waiting.length > 1 ? html`<p class="inbox-count">${t('inbox.waiting', { count: waiting.length })}</p>` : nothing}
-    ${repeat(waiting, (decision) => decision.id, (decision) => ('toolCall' in decision ? approval(decision, from(decision.toolCall.toolCallId), files) : question(decision)))}
+    ${repeat(waiting, (decision) => decision.id, (decision) => ('toolCall' in decision ? approval(decision, from(decision.toolCall.toolCallId), files) : html`<app-ask .decision=${decision}></app-ask>`))}
   </section>`
 }
 
@@ -339,7 +339,11 @@ function toolLabel(tool, files = []) {
   // made then reads as Routines, as it was called at the time (D122).
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${renamed(String(tool.rawInput?.capability))}.name`) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
-  if (tool.name === 'ask_user') return `${t('tool.ask_user')} · ${tool.rawInput?.question ?? ''}`
+  if (tool.name === 'ask_user') {
+    // A helper's lone question, from before questions came in lists (D143).
+    const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : [tool.rawInput]
+    return `${t('tool.ask_user', { count: asked.length })} · ${asked[0]?.question ?? ''}`
+  }
   const key = `tool.${renamed(String(tool.name))}`
   return t(key) === key ? tool.title : t(key)
 }
@@ -359,24 +363,6 @@ function approval({ toolCall, resolve }, helper, files) {
       <button class="button subtle" @click=${() => resolve('reject_always')}>${t('approval.rejectAlways')}</button>
     </div>
   </div>`
-}
-
-/** A helper's question. @param {Extract<import('./state.js').Decision, { question: string }>} decision */
-function question({ question, from, resolve }) {
-  /** @param {SubmitEvent} event */
-  const submit = (event) => {
-    event.preventDefault()
-    resolve(String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('answer') ?? '').trim() || null)
-  }
-  return html`<form class="approval" @submit=${submit}>
-    ${asking(from)}
-    <p dir="auto">${question}</p>
-    <input name="answer" required dir="auto" autocomplete="off" aria-label=${t('inbox.answer')}>
-    <div class="approval-actions">
-      <button class="button primary">${t('action.send')}</button>
-      <button class="button subtle" type="button" @click=${() => resolve(null)}>${t('approval.rejectOnce')}</button>
-    </div>
-  </form>`
 }
 
 /** @param {string} id @param {string} text */

@@ -23,10 +23,12 @@ import { loaded, unlock, contributions } from './caps.js'
 /** @typedef {'light' | 'dark'} Theme */
 /** @typedef {import('../core/loop.js').PermissionOption} PermissionOption */
 /**
- * A decision waiting for the user, in the decision inbox: an approval, or a helper's question.
+ * A decision waiting for the user, in the decision inbox: an approval, or questions from Jean or
+ * one of its helpers (`from`, the part it works on; D143).
  * @typedef {{ id: number, toolCall: ToolCallInfo, resolve: (option: PermissionOption) => void }
- *   | { id: number, question: string, from: string, resolve: (answer: string | null) => void }} Decision
+ *   | { id: number, questions: Question[], from?: string, resolve: (answers: Answer[] | null) => void }} Decision
  */
+/** @import { Question, Answer } from '../caps/ask/answers.js' */
 
 // The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
 export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
@@ -431,8 +433,8 @@ function queue(decision) {
   })
 }
 
-/** A helper's question; null when the user doesn't answer. @param {string} question @param {string} from @returns {Promise<string | null>} */
-export const askUser = (question, from) => queue({ question, from })
+/** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @returns {Promise<Answer[] | null>} */
+export const askUser = (questions, from) => queue({ questions, from })
 
 /** An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then follow. @param {ToolCallInfo} toolCall */
 async function approve(toolCall) {
@@ -471,8 +473,9 @@ async function context() {
  * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes]
  */
 async function prepare(text, brain, records, notes = []) {
-  // Things Jean made comes with the first message, so a file can be made from the start (D119).
-  await Promise.all([app.ready, unlock('made')])
+  // Things Jean made comes with the first message, so a file can be made from the start (D119), and
+  // so do questions, so the brain can ask from the start (D143).
+  await Promise.all([app.ready, unlock('made'), unlock('ask')])
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred).map((tool) => tool.spec.name)

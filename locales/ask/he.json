@@ -1,0 +1,8 @@
+{
+  "ask.step": "שאלה {n} מתוך {count}",
+  "ask.recommended": "מומלץ",
+  "ask.own": "משהו אחר",
+  "ask.next": "הבא",
+  "ask.skip": "דילוג",
+  "ask.back": "חזרה"
+}

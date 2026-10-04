@@ -22,6 +22,8 @@
 // For the browser (D140) it serves a bakery's site, whose page links to its menu, and a page that
 // refuses to be framed; asked for "the bakery site", it opens it (offering the browser first if
 // it's off) and answers from the page; asked to "give me a link", it answers with one.
+// Asked for a letter, it first asks three questions at once (D143): the tone, recommending one,
+// what the letter asks for, several at once, and who signs it; then it says what it was told.
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -59,6 +61,20 @@ const SUGGESTIONS = {
   fr: ['Montre-le en graphique', 'Lequel a le plus progressé ?', 'Écris un court résumé'],
   ar: ['اعرضه كرسم بياني', 'أيّها نما أكثر؟', 'اكتب ملخصًا قصيرًا'],
   ja: ['グラフで見せて', '一番伸びたのはどれ？', '短い要約を書いて'],
+}
+
+/** What a letter needs (D143). */
+const LETTER = [
+  { question: 'Which tone should the letter have?', options: [{ label: 'Formal', description: 'For a bank or an office', recommended: true }, { label: 'Friendly' }] },
+  { question: 'What should it ask for?', options: [{ label: 'A meeting' }, { label: 'A refund' }, { label: 'More time' }], multiple: true },
+  { question: 'Who signs it?' },
+]
+
+/** What the user answered, question by question. @param {string} content the tool's result */
+function told(content) {
+  if (/did not answer/.test(content)) return 'Nobody answered, so I wrote a formal letter.'
+  const { answers } = JSON.parse(content)
+  return `Here is your letter, as you asked:\n\n${answers.map((/** @type {any} */ a) => `- ${a.question} ${a.skipped ? 'You skipped it.' : [a.chose ?? []].flat().concat(a.wrote ?? []).join(', ')}`).join('\n')}`
 }
 
 /** A script that totals the first number column by the first text column. @param {string} name */
@@ -191,13 +207,15 @@ createServer(async (req, res) => {
   const habit = /Requests like this one were made on \w{3} \w{3} \d\d \d{4} (\d\d:\d\d)/.exec(serialized)?.[1]
   const routine = { title: 'Weekly sales', request: 'Summarize the weekly sales by region', every: 'day', at: /\bat (\d\d:\d\d)/.exec(question)?.[1] ?? habit ?? '09:00' }
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
-  else if (helper && /how many/i.test(task) && last.role === 'user') call = { name: 'ask_user', args: { question: 'How many people are coming?' } }
-  else if (helper && toolName === 'ask_user') answer = /did not answer/.test(last.content) ? 'Nobody said; I assumed 10 people.' : `${last.content.trim()} people are coming.`
+  else if (helper && /how many/i.test(task) && last.role === 'user') call = { name: 'ask_user', args: { questions: [{ question: 'How many people are coming?' }] } }
+  else if (helper && toolName === 'ask_user') answer = /did not answer|"skipped"/.test(last.content) ? 'Nobody said; I assumed 10 people.' : `${JSON.parse(last.content).answers[0].wrote} people are coming.`
   else if (helper && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { query: topic, limit: 1 } }
   else if (helper && last.role === 'user') call = { name: 'find_tools', args: { query: 'search emails' } }
   else if (helper && toolName === 'find_tools' && mailTool) call = { name: mailTool, args: { query: topic, limit: 1 } }
   else if (helper && found.length) answer = topic === 'invoice' ? `Invoice 2041, for 912 euros, is due on Friday 4 October [${found[0].n}].` : `Margot asks to confirm an order of 120 croissants for Saturday morning [${found[0].n}].`
   else if (helper) answer = 'I could not find it.'
+  else if (/\bletter\b/i.test(question) && last.role === 'user' && declared.has('ask_user')) call = { name: 'ask_user', args: { questions: LETTER } }
+  else if (toolName === 'ask_user') answer = told(last.content)
   else if (briefing && last.role === 'user' && declared.has('delegate')) {
     call = { name: 'delegate', args: { parts: [
       { title: 'Bakery orders', task: 'Find the latest email about the croissant order and say what it asks.' },

@@ -1,0 +1,8 @@
+{
+  "ask.step": "Pergunta {n} de {count}",
+  "ask.recommended": "Recomendada",
+  "ask.own": "Outra coisa",
+  "ask.next": "Seguinte",
+  "ask.skip": "Saltar",
+  "ask.back": "Anterior"
+}

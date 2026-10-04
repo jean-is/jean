@@ -269,7 +269,10 @@
   "cap.find.offer": "Marami ka nang mababalikan. Hanapin ang lahat ng usapan at file mo sa iisang lugar?",
   "cap.find.yes": "I-on ang paghahanap",
   "tool.delegate": "Hatiin ang trabaho sa mga katuwang",
-  "tool.ask_user": "Isang tanong para sa iyo",
+  "tool.ask_user": {
+    "one": "{count} tanong para sa iyo",
+    "other": "{count} tanong para sa iyo"
+  },
   "inbox.waiting": {
     "one": "{count} desisyon ang naghihintay sa iyo",
     "other": "{count} desisyon ang naghihintay sa iyo"

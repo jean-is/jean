@@ -277,7 +277,12 @@
   "cap.find.offer": "Masz już sporo do przejrzenia. Przeszukiwać wszystkie rozmowy i pliki w jednym miejscu?",
   "cap.find.yes": "Włącz wyszukiwanie",
   "tool.delegate": "Podział pracy między pomocników",
-  "tool.ask_user": "Pytanie do ciebie",
+  "tool.ask_user": {
+    "one": "Pytanie do ciebie",
+    "few": "{count} pytania do ciebie",
+    "many": "{count} pytań do ciebie",
+    "other": "{count} pytania do ciebie"
+  },
   "inbox.waiting": {
     "one": "Czeka na ciebie {count} decyzja",
     "few": "Czekają na ciebie {count} decyzje",

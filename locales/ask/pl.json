@@ -1,0 +1,8 @@
+{
+  "ask.step": "Pytanie {n} z {count}",
+  "ask.recommended": "Polecana",
+  "ask.own": "Coś innego",
+  "ask.next": "Dalej",
+  "ask.skip": "Pomiń",
+  "ask.back": "Wstecz"
+}

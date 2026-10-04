@@ -1,0 +1,43 @@
+/* Questions for the user (D143): loaded with them (caps/ask/ask.js), after ui/style.css. A card of the inbox,
+   one question at a time: how far along, the question, its answers like Settings' choices, then Next, Skip, Back. */
+
+/* How far along: a pip for each question, lit once answered, the one on screen drawn out, the skipped ones hollow. */
+.ask-progress { display: flex; align-items: center; gap: 0.6rem; font-size: 0.86rem; color: var(--ink-soft); }
+.ask-pips { display: flex; gap: 0.3rem; }
+.ask-pips i { inline-size: 0.5rem; block-size: 0.5rem; border-radius: 999px; background: var(--ember-off); transition: inline-size 0.3s var(--ease), background-color 0.3s; }
+.ask-pips [data-state='current'] { inline-size: 1.25rem; background: var(--flame); }
+.ask-pips [data-state='answered'] { background: var(--flame); }
+.ask-pips [data-state='skipped'] { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-faint); }
+
+.ask-field { min-inline-size: 0; margin: 0 0 0.85rem; padding: 0; border: 0; animation: arrive 0.3s var(--ease) both; }
+.ask-question { padding: 0; margin-block-end: 0.7rem; font-weight: 600; overflow-wrap: anywhere; }
+.ask-options { display: grid; gap: 0.45rem; margin: 0; padding: 0; list-style: none; }
+
+/* Each answer is a row to pick, its input first; the picked ones tinted, as in Settings. */
+.ask .choice-option { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.85rem; border: 1px solid var(--line); border-radius: 1rem; color: var(--ink); font-size: 1rem; text-align: start; cursor: pointer; }
+.ask .choice-option:hover { border-color: var(--line-strong); background: var(--line); }
+.ask .choice-option:has(> input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }
+/* The inbox's cards give their field the whole width (ui/style.css); here the row shares it. */
+.ask .choice-option > input { flex: none; inline-size: auto; margin: 0; }
+.ask .choice-option > span { flex: 1; display: grid; min-inline-size: 0; overflow-wrap: anywhere; }
+.ask .choice-option small { color: var(--ink-soft); font-size: 0.82rem; }
+/* Coloured like the primary button, whose colours meet AA by day and by night. */
+.ask-recommended { flex: none; padding: 0.1rem 0.55rem; border-radius: 999px; background: var(--flame); color: var(--on-flame); font-size: 0.78rem; font-style: normal; font-weight: 600; }
+
+/* Something else: the row is the field. */
+.ask .ask-own { cursor: text; }
+:root .ask .ask-own .ask-own-text { flex: 1; inline-size: auto; min-inline-size: 0; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+.ask .ask-own .ask-own-text:focus-visible { outline: 0; }
+.ask .ask-own:focus-within { border-color: oklch(from var(--flame) l c h / 0.7); }
+.ask-field > .ask-own-text { margin: 0; }
+
+.ask .button:disabled { opacity: 0.45; cursor: default; }
+.ask .button.primary:disabled:hover { background: var(--flame); }
+
+@media (forced-colors: active) {
+  .ask .choice-option:has(> input:checked) { border: 2px solid Highlight; }
+  .ask-pips i { forced-color-adjust: none; background: GrayText; }
+  .ask-pips [data-state='current'], .ask-pips [data-state='answered'] { background: Highlight; }
+  .ask-pips [data-state='skipped'] { background: Canvas; box-shadow: inset 0 0 0 1.5px CanvasText; }
+  .ask-recommended { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+}

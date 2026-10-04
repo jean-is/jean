@@ -269,7 +269,10 @@
   "cap.find.offer": "Er is nu veel om op terug te kijken. Al je gesprekken en bestanden op één plek doorzoeken?",
   "cap.find.yes": "Zoeken aanzetten",
   "tool.delegate": "Het werk verdelen over helpers",
-  "tool.ask_user": "Een vraag voor jou",
+  "tool.ask_user": {
+    "one": "Een vraag voor jou",
+    "other": "{count} vragen voor jou"
+  },
   "inbox.waiting": {
     "one": "{count} beslissing wacht op je",
     "other": "{count} beslissingen wachten op je"

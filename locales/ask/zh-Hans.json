@@ -1,0 +1,8 @@
+{
+  "ask.step": "第 {n} 题，共 {count} 题",
+  "ask.recommended": "推荐",
+  "ask.own": "其他",
+  "ask.next": "下一题",
+  "ask.skip": "跳过",
+  "ask.back": "上一题"
+}
