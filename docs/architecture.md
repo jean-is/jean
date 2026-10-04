@@ -58,7 +58,7 @@
 index.html        CSP <meta>, light or dark (D85) and the look (D111) before the first paint, import map, shell
 sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
 preview.html      an HTML file in the preview: a hash-allowed relay writes it in place of itself, under a policy that runs none of its scripts (D126)
-manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but the light-or-dark line
+manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but index.html's first-paint line
 sw.js             offline cache, per-capability caching
 brand.js          export const BRAND = { name, domain }
 core/             llm.js anthropic.js loop.js fs.js files.js zip.js prompt.js events.js i18n.js

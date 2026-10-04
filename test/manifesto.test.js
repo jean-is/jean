@@ -1,4 +1,4 @@
-// manifesto.html: the same words as MANIFESTO.md, and a CSP that allows only its light-or-dark line.
+// manifesto.html: the same words as MANIFESTO.md, and a CSP that allows only index.html's first-paint line.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
@@ -17,7 +17,7 @@ test('the page says what MANIFESTO.md says', () => {
   for (const block of blocks) assert.ok(text.includes(block), `missing from manifesto.html: ${block}`)
 })
 
-test('the page allows exactly its inline script, and the light-or-dark key is the app’s', async () => {
+test('the page allows exactly its inline script, which is index.html’s light or dark and look', async () => {
   const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(page)?.[1] ?? ''
   const inline = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((match) => match[1])
   assert.equal(inline.length, 1)
@@ -26,6 +26,6 @@ test('the page allows exactly its inline script, and the light-or-dark key is th
   for (const directive of ["object-src 'none'", "base-uri 'none'", "connect-src 'none'", "require-trusted-types-for 'script'", "style-src 'self'"]) assert.ok(csp.includes(directive), directive)
   assert.ok(!/unsafe-/.test(csp))
   assert.ok(page.indexOf('Content-Security-Policy') < page.indexOf('<script'))
-  const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
-  assert.ok(inline[0].includes(`localStorage.getItem('${/THEME_KEY = '([^']+)'/.exec(state)?.[1]}')`))
+  const index = await readFile(new URL('../index.html', import.meta.url), 'utf8')
+  assert.equal(inline[0], /<script>([\s\S]*?)<\/script>/.exec(index)?.[1], 'copy index.html’s first-paint line, and its hash')
 })
