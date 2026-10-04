@@ -49,7 +49,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Capability | Offered when… | What appears |
 |---|---|---|
 | Files | The user pastes long text (over 2,000 characters), drops a file, or a reflex or the brain says a document would help | "You can drop files on me," plus a file shelf |
-| Folders | A folder is dropped, or the brain sees a request about files on the computer (0.8) | "Work in this folder?": the project is opened on a folder of this computer, and Jean finds, reads and changes its files where they are, showing each change first. Chrome and Edge; elsewhere, a read-only copy (D141) |
+| Folders | A folder is dropped, or the brain sees a request about files on the computer (0.8) | "Work in this folder?": this conversation, or every new one in its project, is opened on a folder of this computer, and Jean finds, reads and changes its files where they are, showing each change first. Each project and each conversation keeps its own folder across visits. Chrome and Edge; elsewhere, a read-only copy (D141, D149) |
 | Things Jean made | The first message (D119) | Files Jean writes, as cards under the answer that say what each is, seen beside the conversation and saved with a click: Word documents, spreadsheets, text and drawings, changed on request (D119, D126). Copy as rich text, CSV (D108) |
 | Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
 | Search | After ten conversations | ⌘K, or Search under a new conversation: the conversations of every project, files shared or made, and Settings, found as you type, part of a word enough, in any script (D133) |
@@ -170,7 +170,7 @@ Organisation policy can hide or lock any of these.
 ## Files and outputs
 
 - **Dropped files are kept** in the project's library. Each file is stored as the original, an extracted text version and a metadata file; files are named by content hash, so duplicates are stored once. Conversations reference files rather than copying them.
-- **Or left where they are** (0.8, D141). A project opened on a folder works on that folder's files in place. Nothing is copied, and a change Jean makes is in the folder as soon as the user has seen and allowed it.
+- **Or left where they are** (0.8, D141, D149). A project or a conversation opened on a folder works on that folder's files in place, and each keeps its own: two projects, or two conversations, work in two different folders, and a new conversation starts on its project's. Nothing is copied, and a change Jean makes is in the folder as soon as the user has seen and allowed it.
 - **Pictures and the screen.** A picture is shared like any file, and the box's + menu captures the screen, a window or a tab: one frame, shown as a thumbnail before it is sent. Brains that can see are shown it (D105).
 - **Seen without leaving Jean** (D126). A file Jean made, or one the user shared, opens in a preview beside the conversation (over it on a phone), as what it is: a picture, a PDF's pages, a document on a sheet, a spreadsheet's grid, a deck's slides, a web page with its own look and, by default, its own scripts, without the internet (D143; three switches in Approvals change what a page may do). A file being changed shows its new version as it comes, so the next request can be made while looking at it.
 - **Outputs fit office life without any dependency:**
