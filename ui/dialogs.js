@@ -21,7 +21,7 @@ import { t, locale, formatBytes, useStrings, languageName, preferredLocales } fr
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './icons.js'
-import { conversationList, findEntry, settingsEntry } from './inbox.js'
+import { conversationList, findEntry, profileEntry } from './inbox.js'
 import { SHORTCUTS } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
@@ -66,7 +66,7 @@ class History extends Element {
       <button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${() => turnPage(newConversation)}>${icons.plus} ${t('action.new')}</button>
       ${findEntry()}
       ${conversationList()}
-      ${settingsEntry()}
+      ${profileEntry('drawer')}
     </dialog>`
   }
 
@@ -500,7 +500,7 @@ export const SECTIONS = {
   general: { label: 'settings.general', icon: icons.gear, show: general },
   brains: { label: 'settings.brains', icon: icons.spark, show: brains },
   appearance: { label: 'settings.appearance', icon: icons.contrast, show: appearance },
-  you: { label: 'settings.you', icon: icons.note, show: () => knows.value?.you() ?? nothing, also: () => t('knows.title', { name: BRAND.name }), group: true },
+  you: { label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   connections: { label: 'cap.connections.name', icon: icons.plug, show: () => loaded.value.get('connections')?.panel?.() ?? nothing, when: () => loaded.value.has('connections') },
   skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   routines: { label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
@@ -572,7 +572,7 @@ class Settings extends Element {
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm', python: 'code',
-  search: 'globe', browser: 'window', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', 'brain-local': 'chip',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({

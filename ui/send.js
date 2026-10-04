@@ -166,8 +166,8 @@ async function context() {
  */
 async function prepare(text, brain, records, notes = []) {
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
-  // so do questions, so the brain can ask from the start (D146).
-  await Promise.all([app.ready, unlock('made'), unlock('ask')])
+  // so do questions, so the brain can ask from the start (D146), and noting the user's name (D150).
+  await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you')])
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred).map((tool) => tool.spec.name)

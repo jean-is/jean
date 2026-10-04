@@ -165,7 +165,9 @@ Added after 0.7: conversations go on out of sight (D147). Going to another conve
 
 Made room for 0.8, raising no limit (D148): what a message needs on its way (the prompt, the files the brain reads, the run and its approvals, cache warming) left the first load for a module that loads as the user starts typing, and the first load went from 100.0 to 87.0 KB; the modules only reading aloud and the preview use left the core, which went from 2,998 to 2,787 lines. Checked with `npm run e2e` in Chromium and WebKit.
 
-Budgets now (2026-10-04): core 2,787 of 3,000 lines, app 17,490 of 20,000, first load 87.0 of 100 KB gzipped, CSS 9.1 of 12 KB, the largest catalogues 6.1 of 8 KB (Russian, Ukrainian and Telugu) and their dialogs' part 7.5 (Russian and Ukrainian), base prompt 182 of 200 tokens. The dialogs' catalogues are the next to fill: 0.8's strings for the dialogs will need room there first.
+Added after 0.7: the user at the foot of the conversations (D150). In the drawer and in Mail's list, Settings gives its place to the user: their initial and their name, or "You" until it is known, opening a menu with Settings, About you, the language, a dark mode switch, what Jean can do and the manifesto. The name is set in About you, or noted by Jean the first time the user gives it in a conversation, with an Undo, while they have never set one. The browser's button is a globe. Checked with `npm run e2e` in Chromium and WebKit: the language and the mode changed from the menu, and Settings opened from it; a name given in a conversation shown at the foot and kept when another is given later; the name changed in About you. By eye in Arabic and Japanese, at desktop and phone width, in the room, Mail and Glass. 6 new strings in all 33 languages, and 3 moved from the dialogs' catalogue. Its cost: 1.0 KB of the first load, 0.65 KB of it style, and about 150 of the app's lines.
+
+Budgets now (2026-10-04): core 2,788 of 3,000 lines, app 17,639 of 20,000, first load 88.0 of 100 KB gzipped, CSS 9.7 of 12 KB, the largest catalogues 6.1 of 8 KB (Russian, Ukrainian and Telugu) and their dialogs' part 7.5 (Russian and Ukrainian), base prompt 182 of 200 tokens. The dialogs' catalogues are the next to fill: 0.8's strings for the dialogs will need room there first.
 
 ## 0.8 status (2026-10-04)
 
@@ -192,7 +194,7 @@ Still to check by hand:
 - [ ] Firefox: a folder picked and dropped, as a copy
 - [ ] A screen reader on the approval's diff and the change under the answer
 
-Budgets at the end of the build: core 2,811 of 3,000 lines, app 18,994 of 20,000, first load 88.1 of 100 KB gzipped, CSS 9.1 of 12 KB, the largest catalogues 6.2 of 8 KB (Russian, Ukrainian and Telugu) and their dialogs' part 7.6 (Russian and Ukrainian), Folders' own code 21.6 of 40 KB, base prompt 182 of 200 tokens. The app has about 1,000 lines left: the next version will need to make room first.
+Budgets at the end of the build, with D150 merged: core 2,812 of 3,000 lines, app 19,144 of 20,000, first load 89.1 of 100 KB gzipped, CSS 9.8 of 12 KB, the largest catalogues 6.4 of 8 KB (Russian) and their dialogs' part 7.6 (Russian and Ukrainian), Folders' own code 21.6 of 40 KB, base prompt 182 of 200 tokens. The app has about 850 lines left: the next version will need to make room first.
 
 ## Before the public launch (0.3)
 

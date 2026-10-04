@@ -247,7 +247,11 @@ export function you() {
   if (!state) return nothing
   const both = folders().length > 1
   const noticed = html`${icons.note} ${t('knows.noticed', { name: BRAND.name })}`
+  // Emptied, the name stays empty: Jean notes one only while the user has never set it (D150).
   return html`<p class="lede">${t('knows.lede', { name: BRAND.name })}</p>
+    ${setting(t('you.name'), t('you.nameText'), html`<input class="you-name" autocomplete="given-name" dir="auto" maxlength="40" spellcheck="false"
+      aria-label=${t('you.name')} .value=${live(effective.value.settings.name ?? '')}
+      @change=${(/** @type {Event} */ e) => updateSettings({ name: oneLine(/** @type {HTMLInputElement} */ (e.target).value) })}>`)}
     <section>
       <h3>${icons.pin} ${t('knows.instructions')}</h3>
       <p class="muted small">${t('knows.instructionsText', { name: BRAND.name })}</p>

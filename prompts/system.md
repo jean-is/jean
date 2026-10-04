@@ -116,6 +116,7 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Browser (D140) | `browse: show the user a web page beside the conversation, and read it when the site allows` | — (`<page>` says which page is open) |
 | Folders (0.8, D141) | none: its tools are deferred, and `<folder>` names them with their arguments, for the conversation's folder only | — |
 | Questions (D146, always on) | `ask_user: ask the user questions, with answers to pick from` | Ask with ask_user only what you need, all at once, recommending an answer to each. |
+| Your name (D150, always on while the user has never set one) | `save_name: save the first name the user gives for themselves` | — (the tool's description: never someone else's name, never a guess) |
 
 Sources and suggestions were planned as capability rules; in 0.3 they became base rules, because every answer can cite a shared file and end with follow-ups. Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).
 

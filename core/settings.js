@@ -12,6 +12,7 @@ import { ulid } from './ulid.js'
  * @property {string | null} activeBrain
  * @property {Record<string, RuleValue>} rules
  * @property {string | null} voice
+ * @property {string} [name]                  what the user is called, set by them or once by Jean from a conversation; '' when they cleared it (D150)
  * @property {string[]} unlocked              capabilities discovered so far
  * @property {boolean} auto                   Auto picks the brain for each message
  * @property {boolean} cloud                  false: never send to the cloud

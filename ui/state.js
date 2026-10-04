@@ -159,6 +159,12 @@ export function setTheme(next) {
   else localStorage.removeItem(THEME_KEY)
 }
 
+/** Light to dark and back (⌘⇧L, D130): switching back to what the device shows is Auto again (D85). */
+export function switchTheme() {
+  const next = theme.value === 'light' ? 'dark' : 'light'
+  setTheme(next === app.deviceTheme.value ? null : next)
+}
+
 let lookWrite = 0
 /**
  * Another look, or a touch over it (D111), shown at once. `later` waits for a pause before

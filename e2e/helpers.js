@@ -39,17 +39,30 @@ export async function ask(page, text) {
 }
 
 /**
- * Opens Settings from the foot of the conversations: Mail's list when it is in view, otherwise
- * the drawer (D115). On one of its sections when named as its menu says (D113).
+ * Opens the user's menu at the foot of the conversations: Mail's list when it is in view,
+ * otherwise the drawer (D115, D150).
+ * @param {import('@playwright/test').Page} page
+ */
+export async function openProfile(page) {
+  const list = page.locator('app-inbox .profile')
+  const drawer = page.locator('app-history dialog[open] .profile')
+  if (await list.isVisible()) await list.click()
+  else {
+    if (!(await drawer.isVisible())) await page.locator('.bar > .icon-button').first().click()
+    await drawer.click()
+  }
+  const menu = page.locator('.profile-menu:popover-open')
+  await expect(menu).toBeVisible()
+  return menu
+}
+
+/**
+ * Opens Settings from the user's menu, its first item (⌘, beside it), in any language. On one
+ * of its sections when named as its menu says (D113).
  * @param {import('@playwright/test').Page} page @param {string} [section]
  */
 export async function openSettings(page, section) {
-  const list = page.locator('app-inbox .sidebar-settings')
-  if (await list.isVisible()) await list.click()
-  else {
-    await page.locator('.bar > .icon-button').first().click()
-    await page.locator('app-history dialog[open] .sidebar-settings').click()
-  }
+  await (await openProfile(page)).locator('[aria-keyshortcuts$="+,"]').click()
   const settings = page.locator('app-settings dialog[open]')
   await expect(settings).toBeVisible()
   if (section) await settings.locator('.settings-nav button', { hasText: section }).click()

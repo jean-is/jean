@@ -15,7 +15,7 @@ const MAX_PARTS = 5
 const AT_ONCE = 3
 const HELPER_STEPS = 8
 // Helpers don't split their work again, offer things, or answer in place of the user.
-const NOT_FOR_HELPERS = new Set(['delegate', 'helper', 'offer', 'ask_user'])
+const NOT_FOR_HELPERS = new Set(['delegate', 'helper', 'offer', 'ask_user', 'save_name'])
 
 /** What a helper is told, in English like every prompt (prompts/system.md). @param {string} name */
 const prompt = (name) => `You are a helper of ${name}, an assistant that does work for people in their web browser. You do one part of a larger task, then report to ${name}, not to the user.
