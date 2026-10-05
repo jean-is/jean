@@ -297,6 +297,10 @@ createServer(async (req, res) => {
   else if (/bakery site/i.test(question) && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'browse', args: { url: BAKERY } }
   else if (toolName === 'browse') answer = found.length ? `The bakery’s page is open beside our conversation. ${/Fresh bread[^\n]*/.exec(last.content)?.[0]} [${found[0].n}]` : `That didn't work: ${last.content}`
   // The savings starter: one script works the plan out and draws its chart as a page, which opens beside the conversation (D163).
+  // Asked for a change, it makes the page again: a second version, the first kept (D164).
+  // Turned on mid-conversation, javascript is deferred: called by its name, it runs all the same (D104).
+  else if (/bars blue/i.test(question) && last.role === 'user') call = { name: 'javascript', args: { code: SAVINGS.replace('#c8691c', '#2563eb') } }
+  else if (/bars blue/i.test(question) && toolName === 'javascript') answer = 'Done: the bars are blue now. The first version is still under my first answer.'
   else if (savings && last.role === 'user' && declared.has('javascript')) call = { name: 'javascript', args: { code: SAVINGS } }
   else if (savings && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'computer' } }
   else if (savings && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'javascript', args: { code: SAVINGS } }

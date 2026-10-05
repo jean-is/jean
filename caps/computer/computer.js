@@ -16,9 +16,12 @@ import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { icons } from '../../ui/icons.js'
 import { serviceURL } from '../../core/settings.js'
 import { join, walk } from '../../core/fs.js'
+import { addFile } from '../../core/files.js'
+import { callsIn, filesMade, nextVersion } from '../../core/events.js'
 import { t, useStrings, formatBytes } from '../../core/i18n.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
+import { exactText } from '../folders/work.js'
 import { imageTool } from './images.js'
 
 /** @typedef {import('../../core/loop.js').Tool} Tool */
@@ -61,9 +64,9 @@ async function mountOf(signal) {
   const conversation = conversationOf(signal)
   const folders = loaded.peek().has('folders') ? await import('../folders/folders.js') : null
   const open = await folders?.computerFolder(signal)
-  if (open) return { of: `folder:${open.folder.name}`, fs: open.fs, folder: open.folder, always: open.always, conversation }
+  if (open) return { of: `folder:${open.folder.name}`, fs: open.fs, folder: open.folder, always: open.always, conversation, project: '' }
   const project = conversation?.path?.replace(/\/conversations\/[^/]*$/, '') || app.projectDir
-  return { of: `workspace:${project}`, fs: within(app.fs, join(project, 'workspace')), folder: null, always: true, conversation }
+  return { of: `workspace:${project}`, fs: within(app.fs, join(project, 'workspace')), folder: null, always: true, conversation, project }
 }
 
 /** Before a run, in a folder not open yet: Folders' card, whose click lets the browser open it (D141). @param {any} args @param {ToolContext} ctx */
@@ -120,8 +123,10 @@ async function keep(changes, mount, held, ctx) {
   }
 }
 
-/** What the preview shows from a file's own bytes, pages first, by extension, with its type. */
-const SHOWN = /** @type {Record<string, string>} */ ({ html: 'text/html', htm: 'text/html', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf' })
+/** What the preview shows, pages and pictures first (those open by themselves), by extension, with its type. */
+const SHOWN = /** @type {Record<string, string>} */ ({ html: 'text/html', htm: 'text/html', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf',
+  csv: 'text/csv', tsv: 'text/tab-separated-values', md: 'text/markdown', txt: 'text/plain' })
+const OPENS = new Set(['html', 'htm', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf'])
 /** @param {string} path */
 const extension = (path) => /\.([a-z0-9]+)$/i.exec(path)?.[1].toLowerCase() ?? ''
 /** @param {string} path */
@@ -153,13 +158,23 @@ const saveTool = {
     const { mount, changes, held } = batch
     const shown = mount.folder ? await preview(mount.fs, changes) : []
     const done = await incoming(mount.fs, held, changes)
-    // A page, a picture or a PDF made in the project's workspace shows under the answer, and the first
-    // opens beside the conversation on screen (D163); the user's folder has its own ways (D156).
-    const made = mount.folder ? [] : done.saved.filter((path) => SHOWN[extension(path)]).sort((a, b) => order(a) - order(b)).slice(0, 4)
-      .map((path) => ({ uri: join('workspace', path), name: path.split('/').at(-1) ?? path, mimeType: SHOWN[extension(path)], size: changes.put[path].byteLength }))
+    // A page, a picture, a PDF, a table or a text made in the project's workspace shows under the
+    // answer, and the first page or picture opens beside the conversation on screen (D163). Each is
+    // kept as it is now, a version of its own, by its content, as Things Jean made keeps its files:
+    // the next run may change the workspace's, never this one (D164). The user's folder has its own ways (D156).
+    /** @type {import('../../core/events.js').MadeFile[]} */
+    const made = []
+    const before = filesMade(callsIn(mount.conversation?.records ?? [], mount.conversation?.turn?.steps))
+    for (const path of mount.folder ? [] : done.saved.filter((each) => SHOWN[extension(each)]).sort((a, b) => order(a) - order(b)).slice(0, 4)) {
+      const bytes = new Uint8Array(changes.put[path])
+      const mimeType = SHOWN[extension(path)]
+      const text = /^text\//.test(mimeType) ? exactText(bytes) : null
+      const link = await addFile(app.fs, { projectDir: mount.project, name: path, mimeType, bytes, pages: text === null ? [] : [text], by: 'jean' })
+      made.push({ uri: link.uri, name: path, mimeType, size: bytes.length, version: nextVersion([...before, ...made], path, link.uri) })
+    }
     if (made.length) {
       ctx.meta.files = made
-      if (mount.conversation?.id === app.current.peek()?.id) (await import('../../ui/preview.js')).preview(made[0])
+      if (OPENS.has(extension(made[0].name)) && mount.conversation?.id === app.current.peek()?.id) (await import('../../ui/preview.js')).preview(made[0])
     }
     if (mount.folder) {
       ctx.content.push(...diffs(shown.filter((each) => done.saved.includes(each.path))))
@@ -169,6 +184,7 @@ const saveTool = {
     }
     return [
       done.saved.length ? `Kept in /workspace: ${done.saved.join(', ')}.` : '',
+      made.some((file) => (file.version ?? 1) > 1) ? `New versions, the earlier ones still under their answers: ${made.flatMap((file) => ((file.version ?? 1) > 1 ? [`${file.name} (version ${file.version})`] : [])).join(', ')}.` : '',
       done.removed.length ? `Removed from /workspace: ${done.removed.join(', ')}.` : '',
       done.refused.length ? `Not kept, as they changed meanwhile (the computer has them as they are now): ${done.refused.join(', ')}.` : '',
     ].filter(Boolean).join(' ')

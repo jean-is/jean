@@ -11,9 +11,10 @@ import { save } from '../../ui/save.js'
 import { markdown } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
+import { callsIn, filesMade, nextVersion, versionsOf } from '../../core/events.js'
 import { t, locale, formatBytes } from '../../core/i18n.js'
 
-/** @typedef {{ uri: string, name: string, mimeType: string, size: number }} MadeFile what a call that made a file records (`_meta.file`) */
+/** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
 
 // The cards' style sheet comes with them, not with the first screen (D126).
 await new Promise((resolve) => {
@@ -36,14 +37,15 @@ function paper() {
 }
 
 /**
- * Files made in the conversation a call works for, oldest first: those of earlier answers, then this one's.
- * @param {AbortSignal} [signal] its run's @returns {MadeFile[]}
+ * Files made in the conversation a call works for, oldest first: those of earlier answers, then
+ * this one's, the computer's pages included (D164), or only those written here (`written`), which
+ * edit changes: the computer changes its own, in /workspace.
+ * @param {AbortSignal} [signal] its run's @param {boolean} [written] @returns {MadeFile[]}
  */
-function madeFiles(signal) {
+function madeFiles(signal, written = false) {
   const conversation = conversationOf(signal)
-  const earlier = (conversation?.records ?? []).flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' && update._meta?.file ? [update._meta.file] : []))
-  const now = (conversation?.turn?.steps ?? []).flatMap((step) => step.tools.flatMap((tool) => (tool._meta?.file ? [tool._meta.file] : [])))
-  return [...earlier, ...now]
+  const calls = callsIn(conversation?.records ?? [], conversation?.turn?.steps)
+  return written ? calls.flatMap((call) => (call._meta?.file ? [call._meta.file] : [])) : filesMade(calls)
 }
 
 /**
@@ -56,8 +58,10 @@ async function keep(name, content, ctx) {
   const { makeFile } = await import('./formats.js')
   const { name: kept, mimeType, bytes } = await makeFile(name, content, { paper: paper() })
   const link = await addFile(app.fs, { projectDir: app.projectDir, name: kept, mimeType, bytes, pages: [content], by: 'jean' })
-  ctx.meta.file = /** @type {MadeFile} */ ({ uri: link.uri, name: kept, mimeType, size: bytes.length })
-  return kept
+  // Each version is a file of its own, by its content, and the earlier ones stay where they are (D164).
+  const version = nextVersion(madeFiles(ctx.signal), kept, link.uri)
+  ctx.meta.file = /** @type {MadeFile} */ ({ uri: link.uri, name: kept, mimeType, size: bytes.length, version })
+  return { kept, version }
 }
 
 /** @type {import('../../core/loop.js').Tool} */
@@ -82,7 +86,10 @@ const writeTool = {
   },
   kind: 'edit',
   title: (args) => `Write ${args?.name ?? ''}`,
-  run: async (args, ctx) => `Saved ${await keep(String(args?.name ?? ''), String(args?.content ?? ''), ctx)}. It shows under your answer, ready to save.`,
+  run: async (args, ctx) => {
+    const { kept, version } = await keep(String(args?.name ?? ''), String(args?.content ?? ''), ctx)
+    return `Saved ${kept}. It shows under your answer, ready to save${version > 1 ? `, as version ${version}: the earlier ones stay under theirs` : ''}.`
+  },
 }
 
 /** @type {import('../../core/loop.js').Tool} */
@@ -104,7 +111,7 @@ const editTool = {
   title: (args) => `Edit ${args?.file ?? ''}`,
   locations: (args) => [{ path: String(args?.file ?? '') }],
   run: async (args, ctx) => {
-    const files = madeFiles(ctx.signal)
+    const files = madeFiles(ctx.signal, true)
     const wanted = String(args?.file ?? '').trim().toLowerCase()
     const found = files.findLast((file) => file.name.toLowerCase() === wanted)
     if (!found) throw new Error(`No file named "${args?.file}" was made in this conversation. Made: ${[...new Set(files.map((file) => file.name))].join(', ') || 'none'}. Use write to make it.`)
@@ -112,7 +119,8 @@ const editTool = {
     if (text === null) throw new Error(`${found.name} is no longer on this device. Use write to make it again.`)
     const { replaceOnce } = await import('./formats.js')
     const changed = replaceOnce(splitPages(text).join('\n'), String(args?.old ?? ''), String(args?.new ?? ''), found.name)
-    return `Changed ${await keep(found.name, changed, ctx)}. The new version shows under your answer.`
+    const { kept, version } = await keep(found.name, changed, ctx)
+    return `Changed ${kept}. The new version, version ${version}, shows under your answer, and the earlier one stays under its own.`
   },
 }
 
@@ -137,7 +145,7 @@ const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sh
  */
 class FileMade extends Element {
   // A newer version of the file can take this one's place under the answer.
-  static observedAttributes = ['uri', 'name', 'type', 'size']
+  static observedAttributes = ['uri', 'name', 'type', 'size', 'version']
   #url = ''
 
   render() {
@@ -146,12 +154,16 @@ class FileMade extends Element {
     const ext = /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() ?? ''
     const kind = KINDS[ext]
     const label = t('made.save', { name })
-    const open = () => import('../../ui/preview.js').then((module) => module.preview({ uri: this.getAttribute('uri') ?? '', name, mimeType: type }))
+    const uri = this.getAttribute('uri') ?? ''
+    // Its version, once the conversation has more than one of the file (D164); a card from before versions were kept finds its own.
+    const versions = versionsOf(filesMade(callsIn(app.current.value?.records ?? [], app.live.value?.turn.steps)), name)
+    const version = Number(this.getAttribute('version')) || versions.findLast((each) => each.uri === uri)?.version || 0
+    const open = () => import('../../ui/preview.js').then((module) => module.preview({ uri, name, mimeType: type, ...(version && { version }) }))
     // The whole card opens the file for a pointer; its Open button is the one keyboards and screen readers reach.
     return html`<div class="file-card" @click=${(/** @type {MouseEvent} */ event) => /** @type {HTMLElement} */ (event.target).closest('button') || open()}>
       <span class="file-tile" aria-hidden="true">${this.#url ? html`<img src=${this.#url} alt="">` : TILES[kind] ?? icons.file}</span>
       <span class="file-about"><span class="file-name"><span dir="auto">${name}</span></span>
-        <span class="file-meta"><span>${kind ? t(`made.kind.${kind}`) : ext.toUpperCase()}</span><span>${formatBytes(Number(this.getAttribute('size')) || 0)}</span></span></span>
+        <span class="file-meta"><span>${kind ? t(`made.kind.${kind}`) : ext.toUpperCase()}</span><span>${formatBytes(Number(this.getAttribute('size')) || 0)}</span>${version && versions.length > 1 ? html`<span>${t('made.version', { n: version })}</span>` : nothing}</span></span>
       <button class="icon-button" title=${label} aria-label=${label} @click=${() => this.#save(name, type)}>${icons.download}</button>
       <button class="button" aria-label=${t('sources.open', { name })} @click=${open}>${t('made.open')}</button>
     </div>`

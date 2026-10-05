@@ -6,6 +6,7 @@ import { memoryFS } from '../core/fs.js'
 import { loadSettings, folded, renamed } from '../core/settings.js'
 import { computerRights, relayed, covers, judge, registryOf, authorization, reach, COMPUTER_DEFAULTS } from '../caps/computer/net.js'
 import { outgoing, incoming, preview, decline, within } from '../caps/computer/mount.js'
+import { callsIn, filesMade, versionsOf, nextVersion } from '../core/events.js'
 
 const DEFAULTS = { pyodide: 'https://cdn.example/pyodide/v{version}/full/', pypi: 'https://pypi.example/pypi/{package_name}/json', npm: 'https://registry.example/' }
 const decoder = new TextDecoder()
@@ -166,4 +167,24 @@ test('Calculations and the data toolkit are the Computer now, and run is javascr
   const settings = await loadSettings(fs)
   assert.deepEqual(settings.unlocked, ['files', 'computer'])
   assert.deepEqual(settings.offers, { computer: '2026-10-01' })
+})
+
+test('a file made again is a version of its own: numbered in the conversation, the earlier ones kept (D164)', () => {
+  const file = (/** @type {string} */ name, /** @type {string} */ uri) => ({ uri, name, mimeType: 'text/html', size: 1 })
+  const call = (/** @type {string} */ id, /** @type {Record<string, any>} */ meta) => ({ at: 't', by: 'jean', update: { sessionUpdate: 'tool_call', toolCallId: id, title: id, _meta: meta } })
+  const records = /** @type {any[]} */ ([
+    call('a', { file: file('Plan.docx', 'files/sha256-1.docx') }),
+    call('b', { files: [file('Chart.html', 'files/sha256-2.html'), file('data.csv', 'files/sha256-3.csv')] }),
+    { at: 't', by: 'user', update: { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: 'bluer' } } },
+    call('c', { files: [file('Chart.html', 'files/sha256-4.html')] }),
+  ])
+  const live = [{ tools: /** @type {any[]} */ ([{ toolCallId: 'd', _meta: { files: [file('Chart.html', 'files/sha256-4.html')] } }, { toolCallId: 'e', _meta: { file: file('Chart.html', 'files/sha256-2.html') } }]) }]
+  const made = filesMade(callsIn(records, live))
+  assert.deepEqual(made.map((each) => each.uri), ['files/sha256-1.docx', 'files/sha256-2.html', 'files/sha256-3.csv', 'files/sha256-4.html', 'files/sha256-4.html', 'files/sha256-2.html'])
+  const chart = versionsOf(made, 'Chart.html')
+  assert.deepEqual(chart.map((each) => [each.version, each.uri]), [[1, 'files/sha256-2.html'], [2, 'files/sha256-4.html'], [3, 'files/sha256-2.html']], 'the same again just after is one version; going back to an earlier one is a new one')
+  assert.equal(versionsOf(made, 'Plan.docx').length, 1)
+  assert.equal(nextVersion(made, 'Chart.html', 'files/sha256-2.html'), 3, 'the last one again')
+  assert.equal(nextVersion(made, 'Chart.html', 'files/sha256-9.html'), 4)
+  assert.equal(nextVersion(made, 'New.html', 'files/sha256-9.html'), 1)
 })

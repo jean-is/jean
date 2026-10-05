@@ -26,3 +26,11 @@
 .preview-grid td.number { text-align: end; }
 .preview-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }
 
+
+/* A file Jean made again: which version shows, and the way to the others (D164). */
+.versions { display: inline-flex; align-items: center; gap: 0.1rem; margin-inline-end: 0.35rem; color: var(--ink-soft); font-size: 0.82rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.versions .icon-button:first-child svg { rotate: 90deg; }
+.versions .icon-button:last-child svg { rotate: -90deg; }
+:dir(rtl) .versions .icon-button:first-child svg { rotate: -90deg; }
+:dir(rtl) .versions .icon-button:last-child svg { rotate: 90deg; }
+.versions .icon-button:disabled { opacity: 0.35; }

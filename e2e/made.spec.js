@@ -72,8 +72,13 @@ test('a Word document from the first message, saved, then changed', async ({ pag
   const second = page.locator('.msg-jean').nth(1)
   await expect(second.locator('.prose')).toContainText('Bakery plan.docx is under this answer')
   expect((await saved(page, second, 'Save Bakery plan.docx')).text).toContain('Deliver them\nSell the rest')
-  // The first answer keeps the version it made.
+  // The first answer keeps the version it made, and each card says which it is (D164).
   expect((await saved(page, first, 'Save Bakery plan.docx')).text).not.toContain('Sell the rest')
+  await expect(first.locator('app-file .file-meta')).toContainText('Version 1')
+  await expect(second.locator('app-file .file-meta')).toContainText('Version 2')
+  await first.getByRole('button', { name: 'Open Bakery plan.docx' }).click()
+  await expect(page.locator('app-preview .versions')).toContainText('Version 1 of 2')
+  await expect(page.locator('app-preview .preview-sheet')).not.toContainText('Sell the rest')
 })
 
 test('a spreadsheet written by a script, with exact totals', async ({ page }) => {
