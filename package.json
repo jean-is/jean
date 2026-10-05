@@ -16,6 +16,7 @@
     "vendor": "node scripts/vendor.js",
     "manifest": "node scripts/manifest.js",
     "icons": "node scripts/icons.js",
+    "screenshots": "npm run build && node scripts/screenshots.js",
     "budgets": "node scripts/budgets.js",
     "typecheck": "tsc --noEmit -p .",
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",

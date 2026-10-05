@@ -40,6 +40,16 @@ export const ICONS = [
   { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
   { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
 ]
+const SCREENSHOT_LABEL = 'The welcome screen: ideas to start from, and a box to ask anything'
+/**
+ * What the richer install dialog shows (D168): the welcome screen, wide for desktops and narrow
+ * for phones (`npm run screenshots` takes them). JPEGs, as the glow makes PNGs five times heavier.
+ * Like the install icons, only the browser fetches them, so the shell doesn't precache them.
+ */
+export const SCREENSHOTS = [
+  { src: 'screenshots/wide.jpg', sizes: '1280x800', type: 'image/jpeg', form_factor: 'wide', label: SCREENSHOT_LABEL },
+  { src: 'screenshots/narrow.jpg', sizes: '824x1784', type: 'image/jpeg', form_factor: 'narrow', label: SCREENSHOT_LABEL },
+]
 export const VERSION_LINE = /^const VERSION = '.*'$/m
 
 /** @param {unknown} error */
@@ -150,6 +160,7 @@ export function buildWebmanifest (brand, description) {
     background_color: '#120c08',
     theme_color: '#120c08',
     icons: ICONS,
+    screenshots: SCREENSHOTS,
   }
   return `${JSON.stringify(manifest, null, 2)}\n`
 }
