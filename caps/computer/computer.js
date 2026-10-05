@@ -22,6 +22,7 @@ import { t, tParts, useStrings, formatBytes } from '../../core/i18n.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
 import { exactText } from '../folders/work.js'
+import { sitePage } from '../folders/site.js'
 import { imageTool } from './images.js'
 
 /** @typedef {import('../../core/loop.js').Tool} Tool */
@@ -192,10 +193,16 @@ const saveTool = {
       const link = await addFile(app.fs, { projectDir: mount.project, name: path, mimeType, bytes, pages: text === null ? [] : [text], by: 'jean' })
       made.push({ uri: link.uri, name: path, mimeType, size: bytes.length, version: nextVersion([...before, ...made], path, link.uri) })
     }
+    const here = mount.conversation?.id === app.current.peek()?.id
+    // A page that uses other files of the workspace (its scripts, styles, pictures) opens in the
+    // browser instead, where they come along; the preview shows a file on its own (D167).
+    const browsed = here && /\.html?$/i.test(made[0]?.name ?? '') && loaded.peek().has('browser') && (await usesOthers(mount.fs, made[0].name)) ? made[0].name : ''
     if (made.length) {
       ctx.meta.files = made
-      if (OPENS.has(extension(made[0].name)) && mount.conversation?.id === app.current.peek()?.id) (await import('../../ui/preview.js')).preview(made[0])
+      if (OPENS.has(extension(made[0].name)) && here && !browsed) (await import('../../ui/preview.js')).preview(made[0])
     }
+    // The browser's page of the workspace comes again when a file it was made of changed (D167).
+    if (!mount.folder && here) for (const path of done.saved) document.dispatchEvent(new CustomEvent('app-workspace-changed', { detail: { path, open: path === browsed } }))
     if (mount.folder) {
       ctx.content.push(...diffs(shown.filter((each) => done.saved.includes(each.path))))
       if (ctx.answer === 'allow_always') await (await import('../folders/folders.js')).trust(mount.folder)
@@ -210,6 +217,31 @@ const saveTool = {
     ].filter(Boolean).join(' ')
   },
 }
+
+// ─── /workspace in the browser ───────────────────────────────────────────────
+
+// The project's workspace shows in the browser at "/workspace/<path>" when the conversation has no
+// folder (D167), its pages put together as a folder's are (D156, caps/folders/site.js).
+const workspace = () => within(app.fs, join(app.projectDir, 'workspace'))
+
+/** What a path of the project's workspace shows in the browser. @param {string} path */
+export const workspacePage = (path) => sitePage(workspace(), path, '/workspace')
+
+/** Whether the project's workspace holds anything. */
+export const workspaceHolds = async () => (await workspace().list('').catch(() => [])).length > 0
+
+/** Whether a file a page of the workspace was made of changed since. @param {Record<string, string>} files */
+export async function workspaceMoved(files) {
+  const fs = workspace()
+  for (const [path, stamp] of Object.entries(files)) {
+    const now = await fs.stat?.(path).catch(() => null)
+    if (`${now?.size}:${now?.lastModified}` !== stamp) return true
+  }
+  return false
+}
+
+/** Whether a page uses other files of its workspace, which the preview can't show with it. @param {import('../../core/types.js').FS} fs @param {string} path */
+const usesOthers = async (fs, path) => Object.keys((/** @type {any} */ (await sitePage(fs, path).catch(() => ({})))).files ?? {}).length > 1
 
 // ─── The internet ────────────────────────────────────────────────────────────
 
