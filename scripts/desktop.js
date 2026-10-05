@@ -235,8 +235,10 @@ async function stage () {
 }
 
 /**
- * Makes the universal binary an app the system can open, named for display: the system keeps its
- * data under the identifier (DESKTOP), never the name.
+ * Makes the embedded universal binary an app the system can open, named for display: the system
+ * keeps its data under the identifier (DESKTOP), never the name. The fallback used when the build
+ * doesn't run on a Mac, so the X-Frame-Options patch (bundlePatched, D160) can't be compiled or
+ * signed; this app has no patch and opens a plain embedded window.
  * @param {string} binary @param {{ name: string }} brand @param {string} version
  */
 async function bundle (binary, brand, version) {
@@ -246,10 +248,57 @@ async function bundle (binary, brand, version) {
   await rename(binary, join(app, 'Contents', 'MacOS', DESKTOP.binary))
   await writeFile(join(app, 'Contents', 'Info.plist'), infoPlist(brand, version))
   await writeFile(join(app, 'Contents', 'Resources', 'icon.icns'), icns(await readFile(join(ROOT, 'icons', 'icon-512.png'))))
-  // Embedding Jean's files broke the binary's signature, and Apple silicon runs nothing unsigned:
-  // it is signed again, for any Mac (ad hoc). Opening it from a download needs a Developer ID too.
-  if (process.platform === 'darwin') await run('codesign', ['--force', '--sign', '-', app])
-  else console.warn(`${relative(ROOT, app)}: sign it on a Mac before it opens on Apple silicon: codesign --force --sign - "${brand.name}.app"`)
+  console.warn(`${relative(ROOT, app)}: built off a Mac, so without the browser pane's X-Frame-Options patch and unsigned; build on a Mac for the patched, signed app`)
+}
+
+/**
+ * Compiles the two tiny native pieces of the patched Mac app (D160), universal for both kinds of
+ * Mac: the launcher that becomes the bundle's executable, and the library it inserts to turn on
+ * WebKit's iframe-embedding feature. From source in desktop/, never committed binaries, like the
+ * disk image's background. On a Mac only (clang needs the macOS SDK).
+ * @returns {Promise<{ launcher: string, dylib: string }>}
+ */
+async function compileNative () {
+  const launcher = join(WORK, DESKTOP.binary)
+  const dylib = join(WORK, 'libjeanframe.dylib')
+  const arch = ['-arch', 'x86_64', '-arch', 'arm64']
+  await run('clang', [...arch, '-O2', '-o', launcher, join(ROOT, 'desktop', 'launcher.c')])
+  await run('clang', [...arch, '-O2', '-dynamiclib', '-framework', 'Foundation', '-framework', 'CoreGraphics', '-o', dylib, join(ROOT, 'desktop', 'jeanframe.m')])
+  return { launcher, dylib }
+}
+
+/**
+ * The patched Mac app (D160): bundle mode, so Neutralino reads resources.neu from disk and its
+ * embedded-resource reader (fragile to a changed load address) is out of the way. Contents/MacOS
+ * holds only code — the launcher (the bundle's executable, DESKTOP.binary) and the real Neutralino
+ * binary (jean-bin) — so code signing is happy; resources.neu and the config go in Resources/,
+ * where the launcher points Neutralino with --path. The launcher inserts libjeanframe.dylib, which
+ * lets a framed site that refuses embedding show in the browser pane. Signed once each, from
+ * unsigned (re-signing over a signature corrupts the embedded resources), the real binary as plain
+ * nested code so it carries no Info.plist binding of its own.
+ * @param {string} binary  the bundle-mode (not embedded) Neutralino universal binary
+ * @param {string} resourcesNeu  the bundle's resources.neu
+ * @param {string} configFile  the neutralino.config.json to read at runtime
+ * @param {{ name: string }} brand @param {string} version
+ */
+async function bundlePatched (binary, resourcesNeu, configFile, brand, version) {
+  const app = join(OUT, `${brand.name}.app`)
+  const contents = join(app, 'Contents')
+  await mkdir(join(contents, 'MacOS'), { recursive: true })
+  await mkdir(join(contents, 'Resources'), { recursive: true })
+  await mkdir(join(contents, 'Frameworks'), { recursive: true })
+  const { launcher, dylib } = await compileNative()
+  await copyFile(launcher, join(contents, 'MacOS', DESKTOP.binary))
+  await copyFile(binary, join(contents, 'MacOS', `${DESKTOP.binary}-bin`))
+  await copyFile(dylib, join(contents, 'Frameworks', 'libjeanframe.dylib'))
+  await copyFile(resourcesNeu, join(contents, 'Resources', 'resources.neu'))
+  await copyFile(configFile, join(contents, 'Resources', 'neutralino.config.json'))
+  await writeFile(join(contents, 'Info.plist'), infoPlist(brand, version))
+  await writeFile(join(contents, 'Resources', 'icon.icns'), icns(await readFile(join(ROOT, 'icons', 'icon-512.png'))))
+  await run('codesign', ['--remove-signature', join(contents, 'MacOS', `${DESKTOP.binary}-bin`)])
+  for (const path of [join(contents, 'MacOS', `${DESKTOP.binary}-bin`), join(contents, 'Frameworks', 'libjeanframe.dylib'), join(contents, 'MacOS', DESKTOP.binary), app]) {
+    await run('codesign', ['--force', '--sign', '-', path])
+  }
 }
 
 /**
@@ -325,14 +374,33 @@ async function main (argv) {
   await writeFile(join(WORK, 'neutralino.config.json'), `${JSON.stringify(neutralinoConfig(BRAND, { version, description, copyright }), null, 2)}\n`)
   await binaries()
   await stage()
+  const built = join(WORK, 'build', DESKTOP.binary)
+  const mac = `${DESKTOP.binary}-mac_universal`
+  // The patched Mac app (D160) runs in bundle mode, so on a Mac we build that way first and keep its
+  // Neutralino binary and resources.neu, which the embedded pass that follows would overwrite. The
+  // patch is Mac-only (WebKit, a dylib), so off a Mac this pass is skipped and the Mac app is the
+  // plain embedded one.
+  const patched = process.platform === 'darwin'
+  let macMaterials
+  if (patched) {
+    await neu('build')
+    const stash = join(WORK, 'mac-bundle')
+    await rm(stash, { recursive: true, force: true })
+    await mkdir(stash, { recursive: true })
+    macMaterials = { binary: join(stash, mac), resources: join(stash, 'resources.neu') }
+    await copyFile(join(built, mac), macMaterials.binary)
+    await copyFile(join(built, 'resources.neu'), macMaterials.resources)
+  }
+  // Embedded single files for Windows and Linux (D155). On a Mac its own embedded binary is unused:
+  // the patched app replaces it.
   await neu('build', '--embed-resources', '--clean')
   await rm(OUT, { recursive: true, force: true })
   await mkdir(OUT, { recursive: true })
-  const built = join(WORK, 'build', DESKTOP.binary)
   for (const name of await readdir(built)) {
-    if (name === `${DESKTOP.binary}-mac_universal`) await bundle(join(built, name), BRAND, version)
+    if (name === mac) { if (!patched) await bundle(join(built, name), BRAND, version) }
     else await rename(join(built, name), join(OUT, name))
   }
+  if (macMaterials) await bundlePatched(macMaterials.binary, macMaterials.resources, join(WORK, 'neutralino.config.json'), BRAND, version)
   if (target === 'dmg') await diskImage(BRAND, version)
   for (const name of (await readdir(OUT)).sort()) {
     console.log(`${relative(ROOT, join(OUT, name)).padEnd(40)} ${`${((await size(join(OUT, name))) / 1024 / 1024).toFixed(1)} MB`.padStart(9)}`)
