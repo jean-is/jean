@@ -3,8 +3,6 @@
    beside the conversation on a wide screen, over it on a narrow one. A page keeps the white it
    was made on. Logical properties only. */
 
-.bar .browser-toggle { margin-inline-start: auto; }
-
 /* Back, forward and reload, the address, then a new tab, full screen and close. */
 .browser-bar { gap: 0.15rem; padding: 0.45rem 0.5rem; }
 .browser-bar .icon-button { flex: none; inline-size: 2.25rem; block-size: 2.25rem; }

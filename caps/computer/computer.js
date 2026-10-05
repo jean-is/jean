@@ -450,12 +450,21 @@ export async function typed(command, { signal, ask }) {
   return { ...done, refused }
 }
 
+/** What Tab offers in the terminal (D170): `compgen`'s commands, or files, a folder's ending in /. Nobody is told. @param {string} word @param {boolean} commands */
+export async function completions(word, commands) {
+  const quoted = `'${word.replaceAll("'", "'\\''")}'`
+  const command = commands ? `compgen -A command -- ${quoted}` : `compgen -d -S / -- ${quoted}; compgen -f -- ${quoted}`
+  const { done } = await execute({ engine: 'shell', command }, /** @type {ToolContext} */ (/** @type {unknown} */ ({ signal: new AbortController().signal, meta: {} })))
+  const found = new Set(String(done.stdout ?? '').split('\n').filter(Boolean))
+  return [...found].filter((name) => !found.has(`${name}/`)).sort()
+}
+
 /** The terminal's key, left to right in any language: Control, which a Mac writes ⌃ (D166). */
 export const keys = html`<kbd><bdi dir="ltr">${/Mac|iPhone|iPad/.test(navigator.platform) ? '⌃`' : 'Ctrl+`'}</bdi></kbd>`
 /** The terminal's prompt, the shell's: ">_". */
 export const prompt = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.5 7 5 5-5 5M12 17.5h7.5"/></svg>`
 
-/** In the bar, once the terminal has been opened: it opens or closes it. */
+/** At the main area's top, once the terminal has been opened: it opens or closes it (D170). */
 class TerminalToggle extends Element {
   render() {
     if (!app.settings.value.terminal) return nothing

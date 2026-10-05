@@ -20,6 +20,10 @@
 .terminal-line { display: flex; align-items: baseline; gap: 1ch; margin-inline-start: -0.6rem; padding-inline-start: calc(0.6rem - 2px); border-inline-start: 2px solid transparent; }
 .terminal-line:focus-within { border-inline-start-color: var(--flame); }
 :root .terminal-line textarea { flex: 1; min-inline-size: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; outline: 0; font: inherit; resize: none; field-sizing: content; }
+/* What Tab offers when it can't choose (D170), under the line, side by side as bash lists them. The
+   log takes the focus a selection gives it, for what is typed next to go to the line, unmarked. */
+.terminal-choices { display: flex; flex-wrap: wrap; gap: 0 2ch; margin: 0.25rem 0 0; color: var(--ink-soft); }
+.terminal-body:focus { outline: 0; }
 
 @media (prefers-reduced-motion: reduce) { .terminal-entry.is-running::after { animation: none; } }
 @media (forced-colors: active) {

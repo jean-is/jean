@@ -4,8 +4,9 @@
 // /workspace: what it changes there is kept at once, as the user's own, in their folder too; a new
 // site is asked about under it, as Settings › Computer has it; and the brain is told what ran with
 // the next message. Each conversation's terminal keeps what it showed for the visit. ↑ and ↓ go
-// through what was typed, Ctrl+C stops what runs, Ctrl+L clears. Opened from Settings › Computer or
-// with Ctrl+`, then from the bar too. Loaded the first time it opens, with its style sheet.
+// through what was typed, Tab completes, Ctrl+C stops what runs, Ctrl+L clears; a click or a key
+// anywhere in it goes to the line (D170). Opened from Settings › Computer or with Ctrl+`, then from the
+// main area too. Loaded the first time it opens, with its style sheet.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -15,7 +16,7 @@ import { icons } from '../../ui/icons.js'
 import { appendRecords } from '../../core/conversations.js'
 import { noteRecord } from '../../core/events.js'
 import { t, tParts, locale } from '../../core/i18n.js'
-import { typed, clip, prompt, keys } from './computer.js'
+import { typed, completions, clip, prompt, keys } from './computer.js'
 
 /** @typedef {import('../../core/loop.js').PermissionOption} PermissionOption */
 /**
@@ -47,6 +48,8 @@ const terminals = new Map()
 const typedBefore = []
 let back = 0
 let draft = ''
+/** What Tab offers, under the line until the next key. @type {string[]} */
+let choices = []
 /** Whether the log follows what comes, as it does until the user scrolls up. */
 let following = true
 
@@ -54,13 +57,16 @@ let following = true
 const terminalOf = (id = '') => terminals.get(id) ?? /** @type {{ entries: Entry[], cwd: string }} */ (terminals.set(id, { entries: [], cwd: '/workspace' }).get(id))
 const current = () => terminalOf(app.current.peek()?.id)
 
-/** Opens the pane; from then on, the bar has a button for it. */
+/** Opens the pane, or brings the keys to it; from then on, the main area has a button for it. */
 export function show() {
   open.value = true
+  toLine()
   if (!app.settings.peek().terminal) updateSettings({ terminal: true })
 }
 export const close = () => { open.value = false }
-export const toggle = () => (open.peek() ? close() : show())
+/** From ⌃` (`keys`), it closes only once the keys are in it. @param {boolean} [keys] */
+export const toggle = (keys = false) => (open.peek() && (!keys || pane.contains(document.activeElement)) ? close() : show())
+const toLine = () => pane.querySelector('textarea')?.focus()
 
 const stop = () => { for (const entry of current().entries) entry.running?.abort() }
 const clear = () => {
@@ -68,27 +74,29 @@ const clear = () => {
   terminal.entries = terminal.entries.filter((entry) => entry.running)
   bump()
 }
+const choose = (/** @type {string[]} */ names) => { choices = names; bump() }
 
 class Terminal extends Element {
   render() {
     if (!open.value) return nothing
     void moves.value
     const terminal = terminalOf(app.current.value?.id)
-    const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => void} */ run) => html`<button class="icon-button" title=${label} aria-label=${label} @click=${run}>${icon}</button>`
-    return html`<aside class="pane terminal" aria-label=${t('computer.terminal')} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && !event.isComposing && close()}>
+    const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => void} */ run) => html`<button class="icon-button" title=${label} aria-label=${label} @click=${() => { run(); toLine() }}>${icon}</button>`
+    return html`<aside class="pane terminal" aria-label=${t('computer.terminal')} @keydown=${keyed} @click=${focusLine}>
       <header class="pane-head">
         <h2>${t('computer.terminal')}</h2>
         ${terminal.entries.some((entry) => entry.running) ? button(t('action.stop'), icons.stop, stop) : nothing}
         ${button(t('computer.terminal.clear'), icons.trash, clear)}
         ${button(t('action.close'), icons.close, close)}
       </header>
-      <div class="terminal-body" dir="ltr" @scroll=${scrolled} @click=${focusLine}>
+      <div class="terminal-body" dir="ltr" tabindex="-1" @scroll=${scrolled}>
         ${terminal.entries.length ? nothing : html`<p class="terminal-hint" dir="auto">${prompt}<span>${tParts('computer.terminal.text', { keys })}</span></p>`}
         <div role="log">${terminal.entries.map(entry)}</div>
         <form class="terminal-line" @submit=${(/** @type {Event} */ event) => event.preventDefault()}>
           <span aria-hidden="true">${terminal.cwd} $</span>
           <textarea rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label=${t('computer.terminal.command')} @keydown=${typing}></textarea>
         </form>
+        <p class="terminal-choices" role="status">${choices.map((name) => html`<span>${name}</span>`)}</p>
       </div>
     </aside>`
   }
@@ -122,22 +130,34 @@ function scrolled(event) {
   following = body.scrollHeight - body.scrollTop - body.clientHeight < 32
 }
 
-/** A click in the log, not a selection or on a button, is for the line. @param {Event} event */
+const CONTROLS = 'button, textarea'
+/** The key pressed, whatever the keyboard's alphabet. @param {KeyboardEvent} event */
+const letterOf = (event) => (/^[a-z]$/i.test(event.key) ? event.key.toLowerCase() : event.code.replace(/^Key/, '').toLowerCase())
+
+/** A click anywhere in the terminal, not a selection or on a control, is for the line. @param {Event} event */
 function focusLine(event) {
-  const body = /** @type {HTMLElement} */ (event.currentTarget)
-  if (getSelection()?.isCollapsed && !/** @type {HTMLElement} */ (event.target).closest('button, textarea')) body.querySelector('textarea')?.focus()
+  if (getSelection()?.isCollapsed && !/** @type {HTMLElement} */ (event.target).closest(CONTROLS)) toLine()
+}
+
+/** Escape closes; a character or a paste elsewhere in it, as on the log a selection focuses, goes to the line. @param {KeyboardEvent} event */
+function keyed(event) {
+  if (event.isComposing) return
+  const shortcut = (event.ctrlKey && !event.altKey) || event.metaKey
+  if (event.key === 'Escape') close()
+  else if (!/** @type {HTMLElement} */ (event.target).closest(CONTROLS) && (shortcut ? letterOf(event) === 'v' : event.key.length === 1)) toLine()
 }
 
 /**
  * Enter runs (never while an IME is composing), Shift+Enter adds a line; ↑ and ↓ go through what was
- * typed; Ctrl+C stops what runs and drops the line, unless text is selected; Ctrl+L clears.
+ * typed; Tab completes, on a line with something on it, so an empty one lets focus go on; Ctrl+C
+ * stops what runs and drops the line, unless text is selected; Ctrl+L clears.
  * @param {KeyboardEvent} event
  */
 function typing(event) {
   const area = /** @type {HTMLTextAreaElement} */ (event.target)
   if (event.isComposing || event.keyCode === 229) return
-  // The key pressed, whatever the keyboard's alphabet.
-  const letter = /^[a-z]$/i.test(event.key) ? event.key.toLowerCase() : event.code.replace(/^Key/, '').toLowerCase()
+  if (!/^(Tab|Shift|Control|Alt|Meta)$/.test(event.key) && choices.length) choose([])
+  const letter = letterOf(event)
   const control = event.ctrlKey && !event.metaKey && !event.altKey
   const up = event.key === 'ArrowUp' && !area.value.slice(0, area.selectionStart).includes('\n')
   const down = event.key === 'ArrowDown' && !area.value.slice(area.selectionEnd).includes('\n')
@@ -158,7 +178,45 @@ function typing(event) {
   } else if (control && letter === 'l') {
     event.preventDefault()
     clear()
+  } else if (event.key === 'Tab' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && area.value.trim()) {
+    event.preventDefault()
+    complete(area).catch(() => {})
   }
+}
+
+/** The word the caret ends, unquoted, the quote it is in, and whether it names a command. @param {string} line */
+function wordAt(line) {
+  let [word, quote, command] = ['', '', true]
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]
+    if (char === quote) quote = ''
+    else if (char === '\\' && quote !== "'") word += line[++i] ?? ''
+    else if (quote) word += char
+    else if (char === '"' || char === "'") quote = char
+    else if (/[\s|;&()<>]/.test(char)) {
+      command = /[\n|;&(]/.test(char) || (command && !word && !/[<>]/.test(char))
+      word = ''
+    } else word += char
+  }
+  return { word, quote, command }
+}
+
+/** A name as the shell reads it: its specials escaped, or as they go inside the quote it is in. @param {string} text @param {string} quote */
+const escape = (text, quote) => (quote === "'" ? text : text.replace(quote ? /["\\$`]/g : /[\s"'\\|;&()<>$`*?[\]{}!#]/g, '\\$&'))
+
+/**
+ * Tab, as in bash (D170): a command's name first, else a file's. One choice completes the word, more
+ * what they share, or else show under the line. Dropped if the line changed meanwhile. @param {HTMLTextAreaElement} area
+ */
+async function complete(area) {
+  const { value, selectionStart: caret } = area
+  const { word, quote, command } = wordAt(value.slice(0, caret))
+  const found = (await completions(word, command && !word.includes('/'))).filter((name) => name.startsWith(word))
+  if (area.value !== value || area.selectionStart !== caret || !found.length) return
+  let shared = found[0]
+  for (const name of found) while (!name.startsWith(shared)) shared = shared.slice(0, -1)
+  if (found.length > 1 && shared === word) return choose(found.map((name) => name.slice(word.lastIndexOf('/') + 1)))
+  area.setRangeText(escape(shared.slice(word.length), quote) + (found.length > 1 || shared.endsWith('/') ? '' : `${quote} `), caret, caret, 'end')
 }
 
 /** Runs what the user typed on the conversation's computer, and tells the brain. @param {string} command */
@@ -177,8 +235,10 @@ async function run(command) {
   /** A new site, asked about under the command; declined if it is stopped meanwhile. @param {string} site @returns {Promise<PermissionOption>} */
   const ask = (site) => new Promise((resolve) => {
     const answer = (/** @type {PermissionOption} */ option) => {
+      const there = pane.contains(document.activeElement)
       entry.site = undefined
       bump()
+      if (there) toLine()
       resolve(option)
     }
     entry.site = { site, resolve: answer }
@@ -210,4 +270,5 @@ async function tell(conversation, entry) {
 }
 
 define('app-terminal', Terminal)
-dock.join(document.createElement('app-terminal'))
+const pane = document.createElement('app-terminal')
+dock.join(pane)

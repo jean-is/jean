@@ -45,7 +45,7 @@ test('the user browses beside the conversation: back, forward, reload, full scre
   await page.keyboard.press('ControlOrMeta+Shift+KeyB')
   await expect(pane).toHaveCount(0)
   // The header's button opens it, empty, its address field ready.
-  await page.locator('.bar .browser-toggle').click()
+  await page.locator('.views .browser-toggle').click()
   await expect(pane.locator('.browser-note')).toContainText('Pages open here')
   await expect(pane.locator('.browser-bar input')).toHaveAttribute('placeholder', 'Type an address, or words to look up')
   await expect(pane.getByRole('button', { name: 'Back' })).toBeDisabled()
@@ -100,7 +100,7 @@ test('the user browses beside the conversation: back, forward, reload, full scre
   await pane.getByRole('button', { name: 'Close' }).click()
   await expect(pane).toHaveCount(0)
   // The header's button brings it back on the same page.
-  await page.locator('.bar .browser-toggle').click()
+  await page.locator('.views .browser-toggle').click()
   await expect(site(page).locator('h1')).toHaveText('The bakery')
 })
 
@@ -195,7 +195,7 @@ test('the browser and a file share the side of the window, neither covering the 
   await expect(preview.locator('.preview-grid')).toBeVisible()
   const alone = await preview.boundingBox()
   // The browser comes after the file: one above the other, as wide, and the file's still in view.
-  await page.locator('.bar .browser-toggle').click()
+  await page.locator('.views .browser-toggle').click()
   await go(page, `${SITE}/bakery.html`)
   await expect(site(page).locator('h1')).toHaveText('The bakery')
   let [first, second] = await Promise.all([preview.boundingBox(), pane.boundingBox()])
