@@ -3,7 +3,8 @@
 // opens a page there and reads it; the page on show reaches the brain's next note. A site that
 // refuses to be framed opens in a tab of its own from then on, and Jean recommends installing it
 // as an app. ⌘⇧B opens and closes it. It shares the side of the window with a file's preview, neither
-// covering the other, and its edge and the divider between them resize them (D144). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
+// covering the other, and its edge and the divider between them resize them (D144). A web page Jean
+// made opens there from its card (D172). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, closeTasks, BRAIN_URL, SALES } from './helpers.js'
 
@@ -177,6 +178,26 @@ test('the brain offers the browser, then opens a page there and reads it, asking
   const notes = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
     .flatMap((record) => (record.update?.sessionUpdate === '_system_note' ? [record.update.text] : [])))
   expect(notes).toContain(`The <page> section is now:\nThe browser beside the conversation shows ${SITE}/bakery.html.`)
+})
+
+test('a web page Jean made opens from its card in the browser once it is on, as the card holds it (D172)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
+  await ask(page, 'Make a web page for the bakery')
+  const answer = page.locator('.msg-jean').last()
+  await expect(answer.locator('.prose')).toContainText('Bakery.html is under this answer')
+  await answer.locator('app-file .file-name').click()
+  const pane = page.locator('app-browser .browser')
+  await expect(pane.locator('.browser-bar input')).toHaveValue('Bakery.html')
+  await expect(pane.getByRole('button', { name: 'Open in a new tab' })).toBeDisabled()
+  // In a frame of the preview's kind: its style applies and its script runs.
+  const shown = page.frameLocator('.browser-page')
+  await expect(shown.locator('h1')).toHaveCSS('color', 'rgb(180, 70, 20)')
+  await expect(shown.locator('#out')).toHaveText('Baked by a script CSS1Compat')
+  await expect(page.locator('app-preview .preview')).toHaveCount(0)
+  expect(await page.evaluate(async () => (await (await import('/ui/caps.js')).loaded.value.get('browser')?.sections?.())?.page))
+    .toBe('The browser beside the conversation shows Bakery.html, a page you made, as one of your answers kept it.')
 })
 
 test('the browser and a file share the side of the window, neither covering the other', async ({ page }) => {

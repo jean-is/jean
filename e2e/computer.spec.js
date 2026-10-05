@@ -339,7 +339,7 @@ test('npm init, ls and run; a server refused, with the page beside the conversat
   await expect(answer).toContainText('only install, init, ls and run work here')
 })
 
-test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167)', async ({ page }) => {
+test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172)', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await connectFakeBrain(page)
@@ -370,6 +370,19 @@ test('the project’s workspace in the browser: a page that uses its other files
   await expect(pane.locator('.browser-bar input')).toHaveValue('/workspace/site/')
   await go('/workspace/nothing.html')
   await expect(pane.locator('.browser-note')).toContainText('nothing.html isn’t in')
+  // Its card opens it there, as the workspace has it while the card is still its version (D172)…
+  const card = page.locator('.msg-jean').first().getByRole('button', { name: 'Open site/index.html' })
+  await card.click()
+  await expect(pane.locator('.browser-bar input')).toHaveValue('/workspace/site/index.html')
+  await expect(shown.locator('h1')).toHaveText('Fresh bread today')
+  // …and as the card holds it, on its own, once the page changed. A page on its own opens there too.
+  await command(page, `$ echo '<h1>New bread</h1>' > site/index.html`)
+  await expect(shown.locator('h1')).toHaveText('New bread')
+  await expect(pane.locator('.browser-bar input')).toHaveValue('/workspace/site/index.html')
+  await card.click()
+  await expect(pane.locator('.browser-bar input')).toHaveValue('site/index.html')
+  await expect(shown.locator('h1')).toHaveText('Loading')
+  await expect(page.locator('app-preview .preview')).toHaveCount(0)
   // Opened empty, after a reload, it offers the workspace, which is kept (Playwright's WebKit keeps nothing, like a private window).
   if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return
   await page.reload()

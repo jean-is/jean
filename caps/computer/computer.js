@@ -16,7 +16,7 @@ import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { icons } from '../../ui/icons.js'
 import { serviceURL } from '../../core/settings.js'
 import { join, walk } from '../../core/fs.js'
-import { addFile } from '../../core/files.js'
+import { addFile, sha256Hex } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion } from '../../core/events.js'
 import { t, tParts, useStrings, formatBytes } from '../../core/i18n.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
@@ -194,9 +194,9 @@ const saveTool = {
       made.push({ uri: link.uri, name: path, mimeType, size: bytes.length, version: nextVersion([...before, ...made], path, link.uri) })
     }
     const here = mount.conversation?.id === app.current.peek()?.id
-    // A page that uses other files of the workspace (its scripts, styles, pictures) opens in the
-    // browser instead, where they come along; the preview shows a file on its own (D167).
-    const browsed = here && /\.html?$/i.test(made[0]?.name ?? '') && loaded.peek().has('browser') && (await usesOthers(mount.fs, made[0].name)) ? made[0].name : ''
+    // A page opens in the browser once it is on, where the other files of the workspace it uses come
+    // along (D167), as its card opens it there (D172); the preview shows a file on its own.
+    const browsed = here && /\.html?$/i.test(made[0]?.name ?? '') && loaded.peek().has('browser') ? made[0].name : ''
     if (made.length) {
       ctx.meta.files = made
       if (OPENS.has(extension(made[0].name)) && here && !browsed) (await import('../../ui/preview.js')).preview(made[0])
@@ -240,8 +240,11 @@ export async function workspaceMoved(files) {
   return false
 }
 
-/** Whether a page uses other files of its workspace, which the preview can't show with it. @param {import('../../core/types.js').FS} fs @param {string} path */
-const usesOthers = async (fs, path) => Object.keys((/** @type {any} */ (await sitePage(fs, path).catch(() => ({})))).files ?? {}).length > 1
+/** Whether the project's workspace still holds a file as a card of it has it (D172), by its content, which names the card's file. @param {string} path @param {string} uri */
+export async function workspaceKeeps(path, uri) {
+  const bytes = await workspace().readBytes(path).catch(() => null)
+  return Boolean(bytes && uri.startsWith(`files/sha256-${await sha256Hex(bytes)}.`))
+}
 
 // ─── The internet ────────────────────────────────────────────────────────────
 

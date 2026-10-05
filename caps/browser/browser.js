@@ -20,6 +20,8 @@
 // links followed here. A page Jean makes or changes there opens by itself, and the page on show
 // comes again when a file it was made of changes, whoever changed it. Without a folder, the
 // project's workspace shows the same way, at "/workspace/<path>", as the computer names it (D167).
+// A web page's card under an answer opens it here too: the workspace's page while it is still
+// that version, otherwise the card's version on its own, under its name (D172).
 import { html, svg, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, computed, effect } from '@preact/signals-core'
@@ -40,10 +42,15 @@ const PAGE = new URL('../../preview.html', import.meta.url).href
 const FOLDER = 'folder:'
 /** And one of the project's workspace, before "<path>" (D167). */
 const WORKSPACE = 'workspace:'
-const isLocal = (/** @type {string} */ url) => url.startsWith(FOLDER) || url.startsWith(WORKSPACE)
+/** And one of a page Jean made, as a card holds it, before its file in the project (D172). */
+const MADE = 'made:'
+const isLocal = (/** @type {string} */ url) => url.startsWith(FOLDER) || url.startsWith(WORKSPACE) || url.startsWith(MADE)
 const isWorkspace = (/** @type {string} */ url) => url.startsWith(WORKSPACE)
+const isMade = (/** @type {string} */ url) => url.startsWith(MADE)
+/** The names of the pages opened from their cards, by their files. @type {Map<string, string>} */
+const named = new Map()
 /** What the address field shows of a local address. @param {string} url */
-const shownAs = (url) => (isWorkspace(url) ? `/workspace/${url.slice(WORKSPACE.length)}` : url.slice(FOLDER.length))
+const shownAs = (url) => (isWorkspace(url) ? `/workspace/${url.slice(WORKSPACE.length)}` : isMade(url) ? named.get(url.slice(MADE.length)) ?? '' : url.slice(FOLDER.length))
 /** The workspace's name in a sentence, kept left to right in right-to-left text. */
 const WORKSPACE_NAME = '\u2066/workspace\u2069'
 // Scripts, forms and pop-ups in the site's own origin; never the top: the site can't take Jean's place.
@@ -97,6 +104,8 @@ const computerOn = async () => (unlocked.peek().has('computer') ? (computer = aw
 /** Whether the project's workspace holds anything, for the empty pane's way to it. */
 const stocked = signal(false)
 const restock = async () => { stocked.value = Boolean(await (await computerOn())?.workspaceHolds()) }
+// The computer can come on after the pane opened empty, as Jean starts: its workspace is offered then.
+effect(() => { if (unlocked.value.has('computer') && open.peek() && !page.peek()) restock() })
 
 /**
  * Where a path of /workspace leads (D167): the conversation's folder, as the computer has it, or
@@ -232,12 +241,30 @@ async function folderTo(url, click = false) {
   const address = shownAs(url)
   const [folder, ...path] = isWorkspace(url) ? [WORKSPACE_NAME, url.slice(WORKSPACE.length)] : address.split('/')
   const warn = (/** @type {unknown} */ error) => console.warn('Browser', error)
-  const shown = (isWorkspace(url)
-    ? !folders?.folderOf(app.current.peek()) && await (await computerOn())?.workspacePage(path.join('/')).catch(warn)
+  const shown = (isMade(url) ? await madePage(url.slice(MADE.length)).catch(warn)
+    : isWorkspace(url) ? !folders?.folderOf(app.current.peek()) && await (await computerOn())?.workspacePage(path.join('/')).catch(warn)
     : await (await foldersOn())?.folderPage(address, click).catch(warn)) || { note: 'elsewhere' }
   if (at !== asked) return
   loading.value = false
-  local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), allow.peek(), address) } : { note: t(`browser.${shown.note}`, { folder, page: path.join('/') }) }
+  local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), allow.peek(), address) }
+    : { note: isMade(url) ? t('files.missing', { name: address }) : t(`browser.${shown.note}`, { folder, page: path.join('/') }) }
+}
+
+/**
+ * A web page Jean made, from its card under an answer (D172): the project's workspace's page while
+ * the card holds it as it is there now, so its other files come along; otherwise the card's
+ * version, on its own, as the preview showed it. @param {{ uri: string, name: string }} file
+ */
+export async function showMade({ uri, name }) {
+  named.set(uri, name)
+  const same = !(await foldersOn())?.folderOf(app.current.peek()) && await (await computerOn())?.workspaceKeeps(name, uri)
+  visit(same ? `${WORKSPACE}${name}` : `${MADE}${uri}`, { click: true })
+}
+
+/** A page Jean made, as one of its cards holds it; null once it is no longer there. @param {string} uri */
+async function madePage(uri) {
+  const bytes = await app.fs.readBytes(`${app.projectDir}/${uri}`)
+  return bytes && { html: new TextDecoder().decode(bytes), path: named.get(uri) ?? '', files: {} }
 }
 
 /**
@@ -271,7 +298,8 @@ addEventListener('message', ({ source, data }) => {
   if (typeof data?.open !== 'string') return savePage(data, rights.peek().allows.downloads)
   const base = new URL(shown.path.split('/').map(encodeURIComponent).join('/'), 'https://folder.invalid/')
   const to = new URL(data.open, base)
-  if (to.origin === base.origin) visit(`${top}${decodeURIComponent(to.pathname.slice(1))}`, { click: true })
+  // A page from its card stands alone: its own links lead nowhere (D172).
+  if (to.origin === base.origin) isMade(url) || visit(`${top}${decodeURIComponent(to.pathname.slice(1))}`, { click: true })
   else if (/^https?:$/.test(to.protocol)) visit(to.href, { click: true })
 })
 
@@ -296,7 +324,7 @@ document.addEventListener('app-workspace-changed', (event) => {
 setInterval(async () => {
   const shown = page.peek()
   const made = local.peek()
-  if (!open.peek() || !shown || !isLocal(shown.url) || !made || !('files' in made) || document.hidden || loading.peek()) return
+  if (!open.peek() || !shown || !isLocal(shown.url) || isMade(shown.url) || !made || !('files' in made) || document.hidden || loading.peek()) return
   const moved = isWorkspace(shown.url) ? computer?.workspaceMoved(made.files) : (await foldersOn())?.pageMoved(shown.url.slice(FOLDER.length).split('/')[0], made.files)
   if ((await moved) && local.peek() === made) frameTo(shown.url)
 }, 1500)
@@ -576,6 +604,7 @@ register({
     const shown = page.peek()
     if (!open.peek() || !shown || shown.own) return {}
     if (isWorkspace(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the project's workspace.` }
+    if (isMade(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, a page you made, as one of your answers kept it.` }
     if (isLocal(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the user's folder.` }
     return { page: `The browser beside the conversation shows ${shown.url.split('#')[0]}${trail.moved ? ', or a page the user went to from there' : ''}.` }
   },

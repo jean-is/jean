@@ -5,7 +5,7 @@
 import { html, nothing, render } from 'lit-html'
 import { lexer } from 'marked'
 import { Element, define } from '../../ui/base.js'
-import { register } from '../../ui/caps.js'
+import { register, loaded } from '../../ui/caps.js'
 import { app, notify, conversationOf } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
 import { markdown } from '../../ui/markdown.js'
@@ -140,8 +140,9 @@ const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sh
 
 /**
  * A file Jean made, under the answer: a card with its name, the kind of file it is and its size,
- * opened in the preview (D126) or saved. A drawing (.svg) is its own tile, a picture where its
- * scripts never run.
+ * opened in the preview (D126) or saved. A web page opens in the browser once it is on, where its
+ * links lead on and the other files of /workspace it uses come along (D172). A drawing (.svg) is
+ * its own tile, a picture where its scripts never run.
  */
 class FileMade extends Element {
   // A newer version of the file can take this one's place under the answer.
@@ -158,7 +159,9 @@ class FileMade extends Element {
     // Its version, once the conversation has more than one of the file (D164); a card from before versions were kept finds its own.
     const versions = versionsOf(filesMade(callsIn(app.current.value?.records ?? [], app.live.value?.turn.steps)), name)
     const version = Number(this.getAttribute('version')) || versions.findLast((each) => each.uri === uri)?.version || 0
-    const open = () => import('../../ui/preview.js').then((module) => module.preview({ uri, name, mimeType: type, ...(version && { version }) }))
+    const open = async () => (kind === 'page' && loaded.peek().has('browser')
+      ? (await import('../browser/browser.js')).showMade({ uri, name })
+      : (await import('../../ui/preview.js')).preview({ uri, name, mimeType: type, ...(version && { version }) }))
     // The whole card opens the file for a pointer; its Open button is the one keyboards and screen readers reach.
     return html`<div class="file-card" @click=${(/** @type {MouseEvent} */ event) => /** @type {HTMLElement} */ (event.target).closest('button') || open()}>
       <span class="file-tile" aria-hidden="true">${this.#url ? html`<img src=${this.#url} alt="">` : TILES[kind] ?? icons.file}</span>
