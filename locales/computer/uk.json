@@ -35,5 +35,12 @@
     "other": "{count} хвилини"
   },
   "computer.locked": "Встановлено вашою організацією",
-  "computer.reach.once": "Дозволити один раз"
+  "computer.reach.once": "Дозволити один раз",
+  "computer.terminal": "Термінал",
+  "computer.terminal.text": "Запускайте команди на комп’ютері самі, з тими самими файлами, що й у розмові; ваше наступне повідомлення скаже, що ви запускали. {keys} відкриває його звідусіль.",
+  "computer.terminal.open": "Відкрити термінал",
+  "computer.terminal.command": "Команда",
+  "computer.terminal.clear": "Очистити",
+  "computer.terminal.exit": "Код виходу {code}",
+  "computer.terminal.refused": "Не збережено, бо тим часом змінено деінде: {files}"
 }

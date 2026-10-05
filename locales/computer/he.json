@@ -34,5 +34,12 @@
     "other": "{count} דקות"
   },
   "computer.locked": "נקבע על ידי הארגון שלך",
-  "computer.reach.once": "אישור חד־פעמי"
+  "computer.reach.once": "אישור חד־פעמי",
+  "computer.terminal": "מסוף",
+  "computer.terminal.text": "הריצו בעצמכם פקודות במחשב, על אותם קבצים של השיחה; ההודעה הבאה שלכם תספר מה הרצתם. {keys} פותח אותו מכל מקום.",
+  "computer.terminal.open": "פתיחת המסוף",
+  "computer.terminal.command": "פקודה",
+  "computer.terminal.clear": "ניקוי",
+  "computer.terminal.exit": "קוד יציאה {code}",
+  "computer.terminal.refused": "לא נשמר, כי השתנה בינתיים במקום אחר: {files}"
 }

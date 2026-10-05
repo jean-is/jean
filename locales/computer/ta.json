@@ -33,5 +33,12 @@
     "other": "{count} நிமிடங்கள்"
   },
   "computer.locked": "உங்கள் நிறுவனம் அமைத்தது",
-  "computer.reach.once": "ஒருமுறை அனுமதி"
+  "computer.reach.once": "ஒருமுறை அனுமதி",
+  "computer.terminal": "டெர்மினல்",
+  "computer.terminal.text": "கணினியில் நீங்களே கட்டளைகளை இயக்குங்கள், உரையாடலின் அதே கோப்புகளில்; நீங்கள் எதை இயக்கினீர்கள் என்பதை உங்கள் அடுத்த செய்தி சொல்லும். {keys} எங்கிருந்தும் இதைத் திறக்கும்.",
+  "computer.terminal.open": "டெர்மினலைத் திற",
+  "computer.terminal.command": "கட்டளை",
+  "computer.terminal.clear": "அழி",
+  "computer.terminal.exit": "வெளியேறும் குறியீடு {code}",
+  "computer.terminal.refused": "இடையில் வேறு இடத்தில் மாறியதால் வைக்கப்படவில்லை: {files}"
 }

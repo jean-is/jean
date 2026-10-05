@@ -32,5 +32,12 @@
     "other": "{count} นาที"
   },
   "computer.locked": "ตั้งค่าโดยองค์กรของคุณ",
-  "computer.reach.once": "อนุญาตครั้งเดียว"
+  "computer.reach.once": "อนุญาตครั้งเดียว",
+  "computer.terminal": "เทอร์มินัล",
+  "computer.terminal.text": "รันคำสั่งบนคอมพิวเตอร์ด้วยตัวเอง กับไฟล์ชุดเดียวกับในบทสนทนา ข้อความถัดไปของคุณจะบอกว่าคุณรันอะไรไป {keys} เปิดได้จากทุกที่",
+  "computer.terminal.open": "เปิดเทอร์มินัล",
+  "computer.terminal.command": "คำสั่ง",
+  "computer.terminal.clear": "ล้าง",
+  "computer.terminal.exit": "รหัสออก {code}",
+  "computer.terminal.refused": "ไม่ได้เก็บไว้ เพราะระหว่างนั้นถูกเปลี่ยนที่อื่น: {files}"
 }

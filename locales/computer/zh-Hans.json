@@ -32,5 +32,12 @@
     "other": "{count} 分钟"
   },
   "computer.locked": "由你的组织设置",
-  "computer.reach.once": "允许一次"
+  "computer.reach.once": "允许一次",
+  "computer.terminal": "终端",
+  "computer.terminal.text": "自己在电脑上运行命令，使用与对话相同的文件；你的下一条消息会说明你运行了什么。{keys} 可随时打开它。",
+  "computer.terminal.open": "打开终端",
+  "computer.terminal.command": "命令",
+  "computer.terminal.clear": "清除",
+  "computer.terminal.exit": "退出码 {code}",
+  "computer.terminal.refused": "期间已在别处更改，未保存：{files}"
 }

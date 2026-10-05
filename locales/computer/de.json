@@ -33,5 +33,12 @@
     "other": "{count} Minuten"
   },
   "computer.locked": "Von deiner Organisation festgelegt",
-  "computer.reach.once": "Einmal erlauben"
+  "computer.reach.once": "Einmal erlauben",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Führe selbst Befehle auf dem Computer aus, mit denselben Dateien wie das Gespräch; deine nächste Nachricht sagt, was du ausgeführt hast. {keys} öffnet es von überall.",
+  "computer.terminal.open": "Terminal öffnen",
+  "computer.terminal.command": "Befehl",
+  "computer.terminal.clear": "Leeren",
+  "computer.terminal.exit": "Exit-Code {code}",
+  "computer.terminal.refused": "Änderungen nicht übernommen, da inzwischen anderswo geändert: {files}"
 }

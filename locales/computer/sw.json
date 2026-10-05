@@ -33,5 +33,12 @@
     "other": "dakika {count}"
   },
   "computer.locked": "Imewekwa na shirika lako",
-  "computer.reach.once": "Ruhusu mara moja"
+  "computer.reach.once": "Ruhusu mara moja",
+  "computer.terminal": "Terminali",
+  "computer.terminal.text": "Endesha amri kwenye kompyuta mwenyewe, kwenye faili zilezile za mazungumzo; ujumbe wako unaofuata unasema ulichoendesha. {keys} huifungua kutoka popote.",
+  "computer.terminal.open": "Fungua terminali",
+  "computer.terminal.command": "Amri",
+  "computer.terminal.clear": "Futa",
+  "computer.terminal.exit": "Msimbo wa kutoka {code}",
+  "computer.terminal.refused": "Haikuhifadhiwa, kwa sababu ilibadilishwa kwingine wakati huo: {files}"
 }

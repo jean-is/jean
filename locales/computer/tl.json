@@ -33,5 +33,12 @@
     "other": "{count} minuto"
   },
   "computer.locked": "Itinakda ng organisasyon mo",
-  "computer.reach.once": "Payagan nang isang beses"
+  "computer.reach.once": "Payagan nang isang beses",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Ikaw mismo ang magpatakbo ng mga command sa computer, sa parehong mga file ng usapan; sasabihin ng susunod mong mensahe kung ano ang pinatakbo mo. Binubuksan ito ng {keys} mula saanman.",
+  "computer.terminal.open": "Buksan ang terminal",
+  "computer.terminal.command": "Command",
+  "computer.terminal.clear": "I-clear",
+  "computer.terminal.exit": "Exit code {code}",
+  "computer.terminal.refused": "Hindi naitabi dahil binago sa ibang lugar samantala: {files}"
 }

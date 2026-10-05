@@ -33,5 +33,12 @@
     "other": "mintuna {count}"
   },
   "computer.locked": "Ƙungiyarka ce ta saita",
-  "computer.reach.once": "A bari sau ɗaya"
+  "computer.reach.once": "A bari sau ɗaya",
+  "computer.terminal": "Tashar umarni",
+  "computer.terminal.text": "Kai da kanka ka gudanar da umarni a kwamfutar, a kan fayilolin da tattaunawar ke amfani da su; saƙonka na gaba zai faɗi abin da ka gudanar. {keys} yana buɗe ta daga ko'ina.",
+  "computer.terminal.open": "Buɗe tashar umarni",
+  "computer.terminal.command": "Umarni",
+  "computer.terminal.clear": "Share",
+  "computer.terminal.exit": "Lambar fita {code}",
+  "computer.terminal.refused": "Ba a ajiye ba, domin an canza shi a wani wuri a halin da ake ciki: {files}"
 }

@@ -33,5 +33,12 @@
     "other": "{count} मिनिटे"
   },
   "computer.locked": "तुमच्या संस्थेने ठरवलेले",
-  "computer.reach.once": "एकदा परवानगी द्या"
+  "computer.reach.once": "एकदा परवानगी द्या",
+  "computer.terminal": "टर्मिनल",
+  "computer.terminal.text": "संगणकावर स्वतः कमांड चालवा, संभाषणातील त्याच फायलींवर; तुमचा पुढचा संदेश तुम्ही काय चालवले ते सांगतो. {keys} तो कुठूनही उघडतो.",
+  "computer.terminal.open": "टर्मिनल उघडा",
+  "computer.terminal.command": "कमांड",
+  "computer.terminal.clear": "पुसा",
+  "computer.terminal.exit": "एक्झिट कोड {code}",
+  "computer.terminal.refused": "जतन केले नाही, कारण दरम्यान दुसरीकडे बदलले: {files}"
 }

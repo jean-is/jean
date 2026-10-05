@@ -32,5 +32,12 @@
     "other": "{count} 分鐘"
   },
   "computer.locked": "由你的組織設定",
-  "computer.reach.once": "允許一次"
+  "computer.reach.once": "允許一次",
+  "computer.terminal": "終端機",
+  "computer.terminal.text": "自己在電腦上執行指令，使用與對話相同的檔案；你的下一則訊息會說明你執行了什麼。{keys} 隨時都能開啟它。",
+  "computer.terminal.open": "開啟終端機",
+  "computer.terminal.command": "指令",
+  "computer.terminal.clear": "清除",
+  "computer.terminal.exit": "結束代碼 {code}",
+  "computer.terminal.refused": "期間已在別處變更，未儲存：{files}"
 }

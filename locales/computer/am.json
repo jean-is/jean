@@ -33,5 +33,12 @@
     "other": "{count} ደቂቃዎች"
   },
   "computer.locked": "በድርጅትዎ የተቀናበረ",
-  "computer.reach.once": "አንድ ጊዜ ይፈቀድ"
+  "computer.reach.once": "አንድ ጊዜ ይፈቀድ",
+  "computer.terminal": "ተርሚናል",
+  "computer.terminal.text": "በኮምፒውተሩ ላይ ትዕዛዞችን ራስዎ ያስኪዱ፣ በውይይቱ ተመሳሳይ ፋይሎች ላይ፤ የሚቀጥለው መልእክትዎ ያስኬዱትን ይናገራል። {keys} ከየትኛውም ቦታ ይከፍተዋል።",
+  "computer.terminal.open": "ተርሚናሉን ክፈት",
+  "computer.terminal.command": "ትዕዛዝ",
+  "computer.terminal.clear": "አጽዳ",
+  "computer.terminal.exit": "የመውጫ ኮድ {code}",
+  "computer.terminal.refused": "አልተቀመጠም፤ በዚህ መሀል ሌላ ቦታ ስለተቀየረ፦ {files}"
 }

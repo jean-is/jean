@@ -35,5 +35,12 @@
     "other": "{count} минуты"
   },
   "computer.locked": "Задано вашей организацией",
-  "computer.reach.once": "Разрешить один раз"
+  "computer.reach.once": "Разрешить один раз",
+  "computer.terminal": "Терминал",
+  "computer.terminal.text": "Запускайте команды на компьютере сами, с теми же файлами, что и в разговоре; ваше следующее сообщение скажет, что вы запускали. {keys} открывает его откуда угодно.",
+  "computer.terminal.open": "Открыть терминал",
+  "computer.terminal.command": "Команда",
+  "computer.terminal.clear": "Очистить",
+  "computer.terminal.exit": "Код выхода {code}",
+  "computer.terminal.refused": "Не сохранено, так как тем временем изменено в другом месте: {files}"
 }

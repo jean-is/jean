@@ -33,5 +33,12 @@
     "other": "{count} منٹ"
   },
   "computer.locked": "آپ کے ادارے کی طرف سے طے شدہ",
-  "computer.reach.once": "ایک بار اجازت دیں"
+  "computer.reach.once": "ایک بار اجازت دیں",
+  "computer.terminal": "ٹرمینل",
+  "computer.terminal.text": "کمپیوٹر پر خود کمانڈز چلائیں، گفتگو والی انہی فائلوں پر؛ آپ کا اگلا پیغام بتاتا ہے کہ آپ نے کیا چلایا۔ {keys} اسے کہیں سے بھی کھولتا ہے۔",
+  "computer.terminal.open": "ٹرمینل کھولیں",
+  "computer.terminal.command": "کمانڈ",
+  "computer.terminal.clear": "صاف کریں",
+  "computer.terminal.exit": "ایگزٹ کوڈ {code}",
+  "computer.terminal.refused": "محفوظ نہیں ہوا، کیونکہ اس دوران کہیں اور بدل گیا: {files}"
 }

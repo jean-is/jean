@@ -34,5 +34,12 @@
     "other": "{count} minuti"
   },
   "computer.locked": "Impostato dalla tua organizzazione",
-  "computer.reach.once": "Consenti una volta"
+  "computer.reach.once": "Consenti una volta",
+  "computer.terminal": "Terminale",
+  "computer.terminal.text": "Esegui direttamente dei comandi sul computer, sugli stessi file della conversazione; il tuo prossimo messaggio dice cosa hai eseguito. {keys} lo apre da qualsiasi punto.",
+  "computer.terminal.open": "Apri il terminale",
+  "computer.terminal.command": "Comando",
+  "computer.terminal.clear": "Cancella",
+  "computer.terminal.exit": "Codice di uscita {code}",
+  "computer.terminal.refused": "Modifiche non mantenute, per cambiamenti fatti altrove nel frattempo: {files}"
 }

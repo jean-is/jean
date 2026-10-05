@@ -108,7 +108,7 @@
   "look.pixel.name": "ピクセル",
   "look.blueprint.name": "設計図",
   "look.mondrian.name": "モンドリアン",
-  "look.glass.name": "ガラス",
+  "look.human.name": "ヒューマン",
   "profile.manifesto": "マニフェスト",
   "storage.ephemeral": "プライベートウィンドウです。閉じると何も保存されません。",
   "update.ready": "{name} の新しいバージョンがあります。",

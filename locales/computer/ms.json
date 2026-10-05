@@ -32,5 +32,12 @@
     "other": "{count} minit"
   },
   "computer.locked": "Ditetapkan oleh organisasi anda",
-  "computer.reach.once": "Benarkan sekali"
+  "computer.reach.once": "Benarkan sekali",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Jalankan sendiri arahan pada komputer, pada fail yang sama dengan perbualan; mesej anda yang seterusnya menyatakan apa yang anda jalankan. {keys} membukanya dari mana-mana.",
+  "computer.terminal.open": "Buka terminal",
+  "computer.terminal.command": "Arahan",
+  "computer.terminal.clear": "Kosongkan",
+  "computer.terminal.exit": "Kod keluar {code}",
+  "computer.terminal.refused": "Tidak disimpan, kerana sementara itu diubah di tempat lain: {files}"
 }

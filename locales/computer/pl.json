@@ -35,5 +35,12 @@
     "other": "{count} minuty"
   },
   "computer.locked": "Ustawione przez twoją organizację",
-  "computer.reach.once": "Zezwól raz"
+  "computer.reach.once": "Zezwól raz",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Uruchamiaj samodzielnie polecenia na komputerze, na tych samych plikach co rozmowa; twoja następna wiadomość mówi, co zostało uruchomione. {keys} otwiera go z każdego miejsca.",
+  "computer.terminal.open": "Otwórz terminal",
+  "computer.terminal.command": "Polecenie",
+  "computer.terminal.clear": "Wyczyść",
+  "computer.terminal.exit": "Kod wyjścia {code}",
+  "computer.terminal.refused": "Nie zachowano, bo w międzyczasie zmieniono gdzie indziej: {files}"
 }

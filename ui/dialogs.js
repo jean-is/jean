@@ -683,7 +683,7 @@ function looks(look = {}) {
       ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
         <span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>
-        <span><strong>${t(`look.${id}.name`)}</strong><small>${t(`look.${id}.text`)}</small></span>
+        <span><strong>${t(`look.${id}.name`)}</strong></span>
       </label>`)}
     </fieldset>
     <details class="other">

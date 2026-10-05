@@ -108,7 +108,7 @@
   "look.pixel.name": "Píxel",
   "look.blueprint.name": "Plano",
   "look.mondrian.name": "Mondrian",
-  "look.glass.name": "Cristal",
+  "look.human.name": "Humano",
   "profile.manifesto": "Manifiesto",
   "storage.ephemeral": "Ventana privada: no se guardará nada al cerrarla.",
   "update.ready": "Hay una nueva versión de {name} lista.",

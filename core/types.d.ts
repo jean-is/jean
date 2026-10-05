@@ -155,6 +155,8 @@ export type SystemNoteData =
   | { kind: 'habit', at: string[] }
   /** the user undid a change made in their folder, by its call (D141) */
   | { kind: 'undone', call: string, path: string }
+  /** the user ran a command on the computer, in the terminal (D166) */
+  | { kind: 'terminal', command: string, exit: number }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

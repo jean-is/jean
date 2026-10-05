@@ -33,5 +33,12 @@
     "other": "{count} মিনিট"
   },
   "computer.locked": "আপনার প্রতিষ্ঠান নির্ধারণ করেছে",
-  "computer.reach.once": "একবার অনুমতি দিন"
+  "computer.reach.once": "একবার অনুমতি দিন",
+  "computer.terminal": "টার্মিনাল",
+  "computer.terminal.text": "কম্পিউটারে নিজেই কমান্ড চালান, কথোপকথনের একই ফাইলে; আপনার পরের বার্তায় জানানো হয় আপনি কী চালিয়েছেন। {keys} যেকোনো জায়গা থেকে এটি খোলে।",
+  "computer.terminal.open": "টার্মিনাল খুলুন",
+  "computer.terminal.command": "কমান্ড",
+  "computer.terminal.clear": "মুছুন",
+  "computer.terminal.exit": "এক্সিট কোড {code}",
+  "computer.terminal.refused": "রাখা হয়নি, কারণ এর মধ্যে অন্য কোথাও বদলেছে: {files}"
 }

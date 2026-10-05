@@ -32,5 +32,12 @@
     "other": "{count} menit"
   },
   "computer.locked": "Diatur oleh organisasi Anda",
-  "computer.reach.once": "Izinkan sekali"
+  "computer.reach.once": "Izinkan sekali",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Jalankan sendiri perintah di komputer, pada file yang sama dengan percakapan; pesan Anda berikutnya menyebutkan apa yang Anda jalankan. {keys} membukanya dari mana saja.",
+  "computer.terminal.open": "Buka terminal",
+  "computer.terminal.command": "Perintah",
+  "computer.terminal.clear": "Bersihkan",
+  "computer.terminal.exit": "Kode keluar {code}",
+  "computer.terminal.refused": "Tidak disimpan, karena sementara itu diubah di tempat lain: {files}"
 }

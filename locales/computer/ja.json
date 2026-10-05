@@ -32,5 +32,12 @@
     "other": "{count} 分"
   },
   "computer.locked": "組織によって設定されています",
-  "computer.reach.once": "今回だけ許可"
+  "computer.reach.once": "今回だけ許可",
+  "computer.terminal": "ターミナル",
+  "computer.terminal.text": "コンピューターで自分でコマンドを実行できます。会話と同じファイルを使い、次のメッセージで何を実行したかが伝わります。{keys} でどこからでも開けます。",
+  "computer.terminal.open": "ターミナルを開く",
+  "computer.terminal.command": "コマンド",
+  "computer.terminal.clear": "消去",
+  "computer.terminal.exit": "終了コード {code}",
+  "computer.terminal.refused": "その間に別の場所で変更されたため保存されませんでした: {files}"
 }

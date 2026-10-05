@@ -171,7 +171,7 @@ export function switchTheme() {
 }
 
 // The drawer open beside the conversation or put away (D165) belongs to this device too, as the
-// user left it; until then, to the look: Mail and Glass keep it open, the others put it away.
+// user left it; until then, to the look: Mail and Human keep it open, the others put it away.
 export const SIDEBAR_KEY = 'app.sidebar'
 
 /** Whether the drawer is open beside the conversation now: a wide window, and the user's choice or the look's. */
