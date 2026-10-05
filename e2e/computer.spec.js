@@ -339,6 +339,45 @@ test('npm init, ls and run; a server refused, with the page beside the conversat
   await expect(answer).toContainText('only install, init, ls and run work here')
 })
 
+test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167)', async ({ page }) => {
+  test.setTimeout(120_000)
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Computer')
+  await page.keyboard.press('Escape')
+  await turnOn(page, 'Browser')
+  await page.keyboard.press('Escape')
+  const pane = page.locator('app-browser .browser')
+  const shown = page.frameLocator('.browser-page')
+  // Its script and its style in files of their own: the page opens in the browser, not the preview, all of it there.
+  await command(page, `$ mkdir -p site && echo '<link rel="stylesheet" href="style.css"><h1>Loading</h1><script type="module" src="app.js"></script>' > site/index.html && echo 'h1 { color: rgb(0, 0, 128) }' > site/style.css && echo 'document.querySelector("h1").textContent = "Fresh bread"' > site/app.js`)
+  await expect(shown.locator('h1')).toHaveText('Fresh bread')
+  await expect(pane.locator('.browser-bar input')).toHaveValue('/workspace/site/index.html')
+  await expect.poll(() => shown.locator('h1').evaluate((h1) => getComputedStyle(h1).color)).toBe('rgb(0, 0, 128)')
+  await expect(page.locator('app-preview .preview')).toHaveCount(0)
+  expect(await page.evaluate(async () => (await (await import('/ui/caps.js')).loaded.value.get('browser')?.sections?.())?.page)).toBe('The browser beside the conversation shows /workspace/site/index.html, from the project\'s workspace.')
+  // A file it uses, changed by the next command: the page on show comes again.
+  await command(page, `$ echo 'document.querySelector("h1").textContent = "Fresh bread today"' > site/app.js`)
+  await expect(shown.locator('h1')).toHaveText('Fresh bread today')
+  // /workspace, typed: what it holds, and its pages by their links.
+  const go = async (/** @type {string} */ address) => {
+    await pane.locator('.browser-bar input').fill(address)
+    await pane.locator('.browser-bar input').press('Enter')
+  }
+  await go('/workspace')
+  await shown.getByRole('link', { name: 'site/' }).click()
+  await expect(shown.locator('h1')).toHaveText('Fresh bread today')
+  await expect(pane.locator('.browser-bar input')).toHaveValue('/workspace/site/')
+  await go('/workspace/nothing.html')
+  await expect(pane.locator('.browser-note')).toContainText('nothing.html isn’t in')
+  // Opened empty, after a reload, it offers the workspace, which is kept (Playwright's WebKit keeps nothing, like a private window).
+  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return
+  await page.reload()
+  await page.locator('.bar .browser-toggle').click()
+  await pane.getByRole('button', { name: /Show .*\/workspace/ }).click()
+  await expect(shown.getByRole('link', { name: 'site/' })).toBeVisible()
+})
+
 test('Settings › Computer: the internet, its sites, the relay, packages and the workspace', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Computer')

@@ -18,14 +18,15 @@
 // The conversation's folder shows there too (D156), at "<folder>/<path>": a page put together by
 // Folders (caps/folders/site.js) in a frame of the preview's kind (preview.html, scripts only), its
 // links followed here. A page Jean makes or changes there opens by itself, and the page on show
-// comes again when a file it was made of changes, whoever changed it.
+// comes again when a file it was made of changes, whoever changed it. Without a folder, the
+// project's workspace shows the same way, at "/workspace/<path>", as the computer names it (D167).
 import { html, svg, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
 import { register, loaded as unlocked } from '../../ui/caps.js'
-import { app, effective, updateSettings, notify, conversationOf } from '../../ui/state.js'
+import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { icons } from '../../ui/icons.js'
 import { pageRights, pagePolicy, pageAllow } from '../../ui/csp.js'
 import { savePage } from '../../ui/save.js'
@@ -37,7 +38,14 @@ const HOST = new URL('browser.html', import.meta.url).href
 const PAGE = new URL('../../preview.html', import.meta.url).href
 /** What an address of the conversation's folder starts with, before "<folder>/<path>". */
 const FOLDER = 'folder:'
-const isLocal = (/** @type {string} */ url) => url.startsWith(FOLDER)
+/** And one of the project's workspace, before "<path>" (D167). */
+const WORKSPACE = 'workspace:'
+const isLocal = (/** @type {string} */ url) => url.startsWith(FOLDER) || url.startsWith(WORKSPACE)
+const isWorkspace = (/** @type {string} */ url) => url.startsWith(WORKSPACE)
+/** What the address field shows of a local address. @param {string} url */
+const shownAs = (url) => (isWorkspace(url) ? `/workspace/${url.slice(WORKSPACE.length)}` : url.slice(FOLDER.length))
+/** The workspace's name in a sentence, kept left to right in right-to-left text. */
+const WORKSPACE_NAME = '\u2066/workspace\u2069'
 // Scripts, forms and pop-ups in the site's own origin; never the top: the site can't take Jean's place.
 const SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads allow-storage-access-by-user-activation'
 const ALLOW = 'fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture'
@@ -83,6 +91,22 @@ const foldersOn = async () => (unlocked.peek().has('folders') ? (folders = await
 effect(() => {
   if (unlocked.value.has('folders') && !folders) foldersOn().then(() => bump())
 })
+/** The Computer's module, once it is on: the project's workspace, and its pages (D167). @type {typeof import('../computer/computer.js') | null} */
+let computer = null
+const computerOn = async () => (unlocked.peek().has('computer') ? (computer = await import('../computer/computer.js')) : null)
+/** Whether the project's workspace holds anything, for the empty pane's way to it. */
+const stocked = signal(false)
+const restock = async () => { stocked.value = Boolean(await (await computerOn())?.workspaceHolds()) }
+
+/**
+ * Where a path of /workspace leads (D167): the conversation's folder, as the computer has it, or
+ * else the project's workspace; null without either. @param {string} path
+ */
+function inWorkspace(path) {
+  const clean = path.trim().replace(/^\/?workspace(\/|$)/, '').replace(/^\.?\/+/, '')
+  const folder = folders?.folderOf(app.current.peek())?.name
+  return folder ? `${FOLDER}${folder}/${clean}` : unlocked.peek().has('computer') ? `${WORKSPACE}${clean}` : null
+}
 // What a page may do, as Settings and policy have it (D143, D158), with its scripts as data.
 const rights = computed(() => pageRights(effective.value.settings, app.policy))
 const policy = computed(() => pagePolicy(rights.value.allows, rights.value.sites, true))
@@ -109,6 +133,7 @@ export function show() {
   if (shown && isLocal(shown.url)) frameTo(shown.url)
   else if (shown && !shown.own) pending = trail.reload()
   else if (made) visit(made)
+  else restock()
 }
 
 /** The last web page Jean made or changed in this conversation's folder, which the browser opens on. */
@@ -193,7 +218,10 @@ function frameTo(url, click = false) {
 }
 
 let asked = 0
-/** A page of the conversation's folder, put together anew in a fresh frame; or why it can't show. @param {string} url @param {boolean} [click] */
+/**
+ * A page of the conversation's folder, or of the project's workspace when it has none, put together
+ * anew in a fresh frame; or why it can't show. @param {string} url @param {boolean} [click]
+ */
 async function folderTo(url, click = false) {
   frame?.remove()
   frame = null
@@ -201,11 +229,14 @@ async function folderTo(url, click = false) {
   loading.value = true
   bump()
   const at = ++asked
-  const address = url.slice(FOLDER.length)
-  const shown = await (await foldersOn())?.folderPage(address, click).catch((/** @type {unknown} */ error) => console.warn('Browser', error)) ?? { note: 'elsewhere' }
+  const address = shownAs(url)
+  const [folder, ...path] = isWorkspace(url) ? [WORKSPACE_NAME, url.slice(WORKSPACE.length)] : address.split('/')
+  const warn = (/** @type {unknown} */ error) => console.warn('Browser', error)
+  const shown = (isWorkspace(url)
+    ? !folders?.folderOf(app.current.peek()) && await (await computerOn())?.workspacePage(path.join('/')).catch(warn)
+    : await (await foldersOn())?.folderPage(address, click).catch(warn)) || { note: 'elsewhere' }
   if (at !== asked) return
   loading.value = false
-  const [folder, ...path] = address.split('/')
   local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), allow.peek(), address) } : { note: t(`browser.${shown.note}`, { folder, page: path.join('/') }) }
 }
 
@@ -230,15 +261,17 @@ effect(() => {
   if (shown && 'html' in shown) local.value = { ...shown, frame: pageFrame(shown.html, rules, allows, shown.frame.title) }
 })
 
-// A link followed in a page of the folder: another of its pages, or a site; or a file it made, saved (D158).
+// A link followed in a page of the folder or the workspace: another of its pages, or a site; or a
+// file it made, saved (D158).
 addEventListener('message', ({ source, data }) => {
   const shown = local.peek()
-  const [folder] = (page.peek()?.url ?? '').slice(FOLDER.length).split('/')
+  const url = page.peek()?.url ?? ''
+  const top = isWorkspace(url) ? WORKSPACE : `${FOLDER}${url.slice(FOLDER.length).split('/')[0]}/`
   if (!shown || !('frame' in shown) || source !== shown.frame.contentWindow) return
   if (typeof data?.open !== 'string') return savePage(data, rights.peek().allows.downloads)
   const base = new URL(shown.path.split('/').map(encodeURIComponent).join('/'), 'https://folder.invalid/')
   const to = new URL(data.open, base)
-  if (to.origin === base.origin) visit(`${FOLDER}${folder}/${decodeURIComponent(to.pathname.slice(1))}`, { click: true })
+  if (to.origin === base.origin) visit(`${top}${decodeURIComponent(to.pathname.slice(1))}`, { click: true })
   else if (/^https?:$/.test(to.protocol)) visit(to.href, { click: true })
 })
 
@@ -249,11 +282,23 @@ document.addEventListener('app-folder-changed', (event) => {
   const url = `${FOLDER}${folder}/${path}`
   if (/\.html?$/i.test(path)) (open.peek() && page.peek()?.url === url ? frameTo(url) : visit(url))
 })
+// The same in the project's workspace (D167): a page the computer made that uses other files of it
+// opens, and the page on show comes again when the computer changed a file it was made of.
+document.addEventListener('app-workspace-changed', (event) => {
+  const { path, open: opens } = /** @type {CustomEvent} */ (event).detail
+  const url = `${WORKSPACE}${path}`
+  const shown = page.peek()?.url ?? ''
+  const made = local.peek()
+  stocked.value = true
+  if (open.peek() && isWorkspace(shown) && (shown === url || (made && 'files' in made && path in made.files))) frameTo(shown)
+  else if (opens) visit(url)
+})
 setInterval(async () => {
   const shown = page.peek()
   const made = local.peek()
   if (!open.peek() || !shown || !isLocal(shown.url) || !made || !('files' in made) || document.hidden || loading.peek()) return
-  if ((await (await foldersOn())?.pageMoved(shown.url.slice(FOLDER.length).split('/')[0], made.files)) && local.peek() === made) frameTo(shown.url)
+  const moved = isWorkspace(shown.url) ? computer?.workspaceMoved(made.files) : (await foldersOn())?.pageMoved(shown.url.slice(FOLDER.length).split('/')[0], made.files)
+  if ((await moved) && local.peek() === made) frameTo(shown.url)
 }, 1500)
 
 /** A page loaded in the frame: the one asked for, or one the site went to by itself, which shows it shows. @param {string} url */
@@ -317,6 +362,7 @@ let place = ''
 effect(() => {
   const here = `${app.project.value.dir}/${app.current.value?.id ?? ''}`
   if (place && here !== place) trail.elsewhere()
+  if (place && here !== place && open.peek() && !page.peek()) restock()
   place = here
 })
 
@@ -340,9 +386,10 @@ document.addEventListener('fullscreenchange', () => { full.value = Boolean(docum
 function submit(event) {
   event.preventDefault()
   const text = String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('address') ?? '')
-  // The conversation's folder, by its name, or the web.
+  // The conversation's folder, by its name, /workspace (D167), or the web.
   const folder = folders?.folderOf(app.current.peek())?.name
-  const url = folder && `${text.trim()}/`.startsWith(`${folder}/`) ? `${FOLDER}${text.trim() === folder ? `${folder}/` : text.trim()}` : addressOf(text, searchPage(), locale.peek().split('-')[0])
+  const url = folder && `${text.trim()}/`.startsWith(`${folder}/`) ? `${FOLDER}${text.trim() === folder ? `${folder}/` : text.trim()}`
+    : /^\/workspace(\/|$)/.test(text.trim()) ? inWorkspace(text) : addressOf(text, searchPage(), locale.peek().split('-')[0])
   const field = /** @type {HTMLInputElement | null} */ (document.querySelector('.browser-bar input'))
   field?.blur()
   if (url) visit(url, { click: true })
@@ -370,7 +417,7 @@ class Browser extends Element {
     void moves.value
     const shown = page.value
     const here = shown && isLocal(shown.url) ? local.value : null
-    const address = shown && isLocal(shown.url) ? shown.url.slice(FOLDER.length) : shown?.url ?? ''
+    const address = shown && isLocal(shown.url) ? shownAs(shown.url) : shown?.url ?? ''
     const folder = folders?.folderOf(app.current.value)
     const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => unknown} */ run, disabled = false) => html`<button class="icon-button"
       title=${label} aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
@@ -395,7 +442,8 @@ class Browser extends Element {
         ${loading.value ? html`<div class="browser-loading" role="progressbar" aria-label=${t('browser.reload')}></div>` : nothing}
         <iframe class="browser-host" src=${HOST} title=${address || t('cap.browser.name')} allow="fullscreen" ?hidden=${!shown || shown.own || isLocal(shown.url)} @load=${hosted}></iframe>
         ${!shown ? html`<div class="browser-note"><p>${t('browser.empty')}</p>
-          ${folder ? html`<div class="row"><button class="button" @click=${() => visit(`${FOLDER}${folder.name}/`, { click: true })}>${icons.folder} ${t('browser.folder', { folder: folder.name })}</button></div>` : nothing}</div>`
+          ${folder ? html`<div class="row"><button class="button" @click=${() => visit(`${FOLDER}${folder.name}/`, { click: true })}>${icons.folder} ${t('browser.folder', { folder: folder.name })}</button></div>`
+          : stocked.value && unlocked.value.has('computer') ? html`<div class="row"><button class="button" @click=${() => visit(WORKSPACE, { click: true })}>${icons.folder} ${t('browser.folder', { folder: WORKSPACE_NAME })}</button></div>` : nothing}</div>`
         : shown.own ? own(shown.url) : here ? ('frame' in here ? here.frame : html`<div class="browser-note"><p>${here.note}</p></div>`) : nothing}
         ${shown && !shown.own && !isLocal(shown.url) && unsure.value ? html`<div class="browser-strip" role="status">
           <p>${t('browser.blank')}</p>
@@ -480,12 +528,12 @@ async function read(url, signal) {
 const browseTool = {
   spec: {
     name: 'browse',
-    description: 'Show the user a web page in the browser beside the conversation, and read its text when the site allows it: the text is a numbered source to cite. Or show a file of the conversation\'s folder there by its path (a page you make or change there shows by itself). Or go back, forward or reload there. <page> says which page is open.',
+    description: 'Show the user a web page in the browser beside the conversation, and read its text when the site allows it: the text is a numbered source to cite. Or show a file of /workspace there by its path, with the files its page uses (a page you make or change there shows by itself). Or go back, forward or reload there. <page> says which page is open.',
     parameters: {
       type: 'object',
       properties: {
         url: { type: 'string', description: 'The address to open, e.g. https://example.com' },
-        path: { type: 'string', description: 'A file of the conversation\'s folder, e.g. site/index.html; empty for the folder' },
+        path: { type: 'string', description: 'A file of /workspace (the conversation\'s folder, or else the project\'s workspace), e.g. site/index.html; empty for its top' },
         go: { type: 'string', enum: ['back', 'forward', 'reload'] },
       },
     },
@@ -495,11 +543,10 @@ const browseTool = {
   title: (args) => (args?.go ? `${args.go}` : String(args?.path ?? args?.url ?? '')),
   run: async (args, ctx) => {
     if (typeof args?.path === 'string') {
-      const folder = folders?.folderOf(conversationOf(ctx.signal))?.name
-      if (!folder) throw new Error('No folder is open in this conversation.')
-      const path = args.path.trim().replace(/^\.?\/+/, '')
-      visit(`${FOLDER}${folder}/${path}`)
-      return `Showing ${path || 'the folder'} from "${folder}" beside the conversation.`
+      const url = inWorkspace(args.path)
+      if (!url) throw new Error('No folder is open in this conversation, and the computer is off.')
+      visit(url)
+      return `Showing ${shownAs(url)} beside the conversation, from ${isWorkspace(url) ? "the project's workspace" : "the user's folder"}.`
     }
     if (args?.go) {
       if (!page.peek()) return 'Nothing is open in the browser.'
@@ -528,7 +575,8 @@ register({
   sections: async () => {
     const shown = page.peek()
     if (!open.peek() || !shown || shown.own) return {}
-    if (isLocal(shown.url)) return { page: `The browser beside the conversation shows ${shown.url.slice(FOLDER.length)}, from the user's folder.` }
+    if (isWorkspace(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the project's workspace.` }
+    if (isLocal(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the user's folder.` }
     return { page: `The browser beside the conversation shows ${shown.url.split('#')[0]}${trail.moved ? ', or a page the user went to from there' : ''}.` }
   },
 })
