@@ -1,8 +1,8 @@
 // Search (D133): offered once there are ten conversations, then ⌘K (Ctrl+K outside Apple's
-// systems), or Search under a new conversation, finds a conversation by its words, a file by
+// systems), or Search at the top of the drawer (D165), finds a conversation by its words, a file by
 // its text, and a section of Settings, as people type: part of a word, case and accents aside.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
 
 /**
  * Conversations and a file kept as Jean keeps them, so there is plenty to look back on.
@@ -66,7 +66,7 @@ test('offered after ten conversations, it finds a conversation, a file and a set
   // A section of Settings, picked with the arrows.
   await page.keyboard.press('ControlOrMeta+KeyK')
   await page.keyboard.type('garden')
-  await expect(dialog.getByRole('group', { name: 'Conversations' }).getByRole('option')).toHaveCount(9)
+  await expect(dialog.getByRole('group', { name: 'Tasks' }).getByRole('option')).toHaveCount(9)
   await page.keyboard.press('ControlOrMeta+KeyA')
   await page.keyboard.type('appear')
   await page.keyboard.press('ArrowDown')
@@ -83,9 +83,9 @@ test('offered after ten conversations, it finds a conversation, a file and a set
   await page.keyboard.press('ControlOrMeta+KeyK')
   await expect(dialog).toBeHidden()
 
-  // Search sits under a new conversation, with its key.
-  await page.locator('.bar > .icon-button').first().click()
-  await page.locator('app-history dialog[open] .sidebar-find').click()
+  // Search sits at the top of the drawer, beside the button that puts it away (D165).
+  await openTasks(page)
+  await page.getByRole('button', { name: 'Search', exact: true }).click()
   await expect(dialog).toBeVisible()
 })
 

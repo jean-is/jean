@@ -1,5 +1,5 @@
 {
-  "sync.text": "在 OneDrive、Dropbox、iCloud Drive 或 Google Drive 里新建一个文件夹，在这里选择它，再在你的其他电脑上选择同一个文件夹。对话、文件和记忆随你而行；设置和密钥留在各自的电脑上。",
+  "sync.text": "在 OneDrive、Dropbox、iCloud Drive 或 Google Drive 里新建一个文件夹，在这里选择它，再在你的其他电脑上选择同一个文件夹。任务、文件和记忆随你而行；设置和密钥留在各自的电脑上。",
   "sync.choose": "选择文件夹…",
   "sync.syncing": "正在与 {folder} 同步…",
   "sync.done": "已与 {folder} 同步 · {when}",

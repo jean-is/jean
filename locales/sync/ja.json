@@ -1,5 +1,5 @@
 {
-  "sync.text": "OneDrive、Dropbox、iCloud Drive、Google Drive に新しいフォルダーを作ってここで選び、ほかのコンピューターでも同じフォルダーを選びます。会話、ファイル、記憶はどこでも同じになり、設定とキーはそれぞれのコンピューターに残ります。",
+  "sync.text": "OneDrive、Dropbox、iCloud Drive、Google Drive に新しいフォルダーを作ってここで選び、ほかのコンピューターでも同じフォルダーを選びます。タスク、ファイル、記憶はどこでも同じになり、設定とキーはそれぞれのコンピューターに残ります。",
   "sync.choose": "フォルダーを選ぶ…",
   "sync.syncing": "{folder} と同期しています…",
   "sync.done": "{folder} と同期済み · {when}",

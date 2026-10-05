@@ -23,6 +23,6 @@
   "browser.folder": "{folder} చూపించు",
   "browser.missing": "{page} {folder}లో లేదు.",
   "browser.unshown": "{page}ని ఇక్కడ చూపించలేము.",
-  "browser.elsewhere": "{folder} ఈ సంభాషణలో తెరవబడలేదు.",
+  "browser.elsewhere": "{folder} ఈ పనిలో తెరవబడలేదు.",
   "browser.shut": "మీ బ్రౌజర్ {folder}ని తెరవడానికి అనుమతించలేదు. మళ్లీ అడగడానికి మళ్లీ లోడ్ చేయండి."
 }

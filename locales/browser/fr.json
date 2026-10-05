@@ -23,6 +23,6 @@
   "browser.folder": "Afficher {folder}",
   "browser.missing": "{page} n’est pas dans {folder}.",
   "browser.unshown": "{page} ne peut pas être affiché ici.",
-  "browser.elsewhere": "{folder} n’est pas ouvert dans cette conversation.",
+  "browser.elsewhere": "{folder} n’est pas ouvert dans cette tâche.",
   "browser.shut": "Votre navigateur n’a pas permis d’ouvrir {folder}. Actualisez pour qu’il le demande à nouveau."
 }

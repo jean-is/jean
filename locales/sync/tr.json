@@ -1,5 +1,5 @@
 {
-  "sync.text": "OneDrive, Dropbox, iCloud Drive veya Google Drive’da yeni bir klasör oluştur, onu burada seç, sonra diğer bilgisayarlarında aynı klasörü seç. Konuşmalar, dosyalar ve hafıza seninle gelir; ayarlar ve anahtarlar her bilgisayarda kalır.",
+  "sync.text": "OneDrive, Dropbox, iCloud Drive veya Google Drive’da yeni bir klasör oluştur, onu burada seç, sonra diğer bilgisayarlarında aynı klasörü seç. Görevler, dosyalar ve hafıza seninle gelir; ayarlar ve anahtarlar her bilgisayarda kalır.",
   "sync.choose": "Bir klasör seç…",
   "sync.syncing": "{folder} ile eşitleniyor…",
   "sync.done": "{folder} ile eşitlendi · {when}",

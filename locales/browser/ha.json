@@ -23,6 +23,6 @@
   "browser.folder": "Nuna {folder}",
   "browser.missing": "{page} ba ya cikin {folder}.",
   "browser.unshown": "Ba za a iya nuna {page} a nan ba.",
-  "browser.elsewhere": "Ba a buɗe {folder} a wannan tattaunawar ba.",
+  "browser.elsewhere": "Ba a buɗe {folder} a wannan ɗawainiyar ba.",
   "browser.shut": "Burauzarka bai bari a buɗe {folder} ba. Sake lodawa don ya sake tambaya."
 }

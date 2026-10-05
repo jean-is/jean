@@ -1,5 +1,5 @@
 {
-  "sync.text": "Tạo một thư mục mới trong OneDrive, Dropbox, iCloud Drive hoặc Google Drive, chọn nó ở đây, rồi chọn cùng thư mục đó trên các máy tính khác của bạn. Cuộc trò chuyện, tệp và trí nhớ đi theo bạn; cài đặt và khóa ở lại trên từng máy tính.",
+  "sync.text": "Tạo một thư mục mới trong OneDrive, Dropbox, iCloud Drive hoặc Google Drive, chọn nó ở đây, rồi chọn cùng thư mục đó trên các máy tính khác của bạn. Nhiệm vụ, tệp và trí nhớ đi theo bạn; cài đặt và khóa ở lại trên từng máy tính.",
   "sync.choose": "Chọn thư mục…",
   "sync.syncing": "Đang đồng bộ với {folder}…",
   "sync.done": "Đã đồng bộ với {folder} · {when}",

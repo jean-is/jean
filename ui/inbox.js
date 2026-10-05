@@ -1,11 +1,12 @@
-// Mail's list (D111): the drawer's conversations, kept in view beside the one open, with the
-// header's name above it, Search under a new one once it is found (D133) and the user at its foot,
-// whose menu holds Settings, like the Claude apps' sidebar (D115, D150).
+// The drawer, after Manus' (D165): a new task, where each capability found leads, the tasks and
+// the user at its foot, whose menu holds Settings, like the Claude apps' sidebar (D115, D150). On a
+// wide window it stays open beside the conversation (Mail's list, D111), the header's name, Search
+// (D133) and the button that puts it away above it; otherwise it slides over it, with those two.
 import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, theme, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, LOCALES } from './state.js'
+import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, LOCALES } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { loaded } from './caps.js'
 import { BRAND } from '../brand.js'
@@ -14,11 +15,10 @@ import { icons } from './icons.js'
 import { SHORTCUTS } from './shell.js'
 
 /**
- * The conversations, newest first, the open one marked: in the drawer, or in Mail's list. One
- * started before the open one (ULIDs sort by time), or any from a new page, is back (D125).
- * One being answered has a light before its name, ringed while a decision waits there (D147).
+ * The tasks, newest first, the open one marked (D165). One started before the open one (ULIDs
+ * sort by time), or any from a new page, is back (D125). One being answered has a light before its name, ringed while a decision waits there (D147).
  */
-export function conversationList() {
+function conversationList() {
   const list = app.conversations.value
   const currentId = app.current.value?.id
   const running = app.running.value
@@ -41,9 +41,21 @@ export function conversationList() {
 const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${shortcut.startsWith('Meta')
   ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧') : shortcut.replace('Control', 'Ctrl')}</bdi></kbd>`
 
-/** Search, under a new conversation once it is found, with its key shown as in the Claude apps (D133). */
-export const findEntry = () => (loaded.value.has('find') ? html`<button class="sidebar-settings sidebar-find" aria-keyshortcuts=${SHORTCUTS.find}
-  @click=${() => { app.dialog.value = 'find' }}>${icons.search}${t('cap.find.name')}${keys(SHORTCUTS.find)}</button>` : nothing)
+/** Where a capability found leads, under a new task, as Manus lists its own: its section of Settings, in Settings' order. */
+const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scroll'], ['routines', 'alarm']])
+
+/**
+ * What the drawer holds, open beside the conversation or over it: a new task, the places found,
+ * the tasks under their heading, and the user at its foot.
+ * @param {'drawer' | 'list'} where
+ */
+export const sidebarBody = (where) => html`<button class="place" aria-keyshortcuts=${SHORTCUTS.new}
+    @click=${() => turnPage(newConversation)}>${icons.compose}${t('action.new')}</button>
+  ${PLACES.filter(([id]) => loaded.value.has(id)).map(([id, icon]) => html`<button class="place"
+    @click=${() => import('./dialogs.js').then((module) => module.openSettings(id))}>${icons[icon]}${t(`cap.${id}.name`)}</button>`)}
+  <h2 class="sidebar-heading">${t('history.title')}</h2>
+  ${conversationList()}
+  ${profileEntry(where)}`
 
 // ─── The user, at the foot (D150) ────────────────────────────────────────────
 
@@ -114,37 +126,19 @@ function looks() {
 }
 
 /**
- * Another look. One with a list beside the conversation (Mail's, Glass's) moves the user's foot
- * there from the drawer, and one without moves it back: once the look shows, the menu opens
- * again where the foot is, on the same page, unless the user closed it meanwhile (D153).
+ * Another look. The drawer open beside the conversation stays open whatever the new look would
+ * have, since the user is in it, and the menu stays on its page (D153, D165).
  * @param {import('./looks.js').LookId} id
  */
 function pickLook(id) {
+  if (sidebarOpen.value && app.sidebar.value === null) setSidebar(true)
   setLook({ id })
-  const stop = app.look.subscribe((shown) => {
-    if (shown === id) queueMicrotask(() => { stop(); requestAnimationFrame(follow) })
-  })
-}
-
-async function follow() {
-  if (page.value !== 'looks') return
-  const list = document.querySelector('app-inbox .profile')
-  const where = list?.checkVisibility() ? 'list' : 'drawer'
-  const open = /** @type {HTMLElement | null} */ (document.querySelector('.profile-menu:popover-open'))
-  if (open?.id === `profile-${where}`) return
-  if (where === 'drawer') await import('./dialogs.js')
-  open?.hidePopover()
-  app.dialog.value = where === 'drawer' ? 'history' : null
-  const menu = document.getElementById(`profile-${where}`)
-  const chosen = /** @type {HTMLElement | null | undefined} */ (menu?.querySelector('[aria-current="true"]'))
-  menu?.showPopover()
-  chosen?.focus()
 }
 
 /**
- * The user at the foot of the conversations, in the drawer or in Mail's list (D150): their initial
- * and their name, or "You" until it is known, opening a menu above them. It goes back to its actions
- * once closed, not when it moves from one foot to the other (D153).
+ * The user at the foot of the drawer, open beside the conversation or over it (D150, D165): their
+ * initial and their name, or "You" until it is known, opening a menu above them. It goes back to
+ * its actions once closed.
  * @param {'drawer' | 'list'} where
  */
 export function profileEntry(where) {
@@ -162,10 +156,7 @@ export function profileEntry(where) {
 
 class Inbox extends Element {
   render() {
-    return html`<button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${() => turnPage(newConversation)}>${icons.plus} ${t('action.new')}</button>
-      ${findEntry()}
-      ${conversationList()}
-      ${profileEntry('list')}`
+    return sidebarBody('list')
   }
 }
 

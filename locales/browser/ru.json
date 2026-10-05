@@ -23,6 +23,6 @@
   "browser.folder": "Показать {folder}",
   "browser.missing": "{page} нет в папке {folder}.",
   "browser.unshown": "{page} нельзя показать здесь.",
-  "browser.elsewhere": "Папка {folder} не открыта в этом разговоре.",
+  "browser.elsewhere": "Папка {folder} не открыта в этой задаче.",
   "browser.shut": "Ваш браузер не разрешил открыть папку {folder}. Нажмите «Обновить», чтобы он спросил снова."
 }

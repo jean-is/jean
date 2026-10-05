@@ -1,4 +1,4 @@
-// History and settings dialogs (native <dialog>: focus trap and Escape for free), and the brains
+// The drawer and settings dialogs (native <dialog>: focus trap and Escape for free), and the brains
 // and the house of what Jean can do, in Settings.
 import { html, svg, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -6,7 +6,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, setVoice, setBrainMode, updateSettings, notify, loadModels,
-  newConversation, turnPage, showError, theme, setTheme, setLook, LOCALES, CITED,
+  showError, theme, setTheme, setLook, LOCALES, CITED,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, startOpenRouter } from './brains.js'
 import { isLocal } from './auto.js'
@@ -21,8 +21,8 @@ import { t, locale, formatBytes, useStrings, languageName, preferredLocales } fr
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './icons.js'
-import { conversationList, findEntry, profileEntry } from './inbox.js'
-import { SHORTCUTS } from './shell.js'
+import { sidebarBody } from './inbox.js'
+import { SHORTCUTS, findButton } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
 
@@ -57,16 +57,16 @@ export const head = (title) => html`<header class="dialog-head">
   <button class="icon-button" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
 </header>`
 
-// ─── History ─────────────────────────────────────────────────────────────────
+// ─── The drawer ──────────────────────────────────────────────────────────────
 
+// Over the conversation, on a narrow window (D165): Search and the button that puts it away at its top, as in Manus.
 class History extends Element {
   render() {
-    return html`<dialog class="drawer" @close=${closed('history')} @click=${backdrop}>
-      ${head(t('history.title'))}
-      <button class="button wide" aria-keyshortcuts=${SHORTCUTS.new} @click=${() => turnPage(newConversation)}>${icons.plus} ${t('action.new')}</button>
-      ${findEntry()}
-      ${conversationList()}
-      ${profileEntry('drawer')}
+    return html`<dialog class="drawer" aria-label=${t('history.title')} @close=${closed('history')} @click=${backdrop}>
+      <header class="dialog-head">${findButton()}
+        <button class="icon-button" @click=${close} aria-label=${t('sidebar.close')} title=${t('sidebar.close')}>${icons.sidebar}</button>
+      </header>
+      ${sidebarBody('drawer')}
     </dialog>`
   }
 

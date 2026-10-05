@@ -56,7 +56,7 @@ class Projects extends Element {
       </button>
       <div id="project-menu" class="menu project-menu" popover>
         <button type="button" popovertarget="project-menu" popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.new}
-          @click=${() => turnPage(newConversation)}>${icons.plus}${t('action.new')}</button>
+          @click=${() => turnPage(newConversation)}>${icons.compose}${t('action.new')}</button>
         <hr>
         ${app.projects.value.map((project) => html`<button type="button" class="project" popovertarget="project-menu" popovertargetaction="hide"
           aria-current=${project.dir === here.dir ? 'true' : 'false'} @click=${() => enterProject(project)}>

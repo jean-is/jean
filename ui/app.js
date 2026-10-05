@@ -6,7 +6,7 @@ import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, theme, THEME_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
+import { app, effective, activeBrain, theme, sidebarOpen, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
 import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import './shell.js'
@@ -60,6 +60,14 @@ async function start() {
     root.style.removeProperty('transition')
     browserBar?.setAttribute('content', LOOKS[app.look.value].bar[theme.value === 'light' ? 1 : 0])
   })
+  // The drawer stays open beside the conversation on a wide window, as the user left it (D165).
+  const wide = matchMedia('(min-width: 48rem)')
+  const measure = () => { app.wide.value = wide.matches }
+  wide.addEventListener('change', measure)
+  measure()
+  const side = localStorage.getItem(SIDEBAR_KEY)
+  app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
+  effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
   // stays on the device for index.html; the user's touches go over it, in a sheet of their own
   // (CSSOM, which the CSP allows), with their code loaded only once there are some.

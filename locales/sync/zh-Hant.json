@@ -1,5 +1,5 @@
 {
-  "sync.text": "在 OneDrive、Dropbox、iCloud Drive 或 Google Drive 裡新增一個資料夾，在這裡選擇它，再在你的其他電腦上選擇同一個資料夾。對話、檔案和記憶隨你而行；設定和金鑰留在各自的電腦上。",
+  "sync.text": "在 OneDrive、Dropbox、iCloud Drive 或 Google Drive 裡新增一個資料夾，在這裡選擇它，再在你的其他電腦上選擇同一個資料夾。任務、檔案和記憶隨你而行；設定和金鑰留在各自的電腦上。",
   "sync.choose": "選擇資料夾…",
   "sync.syncing": "正在與 {folder} 同步…",
   "sync.done": "已與 {folder} 同步 · {when}",

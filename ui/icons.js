@@ -1,4 +1,4 @@
-// Fifty inline icons, 24×24, drawn with the current colour.
+// Fifty-two inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -9,6 +9,8 @@ export const icons = {
   stop: icon(svg`<rect x="7" y="7" width="10" height="10" rx="2"/>`),
   plus: icon(svg`<path d="M12 5v14M5 12h14"/>`),
   history: icon(svg`<path d="M4 6h16M4 12h16M4 18h10"/>`, 'flip-rtl'),
+  compose: icon(svg`<path d="M11 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V13"/><path d="M17.6 3.9a1.9 1.9 0 0 1 2.7 2.7L12.5 14.4l-3.5.8.8-3.5Z"/>`, 'flip-rtl'),
+  sidebar: icon(svg`<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9.5 4.5v15"/>`, 'flip-rtl'),
   search: icon(svg`<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 4.5 4.5"/>`),
   globe: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.4 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.4-3.6-8.5s1.1-5.9 3.6-8.5Z"/>`),
   websearch: icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.3 15.3 4.7 4.7M4 10.5h13M10.5 4c1.7 1.8 2.5 4 2.5 6.5s-.8 4.7-2.5 6.5c-1.7-1.8-2.5-4-2.5-6.5s.8-4.7 2.5-6.5Z"/>`),

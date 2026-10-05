@@ -23,6 +23,6 @@
   "browser.folder": "عرض {folder}",
   "browser.missing": "{page} غير موجود في {folder}.",
   "browser.unshown": "لا يمكن عرض {page} هنا.",
-  "browser.elsewhere": "{folder} غير مفتوح في هذه المحادثة.",
+  "browser.elsewhere": "{folder} غير مفتوح في هذه المهمة.",
   "browser.shut": "لم يسمح متصفحك بفتح {folder}. أعد التحميل ليسأل مرة أخرى."
 }

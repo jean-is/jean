@@ -23,6 +23,6 @@
   "browser.folder": "{folder} दाखवा",
   "browser.missing": "{page} {folder} मध्ये नाही.",
   "browser.unshown": "{page} इथे दाखवता येत नाही.",
-  "browser.elsewhere": "{folder} या संभाषणात उघडलेले नाही.",
+  "browser.elsewhere": "{folder} या कार्यात उघडलेले नाही.",
   "browser.shut": "तुमच्या ब्राउझरने {folder} उघडू दिले नाही. पुन्हा विचारण्यासाठी पुन्हा लोड करा."
 }

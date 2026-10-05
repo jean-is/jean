@@ -1,5 +1,5 @@
 {
-  "sync.text": "Crea una cartella in OneDrive, Dropbox, iCloud Drive o Google Drive, sceglila qui e poi la stessa cartella sugli altri tuoi computer. Conversazioni, file e memoria ti seguono; impostazioni e chiavi restano su ciascun computer.",
+  "sync.text": "Crea una cartella in OneDrive, Dropbox, iCloud Drive o Google Drive, sceglila qui e poi la stessa cartella sugli altri tuoi computer. Attività, file e memoria ti seguono; impostazioni e chiavi restano su ciascun computer.",
   "sync.choose": "Scegli una cartella…",
   "sync.syncing": "Sincronizzazione con {folder}…",
   "sync.done": "Sincronizzato con {folder} · {when}",

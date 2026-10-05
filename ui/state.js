@@ -5,6 +5,7 @@ import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, 
 import { loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
 import { linkedFiles } from '../core/events.js'
 import { t, useLocale } from '../core/i18n.js'
+import { LOOKS } from './looks.js'
 
 /** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Turn } from '../core/events.js' */
@@ -55,6 +56,10 @@ export const app = {
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
   look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
+  /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
+  sidebar: signal(/** @type {boolean | null} */ (null)),
+  /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
+  wide: signal(false),
   /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'picker' | 'project' | 'skill' | null>} */
   dialog: signal(null),
   section: signal('general'),
@@ -163,6 +168,25 @@ export function setTheme(next) {
 export function switchTheme() {
   const next = theme.value === 'light' ? 'dark' : 'light'
   setTheme(next === app.deviceTheme.value ? null : next)
+}
+
+// The drawer open beside the conversation or put away (D165) belongs to this device too, as the
+// user left it; until then, to the look: Mail and Glass keep it open, the others put it away.
+export const SIDEBAR_KEY = 'app.sidebar'
+
+/** Whether the drawer is open beside the conversation now: a wide window, and the user's choice or the look's. */
+export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?? LOOKS[app.look.value].list === true))
+
+/** The drawer open beside the conversation, or put away, from now on on this device. @param {boolean} open */
+export function setSidebar(open) {
+  app.sidebar.value = open
+  localStorage.setItem(SIDEBAR_KEY, open ? 'open' : 'closed')
+}
+
+/** The header's button: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over. */
+export function toggleSidebar() {
+  if (app.wide.value) setSidebar(!sidebarOpen.value)
+  else app.dialog.value = 'history'
 }
 
 let lookWrite = 0

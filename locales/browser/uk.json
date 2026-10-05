@@ -23,6 +23,6 @@
   "browser.folder": "Показати {folder}",
   "browser.missing": "{page} немає в теці {folder}.",
   "browser.unshown": "{page} не можна показати тут.",
-  "browser.elsewhere": "Теку {folder} не відкрито в цій розмові.",
+  "browser.elsewhere": "Теку {folder} не відкрито в цьому завданні.",
   "browser.shut": "Ваш браузер не дозволив відкрити теку {folder}. Натисніть «Оновити», щоб він запитав знову."
 }

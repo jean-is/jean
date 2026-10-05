@@ -1,5 +1,5 @@
 {
-  "sync.text": "Gumawa ng bagong folder sa OneDrive, Dropbox, iCloud Drive o Google Drive, piliin ito rito, saka piliin ang parehong folder sa iba mo pang computer. Sinusundan ka ng mga usapan, file, at memorya; nananatili sa bawat computer ang mga setting at susi.",
+  "sync.text": "Gumawa ng bagong folder sa OneDrive, Dropbox, iCloud Drive o Google Drive, piliin ito rito, saka piliin ang parehong folder sa iba mo pang computer. Sinusundan ka ng mga gawain, file, at memorya; nananatili sa bawat computer ang mga setting at susi.",
   "sync.choose": "Pumili ng folder…",
   "sync.syncing": "Nagsi-sync sa {folder}…",
   "sync.done": "Na-sync sa {folder} · {when}",

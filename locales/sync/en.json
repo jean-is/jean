@@ -1,5 +1,5 @@
 {
-  "sync.text": "Make a new folder in OneDrive, Dropbox, iCloud Drive or Google Drive, choose it here, then the same folder on your other computers. Conversations, files and memory follow you; settings and keys stay on each computer.",
+  "sync.text": "Make a new folder in OneDrive, Dropbox, iCloud Drive or Google Drive, choose it here, then the same folder on your other computers. Tasks, files and memory follow you; settings and keys stay on each computer.",
   "sync.choose": "Choose a folder…",
   "sync.syncing": "Syncing with {folder}…",
   "sync.done": "Synced with {folder} · {when}",

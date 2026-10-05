@@ -23,6 +23,6 @@
   "browser.folder": "הצגת {folder}",
   "browser.missing": "{page} לא נמצא בתיקייה {folder}.",
   "browser.unshown": "אי אפשר להציג כאן את {page}.",
-  "browser.elsewhere": "התיקייה {folder} לא פתוחה בשיחה הזו.",
+  "browser.elsewhere": "התיקייה {folder} לא פתוחה במשימה הזו.",
   "browser.shut": "הדפדפן לא התיר לפתוח את התיקייה {folder}. כדי שישאל שוב, יש לרענן."
 }

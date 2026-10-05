@@ -23,6 +23,6 @@
   "browser.folder": "显示 {folder}",
   "browser.missing": "{folder} 中没有 {page}。",
   "browser.unshown": "{page} 无法在这里显示。",
-  "browser.elsewhere": "{folder} 没有在这个对话中打开。",
+  "browser.elsewhere": "{folder} 没有在这个任务中打开。",
   "browser.shut": "你的浏览器没有允许打开 {folder}。刷新后它会再次询问。"
 }

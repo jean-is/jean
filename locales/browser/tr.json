@@ -23,6 +23,6 @@
   "browser.folder": "{folder} klasörünü göster",
   "browser.missing": "{page}, {folder} içinde yok.",
   "browser.unshown": "{page} burada gösterilemez.",
-  "browser.elsewhere": "{folder} bu sohbette açık değil.",
+  "browser.elsewhere": "{folder} bu görevde açık değil.",
   "browser.shut": "Tarayıcın {folder} klasörünün açılmasına izin vermedi. Yeniden sorması için Yenile’ye bas."
 }

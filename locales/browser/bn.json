@@ -23,6 +23,6 @@
   "browser.folder": "{folder} দেখান",
   "browser.missing": "{page} {folder}-এ নেই।",
   "browser.unshown": "{page} এখানে দেখানো যায় না।",
-  "browser.elsewhere": "{folder} এই কথোপকথনে খোলা নেই।",
+  "browser.elsewhere": "{folder} এই কাজে খোলা নেই।",
   "browser.shut": "আপনার ব্রাউজার {folder} খুলতে দেয়নি। আবার জিজ্ঞাসা করাতে আবার লোড করুন।"
 }

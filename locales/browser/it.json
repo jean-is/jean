@@ -23,6 +23,6 @@
   "browser.folder": "Mostra {folder}",
   "browser.missing": "{page} non è in {folder}.",
   "browser.unshown": "{page} non si può mostrare qui.",
-  "browser.elsewhere": "{folder} non è aperta in questa conversazione.",
+  "browser.elsewhere": "{folder} non è aperta in questa attività.",
   "browser.shut": "Il tuo browser non ha permesso di aprire {folder}. Ricarica perché lo chieda di nuovo."
 }

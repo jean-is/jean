@@ -23,6 +23,6 @@
   "browser.folder": "{folder} ஐக் காட்டு",
   "browser.missing": "{page} {folder} இல் இல்லை.",
   "browser.unshown": "{page} ஐ இங்கே காட்ட முடியாது.",
-  "browser.elsewhere": "{folder} இந்த உரையாடலில் திறக்கப்படவில்லை.",
+  "browser.elsewhere": "{folder} இந்தப் பணியில் திறக்கப்படவில்லை.",
   "browser.shut": "உங்கள் உலாவி {folder} ஐத் திறக்க அனுமதிக்கவில்லை. மீண்டும் கேட்க, மீண்டும் ஏற்றவும்."
 }

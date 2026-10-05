@@ -39,18 +39,33 @@ export async function ask(page, text) {
 }
 
 /**
- * Opens the user's menu at the foot of the conversations: Mail's list when it is in view,
- * otherwise the drawer (D115, D150).
+ * The tasks, in view: the drawer open beside the conversation on a wide window, or over it on a
+ * narrow one, opened from the header's button when it isn't (D165).
+ * @param {import('@playwright/test').Page} page
+ */
+export async function openTasks(page) {
+  const toggle = page.locator('.sidebar-toggle')
+  const drawer = page.locator('app-history dialog[open]')
+  // The button says whether the drawer is open beside the conversation, before its module has drawn it.
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true' && !(await drawer.isVisible())) await toggle.click()
+  const tasks = page.locator('app-inbox:has(.profile)').or(drawer)
+  await expect(tasks).toBeVisible()
+  return tasks
+}
+
+/** Puts the drawer open beside the conversation away (D165). @param {import('@playwright/test').Page} page */
+export async function closeTasks(page) {
+  const toggle = page.locator('.sidebar-toggle[aria-expanded="true"]')
+  if (await toggle.count()) await toggle.click()
+  await expect(page.locator('app-inbox')).toHaveCount(0)
+}
+
+/**
+ * Opens the user's menu at the foot of the tasks (D115, D150).
  * @param {import('@playwright/test').Page} page
  */
 export async function openProfile(page) {
-  const list = page.locator('app-inbox .profile')
-  const drawer = page.locator('app-history dialog[open] .profile')
-  if (await list.isVisible()) await list.click()
-  else {
-    if (!(await drawer.isVisible())) await page.locator('.bar > .icon-button').first().click()
-    await drawer.click()
-  }
+  await (await openTasks(page)).locator('.profile').click()
   const menu = page.locator('.profile-menu:popover-open')
   await expect(menu).toBeVisible()
   return menu

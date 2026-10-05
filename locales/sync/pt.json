@@ -1,5 +1,5 @@
 {
-  "sync.text": "Cria uma pasta no OneDrive, Dropbox, iCloud Drive ou Google Drive, escolhe-a aqui e depois a mesma pasta nos teus outros computadores. As conversas, os ficheiros e a memória acompanham-te; as definições e as chaves ficam em cada computador.",
+  "sync.text": "Cria uma pasta no OneDrive, Dropbox, iCloud Drive ou Google Drive, escolhe-a aqui e depois a mesma pasta nos teus outros computadores. As tarefas, os ficheiros e a memória acompanham-te; as definições e as chaves ficam em cada computador.",
   "sync.choose": "Escolher uma pasta…",
   "sync.syncing": "A sincronizar com {folder}…",
   "sync.done": "Sincronizado com {folder} · {when}",

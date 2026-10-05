@@ -1,5 +1,5 @@
 // Search (D133), as in the Claude apps: once there is plenty to look back on, ⌘K, or Search
-// under a new conversation, finds a conversation in any project by its title or its words, a
+// at the top of the drawer (D165), finds a conversation in any project by its title or its words, a
 // file shared or made by its name or its text, a project by its name, and a section of
 // Settings, as people type: part of a word is enough, case and accents aside, in any script.
 // It reads every conversation each time it opens, as the list does (an index in .cache/ can
@@ -190,7 +190,7 @@ function found(item, words) {
 function groups(words) {
   if (!words.length) {
     return [
-      { heading: '', options: [{ icon: icons.plus, title: t('action.new'), go: () => turnPage(newConversation).then(focusComposer) }] },
+      { heading: '', options: [{ icon: icons.compose, title: t('action.new'), go: () => turnPage(newConversation).then(focusComposer) }] },
       { heading: t('history.title'), options: app.conversations.value.slice(0, RECENT).map((item) => ({
         icon: icons.history, title: item.title || t('conversation.untitled'), when: item.updatedAt, go: opening({ ...item, dir: app.projectDir }),
       })) },

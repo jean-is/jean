@@ -2,7 +2,7 @@
 // (here, a fresh browser context) without deleting anything that was already there.
 import { test, expect } from '@playwright/test'
 import { readZip } from '../core/zip.js'
-import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, openTasks } from './helpers.js'
 
 test('a backup holds the conversations but no key, and restores on a fresh device', async ({ page, browser }) => {
   await start(page)
@@ -37,8 +37,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
   if (!ephemeral) {
     await other.waitForEvent('load')
-    await other.locator('.bar button[aria-label="Conversations"]').click()
-    await other.locator('app-history .history-item').first().click()
+    await (await openTasks(other)).locator('.history-item').first().click()
     await expect(other.locator('.msg-user').first()).toContainText('Explain photosynthesis')
   }
   await context.close()

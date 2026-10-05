@@ -1,5 +1,5 @@
 {
-  "sync.text": "በOneDrive፣ Dropbox፣ iCloud Drive ወይም Google Drive ውስጥ አዲስ አቃፊ ይፍጠሩ፣ እዚህ ይምረጡት፣ ከዚያ በሌሎች ኮምፒውተሮችዎ ላይ ያንኑ አቃፊ ይምረጡ። ውይይቶች፣ ፋይሎችና ትውስታ ይከተሉዎታል፤ ቅንብሮችና ቁልፎች በእያንዳንዱ ኮምፒውተር ላይ ይቀራሉ።",
+  "sync.text": "በOneDrive፣ Dropbox፣ iCloud Drive ወይም Google Drive ውስጥ አዲስ አቃፊ ይፍጠሩ፣ እዚህ ይምረጡት፣ ከዚያ በሌሎች ኮምፒውተሮችዎ ላይ ያንኑ አቃፊ ይምረጡ። ተግባራት፣ ፋይሎችና ትውስታ ይከተሉዎታል፤ ቅንብሮችና ቁልፎች በእያንዳንዱ ኮምፒውተር ላይ ይቀራሉ።",
   "sync.choose": "አቃፊ ይምረጡ…",
   "sync.syncing": "ከ{folder} ጋር በማመሳሰል ላይ…",
   "sync.done": "ከ{folder} ጋር ተመሳስሏል · {when}",

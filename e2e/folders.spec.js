@@ -8,7 +8,7 @@
 import { test, expect, chromium, devices } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openTasks } from './helpers.js'
 import { extractPages } from '../caps/files/extract.js'
 import { makeFile } from '../caps/made/formats.js'
 import { readZip } from '../core/zip.js'
@@ -109,9 +109,9 @@ async function answer(page) {
 
 /** @param {import('@playwright/test').Page} page @param {string} title */
 async function openConversation(page, title) {
-  await page.locator('.bar > .icon-button').first().click()
-  await page.locator('app-history dialog[open] .history-item', { hasText: title }).click()
-  await expect(page.locator('app-history dialog[open]')).toBeHidden()
+  const item = (await openTasks(page)).locator('.history-item', { hasText: title })
+  await item.click()
+  await expect(item).toHaveAttribute('aria-current', 'true')
 }
 
 /** The system's folder picker, played by a folder of the private file system. @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} target */

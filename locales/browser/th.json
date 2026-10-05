@@ -23,6 +23,6 @@
   "browser.folder": "แสดง {folder}",
   "browser.missing": "ไม่มี {page} ใน {folder}",
   "browser.unshown": "แสดง {page} ที่นี่ไม่ได้",
-  "browser.elsewhere": "{folder} ไม่ได้เปิดอยู่ในการสนทนานี้",
+  "browser.elsewhere": "{folder} ไม่ได้เปิดอยู่ในงานนี้",
   "browser.shut": "เบราว์เซอร์ของคุณไม่อนุญาตให้เปิด {folder} โหลดซ้ำเพื่อให้ถามอีกครั้ง"
 }

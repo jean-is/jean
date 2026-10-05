@@ -17,6 +17,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Model / provider | Jean's brain |
 | Capability (a module unlocked by discovery) | What Jean can do; skills are one of them |
 | Skill (`SKILL.md`) | Skill (D115) |
+| Conversation | Task: New task, Tasks (D165) |
 | Task on a schedule | Routine (D115, D122) |
 | MCP server / connector | Connection |
 | Artifact / output | Things Jean made |

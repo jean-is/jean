@@ -1,9 +1,9 @@
 // Looks (D111, D120): each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view, in one sidebar with the name at its top and
-// the user at its foot (D115, D150), and is back before the first paint; the user's own CSS shows as it
+// the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS shows as it
 // is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
 import { test, expect } from '@playwright/test'
-import { start, openSettings } from './helpers.js'
+import { start, openSettings, openTasks } from './helpers.js'
 import { LOOKS } from '../ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -16,8 +16,8 @@ test('Mail lists the conversations beside the open one, with the user’s touche
   const settings = await openSettings(page, 'Appearance')
   await settings.locator('.look', { hasText: 'Mail' }).click()
   await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
-  await expect(page.locator('.inbox')).toBeVisible()
-  await expect(page.locator('.inbox .profile')).toBeVisible()
+  await expect(page.locator('app-inbox')).toBeVisible()
+  await expect(page.locator('app-inbox .profile')).toBeVisible()
   await settings.locator('details.other summary').click()
   await settings.locator('.look-css').fill('.hero-question { outline: 3px solid rgb(255, 0, 0); }')
   await expect(page.locator('.hero-question')).toHaveCSS('outline-color', 'rgb(255, 0, 0)')
@@ -26,19 +26,60 @@ test('Mail lists the conversations beside the open one, with the user’s touche
   if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
-  await expect(page.locator('.inbox')).toBeVisible()
+  await expect(page.locator('app-inbox')).toBeVisible()
   await expect(page.locator('.hero-question')).toHaveCSS('outline-color', 'rgb(255, 0, 0)')
 })
 
 test('right to left, Mail’s sidebar sits on the right, the name at its top', async ({ page }) => {
   await start(page, 'ar')
   await page.evaluate(async () => (await import('/ui/state.js')).setLook({ id: 'mail' }))
-  await expect(page.locator('.inbox')).toBeVisible()
-  const list = await page.locator('.inbox').boundingBox()
+  await expect(page.locator('app-inbox')).toBeVisible()
+  const list = await page.locator('app-inbox').boundingBox()
   const top = await page.locator('.bar').boundingBox()
   expect(list?.x).toBeGreaterThan(640)
   expect(top?.x).toBe(list?.x)
   expect(top?.y).toBeLessThan(list?.y ?? 0)
+})
+
+test('the drawer opens beside the conversation or is put away, as the user left it, and Mail starts with it open', async ({ page }) => {
+  const look = (/** @type {string} */ id) => page.evaluate(async (id) => (await import('/ui/state.js')).setLook({ id: /** @type {any} */ (id) }), id)
+  await page.goto('./')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  // The first screen is the box alone: the drawer is put away, its button at the header's start (D165).
+  const toggle = page.locator('.sidebar-toggle')
+  const tasks = page.locator('app-inbox')
+  await expect(tasks).toHaveCount(0)
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+  await look('mail')
+  await expect(tasks).toBeVisible()
+  await expect(toggle).toHaveAttribute('aria-label', 'Close sidebar')
+  await toggle.click()
+  await expect(tasks).toHaveCount(0)
+  await look('room')
+  await expect(page.locator('html')).not.toHaveAttribute('data-look')
+  await expect(tasks).toHaveCount(0)
+
+  // Opened: a new task, the tasks under their heading; a capability found that leads somewhere has its row.
+  await toggle.click()
+  await expect(tasks.locator('.place', { hasText: 'New task' })).toBeVisible()
+  await expect(tasks.getByRole('heading', { name: 'Tasks' })).toBeVisible()
+  await expect(tasks.locator('.place')).toHaveCount(1)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('routines'))
+  await tasks.locator('.place', { hasText: 'Routines' }).click()
+  await expect(page.locator('app-settings .settings-nav [aria-current="page"]')).toHaveText('Routines')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+  await page.reload()
+  await expect(tasks).toBeVisible()
+
+  // On a narrow window it slides over the conversation, and its button puts it away.
+  await page.setViewportSize({ width: 600, height: 800 })
+  await expect(tasks).toHaveCount(0)
+  await toggle.click()
+  const drawer = page.locator('app-history dialog[open]')
+  await expect(drawer.locator('.place', { hasText: 'New task' })).toBeVisible()
+  await drawer.getByRole('button', { name: 'Close sidebar' }).click()
+  await expect(drawer).toHaveCount(0)
 })
 
 test('every theme is in the gallery with its thumbnail, and dresses the page when picked', async ({ page }) => {
@@ -79,8 +120,10 @@ test('Depth turns the page as the camera circles the floor, the other way to an 
       }
     }) })
   })
-  await page.locator('.bar > .icon-button').first().click()
-  await page.locator('app-history dialog[open] .history-item').first().click()
+  // On a narrow window the drawer slides over the page, a dialog, which falls back as the page turns.
+  await page.setViewportSize({ width: 700, height: 800 })
+  await expect(page.locator('app-inbox')).toHaveCount(0)
+  await (await openTasks(page)).locator('.history-item').first().click()
   const { turn, animations } = await page.evaluate(() => Reflect.get(window, 'turned'))
   expect(turn).toBe('to back')
   expect(animations).toEqual(expect.arrayContaining([

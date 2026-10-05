@@ -2,7 +2,7 @@
    edge to edge with the conversations (the open one in the system's blue), what the user asked
    in blue bubbles with a tail, a toolbar that the page scrolls under with the title in it, sheets whose three lights
    close them, and panels (the file preview, the browser, the drawer) that float. System typefaces, sizes, focus
-   ring and scroll bars. On a phone: a frosted bar, a large title, the drawer. Over ui/style.css, which comes after it, so every rule here starts
+   ring and scroll bars. On a phone, or with the sidebar put away: a frosted bar, a large title, the drawer. Over ui/style.css, which comes after it, so every rule here starts
    with :root[data-look='glass'], and its keyframes are named glass-*. */
 
 :root[data-look='glass'] {
@@ -84,9 +84,8 @@
 :root[data-look='glass'] :focus-visible { outline: 3px solid oklch(from var(--fill) l c h / 0.6); outline-offset: 1px; }
 :root[data-look='glass'] :is(input, progress) { accent-color: var(--fill); }
 
-/* A frosted bar on a phone; on a wide screen it is the sidebar's top. */
+/* A frosted bar on a phone, or with the sidebar put away; with it open, it is the sidebar's top. */
 :root[data-look='glass'] .bar { padding-block: 0.5rem; border-block-end: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(20px) saturate(1.8); }
-:root[data-look='glass'] app-inbox { display: none; }
 
 /* The first screen: centred, in the system's display face. */
 :root[data-look='glass'] .welcome { align-items: center; gap: 1.75rem; text-align: center; }
@@ -139,20 +138,17 @@
 :root[data-look='glass'] .menu .icon { inline-size: 1rem; block-size: 1rem; }
 
 /* The conversations: rows in the sidebar or the drawer, the open one filled with blue. */
-:root[data-look='glass'] :is(app-inbox, .drawer) > .button, :root[data-look='glass'] .sidebar-settings { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; background: transparent; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
-:root[data-look='glass'] :is(app-inbox, .drawer) > .button:hover, :root[data-look='glass'] .history-list li:hover { background: var(--hover); }
-:root[data-look='glass'] :is(app-inbox, .drawer) > .button .icon, :root[data-look='glass'] .sidebar-settings .icon { color: var(--flame); }
-:root[data-look='glass'] .history-list { gap: 0.125rem; margin: 0.25rem 0 0; }
+:root[data-look='glass'] :is(.place, .sidebar-settings) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; background: transparent; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
+:root[data-look='glass'] :is(.place:hover, .history-list li:hover) { background: var(--hover); }
+:root[data-look='glass'] :is(.place, .sidebar-settings) .icon { color: var(--flame); }
+:root[data-look='glass'] .sidebar-heading { padding-inline: 0.625rem; font-size: 0.75rem; font-weight: 600; }
+:root[data-look='glass'] .history-list { gap: 0.125rem; }
 :root[data-look='glass'] .history-list li { border-radius: 0.625rem; }
 :root[data-look='glass'] .history-list li.is-current { background: var(--fill); color: oklch(1 0 0); }
 :root[data-look='glass'] .history-list li.is-current .icon-button { color: oklch(1 0 0); }
 :root[data-look='glass'] .history-list li.is-current .ember { background: currentColor; }
 :root[data-look='glass'] .history-item { padding: 0.4375rem 0.625rem; }
 :root[data-look='glass'] .history-title { font-size: 0.875rem; font-weight: 500; }
-@media (hover: hover) {
-  :root[data-look='glass'] .history-list li .icon-button { opacity: 0; }
-  :root[data-look='glass'] .history-list li:is(:hover, :focus-within) .icon-button { opacity: 1; }
-}
 
 /* Notifications come in at the top corner, as the system's do. */
 :root[data-look='glass'] .toasts { inset-block: 0.75rem auto; inset-inline: auto 0.75rem; justify-items: end; }
@@ -238,24 +234,22 @@
 @media (width < 48rem) {
   :root[data-look='glass'] .toasts { inset-inline: 0.75rem; justify-items: center; }
 }
-@media (min-width: 48rem) {
-  :root[data-look='glass'] { --list: 17.5rem; }
-  :root[data-look='glass'] app-shell { padding-inline-start: var(--list); background: var(--room) content-box; }
-  /* The sidebar, from edge to edge: the name at its top, the conversations,
-     the user at its foot. The drawer's button goes, its list is in view. */
-  :root[data-look='glass'] :is(.bar, app-inbox) { position: fixed; z-index: 3; inset-inline-start: 0; inline-size: var(--list); border-inline-end: 1px solid var(--line); background: var(--side); backdrop-filter: none; }
-  :root[data-look='glass'] .bar { inset-block-start: 0; block-size: var(--top); padding: 0 0.75rem; border-block-end: 0; }
-  :root[data-look='glass'] .bar > .icon-button:first-child { display: none; }
-  :root[data-look='glass'] .wordmark { min-inline-size: 0; font-size: 0.9375rem; }
-  :root[data-look='glass'] app-inbox { inset-block: var(--top) 0; display: flex; flex-direction: column; gap: 0.5rem; padding: 0 0.625rem 0.625rem; overflow-y: auto; overscroll-behavior: contain; }
-  /* The toolbar over the conversation, which the page scrolls under; its title in it, centred. */
-  :root[data-look='glass'] app-shell::before { content: ''; position: fixed; z-index: 2; inset-block-start: 0; inset-inline: var(--list) 0; block-size: var(--top); background: linear-gradient(var(--room) 40%, oklch(from var(--room) l c h / 0)); pointer-events: none; }
-  :root[data-look='glass'] .conversation-title { position: sticky; z-index: 3; inset-block-start: 0; margin: 0 0 0.75rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
-  :root[data-look='glass'] .notice { margin-block-start: var(--top); }
-}
+/* The sidebar, from edge to edge, open beside the conversation (D165): the name at its top, the
+   conversations, the user at its foot. */
+:root[data-look='glass'][data-sidebar] { --list: 17.5rem; }
+:root[data-look='glass'][data-sidebar] app-shell { padding-inline-start: var(--list); background: var(--room) content-box; }
+:root[data-look='glass'][data-sidebar] :is(.bar, app-inbox) { background: var(--side); backdrop-filter: none; }
+:root[data-look='glass'][data-sidebar] .bar { padding-block: 0; border-block-end: 0; }
+:root[data-look='glass'][data-sidebar] .wordmark { font-size: 0.9375rem; }
+:root[data-look='glass'][data-sidebar] app-inbox { padding: 0 0.625rem 0.625rem; }
+:root[data-look='glass'][data-sidebar] main { padding-block-start: 0; }
+/* The toolbar over the conversation, which the page scrolls under; its title in it, centred. */
+:root[data-look='glass'][data-sidebar] app-shell::before { content: ''; position: fixed; z-index: 2; inset-block-start: 0; inset-inline: var(--list) 0; block-size: var(--top); background: linear-gradient(var(--room) 40%, oklch(from var(--room) l c h / 0)); pointer-events: none; }
+:root[data-look='glass'][data-sidebar] .conversation-title { position: sticky; z-index: 3; inset-block-start: 0; margin: 0 0 0.75rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+:root[data-look='glass'][data-sidebar] .notice { margin-block-start: var(--top); }
 
 @media print {
-  :root[data-look='glass'] app-inbox, :root[data-look='glass'] app-shell::before { display: none; }
-  :root[data-look='glass'] app-shell { padding: 0; border: 0; background: none; }
+  :root[data-look='glass'] app-shell::before { display: none; }
+  :root[data-look='glass'] app-shell { border: 0; background: none; }
   :root[data-look='glass'] .conversation-title { position: static; font: 700 1.5rem/1.2 var(--display); text-align: start; white-space: normal; }
 }

@@ -1,7 +1,7 @@
 /* Mail: the conversations in a list beside the one open, like an email inbox (D111). Over
    ui/style.css, which comes after it, so every rule here starts with :root[data-look='mail'].
    Beside the conversation, one sidebar as in the Claude apps: the header's name at its top, the
-   list, the user at its foot (D115, D150). On a phone: the room's layout, with the list in its drawer.
+   list, the user at its foot (D115, D150); put away, or on a phone, the room's layout (D165).
    Logical properties only. */
 
 :root[data-look='mail'] {
@@ -21,7 +21,6 @@
   --picked: oklch(0.27 0.0015 254);
   --display: var(--sans);
   --radius: 1rem;
-  --list: 0rem;
   --top: 3.75rem;
 }
 :root[data-look='mail'][data-theme='light'] {
@@ -53,51 +52,10 @@
 :root[data-look='mail'] .composer:focus-within { border-color: oklch(from var(--flame) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.18); }
 :root[data-look='mail'] :is(.send, .caret) { box-shadow: none; }
 
-/* The list: the drawer's, kept open, under the header's name. */
-:root[data-look='mail'] .inbox {
-  position: fixed;
-  z-index: 3;
-  inset-block: var(--top) 0;
-  inset-inline-start: 0;
-  display: none;
-  flex-direction: column;
-  gap: 0.75rem;
-  inline-size: var(--list);
-  padding: 0.25rem 0.75rem 0.75rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  border-inline-end: 1px solid var(--line);
-  background: var(--room);
-}
-:root[data-look='mail'] .inbox > .button { justify-content: flex-start; border-radius: 0.8rem; }
-:root[data-look='mail'] .inbox .history-list { margin: 0; }
+/* The list: the drawer, open beside the conversation (D165), under the header's name. */
+:root[data-look='mail'][data-sidebar] { --list: 18rem; }
+:root[data-look='mail'][data-sidebar] .bar { padding: 0 1rem; }
 :root[data-look='mail'] .history-list li { border-radius: 0.8rem; }
 :root[data-look='mail'] .history-list li.is-current { background: var(--picked); }
 :root[data-look='mail'] .history-item { padding: 0.5rem 0.75rem; }
 :root[data-look='mail'] .history-title { font-size: 0.9rem; font-weight: 500; }
-:root[data-look='mail'] .toasts { inset-inline-start: var(--list); }
-
-@media (min-width: 48rem) {
-  :root[data-look='mail'] { --list: 18rem; }
-  :root[data-look='mail'] app-shell { padding-inline-start: var(--list); }
-  :root[data-look='mail'] .inbox { display: flex; }
-  /* The header joins the list, as its top: the name, and the project open. The drawer's button goes, its list is in view. */
-  :root[data-look='mail'] .bar {
-    position: fixed;
-    inset-block-start: 0;
-    inset-inline-start: 0;
-    inline-size: var(--list);
-    block-size: var(--top);
-    padding: 0 1rem;
-    border-inline-end: 1px solid var(--line);
-    background: var(--room);
-  }
-  :root[data-look='mail'] .bar > .icon-button:first-child { display: none; }
-  :root[data-look='mail'] .wordmark { min-inline-size: 0; }
-  :root[data-look='mail'] main { padding-block-start: 1.5rem; }
-}
-
-@media print {
-  :root[data-look='mail'] .inbox { display: none; }
-  :root[data-look='mail'] app-shell { padding: 0; }
-}

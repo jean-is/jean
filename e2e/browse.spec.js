@@ -5,7 +5,7 @@
 // as an app. ⌘⇧B opens and closes it. It shares the side of the window with a file's preview, neither
 // covering the other, and its edge and the divider between them resize them (D144). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, BRAIN_URL, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeTasks, BRAIN_URL, SALES } from './helpers.js'
 
 const SITE = BRAIN_URL.replace(/\/v1$/, '/site')
 
@@ -183,6 +183,8 @@ test('the browser and a file share the side of the window, neither covering the 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await start(page)
   await connectFakeBrain(page)
+  // The drawer put away, the window is the conversation's and the dock's (D165).
+  await closeTasks(page)
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)

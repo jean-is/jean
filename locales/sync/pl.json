@@ -1,5 +1,5 @@
 {
-  "sync.text": "Utwórz nowy folder w OneDrive, Dropbox, iCloud Drive lub Google Drive, wybierz go tutaj, a potem ten sam folder na innych komputerach. Rozmowy, pliki i pamięć idą za tobą; ustawienia i klucze zostają na każdym komputerze.",
+  "sync.text": "Utwórz nowy folder w OneDrive, Dropbox, iCloud Drive lub Google Drive, wybierz go tutaj, a potem ten sam folder na innych komputerach. Zadania, pliki i pamięć idą za tobą; ustawienia i klucze zostają na każdym komputerze.",
   "sync.choose": "Wybierz folder…",
   "sync.syncing": "Synchronizacja z folderem {folder}…",
   "sync.done": "Zsynchronizowano z folderem {folder} · {when}",

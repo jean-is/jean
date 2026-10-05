@@ -1,5 +1,5 @@
 {
-  "sync.text": "Crea una carpeta en OneDrive, Dropbox, iCloud Drive o Google Drive, elígela aquí y luego la misma carpeta en tus otros ordenadores. Las conversaciones, los archivos y la memoria te acompañan; los ajustes y las claves se quedan en cada ordenador.",
+  "sync.text": "Crea una carpeta en OneDrive, Dropbox, iCloud Drive o Google Drive, elígela aquí y luego la misma carpeta en tus otros ordenadores. Las tareas, los archivos y la memoria te acompañan; los ajustes y las claves se quedan en cada ordenador.",
   "sync.choose": "Elegir una carpeta…",
   "sync.syncing": "Sincronizando con {folder}…",
   "sync.done": "Sincronizado con {folder} · {when}",

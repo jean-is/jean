@@ -3,7 +3,7 @@
 // its private file system (as in folders.spec.js), and the drive by the test, which copies one
 // computer's folder over the other's. Chromium only: elsewhere a page can't open a folder in place.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks } from './helpers.js'
 
 /** The system's folder picker, played by `picked/<e2e.pick>` in the private file system. @param {import('@playwright/test').Page} page */
 const picker = (page) => page.addInitScript(() => {
@@ -49,12 +49,6 @@ async function answered(page, text) {
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
 }
 
-/** @param {import('@playwright/test').Page} page */
-const history = async (page) => {
-  await page.locator('.bar > .icon-button').first().click()
-  return page.locator('app-history dialog[open]')
-}
-
 test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium opens a folder in place')
 
 test('two computers keep each other’s conversations through a folder their drive syncs', async ({ page, browser }) => {
@@ -84,7 +78,7 @@ test('two computers keep each other’s conversations through a folder their dri
   await drive(other, 'Jean', first)
   await turnOn(other, 'Sync')
   await other.keyboard.press('Escape')
-  const list = await history(other)
+  const list = await openTasks(other)
   await list.locator('.history-item', { hasText: 'photosynthesis' }).click()
   await expect(other.locator('.msg-user').first()).toContainText('Explain photosynthesis')
   // One home: the second computer's, still empty, gave way to the first one's.
@@ -93,16 +87,15 @@ test('two computers keep each other’s conversations through a folder their dri
 
   // A conversation there goes back, after its answer, and comes in on the first computer.
   await connectFakeBrain(other)
-  const drawer = await history(other)
-  await drawer.getByRole('button', { name: 'New conversation' }).click()
-  await expect(drawer).toBeHidden()
+  await (await openTasks(other)).locator('.place', { hasText: 'New task' }).click()
+  await expect(other.locator('.hero-question')).toBeVisible()
   await answered(other, 'What is a leap year?')
   await expect.poll(async () => Object.values(await folder(other, 'Jean')).some((text) => text.includes('What is a leap year?')), { timeout: 15_000 }).toBe(true)
   await drive(page, 'Jean', await folder(other, 'Jean'))
   const back = (await openSettings(page, 'Your data')).locator('section.sync')
   await back.getByRole('button', { name: 'Sync now' }).click()
   await page.keyboard.press('Escape')
-  await expect((await history(page)).locator('.history-item', { hasText: 'leap year' })).toBeVisible()
+  await expect((await openTasks(page)).locator('.history-item', { hasText: 'leap year' })).toBeVisible()
   await context.close()
 })
 

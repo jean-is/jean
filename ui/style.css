@@ -619,9 +619,29 @@ input:focus-visible, select:focus-visible { outline: 2px solid var(--flame); out
 input[type='radio'] { accent-color: var(--flame); }
 input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: var(--flame); }
 
-/* ─── The conversations, in the drawer or Mail's list ───────────────────── */
+/* ─── The drawer, open beside the conversation or over it ───────────────── */
 
-/* At the foot of the conversations, as in the Claude apps (D115): the user (D150), and Search (D133). */
+/* Open beside the conversation on a wide window (D165), as Mail's list (D111): the header's top is
+   its own, the name first and the button that puts it away last. A look's rules outrank these. */
+:where(:root[data-sidebar]) { --list: 17rem; --top: 4.25rem; }
+:where(:root[data-sidebar]) app-shell { padding-inline-start: var(--list); }
+/* Sticky, in the room the shell leaves at its start, taking none of its own: fixed, Safari would
+   place a menu anchored there (the user's, the project's, the folder's) as if it scrolled away. */
+:where(:root[data-sidebar]) :is(.bar, app-inbox) { align-self: flex-start; inline-size: var(--list); margin-inline-start: calc(-1 * var(--list)); border-inline-end: 1px solid var(--line); background: var(--room); }
+:where(:root[data-sidebar]) .bar { block-size: var(--top); margin-block-end: calc(-1 * var(--top)); padding: 0 0.75rem; }
+:where(:root[data-sidebar]) .wordmark { min-inline-size: 0; margin-inline-end: auto; }
+:where(:root[data-sidebar]) .sidebar-toggle { order: 1; }
+:where(:root[data-sidebar]) main { padding-block-start: 1.5rem; }
+:where(:root[data-sidebar]) .toasts { inset-inline-start: var(--list); }
+app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display: flex; flex-direction: column; block-size: calc(100dvh - var(--top)); margin-block: var(--top) -100dvh; padding: 0.25rem 0.75rem 0.75rem; overflow-y: auto; overscroll-behavior: contain; }
+/* A new task, then where each capability found leads, as Manus' rows; the tasks under their heading. */
+.place { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.75rem; border: 0; border-radius: 0.9rem; background: none; color: var(--ink); text-align: start; }
+.place:hover { background: var(--line); }
+.place .icon { flex: none; inline-size: 1.15rem; block-size: 1.15rem; color: var(--ink-soft); }
+.sidebar-heading { margin: 1.25rem 0 0.25rem; padding-inline: 0.75rem; font: 500 0.8rem/1.4 var(--sans); color: var(--ink-soft); }
+.sidebar-heading + .muted { margin: 0; padding-inline: 0.75rem; font-size: 0.9rem; }
+
+/* At the foot of the drawer, as in the Claude apps (D115): the user (D150). */
 .sidebar-settings {
   position: sticky;
   inset-block-end: 0;
@@ -667,11 +687,13 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 :dir(rtl) .menu [role='switch']::after { background-position: calc(100% - 0.1rem) 50%; }
 :dir(rtl) .menu [role='switch'][aria-checked='true']::after { background-position: 0.1rem 50%; }
 /* One column no wider than the list: a long title ends in an ellipsis, its delete button in view. */
-.history-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.15rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.history-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.15rem; margin: 0; padding: 0; list-style: none; }
 .history-list li { display: flex; align-items: center; border-radius: 0.9rem; }
 .history-list li:hover, .history-list li.is-current { background: var(--line); }
 .history-item { flex: 1; display: flex; align-items: center; gap: 0.5rem; min-inline-size: 0; padding: 0.55rem 0.75rem; border: 0; background: none; text-align: start; }
 .history-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* A task's delete button shows under the pointer, as in Manus (D165); always on a touchscreen. */
+@media (hover: hover) { .history-list li:not(:hover, :focus-within) .icon-button { opacity: 0; } }
 /* Being answered (D147). */
 .history-item .ember { inline-size: 0.375rem; block-size: 0.375rem; background: var(--flame); animation: pulse 1.6s ease-in-out infinite; }
 .history-item .ember[data-waiting] { animation: none; box-shadow: 0 0 0 0.15rem oklch(from var(--flame) l c h / 0.3); }
@@ -722,8 +744,9 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
   /* Also over a look's colours (ui/looks/), which outrank :root alone. */
   :root, :root[data-look][data-theme] { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: #8a4a12; }
   html, body { background: #fff; }
-  .room, .bar, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups { display: none !important; }
+  .room, .bar, app-inbox, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups { display: none !important; }
   main { inline-size: auto; }
+  app-shell { padding: 0 !important; }
   .msg { animation: none; }
   .msg-user { background: none; border: 1px solid var(--line); }
   .prose pre { background: none; }

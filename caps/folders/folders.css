@@ -12,6 +12,8 @@ app-folder-change { display: block; }
 .folder-name .icon { flex: none; inline-size: 1rem; block-size: 1rem; }
 .bar:has(.folder-name) .browser-toggle { margin-inline-start: 0; }
 .folder-menu { position-anchor: --folder; position-area: block-end span-inline-start; margin: 0.25rem 0 0; max-inline-size: min(22rem, calc(100vw - 2rem)); }
+/* In the drawer's top, open beside the conversation (D165), the name sits near the window's edge: the menu opens the other way. */
+:root[data-sidebar] .folder-menu { position-area: block-end span-inline-end; }
 .folder-menu:not(:popover-open) { translate: 0 -0.4rem; }
 .folder-menu:popover-open { @starting-style { translate: 0 -0.4rem; } }
 @supports not (anchor-name: --folder) { .folder-menu { inset: 4rem auto auto; inset-inline-end: 1rem; margin: 0; } }
