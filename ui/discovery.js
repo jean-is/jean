@@ -13,11 +13,13 @@ import { words, alike } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 import { folded } from '../core/settings.js'
+import { host } from './host.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
 
+const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...('showDirectoryPicker' in globalThis ? ['sync'] : []), 'brain-local']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -32,7 +34,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
   helpers: 'helpers that do the independent parts of a large task at the same time',
-  ...('showDirectoryPicker' in globalThis && { sync: 'keeping their conversations, files and memory the same on their other computers, through a folder their cloud drive syncs' }),
+  ...(folders && { sync: 'keeping their conversations, files and memory the same on their other computers, through a folder their cloud drive syncs' }),
 })
 
 /** The tools a capability brings, by name. @param {string} id */

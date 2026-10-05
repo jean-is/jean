@@ -1,0 +1,84 @@
+// The desktop app (D155, D169): Sync's folder is picked with the system's dialog, its host works in it
+// by its path, and the folder's name opens it in the system's file manager. The host is played by the
+// test, on a folder of its own: Neutralino's globals, whose key comes once, and its calls over a
+// WebSocket. In WebKit too, the Mac app's engine, where a page alone can't open a folder.
+import { test, expect } from '@playwright/test'
+import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { start, turnOn } from './helpers.js'
+import { NATIVE } from '../scripts/desktop.js'
+
+const TOKEN = 'key.connect'
+
+/**
+ * Neutralino, as far as Jean uses it: the methods its configuration allows, on this computer's files.
+ * @param {import('@playwright/test').Page} page @param {string} folder what its dialog picks
+ * @returns {Promise<{ opened: string[], asked: string[] }>}
+ */
+async function desktop(page, folder) {
+  const seen = { opened: /** @type {string[]} */ ([]), asked: /** @type {string[]} */ ([]) }
+  let given = false
+  await page.route('**/__neutralino_globals.js', (route) => {
+    route.fulfill({ contentType: 'application/javascript', body: `var NL_OS='Darwin';var NL_PORT=${new URL(route.request().url()).port};var NL_TOKEN='${given ? '' : TOKEN}';` })
+    given = true
+  })
+  /** @type {Record<string, (data: any) => Promise<unknown>>} */
+  const methods = {
+    'os.showFolderDialog': async () => folder,
+    'os.open': async ({ url }) => void seen.opened.push(url),
+    'filesystem.getStats': async ({ path }) => {
+      const found = await stat(path)
+      return { size: found.size, isFile: found.isFile(), isDirectory: found.isDirectory(), modifiedAt: Math.floor(found.mtimeMs / 1000) * 1000 }
+    },
+    'filesystem.readDirectory': async ({ path }) => (await readdir(path, { withFileTypes: true })).map((entry) => ({ entry: entry.name, type: entry.isDirectory() ? 'DIRECTORY' : 'FILE' })),
+    'filesystem.readBinaryFile': async ({ path }) => (await readFile(path)).toString('base64'),
+    'filesystem.writeBinaryFile': async ({ path, data }) => void await writeFile(path, Buffer.from(data, 'base64')),
+    'filesystem.createDirectory': async ({ path }) => void await mkdir(path, { recursive: true }),
+    'filesystem.remove': async ({ path }) => void await rm(path, { recursive: true }),
+  }
+  await page.routeWebSocket(/connectToken=/, (ws) => {
+    if (!ws.url().endsWith(`connectToken=${TOKEN.split('.')[1]}`)) return ws.close()
+    ws.onMessage(async (message) => {
+      const { id, method, accessToken, data } = JSON.parse(String(message))
+      seen.asked.push(method)
+      const answer = accessToken !== TOKEN || !methods[method] ? { error: { code: 'NE_RT_NATPRME', message: method } }
+        : await methods[method](data).then((returnValue) => ({ returnValue, success: true }), (error) => ({ error: { code: error.code === 'ENOENT' ? 'NE_FS_NOPATHE' : 'NE_FS_UNKNOWN', message: String(error) } }))
+      ws.send(JSON.stringify({ id, method, data: answer }))
+    })
+  })
+  return seen
+}
+
+test('the desktop app syncs with a folder picked with the system’s dialog, and its name opens it there', async ({ page }) => {
+  const root = await mkdtemp(join(tmpdir(), 'jean-desktop-'))
+  const folder = join(root, 'Jean Sync')
+  await mkdir(folder)
+  try {
+    const host = await desktop(page, folder)
+    await start(page)
+    await turnOn(page, 'Sync')
+    await page.locator('app-settings .plaque').getByRole('button', { name: 'Open' }).click()
+    const panel = page.locator('app-settings section.sync')
+    await expect(panel).toContainText('Synced with Jean Sync')
+    const files = await readdir(folder, { recursive: true })
+    expect(files).toContain('mirror.json')
+    expect(files.some((path) => path.endsWith('project.md'))).toBe(true)
+    expect(files.filter((path) => /^(\.secrets|\.cache)|^settings\.json$/.test(path))).toEqual([])
+
+    await panel.getByRole('button', { name: 'Jean Sync' }).click()
+    await expect.poll(() => host.opened).toEqual([`file://${folder.split('/').map(encodeURIComponent).join('/')}`])
+
+    // What is made next goes there at the next round, through the host's calls and no other.
+    await page.evaluate(async () => (await import('/ui/state.js')).app.fs.write('projects/note.md', 'Made here\n'))
+    await panel.getByRole('button', { name: 'Sync now' }).click()
+    await expect.poll(() => readFile(join(folder, 'projects/note.md'), 'utf8').catch(() => '')).toBe('Made here\n')
+    expect(host.asked.filter((method) => !NATIVE.includes(method))).toEqual([])
+
+    // After a reload, the key, which came once, is still the tab's.
+    await page.reload()
+    expect(await page.evaluate(async (path) => (await (await import('/ui/host.js')).call('filesystem.getStats', { path })).isDirectory, folder)).toBe(true)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})

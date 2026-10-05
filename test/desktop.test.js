@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { DESKTOP, DIRS, DMG, finderScript, icns, infoPlist, neutralinoConfig, shippedFiles, TOP } from '../scripts/desktop.js'
+import { DESKTOP, DIRS, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles, TOP } from '../scripts/desktop.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
@@ -19,11 +19,15 @@ describe('desktop', () => {
     assert.ok(DESKTOP.port > 0, 'a random port would lose the data at every launch')
   })
 
-  it('gives the page no more power than a browser tab, and writes nothing beside the app', () => {
+  it('gives the page only the host’s calls Sync makes, none that runs a program, and writes nothing beside the app', async () => {
     const config = neutralinoConfig({ name: 'Jean' }, { version: '0.8.0' })
-    assert.equal(config.enableNativeAPI, false)
+    assert.equal(config.enableNativeAPI, true)
+    assert.equal(config.tokenSecurity, 'one-time')
+    assert.deepEqual(config.nativeAllowList, NATIVE)
+    const called = [...(await readFile(new URL('../ui/host.js', import.meta.url), 'utf8')).matchAll(/call\('([\w.]+)'/g)].map(([, method]) => method)
+    assert.deepEqual([...new Set(called)].sort(), [...NATIVE].sort())
+    assert.ok(NATIVE.every((method) => /^(os\.(showFolderDialog|open)|filesystem\.\w+)$/.test(method)))
     assert.equal(config.enableExtensions, false)
-    assert.deepEqual(config.nativeAllowList, [])
     assert.equal(config.logging.enabled, false)
     assert.equal(config.dataLocation, 'system')
     assert.equal(config.modes.window.newWindowPolicy, 'browser')

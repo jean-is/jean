@@ -210,7 +210,7 @@ Still to check by hand:
 - [ ] Chrome's "Allow on every visit" for the folder, and the notice at the start of a visit when it wasn't given
 - [ ] A few hundred conversations: how long a round takes on a weak laptop, every minute
 - [ ] Routines on two computers: a routine whose Routines are on in both runs on both (each run is a conversation of its own, and both are kept)
-- [ ] The desktop version (D155): WebView2 on Windows has the folder picker; macOS's web view doesn't
+- [ ] The desktop version (D169): the system's folder dialog and its file manager, in the built apps on macOS, Windows and Linux
 
 Budgets now: core 2,812 of 3,000 lines, app 19,904 of 20,000, first load 89.7 of 100 KB gzipped, the largest catalogues 6.7 of 8 KB (Russian and Ukrainian) and their dialogs' part 7.6, Sync's own code 5.9 of 40 KB. The app has 96 lines left: the next feature will need to make room first.
 

@@ -94,6 +94,8 @@ export interface FS {
   /** changes made by other tabs; returns unsubscribe */
   watch?: (cb: (path: string) => void) => () => void
   estimate?: () => Promise<{ usage?: number, quota?: number, persisted?: boolean }>
+  /** stops what it runs (a folder's storage worker) */
+  close?: () => void
 }
 
 // ─── Conversations (JSONL) and ACP events ────────────────────────────────────

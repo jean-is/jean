@@ -1,14 +1,16 @@
 // Sync (D157): Jean's files mirrored into a folder of the user's that their cloud drive (OneDrive,
 // Dropbox, iCloud Drive, Google Drive) keeps the same on their other computers, each computer's Jean
-// syncing with it. Chrome and Edge open the folder in place, with Folders' access (D141): its handle
-// is kept in IndexedDB, and the browser asks again once a visit unless allowed on every visit. A round
-// runs as Jean opens, every minute while it is on screen, after each answer and as it goes out of
-// sight, in one tab at a time (mirror.js does the work). What comes in shows where the user is.
+// syncing with it. Chrome and Edge open the folder in place, with Folders' access (D141): its handle is kept
+// in IndexedDB, and the browser asks again once a visit unless allowed on every visit. The desktop app picks
+// it with the system's dialog and keeps its path, which its host works in (D169). A round runs as Jean opens,
+// every minute while it is on screen, after each answer and as it goes out of sight, in one tab at a time
+// (mirror.js does the work). What comes in shows where the user is.
 import { html } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
 import { app, notify, refreshProjects, refreshConversations } from '../../ui/state.js'
 import { folderFS } from '../../ui/opfs.js'
+import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
 import { icons } from '../../ui/icons.js'
 import { loadConversation } from '../../core/conversations.js'
 import { t, tParts, useStrings, relativeTime, locale } from '../../core/i18n.js'
@@ -16,15 +18,18 @@ import { claim, syncRound, settleHomes, BASE } from './mirror.js'
 
 await useStrings('sync')
 
+/** A folder picked in the page, or the path of one picked in the desktop app. @typedef {FileSystemDirectoryHandle | string} Folder */
+const nameOf = (/** @type {Folder} */ folder) => (typeof folder === 'string' ? folder.split('/').filter(Boolean).at(-1) ?? folder : folder.name)
+
 /**
  * The folder Jean syncs with, if any, how it stands, and when it was last in step.
- * @type {import('@preact/signals-core').Signal<{ handle?: FileSystemDirectoryHandle, status: 'waiting' | 'syncing' | 'done' | 'failed', at?: number }>}
+ * @type {import('@preact/signals-core').Signal<{ folder?: Folder, status: 'waiting' | 'syncing' | 'done' | 'failed', at?: number }>}
  */
 const state = signal({ status: 'done' })
-/** @type {Promise<import('../../core/types.js').FS & { close: () => void }> | null} */
+/** @type {Promise<import('../../core/types.js').FS> | null} */
 let mirror = null
 
-// The folder's handle can't be kept in a file: IndexedDB keeps it, never in a backup or a sync.
+// The folder can't be kept in a file (a handle can't, a path is this computer's): IndexedDB keeps it, never in a backup or a sync.
 /** @type {Promise<IDBDatabase | null>} */
 const database = new Promise((resolve) => {
   if (!globalThis.indexedDB) return resolve(null)
@@ -44,26 +49,26 @@ async function stored(mode, act) {
   })
 }
 
-/** Whether the browser lets Jean open the folder, asking when `ask` (it needs the user's click just before). @param {FileSystemDirectoryHandle} handle */
-const allowed = (handle, ask = false) => /** @type {any} */ (handle)[ask ? 'requestPermission' : 'queryPermission']({ mode: 'readwrite' }).then((/** @type {string} */ answer) => answer === 'granted', () => false)
+/** Whether the browser lets Jean open the folder, asking when `ask` (it needs the user's click just before); the host always does. @param {Folder} folder */
+const allowed = async (folder, ask = false) => typeof folder === 'string' || /** @type {any} */ (folder)[ask ? 'requestPermission' : 'queryPermission']({ mode: 'readwrite' }).then((/** @type {string} */ answer) => answer === 'granted', () => false)
 
 /** One round, unless another tab is having one. */
 async function round() {
-  const { handle, at } = state.peek()
-  if (!handle) return
-  if (!(await allowed(handle))) return void (state.value = { handle, status: 'waiting', at })
+  const { folder, at } = state.peek()
+  if (!folder) return
+  if (!(await allowed(folder))) return void (state.value = { folder, status: 'waiting', at })
   await navigator.locks.request('app-sync', { ifAvailable: true }, async (lock) => {
-    if (!lock || handle !== state.peek().handle) return
-    state.value = { handle, status: 'syncing', at }
+    if (!lock || folder !== state.peek().folder) return
+    state.value = { folder, status: 'syncing', at }
     try {
-      const fs = await (mirror ??= folderFS(handle))
+      const fs = await (mirror ??= typeof folder === 'string' ? Promise.resolve(hostFS(folder)) : folderFS(folder))
       if (!(await claim(fs, { by: app.deviceId }))) throw new Error('Not a folder Jean syncs with')
       const came = await syncRound(app.fs, fs, { busy: (path) => app.running.peek().includes(path) })
       if (came.length) await show(came)
-      if (handle === state.peek().handle) state.value = { handle, status: 'done', at: Date.now() }
+      if (folder === state.peek().folder) state.value = { folder, status: 'done', at: Date.now() }
     } catch (error) {
       console.warn('Sync', error)
-      if (handle === state.peek().handle) state.value = { handle, status: 'failed', at }
+      if (folder === state.peek().folder) state.value = { folder, status: 'failed', at }
     }
   })
 }
@@ -89,24 +94,24 @@ async function show(came) {
 
 /** The user picks the folder: an empty one, or the one they sync with on another computer. */
 export async function choose() {
-  /** @type {FileSystemDirectoryHandle} */
-  let handle
+  /** @type {Folder} */
+  let folder
   try {
-    handle = await /** @type {any} */ (window).showDirectoryPicker({ id: 'sync', mode: 'readwrite', startIn: 'documents' })
+    folder = (await host) ? await pickFolder(t('sync.choose')) : await /** @type {any} */ (window).showDirectoryPicker({ id: 'sync', mode: 'readwrite', startIn: 'documents' })
   } catch (error) {
     if (/** @type {any} */ (error)?.name !== 'AbortError') console.warn('Sync', error)
     return
   }
-  const fs = await folderFS(handle)
+  const fs = typeof folder === 'string' ? hostFS(folder) : await folderFS(folder)
   if (!(await claim(fs, { by: app.deviceId }).catch(() => false))) {
-    fs.close()
-    return notify(t('sync.refused', { folder: handle.name }))
+    fs.close?.()
+    return notify(t('sync.refused', { folder: nameOf(folder) }))
   }
   await forget()
   mirror = Promise.resolve(fs)
-  await stored('readwrite', (store) => store.put(handle, 'folder'))
-  state.value = { handle, status: 'syncing' }
-  notify(t('sync.syncing', { folder: handle.name }))
+  await stored('readwrite', (store) => store.put(folder, 'folder'))
+  state.value = { folder, status: 'syncing' }
+  notify(t('sync.syncing', { folder: nameOf(folder) }))
   await round()
 }
 
@@ -119,31 +124,31 @@ async function stop() {
 
 /** What Jean knew of the last folder: its FS and the base, so another folder starts from nothing known. */
 async function forget() {
-  mirror?.then((fs) => fs.close(), () => {})
+  mirror?.then((fs) => fs.close?.(), () => {})
   mirror = null
   await app.fs.remove(BASE)
 }
 
 async function allow() {
-  const { handle } = state.peek()
-  if (handle && (await allowed(handle, true))) await round()
+  const { folder } = state.peek()
+  if (folder && (await allowed(folder, true))) await round()
 }
 
-// A page can't open the system's file manager: its file picker, opened in the folder, shows what it holds. What is picked changes nothing.
-/** @param {FileSystemDirectoryHandle} handle */
-const reveal = (handle) => /** @type {any} */ (window).showOpenFilePicker({ startIn: handle }).catch(() => {})
+// The desktop app's host opens the system's file manager. A page can't: its file picker, opened in the folder, shows what it holds, and what is picked changes nothing.
+/** @param {Folder} folder */
+const reveal = (folder) => (typeof folder === 'string' ? showFolder(folder) : /** @type {any} */ (window).showOpenFilePicker({ startIn: folder })).catch(() => {})
 
 /** Sync's part of Settings' Your data: the folder named in it opens, the time it was last in step shows on hover. */
 function panel() {
-  const { handle, status, at } = state.value
-  const folder = handle && html`<button class="link-button" title=${t('sync.show', { folder: handle.name })} @click=${() => reveal(handle)}>${handle.name}</button>`
+  const { folder: chosen, status, at } = state.value
+  const folder = chosen && html`<button class="link-button" title=${t('sync.show', { folder: nameOf(chosen) })} @click=${() => reveal(chosen)}>${nameOf(chosen)}</button>`
   const when = at && html`<time datetime=${new Date(at).toISOString()} title=${new Intl.DateTimeFormat(locale.value, { dateStyle: 'full', timeStyle: 'medium' }).format(at)}>${relativeTime(at)}</time>`
-  const said = !handle ? t('sync.text')
+  const said = !chosen ? t('sync.text')
     : tParts(status === 'waiting' ? 'sync.waiting' : status === 'failed' ? 'sync.failed' : at ? 'sync.done' : 'sync.syncing', { folder, when })
   return html`<section class="sync">
     <h3>${t('cap.sync.name')}</h3>
     <p class="muted">${said}</p>
-    <div class="row">${!handle ? html`<button class="button" @click=${choose}>${icons.folder} ${t('sync.choose')}</button>` : html`
+    <div class="row">${!chosen ? html`<button class="button" @click=${choose}>${icons.folder} ${t('sync.choose')}</button>` : html`
       <button class="button" ?disabled=${status === 'syncing'} @click=${status === 'waiting' ? allow : round}>${icons.sync} ${t(status === 'waiting' ? 'sync.allow' : 'sync.now')}</button>
       <button class="button subtle" @click=${stop}>${t('sync.stop')}</button>`}</div>
   </section>`
@@ -154,10 +159,10 @@ register({ id: 'sync', panel })
 // The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again.
 const kept = await stored('readonly', (store) => store.get('folder'))
 if (kept) {
-  state.value = { handle: kept, status: 'syncing' }
+  state.value = { folder: kept, status: 'syncing' }
   if (!(await allowed(kept))) {
-    state.value = { handle: kept, status: 'waiting' }
-    notify(t('sync.waiting', { folder: kept.name }), { label: t('sync.allow'), run: allow })
+    state.value = { folder: kept, status: 'waiting' }
+    notify(t('sync.waiting', { folder: nameOf(kept) }), { label: t('sync.allow'), run: allow })
   }
 }
 setInterval(() => document.visibilityState === 'visible' && round(), 60_000)

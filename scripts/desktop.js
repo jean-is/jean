@@ -40,11 +40,15 @@ export const DMG = Object.freeze({ width: 600, height: 360, iconSize: 128, app: 
 export const TOP = ['index.html', 'sandbox.html', 'preview.html', 'manifesto.html', 'manifesto.css', 'brand.js', 'sw.js', 'capabilities.json', 'manifest.webmanifest', 'LICENSE']
 export const DIRS = ['core', 'ui', 'caps', 'locales', 'vendor', 'fonts', 'icons', 'ee']
 
+/** The host's calls the page may make (ui/host.js), and no other. */
+export const NATIVE = ['os.showFolderDialog', 'os.open', 'filesystem.getStats', 'filesystem.readDirectory', 'filesystem.readBinaryFile', 'filesystem.writeBinaryFile', 'filesystem.createDirectory', 'filesystem.remove']
+
 /**
- * Neutralino's configuration: a window on Jean's files and nothing more. The native API stays off,
- * so the page can do no more than in a browser tab; a link that opens elsewhere opens in the
- * system's browser; nothing is written beside the app (no log; the window's size and place go to
- * the system's folder for app data).
+ * Neutralino's configuration: a window on Jean's files. Of the native API, only what Sync needs
+ * (D169): the system's dialog for a folder, the folder opened in the system's file manager, and the
+ * files there; nothing that runs a program. A link that opens elsewhere opens in the system's
+ * browser; nothing is written beside the app (no log; the window's size and place go to the
+ * system's folder for app data).
  * @param {{ name: string }} brand
  * @param {{ version: string, description?: string, copyright?: string }} about
  */
@@ -60,11 +64,11 @@ export function neutralinoConfig (brand, { version, description, copyright }) {
     url: '/',
     documentRoot: '/app/',
     enableServer: true,
-    enableNativeAPI: false,
+    enableNativeAPI: true,
     enableExtensions: false,
     exportAuthInfo: false,
     tokenSecurity: 'one-time',
-    nativeAllowList: [],
+    nativeAllowList: NATIVE,
     dataLocation: 'system',
     logging: { enabled: false, writeToLogFile: false },
     modes: {

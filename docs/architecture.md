@@ -75,6 +75,7 @@ ui/               base element, shell, chat, activity view, caps.js (the unlock 
                   preview.js and preview.css (a file, as what it is, beside the conversation; loaded when one first opens, D126;
                   csp.js writes a web page's policy, D143, tested in Node),
                   dock.js and dock.css (the side of the window the preview and the browser share, tiled and resized; loaded with the first, D144),
+                  host.js (the desktop app's host: its key, its calls, a folder by its path as an FS, D169),
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
                   reflexes/                                     (0.3; reflexes/questions.js is the question catalogue; compute/ was Calculations')
@@ -507,6 +508,7 @@ After 0.8, D157. `caps/sync/sync.js` is the capability: the folder the user pick
 - **A round.** Each file's size and date on each side, compared with the last round's (`.cache/sync.json`), says which side changed: that side's version goes to the other, a deletion too, and a change beats a deletion. Changed on both sides: a conversation's longer version wins, two that went apart both stay (the mirror's as a new conversation), anything else the newer wins. A side that holds none of what it held takes nothing away. Each write checks that what it replaces hasn't moved since it was looked at; a conversation being answered waits.
 - **When.** As Jean opens, every minute on screen, after each answer, and as the page goes out of sight, one tab at a time (Web Locks).
 - **Two homes.** Two computers that each made a home project keep the oldest as the home; `settleHomes` removes a newer, empty one, or keeps it as a project.
+- **The desktop app** (D169). Where Neutralino serves Jean, `ui/host.js` takes its key as Jean opens and makes the calls `NATIVE` in `scripts/desktop.js` allows. The system's dialog picks the folder, its path is kept in place of a handle, `hostFS` is the round's other side, and the folder's name opens it in the system's file manager.
 - **Not yet.** A drive's own API, for Safari, Firefox and phones, waits for the domain (D27); it would be another `FS`.
 
 ## Computer
