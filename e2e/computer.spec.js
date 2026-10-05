@@ -318,6 +318,27 @@ test('npm install from the registry Settings name, then node requires and import
   await expect(answer).toContainText("import { hi } from 'esm-hi'")
 })
 
+test('npm init, ls and run; a server refused, with the page beside the conversation instead', async ({ page }) => {
+  test.setTimeout(120_000)
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Computer')
+  await page.keyboard.press('Escape')
+  let answer = await command(page, '$ mkdir site && cd site && npm -v && npm init -y && npm ls')
+  await expect(answer).toContainText('Exit code: 0')
+  await expect(answer).toContainText('install, init, ls and run')
+  await expect(answer).toContainText('"name": "site"')
+  answer = await command(page, `$ echo 'console.log("built " + process.argv[2])' > build.js && jq '.scripts = {build: "node build.js", dev: "vite"}' package.json > p && mv p package.json && npm run build -- fast`)
+  await expect(answer).toContainText('built fast')
+  for (const server of ['npm run dev', 'npx vite', 'python3 -m http.server', `node -e "require('http')"`]) {
+    answer = await command(page, `$ ${server}`)
+    await expect(answer).toContainText('Exit code: 1')
+    await expect(answer).toContainText('nothing can listen on a port here')
+  }
+  answer = await command(page, '$ npm create vite@latest')
+  await expect(answer).toContainText('only install, init, ls and run work here')
+})
+
 test('Settings › Computer: the internet, its sites, the relay, packages and the workspace', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Computer')

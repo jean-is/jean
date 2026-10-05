@@ -22,6 +22,11 @@ const INDEX = 'https://sandbox.invalid/pyodide/'
 const PACKAGES = 'https://packages.invalid/'
 const WORKSPACE = '/workspace'
 const HOME = '/home/user'
+// What a server is started with, which can't work here: nothing listens on a port in the sandbox.
+const SERVERS = /^(vite|next|nuxt|astro|serve|http-server|live-server|webpack-dev-server|parcel|nodemon)\b(?! build)|^webpack serve\b/
+const SERVER_MODULES = /^(node:)?(http|https|http2|net)$|^express$/
+/** Why it can't, and what does instead. @param {string} name */
+const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts and styles inside it, and it opens beside the conversation by itself.\n`
 
 /** The engines, once loaded: `shell` (just-bash and fflate), `quickjs`, `pyodide`. @type {Record<string, any>} */
 const engines = {}
@@ -288,6 +293,7 @@ function commands(computer) {
   const py = async (/** @type {string[]} */ args, /** @type {any} */ ctx) => {
     if (/^(-V|--version)$/.test(args[0] ?? '')) return exit('Python 3 (Pyodide)\n', '', 0)
     if (args[0] === '-m' && args[1] === 'pip') return pip(args.slice(2), ctx)
+    if (args[0] === '-m' && /^(http\.server|SimpleHTTPServer)$/.test(args[1] ?? '')) return exit('', noServer('python3'), 1)
     const program = await source(args, ctx, ['-c'])
     const ran = await python({ ...program, run: computer.run, cwd: ctx.cwd, stdin: program.name === '-' ? '' : text(ctx.stdin) }, computer)
     return exit(ran.stdout, ran.stderr, ran.exit)
@@ -306,8 +312,12 @@ function commands(computer) {
     const ran = await javascript({ ...program, run: computer.run, cwd: ctx.cwd, env: Object.fromEntries(ctx.env ?? []) }, computer)
     return exit(ran.stdout, ran.stderr, ran.exit)
   }
+  const npx = async (/** @type {string[]} */ args) => {
+    const program = args.filter((arg) => !arg.startsWith('-')).join(' ')
+    return exit('', SERVERS.test(program) ? noServer('npx') : "npx: a package's own programs don't run here: npm install it, then require or import it in node.\n", 1)
+  }
   return [command('python', py), command('python3', py), command('pip', pip), command('pip3', pip), command('node', node), command('js', node),
-    command('tar', (args, ctx) => tarCommand(args, ctx)), command('npm', (args, ctx) => npm(args, ctx, computer))]
+    command('tar', (args, ctx) => tarCommand(args, ctx)), command('npm', (args, ctx) => npm(args, ctx, computer)), command('npx', npx)]
 }
 
 // ─── tar and npm ─────────────────────────────────────────────────────────────
@@ -433,16 +443,46 @@ function satisfies(version, range = '*') {
 /**
  * npm install: packages from the npm registry Settings name, into ./node_modules, flat, with their
  * dependencies; checked against their integrity; none that runs a script as it installs. With no
- * name, those package.json lists. The names asked for are added to package.json.
+ * name, those package.json lists. The names asked for are added to package.json. And init, ls, and
+ * run (start, test): a script of package.json's, in the same shell, unless it starts a server.
  * @param {string[]} args @param {any} ctx @param {Computer} computer
  */
 async function npm(args, ctx, computer) {
-  const [verb, ...specs] = args.filter((arg) => !arg.startsWith('-'))
-  if (!/^(install|i|add)$/.test(verb ?? '')) return exit('', 'Only npm install works here.\n', 1)
+  const dashes = args.indexOf('--')
+  const [verb, ...specs] = args.slice(0, dashes < 0 ? undefined : dashes).filter((arg) => !arg.startsWith('-'))
   const { fs, cwd } = ctx
-  const registry = (computer.registries.npm || 'https://registry.npmjs.org/').replace(/\/?$/, '/')
   const manifestPath = `${cwd}/package.json`
   const manifest = (await fs.exists(manifestPath)) ? JSON.parse(await fs.readFile(manifestPath)) : {}
+  if (!verb && args.some((arg) => /^(-v|--version)$/.test(arg))) return exit('npm for this sandbox: install, init, ls and run\n', '', 0)
+  if (verb === 'init' && !specs.length) {
+    if (!manifest.name) {
+      Object.assign(manifest, { name: cwd.split('/').pop()?.toLowerCase().replace(/[^a-z0-9._~-]+/g, '-') || 'project', version: '1.0.0', main: 'index.js', ...manifest })
+      await fs.writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
+    }
+    return exit(`Wrote to ${manifestPath}:\n\n${JSON.stringify(manifest, null, 2)}\n`, '', 0)
+  }
+  if (/^(ls|list)$/.test(verb ?? '')) {
+    const names = (await fs.exists(`${cwd}/node_modules`)) ? await fs.readdir(`${cwd}/node_modules`) : []
+    const found = []
+    for (const name of names.filter((name) => !name.startsWith('.'))) {
+      if (!name.startsWith('@')) found.push(name)
+      else for (const inner of await fs.readdir(`${cwd}/node_modules/${name}`)) found.push(`${name}/${inner}`)
+    }
+    const versions = await Promise.all(found.map(async (name) => `${name}@${JSON.parse(await fs.readFile(`${cwd}/node_modules/${name}/package.json`).catch(() => '{}')).version ?? '?'}`))
+    return exit(lines(versions.sort()), '', 0)
+  }
+  if (/^(run|run-script|start|test)$/.test(verb ?? '')) {
+    const name = /^run/.test(verb) ? specs[0] : verb
+    const scripts = manifest.scripts ?? {}
+    if (!name) return exit(lines(Object.entries(scripts).map(([each, line]) => `  ${each}: ${line}`)), '', 0)
+    if (!scripts[name]) return exit('', `npm: package.json has no script named ${name}\n`, 1)
+    if (SERVERS.test(scripts[name])) return exit('', noServer(`npm run ${name}`), 1)
+    const line = [scripts[name], ...(dashes < 0 ? [] : args.slice(dashes + 1))].join(' ')
+    const ran = await ctx.exec(line, { cwd })
+    return exit(`> ${line}\n${ran.stdout}`, ran.stderr, ran.exitCode)
+  }
+  if (!/^(install|i|add)$/.test(verb ?? '')) return exit('', "npm: only install, init, ls and run work here; a package's own programs (create-…, npx) don't run.\n", 1)
+  const registry = (computer.registries.npm || 'https://registry.npmjs.org/').replace(/\/?$/, '/')
   const wanted = specs.length ? specs.map((spec) => /^(@?[^@]+)(?:@(.+))?$/.exec(spec)?.slice(1) ?? [spec]) : Object.entries(manifest.dependencies ?? {})
   const queue = wanted.map(([name, range]) => [name, range || 'latest'])
   /** @type {Record<string, string>} */
@@ -576,7 +616,7 @@ const REQUIRE = `
 const __cache = {}
 globalThis.__requireFrom = (base) => (spec) => {
   const path = __resolve(base, String(spec))
-  if (path === undefined) throw new Error("Cannot find module '" + spec + "': install it with npm install in bash, or name it by its path")
+  if (path === undefined) throw new Error(${SERVER_MODULES}.test(spec) ? ${JSON.stringify(noServer('node').trim())} : "Cannot find module '" + spec + "': install it with npm install in bash, or name it by its path")
   if (__cache[path]) return __cache[path].exports
   const module = { exports: {} }
   __cache[path] = module
@@ -685,7 +725,7 @@ async function javascript({ run, code, cwd, tool = false, print = false, argv = 
       if (path.endsWith('.json')) return `export default ${source}`
       if (isModule(path, source)) return source
       return `const __m = { exports: {} }\n;(function (module, exports, require, __filename, __dirname) {\n${source}\n})(__m, __m.exports, globalThis.__requireFrom(${JSON.stringify(path)}), ${JSON.stringify(path)}, ${JSON.stringify(dirOf(path))})\nexport default __m.exports`
-    }, (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base.startsWith('/') ? base : `${cwd}/${base}`, spec, 'import') ?? { error: new Error(`Cannot find module '${spec}'`) })
+    }, (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base.startsWith('/') ? base : `${cwd}/${base}`, spec, 'import') ?? { error: new Error(SERVER_MODULES.test(spec) ? noServer('node').trim() : `Cannot find module '${spec}'`) })
     vm.unwrapResult(vm.evalCode(PRELUDE + REQUIRE + (tool ? '' : PROCESS), 'prelude.js')).dispose()
 
     /** Waits for a value in the script's world, a promise or not. @param {any} handle */
