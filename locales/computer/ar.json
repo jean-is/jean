@@ -37,5 +37,12 @@
     "other": "{count} دقيقة"
   },
   "computer.locked": "تم تحديده من قِبل مؤسستك",
-  "computer.reach.once": "السماح مرة واحدة"
+  "computer.reach.once": "السماح مرة واحدة",
+  "computer.terminal": "الطرفية",
+  "computer.terminal.text": "شغّل الأوامر على الحاسوب بنفسك، على الملفات نفسها التي في المحادثة؛ وتذكر رسالتك التالية ما شغّلته. يفتحها {keys} من أي مكان.",
+  "computer.terminal.open": "افتح الطرفية",
+  "computer.terminal.command": "أمر",
+  "computer.terminal.clear": "مسح",
+  "computer.terminal.exit": "رمز الخروج {code}",
+  "computer.terminal.refused": "لم يُحفظ، إذ تغيّر في مكان آخر في الأثناء: {files}"
 }

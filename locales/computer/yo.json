@@ -32,5 +32,12 @@
     "other": "ìṣẹ́jú {count}"
   },
   "computer.locked": "Àjọ yín ló ṣètò rẹ̀",
-  "computer.reach.once": "Fàyè gbà lẹ́ẹ̀kan"
+  "computer.reach.once": "Fàyè gbà lẹ́ẹ̀kan",
+  "computer.terminal": "Ibùdó àṣẹ",
+  "computer.terminal.text": "Ẹ ṣiṣẹ́ àwọn àṣẹ lórí kọ̀ǹpútà fúnra yín, lórí àwọn fáìlì kan náà tí ìjíròrò ń lò; ìfiránṣẹ́ yín tó kàn yóò sọ ohun tí ẹ ṣiṣẹ́. {keys} ń ṣí i láti ibikíbi.",
+  "computer.terminal.open": "Ṣí ibùdó àṣẹ",
+  "computer.terminal.command": "Àṣẹ",
+  "computer.terminal.clear": "Pa rẹ́",
+  "computer.terminal.exit": "Kóòdù ìjáde {code}",
+  "computer.terminal.refused": "A kò fi pamọ́, nítorí a yí i padà níbòmíràn láàárín àkókò náà: {files}"
 }

@@ -3,7 +3,7 @@ import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, newConversation, turnPage, assistantName, switchTheme } from './state.js'
-import { SIZES, loaded } from './caps.js'
+import { SIZES, loaded, unlock, isDenied } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -26,6 +26,7 @@ class Shell extends Element {
         ${loaded.value.has('folders') ? html`<app-folder></app-folder>` : nothing}
         ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
           aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
+        ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>` : nothing}
       </header>
       ${LOOKS[app.look.value].list ? html`<app-inbox class="inbox" role="complementary" aria-label=${t('history.title')}></app-inbox>` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
@@ -56,7 +57,8 @@ const discovery = () => import('./discovery.js')
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
 // systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
 // ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
-// ⌘⇧B opens the browser once it is found, or closes it (D142).
+// ⌘⇧B opens the browser once it is found, or closes it (D142). Ctrl+` opens the terminal or closes it,
+// on every system, as in code editors, and turns the computer on first (D166).
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
@@ -65,6 +67,13 @@ export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, them
 const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b' })
 
 document.addEventListener('keydown', (event) => {
+  if (event.ctrlKey && !event.metaKey && !event.altKey && event.code === 'Backquote' && !isDenied('computer')) {
+    event.preventDefault()
+    const over = app.dialog.value
+    app.dialog.value = null
+    unlock('computer').then(async (ok) => ok && (await import('../caps/computer/terminal.js'))[over ? 'show' : 'toggle']())
+    return
+  }
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
   if (!command || event.altKey || event.isComposing) return
   const key = /^[ -~]$/.test(event.key) ? event.key.toLowerCase() : PLACES[event.code]

@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto'
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, SALES } from './helpers.js'
 
 const QUESTIONS = {
   en: ['What are the total sales by region?', 'Here are the exact totals'],
@@ -369,4 +369,89 @@ test.describe('in the user’s folder', () => {
     })
     expect(text).toBe('item,price\ncoffee,2\ntea,3\n')
   })
+
+  test('in the terminal, the user’s own command keeps its change there at once (D166)', async ({ page }) => {
+    await start(page)
+    await page.evaluate(async () => {
+      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })).getDirectoryHandle('Shop', { create: true })
+      const writable = await (await shop.getFileHandle('prices.csv', { create: true })).createWritable()
+      await writable.write('item,price\n')
+      await writable.close()
+    })
+    await turnOn(page, 'Folders')
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.folder-name')).toHaveText('Shop')
+    await page.keyboard.press('Control+Backquote')
+    const line = page.locator('app-terminal').getByRole('textbox', { name: 'Command' })
+    await line.fill('echo "tea,3" >> prices.csv && wc -l prices.csv')
+    await line.press('Enter')
+    await expect(page.locator('app-terminal .terminal-entry pre')).toContainText('2 prices.csv', { timeout: 30_000 })
+    await expect(page.locator('app-folder-approval .approval')).toHaveCount(0)
+    await expect.poll(() => page.evaluate(async () => {
+      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Shop')
+      return (await (await shop.getFileHandle('prices.csv')).getFile()).text()
+    })).toBe('item,price\ntea,3\n')
+  })
+})
+
+// The terminal (D166): the user types on the conversation's computer, beside it, the brain's own shell.
+test('the terminal: the user’s commands run on the conversation’s computer, which the brain shares and is told of', async ({ page }) => {
+  test.setTimeout(90_000)
+  const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' }
+  await page.route('https://data.example.com/**', (route) => (route.request().method() === 'OPTIONS' ? route.fulfill({ status: 204, headers: cors })
+    : route.fulfill({ status: 200, headers: { ...cors, 'content-type': 'text/plain' }, body: 'hello from data.example.com' })))
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Computer')
+  await page.keyboard.press('Escape')
+  await expect(await command(page, '$ echo hi > a.txt')).toContainText('Exit code: 0')
+
+  // Ctrl+` opens it, on the line to type on.
+  await page.keyboard.press('Control+Backquote')
+  const terminal = page.locator('app-terminal .terminal')
+  await expect(terminal).toBeVisible()
+  const line = terminal.getByRole('textbox', { name: 'Command' })
+  await expect(line).toBeFocused()
+  /** @param {string} text */
+  const run = async (text) => {
+    await line.fill(text)
+    await line.press('Enter')
+    const last = terminal.locator('.terminal-entry').last()
+    await expect(last).not.toHaveClass(/is-running/, { timeout: 30_000 })
+    return last
+  }
+  // The brain's file is there, and the shell keeps its directory.
+  const first = await run('cat a.txt && cd /tmp && pwd')
+  await expect(first.locator('pre')).toHaveText('hi\n/tmp\n')
+  await expect(terminal.locator('.terminal-line')).toContainText('/tmp $')
+  // What it changes in /workspace is kept at once, as the user's own.
+  await run('echo made > /workspace/b.txt')
+  expect(await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return app.fs.read(`${app.projectDir}/workspace/b.txt`)
+  })).toBe('made\n')
+  await expect(await run('false')).toContainText('Exit code 1')
+  // ↑ brings back what was typed.
+  await line.press('ArrowUp')
+  await expect(line).toHaveValue('false')
+  // A new site is asked about under the command.
+  await line.fill('curl -s https://data.example.com/x')
+  await line.press('Enter')
+  await terminal.locator('.approval .button.primary').click()
+  await expect(terminal.locator('.terminal-entry').last().locator('pre')).toHaveText('hello from data.example.com')
+
+  // The bar has its button now. The brain was told what ran, and runs in the same shell.
+  await expect(page.locator('.bar .terminal-toggle')).toBeVisible()
+  const told = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
+    .flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'terminal' ? [update.data.command] : [])))
+  expect(told).toEqual(['cat a.txt && cd /tmp && pwd', 'echo made > /workspace/b.txt', 'false', 'curl -s https://data.example.com/x'])
+  await expect(await command(page, '$ pwd')).toContainText('/tmp')
+
+  // Escape closes it; Settings › Computer opens it again.
+  await line.press('Escape')
+  await expect(terminal).toBeHidden()
+  const settings = await openSettings(page, 'Computer')
+  await settings.getByRole('button', { name: 'Open the terminal' }).click()
+  await expect(terminal).toBeVisible()
+  await expect(terminal.locator('.terminal-entry')).toHaveCount(4)
 })

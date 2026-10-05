@@ -33,5 +33,12 @@
     "other": "{count} dakika"
   },
   "computer.locked": "Kuruluşun tarafından ayarlandı",
-  "computer.reach.once": "Bir kez izin ver"
+  "computer.reach.once": "Bir kez izin ver",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Bilgisayarda komutları kendin çalıştır, konuşmayla aynı dosyalar üzerinde; bir sonraki mesajın neleri çalıştırdığını söyler. {keys} onu her yerden açar.",
+  "computer.terminal.open": "Terminali aç",
+  "computer.terminal.command": "Komut",
+  "computer.terminal.clear": "Temizle",
+  "computer.terminal.exit": "Çıkış kodu {code}",
+  "computer.terminal.refused": "Bu arada başka yerde değiştiği için saklanmadı: {files}"
 }

@@ -33,5 +33,12 @@
     "other": "{count} నిమిషాలు"
   },
   "computer.locked": "మీ సంస్థ నిర్ణయించింది",
-  "computer.reach.once": "ఒకసారి అనుమతించు"
+  "computer.reach.once": "ఒకసారి అనుమతించు",
+  "computer.terminal": "టెర్మినల్",
+  "computer.terminal.text": "కంప్యూటర్‌లో మీరే ఆదేశాలు నడపండి, సంభాషణలోని అవే ఫైళ్లపై; మీరు ఏమి నడిపారో మీ తదుపరి సందేశం చెబుతుంది. {keys} దీన్ని ఎక్కడి నుంచైనా తెరుస్తుంది.",
+  "computer.terminal.open": "టెర్మినల్ తెరువు",
+  "computer.terminal.command": "ఆదేశం",
+  "computer.terminal.clear": "తుడిచివేయి",
+  "computer.terminal.exit": "నిష్క్రమణ కోడ్ {code}",
+  "computer.terminal.refused": "ఈలోగా వేరే చోట మారినందున ఉంచలేదు: {files}"
 }

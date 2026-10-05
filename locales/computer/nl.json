@@ -33,5 +33,12 @@
     "other": "{count} minuten"
   },
   "computer.locked": "Ingesteld door je organisatie",
-  "computer.reach.once": "Eén keer toestaan"
+  "computer.reach.once": "Eén keer toestaan",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Voer zelf opdrachten uit op de computer, met dezelfde bestanden als het gesprek; je volgende bericht zegt wat je hebt uitgevoerd. {keys} opent hem vanaf elke plek.",
+  "computer.terminal.open": "Terminal openen",
+  "computer.terminal.command": "Opdracht",
+  "computer.terminal.clear": "Wissen",
+  "computer.terminal.exit": "Afsluitcode {code}",
+  "computer.terminal.refused": "Wijzigingen niet bewaard, want intussen elders gewijzigd: {files}"
 }

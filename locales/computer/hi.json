@@ -33,5 +33,12 @@
     "other": "{count} मिनट"
   },
   "computer.locked": "आपके संगठन द्वारा तय",
-  "computer.reach.once": "एक बार अनुमति दें"
+  "computer.reach.once": "एक बार अनुमति दें",
+  "computer.terminal": "टर्मिनल",
+  "computer.terminal.text": "कंप्यूटर पर ख़ुद कमांड चलाएँ, बातचीत वाली उन्हीं फ़ाइलों पर; आपका अगला संदेश बताता है कि आपने क्या चलाया। {keys} इसे कहीं से भी खोलता है।",
+  "computer.terminal.open": "टर्मिनल खोलें",
+  "computer.terminal.command": "कमांड",
+  "computer.terminal.clear": "साफ़ करें",
+  "computer.terminal.exit": "एग्ज़िट कोड {code}",
+  "computer.terminal.refused": "सहेजा नहीं गया, क्योंकि इस बीच कहीं और बदल गया: {files}"
 }

@@ -255,7 +255,7 @@ const RUNS = {
     const env = computer.env ?? undefined
     const result = await computer.bash.exec(String(command), { ...(env && { env, cwd: env.PWD }) })
     computer.env = result.env
-    return { ok: true, exit: result.exitCode, stdout: result.stdout, stderr: result.stderr }
+    return { ok: true, exit: result.exitCode, stdout: result.stdout, stderr: result.stderr, cwd: result.env?.PWD }
   },
   quickjs: (data, computer) => javascript({ ...data, cwd: WORKSPACE, tool: true }, computer),
   pyodide: (data, computer) => python({ ...data, cwd: WORKSPACE, tool: true }, computer),

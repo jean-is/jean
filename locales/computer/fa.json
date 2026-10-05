@@ -33,5 +33,12 @@
     "other": "{count} دقیقه"
   },
   "computer.locked": "تعیین‌شده توسط سازمان شما",
-  "computer.reach.once": "فقط این بار"
+  "computer.reach.once": "فقط این بار",
+  "computer.terminal": "ترمینال",
+  "computer.terminal.text": "خودتان روی رایانه فرمان اجرا کنید، روی همان فایل‌های گفت‌وگو؛ پیام بعدی‌تان می‌گوید چه اجرا کرده‌اید. {keys} آن را از هر جا باز می‌کند.",
+  "computer.terminal.open": "باز کردن ترمینال",
+  "computer.terminal.command": "فرمان",
+  "computer.terminal.clear": "پاک کردن",
+  "computer.terminal.exit": "کد خروج {code}",
+  "computer.terminal.refused": "نگه داشته نشد، چون در این میان جای دیگری تغییر کرد: {files}"
 }

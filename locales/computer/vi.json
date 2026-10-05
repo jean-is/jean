@@ -32,5 +32,12 @@
     "other": "{count} phút"
   },
   "computer.locked": "Do tổ chức của bạn thiết lập",
-  "computer.reach.once": "Cho phép một lần"
+  "computer.reach.once": "Cho phép một lần",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Tự chạy lệnh trên máy tính, trên cùng các tệp với cuộc trò chuyện; tin nhắn tiếp theo của bạn sẽ cho biết bạn đã chạy gì. {keys} mở nó từ bất cứ đâu.",
+  "computer.terminal.open": "Mở terminal",
+  "computer.terminal.command": "Lệnh",
+  "computer.terminal.clear": "Xóa",
+  "computer.terminal.exit": "Mã thoát {code}",
+  "computer.terminal.refused": "Không được giữ, vì trong lúc đó đã bị đổi ở nơi khác: {files}"
 }

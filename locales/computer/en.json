@@ -33,5 +33,12 @@
     "other": "{count} minutes"
   },
   "computer.locked": "Set by your organization",
-  "computer.reach.once": "Allow once"
+  "computer.reach.once": "Allow once",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Run commands on the computer yourself, over the same files as the conversation; your next message says what you ran. {keys} opens it from anywhere.",
+  "computer.terminal.open": "Open the terminal",
+  "computer.terminal.command": "Command",
+  "computer.terminal.clear": "Clear",
+  "computer.terminal.exit": "Exit code {code}",
+  "computer.terminal.refused": "Changed elsewhere meanwhile, so not kept: {files}"
 }

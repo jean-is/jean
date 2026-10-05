@@ -1,0 +1,28 @@
+/* The terminal (caps/computer/terminal.js, D166): a pane of the dock, loaded after ui/dock.css, so
+   its colours are the look's. Commands and what they print run left to right in the look's mono
+   face, each line of output in its own direction, for text in Arabic or Hebrew. Logical properties only. */
+
+.terminal-body { flex: 1; min-block-size: 0; overflow: auto; padding-block: 0.9rem 1.5rem; padding-inline: 1.1rem; font: 0.85rem/1.55 var(--mono); cursor: text; }
+.terminal-hint { display: flex; gap: 0.5rem; margin: 0 0 1rem; color: var(--ink-soft); font-family: var(--sans); line-height: 1.5; }
+.terminal-hint .icon { flex: none; inline-size: 1.1rem; block-size: 1.1rem; margin-block-start: 0.1rem; }
+.terminal-entry { margin-block-end: 0.75rem; }
+:is(.terminal-entry pre, .terminal-command) { margin: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; unicode-bidi: plaintext; }
+.terminal-command { font-weight: 600; }
+:is(.terminal-command, .terminal-line) > span { color: var(--ink-soft); font-weight: 400; user-select: none; -webkit-user-select: none; }
+.terminal-entry .is-error { color: var(--danger); }
+.terminal-note { margin: 0.2rem 0 0; color: var(--ink-soft); font: 0.8rem/1.5 var(--sans); }
+.terminal .approval { margin-block: 0.5rem; font: 0.9rem/1.5 var(--sans); cursor: auto; }
+/* A command that runs has a cursor under it. */
+.terminal-entry.is-running::after { content: ''; display: block; inline-size: 0.6em; block-size: 1.2em; margin-block-start: 0.15rem; background: var(--ink-soft); animation: terminal-cursor 1.1s steps(1) infinite; }
+@keyframes terminal-cursor { 50% { opacity: 0; } }
+
+/* The line typed on, after where the shell is; a mark at its start while it has the keyboard. */
+.terminal-line { display: flex; align-items: baseline; gap: 1ch; margin-inline-start: -0.6rem; padding-inline-start: calc(0.6rem - 2px); border-inline-start: 2px solid transparent; }
+.terminal-line:focus-within { border-inline-start-color: var(--flame); }
+:root .terminal-line textarea { flex: 1; min-inline-size: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; outline: 0; font: inherit; resize: none; field-sizing: content; }
+
+@media (prefers-reduced-motion: reduce) { .terminal-entry.is-running::after { animation: none; } }
+@media (forced-colors: active) {
+  .terminal-entry.is-running::after { background: CanvasText; }
+  .terminal-line:focus-within { border-inline-start-color: Highlight; }
+}

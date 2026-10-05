@@ -18,7 +18,7 @@ import { serviceURL } from '../../core/settings.js'
 import { join, walk } from '../../core/fs.js'
 import { addFile } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion } from '../../core/events.js'
-import { t, useStrings, formatBytes } from '../../core/i18n.js'
+import { t, tParts, useStrings, formatBytes } from '../../core/i18n.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
 import { exactText } from '../folders/work.js'
@@ -75,15 +75,35 @@ const opening = async (args, ctx) => (loaded.peek().has('folders') ? (await impo
 /** Changes waiting to be kept, by batch. @type {Map<string, { changes: { put: Record<string, ArrayBuffer>, gone: string[] }, mount: Awaited<ReturnType<typeof mountOf>>, held: import('./mount.js').Held }>} */
 const batches = new Map()
 
+/** Each computer's last run: the brain's, a helper's and the user's in the terminal take turns on its shell (D166). @type {Map<string, Promise<unknown>>} */
+const turns = new Map()
+
 /**
- * Runs a message on the conversation's computer: /workspace brought up to date first, the internet
- * reached through `online`, and what changed in /workspace kept after.
+ * Runs a message on the conversation's computer, once its run before has ended: /workspace brought
+ * up to date first, the internet reached through `online`, and what changed in /workspace kept after.
  * @param {{ engine: string } & Record<string, any>} message @param {ToolContext} ctx
+ * @returns {Promise<{ done: any, left: string[], kept: string }>}
  */
 async function execute(message, ctx) {
-  const { rights, relay } = rightsNow()
   const mount = await mountOf(ctx.signal)
   const key = mount.conversation?.id ?? 'none'
+  const before = turns.get(key)
+  const turn = (async () => {
+    await before?.catch(() => {})
+    if (ctx.signal?.aborted) throw new Error('Stopped.')
+    return executeNow(message, ctx, mount, key)
+  })()
+  turns.set(key, turn)
+  try {
+    return await turn
+  } finally {
+    if (turns.get(key) === turn) turns.delete(key)
+  }
+}
+
+/** @param {{ engine: string } & Record<string, any>} message @param {ToolContext} ctx @param {Awaited<ReturnType<typeof mountOf>>} mount @param {string} key */
+async function executeNow(message, ctx, mount, key) {
+  const { rights, relay } = rightsNow()
   const what = String(message.command ?? message.code ?? '').trim().split('\n')[0].slice(0, 120)
   /** @type {{ epoch: number, of: string, held: import('./mount.js').Held }} */
   let state = { epoch: 0, of: '', held: new Map() }
@@ -273,7 +293,7 @@ define('app-site-approval', SiteApproval)
 // ─── Tools ───────────────────────────────────────────────────────────────────
 
 /** @param {string} text @param {number} [max] the start and the end of a long text */
-const clip = (text, max = 6000) => (text.length > max ? `${text.slice(0, max * 0.7)}\n… (${text.length - Math.round(max * 0.7) - Math.round(max * 0.3)} characters cut) …\n${text.slice(-Math.round(max * 0.3))}` : text)
+export const clip = (text, max = 6000) => (text.length > max ? `${text.slice(0, max * 0.7)}\n… (${text.length - Math.round(max * 0.7) - Math.round(max * 0.3)} characters cut) …\n${text.slice(-Math.round(max * 0.3))}` : text)
 
 /** What the brain reads of a command: its exit code, what it printed, what changed in /workspace. @param {Awaited<ReturnType<typeof execute>>} ran */
 function commandReport({ done, left, kept }) {
@@ -365,6 +385,54 @@ const pythonTool = {
 /** `run`, as conversations from before D162 declared it: the same as `javascript`. @type {Tool} */
 const runTool = { ...javascriptTool, spec: { ...javascriptTool.spec, name: 'run' }, hidden: true }
 
+// ─── The terminal ────────────────────────────────────────────────────────────
+
+/**
+ * A command the user types in the terminal (D166), on the conversation's computer, as theirs: what it
+ * changes in /workspace is kept at once, in their folder too, and a new site is asked about there
+ * (`ask`), as Settings › Computer has it. Tools aren't called from there.
+ * @param {string} command @param {{ signal: AbortSignal, ask: (site: string) => Promise<import('../../core/loop.js').PermissionOption> }} options
+ */
+export async function typed(command, { signal, ask }) {
+  /** @type {string[]} */
+  let refused = []
+  const ctx = /** @type {ToolContext} */ (/** @type {unknown} */ ({
+    signal,
+    meta: {},
+    call: async (/** @type {string} */ name, /** @type {any} */ args) => {
+      if (name === 'reach_site') {
+        const answer = await ask(String(args.site))
+        if (!answer.startsWith('allow')) throw new Error('The user declined this action.')
+        return reachTool.run(args, /** @type {ToolContext} */ (/** @type {unknown} */ ({ answer })))
+      }
+      const batch = batches.get(args?.batch)
+      if (name !== 'save_workspace' || !batch) throw new Error(`${name} can't be used from the terminal.`)
+      const done = await incoming(batch.mount.fs, batch.held, batch.changes)
+      refused = done.refused
+      // A page changed in the conversation's folder shows in the browser, or has it offered (D156).
+      if (batch.mount.folder) for (const path of done.saved) document.dispatchEvent(new CustomEvent('app-folder-changed', { detail: { folder: batch.mount.folder.name, path } }))
+      return ''
+    },
+  }))
+  const { done } = await execute({ engine: 'shell', command }, ctx)
+  return { ...done, refused }
+}
+
+/** The terminal's key, left to right in any language. */
+export const keys = html`<kbd><bdi dir="ltr">Ctrl+\`</bdi></kbd>`
+/** The terminal's prompt, the shell's: ">_". */
+export const prompt = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.5 7 5 5-5 5M12 17.5h7.5"/></svg>`
+
+/** In the bar, once the terminal has been opened: it opens or closes it. */
+class TerminalToggle extends Element {
+  render() {
+    if (!app.settings.value.terminal) return nothing
+    return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} title=${t('computer.terminal')} aria-keyshortcuts="Control+\`"
+      @click=${() => import('./terminal.js').then((module) => module.toggle())}>${prompt}</button>`
+  }
+}
+define('app-terminal-toggle', TerminalToggle)
+
 // ─── Settings › Computer ─────────────────────────────────────────────────────
 
 // Settings is open when its panel shows, so its module is there to be had: imported, not loaded with the computer.
@@ -444,6 +512,10 @@ function panel() {
       <select aria-label=${t('computer.time')} ?disabled=${locked.has('timeMs')} @change=${(/** @type {Event} */ e) => setComputer({ timeMs: Number(/** @type {HTMLSelectElement} */ (e.target).value) })}>
         ${minutes.map((ms) => html`<option value=${ms} ?selected=${rights.timeMs === ms}>${t('computer.minutes', { count: ms / 60_000 })}</option>`)}
       </select>
+    </section>
+    <section class="setting">
+      <div><h3>${t('computer.terminal')}</h3><p class="muted">${tParts('computer.terminal.text', { keys })}</p></div>
+      <button class="button subtle" aria-keyshortcuts="Control+\`" @click=${() => { app.dialog.value = null; import('./terminal.js').then((module) => module.show()) }}>${prompt} ${t('computer.terminal.open')}</button>
     </section>
     <section class="setting">
       <div><h3>${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text', { size: formatBytes(used.value ?? 0) })}</p></div>

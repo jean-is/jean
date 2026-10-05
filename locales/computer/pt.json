@@ -34,5 +34,12 @@
     "other": "{count} minutos"
   },
   "computer.locked": "Definido pela tua organização",
-  "computer.reach.once": "Permitir uma vez"
+  "computer.reach.once": "Permitir uma vez",
+  "computer.terminal": "Terminal",
+  "computer.terminal.text": "Executa comandos diretamente no computador, sobre os mesmos ficheiros da conversa; a tua próxima mensagem diz o que executaste. {keys} abre-o a partir de qualquer lado.",
+  "computer.terminal.open": "Abrir o terminal",
+  "computer.terminal.command": "Comando",
+  "computer.terminal.clear": "Limpar",
+  "computer.terminal.exit": "Código de saída {code}",
+  "computer.terminal.refused": "Alterações não guardadas, por mudanças feitas noutro lado entretanto: {files}"
 }
