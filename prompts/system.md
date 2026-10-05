@@ -90,7 +90,7 @@ When something changes during a conversation, Jean appends a short note to the t
 ```text
 The interface language is now French.
 Today is 2026-10-03.
-New tools can be found with find_tools: run.
+New tools can be found with find_tools: bash, javascript, python.
 ```
 
 Built so far: language, date, new tools, and since 0.4 the sections (`core/prompt.js`, `changeNotes`). Since 0.6 a message can come with its own note: a brief of what's new starts with "The user is back; they were last here on … Start with a short brief of what is new in their connected services since then. Only read: never send, change or delete anything." (D101). New tools are deferred: the brain finds them with `find_tools` (D63). A conversation from 0.2, which has no `find_tools`, gets "New tools are available: run." and the tools declared instead. A section that changed (the project, instructions, memory or skills) is given whole: "The <memory> section is now:\n- …", or "The <instructions> section is now empty." (D81). Notes for rules come later, in the same style (for example "The user changed a rule: deleting files now needs their approval.").
@@ -99,16 +99,15 @@ Shared files appear in the user's message as `<document source="n" name="…">�
 
 ## Lines contributed by capabilities
 
-Each line appears in `<tools>` as `- name: line`. The tool's own description, sent with its schema, carries the details (for `run`, every global a script can use), so the prompt line stays short. Budget: 40 tokens per capability.
+Each line appears in `<tools>` as `- name: line`. The tool's own description, sent with its schema, carries the details (for `javascript`, every global a script can use), so the prompt line stays short. Budget: 40 tokens per capability.
 
 | Capability | Tool line | Rule |
 |---|---|---|
 | Files (0.2) | `read: read pages of a file the user shared` | Shared files are in the message, sometimes only their first pages. Use read for the others. |
-| Calculations (0.3) | `run: run JavaScript in a sandbox to work things out exactly; scripts can read shared files and call tools` | Compute numbers with run instead of estimating them. |
+| Computer (D162; Calculations from 0.3 and the data toolkit from 0.4 fold into it) | `bash: commands on your own computer, a sandbox: /workspace holds the files; python3, pip, node, curl` / `javascript: JavaScript to work things out exactly; scripts read files and call tools` / `python: Python, for data work` | Compute numbers with code instead of estimating them. |
 | Discovery (0.3, always on) | `find_tools: find tools that aren't listed here, and how to call them` / `offer: suggest turning on something the user has not discovered yet` | Offer at most one new thing per reply, and only when it clearly helps. |
 | Memory (0.4) | `recall: search earlier conversations` / `remember: save a lasting fact, preference or correction the user states` | Remember only what will still matter in later conversations. |
 | Skills (0.4; Routines until D115) | `skill: read the steps of a skill before following it` / `save_skill: save how a repeated task is done, when the user asks` | When a request matches a skill, read it and follow its steps. |
-| Data toolkit (0.4) | `python: run Python (its standard library only) in a sandbox, for data work beyond simple maths` | — |
 | Web search (0.5) | `web_search: search the web for facts the conversation does not hold` (a provider that searches by itself gets its own tool instead, D91) | — |
 | Connections (0.5) | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |
 | Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. |

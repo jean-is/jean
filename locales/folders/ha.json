@@ -22,6 +22,10 @@
   "folders.open.question": "A buɗe {folder} a wannan kwamfuta don {name}?",
   "folders.open.yes": "A bari",
   "folders.change.question": "A canza {path}?",
+  "folders.changes.question": {
+    "one": "A ajiye wannan canjin a cikin fayil ɗin ajiya?",
+    "other": "A ajiye waɗannan canje-canje {count} a cikin fayil ɗin ajiya?"
+  },
   "folders.change.yes": "Canza",
   "folders.always": "A bari koyaushe a {folder}",
   "folders.line": "layi na {line}",

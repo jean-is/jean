@@ -54,9 +54,8 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Things Jean made | The first message (D119) | Files Jean writes, as cards under the answer that say what each is, seen beside the conversation and saved with a click: Word documents, spreadsheets, text and drawings, changed on request (D119, D126). Copy as rich text, CSV (D108) |
 | Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
 | Search | After ten conversations | ⌘K, or Search under a new conversation: the conversations of every project, files shared or made, and Settings, found as you type, part of a word enough, in any script (D133) |
-| Calculations | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | Jean computes instead of guessing (QuickJS) |
+| Computer | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | A computer in the sandbox, never the user's machine: Jean computes instead of guessing (JavaScript, QuickJS), works on data in Python (about 14 MB the first time), and runs commands in bash, over the files of the conversation's folder or the project's workspace, keeping what changed (in the user's folder after showing it). It reaches the internet as Settings › Computer allow, asking first for a new site; packages come from PyPI and npm or a mirror (D162) |
 | Intuition | After two conversations with a brain | "Let Jean get a feel for what you need?" A small helper on this device (about 345 MB, once) picks the brain and suggests next steps |
-| Data toolkit | Spreadsheet work goes beyond simple maths (the brain offers it) | Python with its standard library, after asking ("about 14 MB, once") |
 | Bigger brain | A task outgrows the current brain | The next rung of the brain ladder |
 | Memory | The user states a lasting preference or correction | "Want me to remember things like this from now on?" |
 | Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
@@ -217,8 +216,8 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
   - "Simpler" and "Translate" were dropped: the small reflex model can't tell whether a text is wordy or full of jargon, and the language to translate into is the user's call.
 - **Follow-ups tied to the content:** the brain ends its reply with up to 3 follow-ups in a hidden block, and the UI turns them into buttons under the last answer. They cost a few output tokens and are automatically in the user's language.
 - **"Ask a smarter brain"** sits with them when Auto chose the brain and a higher level is available.
-- **Starters on the first screen** help non-technical users begin.
-- **Suggestions double as discovery.** A "Chart this" button is how Calculations gets discovered.
+- **Starters on the first screen** help non-technical users begin: summarize, write an email, explain, and "Chart a savings plan", which has the computer work a plan out with one script and draw it as a page that opens beside the conversation (D163).
+- **Suggestions double as discovery.** A "Chart this" button is how the computer gets discovered.
 
 ## Voice
 

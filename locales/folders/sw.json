@@ -22,6 +22,10 @@
   "folders.open.question": "Uruhusu {name} kufungua {folder} kwenye kompyuta hii?",
   "folders.open.yes": "Ruhusu",
   "folders.change.question": "Ubadilishe {path}?",
+  "folders.changes.question": {
+    "one": "Uhifadhi badiliko hili kwenye folda?",
+    "other": "Uhifadhi mabadiliko haya {count} kwenye folda?"
+  },
   "folders.change.yes": "Badilisha",
   "folders.always": "Ruhusu kila wakati katika {folder}",
   "folders.line": "mstari {line}",

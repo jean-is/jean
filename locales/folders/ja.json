@@ -22,6 +22,9 @@
   "folders.open.question": "このコンピューターの {folder} を {name} が開いてもよいですか？",
   "folders.open.yes": "許可",
   "folders.change.question": "{path} を変更しますか？",
+  "folders.changes.question": {
+    "other": "フォルダー内のこの {count} 件の変更を残しますか？"
+  },
   "folders.change.yes": "変更する",
   "folders.always": "{folder} では常に許可",
   "folders.line": "{line} 行目",

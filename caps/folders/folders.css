@@ -23,6 +23,9 @@ app-folder-change { display: block; }
 .folder-ask { scroll-margin-block-end: 9rem; }
 .folder-agents { max-block-size: 7rem; overflow: auto; margin: 0 0 0.6rem; padding: 0.6rem 0.8rem; border-radius: 0.6rem; background: var(--line); font-size: 0.82rem; white-space: pre-wrap; }
 
+.folder-others { display: grid; gap: 0.3rem; margin: 0 0 0.75rem; padding: 0; list-style: none; font-size: 0.86rem; }
+.folder-others li { display: flex; align-items: center; gap: 0.4rem; overflow-wrap: anywhere; }
+.folder-others .icon { inline-size: 1rem; block-size: 1rem; flex: none; color: var(--ink-soft); }
 .diff { margin: 0 0 0.75rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 0.7rem; background: var(--room); }
 .diff figcaption { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.4rem 0.75rem; border-block-end: 1px solid var(--line); font-size: 0.82rem; overflow-wrap: anywhere; }
 .diff pre { max-block-size: 18rem; margin: 0; padding-block: 0.35rem; overflow: auto; font: 0.82rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }

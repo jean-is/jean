@@ -14,10 +14,11 @@ import { save, savePage } from './save.js'
 import { markdown } from './markdown.js'
 import { icons } from './icons.js'
 import { fileMeta, fileText, splitPages } from '../core/files.js'
+import { callsIn, filesMade, versionsOf } from '../core/events.js'
 import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
 
-/** @typedef {{ uri: string, name: string, mimeType?: string }} Shown */
+/** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
 
 const FRAME = new URL('../preview.html', import.meta.url).href
 // Rows a grid shows: more would only slow the page; the file has them all.
@@ -45,6 +46,18 @@ addEventListener('message', ({ source, data }) => {
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
 
+// The versions of the file on show, when Jean made it: each one the conversation kept, oldest first (D164).
+const versions = computed(() => {
+  const file = shown.value
+  return file ? versionsOf(filesMade(callsIn(app.current.value?.records ?? [], app.live.value?.turn.steps)), file.name) : []
+})
+/** Where the file on show is among its versions: the one asked for, or the last with its content. */
+const at = computed(() => {
+  const file = shown.value
+  const all = versions.value
+  return file?.version && all[file.version - 1]?.uri === file.uri ? file.version - 1 : all.findLastIndex((each) => each.uri === file?.uri)
+})
+
 class Preview extends Element {
   render() {
     const file = shown.value
@@ -53,6 +66,7 @@ class Preview extends Element {
     return html`<aside class="pane preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && close()}>
       <header class="pane-head">
         <h2><span dir="auto">${file.name}</span></h2>
+        ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}
         <button class="icon-button" title=${label} aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
         <button class="icon-button" title=${t('action.close')} aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
@@ -63,6 +77,16 @@ class Preview extends Element {
   updated() {
     if (dock.place(this, Boolean(shown.value))) this.querySelector('button')?.focus()
   }
+}
+
+/** The versions of the file on show, the one it is chosen, to pick another (D164). */
+function picker() {
+  const all = versions.value
+  // Its value as well as the options' selected: once picked from, a select no longer follows the attribute.
+  return html`<select class="versions" aria-label=${t('preview.versions')} .value=${String(at.value)}
+    @change=${(/** @type {Event} */ event) => { shown.value = all[Number(/** @type {HTMLSelectElement} */ (event.target).value)] }}>
+    ${all.map((each, i) => html`<option value=${i} ?selected=${i === at.value}>${t('made.version', { n: each.version })}</option>`)}
+  </select>`
 }
 
 /** @param {Shown} file */
@@ -93,12 +117,15 @@ effect(() => {
   return release
 })
 
-// A newer version of the file on show, made while the answer is written, takes its place.
+// A newer version of the file on show, made while the answer is written, takes its place, unless
+// the user went back to an earlier one (D164).
+let newest = { name: '', uri: '' }
 effect(() => {
   const file = shown.value
-  const made = (app.live.value?.turn.steps ?? []).flatMap((step) => step.tools.flatMap((tool) => (tool._meta?.file ? [tool._meta.file] : [])))
-  const newer = made.findLast((other) => other.name === file?.name)
-  if (newer && newer.uri !== file?.uri) shown.value = newer
+  const last = versions.value.at(-1)
+  const before = newest
+  newest = { name: file?.name ?? '', uri: last?.uri ?? '' }
+  if (file && last && before.name === file.name && before.uri && before.uri !== last.uri && file.uri === before.uri) shown.value = last
 })
 
 // Another conversation, or another project, closes it.

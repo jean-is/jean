@@ -1,22 +1,22 @@
-// The sandbox (D65): an opaque-origin frame with no network, where a worker runs code the
-// brain wrote. Each runtime has its own frame and document: QuickJS for Calculations
-// (sandbox.html), Pyodide for Python (caps/python/sandbox.html, D80). The parent fetches the
-// worker's source and the runtime's files and posts them in. The sandbox gets code and data,
-// never a key: every call a script makes comes back here as a message, and Jean makes it under
-// the same rules as the brain's own calls (D48). Loaded by the capabilities that run code.
+// The sandbox (D65): an opaque-origin frame with no network (sandbox.html), where a worker runs code
+// the brain wrote: the Computer's (D162), whose engines (the shell, QuickJS, Pyodide) come in as
+// files the first time a run needs each. The parent fetches the worker's source and the files and
+// posts them in. The sandbox gets code and data, never a key: every call a script makes, every
+// engine it needs and every request it makes of the internet comes back here as a message, and
+// Jean answers it under the same rules as the brain's own calls (D48).
 //
-// → { type: 'boot', source, files: { name: text | bytes } }   ← { type: 'ready' } | { type: 'failed', error }
-// → { type: 'run', run, code, limits }                         ← { type: 'call', run, id, name, args }…, { type: 'done', run, ok, result, logs, error }
+// → { type: 'boot', source }                                   ← { type: 'ready' } | { type: 'failed', error }
+// → { type: 'load', engine, files: { name: text | bytes } }    ← { type: 'loaded', engine, error? }
+// → { type: 'run', run, engine, … }                            ← { type: 'call' | 'need' | 'fetch', run, id, … }…, { type: 'done', run, ok, … }
 // → { type: 'answer', run, id, ok, value, error }              ← { type: 'reset' }: start a fresh sandbox next time
 
 /** @typedef {import('../core/loop.js').ToolContext} ToolContext */
-/** @typedef {{ frame: HTMLIFrameElement, runs: Map<number, (message: any) => void>, reset: boolean }} Box */
+/** @typedef {{ frame: HTMLIFrameElement, runs: Map<number, (message: any) => void>, engines: Map<string, Promise<void>>, loading: Map<string, (message: any) => void>, reset: boolean, epoch: number }} Box */
 
-// No word from the sandbox for this long, while no call is waiting on Jean: stop it.
+// No word from the sandbox for this long, while nothing is waiting on Jean: stop it.
 const WATCHDOG_MS = 40_000
-const MAX_OUTPUT = 8000
 // A script can't start another script, hand work to helpers, or interrupt the user with an offer or questions.
-const NOT_FROM_SCRIPTS = new Set(['run', 'python', 'offer', 'delegate', 'helper', 'ask_user'])
+const NOT_FROM_SCRIPTS = new Set(['run', 'javascript', 'python', 'bash', 'offer', 'delegate', 'helper', 'ask_user'])
 
 const ROOT = new URL('../', import.meta.url)
 
@@ -26,33 +26,25 @@ const trace = (/** @type {string} */ label, /** @type {unknown[]} */ ...details)
 const since = (/** @type {number} */ began) => `(${Math.round(performance.now() - began)} ms)`
 
 /**
- * A sandbox for one runtime, started on its first run and kept for the next ones.
- * @param {{ capability: string, runtime: string, worker: URL, page: URL, limits: Record<string, number>, bootMs: number }} options
- *   runtime: the folder whose files the worker receives, e.g. 'vendor/quickjs/'; page: the sandbox document
+ * A sandbox, started on its first run and kept for the next ones, with its engines loaded as runs need them.
+ * @param {{ capability: string, worker: URL, page: URL, engines: Record<string, { runtime: string, bootMs: number }> }} options
+ *   runtime: the folder whose files the engine is made of, e.g. 'vendor/quickjs/'; page: the sandbox document
  */
-export function sandbox({ capability, runtime, worker, page, limits, bootMs }) {
+export function sandbox({ capability, worker, page, engines }) {
   /** @type {Promise<Box> | null} */
   let started = null
   let lastRun = 0
+  let epoch = 0
 
-  /** Loads the sandbox document and boots the runtime in its worker, with files sent from here. */
+  /** Loads the sandbox document and starts its worker, from the source sent from here. */
   async function start() {
-    const began = performance.now()
-    const listing = await fetch(new URL('capabilities.json', ROOT)).then((response) => response.json())
-    const paths = /** @type {string[]} */ (listing.capabilities?.[capability]?.files ?? []).filter((path) => path.startsWith(runtime))
-    /** @type {Record<string, string | ArrayBuffer>} */
-    const files = {}
-    await Promise.all(paths.map(async (path) => {
-      const response = await fetch(new URL(path, ROOT))
-      files[path.slice(runtime.length)] = /\.(m?js|json)$/.test(path) ? await response.text() : await response.arrayBuffer()
-    }))
     const source = await fetch(worker).then((response) => response.text())
     const frame = document.createElement('iframe')
     // Scripts, but an opaque origin: never together with allow-same-origin (AGENTS.md).
     frame.setAttribute('sandbox', 'allow-scripts')
     frame.hidden = true
     /** @type {Box} */
-    const box = { frame, runs: new Map(), reset: false }
+    const box = { frame, runs: new Map(), engines: new Map(), loading: new Map(), reset: false, epoch: ++epoch }
     return new Promise((resolve, reject) => {
       const fail = (/** @type {string} */ message) => {
         console.warn('▣', message)
@@ -62,25 +54,56 @@ export function sandbox({ capability, runtime, worker, page, limits, bootMs }) {
         started = null
         reject(new Error(message))
       }
-      const slow = setTimeout(() => fail('The sandbox did not start.'), bootMs)
+      const slow = setTimeout(() => fail('The sandbox did not start.'), 20_000)
       /** @param {MessageEvent} event */
       function listen({ source: from, data }) {
         if (from !== frame.contentWindow || !data) return
         if (data.type === 'ready') {
           clearTimeout(slow)
-          trace(`${capability} ready`, since(began))
           resolve(box)
         } else if (data.type === 'failed') fail(data.error)
+        else if (data.type === 'loaded') box.loading.get(data.engine)?.(data)
         else if (data.type === 'reset') {
           trace('reset')
           box.reset = true
         } else box.runs.get(data.run)?.(data)
       }
       addEventListener('message', listen)
-      frame.addEventListener('load', () => frame.contentWindow?.postMessage({ type: 'boot', source, files }, '*'), { once: true })
+      frame.addEventListener('load', () => frame.contentWindow?.postMessage({ type: 'boot', source }, '*'), { once: true })
       frame.src = page.href
       document.body.append(frame)
     })
+  }
+
+  /** Sends an engine's files in, once a sandbox; their list comes from capabilities.json. @param {Box} box @param {string} engine */
+  function load(box, engine) {
+    let pending = box.engines.get(engine)
+    if (pending) return pending
+    pending = (async () => {
+      const { runtime, bootMs } = engines[engine]
+      const began = performance.now()
+      const listing = await fetch(new URL('capabilities.json', ROOT)).then((response) => response.json())
+      const paths = /** @type {string[]} */ (listing.capabilities?.[capability]?.files ?? []).filter((path) => path.startsWith(runtime))
+      /** @type {Record<string, string | ArrayBuffer>} */
+      const files = {}
+      await Promise.all(paths.map(async (path) => {
+        const response = await fetch(new URL(path, ROOT))
+        files[path.slice(runtime.length)] = /\.(m?js|json)$/.test(path) ? await response.text() : await response.arrayBuffer()
+      }))
+      await new Promise((resolve, reject) => {
+        const slow = setTimeout(() => reject(new Error('The sandbox did not start.')), bootMs)
+        box.loading.set(engine, (/** @type {any} */ data) => {
+          clearTimeout(slow)
+          if (data.error) return reject(new Error(data.error))
+          trace(`${engine} ready`, since(began))
+          resolve(undefined)
+        })
+        box.frame.contentWindow?.postMessage({ type: 'load', engine, files }, '*')
+      })
+    })()
+    pending.catch(() => box.engines.delete(engine))
+    box.engines.set(engine, pending)
+    return pending
   }
 
   function stop() {
@@ -89,75 +112,73 @@ export function sandbox({ capability, runtime, worker, page, limits, bootMs }) {
     current?.then((box) => box.frame.remove(), () => {})
   }
 
-  /** @param {string} code @param {ToolContext} ctx @returns {Promise<string>} */
-  async function execute(code, ctx) {
+  /**
+   * Runs a message in the sandbox, its engine loaded first. The calls it makes are made here under
+   * the rules; anything else it asks of Jean (a request to the internet) goes to `handle`. `prepare`
+   * adds what depends on the sandbox it runs in (what it already has, by its epoch). Resolves with
+   * the `done` message.
+   * @param {{ engine: string } & Record<string, any>} message @param {ToolContext} ctx
+   * @param {{ handle?: (message: any) => Promise<any>, prepare?: (epoch: number) => Promise<Record<string, any>>, quietMs?: number }} [options]
+   * @returns {Promise<any>}
+   */
+  async function execute(message, ctx, { handle, prepare, quietMs = WATCHDOG_MS } = {}) {
     const box = await (started ??= start().catch((error) => {
       started = null
       throw error
     }))
+    await load(box, message.engine)
+    const extra = await prepare?.(box.epoch)
     const id = ++lastRun
     const began = performance.now()
-    const post = (/** @type {any} */ message) => box.frame.contentWindow?.postMessage(message, '*')
+    const post = (/** @type {any} */ data) => box.frame.contentWindow?.postMessage(data, '*')
     return new Promise((resolve, reject) => {
       let waiting = 0
       /** @type {ReturnType<typeof setTimeout> | undefined} */
       let timer
       const watch = () => {
         clearTimeout(timer)
-        if (!waiting) timer = setTimeout(() => finish(new Error('The calculation took too long and was stopped.'), true), WATCHDOG_MS)
+        if (!waiting) timer = setTimeout(() => finish(new Error('It took too long and was stopped.'), true), quietMs)
       }
       const abort = () => finish(new Error('Stopped.'), true)
-      /** @param {Error | null} error @param {boolean} [kill] @param {string} [output] */
-      const finish = (error, kill = false, output = '') => {
+      /** @param {Error | null} error @param {boolean} [kill] @param {any} [done] */
+      const finish = (error, kill = false, done = null) => {
         clearTimeout(timer)
         box.runs.delete(id)
         ctx.signal?.removeEventListener('abort', abort)
         if (kill) trace(`${id} ←`, error?.message, since(began))
         if (kill || box.reset) stop()
         if (error) reject(error)
-        else resolve(output)
+        else resolve(done)
       }
       ctx.signal?.addEventListener('abort', abort, { once: true })
-      box.runs.set(id, async (/** @type {any} */ message) => {
-        if (message.type === 'done') {
-          const text = report(message)
-          trace(`${id} ←`, message.ok ? message.result : message.error, ...(message.logs.length ? [message.logs] : []), since(began))
-          return message.ok ? finish(null, false, text) : finish(new Error(text))
+      box.runs.set(id, async (/** @type {any} */ data) => {
+        if (data.type === 'done') {
+          trace(`${id} ←`, data.ok ? data.result ?? data.exit : data.error, ...(data.logs?.length ? [data.logs] : []), since(began))
+          return finish(null, false, data)
         }
-        if (message.type !== 'call') return
-        trace(`${id}.${message.id} ←`, message.name, message.args)
+        trace(`${id}.${data.id} ←`, data.type === 'call' ? data.name : data.type, data.args ?? data.engine ?? data.url)
         waiting++
         watch()
         let answer
         try {
-          if (NOT_FROM_SCRIPTS.has(message.name)) throw new Error(`${message.name} can't be used from a script.`)
-          answer = { ok: true, value: await ctx.call(message.name, message.args) }
+          if (data.type === 'need') answer = { ok: true, value: await load(box, data.engine) }
+          else if (data.type !== 'call') answer = { ok: true, value: await handle?.(data) }
+          else if (NOT_FROM_SCRIPTS.has(data.name)) throw new Error(`${data.name} can't be used from a script.`)
+          else answer = { ok: true, value: await ctx.call(data.name, data.args) }
         } catch (error) {
           answer = { ok: false, error: error instanceof Error ? error.message : String(error) }
         }
         waiting--
         watch()
-        trace(`${id}.${message.id} →`, answer.ok ? answer.value : `Error: ${answer.error}`)
-        post({ type: 'answer', run: id, id: message.id, ...answer })
+        trace(`${id}.${data.id} →`, answer.ok ? answer.value : `Error: ${answer.error}`)
+        post({ type: 'answer', run: id, id: data.id, ...answer })
       })
       // The code as an argument, not in the label, so a "%" in it is not read as a format.
-      trace(`${id} →`, code)
-      post({ type: 'run', run: id, code, limits })
+      trace(`${id} →`, message.code ?? message.command)
+      post({ ...message, ...extra, type: 'run', run: id })
       watch()
     })
   }
 
-  return { execute }
-}
-
-/** What the brain reads back: the result, then the log. @param {{ ok: boolean, result?: unknown, error?: string, logs: string[] }} message */
-function report({ ok, result, error, logs }) {
-  // "Result: null" reads like an answer, and a small brain then makes one up.
-  const empty = result === null && !logs.length
-  const parts = [!ok ? `The script failed: ${error}`
-    : empty ? 'The script gave no result: end it with the value you need, or return it.'
-    : `Result: ${typeof result === 'string' ? result : JSON.stringify(result, null, 1)}`]
-  if (logs.length) parts.push(`Log:\n${logs.join('\n')}`)
-  const text = parts.join('\n\n')
-  return text.length > MAX_OUTPUT ? `${text.slice(0, MAX_OUTPUT)}\n… (cut here: return less)` : text
+  return { execute, stop }
 }

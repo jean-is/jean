@@ -22,6 +22,10 @@
   "folders.open.question": "இந்தக் கணினியில் {folder} ஐத் திறக்க {name} க்கு அனுமதி தரவா?",
   "folders.open.yes": "அனுமதி",
   "folders.change.question": "{path} ஐ மாற்றவா?",
+  "folders.changes.question": {
+    "one": "இந்த மாற்றத்தைக் கோப்புறையில் வைத்திருக்கவா?",
+    "other": "இந்த {count} மாற்றங்களைக் கோப்புறையில் வைத்திருக்கவா?"
+  },
   "folders.change.yes": "மாற்று",
   "folders.always": "{folder} இல் எப்போதும் அனுமதி",
   "folders.line": "வரி {line}",

@@ -32,6 +32,19 @@
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
+/** The savings plan, worked out month by month and drawn as a page of bars (D163). */
+const SAVINGS = `const rate = 0.04 / 12
+let balance = 0
+const years = []
+for (let month = 1; month <= 120; month++) {
+  balance = balance * (1 + rate) + 200
+  if (month % 12 === 0) years.push(Math.round(balance))
+}
+const total = years[years.length - 1]
+const bars = years.map((value, i) => '<rect x="' + (40 + i * 50) + '" y="' + (220 - (value / total) * 200) + '" width="36" height="' + ((value / total) * 200) + '" fill="#c8691c"></rect>').join('')
+await fs.writeFile('Savings plan.html', '<!doctype html><title>Savings plan</title><h1>Savings plan</h1><svg viewBox="0 0 560 240" width="560">' + bars + '</svg><p id="total">After 10 years: ' + total + '</p>')
+return { years, total }`
+
 const PORT = Number(process.env.PORT) || 4174
 let previous = ''
 const BAKERY = `http://127.0.0.1:${PORT}/site/bakery.html`
@@ -202,7 +215,13 @@ createServer(async (req, res) => {
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
   const emails = /e-?mails?|inbox|courriels?/i.test(question) || /The user is back/.test(serialized)
-  const fromScript = (/** @type {string} */ name) => ({ name: 'run', args: { code: `return await tools.${name}({ limit: 3 })` } })
+  // Scripts are `javascript` since D162; a conversation declared before has `run`.
+  const script = declared.has('javascript') ? 'javascript' : 'run'
+  const fromScript = (/** @type {string} */ name) => ({ name: script, args: { code: `return await tools.${name}({ limit: 3 })` } })
+  // The savings starter (D163), in English.
+  const savings = /saving 200 a month/i.test(question)
+  // "$ ls": a command, on the computer (D162).
+  const command = /^\$ ([\s\S]+)/.exec(question.trim())?.[1]
   const found = sourcesIn(last.role === 'tool' ? last.content : '')
   // 0.6: a helper's turn, the briefing it is part of, and Double-check's requests.
   const helper = system.startsWith('You are a helper of')
@@ -266,9 +285,9 @@ createServer(async (req, res) => {
   else if (back && toolName === mailTool && sendTool && declared.has(sendTool)) call = { name: sendTool, args: { to: 'margot@bakery.example', body: 'Confirmed.' } }
   else if (back && toolName === sendTool) answer = `Your ${searched.length} latest emails:\n\n${searched.map((email) => `- **${email.title}** [${email.n}]`).join('\n')}`
   else if (emails && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { limit: 3 } }
-  else if (emails && last.role === 'user' && mailTool && declared.has('run')) call = fromScript(mailTool)
+  else if (emails && last.role === 'user' && mailTool && declared.has(script)) call = fromScript(mailTool)
   else if (emails && last.role === 'user' && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'search the latest emails' } }
-  else if (toolName === 'find_tools' && mailTool && /_search_emails\(/.test(last.content)) call = /inside run/.test(last.content) ? fromScript(mailTool) : { name: mailTool, args: { limit: 3 } }
+  else if (toolName === 'find_tools' && mailTool && /_search_emails\(/.test(last.content)) call = /inside (?:javascript|run)/.test(last.content) ? fromScript(mailTool) : { name: mailTool, args: { limit: 3 } }
   else if (found.length && /^mail:/.test(found[0].url)) {
     answer = `Your ${found.length} latest emails:\n\n${found.map((email) => `- **${email.title}**, ${email.more.replace(/:.*$/, '')} [${email.n}]`).join('\n')}`
   } else if (/search the web|look up/i.test(question) && last.role === 'user' && declared.has('web_search')) call = { name: 'web_search', args: { query: question.replace(/.*(?:search the web for|look up)\s*/i, '').replace(/[?.!]$/, '') } }
@@ -277,9 +296,22 @@ createServer(async (req, res) => {
   else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'browser' } }
   else if (/bakery site/i.test(question) && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'browse', args: { url: BAKERY } }
   else if (toolName === 'browse') answer = found.length ? `The bakery’s page is open beside our conversation. ${/Fresh bread[^\n]*/.exec(last.content)?.[0]} [${found[0].n}]` : `That didn't work: ${last.content}`
+  // The savings starter: one script works the plan out and draws its chart as a page, which opens beside the conversation (D163).
+  // Asked for a change, it makes the page again: a second version, the first kept (D164).
+  // Turned on mid-conversation, javascript is deferred: called by its name, it runs all the same (D104).
+  else if (/bars blue/i.test(question) && last.role === 'user') call = { name: 'javascript', args: { code: SAVINGS.replace('#c8691c', '#2563eb') } }
+  else if (/bars blue/i.test(question) && toolName === 'javascript') answer = 'Done: the bars are blue now. The first version is still under my first answer.'
+  else if (savings && last.role === 'user' && declared.has('javascript')) call = { name: 'javascript', args: { code: SAVINGS } }
+  else if (savings && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'computer' } }
+  else if (savings && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'javascript', args: { code: SAVINGS } }
+  else if (savings && toolName === 'javascript') answer = `After 10 years you would have ${/"total": (\d+)/.exec(last.content)?.[1] ?? '?'}. The chart is open beside our conversation.`
+  else if (command && last.role === 'user' && declared.has('bash')) call = { name: 'bash', args: { command } }
+  else if (command && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'computer' } }
+  else if (command && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'bash', args: { command } }
+  else if (toolName === 'bash') answer = `The computer says:\n\n\`\`\`\n${last.content}\n\`\`\``
   else if (/give me a link/i.test(question) && last.role === 'user') answer = `Here it is: [the bakery](${BAKERY}).`
-  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: `return await models.image(${JSON.stringify(question)})` } }
-  else if (toolName === 'run' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
+  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: `return await models.image(${JSON.stringify(question)})` } }
+  else if ((toolName === 'run' || toolName === 'javascript') && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
   else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }
   else if (/web page/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery.html', content: PAGE } }
   else if (/svg logo/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Logo.svg', content: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f6e7cf"/><circle cx="60" cy="60" r="38" fill="#c8691c"/></svg>' } }
@@ -298,10 +330,10 @@ createServer(async (req, res) => {
   else if (skill && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a skill' } }
   else if (toolName === 'find_tools' && /save_skill\(/.test(last.content)) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
   else if (toolName === 'save_skill') answer = 'Done: it is a skill now.'
-  else if (table && /spreadsheet/i.test(question) && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: spreadsheetScript(table[2]) } }
-  else if (table && last.role === 'user' && declared.has('run')) call = { name: 'run', args: { code: totalsScript(table[2]) } }
-  else if (table && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'compute' } }
-  else if (table && last.role === 'tool' && /It is on/.test(last.content)) call = { name: 'run', args: { code: totalsScript(table[2]) } }
+  else if (table && /spreadsheet/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: spreadsheetScript(table[2]) } }
+  else if (table && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: totalsScript(table[2]) } }
+  else if (table && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'computer' } }
+  else if (table && last.role === 'tool' && /It is on/.test(last.content)) call = { name: 'javascript', args: { code: totalsScript(table[2]) } }
   else if (last.role === 'tool' && /^Result: /.test(last.content)) {
     const { by, of, totals } = JSON.parse(last.content.slice(8).split('\n\nLog:')[0])
     const rows = Object.entries(totals).map(([key, value]) => `| ${key} | ${value} |`).join('\n')

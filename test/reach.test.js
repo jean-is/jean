@@ -7,7 +7,7 @@ import { readFile } from 'node:fs/promises'
 import { runTurn } from '../core/loop.js'
 import { toChatMessages, userRecord } from '../core/events.js'
 import { PROVIDERS, streamChat } from '../core/llm.js'
-import { generateImage } from '../caps/compute/picture.js'
+import { generateImage } from '../caps/computer/picture.js'
 import { buildSystemPrompt, promptState, changeNotes } from '../core/prompt.js'
 
 const encoder = new TextEncoder()

@@ -398,7 +398,19 @@ function approvals() {
       </li>`
     })}</ul>
   </section>
-  ${pages()}`
+  ${pages()}
+  ${relay()}`
+}
+
+/**
+ * The address the web is reached through, when there is one (D162): a relay with {url} in it, or
+ * nothing, and the system's proxy alone. The Computer uses it; policy can set it (`relay`).
+ */
+function relay() {
+  const set = app.policy.relay !== undefined
+  return setting(t('relay.title'), set ? t('policy.locked') : t('relay.text'), html`<input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}"
+    aria-label=${t('relay.title')} .value=${String(app.policy.relay ?? app.settings.value.relay ?? '')} ?disabled=${set}
+    @change=${(/** @type {Event} */ e) => updateSettings({ relay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>`)
 }
 
 /** What a web page may do when it opens beside the conversation (D143), each unless the organisation set it. */
@@ -413,7 +425,7 @@ function pages() {
       <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]}
         ?disabled=${locked.has(right) || (right === 'network' && !allows.scripts)}
         @change=${(/** @type {Event} */ e) => setPages({ [right]: /** @type {HTMLInputElement} */ (e.target).checked })}>
-      ${right === 'network' && allows.scripts && allows.network ? reach(rights) : nothing}
+      ${right === 'network' && allows.scripts && allows.network ? siteList({ sites: rights.sites, fixed: locked.has('sites'), set: (sites) => setPages({ sites }), any: true }) : nothing}
     </li>`)}</ul>
   </section>`
 }
@@ -422,12 +434,12 @@ function pages() {
 const setPages = (change) => updateSettings({ pages: { ...app.settings.value.pages, ...change } })
 
 /**
- * The sites a page's code may reach, inline after one another: `*`, any, until one is named.
- * Enter adds what is typed when it is a site, and nothing else adds it; × takes one away.
- * @param {ReturnType<typeof pageRights>} rights
+ * Sites, inline after one another: those a page's code may reach (`any`: `*`, any, until one is
+ * named), or the Computer's (D162). Enter adds what is typed when it is a site, and nothing else
+ * adds it; × takes one away.
+ * @param {{ sites: string[], fixed: boolean, set: (sites: string[]) => void, any?: boolean }} options
  */
-function reach({ sites, locked }) {
-  const fixed = locked.has('sites')
+export function siteList({ sites, fixed, set, any = false }) {
   /** @param {KeyboardEvent} event */
   const add = (event) => {
     if (event.key !== 'Enter' || event.isComposing || event.keyCode === 229) return
@@ -437,16 +449,16 @@ function reach({ sites, locked }) {
     input.setAttribute('aria-invalid', String(!typed))
     if (!typed) return
     input.value = ''
-    setPages({ sites: typed === '*' ? [] : [...new Set([...sites, typed])] })
+    set(typed === '*' && any ? [] : [...new Set([...sites, typed])])
   }
   /** @param {Event} event @param {string} gone */
   const remove = (event, gone) => {
     /** @type {HTMLElement} */ (event.currentTarget).closest('.sites')?.querySelector('input')?.focus()
-    setPages({ sites: sites.filter((other) => other !== gone) })
+    set(sites.filter((other) => other !== gone))
   }
   return html`<div class="reach">
     <div class="sites">
-      <ul aria-label=${t('pages.sites')}>${(sites.length ? sites : ['*']).map((entry) => html`<li><bdi>${entry}</bdi>${sites.length && !fixed
+      <ul aria-label=${t('pages.sites')}>${(sites.length || !any ? sites : ['*']).map((entry) => html`<li><bdi>${entry}</bdi>${sites.length && !fixed
         ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })} title=${t('pages.siteRemove', { site: entry })}
           @click=${(/** @type {Event} */ e) => remove(e, entry)}>${icons.close}</button>` : nothing}</li>`)}</ul>
       ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
@@ -475,7 +487,7 @@ function data() {
 }
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'you' | 'connections' | 'skills' | 'routines' | 'capabilities' | 'approvals' | 'data'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'you' | 'connections' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
  * @property {string} label    its name in the menu
  * @property {unknown} icon
@@ -506,6 +518,7 @@ export const SECTIONS = {
   skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   routines: { label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
   capabilities: { label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
+  computer: { label: 'cap.computer.name', icon: icons.code, show: () => loaded.value.get('computer')?.panel?.() ?? nothing, when: () => loaded.value.has('computer') },
   approvals: { label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
   data: { label: 'settings.storage', icon: icons.data, show: data },
 }
@@ -573,13 +586,13 @@ class Settings extends Element {
 // circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', compute: 'calc', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm', python: 'code',
+  files: 'file', made: 'table', computer: 'code', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), computer: () => openSettings('computer'), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })

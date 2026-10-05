@@ -1,6 +1,6 @@
 // Talk (0.1) and reply suggestions (0.3): an answer streams in, titled meanwhile, its follow-ups become
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
-// the conversation, in the address (D137).
+// the conversation, in the address (D137), and a reload comes back to the line being read.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
 
@@ -66,6 +66,36 @@ test('Settings opens over the conversation, in the address: Back closes it, a re
   await expect(page.locator('.msg-user')).toHaveText('Explain photosynthesis in simple words')
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL(`./${place}`)
+})
+
+test('a reload comes back to the same line of a long conversation, or to its end', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Answers with a file's card (D119), above the line and in the last answer.
+  const asked = ['Explain photosynthesis in simple words', 'Write the bakery plan as a Word document', 'Explain photosynthesis again', 'Write the cafe plan as a Word document']
+  for (const [index, text] of asked.entries()) {
+    await ask(page, text)
+    await expect(page.locator('.msg-jean .msg-actions')).toHaveCount(index + 1)
+  }
+  await expect(page.locator('app-file .file-card')).toHaveCount(2)
+  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
+  test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
+  // The cards come with their capability, after the conversation: here a second late.
+  await page.route('**/caps/made/made.js', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await route.continue()
+  })
+  // Reading the last answer, near the end; then at the end, below the box's and the last card's height.
+  for (const up of [300, 0]) {
+    const line = await page.evaluate((up) => {
+      scrollTo({ top: document.documentElement.scrollHeight - innerHeight - up, behavior: 'instant' })
+      return Math.round(scrollY)
+    }, up)
+    await page.reload()
+    await expect(page.locator('app-file .file-card')).toHaveCount(2)
+    await expect.poll(() => page.evaluate(() => Math.round(scrollY))).toBe(line)
+    expect(await page.evaluate(() => Math.round(document.documentElement.scrollHeight - innerHeight - scrollY))).toBe(up)
+  }
 })
 
 test('light or dark: Auto follows the device, Light and Dark stay put', async ({ page }) => {

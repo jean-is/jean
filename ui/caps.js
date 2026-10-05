@@ -4,6 +4,7 @@
 // system note (D46, D47). Policy can deny a capability (never offered, never downloaded)
 // or unlock it in advance (docs/enterprise.md).
 import { signal } from '@preact/signals-core'
+import { folded } from '../core/settings.js'
 
 /**
  * @typedef {Object} Capability
@@ -25,13 +26,12 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   projects: () => import('../caps/projects/projects.js'),
   skills: () => import('../caps/skills/skills.js'),
   routines: () => import('../caps/routines/routines.js'),
-  python: () => import('../caps/python/python.js'),
   made: () => import('../caps/made/made.js'),
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
   voice: () => import('../caps/voice/voice.js'),
-  compute: () => import('../caps/compute/compute.js'),
+  computer: () => import('../caps/computer/computer.js'),
   reflexes: () => import('../caps/reflexes/reflexes.js'),
   search: () => import('../caps/search/search.js'),
   connections: () => import('../caps/connections/connections.js'),
@@ -47,7 +47,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
 })
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
-export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, python: 14e6, live: 82e6 })
+export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6 })
 
 /** Capabilities whose modules have loaded, by id. */
 export const loaded = signal(/** @type {Map<string, Capability>} */ (new Map()))
@@ -64,7 +64,7 @@ export function configureCapabilities({ deny = [], remember }) {
 }
 
 /** @param {string} id */
-export const isDenied = (id) => gate.deny.includes(id)
+export const isDenied = (id) => gate.deny.includes(id) || gate.deny.some((denied) => folded(denied) === id)
 
 /** Called by a capability module when it loads. @param {Capability} capability */
 export function register(capability) {
@@ -77,6 +77,7 @@ export function register(capability) {
  * @param {string} id
  */
 export function unlock(id) {
+  id = folded(id)
   if (isDenied(id) || !Object.hasOwn(LOADERS, id)) return Promise.resolve(false)
   let pending = loading.get(id)
   if (!pending) {

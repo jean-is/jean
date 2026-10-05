@@ -22,6 +22,9 @@
   "folders.open.question": "{name}이(가) 이 컴퓨터의 {folder}을(를) 열어도 될까요?",
   "folders.open.yes": "허용",
   "folders.change.question": "{path}을(를) 바꿀까요?",
+  "folders.changes.question": {
+    "other": "폴더에 이 변경 {count}개를 유지할까요?"
+  },
   "folders.change.yes": "바꾸기",
   "folders.always": "{folder}에서 항상 허용",
   "folders.line": "{line}번째 줄",

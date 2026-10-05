@@ -265,7 +265,7 @@ async function working(signal) {
 }
 
 /** Before a call: a card to click when the browser must ask first, the click it needs (D141). @param {any} _ @param {import('../../core/loop.js').ToolContext} ctx */
-async function opening(_, ctx) {
+export async function opening(_, ctx) {
   const folder = folderOf(conversationOf(ctx.signal))
   if (folder?.handle && !(await isOpen(folder))) return { ask: true, meta: { folder: folder.name } }
 }
@@ -575,6 +575,23 @@ const changeTool = {
 }
 
 /**
+ * The conversation's folder, open, as the Computer's /workspace (D162), with whether a change there
+ * needs no asking; null when it has none. @param {AbortSignal | undefined} signal
+ */
+export async function computerFolder(signal) {
+  if (!folderOf(conversationOf(signal))) return null
+  const { folder, fs } = await working(signal)
+  return { folder, fs, always: Boolean(folder.copy) || await always(folder) }
+}
+
+/** "Always allow" in a folder, answered on the Computer's card (D162). @param {Folder} folder */
+export async function trust(folder) {
+  if (!folder.handle || await always(folder)) return
+  trusted = [...trusted, folder.handle]
+  await stored('readwrite', (store) => store.put(trusted, ALWAYS))
+}
+
+/**
  * A shared file's text for a script's `file()`, when the name is a path in the conversation's folder
  * (D141); null when it isn't one. @param {string} path @param {import('../../core/loop.js').ToolContext} ctx
  */
@@ -629,10 +646,10 @@ export async function pageMoved(name, files) {
 
 /**
  * A change undone from the conversation: the file as it was, if it is still as Jean left it, and a
- * note so the brain knows (D141). @param {ToolCallInfo} call
+ * note so the brain knows (D141). A call of the Computer's may have changed several (D162).
+ * @param {ToolCallInfo} call @param {import('../../core/types.js').ToolCallContent} [diff]
  */
-async function undo(call) {
-  const diff = call.content?.find((part) => part.type === 'diff')
+async function undo(call, diff = call.content?.find((part) => part.type === 'diff')) {
   const current = app.current.peek()
   if (!diff || diff.type !== 'diff' || !current) return
   try {
@@ -757,16 +774,22 @@ class FolderApproval extends Element {
     if (!decision) return nothing
     const { toolCall, resolve } = decision
     const folder = String(toolCall._meta?.folder ?? '')
-    const diff = toolCall.content?.find((/** @type {any} */ part) => part.type === 'diff')
+    const diffs = (toolCall.content ?? []).filter((/** @type {any} */ part) => part.type === 'diff')
+    // The Computer's changes (D162): several files, some with no text to show.
+    const files = toolCall.name === 'save_workspace' ? [...(toolCall.rawInput?.files ?? []), ...(toolCall.rawInput?.removed ?? [])].map(String) : []
+    const others = files.filter((path) => !diffs.some((/** @type {any} */ diff) => diff.path === path))
     const helper = this.#helper.value
-    const asked = diff ? t('folders.change.question', { path: diff.path }) : t('folders.open.question', { name: assistantName(), folder })
+    const asked = files.length > 1 ? t('folders.changes.question', { count: files.length }) : diffs.length || files.length ? t('folders.change.question', { path: diffs[0]?.path ?? files[0] })
+      : t('folders.open.question', { name: assistantName(), folder })
+    const changing = diffs.length || files.length
     return html`<div class="approval" role="group" aria-label=${asked}>
       ${helper ? html`<p class="approval-from">${icons.helpers}<span dir="auto">${helper}</span></p>` : nothing}
       <p>${asked}</p>
-      ${diff ? diffView(diff) : nothing}
+      ${diffs.map(diffView)}
+      ${others.length ? html`<ul class="folder-others">${others.map((path) => html`<li>${icons.file}<span dir="auto">${path}</span></li>`)}</ul>` : nothing}
       <div class="approval-actions">
-        <button class="button primary" @click=${() => resolve('allow_once')}>${diff ? t('folders.change.yes') : t('folders.open.yes')}</button>
-        ${toolCall.name === 'change' ? html`<button class="button" @click=${() => resolve('allow_always')}>${t('folders.always', { folder })}</button>` : nothing}
+        <button class="button primary" @click=${() => resolve('allow_once')}>${changing ? t('folders.change.yes') : t('folders.open.yes')}</button>
+        ${toolCall.name === 'change' || toolCall.name === 'save_workspace' ? html`<button class="button" @click=${() => resolve('allow_always')}>${t('folders.always', { folder })}</button>` : nothing}
         <button class="button subtle" @click=${() => resolve('reject_once')}>${t('offer.no')}</button>
       </div>
     </div>`
@@ -781,18 +804,20 @@ class FolderChange extends Element {
 
   render() {
     const call = this.#call.value
-    const diff = call?.content?.find((part) => part.type === 'diff')
-    if (!call || diff?.type !== 'diff') return nothing
-    const undone = (app.current.value?.records ?? []).some(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'undone' && update.data.call === call.toolCallId)
-    const { rows } = diffLines(diff.oldText, diff.newText)
-    const count = (/** @type {string} */ kind) => rows.filter((row) => row.kind === kind).length
-    return html`<details class="folder-change ${undone ? 'is-undone' : ''}">
-      <summary>${icons.file}<span class="folder-change-path" dir="auto">${diff.path}</span>
-        <span class="folder-change-count" dir="ltr"><span class="is-new">+${count('+')}</span> <span class="is-gone">−${count('-')}</span></span>
-        ${undone ? html`<span class="muted">${t('folders.undone')}</span>` : html`<button class="button" @click=${(/** @type {Event} */ event) => { event.preventDefault(); undo(call) }}>${t('folders.undo')}</button>`}
-        ${icons.chevron}</summary>
-      ${diffView(diff)}
-    </details>`
+    if (!call) return nothing
+    return (call.content ?? []).map((diff) => {
+      if (diff.type !== 'diff') return nothing
+      const undone = (app.current.value?.records ?? []).some(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'undone' && update.data.call === call.toolCallId && update.data.path === diff.path)
+      const { rows } = diffLines(diff.oldText, diff.newText)
+      const count = (/** @type {string} */ kind) => rows.filter((row) => row.kind === kind).length
+      return html`<details class="folder-change ${undone ? 'is-undone' : ''}">
+        <summary>${icons.file}<span class="folder-change-path" dir="auto">${diff.path}</span>
+          <span class="folder-change-count" dir="ltr"><span class="is-new">+${count('+')}</span> <span class="is-gone">−${count('-')}</span></span>
+          ${undone ? html`<span class="muted">${t('folders.undone')}</span>` : html`<button class="button" @click=${(/** @type {Event} */ event) => { event.preventDefault(); undo(call, diff) }}>${t('folders.undo')}</button>`}
+          ${icons.chevron}</summary>
+        ${diffView(diff)}
+      </details>`
+    })
   }
 }
 

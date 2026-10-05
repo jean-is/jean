@@ -22,6 +22,9 @@
   "folders.open.question": "允許 {name} 開啟這台電腦上的 {folder} 嗎？",
   "folders.open.yes": "允許",
   "folders.change.question": "修改 {path}？",
+  "folders.changes.question": {
+    "other": "要在資料夾中保留這 {count} 項變更嗎？"
+  },
   "folders.change.yes": "修改",
   "folders.always": "在 {folder} 中一律允許",
   "folders.line": "第 {line} 行",

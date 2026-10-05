@@ -5,7 +5,7 @@ import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
-import { renamed } from '../core/settings.js'
+import { renamed, folded } from '../core/settings.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
@@ -14,21 +14,61 @@ import { speaking, toggleSpeech, canSpeak } from './speech.js'
 /** @import { Turn, Step } from '../core/events.js' */
 /** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
 
+/**
+ * Where the reader was when the page went (a reload), in this tab only: the conversation, the turn
+ * at the top of the window and how far into it, so answers that draw later don't move the line.
+ * Nothing when at the end. Read once, by the page that comes next.
+ */
+const SPOT = 'app.spot'
+/** @type {{ id: string, turn: number, offset: number } | null} */
+let spot = null
+try {
+  spot = JSON.parse(sessionStorage.getItem(SPOT) ?? 'null')
+  sessionStorage.removeItem(SPOT)
+} catch {}
+
 class Conversation extends Element {
   #follow = true
   #onScroll = () => {
     this.#follow = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
   }
+  #keep = () => {
+    const turns = [...this.querySelectorAll('.turns > .turn')]
+    const index = Math.max(0, turns.findLastIndex((turn) => turn.getBoundingClientRect().top <= 0))
+    const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 1
+    try {
+      if (end || !turns[index]) sessionStorage.removeItem(SPOT)
+      else sessionStorage.setItem(SPOT, JSON.stringify({ id: app.current.peek()?.id, turn: index, offset: -turns[index].getBoundingClientRect().top }))
+    } catch {}
+  }
 
   connectedCallback() {
     super.connectedCallback()
     addEventListener('scroll', this.#onScroll, { passive: true })
-    scrollTo({ top: document.documentElement.scrollHeight })
+    addEventListener('pagehide', this.#keep)
+    // Back where the reader was, or at the end: once the box below is drawn too, and again once the
+    // capabilities are back, unless the reader has moved since.
+    const back = spot?.id === app.current.peek()?.id ? spot : null
+    spot = null
+    queueMicrotask(async () => {
+      this.#go(back)
+      const at = scrollY
+      await app.ready.catch(() => {})
+      if (this.isConnected && (back ? scrollY === at : this.#follow)) this.#go(back)
+    })
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
     removeEventListener('scroll', this.#onScroll)
+    removeEventListener('pagehide', this.#keep)
+  }
+
+  /** @param {{ turn: number, offset: number } | null} back */
+  #go(back) {
+    const turn = back && this.querySelectorAll('.turns > .turn')[back.turn]
+    scrollTo({ top: turn ? turn.getBoundingClientRect().top + scrollY + back.offset : document.documentElement.scrollHeight, behavior: 'instant' })
+    this.#onScroll()
   }
 
   render() {
@@ -104,7 +144,7 @@ function turnView(turn, live, files, upTo, last, sources) {
         ${activity(steps, text, streaming, files)}
         ${text ? html`<div class="prose" dir="auto">${markdown(text, sources)}${streaming ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>` : nothing}
         ${entries.flatMap(({ _meta, rawInput }) => (_meta?.image ? [html`<app-image uri=${_meta.image.uri} name=${_meta.image.name} alt=${rawInput?.prompt ?? ''}></app-image>`] : []))}
-        ${[...new Map(entries.flatMap(({ _meta }) => (_meta?.file ? [[_meta.file.name, _meta.file]] : []))).values()].map((file) => html`<app-file uri=${file.uri} name=${file.name} type=${file.mimeType} size=${file.size}></app-file>`)}
+        ${[...new Map(entries.flatMap(({ _meta }) => [...(_meta?.file ? [_meta.file] : []), ...(_meta?.files ?? [])].map((file) => [file.name, file]))).values()].map((file) => html`<app-file uri=${file.uri} name=${file.name} type=${file.mimeType} size=${file.size} version=${file.version ?? ''}></app-file>`)}
         ${entries.flatMap((entry) => (entry.status === 'completed' && entry.content?.some((part) => part.type === 'diff') ? [html`<app-folder-change .call=${entry}></app-folder-change>`] : []))}
         ${!streaming && read.length ? readView(read) : nothing}
         ${!streaming && entries.some((entry) => entry._meta?.sources) ? sourcesView(entries.flatMap((entry) => entry._meta?.sources ?? [])) : nothing}
@@ -337,8 +377,8 @@ function toolLabel(tool, files = []) {
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
   // Older conversations name tools renamed since (D115) by their old names; an offer of `routines`
-  // made then reads as Routines, as it was called at the time (D122).
-  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${renamed(String(tool.rawInput?.capability))}.name`) })
+  // made then reads as Routines, as it was called at the time (D122); Calculations and the data toolkit are the Computer (D162).
+  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${folded(renamed(String(tool.rawInput?.capability)))}.name`) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   if (tool.name === 'ask_user') {
     // A helper's lone question, from before questions came in lists (D146).
@@ -356,6 +396,8 @@ function toolLabel(tool, files = []) {
 function approval({ toolCall, resolve }, helper, files) {
   // In the user's folder: the change and its diff, or opening the folder (caps/folders, D141).
   if (toolCall._meta?.folder) return html`<app-folder-approval .decision=${{ toolCall, resolve }} .helper=${helper}></app-folder-approval>`
+  // A site the computer hasn't reached yet (caps/computer, D162).
+  if (toolCall._meta?.site) return html`<app-site-approval .decision=${{ toolCall, resolve }} .helper=${helper}></app-site-approval>`
   return html`<div class="approval" role="group" aria-label=${t('approval.title')}>
     ${asking(helper)}
     <p>${t('approval.question', { action: toolLabel(toolCall, files) })}</p>

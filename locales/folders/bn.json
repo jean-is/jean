@@ -22,6 +22,10 @@
   "folders.open.question": "{name} কি এই কম্পিউটারে {folder} খুলবে?",
   "folders.open.yes": "অনুমতি দিন",
   "folders.change.question": "{path} বদলাবেন?",
+  "folders.changes.question": {
+    "one": "এই পরিবর্তনটি ফোল্ডারে রাখবেন?",
+    "other": "এই {count}টি পরিবর্তন ফোল্ডারে রাখবেন?"
+  },
   "folders.change.yes": "বদলান",
   "folders.always": "{folder}-এ সবসময় অনুমতি দিন",
   "folders.line": "লাইন {line}",

@@ -22,6 +22,9 @@
   "folders.open.question": "Cho {name} mở {folder} trên máy tính này?",
   "folders.open.yes": "Cho phép",
   "folders.change.question": "Sửa {path}?",
+  "folders.changes.question": {
+    "other": "Giữ {count} thay đổi này trong thư mục?"
+  },
   "folders.change.yes": "Sửa",
   "folders.always": "Luôn cho phép trong {folder}",
   "folders.line": "dòng {line}",

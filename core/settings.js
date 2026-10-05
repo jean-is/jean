@@ -26,6 +26,8 @@ import { ulid } from './ulid.js'
  * @property {{ width?: number, sizes?: Record<string, number> }} [dock]  how wide the dock is (a share of the window) and each pane's share of it, as the user set them (D144)
  * @property {{ scripts?: boolean, web?: boolean, network?: boolean, sites?: string[] }} [pages]  what a web page in the preview may do, and which sites it may reach (D143)
  * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
+ * @property {import('../caps/computer/net.js').ComputerSettings} [computer]  what the Computer may reach, and where its packages come from (D162)
+ * @property {string} [relay]                  the address the web is reached through, with {url} in it, when there is one (D162)
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
  */
@@ -43,7 +45,11 @@ import { ulid } from './ulid.js'
  * (`urls` in policy.json). Model weights are a provider identity, like a brain's URL (D33, D53);
  * so is Wikipedia, which web search reads in the user's language ({lang}), and where the browser looks words up.
  */
-export const DEFAULT_URLS = Object.freeze({ modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php', searchPage: 'https://{lang}.wikipedia.org/w/index.php?search={query}' })
+export const DEFAULT_URLS = Object.freeze({
+  modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php', searchPage: 'https://{lang}.wikipedia.org/w/index.php?search={query}',
+  // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
+  pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
+})
 
 /**
  * @param {keyof typeof DEFAULT_URLS} name
@@ -63,10 +69,16 @@ export const DEFAULT_SETTINGS = { format: 2, locale: null, brains: [], activeBra
  * Names that changed (D115): the Skills capability and its tools were Routines. Earlier
  * conversations still name the tools they were given so.
  */
-const RENAMED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ routine: 'skill', save_routine: 'save_skill' }))
+const RENAMED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ routine: 'skill', save_routine: 'save_skill', run: 'javascript' }))
 
 /** A tool's name as it is now. @param {string} name */
 export const renamed = (name) => (Object.hasOwn(RENAMED, name) ? RENAMED[name] : name)
+
+/** Capabilities folded into another (D162): Calculations and the data toolkit are the Computer's. */
+const FOLDED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ compute: 'computer', python: 'computer' }))
+
+/** A capability's id as it is now. @param {string} id */
+export const folded = (id) => (Object.hasOwn(FOLDED, id) ? FOLDED[id] : id)
 
 /**
  * Settings, upgraded when read: in a file of format 1, `routines` is the capability now called
@@ -75,7 +87,8 @@ export const renamed = (name) => (Object.hasOwn(RENAMED, name) ? RENAMED[name] :
  */
 export async function loadSettings(fs) {
   const saved = await readJSON(fs, 'settings.json', null)
-  const settings = { ...DEFAULT_SETTINGS, ...saved ?? {}, format: /** @type {2} */ (2) }
+  const read = { ...DEFAULT_SETTINGS, ...saved ?? {}, format: /** @type {2} */ (2) }
+  const settings = { ...read, unlocked: [...new Set(read.unlocked.map(folded))], offers: Object.fromEntries(Object.entries(read.offers).map(([id, when]) => [folded(id), when])) }
   if ((saved?.format ?? 2) > 1) return settings
   const now = (/** @type {string} */ id) => (id === 'routines' ? 'skills' : id)
   return { ...settings, unlocked: settings.unlocked.map(now), offers: Object.fromEntries(Object.entries(settings.offers).map(([id, when]) => [now(id), when])) }

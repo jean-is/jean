@@ -79,11 +79,11 @@ test('a service that can’t register Jean signs in with the client its organisa
 test('a service of the earlier MCP revision, reached from a script', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Calculations')
+  await turnOn(page, 'Computer')
   await page.keyboard.press('Escape')
   await connect(page, `${MAIL_URL}/legacy/mcp`)
   await ask(page, 'What are my latest emails?')
-  // The sandbox starts first: as in compute.spec.js, that can take a while on a busy machine.
+  // The sandbox starts first: as in computer.spec.js, that can take a while on a busy machine.
   await page.locator('.approval .button.primary').click({ timeout: 30_000 })
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Lunch on Thursday?', { timeout: 30_000 })
   await page.locator('.activity > summary').last().click()
@@ -110,7 +110,7 @@ test('web search answers with sources that open', async ({ page }) => {
 test('a script draws a picture with models.image, kept in the project', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Calculations')
+  await turnOn(page, 'Computer')
   await page.keyboard.press('Escape')
   await ask(page, 'Draw a lighthouse at dusk')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is your picture.', { timeout: 30_000 })

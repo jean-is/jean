@@ -22,6 +22,12 @@
   "folders.open.question": "Может ли {name} открыть {folder} на этом компьютере?",
   "folders.open.yes": "Разрешить",
   "folders.change.question": "Изменить {path}?",
+  "folders.changes.question": {
+    "one": "Сохранить {count} изменение в папке?",
+    "few": "Сохранить {count} изменения в папке?",
+    "many": "Сохранить {count} изменений в папке?",
+    "other": "Сохранить {count} изменения в папке?"
+  },
   "folders.change.yes": "Изменить",
   "folders.always": "Всегда разрешать в {folder}",
   "folders.line": "строка {line}",

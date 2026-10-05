@@ -183,3 +183,40 @@ export function openingOf(records) {
   for (const { update } of records) if (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text' && update.content.text) return update.content.text
   return ''
 }
+
+/**
+ * A file Jean made or changed: Things Jean made's (`_meta.file`), or one the computer kept
+ * (`_meta.files`), with its version in the conversation (D164).
+ * @typedef {{ uri: string, name: string, mimeType: string, size: number, version?: number }} MadeFile
+ */
+
+/**
+ * The tool calls of a conversation, in order: those its records hold, then those of the answer
+ * being written. @param {Envelope[]} records @param {{ tools: ToolCallInfo[] }[]} [steps]
+ * @returns {ToolCallInfo[]}
+ */
+export const callsIn = (records, steps = []) => [
+  ...records.flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' ? [/** @type {ToolCallInfo} */ (update)] : [])),
+  ...steps.flatMap((step) => step.tools),
+]
+
+/** Every file the calls made, in order. @param {ToolCallInfo[]} calls @returns {MadeFile[]} */
+export const filesMade = (calls) => calls.flatMap((call) => [call._meta?.file, ...(call._meta?.files ?? [])].filter(Boolean))
+
+/**
+ * A file's versions in a conversation, oldest first, by its name, numbered: each one made, a
+ * version made again just after itself counted once (D164).
+ * @param {MadeFile[]} made @param {string} name @returns {Required<MadeFile>[]}
+ */
+export function versionsOf(made, name) {
+  /** @type {Required<MadeFile>[]} */
+  const versions = []
+  for (const file of made) if (file.name === name && versions.at(-1)?.uri !== file.uri) versions.push({ ...file, version: versions.length + 1 })
+  return versions
+}
+
+/** The version a file just made will be: the next, unless it is the last one again. @param {MadeFile[]} made @param {string} name @param {string} uri */
+export function nextVersion(made, name, uri) {
+  const versions = versionsOf(made, name)
+  return versions.at(-1)?.uri === uri ? versions.length : versions.length + 1
+}

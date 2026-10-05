@@ -22,6 +22,10 @@
   "folders.open.question": "Let {name} open {folder} on this computer?",
   "folders.open.yes": "Allow",
   "folders.change.question": "Change {path}?",
+  "folders.changes.question": {
+    "one": "Keep this change in the folder?",
+    "other": "Keep these {count} changes in the folder?"
+  },
   "folders.change.yes": "Change it",
   "folders.always": "Always allow in {folder}",
   "folders.line": "line {line}",

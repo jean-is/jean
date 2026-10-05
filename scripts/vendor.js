@@ -97,7 +97,7 @@ async function copyLicense (pkg) {
  * On-demand runtimes (D52), each in its own folder. `rewrite` maps bare specifiers to
  * files in the same folder, because import maps don't reach into workers. A folder entry
  * may keep only the files matching a pattern.
- * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string> }[]}
+ * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]> }[]}
  */
 export const RUNTIMES = [
   {
@@ -139,7 +139,31 @@ export const RUNTIMES = [
     packages: ['pyodide'],
     files: ['pyodide.mjs', 'pyodide.asm.mjs', 'pyodide.asm.wasm', 'python_stdlib.zip', 'pyodide-lock.json'].map((name) => [`pyodide/${name}`, name]),
   },
+  {
+    // The Computer's shell (D162): just-bash's browser build and what it imports, flat. diff and
+    // sprintf-js ship only as CommonJS or UMD, so each is wrapped as a module naming what it exports;
+    // node:zlib is the worker's own few lines over fflate.
+    dir: 'vendor/just-bash',
+    packages: ['just-bash', 'diff', 'sprintf-js', 'turndown', 'fflate'],
+    files: [
+      ['just-bash/dist/bundle/browser.js', 'just-bash.mjs'],
+      ['diff/dist/diff.js', 'diff.mjs'],
+      ['sprintf-js/src/sprintf.js', 'sprintf.mjs'],
+      ['turndown/lib/turndown.browser.es.js', 'turndown.mjs'],
+      ['fflate/esm/browser.js', 'fflate.mjs'],
+    ],
+    rewrite: { diff: './diff.mjs', 'sprintf-js': './sprintf.mjs', turndown: './turndown.mjs', 'node:zlib': './node-zlib.mjs' },
+    wrap: { 'diff.mjs': ['diffArrays', 'diffLines', 'createPatch'], 'sprintf.mjs': ['sprintf', 'vsprintf'] },
+  },
 ]
+
+/**
+ * A CommonJS or UMD file as a module: it fills `module.exports`, whose names are then exported.
+ * @param {string} text @param {string[]} names
+ */
+export function wrapCommonJS (text, names) {
+  return `const module = { exports: {} }, exports = module.exports;\n${text}\n;export const { ${names.join(', ')} } = module.exports\nexport default module.exports\n`
+}
 
 /**
  * Points bare import specifiers at local files: `from"x"` and `from "x"`.
@@ -160,7 +184,8 @@ async function copyRuntime (runtime) {
   /** @param {string} from @param {string} to */
   const copy = async (from, to) => {
     if (/\.m?js$/.test(to)) {
-      const text = rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {})
+      const source = rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {})
+      const text = runtime.wrap?.[to] ? wrapCommonJS(source, runtime.wrap[to]) : source
       await writeFile(join(target, to), text)
       raw += Buffer.byteLength(text)
     } else {

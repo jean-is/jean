@@ -22,6 +22,10 @@
   "folders.open.question": "{folder} በዚህ ኮምፒውተር ላይ ለ{name} ይከፈት?",
   "folders.open.yes": "ይፍቀዱ",
   "folders.change.question": "{path} ይቀየር?",
+  "folders.changes.question": {
+    "one": "ይህ ለውጥ በአቃፊው ውስጥ ይቆይ?",
+    "other": "እነዚህ {count} ለውጦች በአቃፊው ውስጥ ይቆዩ?"
+  },
   "folders.change.yes": "ይቀየር",
   "folders.always": "በ{folder} ውስጥ ሁልጊዜ ይፈቀድ",
   "folders.line": "መስመር {line}",
