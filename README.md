@@ -100,6 +100,7 @@ node test/fixtures/fake-brain.js
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
 | `npm run build:dmg` | The same, then the macOS disk image to hand out, on a Mac |
 | `npm run icons` | Draws the PNG icons that Android and iOS install with from `icons/icon.svg`, after changing it |
+| `npm run screenshots` | Takes the welcome screen's screenshots that the install dialog shows, after changing how it looks |
 | `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to and which sources of skills it can read |
 
 CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on every push and merge request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.

@@ -65,17 +65,25 @@ const discovery = () => import('./discovery.js')
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
 // systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
 // ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
-// ⌘⇧B opens the browser once it is found, or closes it (D142). Ctrl+` opens the terminal or closes it,
-// on every system, as in code editors, and turns the computer on first (D166).
+// ⌘⇧B opens the browser once it is found, or closes it (D142). ⌃` opens the terminal or closes it, as
+// in code editors, and turns the computer on first (D166): Control on every system, since ⌘` is macOS's
+// own "next window" and seldom reaches the page (it works too when it does). The key that types `, on
+// any keyboard, even as a dead key (beside Return on a French Mac), or the one in its place on an
+// American one.
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
 export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
 const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b' })
+/** Where ` is on this keyboard, where the browser says (Chromium): a dead key's own place, since it sends "Dead". */
+let grave = 'Backquote'
+;/** @type {any} */ (navigator).keyboard?.getLayoutMap?.().then((/** @type {Map<string, string>} */ map) => {
+  for (const [code, key] of map) if (key === '`') grave = code
+}).catch(() => {})
 
 document.addEventListener('keydown', (event) => {
-  if (event.ctrlKey && !event.metaKey && !event.altKey && event.code === 'Backquote' && !isDenied('computer')) {
+  if ((event.key === '`' || event.code === grave || event.code === 'Backquote') && (event.ctrlKey || (APPLE && event.metaKey)) && !event.altKey && !isDenied('computer')) {
     event.preventDefault()
     const over = app.dialog.value
     app.dialog.value = null

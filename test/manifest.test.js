@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
 import { countLines } from '../scripts/budgets.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
+import { jpegSize } from '../scripts/screenshots.js'
 import {
   extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
 } from '../scripts/graph.js'
@@ -211,9 +212,9 @@ describe('manifest: outputs', () => {
   })
 })
 
-describe('manifest: icons', () => {
-  const read = (/** @type {string} */ path) => readFile(new URL(`../${path}`, import.meta.url))
+const read = (/** @type {string} */ path) => readFile(new URL(`../${path}`, import.meta.url))
 
+describe('manifest: icons', () => {
   it('draws every PNG that the web manifest and index.html name, at its size, from today\'s icon.svg', async () => {
     const html = (await read('index.html')).toString('utf8')
     const touch = /<link rel="apple-touch-icon" href="([^"]+)">/.exec(html)?.[1]
@@ -231,6 +232,26 @@ describe('manifest: icons', () => {
     const png = Buffer.concat([Buffer.from('89504e470d0a1a0a', 'hex'), header, Buffer.from('0000000049454e44ae426082', 'hex')])
     assert.deepEqual(describePng(png), { width: 16, height: 8, source: null })
     assert.deepEqual(describePng(recordSource(png, 'x sha256:1')), { width: 16, height: 8, source: 'x sha256:1' })
+  })
+})
+
+describe('manifest: screenshots', () => {
+  it('takes one wide and one narrow screenshot, at the size the web manifest says, in a shape Chromium shows', async () => {
+    const { screenshots } = JSON.parse(buildWebmanifest({ name: 'Test' }))
+    assert.deepEqual(screenshots.map((/** @type {any} */ shot) => shot.form_factor), ['wide', 'narrow'])
+    for (const { src, sizes, form_factor: form } of screenshots) {
+      const [width, height] = sizes.split('x').map(Number)
+      assert.deepEqual(jpegSize(await read(src)), { width, height }, `${src} is not ${sizes}: run \`npm run screenshots\``)
+      const [short, long] = [Math.min(width, height), Math.max(width, height)]
+      assert.ok(short >= 320 && long <= 3840 && long <= 2.3 * short, `${src}: Chromium skips a screenshot this shape`)
+      assert.equal(width > height, form === 'wide', `${src}: wide is landscape, narrow portrait`)
+    }
+  })
+
+  it('reads a JPEG\'s size from its frame header, after the segments before it', () => {
+    const jpeg = Buffer.from('ffd8' + 'ffe000040000' + 'ffc0000b08' + '0008' + '0010' + '0101' + '1100', 'hex')
+    assert.deepEqual(jpegSize(jpeg), { width: 16, height: 8 })
+    assert.equal(jpegSize(Buffer.from('89504e470d0a1a0a', 'hex')), null)
   })
 })
 

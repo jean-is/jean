@@ -63,7 +63,7 @@ function fail (res, status, message) {
  * @param {import('node:http').IncomingMessage} req
  * @param {import('node:http').ServerResponse} res
  */
-async function handle (req, res) {
+export async function handle (req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
   const file = resolveRequest(req.url ?? '/')
   if (!file) return fail(res, 404, 'Not found')
