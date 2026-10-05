@@ -66,7 +66,7 @@ class Preview extends Element {
     return html`<aside class="pane preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && close()}>
       <header class="pane-head">
         <h2><span dir="auto">${file.name}</span></h2>
-        ${versions.value.length > 1 && at.value >= 0 ? stepper() : nothing}
+        ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}
         <button class="icon-button" title=${label} aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
         <button class="icon-button" title=${t('action.close')} aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
@@ -79,16 +79,14 @@ class Preview extends Element {
   }
 }
 
-/** Earlier and later versions of the file on show, and which one it is (D164). */
-function stepper() {
+/** The versions of the file on show, the one it is chosen, to pick another (D164). */
+function picker() {
   const all = versions.value
-  const i = at.value
-  const go = (/** @type {number} */ to) => { shown.value = all[to] }
-  return html`<span class="versions">
-    <button class="icon-button subtle" title=${t('preview.older')} aria-label=${t('preview.older')} ?disabled=${i === 0} @click=${() => go(i - 1)}>${icons.chevron}</button>
-    <span class="versions-at" aria-live="polite">${t('preview.version', { n: i + 1, count: all.length })}</span>
-    <button class="icon-button subtle" title=${t('preview.newer')} aria-label=${t('preview.newer')} ?disabled=${i === all.length - 1} @click=${() => go(i + 1)}>${icons.chevron}</button>
-  </span>`
+  // Its value as well as the options' selected: once picked from, a select no longer follows the attribute.
+  return html`<select class="versions" aria-label=${t('preview.versions')} .value=${String(at.value)}
+    @change=${(/** @type {Event} */ event) => { shown.value = all[Number(/** @type {HTMLSelectElement} */ (event.target).value)] }}>
+    ${all.map((each, i) => html`<option value=${i} ?selected=${i === at.value}>${t('made.version', { n: each.version })}</option>`)}
+  </select>`
 }
 
 /** @param {Shown} file */

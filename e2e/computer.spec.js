@@ -68,21 +68,21 @@ test('the savings starter: the computer works the plan out, its chart opens besi
   // Asked for a change, the page is made again: the new version shows, and the first one stays (D164).
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   await expect(await command(page, 'Make the bars blue')).toContainText('the bars are blue now')
-  const stepper = pane.locator('.versions')
-  await expect(stepper).toContainText('Version 2 of 2')
+  const picker = pane.getByRole('combobox', { name: 'Versions' })
+  await expect(picker.locator('option')).toHaveText(['Version 1', 'Version 2'])
+  await expect(picker.locator('option:checked')).toHaveText('Version 2')
   await expect(chart.locator('rect').first()).toHaveAttribute('fill', '#2563eb')
   const [first, second] = [page.locator('.msg-jean').first(), page.locator('.msg-jean').nth(1)]
   await expect(first.locator('app-file .file-meta')).toContainText('Version 1')
   await expect(second.locator('app-file .file-meta')).toContainText('Version 2')
-  // Back to the first, from the preview, then forward again; and from its own card.
-  await stepper.getByRole('button', { name: 'Earlier version' }).click()
-  await expect(stepper).toContainText('Version 1 of 2')
+  // Back to the first, picked in the preview, then the second again; and the first from its own card.
+  await picker.selectOption({ label: 'Version 1' })
   await expect(chart.locator('rect').first()).toHaveAttribute('fill', '#c8691c')
-  await expect(stepper.getByRole('button', { name: 'Earlier version' })).toBeDisabled()
-  await stepper.getByRole('button', { name: 'Later version' }).click()
+  await expect(picker.locator('option:checked')).toHaveText('Version 1')
+  await picker.selectOption({ label: 'Version 2' })
   await expect(chart.locator('rect').first()).toHaveAttribute('fill', '#2563eb')
   await first.getByRole('button', { name: 'Open Savings plan.html' }).click()
-  await expect(stepper).toContainText('Version 1 of 2')
+  await expect(picker.locator('option:checked')).toHaveText('Version 1')
   await expect(chart.locator('rect').first()).toHaveAttribute('fill', '#c8691c')
 })
 

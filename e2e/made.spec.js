@@ -77,7 +77,7 @@ test('a Word document from the first message, saved, then changed', async ({ pag
   await expect(first.locator('app-file .file-meta')).toContainText('Version 1')
   await expect(second.locator('app-file .file-meta')).toContainText('Version 2')
   await first.getByRole('button', { name: 'Open Bakery plan.docx' }).click()
-  await expect(page.locator('app-preview .versions')).toContainText('Version 1 of 2')
+  await expect(page.locator('app-preview').getByRole('combobox', { name: 'Versions' }).locator('option:checked')).toHaveText('Version 1')
   await expect(page.locator('app-preview .preview-sheet')).not.toContainText('Sell the rest')
 })
 
