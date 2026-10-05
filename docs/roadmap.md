@@ -229,6 +229,8 @@ Still to check by hand:
 
 Budgets now: app 21,299 of 22,000 lines, first load 90.3 of 100 KB gzipped, the dialogs' largest catalogues 7.8 of 8 KB (Russian and Ukrainian), the Computer's own code 30.9 of 40 KB.
 
+Added after 0.8: what the computer makes shows (D163). A page, a picture or a PDF a run keeps in the project's workspace is a card under the answer, and the first opens beside the conversation. A fourth starter on the first screen, "Chart a savings plan", has the computer work out what 200 a month at 4% a year comes to over 10 years and draw it as a page: offered if the computer isn't on, then one script, and the chart is in the preview within seconds. Checked with `npm run e2e` in Chromium and WebKit: from the starter's click, the offer, the page in the preview with its ten bars and its total, the answer and the card. By eye, the first screen's four starters in English, Arabic and Japanese. 2 new strings in all 33 languages.
+
 ## Before the public launch (0.3)
 
 - [ ] Final name and domain chosen and registered, because data is bound to the origin (see [open-questions.md](open-questions.md))

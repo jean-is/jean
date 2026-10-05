@@ -7,6 +7,8 @@
   "starter.email.prompt": "עזור לי לכתוב אימייל אל ",
   "starter.explain": "להסביר משהו בפשטות",
   "starter.explain.prompt": "הסבר במילים פשוטות: ",
+  "starter.savings": "לשרטט תוכנית חיסכון",
+  "starter.savings.prompt": "השתמש במחשב שלך כדי לחשב, שנה אחר שנה, כמה יצטבר מחיסכון של 200 בחודש בריבית של 4% לשנה במשך 10 שנים, ואז הראה לי את זה בגרף.",
   "composer.label": "ההודעה שלך",
   "composer.add": "הוספה להודעה שלך",
   "composer.folder": "תיקייה…",

@@ -46,6 +46,26 @@ for (const [lang, [question, expected]] of Object.entries(QUESTIONS)) {
   })
 }
 
+test('the savings starter: the computer works the plan out, and its chart opens beside the conversation (D163)', async ({ page }) => {
+  test.setTimeout(90_000)
+  await start(page)
+  await connectFakeBrain(page)
+  await page.locator('.starter', { hasText: 'Chart a savings plan' }).click()
+  await expect(page.locator('#prompt')).toHaveValue(/saving 200 a month at 4% a year/)
+  await page.locator('#prompt').press('Enter')
+  // The computer isn't on yet: the brain offers it, and the answer goes on once it is.
+  await page.locator('.msg-jean .approval .button.primary').click({ timeout: 30_000 })
+  const pane = page.locator('app-preview .preview')
+  await expect(pane).toBeVisible({ timeout: 30_000 })
+  await expect(pane.locator('.pane-head h2')).toHaveText('Savings plan.html')
+  const chart = page.frameLocator('app-preview iframe')
+  await expect(chart.locator('#total')).toHaveText('After 10 years: 29450')
+  await expect(chart.locator('rect')).toHaveCount(10)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('After 10 years you would have 29450', { timeout: 30_000 })
+  // The page is the answer's too, a card to open again or save.
+  await expect(page.locator('app-file')).toContainText('Savings plan.html')
+})
+
 test('scripts end on their value, their errors come back as text, and they have files and the internet as Settings allow', async ({ page }) => {
   await start(page)
   const output = await page.evaluate(async () => {

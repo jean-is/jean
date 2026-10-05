@@ -7,6 +7,8 @@
   "starter.email.prompt": "Bantu saya menulis email kepada ",
   "starter.explain": "Jelaskan sesuatu dengan sederhana",
   "starter.explain.prompt": "Jelaskan dengan kata-kata sederhana: ",
+  "starter.savings": "Membuat grafik rencana tabungan",
+  "starter.savings.prompt": "Pakai komputermu untuk menghitung, tahun demi tahun, berapa hasil menabung 200 sebulan dengan bunga 4% setahun selama 10 tahun, lalu tunjukkan dalam grafik.",
   "composer.label": "Pesan Anda",
   "composer.add": "Tambahkan ke pesan Anda",
   "composer.folder": "Sebuah folder…",

@@ -120,6 +120,13 @@ async function keep(changes, mount, held, ctx) {
   }
 }
 
+/** What the preview shows from a file's own bytes, pages first, by extension, with its type. */
+const SHOWN = /** @type {Record<string, string>} */ ({ html: 'text/html', htm: 'text/html', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf' })
+/** @param {string} path */
+const extension = (path) => /\.([a-z0-9]+)$/i.exec(path)?.[1].toLowerCase() ?? ''
+/** @param {string} path */
+const order = (path) => Object.keys(SHOWN).indexOf(extension(path))
+
 /** @param {Awaited<ReturnType<typeof preview>>} shown @returns {import('../../core/types.js').ToolCallContent[]} */
 const diffs = (shown) => shown.flatMap((each) => (each.binary || each.newText === null ? [] : [{ type: /** @type {const} */ ('diff'), path: each.path, oldText: each.oldText, newText: each.newText }]))
 
@@ -146,6 +153,14 @@ const saveTool = {
     const { mount, changes, held } = batch
     const shown = mount.folder ? await preview(mount.fs, changes) : []
     const done = await incoming(mount.fs, held, changes)
+    // A page, a picture or a PDF made in the project's workspace shows under the answer, and the first
+    // opens beside the conversation on screen (D163); the user's folder has its own ways (D156).
+    const made = mount.folder ? [] : done.saved.filter((path) => SHOWN[extension(path)]).sort((a, b) => order(a) - order(b)).slice(0, 4)
+      .map((path) => ({ uri: join('workspace', path), name: path.split('/').at(-1) ?? path, mimeType: SHOWN[extension(path)], size: changes.put[path].byteLength }))
+    if (made.length) {
+      ctx.meta.files = made
+      if (mount.conversation?.id === app.current.peek()?.id) (await import('../../ui/preview.js')).preview(made[0])
+    }
     if (mount.folder) {
       ctx.content.push(...diffs(shown.filter((each) => done.saved.includes(each.path))))
       if (ctx.answer === 'allow_always') await (await import('../folders/folders.js')).trust(mount.folder)
@@ -279,6 +294,7 @@ const bashTool = {
       "Run a command on your computer: bash, in a sandbox in this tab, never the user's machine.",
       "/workspace holds the conversation's folder, or the project's workspace when it has none, and what commands change there is kept (in the user's folder, once they agree); /home/user and /tmp last until the tab closes.",
       'Most commands are there (ls, cat, grep, sed, awk, jq, find, sort, diff, gzip, curl…), with python3, pip install and node (JavaScript).',
+      'A web page, a picture or a PDF you make in /workspace opens beside the conversation for the user: a chart is best a small HTML page with inline SVG.',
       'The internet works as Settings › Computer allows; the user is asked first for a new site. The shell keeps its directory and variables between commands.',
     ].join(' '),
     parameters: { type: 'object', properties: { command: { type: 'string', description: 'The command, or several lines of them' } }, required: ['command'] },
@@ -297,7 +313,7 @@ const javascriptTool = {
       'Run JavaScript on your computer, in a sandbox. Top-level await works; return the result, which comes back as JSON with anything logged.',
       'Available in scripts: await file(name) returns the whole text of a shared file (spreadsheets as tab-separated rows under "Sheet:" lines);',
       'csv(text) turns CSV or tab-separated text into rows, objects keyed by the header, numbers as numbers;',
-      "await fs.readFile(path), fs.writeFile(path, text) and fs.readdir(path) work in /workspace, where the conversation's files are;",
+      "await fs.readFile(path), fs.writeFile(path, text) and fs.readdir(path) work in /workspace, where the conversation's files are, and a web page or a picture written there opens beside the conversation;",
       'await fetch(url, init) reaches the internet as Settings allow;',
       'await tools.<name>({ … }) calls any tool, including ones found with await searchTools(query) and those of connected services;',
       'await models.decide(state, questions) asks the on-device decision helper, when it is on (types noul, choice, score);',

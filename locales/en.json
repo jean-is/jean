@@ -7,6 +7,8 @@
   "starter.email.prompt": "Help me write an email to ",
   "starter.explain": "Explain something simply",
   "starter.explain.prompt": "Explain in simple words: ",
+  "starter.savings": "Chart a savings plan",
+  "starter.savings.prompt": "Use your computer to work out, year by year, what saving 200 a month at 4% a year adds up to over 10 years, then show it to me as a chart.",
   "composer.label": "Your message",
   "composer.add": "Add to your message",
   "composer.folder": "A folder…",

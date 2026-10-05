@@ -7,6 +7,8 @@
   "starter.email.prompt": "다음 사람에게 보낼 이메일 쓰기를 도와줘: ",
   "starter.explain": "쉽게 설명하기",
   "starter.explain.prompt": "쉬운 말로 설명해 줘: ",
+  "starter.savings": "저축 계획을 그래프로 그리기",
+  "starter.savings.prompt": "네 컴퓨터로 매달 200씩 연 4%로 10년 동안 모으면 해마다 얼마가 되는지 계산해서 그래프로 보여 줘.",
   "composer.label": "메시지",
   "composer.add": "메시지에 추가",
   "composer.folder": "폴더…",

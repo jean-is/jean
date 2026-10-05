@@ -7,6 +7,8 @@
   "starter.email.prompt": "次の相手へのメールを書くのを手伝ってください：",
   "starter.explain": "わかりやすく説明する",
   "starter.explain.prompt": "やさしい言葉で説明してください：",
+  "starter.savings": "積立プランをグラフにする",
+  "starter.savings.prompt": "あなたのコンピューターで、毎月200を年4%で10年間積み立てるといくらになるかを年ごとに計算して、グラフで見せてください。",
   "composer.label": "メッセージ",
   "composer.add": "メッセージに追加",
   "composer.folder": "フォルダー…",

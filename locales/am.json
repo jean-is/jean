@@ -7,6 +7,8 @@
   "starter.email.prompt": "ለሚከተለው ሰው ኢሜይል እንድጽፍ ይርዱኝ፦ ",
   "starter.explain": "አንድን ነገር በቀላሉ ማብራራት",
   "starter.explain.prompt": "በቀላል ቃላት ያብራሩልኝ፦ ",
+  "starter.savings": "የቁጠባ ዕቅድ በሠንጠረዥ",
+  "starter.savings.prompt": "በኮምፒውተርህ በወር 200 በዓመት 4% ወለድ ለ10 ዓመት ብቆጥብ በየዓመቱ ምን ያህል እንደሚደርስ አስላልኝ፣ ከዚያ በሠንጠረዥ አሳየኝ።",
   "composer.label": "መልእክትዎ",
   "composer.add": "ወደ መልእክትዎ ያክሉ",
   "composer.folder": "አቃፊ…",

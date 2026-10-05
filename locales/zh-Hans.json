@@ -7,6 +7,8 @@
   "starter.email.prompt": "帮我写一封邮件，收件人是：",
   "starter.explain": "简单地解释一件事",
   "starter.explain.prompt": "用简单的话解释：",
+  "starter.savings": "把储蓄计划画成图表",
+  "starter.savings.prompt": "用你的电脑逐年算出每月存 200、年利率 4%、存 10 年能攒到多少，然后用图表给我看。",
   "composer.label": "你的消息",
   "composer.add": "添加到消息",
   "composer.folder": "文件夹…",

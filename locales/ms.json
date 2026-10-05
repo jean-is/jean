@@ -7,6 +7,8 @@
   "starter.email.prompt": "Bantu saya tulis e-mel kepada ",
   "starter.explain": "Terangkan sesuatu dengan mudah",
   "starter.explain.prompt": "Terangkan dengan perkataan mudah: ",
+  "starter.savings": "Melukis graf pelan simpanan",
+  "starter.savings.prompt": "Gunakan komputer kamu untuk mengira, tahun demi tahun, berapa jumlah simpanan 200 sebulan pada kadar 4% setahun selama 10 tahun, kemudian tunjukkan dalam graf.",
   "composer.label": "Mesej anda",
   "composer.add": "Tambah pada mesej anda",
   "composer.folder": "Sebuah folder…",

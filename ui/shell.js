@@ -12,7 +12,7 @@ import { LOOKS } from './looks.js'
 import './chat.js'
 import './persona.js'
 
-const STARTERS = ['summarize', 'email', 'explain']
+const STARTERS = ['summarize', 'email', 'explain', 'savings']
 
 class Shell extends Element {
   render() {

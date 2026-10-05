@@ -7,6 +7,8 @@
   "starter.email.prompt": "幫我寫一封電子郵件，收件人是：",
   "starter.explain": "簡單說明一件事",
   "starter.explain.prompt": "用簡單的話說明：",
+  "starter.savings": "把儲蓄計畫畫成圖表",
+  "starter.savings.prompt": "用你的電腦逐年算出每月存 200、年利率 4%、存 10 年能存到多少，然後用圖表給我看。",
   "composer.label": "你的訊息",
   "composer.add": "新增至訊息",
   "composer.folder": "資料夾…",

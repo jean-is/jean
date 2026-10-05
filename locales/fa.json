@@ -7,6 +7,8 @@
   "starter.email.prompt": "کمکم کن یک ایمیل بنویسم به ",
   "starter.explain": "توضیح ساده دربارهٔ یک موضوع",
   "starter.explain.prompt": "با زبان ساده توضیح بده: ",
+  "starter.savings": "رسم یک برنامهٔ پس‌انداز",
+  "starter.savings.prompt": "با رایانه‌ات سال به سال حساب کن که پس‌انداز ماهی 200 با سود سالانهٔ 4٪ در 10 سال به چقدر می‌رسد، بعد آن را در یک نمودار نشانم بده.",
   "composer.label": "پیام شما",
   "composer.add": "افزودن به پیام شما",
   "composer.folder": "یک پوشه…",

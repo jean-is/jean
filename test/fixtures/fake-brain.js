@@ -32,6 +32,19 @@
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
+/** The savings plan, worked out month by month and drawn as a page of bars (D163). */
+const SAVINGS = `const rate = 0.04 / 12
+let balance = 0
+const years = []
+for (let month = 1; month <= 120; month++) {
+  balance = balance * (1 + rate) + 200
+  if (month % 12 === 0) years.push(Math.round(balance))
+}
+const total = years[years.length - 1]
+const bars = years.map((value, i) => '<rect x="' + (40 + i * 50) + '" y="' + (220 - (value / total) * 200) + '" width="36" height="' + ((value / total) * 200) + '" fill="#c8691c"></rect>').join('')
+await fs.writeFile('Savings plan.html', '<!doctype html><title>Savings plan</title><h1>Savings plan</h1><svg viewBox="0 0 560 240" width="560">' + bars + '</svg><p id="total">After 10 years: ' + total + '</p>')
+return { years, total }`
+
 const PORT = Number(process.env.PORT) || 4174
 let previous = ''
 const BAKERY = `http://127.0.0.1:${PORT}/site/bakery.html`
@@ -205,6 +218,8 @@ createServer(async (req, res) => {
   // Scripts are `javascript` since D162; a conversation declared before has `run`.
   const script = declared.has('javascript') ? 'javascript' : 'run'
   const fromScript = (/** @type {string} */ name) => ({ name: script, args: { code: `return await tools.${name}({ limit: 3 })` } })
+  // The savings starter (D163), in English.
+  const savings = /saving 200 a month/i.test(question)
   // "$ ls": a command, on the computer (D162).
   const command = /^\$ ([\s\S]+)/.exec(question.trim())?.[1]
   const found = sourcesIn(last.role === 'tool' ? last.content : '')
@@ -281,6 +296,11 @@ createServer(async (req, res) => {
   else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'browser' } }
   else if (/bakery site/i.test(question) && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'browse', args: { url: BAKERY } }
   else if (toolName === 'browse') answer = found.length ? `The bakery’s page is open beside our conversation. ${/Fresh bread[^\n]*/.exec(last.content)?.[0]} [${found[0].n}]` : `That didn't work: ${last.content}`
+  // The savings starter: one script works the plan out and draws its chart as a page, which opens beside the conversation (D163).
+  else if (savings && last.role === 'user' && declared.has('javascript')) call = { name: 'javascript', args: { code: SAVINGS } }
+  else if (savings && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'computer' } }
+  else if (savings && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'javascript', args: { code: SAVINGS } }
+  else if (savings && toolName === 'javascript') answer = `After 10 years you would have ${/"total": (\d+)/.exec(last.content)?.[1] ?? '?'}. The chart is open beside our conversation.`
   else if (command && last.role === 'user' && declared.has('bash')) call = { name: 'bash', args: { command } }
   else if (command && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'computer' } }
   else if (command && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'bash', args: { command } }

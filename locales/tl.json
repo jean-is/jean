@@ -7,6 +7,8 @@
   "starter.email.prompt": "Tulungan akong sumulat ng email para kay ",
   "starter.explain": "Ipaliwanag nang simple",
   "starter.explain.prompt": "Ipaliwanag sa simpleng salita: ",
+  "starter.savings": "Gumawa ng chart ng plano sa pag-iipon",
+  "starter.savings.prompt": "Gamitin ang computer mo para kuwentahin, taon-taon, kung magkano ang aabutin ng pag-iipon ng 200 kada buwan sa 4% kada taon sa loob ng 10 taon, saka ipakita mo sa akin bilang chart.",
   "composer.label": "Ang mensahe mo",
   "composer.add": "Magdagdag sa mensahe mo",
   "composer.folder": "Isang folder…",

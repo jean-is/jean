@@ -7,6 +7,8 @@
   "starter.email.prompt": "ساعدني في كتابة بريد إلكتروني إلى ",
   "starter.explain": "اشرح شيئًا ببساطة",
   "starter.explain.prompt": "اشرح بكلمات بسيطة: ",
+  "starter.savings": "رسم خطة ادخار",
+  "starter.savings.prompt": "استخدم حاسوبك لتحسب سنة بسنة كم يصبح ادخار 200 شهريًا بفائدة 4% سنويًا على مدى 10 سنوات، ثم اعرضه لي في رسم بياني.",
   "composer.label": "رسالتك",
   "composer.add": "إضافة إلى رسالتك",
   "composer.folder": "مجلد…",

@@ -7,6 +7,8 @@
   "starter.email.prompt": "Help me een e-mail te schrijven aan ",
   "starter.explain": "Iets eenvoudig uitleggen",
   "starter.explain.prompt": "Leg in eenvoudige woorden uit: ",
+  "starter.savings": "Een spaarplan in een grafiek",
+  "starter.savings.prompt": "Reken met je computer jaar voor jaar uit wat 200 per maand sparen tegen 4% per jaar over 10 jaar oplevert, en laat het me dan zien in een grafiek.",
   "composer.label": "Je bericht",
   "composer.add": "Toevoegen aan je bericht",
   "composer.folder": "Een map…",
