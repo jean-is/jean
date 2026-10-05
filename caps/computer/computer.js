@@ -450,8 +450,8 @@ export async function typed(command, { signal, ask }) {
   return { ...done, refused }
 }
 
-/** The terminal's key, left to right in any language. */
-export const keys = html`<kbd><bdi dir="ltr">Ctrl+\`</bdi></kbd>`
+/** The terminal's key, left to right in any language: Control, which a Mac writes ⌃ (D166). */
+export const keys = html`<kbd><bdi dir="ltr">${/Mac|iPhone|iPad/.test(navigator.platform) ? '⌃`' : 'Ctrl+`'}</bdi></kbd>`
 /** The terminal's prompt, the shell's: ">_". */
 export const prompt = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.5 7 5 5-5 5M12 17.5h7.5"/></svg>`
 
