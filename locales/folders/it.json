@@ -22,6 +22,11 @@
   "folders.open.question": "Lasciare che {name} apra {folder} su questo computer?",
   "folders.open.yes": "Consenti",
   "folders.change.question": "Modificare {path}?",
+  "folders.changes.question": {
+    "one": "Tenere questa modifica nella cartella?",
+    "many": "Tenere queste {count} modifiche nella cartella?",
+    "other": "Tenere queste {count} modifiche nella cartella?"
+  },
   "folders.change.yes": "Modifica",
   "folders.always": "Consenti sempre in {folder}",
   "folders.line": "riga {line}",

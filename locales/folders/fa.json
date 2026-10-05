@@ -22,6 +22,10 @@
   "folders.open.question": "{name} پوشهٔ {folder} را در این رایانه باز کند؟",
   "folders.open.yes": "اجازه بده",
   "folders.change.question": "{path} تغییر کند؟",
+  "folders.changes.question": {
+    "one": "این تغییر در پوشه بماند؟",
+    "other": "این {count} تغییر در پوشه بمانند؟"
+  },
   "folders.change.yes": "تغییر بده",
   "folders.always": "همیشه در {folder} اجازه بده",
   "folders.line": "خط {line}",

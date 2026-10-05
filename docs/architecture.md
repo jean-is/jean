@@ -25,8 +25,9 @@
 
 | Loaded on demand | Used by |
 |---|---|
-| `quickjs-emscripten-core` with the `@jitl/quickjs-wasmfile-release-sync` variant (~600 KB with its wasm) | Calculations and codemode. Copied flat into `vendor/quickjs/` and handed to the sandbox by the parent (D65, D66) |
-| `pyodide` 314.0.7 (about 13 MB: loader, runtime, standard library, lock file) | Data toolkit (Python), in its own sandbox document. Copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`, never committed (D43, D80) |
+| `quickjs-emscripten-core` with the `@jitl/quickjs-wasmfile-release-sync` variant (~600 KB with its wasm) | The Computer's JavaScript: `javascript` (codemode) and `node`. Copied flat into `vendor/quickjs/` and handed to the sandbox by the parent (D65, D66, D162) |
+| `pyodide` 314.0.7 (about 13 MB: loader, runtime, standard library, lock file) | The Computer's Python: `python`, `python3`, `pip` (packages from a registry, through Jean). Copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`, never committed (D43, D80, D162) |
+| `just-bash` 3.6.0 (its browser build, 353 KB gzipped), with `diff`, `sprintf-js`, `turndown` and `fflate` | The Computer's shell: bash and its commands over a virtual filesystem, in the sandbox's worker. Copied flat into `vendor/just-bash/`, the CommonJS ones wrapped as modules (D162) |
 | `@huggingface/transformers` with `onnxruntime-web` | On-device brain (Gemma 4 E2B), reflexes (Kev-0.6B), dictation and live conversation (Whisper base, and Silero for voice detection). Copied into `vendor/transformers/` (D52) |
 | `pdfjs-dist` (legacy build) | Reading PDFs. Copied into `vendor/pdfjs/` with its character maps and standard fonts (D52) |
 | `kokoro-js` | Optional natural voices |
@@ -56,7 +57,7 @@
 
 ```
 index.html        CSP <meta>, light or dark (D85) and the look (D111) before the first paint, import map, shell
-sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65); Python's twin is caps/python/sandbox.html (D80)
+sandbox.html      strict CSP <meta> and a hash-allowed relay; runs untrusted code in a worker (D65): the Computer's (D162)
 preview.html      an HTML file in the preview: a relay writes it in place of itself, under the policy Settings gives it, by default its own scripts and no network (D126, D143)
 manifesto.html    MANIFESTO.md as a page, in English, with manifesto.css over ui/style.css; linked from Settings; no script but index.html's first-paint line
 sw.js             offline cache, per-capability caching
@@ -76,8 +77,8 @@ ui/               base element, shell, chat, activity view, caps.js (the unlock 
                   dock.js and dock.css (the side of the window the preview and the browser share, tiled and resized; loaded with the first, D144),
                   looks/mail.css looks/paper.css (each loaded when chosen, before style.css, which is the room)
 caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/extract.js and backup/archive.js since D96)
-                  compute/ reflexes/                            (0.3; reflexes/questions.js is the question catalogue)
-                  memory/ projects/ skills/ python/             (0.4; skills/ was routines/ until D115)
+                  reflexes/                                     (0.3; reflexes/questions.js is the question catalogue; compute/ was Calculations')
+                  memory/ projects/ skills/                     (0.4; skills/ was routines/ until D115; python/ was the data toolkit's)
                   search/ connections/ live/                    (0.5; connections/ holds the MCP client, mcp.js, and sign-in, auth.js)
                   helpers/ check/ since/ names/                 (0.6; check/claims.js is Double-check's text work, tested in Node)
                   routines/                                     (0.7; routines/schedule.js and skills/sources.js, discovery indexes, tested in Node)
@@ -94,8 +95,12 @@ caps/             files/ made/ backup/ brain-local/ voice/        (0.2; files/ex
                                                                 tested in Node)
                   sync/                                         (after 0.8: Jean's files mirrored into a folder a drive syncs, D157;
                                                                 mirror.js is a round on any two FS, tested in Node)
+                  computer/                                     (after 0.8: a computer in the sandbox, D162; Calculations and the
+                                                                data toolkit fold into it; computer-worker.js runs the shell,
+                                                                QuickJS and Pyodide; mount.js keeps /workspace in step, net.js
+                                                                judges and makes requests, both tested in Node)
 locales/          the 33 launch languages: en.json fr.json ar.json ja.json …, dialogs/ with the dialogs' strings (D97), and browser/,
-                  ask/, folders/ and sync/ with the browser's, the questions', Folders' and Sync's own, loaded and cached with them (D140,
+                  ask/, folders/, sync/ and computer/ with the browser's, the questions', Folders', Sync's and the Computer's own, loaded and cached with them (D140,
                   D146, D152, D157)
 vendor/           signals-core, lit-html, marked (+ the on-demand ones); generated from node_modules, never committed
 desktop/          dmg-background.svg, the macOS disk image's window, drawn when the image is made (D155)
@@ -133,7 +138,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`llm.js`** (~320 lines) and **`anthropic.js`** (~240): two adapters, OpenAI-compatible Chat Completions and Anthropic Messages, over fetch and SSE. Together they reach almost every model. `llm.js` imports `anthropic.js` the first time an Anthropic brain is used (D76). pi-ai serves as a reference implementation but is not a dependency, because it pulls in three official SDKs.
   - Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header.
   - OpenRouter supports an OAuth PKCE login that runs entirely in the browser.
-- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `run`, `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `browse`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`. `ask_user` asks the user questions, from Jean or, saying which part it is for, from a helper (D98, D146); scripts can't call it. `save_name` notes the first name the user gives for themselves, offered only while they have never set one, and never to helpers (D150). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. `schedule` makes a routine (D122); `suggest_skill` is deferred, found with `find_tools` (D121). Built so far: `read`, `write`, `edit`, `run`, `python`, `web_search`, `browse` (D140), `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `suggest_skill`, `schedule`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119). `list`, `find_in_files`, `open` and `change` work in the conversation's folder, deferred and named in `<folder>` (0.8, D141, D152).
+- **Tools**, contributed by capabilities: `read`, `write`, `edit`, `bash`, `javascript` (`run` until D162), `python`, `search`, `web_search`, `recall`, `remember`, `skill`, `save_skill`, `fetch`, `browse`, `offer`, `delegate`, `find_tools`, plus connection tools (deferred, D89). Three hidden tools, `file`, `decide` and `image`, are only for scripts (D64, D92); `helper` is hidden too, called by `delegate`. `ask_user` asks the user questions, from Jean or, saying which part it is for, from a helper (D98, D146); scripts can't call it. `save_name` notes the first name the user gives for themselves, offered only while they have never set one, and never to helpers (D150). `routine` and `save_routine` are hidden aliases of `skill` and `save_skill`, for conversations that declared them before D115. `schedule` makes a routine (D122); `suggest_skill` is deferred, found with `find_tools` (D121). Built so far: `read`, `write`, `edit`, `bash`, `javascript`, `python`, `web_search`, `browse` (D140), `find_tools`, `offer`, `remember`, `recall`, `skill`, `save_skill`, `suggest_skill`, `schedule`, `delegate`, `file`, `decide`, `image`, `helper`, `ask_user`, and every connection's tools. `write` and `edit` come with Things Jean made; Word and Excel files are written by `caps/made/formats.js` (D119). `list`, `find_in_files`, `open` and `change` work in the conversation's folder, deferred and named in `<folder>` (0.8, D141, D152).
 - Pictures from the provider's image model, for `models.image` (D92), are `caps/compute/picture.js` since D96, imported on first use.
 - **`events.js`:** the ACP event stream (see [Activity events](#activity-events)), and `splitSuggestions()`, which hides the brain's `<suggestions>` block from the answer (D69).
 - **`deferred.js`:** `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63).
@@ -229,6 +234,7 @@ Follow-ups are one yes/no question each rather than one choice over the catalogu
       files/sha256-<hash>.md     extracted text, a "[[page N]]" line before each page
       files/sha256-<hash>.meta.json
       conversations/<ulid>.jsonl
+      workspace/                 the Computer's /workspace when no folder is open: the user's files, by their names (D162)
   .secrets/                      encrypted; never exported, synced or shared
   .cache/                        disposable: search index, thumbnails, skills indexes (skills/, a day each, D121), sync.json (D157)
 ```
@@ -281,23 +287,24 @@ require-trusted-types-for 'script'; trusted-types lit-html app-urls
 - **Why `connect-src` is broad:** users can add any OpenAI-compatible endpoint, and untrusted code never runs in this document. Organisations tighten it with an HTTP header (see [enterprise.md](enterprise.md)).
 - **If an on-demand runtime turns out to need `'unsafe-eval'`,** give it its own worker document rather than loosening `index.html`.
 
-**`sandbox.html`** is loaded in `<iframe sandbox="allow-scripts">` (never with `allow-same-origin`). As built in 0.3 (D65):
+**`sandbox.html`** is loaded in `<iframe sandbox="allow-scripts">` (never with `allow-same-origin`). As built in 0.3 (D65), with `'unsafe-eval'` for Pyodide since the Computer (D162):
 
 ```text
-default-src 'none'; script-src 'sha256-<relay>' blob: 'wasm-unsafe-eval'; worker-src blob:;
+default-src 'none'; script-src 'sha256-<relay>' blob: 'wasm-unsafe-eval' 'unsafe-eval'; worker-src blob:;
 connect-src 'none'; base-uri 'none'; form-action 'none'
 ```
 
 - **No access to Jean's storage.** Its origin is opaque.
 - **No network at all.** The document holds only a small inline relay, allowed by its hash; it loads nothing from anywhere, so how `'self'` behaves in an opaque origin never matters. `test/html.test.js` checks the hash and that the frame never gets `allow-same-origin`.
-- **The parent sends everything in.** `caps/compute/compute.js` fetches the worker's source and QuickJS's files (their list comes from `capabilities.json`) and posts them to the relay.
+- **The parent sends everything in.** `ui/sandbox.js` fetches the worker's source and, the first time a run needs it, an engine's files (their list comes from `capabilities.json`), and posts them to the relay.
 - **Untrusted code only ever runs in a Worker** created from a `blob:` URL, so it inherits the sandbox's strict CSP. Workers have no navigation, no WebRTC and no `sendBeacon`, so every network path goes through `connect-src`.
 - **A classic worker.** Browsers refuse module workers from `blob:` URLs in an opaque origin (checked in Chromium). A classic worker can still `import()` blob modules and compile wasm: it turns each QuickJS module into a blob URL, leaves first, and passes `wasmBinary` and `wasmLocation`, so Emscripten never resolves a URL against a `blob:` base.
-- **QuickJS limits:** 64 MB of memory, 20 s of computing time (time spent waiting on Jean or on the user's approval doesn't count), a 40 s watchdog in the parent, 20 s to start, and 8,000 characters of output. A script reaches only the functions Jean hands it (see [Codemode](#prompt-tools-and-caching)).
-- **Pyodide runs in a twin document** (0.4, D80): `caps/python/sandbox.html`, the same relay and policy plus `'unsafe-eval'`, which Pyodide's runtime needs when it starts (Emscripten builds some functions with `eval`). There is still nothing to steal and nowhere to send it, and Calculations keep the stricter `sandbox.html`.
+- **QuickJS limits:** 64 MB of memory, 20 s of computing time (time spent waiting on Jean or on the user's approval doesn't count), a 40 s watchdog in the parent (a command's time and 20 s more for bash), 20 s to start, and 8,000 characters of output. A script reaches only the functions Jean hands it (see [Codemode](#prompt-tools-and-caching)).
+- **Pyodide runs in the same document** since D162 (it had a twin from 0.4, D80): `'unsafe-eval'` is there because Pyodide's runtime needs it when it starts (Emscripten builds some functions with `eval`). There is still nothing to steal and nowhere to send it.
 - **Where Pyodide's files come from** (D43): Jean's own pinned `pyodide` npm package, copied into `vendor/pyodide/` by `npm run dev`, `npm start` and `npm run build`. They are never committed and never taken from outside Jean's folder. The capability manifest lists them under the Python capability, never in the shell.
-- **How it gets them** (the 0.4 spike chose option (b), D80): the parent sends the files in, as for QuickJS, and the worker's `fetch` serves only those, under an address that never resolves; `connect-src 'none'` stays. Option (a), serving `vendor/pyodide/` with CORS to the sandbox, was not needed.
-- **Python's limits:** the standard library only (no package can be fetched); `import js` reaches an empty object; no cap on memory or computing time inside Pyodide (it would need a cross-origin isolated page), so the parent's 40 s watchdog stops a script that goes quiet; 60 s to start. `ui/sandbox.js` is the client both runtimes share.
+- **How it gets them** (the 0.4 spike chose option (b), D80): the parent sends the files in, as for QuickJS, and the worker's `fetch` serves only those, under an address that never resolves; `connect-src 'none'` stays. Packages come through Jean, from the registry Settings name (D162).
+- **Python's limits:** `import js` reaches only `fetch` (Jean's) and a few constructors pyfetch needs; no cap on memory or computing time inside Pyodide (it would need a cross-origin isolated page), so the parent's watchdog stops a script that goes quiet while nothing waits on Jean; 60 s to start. `ui/sandbox.js` is the client.
+- **The internet goes through Jean** (D162). The worker has no network of its own: a request crosses to Jean, which judges it by Settings › Computer (`caps/computer/net.js`), asks first for a new site, and makes it with no cookies and no referrer, through the relay when there is one, with a registry's key added there. See [Computer](#computer).
 
 **The preview** (D126) shows an HTML file in `preview.html`, framed with `sandbox="allow-scripts"` only, so its origin is opaque, and given nothing but the page and its policy. `preview.html`'s own policy is the most Settings can allow (D143):
 
@@ -379,28 +386,30 @@ pi 1.0 adopted four mechanisms on 2026-10-01: mid-conversation system messages, 
 - **Always findable.** `find_tools` and `offer` come from the `discovery` capability, which is always loaded, so every new conversation declares them (D63).
 - **Finding them.** `find_tools(query)` ranks the tools that aren't declared by name and description, with the BM25 engine in `core/search.js`, and returns up to five signatures (`name({ file: string, pages?: string }): what it does`).
 - **The note.** A capability turned on mid-conversation adds the system note "New tools can be found with find_tools: run." (`data: { kind: 'tools', added, deferred: true }`). A conversation from 0.2, which has no `find_tools`, gets "New tools are available: …" and the tools declared instead.
-- **Calling them.** With `run` declared, deferred tools are called from a script, so the declared list never changes. Otherwise `find_tools` (or an accepted offer) declares the tools it found from the next request on, at the cost of one cache miss. The tool call records this as `_meta.declare`, so replaying the transcript rebuilds the declared list. A brain that calls a deferred tool by its exact name, as `<connections>` gives it, gets it run under the rules without declaring anything; if a required argument is missing, it gets the tool's signature back instead (D104).
+- **Calling them.** With `javascript` (or `run`) declared, deferred tools are called from a script, so the declared list never changes. Otherwise `find_tools` (or an accepted offer) declares the tools it found from the next request on, at the cost of one cache miss. The tool call records this as `_meta.declare`, so replaying the transcript rebuilds the declared list. A brain that calls a deferred tool by its exact name, as `<connections>` gives it, gets it run under the rules without declaring anything; if a required argument is missing, it gets the tool's signature back instead (D104).
 - **Hidden tools** are never declared and exist only for scripts: `file` (a shared file's whole text) and `decide` (the reflexes) (D64).
 - **Native deferral.** Where a provider supports it (Anthropic's `defer_loading` with tool additions), the adapter may use it instead. The behaviour stays the same.
 - **The next conversation** declares the newly unlocked capability's tools directly. Connection tools stay deferred (`deferred: true`): `<connections>` names them, `find_tools` finds them, a script calls them (D89). Pinning a connection's tools comes later.
 
-**Codemode (D48).** The `run` tool (Calculations) executes a JavaScript snippet in QuickJS. Top-level `await` works, and the result is what the script returns or, as in a console, its last expression. Inside it, Jean exposes what the user has granted, and nothing else:
+**Codemode (D48).** The `javascript` tool (`run` until D162) executes a JavaScript snippet in QuickJS, on the conversation's computer. Top-level `await` works, and the result is what the script returns or, as in a console, its last expression. Inside it, Jean exposes what the user has granted, and nothing else:
 
 | Global | What it does |
 |---|---|
 | `file(name)` | The whole text of a shared file (spreadsheets as tab-separated rows), through the hidden `file` tool |
 | `csv(text)` | Turns CSV or tab-separated text into rows: objects keyed by the header, numbers as numbers |
-| `tools.<name>(args)` | Calls any granted tool, deferred ones included, and connection tools. `run`, `python`, `offer` and `delegate` can't be called from a script. |
+| `tools.<name>(args)` | Calls any granted tool, deferred ones included, and connection tools. `bash`, `javascript`, `python`, `offer` and `delegate` can't be called from a script. |
+| `fs.readFile(path)`, `fs.writeFile(path, text)`, `fs.readdir(path)` | The computer's files: /workspace, where what changed is kept after the run (D162) |
+| `fetch(url, init)` | The internet, through Jean, as Settings › Computer allow (D162) |
 | `searchTools(query)` | Same as `find_tools`, from inside a script |
 | `models.decide(state, questions)` | Asks Kev on the device, when Intuition is on, through the hidden `decide` tool (the [Reflexes](#reflexes) shape); Jev when a cloud brain is connected, later |
 | `models.image(description)` | Makes a picture with the image model of a connected brain's provider, kept in the project's files and shown under the answer, through the hidden `image` tool (0.5, D92) |
 
 - **Same rules.** Every nested call goes through Do it / Ask me first / Never (`ctx.call` in `core/loop.js`). A call that needs approval pauses the script until the user answers, and that wait doesn't count against its computing time.
-- **Visible.** Each nested call carries `_meta.parent` and shows in the activity view as a child of the `run` call.
+- **Visible.** Each nested call carries `_meta.parent` and shows in the activity view as a child of the `javascript` call.
 - **Out of the brain's context.** `toChatMessages` leaves nested calls out: the script's result already holds what matters (D64).
 - **Keys stay outside.** The script runs in the sandbox (see [Security](#security)). Each call crosses to Jean as a message, and Jean makes it with its own keys, so the sandbox never sees a secret.
 - **Direct calls stay.** Declared tools remain callable without code, because small brains call tools more reliably than they write scripts. Codemode pays off with strong brains, many tools and data-heavy work.
-- **Short description.** The `run` line in the prompt is one sentence; the tool's own description names each global.
+- **Short description.** The `javascript` line in the prompt is one sentence; the tool's own description names each global.
 
 **Thinking blocks are kept (D54).** Anthropic's thinking blocks are stored on each step's brain entry and replayed unchanged to the model that wrote them, because current models bind them to the conversation: dropping them is an edit, which costs the cache from that point on.
 
@@ -445,7 +454,7 @@ Jean's internal event format is ACP's `session/update` vocabulary: `user_message
 - **Approvals map directly onto rules.** `allow_always` writes a "Do it" rule, `reject_always` writes "Never", and the "once" options keep "Ask me first".
 - **Outside the vocabulary:** a connection's tools that change something, such as sending an email, use `kind: "other"`; read-only ones use `fetch` (D89). The brain's own web searches are shown from its kept blocks, under the brain entry.
 - **Reflex decisions** shown to the user appear as collapsed `think` entries. Auto's choice is recorded on the brain entry (`rawInput.auto: { level, reason }`) and shown in plain words, such as "kept on this device: personal content" (D70).
-- **A script's calls** are tool calls with `_meta.parent` set to their `run` call, shown nested under it.
+- **A script's calls** are tool calls with `_meta.parent` set to their `javascript` (or `bash`, `python`) call, shown nested under it.
 - **Every line opens** on what went in and what came back (D103): a call's tool name, arguments, result and duration; a brain step's thought and text as written, how it stopped, its duration and how much it read and wrote. The loop records durations in `_meta.ms`. Lines follow the order things happened.
 - **Helpers** are child turns recorded under their call (D98): `delegate`, then a `helper` call per part, then each helper's brain entries and calls, ids prefixed with their parent's. The view draws the tree, parts in the order they were split.
 - **The decision inbox** (D99): approvals (`session/request_permission`) and questions, Jean's or its helpers' (`ask_user`, D146), queue as cards under the live answer, answered in any order; an "Always" or "Never" answer settles the other cards of that kind. Each card belongs to its conversation and waits there (D147).
@@ -498,6 +507,15 @@ After 0.8, D157. `caps/sync/sync.js` is the capability: the folder the user pick
 - **When.** As Jean opens, every minute on screen, after each answer, and as the page goes out of sight, one tab at a time (Web Locks).
 - **Two homes.** Two computers that each made a home project keep the oldest as the home; `settleHomes` removes a newer, empty one, or keeps it as a project.
 - **Not yet.** A drive's own API, for Safari, Firefox and phones, waits for the domain (D27); it would be another `FS`.
+
+## Computer
+
+After 0.8, D162. `caps/computer/computer.js` is the capability: the tools (`bash`, `javascript`, `python`; hidden, `run`, `image`, `save_workspace`, `reach_site`), the sandbox (`ui/sandbox.js`), which conversation's computer a run is on, `/workspace` and what comes back from it, the requests the computer makes, Settings › Computer and the card for a new site. `computer-worker.js` runs in the sandbox's worker: just-bash, one `Bash` per conversation over a `MountableFs` (`/workspace` an `InMemoryFs` of its own), with Jean's commands (`python`, `python3`, `pip`, `node`, `js`, `npm`, `tar`), QuickJS and Pyodide loaded when first needed.
+
+- **/workspace** (`mount.js`). The conversation's folder (Folders' `computerFolder()`), or else the project's workspace in the private file system. Before a run Jean sends the computer what changed since it last sent (size and date, `.git`, `node_modules` and `.gitignore` aside, 256 MB at most) and what went; after it, the worker gives back what changed under `/workspace`, which `save_workspace` keeps: in the user's folder asked first with the diffs, unless always allowed, and refused for a file that moved meanwhile. Python's files are copied in and out around each Python run, which go one at a time.
+- **The internet** (`net.js`). Off, Ask first or Any site, a list of sites, the registries; https only; never Jean's origin or a private address unless listed; the card asks once a run per new site; requests carry no cookies, 100 MB at most; a relay ("Reach the web through", in Approvals, or the Computer's own) takes the address in place of `{url}`. Each site reached is counted on the call (`_meta.reached`).
+- **Packages.** Pyodide's builds, PyPI and npm, from `DEFAULT_URLS` or Settings, each with an optional key in `.secrets/`, added by Jean as `Authorization`. `npm install` is the worker's: versions by range, integrity checked, no install scripts, flat into `node_modules`; `node` resolves `require` and `import` from there.
+- **Limits.** A command has two minutes by default (Settings), a JavaScript script 64 MB and 20 s of computing time; output is cut to 8,000 characters. Stop, or a run gone quiet, ends the sandbox: computers lose `/home/user` and what wasn't kept, never the workspace.
 
 ## Voice pipeline
 

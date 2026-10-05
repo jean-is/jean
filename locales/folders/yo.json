@@ -22,6 +22,9 @@
   "folders.open.question": "Ṣé kí {name} ṣí {folder} lórí kọ̀ǹpútà yìí?",
   "folders.open.yes": "Fàyè gbà",
   "folders.change.question": "Ṣé kí a yí {path} padà?",
+  "folders.changes.question": {
+    "other": "Ṣé kí a pa àwọn àyípadà {count} yìí mọ́ nínú fódà?"
+  },
   "folders.change.yes": "Yí i padà",
   "folders.always": "Fàyè gbà nígbà gbogbo nínú {folder}",
   "folders.line": "ìlà {line}",

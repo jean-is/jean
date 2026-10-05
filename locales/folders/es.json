@@ -22,6 +22,11 @@
   "folders.open.question": "¿Dejar que {name} abra {folder} en este ordenador?",
   "folders.open.yes": "Permitir",
   "folders.change.question": "¿Cambiar {path}?",
+  "folders.changes.question": {
+    "one": "¿Guardar este cambio en la carpeta?",
+    "many": "¿Guardar estos {count} cambios en la carpeta?",
+    "other": "¿Guardar estos {count} cambios en la carpeta?"
+  },
   "folders.change.yes": "Cambiarlo",
   "folders.always": "Permitir siempre en {folder}",
   "folders.line": "línea {line}",

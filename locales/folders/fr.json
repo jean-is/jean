@@ -22,6 +22,11 @@
   "folders.open.question": "Laisser {name} ouvrir {folder} sur cet ordinateur ?",
   "folders.open.yes": "Autoriser",
   "folders.change.question": "Modifier {path} ?",
+  "folders.changes.question": {
+    "one": "Garder cette modification dans le dossier ?",
+    "many": "Garder ces {count} modifications dans le dossier ?",
+    "other": "Garder ces {count} modifications dans le dossier ?"
+  },
   "folders.change.yes": "Modifier",
   "folders.always": "Toujours autoriser dans {folder}",
   "folders.line": "ligne {line}",

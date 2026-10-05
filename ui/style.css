@@ -476,6 +476,7 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .approval input { inline-size: 100%; margin-block-end: 0.75rem; }
 .approval .approval-from { display: flex; align-items: center; gap: 0.4rem; margin-block-end: 0.4rem; font-size: 0.86rem; color: var(--ink-soft); }
 .approval-from .icon { inline-size: 1rem; block-size: 1rem; flex: none; }
+.approval-for { margin: 0 0 0.75rem; padding: 0.4rem 0.6rem; overflow-x: auto; border-radius: 0.5rem; background: var(--room); font: 0.82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 .inbox { display: grid; gap: 0.6rem; }
 .since { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-weight: 600; }
 .since .icon { inline-size: 1.1rem; block-size: 1.1rem; color: var(--flame-deep); }

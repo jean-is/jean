@@ -49,12 +49,13 @@ test('the CSP meta comes before any script', () => {
 const sandbox = await readFile(new URL('../sandbox.html', import.meta.url), 'utf8')
 const sandboxCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(sandbox)?.[1] ?? ''
 
-test('the sandbox allows exactly its inline relay, and no network', () => {
+test('the sandbox allows exactly its inline relay, eval for Pyodide (D80, D162), and no network', () => {
   const relay = /<script>([\s\S]*?)<\/script>/.exec(sandbox)?.[1] ?? ''
   const hash = createHash('sha256').update(relay).digest('base64')
   assert.ok(sandboxCSP.includes(`'sha256-${hash}'`), `update the sandbox's script-src hash to 'sha256-${hash}'`)
   for (const directive of ["default-src 'none'", "connect-src 'none'", 'worker-src blob:', "base-uri 'none'"]) assert.ok(sandboxCSP.includes(directive), directive)
-  assert.ok(!/'self'|unsafe-inline|unsafe-eval'|https?:/.test(sandboxCSP.replace("'wasm-unsafe-eval'", '')), 'nothing to load from anywhere')
+  assert.match(sandboxCSP, /script-src [^;]*'wasm-unsafe-eval' 'unsafe-eval';/)
+  assert.ok(!/'self'|unsafe-inline|unsafe-eval'|https?:/.test(sandboxCSP.replace("'wasm-unsafe-eval' 'unsafe-eval'", '')), 'nothing to load from anywhere')
   assert.ok(sandbox.indexOf('Content-Security-Policy') < sandbox.indexOf('<script'))
 })
 
@@ -62,17 +63,6 @@ test('the sandbox is only ever framed without allow-same-origin', async () => {
   const client = await readFile(new URL('../ui/sandbox.js', import.meta.url), 'utf8')
   assert.match(client, /setAttribute\('sandbox', 'allow-scripts'\)/)
   assert.doesNotMatch(client, /allow-same-origin'/)
-})
-
-const python = await readFile(new URL('../caps/python/sandbox.html', import.meta.url), 'utf8')
-const pythonCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(python)?.[1] ?? ''
-
-test('the Python sandbox has the same relay and no network; eval is allowed there only (D80)', () => {
-  const relay = /<script>([\s\S]*?)<\/script>/.exec(python)?.[1] ?? ''
-  assert.equal(relay, /<script>([\s\S]*?)<\/script>/.exec(sandbox)?.[1], 'the same relay as sandbox.html')
-  assert.equal(pythonCSP, sandboxCSP.replace("'wasm-unsafe-eval'", "'wasm-unsafe-eval' 'unsafe-eval'"))
-  assert.ok(!/unsafe-eval'/.test(sandboxCSP.replace("'wasm-unsafe-eval'", '')), 'Calculations never get eval')
-  assert.ok(python.indexOf('Content-Security-Policy') < python.indexOf('<script'))
 })
 
 const preview = await readFile(new URL('../preview.html', import.meta.url), 'utf8')

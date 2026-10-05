@@ -22,6 +22,12 @@
   "folders.open.question": "Czy {name} może otworzyć {folder} na tym komputerze?",
   "folders.open.yes": "Zezwól",
   "folders.change.question": "Zmienić {path}?",
+  "folders.changes.question": {
+    "one": "Zachować tę zmianę w folderze?",
+    "few": "Zachować te {count} zmiany w folderze?",
+    "many": "Zachować tych {count} zmian w folderze?",
+    "other": "Zachować te {count} zmiany w folderze?"
+  },
   "folders.change.yes": "Zmień",
   "folders.always": "Zawsze zezwalaj w folderze {folder}",
   "folders.line": "wiersz {line}",

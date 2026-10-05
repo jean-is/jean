@@ -22,6 +22,9 @@
   "folders.open.question": "Izinkan {name} membuka {folder} di komputer ini?",
   "folders.open.yes": "Izinkan",
   "folders.change.question": "Ubah {path}?",
+  "folders.changes.question": {
+    "other": "Simpan {count} perubahan ini di folder?"
+  },
   "folders.change.yes": "Ubah",
   "folders.always": "Selalu izinkan di {folder}",
   "folders.line": "baris {line}",

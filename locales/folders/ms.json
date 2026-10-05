@@ -22,6 +22,9 @@
   "folders.open.question": "Benarkan {name} membuka {folder} pada komputer ini?",
   "folders.open.yes": "Benarkan",
   "folders.change.question": "Ubah {path}?",
+  "folders.changes.question": {
+    "other": "Simpan {count} perubahan ini dalam folder?"
+  },
   "folders.change.yes": "Ubah",
   "folders.always": "Sentiasa benarkan dalam {folder}",
   "folders.line": "baris {line}",

@@ -22,6 +22,10 @@
   "folders.open.question": "{name} bu bilgisayarda {folder} klasörünü açabilsin mi?",
   "folders.open.yes": "İzin ver",
   "folders.change.question": "{path} değiştirilsin mi?",
+  "folders.changes.question": {
+    "one": "Bu değişiklik klasörde kalsın mı?",
+    "other": "Bu {count} değişiklik klasörde kalsın mı?"
+  },
   "folders.change.yes": "Değiştir",
   "folders.always": "{folder} içinde her zaman izin ver",
   "folders.line": "satır {line}",

@@ -24,8 +24,7 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   'brain-local': ['vendor/transformers'],
   voice: ['vendor/transformers'],
   reflexes: ['vendor/transformers'],
-  compute: ['vendor/quickjs'],
-  python: ['vendor/pyodide'],
+  computer: ['vendor/just-bash', 'vendor/quickjs', 'vendor/pyodide'],
   live: ['vendor/transformers'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]

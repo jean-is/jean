@@ -22,6 +22,10 @@
   "folders.open.question": "{name} {folder} op deze computer laten openen?",
   "folders.open.yes": "Toestaan",
   "folders.change.question": "{path} wijzigen?",
+  "folders.changes.question": {
+    "one": "Deze wijziging in de map houden?",
+    "other": "Deze {count} wijzigingen in de map houden?"
+  },
   "folders.change.yes": "Wijzigen",
   "folders.always": "Altijd toestaan in {folder}",
   "folders.line": "regel {line}",

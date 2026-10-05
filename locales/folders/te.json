@@ -22,6 +22,10 @@
   "folders.open.question": "ఈ కంప్యూటర్‌లో {folder}ని తెరవడానికి {name}కు అనుమతి ఇవ్వాలా?",
   "folders.open.yes": "అనుమతించు",
   "folders.change.question": "{path}ని మార్చాలా?",
+  "folders.changes.question": {
+    "one": "ఈ మార్పును ఫోల్డర్‌లో ఉంచాలా?",
+    "other": "ఈ {count} మార్పులను ఫోల్డర్‌లో ఉంచాలా?"
+  },
   "folders.change.yes": "మార్చు",
   "folders.always": "{folder}లో ఎల్లప్పుడూ అనుమతించు",
   "folders.line": "పంక్తి {line}",

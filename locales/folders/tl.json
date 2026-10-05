@@ -22,6 +22,10 @@
   "folders.open.question": "Hayaang buksan ni {name} ang {folder} sa computer na ito?",
   "folders.open.yes": "Payagan",
   "folders.change.question": "Baguhin ang {path}?",
+  "folders.changes.question": {
+    "one": "Panatilihin ang pagbabagong ito sa folder?",
+    "other": "Panatilihin ang {count} pagbabagong ito sa folder?"
+  },
   "folders.change.yes": "Baguhin",
   "folders.always": "Laging payagan sa {folder}",
   "folders.line": "linya {line}",

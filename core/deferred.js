@@ -21,7 +21,8 @@ export function signature({ spec }) {
  * @param {string[]} names @param {import('./loop.js').ToolContext} ctx
  */
 export function reach(names, ctx) {
-  if (ctx.declared.includes('run')) return 'Call them inside run, e.g. `await tools.name({ … })`.'
+  const script = ['javascript', 'run'].find((name) => ctx.declared.includes(name))
+  if (script) return `Call them inside ${script}, e.g. \`await tools.name({ … })\`.`
   ctx.declare(names)
   return 'You can call them directly from your next step.'
 }

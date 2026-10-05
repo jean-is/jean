@@ -22,6 +22,12 @@
   "folders.open.question": "Чи може {name} відкрити {folder} на цьому комп’ютері?",
   "folders.open.yes": "Дозволити",
   "folders.change.question": "Змінити {path}?",
+  "folders.changes.question": {
+    "one": "Зберегти {count} зміну в папці?",
+    "few": "Зберегти {count} зміни в папці?",
+    "many": "Зберегти {count} змін у папці?",
+    "other": "Зберегти {count} зміни в папці?"
+  },
   "folders.change.yes": "Змінити",
   "folders.always": "Завжди дозволяти в {folder}",
   "folders.line": "рядок {line}",

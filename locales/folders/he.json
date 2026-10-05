@@ -22,6 +22,11 @@
   "folders.open.question": "לפתוח את {folder} במחשב הזה עבור {name}?",
   "folders.open.yes": "אישור",
   "folders.change.question": "לשנות את {path}?",
+  "folders.changes.question": {
+    "one": "לשמור את השינוי הזה בתיקייה?",
+    "two": "לשמור את {count} השינויים האלה בתיקייה?",
+    "other": "לשמור את {count} השינויים האלה בתיקייה?"
+  },
   "folders.change.yes": "שינוי",
   "folders.always": "לאשר תמיד ב־{folder}",
   "folders.line": "שורה {line}",

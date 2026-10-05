@@ -22,6 +22,10 @@
   "folders.open.question": "{name} {folder} auf diesem Computer öffnen lassen?",
   "folders.open.yes": "Erlauben",
   "folders.change.question": "{path} ändern?",
+  "folders.changes.question": {
+    "one": "Diese Änderung im Ordner behalten?",
+    "other": "Diese {count} Änderungen im Ordner behalten?"
+  },
   "folders.change.yes": "Ändern",
   "folders.always": "In {folder} immer erlauben",
   "folders.line": "Zeile {line}",

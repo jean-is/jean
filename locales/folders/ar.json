@@ -22,6 +22,14 @@
   "folders.open.question": "هل يفتح {name} المجلد {folder} على هذا الكمبيوتر؟",
   "folders.open.yes": "السماح",
   "folders.change.question": "تغيير {path}؟",
+  "folders.changes.question": {
+    "zero": "الإبقاء على {count} تغيير في المجلد؟",
+    "one": "الإبقاء على هذا التغيير في المجلد؟",
+    "two": "الإبقاء على هذين التغييرين في المجلد؟",
+    "few": "الإبقاء على هذه التغييرات الـ{count} في المجلد؟",
+    "many": "الإبقاء على {count} تغييرًا في المجلد؟",
+    "other": "الإبقاء على {count} تغيير في المجلد؟"
+  },
   "folders.change.yes": "تغييره",
   "folders.always": "السماح دائمًا في {folder}",
   "folders.line": "السطر {line}",

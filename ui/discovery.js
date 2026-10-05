@@ -12,22 +12,22 @@ import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '..
 import { words, alike } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
+import { folded } from '../core/settings.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
 
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'compute', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'python', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...('showDirectoryPicker' in globalThis ? ['sync'] : []), 'brain-local']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...('showDirectoryPicker' in globalThis ? ['sync'] : []), 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
   files: 'reading files the user shares: PDF, Word, Excel, PowerPoint, CSV, text',
-  compute: 'exact calculations and data analysis, by running code',
+  computer: 'a computer of your own in a sandbox: commands, JavaScript and Python, for exact calculations and data work (Python downloads about 14 MB the first time)',
   memory: 'remembering lasting facts and preferences the user states, from one conversation to the next',
   projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
   folders: 'opening a folder of their computer, to find, read and change its files where they are, showing each change first',
   skills: 'saving how a task the user repeats is done, to do it the same way every time',
   routines: 'doing a task on its own on a schedule (every day, week or month), while the user has you open or as soon as they are back',
-  python: 'Python for data work beyond simple maths (a one-time download of about 14 MB)',
   search: 'searching the web, when a question needs current or specific facts',
   browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
@@ -48,7 +48,7 @@ const offerTool = {
   kind: 'think',
   title: (args) => `Offer ${args?.capability ?? ''}`,
   run: async (args, ctx) => {
-    const id = String(args?.capability ?? '')
+    const id = folded(String(args?.capability ?? ''))
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
     if (id === 'search' && !loaded.value.has(id) && app.conversations.value.length < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (!loaded.value.has(id)) {
@@ -207,7 +207,7 @@ effect(() => {
 })
 effect(() => {
   // Rows of data: exact numbers are a script away.
-  if (app.attachments.value.some((item) => item.status === 'ready' && /\.(csv|tsv|xlsx?)$/i.test(item.name))) offerOnce('compute')
+  if (app.attachments.value.some((item) => item.status === 'ready' && /\.(csv|tsv|xlsx?)$/i.test(item.name))) offerOnce('computer')
 })
 
 // ─── Reflexes ────────────────────────────────────────────────────────────────
@@ -228,7 +228,7 @@ export async function sense(text, previous) {
   const decide = loaded.value.get('reflexes')?.decide
   if (!decide || !text) return {}
   const { offers } = effective.value.settings
-  const open = (/** @type {string} */ id) => !loaded.value.has(id) && !isDenied(id) && !offers[id]
+  const open = (/** @type {string} */ id) => !loaded.value.has(folded(id)) && !isDenied(id) && !offers[folded(id)]
   const candidates = Object.fromEntries(Object.entries(CAPABILITIES).filter(([id]) => open(id)))
   const [about, after] = await Promise.all([
     quickly(decide(clip(text), {
@@ -240,7 +240,7 @@ export async function sense(text, previous) {
     previous ? quickly(decide(exchange(clip(previous), clip(text)), { unhappy: REFLEXES.unhappy })) : null,
   ])
   const { demand, personal, capability, lasting } = about ?? {}
-  if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(capability.choice)
+  if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(folded(capability.choice))
   // A lasting fact, preference or correction: memory could keep it.
   if (lasting?.type === 'noul' && lasting.noul >= YES) offerOnce('memory')
   return {

@@ -1,0 +1,435 @@
+// The Computer (D162): a computer of Jean's own, in a sandbox in this tab, never the user's machine.
+// Calculations and the data toolkit fold into it (D13, D48, D80): `javascript` (QuickJS, codemode),
+// `python` (Pyodide) and `bash` (just-bash, with python3, pip and node as commands) run in one worker
+// (computer-worker.js), each conversation on a computer of its own. /workspace is the conversation's
+// folder (Folders) or else its project's workspace (`<project>/workspace/`), brought up to date
+// before each run (mount.js); what a run changed there is kept after it through `save_workspace`,
+// which asks first, with the diff, in the user's folder. The computer reaches the internet through
+// Jean only, as Settings › Computer and policy allow (net.js): a new site is asked about first.
+import { html, nothing } from 'lit-html'
+import { signal } from '@preact/signals-core'
+import { register, loaded } from '../../ui/caps.js'
+import { sandbox } from '../../ui/sandbox.js'
+import { Element, define } from '../../ui/base.js'
+import { app, conversationOf, updateSettings } from '../../ui/state.js'
+import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
+import { icons } from '../../ui/icons.js'
+import { serviceURL } from '../../core/settings.js'
+import { join, walk } from '../../core/fs.js'
+import { t, useStrings, formatBytes } from '../../core/i18n.js'
+import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
+import { outgoing, incoming, preview, decline, within } from './mount.js'
+import { imageTool } from './images.js'
+
+/** @typedef {import('../../core/loop.js').Tool} Tool */
+/** @typedef {import('../../core/loop.js').ToolContext} ToolContext */
+/** @typedef {import('./net.js').ComputerSettings} ComputerSettings */
+
+await useStrings('computer')
+
+// The shell comes with every run (its files are the computer's); QuickJS and Pyodide when one needs them.
+const box = sandbox({
+  capability: 'computer',
+  worker: new URL('./computer-worker.js', import.meta.url),
+  page: new URL('../../sandbox.html', import.meta.url),
+  engines: {
+    shell: { runtime: 'vendor/just-bash/', bootMs: 20_000 },
+    quickjs: { runtime: 'vendor/quickjs/', bootMs: 20_000 },
+    pyodide: { runtime: 'vendor/pyodide/', bootMs: 60_000 },
+  },
+})
+
+// 64 MB of memory and 20 s of computing time for a JavaScript script (waiting on Jean or on the
+// user doesn't count), 6,000 characters of log, 8,000 of output (D65).
+const SCRIPT = { memory: 64 * 1024 * 1024, cpu: 20_000, output: 6000 }
+const MAX_OUTPUT = 8000
+
+/** Settings › Computer, under policy, with the registries' default addresses. */
+const rightsNow = () => computerRights(app.settings.value, app.policy, Object.fromEntries(REGISTRIES.map((kind) => [kind, serviceURL(kind, app.settings.value, app.policy)])))
+
+// ─── /workspace ──────────────────────────────────────────────────────────────
+
+/**
+ * What each conversation's computer holds of its /workspace: in which sandbox (its epoch), of what
+ * (a folder, or a project's workspace), file by file.
+ * @type {Map<string, { epoch: number, of: string, held: import('./mount.js').Held }>}
+ */
+const holding = new Map()
+
+/** The conversation's /workspace: its folder, open (Folders), or else its project's workspace. @param {AbortSignal | undefined} signal */
+async function mountOf(signal) {
+  const conversation = conversationOf(signal)
+  const folders = loaded.peek().has('folders') ? await import('../folders/folders.js') : null
+  const open = await folders?.computerFolder(signal)
+  if (open) return { of: `folder:${open.folder.name}`, fs: open.fs, folder: open.folder, always: open.always, conversation }
+  const project = conversation?.path?.replace(/\/conversations\/[^/]*$/, '') || app.projectDir
+  return { of: `workspace:${project}`, fs: within(app.fs, join(project, 'workspace')), folder: null, always: true, conversation }
+}
+
+/** Before a run, in a folder not open yet: Folders' card, whose click lets the browser open it (D141). @param {any} args @param {ToolContext} ctx */
+const opening = async (args, ctx) => (loaded.peek().has('folders') ? (await import('../folders/folders.js')).opening(args, ctx) : undefined)
+
+/** Changes waiting to be kept, by batch. @type {Map<string, { changes: { put: Record<string, ArrayBuffer>, gone: string[] }, mount: Awaited<ReturnType<typeof mountOf>>, held: import('./mount.js').Held }>} */
+const batches = new Map()
+
+/**
+ * Runs a message on the conversation's computer: /workspace brought up to date first, the internet
+ * reached through `online`, and what changed in /workspace kept after.
+ * @param {{ engine: string } & Record<string, any>} message @param {ToolContext} ctx
+ */
+async function execute(message, ctx) {
+  const { rights, relay } = rightsNow()
+  const mount = await mountOf(ctx.signal)
+  const key = mount.conversation?.id ?? 'none'
+  const what = String(message.command ?? message.code ?? '').trim().split('\n')[0].slice(0, 120)
+  /** @type {{ epoch: number, of: string, held: import('./mount.js').Held }} */
+  let state = { epoch: 0, of: '', held: new Map() }
+  /** @type {string[]} */
+  let left = []
+  /** Sites asked about in this run, and the answer. @type {Map<string, Promise<string>>} */
+  const asked = new Map()
+  const done = await box.execute({ ...message, computer: key, registries: rights.registries, limits: { ...message.limits, time: rights.timeMs } }, ctx, {
+    quietMs: message.engine === 'shell' ? rights.timeMs + 20_000 : undefined,
+    prepare: async (epoch) => {
+      const known = holding.get(key)
+      // Another folder in the same sandbox: its /workspace is emptied first.
+      const fresh = known?.epoch === epoch && known.of !== mount.of
+      state = known && known.epoch === epoch && !fresh ? known : { epoch, of: mount.of, held: new Map() }
+      holding.set(key, state)
+      const sent = await outgoing(mount.fs, state.held, { limit: rights.workspaceMB * 1e6 })
+      left = sent.left
+      return { put: sent.put, gone: sent.gone, fresh }
+    },
+    handle: (request) => online(request, ctx, { rights, relay, asked, what }),
+  })
+  return { done, left, kept: await keep(done.changes, mount, state.held, ctx) }
+}
+
+/** What a run changed in /workspace, kept through `save_workspace` (asked first in the user's folder). @param {any} changes @param {Awaited<ReturnType<typeof mountOf>>} mount @param {import('./mount.js').Held} held @param {ToolContext} ctx */
+async function keep(changes, mount, held, ctx) {
+  if (!changes || (!Object.keys(changes.put).length && !changes.gone.length)) return ''
+  const batch = crypto.randomUUID()
+  batches.set(batch, { changes, mount, held })
+  try {
+    return await ctx.call('save_workspace', { batch, files: Object.keys(changes.put), removed: changes.gone })
+  } catch (error) {
+    decline(held, changes)
+    return `What changed in /workspace was not kept: ${error instanceof Error ? error.message : String(error)}`
+  } finally {
+    batches.delete(batch)
+  }
+}
+
+/** @param {Awaited<ReturnType<typeof preview>>} shown @returns {import('../../core/types.js').ToolCallContent[]} */
+const diffs = (shown) => shown.flatMap((each) => (each.binary || each.newText === null ? [] : [{ type: /** @type {const} */ ('diff'), path: each.path, oldText: each.oldText, newText: each.newText }]))
+
+/** @type {Tool} */
+const saveTool = {
+  spec: {
+    name: 'save_workspace',
+    description: 'Keeps what a run changed in /workspace. For the computer itself.',
+    parameters: { type: 'object', properties: { batch: { type: 'string' }, files: { type: 'array', items: { type: 'string' } }, removed: { type: 'array', items: { type: 'string' } } }, required: ['batch'] },
+  },
+  kind: 'edit',
+  hidden: true,
+  title: (args) => `Keep ${[...(args?.files ?? []), ...(args?.removed ?? [])].join(', ')}`,
+  locations: (args) => [...(args?.files ?? []), ...(args?.removed ?? [])].map((path) => ({ path: String(path) })),
+  // In the user's folder, the changes are asked first with their diffs, unless it is always allowed (D141).
+  check: async (args) => {
+    const batch = batches.get(args?.batch)
+    if (!batch?.mount.folder) return
+    return { ask: !batch.mount.always, meta: { folder: batch.mount.folder.name }, content: diffs(await preview(batch.mount.fs, batch.changes)) }
+  },
+  run: async (args, ctx) => {
+    const batch = batches.get(args?.batch)
+    if (!batch) throw new Error('These changes are no longer there.')
+    const { mount, changes, held } = batch
+    const shown = mount.folder ? await preview(mount.fs, changes) : []
+    const done = await incoming(mount.fs, held, changes)
+    if (mount.folder) {
+      ctx.content.push(...diffs(shown.filter((each) => done.saved.includes(each.path))))
+      if (ctx.answer === 'allow_always') await (await import('../folders/folders.js')).trust(mount.folder)
+      // A page made or changed in the conversation on screen shows in the browser, or has it offered (D156).
+      if (mount.conversation?.id === app.current.peek()?.id) for (const path of done.saved) document.dispatchEvent(new CustomEvent('app-folder-changed', { detail: { folder: mount.folder.name, path } }))
+    }
+    return [
+      done.saved.length ? `Kept in /workspace: ${done.saved.join(', ')}.` : '',
+      done.removed.length ? `Removed from /workspace: ${done.removed.join(', ')}.` : '',
+      done.refused.length ? `Not kept, as they changed meanwhile (the computer has them as they are now): ${done.refused.join(', ')}.` : '',
+    ].filter(Boolean).join(' ')
+  },
+}
+
+// ─── The internet ────────────────────────────────────────────────────────────
+
+/**
+ * A request from the computer: refused, asked about once a run for a new site, or made, by Jean,
+ * through the relay, with a registry's key when it goes to one.
+ * @param {{ url: string, method?: string, headers?: Record<string, string>, body?: ArrayBuffer }} request @param {ToolContext} ctx
+ * @param {{ rights: import('./net.js').ComputerRights, relay: string, asked: Map<string, Promise<string>>, what: string }} run
+ */
+async function online(request, ctx, { rights, relay, asked, what }) {
+  const origin = location.origin
+  const judged = judge(request.url, { rights, origin })
+  if (judged.verdict === 'deny') throw new Error(judged.why)
+  if (judged.verdict === 'ask') {
+    if (!asked.has(judged.site)) asked.set(judged.site, ctx.call('reach_site', { site: judged.site, for: what }))
+    await asked.get(judged.site)
+  }
+  const kind = registryOf(request.url, rights)
+  const token = kind ? await getSecret(app.fs, `computer-${kind}`) : null
+  const allowed = (/** @type {string} */ to) => {
+    const again = judge(to, { rights: rightsNow().rights, origin })
+    return again.verdict === 'allow' || asked.has(again.site)
+  }
+  const answer = await reach(request, { relay, token: token ?? undefined, limit: rights.limitMB * 1e6, allowed, signal: ctx.signal })
+  if (ctx.meta) (ctx.meta.reached ??= {})[judged.site] = (ctx.meta.reached[judged.site] ?? 0) + 1
+  return answer
+}
+
+/** @type {Tool} */
+const reachTool = {
+  spec: {
+    name: 'reach_site',
+    description: 'Asks the user before the computer reaches a site it has not reached yet. For the computer itself.',
+    parameters: { type: 'object', properties: { site: { type: 'string' }, for: { type: 'string' } }, required: ['site'] },
+  },
+  kind: 'fetch',
+  hidden: true,
+  title: (args) => `Reach ${args?.site ?? ''}`,
+  // Always asked, by site: "Always" adds the site to Settings › Computer, not a rule for every request.
+  check: async (args) => ({ ask: true, meta: { site: String(args?.site ?? '') } }),
+  run: async (args, ctx) => {
+    const site = String(args?.site ?? '')
+    if (ctx.answer === 'allow_always') {
+      const own = app.settings.value.computer ?? {}
+      await updateSettings({ computer: { ...own, sites: [...new Set([...(own.sites ?? []), site])] } })
+    }
+    return `The computer may reach ${site}.`
+  },
+}
+
+/** The card for a site the computer hasn't reached yet: once, always (Settings › Computer lists it), or no. */
+class SiteApproval extends Element {
+  #decision = signal(/** @type {any} */ (null))
+  #helper = signal(/** @type {string | undefined} */ (undefined))
+  /** @param {Extract<import('../../ui/state.js').Decision, { toolCall: any }>} value */
+  set decision(value) { this.#decision.value = value }
+  /** @param {string | undefined} value the helper asking, if one is */
+  set helper(value) { this.#helper.value = value }
+
+  render() {
+    const decision = this.#decision.value
+    if (!decision) return nothing
+    const { toolCall, resolve } = decision
+    const site = String(toolCall._meta?.site ?? '')
+    const asked = t('computer.reach.question', { site })
+    const what = String(toolCall.rawInput?.for ?? '')
+    return html`<div class="approval" role="group" aria-label=${asked}>
+      ${this.#helper.value ? html`<p class="approval-from">${icons.helpers}<span dir="auto">${this.#helper.value}</span></p>` : nothing}
+      <p>${asked}</p>
+      ${what ? html`<pre class="approval-for" dir="ltr">${what}</pre>` : nothing}
+      <div class="approval-actions">
+        <button class="button primary" @click=${() => resolve('allow_once')}>${t('computer.reach.once')}</button>
+        <button class="button" @click=${() => resolve('allow_always')}>${t('computer.reach.always', { site })}</button>
+        <button class="button subtle" @click=${() => resolve('reject_once')}>${t('computer.reach.no')}</button>
+      </div>
+    </div>`
+  }
+}
+define('app-site-approval', SiteApproval)
+
+// ─── Tools ───────────────────────────────────────────────────────────────────
+
+/** @param {string} text @param {number} [max] the start and the end of a long text */
+const clip = (text, max = 6000) => (text.length > max ? `${text.slice(0, max * 0.7)}\n… (${text.length - Math.round(max * 0.7) - Math.round(max * 0.3)} characters cut) …\n${text.slice(-Math.round(max * 0.3))}` : text)
+
+/** What the brain reads of a command: its exit code, what it printed, what changed in /workspace. @param {Awaited<ReturnType<typeof execute>>} ran */
+function commandReport({ done, left, kept }) {
+  if (!done.ok) throw new Error(`The command couldn't run: ${done.error}`)
+  const parts = [`Exit code: ${done.exit}`]
+  if (done.stdout) parts.push(clip(done.stdout))
+  if (done.stderr) parts.push(`stderr:\n${clip(done.stderr, 2000)}`)
+  if (kept) parts.push(kept)
+  if (left.length) parts.push(`Too large for the computer, left out of /workspace: ${left.join(', ')}`)
+  return parts.join('\n\n')
+}
+
+/** What the brain reads of a script: the result, then the log; a failure as an error. @param {Awaited<ReturnType<typeof execute>>} ran */
+function scriptReport({ done, kept }) {
+  const { ok, result, error, logs = [] } = done
+  // "Result: null" reads like an answer, and a small brain then makes one up.
+  const empty = result === null && !logs.length
+  const parts = [!ok ? `The script failed: ${error}`
+    : empty ? 'The script gave no result: end it with the value you need, or return it.'
+    : `Result: ${typeof result === 'string' ? result : JSON.stringify(result, null, 1)}`]
+  if (logs.length) parts.push(`Log:\n${logs.join('\n')}`)
+  if (kept) parts.push(kept)
+  const text = parts.join('\n\n')
+  const cut = text.length > MAX_OUTPUT ? `${text.slice(0, MAX_OUTPUT)}\n… (cut here: return less)` : text
+  if (!ok) throw new Error(cut)
+  return cut
+}
+
+/** @type {Tool} */
+const bashTool = {
+  spec: {
+    name: 'bash',
+    description: [
+      "Run a command on your computer: bash, in a sandbox in this tab, never the user's machine.",
+      "/workspace holds the conversation's folder, or the project's workspace when it has none, and what commands change there is kept (in the user's folder, once they agree); /home/user and /tmp last until the tab closes.",
+      'Most commands are there (ls, cat, grep, sed, awk, jq, find, sort, diff, gzip, curl…), with python3, pip install and node (JavaScript).',
+      'The internet works as Settings › Computer allows; the user is asked first for a new site. The shell keeps its directory and variables between commands.',
+    ].join(' '),
+    parameters: { type: 'object', properties: { command: { type: 'string', description: 'The command, or several lines of them' } }, required: ['command'] },
+  },
+  kind: 'execute',
+  title: (args) => `Command: ${String(args?.command ?? '').trim().split('\n')[0].slice(0, 80)}`,
+  check: opening,
+  run: async (args, ctx) => commandReport(await execute({ engine: 'shell', command: String(args?.command ?? '') }, ctx)),
+}
+
+/** @type {Tool} */
+const javascriptTool = {
+  spec: {
+    name: 'javascript',
+    description: [
+      'Run JavaScript on your computer, in a sandbox. Top-level await works; return the result, which comes back as JSON with anything logged.',
+      'Available in scripts: await file(name) returns the whole text of a shared file (spreadsheets as tab-separated rows under "Sheet:" lines);',
+      'csv(text) turns CSV or tab-separated text into rows, objects keyed by the header, numbers as numbers;',
+      "await fs.readFile(path), fs.writeFile(path, text) and fs.readdir(path) work in /workspace, where the conversation's files are;",
+      'await fetch(url, init) reaches the internet as Settings allow;',
+      'await tools.<name>({ … }) calls any tool, including ones found with await searchTools(query) and those of connected services;',
+      'await models.decide(state, questions) asks the on-device decision helper, when it is on (types noul, choice, score);',
+      'await models.image(description) makes a picture, which the user sees.',
+    ].join(' '),
+    parameters: { type: 'object', properties: { code: { type: 'string', description: 'The script' } }, required: ['code'] },
+  },
+  kind: 'execute',
+  title: () => 'Calculate',
+  check: opening,
+  run: async (args, ctx) => scriptReport(await execute({ engine: 'quickjs', code: String(args?.code ?? ''), limits: SCRIPT }, ctx)),
+}
+
+/** @type {Tool} */
+const pythonTool = {
+  spec: {
+    name: 'python',
+    description: [
+      "Run Python 3 on your computer, in a sandbox, in /workspace, where the conversation's files are.",
+      'Its standard library is there; packages install with `import micropip` then `await micropip.install("pandas")` when the internet is allowed.',
+      'Top-level await works; the value of the last line comes back as JSON, with anything printed. For the internet, `from pyodide.http import pyfetch` (requests and urllib wait for a reply, which the sandbox can\'t).',
+      'Available in scripts: await file(name) returns the whole text of a shared file (spreadsheets as tab-separated rows under "Sheet:" lines);',
+      'await tools.<name>(**args) calls any tool, including ones found with await search_tools(query).',
+    ].join(' '),
+    parameters: { type: 'object', properties: { code: { type: 'string', description: 'The script' } }, required: ['code'] },
+  },
+  kind: 'execute',
+  title: () => 'Python',
+  check: opening,
+  run: async (args, ctx) => scriptReport(await execute({ engine: 'pyodide', code: String(args?.code ?? ''), limits: { output: SCRIPT.output } }, ctx)),
+}
+
+/** `run`, as conversations from before D162 declared it: the same as `javascript`. @type {Tool} */
+const runTool = { ...javascriptTool, spec: { ...javascriptTool.spec, name: 'run' }, hidden: true }
+
+// ─── Settings › Computer ─────────────────────────────────────────────────────
+
+// Settings is open when its panel shows, so its module is there to be had: imported, not loaded with the computer.
+const dialogs = signal(/** @type {typeof import('../../ui/dialogs.js') | null} */ (null))
+/** The project's workspace, measured when the panel shows. */
+const used = signal(/** @type {number | null} */ (null))
+
+/** @param {ComputerSettings} change */
+async function setComputer(change) {
+  await updateSettings({ computer: { ...app.settings.value.computer, ...change } })
+  // A command's time is the shell's, set when it starts: the computer starts again.
+  if ('timeMs' in change) restart()
+}
+
+function restart() {
+  box.stop()
+  holding.clear()
+}
+
+/** The project's workspace and how much it holds. */
+async function measure() {
+  const fs = within(app.fs, join(app.projectDir, 'workspace'))
+  let size = 0
+  for (const path of await walk(fs)) size += (await fs.stat?.(path))?.size ?? 0
+  used.value = size
+}
+
+async function empty() {
+  if (!confirm(t('computer.workspace.confirm'))) return
+  await app.fs.remove(join(app.projectDir, 'workspace'))
+  restart()
+  measure()
+}
+
+/** @param {string} name @param {string} label @param {string[]} options @param {string} current @param {boolean} locked @param {(value: string) => void} set */
+const choice = (name, label, options, current, locked, set) => html`<span class="segmented" role="radiogroup" aria-label=${label}>
+  ${options.map((option) => html`<label><input type="radio" name=${name} .checked=${current === option} ?disabled=${locked} @change=${() => set(option)}><span>${t(`computer.${name}.${option}`)}</span></label>`)}
+</span>`
+
+/** Settings › Computer: the internet, the sites, the relay, where packages come from, the limits and the workspace. */
+function panel() {
+  if (!dialogs.value) import('../../ui/dialogs.js').then((module) => { dialogs.value = module })
+  if (used.value === null) measure()
+  const { rights, locked, global } = rightsNow()
+  const held = (/** @type {string} */ key) => (locked.has(key) ? html`<p class="muted small">${t('computer.locked')}</p>` : nothing)
+  const minutes = [60_000, 120_000, 300_000, 600_000]
+  return html`<p class="lede">${t('computer.text')}</p>
+    <section class="setting">
+      <div><h3>${t('computer.internet')}</h3><p class="muted">${t('computer.internet.text')}</p>${held('internet')}</div>
+      ${choice('internet', t('computer.internet'), ['off', 'ask', 'any'], rights.internet, locked.has('internet'), (internet) => setComputer({ internet: /** @type {any} */ (internet) }))}
+    </section>
+    ${rights.internet === 'off' ? nothing : html`<section>
+      <h3>${t('computer.sites')}</h3>
+      ${dialogs.value?.siteList({ sites: rights.sites, fixed: locked.has('sites'), set: (sites) => setComputer({ sites }) }) ?? nothing}
+    </section>
+    <section class="setting">
+      <div><h3>${t('computer.relay')}</h3><p class="muted">${global ? t('computer.relay.globalText', { relay: global }) : t('computer.relay.noneText')}</p>${held('relay')}</div>
+      <select aria-label=${t('computer.relay')} ?disabled=${locked.has('relay')} @change=${(/** @type {Event} */ e) => setComputer({ relay: /** @type {any} */ (/** @type {HTMLSelectElement} */ (e.target).value) })}>
+        ${['global', 'own', 'none'].map((option) => html`<option value=${option} ?selected=${rights.relay === option}>${t(`computer.relay.${option}`)}</option>`)}
+      </select>
+      ${rights.relay === 'own' ? html`<input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}" aria-label=${t('computer.relay.address')} .value=${rights.ownRelay}
+        ?disabled=${locked.has('ownRelay')} @change=${(/** @type {Event} */ e) => setComputer({ ownRelay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>` : nothing}
+    </section>
+    <details class="other">
+      <summary>${t('computer.registries')}</summary>
+      <p class="muted">${t('computer.registries.text')}</p>
+      ${REGISTRIES.map((kind) => html`<div class="stack">
+        <label>${t(`computer.registry.${kind}`)}<input dir="ltr" type="url" spellcheck="false" .value=${app.settings.value.computer?.registries?.[kind] ?? ''}
+          placeholder=${serviceURL(kind, app.settings.value, app.policy)} ?disabled=${locked.has(`registries.${kind}`)}
+          @change=${(/** @type {Event} */ e) => setComputer({ registries: { ...app.settings.value.computer?.registries, [kind]: /** @type {HTMLInputElement} */ (e.target).value.trim() } })}></label>
+        <label>${t('computer.registry.key')}<input type="password" autocomplete="off" spellcheck="false" dir="ltr" placeholder="••••"
+          @change=${async (/** @type {Event} */ e) => { const value = /** @type {HTMLInputElement} */ (e.target).value.trim(); await (value ? setSecret(app.fs, `computer-${kind}`, value) : deleteSecret(app.fs, `computer-${kind}`)) }}></label>
+      </div>`)}
+    </details>`}
+    <section class="setting">
+      <div><h3>${t('computer.time')}</h3>${held('timeMs')}</div>
+      <select aria-label=${t('computer.time')} ?disabled=${locked.has('timeMs')} @change=${(/** @type {Event} */ e) => setComputer({ timeMs: Number(/** @type {HTMLSelectElement} */ (e.target).value) })}>
+        ${minutes.map((ms) => html`<option value=${ms} ?selected=${rights.timeMs === ms}>${t('computer.minutes', { count: ms / 60_000 })}</option>`)}
+      </select>
+    </section>
+    <section class="setting">
+      <div><h3>${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text', { size: formatBytes(used.value ?? 0) })}</p></div>
+      <div class="row">
+        <button class="button subtle" @click=${restart}>${icons.retry} ${t('computer.restart')}</button>
+        <button class="button subtle danger" ?disabled=${!used.value} @click=${empty}>${icons.trash} ${t('computer.workspace.empty')}</button>
+      </div>
+    </section>`
+}
+
+register({
+  id: 'computer',
+  tools: [bashTool, javascriptTool, pythonTool, runTool, imageTool, saveTool, reachTool],
+  lines: [
+    { name: 'bash', line: 'commands on your own computer, a sandbox: /workspace holds the files; python3, pip, node, curl' },
+    { name: 'javascript', line: 'JavaScript to work things out exactly; scripts read files and call tools' },
+    { name: 'python', line: 'Python, for data work' },
+  ],
+  rules: ['Compute numbers with code instead of estimating them.'],
+  panel,
+})

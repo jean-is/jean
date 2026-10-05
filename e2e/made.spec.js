@@ -79,13 +79,13 @@ test('a Word document from the first message, saved, then changed', async ({ pag
 test('a spreadsheet written by a script, with exact totals', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Calculations')
+  await turnOn(page, 'Computer')
   await page.keyboard.press('Escape')
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
   await ask(page, 'Make the totals by region a spreadsheet')
   const answer = page.locator('.msg-jean').last()
-  // The sandbox starts first: as in compute.spec.js, that can take a while on a busy machine.
+  // The sandbox starts first: as in computer.spec.js, that can take a while on a busy machine.
   await expect(answer.locator('.prose')).toContainText('2540', { timeout: 30_000 })
   const totals = await saved(page, answer, 'Save Totals.xlsx')
   expect(totals.text).toBe('Sheet: Totals\nregion\tsales\nNorth\t2540\nSouth\t1960\nEast\t1515')

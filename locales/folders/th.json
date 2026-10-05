@@ -22,6 +22,9 @@
   "folders.open.question": "ให้ {name} เปิด {folder} บนคอมพิวเตอร์เครื่องนี้ไหม",
   "folders.open.yes": "อนุญาต",
   "folders.change.question": "แก้ไข {path} ไหม",
+  "folders.changes.question": {
+    "other": "เก็บการเปลี่ยนแปลง {count} รายการนี้ไว้ในโฟลเดอร์ไหม"
+  },
   "folders.change.yes": "แก้ไข",
   "folders.always": "อนุญาตเสมอใน {folder}",
   "folders.line": "บรรทัด {line}",
