@@ -247,6 +247,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .look input { position: absolute; opacity: 0; }
 .look:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }
 .look:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
+.look > .look-preview { flex: none; }
 .look > span:last-child { padding-inline: 0.3rem; }
 .look-preview {
   --p-ink: oklch(from var(--p-text) l c h / 0.55);
