@@ -114,7 +114,7 @@ function looks() {
 }
 
 /**
- * Another look. One with a list beside the conversation (Mail's, Glass's) moves the user's foot
+ * Another look. One with a list beside the conversation (Mail's, Human's) moves the user's foot
  * there from the drawer, and one without moves it back: once the look shows, the menu opens
  * again where the foot is, on the same page, unless the user closed it meanwhile (D153).
  * @param {import('./looks.js').LookId} id

@@ -106,7 +106,7 @@
   "look.pixel.name": "Pixel",
   "look.blueprint.name": "Blueprint",
   "look.mondrian.name": "Mondrian",
-  "look.glass.name": "Glass",
+  "look.human.name": "Human",
   "profile.manifesto": "Manifesto",
   "storage.ephemeral": "Private window: nothing will be saved after you close it.",
   "update.ready": "A new version of {name} is ready.",

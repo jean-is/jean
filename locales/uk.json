@@ -106,7 +106,7 @@
   "look.pixel.name": "Піксель",
   "look.blueprint.name": "Креслення",
   "look.mondrian.name": "Мондріан",
-  "look.glass.name": "Скло",
+  "look.human.name": "Людяний",
   "profile.manifesto": "Маніфест",
   "storage.ephemeral": "Приватне вікно: після закриття нічого не збережеться.",
   "update.ready": "Готова нова версія: {name}.",

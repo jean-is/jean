@@ -106,7 +106,7 @@
   "look.pixel.name": "पिक्सेल",
   "look.blueprint.name": "ब्लूप्रिंट",
   "look.mondrian.name": "मॉन्ड्रियन",
-  "look.glass.name": "काँच",
+  "look.human.name": "मानवीय",
   "profile.manifesto": "घोषणापत्र",
   "storage.ephemeral": "निजी विंडो: बंद करने के बाद कुछ भी सहेजा नहीं जाएगा।",
   "update.ready": "नया संस्करण तैयार है: {name}।",

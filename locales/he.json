@@ -106,7 +106,7 @@
   "look.pixel.name": "פיקסל",
   "look.blueprint.name": "שרטוט",
   "look.mondrian.name": "מונדריאן",
-  "look.glass.name": "זכוכית",
+  "look.human.name": "אנושי",
   "profile.manifesto": "מניפסט",
   "storage.ephemeral": "חלון פרטי: שום דבר לא יישמר אחרי הסגירה.",
   "update.ready": "גרסה חדשה מוכנה: {name}.",

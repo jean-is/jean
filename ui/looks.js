@@ -5,11 +5,11 @@
 
 /**
  * Each look, with what the page needs before its style sheet says it: the browser bar's colour
- * by night and by day, and its accent, where the colour pickers start. Mail and Glass keep the
+ * by night and by day, and its accent, where the colour pickers start. Mail and Human keep the
  * conversations in view, beside the one open (`list`). Jean's own three first, then (D120) the
  * refined, the playful and the familiar.
  */
-/** @typedef {'room' | 'mail' | 'paper' | 'minimal' | 'swiss' | 'fjord' | 'velvet' | 'terminal' | 'neon' | 'notebook' | 'depth' | 'classic' | 'pixel' | 'blueprint' | 'mondrian' | 'glass'} LookId */
+/** @typedef {'room' | 'mail' | 'paper' | 'minimal' | 'swiss' | 'fjord' | 'velvet' | 'terminal' | 'neon' | 'notebook' | 'depth' | 'classic' | 'pixel' | 'blueprint' | 'mondrian' | 'human'} LookId */
 /** @type {Readonly<Record<LookId, { bar: [string, string], accent: string, list?: boolean }>>} */
 export const LOOKS = Object.freeze({
   room: { bar: ['#120c08', '#fbf6ee'], accent: '#f29d38' },
@@ -27,7 +27,7 @@ export const LOOKS = Object.freeze({
   pixel: { bar: ['#202126', '#d0cec7'], accent: '#9bbc0f' },
   blueprint: { bar: ['#0c3c75', '#f2f8fc'], accent: '#fde56f' },
   mondrian: { bar: ['#100f0d', '#fbfaf6'], accent: '#d01e1c' },
-  glass: { bar: ['#1e1e1e', '#ffffff'], accent: '#0a84ff', list: true },
+  human: { bar: ['#1e1e1e', '#ffffff'], accent: '#0a84ff', list: true },
 })
 
 /** The look's id, also kept on this device: index.html applies it before the first paint, like light or dark (D85). */
