@@ -14,21 +14,61 @@ import { speaking, toggleSpeech, canSpeak } from './speech.js'
 /** @import { Turn, Step } from '../core/events.js' */
 /** @import { ToolCallInfo, ResourceLink } from '../core/types.js' */
 
+/**
+ * Where the reader was when the page went (a reload), in this tab only: the conversation, the turn
+ * at the top of the window and how far into it, so answers that draw later don't move the line.
+ * Nothing when at the end. Read once, by the page that comes next.
+ */
+const SPOT = 'app.spot'
+/** @type {{ id: string, turn: number, offset: number } | null} */
+let spot = null
+try {
+  spot = JSON.parse(sessionStorage.getItem(SPOT) ?? 'null')
+  sessionStorage.removeItem(SPOT)
+} catch {}
+
 class Conversation extends Element {
   #follow = true
   #onScroll = () => {
     this.#follow = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
   }
+  #keep = () => {
+    const turns = [...this.querySelectorAll('.turns > .turn')]
+    const index = Math.max(0, turns.findLastIndex((turn) => turn.getBoundingClientRect().top <= 0))
+    const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 1
+    try {
+      if (end || !turns[index]) sessionStorage.removeItem(SPOT)
+      else sessionStorage.setItem(SPOT, JSON.stringify({ id: app.current.peek()?.id, turn: index, offset: -turns[index].getBoundingClientRect().top }))
+    } catch {}
+  }
 
   connectedCallback() {
     super.connectedCallback()
     addEventListener('scroll', this.#onScroll, { passive: true })
-    scrollTo({ top: document.documentElement.scrollHeight })
+    addEventListener('pagehide', this.#keep)
+    // Back where the reader was, or at the end: once the box below is drawn too, and again once the
+    // capabilities are back, unless the reader has moved since.
+    const back = spot?.id === app.current.peek()?.id ? spot : null
+    spot = null
+    queueMicrotask(async () => {
+      this.#go(back)
+      const at = scrollY
+      await app.ready.catch(() => {})
+      if (this.isConnected && (back ? scrollY === at : this.#follow)) this.#go(back)
+    })
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
     removeEventListener('scroll', this.#onScroll)
+    removeEventListener('pagehide', this.#keep)
+  }
+
+  /** @param {{ turn: number, offset: number } | null} back */
+  #go(back) {
+    const turn = back && this.querySelectorAll('.turns > .turn')[back.turn]
+    scrollTo({ top: turn ? turn.getBoundingClientRect().top + scrollY + back.offset : document.documentElement.scrollHeight, behavior: 'instant' })
+    this.#onScroll()
   }
 
   render() {
