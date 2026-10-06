@@ -424,10 +424,11 @@ const pythonTool = {
 /**
  * A command the user types in the terminal (D166), on the conversation's computer, as theirs: what it
  * changes in /workspace is kept at once, in their folder too, and a new site is asked about there
- * (`ask`), as Settings › Computer has it. Tools aren't called from there.
- * @param {string} command @param {{ signal: AbortSignal, ask: (site: string) => Promise<import('../../core/loop.js').PermissionOption> }} options
+ * (`ask`), as Settings › Computer has it. Tools aren't called from there. With `repl`, a line typed at
+ * node's or python's prompt (D180), the first one `start`ing it afresh.
+ * @param {string} command @param {{ signal: AbortSignal, ask: (site: string) => Promise<import('../../core/loop.js').PermissionOption>, repl?: string, start?: boolean }} options
  */
-export async function typed(command, { signal, ask }) {
+export async function typed(command, { signal, ask, repl, start }) {
   /** @type {string[]} */
   let refused = []
   const ctx = /** @type {ToolContext} */ (/** @type {unknown} */ ({
@@ -448,7 +449,7 @@ export async function typed(command, { signal, ask }) {
       return ''
     },
   }))
-  const { done } = await execute({ engine: 'shell', command }, ctx)
+  const { done } = await execute({ engine: 'shell', command, repl, start }, ctx)
   return { ...done, refused }
 }
 

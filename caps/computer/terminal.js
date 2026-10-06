@@ -5,8 +5,10 @@
 // site is asked about under it, as Settings › Computer has it; and the brain is told what ran with
 // the next message. Each conversation's terminal keeps what it showed for the visit. ↑ and ↓ go
 // through what was typed, Tab completes, Ctrl+C stops what runs, Ctrl+L and `clear` clear it; a
-// click or a key anywhere in it goes to the line (D170), and the whole pane is ringed while it has it. Opened from Settings › Computer or with Ctrl+`, then from the
-// main area too. Loaded the first time it opens, with its style sheet.
+// click or a key anywhere in it goes to the line (D170), and the whole pane is ringed while it has
+// it. A bare `node`, `python` or `python3` opens its prompt, as on a real computer (D180), until
+// `.exit`, `exit()` or Ctrl+D. Opened from Settings › Computer or with Ctrl+`, then from the main
+// area too. Loaded the first time it opens, with its style sheet.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
@@ -21,10 +23,16 @@ import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../core/loop.js').PermissionOption} PermissionOption */
 /**
- * A command and what came of it, as it shows: what it printed, its errors, its exit code once it has
- * ended, a site it waits to reach, and the files not kept as they changed meanwhile.
- * @typedef {{ command: string, cwd: string, out: string, err: string, exit?: number, running?: AbortController,
+ * A command and what came of it, as it shows: the prompt it was typed at, what it printed, its
+ * errors, its exit code once it has ended, a site it waits to reach, and the files not kept as they
+ * changed meanwhile.
+ * @typedef {{ command: string, prompt: string, out: string, err: string, exit?: number, running?: AbortController,
  *   site?: { site: string, resolve: (answer: PermissionOption) => void }, refused?: string[] }} Entry
+ */
+/**
+ * A conversation's terminal for the visit: what it showed, where its shell is, and the interpreter
+ * at whose prompt it is (D180), with the lines of a statement not yet whole.
+ * @typedef {{ entries: Entry[], cwd: string, repl?: { language: string, lines: string }, turn?: Promise<void> }} Term
  */
 
 await styleSheet(new URL('terminal.css', import.meta.url))
@@ -35,11 +43,14 @@ const TOLD = 1500
 // Colours and the cursor's moves, which the pane doesn't draw; and a screen wiped, as `clear` does.
 const ESCAPES = /\x1b\[[0-9;?]*[ -/]*[@-~]/g
 const WIPED = /\x1b\[[23]J|\x1bc/
+// What opens an interpreter's prompt (D180); Ctrl+D, the end of what is typed, closes it.
+const BARE = /^\s*(node|python3?)\s*$/
+const END = '\x04'
 
 const open = signal(false)
 const moves = signal(0)
 const bump = () => { moves.value++ }
-/** Each conversation's terminal for the visit ('' before one exists): what it showed, and where its shell is. @type {Map<string, { entries: Entry[], cwd: string }>} */
+/** Each conversation's terminal ('' before one exists). @type {Map<string, Term>} */
 const terminals = new Map()
 /** What was typed, oldest first; where ↑ and ↓ are in it, and the line being typed before. @type {string[]} */
 const typedBefore = []
@@ -51,8 +62,10 @@ let choices = []
 let following = true
 
 /** @param {string} [id] */
-const terminalOf = (id = '') => terminals.get(id) ?? /** @type {{ entries: Entry[], cwd: string }} */ (terminals.set(id, { entries: [], cwd: '/workspace' }).get(id))
+const terminalOf = (id = '') => terminals.get(id) ?? /** @type {Term} */ (terminals.set(id, { entries: [], cwd: '/workspace' }).get(id))
 const current = () => terminalOf(app.current.peek()?.id)
+/** What the line starts with: where the shell is, or node's or python's prompt, ... while a statement goes on. @param {Term} terminal */
+const promptOf = ({ cwd, repl }) => (!repl ? `${cwd} $` : repl.lines ? '...' : repl.language === 'node' ? '>' : '>>>')
 
 /** Opens the pane, or brings the keys to it, with a line typed (Settings' Try, D176); from then on, the main area has a button for it. @param {string} [line] */
 export function show(line) {
@@ -92,7 +105,7 @@ class Terminal extends Element {
         ${terminal.entries.length ? nothing : html`<p class="terminal-hint" dir="auto">${prompt}<span>${tParts('computer.terminal.text', { keys })}</span></p>`}
         <div role="log">${terminal.entries.map(entry)}</div>
         <form class="terminal-line" @submit=${(/** @type {Event} */ event) => event.preventDefault()}>
-          <span aria-hidden="true">${terminal.cwd} $</span>
+          <span aria-hidden="true">${promptOf(terminal)}</span>
           <textarea rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label=${t('computer.terminal.command')} @keydown=${typing}></textarea>
         </form>
         <p class="terminal-choices" role="status">${choices.map((name) => html`<span>${name}</span>`)}</p>
@@ -109,7 +122,7 @@ class Terminal extends Element {
 
 /** @param {Entry} entry */
 const entry = (entry) => html`<div class="terminal-entry ${entry.running ? 'is-running' : ''}">
-  <p class="terminal-command"><span aria-hidden="true">${entry.cwd} $ </span>${entry.command}</p>
+  <p class="terminal-command"><span aria-hidden="true">${entry.prompt} </span>${entry.command}</p>
   ${entry.out ? html`<pre>${shown(entry.out)}</pre>` : nothing}
   ${entry.err ? html`<pre class="is-error">${shown(entry.err)}</pre>` : nothing}
   ${entry.site ? html`<app-site-approval .decision=${{ toolCall: { _meta: { site: entry.site.site }, rawInput: {} }, resolve: entry.site.resolve }}></app-site-approval>` : nothing}
@@ -148,8 +161,10 @@ function keyed(event) {
 
 /**
  * Enter runs (never while an IME is composing), Shift+Enter adds a line; ↑ and ↓ go through what was
- * typed; Tab completes, an empty line with the commands, and keeps the keys, which Shift+Tab, Escape
- * and ⌃` take elsewhere; Ctrl+C stops what runs and drops the line, unless text is selected; Ctrl+L clears.
+ * typed; Tab completes, an empty line with the commands, or indents at an interpreter's prompt, and
+ * keeps the keys, which Shift+Tab, Escape and ⌃` take elsewhere; Ctrl+C stops what runs and drops
+ * the line, and a statement's lines, unless text is selected; Ctrl+D on an empty line ends the
+ * interpreter; Ctrl+L clears.
  * @param {KeyboardEvent} event
  */
 function typing(event) {
@@ -160,11 +175,13 @@ function typing(event) {
   const control = event.ctrlKey && !event.metaKey && !event.altKey
   const up = event.key === 'ArrowUp' && !area.value.slice(0, area.selectionStart).includes('\n')
   const down = event.key === 'ArrowDown' && !area.value.slice(area.selectionEnd).includes('\n')
+  const { repl } = current()
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
     const command = area.value
     area.value = ''
-    if (command.trim()) run(command)
+    // At a prompt, an empty line counts: it ends python's block.
+    if (command.trim() || repl) run(command)
   } else if ((up && back > 0) || (down && back < typedBefore.length)) {
     event.preventDefault()
     if (back === typedBefore.length) draft = area.value
@@ -174,12 +191,18 @@ function typing(event) {
     event.preventDefault()
     stop()
     area.value = ''
+    if (repl) repl.lines = ''
+    bump()
+  } else if (control && letter === 'd' && repl && !area.value) {
+    event.preventDefault()
+    run(END)
   } else if (control && letter === 'l') {
     event.preventDefault()
     clear()
   } else if (event.key === 'Tab' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
     event.preventDefault()
-    complete(area).catch(() => {})
+    if (repl) area.setRangeText(repl.language === 'node' ? '  ' : '    ', area.selectionStart, area.selectionEnd, 'end')
+    else complete(area).catch(() => {})
   }
 }
 
@@ -218,18 +241,31 @@ async function complete(area) {
   area.setRangeText(escape(shared.slice(word.length), quote) + (found.length > 1 || shared.endsWith('/') ? '' : `${quote} `), caret, caret, 'end')
 }
 
-/** Runs what the user typed on the conversation's computer, and tells the brain. @param {string} command */
-async function run(command) {
-  const conversation = app.current.peek()
-  const terminal = terminalOf(conversation?.id)
-  if (typedBefore.at(-1) !== command) typedBefore.push(command)
+/** What the user types runs once what they typed before has, as in a terminal: where it left the shell, or the prompt. @param {string} command */
+function run(command) {
+  if (command.trim() && command !== END && typedBefore.at(-1) !== command) typedBefore.push(command)
   back = typedBefore.length
   draft = ''
+  const conversation = app.current.peek()
+  const terminal = terminalOf(conversation?.id)
+  terminal.turn = (terminal.turn ?? Promise.resolve()).then(() => runNow(conversation, terminal, command))
+}
+
+/**
+ * Runs it on the conversation's computer, and tells the brain: a command, or a line at an
+ * interpreter's prompt, after those of the statement it goes on.
+ * @param {typeof app.current.value} conversation @param {Term} terminal @param {string} command
+ */
+async function runNow(conversation, terminal, command) {
+  const { repl } = terminal
   following = true
   const running = new AbortController()
   /** @type {Entry} */
-  const entry = { command, cwd: terminal.cwd, out: '', err: '', running }
+  const entry = { command: command === END ? '' : command, prompt: promptOf(terminal), out: '', err: '', running }
   terminal.entries.push(entry)
+  const bare = repl ? undefined : BARE.exec(command)?.[1]
+  const language = repl?.language ?? (bare && (bare === 'node' ? 'node' : 'python'))
+  const source = repl?.lines ? `${repl.lines}\n${command}` : command
   bump()
   /** A new site, asked about under the command; declined if it is stopped meanwhile. @param {string} site @returns {Promise<PermissionOption>} */
   const ask = (site) => new Promise((resolve) => {
@@ -245,16 +281,19 @@ async function run(command) {
     bump()
   })
   try {
-    const done = await typed(command, { signal: running.signal, ask })
+    const done = await typed(bare ? '' : source, { signal: running.signal, ask, repl: language, start: Boolean(bare) })
     Object.assign(entry, done.ok ? { out: done.stdout ?? '', err: done.stderr ?? '', exit: done.exit, refused: done.refused } : { err: String(done.error) })
     if (done.cwd) terminal.cwd = done.cwd
+    // A bare command opens its prompt, which stays until it ends; a statement cut short waits for more.
+    terminal.repl = language && done.ok && !done.ended ? { language, lines: done.more ? source : '' } : undefined
     // A wiped screen keeps what came after, and what still runs; the command too, if that is something.
     if (WIPED.test(entry.out)) {
       entry.out = entry.out.split(WIPED).at(-1)?.replace(ESCAPES, '') ?? ''
       terminal.entries = terminal.entries.filter((each) => (each === entry ? entry.out || entry.err || entry.exit : each.running))
     }
-    if (conversation && done.ok) await tell(conversation, entry)
+    if (conversation && done.ok && !done.more && command !== END) await tell(conversation, entry, repl ? source : command, repl?.language)
   } catch (error) {
+    if (terminal.repl) terminal.repl.lines = ''
     // Stopped, as terminals say it.
     entry.err = running.signal.aborted ? '^C' : error instanceof Error ? error.message : String(error)
   } finally {
@@ -263,11 +302,14 @@ async function run(command) {
   }
 }
 
-/** The brain is told what the user ran, with their next message: a system note (D46). @param {{ path: string }} conversation @param {Entry} entry */
-async function tell(conversation, entry) {
-  const text = [`The user ran a command on your computer, in the terminal: ${entry.command}`, `Exit code: ${entry.exit}`,
+/**
+ * The brain is told what the user ran, with their next message: a system note (D46).
+ * @param {{ path: string }} conversation @param {Entry} entry @param {string} command @param {string} [at] the interpreter at whose prompt it was typed
+ */
+async function tell(conversation, entry, command, at) {
+  const text = [`The user ran ${at ? `at ${at}'s prompt` : 'a command'} on your computer, in the terminal: ${command}`, `Exit code: ${entry.exit}`,
     entry.out && clip(entry.out.replace(ESCAPES, ''), TOLD), entry.err && `stderr:\n${clip(entry.err.replace(ESCAPES, ''), TOLD)}`]
-  const note = noteRecord(text.filter(Boolean).join('\n'), { kind: 'terminal', command: entry.command, exit: entry.exit ?? 0 })
+  const note = noteRecord(text.filter(Boolean).join('\n'), { kind: 'terminal', command, exit: entry.exit ?? 0 })
   await appendRecords(app.fs, conversation.path, [note])
   const now = app.current.peek()
   if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }

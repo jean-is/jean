@@ -26,8 +26,8 @@ const HOME = '/home/user'
 const SERVERS = /^(vite|next|nuxt|astro|serve|http-server|live-server|webpack-dev-server|parcel|nodemon)\b(?! build)|^webpack serve\b/
 const SERVER_MODULES = /^(node:)?(http|https|http2|net)$|^express$/
 // Node's own modules: those node has here (D178), and the others, which it doesn't.
-const OWN = /^(?:node:)?(path|fs|fs\/promises|process)$/
-const NODE = /^node:|^(assert|buffer|child_process|crypto|events|os|readline|stream|string_decoder|tty|url|util|zlib)(\/|$)/
+const OWN = /^(?:node:)?(path|fs|fs\/promises|os|util|events|process)$/
+const NODE = /^node:|^(assert|buffer|child_process|crypto|readline|stream|string_decoder|timers|tty|url|vm|worker_threads|zlib)(\/|$)/
 /** Why it can't, and what does instead. @param {string} name */
 const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts and styles inside it, and it opens beside the conversation by itself.\n`
 
@@ -42,8 +42,9 @@ let code = 0
 const computers = new Map()
 
 /**
+ * python and node: the user's, at their prompt in the terminal (D180).
  * @typedef {{ fs: any, base: any, workspace: any, bash: any, run: number, env: Record<string, string> | null, synced: Map<string, string>,
- *   registries: Record<string, string>, limits: Record<string, number> }} Computer
+ *   registries: Record<string, string>, limits: Record<string, number>, python?: any, node?: any }} Computer
  */
 
 self.onmessage = async ({ data }) => {
@@ -272,7 +273,8 @@ async function secureFetch(computer, url, { method = 'GET', headers, body } = {}
 /** @type {Record<string, (data: any, computer: Computer) => Promise<Record<string, any>>>} */
 const RUNS = {
   // A command, in the conversation's shell, which keeps its directory and variables between commands.
-  shell: async ({ command }, computer) => {
+  shell: async ({ command, repl, start }, computer) => {
+    if (repl) return prompted(repl, String(command ?? ''), Boolean(start), computer)
     const env = computer.env ?? undefined
     const result = await computer.bash.exec(String(command), { ...(env && { env, cwd: env.PWD }) })
     computer.env = result.env
@@ -592,7 +594,7 @@ function resolve(files, base, spec, kind) {
 
 /** Why a module isn't there. @param {string} spec */
 const missing = (spec) => new Error(SERVER_MODULES.test(spec) ? noServer('node').trim()
-  : NODE.test(spec) ? `Cannot find module '${spec}': of Node's own modules, only path, fs and process are here`
+  : NODE.test(spec) ? `Cannot find module '${spec}': of Node's own modules, only path, fs, os, util, events and process are here`
   : `Cannot find module '${spec}': install it with npm install in bash, or name it by its path`)
 
 /** Whether a file is an ES module rather than CommonJS. @param {string} path @param {string} source */
@@ -659,13 +661,17 @@ globalThis.__requireFrom = (base) => (spec) => {
 }
 globalThis.require = __requireFrom(__cwd + '/[eval]')
 `
-// As a command, Node's way: process, and console to stdout and stderr.
+// As a command, Node's way: process, and console to stdout and stderr, as util.format writes it.
 const PROCESS = `
 globalThis.process = { argv: JSON.parse(__argv), env: JSON.parse(__env), cwd: () => __cwd, exit: (code = 0) => { throw { __exit: Number(code) } }, platform: 'browser' }
+for (const level of ['log', 'info', 'warn', 'error']) {
+  const write = console[level]
+  console[level] = (...args) => write(__node.util.format(...args))
+}
 `
 
-// Node's own modules here (D178): path, fs (at once, or with a callback or a promise) and process.
-// Its source runs in QuickJS, with fileSync as `file`, from `cwd`.
+// Node's own modules here (D178): path, fs (at once, or with a callback or a promise), os, util,
+// events and process. Its source runs in QuickJS, with fileSync as `file`, from `cwd`.
 function nodeModules(file, cwd) {
   const path = {
     sep: '/',
@@ -750,7 +756,85 @@ function nodeModules(file, cwd) {
     }
   }
 
-  return { path, fs, 'fs/promises': fs.promises, process: globalThis.process }
+  const os = { EOL: '\n', platform: () => 'browser', arch: () => 'wasm32', hostname: () => 'computer', homedir: () => '/home/user', tmpdir: () => '/tmp', cpus: () => [{ model: 'QuickJS' }] }
+
+  // As Node shows a value, on one line: strings quoted, objects as { key: value }, a class's by its name.
+  const inspect = (value, seen = []) => {
+    if (typeof value === 'string') return `'${JSON.stringify(value).slice(1, -1).replaceAll('\\"', '"').replaceAll("'", "\\'")}'`
+    if (typeof value === 'function') return `[${/^class\b/.test(String(value)) ? 'class' : 'Function'}: ${value.name || '(anonymous)'}]`
+    if (typeof value === 'bigint') return `${value}n`
+    if (!value || typeof value !== 'object') return String(value)
+    if (seen.includes(value)) return '[Circular]'
+    if (value instanceof Error) return value.stack ? `${value}\n${value.stack.trimEnd()}` : String(value)
+    if (value instanceof Date) return value.toISOString()
+    if (value instanceof RegExp) return String(value)
+    const inner = (each) => inspect(each, [...seen, value])
+    const items = Array.isArray(value) ? value.map(inner)
+      : value instanceof Map ? [...value].map(([key, each]) => `${inner(key)} => ${inner(each)}`)
+      : value instanceof Set ? [...value].map(inner)
+      : Object.entries(value).map(([key, each]) => `${/^[A-Za-z_$][\w$]*$/.test(key) ? key : inspect(key)}: ${inner(each)}`)
+    const kind = value instanceof Map || value instanceof Set ? `${value.constructor.name}(${value.size}) `
+      : Array.isArray(value) || value.constructor === Object ? '' : `${value.constructor?.name ?? '[Object: null prototype]'} `
+    const [open, close] = Array.isArray(value) ? ['[', ']'] : ['{', '}']
+    return items.length ? `${kind}${open} ${items.join(', ')} ${close}` : `${kind}${open}${close}`
+  }
+  const shown = (value) => (typeof value === 'string' ? value : inspect(value))
+  const util = {
+    inspect: (value) => inspect(value),
+    format: (first, ...args) => [typeof first === 'string' ? first.replace(/%[sdifjoO%]/g, (match) => (match === '%%' ? '%' : !args.length ? match
+      : match === '%s' ? shown(args.shift()) : match === '%j' ? JSON.stringify(args.shift()) : /%[dif]/.test(match) ? String(Number(args.shift())) : inspect(args.shift()))) : shown(first), ...args.map(shown)].join(' '),
+    promisify: (fn) => (...args) => new Promise((resolve, reject) => fn(...args, (error, value) => (error ? reject(error) : resolve(value)))),
+    inherits: (child, parent) => Object.setPrototypeOf(child.prototype, parent.prototype),
+    deprecate: (fn) => fn,
+    isDeepStrictEqual: (a, b) => JSON.stringify(a) === JSON.stringify(b),
+  }
+
+  // A function, not a class, for the packages that call it on their own `this`.
+  function EventEmitter() {}
+  Object.assign(EventEmitter.prototype, {
+    on(name, listener) {
+      this._events ??= {}
+      ;(this._events[name] ??= []).push(listener)
+      return this
+    },
+    once(name, listener) {
+      const once = (...args) => {
+        this.off(name, once)
+        listener.apply(this, args)
+      }
+      once.listener = listener
+      return this.on(name, once)
+    },
+    off(name, listener) {
+      if (this._events?.[name]) this._events[name] = this._events[name].filter((each) => each !== listener && each.listener !== listener)
+      return this
+    },
+    emit(name, ...args) {
+      const listeners = [...(this._events?.[name] ?? [])]
+      if (name === 'error' && !listeners.length) throw args[0]
+      for (const listener of listeners) listener.apply(this, args)
+      return listeners.length > 0
+    },
+    listeners(name) {
+      return (this._events?.[name] ?? []).map((each) => each.listener ?? each)
+    },
+    listenerCount(name) {
+      return this.listeners(name).length
+    },
+    removeAllListeners(name) {
+      if (name === undefined) this._events = {}
+      else delete this._events?.[name]
+      return this
+    },
+    setMaxListeners() {
+      return this
+    },
+  })
+  EventEmitter.prototype.addListener = EventEmitter.prototype.on
+  EventEmitter.prototype.removeListener = EventEmitter.prototype.off
+  EventEmitter.EventEmitter = EventEmitter
+
+  return { path, fs, 'fs/promises': fs.promises, os, util, events: EventEmitter, process: globalThis.process }
 }
 // After process; with the names each exports, for import.
 const NODE_MODULES = `
@@ -759,49 +843,91 @@ Object.fromEntries(Object.entries(__node).map(([name, module]) => [name, Object.
 `
 
 /**
- * Runs JavaScript in QuickJS: as the `javascript` tool (its result is the value it returns or ends
- * on, as JSON), or as `node` (what it prints, and its exit code).
- * @param {{ run: number, code: string, cwd: string, tool?: boolean, print?: boolean, argv?: string[], name?: string, env?: Record<string, string>, limits?: Record<string, number> }} options
+ * QuickJS, ready for JavaScript on a computer: the console, Jean's tools and the computer's files,
+ * require and import, Node's own modules. Each run `begin`s on it: its id, its output and computing
+ * time from naught, and the computer's scripts and packages read anew, as require and import are
+ * synchronous. The user's node keeps one between lines (D180); a run's own goes with it.
+ * @param {{ run: number, cwd: string, tool?: boolean, argv?: string[], name?: string, env?: Record<string, string>, limits?: Record<string, number> }} options
  * @param {Computer} computer
  */
-async function javascript({ run, code, cwd, tool = false, print = false, argv = [], name = '-', env = {}, limits = {} }, computer) {
+async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = {}, limits = {} }, computer) {
   const quickjs = await engine(run, 'quickjs')
-  const memory = limits.memory ?? 64 * 1024 * 1024
   const cpu = limits.cpu ?? 20_000
   const output = limits.output ?? 6000
   const runtime = quickjs.newRuntime()
-  runtime.setMemoryLimit(memory)
+  runtime.setMemoryLimit(limits.memory ?? 64 * 1024 * 1024)
   runtime.setMaxStackSize(512 * 1024)
-  // Computing time only: waiting for Jean (or for the user's approval) doesn't count.
-  let spent = 0
-  let started = Date.now()
-  runtime.setInterruptHandler(() => spent + Date.now() - started > cpu)
-  const step = (/** @type {() => void} */ work) => {
-    started = Date.now()
-    try {
-      work()
-    } finally {
-      spent += Date.now() - started
-    }
-  }
   const vm = runtime.newContext()
-  /** @type {string[]} */
-  const logs = []
-  /** @type {string[]} */
-  const errors = []
-  let logged = 0
   /** @type {Set<any>} */
   const pending = new Set()
-  let alive = true
+  /** @type {Map<string, string>} */
+  const files = new Map()
+  const js = {
+    vm,
+    run,
+    alive: true,
+    /** @type {string[]} */
+    logs: [],
+    /** @type {string[]} */
+    errors: [],
+    logged: 0,
+    // Computing time only: waiting for Jean (or for the user's approval) doesn't count.
+    spent: 0,
+    started: Date.now(),
+    /** @param {() => void} work */
+    step(work) {
+      js.started = Date.now()
+      try {
+        work()
+      } finally {
+        js.spent += Date.now() - js.started
+      }
+    },
+    /** @param {number} run */
+    async begin(run) {
+      Object.assign(js, { run, logs: [], errors: [], logged: 0, spent: 0 })
+      files.clear()
+      for (const path of computer.fs.getAllPaths()) {
+        if (/\/node_modules\/.*\.(m?js|cjs|json)$|\.(m?js|cjs)$|\/package\.json$/.test(path)) files.set(path, await computer.fs.readFile(path).catch(() => ''))
+      }
+    },
+    /** Waits for a value in the script's world, a promise or not. @param {any} handle */
+    async settle(handle) {
+      const settled = vm.resolvePromise(handle)
+      handle.dispose()
+      js.step(() => runtime.executePendingJobs())
+      const outcome = await settled
+      if (outcome.error) {
+        const error = vm.dump(outcome.error)
+        outcome.error.dispose()
+        if (error && typeof error === 'object' && '__exit' in error) return { exit: error.__exit }
+        throw new Error(typeof error === 'object' && error ? `${error.name ?? 'Error'}: ${error.message}` : String(error))
+      }
+      return outcome.value
+    },
+    dispose() {
+      js.alive = false
+      for (const deferred of pending) deferred.dispose()
+      try {
+        vm.dispose()
+        runtime.dispose()
+      } catch {
+        // A script stopped mid-way can leave QuickJS unusable: ask for a fresh sandbox.
+        engines.quickjs = null
+        self.postMessage({ type: 'reset' })
+      }
+    },
+  }
+  runtime.setInterruptHandler(() => js.spent + Date.now() - js.started > cpu)
   try {
-    /** @param {string} label @param {string[]} into */
+    /** @param {string} label @param {'logs' | 'errors'} into */
     const writer = (label, into) => vm.newFunction(label, (/** @type {any[]} */ ...args) => {
       const line = args.map((handle) => show(vm.dump(handle))).join(' ')
-      logged += line.length
-      if (!tool || logged < output) into.push(line)
+      js.logged += line.length
+      if (!tool || js.logged < output) js[into].push(line)
     })
     const console = vm.newObject()
-    for (const [label, into] of /** @type {const} */ ([['log', logs], ['info', logs], ['error', tool ? logs : errors], ['warn', tool ? logs : errors]])) {
+    for (const [label, into] of /** @type {const} */ ([['log', 'logs'], ['info', 'logs'], ['error', tool ? 'logs' : 'errors'], ['warn', tool ? 'logs' : 'errors']])) {
       const write = writer(label, into)
       vm.setProp(console, label, write)
       write.dispose()
@@ -814,29 +940,23 @@ async function javascript({ run, code, cwd, tool = false, print = false, argv = 
         const deferred = vm.newPromise()
         pending.add(deferred)
         work(...args.map((arg) => vm.getString(arg))).then((value) => [true, value], (error) => [false, said(error)]).then(([ok, value]) => {
-          if (!alive || !pending.delete(deferred)) return
+          if (!js.alive || !pending.delete(deferred)) return
           const answer = ok ? vm.newString(String(value ?? '')) : vm.newError(String(value))
           ok ? deferred.resolve(answer) : deferred.reject(answer)
           answer.dispose()
-          step(() => runtime.executePendingJobs())
+          js.step(() => runtime.executePendingJobs())
         })
         return deferred.handle
       })
       vm.setProp(vm.global, label, handle)
       handle.dispose()
     }
-    promised('__call', (name, args) => ask(run, { type: 'call', name, args: JSON.parse(args) }))
+    promised('__call', (name, args) => ask(js.run, { type: 'call', name, args: JSON.parse(args) }))
     promised('__host', (op, arg) => host(computer, cwd, op, arg))
     for (const [label, value] of Object.entries({ __argv: JSON.stringify(['node', name, ...argv]), __env: JSON.stringify(env), __cwd: cwd })) {
       const handle = vm.newString(value)
       vm.setProp(vm.global, label, handle)
       handle.dispose()
-    }
-    // Modules: the computer's scripts and packages, read now, as require and import are synchronous.
-    /** @type {Map<string, string>} */
-    const files = new Map()
-    for (const path of computer.fs.getAllPaths()) {
-      if (/\/node_modules\/.*\.(m?js|cjs|json)$|\.(m?js|cjs)$|\/package\.json$/.test(path)) files.set(path, await computer.fs.readFile(path).catch(() => ''))
     }
     /** @param {string} base @param {string} spec */
     const required = (base, spec) => {
@@ -865,21 +985,31 @@ async function javascript({ run, code, cwd, tool = false, print = false, argv = 
     const prelude = vm.unwrapResult(vm.evalCode(PRELUDE + REQUIRE + (tool ? '' : PROCESS) + NODE_MODULES, 'prelude.js'))
     named = vm.dump(prelude)
     prelude.dispose()
+  } catch (error) {
+    js.dispose()
+    throw error
+  }
+  return js
+}
 
-    /** Waits for a value in the script's world, a promise or not. @param {any} handle */
-    const settle = async (handle) => {
-      const settled = vm.resolvePromise(handle)
-      handle.dispose()
-      step(() => runtime.executePendingJobs())
-      const outcome = await settled
-      if (outcome.error) {
-        const error = vm.dump(outcome.error)
-        outcome.error.dispose()
-        if (error && typeof error === 'object' && '__exit' in error) return { exit: error.__exit }
-        throw new Error(typeof error === 'object' && error ? `${error.name ?? 'Error'}: ${error.message}` : String(error))
-      }
-      return outcome.value
-    }
+/** Why a script stopped, as people say it. @param {unknown} error */
+const stopped = (error) => (/interrupted/i.test(String(error)) ? 'The script used all its computing time and was stopped.'
+  : /out of memory/i.test(String(error)) ? 'The script ran out of memory and was stopped.'
+  : said(error))
+
+/**
+ * Runs JavaScript in QuickJS: as the `javascript` tool (its result is the value it returns or ends
+ * on, as JSON), or as `node` (what it prints, and its exit code).
+ * @param {Parameters<typeof jsContext>[0] & { code: string, print?: boolean }} options
+ * @param {Computer} computer
+ */
+async function javascript(options, computer) {
+  const { code, cwd, tool = false, print = false, name = '-' } = options
+  const js = await jsContext(options, computer)
+  const { vm } = js
+  try {
+    await js.begin(options.run)
+    const { logs, errors } = js
     // The result is what the script returns or, as in a console, its last expression
     // (small brains write `Math.cos(9)` and expect its value). First as a script with
     // top-level await, which resolves to { value: <last expression> }; a top-level return
@@ -889,23 +1019,23 @@ async function javascript({ run, code, cwd, tool = false, print = false, argv = 
     const exited = (/** @type {any} */ value) => ({ ok: true, exit: value.exit, stdout: lines(logs), stderr: lines(errors) })
     // A program with import or export is a module, whose value is nothing.
     if (!tool && isModule(name, code)) {
-      step(() => { evaluated = vm.evalCode(code, name.startsWith('/') ? name : `${cwd}/[eval].mjs`, { type: 'module' }) })
-      const done = await settle(vm.unwrapResult(evaluated))
+      js.step(() => { evaluated = vm.evalCode(code, name.startsWith('/') ? name : `${cwd}/[eval].mjs`, { type: 'module' }) })
+      const done = await js.settle(vm.unwrapResult(evaluated))
       if (!done.dispose) return exited(done)
       done.dispose()
       return { ok: true, result: null, logs, exit: 0, stdout: lines(logs), stderr: lines(errors) }
     }
-    step(() => { evaluated = vm.evalCode(code, name, ASYNC_SCRIPT) })
+    js.step(() => { evaluated = vm.evalCode(code, name, ASYNC_SCRIPT) })
     const asScript = !evaluated.error
     if (!asScript) {
       evaluated.error.dispose()
-      step(() => { evaluated = vm.evalCode(`(async () => {\n${code}\n})()`, name) })
+      js.step(() => { evaluated = vm.evalCode(`(async () => {\n${code}\n})()`, name) })
     }
-    let value = await settle(vm.unwrapResult(evaluated))
+    let value = await js.settle(vm.unwrapResult(evaluated))
     if (!value.dispose) return exited(value)
     if (asScript) {
       const completion = value
-      value = await settle(vm.getProp(completion, 'value'))
+      value = await js.settle(vm.getProp(completion, 'value'))
       completion.dispose()
       if (!value.dispose) return exited(value)
     }
@@ -914,21 +1044,10 @@ async function javascript({ run, code, cwd, tool = false, print = false, argv = 
     if (print) logs.push(show(result))
     return { ok: true, result: result === undefined ? null : result, logs, exit: 0, stdout: lines(logs), stderr: lines(errors) }
   } catch (error) {
-    const message = /interrupted/i.test(String(error)) ? 'The script used all its computing time and was stopped.'
-      : /out of memory/i.test(String(error)) ? 'The script ran out of memory and was stopped.'
-      : said(error)
-    return { ok: false, error: message, logs, exit: 1, stdout: lines(logs), stderr: lines([...errors, message]) }
+    const message = stopped(error)
+    return { ok: false, error: message, logs: js.logs, exit: 1, stdout: lines(js.logs), stderr: lines([...js.errors, message]) }
   } finally {
-    alive = false
-    for (const deferred of pending) deferred.dispose()
-    try {
-      vm.dispose()
-      runtime.dispose()
-    } catch {
-      // A script stopped mid-way can leave QuickJS unusable: ask for a fresh sandbox.
-      engines.quickjs = null
-      self.postMessage({ type: 'reset' })
-    }
+    js.dispose()
   }
 }
 
@@ -1005,8 +1124,9 @@ const ROOTS = [WORKSPACE, HOME, '/tmp']
 
 /**
  * Runs Python: as the `python` tool (the value of its last line, as JSON), or as `python3` (what it
- * prints, and its exit code). The computer's files are copied in first, and what it changed back.
- * @param {{ run: number, code: string, cwd: string, tool?: boolean, argv?: string[], name?: string, file?: string, stdin?: string, packages?: string[], limits?: Record<string, number> }} options
+ * prints, and its exit code), or a line at its prompt (`repl`, D180), in the names the computer keeps
+ * for it. The computer's files are copied in first, and what it changed back.
+ * @param {{ run: number, code: string, cwd: string, tool?: boolean, repl?: boolean, argv?: string[], name?: string, file?: string, stdin?: string, packages?: string[], limits?: Record<string, number> }} options
  * @param {Computer} computer
  */
 function python(options, computer) {
@@ -1015,8 +1135,73 @@ function python(options, computer) {
   return work
 }
 
+/**
+ * A line typed at the user's python or node in the terminal (D180), in an interpreter the computer
+ * keeps between lines, afresh from each bare `python3` or `node` (`start`), as a new process would
+ * be, and gone at the end of what is typed (Ctrl+D, \x04): what it prints, whether the statement
+ * wants more lines (`more`), and whether it ended (`ended`).
+ * @param {string} language node or python @param {string} source what was typed since its prompt was last > or >>>
+ * @param {boolean} start @param {Computer} computer
+ */
+async function prompted(language, source, start, computer) {
+  if (start || source === '\x04') {
+    if (language === 'node') computer.node?.dispose()
+    else computer.python?.destroy()
+    computer[language === 'node' ? 'node' : 'python'] = null
+  }
+  if (source === '\x04') return { ok: true, exit: 0, ended: true, stdout: '', stderr: '' }
+  if (language === 'node') return nodeLine(source, computer)
+  return python({ code: source, run: computer.run, cwd: computer.env?.PWD ?? WORKSPACE, repl: true, name: '' }, computer)
+}
+
+/** @param {string} source @param {Computer} computer */
+async function nodeLine(source, computer) {
+  const banner = computer.node ? '' : 'Welcome to node (QuickJS).\nType ".help" for more information.\n'
+  const js = (computer.node ??= await jsContext({ run: computer.run, cwd: computer.env?.PWD ?? WORKSPACE, name: '[repl]' }, computer))
+  const { vm } = js
+  const answer = (/** @type {{ stdout?: string, stderr?: string, more?: boolean, ended?: boolean }} */ more) => ({ ok: true, exit: 0, ...more, stdout: banner + lines(js.logs) + (more.stdout ?? ''), stderr: lines(js.errors) + (more.stderr ?? '') })
+  const ended = () => {
+    js.dispose()
+    computer.node = null
+    return answer({ ended: true })
+  }
+  await js.begin(computer.run)
+  const command = source.split('\n').at(-1)?.trim()
+  if (command === '.exit') return ended()
+  if (command === '.help') return answer({ stdout: '.break    Sometimes you get stuck, this gets you out\n.clear    Alias for .break\n.exit     Exit the REPL\n.help     Print this help message\n\nPress Ctrl+C to abort current expression, Ctrl+D to exit the REPL\n' })
+  if (!source.trim() || command === '.break' || command === '.clear') return answer({})
+  /** @type {any} */
+  let evaluated
+  js.step(() => { evaluated = vm.evalCode(source, '[repl]', ASYNC_SCRIPT) })
+  if (evaluated.error) {
+    const error = vm.dump(evaluated.error)
+    evaluated.error.dispose()
+    // A statement cut short at its end, as `function f() {`, wants more lines.
+    const [, row, column] = /:(\d+):(\d+)\s*$/.exec(error?.stack ?? '') ?? []
+    const rows = source.split('\n')
+    if (Number(row) === rows.length && Number(column) > (rows.at(-1)?.length ?? 0)) return answer({ more: true })
+    return answer({ stderr: `Uncaught ${error?.name}: ${error?.message}\n` })
+  }
+  try {
+    const completion = await js.settle(evaluated.value)
+    if (!completion.dispose) return ended()
+    const value = await js.settle(vm.getProp(completion, 'value'))
+    completion.dispose()
+    if (!value.dispose) return ended()
+    // Its value, as Node shows it, and kept as _.
+    vm.setProp(vm.global, '_', value)
+    const inspect = vm.unwrapResult(vm.evalCode('__node.util.inspect'))
+    const shown = vm.unwrapResult(vm.callFunction(inspect, vm.undefined, value))
+    const text = vm.getString(shown)
+    for (const handle of [shown, inspect, value]) handle.dispose()
+    return answer({ stdout: `${text}\n` })
+  } catch (error) {
+    return answer({ stderr: `Uncaught ${stopped(error)}\n` })
+  }
+}
+
 /** @param {Parameters<typeof python>[0]} options @param {Computer} computer */
-async function runPython({ run, code, cwd, tool = false, argv = [], name = '<string>', file, stdin = '', packages = [], limits = {} }, computer) {
+async function runPython({ run, code, cwd, tool = false, repl = false, argv = [], name = '<string>', file, stdin = '', packages = [], limits = {} }, computer) {
   const pyodide = await engine(run, 'pyodide')
   interpreter.computer = computer
   const output = limits.output ?? 6000
@@ -1033,7 +1218,8 @@ async function runPython({ run, code, cwd, tool = false, argv = [], name = '<str
   pyodide.setStderr({ batched: write(tool ? logs : errors) })
   let input = /** @type {string | null} */ (stdin)
   pyodide.setStdin({ stdin: () => { const given = input; input = null; return given || null } })
-  const scope = pyodide.globals.get('dict')()
+  const banner = repl && !computer.python ? `Python ${pyodide.runPython('import sys\nsys.version')} on emscripten\nType "help", "copyright", "credits" or "license" for more information.\n` : ''
+  const scope = repl ? (computer.python ??= pyodide.globals.get('dict')()) : pyodide.globals.get('dict')()
   try {
     await toPython(pyodide, computer)
     pyodide.FS.mkdirTree(cwd)
@@ -1044,6 +1230,11 @@ async function runPython({ run, code, cwd, tool = false, argv = [], name = '<str
     if (file) scope.set('__file__', file)
     pyodide.runPython(`import sys\nsys.argv = ${JSON.stringify([name, ...argv])}`)
     await pyodide.runPythonAsync(PYTHON, { globals: scope })
+    // At the prompt, as Python's own reads a line: True while the statement wants more.
+    if (repl) {
+      const more = pyodide.runPython(`__import__('code').InteractiveInterpreter(globals()).runsource(${JSON.stringify(code)}, '<stdin>')`, { globals: scope })
+      return { ok: true, exit: 0, more, stdout: banner + lines(logs), stderr: lines(errors) }
+    }
     // The result is the value of the last line, as in a console, as JSON (anything else as text).
     const value = await pyodide.runPythonAsync(code, { globals: scope, filename: name })
     scope.set('_result', value)
@@ -1052,11 +1243,15 @@ async function runPython({ run, code, cwd, tool = false, argv = [], name = '<str
     return { ok: true, result: JSON.parse(json), logs, exit: 0, stdout: lines(logs), stderr: lines(errors) }
   } catch (error) {
     const exited = /SystemExit: ?(\d*)/.exec(String(/** @type {any} */ (error)?.message))
-    if (exited && !tool) return { ok: true, exit: Number(exited[1] || 0), stdout: lines(logs), stderr: lines(errors) }
+    if (exited && repl) {
+      scope.destroy()
+      computer.python = null
+    }
+    if (exited && !tool) return { ok: true, exit: Number(exited[1] || 0), ended: repl, stdout: lines(logs), stderr: lines(errors) }
     const message = explain(error)
     return { ok: false, error: message, logs, exit: 1, stdout: lines(logs), stderr: lines([...errors, message]) }
   } finally {
-    scope.destroy()
+    if (!repl) scope.destroy()
     await fromPython(pyodide, computer).catch(() => {})
     interpreter.computer = null
   }

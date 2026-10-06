@@ -282,7 +282,7 @@ function pack(name, version, files) {
   return { tgz, tarball, meta: { name, 'dist-tags': { latest: version }, versions: { '1.0.0': { ...manifest, version: '1.0.0', dist: { tarball, integrity: 'sha512-old' } }, [version]: { ...manifest, dist: { tarball, integrity } } } } }
 }
 
-test('npm install from the registry Settings name, then node requires and imports, with Node’s own path and fs (D178); and tar', async ({ page }) => {
+test('npm install from the registry Settings name, then node requires and imports, with Node’s own modules (D178); and tar', async ({ page }) => {
   test.setTimeout(90_000)
   const packages = [
     // As cowsay does: its cows are files beside its code, read at once through path and fs.
@@ -316,7 +316,7 @@ test('npm install from the registry Settings name, then node requires and import
   answer = await command(page, `$ echo "import { hi } from 'esm-hi'; console.log(hi())" > hi.mjs && node hi.mjs`)
   await expect(answer).toContainText('hi from a module')
 
-  // Node's own: path and fs, at once, with a callback or a promise, by require and import; another is named.
+  // Node's own: path and fs, at once, with a callback or a promise, by require and import; one not here is named.
   await command(page, `$ echo '{ "dependencies": { "moo": "^1.0.0" } }' > package.json`)
   answer = await command(page, `$ npm install && npm install && node -e "const moo = require('moo'); console.log(moo.say('hello'), moo.list().sort().join())"`)
   await expect(answer).toContainText('added 1 package')
@@ -325,7 +325,10 @@ test('npm install from the registry Settings name, then node requires and import
   answer = await command(page, `$ mkdir -p lib ; node -e "const fs = require('node:fs'); fs.writeFileSync('n.txt', 'one'); fs.appendFileSync('n.txt', ' two'); fs.readFile('n.txt', 'utf8', (error, text) => console.log(text, fs.existsSync('nope'), fs.statSync('lib').isDirectory()))" ; node -e "require('fs').readFileSync('nope')" ; node -e "require('crypto')"`)
   await expect(answer).toContainText('one two false true')
   await expect(answer).toContainText('ENOENT')
-  await expect(answer).toContainText("Cannot find module 'crypto': of Node's own modules, only path, fs and process are here")
+  await expect(answer).toContainText("Cannot find module 'crypto': of Node's own modules, only path, fs, os, util, events and process are here")
+  // os, util and events, as packages use them: a constructor that calls EventEmitter on its own `this`.
+  answer = await command(page, `$ node -e "const EventEmitter = require('events'); const util = require('node:util'); const os = require('os'); function Bell() { EventEmitter.call(this) } util.inherits(Bell, EventEmitter); const bell = new Bell(); bell.once('ring', (n) => console.log(util.format('%s rang %d times in %s', 'bell', n, os.homedir()), bell.listenerCount('ring'))); bell.emit('ring', '2'); util.promisify(require('fs').readFile)('n.txt').then(console.log)"`)
+  await expect(answer).toContainText('bell rang 2 times in /home/user 0\none two')
   answer = await command(page, `$ echo "import { join, relative } from 'node:path'; import { readFile } from 'fs/promises'; console.log(join('a', '..', 'b/'), relative('/x/y', '/x/z'), await readFile('n.txt'))" > own.mjs && node own.mjs`)
   await expect(answer).toContainText('b/ ../z one two')
 
@@ -615,4 +618,69 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   await expect(await run('echo gone; clear; echo kept')).toHaveText(/kept/)
   await expect(terminal.locator('.terminal-entry')).toHaveCount(1)
   await expect(terminal.locator('.terminal-entry pre')).toHaveText('kept\n')
+})
+
+// A bare node or python3 opens its prompt, as on a real computer (D180): one interpreter kept between
+// lines, values shown as each shows them, a statement over several lines, until it ends.
+test('the terminal: a bare node or python3 opens its prompt, until .exit, exit() or Ctrl+D', async ({ page }) => {
+  test.setTimeout(150_000)
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Computer')
+  await page.keyboard.press('Escape')
+  await expect(await command(page, '$ true')).toContainText('Exit code: 0')
+  await page.keyboard.press('Control+Backquote')
+  const terminal = page.locator('app-terminal .terminal')
+  const line = terminal.getByRole('textbox', { name: 'Command' })
+  const prompt = terminal.locator('.terminal-line > span')
+  /** @param {string} text */
+  const type = async (text) => {
+    await line.fill(text)
+    await line.press('Enter')
+    const last = terminal.locator('.terminal-entry').last()
+    await expect(last).not.toHaveClass(/is-running/, { timeout: 90_000 })
+    return last
+  }
+
+  await expect(await type('node')).toContainText('Welcome to node')
+  await expect(prompt).toHaveText('>')
+  await expect((await type('const list = [1, "two", { three: 3 }]')).locator('pre')).toHaveText('undefined\n')
+  await expect((await type('list')).locator('pre')).toHaveText("[ 1, 'two', { three: 3 } ]\n")
+  await type('function twice(n) {')
+  await expect(prompt).toHaveText('...')
+  await type('return n * 2 }')
+  await expect(prompt).toHaveText('>')
+  await expect((await type('await Promise.resolve(twice(21))')).locator('pre')).toHaveText('42\n')
+  await expect((await type('console.log({ a: [1] }, "b")')).locator('pre')).toHaveText('{ a: [ 1 ] } b\nundefined\n')
+  await expect((await type('nope')).locator('pre.is-error')).toHaveText("Uncaught ReferenceError: 'nope' is not defined\n")
+  await type('.exit')
+  await expect(prompt).toHaveText('/workspace $')
+
+  await expect(await type('python3')).toContainText('Python 3')
+  await expect(prompt).toHaveText('>>>')
+  await type('total = 0')
+  await type('for n in range(4):')
+  await expect(prompt).toHaveText('...')
+  // Tab indents at a prompt; an empty line ends the block.
+  await line.press('Tab')
+  await line.pressSequentially('total += n')
+  await line.press('Enter')
+  await type('')
+  await expect(prompt).toHaveText('>>>')
+  await expect((await type('total')).locator('pre')).toHaveText('6\n')
+  await expect((await type('1 / 0')).locator('pre.is-error')).toContainText('ZeroDivisionError: division by zero')
+  await line.press('Control+d')
+  await expect(prompt).toHaveText('/workspace $')
+  // Afresh each time, as a new process would be.
+  await type('python')
+  await expect((await type('total')).locator('pre.is-error')).toContainText("NameError: name 'total' is not defined")
+  await type('exit()')
+  await expect(prompt).toHaveText('/workspace $')
+
+  // The brain is told each statement that ran, whole, not the lines it waited on.
+  const told = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
+    .flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'terminal' ? [update.data.command] : [])))
+  expect(told).toContain('function twice(n) {\nreturn n * 2 }')
+  expect(told).toContain('for n in range(4):\n    total += n\n')
+  expect(told).not.toContain('for n in range(4):')
 })
