@@ -134,7 +134,7 @@ test('a capability that arrives mid-conversation is deferred, then declared by f
   const start = { language: 'English', date: '2026-10-02', tools: ['find_tools', 'read'] }
   const records = [promptRecord('dev', 'sys', start)]
   const notes = changeNotes(start, { ...start, tools: ['find_tools', 'read', 'run'] })
-  assert.deepEqual(notes.map((note) => note.update), [{ sessionUpdate: '_system_note', text: 'New tools can be found with find_tools: run.', data: { kind: 'tools', added: ['run'], deferred: true } }])
+  assert.deepEqual(notes.map((note) => note.update), [{ sessionUpdate: '_system_note', text: 'New tools can be found with find_tools: run.', data: { kind: 'tools', added: ['run'] } }])
   const known = frozenPrompt([...records, ...notes])
   assert.deepEqual(known?.state, { ...start, deferred: ['run'] })
   assert.deepEqual(changeNotes(/** @type {any} */ (known).state, { ...start, tools: ['find_tools', 'read', 'run'] }), [], 'a deferred tool is announced once')

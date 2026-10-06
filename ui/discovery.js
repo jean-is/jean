@@ -8,11 +8,10 @@ import { effect } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions } from './caps.js'
 import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
-import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
+import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
 import { words, alike } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
-import { folded } from '../core/settings.js'
 import { host } from './host.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
@@ -50,7 +49,7 @@ const offerTool = {
   kind: 'think',
   title: (args) => `Offer ${args?.capability ?? ''}`,
   run: async (args, ctx) => {
-    const id = folded(String(args?.capability ?? ''))
+    const id = String(args?.capability ?? '')
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
     if (id === 'search' && !loaded.value.has(id) && app.conversations.value.length < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (!loaded.value.has(id)) {
@@ -230,8 +229,8 @@ export async function sense(text, previous) {
   const decide = loaded.value.get('reflexes')?.decide
   if (!decide || !text) return {}
   const { offers } = effective.value.settings
-  const open = (/** @type {string} */ id) => !loaded.value.has(folded(id)) && !isDenied(id) && !offers[folded(id)]
-  const candidates = Object.fromEntries(Object.entries(CAPABILITIES).filter(([id]) => open(id)))
+  const open = (/** @type {string} */ id) => !loaded.value.has(id) && !isDenied(id) && !offers[id]
+  const candidates = Object.fromEntries(Object.entries(CAPABILITIES).filter(([choice]) => open(OFFERED[choice])))
   const [about, after] = await Promise.all([
     quickly(decide(clip(text), {
       demand: REFLEXES.demand,
@@ -242,7 +241,7 @@ export async function sense(text, previous) {
     previous ? quickly(decide(exchange(clip(previous), clip(text)), { unhappy: REFLEXES.unhappy })) : null,
   ])
   const { demand, personal, capability, lasting } = about ?? {}
-  if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(folded(capability.choice))
+  if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(OFFERED[capability.choice])
   // A lasting fact, preference or correction: memory could keep it.
   if (lasting?.type === 'noul' && lasting.noul >= YES) offerOnce('memory')
   return {

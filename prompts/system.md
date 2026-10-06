@@ -93,7 +93,7 @@ Today is 2026-10-03.
 New tools can be found with find_tools: bash, javascript, python.
 ```
 
-`changeNotes` in `core/prompt.js` writes them: the language, the date, new tools (found with `find_tools`, D63; declared instead in a conversation that has no `find_tools`), and a section that changed, given whole: "The <memory> section is now:\n- …", or "The <instructions> section is now empty." (D81). A message can come with a note of its own: "Since last time" starts with "The user is back; they were last here on … Only read: never send, change or delete anything." (D101), and the terminal's commands are noted with their exit code and output (D166). Notes for rules come later, in the same style ("The user changed a rule: deleting files now needs their approval.").
+`changeNotes` in `core/prompt.js` writes them: the language, the date, new tools (found with `find_tools`, D63), and a section that changed, given whole: "The <memory> section is now:\n- …", or "The <instructions> section is now empty." (D81). A message can come with a note of its own: "Since last time" starts with "The user is back; they were last here on … Only read: never send, change or delete anything." (D101), and the terminal's commands are noted with their exit code and output (D166). Notes for rules come later, in the same style ("The user changed a rule: deleting files now needs their approval.").
 
 Shared files appear in the user's message as `<document source="n" name="…">…</document>` blocks, with `[[page N]]` lines; `n` is the number the brain cites the file by (D71). The `read` tool's output starts with "Source [n]:". On brains whose chat template accepts a system message only at the start, notes arrive as `<system-note>…</system-note>` at the top of the next user message.
 

@@ -38,3 +38,5 @@ export const likeliest = (probabilities) => {
 export const exchange = (previous, message) => ({ 'previous answer': previous, 'new message': message })
 
 export const CAPABILITIES = { files: 'reading a document or file the user mentions', compute: 'exact numbers, maths, or analysing a table of data' }
+/** The capability each choice offers: exact numbers are the computer's (D162). */
+export const OFFERED = /** @type {Record<string, string>} */ ({ files: 'files', compute: 'computer' })

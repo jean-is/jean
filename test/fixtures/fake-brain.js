@@ -215,8 +215,8 @@ createServer(async (req, res) => {
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
   const emails = /e-?mails?|inbox|courriels?/i.test(question) || /The user is back/.test(serialized)
-  // Scripts are `javascript` since D162; a conversation declared before has `run`.
-  const script = declared.has('javascript') ? 'javascript' : 'run'
+  // A script, called by name even when the computer came on mid-conversation (D104).
+  const script = 'javascript'
   const fromScript = (/** @type {string} */ name) => ({ name: script, args: { code: `return await tools.${name}({ limit: 3 })` } })
   // The savings starter (D163), in English.
   const savings = /saving 200 a month/i.test(question)
@@ -311,7 +311,7 @@ createServer(async (req, res) => {
   else if (toolName === 'bash') answer = `The computer says:\n\n\`\`\`\n${last.content}\n\`\`\``
   else if (/give me a link/i.test(question) && last.role === 'user') answer = `Here it is: [the bakery](${BAKERY}).`
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: `return await models.image(${JSON.stringify(question)})` } }
-  else if ((toolName === 'run' || toolName === 'javascript') && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
+  else if (toolName === 'javascript' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
   else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }
   else if (/web page/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery.html', content: PAGE } }
   else if (/svg logo/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Logo.svg', content: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f6e7cf"/><circle cx="60" cy="60" r="38" fill="#c8691c"/></svg>' } }

@@ -5,7 +5,6 @@ import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
-import { renamed, folded } from '../core/settings.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, plainText } from './markdown.js'
 import { icons } from './icons.js'
@@ -376,16 +375,13 @@ function toolLabel(tool, files = []) {
   const path = tool.locations?.[0]?.path
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
-  // Older conversations name tools renamed since (D115) by their old names; an offer of `routines`
-  // made then reads as Routines, as it was called at the time (D122); Calculations and the data toolkit are the Computer (D162).
-  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${folded(renamed(String(tool.rawInput?.capability)))}.name`) })
+  if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${String(tool.rawInput?.capability)}.name`) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   if (tool.name === 'ask_user') {
-    // A helper's lone question, from before questions came in lists (D146).
-    const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : [tool.rawInput]
+    const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : []
     return `${t('tool.ask_user', { count: asked.length })} · ${asked[0]?.question ?? ''}`
   }
-  const key = `tool.${renamed(String(tool.name))}`
+  const key = `tool.${String(tool.name)}`
   return t(key) === key ? tool.title : t(key)
 }
 

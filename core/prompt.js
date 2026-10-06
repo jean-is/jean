@@ -106,7 +106,7 @@ export function frozenPrompt(records) {
     const { data } = update
     if (data.kind === 'language') state.language = data.language
     else if (data.kind === 'date') state.date = data.date
-    else if (data.kind === 'tools') add(data.deferred ? 'deferred' : 'tools', data.added)
+    else if (data.kind === 'tools') add('deferred', data.added)
     else if (data.kind === 'section') state.sections[data.name] = data.version
   }
   const { deferred, sections, ...rest } = state
@@ -115,9 +115,8 @@ export function frozenPrompt(records) {
 
 /**
  * Notes for whatever changed between what the brain knows and now, one change per note.
- * A section that changed is given whole. Tools are only ever added. New ones are deferred:
- * found with find_tools (D47); a conversation that never declared find_tools declares them
- * instead.
+ * A section that changed is given whole. Tools are only ever added, deferred: found with
+ * find_tools (D47).
  * @param {PromptState} known @param {PromptState} now @param {Sections} [sections] their text now
  * @returns {Envelope[]}
  */
@@ -134,8 +133,6 @@ export function changeNotes(known, now, sections = {}) {
     notes.push(noteRecord(text, { kind: 'section', name, version }))
   }
   const added = now.tools.filter((name) => !known.tools.includes(name) && !known.deferred?.includes(name))
-  if (added.length && known.tools.includes('find_tools')) {
-    notes.push(noteRecord(`New tools can be found with find_tools: ${added.join(', ')}.`, { kind: 'tools', added, deferred: true }))
-  } else if (added.length) notes.push(noteRecord(`New tools are available: ${added.join(', ')}.`, { kind: 'tools', added }))
+  if (added.length) notes.push(noteRecord(`New tools can be found with find_tools: ${added.join(', ')}.`, { kind: 'tools', added }))
   return notes
 }

@@ -145,16 +145,9 @@ const suggestTool = {
   },
 }
 
-// Conversations started before D115 declared `routine` and `save_routine`, and their tools are
-// frozen (D46): the same tools answer to those names, with the specs those conversations know.
-const aliases = [
-  { ...skillTool, spec: { ...skillTool.spec, name: 'routine', description: 'Read the steps of one of the routines listed in <skills>.' }, hidden: true },
-  { ...saveTool, spec: { ...saveTool.spec, name: 'save_routine' }, hidden: true },
-]
-
 register({
   id: 'skills',
-  tools: [skillTool, saveTool, suggestTool, ...aliases],
+  tools: [skillTool, saveTool, suggestTool],
   lines: [
     { name: 'skill', line: 'read the steps of a skill before following it' },
     { name: 'save_skill', line: 'save how a repeated task is done, when the user asks' },

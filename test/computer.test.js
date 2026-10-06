@@ -3,7 +3,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS } from '../core/fs.js'
-import { loadSettings, folded, renamed } from '../core/settings.js'
 import { computerRights, relayed, covers, judge, registryOf, authorization, reach, COMPUTER_DEFAULTS } from '../caps/computer/net.js'
 import { outgoing, incoming, preview, decline, within } from '../caps/computer/mount.js'
 import { callsIn, filesMade, versionsOf, nextVersion } from '../core/events.js'
@@ -155,18 +154,6 @@ test('a project’s workspace is a folder of its FS, as an FS of its own', async
   assert.equal(await fs.read('projects/p/workspace/d/b.txt'), 'b')
   assert.deepEqual((await workspace.list('')).map((entry) => entry.name).sort(), ['a.txt', 'd'])
   assert.equal((await workspace.stat?.('a.txt'))?.size, 1)
-})
-
-test('Calculations and the data toolkit are the Computer now, and run is javascript (D162)', async () => {
-  assert.equal(folded('compute'), 'computer')
-  assert.equal(folded('python'), 'computer')
-  assert.equal(folded('files'), 'files')
-  assert.equal(renamed('run'), 'javascript')
-  assert.equal(renamed('python'), 'python', 'the python tool keeps its name')
-  const fs = memoryFS({ 'settings.json': JSON.stringify({ format: 2, unlocked: ['files', 'compute', 'python'], offers: { python: '2026-10-01' } }) })
-  const settings = await loadSettings(fs)
-  assert.deepEqual(settings.unlocked, ['files', 'computer'])
-  assert.deepEqual(settings.offers, { computer: '2026-10-01' })
 })
 
 test('a file made again is a version of its own: numbered in the conversation, the earlier ones kept (D164)', () => {

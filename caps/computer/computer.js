@@ -417,8 +417,6 @@ const pythonTool = {
   run: async (args, ctx) => scriptReport(await execute({ engine: 'pyodide', code: String(args?.code ?? ''), limits: { output: SCRIPT.output } }, ctx)),
 }
 
-/** `run`, as conversations from before D162 declared it: the same as `javascript`. @type {Tool} */
-const runTool = { ...javascriptTool, spec: { ...javascriptTool.spec, name: 'run' }, hidden: true }
 
 // ─── The terminal ────────────────────────────────────────────────────────────
 
@@ -572,7 +570,7 @@ function panel() {
 
 register({
   id: 'computer',
-  tools: [bashTool, javascriptTool, pythonTool, runTool, imageTool, saveTool, reachTool],
+  tools: [bashTool, javascriptTool, pythonTool, imageTool, saveTool, reachTool],
   lines: [
     { name: 'bash', line: 'commands on your own computer, a sandbox: /workspace holds the files; python3, pip, node, curl' },
     { name: 'javascript', line: 'JavaScript to work things out exactly; scripts read files and call tools' },

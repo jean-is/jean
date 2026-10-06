@@ -146,7 +146,7 @@ export type AcpUpdate =
 export type SystemNoteData =
   | { kind: 'language', language: string }
   | { kind: 'date', date: string }
-  | { kind: 'tools', added: string[], deferred?: boolean }
+  | { kind: 'tools', added: string[] }
   /** version: the section's fingerprint now, '' when it is empty */
   | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'folder' | 'page', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */

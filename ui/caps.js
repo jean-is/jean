@@ -4,7 +4,6 @@
 // system note (D46, D47). Policy can deny a capability (never offered, never downloaded)
 // or unlock it in advance (docs/enterprise.md).
 import { signal } from '@preact/signals-core'
-import { folded } from '../core/settings.js'
 
 /**
  * @typedef {Object} Capability
@@ -64,7 +63,7 @@ export function configureCapabilities({ deny = [], remember }) {
 }
 
 /** @param {string} id */
-export const isDenied = (id) => gate.deny.includes(id) || gate.deny.some((denied) => folded(denied) === id)
+export const isDenied = (id) => gate.deny.includes(id)
 
 /** Called by a capability module when it loads. @param {Capability} capability */
 export function register(capability) {
@@ -77,7 +76,6 @@ export function register(capability) {
  * @param {string} id
  */
 export function unlock(id) {
-  id = folded(id)
   if (isDenied(id) || !Object.hasOwn(LOADERS, id)) return Promise.resolve(false)
   let pending = loading.get(id)
   if (!pending) {

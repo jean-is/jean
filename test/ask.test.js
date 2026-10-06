@@ -16,8 +16,7 @@ test('questions: read the way brains write them, without what can’t be shown',
     { question: 'Which parts?', options: [{ label: 'Summary', description: '', recommended: false }, { label: 'Budget', description: '', recommended: true }, { label: 'Timeline', description: '', recommended: true }], multiple: true },
     { question: 'When is it due?', options: [], multiple: false },
   ])
-  // A helper's lone question from before, and questions sent as JSON text.
-  assert.deepEqual(questionsOf({ question: 'How many people are coming?' }), [{ question: 'How many people are coming?', options: [], multiple: false }])
+  // Questions sent as JSON text.
   assert.deepEqual(questionsOf({ questions: '[{"question":"Which day?","options":["Monday"]}]' }), [{ question: 'Which day?', options: [{ label: 'Monday', description: '', recommended: false }], multiple: false }])
   assert.deepEqual(questionsOf({ questions: 'not a list' }), [])
   assert.deepEqual(questionsOf(null), [])

@@ -6,7 +6,7 @@ import { ulid } from './ulid.js'
 
 /**
  * @typedef {Object} Settings
- * @property {2} format                      2 since D122: capability ids are today's
+ * @property {1} format
  * @property {string | null} locale
  * @property {BrainConfig[]} brains
  * @property {string | null} activeBrain
@@ -64,35 +64,11 @@ export function serviceURL(name, settings, policy = {}) {
 export const isLocal = (brain) => brain.api === 'device' || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
 
 /** @type {Settings} */
-export const DEFAULT_SETTINGS = { format: 2, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
+export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
 
-/**
- * Names that changed (D115): the Skills capability and its tools were Routines. Earlier
- * conversations still name the tools they were given so.
- */
-const RENAMED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ routine: 'skill', save_routine: 'save_skill', run: 'javascript' }))
-
-/** A tool's name as it is now. @param {string} name */
-export const renamed = (name) => (Object.hasOwn(RENAMED, name) ? RENAMED[name] : name)
-
-/** Capabilities folded into another (D162): Calculations and the data toolkit are the Computer's. */
-const FOLDED = /** @type {Readonly<Record<string, string>>} */ (Object.freeze({ compute: 'computer', python: 'computer' }))
-
-/** A capability's id as it is now. @param {string} id */
-export const folded = (id) => (Object.hasOwn(FOLDED, id) ? FOLDED[id] : id)
-
-/**
- * Settings, upgraded when read: in a file of format 1, `routines` is the capability now called
- * skills (D115); since format 2 it is the tasks Jean does on a schedule (D122).
- * @param {FS} fs @returns {Promise<Settings>}
- */
+/** @param {FS} fs @returns {Promise<Settings>} */
 export async function loadSettings(fs) {
-  const saved = await readJSON(fs, 'settings.json', null)
-  const read = { ...DEFAULT_SETTINGS, ...saved ?? {}, format: /** @type {2} */ (2) }
-  const settings = { ...read, unlocked: [...new Set(read.unlocked.map(folded))], offers: Object.fromEntries(Object.entries(read.offers).map(([id, when]) => [folded(id), when])) }
-  if ((saved?.format ?? 2) > 1) return settings
-  const now = (/** @type {string} */ id) => (id === 'routines' ? 'skills' : id)
-  return { ...settings, unlocked: settings.unlocked.map(now), offers: Object.fromEntries(Object.entries(settings.offers).map(([id, when]) => [now(id), when])) }
+  return { ...DEFAULT_SETTINGS, ...await readJSON(fs, 'settings.json', {}) }
 }
 
 /** @param {FS} fs @param {Settings} settings */

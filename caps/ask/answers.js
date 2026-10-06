@@ -27,13 +27,11 @@ function list(value) {
 
 /**
  * The questions asked, without what can't be shown: empty ones, answers without words, and more
- * than the card holds. A lone `{ question }`, as helpers asked before D146, is one question.
- * A single choice recommends one answer at most.
+ * than the card holds. A single choice recommends one answer at most.
  * @param {any} args @returns {Question[]}
  */
 export function questionsOf(args) {
-  const asked = args?.questions === undefined && args?.question !== undefined ? [args] : list(args?.questions)
-  return asked.flatMap((item) => {
+  return list(args?.questions).flatMap((item) => {
     const question = text(typeof item === 'string' ? item : /** @type {any} */ (item)?.question)
     if (!question) return []
     const multiple = /** @type {any} */ (item)?.multiple === true

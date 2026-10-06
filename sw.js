@@ -1,6 +1,6 @@
 // Service worker: offline shell and per-capability caches (classic script).
 // VERSION is rewritten by scripts/manifest.js whenever any shipped file changes.
-const VERSION = '7a2c2d25410d'
+const VERSION = '278a75002c6e'
 const SHELL = `app-shell-${VERSION}`
 // Capability caches carry the version too: an update re-caches every unlocked capability,
 // copying unchanged files over, so old code is never served next to a new shell.
@@ -62,9 +62,8 @@ async function unlockedCapabilities () {
   const ids = new Set()
   for (const name of await caches.keys()) {
     if (!name.startsWith(CAPABILITY)) continue
-    const rest = name.slice(CAPABILITY.length)
-    // 0.1 named them app-cap-<id>; since 0.2 they are app-cap-<version>-<id>.
-    ids.add(/^[0-9a-f]{12}-/.test(rest) ? rest.slice(13) : rest)
+    // app-cap-<version>-<id>
+    ids.add(name.slice(CAPABILITY.length + 13))
   }
   return [...ids]
 }

@@ -152,9 +152,9 @@ class FileMade extends Element {
     const kind = KINDS[ext]
     const label = t('made.save', { name })
     const uri = this.getAttribute('uri') ?? ''
-    // Its version, once the conversation has more than one of the file (D164); a card from before versions were kept finds its own.
+    // Its version, once the conversation has more than one of the file (D164).
     const versions = versionsOf(filesMade(callsIn(app.current.value?.records ?? [], app.live.value?.turn.steps)), name)
-    const version = Number(this.getAttribute('version')) || versions.findLast((each) => each.uri === uri)?.version || 0
+    const version = Number(this.getAttribute('version')) || 0
     const open = async () => (kind === 'page' && loaded.peek().has('browser')
       ? (await import('../browser/browser.js')).showMade({ uri, name })
       : (await import('../../ui/preview.js')).preview({ uri, name, mimeType: type, ...(version && { version }) }))

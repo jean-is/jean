@@ -118,10 +118,10 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 | ask, you (always) | `ask_user`; `save_name` while the user has never set a name (D146, D150) |
 | Things Jean made (always) | `write`, `edit` (D119) |
 | Files | `read`, *`file`* |
-| Computer | `bash`, `javascript`, `python`; *`run`* (the old `javascript`), *`image`*, *`save_workspace`*, *`reach_site`* (D162) |
+| Computer | `bash`, `javascript`, `python`; *`image`*, *`save_workspace`*, *`reach_site`* (D162) |
 | Intuition | *`decide`* |
 | Memory | `remember`, `recall` |
-| Skills | `skill`, `save_skill`, `suggest_skill` (deferred); *`routine`*, *`save_routine`* (old names, D115) |
+| Skills | `skill`, `save_skill`, `suggest_skill` (deferred) |
 | Routines | `schedule` (D122) |
 | Web search | `web_search`, the provider's own where it has one (D91) |
 | Browser | `browse` (D140) |
@@ -182,7 +182,7 @@ Follow-ups are one yes/no question each rather than one choice, because several 
 
 ```
 /                                OPFS root
-  settings.json                  format 2; capability ids as they are now
+  settings.json                  defaults ← user ← policy (D30)
   instructions.md                global, written by the user
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
   skills/<name>/SKILL.md         global skills (metadata: format, author, created; source and digest when from elsewhere)
@@ -209,7 +209,7 @@ There is always a default project, hidden until Projects is discovered, so one c
 - **Writes.** One storage worker writes with `createSyncAccessHandle` (Safari 16.4+, Chrome 108+, Firefox 111+; D12). Conversations are append-only, so a crash costs at most a half-written last line, ignored on read; files rewritten whole go to a temporary file first, then are swapped in.
 - **Several tabs.** Web Locks serialise writes per file; BroadcastChannel tells other tabs to refresh.
 - **Folders of the user's** (D141, D149, D152). A project or a conversation opened on a folder of the computer gets an `FS` of its own (`folderFS` in `ui/opfs.js`): a storage worker started on the folder's handle, writing in place with `createWritable`, without the temporary copy and without telling other tabs. `stat` gives a file's size and `lastModified`, which a change checks against what the conversation read. Handles live in IndexedDB's `app-folders` under the project's or conversation's ULID, with the folders "Always allow" was given for; the folder's name is in `project.md` and `<folder>`, so a missing handle is asked for again by name. Tools work in the folder of the conversation that asked (D147). Outside Chromium, a folder is a read-only copy for the visit (`caps/folders/copy.js`), and what Jean changed is saved as one zip. Nothing of Jean's is written there.
-- **Format changes.** Every file carries a `format` version and is upgraded lazily when read.
+- **Format changes.** Every file carries a `format` version, to be upgraded lazily when read once Jean has users; until the public launch nothing is kept for earlier shapes (D173).
 - **Preventing loss:** `navigator.storage.persist()`; installing the app (Safari can wipe a site not visited for 7 days); backup offered early; Sync (D157) as a continuous copy in Chrome and Edge; usage shown in plain words; model weights evicted first, never user data.
 - **Secrets.** API keys and tokens are encrypted with a non-extractable `CryptoKey` kept in IndexedDB, and never exported, synced or shared. Folder handles can't be encrypted or kept in a file; IndexedDB keeps them, never in a backup.
 - **Layout rules that keep sync possible:** one file per entity, named by ULID and never renamed; attachments named by content hash; no central index of record; `author` and timestamps on every entity; only `core/fs.js` touches storage.
@@ -317,7 +317,7 @@ Four mechanisms from pi 1.0, fitted to Jean, share one idea: what the brain has 
 **Deferred tools** (D47, D63, D64, D104). A conversation declares the tools unlocked when it started; anything later is deferred, including every connection's tools.
 
 - `find_tools` and `offer` come from the `discovery` capability, always loaded, so every conversation declares them. `find_tools(query)` ranks undeclared tools by name and description with BM25 and returns up to five signatures (`name({ file: string, pages?: string }): what it does`).
-- A capability turned on mid-conversation adds the note "New tools can be found with find_tools: …" (`data: { kind: 'tools', added, deferred: true }`); a conversation that never declared `find_tools` gets the tools declared instead.
+- A capability turned on mid-conversation adds the note "New tools can be found with find_tools: …" (`data: { kind: 'tools', added }`).
 - With `javascript` declared, deferred tools are called from a script and the declared list never changes. Otherwise `find_tools`, or an accepted offer, declares them from the next request on, recorded as `_meta.declare` on the call, at the cost of one cache miss. A tool called by its exact name, as `<connections>` gives it, runs under the rules without being declared; a missing argument gets the signature back.
 - A provider's native deferral (Anthropic's `defer_loading`) may replace this later, with the same behaviour. The next conversation declares a newly unlocked capability's tools directly; connections' stay deferred.
 

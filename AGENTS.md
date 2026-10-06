@@ -39,6 +39,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
   - Attachments are named by content hash.
 - **Indexes:** there is no central index of record. Indexes live in `.cache/` and can always be rebuilt.
 - **Metadata:** every entity carries `author` and timestamps, and every file carries a `format` version.
+- **No backward compatibility before the public launch** (D173): no aliases, migrations or readers of older shapes. Change the code and its tests instead.
 - **`BRAND` is for display only.** Never use it in storage keys, file paths, cache names, CSS classes or element names. The element prefix is `app-`.
 
 ## Licensing

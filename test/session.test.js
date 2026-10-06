@@ -38,24 +38,24 @@ test('toChatMessages: notes where they fall, documents with their recorded pages
 })
 
 test('the prompt is frozen at the start; notes carry every later change', () => {
-  const start = promptState({ language: 'English', tools: [], now: new Date(2026, 9, 2, 12) })
-  assert.deepEqual(start, { language: 'English', date: '2026-10-02', tools: [] })
+  const start = promptState({ language: 'English', tools: ['find_tools'], now: new Date(2026, 9, 2, 12) })
+  assert.deepEqual(start, { language: 'English', date: '2026-10-02', tools: ['find_tools'] })
   const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: 'English' })
   const records = [promptRecord('dev', system, start)]
   assert.deepEqual(frozenPrompt(records), { system, state: start })
   assert.equal(frozenPrompt([]), null)
 
-  const later = promptState({ language: 'French', tools: ['read'], now: new Date(2026, 9, 3, 9) })
+  const later = promptState({ language: 'French', tools: ['find_tools', 'read'], now: new Date(2026, 9, 3, 9) })
   const notes = changeNotes(start, later)
   assert.deepEqual(notes.map((n) => n.update), [
     { sessionUpdate: '_system_note', text: 'The interface language is now French.', data: { kind: 'language', language: 'French' } },
     { sessionUpdate: '_system_note', text: 'Today is 2026-10-03.', data: { kind: 'date', date: '2026-10-03' } },
-    { sessionUpdate: '_system_note', text: 'New tools are available: read.', data: { kind: 'tools', added: ['read'] } },
+    { sessionUpdate: '_system_note', text: 'New tools can be found with find_tools: read.', data: { kind: 'tools', added: ['read'] } },
   ])
   const known = frozenPrompt([...records, ...notes])
   assert.equal(known?.system, system, 'the system prompt itself never changes')
-  assert.deepEqual(known?.state, later)
-  assert.deepEqual(changeNotes(later, later), [])
+  assert.deepEqual(known?.state, { ...later, tools: ['find_tools'], deferred: ['read'] })
+  assert.deepEqual(changeNotes(/** @type {any} */ (known).state, later), [])
   assert.deepEqual(changeNotes(later, { ...later, tools: [] }), [], 'tools are never taken back')
 })
 

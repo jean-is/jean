@@ -6,7 +6,7 @@ import { gzipSync } from 'node:zlib'
 import { memoryFS, writeJSON } from '../core/fs.js'
 import { writeZip } from '../core/zip.js'
 import { saveSkill, parseSkill } from '../core/skills.js'
-import { loadSettings, renamed } from '../core/settings.js'
+import { loadSettings } from '../core/settings.js'
 import { SCHEMA, indexURL, parseIndex, sha256, unpack, untar, readIndexes, bestFit, SkillError } from '../caps/skills/sources.js'
 import { schedule, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../caps/routines/schedule.js'
 
@@ -141,18 +141,14 @@ test('a skill from elsewhere keeps where it came from and its digest', async () 
   assert.equal(parseSkill(STEPS, 'skills/weekly-sales-report/SKILL.md')?.source, undefined)
 })
 
-test('settings name routines as they are now; before format 2, routines were skills (D115, D122)', async () => {
+test('settings are read as written, over the defaults', async () => {
   const fs = memoryFS()
-  await writeJSON(fs, 'settings.json', { format: 1, unlocked: ['files', 'routines', 'memory'], offers: { routines: '2026-10-02T10:00:00.000Z', backup: '2026-10-01T09:00:00.000Z' } })
-  const before = await loadSettings(fs)
-  assert.deepEqual(before.unlocked, ['files', 'skills', 'memory'])
-  assert.deepEqual(before.offers, { skills: '2026-10-02T10:00:00.000Z', backup: '2026-10-01T09:00:00.000Z' })
-  assert.equal(before.format, 2)
-  await writeJSON(fs, 'settings.json', { ...before, unlocked: [...before.unlocked, 'routines'] })
-  assert.deepEqual((await loadSettings(fs)).unlocked, ['files', 'skills', 'memory', 'routines'])
+  await writeJSON(fs, 'settings.json', { format: 1, unlocked: ['files', 'routines', 'memory'], offers: { backup: '2026-10-01T09:00:00.000Z' } })
+  const read = await loadSettings(fs)
+  assert.deepEqual(read.unlocked, ['files', 'routines', 'memory'])
+  assert.deepEqual(read.offers, { backup: '2026-10-01T09:00:00.000Z' })
+  assert.equal(read.auto, true, 'what the file leaves out is the default')
   assert.deepEqual((await loadSettings(memoryFS())).unlocked, [], 'no settings yet: the defaults')
-  // Older conversations name the tools they were given.
-  assert.deepEqual(['routine', 'save_routine', 'read', 'routines'].map(renamed), ['skill', 'save_skill', 'read', 'routines'])
 })
 
 test('a schedule is every day, working day, week or month, at a local time', () => {
