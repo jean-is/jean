@@ -12,6 +12,7 @@
   "computer.memory": "میموری",
   "computer.workspace.short": "ورک اسپیس",
   "computer.of": "{total} میں سے {used}",
+  "computer.of.least": "کم از کم {total} میں سے {used}",
   "computer.engines": "اس پر کیا چلتا ہے",
   "computer.engine.shell": "کمانڈز",
   "computer.engine.shell.text": "bash اور اس کے ٹولز: grep، sed، awk، jq، curl…",

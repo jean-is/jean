@@ -12,6 +12,7 @@
   "computer.memory": "మెమరీ",
   "computer.workspace.short": "పనిస్థలం",
   "computer.of": "{total}లో {used}",
+  "computer.of.least": "కనీసం {total}లో {used}",
   "computer.engines": "దీనిపై నడిచేవి",
   "computer.engine.shell": "ఆదేశాలు",
   "computer.engine.shell.text": "bash, దాని సాధనాలు: grep, sed, awk, jq, curl…",

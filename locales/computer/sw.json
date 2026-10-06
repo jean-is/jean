@@ -12,6 +12,7 @@
   "computer.memory": "Kumbukumbu",
   "computer.workspace.short": "Nafasi ya kazi",
   "computer.of": "{used} kati ya {total}",
+  "computer.of.least": "{used} kati ya angalau {total}",
   "computer.engines": "Kinachoendeshwa humo",
   "computer.engine.shell": "Amri",
   "computer.engine.shell.text": "bash na zana zake: grep, sed, awk, jq, curl…",

@@ -12,6 +12,7 @@
   "computer.memory": "حافظه",
   "computer.workspace.short": "فضای کار",
   "computer.of": "{used} از {total}",
+  "computer.of.least": "{used} از دست‌کم {total}",
   "computer.engines": "آنچه اجرا می‌کند",
   "computer.engine.shell": "فرمان‌ها",
   "computer.engine.shell.text": "bash و ابزارهایش: grep، sed، awk، jq، curl…",

@@ -121,14 +121,15 @@ label.item, .list summary { cursor: pointer; }
 .service > span:not(.monogram) { flex: 1; display: grid; min-inline-size: 0; }
 .service > .icon { flex: none; color: var(--ink-faint); } .service:hover:not(:disabled) > .icon { color: var(--flame); }
 /* Settings › Computer opens on the computer itself (D176): its light, then what it uses, a tile each,
-   with a meter, the track a lighter step of its fill, where there is a limit; then what it runs. */
-.gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
-.gauges li { display: grid; align-content: start; gap: 0.15rem; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: 1rem; font-size: 0.85rem; }
-.gauges strong { font-size: 1.1rem; font-weight: 600; }
-.gauges meter { appearance: none; inline-size: 100%; block-size: 0.3rem; margin-block-start: 0.4rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
-.gauges meter::-webkit-meter-bar { block-size: 100%; border: 0; border-radius: inherit; background: none; }
-.gauges meter::-webkit-meter-optimum-value { border-radius: inherit; background: var(--flame); }
-.gauges meter::-moz-meter-bar { border-radius: inherit; background: var(--flame); }
+   a ring as far as its share of a limit goes, how far in its middle, clockwise as one reads; then what it runs. */
+.gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(6.25rem, 1fr)); gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
+.gauges li { display: grid; justify-items: center; align-content: start; gap: 0.15rem; padding: 0.9rem 0.5rem 0.8rem; border: 1px solid var(--line); border-radius: 1rem; font-size: 0.85rem; text-align: center; text-wrap: balance; }
+.gauges strong { color: var(--ink); font-size: 1rem; font-weight: 600; }
+.ring { position: relative; display: grid; place-items: center; inline-size: 4.25rem; aspect-ratio: 1; margin-block-end: 0.45rem; font-size: 0.8rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ring svg { position: absolute; inset: 0; rotate: -90deg; fill: none; stroke: oklch(from var(--flame) l c h / 0.16); stroke-width: 3; }
+:dir(rtl) .ring svg { rotate: 90deg; scale: -1 1; }
+.ring circle + circle { stroke: var(--flame); stroke-linecap: round; transition: stroke-dasharray 0.5s var(--ease); }
+@media (forced-colors: active) { .ring svg { stroke: GrayText; } .ring circle + circle { stroke: CanvasText; } }
 .engines .item-text { flex: 1 1 13rem; } .engines small:has(.ember) { display: inline-flex; align-items: center; gap: 0.4rem; }
 /* A service connected: a dot while it answers; opened, what it can do as chips. */
 .connections .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); } .connections .item-body .row { justify-content: space-between; }

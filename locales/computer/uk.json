@@ -14,6 +14,7 @@
   "computer.memory": "Пам’ять",
   "computer.workspace.short": "Робоча область",
   "computer.of": "{used} з {total}",
+  "computer.of.least": "{used} з щонайменше {total}",
   "computer.engines": "Що на ньому працює",
   "computer.engine.shell": "Команди",
   "computer.engine.shell.text": "bash і його інструменти: grep, sed, awk, jq, curl…",

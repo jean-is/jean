@@ -13,6 +13,7 @@
   "computer.memory": "Memoria",
   "computer.workspace.short": "Spazio di lavoro",
   "computer.of": "{used} di {total}",
+  "computer.of.least": "{used} di almeno {total}",
   "computer.engines": "Cosa esegue",
   "computer.engine.shell": "Comandi",
   "computer.engine.shell.text": "bash e i suoi strumenti: grep, sed, awk, jq, curl…",

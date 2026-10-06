@@ -12,6 +12,7 @@
   "computer.memory": "ማህደረ ትውስታ",
   "computer.workspace.short": "የሥራ ቦታ",
   "computer.of": "ከ{total} {used}",
+  "computer.of.least": "ቢያንስ ከ{total} {used}",
   "computer.engines": "የሚያሄደው",
   "computer.engine.shell": "ትዕዛዞች",
   "computer.engine.shell.text": "bash እና መሣሪያዎቹ፦ grep፣ sed፣ awk፣ jq፣ curl…",

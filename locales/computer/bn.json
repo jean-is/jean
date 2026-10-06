@@ -12,6 +12,7 @@
   "computer.memory": "মেমরি",
   "computer.workspace.short": "কর্মক্ষেত্র",
   "computer.of": "{total}-এর মধ্যে {used}",
+  "computer.of.least": "অন্তত {total}-এর মধ্যে {used}",
   "computer.engines": "এতে যা চলে",
   "computer.engine.shell": "কমান্ড",
   "computer.engine.shell.text": "bash আর তার টুল: grep, sed, awk, jq, curl…",

@@ -11,6 +11,7 @@
   "computer.memory": "記憶體",
   "computer.workspace.short": "工作區",
   "computer.of": "{used} / {total}",
+  "computer.of.least": "{used} / 至少 {total}",
   "computer.engines": "可以執行的",
   "computer.engine.shell": "指令",
   "computer.engine.shell.text": "bash 及其工具：grep、sed、awk、jq、curl……",

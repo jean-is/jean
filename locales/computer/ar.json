@@ -16,6 +16,7 @@
   "computer.memory": "الذاكرة",
   "computer.workspace.short": "مساحة العمل",
   "computer.of": "{used} من {total}",
+  "computer.of.least": "{used} من {total} على الأقل",
   "computer.engines": "ما يشغّله",
   "computer.engine.shell": "الأوامر",
   "computer.engine.shell.text": "bash وأدواته: grep وsed وawk وjq وcurl…",

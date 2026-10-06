@@ -12,6 +12,7 @@
   "computer.memory": "मेमोरी",
   "computer.workspace.short": "कार्यक्षेत्र",
   "computer.of": "{total} में से {used}",
+  "computer.of.least": "कम से कम {total} में से {used}",
   "computer.engines": "इस पर क्या चलता है",
   "computer.engine.shell": "कमांड",
   "computer.engine.shell.text": "bash और उसके टूल: grep, sed, awk, jq, curl…",

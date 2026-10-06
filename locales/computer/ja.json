@@ -11,6 +11,7 @@
   "computer.memory": "メモリー",
   "computer.workspace.short": "作業スペース",
   "computer.of": "{total} 中 {used}",
+  "computer.of.least": "{total} 以上中 {used}",
   "computer.engines": "動かせるもの",
   "computer.engine.shell": "コマンド",
   "computer.engine.shell.text": "bash とそのツール：grep、sed、awk、jq、curl など",

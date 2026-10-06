@@ -19,14 +19,14 @@ describe('desktop', () => {
     assert.ok(DESKTOP.port > 0, 'a random port would lose the data at every launch')
   })
 
-  it('gives the page only the host’s calls Sync makes, none that runs a program, and writes nothing beside the app', async () => {
+  it('gives the page only the host’s calls Sync and Settings › Computer make, none that runs a program, and writes nothing beside the app', async () => {
     const config = neutralinoConfig({ name: 'Jean' }, { version: '0.8.0' })
     assert.equal(config.enableNativeAPI, true)
     assert.equal(config.tokenSecurity, 'one-time')
     assert.deepEqual(config.nativeAllowList, NATIVE)
     const called = [...(await readFile(new URL('../ui/host.js', import.meta.url), 'utf8')).matchAll(/call\('([\w.]+)'/g)].map(([, method]) => method)
     assert.deepEqual([...new Set(called)].sort(), [...NATIVE].sort())
-    assert.ok(NATIVE.every((method) => /^(os\.(showFolderDialog|open)|filesystem\.\w+)$/.test(method)))
+    assert.ok(NATIVE.every((method) => /^(os\.(showFolderDialog|open)|filesystem\.\w+|computer\.getMemoryInfo)$/.test(method)))
     assert.equal(config.enableExtensions, false)
     assert.equal(config.logging.enabled, false)
     assert.equal(config.dataLocation, 'system')

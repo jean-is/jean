@@ -18,7 +18,8 @@ import { serviceURL } from '../../core/settings.js'
 import { join, walk } from '../../core/fs.js'
 import { addFile, sha256Hex } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion } from '../../core/events.js'
-import { t, tParts, useStrings, formatBytes } from '../../core/i18n.js'
+import { t, tParts, useStrings, locale } from '../../core/i18n.js'
+import { memoryTotal } from '../../ui/host.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
 import { exactText } from '../folders/work.js'
@@ -530,32 +531,56 @@ function terminal(line) {
 }
 
 /**
+ * This device's memory, in bytes (D176): exactly, as the system tells the desktop app; otherwise at
+ * least what Chromium's `deviceMemory` says (GiB rounded down to a power of two, at most 32); or 0, unknown.
+ */
+const deviceMemory = signal({ bytes: (/** @type {any} */ (navigator).deviceMemory ?? 0) * 2 ** 30, exact: false })
+memoryTotal().then((bytes) => { if (bytes) deviceMemory.value = { bytes, exact: true } }, () => {})
+
+/** "0.02 MB", "1.5 GB": never less than a megabyte; memory by 1,024, as systems count it. @param {number} bytes @param {number} [k] */
+function amount(bytes, k = 1000) {
+  const mb = bytes / k / k
+  const [unit, size] = mb >= k ? ['gigabyte', mb / k] : ['megabyte', mb]
+  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: size && size < 1 ? 2 : 1 }).format(size)
+}
+
+/**
+ * A share of a limit as a ring, how far it goes in its middle, then what it is (D176); with no
+ * limit known, an empty ring. @param {string} label @param {unknown} value @param {number | null} part
+ */
+const gauge = (label, value, part) => html`<li>
+  <span class="ring" aria-hidden="true"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5"/><circle cx="18" cy="18" r="15.5" pathLength="100"
+    stroke-dasharray=${`${Math.min(1, part ?? 0) * 100} 100`} opacity=${part ? 1 : 0}/></svg>${part === null ? nothing : new Intl.NumberFormat(locale.value, { style: 'percent', maximumFractionDigits: part && part < 0.01 ? 1 : 0 }).format(part)}</span>
+  <span class="muted">${label}</span><span>${value}</span>
+</li>`
+
+/**
  * The computer itself, at the top of Settings › Computer (D176), after DEVS's Device and HappyCapy's
- * Sandbox: its light, with Restart; the core it computes on, of this device's, the memory it holds and
- * the workspace, of what it takes in; then what it runs, each engine asleep or ready, with Try.
+ * Sandbox: its light, with Restart; the core it computes on, of this device's, the memory it holds, of
+ * this device's, and the workspace, of what it takes in; then what it runs, each engine asleep or ready, with Try.
  */
 function itself() {
   const { state, engines, computing, memory } = box.status.value
   const cores = navigator.hardwareConcurrency || 1
   const limit = rightsNow().rights.workspaceMB * 1e6
-  /** @param {string} label @param {string} value @param {number} [part] of its limit */
-  const gauge = (label, value, part) => html`<li><span class="muted">${label}</span><strong>${value}</strong>${part === undefined ? nothing : html`<meter value=${part} aria-label=${label}></meter>`}</li>`
+  const { bytes: total, exact } = deviceMemory.value
+  const strong = (/** @type {string} */ text) => html`<strong>${text}</strong>`
   return html`<section class="computer">
       <div class="setting">
         <div><h3>${light(state)}<span role="status">${t(`computer.state.${state}`)}</span></h3><p class="muted">${t('computer.text')}</p></div>
         <button class="button subtle" ?disabled=${state === 'asleep'} @click=${restart}>${icons.retry} ${t('computer.restart')}</button>
       </div>
       <ul class="gauges">
-        ${gauge(t('computer.processor'), t('computer.cores', { count: cores, used: computing ? 1 : 0 }), computing ? 1 / cores : 0)}
-        ${gauge(t('computer.memory'), formatBytes(memory))}
-        ${gauge(t('computer.workspace.short'), t('computer.of', { used: formatBytes(used.value ?? 0), total: formatBytes(limit) }), (used.value ?? 0) / limit)}
+        ${gauge(t('computer.processor'), tParts('computer.cores', { count: cores, used: strong(new Intl.NumberFormat(locale.value).format(computing ? 1 : 0)) }), computing ? 1 / cores : 0)}
+        ${gauge(t('computer.memory'), total ? tParts(exact ? 'computer.of' : 'computer.of.least', { used: strong(amount(memory, 1024)), total: amount(total, 1024) }) : strong(amount(memory, 1024)), total ? memory / total : null)}
+        ${gauge(t('computer.workspace.short'), tParts('computer.of', { used: strong(amount(used.value ?? 0)), total: amount(limit) }), (used.value ?? 0) / limit)}
       </ul>
     </section>
     <section>
       <h3>${t('computer.engines')}</h3>
       <ul class="list engines">${ENGINES.map(([id, mark, line]) => html`<li>
         <span class="item-icon" aria-hidden="true">${mark}</span>
-        <span class="item-text"><span id=${`engine-${id}`}>${t(`computer.engine.${id}`)}</span><small>${t(`computer.engine.${id}.text`, { size: formatBytes(14e6) })}</small></span>
+        <span class="item-text"><span id=${`engine-${id}`}>${t(`computer.engine.${id}`)}</span><small>${t(`computer.engine.${id}.text`, { size: amount(14e6) })}</small></span>
         <small class="muted">${light(engines[id] ?? 'asleep')} ${t(`computer.state.${engines[id] ?? 'asleep'}`)}</small>
         <button class="button subtle" aria-describedby=${`engine-${id}`} @click=${() => terminal(line)}>${t('computer.try')}</button>
       </li>`)}</ul>

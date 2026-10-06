@@ -11,6 +11,7 @@
   "computer.memory": "Ìrántí",
   "computer.workspace.short": "Ibi iṣẹ́",
   "computer.of": "{used} nínú {total}",
+  "computer.of.least": "{used} nínú ó kéré tán {total}",
   "computer.engines": "Ohun tí ó ń ṣiṣẹ́ lórí rẹ̀",
   "computer.engine.shell": "Àwọn àṣẹ",
   "computer.engine.shell.text": "bash àti àwọn irinṣẹ́ rẹ̀: grep, sed, awk, jq, curl…",

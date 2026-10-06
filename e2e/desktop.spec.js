@@ -1,5 +1,6 @@
 // The desktop app (D155, D169): Sync's folder is picked with the system's dialog, its host works in it
-// by its path, and the folder's name opens it in the system's file manager. The host is played by the
+// by its path, and the folder's name opens it in the system's file manager; Settings › Computer has the
+// computer's memory from it (D176). The host is played by the
 // test, on a folder of its own: Neutralino's globals, whose key comes once, and its calls over a
 // WebSocket. In WebKit too, the Mac app's engine, where a page alone can't open a folder.
 import { test, expect } from '@playwright/test'
@@ -25,6 +26,7 @@ async function desktop(page, folder) {
   })
   /** @type {Record<string, (data: any) => Promise<unknown>>} */
   const methods = {
+    'computer.getMemoryInfo': async () => ({ physical: { total: 96 * 2 ** 30, available: 2 ** 30 } }),
     'os.showFolderDialog': async () => folder,
     'os.open': async ({ url }) => void seen.opened.push(url),
     'filesystem.getStats': async ({ path }) => {
@@ -81,4 +83,15 @@ test('the desktop app syncs with a folder picked with the system’s dialog, and
   } finally {
     await rm(root, { recursive: true, force: true })
   }
+})
+
+test('in the desktop app, Settings › Computer has the computer’s whole memory, as the system tells it (D176)', async ({ page }) => {
+  const host = await desktop(page, tmpdir())
+  await start(page)
+  await turnOn(page, 'Computer')
+  const settings = page.locator('app-settings dialog[open]')
+  await settings.locator('.settings-nav button', { hasText: 'Computer' }).click()
+  // Exactly, where the browser alone says at least a power of two, or nothing.
+  await expect(settings.locator('.gauges li').nth(1)).toHaveText(/Memory\s*0 MB of 96 GB/)
+  expect(host.asked).toContain('computer.getMemoryInfo')
 })

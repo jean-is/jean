@@ -12,6 +12,7 @@
   "computer.memory": "Arbeitsspeicher",
   "computer.workspace.short": "Arbeitsbereich",
   "computer.of": "{used} von {total}",
+  "computer.of.least": "{used} von mindestens {total}",
   "computer.engines": "Was darauf läuft",
   "computer.engine.shell": "Befehle",
   "computer.engine.shell.text": "bash und seine Werkzeuge: grep, sed, awk, jq, curl …",

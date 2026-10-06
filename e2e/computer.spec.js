@@ -400,7 +400,8 @@ test('Settings › Computer: the computer itself (D176), the internet, its sites
   // Asleep until something runs; Try types a line in the terminal, and Enter wakes Python up.
   const panel = settings.locator('.settings-panel')
   await expect(panel.locator('.computer h3')).toHaveText('Asleep')
-  await expect(panel.locator('.gauges li')).toHaveText([/^Processor0 of \d+ cores?$/, /^Memory/, /^Workspace0 kB of 256 MB$/])
+  // Rings, how far in their middle; never less than a megabyte.
+  await expect(panel.locator('.gauges li')).toHaveText([/0%\s*Processor\s*0 of \d+ cores?\s*$/, /Memory\s*0 MB/, /0%\s*Workspace\s*0 MB of 256 MB\s*$/])
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Asleep/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Asleep/])
   await panel.locator('.engines li', { hasText: 'Python' }).getByRole('button', { name: 'Try' }).click()
   await expect(settings).toBeHidden()
@@ -413,7 +414,8 @@ test('Settings › Computer: the computer itself (D176), the internet, its sites
   await openSettings(page, 'Computer')
   await expect(panel.locator('.computer h3')).toHaveText('Ready')
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Ready/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Ready/])
-  await expect(panel.locator('.gauges li').nth(1)).toHaveText(/^Memory[\d.]+ MB$/)
+  // Of this device's memory, at least as much as Chromium says; WebKit doesn't say.
+  await expect(panel.locator('.gauges li').nth(1)).toHaveText(/Memory\s*[\d.]+ MB( of at least \d+ GB)?\s*$/)
   await expect(settings.locator('.settings-panel')).toContainText('Ask first')
   await settings.locator('.segmented label', { hasText: 'Any site' }).click()
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.computer?.internet)).toBe('any')

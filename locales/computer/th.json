@@ -11,6 +11,7 @@
   "computer.memory": "หน่วยความจำ",
   "computer.workspace.short": "พื้นที่ทำงาน",
   "computer.of": "{used} จาก {total}",
+  "computer.of.least": "{used} จากอย่างน้อย {total}",
   "computer.engines": "สิ่งที่รันได้",
   "computer.engine.shell": "คำสั่ง",
   "computer.engine.shell.text": "bash และเครื่องมือของมัน: grep, sed, awk, jq, curl…",

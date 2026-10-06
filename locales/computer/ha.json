@@ -12,6 +12,7 @@
   "computer.memory": "Ƙwaƙwalwa",
   "computer.workspace.short": "Wurin aiki",
   "computer.of": "{used} cikin {total}",
+  "computer.of.least": "{used} cikin aƙalla {total}",
   "computer.engines": "Abin da take gudanarwa",
   "computer.engine.shell": "Umarni",
   "computer.engine.shell.text": "bash da kayan aikinsa: grep, sed, awk, jq, curl…",

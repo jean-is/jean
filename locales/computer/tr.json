@@ -12,6 +12,7 @@
   "computer.memory": "Bellek",
   "computer.workspace.short": "Çalışma alanı",
   "computer.of": "{used} / {total}",
+  "computer.of.least": "{used} / en az {total}",
   "computer.engines": "Üzerinde çalışanlar",
   "computer.engine.shell": "Komutlar",
   "computer.engine.shell.text": "bash ve araçları: grep, sed, awk, jq, curl…",

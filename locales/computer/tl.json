@@ -12,6 +12,7 @@
   "computer.memory": "Memory",
   "computer.workspace.short": "Workspace",
   "computer.of": "{used} sa {total}",
+  "computer.of.least": "{used} sa hindi bababa sa {total}",
   "computer.engines": "Ang pinapatakbo nito",
   "computer.engine.shell": "Mga command",
   "computer.engine.shell.text": "bash at ang mga tool nito: grep, sed, awk, jq, curl…",

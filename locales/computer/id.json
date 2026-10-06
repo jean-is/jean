@@ -11,6 +11,7 @@
   "computer.memory": "Memori",
   "computer.workspace.short": "Ruang kerja",
   "computer.of": "{used} dari {total}",
+  "computer.of.least": "{used} dari setidaknya {total}",
   "computer.engines": "Yang dijalankannya",
   "computer.engine.shell": "Perintah",
   "computer.engine.shell.text": "bash dan alat-alatnya: grep, sed, awk, jq, curl…",

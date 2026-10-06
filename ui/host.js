@@ -1,6 +1,6 @@
 // The desktop app's host (D155, D169): Neutralino, which serves Jean on 127.0.0.1, answers the calls
 // its configuration allows: the system's dialog for a folder, a folder opened in the system's file
-// manager, and the files there. Its key comes once per launch, to the first page that asks: Jean asks
+// manager, the files there, and how much memory the computer has. Its key comes once per launch, to the first page that asks: Jean asks
 // as it opens, before any other page could, and keeps it in the tab's session for a reload. A page
 // served from anywhere else has no host and asks nothing.
 import { normalizeDir, normalizePath } from '../core/fs.js'
@@ -43,6 +43,8 @@ export async function call(method, data) {
 
 /** The system's dialog for a folder: its path; closed without one, an AbortError, as from the page's picker. @param {string} title @returns {Promise<string>} */
 export const pickFolder = (title) => call('os.showFolderDialog', { title }).then((path) => path || Promise.reject(new DOMException('No folder', 'AbortError')))
+/** This computer's memory, in bytes, as the system tells it (Settings › Computer, D176). @returns {Promise<number>} */
+export const memoryTotal = () => call('computer.getMemoryInfo', {}).then((info) => info?.physical?.total ?? 0)
 /** A folder opened in the system's file manager: Windows takes its path, the others a file: address, which holds nothing their shell would read. @param {string} path */
 export const showFolder = async (path) => call('os.open', { url: (await host)?.os === 'Windows' ? path.replaceAll('/', '\\') : `file://${path.split('/').map(encodeURIComponent).join('/')}` })
 

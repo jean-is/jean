@@ -11,6 +11,7 @@
   "computer.memory": "메모리",
   "computer.workspace.short": "작업 공간",
   "computer.of": "{total} 중 {used}",
+  "computer.of.least": "{total} 이상 중 {used}",
   "computer.engines": "실행할 수 있는 것",
   "computer.engine.shell": "명령",
   "computer.engine.shell.text": "bash와 그 도구: grep, sed, awk, jq, curl…",

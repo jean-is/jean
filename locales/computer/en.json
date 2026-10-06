@@ -12,6 +12,7 @@
   "computer.memory": "Memory",
   "computer.workspace.short": "Workspace",
   "computer.of": "{used} of {total}",
+  "computer.of.least": "{used} of at least {total}",
   "computer.engines": "What it runs",
   "computer.engine.shell": "Commands",
   "computer.engine.shell.text": "bash and its tools: grep, sed, awk, jq, curl…",

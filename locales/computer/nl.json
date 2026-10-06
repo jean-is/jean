@@ -12,6 +12,7 @@
   "computer.memory": "Geheugen",
   "computer.workspace.short": "Werkruimte",
   "computer.of": "{used} van {total}",
+  "computer.of.least": "{used} van minstens {total}",
   "computer.engines": "Wat erop draait",
   "computer.engine.shell": "Opdrachten",
   "computer.engine.shell.text": "bash en zijn hulpmiddelen: grep, sed, awk, jq, curl…",

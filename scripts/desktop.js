@@ -41,7 +41,7 @@ export const TOP = ['index.html', 'sandbox.html', 'preview.html', 'manifesto.htm
 export const DIRS = ['core', 'ui', 'caps', 'locales', 'vendor', 'fonts', 'icons', 'ee']
 
 /** The host's calls the page may make (ui/host.js), and no other. */
-export const NATIVE = ['os.showFolderDialog', 'os.open', 'filesystem.getStats', 'filesystem.readDirectory', 'filesystem.readBinaryFile', 'filesystem.writeBinaryFile', 'filesystem.createDirectory', 'filesystem.remove']
+export const NATIVE = ['computer.getMemoryInfo', 'os.showFolderDialog', 'os.open', 'filesystem.getStats', 'filesystem.readDirectory', 'filesystem.readBinaryFile', 'filesystem.writeBinaryFile', 'filesystem.createDirectory', 'filesystem.remove']
 
 /**
  * Neutralino's configuration: a window on Jean's files. Of the native API, only what Sync needs

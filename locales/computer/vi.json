@@ -11,6 +11,7 @@
   "computer.memory": "Bộ nhớ",
   "computer.workspace.short": "Không gian làm việc",
   "computer.of": "{used} / {total}",
+  "computer.of.least": "{used} / ít nhất {total}",
   "computer.engines": "Những gì nó chạy",
   "computer.engine.shell": "Lệnh",
   "computer.engine.shell.text": "bash và các công cụ của nó: grep, sed, awk, jq, curl…",

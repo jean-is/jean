@@ -13,6 +13,7 @@
   "computer.memory": "זיכרון",
   "computer.workspace.short": "סביבת עבודה",
   "computer.of": "{used} מתוך {total}",
+  "computer.of.least": "{used} מתוך {total} לפחות",
   "computer.engines": "מה רץ עליו",
   "computer.engine.shell": "פקודות",
   "computer.engine.shell.text": "bash והכלים שלו: grep, sed, awk, jq, curl…",

@@ -12,6 +12,7 @@
   "computer.memory": "நினைவகம்",
   "computer.workspace.short": "பணியிடம்",
   "computer.of": "{total}-இல் {used}",
+  "computer.of.least": "குறைந்தது {total}-இல் {used}",
   "computer.engines": "இதில் இயங்குபவை",
   "computer.engine.shell": "கட்டளைகள்",
   "computer.engine.shell.text": "bash-உம் அதன் கருவிகளும்: grep, sed, awk, jq, curl…",
