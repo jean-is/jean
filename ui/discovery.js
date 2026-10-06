@@ -113,7 +113,7 @@ export async function accept(id) {
 
 /** What a capability leads to as soon as it is on: a project or an assistant to name, a service to connect, a conversation to have. @param {string} id */
 export async function begin(id) {
-  if (id === 'projects') (await import('../caps/projects/projects.js')).newProject()
+  if (id === 'projects') (await import('../caps/projects/projects.js')).editProject()
   if (id === 'names' && !app.project.value.data.default) (await import('../caps/projects/projects.js')).editProject(app.project.value)
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()

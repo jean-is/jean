@@ -76,6 +76,22 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await page.reload()
   await expect(tasks).toBeVisible()
 
+  // New task brings the keyboard to the box; a task's ⋮ menu holds Delete (D181).
+  await tasks.locator('.place', { hasText: 'New task' }).click()
+  await expect(page.locator('#prompt')).toBeFocused()
+  await page.evaluate(async () => {
+    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' })])
+    await refreshConversations()
+  })
+  const row = tasks.locator('.history-list li', { hasText: 'Plan the week' })
+  await row.hover()
+  await row.getByRole('button', { name: 'More options' }).click()
+  page.once('dialog', (dialog) => dialog.accept())
+  await row.getByRole('button', { name: 'Delete' }).click()
+  await expect(row).toHaveCount(0)
+
   // On a narrow window it slides over the conversation, and its button puts it away.
   await page.setViewportSize({ width: 600, height: 800 })
   await expect(tasks).toHaveCount(0)
@@ -84,6 +100,11 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await expect(drawer.locator('.place', { hasText: 'New task' })).toBeVisible()
   await drawer.getByRole('button', { name: 'Close sidebar' }).click()
   await expect(drawer).toHaveCount(0)
+  // Its New task closes it, the keyboard in the box.
+  await toggle.click()
+  await drawer.locator('.place', { hasText: 'New task' }).click()
+  await expect(drawer).toHaveCount(0)
+  await expect(page.locator('#prompt')).toBeFocused()
 })
 
 test('every theme is in the gallery with its thumbnail, and dresses the page when picked', async ({ page }) => {

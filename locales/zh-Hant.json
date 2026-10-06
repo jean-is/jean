@@ -18,6 +18,7 @@
   "action.new": "新任務",
   "action.close": "關閉",
   "action.delete": "刪除",
+  "action.more": "更多選項",
   "action.remove": "移除",
   "action.copy": "複製",
   "action.retry": "重試",

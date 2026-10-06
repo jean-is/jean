@@ -48,7 +48,8 @@ app-folder-change { display: block; }
 .folder-change.is-undone .folder-change-path { color: var(--ink-soft); text-decoration: line-through; }
 .folder-change .diff { margin: 0 0.75rem 0.75rem; }
 
-.folder-field { display: grid; gap: 0.4rem; }
-.folder-field-label { font-weight: 550; }
+/* In a project's dialog: what it is and the folder on one side, the buttons on the other (D182). */
+.folder-field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.2rem 1rem; }
+.folder-field-label { color: var(--ink); font-size: 0.95rem; } .folder-field .row { grid-area: 1 / 2 / 3; }
 .folder-field p { display: flex; align-items: center; gap: 0.4rem; margin: 0; }
 .folder-field .icon { flex: none; inline-size: 1rem; block-size: 1rem; }

@@ -139,7 +139,7 @@
 :root[data-look='human'] .menu .icon { inline-size: 1rem; block-size: 1rem; }
 
 /* The conversations: rows in the sidebar or the drawer, the open one filled with blue. */
-:root[data-look='human'] :is(.place, .sidebar-settings) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; background: transparent; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
+:root[data-look='human'] :is(.place, .sidebar-settings) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
 :root[data-look='human'] :is(.place:hover, .history-list li:hover) { background: var(--hover); }
 :root[data-look='human'] :is(.place, .sidebar-settings) .icon { color: var(--flame); }
 :root[data-look='human'] .sidebar-heading { padding-inline: 0.625rem; font-size: 0.75rem; font-weight: 600; }
@@ -189,7 +189,7 @@
 @keyframes human-panel { from { opacity: 0; scale: 0.94; } }
 :root[data-look='human'] .pane-head { padding-inline: 1rem 0.625rem; }
 :root[data-look='human'] .pane-head h2 { font-size: 0.9375rem; text-align: center; }
-:root[data-look='human'] .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; }
+:root[data-look='human'] .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; } :root[data-look='human'] .drawer .sidebar-settings { background: var(--room-2); }
 
 @media (width > 40rem) {
   /* Three lights at the top corner of a sheet or a panel: the first closes it, the others are

@@ -92,7 +92,7 @@
 :root[data-look='classic'] dialog { border: 0; background: var(--room); box-shadow: var(--raised); }
 :root[data-look='classic'] .dialog-head { margin: calc(-1.25rem + 3px) calc(-1.5rem + 3px) 0.75rem; padding: 0.15rem 0.2rem 0.15rem 0.5rem; background: var(--title); color: oklch(1 0 0); }
 :root[data-look='classic'] .drawer .dialog-head { margin: calc(-1rem + 3px) calc(-1rem + 3px) 0.75rem; }
-:root[data-look='classic'] .settings .dialog-head { margin: 3px; padding: 0.15rem 0.2rem 0.15rem 0.5rem; }
+:root[data-look='classic'] :is(.settings, .project-dialog) .dialog-head { margin: 3px; padding: 0.15rem 0.2rem 0.15rem 0.5rem; }
 :root[data-look='classic'] .dialog-head h2 { font-size: 1rem; font-weight: 700; color: oklch(1 0 0); }
 :root[data-look='classic'] .dialog-head .icon-button { inline-size: 1.5rem; block-size: 1.35rem; background: var(--room); color: var(--ink); box-shadow: var(--raised); }
 :root[data-look='classic'] :is(.toast, .notice, .menu, .approval, .offer) { border: 0; background: var(--room); box-shadow: var(--raised); backdrop-filter: none; }

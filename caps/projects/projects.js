@@ -25,13 +25,8 @@ const COLOURS = Object.entries({ amber: 54, coral: 28, rose: 355, violet: 305, b
 /** The project whose dialog is open: null while a new one is being made. */
 const editing = signal(/** @type {Project | null} */ (null))
 
-export function newProject() {
-  editing.value = null
-  app.dialog.value = 'project'
-}
-
-/** @param {Project} project */
-export function editProject(project) {
+/** Opens a project's dialog, or a new one's. @param {Project | null} [project] */
+export function editProject(project = null) {
   editing.value = project
   app.dialog.value = 'project'
 }
@@ -64,7 +59,7 @@ class Projects extends Element {
           <span dir="auto">${nameOf(project)}</span>
         </button>`)}
         <hr>
-        <button type="button" popovertarget="project-menu" popovertargetaction="hide" @click=${newProject}>${icons.folder}${t('projects.new')}</button>
+        <button type="button" popovertarget="project-menu" popovertargetaction="hide" @click=${() => editProject()}>${icons.folder}${t('projects.new')}</button>
         ${here.data.default !== true ? html`<button type="button" popovertarget="project-menu" popovertargetaction="hide"
           @click=${() => editProject(here)}>${icons.gear}${t('projects.edit')}</button>` : nothing}
       </div>`
@@ -117,38 +112,46 @@ async function remove(project) {
   close()
 }
 
+// A project's dialog (D182): who it is first, its light as it will look beside its name and the
+// colours to pick from; then its assistant, then where it is kept. Its actions stay at its foot.
 class ProjectDialog extends Element {
   render() {
     const project = editing.value
     const current = typeof project?.data.colour === 'string' ? project.data.colour : COLOURS[0][1]
     return html`<dialog class="sheet project-dialog" @close=${closed('project')} @click=${backdrop}>
       ${head(t(project ? 'projects.edit' : 'projects.new'))}
-      <p class="lede">${t('cap.projects.text', { name: BRAND.name })}</p>
-      <form class="stack" @submit=${save}>
-        <label>${t('projects.name')}
-          <input name="name" required maxlength="80" dir="auto" autocomplete="off" autofocus .value=${live(project ? String(project.data.name) : '')}>
-        </label>
-        ${loaded.value.has('names') ? html`<label>${t('projects.assistant')}
-          <input name="assistant" maxlength="40" dir="auto" autocomplete="off" placeholder=${BRAND.name} .value=${live(String(project?.data.assistantName ?? ''))}>
-        </label>
-        <label>${t('projects.persona')}
-          <textarea name="persona" rows="2" maxlength="300" dir="auto" placeholder=${t('projects.personaHint')} .value=${live(project?.body.trim() ?? '')}></textarea>
-        </label>` : nothing}
-        <fieldset class="swatches">
-          <legend>${t('projects.colour')}</legend>
-          ${COLOURS.map(([name, value]) => html`<label class="swatch" title=${t(`colour.${name}`)}>
-            <input type="radio" name="colour" value=${value} .checked=${live(value === current)}>
-            <app-persona data-tint=${value}></app-persona><span class="visually-hidden">${t(`colour.${name}`)}</span>
-          </label>`)}
-        </fieldset>
-        <label class="toggle">
-          <input type="checkbox" name="local" .checked=${live(project?.data.cloud === false)}>
-          <span>${t('projects.local')}</span>
-        </label>
-        ${project && loaded.value.has('folders') ? html`<app-folder-field .project=${project}></app-folder-field>` : nothing}
-        <button class="button primary">${t(project ? 'projects.save' : 'projects.create')}</button>
+      <form id="project-form" class="project-form" @submit=${save}>
+        ${project ? nothing : html`<p class="lede">${t('cap.projects.text', { name: BRAND.name })}</p>`}
+        <div class="project-identity">
+          <app-persona class="project-light" data-tint=${current}></app-persona>
+          <label>${t('projects.name')}
+            <input name="name" required maxlength="80" dir="auto" autocomplete="off" autofocus .value=${live(project ? String(project.data.name) : '')}>
+          </label>
+          <fieldset class="swatches" @change=${(/** @type {Event} */ e) => /** @type {HTMLElement} */ (this.querySelector('.project-light')).style.setProperty('--tint', /** @type {HTMLInputElement} */ (e.target).value)}>
+            <legend class="visually-hidden">${t('projects.colour')}</legend>
+            ${COLOURS.map(([name, value]) => html`<label class="swatch" title=${t(`colour.${name}`)}>
+              <input type="radio" name="colour" value=${value} .checked=${live(value === current)}>
+              <app-persona data-tint=${value}></app-persona><span class="visually-hidden">${t(`colour.${name}`)}</span>
+            </label>`)}
+          </fieldset>
+        </div>
+        ${loaded.value.has('names') ? html`<section class="stack">
+          <label>${t('projects.assistant')}
+            <input name="assistant" maxlength="40" dir="auto" autocomplete="off" placeholder=${BRAND.name} .value=${live(String(project?.data.assistantName ?? ''))}>
+          </label>
+          <label>${t('projects.persona')}
+            <textarea name="persona" rows="2" maxlength="300" dir="auto" placeholder=${t('projects.personaHint')} .value=${live(project?.body.trim() ?? '')}></textarea>
+          </label>
+        </section>` : nothing}
+        <section class="stack">
+          <label class="setting">${t('projects.local')}<input type="checkbox" class="switch" role="switch" name="local" .checked=${live(project?.data.cloud === false)}></label>
+          ${project && loaded.value.has('folders') ? html`<app-folder-field .project=${project}></app-folder-field>` : nothing}
+        </section>
       </form>
-      ${project ? html`<button class="button subtle danger" @click=${() => remove(project)}>${icons.trash} ${t('projects.delete')}</button>` : nothing}
+      <footer class="dialog-foot">
+        ${project ? html`<button class="button subtle danger" @click=${() => remove(project)}>${icons.trash} ${t('projects.delete')}</button>` : nothing}
+        <button class="button primary" form="project-form">${t(project ? 'projects.save' : 'projects.create')}</button>
+      </footer>
     </dialog>`
   }
 

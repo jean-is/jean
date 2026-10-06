@@ -44,7 +44,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 /* Settings: a menu beside the section open, like the Claude apps' (D113); a strip above it on a phone. */
 .settings { display: grid; grid-template: auto 1fr / 13rem 1fr; inline-size: min(100% - 2rem, 52rem); block-size: min(88dvh, 44rem); padding: 0; }
 /* Laid out whether open or closing, so they fade out as they were. */
-:is(.settings, .drawer):not([open]) { display: none; }
+:is(.settings, .drawer, .project-dialog):not([open]) { display: none; }
 .settings-close { grid-area: 1 / 1; justify-self: start; margin-block: 1rem 0.5rem; margin-inline-start: 1.1rem; }
 .settings-nav { grid-area: 2 / 1; display: flex; flex-direction: column; gap: 0.15rem; padding: 0.25rem 0.75rem 1rem; overflow: auto; scrollbar-width: none; }
 .settings-nav button { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.85rem; border: 0; border-radius: 0.8rem; background: none; color: var(--ink-soft); text-align: start; }
@@ -225,11 +225,19 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sheet .empty { padding: 1rem; border: 1px dashed var(--line-strong); border-radius: 1rem; text-align: center; }
 .noticed li { flex-wrap: nowrap; gap: 0.25rem; padding-block: 0.25rem; padding-inline: 0.4rem 0.25rem; }
 .noticed li:hover, .noticed li:focus-within { background: var(--line); }
-.swatches { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
-.swatches legend { margin-block-end: 0.4rem; font-size: 0.9rem; color: var(--ink-soft); }
-.swatch { position: relative; display: grid; place-items: center; inline-size: 2.9rem; block-size: 2.9rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
+/* A project's dialog (D182): what scrolls between its head and its actions, Delete apart from Save. */
+.project-dialog { display: flex; flex-direction: column; padding: 0; }
+.project-dialog > .dialog-head { margin: 0; padding: 1.25rem 1.5rem 0.75rem; }
+.project-form { display: grid; gap: 1.25rem; min-block-size: 0; padding: 0.25rem 1.5rem 1.25rem; overflow-y: auto; }
+.project-form .lede { margin: 0; } .sheet .project-form section { padding-block: 1.25rem 0; }
+.project-form .setting { grid-template-columns: 1fr auto; color: var(--ink); font-size: 0.95rem; cursor: pointer; }
+.project-identity { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.75rem 1.25rem; }
+.project-light { --persona-size: 4.5rem; grid-row: span 2; margin-inline: 0.25rem; transition: --tint 0.4s var(--ease); }
+.dialog-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.5rem; padding: 0.875rem 1.5rem 1.25rem; border-block-start: 1px solid var(--line); } .dialog-foot .danger { margin-inline-end: auto; }
+.swatches { display: flex; flex-wrap: wrap; gap: 0.2rem; margin: 0; padding: 0; border: 0; }
+.swatch { position: relative; display: grid; place-items: center; inline-size: 2.3rem; block-size: 2.3rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
 .swatch input { position: absolute; opacity: 0; }
-.swatch app-persona { --persona-size: 2rem; }
+.swatch app-persona { --persona-size: 1.55rem; }
 .swatch:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: var(--line); }
 .swatch:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
 .button.danger { color: var(--danger); }

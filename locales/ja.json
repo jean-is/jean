@@ -18,6 +18,7 @@
   "action.new": "新しいタスク",
   "action.close": "閉じる",
   "action.delete": "削除",
+  "action.more": "その他のオプション",
   "action.remove": "外す",
   "action.copy": "コピー",
   "action.retry": "もう一度試す",

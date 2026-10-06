@@ -18,6 +18,7 @@
   "action.new": "새 작업",
   "action.close": "닫기",
   "action.delete": "삭제",
+  "action.more": "추가 옵션",
   "action.remove": "제거",
   "action.copy": "복사",
   "action.retry": "다시 시도",

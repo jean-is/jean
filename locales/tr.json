@@ -18,6 +18,7 @@
   "action.new": "Yeni görev",
   "action.close": "Kapat",
   "action.delete": "Sil",
+  "action.more": "Diğer seçenekler",
   "action.remove": "Kaldır",
   "action.copy": "Kopyala",
   "action.retry": "Tekrar dene",

@@ -18,6 +18,7 @@
   "action.new": "Nouvelle tâche",
   "action.close": "Fermer",
   "action.delete": "Supprimer",
+  "action.more": "Plus d’options",
   "action.remove": "Retirer",
   "action.copy": "Copier",
   "action.retry": "Réessayer",

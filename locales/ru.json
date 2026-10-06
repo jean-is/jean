@@ -18,6 +18,7 @@
   "action.new": "Новая задача",
   "action.close": "Закрыть",
   "action.delete": "Удалить",
+  "action.more": "Другие действия",
   "action.remove": "Убрать",
   "action.copy": "Копировать",
   "action.retry": "Повторить",

@@ -13,26 +13,31 @@ import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { SHORTCUTS } from './shell.js'
+import { focusComposer } from './composer.js'
 
 /**
  * The tasks, newest first, the open one marked (D165). One started before the open one (ULIDs
  * sort by time), or any from a new page, is back (D125). One being answered has a light before its name, ringed while a decision waits there (D147).
+ * What can be done with one is in a menu at its end (D181).
+ * @param {'drawer' | 'list'} where
  */
-function conversationList() {
+function conversationList(where) {
   const list = app.conversations.value
   const currentId = app.current.value?.id
   const running = app.running.value
   const waiting = [...app.decisions.value.map((decision) => decision.conversation), app.offering.value?.conversation]
   return list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => {
     const asks = running.includes(item.path) ? waiting.filter((path) => path === item.path).length : -1
+    const menu = `task-${where}-${item.id}`
     return html`<li class=${item.id === currentId ? 'is-current' : ''}>
       <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'}
         @click=${() => turnPage(() => openConversation(item.path), !currentId || item.id < currentId)}>
         ${asks < 0 ? nothing : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
         <span class="history-title" dir="auto">${item.title || t('conversation.untitled')}</span>
       </button>
-      <button class="icon-button subtle" aria-label=${t('action.delete')} title=${t('action.delete')}
-        @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}</button>
+      <button class="icon-button subtle" popovertarget=${menu} aria-label=${t('action.more')} title=${t('action.more')}>${icons.more}</button>
+      <div id=${menu} class="menu task-menu" popover><button type="button" popovertarget=${menu} popovertargetaction="hide"
+        @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}${t('action.delete')}</button></div>
     </li>`
   })}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
 }
@@ -45,16 +50,16 @@ const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${shortcu
 const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scroll'], ['routines', 'alarm']])
 
 /**
- * What the drawer holds, open beside the conversation or over it: a new task, the places found,
- * the tasks under their heading, and the user at its foot.
+ * What the drawer holds, open beside the conversation or over it: a new task, which brings the
+ * keyboard to the box, the places found, the tasks under their heading, and the user at its foot.
  * @param {'drawer' | 'list'} where
  */
 export const sidebarBody = (where) => html`<button class="place" aria-keyshortcuts=${SHORTCUTS.new}
-    @click=${() => turnPage(newConversation)}>${icons.compose}${t('action.new')}</button>
+    @click=${() => turnPage(newConversation).then(focusComposer)}>${icons.compose}${t('action.new')}</button>
   ${PLACES.filter(([id]) => loaded.value.has(id)).map(([id, icon]) => html`<button class="place"
     @click=${() => import('./dialogs.js').then((module) => module.openSettings(id))}>${icons[icon]}${t(`cap.${id}.name`)}</button>`)}
   <h2 class="sidebar-heading">${t('history.title')}</h2>
-  ${conversationList()}
+  ${conversationList(where)}
   ${profileEntry(where)}`
 
 // ─── The user, at the foot (D150) ────────────────────────────────────────────

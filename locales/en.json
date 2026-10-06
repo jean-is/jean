@@ -18,6 +18,7 @@
   "action.new": "New task",
   "action.close": "Close",
   "action.delete": "Delete",
+  "action.more": "More options",
   "action.remove": "Remove",
   "action.copy": "Copy",
   "action.retry": "Try again",
