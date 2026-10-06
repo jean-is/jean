@@ -2,17 +2,11 @@
 // the runs it spanned, in the first one's formatting. The rest of the document stays as it was: the
 // other runs, paragraphs and parts, unchanged once unzipped.
 import { readZip, writeZip } from '../../core/zip.js'
+import { decodeEntities as decode } from '../files/extract.js'
 
 const PARAGRAPH = /<w:p[\s>][\s\S]*?<\/w:p>/g
 const TEXT = /<w:t(\s[^>]*)?>([^<]*)<\/w:t>/g
-const ENTITIES = /** @type {Record<string, string>} */ ({ lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" })
 const ESCAPES = /** @type {Record<string, string>} */ ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })
-
-/** @param {string} text */
-const decode = (text) => text.replace(/&(#x[\da-f]+|#\d+|\w+);/gi, (entity, body) => {
-  if (body[0] !== '#') return ENTITIES[body] ?? entity
-  return String.fromCodePoint(body[1].toLowerCase() === 'x' ? parseInt(body.slice(2), 16) : Number(body.slice(1)))
-})
 
 /** The texts of a paragraph's runs, where each is in its XML. @param {string} source */
 function runs(source) {

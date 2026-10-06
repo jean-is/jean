@@ -13,16 +13,12 @@ import { icons } from '../../ui/icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion, versionsOf } from '../../core/events.js'
 import { t, locale, formatBytes } from '../../core/i18n.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
 
 // The cards' style sheet comes with them, not with the first screen (D126).
-await new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('made.css', import.meta.url).href })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})
+await styleSheet(new URL('made.css', import.meta.url))
 
 // ─── Writing files ───────────────────────────────────────────────────────────
 

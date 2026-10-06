@@ -17,6 +17,7 @@ import { fileMeta, fileText, splitPages } from '../core/files.js'
 import { callsIn, filesMade, versionsOf } from '../core/events.js'
 import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
+import { styleSheet } from './sheet.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
 
@@ -24,12 +25,7 @@ const FRAME = new URL('../preview.html', import.meta.url).href
 // Rows a grid shows: more would only slow the page; the file has them all.
 const ROWS = 2000
 
-await new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: 'ui/preview.css' })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})
+await styleSheet('ui/preview.css')
 
 const shown = signal(/** @type {Shown | null} */ (null))
 const view = signal(/** @type {unknown} */ (nothing))

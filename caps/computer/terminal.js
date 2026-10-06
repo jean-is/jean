@@ -17,6 +17,7 @@ import { appendRecords } from '../../core/conversations.js'
 import { noteRecord } from '../../core/events.js'
 import { t, tParts, locale } from '../../core/i18n.js'
 import { typed, completions, clip, prompt, keys } from './computer.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../core/loop.js').PermissionOption} PermissionOption */
 /**
@@ -26,12 +27,7 @@ import { typed, completions, clip, prompt, keys } from './computer.js'
  *   site?: { site: string, resolve: (answer: PermissionOption) => void }, refused?: string[] }} Entry
  */
 
-await new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('terminal.css', import.meta.url).href })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})
+await styleSheet(new URL('terminal.css', import.meta.url))
 
 // What an output shows, from its end: more only slows the page. What the brain is told of it.
 const SHOWN = 100_000

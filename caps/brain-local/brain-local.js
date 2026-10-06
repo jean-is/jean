@@ -4,7 +4,7 @@
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { weightsHost } from '../../ui/state.js'
-import { scriptURL } from '../../ui/trusted.js'
+import { modelWorker, downloading } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { gemmaParser } from './gemma.js'
 
@@ -24,6 +24,7 @@ const MEMORY_GB = 8 // navigator.deviceMemory is coarse: 4 means "under 8"
  *   | { state: 'loading' } | { state: 'ready' } | { state: 'failed', message: string }} Download
  */
 export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
+const worker = modelWorker(new URL('./brain-worker.js', import.meta.url), 'The on-device brain stopped')
 
 /**
  * Whether this device can run the brain, and if not, why.
@@ -60,10 +61,7 @@ export async function prepare() {
   download.value = { state: 'downloading', loaded: 0, total: GEMMA.bytes }
   navigator.storage?.persist?.().catch(() => {})
   try {
-    await call({ type: 'load', host: weightsHost(), model: GEMMA.model, dtype: GEMMA.dtype }, (message) => {
-      if (message.type !== 'progress') return
-      download.value = message.loaded >= message.total * 0.999 ? { state: 'loading' } : { state: 'downloading', loaded: message.loaded, total: Math.max(message.total, GEMMA.bytes) }
-    })
+    await worker.call({ type: 'load', host: weightsHost(), model: GEMMA.model, dtype: GEMMA.dtype }, { onMessage: (message) => { download.value = downloading(message, GEMMA.bytes) } })
     download.value = { state: 'ready' }
   } catch (error) {
     download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
@@ -86,23 +84,21 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   let wake = null
   /** @type {{ usage?: any, error?: any } | null} */
   let finished = null
-  const id = ++nextId
-  const onAbort = () => worker?.postMessage({ type: 'abort', id })
+  const id = worker.id()
+  const onAbort = () => worker.post({ type: 'abort', id })
   signal?.addEventListener('abort', onAbort, { once: true })
   /** @param {any[]} events */
   const push = (events) => {
     queue.push(.../** @type {StreamEvent[]} */ (events))
     wake?.()
   }
-  call({
+  worker.call({
     type: 'generate',
     messages: openaiMessages(system, messages, { systemNotes: false, argsAsObject: true }),
     tools: tools.map(({ name, description, parameters }) => ({ type: 'function', function: { name, description, parameters } })),
     maxTokens: maxTokens ?? 4096,
     contextTokens: CONTEXT,
-  }, (message) => {
-    if (message.type === 'chunk') push(parser.feed(message.text))
-  }, id).then((done) => {
+  }, { id, onMessage: (message) => { if (message.type === 'chunk') push(parser.feed(message.text)) } }).then((done) => {
     push(parser.end())
     finished = { usage: done.usage }
   }, (error) => {
@@ -143,41 +139,3 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
 }
 
 register({ id: 'brain-local', stream })
-
-// ─── Worker ──────────────────────────────────────────────────────────────────
-
-/** @type {Worker | null} */
-let worker = null
-let nextId = 0
-/** @type {Map<number, { resolve: (value: any) => void, reject: (error: any) => void, onMessage: (message: any) => void }>} */
-const pending = new Map()
-
-/** @param {Record<string, any>} message @param {(message: any) => void} onMessage @param {number} [id] @returns {Promise<any>} */
-function call(message, onMessage, id = ++nextId) {
-  const target = (worker ??= start())
-  return new Promise((resolve, reject) => {
-    pending.set(id, { resolve, reject, onMessage })
-    target.postMessage({ ...message, id })
-  })
-}
-
-function start() {
-  const started = new Worker(scriptURL(new URL('./brain-worker.js', import.meta.url)), { type: 'module' })
-  started.onmessage = ({ data }) => {
-    const request = pending.get(data.id)
-    if (!request) return
-    if (data.type === 'error') {
-      pending.delete(data.id)
-      request.reject(Object.assign(new Error(data.message), { code: data.code }))
-    } else if (data.type === 'done' || data.type === 'ready') {
-      pending.delete(data.id)
-      request.resolve(data)
-    } else request.onMessage(data)
-  }
-  started.onerror = (event) => {
-    for (const request of pending.values()) request.reject(new Error(event.message || 'The on-device brain stopped'))
-    pending.clear()
-    worker = null
-  }
-  return started
-}

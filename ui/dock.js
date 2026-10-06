@@ -11,13 +11,9 @@
 import { effect } from '@preact/signals-core'
 import { app, updateSettings } from './state.js'
 import { t } from '../core/i18n.js'
+import { styleSheet } from './sheet.js'
 
-await new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('dock.css', import.meta.url).href })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})
+await styleSheet(new URL('dock.css', import.meta.url))
 
 /**
  * What a handle moves: a length along its axis, in pixels, read from the pointer or as it is now.

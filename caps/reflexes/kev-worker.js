@@ -3,15 +3,9 @@
 // the base PreTrainedModel class, as its model card says, on WebGPU or WebAssembly.
 // { type: 'load', host, model, device, dtype }  → progress…, { type: 'ready' }
 // { type: 'decide', state, questions }         → { type: 'answers', answers }
-import { env, AutoTokenizer, PreTrainedModel, Tensor } from '../../vendor/transformers/transformers.web.min.js'
+import { AutoTokenizer, PreTrainedModel, Tensor } from '../../vendor/transformers/transformers.web.min.js'
+import { weightsFrom } from '../../ui/model-worker.js'
 import { pack, answers } from '../../core/decide.js'
-
-const RUNTIME = new URL('../../vendor/transformers/', import.meta.url)
-env.allowLocalModels = false
-env.backends.onnx.wasm.wasmPaths = {
-  wasm: new URL('ort-wasm-simd-threaded.asyncify.wasm', RUNTIME).href,
-  mjs: new URL('ort-wasm-simd-threaded.asyncify.mjs', RUNTIME).href,
-}
 
 /** @type {Promise<{ tokenizer: any, model: any }> | null} */
 let loading = null
@@ -38,20 +32,7 @@ async function handle(data) {
 }
 
 function load({ host, model, device, dtype }, id) {
-  env.remoteHost = host
-  /** @type {Map<string, { loaded: number, total: number }>} */
-  const files = new Map()
-  const progress_callback = (event) => {
-    if (event.status !== 'progress' || !event.total) return
-    files.set(event.file, { loaded: event.loaded, total: event.total })
-    let loaded = 0
-    let total = 0
-    for (const file of files.values()) {
-      loaded += file.loaded
-      total += file.total
-    }
-    self.postMessage({ id, type: 'progress', loaded, total })
-  }
+  const progress_callback = weightsFrom(host, id)
   loading ??= Promise.all([
     AutoTokenizer.from_pretrained(model, { progress_callback }),
     PreTrainedModel.from_pretrained(model, { dtype, device, progress_callback }),

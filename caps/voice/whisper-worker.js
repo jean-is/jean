@@ -5,13 +5,7 @@
 // { type: 'vad', host, model, audio } → { type: 'result', speech }: Silero's probability that each
 //   32 ms of audio (512 samples at 16 kHz) is speech, for live conversation
 import { env, pipeline, AutoModel, Tensor } from '../../vendor/transformers/transformers.web.min.js'
-
-const RUNTIME = new URL('../../vendor/transformers/', import.meta.url)
-env.allowLocalModels = false
-env.backends.onnx.wasm.wasmPaths = {
-  wasm: new URL('ort-wasm-simd-threaded.asyncify.wasm', RUNTIME).href,
-  mjs: new URL('ort-wasm-simd-threaded.asyncify.mjs', RUNTIME).href,
-}
+import { weightsFrom } from '../../ui/model-worker.js'
 
 /** @type {Promise<any> | null} */
 let transcriber = null
@@ -53,22 +47,5 @@ self.onmessage = async ({ data }) => {
 }
 
 function load({ host, model, dtype }, id) {
-  env.remoteHost = host
-  /** @type {Map<string, { loaded: number, total: number }>} */
-  const files = new Map()
-  return pipeline('automatic-speech-recognition', model, {
-    dtype,
-    device: 'wasm',
-    progress_callback: (event) => {
-      if (event.status !== 'progress' || !event.total) return
-      files.set(event.file, { loaded: event.loaded, total: event.total })
-      let loaded = 0
-      let total = 0
-      for (const file of files.values()) {
-        loaded += file.loaded
-        total += file.total
-      }
-      self.postMessage({ id, type: 'progress', progress: Math.min(loaded / total, 1) })
-    },
-  })
+  return pipeline('automatic-speech-recognition', model, { dtype, device: 'wasm', progress_callback: weightsFrom(host, id) })
 }

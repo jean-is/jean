@@ -28,6 +28,7 @@ import { walkFolder, listingText, findInFolder, openText, planChange, diffLines,
 import { copyFS, pickedFiles, droppedFiles } from './copy.js'
 import { replaceInWord } from './word.js'
 import { sitePage } from './site.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 /** @import { Envelope, ToolCallInfo, FS } from '../../core/types.js' */
 /** @typedef {import('./copy.js').CopyFS} CopyFS */
@@ -40,12 +41,7 @@ import { sitePage } from './site.js'
  * @typedef {{ name: string, handle?: FileSystemDirectoryHandle, copy?: CopyFS, agents?: boolean }} Folder
  */
 
-await Promise.all([useStrings('folders'), unlock('files'), new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('folders.css', import.meta.url).href })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})])
+await Promise.all([useStrings('folders'), unlock('files'), styleSheet(new URL('folders.css', import.meta.url))])
 
 // PDFs are read by pdf.js, which comes with Files and loads with the first one.
 const READS = { pdf: (/** @type {Uint8Array} */ bytes) => import('../files/pdf.js').then((module) => module.pdfPages(bytes)) }

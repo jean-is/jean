@@ -20,6 +20,7 @@ import { fold, terms, ranges, passage } from '../../core/search.js'
 import { join, readJSON } from '../../core/fs.js'
 import { t, locale, relativeTime } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 /** @typedef {import('../../core/types.js').ResourceLink} ResourceLink */
@@ -34,12 +35,7 @@ import { BRAND } from '../../brand.js'
  */
 
 // Its style sheet comes with it, not with the first screen.
-await new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('find.css', import.meta.url).href })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})
+await styleSheet(new URL('find.css', import.meta.url))
 
 const RECENT = 8
 const MOST = 30

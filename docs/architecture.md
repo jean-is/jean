@@ -61,7 +61,9 @@ ui/               app.js (start), shell.js, base.js, state.js (signals; what the
                   preview.css, csp.js (a page's policy), dock.js and dock.css (panes beside the conversation), inbox.js (the
                   drawer's list), looks.js, touches.js, speech.js, voices.js, language.js, dictation.js, title.js, update.js,
                   host.js (the desktop app's host), persona.js (the little light), icons.js, save.js, secrets.js,
-                  trusted.js (Trusted Types), style.css (the room) and looks/<id>.css (the other themes)
+                  trusted.js (Trusted Types), sheet.js (a module's own style sheet), model.js and model-worker.js (the
+                  two sides of a model's worker: the device's brain, Intuition, dictation), style.css (the room) and
+                  looks/<id>.css (the other themes)
 caps/<id>/        one folder per capability: files made backup brain-local voice reflexes memory projects skills search
                   connections live helpers check since names routines find browser ask you folders sync computer
 locales/          <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
@@ -215,7 +217,7 @@ There is always a default project, hidden until Projects is discovered, so one c
 ## Service worker
 
 - **On install:** cache the shell (`sandbox.html` and `preview.html` included) and every locale file, so switching language is instant and offline. Files come through the HTTP cache and are checked against the integrity hashes in `capabilities.json`; a stale copy is fetched again. The install icons and screenshots stay out (D131, D168).
-- **On unlock:** cache the capability's files, listed in `capabilities.json` with content hashes. The cache is the record of what has been unlocked.
+- **On unlock:** cache the capability's files, listed in `capabilities.json` with content hashes, with the modules of other capabilities it imports (the Computer's from Folders and Files), so it works offline on its own. The cache is the record of what has been unlocked.
 - **On update:** download the new shell and new versions of unlocked capabilities only, then delete old caches. When the user lets it in, the new version takes the page's place where it was (`ui/update.js`, D138).
 - **Model weights** live in their own cache, so an update never downloads 3 GB again.
 - **Offline:** history, files and the device's brain keep working; with only a cloud brain, Jean says so.

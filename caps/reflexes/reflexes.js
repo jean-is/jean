@@ -5,7 +5,7 @@
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { weightsHost } from '../../ui/state.js'
-import { scriptURL } from '../../ui/trusted.js'
+import { modelWorker, downloading } from '../../ui/model.js'
 
 /** @import { Question } from '../../core/decide.js' */
 /** @import { Download } from '../brain-local/brain-local.js' */
@@ -13,6 +13,7 @@ import { scriptURL } from '../../ui/trusted.js'
 export const KEV = Object.freeze({ model: 'onnx-community/kev-0.6b-ONNX', bytes: 3.45e8 })
 
 export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
+const worker = modelWorker(new URL('./kev-worker.js', import.meta.url), 'Reflexes stopped')
 
 // The reflexes' lines in the browser console start with ◈, a flowchart's decision: → is the
 // state and questions going in, ← the answers coming out. 1 is the first decision.
@@ -48,7 +49,7 @@ async function decide(state, questions) {
   const began = performance.now()
   trace(`${id} →`, state, questions)
   try {
-    const { answers } = await call({ type: 'decide', state, questions })
+    const { answers } = await worker.call({ type: 'decide', state, questions })
     trace(`${id} ←`, answers, since(began))
     return answers
   } catch (error) {
@@ -65,10 +66,7 @@ export async function prepare() {
   const began = performance.now()
   try {
     const { device, dtype } = await backend()
-    await call({ type: 'load', host: weightsHost(), model: KEV.model, device, dtype }, (message) => {
-      if (message.type !== 'progress') return
-      download.value = message.loaded >= message.total * 0.999 ? { state: 'loading' } : { state: 'downloading', loaded: message.loaded, total: Math.max(message.total, KEV.bytes) }
-    })
+    await worker.call({ type: 'load', host: weightsHost(), model: KEV.model, device, dtype }, { onMessage: (message) => { download.value = downloading(message, KEV.bytes) } })
     trace('ready', device, since(began))
     download.value = { state: 'ready' }
     register({ ...capability, decide })
@@ -100,42 +98,3 @@ const capability = { id: 'reflexes', tools: [decideTool] }
 register(capability)
 // Downloaded on an earlier visit: load it in the background. A failure is logged in prepare().
 isDownloaded().then((yes) => (yes ? prepare() : undefined)).catch(() => {})
-
-// ─── Worker ──────────────────────────────────────────────────────────────────
-
-/** @type {Worker | null} */
-let worker = null
-let nextId = 0
-/** @type {Map<number, { resolve: (value: any) => void, reject: (error: any) => void, onMessage: (message: any) => void }>} */
-const pending = new Map()
-
-/** @param {Record<string, any>} message @param {(message: any) => void} [onMessage] @returns {Promise<any>} */
-function call(message, onMessage = () => {}) {
-  const target = (worker ??= start())
-  const id = ++nextId
-  return new Promise((resolve, reject) => {
-    pending.set(id, { resolve, reject, onMessage })
-    target.postMessage({ ...message, id })
-  })
-}
-
-function start() {
-  const started = new Worker(scriptURL(new URL('./kev-worker.js', import.meta.url)), { type: 'module' })
-  started.onmessage = ({ data }) => {
-    const request = pending.get(data.id)
-    if (!request) return
-    if (data.type === 'error') {
-      pending.delete(data.id)
-      request.reject(new Error(data.message))
-    } else if (data.type === 'ready' || data.type === 'answers') {
-      pending.delete(data.id)
-      request.resolve(data)
-    } else request.onMessage(data)
-  }
-  started.onerror = (event) => {
-    for (const request of pending.values()) request.reject(new Error(event.message || 'Reflexes stopped'))
-    pending.clear()
-    worker = null
-  }
-  return started
-}

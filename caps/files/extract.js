@@ -87,8 +87,8 @@ function attr(attrs, name) {
 
 const ENTITIES = /** @type {Record<string, string>} */ ({ lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" })
 
-/** @param {string} text */
-function decodeEntities(text) {
+/** XML's entities, named and numbered, as text. @param {string} text */
+export function decodeEntities(text) {
   return text.replace(/&(#x[\da-f]+|#\d+|\w+);/gi, (entity, body) => {
     if (body[0] !== '#') return ENTITIES[body] ?? entity
     const code = body[1] === 'x' || body[1] === 'X' ? parseInt(body.slice(2), 16) : Number(body.slice(1))

@@ -5,7 +5,7 @@ import { register } from '../../ui/caps.js'
 import { dictation } from '../../ui/dictation.js'
 import { app, effective, answerOffer, updateSettings, weightsHost, notify } from '../../ui/state.js'
 import { locale, t } from '../../core/i18n.js'
-import { scriptURL } from '../../ui/trusted.js'
+import { modelWorker } from '../../ui/model.js'
 
 register({ id: 'voice' })
 
@@ -14,6 +14,11 @@ const WHISPER = { model: 'onnx-community/whisper-base', dtype: { encoder_model: 
 /** Voice detection for live conversation, about 2 MB. */
 const SILERO = 'onnx-community/silero-vad'
 const OFFER = 'voice.download'
+const worker = modelWorker(new URL('./whisper-worker.js', import.meta.url), 'Dictation stopped')
+/** Whisper, loaded once, its download's progress shown in the box. */
+const load = () => worker.call({ type: 'load', host: weightsHost(), ...WHISPER }, {
+  onMessage: ({ loaded, total }) => { dictation.value = { ...dictation.value, progress: Math.min(loaded / total, 1) } },
+})
 const Recognition = /** @type {any} */ (globalThis).SpeechRecognition ?? /** @type {any} */ (globalThis).webkitSpeechRecognition
 
 /** How long the browser gets to install its on-device recognition, and to end once stopped. */
@@ -77,15 +82,15 @@ export async function prepare(consented = false) {
     if (!consented && !confirm(t('dictation.download', { size: WHISPER.megabytes }))) return false
     await answerOffer(OFFER)
   }
-  await call({ type: 'load', host: weightsHost(), ...WHISPER })
+  await load()
   return true
 }
 
 /** What was said, in the interface language. @param {Float32Array} audio 16 kHz mono */
-export const transcribe = async (audio) => String((await call({ type: 'transcribe', audio, language: languageTag().split('-')[0] }, [audio.buffer])).text ?? '')
+export const transcribe = async (audio) => String((await worker.call({ type: 'transcribe', audio, language: languageTag().split('-')[0] }, { transfer: [audio.buffer] })).text ?? '')
 
 /** How likely each 32 ms of the frames is speech. @param {Float32Array} frames 16 kHz mono @returns {Promise<number[]>} */
-export const detect = async (frames) => (await call({ type: 'vad', host: weightsHost(), model: SILERO, audio: frames }, [frames.buffer])).speech
+export const detect = async (frames) => (await worker.call({ type: 'vad', host: weightsHost(), model: SILERO, audio: frames }, { transfer: [frames.buffer] })).speech
 
 /** Appends dictated words to the draft, keeping what was typed. @param {string} before @param {string} words */
 const join = (before, words) => (before && words && !/\s$/.test(before) ? `${before} ${words}` : before + words)
@@ -149,7 +154,7 @@ async function record(lang) {
   const recorder = new MediaRecorder(stream)
   /** @type {Blob[]} */
   const chunks = []
-  const ready = call({ type: 'load', host: weightsHost(), ...WHISPER })
+  const ready = load()
   // A failed download shouldn't wait for the user to stop talking.
   ready.catch(() => recorder.state === 'recording' && recorder.stop())
   recorder.ondataavailable = (event) => chunks.push(event.data)
@@ -160,7 +165,7 @@ async function record(lang) {
     try {
       await ready
       const audio = await decode(new Blob(chunks, { type: recorder.mimeType }))
-      const { text } = await call({ type: 'transcribe', audio, language: lang.split('-')[0] }, [audio.buffer])
+      const { text } = await worker.call({ type: 'transcribe', audio, language: lang.split('-')[0] }, { transfer: [audio.buffer] })
       const words = String(text ?? '').trim()
       if (words) {
         app.draft.value = join(app.draft.value, words)
@@ -192,35 +197,4 @@ async function decode(blob) {
   } finally {
     context.close()
   }
-}
-
-// ─── Worker ──────────────────────────────────────────────────────────────────
-
-/** @type {Worker | null} */
-let worker = null
-let nextId = 0
-/** @type {Map<number, { resolve: (value: any) => void, reject: (error: Error) => void }>} */
-const pending = new Map()
-
-/** @param {Record<string, any>} message @param {Transferable[]} [transfer] @returns {Promise<any>} */
-function call(message, transfer = []) {
-  const target = (worker ??= start())
-  const id = ++nextId
-  return new Promise((resolve, reject) => {
-    pending.set(id, { resolve, reject })
-    target.postMessage({ ...message, id }, transfer)
-  })
-}
-
-function start() {
-  const started = new Worker(scriptURL(new URL('./whisper-worker.js', import.meta.url)), { type: 'module' })
-  started.onmessage = ({ data }) => {
-    if (data.type === 'progress') dictation.value = { ...dictation.value, progress: data.progress }
-    const request = pending.get(data.id)
-    if (!request || data.type === 'progress') return
-    pending.delete(data.id)
-    if (data.type === 'error') request.reject(new Error(data.message))
-    else request.resolve(data)
-  }
-  return started
 }

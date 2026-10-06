@@ -25,17 +25,13 @@ import { sidebarBody } from './inbox.js'
 import { SHORTCUTS, findButton } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
+import { styleSheet } from './sheet.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
 // The dialogs' own strings and style sheet come with them (D97, D120): every module that shows a
 // dialog imports this one. The sheet goes after ui/style.css, so its rules win a tie.
-await Promise.all([useStrings('dialogs'), new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: 'ui/dialogs.css' })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})])
+await Promise.all([useStrings('dialogs'), styleSheet('ui/dialogs.css')])
 
 /** @param {Element} host @param {string} name */
 export function syncDialog(host, name) {

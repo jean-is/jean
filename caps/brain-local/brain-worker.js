@@ -6,14 +6,8 @@
 // { type: 'load', host, model, dtype }                → progress…, { type: 'ready' }
 // { type: 'generate', messages, tools, maxTokens }    → { type: 'chunk', text }…, { type: 'done', usage }
 // { type: 'abort', id }                                stops that generation, or drops it while it waits its turn
-import { env, AutoTokenizer, Gemma4ForCausalLM, TextStreamer, InterruptableStoppingCriteria, Tensor } from '../../vendor/transformers/transformers.web.min.js'
-
-const RUNTIME = new URL('../../vendor/transformers/', import.meta.url)
-env.allowLocalModels = false
-env.backends.onnx.wasm.wasmPaths = {
-  wasm: new URL('ort-wasm-simd-threaded.asyncify.wasm', RUNTIME).href,
-  mjs: new URL('ort-wasm-simd-threaded.asyncify.mjs', RUNTIME).href,
-}
+import { AutoTokenizer, Gemma4ForCausalLM, TextStreamer, InterruptableStoppingCriteria, Tensor } from '../../vendor/transformers/transformers.web.min.js'
+import { weightsFrom } from '../../ui/model-worker.js'
 
 /** @type {Promise<{ tokenizer: any, model: any }> | null} */
 let loading = null
@@ -51,20 +45,7 @@ async function handle(data) {
 }
 
 function load({ host, model, dtype }, id) {
-  env.remoteHost = host
-  /** @type {Map<string, { loaded: number, total: number }>} */
-  const files = new Map()
-  const progress_callback = (event) => {
-    if (event.status !== 'progress' || !event.total) return
-    files.set(event.file, { loaded: event.loaded, total: event.total })
-    let loaded = 0
-    let total = 0
-    for (const file of files.values()) {
-      loaded += file.loaded
-      total += file.total
-    }
-    self.postMessage({ id, type: 'progress', loaded, total })
-  }
+  const progress_callback = weightsFrom(host, id)
   loading ??= Promise.all([
     AutoTokenizer.from_pretrained(model, { progress_callback }),
     // The causal-LM class loads the text sessions only; image and audio come later (D42).

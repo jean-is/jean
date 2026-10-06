@@ -15,16 +15,12 @@ import { askUser } from '../../ui/send.js'
 import { icons } from '../../ui/icons.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { MAX_QUESTIONS, MAX_OPTIONS, questionsOf, start, answered, reply } from './answers.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('./answers.js').Answer} Answer */
 /** @typedef {Extract<import('../../ui/state.js').Decision, { questions: unknown }>} Questions */
 
-await Promise.all([useStrings('ask'), new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('ask.css', import.meta.url).href })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})])
+await Promise.all([useStrings('ask'), styleSheet(new URL('ask.css', import.meta.url))])
 
 /**
  * The questions, in the inbox, answered one after the other. Where the user is stays with the

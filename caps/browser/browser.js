@@ -35,6 +35,7 @@ import { savePage } from '../../ui/save.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { addressOf, showable, siteOf, pageText, installer, Trail } from './pages.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 const HOST = new URL('browser.html', import.meta.url).href
 const PAGE = new URL('../../preview.html', import.meta.url).href
@@ -60,12 +61,7 @@ const ALLOW = 'fullscreen; autoplay; clipboard-write; encrypted-media; picture-i
 const READ_CHARS = 12000
 const READ_MS = 10000
 
-await Promise.all([useStrings('browser'), new Promise((resolve) => {
-  const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: new URL('browser.css', import.meta.url).href })
-  link.addEventListener('load', resolve, { once: true })
-  link.addEventListener('error', resolve, { once: true })
-  document.head.append(link)
-})])
+await Promise.all([useStrings('browser'), styleSheet(new URL('browser.css', import.meta.url))])
 
 // Back points the way the text goes; the others don't turn.
 const glyph = (/** @type {unknown} */ paths, flip = '') => html`<svg class="icon ${flip}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths}</svg>`
