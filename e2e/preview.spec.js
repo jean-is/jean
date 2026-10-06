@@ -206,7 +206,9 @@ test('on a phone the preview covers the conversation; Escape gives it back', asy
   await page.keyboard.press('Enter')
   const pane = page.locator('app-preview .preview')
   await expect(pane.locator('.preview-grid')).toBeVisible()
-  expect((await pane.boundingBox())?.width).toBe(390)
+  // The whole width, or all but the margins of a look whose panes float.
+  const box = await pane.boundingBox()
+  expect(2 * (box?.x ?? 0) + (box?.width ?? 0)).toBeCloseTo(390, 0)
   await expect(page.locator('app-shell')).toHaveJSProperty('inert', true)
   await page.keyboard.press('Escape')
   await expect(pane).toHaveCount(0)
@@ -222,8 +224,7 @@ test('right to left, the preview opens on the left of the conversation', async (
   await ask(page, 'Here is my table')
   await page.locator('.msg-files .file-chip').click()
   const box = await page.locator('app-preview .preview').boundingBox()
-  expect(box?.x).toBe(0)
-  expect((await page.locator('main').boundingBox())?.x).toBeGreaterThan(box?.width ?? 0)
+  expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual((await page.locator('main').boundingBox())?.x ?? 0)
 })
 
 /** A one-page PDF in Helvetica, one of the standard fonts. @param {string} text */

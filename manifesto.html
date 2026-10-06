@@ -5,18 +5,17 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-jWVt1ZxAxvIOeFOOOkbvMn/fURMkhVajfwsvyrKz7gs='; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-idas6hj8gcIoYFO7ll9w1MGv9kD4YBmVqD5aBDRHWP4='; style-src 'self'; font-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#120c08">
-<script>{const root = document.documentElement, look = localStorage.getItem('app.look')
+<meta name="theme-color" content="#1e1e1e">
+<script>{const root = document.documentElement, look = localStorage.getItem('app.look') ?? 'human'
 root.dataset.theme = localStorage.getItem('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-if (/^[a-z]+$/.test(look ?? '')) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
+if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.">
 <title>Jean · Manifesto</title>
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-<link rel="preload" href="fonts/display-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="ui/style.css">
 <link rel="stylesheet" href="manifesto.css">
 </head>

@@ -236,9 +236,10 @@ test('the browser and a file share the side of the window, neither covering the 
   // and what the user set is kept; a double click puts each back.
   const dock = page.locator('.dock')
   const width = (await dock.boundingBox())?.width ?? 0
+  const paneWidth = (await pane.boundingBox())?.width ?? 0
   await drag(page, page.locator('.dock-edge'), -100, 0)
   expect((await dock.boundingBox())?.width).toBeCloseTo(width + 100, 0)
-  expect((await pane.boundingBox())?.width).toBeCloseTo(width + 100 - 1, 0)
+  expect((await pane.boundingBox())?.width).toBeCloseTo(paneWidth + 100, 0)
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.dock?.width)).toBeCloseTo((width + 100) / 1280, 2)
   await divider.dblclick()
   await page.locator('.dock-edge').dblclick()

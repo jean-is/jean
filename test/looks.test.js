@@ -84,17 +84,18 @@ test('every look has a name and a thumbnail in Settings', async () => {
   }
 })
 
-test('a look is applied before the first paint, with the key ui/looks.js uses', () => {
+test('a look is applied before the first paint, with the key ui/looks.js uses, Human until one is picked', () => {
   const script = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
-  assert.ok(script.includes(`localStorage.getItem('${LOOK_KEY}')`))
+  assert.ok(script.includes(`localStorage.getItem('${LOOK_KEY}') ?? '${lookId(undefined)}'`))
   assert.ok(script.includes('ui/looks/${look}.css'))
 })
 
-test('an unknown look is the room', () => {
+test('an unknown look is Human (D174)', () => {
   assert.equal(lookId('mail'), 'mail')
-  assert.equal(lookId('../style'), 'room')
-  assert.equal(lookId('toString'), 'room')
-  assert.equal(lookId(undefined), 'room')
+  assert.equal(lookId('room'), 'room')
+  assert.equal(lookId('../style'), 'human')
+  assert.equal(lookId('toString'), 'human')
+  assert.equal(lookId(undefined), 'human')
 })
 
 test('no touches, no CSS', () => {

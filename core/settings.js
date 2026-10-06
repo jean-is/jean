@@ -34,7 +34,7 @@ import { ulid } from './ulid.js'
  */
 
 /**
- * A look by its id (the room when absent), and what the user changed over it: colours as
+ * A look by its id (Human when absent, D174), and what the user changed over it: colours as
  * `#rrggbb`, a text size as a share of the browser's, a typeface, and their own CSS.
  * @typedef {{ id?: string, accent?: string, background?: string, size?: number, font?: string, css?: string }} Look
  */

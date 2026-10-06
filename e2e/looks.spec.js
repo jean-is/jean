@@ -1,4 +1,4 @@
-// Looks (D111, D120): each one in Settings' gallery, with its thumbnail, dresses the page when
+// Looks (D111, D120): Human until one is picked (D174); each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view, in one sidebar with the name at its top and
 // the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS shows as it
 // is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
@@ -41,22 +41,26 @@ test('right to left, Mail’s sidebar sits on the right, the name at its top', a
   expect(top?.y).toBeLessThan(list?.y ?? 0)
 })
 
-test('the drawer opens beside the conversation or is put away, as the user left it, and Mail starts with it open', async ({ page }) => {
+test('the drawer opens beside the conversation or is put away, as the user left it, and Human and Mail start with it open', async ({ page }) => {
   const look = (/** @type {string} */ id) => page.evaluate(async (id) => (await import('/ui/state.js')).setLook({ id: /** @type {any} */ (id) }), id)
   await page.goto('./')
   await expect(page.locator('.hero-question')).toBeVisible()
-  // The first screen is the box alone: the drawer is put away, its button at the header's start (D165).
+  // The first screen is Human's (D174): the drawer open beside the conversation, its button at the header's start (D165).
   const toggle = page.locator('.sidebar-toggle')
   const tasks = page.locator('app-inbox')
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'human')
+  await expect(tasks).toBeVisible()
+  await expect(toggle).toHaveAttribute('aria-label', 'Close sidebar')
+  // The room's is the box alone.
+  await look('room')
+  await expect(page.locator('html')).not.toHaveAttribute('data-look')
   await expect(tasks).toHaveCount(0)
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
   await look('mail')
   await expect(tasks).toBeVisible()
-  await expect(toggle).toHaveAttribute('aria-label', 'Close sidebar')
   await toggle.click()
   await expect(tasks).toHaveCount(0)
   await look('room')
-  await expect(page.locator('html')).not.toHaveAttribute('data-look')
   await expect(tasks).toHaveCount(0)
 
   // Opened: a new task, the tasks under their heading; a capability found that leads somewhere has its row.
@@ -94,7 +98,7 @@ test('every theme is in the gallery with its thumbnail, and dresses the page whe
     else await expect(page.locator('html')).toHaveAttribute('data-look', id)
     await expect(card.locator('input')).toBeChecked()
   }
-  await expect.poll(() => savedLook(page)).toMatchObject({ id: 'room' })
+  await expect.poll(() => savedLook(page)).toMatchObject({ id: 'human' })
 })
 
 test('Depth turns the page as the camera circles the floor, the other way to an older conversation', async ({ page }) => {

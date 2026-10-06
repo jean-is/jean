@@ -55,7 +55,7 @@ export const app = {
   deviceTheme: signal(/** @type {Theme} */ ('dark')),
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
-  look: signal(/** @type {import('./looks.js').LookId} */ ('room')),
+  look: signal(/** @type {import('./looks.js').LookId} */ ('human')),
   /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
   sidebar: signal(/** @type {boolean | null} */ (null)),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */

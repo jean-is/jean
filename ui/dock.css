@@ -5,8 +5,6 @@
 
 :root { --pane: min(50vw, 52rem); }
 :root[data-dock='beside'] app-shell { margin-inline-end: var(--pane); }
-/* The welcome's question is sized by the window: beside the dock, it has half of it. */
-:root[data-dock='beside'] .hero-question { font-size: clamp(2.4rem, 4.5vw, 4.2rem); }
 :root[data-dock='beside'] .toasts { inset-inline-end: var(--pane); }
 
 /* Beside the conversation on a wide screen, over it on a narrow one; one above the other, or side by side. */

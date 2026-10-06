@@ -2,7 +2,7 @@
    edge to edge with the conversations (the open one in the system's blue), what the user asked
    in blue bubbles with a tail, a toolbar that the page scrolls under with the title in it, sheets whose three lights
    close them, and panels (the file preview, the browser, the drawer) that float. System typefaces, sizes, focus
-   ring and scroll bars. On a phone, or with the sidebar put away: a frosted bar, a large title, the drawer. Over ui/style.css, which comes after it, so every rule here starts
+   ring and scroll bars. On a phone, or with the sidebar put away: a bar without an edge, a large title, the drawer. Over ui/style.css, which comes after it, so every rule here starts
    with :root[data-look='human'], and its keyframes are named human-*. */
 
 :root[data-look='human'] {
@@ -84,8 +84,9 @@
 :root[data-look='human'] :focus-visible { outline: 3px solid oklch(from var(--fill) l c h / 0.6); outline-offset: 1px; }
 :root[data-look='human'] :is(input, progress) { accent-color: var(--fill); }
 
-/* A frosted bar on a phone, or with the sidebar put away; with it open, it is the sidebar's top. */
-:root[data-look='human'] .bar { padding-block: 0.5rem; border-block-end: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(20px) saturate(1.8); }
+/* The bar on a phone, or with the sidebar put away: no edge, the page's own colour that the
+   conversation fades under, as beside the sidebar; with it open, it is the sidebar's top. */
+:root[data-look='human'] .bar { padding-block: 0.5rem; }
 
 /* The first screen: centred, in the system's display face. */
 :root[data-look='human'] .welcome { align-items: center; gap: 1.75rem; text-align: center; }
@@ -238,8 +239,8 @@
    conversations, the user at its foot. */
 :root[data-look='human'][data-sidebar] { --list: 17.5rem; }
 :root[data-look='human'][data-sidebar] app-shell { padding-inline-start: var(--list); background: var(--room) content-box; }
-:root[data-look='human'][data-sidebar] :is(.bar, app-inbox) { background: var(--side); backdrop-filter: none; }
-:root[data-look='human'][data-sidebar] .bar { padding-block: 0; border-block-end: 0; }
+:root[data-look='human'][data-sidebar] :is(.bar, app-inbox) { background: var(--side); }
+:root[data-look='human'][data-sidebar] .bar { padding-block: 0; }
 :root[data-look='human'][data-sidebar] .wordmark { font-size: 0.9375rem; }
 :root[data-look='human'][data-sidebar] app-inbox { padding: 0 0.625rem 0.625rem; }
 :root[data-look='human'][data-sidebar] main { padding-block-start: 0; }

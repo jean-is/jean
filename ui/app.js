@@ -51,7 +51,7 @@ async function start() {
   const chosen = localStorage.getItem(THEME_KEY)
   app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
   const browserBar = document.querySelector('meta[name="theme-color"]')
-  app.look.value = lookId(root.dataset.look)
+  app.look.value = lookId(root.dataset.look ?? 'room')
   effect(() => {
     root.style.transition = 'none'
     root.dataset.theme = theme.value
@@ -70,13 +70,13 @@ async function start() {
   app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
-  // stays on the device for index.html; the user's touches go over it, in a sheet of their own
-  // (CSSOM, which the CSP allows), with their code loaded only once there are some.
+  // stays on the device for index.html, the room's too, since a device without one starts in
+  // Human (D174); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
+  // allows), with their code loaded only once there are some.
   let dressing = Promise.resolve()
   effect(() => {
     const id = lookId(effective.value.settings.look?.id)
-    if (id === 'room') localStorage.removeItem(LOOK_KEY)
-    else localStorage.setItem(LOOK_KEY, id)
+    localStorage.setItem(LOOK_KEY, id)
     dressing = lookSheet(id).then(() => { if (id === lookId(app.settings.value.look?.id)) app.look.value = id })
   })
   const touches = new CSSStyleSheet()
