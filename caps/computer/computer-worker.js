@@ -8,9 +8,9 @@
 // the rules (D48) and Settings › Computer: the worker holds no key and has no network of its own.
 //
 // → { type: 'boot' }                                          ← { type: 'ready' }
-// → { type: 'load', engine, files }                           ← { type: 'loaded', engine, error? }
+// → { type: 'load', engine, files }                           ← { type: 'loaded', engine, error?, memory }
 // → { type: 'run', run, engine, computer, put, gone, … }      ← { type: 'call' | 'need' | 'fetch', run, id, … }…,
-//                                                                { type: 'done', run, ok, result, logs, error, exit, changes }
+//                                                                { type: 'done', run, ok, result, logs, error, exit, changes, memory }
 // → { type: 'answer', run, id, ok, value, error }
 // A classic script (no static imports): the sandbox can only start classic workers.
 
@@ -33,11 +33,13 @@ const engines = {}
 /** Requests to Jean waiting for their answer, by id. @type {Map<number, { resolve: (value: any) => void, reject: (error: Error) => void }>} */
 const waiting = new Map()
 let asked = 0
+/** The bytes of the engines' files, which the worker keeps. */
+let code = 0
 /** Each conversation's computer, for the visit. @type {Map<string, Computer>} */
 const computers = new Map()
 
 /**
- * @typedef {{ fs: any, workspace: any, bash: any, run: number, env: Record<string, string> | null, synced: Map<string, string>,
+ * @typedef {{ fs: any, base: any, workspace: any, bash: any, run: number, env: Record<string, string> | null, synced: Map<string, string>,
  *   registries: Record<string, string>, limits: Record<string, number> }} Computer
  */
 
@@ -47,24 +49,35 @@ self.onmessage = async ({ data }) => {
   if (data.type === 'load') {
     try {
       engines[data.engine] ??= await LOADERS[data.engine](data.files)
-      self.postMessage({ type: 'loaded', engine: data.engine })
+      for (const file of Object.values(data.files)) code += file.byteLength ?? file.length
+      self.postMessage({ type: 'loaded', engine: data.engine, memory: memory() })
     } catch (error) {
-      self.postMessage({ type: 'loaded', engine: data.engine, error: said(error) })
+      self.postMessage({ type: 'loaded', engine: data.engine, error: said(error), memory: memory() })
     }
   } else if (data.type === 'run') {
     try {
       const computer = await computerOf(data)
       await receive(computer, data.put, data.gone, data.fresh)
       const outcome = await RUNS[data.engine](data, computer)
-      self.postMessage({ type: 'done', run: data.run, ...outcome, changes: await changes(computer) })
+      self.postMessage({ type: 'done', run: data.run, ...outcome, changes: await changes(computer), memory: memory() })
     } catch (error) {
-      self.postMessage({ type: 'done', run: data.run, ok: false, error: said(error), logs: [] })
+      self.postMessage({ type: 'done', run: data.run, ok: false, error: said(error), logs: [], memory: memory() })
     }
   }
 }
 
 /** @param {any} error */
 const said = (error) => String(error?.message ?? error)
+
+/** What the computers hold in memory, for Settings (D176): their files, and each engine woken, its code and its heap. */
+function memory() {
+  let bytes = code + (engines.pyodide?._module?.HEAP8?.length ?? 0)
+  for (const { base, workspace } of computers.values()) bytes += base.retainedBytes + workspace.retainedBytes
+  try {
+    bytes += engines.quickjs?.getWasmMemory().buffer.byteLength ?? 0
+  } catch {}
+  return bytes
+}
 
 /** Asks Jean for something and waits for the answer. @param {number} run @param {Record<string, any>} message @returns {Promise<any>} */
 function ask(run, message) {
@@ -161,10 +174,10 @@ async function computerOf({ run, computer: id, registries = {}, limits = {} }) {
   const { Bash, InMemoryFs, MountableFs } = await engine(run, 'shell')
   let computer = computers.get(id)
   if (!computer) {
-    const workspace = new InMemoryFs()
-    const fs = new MountableFs({ base: new InMemoryFs(), mounts: [{ mountPoint: WORKSPACE, filesystem: workspace }] })
+    const [base, workspace] = [new InMemoryFs(), new InMemoryFs()]
+    const fs = new MountableFs({ base, mounts: [{ mountPoint: WORKSPACE, filesystem: workspace }] })
     for (const dir of [HOME, '/tmp']) await fs.mkdir(dir, { recursive: true })
-    const owner = computer = /** @type {Computer} */ ({ fs, workspace, run, env: null, synced: new Map(), registries, limits })
+    const owner = computer = /** @type {Computer} */ ({ fs, base, workspace, run, env: null, synced: new Map(), registries, limits })
     computer.bash = new Bash({
       fs,
       cwd: WORKSPACE,

@@ -6,12 +6,19 @@
 // Jean answers it under the same rules as the brain's own calls (D48).
 //
 // → { type: 'boot', source }                                   ← { type: 'ready' } | { type: 'failed', error }
-// → { type: 'load', engine, files: { name: text | bytes } }    ← { type: 'loaded', engine, error? }
-// → { type: 'run', run, engine, … }                            ← { type: 'call' | 'need' | 'fetch', run, id, … }…, { type: 'done', run, ok, … }
+// → { type: 'load', engine, files: { name: text | bytes } }    ← { type: 'loaded', engine, error?, memory }
+// → { type: 'run', run, engine, … }                            ← { type: 'call' | 'need' | 'fetch', run, id, … }…, { type: 'done', run, ok, memory, … }
 // → { type: 'answer', run, id, ok, value, error }              ← { type: 'reset' }: start a fresh sandbox next time
+import { signal } from '@preact/signals-core'
 
 /** @typedef {import('../core/loop.js').ToolContext} ToolContext */
 /** @typedef {{ frame: HTMLIFrameElement, runs: Map<number, (message: any) => void>, engines: Map<string, Promise<void>>, loading: Map<string, (message: any) => void>, reset: boolean, epoch: number }} Box */
+/**
+ * What a sandbox is doing, for Settings to show (D176): asleep until a run needs it, waking up while
+ * it or an engine starts, then ready, or working while a run goes on; each engine waking or ready;
+ * whether a run computes now, rather than waits on Jean; and the memory the worker said it holds.
+ * @typedef {{ state: 'asleep' | 'waking' | 'ready' | 'working', engines: Record<string, 'waking' | 'ready'>, computing: boolean, memory: number }} Status
+ */
 
 // No word from the sandbox for this long, while nothing is waiting on Jean: stop it.
 const WATCHDOG_MS = 40_000
@@ -35,9 +42,22 @@ export function sandbox({ capability, worker, page, engines }) {
   let started = null
   let lastRun = 0
   let epoch = 0
+  const status = signal(/** @type {Status} */ ({ state: 'asleep', engines: {}, computing: false, memory: 0 }))
+  let booting = false
+  /** The runs going on, and those of them waiting on Jean, by id. */
+  const going = { runs: new Set(), waiting: new Set() }
+  /** @type {Status['engines']} */
+  let woken = {}
+  /** @param {number} [memory] */
+  const tell = (memory = status.peek().memory) => {
+    const state = booting || Object.values(woken).includes('waking') ? 'waking' : !started ? 'asleep' : going.runs.size ? 'working' : 'ready'
+    status.value = { state, engines: { ...woken }, computing: going.runs.size > going.waiting.size, memory: started ? memory : 0 }
+  }
 
   /** Loads the sandbox document and starts its worker, from the source sent from here. */
   async function start() {
+    booting = true
+    tell()
     const source = await fetch(worker).then((response) => response.text())
     const frame = document.createElement('iframe')
     // Scripts, but an opaque origin: never together with allow-same-origin (AGENTS.md).
@@ -52,6 +72,8 @@ export function sandbox({ capability, worker, page, engines }) {
         frame.remove()
         removeEventListener('message', listen)
         started = null
+        booting = false
+        tell()
         reject(new Error(message))
       }
       const slow = setTimeout(() => fail('The sandbox did not start.'), 20_000)
@@ -60,7 +82,9 @@ export function sandbox({ capability, worker, page, engines }) {
         if (from !== frame.contentWindow || !data) return
         if (data.type === 'ready') {
           clearTimeout(slow)
+          booting = false
           resolve(box)
+          tell()
         } else if (data.type === 'failed') fail(data.error)
         else if (data.type === 'loaded') box.loading.get(data.engine)?.(data)
         else if (data.type === 'reset') {
@@ -79,6 +103,14 @@ export function sandbox({ capability, worker, page, engines }) {
   function load(box, engine) {
     let pending = box.engines.get(engine)
     if (pending) return pending
+    /** An engine of the sandbox running now, waking, ready, or gone. @param {'waking' | 'ready' | null} to @param {number} [memory] */
+    const wake = (to, memory) => {
+      if (box.epoch !== epoch) return
+      if (to) woken[engine] = to
+      else delete woken[engine]
+      tell(memory)
+    }
+    wake('waking')
     pending = (async () => {
       const { runtime, bootMs } = engines[engine]
       const began = performance.now()
@@ -96,12 +128,16 @@ export function sandbox({ capability, worker, page, engines }) {
           clearTimeout(slow)
           if (data.error) return reject(new Error(data.error))
           trace(`${engine} ready`, since(began))
+          wake('ready', data.memory)
           resolve(undefined)
         })
         box.frame.contentWindow?.postMessage({ type: 'load', engine, files }, '*')
       })
     })()
-    pending.catch(() => box.engines.delete(engine))
+    pending.catch(() => {
+      box.engines.delete(engine)
+      wake(null)
+    })
     box.engines.set(engine, pending)
     return pending
   }
@@ -109,6 +145,8 @@ export function sandbox({ capability, worker, page, engines }) {
   function stop() {
     const current = started
     started = null
+    woken = {}
+    tell()
     current?.then((box) => box.frame.remove(), () => {})
   }
 
@@ -144,6 +182,9 @@ export function sandbox({ capability, worker, page, engines }) {
       const finish = (error, kill = false, done = null) => {
         clearTimeout(timer)
         box.runs.delete(id)
+        going.runs.delete(id)
+        going.waiting.delete(id)
+        tell(done?.memory)
         ctx.signal?.removeEventListener('abort', abort)
         if (kill) trace(`${id} ←`, error?.message, since(began))
         if (kill || box.reset) stop()
@@ -158,6 +199,8 @@ export function sandbox({ capability, worker, page, engines }) {
         }
         trace(`${id}.${data.id} ←`, data.type === 'call' ? data.name : data.type, data.args ?? data.engine ?? data.url)
         waiting++
+        if (going.runs.has(id)) going.waiting.add(id)
+        tell()
         watch()
         let answer
         try {
@@ -168,7 +211,8 @@ export function sandbox({ capability, worker, page, engines }) {
         } catch (error) {
           answer = { ok: false, error: error instanceof Error ? error.message : String(error) }
         }
-        waiting--
+        if (!--waiting) going.waiting.delete(id)
+        tell()
         watch()
         trace(`${id}.${data.id} →`, answer.ok ? answer.value : `Error: ${answer.error}`)
         post({ type: 'answer', run: id, id: data.id, ...answer })
@@ -176,9 +220,11 @@ export function sandbox({ capability, worker, page, engines }) {
       // The code as an argument, not in the label, so a "%" in it is not read as a format.
       trace(`${id} →`, message.code ?? message.command)
       post({ ...message, ...extra, type: 'run', run: id })
+      going.runs.add(id)
+      tell()
       watch()
     })
   }
 
-  return { execute, stop }
+  return { execute, stop, status }
 }

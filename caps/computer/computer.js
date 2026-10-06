@@ -7,7 +7,7 @@
 // which asks first, with the diff, in the user's folder. The computer reaches the internet through
 // Jean only, as Settings › Computer and policy allow (net.js): a new site is asked about first.
 import { html, nothing } from 'lit-html'
-import { signal } from '@preact/signals-core'
+import { signal, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { sandbox } from '../../ui/sandbox.js'
 import { Element, define } from '../../ui/base.js'
@@ -465,12 +465,16 @@ export const keys = html`<kbd><bdi dir="ltr">${/Mac|iPhone|iPad/.test(navigator.
 /** The terminal's prompt, the shell's: ">_". */
 export const prompt = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.5 7 5 5-5 5M12 17.5h7.5"/></svg>`
 
-/** At the main area's top, once the terminal has been opened: it opens or closes it (D170). */
+/** The computer's light (D176): unlit asleep, steady once ready, breathing while it wakes or works. @param {string} state */
+const light = (state) => html`<span class="ember" data-state=${state} aria-hidden="true"></span>`
+
+/** At the main area's top, once the terminal has been opened: it opens or closes it (D170), with the computer's light. */
 class TerminalToggle extends Element {
   render() {
     if (!app.settings.value.terminal) return nothing
+    const { state } = box.status.value
     return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} title=${t('computer.terminal')} aria-keyshortcuts="Control+\`"
-      @click=${() => import('./terminal.js').then((module) => module.toggle())}>${prompt}</button>`
+      @click=${() => import('./terminal.js').then((module) => module.toggle())}>${prompt}${state === 'asleep' ? nothing : light(state)}</button>`
   }
 }
 define('app-terminal-toggle', TerminalToggle)
@@ -501,6 +505,8 @@ async function measure() {
   for (const path of await walk(fs)) size += (await fs.stat?.(path))?.size ?? 0
   used.value = size
 }
+// Once Settings has shown it, measured again as the computer comes back from a run.
+effect(() => { if (box.status.value.state === 'ready' && used.peek() !== null) measure() })
 
 async function empty() {
   if (!confirm(t('computer.workspace.confirm'))) return
@@ -514,14 +520,56 @@ const choice = (name, label, options, current, locked, set) => html`<span class=
   ${options.map((option) => html`<label><input type="radio" name=${name} .checked=${current === option} ?disabled=${locked} @change=${() => set(option)}><span>${t(`computer.${name}.${option}`)}</span></label>`)}
 </span>`
 
-/** Settings › Computer: the internet, the sites, the relay, where packages come from, the limits and the workspace. */
+/** What the computer runs (D176), each with a line Try types in the terminal, for the user to run with Enter. Python's files are about 14 MB. */
+const ENGINES = /** @type {const} */ ([['shell', prompt, 'tree /workspace'], ['quickjs', 'JS', 'node -p "(1000 * 1.05 ** 10).toFixed(2)"'], ['pyodide', 'Py', 'python3 -c "print(2 ** 100)"']])
+
+/** Settings closes and the terminal opens, with a line typed on it if one is given. @param {string} [line] */
+function terminal(line) {
+  app.dialog.value = null
+  import('./terminal.js').then((module) => module.show(line))
+}
+
+/**
+ * The computer itself, at the top of Settings › Computer (D176), after DEVS's Device and HappyCapy's
+ * Sandbox: its light, with Restart; the core it computes on, of this device's, the memory it holds and
+ * the workspace, of what it takes in; then what it runs, each engine asleep or ready, with Try.
+ */
+function itself() {
+  const { state, engines, computing, memory } = box.status.value
+  const cores = navigator.hardwareConcurrency || 1
+  const limit = rightsNow().rights.workspaceMB * 1e6
+  /** @param {string} label @param {string} value @param {number} [part] of its limit */
+  const gauge = (label, value, part) => html`<li><span class="muted">${label}</span><strong>${value}</strong>${part === undefined ? nothing : html`<meter value=${part} aria-label=${label}></meter>`}</li>`
+  return html`<section class="computer">
+      <div class="setting">
+        <div><h3>${light(state)}<span role="status">${t(`computer.state.${state}`)}</span></h3><p class="muted">${t('computer.text')}</p></div>
+        <button class="button subtle" ?disabled=${state === 'asleep'} @click=${restart}>${icons.retry} ${t('computer.restart')}</button>
+      </div>
+      <ul class="gauges">
+        ${gauge(t('computer.processor'), t('computer.cores', { count: cores, used: computing ? 1 : 0 }), computing ? 1 / cores : 0)}
+        ${gauge(t('computer.memory'), formatBytes(memory))}
+        ${gauge(t('computer.workspace.short'), t('computer.of', { used: formatBytes(used.value ?? 0), total: formatBytes(limit) }), (used.value ?? 0) / limit)}
+      </ul>
+    </section>
+    <section>
+      <h3>${t('computer.engines')}</h3>
+      <ul class="list engines">${ENGINES.map(([id, mark, line]) => html`<li>
+        <span class="item-icon" aria-hidden="true">${mark}</span>
+        <span class="item-text"><span id=${`engine-${id}`}>${t(`computer.engine.${id}`)}</span><small>${t(`computer.engine.${id}.text`, { size: formatBytes(14e6) })}</small></span>
+        <small class="muted">${light(engines[id] ?? 'asleep')} ${t(`computer.state.${engines[id] ?? 'asleep'}`)}</small>
+        <button class="button subtle" aria-describedby=${`engine-${id}`} @click=${() => terminal(line)}>${t('computer.try')}</button>
+      </li>`)}</ul>
+    </section>`
+}
+
+/** Settings › Computer: the computer itself, the internet, the sites, the relay, where packages come from, the limits, the terminal and the workspace. */
 function panel() {
   if (!dialogs.value) import('../../ui/dialogs.js').then((module) => { dialogs.value = module })
   if (used.value === null) measure()
   const { rights, locked, global } = rightsNow()
   const held = (/** @type {string} */ key) => (locked.has(key) ? html`<p class="muted small">${t('computer.locked')}</p>` : nothing)
   const minutes = [60_000, 120_000, 300_000, 600_000]
-  return html`<p class="lede">${t('computer.text')}</p>
+  return html`${itself()}
     <section class="setting">
       <div><h3>${t('computer.internet')}</h3><p class="muted">${t('computer.internet.text')}</p>${held('internet')}</div>
       ${choice('internet', t('computer.internet'), ['off', 'ask', 'any'], rights.internet, locked.has('internet'), (internet) => setComputer({ internet: /** @type {any} */ (internet) }))}
@@ -557,14 +605,11 @@ function panel() {
     </section>
     <section class="setting">
       <div><h3>${t('computer.terminal')}</h3><p class="muted">${tParts('computer.terminal.text', { keys })}</p></div>
-      <button class="button subtle" aria-keyshortcuts="Control+\`" @click=${() => { app.dialog.value = null; import('./terminal.js').then((module) => module.show()) }}>${prompt} ${t('computer.terminal.open')}</button>
+      <button class="button subtle" aria-keyshortcuts="Control+\`" @click=${() => terminal()}>${prompt} ${t('computer.terminal.open')}</button>
     </section>
     <section class="setting">
-      <div><h3>${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text', { size: formatBytes(used.value ?? 0) })}</p></div>
-      <div class="row">
-        <button class="button subtle" @click=${restart}>${icons.retry} ${t('computer.restart')}</button>
-        <button class="button subtle danger" ?disabled=${!used.value} @click=${empty}>${icons.trash} ${t('computer.workspace.empty')}</button>
-      </div>
+      <div><h3>${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text')}</p></div>
+      <button class="button subtle danger" ?disabled=${!used.value} @click=${empty}>${icons.trash} ${t('computer.workspace.empty')}</button>
     </section>`
 }
 

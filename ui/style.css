@@ -466,12 +466,14 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .thought { padding-inline-start: 0.9rem; border-inline-start: 1px solid var(--line-strong); color: var(--ink-faint); font-size: 0.88rem; }
 .thought p { margin-block: 0 0.5rem; }
 .ember { inline-size: 0.5rem; block-size: 0.5rem; flex: none; border-radius: 50%; background: var(--ember-off); }
-[data-status='thinking'] > summary .ember, [data-status='working'] > summary .ember, [data-status='in_progress'] > .step > summary .ember, [data-status='pending'] > .step > summary .ember {
+[data-status='thinking'] > summary .ember, [data-status='working'] > summary .ember, [data-status='in_progress'] > .step > summary .ember, [data-status='pending'] > .step > summary .ember, .ember:is([data-state='waking'], [data-state='working']) {
   background: var(--flame);
   box-shadow: 0 0 0.6rem oklch(from var(--glow) l c h / 0.9);
   animation: pulse 1.1s ease-in-out infinite;
 }
-[data-status='completed'] > summary .ember, [data-status='completed'] > .step > summary .ember { background: oklch(from var(--flame) l c h / 0.55); }
+[data-status='completed'] > summary .ember, [data-status='completed'] > .step > summary .ember, .ember[data-state='ready'] { background: oklch(from var(--flame) l c h / 0.55); }
+/* The computer's light (D176) at the corner of the terminal's button. */
+.terminal-toggle { position: relative; } .terminal-toggle .ember { position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.4rem; block-size: 0.4rem; }
 [data-status='failed'] > summary .ember, [data-status='failed'] > .step > summary .ember { background: var(--danger); }
 @keyframes pulse { 50% { opacity: 0.4; scale: 0.8; } }
 
@@ -777,7 +779,7 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
   .persona-body { fill: Canvas; stroke: CanvasText; }
   .persona-sparks { fill: CanvasText; }
   .send, .button.primary { forced-color-adjust: none; background: Highlight; color: HighlightText; }
-  .history-item .ember { forced-color-adjust: none; background: CanvasText; }
+  :is(.history-item .ember, .ember:is([data-state='waking'], [data-state='working'], [data-state='ready'])) { forced-color-adjust: none; background: CanvasText; }
   .menu [role='switch']::after { forced-color-adjust: none; background-color: GrayText; }
   .menu [role='switch'][aria-checked='true']::after { background-color: Highlight; }
   .hero-question { color: CanvasText; background: none; }

@@ -53,9 +53,11 @@ let following = true
 const terminalOf = (id = '') => terminals.get(id) ?? /** @type {{ entries: Entry[], cwd: string }} */ (terminals.set(id, { entries: [], cwd: '/workspace' }).get(id))
 const current = () => terminalOf(app.current.peek()?.id)
 
-/** Opens the pane, or brings the keys to it; from then on, the main area has a button for it. */
-export function show() {
+/** Opens the pane, or brings the keys to it, with a line typed (Settings' Try, D176); from then on, the main area has a button for it. @param {string} [line] */
+export function show(line) {
   open.value = true
+  const area = pane.querySelector('textarea')
+  if (area && line) area.value = line
   toLine()
   if (!app.settings.peek().terminal) updateSettings({ terminal: true })
 }
