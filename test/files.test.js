@@ -177,6 +177,16 @@ test('the read tool finds files by name and cuts long reads', async () => {
   await assert.rejects(readTool({ fs, projectDir: () => 'p', files: () => [shot] }).run({ file: 'screen.png' }, {}), /"Screen\.png" is a picture/)
 })
 
+test("the read tool reads the files of the conversation that asked, by its run's signal, on screen or not", async () => {
+  const fs = memoryFS()
+  const here = await addFile(fs, { projectDir: 'p', name: 'Here.txt', bytes: enc.encode('here'), pages: ['On screen.'], by: 'd' })
+  const away = await addFile(fs, { projectDir: 'p', name: 'Away.txt', bytes: enc.encode('away'), pages: ['Out of sight.'], by: 'd' })
+  const run = new AbortController()
+  const tool = readTool({ fs, projectDir: () => 'p', files: (signal) => (signal === run.signal ? [away] : [here]) })
+  assert.match(await tool.run({ file: 'away.txt' }, { signal: run.signal }), /Out of sight\./)
+  await assert.rejects(tool.run({ file: 'away.txt' }, {}), /No file named "away\.txt"\. Files: Here\.txt\./)
+})
+
 // ─── Backup ──────────────────────────────────────────────────────────────────
 
 const HOME = (/** @type {string} */ id) => `---\nformat: 1\ndefault: true\nname: Home\n---\n${id}`
