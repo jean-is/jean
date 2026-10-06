@@ -20,7 +20,7 @@ export const UNCOMMITTED = [WEBMANIFEST, 'capabilities.json']
 export const ENTRY = 'ui/app.js'
 /** On-demand runtimes (D52) belong to the capabilities that use them, never to the shell. */
 export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
-  files: ['vendor/pdfjs'],
+  files: ['vendor/pdfjs', 'vendor/ooxml'],
   'brain-local': ['vendor/transformers'],
   voice: ['vendor/transformers'],
   reflexes: ['vendor/transformers'],

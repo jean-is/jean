@@ -213,7 +213,7 @@ test('the browser and a file share the side of the window, neither covering the 
   await page.locator('.msg-files .file-chip').click()
   const preview = page.locator('app-preview .preview')
   const pane = page.locator('app-browser .browser')
-  await expect(preview.locator('.preview-grid')).toBeVisible()
+  await expect(preview.locator('.preview-frame')).toBeVisible()
   const alone = await preview.boundingBox()
   // The browser comes after the file: one above the other, as wide, and the file's still in view.
   await page.locator('.views .browser-toggle').click()
@@ -222,7 +222,7 @@ test('the browser and a file share the side of the window, neither covering the 
   let [first, second] = await Promise.all([preview.boundingBox(), pane.boundingBox()])
   expect(first?.width).toBe(second?.width)
   expect((first?.y ?? 0) + (first?.height ?? 0)).toBeLessThanOrEqual(second?.y ?? 0)
-  await expect(preview.locator('.preview-grid')).toBeInViewport()
+  await expect(preview.locator('.preview-frame')).toBeInViewport()
   // Beside the conversation, the box still takes a message.
   await expect(page.locator('#prompt')).toBeEditable()
   // The divider between them is dragged, over the page too, or moved with the keys.

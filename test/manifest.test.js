@@ -15,7 +15,7 @@ import {
   stampVersion,
 } from '../scripts/manifest.js'
 import { resolveRequest } from '../scripts/serve.js'
-import { rewriteSpecifiers, stripSourceMaps } from '../scripts/vendor.js'
+import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, forImportMap } from '../scripts/vendor.js'
 
 const IMPORT_MAP = {
   imports: {
@@ -126,6 +126,21 @@ describe('manifest: capabilities', () => {
     const map = { 'onnxruntime-web/webgpu': './ort.mjs', 'onnxruntime-common': './ort.mjs' }
     assert.equal(rewriteSpecifiers('import*as a from"onnxruntime-web/webgpu";import{Tensor as b}from "onnxruntime-common";x("onnxruntime-common")', map),
       'import*as a from"./ort.mjs";import{Tensor as b}from "./ort.mjs";x("onnxruntime-common")')
+  })
+
+  it('makes CommonJS files one classic script, as Buffer for QuickJS is (D178)', () => {
+    const script = classicScript("const half = require('half'); module.exports.twice = (n) => half.of(n) * 4", { half: 'exports.of = (n) => n / 2' }, 'globalThis.made = module.exports')
+    const scope = /** @type {{ made?: { twice: (n: number) => number } }} */ ({})
+    new Function('globalThis', script)(scope)
+    assert.equal(scope.made?.twice(3), 6)
+  })
+
+  it('readies a package’s modules for an import map of data: addresses, its workers classic (D183)', () => {
+    assert.equal(forImportMap('import{a as b}from"./x-1.js";export*from "./y.js";import"./z.js";const c=()=>import("./w.js");const u=new URL("p_bg.wasm", import.meta.url).href', 'ooxml/'),
+      'import{a as b}from"ooxml/x-1.js";export*from "ooxml/y.js";import"ooxml/z.js";const c=()=>import("ooxml/w.js");const u=new URL("p_bg.wasm", "https://package.invalid/").href')
+    assert.equal(forImportMap('import x from"lit-html";s="../up.js"', 'ooxml/'), 'import x from"lit-html";s="../up.js"', 'bare and upward specifiers stay')
+    assert.equal(classicWorkers('b = new Blob(["URL.revokeObjectURL(import.meta.url);", src], { type: "text/javascript" }); w = new Worker(t, {\n\t\ttype: "module",\n\t\tname: e?.name\n\t})'),
+      'b = new Blob([src], { type: "text/javascript" }); w = new Worker(t, {\n\t\tname: e?.name\n\t})')
   })
 })
 

@@ -40,6 +40,8 @@
   "optionalDependencies": {
     "@huggingface/transformers": "4.3.0",
     "@jitl/quickjs-wasmfile-release-sync": "0.32.0",
+    "@silurus/ooxml": "0.88.0",
+    "buffer": "6.0.3",
     "fflate": "0.8.3",
     "just-bash": "3.6.0",
     "pdfjs-dist": "6.4.299",

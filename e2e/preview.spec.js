@@ -1,9 +1,9 @@
 // The preview (D126): a file Jean made or the user shared opens beside the conversation, as what
 // it is. A web page shows with its style and runs its script, but nothing leaves, and with its
 // code off in Settings the script never runs (D143); it fills the screen and saves a file until
-// Settings says no (D158); a Word document shows on a sheet and follows
-// its new version; a spreadsheet is a grid, a PDF its drawn pages, a deck its slides. On a phone
-// it covers the conversation; right to left, it sits on the left.
+// Settings says no (D158); a Word document, a table and a deck show as Office draws them, in a
+// frame of the same kind (D183), and a file follows its new version; a PDF shows its drawn pages.
+// On a phone it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, SALES } from './helpers.js'
 import { writeZip } from '../core/zip.js'
@@ -133,7 +133,7 @@ test('the sites a page’s code may reach: any by default, each one added with E
   await expect(policy).toHaveAttribute('content', /connect-src https:;/)
 })
 
-test('a Word document on a sheet, following its new version, saved from the preview', async ({ page }) => {
+test('a Word document as Word draws it, following its new version, saved from the preview', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Write the bakery plan as a Word document')
@@ -142,10 +142,10 @@ test('a Word document on a sheet, following its new version, saved from the prev
   // The card says what the file is, and opens it.
   await expect(first.locator('app-file .file-meta')).toContainText('Word document')
   await first.getByRole('button', { name: 'Open Bakery plan.docx' }).click()
-  const sheet = page.locator('.preview .preview-sheet')
-  // Its headings sit under the preview's own, the file's name.
-  await expect(sheet.getByRole('heading', { name: 'Bakery plan' })).toBeVisible()
-  await expect(sheet.locator('table')).toContainText('Saturday')
+  // Drawn on its pages, its text over them to select.
+  const sheet = page.frameLocator('.preview iframe').locator('main')
+  await expect(sheet).toContainText('Bakery plan', { timeout: 15_000 })
+  await expect(sheet).toContainText('Saturday')
   // Beside the conversation, the box still takes the next message.
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   await ask(page, 'Add a step to it')
@@ -157,7 +157,7 @@ test('a Word document on a sheet, following its new version, saved from the prev
   expect(download.suggestedFilename()).toBe('Bakery plan.docx')
 })
 
-test('shared files open in the preview: a table as a grid, a PDF drawn, a deck as slides', async ({ page }) => {
+test('shared files open in the preview: a table as a workbook, a PDF drawn, a deck as its slides', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles([
@@ -170,11 +170,11 @@ test('shared files open in the preview: a table as a grid, a PDF drawn, a deck a
   const chips = page.locator('.msg-files .file-chip')
   const pane = page.locator('app-preview .preview')
 
+  // A table, made a workbook, shows as Excel does: its sheet's tab under the grid (D183).
   await chips.filter({ hasText: 'sales.csv' }).click()
-  const grid = pane.locator('.preview-grid table')
-  await expect(grid.locator('thead th')).toHaveText(['', 'A', 'B', 'C'])
-  await expect(grid.locator('tbody tr').nth(1)).toContainText('North')
-  await expect(grid.locator('td.number').first()).toHaveText('1200')
+  const drawn = page.frameLocator('app-preview .preview iframe').locator('main')
+  await expect(drawn).toContainText('sales', { timeout: 15_000 })
+  await expect(drawn.locator('canvas').first()).toBeVisible()
 
   await chips.filter({ hasText: 'menu.pdf' }).click()
   await expect(pane.locator('h2')).toHaveText('menu.pdf')
@@ -189,8 +189,8 @@ test('shared files open in the preview: a table as a grid, a PDF drawn, a deck a
   }), { timeout: 15_000 }).toBeGreaterThan(50)
 
   await chips.filter({ hasText: 'pitch.pptx' }).click()
-  await expect(pane.locator('.preview-slides li')).toHaveCount(2)
-  await expect(pane.locator('.preview-slides li h3').first()).toHaveText('Our bakery')
+  await expect(drawn).toContainText('Our bakery', { timeout: 15_000 })
+  await expect(drawn).toContainText('Fresh every morning')
 })
 
 test('on a phone the preview covers the conversation; Escape gives it back', async ({ page }) => {
@@ -205,7 +205,7 @@ test('on a phone the preview covers the conversation; Escape gives it back', asy
   await chip.focus()
   await page.keyboard.press('Enter')
   const pane = page.locator('app-preview .preview')
-  await expect(pane.locator('.preview-grid')).toBeVisible()
+  await expect(pane.locator('.preview-frame')).toBeVisible()
   // The whole width, or all but the margins of a look whose panes float.
   const box = await pane.boundingBox()
   expect(2 * (box?.x ?? 0) + (box?.width ?? 0)).toBeCloseTo(390, 0)
@@ -242,8 +242,18 @@ trailer <</Root 1 0 R>>
 %%EOF`)
 }
 
-/** A deck of one-line slides, as PowerPoint keeps them. @param {string[]} titles */
+/** A deck of slides with a title and a line each, as PowerPoint keeps them. @param {string[]} titles */
 async function deck(titles) {
-  const slide = (/** @type {string} */ title) => `<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>${title}</a:t></a:r></a:p></p:txBody></p:sp><p:sp><p:txBody><a:p><a:r><a:t>Made with flour</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>`
-  return Buffer.from(await writeZip(titles.map((title, i) => ({ name: `ppt/slides/slide${i + 1}.xml`, bytes: new TextEncoder().encode(slide(title)) }))))
+  const [p, a, r] = ['presentationml/2006/main', 'drawingml/2006/main', 'officeDocument/2006/relationships'].map((path) => `http://schemas.openxmlformats.org/${path}`)
+  const rels = (/** @type {[string, string][]} */ list) => `<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${list.map(([type, target], i) => `<Relationship Id="rId${i + 1}" Type="${r}/${type}" Target="${target}"/>`).join('')}</Relationships>`
+  const box = (/** @type {number} */ id, /** @type {string} */ text) => `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="t${id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="457200" y="${id * 900000}"/><a:ext cx="8229600" cy="900000"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr><p:txBody><a:bodyPr/><a:p><a:r><a:rPr lang="en-US" sz="${id === 2 ? 4000 : 2400}"/><a:t>${text}</a:t></a:r></a:p></p:txBody></p:sp>`
+  const slide = (/** @type {string} */ title) => `<p:sld xmlns:a="${a}" xmlns:p="${p}" xmlns:r="${r}"><p:cSld><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr/>${box(2, title)}${box(3, 'Made with flour')}</p:spTree></p:cSld></p:sld>`
+  const files = {
+    '[Content_Types].xml': `<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>${titles.map((_, i) => `<Override PartName="/ppt/slides/slide${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>`).join('')}</Types>`,
+    '_rels/.rels': rels([['officeDocument', 'ppt/presentation.xml']]),
+    'ppt/presentation.xml': `<p:presentation xmlns:p="${p}" xmlns:r="${r}"><p:sldIdLst>${titles.map((_, i) => `<p:sldId id="${256 + i}" r:id="rId${i + 1}"/>`).join('')}</p:sldIdLst><p:sldSz cx="9144000" cy="5143500"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>`,
+    'ppt/_rels/presentation.xml.rels': rels(titles.map((_, i) => ['slide', `slides/slide${i + 1}.xml`])),
+    ...Object.fromEntries(titles.map((title, i) => [`ppt/slides/slide${i + 1}.xml`, slide(title)])),
+  }
+  return Buffer.from(await writeZip(Object.entries(files).map(([name, text]) => ({ name, bytes: new TextEncoder().encode(text) }))))
 }

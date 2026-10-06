@@ -45,16 +45,16 @@ export function site(text) {
 /**
  * A Content-Security-Policy: inline scripts when they run, and from the web (https only) what the
  * page links to, its scripts included, and what they send and receive, to the sites listed (none
- * of those valid: nowhere). Never a frame, a form or another base address. A page of the user's
- * folder (D156) has its scripts and modules as data addresses.
+ * of those valid: nowhere). Never a frame, a form or another base address. A page of the user's folder
+ * (D156) or an Office file's (D183) has its scripts as data, and its own workers, pictures and WebAssembly.
  * @param {Record<PageRight, boolean>} allows @param {string[]} [sites] @param {boolean} [folder]
  */
 export function pagePolicy({ scripts, web, network }, sites = [], folder = false) {
   const from = (/** @type {string} */ own) => (web ? `${own} https:` : own)
   const reach = sites.length ? sites.map(site).flatMap((host) => (host ? [host === '*' ? 'https:' : `${LOCAL.test(host) ? 'http' : 'https'}://${host}`] : [])) : ['https:']
   return [
-    "default-src 'none'", `script-src ${scripts ? from(folder ? "'unsafe-inline' data:" : "'unsafe-inline'") : "'none'"}`, `style-src ${from("'unsafe-inline'")}`,
-    `img-src ${from('data:')}`, `media-src ${from('data:')}`, `font-src ${from('data:')}`, `connect-src ${network && reach.length ? reach.join(' ') : "'none'"}`,
+    "default-src 'none'", `script-src ${scripts ? from(folder ? "'unsafe-inline' data: blob: 'wasm-unsafe-eval'" : "'unsafe-inline'") : "'none'"}`, `style-src ${from("'unsafe-inline'")}`,
+    `img-src ${from(folder ? 'data: blob:' : 'data:')}`, `media-src ${from('data:')}`, `font-src ${from('data:')}`, `connect-src ${network && reach.length ? reach.join(' ') : "'none'"}`,
     "frame-src 'none'", "base-uri 'none'", "form-action 'none'",
   ].join('; ')
 }

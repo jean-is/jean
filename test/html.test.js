@@ -99,7 +99,7 @@ test('a page reaches any site, or only those listed, as typed or pasted (D143)',
 
 test('the preview frame allows at most what Settings can, and its relay writes the policy first (D126, D143)', () => {
   assert.equal(previewCSP, pagePolicy({ scripts: true, web: true, network: true }, ['*', 'localhost:*', '127.0.0.1:*'], true), "preview.html's policy is the loosest a page can be given, a folder's included")
-  assert.match(pagePolicy({ scripts: true, web: false, network: false }, [], true), /script-src 'unsafe-inline' data:;/, "a folder's page: its scripts and modules as data (D156)")
+  assert.match(pagePolicy({ scripts: true, web: false, network: false }, [], true), /script-src 'unsafe-inline' data: blob: 'wasm-unsafe-eval';.* img-src data: blob:;/, "a folder's or an Office file's page: its scripts as data, its own workers, pictures and WebAssembly (D156, D183)")
   assert.ok(preview.indexOf('Content-Security-Policy') < preview.indexOf('<script'))
   const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
   assert.ok(relay.indexOf('http-equiv="Content-Security-Policy"') < relay.indexOf('document.write(data.page)'), "the page's policy, before the page")

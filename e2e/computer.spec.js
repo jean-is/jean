@@ -282,7 +282,7 @@ function pack(name, version, files) {
   return { tgz, tarball, meta: { name, 'dist-tags': { latest: version }, versions: { '1.0.0': { ...manifest, version: '1.0.0', dist: { tarball, integrity: 'sha512-old' } }, [version]: { ...manifest, dist: { tarball, integrity } } } } }
 }
 
-test('npm install from the registry Settings name, then node requires and imports, with Node’s own modules (D178); and tar', async ({ page }) => {
+test('npm install from the registry Settings name, then node requires and imports, with Node’s own modules, Buffer and timers (D178); and tar', async ({ page }) => {
   test.setTimeout(90_000)
   const packages = [
     // As cowsay does: its cows are files beside its code, read at once through path and fs.
@@ -325,12 +325,16 @@ test('npm install from the registry Settings name, then node requires and import
   answer = await command(page, `$ mkdir -p lib ; node -e "const fs = require('node:fs'); fs.writeFileSync('n.txt', 'one'); fs.appendFileSync('n.txt', ' two'); fs.readFile('n.txt', 'utf8', (error, text) => console.log(text, fs.existsSync('nope'), fs.statSync('lib').isDirectory()))" ; node -e "require('fs').readFileSync('nope')" ; node -e "require('crypto')"`)
   await expect(answer).toContainText('one two false true')
   await expect(answer).toContainText('ENOENT')
-  await expect(answer).toContainText("Cannot find module 'crypto': of Node's own modules, only path, fs, os, util, events and process are here")
+  await expect(answer).toContainText("Cannot find module 'crypto': of Node's own modules, only path, fs, os, util, events, process and buffer are here")
   // os, util and events, as packages use them: a constructor that calls EventEmitter on its own `this`.
   answer = await command(page, `$ node -e "const EventEmitter = require('events'); const util = require('node:util'); const os = require('os'); function Bell() { EventEmitter.call(this) } util.inherits(Bell, EventEmitter); const bell = new Bell(); bell.once('ring', (n) => console.log(util.format('%s rang %d times in %s', 'bell', n, os.homedir()), bell.listenerCount('ring'))); bell.emit('ring', '2'); util.promisify(require('fs').readFile)('n.txt').then(console.log)"`)
-  await expect(answer).toContainText('bell rang 2 times in /home/user 0\none two')
-  answer = await command(page, `$ echo "import { join, relative } from 'node:path'; import { readFile } from 'fs/promises'; console.log(join('a', '..', 'b/'), relative('/x/y', '/x/z'), await readFile('n.txt'))" > own.mjs && node own.mjs`)
+  await expect(answer).toContainText('bell rang 2 times in /home/user 0\n<Buffer 6f 6e 65 20 74 77 6f>')
+  answer = await command(page, `$ echo "import { join, relative } from 'node:path'; import { readFile } from 'fs/promises'; console.log(join('a', '..', 'b/'), relative('/x/y', '/x/z'), await readFile('n.txt', 'utf8'))" > own.mjs && node own.mjs`)
   await expect(answer).toContainText('b/ ../z one two')
+  // Bytes, Buffer and timers, as Node has them, so a package that makes a deck or a workbook writes it whole; a cleared timer is gone at once.
+  answer = await command(page, `$ node -e "const fs = require('fs'); clearTimeout(setTimeout(() => console.log('never'), 60000)); setTimeout(() => { fs.writeFileSync('b.bin', new Uint8Array([0, 1, 2, 255])); fs.appendFileSync('b.bin', Buffer.from('/w==', 'base64')); const b = fs.readFileSync('b.bin'); console.log(b.toString('hex'), Buffer.isBuffer(b), process.release.name) }, 20)" && base64 b.bin`)
+  await expect(answer).toContainText('000102ffff true node')
+  await expect(answer).toContainText('AAEC//8=')
 
   answer = await command(page, '$ tar czf both.tgz package.json hi.mjs && rm hi.mjs && tar xzf both.tgz && tar tzf both.tgz && cat hi.mjs')
   await expect(answer).toContainText('package.json\nhi.mjs')

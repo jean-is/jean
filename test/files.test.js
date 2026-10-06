@@ -6,6 +6,10 @@ import { decodeText, docx, extractPages, extractable, paginate, sheetRows, slide
 import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages, weigh } from '../core/files.js'
 import { isPicture } from '../core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
+import { officePage } from '../caps/files/office.js'
+import { sitePage } from '../caps/folders/site.js'
+import { existsSync } from 'node:fs'
+import { readFile } from 'node:fs/promises'
 
 const enc = new TextEncoder()
 const dec = new TextDecoder()
@@ -80,6 +84,22 @@ test('slides and sheets', () => {
   </sheetData></worksheet>`
   assert.deepEqual(sheetRows(sheet, ['Name', 'Total']), ['Name\t\tTotal', 'Inline\t42.5\tTRUE\tName'])
 })
+
+test('an Office file is drawn in a page of its own: its viewer’s modules as data under an import map, its parser and the file as data, nothing from anywhere (D183)',
+  { skip: !existsSync(new URL('../vendor/ooxml/graph.json', import.meta.url)) && 'npm run vendor makes vendor/ooxml' }, async (t) => {
+    t.mock.method(globalThis, 'fetch', async (/** @type {URL} */ url) => new Response(await readFile(url)))
+    const bytes = await zipOf({ '[Content_Types].xml': '<Types/>' })
+    const page = await officePage('pptx', bytes, 'Plan <1>.pptx')
+    const imports = JSON.parse(/<script type="importmap">(.*?)<\/script>/.exec(page)?.[1] ?? '{}').imports
+    assert.ok(imports['ooxml/pptx.mjs'] && Object.values(imports).every((url) => url.startsWith('data:text/javascript;base64,')))
+    assert.match(page, /import \{ PptxScrollViewer as Viewer \} from 'ooxml\/pptx\.mjs'/)
+    assert.match(page, /wasmUrl: 'data:application\/wasm;base64,/)
+    assert.ok(page.includes(`atob('${Buffer.from(bytes).toString('base64')}')`), 'the file, as data')
+    assert.ok(!/https?:|\/\/[a-z]/.test(page.replace(/data:[^'"]+/g, '')), 'nothing from anywhere')
+    assert.ok(!page.includes('<1>'), 'its name only as text')
+    const shown = await sitePage(memoryFS({ 'notes/a.docx': bytes }), 'notes/a.docx')
+    assert.ok('html' in shown && /DocxScrollViewer/.test(shown.html), 'a folder’s Office file, in the browser')
+  })
 
 test('extractPages reads real Office containers in presentation order', async () => {
   const pptx = await zipOf({

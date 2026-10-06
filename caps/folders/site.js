@@ -5,7 +5,7 @@
 // as data: addresses, modules through an import map of data: addresses (their imports first made
 // absolute), and the data files its scripts name, which its fetch() then finds. Never a hidden file
 // (a name starting with a dot) or one outside the folder. A folder shows its index.html, or what it
-// holds; a picture, a sound, a film or a text shows as itself. No DOM: node tests run it.
+// holds; a picture, a sound, a film or a text as itself, an Office file drawn (D183). No DOM: node tests run it.
 import { walkFolder } from './work.js'
 
 /** The made-up site a page's addresses are resolved in, never fetched. */
@@ -41,7 +41,7 @@ function base64(bytes) {
   for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
   return btoa(text)
 }
-const dataURL = (/** @type {string} */ type, /** @type {Uint8Array} */ bytes) => `data:${type};base64,${base64(bytes)}`
+export const dataURL = (/** @type {string} */ type, /** @type {Uint8Array} */ bytes) => `data:${type};base64,${base64(bytes)}`
 
 /**
  * A reference in a file of the folder, as the path of the file it names: null for another site, a
@@ -190,7 +190,7 @@ const plain = (title, inner) => `<meta charset="utf-8"><title>${escape(title)}</
 
 /**
  * What a path of the folder shows (D156): a page put together, a picture, a sound, a film or a text
- * as itself, a folder as its index.html or the list of what it holds.
+ * as itself, an Office file drawn (D183), a folder as its index.html or the list of what it holds.
  * @param {FS} fs @param {string} path @param {string} [name] the folder's, for the list of its top
  * @returns {Promise<Shown>}
  */
@@ -217,6 +217,7 @@ export async function sitePage(fs, path, name = '') {
   const file = clean.split('/').at(-1) ?? clean
   if (!bytes) return { note: 'unshown' }
   if (type === 'text/html') return { html: await page(ctx, decoder.decode(bytes), clean), path: clean, files: ctx.files }
+  if (/\.(docx|xlsx|pptx)$/i.test(clean)) return { html: await (await import('../files/office.js')).officePage(clean.slice(-4).toLowerCase(), bytes, file), path: clean, files: ctx.files }
   const media = /^(image|video|audio)\//.exec(type)?.[1]
   const inner = media === 'image' ? `<img src="${dataURL(type, bytes)}" alt="${escape(file)}">`
     : media ? `<${media} src="${dataURL(type, bytes)}" controls></${media}>`

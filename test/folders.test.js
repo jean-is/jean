@@ -235,7 +235,7 @@ test('a page of the folder comes with what it uses: styles, pictures, fonts, scr
 })
 
 test('the folder itself: its index.html, or what it holds; a picture, a text as themselves; what isn’t a page, or isn’t there', async () => {
-  const fs = memoryFS({ 'site/index.html': '<h1>Home</h1>', 'notes/a <b>.txt': 'x < y', 'notes/b.png': new Uint8Array([1]), 'notes/c.docx': new Uint8Array([2]), 'notes/sub/d.md': '#', 'notes/.hidden': 'h', '.gitignore': 'build/\n', 'build/x.js': 'x' })
+  const fs = memoryFS({ 'site/index.html': '<h1>Home</h1>', 'notes/a <b>.txt': 'x < y', 'notes/b.png': new Uint8Array([1]), 'notes/c.bin': new Uint8Array([2]), 'notes/sub/d.md': '#', 'notes/.hidden': 'h', '.gitignore': 'build/\n', 'build/x.js': 'x' })
   assert.deepEqual(await sitePage(fs, 'site'), { html: '<h1>Home</h1>', path: 'site/index.html', files: { 'site/index.html': (await sitePage(fs, 'site/')).files['site/index.html'] } })
   const top = await sitePage(fs, '', 'Work')
   assert.ok('html' in top && top.path === '')
@@ -248,7 +248,7 @@ test('the folder itself: its index.html, or what it holds; a picture, a text as 
   assert.ok('html' in text && text.html.includes('<pre dir="auto">x &#60; y</pre>'))
   const picture = await sitePage(fs, 'notes/b.png')
   assert.ok('html' in picture && picture.html.includes('<img src="data:image/png;base64,AQ==" alt="b.png">'))
-  assert.deepEqual(await sitePage(fs, 'notes/c.docx'), { note: 'unshown' })
+  assert.deepEqual(await sitePage(fs, 'notes/c.bin'), { note: 'unshown' })
   assert.deepEqual(await sitePage(fs, 'notes/nope.html'), { note: 'missing' })
   assert.deepEqual(await sitePage(fs, 'nope/'), { note: 'missing' })
   assert.deepEqual(await sitePage(fs, 'notes/.hidden'), { note: 'missing' })

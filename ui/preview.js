@@ -2,9 +2,9 @@
 // it on a narrow screen, in a pane of the dock (D144), with a button to save it. Each kind shows
 // as what it is: a picture or a drawing as a picture; a web page in a frame of its own
 // (preview.html), doing what Settings lets it (D143), by default running its scripts without any
-// network; a PDF's pages drawn by pdf.js; a document on a sheet; a spreadsheet as a grid; a deck
-// as its slides' text. A file being changed shows its new version as it comes. Loaded the first
-// time a file is opened, with its style sheet.
+// network; a PDF's pages drawn by pdf.js; an Office file or a CSV as Office draws it, in a frame of
+// the same kind (D183), else its text. A file being changed shows its new version as it comes.
+// Loaded the first time a file is opened, with its style sheet.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -22,8 +22,6 @@ import { styleSheet } from './sheet.js'
 /** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
 
 const FRAME = new URL('../preview.html', import.meta.url).href
-// Rows a grid shows: more would only slow the page; the file has them all.
-const ROWS = 2000
 
 await styleSheet('ui/preview.css')
 
@@ -157,23 +155,15 @@ async function show(file, holds, rules, allows) {
       console.warn('Preview', error)
     }
   }
+  // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183).
+  const { allows: can, sites } = rights.peek()
+  const csv = /^(csv|tsv)$/.test(ext) && can.scripts ? await (await import('../caps/made/formats.js')).makeFile(file.name.replace(/\.[ct]sv$/i, '.xlsx'), new TextDecoder().decode(bytes)).catch(() => null) : null
+  if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && can.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, file.name), file.name, pagePolicy(can, sites, true), allows)
   // Everything else shows from its text: what Jean wrote for a file it made, what was read from a shared one.
   const pages = splitPages((await fileText(app.fs, dir, file.uri)) ?? '')
   const made = (await fileMeta(app.fs, dir, file.uri))?.author === 'jean'
-  if (ext === 'pptx') return html`<ol class="preview-slides">${pages.map(slide)}</ol>`
-  if (/^(xlsx|csv|tsv)$/.test(ext)) return grids(await sheets(ext, made, pages, file.name))
   if (/^(md|markdown)$/.test(ext) || (made && ext === 'docx')) return html`<article class="preview-sheet prose" dir="auto">${markdown(pages.join('\n'))}</article>`
-  if (ext === 'docx' || ext === 'pdf') return (ext === 'pdf' ? pages : [pages.join('\n')]).map((page) => html`<article class="preview-sheet" dir="auto">${paragraphs(page)}</article>`)
   return html`<pre class="preview-text" dir="auto">${pages.join('\n')}</pre>`
-}
-
-/** @param {string} text */
-const paragraphs = (text) => text.split(/\n+/).map((line) => html`<p>${line}</p>`)
-
-/** A slide's text: its first line is its title. @param {string} text */
-function slide(text) {
-  const [title = '', ...lines] = text.split('\n').filter((line) => line.trim())
-  return html`<li dir="auto"><h3>${title}</h3>${lines.map((line) => html`<p>${line}</p>`)}</li>`
 }
 
 /**
@@ -226,43 +216,6 @@ async function pdf(bytes, holds) {
   })().catch(() => {})
   return pages
 }
-
-/**
- * A spreadsheet's sheets: what Jean wrote (CSV, or Markdown tables under their sheets' names),
- * a shared CSV, or a shared workbook's text, each page a sheet's name, then its rows by tabs.
- * @param {string} ext @param {boolean} made @param {string[]} pages @param {string} name
- * @returns {Promise<{ name: string, rows: string[][] }[]>}
- */
-async function sheets(ext, made, pages, name) {
-  const { sheetsIn, csvRows } = await import('../caps/made/formats.js')
-  if (ext !== 'xlsx') return [{ name: '', rows: csvRows(pages.join('\n')) }]
-  if (made) return sheetsIn(pages.join('\n'), name.slice(0, -5))
-  /** @type {Map<string, string[][]>} */
-  const found = new Map()
-  for (const page of pages) {
-    const [head, ...rows] = page.split('\n')
-    const sheet = head.replace(/^Sheet: /, '').replace(/ \(rows [^)]*\)$/, '')
-    found.set(sheet, [...(found.get(sheet) ?? []), ...rows.map((row) => row.split('\t'))])
-  }
-  return [...found].map(([sheet, rows]) => ({ name: sheet, rows }))
-}
-
-/** Each sheet as a grid, its columns lettered and its rows numbered, as spreadsheets show them. @param {{ name: string, rows: string[][] }[]} list */
-function grids(list) {
-  return list.map(({ name, rows }) => {
-    const columns = Array.from({ length: Math.max(0, ...rows.map((row) => row.length)) }, (_, i) => letters(i))
-    return html`<section class="preview-grid">
-      ${list.length > 1 ? html`<h3 dir="auto">${name}</h3>` : nothing}
-      <table><thead><tr><th></th>${columns.map((column) => html`<th>${column}</th>`)}</tr></thead>
-      <tbody>${rows.slice(0, ROWS).map((row, r) => html`<tr><th>${r + 1}</th>${columns.map((_, i) => html`<td dir="auto"
-        class=${/^[-+]?\d[\d.,\s]*%?$/.test(row[i] ?? '') ? 'number' : ''}>${row[i] ?? ''}</td>`)}</tr>`)}
-      ${rows.length > ROWS ? html`<tr><th>…</th></tr>` : nothing}</tbody></table>
-    </section>`
-  })
-}
-
-/** @param {number} index @returns {string} A, B, … Z, AA… */
-const letters = (index) => (index >= 26 ? letters(Math.floor(index / 26) - 1) : '') + String.fromCharCode(65 + (index % 26))
 
 define('app-preview', Preview)
 dock.join(document.createElement('app-preview'))

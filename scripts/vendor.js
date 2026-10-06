@@ -96,8 +96,10 @@ async function copyLicense (pkg) {
 /**
  * On-demand runtimes (D52), each in its own folder. `rewrite` maps bare specifiers to
  * files in the same folder, because import maps don't reach into workers. A folder entry
- * may keep only the files matching a pattern.
- * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]> }[]}
+ * may keep only the files matching a pattern. `scripts` are CommonJS files made one classic script
+ * (`classicScript`); `graph` copies what entries import, for an import map (`forImportMap`).
+ * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>,
+ *   scripts?: Record<string, [string, Record<string, string>, string]>, graph?: { from: string, entries: string[], prefix: string, skip: RegExp } }[]}
  */
 export const RUNTIMES = [
   {
@@ -120,9 +122,10 @@ export const RUNTIMES = [
     rewrite: { 'onnxruntime-web/webgpu': './ort.webgpu.bundle.min.mjs', 'onnxruntime-common': './ort.webgpu.bundle.min.mjs' },
   },
   {
-    // QuickJS for Calculations (D13, D48): flat, so the sandbox can load it from blob URLs.
+    // QuickJS for Calculations (D13, D48): flat, so the sandbox can load it from blob URLs. Node's
+    // Buffer for its scripts (D178) is feross's, with what it requires, as one classic script.
     dir: 'vendor/quickjs',
-    packages: ['quickjs-emscripten-core', '@jitl/quickjs-wasmfile-release-sync', '@jitl/quickjs-ffi-types'],
+    packages: ['quickjs-emscripten-core', '@jitl/quickjs-wasmfile-release-sync', '@jitl/quickjs-ffi-types', 'buffer', 'base64-js', 'ieee754'],
     files: [
       ['@jitl/quickjs-ffi-types/dist/index.mjs', 'ffi-types.mjs'],
       ['@jitl/quickjs-wasmfile-release-sync/dist/ffi.mjs', 'ffi.mjs'],
@@ -131,6 +134,17 @@ export const RUNTIMES = [
     ],
     folders: [['quickjs-emscripten-core/dist', '.', /\.mjs$/]],
     rewrite: { '@jitl/quickjs-ffi-types': './ffi-types.mjs' },
+    scripts: { 'buffer.js': ['buffer/index.js', { 'base64-js': 'base64-js/index.js', ieee754: 'ieee754/index.js' }, 'globalThis.__buffer = module.exports\nglobalThis.Buffer = module.exports.Buffer'] },
+  },
+  {
+    // Word, Excel and PowerPoint files, drawn as Office draws them (D183): each kind's modules, what
+    // they import, and its parser. A page holds them as data: addresses (caps/files/office.js), under
+    // an import map, which graph.json lists by kind; the parser's address goes in as data too, and its
+    // worker starts as a classic script. The modules of drawing in a worker of its own aren't needed.
+    dir: 'vendor/ooxml',
+    packages: ['@silurus/ooxml'],
+    files: ['docx', 'xlsx', 'pptx'].map((kind) => [`@silurus/ooxml/dist/${kind}_parser_bg.wasm`, `${kind}_parser_bg.wasm`]),
+    graph: { from: '@silurus/ooxml/dist', entries: ['docx.mjs', 'xlsx.mjs', 'pptx.mjs'], prefix: 'ooxml/', skip: /^render-worker-host-/ },
   },
   {
     // Pyodide for the data toolkit (D43): the loader, the runtime, the standard library and the
@@ -166,6 +180,42 @@ export function wrapCommonJS (text, names) {
 }
 
 /**
+ * CommonJS files as one classic script: the main one, given the files it requires, then `then`,
+ * which finds its exports as `module.exports`.
+ * @param {string} main @param {Record<string, string>} required its source, by the name it requires it by @param {string} then
+ */
+export function classicScript (main, required, then) {
+  const wrapped = (/** @type {string} */ text) => `(() => { const module = { exports: {} }, exports = module.exports;\n${text}\nreturn module.exports })()`
+  const modules = Object.entries(required).map(([name, text]) => `${JSON.stringify(name)}: ${wrapped(text)}`)
+  return `(() => {\nconst required = { ${modules.join(',\n')} }\nconst require = (name) => required[name]\nconst module = { exports: {} }, exports = module.exports;\n${main}\n${then}\n})();\n`
+}
+
+/**
+ * A module for an import map of data: addresses, under which nothing resolves against the module's
+ * own: its relative imports, static or dynamic, named under `prefix`, and an address worked out from
+ * import.meta.url made from a site that never resolves.
+ * @param {string} text @param {string} prefix
+ */
+export function forImportMap (text, prefix) {
+  return text
+    .replace(/(\bimport\s*\(\s*|\bfrom\s*|\bimport\s*)(["'])\.\/([^"'\n]+)\2/g, `$1$2${prefix}$3$2`)
+    .replace(/new URL\((["'][^"'\n]+["']),\s*import\.meta\.url\)/g, 'new URL($1, "https://package.invalid/")')
+}
+
+/**
+ * A module's workers started as classic scripts, which an opaque origin can start from a blob, as
+ * the preview's frame is (D183); browsers refuse module workers there. Their scripts then mustn't
+ * use import.meta, which only revoked the blob's address.
+ * @param {string} text
+ */
+export function classicWorkers (text) {
+  return text.replace(/new Blob\(\["URL\.revokeObjectURL\(import\.meta\.url\);", /g, 'new Blob([').replace(/(new Worker\([^{]*\{\s*)type: "module",\s*/g, '$1')
+}
+
+/** The relative imports of a module, static or dynamic, by the file they name. */
+const RELATIVE = /(?:\bimport\s*\(\s*|\bfrom\s*|\bimport\s*)["']\.\/([^"'\n]+)["']/g
+
+/**
  * Points bare import specifiers at local files: `from"x"` and `from "x"`.
  * @param {string} text @param {Record<string, string>} map
  */
@@ -197,6 +247,33 @@ async function copyRuntime (runtime) {
   for (const [from, to, only] of runtime.folders ?? []) {
     await mkdir(join(target, to), { recursive: true })
     for (const name of await readdir(join(MODULES, from))) if (!only || only.test(name)) await copy(join(from, name), join(to, name))
+  }
+  /** @param {string} path */
+  const source = (path) => readFile(join(MODULES, path), 'utf8')
+  for (const [to, [main, required, then]] of Object.entries(runtime.scripts ?? {})) {
+    const sources = Object.fromEntries(await Promise.all(Object.entries(required).map(async ([name, path]) => [name, await source(path)])))
+    await writeFile(join(target, to), classicScript(await source(main), sources, then))
+  }
+  if (runtime.graph) {
+    const { from, entries, prefix, skip } = runtime.graph
+    /** @type {Record<string, string[]>} */
+    const graph = {}
+    for (const entry of entries) {
+      const found = (graph[entry.replace(/\.m?js$/, '')] = /** @type {string[]} */ ([]))
+      /** @param {string} name */
+      const visit = async (name) => {
+        if (found.includes(name) || skip.test(name)) return
+        found.push(name)
+        for (const [, next] of (await source(join(from, name))).matchAll(RELATIVE)) await visit(next)
+      }
+      await visit(entry)
+    }
+    for (const name of new Set(Object.values(graph).flat())) {
+      const text = forImportMap(classicWorkers(stripSourceMaps(await source(join(from, name)))), prefix)
+      await writeFile(join(target, name), text)
+      raw += Buffer.byteLength(text)
+    }
+    await writeFile(join(target, 'graph.json'), `${JSON.stringify(graph)}\n`)
   }
   for (const pkg of runtime.packages) await copyLicense(pkg)
   console.log(`${`${runtime.dir}/ (on demand)`.padEnd(48)} ${kb(raw).padStart(9)}`)

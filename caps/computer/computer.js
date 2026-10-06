@@ -145,10 +145,11 @@ async function keep(changes, mount, held, ctx) {
   }
 }
 
-/** What the preview shows, pages and pictures first (those open by themselves), by extension, with its type. */
+/** What the preview shows, pages, pictures and documents first (those open by themselves, D183), by extension, with its type. */
 const SHOWN = /** @type {Record<string, string>} */ ({ html: 'text/html', htm: 'text/html', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf',
-  csv: 'text/csv', tsv: 'text/tab-separated-values', md: 'text/markdown', txt: 'text/plain' })
-const OPENS = new Set(['html', 'htm', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf'])
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', csv: 'text/csv', tsv: 'text/tab-separated-values', md: 'text/markdown', txt: 'text/plain' })
+const OPENS = new Set(['html', 'htm', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'pptx', 'docx', 'xlsx'])
 /** @param {string} path */
 const extension = (path) => /\.([a-z0-9]+)$/i.exec(path)?.[1].toLowerCase() ?? ''
 /** @param {string} path */
@@ -180,8 +181,8 @@ const saveTool = {
     const { mount, changes, held } = batch
     const shown = mount.folder ? await preview(mount.fs, changes) : []
     const done = await incoming(mount.fs, held, changes)
-    // A page, a picture, a PDF, a table or a text made in the project's workspace shows under the
-    // answer, and the first page or picture opens beside the conversation on screen (D163). Each is
+    // A page, a picture, a PDF, an Office file, a table or a text made in the project's workspace shows under
+    // the answer, and the first page, picture or document opens beside the conversation on screen (D163). Each is
     // kept as it is now, a version of its own, by its content, as Things Jean made keeps its files:
     // the next run may change the workspace's, never this one (D164). The user's folder has its own ways (D156).
     /** @type {import('../../core/events.js').MadeFile[]} */

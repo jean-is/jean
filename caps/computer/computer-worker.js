@@ -26,8 +26,8 @@ const HOME = '/home/user'
 const SERVERS = /^(vite|next|nuxt|astro|serve|http-server|live-server|webpack-dev-server|parcel|nodemon)\b(?! build)|^webpack serve\b/
 const SERVER_MODULES = /^(node:)?(http|https|http2|net)$|^express$/
 // Node's own modules: those node has here (D178), and the others, which it doesn't.
-const OWN = /^(?:node:)?(path|fs|fs\/promises|os|util|events|process)$/
-const NODE = /^node:|^(assert|buffer|child_process|crypto|readline|stream|string_decoder|timers|tty|url|vm|worker_threads|zlib)(\/|$)/
+const OWN = /^(?:node:)?(path|fs|fs\/promises|os|util|events|process|buffer)$/
+const NODE = /^node:|^(assert|child_process|crypto|readline|stream|string_decoder|timers|tty|url|vm|worker_threads|zlib)(\/|$)/
 /** Why it can't, and what does instead. @param {string} name */
 const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts and styles inside it, and it opens beside the conversation by itself.\n`
 
@@ -148,8 +148,9 @@ const LOADERS = {
       importModuleLoader: () => import(urls['emscripten-module.mjs']).then((module) => module.default),
     }
     // The bytes come from Jean, so nothing is fetched; a location keeps Emscripten from
-    // resolving one against import.meta.url, which a blob: URL can't be a base for.
-    return newQuickJSWASMModuleFromVariant(newVariant(variant, { wasmBinary: files['emscripten-module.wasm'], wasmLocation: 'emscripten-module.wasm' }))
+    // resolving one against import.meta.url, which a blob: URL can't be a base for. Node's Buffer
+    // (feross's, D178) comes along, for each script to start with.
+    return Object.assign(await newQuickJSWASMModuleFromVariant(newVariant(variant, { wasmBinary: files['emscripten-module.wasm'], wasmLocation: 'emscripten-module.wasm' })), { buffer: files['buffer.js'] })
   },
   // Pyodide's loader fetches its files: its own come from Jean in the load message, and packages
   // through Jean from the registry Settings name (D80, D162). Pyodide refuses classic workers when
@@ -594,7 +595,7 @@ function resolve(files, base, spec, kind) {
 
 /** Why a module isn't there. @param {string} spec */
 const missing = (spec) => new Error(SERVER_MODULES.test(spec) ? noServer('node').trim()
-  : NODE.test(spec) ? `Cannot find module '${spec}': of Node's own modules, only path, fs, os, util, events and process are here`
+  : NODE.test(spec) ? `Cannot find module '${spec}': of Node's own modules, only path, fs, os, util, events, process and buffer are here`
   : `Cannot find module '${spec}': install it with npm install in bash, or name it by its path`)
 
 /** Whether a file is an ES module rather than CommonJS. @param {string} path @param {string} source */
@@ -619,6 +620,19 @@ globalThis.fs = {
   readdir: async (path = '.') => JSON.parse(await __host('list', String(path))),
   exists: async (path) => (await __host('exists', String(path))) === 'true',
 }
+// Timers, as Node's (D178): each waits on the worker's, which isn't computing time, and the run lasts
+// until none is left; a cleared one's wait ends at once. What a callback throws is printed.
+let __timer = 0
+const __timers = new Set()
+const __later = (fn, ms, args, again, id = ++__timer) => {
+  const tick = () => __sleep(String(Math.max(0, Number(ms) || 0)), String(id)).then(() => __timers.has(id) && (again || __timers.delete(id)) && (fn(...args), again && tick()))
+    .catch((error) => '__exit' in Object(error) || console.error(error))
+  __timers.add(id).size && tick()
+  return { ref() { return this }, unref() { return this }, hasRef: () => true, [Symbol.toPrimitive]: () => id }
+}
+Object.assign(globalThis, { setTimeout: (fn, ms, ...args) => __later(fn, ms, args, false), setInterval: (fn, ms, ...args) => __later(fn, ms, args, true),
+  setImmediate: (fn, ...args) => __later(fn, 0, args, false), queueMicrotask: (fn) => { Promise.resolve().then(fn) } })
+globalThis.clearTimeout = globalThis.clearInterval = globalThis.clearImmediate = (timer) => { if (__timers.delete(Number(timer))) __wake(String(Number(timer))) }
 globalThis.fetch = async (url, init = {}) => {
   const r = JSON.parse(await __host('fetch', JSON.stringify({ url: String(url), method: init.method, headers: init.headers, body: init.body })))
   const headers = { get: (name) => r.headers[String(name).toLowerCase()] ?? null }
@@ -661,9 +675,11 @@ globalThis.__requireFrom = (base) => (spec) => {
 }
 globalThis.require = __requireFrom(__cwd + '/[eval]')
 `
-// As a command, Node's way: process, and console to stdout and stderr, as util.format writes it.
+// As a command, Node's way: process, which says it is Node, so packages take their Node ways (D178),
+// and console to stdout and stderr, as util.format writes it.
 const PROCESS = `
-globalThis.process = { argv: JSON.parse(__argv), env: JSON.parse(__env), cwd: () => __cwd, exit: (code = 0) => { throw { __exit: Number(code) } }, platform: 'browser' }
+globalThis.process = { argv: JSON.parse(__argv), env: JSON.parse(__env), cwd: () => __cwd, exit: (code = 0) => { throw { __exit: Number(code) } }, platform: 'browser',
+  version: 'v22.0.0', versions: { node: '22.0.0' }, release: { name: 'node' }, nextTick: (fn, ...args) => queueMicrotask(() => fn(...args)) }
 for (const level of ['log', 'info', 'warn', 'error']) {
   const write = console[level]
   console[level] = (...args) => write(__node.util.format(...args))
@@ -671,7 +687,7 @@ for (const level of ['log', 'info', 'warn', 'error']) {
 `
 
 // Node's own modules here (D178): path, fs (at once, or with a callback or a promise), os, util,
-// events and process. Its source runs in QuickJS, with fileSync as `file`, from `cwd`.
+// events, process and buffer. Its source runs in QuickJS, with fileSync as `file`, from `cwd`.
 function nodeModules(file, cwd) {
   const path = {
     sep: '/',
@@ -716,22 +732,24 @@ function nodeModules(file, cwd) {
   }
   path.posix = path
 
-  // Errors carry Node's code.
-  const call = (op, p, text = '') => {
+  // Errors carry Node's code. A file's bytes cross as an ArrayBuffer: text as UTF-8, or in the encoding named.
+  const call = (op, p, data = '') => {
     try {
-      return file(op, path.resolve(String(p)), String(text))
+      return file(op, path.resolve(String(p)), typeof data === 'string' ? data : data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength))
     } catch (error) {
       throw Object.assign(error, { code: /^E[A-Z]+/.exec(error.message)?.[0] })
     }
   }
+  const encoding = (options) => (typeof options === 'string' ? options : options?.encoding)
+  const bytes = (data, options) => (typeof data === 'string' ? Buffer.from(data, encoding(options)) : ArrayBuffer.isView(data) ? data : new Uint8Array(data))
   const stat = (p) => {
     const { folder, size, mtime } = JSON.parse(call('stat', p))
     return { size, mtime: new Date(mtime), mtimeMs: mtime, isFile: () => !folder, isDirectory: () => folder }
   }
   const fs = {
-    readFileSync: (p) => call('read', p),
-    writeFileSync: (p, text) => call('write', p, text),
-    appendFileSync: (p, text) => call('write', p, (fs.existsSync(p) ? call('read', p) : '') + text),
+    readFileSync: (p, options) => (/^utf-?8$/i.test(encoding(options) ?? '') ? call('read', p) : encoding(options) ? Buffer.from(call('bytes', p)).toString(encoding(options)) : Buffer.from(call('bytes', p))),
+    writeFileSync: (p, data, options) => call('write', p, bytes(data, options)),
+    appendFileSync: (p, data, options) => call('write', p, Buffer.concat([fs.existsSync(p) ? fs.readFileSync(p) : Buffer.alloc(0), bytes(data, options)])),
     existsSync: (p) => {
       try {
         return Boolean(call('stat', p))
@@ -765,6 +783,7 @@ function nodeModules(file, cwd) {
     if (typeof value === 'bigint') return `${value}n`
     if (!value || typeof value !== 'object') return String(value)
     if (seen.includes(value)) return '[Circular]'
+    if (typeof value[Symbol.for('nodejs.util.inspect.custom')] === 'function') return String(value[Symbol.for('nodejs.util.inspect.custom')]())
     if (value instanceof Error) return value.stack ? `${value}\n${value.stack.trimEnd()}` : String(value)
     if (value instanceof Date) return value.toISOString()
     if (value instanceof RegExp) return String(value)
@@ -834,7 +853,7 @@ function nodeModules(file, cwd) {
   EventEmitter.prototype.removeListener = EventEmitter.prototype.off
   EventEmitter.EventEmitter = EventEmitter
 
-  return { path, fs, 'fs/promises': fs.promises, os, util, events: EventEmitter, process: globalThis.process }
+  return { path, fs, 'fs/promises': fs.promises, os, util, events: EventEmitter, process: globalThis.process, buffer: globalThis.__buffer }
 }
 // After process; with the names each exports, for import.
 const NODE_MODULES = `
@@ -860,6 +879,8 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
   const vm = runtime.newContext()
   /** @type {Set<any>} */
   const pending = new Set()
+  /** The timers' waits, by id, which clearing a timer ends early. @type {Map<string, (value?: unknown) => void>} */
+  const waits = new Map()
   /** @type {Map<string, string>} */
   const files = new Map()
   const js = {
@@ -890,6 +911,10 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
       for (const path of computer.fs.getAllPaths()) {
         if (/\/node_modules\/.*\.(m?js|cjs|json)$|\.(m?js|cjs)$|\/package\.json$/.test(path)) files.set(path, await computer.fs.readFile(path).catch(() => ''))
       }
+    },
+    /** Waits, as Node does, until nothing the script started is pending (timers, Jean's answers, the internet), told by `moved`. */
+    async idle() {
+      while (js.alive && pending.size) await new Promise((resolve) => { js.moved = resolve })
     },
     /** Waits for a value in the script's world, a promise or not. @param {any} handle */
     async settle(handle) {
@@ -945,6 +970,7 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
           ok ? deferred.resolve(answer) : deferred.reject(answer)
           answer.dispose()
           js.step(() => runtime.executePendingJobs())
+          js.moved?.()
         })
         return deferred.handle
       })
@@ -953,6 +979,7 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
     }
     promised('__call', (name, args) => ask(js.run, { type: 'call', name, args: JSON.parse(args) }))
     promised('__host', (op, arg) => host(computer, cwd, op, arg))
+    promised('__sleep', (ms, id) => new Promise((resolve) => setTimeout(waits.set(id, resolve).get(id), Number(ms))).finally(() => waits.delete(id)))
     for (const [label, value] of Object.entries({ __argv: JSON.stringify(['node', name, ...argv]), __env: JSON.stringify(env), __cwd: cwd })) {
       const handle = vm.newString(value)
       vm.setProp(vm.global, label, handle)
@@ -964,11 +991,11 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
       if (!found) throw missing(spec)
       return found
     }
-    for (const [label, work] of /** @type {const} */ ([['__resolve', required], ['__source', (/** @type {string} */ path) => files.get(path)],
-      ['__fs', (/** @type {string} */ op, /** @type {string} */ path, /** @type {string} */ text) => fileSync(computer, op, path, text)]])) {
+    for (const [label, work] of /** @type {const} */ ([['__resolve', required], ['__source', (/** @type {string} */ path) => files.get(path)], ['__wake', (/** @type {string} */ id) => waits.get(id)?.()],
+      ['__fs', (/** @type {string} */ op, /** @type {string} */ path, /** @type {string | Uint8Array} */ data) => fileSync(computer, op, path, data)]])) {
       const handle = vm.newFunction(label, (/** @type {any[]} */ ...args) => {
-        const found = work(...args.map((arg) => vm.getString(arg)))
-        return found === undefined ? vm.undefined : vm.newString(found)
+        const found = work(...args.map((arg) => (vm.typeof(arg) === 'object' ? vm.getArrayBuffer(arg).consume((/** @type {{ value: Uint8Array }} */ bytes) => bytes.value.slice()) : vm.getString(arg))))
+        return found === undefined ? vm.undefined : found instanceof Uint8Array ? vm.newArrayBuffer(found) : vm.newString(found)
       })
       vm.setProp(vm.global, label, handle)
       handle.dispose()
@@ -982,7 +1009,7 @@ async function jsContext({ run, cwd, tool = false, argv = [], name = '-', env = 
       if (isModule(path, source)) return source
       return `const __m = { exports: {} }\n;(function (module, exports, require, __filename, __dirname) {\n${source}\n})(__m, __m.exports, globalThis.__requireFrom(${JSON.stringify(path)}), ${JSON.stringify(path)}, ${JSON.stringify(dirOf(path))})\nexport default __m.exports`
     }, (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base.startsWith('/') ? base : `${cwd}/${base}`, spec, 'import') ?? { error: missing(spec) })
-    const prelude = vm.unwrapResult(vm.evalCode(PRELUDE + REQUIRE + (tool ? '' : PROCESS) + NODE_MODULES, 'prelude.js'))
+    const prelude = vm.unwrapResult(vm.evalCode(`${quickjs.buffer}\n${PRELUDE}${REQUIRE}${tool ? '' : PROCESS}${NODE_MODULES}`, 'prelude.js'))
     named = vm.dump(prelude)
     prelude.dispose()
   } catch (error) {
@@ -1023,6 +1050,7 @@ async function javascript(options, computer) {
       const done = await js.settle(vm.unwrapResult(evaluated))
       if (!done.dispose) return exited(done)
       done.dispose()
+      await js.idle()
       return { ok: true, result: null, logs, exit: 0, stdout: lines(logs), stderr: lines(errors) }
     }
     js.step(() => { evaluated = vm.evalCode(code, name, ASYNC_SCRIPT) })
@@ -1042,6 +1070,7 @@ async function javascript(options, computer) {
     const result = vm.dump(value)
     value.dispose()
     if (print) logs.push(show(result))
+    await js.idle()
     return { ok: true, result: result === undefined ? null : result, logs, exit: 0, stdout: lines(logs), stderr: lines(errors) }
   } catch (error) {
     const message = stopped(error)
@@ -1059,7 +1088,7 @@ function show(value) {
   return typeof value === 'string' ? value : JSON.stringify(value)
 }
 
-/** What node's fs asks, at once (D178): just-bash keeps the files in maps. @param {Computer} computer @param {string} op @param {string} path @param {string} text */
+/** What node's fs asks, at once (D178): just-bash keeps the files in maps. @param {Computer} computer @param {string} op @param {string} path @param {string | Uint8Array} text */
 function fileSync({ fs }, op, path, text) {
   if (op === 'write') return fs.writeFileSync(path, text)
   if (op === 'mkdir') return fs.mkdirSync(path, { recursive: Boolean(text) })
@@ -1070,8 +1099,9 @@ function fileSync({ fs }, op, path, text) {
   const folder = entry.type === 'directory'
   if (op === 'stat') return JSON.stringify({ folder, size: entry.content?.length ?? 0, mtime: +entry.mtime })
   if (op === 'list') return JSON.stringify([...[...inner.data.keys()].filter((key) => key !== at && dirOf(key) === at).map((key) => key.slice(key.lastIndexOf('/') + 1)), ...fs.getChildMountPoints(path)])
-  if (folder && (op === 'read' || !text)) throw new Error(`EISDIR: illegal operation on a directory, '${path}'`)
+  if (folder && (op === 'read' || op === 'bytes' || !text)) throw new Error(`EISDIR: illegal operation on a directory, '${path}'`)
   if (op === 'read') return typeof entry.content === 'string' ? entry.content : new TextDecoder().decode(entry.content)
+  if (op === 'bytes') return typeof entry.content === 'string' ? new TextEncoder().encode(entry.content) : entry.content
   for (const key of [...inner.data.keys()]) if (key === at || key.startsWith(`${at}/`)) inner.deleteEntry(key)
 }
 

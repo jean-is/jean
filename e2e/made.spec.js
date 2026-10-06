@@ -78,7 +78,9 @@ test('a Word document from the first message, saved, then changed', async ({ pag
   await expect(second.locator('app-file .file-meta')).toContainText('Version 2')
   await first.getByRole('button', { name: 'Open Bakery plan.docx' }).click()
   await expect(page.locator('app-preview').getByRole('combobox', { name: 'Versions' }).locator('option:checked')).toHaveText('Version 1')
-  await expect(page.locator('app-preview .preview-sheet')).not.toContainText('Sell the rest')
+  const drawn = page.frameLocator('app-preview iframe').locator('main')
+  await expect(drawn).toContainText('Deliver them', { timeout: 15_000 })
+  await expect(drawn).not.toContainText('Sell the rest')
 })
 
 test('a spreadsheet written by a script, with exact totals', async ({ page }) => {
