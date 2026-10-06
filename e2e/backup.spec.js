@@ -43,6 +43,24 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   await context.close()
 })
 
+test('what takes up space: the tasks among the rest, each with its share', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  const settings = await openSettings(page, 'Your data')
+  // Nothing is kept in a private window (Playwright's WebKit), so there is nothing to break down.
+  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) {
+    await expect(settings.getByText('What takes up space')).toHaveCount(0)
+    return
+  }
+  await settings.getByText('What takes up space').click()
+  const tasks = settings.locator('.parts li').filter({ hasText: 'Tasks' })
+  await expect(tasks).toContainText(/\d (kB|MB)/)
+  await expect(tasks.getByRole('meter', { name: 'Tasks' })).toHaveAttribute('value', /^0\.\d+/)
+  await expect(settings.locator('.parts li').last()).toContainText('Everything else')
+})
+
 test('a file that isn’t a backup is refused, and nothing changes', async ({ page }) => {
   await start(page)
   page.on('dialog', (dialog) => dialog.accept())

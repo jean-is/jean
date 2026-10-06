@@ -53,7 +53,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .settings-nav [aria-current='page'] { font-weight: 600; }
 /* The menu's three groups (D134): Jean itself; what it knows and can do; what it may do and keeps. */
 .settings-nav hr { flex: none; margin: 0.45rem 0.85rem; border: 0; border-block-start: 1px solid var(--line); }
-.settings-panel { grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; }
+.settings-panel { position: relative; grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; }
 .settings-panel > :first-child { border-block-start: 0; padding-block-start: 0.25rem; }
 .setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
 .setting p { margin: 0; }
@@ -141,6 +141,15 @@ label.item, .list summary { cursor: pointer; }
 .is-later .monogram { inline-size: 1.5rem; block-size: 1.5rem; border-radius: 0.45rem; background: var(--line); color: inherit; font-size: 0.78rem; }
 :is(.monogram, .item-icon).is-logo { border: 0; border-radius: 0; background: none; object-fit: contain; } .is-logo[src$='.png'] { border-radius: 22%; }
 .other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
+/* What takes up space, under Storage (D177): a row a kind, its size, then a bar of its share, the track a lighter step of its fill. */
+.parts .list > li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.35rem 0.75rem; }
+.parts .item-icon { grid-row: span 2; } .parts strong { font-weight: 600; font-variant-numeric: tabular-nums; }
+.parts meter { grid-column: 2 / -1; appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
+.parts meter::-webkit-meter-bar { block-size: 100%; border: 0; border-radius: inherit; background: none; }
+.parts meter::-webkit-meter-optimum-value { border-radius: inherit; background: var(--flame); }
+.parts meter::-moz-meter-bar { border-radius: inherit; background: var(--flame); }
+@media (forced-colors: active) { .parts meter { forced-color-adjust: none; background: GrayText; } .parts meter::-webkit-meter-optimum-value { background: CanvasText; } }
+@media (forced-colors: active) { .parts meter::-moz-meter-bar { background: CanvasText; } }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .model-input { font: 0.85rem var(--mono); }
 .rule-kind { font-size: 0.92rem; }

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../core/fs.js'
 import { crc32, readZip, writeZip } from '../core/zip.js'
 import { decodeText, docx, extractPages, extractable, paginate, sheetRows, slideText } from '../caps/files/extract.js'
-import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages } from '../core/files.js'
+import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages, weigh } from '../core/files.js'
 import { isPicture } from '../core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
 
@@ -229,4 +229,14 @@ test('importing never shortens a conversation that diverged, and rejects non-bac
   assert.deepEqual(await importBackup(target, bytes), { added: 0, updated: 0, kept: 1 })
   assert.equal(await target.read('c.jsonl'), 'a\nX\n')
   await assert.rejects(importBackup(target, await zipOf({ 'x.txt': 'x' })), /not a backup/)
+})
+
+test('weigh totals the files by kind: tasks, files, workspaces, and the rest', async () => {
+  const fs = memoryFS({
+    'settings.json': '{}', 'memory.md': 'abc', '.cache/search.json': '12345', '.secrets/keys': 'k',
+    'projects/01-home/project.md': 'xy', 'projects/01-home/conversations/01.jsonl': 'abcdef', 'projects/01-home/files/sha256-a.pdf': new Uint8Array(10),
+    'projects/02-work/conversations/02.jsonl': 'été', 'projects/02-work/workspace/site/index.html': '<p>', 'projects/02-work/skills/x/SKILL.md': 'z',
+  })
+  assert.deepEqual(await weigh(fs), { conversations: 6 + 5, files: 10, workspace: 3, rest: 2 + 3 + 5 + 1 + 2 + 1 })
+  assert.deepEqual(await weigh(memoryFS()), { conversations: 0, files: 0, workspace: 0, rest: 0 })
 })

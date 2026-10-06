@@ -1,7 +1,7 @@
 // The project's file library: files/sha256-<hash>.<ext> (the original), .md (its text,
 // with a [[page N]] line before each page) and .meta.json. Named by content, so the
 // same file dropped twice is stored once. Conversations link to files, never copy them.
-import { join, readJSON, writeJSON } from './fs.js'
+import { join, readJSON, walk, writeJSON } from './fs.js'
 import { isPicture } from './events.js'
 
 /** @import { FS, ResourceLink, DocumentPart } from './types.js' */
@@ -173,4 +173,21 @@ export function readTool({ fs, projectDir, files, maxTokens = 6000 }) {
       return `${source}${link.name}, pages ${first}–${last} of ${pages.length}.${more}\n\n${out.trim()}`
     },
   }
+}
+
+/**
+ * What Jean's files take, in bytes, by kind, for Settings › Your data (D177): projects' conversations, files
+ * and workspaces, and the rest (settings, memory, instructions, skills, routines, keys, indexes).
+ * @param {FS} fs
+ * @returns {Promise<Record<'conversations' | 'files' | 'workspace' | 'rest', number>>}
+ */
+export async function weigh(fs) {
+  const kinds = { conversations: 0, files: 0, workspace: 0, rest: 0 }
+  await Promise.all((await walk(fs)).map(async (path) => {
+    const [top, , folder = ''] = path.split('/')
+    const kind = top === 'projects' && (folder === 'conversations' || folder === 'files' || folder === 'workspace') ? folder : 'rest'
+    const size = (fs.stat ? (await fs.stat(path))?.size : (await fs.readBytes(path))?.length) ?? 0
+    kinds[kind] += size
+  }))
+  return kinds
 }

@@ -13,6 +13,7 @@ import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
+import { weigh } from '../core/files.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
@@ -464,11 +465,71 @@ export function siteList({ sites, fixed, set, any = false }) {
   </div>`
 }
 
+/** What takes up space, by kind, largest first and the rest last; null while it is measured. */
+const parts = signal(/** @type {Array<{ id: keyof typeof PARTS, bytes: number }> | null} */ (null))
+/** Each kind: its icon, its name and what it holds, when its name doesn't say. */
+const PARTS = /** @type {const} */ ({
+  conversations: ['history', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['code', 'cap.computer.name', 'storage.computer.text'],
+  brains: ['chip', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['data', 'storage.rest', 'storage.rest.text'],
+})
+
+/** A cached response's size: its length as sent, unless it came compressed, then its body's. @param {Response | undefined} response */
+const sizeOf = async (response) => (response && !response.headers.has('content-encoding') && Number(response.headers.get('content-length'))) || (await response?.blob())?.size || 0
+
+/**
+ * What the browser keeps for Jean in its caches: the brains downloaded to this device (Transformers.js's
+ * cache), and Jean's own code, the Computer's apart, to work offline (sw.js's).
+ */
+async function cached() {
+  const kept = { brains: 0, computer: 0, app: 0 }
+  for (const name of await caches.keys()) {
+    const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell|cap)-/.test(name) ? 'app' : null
+    if (!kind) continue
+    const cache = await caches.open(name)
+    for (const size of await Promise.all((await cache.keys()).map(async (request) => sizeOf(await cache.match(request))))) kept[kind] += size
+  }
+  return kept
+}
+
+/** Measures what takes up space: Jean's files by kind (`weigh`), then its caches; what the browser counts beyond is the rest's. */
+async function measure() {
+  parts.value = null
+  const [files, estimate, kept] = await Promise.all([weigh(app.fs), app.fs.estimate?.(), cached().catch(() => ({ brains: 0, computer: 0, app: 0 }))])
+  const named = { conversations: files.conversations, files: files.files, computer: files.workspace + kept.computer, brains: kept.brains, app: kept.app }
+  const sum = Object.values(named).reduce((total, bytes) => total + bytes, 0)
+  const rest = Math.max(files.rest, (estimate?.usage ?? 0) - sum)
+  storage.value = { ...storage.value, usage: sum + rest }
+  parts.value = [...(/** @type {Array<[keyof typeof PARTS, number]>} */ (Object.entries(named))).filter(([, bytes]) => bytes > 0).sort((a, b) => b[1] - a[1]), /** @type {const} */ (['rest', rest])]
+    .map(([id, bytes]) => ({ id, bytes }))
+}
+
+/** What takes up space, opened under Storage (D177): a row a kind, its size, and a bar of its share. */
+function breakdown() {
+  const total = parts.value?.reduce((sum, part) => sum + part.bytes, 0) ?? 0
+  return html`<details class="other parts" @toggle=${(/** @type {Event} */ e) => { if (/** @type {HTMLDetailsElement} */ (e.target).open) measure() }}>
+    <summary>${t('storage.parts')}</summary>
+    ${parts.value ? html`<ul class="list">${parts.value.map(({ id, bytes }) => {
+      const [icon, label, text] = PARTS[id]
+      return html`<li>
+        <span class="item-icon" aria-hidden="true">${icons[icon]}</span>
+        <span class="item-text"><span id=${`part-${id}`}>${t(label)}</span>${text ? html`<small>${t(text, { name: BRAND.name })}</small>` : nothing}</span>
+        <strong>${formatBytes(bytes)}</strong>
+        <meter value=${total ? bytes / total : 0} aria-labelledby=${`part-${id}`}></meter>
+      </li>`
+    })}</ul>` : html`<p class="muted" role="status">${t('storage.measuring')}</p>`}
+  </details>`
+}
+
 function data() {
   const usage = storage.value?.usage
   return html`
-    ${setting(t('storage.title'), app.ephemeral.value ? t('storage.ephemeral') : usage === undefined ? '' : t('storage.usage', { name: BRAND.name, size: formatBytes(usage) }),
-      storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : nothing)}
+    <section>
+      <div class="setting">
+        <div><h3>${t('storage.title')}</h3><p class="muted">${app.ephemeral.value ? t('storage.ephemeral') : usage === undefined ? '' : t('storage.usage', { name: BRAND.name, size: formatBytes(usage) })}</p></div>
+        ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : nothing}
+      </div>
+      ${app.ephemeral.value ? nothing : breakdown()}
+    </section>
     ${isDenied('backup') ? nothing : html`<section>
       <h3>${t('cap.backup.name')}</h3>
       <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
