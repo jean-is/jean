@@ -109,6 +109,19 @@ describe('manifest: capabilities', () => {
     })
   })
 
+  it("lists the modules of another capability that one imports, so it works offline without the other on", async () => {
+    const root = await fixture({
+      'caps/computer/computer.js': "import { html } from 'lit-html'\nimport { exactText } from '../folders/work.js'\nimport { t } from '../../core/i18n.js'\nconst later = () => import('../browser/browser.js')",
+      'caps/folders/work.js': "import { extractPages } from '../files/extract.js'",
+      'caps/folders/folders.js': '',
+      'caps/files/extract.js': '',
+      'caps/browser/browser.js': '',
+    })
+    const { capabilities } = await collectFiles(root)
+    assert.deepEqual(capabilities.computer.files, ['caps/computer/computer.js', 'caps/files/extract.js', 'caps/folders/work.js'])
+    assert.deepEqual(capabilities.folders.files, ['caps/files/extract.js', 'caps/folders/folders.js', 'caps/folders/work.js'])
+  })
+
   it('points bare specifiers of a vendored runtime at local files', () => {
     const map = { 'onnxruntime-web/webgpu': './ort.mjs', 'onnxruntime-common': './ort.mjs' }
     assert.equal(rewriteSpecifiers('import*as a from"onnxruntime-web/webgpu";import{Tensor as b}from "onnxruntime-common";x("onnxruntime-common")', map),

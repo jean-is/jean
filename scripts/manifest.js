@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto'
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { moduleGraph, parseImportMap } from './graph.js'
+import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
@@ -124,9 +124,26 @@ export async function collectFiles (root) {
     if (!entry.isDirectory() || entry.name.startsWith('.')) continue
     const dirs = [`caps/${entry.name}`, `locales/${entry.name}`, ...(CAPABILITY_RUNTIMES[entry.name] ?? [])]
     const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter(isShipped).sort()
-    capabilities[entry.name] = { files }
+    capabilities[entry.name] = { files: [...new Set([...files, ...await borrowed(root, entry.name, files)])].sort() }
   }
   return { shell, locales, capabilities: Object.fromEntries(Object.entries(capabilities).sort(([a], [b]) => (a < b ? -1 : 1))) }
+}
+
+/**
+ * The modules of other capabilities that a capability's own import, statically, and theirs: they
+ * are cached with it, so it works offline whether or not the other is on (the Computer reads
+ * files as Folders does).
+ * @param {string} root @param {string} id @param {string[]} files
+ */
+async function borrowed (root, id, files) {
+  const queue = files.filter((path) => /\.m?js$/.test(path) && path.startsWith(`caps/${id}/`))
+  for (const path of queue) {
+    for (const specifier of extractStaticImports((await readOrNull(root, path))?.toString('utf8') ?? '')) {
+      const target = resolveSpecifier(specifier, path)
+      if (target?.startsWith('caps/') && !queue.includes(target)) queue.push(target)
+    }
+  }
+  return queue.filter((path) => !path.startsWith(`caps/${id}/`))
 }
 
 /** @param {string | Uint8Array} data */
