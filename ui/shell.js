@@ -22,9 +22,9 @@ class Shell extends Element {
     // What opens beside the conversation, the browser and the terminal, keeps the main area's top
     // end: the header's, or, with the drawer open, the same place beside it (D170).
     const views = loaded.value.has('browser') || loaded.value.has('computer') ? html`<div class="views">
-      ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>
+      ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>` : nothing}
       ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
-        aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}` : nothing}</div>` : nothing
+        aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}</div>` : nothing
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
