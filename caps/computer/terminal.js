@@ -4,8 +4,8 @@
 // /workspace: what it changes there is kept at once, as the user's own, in their folder too; a new
 // site is asked about under it, as Settings › Computer has it; and the brain is told what ran with
 // the next message. Each conversation's terminal keeps what it showed for the visit. ↑ and ↓ go
-// through what was typed, Tab completes, Ctrl+C stops what runs, Ctrl+L clears; a click or a key
-// anywhere in it goes to the line (D170). Opened from Settings › Computer or with Ctrl+`, then from the
+// through what was typed, Tab completes, Ctrl+C stops what runs, Ctrl+L and `clear` clear it; a
+// click or a key anywhere in it goes to the line (D170), and the whole pane is ringed while it has it. Opened from Settings › Computer or with Ctrl+`, then from the
 // main area too. Loaded the first time it opens, with its style sheet.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -32,8 +32,9 @@ await styleSheet(new URL('terminal.css', import.meta.url))
 // What an output shows, from its end: more only slows the page. What the brain is told of it.
 const SHOWN = 100_000
 const TOLD = 1500
-// Colours and the cursor's moves, which the pane doesn't draw.
+// Colours and the cursor's moves, which the pane doesn't draw; and a screen wiped, as `clear` does.
 const ESCAPES = /\x1b\[[0-9;?]*[ -/]*[@-~]/g
+const WIPED = /\x1b\[[23]J|\x1bc/
 
 const open = signal(false)
 const moves = signal(0)
@@ -147,8 +148,8 @@ function keyed(event) {
 
 /**
  * Enter runs (never while an IME is composing), Shift+Enter adds a line; ↑ and ↓ go through what was
- * typed; Tab completes, on a line with something on it, so an empty one lets focus go on; Ctrl+C
- * stops what runs and drops the line, unless text is selected; Ctrl+L clears.
+ * typed; Tab completes, an empty line with the commands, and keeps the keys, which Shift+Tab, Escape
+ * and ⌃` take elsewhere; Ctrl+C stops what runs and drops the line, unless text is selected; Ctrl+L clears.
  * @param {KeyboardEvent} event
  */
 function typing(event) {
@@ -176,7 +177,7 @@ function typing(event) {
   } else if (control && letter === 'l') {
     event.preventDefault()
     clear()
-  } else if (event.key === 'Tab' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey && area.value.trim()) {
+  } else if (event.key === 'Tab' && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
     event.preventDefault()
     complete(area).catch(() => {})
   }
@@ -247,6 +248,11 @@ async function run(command) {
     const done = await typed(command, { signal: running.signal, ask })
     Object.assign(entry, done.ok ? { out: done.stdout ?? '', err: done.stderr ?? '', exit: done.exit, refused: done.refused } : { err: String(done.error) })
     if (done.cwd) terminal.cwd = done.cwd
+    // A wiped screen keeps what came after, and what still runs; the command too, if that is something.
+    if (WIPED.test(entry.out)) {
+      entry.out = entry.out.split(WIPED).at(-1)?.replace(ESCAPES, '') ?? ''
+      terminal.entries = terminal.entries.filter((each) => (each === entry ? entry.out || entry.err || entry.exit : each.running))
+    }
     if (conversation && done.ok) await tell(conversation, entry)
   } catch (error) {
     // Stopped, as terminals say it.

@@ -25,6 +25,9 @@ const HOME = '/home/user'
 // What a server is started with, which can't work here: nothing listens on a port in the sandbox.
 const SERVERS = /^(vite|next|nuxt|astro|serve|http-server|live-server|webpack-dev-server|parcel|nodemon)\b(?! build)|^webpack serve\b/
 const SERVER_MODULES = /^(node:)?(http|https|http2|net)$|^express$/
+// Node's own modules: those node has here (D178), and the others, which it doesn't.
+const OWN = /^(?:node:)?(path|fs|fs\/promises|process)$/
+const NODE = /^node:|^(assert|buffer|child_process|crypto|events|os|readline|stream|string_decoder|tty|url|util|zlib)(\/|$)/
 /** Why it can't, and what does instead. @param {string} name */
 const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts and styles inside it, and it opens beside the conversation by itself.\n`
 
@@ -455,9 +458,10 @@ function satisfies(version, range = '*') {
 
 /**
  * npm install: packages from the npm registry Settings name, into ./node_modules, flat, with their
- * dependencies; checked against their integrity; none that runs a script as it installs. With no
- * name, those package.json lists. The names asked for are added to package.json. And init, ls, and
- * run (start, test): a script of package.json's, in the same shell, unless it starts a server.
+ * dependencies, those already there too; checked against their integrity; none that runs a script
+ * as it installs. With no name, those package.json lists. The names asked for are added to
+ * package.json. And init, ls, and run (start, test): a script of package.json's, in the same shell,
+ * unless it starts a server.
  * @param {string[]} args @param {any} ctx @param {Computer} computer
  */
 async function npm(args, ctx, computer) {
@@ -500,11 +504,18 @@ async function npm(args, ctx, computer) {
   const queue = wanted.map(([name, range]) => [name, range || 'latest'])
   /** @type {Record<string, string>} */
   const added = {}
+  const seen = new Set()
   while (queue.length) {
-    const [name, range] = /** @type {[string, string]} */ (queue.shift())
+    const [name, range, any] = /** @type {[string, string, boolean?]} */ (queue.shift())
+    if (seen.has(`${name}@${range}`)) continue
+    seen.add(`${name}@${range}`)
     const at = `${cwd}/node_modules/${name}`
-    const have = (await fs.exists(`${at}/package.json`)) ? JSON.parse(await fs.readFile(`${at}/package.json`)).version : null
-    if (have && (range === 'latest' || satisfies(have, range))) continue
+    const have = (await fs.exists(`${at}/package.json`)) ? JSON.parse(await fs.readFile(`${at}/package.json`)) : null
+    // There already, and so is what it needs, in any version, unless an install stopped midway.
+    if (have && (any || range === 'latest' || satisfies(have.version, range))) {
+      queue.push(...Object.entries(have.dependencies ?? {}).map(([dependency, wants]) => [dependency, wants, true]))
+      continue
+    }
     const meta = await (await bridged(computer, `${registry}${name.replace('/', '%2f')}`)).json()
     if (!meta?.versions) throw new Error(`${name} isn't in the registry`)
     const tagged = meta['dist-tags']?.[range]
@@ -534,6 +545,7 @@ async function npm(args, ctx, computer) {
     await fs.writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
   }
   const count = Object.keys(added).length
+  if (!count) return exit('up to date\n', '', 0)
   return exit(`added ${count} package${count === 1 ? '' : 's'}\n${lines(Object.entries(added).map(([name, version]) => `${name}@${version}`))}`, '', 0)
 }
 
@@ -553,11 +565,13 @@ function normal(path) {
 }
 
 /**
- * Where an import or a require leads, as Node finds it: a relative path with its extension or
- * index, or a package in the nearest node_modules, by its exports, module or main.
+ * Where an import or a require leads, as Node finds it: one of Node's own modules here, a relative
+ * path with its extension or index, or a package in the nearest node_modules, by its exports, module or main.
  * @param {Map<string, string>} files @param {string} base the importing file @param {string} spec @param {'import' | 'require'} kind
  */
 function resolve(files, base, spec, kind) {
+  const own = OWN.exec(spec)
+  if (own) return `node:${own[1]}`
   const file = (/** @type {string} */ path) => ['', '.js', '.mjs', '.cjs', '.json', '/index.js', '/index.mjs', '/index.cjs'].map((end) => path + end).find((each) => files.has(each))
   if (/^\.{0,2}\//.test(spec)) return file(normal(spec.startsWith('/') ? spec : `${dirOf(base)}/${spec}`))
   const [, name = '', sub] = /^((?:@[^/]+\/)?[^/]+)(?:\/(.*))?$/.exec(spec) ?? []
@@ -575,6 +589,11 @@ function resolve(files, base, spec, kind) {
     if (dir === '/') return undefined
   }
 }
+
+/** Why a module isn't there. @param {string} spec */
+const missing = (spec) => new Error(SERVER_MODULES.test(spec) ? noServer('node').trim()
+  : NODE.test(spec) ? `Cannot find module '${spec}': of Node's own modules, only path, fs and process are here`
+  : `Cannot find module '${spec}': install it with npm install in bash, or name it by its path`)
 
 /** Whether a file is an ES module rather than CommonJS. @param {string} path @param {string} source */
 const isModule = (path, source) => path.endsWith('.mjs') || (!path.endsWith('.cjs') && /^\s*(import\s*[\w{*'"]|export\s)/m.test(source))
@@ -624,12 +643,12 @@ globalThis.csv = (text) => {
   return lines.slice(1).map((line) => Object.fromEntries(split(line).map((value, i) => [names[i] ?? 'column ' + (i + 1), value])))
 }
 `
-// require(), Node's way, from the computer's files and node_modules (resolved by the worker).
+// require(), Node's way, from Node's own modules, the computer's files and node_modules (resolved by the worker).
 const REQUIRE = `
 const __cache = {}
 globalThis.__requireFrom = (base) => (spec) => {
   const path = __resolve(base, String(spec))
-  if (path === undefined) throw new Error(${SERVER_MODULES}.test(spec) ? ${JSON.stringify(noServer('node').trim())} : "Cannot find module '" + spec + "': install it with npm install in bash, or name it by its path")
+  if (path.startsWith('node:')) return __node[path.slice(5)]
   if (__cache[path]) return __cache[path].exports
   const module = { exports: {} }
   __cache[path] = module
@@ -643,6 +662,100 @@ globalThis.require = __requireFrom(__cwd + '/[eval]')
 // As a command, Node's way: process, and console to stdout and stderr.
 const PROCESS = `
 globalThis.process = { argv: JSON.parse(__argv), env: JSON.parse(__env), cwd: () => __cwd, exit: (code = 0) => { throw { __exit: Number(code) } }, platform: 'browser' }
+`
+
+// Node's own modules here (D178): path, fs (at once, or with a callback or a promise) and process.
+// Its source runs in QuickJS, with fileSync as `file`, from `cwd`.
+function nodeModules(file, cwd) {
+  const path = {
+    sep: '/',
+    delimiter: ':',
+    isAbsolute: (p) => p.startsWith('/'),
+    normalize(p) {
+      const parts = []
+      for (const part of p.split('/')) {
+        if (part === '..' && parts.length && parts.at(-1) !== '..') parts.pop()
+        else if (part === '..' ? !p.startsWith('/') : part && part !== '.') parts.push(part)
+      }
+      return ((p.startsWith('/') ? '/' : '') + parts.join('/') || '.') + (parts.length && p.endsWith('/') ? '/' : '')
+    },
+    join: (...parts) => path.normalize(parts.filter(Boolean).join('/')),
+    resolve(...parts) {
+      let resolved = cwd
+      for (const part of parts) if (part) resolved = part.startsWith('/') ? part : `${resolved}/${part}`
+      return path.normalize(resolved).replace(/(.)\/$/, '$1')
+    },
+    dirname(p) {
+      const trimmed = p.replace(/(.)\/+$/, '$1')
+      return trimmed.includes('/') ? trimmed.slice(0, trimmed.lastIndexOf('/')) || '/' : '.'
+    },
+    basename(p, ext = '') {
+      const base = p.replace(/(.)\/+$/, '$1').split('/').pop()
+      return ext && base !== ext && base.endsWith(ext) ? base.slice(0, -ext.length) : base
+    },
+    extname(p) {
+      const base = path.basename(p)
+      return base.lastIndexOf('.') > 0 ? base.slice(base.lastIndexOf('.')) : ''
+    },
+    relative(from, to) {
+      const [a, b] = [from, to].map((p) => path.resolve(p).split('/').filter(Boolean))
+      let same = 0
+      while (same < a.length && a[same] === b[same]) same++
+      return [...a.slice(same).fill('..'), ...b.slice(same)].join('/')
+    },
+    parse(p) {
+      const [base, ext] = [path.basename(p), path.extname(p)]
+      return { root: p.startsWith('/') ? '/' : '', dir: path.dirname(p), base, ext, name: base.slice(0, base.length - ext.length) }
+    },
+  }
+  path.posix = path
+
+  // Errors carry Node's code.
+  const call = (op, p, text = '') => {
+    try {
+      return file(op, path.resolve(String(p)), String(text))
+    } catch (error) {
+      throw Object.assign(error, { code: /^E[A-Z]+/.exec(error.message)?.[0] })
+    }
+  }
+  const stat = (p) => {
+    const { folder, size, mtime } = JSON.parse(call('stat', p))
+    return { size, mtime: new Date(mtime), mtimeMs: mtime, isFile: () => !folder, isDirectory: () => folder }
+  }
+  const fs = {
+    readFileSync: (p) => call('read', p),
+    writeFileSync: (p, text) => call('write', p, text),
+    appendFileSync: (p, text) => call('write', p, (fs.existsSync(p) ? call('read', p) : '') + text),
+    existsSync: (p) => {
+      try {
+        return Boolean(call('stat', p))
+      } catch {
+        return false
+      }
+    },
+    statSync: stat,
+    lstatSync: stat,
+    readdirSync: (p, options) => JSON.parse(call('list', p)).map((name) => (options?.withFileTypes ? { name, ...stat(path.join(p, name)) } : name)),
+    mkdirSync: (p, options) => call('mkdir', p, options?.recursive ? 'recursive' : ''),
+    rmSync: (p, options) => (options?.force && !fs.existsSync(p) ? undefined : call('rm', p, options?.recursive ? 'recursive' : '')),
+    unlinkSync: (p) => call('rm', p),
+    promises: {},
+  }
+  for (const [name, sync] of Object.entries(fs)) {
+    if (!name.endsWith('Sync') || name === 'existsSync') continue
+    const promised = (fs.promises[name.slice(0, -4)] = async (...args) => sync(...args))
+    fs[name.slice(0, -4)] = (...args) => {
+      const done = typeof args.at(-1) === 'function' ? args.pop() : () => {}
+      promised(...args).then((value) => done(null, value), done)
+    }
+  }
+
+  return { path, fs, 'fs/promises': fs.promises, process: globalThis.process }
+}
+// After process; with the names each exports, for import.
+const NODE_MODULES = `
+globalThis.__node = (${nodeModules})(__fs, __cwd)
+Object.fromEntries(Object.entries(__node).map(([name, module]) => [name, Object.keys(Object(module)).join()]))
 `
 
 /**
@@ -725,7 +838,14 @@ async function javascript({ run, code, cwd, tool = false, print = false, argv = 
     for (const path of computer.fs.getAllPaths()) {
       if (/\/node_modules\/.*\.(m?js|cjs|json)$|\.(m?js|cjs)$|\/package\.json$/.test(path)) files.set(path, await computer.fs.readFile(path).catch(() => ''))
     }
-    for (const [label, work] of /** @type {const} */ ([['__resolve', (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base, spec, 'require')], ['__source', (/** @type {string} */ path) => files.get(path)]])) {
+    /** @param {string} base @param {string} spec */
+    const required = (base, spec) => {
+      const found = resolve(files, base, spec, 'require')
+      if (!found) throw missing(spec)
+      return found
+    }
+    for (const [label, work] of /** @type {const} */ ([['__resolve', required], ['__source', (/** @type {string} */ path) => files.get(path)],
+      ['__fs', (/** @type {string} */ op, /** @type {string} */ path, /** @type {string} */ text) => fileSync(computer, op, path, text)]])) {
       const handle = vm.newFunction(label, (/** @type {any[]} */ ...args) => {
         const found = work(...args.map((arg) => vm.getString(arg)))
         return found === undefined ? vm.undefined : vm.newString(found)
@@ -733,13 +853,18 @@ async function javascript({ run, code, cwd, tool = false, print = false, argv = 
       vm.setProp(vm.global, label, handle)
       handle.dispose()
     }
+    /** @type {Record<string, string>} */
+    let named = {}
     runtime.setModuleLoader((/** @type {string} */ path) => {
+      if (path.startsWith('node:')) return `const m = globalThis.__node[${JSON.stringify(path.slice(5))}]\nexport default m\nexport const { ${named[path.slice(5)]} } = m`
       const source = files.get(path) ?? ''
       if (path.endsWith('.json')) return `export default ${source}`
       if (isModule(path, source)) return source
       return `const __m = { exports: {} }\n;(function (module, exports, require, __filename, __dirname) {\n${source}\n})(__m, __m.exports, globalThis.__requireFrom(${JSON.stringify(path)}), ${JSON.stringify(path)}, ${JSON.stringify(dirOf(path))})\nexport default __m.exports`
-    }, (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base.startsWith('/') ? base : `${cwd}/${base}`, spec, 'import') ?? { error: new Error(SERVER_MODULES.test(spec) ? noServer('node').trim() : `Cannot find module '${spec}'`) })
-    vm.unwrapResult(vm.evalCode(PRELUDE + REQUIRE + (tool ? '' : PROCESS), 'prelude.js')).dispose()
+    }, (/** @type {string} */ base, /** @type {string} */ spec) => resolve(files, base.startsWith('/') ? base : `${cwd}/${base}`, spec, 'import') ?? { error: missing(spec) })
+    const prelude = vm.unwrapResult(vm.evalCode(PRELUDE + REQUIRE + (tool ? '' : PROCESS) + NODE_MODULES, 'prelude.js'))
+    named = vm.dump(prelude)
+    prelude.dispose()
 
     /** Waits for a value in the script's world, a promise or not. @param {any} handle */
     const settle = async (handle) => {
@@ -813,6 +938,22 @@ const lines = (printed) => (printed.length ? `${printed.join('\n')}\n` : '')
 /** @param {unknown} value */
 function show(value) {
   return typeof value === 'string' ? value : JSON.stringify(value)
+}
+
+/** What node's fs asks, at once (D178): just-bash keeps the files in maps. @param {Computer} computer @param {string} op @param {string} path @param {string} text */
+function fileSync({ fs }, op, path, text) {
+  if (op === 'write') return fs.writeFileSync(path, text)
+  if (op === 'mkdir') return fs.mkdirSync(path, { recursive: Boolean(text) })
+  const { fs: inner, relativePath } = fs.routePath(path)
+  const at = inner.resolvePathWithSymlinks(relativePath)
+  const entry = inner.data.get(at)
+  if (!entry) throw new Error(`ENOENT: no such file or directory, '${path}'`)
+  const folder = entry.type === 'directory'
+  if (op === 'stat') return JSON.stringify({ folder, size: entry.content?.length ?? 0, mtime: +entry.mtime })
+  if (op === 'list') return JSON.stringify([...[...inner.data.keys()].filter((key) => key !== at && dirOf(key) === at).map((key) => key.slice(key.lastIndexOf('/') + 1)), ...fs.getChildMountPoints(path)])
+  if (folder && (op === 'read' || !text)) throw new Error(`EISDIR: illegal operation on a directory, '${path}'`)
+  if (op === 'read') return typeof entry.content === 'string' ? entry.content : new TextDecoder().decode(entry.content)
+  for (const key of [...inner.data.keys()]) if (key === at || key.startsWith(`${at}/`)) inner.deleteEntry(key)
 }
 
 /** What a script asks of the computer: its files, or the internet. @param {Computer} computer @param {string} cwd @param {string} op @param {string} arg */

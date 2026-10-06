@@ -273,7 +273,8 @@ function pack(name, version, files) {
     mkdirSync(join(dir, 'package', path, '..'), { recursive: true })
     writeFileSync(join(dir, 'package', path), path === 'package.json' ? JSON.stringify({ name, version, ...JSON.parse(files['package.json'] ?? '{}') }) : text)
   }
-  execFileSync('tar', ['czf', join(dir, 'pack.tgz'), '-C', dir, 'package'])
+  // Without the ._ files a Mac's tar adds.
+  execFileSync('tar', ['czf', join(dir, 'pack.tgz'), '-C', dir, 'package'], { env: { ...process.env, COPYFILE_DISABLE: '1' } })
   const tgz = readFileSync(join(dir, 'pack.tgz'))
   const manifest = JSON.parse(readFileSync(join(dir, 'package', 'package.json'), 'utf8'))
   const tarball = `https://npm.example.com/${name}/-/${name}-${version}.tgz`
@@ -281,9 +282,11 @@ function pack(name, version, files) {
   return { tgz, tarball, meta: { name, 'dist-tags': { latest: version }, versions: { '1.0.0': { ...manifest, version: '1.0.0', dist: { tarball, integrity: 'sha512-old' } }, [version]: { ...manifest, dist: { tarball, integrity } } } } }
 }
 
-test('npm install from the registry Settings name, then node requires and imports; and tar', async ({ page }) => {
+test('npm install from the registry Settings name, then node requires and imports, with Node’s own path and fs (D178); and tar', async ({ page }) => {
   test.setTimeout(90_000)
   const packages = [
+    // As cowsay does: its cows are files beside its code, read at once through path and fs.
+    pack('moo', '1.0.0', { 'lib/cows.js': "const path = require('path')\nconst fs = require('fs')\nexports.say = (text) => fs.readFileSync(path.join(__dirname, '/../cows', 'default') + '.cow', 'utf-8').replace('$text', text)\nexports.list = () => fs.readdirSync(path.join(__dirname, '../cows')).map((cow) => path.basename(cow, '.cow'))\n", 'package.json': JSON.stringify({ main: './lib/cows' }), 'cows/default.cow': '< $text >\n  moo\n', 'cows/fox.cow': 'fox' }),
     pack('greet', '1.2.0', { 'package.json': JSON.stringify({ main: 'lib/index.js', dependencies: { shout: '^2.0.0' } }), 'lib/index.js': "const shout = require('shout')\nmodule.exports = (name) => shout('hello ' + name)\n" }),
     pack('shout', '2.1.0', { 'index.js': "module.exports = (text) => text.toUpperCase() + '!'\n" }),
     pack('esm-hi', '3.0.0', { 'package.json': JSON.stringify({ type: 'module', exports: { '.': { import: './hi.js' } } }), 'hi.js': "export const hi = () => 'hi from a module'\n" }),
@@ -312,6 +315,19 @@ test('npm install from the registry Settings name, then node requires and import
 
   answer = await command(page, `$ echo "import { hi } from 'esm-hi'; console.log(hi())" > hi.mjs && node hi.mjs`)
   await expect(answer).toContainText('hi from a module')
+
+  // Node's own: path and fs, at once, with a callback or a promise, by require and import; another is named.
+  await command(page, `$ echo '{ "dependencies": { "moo": "^1.0.0" } }' > package.json`)
+  answer = await command(page, `$ npm install && npm install && node -e "const moo = require('moo'); console.log(moo.say('hello'), moo.list().sort().join())"`)
+  await expect(answer).toContainText('added 1 package')
+  await expect(answer).toContainText('up to date')
+  await expect(answer).toContainText('< hello >\n  moo\n default,fox')
+  answer = await command(page, `$ mkdir -p lib ; node -e "const fs = require('node:fs'); fs.writeFileSync('n.txt', 'one'); fs.appendFileSync('n.txt', ' two'); fs.readFile('n.txt', 'utf8', (error, text) => console.log(text, fs.existsSync('nope'), fs.statSync('lib').isDirectory()))" ; node -e "require('fs').readFileSync('nope')" ; node -e "require('crypto')"`)
+  await expect(answer).toContainText('one two false true')
+  await expect(answer).toContainText('ENOENT')
+  await expect(answer).toContainText("Cannot find module 'crypto': of Node's own modules, only path, fs and process are here")
+  answer = await command(page, `$ echo "import { join, relative } from 'node:path'; import { readFile } from 'fs/promises'; console.log(join('a', '..', 'b/'), relative('/x/y', '/x/z'), await readFile('n.txt'))" > own.mjs && node own.mjs`)
+  await expect(answer).toContainText('b/ ../z one two')
 
   answer = await command(page, '$ tar czf both.tgz package.json hi.mjs && rm hi.mjs && tar xzf both.tgz && tar tzf both.tgz && cat hi.mjs')
   await expect(answer).toContainText('package.json\nhi.mjs')
@@ -545,9 +561,12 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   await line.press('a')
   await expect(terminal.locator('.terminal-choices span')).toHaveCount(0)
   await expect(line).toHaveValue('cat /workspace/a')
-  // An empty line lets Tab move on.
+  // On an empty line, Tab offers the commands and keeps the keys; Shift+Tab takes them elsewhere.
   await line.fill('')
   await line.press('Tab')
+  await expect(terminal.locator('.terminal-choices span', { hasText: /^ls$/ })).toHaveCount(1)
+  await expect(line).toBeFocused()
+  await line.press('Shift+Tab')
   await expect(line).not.toBeFocused()
 
   // The whole pane is where one types: a click on its title, or a key typed on what it showed.
@@ -586,4 +605,14 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   await settings.getByRole('button', { name: 'Open the terminal' }).click()
   await expect(terminal).toBeVisible()
   await expect(terminal.locator('.terminal-entry')).toHaveCount(4)
+  // The whole pane is ringed while it has the keyboard, not the line; clear clears it, as Ctrl+L does.
+  await expect(line).toBeFocused()
+  expect(await terminal.evaluate((pane) => [getComputedStyle(pane).outlineStyle, getComputedStyle(pane.querySelector('textarea') ?? pane).outlineStyle])).toEqual(['solid', 'none'])
+  await line.fill('clear')
+  await line.press('Enter')
+  await expect(terminal.locator('.terminal-entry')).toHaveCount(0)
+  await expect(terminal.locator('.terminal-hint')).toBeVisible()
+  await expect(await run('echo gone; clear; echo kept')).toHaveText(/kept/)
+  await expect(terminal.locator('.terminal-entry')).toHaveCount(1)
+  await expect(terminal.locator('.terminal-entry pre')).toHaveText('kept\n')
 })
