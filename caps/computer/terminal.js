@@ -7,7 +7,7 @@
 // through what was typed, Tab completes, Ctrl+C stops what runs, Ctrl+L and `clear` clear it; a
 // click or a key anywhere in it goes to the line (D170), and the whole pane is ringed while it has
 // it. A bare `node`, `python` or `python3` opens its prompt, as on a real computer (D180), until
-// `.exit`, `exit()` or Ctrl+D. Opened from Settings › Computer or with Ctrl+`, then from the main
+// `.exit`, `exit()` or Ctrl+D. Opened from Settings › Computer or with ⌘J, then from the main
 // area too. Loaded the first time it opens, with its style sheet.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -76,7 +76,7 @@ export function show(line) {
   if (!app.settings.peek().terminal) updateSettings({ terminal: true })
 }
 export const close = () => { open.value = false }
-/** From ⌃` (`keys`), it closes only once the keys are in it. @param {boolean} [keys] */
+/** From ⌘J (`keys`), it closes only once the keys are in it. @param {boolean} [keys] */
 export const toggle = (keys = false) => (open.peek() && (!keys || pane.contains(document.activeElement)) ? close() : show())
 const toLine = () => pane.querySelector('textarea')?.focus()
 
@@ -162,7 +162,7 @@ function keyed(event) {
 /**
  * Enter runs (never while an IME is composing), Shift+Enter adds a line; ↑ and ↓ go through what was
  * typed; Tab completes, an empty line with the commands, or indents at an interpreter's prompt, and
- * keeps the keys, which Shift+Tab, Escape and ⌃` take elsewhere; Ctrl+C stops what runs and drops
+ * keeps the keys, which Shift+Tab, Escape and ⌘J take elsewhere; Ctrl+C stops what runs and drops
  * the line, and a statement's lines, unless text is selected; Ctrl+D on an empty line ends the
  * interpreter; Ctrl+L clears.
  * @param {KeyboardEvent} event

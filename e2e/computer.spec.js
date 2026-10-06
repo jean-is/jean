@@ -497,7 +497,7 @@ test.describe('in the user’s folder', () => {
     await turnOn(page, 'Folders')
     await page.keyboard.press('Escape')
     await expect(page.locator('.folder-name')).toHaveText('Shop')
-    await page.keyboard.press('Control+Backquote')
+    await page.keyboard.press('ControlOrMeta+KeyJ')
     const line = page.locator('app-terminal').getByRole('textbox', { name: 'Command' })
     await line.fill('echo "tea,3" >> prices.csv && wc -l prices.csv')
     await line.press('Enter')
@@ -522,8 +522,8 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   await page.keyboard.press('Escape')
   await expect(await command(page, '$ echo hi > a.txt')).toContainText('Exit code: 0')
 
-  // Ctrl+` opens it, on the line to type on.
-  await page.keyboard.press('Control+Backquote')
+  // ⌘J opens it, on the line to type on.
+  await page.keyboard.press('ControlOrMeta+KeyJ')
   const terminal = page.locator('app-terminal .terminal')
   await expect(terminal).toBeVisible()
   const line = terminal.getByRole('textbox', { name: 'Command' })
@@ -596,13 +596,13 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   expect(told).toEqual(['cat a.txt && cd /tmp && pwd', 'echo made > /workspace/b.txt', 'false', 'curl -s https://data.example.com/x'])
   await expect(await command(page, '$ pwd')).toContainText('/tmp')
 
-  // ⌃` brings the keys back to it from elsewhere, and from there closes it.
+  // ⌘J brings the keys back to it from elsewhere, and from there closes it.
   await page.locator('#prompt').focus()
-  await page.keyboard.press('Control+Backquote')
+  await page.keyboard.press('ControlOrMeta+KeyJ')
   await expect(line).toBeFocused()
-  await page.keyboard.press('Control+Backquote')
+  await page.keyboard.press('ControlOrMeta+KeyJ')
   await expect(terminal).toBeHidden()
-  await page.keyboard.press('Control+Backquote')
+  await page.keyboard.press('ControlOrMeta+KeyJ')
   await expect(line).toBeFocused()
 
   // Escape closes it; Settings › Computer opens it again.
@@ -633,7 +633,7 @@ test('the terminal: a bare node or python3 opens its prompt, until .exit, exit()
   await turnOn(page, 'Computer')
   await page.keyboard.press('Escape')
   await expect(await command(page, '$ true')).toContainText('Exit code: 0')
-  await page.keyboard.press('Control+Backquote')
+  await page.keyboard.press('ControlOrMeta+KeyJ')
   const terminal = page.locator('app-terminal .terminal')
   const line = terminal.getByRole('textbox', { name: 'Command' })
   const prompt = terminal.locator('.terminal-line > span')

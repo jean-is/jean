@@ -68,30 +68,16 @@ const discovery = () => import('./discovery.js')
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
 // systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
 // ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
-// ⌘⇧B opens the browser once it is found, or closes it (D142). ⌃` opens the terminal, brings the keys to
-// it, or closes it once they are there, and turns the computer on first (D166, D170): Control on every
-// system, since ⌘` is macOS's own "next window" and seldom reaches the page (it works too when it does).
-// The key that types `, on any keyboard, even as a dead key (beside Return on a French Mac), or the one
-// in its place on an American one.
+// ⌘⇧B opens the browser once it is found, or closes it (D142). ⌘J opens the terminal, as in code editors,
+// brings the keys to it, or closes it once they are there, and turns the computer on first (D166, D170, D184).
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b' })
-/** Where ` is on this keyboard, where the browser says (Chromium): a dead key's own place, since it sends "Dead". */
-let grave = 'Backquote'
-;/** @type {any} */ (navigator).keyboard?.getLayoutMap?.().then((/** @type {Map<string, string>} */ map) => {
-  for (const [code, key] of map) if (key === '`') grave = code
-}).catch(() => {})
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 
 document.addEventListener('keydown', (event) => {
-  if ((event.key === '`' || event.code === grave || event.code === 'Backquote') && (event.ctrlKey || (APPLE && event.metaKey)) && !event.altKey && !isDenied('computer')) {
-    event.preventDefault()
-    app.dialog.value = null
-    unlock('computer').then(async (ok) => ok && (await import('../caps/computer/terminal.js')).toggle(true))
-    return
-  }
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
   if (!command || event.altKey || event.isComposing) return
   const key = /^[ -~]$/.test(event.key) ? event.key.toLowerCase() : PLACES[event.code]
@@ -114,6 +100,10 @@ document.addEventListener('keydown', (event) => {
     const over = app.dialog.value
     app.dialog.value = null
     import('../caps/browser/browser.js').then((module) => (over ? module.show() : module.toggle()))
+  } else if (key === 'j' && !event.shiftKey && !isDenied('computer')) {
+    event.preventDefault()
+    app.dialog.value = null
+    unlock('computer').then(async (ok) => ok && (await import('../caps/computer/terminal.js')).toggle(true))
   }
 })
 

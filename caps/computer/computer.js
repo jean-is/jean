@@ -20,6 +20,7 @@ import { addFile, sha256Hex } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion } from '../../core/events.js'
 import { t, tParts, useStrings, locale } from '../../core/i18n.js'
 import { memoryTotal } from '../../ui/host.js'
+import { SHORTCUTS } from '../../ui/shell.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
 import { exactText } from '../folders/work.js'
@@ -463,8 +464,8 @@ export async function completions(word, commands) {
   return [...found].filter((name) => !found.has(`${name}/`)).sort()
 }
 
-/** The terminal's key, left to right in any language: Control, which a Mac writes ⌃ (D166). */
-export const keys = html`<kbd><bdi dir="ltr">${/Mac|iPhone|iPad/.test(navigator.platform) ? '⌃`' : 'Ctrl+`'}</bdi></kbd>`
+/** The terminal's key, left to right in any language: ⌘J on Apple's systems, Ctrl+J elsewhere (D184). */
+export const keys = html`<kbd><bdi dir="ltr">${SHORTCUTS.terminal.replace('Meta+', '⌘').replace('Control', 'Ctrl')}</bdi></kbd>`
 /** The terminal's prompt, the shell's: ">_". */
 export const prompt = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.5 7 5 5-5 5M12 17.5h7.5"/></svg>`
 
@@ -476,7 +477,7 @@ class TerminalToggle extends Element {
   render() {
     if (!app.settings.value.terminal) return nothing
     const { state } = box.status.value
-    return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} title=${t('computer.terminal')} aria-keyshortcuts="Control+\`"
+    return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} title=${t('computer.terminal')} aria-keyshortcuts=${SHORTCUTS.terminal}
       @click=${() => import('./terminal.js').then((module) => module.toggle())}>${prompt}${state === 'asleep' ? nothing : light(state)}</button>`
   }
 }
@@ -632,7 +633,7 @@ function panel() {
     </section>
     <section class="setting">
       <div><h3>${t('computer.terminal')}</h3><p class="muted">${tParts('computer.terminal.text', { keys })}</p></div>
-      <button class="button subtle" aria-keyshortcuts="Control+\`" @click=${() => terminal()}>${prompt} ${t('computer.terminal.open')}</button>
+      <button class="button subtle" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${prompt} ${t('computer.terminal.open')}</button>
     </section>
     <section class="setting">
       <div><h3>${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text')}</p></div>
