@@ -13,7 +13,7 @@
     "firstLoad": 100,
     "css": 12,
     "locale": 8,
-    "capabilityCode": 40,
+    "capabilityCode": 44,
     "$comment": "capabilityCode excludes on-demand runtimes (QuickJS, Pyodide, Transformers.js) and model weights."
   },
   "fontKB": {
