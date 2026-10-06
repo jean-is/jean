@@ -1,6 +1,6 @@
 # Open questions
 
-Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend (D41), on-device brain (D42), where Pyodide's files come from (D43), language review (D44), the old DEVS domain (D38), license (D39), minimum Safari (D40), collaboration relay (D45). Answered while building 0.4: how the sandbox loads Pyodide (D80). Answered while building 0.5: the MCP client, Jean's own (D87). Answered while building 0.6: where helpers' transcripts live (in their parent's, D98), and what checks claims against sources (the brain that answered, D100). The visual identity stays as planned in [design.md](design.md), with no comparison to OpenAI Dots.
+What is still undecided. An answered question becomes an entry in [decisions.md](decisions.md) and leaves this page.
 
 ## Name and domain (decide before the public launch)
 
@@ -16,7 +16,8 @@ Answered on 2026-10-02 and moved to [decisions.md](decisions.md): reflex backend
   - `.li` can't be checked automatically. The user found `leap.li`, `blur.li`, `span.li` and `leap.is` available, but none convinced.
 - **Handles:** on GitHub, `jean` and `jeancx` are taken and `jean-cx` exists but is empty (whose?). On npm, `jean` is an old IoC library.
 - **Criteria for an alternative:** a first name (a person you delegate to), 1–2 syllables, said the same way in English and French, unused in AI, with a short domain.
-- **Also depends on it:** the collaboration relay's subdomain (D45).
+- **Other names taken nearby:** LEAP (Liquid AI's on-device platform), Blur (an NFT marketplace), Space (ChatGPT's shared workspace).
+- **Also depends on it:** the collaboration relay's subdomain (D45), the desktop app's bundle id (D155), Client ID Metadata Documents (below) and a drive's own API for Sync (D157).
 
 ## Display face
 

@@ -45,20 +45,20 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
 
-**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. The language, the theme and light or dark are also in the user's menu, at the foot of the conversations, with Settings, and change there while it stays open (D150, D153).
+**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there. The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
+
+**Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; sharing and collaboration ([enterprise.md](enterprise.md)).
 
 | Capability | Offered when… | What appears |
 |---|---|---|
 | Files | The user pastes long text (over 2,000 characters), drops a file, or a reflex or the brain says a document would help | "You can drop files on me," plus a file shelf |
-| Folders | A folder is dropped, or the brain sees a request about files on the computer (0.8) | "Work in this folder?": this conversation, or every new one in its project, is opened on a folder of this computer, and Jean finds, reads and changes its files where they are, showing each change first. Each project and each conversation keeps its own folder across visits. Chrome and Edge; elsewhere, a folder picked or dropped is a read-only copy, and what Jean changed is saved as one zip (D141, D149, D152) |
+| Folders | A folder is dropped, or the brain sees a request about files on the computer | "Work in this folder?": this conversation, or every new one in its project, is opened on a folder of this computer, and Jean finds, reads and changes its files where they are, showing each change first. Each project and each conversation keeps its own folder across visits. Chrome and Edge; elsewhere, a folder picked or dropped is a read-only copy, and what Jean changed is saved as one zip (D141, D149, D152) |
 | Things Jean made | The first message (D119) | Files Jean writes, as cards under the answer that say what each is, seen beside the conversation and saved with a click: Word documents, spreadsheets, text and drawings, changed on request (D119, D126). Copy as rich text, CSV (D108) |
 | Backup | After three conversations (never in a private window) | "Keep a copy of everything?" plus a request for persistent storage |
 | Search | After ten conversations | ⌘K, or Search under a new conversation: the conversations of every project, files shared or made, and Settings, found as you type, part of a word enough, in any script (D133) |
 | Computer | A spreadsheet (CSV, TSV, XLSX) is shared, or a reflex or the brain says exact numbers would help | A computer in the sandbox, never the user's machine: Jean computes instead of guessing (JavaScript, QuickJS), works on data in Python (about 14 MB the first time), and runs commands in bash, over the files of the conversation's folder or the project's workspace, keeping what changed (in the user's folder after showing it). It reaches the internet as Settings › Computer allow, asking first for a new site; packages come from PyPI and npm or a mirror (D162) |
 | Intuition | After two conversations with a brain | "Let Jean get a feel for what you need?" A small helper on this device (about 345 MB, once) picks the brain and suggests next steps |
-| Bigger brain | A task outgrows the current brain | The next rung of the brain ladder |
 | Memory | The user states a lasting preference or correction | "Want me to remember things like this from now on?" |
-| Instructions | A remembered preference keeps coming back | "Make this a standing instruction?" |
 | Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups, or "See a ready-made skill for this" when one from elsewhere fits, read before it is added (D121) |
 | Routines | The same kind of request on three different days (D122), or the brain offers it when the user wants something done regularly | "Make it a routine?": Jean sends the request itself, every day, working day, week or month, while it is open or as soon as the user is back |
 | Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, shown in the header, which opens on the others |
@@ -71,7 +71,6 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Double-check | Citations are in regular use (three answers that cite sources, D100) | Jean checks each claim against the source it cites, and shows what the sources don't support |
 | Since last time | The user returns after time away (8 hours) and has connections | A read-only brief when Jean opens, in a conversation of its own (D101) |
 | Sync | Another computer is mentioned (the brain offers it), in Chrome or Edge on a computer | "Keep your conversations, files and memory the same on your other computers?" A folder their cloud drive syncs (OneDrive, Dropbox, iCloud Drive, Google Drive), chosen on each computer; settings and keys stay on each (D157) |
-| Share / Collaborate | The user wants to send something / someone opens a shared item | See [enterprise.md](enterprise.md) |
 
 ## Projects
 
@@ -102,10 +101,10 @@ Once they are on, Settings' Skills lists the skills, each saying where it came f
 **Memory that switches itself on:**
 
 - **Detecting.** Before memory is on, a reflex question asks whether the message states a lasting fact, preference or correction, and offers memory when it does; the brain can offer it too (D79, D84).
-- **Writing.** Once memory is on, the brain has a `remember(text, scope)` tool in every new conversation, with one rule: remember only what will still matter later. It writes one line in the user's language, about the person or about the current project, and a toast shows "Remembered: … · Undo". (Giving the tool only on turns a reflex flagged would change the declared tools mid-conversation, D46.)
+- **Writing.** Once memory is on, the brain has a `remember(text, scope)` tool in every new conversation, with one rule: remember only what will still matter later. It writes one line in the user's language, about the person or about the current project, and a toast shows "Remembered: … · Undo".
 - **Opting in.** The first time, it is an offer. Once accepted, memory runs automatically. It can be switched off in About you. Private conversations come later.
 - **Reading back.**
-  - `memory.md` is injected while it stays under about 1k tokens, the newest lines first when it doesn't fit (0.4, the same budget for every brain).
+  - The newest lines of `memory.md` that fit in about 1,000 tokens go into the prompt, the same for every brain.
   - Later: past that, Jean occasionally consolidates it, keeping the previous version for undo, and the reflex model selects the relevant lines.
   - `recall(query)` searches past conversations with the same engine as documents.
 - **Transparency.** Memory is a local file. With a cloud brain it is sent as context, and About you says so plainly.
@@ -117,11 +116,11 @@ Every kind of action has one of three settings: **Do it / Ask me first / Never**
 | Defaults | |
 |---|---|
 | Reading and writing Jean's own files | Do it |
-| Changing files in the user's own folder (0.8, D141) | Ask me first; "Always allow" holds for that folder only |
+| Changing files in the user's own folder (D152) | Ask me first, with the change shown; "Always allow" holds for that folder only |
 | Sending, sharing, deleting, anything external | Ask me first |
 | Passwords, payments | Never (reserved for humans) |
 
-- **Automatic review.** A reflex question checks consequential actions against the user's instructions.
+- **Automatic review** (later): a reflex question checks consequential actions against the user's instructions.
 - **Setting rules from approvals.** On an approval card, "Always allow" writes a "Do it" rule and "Never allow" writes a "Never" rule.
 - **Overrides.** Projects can override rules, and organisation policy can lock them.
 
@@ -130,16 +129,16 @@ Every kind of action has one of three settings: **Do it / Ask me first / Never**
 A live, inspectable activity view built from standard ACP events:
 
 - **The plan:** steps, each with a status.
-- **Each action:** a plain-language label, the files it touched (clickable), its status and its output. As built (D103), every line opens on what it was given and what came back, so a step that went wrong can be looked into.
+- **Each action:** a plain-language label, the files it touched (clickable), its status, and, one click down, what it was given and what came back (D103).
 - **Approval cards.**
 - **Pause and stop.**
 
 Jean's "computer" is the user's own browser, so the view can show everything: files read, code run, sources used, files made.
 
-- **Decision inbox.** During long tasks or work by helpers, questions and approvals queue up as cards instead of blocking the chat. As built in 0.6 (D99): the cards wait under the answer being written, each saying which part it is for, and are answered in any order while the helpers go on.
+- **Decision inbox** (D99). During long tasks or work by helpers, questions and approvals queue as cards under the answer being written, each saying which part it is for, answered in any order while the work goes on.
 - **Questions** (D146). When Jean needs the user's choices before it can do a task well, it asks them all at once, on a card in the inbox, one question at a time: a few answers to pick from, the one it recommends picked already and marked, and room for the user's own words. Skip leaves a question unanswered, Back returns to the one before, and the last one sends the answers back. Helpers ask the same way. Like the inbox, it is always there.
-- **Since last time.** On opening, a read-only pass over connections produces a short brief. Jean cannot work while the tab is closed, and says so. As built in 0.6 (D101), the brief reads connected services only: files change only when the user shares them, until sync.
-- **Routines** (0.7, D122). Requests Jean sends itself on a schedule, each in a conversation of its own that opens with the routine's name, under the same rules as any. They run while the tab is open, once Jean is free and the user isn't reading; one that fell due while it was closed runs at the next visit, once.
+- **Since last time** (D101). On opening after time away, a read-only pass over the connected services produces a short brief. Jean cannot work while the tab is closed, and says so.
+- **Routines** (D122). Requests Jean sends itself on a schedule, each in a conversation of its own that opens with the routine's name, under the same rules as any. They run while the tab is open, once Jean is free and the user isn't reading; one that fell due while it was closed runs at the next visit, once.
 - **Explanations for Auto.** Auto mode explains its choices in collapsed "thinking" entries ("Chose the on-device brain: personal content").
 
 ## Brains: picker and Auto
@@ -166,34 +165,30 @@ Organisation policy can hide or lock any of these.
 - **Stable choices.** Auto steps up when needed and never steps down within a conversation; a new conversation starts again from the bottom. This keeps the provider's cache warm and the tool-call format consistent.
 - **Without Intuition,** Auto picks the Smart level (D70).
 - **Visible.** Every answer shows where it came from ("answered on this device"), with a one-tap "Ask a smarter brain".
-- **Optional budget.** A monthly budget cap can be set.
+- **Optional budget** (later): a monthly cap.
 
 ## Files and outputs
 
 - **Dropped files are kept** in the project's library. Each file is stored as the original, an extracted text version and a metadata file; files are named by content hash, so duplicates are stored once. Conversations reference files rather than copying them.
-- **Or left where they are** (0.8, D141, D149). A project or a conversation opened on a folder works on that folder's files in place, and each keeps its own: two projects, or two conversations, work in two different folders, and a new conversation starts on its project's. Nothing is copied, and a change Jean makes is in the folder as soon as the user has seen and allowed it.
+- **Or left where they are** (D141, D149). A project or a conversation opened on a folder works on that folder's files in place, and each keeps its own: two projects, or two conversations, work in two different folders, and a new conversation starts on its project's. Nothing is copied, and a change Jean makes is in the folder as soon as the user has seen and allowed it.
 - **Pictures and the screen.** A picture is shared like any file, and the box's + menu captures the screen, a window or a tab: one frame, shown as a thumbnail before it is sent. Brains that can see are shown it (D105).
 - **Seen without leaving Jean** (D126). A file Jean made, or one the user shared, opens in a preview beside the conversation (over it on a phone), as what it is: a picture, a PDF's pages, a document on a sheet, a spreadsheet's grid, a deck's slides, a web page with its own look and, by default, its own scripts, without the internet, able to fill the screen and save a file it made (D143, D158; five switches in Approvals change what a page may do). A file being changed shows its new version as it comes, so the next request can be made while looking at it.
-- **Outputs fit office life without any dependency:**
-  - Copy as rich text, which pastes formatted into Word, Outlook and Google Docs
-  - CSV, which opens in Excel
-- **Later:** `.docx` and `.xlsx` writers arrive as unlocks.
+- **Outputs fit office life without any dependency** (D119): Word documents and Excel spreadsheets Jean writes, each change a new version (D164); an answer copied as rich text, which pastes formatted into Word, Outlook and Google Docs; a table as CSV.
 
 ## Sources and citations
 
 - **Numbered sources.** Every tool that brings in outside content returns numbered sources (file and page, URL and title, memory item, past conversation). The brain cites them as `[n]`, and the UI shows each as a chip: hover shows the passage, clicking opens the file at that page or the URL.
-- **One format for all providers.** Provider citations (Anthropic Citations, `url_citation` annotations, Gemini grounding) are converted into the same format.
-- **As built in 0.5 (D90).** Shared files, a connection's emails and documents, Wikipedia's pages and the brain's own search share one numbering per conversation. A web page's chip opens it in a new tab, or beside the conversation once the browser is on (D140); an email's shows its title. Each answer lists its sources under "Sources".
+- **One format for all providers** (D90). Shared files, a connection's emails and documents, Wikipedia's pages and the brain's own search share one numbering per conversation. A web page's chip opens it in a new tab, or beside the conversation once the browser is on; an email's shows its title. Each answer lists its sources under "Sources".
 - **Honest even with small brains.** Small on-device brains cite unreliably, so a "What Jean read" list is always built from the actual tool calls.
-- **Double-check** (0.6, D100). Each sentence that cites a source is checked against that source's words by the brain that wrote the answer, in one short request outside the conversation; the reflex model was not up to it. The verdicts show under the answer: what matches, what the source doesn't say or contradicts, and a follow-up to correct it.
+- **Double-check** (D100). Each sentence that cites a source is checked against that source's words by the brain that wrote the answer, in one short request outside the conversation; the reflex model was not up to it. The verdicts show under the answer: what matches, what the source doesn't say or contradicts, and a follow-up to correct it.
 
 ## Web search
 
 There is no Jean server, so search comes from something the user or their organisation already has:
 
-1. The connected cloud brain's own search (OpenRouter's search tool, Anthropic, OpenAI, Gemini grounding). Sources come back with the answer. Built in 0.5 for Anthropic and OpenRouter, which search only when a question needs it.
-2. Wikipedia and Wikidata for everyone, including on the on-device brain: free, browsers can call them directly, 300+ languages. Built in 0.5 for Wikipedia, in the user's language.
-3. A configurable search endpoint (their own SearXNG, or Brave, Tavily or Exa with their own keys), set by the user or by policy.
+1. The connected cloud brain's own search, with its sources (Anthropic and OpenRouter, which search only when a question needs it; OpenAI and Gemini later).
+2. Wikipedia, in the user's language, for everyone else, the on-device brain included: free, callable from a browser, in 300+ languages (Wikidata later).
+3. Later, a search endpoint set by the user or by policy (their own SearXNG, or Brave, Tavily or Exa with their own keys).
 
 When no route exists, Jean says so and suggests connecting a cloud brain. A shared community proxy should only be considered if real demand appears; DEVS's `proxy.devs.new` is the warning.
 
@@ -210,7 +205,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 
 ## Reply suggestions
 
-- **Actions from a translated catalogue** (as built in 0.3, D69):
+- **Actions from a translated catalogue** (D69):
   - "Shorter" when the answer is over 220 words. That is a length, so it works in every language, with or without Intuition.
   - "As a table" and "Draft an email" when Intuition says they fit.
   - "Simpler" and "Translate" were dropped: the small reflex model can't tell whether a text is wordy or full of jargon, and the language to translate into is the user's call.
@@ -227,7 +222,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 | Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true, in the answer's own language (D109), by the most natural voice there for it; when none speaks it, Jean says so (D114) | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
 | Live conversation | A chain: Silero voice detection → speech-to-text → brain (streamed) → speech, sentence by sentence; speaking over Jean interrupts it. Works with any brain. | Real-time speech models from the connected provider (OpenAI Realtime over WebRTC with the user's key, Gemini Live) |
 
-Dictation and read-aloud are available from day one for accessibility. Live conversation is discovered: built in 0.5 as the private chain above, offered after three dictations (D93). Once on, it starts from the box's send button while the box is empty, and its state shows in the box (D123).
+Dictation and read-aloud are always there, for accessibility. Live conversation is discovered after three dictations (D93); once on, it starts from the box's button while the box is empty, and its state shows in the box (D123). Kokoro voices and the providers' speech services are options for later.
 
 ## Languages
 

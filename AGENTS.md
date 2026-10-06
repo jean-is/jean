@@ -68,6 +68,12 @@ The base prompt lives in [prompts/system.md](prompts/system.md) and stays within
 
 The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read.
 
+## Docs
+
+- Docs describe Jean as it is now; history lives in git. No "as built in 0.x", "since Dnnn" or "until Dnnn" asides, no changelog, no budget snapshots (`npm run budgets` prints them).
+- A decision goes into [docs/decisions.md](docs/decisions.md) as its header says: short (what, why, what was rejected), merged with the entries it amends, under the section it belongs to. How a feature works goes into architecture.md or product.md, once.
+- The roadmap keeps one line per version and one checklist of what is still to check by hand.
+
 ## Testing
 
 - Use `node --test` for `core/`, test-first for `core/` and storage.

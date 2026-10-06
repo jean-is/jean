@@ -114,10 +114,10 @@ CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on 
 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
 | [docs/design.md](docs/design.md) | The room that lights up, and the little light |
 | [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, what is open and what is enterprise, and what the architecture allows later |
-| [docs/roadmap.md](docs/roadmap.md) | Build order, what each version shipped, and what is still to check by hand |
-| [docs/decisions.md](docs/decisions.md) | Every decision, with the alternatives that were rejected |
+| [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
+| [docs/decisions.md](docs/decisions.md) | Every decision as it stands, by topic, with the alternatives that were rejected |
 | [docs/open-questions.md](docs/open-questions.md) | What is still undecided |
-| [docs/assessment.md](docs/assessment.md), [docs/landscape.md](docs/landscape.md) | Where Jean comes from, and the field as of 2026-10-01 |
+| [docs/background.md](docs/background.md) | Where Jean comes from (DEVS), and the field as of 2026-10-01 |
 
 Jean revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from scratch. It started inside the DEVS repository and moved out on 2026-10-02 with its history (D50). It is self-contained: nothing here reads, imports or copies files from outside this repository.
 

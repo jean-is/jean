@@ -42,11 +42,16 @@ Jean's persona is the room's light, drawn small: a soft flame with a curled tip,
 
 ## Looks
 
-The room is Jean's own look, and the default. Settings → Appearance offers two more, each in light and dark (D111):
+The room is Jean's own look, and the default. Settings › Appearance, and the theme page of the user's menu, offer sixteen, each with a light and a dark palette, in system typefaces, shown as small pictures of themselves (D111, D120, D154):
 
 - **Room:** everything above. A dark, warm room lit by the little light, the display face, and the room warming with each discovery.
-- **Mail:** after the devs.new task inbox. Conversations sit in a list beside the one open, as in an email client: wider than a phone, one sidebar, as in the Claude apps, with the name at its top, the list, and the user at its foot, whose menu holds Settings (D117, D150), open until the user puts it away (D165); on a phone, the room's layout with the list in its drawer. Neutral greys, one blue accent, the system face, flat surfaces. The little light stays at the name.
-- **Paper:** ink on paper. A serif for everything, a rule under the masthead, the user's words set as a quotation in the margin's red, square corners, no glow.
+- **Mail:** after the devs.new task inbox: the tasks in a list beside the one open, as in an email client; neutral greys, one blue accent, flat surfaces.
+- **Paper:** ink on paper, a serif for everything, the user's words set as a quotation in the margin's red, no glow.
+- **Refined:** Minimal (one grey scale), Swiss (a strict grid, black and white with one red), Fjord (polar blues under a faint aurora), Velvet (plum and gold, a Didone).
+- **Playful:** Terminal (green phosphor; green-bar paper by day), Neon (an Eighties sun behind a grid), Notebook (squared paper and sticky notes; a blackboard by night), Depth (a floor in true perspective that the camera circles while Jean works, D125).
+- **Familiar:** Classic (a Nineties desktop), Pixel (a 1989 handheld's four greens), Blueprint (white lines on Prussian blue), Mondrian (thick lines and primaries), and Human, after today's desktop: frosted panes, the system's blue and typeface, sheets with three lights (D132).
+
+Mail and Human start with the drawer open beside the conversation (D165). Names that are trademarks stay out of the UI, and `test/looks.test.js` checks every theme's text at AA by day and by night.
 
 **Make it yours** adds an accent colour, a background colour, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the little light and the room's glow, unless a project has a light of its own.
 
@@ -76,7 +81,7 @@ The room is Jean's own look, and the default. Settings → Appearance offers two
 - **`prefers-reduced-motion`:** a still glow, with no movement. The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces.
 - **`forced-colors`** is supported. The little light becomes an outline drawing in the system colours.
-- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘N a new conversation, ⌘⇧L switches between light and dark, ⌘K opens search once it is found and ⌘⇧B the browser, Ctrl outside Apple's systems (D118, D130, D133, D142).
+- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘N a new conversation, ⌘⇧L switches between light and dark, ⌘K opens search and ⌘⇧B the browser once each is found, ⌃` the terminal, Ctrl outside Apple's systems (D118).
 
 ## Budget
 
