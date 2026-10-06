@@ -6,7 +6,6 @@
 // Skills from elsewhere (D121): the indexes in settings and policy are read on the device
 // (./sources.js); the third request of a kind looks there first, and `suggest_skill` lets the
 // brain look. Either way the user reads the steps and adds the skill (./ready.js), or not.
-// They were called routines until D115.
 import { register } from '../../ui/caps.js'
 import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { SAME_KIND } from '../../ui/discovery.js'

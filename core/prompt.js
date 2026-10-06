@@ -116,8 +116,8 @@ export function frozenPrompt(records) {
 /**
  * Notes for whatever changed between what the brain knows and now, one change per note.
  * A section that changed is given whole. Tools are only ever added. New ones are deferred:
- * found with find_tools (D47). A conversation that started without find_tools (0.2)
- * declares them instead.
+ * found with find_tools (D47); a conversation that never declared find_tools declares them
+ * instead.
  * @param {PromptState} known @param {PromptState} now @param {Sections} [sections] their text now
  * @returns {Envelope[]}
  */
