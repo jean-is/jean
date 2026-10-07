@@ -1,19 +1,16 @@
-/* Folders (caps/folders/folders.js, D141, D149), loaded with it, after ui/style.css: the folder's name in
-   the header and its menu, a question above the box, a change's diff, the card under the answer, and the
-   project dialog's field. A diff's lines carry their sign, so they read without colour. Logical properties only. */
+/* Folders (caps/folders/folders.js, D141, D149), loaded with it, after ui/style.css: the folder's name and
+   its menu, beside the browser and the terminal, a question above the box, a change's diff, the card under
+   the answer, and the project dialog's field. A diff's lines carry their sign, so they read without colour. Logical properties only. */
 app-folder, app-folder-approval { display: contents; }
 app-folder-change { display: block; }
 
-.folder-name { anchor-name: --folder; display: inline-flex; align-items: center; gap: 0.35rem; min-inline-size: 0; max-inline-size: min(14rem, 40vw); margin-inline-start: auto;
+.folder-name { anchor-name: --folder; display: inline-flex; align-items: center; gap: 0.35rem; min-inline-size: 0; max-inline-size: min(14rem, 40vw);
   padding: 0.3rem 0.75rem; border: 1px solid var(--line-strong); border-radius: 999px; background: none; color: var(--ink-soft); font-size: 0.9rem; transition: color 0.2s, border-color 0.2s; }
 .folder-name:hover { border-color: oklch(from var(--flame) l c h / 0.5); color: var(--ink); }
 .folder-name.is-shut { border-style: dashed; }
 .folder-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .folder-name .icon { flex: none; inline-size: 1rem; block-size: 1rem; }
-.bar:has(.folder-name) .views { margin-inline-start: 0; }
 .folder-menu { position-anchor: --folder; position-area: block-end span-inline-start; margin: 0.25rem 0 0; max-inline-size: min(22rem, calc(100vw - 2rem)); }
-/* In the drawer's top, open beside the conversation (D165), the name sits near the window's edge: the menu opens the other way. */
-:root[data-sidebar] .folder-menu { position-area: block-end span-inline-end; }
 .folder-menu:not(:popover-open) { translate: 0 -0.4rem; }
 .folder-menu:popover-open { @starting-style { translate: 0 -0.4rem; } }
 @supports not (anchor-name: --folder) { .folder-menu { inset: 4rem auto auto; inset-inline-end: 1rem; margin: 0; } }

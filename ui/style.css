@@ -206,10 +206,12 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
   padding: 0.9rem clamp(1rem, 3vw, 1.75rem);
   background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0));
 }
-/* The browser's and the terminal's buttons at the main area's top end (D166, D170): the bar's, or,
-   with the drawer open beside the conversation, a row of their own there, as tall as the drawer's top. */
+/* The folder's name and the browser's and the terminal's buttons at the main area's top end (D149, D166, D170):
+   the bar's, or, with the drawer open beside the conversation, a row of their own there, as tall as the
+   drawer's top, and none while none of them shows. */
 app-terminal-toggle { display: contents; }
 .views { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-inline-start: auto; }
+app-shell > .views:not(:has(button)) { display: none; }
 app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-size: var(--top); margin-inline-start: 0; padding-inline: clamp(1rem, 3vw, 1.75rem); background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0)); }
 .wordmark {
   display: inline-flex;
@@ -652,7 +654,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 :where(:root[data-sidebar]) .wordmark { min-inline-size: 0; margin-inline-end: auto; }
 :where(:root[data-sidebar]) .sidebar-toggle { order: 1; }
 :where(:root[data-sidebar]) main { padding-block-start: 1.5rem; }
-:where(:root[data-sidebar] app-shell:has(> .views)) main { padding-block-start: 0; }
+:where(:root[data-sidebar] app-shell:has(> .views button)) main { padding-block-start: 0; }
 :where(:root[data-sidebar]) .toasts { inset-inline-start: var(--list); }
 /* It scrolls without a bar of its own, which stood at its edge like a handle to drag (D181), as Settings' menu does. */
 app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display: flex; flex-direction: column; block-size: calc(100dvh - var(--top)); margin-block: var(--top) -100dvh; padding: 0.25rem 0.75rem 0.75rem; overflow-y: auto; overscroll-behavior: none; scrollbar-width: none; }

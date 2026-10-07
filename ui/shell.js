@@ -20,8 +20,10 @@ class Shell extends Element {
     // Open beside the conversation (D165), the drawer has the header's top as its own: the name,
     // then what it opens, Search and the button that puts it away, at the far end, as in Manus.
     // What opens beside the conversation, the browser and the terminal, keeps the main area's top
-    // end: the header's, or, with the drawer open, the same place beside it (D170).
-    const views = loaded.value.has('browser') || loaded.value.has('computer') ? html`<div class="views">
+    // end: the header's, or, with the drawer open, the same place beside it (D170). The folder's
+    // name goes before them, there and never in the drawer (D149).
+    const views = ['folders', 'computer', 'browser'].some((name) => loaded.value.has(name)) ? html`<div class="views">
+      ${loaded.value.has('folders') ? html`<app-folder></app-folder>` : nothing}
       ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>` : nothing}
       ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
         aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}</div>` : nothing
@@ -32,7 +34,6 @@ class Shell extends Element {
           aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')} title=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
-        ${loaded.value.has('folders') ? html`<app-folder></app-folder>` : nothing}
         ${open ? findButton() : views}
       </header>
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
