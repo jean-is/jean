@@ -737,7 +737,8 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
 
 /* ─── Toasts ────────────────────────────────────────────────────────────── */
 
-.toasts { position: fixed; inset-inline: 0; inset-block-end: 7.5rem; z-index: 5; display: grid; justify-items: center; gap: 0.5rem; pointer-events: none; }
+/* A popover (ui/shell.js), with none of a popover's own look. */
+.toasts { position: fixed; inset-inline: 0; inset-block: auto 7.5rem; z-index: 5; display: grid; justify-items: center; gap: 0.5rem; inline-size: auto; margin: 0; padding: 0; border: 0; overflow: visible; background: none; color: inherit; pointer-events: none; }
 .toast {
   display: inline-flex;
   align-items: center;

@@ -23,7 +23,7 @@ import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './icons.js'
 import { sidebarBody } from './inbox.js'
-import { SHORTCUTS, findButton } from './shell.js'
+import { SHORTCUTS, findButton, placeToasts } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
 import { styleSheet } from './sheet.js'
@@ -40,6 +40,7 @@ export function syncDialog(host, name) {
   const open = app.dialog.value === name
   if (open && !dialog?.open) dialog?.showModal()
   else if (!open && dialog?.open) dialog.close()
+  placeToasts()
 }
 
 export const close = () => { app.dialog.value = null }
