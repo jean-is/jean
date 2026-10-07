@@ -1,9 +1,10 @@
 // Sending a message and answering it: the prompt and the notes since (D46), what the brain reads of
 // the files shared, Auto's choice of a brain, the run with its approvals, and the provider's cache
 // kept warm (D49). Loaded when the user starts typing or sends, not with the first screen (D148):
-// state.js's send, retry and warm load it.
+// state.js's send, retry, rewind and warm load it.
+import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
-import { createConversation, appendRecords } from '../core/conversations.js'
+import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
 import { userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
@@ -13,7 +14,7 @@ import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import {
   app, effective, activeBrain, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, beginRun, endRun, CITED,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, beginRun, endRun, stop, CITED,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -284,6 +285,23 @@ export async function retry() {
   if (!current || app.busy.value) return
   const picked = await pickBrain('', current.records)
   if (picked) await runAgent(current, picked.brain, picked.meta)
+}
+
+/**
+ * Goes back to a request: what came after it is gone from the conversation, but its title, and the
+ * request is answered again (D188). @param {number} upTo how many records lead up to its end
+ */
+export async function rewind(upTo) {
+  // An answer being written to a later request stops, and ends, before anything is left out.
+  const path = app.current.value?.path
+  stop()
+  await new Promise((resolve) => { const done = effect(() => { if (!app.running.value.includes(path ?? '')) queueMicrotask(() => resolve(done())) }) })
+  const current = app.current.value
+  if (!current || current.path !== path || app.busy.value) return
+  const records = [...current.records.slice(0, upTo), ...current.records.slice(upTo).filter((record) => record.meta?.title)]
+  await rewriteRecords(app.fs, current.path, records)
+  app.current.value = { ...current, records }
+  await retry()
 }
 
 /** Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it */

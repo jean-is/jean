@@ -18,9 +18,6 @@ export function placeIn(hash) {
   return { project: valid(project), conversation: valid(conversation) }
 }
 
-/** @param {string} hash @returns {string | null} the conversation id in an address */
-export const conversationIn = (hash) => placeIn(hash).conversation
-
 /** @param {string} hash @returns {string | null} the section of Settings open over the place */
 export function settingsIn(hash) {
   const [, , , open, section] = ADDRESS.exec(hash) ?? []

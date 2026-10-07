@@ -31,6 +31,7 @@
   "history.title": "Các nhiệm vụ",
   "history.empty": "Các nhiệm vụ của bạn sẽ hiện ở đây.",
   "history.confirmDelete": "Xóa nhiệm vụ này? Không thể hoàn tác.",
+  "rewind.confirm": "Hỏi lại điều này? Mọi thứ sau đó trong nhiệm vụ này sẽ bị xóa. Các tệp đã tạo hoặc thay đổi từ đó vẫn giữ nguyên.",
   "sidebar.open": "Mở thanh bên",
   "sidebar.close": "Đóng thanh bên",
   "activity.thinking": "Đang suy nghĩ…",

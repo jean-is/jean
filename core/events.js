@@ -43,9 +43,9 @@ export function metaRecord(by, meta) {
 /**
  * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[] }} Step
  * @typedef {{ text: string, data: SystemNoteData }} Note
- * @typedef {{ text: string, files: ResourceLink[], at: string }} UserTurn
- * @typedef {{ user: UserTurn | null, notes: Note[], steps: Step[], plan?: PlanEntry[], at: string }} Turn
- *   notes are the system notes recorded just before this turn's user message.
+ * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number }} UserTurn upTo: how many records lead up to its end
+ * @typedef {{ user: UserTurn | null, notes: Note[], steps: Step[], plan?: PlanEntry[], at: string, end?: string }} Turn
+ *   notes are the system notes recorded just before this turn's user message; end is when its answer was last written.
  */
 
 /** Fold records into turns for display. @param {Envelope[]} records @returns {Turn[]} */
@@ -57,23 +57,25 @@ export function foldTurns(records) {
   /** @type {Note[]} */
   let notes = []
   let previous = ''
-  for (const record of records) {
+  for (const [index, record] of records.entries()) {
     const update = record.update
     if (!update) continue
     const kind = update.sessionUpdate
     if (kind === '_system_note') notes.push({ text: update.text, data: update.data })
     else if (kind === 'user_message_chunk') {
       if (previous !== kind || !turn?.user) {
-        turn = { user: { text: '', files: [], at: record.at }, notes, steps: [], at: record.at }
+        turn = { user: { text: '', files: [], at: record.at, upTo: 0 }, notes, steps: [], at: record.at }
         turns.push(turn)
         notes = []
       }
       const user = /** @type {UserTurn} */ (turn.user)
+      user.upTo = index + 1
       if (update.content.type === 'resource_link') user.files.push(update.content)
       else user.text += update.content.text
     } else {
       if (!turn) turns.push((turn = { user: null, notes: [], steps: [], at: record.at }))
       applyUpdate(turn, update, record.step ?? 0)
+      turn.end = record.at
     }
     previous = kind
   }

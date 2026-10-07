@@ -85,7 +85,8 @@ async function conversation(dir, path) {
   const talk = await loadConversation(app.fs, path).catch(() => null)
   if (!talk) return null
   const known = kept.get(path)
-  if (known?.size === talk.records.length) return known
+  // A conversation gone back to a request (D188) may be as long as before, but not as late.
+  if (known?.size === talk.records.length && known.at === talk.updatedAt) return known
   /** @type {string[]} */
   const parts = []
   for (const turn of foldTurns(talk.records)) {

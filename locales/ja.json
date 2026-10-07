@@ -31,6 +31,7 @@
   "history.title": "タスク",
   "history.empty": "タスクはここに表示されます。",
   "history.confirmDelete": "このタスクを削除しますか？元に戻せません。",
+  "rewind.confirm": "もう一度尋ねますか？このタスクでこれより後の内容はすべて削除されます。その後に作成・変更されたファイルはそのまま残ります。",
   "sidebar.open": "サイドバーを開く",
   "sidebar.close": "サイドバーを閉じる",
   "activity.thinking": "考えています…",

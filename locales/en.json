@@ -31,6 +31,7 @@
   "history.title": "Tasks",
   "history.empty": "Your tasks will appear here.",
   "history.confirmDelete": "Delete this task? This can’t be undone.",
+  "rewind.confirm": "Ask this again? Everything after it in this task will be removed. Files made or changed since stay as they are.",
   "sidebar.open": "Open sidebar",
   "sidebar.close": "Close sidebar",
   "activity.thinking": "Thinking…",

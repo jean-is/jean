@@ -21,6 +21,60 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await expect(page.locator('.msg-user').last()).toHaveText('Show it as a chart')
 })
 
+test('under a request, when it was asked, Copy and Try again; under an answer, when it came (D188)', async ({ page }) => {
+  // The clipboard is the browser's: record what reaches it.
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator.clipboard, 'writeText', { value: async (/** @type {string} */ text) => { /** @type {any} */ (window).copied = text } })
+  })
+  await page.clock.install()
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  const requests = page.locator('.msg-actions.is-request')
+  const answered = page.locator('.msg-jean .msg-actions time')
+  await expect(requests.first().locator('time')).toHaveText('now')
+  await expect(answered).toHaveText('now')
+  // The times move on by themselves.
+  await page.clock.fastForward('03:00')
+  await expect(requests.first().locator('time')).toHaveText('3 minutes ago')
+  await expect(answered).toHaveText('3 minutes ago')
+
+  await requests.first().getByRole('button', { name: 'Copy' }).click()
+  await expect(page.locator('.toast')).toContainText('Copied')
+  expect(await page.evaluate(() => /** @type {any} */ (window).copied)).toBe('Explain photosynthesis in simple words')
+
+  // While a request is being answered, it can't be tried again; one before it can.
+  await ask(page, 'Write a letter to my bank')
+  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(requests.last().getByRole('button', { name: 'Try again' })).toBeDisabled()
+  const again = requests.first().getByRole('button', { name: 'Try again' })
+  await expect(again).toBeEnabled()
+  // Only once the user agrees.
+  page.once('dialog', (dialog) => dialog.dismiss())
+  await again.click()
+  await expect(page.locator('.msg-user')).toHaveCount(2)
+  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  // Then the answer being written stops, everything after the request goes, and it is answered again.
+  page.once('dialog', (dialog) => {
+    expect(dialog.message()).toContain('Everything after it in this task will be removed')
+    dialog.accept()
+  })
+  await again.click()
+  await expect(page.locator('.msg-user')).toHaveCount(1)
+  await expect(page.locator('.inbox app-ask form.approval')).toHaveCount(0)
+  await expect(page.locator('.msg-jean .prose')).toHaveCount(1)
+  await expect(page.locator('.msg-jean .prose')).toContainText('Anything else?')
+  await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  // The conversation's file says the same, its title kept.
+  const kept = await page.evaluate(async () => {
+    const [{ app }, { loadConversation }, { foldTurns }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const conversation = await loadConversation(app.fs, /** @type {any} */ (app.current.value).path)
+    return { requests: foldTurns(conversation?.records ?? []).map((turn) => turn.user?.text), title: conversation?.title }
+  })
+  expect(kept).toEqual({ requests: ['Explain photosynthesis in simple words'], title: 'Explain photosynthesis simple' })
+})
+
 test('Arabic: right to left, and the answer in Arabic', async ({ page }) => {
   await start(page, 'ar')
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')

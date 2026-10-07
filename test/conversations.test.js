@@ -1,13 +1,14 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS } from '../core/fs.js'
-import { ulidTime } from '../core/ulid.js'
+import { ulid } from '../core/ulid.js'
 import {
   appendRecords,
   createConversation,
   deleteConversation,
   listConversations,
   loadConversation,
+  rewriteRecords,
 } from '../core/conversations.js'
 
 /** @typedef {import('../core/types.js').Envelope} Envelope */
@@ -43,7 +44,7 @@ test('createConversation writes the header line', async () => {
   const fs = memoryFS()
   const { id, path, header } = await createConversation(fs, { projectDir, by: 'device-1', now })
   assert.match(id, /^[0-9A-HJKMNP-TV-Z]{26}$/)
-  assert.equal(ulidTime(id), now.getTime())
+  assert.equal(id.slice(0, 10), ulid(now.getTime()).slice(0, 10))
   assert.equal(path, `${projectDir}/conversations/${id}.jsonl`)
   assert.deepEqual(header, { format: 1, kind: 'conversation', id, createdAt: now.toISOString(), by: 'device-1' })
   assert.equal(await fs.read(path), JSON.stringify(header) + '\n')
@@ -162,6 +163,19 @@ test('listConversations sorts by updatedAt desc, keeps how each opened, and skip
   ])
   assert.equal(warn.mock.callCount(), 1)
   assert.deepEqual(await listConversations(fs, 'projects/none'), [])
+})
+
+test('rewriteRecords keeps the header and only the records given, and appending goes on after them', async () => {
+  const { fs, appends } = spyFS()
+  const { path, header } = await createConversation(fs, { projectDir, by: 'device-1', now })
+  await appendRecords(fs, path, [say('2026-01-02T03:04:06.000Z', 'Hi'), titled('2026-01-02T03:04:07.000Z', 'Greetings'), say('2026-01-02T03:04:08.000Z', 'Again')])
+  await rewriteRecords(fs, path, [say('2026-01-02T03:04:06.000Z', 'Hi')])
+  await appendRecords(fs, path, [say('2026-01-02T03:04:09.000Z', 'Then')])
+  assert.equal(appends.length, 2, 'the rewrite is one write, not an append')
+  const loaded = await loadConversation(fs, path)
+  assert.deepEqual(loaded?.header, header)
+  assert.deepEqual(loaded?.records.map((record) => record.update?.sessionUpdate === 'user_message_chunk' && record.update.content.type === 'text' && record.update.content.text), ['Hi', 'Then'])
+  await assert.rejects(rewriteRecords(fs, `${projectDir}/conversations/${ulid()}.jsonl`, []), /not found/)
 })
 
 test('deleteConversation removes the file', async () => {

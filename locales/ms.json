@@ -31,6 +31,7 @@
   "history.title": "Tugasan",
   "history.empty": "Tugasan anda akan dipaparkan di sini.",
   "history.confirmDelete": "Padam tugasan ini? Tindakan ini tidak boleh dibatalkan.",
+  "rewind.confirm": "Tanya ini sekali lagi? Semua yang datang selepasnya dalam tugasan ini akan dibuang. Fail yang dibuat atau diubah sejak itu kekal seperti sedia ada.",
   "sidebar.open": "Buka bar sisi",
   "sidebar.close": "Tutup bar sisi",
   "activity.thinking": "Sedang berfikir…",

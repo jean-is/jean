@@ -342,11 +342,15 @@ app-latex details pre { margin-block: 0.6rem 0; }
 }
 @keyframes caret { 50% { opacity: 0.35; } }
 
-.msg-actions, app-made { display: flex; gap: 0.15rem; }
-.msg-actions { margin-inline-start: -0.5rem; opacity: 0.55; transition: opacity 0.3s; }
+.msg-actions, app-made { display: flex; align-items: center; gap: 0.15rem; }
+.msg-actions { margin-inline-start: -0.5rem; }
+.msg-actions .icon-button { opacity: 0.55; transition: opacity 0.3s; }
 app-made:not(:defined) { display: none; }
-.msg-jean:hover .msg-actions, .msg-actions:focus-within { opacity: 1; }
-@media (hover: none) { .msg-actions { opacity: 1; } }
+.msg-actions:is(.msg-jean:hover *, .msg-user:hover + *, :hover, :focus-within) .icon-button:enabled { opacity: 1; }
+@media (hover: none) { .msg-actions .icon-button:enabled { opacity: 1; } }
+.msg-actions .icon-button:disabled { opacity: 0.25; background: none; cursor: default; }
+.msg-actions.is-request { align-self: flex-end; margin-block-start: -0.6rem; margin-inline: 0 -0.5rem; }
+.msg-time { padding-inline: 0.5rem; font-size: 0.8rem; color: var(--ink-faint); white-space: nowrap; }
 
 /* ─── Files and what Jean read ──────────────────────────────────────────── */
 

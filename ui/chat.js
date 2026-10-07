@@ -1,8 +1,9 @@
 // The conversation: messages, the live activity view, approvals, errors.
 import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
+import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere } from './state.js'
+import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
@@ -25,6 +26,10 @@ try {
   spot = JSON.parse(sessionStorage.getItem(SPOT) ?? 'null')
   sessionStorage.removeItem(SPOT)
 } catch {}
+
+/** The time, a minute at a time, so that "5 minutes ago" moves on. */
+const now = signal(Date.now())
+setInterval(() => { now.value = Date.now() }, 60_000)
 
 class Conversation extends Element {
   #follow = true
@@ -49,11 +54,14 @@ class Conversation extends Element {
     // capabilities are back, unless the reader has moved since.
     const back = spot?.id === app.current.peek()?.id ? spot : null
     spot = null
+    // Until then, the browser's scroll anchoring would move the page as what comes later draws, as if the reader had.
+    document.documentElement.style.overflowAnchor = 'none'
     queueMicrotask(async () => {
       this.#go(back)
       const at = scrollY
       await app.ready.catch(() => {})
       if (this.isConnected && (back ? scrollY === at : this.#follow)) this.#go(back)
+      document.documentElement.style.overflowAnchor = ''
     })
   }
 
@@ -138,6 +146,7 @@ function turnView(turn, live, files, upTo, last, sources) {
       <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${isPicture(link) ? icons.image : icons.file}<span dir="auto">${link.name}</span></button>
     </li>`)}</ul>` : nothing}
     ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${turn.user.text}</p>` : nothing}
+    ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
         ${activity(steps, text, streaming, files)}
@@ -148,7 +157,7 @@ function turnView(turn, live, files, upTo, last, sources) {
         ${!streaming && read.length ? readView(read) : nothing}
         ${!streaming && entries.some((entry) => entry._meta?.sources) ? sourcesView(entries.flatMap((entry) => entry._meta?.sources ?? [])) : nothing}
         ${!streaming && text ? html`<app-check at=${turn.at}></app-check>` : nothing}
-        ${!streaming && text ? actions(turn.at, text) : nothing}
+        ${!streaming && text ? actions(turn.at, text, turn.end ?? turn.at) : nothing}
       </article>` : nothing}
     ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
   </li>`
@@ -406,8 +415,22 @@ function approval({ toolCall, resolve }, helper, files) {
   </div>`
 }
 
-/** @param {string} id @param {string} text */
-function actions(id, text) {
+/** How long ago, and the day and time in full on hover. @param {string} at */
+const when = (at) => html`<time class="msg-time" datetime=${at} title=${new Intl.DateTimeFormat(locale.value, { dateStyle: 'full', timeStyle: 'short' }).format(new Date(at))}>${relativeTime(at, now.value)}</time>`
+
+/**
+ * Under a request: when it was asked, Copy, and Try again once its answer is written, which goes back
+ * to it when the user agrees (D188). @param {import('../core/events.js').UserTurn} user @param {boolean} answered
+ */
+function requestActions({ text, at, upTo }, answered) {
+  return html`<div class="msg-actions is-request">${when(at)}${text ? html`
+    <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+      @click=${() => navigator.clipboard.writeText(text).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+    <button class="icon-button subtle" aria-label=${t('action.retry')} title=${t('action.retry')} ?disabled=${!answered} @click=${() => confirm(t('rewind.confirm')) && rewind(upTo)}>${icons.retry}</button>` : nothing}</div>`
+}
+
+/** @param {string} id @param {string} text @param {string} at when it was written */
+function actions(id, text, at) {
   const isSpeaking = speaking.value === id
   // Copy and CSV belong to "Things Jean made", which loads with the first answer.
   unlock('made')
@@ -416,6 +439,7 @@ function actions(id, text) {
     ${canSpeak() ? html`<button class="icon-button subtle ${isSpeaking ? 'is-active' : ''}" aria-pressed=${isSpeaking ? 'true' : 'false'}
       aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')} title=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
       @click=${() => toggleSpeech(id, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
+    ${when(at)}
   </div>`
 }
 

@@ -31,6 +31,7 @@
   "history.title": "Aufgaben",
   "history.empty": "Deine Aufgaben erscheinen hier.",
   "history.confirmDelete": "Diese Aufgabe löschen? Das lässt sich nicht rückgängig machen.",
+  "rewind.confirm": "Das noch einmal fragen? Alles danach in dieser Aufgabe wird entfernt. Seitdem erstellte oder geänderte Dateien bleiben, wie sie sind.",
   "sidebar.open": "Seitenleiste öffnen",
   "sidebar.close": "Seitenleiste schließen",
   "activity.thinking": "Denkt nach…",

@@ -1,5 +1,5 @@
-// Conversations are append-only JSONL files: `${projectDir}/conversations/${id}.jsonl`.
-// Line 1 is a ConversationHeader, every following line one Envelope.
+// Conversations are append-only JSONL files: `${projectDir}/conversations/${id}.jsonl`, except
+// when the user goes back to a request (D188). Line 1 is a ConversationHeader, every following line one Envelope.
 // A crash mid-append leaves a half-written last line, which is ignored on read.
 
 import { join } from './fs.js'
@@ -52,6 +52,18 @@ export async function appendRecords(fs, path, records) {
     if (current && !current.endsWith('\n')) text = '\n' + text
   }
   await fs.append(path, text)
+  setClean(fs, path, true)
+}
+
+/**
+ * Writes a conversation again with only the records given, its header kept: what came after
+ * a request the user went back to is left out (D188).
+ * @param {FS} fs @param {string} path @param {Envelope[]} records
+ */
+export async function rewriteRecords(fs, path, records) {
+  const text = await fs.read(path)
+  if (text === null) throw new Error(`Conversation not found: ${path}`)
+  await fs.write(path, text.slice(0, text.indexOf('\n') + 1) + records.map((record) => JSON.stringify(record) + '\n').join(''))
   setClean(fs, path, true)
 }
 

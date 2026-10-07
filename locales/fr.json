@@ -31,6 +31,7 @@
   "history.title": "Tâches",
   "history.empty": "Vos tâches apparaîtront ici.",
   "history.confirmDelete": "Supprimer cette tâche ? C’est définitif.",
+  "rewind.confirm": "Redemander ceci ? Tout ce qui suit dans cette tâche sera supprimé. Les fichiers créés ou modifiés depuis restent tels quels.",
   "sidebar.open": "Ouvrir la barre latérale",
   "sidebar.close": "Fermer la barre latérale",
   "activity.thinking": "Réflexion…",

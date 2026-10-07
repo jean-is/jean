@@ -31,6 +31,7 @@
   "history.title": "任务",
   "history.empty": "你的任务会显示在这里。",
   "history.confirmDelete": "删除这个任务？此操作无法撤销。",
+  "rewind.confirm": "要重新问一次吗？此任务中这之后的所有内容都将被移除。之后创建或更改的文件保持不变。",
   "sidebar.open": "打开侧边栏",
   "sidebar.close": "关闭侧边栏",
   "activity.thinking": "思考中…",

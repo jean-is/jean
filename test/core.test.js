@@ -1,15 +1,21 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { addCatalog, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../core/i18n.js'
+import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { buildSystemPrompt, basePromptForBudget } from '../core/prompt.js'
-import { foldTurns, toChatMessages, userRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../core/events.js'
+import { foldTurns, toChatMessages, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../core/events.js'
 import { parseFrontMatter, stringifyFrontMatter, applyPolicy, DEFAULT_SETTINGS } from '../core/settings.js'
-import { ulid, ulidTime } from '../core/ulid.js'
+import { ulid } from '../core/ulid.js'
+
+/** @type {Record<string, Record<string, any>>} */
+const catalogs = {
+  en: { hello: 'Hello {name}', items: { one: '{count} item', other: '{count} items' }, onlyEn: 'English', synced: 'Synced with {folder} · {when}' },
+  ar: { hello: 'مرحبا {name}', items: { zero: 'لا عناصر', one: 'عنصر واحد', two: 'عنصران', few: '{count} عناصر', many: '{count} عنصرًا', other: '{count} عنصر' } },
+  ja: { synced: '{when}に{folder}と同期しました' },
+}
+setLoader(async (lang) => catalogs[lang] ?? null)
 
 test('i18n: interpolation, plurals, fallback and direction', async () => {
-  addCatalog('en', { hello: 'Hello {name}', items: { one: '{count} item', other: '{count} items' }, onlyEn: 'English' })
-  addCatalog('ar', { hello: 'مرحبا {name}', items: { zero: 'لا عناصر', one: 'عنصر واحد', two: 'عنصران', few: '{count} عناصر', many: '{count} عنصرًا', other: '{count} عنصر' } })
   await useLocale('en')
   assert.equal(t('hello', { name: 'Ada' }), 'Hello Ada')
   assert.equal(t('items', { count: 1 }), '1 item')
@@ -25,8 +31,6 @@ test('i18n: interpolation, plurals, fallback and direction', async () => {
 })
 
 test('i18n: a value that isn’t text stays itself, where the translation puts it', async () => {
-  addCatalog('en', { synced: 'Synced with {folder} · {when}' })
-  addCatalog('ja', { synced: '{when}に{folder}と同期しました' })
   const folder = { link: 'Drive' }
   const when = { time: 'now' }
   await useLocale('en')
@@ -37,7 +41,7 @@ test('i18n: a value that isn’t text stays itself, where the translation puts i
 })
 
 test('i18n: only the chosen catalog is fetched, and English only when it cannot be', async () => {
-  const i18n = await import('../core/i18n.js?fresh') // its own catalogs, without the ones added above
+  const i18n = await import('../core/i18n.js?fresh') // its own catalogs and loader, without the ones above
   /** @type {string[]} */
   const fetched = []
   i18n.setLoader(async (lang) => {
@@ -144,6 +148,36 @@ test('events: fold turns and derive the model context', () => {
   ])
 })
 
+test('events: a turn knows when its answer was last written, not a note or a title after it', () => {
+  const when = (/** @type {any} */ record, /** @type {string} */ at) => ({ ...record, at })
+  const records = [
+    when(userRecord('Sum the file', 'dev1'), '2026-10-07T10:00:00.000Z'),
+    when(envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Reading it.' } }, 0), '2026-10-07T10:00:02.000Z'),
+    when(envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'The total is 6.' } }, 1), '2026-10-07T10:00:09.000Z'),
+    when(metaRecord('dev1', { title: 'Sums' }), '2026-10-07T10:00:12.000Z'),
+    when(noteRecord('The user undid your change.', /** @type {any} */ ({ kind: 'undone' })), '2026-10-07T10:03:00.000Z'),
+    when(userRecord('Thanks', 'dev1'), '2026-10-07T10:05:00.000Z'),
+  ]
+  const [first, second] = foldTurns(records)
+  assert.equal(first.at, '2026-10-07T10:00:00.000Z')
+  assert.equal(first.end, '2026-10-07T10:00:09.000Z')
+  assert.equal(second.end, undefined)
+})
+
+test('events: a request knows the records up to its end, its files and words included (D188)', () => {
+  const file = { type: /** @type {const} */ ('resource_link'), uri: 'files/a.csv', name: 'a.csv' }
+  const records = [
+    metaRecord('dev1', { prompt: /** @type {any} */ ({ system: 'You are Jean.', state: {} }) }),
+    ...userRecords('Sum the file', [file], 'dev1'),
+    envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'The total is 6.' } }, 0),
+    noteRecord('The user undid your change.', /** @type {any} */ ({ kind: 'undone' })),
+    userRecord('Thanks', 'dev1'),
+  ]
+  const [first, second] = foldTurns(records)
+  assert.equal(first.user?.upTo, 3)
+  assert.equal(second.user?.upTo, 6)
+})
+
 test('events: failed tools become error results; empty steps are skipped', () => {
   const records = [
     userRecord('Delete it', 'dev1'),
@@ -173,5 +207,5 @@ test('ulid: 26 sortable characters carrying the time', () => {
   const b = ulid(2000)
   assert.equal(a.length, 26)
   assert.ok(a < b)
-  assert.equal(ulidTime(b), 2000)
+  assert.equal(b.slice(0, 10), '00000001YG')
 })

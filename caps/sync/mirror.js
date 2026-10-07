@@ -2,7 +2,7 @@
 // cloud drive keeps in sync with their other computers (a drive of its own would be another FS). A
 // round compares each side with what it was at the last round (the base, in .cache/): what changed
 // on one side goes to the other, a deletion too; what changed on both is settled by the file's kind.
-// A conversation only grows, so the longer wins, and two that went apart both stay, the mirror's as a
+// A conversation grows (unless gone back to a request, D188), so the longer wins; two that went apart both stay, the mirror's as a
 // new conversation; a file named by its hash never differs; anything else, the newer wins. Keys,
 // caches, settings.json and what drives and systems leave in a folder stay where they are.
 import { walk, dirname, readJSON, writeJSON } from '../../core/fs.js'

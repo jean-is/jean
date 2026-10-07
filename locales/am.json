@@ -31,6 +31,7 @@
   "history.title": "ተግባራት",
   "history.empty": "ተግባራትዎ እዚህ ይታያሉ።",
   "history.confirmDelete": "ይህ ተግባር ይሰረዝ? ከተሰረዘ በኋላ መመለስ አይቻልም።",
+  "rewind.confirm": "ይህን እንደገና ይጠይቁ? በዚህ ተግባር ውስጥ ከዚህ በኋላ ያለው ሁሉ ይወገዳል። ከዚያ ወዲህ የተሠሩ ወይም የተቀየሩ ፋይሎች እንዳሉ ይቆያሉ።",
   "sidebar.open": "የጎን አሞሌን ይክፈቱ",
   "sidebar.close": "የጎን አሞሌን ይዝጉ",
   "activity.thinking": "በማሰብ ላይ…",

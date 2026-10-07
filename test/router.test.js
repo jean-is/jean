@@ -1,14 +1,14 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { conversationIn } from '../ui/router.js'
+import { placeIn } from '../ui/router.js'
 
 test('the address names a conversation only with a valid ULID', () => {
-  assert.equal(conversationIn('#/c/01M3XN7APTVD76G6T68W6FRKC8'), '01M3XN7APTVD76G6T68W6FRKC8')
-  assert.equal(conversationIn('#/c/01M3XN7APTVD76G6T68W6FRKC8/extra'), '01M3XN7APTVD76G6T68W6FRKC8')
-  assert.equal(conversationIn('#/'), null)
-  assert.equal(conversationIn(''), null)
-  assert.equal(conversationIn('#/c/../../settings'), null)
-  assert.equal(conversationIn('#/c/01m3xn7aptvd76g6t68w6frkc8'), null, 'ULIDs are upper case')
+  assert.equal(placeIn('#/c/01M3XN7APTVD76G6T68W6FRKC8').conversation, '01M3XN7APTVD76G6T68W6FRKC8')
+  assert.equal(placeIn('#/c/01M3XN7APTVD76G6T68W6FRKC8/extra').conversation, '01M3XN7APTVD76G6T68W6FRKC8')
+  assert.equal(placeIn('#/').conversation, null)
+  assert.equal(placeIn('').conversation, null)
+  assert.equal(placeIn('#/c/../../settings').conversation, null)
+  assert.equal(placeIn('#/c/01m3xn7aptvd76g6t68w6frkc8').conversation, null, 'ULIDs are upper case')
 })
 
 test('a project other than home is in the address too', async () => {

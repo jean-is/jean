@@ -35,7 +35,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 - Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder).
 - **Files and names:**
   - One file per entity, named with a ULID and never renamed.
-  - Conversations are append-only JSONL of ACP records.
+  - Conversations are append-only JSONL of ACP records, except when the user goes back to a request, which removes what came after it (D188).
   - Attachments are named by content hash.
 - **Indexes:** there is no central index of record. Indexes live in `.cache/` and can always be rebuilt.
 - **Metadata:** every entity carries `author` and timestamps, and every file carries a `format` version.
@@ -67,7 +67,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 The base prompt lives in [prompts/system.md](prompts/system.md) and stays within its 200-token budget (182 as of 0.5). Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
 
-The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read.
+The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read, unless the user goes back to a request (D188).
 
 ## Docs
 

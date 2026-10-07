@@ -425,6 +425,9 @@ export async function send(text, options) {
 /** Runs the brain again on the conversation on screen, up to its last user message. */
 export const retry = async () => (await sending()).retry()
 
+/** Goes back to a request, leaving out what came after it, and answers it again (D188). @param {number} upTo */
+export const rewind = async (upTo) => (await sending()).rewind(upTo)
+
 /** The user started typing, or a file is ready: the provider's cache may need writing again (D49). */
 export const warm = async () => (await sending()).warm()
 

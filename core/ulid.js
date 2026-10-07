@@ -15,10 +15,3 @@ export function ulid(time = Date.now()) {
   for (let i = 0; i < 16; i++) out += ALPHABET[bytes[i] % 32]
   return out
 }
-
-/** @param {string} id */
-export function ulidTime(id) {
-  let t = 0
-  for (const ch of id.slice(0, 10)) t = t * 32 + ALPHABET.indexOf(ch)
-  return t
-}

@@ -20,15 +20,6 @@ export function setLoader(fn) {
   loader = fn
 }
 
-/** @param {string} lang @param {Record<string, any>} messages */
-const merge = (lang, messages) => catalogs.set(lang, { ...catalogs.get(lang), ...messages })
-
-/** @param {string} lang @param {Record<string, any>} messages */
-export function addCatalog(lang, messages) {
-  merge(lang, messages)
-  fetched.add(`${lang}/`)
-}
-
 /**
  * Every catalog has every key (test/locales.test.js), so English, the fallback, is only
  * fetched when the catalog itself can't be. @param {string} lang @param {string} part
@@ -38,7 +29,7 @@ async function load(lang, part) {
     if (!fetched.has(`${code}/${part}`)) {
       const messages = await loader(code, part)
       if (messages) {
-        merge(code, messages)
+        catalogs.set(code, { ...catalogs.get(code), ...messages })
         fetched.add(`${code}/${part}`)
       }
     }
