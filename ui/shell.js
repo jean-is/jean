@@ -46,7 +46,7 @@ class Shell extends Element {
       <app-settings></app-settings>
       <app-picker></app-picker>
       <app-project-dialog></app-project-dialog>
-      ${toasts()}
+      <app-toasts class="toasts" role="status" aria-live="polite" popover="manual"></app-toasts>
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
 }
@@ -132,16 +132,49 @@ function welcome() {
   </section>`
 }
 
-function toasts() {
-  const waiting = app.updateReady.value
-  const toast = app.toast.value
-  const act = (/** @type {() => void} */ run) => () => { app.toast.value = null; run() }
-  return html`<div class="toasts" role="status" aria-live="polite">
-    ${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
+/** @type {Toasts | undefined} */
+let toasts
+/** Where the room has the toasts. @type {{ parent: Node, next: Node | null } | undefined} */
+let home
+
+// The toasts, in the top layer, above what is open. A modal dialog makes everything outside it
+// inert, so while one is open they go inside it, where their buttons can still be pressed.
+class Toasts extends Element {
+  connectedCallback() {
+    toasts = this
+    home ??= { parent: /** @type {Node} */ (this.parentNode), next: this.nextSibling }
+    super.connectedCallback()
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    // Gone with the dialog they were in: back in the room.
+    queueMicrotask(() => { if (!this.isConnected) placeToasts() })
+  }
+
+  render() {
+    const waiting = app.updateReady.value
+    const toast = app.toast.value
+    const act = (/** @type {() => void} */ run) => () => { app.toast.value = null; run() }
+    return html`${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
       <button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(waiting))}>${t('update.reload')}</button></p>` : nothing}
     ${toast ? html`<p class="toast"><span dir="auto">${toast.message}</span>${toast.action
-      ? html`<button class="button" @click=${act(toast.action.run)}>${toast.action.label}</button>` : nothing}</p>` : nothing}
-  </div>`
+      ? html`<button class="button" @click=${act(toast.action.run)}>${toast.action.label}</button>` : nothing}</p>` : nothing}`
+  }
+
+  updated() {
+    // Popovers are newer than Jean's floor (D12): without them, the toasts are only fixed in place.
+    if (this.showPopover && !this.matches(':popover-open')) this.showPopover()
+  }
 }
 
+/** Puts the toasts in the open modal dialog, or back where the room has them: each dialog calls it as it opens and closes. */
+export function placeToasts() {
+  if (!toasts || !home) return
+  const dialog = document.querySelector('dialog:modal')
+  if (dialog) { if (toasts.parentNode !== dialog) dialog.prepend(toasts) }
+  else if (toasts.parentNode !== home.parent) home.parent.insertBefore(toasts, home.next)
+}
+
+define('app-toasts', Toasts)
 define('app-shell', Shell)

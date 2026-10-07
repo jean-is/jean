@@ -17,6 +17,9 @@ export const parseChallenge = (header) => Object.fromEntries([...String(header ?
 /** An address the browser may be sent to or post to: HTTPS, or HTTP on this computer. @param {unknown} url */
 const safe = (url) => typeof url === 'string' && /^(https:\/\/|http:\/\/(localhost|127\.0\.0\.1|\[::1\])[:/])/i.test(url)
 
+/** An address as the browser writes it, or null. @param {unknown} url */
+const href = (url) => { try { return new URL(String(url)).href } catch { return null } }
+
 /** @param {typeof globalThis.fetch} fetch @param {string} url */
 const getJSON = (fetch, url) => fetch(url, { headers: { accept: 'application/json' } }).then((res) => (res.ok ? res.json() : null)).catch(() => null)
 
@@ -40,8 +43,9 @@ export async function discover(server, { challenge, fetch = globalThis.fetch } =
   const candidates = [`${origin}/.well-known/oauth-authorization-server${tenant}`, `${origin}/.well-known/openid-configuration${tenant}`, ...(tenant ? [`${origin}${tenant}/.well-known/openid-configuration`] : [])]
   for (const url of candidates) {
     const metadata = await getJSON(fetch, url)
-    // A document only counts for the issuer it was asked about (RFC 8414, section 3.3).
-    if (metadata?.issuer === issuer && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
+    // A document only counts for the issuer it was asked about (RFC 8414, section 3.3), as an
+    // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant".
+    if (metadata && href(metadata.issuer) === href(issuer) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
       return { ...metadata, resource: resource.resource ?? server.replace(/#.*$/, ''), scope: asked.scope ?? resource.scopes_supported?.join(' ') }
     }
   }

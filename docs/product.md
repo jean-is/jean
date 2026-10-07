@@ -188,7 +188,7 @@ There is no Jean server, so search comes from something the user or their organi
 
 1. The connected cloud brain's own search, with its sources (Anthropic and OpenRouter, which search only when a question needs it; OpenAI and Gemini later).
 2. Wikipedia, in the user's language, for everyone else, the on-device brain included: free, callable from a browser, in 300+ languages (Wikidata later).
-3. Later, a search endpoint set by the user or by policy (their own SearXNG, or Brave, Tavily or Exa with their own keys).
+3. A search service connected like any other (D192): Exa, which needs no key and no sign-in, is among the services Jean knows, and an organisation can add its own.
 
 When no route exists, Jean says so and suggests connecting a cloud brain. A shared community proxy should only be considered if real demand appears; DEVS's `proxy.devs.new` is the warning.
 

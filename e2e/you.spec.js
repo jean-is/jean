@@ -3,7 +3,7 @@
 // and the manifesto, the themes as thumbnails. A language or a theme picked there applies and the menu stays on its page,
 // the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user
 // gives for themselves in a conversation, while they have never set one, and says so with an
-// Undo; they change it in About you. A long title stays inside the list.
+// Undo; they change it in About you. A long title stays inside the list. A toast shows over Settings.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openProfile, openSettings, openTasks } from './helpers.js'
 import { LOOKS } from '../ui/looks.js'
@@ -51,6 +51,18 @@ test('the user’s menu changes the theme, the language and the mode, staying op
   await expect(again.locator('[role="switch"]')).toHaveAttribute('aria-checked', String(after === 'dark'))
   await again.locator('[aria-keyshortcuts$="+,"]').click()
   await expect(page.locator('app-settings dialog[open]')).toBeVisible()
+})
+
+test('a toast shows over Settings, inside it, where its button can still be pressed', async ({ page }) => {
+  await start(page)
+  const settings = await openSettings(page)
+  await page.evaluate(async () => (await import('/ui/state.js')).notify('Saved', { label: 'Undo', run: () => { document.documentElement.dataset.undone = '' } }))
+  // Outside the modal dialog, the button would be inert, under its backdrop: the click would never land.
+  await settings.locator('.toast button', { hasText: 'Undo' }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-undone', '')
+  await expect(settings).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.locator('app-shell > app-toasts')).toHaveCount(1)
 })
 
 test('Jean notes the name the user gives, once, and the user changes it in About you', async ({ page }) => {
