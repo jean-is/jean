@@ -8,6 +8,8 @@
 //                  knows the client `jean-test`, registered for any address (D95)
 //   /closed/mcp    the same again, answering no browser (no CORS), behind a sign-in server that only
 //                  knows the app `gateway-app`, whose secret a gateway holds (D191)
+//   /listed/mcp    the same tools, listed to anyone but run only for someone signed in, with the
+//                  first one's sign-in server, as Google's are (D193)
 //   /legacy/mcp    MCP 2025-11-25: initialize, then a session (Mcp-Session-Id)
 //   /wiki/{lang}/w/api.php   a few pages in the shape of Wikipedia's search API
 //   /.well-known/agent-skills/index.json   a skills discovery index (D121): a SKILL.md, an archive
@@ -120,6 +122,7 @@ export function createFakeMail() {
     // ─── Signing in ───
     const fixed = /\/(fixed|closed)(\/mcp)?$/.exec(url.pathname)?.[1]
     const at = fixed ? `/${fixed}` : ''
+    if (url.pathname === '/.well-known/oauth-protected-resource/listed/mcp') return json(200, { resource: `${origin}/listed/mcp`, authorization_servers: [origin], scopes_supported: ['mail.read'] })
     if (/^\/\.well-known\/oauth-protected-resource(\/fixed|\/closed)?\/mcp$/.test(url.pathname)) {
       return json(200, { resource: `${origin}${at}/mcp`, authorization_servers: [`${origin}${at}`], scopes_supported: ['mail.read'] })
     }
@@ -138,14 +141,14 @@ export function createFakeMail() {
     if (url.pathname === '/authorize') {
       const query = Object.fromEntries(url.searchParams)
       const client = clients.get(query.client_id)
-      const resource = [`${origin}/mcp`, `${origin}/fixed/mcp`, `${origin}/closed/mcp`].find((one) => one === query.resource)
+      const resource = [`${origin}/mcp`, `${origin}/fixed/mcp`, `${origin}/closed/mcp`, `${origin}/listed/mcp`].find((one) => one === query.resource)
       if (!client || (client.redirect ?? query.redirect_uri) !== query.redirect_uri || query.code_challenge_method !== 'S256' || !resource) return json(400, { error: 'invalid_request' })
       const code = randomUUID()
       codes.set(code, { challenge: query.code_challenge, client: query.client_id, redirect: query.redirect_uri, resource: query.resource })
       const back = new URL(query.redirect_uri)
       back.searchParams.set('code', code)
       back.searchParams.set('state', query.state)
-      back.searchParams.set('iss', resource.replace(/\/mcp$/, ''))
+      back.searchParams.set('iss', resource.replace(/(\/listed)?\/mcp$/, ''))
       return res.writeHead(302, { location: back.href }).end()
     }
     if (url.pathname === '/token') {
@@ -174,7 +177,7 @@ export function createFakeMail() {
     }
 
     // ─── MCP ───
-    if (!/^\/(open\/|legacy\/|fixed\/|closed\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
+    if (!/^\/(open\/|legacy\/|fixed\/|closed\/|listed\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
     if (req.method !== 'POST') return res.writeHead(405).end()
     const message = JSON.parse(body)
     const reply = (/** @type {any} */ result) => json(200, { jsonrpc: '2.0', id: message.id, result })
@@ -192,8 +195,9 @@ export function createFakeMail() {
       if (!sessions.has(String(req.headers['mcp-session-id']))) return fail(404, -32001, 'Session not found')
       if (message.method === 'notifications/initialized') return res.writeHead(202).end()
     } else {
-      if (url.pathname !== '/open/mcp' && !tokens.has(String(req.headers.authorization ?? '').replace(/^Bearer /, ''))) {
-        return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource${at}/mcp", scope="mail.read"` })
+      const open = url.pathname === '/open/mcp' || (url.pathname === '/listed/mcp' && message.method === 'tools/list')
+      if (!open && !tokens.has(String(req.headers.authorization ?? '').replace(/^Bearer /, ''))) {
+        return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource${url.pathname}", scope="mail.read"` })
       }
       const version = message.params?._meta?.['io.modelcontextprotocol/protocolVersion']
       if (version !== '2026-07-28') return fail(400, -32022, 'Unsupported protocol version', { supported: ['2026-07-28'], requested: version })

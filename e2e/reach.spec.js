@@ -69,6 +69,29 @@ test('a service Jean knows connects in one click; those not reached yet are ther
   await expect(back.getByRole('button', { name: /^Mail/ })).toContainText('Another account')
 })
 
+test('a service that lists its tools to anyone but runs them only for someone signed in offers the sign-in once it refuses (D193)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Its tools are listed without a sign-in, so it connects without one, as a service whose sign-in is optional does.
+  await connect(page, `${MAIL_URL}/listed/mcp`)
+  await ask(page, 'Summarise my latest emails')
+  await page.locator('.approval .button.primary').click()
+  // The call is refused: the brain reads that the user has to sign in, and the connection offers it.
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in first')
+  const mail = (await openSettings(page, 'Connections')).locator('.connection')
+  await expect(mail).toContainText('This service needs you to sign in')
+  await mail.getByRole('button', { name: 'Connect' }).click()
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  await expect((await openSettings(page, 'Connections')).locator('.connection')).toContainText('3 actions')
+  // Signed in, its tools run. (A private window, as WebKit's here, forgets the brain on the way.)
+  const read = () => page.evaluate(async () => {
+    const tool = (await import('/ui/caps.js')).loaded.value.get('connections')?.tools?.find((one) => one.spec.name === 'mail_search_emails')
+    const ctx = { signal: undefined, cite: (/** @type {any[]} */ sources) => sources.map((_, i) => i + 1) }
+    return tool?.run({ limit: 1 }, /** @type {any} */ (ctx)).catch((/** @type {Error} */ error) => `failed: ${error.message}`)
+  })
+  await expect.poll(read).toMatch(/^Source \[1\]: Croissants for Saturday/m)
+})
+
 /** The names of the connections' tools the brain is given here. @param {import('@playwright/test').Page} page */
 const tools = (page) => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.get('connections')?.tools?.map((tool) => tool.spec.name))
 

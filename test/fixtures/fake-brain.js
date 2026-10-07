@@ -292,6 +292,7 @@ createServer(async (req, res) => {
   else if (emails && last.role === 'user' && mailTool && declared.has(script)) call = fromScript(mailTool)
   else if (emails && last.role === 'user' && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'search the latest emails' } }
   else if (toolName === 'find_tools' && mailTool && /_search_emails\(/.test(last.content)) call = /inside (?:javascript|run)/.test(last.content) ? fromScript(mailTool) : { name: mailTool, args: { limit: 3 } }
+  else if (toolName === mailTool && last.content.startsWith('Error: ')) answer = `That didn't work: ${last.content.slice(7)}`
   else if (found.length && /^mail:/.test(found[0].url)) {
     answer = `Your ${found.length} latest emails:\n\n${found.map((email) => `- **${email.title}**, ${email.more.replace(/:.*$/, '')} [${email.n}]`).join('\n')}`
   } else if (/search the web|look up/i.test(question) && last.role === 'user' && declared.has('web_search')) call = { name: 'web_search', args: { query: question.replace(/.*(?:search the web for|look up)\s*/i, '').replace(/[?.!]$/, '') } }

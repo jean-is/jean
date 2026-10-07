@@ -33,8 +33,8 @@ const PENDING = 'app.connect'
 // Longer results are cut, so one call can't flood a small brain's context.
 const MAX_OUTPUT = 12_000
 
-/** What each connection offers now: its tools, or why they couldn't be listed. */
-const status = signal(/** @type {Record<string, { tools?: McpTool[], error?: 'auth' | 'failed' }>} */ ({}))
+/** What each connection offers now: its tools, or why they couldn't be listed or run; a refusal's challenge, for the sign-in. */
+const status = signal(/** @type {Record<string, { tools?: McpTool[], error?: 'auth' | 'failed', challenge?: string | null }>} */ ({}))
 const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
 /** Where what was clicked says how it went: under the services, or under the address typed. */
 let place = /** @type {'top' | 'other'} */ ('top')
@@ -79,15 +79,15 @@ const reach = (connection) => (connection.gateway ? (/** @type {RequestInfo | UR
 
 // ─── Tools ───────────────────────────────────────────────────────────────────
 
-/** @type {Map<string, { url: string, mcp: ReturnType<typeof mcpClient> }>} */
+/** @type {Map<string, { url: string, auth: Connection['auth'], mcp: ReturnType<typeof mcpClient> }>} */
 const clients = new Map()
 
-/** @param {Connection} connection */
+/** A client per connection, made again once it signs in. @param {Connection} connection */
 function client(connection) {
   const found = clients.get(connection.id)
-  if (found?.url === connection.url) return found.mcp
+  if (found?.url === connection.url && found.auth === connection.auth) return found.mcp
   const mcp = mcpClient({ url: connection.url, client: { name: BRAND.name, version: '0.6' }, authorization: () => credential(connection), fetch: reach(connection) })
-  clients.set(connection.id, { url: connection.url, mcp })
+  clients.set(connection.id, { url: connection.url, auth: connection.auth, mcp })
   return mcp
 }
 
@@ -122,9 +122,15 @@ function asTool(connection, tool) {
     kind: tool.annotations?.readOnlyHint ? 'fetch' : 'other',
     deferred: true,
     title: () => `${connection.name}: ${label}`,
-    // An access token refused before it expired is renewed once.
+    // An access token refused before it expired is renewed once. A service that lists its tools
+    // to anyone may still run them only for someone signed in (Google's, D193): its row offers it.
     run: async (args, ctx) => answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
-      if (!(error instanceof MCPError && error.status === 401 && connection.auth === 'oauth')) throw error
+      if (!(error instanceof MCPError && error.auth)) throw error
+      if (connection.auth === 'none') {
+        status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth', challenge: error.challenge } }
+        throw new Error(`${connection.name} needs the user to sign in first. Ask them to click Connect beside ${connection.name} in Settings › Connections, then try again.`)
+      }
+      if (error.status !== 401 || connection.auth !== 'oauth') throw error
       await credential(connection, true)
       return call(args, ctx.signal)
     }), ctx),
@@ -315,14 +321,14 @@ function projects() { return loaded.value.has('projects') && app.projects.value.
 
 /** A service connected, opened to what it can do and to disconnect it; or why it can't be reached, and what fixes it. @param {Connection} connection */
 function row(connection) {
-  const { tools, error } = status.value[connection.id] ?? {}
+  const { tools, error, challenge } = status.value[connection.id] ?? {}
   const own = (app.settings.value.connections ?? []).includes(connection)
   const kept = connection.projects && projects().filter((project) => connection.projects?.includes(project.id)).map(nameOf)
   const head = html`${monogram({ name: connection.name, logo: known(app.policy).find((entry) => entry.url === connection.url)?.logo }, 'item-icon')}<span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
     ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}${kept?.length
       ? html` · <bdi>${products(kept)}</bdi>` : nothing}</small>`}</span>`
   if (error || !tools) {
-    return html`<li class="connection"><span class="item">${head}</span>${error === 'auth' ? html`<button class="button" @click=${() => { place = 'top'; signIn(connection) }}>${t('brain.connect')}</button>`
+    return html`<li class="connection"><span class="item">${head}</span>${error === 'auth' ? html`<button class="button" @click=${() => { place = 'top'; signIn(connection, challenge) }}>${t('brain.connect')}</button>`
       : error ? html`<button class="icon-button subtle" aria-label=${t('action.retry')} title=${t('action.retry')} @click=${() => list([connection])}>${icons.retry}</button>` : nothing}
       ${own ? html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}</li>`
   }

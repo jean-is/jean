@@ -339,6 +339,31 @@ describe('signing in to a connection', () => {
       await close()
     }
   })
+
+  test('a service may list its tools to anyone and run them only once signed in: its refusal says where (Google’s, D193)', async () => {
+    const { origin, server, close } = await fakeMail()
+    try {
+      const open = mcpClient({ url: `${origin}/listed/mcp`, client: jean })
+      const tools = await open.listTools()
+      assert.equal(tools.length, 3)
+      /** @type {any} */
+      let refused = null
+      await open.callTool(tools[0], { limit: 1 }).catch((error) => { refused = error })
+      assert.equal(refused?.status, 401)
+      assert.ok(refused.auth)
+      const metadata = await discover(`${origin}/listed/mcp`, { challenge: refused.challenge })
+      assert.deepEqual([metadata.issuer, metadata.resource], [origin, `${origin}/listed/mcp`])
+      const redirectURI = 'http://127.0.0.1:4180/'
+      const { url, pending } = await authorization(metadata, { clientId: await registerClient(metadata, { redirectURI, name: 'Jean' }), redirectURI })
+      const back = new URL(/** @type {string} */ ((await fetch(url, { redirect: 'manual' })).headers.get('location')))
+      const tokens = await finish(back.searchParams, pending)
+      const signed = mcpClient({ url: `${origin}/listed/mcp`, client: jean, authorization: async () => `Bearer ${tokens.access}` })
+      assert.equal((await signed.callTool(tools[0], { limit: 1 })).content?.length, 2)
+      assert.deepEqual(server.log.filter((line) => line.startsWith('POST /listed/mcp')), ['POST /listed/mcp tools/list', 'POST /listed/mcp tools/call', 'POST /listed/mcp tools/call'])
+    } finally {
+      await close()
+    }
+  })
 })
 
 describe('the services Jean knows (D95)', () => {
