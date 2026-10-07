@@ -23,6 +23,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 **With real brains**
 - [ ] Do strong cloud brains call `remember` for lasting facts only, and does the device's brain call it at all?
 - [ ] `find_tools` then `save_skill` when Skills arrive mid-conversation; `schedule` with the right day and time ("every Monday morning"); `suggest_skill` when a task could use one
+- [ ] / and @ (D199): does a brain follow a skill named with /, use the connection named, and keep to the earlier task named with @? On the device's brain, an earlier task's length in its context
 - [ ] Helpers: does a strong brain split only large tasks, giving each part what it needs? Does the device's brain ever call `delegate`? Three helpers at once against rate limits (OpenRouter's free models)
 - [ ] Double-check: one verdict per line, in any language; its cost on long answers
 - [ ] `ask_user`: only what is needed, all at once, with an answer recommended
@@ -66,7 +67,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] The built desktop apps on macOS, Windows and Linux: the system's folder dialog and file manager; on Linux, whether WebKitGTK lets the microphone through
 
 **Accessibility**
-- [ ] A screen reader on the inbox (cards arriving while another has focus), between the dock's panes and the box, through search's results, and on a change's diff
+- [ ] A screen reader on the inbox (cards arriving while another has focus), between the dock's panes and the box, through search's results, through the box's / and @ menu (the option Enter picks), and on a change's diff
 - [ ] A project's light at every stage of the room's warmth, by day and by night, with `prefers-contrast: more`
 
 ## Before the public launch

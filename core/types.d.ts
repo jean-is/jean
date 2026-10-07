@@ -157,6 +157,8 @@ export type SystemNoteData =
   | { kind: 'routine', routine: string, title: string, due: string }
   /** when requests like this one were made before, for a routine to fit the habit (D122) */
   | { kind: 'habit', at: string[] }
+  /** what / and @ named in the user's next message, by the words in it (D199) */
+  | { kind: 'mentions', words: string[] }
   /** the user undid a change made in their folder, by its call (D141) */
   | { kind: 'undone', call: string, path: string }
   /** the user ran a command on the computer, in the terminal (D166) */

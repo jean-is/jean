@@ -255,7 +255,9 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
     return
   }
   const { brain, meta } = picked
-  const added = await prepare(text.trim(), brain, current?.records ?? [], notes)
+  // What / and @ named in it, told just before it (D199).
+  const named = /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : []
+  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named])
   app.draft.value = ''
   app.attachments.value = []
   if (!current) {

@@ -687,7 +687,7 @@ class Settings extends Element {
 // lit once found, a silhouette until then that says how it is found. A ring of a segment each
 // circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
-const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
+export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', made: 'table', computer: 'code', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip',
 })

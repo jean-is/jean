@@ -60,7 +60,8 @@ core/             the engine, standard web APIs only: llm.js anthropic.js sse.js
                   rules.js fs.js files.js conversations.js settings.js memory.js skills.js search.js decide.js i18n.js
                   oauth.js zip.js ulid.js types.d.ts
 ui/               app.js (start), shell.js, base.js, state.js (signals; what the first screen draws), send.js (a message on
-                  its way and its answer, loaded as the user types), chat.js, composer.js, markdown.js, discovery.js,
+                  its way and its answer, loaded as the user types), chat.js, composer.js, complete.js, complete.css and
+                  mentions.js (the box's / and @, D199), markdown.js, discovery.js,
                   caps.js (the unlock gate), auto.js, picker.js, dialogs.js and dialogs.css (Settings, with brains.js and
                   knows.js), router.js, opfs.js and storage-worker.js, sandbox.js (the sandbox's client), preview.js and
                   preview.css, view.js and view.css (a file shown, in the preview and the browser), csp.js (a page's policy), dock.js and dock.css (panes beside the conversation), inbox.js (the
@@ -322,7 +323,7 @@ Four mechanisms from pi 1.0, fitted to Jean, share one idea: what the brain has 
 **System notes** (D46, D81). A change mid-conversation (language, rules, instructions, memory, skills, the project, new tools, the date) is a note appended to the transcript where it happens.
 
 - **Sections.** The project, instructions, memory, skills, connections (`<connections>`, D89), the folder (`<folder>`: its name, top level and four tools, and its `AGENTS.md` when the user took it, D152) and the page on show (`<page>`, D140) are sections of the frozen prompt; each has a fingerprint, and one that changed arrives whole in a note ("The <memory> section is now: …").
-- **Notes a message comes with:** "Since last time" starts with when the user was last here (D101); the terminal's commands, with their exit codes and output (D166).
+- **Notes a message comes with:** "Since last time" starts with when the user was last here (D101); the terminal's commands, with their exit codes and output (D166); what / and @ named in it, a skill with its steps, an earlier task as it went (D199).
 - **Recorded:** a note is an ACP extension update (`_system_note`) in the conversation's JSONL, holding the English the brain sees and data for the UI's label, so replaying the file rebuilds what the brain was told, and when.
 - **Rendered per adapter:** for Anthropic, a `system` message after the next user message, on models that take one; for OpenAI and OpenRouter, a `system` message where the note falls; for other servers and the device's brain, whose templates allow a system message only at the start, a tagged block at the top of the next user turn.
 - **Never deleted:** removing a note is an edit, which breaks the cache from there on.

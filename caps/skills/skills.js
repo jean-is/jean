@@ -47,21 +47,26 @@ const skillTool = {
   },
   kind: 'read',
   title: (args) => `Skill ${args?.name ?? ''}`,
-  run: async (args) => {
-    // "name/references/forms.md" reads a file that came with a skill from elsewhere.
-    const [name, ...rest] = String(args?.name ?? '').trim().split('/')
-    const all = await skills()
-    const skill = all.find((candidate) => candidate.name === name)
-    if (!skill) throw new Error(`There is no skill named "${name}". Skills: ${all.map((candidate) => candidate.name).join(', ') || 'none'}.`)
-    const folder = dirname(skill.path)
-    if (rest.length) {
-      const text = rest.includes('..') ? null : await app.fs.read(join(folder, ...rest))
-      if (text === null) throw new Error(`The skill "${name}" has no file "${rest.join('/')}".`)
-      return text
-    }
-    const beside = (await walk(app.fs, folder)).map((path) => path.slice(folder.length + 1)).filter((path) => path !== 'SKILL.md')
-    return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
-  },
+  run: (args) => steps(String(args?.name ?? '')),
+}
+
+/**
+ * A skill's steps, naming the files beside them, or one of those files ("name/references/forms.md"),
+ * for `skill` and for a skill named in the box (D199). @param {string} named
+ */
+export async function steps(named) {
+  const [name, ...rest] = named.trim().split('/')
+  const all = await skills()
+  const skill = all.find((candidate) => candidate.name === name)
+  if (!skill) throw new Error(`There is no skill named "${name}". Skills: ${all.map((candidate) => candidate.name).join(', ') || 'none'}.`)
+  const folder = dirname(skill.path)
+  if (rest.length) {
+    const text = rest.includes('..') ? null : await app.fs.read(join(folder, ...rest))
+    if (text === null) throw new Error(`The skill "${name}" has no file "${rest.join('/')}".`)
+    return text
+  }
+  const beside = (await walk(app.fs, folder)).map((path) => path.slice(folder.length + 1)).filter((path) => path !== 'SKILL.md')
+  return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
 }
 
 /** @type {import('../../core/loop.js').Tool} */

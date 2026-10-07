@@ -1,5 +1,5 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
-// brings back what was asked (D187). Under it (D123):
+// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen) and dictation; then the brain, and one button to go.
 import { html, nothing } from 'lit-html'
 import { live as current } from 'lit-html/directives/live.js'
@@ -37,6 +37,7 @@ class Composer extends Element {
     const add = t(menu ? 'composer.add' : 'files.attach')
     return html`
       <form class="composer" @submit=${this.#submit}>
+        <app-complete></app-complete>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
           <li class="attachment" data-status=${item.status} title=${item.error ?? ''}>
             ${item.preview && item.link ? html`<button type="button" class="attachment-preview" title=${t('files.open')} @click=${() => item.link && openFile(item.link)}>
@@ -97,6 +98,7 @@ class Composer extends Element {
   #input = (event) => {
     const area = /** @type {HTMLTextAreaElement} */ (event.target)
     app.draft.value = area.value
+    complete(area)
     if (!CSS.supports('field-sizing', 'content')) {
       area.style.height = 'auto'
       area.style.height = `${area.scrollHeight}px`
@@ -106,7 +108,7 @@ class Composer extends Element {
 
   /** @param {KeyboardEvent} event */
   #keydown = (event) => {
-    if (event.isComposing || event.keyCode === 229) return
+    if (event.isComposing || event.keyCode === 229 || naming?.keydown(event)) return
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       this.#submit(event)
@@ -175,6 +177,15 @@ function primary(busy, empty, hands) {
 }
 
 const LONG_PASTE = 2000
+
+/** The menu of what / and @ can name (ui/complete.js, D199), loaded once either is typed at a word's start. @type {typeof import('./complete.js') | null} */
+let naming = null
+/** @param {HTMLTextAreaElement} area */
+function complete(area) {
+  if (naming) naming.follow(area)
+  else if (/(?:^|\s)[/@／＠]\S*$/u.test(area.value.slice(0, area.selectionStart))) import('./complete.js').then((module) => (naming = module).follow(area))
+}
+
 /** Whether this browser can share a screen (not phones, where + only adds files). */
 const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 

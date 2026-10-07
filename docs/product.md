@@ -143,6 +143,15 @@ Jean's "computer" is the user's own browser, so the view can show everything: fi
 - **Routines** (D122). Requests Jean sends itself on a schedule, each in a conversation of its own that opens with the routine's name, under the same rules as any. They run while the tab is open, once Jean is free and the user isn't reading; one that fell due while it was closed runs at the next visit, once.
 - **Explanations for Auto.** Auto mode explains its choices in collapsed "thinking" entries ("Chose the on-device brain: personal content").
 
+## / and @ in the box
+
+Typed at the start of a word, / and @ open a menu above the box that narrows as the user types on (D199):
+
+- **/** names what Jean uses for the message: one of the project's skills or connections, or something Jean can do (Web search, Computer, Documents and spreadsheets…). It also finds what isn't there yet: a ready-made skill, read before it is added, and a service Jean knows, connected in a click.
+- **@** points at what Jean reads: a file or folder of the conversation's folder, a file shared or made in the project, attached again, or one of the project's earlier tasks.
+
+What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jean is told what each one names.
+
 ## Brains: picker and Auto
 
 A chip in the message box, beside its send button, reads **Auto ▾**, or the name of the brain picked by hand (its provider is in the picker). It offers:
