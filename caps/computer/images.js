@@ -2,7 +2,7 @@
 // provider of a connected brain that has an image model, keeps it in the project's files like
 // a shared file (its description as its text), and shows it in the answer, ready to save.
 import { html, render } from 'lit-html'
-import { app, effective, loadModels, cloudAllowed } from '../../ui/state.js'
+import { app, brainsHere, loadModels, cloudAllowed } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
 import { isLocal } from '../../ui/auto.js'
 import { addFile } from '../../core/files.js'
@@ -15,7 +15,7 @@ export const IMAGES = /** @type {Record<string, string[]>} */ ({ openai: ['gpt-i
 
 /** A connected brain whose provider lists an image model, and that model. */
 async function painter() {
-  for (const brain of effective.value.settings.brains) {
+  for (const brain of brainsHere.value) {
     if (brain.api !== 'openai' || !(isLocal(brain) || cloudAllowed())) continue
     await loadModels(brain)
     const models = app.models.value[brain.id] ?? []

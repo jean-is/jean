@@ -4,7 +4,7 @@ import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, lan
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { buildSystemPrompt, basePromptForBudget } from '../core/prompt.js'
 import { foldTurns, toChatMessages, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../core/events.js'
-import { parseFrontMatter, stringifyFrontMatter, applyPolicy, DEFAULT_SETTINGS } from '../core/settings.js'
+import { parseFrontMatter, stringifyFrontMatter, applyPolicy, usedIn, DEFAULT_SETTINGS } from '../core/settings.js'
 import { ulid } from '../core/ulid.js'
 
 /** @type {Record<string, Record<string, any>>} */
@@ -200,6 +200,13 @@ test('settings: front matter round trip and policy', () => {
   assert.equal(settings.activeBrain, 'b1')
   assert.equal(settings.rules.fetch, 'never')
   assert.ok(locked.has('brains') && locked.has('rules.fetch'))
+})
+
+test('settings: a brain or a connection kept to some projects is used in those only, and without a list in every one (D194)', () => {
+  assert.ok(usedIn({}, 'P1'))
+  assert.ok(usedIn({ projects: ['P1', 'P2'] }, 'P2'))
+  assert.ok(!usedIn({ projects: ['P1'] }, 'P2'))
+  assert.ok(!usedIn({ projects: [] }, 'P1'))
 })
 
 test('ulid: 26 sortable characters carrying the time', () => {

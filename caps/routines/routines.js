@@ -7,7 +7,7 @@
 // Routines lists, changes and deletes them.
 import { effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
-import { app, effective, newConversation, notify, send } from '../../ui/state.js'
+import { app, brainsHere, newConversation, notify, send } from '../../ui/state.js'
 import { noteRecord } from '../../core/events.js'
 import { t } from '../../core/i18n.js'
 import { due, dueTime, inEnglish, listRoutines, localStamp, newRoutine, schedule, writeRoutine } from './schedule.js'
@@ -70,7 +70,7 @@ for (const type of ['pointerdown', 'keydown']) addEventListener(type, () => { to
  * dialog open, no brief of what's new about to start, and nobody reading a conversation.
  */
 function free() {
-  return effective.peek().settings.brains.length > 0 && !app.busy.peek() && !app.draft.peek().trim() && !app.attachments.peek().length
+  return brainsHere.peek().length > 0 && !app.busy.peek() && !app.draft.peek().trim() && !app.attachments.peek().length
     && !app.dialog.peek() && !app.decisions.peek().length && !app.offering.peek() && !(app.back.peek() && loaded.peek().has('since'))
     && (document.hidden || !app.current.peek() || Date.now() - touched > ALONE_MS)
 }

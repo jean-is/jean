@@ -13,7 +13,7 @@ import { signal, computed, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { openSettings } from '../../ui/dialogs.js'
+import { openSettings, placeable, where } from '../../ui/dialogs.js'
 import { mcpClient, MCPError } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor, covers } from './directory.js'
@@ -346,24 +346,12 @@ function row(connection) {
  * @param {Connection} connection
  */
 function yours(connection) {
-  const shown = projects()
-  const only = connection.projects
-  /** @param {Event} event */
-  const ticked = (event) => /** @type {HTMLInputElement} */ (event.target).checked
   return html`<label class="connection-name">${t('projects.name')}<input dir="auto" maxlength="40" autocomplete="off" .value=${live(connection.name)}
       @change=${(/** @type {Event} */ e) => {
         const name = /** @type {HTMLInputElement} */ (e.target).value.trim()
         if (name && name !== connection.name) change(connection, { name: unique(name, connection.id) })
       }}></label>
-    ${shown.length ? html`<fieldset class="where">
-      <legend>${t('connections.where')}</legend>
-      <label><input type="checkbox" .checked=${live(!only)} @change=${(/** @type {Event} */ e) => change(connection, { projects: ticked(e) ? undefined : [app.project.value.id] })}>${t('connections.everywhere')}</label>
-      ${only ? shown.map((project) => {
-        const on = only.includes(project.id)
-        return html`<label><input type="checkbox" .checked=${live(on)} ?disabled=${on && only.length === 1}
-          @change=${(/** @type {Event} */ e) => change(connection, { projects: ticked(e) ? [...only, project.id] : only.filter((id) => id !== project.id) })}><bdi>${nameOf(project)}</bdi></label>`
-      }) : nothing}
-    </fieldset>` : nothing}`
+    ${placeable(connection) ? where(connection, (projects) => change(connection, { projects })) : nothing}`
 }
 
 /**

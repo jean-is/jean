@@ -8,7 +8,7 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
-import { app, effective, activeBrain, send } from '../../ui/state.js'
+import { app, activeBrain, brainsHere, send } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
 import { appendRecords } from '../../core/conversations.js'
 import { foldTurns, linkedFiles, metaRecord, splitSuggestions } from '../../core/events.js'
@@ -49,7 +49,7 @@ function sourceTexts(records) {
 function brainOf(turn) {
   const entry = turn.steps.flatMap((step) => step.tools).findLast((tool) => tool.kind === 'think' && !tool.name && !tool._meta?.parent)
   const { provider, model } = entry?.rawInput ?? {}
-  const brain = effective.value.settings.brains.find((candidate) => candidate.provider === provider) ?? activeBrain.value
+  const brain = brainsHere.value.find((candidate) => candidate.provider === provider) ?? activeBrain.value
   return brain && (model && brain.api !== 'device' ? { ...brain, model } : brain)
 }
 

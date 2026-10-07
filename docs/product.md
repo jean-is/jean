@@ -153,6 +153,8 @@ A chip in the message box, beside its send button, reads **Auto ▾**, or the na
 
 Organisation policy can hide or lock any of these.
 
+The picker offers the brains of the project the user is in. A brain is used in every project, or only in those ticked under it in Settings › Brains, so a key a client pays for answers for that client only (D194).
+
 **How Auto decides** (reflex questions, asked locally, per request):
 
 | Question | Effect |

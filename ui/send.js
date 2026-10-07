@@ -13,7 +13,7 @@ import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber } fr
 import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import {
-  app, effective, activeBrain, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
+  app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, beginRun, endRun, stop, CITED,
 } from './state.js'
 
@@ -212,9 +212,10 @@ async function pickBrain(text, records, boost = 0) {
     const brain = activeBrain.value
     return brain && (cloudAllowed() || isLocal(brain)) ? { brain } : null
   }
-  const [{ chooseBrain, TIERS }] = await Promise.all([import('./auto.js'), ...settings.brains.filter((brain) => !isLocal(brain)).map(loadModels)])
+  const brains = brainsHere.value
+  const [{ chooseBrain, TIERS }] = await Promise.all([import('./auto.js'), ...brains.filter((brain) => !isLocal(brain)).map(loadModels)])
   const choice = chooseBrain({
-    brains: settings.brains,
+    brains,
     preferred: settings.activeBrain,
     cloud: cloudAllowed(),
     // A conversation with a picture needs a brain that can see it.
@@ -237,7 +238,7 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
   const files = app.attachments.value
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
-  if (!effective.value.settings.brains.length) {
+  if (!brainsHere.value.length) {
     app.draft.value = text
     import('./dialogs.js').then((module) => module.openSettings('brains'))
     return

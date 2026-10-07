@@ -141,6 +141,8 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 
 Not used: the browsers' built-in models (too experimental) and native OS models.
 
+**Kept to projects** (D194): a brain's `projects` keeps it to those projects, and without it the brain is in every one (`usedIn()` in `core/settings.js`, as for connections). `brainsHere` in `ui/state.js` is the room's project's, and Auto, the picker, `activeBrain`, Double-check, `models.image`, routines and Since last time read it; Settings › Brains lists every brain, one kept elsewhere unable to be chosen, and ticks where each is used (`where()` in `ui/dialogs.js`, which Connections shares).
+
 ## Reflexes
 
 `decide(state, questions)` takes typed questions (`noul`, `choice`, `score`) and returns calibrated probabilities, in the Jev/Decisions API shape that Jev, Clef, Strands Decider, Laya, Kev, Ollaya and OpenRouter's `/api/alpha/decisions` share, so backends can be swapped. In the UI, reflexes are **Intuition**.

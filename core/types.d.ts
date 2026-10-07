@@ -19,6 +19,8 @@ export interface BrainConfig {
   label?: string
   /** Extra non-secret headers */
   headers?: Record<string, string>
+  /** The projects it is used in, by id; without them, every one (D194) */
+  projects?: string[]
 }
 
 // ─── Provider-neutral chat ───────────────────────────────────────────────────

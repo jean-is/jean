@@ -1,7 +1,7 @@
 // Application state (signals) and the actions that change it.
 import { signal, computed } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
-import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal } from '../core/settings.js'
+import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
 import { loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
 import { linkedFiles } from '../core/events.js'
 import { t, useLocale } from '../core/i18n.js'
@@ -92,10 +92,10 @@ export const AWAY_MS = 8 * 3600_000
 export const SEEN_KEY = 'app.seen'
 
 export const effective = computed(() => applyPolicy(app.settings.value, app.policy))
-export const activeBrain = computed(() => {
-  const { settings } = effective.value
-  return settings.brains.find((brain) => brain.id === settings.activeBrain) ?? settings.brains[0] ?? null
-})
+/** The brains of the room's project: those of every project, and those kept to this one (D194). */
+export const brainsHere = computed(() => effective.value.settings.brains.filter((brain) => usedIn(brain, app.project.value.id)))
+/** The brain chosen, while it is used here; or else the first that is. */
+export const activeBrain = computed(() => brainsHere.value.find((brain) => brain.id === effective.value.settings.activeBrain) ?? brainsHere.value[0] ?? null)
 
 export const theme = computed(() => app.chosenTheme.value ?? app.deviceTheme.value)
 
@@ -437,7 +437,7 @@ export const readBody = async (path) => parseFrontMatter((await app.fs.read(path
 /** Whether "Ask a smarter brain" can step up from an answer Auto chose. @param {ToolCallInfo | undefined} entry */
 export function canStepUp(entry) {
   const { settings } = effective.value
-  return settings.auto && cloudAllowed() && (entry?.rawInput?.auto?.level ?? 2) < 2 && settings.brains.some((brain) => !isLocal(brain))
+  return settings.auto && cloudAllowed() && (entry?.rawInput?.auto?.level ?? 2) < 2 && brainsHere.value.some((brain) => !isLocal(brain))
 }
 
 /** Asks again, one level up. */

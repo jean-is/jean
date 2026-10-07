@@ -59,6 +59,11 @@ export async function setVersion(id, model) {
   if (model) await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, model } : brain)) })
 }
 
+/** Keeps a brain to some projects, or, with none, uses it in every one (D194). @param {string} id @param {string[] | undefined} projects */
+export async function keepBrain(id, projects) {
+  await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, projects } : brain)) })
+}
+
 /** @param {string} id @param {string} [model] */
 export async function useBrain(id, model) {
   const brains = app.settings.value.brains.map((brain) => (brain.id === id && model ? { ...brain, model } : brain))

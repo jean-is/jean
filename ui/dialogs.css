@@ -112,6 +112,9 @@ label.item, .list summary { cursor: pointer; }
 .brains .is-selected { background: oklch(from var(--flame) l c h / 0.08); }
 .brains .item { flex-basis: 12rem; }
 .brains .model-input { flex: 1 1 13rem; max-inline-size: 20rem; padding-block: 0.4rem; }
+/* A brain not used in the room's project can't be chosen there; under it, the projects it is used in (D194). */
+.brains label.item:has(:disabled) { cursor: default; } .list.brains [aria-expanded] > .icon:last-child { rotate: none; }
+.brains .where { flex-basis: 100%; padding-block-end: 0.35rem; padding-inline-start: calc(13px + 1.5rem + 2.2rem); } @media (max-width: 30rem) { .brains .where { padding-inline-start: 0; } }
 /* The services Jean knows: a tile each, one not reached yet disabled (D95, D191); a brand's logo, its own file in its own shape; a picture is an app icon, rounded as the system would (D159). */
 .services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
 .services li:has(.includes) { grid-column: span 2; }

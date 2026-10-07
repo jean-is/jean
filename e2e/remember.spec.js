@@ -73,6 +73,33 @@ test('two projects keep separate memories, each in its own light', async ({ page
   expect(system).toContain('<memory>\n- the bakery opens at 7\n</memory>')
 })
 
+test('a brain kept to one project answers there, and isn’t offered in the others (D194)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Projects')
+  await createProject(page, 'Bakery')
+  const brain = (await openSettings(page, 'Brains')).locator('.brains > div').nth(1)
+  await brain.getByRole('button', { name: 'Used in' }).click()
+  const where = brain.getByRole('group', { name: 'Used in' })
+  await expect(where.getByLabel('Every project')).toBeChecked()
+  await where.getByLabel('Every project').uncheck()
+  // Kept to the project the user is in, which can't be unticked while it is the only one.
+  await expect(where.getByLabel('Bakery')).toBeChecked()
+  await expect(where.getByLabel('Bakery')).toBeDisabled()
+  await expect(brain.locator('.item small')).toHaveText('On your computer · Bakery')
+  await page.keyboard.press('Escape')
+  await ask(page, 'Hello')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+
+  // At home there is no brain to answer: the chip asks for one, and the bakery's can't be chosen.
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu .project', { hasText: 'Jean' }).click()
+  await expect(page.locator('.brain-chip')).toContainText('Choose a brain')
+  await page.locator('.brain-chip').click()
+  await expect(page.locator('app-settings dialog[open] .brains > div').nth(1).getByRole('radio')).toBeDisabled()
+})
+
 test('the third request of a kind becomes a skill', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

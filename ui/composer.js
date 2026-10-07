@@ -4,7 +4,7 @@
 import { html, nothing } from 'lit-html'
 import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify } from './state.js'
 import { unlock, isDenied, loaded } from './caps.js'
 import { t } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
@@ -180,7 +180,7 @@ const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
 /** The brain picker, or choosing a first brain. */
 async function openPicker() {
-  if (!effective.value.settings.brains.length) return (await import('./dialogs.js')).openSettings('brains')
+  if (!brainsHere.value.length) return (await import('./dialogs.js')).openSettings('brains')
   await import('./picker.js')
   app.dialog.value = 'picker'
 }

@@ -8,12 +8,13 @@ import {
   app, effective, activeBrain, setLocale, setRule, setVoice, setBrainMode, updateSettings, notify, loadModels,
   showError, theme, setTheme, setLook, LOCALES, CITED,
 } from './state.js'
-import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, startOpenRouter } from './brains.js'
+import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
+import { usedIn } from '../core/settings.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
@@ -76,8 +77,9 @@ class History extends Element {
 // ─── Brains ──────────────────────────────────────────────────────────────────
 
 // Settings' Brains (D128, D134): the brains connected, as one choice of who answers, Auto first,
-// as the picker offers it; then the ways to add one, one open at a time, each saying what it
-// needs in a line and, once open, the rest, with what it says back under its own form.
+// as the picker offers it, each used in every project or kept to some (D194); then the ways to add
+// one, one open at a time, each saying what it needs in a line and, once open, the rest, with what
+// it says back under its own form.
 
 /** What a way to add a brain says back: connecting, or why it didn't. */
 const status = signal(/** @type {{ way: string, kind: 'busy' | 'error', message: string } | null} */ (null))
@@ -171,11 +173,49 @@ function describe(brain) {
   return isLocal(brain) ? { icon: icons.computer, name, where: t('picker.local') } : { icon: icons.globe, name, where: t('brain.cloud') }
 }
 
-/** @param {boolean} checked @param {() => unknown} choose @param {{ icon: unknown, name: string, where: string }} brain */
-const answer = (checked, choose, { icon, name, where }) => html`<label class="item">
-  <input type="radio" name="answers" .checked=${checked} @change=${choose}>
-  <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}</small></span>
-</label>`
+/**
+ * Who may answer: Auto, or a brain, which can't be chosen in a project it isn't used in; then the
+ * projects it is kept to. @param {boolean} checked @param {() => unknown} choose
+ * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[] }} [kept]
+ */
+function answer(checked, choose, { icon, name, where }, kept = {}) {
+  const names = kept.projects ? app.projects.value.filter((project) => kept.projects?.includes(project.id)).map(projectName) : []
+  return html`<label class="item">
+    <input type="radio" name="answers" .checked=${checked} ?disabled=${!usedIn(kept, app.project.value.id)} @change=${choose}>
+    <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${names.length
+      ? html` · <bdi>${new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}</small></span>
+  </label>`
+}
+
+/** A project as its menu names it: the home project goes by the assistant's name. @param {import('../core/settings.js').Project} project */
+const projectName = (project) => String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name)
+
+/** Whether a brain or a connection can be kept to projects: once there are several, or while it is kept to some. @param {{ projects?: string[] }} item */
+export const placeable = (item) => loaded.value.has('projects') && (app.projects.value.length > 1 || Boolean(item.projects))
+
+/**
+ * Where a brain or a connection is used (D191, D194): every project, or only those ticked, at
+ * least one. Unticking "Every project" keeps it to the room's.
+ * @param {{ projects?: string[] }} item @param {(projects: string[] | undefined) => unknown} keep
+ */
+export function where(item, keep) {
+  const only = item.projects
+  const kept = only ? app.projects.value.filter((project) => only.includes(project.id)) : []
+  /** @param {Event} event */
+  const ticked = (event) => /** @type {HTMLInputElement} */ (event.target).checked
+  return html`<fieldset class="where">
+    <legend>${t('projects.where')}</legend>
+    <label><input type="checkbox" .checked=${live(!only)} @change=${(/** @type {Event} */ e) => keep(ticked(e) ? undefined : [app.project.value.id])}>${t('projects.everywhere')}</label>
+    ${only ? app.projects.value.map((project) => {
+      const on = kept.includes(project)
+      return html`<label><input type="checkbox" .checked=${live(on)} ?disabled=${on && kept.length === 1}
+        @change=${(/** @type {Event} */ e) => keep(ticked(e) ? [...only, project.id] : only.filter((id) => id !== project.id))}><bdi>${projectName(project)}</bdi></label>`
+    }) : nothing}
+  </fieldset>`
+}
+
+/** The brain whose projects are open under it. */
+const placing = signal(/** @type {string | null} */ (null))
 
 /**
  * Who answers, as the picker offers it: Auto, or one of the brains, each with its version and a
@@ -190,13 +230,17 @@ function answers(settings, brainsLocked) {
         <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => setBrainMode({ auto: true }), { icon: icons.spark, name: t('auto.name'), where: t('auto.text') })}</div>
         ${settings.brains.map((brain) => {
           const chosen = !settings.auto && brain.id === active?.id
+          const open = !brainsLocked && placing.value === brain.id && placeable(brain)
           return html`<div class=${chosen ? 'is-selected' : ''}>
-            ${answer(chosen, () => setBrainMode({ auto: false }).then(() => useBrain(brain.id)), describe(brain))}
+            ${answer(chosen, () => setBrainMode({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain)}
             ${brain.api === 'device' ? nothing : html`<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr"
                 aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
               <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
+            ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')} title=${t('projects.where')}
+              @click=${() => { placing.value = open ? null : brain.id }}>${icons.folder}</button>`}
             ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')}
               @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
+            ${open ? where(brain, (projects) => keepBrain(brain.id, projects).catch(showError)) : nothing}
           </div>`
         })}
       </div>

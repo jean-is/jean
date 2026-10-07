@@ -5,7 +5,7 @@
 // work while the tab is closed, so the brief is read when the user comes back, and says so.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { app, effective, newConversation, send } from '../../ui/state.js'
+import { app, effective, brainsHere, newConversation, send } from '../../ui/state.js'
 import { noteRecord } from '../../core/events.js'
 import { t } from '../../core/i18n.js'
 
@@ -20,7 +20,7 @@ const note = (since) => noteRecord(`The user is back; they were last here on ${s
  * (`app.back`), which routines wait for (D122). @param {number} [since] when the user was last here
  */
 export async function brief(since = app.back.peek()) {
-  if (!since || !connected() || !effective.peek().settings.brains.length || app.busy.peek()) return void (app.back.value = 0)
+  if (!since || !connected() || !brainsHere.peek().length || app.busy.peek()) return void (app.back.value = 0)
   // The services' tools have to be listed before the brain is told about them.
   await (await import('../connections/connections.js')).listed
   app.back.value = 0

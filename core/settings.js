@@ -66,6 +66,12 @@ export function serviceURL(name, settings, policy = {}) {
   return policy.urls?.[name] ?? settings.urls?.[name] ?? DEFAULT_URLS[name]
 }
 
+/**
+ * Whether a brain or a connection is used in a project: in those it is kept to, or, kept to none,
+ * in every one (D191, D194). @param {{ projects?: string[] }} item @param {string} project its id
+ */
+export const usedIn = (item, project) => !item.projects || item.projects.includes(project)
+
 /** A brain that never leaves this computer. @param {BrainConfig} brain */
 export const isLocal = (brain) => brain.api === 'device' || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
 

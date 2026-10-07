@@ -1,9 +1,10 @@
 // The brain picker behind the chip in the box (docs/product.md, "Brains: picker and Auto"):
 // Auto, this device, Fast / Smart / Best from the connected provider with the real name in
-// small print and a plain cost, every other brain, and "never send to the cloud".
+// small print and a plain cost, every other brain, and "never send to the cloud": those of the
+// room's project (D194).
 import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
-import { app, effective, activeBrain, brainLabel, setBrainMode, loadModels } from './state.js'
+import { app, effective, activeBrain, brainsHere, brainLabel, setBrainMode, loadModels } from './state.js'
 import { useBrain } from './brains.js'
 import { syncDialog, closed, close, backdrop, head, openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
@@ -46,7 +47,8 @@ class Picker extends Element {
   render() {
     const { settings } = effective.value
     const active = activeBrain.value
-    const remote = [settings.brains.find((brain) => brain.id === settings.activeBrain), ...settings.brains].find((brain) => brain && !isLocal(brain))
+    const brains = brainsHere.value
+    const remote = [active, ...brains].find((brain) => brain && !isLocal(brain))
     const models = remote ? app.models.value[remote.id] ?? [] : []
     const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
     const offered = tiers.filter((model) => models.some((info) => info.id === model))
@@ -57,7 +59,7 @@ class Picker extends Element {
         ${option(t('auto.name'), t('auto.text'), settings.auto, () => setBrainMode({ auto: true }).then(close))}
         ${remote ? offered.map((model) => option(t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`), [model, cost(models.find((info) => info.id === model))].filter(Boolean).join(' · '),
           manual(remote, model), () => pick(remote, model))) : nothing}
-        ${settings.brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => option(
+        ${brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => option(
           brain.api === 'device' ? t('brain.device.title') : brainLabel(brain),
           brain.api === 'device' ? t('brain.device.private') : isLocal(brain) ? t('picker.local') : '',
           manual(brain, brain.model), () => pick(brain, brain.model), brain.api === 'device' ? icons.chip : icons.computer))}
@@ -72,7 +74,7 @@ class Picker extends Element {
 
   updated() {
     syncDialog(this, 'picker')
-    if (app.dialog.value === 'picker') for (const brain of effective.value.settings.brains) if (!isLocal(brain)) loadModels(brain)
+    if (app.dialog.value === 'picker') for (const brain of brainsHere.value) if (!isLocal(brain)) loadModels(brain)
   }
 }
 
