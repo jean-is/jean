@@ -62,7 +62,7 @@ function block(token) {
   switch (token.type) {
     case 'heading': return heading(token.depth, inline(token.tokens))
     case 'paragraph': return html`<p>${inline(token.tokens)}</p>`
-    case 'code': return token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr"><code>${token.text}</code></pre>`
+    case 'code': return opening(token) ? nothing : token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr"><code>${token.text}</code></pre>`
     case 'blockquote': return html`<blockquote>${blocks(token.tokens)}</blockquote>`
     case 'list': return list(token)
     case 'table': return table(token)
@@ -147,8 +147,13 @@ function widget(token) {
   const kind = String(token.lang).toLowerCase()
   if (!declared.value.has(kind) || !Object.hasOwn(WIDGETS, kind)) return null
   unlock(WIDGETS[kind])
-  return kind === 'abc' ? html`<app-score source=${token.text}></app-score>` : html`<app-chart source=${token.text}></app-chart>`
+  return kind === 'abc' ? html`<app-score source=${token.text}></app-score>` : html`<app-chart source=${token.text} ?open=${!CLOSED.test(token.raw)}></app-chart>`
 }
+
+// marked doesn't wait for a fenced block's closing fence: until it is written, the block is still being written.
+const CLOSED = /^ {0,3}(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n(?:[\s\S]*\n)? {0,3}\1[`~]* *\n*$/
+/** A fence whose first line is still being written, kind and all: nothing to show yet. @param {any} token */
+const opening = (token) => token.codeBlockStyle !== 'indented' && !token.raw.includes('\n')
 
 /** @param {string} href */
 function safeHref(href) {

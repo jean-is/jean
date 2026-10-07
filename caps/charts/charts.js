@@ -1,8 +1,9 @@
 // Charts (D196): a ```echarts block in an answer, drawn by ECharts on a canvas, with the theme's
 // light or dark, the room's type and numbers in the user's language; drawn again as its box, the
 // theme, the look or the language changes; copied as its source and its picture, on light paper,
-// at once. The block is data (./option.js). Loaded by the first
-// chart an answer holds; until then, or when it isn't a chart, it shows as code.
+// at once. The block is data (./option.js). While it is written, what is whole of it so far is
+// drawn, and the chart grows as more comes. Loaded by the first chart an answer holds; until then,
+// or when it isn't a chart, it shows as code.
 import { html, render } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { app, theme, notify } from '../../ui/state.js'
@@ -38,13 +39,18 @@ function dressed(option, font) {
 }
 
 class AppChart extends HTMLElement {
-  static observedAttributes = ['source']
+  /** `open` while its block's closing fence isn't written yet: the answer is still writing it. */
+  static observedAttributes = ['source', 'open']
   /** @type {any} ECharts' instance, while a chart is drawn */
   chart = null
   /** @type {Option | null} what it draws */
   option = null
-  /** What was drawn last: the source, in a theme, look and language. */
+  /** What was drawn last: the source, in a theme, look and language, and whether it was open. */
   drawn = ''
+  /** The theme, look and language the chart was made in. */
+  made = ''
+  /** @type {string | null} what the block held when last drawn while open, which more of it grows from */
+  growing = null
   frame = 0
   sized = new ResizeObserver(() => this.chart?.resize())
   /** @type {(() => void) | undefined} */
@@ -66,6 +72,7 @@ class AppChart extends HTMLElement {
     this.chart?.dispose()
     this.chart = null
     this.drawn = ''
+    this.growing = null
   }
 
   attributeChangedCallback() {
@@ -74,21 +81,34 @@ class AppChart extends HTMLElement {
 
   draw() {
     const source = this.getAttribute('source') ?? ''
-    const key = [theme.peek(), app.look.peek(), locale.peek(), source].join('\n')
+    const open = this.hasAttribute('open')
+    const look = [theme.peek(), app.look.peek(), locale.peek()].join('\n')
+    const key = [look, open, source].join('\n')
     if (key === this.drawn) return
     this.drawn = key
-    this.chart?.dispose()
-    this.chart = null
-    const option = (this.option = readOption(source))
+    // More of a block being written goes on the chart already drawn.
+    const more = Boolean(this.chart) && this.made === look && this.growing !== null && source.startsWith(this.growing)
+    this.growing = open ? source : null
+    const option = readOption(source, open)
+    // Nothing whole has come since: what is drawn stays.
+    if (!option && open && more) return
+    if (!option || !more) {
+      this.chart?.dispose()
+      this.chart = null
+    }
+    this.option = option
     this.paint(source, option)
     const box = this.querySelector('.chart')
     if (!option || !box) return
     try {
-      this.chart = echarts.init(box, theme.peek() === 'dark' ? 'dark' : undefined, { renderer: 'canvas' })
-      this.chart.setOption(dressed(option, getComputedStyle(this).fontFamily))
+      this.chart ??= echarts.init(box, theme.peek() === 'dark' ? 'dark' : undefined, { renderer: 'canvas' })
+      this.made = look
+      // Without animation while it grows: each would start again with the next few values.
+      this.chart.setOption({ ...dressed(option, getComputedStyle(this).fontFamily), ...(open && { animation: false }) })
       this.sized.observe(box)
     } catch (error) {
-      console.warn('Chart', error)
+      // Half an option may not draw yet; a whole one that doesn't is worth a word.
+      if (!open) console.warn('Chart', error)
       this.chart?.dispose()
       this.chart = null
       this.paint(source, null)

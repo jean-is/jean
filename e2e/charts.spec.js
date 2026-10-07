@@ -1,7 +1,7 @@
 // Charts (D196): a skill from Jean's own directory, read in Settings and added, declares ```echarts
 // blocks; from then on they are widgets in the conversation, drawn by ECharts, copied as their
 // source and their picture at once, and as a picture when the answer is copied. Until a skill of
-// the room declares them, they stay code.
+// the room declares them, they stay code. While an answer writes one, it is drawn as far as it goes.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
 
@@ -96,4 +96,43 @@ test('Copy puts the chart’s source and its picture on the clipboard itself, an
   await expect.poll(() => page.evaluate(async () => [...(await navigator.clipboard.read())[0].types].sort())).toEqual(['text/html', 'text/plain'])
   const rich = await page.evaluate(async () => (await (await navigator.clipboard.read())[0].getType('text/html')).text())
   expect(rich).toMatch(/<img [^>]*src="data:image\/png;base64,/)
+})
+
+test('while its block is written, the chart is drawn as far as it goes, then to its end on the same chart', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    await app.fs.write('skills/chart/SKILL.md', '---\nname: chart\ndescription: Draw charts.\nmetadata:\n  blocks: echarts\n---\n# Chart\n')
+    const { unlock } = await import('/ui/caps.js')
+    await unlock('skills')
+    await (await import('/caps/skills/skills.js')).redeclare()
+    await unlock('charts')
+  })
+  // An answer as the brain writes it, drawn again in the same place as more of it comes.
+  const write = (/** @type {string} */ text) => page.evaluate(async (text) => {
+    const [{ render }, { markdown }] = await Promise.all([import('lit-html'), import('/ui/markdown.js')])
+    const answer = document.querySelector('#written') ?? document.body.appendChild(Object.assign(document.createElement('article'), { id: 'written', className: 'msg msg-jean is-streaming' }))
+    render(markdown(text), answer)
+  }, text)
+  const block = '```echarts\n{"title":{"text":"Croissants sold"},"xAxis":{"type":"category","data":["Mon","Tue","Wed"]},"yAxis":{"type":"value"},"series":[{"name":"Croissants","type":"bar","data":[120,1250.5,90]}]}\n```'
+  const answer = page.locator('#written')
+  const chart = answer.locator('app-chart')
+  const drawn = () => chart.evaluate((element) => /** @type {any} */ (element).option?.series[0].data)
+
+  // A fence still on its first line shows nothing yet, not an empty block of code.
+  await write('Here are the sales:\n\n```echar')
+  await expect(answer).toContainText('Here are the sales:')
+  await expect(answer.locator('pre, app-chart')).toHaveCount(0)
+  await write(`Here are the sales:\n\n${block.slice(0, block.indexOf('"series"'))}`)
+  await expect(chart).toHaveAttribute('open', '')
+  await expect(chart.locator('.while')).toHaveText('Drawing the chart…')
+  // Cut in the middle of 1250.5: what is whole is drawn, and the half-written number isn't.
+  await write(`Here are the sales:\n\n${block.slice(0, block.indexOf('1250') + 2)}`)
+  await expect(chart.locator('.chart canvas').first()).toBeVisible()
+  expect(await drawn()).toEqual([120])
+  await chart.evaluate((element) => { /** @type {any} */ (window).first = /** @type {any} */ (element).chart })
+  await write(`Here are the sales:\n\n${block}\n\nTuesday sold the most.`)
+  await expect(chart).not.toHaveAttribute('open')
+  expect(await drawn()).toEqual([120, 1250.5, 90])
+  expect(await chart.evaluate((element) => /** @type {any} */ (element).chart === /** @type {any} */ (window).first)).toBe(true)
 })
