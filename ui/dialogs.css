@@ -112,12 +112,12 @@ label.item, .list summary { cursor: pointer; }
 .brains .is-selected { background: oklch(from var(--flame) l c h / 0.08); }
 .brains .item { flex-basis: 12rem; }
 .brains .model-input { flex: 1 1 13rem; max-inline-size: 20rem; padding-block: 0.4rem; }
-/* The services Jean knows: tiles to connect, then the ones not available yet (D95); a brand's logo, its own file in its own shape; a picture is an app icon, rounded as the system would (D159). */
+/* The services Jean knows: a tile each, one not reached yet disabled (D95, D191); a brand's logo, its own file in its own shape; a picture is an app icon, rounded as the system would (D159). */
 .services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
-.services li:has(small) { grid-column: span 2; }
+.services li:has(.includes) { grid-column: span 2; }
 :is(.service, .card) { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; color: var(--ink); text-align: start; }
 :is(.service, .card):hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
-.service:disabled { cursor: progress; opacity: 0.6; }
+.service:disabled { cursor: progress; opacity: 0.6; } .service.is-soon { cursor: default; } .is-soon .monogram { filter: grayscale(1); }
 .service > span:not(.monogram) { flex: 1; display: grid; min-inline-size: 0; }
 .service > .icon { flex: none; color: var(--ink-faint); } .service:hover:not(:disabled) > .icon { color: var(--flame); }
 /* Settings › Computer opens on the computer itself (D176): its light, then what it uses, a tile each,
@@ -135,10 +135,12 @@ label.item, .list summary { cursor: pointer; }
 .connections .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); } .connections .item-body .row { justify-content: space-between; }
 .service small { color: var(--ink-soft); font-size: 0.78rem; overflow-wrap: anywhere; }
 .monogram { flex: none; display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; border: 1px solid transparent; border-radius: 0.6rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
-.later h4 { margin-block-start: 0.5rem; } .later .hint { margin-block: 0.5rem 0; }
-.services.is-later { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin: 0; color: var(--ink-soft); font-size: 0.88rem; }
-.is-later li { display: inline-flex; align-items: center; gap: 0.4rem; }
-.is-later .monogram { inline-size: 1.5rem; block-size: 1.5rem; border-radius: 0.45rem; background: var(--line); color: inherit; font-size: 0.78rem; }
+/* A panel's own action at the end of its first line: Connections' +, a × while its form is open (D191); then where a connection is used. */
+.panel-head { display: flex; align-items: start; gap: 1rem; } .panel-head .lede { flex: 1; margin: 0; }
+.panel-head .icon { transition: rotate 0.2s var(--ease); } .panel-head [aria-expanded='true'] .icon { rotate: 45deg; }
+.adding { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; } .sheet .adding h3 { margin: 0; }
+.where { margin: 0; padding: 0; border: 0; } .where legend { margin-block-end: 0.3rem; padding: 0; font-size: 0.9rem; color: var(--ink-soft); }
+.where label { display: inline-flex; align-items: center; gap: 0.4rem; margin-inline-end: 1rem; color: var(--ink); }
 :is(.monogram, .item-icon).is-logo { border: 0; border-radius: 0; background: none; object-fit: contain; } .is-logo[src$='.png'] { border-radius: 22%; }
 .other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
 /* What takes up space, under Storage (D177): a row a kind, its size, then a bar of its share, the track a lighter step of its fill. */

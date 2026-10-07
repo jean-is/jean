@@ -231,7 +231,8 @@ describe('the <connections> section', () => {
 import { createFakeMail } from './fixtures/fake-mail.js'
 import { mcpClient, paramHeaders, headerValue } from '../caps/connections/mcp.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh } from '../caps/connections/auth.js'
-import { DIRECTORY, known, knownFor } from '../caps/connections/directory.js'
+import { DIRECTORY, known, knownFor, covers } from '../caps/connections/directory.js'
+import { gateway, covers as gatewayCovers } from '../gateway/gateway.js'
 import { listener, speakable } from '../caps/live/turns.js'
 
 /** @returns {Promise<{ origin: string, server: ReturnType<typeof createFakeMail>, close: () => Promise<void> }>} */
@@ -341,13 +342,33 @@ describe('signing in to a connection', () => {
 })
 
 describe('the services Jean knows (D95)', () => {
-  test('ready ones have a web address; the rest are listed as not yet', () => {
+  test('each is reached from the browser, through the gateway that relays to its host, or not yet; those reached first (D191)', () => {
     assert.equal(new Set(DIRECTORY.map((entry) => entry.id)).size, DIRECTORY.length)
-    const { ready, later } = known()
-    assert.deepEqual(ready.map((entry) => entry.id), ['notion', 'canva', 'miro', 'granola'])
-    for (const entry of ready) assert.match(String(entry.url), /^https:\/\//)
-    assert.ok(later.some((entry) => entry.id === 'microsoft-365' && entry.url === 'https://microsoft365.mcp.claude.com/mcp'))
-    assert.ok(later.some((entry) => entry.id === 'google-meet' && !entry.url))
+    const services = known()
+    assert.deepEqual(services.slice(0, 4).map((entry) => [entry.id, entry.via]), [['notion', 'browser'], ['canva', 'browser'], ['miro', 'browser'], ['granola', 'browser']])
+    for (const entry of services.slice(0, 4)) assert.match(String(entry.url), /^https:\/\//)
+    assert.equal(services.length, DIRECTORY.length)
+    assert.ok(services.some((entry) => entry.id === 'microsoft-365' && entry.url === 'https://microsoft365.mcp.claude.com/mcp' && entry.via === null))
+    assert.ok(services.some((entry) => entry.id === 'google-meet' && !entry.url && entry.via === null))
+    // A gateway that relays to Google's and Slack's hosts reaches those with an address; Meet still has none.
+    const through = known({}, ['googleapis.com', 'slack.com'])
+    assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'slack', 'google-chat'])
+    assert.deepEqual(through.slice(4, 9).map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'slack', 'google-chat'])
+    assert.equal(through.find((entry) => entry.id === 'google-meet')?.via, null)
+    assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, ['googleapis.com'])?.id, 'gmail')
+    assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1'), undefined)
+  })
+
+  test('the gateway reaches HTTPS on the hosts it names and their subdomains, HTTP only on this computer; Jean checks as it does', () => {
+    const hosts = ['googleapis.com', '127.0.0.1']
+    const cases = /** @type {const} */ ([
+      ['https://googleapis.com/x', true], ['https://gmailmcp.googleapis.com/mcp/v1', true], ['https://evilgoogleapis.com/', false], ['https://googleapis.com.evil.example/', false],
+      ['http://gmailmcp.googleapis.com/', false], ['http://127.0.0.1:4182/closed/mcp', true], ['ftp://googleapis.com/', false],
+    ])
+    for (const [url, expected] of cases) {
+      assert.equal(covers(hosts, new URL(url)), expected, url)
+      assert.equal(gatewayCovers(hosts, new URL(url)), expected, url)
+    }
   })
 
   test('each service Jean knows has its brand\'s logo, its own file: a plain drawing, or a picture (D159)', async () => {
@@ -368,12 +389,12 @@ describe('the services Jean knows (D95)', () => {
       { id: 'canva', ready: false },
       { id: 'nameless', url: 'https://nowhere.example/mcp' },
     ] }
-    const { ready, later } = known(policy)
-    const m365 = ready.find((entry) => entry.id === 'microsoft-365')
-    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], logo: 'microsoft-365.svg', clientId: 'corp-app', ready: true })
-    assert.ok(ready.some((entry) => entry.id === 'crm'))
-    assert.ok(later.some((entry) => entry.id === 'canva'))
-    assert.ok(![...ready, ...later].some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
+    const services = known(policy)
+    const m365 = services.find((entry) => entry.id === 'microsoft-365')
+    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], logo: 'microsoft-365.svg', clientId: 'corp-app', ready: true, via: 'browser' })
+    assert.equal(services.find((entry) => entry.id === 'crm')?.via, 'browser')
+    assert.equal(services.find((entry) => entry.id === 'canva')?.via, null)
+    assert.ok(!services.some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
     assert.equal(knownFor('https://mcp.m365.corp.example/mcp', policy)?.clientId, 'corp-app')
     assert.equal(knownFor('https://mcp.canva.com/mcp', policy), undefined)
   })
@@ -393,6 +414,67 @@ describe('the services Jean knows (D95)', () => {
       assert.equal(tokens.clientId, 'jean-test')
       const mcp = mcpClient({ url: `${origin}/fixed/mcp`, client: jean, authorization: async () => `Bearer ${tokens.access}` })
       assert.equal((await mcp.listTools()).length, 3)
+    } finally {
+      await close()
+    }
+  })
+})
+
+describe('the gateway (D191)', () => {
+  const JEAN = 'http://127.0.0.1:4180'
+  const AT = 'https://gateway.example/'
+  /** Jean's fetch through a gateway: each address in `url`, from Jean's origin, as a browser sends it. @param {(request: Request) => Promise<Response>} handle */
+  const through = (handle) => /** @type {typeof fetch} */ (async (input, init = {}) => {
+    const url = new URL(AT)
+    url.searchParams.set('url', String(input))
+    const headers = new Headers(init.headers)
+    headers.set('origin', JEAN)
+    return handle(new Request(url, { ...init, headers }))
+  })
+
+  test('only for Jean’s origins and the hosts it names, and it says what it serves', async () => {
+    const handle = gateway({ origins: [JEAN], hosts: ['127.0.0.1'], clients: [{ issuer: 'https://accounts.example', tokenEndpoint: 'https://accounts.example/token', clientId: 'app', clientSecret: 'secret' }] })
+    const served = await handle(new Request(AT, { headers: { origin: JEAN } }))
+    assert.deepEqual(await served.json(), { format: 1, hosts: ['127.0.0.1'], clients: { 'https://accounts.example': 'app' } })
+    assert.equal(served.headers.get('access-control-allow-origin'), JEAN)
+    const elsewhere = await handle(new Request(`${AT}?url=${encodeURIComponent('http://127.0.0.1:9/mcp')}`, { method: 'POST', headers: { origin: 'https://elsewhere.example' } }))
+    assert.equal(elsewhere.status, 403)
+    assert.equal(elsewhere.headers.get('access-control-allow-origin'), null)
+    assert.equal((await through(handle)('https://example.com/mcp', { method: 'POST' })).status, 403)
+    assert.equal((await through(handle)('not an address', { method: 'POST' })).status, 403)
+    const preflight = await handle(new Request(`${AT}?url=${encodeURIComponent('http://127.0.0.1:9/mcp')}`, { method: 'OPTIONS', headers: { origin: JEAN, 'access-control-request-headers': 'authorization,mcp-method' } }))
+    assert.equal(preflight.status, 204)
+    assert.equal(preflight.headers.get('access-control-allow-headers'), 'authorization,mcp-method')
+  })
+
+  test('a service that answers no page: signing in with the app the gateway holds, its secret added on the way, then the tools', async () => {
+    const { origin, server, close } = await fakeMail()
+    try {
+      for (const auth of /** @type {const} */ (['post', 'basic'])) {
+        const fetch = through(gateway({ origins: [JEAN], hosts: ['127.0.0.1'], clients: [{ issuer: `${origin}/closed`, tokenEndpoint: `${origin}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret', auth }] }))
+        let challenge = null
+        await mcpClient({ url: `${origin}/closed/mcp`, client: jean, fetch }).listTools().catch((/** @type {any} */ error) => { challenge = error.challenge })
+        const metadata = await discover(`${origin}/closed/mcp`, { challenge, fetch })
+        assert.equal(metadata.issuer, `${origin}/closed`)
+        assert.equal(metadata.registration_endpoint, undefined)
+        // Another account of a service already connected: the sign-in asks which.
+        const { url, pending } = await authorization(metadata, { clientId: 'gateway-app', redirectURI: `${JEAN}/`, another: true })
+        assert.equal(new URL(url).searchParams.get('prompt'), 'select_account')
+        const code = () => globalThis.fetch(url, { redirect: 'manual' }).then((res) => new URL(/** @type {string} */ (res.headers.get('location'))).searchParams)
+        // Straight from the browser, without the app's secret, the code can't be traded.
+        await assert.rejects(finish(await code(), pending), /invalid_client/)
+        const tokens = await finish(await code(), pending, fetch)
+        assert.equal(tokens.clientId, 'gateway-app')
+        assert.equal((await refresh(tokens, fetch)).access, 'renewed')
+        const mcp = mcpClient({ url: `${origin}/closed/mcp`, client: jean, fetch, authorization: async () => `Bearer ${tokens.access}` })
+        const tools = await mcp.listTools()
+        assert.equal(tools.length, 3)
+        // A call's answer streams through, and the headers a tool asks for go with it.
+        const read = await mcp.callTool(/** @type {any} */ (tools.find((tool) => tool.name === 'read_email')), { id: '2' })
+        assert.match(read.content?.[0].resource.text, /Invoice 2041/)
+      }
+      assert.ok(server.log.includes('POST /closed/mcp tools/call 2'))
+      assert.ok(!server.log.some((line) => line.includes('/closed') && line.includes(' from ')), 'the service never saw a page’s origin')
     } finally {
       await close()
     }

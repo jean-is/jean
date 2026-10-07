@@ -69,15 +69,16 @@ export async function registerClient(metadata, { redirectURI, name, fetch = glob
 }
 
 /**
- * Where to send the user, and what to keep until they come back.
- * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string }} options
+ * Where to send the user, and what to keep until they come back. Signing in to another account of
+ * a service asks which one (`prompt=select_account`, which a server that doesn't know it ignores).
+ * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean }} options
  * @returns {Promise<{ url: string, pending: Pending }>}
  */
-export async function authorization(metadata, { clientId, redirectURI }) {
+export async function authorization(metadata, { clientId, redirectURI, another = false }) {
   const [verifier, state] = [createVerifier(), createVerifier().slice(0, 32)]
   const scope = [metadata.scope, metadata.scopes_supported?.includes('offline_access') && 'offline_access'].filter(Boolean).join(' ')
   const url = new URL(metadata.authorization_endpoint)
-  const params = { response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, resource: metadata.resource, ...(scope && { scope }) }
+  const params = { response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, resource: metadata.resource, ...(scope && { scope }), ...(another && { prompt: 'select_account' }) }
   for (const [name, value] of Object.entries(params)) url.searchParams.set(name, value)
   const issRequired = metadata.authorization_response_iss_parameter_supported === true
   return { url: url.href, pending: { state, verifier, clientId, redirectURI, issuer: metadata.issuer, issRequired, tokenEndpoint: metadata.token_endpoint, resource: metadata.resource } }

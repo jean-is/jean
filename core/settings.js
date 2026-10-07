@@ -26,7 +26,7 @@ import { ulid } from './ulid.js'
  * @property {boolean} [terminal]             the user opened the terminal: the bar has a button for it (D166)
  * @property {{ width?: number, sizes?: Record<string, number> }} [dock]  how wide the dock is (a share of the window) and each pane's share of it, as the user set them (D144)
  * @property {{ scripts?: boolean, web?: boolean, network?: boolean, sites?: string[] }} [pages]  what a web page in the preview may do, and which sites it may reach (D143)
- * @property {Partial<typeof DEFAULT_URLS>} [urls]  overrides of the default addresses
+ * @property {Partial<Record<keyof typeof DEFAULT_URLS, string>>} [urls]  overrides of the default addresses
  * @property {import('../caps/computer/net.js').ComputerSettings} [computer]  what the Computer may reach, and where its packages come from (D162)
  * @property {string} [relay]                  the address the web is reached through, with {url} in it, when there is one (D162)
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
@@ -39,7 +39,11 @@ import { ulid } from './ulid.js'
  * @typedef {{ id?: string, accent?: string, background?: string, size?: number, font?: string, css?: string }} Look
  */
 
-/** @typedef {{ id: string, name: string, url: string, auth: 'none' | 'key' | 'oauth' }} Connection */
+/**
+ * A service connected (D21, D87): the projects it is used in, when not every one, and whether it
+ * is reached through the gateway (D191).
+ * @typedef {{ id: string, name: string, url: string, auth: 'none' | 'key' | 'oauth', projects?: string[], gateway?: boolean }} Connection
+ */
 
 /**
  * Addresses of services Jean can use, each replaceable in settings and by policy
@@ -50,6 +54,8 @@ export const DEFAULT_URLS = Object.freeze({
   modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php', searchPage: 'https://{lang}.wikipedia.org/w/index.php?search={query}',
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
+  // The gateway to the services a browser can't reach (D191): none until one is named.
+  gateway: '',
 })
 
 /**

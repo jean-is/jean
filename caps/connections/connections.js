@@ -1,29 +1,32 @@
 // Connections (docs/product.md): the services the user already uses, their email, documents or
 // calendar, reached through MCP (D21, D86). A connection is an address, plus a key or a sign-in
-// when the service asks for one, kept encrypted in .secrets/ and never in a backup. Its tools are
-// deferred (D47): <connections> names them, and the brain finds them with find_tools or calls
-// them from a script. Reading through a connection is "Using the internet", anything else
+// when the service asks for one, kept encrypted in .secrets/ and never in a backup. A service can
+// be connected once an account, and a connection kept to some projects; one that doesn't answer a
+// browser goes through the gateway, when one is named (D191). Its tools are deferred (D47):
+// <connections> names those of the room's project, and the brain finds them with find_tools or
+// calls them from a script. Reading through a connection is "Using the internet", anything else
 // "Sending and sharing": both "Ask me first" by default. What they bring in is cited by number.
 // They are a section of Settings, once on (D134).
 import { html, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { live } from 'lit-html/directives/live.js'
+import { signal, computed, effect } from '@preact/signals-core'
+import { register, loaded } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { openSettings } from '../../ui/dialogs.js'
 import { mcpClient, MCPError } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
-import { known, knownFor } from './directory.js'
-import { slug } from '../../core/settings.js'
+import { known, knownFor, covers } from './directory.js'
+import { slug, serviceURL } from '../../core/settings.js'
 import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
 
-/** @import { Connection } from '../../core/settings.js' */
+/** @import { Connection, Project } from '../../core/settings.js' */
 /** @import { McpTool, CallResult } from './mcp.js' */
-/** @import { Known } from './directory.js' */
+/** @import { Known, Listed } from './directory.js' */
 
 // Kept in this tab while the user signs in elsewhere.
 const PENDING = 'app.connect'
@@ -35,9 +38,46 @@ const status = signal(/** @type {Record<string, { tools?: McpTool[], error?: 'au
 const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
 /** Where what was clicked says how it went: under the services, or under the address typed. */
 let place = /** @type {'top' | 'other'} */ ('top')
+/** Whether the form for a service's address is open: null until the user says, then open only when no service is offered. */
+const adding = signal(/** @type {boolean | null} */ (null))
 
 /** The organisation's connections (policy), then the user's. @returns {Connection[]} */
 const all = () => [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])]
+/** Those of the room's project: the connections of every project, and those kept to this one. */
+const here = () => all().filter((connection) => !connection.projects || connection.projects.includes(app.project.value.id))
+
+// ─── The gateway (D191) ──────────────────────────────────────────────────────
+
+/** Its address, from policy or settings: none until one is named. */
+const gatewayAt = computed(() => serviceURL('gateway', app.settings.value, app.policy))
+/** What it serves: the hosts it relays to, and the apps it holds, by sign-in server. */
+const served = signal(/** @type {{ hosts: string[], clients: Record<string, string> }} */ ({ hosts: [], clients: {} }))
+
+// Asked again whenever its address changes; an answer for an address since changed is dropped.
+effect(() => {
+  const address = gatewayAt.value
+  served.value = { hosts: [], clients: {} }
+  if (address) {
+    fetch(address, { headers: { accept: 'application/json' } }).then((res) => res.json()).then(({ hosts, clients }) => {
+      if (gatewayAt.peek() === address) served.value = { hosts: Array.isArray(hosts) ? hosts.map(String) : [], clients: { ...clients } }
+    }, (error) => console.warn(address, error))
+  }
+})
+
+/**
+ * How a connection reaches its service: the browser's own fetch, or each address through the
+ * gateway, as `<gateway>?url=<address>`.
+ * @param {Connection} connection @returns {typeof globalThis.fetch | undefined}
+ */
+const reach = (connection) => (connection.gateway ? (/** @type {RequestInfo | URL} */ input, /** @type {RequestInit | undefined} */ init) => {
+  const address = gatewayAt.peek()
+  if (!address) return Promise.reject(new TypeError('No gateway'))
+  const url = new URL(address)
+  url.searchParams.set('url', String(input))
+  return fetch(url, init)
+} : undefined)
+
+// ─── Tools ───────────────────────────────────────────────────────────────────
 
 /** @type {Map<string, { url: string, mcp: ReturnType<typeof mcpClient> }>} */
 const clients = new Map()
@@ -46,7 +86,7 @@ const clients = new Map()
 function client(connection) {
   const found = clients.get(connection.id)
   if (found?.url === connection.url) return found.mcp
-  const mcp = mcpClient({ url: connection.url, client: { name: BRAND.name, version: '0.6' }, authorization: () => credential(connection) })
+  const mcp = mcpClient({ url: connection.url, client: { name: BRAND.name, version: '0.6' }, authorization: () => credential(connection), fetch: reach(connection) })
   clients.set(connection.id, { url: connection.url, mcp })
   return mcp
 }
@@ -56,7 +96,7 @@ async function credential(connection, renew = false) {
   const secret = connection.auth === 'none' ? null : await getSecret(app.fs, connection.id)
   if (!secret || connection.auth === 'key') return secret ? `Bearer ${secret}` : undefined
   let tokens = JSON.parse(secret)
-  if (renew || tokens.expiresAt < Date.now() + 60_000) await setSecret(app.fs, connection.id, JSON.stringify(tokens = await refresh(tokens)))
+  if (renew || tokens.expiresAt < Date.now() + 60_000) await setSecret(app.fs, connection.id, JSON.stringify(tokens = await refresh(tokens, reach(connection))))
   return `Bearer ${tokens.access}`
 }
 
@@ -115,11 +155,11 @@ function answer(connection, label, result, ctx) {
 
 effect(() => register({
   id: 'connections',
-  tools: all().flatMap((connection) => (status.value[connection.id]?.tools ?? []).map((tool) => asTool(connection, tool))),
+  tools: here().flatMap((connection) => (status.value[connection.id]?.tools ?? []).map((tool) => asTool(connection, tool))),
   rules: ['Find the tools of the services in <connections> with find_tools.'],
-  // Each service, and the names of its tools.
+  // Each service of the room's project, and the names of its tools.
   sections: async () => {
-    const lines = all().map((connection) => [connection.name, ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
+    const lines = here().map((connection) => [connection.name, ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
     return lines.length ? { connections: lines.map(([name, ...tools]) => `- ${name}${tools.length ? `: ${tools.join(', ')}` : ''}`).join('\n') } : {}
   },
   panel,
@@ -137,6 +177,16 @@ function nameFor(url) {
   return name[0].toUpperCase() + name.slice(1)
 }
 
+/**
+ * Tool names start with the connection's: two connections need two names, an account each
+ * ("Notion", "Notion 2"). @param {string} name @param {string} [except] the connection renamed
+ */
+function unique(name, except) {
+  let named = name
+  for (let n = 2; all().some((other) => other.id !== except && slug(other.name) === slug(named)); n++) named = `${name} ${n}`
+  return named
+}
+
 /** @param {Connection} connection @param {McpTool[]} tools */
 async function save(connection, tools) {
   await updateSettings({ connections: [...(app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), connection] })
@@ -145,19 +195,20 @@ async function save(connection, tools) {
   notify(t('connections.connected', { service: connection.name }))
 }
 
+/** Changes the user's own connection: what it is called, or the projects it is used in. @param {Connection} connection @param {Partial<Connection>} patch */
+const change = (connection, patch) => updateSettings({ connections: (app.settings.value.connections ?? []).map((other) => (other.id === connection.id ? { ...other, ...patch } : other)) })
+
 /** Why it didn't connect: an address to check, or, for a service Jean knows, just that. @param {Connection} connection @param {string} key */
-const failed = (connection, key) => (knownFor(connection.url, app.policy) ? t('connections.failedKnown', { service: connection.name }) : t(key))
+const failed = (connection, key) => (knownFor(connection.url, app.policy, served.value.hosts) ? t('connections.failedKnown', { service: connection.name }) : t(key))
 
 /**
- * Connects a service; one that wants a sign-in sends the user there. True once it is connected.
- * @param {string} url @param {string} name @param {string} [key]
+ * Connects a service; one that wants a sign-in sends the user there, and one that doesn't answer
+ * a browser is tried again through the gateway, when it relays to its host. True once connected.
+ * @param {string} url @param {string} name @param {{ key?: string, gateway?: boolean }} [options]
  */
-async function connectTo(url, name, key = '') {
-  // Tool names start with the service's: two services need two names.
-  let unique = name
-  for (let n = 2; all().some((other) => slug(other.name) === slug(unique)); n++) unique = `${name} ${n}`
+async function connectTo(url, name, { key = '', gateway = false } = {}) {
   /** @type {Connection} */
-  const connection = { id: ulid(), name: unique, url, auth: key ? 'key' : 'none' }
+  const connection = { id: ulid(), name: unique(name), url, auth: key ? 'key' : 'none', ...(gateway && { gateway }) }
   message.value = { kind: 'busy', text: t('brain.connecting') }
   try {
     if (key) await setSecret(app.fs, connection.id, key)
@@ -167,6 +218,7 @@ async function connectTo(url, name, key = '') {
     clients.delete(connection.id)
     if (key) await deleteSecret(app.fs, connection.id)
     else if (error instanceof MCPError && error.auth) return signIn(connection, error.challenge).then(() => false)
+    if (error instanceof TypeError && !gateway && covers(served.value.hosts, new URL(url))) return connectTo(url, name, { key, gateway: true })
     console.warn(url, error)
     message.value = { kind: 'error', text: failed(connection, 'connections.failed') }
     return false
@@ -178,18 +230,24 @@ async function add(event) {
   event.preventDefault()
   const form = /** @type {HTMLFormElement} */ (event.target)
   const { url, key, name } = Object.fromEntries([...new FormData(form)].map(([field, value]) => [field, String(value).trim()]))
-  if (await connectTo(url, name || nameFor(url), key)) form.reset()
+  if (await connectTo(url, name || nameFor(url), { key })) adding.value = false
 }
 
-/** Sends the user to the service's sign-in; they come back here with a code. @param {Connection} connection @param {string | null} [challenge] its 401's */
+/**
+ * Sends the user to the service's sign-in; they come back here with a code. Another account of a
+ * service already connected is asked for by name. @param {Connection} connection @param {string | null} [challenge] its 401's
+ */
 async function signIn(connection, challenge) {
   message.value = { kind: 'busy', text: t('brain.connecting') }
   try {
-    const metadata = await discover(connection.url, { challenge })
+    const fetch = reach(connection)
+    const metadata = await discover(connection.url, { challenge, fetch })
     const redirectURI = location.origin + location.pathname
-    // A service that can't register Jean takes the client the organisation registered there.
-    const clientId = knownFor(connection.url, app.policy)?.clientId ?? await registerClient(metadata, { redirectURI, name: BRAND.name })
-    const { url, pending } = await authorization(metadata, { clientId, redirectURI })
+    // A service that can't register Jean takes the app the organisation registered there, or the gateway's.
+    const clientId = knownFor(connection.url, app.policy, served.value.hosts)?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
+      ?? await registerClient(metadata, { redirectURI, name: BRAND.name, fetch })
+    const another = all().some((other) => other.id !== connection.id && other.url === connection.url)
+    const { url, pending } = await authorization(metadata, { clientId, redirectURI, another })
     sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, connection: { ...connection, auth: 'oauth' }, route: location.hash, draft: app.draft.value }))
     location.assign(url)
   } catch (error) {
@@ -209,7 +267,7 @@ export async function finishSignIn() {
   app.draft.value = saved.draft ?? ''
   openSettings('connections')
   try {
-    await setSecret(app.fs, saved.connection.id, JSON.stringify(await finish(params, saved)))
+    await setSecret(app.fs, saved.connection.id, JSON.stringify(await finish(params, saved, reach(saved.connection))))
     await save(saved.connection, await client(saved.connection).listTools())
   } catch (error) {
     console.warn(error)
@@ -234,10 +292,14 @@ export const connect = () => new Promise((resolve) => {
   })
 })
 
-// A service that failed to connect is forgotten once Settings closes.
+// A service that failed to connect is forgotten once Settings closes, and the address's form closes.
 effect(() => {
-  if (app.dialog.value !== 'settings' && message.peek()?.kind === 'error') message.value = null
+  if (app.dialog.value === 'settings') return
+  if (message.peek()?.kind === 'error') message.value = null
+  adding.value = null
 })
+
+// ─── Settings › Connections ──────────────────────────────────────────────────
 
 // Declared, not assigned, as the panel is: Settings may show it before this module has run to its end.
 /** A service's logo (D159), or else its first letter. @param {Pick<Known, 'name' | 'logo'>} entry @param {string} [kind] */
@@ -246,13 +308,19 @@ function monogram({ name, logo }, kind = 'monogram') {
 }
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
 function products(names) { return new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names) }
+/** A project as its menu names it: the home project goes by the assistant's name. @param {Project} project */
+function nameOf(project) { return String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name) }
+/** The projects that can be chosen: once projects are on, and there is more than one. */
+function projects() { return loaded.value.has('projects') && app.projects.value.length > 1 ? app.projects.value : [] }
 
 /** A service connected, opened to what it can do and to disconnect it; or why it can't be reached, and what fixes it. @param {Connection} connection */
 function row(connection) {
   const { tools, error } = status.value[connection.id] ?? {}
   const own = (app.settings.value.connections ?? []).includes(connection)
-  const head = html`${monogram({ name: connection.name, logo: knownFor(connection.url, app.policy)?.logo }, 'item-icon')}<span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
-    ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}</small>`}</span>`
+  const kept = connection.projects && projects().filter((project) => connection.projects?.includes(project.id)).map(nameOf)
+  const head = html`${monogram({ name: connection.name, logo: known(app.policy).find((entry) => entry.url === connection.url)?.logo }, 'item-icon')}<span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
+    ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}${kept?.length
+      ? html` · <bdi>${products(kept)}</bdi>` : nothing}</small>`}</span>`
   if (error || !tools) {
     return html`<li class="connection"><span class="item">${head}</span>${error === 'auth' ? html`<button class="button" @click=${() => { place = 'top'; signIn(connection) }}>${t('brain.connect')}</button>`
       : error ? html`<button class="icon-button subtle" aria-label=${t('action.retry')} title=${t('action.retry')} @click=${() => list([connection])}>${icons.retry}</button>` : nothing}
@@ -260,42 +328,104 @@ function row(connection) {
   }
   return html`<li class="connection"><details><summary>${head}${icons.chevron}</summary><div class="item-body">
     <ul class="chips">${tools.map((tool) => html`<li>${tool.title ?? tool.annotations?.title ?? tool.name}</li>`)}</ul>
+    ${own ? yours(connection) : nothing}
     <div class="row"><small class="muted" dir="ltr">${new URL(connection.url).host}</small>${own
       ? html`<button class="button subtle danger" @click=${() => remove(connection)}>${t('connections.disconnect')}</button>` : html`<small class="muted">${t('policy.locked')}</small>`}</div>
   </div></details></li>`
 }
 
-/** Settings' Connections: the services connected, then those Jean knows, a tile each to connect in one click, those not yet, and any other by its address. */
+/**
+ * What the user sets on their own connection: its name, which tells two accounts apart, and, once
+ * there are projects, where it is used: every project, or only those ticked (at least one).
+ * @param {Connection} connection
+ */
+function yours(connection) {
+  const shown = projects()
+  const only = connection.projects
+  /** @param {Event} event */
+  const ticked = (event) => /** @type {HTMLInputElement} */ (event.target).checked
+  return html`<label class="connection-name">${t('projects.name')}<input dir="auto" maxlength="40" autocomplete="off" .value=${live(connection.name)}
+      @change=${(/** @type {Event} */ e) => {
+        const name = /** @type {HTMLInputElement} */ (e.target).value.trim()
+        if (name && name !== connection.name) change(connection, { name: unique(name, connection.id) })
+      }}></label>
+    ${shown.length ? html`<fieldset class="where">
+      <legend>${t('connections.where')}</legend>
+      <label><input type="checkbox" .checked=${live(!only)} @change=${(/** @type {Event} */ e) => change(connection, { projects: ticked(e) ? undefined : [app.project.value.id] })}>${t('connections.everywhere')}</label>
+      ${only ? shown.map((project) => {
+        const on = only.includes(project.id)
+        return html`<label><input type="checkbox" .checked=${live(on)} ?disabled=${on && only.length === 1}
+          @change=${(/** @type {Event} */ e) => change(connection, { projects: ticked(e) ? [...only, project.id] : only.filter((id) => id !== project.id) })}><bdi>${nameOf(project)}</bdi></label>`
+      }) : nothing}
+    </fieldset>` : nothing}`
+}
+
+/**
+ * A service Jean knows: a click connects it, and once connected, another account. One not reached
+ * yet is there too, disabled. @param {Listed} entry
+ */
+function tile(entry) {
+  const again = all().some((connection) => connection.url === entry.url)
+  const small = !entry.via ? t('connections.notYet') : again ? t('connections.another') : ''
+  return html`<li><button class="service ${entry.via ? '' : 'is-soon'}" ?disabled=${!entry.via || message.value?.kind === 'busy'}
+    @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name, { gateway: entry.via === 'gateway' }) }}>
+    ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${small ? html`<small>${small}</small>`
+      : entry.includes ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span>${entry.via ? icons.plus : nothing}
+  </button></li>`
+}
+
+/** The form for any other service, by its address, opened by the panel's +. @param {unknown} said */
+const other = (said) => html`<form id="connection-add" class="stack adding" @submit=${(/** @type {SubmitEvent} */ e) => { place = 'other'; add(e) }}>
+  <h3>${t('connections.other')}</h3>
+  <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
+  <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
+  <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
+  <p class="hint">${t('connections.keyHint')}</p>
+  <div class="row"><button class="button primary" ?disabled=${message.value?.kind === 'busy'}>${t('brain.connect')}</button></div>
+  ${place === 'other' ? said : nothing}
+</form>`
+
+/** The gateway's address, unless the organisation set it (D191). Empty: back to the default. */
+function gateway() {
+  const set = app.policy.urls?.gateway !== undefined
+  return html`<details class="other">
+    <summary>${t('gateway.title')}</summary>
+    <div class="stack">
+      <p class="muted">${set ? t('policy.locked') : t('gateway.text', { name: BRAND.name })}</p>
+      <input dir="ltr" type="url" spellcheck="false" autocomplete="off" placeholder="https://…" aria-label=${t('gateway.title')} .value=${live(gatewayAt.value)} ?disabled=${set}
+        @change=${(/** @type {Event} */ e) => {
+          const { gateway: _, ...urls } = app.settings.value.urls ?? {}
+          const address = /** @type {HTMLInputElement} */ (e.target).value.trim()
+          updateSettings({ urls: address ? { ...urls, gateway: address } : urls })
+        }}>
+    </div>
+  </details>`
+}
+
+/**
+ * Settings' Connections: the services connected, then every service Jean knows, a tile each to
+ * connect in one click, those not reached yet disabled; any other by its address, behind the +
+ * at the top; and the gateway.
+ */
 function panel() {
   const shown = message.value
   const said = shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing
-  const { ready, later } = known(app.policy)
-  // A service already connected leaves the tiles.
-  const offered = ready.filter((entry) => !all().some((connection) => connection.url === entry.url))
-  return html`<p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
+  const services = known(app.policy, served.value.hosts)
+  const open = adding.value ?? !services.some((entry) => entry.via)
+  return html`<header class="panel-head">
+      <p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
+      <button class="icon-button" aria-expanded=${String(open)} aria-controls="connection-add" aria-label=${t('connections.other')} title=${t('connections.other')}
+        @click=${() => {
+          adding.value = !open
+          if (!open) requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('#connection-add input'))?.focus())
+        }}>${icons.plus}</button>
+    </header>
+    ${open ? other(said) : nothing}
     ${all().length ? html`<section><h3>${t('connections.yours')}</h3><ul class="list connections">${all().map(row)}</ul></section>` : nothing}
     ${place === 'top' ? said : nothing}
-    ${offered.length || later.length ? html`<section>
+    ${services.length ? html`<section>
       <h3>${t('cap.connections.yes')}</h3>
-      ${offered.length ? html`<ul class="services">${offered.map((entry) => html`<li>
-        <button class="service" ?disabled=${shown?.kind === 'busy'} @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name) }}>
-          ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${entry.includes ? html`<small>${products(entry.includes)}</small>` : nothing}</span>${icons.plus}
-        </button></li>`)}</ul>` : nothing}
-      ${later.length ? html`<div class="later">
-        <h4>${t('connections.notYet')}</h4>
-        <ul class="services is-later">${later.map((entry) => html`<li>${monogram(entry)}<span dir="auto">${entry.name}</span></li>`)}</ul>
-        <p class="hint">${t('connections.later')}</p>
-      </div>` : nothing}
+      <ul class="services">${services.map(tile)}</ul>
     </section>` : nothing}
-    <details class="other" ?open=${!ready.length}>
-      <summary>${t('connections.other')}</summary>
-      <form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => { place = 'other'; add(e) }}>
-        <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
-        <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
-        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
-        <p class="hint">${t('connections.keyHint')}</p>
-        <div class="row"><button class="button primary">${t('brain.connect')}</button></div>
-        ${place === 'other' ? said : nothing}
-      </form>
-    </details>`
+    ${gateway()}`
 }

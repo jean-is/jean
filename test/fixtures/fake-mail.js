@@ -6,6 +6,8 @@
 //   /open/mcp      the same tools, no sign-in
 //   /fixed/mcp     the same tools, behind a sign-in server that can't register apps: it only
 //                  knows the client `jean-test`, registered for any address (D95)
+//   /closed/mcp    the same again, answering no browser (no CORS), behind a sign-in server that only
+//                  knows the app `gateway-app`, whose secret a gateway holds (D191)
 //   /legacy/mcp    MCP 2025-11-25: initialize, then a session (Mcp-Session-Id)
 //   /wiki/{lang}/w/api.php   a few pages in the shape of Wikipedia's search API
 //   /.well-known/agent-skills/index.json   a skills discovery index (D121): a SKILL.md, an archive
@@ -81,8 +83,8 @@ const INDEX = { $schema: 'https://schemas.agentskills.io/discovery/0.2.0/schema.
 })) }
 
 export function createFakeMail() {
-  /** @type {Map<string, { redirect: string | null }>} null: any address */
-  const clients = new Map([['jean-test', { redirect: null }]])
+  /** @type {Map<string, { redirect: string | null, secret?: string }>} null: any address */
+  const clients = new Map([['jean-test', { redirect: null }], ['gateway-app', { redirect: null, secret: 'gateway-secret' }]])
   /** @type {Map<string, { challenge: string, client: string, redirect: string, resource: string }>} */
   const codes = new Map()
   const tokens = new Set(['test-token'])
@@ -94,15 +96,21 @@ export function createFakeMail() {
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', `http://${req.headers.host}`)
     const origin = url.origin
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers'] ?? '*')
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE')
-    res.setHeader('Access-Control-Expose-Headers', 'Mcp-Session-Id, WWW-Authenticate')
+    // The closed service, its sign-in included, answers no browser: only a gateway reaches it.
+    const closed = url.pathname.includes('/closed')
+    if (!closed) {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers'] ?? '*')
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE')
+      res.setHeader('Access-Control-Expose-Headers', 'Mcp-Session-Id, WWW-Authenticate')
+    }
     if (req.method === 'OPTIONS') return res.end()
+    // …and refuses any request that says it comes from a page, as some services do.
+    if (closed && req.headers.origin) return res.writeHead(403).end()
     let body = ''
     for await (const chunk of req) body += chunk
     const json = (/** @type {number} */ status, /** @type {any} */ value, headers = {}) => res.writeHead(status, { 'content-type': 'application/json', ...headers }).end(JSON.stringify(value))
-    log.push(`${req.method} ${url.pathname} ${req.headers['mcp-method'] ?? ''} ${req.headers['mcp-param-email'] ?? ''}`.trim())
+    log.push(`${req.method} ${url.pathname} ${req.headers['mcp-method'] ?? ''} ${req.headers['mcp-param-email'] ?? ''}${req.headers.origin ? ` from ${req.headers.origin}` : ''}`.trim())
 
     // ─── Skills from elsewhere ───
     if (url.pathname === '/.well-known/agent-skills/index.json') return json(200, INDEX)
@@ -110,13 +118,14 @@ export function createFakeMail() {
     if (skill && Object.hasOwn(SKILLS, skill[1])) return res.writeHead(200, { 'content-type': url.pathname.endsWith('.gz') ? 'application/gzip' : 'text/markdown' }).end(SKILLS[/** @type {keyof typeof SKILLS} */ (skill[1])].bytes)
 
     // ─── Signing in ───
-    const fixed = url.pathname.endsWith('/fixed') || url.pathname.endsWith('/fixed/mcp')
-    if (/^\/\.well-known\/oauth-protected-resource(\/fixed)?\/mcp$/.test(url.pathname)) {
-      return json(200, { resource: `${origin}${fixed ? '/fixed' : ''}/mcp`, authorization_servers: [`${origin}${fixed ? '/fixed' : ''}`], scopes_supported: ['mail.read'] })
+    const fixed = /\/(fixed|closed)(\/mcp)?$/.exec(url.pathname)?.[1]
+    const at = fixed ? `/${fixed}` : ''
+    if (/^\/\.well-known\/oauth-protected-resource(\/fixed|\/closed)?\/mcp$/.test(url.pathname)) {
+      return json(200, { resource: `${origin}${at}/mcp`, authorization_servers: [`${origin}${at}`], scopes_supported: ['mail.read'] })
     }
-    if (/^\/\.well-known\/oauth-authorization-server(\/fixed)?$/.test(url.pathname)) {
+    if (/^\/\.well-known\/oauth-authorization-server(\/fixed|\/closed)?$/.test(url.pathname)) {
       return json(200, {
-        issuer: `${origin}${fixed ? '/fixed' : ''}`, authorization_endpoint: `${origin}/authorize`, token_endpoint: `${origin}/token`, ...(!fixed && { registration_endpoint: `${origin}/register` }),
+        issuer: `${origin}${at}`, authorization_endpoint: `${origin}/authorize`, token_endpoint: `${origin}/token`, ...(!fixed && { registration_endpoint: `${origin}/register` }),
         code_challenge_methods_supported: ['S256'], authorization_response_iss_parameter_supported: true, scopes_supported: ['mail.read', 'offline_access'],
       })
     }
@@ -129,7 +138,7 @@ export function createFakeMail() {
     if (url.pathname === '/authorize') {
       const query = Object.fromEntries(url.searchParams)
       const client = clients.get(query.client_id)
-      const resource = [`${origin}/mcp`, `${origin}/fixed/mcp`].find((one) => one === query.resource)
+      const resource = [`${origin}/mcp`, `${origin}/fixed/mcp`, `${origin}/closed/mcp`].find((one) => one === query.resource)
       if (!client || (client.redirect ?? query.redirect_uri) !== query.redirect_uri || query.code_challenge_method !== 'S256' || !resource) return json(400, { error: 'invalid_request' })
       const code = randomUUID()
       codes.set(code, { challenge: query.code_challenge, client: query.client_id, redirect: query.redirect_uri, resource: query.resource })
@@ -141,6 +150,11 @@ export function createFakeMail() {
     }
     if (url.pathname === '/token') {
       const form = Object.fromEntries(new URLSearchParams(body))
+      // An app with a secret proves it, in the form or as Basic authentication.
+      const basic = /^Basic (.+)$/.exec(req.headers.authorization ?? '')?.[1]
+      if (basic) [form.client_id, form.client_secret] = Buffer.from(basic, 'base64').toString().split(':').map(decodeURIComponent)
+      const secret = clients.get(form.client_id)?.secret
+      if (secret && form.client_secret !== secret) return json(401, { error: 'invalid_client' })
       if (form.grant_type === 'refresh_token' && form.refresh_token === 'refresh-me') return json(200, { access_token: 'renewed', token_type: 'Bearer', expires_in: 3600 })
       const grant = codes.get(form.code)
       codes.delete(form.code)
@@ -160,7 +174,7 @@ export function createFakeMail() {
     }
 
     // ─── MCP ───
-    if (!/^\/(open\/|legacy\/|fixed\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
+    if (!/^\/(open\/|legacy\/|fixed\/|closed\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
     if (req.method !== 'POST') return res.writeHead(405).end()
     const message = JSON.parse(body)
     const reply = (/** @type {any} */ result) => json(200, { jsonrpc: '2.0', id: message.id, result })
@@ -179,7 +193,7 @@ export function createFakeMail() {
       if (message.method === 'notifications/initialized') return res.writeHead(202).end()
     } else {
       if (url.pathname !== '/open/mcp' && !tokens.has(String(req.headers.authorization ?? '').replace(/^Bearer /, ''))) {
-        return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource${fixed ? '/fixed' : ''}/mcp", scope="mail.read"` })
+        return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource${at}/mcp", scope="mail.read"` })
       }
       const version = message.params?._meta?.['io.modelcontextprotocol/protocolVersion']
       if (version !== '2026-07-28') return fail(400, -32022, 'Unsupported protocol version', { supported: ['2026-07-28'], requested: version })

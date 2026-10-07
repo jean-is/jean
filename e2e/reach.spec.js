@@ -2,7 +2,7 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, MAIL_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, openSettings, MAIL_URL, GATEWAY_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -46,16 +46,17 @@ async function withPolicy(page, policy) {
   }, { once: true }))
 }
 
-test('a service Jean knows connects in one click; the ones not available yet are only listed', async ({ page }) => {
+test('a service Jean knows connects in one click; those not reached yet are there, disabled', async ({ page }) => {
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  await expect(dialog.getByRole('button', { name: 'Notion', exact: true })).toBeVisible()
-  await expect(dialog.locator('.is-later')).toContainText('Gmail')
-  await expect(dialog.locator('.is-later')).toContainText('Microsoft 365')
-  await expect(dialog.locator('.is-later button')).toHaveCount(0)
-  await expect(dialog.locator('details.other')).not.toHaveAttribute('open')
+  await expect(dialog.getByRole('button', { name: 'Notion' })).toBeEnabled()
+  for (const name of ['Gmail', 'Microsoft 365', 'Google Meet']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
+  await expect(dialog.getByRole('button', { name: 'Gmail' })).toContainText('Not available yet')
+  // Any other service is behind the + at the top.
+  await expect(dialog.locator('#connection-add')).toHaveCount(0)
+  await expect(dialog.locator('.panel-head .icon-button')).toHaveAttribute('aria-expanded', 'false')
   // Signing in leaves the page and comes back to Settings' Connections.
   await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
@@ -64,7 +65,84 @@ test('a service Jean knows connects in one click; the ones not available yet are
   await expect(mail).toContainText('3 actions')
   await mail.locator('summary').click()
   await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email'])
-  await expect(back.getByRole('button', { name: 'Mail', exact: true })).toHaveCount(0)
+  // Its tile stays, for another account.
+  await expect(back.getByRole('button', { name: /^Mail/ })).toContainText('Another account')
+})
+
+/** The names of the connections' tools the brain is given here. @param {import('@playwright/test').Page} page */
+const tools = (page) => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.get('connections')?.tools?.map((tool) => tool.spec.name))
+
+test('a service connects again for another account, each with a name of its own', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/open/mcp` }] })
+  await start(page)
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-settings dialog[open]')
+  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  await dialog.getByRole('button', { name: /^Mail/ }).click()
+  await expect(page.locator('.toast')).toContainText('Mail 2 is connected')
+  const accounts = dialog.locator('.connection')
+  await expect(accounts).toHaveCount(2)
+  await accounts.nth(1).locator('summary').click()
+  await accounts.nth(1).getByLabel('Name').fill('Mail at work')
+  await accounts.nth(1).getByLabel('Name').blur()
+  await expect(accounts.nth(1).locator('summary')).toContainText('Mail at work')
+  await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_at_work_search_emails', 'mail_at_work_read_email', 'mail_at_work_send_email'])
+})
+
+test('a service that answers no page waits for a gateway that relays to it (D191)', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'closed', name: 'Closed Mail', url: `${MAIL_URL}/closed/mcp`, ready: false }] })
+  await start(page)
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-settings dialog[open]')
+  const tile = dialog.getByRole('button', { name: 'Closed Mail' })
+  await expect(tile).toBeDisabled()
+  await dialog.locator('summary', { hasText: 'Gateway' }).click()
+  await dialog.getByLabel('Gateway').fill(GATEWAY_URL)
+  await dialog.getByLabel('Gateway').blur()
+  await expect(tile).toBeEnabled()
+  await dialog.getByLabel('Gateway').fill('')
+  await dialog.getByLabel('Gateway').blur()
+  await expect(tile).toBeDisabled()
+})
+
+test('through the organisation’s gateway, which holds the app its sign-in registered, a service that answers no page connects (D191)', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'closed', name: 'Closed Mail', url: `${MAIL_URL}/closed/mcp`, ready: false }], urls: { gateway: GATEWAY_URL } })
+  await start(page)
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-settings dialog[open]')
+  await dialog.locator('summary', { hasText: 'Gateway' }).click()
+  await expect(dialog.getByLabel('Gateway')).toBeDisabled()
+  await expect(dialog.locator('details.other', { hasText: 'Gateway' })).toContainText('Set by your organization')
+  await dialog.getByRole('button', { name: 'Closed Mail' }).click()
+  await expect(page.locator('.toast')).toContainText('Closed Mail is connected')
+  await expect(page.locator('app-settings dialog[open] .connection')).toContainText('3 actions')
+  await expect.poll(() => tools(page)).toContain('closed_mail_search_emails')
+})
+
+test('a connection kept to one project gives its tools there only', async ({ page }) => {
+  await start(page)
+  await connect(page, `${MAIL_URL}/open/mcp`)
+  await turnOn(page, 'Projects')
+  const project = page.locator('app-project-dialog dialog[open]')
+  await project.locator('input[name="name"]').fill('Bakery')
+  await project.locator('.button.primary').click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
+  const mail = (await openSettings(page, 'Connections')).locator('.connection')
+  await mail.locator('summary').click()
+  const where = mail.getByRole('group', { name: 'Used in' })
+  await expect(where.getByLabel('Every project')).toBeChecked()
+  await where.getByLabel('Every project').uncheck()
+  // Kept to the project the user is in, which can't be unticked while it is the only one.
+  await expect(where.getByLabel('Bakery')).toBeChecked()
+  await expect(where.getByLabel('Bakery')).toBeDisabled()
+  await expect(mail.locator('summary')).toContainText('3 actions · Bakery')
+  await expect.poll(() => tools(page)).toHaveLength(3)
+  await page.keyboard.press('Escape')
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu .project', { hasText: 'Jean' }).click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Jean')
+  await expect.poll(() => tools(page)).toEqual([])
 })
 
 test('a service that can’t register Jean signs in with the client its organisation registered', async ({ page }) => {

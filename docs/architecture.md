@@ -73,6 +73,7 @@ locales/          <lang>.json for the 33 languages, dialogs/<lang>.json, and the
                   browser/ ask/ folders/ sync/ computer/ (D97)
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
 scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, icons.js, screenshots.js, reflexes.js, directory.js
+gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
 test/             node --test suites; fixtures/ (the fake brain, a fake MCP mail service with sign-in, a fake skills index);
                   reflexes/ (the multilingual reflex test set and results.md)
 e2e/              Playwright smoke tests, one per capability, in Chromium and WebKit
@@ -381,11 +382,13 @@ There is no Jean proxy. Fetching an arbitrary address meets the same CORS wall.
 
 A connection is an address and, when the service asks, a key or a sign-in (D87–D89, D95).
 
-- **The directory** (`caps/connections/directory.js`) lists the services Jean knows: tiles for those a browser can reach and sign in to, each with its logo (D159), and a muted list of those it can't yet. Policy merges into it by `id`: an address (a gateway), a `clientId` instead of dynamic registration, `hidden`, `ready`. `npm run directory` checks each entry from an unknown origin without registering anything.
+- **The directory** (`caps/connections/directory.js`) lists the services Jean knows, a tile each with its logo (D159): reached from the browser (`ready`), through the gateway when it relays to the service's host, or not yet, and then disabled, after the others. Policy merges into it by `id`: an address, a `clientId` instead of dynamic registration, `hidden`, `ready`. `npm run directory` checks each entry from an unknown origin without registering anything.
+- **Accounts and projects** (D191): a tile stays once its service is connected, for another account, whose sign-in asks which (`prompt=select_account`) and which takes "Mail 2" until renamed, since tool names start with the connection's. A connection's `projects` keeps it to those projects; without it, it is in every one. The room's project decides which connections give their tools and `<connections>`. Another service is added by its address, behind the + at the top of the panel.
 - **The client** (`mcp.js`) speaks Streamable HTTP: the stateless 2026-07-28 revision first, then the `initialize` handshake and session of 2025-03-26 to 2025-11-25 when a server answers like an earlier one.
 - **Signing in** (`auth.js`) follows MCP authorization from the browser: protected resource and authorization server metadata, dynamic registration as a public client, PKCE with a `resource` indicator, the `iss` check. The redirect comes back to Jean's own address with `?state=`. Keys and tokens are encrypted in `.secrets/`, never backed up, and renewed before they expire.
 - **Tools** are `<service>_<tool>`, made JavaScript identifiers (D106), deferred and listed in `<connections>`; both kinds ask first by default.
-- **The browser's limits:** a service must answer with CORS and expose `Mcp-Session-Id` (2025 sessions) and, ideally, `WWW-Authenticate`. When it doesn't, Jean says it couldn't connect.
+- **The browser's limits:** a service must answer with CORS and expose `Mcp-Session-Id` (2025 sessions) and, ideally, `WWW-Authenticate`. When it doesn't, and no gateway reaches it, Jean says it couldn't connect.
+- **The gateway** (`gateway/gateway.js`, D191) is a fetch handler with nothing to install: `node gateway/serve.js` runs it on Node, and Cloudflare Workers, `deno serve` and Bun take the module as it is. Its configuration, in `GATEWAY_CONFIG` and never in a file beside it (Jean's folder is served as it is), names Jean's origins, the hosts it relays to (a name covers its subdomains), and the apps it holds: issuer, token endpoint, client id and secret, sent in the form or as Basic. `GET <gateway>` answers `{ format: 1, hosts, clients: { <issuer>: <client id> } }`; `<gateway>?url=<address>` relays: only from those origins, only to HTTPS on those hosts (HTTP on this computer), redirects followed only to them, the request's `Accept`, `Content-Type`, `Authorization` and `Mcp-*` headers alone, at most 10 MB in and the answer streamed back with CORS that exposes `Mcp-Session-Id` and `WWW-Authenticate`. A token request to a configured endpoint that names its app gets the secret. A connection made through it is marked `gateway` and every request it makes, discovery, registration, tokens and MCP, takes the gateway's address at that moment (`urls.gateway`).
 
 ## Skills and routines
 

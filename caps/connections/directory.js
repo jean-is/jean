@@ -1,9 +1,9 @@
 // The services Jean already knows (D95): click one, sign in, done. An address here is a provider
-// identity, like a brain's (D33), and policy can replace it (`directory` in policy.json). Only an
-// entry checked from a browser is `ready`: CORS that names Authorization, on the service and its
-// sign-in, and a sign-in open to any app (`npm run directory` checks again). The others are listed
-// as not yet, until their service opens up or an organisation points them at its own gateway.
-// A logo is the brand's own file, in logos/ (D159).
+// identity, like a brain's (D33), and policy can replace it (`directory` in policy.json). Each is
+// reached from the browser, once checked from one (`ready`: CORS that names Authorization, on the
+// service and its sign-in, and a sign-in open to any app; `npm run directory` checks again);
+// otherwise through the gateway, when it relays to the service's host (D191); otherwise not yet,
+// shown but disabled. A logo is the brand's own file, in logos/ (D159).
 // Host-agnostic: no DOM.
 
 /**
@@ -34,13 +34,16 @@ export const DIRECTORY = Object.freeze([
   { id: 'atlassian', name: 'Atlassian', url: 'https://mcp.atlassian.com/v1/mcp', includes: ['Jira', 'Confluence'], logo: 'atlassian.svg' },
 ])
 
+/** @typedef {Known & { via: 'browser' | 'gateway' | null }} Listed  how it is reached now; null: not yet */
+
 /**
  * The directory, with the organisation's entries merged in by id: one can add a service, change
  * an address or a client id, or hide one. What policy names is ready unless it says otherwise.
- * @param {{ directory?: Partial<Known>[] }} [policy]
- * @returns {{ ready: Known[], later: Known[] }}
+ * Those reached come first, from the browser or through the gateway, which relays to `hosts`.
+ * @param {{ directory?: Partial<Known>[] }} [policy] @param {string[]} [hosts]
+ * @returns {Listed[]}
  */
-export function known(policy = {}) {
+export function known(policy = {}, hosts = []) {
   /** @type {Map<string, Known>} */
   const entries = new Map(DIRECTORY.map((entry) => [entry.id, entry]))
   for (const change of policy.directory ?? []) {
@@ -49,8 +52,20 @@ export function known(policy = {}) {
     if (id && (before || change.name)) entries.set(id, /** @type {Known} */ ({ ...before, ready: true, ...change, id }))
   }
   const shown = [...entries.values()].filter((entry) => !entry.hidden)
-  return { ready: shown.filter((entry) => entry.ready && entry.url), later: shown.filter((entry) => !(entry.ready && entry.url)) }
+    .map((entry) => ({ ...entry, via: !entry.url ? null : entry.ready ? 'browser' : covers(hosts, new URL(entry.url)) ? 'gateway' : null }))
+  return /** @type {Listed[]} */ ([...shown.filter((entry) => entry.via), ...shown.filter((entry) => !entry.via)])
 }
 
-/** The entry a connection was made from, by its address. @param {string} url @param {{ directory?: Partial<Known>[] }} [policy] */
-export const knownFor = (url, policy) => known(policy).ready.find((entry) => entry.url === url)
+/**
+ * The entry a connection was made from, by its address, while it is reached.
+ * @param {string} url @param {{ directory?: Partial<Known>[] }} [policy] @param {string[]} [hosts]
+ */
+export const knownFor = (url, policy, hosts) => known(policy, hosts).find((entry) => entry.via && entry.url === url)
+
+/**
+ * Whether the gateway relays to an address: HTTPS, or HTTP on this computer, to a host it names
+ * or one of its subdomains, as the gateway itself checks (gateway/gateway.js).
+ * @param {string[]} hosts @param {URL} url
+ */
+export const covers = (hosts, url) => (url.protocol === 'https:' || (url.protocol === 'http:' && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(url.hostname)))
+  && hosts.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`))

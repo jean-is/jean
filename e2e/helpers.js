@@ -3,6 +3,7 @@ import { expect } from '@playwright/test'
 
 export const BRAIN_URL = 'http://127.0.0.1:4181/v1'
 export const MAIL_URL = 'http://127.0.0.1:4182'
+export const GATEWAY_URL = 'http://127.0.0.1:4183/'
 export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,Feb,1340\nSouth,Feb,1010\nEast,Jan,700\nEast,Feb,815\n'
 
 /** @param {import('@playwright/test').Page} page @param {string} [lang] */
@@ -99,11 +100,12 @@ export async function turnOn(page, name) {
 export async function connect(page, url) {
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  // The services Jean knows come first; an address is one step down.
-  await dialog.locator('details.other summary').click()
+  // The services Jean knows come first; an address is behind the + at the panel's top (D191).
+  await dialog.getByRole('button', { name: 'Another service, by its address' }).click()
+  await expect(dialog.locator('input[name="url"]')).toBeFocused()
   await dialog.locator('input[name="url"]').fill(url)
   await dialog.locator('input[name="name"]').fill('Mail')
-  await dialog.locator('.button.primary').click()
+  await dialog.locator('#connection-add .button.primary').click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   await expect(dialog.locator('.connection')).toContainText('3 actions')
   await page.keyboard.press('Escape')
