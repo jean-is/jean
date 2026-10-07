@@ -300,6 +300,7 @@
   "made.open": "فتح",
   "made.version": "الإصدار {n}",
   "preview.versions": "الإصدارات",
+  "view.unshown": "لا يمكن عرض هذا الملف هنا.",
   "made.kind.document": "مستند Word",
   "made.kind.sheet": "جدول بيانات",
   "made.kind.page": "صفحة ويب",

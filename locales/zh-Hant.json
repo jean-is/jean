@@ -280,6 +280,7 @@
   "made.open": "開啟",
   "made.version": "版本 {n}",
   "preview.versions": "版本",
+  "view.unshown": "此檔案無法在這裡顯示。",
   "made.kind.document": "Word 文件",
   "made.kind.sheet": "試算表",
   "made.kind.page": "網頁",

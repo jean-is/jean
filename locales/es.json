@@ -288,6 +288,7 @@
   "made.open": "Abrir",
   "made.version": "Versión {n}",
   "preview.versions": "Versiones",
+  "view.unshown": "Este archivo no se puede mostrar aquí.",
   "made.kind.document": "Documento de Word",
   "made.kind.sheet": "Hoja de cálculo",
   "made.kind.page": "Página web",

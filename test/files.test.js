@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../core/fs.js'
 import { crc32, readZip, writeZip } from '../core/zip.js'
-import { decodeText, docx, extractPages, extractable, paginate, sheetRows, slideText } from '../caps/files/extract.js'
+import { decodeText, docx, extractPages, extractable, isBinary, paginate, sheetRows, slideText } from '../caps/files/extract.js'
 import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages, weigh } from '../core/files.js'
 import { isPicture } from '../core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
@@ -44,6 +44,15 @@ test('readZip rejects what is not a zip', () => {
 test('decodeText falls back to Windows-1252 and normalises line ends', () => {
   assert.equal(decodeText(enc.encode('a\r\nb\rc')), 'a\nb\nc')
   assert.equal(decodeText(new Uint8Array([0x63, 0x61, 0x66, 0xe9])), 'café')
+})
+
+test('UTF-16 text reads as text, and only a file with a zero byte in its first 8000 is data', () => {
+  const wide = new Uint8Array([0xff, 0xfe, ...[...'été\r\n'].flatMap((char) => [char.charCodeAt(0), 0])])
+  assert.equal(decodeText(wide), 'été\n')
+  assert.equal(decodeText(new Uint8Array([0xfe, 0xff, 0, 0x4a])), 'J')
+  assert.ok(!isBinary(wide) && !isBinary(enc.encode('plain')) && !isBinary(new Uint8Array()))
+  assert.ok(isBinary(new Uint8Array([0x4d, 0x54, 0x68, 0x64, 0, 0, 0, 6])))
+  assert.ok(!isBinary(new Uint8Array([...enc.encode('x'.repeat(8000)), 0])))
 })
 
 test('paginate groups lines into pages of about 4000 characters', () => {

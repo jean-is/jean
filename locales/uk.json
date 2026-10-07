@@ -292,6 +292,7 @@
   "made.open": "Відкрити",
   "made.version": "Версія {n}",
   "preview.versions": "Версії",
+  "view.unshown": "Цей файл не можна показати тут.",
   "made.kind.document": "Документ Word",
   "made.kind.sheet": "Таблиця",
   "made.kind.page": "Вебсторінка",

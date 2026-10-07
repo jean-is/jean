@@ -280,6 +280,7 @@
   "made.open": "열기",
   "made.version": "버전 {n}",
   "preview.versions": "버전",
+  "view.unshown": "이 파일은 여기에서 보여 줄 수 없어요.",
   "made.kind.document": "Word 문서",
   "made.kind.sheet": "스프레드시트",
   "made.kind.page": "웹 페이지",

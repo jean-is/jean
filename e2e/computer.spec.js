@@ -362,7 +362,7 @@ test('npm init, ls and run; a server refused, with the page beside the conversat
   await expect(answer).toContainText('only install, init, ls and run work here')
 })
 
-test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172); any other file as the preview shows it: a PDF drawn, Markdown laid out, the rest as its text (D190)', async ({ page }) => {
+test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172); any other file as the preview shows it: a PDF drawn, Markdown laid out, a MIDI file played (D197), the rest as its text (D190)', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await connectFakeBrain(page)
@@ -404,6 +404,23 @@ test('the project’s workspace in the browser: a page that uses its other files
   }, [pdf('Croissant 2 euros').toString(), 'http://127.0.0.1:4181/site/bakery.html'])
   await go('/workspace/menu.pdf')
   await expect.poll(() => inkOf(pane.locator('.view-pages canvas').first()), { timeout: 15_000 }).toBeGreaterThan(50)
+  // A MIDI file as the sound Jean's own synthesizer makes of it, in the page's own player (D197): a
+  // second of a piano's C and E and a bass drum, then its fading. A file that isn't text, and a
+  // picture no browser can draw, say they can't show.
+  const track = [0, 0x90, 60, 100, 0, 0x99, 36, 100, 0x83, 0x60, 0x80, 60, 0, 0, 0x89, 36, 0, 0, 0x90, 64, 100, 0x83, 0x60, 0x80, 64, 0, 0, 0xff, 0x2f, 0]
+  const song = [...Buffer.from('MThd'), 0, 0, 0, 6, 0, 0, 0, 1, 0x01, 0xe0, ...Buffer.from('MTrk'), 0, 0, 0, track.length, ...track]
+  await page.evaluate(async (song) => {
+    const { app } = await import('/ui/state.js')
+    await app.fs.writeBytes(`${app.projectDir}/workspace/song.mid`, new Uint8Array(song))
+    await app.fs.writeBytes(`${app.projectDir}/workspace/data.bin`, new Uint8Array([0, 1, 2, 3, 255, 0]))
+    await app.fs.writeBytes(`${app.projectDir}/workspace/photo.tiff`, new Uint8Array([1, 2, 3, 4]))
+  }, song)
+  await go('/workspace/song.mid')
+  await expect.poll(() => pane.locator('audio.view-sound').evaluate((sound) => /** @type {HTMLAudioElement} */ (sound).duration), { timeout: 15_000 }).toBeGreaterThan(2)
+  for (const file of ['data.bin', 'photo.tiff']) {
+    await go(`/workspace/${file}`)
+    await expect(pane.locator('.view-note')).toHaveText('This file can’t be shown here.')
+  }
   await go('/workspace/euler.md')
   await expect(pane.locator('.view-sheet').getByRole('heading', { name: 'Euler' })).toBeVisible()
   await expect(pane.locator('.view-sheet app-math')).toBeVisible()
