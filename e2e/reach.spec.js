@@ -69,7 +69,7 @@ test('a service Jean knows connects in one click; those not reached yet are ther
   await expect(back.getByRole('button', { name: /^Mail/ })).toContainText('Another account')
 })
 
-test('a service that lists its tools to anyone but runs them only for someone signed in offers the sign-in once it refuses (D193)', async ({ page }) => {
+test('a service that lists its tools to anyone but runs them only for someone signed in offers the sign-in once it refuses (D193)', async ({ page, browserName }) => {
   await start(page)
   await connectFakeBrain(page)
   // Its tools are listed without a sign-in, so it connects without one, as a service whose sign-in is optional does.
@@ -82,7 +82,12 @@ test('a service that lists its tools to anyone but runs them only for someone si
   await expect(mail).toContainText('This service needs you to sign in')
   await mail.getByRole('button', { name: 'Connect' }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect((await openSettings(page, 'Connections')).locator('.connection')).toContainText('3 actions')
+  // Back where the sign-in started: Settings on Connections, over the conversation, whose opening
+  // doesn't close it. (WebKit runs here like a private window: the conversation is gone on the way.)
+  const back = page.locator('app-settings dialog[open]')
+  await expect(back.locator('.connection')).toContainText('3 actions')
+  await expect(back.locator('.settings-nav [aria-current="page"]')).toContainText('Connections')
+  expect(new URL(page.url()).hash).toMatch(browserName === 'webkit' ? /^#\/settings\/connections$/ : /^#\/c\/[0-9A-Z]{26}\/settings\/connections$/)
   // Signed in, its tools run. (A private window, as WebKit's here, forgets the brain on the way.)
   const read = () => page.evaluate(async () => {
     const tool = (await import('/ui/caps.js')).loaded.value.get('connections')?.tools?.find((one) => one.spec.name === 'mail_search_emails')

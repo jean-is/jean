@@ -63,6 +63,12 @@ async function follow() {
   }
 }
 
+/** Back to an address kept while the page was away (signing in); resolves once it shows. @param {string} hash */
+export function returnTo(hash) {
+  history.replaceState(null, '', location.pathname + hash)
+  return follow()
+}
+
 // One history entry per place, and per opening of Settings, which Back closes; its sections share
 // it. Closed where it opened, Settings goes back to the entry before, so Back won't open it again.
 function write(followed = false) {

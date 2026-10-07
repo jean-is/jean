@@ -14,6 +14,7 @@ import { register, loaded } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { openSettings, placeable, where } from '../../ui/dialogs.js'
+import { returnTo } from '../../ui/router.js'
 import { mcpClient, MCPError } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor, covers } from './directory.js'
@@ -268,8 +269,8 @@ export async function finishSignIn() {
   const saved = JSON.parse(sessionStorage.getItem(PENDING) ?? 'null')
   if (!saved) return false
   sessionStorage.removeItem(PENDING)
-  history.replaceState(null, '', location.pathname + (saved.route ?? ''))
-  dispatchEvent(new HashChangeEvent('hashchange'))
+  // Settings opens once the conversation under it is open again, since opening one closes it.
+  await returnTo(saved.route ?? '')
   app.draft.value = saved.draft ?? ''
   openSettings('connections')
   try {
