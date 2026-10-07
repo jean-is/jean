@@ -1,18 +1,7 @@
 /* The preview (ui/preview.js, D126): a pane of the dock (ui/dock.css, D144), beside the
    conversation on a wide screen, over it on a narrow one. Loaded with it, after ui/style.css, so
-   its colours are the look's. A web page, a picture and a PDF keep the white they were made on.
-   Logical properties only. */
-
-.preview-body { flex: 1; min-block-size: 0; display: flex; flex-direction: column; gap: 1.25rem; padding: 1.25rem; overflow: auto; container-type: inline-size; }
-.preview-frame { flex: 1; margin: -1.25rem; border: 0; background: white; color-scheme: light; }
-.preview-picture { align-self: center; max-inline-size: 100%; block-size: auto; border: 1px solid var(--line); border-radius: 0.6rem; background: white; }
-.preview-pages { display: grid; gap: 1rem; }
-.preview-pages canvas { display: block; inline-size: 100%; block-size: auto; border-radius: 0.3rem; background: white; box-shadow: 0 0.5rem 1.5rem -0.75rem oklch(0 0 0 / 0.5); }
-
-/* A document Jean wrote, on a sheet, where pages can't run code (D183); any other text as it is. */
-.preview-sheet { padding: clamp(1.25rem, 6cqi, 3rem); border: 1px solid var(--line); border-radius: 0.6rem; background: var(--room); }
-.preview-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }
-
+   its colours are the look's; what a file shows as is styled with it (ui/view.css). Logical
+   properties only. */
 
 /* A file Jean made again: which version shows, to pick another (D164). */
 .pane-head .versions { flex: none; inline-size: auto; margin-inline-end: 0.35rem; padding-block: 0.3rem; padding-inline: 0.65rem 0.4rem; border-radius: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; }

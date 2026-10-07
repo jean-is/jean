@@ -1,0 +1,15 @@
+/* What a file shows as (ui/view.js, D126): in the preview's pane and the browser's (D190), each
+   a pane of the dock (ui/dock.css, D144). Loaded with it, after ui/style.css, so its colours are
+   the look's. A web page, a picture and a PDF keep the white they were made on. Logical
+   properties only. */
+
+.view { flex: 1; min-block-size: 0; display: flex; flex-direction: column; gap: 1.25rem; padding: 1.25rem; overflow: auto; container-type: inline-size; }
+.view-frame { flex: 1; margin: -1.25rem; border: 0; background: white; color-scheme: light; }
+.view-picture, .view-film { align-self: center; max-inline-size: 100%; block-size: auto; border: 1px solid var(--line); border-radius: 0.6rem; background: white; }
+.view-sound { align-self: center; inline-size: 100%; }
+.view-pages { display: grid; gap: 1rem; }
+.view-pages canvas { display: block; inline-size: 100%; block-size: auto; border-radius: 0.3rem; background: white; box-shadow: 0 0.5rem 1.5rem -0.75rem oklch(0 0 0 / 0.5); }
+
+/* Markdown, or a document Jean wrote, on a sheet, where pages can't run code (D183); any other text as it is. */
+.view-sheet { padding: clamp(1.25rem, 6cqi, 3rem); border: 1px solid var(--line); border-radius: 0.6rem; background: var(--room); }
+.view-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }

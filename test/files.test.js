@@ -7,7 +7,6 @@ import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, p
 import { isPicture } from '../core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
 import { officePage } from '../caps/files/office.js'
-import { sitePage } from '../caps/folders/site.js'
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 
@@ -97,8 +96,6 @@ test('an Office file is drawn in a page of its own: its viewer’s modules as da
     assert.ok(page.includes(`atob('${Buffer.from(bytes).toString('base64')}')`), 'the file, as data')
     assert.ok(!/https?:|\/\/[a-z]/.test(page.replace(/data:[^'"]+/g, '')), 'nothing from anywhere')
     assert.ok(!page.includes('<1>'), 'its name only as text')
-    const shown = await sitePage(memoryFS({ 'notes/a.docx': bytes }), 'notes/a.docx')
-    assert.ok('html' in shown && /DocxScrollViewer/.test(shown.html), 'a folder’s Office file, in the browser')
   })
 
 test('extractPages reads real Office containers in presentation order', async () => {

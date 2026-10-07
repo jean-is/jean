@@ -126,7 +126,8 @@ test('a page may fill the screen and save files unless Settings says no; it can 
 })
 
 test('the preview is only ever framed without allow-same-origin, and the page never opens in a tab', async () => {
-  const client = await readFile(new URL('../ui/preview.js', import.meta.url), 'utf8')
+  // Where a file shows, in the preview and the browser alike (D190).
+  const client = await readFile(new URL('../ui/view.js', import.meta.url), 'utf8')
   const frames = [...client.matchAll(/<iframe\b[^>]*>/g)].map((match) => match[0])
   assert.equal(frames.length, 1)
   assert.match(frames[0], /\ssandbox="allow-scripts" allow=\$\{allow\} src=\$\{FRAME\}\s/, 'scripts, and nothing else: no same origin, pop-ups, forms or top navigation; what it allows set before its address (D158)')

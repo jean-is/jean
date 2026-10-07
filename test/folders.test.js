@@ -234,21 +234,24 @@ test('a page of the folder comes with what it uses: styles, pictures, fonts, scr
   assert.match(files['site/index.html'], /^\d+:\d+$/)
 })
 
-test('the folder itself: its index.html, or what it holds; a picture, a text as themselves; what isn’t a page, or isn’t there', async () => {
-  const fs = memoryFS({ 'site/index.html': '<h1>Home</h1>', 'notes/a <b>.txt': 'x < y', 'notes/b.png': new Uint8Array([1]), 'notes/c.bin': new Uint8Array([2]), 'notes/sub/d.md': '#', 'notes/.hidden': 'h', '.gitignore': 'build/\n', 'build/x.js': 'x' })
+test('the folder itself: its index.html, or what it holds; any other file as it is, for the browser to show as the preview does; what isn’t there', async () => {
+  const fs = memoryFS({ 'site/index.html': '<h1>Home</h1>', 'notes/a <b>.txt': 'x < y', 'notes/b.png': new Uint8Array([1]), 'notes/c.tex': '$e^{i\\pi} < 0$', 'notes/menu.PDF': '%PDF-1.4', 'notes/sub/d.md': '#', 'notes/.hidden': 'h', '.gitignore': 'build/\n', 'build/x.js': 'x' })
   assert.deepEqual(await sitePage(fs, 'site'), { html: '<h1>Home</h1>', path: 'site/index.html', files: { 'site/index.html': (await sitePage(fs, 'site/')).files['site/index.html'] } })
-  const top = await sitePage(fs, '', 'Work')
-  assert.ok('html' in top && top.path === '')
-  assert.match(top.html, /<h1 dir="auto">Work<\/h1><ul><li><a href="notes\/" dir="auto">notes\/<\/a><\/li><li><a href="site\/" dir="auto">site\/<\/a><\/li><\/ul>/)
+  // A folder: its name and what it holds, for the browser to draw, without what .gitignore names or hidden files.
+  assert.deepEqual(await sitePage(fs, '', 'Work'), { title: 'Work', list: [{ name: 'notes', folder: true }, { name: 'site', folder: true }], path: '', files: {} })
   const notes = await sitePage(fs, 'notes/', 'Work')
-  assert.ok('html' in notes && notes.path === 'notes/')
-  assert.match(notes.html, /<li><a href="\.\.\/">\.\.<\/a><\/li><li><a href="sub\/" dir="auto">sub\/<\/a><\/li><li><a href="a%20%3Cb%3E.txt" dir="auto">a &#60;b&#62;.txt<\/a><\/li>/)
-  assert.ok(!notes.html.includes('hidden'))
+  assert.ok('list' in notes && notes.title === 'notes' && notes.path === 'notes/')
+  assert.deepEqual(notes.list.slice(0, 2), [{ name: 'sub', folder: true }, { name: 'a <b>.txt', folder: false }])
+  assert.ok(!notes.list.some(({ name }) => name.startsWith('.')))
+  // A file that isn't a page goes to the browser as it is, with its type, and comes again when it changes (D190).
   const text = await sitePage(fs, 'notes/a <b>.txt')
-  assert.ok('html' in text && text.html.includes('<pre dir="auto">x &#60; y</pre>'))
+  assert.ok('file' in text && new TextDecoder().decode(text.file) === 'x < y' && text.type === 'text/plain' && text.path === 'notes/a <b>.txt' && 'notes/a <b>.txt' in text.files)
   const picture = await sitePage(fs, 'notes/b.png')
-  assert.ok('html' in picture && picture.html.includes('<img src="data:image/png;base64,AQ==" alt="b.png">'))
-  assert.deepEqual(await sitePage(fs, 'notes/c.bin'), { note: 'unshown' })
+  assert.ok('file' in picture && picture.type === 'image/png' && picture.file[0] === 1)
+  for (const path of ['notes/menu.PDF', 'notes/c.tex']) {
+    const shown = await sitePage(fs, path)
+    assert.ok('file' in shown && shown.path === path && shown.type === 'application/octet-stream', path)
+  }
   assert.deepEqual(await sitePage(fs, 'notes/nope.html'), { note: 'missing' })
   assert.deepEqual(await sitePage(fs, 'nope/'), { note: 'missing' })
   assert.deepEqual(await sitePage(fs, 'notes/.hidden'), { note: 'missing' })

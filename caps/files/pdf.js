@@ -17,7 +17,7 @@ function pdfjs() {
   return library
 }
 
-/** A PDF, opened: its text is read here, its pages drawn by the preview (ui/preview.js, D126). @param {Uint8Array} bytes */
+/** A PDF, opened: its text is read here, its pages drawn where a file shows (ui/view.js, D126). @param {Uint8Array} bytes */
 export async function openPdf(bytes) {
   return (await pdfjs()).getDocument({
     data: bytes.slice(), // the buffer is transferred to the worker

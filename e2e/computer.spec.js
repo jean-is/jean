@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto'
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn, openSettings, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, SALES, pdf, inkOf } from './helpers.js'
 
 const QUESTIONS = {
   en: ['What are the total sales by region?', 'Here are the exact totals'],
@@ -362,7 +362,7 @@ test('npm init, ls and run; a server refused, with the page beside the conversat
   await expect(answer).toContainText('only install, init, ls and run work here')
 })
 
-test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172)', async ({ page }) => {
+test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172); any other file as the preview shows it: a PDF drawn, Markdown laid out, the rest as its text (D190)', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await connectFakeBrain(page)
@@ -388,11 +388,31 @@ test('the project’s workspace in the browser: a page that uses its other files
     await pane.locator('.browser-bar input').press('Enter')
   }
   await go('/workspace')
-  await shown.getByRole('link', { name: 'site/' }).click()
+  await expect(pane.locator('.browser-list h1')).toHaveText('/workspace')
+  await pane.locator('.browser-list').getByRole('button', { name: 'site/' }).click()
   await expect(shown.locator('h1')).toHaveText('Fresh bread today')
   await expect(pane.locator('.browser-bar input')).toHaveValue('/workspace/site/')
   await go('/workspace/nothing.html')
   await expect(pane.locator('.browser-note')).toContainText('nothing.html isn’t in')
+  // A file that isn't a page shows as the preview shows it (D190): a PDF's pages drawn, Markdown
+  // laid out with its formulas, its links opening here, and a file of a kind it doesn't know as its text.
+  await page.evaluate(async ([menu, site]) => {
+    const { app } = await import('/ui/state.js')
+    await app.fs.write(`${app.projectDir}/workspace/menu.pdf`, menu)
+    await app.fs.write(`${app.projectDir}/workspace/euler.md`, `# Euler\n\n$e^{i\\pi} + 1 = 0$, as [the bakery](${site}) says.`)
+    await app.fs.write(`${app.projectDir}/workspace/euler.tex`, '$e^{i\\pi} + 1 = 0$')
+  }, [pdf('Croissant 2 euros').toString(), 'http://127.0.0.1:4181/site/bakery.html'])
+  await go('/workspace/menu.pdf')
+  await expect.poll(() => inkOf(pane.locator('.view-pages canvas').first()), { timeout: 15_000 }).toBeGreaterThan(50)
+  await go('/workspace/euler.md')
+  await expect(pane.locator('.view-sheet').getByRole('heading', { name: 'Euler' })).toBeVisible()
+  await expect(pane.locator('.view-sheet app-math')).toBeVisible()
+  await go('/workspace/euler.tex')
+  await expect(pane.locator('.view-text')).toHaveText('$e^{i\\pi} + 1 = 0$')
+  await expect(pane.locator('.view-pages, .view-sheet')).toHaveCount(0)
+  await pane.getByRole('button', { name: 'Back' }).click()
+  await pane.locator('.view-sheet').getByRole('link', { name: 'the bakery' }).click()
+  await expect(pane.locator('.browser-bar input')).toHaveValue('http://127.0.0.1:4181/site/bakery.html')
   // Its card opens it there, as the workspace has it while the card is still its version (D172)…
   const card = page.locator('.msg-jean').first().getByRole('button', { name: 'Open site/index.html' })
   await card.click()
@@ -411,7 +431,7 @@ test('the project’s workspace in the browser: a page that uses its other files
   await page.reload()
   await page.locator('.views .browser-toggle').click()
   await pane.getByRole('button', { name: /Show .*\/workspace/ }).click()
-  await expect(shown.getByRole('link', { name: 'site/' })).toBeVisible()
+  await expect(pane.locator('.browser-list').getByRole('button', { name: 'site/' })).toBeVisible()
 })
 
 test('Settings › Computer: the computer itself (D176), the internet, its sites, the relay, packages and the workspace', async ({ page }) => {

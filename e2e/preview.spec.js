@@ -5,7 +5,7 @@
 // frame of the same kind (D183), and a file follows its new version; a PDF shows its drawn pages.
 // On a phone it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, SALES, pdf, inkOf } from './helpers.js'
 import { writeZip } from '../core/zip.js'
 
 test('a web page Jean made shows in the preview and runs its script, which can send nothing away', async ({ page }) => {
@@ -22,7 +22,7 @@ test('a web page Jean made shows in the preview and runs its script, which can s
   await answer.getByRole('button', { name: 'Open Bakery.html' }).click()
   const pane = page.locator('app-preview .preview')
   await expect(pane.locator('h2')).toHaveText('Bakery.html')
-  const frame = page.frameLocator('.preview-frame')
+  const frame = page.frameLocator('.view-frame')
   // Its style applies and its script runs, in standards mode; its fetch and its picture never leave.
   await expect(frame.locator('h1')).toHaveCSS('color', 'rgb(180, 70, 20)')
   await expect(frame.locator('#out')).toHaveText('Baked by a script CSS1Compat')
@@ -58,7 +58,7 @@ test('a page fills the screen and saves a file, until Settings says no (D158)', 
   await connectFakeBrain(page)
   await ask(page, 'Make a web page for the bakery')
   await page.locator('.msg-jean').last().getByRole('button', { name: 'Open Bakery.html' }).click()
-  const frame = page.frameLocator('.preview-frame')
+  const frame = page.frameLocator('.view-frame')
   await frame.locator('#big').click()
   await expect(frame.locator('#out')).toHaveText('Full screen')
   // A link to a file the page made, and one its code makes and clicks off the page: Jean saves both.
@@ -91,7 +91,7 @@ test('the sites a page’s code may reach: any by default, each one added with E
   await connectFakeBrain(page)
   await ask(page, 'Make a web page for the bakery')
   await page.locator('.msg-jean').last().getByRole('button', { name: 'Open Bakery.html' }).click()
-  const policy = page.frameLocator('.preview-frame').locator('meta[http-equiv="Content-Security-Policy"]').first()
+  const policy = page.frameLocator('.view-frame').locator('meta[http-equiv="Content-Security-Policy"]').first()
   await expect(policy).toHaveAttribute('content', /connect-src 'none';/)
   const settings = await openSettings(page, 'Approvals')
   await settings.getByRole('switch', { name: 'Send and receive over the internet' }).click()
@@ -179,14 +179,7 @@ test('shared files open in the preview: a table as a workbook, a PDF drawn, a de
   await chips.filter({ hasText: 'menu.pdf' }).click()
   await expect(pane.locator('h2')).toHaveText('menu.pdf')
   // Drawn, not only laid out: some of the page is ink.
-  await expect.poll(() => pane.locator('.preview-pages canvas').first().evaluate((canvas) => {
-    const { width, height } = /** @type {HTMLCanvasElement} */ (canvas)
-    if (!width) return 0
-    const { data } = /** @type {CanvasRenderingContext2D} */ (/** @type {HTMLCanvasElement} */ (canvas).getContext('2d')).getImageData(0, 0, width, height)
-    let ink = 0
-    for (let i = 0; i < data.length; i += 4) if (data[i + 3] && data[i] < 128) ink++
-    return ink
-  }), { timeout: 15_000 }).toBeGreaterThan(50)
+  await expect.poll(() => inkOf(pane.locator('.view-pages canvas').first()), { timeout: 15_000 }).toBeGreaterThan(50)
 
   await chips.filter({ hasText: 'pitch.pptx' }).click()
   await expect(drawn).toContainText('Our bakery', { timeout: 15_000 })
@@ -205,7 +198,7 @@ test('on a phone the preview covers the conversation; Escape gives it back', asy
   await chip.focus()
   await page.keyboard.press('Enter')
   const pane = page.locator('app-preview .preview')
-  await expect(pane.locator('.preview-frame')).toBeVisible()
+  await expect(pane.locator('.view-frame')).toBeVisible()
   // The whole width, or all but the margins of a look whose panes float.
   const box = await pane.boundingBox()
   expect(2 * (box?.x ?? 0) + (box?.width ?? 0)).toBeCloseTo(390, 0)
@@ -226,21 +219,6 @@ test('right to left, the preview opens on the left of the conversation', async (
   const box = await page.locator('app-preview .preview').boundingBox()
   expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual((await page.locator('main').boundingBox())?.x ?? 0)
 })
-
-/** A one-page PDF in Helvetica, one of the standard fonts. @param {string} text */
-function pdf(text) {
-  const stream = `BT /F1 24 Tf 20 90 Td (${text}) Tj ET`
-  return Buffer.from(`%PDF-1.4
-1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj
-2 0 obj <</Type /Pages /Kids [3 0 R] /Count 1>> endobj
-3 0 obj <</Type /Page /Parent 2 0 R /MediaBox [0 0 300 200] /Contents 4 0 R /Resources <</Font <</F1 5 0 R>>>>>> endobj
-4 0 obj <</Length ${stream.length}>> stream
-${stream}
-endstream endobj
-5 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>> endobj
-trailer <</Root 1 0 R>>
-%%EOF`)
-}
 
 /** A deck of slides with a title and a line each, as PowerPoint keeps them. @param {string[]} titles */
 async function deck(titles) {

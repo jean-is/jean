@@ -110,3 +110,28 @@ export async function connect(page, url) {
   await expect(dialog.locator('.connection')).toContainText('3 actions')
   await page.keyboard.press('Escape')
 }
+
+/** A one-page PDF in Helvetica, one of the standard fonts. @param {string} text */
+export function pdf(text) {
+  const stream = `BT /F1 24 Tf 20 90 Td (${text}) Tj ET`
+  return Buffer.from(`%PDF-1.4
+1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj
+2 0 obj <</Type /Pages /Kids [3 0 R] /Count 1>> endobj
+3 0 obj <</Type /Page /Parent 2 0 R /MediaBox [0 0 300 200] /Contents 4 0 R /Resources <</Font <</F1 5 0 R>>>>>> endobj
+4 0 obj <</Length ${stream.length}>> stream
+${stream}
+endstream endobj
+5 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>> endobj
+trailer <</Root 1 0 R>>
+%%EOF`)
+}
+
+/** How much of a page drawn on a canvas is ink: drawn, not only laid out. @param {import('@playwright/test').Locator} canvas */
+export const inkOf = (canvas) => canvas.evaluate((element) => {
+  const { width, height } = /** @type {HTMLCanvasElement} */ (element)
+  if (!width) return 0
+  const { data } = /** @type {CanvasRenderingContext2D} */ (/** @type {HTMLCanvasElement} */ (element).getContext('2d')).getImageData(0, 0, width, height)
+  let ink = 0
+  for (let i = 0; i < data.length; i += 4) if (data[i + 3] && data[i] < 128) ink++
+  return ink
+})

@@ -21,7 +21,10 @@
 // comes again when a file it was made of changes, whoever changed it. Without a folder, the
 // project's workspace shows the same way, at "/workspace/<path>", as the computer names it (D167).
 // A web page's card under an answer opens it here too: the workspace's page while it is still
-// that version, otherwise the card's version on its own, under its name (D172).
+// that version, otherwise the card's version on its own, under its name (D172). A file there that
+// isn't a page shows as the preview shows it, by the same code (ui/view.js, D190): a PDF's pages,
+// Markdown laid out, an Office file or a CSV as Office draws it, any other file as its text. A
+// folder's list is drawn here, not in a page's frame, which some panes that hold Jean refuse.
 import { html, svg, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, computed, effect } from '@preact/signals-core'
@@ -48,6 +51,8 @@ const MADE = 'made:'
 const isLocal = (/** @type {string} */ url) => url.startsWith(FOLDER) || url.startsWith(WORKSPACE) || url.startsWith(MADE)
 const isWorkspace = (/** @type {string} */ url) => url.startsWith(WORKSPACE)
 const isMade = (/** @type {string} */ url) => url.startsWith(MADE)
+/** Where the paths of a local address start: the workspace, or the folder by its name. @param {string} url */
+const topOf = (url) => (isWorkspace(url) ? WORKSPACE : `${FOLDER}${url.slice(FOLDER.length).split('/')[0]}/`)
 /** The names of the pages opened from their cards, by their files. @type {Map<string, string>} */
 const named = new Map()
 /** What the address field shows of a local address. @param {string} url */
@@ -86,8 +91,13 @@ const moves = signal(0)
 const trail = new Trail()
 /** Sites seen showing in the frame, this visit: a page of theirs went on by itself. */
 const shows = new Set()
-/** The folder's page on show: its frame, the path its links start from, the files it was made of, by size and date; or why it can't show. */
-const local = signal(/** @type {{ frame: HTMLIFrameElement, html: string, path: string, files: Record<string, string> } | { note: string } | null} */ (null))
+/** The folder's page on show: its frame, the view of a file that isn't a page and how to let go of it, or a folder's list; the path its links start from, the files it was made of, by size and date; or why it can't show. */
+const local = signal(/** @type {({ frame: HTMLIFrameElement, html: string } | { view: unknown, release: () => void } | { title: string, list: { name: string, folder: boolean }[] }) & { path: string, files: Record<string, string> } | { note: string } | null} */ (null))
+// A file's view lets go of what it holds (a picture's address, a PDF) once it no longer shows.
+effect(() => {
+  const shown = local.value
+  return () => { if (shown && 'release' in shown) shown.release() }
+})
 /** Folders' module, once it is on: the conversation's folder, and its pages. @type {typeof import('../folders/folders.js') | null} */
 let folders = null
 const foldersOn = async () => (unlocked.peek().has('folders') ? (folders = await import('../folders/folders.js')) : null)
@@ -240,10 +250,19 @@ async function folderTo(url, click = false) {
   const shown = (isMade(url) ? await madePage(url.slice(MADE.length)).catch(warn)
     : isWorkspace(url) ? !folders?.folderOf(app.current.peek()) && await (await computerOn())?.workspacePage(path.join('/')).catch(warn)
     : await (await foldersOn())?.folderPage(address, click).catch(warn)) || { note: 'elsewhere' }
+  /** @type {(() => void)[]} */
+  const holds = []
+  const release = () => { for (const run of holds.splice(0)) run() }
+  const { allows, sites } = rights.peek()
+  const view = 'file' in shown && at === asked ? await import('../../ui/view.js')
+    .then(({ viewOf }) => viewOf({ name: shown.path.split('/').at(-1) ?? '', bytes: shown.file, type: shown.type }, holds, { allows, sites, policy: policy.peek(), allow: allow.peek() })).catch(warn) : null
+  if (at !== asked || !view) release()
   if (at !== asked) return
   loading.value = false
   local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), allow.peek(), address) }
-    : { note: isMade(url) ? t('files.missing', { name: address }) : t(`browser.${shown.note}`, { folder, page: path.join('/') }) }
+    : 'file' in shown && view ? { view, release, path: shown.path, files: shown.files }
+    : 'list' in shown ? shown
+    : { note: isMade(url) ? t('files.missing', { name: address }) : t(`browser.${'note' in shown ? shown.note : 'unshown'}`, { folder, page: path.join('/') }) }
 }
 
 /**
@@ -276,12 +295,15 @@ function pageFrame(source, rules, allows, title) {
   element.src = PAGE
   return element
 }
-// What a page may do changed in Settings: the page on show comes again under it.
+// What a page may do changed in Settings: the page on show comes again under it, and a file too
+// (an Office file shows its text when its code may not run).
 effect(() => {
   const rules = policy.value
   const allows = allow.value
   const shown = local.peek()
+  const url = page.peek()?.url
   if (shown && 'html' in shown) local.value = { ...shown, frame: pageFrame(shown.html, rules, allows, shown.frame.title) }
+  else if (shown && 'view' in shown && url) queueMicrotask(() => frameTo(url))
 })
 
 // A link followed in a page of the folder or the workspace: another of its pages, or a site; or a
@@ -289,7 +311,7 @@ effect(() => {
 addEventListener('message', ({ source, data }) => {
   const shown = local.peek()
   const url = page.peek()?.url ?? ''
-  const top = isWorkspace(url) ? WORKSPACE : `${FOLDER}${url.slice(FOLDER.length).split('/')[0]}/`
+  const top = topOf(url)
   if (!shown || !('frame' in shown) || source !== shown.frame.contentWindow) return
   if (typeof data?.open !== 'string') return savePage(data, rights.peek().allows.downloads)
   const base = new URL(shown.path.split('/').map(encodeURIComponent).join('/'), 'https://folder.invalid/')
@@ -468,7 +490,8 @@ class Browser extends Element {
         ${!shown ? html`<div class="browser-note"><p>${t('browser.empty')}</p>
           ${folder ? html`<div class="row"><button class="button" @click=${() => visit(`${FOLDER}${folder.name}/`, { click: true })}>${icons.folder} ${t('browser.folder', { folder: folder.name })}</button></div>`
           : stocked.value && unlocked.value.has('computer') ? html`<div class="row"><button class="button" @click=${() => visit(WORKSPACE, { click: true })}>${icons.folder} ${t('browser.folder', { folder: WORKSPACE_NAME })}</button></div>` : nothing}</div>`
-        : shown.own ? own(shown.url) : here ? ('frame' in here ? here.frame : html`<div class="browser-note"><p>${here.note}</p></div>`) : nothing}
+        : shown.own ? own(shown.url) : here ? ('frame' in here ? here.frame : 'view' in here ? html`<div class="view">${here.view}</div>`
+          : 'list' in here ? listing(here, shown.url) : html`<div class="browser-note"><p>${here.note}</p></div>`) : nothing}
         ${shown && !shown.own && !isLocal(shown.url) && unsure.value ? html`<div class="browser-strip" role="status">
           <p>${t('browser.blank')}</p>
           <button class="button" @click=${() => ownTab(shown.url)}>${GLYPHS.tab} ${t('browser.tab')}</button>
@@ -482,6 +505,21 @@ class Browser extends Element {
     // Opened empty, it takes an address.
     if (dock.place(this, open.value) && !page.value) /** @type {HTMLInputElement | null} */ (this.querySelector('.browser-bar input'))?.focus()
   }
+}
+
+/**
+ * What a folder holds, drawn by Jean: each folder and file leads to itself, ".." to the folder
+ * around it. @param {{ title: string, list: { name: string, folder: boolean }[], path: string }} folder @param {string} url
+ */
+function listing({ title, list, path }, url) {
+  const go = (/** @type {string} */ to) => visit(`${topOf(url)}${to}`, { click: true })
+  return html`<nav class="browser-list" aria-label=${title}>
+    <h1><bdi>${title}</bdi></h1>
+    <ul>
+      ${path ? html`<li><button class="link-button" @click=${() => go(path.replace(/[^/]+\/$/, ''))}>..</button></li>` : nothing}
+      ${list.map(({ name, folder }) => html`<li><button class="link-button" dir="auto" @click=${() => go(`${path}${name}${folder ? '/' : ''}`)}>${name}${folder ? '/' : ''}</button></li>`)}
+    </ul>
+  </nav>`
 }
 
 /** The host document is in: the address waiting for it goes in. @param {Event} event */
@@ -514,10 +552,11 @@ function own(url) {
 
 // ─── Links in answers ────────────────────────────────────────────────────────
 
-// A web link in the conversation opens beside it; with a modifier key, where the browser puts it.
+// A web link in the conversation, or in a file the browser shows, opens beside it; with a modifier
+// key, where the browser puts it.
 document.addEventListener('click', (event) => {
   // window.Element: Element here is the base of Jean's own elements.
-  const link = event.target instanceof window.Element ? event.target.closest('app-conversation a[href]') : null
+  const link = event.target instanceof window.Element ? event.target.closest('app-conversation a[href], app-browser .view a[href]') : null
   if (!(link instanceof HTMLAnchorElement) || event.defaultPrevented || event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
   const { href } = link
   if (!/^https?:/i.test(href)) return

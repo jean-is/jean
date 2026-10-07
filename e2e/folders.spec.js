@@ -319,8 +319,15 @@ test.describe('in place', () => {
     await expect(shown.locator('h1')).toHaveText('Menu')
     await expect(pane.locator('.browser-bar input')).toHaveValue('Site/menu.html')
     await shown.getByRole('link', { name: 'Notes' }).click()
-    await shown.getByRole('link', { name: 'todo.txt' }).click()
-    await expect(shown.locator('pre')).toHaveText('Order flour')
+    // A folder's list is drawn by Jean, its entries leading on, ".." back up, to the index.html there (D190).
+    await expect(pane.locator('.browser-bar input')).toHaveValue('Site/notes/')
+    await pane.locator('.browser-list').getByRole('button', { name: '..' }).click()
+    await expect(shown.locator('h1')).toHaveText('The bakery')
+    await expect(pane.locator('.browser-bar input')).toHaveValue('Site/')
+    await pane.getByRole('button', { name: 'Back' }).click()
+    await pane.locator('.browser-list').getByRole('button', { name: 'todo.txt' }).click()
+    // A file that isn't a page shows as the preview shows it (D190).
+    await expect(pane.locator('.view-text')).toHaveText('Order flour')
     await go(page, 'Site/nothing.html')
     await expect(pane.locator('.browser-note')).toContainText('nothing.html isn’t in Site.')
     for (const _ of [1, 2, 3, 4]) await pane.getByRole('button', { name: 'Back' }).click()

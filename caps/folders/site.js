@@ -5,7 +5,8 @@
 // as data: addresses, modules through an import map of data: addresses (their imports first made
 // absolute), and the data files its scripts name, which its fetch() then finds. Never a hidden file
 // (a name starting with a dot) or one outside the folder. A folder shows its index.html, or what it
-// holds; a picture, a sound, a film or a text as itself, an Office file drawn (D183). No DOM: node tests run it.
+// holds, which the browser draws itself; any other file goes to the browser as it is, which shows it
+// as the preview does (D190). No DOM: node tests run it.
 import { walkFolder } from './work.js'
 
 /** The made-up site a page's addresses are resolved in, never fetched. */
@@ -26,13 +27,13 @@ const decoder = new TextDecoder()
 /** @typedef {import('../../core/types.js').FS} FS */
 /** @typedef {{ fs: FS, page: string, files: Record<string, string>, modules: Map<string, string>, data: Record<string, string> }} Context */
 /**
- * What a folder's address shows: a page put together, with the path its links are resolved from and
- * the files it was made of, by size and date; or why it can't show.
- * @typedef {{ html: string, path: string, files: Record<string, string> } | { note: 'missing' | 'unshown' }} Shown
+ * What a folder's address shows: a page put together; a file that isn't a page, with its media type,
+ * as the preview shows it; or a folder's name and what it holds (D190). With the path its links are
+ * resolved from and the files it was made of, by size and date. Or why it can't show (a file too big).
+ * @typedef {({ html: string } | { file: Uint8Array, type: string } | { title: string, list: { name: string, folder: boolean }[] }) & { path: string, files: Record<string, string> } | { note: 'missing' | 'unshown' }} Shown
  */
 
 const typeOf = (/** @type {string} */ path) => TYPES[/\.([a-z0-9]+)$/i.exec(path)?.[1].toLowerCase() ?? ''] ?? 'application/octet-stream'
-const escape = (/** @type {string} */ text) => text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`)
 const address = (/** @type {string} */ path) => SITE + path.split('/').map(encodeURIComponent).join('/')
 
 /** @param {Uint8Array} bytes */
@@ -184,13 +185,9 @@ async function page(ctx, html, from) {
   return head.join('') + body
 }
 
-/** A page of a few words of Jean's, for what isn't a page: a picture, a film, a text, a folder. @param {string} title @param {string} inner */
-const plain = (title, inner) => `<meta charset="utf-8"><title>${escape(title)}</title>
-<style>body { margin: 0; padding: 1.5rem; font: 1rem/1.5 system-ui, sans-serif; } img, video { display: block; max-inline-size: 100%; margin: auto; } pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; } li { margin-block: 0.25rem; }</style>${inner}`
-
 /**
- * What a path of the folder shows (D156): a page put together, a picture, a sound, a film or a text
- * as itself, an Office file drawn (D183), a folder as its index.html or the list of what it holds.
+ * What a path of the folder shows (D156): a page put together, a folder as its index.html or the
+ * list of what it holds, any other file as it is, for the browser to show as the preview does (D190).
  * @param {FS} fs @param {string} path @param {string} [name] the folder's, for the list of its top
  * @returns {Promise<Shown>}
  */
@@ -204,23 +201,17 @@ export async function sitePage(fs, path, name = '') {
     const at = dir ? `${dir}/` : ''
     if (await fs.stat?.(`${at}index.html`).catch(() => null)) return sitePage(fs, `${at}index.html`, name)
     const { entries } = await walkFolder(fs, dir, 1)
-    const items = entries.filter((entry) => !entry.path.split('/').at(-1)?.startsWith('.')).map((entry) => {
-      const label = `${entry.path.split('/').at(-1)}${entry.kind === 'directory' ? '/' : ''}`
-      return `<li><a href="${escape(label.split('/').map(encodeURIComponent).join('/'))}" dir="auto">${escape(label)}</a></li>`
+    const list = entries.flatMap((entry) => {
+      const last = entry.path.split('/').at(-1) ?? ''
+      return last.startsWith('.') ? [] : [{ name: last, folder: entry.kind === 'directory' }]
     })
-    return { html: plain(dir || name, `<h1 dir="auto">${escape(dir.split('/').at(-1) || name)}</h1><ul>${dir ? '<li><a href="../">..</a></li>' : ''}${items.join('')}</ul>`), path: at, files: {} }
+    return { title: dir.split('/').at(-1) || name, list, path: at, files: {} }
   }
   /** @type {Context} */
   const ctx = { fs, page: clean, files: {}, modules: new Map(), data: {} }
   const bytes = await bytesOf(ctx, clean)
   const type = typeOf(clean)
-  const file = clean.split('/').at(-1) ?? clean
   if (!bytes) return { note: 'unshown' }
   if (type === 'text/html') return { html: await page(ctx, decoder.decode(bytes), clean), path: clean, files: ctx.files }
-  if (/\.(docx|xlsx|pptx)$/i.test(clean)) return { html: await (await import('../files/office.js')).officePage(clean.slice(-4).toLowerCase(), bytes, file), path: clean, files: ctx.files }
-  const media = /^(image|video|audio)\//.exec(type)?.[1]
-  const inner = media === 'image' ? `<img src="${dataURL(type, bytes)}" alt="${escape(file)}">`
-    : media ? `<${media} src="${dataURL(type, bytes)}" controls></${media}>`
-    : /^text\/|json|xml/.test(type) ? `<pre dir="auto">${escape(decoder.decode(bytes))}</pre>` : null
-  return inner === null ? { note: 'unshown' } : { html: plain(file, inner), path: clean, files: ctx.files }
+  return { file: bytes, type, path: clean, files: ctx.files }
 }

@@ -1,27 +1,24 @@
 // The preview (D126): a file Jean made or the user shared, seen beside the conversation, or over
 // it on a narrow screen, in a pane of the dock (D144), with a button to save it. Each kind shows
-// as what it is: a picture or a drawing as a picture; a web page in a frame of its own
-// (preview.html), doing what Settings lets it (D143), by default running its scripts without any
-// network; a PDF's pages drawn by pdf.js; an Office file or a CSV as Office draws it, in a frame of
-// the same kind (D183), else its text. A file being changed shows its new version as it comes.
-// Loaded the first time a file is opened, with its style sheet.
+// as what it is (ui/view.js, which the browser shares): a picture as a picture; a web page in a
+// frame of its own, doing what Settings lets it (D143); a PDF's pages drawn; an Office file or a
+// CSV as Office draws it (D183); Markdown laid out; else its text. A file being changed shows its
+// new version as it comes. Loaded the first time a file is opened, with its style sheet.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import * as dock from './dock.js'
 import { app, effective, notify } from './state.js'
 import { save, savePage } from './save.js'
-import { markdown } from './markdown.js'
 import { icons } from './icons.js'
 import { fileMeta, fileText, splitPages } from '../core/files.js'
 import { callsIn, filesMade, versionsOf } from '../core/events.js'
 import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
+import { viewOf } from './view.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
-
-const FRAME = new URL('../preview.html', import.meta.url).href
 
 await styleSheet('ui/preview.css')
 
@@ -64,7 +61,7 @@ class Preview extends Element {
         <button class="icon-button" title=${label} aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
         <button class="icon-button" title=${t('action.close')} aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
-      <div class="preview-body">${view.value}</div>
+      <div class="view">${view.value}</div>
     </aside>`
   }
 
@@ -141,80 +138,11 @@ async function show(file, holds, rules, allows) {
     notify(t('files.missing', { name: file.name }))
     return null
   }
-  const ext = /\.([a-z0-9]+)$/i.exec(file.name)?.[1].toLowerCase() ?? ''
-  if (file.mimeType?.startsWith('image/')) {
-    const url = URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType }))
-    holds.push(() => URL.revokeObjectURL(url))
-    return html`<img class="preview-picture" src=${url} alt=${file.name}>`
-  }
-  if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), file.name, rules, allows)
-  if (ext === 'pdf') {
-    try {
-      return await pdf(bytes, holds)
-    } catch (error) {
-      console.warn('Preview', error)
-    }
-  }
-  // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183).
+  // Its text is what Jean wrote for a file it made, what was read from a shared one; a Word document Jean wrote is Markdown.
+  const prose = /\.docx$/i.test(file.name) && (await fileMeta(app.fs, dir, file.uri))?.author === 'jean'
+  const text = async () => splitPages((await fileText(app.fs, dir, file.uri)) ?? '').join('\n')
   const { allows: can, sites } = rights.peek()
-  const csv = /^(csv|tsv)$/.test(ext) && can.scripts ? await (await import('../caps/made/formats.js')).makeFile(file.name.replace(/\.[ct]sv$/i, '.xlsx'), new TextDecoder().decode(bytes)).catch(() => null) : null
-  if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && can.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, file.name), file.name, pagePolicy(can, sites, true), allows)
-  // Everything else shows from its text: what Jean wrote for a file it made, what was read from a shared one.
-  const pages = splitPages((await fileText(app.fs, dir, file.uri)) ?? '')
-  const made = (await fileMeta(app.fs, dir, file.uri))?.author === 'jean'
-  if (/^(md|markdown)$/.test(ext) || (made && ext === 'docx')) return html`<article class="preview-sheet prose" dir="auto">${markdown(pages.join('\n'))}</article>`
-  return html`<pre class="preview-text" dir="auto">${pages.join('\n')}</pre>`
-}
-
-/**
- * A web page, in a frame of its own: an opaque origin (scripts, never with allow-same-origin)
- * whose relay writes the policy ahead of the page. Both go in once, when the frame is ready. What
- * it allows is set before its address, since a frame takes it as it loads (D158).
- * @param {string} source @param {string} name @param {string} policy @param {string} allow
- */
-function frame(source, name, policy, allow) {
-  const send = { once: true, handleEvent: (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage({ page: source, policy }, '*') }
-  return html`<iframe class="preview-frame" sandbox="allow-scripts" allow=${allow} src=${FRAME} title=${name} @load=${send}></iframe>`
-}
-
-/**
- * A PDF's pages, drawn when they come into view, at the size they show, and let go when they
- * are far from it. Falls back to its text when pdf.js can't open it.
- * @param {Uint8Array} bytes @param {(() => void)[]} holds
- */
-async function pdf(bytes, holds) {
-  const { openPdf } = await import('../caps/files/pdf.js')
-  const task = await openPdf(bytes)
-  holds.push(() => task.destroy())
-  const doc = await task.promise
-  const pages = Object.assign(document.createElement('div'), { className: 'preview-pages' })
-  /** @type {WeakMap<object, (seen: boolean) => void>} */
-  const seen = new WeakMap()
-  const observer = new IntersectionObserver((entries) => {
-    for (const { target, isIntersecting } of entries) seen.get(target)?.(isIntersecting)
-  }, { rootMargin: '100% 0px' })
-  holds.push(() => observer.disconnect())
-  // Page by page, so the first shows at once; a PDF let go stops this (getPage fails).
-  ;(async () => {
-    for (let n = 1; n <= doc.numPages; n++) {
-      const page = await doc.getPage(n)
-      const { width, height } = page.getViewport({ scale: 1 })
-      const canvas = document.createElement('canvas')
-      canvas.style.aspectRatio = `${width} / ${height}`
-      /** @type {any} */
-      let drawing = null
-      seen.set(canvas, (near) => {
-        drawing?.cancel()
-        const viewport = page.getViewport({ scale: near ? (canvas.clientWidth * devicePixelRatio) / width : 0 })
-        Object.assign(canvas, { width: Math.floor(viewport.width), height: Math.floor(viewport.height) })
-        drawing = canvas.width ? page.render({ canvas, viewport }) : null
-        drawing?.promise.catch(() => {})
-      })
-      pages.append(canvas)
-      observer.observe(canvas)
-    }
-  })().catch(() => {})
-  return pages
+  return viewOf({ name: file.name, bytes, type: file.mimeType, text, prose }, holds, { allows: can, sites, policy: rules, allow: allows })
 }
 
 define('app-preview', Preview)
