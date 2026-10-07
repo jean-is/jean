@@ -27,6 +27,7 @@
   "dock.resize": "Resize",
   "speech.noVoice": "No voice on this device can read {language}. Your system’s settings can add one.",
   "toast.copied": "Copied",
+  "toast.copiedPictures": "Copied. If its pictures don’t paste, copy each one with its own Copy.",
   "conversation.untitled": "New task",
   "history.title": "Tasks",
   "history.empty": "Your tasks will appear here.",

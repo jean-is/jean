@@ -144,11 +144,11 @@ test('a skill from elsewhere keeps where it came from and its digest', async () 
 })
 
 test('a skill declares the kinds of block it writes, which are drawn as widgets, and keeps them when saved (D196)', async () => {
-  const declared = '---\nname: charts\ndescription: Draw charts.\nmetadata:\n  blocks: "ECharts, vega-lite  ../x"\n---\n# Charts\n'
-  assert.deepEqual(parseSkill(declared, 'skills/charts/SKILL.md')?.blocks, ['echarts', 'vega-lite'], 'lower case, names only')
+  const declared = '---\nname: chart\ndescription: Draw charts.\nmetadata:\n  blocks: "ECharts, vega-lite  ../x"\n---\n# Chart\n'
+  assert.deepEqual(parseSkill(declared, 'skills/chart/SKILL.md')?.blocks, ['echarts', 'vega-lite'], 'lower case, names only')
   assert.equal(parseSkill(STEPS, 'skills/weekly-sales-report/SKILL.md')?.blocks, undefined, 'most skills draw nothing')
   const fs = memoryFS()
-  const path = await saveSkill(fs, '', { name: 'charts', description: 'Draw charts.', body: '# Charts', by: 'device', blocks: ['echarts'] })
+  const path = await saveSkill(fs, '', { name: 'chart', description: 'Draw charts.', body: '# Chart', by: 'device', blocks: ['echarts'] })
   assert.match(/** @type {string} */ (await fs.read(path)), /\n {2}blocks: echarts\n/)
   assert.deepEqual(parseSkill(/** @type {string} */ (await fs.read(path)), path)?.blocks, ['echarts'])
   // A skill from elsewhere says so in its SKILL.md, which is read before it is added.

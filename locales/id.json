@@ -27,6 +27,7 @@
   "dock.resize": "Ubah ukuran",
   "speech.noVoice": "Tidak ada suara di perangkat ini yang bisa membaca bahasa {language}. Anda bisa menambahkannya di pengaturan sistem.",
   "toast.copied": "Disalin",
+  "toast.copiedPictures": "Disalin. Jika gambarnya tidak ikut tertempel, salin masing-masing dengan tombol “Salin” miliknya.",
   "conversation.untitled": "Tugas baru",
   "history.title": "Tugas",
   "history.empty": "Tugas Anda akan muncul di sini.",

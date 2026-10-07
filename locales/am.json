@@ -27,6 +27,7 @@
   "dock.resize": "መጠን ቀይር",
   "speech.noVoice": "በዚህ መሣሪያ ላይ {language} ማንበብ የሚችል ድምፅ የለም። በስርዓትዎ ቅንብሮች ውስጥ ማከል ይችላሉ።",
   "toast.copied": "ተቀድቷል",
+  "toast.copiedPictures": "ተቀድቷል። ምስሎቹ ካልተለጠፉ፣ እያንዳንዱን በራሱ «ይቅዱ» ይቅዱት።",
   "conversation.untitled": "አዲስ ተግባር",
   "history.title": "ተግባራት",
   "history.empty": "ተግባራትዎ እዚህ ይታያሉ።",

@@ -27,6 +27,7 @@
   "dock.resize": "Ridimensiona",
   "speech.noVoice": "Nessuna voce su questo dispositivo sa leggere questa lingua ({language}). Puoi aggiungerne una nelle impostazioni del sistema.",
   "toast.copied": "Copiato",
+  "toast.copiedPictures": "Copiato. Se le immagini non si incollano, copia ciascuna con il suo «Copia».",
   "conversation.untitled": "Nuova attività",
   "history.title": "Attività",
   "history.empty": "Le tue attività appariranno qui.",

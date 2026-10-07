@@ -135,3 +135,20 @@ export const inkOf = (canvas) => canvas.evaluate((element) => {
   for (let i = 0; i < data.length; i += 4) if (data[i + 3] && data[i] < 128) ink++
   return ink
 })
+
+/**
+ * What the next Copy puts on the clipboard (D196), caught on its way there: each kind it holds,
+ * text as it is and anything else by its first four bytes. Call before the click, await after.
+ * @param {import('@playwright/test').Page} page
+ */
+export async function nextCopy(page) {
+  await page.evaluate(() => {
+    /** @type {any} */ (window).copied = new Promise((resolve) => {
+      navigator.clipboard.write = async ([item]) => resolve(Object.fromEntries(await Promise.all(item.types.map(async (type) => {
+        const blob = await item.getType(type)
+        return [type, type.startsWith('text/') ? await blob.text() : [...new Uint8Array(await blob.slice(0, 4).arrayBuffer())]]
+      }))))
+    })
+  })
+  return { read: () => page.evaluate(() => /** @type {any} */ (window).copied) }
+}

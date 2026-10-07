@@ -27,6 +27,7 @@
   "dock.resize": "Zmień rozmiar",
   "speech.noVoice": "Żaden głos na tym urządzeniu nie czyta w tym języku ({language}). Możesz dodać głos w ustawieniach systemu.",
   "toast.copied": "Skopiowano",
+  "toast.copiedPictures": "Skopiowano. Jeśli obrazy się nie wkleją, skopiuj każdy jego własnym przyciskiem „Kopiuj”.",
   "conversation.untitled": "Nowe zadanie",
   "history.title": "Zadania",
   "history.empty": "Tutaj pojawią się twoje zadania.",

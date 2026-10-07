@@ -27,6 +27,7 @@
   "dock.resize": "Đổi kích thước",
   "speech.noVoice": "Không có giọng nào trên thiết bị này đọc được {language}. Bạn có thể thêm giọng trong phần cài đặt hệ thống.",
   "toast.copied": "Đã sao chép",
+  "toast.copiedPictures": "Đã sao chép. Nếu hình ảnh không được dán, hãy sao chép từng hình bằng nút “Sao chép” riêng của nó.",
   "conversation.untitled": "Nhiệm vụ mới",
   "history.title": "Các nhiệm vụ",
   "history.empty": "Các nhiệm vụ của bạn sẽ hiện ở đây.",

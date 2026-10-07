@@ -27,6 +27,7 @@
   "dock.resize": "調整大小",
   "speech.noVoice": "這台裝置上沒有能朗讀{language}的聲音。你可以在系統設定中新增。",
   "toast.copied": "已複製",
+  "toast.copiedPictures": "已複製。如果圖片沒有貼上，請用各自的「複製」分別複製。",
   "conversation.untitled": "新任務",
   "history.title": "任務",
   "history.empty": "你的任務會顯示在這裡。",

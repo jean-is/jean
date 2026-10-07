@@ -28,7 +28,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] `ask_user`: only what is needed, all at once, with an answer recommended
 - [ ] `write` for a document, with Markdown and CSV as the tool asks; the HTML pages they make, with a chart library from the internet
 - [ ] `browse` only when a page helps
-- [ ] Charts and Music scores (D196): do brains read the skill and write strict JSON and ABC whose bars add up, in the user's language? The device's brain especially
+- [ ] Chart and Music score (D196): do brains read the skill and write strict JSON and ABC whose bars add up, in the user's language? The device's brain especially
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file
 - [ ] bash: how often a brain reaches for it, and whether its commands suit a non-technical user's files
 
@@ -54,6 +54,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Formulas (D185) on Windows, Linux and Android, whose math fonts differ or are missing, and with a screen reader
 - [ ] Charts and scores (D196) on a weak laptop (ECharts' first load, a score of a few hundred bars), heard on real speakers, in Firefox and real Safari, and with a screen reader
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
+- [ ] An answer with charts and scores pasted into Word, Google Docs, Pages and Outlook: do its `data:` pictures come along, as they don't in Notion? (D196)
 
 **Voice**
 - [ ] Whisper dictation and Chrome's on-device recognition, Arc included (fixed by D61 and D110, to check again)

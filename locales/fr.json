@@ -27,6 +27,7 @@
   "dock.resize": "Redimensionner",
   "speech.noVoice": "Aucune voix de cet appareil ne sait lire cette langue ({language}). Vous pouvez en ajouter une dans les réglages de votre système.",
   "toast.copied": "Copié",
+  "toast.copiedPictures": "Copié. Si ses images ne suivent pas, copiez chacune avec son propre « Copier ».",
   "conversation.untitled": "Nouvelle tâche",
   "history.title": "Tâches",
   "history.empty": "Vos tâches apparaîtront ici.",

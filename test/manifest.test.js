@@ -49,7 +49,7 @@ describe('manifest: file filters', () => {
 
   it('skips docs, source maps, type declarations and dotfiles', () => {
     assert.equal(isShipped('core/README.md'), false)
-    assert.equal(isShipped('caps/skills/directory/charts/SKILL.md'), true, 'a skill Jean ships (D196)')
+    assert.equal(isShipped('caps/skills/directory/chart/SKILL.md'), true, 'a skill Jean ships (D196)')
     assert.equal(isShipped('vendor/marked.esm.js.map'), false)
     assert.equal(isShipped('vendor/lit-html/lit-html.d.ts'), false)
     assert.equal(isShipped('ui/.DS_Store'), false)

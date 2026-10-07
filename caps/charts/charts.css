@@ -1,10 +1,8 @@
-/* Charts (D196): the chart in its frame, then Save as picture beside its source. */
+/* Charts (D196): the chart in its frame, then Copy at its end. */
 app-chart .chart { block-size: clamp(15rem, 55vw, 22rem); }
-app-chart .drawn-foot { margin-block-start: 0.6rem; }
-app-chart .drawn-foot > button { float: inline-end; }
-app-chart .drawn-foot pre { clear: both; }
+app-chart .drawn-foot { display: flex; justify-content: end; margin-block-start: 0.4rem; }
 /* While the answer is written, the chart's place; once it's written, why there is none. */
 app-chart .drawn-status { margin: 0 0 0.6rem; }
 .is-streaming app-chart .drawn-status { display: grid; place-items: center; min-block-size: clamp(15rem, 55vw, 22rem); margin: 0; }
-app-chart .while, .is-streaming app-chart :is(.failed, details) { display: none; }
+app-chart .while, .is-streaming app-chart :is(.failed, pre) { display: none; }
 .is-streaming app-chart .while { display: inline; }
