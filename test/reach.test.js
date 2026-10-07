@@ -335,6 +335,11 @@ describe('signing in to a connection', () => {
       const hostile = /** @type {typeof fetch} */ (async (url) => Response.json(String(url).includes('protected-resource') ? { authorization_servers: ['https://as.example'] }
         : { issuer: 'https://as.example', authorization_endpoint: 'javascript:alert(1)', token_endpoint: 'https://as.example/token' }))
       await assert.rejects(discover('https://mcp.example/mcp', { fetch: hostile }), /could not be found/)
+      // An issuer is compared as an address: a bare host's trailing slash is the same one (Box, Otter), a path's isn't.
+      const named = (/** @type {string} */ server) => /** @type {typeof fetch} */ (async (url) => Response.json(String(url).includes('protected-resource') ? { authorization_servers: [server] }
+        : { issuer: server.replace(/\/$/, ''), authorization_endpoint: 'https://as.example/authorize', token_endpoint: 'https://as.example/token' }))
+      assert.equal((await discover('https://mcp.example/mcp', { fetch: named('https://as.example/') })).issuer, 'https://as.example')
+      await assert.rejects(discover('https://mcp.example/mcp', { fetch: named('https://as.example/tenant/') }), /could not be found/)
     } finally {
       await close()
     }
@@ -353,7 +358,8 @@ describe('the services Jean knows (D95)', () => {
     // A gateway that relays to Google's and Slack's hosts reaches those with an address; Meet still has none.
     const through = known({}, ['googleapis.com', 'slack.com'])
     assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'slack', 'google-chat'])
-    assert.deepEqual(through.slice(4, 9).map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'slack', 'google-chat'])
+    const ready = DIRECTORY.filter((entry) => entry.ready).length
+    assert.deepEqual(through.slice(ready, ready + 5).map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'slack', 'google-chat'])
     assert.equal(through.find((entry) => entry.id === 'google-meet')?.via, null)
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, ['googleapis.com'])?.id, 'gmail')
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1'), undefined)

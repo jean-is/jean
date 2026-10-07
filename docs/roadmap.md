@@ -36,7 +36,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] OpenRouter's web search: where its annotations arrive in the stream (all at the end would hide the `[n]` marks behind the follow-ups)
 - [ ] Auto's tiers: the model ids exist, and the picker shows their prices
 - [ ] Each provider of D136 with a real key; `models.image` with OpenAI and OpenRouter keys
-- [ ] A real sign-in to each ready connection (Notion, Canva, Miro, Granola), and a token renewal
+- [ ] A real sign-in to each ready connection (Notion, Canva, Miro, Granola, ClickUp, Linear, Intercom, Wix, Attio, Fireflies), and a token renewal; a search through Exa, with no sign-in
 - [ ] An organisation's own skills index for office work, served with CORS
 - [ ] An Artifactory instance for PyPI and npm with a key; micropip against an index that serves only HTML
 - [ ] "Since last time" with a real service after a real night away
