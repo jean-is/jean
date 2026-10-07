@@ -1,4 +1,5 @@
-// The box. Enter sends (never while an IME is composing), Shift+Enter adds a line. Under it (D123):
+// The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
+// brings back what was asked (D187). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen) and dictation; then the brain, and one button to go.
 import { html, nothing } from 'lit-html'
 import { live as current } from 'lit-html/directives/live.js'
@@ -6,6 +7,7 @@ import { Element, define } from './base.js'
 import { app, activeBrain, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify } from './state.js'
 import { unlock, isDenied, loaded } from './caps.js'
 import { t } from '../core/i18n.js'
+import { requestsOf } from '../core/events.js'
 import { icons } from './icons.js'
 import { dictation, toggleDictation, live } from './dictation.js'
 
@@ -104,10 +106,32 @@ class Composer extends Element {
 
   /** @param {KeyboardEvent} event */
   #keydown = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey && !event.isComposing && event.keyCode !== 229) {
+    if (event.isComposing || event.keyCode === 229) return
+    if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       this.#submit(event)
-    }
+    } else if (/^Arrow(Up|Down)$/.test(event.key) && !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey) this.#recall(event)
+  }
+
+  /** The request ↑ brought back, counted from the newest (0); -1 when none. */
+  #back = -1
+
+  /**
+   * From an empty box, ↑ and ↓ go through what was asked in this conversation, newest first, as in
+   * a terminal, until the request brought back is changed; in one of several lines, through its lines first (D187).
+   * @param {KeyboardEvent} event
+   */
+  #recall = (event) => {
+    const area = /** @type {HTMLTextAreaElement} */ (event.target)
+    const asked = requestsOf(app.current.value?.records ?? []).reverse()
+    const up = event.key === 'ArrowUp'
+    const at = !area.value ? -1 : area.value === asked[this.#back] ? this.#back : NaN
+    const next = at + (up ? 1 : -1)
+    const edge = !(up ? area.value.slice(0, area.selectionStart) : area.value.slice(area.selectionEnd)).includes('\n')
+    if (!edge || !(next >= -1 && next < asked.length)) return
+    event.preventDefault()
+    this.#back = next
+    app.draft.value = asked[next] ?? ''
   }
 
   /** @param {ClipboardEvent} event */

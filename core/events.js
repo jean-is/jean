@@ -178,11 +178,11 @@ export function titleOf(records) {
   return title
 }
 
+/** The words of each request, in order. @param {Envelope[]} records @returns {string[]} */
+export const requestsOf = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text' && update.content.text ? [update.content.text] : []))
+
 /** The words of the request that opened the conversation. @param {Envelope[]} records */
-export function openingOf(records) {
-  for (const { update } of records) if (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text' && update.content.text) return update.content.text
-  return ''
-}
+export const openingOf = (records) => requestsOf(records)[0] ?? ''
 
 /**
  * A file Jean made or changed: Things Jean made's (`_meta.file`), or one the computer kept

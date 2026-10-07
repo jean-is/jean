@@ -44,3 +44,40 @@ test('⌘⇧L switches between light and dark, even mid-sentence', async ({ page
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(root).toHaveAttribute('data-theme', 'light')
 })
+
+test('↑ from an empty box brings back what was asked, newest first, and ↓ goes back to an empty box (D187)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const box = page.locator('#prompt')
+  const answers = page.locator('.msg-jean .prose')
+  for (const request of ['Explain photosynthesis in simple words', 'Shorter, please\nIn two lines']) {
+    await ask(page, request)
+    await expect(answers.last()).toContainText(request.split('\n')[0])
+    await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  }
+  // Never while an IME composes: its arrows pick among the words it offers.
+  await box.dispatchEvent('keydown', { key: 'ArrowUp', isComposing: true })
+  await expect(box).toHaveValue('')
+  await box.press('ArrowUp')
+  await expect(box).toHaveValue('Shorter, please\nIn two lines')
+  // In a request of several lines, ↑ goes up its lines before the one asked before it.
+  await box.press('ArrowUp')
+  await expect(box).toHaveValue('Shorter, please\nIn two lines')
+  await box.press('ArrowUp')
+  await expect(box).toHaveValue('Explain photosynthesis in simple words')
+  await box.press('ArrowUp')
+  await expect(box).toHaveValue('Explain photosynthesis in simple words')
+  await box.press('ArrowDown')
+  await expect(box).toHaveValue('Shorter, please\nIn two lines')
+  await box.press('ArrowDown')
+  await expect(box).toHaveValue('')
+  // Once changed, the words are the user's, and the arrows move in them.
+  await box.press('ArrowUp')
+  await box.press('End')
+  await box.pressSequentially('!')
+  await box.press('ArrowDown')
+  await expect(box).toHaveValue('Shorter, please\nIn two lines!')
+  await box.fill('Hello')
+  await box.press('ArrowUp')
+  await expect(box).toHaveValue('Hello')
+})
