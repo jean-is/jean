@@ -16,8 +16,7 @@ export async function start(page, lang = 'en') {
   const settings = await openSettings(page)
   await settings.locator('.settings-panel select').first().selectOption(lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
-  await page.keyboard.press('Escape')
-  await expect(settings).toBeHidden()
+  await closeSettings(page)
 }
 
 /** Connects the fake brain through Settings' Brains, "On your computer" → Other. @param {import('@playwright/test').Page} page */
@@ -83,6 +82,17 @@ export async function openSettings(page, section) {
   await expect(settings).toBeVisible()
   if (section) await settings.locator('.settings-nav button', { hasText: section }).click()
   return settings
+}
+
+/**
+ * Closes Settings with Escape, its address too: going back over the history entry it opened (D137)
+ * lands a moment after the dialog closes, and a reload meanwhile is cut short or opens it again.
+ * @param {import('@playwright/test').Page} page
+ */
+export async function closeSettings(page) {
+  await page.keyboard.press('Escape')
+  await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+  await expect(page).not.toHaveURL(/\/settings/)
 }
 
 /** Turns a capability on from the house ("What Jean can do", in Settings): its trophy, then its plaque. @param {import('@playwright/test').Page} page @param {string} name */
