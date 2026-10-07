@@ -1,14 +1,15 @@
 // Signing in to a connection (MCP authorization, D87). The service names its authorization
-// server (protected resource metadata, RFC 9728), whose metadata says how to sign in (RFC 8414,
-// or OpenID Connect discovery). Jean registers as a public client (RFC 7591), sends the user there
-// with PKCE and a resource indicator (RFC 8707), checks who answered (RFC 9207), and trades the
-// code for tokens, all from the browser. Host-agnostic: fetch and Web Crypto.
+// server (protected resource metadata, RFC 9728), or one of the 2025-03-26 revision names none and
+// has it at its own origin; that server's metadata says how to sign in (RFC 8414, or OpenID Connect
+// discovery). Jean registers as a public client (RFC 7591), sends the user there with PKCE and a
+// resource indicator (RFC 8707) to a service that named its server, checks who answered (RFC 9207),
+// and trades the code for tokens, all from the browser. Host-agnostic: fetch and Web Crypto.
 import { createVerifier, challengeS256 } from '../../core/oauth.js'
 
 /**
- * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource: string, scope?: string }} Metadata
- * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource: string }} Pending
- * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource: string }} Tokens
+ * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource?: string, scope?: string }} Metadata
+ * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
+ * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string }} Tokens
  */
 
 /** `Bearer resource_metadata="…", scope="…"` → its parameters. @param {string | null | undefined} header @returns {Record<string, string>} */
@@ -36,8 +37,9 @@ export async function discover(server, { challenge, fetch = globalThis.fetch } =
   for (const url of [asked.resource_metadata, path && `${at.origin}/.well-known/oauth-protected-resource${path}`, `${at.origin}/.well-known/oauth-protected-resource`]) {
     if (url && (resource = await getJSON(fetch, url))?.authorization_servers?.length) break
   }
-  if (!resource?.authorization_servers?.length) throw new Error('This service does not say where to sign in.')
-  const issuer = resource.authorization_servers[0]
+  // One that names none (Atlassian's) has it at its own origin, and takes no resource indicator (D195).
+  const named = Boolean(resource?.authorization_servers?.length)
+  const issuer = named ? resource.authorization_servers[0] : at.origin
   const { origin, pathname } = new URL(issuer)
   const tenant = pathname.replace(/\/$/, '')
   const candidates = [`${origin}/.well-known/oauth-authorization-server${tenant}`, `${origin}/.well-known/openid-configuration${tenant}`, ...(tenant ? [`${origin}${tenant}/.well-known/openid-configuration`] : [])]
@@ -46,10 +48,10 @@ export async function discover(server, { challenge, fetch = globalThis.fetch } =
     // A document only counts for the issuer it was asked about (RFC 8414, section 3.3), as an
     // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant".
     if (metadata && href(metadata.issuer) === href(issuer) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
-      return { ...metadata, resource: resource.resource ?? server.replace(/#.*$/, ''), scope: asked.scope ?? resource.scopes_supported?.join(' ') }
+      return { ...metadata, resource: named ? resource.resource ?? server.replace(/#.*$/, '') : undefined, scope: asked.scope ?? resource?.scopes_supported?.join(' ') }
     }
   }
-  throw new Error('The sign-in service could not be found.')
+  throw new Error(named ? 'The sign-in service could not be found.' : 'This service does not say where to sign in.')
 }
 
 /**
@@ -82,7 +84,7 @@ export async function authorization(metadata, { clientId, redirectURI, another =
   const [verifier, state] = [createVerifier(), createVerifier().slice(0, 32)]
   const scope = [metadata.scope, metadata.scopes_supported?.includes('offline_access') && 'offline_access'].filter(Boolean).join(' ')
   const url = new URL(metadata.authorization_endpoint)
-  const params = { response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, resource: metadata.resource, ...(scope && { scope }), ...(another && { prompt: 'select_account' }) }
+  const params = { response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, ...(metadata.resource && { resource: metadata.resource }), ...(scope && { scope }), ...(another && { prompt: 'select_account' }) }
   for (const [name, value] of Object.entries(params)) url.searchParams.set(name, value)
   const issRequired = metadata.authorization_response_iss_parameter_supported === true
   return { url: url.href, pending: { state, verifier, clientId, redirectURI, issuer: metadata.issuer, issRequired, tokenEndpoint: metadata.token_endpoint, resource: metadata.resource } }
@@ -108,9 +110,9 @@ export async function refresh(tokens, fetch = globalThis.fetch) {
   return { refresh: tokens.refresh, ...await token(tokens, { grant_type: 'refresh_token', refresh_token: tokens.refresh }, fetch) }
 }
 
-/** @param {{ tokenEndpoint: string, clientId: string, resource: string }} client @param {Record<string, string>} form @param {typeof globalThis.fetch} fetch @returns {Promise<Tokens>} */
+/** @param {{ tokenEndpoint: string, clientId: string, resource?: string }} client @param {Record<string, string>} form @param {typeof globalThis.fetch} fetch @returns {Promise<Tokens>} */
 async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
-  const body = new URLSearchParams({ ...form, client_id: clientId, resource })
+  const body = new URLSearchParams({ ...form, client_id: clientId, ...(resource && { resource }) })
   const res = await fetch(tokenEndpoint, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', accept: 'application/json' }, body })
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.access_token) throw new Error(json?.error_description ?? json?.error ?? `HTTP ${res.status}`)

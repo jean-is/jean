@@ -330,7 +330,8 @@ describe('signing in to a connection', () => {
     const { origin, close } = await fakeMail()
     try {
       assert.equal((await discover(`${origin}/mcp`)).token_endpoint, `${origin}/token`)
-      await assert.rejects(discover(`${origin}/open/elsewhere`), /does not say where to sign in/)
+      const nowhere = /** @type {typeof fetch} */ (async () => new Response('Not Found', { status: 404 }))
+      await assert.rejects(discover('https://mcp.example/mcp', { fetch: nowhere }), /does not say where to sign in/)
       // A sign-in page that isn't a web address is never followed.
       const hostile = /** @type {typeof fetch} */ (async (url) => Response.json(String(url).includes('protected-resource') ? { authorization_servers: ['https://as.example'] }
         : { issuer: 'https://as.example', authorization_endpoint: 'javascript:alert(1)', token_endpoint: 'https://as.example/token' }))
@@ -343,6 +344,30 @@ describe('signing in to a connection', () => {
     } finally {
       await close()
     }
+  })
+
+  test('a service that names no sign-in server (MCP 2025-03-26, as Atlassian’s) signs in at its own origin, with no resource indicator', async () => {
+    /** @type {{ url: string, body?: string }[]} */
+    const asked = []
+    const atlassian = /** @type {typeof fetch} */ (async (url, init) => {
+      asked.push({ url: String(url), body: init?.body?.toString() })
+      if (String(url) === 'https://mcp.atlassian.example/.well-known/oauth-authorization-server') {
+        return Response.json({ issuer: 'https://mcp.atlassian.example', authorization_endpoint: 'https://mcp.atlassian.example/v1/authorize', token_endpoint: 'https://mcp.atlassian.example/v1/token', registration_endpoint: 'https://mcp.atlassian.example/v1/register' })
+      }
+      if (String(url).endsWith('/v1/token')) return Response.json({ access_token: 'access', refresh_token: 'refresh', expires_in: 3600 })
+      return new Response('Not Found', { status: 404 })
+    })
+    const metadata = await discover('https://mcp.atlassian.example/v1/mcp', { challenge: 'Bearer realm="OAuth", error="invalid_token"', fetch: atlassian })
+    assert.equal(metadata.issuer, 'https://mcp.atlassian.example')
+    assert.equal(metadata.resource, undefined)
+    const redirectURI = 'http://127.0.0.1:4180/'
+    const { url, pending } = await authorization(metadata, { clientId: 'jean', redirectURI })
+    assert.equal(new URL(url).searchParams.has('resource'), false)
+    const tokens = await finish(new URLSearchParams({ code: 'code', state: pending.state }), pending, atlassian)
+    assert.equal(tokens.access, 'access')
+    assert.equal(new URLSearchParams(asked.at(-1)?.body).has('resource'), false)
+    await refresh(tokens, atlassian)
+    assert.equal(new URLSearchParams(asked.at(-1)?.body).has('resource'), false)
   })
 
   test('a service may list its tools to anyone and run them only once signed in: its refusal says where (Google’s, D193)', async () => {
