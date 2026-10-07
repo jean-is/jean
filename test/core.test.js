@@ -99,16 +99,17 @@ test('rules: policy, reserved, layers and approvals', () => {
   assert.equal(ruleFromPermission('allow_once'), null)
 })
 
-test('prompt: sections, language, budget', () => {
+test('prompt: sections, language, rules said once, budget', () => {
   const prompt = buildSystemPrompt({
     assistantName: 'Margot', uiLanguage: 'French',
-    tools: [{ name: 'read', line: 'read a file the user shared' }],
+    tools: [{ name: 'read', line: 'read a file the user shared' }], rules: ['Write formulas with symbols.', 'Write formulas with symbols.'],
     sections: { memory: 'Prefers short answers.' }, now: new Date('2026-10-01T12:00:00Z'),
   })
   assert.match(prompt, /^You are Margot,/)
   assert.match(prompt, /<tools>\n- read: read a file the user shared\n<\/tools>/)
   assert.match(prompt, /If that is unclear, use French\./)
   assert.match(prompt, /<memory>\nPrefers short answers\.\n<\/memory>/)
+  assert.equal(prompt.split('- Write formulas with symbols.').length, 2)
   assert.match(prompt, /Today is 2026-10-01\./)
   assert.doesNotMatch(prompt, /<skills>/)
   assert.ok(basePromptForBudget().length / 4 < 200, 'base prompt stays under the token budget')

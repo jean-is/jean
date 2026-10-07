@@ -26,6 +26,7 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   reflexes: ['vendor/transformers'],
   computer: ['vendor/just-bash', 'vendor/quickjs', 'vendor/pyodide'],
   live: ['vendor/transformers'],
+  math: ['vendor/temml'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
 /** Drawn for installs (D131): only the browser or the system fetches them, once, so the shell doesn't precache them. */

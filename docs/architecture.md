@@ -33,6 +33,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 | `@huggingface/transformers` with `onnxruntime-web` | The device's brain (Gemma 4 E2B), Intuition (Kev-0.6B), dictation and live conversation (Whisper base, Silero); copied into `vendor/transformers/` |
 | `pdfjs-dist` (legacy build) | Reading and drawing PDFs; copied into `vendor/pdfjs/` with its character maps and standard fonts |
 | `@silurus/ooxml` (parsers in WebAssembly, viewers on a canvas; for each kind about 1.4–2.1 MB of modules and a 1.7–1.9 MB parser) | Word, Excel and PowerPoint files in the preview and the browser (D183); copied into `vendor/ooxml/` with what each kind imports, listed in `graph.json`, its relative imports named for an import map and its workers started as classic scripts |
+| `temml` (its minified build, 50 KB gzipped, with its style sheet and one font) | Formulas in answers, drawn as MathML by the `math` capability (D185); copied into `vendor/temml/`, its script made a module |
 | `buffer` (feross's, with `base64-js` and `ieee754`) | The Computer's `node`'s `Buffer` (D178); one classic script, `vendor/quickjs/buffer.js` |
 | No MCP SDK | Connections: Jean's own client, `caps/connections/mcp.js` (D87) |
 
@@ -61,13 +62,13 @@ ui/               app.js (start), shell.js, base.js, state.js (signals; what the
                   caps.js (the unlock gate), auto.js, picker.js, dialogs.js and dialogs.css (Settings, with brains.js and
                   knows.js), router.js, opfs.js and storage-worker.js, sandbox.js (the sandbox's client), preview.js and
                   preview.css, csp.js (a page's policy), dock.js and dock.css (panes beside the conversation), inbox.js (the
-                  drawer's list), looks.js, touches.js, speech.js, voices.js, language.js, dictation.js, title.js, update.js,
+                  drawer's list), looks.js, touches.js, speech.js, voices.js, spoken.js, language.js, dictation.js, title.js, update.js,
                   host.js (the desktop app's host), persona.js (the little light), icons.js, save.js, secrets.js,
                   trusted.js (Trusted Types), sheet.js (a module's own style sheet), model.js and model-worker.js (the
                   two sides of a model's worker: the device's brain, Intuition, dictation), style.css (the room) and
                   looks/<id>.css (the other themes)
 caps/<id>/        one folder per capability: files made backup brain-local voice reflexes memory projects skills search
-                  connections live helpers check since names routines find browser ask you folders sync computer
+                  connections live helpers check since names routines find browser ask you folders sync computer math
 locales/          <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
                   browser/ ask/ folders/ sync/ computer/ (D97)
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)

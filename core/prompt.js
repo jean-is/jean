@@ -43,7 +43,7 @@ export function buildSystemPrompt(input) {
   const { assistantName, uiLanguage, tools = [], rules = [], sections = {}, now } = input
   const parts = [PREAMBLE.replace('{name}', assistantName)]
   if (tools.length) parts.push(tag('tools', tools.map((tool) => `- ${tool.name}: ${tool.line}`).join('\n')))
-  parts.push(tag('rules', [...RULES, ...rules].map((rule) => `- ${rule}`).join('\n')))
+  parts.push(tag('rules', [...new Set([...RULES, ...rules])].map((rule) => `- ${rule}`).join('\n')))
   parts.push(tag('language', `Reply in the language of the user's last message. If that is unclear, use ${uiLanguage}.`))
   for (const name of SECTIONS) if (sections[name]) parts.push(tag(name, /** @type {string} */ (sections[name])))
   if (now) parts.push(tag('context', `Today is ${localDate(now)}.`))

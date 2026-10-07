@@ -2,7 +2,8 @@
 // raw HTML in model output is shown as text, and images are never loaded
 // (an image URL is a classic way for injected instructions to leak data).
 import { html, nothing } from 'lit-html'
-import { lexer } from 'marked'
+import { Marked } from 'marked'
+import { unlock } from './caps.js'
 
 /** @typedef {import('marked').Token} Token */
 /** @typedef {Map<number, { name: string, label: string, open?: () => void, url?: string }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened */
@@ -10,11 +11,25 @@ import { lexer } from 'marked'
 /** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
 let cited = null
 
+// Formulas in LaTeX (D185): $…$ and \(…\) in a line, $$…$$ and \[…\] set apart. As in Pandoc, a $
+// opens before a non-space and closes after one, never before a digit, so "$5 and $10" stays text.
+export const FORMULA = /^(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)|\$(?!\s)((?:\\[\s\S]|[^\\$])+?)(?<!\s)\$(?!\d))/
+const FORMULA_BLOCK = /^ {0,3}(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\])[ \t]*(?:\n+|$)/
+/** @param {RegExpExecArray | null} match */
+const formulaToken = (match) => match ? { type: 'math', raw: match[0], text: (match[1] ?? match[2] ?? match[3] ?? match[4]).trim(), block: (match[1] ?? match[2]) !== undefined } : undefined
+const parser = new Marked({ extensions: [
+  { name: 'math', level: 'block', start: (src) => src.match(/(?<=\n) {0,3}(?:\$\$|\\\[)/)?.index, tokenizer: (src) => formulaToken(FORMULA_BLOCK.exec(src)) },
+  { name: 'math', level: 'inline', start: (src) => src.match(/\$|\\[([]/)?.index, tokenizer: (src) => formulaToken(FORMULA.exec(src)) },
+] })
+
+/** marked's tokens, formulas among them. @param {string} source */
+export const lex = (source) => parser.lexer(source)
+
 /** @param {string} source @param {Sources} [sources] */
 export function markdown(source, sources) {
   cited = sources ?? null
   try {
-    return blocks(lexer(source))
+    return blocks(lex(source))
   } catch {
     return html`<p>${source}</p>`
   } finally {
@@ -51,6 +66,7 @@ function block(token) {
     case 'list': return list(token)
     case 'table': return table(token)
     case 'hr': return html`<hr>`
+    case 'math': return formula(token)
     case 'space': return nothing
     case 'text': return html`<p>${token.tokens ? inline(token.tokens) : cite(decode(token.text))}</p>`
     default: return html`<p>${token.raw}</p>`
@@ -101,9 +117,18 @@ function inline(tokens = []) {
         : inline(token.tokens)
       case 'image': return html`<span class="image-alt">[${token.text || token.href}]</span>`
       case 'escape': return token.text
+      case 'math': return formula(token)
       default: return token.raw
     }
   })
+}
+
+/** @type {Promise<boolean> | undefined} */
+let drawing
+/** A formula, which the math capability draws once it has loaded; until then, or if it can't, its source shows. @param {any} token */
+function formula(token) {
+  drawing ??= unlock('math')
+  return html`<app-math dir="ltr" tex=${token.text} ?block=${token.block}></app-math>`
 }
 
 /** @param {string} href */
@@ -120,15 +145,4 @@ const ENTITIES = /** @type {Record<string, string>} */ ({ '&amp;': '&', '&lt;': 
 /** @param {string} text */
 function decode(text) {
   return text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (entity) => ENTITIES[entity])
-}
-
-/** Plain text for reading aloud and copying. @param {string} source */
-export function plainText(source) {
-  return source
-    .replace(/```[\s\S]*?```/g, '')
-    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    .replace(/[*_`#>|~]+/g, '')
-    .replace(/\n{2,}/g, '\n')
-    .trim()
 }

@@ -127,7 +127,7 @@ register({
     { name: 'write', line: 'make a file the user can save: .docx, .xlsx or text' },
     { name: 'edit', line: 'change part of a file you made' },
   ],
-  rules: ['Documents and spreadsheets the user asks for are files.'],
+  rules: ['Documents and spreadsheets the user asks for are files.', 'In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX.'],
 })
 
 /** The kinds of file Jean makes, by extension, in words people use (any other shows its extension), each with its icon. */

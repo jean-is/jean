@@ -45,7 +45,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
 
-**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there. The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
+**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there, and formulas (`math`) load with the first one in an answer, drawn as they are printed (D185). The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
 
 **Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; sharing and collaboration ([enterprise.md](enterprise.md)).
 
@@ -173,7 +173,7 @@ Organisation policy can hide or lock any of these.
 - **Or left where they are** (D141, D149). A project or a conversation opened on a folder works on that folder's files in place, and each keeps its own: two projects, or two conversations, work in two different folders, and a new conversation starts on its project's. Nothing is copied, and a change Jean makes is in the folder as soon as the user has seen and allowed it.
 - **Pictures and the screen.** A picture is shared like any file, and the box's + menu captures the screen, a window or a tab: one frame, shown as a thumbnail before it is sent. Brains that can see are shown it (D105).
 - **Seen without leaving Jean** (D126). A file Jean made, or one the user shared, opens in a preview beside the conversation (over it on a phone), as what it is: a picture, a PDF's pages, a Word document's pages, a workbook with its sheets' tabs (a CSV too), a deck's slides, each as Office draws them (D183), a web page with its own look and, by default, its own scripts, without the internet, able to fill the screen and save a file it made (D143, D158; five switches in Approvals change what a page may do). A file being changed shows its new version as it comes, so the next request can be made while looking at it.
-- **Outputs fit office life without any dependency** (D119): Word documents and Excel spreadsheets Jean writes, each change a new version (D164); an answer copied as rich text, which pastes formatted into Word, Outlook and Google Docs; a table as CSV.
+- **Outputs fit office life without any dependency** (D119): Word documents and Excel spreadsheets Jean writes, each change a new version (D164), their formulas written with symbols, since Office reads no LaTeX (D185); an answer copied as rich text, which pastes formatted into Word, Outlook and Google Docs; a table as CSV.
 
 ## Sources and citations
 

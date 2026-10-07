@@ -6,7 +6,7 @@ import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarte
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
-import { markdown, plainText } from './markdown.js'
+import { markdown } from './markdown.js'
 import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
 
@@ -415,7 +415,7 @@ function actions(id, text) {
     <app-made .source=${text}></app-made>
     ${canSpeak() ? html`<button class="icon-button subtle ${isSpeaking ? 'is-active' : ''}" aria-pressed=${isSpeaking ? 'true' : 'false'}
       aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')} title=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
-      @click=${() => toggleSpeech(id, plainText(text), locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
+      @click=${() => toggleSpeech(id, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
   </div>`
 }
 

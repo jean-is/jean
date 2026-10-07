@@ -104,21 +104,21 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Capability | Tool line | Rule |
 |---|---|---|
 | Files | `read: read pages of a file the user shared` | Shared files are in the message, sometimes only their first pages. Use read for the others. |
-| Computer (D162) | `bash: commands on your own computer, a sandbox: /workspace holds the files; python3, pip, node, curl` / `javascript: JavaScript to work things out exactly; scripts read files and call tools` / `python: Python, for data work` | Compute numbers with code instead of estimating them. |
+| Computer (D162) | `bash: commands on your own computer, a sandbox: /workspace holds the files; python3, pip, node, curl` / `javascript: JavaScript to work things out exactly; scripts read files and call tools` / `python: Python, for data work` | Compute numbers with code instead of estimating them. / In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX. (D185) |
 | Discovery (always on) | `find_tools: find tools that aren't listed here, and how to call them` / `offer: suggest turning on something the user has not discovered yet` | Offer at most one new thing per reply, and only when it clearly helps. |
 | Memory | `recall: search earlier conversations` / `remember: save a lasting fact, preference or correction the user states` | Remember only what will still matter in later conversations. |
 | Skills | `skill: read the steps of a skill before following it` / `save_skill: save how a repeated task is done, when the user asks` | When a request matches a skill, read it and follow its steps. |
 | Web search | `web_search: search the web for facts the conversation does not hold` (a provider that searches by itself gets its own tool instead, D91) | — |
 | Connections | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |
 | Routines (D122) | `schedule: make a routine, when the user wants something done regularly` | — |
-| Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. |
+| Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. / In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX. (D185) |
 | Helpers | `delegate: hand independent parts of a large task to helpers, who do them at the same time` | Use helpers only for independent parts of a large task. |
 | Browser (D140) | `browse: show the user a web page beside the conversation, and read it when the site allows` | — (`<page>` says which page is open) |
 | Folders (D152) | none: its tools are deferred, and `<folder>` names them with their arguments, for the conversation's folder only | — |
 | Questions (D146, always on) | `ask_user: ask the user questions, with answers to pick from` | Ask with ask_user only what you need, all at once, recommending an answer to each. |
 | Your name (D150, always on while the user has never set one) | `save_name: save the first name the user gives for themselves` | — (the tool's description: never someone else's name, never a guess) |
 
-Sources and suggestions are base rules, because every answer can cite a shared file and end with follow-ups. Skills' `suggest_skill` is deferred and has no line (D121). Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).
+A rule two capabilities share is said once. Sources and suggestions are base rules, because every answer can cite a shared file and end with follow-ups. Skills' `suggest_skill` is deferred and has no line (D121). Intuition (the reflexes) adds no line: its `decide` tool is hidden, for scripts only (`models.decide()`).
 
 ## Notes
 

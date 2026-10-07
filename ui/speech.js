@@ -14,8 +14,8 @@ const load = () => (loading ??= import('./voices.js').then((module) => (voices =
 }))
 
 /**
- * Speak a text, or stop if this text is already being spoken.
- * @param {string} id @param {string} text @param {string} hint the interface language
+ * Speak a message, or stop if it is already being spoken.
+ * @param {string} id @param {string} text its markdown @param {string} hint the interface language
  * @param {string | null} [choice] the user's voice, used when it speaks the text's language
  */
 export function toggleSpeech(id, text, hint, choice) {

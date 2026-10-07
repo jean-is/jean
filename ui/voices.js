@@ -6,6 +6,7 @@ import { languageOf, rankVoices } from './language.js'
 import { t, locale } from '../core/i18n.js'
 import { notify } from './state.js'
 import { speaking } from './speech.js'
+import { plainText } from './spoken.js'
 
 const voices = signal(/** @type {SpeechSynthesisVoice[]} */ ([]))
 // Chrome lists them a moment after it is first asked.
@@ -44,11 +45,12 @@ export function noVoice(lang) {
 }
 
 /**
- * Reads a text aloud as `id`, unless that was stopped in the meantime.
- * @param {string} id @param {string} text @param {string} hint @param {string | null} [choice]
+ * Reads a message aloud as `id`, unless that was stopped in the meantime.
+ * @param {string} id @param {string} source its markdown @param {string} hint @param {string | null} [choice]
  */
-export function read(id, text, hint, choice) {
+export function read(id, source, hint, choice) {
   if (speaking.value !== id) return
+  const text = plainText(source)
   const { lang, voice } = voiceFor(text, hint, choice)
   if (!voice) {
     speaking.value = null

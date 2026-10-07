@@ -98,7 +98,8 @@ async function copyLicense (pkg) {
  * files in the same folder, because import maps don't reach into workers. A folder entry
  * may keep only the files matching a pattern. `scripts` are CommonJS files made one classic script
  * (`classicScript`); `graph` copies what entries import, for an import map (`forImportMap`).
- * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>,
+ * `global` makes a script that declares one variable a module whose default export it is.
+ * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>, global?: Record<string, string>,
  *   scripts?: Record<string, [string, Record<string, string>, string]>, graph?: { from: string, entries: string[], prefix: string, skip: RegExp } }[]}
  */
 export const RUNTIMES = [
@@ -169,6 +170,14 @@ export const RUNTIMES = [
     rewrite: { diff: './diff.mjs', 'sprintf-js': './sprintf.mjs', turndown: './turndown.mjs', 'node:zlib': './node-zlib.mjs' },
     wrap: { 'diff.mjs': ['diffArrays', 'diffLines', 'createPatch'], 'sprintf.mjs': ['sprintf', 'vsprintf'] },
   },
+  {
+    // Formulas (D185): Temml turns LaTeX into MathML, which the browser draws. Its minified build
+    // declares `temml`; it comes with its style sheet for local math fonts and the one font that names.
+    dir: 'vendor/temml',
+    packages: ['temml'],
+    files: [['temml/dist/temml.min.js', 'temml.mjs'], ['temml/dist/Temml-Local.css', 'temml.css'], ['temml/dist/Temml.woff2', 'Temml.woff2']],
+    global: { 'temml.mjs': 'temml' },
+  },
 ]
 
 /**
@@ -235,7 +244,7 @@ async function copyRuntime (runtime) {
   const copy = async (from, to) => {
     if (/\.m?js$/.test(to)) {
       const source = rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {})
-      const text = runtime.wrap?.[to] ? wrapCommonJS(source, runtime.wrap[to]) : source
+      const text = runtime.wrap?.[to] ? wrapCommonJS(source, runtime.wrap[to]) : runtime.global?.[to] ? `${source}\nexport default ${runtime.global[to]}\n` : source
       await writeFile(join(target, to), text)
       raw += Buffer.byteLength(text)
     } else {

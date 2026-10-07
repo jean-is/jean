@@ -649,6 +649,6 @@ register({
     { name: 'javascript', line: 'JavaScript to work things out exactly; scripts read files and call tools' },
     { name: 'python', line: 'Python, for data work' },
   ],
-  rules: ['Compute numbers with code instead of estimating them.'],
+  rules: ['Compute numbers with code instead of estimating them.', 'In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX.'],
   panel,
 })

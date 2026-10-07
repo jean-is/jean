@@ -10,7 +10,7 @@ import { app, effective, send, stop, notify, setPresence } from '../../ui/state.
 import { prepare, transcribe, detect } from '../voice/voice.js'
 import { listener, speakable } from './turns.js'
 import { splitSuggestions } from '../../core/events.js'
-import { plainText } from '../../ui/markdown.js'
+import { plainText } from '../../ui/spoken.js'
 import { listed, voiceFor, noVoice } from '../../ui/voices.js'
 import { locale, t } from '../../core/i18n.js'
 import { scriptURL } from '../../ui/trusted.js'

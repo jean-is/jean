@@ -321,6 +321,8 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 .prose th { font-weight: 600; background: oklch(from var(--ink) l c h / 0.04); }
 .prose .align-right { text-align: end; }
 .prose .align-center { text-align: center; }
+app-math:not(:defined)::before { content: attr(tex); }
+app-math[block] { display: block; overflow-x: auto; margin-block: 0 0.85rem; }
 .image-alt { color: var(--ink-faint); }
 .caret {
   display: inline-block;
