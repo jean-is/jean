@@ -34,6 +34,8 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 | `pdfjs-dist` (legacy build) | Reading and drawing PDFs; copied into `vendor/pdfjs/` with its character maps and standard fonts |
 | `@silurus/ooxml` (parsers in WebAssembly, viewers on a canvas; for each kind about 1.4–2.1 MB of modules and a 1.7–1.9 MB parser) | Word, Excel and PowerPoint files in the preview and the browser (D183); copied into `vendor/ooxml/` with what each kind imports, listed in `graph.json`, its relative imports named for an import map and its workers started as classic scripts |
 | `temml` (its minified build, 50 KB gzipped, with its style sheet and one font) | Formulas in answers, drawn as MathML by the `math` capability (D185); copied into `vendor/temml/`, its script made a module |
+| `echarts` (its module build, whole, with zrender inside; 360 KB gzipped) | Charts in answers, a widget the `charts` capability draws on a canvas (D196); copied into `vendor/echarts/`, its emptying of elements patched for Trusted Types |
+| `abcjs` (its minified build, 145 KB gzipped, made a module) | Scores in answers, a widget the `scores` capability draws as SVG and plays on Jean's own synthesizer (D196); copied into `vendor/abcjs/`, its emptying of elements and its `style` attributes patched for Trusted Types and the CSP |
 | `buffer` (feross's, with `base64-js` and `ieee754`) | The Computer's `node`'s `Buffer` (D178); one classic script, `vendor/quickjs/buffer.js` |
 | No MCP SDK | Connections: Jean's own client, `caps/connections/mcp.js` (D87) |
 
@@ -69,8 +71,9 @@ ui/               app.js (start), shell.js, base.js, state.js (signals; what the
                   looks/<id>.css (the other themes)
 caps/<id>/        one folder per capability: files made backup brain-local voice reflexes memory projects skills search
                   connections live helpers check since names routines find browser ask you folders sync computer math
+                  charts scores
 locales/          <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
-                  browser/ ask/ folders/ sync/ computer/ (D97)
+                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ (D97)
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
 scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, icons.js, screenshots.js, reflexes.js, directory.js
 gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
@@ -80,7 +83,7 @@ e2e/              Playwright smoke tests, one per capability, in Chromium and We
 ee/               the enterprise integrations, Elastic-2.0 (D139)
 ```
 
-Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js` and `office.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148).
+Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js` and `office.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
 
 ## Brand
 
@@ -111,7 +114,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 - **`fs.js`**, **`files.js`**, **`conversations.js`**: storage, shared files (original, text and metadata, source numbers), transcripts.
 - **`search.js`**: BM25 over short texts, `alike()`, and matching as people type (D133).
 - **`decide.js`**: Kev's input and answers in the Decisions API's shape; the questions themselves are in `caps/reflexes/questions.js` (D62).
-- **`memory.js`**, **`skills.js`**: the `memory.md` format and the lines that fit (D79); `SKILL.md` folders, of which only names and descriptions go into the prompt (D83, D121).
+- **`memory.js`**, **`skills.js`**: the `memory.md` format and the lines that fit (D79); `SKILL.md` folders, of which only names and descriptions go into the prompt (D83, D121), and the kinds of block each declares (D196).
 - **`i18n.js`**, **`zip.js`**, **`ulid.js`**.
 
 **Tools,** contributed by capabilities:
@@ -191,7 +194,8 @@ Follow-ups are one yes/no question each rather than one choice, because several 
   settings.json                  defaults ← user ← policy (D30)
   instructions.md                global, written by the user
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
-  skills/<name>/SKILL.md         global skills (metadata: format, author, created; source and digest when from elsewhere)
+  skills/<name>/SKILL.md         global skills (metadata: format, author, created; source and digest when from elsewhere;
+                                 blocks, the kinds of block it writes that are drawn as widgets, D196)
   routines/<ulid>.md             the home project's routines (front matter: the schedule, lastRun; body: the request)
   projects/
     <ulid>-<slug>/
@@ -397,6 +401,8 @@ A connection is an address and, when the service asks, a key or a sign-in (D87�
 ## Skills and routines
 
 - **Skills from elsewhere** (D121): `caps/skills/sources.js` reads Agent Skills discovery indexes (`/.well-known/agent-skills/index.json`, schema 0.2.0) from policy (`skills.sources`, `skills.only`) and the user's list, keeps each a day in `.cache/skills/`, compares descriptions with requests on the device (`alike()`), and checks a download's digest with Web Crypto. It unpacks `.tar.gz` (`DecompressionStream` and a small tar reader) and `.zip` (`core/zip.js`); only `SKILL.md` and text come in, and a script, a program, a link or a path out of the folder refuses the skill. `caps/skills/ready.js` shows one before the user adds it.
+- **Jean's own directory** (D196): `caps/skills/directory.js` lists its skills with their icons; each is `caps/skills/directory/<name>/SKILL.md`, the one kind of Markdown the build ships (`isShipped`), cached with the skills capability. They are read when Settings › Skills shows them, as tiles named by the dialogs' `skill.<name>`, and when a request is compared with ready-made skills; one is added from its own file, with no source or digest.
+- **Widgets** (D196): a skill declares the kinds of block it writes in `metadata.blocks`. The skills capability keeps the kinds the room's skills declare in `declared` (`ui/markdown.js`), read again in a new room and whenever a skill comes or goes, and `ui/markdown.js` draws a declared block it has a widget for: ```echarts as `<app-chart>`, ```abc as `<app-score>`, each element defined by its capability, which the first one unlocks (never remembered, so never loaded at the start). Until it has loaded, the block's source shows; `.is-streaming` on the answer tells a widget that its block may still be partial.
 - **Routines** (D122): `caps/routines/schedule.js` reads and writes `routines/<ulid>.md` and says when one falls due, in local time, with working days from `Intl.Locale`'s week information. `caps/routines/routines.js` looks every half minute and when Jean comes free, runs a due routine of the room's project once nothing is under way and the user isn't reading (Web Locks keep it to one tab), and sends its request after a `routine` note. Nothing runs while the tab is closed; a routine that fell due meanwhile runs once at the next visit.
 
 ## Folders

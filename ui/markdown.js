@@ -2,6 +2,7 @@
 // raw HTML in model output is shown as text, and images are never loaded
 // (an image URL is a classic way for injected instructions to leak data).
 import { html, nothing } from 'lit-html'
+import { signal } from '@preact/signals-core'
 import { Marked } from 'marked'
 import { unlock } from './caps.js'
 
@@ -61,7 +62,7 @@ function block(token) {
   switch (token.type) {
     case 'heading': return heading(token.depth, inline(token.tokens))
     case 'paragraph': return html`<p>${inline(token.tokens)}</p>`
-    case 'code': return token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : html`<pre dir="ltr"><code>${token.text}</code></pre>`
+    case 'code': return token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr"><code>${token.text}</code></pre>`
     case 'blockquote': return html`<blockquote>${blocks(token.tokens)}</blockquote>`
     case 'list': return list(token)
     case 'table': return table(token)
@@ -135,6 +136,18 @@ function formula(token) {
 function latex(token) {
   drawing ??= unlock('math')
   return html`<app-latex dir="auto" kind=${token.lang} tex=${token.text}></app-latex>`
+}
+
+/** Widgets (D196): a block of a kind the room's skills declare, which the skills capability keeps, drawn by its capability. */
+export const declared = signal(/** @type {ReadonlySet<string>} */ (new Set()))
+const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores' })
+
+/** @param {any} token */
+function widget(token) {
+  const kind = String(token.lang).toLowerCase()
+  if (!declared.value.has(kind) || !Object.hasOwn(WIDGETS, kind)) return null
+  unlock(WIDGETS[kind])
+  return kind === 'abc' ? html`<app-score source=${token.text}></app-score>` : html`<app-chart source=${token.text}></app-chart>`
 }
 
 /** @param {string} href */

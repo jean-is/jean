@@ -3,11 +3,13 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { gzipSync } from 'node:zlib'
+import { readFile } from 'node:fs/promises'
 import { memoryFS, writeJSON } from '../core/fs.js'
 import { writeZip } from '../core/zip.js'
 import { saveSkill, parseSkill } from '../core/skills.js'
 import { loadSettings } from '../core/settings.js'
 import { SCHEMA, indexURL, parseIndex, sha256, unpack, untar, readIndexes, bestFit, SkillError } from '../caps/skills/sources.js'
+import { DIRECTORY, readDirectory } from '../caps/skills/directory.js'
 import { schedule, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../caps/routines/schedule.js'
 
 const text = (/** @type {string} */ value) => new TextEncoder().encode(value)
@@ -139,6 +141,31 @@ test('a skill from elsewhere keeps where it came from and its digest', async () 
   assert.match(saved, /\n {2}source: "https:\/\/skills\.example\/notes\.md"\n {2}digest: "sha256:c{64}"\n/)
   assert.equal(parseSkill(saved, path)?.source, 'https://skills.example/notes.md')
   assert.equal(parseSkill(STEPS, 'skills/weekly-sales-report/SKILL.md')?.source, undefined)
+})
+
+test('a skill declares the kinds of block it writes, which are drawn as widgets, and keeps them when saved (D196)', async () => {
+  const declared = '---\nname: charts\ndescription: Draw charts.\nmetadata:\n  blocks: "ECharts, vega-lite  ../x"\n---\n# Charts\n'
+  assert.deepEqual(parseSkill(declared, 'skills/charts/SKILL.md')?.blocks, ['echarts', 'vega-lite'], 'lower case, names only')
+  assert.equal(parseSkill(STEPS, 'skills/weekly-sales-report/SKILL.md')?.blocks, undefined, 'most skills draw nothing')
+  const fs = memoryFS()
+  const path = await saveSkill(fs, '', { name: 'charts', description: 'Draw charts.', body: '# Charts', by: 'device', blocks: ['echarts'] })
+  assert.match(/** @type {string} */ (await fs.read(path)), /\n {2}blocks: echarts\n/)
+  assert.deepEqual(parseSkill(/** @type {string} */ (await fs.read(path)), path)?.blocks, ['echarts'])
+  // A skill from elsewhere says so in its SKILL.md, which is read before it is added.
+  const file = text(declared)
+  const digest = await sha256(file)
+  assert.deepEqual((await unpack({ name: 'charts', type: 'skill-md', description: 'Draw charts.', url: 'https://x/SKILL.md', digest, source: 'https://x/i.json' }, file)).blocks, ['echarts', 'vega-lite'])
+})
+
+test('Jean’s own directory: each skill as its SKILL.md says, the charts drawn from ```echarts and the scores from ```abc', async () => {
+  const fetchFile = async (/** @type {string | URL | Request} */ url) => new Response(await readFile(new URL(String(url))))
+  const ready = await readDirectory({ fetch: /** @type {typeof fetch} */ (fetchFile) })
+  assert.deepEqual(ready.map((entry) => entry.name), DIRECTORY.map((entry) => entry.name), 'every one can be read')
+  assert.ok(ready.every((entry) => entry.digest === '' && entry.description.length > 40 && entry.icon))
+  const blocks = await Promise.all(ready.map(async (entry) => parseSkill(await readFile(new URL(entry.url), 'utf8'), entry.url)?.blocks))
+  assert.deepEqual(blocks, [['echarts'], ['abc']])
+  const missing = await readDirectory({ fetch: /** @type {typeof fetch} */ (async () => new Response('', { status: 404 })) })
+  assert.deepEqual(missing, [], 'one that can’t be read is left out')
 })
 
 test('settings are read as written, over the defaults', async () => {

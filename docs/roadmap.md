@@ -28,6 +28,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] `ask_user`: only what is needed, all at once, with an answer recommended
 - [ ] `write` for a document, with Markdown and CSV as the tool asks; the HTML pages they make, with a chart library from the internet
 - [ ] `browse` only when a page helps
+- [ ] Charts and Music scores (D196): do brains read the skill and write strict JSON and ABC whose bars add up, in the user's language? The device's brain especially
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file
 - [ ] bash: how often a brain reaches for it, and whether its commands suit a non-technical user's files
 
@@ -51,6 +52,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Folders in Chrome and Edge: the prompt at the first message, "Allow on every visit", a synced folder whose files change while Jean works; a handle kept in a real Incognito window (D152's mark)
 - [ ] Made files and changed Word documents in Word, Excel, Numbers, Google Docs and LibreOffice on Windows (a passage over several runs takes the first one's formatting)
 - [ ] Formulas (D185) on Windows, Linux and Android, whose math fonts differ or are missing, and with a screen reader
+- [ ] Charts and scores (D196) on a weak laptop (ECharts' first load, a score of a few hundred bars), heard on real speakers, in Firefox and real Safari, and with a screen reader
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
 
 **Voice**

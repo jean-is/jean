@@ -6,6 +6,7 @@
 // Only skills made of instructions are added: SKILL.md, and text beside it, never programs.
 // Host-agnostic: no DOM, tested under node --test.
 import { readZip } from '../../core/zip.js'
+import { blocksOf } from '../../core/skills.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
 import { parseFrontMatter } from '../../core/settings.js'
 import { alike } from '../../core/search.js'
@@ -121,11 +122,11 @@ async function gunzip(bytes) {
 }
 
 /**
- * What a download holds, once it matches its digest: the steps (SKILL.md's body) and the text
- * files beside them. Anything that isn't text (a script, a program, a picture) means the skill
- * needs more than instructions, and it isn't added (D116).
+ * What a download holds, once it matches its digest: the steps (SKILL.md's body), the text files
+ * beside them, and the kinds of block it declares (D196). Anything that isn't text (a script, a
+ * program, a picture) means the skill needs more than instructions, and it isn't added (D116).
  * @param {Entry} entry @param {Uint8Array} bytes
- * @returns {Promise<{ body: string, files: { path: string, text: string }[] }>}
+ * @returns {Promise<{ body: string, files: { path: string, text: string }[], blocks: string[] }>}
  */
 export async function unpack(entry, bytes) {
   if (bytes.length > MAX_BYTES) throw new SkillError('invalid', 'The skill is too large.')
@@ -152,9 +153,9 @@ export async function unpack(entry, bytes) {
   }
   const steps = files.find((file) => file.path === 'SKILL.md')
   if (!steps) throw new SkillError('invalid', 'There is no SKILL.md at the root.')
-  const body = parseFrontMatter(steps.text).body.trim()
-  if (!body) throw new SkillError('invalid', 'SKILL.md has no steps.')
-  return { body, files: files.filter((file) => file !== steps) }
+  const { data, body } = parseFrontMatter(steps.text)
+  if (!body.trim()) throw new SkillError('invalid', 'SKILL.md has no steps.')
+  return { body: body.trim(), files: files.filter((file) => file !== steps), blocks: blocksOf(data.metadata?.blocks) }
 }
 
 /** @param {string} url */

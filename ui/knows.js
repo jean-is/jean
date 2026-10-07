@@ -1,8 +1,9 @@
 // "What Jean knows about you" (docs/product.md), Settings' About you: the user's instructions,
 // which Jean always follows, and what Jean noticed, which the user can edit, delete or turn into
-// an instruction. Then, once each is on, Settings' Skills, with those published elsewhere (D121),
-// and Routines (D122). Everything here is a plain file (instructions.md, memory.md, SKILL.md,
-// routines/*.md). Loaded the first time one of the three sections is shown (D134).
+// an instruction. Then, once each is on, Settings' Skills, with Jean's own directory of ready-made
+// ones (D196) and those published elsewhere (D121), and Routines (D122). Everything here is a
+// plain file (instructions.md, memory.md, SKILL.md, routines/*.md). Loaded the first time one of
+// the three sections is shown (D134).
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
@@ -20,7 +21,8 @@ import { icons } from './icons.js'
 /** @typedef {import('../core/memory.js').Entry} Entry */
 /** @typedef {import('../caps/routines/schedule.js').Routine} Routine */
 /**
- * @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[], skills: import('../core/skills.js').Skill[], routines: Routine[] }} Page
+ * @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[], skills: import('../core/skills.js').Skill[], routines: Routine[],
+ *   directory: import('../caps/skills/directory.js').Ready[] }} Page
  */
 
 const page = signal(/** @type {Page | null} */ (null))
@@ -47,7 +49,10 @@ export async function refresh() {
     memory: await Promise.all(dirs.map(async (dir) => ({ path: join(dir, 'memory.md'), entries: parseMemory(await app.fs.read(join(dir, 'memory.md'))) }))),
     skills: loaded.value.has('skills') ? await listSkills(app.fs, dirs) : [],
     routines: (await routinesModule?.routines()) ?? [],
+    directory: (await skillsModule?.directory()) ?? [],
   }
+  // A skill added, changed or deleted here changes the blocks drawn as widgets (D196).
+  skillsModule?.declare(page.value.skills)
 }
 
 /** @param {string} dir @param {string} text */
@@ -152,6 +157,27 @@ async function removeSource(url) {
 
 /** @param {import('../caps/skills/sources.js').Entry} entry */
 const preview = async (entry) => (await import('../caps/skills/ready.js')).preview(entry)
+
+/**
+ * Jean's own ready-made skills that the user hasn't added (D196): a tile each, named in their
+ * language, read before it is added. @param {Page} state
+ */
+function directoryView(state) {
+  const have = state.skills.map((skill) => skill.name)
+  const open = state.directory.filter((entry) => !have.includes(entry.name))
+  return open.length ? html`<section>
+    <h3>${t('skills.directory')}</h3>
+    <p class="muted small">${t('skills.directoryText')}</p>
+    <ul class="services ready-made">${open.map((entry) => html`<li><button class="service" @click=${() => preview(entry)}>
+      <span class="monogram" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" focusable="false"><path d=${entry.icon}></path></svg></span>
+      <span><strong>${t(`skill.${entry.name}`)}</strong><small>${t(`skill.${entry.name}.text`)}</small></span>${icons.plus}
+    </button></li>`)}</ul>
+  </section>` : nothing
+}
+
+/** What a skill is called, and when it is used: one of the directory's in the user's language. @param {Page} state @param {import('../core/skills.js').Skill} skill */
+const named = (state, skill) => (!skill.source && state.directory.some((entry) => entry.name === skill.name)
+  ? { title: t(`skill.${skill.name}`), text: t(`skill.${skill.name}.text`) } : { title: skill.title, text: skill.description })
 
 /** Skills from elsewhere, read when asked: each source's the user hasn't, as cards, narrowed by what is typed; a source is removed where it shows. @param {Page} state */
 function sourcesView(state) {
@@ -292,7 +318,7 @@ export function you() {
       </section>`}`
 }
 
-/** Settings' Skills: each one's steps to read or change, one from a file, and those from elsewhere. */
+/** Settings' Skills: each one's steps to read or change, one from a file, Jean's ready-made ones, and those from elsewhere. */
 export function skills() {
   const state = page.value
   if (!state) return nothing
@@ -301,7 +327,7 @@ export function skills() {
       <div class="section-head"><h3>${t('skills.yours')}</h3><label class="button subtle">${icons.upload} ${t('skills.add')}
         <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}></label></div>
       ${state.skills.length ? html`<ul class="list">${state.skills.map((skill) => html`<li><details>
-        <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${skill.title}</strong><small dir="auto">${skill.description}</small>${skill.source
+        <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${named(state, skill).title}</strong><small dir="auto">${named(state, skill).text}</small>${skill.source
           ? html`<small>${icons.globe} ${t('skills.from', { source: new URL(skill.source).host })}</small>` : nothing}</span>${icons.chevron}</summary>
         <div class="item-body">
           <textarea class="steps" rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}
@@ -310,6 +336,7 @@ export function skills() {
         </div>
       </details></li>`)}</ul>` : html`<p class="empty muted small">${t('skills.none')}</p>`}
     </section>
+    ${directoryView(state)}
     ${sourcesView(state)}`
 }
 
