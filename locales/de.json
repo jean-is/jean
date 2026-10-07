@@ -284,6 +284,7 @@
   "made.open": "Öffnen",
   "made.version": "Version {n}",
   "preview.versions": "Versionen",
+  "view.unshown": "Diese Datei lässt sich hier nicht anzeigen.",
   "made.kind.document": "Word-Dokument",
   "made.kind.sheet": "Tabelle",
   "made.kind.page": "Webseite",

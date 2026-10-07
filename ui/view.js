@@ -1,14 +1,17 @@
 // What a file shows as beside the conversation (D126): in the preview, and in the browser for a
 // file of the conversation's folder or the project's workspace that isn't a page (D190), so both
-// show a file the same way. A picture, a film or a sound as itself; a web page in a frame of its
+// show a file the same way. A picture, a film or a sound as itself; a MIDI file, which no browser
+// plays, as the sound Jean's own synthesizer makes of it (D197); a web page in a frame of its
 // own (preview.html), doing what Settings lets it (D143), by default running its scripts without
 // any network; a PDF's pages drawn by pdf.js; an Office file or a CSV as Office draws it, in a
-// frame of the same kind (D183); Markdown laid out as an answer is; anything else as its text.
+// frame of the same kind (D183); Markdown laid out as an answer is; anything else as its text,
+// unless it isn't text. One this browser can't draw, play or read says so in its place.
 // Loaded the first time a file shows, with its style sheet.
 import { html } from 'lit-html'
 import { markdown } from './markdown.js'
 import { pagePolicy } from './csp.js'
 import { styleSheet } from './sheet.js'
+import { t } from '../core/i18n.js'
 
 const FRAME = new URL('../preview.html', import.meta.url).href
 
@@ -33,13 +36,18 @@ await styleSheet(new URL('view.css', import.meta.url))
 export async function viewOf(file, holds, page) {
   const { name, bytes } = file
   const ext = /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() ?? ''
-  const media = /^(image|video|audio)\//.exec(file.type ?? '')?.[1]
+  const midi = /^(midi?|kar|rmi)$/.test(ext) || /^audio\/(x-)?midi?$/.test(file.type ?? '')
+  const media = midi ? 'audio' : /^(image|video|audio)\//.exec(file.type ?? '')?.[1]
   if (media) {
-    const url = URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.type }))
+    const sound = midi ? await (await import('../caps/files/midi.js')).midiSound(bytes).catch((error) => console.warn('View', error) ?? null) : null
+    if (midi && !sound) return unshown()
+    const url = URL.createObjectURL(sound ?? new Blob([/** @type {BlobPart} */ (bytes)], { type: file.type }))
     holds.push(() => URL.revokeObjectURL(url))
-    return media === 'image' ? html`<img class="view-picture" src=${url} alt=${name}>`
-      : media === 'video' ? html`<video class="view-film" src=${url} controls></video>`
-      : html`<audio class="view-sound" src=${url} controls></audio>`
+    // A kind this browser can't draw or play (a TIFF or HEIC picture outside Safari) says so in its place.
+    const failed = (/** @type {Event} */ event) => /** @type {Element} */ (event.currentTarget).replaceWith(unshown())
+    return media === 'image' ? html`<img class="view-picture" src=${url} alt=${name} @error=${failed}>`
+      : media === 'video' ? html`<video class="view-film" src=${url} controls @error=${failed}></video>`
+      : html`<audio class="view-sound" src=${url} controls @error=${failed}></audio>`
   }
   if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), name, page.policy, page.allow)
   // A PDF's pages, drawn by pdf.js; its text when pdf.js can't open it.
@@ -53,12 +61,17 @@ export async function viewOf(file, holds, page) {
   // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183).
   const csv = /^(csv|tsv)$/.test(ext) && page.allows.scripts ? await (await import('../caps/made/formats.js')).makeFile(name.replace(/\.[ct]sv$/i, '.xlsx'), new TextDecoder().decode(bytes)).catch(() => null) : null
   if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name), name, pagePolicy(page.allows, page.sites, true), page.allow)
-  // Everything else shows from its text: an Office file's words, any other file as it is.
-  const { extractPages, decodeText } = await import('../caps/files/extract.js')
-  const text = file.text ? await file.text() : /^(docx|xlsx|pptx)$/.test(ext) ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : decodeText(bytes)
+  // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
+  const { extractPages, decodeText, isBinary } = await import('../caps/files/extract.js')
+  const office = /^(docx|xlsx|pptx)$/.test(ext)
+  const text = file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : isBinary(bytes) ? '' : decodeText(bytes)
+  if (!text && !office && isBinary(bytes)) return unshown()
   if (/^(md|markdown)$/.test(ext) || file.prose) return html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
   return html`<pre class="view-text" dir="auto">${text}</pre>`
 }
+
+/** What shows in place of a file that can't. */
+const unshown = () => Object.assign(document.createElement('p'), { className: 'view-note', textContent: t('view.unshown') })
 
 /**
  * A web page, in a frame of its own: an opaque origin (scripts, never with allow-same-origin)

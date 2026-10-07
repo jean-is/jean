@@ -280,6 +280,7 @@
   "made.open": "開く",
   "made.version": "バージョン {n}",
   "preview.versions": "バージョン",
+  "view.unshown": "このファイルはここでは表示できません。",
   "made.kind.document": "Word 文書",
   "made.kind.sheet": "スプレッドシート",
   "made.kind.page": "ウェブページ",

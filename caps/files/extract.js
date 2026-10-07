@@ -35,8 +35,15 @@ export async function extractPages(name, bytes) {
 
 const decoder = new TextDecoder()
 
-/** UTF-8 when valid, else Windows-1252 (what older Windows apps save). @param {Uint8Array} bytes */
+/** UTF-16 when it starts with its byte order mark (what Windows' Notepad and PowerShell may save). @param {Uint8Array} bytes */
+const wide = (bytes) => (bytes[0] === 0xff && bytes[1] === 0xfe ? 'utf-16le' : bytes[0] === 0xfe && bytes[1] === 0xff ? 'utf-16be' : '')
+
+/** Whether a file's bytes are data rather than text: a zero in its first 8000, as Git tells, unless it is UTF-16. @param {Uint8Array} bytes */
+export const isBinary = (bytes) => !wide(bytes) && bytes.subarray(0, 8000).includes(0)
+
+/** UTF-16 when it says so, UTF-8 when valid, else Windows-1252 (what older Windows apps save). @param {Uint8Array} bytes */
 export function decodeText(bytes) {
+  if (wide(bytes)) return new TextDecoder(wide(bytes)).decode(bytes).replace(/\r\n?/g, '\n')
   try {
     return new TextDecoder('utf-8', { fatal: true }).decode(bytes).replace(/\r\n?/g, '\n')
   } catch {

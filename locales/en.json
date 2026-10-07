@@ -284,6 +284,7 @@
   "made.open": "Open",
   "made.version": "Version {n}",
   "preview.versions": "Versions",
+  "view.unshown": "This file can’t be shown here.",
   "made.kind.document": "Word document",
   "made.kind.sheet": "Spreadsheet",
   "made.kind.page": "Web page",
