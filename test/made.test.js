@@ -30,11 +30,16 @@ test('makeFile: text files as written, a CSV with the mark Excel reads as UTF-8'
   assert.equal(csv.mimeType, 'text/csv')
   assert.deepEqual([...csv.bytes.slice(0, 3)], [0xef, 0xbb, 0xbf])
   assert.equal((await makeFile('chart.svg', '<svg/>')).mimeType, 'image/svg+xml')
+  // Any kind it doesn't know is text, for a program or another tool to take up.
+  const tex = await makeFile('Formules d’Euler.tex', '\\documentclass{article}')
+  assert.equal(tex.mimeType, 'text/plain')
+  assert.equal(dec.decode(tex.bytes), '\\documentclass{article}')
 })
 
-test('makeFile: says what it can make when the name has no kind, or one it can’t make', async () => {
+test('makeFile: says what it can make when the name has no kind, or one that isn’t text', async () => {
   await assert.rejects(makeFile('Report', 'text'), /Name the file with its kind/)
   await assert.rejects(makeFile('Report.pdf', 'text'), /\.pdf file can't be made.*\.docx/)
+  await assert.rejects(makeFile('Photo.JPG', 'text'), /\.jpg file can't be made: it isn't text/)
   await assert.rejects(makeFile('Report.docx', '  \n'), /no content/)
 })
 

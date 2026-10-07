@@ -1,6 +1,6 @@
 // Files Jean makes (D119): a Word document from Markdown, a spreadsheet from CSV or Markdown
-// tables, or a text file as it is. Office files are zips of XML, written with core/zip.js and
-// the lexer Jean already loads: no file-format library. Pure, so Node's tests run it.
+// tables, or any other text file as it is. Office files are zips of XML, written with
+// core/zip.js and the lexer Jean already loads: no file-format library. Pure, so Node's tests run it.
 import { lexer } from 'marked'
 import { writeZip } from '../../core/zip.js'
 
@@ -12,6 +12,10 @@ const TEXT = /** @type {Record<string, string>} */ ({
   ics: 'text/calendar', vcf: 'text/vcard', yaml: 'application/yaml', yml: 'application/yaml', css: 'text/css',
   js: 'text/javascript', py: 'text/x-python', sql: 'application/sql', srt: 'application/x-subrip', vtt: 'text/vtt', log: 'text/plain',
 })
+// Kinds that aren't text: written as text, they would be broken files. Any other kind is text.
+const BINARY = new Set(('pdf doc docm dot xls xlsm xlsb ppt pptx pptm odt ods odp pages numbers key epub zip gz tgz bz2 xz 7z rar tar iso ' +
+  'png jpg jpeg gif webp avif heic heif bmp tif tiff ico psd mp3 wav m4a aac ogg flac wma mp4 m4v mov webm avi mkv wmv ' +
+  'exe msi dmg apk jar wasm woff woff2 ttf otf sqlite db parquet').split(' '))
 
 const encoder = new TextEncoder()
 
@@ -34,10 +38,10 @@ export async function makeFile(name, content, { paper = 'a4', date } = {}) {
   if (!content.trim()) throw new Error('The file has no content.')
   if (ext === 'docx') return { name: clean, mimeType: DOCX, bytes: await docx(content, paper, date) }
   if (ext === 'xlsx') return { name: clean, mimeType: XLSX, bytes: await xlsx(sheetsIn(content, clean.slice(0, -5)), date) }
-  // A byte-order mark, so Excel reads a CSV as UTF-8.
-  if (Object.hasOwn(TEXT, ext)) return { name: clean, mimeType: TEXT[ext], bytes: encoder.encode((/^[ct]sv$/.test(ext) ? '\ufeff' : '') + content) }
   if (!ext) throw new Error('Name the file with its kind, e.g. "Report.docx", "Budget.xlsx" or "Notes.txt".')
-  throw new Error(`A .${ext} file can't be made. Make a Word document (.docx, which Word saves as PDF too), a spreadsheet (.xlsx) or a text file (.md, .csv, .txt, .html, .svg…).`)
+  if (BINARY.has(ext)) throw new Error(`A .${ext} file can't be made: it isn't text. Make a Word document (.docx, which Word saves as PDF too), a spreadsheet (.xlsx), a drawing (.svg) or a text file (.md, .csv, .html…).`)
+  // A byte-order mark, so Excel reads a CSV as UTF-8.
+  return { name: clean, mimeType: TEXT[ext] ?? 'text/plain', bytes: encoder.encode((/^[ct]sv$/.test(ext) ? '\ufeff' : '') + content) }
 }
 
 /**

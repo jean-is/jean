@@ -69,7 +69,7 @@ const writeTool = {
       '.docx, a Word document, written in Markdown (headings, lists, tables, bold, links);',
       '.xlsx, a spreadsheet, written as CSV, or as Markdown tables, each under a heading that names its sheet:',
       'numbers plain (1234.5), dates as 2026-10-03, formulas in English (=SUM(B2:B9));',
-      'or a text file, as it is (.md, .csv, .txt, .html, .svg, .json, .ics…).',
+      'or any text file, as it is (.md, .csv, .html, .svg, .json, .ics, .tex, .py…).',
     ].join(' '),
     parameters: {
       type: 'object',
