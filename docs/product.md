@@ -45,7 +45,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
 
-**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there, and formulas (`math`) load with the first one in an answer, drawn as they are printed (D185). The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
+**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there, and formulas (`math`) load with the first one in an answer, drawn as they are printed, a LaTeX document laid out with them (D185). The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
 
 **Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; sharing and collaboration ([enterprise.md](enterprise.md)).
 

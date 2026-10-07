@@ -61,7 +61,7 @@ function block(token) {
   switch (token.type) {
     case 'heading': return heading(token.depth, inline(token.tokens))
     case 'paragraph': return html`<p>${inline(token.tokens)}</p>`
-    case 'code': return html`<pre dir="ltr"><code>${token.text}</code></pre>`
+    case 'code': return token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : html`<pre dir="ltr"><code>${token.text}</code></pre>`
     case 'blockquote': return html`<blockquote>${blocks(token.tokens)}</blockquote>`
     case 'list': return list(token)
     case 'table': return table(token)
@@ -125,10 +125,16 @@ function inline(tokens = []) {
 
 /** @type {Promise<boolean> | undefined} */
 let drawing
-/** A formula, which the math capability draws once it has loaded; until then, or if it can't, its source shows. @param {any} token */
+/** A formula, which the math capability draws once it has loaded; until then, or if it can't, its source shows. @param {{ text: string, block?: boolean }} token */
 function formula(token) {
   drawing ??= unlock('math')
   return html`<app-math dir="ltr" tex=${token.text} ?block=${token.block}></app-math>`
+}
+
+/** A LaTeX document, which the math capability lays out; until then, or if it can't, its source shows. @param {any} token */
+function latex(token) {
+  drawing ??= unlock('math')
+  return html`<app-latex dir="auto" kind=${token.lang} tex=${token.text}></app-latex>`
 }
 
 /** @param {string} href */

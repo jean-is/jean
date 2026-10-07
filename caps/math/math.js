@@ -1,7 +1,10 @@
-// Formulas (D185): drawn by the browser as MathML, which Temml writes from the LaTeX brains use.
-// Unlocked by the first formula a message holds, never offered; until then, or if Temml can't read
-// one, its source shows (ui/markdown.js).
+// Formulas (D185): drawn by the browser as MathML, which Temml writes from the LaTeX brains use, and
+// LaTeX documents laid out with them. Unlocked by the first formula or document a message holds,
+// never offered; until then, or if Temml can't read one, its source shows (ui/markdown.js).
+import { html, render } from 'lit-html'
+import { markdown } from '../../ui/markdown.js'
 import { styleSheet } from '../../ui/sheet.js'
+import { latexToMarkdown } from './latex.js'
 
 const [{ default: temml }] = await Promise.all([
   import(new URL('../../vendor/temml/temml.mjs', import.meta.url).href),
@@ -25,4 +28,15 @@ class AppMath extends HTMLElement {
   }
 }
 
+/** A ```latex block laid out, its source under it as the brain wrote it, named by the block's own tag. */
+class AppLatex extends HTMLElement {
+  static observedAttributes = ['tex']
+
+  attributeChangedCallback() {
+    const tex = this.getAttribute('tex') ?? ''
+    render(html`${markdown(latexToMarkdown(tex))}<details><summary>${this.getAttribute('kind')}</summary><pre dir="ltr"><code>${tex}</code></pre></details>`, this)
+  }
+}
+
 customElements.define('app-math', AppMath)
+customElements.define('app-latex', AppLatex)
