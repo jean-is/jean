@@ -85,12 +85,14 @@ async function copyLitHtml () {
 async function copyLicense (pkg) {
   const to = join(VENDOR, 'LICENSES', licenseName(pkg))
   await mkdir(dirname(to), { recursive: true })
-  const text = await readFile(join(MODULES, pkg, 'LICENSE')).catch(async () => {
+  const text = await readFile(join(MODULES, pkg, 'LICENSE')).catch(() => readFile(join(MODULES, pkg, 'LICENSE.md'))).catch(async () => {
     // Some packages (onnxruntime-web) ship no LICENSE file: record what package.json declares.
     const { name, version, license, repository } = JSON.parse(await readFile(join(MODULES, pkg, 'package.json'), 'utf8'))
     return `${name} ${version} is distributed under the ${license} license.\nSource: ${repository?.url ?? repository ?? ''}\n`
   })
-  await writeFile(to, text)
+  // Apache-2.0's NOTICE (ECharts') goes with the licence.
+  const notice = await readFile(join(MODULES, pkg, 'NOTICE'), 'utf8').catch(() => '')
+  await writeFile(to, notice ? `${text}\n\n${notice}` : text)
 }
 
 /**
@@ -99,7 +101,9 @@ async function copyLicense (pkg) {
  * may keep only the files matching a pattern. `scripts` are CommonJS files made one classic script
  * (`classicScript`); `graph` copies what entries import, for an import map (`forImportMap`).
  * `global` makes a script that declares one variable a module whose default export it is.
+ * `patch` makes exact replacements in a file (`patchSource`).
  * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>, global?: Record<string, string>,
+ *   patch?: Record<string, Array<[RegExp, string, number]>>,
  *   scripts?: Record<string, [string, Record<string, string>, string]>, graph?: { from: string, entries: string[], prefix: string, skip: RegExp } }[]}
  */
 export const RUNTIMES = [
@@ -178,7 +182,38 @@ export const RUNTIMES = [
     files: [['temml/dist/temml.min.js', 'temml.mjs'], ['temml/dist/Temml-Local.css', 'temml.css'], ['temml/dist/Temml.woff2', 'Temml.woff2']],
     global: { 'temml.mjs': 'temml' },
   },
+  {
+    // Charts (D196): ECharts' module build, whole, with zrender inside. It empties an element with
+    // innerHTML, which Trusted Types refuse; replaceChildren() does the same.
+    dir: 'vendor/echarts',
+    packages: ['echarts', 'zrender'],
+    files: [['echarts/dist/echarts.esm.min.mjs', 'echarts.mjs']],
+    patch: { 'echarts.mjs': [[/\.innerHTML=(?:""|null)/g, '.replaceChildren()', 6]] },
+  },
+  {
+    // Scores (D196): abcjs draws ABC notation as SVG, its minified build made a module. It empties
+    // with innerHTML and styles with style attributes, which Trusted Types and the CSP refuse: the
+    // same, done with replaceChildren(), textContent and the CSSOM.
+    dir: 'vendor/abcjs',
+    packages: ['abcjs'],
+    files: [['abcjs/dist/abcjs-basic-min.js', 'abcjs.mjs']],
+    wrap: { 'abcjs.mjs': ['renderAbc'] },
+    patch: { 'abcjs.mjs': [[/\.innerHTML=""/g, '.replaceChildren()', 3], [/\.innerHTML="&nbsp;"/g, '.textContent="\\xa0"', 1], [/\.setAttribute\("style",/g, '.style.cssText=(', 7]] },
+  },
 ]
+
+/**
+ * Exact replacements in a third-party file, each found as many times as expected, or the copy
+ * fails: a new version that changed those lines is looked at again, never shipped half patched.
+ * @param {string} text @param {Array<[RegExp, string, number]>} patches
+ */
+export function patchSource (text, patches) {
+  return patches.reduce((out, [pattern, replacement, count]) => {
+    const found = out.match(pattern)?.length ?? 0
+    if (found !== count) throw new Error(`expected ${pattern} ${count} times, found it ${found}`)
+    return out.replace(pattern, replacement)
+  }, text)
+}
 
 /**
  * A CommonJS or UMD file as a module: it fills `module.exports`, whose names are then exported.
@@ -243,7 +278,7 @@ async function copyRuntime (runtime) {
   /** @param {string} from @param {string} to */
   const copy = async (from, to) => {
     if (/\.m?js$/.test(to)) {
-      const source = rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {})
+      const source = patchSource(rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {}), runtime.patch?.[to] ?? [])
       const text = runtime.wrap?.[to] ? wrapCommonJS(source, runtime.wrap[to]) : runtime.global?.[to] ? `${source}\nexport default ${runtime.global[to]}\n` : source
       await writeFile(join(target, to), text)
       raw += Buffer.byteLength(text)

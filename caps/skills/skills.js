@@ -4,16 +4,22 @@
 // `save_skill` writes one when the user asks for it, typically after "Save this as a skill",
 // suggested when the same kind of request comes up a third time (ui/discovery.js).
 // Skills from elsewhere (D121): the indexes in settings and policy are read on the device
-// (./sources.js); the third request of a kind looks there first, and `suggest_skill` lets the
-// brain look. Either way the user reads the steps and adds the skill (./ready.js), or not.
+// (./sources.js), and Jean's own directory with them (./directory.js, D196); the third request of a
+// kind looks there first, and `suggest_skill` lets the brain look. Either way the user reads the
+// steps and adds the skill (./ready.js), or not.
+// A skill declares the kinds of block it writes (D196); answers draw those as widgets while one
+// of the room's skills declares them.
+import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
+import { declared } from '../../ui/markdown.js'
 import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { SAME_KIND } from '../../ui/discovery.js'
-import { listSkills, saveSkill, skillLines } from '../../core/skills.js'
-import { slug } from '../../core/settings.js'
+import { blocksOf, listSkills, saveSkill, skillLines } from '../../core/skills.js'
+import { parseFrontMatter, slug } from '../../core/settings.js'
 import { dirname, join, walk } from '../../core/fs.js'
 import { t } from '../../core/i18n.js'
 import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, unpack } from './sources.js'
+import { readDirectory } from './directory.js'
 
 /** @typedef {import('./sources.js').Entry} Entry */
 
@@ -22,6 +28,15 @@ const folders = () => (app.project.value.data.default === true ? [''] : ['', app
 
 /** The skills of the room. */
 export const skills = () => listSkills(app.fs, folders())
+
+/** The kinds of block these skills write, drawn as widgets in answers (D196). @param {import('../../core/skills.js').Skill[]} list */
+export const declare = (list) => { declared.value = new Set(list.flatMap((skill) => skill.blocks ?? [])) }
+/** Reads them again: in a new room, and when a skill comes or goes. */
+export const redeclare = async () => declare(await skills())
+effect(() => {
+  void app.project.value
+  void redeclare()
+})
 
 /** @type {import('../../core/loop.js').Tool} */
 const skillTool = {
@@ -97,31 +112,45 @@ export const sources = () => [...new Set([...locked(), ...app.policy.skills?.onl
 /** What the sources offer, as last read (a day's cache in .cache/). @param {{ again?: boolean }} [options] */
 export const offered = (options) => readIndexes(app.fs, sources(), options)
 
+/** @type {Promise<import('./directory.js').Ready[]> | null} */
+let shelf = null
+/** Jean's own ready-made skills (D196), read once, unless policy keeps to the organisation's sources. */
+export const directory = async () => (app.policy.skills?.only ? [] : (shelf ??= readDirectory()))
+
 /** A skill from elsewhere suggested in a conversation, by the conversation's path, shown under its answers. @type {Map<string, Entry>} */
 export const suggested = new Map()
 
 /** The skill from elsewhere that fits a request, if one does and the user doesn't have it. @param {string} request */
 export async function lookFor(request) {
   const have = (await skills()).map((skill) => skill.name)
-  return bestFit(request, (await offered()).flatMap((index) => index.skills), have, SAME_KIND)
+  return bestFit(request, [...await directory(), ...(await offered()).flatMap((index) => index.skills)], have, SAME_KIND)
 }
 
-/** Downloads a skill and checks it against its digest (SkillError when it can't be added). @param {Entry} entry */
+/**
+ * Downloads a skill and checks it against its digest (SkillError when it can't be added); one of
+ * Jean's own is read from its files. @param {Entry} entry
+ */
 export async function download(entry) {
   const response = await fetch(entry.url)
   if (!response.ok) throw new Error(`The skill answered ${response.status}.`)
+  if (!entry.digest) {
+    const { data, body } = parseFrontMatter(await response.text())
+    return { body: body.trim(), files: [], blocks: blocksOf(data.metadata?.blocks) }
+  }
   return unpack(entry, new Uint8Array(await response.arrayBuffer()))
 }
 
 /**
  * Adds a skill from elsewhere as the user saw it: its steps and the text beside them, with where
- * it came from and the digest it was checked against. Its suggestions go.
- * @param {Entry} entry @param {{ body: string, files: { path: string, text: string }[] }} unpacked
+ * it came from and the digest it was checked against (one of Jean's own, with neither). Its
+ * suggestions go.
+ * @param {Entry} entry @param {{ body: string, files: { path: string, text: string }[], blocks?: string[] }} unpacked
  */
-export async function adopt(entry, { body, files }) {
+export async function adopt(entry, { body, files, blocks }) {
   const dir = folders().at(-1) ?? ''
   for (const file of files) await app.fs.write(join(dir, 'skills', entry.name, file.path), file.text)
-  await saveSkill(app.fs, dir, { name: entry.name, description: entry.description, body, by: app.deviceId, source: entry.url, digest: entry.digest })
+  await saveSkill(app.fs, dir, { name: entry.name, description: entry.description, body, by: app.deviceId, blocks, ...(entry.digest && { source: entry.url, digest: entry.digest }) })
+  await redeclare()
   for (const [path, other] of suggested) if (other.name === entry.name) suggested.delete(path)
   app.actions.value = Object.fromEntries(Object.entries(app.actions.value).map(([at, ids]) => [at, ids.filter((id) => id !== 'ready')]))
 }
@@ -141,7 +170,7 @@ const suggestTool = {
     const found = path ? await lookFor(String(args?.task ?? '')) : null
     if (!path || !found) return 'No ready-made skill fits that.'
     suggested.set(path, found)
-    return `Found "${found.name}" on ${siteOf(found.url)}: ${found.description}\nA button under your answer lets the user read its steps and add it. It isn't added unless they do.`
+    return `Found "${found.name}"${found.digest ? ` on ${siteOf(found.url)}` : ''}: ${found.description}\nA button under your answer lets the user read its steps and add it. It isn't added unless they do.`
   },
 }
 

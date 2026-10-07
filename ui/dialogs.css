@@ -118,6 +118,7 @@ label.item, .list summary { cursor: pointer; }
 /* The services Jean knows: a tile each, one not reached yet disabled (D95, D191); a brand's logo, its own file in its own shape; a picture is an app icon, rounded as the system would (D159). */
 .services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
 .services li:has(.includes) { grid-column: span 2; }
+.services.ready-made { grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }
 :is(.service, .card) { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; color: var(--ink); text-align: start; }
 :is(.service, .card):hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
 .service:disabled { cursor: progress; opacity: 0.6; } .service.is-soon { cursor: default; } .is-soon .monogram { filter: grayscale(1); }

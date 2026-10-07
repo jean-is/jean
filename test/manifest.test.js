@@ -15,7 +15,7 @@ import {
   stampVersion,
 } from '../scripts/manifest.js'
 import { resolveRequest } from '../scripts/serve.js'
-import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, forImportMap } from '../scripts/vendor.js'
+import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, forImportMap, patchSource } from '../scripts/vendor.js'
 
 const IMPORT_MAP = {
   imports: {
@@ -49,6 +49,7 @@ describe('manifest: file filters', () => {
 
   it('skips docs, source maps, type declarations and dotfiles', () => {
     assert.equal(isShipped('core/README.md'), false)
+    assert.equal(isShipped('caps/skills/directory/charts/SKILL.md'), true, 'a skill Jean ships (D196)')
     assert.equal(isShipped('vendor/marked.esm.js.map'), false)
     assert.equal(isShipped('vendor/lit-html/lit-html.d.ts'), false)
     assert.equal(isShipped('ui/.DS_Store'), false)
@@ -141,6 +142,13 @@ describe('manifest: capabilities', () => {
     assert.equal(forImportMap('import x from"lit-html";s="../up.js"', 'ooxml/'), 'import x from"lit-html";s="../up.js"', 'bare and upward specifiers stay')
     assert.equal(classicWorkers('b = new Blob(["URL.revokeObjectURL(import.meta.url);", src], { type: "text/javascript" }); w = new Worker(t, {\n\t\ttype: "module",\n\t\tname: e?.name\n\t})'),
       'b = new Blob([src], { type: "text/javascript" }); w = new Worker(t, {\n\t\tname: e?.name\n\t})')
+  })
+
+  it('patches a library exactly as often as expected, or stops (D196)', () => {
+    const clearing = /\.innerHTML=(?:""|null)/g
+    assert.equal(patchSource('a.innerHTML="",b&&(b.innerHTML=null);c.setAttribute("style","x")', [[clearing, '.replaceChildren()', 2], [/\.setAttribute\("style",/g, '.style.cssText=(', 1]]),
+      'a.replaceChildren(),b&&(b.replaceChildren());c.style.cssText=("x")')
+    assert.throws(() => patchSource('a.innerHTML=""', [[clearing, '.replaceChildren()', 2]]), /found it 1/, 'a new version is looked at again')
   })
 })
 

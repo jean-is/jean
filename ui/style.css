@@ -322,12 +322,13 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 .prose .align-right { text-align: end; }
 .prose .align-center { text-align: center; }
 app-math:not(:defined)::before, app-latex:not(:defined)::before { content: attr(tex); }
+:is(app-chart, app-score):not(:defined)::before { content: attr(source); }
 app-math[block] { display: block; overflow-x: auto; margin-block: 0 0.85rem; }
-app-latex { display: block; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 0.9rem; margin-block: 0 0.85rem; }
-app-latex:not(:defined) { white-space: pre-wrap; font: 0.86rem var(--mono); }
+:is(app-latex, app-chart, app-score) { display: block; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 0.9rem; margin-block: 0 0.85rem; }
+:is(app-latex, app-chart, app-score):not(:defined) { white-space: pre-wrap; font: 0.86rem var(--mono); }
 app-latex > :first-child { margin-block-start: 0; }
-app-latex summary { color: var(--ink-faint); font: 0.86rem var(--mono); cursor: pointer; }
-app-latex details pre { margin-block: 0.6rem 0; }
+:is(app-latex, app-chart, app-score) summary { color: var(--ink-faint); font: 0.86rem var(--mono); cursor: pointer; }
+:is(app-latex, app-chart, app-score) details pre { margin-block: 0.6rem 0; }
 .image-alt { color: var(--ink-faint); }
 .caret {
   display: inline-block;

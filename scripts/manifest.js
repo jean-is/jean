@@ -27,6 +27,8 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   computer: ['vendor/just-bash', 'vendor/quickjs', 'vendor/pyodide'],
   live: ['vendor/transformers'],
   math: ['vendor/temml'],
+  charts: ['vendor/echarts'],
+  scores: ['vendor/abcjs'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
 /** Drawn for installs (D131): only the browser or the system fetches them, once, so the shell doesn't precache them. */
@@ -57,13 +59,14 @@ export const VERSION_LINE = /^const VERSION = '.*'$/m
 export const isMissing = (error) => /** @type {{ code?: string }} */ (error)?.code === 'ENOENT'
 
 /**
- * Whether a root-relative path belongs in a deployable cache list.
+ * Whether a root-relative path belongs in a deployable cache list. Markdown isn't, but for the
+ * skills of Jean's own directory (D196).
  * @param {string} path  posix path relative to the app root
  */
 export function isShipped (path) {
   const segments = path.split('/')
   const name = segments[segments.length - 1]
-  return segments.every((s) => !s.startsWith('.')) && !/\.(md|map)$|\.d\.ts$/.test(name)
+  return segments.every((s) => !s.startsWith('.')) && (name === 'SKILL.md' || !/\.(md|map)$|\.d\.ts$/.test(name))
 }
 
 /**

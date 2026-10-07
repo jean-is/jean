@@ -18,7 +18,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - what it should know about you, on a page where you can read and change it;
   - standing instructions;
   - projects, each with its own memory, files and light;
-  - skills it learns from requests you repeat, saved as `SKILL.md`, or ready-made ones that sites and your organisation publish, added only after you read their steps;
+  - skills it learns from requests you repeat, saved as `SKILL.md`, or ready-made ones, from its own directory or that sites and your organisation publish, added only after you read their steps; some draw in answers, such as charts and music scores you can play;
   - and once there's plenty to look back on, ⌘K finds any conversation, file or setting as you type.
 - **Repeats on a schedule.** A routine is a request Jean sends itself every day, working day, week or month. It runs while Jean is open, and what fell due while it was closed runs when you're back.
 - **Reaches your services and the web.** Connections over MCP sign in from the browser. Web search uses the brain's own search, or Wikipedia. Every source becomes a numbered citation. Pages open beside the conversation, with back, forward and reload, and Jean can open one there too. A site that won't show inside Jean opens in its own tab, and Jean explains how to install it as an app.

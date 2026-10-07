@@ -44,7 +44,12 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   folders: () => import('../caps/folders/folders.js'),
   you: () => import('../caps/you/you.js'),
   math: () => import('../caps/math/math.js'),
+  charts: () => import('../caps/charts/charts.js'),
+  scores: () => import('../caps/scores/scores.js'),
 })
+
+/** Widgets (D196), loaded when an answer holds one, never at the start. */
+const ON_SIGHT = ['charts', 'scores']
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
 export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6 })
@@ -81,7 +86,7 @@ export function unlock(id) {
   let pending = loading.get(id)
   if (!pending) {
     pending = LOADERS[id]().then(() => {
-      gate.remember(id)
+      if (!ON_SIGHT.includes(id)) gate.remember(id)
       navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id })
       return true
     }, (error) => {
