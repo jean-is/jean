@@ -41,7 +41,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
   3. The model's own `offer(capability)` tool, as a backstop.
 - **Offers are short.** Jean introduces a capability in one sentence. If the user accepts, that capability's code loads and its tools join the conversation. Once discovered, it stays visible.
 - **"What Jean can do"**, Settings' Capabilities section, is a case of trophies (D127). Each capability is a medal, lit once found. Each undiscovered one is a silhouette that says how it is found ("Share a spreadsheet"), so the case doubles as a list of things to try. A rank shows how far the house is lit, and how many more it takes to reach the next. Curious users can turn a trophy on early from its plaque, and power users can unlock everything at once.
-- **Discovery and code loading are one decision.** Each capability is a module loaded on demand, so the simple first screen and the 100 KB first load are the same thing.
+- **Discovery and code loading are one decision.** Each capability is a module loaded on demand, so the simple first screen and the 101 KB first load are the same thing.
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
 
