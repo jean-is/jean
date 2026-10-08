@@ -75,6 +75,9 @@ async function mountOf(signal) {
 /** Before a run, in a folder not open yet: Folders' card, whose click lets the browser open it (D141). @param {any} args @param {ToolContext} ctx */
 const opening = async (args, ctx) => (loaded.peek().has('folders') ? (await import('../folders/folders.js')).opening(args, ctx) : undefined)
 
+/** This computer (D198), once it is on: what runs a task's commands on the user's own machine. */
+const machine = () => (loaded.peek().has('machine') ? import('../machine/machine.js') : null)
+
 /** Changes waiting to be kept, by batch. @type {Map<string, { changes: { put: Record<string, ArrayBuffer>, gone: string[] }, mount: Awaited<ReturnType<typeof mountOf>>, held: import('./mount.js').Held }>} */
 const batches = new Map()
 
@@ -88,13 +91,20 @@ const turns = new Map()
  * @returns {Promise<{ done: any, left: string[], kept: string }>}
  */
 async function execute(message, ctx) {
-  const mount = await mountOf(ctx.signal)
-  const key = mount.conversation?.id ?? 'none'
+  // A command in a folder the bridge runs in goes to this computer (D198), the rest to the sandbox.
+  const on = message.engine === 'shell' ? await machine() : null
+  const there = (await on?.machineFolder(ctx.signal)) ?? ''
+  const mount = there ? null : await mountOf(ctx.signal)
+  const key = (there ? conversationOf(ctx.signal) : mount?.conversation)?.id ?? 'none'
   const before = turns.get(key)
   const turn = (async () => {
     await before?.catch(() => {})
     if (ctx.signal?.aborted) throw new Error('Stopped.')
-    return executeNow(message, ctx, mount, key)
+    if (on && there) {
+      if (ctx.answer === 'allow_always') await on.trust(there)
+      return on.runThere(message, ctx, key, rightsNow().rights.timeMs)
+    }
+    return executeNow(message, ctx, /** @type {Awaited<ReturnType<typeof mountOf>>} */ (mount), key)
   })()
   turns.set(key, turn)
   try {
@@ -128,6 +138,8 @@ async function executeNow(message, ctx, mount, key) {
     },
     handle: (request) => online(request, ctx, { rights, relay, asked, what }),
   })
+  // A server refused here could run on the user's own computer (D198).
+  if (message.engine === 'shell' && /nothing can listen on a port here/.test(String(done.stderr ?? ''))) document.dispatchEvent(new CustomEvent('app-server-refused'))
   return { done, left, kept: await keep(done.changes, mount, state.held, ctx) }
 }
 
@@ -375,7 +387,8 @@ const bashTool = {
   },
   kind: 'execute',
   title: (args) => `Command: ${String(args?.command ?? '').trim().split('\n')[0].slice(0, 80)}`,
-  check: opening,
+  // On this computer, asked first (D198); in the sandbox, only the folder's opening.
+  check: async (args, ctx) => (await (await machine())?.asking(args, ctx)) ?? opening(args, ctx),
   run: async (args, ctx) => commandReport(await execute({ engine: 'shell', command: String(args?.command ?? '') }, ctx)),
 }
 
@@ -635,6 +648,7 @@ function panel() {
       <div><h3>${t('computer.terminal')}</h3><p class="muted">${tParts('computer.terminal.text', { keys })}</p></div>
       <button class="button subtle" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${prompt} ${t('computer.terminal.open')}</button>
     </section>
+    ${loaded.value.get('machine')?.panel?.() ?? nothing}
     <section class="setting">
       <div><h3>${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text')}</p></div>
       <button class="button subtle danger" ?disabled=${!used.value} @click=${empty}>${icons.trash} ${t('computer.workspace.empty')}</button>

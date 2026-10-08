@@ -1,0 +1,10 @@
+{
+  "slides.deck": "شرائح",
+  "slides.slide": "شريحة",
+  "slides.where": "الشريحة {n} من {count}",
+  "slides.previous": "الشريحة السابقة",
+  "slides.next": "الشريحة التالية",
+  "slides.present": "العرض بملء الشاشة",
+  "slides.drawing": "جارٍ كتابة الشرائح…",
+  "slides.failed": "تعذّر رسم هذه الشرائح."
+}

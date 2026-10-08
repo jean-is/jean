@@ -1,0 +1,10 @@
+{
+  "slides.deck": "スライド",
+  "slides.slide": "スライド",
+  "slides.where": "スライド {n}/{count}",
+  "slides.previous": "前のスライド",
+  "slides.next": "次のスライド",
+  "slides.present": "全画面で発表",
+  "slides.drawing": "スライドを書いています…",
+  "slides.failed": "このスライドは描けませんでした。"
+}

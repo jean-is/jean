@@ -104,6 +104,7 @@
   "routines.next": "下次：{when}",
   "routines.confirmDelete": "删除例行任务“{title}”？",
   "routines.run": "立即运行",
+  "routines.runs": "历次运行",
   "skills.from": "来自 {source}",
   "skills.elsewhere": "来自其他地方的技能",
   "skills.elsewhereText": "网站和组织发布的现成技能。它们会在这台设备上与你的请求进行比较，只有在你读过步骤并选择后才会添加。",
@@ -124,6 +125,8 @@
   "skills.ready.unreachable": "无法下载此技能。",
   "skills.directory": "现成技能",
   "skills.directoryText": "用于大家常请求的事。添加前，请先阅读技能的步骤。",
+  "skill.slides": "幻灯片",
+  "skill.slides.text": "写在回答里的幻灯片，可翻阅可演示",
   "skill.chart": "图表",
   "skill.chart.text": "柱状图、折线图、饼图等，直接画在回答里",
   "skill.music-score": "乐谱",
@@ -280,5 +283,7 @@
   "brain.device.loading": "马上就好…",
   "brain.device.failed": "下载中断了。请重试。",
   "brain.device.ready": "这台设备上的大脑已就绪",
-  "brain.device.private": "私密 · 可离线使用"
+  "brain.device.private": "私密 · 可离线使用",
+  "cap.machine.hint": "请它运行网站的开发服务器，例如 npm run dev。",
+  "cap.machine.text": "在这台设备本身、你的某个文件夹中，用它自己的程序和服务器运行电脑的命令：网站的开发服务器会显示在浏览器中。每条命令都会先询问，在终端中按 Ctrl+C 即可全部停止。"
 }

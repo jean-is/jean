@@ -3,7 +3,7 @@
 // it, and the note that tells the brain what each word names. ui/complete.js is the menu.
 // Host-agnostic: no DOM.
 import { fold } from '../core/search.js'
-import { foldTurns, splitSuggestions } from '../core/events.js'
+import { filesMade, foldTurns, splitSuggestions } from '../core/events.js'
 
 /** @typedef {{ kind: '/' | '@', query: string, start: number }} Typing  start: where the / or @ is */
 
@@ -64,16 +64,18 @@ export function holds(text, words) {
 }
 
 /**
- * An earlier task as the brain reads it when the user points at it: what was asked, the files
- * shared, and what was answered, in order; when longer than `max` characters, its start and
- * its end.
+ * An earlier task as the brain reads it when the user points at it, or a routine's earlier run
+ * (D122): what was asked, the files shared, what was answered and the files made, in order;
+ * when longer than `max` characters, its start and its end.
  * @param {import('../core/types.js').Envelope[]} records @param {number} [max]
  */
 export function digest(records, max = 16_000) {
   const text = foldTurns(records).flatMap((turn) => {
     const asked = turn.user ? [...turn.user.files.map((file) => `[${file.name}]`), turn.user.text].filter(Boolean).join(' ') : ''
     const answer = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n')).text.trim()
-    return [...(asked ? [`User: ${asked}`] : []), ...(answer ? [`Assistant: ${answer}`] : [])]
+    const made = [...new Set(filesMade(turn.steps.flatMap((step) => step.tools)).map((file) => file.name))]
+    const answered = [answer && `Assistant: ${answer}`, made.length ? `Files made: ${made.join(', ')}` : ''].filter(Boolean).join('\n')
+    return [...(asked ? [`User: ${asked}`] : []), ...(answered ? [answered] : [])]
   }).join('\n\n')
   if (text.length <= max) return text
   const head = Math.round(max / 8)

@@ -1,0 +1,10 @@
+{
+  "slides.deck": "שקופיות",
+  "slides.slide": "שקופית",
+  "slides.where": "שקופית {n} מתוך {count}",
+  "slides.previous": "השקופית הקודמת",
+  "slides.next": "השקופית הבאה",
+  "slides.present": "הצגה במסך מלא",
+  "slides.drawing": "כותבים את השקופיות…",
+  "slides.failed": "לא ניתן היה לצייר את השקופיות האלה."
+}

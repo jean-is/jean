@@ -1,0 +1,10 @@
+{
+  "slides.deck": "स्लाइड्स",
+  "slides.slide": "स्लाइड",
+  "slides.where": "{count} में से स्लाइड {n}",
+  "slides.previous": "पिछली स्लाइड",
+  "slides.next": "अगली स्लाइड",
+  "slides.present": "पूरी स्क्रीन पर प्रस्तुत करें",
+  "slides.drawing": "स्लाइड्स लिखी जा रही हैं…",
+  "slides.failed": "ये स्लाइड्स नहीं बनाई जा सकीं।"
+}

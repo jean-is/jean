@@ -106,6 +106,7 @@
   "routines.next": "Volgende keer: {when}",
   "routines.confirmDelete": "Routine ‘{title}’ verwijderen?",
   "routines.run": "Nu uitvoeren",
+  "routines.runs": "Eerdere uitvoeringen",
   "skills.from": "Van {source}",
   "skills.elsewhere": "Vaardigheden van elders",
   "skills.elsewhereText": "Kant-en-klare vaardigheden die websites en organisaties publiceren. Ze worden op dit apparaat vergeleken met je verzoeken, en er wordt er pas een toegevoegd als je die kiest, nadat je de stappen hebt gelezen.",
@@ -126,6 +127,8 @@
   "skills.ready.unreachable": "Deze vaardigheid kon niet worden gedownload.",
   "skills.directory": "Kant-en-klare vaardigheden",
   "skills.directoryText": "Voor wat mensen vaak vragen. Lees de stappen van een vaardigheid voordat je die toevoegt.",
+  "skill.slides": "Dia’s",
+  "skill.slides.text": "Presentaties in antwoorden, om door te bladeren en te presenteren",
   "skill.chart": "Grafiek",
   "skill.chart.text": "Staven, lijnen, taarten en meer, getekend in de antwoorden",
   "skill.music-score": "Bladmuziek",
@@ -283,5 +286,7 @@
   "brain.device.loading": "Bijna klaar…",
   "brain.device.failed": "Het downloaden is gestopt. Probeer het opnieuw.",
   "brain.device.ready": "Het brein op dit apparaat is klaar",
-  "brain.device.private": "Privé · werkt offline"
+  "brain.device.private": "Privé · werkt offline",
+  "cap.machine.hint": "Vraag om de ontwikkelserver van een site te starten, zoals npm run dev.",
+  "cap.machine.text": "Voert de opdrachten van de computer uit op dit apparaat zelf, in een van je mappen, met zijn eigen programma’s en servers: de ontwikkelserver van een site verschijnt in de browser. Elke opdracht wordt eerst gevraagd, en Ctrl+C in je terminal stopt alles."
 }

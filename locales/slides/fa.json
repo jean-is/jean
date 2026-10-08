@@ -1,0 +1,10 @@
+{
+  "slides.deck": "اسلایدها",
+  "slides.slide": "اسلاید",
+  "slides.where": "اسلاید {n} از {count}",
+  "slides.previous": "اسلاید قبلی",
+  "slides.next": "اسلاید بعدی",
+  "slides.present": "ارائه در تمام‌صفحه",
+  "slides.drawing": "در حال نوشتن اسلایدها…",
+  "slides.failed": "این اسلایدها کشیده نشد."
+}

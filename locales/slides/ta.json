@@ -1,0 +1,10 @@
+{
+  "slides.deck": "ஸ்லைடுகள்",
+  "slides.slide": "ஸ்லைடு",
+  "slides.where": "{count} இல் ஸ்லைடு {n}",
+  "slides.previous": "முந்தைய ஸ்லைடு",
+  "slides.next": "அடுத்த ஸ்லைடு",
+  "slides.present": "முழுத் திரையில் காட்டு",
+  "slides.drawing": "ஸ்லைடுகள் எழுதப்படுகின்றன…",
+  "slides.failed": "இந்த ஸ்லைடுகளை வரைய முடியவில்லை."
+}

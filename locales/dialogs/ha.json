@@ -106,6 +106,7 @@
   "routines.next": "Na gaba: {when}",
   "routines.confirmDelete": "A share aikin lokaci-lokaci “{title}”?",
   "routines.run": "Gudanar yanzu",
+  "routines.runs": "Lokutan da suka gabata",
   "skills.from": "Daga {source}",
   "skills.elsewhere": "Ƙwarewa daga wasu wurare",
   "skills.elsewhereText": "Ƙwarewar da aka shirya, waɗanda shafuka da ƙungiyoyi ke wallafawa. Ana kwatanta su da buƙatunka a wannan na'urar, kuma ana ƙara ɗaya ne kawai idan ka zaɓe ta bayan ka karanta matakanta.",
@@ -126,6 +127,8 @@
   "skills.ready.unreachable": "Ba a iya sauke wannan ƙwarewa ba.",
   "skills.directory": "Ƙwarewar da aka shirya",
   "skills.directoryText": "Don abubuwan da mutane ke yawan nema. Karanta matakan ƙwarewa kafin ka ƙara ta.",
+  "skill.slides": "Silaidodi",
+  "skill.slides.text": "Gabatarwa da aka rubuta a cikin amsoshi, don juyawa da gabatarwa",
   "skill.chart": "Jadawali",
   "skill.chart.text": "Sanduna, layuka, da'irori da ƙari, ana zana su a cikin amsoshi",
   "skill.music-score": "Rubutun waƙa",
@@ -283,5 +286,7 @@
   "brain.device.loading": "Kusan ta shirya…",
   "brain.device.failed": "Saukewar ta tsaya. Sake gwadawa.",
   "brain.device.ready": "Ƙwaƙwalwar wannan na'urar ta shirya",
-  "brain.device.private": "Na sirri · yana aiki ba tare da intanet ba"
+  "brain.device.private": "Na sirri · yana aiki ba tare da intanet ba",
+  "cap.machine.hint": "Nemi a gudanar da sabar haɓaka ta wani shafi, kamar npm run dev.",
+  "cap.machine.text": "Yana gudanar da umarnin kwamfutar a wannan na'urar kanta, a ɗaya daga cikin fayilolin ajiyarka, da shirye-shiryenta da sabobinta: sabar haɓaka ta shafi tana bayyana a mai lilo. Ana tambaya kafin kowane umarni, kuma Ctrl+C a tashar umarninka yana dakatar da komai."
 }

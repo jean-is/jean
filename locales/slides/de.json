@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Folien",
+  "slides.slide": "Folie",
+  "slides.where": "Folie {n} von {count}",
+  "slides.previous": "Vorherige Folie",
+  "slides.next": "Nächste Folie",
+  "slides.present": "Im Vollbild präsentieren",
+  "slides.drawing": "Die Folien werden geschrieben …",
+  "slides.failed": "Diese Folien konnten nicht gezeichnet werden."
+}

@@ -8,8 +8,10 @@ import {
   deleteConversation,
   listConversations,
   loadConversation,
+  oneRowEach,
   rewriteRecords,
 } from '../core/conversations.js'
+import { noteRecord } from '../core/events.js'
 
 /** @typedef {import('../core/types.js').Envelope} Envelope */
 
@@ -163,6 +165,24 @@ test('listConversations sorts by updatedAt desc, keeps how each opened, and skip
   ])
   assert.equal(warn.mock.callCount(), 1)
   assert.deepEqual(await listConversations(fs, 'projects/none'), [])
+})
+
+test('a routine\'s run is known by the note it opens with (D122)', async () => {
+  const fs = memoryFS()
+  const run = await createConversation(fs, { projectDir, by: 'd', now })
+  const routine = `${projectDir}/routines/01ROUTINE.md`
+  await appendRecords(fs, run.path, [noteRecord('The next message is the user\'s routine.', { kind: 'routine', routine, title: 'Weekly sales', due: now.toISOString() }), say('2026-01-02T03:04:06.000Z', 'Sum up the sales')])
+  const [summary] = await listConversations(fs, projectDir)
+  assert.equal(summary.routine, routine)
+  assert.equal(summary.opening, 'Sum up the sales')
+})
+
+test('oneRowEach: a routine\'s runs are one row, its newest, with the earlier ones newest first; the list keeps its order', () => {
+  /** @param {string} id @param {string} [routine] */
+  const row = (id, routine) => ({ id, path: id, title: '', opening: '', createdAt: '', updatedAt: '', ...(routine && { routine }) })
+  const list = [row('05', 'daily'), row('04'), row('07', 'daily'), row('03', 'weekly'), row('01', 'daily')]
+  assert.deepEqual(oneRowEach(list).map(({ id, earlier }) => [id, earlier?.map((run) => run.id)]), [['04', undefined], ['07', ['05', '01']], ['03', []]])
+  assert.deepEqual(oneRowEach([]), [])
 })
 
 test('rewriteRecords keeps the header and only the records given, and appending goes on after them', async () => {

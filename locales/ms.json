@@ -32,6 +32,7 @@
   "history.title": "Tugasan",
   "history.empty": "Tugasan anda akan dipaparkan di sini.",
   "history.confirmDelete": "Padam tugasan ini? Tindakan ini tidak boleh dibatalkan.",
+  "history.runs": "Larian terdahulu: {count}",
   "rewind.confirm": "Tanya ini sekali lagi? Semua yang datang selepasnya dalam tugasan ini akan dibuang. Fail yang dibuat atau diubah sejak itu kekal seperti sedia ada.",
   "sidebar.open": "Buka bar sisi",
   "sidebar.close": "Tutup bar sisi",
@@ -152,7 +153,6 @@
   },
   "read.pages": "halaman {first}–{last} daripada {total}",
   "read.whole": "keseluruhannya",
-  "made.copyTitle": "Salin (ditampal dengan format)",
   "made.copyFailed": "Tidak dapat menyalin",
   "made.csvTitle": "Muat turun sebagai hamparan (CSV)",
   "made.csvNumbered": "Muat turun jadual {count} sebagai hamparan (CSV)",
@@ -329,5 +329,8 @@
   "check.fix": "Betulkan yang tidak disokong sumber",
   "check.fix.prompt": "Sumber kamu tidak menyokong perkara-perkara ini. Semak semula dan betulkan jawapan kamu:",
   "since.prompt": "Apa yang baharu sejak kali terakhir?",
-  "since.closed": "Kerja berhenti selagi tab ini ditutup, jadi ini baru sahaja dibaca."
+  "since.closed": "Kerja berhenti selagi tab ini ditutup, jadi ini baru sahaja dibaca.",
+  "cap.machine.name": "Komputer ini",
+  "cap.machine.offer": "Jalankan pelayan pembangunan sesebuah laman, atau program anda sendiri, pada komputer ini?",
+  "cap.machine.yes": "Gunakan komputer ini"
 }

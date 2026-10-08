@@ -104,6 +104,7 @@
   "routines.next": "Seterusnya: {when}",
   "routines.confirmDelete": "Padam rutin “{title}”?",
   "routines.run": "Jalankan sekarang",
+  "routines.runs": "Larian terdahulu",
   "skills.from": "Daripada {source}",
   "skills.elsewhere": "Kemahiran dari tempat lain",
   "skills.elsewhereText": "Kemahiran sedia ada yang diterbitkan oleh laman web dan organisasi. Ia dibandingkan dengan permintaan anda pada peranti ini, dan satu hanya ditambah apabila anda memilihnya selepas membaca langkahnya.",
@@ -124,6 +125,8 @@
   "skills.ready.unreachable": "Kemahiran ini tidak dapat dimuat turun.",
   "skills.directory": "Kemahiran sedia ada",
   "skills.directoryText": "Untuk perkara yang sering diminta orang. Baca langkah kemahiran sebelum menambahkannya.",
+  "skill.slides": "Slaid",
+  "skill.slides.text": "Persembahan yang ditulis dalam jawapan, untuk diselak dan dibentangkan",
   "skill.chart": "Carta",
   "skill.chart.text": "Bar, garisan, pai dan banyak lagi, dilukis dalam jawapan",
   "skill.music-score": "Skor muzik",
@@ -280,5 +283,7 @@
   "brain.device.loading": "Hampir siap…",
   "brain.device.failed": "Muat turun terhenti. Cuba lagi.",
   "brain.device.ready": "Otak pada peranti ini sudah sedia",
-  "brain.device.private": "Peribadi · berfungsi di luar talian"
+  "brain.device.private": "Peribadi · berfungsi di luar talian",
+  "cap.machine.hint": "Minta untuk menjalankan pelayan pembangunan sesebuah laman, seperti npm run dev.",
+  "cap.machine.text": "Menjalankan arahan komputer pada peranti ini sendiri, dalam salah satu folder anda, dengan program dan pelayannya sendiri: pelayan pembangunan laman dipaparkan dalam pelayar. Setiap arahan ditanya dahulu, dan Ctrl+C dalam terminal anda menghentikan semuanya."
 }

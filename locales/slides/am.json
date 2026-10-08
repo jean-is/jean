@@ -1,0 +1,10 @@
+{
+  "slides.deck": "ስላይዶች",
+  "slides.slide": "ስላይድ",
+  "slides.where": "ስላይድ {n} ከ{count}",
+  "slides.previous": "ቀዳሚ ስላይድ",
+  "slides.next": "ቀጣይ ስላይድ",
+  "slides.present": "በሙሉ ማያ ገጽ አቅርብ",
+  "slides.drawing": "ስላይዶቹን በመጻፍ ላይ…",
+  "slides.failed": "እነዚህ ስላይዶች ሊሳሉ አልቻሉም።"
+}

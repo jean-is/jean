@@ -18,7 +18,7 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   await page.keyboard.press('Escape')
   const knows = await openSettings(page, 'Skills')
   const tiles = knows.locator('.ready-made .service')
-  await expect(tiles).toHaveCount(3)
+  await expect(tiles).toHaveCount(4)
   await tiles.filter({ hasText: 'Chart' }).click()
   const ready = page.locator('app-skill-ready dialog[open]')
   await expect(ready).toContainText('Bars, lines, pies and more, drawn in answers')
@@ -27,7 +27,7 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   await ready.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Chart”.')
   await expect(knows.locator('.list summary', { hasText: 'Chart' })).toContainText('Bars, lines, pies and more')
-  await expect(tiles).toHaveCount(2)
+  await expect(tiles).toHaveCount(3)
   const steps = await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('skills/chart/SKILL.md'))
   expect(steps).toContain('  blocks: echarts\n')
   expect(steps).not.toContain('source:')
@@ -45,6 +45,11 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   expect(copied['image/png']).toEqual([137, 80, 78, 71])
   await expect(page.locator('.toast')).toContainText('Copied')
   await expect(chart.getByRole('button', { name: 'Save as picture' })).toHaveCount(0)
+  // Printed, the chart shows without its Copy.
+  await page.emulateMedia({ media: 'print' })
+  await expect(chart.locator('.drawn-foot')).toBeHidden()
+  await expect(chart.locator('.chart canvas').first()).toBeVisible()
+  await page.emulateMedia({ media: 'screen' })
 
   // Copying the answer: its Markdown as text, and as rich text with the chart as its picture.
   const whole = await nextCopy(page)
@@ -61,7 +66,7 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   page.once('dialog', (dialog) => dialog.accept())
   await knowsAgain.locator('.list summary', { hasText: 'Chart' }).click()
   await knowsAgain.getByRole('button', { name: 'Delete' }).click()
-  await expect(knowsAgain.locator('.ready-made .service')).toHaveCount(3)
+  await expect(knowsAgain.locator('.ready-made .service')).toHaveCount(4)
   await page.keyboard.press('Escape')
   await expect(answer.locator('app-chart')).toHaveCount(0)
   await expect(answer.locator('pre code')).toContainText('"type":"bar"')

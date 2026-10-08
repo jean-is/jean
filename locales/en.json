@@ -32,6 +32,7 @@
   "history.title": "Tasks",
   "history.empty": "Your tasks will appear here.",
   "history.confirmDelete": "Delete this task? This can’t be undone.",
+  "history.runs": "Past runs: {count}",
   "rewind.confirm": "Ask this again? Everything after it in this task will be removed. Files made or changed since stay as they are.",
   "sidebar.open": "Open sidebar",
   "sidebar.close": "Close sidebar",
@@ -154,7 +155,6 @@
   },
   "read.pages": "pages {first}–{last} of {total}",
   "read.whole": "all of it",
-  "made.copyTitle": "Copy (pastes with formatting)",
   "made.copyFailed": "Couldn’t copy",
   "made.csvTitle": "Download as a spreadsheet (CSV)",
   "made.csvNumbered": "Download table {count} as a spreadsheet (CSV)",
@@ -337,5 +337,8 @@
   "check.fix": "Correct what the sources don’t support",
   "check.fix.prompt": "Your sources don’t support these points. Check them again and correct your answer:",
   "since.prompt": "What’s new since last time?",
-  "since.closed": "Work stops while this tab is closed, so this was read just now."
+  "since.closed": "Work stops while this tab is closed, so this was read just now.",
+  "cap.machine.name": "This computer",
+  "cap.machine.offer": "Run a site’s dev server, or your own programs, on this computer?",
+  "cap.machine.yes": "Use this computer"
 }

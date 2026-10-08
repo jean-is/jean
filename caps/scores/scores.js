@@ -5,7 +5,7 @@
 // answer holds; until then, or when abcjs finds no music in a block, it shows as code.
 import { html, render, svg } from 'lit-html'
 import { notify } from '../../ui/state.js'
-import { copyDrawing } from '../../ui/save.js'
+import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
@@ -119,6 +119,8 @@ class AppScore extends HTMLElement {
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
         <span class="score-time">${clock(this.at)} / ${clock(this.length)}</span>` : ''}
+      </div>
+      <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
       </div>`}`, this)
@@ -135,20 +137,7 @@ class AppScore extends HTMLElement {
     copy.removeAttribute('style')
     copy.setAttribute('width', String(width))
     copy.setAttribute('height', String(height))
-    const address = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copy)], { type: 'image/svg+xml' }))
-    try {
-      const image = new Image()
-      image.src = address
-      await image.decode()
-      const canvas = Object.assign(document.createElement('canvas'), { width: width * 2, height: height * 2 })
-      const pen = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'))
-      pen.fillStyle = '#fff'
-      pen.fillRect(0, 0, canvas.width, canvas.height)
-      pen.drawImage(image, 0, 0, canvas.width, canvas.height)
-      return await new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('No picture'))), 'image/png'))
-    } finally {
-      URL.revokeObjectURL(address)
-    }
+    return pictureOf(new XMLSerializer().serializeToString(copy), width, height)
   }
 
   play() {

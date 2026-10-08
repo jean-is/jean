@@ -114,6 +114,7 @@
   "routines.next": "المرة القادمة: {when}",
   "routines.confirmDelete": "هل تحذف المهمة الدورية «{title}»؟",
   "routines.run": "شغّلها الآن",
+  "routines.runs": "المرات السابقة",
   "skills.from": "المصدر: {source}",
   "skills.elsewhere": "مهارات من أماكن أخرى",
   "skills.elsewhereText": "مهارات جاهزة تنشرها مواقع ومؤسسات. تُقارَن بطلباتك على هذا الجهاز، ولا تُضاف إحداها إلا حين تختارها بعد قراءة خطواتها.",
@@ -134,6 +135,8 @@
   "skills.ready.unreachable": "تعذّر تنزيل هذه المهارة.",
   "skills.directory": "مهارات جاهزة",
   "skills.directoryText": "لما يطلبه الناس كثيرًا. اقرأ خطوات المهارة قبل إضافتها.",
+  "skill.slides": "شرائح",
+  "skill.slides.text": "عروض تقديمية مكتوبة في الإجابات، لتصفّحها وعرضها",
   "skill.chart": "رسم بياني",
   "skill.chart.text": "أعمدة وخطوط ودوائر وغيرها، تُرسم داخل الإجابات",
   "skill.music-score": "نوتة موسيقية",
@@ -295,5 +298,7 @@
   "brain.device.loading": "أوشك على الجاهزية…",
   "brain.device.failed": "توقف التنزيل. حاول مرة أخرى.",
   "brain.device.ready": "العقل على هذا الجهاز جاهز",
-  "brain.device.private": "خاص · يعمل دون اتصال"
+  "brain.device.private": "خاص · يعمل دون اتصال",
+  "cap.machine.hint": "اطلب تشغيل خادم تطوير لموقع، مثل npm run dev.",
+  "cap.machine.text": "يشغّل أوامر الحاسوب على هذا الجهاز نفسه، في أحد مجلداتك، ببرامجه وخوادمه: يظهر خادم تطوير الموقع في المتصفح. يُستأذن لكل أمر أولًا، وCtrl+C في طرفيتك يوقف كل شيء."
 }

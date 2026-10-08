@@ -32,6 +32,7 @@
   "history.title": "Tareas",
   "history.empty": "Tus tareas aparecerán aquí.",
   "history.confirmDelete": "¿Eliminar esta tarea? No se puede deshacer.",
+  "history.runs": "Ejecuciones anteriores: {count}",
   "rewind.confirm": "¿Preguntar esto de nuevo? Todo lo que vino después en esta tarea se eliminará. Los archivos creados o cambiados desde entonces se quedan como están.",
   "sidebar.open": "Abrir la barra lateral",
   "sidebar.close": "Cerrar la barra lateral",
@@ -156,7 +157,6 @@
   },
   "read.pages": "páginas {first}–{last} de {total}",
   "read.whole": "completo",
-  "made.copyTitle": "Copiar (se pega con formato)",
   "made.copyFailed": "No se pudo copiar",
   "made.csvTitle": "Descargar como hoja de cálculo (CSV)",
   "made.csvNumbered": "Descargar la tabla {count} como hoja de cálculo (CSV)",
@@ -345,5 +345,8 @@
   "check.fix": "Corregir lo que las fuentes no respaldan",
   "check.fix.prompt": "Tus fuentes no respaldan estos puntos. Revísalos de nuevo y corrige tu respuesta:",
   "since.prompt": "¿Qué hay de nuevo desde la última vez?",
-  "since.closed": "El trabajo se detiene mientras esta pestaña está cerrada: esto se acaba de leer."
+  "since.closed": "El trabajo se detiene mientras esta pestaña está cerrada: esto se acaba de leer.",
+  "cap.machine.name": "Esta computadora",
+  "cap.machine.offer": "¿Ejecutar el servidor de desarrollo de un sitio, o tus propios programas, en esta computadora?",
+  "cap.machine.yes": "Usar esta computadora"
 }

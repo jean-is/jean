@@ -106,6 +106,7 @@
   "routines.next": "Ijayo: {when}",
   "routines.confirmDelete": "Futa ratiba “{title}”?",
   "routines.run": "Endesha sasa",
+  "routines.runs": "Mara zilizopita",
   "skills.from": "Kutoka {source}",
   "skills.elsewhere": "Ujuzi kutoka kwingineko",
   "skills.elsewhereText": "Ujuzi uliotayarishwa ambao tovuti na mashirika huchapisha. Hulinganishwa na maombi yako kwenye kifaa hiki, na mmoja huongezwa tu unapouchagua baada ya kusoma hatua zake.",
@@ -126,6 +127,8 @@
   "skills.ready.unreachable": "Imeshindwa kupakua ujuzi huu.",
   "skills.directory": "Ujuzi uliotayarishwa",
   "skills.directoryText": "Kwa mambo ambayo watu huomba mara nyingi. Soma hatua za ujuzi kabla ya kuuongeza.",
+  "skill.slides": "Slaidi",
+  "skill.slides.text": "Mawasilisho yaliyoandikwa katika majibu, ya kupitia na kuwasilisha",
   "skill.chart": "Chati",
   "skill.chart.text": "Pau, mistari, duara na zaidi, huchorwa ndani ya majibu",
   "skill.music-score": "Nota ya muziki",
@@ -283,5 +286,7 @@
   "brain.device.loading": "Karibu tayari…",
   "brain.device.failed": "Upakuaji umesimama. Jaribu tena.",
   "brain.device.ready": "Ubongo wa kifaa hiki uko tayari",
-  "brain.device.private": "Faragha · hufanya kazi bila mtandao"
+  "brain.device.private": "Faragha · hufanya kazi bila mtandao",
+  "cap.machine.hint": "Omba kuendesha seva ya uundaji ya tovuti, kama npm run dev.",
+  "cap.machine.text": "Huendesha amri za kompyuta kwenye kifaa hiki chenyewe, katika mojawapo ya folda zako, kwa programu na seva zake: seva ya uundaji ya tovuti huonekana kwenye kivinjari. Kila amri huulizwa kwanza, na Ctrl+C kwenye terminali yako husimamisha yote."
 }

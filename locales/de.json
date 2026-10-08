@@ -32,6 +32,7 @@
   "history.title": "Aufgaben",
   "history.empty": "Deine Aufgaben erscheinen hier.",
   "history.confirmDelete": "Diese Aufgabe löschen? Das lässt sich nicht rückgängig machen.",
+  "history.runs": "Bisherige Ausführungen: {count}",
   "rewind.confirm": "Das noch einmal fragen? Alles danach in dieser Aufgabe wird entfernt. Seitdem erstellte oder geänderte Dateien bleiben, wie sie sind.",
   "sidebar.open": "Seitenleiste öffnen",
   "sidebar.close": "Seitenleiste schließen",
@@ -154,7 +155,6 @@
   },
   "read.pages": "Seiten {first}–{last} von {total}",
   "read.whole": "vollständig",
-  "made.copyTitle": "Kopieren (mit Formatierung einfügen)",
   "made.copyFailed": "Kopieren fehlgeschlagen",
   "made.csvTitle": "Als Tabelle herunterladen (CSV)",
   "made.csvNumbered": "Tabelle {count} als Tabellendatei herunterladen (CSV)",
@@ -337,5 +337,8 @@
   "check.fix": "Korrigieren, was die Quellen nicht stützen",
   "check.fix.prompt": "Deine Quellen stützen diese Punkte nicht. Prüf sie noch einmal und korrigiere deine Antwort:",
   "since.prompt": "Was gibt es Neues seit dem letzten Mal?",
-  "since.closed": "Solange dieser Tab geschlossen ist, ruht die Arbeit; das hier wurde gerade eben gelesen."
+  "since.closed": "Solange dieser Tab geschlossen ist, ruht die Arbeit; das hier wurde gerade eben gelesen.",
+  "cap.machine.name": "Dieser Computer",
+  "cap.machine.offer": "Den Entwicklungsserver einer Website oder deine eigenen Programme auf diesem Computer ausführen?",
+  "cap.machine.yes": "Diesen Computer verwenden"
 }

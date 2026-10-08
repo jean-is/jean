@@ -1,0 +1,11 @@
+{
+  "machine.text": "Os comandos também podem correr neste computador, com os seus próprios programas e servidores: abre um terminal numa das tuas pastas e cola esta linha. As tarefas com essa pasta passam então a executar lá os seus comandos, até carregares em Ctrl+C nesse terminal.",
+  "machine.on": "As tarefas com a pasta {folder} executam os seus comandos neste computador, cada um perguntado antes, até carregares em Ctrl+C no terminal.",
+  "machine.forget": "Deixar de usar",
+  "machine.question": "Executar isto no teu computador, em {folder}?",
+  "machine.always": "Permitir sempre em {folder}",
+  "machine.app": "Os comandos também podem correr neste computador, com os seus próprios programas e servidores, numa pasta que escolhes: as tarefas com essa pasta executam lá os seus comandos.",
+  "machine.choose": "Escolher uma pasta…",
+  "machine.failed": "Não arrancou: precisa do Node.js neste computador, o comando node de um terminal.",
+  "machine.on.app": "As tarefas com a pasta {folder} executam os seus comandos neste computador, cada um perguntado antes."
+}

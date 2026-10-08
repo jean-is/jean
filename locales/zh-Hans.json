@@ -32,6 +32,7 @@
   "history.title": "任务",
   "history.empty": "你的任务会显示在这里。",
   "history.confirmDelete": "删除这个任务？此操作无法撤销。",
+  "history.runs": "历次运行：{count}",
   "rewind.confirm": "要重新问一次吗？此任务中这之后的所有内容都将被移除。之后创建或更改的文件保持不变。",
   "sidebar.open": "打开侧边栏",
   "sidebar.close": "关闭侧边栏",
@@ -152,7 +153,6 @@
   },
   "read.pages": "第 {first}–{last} 页，共 {total} 页",
   "read.whole": "全部",
-  "made.copyTitle": "复制（粘贴时保留格式）",
   "made.copyFailed": "无法复制",
   "made.csvTitle": "下载为电子表格（CSV）",
   "made.csvNumbered": "将表格 {count} 下载为电子表格（CSV）",
@@ -329,5 +329,8 @@
   "check.fix": "修正来源不支持的内容",
   "check.fix.prompt": "你的来源不支持这几点。请重新核对并修正你的回答：",
   "since.prompt": "自上次以来有什么新情况？",
-  "since.closed": "这个标签页关闭时工作会停止，所以这些是刚刚读取的。"
+  "since.closed": "这个标签页关闭时工作会停止，所以这些是刚刚读取的。",
+  "cap.machine.name": "这台电脑",
+  "cap.machine.offer": "在这台电脑上运行网站的开发服务器或你自己的程序吗？",
+  "cap.machine.yes": "使用这台电脑"
 }

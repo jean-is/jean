@@ -1,0 +1,11 @@
+{
+  "machine.text": "Puwede ring tumakbo ang mga command sa computer na ito, gamit ang sarili nitong mga program at server: magbukas ng terminal sa isa sa mga folder mo at i-paste ang linyang ito. Doon na patatakbuhin ng mga gawaing may folder na iyon ang kanilang mga command, hanggang pindutin mo ang Ctrl+C sa terminal na iyon.",
+  "machine.on": "Pinapatakbo ng mga gawaing may folder na {folder} ang kanilang mga command sa computer na ito, bawat isa ay itinatanong muna, hanggang pindutin mo ang Ctrl+C sa terminal nito.",
+  "machine.forget": "Itigil ang paggamit",
+  "machine.question": "Patakbuhin ito sa computer mo, sa {folder}?",
+  "machine.always": "Laging payagan sa {folder}",
+  "machine.app": "Puwede ring tumakbo ang mga command sa computer na ito, gamit ang sarili nitong mga program at server, sa folder na pipiliin mo: doon pinapatakbo ng mga gawaing may folder na iyon ang kanilang mga command.",
+  "machine.choose": "Pumili ng folder…",
+  "machine.failed": "Hindi ito nagsimula: kailangan nito ang Node.js sa computer na ito, ang command na node sa terminal.",
+  "machine.on.app": "Pinapatakbo ng mga gawaing may folder na {folder} ang kanilang mga command sa computer na ito, bawat isa ay itinatanong muna."
+}

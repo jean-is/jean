@@ -32,6 +32,7 @@
   "history.title": "작업",
   "history.empty": "작업이 여기에 표시됩니다.",
   "history.confirmDelete": "이 작업을 삭제할까요? 되돌릴 수 없습니다.",
+  "history.runs": "지난 실행: {count}",
   "rewind.confirm": "다시 물어볼까요? 이 작업에서 이후의 내용은 모두 삭제됩니다. 그 뒤에 만들거나 바꾼 파일은 그대로 남습니다.",
   "sidebar.open": "사이드바 열기",
   "sidebar.close": "사이드바 닫기",
@@ -152,7 +153,6 @@
   },
   "read.pages": "{total}쪽 중 {first}–{last}쪽",
   "read.whole": "전체",
-  "made.copyTitle": "복사(서식 포함해 붙여넣기)",
   "made.copyFailed": "복사하지 못했어요",
   "made.csvTitle": "스프레드시트로 다운로드(CSV)",
   "made.csvNumbered": "표 {count}을(를) 스프레드시트로 다운로드(CSV)",
@@ -329,5 +329,8 @@
   "check.fix": "출처가 뒷받침하지 않는 부분 고치기",
   "check.fix.prompt": "출처가 이 내용들을 뒷받침하지 않아. 다시 확인하고 답변을 고쳐 줘:",
   "since.prompt": "지난번 이후로 새로운 게 있어?",
-  "since.closed": "이 탭이 닫혀 있는 동안에는 작업이 멈추므로, 이건 방금 읽은 내용이에요."
+  "since.closed": "이 탭이 닫혀 있는 동안에는 작업이 멈추므로, 이건 방금 읽은 내용이에요.",
+  "cap.machine.name": "이 컴퓨터",
+  "cap.machine.offer": "사이트의 개발 서버나 내 프로그램을 이 컴퓨터에서 실행할까요?",
+  "cap.machine.yes": "이 컴퓨터 사용"
 }

@@ -110,6 +110,7 @@
   "routines.next": "Następnym razem: {when}",
   "routines.confirmDelete": "Usunąć rutynę „{title}”?",
   "routines.run": "Uruchom teraz",
+  "routines.runs": "Wcześniejsze uruchomienia",
   "skills.from": "Źródło: {source}",
   "skills.elsewhere": "Umiejętności z innych miejsc",
   "skills.elsewhereText": "Gotowe umiejętności publikowane przez strony i organizacje. Są porównywane z twoimi prośbami na tym urządzeniu, a dodawane tylko wtedy, gdy wybierzesz jedną po przeczytaniu jej kroków.",
@@ -130,6 +131,8 @@
   "skills.ready.unreachable": "Nie udało się pobrać tej umiejętności.",
   "skills.directory": "Gotowe umiejętności",
   "skills.directoryText": "Do tego, o co ludzie często proszą. Przeczytaj kroki umiejętności, zanim ją dodasz.",
+  "skill.slides": "Slajdy",
+  "skill.slides.text": "Prezentacje pisane w odpowiedziach, do przeglądania i pokazywania",
   "skill.chart": "Wykres",
   "skill.chart.text": "Słupki, linie, koła i nie tylko, rysowane w odpowiedziach",
   "skill.music-score": "Nuty",
@@ -289,5 +292,7 @@
   "brain.device.loading": "Prawie gotowe…",
   "brain.device.failed": "Pobieranie zostało przerwane. Spróbuj ponownie.",
   "brain.device.ready": "Mózg na tym urządzeniu jest gotowy",
-  "brain.device.private": "Prywatnie · działa bez internetu"
+  "brain.device.private": "Prywatnie · działa bez internetu",
+  "cap.machine.hint": "Poproś o uruchomienie serwera deweloperskiego strony, np. npm run dev.",
+  "cap.machine.text": "Uruchamia polecenia komputera na tym urządzeniu, w jednym z twoich folderów, z jego własnymi programami i serwerami: serwer deweloperski strony widać w przeglądarce. O każde polecenie najpierw pyta, a Ctrl+C w twoim terminalu zatrzymuje wszystko."
 }

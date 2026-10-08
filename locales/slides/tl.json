@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Mga slide",
+  "slides.slide": "slide",
+  "slides.where": "Slide {n} sa {count}",
+  "slides.previous": "Nakaraang slide",
+  "slides.next": "Susunod na slide",
+  "slides.present": "Ipresenta sa buong screen",
+  "slides.drawing": "Isinusulat ang mga slide…",
+  "slides.failed": "Hindi maiguhit ang mga slide na ito."
+}

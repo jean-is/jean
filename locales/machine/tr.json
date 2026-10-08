@@ -1,0 +1,11 @@
+{
+  "machine.text": "Komutlar bu bilgisayarda da, kendi programları ve sunucularıyla çalışabilir: klasörlerinden birinde bir terminal aç ve bu satırı yapıştır. O klasörün görevleri, o terminalde Ctrl+C'ye basana kadar komutlarını orada çalıştırır.",
+  "machine.on": "{folder} klasörünün görevleri komutlarını bu bilgisayarda çalıştırır, her biri önce sorularak, terminalinde Ctrl+C'ye basana kadar.",
+  "machine.forget": "Kullanmayı bırak",
+  "machine.question": "Bu, bilgisayarında, {folder} içinde çalıştırılsın mı?",
+  "machine.always": "{folder} içinde her zaman izin ver",
+  "machine.app": "Komutlar bu bilgisayarda da, kendi programları ve sunucularıyla, seçtiğin bir klasörde çalışabilir: o klasörün görevleri komutlarını orada çalıştırır.",
+  "machine.choose": "Klasör seç…",
+  "machine.failed": "Başlamadı: bu bilgisayarda Node.js gerekiyor, yani terminaldeki node komutu.",
+  "machine.on.app": "{folder} klasörünün görevleri komutlarını bu bilgisayarda çalıştırır, her biri önce sorularak."
+}

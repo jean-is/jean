@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Slajdy",
+  "slides.slide": "slajd",
+  "slides.where": "Slajd {n} z {count}",
+  "slides.previous": "Poprzedni slajd",
+  "slides.next": "Następny slajd",
+  "slides.present": "Prezentuj na pełnym ekranie",
+  "slides.drawing": "Zapisywanie slajdów…",
+  "slides.failed": "Nie udało się narysować tych slajdów."
+}

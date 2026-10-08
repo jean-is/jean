@@ -1,0 +1,11 @@
+{
+  "machine.text": "Commands can also run on this computer, with its own programs and servers: open a terminal in one of your folders and paste this line. Tasks with that folder then run their commands there, until you press Ctrl+C in that terminal.",
+  "machine.on": "Tasks with the folder {folder} run their commands on this computer, each asked first, until you press Ctrl+C in its terminal.",
+  "machine.forget": "Stop using it",
+  "machine.question": "Run this on your computer, in {folder}?",
+  "machine.always": "Always allow in {folder}",
+  "machine.app": "Commands can also run on this computer, with its own programs and servers, in a folder you choose: tasks with that folder then run their commands there.",
+  "machine.choose": "Choose a folder…",
+  "machine.failed": "It didn’t start: it needs Node.js on this computer, the node command a terminal runs.",
+  "machine.on.app": "Tasks with the folder {folder} run their commands on this computer, each asked first."
+}

@@ -1,8 +1,17 @@
 /* Formulas (D185): set apart, one scrolls only sideways; Chromium lays it out a pixel taller than its box, which the padding holds. */
 app-math[block] { overflow-y: hidden; padding-block: 0.15em; }
-/* A LaTeX document, then Copy at its end (D196); its margins inside it, as its picture holds them. */
+app-math mtext.is-bold { font-weight: bold; }
+/* A LaTeX document, Copy at its top corner as a widget's (D196), shown on hover; its margins inside it, as its picture holds them. */
+app-latex { position: relative; }
 app-latex .latex-page { display: flow-root; }
 app-latex .latex-page > :first-child { margin-block-start: 0; }
 app-latex .latex-page > :last-child { margin-block-end: 0; }
-app-latex .drawn-foot { display: flex; justify-content: end; margin-block-start: 0.4rem; }
+app-latex .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
+app-latex:not([line]) .drawn-foot .icon-button { background: var(--glass); }
+/* One formula or one sentence: no frame, Copy at the end of its line. */
+app-latex[line] { display: flex; align-items: center; gap: 0.5rem; padding: 0; border: 0; }
+app-latex[line] .latex-page { flex: 1; min-inline-size: 0; }
+app-latex[line] .drawn-foot { position: static; }
+@media (hover: hover) { app-latex:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
+app-latex[open] .drawn-foot { display: none; }
 @media print { app-latex .drawn-foot { display: none; } }

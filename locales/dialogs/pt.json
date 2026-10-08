@@ -108,6 +108,7 @@
   "routines.next": "Próxima vez: {when}",
   "routines.confirmDelete": "Eliminar a rotina «{title}»?",
   "routines.run": "Executar agora",
+  "routines.runs": "Execuções anteriores",
   "skills.from": "De {source}",
   "skills.elsewhere": "Competências de outros lados",
   "skills.elsewhereText": "Competências já feitas, publicadas por sites e organizações. São comparadas com os teus pedidos neste dispositivo, e uma só é adicionada quando a escolhes, depois de leres os passos.",
@@ -128,6 +129,8 @@
   "skills.ready.unreachable": "Não foi possível transferir esta competência.",
   "skills.directory": "Competências já feitas",
   "skills.directoryText": "Para o que as pessoas pedem muitas vezes. Lê os passos de uma competência antes de a adicionares.",
+  "skill.slides": "Diapositivos",
+  "skill.slides.text": "Apresentações escritas nas respostas, para folhear e apresentar",
   "skill.chart": "Gráfico",
   "skill.chart.text": "Barras, linhas, circulares e mais, desenhados nas respostas",
   "skill.music-score": "Partitura",
@@ -286,5 +289,7 @@
   "brain.device.loading": "Quase pronto…",
   "brain.device.failed": "A transferência parou. Tenta de novo.",
   "brain.device.ready": "O cérebro deste dispositivo está pronto",
-  "brain.device.private": "Privado · funciona sem ligação"
+  "brain.device.private": "Privado · funciona sem ligação",
+  "cap.machine.hint": "Pede para correr o servidor de desenvolvimento de um site, como npm run dev.",
+  "cap.machine.text": "Executa os comandos do computador neste próprio dispositivo, numa das tuas pastas, com os seus programas e servidores: o servidor de desenvolvimento de um site aparece no navegador. Cada comando é perguntado antes, e Ctrl+C no teu terminal para tudo."
 }

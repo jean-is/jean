@@ -104,6 +104,7 @@
   "routines.next": "次回：{when}",
   "routines.confirmDelete": "ルーティン「{title}」を削除しますか？",
   "routines.run": "今すぐ実行",
+  "routines.runs": "これまでの実行",
   "skills.from": "提供元：{source}",
   "skills.elsewhere": "ほかの場所のスキル",
   "skills.elsewhereText": "サイトや組織が公開している既製のスキルです。このデバイス上であなたの依頼と照らし合わせ、手順を読んだうえで選んだときだけ追加されます。",
@@ -124,6 +125,8 @@
   "skills.ready.unreachable": "このスキルをダウンロードできませんでした。",
   "skills.directory": "既製のスキル",
   "skills.directoryText": "よく頼まれることのために。追加する前に、スキルの手順を読んでください。",
+  "skill.slides": "スライド",
+  "skill.slides.text": "回答の中に書かれたスライド。めくって見たり、発表したりできます",
   "skill.chart": "グラフ",
   "skill.chart.text": "棒・折れ線・円グラフなどを回答の中に描きます",
   "skill.music-score": "楽譜",
@@ -280,5 +283,7 @@
   "brain.device.loading": "もうすぐ準備ができます…",
   "brain.device.failed": "ダウンロードが止まりました。もう一度お試しください。",
   "brain.device.ready": "この端末の頭脳の準備ができました",
-  "brain.device.private": "プライベート・オフラインで使えます"
+  "brain.device.private": "プライベート・オフラインで使えます",
+  "cap.machine.hint": "npm run dev のような、サイトの開発サーバーの起動を頼んでみてください。",
+  "cap.machine.text": "コンピューターのコマンドを、このデバイス自体の自分のフォルダーで、その上のプログラムやサーバーを使って実行します。サイトの開発サーバーはブラウザーに表示されます。コマンドは毎回先に確認され、ターミナルで Ctrl+C を押すとすべて止まります。"
 }

@@ -106,6 +106,7 @@
   "routines.next": "Nächstes Mal: {when}",
   "routines.confirmDelete": "Routine „{title}“ löschen?",
   "routines.run": "Jetzt ausführen",
+  "routines.runs": "Bisherige Ausführungen",
   "skills.from": "Von {source}",
   "skills.elsewhere": "Fähigkeiten von anderswo",
   "skills.elsewhereText": "Fertige Fähigkeiten, die Websites und Organisationen veröffentlichen. Sie werden auf diesem Gerät mit deinen Anfragen verglichen, und eine wird nur hinzugefügt, wenn du sie auswählst, nachdem du ihre Schritte gelesen hast.",
@@ -126,6 +127,8 @@
   "skills.ready.unreachable": "Diese Fähigkeit konnte nicht heruntergeladen werden.",
   "skills.directory": "Fertige Fähigkeiten",
   "skills.directoryText": "Für Dinge, um die oft gebeten wird. Lies die Schritte einer Fähigkeit, bevor du sie hinzufügst.",
+  "skill.slides": "Folien",
+  "skill.slides.text": "Präsentationen in Antworten, zum Durchblättern und Vorführen",
   "skill.chart": "Diagramm",
   "skill.chart.text": "Balken, Linien, Torten und mehr, direkt in den Antworten gezeichnet",
   "skill.music-score": "Noten",
@@ -283,5 +286,7 @@
   "brain.device.loading": "Fast fertig…",
   "brain.device.failed": "Der Download wurde unterbrochen. Versuche es erneut.",
   "brain.device.ready": "Das Gehirn auf diesem Gerät ist bereit",
-  "brain.device.private": "Privat · funktioniert offline"
+  "brain.device.private": "Privat · funktioniert offline",
+  "cap.machine.hint": "Bitte darum, den Entwicklungsserver einer Website zu starten, etwa npm run dev.",
+  "cap.machine.text": "Führt die Befehle des Computers auf diesem Gerät selbst aus, in einem deiner Ordner, mit seinen eigenen Programmen und Servern: Der Entwicklungsserver einer Website erscheint im Browser. Jeder Befehl wird erst erfragt, und Strg+C in deinem Terminal beendet alles."
 }

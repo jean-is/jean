@@ -32,6 +32,7 @@
   "history.title": "Àwọn iṣẹ́",
   "history.empty": "Àwọn iṣẹ́ yín yóò hàn níbí.",
   "history.confirmDelete": "Ṣé kí a paarẹ́ iṣẹ́ yìí? Kò ní ṣeé dá padà.",
+  "history.runs": "Àwọn ìgbà tó ti ṣe é: {count}",
   "rewind.confirm": "Ṣé o fẹ́ béèrè èyí lẹ́ẹ̀kan sí i? Gbogbo ohun tó tẹ̀lé e nínú iṣẹ́ yìí ni a ó yọ kúrò. Àwọn fáìlì tí a ṣe tàbí tí a yí padà láti ìgbà náà yóò wà bí wọ́n ṣe wà.",
   "sidebar.open": "Ṣí ọ̀pá ẹ̀gbẹ́",
   "sidebar.close": "Pa ọ̀pá ẹ̀gbẹ́",
@@ -152,7 +153,6 @@
   },
   "read.pages": "ojú-ìwé {first}–{last} nínú {total}",
   "read.whole": "gbogbo rẹ̀",
-  "made.copyTitle": "Ṣe ẹ̀dà (ó ń lẹ̀ pẹ̀lú ìṣètò rẹ̀)",
   "made.copyFailed": "A kò lè ṣe ẹ̀dà",
   "made.csvTitle": "Gbà á sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.csvNumbered": "Gba tábìlì {count} sílẹ̀ bí ìwé ìṣirò (CSV)",
@@ -329,5 +329,8 @@
   "check.fix": "Ṣàtúnṣe ohun tí orísun kò ṣe àtìlẹ́yìn fún",
   "check.fix.prompt": "Àwọn orísun rẹ kò ṣe àtìlẹ́yìn fún àwọn kókó wọ̀nyí. Tún wọn yẹ̀ wò kí o sì ṣàtúnṣe ìdáhùn rẹ:",
   "since.prompt": "Kí ló jẹ́ tuntun láti ìgbà tó kọjá?",
-  "since.closed": "Iṣẹ́ máa ń dúró nígbà tí táàbù yìí bá ti pa, nítorí náà ìsinsìnyí ni a ṣẹ̀ṣẹ̀ ka èyí."
+  "since.closed": "Iṣẹ́ máa ń dúró nígbà tí táàbù yìí bá ti pa, nítorí náà ìsinsìnyí ni a ṣẹ̀ṣẹ̀ ka èyí.",
+  "cap.machine.name": "Kọ̀ǹpútà yìí",
+  "cap.machine.offer": "Ṣé kí ẹ ṣiṣẹ́ sáfà ìdàgbàsókè ti ojú-òpó kan, tàbí àwọn ètò yín, lórí kọ̀ǹpútà yìí?",
+  "cap.machine.yes": "Lo kọ̀ǹpútà yìí"
 }

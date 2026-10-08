@@ -9,7 +9,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { app, effective, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
-import { setting } from './dialogs.js'
+import { openSettings, setting } from './dialogs.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
 import { stringifyFrontMatter } from '../core/settings.js'
@@ -239,6 +239,12 @@ async function removeRoutine(routine) {
   await refresh()
 }
 
+/** Settings' Routines, open on a routine: from one of its runs (D122). @param {string} path */
+export function showRoutine(path) {
+  opened.value = path
+  openSettings('routines')
+}
+
 /** @param {Routine} routine */
 function routineView(routine) {
   const module = /** @type {NonNullable<typeof routinesModule>} */ (routinesModule)
@@ -247,6 +253,9 @@ function routineView(routine) {
   const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(locale.value, { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
   const value = (/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).value
   const open = opened.value === routine.path
+  // Its runs, newest first (D122).
+  const runs = app.conversations.value.filter((item) => item.routine === routine.path).sort((a, b) => (a.id < b.id ? 1 : -1))
+  const when = new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' })
   // Run now beside the routine's name, so the row can't be a <details>: its summary would hold a button.
   return html`<li>
     <button class="item" aria-expanded=${open} @click=${() => { opened.value = open ? '' : routine.path }}><span class="item-icon">${icons.alarm}</span><span class="item-text">
@@ -265,6 +274,8 @@ function routineView(routine) {
       </div>
       <label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
         @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>
+      ${runs.length ? html`<div class="routine-runs">${t('routines.runs')}<ul aria-label=${t('routines.runs')}>${runs.map((run) => html`<li>
+        <button class="button" @click=${() => openConversation(run.path)}>${when.format(new Date(run.createdAt))}</button></li>`)}</ul></div>` : nothing}
       <div class="row"><button class="button subtle danger" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button></div>
     </div>` : nothing}
   </li>`

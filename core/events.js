@@ -186,6 +186,9 @@ export const requestsOf = (records) => records.flatMap(({ update }) => (update?.
 /** The words of the request that opened the conversation. @param {Envelope[]} records */
 export const openingOf = (records) => requestsOf(records)[0] ?? ''
 
+/** The routine a conversation is a run of, from the note it opens with (D122). @param {Envelope[]} records */
+export const routineOf = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'routine' ? [update.data] : []))[0]
+
 /**
  * A file Jean made or changed: Things Jean made's (`_meta.file`), or one the computer kept
  * (`_meta.files`), with its version in the conversation (D164).

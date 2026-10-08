@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { lex, withFormulas } from '../ui/markdown.js'
 import { plainText } from '../ui/spoken.js'
-import { latexToMarkdown } from '../caps/math/latex.js'
+import { latexToMarkdown, wholeSoFar } from '../caps/math/latex.js'
 
 /** What a text shows, in order: its words, and its formulas as [source], or [[source]] when set apart. @param {string} source */
 function shown(source) {
@@ -75,6 +75,32 @@ Some \textbf{bold}, \emph{a $\{x\}$ set} and~more -- 50\% % a comment
   assert.match(markdown, /\n1\. One \$x\$\n1\. Two\n/)
   assert.equal(shown(markdown).endsWith('[[\\begin{align*} a &= b \\\\ c &= d \\end{align*}]]'), true)
   assert.doesNotMatch(markdown, /documentclass|comment|maketitle/)
+})
+
+test('a LaTeX block of math environments alone: one formula each, its words and breaks left to Temml', () => {
+  const proof = String.raw`\begin{aligned}
+&\textbf{Théorème : } \forall x\in\mathbb{R},\quad e^{ix}=\cos x+i\sin x\\[1.2em]
+&\text{Étape 1 : } z=ix \;\Rightarrow\; e^{ix}=\sum_{n=0}^{\infty}\frac{(ix)^n}{n!}\qquad\blacksquare
+\end{aligned}`
+  assert.equal(shown(latexToMarkdown(proof)), `[[${proof}]]`)
+  assert.equal(shown(latexToMarkdown('f(x) = \\begin{cases} 1 & x > 0 \\\\ 0 & \\text{sinon} \\end{cases}')), '[[f(x) = \\begin{cases} 1 & x > 0 \\\\ 0 & \\text{sinon} \\end{cases}]]')
+  const doc = String.raw`\section*{Preuve}
+\begin{gathered}
+\textbf{a} = b \\[2pt] c
+\end{gathered}
+Donc $\textbf{x}$ et \textbf{fin}.\\[4pt]
+Suite`
+  assert.equal(shown(latexToMarkdown(doc)).startsWith('Preuve[[\\begin{gathered}\n\\textbf{a} = b \\\\[2pt] c\n\\end{gathered}]]Donc [\\textbf{x}] et fin.'), true)
+  assert.match(latexToMarkdown(doc), / et \*\*fin\*\*\.\s+Suite$/)
+})
+
+test('a LaTeX block still being written: its finished lines, what they open closed', () => {
+  assert.equal(wholeSoFar('\\begin{aligned}\n&a\\\\\n&\\textbf{b}\\\\[1.2em]\n&\\textbf{Th'), '\\begin{aligned}\n&a\\\\\n&\\textbf{b}\n\\end{aligned}')
+  assert.equal(wholeSoFar('\\[ \\begin{cases} 1 \\\\\n0 & x'), '\\[ \\begin{cases} 1\n\\end{cases}\n\\]')
+  assert.equal(wholeSoFar('\\section*{A}\n$$\nx^2\n$$\nSoit $y$ et\n'), '\\section*{A}\n$$\nx^2\n$$\nSoit $y$ et\n')
+  assert.equal(wholeSoFar('Soit\n$$\nx +'), 'Soit\n$$\n$$')
+  assert.equal(wholeSoFar('\\begin{aligned}'), '')
+  assert.equal(shown(latexToMarkdown(wholeSoFar('\\begin{aligned}\n&a = 1\\\\\n&b ='))), '[[\\begin{aligned}\n&a = 1\n\\end{aligned}]]')
 })
 
 test('a LaTeX block with only formulas: one each paragraph', () => {

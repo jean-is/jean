@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Dia’s",
+  "slides.slide": "dia",
+  "slides.where": "Dia {n} van {count}",
+  "slides.previous": "Vorige dia",
+  "slides.next": "Volgende dia",
+  "slides.present": "Presenteren op volledig scherm",
+  "slides.drawing": "De dia’s worden geschreven…",
+  "slides.failed": "Deze dia’s konden niet worden getekend."
+}

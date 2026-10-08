@@ -1,0 +1,10 @@
+{
+  "slides.deck": "幻灯片",
+  "slides.slide": "幻灯片",
+  "slides.where": "第 {n} 张，共 {count} 张",
+  "slides.previous": "上一张幻灯片",
+  "slides.next": "下一张幻灯片",
+  "slides.present": "全屏演示",
+  "slides.drawing": "正在写幻灯片…",
+  "slides.failed": "无法绘制这些幻灯片。"
+}

@@ -153,8 +153,8 @@ export type SystemNoteData =
   | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'folder' | 'page', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
-  /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due */
-  | { kind: 'routine', routine: string, title: string, due: string }
+  /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due, or that the user ran it */
+  | { kind: 'routine', routine: string, title: string, due: string, asked?: boolean }
   /** when requests like this one were made before, for a routine to fit the habit (D122) */
   | { kind: 'habit', at: string[] }
   /** what / and @ named in the user's next message, by the words in it (D199) */
@@ -195,7 +195,8 @@ export interface ConversationHeader {
   by: string
 }
 
-export type ConversationSummary = { id: string, path: string, title: string, opening: string, createdAt: string, updatedAt: string }
+/** routine: the routine's file, for one of its runs (D122) */
+export type ConversationSummary = { id: string, path: string, title: string, opening: string, createdAt: string, updatedAt: string, routine?: string }
 
 // ─── Rules ───────────────────────────────────────────────────────────────────
 

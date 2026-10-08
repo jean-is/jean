@@ -104,6 +104,7 @@
   "routines.next": "Ìgbà tó kàn: {when}",
   "routines.confirmDelete": "Ṣé kí a pa iṣẹ́ déédéé “{title}” rẹ́?",
   "routines.run": "Ṣe é báyìí",
+  "routines.runs": "Àwọn ìgbà tó ti ṣe é",
   "skills.from": "Láti {source}",
   "skills.elsewhere": "Àwọn ọgbọ́n láti ibòmíràn",
   "skills.elsewhereText": "Àwọn ọgbọ́n tí a ti ṣe tán tí àwọn ojú-òpó àti àwọn àjọ ń tẹ̀ jáde. A ń fi wọ́n wé àwọn ìbéèrè yín lórí ẹ̀rọ yìí, a sì máa ń fi ọ̀kan kún un nìkan tí ẹ bá yàn án lẹ́yìn tí ẹ ti ka àwọn ìgbésẹ̀ rẹ̀.",
@@ -124,6 +125,8 @@
   "skills.ready.unreachable": "A kò lè gba ọgbọ́n yìí sílẹ̀.",
   "skills.directory": "Àwọn ọgbọ́n tí a ti ṣe tán",
   "skills.directoryText": "Fún ohun tí àwọn ènìyàn máa ń béèrè lọ́pọ̀ ìgbà. Ẹ ka àwọn ìgbésẹ̀ ọgbọ́n kan kí ẹ tó fi kún un.",
+  "skill.slides": "Àwọn síláìdì",
+  "skill.slides.text": "Àwọn ìgbékalẹ̀ tí a kọ sínú ìdáhùn, láti yí wò àti láti ṣàfihàn",
   "skill.chart": "Àwòrán ìṣirò",
   "skill.chart.text": "Ọ̀pá, ìlà, àwòrán ròbótó àti bẹ́ẹ̀ bẹ́ẹ̀ lọ, tí a yà sínú àwọn ìdáhùn",
   "skill.music-score": "Àkọsílẹ̀ orin",
@@ -280,5 +283,7 @@
   "brain.device.loading": "Ó fẹ́rẹ̀ ṣetán…",
   "brain.device.failed": "Ìgbàsílẹ̀ náà dúró. Ẹ gbìyànjú lẹ́ẹ̀kan sí i.",
   "brain.device.ready": "Ọpọlọ tí ó wà lórí ẹ̀rọ yìí ti ṣetán",
-  "brain.device.private": "Àdáni · ó ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì"
+  "brain.device.private": "Àdáni · ó ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì",
+  "cap.machine.hint": "Ẹ béèrè pé kí ó ṣiṣẹ́ sáfà ìdàgbàsókè ti ojú-òpó kan, bíi npm run dev.",
+  "cap.machine.text": "Ó ń ṣiṣẹ́ àwọn àṣẹ kọ̀ǹpútà lórí ẹ̀rọ yìí gan-an, nínú ọ̀kan lára àwọn fódà yín, pẹ̀lú àwọn ètò àti sáfà tirẹ̀: sáfà ìdàgbàsókè ojú-òpó ń hàn nínú aṣàwákiri. A ń béèrè ṣáájú àṣẹ kọ̀ọ̀kan, Ctrl+C nínú ibùdó àṣẹ yín sì ń dá gbogbo rẹ̀ dúró."
 }

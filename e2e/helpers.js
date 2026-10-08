@@ -98,11 +98,13 @@ export async function closeSettings(page) {
 /** Turns a capability on from the house ("What Jean can do", in Settings): its trophy, then its plaque. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
   const house = (await openSettings(page, 'Capabilities')).locator('.house')
-  await house.locator('.trophy', { hasText: name }).click()
+  // A trophy's text starts with its name: "Computer" is not "This computer" (D198).
+  const named = new RegExp(`^\\s*${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\s|$)`)
+  await house.locator('.trophy', { hasText: named }).click()
   await house.locator('.plaque .button').click()
   // Lit once its module has loaded, so a message sent next declares its tools; or, for one that
   // leads somewhere at once (Connections), Settings is on its section (D134).
-  await expect(page.locator('app-settings .trophy.is-lit', { hasText: name })
+  await expect(page.locator('app-settings .trophy.is-lit', { hasText: named })
     .or(page.locator('app-settings .settings-nav [aria-current="page"]', { hasText: name }))).toHaveCount(1)
 }
 

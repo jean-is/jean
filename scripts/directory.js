@@ -70,6 +70,12 @@ async function browserGet(url) {
   return 'too many redirects'
 }
 
+/**
+ * On a terminal, how far a check has got, on one line rewritten in place; empty clears it for the
+ * result. Elsewhere (a pipe, CI), nothing. @param {string} text
+ */
+const progress = (text) => process.stdout.isTTY && process.stdout.write(`\r\x1b[2K${text.slice(0, process.stdout.columns - 1)}`)
+
 let mismatches = 0
 for (const entry of DIRECTORY) {
   const problems = await check(entry)
@@ -82,16 +88,19 @@ for (const entry of DIRECTORY) {
 console.log('\nSources of skills')
 for (const address of DEFAULT_SOURCES) {
   const url = indexURL(address)
+  progress(`  ${address.padEnd(28)} reading its index…`)
   const res = await browserGet(url)
   const entries = typeof res === 'string' ? res : await res.json().then((json) => parseIndex(json, url)).catch((/** @type {Error} */ error) => error.message)
   if (typeof entries === 'string') {
     mismatches++
+    progress('')
     console.log(`✗ ${address.padEnd(28)} ${entries}`)
     continue
   }
   /** @type {Record<string, string[]>} */
   const verdicts = {}
-  for (const entry of entries) {
+  for (const [i, entry] of entries.entries()) {
+    progress(`  ${address.padEnd(28)} ${i + 1}/${entries.length} skills: ${entry.name}…`)
     const download = await browserGet(entry.url)
     const verdict = typeof download === 'string' ? download
       : await unpack(entry, new Uint8Array(await download.arrayBuffer())).then(() => 'can be added', (/** @type {any} */ error) => error.code ?? error.message)
@@ -99,6 +108,7 @@ for (const address of DEFAULT_SOURCES) {
   }
   const added = verdicts['can be added']?.length ?? 0
   mismatches += Number(!added)
+  progress('')
   console.log(`${added ? ' ' : '✗'} ${address.padEnd(28)} ${entries.length} skills: ${Object.entries(verdicts).map(([verdict, names]) => `${names.length} ${verdict}`).join(', ')}`)
 }
 console.log(mismatches ? `\n${mismatches} entries disagree with their checks.` : '\nEvery entry agrees with its checks. Sign in once to each ready service before shipping.')

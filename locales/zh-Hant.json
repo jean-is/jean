@@ -32,6 +32,7 @@
   "history.title": "任務",
   "history.empty": "你的任務會顯示在這裡。",
   "history.confirmDelete": "刪除這個任務？此動作無法復原。",
+  "history.runs": "歷次執行：{count}",
   "rewind.confirm": "要重新問一次嗎？此任務中這之後的所有內容都將被移除。之後建立或變更的檔案保持不變。",
   "sidebar.open": "開啟側邊欄",
   "sidebar.close": "關閉側邊欄",
@@ -152,7 +153,6 @@
   },
   "read.pages": "第 {first}–{last} 頁，共 {total} 頁",
   "read.whole": "全部",
-  "made.copyTitle": "複製（貼上時保留格式）",
   "made.copyFailed": "無法複製",
   "made.csvTitle": "下載為試算表（CSV）",
   "made.csvNumbered": "將表格 {count} 下載為試算表（CSV）",
@@ -329,5 +329,8 @@
   "check.fix": "修正來源不支持的內容",
   "check.fix.prompt": "你的來源不支持這幾點。請重新核對並修正你的回答：",
   "since.prompt": "自上次以來有什麼新狀況？",
-  "since.closed": "這個分頁關閉時工作會停止，所以這些是剛剛讀取的。"
+  "since.closed": "這個分頁關閉時工作會停止，所以這些是剛剛讀取的。",
+  "cap.machine.name": "這台電腦",
+  "cap.machine.offer": "在這台電腦上執行網站的開發伺服器或你自己的程式嗎？",
+  "cap.machine.yes": "使用這台電腦"
 }

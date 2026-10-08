@@ -32,6 +32,7 @@
   "history.title": "Tâches",
   "history.empty": "Vos tâches apparaîtront ici.",
   "history.confirmDelete": "Supprimer cette tâche ? C’est définitif.",
+  "history.runs": "Lancements précédents : {count}",
   "rewind.confirm": "Redemander ceci ? Tout ce qui suit dans cette tâche sera supprimé. Les fichiers créés ou modifiés depuis restent tels quels.",
   "sidebar.open": "Ouvrir la barre latérale",
   "sidebar.close": "Fermer la barre latérale",
@@ -156,7 +157,6 @@
   },
   "read.pages": "pages {first} à {last} sur {total}",
   "read.whole": "en entier",
-  "made.copyTitle": "Copier (se colle avec la mise en forme)",
   "made.copyFailed": "Impossible de copier",
   "made.csvTitle": "Télécharger comme tableur (CSV)",
   "made.csvNumbered": "Télécharger le tableau {count} comme tableur (CSV)",
@@ -345,5 +345,8 @@
   "check.fix": "Corriger ce que les sources n’étayent pas",
   "check.fix.prompt": "Tes sources n’étayent pas ces points. Vérifie-les à nouveau et corrige ta réponse :",
   "since.prompt": "Quoi de neuf depuis la dernière fois ?",
-  "since.closed": "Le travail s’arrête quand cet onglet est fermé : tout ceci vient d’être lu."
+  "since.closed": "Le travail s’arrête quand cet onglet est fermé : tout ceci vient d’être lu.",
+  "cap.machine.name": "Cet ordinateur",
+  "cap.machine.offer": "Faire tourner le serveur de développement d’un site, ou vos propres programmes, sur cet ordinateur ?",
+  "cap.machine.yes": "Utiliser cet ordinateur"
 }

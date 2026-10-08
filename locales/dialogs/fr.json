@@ -108,6 +108,7 @@
   "routines.next": "Prochaine fois : {when}",
   "routines.confirmDelete": "Supprimer la routine « {title} » ?",
   "routines.run": "Lancer maintenant",
+  "routines.runs": "Lancements précédents",
   "skills.from": "De {source}",
   "skills.elsewhere": "Compétences d’ailleurs",
   "skills.elsewhereText": "Des compétences toutes faites, publiées par des sites et des organisations. Elles sont comparées à vos demandes sur cet appareil, et une compétence n’est ajoutée que si vous la choisissez, après avoir lu ses étapes.",
@@ -128,6 +129,8 @@
   "skills.ready.unreachable": "Impossible de télécharger cette compétence.",
   "skills.directory": "Compétences toutes faites",
   "skills.directoryText": "Pour ce qu’on demande souvent. Lisez les étapes d’une compétence avant de l’ajouter.",
+  "skill.slides": "Diapositives",
+  "skill.slides.text": "Des présentations écrites dans les réponses, à feuilleter et à projeter",
   "skill.chart": "Graphique",
   "skill.chart.text": "Barres, courbes, camemberts et plus, dessinés dans les réponses",
   "skill.music-score": "Partition",
@@ -286,5 +289,7 @@
   "brain.device.loading": "Presque prêt…",
   "brain.device.failed": "Le téléchargement s’est arrêté. Réessayez.",
   "brain.device.ready": "Le cerveau de cet appareil est prêt",
-  "brain.device.private": "Privé · fonctionne hors ligne"
+  "brain.device.private": "Privé · fonctionne hors ligne",
+  "cap.machine.hint": "Demandez à lancer le serveur de développement d’un site, comme npm run dev.",
+  "cap.machine.text": "Lance les commandes de l’ordinateur sur cet appareil lui-même, dans l’un de vos dossiers, avec ses propres programmes et serveurs : le serveur de développement d’un site s’affiche dans le navigateur. Chaque commande est demandée d’abord, et Ctrl+C dans votre terminal arrête tout."
 }

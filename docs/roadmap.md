@@ -30,9 +30,12 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] `write` for a document, with Markdown and CSV as the tool asks; the HTML pages they make, with a chart library from the internet
 - [ ] `browse` only when a page helps
 - [ ] Chart and Music score (D196): do brains read the skill and write strict JSON and ABC whose bars add up, in the user's language? The device's brain especially
+- [ ] Slides (D200): do brains keep a slide to what fits, use `lead` and `invert` where they help, and pick Slides or PowerPoint as the user meant? Presented with a clicker, in the desktop app and on an iPad
 - [ ] PowerPoint (D201): does a brain install pptxgenjs in ~, start from the skill's script and keep within the slide, in Arabic and Japanese too? Do the decks open without a repair in PowerPoint, Keynote and Google Slides?
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file
 - [ ] bash: how often a brain reaches for it, and whether its commands suit a non-technical user's files
+- [ ] This computer (D198) from Jean served over https: Chrome's local network prompt, Safari and Firefox reaching 127.0.0.1, Linux; a brain making, installing and serving a Vite project there, fixing what its log says
+- [ ] This computer in the desktop app, opened from the Dock or Finder: the login shell finding Node from Homebrew, Volta and nvm; Linux; the folder dialog and Stop in the real window
 
 **With real services**
 - [ ] Anthropic: cache reads and warming (`cache_read_input_tokens` on the second question); its own web search (chips, a second question replaying the results, `pause_turn`)

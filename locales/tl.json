@@ -32,6 +32,7 @@
   "history.title": "Mga gawain",
   "history.empty": "Dito lalabas ang mga gawain mo.",
   "history.confirmDelete": "Burahin ang gawaing ito? Hindi na ito maibabalik.",
+  "history.runs": "Mga nakaraang takbo: {count}",
   "rewind.confirm": "Itanong ulit ito? Aalisin ang lahat ng sumunod dito sa gawaing ito. Mananatili kung ano sila ang mga file na ginawa o binago mula noon.",
   "sidebar.open": "Buksan ang sidebar",
   "sidebar.close": "Isara ang sidebar",
@@ -154,7 +155,6 @@
   },
   "read.pages": "pahina {first}–{last} ng {total}",
   "read.whole": "lahat",
-  "made.copyTitle": "Kopyahin (idinidikit nang may format)",
   "made.copyFailed": "Hindi makopya",
   "made.csvTitle": "I-download bilang spreadsheet (CSV)",
   "made.csvNumbered": "I-download ang talahanayan {count} bilang spreadsheet (CSV)",
@@ -337,5 +337,8 @@
   "check.fix": "Itama ang hindi sinusuportahan ng mga pinagmulan",
   "check.fix.prompt": "Hindi sinusuportahan ng mga pinagmulan mo ang mga puntong ito. Tsekin ulit at itama ang sagot mo:",
   "since.prompt": "Ano ang bago mula noong huli?",
-  "since.closed": "Tumitigil ang trabaho habang sarado ang tab na ito, kaya ngayon lang ito binasa."
+  "since.closed": "Tumitigil ang trabaho habang sarado ang tab na ito, kaya ngayon lang ito binasa.",
+  "cap.machine.name": "Ang computer na ito",
+  "cap.machine.offer": "Patakbuhin ang dev server ng isang site, o ang sarili mong mga program, sa computer na ito?",
+  "cap.machine.yes": "Gamitin ang computer na ito"
 }

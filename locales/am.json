@@ -32,6 +32,7 @@
   "history.title": "ተግባራት",
   "history.empty": "ተግባራትዎ እዚህ ይታያሉ።",
   "history.confirmDelete": "ይህ ተግባር ይሰረዝ? ከተሰረዘ በኋላ መመለስ አይቻልም።",
+  "history.runs": "ያለፉ ሂደቶች: {count}",
   "rewind.confirm": "ይህን እንደገና ይጠይቁ? በዚህ ተግባር ውስጥ ከዚህ በኋላ ያለው ሁሉ ይወገዳል። ከዚያ ወዲህ የተሠሩ ወይም የተቀየሩ ፋይሎች እንዳሉ ይቆያሉ።",
   "sidebar.open": "የጎን አሞሌን ይክፈቱ",
   "sidebar.close": "የጎን አሞሌን ይዝጉ",
@@ -154,7 +155,6 @@
   },
   "read.pages": "ከ{total} ገጾች ገጽ {first}–{last}",
   "read.whole": "ሙሉውን",
-  "made.copyTitle": "ይቅዱ (ከነቅርጸቱ ይለጠፋል)",
   "made.copyFailed": "መቅዳት አልተቻለም",
   "made.csvTitle": "በተመን ሉህ መልክ ያውርዱ (CSV)",
   "made.csvNumbered": "ሰንጠረዥ {count} በተመን ሉህ መልክ ያውርዱ (CSV)",
@@ -337,5 +337,8 @@
   "check.fix": "ምንጮች የማይደግፉትን ማስተካከል",
   "check.fix.prompt": "ምንጮቹ እነዚህን ነጥቦች አይደግፉም። እንደገና ተረጋግጠው መልሱ ይስተካከል፦",
   "since.prompt": "ካለፈው ጊዜ ወዲህ ምን አዲስ ነገር አለ?",
-  "since.closed": "ይህ ትር ሲዘጋ ሥራ ይቆማል፤ ስለዚህ ይህ አሁን ገና ተነበበ።"
+  "since.closed": "ይህ ትር ሲዘጋ ሥራ ይቆማል፤ ስለዚህ ይህ አሁን ገና ተነበበ።",
+  "cap.machine.name": "ይህ ኮምፒውተር",
+  "cap.machine.offer": "የአንድ ድር ጣቢያ የልማት ሰርቨርን ወይም የራስዎን ፕሮግራሞች በዚህ ኮምፒውተር ላይ ያስኪዱ?",
+  "cap.machine.yes": "ይህን ኮምፒውተር ይጠቀሙ"
 }

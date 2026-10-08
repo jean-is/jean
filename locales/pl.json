@@ -32,6 +32,7 @@
   "history.title": "Zadania",
   "history.empty": "Tutaj pojawią się twoje zadania.",
   "history.confirmDelete": "Usunąć to zadanie? Tego nie można cofnąć.",
+  "history.runs": "Wcześniejsze uruchomienia: {count}",
   "rewind.confirm": "Zapytać o to ponownie? Wszystko, co nastąpiło później w tym zadaniu, zostanie usunięte. Pliki utworzone lub zmienione od tego czasu pozostaną bez zmian.",
   "sidebar.open": "Otwórz pasek boczny",
   "sidebar.close": "Zamknij pasek boczny",
@@ -158,7 +159,6 @@
   },
   "read.pages": "strony {first}–{last} z {total}",
   "read.whole": "całość",
-  "made.copyTitle": "Kopiuj (wkleja się z formatowaniem)",
   "made.copyFailed": "Nie udało się skopiować",
   "made.csvTitle": "Pobierz jako arkusz (CSV)",
   "made.csvNumbered": "Pobierz tabelę {count} jako arkusz (CSV)",
@@ -353,5 +353,8 @@
   "check.fix": "Popraw to, czego źródła nie potwierdzają",
   "check.fix.prompt": "Twoje źródła nie potwierdzają tych punktów. Sprawdź je jeszcze raz i popraw odpowiedź:",
   "since.prompt": "Co nowego od ostatniego razu?",
-  "since.closed": "Gdy ta karta jest zamknięta, praca stoi, więc to zostało przeczytane przed chwilą."
+  "since.closed": "Gdy ta karta jest zamknięta, praca stoi, więc to zostało przeczytane przed chwilą.",
+  "cap.machine.name": "Ten komputer",
+  "cap.machine.offer": "Uruchamiać serwer deweloperski strony albo własne programy na tym komputerze?",
+  "cap.machine.yes": "Używaj tego komputera"
 }

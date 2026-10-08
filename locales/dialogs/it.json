@@ -108,6 +108,7 @@
   "routines.next": "Prossima volta: {when}",
   "routines.confirmDelete": "Eliminare la routine «{title}»?",
   "routines.run": "Esegui ora",
+  "routines.runs": "Esecuzioni precedenti",
   "skills.from": "Da {source}",
   "skills.elsewhere": "Abilità da altrove",
   "skills.elsewhereText": "Abilità già pronte pubblicate da siti e organizzazioni. Vengono confrontate con le tue richieste su questo dispositivo, e una viene aggiunta solo se la scegli, dopo averne letto i passaggi.",
@@ -128,6 +129,8 @@
   "skills.ready.unreachable": "Impossibile scaricare questa abilità.",
   "skills.directory": "Abilità già pronte",
   "skills.directoryText": "Per ciò che si chiede spesso. Leggi i passaggi di un’abilità prima di aggiungerla.",
+  "skill.slides": "Diapositive",
+  "skill.slides.text": "Presentazioni scritte nelle risposte, da sfogliare e proiettare",
   "skill.chart": "Grafico",
   "skill.chart.text": "Barre, linee, torte e altro, disegnati nelle risposte",
   "skill.music-score": "Spartito",
@@ -286,5 +289,7 @@
   "brain.device.loading": "Quasi pronto…",
   "brain.device.failed": "Il download si è interrotto. Riprova.",
   "brain.device.ready": "Il cervello su questo dispositivo è pronto",
-  "brain.device.private": "Privato · funziona offline"
+  "brain.device.private": "Privato · funziona offline",
+  "cap.machine.hint": "Chiedi di avviare il server di sviluppo di un sito, come npm run dev.",
+  "cap.machine.text": "Esegue i comandi del computer su questo dispositivo, in una delle tue cartelle, con i suoi programmi e server: il server di sviluppo di un sito si vede nel browser. Ogni comando viene chiesto prima, e Ctrl+C nel tuo terminale ferma tutto."
 }

@@ -55,7 +55,7 @@ function cite(text) {
 }
 
 /** @param {Token[]} tokens */
-const blocks = (tokens) => tokens.map(block)
+export const blocks = (tokens) => tokens.map(block)
 
 /** @param {any} token @returns {unknown} */
 function block(token) {
@@ -104,7 +104,7 @@ function table(token) {
 }
 
 /** @param {Token[] | undefined} tokens @returns {unknown} */
-function inline(tokens = []) {
+export function inline(tokens = []) {
   return tokens.map((/** @type {any} */ token) => {
     switch (token.type) {
       case 'text': return token.tokens ? inline(token.tokens) : cite(decode(token.text))
@@ -140,19 +140,22 @@ export const withFormulas = (text, draw = formula) => text.split(FORMULAS).map((
 /** A LaTeX document, which the math capability lays out; until then, or if it can't, its source shows. @param {any} token */
 function latex(token) {
   drawing ??= unlock('math')
-  return html`<app-latex dir="auto" source=${token.text}></app-latex>`
+  return html`<app-latex dir="auto" source=${token.text} ?open=${!CLOSED.test(token.raw)}></app-latex>`
 }
 
 /** Widgets (D196): a block of a kind the room's skills declare, which the skills capability keeps, drawn by its capability. */
 export const declared = signal(/** @type {ReadonlySet<string>} */ (new Set()))
-const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores' })
+const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', marp: 'slides' })
 
 /** @param {any} token */
 function widget(token) {
   const kind = String(token.lang).toLowerCase()
   if (!declared.value.has(kind) || !Object.hasOwn(WIDGETS, kind)) return null
   unlock(WIDGETS[kind])
-  return kind === 'abc' ? html`<app-score source=${token.text}></app-score>` : html`<app-chart source=${token.text} ?open=${!CLOSED.test(token.raw)}></app-chart>`
+  const open = !CLOSED.test(token.raw)
+  return kind === 'abc' ? html`<app-score source=${token.text}></app-score>`
+    : kind === 'marp' ? html`<app-slides source=${token.text} ?open=${open}></app-slides>`
+    : html`<app-chart source=${token.text} ?open=${open}></app-chart>`
 }
 
 // marked doesn't wait for a fenced block's closing fence: until it is written, the block is still being written.

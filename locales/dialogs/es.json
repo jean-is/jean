@@ -108,6 +108,7 @@
   "routines.next": "Próxima vez: {when}",
   "routines.confirmDelete": "¿Eliminar la rutina «{title}»?",
   "routines.run": "Ejecutar ahora",
+  "routines.runs": "Ejecuciones anteriores",
   "skills.from": "De {source}",
   "skills.elsewhere": "Habilidades de otros sitios",
   "skills.elsewhereText": "Habilidades ya hechas que publican sitios y organizaciones. Se comparan con tus peticiones en este dispositivo, y solo se añade una cuando la eliges, después de leer sus pasos.",
@@ -128,6 +129,8 @@
   "skills.ready.unreachable": "No se pudo descargar esta habilidad.",
   "skills.directory": "Habilidades ya hechas",
   "skills.directoryText": "Para lo que la gente pide a menudo. Lee los pasos de una habilidad antes de añadirla.",
+  "skill.slides": "Diapositivas",
+  "skill.slides.text": "Presentaciones escritas en las respuestas, para hojear y presentar",
   "skill.chart": "Gráfico",
   "skill.chart.text": "Barras, líneas, sectores y más, dibujados en las respuestas",
   "skill.music-score": "Partitura",
@@ -286,5 +289,7 @@
   "brain.device.loading": "Casi listo…",
   "brain.device.failed": "La descarga se detuvo. Vuelve a intentarlo.",
   "brain.device.ready": "El cerebro de este dispositivo está listo",
-  "brain.device.private": "Privado · funciona sin conexión"
+  "brain.device.private": "Privado · funciona sin conexión",
+  "cap.machine.hint": "Pide ejecutar el servidor de desarrollo de un sitio, como npm run dev.",
+  "cap.machine.text": "Ejecuta los comandos de la computadora en este mismo dispositivo, en una de tus carpetas, con sus propios programas y servidores: el servidor de desarrollo de un sitio se ve en el navegador. Cada comando se pregunta antes, y Ctrl+C en tu terminal lo detiene todo."
 }

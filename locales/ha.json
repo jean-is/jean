@@ -32,6 +32,7 @@
   "history.title": "Ɗawainiyoyi",
   "history.empty": "Ɗawainiyoyinka za su bayyana a nan.",
   "history.confirmDelete": "A share wannan ɗawainiya? Ba za a iya mayar da ita ba.",
+  "history.runs": "Lokutan da suka gabata: {count}",
   "rewind.confirm": "Ka sake tambayar wannan? Duk abin da ya biyo baya a wannan aiki za a cire shi. Fayilolin da aka yi ko aka canza tun daga lokacin za su kasance yadda suke.",
   "sidebar.open": "Buɗe sandar gefe",
   "sidebar.close": "Rufe sandar gefe",
@@ -154,7 +155,6 @@
   },
   "read.pages": "shafuka {first}–{last} cikin {total}",
   "read.whole": "duka",
-  "made.copyTitle": "Kwafa (ana liƙawa tare da tsari)",
   "made.copyFailed": "Ba a iya kwafawa ba",
   "made.csvTitle": "Sauke a matsayin takardar lissafi (CSV)",
   "made.csvNumbered": "Sauke tebur {count} a matsayin takardar lissafi (CSV)",
@@ -337,5 +337,8 @@
   "check.fix": "Gyara abin da tushe bai goyi baya ba",
   "check.fix.prompt": "Tushenka ba su goyi bayan waɗannan batutuwa ba. Sake duba su ka gyara amsarka:",
   "since.prompt": "Me ya sabunta tun lokacin ƙarshe?",
-  "since.closed": "Aiki na tsayawa idan wannan shafi a rufe yake, don haka yanzun nan aka karanta wannan."
+  "since.closed": "Aiki na tsayawa idan wannan shafi a rufe yake, don haka yanzun nan aka karanta wannan.",
+  "cap.machine.name": "Wannan kwamfutar",
+  "cap.machine.offer": "A gudanar da sabar haɓaka ta wani shafi, ko shirye-shiryenka, a wannan kwamfutar?",
+  "cap.machine.yes": "Yi amfani da wannan kwamfutar"
 }

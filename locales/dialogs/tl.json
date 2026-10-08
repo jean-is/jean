@@ -106,6 +106,7 @@
   "routines.next": "Susunod: {when}",
   "routines.confirmDelete": "Burahin ang rutinang “{title}”?",
   "routines.run": "Patakbuhin ngayon",
+  "routines.runs": "Mga nakaraang takbo",
   "skills.from": "Mula sa {source}",
   "skills.elsewhere": "Mga kasanayan mula sa ibang lugar",
   "skills.elsewhereText": "Mga handang kasanayan na inilalathala ng mga site at organisasyon. Inihahambing ang mga ito sa mga kahilingan mo sa device na ito, at idinadagdag lang ang isa kapag pinili mo ito matapos basahin ang mga hakbang nito.",
@@ -126,6 +127,8 @@
   "skills.ready.unreachable": "Hindi ma-download ang kasanayang ito.",
   "skills.directory": "Mga handang kasanayan",
   "skills.directoryText": "Para sa mga madalas hilingin ng mga tao. Basahin ang mga hakbang ng isang kasanayan bago ito idagdag.",
+  "skill.slides": "Mga slide",
+  "skill.slides.text": "Mga presentasyong isinulat sa mga sagot, para buklatin at ipresenta",
   "skill.chart": "Tsart",
   "skill.chart.text": "Mga bar, linya, pie at iba pa, iginuguhit sa mga sagot",
   "skill.music-score": "Piyesa ng musika",
@@ -283,5 +286,7 @@
   "brain.device.loading": "Malapit nang matapos…",
   "brain.device.failed": "Huminto ang pag-download. Subukang muli.",
   "brain.device.ready": "Handa na ang utak sa device na ito",
-  "brain.device.private": "Pribado · gumagana offline"
+  "brain.device.private": "Pribado · gumagana offline",
+  "cap.machine.hint": "Ipapatakbo ang dev server ng isang site, gaya ng npm run dev.",
+  "cap.machine.text": "Pinapatakbo ang mga command ng computer sa mismong device na ito, sa isa sa mga folder mo, gamit ang sarili nitong mga program at server: lumalabas sa browser ang dev server ng isang site. Itinatanong muna ang bawat command, at pinahihinto ng Ctrl+C sa terminal mo ang lahat."
 }

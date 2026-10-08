@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Slide",
+  "slides.slide": "slide",
+  "slides.where": "Slide {n} dari {count}",
+  "slides.previous": "Slide sebelumnya",
+  "slides.next": "Slide berikutnya",
+  "slides.present": "Presentasikan layar penuh",
+  "slides.drawing": "Menulis slide…",
+  "slides.failed": "Slide ini tidak dapat digambar."
+}

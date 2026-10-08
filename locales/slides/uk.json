@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Слайди",
+  "slides.slide": "слайд",
+  "slides.where": "Слайд {n} з {count}",
+  "slides.previous": "Попередній слайд",
+  "slides.next": "Наступний слайд",
+  "slides.present": "Показати на весь екран",
+  "slides.drawing": "Пишемо слайди…",
+  "slides.failed": "Не вдалося намалювати ці слайди."
+}

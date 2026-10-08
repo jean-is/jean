@@ -109,6 +109,7 @@
   "routines.next": "בפעם הבאה: {when}",
   "routines.confirmDelete": "למחוק את השגרה “{title}”?",
   "routines.run": "הפעלה עכשיו",
+  "routines.runs": "הפעלות קודמות",
   "skills.from": "מקור: {source}",
   "skills.elsewhere": "מיומנויות ממקומות אחרים",
   "skills.elsewhereText": "מיומנויות מוכנות שאתרים וארגונים מפרסמים. הן מושוות לבקשות שלך במכשיר הזה, ומיומנות נוספת רק כשבוחרים בה, אחרי קריאת השלבים שלה.",
@@ -129,6 +130,8 @@
   "skills.ready.unreachable": "לא ניתן להוריד את המיומנות הזו.",
   "skills.directory": "מיומנויות מוכנות",
   "skills.directoryText": "לדברים שמבקשים לעיתים קרובות. קראו את שלבי המיומנות לפני שתוסיפו אותה.",
+  "skill.slides": "שקופיות",
+  "skill.slides.text": "מצגות שנכתבות בתשובות, לדפדוף ולהצגה",
   "skill.chart": "תרשים",
   "skill.chart.text": "עמודות, קווים, עוגות ועוד, מצוירים בתוך התשובות",
   "skill.music-score": "תווים",
@@ -288,5 +291,7 @@
   "brain.device.loading": "כמעט מוכן…",
   "brain.device.failed": "ההורדה נעצרה. נסו שוב.",
   "brain.device.ready": "המוח במכשיר הזה מוכן",
-  "brain.device.private": "פרטי · עובד בלי אינטרנט"
+  "brain.device.private": "פרטי · עובד בלי אינטרנט",
+  "cap.machine.hint": "בקשו להריץ שרת פיתוח של אתר, כמו npm run dev.",
+  "cap.machine.text": "מריץ את הפקודות של המחשב במכשיר הזה עצמו, באחת התיקיות שלכם, עם התוכנות והשרתים שלו: שרת הפיתוח של אתר מוצג בדפדפן. כל פקודה נשאלת קודם, ו־Ctrl+C במסוף שלכם עוצר הכול."
 }

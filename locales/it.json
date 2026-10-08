@@ -32,6 +32,7 @@
   "history.title": "Attività",
   "history.empty": "Le tue attività appariranno qui.",
   "history.confirmDelete": "Eliminare questa attività? Non si può annullare.",
+  "history.runs": "Esecuzioni precedenti: {count}",
   "rewind.confirm": "Chiedere di nuovo? Tutto ciò che segue in questa attività verrà rimosso. I file creati o modificati da allora restano come sono.",
   "sidebar.open": "Apri la barra laterale",
   "sidebar.close": "Chiudi la barra laterale",
@@ -156,7 +157,6 @@
   },
   "read.pages": "pagine {first}–{last} di {total}",
   "read.whole": "tutto",
-  "made.copyTitle": "Copia (si incolla con la formattazione)",
   "made.copyFailed": "Impossibile copiare",
   "made.csvTitle": "Scarica come foglio di calcolo (CSV)",
   "made.csvNumbered": "Scarica la tabella {count} come foglio di calcolo (CSV)",
@@ -345,5 +345,8 @@
   "check.fix": "Correggere ciò che le fonti non sostengono",
   "check.fix.prompt": "Le tue fonti non sostengono questi punti. Ricontrollali e correggi la tua risposta:",
   "since.prompt": "Che novità ci sono dall’ultima volta?",
-  "since.closed": "Il lavoro si ferma mentre questa scheda è chiusa: tutto questo è stato letto adesso."
+  "since.closed": "Il lavoro si ferma mentre questa scheda è chiusa: tutto questo è stato letto adesso.",
+  "cap.machine.name": "Questo computer",
+  "cap.machine.offer": "Eseguire il server di sviluppo di un sito, o i tuoi programmi, su questo computer?",
+  "cap.machine.yes": "Usa questo computer"
 }

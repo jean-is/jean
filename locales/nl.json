@@ -32,6 +32,7 @@
   "history.title": "Taken",
   "history.empty": "Je taken verschijnen hier.",
   "history.confirmDelete": "Deze taak verwijderen? Dit kan niet ongedaan worden gemaakt.",
+  "history.runs": "Eerdere uitvoeringen: {count}",
   "rewind.confirm": "Dit opnieuw vragen? Alles wat erna kwam in deze taak wordt verwijderd. Bestanden die sindsdien zijn gemaakt of gewijzigd, blijven zoals ze zijn.",
   "sidebar.open": "Zijbalk openen",
   "sidebar.close": "Zijbalk sluiten",
@@ -154,7 +155,6 @@
   },
   "read.pages": "pagina's {first}–{last} van {total}",
   "read.whole": "helemaal",
-  "made.copyTitle": "Kopiëren (plakt met opmaak)",
   "made.copyFailed": "Kopiëren mislukt",
   "made.csvTitle": "Downloaden als spreadsheet (CSV)",
   "made.csvNumbered": "Tabel {count} downloaden als spreadsheet (CSV)",
@@ -337,5 +337,8 @@
   "check.fix": "Verbeteren wat de bronnen niet staven",
   "check.fix.prompt": "Je bronnen staven deze punten niet. Loop ze opnieuw na en verbeter je antwoord:",
   "since.prompt": "Wat is er nieuw sinds de vorige keer?",
-  "since.closed": "Het werk ligt stil zolang dit tabblad dicht is; dit is zojuist gelezen."
+  "since.closed": "Het werk ligt stil zolang dit tabblad dicht is; dit is zojuist gelezen.",
+  "cap.machine.name": "Deze computer",
+  "cap.machine.offer": "De ontwikkelserver van een site, of je eigen programma’s, op deze computer draaien?",
+  "cap.machine.yes": "Deze computer gebruiken"
 }

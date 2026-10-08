@@ -36,17 +36,18 @@ export const DESKTOP = Object.freeze({ id: 'cx.jean.desktop', binary: 'jean', po
  */
 export const DMG = Object.freeze({ width: 600, height: 360, iconSize: 128, app: [150, 160], applications: [450, 160] })
 
-/** What a web deploy serves: the pages and what they load, never the tooling, the tests or the docs. */
+/** What a web deploy serves: the pages and what they load, and the bridge a line of Jean's fetches (D198); never the tooling, the tests or the docs. */
 export const TOP = ['index.html', 'sandbox.html', 'preview.html', 'manifesto.html', 'manifesto.css', 'brand.js', 'sw.js', 'capabilities.json', 'manifest.webmanifest', 'LICENSE']
-export const DIRS = ['core', 'ui', 'caps', 'locales', 'vendor', 'fonts', 'icons', 'ee']
+export const DIRS = ['core', 'ui', 'caps', 'locales', 'vendor', 'fonts', 'icons', 'ee', 'bridge']
 
-/** The host's calls the page may make (ui/host.js), and no other. */
-export const NATIVE = ['computer.getMemoryInfo', 'os.showFolderDialog', 'os.open', 'filesystem.getStats', 'filesystem.readDirectory', 'filesystem.readBinaryFile', 'filesystem.writeBinaryFile', 'filesystem.createDirectory', 'filesystem.remove']
+/** The host's calls the page may make (ui/host.js, and This computer for the bridge it starts, D198), and no other. */
+export const NATIVE = ['computer.getMemoryInfo', 'os.showFolderDialog', 'os.open', 'filesystem.getStats', 'filesystem.readDirectory', 'filesystem.readBinaryFile', 'filesystem.writeBinaryFile', 'filesystem.createDirectory', 'filesystem.remove',
+  'os.spawnProcess', 'os.getSpawnedProcesses', 'os.updateSpawnedProcess']
 
 /**
  * Neutralino's configuration: a window on Jean's files. Of the native API, only what Sync needs
  * (D169): the system's dialog for a folder, the folder opened in the system's file manager, and the
- * files there; nothing that runs a program. A link that opens elsewhere opens in the system's
+ * files there; and the one program it runs, This computer's bridge (D198). A link that opens elsewhere opens in the system's
  * browser; nothing is written beside the app (no log; the window's size and place go to the
  * system's folder for app data).
  * @param {{ name: string }} brand

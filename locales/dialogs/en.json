@@ -106,6 +106,7 @@
   "routines.next": "Next: {when}",
   "routines.confirmDelete": "Delete the routine “{title}”?",
   "routines.run": "Run now",
+  "routines.runs": "Past runs",
   "skills.from": "From {source}",
   "skills.elsewhere": "Skills from elsewhere",
   "skills.elsewhereText": "Ready-made skills that sites and organisations publish. They’re compared with your requests on this device, and one is added only when you choose it, after reading its steps.",
@@ -126,6 +127,8 @@
   "skills.ready.unreachable": "This skill couldn’t be downloaded.",
   "skills.directory": "Ready-made skills",
   "skills.directoryText": "For things people often ask for. Read a skill’s steps before adding it.",
+  "skill.slides": "Slides",
+  "skill.slides.text": "Decks written in answers, to page through and present",
   "skill.chart": "Chart",
   "skill.chart.text": "Bars, lines, pies and more, drawn in answers",
   "skill.music-score": "Music score",
@@ -283,5 +286,7 @@
   "brain.device.loading": "Almost ready…",
   "brain.device.failed": "The download stopped. Try again.",
   "brain.device.ready": "The brain on this device is ready",
-  "brain.device.private": "Private · works offline"
+  "brain.device.private": "Private · works offline",
+  "cap.machine.hint": "Ask to run a site’s dev server, such as npm run dev.",
+  "cap.machine.text": "Runs the computer’s commands on this device itself, in a folder of yours, with its own programs and servers: a site’s dev server shows in the browser. Each command is asked first, and Ctrl+C in your terminal stops it all."
 }

@@ -4,7 +4,7 @@
 
 import { join } from './fs.js'
 import { ulid } from './ulid.js'
-import { openingOf } from './events.js'
+import { openingOf, routineOf } from './events.js'
 
 /** @import { FS, Envelope, ConversationHeader, ConversationSummary } from './types.js' */
 /** @typedef {{ header: ConversationHeader, records: Envelope[], title: string, updatedAt: string }} Conversation */
@@ -123,8 +123,9 @@ async function summarize(fs, path, id) {
     const conversation = await loadConversation(fs, path)
     if (!conversation) return null
     const { header, records, title, updatedAt } = conversation
-    // The opening request's start, for "the third request of a kind" (D83).
-    return { id, path, title, opening: openingOf(records).slice(0, 200), createdAt: header.createdAt, updatedAt }
+    // The opening request's start, for "the third request of a kind" (D83); a routine's run, by its note (D122).
+    const routine = routineOf(records)?.routine
+    return { id, path, title, opening: openingOf(records).slice(0, 200), createdAt: header.createdAt, updatedAt, ...(routine && { routine }) }
   } catch (err) {
     console.warn(`Skipping unreadable conversation ${path}`, err)
     return null
@@ -149,6 +150,22 @@ export async function listConversations(fs, projectDir) {
   return summaries
     .filter((summary) => summary !== null)
     .sort((a, b) => compare(b.updatedAt, a.updatedAt) || compare(b.id, a.id))
+}
+
+/**
+ * A routine's runs as one row (D122): its newest, with the earlier ones under it, newest first.
+ * The list keeps its order.
+ * @param {ConversationSummary[]} list @returns {(ConversationSummary & { earlier?: ConversationSummary[] })[]}
+ */
+export function oneRowEach(list) {
+  /** @type {Map<string, ConversationSummary[]>} */
+  const runs = new Map()
+  for (const item of [...list].sort((a, b) => compare(b.id, a.id))) if (item.routine) runs.set(item.routine, [...(runs.get(item.routine) ?? []), item])
+  return list.flatMap((item) => {
+    if (!item.routine) return [item]
+    const [newest, ...earlier] = runs.get(item.routine) ?? []
+    return newest === item ? [{ ...item, earlier }] : []
+  })
 }
 
 /**

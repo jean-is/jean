@@ -28,8 +28,9 @@
 // In a conversation opened on a folder (D141), it finds which files mention something, lists the
 // folder, and changes a file when asked to change "this" to "that" in it: it opens the file first,
 // then changes it, and asks again when told the folder is open now. Asked to make a page "saying"
-// something, it makes it there, as a heading (D156). Asked to "Chart" something, or for a jig, it
-// answers with a chart or a tune, as the skills of Jean's own directory write them (D196).
+// something, it makes it there, as a heading (D156). Asked to "Chart" something, for a jig or for
+// slides, it answers with a chart, a tune or a deck, as the skills of Jean's own directory write
+// them (D196, D200).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -113,11 +114,23 @@ const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of,
 const GOLDEN = 'The ratio tends to $\\varphi \\approx 1.618$:\n\n$$\\varphi = \\frac{1 + \\sqrt{5}}{2}$$\n\n| Terms | Ratio |\n|---|---|\n| $F_5 / F_4$ | 1.6667 |\n\nA book costs $5 and a pen $10.'
 /** A LaTeX document in a code block: sections, formulas set apart and in a line (D185). */
 const EULER = "Voici :\n\n```latex\n\\section*{Formules d'Euler}\n\\subsection*{Identité d'Euler}\n\\[ e^{i\\pi} + 1 = 0 \\]\nPour un cube : $8 - 12 + 6 = 2$.\n```"
+/** A LaTeX block of one line: a formula alone. */
+const IDENTITY = 'Here it is:\n\n```latex\ne^{i\\pi} + 1 = 0\n```'
+/** A proof as brains write it: one aligned formula, its words in \textbf and \text, its rows broken with \\[1.2em] (D185). */
+const PROOF = `Voici la preuve :\n\n\`\`\`latex\n${String.raw`\begin{aligned}
+&\textbf{Théorème : } \forall x\in\mathbb{R},\quad e^{ix}=\cos x+i\sin x\\[1.2em]
+&\textbf{Preuve : séries entières}\\
+&\text{Étape 1 : } z=ix \;\Rightarrow\; e^{ix}=\sum_{n=0}^{\infty}\frac{(ix)^n}{n!}\\
+&\text{Étape 2 : } i^{2k}=(-1)^k,\qquad i^{2k+1}=i\,(-1)^k\\
+&\text{donc } e^{ix}=\cos x+i\sin x\qquad\blacksquare
+\end{aligned}`}\n\`\`\``
 /** Its follow-ups, with formulas in a line. */
 const EULER_NEXT = ['Démontre la formule $e^{ix}=\\cos x+i\\sin x$', "Explique l'indicatrice d'Euler $\\varphi(n)$"]
 /** A chart and a tune, as the skills of Jean's own directory write them: an ECharts option and ABC notation (D196). */
 const CHART = 'Here are the sales:\n\n```echarts\n{"title":{"text":"Croissants sold"},"tooltip":{"trigger":"axis"},"xAxis":{"type":"category","data":["Mon","Tue","Wed"]},"yAxis":{"type":"value"},"series":[{"name":"Croissants","type":"bar","data":[120,1250.5,90]}]}\n```\n\nTuesday sold the most.'
 const JIG = 'Here is a jig:\n\n```abc\nX:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/8=116\nR:jig\nK:G\nGFG BAB | gfg d2B | GFG BAB | d2B G2B |\nGFG BAB | gfg d2B | c2c B2A | GFG B2G :|\n```\n\nPlay it lightly.'
+/** A deck, as the Slides skill writes it in Marp's Markdown (D200): numbered, a title slide, a table, its colours swapped on the last, a note for the speaker. */
+const DECK = 'Here are your slides:\n\n```marp\n---\npaginate: true\nfooter: Bakery · 2027\n---\n\n<!-- _class: lead -->\n# A second oven\n\n---\n\n## What it costs\n\n<!-- Say it pays back in 14 months. -->\n\n| | Cost |\n|---|---:|\n| Oven | €18,000 |\n\n---\n\n<!-- _class: invert -->\n## Paid back in 14 months\n```\n\nThree slides on the new oven.'
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 /** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. It can fill the screen and save its prices, by a link or from its code (D158). */
 const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p>
@@ -323,7 +336,10 @@ createServer(async (req, res) => {
   else if (/give me a link/i.test(question) && last.role === 'user') answer = `Here it is: [the bakery](${BAKERY}).`
   else if (/^chart\b/i.test(question) && last.role === 'user') answer = CHART
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
+  else if (/\bslides\b/i.test(question) && last.role === 'user') answer = DECK
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
+  else if (/\bidentity\b/i.test(question) && last.role === 'user') answer = IDENTITY
+  else if (/^Démontre/.test(question) && last.role === 'user') answer = PROOF
   else if (/euler/i.test(question) && last.role === 'user') answer = EULER
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: `return await models.image(${JSON.stringify(question)})` } }
   else if (toolName === 'javascript' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'

@@ -1,6 +1,10 @@
-/* Charts (D196): the chart in its frame, then Copy at its end. */
+/* Charts (D196): the chart in its frame, Copy at its top corner, shown on hover. */
+app-chart { position: relative; }
 app-chart .chart { block-size: clamp(15rem, 55vw, 22rem); }
-app-chart .drawn-foot { display: flex; justify-content: end; margin-block-start: 0.4rem; }
+app-chart .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
+app-chart .drawn-foot .icon-button { background: var(--glass); }
+@media (hover: hover) { app-chart:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
+@media print { app-chart .drawn-foot { display: none; } }
 /* While the answer is written, the chart's place; once it's written, why there is none. */
 app-chart .drawn-status { margin: 0 0 0.6rem; }
 .is-streaming app-chart .drawn-status { display: grid; place-items: center; min-block-size: clamp(15rem, 55vw, 22rem); margin: 0; }

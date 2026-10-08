@@ -104,6 +104,7 @@
   "routines.next": "Lần tới: {when}",
   "routines.confirmDelete": "Xóa tác vụ định kỳ “{title}”?",
   "routines.run": "Chạy ngay",
+  "routines.runs": "Các lần chạy trước",
   "skills.from": "Từ {source}",
   "skills.elsewhere": "Kỹ năng từ nơi khác",
   "skills.elsewhereText": "Kỹ năng có sẵn do các trang web và tổ chức công bố. Chúng được so với yêu cầu của bạn ngay trên thiết bị này, và chỉ được thêm khi bạn chọn sau khi đọc các bước.",
@@ -124,6 +125,8 @@
   "skills.ready.unreachable": "Không tải xuống được kỹ năng này.",
   "skills.directory": "Kỹ năng có sẵn",
   "skills.directoryText": "Cho những việc mọi người thường nhờ. Hãy đọc các bước của kỹ năng trước khi thêm.",
+  "skill.slides": "Trang chiếu",
+  "skill.slides.text": "Bài trình chiếu viết ngay trong câu trả lời, để lật xem và trình chiếu",
   "skill.chart": "Biểu đồ",
   "skill.chart.text": "Cột, đường, tròn và hơn thế nữa, vẽ ngay trong câu trả lời",
   "skill.music-score": "Bản nhạc",
@@ -280,5 +283,7 @@
   "brain.device.loading": "Sắp xong…",
   "brain.device.failed": "Quá trình tải đã dừng. Hãy thử lại.",
   "brain.device.ready": "Bộ não trên thiết bị này đã sẵn sàng",
-  "brain.device.private": "Riêng tư · chạy ngoại tuyến"
+  "brain.device.private": "Riêng tư · chạy ngoại tuyến",
+  "cap.machine.hint": "Nhờ chạy máy chủ phát triển của một trang web, như npm run dev.",
+  "cap.machine.text": "Chạy lệnh của máy tính ngay trên thiết bị này, trong một thư mục của bạn, với chương trình và máy chủ của chính nó: máy chủ phát triển của trang web hiện trong trình duyệt. Mỗi lệnh đều được hỏi trước, và Ctrl+C trong terminal của bạn dừng tất cả."
 }

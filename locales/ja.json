@@ -32,6 +32,7 @@
   "history.title": "タスク",
   "history.empty": "タスクはここに表示されます。",
   "history.confirmDelete": "このタスクを削除しますか？元に戻せません。",
+  "history.runs": "これまでの実行：{count}",
   "rewind.confirm": "もう一度尋ねますか？このタスクでこれより後の内容はすべて削除されます。その後に作成・変更されたファイルはそのまま残ります。",
   "sidebar.open": "サイドバーを開く",
   "sidebar.close": "サイドバーを閉じる",
@@ -152,7 +153,6 @@
   },
   "read.pages": "{total} ページ中 {first}–{last} ページ",
   "read.whole": "全体",
-  "made.copyTitle": "コピー（書式付きで貼り付けられます）",
   "made.copyFailed": "コピーできませんでした",
   "made.csvTitle": "表計算ファイル（CSV）としてダウンロード",
   "made.csvNumbered": "表 {count} を表計算ファイル（CSV）としてダウンロード",
@@ -329,5 +329,8 @@
   "check.fix": "出典で裏づけられない点を直す",
   "check.fix.prompt": "出典がこれらの点を裏づけていません。もう一度確認して、回答を直して：",
   "since.prompt": "前回から何か新しいことはある？",
-  "since.closed": "このタブを閉じている間は作業が止まるため、これはたった今読んだ内容です。"
+  "since.closed": "このタブを閉じている間は作業が止まるため、これはたった今読んだ内容です。",
+  "cap.machine.name": "このコンピューター",
+  "cap.machine.offer": "サイトの開発サーバーや自分のプログラムを、このコンピューターで動かしますか？",
+  "cap.machine.yes": "このコンピューターを使う"
 }

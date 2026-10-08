@@ -106,6 +106,7 @@
   "routines.next": "Sonraki: {when}",
   "routines.confirmDelete": "“{title}” rutini silinsin mi?",
   "routines.run": "Şimdi çalıştır",
+  "routines.runs": "Önceki çalıştırmalar",
   "skills.from": "Kaynak: {source}",
   "skills.elsewhere": "Başka yerlerden beceriler",
   "skills.elsewhereText": "Sitelerin ve kuruluşların yayımladığı hazır beceriler. Bu cihazda isteklerinle karşılaştırılırlar ve biri ancak adımlarını okuyup sen seçersen eklenir.",
@@ -126,6 +127,8 @@
   "skills.ready.unreachable": "Bu beceri indirilemedi.",
   "skills.directory": "Hazır beceriler",
   "skills.directoryText": "İnsanların sık istediği şeyler için. Bir beceriyi eklemeden önce adımlarını oku.",
+  "skill.slides": "Slaytlar",
+  "skill.slides.text": "Yanıtlarda yazılan sunumlar, gezinmek ve sunmak için",
   "skill.chart": "Grafik",
   "skill.chart.text": "Sütun, çizgi, pasta ve daha fazlası, yanıtların içinde çizilir",
   "skill.music-score": "Nota",
@@ -283,5 +286,7 @@
   "brain.device.loading": "Neredeyse hazır…",
   "brain.device.failed": "İndirme durdu. Tekrar dene.",
   "brain.device.ready": "Bu cihazdaki beyin hazır",
-  "brain.device.private": "Gizli · çevrimdışı çalışır"
+  "brain.device.private": "Gizli · çevrimdışı çalışır",
+  "cap.machine.hint": "Bir sitenin geliştirme sunucusunu çalıştırmayı iste, örneğin npm run dev.",
+  "cap.machine.text": "Bilgisayarın komutlarını bu cihazın kendisinde, klasörlerinden birinde, kendi programları ve sunucularıyla çalıştırır: bir sitenin geliştirme sunucusu tarayıcıda görünür. Her komut önce sorulur, terminalinde Ctrl+C her şeyi durdurur."
 }

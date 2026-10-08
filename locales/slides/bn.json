@@ -1,0 +1,10 @@
+{
+  "slides.deck": "স্লাইড",
+  "slides.slide": "স্লাইড",
+  "slides.where": "{count}টির মধ্যে স্লাইড {n}",
+  "slides.previous": "আগের স্লাইড",
+  "slides.next": "পরের স্লাইড",
+  "slides.present": "পূর্ণ স্ক্রিনে উপস্থাপন করুন",
+  "slides.drawing": "স্লাইড লেখা হচ্ছে…",
+  "slides.failed": "এই স্লাইডগুলো আঁকা যায়নি।"
+}

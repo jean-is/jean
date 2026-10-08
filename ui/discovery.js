@@ -18,7 +18,7 @@ import { host } from './host.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'search', 'browser', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'search', 'browser', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -31,6 +31,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   routines: 'doing a task on its own on a schedule (every day, week or month), while the user has you open or as soon as they are back',
   search: 'searching the web, when a question needs current or specific facts',
   browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
+  machine: "running your commands on the user's own computer instead of the sandbox, in a folder of theirs, with its programs and ports, so a site's dev server (npm run dev) serves and shows in the browser; they paste a line in a terminal there",
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
   helpers: 'helpers that do the independent parts of a large task at the same time',
   ...(folders && { sync: 'keeping their conversations, files and memory the same on their other computers, through a folder their cloud drive syncs' }),
@@ -119,6 +120,7 @@ export async function begin(id) {
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
   if (id === 'find') app.dialog.value = 'find'
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
+  if (id === 'machine') (await import('./dialogs.js')).openSettings('computer')
   // A folder to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
   if (id === 'folders' || id === 'sync') {
     const { choose } = await (id === 'sync' ? import('../caps/sync/sync.js') : import('../caps/folders/folders.js'))
@@ -200,6 +202,8 @@ document.addEventListener('click', (event) => {
 effect(() => {
   if ((effective.value.settings.browsed ?? 0) >= BROWSED) offerOnce('browser')
 })
+// A server the sandbox refused could run on the user's own computer (D198).
+document.addEventListener('app-server-refused', () => offerOnce('machine'))
 // A web page made or changed in the conversation's folder could show there too (D156).
 document.addEventListener('app-folder-changed', (event) => { if (/\.html?$/i.test(/** @type {CustomEvent} */ (event).detail.path)) offerOnce('browser') })
 effect(() => {
