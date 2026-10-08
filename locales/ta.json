@@ -38,6 +38,7 @@
   "activity.thinking": "சிந்தனை நடக்கிறது…",
   "activity.writing": "எழுதுதல் நடக்கிறது…",
   "activity.working": "வேலை நடக்கிறது…",
+  "activity.retrying": "மீண்டும் முயல்கிறது…",
   "activity.failed": "ஏதோ தவறு நடந்தது",
   "activity.answeredWith": "பதில்: {brain}",
   "activity.brain": "கேள்வி: {brain}",

@@ -38,6 +38,7 @@
   "activity.thinking": "سوچ بچار جاری ہے…",
   "activity.writing": "لکھائی جاری ہے…",
   "activity.working": "کام جاری ہے…",
+  "activity.retrying": "دوبارہ کوشش جاری ہے…",
   "activity.failed": "کچھ غلط ہو گیا",
   "activity.answeredWith": "جواب: {brain}",
   "activity.brain": "سوال: {brain}",

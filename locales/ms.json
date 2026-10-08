@@ -38,6 +38,7 @@
   "activity.thinking": "Sedang berfikir…",
   "activity.writing": "Sedang menulis…",
   "activity.working": "Sedang bekerja…",
+  "activity.retrying": "Sedang mencuba lagi…",
   "activity.failed": "Ada sesuatu yang tidak kena",
   "activity.answeredWith": "Dijawab oleh {brain}",
   "activity.brain": "Bertanya kepada {brain}",

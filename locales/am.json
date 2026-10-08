@@ -38,6 +38,7 @@
   "activity.thinking": "በማሰብ ላይ…",
   "activity.writing": "በመጻፍ ላይ…",
   "activity.working": "በመሥራት ላይ…",
+  "activity.retrying": "እንደገና በመሞከር ላይ…",
   "activity.failed": "የሆነ ችግር ተፈጥሯል",
   "activity.answeredWith": "መልሱን የሰጠው፦ {brain}",
   "activity.brain": "የተጠየቀው፦ {brain}",

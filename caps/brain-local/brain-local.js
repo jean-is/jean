@@ -127,7 +127,8 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   }
   const { error, usage } = /** @type {{ usage?: any, error?: any }} */ (finished)
   if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
-  if (error) throw new LLMError(error.message, { code: error.code === 'too_long' ? 'too_long' : 'server' })
+  // Nothing to reconnect to here: what failed on the device would fail again (D202).
+  if (error) throw new LLMError(error.message, { code: error.code === 'too_long' ? 'too_long' : 'server', retryable: false })
   // Tool calls come last, as from the other adapters (D31).
   for (const call of calls) yield { type: 'tool_call', call }
   yield {

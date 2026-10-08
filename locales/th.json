@@ -38,6 +38,7 @@
   "activity.thinking": "กำลังคิด…",
   "activity.writing": "กำลังเขียน…",
   "activity.working": "กำลังทำงาน…",
+  "activity.retrying": "กำลังลองอีกครั้ง…",
   "activity.failed": "เกิดข้อผิดพลาด",
   "activity.answeredWith": "ตอบโดย {brain}",
   "activity.brain": "ถาม {brain} แล้ว",

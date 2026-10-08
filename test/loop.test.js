@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { runTurn } from '../core/loop.js'
+import { LLMError } from '../core/llm.js'
 import { toChatMessages, userRecord } from '../core/events.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'test-model' }
@@ -121,6 +122,71 @@ test('loop: stream errors persist partial output and rethrow', async () => {
   assert.equal(persisted[0].update.rawOutput.code, 'cors_or_offline')
   assert.equal(typeof persisted[0].update._meta.ms, 'number')
   assert.equal(persisted[1].update.content.text, 'Partial')
+})
+
+test('loop: a request that fails before anything of the answer came is asked again after a moment, which its entry says meanwhile (D202)', async () => {
+  let calls = 0
+  /** @param {any} _ */
+  async function* stream(_) {
+    // Offline looks like a refused cross-origin request to a browser; a busy server passes too.
+    if (++calls === 1) throw new LLMError('Failed to fetch', { code: 'cors_or_offline' })
+    if (calls === 2) throw new LLMError('Overloaded', { code: 'server' })
+    yield { type: 'text', delta: 'Hello' }
+    yield done('end', { role: 'assistant', content: 'Hello' })
+  }
+  /** @type {any[]} */
+  const persisted = []
+  /** @type {any[]} */
+  const live = []
+  const result = await runTurn({
+    brain, system: 's', history: [{ role: 'user', content: 'Hi' }], stream: /** @type {any} */ (stream), retries: [0, 0, 0],
+    onUpdate: (update) => live.push(update), persist: async (records) => { persisted.push(...records) },
+  })
+  assert.equal(calls, 3)
+  assert.equal(result.text, 'Hello')
+  assert.deepEqual(persisted.map((record) => [record.update.sessionUpdate, record.update.status]), [['tool_call', 'completed'], ['agent_message_chunk', undefined]])
+  assert.deepEqual(live.flatMap((update) => (update._meta && 'retrying' in update._meta ? [update._meta.retrying] : [])), [true, false, true, false])
+  assert.equal(new Set(live.flatMap((update) => update.toolCallId ?? [])).size, 1)
+})
+
+test('loop: it asks again only while it may help: not past its retries, a lasting error, a long wait, or part of an answer (D202)', async () => {
+  /** @type {[string, LLMError, boolean, number][]} */
+  const cases = [
+    ['past its retries', new LLMError('Busy', { code: 'rate_limit' }), false, 4],
+    ['a lasting error', new LLMError('Wrong key', { code: 'auth' }), false, 1],
+    ['a wait longer than half a minute', new LLMError('Busy', { code: 'rate_limit', retryAfter: 60_000 }), false, 1],
+    ['part of an answer shown', new LLMError('The response stream ended early', { code: 'network' }), true, 1],
+  ]
+  for (const [why, error, partial, expected] of cases) {
+    let calls = 0
+    /** @param {any} _ */
+    async function* stream(_) {
+      calls++
+      if (partial) yield { type: 'text', delta: 'Half an answ' }
+      throw error
+    }
+    await assert.rejects(runTurn({ brain, system: 's', history: [{ role: 'user', content: 'Hi' }], stream: /** @type {any} */ (stream), retries: [0, 0, 0] }), error)
+    assert.equal(calls, expected, why)
+  }
+})
+
+test('loop: stopped while it waits to ask again, it asks no more (D202)', async () => {
+  const controller = new AbortController()
+  let calls = 0
+  /** @param {any} _ */
+  async function* stream(_) {
+    calls++
+    yield* []
+    throw new LLMError('The connection dropped', { code: 'network' })
+  }
+  /** @type {any[]} */
+  const persisted = []
+  await assert.rejects(runTurn({
+    brain, system: 's', history: [{ role: 'user', content: 'Hi' }], stream: /** @type {any} */ (stream), retries: [20_000], signal: controller.signal,
+    onUpdate: (update) => update._meta?.retrying && controller.abort(), persist: async (records) => { persisted.push(...records) },
+  }), { code: 'aborted' })
+  assert.equal(calls, 1)
+  assert.equal(persisted[0].update.status, 'failed')
 })
 
 test('loop: once stopped, it runs and asks for nothing more', async () => {

@@ -35,16 +35,23 @@ export const PROVIDERS = {
   custom: { api: 'openai', baseURL: '', defaultModel: null, needsKey: false },
 }
 
-const RETRYABLE = new Set(['rate_limit', 'server', 'network'])
+// What may pass if asked again. Being offline does; a refused cross-origin request looks the same
+// to a browser, and costs only the wait (D202).
+const RETRYABLE = new Set(['rate_limit', 'server', 'network', 'cors_or_offline'])
 
 export class LLMError extends Error {
-  /** @param {string} message @param {{ status?: number, code?: LLMErrorCode, retryable?: boolean, cause?: unknown }} [options] */
-  constructor(message, { status, code = 'bad_response', retryable, cause } = {}) {
+  /**
+   * @param {string} message
+   * @param {{ status?: number, code?: LLMErrorCode, retryable?: boolean, retryAfter?: number, cause?: unknown }} [options]
+   *   retryAfter: how long the provider asks to wait, in ms
+   */
+  constructor(message, { status, code = 'bad_response', retryable, retryAfter, cause } = {}) {
     super(message, { cause })
     this.name = 'LLMError'
     this.status = status
     this.code = code
     this.retryable = retryable ?? RETRYABLE.has(code)
+    this.retryAfter = retryAfter
   }
 }
 
@@ -323,7 +330,13 @@ async function httpError(res) {
   const message = detail ? `HTTP ${res.status}: ${detail}` : `HTTP ${res.status}`
   // Gemini and xAI answer a wrong key with 400: "Please pass a valid API key", "Incorrect API key provided".
   const code = res.status === 400 && /(valid|incorrect) API key/i.test(detail) ? 'auth' : codeForStatus(res.status)
-  return new LLMError(message, { status: res.status, code })
+  return new LLMError(message, { status: res.status, code, retryAfter: waitAsked(res.headers.get('retry-after')) })
+}
+
+/** Retry-After, in seconds or until a date, as ms (D202). @param {string | null} value */
+function waitAsked(value) {
+  const ms = !value ? NaN : /^\s*\d+\s*$/.test(value) ? Number(value) * 1000 : Date.parse(value) - Date.now()
+  return Number.isFinite(ms) ? Math.max(0, ms) : undefined
 }
 
 /** @param {number} status @returns {LLMErrorCode} */

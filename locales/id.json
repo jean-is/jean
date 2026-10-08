@@ -38,6 +38,7 @@
   "activity.thinking": "Berpikir…",
   "activity.writing": "Menulis…",
   "activity.working": "Bekerja…",
+  "activity.retrying": "Mencoba lagi…",
   "activity.failed": "Terjadi kesalahan",
   "activity.answeredWith": "Dijawab oleh {brain}",
   "activity.brain": "Bertanya ke {brain}",

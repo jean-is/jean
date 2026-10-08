@@ -1,8 +1,9 @@
 // Talk (0.1) and reply suggestions (0.3): an answer streams in, titled meanwhile, its follow-ups become
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
-// the conversation, in the address (D137), and a reload comes back to the line being read.
+// the conversation, in the address (D137), and a reload comes back to the line being read. A request
+// whose connection drops before its answer starts is asked again (D202).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, BRAIN_URL } from './helpers.js'
 
 test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await start(page)
@@ -19,6 +20,25 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await followUps.first().click()
   await expect(page.locator('.msg-user')).toHaveCount(2)
   await expect(page.locator('.msg-user').last()).toHaveText('Show it as a chart')
+})
+
+test('a request whose connection drops before its answer starts is asked again after a moment, saying so (D202)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // The answer's first request is cut off as if the network went away; the title's (no tools) goes through.
+  let dropped = 0
+  await page.route(`${BRAIN_URL}/chat/completions`, (route) => {
+    const request = route.request()
+    if (request.method() !== 'POST' || dropped || !request.postDataJSON()?.tools) return route.fallback()
+    dropped++
+    return route.abort('internetdisconnected')
+  })
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .activity > summary')).toHaveText('Trying again…')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
+  expect(dropped).toBe(1)
+  await expect(page.locator('.msg-error')).toHaveCount(0)
+  await expect(page.locator('.msg-jean .activity > summary')).toContainText('Answered with')
 })
 
 test('under a request, when it was asked, Copy and Try again; under an answer, when it came (D188)', async ({ page }) => {

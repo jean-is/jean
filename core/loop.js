@@ -7,6 +7,11 @@ import { signature } from './deferred.js'
 /** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCallInfo, RuleValue, Source } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
 
+// A request that fails before anything of the answer came is asked again after these waits (D202),
+// or after what the provider asks for, unless that is longer than LONGEST_WAIT.
+const RETRIES = [1000, 2000, 4000]
+const LONGEST_WAIT = 30_000
+
 /**
  * @typedef {Object} Tool
  * @property {import('./types.js').ToolSpec} spec
@@ -56,13 +61,14 @@ import { signature } from './deferred.js'
  * @property {(records: Envelope[]) => Promise<void>} [persist]      settled records
  * @property {AbortSignal} [signal]
  * @property {number} [maxSteps]
+ * @property {number[]} [retries]                    the waits before asking again, in ms (D202)
  * @property {typeof defaultStream} [stream]          injectable for tests
  */
 
 /** @param {TurnOptions} options */
 export async function runTurn(options) {
   const {
-    brain, apiKey, system, label, meta, signal, maxSteps = 12, stream = defaultStream,
+    brain, apiKey, system, label, meta, signal, maxSteps = 12, retries = RETRIES, stream = defaultStream,
     rule = () => 'ask', askPermission = async () => 'reject_once',
     onUpdate = () => {}, persist = async () => {},
   } = options
@@ -96,21 +102,34 @@ export async function runTurn(options) {
     let done = null
     try {
       const specs = [...ctx.byName.values()].filter((tool) => declared.has(tool.spec.name)).map((tool) => tool.spec)
-      const events = stream({ brain, apiKey, system, messages: history, tools: specs, signal })
-      for await (const event of events) {
-        if (event.type === 'text') {
-          text += event.delta
-          onUpdate({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: event.delta } }, step)
-        } else if (event.type === 'thinking') {
-          thought += event.delta
-          onUpdate({ sessionUpdate: 'agent_thought_chunk', content: { type: 'text', text: event.delta } }, step)
-        } else if (event.type === 'cite') {
-          // The brain's own search cites pages after what it just wrote.
-          const marks = ` [${[...new Set(cite(event.sources, cited))].join(', ')}]`
-          text += marks
-          onUpdate({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: marks } }, step)
-        } else if (event.type === 'tool_call') calls.push(event.call)
-        else if (event.type === 'done') done = event
+      for (let attempt = 0, heard = false; ; attempt++) {
+        try {
+          for await (const event of stream({ brain, apiKey, system, messages: history, tools: specs, signal })) {
+            heard = true
+            if (event.type === 'text') {
+              text += event.delta
+              onUpdate({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: event.delta } }, step)
+            } else if (event.type === 'thinking') {
+              thought += event.delta
+              onUpdate({ sessionUpdate: 'agent_thought_chunk', content: { type: 'text', text: event.delta } }, step)
+            } else if (event.type === 'cite') {
+              // The brain's own search cites pages after what it just wrote.
+              const marks = ` [${[...new Set(cite(event.sources, cited))].join(', ')}]`
+              text += marks
+              onUpdate({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: marks } }, step)
+            } else if (event.type === 'tool_call') calls.push(event.call)
+            else if (event.type === 'done') done = event
+          }
+          break
+        } catch (error) {
+          // Nothing of the answer came, and it may pass: asked again after a moment, which its entry says meanwhile.
+          const wait = heard || signal?.aborted ? undefined : retryWait(error, retries[attempt])
+          if (wait === undefined) throw error
+          onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: brainEntry.toolCallId, _meta: { retrying: true } }, step)
+          await pause(wait, signal)
+          if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
+          onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: brainEntry.toolCallId, _meta: { retrying: false } }, step)
+        }
       }
     } catch (error) {
       const failed = { ...brainEntry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ms: Date.now() - started } }
@@ -271,6 +290,27 @@ function safe(fn, fallback) {
     return fallback
   }
 }
+
+/**
+ * How long to wait before asking again, or undefined when it wouldn't help.
+ * @param {unknown} error @param {number | undefined} planned
+ */
+function retryWait(error, planned) {
+  if (planned === undefined || !(error instanceof LLMError) || !error.retryable) return undefined
+  const wait = Math.max(planned, error.retryAfter ?? 0)
+  return wait <= LONGEST_WAIT ? wait : undefined
+}
+
+/** Waits, unless stopped meanwhile. @param {number} ms @param {AbortSignal} [signal] @returns {Promise<void>} */
+const pause = (ms, signal) => new Promise((resolve) => {
+  const end = () => {
+    clearTimeout(timer)
+    signal?.removeEventListener('abort', end)
+    resolve()
+  }
+  const timer = setTimeout(end, signal?.aborted ? 0 : ms)
+  signal?.addEventListener('abort', end)
+})
 
 /** @param {unknown} error */
 function errorInfo(error) {

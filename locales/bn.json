@@ -38,6 +38,7 @@
   "activity.thinking": "ভাবছে…",
   "activity.writing": "লিখছে…",
   "activity.working": "কাজ চলছে…",
+  "activity.retrying": "আবার চেষ্টা করছে…",
   "activity.failed": "কিছু একটা ভুল হয়েছে",
   "activity.answeredWith": "{brain} দিয়ে উত্তর দেওয়া হয়েছে",
   "activity.brain": "{brain}-কে জিজ্ঞেস করা হয়েছে",

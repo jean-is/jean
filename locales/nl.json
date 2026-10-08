@@ -38,6 +38,7 @@
   "activity.thinking": "Denkt na…",
   "activity.writing": "Schrijft…",
   "activity.working": "Bezig…",
+  "activity.retrying": "Probeert opnieuw…",
   "activity.failed": "Er ging iets mis",
   "activity.answeredWith": "Beantwoord met {brain}",
   "activity.brain": "{brain} gevraagd",

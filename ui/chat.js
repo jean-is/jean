@@ -233,8 +233,9 @@ function activity(steps, text, streaming, files) {
   const unfinished = !streaming && last?.rawOutput?.stopReason === 'tool_use'
   const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
   const status = streaming ? (working ? 'working' : 'thinking') : failed || unfinished ? 'failed' : 'completed'
+  // A request that failed is asked again after a moment (D202).
   const summary = streaming
-    ? t(working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
+    ? t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
     : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : t('activity.answeredWith', { brain: last ? brainName(last) : '' })
   // The offer made here, not in a conversation out of sight (D147).
   const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null

@@ -758,6 +758,19 @@ describe('errors', () => {
     })
   }
 
+  test('keeps how long the provider asks to wait (Retry-After), in seconds or until a date (D202)', async () => {
+    const later = new Date(Date.now() + 30_000).toUTCString()
+    for (const [value, expected] of [['7', 7000], [later, 30_000], ['soon', undefined], [null, undefined]]) {
+      const headers = value === null ? {} : { 'retry-after': value }
+      const { fetch } = mockFetch(() => new Response('{}', { status: 429, headers }))
+      await assert.rejects(collect(streamChat({ brain: brains.ollama, messages: [], fetch })), (error) => {
+        if (expected === undefined) assert.equal(error.retryAfter, undefined)
+        else assert.ok(Math.abs(error.retryAfter - expected) < 1500, `${value} → ${error.retryAfter}`)
+        return true
+      })
+    }
+  })
+
   test('extracts provider messages from different error shapes', async () => {
     const shapes = [
       ['{"error":{"message":"Invalid key","code":401}}', 'Invalid key'],
@@ -778,7 +791,8 @@ describe('errors', () => {
     const fetch = async () => {
       throw new TypeError('Failed to fetch')
     }
-    await rejectsWith(collect(streamChat({ brain: brains.anthropic, messages: [], fetch })), { code: 'cors_or_offline', retryable: false })
+    // Being offline passes; a refused cross-origin request looks the same to a browser (D202).
+    await rejectsWith(collect(streamChat({ brain: brains.anthropic, messages: [], fetch })), { code: 'cors_or_offline', retryable: true })
     await rejectsWith(listModels({ brain: brains.ollama, fetch }), { code: 'cors_or_offline' })
   })
 
