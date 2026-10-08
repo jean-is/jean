@@ -82,7 +82,8 @@ test('a service that lists its tools to anyone but runs them only for someone si
   await expect(mail).toContainText('This service needs you to sign in')
   await mail.getByRole('button', { name: 'Connect' }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect((await openSettings(page, 'Connections')).locator('.connection')).toContainText('3 actions')
+  // Back from the sign-in, Settings is open on Connections, where the user was.
+  await expect(page.locator('app-settings dialog[open] .connection')).toContainText('3 actions')
   // Signed in, its tools run. (A private window, as WebKit's here, forgets the brain on the way.)
   const read = () => page.evaluate(async () => {
     const tool = (await import('/ui/caps.js')).loaded.value.get('connections')?.tools?.find((one) => one.spec.name === 'mail_search_emails')

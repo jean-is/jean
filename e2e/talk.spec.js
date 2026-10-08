@@ -2,7 +2,7 @@
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
 // the conversation, in the address (D137), and a reload comes back to the line being read.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
 
 test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await start(page)
@@ -182,5 +182,5 @@ test('light or dark: Auto follows the device, Light and Dark stay put', async ({
 /** Light or dark is picked in Settings' Appearance. @param {import('@playwright/test').Page} page @param {string} name */
 async function pickTheme(page, name) {
   await (await openSettings(page, 'Appearance')).getByRole('radio', { name, exact: true }).check()
-  await page.keyboard.press('Escape')
+  await closeSettings(page)
 }
