@@ -124,6 +124,13 @@ const PROOF = `Voici la preuve :\n\n\`\`\`latex\n${String.raw`\begin{aligned}
 &\text{Étape 2 : } i^{2k}=(-1)^k,\qquad i^{2k+1}=i\,(-1)^k\\
 &\text{donc } e^{ix}=\cos x+i\sin x\qquad\blacksquare
 \end{aligned}`}\n\`\`\``
+/** A budget as a pgf-pie chart, as a brain wrote it: in a centred TikZ picture, each slice's number before a \% (D185). */
+const BUDGET = `Voici la répartition :\n\n\`\`\`latex\n${String.raw`\begin{center}
+\begin{tikzpicture}
+\pie[rotate=0, radius=3cm, sum=100, color={blue!50, green!50, orange!50}, explode=0.1]
+{50\% Loyer, 30.5\% Santé, 19.5\% Autres}
+\end{tikzpicture}
+\end{center}`}\n\`\`\``
 /** Its follow-ups, with formulas in a line. */
 const EULER_NEXT = ['Démontre la formule $e^{ix}=\\cos x+i\\sin x$', "Explique l'indicatrice d'Euler $\\varphi(n)$"]
 /** A chart and a tune, as the skills of Jean's own directory write them: an ECharts option and ABC notation (D196). */
@@ -340,6 +347,7 @@ createServer(async (req, res) => {
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
   else if (/\bidentity\b/i.test(question) && last.role === 'user') answer = IDENTITY
   else if (/^Démontre/.test(question) && last.role === 'user') answer = PROOF
+  else if (/camembert/i.test(question) && last.role === 'user') answer = BUDGET
   else if (/euler/i.test(question) && last.role === 'user') answer = EULER
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: `return await models.image(${JSON.stringify(question)})` } }
   else if (toolName === 'javascript' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'

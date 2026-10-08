@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { lex, withFormulas } from '../ui/markdown.js'
 import { plainText } from '../ui/spoken.js'
-import { latexToMarkdown, wholeSoFar } from '../caps/math/latex.js'
+import { latexToMarkdown, wholeSoFar, readPies } from '../caps/math/latex.js'
 
 /** What a text shows, in order: its words, and its formulas as [source], or [[source]] when set apart. @param {string} source */
 function shown(source) {
@@ -105,4 +105,31 @@ test('a LaTeX block still being written: its finished lines, what they open clos
 
 test('a LaTeX block with only formulas: one each paragraph', () => {
   assert.equal(shown(latexToMarkdown('\\frac{a}{b} = c\n\n  \\sqrt{2}\n')), '[[\\frac{a}{b} = c]][[\\sqrt{2}]]')
+})
+
+test('a TikZ picture: a block of its own, pgf-pie charts read from it as brains write them', () => {
+  const budget = String.raw`Répartition :
+\begin{center}
+\begin{tikzpicture}
+\pie[rotate=90, radius=2cm, sum=100, color={blue!50, green!50}, explode=0.2]
+{36.4\% Loyer, 30.3/{Santé, mutuelle}, 12.1 \% $x^2$}
+\end{tikzpicture}
+\caption{Budget -- octobre}
+\end{center}`
+  const tokens = lex(latexToMarkdown(budget)).filter((token) => token.type !== 'space')
+  assert.deepEqual(tokens.map((token) => token.type === 'code' ? token.lang : token.text), ['Répartition :', 'tikz', 'Budget – octobre'])
+  assert.deepEqual(readPies(tokens[1].text), [{
+    slices: [{ value: 36.4, label: 'Loyer' }, { value: 30.3, label: 'Santé, mutuelle' }, { value: 12.1, label: '$x^2$' }],
+    whole: 100, start: 90, apart: [0.1, 0.1, 0.1], before: '', after: '%', hide: false,
+  }])
+  // More than the sum: shares of their total. Auto: numbers as they are, in their words; an explode each.
+  assert.equal(readPies('\\pie{60/A, 50/B}')[0].whole, 110)
+  assert.deepEqual(readPies('\\pie[sum=auto, after number=\\,€, radius=2, explode={0.5, 0}, hide number]{1200/Loyer, 300/Food \\& drinks}'), [{
+    slices: [{ value: 1200, label: 'Loyer' }, { value: 300, label: 'Food & drinks' }],
+    whole: 1500, start: 0, apart: [0.25, 0], before: '', after: '\u202f€', hide: true,
+  }])
+  // Any other picture is its source, as code.
+  const drawing = '\\begin{tikzpicture}\n\\draw (0,0) -- (1,1);\n\\end{tikzpicture}'
+  assert.deepEqual(lex(latexToMarkdown(drawing)).filter((token) => token.type !== 'space').map((token) => [token.lang, token.text]), [['tikz', drawing]])
+  assert.deepEqual(readPies(drawing), [])
 })

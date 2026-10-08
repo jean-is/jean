@@ -1,15 +1,15 @@
 // Formulas (D185): drawn by the browser as MathML, which Temml writes from the LaTeX brains use, and
-// LaTeX documents laid out with them, copied as a widget is (D196), as their source and their
-// picture at once. Unlocked by the first formula or document a message holds, never offered; until
+// LaTeX documents laid out with them, their pgf-pie charts drawn too, copied as a widget is (D196), as
+// their source and their picture at once. Unlocked by the first formula or document a message holds, never offered; until
 // then, or if Temml can't read one, its source shows (ui/markdown.js).
-import { html, nothing, render } from 'lit-html'
-import { markdown, lex } from '../../ui/markdown.js'
+import { html, svg, nothing, render } from 'lit-html'
+import { blocks, lex, withFormulas } from '../../ui/markdown.js'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t } from '../../core/i18n.js'
-import { latexToMarkdown, wholeSoFar } from './latex.js'
+import { t, locale } from '../../core/i18n.js'
+import { latexToMarkdown, wholeSoFar, readPies } from './latex.js'
 
 const [{ default: temml }] = await Promise.all([
   import(new URL('../../vendor/temml/temml.mjs', import.meta.url).href),
@@ -53,11 +53,12 @@ class AppLatex extends HTMLElement {
     // Written: drawn anew, so that a formula Temml can't read shows its source.
     if (!open && this.drawn.startsWith('true')) render(nothing, this)
     this.drawn = `${open} ${page}`
+    const tokens = lex(page)
     /** @type {any[]} */
-    const [part, ...more] = lex(page).filter((token) => token.type !== 'space')
+    const [part, ...more] = tokens.filter((token) => token.type !== 'space')
     // One line: a formula with no row breaks, or a sentence.
     this.toggleAttribute('line', !open && !more.length && (part?.type === 'math' ? !part.text.includes('\\\\') : part?.type === 'paragraph' && !part.raw.trim().includes('\n')))
-    render(html`<div class="latex-page">${markdown(page)}</div>
+    render(html`<div class="latex-page">${tokens.map(drawn)}</div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
@@ -83,6 +84,33 @@ class AppLatex extends HTMLElement {
     Object.assign(copy.style, { color: '#000', margin: `${margin}px` })
     return pictureOf(`<svg xmlns="http://www.w3.org/2000/svg" width="${width + 2 * margin}" height="${height + 2 * margin}"><foreignObject width="100%" height="100%">${new XMLSerializer().serializeToString(copy)}</foreignObject></svg>`, width + 2 * margin, height + 2 * margin)
   }
+}
+
+/** Slices' colours, ECharts' own, as a chart's (D196). */
+const COLOURS = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc']
+
+/** A pgf-pie chart: its slices as it turns them, each apart as it says, and beside it their colours, labels and numbers, which say all it shows. @param {import('./latex.js').Pie} pie */
+function pieChart({ slices, whole, start, apart, before, after, hide }) {
+  const percent = !before && after === '%'
+  const number = new Intl.NumberFormat(locale.peek(), { maximumFractionDigits: 2, ...(percent && { style: 'percent' }) })
+  let turned = start / 360
+  return html`<figure class="pie">
+    <svg viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true">${slices.map(({ value }, i) => {
+      const [from, to] = [turned, (turned += value / whole)].map((turn) => turn * 2 * Math.PI)
+      const [x, y] = [Math.cos((from + to) / 2) * apart[i], -Math.sin((from + to) / 2) * apart[i]]
+      const at = (/** @type {number} */ angle) => `${x + Math.cos(angle)} ${y - Math.sin(angle)}`
+      return to - from > 6.283 ? svg`<circle cx=${x} cy=${y} r="1" fill=${COLOURS[i % 9]}/>`
+        : svg`<path fill=${COLOURS[i % 9]} d=${`M${x} ${y}L${at(from)}A1 1 0 ${to - from > Math.PI ? 1 : 0} 0 ${at(to)}Z`}/>`
+    })}</svg>
+    <ul>${slices.map(({ value, label }, i) => html`<li><svg viewBox="0 0 1 1" aria-hidden="true"><rect width="1" height="1" rx="0.25" fill=${COLOURS[i % 9]}/></svg>
+      <span>${withFormulas(label)}</span>${hide ? nothing : html`<span class="pie-number">${percent ? number.format(value / 100) : `${before}${number.format(value)}${after}`}</span>`}</li>`)}</ul>
+  </figure>`
+}
+
+/** A block of a LaTeX document as drawn: a TikZ picture as its pie charts, or else its source. @param {any} token */
+function drawn(token) {
+  const pies = token.type === 'code' && token.lang === 'tikz' ? readPies(token.text) : []
+  return pies.length ? pies.map(pieChart) : blocks([token])
 }
 
 customElements.define('app-math', AppMath)

@@ -1,7 +1,8 @@
 // Formulas (D185): the LaTeX an answer holds is drawn as MathML, in a line, set apart or in a table,
 // once the math capability has loaded with the first one; prices written with $ stay text. A ```latex
 // block is laid out as a document, copied as a widget is: its source and its picture at once; one of a
-// single line has no frame, its Copy in that line; one being written is drawn as it comes.
+// single line has no frame, its Copy in that line; one being written is drawn as it comes; a pgf-pie
+// chart in it is drawn as a pie, its slices' labels and numbers beside it.
 // Follow-ups and requests draw theirs too.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, nextCopy } from './helpers.js'
@@ -85,4 +86,18 @@ test('a LaTeX block of one line has no frame, and its Copy is at the end of its 
     return { border: getComputedStyle(element).borderTopWidth, inLine: copy.top < formula.bottom && copy.bottom > formula.top, atEnd: copy.left >= formula.right }
   })
   expect(placed).toEqual({ border: '0px', inLine: true, atEnd: true })
+})
+
+test('a pie chart in a LaTeX block is drawn, its labels and numbers beside it', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Un camembert de mon budget, en LaTeX')
+  const pie = page.locator('.msg-jean app-latex .pie')
+  await expect(pie.locator('> svg path')).toHaveCount(3)
+  await expect(pie.locator('li')).toHaveText([/Loyer\s*50%/, /Santé\s*30\.5%/, /Autres\s*19\.5%/])
+  await expect(page.locator('.msg-jean app-latex')).not.toContainText('tikzpicture')
+  // Its first slice, half the pie, starts at the right and turns anticlockwise, standing a little apart.
+  const box = await pie.locator('> svg path').first().boundingBox()
+  const whole = await pie.locator('> svg').boundingBox()
+  expect(box && whole && box.y + box.height < whole.y + whole.height * 0.55).toBe(true)
 })

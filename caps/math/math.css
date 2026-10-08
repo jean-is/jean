@@ -14,4 +14,11 @@ app-latex[line] .latex-page { flex: 1; min-inline-size: 0; }
 app-latex[line] .drawn-foot { position: static; }
 @media (hover: hover) { app-latex:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
 app-latex[open] .drawn-foot { display: none; }
+/* A pie chart: the pie, and beside it, or under it in a narrow column, each slice's colour, label and number; its colours stay where colours are forced. */
+app-latex .pie { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; margin: 0 0 0.85rem; }
+app-latex .pie svg { flex: none; inline-size: min(100%, 12rem); forced-color-adjust: none; }
+app-latex .pie ul { flex: 0 1 20rem; margin: 0; padding: 0; list-style: none; }
+app-latex .pie li { display: flex; align-items: center; gap: 0.6rem; }
+app-latex .pie li svg { inline-size: 0.8em; }
+app-latex .pie .pie-number { margin-inline-start: auto; font-variant-numeric: tabular-nums; }
 @media print { app-latex .drawn-foot { display: none; } }
