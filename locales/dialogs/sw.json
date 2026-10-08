@@ -130,6 +130,8 @@
   "skill.chart.text": "Pau, mistari, duara na zaidi, huchorwa ndani ya majibu",
   "skill.music-score": "Nota ya muziki",
   "skill.music-score.text": "Nyimbo zilizoandikwa kwa nota, za kusoma na kupiga",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Mawasilisho katika faili za PowerPoint, tayari kuonyeshwa na kubadilishwa",
   "cap.search.text": "{name} hutafuta kwenye wavuti swali linapohitaji ukweli usiopatikana, na huonyesha kila jibu limetoka wapi.",
   "cap.browser.hint": "Fungua viungo vitatu kutoka kwenye majibu.",
   "cap.browser.text": "Huonyesha kurasa za wavuti kando ya mazungumzo, pamoja na kurudi, kwenda mbele na kupakia upya. Kurasa zinaweza pia kufunguliwa hapo wakati wa jibu, na ukurasa ulio wazi hujulikana.",

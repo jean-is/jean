@@ -363,7 +363,7 @@ class Complete extends Element {
       </li>`
     }
     // Pressed, an option keeps the box's keyboard.
-    return html`<div id="complete" class="complete" role="listbox" aria-label=${t('suggest.title')} @pointerdown=${(/** @type {Event} */ e) => e.preventDefault()}>
+    return html`<div id="complete" class="complete" role="listbox" aria-label=${t('suggest.title')} @mousedown=${(/** @type {Event} */ e) => e.preventDefault()}>
       ${shown.value.map((group, g) => html`<ul role="group" aria-labelledby="complete-group-${g}">
         <li role="presentation" id="complete-group-${g}" class="complete-heading" dir="auto">${group.heading}</li>${group.options.map(row)}
       </ul>`)}

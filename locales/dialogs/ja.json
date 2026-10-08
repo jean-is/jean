@@ -128,6 +128,8 @@
   "skill.chart.text": "棒・折れ線・円グラフなどを回答の中に描きます",
   "skill.music-score": "楽譜",
   "skill.music-score.text": "メロディーを楽譜にして、読んだり再生したりできます",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "PowerPoint のプレゼン資料を作り、そのまま発表や編集ができます",
   "cap.search.text": "{name}は、手元にない事実が質問に必要なときにウェブを検索し、それぞれの答えの出どころを示します。",
   "cap.browser.hint": "答えのリンクを3つ開く。",
   "cap.browser.text": "ウェブページを会話の横に表示し、戻る・進む・再読み込みができます。{name}もそこにページを開けて、どのページが開いているかを把握しています。",

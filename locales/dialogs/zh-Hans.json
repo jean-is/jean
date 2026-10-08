@@ -128,6 +128,8 @@
   "skill.chart.text": "柱状图、折线图、饼图等，直接画在回答里",
   "skill.music-score": "乐谱",
   "skill.music-score.text": "写成乐谱的旋律，可读可播放",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "做成 PowerPoint 文件的演示文稿，可直接放映和修改",
   "cap.search.text": "当问题需要手头没有的事实时，{name} 会上网搜索，并显示每个回答的出处。",
   "cap.browser.hint": "打开回答中的三个链接。",
   "cap.browser.text": "在对话旁边显示网页，可以后退、前进和刷新。{name} 也能在那里打开网页，并且知道打开的是哪一页。",

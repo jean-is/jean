@@ -132,6 +132,8 @@
   "skill.chart.text": "Barre, linee, torte e altro, disegnati nelle risposte",
   "skill.music-score": "Spartito",
   "skill.music-score.text": "Melodie scritte come spartito, da leggere e da suonare",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Presentazioni in file PowerPoint, pronte da proiettare e modificare",
   "cap.search.text": "Quando a una domanda mancano dei fatti, si cercano sul web, e si vede da dove viene ogni risposta.",
   "cap.browser.hint": "Apri tre link dalle risposte.",
   "cap.browser.text": "Mostra le pagine web accanto alla conversazione, con indietro, avanti e ricarica. Anche {name} può aprirci delle pagine, e sa quale è aperta.",

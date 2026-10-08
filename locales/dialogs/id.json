@@ -128,6 +128,8 @@
   "skill.chart.text": "Batang, garis, pai, dan lainnya, digambar langsung di jawaban",
   "skill.music-score": "Partitur musik",
   "skill.music-score.text": "Melodi yang ditulis sebagai partitur, untuk dibaca dan dimainkan",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Presentasi dalam file PowerPoint, siap ditampilkan dan diubah",
   "cap.search.text": "{name} mencari di web saat sebuah pertanyaan butuh fakta yang belum ada, dan menunjukkan asal setiap jawaban.",
   "cap.browser.hint": "Buka tiga tautan dari jawaban.",
   "cap.browser.text": "Menampilkan halaman web di samping percakapan, dengan kembali, maju, dan muat ulang. {name} juga bisa membuka halaman di sana, dan tahu halaman mana yang sedang terbuka.",

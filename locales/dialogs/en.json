@@ -130,6 +130,8 @@
   "skill.chart.text": "Bars, lines, pies and more, drawn in answers",
   "skill.music-score": "Music score",
   "skill.music-score.text": "Tunes written as sheet music, to read and to play",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Presentations made as PowerPoint files, ready to present and change",
   "cap.search.text": "{name} looks things up on the web when a question needs facts it doesn’t have, and shows where each answer comes from.",
   "cap.browser.hint": "Open three links from answers.",
   "cap.browser.text": "Shows web pages beside the conversation, with back, forward and reload. {name} can open pages there too, and knows which one is open.",
