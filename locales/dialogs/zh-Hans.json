@@ -124,6 +124,8 @@
   "skills.ready.unreachable": "无法下载此技能。",
   "skills.directory": "现成技能",
   "skills.directoryText": "用于大家常请求的事。添加前，请先阅读技能的步骤。",
+  "skill.slides": "幻灯片",
+  "skill.slides.text": "写在回答里的幻灯片，可翻阅可演示",
   "skill.chart": "图表",
   "skill.chart.text": "柱状图、折线图、饼图等，直接画在回答里",
   "skill.music-score": "乐谱",

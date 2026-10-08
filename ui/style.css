@@ -243,7 +243,7 @@ app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-s
 .icon-button:hover, .icon-button.is-active { background: var(--line); color: var(--ink); }
 .icon-button.subtle { inline-size: 2.1rem; block-size: 2.1rem; }
 .icon { inline-size: 1.25rem; block-size: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-:dir(rtl) .flip-rtl { transform: scaleX(-1); }
+.flip-rtl:dir(rtl) { transform: scaleX(-1); }
 
 
 .notice { inline-size: var(--column); margin: 0 auto; padding: 0.5rem 0.9rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.85rem; text-align: center; color: var(--ink-soft); }

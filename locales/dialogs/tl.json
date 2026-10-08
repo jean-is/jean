@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "Hindi ma-download ang kasanayang ito.",
   "skills.directory": "Mga handang kasanayan",
   "skills.directoryText": "Para sa mga madalas hilingin ng mga tao. Basahin ang mga hakbang ng isang kasanayan bago ito idagdag.",
+  "skill.slides": "Mga slide",
+  "skill.slides.text": "Mga presentasyong isinulat sa mga sagot, para buklatin at ipresenta",
   "skill.chart": "Tsart",
   "skill.chart.text": "Mga bar, linya, pie at iba pa, iginuguhit sa mga sagot",
   "skill.music-score": "Piyesa ng musika",

@@ -129,6 +129,8 @@
   "skills.ready.unreachable": "לא ניתן להוריד את המיומנות הזו.",
   "skills.directory": "מיומנויות מוכנות",
   "skills.directoryText": "לדברים שמבקשים לעיתים קרובות. קראו את שלבי המיומנות לפני שתוסיפו אותה.",
+  "skill.slides": "שקופיות",
+  "skill.slides.text": "מצגות שנכתבות בתשובות, לדפדוף ולהצגה",
   "skill.chart": "תרשים",
   "skill.chart.text": "עמודות, קווים, עוגות ועוד, מצוירים בתוך התשובות",
   "skill.music-score": "תווים",

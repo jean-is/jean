@@ -35,6 +35,11 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   const copied = await copy.read()
   expect(copied['text/plain']).toMatch(/^X:1\nT:The Legacy Jig\n/)
   expect(copied['image/png']).toEqual([137, 80, 78, 71])
+  // Printed, the score shows without its player.
+  await page.emulateMedia({ media: 'print' })
+  await expect(score.locator('.score-player')).toBeHidden()
+  await expect(score.locator('.score-sheet svg')).toBeVisible()
+  await page.emulateMedia({ media: 'screen' })
   // Copying the answer: the score as its picture in the rich text.
   const whole = await nextCopy(page)
   await page.locator('.msg-jean').last().locator('app-made').getByRole('button', { name: 'Copy' }).click()

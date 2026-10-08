@@ -128,6 +128,8 @@
   "skills.ready.unreachable": "Impossible de télécharger cette compétence.",
   "skills.directory": "Compétences toutes faites",
   "skills.directoryText": "Pour ce qu’on demande souvent. Lisez les étapes d’une compétence avant de l’ajouter.",
+  "skill.slides": "Diapositives",
+  "skill.slides.text": "Des présentations écrites dans les réponses, à feuilleter et à projeter",
   "skill.chart": "Graphique",
   "skill.chart.text": "Barres, courbes, camemberts et plus, dessinés dans les réponses",
   "skill.music-score": "Partition",

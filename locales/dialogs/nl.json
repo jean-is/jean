@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "Deze vaardigheid kon niet worden gedownload.",
   "skills.directory": "Kant-en-klare vaardigheden",
   "skills.directoryText": "Voor wat mensen vaak vragen. Lees de stappen van een vaardigheid voordat je die toevoegt.",
+  "skill.slides": "Dia’s",
+  "skill.slides.text": "Presentaties in antwoorden, om door te bladeren en te presenteren",
   "skill.chart": "Grafiek",
   "skill.chart.text": "Staven, lijnen, taarten en meer, getekend in de antwoorden",
   "skill.music-score": "Bladmuziek",

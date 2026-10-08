@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "Diese Fähigkeit konnte nicht heruntergeladen werden.",
   "skills.directory": "Fertige Fähigkeiten",
   "skills.directoryText": "Für Dinge, um die oft gebeten wird. Lies die Schritte einer Fähigkeit, bevor du sie hinzufügst.",
+  "skill.slides": "Folien",
+  "skill.slides.text": "Präsentationen in Antworten, zum Durchblättern und Vorführen",
   "skill.chart": "Diagramm",
   "skill.chart.text": "Balken, Linien, Torten und mehr, direkt in den Antworten gezeichnet",
   "skill.music-score": "Noten",

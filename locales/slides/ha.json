@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Silaidodi",
+  "slides.slide": "silaidi",
+  "slides.where": "Silaidi {n} cikin {count}",
+  "slides.previous": "Silaidin baya",
+  "slides.next": "Silaidi na gaba",
+  "slides.present": "Gabatar a cikakken allo",
+  "slides.drawing": "Ana rubuta silaidodin…",
+  "slides.failed": "Ba a iya zana waɗannan silaidodin ba."
+}

@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Slaidi",
+  "slides.slide": "slaidi",
+  "slides.where": "Slaidi {n} kati ya {count}",
+  "slides.previous": "Slaidi iliyotangulia",
+  "slides.next": "Slaidi inayofuata",
+  "slides.present": "Wasilisha skrini nzima",
+  "slides.drawing": "Inaandika slaidi…",
+  "slides.failed": "Slaidi hizi hazikuweza kuchorwa."
+}

@@ -124,6 +124,8 @@
   "skills.ready.unreachable": "Keterampilan ini tidak dapat diunduh.",
   "skills.directory": "Keterampilan siap pakai",
   "skills.directoryText": "Untuk hal-hal yang sering diminta orang. Baca langkah-langkah keterampilan sebelum menambahkannya.",
+  "skill.slides": "Slide",
+  "skill.slides.text": "Presentasi yang ditulis dalam jawaban, untuk dibolak-balik dan dipresentasikan",
   "skill.chart": "Grafik",
   "skill.chart.text": "Batang, garis, pai, dan lainnya, digambar langsung di jawaban",
   "skill.music-score": "Partitur musik",

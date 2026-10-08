@@ -128,6 +128,8 @@
   "skills.ready.unreachable": "Impossibile scaricare questa abilità.",
   "skills.directory": "Abilità già pronte",
   "skills.directoryText": "Per ciò che si chiede spesso. Leggi i passaggi di un’abilità prima di aggiungerla.",
+  "skill.slides": "Diapositive",
+  "skill.slides.text": "Presentazioni scritte nelle risposte, da sfogliare e proiettare",
   "skill.chart": "Grafico",
   "skill.chart.text": "Barre, linee, torte e altro, disegnati nelle risposte",
   "skill.music-score": "Spartito",

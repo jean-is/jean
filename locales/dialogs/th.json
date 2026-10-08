@@ -124,6 +124,8 @@
   "skills.ready.unreachable": "ดาวน์โหลดทักษะนี้ไม่ได้",
   "skills.directory": "ทักษะสำเร็จรูป",
   "skills.directoryText": "สำหรับสิ่งที่ผู้คนขอบ่อย อ่านขั้นตอนของทักษะก่อนเพิ่ม",
+  "skill.slides": "สไลด์",
+  "skill.slides.text": "งานนำเสนอที่เขียนในคำตอบ ไว้เปิดดูและนำเสนอ",
   "skill.chart": "แผนภูมิ",
   "skill.chart.text": "แท่ง เส้น วงกลม และอื่น ๆ วาดไว้ในคำตอบ",
   "skill.music-score": "โน้ตเพลง",

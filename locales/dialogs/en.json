@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "This skill couldn’t be downloaded.",
   "skills.directory": "Ready-made skills",
   "skills.directoryText": "For things people often ask for. Read a skill’s steps before adding it.",
+  "skill.slides": "Slides",
+  "skill.slides.text": "Decks written in answers, to page through and present",
   "skill.chart": "Chart",
   "skill.chart.text": "Bars, lines, pies and more, drawn in answers",
   "skill.music-score": "Music score",

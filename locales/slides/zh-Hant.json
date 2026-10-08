@@ -1,0 +1,10 @@
+{
+  "slides.deck": "投影片",
+  "slides.slide": "投影片",
+  "slides.where": "第 {n} 張，共 {count} 張",
+  "slides.previous": "上一張投影片",
+  "slides.next": "下一張投影片",
+  "slides.present": "全螢幕簡報",
+  "slides.drawing": "正在寫投影片…",
+  "slides.failed": "無法繪製這些投影片。"
+}

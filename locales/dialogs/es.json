@@ -128,6 +128,8 @@
   "skills.ready.unreachable": "No se pudo descargar esta habilidad.",
   "skills.directory": "Habilidades ya hechas",
   "skills.directoryText": "Para lo que la gente pide a menudo. Lee los pasos de una habilidad antes de añadirla.",
+  "skill.slides": "Diapositivas",
+  "skill.slides.text": "Presentaciones escritas en las respuestas, para hojear y presentar",
   "skill.chart": "Gráfico",
   "skill.chart.text": "Barras, líneas, sectores y más, dibujados en las respuestas",
   "skill.music-score": "Partitura",

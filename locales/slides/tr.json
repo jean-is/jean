@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Slaytlar",
+  "slides.slide": "slayt",
+  "slides.where": "Slayt {n} / {count}",
+  "slides.previous": "Önceki slayt",
+  "slides.next": "Sonraki slayt",
+  "slides.present": "Tam ekran sun",
+  "slides.drawing": "Slaytlar yazılıyor…",
+  "slides.failed": "Bu slaytlar çizilemedi."
+}

@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "Imeshindwa kupakua ujuzi huu.",
   "skills.directory": "Ujuzi uliotayarishwa",
   "skills.directoryText": "Kwa mambo ambayo watu huomba mara nyingi. Soma hatua za ujuzi kabla ya kuuongeza.",
+  "skill.slides": "Slaidi",
+  "skill.slides.text": "Mawasilisho yaliyoandikwa katika majibu, ya kupitia na kuwasilisha",
   "skill.chart": "Chati",
   "skill.chart.text": "Pau, mistari, duara na zaidi, huchorwa ndani ya majibu",
   "skill.music-score": "Nota ya muziki",

@@ -124,6 +124,8 @@
   "skills.ready.unreachable": "이 스킬을 내려받지 못했어요.",
   "skills.directory": "기성 스킬",
   "skills.directoryText": "사람들이 자주 요청하는 일을 위한 스킬입니다. 추가하기 전에 단계를 읽어 보세요.",
+  "skill.slides": "슬라이드",
+  "skill.slides.text": "답변에 쓰인 슬라이드를 넘겨 보고 발표할 수 있습니다",
   "skill.chart": "차트",
   "skill.chart.text": "막대, 선, 원형 차트 등을 답변 안에 그립니다",
   "skill.music-score": "악보",

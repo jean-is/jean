@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "Bu beceri indirilemedi.",
   "skills.directory": "Hazır beceriler",
   "skills.directoryText": "İnsanların sık istediği şeyler için. Bir beceriyi eklemeden önce adımlarını oku.",
+  "skill.slides": "Slaytlar",
+  "skill.slides.text": "Yanıtlarda yazılan sunumlar, gezinmek ve sunmak için",
   "skill.chart": "Grafik",
   "skill.chart.text": "Sütun, çizgi, pasta ve daha fazlası, yanıtların içinde çizilir",
   "skill.music-score": "Nota",

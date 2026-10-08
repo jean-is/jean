@@ -47,10 +47,11 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   math: () => import('../caps/math/math.js'),
   charts: () => import('../caps/charts/charts.js'),
   scores: () => import('../caps/scores/scores.js'),
+  slides: () => import('../caps/slides/slides.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
-const ON_SIGHT = ['charts', 'scores']
+const ON_SIGHT = ['charts', 'scores', 'slides']
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
 export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6 })

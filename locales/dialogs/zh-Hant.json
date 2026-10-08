@@ -124,6 +124,8 @@
   "skills.ready.unreachable": "無法下載此技能。",
   "skills.directory": "現成技能",
   "skills.directoryText": "用於大家常請求的事。加入前，請先閱讀技能的步驟。",
+  "skill.slides": "投影片",
+  "skill.slides.text": "寫在回答裡的投影片，可翻閱可簡報",
   "skill.chart": "圖表",
   "skill.chart.text": "長條圖、折線圖、圓餅圖等，直接畫在回答裡",
   "skill.music-score": "樂譜",

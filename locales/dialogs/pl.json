@@ -130,6 +130,8 @@
   "skills.ready.unreachable": "Nie udało się pobrać tej umiejętności.",
   "skills.directory": "Gotowe umiejętności",
   "skills.directoryText": "Do tego, o co ludzie często proszą. Przeczytaj kroki umiejętności, zanim ją dodasz.",
+  "skill.slides": "Slajdy",
+  "skill.slides.text": "Prezentacje pisane w odpowiedziach, do przeglądania i pokazywania",
   "skill.chart": "Wykres",
   "skill.chart.text": "Słupki, linie, koła i nie tylko, rysowane w odpowiedziach",
   "skill.music-score": "Nuty",

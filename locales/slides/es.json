@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Diapositivas",
+  "slides.slide": "diapositiva",
+  "slides.where": "Diapositiva {n} de {count}",
+  "slides.previous": "Diapositiva anterior",
+  "slides.next": "Diapositiva siguiente",
+  "slides.present": "Presentar a pantalla completa",
+  "slides.drawing": "Escribiendo las diapositivas…",
+  "slides.failed": "No se pudieron dibujar estas diapositivas."
+}

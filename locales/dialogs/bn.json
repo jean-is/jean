@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "এই দক্ষতা ডাউনলোড করা গেল না।",
   "skills.directory": "তৈরি দক্ষতা",
   "skills.directoryText": "মানুষ প্রায়ই যা চায় তার জন্য। যোগ করার আগে দক্ষতার ধাপগুলো পড়ে নিন।",
+  "skill.slides": "স্লাইড",
+  "skill.slides.text": "উত্তরে লেখা উপস্থাপনা, পাতা ওল্টাতে আর দেখাতে",
   "skill.chart": "চার্ট",
   "skill.chart.text": "বার, লাইন, পাই চার্ট আর আরও অনেক কিছু, উত্তরের মধ্যেই আঁকা",
   "skill.music-score": "স্বরলিপি",

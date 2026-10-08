@@ -5,6 +5,7 @@ app-score .score-sheet .is-sounding { color: var(--flame); fill: var(--flame); }
 app-score .score-player { display: flex; align-items: center; gap: 0.6rem; margin-block: 0.4rem 0.2rem; }
 app-score .score-player input { flex: 1; min-inline-size: 0; accent-color: var(--flame); }
 app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media print { app-score .score-player { display: none; } }
 app-score .score-player > .subtle { margin-inline-start: auto; }
 /* While the answer is written, the score's place; once it's written, why there is none. */
 app-score .drawn-status { margin: 0 0 0.6rem; }

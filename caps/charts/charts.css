@@ -1,6 +1,7 @@
 /* Charts (D196): the chart in its frame, then Copy at its end. */
 app-chart .chart { block-size: clamp(15rem, 55vw, 22rem); }
 app-chart .drawn-foot { display: flex; justify-content: end; margin-block-start: 0.4rem; }
+@media print { app-chart .drawn-foot { display: none; } }
 /* While the answer is written, the chart's place; once it's written, why there is none. */
 app-chart .drawn-status { margin: 0 0 0.6rem; }
 .is-streaming app-chart .drawn-status { display: grid; place-items: center; min-block-size: clamp(15rem, 55vw, 22rem); margin: 0; }

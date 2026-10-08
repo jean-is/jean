@@ -126,6 +126,8 @@
   "skills.ready.unreachable": "ይህን ክህሎት ማውረድ አልተቻለም።",
   "skills.directory": "የተዘጋጁ ክህሎቶች",
   "skills.directoryText": "ሰዎች ብዙ ጊዜ ለሚጠይቋቸው ነገሮች። ክህሎትን ከማከልዎ በፊት ደረጃዎቹን ያንብቡ።",
+  "skill.slides": "ስላይዶች",
+  "skill.slides.text": "በመልሶች ውስጥ የተጻፉ ማቅረቢያዎች፣ ለማገላበጥና ለማቅረብ",
   "skill.chart": "ገበታ",
   "skill.chart.text": "አምዶች፣ መስመሮች፣ ክብ ገበታዎች እና ሌሎችም፣ በመልሶች ውስጥ የሚሳሉ",
   "skill.music-score": "የሙዚቃ ኖታ",

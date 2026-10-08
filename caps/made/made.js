@@ -223,7 +223,7 @@ class Made extends Element {
 
 /**
  * Copies an answer two ways at once: its Markdown as text, and laid out as rich text, in which a
- * chart, a score or a LaTeX document (D185, D196) is the picture its widget on screen draws, or else its code.
+ * chart, a score, a deck's slide or a LaTeX document (D185, D196, D200) is the picture its widget on screen draws, or else its code.
  * @param {string} source Markdown @param {globalThis.Element | null} [answer] the answer on screen, with its widgets
  */
 export async function copyRich(source, answer) {
@@ -235,7 +235,7 @@ export async function copyRich(source, answer) {
       })])
     } else await navigator.clipboard.writeText(source)
     // Some apps leave out pictures pasted in rich text (Notion), but take a widget's own copy (D196).
-    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-latex .latex-page') ? 'toast.copiedPictures' : 'toast.copied'))
+    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-slides .slide, .prose app-latex .latex-page') ? 'toast.copiedPictures' : 'toast.copied'))
   } catch (error) {
     console.warn('Copy', error)
     notify(t('made.copyFailed'))
@@ -253,8 +253,8 @@ async function laidOut(source, answer) {
   while (walker.nextNode()) comments.push(/** @type {ChildNode} */ (walker.currentNode))
   for (const comment of comments) comment.remove()
   // Each widget's twin on screen, the same kind with the same source, draws its picture.
-  const shown = [...answer?.querySelectorAll('.prose :is(app-chart, app-score, app-latex)') ?? []]
-  for (const widget of holder.querySelectorAll('app-chart, app-score, app-latex')) {
+  const shown = [...answer?.querySelectorAll('.prose :is(app-chart, app-score, app-slides, app-latex)') ?? []]
+  for (const widget of holder.querySelectorAll('app-chart, app-score, app-slides, app-latex')) {
     const code = widget.getAttribute('source') ?? ''
     const twin = shown.find((other) => other.localName === widget.localName && other.getAttribute('source') === code)
     if (twin) shown.splice(shown.indexOf(twin), 1)
@@ -272,7 +272,7 @@ async function pictureOf(widget) {
     reader.readAsDataURL(blob)
     const [{ width }] = await Promise.all([createImageBitmap(blob), read])
     // Drawn twice as fine as it shows.
-    return Object.assign(document.createElement('img'), { src: String(reader.result), width: Math.round(width / 2), alt: widget.querySelector('[role="img"]')?.getAttribute('aria-label') ?? '' })
+    return Object.assign(document.createElement('img'), { src: String(reader.result), width: Math.round(width / 2), alt: widget.querySelector('[role="img"], .slide.is-shown')?.getAttribute('aria-label') ?? '' })
   } catch (error) {
     console.warn('Copy', error)
     return null

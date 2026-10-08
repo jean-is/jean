@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Trang chiếu",
+  "slides.slide": "trang chiếu",
+  "slides.where": "Trang chiếu {n}/{count}",
+  "slides.previous": "Trang chiếu trước",
+  "slides.next": "Trang chiếu tiếp theo",
+  "slides.present": "Trình chiếu toàn màn hình",
+  "slides.drawing": "Đang viết các trang chiếu…",
+  "slides.failed": "Không vẽ được các trang chiếu này."
+}

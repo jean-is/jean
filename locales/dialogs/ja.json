@@ -124,6 +124,8 @@
   "skills.ready.unreachable": "このスキルをダウンロードできませんでした。",
   "skills.directory": "既製のスキル",
   "skills.directoryText": "よく頼まれることのために。追加する前に、スキルの手順を読んでください。",
+  "skill.slides": "スライド",
+  "skill.slides.text": "回答の中に書かれたスライド。めくって見たり、発表したりできます",
   "skill.chart": "グラフ",
   "skill.chart.text": "棒・折れ線・円グラフなどを回答の中に描きます",
   "skill.music-score": "楽譜",

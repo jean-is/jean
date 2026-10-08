@@ -128,6 +128,8 @@
   "skills.ready.unreachable": "Não foi possível transferir esta competência.",
   "skills.directory": "Competências já feitas",
   "skills.directoryText": "Para o que as pessoas pedem muitas vezes. Lê os passos de uma competência antes de a adicionares.",
+  "skill.slides": "Diapositivos",
+  "skill.slides.text": "Apresentações escritas nas respostas, para folhear e apresentar",
   "skill.chart": "Gráfico",
   "skill.chart.text": "Barras, linhas, circulares e mais, desenhados nas respostas",
   "skill.music-score": "Partitura",

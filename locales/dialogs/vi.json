@@ -124,6 +124,8 @@
   "skills.ready.unreachable": "Không tải xuống được kỹ năng này.",
   "skills.directory": "Kỹ năng có sẵn",
   "skills.directoryText": "Cho những việc mọi người thường nhờ. Hãy đọc các bước của kỹ năng trước khi thêm.",
+  "skill.slides": "Trang chiếu",
+  "skill.slides.text": "Bài trình chiếu viết ngay trong câu trả lời, để lật xem và trình chiếu",
   "skill.chart": "Biểu đồ",
   "skill.chart.text": "Cột, đường, tròn và hơn thế nữa, vẽ ngay trong câu trả lời",
   "skill.music-score": "Bản nhạc",

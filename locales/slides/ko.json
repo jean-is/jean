@@ -1,0 +1,10 @@
+{
+  "slides.deck": "슬라이드",
+  "slides.slide": "슬라이드",
+  "slides.where": "슬라이드 {n}/{count}",
+  "slides.previous": "이전 슬라이드",
+  "slides.next": "다음 슬라이드",
+  "slides.present": "전체 화면으로 발표",
+  "slides.drawing": "슬라이드를 쓰는 중…",
+  "slides.failed": "이 슬라이드를 그릴 수 없습니다."
+}

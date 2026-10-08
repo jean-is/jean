@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Diapositivos",
+  "slides.slide": "diapositivo",
+  "slides.where": "Diapositivo {n} de {count}",
+  "slides.previous": "Diapositivo anterior",
+  "slides.next": "Diapositivo seguinte",
+  "slides.present": "Apresentar em ecrã inteiro",
+  "slides.drawing": "A escrever os diapositivos…",
+  "slides.failed": "Não foi possível desenhar estes diapositivos."
+}

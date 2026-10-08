@@ -134,6 +134,8 @@
   "skills.ready.unreachable": "تعذّر تنزيل هذه المهارة.",
   "skills.directory": "مهارات جاهزة",
   "skills.directoryText": "لما يطلبه الناس كثيرًا. اقرأ خطوات المهارة قبل إضافتها.",
+  "skill.slides": "شرائح",
+  "skill.slides.text": "عروض تقديمية مكتوبة في الإجابات، لتصفّحها وعرضها",
   "skill.chart": "رسم بياني",
   "skill.chart.text": "أعمدة وخطوط ودوائر وغيرها، تُرسم داخل الإجابات",
   "skill.music-score": "نوتة موسيقية",
