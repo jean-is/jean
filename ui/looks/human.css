@@ -99,7 +99,6 @@
 :root[data-look='human'] .conversation-title { margin: 0.75rem 0 1rem; font: 700 1.75rem/1.2 var(--display); color: var(--ink); }
 :root[data-look='human'] .prose { font-size: 1rem; line-height: 1.6; }
 :root[data-look='human'] .prose pre { border: 0; border-radius: 0.625rem; background: oklch(from var(--ink) l c h / 0.06); }
-:root[data-look='human'] .prose .table { border-radius: 0.625rem; }
 :root[data-look='human'] .caret { inline-size: 0.125em; border-radius: 0; box-shadow: none; }
 @media screen {
   :root[data-look='human'] .msg-user { position: relative; max-inline-size: 75%; padding-block: 0.4375rem; padding-inline: 0.875rem; border-radius: var(--radius); background: var(--fill); color: oklch(1 0 0); line-height: 1.45; }
