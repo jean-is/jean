@@ -1,4 +1,5 @@
-/* Scores (D196): the score in the ink's colour, the notes sounding in the flame's, then the player and Copy. */
+/* Scores (D196): the score in the ink's colour, the notes sounding in the flame's, then the player; Copy at its top corner, shown on hover. */
+app-score { position: relative; }
 app-score .score-sheet { color: var(--ink); }
 app-score .score-sheet:empty { display: none; }
 app-score .score-sheet .is-sounding { color: var(--flame); fill: var(--flame); }
@@ -6,7 +7,10 @@ app-score .score-player { display: flex; align-items: center; gap: 0.6rem; margi
 app-score .score-player input { flex: 1; min-inline-size: 0; accent-color: var(--flame); }
 app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 @media print { app-score .score-player { display: none; } }
-app-score .score-player > .subtle { margin-inline-start: auto; }
+app-score .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
+app-score .drawn-foot .icon-button { background: var(--glass); }
+@media (hover: hover) { app-score:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
+@media print { app-score .drawn-foot { display: none; } }
 /* While the answer is written, the score's place; once it's written, why there is none. */
 app-score .drawn-status { margin: 0 0 0.6rem; }
 .is-streaming app-score .drawn-status { display: grid; place-items: center; min-block-size: 8rem; margin: 0; }
