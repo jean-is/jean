@@ -36,7 +36,7 @@ class Composer extends Element {
     const menu = CAPTURE || folders
     const add = t(menu ? 'composer.add' : 'files.attach')
     return html`
-      <form class="composer" @submit=${this.#submit}>
+      <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
         <app-complete></app-complete>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
           <li class="attachment" data-status=${item.status} title=${item.error ?? ''}>
@@ -144,6 +144,13 @@ class Composer extends Element {
     if (!files.length) return
     event.preventDefault()
     attachFiles(files)
+  }
+
+  /** A tap anywhere in the box but its buttons is for its words. @param {Event} event */
+  #press = (event) => {
+    if (/** @type {Element} */ (event.target).closest('textarea, button')) return
+    if (event.type === 'click') focusComposer()
+    else event.preventDefault()
   }
 
   #files = () => /** @type {HTMLInputElement | null} */ (this.querySelector('input[type="file"]'))?.click()
