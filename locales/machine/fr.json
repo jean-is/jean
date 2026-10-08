@@ -3,5 +3,9 @@
   "machine.on": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord, jusqu’à ce que vous appuyiez sur Ctrl+C dans son terminal.",
   "machine.forget": "Ne plus l’utiliser",
   "machine.question": "Lancer ceci sur votre ordinateur, dans {folder} ?",
-  "machine.always": "Toujours autoriser dans {folder}"
+  "machine.always": "Toujours autoriser dans {folder}",
+  "machine.app": "Les commandes peuvent aussi tourner sur cet ordinateur, avec ses propres programmes et serveurs, dans un dossier que vous choisissez : les tâches de ce dossier y lancent alors leurs commandes.",
+  "machine.choose": "Choisir un dossier…",
+  "machine.failed": "Il n’a pas démarré : il lui faut Node.js sur cet ordinateur, la commande node d’un terminal.",
+  "machine.on.app": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord."
 }

@@ -3,5 +3,9 @@
   "machine.on": "Tugasan dengan folder {folder} menjalankan arahannya pada komputer ini, setiap satu ditanya dahulu, sehingga anda menekan Ctrl+C dalam terminalnya.",
   "machine.forget": "Berhenti menggunakannya",
   "machine.question": "Jalankan ini pada komputer anda, dalam {folder}?",
-  "machine.always": "Sentiasa benarkan dalam {folder}"
+  "machine.always": "Sentiasa benarkan dalam {folder}",
+  "machine.app": "Arahan juga boleh berjalan pada komputer ini, dengan program dan pelayannya sendiri, dalam folder yang anda pilih: tugasan dengan folder itu menjalankan arahannya di sana.",
+  "machine.choose": "Pilih folder…",
+  "machine.failed": "Ia tidak bermula: komputer ini memerlukan Node.js, iaitu arahan node dalam terminal.",
+  "machine.on.app": "Tugasan dengan folder {folder} menjalankan arahannya pada komputer ini, setiap satu ditanya dahulu."
 }

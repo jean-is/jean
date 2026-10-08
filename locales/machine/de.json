@@ -3,5 +3,9 @@
   "machine.on": "Aufgaben mit dem Ordner {folder} führen ihre Befehle auf diesem Computer aus, jeden erst nach Rückfrage, bis du in seinem Terminal Strg+C drückst.",
   "machine.forget": "Nicht mehr verwenden",
   "machine.question": "Das auf deinem Computer ausführen, in {folder}?",
-  "machine.always": "In {folder} immer erlauben"
+  "machine.always": "In {folder} immer erlauben",
+  "machine.app": "Befehle können auch auf diesem Computer laufen, mit seinen eigenen Programmen und Servern, in einem Ordner deiner Wahl: Aufgaben mit diesem Ordner führen ihre Befehle dann dort aus.",
+  "machine.choose": "Ordner wählen…",
+  "machine.failed": "Er ist nicht gestartet: Er braucht Node.js auf diesem Computer, den Befehl node im Terminal.",
+  "machine.on.app": "Aufgaben mit dem Ordner {folder} führen ihre Befehle auf diesem Computer aus, jeden erst nach Rückfrage."
 }

@@ -5,25 +5,32 @@
 // the sandbox. Offered when a server is refused in the sandbox. Jean reaches the bridge over MCP on
 // 127.0.0.1 with the key in the line, kept in .secrets/ with the folders where the user said
 // "always". A command the brain runs there is asked first; what the user types in the terminal is theirs.
+// The desktop app starts the bridge itself, in a folder the system's dialog picks, as Jean opens.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, unlock } from '../../ui/caps.js'
 import { app, conversationOf, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
+import { host, call, pickFolder } from '../../ui/host.js'
 import { icons } from '../../ui/icons.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { mcpClient } from '../connections/mcp.js'
 
 /** @typedef {import('../../core/loop.js').ToolContext} ToolContext */
-/** @typedef {{ port: number, key: string, always: string[] }} Pairing */
+/** @typedef {{ port: number, key: string, always: string[], path?: string }} Pairing path: the folder the desktop app starts it in */
 /** @typedef {{ on: false } | { on: true, folder: string, path: string, os: string }} Found */
 
 // Its commands are the Computer's, in a task's folder.
 await Promise.all([useStrings('machine'), unlock('computer'), unlock('folders')])
 
 const SECRET = 'computer-bridge'
+const BRIDGE = new URL('../../bridge/bridge.js', import.meta.url).href
+// The desktop app starts the bridge itself where the system has bash; the process it started, for the visit.
+const inApp = signal(false)
+const desktop = host.then((known) => (inApp.value = Boolean(known) && known?.os !== 'Windows'))
+const RUNNING = 'app.bridge'
 // How long what Jean found of the bridge holds before a command asks again.
 const FRESH_MS = 5000
 
@@ -40,13 +47,43 @@ const pairing = () => (paired ??= (async () => {
   const kept = await getSecret(app.fs, SECRET)
   if (kept) return /** @type {Pairing} */ (JSON.parse(kept))
   const bytes = crypto.getRandomValues(new Uint8Array(20))
-  const pair = { port: 41_000 + ((bytes[0] << 8) | bytes[1]) % 1000, key: btoa(String.fromCharCode(...bytes.slice(2))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' })[c] ?? ''), always: [] }
+  const pair = /** @type {Pairing} */ ({ port: 41_000 + ((bytes[0] << 8) | bytes[1]) % 1000, key: btoa(String.fromCharCode(...bytes.slice(2))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' })[c] ?? ''), always: [] })
   await setSecret(app.fs, SECRET, JSON.stringify(pair))
   return pair
 })())
 
+/** @param {Pairing} next */
+async function save(next) {
+  await setSecret(app.fs, SECRET, JSON.stringify(next))
+  paired = Promise.resolve(next)
+}
+
 /** What the user pastes in a terminal, in their folder: the bridge from where Jean is served, for this origin, with the key. @param {Pairing} pair */
-const line = ({ port, key }) => `curl -fsSL ${new URL('../../bridge/bridge.js', import.meta.url)} | node --input-type=module - --port ${port} --origin ${location.origin} --key ${key}`
+const line = ({ port, key }) => `curl -fsSL ${BRIDGE} | node --input-type=module - --port ${port} --origin ${location.origin} --key ${key}`
+/** A text as one word for the shell. @param {string} text */
+const word = (text) => `'${text.replaceAll("'", `'\\''`)}'`
+/** The desktop app's bridge ended without answering (no node, say). */
+const failed = signal(false)
+
+/**
+ * Starts the bridge in a folder, in the desktop app, unless it answers already: through the user's
+ * login shell, so it finds the node their terminal finds, and `--attached`, so it ends with the app.
+ * The folder is kept for the next launch. @param {string} path
+ */
+async function start(path) {
+  const pair = await pairing()
+  if (pair.path !== path) await save({ ...pair, path })
+  if ((await find(true)).on) return
+  const load = "await import('data:text/javascript,' + encodeURIComponent(await (await fetch(process.argv[1])).text()))"
+  const node = `exec node --input-type=module -e ${word(load)} -- ${word(BRIDGE)} --port ${pair.port} --origin ${word(location.origin)} --key ${pair.key} --folder ${word(path)} --attached`
+  const { id } = await call('os.spawnProcess', { command: `exec "\${SHELL:-/bin/sh}" -lic ${word(node)}` })
+  sessionStorage.setItem(RUNNING, String(id))
+  failed.value = false
+  for (let tries = 0; tries < 60 && !(await find(true)).on; tries++) {
+    if (!(await call('os.getSpawnedProcesses', {})).some((/** @type {{ id: number }} */ each) => each.id === id)) return void (failed.value = true)
+    await new Promise((resolve) => setTimeout(resolve, 500))
+  }
+}
 
 /** @param {Pairing} pair */
 function clientOf(pair) {
@@ -92,10 +129,7 @@ export async function asking(_, ctx) {
 /** "Always" for a folder, from the card. @param {string} folder */
 export async function trust(folder) {
   const pair = await pairing()
-  if (pair.always.includes(folder)) return
-  const next = { ...pair, always: [...pair.always, folder] }
-  await setSecret(app.fs, SECRET, JSON.stringify(next))
-  paired = Promise.resolve(next)
+  if (!pair.always.includes(folder)) await save({ ...pair, always: [...pair.always, folder] })
 }
 
 /**
@@ -133,24 +167,37 @@ function watch() {
 }
 
 async function forget() {
+  // The desktop app's bridge ends as its input closes.
+  const id = sessionStorage.getItem(RUNNING)
+  if (id) await call('os.updateSpawnedProcess', { id: Number(id), event: 'stdInEnd' }).catch(() => {})
+  sessionStorage.removeItem(RUNNING)
   await deleteSecret(app.fs, SECRET)
-  ;[client, paired, shown.value] = [null, null, '']
+  ;[client, paired, shown.value, failed.value] = [null, null, '', false]
   await find(true)
 }
 
-/** This computer, in Settings › Computer: on, in which folder, with Stop using it; or the line to paste in a terminal, with Copy. The light is the Computer's (D176), here the bridge's. */
+/** The folder the desktop app starts the bridge in, picked with the system's dialog. */
+const choose = () => pickFolder(t('machine.choose')).then((path) => start(path).catch(() => { failed.value = true }), () => {})
+
+/**
+ * This computer, in Settings › Computer: on, in which folder, with Stop using it; or the line to paste
+ * in a terminal, with Copy; in the desktop app, Choose a folder. The light is the Computer's (D176), here the bridge's.
+ */
 function panel() {
   const found = bridge.value
-  if (!shown.value) pairing().then((pair) => { shown.value = line(pair) })
+  const own = inApp.value
+  if (!shown.value && !own) pairing().then((pair) => { shown.value = line(pair) })
   if (!found.on) watch()
+  const text = found.on ? t(own ? 'machine.on.app' : 'machine.on', { folder: found.folder }) : own ? t(failed.value ? 'machine.failed' : 'machine.app') : t('machine.text')
   return html`<section class="setting machine">
       <div>
         <h3><span class="ember" data-state=${found.on ? 'ready' : 'asleep'} aria-hidden="true"></span><span role="status">${t('cap.machine.name')}</span></h3>
-        <p class="muted">${found.on ? t('machine.on', { folder: found.folder }) : t('machine.text')}</p>
+        <p class="muted">${text}</p>
       </div>
-      ${found.on ? html`<button class="button subtle" @click=${forget}>${t('machine.forget')}</button>` : nothing}
+      ${found.on ? html`<button class="button subtle" @click=${forget}>${t('machine.forget')}</button>`
+        : own ? html`<button class="button subtle" @click=${choose}>${icons.folder} ${t('machine.choose')}</button>` : nothing}
     </section>
-    ${found.on || !shown.value ? nothing : html`<div class="machine-line">
+    ${found.on || own || !shown.value ? nothing : html`<div class="machine-line">
       <code dir="ltr">${shown.value}</code>
       <button class="button subtle" @click=${() => navigator.clipboard.writeText(shown.value).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('action.copy')}</button>
     </div>`}`
@@ -186,5 +233,10 @@ class MachineApproval extends Element {
 define('app-machine-approval', MachineApproval)
 
 register({ id: 'machine', panel })
-// Looked for once on: Settings and the first command know at once whether it runs.
-find(true)
+// Looked for once on, so Settings and the first command know at once whether it runs; in the desktop
+// app, started again in the folder it was started in.
+desktop.then(async (yes) => {
+  const kept = yes && (await getSecret(app.fs, SECRET))
+  const path = kept && /** @type {Pairing} */ (JSON.parse(kept)).path
+  return path ? start(path) : find(true)
+}).catch(() => {})

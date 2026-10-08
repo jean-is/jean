@@ -3,5 +3,9 @@
   "machine.on": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan, títí ẹ ó fi tẹ Ctrl+C nínú ibùdó àṣẹ rẹ̀.",
   "machine.forget": "Dẹ́kun lílò ó",
   "machine.question": "Ṣé kí èyí ṣiṣẹ́ lórí kọ̀ǹpútà yín, nínú {folder}?",
-  "machine.always": "Fàyè gbà nígbà gbogbo nínú {folder}"
+  "machine.always": "Fàyè gbà nígbà gbogbo nínú {folder}",
+  "machine.app": "Àwọn àṣẹ tún lè ṣiṣẹ́ lórí kọ̀ǹpútà yìí, pẹ̀lú àwọn ètò àti sáfà tirẹ̀, nínú fódà tí ẹ bá yàn: àwọn iṣẹ́ tó ní fódà náà ń ṣiṣẹ́ àwọn àṣẹ wọn níbẹ̀.",
+  "machine.choose": "Yan fódà kan…",
+  "machine.failed": "Kò bẹ̀rẹ̀: ó nílò Node.js lórí kọ̀ǹpútà yìí, ìyẹn àṣẹ node nínú ibùdó àṣẹ.",
+  "machine.on.app": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan."
 }

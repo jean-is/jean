@@ -3,5 +3,9 @@
   "machine.on": "Taken met de map {folder} voeren hun opdrachten uit op deze computer, elke eerst gevraagd, tot je in de terminal op Ctrl+C drukt.",
   "machine.forget": "Niet meer gebruiken",
   "machine.question": "Dit uitvoeren op je computer, in {folder}?",
-  "machine.always": "Altijd toestaan in {folder}"
+  "machine.always": "Altijd toestaan in {folder}",
+  "machine.app": "Opdrachten kunnen ook op deze computer draaien, met zijn eigen programma’s en servers, in een map die je kiest: taken met die map voeren hun opdrachten daar dan uit.",
+  "machine.choose": "Kies een map…",
+  "machine.failed": "Hij is niet gestart: hij heeft Node.js nodig op deze computer, de opdracht node in een terminal.",
+  "machine.on.app": "Taken met de map {folder} voeren hun opdrachten uit op deze computer, elke eerst gevraagd."
 }

@@ -6,6 +6,7 @@
 // Jean's own computer, through a link in a temporary folder. Each command runs in a process group
 // of its own; one still serving when it has printed a local address and gone quiet keeps running,
 // its output going on in a log, until the user stops the bridge (Ctrl+C), which ends them all.
+// Jean's desktop app starts it itself, `--attached`: it ends when the app does, its input closing.
 //
 //   curl -fsSL <jean>/bridge/bridge.js | node --input-type=module - --port <port> --origin <jean> --key <key>
 //
@@ -230,7 +231,7 @@ export async function bridge({ folder, origins, key, port }) {
 
 /** @param {string[]} argv */
 export async function main(argv) {
-  const { values } = parseArgs({ args: argv, options: { port: { type: 'string' }, origin: { type: 'string', multiple: true }, key: { type: 'string' }, folder: { type: 'string' } } })
+  const { values } = parseArgs({ args: argv, options: { port: { type: 'string' }, origin: { type: 'string', multiple: true }, key: { type: 'string' }, folder: { type: 'string' }, attached: { type: 'boolean' } } })
   const port = Number(values.port)
   if (!port || !values.key || !values.origin?.length) throw new Error('The line from Jean is needed: --port, --origin and --key.')
   if (platform() === 'win32') throw new Error('The bridge needs bash: on Windows, run it in WSL.')
@@ -246,6 +247,8 @@ export async function main(argv) {
   process.on('SIGINT', stop)
   process.on('SIGTERM', stop)
   process.on('SIGHUP', stop)
+  // Started by the desktop app: its input ends when the app quits, or stops it.
+  if (values.attached) process.stdin.on('end', stop).on('error', stop).resume()
 }
 
 // Run as a program: by its path, from stdin, or from a data: address.

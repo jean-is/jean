@@ -34,6 +34,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file
 - [ ] bash: how often a brain reaches for it, and whether its commands suit a non-technical user's files
 - [ ] This computer (D198) from Jean served over https: Chrome's local network prompt, Safari and Firefox reaching 127.0.0.1, Linux; a brain making, installing and serving a Vite project there, fixing what its log says
+- [ ] This computer in the desktop app, opened from the Dock or Finder: the login shell finding Node from Homebrew, Volta and nvm; Linux; the folder dialog and Stop in the real window
 
 **With real services**
 - [ ] Anthropic: cache reads and warming (`cache_read_input_tokens` on the second question); its own web search (chips, a second question replaying the results, `pause_turn`)
