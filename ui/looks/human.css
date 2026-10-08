@@ -246,9 +246,9 @@
 :root[data-look='human'][data-sidebar] main { padding-block-start: 0; }
 /* The toolbar over the conversation, which the page scrolls under; its title in it, centred. */
 :root[data-look='human'][data-sidebar] app-shell::before { content: ''; position: fixed; z-index: 2; inset-block-start: 0; inset-inline: var(--list) 0; block-size: var(--top); background: linear-gradient(var(--room) 40%, oklch(from var(--room) l c h / 0)); pointer-events: none; }
-/* The browser's and the terminal's buttons sit in it, at its end (D170). */
+/* The browser's and the terminal's buttons sit in it, at its end (D170), over the title, which reaches under them on a narrower window. */
 :root[data-look='human'] app-shell > .views { margin-block-end: calc(-1 * var(--top)); background: none; }
-:root[data-look='human'][data-sidebar] .conversation-title { position: sticky; z-index: 3; inset-block-start: 0; margin: 0 0 0.75rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+:root[data-look='human'][data-sidebar] .conversation-title { position: sticky; z-index: 2; inset-block-start: 0; margin: 0 0 0.75rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 :root[data-look='human'][data-sidebar] .notice { margin-block-start: var(--top); }
 
 @media print {
