@@ -115,7 +115,7 @@ test('a deferred tool called by its name runs under the rules, or says how to ca
     brain, system: 's', history: [{ role: 'user', content: 'q' }], stream, tools: [tool('find_tools'), notion, tool('secret', { hidden: true })], declared: ['find_tools'],
     rule: () => 'ask', askPermission: async () => { asked++; return 'allow_once' }, persist: async (records) => { persisted.push(...records) },
   })
-  const output = (/** @type {string} */ id) => persisted.find((record) => record.update?.toolCallId === id).update
+  const output = (/** @type {string} */ id) => persisted.findLast((record) => record.update?.toolCallId === id).update
   assert.equal(output('a').rawOutput, 'It needs x. Call it like this:\nnotion_notion_search({ x: number }): notion_notion_search things')
   assert.equal(output('b').rawOutput, 'notion_notion_search:3')
   assert.equal(output('b').title, 'notion_notion_search')

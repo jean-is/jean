@@ -4,7 +4,7 @@ import { streamChat as defaultStream, LLMError } from './llm.js'
 import { envelope } from './events.js'
 import { signature } from './deferred.js'
 
-/** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCallInfo, RuleValue, Source } from './types.js' */
+/** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, RuleValue, Source } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
 
 // A request that fails before anything of the answer came is asked again after these waits (D202),
@@ -19,6 +19,7 @@ const LONGEST_WAIT = 30_000
  * @property {boolean} [reserved]   passwords, payments: never done by Jean
  * @property {boolean} [hidden]     never declared to the brain; scripts can call it (codemode, D48)
  * @property {boolean} [deferred]   not declared when a conversation starts: found with find_tools (connections, D47)
+ * @property {boolean} [asks]       waits for the user's answer when it runs (ask_user), so it is kept as pending meanwhile (D212)
  * @property {(args: any) => string} title
  * @property {(args: any) => import('./types.js').ToolCallLocation[]} [locations]
  * @property {(args: any, ctx: ToolContext) => Promise<Check | void>} [check]
@@ -60,6 +61,7 @@ const LONGEST_WAIT = 30_000
  * @property {(update: AcpUpdate, step: number) => void} [onUpdate]   live, including deltas
  * @property {(records: Envelope[]) => Promise<void>} [persist]      settled records
  * @property {AbortSignal} [signal]
+ * @property {{ step: number, calls: ToolCall[] } | null} [resume]  calls a closed page left waiting for the user, run again in their step first (D212)
  * @property {number} [maxSteps]
  * @property {number[]} [retries]                    the waits before asking again, in ms (D202)
  * @property {typeof defaultStream} [stream]          injectable for tests
@@ -83,10 +85,23 @@ export async function runTurn(options) {
     if (!numbers.has(key)) (meta.sources ??= []).push({ ...source, n: numbers.set(key, numbers.size + (options.firstSource ?? 1)).get(key) })
     return /** @type {number} */ (numbers.get(key))
   })
-  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(), declared, tools, cite, options, numbers }
+  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(tools().map((tool) => [tool.spec.name, tool])), declared, tools, cite, options, numbers }
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 }
+  // A step's calls, in order. One waiting for the user's answer is kept as pending meanwhile, with those after it, so a
+  // page closed before the answer asks again when the conversation opens (D212).
+  const runCalls = async (/** @type {ToolCall[]} */ calls, /** @type {number} */ step) => {
+    for (const [i, call] of calls.entries()) {
+      // A deferred tool called by the name <connections> gives it runs all the same (D104); a hidden one stays for scripts.
+      const tool = ctx.byName.get(call.name)
+      const waiting = (/** @type {ToolCallInfo} */ info) => persist(calls.slice(i).map((next, j) => envelope('jean', { sessionUpdate: 'tool_call', status: 'pending',
+        ...(j ? { toolCallId: next.id, name: next.name, title: next.name, rawInput: next.args } : { ...info, _meta: { ...info._meta, waiting: true } }) }, step)))
+      const result = await runTool(call, declared.has(call.name) || !tool?.hidden ? tool : undefined, step, ctx, undefined, waiting)
+      history.push({ role: 'tool', toolCallId: call.id, name: call.name, content: result.output, ...(result.failed && { isError: true }) })
+    }
+  }
+  if (options.resume) await runCalls(options.resume.calls, options.resume.step)
 
-  for (let step = 0; step < maxSteps; step++) {
+  for (let step = options.resume ? options.resume.step + 1 : 0; step < maxSteps; step++) {
     const started = Date.now()
     /** @type {ToolCallInfo} */
     const brainEntry = { toolCallId: `brain-${step}-${started.toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, ...meta } }
@@ -155,13 +170,7 @@ export async function runTurn(options) {
 
     if (stopReason === 'pause') continue
     if (stopReason !== 'tool_use' || !calls.length) return { stopReason, usage, text }
-
-    for (const call of calls) {
-      // A deferred tool called by the name <connections> gives it runs all the same (D104); a hidden one stays for scripts.
-      const tool = ctx.byName.get(call.name)
-      const result = await runTool(call, declared.has(call.name) || !tool?.hidden ? tool : undefined, step, ctx)
-      history.push({ role: 'tool', toolCallId: call.id, name: call.name, content: result.output, ...(result.failed && { isError: true }) })
-    }
+    await runCalls(calls, step)
   }
   return { stopReason: 'max_steps', usage, text: '' }
 }
@@ -187,8 +196,9 @@ function stepRecords(step, brainEntry, thought, text) {
  * @param {Pick<Required<TurnOptions>, 'rule' | 'askPermission' | 'onUpdate' | 'persist'> & { signal?: AbortSignal, byName: Map<string, Tool>, declared: Set<string>, tools: () => Tool[],
  *   cite: (sources: Source[], meta: Record<string, any>) => number[], options: TurnOptions, numbers: Map<string, number> }} ctx
  * @param {string} [parent]
+ * @param {(info: ToolCallInfo) => Promise<void>} [waiting] keeps the call as pending while it waits for the user (D212)
  */
-async function runTool(call, tool, step, ctx, parent) {
+async function runTool(call, tool, step, ctx, parent, waiting) {
   const { rule, askPermission, onUpdate, signal } = ctx
   // Stopped: nothing more runs, and nothing more is asked.
   if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
@@ -226,12 +236,12 @@ async function runTool(call, tool, step, ctx, parent) {
       for (const name of names) ctx.declared.add(name)
       ;(context.meta.declare ??= []).push(...names)
     },
-    // A helper's text is its result; its calls are kept, under this one.
+    // A helper's text is its result; its calls are kept, under this one, never as pending: a closed page asks its questions no more (D212).
     turn: (child) => runTurn({
       ...ctx.options, label: undefined, meta: undefined, ...child, numbers: ctx.numbers,
       askPermission: (request) => ctx.askPermission({ ...request, toolCall: under(request.toolCall, call.id) }),
       onUpdate: (update) => 'toolCallId' in update && onUpdate(under(update, call.id), step),
-      persist: (records) => ctx.persist(records.flatMap(({ update, ...record }) => (update && 'toolCallId' in update ? [{ ...record, step, update: under(update, call.id) }] : []))),
+      persist: (records) => ctx.persist(records.flatMap(({ update, ...record }) => (update && 'toolCallId' in update && update.status !== 'pending' ? [{ ...record, step, update: under(update, call.id) }] : []))),
     }),
   }
   if (!tool) output = `There is no tool named "${call.name}".${ctx.declared.has('find_tools') ? ' Use find_tools to look for one.' : ''}`
@@ -244,11 +254,13 @@ async function runTool(call, tool, step, ctx, parent) {
     const checked = decision === 'never' ? undefined : await tool.check?.(call.args, context).catch(() => undefined)
     if (checked?.meta) info._meta = { ...info._meta, ...checked.meta }
     if (decision === 'ask' || checked?.ask) {
+      await waiting?.(info)
       context.answer = await askPermission({ toolCall: { ...info, ...(checked?.content && { content: checked.content }) }, step })
       decision = context.answer.startsWith('allow') ? 'allow' : 'never'
     }
     if (decision === 'never') output = 'The user declined this action.'
     else {
+      if (tool.asks) await waiting?.(info)
       onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, status: 'in_progress' }, step)
       const started = Date.now()
       try {

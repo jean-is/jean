@@ -5,7 +5,7 @@
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
 import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
-import { userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture } from '../core/events.js'
+import { userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { t, locale, languageName } from '../core/i18n.js'
@@ -328,8 +328,9 @@ async function runAgent(conversation, brain, meta) {
     // The loop and the brains' adapters load with the first message, not with the first screen.
     const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
     const frozen = frozenPrompt(sent)
-    const messages = toChatMessages(sent, await documents(sent, brain))
-    const lastUser = messages.findLastIndex((message) => message.role === 'user')
+    // A turn the page closed on while it waited for the user goes on from there, asking again (D212).
+    const resume = unanswered(sent)
+    const messages = toChatMessages(sent, await documents(sent, brain), resume)
     if (brain.api === 'device') await unlock('brain-local')
     const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
     asked.set(path, Date.now())
@@ -338,7 +339,8 @@ async function runAgent(conversation, brain, meta) {
       brain,
       apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
       system: frozen?.system ?? '',
-      history: messages.slice(0, lastUser + 1),
+      history: resume ? messages : messages.slice(0, messages.findLastIndex((message) => message.role === 'user') + 1),
+      resume,
       // Every tool can be called from a script; the brain sees the declared ones (D47).
       tools: () => contributions().tools,
       declared: frozen?.state.tools ?? [],

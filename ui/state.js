@@ -3,7 +3,7 @@ import { signal, computed } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
 import { loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
-import { linkedFiles } from '../core/events.js'
+import { linkedFiles, unanswered } from '../core/events.js'
 import { t, useLocale } from '../core/i18n.js'
 import { LOOKS } from './looks.js'
 
@@ -316,6 +316,8 @@ export async function openConversation(path) {
   app.dialog.value = null
   if (loaded) app.current.value = { id: loaded.header.id, path, records: loaded.records.filter((record) => !kept.has(JSON.stringify(record))) }
   showRun()
+  // A question or an approval the page closed on is asked again (D212).
+  if (loaded && !run && unanswered(loaded.records)) sending().then((module) => { if (app.current.peek()?.path === path) module.retry() })
 }
 
 /** @param {string} path */

@@ -73,6 +73,34 @@ test('the user’s own words answer a question, and Enter goes on', async ({ pag
   await expect(answer).toContainText('Who signs it? Sam')
 })
 
+test('questions the page was closed on are asked again as the conversation opens, and the answer goes on from there (D212)', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'WebKit runs here like a private window: nothing is kept for the next visit')
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Write a letter to my bank')
+  const card = page.locator('.inbox app-ask form.approval')
+  await expect(card.locator('.ask-progress')).toHaveText('Question 1 of 3')
+  await page.reload()
+  await expect(page.locator('.msg-user')).toHaveText('Write a letter to my bank')
+  await expect(card.locator('.ask-progress')).toHaveText('Question 1 of 3')
+  await card.locator('.button.primary').click()
+  await card.locator('.choice-option', { hasText: 'A refund' }).click()
+  await card.locator('.button.primary').click()
+  await card.locator('.button', { hasText: 'Skip' }).click()
+  const answer = page.locator('.msg-jean .prose').last()
+  await expect(answer).toContainText('Which tone should the letter have? Formal')
+  await expect(answer).toContainText('What should it ask for? A refund')
+  // One answer, where the questions show once.
+  await expect(page.locator('.msg-jean')).toHaveCount(1)
+  await page.locator('.activity > summary').last().click()
+  await expect(page.locator('.activity-list li', { hasText: '3 questions for you' })).toHaveCount(1)
+  // Opened again once it is written, it is done: nothing is asked.
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  await page.reload()
+  await expect(answer).toContainText('What should it ask for? A refund')
+  await expect(page.locator('.inbox')).toHaveCount(0)
+})
+
 for (const [lang, dir, step, send] of [['ar', 'rtl', 'السؤال 1 من 3', 'إرسال'], ['ja', 'ltr', '質問 1 / 3', '送信']]) {
   test(`the questions’ card speaks the user’s language (${lang})`, async ({ page }) => {
     await start(page, lang)

@@ -153,6 +153,7 @@ export const askTool = (from) => ({
     },
   },
   kind: 'think',
+  asks: true,
   // A helper's is added to its own turn, never declared in the conversation.
   ...(from !== undefined && { hidden: true }),
   title: (args) => questionsOf(args).map((item) => item.question).join(' · '),

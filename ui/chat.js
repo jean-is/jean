@@ -136,7 +136,8 @@ function site(url) {
  * @param {boolean} last @param {import('./markdown.js').Sources} sources
  */
 function turnView(turn, live, files, upTo, last, sources) {
-  const steps = live ? [...turn.steps, ...live.steps] : turn.steps
+  // Calls the file keeps as pending never ended, or are asked again in the live answer (D212).
+  const steps = [...turn.steps.map((step) => ({ ...step, tools: step.tools.filter((tool) => tool.status !== 'pending') })), ...(live?.steps ?? [])]
   // The brain's follow-ups come in a trailing block, hidden from the answer itself.
   const { text, suggestions } = splitSuggestions(steps.map((step) => step.text).filter(Boolean).join('\n\n'))
   const entries = steps.flatMap((step) => step.tools)

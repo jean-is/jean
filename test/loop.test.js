@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { runTurn } from '../core/loop.js'
 import { LLMError } from '../core/llm.js'
-import { toChatMessages, userRecord } from '../core/events.js'
+import { toChatMessages, userRecord, unanswered } from '../core/events.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'test-model' }
 
@@ -215,7 +215,80 @@ test('loop: once stopped, it runs and asks for nothing more', async () => {
   }), { code: 'aborted' })
   assert.deepEqual(asked, ['a'])
   assert.equal(calls.length, 1)
-  assert.deepEqual(persisted.filter((record) => record.update?.name).map((record) => record.update.toolCallId), ['a'])
+  // Kept as pending while the card waited (D212); declined, the turn isn't asked again, and what never ran reads as cut short.
+  assert.deepEqual(persisted.filter((record) => record.update?.name).map(({ update }) => [update.toolCallId, update.status]), [['a', 'pending'], ['b', 'pending'], ['a', 'failed']])
+  const records = [userRecord('go', 'dev'), ...persisted]
+  assert.equal(unanswered(records), null)
+  assert.deepEqual(toChatMessages(records).at(-1), { role: 'tool', toolCallId: 'b', name: 'read', content: 'Cut short before it ended: it may not have been done.', isError: true })
+})
+
+test('loop: a call that waits for the user is kept as pending with the calls after it, and a turn the page closed on goes on from there, asking again (D212)', async () => {
+  const question = { id: 'q', name: 'ask_user', args: { questions: [{ question: 'Which tone?' }] } }
+  const read = { id: 'r', name: 'read', args: { path: 'a' } }
+  /** @type {((answer: string) => void)[]} */
+  const answers = []
+  const askTool = {
+    spec: { name: 'ask_user', description: 'ask', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('think'),
+    asks: true,
+    title: () => 'Which tone?',
+    run: () => new Promise((/** @type {(answer: string) => void} */ resolve) => answers.push(resolve)),
+  }
+  const tools = [askTool, readTool]
+  const first = fakeStream([[{ type: 'text', delta: 'A few questions.' }, { type: 'tool_call', call: question }, { type: 'tool_call', call: read }, done('tool_use', { role: 'assistant', content: 'A few questions.', toolCalls: [question, read] })]])
+  /** @type {any[]} */
+  const records = [userRecord('Write a letter', 'dev')]
+  const persist = async (/** @type {any[]} */ added) => { records.push(...added) }
+  // The page closes while the question waits: that turn never ends.
+  runTurn({ brain, system: 's', history: [{ role: 'user', content: 'Write a letter' }], tools, rule: () => 'allow', stream: /** @type {any} */ (first.stream), persist })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.deepEqual(records.filter((record) => record.update?.name).map(({ update }) => [update.toolCallId, update.status, Boolean(update._meta?.waiting)]), [['q', 'pending', true], ['r', 'pending', false]])
+  const resume = unanswered(records)
+  assert.deepEqual(resume, { step: 0, calls: [question, read] })
+  // Read as it is, every call has its result: what never ended was cut short.
+  assert.deepEqual(toChatMessages(records).slice(1).map((message) => (message.role === 'tool' ? [message.toolCallId, message.isError] : message.toolCalls?.map((call) => call.id))), [['q', 'r'], ['q', true], ['r', true]])
+
+  // Opened again: the calls run again in their step, the question asked first, and the brain goes on.
+  const second = fakeStream([[{ type: 'text', delta: 'Formal it is.' }, done('end', { role: 'assistant', content: 'Formal it is.' })]])
+  const turn = runTurn({ brain, system: 's', history: toChatMessages(records, undefined, resume), resume, tools, rule: () => 'allow', stream: /** @type {any} */ (second.stream), persist })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(answers.length, 2)
+  answers[1]('Formal')
+  assert.equal((await turn).text, 'Formal it is.')
+  const asked = [
+    { role: 'user', content: 'Write a letter' },
+    { role: 'assistant', content: 'A few questions.', toolCalls: [question, read] },
+    { role: 'tool', toolCallId: 'q', name: 'ask_user', content: 'Formal' },
+    { role: 'tool', toolCallId: 'r', name: 'read', content: 'contents of a' },
+  ]
+  assert.deepEqual(second.calls[0], asked)
+  // The file reads as one turn never cut: the brain's next step after the calls, nothing left waiting.
+  assert.equal(unanswered(records), null)
+  assert.deepEqual(toChatMessages(records), [...asked, { role: 'assistant', content: 'Formal it is.' }])
+  assert.deepEqual(records.filter((record) => record.update?.kind === 'think' && !record.update.name).map((record) => record.step), [0, 1])
+})
+
+test('loop: an approval the page closed on is asked again; one that was running when it closed is not (D212)', async () => {
+  const call = { id: 'a', name: 'read', args: { path: 'a' } }
+  const later = { id: 'b', name: 'read', args: { path: 'b' } }
+  const { stream } = fakeStream([[{ type: 'tool_call', call }, { type: 'tool_call', call: later }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call, later] })]])
+  /** @type {any[]} */
+  const records = [userRecord('go', 'dev')]
+  /** @type {((option: any) => void)[]} */
+  const cards = []
+  runTurn({
+    brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [readTool], stream: /** @type {any} */ (stream),
+    rule: () => 'ask', askPermission: () => new Promise((resolve) => cards.push(resolve)), persist: async (added) => { records.push(...added) },
+  })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.deepEqual(unanswered(records), { step: 0, calls: [call, later] })
+  // Allowed, the first ran; the page closed while the second waited: that one is asked again.
+  cards[0]('allow_once')
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.deepEqual(unanswered(records), { step: 0, calls: [later] })
+  // Had the second been running, without a card, it wouldn't run again by itself.
+  const running = records.filter((record) => !(record.update?.toolCallId === 'b' && record.update._meta?.waiting))
+  assert.equal(unanswered(running), null)
 })
 
 test('loop: a check asks even where the rules allow, shows its diff on the card, and the run gets the answer and keeps the diff (D141)', async () => {
@@ -254,7 +327,7 @@ test('loop: a check asks even where the rules allow, shows its diff on the card,
     assert.equal(calls[1].at(-1).content, output)
     assert.equal(cards.length, asked)
     if (asked) assert.deepEqual([cards[0].content, cards[0]._meta.folder], [[diff], 'Clients'])
-    const record = persisted.find((item) => item.update?.toolCallId === 'c').update
+    const record = persisted.findLast((item) => item.update?.toolCallId === 'c').update
     assert.deepEqual(record.content.map((/** @type {any} */ part) => part.type), output.startsWith('Changed') ? ['diff', 'content'] : ['content'])
   }
   assert.deepEqual(answers, ['allow_always', undefined])
