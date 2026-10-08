@@ -17,7 +17,7 @@ import { alike } from '../../core/search.js'
  * A skill an index or a repository offers. url: absolute (a folder's SKILL.md); source: where it is listed; files: a folder's, with git's hashes.
  * @typedef {{ name: string, type: 'skill-md' | 'archive' | 'folder', description: string, url: string, digest: string, source: string, files?: { path: string, sha: string, size: number }[] }} Entry
  */
-/** What an index held when it was last read, or why it couldn't be. @typedef {{ url: string, at: string, skills: Entry[], error?: string }} Index */
+/** What a source held when last read, or why it couldn't be, and until when (GitHub's limit). @typedef {{ url: string, at: string, skills: Entry[], error?: string, until?: string }} Index */
 
 export const SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json'
 
@@ -206,44 +206,50 @@ const cachePath = (url) => `.cache/skills/${[...url].reduce((hash, char) => Math
 
 /**
  * Every source, as last read: from .cache/ when it was read less than a day ago, otherwise
- * fetched again (a source that can't be read keeps what was read before, and says why).
+ * fetched again (a source that can't be read keeps what was read before, and says why, and waits
+ * for GitHub's limit to reset). The folders of a repository share one call to GitHub's API.
  * @param {FS} fs @param {string[]} urls the indexes' and repositories' addresses
  * @param {{ fetch?: typeof globalThis.fetch, now?: Date, again?: boolean }} [options] again: whatever the cache holds
  * @returns {Promise<Index[]>}
  */
 export function readIndexes(fs, urls, { fetch = globalThis.fetch, now = new Date(), again = false } = {}) {
+  const trees = new Map()
   return Promise.all(urls.map(async (url) => {
     const path = cachePath(url)
     const kept = /** @type {Index | null} */ (await readJSON(fs, path, null))
-    if (kept && !again && !kept.error && now.getTime() - Date.parse(kept.at) < FRESH_MS) return kept
+    if (kept && !again && now.getTime() < (kept.error ? Date.parse(kept.until ?? kept.at) : Date.parse(kept.at) + FRESH_MS)) return kept
     /** @type {Index} */
     let read
     try {
-      read = { url, at: now.toISOString(), skills: repoOf(url) ? await readRepo(url, fetch) : parseIndex(await (await answer(fetch, url)).json(), url) }
+      read = { url, at: now.toISOString(), skills: repoOf(url) ? await readRepo(url, fetch, trees) : parseIndex(await (await answer(fetch, url)).json(), url) }
     } catch (error) {
-      read = { url, at: now.toISOString(), skills: kept?.skills ?? [], error: /** @type {Error} */ (error).message || 'unreachable' }
+      const { message, until } = /** @type {Error & { until?: string }} */ (error)
+      read = { url, at: now.toISOString(), skills: kept?.skills ?? [], error: message || 'unreachable', ...(until && { until }) }
     }
     await writeJSON(fs, path, read)
     return read
   }))
 }
 
-/** What an address answered, when it answered well. @param {typeof globalThis.fetch} fetch @param {string} url */
+/** What an address answered, when it answered well; GitHub's API says when its limit resets. @param {typeof globalThis.fetch} fetch @param {string} url */
 async function answer(fetch, url) {
   const response = await fetch(url)
-  if (!response.ok) throw new Error(`${new URL(url).host} answered ${response.status}.`)
+  const reset = response.headers.get('x-ratelimit-remaining') === '0' && Number(response.headers.get('x-ratelimit-reset'))
+  if (!response.ok) throw Object.assign(new Error(`${new URL(url).host} answered ${response.status}.`), reset ? { until: new Date(reset * 1000).toISOString() } : {})
   return response
 }
 
 /**
  * The skills of a repository on GitHub, or of one of its folders: each folder with a SKILL.md (one inside
  * another's is part of it) and git's hash of each file, from one call to GitHub's API (sixty an hour without
- * an account), then each SKILL.md from its files' host for its description. @param {string} url @param {typeof globalThis.fetch} fetch
+ * an account), then each SKILL.md from its files' host for its description.
+ * @param {string} url @param {typeof globalThis.fetch} fetch @param {Map<string, Promise<any>>} [trees] the calls already made, by address
  */
-async function readRepo(url, fetch) {
+async function readRepo(url, fetch, trees = new Map()) {
   const { owner, repo, ref, folder } = /** @type {NonNullable<ReturnType<typeof repoOf>>} */ (repoOf(url))
+  const api = `https://api.github.com/repos/${owner}/${repo}/git/trees/${ref}?recursive=1`
   /** @type {{ sha: string, tree: { path: string, type: string, sha: string, size: number }[] }} */
-  const { sha, tree } = await (await answer(fetch, `https://api.github.com/repos/${owner}/${repo}/git/trees/${ref}?recursive=1`)).json()
+  const { sha, tree } = await (trees.get(api) ?? trees.set(api, answer(fetch, api).then((response) => response.json())).get(api))
   const within = tree.filter((item) => `${item.path}/`.startsWith(folder))
   const homes = within.filter((item) => item.type === 'blob' && /(^|\/)SKILL\.md$/.test(item.path)).map((item) => item.path.slice(0, -'SKILL.md'.length))
   const raw = `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/`

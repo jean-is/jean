@@ -173,6 +173,31 @@ test('a repository on GitHub, or one of its folders, is a source: every SKILL.md
   await assert.rejects(fetchSkill(brief, fetch), (error) => error instanceof SkillError && error.code === 'digest', 'a file changed since the repository was read')
 })
 
+test('the folders of a repository share one call to GitHub’s API, and a source GitHub’s limit refuses waits for it to reset', async () => {
+  const fs = memoryFS()
+  const folders = ['legal', 'sales'].map((folder) => `https://github.com/anthropics/knowledge-work-plugins/tree/main/${folder}`)
+  let calls = 0
+  let limited = false
+  const reset = Date.parse('2026-10-08T21:31:34Z') / 1000
+  const fetch = /** @type {typeof globalThis.fetch} */ (/** @type {unknown} */ (async (/** @type {string} */ url) => {
+    if (!url.startsWith('https://api.github.com/')) return new Response('', { status: 404 })
+    calls++
+    return limited ? new Response('{"message":"API rate limit exceeded"}', { status: 403, headers: { 'x-ratelimit-remaining': '0', 'x-ratelimit-reset': String(reset) } })
+      : new Response(JSON.stringify({ sha: 'a'.repeat(40), tree: [] }))
+  }))
+  await readIndexes(fs, folders, { fetch, now: new Date('2026-10-08T20:00:00Z') })
+  assert.equal(calls, 1, 'one call for both folders')
+  limited = true
+  const read = await readIndexes(fs, folders, { fetch, now: new Date('2026-10-08T21:00:00Z'), again: true })
+  assert.equal(calls, 2)
+  assert.deepEqual(read.map((index) => [index.error, index.until]), folders.map(() => ['api.github.com answered 403.', '2026-10-08T21:31:34.000Z']))
+  await readIndexes(fs, folders, { fetch, now: new Date('2026-10-08T21:31:00Z') })
+  assert.equal(calls, 2, 'not asked again before the limit resets')
+  limited = false
+  await readIndexes(fs, folders, { fetch, now: new Date('2026-10-08T21:32:00Z') })
+  assert.equal(calls, 3, 'asked again once it has')
+})
+
 test('a request finds the skill of its kind, never one the user has, and nothing when none fits', () => {
   const entries = ['weekly-sales-report: Summarize weekly sales by region from a spreadsheet, with totals.', 'meeting-notes: Turn meeting notes into a summary with decisions and action items.', 'neon-postgres: Guides and best practices for working with Postgres on Neon.']
     .map((line) => ({ name: line.split(':')[0], description: line.split(': ')[1], type: /** @type {const} */ ('skill-md'), url: 'https://x/a', digest: '', source: 'https://x/i.json' }))
