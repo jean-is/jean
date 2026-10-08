@@ -1,7 +1,7 @@
 /* Human: a desktop app of today, after the system of 2026 (D132). Frosted glass, a sidebar from
    edge to edge with the conversations (the open one in the system's blue), what the user asked
-   in blue bubbles with a tail, a toolbar that the page scrolls under with the title in it, sheets whose three lights
-   close them, and panels (the file preview, the browser, the drawer) that float. System typefaces, sizes, focus
+   in blue bubbles with a tail, a toolbar that the page scrolls under with the title in it, sheets that open with
+   a spring, and panels (the file preview, the browser, the drawer) that float. System typefaces, sizes, focus
    ring and scroll bars. On a phone, or with the sidebar put away: a bar without an edge, a large title, the drawer. Over ui/style.css, which comes after it, so every rule here starts
    with :root[data-look='human'], and its keyframes are named human-*. */
 
@@ -37,7 +37,6 @@
   --display: system-ui, -apple-system, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
   --radius: 1.125rem;
   --spring: cubic-bezier(0.3, 1.3, 0.5, 1);
-  --stoplight: 0.875rem;
   --side-to: 90deg;
   --list: 0rem;
   --top: 3.25rem;
@@ -192,44 +191,14 @@
 :root[data-look='human'] .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; } :root[data-look='human'] .drawer .sidebar-settings { background: var(--room-2); }
 
 @media (width > 40rem) {
-  /* Three lights at the top corner of a sheet or a panel: the first closes it, the others are
-     drawn. Glassy, with a highlight above and a glow below; their marks show when the pointer comes. */
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head) { justify-content: flex-start; gap: 0.5rem; }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head) > .icon-button:last-child, :root[data-look='human'] :is(.sheet .dialog-head, .pane-head)::before, :root[data-look='human'] :is(.sheet .dialog-head, .pane-head)::after {
-    position: relative;
-    flex: none;
-    inline-size: var(--stoplight);
-    block-size: var(--stoplight);
-    padding: 0;
-    border-radius: 50%;
-    background: radial-gradient(70% 40% at 50% 22%, oklch(1 0 0 / 0.7), oklch(1 0 0 / 0)), radial-gradient(80% 50% at 50% 100%, oklch(from var(--c) calc(l + 0.15) c h / 0.9), oklch(from var(--c) l c h / 0)), var(--c);
-    box-shadow: inset 0 0 0 0.5px oklch(from var(--c) calc(l - 0.25) c h / 0.8), 0 0.5px 1px oklch(0 0 0 / 0.2);
-    color: transparent;
-    font: 800 0.6875rem/var(--stoplight) var(--sans);
-    text-align: center;
-  }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head) > .icon-button:last-child { --c: oklch(0.7 0.17 27); order: -3; }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head) > .icon-button:last-child::before { content: ''; position: absolute; inset: -0.25rem; border-radius: 50%; }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head)::before { --c: oklch(0.84 0.14 80); content: ''; content: '\2212' / ''; order: -2; }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head)::after { --c: oklch(0.75 0.17 145); content: ''; content: '+' / ''; order: -1; margin-inline-end: 0.5rem; }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head) > .icon-button:last-child .icon { inline-size: 0.5rem; block-size: 0.5rem; stroke-width: 3.5; }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head):has(> .icon-button:last-child:is(:hover, :focus-visible)) > .icon-button:last-child { color: oklch(0.35 0.13 25); }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head):has(> .icon-button:last-child:is(:hover, :focus-visible))::before { color: oklch(0.42 0.1 70); }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head):has(> .icon-button:last-child:is(:hover, :focus-visible))::after { color: oklch(0.38 0.11 145); }
   /* Settings is a window of its own: its sections in a sidebar, the open one's settings in groups. */
   :root[data-look='human'] .settings { background: linear-gradient(var(--side-to), var(--side) 13rem, var(--line) 13rem calc(13rem + 1px), var(--well) calc(13rem + 1px)); }
-  :root[data-look='human'] .settings .dialog-head { padding-block: 0.875rem 0.5rem; padding-inline: 1.125rem; }
-  :root[data-look='human'] .settings .dialog-head h2 { margin-inline-start: calc(12.625rem - 3 * var(--stoplight) - 1.5rem); font-size: 0.9375rem; }
   :root[data-look='human'] .settings-nav { padding-inline: 0.625rem; }
   :root[data-look='human'] .settings-panel > section { margin-block-end: 0.75rem; padding: 0.875rem 1rem; border: 0; border-radius: 0.75rem; background: var(--group); box-shadow: 0 0 0 1px var(--line); }
   /* A list in a group is the group's rows, from edge to edge. */
   :root[data-look='human'] .settings-panel > section > .list { margin-inline: -1rem; border-inline: 0; border-radius: 0; }
   :root[data-look='human'] .settings-panel > section > .list:first-child { margin-block-start: -0.875rem; border-block-start: 0; border-start-start-radius: 0.75rem; border-start-end-radius: 0.75rem; }
   :root[data-look='human'] .settings-panel > section > .list:last-child { margin-block-end: -0.875rem; border-block-end: 0; border-end-start-radius: 0.75rem; border-end-end-radius: 0.75rem; }
-}
-@media (width > 40rem) and (forced-colors: active) {
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head) > .icon-button:last-child { border: 1px solid ButtonText; color: ButtonText; }
-  :root[data-look='human'] :is(.sheet .dialog-head, .pane-head)::before, :root[data-look='human'] :is(.sheet .dialog-head, .pane-head)::after { display: none; }
 }
 
 @media (width < 48rem) {

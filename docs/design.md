@@ -44,7 +44,7 @@ Jean's persona is the room's light, drawn small: a soft flame with a curled tip,
 
 The room is Jean's own look; Jean starts in Human (D174). Settings › Appearance, and the theme page of the user's menu, offer fifteen, each with a light and a dark palette, in system typefaces, shown as small pictures of themselves, Human first, then from the calmest to the most playful (D111, D120, D154, D174):
 
-- **Human:** after today's desktop: frosted panes, the system's blue and typeface, sheets with three lights (D132).
+- **Human:** after today's desktop: frosted panes that float, the system's blue and typeface (D132).
 - **Mail:** after the devs.new task inbox: the tasks in a list beside the one open, as in an email client; neutral greys, one blue accent, flat surfaces.
 - **Minimal** (one grey scale) and **Swiss** (a strict grid, black and white with one red).
 - **Paper:** ink on paper, a serif for everything, the user's words set as a quotation in the margin's red, no glow.
