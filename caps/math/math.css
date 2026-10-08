@@ -1,5 +1,6 @@
 /* Formulas (D185): set apart, one scrolls only sideways; Chromium lays it out a pixel taller than its box, which the padding holds. */
 app-math[block] { overflow-y: hidden; padding-block: 0.15em; }
+app-math mtext.is-bold { font-weight: bold; }
 /* A LaTeX document, Copy at its top corner as a widget's (D196), shown on hover; its margins inside it, as its picture holds them. */
 app-latex { position: relative; }
 app-latex .latex-page { display: flow-root; }
@@ -12,4 +13,5 @@ app-latex[line] { display: flex; align-items: center; gap: 0.5rem; padding: 0; b
 app-latex[line] .latex-page { flex: 1; min-inline-size: 0; }
 app-latex[line] .drawn-foot { position: static; }
 @media (hover: hover) { app-latex:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
+app-latex[open] .drawn-foot { display: none; }
 @media print { app-latex .drawn-foot { display: none; } }

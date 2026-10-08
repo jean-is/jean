@@ -115,6 +115,14 @@ const GOLDEN = 'The ratio tends to $\\varphi \\approx 1.618$:\n\n$$\\varphi = \\
 const EULER = "Voici :\n\n```latex\n\\section*{Formules d'Euler}\n\\subsection*{Identité d'Euler}\n\\[ e^{i\\pi} + 1 = 0 \\]\nPour un cube : $8 - 12 + 6 = 2$.\n```"
 /** A LaTeX block of one line: a formula alone. */
 const IDENTITY = 'Here it is:\n\n```latex\ne^{i\\pi} + 1 = 0\n```'
+/** A proof as brains write it: one aligned formula, its words in \textbf and \text, its rows broken with \\[1.2em] (D185). */
+const PROOF = `Voici la preuve :\n\n\`\`\`latex\n${String.raw`\begin{aligned}
+&\textbf{Théorème : } \forall x\in\mathbb{R},\quad e^{ix}=\cos x+i\sin x\\[1.2em]
+&\textbf{Preuve : séries entières}\\
+&\text{Étape 1 : } z=ix \;\Rightarrow\; e^{ix}=\sum_{n=0}^{\infty}\frac{(ix)^n}{n!}\\
+&\text{Étape 2 : } i^{2k}=(-1)^k,\qquad i^{2k+1}=i\,(-1)^k\\
+&\text{donc } e^{ix}=\cos x+i\sin x\qquad\blacksquare
+\end{aligned}`}\n\`\`\``
 /** Its follow-ups, with formulas in a line. */
 const EULER_NEXT = ['Démontre la formule $e^{ix}=\\cos x+i\\sin x$', "Explique l'indicatrice d'Euler $\\varphi(n)$"]
 /** A chart and a tune, as the skills of Jean's own directory write them: an ECharts option and ABC notation (D196). */
@@ -327,6 +335,7 @@ createServer(async (req, res) => {
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
   else if (/\bidentity\b/i.test(question) && last.role === 'user') answer = IDENTITY
+  else if (/^Démontre/.test(question) && last.role === 'user') answer = PROOF
   else if (/euler/i.test(question) && last.role === 'user') answer = EULER
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: `return await models.image(${JSON.stringify(question)})` } }
   else if (toolName === 'javascript' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'

@@ -1,7 +1,7 @@
 // Formulas (D185): the LaTeX an answer holds is drawn as MathML, in a line, set apart or in a table,
 // once the math capability has loaded with the first one; prices written with $ stay text. A ```latex
 // block is laid out as a document, copied as a widget is: its source and its picture at once; one of a
-// single line has no frame, its Copy in that line.
+// single line has no frame, its Copy in that line; one being written is drawn as it comes.
 // Follow-ups and requests draw theirs too.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, nextCopy } from './helpers.js'
@@ -51,11 +51,26 @@ test('a LaTeX document is laid out, and copied as its source and its picture', a
   const next = page.locator('.follow-up', { hasText: 'Démontre la formule' })
   await expect(page.locator('.follow-up app-math math')).toHaveCount(2)
   await expect(next).not.toContainText('\\cos')
+  // The proof it brings is drawn as it is written, never shown as its source.
+  await page.evaluate(() => {
+    const shown = /** @type {any} */ (window).sourceShown = []
+    new MutationObserver(() => { if (document.querySelector('app-latex app-math > code')) shown.push(1) }).observe(document.body, { subtree: true, childList: true })
+  })
   await next.click()
+  await expect(page.locator('.is-streaming app-latex[open] mtext.is-bold').first()).toHaveText('Théorème :')
   const asked = page.locator('.msg-user').last()
   await expect(asked).toContainText('Démontre la formule')
   await expect(asked.locator('app-math math')).toHaveCount(1)
   await expect(asked).not.toContainText('$')
+  // The proof comes as one aligned formula: its rows and its bold words, accents and all, are Temml's.
+  const proof = page.locator('.msg-jean').last().locator('app-latex')
+  await expect(proof.locator('app-math[block] math')).toHaveCount(1)
+  await expect(proof.locator('app-math')).toContainText('Étape 1 : z=ix')
+  await expect(proof.locator('mtext.is-bold').first()).toHaveText('Théorème :')
+  await expect(proof.locator('app-math code')).toHaveCount(0)
+  await expect(proof).not.toContainText('**')
+  await expect(proof).not.toHaveAttribute('open')
+  expect(await page.evaluate(() => /** @type {any} */ (window).sourceShown.length)).toBe(0)
 })
 
 test('a LaTeX block of one line has no frame, and its Copy is at the end of its line', async ({ page }) => {

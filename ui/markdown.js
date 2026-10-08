@@ -140,7 +140,7 @@ export const withFormulas = (text, draw = formula) => text.split(FORMULAS).map((
 /** A LaTeX document, which the math capability lays out; until then, or if it can't, its source shows. @param {any} token */
 function latex(token) {
   drawing ??= unlock('math')
-  return html`<app-latex dir="auto" source=${token.text}></app-latex>`
+  return html`<app-latex dir="auto" source=${token.text} ?open=${!CLOSED.test(token.raw)}></app-latex>`
 }
 
 /** Widgets (D196): a block of a kind the room's skills declare, which the skills capability keeps, drawn by its capability. */
