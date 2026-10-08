@@ -3,7 +3,7 @@
 // picture at once. Unlocked by the first formula or document a message holds, never offered; until
 // then, or if Temml can't read one, its source shows (ui/markdown.js).
 import { html, render } from 'lit-html'
-import { markdown } from '../../ui/markdown.js'
+import { markdown, lex } from '../../ui/markdown.js'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
@@ -34,13 +34,18 @@ class AppMath extends HTMLElement {
   }
 }
 
-/** A ```latex block laid out, then Copy at its end. */
+/** A ```latex block laid out, Copy at its top corner; one formula or one sentence has no frame, its Copy at the end of its line. */
 class AppLatex extends HTMLElement {
   static observedAttributes = ['source']
 
   attributeChangedCallback() {
     const source = this.getAttribute('source') ?? ''
-    render(html`<div class="latex-page">${markdown(latexToMarkdown(source))}</div>
+    const page = latexToMarkdown(source)
+    /** @type {any[]} */
+    const [part, ...more] = lex(page).filter((token) => token.type !== 'space')
+    // One line: a formula with no row breaks, or a sentence.
+    this.toggleAttribute('line', !more.length && (part?.type === 'math' ? !part.text.includes('\\\\') : part?.type === 'paragraph' && !part.raw.trim().includes('\n')))
+    render(html`<div class="latex-page">${markdown(page)}</div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>

@@ -113,6 +113,8 @@ const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of,
 const GOLDEN = 'The ratio tends to $\\varphi \\approx 1.618$:\n\n$$\\varphi = \\frac{1 + \\sqrt{5}}{2}$$\n\n| Terms | Ratio |\n|---|---|\n| $F_5 / F_4$ | 1.6667 |\n\nA book costs $5 and a pen $10.'
 /** A LaTeX document in a code block: sections, formulas set apart and in a line (D185). */
 const EULER = "Voici :\n\n```latex\n\\section*{Formules d'Euler}\n\\subsection*{Identité d'Euler}\n\\[ e^{i\\pi} + 1 = 0 \\]\nPour un cube : $8 - 12 + 6 = 2$.\n```"
+/** A LaTeX block of one line: a formula alone. */
+const IDENTITY = 'Here it is:\n\n```latex\ne^{i\\pi} + 1 = 0\n```'
 /** Its follow-ups, with formulas in a line. */
 const EULER_NEXT = ['Démontre la formule $e^{ix}=\\cos x+i\\sin x$', "Explique l'indicatrice d'Euler $\\varphi(n)$"]
 /** A chart and a tune, as the skills of Jean's own directory write them: an ECharts option and ABC notation (D196). */
@@ -324,6 +326,7 @@ createServer(async (req, res) => {
   else if (/^chart\b/i.test(question) && last.role === 'user') answer = CHART
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
+  else if (/\bidentity\b/i.test(question) && last.role === 'user') answer = IDENTITY
   else if (/euler/i.test(question) && last.role === 'user') answer = EULER
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: `return await models.image(${JSON.stringify(question)})` } }
   else if (toolName === 'javascript' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
