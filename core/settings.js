@@ -159,8 +159,8 @@ export const slug = (text) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLo
  */
 
 /**
- * Minimal front matter: `key: value` scalars between --- lines, and maps one level deep
- * (`key:` then indented `key: value` lines).
+ * Minimal front matter: `key: value` scalars between --- lines, `>` and `|` blocks, and maps one
+ * level deep (`key:` then indented `key: value` lines).
  * @param {string} text
  * @returns {{ data: FrontMatter, body: string }}
  */
@@ -171,7 +171,9 @@ export function parseFrontMatter(text) {
   const data = {}
   /** @type {Record<string, Scalar> | null} */
   let map = null
-  for (const line of match[1].split('\n')) {
+  const head = match[1].replace(/^( *)([^:\n]+): *([>|])[+-]? *\n((?:\1 +\S.*\n?|\s*\n)*)/gm, (_, indent, key, style, lines) =>
+    `${indent}${key}: ${JSON.stringify(lines.trim().split(/\s*\n\s*/).join(style === '>' ? ' ' : '\n'))}\n`)
+  for (const line of head.split('\n')) {
     const at = line.indexOf(':')
     if (at < 1) continue
     const key = line.slice(0, at).trim()

@@ -10,8 +10,8 @@ import { syncDialog } from '../../ui/dialogs.js'
 import { markdown } from '../../ui/markdown.js'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
-import { adopt, download } from './skills.js'
-import { siteOf } from './sources.js'
+import { adopt } from './skills.js'
+import { fetchSkill, siteOf } from './sources.js'
 
 /** @typedef {import('./sources.js').Entry} Entry */
 /** @typedef {{ body: string, files: { path: string, text: string }[], blocks?: string[] }} Unpacked */
@@ -30,7 +30,7 @@ export async function preview(entry) {
   from = app.dialog.peek() === 'skill' ? from : app.dialog.peek()
   app.dialog.value = 'skill'
   try {
-    const unpacked = await download(entry)
+    const unpacked = await fetchSkill(entry)
     if (shown.peek()?.entry === entry) shown.value = { entry, unpacked }
   } catch (error) {
     const code = /** @type {any} */ (error)?.code

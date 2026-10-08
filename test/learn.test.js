@@ -8,7 +8,7 @@ import { memoryFS, writeJSON } from '../core/fs.js'
 import { writeZip } from '../core/zip.js'
 import { saveSkill, parseSkill } from '../core/skills.js'
 import { loadSettings } from '../core/settings.js'
-import { SCHEMA, indexURL, parseIndex, sha256, unpack, untar, readIndexes, bestFit, SkillError } from '../caps/skills/sources.js'
+import { SCHEMA, indexURL, siteOf, parseIndex, sha256, gitHash, unpack, untar, readIndexes, fetchSkill, bestFit, SkillError } from '../caps/skills/sources.js'
 import { DIRECTORY, readDirectory } from '../caps/skills/directory.js'
 import { schedule, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../caps/routines/schedule.js'
 
@@ -124,6 +124,55 @@ test('indexes are read once a day, and one that fails keeps what it had', async 
   assert.ok((await fs.list('.cache/skills')).length === 1, 'kept in .cache/, which backups leave out')
 })
 
+test('a repository on GitHub, or one of its folders, is a source: every SKILL.md in it, each file checked against git’s hash', async () => {
+  assert.equal(indexURL('github.com/anthropics/knowledge-work-plugins/'), 'https://github.com/anthropics/knowledge-work-plugins')
+  assert.equal(indexURL('https://github.com/anthropics/knowledge-work-plugins/tree/main/legal'), 'https://github.com/anthropics/knowledge-work-plugins/tree/main/legal')
+  assert.throws(() => indexURL('github.com/anthropics'), 'a repository, or nothing')
+  assert.equal(siteOf('https://github.com/anthropics/knowledge-work-plugins/tree/main/legal'), 'github.com/anthropics/knowledge-work-plugins/legal')
+  assert.equal(siteOf('https://raw.githubusercontent.com/anthropics/knowledge-work-plugins/main/legal/skills/brief/SKILL.md'), 'github.com/anthropics/knowledge-work-plugins')
+  assert.equal(siteOf('https://neon.com/.well-known/agent-skills/index.json'), 'neon.com')
+  // git's name for "hello\n", as `git hash-object` gives it.
+  assert.equal(await gitHash(text('hello\n')), 'ce013625030ba8dba906f756967f9e9ca394464a')
+
+  const files = {
+    'legal/skills/brief/SKILL.md': '---\nname: brief\ndescription: >\n  Write a short legal brief\n  for a meeting.\n---\n# Brief\n\n1. Read the matter.\n',
+    'legal/skills/brief/reference/forms.md': '# Forms\n',
+    'legal/skills/brief/inner/SKILL.md': '---\nname: inner\ndescription: Part of brief.\n---\n# Inner\n',
+    'legal/skills/stamp/SKILL.md': '---\nname: stamp\ndescription: Stamp a contract.\n---\n# Stamp\n',
+    'legal/skills/stamp/stamp.py': 'print(1)\n',
+    'sales/skills/pitch/SKILL.md': '---\nname: pitch\ndescription: Pitch.\n---\n# Pitch\n',
+  }
+  const blobs = await Promise.all(Object.entries(files).map(async ([path, body]) => ({ path, type: 'blob', sha: await gitHash(text(body)), size: text(body).length })))
+  const tree = [...blobs, { path: 'legal', type: 'tree', sha: 'f'.repeat(40) }, { path: 'legal/skills/brief', type: 'tree', sha: 'b'.repeat(40) }]
+  const asked = /** @type {string[]} */ ([])
+  let changed = false
+  const fetch = /** @type {typeof globalThis.fetch} */ (/** @type {unknown} */ (async (/** @type {string} */ url) => {
+    asked.push(url)
+    if (url === 'https://api.github.com/repos/anthropics/knowledge-work-plugins/git/trees/main?recursive=1') return new Response(JSON.stringify({ sha: 'a'.repeat(40), tree }))
+    const path = url.replace('https://raw.githubusercontent.com/anthropics/knowledge-work-plugins/main/', '')
+    const body = /** @type {Record<string, string>} */ (files)[path]
+    return body === undefined ? new Response('', { status: 404 }) : new Response(changed ? `${body}!` : body)
+  }))
+  const source = 'https://github.com/anthropics/knowledge-work-plugins/tree/main/legal'
+  const [{ skills }] = await readIndexes(memoryFS(), [source], { fetch })
+  assert.deepEqual(skills.map((entry) => entry.name), ['brief', 'stamp'], 'the folder’s, and a skill inside another is part of it')
+  const [brief, stamp] = skills
+  assert.equal(brief.description, 'Write a short legal brief for a meeting.')
+  assert.equal(brief.digest, `git:${'b'.repeat(40)}`, 'the folder’s own hash in git')
+  assert.equal(brief.url, 'https://raw.githubusercontent.com/anthropics/knowledge-work-plugins/main/legal/skills/brief/SKILL.md')
+  assert.deepEqual(brief.files?.map((file) => file.path), ['SKILL.md', 'reference/forms.md', 'inner/SKILL.md'])
+  assert.equal(asked.filter((url) => url.startsWith('https://api.github.com/')).length, 1, 'one call to GitHub’s API')
+
+  const added = await fetchSkill(brief, fetch)
+  assert.match(added.body, /^# Brief/)
+  assert.deepEqual(added.files.map((file) => file.path), ['reference/forms.md', 'inner/SKILL.md'])
+  asked.length = 0
+  await assert.rejects(fetchSkill(stamp, fetch), (error) => error instanceof SkillError && error.code === 'programs')
+  assert.deepEqual(asked, [], 'nothing downloaded when a file isn’t text')
+  changed = true
+  await assert.rejects(fetchSkill(brief, fetch), (error) => error instanceof SkillError && error.code === 'digest', 'a file changed since the repository was read')
+})
+
 test('a request finds the skill of its kind, never one the user has, and nothing when none fits', () => {
   const entries = ['weekly-sales-report: Summarize weekly sales by region from a spreadsheet, with totals.', 'meeting-notes: Turn meeting notes into a summary with decisions and action items.', 'neon-postgres: Guides and best practices for working with Postgres on Neon.']
     .map((line) => ({ name: line.split(':')[0], description: line.split(': ')[1], type: /** @type {const} */ ('skill-md'), url: 'https://x/a', digest: '', source: 'https://x/i.json' }))
@@ -157,13 +206,13 @@ test('a skill declares the kinds of block it writes, which are drawn as widgets,
   assert.deepEqual((await unpack({ name: 'charts', type: 'skill-md', description: 'Draw charts.', url: 'https://x/SKILL.md', digest, source: 'https://x/i.json' }, file)).blocks, ['echarts', 'vega-lite'])
 })
 
-test('Jean’s own directory: each skill as its SKILL.md says, the charts drawn from ```echarts, the scores from ```abc and the slides from ```marp; PowerPoint draws nothing, it makes files on the computer', async () => {
+test('Jean’s own directory: each skill as its SKILL.md says, the charts drawn from ```echarts (a budget’s too), the scores from ```abc and the slides from ```marp; the others draw nothing, they write answers and files', async () => {
   const fetchFile = async (/** @type {string | URL | Request} */ url) => new Response(await readFile(new URL(String(url))))
   const ready = await readDirectory({ fetch: /** @type {typeof fetch} */ (fetchFile) })
   assert.deepEqual(ready.map((entry) => entry.name), DIRECTORY.map((entry) => entry.name), 'every one can be read')
   assert.ok(ready.every((entry) => entry.digest === '' && entry.description.length > 40 && entry.icon))
   const blocks = await Promise.all(ready.map(async (entry) => parseSkill(await readFile(new URL(entry.url), 'utf8'), entry.url)?.blocks))
-  assert.deepEqual(blocks, [['echarts'], ['abc'], ['marp'], undefined])
+  assert.deepEqual(blocks, [undefined, undefined, ['echarts'], undefined, undefined, undefined, ['echarts'], ['abc'], ['marp'], undefined])
   const missing = await readDirectory({ fetch: /** @type {typeof fetch} */ (async () => new Response('', { status: 404 })) })
   assert.deepEqual(missing, [], 'one that can’t be read is left out')
 })

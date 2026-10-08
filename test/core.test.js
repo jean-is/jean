@@ -194,6 +194,9 @@ test('settings: front matter round trip and policy', () => {
   assert.deepEqual(data, { format: 1, default: true, name: 'Bakery: Margot', by: 'dev1' })
   assert.equal(body, 'Body\n')
   assert.deepEqual(parseFrontMatter('no front matter'), { data: {}, body: 'no front matter' })
+  // Block scalars, as many SKILL.md files write a long description: `>` folds its lines, `|` keeps them.
+  const block = '---\nname: ad-manager\ndescription: >\n  Turn ad spend into a decision:\n  pause, keep or raise.\n\nnotes: |-\n  one\n  two\nmetadata:\n  author: jean\n---\n# Ads\n'
+  assert.deepEqual(parseFrontMatter(block).data, { name: 'ad-manager', description: 'Turn ad spend into a decision: pause, keep or raise.', notes: 'one\ntwo', metadata: { author: 'jean' } })
 
   const brain = { id: 'b1', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'https://ai.corp/v1', model: 'm' }
   const { settings, locked } = applyPolicy({ ...DEFAULT_SETTINGS, rules: { fetch: 'allow' } }, { brains: [brain], rules: { fetch: 'never' } })

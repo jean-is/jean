@@ -1,11 +1,12 @@
-// Skills from elsewhere (D116, D121): Agent Skills discovery indexes, the format's own way to
-// publish skills (https://github.com/cloudflare/agent-skills-discovery-rfc, schema 0.2.0). Jean
-// reads whole indexes and compares their descriptions with the user's requests here, on the
-// device, so a request never goes anywhere. A skill comes in only when the user adds it, after
-// reading its steps, and only once what was downloaded matches the digest its index lists.
-// Only skills made of instructions are added: SKILL.md, and text beside it, never programs.
+// Skills from elsewhere (D116, D121, D207): Agent Skills discovery indexes, the format's own way to
+// publish skills (https://github.com/cloudflare/agent-skills-discovery-rfc, schema 0.2.0), and
+// repositories on GitHub. Jean reads them whole and compares their descriptions with the user's
+// requests here, on the device, so a request never goes anywhere. A skill comes in only when the
+// user adds it, after reading its steps, once what was downloaded matches the digest its index
+// lists, or git's hash of each file, and holds only instructions: SKILL.md and text, never programs.
 // Host-agnostic: no DOM, tested under node --test.
 import { readZip } from '../../core/zip.js'
+import { sha256Hex } from '../../core/files.js'
 import { blocksOf } from '../../core/skills.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
 import { parseFrontMatter } from '../../core/settings.js'
@@ -13,20 +14,20 @@ import { alike } from '../../core/search.js'
 
 /** @typedef {import('../../core/types.js').FS} FS */
 /**
- * A skill an index offers. url: absolute; source: the index it is listed in.
- * @typedef {{ name: string, type: 'skill-md' | 'archive', description: string, url: string, digest: string, source: string }} Entry
+ * A skill an index or a repository offers. url: absolute (a folder's SKILL.md); source: where it is listed; files: a folder's, with git's hashes.
+ * @typedef {{ name: string, type: 'skill-md' | 'archive' | 'folder', description: string, url: string, digest: string, source: string, files?: { path: string, sha: string, size: number }[] }} Entry
  */
 /** What an index held when it was last read, or why it couldn't be. @typedef {{ url: string, at: string, skills: Entry[], error?: string }} Index */
 
 export const SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json'
 
 /**
- * The indexes read unless the user or policy changes the list: hand-picked, checked from a
- * browser's point of view by `npm run directory` (D121). As of 2026-10-03 no index answering
- * browsers offers skills for office work, so these are developers'; an organisation's own, set in
- * policy, is where those will come from.
+ * The sources read unless the user or policy changes the list, checked from a browser's point of view
+ * by `npm run directory` (D207): the indexes that answer browsers are developers', so these are the
+ * folders of Anthropic's skills for knowledge work (Apache 2.0) about people's work rather than code.
  */
-export const DEFAULT_SOURCES = Object.freeze(['https://developers.cloudflare.com', 'https://huggingface.co', 'https://neon.com'])
+export const DEFAULT_SOURCES = Object.freeze(['small-business', 'marketing', 'sales', 'human-resources', 'legal', 'customer-support']
+  .map((folder) => `https://github.com/anthropics/knowledge-work-plugins/tree/main/${folder}`))
 
 const NAME = /^(?=.{1,64}$)[a-z0-9]+(-[a-z0-9]+)*$/
 const DIGEST = /^sha256:[0-9a-f]{64}$/
@@ -46,16 +47,30 @@ export class SkillError extends Error {
   }
 }
 
-/** An index's address from what the user typed: a site (its .well-known index), or the index itself. @param {string} address */
+/** A source's address from what the user typed: a site (its .well-known index), the index itself, or a repository on GitHub or one of its folders. @param {string} address */
 export function indexURL(address) {
   const text = address.trim()
   const url = new URL(/^https?:\/\//i.test(text) ? text : `https://${text}`)
+  const repo = url.host === 'github.com' && `https://github.com${url.pathname.replace(/\.git$|\/+$/g, '')}`
+  if (repo && !repoOf(repo)) throw new Error('Not a repository.')
+  if (repo) return repo
   if (!url.pathname.endsWith('.json')) url.pathname = `${url.pathname.replace(/\/+$/, '')}/.well-known/agent-skills/index.json`
   return url.href
 }
 
-/** Where an index or a skill comes from, for people: its site. @param {string} url */
-export const siteOf = (url) => new URL(url).host
+/** Where a skill or a source comes from, for people: its site, or its repository on GitHub, with a source's folder. @param {string} url */
+export function siteOf(url) {
+  const { host, pathname } = new URL(url)
+  const [owner, repo, tree, , ...folder] = pathname.slice(1).split('/')
+  if (host === 'raw.githubusercontent.com') return `github.com/${owner}/${repo}`
+  return host === 'github.com' ? ['github.com', owner, repo, ...(tree === 'tree' ? folder : [])].join('/') : host
+}
+
+/** A repository on GitHub, or one of its folders (…/tree/<branch>/<folder>). @param {string} url */
+function repoOf(url) {
+  const [, owner, repo, ref = 'HEAD', folder = ''] = /^https:\/\/github\.com\/([\w.-]+)\/([\w.-]+)(?:\/tree\/([^/]+)(?:\/(.+))?)?$/.exec(url) ?? []
+  return owner ? { owner, repo, ref, folder: folder && `${folder}/` } : null
+}
 
 /**
  * The skills an index lists, with their addresses made absolute. An index of another version
@@ -78,10 +93,11 @@ export function parseIndex(json, source) {
 }
 
 /** @param {Uint8Array} bytes */
-export async function sha256(bytes) {
-  const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', /** @type {BufferSource} */ (bytes)))
-  return `sha256:${[...hash].map((byte) => byte.toString(16).padStart(2, '0')).join('')}`
-}
+export const sha256 = async (bytes) => `sha256:${await sha256Hex(bytes)}`
+
+/** git's name for a file's content, which GitHub lists: a blob's SHA-1. @param {Uint8Array} bytes */
+export const gitHash = async (bytes) => [...new Uint8Array(await crypto.subtle.digest('SHA-1', new Uint8Array([...new TextEncoder().encode(`blob ${bytes.length}\0`), ...bytes])))]
+  .map((byte) => byte.toString(16).padStart(2, '0')).join('')
 
 /** A path inside a skill, or null when it would leave it (absolute, `..`, a backslash). @param {string} path */
 function inside(path) {
@@ -132,9 +148,36 @@ export async function unpack(entry, bytes) {
   if (bytes.length > MAX_BYTES) throw new SkillError('invalid', 'The skill is too large.')
   if (await sha256(bytes) !== entry.digest) throw new SkillError('digest', 'What was downloaded doesn’t match the digest its index lists.')
   const zipped = bytes[0] === 0x50 && bytes[1] === 0x4b
-  const listed = entry.type === 'skill-md' ? [{ path: 'SKILL.md', bytes }]
+  return instructions(entry.type === 'skill-md' ? [{ path: 'SKILL.md', bytes }]
     : zipped ? await Promise.all(readZip(bytes).map(async (file) => ({ path: file.name, bytes: await file.read() })))
-    : bytes[0] === 0x1f && bytes[1] === 0x8b ? untar(await gunzip(bytes)) : []
+    : bytes[0] === 0x1f && bytes[1] === 0x8b ? untar(await gunzip(bytes)) : [])
+}
+
+/**
+ * Downloads a skill and checks it (SkillError when it can't be added): against the digest its index
+ * lists, or each file of a repository's, text alone, against git's hash of it. Jean's own (no digest)
+ * is read from its file. @param {Entry} entry @param {typeof globalThis.fetch} [fetch]
+ */
+export async function fetchSkill(entry, fetch = globalThis.fetch) {
+  const bytesOf = async (/** @type {string} */ url) => new Uint8Array(await (await answer(fetch, url)).arrayBuffer())
+  if (!entry.digest) {
+    const { data, body } = parseFrontMatter(new TextDecoder().decode(await bytesOf(entry.url)))
+    return { body: body.trim(), files: [], blocks: blocksOf(data.metadata?.blocks) }
+  }
+  if (!entry.files) return unpack(entry, await bytesOf(entry.url))
+  const odd = entry.files.find((file) => !TEXT.test(file.path))
+  if (odd) throw new SkillError('programs', `The skill holds more than instructions (${odd.path}).`)
+  if (entry.files.reduce((sum, file) => sum + file.size, 0) > MAX_BYTES) throw new SkillError('invalid', 'The skill is too large.')
+  const folder = entry.url.slice(0, -'SKILL.md'.length)
+  return instructions(await Promise.all(entry.files.map(async ({ path, sha }) => {
+    const bytes = await bytesOf(folder + path)
+    if (await gitHash(bytes) !== sha) throw new SkillError('digest', `${path} isn’t what the repository lists.`)
+    return { path, bytes }
+  })))
+}
+
+/** What a skill's files hold, as unpack() says. @param {{ path: string, bytes: Uint8Array }[]} listed */
+function instructions(listed) {
   const strict = new TextDecoder('utf-8', { fatal: true })
   /** @type {{ path: string, text: string }[]} */
   const files = []
@@ -162,9 +205,9 @@ export async function unpack(entry, bytes) {
 const cachePath = (url) => `.cache/skills/${[...url].reduce((hash, char) => Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0, 2166136261).toString(36)}.json`
 
 /**
- * Every index, as last read: from .cache/ when it was read less than a day ago, otherwise
- * fetched again (an index that can't be read keeps what was read before, and says why).
- * @param {FS} fs @param {string[]} urls indexes' addresses
+ * Every source, as last read: from .cache/ when it was read less than a day ago, otherwise
+ * fetched again (a source that can't be read keeps what was read before, and says why).
+ * @param {FS} fs @param {string[]} urls the indexes' and repositories' addresses
  * @param {{ fetch?: typeof globalThis.fetch, now?: Date, again?: boolean }} [options] again: whatever the cache holds
  * @returns {Promise<Index[]>}
  */
@@ -176,15 +219,41 @@ export function readIndexes(fs, urls, { fetch = globalThis.fetch, now = new Date
     /** @type {Index} */
     let read
     try {
-      const response = await fetch(url, { headers: { accept: 'application/json' } })
-      if (!response.ok) throw new Error(`The index answered ${response.status}.`)
-      read = { url, at: now.toISOString(), skills: parseIndex(await response.json(), url) }
+      read = { url, at: now.toISOString(), skills: repoOf(url) ? await readRepo(url, fetch) : parseIndex(await (await answer(fetch, url)).json(), url) }
     } catch (error) {
       read = { url, at: now.toISOString(), skills: kept?.skills ?? [], error: /** @type {Error} */ (error).message || 'unreachable' }
     }
     await writeJSON(fs, path, read)
     return read
   }))
+}
+
+/** What an address answered, when it answered well. @param {typeof globalThis.fetch} fetch @param {string} url */
+async function answer(fetch, url) {
+  const response = await fetch(url)
+  if (!response.ok) throw new Error(`${new URL(url).host} answered ${response.status}.`)
+  return response
+}
+
+/**
+ * The skills of a repository on GitHub, or of one of its folders: each folder with a SKILL.md (one inside
+ * another's is part of it) and git's hash of each file, from one call to GitHub's API (sixty an hour without
+ * an account), then each SKILL.md from its files' host for its description. @param {string} url @param {typeof globalThis.fetch} fetch
+ */
+async function readRepo(url, fetch) {
+  const { owner, repo, ref, folder } = /** @type {NonNullable<ReturnType<typeof repoOf>>} */ (repoOf(url))
+  /** @type {{ sha: string, tree: { path: string, type: string, sha: string, size: number }[] }} */
+  const { sha, tree } = await (await answer(fetch, `https://api.github.com/repos/${owner}/${repo}/git/trees/${ref}?recursive=1`)).json()
+  const within = tree.filter((item) => `${item.path}/`.startsWith(folder))
+  const homes = within.filter((item) => item.type === 'blob' && /(^|\/)SKILL\.md$/.test(item.path)).map((item) => item.path.slice(0, -'SKILL.md'.length))
+  const raw = `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/`
+  return (await Promise.all(homes.filter((home) => !homes.some((other) => other !== home && home.startsWith(other))).map(async (home) => {
+    const { name, description } = parseFrontMatter(await fetch(raw + home + 'SKILL.md').then((response) => (response.ok ? response.text() : ''), () => '')).data
+    const digest = (home && tree.find((item) => `${item.path}/` === home)?.sha) || sha
+    const files = within.filter((item) => item.type === 'blob' && item.path.startsWith(home)).map((item) => ({ path: item.path.slice(home.length), sha: item.sha, size: item.size }))
+    return typeof name === 'string' && NAME.test(name) && typeof description === 'string' && description.trim()
+      ? [{ name, type: /** @type {const} */ ('folder'), description: description.trim().slice(0, 1024), url: `${raw}${home}SKILL.md`, digest: `git:${digest}`, source: url, files }] : []
+  }))).flat()
 }
 
 /** What a request is compared with: the name's words and the description. @param {Entry} entry */

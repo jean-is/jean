@@ -1,6 +1,7 @@
-// Learn and repeat (0.7): skills from elsewhere, read from a discovery index on the device and
-// added only by the user, after reading their steps (D121); routines, requests Jean sends itself
-// on a schedule, while open or caught up at the next visit (D122).
+// Learn and repeat (0.7): skills from elsewhere, read from a discovery index or a repository on
+// GitHub on the device and added only by the user, after reading their steps (D121, D207);
+// routines, requests Jean sends itself on a schedule, while open or caught up at the next visit (D122).
+import { createHash } from 'node:crypto'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, MAIL_URL } from './helpers.js'
 
@@ -70,6 +71,50 @@ test('a skill from elsewhere is checked, shown, and added only by the user', asy
   expect(steps).toContain('source: "http://127.0.0.1:4182/.well-known/agent-skills/meeting-notes.tar.gz"')
   expect(steps).toMatch(/digest: "sha256:[0-9a-f]{64}"/)
   expect(beside).toBe('## Decisions\n\n## Action items\n')
+})
+
+test('a folder of a repository on GitHub is a source: its skills, each file checked against git’s hash (D207)', async ({ page }) => {
+  /** @type {Record<string, string>} */
+  const files = {
+    'legal/skills/brief/SKILL.md': '---\nname: brief\ndescription: >\n  Write a short brief\n  before a meeting.\n---\n# Brief\n\n1. Read the matter.\n',
+    'legal/skills/brief/reference/forms.md': '# Forms\n',
+    'legal/skills/stamp/SKILL.md': '---\nname: stamp\ndescription: Stamp a contract with a seal.\n---\n# Stamp\n',
+    'legal/skills/stamp/stamp.py': 'print(1)\n',
+  }
+  const blob = (/** @type {string} */ text) => createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0${text}`).digest('hex')
+  const tree = [{ path: 'legal/skills/brief', type: 'tree', sha: 'b'.repeat(40) },
+    ...Object.entries(files).map(([path, text]) => ({ path, type: 'blob', sha: blob(text), size: Buffer.byteLength(text) }))]
+  const headers = { 'access-control-allow-origin': '*' }
+  await page.route('https://api.github.com/repos/anthropics/knowledge-work-plugins/git/trees/main?recursive=1', (route) => route.fulfill({ headers, json: { sha: 'a'.repeat(40), tree } }))
+  await page.route('https://raw.githubusercontent.com/anthropics/knowledge-work-plugins/main/**', (route) => {
+    const text = files[new URL(route.request().url()).pathname.split('/main/')[1]]
+    return route.fulfill({ headers, status: text === undefined ? 404 : 200, body: text ?? '' })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  await useSources(page, ['github.com/anthropics/knowledge-work-plugins/tree/main/legal'])
+  const knows = await openSettings(page, 'Skills')
+  const elsewhere = knows.locator('section.sources')
+  await elsewhere.getByRole('button', { name: 'Browse them' }).click()
+  const source = elsewhere.locator('.source')
+  await expect(source.locator('h4')).toContainText('github.com/anthropics/knowledge-work-plugins/legal')
+  await expect(source.locator('li')).toHaveCount(2)
+
+  const ready = page.locator('app-skill-ready dialog[open]')
+  await source.getByRole('button', { name: 'stamp' }).click()
+  await expect(ready.locator('.status')).toHaveText('This skill runs programs, which can’t run here, so it can’t be added.')
+  await page.keyboard.press('Escape')
+  await source.getByRole('button', { name: 'brief' }).click()
+  await expect(ready).toContainText('From github.com/anthropics/knowledge-work-plugins')
+  await expect(ready).toContainText('Write a short brief before a meeting.')
+  await expect(ready).toContainText('With these files: reference/forms.md')
+  await ready.locator('.button.primary').click()
+  await expect(knows.locator('.list summary', { hasText: 'Brief' })).toContainText('From github.com/anthropics/knowledge-work-plugins')
+  const steps = await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('skills/brief/SKILL.md'))
+  expect(steps).toContain('source: "https://raw.githubusercontent.com/anthropics/knowledge-work-plugins/main/legal/skills/brief/SKILL.md"')
+  expect(steps).toContain(`digest: "git:${'b'.repeat(40)}"`)
 })
 
 test('the third request of a kind finds a ready-made skill before offering to make one', async ({ page }) => {

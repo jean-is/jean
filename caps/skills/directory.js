@@ -10,6 +10,12 @@ import { parseSkill } from '../../core/skills.js'
 
 /** The skills, by name, with their icon's path (24×24, drawn with a line). */
 export const DIRECTORY = Object.freeze([
+  { name: 'plain-words', icon: 'M4.5 5.5h15v10h-8l-4 3.5v-3.5h-3zM8 9h8M8 12h5' },
+  { name: 'letter', icon: 'M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6' },
+  { name: 'budget', icon: 'M5 7a7 2.5 0 1 0 14 0 7 2.5 0 1 0-14 0v10c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V7M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5' },
+  { name: 'compare', icon: 'M12 3.5v16M8 19.5h8M4.5 7.5h15M4.5 7.5l-2.5 6h5zM19.5 7.5l-2.5 6h5z' },
+  { name: 'calendar-event', icon: 'M4.5 6h15v13.5h-15zM4.5 10h15M8.5 3.5V8M15.5 3.5V8M8 13.5h2M14 13.5h2M8 16.5h2' },
+  { name: 'quiz', icon: 'M3.5 12a8.5 8.5 0 1 0 17 0 8.5 8.5 0 1 0-17 0M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 16.5v.5' },
   { name: 'chart', icon: 'M3.5 19.5h17M6.5 19.5v-6M10.5 19.5V9M14.5 19.5v-8M18.5 19.5V5.5' },
   { name: 'music-score', icon: 'M9 18.5V6l10-2v12.5M4 18.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0M14 16.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0' },
   { name: 'slides', icon: 'M3.5 4.5h17v11h-17zM12 15.5v4M8 19.5h8' },

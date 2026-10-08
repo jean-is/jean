@@ -3,10 +3,10 @@
 // skill's name and when to use it; `skill` reads its steps when a request matches, and
 // `save_skill` writes one when the user asks for it, typically after "Save this as a skill",
 // suggested when the same kind of request comes up a third time (ui/discovery.js).
-// Skills from elsewhere (D121): the indexes in settings and policy are read on the device
-// (./sources.js), and Jean's own directory with them (./directory.js, D196); the third request of a
-// kind looks there first, and `suggest_skill` lets the brain look. Either way the user reads the
-// steps and adds the skill (./ready.js), or not.
+// Skills from elsewhere (D121): the indexes and repositories in settings and policy are read on
+// the device (./sources.js), and Jean's own directory with them (./directory.js, D196); the third
+// request of a kind looks there first, and `suggest_skill` lets the brain look. Either way the user
+// reads the steps and adds the skill (./ready.js), or not.
 // A skill declares the kinds of block it writes (D196); answers draw those as widgets while one
 // of the room's skills declares them.
 import { effect } from '@preact/signals-core'
@@ -14,11 +14,11 @@ import { register } from '../../ui/caps.js'
 import { declared } from '../../ui/markdown.js'
 import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { SAME_KIND } from '../../ui/discovery.js'
-import { blocksOf, listSkills, saveSkill, skillLines } from '../../core/skills.js'
-import { parseFrontMatter, slug } from '../../core/settings.js'
+import { listSkills, saveSkill, skillLines } from '../../core/skills.js'
+import { slug } from '../../core/settings.js'
 import { dirname, join, walk } from '../../core/fs.js'
 import { t } from '../../core/i18n.js'
-import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, unpack } from './sources.js'
+import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf } from './sources.js'
 import { readDirectory } from './directory.js'
 
 /** @typedef {import('./sources.js').Entry} Entry */
@@ -129,20 +129,6 @@ export const suggested = new Map()
 export async function lookFor(request) {
   const have = (await skills()).map((skill) => skill.name)
   return bestFit(request, [...await directory(), ...(await offered()).flatMap((index) => index.skills)], have, SAME_KIND)
-}
-
-/**
- * Downloads a skill and checks it against its digest (SkillError when it can't be added); one of
- * Jean's own is read from its files. @param {Entry} entry
- */
-export async function download(entry) {
-  const response = await fetch(entry.url)
-  if (!response.ok) throw new Error(`The skill answered ${response.status}.`)
-  if (!entry.digest) {
-    const { data, body } = parseFrontMatter(await response.text())
-    return { body: body.trim(), files: [], blocks: blocksOf(data.metadata?.blocks) }
-  }
-  return unpack(entry, new Uint8Array(await response.arrayBuffer()))
 }
 
 /**

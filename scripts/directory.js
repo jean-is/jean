@@ -5,13 +5,15 @@
 // metadata and preflights, and registers nothing.
 // An entry marked ready that fails, or one that passes and isn't marked, is reported, and the
 // command fails. Passing is not enough to mark one ready: sign in once with a real account.
-// Then the default sources of skills (caps/skills/sources.js, D121): each index, and every skill
-// it lists, must answer a browser, match its digest, and at least one must be made of instructions.
+// Then the default sources of skills (caps/skills/sources.js, D121): each index or repository, and
+// every skill it lists, must answer a browser, match its digest or git's hashes, and at least one
+// must be made of instructions.
 // Usage: npm run directory
 import { DIRECTORY } from '../caps/connections/directory.js'
 import { discover } from '../caps/connections/auth.js'
 import { mcpClient, MCPError } from '../caps/connections/mcp.js'
-import { DEFAULT_SOURCES, indexURL, parseIndex, unpack } from '../caps/skills/sources.js'
+import { DEFAULT_SOURCES, fetchSkill, indexURL, readIndexes, siteOf } from '../caps/skills/sources.js'
+import { memoryFS } from '../core/fs.js'
 
 const ORIGIN = 'https://jean.example'
 // What Jean sends: the 2026-07-28 revision's headers first, then the 2025 session's (D87).
@@ -70,6 +72,13 @@ async function browserGet(url) {
   return 'too many redirects'
 }
 
+/** fetch as a browser makes it from ORIGIN, which fails where browserGet stops. @param {string | URL | Request} url */
+const asBrowser = async (url) => {
+  const res = await browserGet(String(url))
+  if (typeof res === 'string') throw new Error(res)
+  return res
+}
+
 /**
  * On a terminal, how far a check has got, on one line rewritten in place; empty clears it for the
  * result. Elsewhere (a pipe, CI), nothing. @param {string} text
@@ -88,28 +97,26 @@ for (const entry of DIRECTORY) {
 console.log('\nSources of skills')
 for (const address of DEFAULT_SOURCES) {
   const url = indexURL(address)
-  progress(`  ${address.padEnd(28)} reading its index…`)
-  const res = await browserGet(url)
-  const entries = typeof res === 'string' ? res : await res.json().then((json) => parseIndex(json, url)).catch((/** @type {Error} */ error) => error.message)
-  if (typeof entries === 'string') {
+  const name = siteOf(url).padEnd(48)
+  progress(`  ${name} reading it…`)
+  const [{ skills: entries, error }] = await readIndexes(memoryFS(), [url], { fetch: /** @type {typeof fetch} */ (asBrowser) })
+  if (error) {
     mismatches++
     progress('')
-    console.log(`✗ ${address.padEnd(28)} ${entries}`)
+    console.log(`✗ ${name} ${error}`)
     continue
   }
   /** @type {Record<string, string[]>} */
   const verdicts = {}
   for (const [i, entry] of entries.entries()) {
-    progress(`  ${address.padEnd(28)} ${i + 1}/${entries.length} skills: ${entry.name}…`)
-    const download = await browserGet(entry.url)
-    const verdict = typeof download === 'string' ? download
-      : await unpack(entry, new Uint8Array(await download.arrayBuffer())).then(() => 'can be added', (/** @type {any} */ error) => error.code ?? error.message)
+    progress(`  ${name} ${i + 1}/${entries.length} skills: ${entry.name}…`)
+    const verdict = await fetchSkill(entry, /** @type {typeof fetch} */ (asBrowser)).then(() => 'can be added', (/** @type {any} */ error) => error.code ?? error.message)
     ;(verdicts[verdict] ??= []).push(entry.name)
   }
   const added = verdicts['can be added']?.length ?? 0
   mismatches += Number(!added)
   progress('')
-  console.log(`${added ? ' ' : '✗'} ${address.padEnd(28)} ${entries.length} skills: ${Object.entries(verdicts).map(([verdict, names]) => `${names.length} ${verdict}`).join(', ')}`)
+  console.log(`${added ? ' ' : '✗'} ${name} ${entries.length} skills: ${Object.entries(verdicts).map(([verdict, names]) => `${names.length} ${verdict}`).join(', ')}`)
 }
 console.log(mismatches ? `\n${mismatches} entries disagree with their checks.` : '\nEvery entry agrees with its checks. Sign in once to each ready service before shipping.')
 process.exitCode = mismatches ? 1 : 0

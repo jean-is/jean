@@ -12,6 +12,7 @@ import { loaded, unlock, isDenied } from './caps.js'
 import { openSettings, setting } from './dialogs.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
+import { DEFAULT_SOURCES, indexURL, siteOf } from '../caps/skills/sources.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
@@ -126,32 +127,27 @@ async function browse(again = false) {
   elsewhere.value = (await skillsModule?.offered({ again })) ?? []
 }
 
-/** The user's own list of sources: the defaults until they change it. */
-async function ownSources() {
-  const { DEFAULT_SOURCES } = await import('../caps/skills/sources.js')
-  return effective.value.settings.sources ?? [...DEFAULT_SOURCES]
-}
+/** The user's own list of sources: the defaults until they change it. @returns {string[]} */
+const ownSources = () => effective.value.settings.sources ?? [...DEFAULT_SOURCES]
 
 /** @param {SubmitEvent} event */
 async function addSource(event) {
   event.preventDefault()
   const form = /** @type {HTMLFormElement} */ (event.target)
   const address = String(new FormData(form).get('address') ?? '').trim()
-  const { indexURL } = await import('../caps/skills/sources.js')
   try {
     indexURL(address)
   } catch {
     return notify(t('skills.unreachable', { source: address }))
   }
   form.reset()
-  await updateSettings({ sources: [...new Set([...await ownSources(), address])] })
+  await updateSettings({ sources: [...new Set([...ownSources(), address])] })
   await browse(true)
 }
 
 /** @param {string} url an index's address */
 async function removeSource(url) {
-  const { indexURL } = await import('../caps/skills/sources.js')
-  await updateSettings({ sources: (await ownSources()).filter((address) => indexURL(address) !== url) })
+  await updateSettings({ sources: ownSources().filter((address) => indexURL(address) !== url) })
   await browse()
 }
 
@@ -194,7 +190,7 @@ function sourcesView(state) {
         placeholder=${t('skills.search')} aria-label=${t('skills.search')} @input=${(/** @type {Event} */ e) => { query.value = /** @type {HTMLInputElement} */ (e.target).value }}>` : nothing}
       ${words && !offered.some(({ entries }) => entries.length) ? html`<p class="muted small">${t('find.none', { query: query.value.trim() })}</p>` : nothing}
       ${offered.filter(({ index, entries }) => entries.length || index.error || !words).map(({ index, entries }) => {
-        const site = new URL(index.url).host
+        const site = siteOf(index.url)
         return html`<div class="source">
           <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${t('policy.locked')}</span>`
             : html`<button class="icon-button subtle" title=${t('action.remove')} aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
@@ -339,7 +335,7 @@ export function skills() {
         <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}></label></div>
       ${state.skills.length ? html`<ul class="list">${state.skills.map((skill) => html`<li><details>
         <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${named(state, skill).title}</strong><small dir="auto">${named(state, skill).text}</small>${skill.source
-          ? html`<small>${icons.globe} ${t('skills.from', { source: new URL(skill.source).host })}</small>` : nothing}</span>${icons.chevron}</summary>
+          ? html`<small>${icons.globe} ${t('skills.from', { source: siteOf(skill.source) })}</small>` : nothing}</span>${icons.chevron}</summary>
         <div class="item-body">
           <textarea class="steps" rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}
             @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
