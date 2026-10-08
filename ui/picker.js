@@ -1,12 +1,12 @@
-// The brain picker behind the chip in the box (docs/product.md, "Brains: picker and Auto"):
-// Auto, this device, Fast / Smart / Best from the connected provider with the real name in
-// small print and a plain cost, every other brain, and "never send to the cloud": those of the
-// room's project (D194).
+// The brain picker, a menu above the chip in the box (docs/product.md, "Brains: picker and Auto"):
+// Auto, Fast / Smart / Best from the connected provider, every other brain of the room's project
+// (D194), then "never send to the cloud" while one is in the cloud, and all brains. One line each,
+// an icon and a name; the real name and a plain cost show on hover.
 import { html, nothing } from 'lit-html'
 import { Element, define } from './base.js'
 import { app, effective, activeBrain, brainsHere, brainLabel, setBrainMode, loadModels } from './state.js'
 import { useBrain } from './brains.js'
-import { syncDialog, closed, close, backdrop, head, openSettings } from './dialogs.js'
+import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -14,16 +14,19 @@ import { icons } from './icons.js'
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
 const TIER_NAMES = ['fast', 'smart', 'best']
+const TIER_ICONS = [icons.bolt, icons.lamp, icons.star]
 // A typical answer: about 3,000 tokens read and 600 written.
 const READ = 3000
 const WRITTEN = 600
 
+/** Opens the menu; once this module is in, the chip opens and closes it on its own. */
+export const openPicker = () => document.getElementById('brain-menu')?.showPopover()
+
+/** A model's own name, without its maker's: "claude-sonnet-5.5". @param {string} model */
+const short = (model) => model.slice(model.lastIndexOf('/') + 1)
+
 /** @param {BrainConfig} brain @param {string} model */
-async function pick(brain, model) {
-  await setBrainMode({ auto: false })
-  await useBrain(brain.id, model)
-  close()
-}
+const pick = (brain, model) => setBrainMode({ auto: false }).then(() => useBrain(brain.id, model))
 
 /** "about $0.003 per answer", from the provider's own prices. @param {import('../core/types.js').ModelInfo | undefined} info */
 function cost(info) {
@@ -34,14 +37,11 @@ function cost(info) {
 }
 
 /**
- * @param {string} label @param {string} detail small print @param {boolean} selected
- * @param {() => void} choose @param {unknown} [icon]
+ * One choice: its icon and its name, what is behind it on hover; the one answering is ticked.
+ * @param {unknown} icon @param {string} label @param {string} behind @param {boolean} selected @param {() => unknown} choose
  */
-const option = (label, detail, selected, choose, icon = icons.spark) => html`<li>
-  <button class="choice-option ${selected ? 'is-selected' : ''}" aria-pressed=${selected ? 'true' : 'false'} @click=${choose}>
-    ${icon}<span><strong>${label}</strong>${detail ? html`<small dir="auto">${detail}</small>` : nothing}</span>${selected ? icons.check : nothing}
-  </button>
-</li>`
+const option = (icon, label, behind, selected, choose) => html`<button type="button" popovertarget="brain-menu" popovertargetaction="hide"
+  title=${behind || nothing} aria-current=${selected ? 'true' : 'false'} @click=${choose}>${icon}<span><bdi>${label}</bdi></span>${selected ? icons.check : nothing}</button>`
 
 class Picker extends Element {
   render() {
@@ -53,28 +53,19 @@ class Picker extends Element {
     const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
     const offered = tiers.filter((model) => models.some((info) => info.id === model))
     const manual = (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => !settings.auto && active?.id === brain.id && active.model === model
-    return html`<dialog class="sheet picker" @close=${closed('picker')} @click=${backdrop}>
-      ${head(t('picker.title'))}
-      <ul class="choices">
-        ${option(t('auto.name'), t('auto.text'), settings.auto, () => setBrainMode({ auto: true }).then(close))}
-        ${remote ? offered.map((model) => option(t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`), [model, cost(models.find((info) => info.id === model))].filter(Boolean).join(' · '),
-          manual(remote, model), () => pick(remote, model))) : nothing}
-        ${brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => option(
-          brain.api === 'device' ? t('brain.device.title') : brainLabel(brain),
-          brain.api === 'device' ? t('brain.device.private') : isLocal(brain) ? t('picker.local') : '',
-          manual(brain, brain.model), () => pick(brain, brain.model), brain.api === 'device' ? icons.chip : icons.computer))}
-      </ul>
-      <label class="toggle">
-        <input type="checkbox" .checked=${!settings.cloud} @change=${(/** @type {Event} */ e) => setBrainMode({ cloud: !(/** @type {HTMLInputElement} */ (e.target).checked) })}>
-        <span>${t('picker.neverCloud')}</span>
-      </label>
-      <button class="button subtle wide" @click=${() => openSettings('brains')}>${t('picker.all')} ${icons.arrow}</button>
-    </dialog>`
-  }
-
-  updated() {
-    syncDialog(this, 'picker')
-    if (app.dialog.value === 'picker') for (const brain of brainsHere.value) if (!isLocal(brain)) loadModels(brain)
+    return html`<div id="brain-menu" class="menu brain-menu" popover
+      @toggle=${(/** @type {ToggleEvent} */ e) => e.newState === 'open' && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
+      ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => setBrainMode({ auto: true }))}
+      ${remote ? offered.map((model) => option(TIER_ICONS[tiers.indexOf(model)], t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`),
+        [short(model), cost(models.find((info) => info.id === model))].filter(Boolean).join(' · '), manual(remote, model), () => pick(remote, model))) : nothing}
+      ${brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => brain.api === 'device'
+        ? option(icons.chip, t('brain.device.title'), t('brain.device.private'), manual(brain, brain.model), () => pick(brain, brain.model))
+        : option(isLocal(brain) ? icons.computer : icons.globe, short(brain.model), brainLabel(brain), manual(brain, brain.model), () => pick(brain, brain.model)))}
+      <hr>
+      ${remote ? html`<button type="button" role="switch" aria-checked=${settings.cloud ? 'false' : 'true'}
+        @click=${() => setBrainMode({ cloud: !settings.cloud })}>${icons.shield}<span>${t('picker.neverCloud')}</span></button>` : nothing}
+      <button type="button" popovertarget="brain-menu" popovertargetaction="hide" @click=${() => openSettings('brains')}>${icons.gear}<span>${t('picker.all')}</span></button>
+    </div>`
   }
 }
 

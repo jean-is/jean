@@ -155,13 +155,13 @@ What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jea
 
 ## Brains: picker and Auto
 
-A chip in the message box, beside its send button, reads **Auto ▾**, or the name of the brain picked by hand (its provider is in the picker). It offers:
+A chip in the message box, beside its send button, reads **Auto ▾**, or the name of the brain picked by hand (its provider is in the picker). It opens a menu above it, each choice on one line, an icon and a name, and the one answering ticked:
 
 - **Auto** (recommended)
 - **On this device:** private, free, works offline
-- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name in small print and a plain cost ("about 1¢ per answer"), using prices from the provider's catalogue (OpenRouter `/models`, or models.dev).
+- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover, using prices from the provider's catalogue (OpenRouter `/models`, or models.dev).
 - **All brains**
-- **Never send to the cloud,** an explicit switch
+- **Never send to the cloud,** an explicit switch, while a brain is in the cloud
 
 Organisation policy can hide or lock any of these.
 

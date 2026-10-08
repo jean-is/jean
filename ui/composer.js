@@ -71,7 +71,7 @@ class Composer extends Element {
               aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')} title=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
           </div>
-          <button type="button" class="brain-chip" aria-haspopup="dialog" @click=${openPicker}>
+          <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
             ${brain?.api === 'device' && !auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
           ${primary(busy, empty, hands)}
@@ -196,11 +196,10 @@ function complete(area) {
 /** Whether this browser can share a screen (not phones, where + only adds files). */
 const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
-/** The brain picker, or choosing a first brain. */
+/** The brain picker, a menu above the chip, or choosing a first brain. */
 async function openPicker() {
   if (!brainsHere.value.length) return (await import('./dialogs.js')).openSettings('brains')
-  await import('./picker.js')
-  app.dialog.value = 'picker'
+  if (!customElements.get('app-picker')) (await import('./picker.js')).openPicker()
 }
 
 /**

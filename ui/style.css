@@ -569,6 +569,7 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
   background: transparent;
   font-size: 0.84rem;
   color: var(--ink-soft);
+  anchor-name: --brain;
 }
 .brain-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .brain-chip .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
@@ -616,6 +617,10 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
 .menu hr { margin: 0.35rem 0.5rem; border: 0; border-block-start: 1px solid var(--line); }
 .menu kbd { margin-inline-start: auto; padding-inline-start: 1.5rem; font: inherit; font-size: 0.78rem; color: var(--ink-faint); }
 @media (pointer: coarse) { .menu kbd { display: none; } }
+/* The brain picker, above its chip: one line each, an icon and a name, the one answering ticked. */
+.brain-menu { position-anchor: --brain; position-area: block-start span-inline-start; min-inline-size: 14rem; max-inline-size: min(20rem, 100vw - 2rem); max-block-size: min(70dvh, 34rem); overflow-y: auto; }
+.brain-menu button > span { flex: 1; min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; }
+.brain-menu [aria-current='true'] .icon:last-child { color: var(--flame); }
 
 /* ─── Buttons and forms ─────────────────────────────────────────────────── */
 

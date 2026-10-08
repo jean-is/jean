@@ -251,7 +251,7 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
   if (!picked) {
     setPresence('idle')
     notify(t('auto.noPrivate'))
-    app.dialog.value = 'picker'
+    import('./picker.js').then((module) => module.openPicker())
     return
   }
   const { brain, meta } = picked

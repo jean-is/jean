@@ -1,4 +1,4 @@
-// Fifty-two inline icons, 24×24, drawn with the current colour.
+// Fifty-five inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -25,6 +25,8 @@ export const icons = {
   check: icon(svg`<path d="M5 12.5 10 17 19 7"/>`),
   chevron: icon(svg`<path d="m8 10 4 4 4-4"/>`),
   spark: icon(svg`<path d="M12 5c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7Z"/>`),
+  bolt: icon(svg`<path d="M13 3.5 5.5 13.5H12l-1 7 7.5-10H12l1-7Z"/>`),
+  star: icon(svg`<path d="m12 4 2.5 5.1 5.6.8-4 4 .9 5.6-5-2.6-5 2.6.9-5.6-4-4 5.6-.8Z"/>`),
   more: icon(svg`<path d="M12 5.5v.01M12 12v.01M12 18.5v.01" stroke-width="2.6"/>`),
   trash: icon(svg`<path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/>`),
   retry: icon(svg`<path d="M5 12a7 7 0 1 0 2-4.9M5 4v4h4"/>`),
