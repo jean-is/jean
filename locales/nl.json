@@ -27,6 +27,7 @@
   "dock.resize": "Formaat wijzigen",
   "speech.noVoice": "Geen stem op dit apparaat kan {language} voorlezen. Je kunt er een toevoegen in de instellingen van je systeem.",
   "toast.copied": "Gekopieerd",
+  "toast.copiedPictures": "Gekopieerd. Komen de afbeeldingen niet mee, kopieer dan elk met zijn eigen ‘Kopiëren’.",
   "conversation.untitled": "Nieuwe taak",
   "history.title": "Taken",
   "history.empty": "Je taken verschijnen hier.",

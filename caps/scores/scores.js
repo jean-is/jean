@@ -1,9 +1,12 @@
 // Scores (D196): a ```abc block in an answer, music in ABC notation, drawn as a score by abcjs and
 // played by Jean's own small synthesizer (./notes.js), each note lit as it sounds, with where it
-// is to move. One score plays at a time. Drawn again, at most every quarter second, while the
-// answer is written. Loaded by the first score an answer holds, never offered; until then, or when
-// abcjs finds no music in a block, its source shows a click away.
+// is to move, and copied as its source and its picture at once. One score plays at a time. Drawn
+// again, at most every quarter second, while the answer is written. Loaded by the first score an
+// answer holds; until then, or when abcjs finds no music in a block, it shows as code.
 import { html, render, svg } from 'lit-html'
+import { notify } from '../../ui/state.js'
+import { copyDrawing } from '../../ui/save.js'
+import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { notesOf, wholeNote } from './notes.js'
@@ -109,14 +112,43 @@ class AppScore extends HTMLElement {
     const on = this.started !== null
     const source = this.getAttribute('source') ?? ''
     render(html`<div class="score-sheet" dir="ltr" role="img" aria-label=${this.label || t('scores.score')}></div>
-      ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>`
-      : this.notes.length ? html`<div class="score-player" dir="ltr">
+      ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>
+        <pre dir="ltr"><code>${source}</code></pre>`
+      : html`<div class="score-player" dir="ltr">${this.notes.length ? html`
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} title=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : PLAY}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
-        <span class="score-time">${clock(this.at)} / ${clock(this.length)}</span>
-      </div>` : ''}
-      <details><summary>abc</summary><pre dir="ltr"><code>${source}</code></pre></details>`, this)
+        <span class="score-time">${clock(this.at)} / ${clock(this.length)}</span>` : ''}
+        <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+          @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+      </div>`}`, this)
+  }
+
+  /**
+   * The score as a picture to put in a document, a PNG: its drawing as abcjs made it, in black on
+   * white, twice as fine. @returns {Promise<Blob>}
+   */
+  async picture() {
+    const drawn = /** @type {SVGSVGElement} */ (this.querySelector('.score-sheet svg'))
+    const [width, height] = (drawn.getAttribute('viewBox')?.split(/\s+/).slice(2) ?? [drawn.getAttribute('width'), drawn.getAttribute('height')]).map(Number)
+    const copy = /** @type {SVGSVGElement} */ (drawn.cloneNode(true))
+    copy.removeAttribute('style')
+    copy.setAttribute('width', String(width))
+    copy.setAttribute('height', String(height))
+    const address = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(copy)], { type: 'image/svg+xml' }))
+    try {
+      const image = new Image()
+      image.src = address
+      await image.decode()
+      const canvas = Object.assign(document.createElement('canvas'), { width: width * 2, height: height * 2 })
+      const pen = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'))
+      pen.fillStyle = '#fff'
+      pen.fillRect(0, 0, canvas.width, canvas.height)
+      pen.drawImage(image, 0, 0, canvas.width, canvas.height)
+      return await new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('No picture'))), 'image/png'))
+    } finally {
+      URL.revokeObjectURL(address)
+    }
   }
 
   play() {

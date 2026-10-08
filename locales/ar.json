@@ -27,6 +27,7 @@
   "dock.resize": "تغيير الحجم",
   "speech.noVoice": "لا يوجد على هذا الجهاز صوت يقرأ هذه اللغة ({language}). يمكنك إضافة صوت من إعدادات نظامك.",
   "toast.copied": "تم النسخ",
+  "toast.copiedPictures": "تم النسخ. إن لم تُلصق صوره، انسخ كلًّا منها بزر «نسخ» الخاص بها.",
   "conversation.untitled": "مهمة جديدة",
   "history.title": "المهام",
   "history.empty": "ستظهر مهامك هنا.",

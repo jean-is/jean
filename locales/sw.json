@@ -27,6 +27,7 @@
   "dock.resize": "Badilisha ukubwa",
   "speech.noVoice": "Hakuna sauti kwenye kifaa hiki inayoweza kusoma lugha hii ({language}). Unaweza kuongeza moja katika mipangilio ya mfumo wako.",
   "toast.copied": "Imenakiliwa",
+  "toast.copiedPictures": "Imenakiliwa. Picha zisipobandikwa, nakili kila moja kwa kitufe chake cha “Nakili”.",
   "conversation.untitled": "Kazi mpya",
   "history.title": "Kazi",
   "history.empty": "Kazi zako zitaonekana hapa.",

@@ -132,7 +132,7 @@ export function notify(message, action) {
   app.toast.value = toast
   setTimeout(() => {
     if (app.toast.value === toast) app.toast.value = null
-  }, action ? 6000 : 2600)
+  }, action ? 6000 : Math.max(2600, message.length * 80))
 }
 
 // ─── Language and rules ──────────────────────────────────────────────────────

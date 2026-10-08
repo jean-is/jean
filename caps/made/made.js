@@ -212,7 +212,7 @@ class Made extends Element {
     if (!source) return nothing
     const tables = tablesIn(source)
     return html`
-      <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('made.copyTitle')} @click=${() => copyRich(source)}>${icons.copy}</button>
+      <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('made.copyTitle')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>
       ${tables.map((table, i) => html`<button class="icon-button subtle" title=${t('made.csvTitle')}
         aria-label=${tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle')}
         @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}`
@@ -221,8 +221,29 @@ class Made extends Element {
 
 // ─── Rich text ───────────────────────────────────────────────────────────────
 
-/** @param {string} source Markdown */
-export async function copyRich(source) {
+/**
+ * Copies an answer two ways at once: its Markdown as text, and laid out as rich text, in which a
+ * chart or a score (D196) is the picture its widget on screen draws, or else its code.
+ * @param {string} source Markdown @param {globalThis.Element | null} [answer] the answer on screen, with its widgets
+ */
+export async function copyRich(source, answer) {
+  try {
+    if (typeof ClipboardItem === 'function' && navigator.clipboard.write) {
+      await navigator.clipboard.write([new ClipboardItem({
+        'text/html': laidOut(source, answer).then((rich) => new Blob([rich], { type: 'text/html' })),
+        'text/plain': new Blob([source], { type: 'text/plain' }),
+      })])
+    } else await navigator.clipboard.writeText(source)
+    // Some apps leave out pictures pasted in rich text (Notion), but take a widget's own copy (D196).
+    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"]') ? 'toast.copiedPictures' : 'toast.copied'))
+  } catch (error) {
+    console.warn('Copy', error)
+    notify(t('made.copyFailed'))
+  }
+}
+
+/** The answer as HTML. @param {string} source @param {globalThis.Element | null | undefined} answer */
+async function laidOut(source, answer) {
   const holder = document.createElement('div')
   render(markdown(source), holder)
   // lit-html leaves marker comments; the clipboard doesn't need them.
@@ -231,18 +252,30 @@ export async function copyRich(source) {
   const comments = []
   while (walker.nextNode()) comments.push(/** @type {ChildNode} */ (walker.currentNode))
   for (const comment of comments) comment.remove()
-  const rich = new XMLSerializer().serializeToString(holder)
+  // Each widget's twin on screen, the same kind with the same source, draws its picture.
+  const shown = [...answer?.querySelectorAll('.prose :is(app-chart, app-score)') ?? []]
+  for (const widget of holder.querySelectorAll('app-chart, app-score')) {
+    const code = widget.getAttribute('source') ?? ''
+    const twin = shown.find((other) => other.localName === widget.localName && other.getAttribute('source') === code)
+    if (twin) shown.splice(shown.indexOf(twin), 1)
+    widget.replaceWith((twin && await pictureOf(twin)) || Object.assign(document.createElement('pre'), { textContent: code }))
+  }
+  return new XMLSerializer().serializeToString(holder)
+}
+
+/** A widget's picture as an image in the copied HTML, at the size it shows, or null. @param {globalThis.Element} widget */
+async function pictureOf(widget) {
   try {
-    if (typeof ClipboardItem === 'function' && navigator.clipboard.write) {
-      await navigator.clipboard.write([new ClipboardItem({
-        'text/html': new Blob([rich], { type: 'text/html' }),
-        'text/plain': new Blob([source], { type: 'text/plain' }),
-      })])
-    } else await navigator.clipboard.writeText(source)
-    notify(t('toast.copied'))
+    const blob = await /** @type {{ picture: () => Promise<Blob> }} */ (/** @type {unknown} */ (widget)).picture()
+    const reader = new FileReader()
+    const read = new Promise((resolve, reject) => Object.assign(reader, { onload: resolve, onerror: reject }))
+    reader.readAsDataURL(blob)
+    const [{ width }] = await Promise.all([createImageBitmap(blob), read])
+    // Drawn twice as fine as it shows.
+    return Object.assign(document.createElement('img'), { src: String(reader.result), width: Math.round(width / 2), alt: widget.querySelector('[role="img"]')?.getAttribute('aria-label') ?? '' })
   } catch (error) {
     console.warn('Copy', error)
-    notify(t('made.copyFailed'))
+    return null
   }
 }
 

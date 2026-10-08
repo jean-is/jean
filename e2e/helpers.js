@@ -16,8 +16,7 @@ export async function start(page, lang = 'en') {
   const settings = await openSettings(page)
   await settings.locator('.settings-panel select').first().selectOption(lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
-  await page.keyboard.press('Escape')
-  await expect(settings).toBeHidden()
+  await closeSettings(page)
 }
 
 /** Connects the fake brain through Settings' Brains, "On your computer" → Other. @param {import('@playwright/test').Page} page */
@@ -85,6 +84,17 @@ export async function openSettings(page, section) {
   return settings
 }
 
+/**
+ * Closes Settings with Escape, its address too: going back over the history entry it opened (D137)
+ * lands a moment after the dialog closes, and a reload meanwhile is cut short or opens it again.
+ * @param {import('@playwright/test').Page} page
+ */
+export async function closeSettings(page) {
+  await page.keyboard.press('Escape')
+  await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+  await expect(page).not.toHaveURL(/\/settings/)
+}
+
 /** Turns a capability on from the house ("What Jean can do", in Settings): its trophy, then its plaque. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
   const house = (await openSettings(page, 'Capabilities')).locator('.house')
@@ -135,3 +145,20 @@ export const inkOf = (canvas) => canvas.evaluate((element) => {
   for (let i = 0; i < data.length; i += 4) if (data[i + 3] && data[i] < 128) ink++
   return ink
 })
+
+/**
+ * What the next Copy puts on the clipboard (D196), caught on its way there: each kind it holds,
+ * text as it is and anything else by its first four bytes. Call before the click, await after.
+ * @param {import('@playwright/test').Page} page
+ */
+export async function nextCopy(page) {
+  await page.evaluate(() => {
+    /** @type {any} */ (window).copied = new Promise((resolve) => {
+      navigator.clipboard.write = async ([item]) => resolve(Object.fromEntries(await Promise.all(item.types.map(async (type) => {
+        const blob = await item.getType(type)
+        return [type, type.startsWith('text/') ? await blob.text() : [...new Uint8Array(await blob.slice(0, 4).arrayBuffer())]]
+      }))))
+    })
+  })
+  return { read: () => page.evaluate(() => /** @type {any} */ (window).copied) }
+}

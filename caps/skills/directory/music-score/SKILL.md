@@ -1,11 +1,11 @@
 ---
-name: music-scores
+name: music-score
 description: "Write music as a score the user can see and play, in ABC notation: a melody, a tune, a song's chords, an exercise or a transcription, when the user asks for sheet music, notes to play or a tune."
 metadata:
   format: "1"
   blocks: abc
 ---
-# Music scores
+# Music score
 
 Write music in ABC notation in a fenced code block tagged `abc`. It is drawn as a score where the block is, with a button to play it, each note lit as it sounds.
 

@@ -1,8 +1,8 @@
-// Scores (D196): with the Music scores skill of Jean's own directory added, a ```abc block in an
+// Scores (D196): with the Music score skill of Jean's own directory added, a ```abc block in an
 // answer is a widget: drawn as a score by abcjs, played by Jean's own synthesizer, each note lit
-// as it sounds, paused where it is.
+// as it sounds, paused where it is, and copied as its source and its picture at once.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
 
 test('a tune is drawn as a score once its skill is added, and plays, each note lit as it sounds', async ({ page }) => {
   await start(page)
@@ -10,11 +10,11 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await turnOn(page, 'Skills')
   await page.keyboard.press('Escape')
   const knows = await openSettings(page, 'Skills')
-  await knows.locator('.ready-made .service', { hasText: 'Music scores' }).click()
+  await knows.locator('.ready-made .service', { hasText: 'Music score' }).click()
   const ready = page.locator('app-skill-ready dialog[open]')
   await expect(ready.locator('.skill-steps')).toContainText('ABC notation')
   await ready.locator('.button.primary').click()
-  await expect(page.locator('.toast')).toContainText('Added the skill “Music scores”.')
+  await expect(page.locator('.toast')).toContainText('Added the skill “Music score”.')
   await page.keyboard.press('Escape')
 
   await ask(page, 'Write me a jig')
@@ -29,6 +29,14 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await score.getByRole('button', { name: 'Pause' }).click()
   await expect(score.getByRole('button', { name: 'Play' })).toBeVisible()
   await expect(score.locator('.score-sheet .is-sounding')).toHaveCount(0)
-  await score.locator('summary', { hasText: 'abc' }).click()
-  await expect(score.locator('details pre')).toContainText('T:The Legacy Jig')
+  // Copy: the ABC as text and the score as a picture, at once.
+  const copy = await nextCopy(page)
+  await score.getByRole('button', { name: 'Copy' }).click()
+  const copied = await copy.read()
+  expect(copied['text/plain']).toMatch(/^X:1\nT:The Legacy Jig\n/)
+  expect(copied['image/png']).toEqual([137, 80, 78, 71])
+  // Copying the answer: the score as its picture in the rich text.
+  const whole = await nextCopy(page)
+  await page.locator('.msg-jean').last().locator('app-made').getByRole('button', { name: 'Copy' }).click()
+  expect((await whole.read())['text/html']).toMatch(/<img [^>]*src="data:image\/png;base64,[^"]+"[^>]*alt="The Legacy Jig"/)
 })

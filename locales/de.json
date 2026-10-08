@@ -27,6 +27,7 @@
   "dock.resize": "Größe ändern",
   "speech.noVoice": "Keine Stimme auf diesem Gerät kann {language} vorlesen. In den Systemeinstellungen kannst du eine hinzufügen.",
   "toast.copied": "Kopiert",
+  "toast.copiedPictures": "Kopiert. Wenn die Bilder nicht mitkommen, kopiere jedes mit seinem eigenen „Kopieren“.",
   "conversation.untitled": "Neue Aufgabe",
   "history.title": "Aufgaben",
   "history.empty": "Deine Aufgaben erscheinen hier.",

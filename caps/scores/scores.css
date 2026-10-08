@@ -1,12 +1,13 @@
-/* Scores (D196): the score in the ink's colour, the notes sounding in the flame's, then the player and the source. */
+/* Scores (D196): the score in the ink's colour, the notes sounding in the flame's, then the player and Copy. */
 app-score .score-sheet { color: var(--ink); }
 app-score .score-sheet:empty { display: none; }
 app-score .score-sheet .is-sounding { color: var(--flame); fill: var(--flame); }
 app-score .score-player { display: flex; align-items: center; gap: 0.6rem; margin-block: 0.4rem 0.2rem; }
 app-score .score-player input { flex: 1; min-inline-size: 0; accent-color: var(--flame); }
 app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+app-score .score-player > .subtle { margin-inline-start: auto; }
 /* While the answer is written, the score's place; once it's written, why there is none. */
 app-score .drawn-status { margin: 0 0 0.6rem; }
 .is-streaming app-score .drawn-status { display: grid; place-items: center; min-block-size: 8rem; margin: 0; }
-app-score .while, .is-streaming app-score :is(.failed, details) { display: none; }
+app-score .while, .is-streaming app-score :is(.failed, pre) { display: none; }
 .is-streaming app-score .while { display: inline; }

@@ -27,6 +27,7 @@
   "dock.resize": "Yeniden boyutlandır",
   "speech.noVoice": "Bu cihazda bu dili ({language}) okuyabilen bir ses yok. Sistem ayarlarından bir ses ekleyebilirsin.",
   "toast.copied": "Kopyalandı",
+  "toast.copiedPictures": "Kopyalandı. Resimler yapışmazsa, her birini kendi “Kopyala” düğmesiyle kopyala.",
   "conversation.untitled": "Yeni görev",
   "history.title": "Görevler",
   "history.empty": "Görevlerin burada görünecek.",

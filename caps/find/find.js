@@ -275,9 +275,9 @@ class Find extends Element {
   }
 
   #open = false
-  #closed = () => {
+  #closed = (/** @type {Event} */ event) => {
     active.value = 0
-    closed('find')()
+    closed('find')(event)
   }
 
   updated() {

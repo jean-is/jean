@@ -174,6 +174,13 @@ effect(() => register({
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()
 
+/** The room's connections as the box's / names them (D199): each with its logo and its tools' names. */
+export const offered = () => here().map((connection) => ({
+  name: connection.name,
+  logo: known(app.policy).find((entry) => entry.url === connection.url)?.logo,
+  tools: (status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name)),
+}))
+
 // ─── Connecting ──────────────────────────────────────────────────────────────
 
 /** "https://mcp.notion.com/mcp" → "Notion"; an address without a name keeps its host. @param {string} url */
@@ -230,6 +237,18 @@ async function connectTo(url, name, { key = '', gateway = false } = {}) {
     message.value = { kind: 'error', text: failed(connection, 'connections.failed') }
     return false
   }
+}
+
+/** The services Jean knows, those the gateway reaches included (D191), as the panel shows them. */
+export const services = () => known(app.policy, served.value.hosts)
+
+/**
+ * A service picked in the box (D199), connected as its tile connects it, its sign-in included;
+ * Settings opens on Connections when it couldn't be, saying why. @param {Listed} entry
+ */
+export async function connectService(entry) {
+  place = 'top'
+  if (!(await connectTo(String(entry.url), entry.name, { gateway: entry.via === 'gateway' })) && message.value?.kind === 'error') openSettings('connections')
 }
 
 /** @param {SubmitEvent} event */

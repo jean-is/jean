@@ -27,6 +27,7 @@
   "dock.resize": "שינוי גודל",
   "speech.noVoice": "אין במכשיר הזה קול שיכול להקריא את השפה הזו ({language}). אפשר להוסיף קול בהגדרות המערכת.",
   "toast.copied": "הועתק",
+  "toast.copiedPictures": "הועתק. אם התמונות לא מודבקות, העתיקו כל אחת בכפתור ״העתקה״ שלה.",
   "conversation.untitled": "משימה חדשה",
   "history.title": "משימות",
   "history.empty": "המשימות שלך יופיעו כאן.",

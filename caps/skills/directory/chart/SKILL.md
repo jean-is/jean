@@ -1,13 +1,13 @@
 ---
-name: charts
+name: chart
 description: "Draw a chart in an answer (bars, lines, areas, pie, scatter, heatmap, radar, funnel, gauge, treemap, sankey and more) when the user asks for a chart or a graph, or when numbers are clearer seen than read."
 metadata:
   format: "1"
   blocks: echarts
 ---
-# Charts
+# Chart
 
-Draw a chart in your answer by writing an ECharts option as JSON in a fenced code block tagged `echarts`. It is drawn where the block is, in the user's theme, and the user can save it as a picture.
+Draw a chart in your answer by writing an ECharts option as JSON in a fenced code block tagged `echarts`. It is drawn where the block is, in the user's theme, and the user can copy it as a picture.
 
 ```echarts
 {

@@ -35,18 +35,34 @@ import { styleSheet } from './sheet.js'
 // dialog imports this one. The sheet goes after ui/style.css, so its rules win a tie.
 await Promise.all([useStrings('dialogs'), styleSheet('ui/dialogs.css')])
 
-/** @param {Element} host @param {string} name */
+/** Whether each dialog was last told to be open. @type {WeakMap<HTMLDialogElement, boolean>} */
+const told = new WeakMap()
+
+/**
+ * Opens or closes a dialog when app.dialog comes to name it or stops: a render meanwhile never
+ * opens again one the browser closed (Escape) before its close event says so.
+ * @param {Element} host @param {string} name
+ */
 export function syncDialog(host, name) {
   const dialog = host.querySelector('dialog')
   const open = app.dialog.value === name
-  if (open && !dialog?.open) dialog?.showModal()
-  else if (!open && dialog?.open) dialog.close()
+  if (dialog && told.get(dialog) !== open) {
+    told.set(dialog, open)
+    if (open && !dialog.open) dialog.showModal()
+    else if (!open && dialog.open) dialog.close()
+  }
   placeToasts()
 }
 
 export const close = () => { app.dialog.value = null }
-/** A dialog closed (Escape, or another one opening): forget it only if it is still the open one. @param {string} name */
-export const closed = (name) => () => { if (app.dialog.value === name) app.dialog.value = null }
+/**
+ * A dialog closed (Escape, or another one opening): forget it only if it is still the open one, and
+ * still closed. The event comes after the fact (a frame later in Chromium), maybe once it opened again.
+ * @param {string} name
+ */
+export const closed = (name) => (/** @type {Event} */ event) => {
+  if (app.dialog.value === name && !(/** @type {HTMLDialogElement} */ (event.target)).open) app.dialog.value = null
+}
 /** @param {MouseEvent} event */
 export const backdrop = (event) => { if (event.target === event.currentTarget) close() }
 
@@ -687,7 +703,7 @@ class Settings extends Element {
 // lit once found, a silhouette until then that says how it is found. A ring of a segment each
 // circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
-const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
+export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', made: 'table', computer: 'code', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip',
 })

@@ -27,6 +27,7 @@
   "dock.resize": "调整大小",
   "speech.noVoice": "这台设备上没有能朗读{language}的声音。你可以在系统设置中添加。",
   "toast.copied": "已复制",
+  "toast.copiedPictures": "已复制。如果图片没有粘贴过去，请用各自的“复制”分别复制。",
   "conversation.untitled": "新任务",
   "history.title": "任务",
   "history.empty": "你的任务会显示在这里。",

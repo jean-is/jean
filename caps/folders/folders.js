@@ -205,7 +205,8 @@ const sending = (/** @type {boolean} */ typed) => {
   if (folder?.handle && !allowed.peek().has(folder.handle) && (!typed || app.draft.peek().trim())) permit(folder)
 }
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' && !event.shiftKey && !event.isComposing && event.target instanceof HTMLTextAreaElement && event.target.id === 'prompt') sending(true)
+  // Not when Enter picks from the box's menu of / and @ (D199), which says which it picks.
+  if (event.key === 'Enter' && !event.shiftKey && !event.isComposing && event.target instanceof HTMLTextAreaElement && event.target.id === 'prompt' && !event.target.hasAttribute('aria-activedescendant')) sending(true)
 }, true)
 document.addEventListener('click', (event) => {
   if (!(event.target instanceof window.Element)) return
@@ -578,6 +579,16 @@ export async function computerFolder(signal) {
   if (!folderOf(conversationOf(signal))) return null
   const { folder, fs } = await working(signal)
   return { folder, fs, always: Boolean(folder.copy) || await always(folder) }
+}
+
+/**
+ * The files and folders of the folder of the conversation on screen, or of the one about to start,
+ * by path, for @ in the box (D199); null without one, or while the browser doesn't let Jean open it.
+ */
+export async function entries() {
+  const folder = folderOf(app.current.peek())
+  if (!folder || !(await isOpen(folder))) return null
+  return { name: folder.name, ...(await walkFolder(await fsOf(folder))) }
 }
 
 /** "Always allow" in a folder, answered on the Computer's card (D162). @param {Folder} folder */

@@ -3,7 +3,7 @@
 // the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS shows as it
 // is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
 import { test, expect } from '@playwright/test'
-import { start, openSettings, openTasks } from './helpers.js'
+import { start, openSettings, closeSettings, openTasks } from './helpers.js'
 import { LOOKS } from '../ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -71,8 +71,7 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('routines'))
   await tasks.locator('.place', { hasText: 'Routines' }).click()
   await expect(page.locator('app-settings .settings-nav [aria-current="page"]')).toHaveText('Routines')
-  await page.keyboard.press('Escape')
-  await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+  await closeSettings(page)
   await page.reload()
   await expect(tasks).toBeVisible()
 
