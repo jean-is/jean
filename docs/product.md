@@ -233,7 +233,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 
 | Need | Default (private) | Option |
 |---|---|---|
-| Dictation (speech to text) | A Whisper-class multilingual model in the page, through Transformers.js (99 languages) | Chrome's on-device recognition (`processLocally: true`) where available; cloud speech-to-text from the connected provider |
+| Dictation (speech to text) | A model in the page: Whistle in English, German, French, Spanish, Italian and Dutch, Whisper base through Transformers.js in the other languages (D205) | Chrome's on-device recognition (`processLocally: true`) where available; cloud speech-to-text from the connected provider |
 | Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true, in the answer's own language (D109), by the most natural voice there for it; when none speaks it, Jean says so (D114) | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
 | Live conversation | A chain: Silero voice detection → speech-to-text → brain (streamed) → speech, sentence by sentence; speaking over Jean interrupts it. Works with any brain. | Real-time speech models from the connected provider (OpenAI Realtime over WebRTC with the user's key, Gemini Live) |
 

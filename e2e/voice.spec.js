@@ -1,6 +1,6 @@
 // Dictation (0.2): the browser's own recognition on the device when it has one, never its
-// cloud recognition, in the interface language; otherwise a small Whisper, downloaded only
-// once the user agrees. The browser's recogniser is replaced by a fake that hears a sentence.
+// cloud recognition, in the interface language; otherwise Whistle or a small Whisper, by
+// language, downloaded only once the user agrees. The browser's recogniser is replaced by a fake that hears a sentence.
 // Read-aloud (D114): each answer in its own language, by the best voice on the device.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
@@ -52,9 +52,10 @@ for (const [lang, tag, words] of [['en', 'en-US', 'what are the total sales'], [
   })
 }
 
-test('without on-device recognition, nothing is downloaded until the user agrees', async ({ page }) => {
+// Whistle writes English, Whisper base Polish (D205): each asks for its own download.
+for (const [lang, size] of [['en', 18], ['pl', 80]]) test(`without on-device recognition, nothing is downloaded until the user agrees (${lang})`, async ({ page }) => {
   await fakeRecognition(page, { status: 'unavailable' })
-  await start(page)
+  await start(page, lang)
   /** @type {string[]} */
   const asked = []
   page.on('dialog', (dialog) => {
@@ -65,7 +66,7 @@ test('without on-device recognition, nothing is downloaded until the user agrees
   const mic = page.locator('.composer-tools button[aria-pressed]')
   await mic.click()
   await expect.poll(() => asked.length).toBe(1)
-  expect(asked[0]).toContain('about 80 MB')
+  expect(asked[0]).toContain(`${size} MB`)
   expect(await whisper).toBeNull()
   await expect(mic).toHaveAttribute('aria-pressed', 'false')
   const recognitions = await page.evaluate(() => /** @type {any} */ (window).recognitions)

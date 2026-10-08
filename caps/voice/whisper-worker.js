@@ -1,14 +1,17 @@
-// Speech to text with Whisper through Transformers.js, on WebAssembly. Weights come from
-// the host the page passes (settings or policy), and are cached by Transformers.js.
-// { type: 'load', host, model, dtype } → { type: 'ready' } (with progress messages)
-// { type: 'transcribe', audio, language } → { type: 'result', text }
+// Speech to text with Whisper through Transformers.js, on WebAssembly, or with Whistle (whistle.js).
+// Weights come from the host the page passes (settings or policy), and are cached.
+// { type: 'load', host, model, dtype } or { type: 'load', host, engine: 'whistle' } → { type: 'ready' } (with progress messages)
+// { type: 'transcribe', audio, language, engine? } → { type: 'result', text }
 // { type: 'vad', host, model, audio } → { type: 'result', speech }: Silero's probability that each
 //   32 ms of audio (512 samples at 16 kHz) is speech, for live conversation
 import { env, pipeline, AutoModel, Tensor } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
+import { whistle } from './whistle.js'
 
 /** @type {Promise<any> | null} */
 let transcriber = null
+/** @type {Promise<(audio: Float32Array, language: string) => string> | null} */
+let whistler = null
 /** @type {Promise<any> | null} */
 let detector = null
 // Silero carries its state from one frame to the next.
@@ -19,9 +22,12 @@ self.onmessage = async ({ data }) => {
   const { id, type } = data
   try {
     if (type === 'load') {
-      transcriber ??= load(data, id)
-      await transcriber
+      if (data.engine === 'whistle') await (whistler ??= whistle(data.host, (loaded, total) => self.postMessage({ id, type: 'progress', loaded, total })))
+      else await (transcriber ??= load(data, id))
       self.postMessage({ id, type: 'ready' })
+    } else if (type === 'transcribe' && data.engine === 'whistle') {
+      if (!whistler) throw new Error('Not loaded')
+      self.postMessage({ id, type: 'result', text: (await whistler)(data.audio, data.language) })
     } else if (type === 'transcribe') {
       if (!transcriber) throw new Error('Not loaded')
       const run = await transcriber
@@ -40,7 +46,8 @@ self.onmessage = async ({ data }) => {
       self.postMessage({ id, type: 'result', speech })
     }
   } catch (error) {
-    if (type === 'load') transcriber = null
+    if (type === 'load' && data.engine === 'whistle') whistler = null
+    else if (type === 'load') transcriber = null
     if (type === 'vad') detector = null
     self.postMessage({ id, type: 'error', message: error?.message ?? String(error) })
   }

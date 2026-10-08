@@ -57,12 +57,13 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Folders in Chrome and Edge: the prompt at the first message, "Allow on every visit", a synced folder whose files change while Jean works; a handle kept in a real Incognito window (D152's mark)
 - [ ] Made files and changed Word documents in Word, Excel, Numbers, Google Docs and LibreOffice on Windows (a passage over several runs takes the first one's formatting)
 - [ ] Formulas (D185) on Windows, Linux and Android, whose math fonts differ or are missing, and with a screen reader
+- [ ] An answer with charts and scores pasted into Word, Google Docs, Pages and Outlook: do its `data:` pictures come along, as they don't in Notion? (D196)
 - [ ] Charts and scores (D196) on a weak laptop (ECharts' first load, a score of a few hundred bars), heard on real speakers, in Firefox and real Safari, and with a screen reader
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
-- [ ] An answer with charts and scores pasted into Word, Google Docs, Pages and Outlook: do its `data:` pictures come along, as they don't in Notion? (D196)
 
 **Voice**
 - [ ] Whisper dictation and Chrome's on-device recognition, Arc included (fixed by D61 and D110, to check again)
+- [ ] Whistle dictation and live conversation on a real microphone in each of its six languages, and a dictation over 30 s (D205)
 - [ ] Live conversation on a real microphone: Silero's thresholds, Jean's voice through speakers interrupting it, Safari's `AudioContext` at 16 kHz
 
 **Sync, routines and the desktop app**

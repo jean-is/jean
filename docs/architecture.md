@@ -31,6 +31,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 | `pyodide` (about 13 MB: loader, runtime, standard library, lock file) | The Computer's `python`, `python3` and `pip`; copied into `vendor/pyodide/` |
 | `just-bash` (its browser build, 353 KB gzipped), with `diff`, `sprintf-js`, `turndown` and `fflate` | The Computer's shell; copied flat into `vendor/just-bash/`, CommonJS wrapped as modules |
 | `@huggingface/transformers` with `onnxruntime-web` | The device's brain (Gemma 4 E2B), Intuition (Kev-0.6B), dictation and live conversation (Whisper base, Silero); copied into `vendor/transformers/` |
+| Whistle's engine, Cactus Compute's `needle.wasm` (0.9 MB) | Dictation and live conversation in six languages (D205); not on npm, so fetched with its weights from the weights host, pinned and checked by SHA-256, and run by Jean's own loader, `caps/voice/whistle.js` |
 | `pdfjs-dist` (legacy build) | Reading and drawing PDFs; copied into `vendor/pdfjs/` with its character maps and standard fonts |
 | `@silurus/ooxml` (parsers in WebAssembly, viewers on a canvas; for each kind about 1.4–2.1 MB of modules and a 1.7–1.9 MB parser) | Word, Excel and PowerPoint files in the preview and the browser (D183); copied into `vendor/ooxml/` with what each kind imports, listed in `graph.json`, its relative imports named for an import map and its workers started as classic scripts |
 | `temml` (its minified build, 50 KB gzipped, with its style sheet and one font) | Formulas in answers, drawn as MathML by the `math` capability (D185); copied into `vendor/temml/`, its script made a module |
@@ -441,9 +442,9 @@ A connection is an address and, when the service asks, a key or a sign-in (D87�
 
 ## Voice
 
-- **Speech to text** (D56, D61, D110): the browser's on-device recognition where it works, otherwise Whisper base in a worker through Transformers.js.
+- **Speech to text** (D56, D61, D110, D205): the browser's on-device recognition where it works, otherwise a worker: Whistle in English, German, French, Spanish, Italian and Dutch, Whisper base through Transformers.js in the other languages.
 - **Text to speech** (D109, D114): `speechSynthesis` with local voices only, each answer in its own language, by the voice `rankVoices()` in `ui/language.js` puts first. Natural voices (Kokoro) are a possible later option.
-- **Live conversation** (D93): an AudioWorklet feeds 16 kHz audio to Silero voice detection (~2 MB) in dictation's worker → Whisper → the brain, streamed → the system's voices, sentence by sentence. A turn starts after 250 ms of speech and ends after 800 ms of silence; speaking over Jean for half a second interrupts it. `caps/live/turns.js` holds the turn-taking, tested under `node --test`.
+- **Live conversation** (D93): an AudioWorklet feeds 16 kHz audio to Silero voice detection (~2 MB) in dictation's worker → Whistle or Whisper → the brain, streamed → the system's voices, sentence by sentence. A turn starts after 250 ms of speech and ends after 800 ms of silence; speaking over Jean for half a second interrupts it. `caps/live/turns.js` holds the turn-taking, tested under `node --test`.
 - **Real-time speech models** from providers (OpenAI Realtime over WebRTC, Gemini Live) could come later; `wss:` is already in `connect-src`.
 
 ## Sources

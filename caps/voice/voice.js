@@ -1,6 +1,6 @@
 // Dictation, private by default: the browser's on-device recognition where it has one
-// (Chrome's processLocally), otherwise a small Whisper in a worker, downloaded once with
-// consent. Never the cloud recognition some browsers use by default.
+// (Chrome's processLocally), otherwise Whistle or a small Whisper, by language, in a worker,
+// downloaded once with consent. Never the cloud recognition some browsers use by default.
 import { register } from '../../ui/caps.js'
 import { dictation } from '../../ui/dictation.js'
 import { app, effective, answerOffer, updateSettings, weightsHost, notify } from '../../ui/state.js'
@@ -10,13 +10,16 @@ import { modelWorker } from '../../ui/model.js'
 register({ id: 'voice' })
 
 /** About 80 MB, 8-bit weights (dtype "q8", files "_quantized"); runs on WebAssembly everywhere. */
-const WHISPER = { model: 'onnx-community/whisper-base', dtype: { encoder_model: 'q8', decoder_model_merged: 'q8' }, megabytes: 80 }
+const WHISPER = { model: 'onnx-community/whisper-base', dtype: { encoder_model: 'q8', decoder_model_merged: 'q8' }, megabytes: 80, offer: 'voice.download', engine: 'whisper' }
+/** Whistle (D205), about 18 MB and many times faster, in the languages where it measured as good as Whisper or better. */
+const WHISTLE = { engine: 'whistle', languages: ['en', 'de', 'fr', 'es', 'it', 'nl'], megabytes: 18, offer: 'voice.whistle' }
+/** Which writes a language down. @param {string} lang a tag ("fr-FR") */
+const writer = (lang) => (WHISTLE.languages.includes(lang.split('-')[0]) ? WHISTLE : WHISPER)
 /** Voice detection for live conversation, about 2 MB. */
 const SILERO = 'onnx-community/silero-vad'
-const OFFER = 'voice.download'
 const worker = modelWorker(new URL('./whisper-worker.js', import.meta.url), 'Dictation stopped')
-/** Whisper, loaded once, its download's progress shown in the box. */
-const load = () => worker.call({ type: 'load', host: weightsHost(), ...WHISPER }, {
+/** The language's writer, loaded once, its download's progress shown in the box. @param {string} lang */
+const load = (lang) => worker.call({ type: 'load', host: weightsHost(), ...writer(lang) }, {
   onMessage: ({ loaded, total }) => { dictation.value = { ...dictation.value, progress: Math.min(loaded / total, 1) } },
 })
 const Recognition = /** @type {any} */ (globalThis).SpeechRecognition ?? /** @type {any} */ (globalThis).webkitSpeechRecognition
@@ -57,8 +60,8 @@ async function onDevice(lang) {
   const options = { langs: [lang], processLocally: true }
   const status = await Recognition.available(options).catch(() => 'unavailable')
   if (status === 'available') return true
-  // Whisper already on this device beats a second download.
-  if ((status !== 'downloadable' && status !== 'downloading') || effective.value.settings.offers[OFFER]) return false
+  // A writer already on this device beats a second download.
+  if ((status !== 'downloadable' && status !== 'downloading') || effective.value.settings.offers[writer(lang).offer]) return false
   dictation.value = { state: 'preparing' }
   // Some Chromium browsers (Arc) offer the download, then never finish it.
   const installed = Boolean(await Promise.race([
@@ -74,20 +77,24 @@ async function onDevice(lang) {
 const counted = () => updateSettings({ dictated: (app.settings.value.dictated ?? 0) + 1 })
 
 /**
- * Whisper, for live conversation: downloaded once, with consent. False when the user declines.
+ * The interface language's writer, for live conversation: downloaded once, with consent. False when the user declines.
  * @param {boolean} [consented] they accepted live conversation, which says how big it is
  */
 export async function prepare(consented = false) {
-  if (!effective.value.settings.offers[OFFER]) {
-    if (!consented && !confirm(t('dictation.download', { size: WHISPER.megabytes }))) return false
-    await answerOffer(OFFER)
+  const { offer, megabytes } = writer(languageTag())
+  if (!effective.value.settings.offers[offer]) {
+    if (!consented && !confirm(t('dictation.download', { size: megabytes }))) return false
+    await answerOffer(offer)
   }
-  await load()
+  await load(languageTag())
   return true
 }
 
+/** Writes down what was said. @param {Float32Array} audio 16 kHz mono @param {string} lang a tag ("fr-FR") */
+const write = async (audio, lang) => String((await worker.call({ type: 'transcribe', audio, language: lang.split('-')[0], engine: writer(lang).engine }, { transfer: [audio.buffer] })).text ?? '')
+
 /** What was said, in the interface language. @param {Float32Array} audio 16 kHz mono */
-export const transcribe = async (audio) => String((await worker.call({ type: 'transcribe', audio, language: languageTag().split('-')[0] }, { transfer: [audio.buffer] })).text ?? '')
+export const transcribe = (audio) => write(audio, languageTag())
 
 /** How likely each 32 ms of the frames is speech. @param {Float32Array} frames 16 kHz mono @returns {Promise<number[]>} */
 export const detect = async (frames) => (await worker.call({ type: 'vad', host: weightsHost(), model: SILERO, audio: frames }, { transfer: [frames.buffer] })).speech
@@ -144,17 +151,18 @@ function listen(lang) {
   recognition.start()
 }
 
-/** Whisper: record until the second press, then transcribe. @param {string} lang */
+/** Whistle or Whisper: record until the second press, then transcribe. @param {string} lang */
 async function record(lang) {
-  if (!effective.value.settings.offers[OFFER]) {
-    if (!confirm(t('dictation.download', { size: WHISPER.megabytes }))) return
-    await answerOffer(OFFER)
+  const { offer, megabytes } = writer(lang)
+  if (!effective.value.settings.offers[offer]) {
+    if (!confirm(t('dictation.download', { size: megabytes }))) return
+    await answerOffer(offer)
   }
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
   const recorder = new MediaRecorder(stream)
   /** @type {Blob[]} */
   const chunks = []
-  const ready = load()
+  const ready = load(lang)
   // A failed download shouldn't wait for the user to stop talking.
   ready.catch(() => recorder.state === 'recording' && recorder.stop())
   recorder.ondataavailable = (event) => chunks.push(event.data)
@@ -165,8 +173,7 @@ async function record(lang) {
     try {
       await ready
       const audio = await decode(new Blob(chunks, { type: recorder.mimeType }))
-      const { text } = await worker.call({ type: 'transcribe', audio, language: lang.split('-')[0] }, { transfer: [audio.buffer] })
-      const words = String(text ?? '').trim()
+      const words = (await write(audio, lang)).trim()
       if (words) {
         app.draft.value = join(app.draft.value, words)
         counted()
@@ -183,7 +190,7 @@ async function record(lang) {
   recorder.start()
 }
 
-/** Mono, 16 kHz, as Whisper wants. @param {Blob} blob */
+/** Mono, 16 kHz, as Whisper and Whistle want. @param {Blob} blob */
 async function decode(blob) {
   const context = new AudioContext({ sampleRate: 16000 })
   try {
