@@ -7,7 +7,7 @@ import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarte
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
-import { markdown } from './markdown.js'
+import { markdown, withFormulas } from './markdown.js'
 import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
 
@@ -145,7 +145,7 @@ function turnView(turn, live, files, upTo, last, sources) {
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
       <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${isPicture(link) ? icons.image : icons.file}<span dir="auto">${link.name}</span></button>
     </li>`)}</ul>` : nothing}
-    ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${turn.user.text}</p>` : nothing}
+    ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${withFormulas(turn.user.text)}</p>` : nothing}
     ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
@@ -173,7 +173,7 @@ function followUps(at, suggestions, brain) {
   const smarter = canStepUp(brain)
   if (!suggestions.length && !actions.length && !smarter) return nothing
   return html`<ul class="follow-ups" aria-label=${t('suggest.title')}>
-    ${suggestions.map((suggestion) => html`<li><button class="follow-up" dir="auto" @click=${() => send(suggestion)}>${suggestion}</button></li>`)}
+    ${suggestions.map((suggestion) => html`<li><button class="follow-up" dir="auto" @click=${() => send(suggestion)}><span>${withFormulas(suggestion)}</span></button></li>`)}
     ${actions.map((id) => html`<li><button class="follow-up" @click=${() => import('./discovery.js').then((module) => module.follow(id))}>${t(`suggest.${id}`)}</button></li>`)}
     ${smarter ? html`<li><button class="follow-up is-smarter" @click=${askSmarter}>${icons.spark}${t('auto.smarter')}</button></li>` : nothing}
   </ul>`
