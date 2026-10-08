@@ -1,8 +1,9 @@
 // Formulas (D185): the LaTeX an answer holds is drawn as MathML, in a line, set apart or in a table,
 // once the math capability has loaded with the first one; prices written with $ stay text. A ```latex
-// block is laid out as a document, its source a click away. Follow-ups and requests draw theirs too.
+// block is laid out as a document, copied as a widget is: its source and its picture at once.
+// Follow-ups and requests draw theirs too.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, nextCopy } from './helpers.js'
 
 test('formulas are drawn, set apart or in a line, and prices stay text', async ({ page }) => {
   await start(page)
@@ -16,7 +17,7 @@ test('formulas are drawn, set apart or in a line, and prices stay text', async (
   await expect(answer).toContainText('A book costs $5 and a pen $10.')
 })
 
-test('a LaTeX document is laid out, with its source under it', async ({ page }) => {
+test('a LaTeX document is laid out, and copied as its source and its picture', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Les formules d’Euler, en LaTeX')
@@ -24,9 +25,26 @@ test('a LaTeX document is laid out, with its source under it', async ({ page }) 
   await expect(laidOut.locator('h3')).toHaveText("Formules d'Euler")
   await expect(laidOut.locator('h4')).toHaveText("Identité d'Euler")
   await expect(laidOut.locator('app-math math')).toHaveCount(2)
-  await expect(laidOut.locator('details pre')).toBeHidden()
-  await laidOut.locator('summary').filter({ hasText: 'latex' }).click()
-  await expect(laidOut.locator('details pre')).toContainText("\\section*{Formules d'Euler}")
+  await expect(laidOut.locator('details')).toHaveCount(0)
+  // Copy: the block's source as text and the document as a picture, at once.
+  const copy = await nextCopy(page)
+  await laidOut.getByRole('button', { name: 'Copy' }).click()
+  const copied = await copy.read()
+  expect(copied['text/plain']).toBe(await laidOut.getAttribute('source'))
+  expect(copied['text/plain']).toContain("\\section*{Formules d'Euler}")
+  expect(copied['image/png']).toEqual([137, 80, 78, 71])
+  await expect(page.locator('.toast')).toContainText('Copied')
+  // Printed, the document shows without its Copy.
+  await page.emulateMedia({ media: 'print' })
+  await expect(laidOut.locator('.drawn-foot')).toBeHidden()
+  await page.emulateMedia({ media: 'screen' })
+  // Copying the answer: the document as its picture in the rich text.
+  const whole = await nextCopy(page)
+  await page.locator('.msg-jean').last().locator('app-made').getByRole('button', { name: 'Copy' }).click()
+  const answerCopied = await whole.read()
+  expect(answerCopied['text/html']).toMatch(/<img [^>]*src="data:image\/png;base64,iVBORw0KGgo/)
+  expect(answerCopied['text/html']).toContain('Voici')
+  expect(answerCopied['text/html']).not.toContain('app-latex')
   // Its follow-ups draw their formulas, and so does the request one sends.
   const next = page.locator('.follow-up', { hasText: 'Démontre la formule' })
   await expect(page.locator('.follow-up app-math math')).toHaveCount(2)

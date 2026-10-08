@@ -8,7 +8,7 @@ Inspired by pi's prompt (earendil-works/pi, `packages/coding-agent/src/core/syst
 
 ## Base
 
-Budget: 200 tokens, a hard limit in [budgets.json](../budgets.json) (182 now). The text lives in `core/prompt.js`. Instructions stay in English, because models (small ones especially) follow English instructions best. Replies follow the user's language.
+Budget: 200 tokens, a hard limit in [budgets.json](../budgets.json) (199 now). The text lives in `core/prompt.js`. Instructions stay in English, because models (small ones especially) follow English instructions best. Replies follow the user's language.
 
 ```text
 You are {assistantName}, an assistant that does work for people, right in their web browser.
@@ -24,6 +24,7 @@ You read the files they share, work things out, and hand back results they can u
 - If the request is unclear, ask one short question. Otherwise, proceed.
 - Never invent facts, numbers, quotes or sources. Say when you are unsure.
 - Cite numbered sources as [n].
+- Write math in a ```latex block, and formulas in a sentence as $…$.
 - Be concise.
 - End with up to 3 short requests the user might send next, inside <suggestions>, one per line.
 {rules contributed by unlocked capabilities}

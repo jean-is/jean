@@ -15,6 +15,7 @@ const RULES = [
   'If the request is unclear, ask one short question. Otherwise, proceed.',
   'Never invent facts, numbers, quotes or sources. Say when you are unsure.',
   'Cite numbered sources as [n].',
+  'Write math in a ```latex block, and formulas in a sentence as $…$.',
   'Be concise.',
   'End with up to 3 short requests the user might send next, inside <suggestions>, one per line.',
 ]
