@@ -154,7 +154,6 @@
   },
   "read.pages": "pagina's {first}–{last} van {total}",
   "read.whole": "helemaal",
-  "made.copyTitle": "Kopiëren (plakt met opmaak)",
   "made.copyFailed": "Kopiëren mislukt",
   "made.csvTitle": "Downloaden als spreadsheet (CSV)",
   "made.csvNumbered": "Tabel {count} downloaden als spreadsheet (CSV)",

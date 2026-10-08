@@ -154,7 +154,6 @@
   },
   "read.pages": "sayfa {first}–{last} / {total}",
   "read.whole": "tamamı",
-  "made.copyTitle": "Kopyala (biçimiyle yapıştırılır)",
   "made.copyFailed": "Kopyalanamadı",
   "made.csvTitle": "Tablo olarak indir (CSV)",
   "made.csvNumbered": "{count}. tabloyu indir (CSV)",

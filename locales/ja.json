@@ -152,7 +152,6 @@
   },
   "read.pages": "{total} ページ中 {first}–{last} ページ",
   "read.whole": "全体",
-  "made.copyTitle": "コピー（書式付きで貼り付けられます）",
   "made.copyFailed": "コピーできませんでした",
   "made.csvTitle": "表計算ファイル（CSV）としてダウンロード",
   "made.csvNumbered": "表 {count} を表計算ファイル（CSV）としてダウンロード",

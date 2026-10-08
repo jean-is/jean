@@ -158,7 +158,6 @@
   },
   "read.pages": "עמודים {first}–{last} מתוך {total}",
   "read.whole": "הכול",
-  "made.copyTitle": "העתקה (מודבק עם עיצוב)",
   "made.copyFailed": "ההעתקה נכשלה",
   "made.csvTitle": "הורדה כגיליון (CSV)",
   "made.csvNumbered": "הורדת טבלה {count} כגיליון (CSV)",

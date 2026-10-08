@@ -152,7 +152,6 @@
   },
   "read.pages": "ojú-ìwé {first}–{last} nínú {total}",
   "read.whole": "gbogbo rẹ̀",
-  "made.copyTitle": "Ṣe ẹ̀dà (ó ń lẹ̀ pẹ̀lú ìṣètò rẹ̀)",
   "made.copyFailed": "A kò lè ṣe ẹ̀dà",
   "made.csvTitle": "Gbà á sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.csvNumbered": "Gba tábìlì {count} sílẹ̀ bí ìwé ìṣirò (CSV)",

@@ -154,7 +154,6 @@
   },
   "read.pages": "صفحه‌های {first} تا {last} از {total}",
   "read.whole": "همهٔ آن",
-  "made.copyTitle": "رونوشت (با قالب‌بندی چسبانده می‌شود)",
   "made.copyFailed": "رونوشت ممکن نشد",
   "made.csvTitle": "بارگیری به‌صورت صفحه‌گسترده (CSV)",
   "made.csvNumbered": "بارگیری جدول {count} به‌صورت صفحه‌گسترده (CSV)",

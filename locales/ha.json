@@ -154,7 +154,6 @@
   },
   "read.pages": "shafuka {first}–{last} cikin {total}",
   "read.whole": "duka",
-  "made.copyTitle": "Kwafa (ana liƙawa tare da tsari)",
   "made.copyFailed": "Ba a iya kwafawa ba",
   "made.csvTitle": "Sauke a matsayin takardar lissafi (CSV)",
   "made.csvNumbered": "Sauke tebur {count} a matsayin takardar lissafi (CSV)",

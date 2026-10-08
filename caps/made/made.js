@@ -212,7 +212,7 @@ class Made extends Element {
     if (!source) return nothing
     const tables = tablesIn(source)
     return html`
-      <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('made.copyTitle')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>
+      <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>
       ${tables.map((table, i) => html`<button class="icon-button subtle" title=${t('made.csvTitle')}
         aria-label=${tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle')}
         @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}`

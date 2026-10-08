@@ -152,7 +152,6 @@
   },
   "read.pages": "หน้า {first}–{last} จาก {total}",
   "read.whole": "ทั้งหมด",
-  "made.copyTitle": "คัดลอก (วางพร้อมรูปแบบ)",
   "made.copyFailed": "คัดลอกไม่ได้",
   "made.csvTitle": "ดาวน์โหลดเป็นสเปรดชีต (CSV)",
   "made.csvNumbered": "ดาวน์โหลดตาราง {count} เป็นสเปรดชีต (CSV)",

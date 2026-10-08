@@ -154,7 +154,6 @@
   },
   "read.pages": "{total} இல் பக்கங்கள் {first}–{last}",
   "read.whole": "முழுவதும்",
-  "made.copyTitle": "நகலெடு (வடிவமைப்புடன் ஒட்டப்படும்)",
   "made.copyFailed": "நகலெடுக்க முடியவில்லை",
   "made.csvTitle": "விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.csvNumbered": "அட்டவணை {count} ஐ விரிதாளாகப் பதிவிறக்கு (CSV)",

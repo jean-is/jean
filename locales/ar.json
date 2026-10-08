@@ -162,7 +162,6 @@
   },
   "read.pages": "الصفحات {first}–{last} من {total}",
   "read.whole": "كاملًا",
-  "made.copyTitle": "نسخ (يُلصق مع التنسيق)",
   "made.copyFailed": "تعذّر النسخ",
   "made.csvTitle": "تنزيل كجدول بيانات (CSV)",
   "made.csvNumbered": "تنزيل الجدول {count} كجدول بيانات (CSV)",

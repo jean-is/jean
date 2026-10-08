@@ -154,7 +154,6 @@
   },
   "read.pages": "पाने {first}–{last}, एकूण {total}",
   "read.whole": "संपूर्ण",
-  "made.copyTitle": "कॉपी करा (फॉरमॅटिंगसह पेस्ट होते)",
   "made.copyFailed": "कॉपी करता आले नाही",
   "made.csvTitle": "स्प्रेडशीट म्हणून डाउनलोड करा (CSV)",
   "made.csvNumbered": "तक्ता {count} स्प्रेडशीट म्हणून डाउनलोड करा (CSV)",

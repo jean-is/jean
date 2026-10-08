@@ -154,7 +154,6 @@
   },
   "read.pages": "ከ{total} ገጾች ገጽ {first}–{last}",
   "read.whole": "ሙሉውን",
-  "made.copyTitle": "ይቅዱ (ከነቅርጸቱ ይለጠፋል)",
   "made.copyFailed": "መቅዳት አልተቻለም",
   "made.csvTitle": "በተመን ሉህ መልክ ያውርዱ (CSV)",
   "made.csvNumbered": "ሰንጠረዥ {count} በተመን ሉህ መልክ ያውርዱ (CSV)",

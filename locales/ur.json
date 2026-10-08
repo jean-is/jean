@@ -154,7 +154,6 @@
   },
   "read.pages": "صفحات {first}–{last} از {total}",
   "read.whole": "مکمل",
-  "made.copyTitle": "کاپی کریں (فارمیٹنگ کے ساتھ پیسٹ ہوتا ہے)",
   "made.copyFailed": "کاپی نہیں ہو سکا",
   "made.csvTitle": "اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",
   "made.csvNumbered": "جدول {count} کو اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",

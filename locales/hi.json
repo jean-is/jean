@@ -154,7 +154,6 @@
   },
   "read.pages": "पेज {first}–{last}, कुल {total}",
   "read.whole": "पूरा",
-  "made.copyTitle": "कॉपी करें (फ़ॉर्मैटिंग के साथ पेस्ट होता है)",
   "made.copyFailed": "कॉपी नहीं हो सका",
   "made.csvTitle": "स्प्रेडशीट के रूप में डाउनलोड करें (CSV)",
   "made.csvNumbered": "तालिका {count} को स्प्रेडशीट के रूप में डाउनलोड करें (CSV)",

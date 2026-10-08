@@ -152,7 +152,6 @@
   },
   "read.pages": "第 {first}–{last} 頁，共 {total} 頁",
   "read.whole": "全部",
-  "made.copyTitle": "複製（貼上時保留格式）",
   "made.copyFailed": "無法複製",
   "made.csvTitle": "下載為試算表（CSV）",
   "made.csvNumbered": "將表格 {count} 下載為試算表（CSV）",

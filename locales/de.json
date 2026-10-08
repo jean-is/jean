@@ -154,7 +154,6 @@
   },
   "read.pages": "Seiten {first}–{last} von {total}",
   "read.whole": "vollständig",
-  "made.copyTitle": "Kopieren (mit Formatierung einfügen)",
   "made.copyFailed": "Kopieren fehlgeschlagen",
   "made.csvTitle": "Als Tabelle herunterladen (CSV)",
   "made.csvNumbered": "Tabelle {count} als Tabellendatei herunterladen (CSV)",

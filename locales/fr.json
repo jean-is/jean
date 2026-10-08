@@ -156,7 +156,6 @@
   },
   "read.pages": "pages {first} à {last} sur {total}",
   "read.whole": "en entier",
-  "made.copyTitle": "Copier (se colle avec la mise en forme)",
   "made.copyFailed": "Impossible de copier",
   "made.csvTitle": "Télécharger comme tableur (CSV)",
   "made.csvNumbered": "Télécharger le tableau {count} comme tableur (CSV)",

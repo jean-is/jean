@@ -158,7 +158,6 @@
   },
   "read.pages": "strony {first}–{last} z {total}",
   "read.whole": "całość",
-  "made.copyTitle": "Kopiuj (wkleja się z formatowaniem)",
   "made.copyFailed": "Nie udało się skopiować",
   "made.csvTitle": "Pobierz jako arkusz (CSV)",
   "made.csvNumbered": "Pobierz tabelę {count} jako arkusz (CSV)",

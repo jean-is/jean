@@ -152,7 +152,6 @@
   },
   "read.pages": "halaman {first}–{last} dari {total}",
   "read.whole": "seluruhnya",
-  "made.copyTitle": "Salin (ditempel dengan format)",
   "made.copyFailed": "Gagal menyalin",
   "made.csvTitle": "Unduh sebagai spreadsheet (CSV)",
   "made.csvNumbered": "Unduh tabel {count} sebagai spreadsheet (CSV)",

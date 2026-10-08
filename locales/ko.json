@@ -152,7 +152,6 @@
   },
   "read.pages": "{total}쪽 중 {first}–{last}쪽",
   "read.whole": "전체",
-  "made.copyTitle": "복사(서식 포함해 붙여넣기)",
   "made.copyFailed": "복사하지 못했어요",
   "made.csvTitle": "스프레드시트로 다운로드(CSV)",
   "made.csvNumbered": "표 {count}을(를) 스프레드시트로 다운로드(CSV)",

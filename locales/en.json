@@ -154,7 +154,6 @@
   },
   "read.pages": "pages {first}–{last} of {total}",
   "read.whole": "all of it",
-  "made.copyTitle": "Copy (pastes with formatting)",
   "made.copyFailed": "Couldn’t copy",
   "made.csvTitle": "Download as a spreadsheet (CSV)",
   "made.csvNumbered": "Download table {count} as a spreadsheet (CSV)",

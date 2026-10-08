@@ -152,7 +152,6 @@
   },
   "read.pages": "halaman {first}–{last} daripada {total}",
   "read.whole": "keseluruhannya",
-  "made.copyTitle": "Salin (ditampal dengan format)",
   "made.copyFailed": "Tidak dapat menyalin",
   "made.csvTitle": "Muat turun sebagai hamparan (CSV)",
   "made.csvNumbered": "Muat turun jadual {count} sebagai hamparan (CSV)",

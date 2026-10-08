@@ -154,7 +154,6 @@
   },
   "read.pages": "kurasa {first}–{last} kati ya {total}",
   "read.whole": "yote",
-  "made.copyTitle": "Nakili (inabandikwa pamoja na muundo)",
   "made.copyFailed": "Imeshindwa kunakili",
   "made.csvTitle": "Pakua kama lahajedwali (CSV)",
   "made.csvNumbered": "Pakua jedwali {count} kama lahajedwali (CSV)",

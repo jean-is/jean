@@ -158,7 +158,6 @@
   },
   "read.pages": "страницы {first}–{last} из {total}",
   "read.whole": "целиком",
-  "made.copyTitle": "Копировать (вставляется с форматированием)",
   "made.copyFailed": "Не удалось скопировать",
   "made.csvTitle": "Скачать как таблицу (CSV)",
   "made.csvNumbered": "Скачать таблицу {count} (CSV)",

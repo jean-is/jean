@@ -154,7 +154,6 @@
   },
   "read.pages": "{total} లో పేజీలు {first}–{last}",
   "read.whole": "మొత్తం",
-  "made.copyTitle": "కాపీ చేయి (ఫార్మాటింగ్‌తో పేస్ట్ అవుతుంది)",
   "made.copyFailed": "కాపీ చేయలేకపోయాం",
   "made.csvTitle": "స్ప్రెడ్‌షీట్‌గా డౌన్‌లోడ్ చేయి (CSV)",
   "made.csvNumbered": "పట్టిక {count} ను స్ప్రెడ్‌షీట్‌గా డౌన్‌లోడ్ చేయి (CSV)",

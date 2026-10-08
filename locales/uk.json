@@ -158,7 +158,6 @@
   },
   "read.pages": "сторінки {first}–{last} з {total}",
   "read.whole": "повністю",
-  "made.copyTitle": "Копіювати (вставляється з форматуванням)",
   "made.copyFailed": "Не вдалося скопіювати",
   "made.csvTitle": "Завантажити як таблицю (CSV)",
   "made.csvNumbered": "Завантажити таблицю {count} (CSV)",

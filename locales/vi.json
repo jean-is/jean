@@ -152,7 +152,6 @@
   },
   "read.pages": "trang {first}–{last} trên {total}",
   "read.whole": "toàn bộ",
-  "made.copyTitle": "Sao chép (dán kèm định dạng)",
   "made.copyFailed": "Không sao chép được",
   "made.csvTitle": "Tải xuống dạng bảng tính (CSV)",
   "made.csvNumbered": "Tải bảng {count} xuống dạng bảng tính (CSV)",

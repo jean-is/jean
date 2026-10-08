@@ -156,7 +156,6 @@
   },
   "read.pages": "páginas {first}–{last} de {total}",
   "read.whole": "tudo",
-  "made.copyTitle": "Copiar (cola com formatação)",
   "made.copyFailed": "Não foi possível copiar",
   "made.csvTitle": "Transferir como folha de cálculo (CSV)",
   "made.csvNumbered": "Transferir a tabela {count} como folha de cálculo (CSV)",

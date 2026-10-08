@@ -154,7 +154,6 @@
   },
   "read.pages": "{total}-এর মধ্যে পৃষ্ঠা {first}–{last}",
   "read.whole": "পুরোটা",
-  "made.copyTitle": "কপি করুন (ফরম্যাটসহ পেস্ট হয়)",
   "made.copyFailed": "কপি করা যায়নি",
   "made.csvTitle": "স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",
   "made.csvNumbered": "সারণি {count} স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",

@@ -154,7 +154,6 @@
   },
   "read.pages": "pahina {first}–{last} ng {total}",
   "read.whole": "lahat",
-  "made.copyTitle": "Kopyahin (idinidikit nang may format)",
   "made.copyFailed": "Hindi makopya",
   "made.csvTitle": "I-download bilang spreadsheet (CSV)",
   "made.csvNumbered": "I-download ang talahanayan {count} bilang spreadsheet (CSV)",
