@@ -1,6 +1,6 @@
 // Checks the services Jean knows (caps/connections/directory.js, D95) the way a browser would
 // meet them, from an origin none of them knows: can a page reach the service with a sign-in
-// (CORS that names Authorization), find where to sign in, register itself there, and trade a
+// (CORS that lets Authorization through), find where to sign in, register itself there, and trade a
 // code for tokens? One whose tools a browser can list needs none. Read-only: it asks for
 // metadata and preflights, and registers nothing.
 // An entry marked ready that fails, or one that passes and isn't marked, is reported, and the
@@ -24,8 +24,8 @@ async function preflight(url, headers) {
   const origin = res?.headers.get('access-control-allow-origin')
   if (!res?.ok || (origin !== '*' && origin !== ORIGIN)) return false
   const allowed = (res.headers.get('access-control-allow-headers') ?? '').toLowerCase().split(',').map((name) => name.trim())
-  // A wildcard never covers Authorization.
-  return headers.every((name) => allowed.includes(name) || (allowed.includes('*') && name !== 'authorization'))
+  // A wildcard covers Authorization in Chromium and WebKit, though the standard leaves it out (D195).
+  return headers.every((name) => allowed.includes(name) || allowed.includes('*'))
 }
 
 /** @param {import('../caps/connections/directory.js').Known} entry @returns {Promise<string[]>} what stands in the way */

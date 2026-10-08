@@ -31,7 +31,6 @@ Instrument Serif ships for now (D34). Fraunces will probably replace it. To chec
   - **Microsoft 365** (`microsoft365.mcp.claude.com`): Anthropic accepting Jean's origin, and a single-page-app redirect for Jean's domain on its Entra app.
   - **Gmail, Google Drive, Google Calendar and Google Chat:** Google ending the developer preview, and its servers answering browsers.
   - **Slack and Dropbox:** CORS, plus open registration for Slack. Dropbox, like Figma, registers only the apps on its list: ask both to add Jean.
-  - **Atlassian:** naming `Authorization` in its CORS, and publishing where to sign in.
   - **Google Meet and Google Tasks:** a server at all.
 - **Helpers on a cheaper brain?** Helpers use the brain that delegated (D98). Auto could give them a lighter tier: cheaper, but one answer would then mix two models' work. To decide with real tasks.
 - **Double-check with Intuition one day?** If the fine-tuned "Jean reflexes" checkpoint (D68) learns "does this passage support this sentence?" in every launch language, checks could stay on the device and cost nothing (D100).

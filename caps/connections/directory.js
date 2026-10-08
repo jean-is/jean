@@ -1,7 +1,7 @@
 // The services Jean already knows (D95): click one, sign in, done. An address here is a provider
 // identity, like a brain's (D33), and policy can replace it (`directory` in policy.json). Each is
-// reached from the browser, once checked from one (`ready`: CORS that names Authorization, on the
-// service and its sign-in, and a sign-in open to any app; for one that needs no sign-in, CORS on
+// reached from the browser, once checked from one (`ready`: CORS that lets Authorization through, on
+// the service and its sign-in, and a sign-in open to any app; for one that needs no sign-in, CORS on
 // the service; `npm run directory` checks again); otherwise through the gateway, when it relays to
 // the service's host (D191); otherwise not yet, shown but disabled. They are the services people
 // at work use most, never a developer's tools or a payment's (D192). A logo is the brand's own
@@ -21,6 +21,9 @@ export const DIRECTORY = Object.freeze([
   { id: 'granola', name: 'Granola', url: 'https://mcp.granola.ai/mcp', ready: true, logo: 'granola.png' },
   { id: 'clickup', name: 'ClickUp', url: 'https://mcp.clickup.com/mcp', ready: true, logo: 'clickup.png' },
   { id: 'linear', name: 'Linear', url: 'https://mcp.linear.app/mcp', ready: true, logo: 'linear.svg' },
+  // Its CORS allows any header with `*`, which the standard says leaves out Authorization, but
+  // Chromium and WebKit let it through (D195).
+  { id: 'atlassian', name: 'Atlassian', url: 'https://mcp.atlassian.com/v1/mcp', includes: ['Jira', 'Confluence'], ready: true, logo: 'atlassian.svg' },
   { id: 'intercom', name: 'Intercom', url: 'https://mcp.intercom.com/mcp', ready: true, logo: 'intercom.svg' },
   { id: 'wix', name: 'Wix', url: 'https://mcp.wix.com/mcp', ready: true, logo: 'wix.png' },
   { id: 'attio', name: 'Attio', url: 'https://mcp.attio.com/mcp', ready: true, logo: 'attio.svg' },
@@ -40,8 +43,6 @@ export const DIRECTORY = Object.freeze([
   { id: 'google-tasks', name: 'Google Tasks', logo: 'google-tasks.svg' },
   // Only registers the apps on its list.
   { id: 'figma', name: 'Figma', url: 'https://mcp.figma.com/mcp', logo: 'figma.svg' },
-  // Its CORS allows any header with `*`, which never covers Authorization.
-  { id: 'atlassian', name: 'Atlassian', url: 'https://mcp.atlassian.com/v1/mcp', includes: ['Jira', 'Confluence'], logo: 'atlassian.svg' },
   // Refuse browsers, and register only the apps made on their sites.
   { id: 'asana', name: 'Asana', url: 'https://mcp.asana.com/v2/mcp', logo: 'asana.svg' },
   { id: 'zoom', name: 'Zoom', url: 'https://mcp.zoom.us/mcp/zoom/streamable', logo: 'zoom.png' },
