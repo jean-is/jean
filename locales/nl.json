@@ -337,5 +337,8 @@
   "check.fix": "Verbeteren wat de bronnen niet staven",
   "check.fix.prompt": "Je bronnen staven deze punten niet. Loop ze opnieuw na en verbeter je antwoord:",
   "since.prompt": "Wat is er nieuw sinds de vorige keer?",
-  "since.closed": "Het werk ligt stil zolang dit tabblad dicht is; dit is zojuist gelezen."
+  "since.closed": "Het werk ligt stil zolang dit tabblad dicht is; dit is zojuist gelezen.",
+  "cap.machine.name": "Deze computer",
+  "cap.machine.offer": "De ontwikkelserver van een site, of je eigen programma’s, op deze computer draaien?",
+  "cap.machine.yes": "Deze computer gebruiken"
 }

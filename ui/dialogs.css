@@ -129,6 +129,9 @@ label.item, .list summary { cursor: pointer; }
 .gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(6.25rem, 1fr)); gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; }
 .gauges li { display: grid; justify-items: center; align-content: start; gap: 0.15rem; padding: 0.9rem 0.5rem 0.8rem; border: 1px solid var(--line); border-radius: 1rem; font-size: 0.85rem; text-align: center; text-wrap: balance; }
 .gauges strong { color: var(--ink); font-size: 1rem; font-weight: 600; }
+/* This computer's line, to paste in a terminal (D198): all of it selected at a click. */
+.machine-line { display: flex; align-items: start; gap: 0.5rem; margin: -0.25rem 0 1rem; }
+.machine-line code { flex: 1; padding: 0.45rem 0.6rem; border-radius: 0.5rem; background: var(--room); font: 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; user-select: all; }
 .ring { position: relative; display: grid; place-items: center; inline-size: 4.25rem; aspect-ratio: 1; margin-block-end: 0.45rem; font-size: 0.8rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .ring svg { position: absolute; inset: 0; rotate: -90deg; fill: none; stroke: oklch(from var(--flame) l c h / 0.16); stroke-width: 3; }
 :dir(rtl) .ring svg { rotate: 90deg; scale: -1 1; }

@@ -345,5 +345,8 @@
   "check.fix": "Corrigir o que as fontes não sustentam",
   "check.fix.prompt": "As tuas fontes não sustentam estes pontos. Verifica-os de novo e corrige a tua resposta:",
   "since.prompt": "O que há de novo desde a última vez?",
-  "since.closed": "O trabalho para enquanto este separador está fechado: isto acabou de ser lido."
+  "since.closed": "O trabalho para enquanto este separador está fechado: isto acabou de ser lido.",
+  "cap.machine.name": "Este computador",
+  "cap.machine.offer": "Correr o servidor de desenvolvimento de um site, ou os teus programas, neste computador?",
+  "cap.machine.yes": "Usar este computador"
 }

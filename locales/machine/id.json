@@ -1,0 +1,7 @@
+{
+  "machine.text": "Perintah juga bisa berjalan di komputer ini, dengan program dan servernya sendiri: buka terminal di salah satu folder Anda lalu tempel baris ini. Tugas dengan folder itu kemudian menjalankan perintahnya di sana, sampai Anda menekan Ctrl+C di terminal itu.",
+  "machine.on": "Tugas dengan folder {folder} menjalankan perintahnya di komputer ini, masing-masing ditanyakan dulu, sampai Anda menekan Ctrl+C di terminalnya.",
+  "machine.forget": "Berhenti memakainya",
+  "machine.question": "Jalankan ini di komputer Anda, di {folder}?",
+  "machine.always": "Selalu izinkan di {folder}"
+}

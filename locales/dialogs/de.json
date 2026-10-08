@@ -283,5 +283,7 @@
   "brain.device.loading": "Fast fertig…",
   "brain.device.failed": "Der Download wurde unterbrochen. Versuche es erneut.",
   "brain.device.ready": "Das Gehirn auf diesem Gerät ist bereit",
-  "brain.device.private": "Privat · funktioniert offline"
+  "brain.device.private": "Privat · funktioniert offline",
+  "cap.machine.hint": "Bitte darum, den Entwicklungsserver einer Website zu starten, etwa npm run dev.",
+  "cap.machine.text": "Führt die Befehle des Computers auf diesem Gerät selbst aus, in einem deiner Ordner, mit seinen eigenen Programmen und Servern: Der Entwicklungsserver einer Website erscheint im Browser. Jeder Befehl wird erst erfragt, und Strg+C in deinem Terminal beendet alles."
 }

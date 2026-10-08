@@ -329,5 +329,8 @@
   "check.fix": "Sửa những gì nguồn không ủng hộ",
   "check.fix.prompt": "Nguồn của bạn không ủng hộ những điểm này. Hãy kiểm tra lại và sửa câu trả lời:",
   "since.prompt": "Có gì mới từ lần trước?",
-  "since.closed": "Công việc dừng lại khi thẻ này đóng, nên những điều này vừa mới được đọc."
+  "since.closed": "Công việc dừng lại khi thẻ này đóng, nên những điều này vừa mới được đọc.",
+  "cap.machine.name": "Máy tính này",
+  "cap.machine.offer": "Chạy máy chủ phát triển của một trang web, hay chương trình của bạn, trên máy tính này?",
+  "cap.machine.yes": "Dùng máy tính này"
 }

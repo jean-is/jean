@@ -1,0 +1,7 @@
+{
+  "machine.text": "Polecenia mogą też działać na tym komputerze, z jego własnymi programami i serwerami: otwórz terminal w jednym ze swoich folderów i wklej ten wiersz. Zadania z tym folderem będą wtedy uruchamiać tam swoje polecenia, dopóki nie naciśniesz Ctrl+C w tym terminalu.",
+  "machine.on": "Zadania z folderem {folder} uruchamiają polecenia na tym komputerze, każde po zapytaniu, dopóki nie naciśniesz Ctrl+C w jego terminalu.",
+  "machine.forget": "Przestań używać",
+  "machine.question": "Uruchomić to na twoim komputerze, w folderze {folder}?",
+  "machine.always": "Zawsze zezwalaj w folderze {folder}"
+}

@@ -280,5 +280,7 @@
   "brain.device.loading": "Sắp xong…",
   "brain.device.failed": "Quá trình tải đã dừng. Hãy thử lại.",
   "brain.device.ready": "Bộ não trên thiết bị này đã sẵn sàng",
-  "brain.device.private": "Riêng tư · chạy ngoại tuyến"
+  "brain.device.private": "Riêng tư · chạy ngoại tuyến",
+  "cap.machine.hint": "Nhờ chạy máy chủ phát triển của một trang web, như npm run dev.",
+  "cap.machine.text": "Chạy lệnh của máy tính ngay trên thiết bị này, trong một thư mục của bạn, với chương trình và máy chủ của chính nó: máy chủ phát triển của trang web hiện trong trình duyệt. Mỗi lệnh đều được hỏi trước, và Ctrl+C trong terminal của bạn dừng tất cả."
 }

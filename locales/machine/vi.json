@@ -1,0 +1,7 @@
+{
+  "machine.text": "Lệnh cũng có thể chạy trên máy tính này, với chương trình và máy chủ của chính nó: mở một terminal trong một thư mục của bạn rồi dán dòng này vào. Khi đó các nhiệm vụ có thư mục ấy sẽ chạy lệnh ở đó, cho đến khi bạn nhấn Ctrl+C trong terminal ấy.",
+  "machine.on": "Các nhiệm vụ có thư mục {folder} chạy lệnh trên máy tính này, mỗi lệnh đều hỏi trước, cho đến khi bạn nhấn Ctrl+C trong terminal của nó.",
+  "machine.forget": "Ngừng dùng",
+  "machine.question": "Chạy lệnh này trên máy tính của bạn, trong {folder}?",
+  "machine.always": "Luôn cho phép trong {folder}"
+}

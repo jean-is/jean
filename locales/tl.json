@@ -337,5 +337,8 @@
   "check.fix": "Itama ang hindi sinusuportahan ng mga pinagmulan",
   "check.fix.prompt": "Hindi sinusuportahan ng mga pinagmulan mo ang mga puntong ito. Tsekin ulit at itama ang sagot mo:",
   "since.prompt": "Ano ang bago mula noong huli?",
-  "since.closed": "Tumitigil ang trabaho habang sarado ang tab na ito, kaya ngayon lang ito binasa."
+  "since.closed": "Tumitigil ang trabaho habang sarado ang tab na ito, kaya ngayon lang ito binasa.",
+  "cap.machine.name": "Ang computer na ito",
+  "cap.machine.offer": "Patakbuhin ang dev server ng isang site, o ang sarili mong mga program, sa computer na ito?",
+  "cap.machine.yes": "Gamitin ang computer na ito"
 }

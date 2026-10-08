@@ -781,6 +781,8 @@ class FolderApproval extends Element {
     const decision = this.#decision.value
     if (!decision) return nothing
     const { toolCall, resolve } = decision
+    // A command on this computer, in the folder (D198): its own card.
+    if (toolCall._meta?.machine) return html`<app-machine-approval .decision=${decision} .helper=${this.#helper.value}></app-machine-approval>`
     const folder = String(toolCall._meta?.folder ?? '')
     const diffs = (toolCall.content ?? []).filter((/** @type {any} */ part) => part.type === 'diff')
     // The Computer's changes (D162): several files, some with no text to show.

@@ -57,4 +57,5 @@ export const icons = {
   wave: icon(svg`<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>`),
   chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),
   capture: icon(svg`<path d="M4 8.5V6a2 2 0 0 1 2-2h2.5M15.5 4H18a2 2 0 0 1 2 2v2.5M20 15.5V18a2 2 0 0 1-2 2h-2.5M8.5 20H6a2 2 0 0 1-2-2v-2.5"/><circle cx="12" cy="12" r="3"/>`),
+  terminal: icon(svg`<path d="m4.5 7 5 5-5 5M12 17.5h7.5"/>`),
 }

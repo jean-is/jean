@@ -1,0 +1,7 @@
+{
+  "machine.text": "Àwọn àṣẹ tún lè ṣiṣẹ́ lórí kọ̀ǹpútà yìí, pẹ̀lú àwọn ètò àti sáfà tirẹ̀: ẹ ṣí ibùdó àṣẹ nínú ọ̀kan lára àwọn fódà yín kí ẹ sì lẹ ìlà yìí sínú rẹ̀. Nígbà náà àwọn iṣẹ́ tó ní fódà náà yóò máa ṣiṣẹ́ àwọn àṣẹ wọn níbẹ̀, títí ẹ ó fi tẹ Ctrl+C nínú ibùdó àṣẹ náà.",
+  "machine.on": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan, títí ẹ ó fi tẹ Ctrl+C nínú ibùdó àṣẹ rẹ̀.",
+  "machine.forget": "Dẹ́kun lílò ó",
+  "machine.question": "Ṣé kí èyí ṣiṣẹ́ lórí kọ̀ǹpútà yín, nínú {folder}?",
+  "machine.always": "Fàyè gbà nígbà gbogbo nínú {folder}"
+}

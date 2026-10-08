@@ -280,5 +280,7 @@
   "brain.device.loading": "快好了…",
   "brain.device.failed": "下載中斷了。請重試。",
   "brain.device.ready": "這台裝置上的大腦已就緒",
-  "brain.device.private": "私密 · 可離線使用"
+  "brain.device.private": "私密 · 可離線使用",
+  "cap.machine.hint": "請它執行網站的開發伺服器，例如 npm run dev。",
+  "cap.machine.text": "在這台裝置本身、你的某個資料夾中，用它自己的程式和伺服器執行電腦的指令：網站的開發伺服器會顯示在瀏覽器中。每條指令都會先詢問，在終端機中按 Ctrl+C 即可全部停止。"
 }

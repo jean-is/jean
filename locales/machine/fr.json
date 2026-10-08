@@ -1,0 +1,7 @@
+{
+  "machine.text": "Les commandes peuvent aussi tourner sur cet ordinateur, avec ses propres programmes et serveurs : ouvrez un terminal dans l’un de vos dossiers et collez-y cette ligne. Les tâches de ce dossier y lancent alors leurs commandes, jusqu’à ce que vous appuyiez sur Ctrl+C dans ce terminal.",
+  "machine.on": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord, jusqu’à ce que vous appuyiez sur Ctrl+C dans son terminal.",
+  "machine.forget": "Ne plus l’utiliser",
+  "machine.question": "Lancer ceci sur votre ordinateur, dans {folder} ?",
+  "machine.always": "Toujours autoriser dans {folder}"
+}

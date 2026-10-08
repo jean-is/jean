@@ -329,5 +329,8 @@
   "check.fix": "Betulkan yang tidak disokong sumber",
   "check.fix.prompt": "Sumber kamu tidak menyokong perkara-perkara ini. Semak semula dan betulkan jawapan kamu:",
   "since.prompt": "Apa yang baharu sejak kali terakhir?",
-  "since.closed": "Kerja berhenti selagi tab ini ditutup, jadi ini baru sahaja dibaca."
+  "since.closed": "Kerja berhenti selagi tab ini ditutup, jadi ini baru sahaja dibaca.",
+  "cap.machine.name": "Komputer ini",
+  "cap.machine.offer": "Jalankan pelayan pembangunan sesebuah laman, atau program anda sendiri, pada komputer ini?",
+  "cap.machine.yes": "Gunakan komputer ini"
 }

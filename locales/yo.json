@@ -329,5 +329,8 @@
   "check.fix": "Ṣàtúnṣe ohun tí orísun kò ṣe àtìlẹ́yìn fún",
   "check.fix.prompt": "Àwọn orísun rẹ kò ṣe àtìlẹ́yìn fún àwọn kókó wọ̀nyí. Tún wọn yẹ̀ wò kí o sì ṣàtúnṣe ìdáhùn rẹ:",
   "since.prompt": "Kí ló jẹ́ tuntun láti ìgbà tó kọjá?",
-  "since.closed": "Iṣẹ́ máa ń dúró nígbà tí táàbù yìí bá ti pa, nítorí náà ìsinsìnyí ni a ṣẹ̀ṣẹ̀ ka èyí."
+  "since.closed": "Iṣẹ́ máa ń dúró nígbà tí táàbù yìí bá ti pa, nítorí náà ìsinsìnyí ni a ṣẹ̀ṣẹ̀ ka èyí.",
+  "cap.machine.name": "Kọ̀ǹpútà yìí",
+  "cap.machine.offer": "Ṣé kí ẹ ṣiṣẹ́ sáfà ìdàgbàsókè ti ojú-òpó kan, tàbí àwọn ètò yín, lórí kọ̀ǹpútà yìí?",
+  "cap.machine.yes": "Lo kọ̀ǹpútà yìí"
 }

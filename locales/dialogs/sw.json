@@ -283,5 +283,7 @@
   "brain.device.loading": "Karibu tayari…",
   "brain.device.failed": "Upakuaji umesimama. Jaribu tena.",
   "brain.device.ready": "Ubongo wa kifaa hiki uko tayari",
-  "brain.device.private": "Faragha · hufanya kazi bila mtandao"
+  "brain.device.private": "Faragha · hufanya kazi bila mtandao",
+  "cap.machine.hint": "Omba kuendesha seva ya uundaji ya tovuti, kama npm run dev.",
+  "cap.machine.text": "Huendesha amri za kompyuta kwenye kifaa hiki chenyewe, katika mojawapo ya folda zako, kwa programu na seva zake: seva ya uundaji ya tovuti huonekana kwenye kivinjari. Kila amri huulizwa kwanza, na Ctrl+C kwenye terminali yako husimamisha yote."
 }

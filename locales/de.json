@@ -337,5 +337,8 @@
   "check.fix": "Korrigieren, was die Quellen nicht stützen",
   "check.fix.prompt": "Deine Quellen stützen diese Punkte nicht. Prüf sie noch einmal und korrigiere deine Antwort:",
   "since.prompt": "Was gibt es Neues seit dem letzten Mal?",
-  "since.closed": "Solange dieser Tab geschlossen ist, ruht die Arbeit; das hier wurde gerade eben gelesen."
+  "since.closed": "Solange dieser Tab geschlossen ist, ruht die Arbeit; das hier wurde gerade eben gelesen.",
+  "cap.machine.name": "Dieser Computer",
+  "cap.machine.offer": "Den Entwicklungsserver einer Website oder deine eigenen Programme auf diesem Computer ausführen?",
+  "cap.machine.yes": "Diesen Computer verwenden"
 }

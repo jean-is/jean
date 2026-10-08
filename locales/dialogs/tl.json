@@ -283,5 +283,7 @@
   "brain.device.loading": "Malapit nang matapos…",
   "brain.device.failed": "Huminto ang pag-download. Subukang muli.",
   "brain.device.ready": "Handa na ang utak sa device na ito",
-  "brain.device.private": "Pribado · gumagana offline"
+  "brain.device.private": "Pribado · gumagana offline",
+  "cap.machine.hint": "Ipapatakbo ang dev server ng isang site, gaya ng npm run dev.",
+  "cap.machine.text": "Pinapatakbo ang mga command ng computer sa mismong device na ito, sa isa sa mga folder mo, gamit ang sarili nitong mga program at server: lumalabas sa browser ang dev server ng isang site. Itinatanong muna ang bawat command, at pinahihinto ng Ctrl+C sa terminal mo ang lahat."
 }

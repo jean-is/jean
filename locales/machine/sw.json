@@ -1,0 +1,7 @@
+{
+  "machine.text": "Amri zinaweza pia kuendeshwa kwenye kompyuta hii, kwa programu na seva zake yenyewe: fungua terminali katika mojawapo ya folda zako na ubandike mstari huu. Kazi zenye folda hiyo zitaendesha amri zao huko, hadi ubonyeze Ctrl+C katika terminali hiyo.",
+  "machine.on": "Kazi zenye folda {folder} huendesha amri zao kwenye kompyuta hii, kila moja ikiulizwa kwanza, hadi ubonyeze Ctrl+C katika terminali yake.",
+  "machine.forget": "Acha kuitumia",
+  "machine.question": "Endesha hii kwenye kompyuta yako, katika {folder}?",
+  "machine.always": "Ruhusu kila wakati katika {folder}"
+}

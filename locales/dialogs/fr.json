@@ -286,5 +286,7 @@
   "brain.device.loading": "Presque prêt…",
   "brain.device.failed": "Le téléchargement s’est arrêté. Réessayez.",
   "brain.device.ready": "Le cerveau de cet appareil est prêt",
-  "brain.device.private": "Privé · fonctionne hors ligne"
+  "brain.device.private": "Privé · fonctionne hors ligne",
+  "cap.machine.hint": "Demandez à lancer le serveur de développement d’un site, comme npm run dev.",
+  "cap.machine.text": "Lance les commandes de l’ordinateur sur cet appareil lui-même, dans l’un de vos dossiers, avec ses propres programmes et serveurs : le serveur de développement d’un site s’affiche dans le navigateur. Chaque commande est demandée d’abord, et Ctrl+C dans votre terminal arrête tout."
 }

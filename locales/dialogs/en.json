@@ -283,5 +283,7 @@
   "brain.device.loading": "Almost ready…",
   "brain.device.failed": "The download stopped. Try again.",
   "brain.device.ready": "The brain on this device is ready",
-  "brain.device.private": "Private · works offline"
+  "brain.device.private": "Private · works offline",
+  "cap.machine.hint": "Ask to run a site’s dev server, such as npm run dev.",
+  "cap.machine.text": "Runs the computer’s commands on this device itself, in a folder of yours, with its own programs and servers: a site’s dev server shows in the browser. Each command is asked first, and Ctrl+C in your terminal stops it all."
 }

@@ -283,5 +283,7 @@
   "brain.device.loading": "Neredeyse hazır…",
   "brain.device.failed": "İndirme durdu. Tekrar dene.",
   "brain.device.ready": "Bu cihazdaki beyin hazır",
-  "brain.device.private": "Gizli · çevrimdışı çalışır"
+  "brain.device.private": "Gizli · çevrimdışı çalışır",
+  "cap.machine.hint": "Bir sitenin geliştirme sunucusunu çalıştırmayı iste, örneğin npm run dev.",
+  "cap.machine.text": "Bilgisayarın komutlarını bu cihazın kendisinde, klasörlerinden birinde, kendi programları ve sunucularıyla çalıştırır: bir sitenin geliştirme sunucusu tarayıcıda görünür. Her komut önce sorulur, terminalinde Ctrl+C her şeyi durdurur."
 }

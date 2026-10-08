@@ -1,0 +1,7 @@
+{
+  "machine.text": "Los comandos también pueden ejecutarse en esta computadora, con sus propios programas y servidores: abre una terminal en una de tus carpetas y pega esta línea. Las tareas con esa carpeta ejecutarán entonces sus comandos allí, hasta que pulses Ctrl+C en esa terminal.",
+  "machine.on": "Las tareas con la carpeta {folder} ejecutan sus comandos en esta computadora, cada uno preguntado antes, hasta que pulses Ctrl+C en su terminal.",
+  "machine.forget": "Dejar de usarla",
+  "machine.question": "¿Ejecutar esto en tu computadora, en {folder}?",
+  "machine.always": "Permitir siempre en {folder}"
+}

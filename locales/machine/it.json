@@ -1,0 +1,7 @@
+{
+  "machine.text": "I comandi possono girare anche su questo computer, con i suoi programmi e server: apri un terminale in una delle tue cartelle e incolla questa riga. Le attività con quella cartella eseguono allora lì i loro comandi, finché non premi Ctrl+C in quel terminale.",
+  "machine.on": "Le attività con la cartella {folder} eseguono i loro comandi su questo computer, ognuno chiesto prima, finché non premi Ctrl+C nel suo terminale.",
+  "machine.forget": "Smetti di usarlo",
+  "machine.question": "Eseguire questo sul tuo computer, in {folder}?",
+  "machine.always": "Consenti sempre in {folder}"
+}

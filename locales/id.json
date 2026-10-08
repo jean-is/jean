@@ -329,5 +329,8 @@
   "check.fix": "Perbaiki yang tidak didukung sumber",
   "check.fix.prompt": "Sumbermu tidak mendukung poin-poin ini. Periksa lagi dan perbaiki jawabanmu:",
   "since.prompt": "Apa yang baru sejak terakhir kali?",
-  "since.closed": "Pekerjaan berhenti selama tab ini tertutup, jadi ini baru saja dibaca."
+  "since.closed": "Pekerjaan berhenti selama tab ini tertutup, jadi ini baru saja dibaca.",
+  "cap.machine.name": "Komputer ini",
+  "cap.machine.offer": "Jalankan server pengembangan sebuah situs, atau program Anda sendiri, di komputer ini?",
+  "cap.machine.yes": "Gunakan komputer ini"
 }

@@ -337,5 +337,8 @@
   "check.fix": "Rekebisha yasiyoungwa mkono na vyanzo",
   "check.fix.prompt": "Vyanzo vyako haviungi mkono hoja hizi. Zihakiki tena na urekebishe jibu lako:",
   "since.prompt": "Kuna nini kipya tangu mara ya mwisho?",
-  "since.closed": "Kazi husimama kichupo hiki kikiwa kimefungwa, kwa hivyo haya yamesomwa sasa hivi."
+  "since.closed": "Kazi husimama kichupo hiki kikiwa kimefungwa, kwa hivyo haya yamesomwa sasa hivi.",
+  "cap.machine.name": "Kompyuta hii",
+  "cap.machine.offer": "Endesha seva ya uundaji ya tovuti, au programu zako, kwenye kompyuta hii?",
+  "cap.machine.yes": "Tumia kompyuta hii"
 }

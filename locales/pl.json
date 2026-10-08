@@ -353,5 +353,8 @@
   "check.fix": "Popraw to, czego źródła nie potwierdzają",
   "check.fix.prompt": "Twoje źródła nie potwierdzają tych punktów. Sprawdź je jeszcze raz i popraw odpowiedź:",
   "since.prompt": "Co nowego od ostatniego razu?",
-  "since.closed": "Gdy ta karta jest zamknięta, praca stoi, więc to zostało przeczytane przed chwilą."
+  "since.closed": "Gdy ta karta jest zamknięta, praca stoi, więc to zostało przeczytane przed chwilą.",
+  "cap.machine.name": "Ten komputer",
+  "cap.machine.offer": "Uruchamiać serwer deweloperski strony albo własne programy na tym komputerze?",
+  "cap.machine.yes": "Używaj tego komputera"
 }

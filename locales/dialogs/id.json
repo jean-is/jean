@@ -280,5 +280,7 @@
   "brain.device.loading": "Hampir siap…",
   "brain.device.failed": "Unduhan terhenti. Coba lagi.",
   "brain.device.ready": "Otak di perangkat ini sudah siap",
-  "brain.device.private": "Pribadi · bisa offline"
+  "brain.device.private": "Pribadi · bisa offline",
+  "cap.machine.hint": "Minta untuk menjalankan server pengembangan sebuah situs, seperti npm run dev.",
+  "cap.machine.text": "Menjalankan perintah komputer di perangkat ini sendiri, di salah satu folder Anda, dengan program dan servernya sendiri: server pengembangan situs tampil di browser. Setiap perintah ditanyakan dulu, dan Ctrl+C di terminal Anda menghentikan semuanya."
 }

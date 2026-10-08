@@ -345,5 +345,8 @@
   "check.fix": "Correggere ciò che le fonti non sostengono",
   "check.fix.prompt": "Le tue fonti non sostengono questi punti. Ricontrollali e correggi la tua risposta:",
   "since.prompt": "Che novità ci sono dall’ultima volta?",
-  "since.closed": "Il lavoro si ferma mentre questa scheda è chiusa: tutto questo è stato letto adesso."
+  "since.closed": "Il lavoro si ferma mentre questa scheda è chiusa: tutto questo è stato letto adesso.",
+  "cap.machine.name": "Questo computer",
+  "cap.machine.offer": "Eseguire il server di sviluppo di un sito, o i tuoi programmi, su questo computer?",
+  "cap.machine.yes": "Usa questo computer"
 }

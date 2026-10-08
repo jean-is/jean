@@ -31,6 +31,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
   voice: () => import('../caps/voice/voice.js'),
   computer: () => import('../caps/computer/computer.js'),
+  machine: () => import('../caps/machine/machine.js'),
   reflexes: () => import('../caps/reflexes/reflexes.js'),
   search: () => import('../caps/search/search.js'),
   connections: () => import('../caps/connections/connections.js'),

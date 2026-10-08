@@ -286,5 +286,7 @@
   "brain.device.loading": "Casi listo…",
   "brain.device.failed": "La descarga se detuvo. Vuelve a intentarlo.",
   "brain.device.ready": "El cerebro de este dispositivo está listo",
-  "brain.device.private": "Privado · funciona sin conexión"
+  "brain.device.private": "Privado · funciona sin conexión",
+  "cap.machine.hint": "Pide ejecutar el servidor de desarrollo de un sitio, como npm run dev.",
+  "cap.machine.text": "Ejecuta los comandos de la computadora en este mismo dispositivo, en una de tus carpetas, con sus propios programas y servidores: el servidor de desarrollo de un sitio se ve en el navegador. Cada comando se pregunta antes, y Ctrl+C en tu terminal lo detiene todo."
 }

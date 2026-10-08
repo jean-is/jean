@@ -33,6 +33,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] PowerPoint (D201): does a brain install pptxgenjs in ~, start from the skill's script and keep within the slide, in Arabic and Japanese too? Do the decks open without a repair in PowerPoint, Keynote and Google Slides?
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file
 - [ ] bash: how often a brain reaches for it, and whether its commands suit a non-technical user's files
+- [ ] This computer (D198) from Jean served over https: Chrome's local network prompt, Safari and Firefox reaching 127.0.0.1, Linux; a brain making, installing and serving a Vite project there, fixing what its log says
 
 **With real services**
 - [ ] Anthropic: cache reads and warming (`cache_read_input_tokens` on the second question); its own web search (chips, a second question replaying the results, `pause_turn`)
