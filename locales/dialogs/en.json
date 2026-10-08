@@ -143,7 +143,6 @@
   "connections.failed": "Couldn’t connect. Check the address: some services don’t accept connections from a browser yet.",
   "connections.needsKey": "This service needs you to sign in, or a key.",
   "connections.confirmRemove": "Disconnect {service}?",
-  "connections.notYet": "Not available yet",
   "connections.other": "Another service, by its address",
   "connections.failedKnown": "Couldn’t connect to {service}. Try again in a moment.",
   "connections.yours": "Connected",

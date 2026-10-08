@@ -143,7 +143,6 @@
   "connections.failed": "اتصال برقرار نشد. نشانی را بررسی کنید: برخی سرویس‌ها هنوز اتصال از مرورگر را نمی‌پذیرند.",
   "connections.needsKey": "این سرویس ورود یا یک کلید لازم دارد.",
   "connections.confirmRemove": "اتصال {service} قطع شود؟",
-  "connections.notYet": "هنوز در دسترس نیست",
   "connections.other": "سرویسی دیگر، با نشانی‌اش",
   "connections.failedKnown": "اتصال به سرویس {service} برقرار نشد. کمی بعد دوباره امتحان کنید.",
   "connections.yours": "متصل",

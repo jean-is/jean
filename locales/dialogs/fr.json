@@ -145,7 +145,6 @@
   "connections.failed": "Connexion impossible. Vérifiez l’adresse : certains services n’acceptent pas encore les connexions depuis un navigateur.",
   "connections.needsKey": "Ce service demande de vous connecter, ou une clé.",
   "connections.confirmRemove": "Déconnecter {service} ?",
-  "connections.notYet": "Pas encore disponible",
   "connections.other": "Un autre service, par son adresse",
   "connections.failedKnown": "Connexion à {service} impossible. Réessayez dans un instant.",
   "connections.yours": "Connectés",

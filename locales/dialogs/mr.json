@@ -143,7 +143,6 @@
   "connections.failed": "जोडता आले नाही. पत्ता तपासा: काही सेवा अजून ब्राउझरमधून येणाऱ्या जोडण्या स्वीकारत नाहीत.",
   "connections.needsKey": "या सेवेसाठी साइन इन किंवा की लागते.",
   "connections.confirmRemove": "सेवा {service} डिस्कनेक्ट करायची?",
-  "connections.notYet": "अजून उपलब्ध नाही",
   "connections.other": "दुसरी सेवा, तिच्या पत्त्याने",
   "connections.failedKnown": "सेवा {service} शी जोडता आले नाही. थोड्या वेळाने पुन्हा प्रयत्न करा.",
   "connections.yours": "जोडलेल्या",

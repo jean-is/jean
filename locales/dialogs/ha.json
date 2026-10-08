@@ -143,7 +143,6 @@
   "connections.failed": "Ba a iya haɗawa ba. Duba adireshin: wasu ayyuka ba sa karɓar haɗi daga mai bincike tukuna.",
   "connections.needsKey": "Wannan aikin yana bukatar ka shiga, ko makulli.",
   "connections.confirmRemove": "A cire haɗin {service}?",
-  "connections.notYet": "Ba a samu ba tukuna",
   "connections.other": "Wani aiki, ta adireshinsa",
   "connections.failedKnown": "Ba a iya haɗawa da {service} ba. Sake gwadawa nan da ɗan lokaci.",
   "connections.yours": "An haɗa",

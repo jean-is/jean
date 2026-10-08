@@ -141,7 +141,6 @@
   "connections.failed": "无法连接。请检查地址：有些服务还不接受来自浏览器的连接。",
   "connections.needsKey": "此服务需要登录或密钥。",
   "connections.confirmRemove": "断开 {service}？",
-  "connections.notYet": "暂不可用",
   "connections.other": "其他服务，按地址添加",
   "connections.failedKnown": "无法连接 {service}。请稍后再试。",
   "connections.yours": "已连接",

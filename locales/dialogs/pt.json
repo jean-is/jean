@@ -145,7 +145,6 @@
   "connections.failed": "Não foi possível ligar. Verifica o endereço: alguns serviços ainda não aceitam ligações a partir de um navegador.",
   "connections.needsKey": "Este serviço pede para iniciares sessão, ou uma chave.",
   "connections.confirmRemove": "Desligar {service}?",
-  "connections.notYet": "Ainda não disponível",
   "connections.other": "Outro serviço, pelo endereço",
   "connections.failedKnown": "Não foi possível ligar a {service}. Tenta novamente daqui a pouco.",
   "connections.yours": "Ligados",

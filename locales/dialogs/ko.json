@@ -141,7 +141,6 @@
   "connections.failed": "연결하지 못했어요. 주소를 확인하세요. 아직 브라우저의 연결을 받지 않는 서비스도 있어요.",
   "connections.needsKey": "이 서비스는 로그인이나 키가 필요해요.",
   "connections.confirmRemove": "{service} 연결을 해제할까요?",
-  "connections.notYet": "아직 사용할 수 없어요",
   "connections.other": "다른 서비스, 주소로 추가",
   "connections.failedKnown": "{service}에 연결하지 못했어요. 잠시 후 다시 시도하세요.",
   "connections.yours": "연결됨",

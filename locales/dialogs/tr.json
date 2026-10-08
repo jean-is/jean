@@ -143,7 +143,6 @@
   "connections.failed": "Bağlanılamadı. Adresi kontrol et: bazı hizmetler henüz tarayıcıdan gelen bağlantıları kabul etmiyor.",
   "connections.needsKey": "Bu hizmet için oturum açman ya da bir anahtar gerekiyor.",
   "connections.confirmRemove": "Bağlantı kesilsin mi: {service}?",
-  "connections.notYet": "Henüz kullanılamıyor",
   "connections.other": "Başka bir hizmet, adresiyle",
   "connections.failedKnown": "{service} hizmetine bağlanılamadı. Birazdan yeniden dene.",
   "connections.yours": "Bağlı",

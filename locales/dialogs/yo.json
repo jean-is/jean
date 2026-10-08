@@ -141,7 +141,6 @@
   "connections.failed": "A kò lè so ó pọ̀. Ẹ ṣàyẹ̀wò àdírẹ́sì náà: àwọn iṣẹ́ kan kò tíì gba ìsopọ̀ láti inú ẹ̀rọ ìtàkùn.",
   "connections.needsKey": "Iṣẹ́ yìí nílò kí ẹ wọlé, tàbí kọ́kọ́rọ́ kan.",
   "connections.confirmRemove": "Ṣé kí a ya {service} kúrò?",
-  "connections.notYet": "Kò tíì sí",
   "connections.other": "Iṣẹ́ mìíràn, nípasẹ̀ àdírẹ́sì rẹ̀",
   "connections.failedKnown": "A kò lè so {service} pọ̀. Ẹ gbìyànjú lẹ́ẹ̀kan sí i láìpẹ́.",
   "connections.yours": "Tí a ti so pọ̀",

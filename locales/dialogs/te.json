@@ -143,7 +143,6 @@
   "connections.failed": "అనుసంధానం కాలేదు. చిరునామా చూడండి: కొన్ని సేవలు ఇంకా బ్రౌజర్ నుంచి వచ్చే అనుసంధానాలను అంగీకరించవు.",
   "connections.needsKey": "ఈ సేవకు సైన్ ఇన్ లేదా కీ అవసరం.",
   "connections.confirmRemove": "{service} సేవ అనుసంధానం తీసేయాలా?",
-  "connections.notYet": "ఇంకా అందుబాటులో లేదు",
   "connections.other": "మరో సేవ, దాని చిరునామాతో",
   "connections.failedKnown": "{service} సేవతో అనుసంధానం కాలేదు. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
   "connections.yours": "అనుసంధానించినవి",
