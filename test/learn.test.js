@@ -157,13 +157,13 @@ test('a skill declares the kinds of block it writes, which are drawn as widgets,
   assert.deepEqual((await unpack({ name: 'charts', type: 'skill-md', description: 'Draw charts.', url: 'https://x/SKILL.md', digest, source: 'https://x/i.json' }, file)).blocks, ['echarts', 'vega-lite'])
 })
 
-test('Jean’s own directory: each skill as its SKILL.md says, the charts drawn from ```echarts and the scores from ```abc', async () => {
+test('Jean’s own directory: each skill as its SKILL.md says, the charts drawn from ```echarts and the scores from ```abc; PowerPoint draws nothing, it makes files on the computer', async () => {
   const fetchFile = async (/** @type {string | URL | Request} */ url) => new Response(await readFile(new URL(String(url))))
   const ready = await readDirectory({ fetch: /** @type {typeof fetch} */ (fetchFile) })
   assert.deepEqual(ready.map((entry) => entry.name), DIRECTORY.map((entry) => entry.name), 'every one can be read')
   assert.ok(ready.every((entry) => entry.digest === '' && entry.description.length > 40 && entry.icon))
   const blocks = await Promise.all(ready.map(async (entry) => parseSkill(await readFile(new URL(entry.url), 'utf8'), entry.url)?.blocks))
-  assert.deepEqual(blocks, [['echarts'], ['abc']])
+  assert.deepEqual(blocks, [['echarts'], ['abc'], undefined])
   const missing = await readDirectory({ fetch: /** @type {typeof fetch} */ (async () => new Response('', { status: 404 })) })
   assert.deepEqual(missing, [], 'one that can’t be read is left out')
 })

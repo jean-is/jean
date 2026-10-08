@@ -128,6 +128,8 @@
   "skill.chart.text": "Bar, garisan, pai dan banyak lagi, dilukis dalam jawapan",
   "skill.music-score": "Skor muzik",
   "skill.music-score.text": "Melodi yang ditulis sebagai skor muzik, untuk dibaca dan dimainkan",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Pembentangan dalam fail PowerPoint, sedia untuk dibentangkan dan diubah",
   "cap.search.text": "{name} mencari di web apabila soalan memerlukan fakta yang belum ada, dan menunjukkan dari mana setiap jawapan datang.",
   "cap.browser.hint": "Buka tiga pautan daripada jawapan.",
   "cap.browser.text": "Memaparkan halaman web di sebelah perbualan, dengan undur, maju dan muat semula. {name} juga boleh membuka halaman di situ, dan tahu halaman mana yang sedang terbuka.",

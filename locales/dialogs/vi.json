@@ -128,6 +128,8 @@
   "skill.chart.text": "Cột, đường, tròn và hơn thế nữa, vẽ ngay trong câu trả lời",
   "skill.music-score": "Bản nhạc",
   "skill.music-score.text": "Giai điệu viết thành bản nhạc, để đọc và để chơi",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Bài thuyết trình dạng tệp PowerPoint, sẵn sàng để trình chiếu và chỉnh sửa",
   "cap.search.text": "{name} tìm trên web khi câu hỏi cần những thông tin chưa có, và cho biết mỗi câu trả lời đến từ đâu.",
   "cap.browser.hint": "Mở ba liên kết từ câu trả lời.",
   "cap.browser.text": "Hiển thị trang web bên cạnh cuộc trò chuyện, có quay lại, tiến tới và tải lại. {name} cũng có thể mở trang ở đó, và biết trang nào đang mở.",

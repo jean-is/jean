@@ -130,6 +130,8 @@
   "skill.chart.text": "Staven, lijnen, taarten en meer, getekend in de antwoorden",
   "skill.music-score": "Bladmuziek",
   "skill.music-score.text": "Melodieën op notenschrift, om te lezen en af te spelen",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Presentaties als PowerPoint-bestanden, klaar om te presenteren en aan te passen",
   "cap.search.text": "{name} zoekt op het web als een vraag feiten nodig heeft die er niet zijn, en laat zien waar elk antwoord vandaan komt.",
   "cap.browser.hint": "Open drie links uit antwoorden.",
   "cap.browser.text": "Toont webpagina’s naast het gesprek, met terug, vooruit en vernieuwen. {name} kan er ook pagina’s openen, en weet welke open is.",

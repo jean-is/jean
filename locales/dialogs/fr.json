@@ -132,6 +132,8 @@
   "skill.chart.text": "Barres, courbes, camemberts et plus, dessinés dans les réponses",
   "skill.music-score": "Partition",
   "skill.music-score.text": "Des airs écrits en partition, à lire et à jouer",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Des présentations en fichiers PowerPoint, prêtes à projeter et à modifier",
   "cap.search.text": "{name} cherche sur le web quand une question demande des faits qui manquent, et montre d’où vient chaque réponse.",
   "cap.browser.hint": "Ouvrez trois liens depuis des réponses.",
   "cap.browser.text": "Affiche les pages web à côté de la conversation, avec précédent, suivant et actualiser. {name} peut aussi y ouvrir des pages, et sait laquelle est ouverte.",

@@ -128,6 +128,8 @@
   "skill.chart.text": "長條圖、折線圖、圓餅圖等，直接畫在回答裡",
   "skill.music-score": "樂譜",
   "skill.music-score.text": "寫成樂譜的旋律，可讀可播放",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "製成 PowerPoint 檔案的簡報，可直接放映和修改",
   "cap.search.text": "當問題需要手邊沒有的事實時，{name} 會上網搜尋，並顯示每個回答的出處。",
   "cap.browser.hint": "開啟回答中的三個連結。",
   "cap.browser.text": "在對話旁邊顯示網頁，可以上一頁、下一頁和重新整理。{name} 也能在那裡開啟網頁，並且知道開著的是哪一頁。",

@@ -134,6 +134,8 @@
   "skill.chart.text": "Słupki, linie, koła i nie tylko, rysowane w odpowiedziach",
   "skill.music-score": "Nuty",
   "skill.music-score.text": "Melodie zapisane nutami, do czytania i odtwarzania",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Prezentacje w plikach PowerPoint, gotowe do pokazania i zmiany",
   "cap.search.text": "Gdy do odpowiedzi brakuje faktów, są wyszukiwane w sieci, a przy każdej odpowiedzi widać, skąd pochodzi.",
   "cap.browser.hint": "Otwórz trzy linki z odpowiedzi.",
   "cap.browser.text": "Pokazuje strony internetowe obok rozmowy, z przyciskami wstecz, dalej i odśwież. {name} też może tam otwierać strony i wie, która jest otwarta.",

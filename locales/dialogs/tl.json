@@ -130,6 +130,8 @@
   "skill.chart.text": "Mga bar, linya, pie at iba pa, iginuguhit sa mga sagot",
   "skill.music-score": "Piyesa ng musika",
   "skill.music-score.text": "Mga himig na isinulat bilang piyesa, para basahin at tugtugin",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Mga presentasyon bilang PowerPoint file, handang ipakita at baguhin",
   "cap.search.text": "Naghahanap ang {name} sa web kapag kailangan ng tanong ang mga katotohanang wala pa, at ipinapakita kung saan galing ang bawat sagot.",
   "cap.browser.hint": "Magbukas ng tatlong link mula sa mga sagot.",
   "cap.browser.text": "Ipinapakita ang mga web page sa tabi ng usapan, may balik, abante at reload. Kaya rin ni {name} na magbukas ng page doon, at alam niya kung alin ang bukas.",

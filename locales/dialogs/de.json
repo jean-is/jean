@@ -130,6 +130,8 @@
   "skill.chart.text": "Balken, Linien, Torten und mehr, direkt in den Antworten gezeichnet",
   "skill.music-score": "Noten",
   "skill.music-score.text": "Melodien als Notenblatt, zum Lesen und Abspielen",
+  "skill.pptx": "PowerPoint",
+  "skill.pptx.text": "Präsentationen als PowerPoint-Dateien, bereit zum Vorführen und Ändern",
   "cap.search.text": "{name} sucht im Web, wenn für eine Frage Fakten fehlen, und zeigt, woher jede Antwort stammt.",
   "cap.browser.hint": "Öffne drei Links aus Antworten.",
   "cap.browser.text": "Zeigt Webseiten neben dem Gespräch, mit Zurück, Vor und Neu laden. {name} kann dort auch Seiten öffnen und weiß, welche offen ist.",
