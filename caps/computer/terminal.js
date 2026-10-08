@@ -9,7 +9,7 @@
 // it. A bare `node`, `python` or `python3` opens its prompt, as on a real computer (D180), until
 // `.exit`, `exit()` or Ctrl+D. Opened from Settings › Computer or with ⌘J, then from the main
 // area too. Loaded the first time it opens, with its style sheet.
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
@@ -80,6 +80,9 @@ export const close = () => { open.value = false }
 export const toggle = (keys = false) => (open.peek() && (!keys || pane.contains(document.activeElement)) ? close() : show())
 const toLine = () => pane.querySelector('textarea')?.focus()
 
+/** Clear's icon: a broom, for what is swept away rather than deleted. */
+const broom = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<g transform="rotate(45 12 12)"><path d="M12 .5V10M9.5 10h5l2.5 10H7ZM8.9 12.5h6.2M10.3 15.5 10 20M13.7 15.5l.3 4.5"/></g>`}</svg>`
+
 const stop = () => { for (const entry of current().entries) entry.running?.abort() }
 const clear = () => {
   const terminal = current()
@@ -97,8 +100,7 @@ class Terminal extends Element {
     return html`<aside class="pane terminal" aria-label=${t('computer.terminal')} @keydown=${keyed} @click=${focusLine}>
       <header class="pane-head">
         <h2>${t('computer.terminal')}</h2>
-        ${terminal.entries.some((entry) => entry.running) ? button(t('action.stop'), icons.stop, stop) : nothing}
-        ${button(t('computer.terminal.clear'), icons.trash, clear)}
+        ${terminal.entries.some((entry) => entry.running) ? button(t('action.stop'), icons.stop, stop) : button(t('computer.terminal.clear'), broom, clear)}
         ${button(t('action.close'), icons.close, close)}
       </header>
       <div class="terminal-body" dir="ltr" tabindex="-1" @scroll=${scrolled}>
