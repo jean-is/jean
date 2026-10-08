@@ -109,6 +109,7 @@
   "routines.next": "בפעם הבאה: {when}",
   "routines.confirmDelete": "למחוק את השגרה “{title}”?",
   "routines.run": "הפעלה עכשיו",
+  "routines.runs": "הפעלות קודמות",
   "skills.from": "מקור: {source}",
   "skills.elsewhere": "מיומנויות ממקומות אחרים",
   "skills.elsewhereText": "מיומנויות מוכנות שאתרים וארגונים מפרסמים. הן מושוות לבקשות שלך במכשיר הזה, ומיומנות נוספת רק כשבוחרים בה, אחרי קריאת השלבים שלה.",

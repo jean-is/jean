@@ -32,6 +32,7 @@
   "history.title": "Tareas",
   "history.empty": "Tus tareas aparecerán aquí.",
   "history.confirmDelete": "¿Eliminar esta tarea? No se puede deshacer.",
+  "history.runs": "Ejecuciones anteriores: {count}",
   "rewind.confirm": "¿Preguntar esto de nuevo? Todo lo que vino después en esta tarea se eliminará. Los archivos creados o cambiados desde entonces se quedan como están.",
   "sidebar.open": "Abrir la barra lateral",
   "sidebar.close": "Cerrar la barra lateral",

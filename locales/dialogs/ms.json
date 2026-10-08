@@ -104,6 +104,7 @@
   "routines.next": "Seterusnya: {when}",
   "routines.confirmDelete": "Padam rutin “{title}”?",
   "routines.run": "Jalankan sekarang",
+  "routines.runs": "Larian terdahulu",
   "skills.from": "Daripada {source}",
   "skills.elsewhere": "Kemahiran dari tempat lain",
   "skills.elsewhereText": "Kemahiran sedia ada yang diterbitkan oleh laman web dan organisasi. Ia dibandingkan dengan permintaan anda pada peranti ini, dan satu hanya ditambah apabila anda memilihnya selepas membaca langkahnya.",

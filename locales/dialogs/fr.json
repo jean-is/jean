@@ -108,6 +108,7 @@
   "routines.next": "Prochaine fois : {when}",
   "routines.confirmDelete": "Supprimer la routine « {title} » ?",
   "routines.run": "Lancer maintenant",
+  "routines.runs": "Lancements précédents",
   "skills.from": "De {source}",
   "skills.elsewhere": "Compétences d’ailleurs",
   "skills.elsewhereText": "Des compétences toutes faites, publiées par des sites et des organisations. Elles sont comparées à vos demandes sur cet appareil, et une compétence n’est ajoutée que si vous la choisissez, après avoir lu ses étapes.",

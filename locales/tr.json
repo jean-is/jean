@@ -32,6 +32,7 @@
   "history.title": "Görevler",
   "history.empty": "Görevlerin burada görünecek.",
   "history.confirmDelete": "Bu görev silinsin mi? Bu geri alınamaz.",
+  "history.runs": "Önceki çalıştırmalar: {count}",
   "rewind.confirm": "Bunu yeniden sormak istiyor musunuz? Bu görevde ondan sonra gelen her şey kaldırılacak. O zamandan beri oluşturulan veya değiştirilen dosyalar olduğu gibi kalır.",
   "sidebar.open": "Kenar çubuğunu aç",
   "sidebar.close": "Kenar çubuğunu kapat",

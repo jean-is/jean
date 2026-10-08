@@ -32,6 +32,7 @@
   "history.title": "Taken",
   "history.empty": "Je taken verschijnen hier.",
   "history.confirmDelete": "Deze taak verwijderen? Dit kan niet ongedaan worden gemaakt.",
+  "history.runs": "Eerdere uitvoeringen: {count}",
   "rewind.confirm": "Dit opnieuw vragen? Alles wat erna kwam in deze taak wordt verwijderd. Bestanden die sindsdien zijn gemaakt of gewijzigd, blijven zoals ze zijn.",
   "sidebar.open": "Zijbalk openen",
   "sidebar.close": "Zijbalk sluiten",

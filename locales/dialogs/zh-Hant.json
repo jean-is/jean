@@ -104,6 +104,7 @@
   "routines.next": "下次：{when}",
   "routines.confirmDelete": "刪除例行任務「{title}」？",
   "routines.run": "立即執行",
+  "routines.runs": "歷次執行",
   "skills.from": "來自 {source}",
   "skills.elsewhere": "來自其他地方的技能",
   "skills.elsewhereText": "網站和組織發布的現成技能。它們會在這台裝置上與你的請求比對，只有在你讀過步驟並選擇後才會新增。",

@@ -32,6 +32,7 @@
   "history.title": "Tugas",
   "history.empty": "Tugas Anda akan muncul di sini.",
   "history.confirmDelete": "Hapus tugas ini? Ini tidak bisa dibatalkan.",
+  "history.runs": "Riwayat: {count}",
   "rewind.confirm": "Tanyakan ini lagi? Semua yang muncul setelahnya dalam tugas ini akan dihapus. File yang dibuat atau diubah sejak itu tetap seperti adanya.",
   "sidebar.open": "Buka bilah samping",
   "sidebar.close": "Tutup bilah samping",

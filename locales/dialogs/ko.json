@@ -104,6 +104,7 @@
   "routines.next": "다음: {when}",
   "routines.confirmDelete": "루틴 ‘{title}’을(를) 삭제할까요?",
   "routines.run": "지금 실행",
+  "routines.runs": "지난 실행",
   "skills.from": "출처: {source}",
   "skills.elsewhere": "다른 곳의 스킬",
   "skills.elsewhereText": "사이트와 조직이 공개한 기성 스킬이에요. 이 기기에서 요청과 비교하며, 단계를 읽고 직접 고른 경우에만 추가돼요.",

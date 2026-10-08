@@ -46,6 +46,10 @@ test('digest: what was asked, shared and answered, without the follow-ups; its s
     answer('About 100.'),
   ]
   assert.equal(digest(records), 'User: [Budget.xlsx] Sum up the budget\n\nAssistant: The total is 1,200.\n\nUser: And per month?\n\nAssistant: About 100.')
+  // The files an answer made, named after it.
+  const file = { uri: 'files/sha256-b.xlsx', name: 'Monthly.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size: 10 }
+  const made = envelope('jean', /** @type {any} */ ({ sessionUpdate: 'tool_call', toolCallId: 'c1', title: 'Write Monthly.xlsx', kind: 'edit', status: 'completed', _meta: { file } }), 0)
+  assert.equal(digest([...records, made]), 'User: [Budget.xlsx] Sum up the budget\n\nAssistant: The total is 1,200.\n\nUser: And per month?\n\nAssistant: About 100.\nFiles made: Monthly.xlsx')
   const long = digest(records, 60)
   assert.ok(long.startsWith('User: [') && long.endsWith('About 100.') && long.includes('\n…\n') && long.length < 70, long)
 })

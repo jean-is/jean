@@ -8,6 +8,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, LOCALES } from './state.js'
 import { LOOKS, lookId } from './looks.js'
+import { oneRowEach } from '../core/conversations.js'
 import { loaded } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
@@ -15,26 +16,39 @@ import { icons } from './icons.js'
 import { SHORTCUTS } from './shell.js'
 import { focusComposer } from './composer.js'
 
+/** Routines whose earlier runs the user unfolded or folded in the list, by the routine's file (D122). */
+const folds = signal(/** @type {Map<string, boolean>} */ (new Map()))
+
 /**
  * The tasks, newest first, the open one marked (D165). One started before the open one (ULIDs
  * sort by time), or any from a new page, is back (D125). One being answered has a light before its name, ringed while a decision waits there (D147).
- * What can be done with one is in a menu at its end (D181).
+ * What can be done with one is in a menu at its end (D181). A routine's runs are one row, its newest, which unfolds the earlier
+ * ones under it by date; unfolded while one of them is open or under way (D122).
  * @param {'drawer' | 'list'} where
  */
 function conversationList(where) {
-  const list = app.conversations.value
   const currentId = app.current.value?.id
   const running = app.running.value
   const waiting = [...app.decisions.value.map((decision) => decision.conversation), app.offering.value?.conversation]
-  return list.length ? html`<ol class="history-list">${repeat(list, (item) => item.id, (item) => {
+  const [when, count] = [new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' }), new Intl.NumberFormat(locale.value)]
+  const rows = oneRowEach(app.conversations.value).flatMap((item) => {
+    const earlier = item.earlier ?? []
+    const open = earlier.some((run) => run.id === currentId || running.includes(run.path)) || Boolean(folds.value.get(item.routine ?? ''))
+    return [{ item, earlier, open, run: false }, ...(open ? earlier.map((run) => ({ item: run, earlier: [], open: false, run: true })) : [])]
+  })
+  /** @param {string} routine @param {boolean} open */
+  const fold = (routine, open) => { folds.value = new Map(folds.value).set(routine, !open) }
+  return rows.length ? html`<ol class="history-list">${repeat(rows, ({ item }) => item.id, ({ item, earlier, open, run }) => {
     const asks = running.includes(item.path) ? waiting.filter((path) => path === item.path).length : -1
     const menu = `task-${where}-${item.id}`
-    return html`<li class=${item.id === currentId ? 'is-current' : ''}>
+    return html`<li class="${item.id === currentId ? 'is-current' : ''} ${run ? 'is-run' : ''}">
       <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'}
         @click=${() => turnPage(() => openConversation(item.path), !currentId || item.id < currentId)}>
         ${asks < 0 ? nothing : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
-        <span class="history-title" dir="auto">${item.title || t('conversation.untitled')}</span>
+        ${item.routine && !run ? icons.alarm : nothing}<span class="history-title" dir="auto">${run ? when.format(new Date(item.createdAt)) : item.title || t('conversation.untitled')}</span>
       </button>
+      ${earlier.length ? html`<button class="runs-toggle" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })} title=${t('history.runs', { count: earlier.length })}
+        @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
       <button class="icon-button subtle" popovertarget=${menu} aria-label=${t('action.more')} title=${t('action.more')}>${icons.more}</button>
       <div id=${menu} class="menu task-menu" popover><button type="button" popovertarget=${menu} popovertargetaction="hide"
         @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}${t('action.delete')}</button></div>

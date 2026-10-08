@@ -497,6 +497,7 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .approval-for { margin: 0 0 0.75rem; padding: 0.4rem 0.6rem; overflow-x: auto; border-radius: 0.5rem; background: var(--room); font: 0.82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 .inbox { display: grid; gap: 0.6rem; }
 .since { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-weight: 600; }
+button.since { padding: 0; border: 0; background: none; text-align: start; } button.since:hover > span { text-decoration: underline; }
 .since .icon { inline-size: 1.1rem; block-size: 1.1rem; color: var(--flame-deep); }
 .since-note { margin: 0.2rem 0 0.8rem; font-size: 0.86rem; color: var(--ink-soft); }
 .check.is-running { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-size: 0.86rem; color: var(--ink-soft); animation: pulse 1.6s ease-in-out infinite; }
@@ -720,6 +721,11 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 /* Being answered (D147). */
 .history-item .ember { inline-size: 0.375rem; block-size: 0.375rem; background: var(--flame); animation: pulse 1.6s ease-in-out infinite; }
 .history-item .ember[data-waiting] { animation: none; box-shadow: 0 0 0 0.15rem oklch(from var(--flame) l c h / 0.3); }
+.history-item > .icon { flex: none; inline-size: 1rem; block-size: 1rem; opacity: 0.7; }
+/* A routine's runs (D122): its newest named after it, with a count that unfolds the earlier ones under it, by date. */
+.runs-toggle { flex: none; display: inline-flex; align-items: center; gap: 0.1rem; padding: 0.3rem 0.45rem; border: 0; border-radius: 0.6rem; background: none; color: inherit; font-size: 0.8rem; }
+.runs-toggle:hover { background: var(--line-strong); } .runs-toggle .icon { inline-size: 0.9rem; block-size: 0.9rem; transition: rotate 0.25s var(--ease); } .runs-toggle[aria-expanded='true'] .icon { rotate: 180deg; }
+.history-list li.is-run .history-item { padding-inline-start: 2.25rem; font-size: 0.88rem; color: var(--ink-soft); }
 
 /* ─── Projects ──────────────────────────────────────────────────────────── */
 

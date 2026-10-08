@@ -2,7 +2,7 @@
 // added only by the user, after reading their steps (D121); routines, requests Jean sends itself
 // on a schedule, while open or caught up at the next visit (D122).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, MAIL_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, MAIL_URL } from './helpers.js'
 
 
 /** A new conversation, once the page has turned to it. @param {import('@playwright/test').Page} page */
@@ -149,8 +149,30 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   const asked = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update)
-  expect(asked.text).toMatch(/every day at 00:00; the user ran it now\.$/)
+  // Told of the run before it, from its time, as it went.
+  expect(asked.text).toMatch(/every day at 00:00; the user ran it now\. It ran once before, last on \d{4}-\d\d-\d\d \d\d:\d\d \(\w+day\); what is new is what came after that\. /)
+  expect(asked.text).toContain('The last run, as it went, for reference:\n\nUser: Summarize the weekly sales by region\n\nAssistant: ## Here is what I found')
   expect((await routines(page))[0].lastRun > ran).toBe(true)
+
+  // Its runs are its own (D122): one row in the drawer, named after it, which unfolds the earlier one under it.
+  const tasks = await openTasks(page)
+  await expect(tasks.locator('.history-item:has(> .icon)')).toHaveText(['Weekly sales'])
+  const fold = tasks.locator('.runs-toggle')
+  await expect(fold).toHaveAttribute('aria-label', 'Past runs: 1')
+  await expect(tasks.locator('li.is-run')).toHaveCount(0)
+  await fold.click()
+  await expect(fold).toHaveAttribute('aria-expanded', 'true')
+  await tasks.locator('li.is-run .history-item').click()
+  await expect.poll(current).toBe(before)
+  await expect(tasks.locator('li.is-run.is-current')).toHaveCount(1)
+  // Listed under it in Settings too, which a run's line opens.
+  await page.locator('button.since').click()
+  const runs = page.locator('app-settings dialog[open] .routine-runs button')
+  await expect(runs).toHaveCount(2)
+  await runs.first().click()
+  await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+  await expect.poll(current).not.toBe(before)
+  await expect(tasks.locator('li.is-current .history-item')).toHaveText('Weekly sales')
 })
 
 test('a routine that fell due while Jean was closed runs at the next visit, once', async ({ page, browserName }) => {

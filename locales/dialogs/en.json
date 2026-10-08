@@ -106,6 +106,7 @@
   "routines.next": "Next: {when}",
   "routines.confirmDelete": "Delete the routine “{title}”?",
   "routines.run": "Run now",
+  "routines.runs": "Past runs",
   "skills.from": "From {source}",
   "skills.elsewhere": "Skills from elsewhere",
   "skills.elsewhereText": "Ready-made skills that sites and organisations publish. They’re compared with your requests on this device, and one is added only when you choose it, after reading its steps.",

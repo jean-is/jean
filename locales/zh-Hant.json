@@ -32,6 +32,7 @@
   "history.title": "任務",
   "history.empty": "你的任務會顯示在這裡。",
   "history.confirmDelete": "刪除這個任務？此動作無法復原。",
+  "history.runs": "歷次執行：{count}",
   "rewind.confirm": "要重新問一次嗎？此任務中這之後的所有內容都將被移除。之後建立或變更的檔案保持不變。",
   "sidebar.open": "開啟側邊欄",
   "sidebar.close": "關閉側邊欄",

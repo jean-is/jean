@@ -106,6 +106,7 @@
   "routines.next": "Susunod: {when}",
   "routines.confirmDelete": "Burahin ang rutinang “{title}”?",
   "routines.run": "Patakbuhin ngayon",
+  "routines.runs": "Mga nakaraang takbo",
   "skills.from": "Mula sa {source}",
   "skills.elsewhere": "Mga kasanayan mula sa ibang lugar",
   "skills.elsewhereText": "Mga handang kasanayan na inilalathala ng mga site at organisasyon. Inihahambing ang mga ito sa mga kahilingan mo sa device na ito, at idinadagdag lang ang isa kapag pinili mo ito matapos basahin ang mga hakbang nito.",

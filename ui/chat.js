@@ -136,12 +136,12 @@ function turnView(turn, live, files, upTo, last, sources) {
   const streaming = Boolean(live)
   const read = whatJeanRead(upTo, entries, files)
   const since = turn.notes.map((note) => note.data).find((data) => data.kind === 'since')
-  // A routine's request, sent by Jean on its schedule (D122).
+  // A routine's request, sent by Jean on its schedule (D122): its line opens the routine and its runs.
   const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
   return html`<li class="turn">
     ${since?.kind === 'since' ? html`<p class="since">${icons.clock}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
-    ${routine?.kind === 'routine' ? html`<p class="since">${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></p>` : nothing}
+    ${routine?.kind === 'routine' ? html`<button class="since" @click=${() => import('./knows.js').then((knows) => knows.showRoutine(routine.routine))}>${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></button>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
       <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${isPicture(link) ? icons.image : icons.file}<span dir="auto">${link.name}</span></button>
     </li>`)}</ul>` : nothing}

@@ -32,6 +32,7 @@
   "history.title": "Àwọn iṣẹ́",
   "history.empty": "Àwọn iṣẹ́ yín yóò hàn níbí.",
   "history.confirmDelete": "Ṣé kí a paarẹ́ iṣẹ́ yìí? Kò ní ṣeé dá padà.",
+  "history.runs": "Àwọn ìgbà tó ti ṣe é: {count}",
   "rewind.confirm": "Ṣé o fẹ́ béèrè èyí lẹ́ẹ̀kan sí i? Gbogbo ohun tó tẹ̀lé e nínú iṣẹ́ yìí ni a ó yọ kúrò. Àwọn fáìlì tí a ṣe tàbí tí a yí padà láti ìgbà náà yóò wà bí wọ́n ṣe wà.",
   "sidebar.open": "Ṣí ọ̀pá ẹ̀gbẹ́",
   "sidebar.close": "Pa ọ̀pá ẹ̀gbẹ́",

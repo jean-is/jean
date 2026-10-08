@@ -97,6 +97,7 @@ label.item, .list summary { cursor: pointer; }
 /* A routine: its name opens its schedule and request, Run now beside it. */
 .routines > li { padding: 0.25rem; gap: 0.5rem; } .routines li > .button { margin-inline-end: 0.4rem; } .routines .item-body { flex-basis: 100%; padding-block-start: 0.4rem; }
 .routines button.item { padding: 0.4rem 0.65rem; border: 0; border-radius: 0.75rem; background: none; text-align: start; } .routines button.item:hover { background: var(--line); }
+.routine-runs { display: grid; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-soft); } .routine-runs ul { display: flex; flex-wrap: wrap; gap: 0.35rem; max-block-size: 7rem; overflow-y: auto; margin: 0 -0.25rem; padding: 0.25rem; list-style: none; } .routine-runs .button { padding: 0.3rem 0.75rem; color: var(--ink); }
 .item-icon { flex: none; display: grid; place-items: center; inline-size: 2.2rem; aspect-ratio: 1; border-radius: 0.7rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
 .item-icon .icon { color: var(--flame); }
 .item-text { flex: 1; display: grid; min-inline-size: 0; }

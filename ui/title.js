@@ -6,7 +6,7 @@ import { app, loadModels, refreshConversations } from './state.js'
 import { getSecret } from './secrets.js'
 import { TIERS } from './auto.js'
 import { appendRecords } from '../core/conversations.js'
-import { linkedFiles, metaRecord, openingOf, titleOf } from '../core/events.js'
+import { linkedFiles, metaRecord, openingOf, routineOf, titleOf } from '../core/events.js'
 import { firstWords } from '../core/i18n.js'
 
 /** @import { Envelope, BrainConfig } from '../core/types.js' */
@@ -36,6 +36,9 @@ export function nameConversation(path, records, brain) {
 
 /** @param {Envelope[]} records @param {BrainConfig} brain */
 async function titleFor(records, brain) {
+  // A routine's run takes its routine's name (D122).
+  const routine = routineOf(records)
+  if (routine) return routine.title
   const text = openingOf(records)
   const names = linkedFiles(records).map((link) => link.name)
   if (!text) return names[0] ?? ''

@@ -32,6 +32,7 @@
   "history.title": "작업",
   "history.empty": "작업이 여기에 표시됩니다.",
   "history.confirmDelete": "이 작업을 삭제할까요? 되돌릴 수 없습니다.",
+  "history.runs": "지난 실행: {count}",
   "rewind.confirm": "다시 물어볼까요? 이 작업에서 이후의 내용은 모두 삭제됩니다. 그 뒤에 만들거나 바꾼 파일은 그대로 남습니다.",
   "sidebar.open": "사이드바 열기",
   "sidebar.close": "사이드바 닫기",

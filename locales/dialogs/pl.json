@@ -110,6 +110,7 @@
   "routines.next": "Następnym razem: {when}",
   "routines.confirmDelete": "Usunąć rutynę „{title}”?",
   "routines.run": "Uruchom teraz",
+  "routines.runs": "Wcześniejsze uruchomienia",
   "skills.from": "Źródło: {source}",
   "skills.elsewhere": "Umiejętności z innych miejsc",
   "skills.elsewhereText": "Gotowe umiejętności publikowane przez strony i organizacje. Są porównywane z twoimi prośbami na tym urządzeniu, a dodawane tylko wtedy, gdy wybierzesz jedną po przeczytaniu jej kroków.",

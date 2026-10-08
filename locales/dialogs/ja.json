@@ -104,6 +104,7 @@
   "routines.next": "次回：{when}",
   "routines.confirmDelete": "ルーティン「{title}」を削除しますか？",
   "routines.run": "今すぐ実行",
+  "routines.runs": "これまでの実行",
   "skills.from": "提供元：{source}",
   "skills.elsewhere": "ほかの場所のスキル",
   "skills.elsewhereText": "サイトや組織が公開している既製のスキルです。このデバイス上であなたの依頼と照らし合わせ、手順を読んだうえで選んだときだけ追加されます。",

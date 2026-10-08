@@ -104,6 +104,7 @@
   "routines.next": "Berikutnya: {when}",
   "routines.confirmDelete": "Hapus rutinitas “{title}”?",
   "routines.run": "Jalankan sekarang",
+  "routines.runs": "Riwayat",
   "skills.from": "Dari {source}",
   "skills.elsewhere": "Keterampilan dari tempat lain",
   "skills.elsewhereText": "Keterampilan siap pakai yang diterbitkan situs dan organisasi. Semuanya dibandingkan dengan permintaan Anda di perangkat ini, dan satu hanya ditambahkan bila Anda memilihnya setelah membaca langkah-langkahnya.",

@@ -32,6 +32,7 @@
   "history.title": "Zadania",
   "history.empty": "Tutaj pojawią się twoje zadania.",
   "history.confirmDelete": "Usunąć to zadanie? Tego nie można cofnąć.",
+  "history.runs": "Wcześniejsze uruchomienia: {count}",
   "rewind.confirm": "Zapytać o to ponownie? Wszystko, co nastąpiło później w tym zadaniu, zostanie usunięte. Pliki utworzone lub zmienione od tego czasu pozostaną bez zmian.",
   "sidebar.open": "Otwórz pasek boczny",
   "sidebar.close": "Zamknij pasek boczny",

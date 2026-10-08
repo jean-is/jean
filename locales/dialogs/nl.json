@@ -106,6 +106,7 @@
   "routines.next": "Volgende keer: {when}",
   "routines.confirmDelete": "Routine ‘{title}’ verwijderen?",
   "routines.run": "Nu uitvoeren",
+  "routines.runs": "Eerdere uitvoeringen",
   "skills.from": "Van {source}",
   "skills.elsewhere": "Vaardigheden van elders",
   "skills.elsewhereText": "Kant-en-klare vaardigheden die websites en organisaties publiceren. Ze worden op dit apparaat vergeleken met je verzoeken, en er wordt er pas een toegevoegd als je die kiest, nadat je de stappen hebt gelezen.",

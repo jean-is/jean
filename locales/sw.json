@@ -32,6 +32,7 @@
   "history.title": "Kazi",
   "history.empty": "Kazi zako zitaonekana hapa.",
   "history.confirmDelete": "Ufute kazi hii? Hili haliwezi kutenduliwa.",
+  "history.runs": "Mara zilizopita: {count}",
   "rewind.confirm": "Uliza hili tena? Kila kitu kilichofuata katika kazi hii kitaondolewa. Faili zilizotengenezwa au kubadilishwa tangu hapo zitabaki kama zilivyo.",
   "sidebar.open": "Fungua upau wa pembeni",
   "sidebar.close": "Funga upau wa pembeni",

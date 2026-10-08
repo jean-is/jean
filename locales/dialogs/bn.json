@@ -106,6 +106,7 @@
   "routines.next": "পরের বার: {when}",
   "routines.confirmDelete": "রুটিন “{title}” মুছবেন?",
   "routines.run": "এখনই চালান",
+  "routines.runs": "আগের বারগুলো",
   "skills.from": "উৎস: {source}",
   "skills.elsewhere": "অন্য জায়গার দক্ষতা",
   "skills.elsewhereText": "ওয়েবসাইট ও প্রতিষ্ঠানের প্রকাশ করা তৈরি দক্ষতা। এই ডিভাইসেই এগুলো আপনার অনুরোধের সঙ্গে মেলানো হয়, আর ধাপগুলো পড়ে আপনি বেছে নিলে তবেই একটি যোগ হয়।",
