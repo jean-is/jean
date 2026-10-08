@@ -56,6 +56,8 @@ export const DEFAULT_URLS = Object.freeze({
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
   // The gateway to the services a browser can't reach (D191): none until one is named.
   gateway: '',
+  // A web source's site icon, shown with its domain on its chip (D210): none when ''.
+  siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
 })
 
 /**

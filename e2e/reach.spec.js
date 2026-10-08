@@ -207,8 +207,17 @@ test('web search answers with sources that open', async ({ page }) => {
   await expect(answer).toContainText('Here is what the web says')
   // A web page's chip is a link (D140).
   await expect(answer.locator('a.cite')).toHaveCount(2)
-  await expect(answer.locator('a.cite').first()).toHaveAttribute('title', 'Lighthouse')
   await expect(answer.locator('a.cite').first()).toHaveAttribute('href', /^https:\/\/en\.wikipedia\.org\/wiki\//)
+  // On hover, it shows the site: its icon, asked for only then, its domain and the page's title (D210).
+  await page.route('https://icons.duckduckgo.com/ip3/*', (route) => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"/>' }))
+  const icon = page.waitForRequest('https://icons.duckduckgo.com/ip3/en.wikipedia.org.ico')
+  const tip = answer.locator('.cite-tip').first()
+  await expect(tip).toBeHidden()
+  await answer.locator('a.cite').first().hover()
+  await expect(tip).toBeVisible()
+  await expect(tip).toContainText('en.wikipedia.org')
+  await expect(tip).toContainText('Lighthouse')
+  await icon
   await expect(page.locator('.activity-list')).toContainText('Searched the web · lighthouse')
 })
 

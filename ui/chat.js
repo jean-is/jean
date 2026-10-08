@@ -6,6 +6,7 @@ import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind } from './state.js'
 import { unlock, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
+import { serviceURL } from '../core/settings.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, withFormulas } from './markdown.js'
 import { icons } from './icons.js'
@@ -115,13 +116,19 @@ function citable(files, turns) {
     if (number && !sources.has(number)) sources.set(number, { name: link.name, label: t('sources.open', { name: link.name }), open: () => openFile(link) })
   }
   for (const { n, title, url } of turns.flatMap((turn) => turn.steps.flatMap((step) => step.tools.flatMap((tool) => tool._meta?.sources ?? [])))) {
-    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { url }) })
+    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { url, ...site(url) }) })
   }
   return sources
 }
 
 /** Only web addresses become links: a tool's result could name any scheme. @param {string | undefined} url @returns {url is string} */
 const web = (url) => /^https?:\/\//i.test(url ?? '')
+
+/** A web page's domain, and its icon unless the address for icons is '' (D210). @param {string} url */
+function site(url) {
+  const icon = serviceURL('siteIcon', app.settings.value, app.policy)
+  try { const { hostname } = new URL(url); return { site: hostname.replace(/^www\./, ''), icon: icon && icon.replace('{domain}', hostname) } } catch { return {} }
+}
 
 /**
  * @param {Turn} turn @param {Turn | null} live

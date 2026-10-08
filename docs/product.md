@@ -191,7 +191,7 @@ The picker offers the brains of the project the user is in. A brain is used in e
 
 ## Sources and citations
 
-- **Numbered sources.** Every tool that brings in outside content returns numbered sources (file and page, URL and title, memory item, past conversation). The brain cites them as `[n]`, and the UI shows each as a chip: hover shows the passage, clicking opens the file at that page or the URL.
+- **Numbered sources.** Every tool that brings in outside content returns numbered sources (file and page, URL and title, memory item, past conversation). The brain cites them as `[n]`, and the UI shows each as a chip: hovering a web page's chip shows its site's icon, its domain and the page's title (D210), and clicking opens the file at that page or the URL.
 - **One format for all providers** (D90). Shared files, a connection's emails and documents, Wikipedia's pages and the brain's own search share one numbering per conversation. A web page's chip opens it in a new tab, or beside the conversation once the browser is on; an email's shows its title. Each answer lists its sources under "Sources".
 - **Honest even with small brains.** Small on-device brains cite unreliably, so a "What Jean read" list is always built from the actual tool calls.
 - **Double-check** (D100). Each sentence that cites a source is checked against that source's words by the brain that wrote the answer, in one short request outside the conversation; the reflex model was not up to it. The verdicts show under the answer: what matches, what the source doesn't say or contradicts, and a follow-up to correct it.

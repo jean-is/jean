@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr" data-presence="idle">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-AVkAeWFclsxbwt9flrhS75Lc2bBapPCIrquC+SzWpws=' 'sha256-idas6hj8gcIoYFO7ll9w1MGv9kD4YBmVqD5aBDRHWP4='; style-src 'self' 'sha256-4TQiNejSsY6HYV6I9ZeOSbTB4w4ILCsQdptk1OWhWoI='; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-AVkAeWFclsxbwt9flrhS75Lc2bBapPCIrquC+SzWpws=' 'sha256-idas6hj8gcIoYFO7ll9w1MGv9kD4YBmVqD5aBDRHWP4='; style-src 'self' 'sha256-4TQiNejSsY6HYV6I9ZeOSbTB4w4ILCsQdptk1OWhWoI='; img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#1e1e1e">
@@ -26,7 +26,6 @@ if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; documen
 <link rel="modulepreload" href="core/i18n.js">
 <link rel="modulepreload" href="core/ulid.js">
 <link rel="modulepreload" href="ui/opfs.js">
-<link rel="modulepreload" href="ui/host.js">
 <link rel="modulepreload" href="ui/state.js">
 <link rel="modulepreload" href="ui/looks.js">
 <link rel="modulepreload" href="ui/caps.js">

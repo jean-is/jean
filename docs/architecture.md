@@ -245,13 +245,14 @@ Every HTML document has its own CSP in a `<meta>`, which works on any static hos
 
 ```text
 default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-<import map>' 'sha256-<first paint>'; style-src 'self';
-img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self';
+img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self';
 connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:*;
 worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';
 require-trusted-types-for 'script'; trusted-types lit-html app-urls
 ```
 
 - **`connect-src` is broad** because users add any OpenAI-compatible endpoint, and untrusted code never runs in this document. Organisations tighten it with an HTTP header ([enterprise.md](enterprise.md)).
+- **`img-src` allows `https:`** for the site icons on web sources' chips, whose address is replaceable (D210). Answers never load an image: Markdown images are shown as text.
 - **A runtime that needs `'unsafe-eval'`** gets a worker document of its own, never a looser `index.html`.
 
 **`sandbox.html`**, framed with `sandbox="allow-scripts"` and never `allow-same-origin` (D65, D162):
