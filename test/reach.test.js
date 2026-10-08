@@ -346,7 +346,7 @@ describe('signing in to a connection', () => {
     }
   })
 
-  test('a service that names no sign-in server (MCP 2025-03-26, as Atlassian’s) signs in at its own origin, with no resource indicator', async () => {
+  test('a service that names no sign-in server (MCP 2025-03-26, as Atlassian’s /v1) signs in at its own origin, with no resource indicator', async () => {
     /** @type {{ url: string, body?: string }[]} */
     const asked = []
     const atlassian = /** @type {typeof fetch} */ (async (url, init) => {

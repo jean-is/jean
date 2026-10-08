@@ -23,7 +23,7 @@ export const DIRECTORY = Object.freeze([
   { id: 'linear', name: 'Linear', url: 'https://mcp.linear.app/mcp', ready: true, logo: 'linear.svg' },
   // Its CORS allows any header with `*`, which the standard says leaves out Authorization, but
   // Chromium and WebKit let it through (D195).
-  { id: 'atlassian', name: 'Atlassian', url: 'https://mcp.atlassian.com/v1/mcp', includes: ['Jira', 'Confluence'], ready: true, logo: 'atlassian.svg' },
+  { id: 'atlassian', name: 'Atlassian', url: 'https://mcp.atlassian.com/v2/mcp', includes: ['Jira', 'Confluence'], ready: true, logo: 'atlassian.svg' },
   { id: 'intercom', name: 'Intercom', url: 'https://mcp.intercom.com/mcp', ready: true, logo: 'intercom.svg' },
   { id: 'wix', name: 'Wix', url: 'https://mcp.wix.com/mcp', ready: true, logo: 'wix.png' },
   { id: 'attio', name: 'Attio', url: 'https://mcp.attio.com/mcp', ready: true, logo: 'attio.svg' },

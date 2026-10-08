@@ -37,7 +37,7 @@ export async function discover(server, { challenge, fetch = globalThis.fetch } =
   for (const url of [asked.resource_metadata, path && `${at.origin}/.well-known/oauth-protected-resource${path}`, `${at.origin}/.well-known/oauth-protected-resource`]) {
     if (url && (resource = await getJSON(fetch, url))?.authorization_servers?.length) break
   }
-  // One that names none (Atlassian's) has it at its own origin, and takes no resource indicator (D195).
+  // One that names none (Atlassian's /v1) has it at its own origin, and takes no resource indicator (D195).
   const named = Boolean(resource?.authorization_servers?.length)
   const issuer = named ? resource.authorization_servers[0] : at.origin
   const { origin, pathname } = new URL(issuer)
