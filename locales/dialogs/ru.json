@@ -147,7 +147,6 @@
   "connections.failed": "Не удалось подключиться. Проверьте адрес: некоторые сервисы пока не принимают подключения из браузера.",
   "connections.needsKey": "Для этого сервиса нужно войти или указать ключ.",
   "connections.confirmRemove": "Отключить сервис «{service}»?",
-  "connections.notYet": "Пока недоступен",
   "connections.other": "Другой сервис, по адресу",
   "connections.failedKnown": "Не удалось подключиться к сервису «{service}». Попробуйте чуть позже.",
   "connections.yours": "Подключённые",

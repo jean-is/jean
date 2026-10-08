@@ -143,7 +143,6 @@
   "connections.failed": "መገናኘት አልተቻለም። አድራሻውን ያረጋግጡ፦ አንዳንድ አገልግሎቶች ገና ከአሳሽ የሚመጡ ግንኙነቶችን አይቀበሉም።",
   "connections.needsKey": "ይህ አገልግሎት መግባት ወይም ቁልፍ ይፈልጋል።",
   "connections.confirmRemove": "{service} ይቋረጥ?",
-  "connections.notYet": "ገና አይገኝም",
   "connections.other": "ሌላ አገልግሎት፣ በአድራሻው",
   "connections.failedKnown": "ከ{service} ጋር መገናኘት አልተቻለም። ትንሽ ቆይተው እንደገና ይሞክሩ።",
   "connections.yours": "የተገናኙ",

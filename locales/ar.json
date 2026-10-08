@@ -38,6 +38,7 @@
   "activity.thinking": "جارٍ التفكير…",
   "activity.writing": "جارٍ الكتابة…",
   "activity.working": "جارٍ العمل…",
+  "activity.retrying": "جارٍ المحاولة مرة أخرى…",
   "activity.failed": "حدث خطأ ما",
   "activity.answeredWith": "الإجابة من {brain}",
   "activity.brain": "تم سؤال {brain}",

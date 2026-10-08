@@ -141,7 +141,6 @@
   "connections.failed": "Tidak dapat terhubung. Periksa alamatnya: beberapa layanan belum menerima koneksi dari browser.",
   "connections.needsKey": "Layanan ini perlu Anda masuk, atau sebuah kunci.",
   "connections.confirmRemove": "Putuskan {service}?",
-  "connections.notYet": "Belum tersedia",
   "connections.other": "Layanan lain, lewat alamatnya",
   "connections.failedKnown": "Tidak dapat terhubung ke {service}. Coba lagi sebentar lagi.",
   "connections.yours": "Terhubung",

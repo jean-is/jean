@@ -38,6 +38,7 @@
   "activity.thinking": "ఆలోచన జరుగుతోంది…",
   "activity.writing": "రాత జరుగుతోంది…",
   "activity.working": "పని జరుగుతోంది…",
+  "activity.retrying": "మళ్లీ ప్రయత్నిస్తోంది…",
   "activity.failed": "ఏదో తప్పు జరిగింది",
   "activity.answeredWith": "జవాబు: {brain}",
   "activity.brain": "ప్రశ్న: {brain}",

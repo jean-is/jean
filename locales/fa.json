@@ -38,6 +38,7 @@
   "activity.thinking": "در حال فکر کردن…",
   "activity.writing": "در حال نوشتن…",
   "activity.working": "در حال کار…",
+  "activity.retrying": "در حال تلاش دوباره…",
   "activity.failed": "مشکلی پیش آمد",
   "activity.answeredWith": "پاسخ با {brain}",
   "activity.brain": "پرسش از {brain}",

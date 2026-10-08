@@ -38,6 +38,7 @@
   "activity.thinking": "考えています…",
   "activity.writing": "書いています…",
   "activity.working": "作業中…",
+  "activity.retrying": "もう一度試しています…",
   "activity.failed": "問題が発生しました",
   "activity.answeredWith": "{brain} が回答しました",
   "activity.brain": "{brain} に質問しました",

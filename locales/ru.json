@@ -38,6 +38,7 @@
   "activity.thinking": "Думаю…",
   "activity.writing": "Пишу…",
   "activity.working": "Работаю…",
+  "activity.retrying": "Пробую ещё раз…",
   "activity.failed": "Что-то пошло не так",
   "activity.answeredWith": "Ответ: {brain}",
   "activity.brain": "Запрос: {brain}",

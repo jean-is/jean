@@ -38,6 +38,7 @@
   "activity.thinking": "विचार सुरू आहे…",
   "activity.writing": "लेखन सुरू आहे…",
   "activity.working": "काम सुरू आहे…",
+  "activity.retrying": "पुन्हा प्रयत्न सुरू आहे…",
   "activity.failed": "काहीतरी चुकले",
   "activity.answeredWith": "उत्तर: {brain}",
   "activity.brain": "प्रश्न: {brain}",

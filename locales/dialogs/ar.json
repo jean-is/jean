@@ -151,7 +151,6 @@
   "connections.failed": "تعذّر الاتصال. تحقّق من العنوان: بعض الخدمات لا تقبل بعدُ الاتصال من متصفح.",
   "connections.needsKey": "تتطلب هذه الخدمة تسجيل الدخول أو مفتاحًا.",
   "connections.confirmRemove": "قطع الاتصال بخدمة {service}؟",
-  "connections.notYet": "غير متاحة بعد",
   "connections.other": "خدمة أخرى، بعنوانها",
   "connections.failedKnown": "تعذّر الاتصال بخدمة {service}. حاول مجددًا بعد قليل.",
   "connections.yours": "المتصلة",

@@ -143,7 +143,6 @@
   "connections.failed": "Keine Verbindung möglich. Prüfe die Adresse: Manche Dienste nehmen noch keine Verbindungen aus dem Browser an.",
   "connections.needsKey": "Für diesen Dienst musst du dich anmelden oder einen Schlüssel angeben.",
   "connections.confirmRemove": "Verbindung zu {service} trennen?",
-  "connections.notYet": "Noch nicht verfügbar",
   "connections.other": "Ein anderer Dienst, über seine Adresse",
   "connections.failedKnown": "Keine Verbindung zu {service} möglich. Versuch es gleich noch einmal.",
   "connections.yours": "Verbunden",

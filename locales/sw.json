@@ -38,6 +38,7 @@
   "activity.thinking": "Inafikiri…",
   "activity.writing": "Inaandika…",
   "activity.working": "Inafanya kazi…",
+  "activity.retrying": "Inajaribu tena…",
   "activity.failed": "Kuna hitilafu",
   "activity.answeredWith": "Imejibiwa na {brain}",
   "activity.brain": "Imeuliza {brain}",

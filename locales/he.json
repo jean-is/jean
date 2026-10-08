@@ -38,6 +38,7 @@
   "activity.thinking": "חשיבה…",
   "activity.writing": "כתיבה…",
   "activity.working": "עבודה…",
+  "activity.retrying": "מנסה שוב…",
   "activity.failed": "משהו השתבש",
   "activity.answeredWith": "נענה על ידי {brain}",
   "activity.brain": "נשאל: {brain}",

@@ -143,7 +143,6 @@
   "connections.failed": "সংযোগ করা গেল না। ঠিকানা দেখুন: কিছু পরিষেবা এখনও ব্রাউজার থেকে সংযোগ নেয় না।",
   "connections.needsKey": "এই পরিষেবার জন্য সাইন ইন বা একটি কী লাগবে।",
   "connections.confirmRemove": "{service} বিচ্ছিন্ন করবেন?",
-  "connections.notYet": "এখনও পাওয়া যায় না",
   "connections.other": "অন্য কোনো পরিষেবা, তার ঠিকানা দিয়ে",
   "connections.failedKnown": "{service} পরিষেবার সঙ্গে সংযোগ করা গেল না। একটু পরে আবার চেষ্টা করুন।",
   "connections.yours": "সংযুক্ত",

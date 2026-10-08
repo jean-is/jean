@@ -38,6 +38,7 @@
   "activity.thinking": "Düşünüyor…",
   "activity.writing": "Yazıyor…",
   "activity.working": "Çalışıyor…",
+  "activity.retrying": "Tekrar deniyor…",
   "activity.failed": "Bir şeyler ters gitti",
   "activity.answeredWith": "Yanıtlayan: {brain}",
   "activity.brain": "Sorulan: {brain}",

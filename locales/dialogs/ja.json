@@ -141,7 +141,6 @@
   "connections.failed": "接続できませんでした。アドレスを確認してください。ブラウザからの接続をまだ受け付けないサービスもあります。",
   "connections.needsKey": "このサービスにはサインインかキーが必要です。",
   "connections.confirmRemove": "{service}の接続を解除しますか？",
-  "connections.notYet": "まだ使えません",
   "connections.other": "ほかのサービス（アドレスで追加）",
   "connections.failedKnown": "{service}に接続できませんでした。少し待ってからもう一度お試しください。",
   "connections.yours": "接続済み",

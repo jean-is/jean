@@ -146,7 +146,6 @@
   "connections.failed": "החיבור נכשל. כדאי לבדוק את הכתובת: יש שירותים שעדיין לא מקבלים חיבורים מדפדפן.",
   "connections.needsKey": "השירות הזה דורש התחברות או מפתח.",
   "connections.confirmRemove": "לנתק את {service}?",
-  "connections.notYet": "עדיין לא זמין",
   "connections.other": "שירות אחר, לפי הכתובת שלו",
   "connections.failedKnown": "החיבור לשירות {service} נכשל. כדאי לנסות שוב בעוד רגע.",
   "connections.yours": "מחוברים",

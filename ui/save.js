@@ -27,6 +27,23 @@ export async function copyDrawing(text, picture) {
 }
 
 /**
+ * An SVG as a picture to put in a document, a PNG on white, twice as fine (D196, D200). Read from
+ * a `data:` address: one with HTML inside (a slide) taints the canvas when read from a `blob:` one.
+ * @param {string} drawing the SVG's markup @param {number} width @param {number} height @returns {Promise<Blob>}
+ */
+export async function pictureOf(drawing, width, height) {
+  const image = new Image()
+  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(drawing)}`
+  await image.decode()
+  const canvas = Object.assign(document.createElement('canvas'), { width: width * 2, height: height * 2 })
+  const pen = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'))
+  pen.fillStyle = '#fff'
+  pen.fillRect(0, 0, canvas.width, canvas.height)
+  pen.drawImage(image, 0, 0, canvas.width, canvas.height)
+  return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('No picture'))), 'image/png'))
+}
+
+/**
  * A file a web page made and asked Jean to save, through preview.html's relay (D158): saved on a
  * click of the user's, when Settings lets pages save files. @param {unknown} data @param {boolean} allowed
  */

@@ -143,7 +143,6 @@
   "connections.failed": "Hindi makakonekta. Tingnan ang address: may mga serbisyong hindi pa tumatanggap ng koneksyon mula sa browser.",
   "connections.needsKey": "Kailangan ng serbisyong ito na mag-sign in ka, o ng susi.",
   "connections.confirmRemove": "Idiskonekta ang {service}?",
-  "connections.notYet": "Hindi pa magagamit",
   "connections.other": "Ibang serbisyo, gamit ang address nito",
   "connections.failedKnown": "Hindi makakonekta sa {service}. Subukan ulit maya-maya.",
   "connections.yours": "Nakakonekta",

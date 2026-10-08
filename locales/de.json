@@ -38,6 +38,7 @@
   "activity.thinking": "Denkt nach…",
   "activity.writing": "Schreibt…",
   "activity.working": "Arbeitet…",
+  "activity.retrying": "Neuer Versuch…",
   "activity.failed": "Etwas ist schiefgelaufen",
   "activity.answeredWith": "Beantwortet mit {brain}",
   "activity.brain": "{brain} gefragt",

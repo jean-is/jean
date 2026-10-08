@@ -141,7 +141,6 @@
   "connections.failed": "Không kết nối được. Hãy kiểm tra địa chỉ: một số dịch vụ chưa nhận kết nối từ trình duyệt.",
   "connections.needsKey": "Dịch vụ này cần đăng nhập hoặc một khóa.",
   "connections.confirmRemove": "Ngắt kết nối {service}?",
-  "connections.notYet": "Chưa dùng được",
   "connections.other": "Dịch vụ khác, theo địa chỉ",
   "connections.failedKnown": "Không kết nối được với {service}. Hãy thử lại sau giây lát.",
   "connections.yours": "Đã kết nối",

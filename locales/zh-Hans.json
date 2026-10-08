@@ -38,6 +38,7 @@
   "activity.thinking": "思考中…",
   "activity.writing": "写作中…",
   "activity.working": "处理中…",
+  "activity.retrying": "正在重试…",
   "activity.failed": "出了点问题",
   "activity.answeredWith": "由 {brain} 回答",
   "activity.brain": "已询问 {brain}",

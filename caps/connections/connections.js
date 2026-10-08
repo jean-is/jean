@@ -380,7 +380,7 @@ function yours(connection) {
  */
 function tile(entry) {
   const again = all().some((connection) => connection.url === entry.url)
-  const small = !entry.via ? t('connections.notYet') : again ? t('connections.another') : ''
+  const small = again ? t('connections.another') : ''
   return html`<li><button class="service ${entry.via ? '' : 'is-soon'}" ?disabled=${!entry.via || message.value?.kind === 'busy'}
     @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name, { gateway: entry.via === 'gateway' }) }}>
     ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${small ? html`<small>${small}</small>`

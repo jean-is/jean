@@ -145,7 +145,6 @@
   "connections.failed": "No se pudo conectar. Revisa la dirección: algunos servicios aún no aceptan conexiones desde un navegador.",
   "connections.needsKey": "Este servicio pide iniciar sesión o una clave.",
   "connections.confirmRemove": "¿Desconectar {service}?",
-  "connections.notYet": "Aún no disponible",
   "connections.other": "Otro servicio, por su dirección",
   "connections.failedKnown": "No se pudo conectar con {service}. Vuelve a intentarlo en un momento.",
   "connections.yours": "Conectados",

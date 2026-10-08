@@ -132,10 +132,15 @@ function formula(token) {
   return html`<app-math dir="ltr" tex=${token.text} ?block=${token.block}></app-math>`
 }
 
+// Requests and follow-ups: their formulas in the line, nothing else read as Markdown. Split keeps FORMULA's 4 groups.
+const FORMULAS = new RegExp(`(?<!\\\\)${FORMULA.source.slice(1)}`, 'g')
+/** @param {string} text @param {(token: { text: string }) => unknown} [draw] */
+export const withFormulas = (text, draw = formula) => text.split(FORMULAS).map((part, i) => (i % 5 ? part && draw({ text: part.trim() }) : part))
+
 /** A LaTeX document, which the math capability lays out; until then, or if it can't, its source shows. @param {any} token */
 function latex(token) {
   drawing ??= unlock('math')
-  return html`<app-latex dir="auto" kind=${token.lang} tex=${token.text}></app-latex>`
+  return html`<app-latex dir="auto" source=${token.text}></app-latex>`
 }
 
 /** Widgets (D196): a block of a kind the room's skills declare, which the skills capability keeps, drawn by its capability. */

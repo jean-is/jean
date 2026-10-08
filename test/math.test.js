@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lex } from '../ui/markdown.js'
+import { lex, withFormulas } from '../ui/markdown.js'
 import { plainText } from '../ui/spoken.js'
 import { latexToMarkdown } from '../caps/math/latex.js'
 
@@ -31,6 +31,16 @@ test('formulas: prices, escapes and code stay text', () => {
   assert.equal(shown('It costs $5 and $10, or 5 $ et 10 $, or $5-$10.'), 'It costs $5 and $10, or 5 $ et 10 $, or $5-$10.')
   assert.equal(shown('Escaped \\$x\\$ stays.'), 'Escaped $x$ stays.')
   assert.equal(shown('`$x$` and\n\n```\n$$y$$\n```'), '$x$ and$$y$$')
+})
+
+test('formulas in a request or a follow-up: drawn in the line, nothing else read as Markdown', () => {
+  /** @param {string} text */
+  const parts = (text) => withFormulas(text, (token) => token).filter(Boolean)
+  assert.deepEqual(parts('Démontre la formule $e^{ix}=\\cos x+i\\sin x$'), ['Démontre la formule ', { text: 'e^{ix}=\\cos x+i\\sin x' }])
+  assert.deepEqual(parts("Explique l'indicatrice d'Euler $\\varphi(n)$ et \\(n!\\) *ici*"), ["Explique l'indicatrice d'Euler ", { text: '\\varphi(n)' }, ' et ', { text: 'n!' }, ' *ici*'])
+  assert.deepEqual(parts('$$a$$ then \\[ b \\]'), [{ text: 'a' }, ' then ', { text: 'b' }])
+  assert.deepEqual(parts('It costs $5 and $10, or 5 $ et 10 $.'), ['It costs $5 and $10, or 5 $ et 10 $.'])
+  assert.deepEqual(parts('Escaped \\$x$ stays'), ['Escaped \\$x$ stays'])
 })
 
 test('formulas: read aloud as symbols', () => {

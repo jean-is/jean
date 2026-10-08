@@ -1,0 +1,8 @@
+/* Formulas (D185): set apart, one scrolls only sideways; Chromium lays it out a pixel taller than its box, which the padding holds. */
+app-math[block] { overflow-y: hidden; padding-block: 0.15em; }
+/* A LaTeX document, then Copy at its end (D196); its margins inside it, as its picture holds them. */
+app-latex .latex-page { display: flow-root; }
+app-latex .latex-page > :first-child { margin-block-start: 0; }
+app-latex .latex-page > :last-child { margin-block-end: 0; }
+app-latex .drawn-foot { display: flex; justify-content: end; margin-block-start: 0.4rem; }
+@media print { app-latex .drawn-foot { display: none; } }

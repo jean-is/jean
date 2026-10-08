@@ -38,6 +38,7 @@
   "activity.thinking": "Đang suy nghĩ…",
   "activity.writing": "Đang viết…",
   "activity.working": "Đang làm…",
+  "activity.retrying": "Đang thử lại…",
   "activity.failed": "Đã có lỗi xảy ra",
   "activity.answeredWith": "Trả lời bởi {brain}",
   "activity.brain": "Đã hỏi {brain}",

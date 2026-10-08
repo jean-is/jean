@@ -147,7 +147,6 @@
   "connections.failed": "Nie udało się połączyć. Sprawdź adres: niektóre usługi nie przyjmują jeszcze połączeń z przeglądarki.",
   "connections.needsKey": "Ta usługa wymaga zalogowania albo klucza.",
   "connections.confirmRemove": "Odłączyć usługę „{service}”?",
-  "connections.notYet": "Jeszcze niedostępna",
   "connections.other": "Inna usługa, po adresie",
   "connections.failedKnown": "Nie udało się połączyć z usługą „{service}”. Spróbuj ponownie za chwilę.",
   "connections.yours": "Połączone",

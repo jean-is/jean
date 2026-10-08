@@ -143,7 +143,6 @@
   "connections.failed": "Verbinden lukte niet. Controleer het adres: sommige diensten accepteren nog geen verbindingen vanuit een browser.",
   "connections.needsKey": "Voor deze dienst moet je inloggen, of een sleutel opgeven.",
   "connections.confirmRemove": "{service} loskoppelen?",
-  "connections.notYet": "Nog niet beschikbaar",
   "connections.other": "Een andere dienst, via het adres",
   "connections.failedKnown": "Verbinden met {service} lukte niet. Probeer het zo nog eens.",
   "connections.yours": "Verbonden",
