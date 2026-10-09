@@ -93,7 +93,13 @@ node test/fixtures/fake-brain.js
 GATEWAY_CONFIG='{"origins":["https://jean.example"]}' node gateway/serve.js
 ```
 
-That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier and Todoist need. Google (Gmail, Drive, Calendar, Chat), Slack, Figma, Asana, Zoom, HubSpot and Box take only apps registered with them: register one, with Jean's address as its redirect, and add it to `clients` (`{"issuer":"https://accounts.google.com","tokenEndpoint":"https://oauth2.googleapis.com/token","clientId":"…","clientSecret":"…"}`). `npm run directory` shows each service's sign-in server.
+To try it on your computer, one command serves Jean with the gateway at `/gateway` on the same address, already set in Settings › Connections, with Connections turned on (a policy the development server makes up, as an organisation's would):
+
+```bash
+npm run dev:gateway
+```
+
+That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier and Todoist need. Google (Gmail, Drive, Calendar, Chat), Slack, Figma, Asana, Zoom, HubSpot and Box take only apps registered with them: register one, with Jean's address as its redirect, and add it to `clients` (`{"issuer":"https://accounts.google.com","tokenEndpoint":"https://oauth2.googleapis.com/token","clientId":"…","clientSecret":"…"}`). `npm run directory` shows each service's sign-in server. With `npm run dev:gateway`, the redirect is `http://127.0.0.1:4173/`, and the apps go in `GATEWAY_CONFIG` before the command.
 
 **Desktop:** `npm run build:desktop` puts the same files in an app for macOS, Windows and Linux, in `dist/desktop/`: a window of the system's own web view, with Jean's files inside, made with [Neutralino](https://neutralino.js.org). It needs nothing else on macOS and Windows; Linux needs WebKitGTK. The window gives Jean only what Sync needs: the system's dialog for a folder, the folder's files, and its file manager (D155, D169). On a Mac, `npm run build:dmg` also makes the disk image to hand out.
 

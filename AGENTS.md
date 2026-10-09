@@ -85,6 +85,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 
 ```bash
 npm run dev     # build (vendor + manifest), then serve (npm start does the same)
+npm run dev:gateway  # the same, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
 npm run build   # copy runtimes into vendor/, regenerate the manifest
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
 npm run build:dmg      # the same, then the macOS disk image, on a Mac
