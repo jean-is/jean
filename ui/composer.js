@@ -4,7 +4,7 @@
 import { html, nothing } from 'lit-html'
 import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, SHORTCUTS } from './state.js'
 import { unlock, isDenied, loaded } from './caps.js'
 import { t } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
@@ -71,7 +71,7 @@ class Composer extends Element {
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
-              aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')}
+              aria-keyshortcuts=${SHORTCUTS.dictation} aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
           </div>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
@@ -181,7 +181,7 @@ function primary(busy, empty, hands) {
   const on = hands !== 'off'
   if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-label=${t('action.stop')}>${icons.stop}</button>`
   if (empty ? on || loaded.value.has('live') : on && busy) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
-    aria-label=${t(on ? 'live.stop' : 'live.start')}
+    aria-keyshortcuts=${SHORTCUTS.live} aria-label=${t(on ? 'live.stop' : 'live.start')}
     @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`
   return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')}>${icons.send}</button>`
 }

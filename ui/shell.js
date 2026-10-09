@@ -2,7 +2,7 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar } from './state.js'
+import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, APPLE, SHORTCUTS } from './state.js'
 import { SIZES, loaded, unlock, isDenied } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
@@ -71,17 +71,12 @@ const discovery = () => import('./discovery.js')
 
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
-// As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
-// systems. A browser tab keeps ⌘N for a new window, so ⌘⇧O does it too, as in ChatGPT, and is the one shown (D236).
-// ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧S dictation, ⌘⇧H hands-free once found (D130, D238);
-// ⌘K opens search once it is found, or closes it (D133);
+// As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new task, and ⌘⇧O, as in ChatGPT, since a browser
+// tab keeps ⌘N (D236); Ctrl outside Apple's systems. ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧S dictation,
+// ⌘⇧H hands-free once found (D130, D238); ⌘K opens search once it is found, or closes it (D133);
 // ⌘⇧B opens the browser once it is found, or closes it (D142). ⌘J opens the terminal, as in code editors,
 // brings the keys to it, or closes it once they are there, and turns the computer on first (D166, D170, D184).
 // ⌘B opens the drawer or puts it away, as in code editors (D234).
-const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
-const MODIFIER = APPLE ? 'Meta' : 'Control'
-/** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
 const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 

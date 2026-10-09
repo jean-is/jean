@@ -6,7 +6,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, setVoice, setBrainMode, updateSettings, notify, loadModels,
-  showError, theme, setTheme, setLook, LOCALES, CITED,
+  showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter } from './brains.js'
 import { isLocal } from './auto.js'
@@ -24,7 +24,7 @@ import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './icons.js'
 import { sidebarBody, keyNames } from './inbox.js'
-import { SHORTCUTS, findButton, placeToasts } from './shell.js'
+import { findButton, placeToasts } from './shell.js'
 import { dictation } from './dictation.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'

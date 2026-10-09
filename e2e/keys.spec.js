@@ -129,6 +129,8 @@ test('↑ from an empty box brings back what was asked, newest first, and ↓ go
 
 test('Settings lists the shortcuts to read, a capability\'s once it is found (D236)', async ({ page }) => {
   await start(page)
+  // The buttons say their keys too.
+  await expect(page.getByRole('button', { name: 'Dictate' })).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+Shift\+S$/)
   const settings = await openSettings(page, 'Keyboard shortcuts')
   const row = (/** @type {string} */ name) => settings.locator('.keyboard > div', { hasText: name })
   await expect(row('New task').locator('kbd')).toHaveText(/^(⌘⇧O|Ctrl\+Shift\+O)$/)

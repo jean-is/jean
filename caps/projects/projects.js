@@ -9,7 +9,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
-import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage } from '../../ui/state.js'
+import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage, SHORTCUTS } from '../../ui/state.js'
 import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
 import { createProject, stringifyFrontMatter } from '../../core/settings.js'
 import { splitSuggestions } from '../../core/events.js'
@@ -17,7 +17,6 @@ import { nameOf, attendees, knows, speakerPrompt, request, minutes, report, pool
 import { BRAND } from '../../brand.js'
 import { t } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
-import { SHORTCUTS } from '../../ui/shell.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 
