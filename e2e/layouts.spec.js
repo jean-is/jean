@@ -20,7 +20,9 @@ test('a comparison, steps and notes are laid out as what they are, and copy as t
   // Each option is a card: its cells on a ground of their own, the criteria on none.
   await expect(compare.locator('td').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
   await expect(compare.locator('td').nth(1)).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-  // Three plans fit the text: the criteria in line with it, the cards' spacing reaching past it, the cards of one width.
+  // Three plans fit the text: the criteria in line with it, the cards' spacing reaching past it, the cards of one width,
+  // measured once the answer is written: until then, the table may be drawn again.
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const [text, cards] = await Promise.all([answer.boundingBox(), compare.locator('table').boundingBox()])
   expect(Math.abs((cards?.x ?? 0) + 8 - (text?.x ?? 0))).toBeLessThan(2)
   expect(Math.abs((cards?.width ?? 0) - 16 - (text?.width ?? 0))).toBeLessThan(2)
