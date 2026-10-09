@@ -13,10 +13,10 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
 COPY . .
 # Jean reads the policy.json beside index.html (docs/enterprise.md): an empty one, until the
-# organisation mounts its own over it. Then only what a web deploy serves (scripts/desktop.js), into /site.
-RUN sed -i 's|</head>|<meta name="app-policy" content="policy.json">\n</head>|' index.html \
+# organisation mounts its own over it. Then app/, what a web deploy serves (scripts/desktop.js), into /site.
+RUN sed -i 's|</head>|<meta name="app-policy" content="policy.json">\n</head>|' app/index.html \
  && npm run build \
- && node --input-type=module -e "import { cp } from 'node:fs/promises'; import { shippedFiles } from './scripts/desktop.js'; for (const path of await shippedFiles('.')) await cp(path, '/site/' + path)" \
+ && node --input-type=module -e "import { cp } from 'node:fs/promises'; import { shippedFiles } from './scripts/desktop.js'; for (const path of await shippedFiles('app')) await cp('app/' + path, '/site/' + path)" \
  && echo '{}' > /site/policy.json
 
 # The gateway: one module and Node, nothing to install, configured by GATEWAY_CONFIG.

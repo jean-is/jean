@@ -1,4 +1,4 @@
-// Copies the three upfront runtime dependencies from node_modules into vendor/,
+// Copies the three upfront runtime dependencies from node_modules into app/vendor/,
 // which is gitignored (D51): npm run dev, start, build and check all run this first.
 // From lit-html, only the files Jean's code can reach are copied. The on-demand
 // runtimes (D52) go into their own folders, which only their capabilities cache.
@@ -11,8 +11,9 @@ import { moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 import { walk } from './manifest.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
+const APP = join(ROOT, 'app')
 const MODULES = join(ROOT, 'node_modules')
-const VENDOR = join(ROOT, 'vendor')
+const VENDOR = join(APP, 'vendor')
 
 /**
  * Removes `//# sourceMappingURL=` comments, whether on their own line or
@@ -43,7 +44,7 @@ async function copyJs (from, to) {
   await writeFile(to, text)
   const raw = Buffer.byteLength(text)
   const gzip = gzipSync(text, { level: 9 }).length
-  console.log(`${relative(ROOT, to).padEnd(48)} ${kb(raw).padStart(10)} ${kb(gzip).padStart(10)} gz`)
+  console.log(`${relative(APP, to).padEnd(48)} ${kb(raw).padStart(10)} ${kb(gzip).padStart(10)} gz`)
   return { raw, gzip }
 }
 
@@ -56,11 +57,11 @@ const LIT_SPECIFIER = /['"](lit-html(?:\/[^'"\s]+)?)['"]/g
  * @returns {Promise<string[]>}  root-relative paths under vendor/lit-html/
  */
 async function litHtmlFiles () {
-  const importMap = parseImportMap(await readFile(join(ROOT, 'index.html'), 'utf8'))
-  const sources = (await Promise.all(['core', 'ui', 'caps'].map((dir) => walk(ROOT, dir)))).flat()
+  const importMap = parseImportMap(await readFile(join(APP, 'index.html'), 'utf8'))
+  const sources = (await Promise.all(['core', 'ui', 'caps'].map((dir) => walk(APP, dir)))).flat()
   const entries = new Set()
   for (const path of sources.filter((p) => /\.m?js$/.test(p))) {
-    for (const [, specifier] of (await readFile(join(ROOT, path), 'utf8')).matchAll(LIT_SPECIFIER)) {
+    for (const [, specifier] of (await readFile(join(APP, path), 'utf8')).matchAll(LIT_SPECIFIER)) {
       const target = resolveSpecifier(specifier, path, importMap)
       if (target?.startsWith(LIT_HTML)) entries.add(target)
     }
@@ -76,7 +77,7 @@ async function copyLitHtml () {
   await rm(join(VENDOR, 'lit-html'), { recursive: true, force: true })
   const results = []
   for (const path of await litHtmlFiles()) {
-    results.push(await copyJs(join(MODULES, 'lit-html', path.slice(LIT_HTML.length)), join(ROOT, path)))
+    results.push(await copyJs(join(MODULES, 'lit-html', path.slice(LIT_HTML.length)), join(APP, path)))
   }
   return results
 }
@@ -271,7 +272,7 @@ export function rewriteSpecifiers (text, map) {
 
 /** @param {(typeof RUNTIMES)[number]} runtime */
 async function copyRuntime (runtime) {
-  const target = join(ROOT, runtime.dir)
+  const target = join(APP, runtime.dir)
   await rm(target, { recursive: true, force: true })
   await mkdir(target, { recursive: true })
   let raw = 0

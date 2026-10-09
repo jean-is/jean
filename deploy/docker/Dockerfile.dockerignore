@@ -2,9 +2,10 @@
 # itself, and never takes the local checkout's, its git history or its sessions' worktrees.
 .*
 node_modules
-vendor
+app/vendor
 dist
 test-results
 playwright-report
-capabilities.json
-manifest.webmanifest
+app/capabilities.json
+app/manifest.webmanifest
+app/LICENSE

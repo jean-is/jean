@@ -6,9 +6,9 @@
 import { randomUUID } from 'node:crypto'
 import { appendFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { normalizeDir, normalizePath } from '../core/fs.js'
+import { normalizeDir, normalizePath } from '../app/core/fs.js'
 
-/** @import { FS, DirEntry } from '../core/types.js' */
+/** @import { FS, DirEntry } from '../app/core/types.js' */
 
 /** What reading something that isn't there, or isn't a file, gives. */
 const none = () => null

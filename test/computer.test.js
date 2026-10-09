@@ -2,10 +2,10 @@
 // gives back, and the capabilities it folds in.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS } from '../core/fs.js'
-import { computerRights, relayed, covers, judge, registryOf, authorization, reach, COMPUTER_DEFAULTS } from '../caps/computer/net.js'
-import { outgoing, incoming, preview, decline, within } from '../caps/computer/mount.js'
-import { callsIn, filesMade, versionsOf, nextVersion, latestOf } from '../core/events.js'
+import { memoryFS } from '../app/core/fs.js'
+import { computerRights, relayed, covers, judge, registryOf, authorization, reach, COMPUTER_DEFAULTS } from '../app/caps/computer/net.js'
+import { outgoing, incoming, preview, decline, within } from '../app/caps/computer/mount.js'
+import { callsIn, filesMade, versionsOf, nextVersion, latestOf } from '../app/core/events.js'
 
 const DEFAULTS = { pyodide: 'https://cdn.example/pyodide/v{version}/full/', pypi: 'https://pypi.example/pypi/{package_name}/json', npm: 'https://registry.example/' }
 const decoder = new TextDecoder()
@@ -103,7 +103,7 @@ test('Jean makes the request: no cookies, the key added, the body cut past the l
 
 test('/workspace: what changed since is sent, what went is named, .gitignore and the limit hold', async () => {
   const fs = memoryFS({ 'a.csv': 'x,y\n1,2\n', 'docs/b.txt': 'b', '.gitignore': 'secret/\n', 'secret/key.txt': 'no', 'node_modules/x/index.js': 'no' })
-  /** @type {import('../caps/computer/mount.js').Held} */
+  /** @type {import('../app/caps/computer/mount.js').Held} */
   const held = new Map()
   const first = await outgoing(fs, held, { limit: 1e6 })
   assert.deepEqual(Object.keys(first.put).sort(), ['.gitignore', 'a.csv', 'docs/b.txt'])
@@ -123,7 +123,7 @@ test('/workspace: what changed since is sent, what went is named, .gitignore and
 
 test('/workspace: a run’s changes are written back, unless the file moved meanwhile; declined ones are sent again', async () => {
   const fs = memoryFS({ 'a.txt': 'one', 'b.txt': 'two', 'c.txt': 'three' })
-  /** @type {import('../caps/computer/mount.js').Held} */
+  /** @type {import('../app/caps/computer/mount.js').Held} */
   const held = new Map()
   await outgoing(fs, held, { limit: 1e6 })
   await later()

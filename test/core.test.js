@@ -1,11 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../core/i18n.js'
-import { resolveRule, ruleFromPermission } from '../core/rules.js'
-import { buildSystemPrompt, basePromptForBudget } from '../core/prompt.js'
-import { foldTurns, toChatMessages, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../core/events.js'
-import { parseFrontMatter, stringifyFrontMatter, applyPolicy, usedIn, DEFAULT_SETTINGS } from '../core/settings.js'
-import { ulid } from '../core/ulid.js'
+import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../app/core/i18n.js'
+import { resolveRule, ruleFromPermission } from '../app/core/rules.js'
+import { buildSystemPrompt, basePromptForBudget } from '../app/core/prompt.js'
+import { foldTurns, toChatMessages, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../app/core/events.js'
+import { parseFrontMatter, stringifyFrontMatter, applyPolicy, usedIn, DEFAULT_SETTINGS } from '../app/core/settings.js'
+import { ulid } from '../app/core/ulid.js'
 
 /** @type {Record<string, Record<string, any>>} */
 const catalogs = {
@@ -41,7 +41,7 @@ test('i18n: a value that isn’t text stays itself, where the translation puts i
 })
 
 test('i18n: only the chosen catalog is fetched, and English only when it cannot be', async () => {
-  const i18n = await import('../core/i18n.js?fresh') // its own catalogs and loader, without the ones above
+  const i18n = await import('../app/core/i18n.js?fresh') // its own catalogs and loader, without the ones above
   /** @type {string[]} */
   const fetched = []
   i18n.setLoader(async (lang) => {
@@ -58,7 +58,7 @@ test('i18n: only the chosen catalog is fetched, and English only when it cannot 
 })
 
 test('i18n: the dialogs’ part loads when asked for, then with every language switch', async () => {
-  const i18n = await import('../core/i18n.js?parts')
+  const i18n = await import('../app/core/i18n.js?parts')
   /** @type {string[]} */
   const fetched = []
   i18n.setLoader(async (lang, part) => {

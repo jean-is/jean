@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 
-const page = await readFile(new URL('../manifesto.html', import.meta.url), 'utf8')
+const page = await readFile(new URL('../app/manifesto.html', import.meta.url), 'utf8')
 const source = await readFile(new URL('../MANIFESTO.md', import.meta.url), 'utf8')
 
 /** Words only: typographic and straight apostrophes alike, spaces collapsed. @param {string} text */
@@ -26,6 +26,6 @@ test('the page allows exactly its inline script, which is index.html’s light o
   for (const directive of ["object-src 'none'", "base-uri 'none'", "connect-src 'none'", "require-trusted-types-for 'script'", "style-src 'self'"]) assert.ok(csp.includes(directive), directive)
   assert.ok(!/unsafe-/.test(csp))
   assert.ok(page.indexOf('Content-Security-Policy') < page.indexOf('<script'))
-  const index = await readFile(new URL('../index.html', import.meta.url), 'utf8')
+  const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
   assert.equal(inline[0], /<script>([\s\S]*?)<\/script>/.exec(index)?.[1], 'copy index.html’s first-paint line, and its hash')
 })

@@ -2,8 +2,8 @@
 // that hold on it, and nothing of the comments, notes or pictures' layout words drawn.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lex } from '../ui/markdown.js'
-import { readDeck } from '../caps/slides/deck.js'
+import { lex } from '../app/ui/markdown.js'
+import { readDeck } from '../app/caps/slides/deck.js'
 
 /** Each slide as the kinds of its tokens and the settings that hold on it. @param {string} source */
 const read = (source) => readDeck(source, lex).map(({ tokens, settings }) => ({ kinds: tokens.map((token) => token.type), settings }))

@@ -2,16 +2,16 @@
 // sections of the frozen prompt that change through system notes (D46).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS } from '../core/fs.js'
-import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, ensureHome, slug } from '../core/settings.js'
-import { parseMemory, stringifyMemory, memoryText } from '../core/memory.js'
-import { parseSkill, listSkills, saveSkill, skillLines } from '../core/skills.js'
-import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
-import { alike } from '../core/search.js'
-import { importBackup, exportBackup } from '../caps/backup/archive.js'
-import { attendees, knows, speakerPrompt, request, minutes, report, pool } from '../caps/projects/meeting.js'
-import { createConversation, appendRecords } from '../core/conversations.js'
-import { userRecords, envelope, metaRecord } from '../core/events.js'
+import { memoryFS } from '../app/core/fs.js'
+import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, ensureHome, slug } from '../app/core/settings.js'
+import { parseMemory, stringifyMemory, memoryText } from '../app/core/memory.js'
+import { parseSkill, listSkills, saveSkill, skillLines } from '../app/core/skills.js'
+import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../app/core/prompt.js'
+import { alike } from '../app/core/search.js'
+import { importBackup, exportBackup } from '../app/caps/backup/archive.js'
+import { attendees, knows, speakerPrompt, request, minutes, report, pool } from '../app/caps/projects/meeting.js'
+import { createConversation, appendRecords } from '../app/core/conversations.js'
+import { userRecords, envelope, metaRecord } from '../app/core/events.js'
 
 test('front matter: one level of nesting, and strings that look like something else stay strings', () => {
   const text = stringifyFrontMatter({ name: 'weekly-report', description: 'true', count: '12', empty: '', metadata: { author: 'jean', format: '1' } }, '# Steps\n')

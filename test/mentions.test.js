@@ -2,8 +2,8 @@
 // it, which picked words a message still holds, an earlier task as the brain reads it, and the note.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { typing, searchable, matching, holds, digest, pointing } from '../ui/mentions.js'
-import { envelope, userRecords } from '../core/events.js'
+import { typing, searchable, matching, holds, digest, pointing } from '../app/ui/mentions.js'
+import { envelope, userRecords } from '../app/core/events.js'
 
 test('typing: a / or @ at a word’s start, up to the caret', () => {
   assert.deepEqual(typing('/', 1), { kind: '/', query: '', start: 0 })

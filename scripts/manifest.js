@@ -1,7 +1,8 @@
-// Generates manifest.webmanifest and capabilities.json (content hashes), writes
-// a modulepreload link for every module of the first load into index.html, and
+// Generates manifest.webmanifest and capabilities.json (content hashes) in app/, writes
+// a modulepreload link for every module of the first load into index.html,
 // stamps the resulting version into sw.js so that any asset change produces a
-// byte-different service worker, which is what triggers an update.
+// byte-different service worker, which is what triggers an update, and copies
+// LICENSE beside them, so that app/ is the whole of a deploy (D243).
 // Usage: npm run manifest              write the outputs
 //        npm run manifest -- --check   exit 1 if a committed output is stale (CI)
 import { createHash } from 'node:crypto'
@@ -10,13 +11,14 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url))
+/** The folder a deploy serves (D243): every path here is relative to it. */
+const APP = fileURLToPath(new URL('../app', import.meta.url))
 
 export const SHELL_FILES = ['index.html', 'sandbox.html', 'preview.html', 'brand.js', 'manifest.webmanifest']
 export const SHELL_DIRS = ['core', 'ui', 'vendor', 'fonts', 'icons']
 export const WEBMANIFEST = 'manifest.webmanifest'
 /** Outputs that are entirely generated and never committed (D74); `--check` skips them. */
-export const UNCOMMITTED = [WEBMANIFEST, 'capabilities.json']
+export const UNCOMMITTED = [WEBMANIFEST, 'capabilities.json', 'LICENSE']
 export const ENTRY = 'ui/app.js'
 /** On-demand runtimes (D52) belong to the capabilities that use them, never to the shell. */
 export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
@@ -60,13 +62,13 @@ export const isMissing = (error) => /** @type {{ code?: string }} */ (error)?.co
 
 /**
  * Whether a root-relative path belongs in a deployable cache list. Markdown isn't, but for the
- * skills of Jean's own directory (D196), nor jean-cli's strings, which only its package has.
+ * skills of Jean's own directory (D196).
  * @param {string} path  posix path relative to the app root
  */
 export function isShipped (path) {
   const segments = path.split('/')
   const name = segments[segments.length - 1]
-  return segments.every((s) => !s.startsWith('.')) && !path.startsWith('locales/cli/') && (name === 'SKILL.md' || !/\.(md|map)$|\.d\.ts$/.test(name))
+  return segments.every((s) => !s.startsWith('.')) && (name === 'SKILL.md' || !/\.(md|map)$|\.d\.ts$/.test(name))
 }
 
 /**
@@ -235,7 +237,7 @@ export function stampVersion (source, version) {
  * Computes every output without writing anything.
  * @param {string} root
  */
-export async function plan (root = ROOT) {
+export async function plan (root = APP) {
   const { BRAND } = await import(pathToFileURL(join(root, 'brand.js')).href)
   const html = (await readOrNull(root, 'index.html'))?.toString('utf8')
   const description = html && /<meta name="description" content="([^"]*)">/.exec(html)?.[1]
@@ -262,6 +264,7 @@ export async function plan (root = ROOT) {
   const sw = await readOrNull(root, 'sw.js')
   const stamped = sw && stampVersion(sw.toString('utf8'), version)
   if (!stamped) throw new Error("sw.js is missing or has no `const VERSION = '…'` line")
+  const licence = await readOrNull(join(root, '..'), 'LICENSE')
   return {
     version,
     files: shell.length + locales.length + capabilityFiles.length,
@@ -269,6 +272,7 @@ export async function plan (root = ROOT) {
       ...generated,
       'capabilities.json': buildCapabilities(version, shell, locales, integrity, capabilities),
       'sw.js': stamped,
+      ...(licence ? { LICENSE: licence.toString('utf8') } : {}),
     },
   }
 }
@@ -280,10 +284,10 @@ async function main (argv) {
   const stale = []
   for (const [path, content] of Object.entries(outputs)) {
     if (check && UNCOMMITTED.includes(path)) continue
-    const current = await readOrNull(ROOT, path)
+    const current = await readOrNull(APP, path)
     if (current?.toString('utf8') === content) continue
     stale.push(path)
-    if (!check) await writeFile(join(ROOT, path), content)
+    if (!check) await writeFile(join(APP, path), content)
   }
   if (check && stale.length) {
     console.error(`manifest: out of date: ${stale.join(', ')}. Run \`npm run manifest\` and commit the result.`)

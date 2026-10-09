@@ -8,6 +8,8 @@ import { linkedStylesheets, moduleGraph, parseImportMap } from './graph.js'
 import { isMissing, walk } from './manifest.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
+/** What a deploy serves (D243), which every budget but jean-cli's measures. */
+const APP = join(ROOT, 'app')
 const ENTRY = 'ui/app.js'
 const KB = 1024
 
@@ -24,18 +26,18 @@ export const gzipSize = (data) => gzipSync(data, { level: 9 }).length
 
 // ─── File access ─────────────────────────────────────────────────────────────
 
-/** @param {string} path */
-async function readBytes (path) {
+/** @param {string} path @param {string} [root] */
+async function readBytes (path, root = APP) {
   try {
-    return await readFile(join(ROOT, path))
+    return await readFile(join(root, path))
   } catch (error) {
     if (isMissing(error)) return null
     throw error
   }
 }
 
-/** @param {string} path */
-const readText = async (path) => (await readBytes(path))?.toString('utf8') ?? null
+/** @param {string} path @param {string} [root] */
+const readText = async (path, root = APP) => (await readBytes(path, root))?.toString('utf8') ?? null
 
 /**
  * Sums gzip sizes of files (each compressed separately, as served).
@@ -55,21 +57,22 @@ async function gzipTotal (paths) {
 /**
  * @param {string[]} dirs
  * @param {RegExp} pattern
+ * @param {string} [root]
  */
-async function filesIn (dirs, pattern) {
-  return (await Promise.all(dirs.map((dir) => walk(ROOT, dir)))).flat().filter((p) => pattern.test(p))
+async function filesIn (dirs, pattern, root = APP) {
+  return (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((p) => pattern.test(p))
 }
 
-/** @param {string[]} paths */
-async function totalLines (paths) {
+/** @param {string[]} paths @param {string} [root] */
+async function totalLines (paths, root = APP) {
   let lines = 0
-  for (const path of paths) lines += countLines((await readText(path)) ?? '')
+  for (const path of paths) lines += countLines((await readText(path, root)) ?? '')
   return lines
 }
 
 /** @param {string} dir */
 async function subdirectories (dir) {
-  const entries = await readdir(join(ROOT, dir), { withFileTypes: true }).catch(() => [])
+  const entries = await readdir(join(APP, dir), { withFileTypes: true }).catch(() => [])
   return entries.filter((e) => e.isDirectory() && !e.name.startsWith('.')).map((e) => e.name).sort()
 }
 
@@ -106,13 +109,13 @@ async function checkLines (budgets) {
     measure('lines.core', budgets.lines.core, await totalLines(core)),
     measure('lines.app', budgets.lines.app, await totalLines(app)),
     // jean-cli, which only its package has (D240).
-    measure('lines.cli', budgets.lines.cli, await totalLines(await filesIn(['cli'], /\.m?js$/))),
+    measure('lines.cli', budgets.lines.cli, await totalLines(await filesIn(['cli'], /\.m?js$/, ROOT), ROOT)),
   ]
 }
 
 /** @param {any} budgets */
 async function checkDependencies (budgets) {
-  const pkg = JSON.parse((await readText('package.json')) ?? '{}')
+  const pkg = JSON.parse((await readText('package.json', ROOT)) ?? '{}')
   const names = Object.keys(pkg.dependencies ?? {})
   const { max, allowed } = budgets.runtimeDependencies
   const extra = names.filter((name) => !allowed.includes(name))
@@ -201,7 +204,7 @@ async function checkPrompt (budgets) {
   const skip = (/** @type {string} */ note) => [{ name, limit: String(limit), actual: '-', status: /** @type {const} */ ('skip'), notes: [note] }]
   if (await readBytes('core/prompt.js') === null) return skip('warning: core/prompt.js not found')
   try {
-    const module = await import(pathToFileURL(join(ROOT, 'core/prompt.js')).href)
+    const module = await import(pathToFileURL(join(APP, 'core/prompt.js')).href)
     if (typeof module.basePromptForBudget !== 'function') return skip('warning: core/prompt.js has no basePromptForBudget() export')
     const prompt = String(await module.basePromptForBudget())
     return [measure(name, limit, Math.ceil(prompt.length / 4))]
@@ -221,7 +224,7 @@ function printTable (rows) {
 }
 
 async function main () {
-  const budgets = JSON.parse((await readText('budgets.json')) ?? 'null')
+  const budgets = JSON.parse((await readText('budgets.json', ROOT)) ?? 'null')
   if (!budgets) throw new Error('budgets.json not found')
   const rows = [
     ...await checkLines(budgets),

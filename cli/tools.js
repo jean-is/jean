@@ -5,22 +5,22 @@
 // shown, unless the user always allows it in that folder, as on This computer (D198).
 import { spawn } from 'node:child_process'
 import { basename, sep } from 'node:path'
-import { SPECS, USE, findInFolder, lastRead, listingText, openText, planChange, topLevel, walkFolder } from '../caps/folders/work.js'
-import { mcpClient, LEGACY } from '../caps/connections/mcp.js'
+import { SPECS, USE, findInFolder, lastRead, listingText, openText, planChange, topLevel, walkFolder } from '../app/caps/folders/work.js'
+import { mcpClient, LEGACY } from '../app/caps/connections/mcp.js'
 import { peer, RpcError } from './rpc.js'
-import { changeMemory, memoryText, oneLine, parseMemory } from '../core/memory.js'
-import { listSkills, skillLines } from '../core/skills.js'
-import { listConversations, loadConversation } from '../core/conversations.js'
-import { foldTurns, linkedFiles, splitSuggestions } from '../core/events.js'
-import { readTool } from '../core/files.js'
-import { findTools, identifier } from '../core/deferred.js'
-import { dirname, join, walk } from '../core/fs.js'
-import { bm25 } from '../core/search.js'
-import { slug } from '../core/settings.js'
+import { changeMemory, memoryText, oneLine, parseMemory } from '../app/core/memory.js'
+import { listSkills, skillLines } from '../app/core/skills.js'
+import { listConversations, loadConversation } from '../app/core/conversations.js'
+import { foldTurns, linkedFiles, splitSuggestions } from '../app/core/events.js'
+import { readTool } from '../app/core/files.js'
+import { findTools, identifier } from '../app/core/deferred.js'
+import { dirname, join, walk } from '../app/core/fs.js'
+import { bm25 } from '../app/core/search.js'
+import { slug } from '../app/core/settings.js'
 
-/** @import { FS, Envelope, ToolCallInfo, ToolCallContent } from '../core/types.js' */
-/** @import { Tool } from '../core/loop.js' */
-/** @import { McpTool } from '../caps/connections/mcp.js' */
+/** @import { FS, Envelope, ToolCallInfo, ToolCallContent } from '../app/core/types.js' */
+/** @import { Tool } from '../app/core/loop.js' */
+/** @import { McpTool } from '../app/caps/connections/mcp.js' */
 
 /**
  * What a session's tools work with.
@@ -67,7 +67,7 @@ function folderTools(room) {
   const name = basename(room.cwd)
   const cache = new Map()
   const at = (/** @type {any} */ args) => inside(room.cwd, args?.path)
-  /** @param {import('../core/loop.js').ToolContext} ctx @param {Record<string, [number, number]>} read */
+  /** @param {import('../app/core/loop.js').ToolContext} ctx @param {Record<string, [number, number]>} read */
   const stamp = (ctx, read) => {
     ctx.meta.folder = name
     ctx.meta.read = { ...ctx.meta.read, ...read }

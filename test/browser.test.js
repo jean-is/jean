@@ -3,7 +3,7 @@
 // brain, and how this browser installs a site as an app.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { addressOf, showable, siteOf, pageText, installer, Trail } from '../caps/browser/pages.js'
+import { addressOf, showable, siteOf, pageText, installer, Trail } from '../app/caps/browser/pages.js'
 
 const SEARCH = 'https://{lang}.wikipedia.org/w/index.php?search={query}'
 

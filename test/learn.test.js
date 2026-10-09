@@ -4,14 +4,14 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { gzipSync } from 'node:zlib'
 import { readFile } from 'node:fs/promises'
-import { memoryFS, writeJSON } from '../core/fs.js'
-import { writeZip } from '../core/zip.js'
-import { saveSkill, parseSkill } from '../core/skills.js'
-import { loadSettings } from '../core/settings.js'
-import { SCHEMA, indexURL, siteOf, parseIndex, sha256, gitHash, unpack, untar, readIndexes, fetchSkill, bestFit, SkillError } from '../caps/skills/sources.js'
-import { DIRECTORY, readDirectory, shownIn } from '../caps/skills/directory.js'
+import { memoryFS, writeJSON } from '../app/core/fs.js'
+import { writeZip } from '../app/core/zip.js'
+import { saveSkill, parseSkill } from '../app/core/skills.js'
+import { loadSettings } from '../app/core/settings.js'
+import { SCHEMA, indexURL, siteOf, parseIndex, sha256, gitHash, unpack, untar, readIndexes, fetchSkill, bestFit, SkillError } from '../app/caps/skills/sources.js'
+import { DIRECTORY, readDirectory, shownIn } from '../app/caps/skills/directory.js'
 import { LOCALES } from './fixtures/locales.js'
-import { schedule, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../caps/routines/schedule.js'
+import { schedule, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../app/caps/routines/schedule.js'
 
 const text = (/** @type {string} */ value) => new TextEncoder().encode(value)
 const STEPS = '---\nname: weekly-sales-report\ndescription: Summarize weekly sales by region.\n---\n# Weekly sales report\n\n1. Read the spreadsheet.\n2. Total by region.\n'
@@ -234,14 +234,14 @@ test('a skill declares the kinds of block it writes, which are drawn as widgets,
 
 test('a skill gives its name and a few words in each language in its metadata, kept when it is saved, and is shown in the user’s, else in English, else as written (D222)', async () => {
   const named = '---\nname: chart\ndescription: Draw charts.\nmetadata:\n  format: "1"\n  licence: MIT\n  title-en: Chart\n  text-en: "Bars and lines"\n  title-fr: "Graphique"\n  text-fr: "Barres et lignes"\n---\n# Chart\n'
-  const skill = /** @type {import('../core/skills.js').Skill} */ (parseSkill(named, 'skills/chart/SKILL.md'))
+  const skill = /** @type {import('../app/core/skills.js').Skill} */ (parseSkill(named, 'skills/chart/SKILL.md'))
   assert.deepEqual(shownIn(skill, 'fr'), { title: 'Graphique', text: 'Barres et lignes' })
   assert.deepEqual(shownIn(skill, 'ja'), { title: 'Chart', text: 'Bars and lines' }, 'English when the language isn’t given')
   assert.deepEqual(shownIn(/** @type {any} */ (parseSkill(STEPS, 'skills/weekly-sales-report/SKILL.md')), 'fr'), { title: 'Weekly sales report', text: 'Summarize weekly sales by region.' }, 'as written')
   assert.deepEqual(shownIn({ name: 'notes', description: 'Notes.' }, 'fr'), { title: 'notes', text: 'Notes.' }, 'an index’s entry by its name')
   const fs = memoryFS()
   const path = await saveSkill(fs, '', { ...skill, body: '# Chart\n\nChanged.', by: 'device', now: new Date('2026-10-09T10:00:00Z') })
-  const saved = /** @type {import('../core/skills.js').Skill} */ (parseSkill(/** @type {string} */ (await fs.read(path)), path))
+  const saved = /** @type {import('../app/core/skills.js').Skill} */ (parseSkill(/** @type {string} */ (await fs.read(path)), path))
   assert.deepEqual(shownIn(saved, 'fr'), { title: 'Graphique', text: 'Barres et lignes' }, 'kept through an edit')
   assert.equal(saved.metadata?.licence, 'MIT', 'what Jean doesn’t use is kept too')
   assert.equal(saved.metadata?.author, 'device', 'Jean’s own keys are its own')

@@ -1,12 +1,12 @@
 // Frozen prompts, system notes, shared files in messages, and replayed thinking (D46, D49).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { foldTurns, linkedFiles, noteRecord, toChatMessages, userRecords } from '../core/events.js'
-import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState } from '../core/prompt.js'
-import { runTurn } from '../core/loop.js'
-import { documentPart, joinPages } from '../core/files.js'
+import { foldTurns, linkedFiles, noteRecord, toChatMessages, userRecords } from '../app/core/events.js'
+import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState } from '../app/core/prompt.js'
+import { runTurn } from '../app/core/loop.js'
+import { documentPart, joinPages } from '../app/core/files.js'
 
-/** @type {import('../core/types.js').ResourceLink} */
+/** @type {import('../app/core/types.js').ResourceLink} */
 const link = { type: 'resource_link', uri: 'files/sha256-ab.pdf', name: 'report.pdf', mimeType: 'application/pdf', size: 10, _meta: { pages: [1, 1], of: 2 } }
 
 test('a user message with files folds into one turn, and notes attach to the next turn', () => {

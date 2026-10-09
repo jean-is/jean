@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readMidi } from '../caps/files/midi.js'
+import { readMidi } from '../app/caps/files/midi.js'
 
 /** A number as MIDI writes a time: seven bits a byte, the first bytes' top bit set. @param {number} value */
 const vlq = (value) => {

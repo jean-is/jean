@@ -6,13 +6,13 @@ import { join } from 'node:path'
 import { PassThrough } from 'node:stream'
 import { agent } from '../cli/acp.js'
 import { peer, RpcError } from '../cli/rpc.js'
-import { LLMError } from '../core/llm.js'
-import { setLoader, useStrings } from '../core/i18n.js'
-import { memoryFS, walk } from '../core/fs.js'
-import { syncRound } from '../caps/sync/mirror.js'
+import { LLMError } from '../app/core/llm.js'
+import { setLoader, useStrings } from '../app/core/i18n.js'
+import { memoryFS, walk } from '../app/core/fs.js'
+import { syncRound } from '../app/caps/sync/mirror.js'
 import { nodeFS } from '../cli/fs.js'
 
-setLoader(async (lang, part) => (part === 'cli' ? JSON.parse(await readFile(new URL(`../locales/cli/${lang}.json`, import.meta.url), 'utf8')) : null))
+setLoader(async (lang, part) => (part === 'cli' ? JSON.parse(await readFile(new URL(`../cli/locales/${lang}.json`, import.meta.url), 'utf8')) : null))
 await useStrings('cli')
 
 /**

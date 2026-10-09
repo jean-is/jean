@@ -2,7 +2,7 @@
 // worker but uses no browser API.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { gemmaParser, parseArguments, toolCall, continues } from '../caps/brain-local/gemma.js'
+import { gemmaParser, parseArguments, toolCall, continues } from '../app/caps/brain-local/gemma.js'
 
 /** @param {string[]} chunks */
 function parse(chunks) {

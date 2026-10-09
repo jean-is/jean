@@ -15,7 +15,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 
 ## Stack
 
-**No build step** (D9). Plain ES modules and an import map; types in JSDoc, checked by `tsc --noEmit`. Deploying means copying the folder, and view-source is the source.
+**No build step** (D9). Plain ES modules and an import map; types in JSDoc, checked by `tsc --noEmit`. Deploying means copying `app/` (D243), and view-source is the source.
 
 **A first load without a bundle.** `npm run manifest` writes a `<link rel="modulepreload">` into `index.html` for every module the first load imports, so the browser fetches the graph in one round trip; CI fails if the links are stale. The first screen loads only what it draws (D76, D94, D148): the dialogs, the Anthropic adapter, the loop and the other adapters, Auto, and what a message needs on its way (`ui/send.js`) load when first needed, sending as soon as the user types.
 
@@ -40,7 +40,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 | `buffer` (feross's, with `base64-js` and `ieee754`) | The Computer's `node`'s `Buffer` (D178); one classic script, `vendor/quickjs/buffer.js` |
 | No MCP SDK | Connections: Jean's own client, `caps/connections/mcp.js` (D87) |
 
-`vendor/`, `capabilities.json` and `manifest.webmanifest` are made by `npm run dev`, `start`, `build` and `check` from Jean's own `node_modules`, and never committed (D43, D51, D52, D74).
+`vendor/`, `capabilities.json`, `manifest.webmanifest` and a copy of `LICENSE`, all in `app/`, are made by `npm run dev`, `start`, `build` and `check` from Jean's own `node_modules` and the root's licence, and never committed (D43, D51, D52, D74, D243).
 
 **Built on the browser, no dependency:** text from DOCX, XLSX and PPTX (zip through `DecompressionStream` and a small tag scanner, not `DOMParser`, so it runs in workers and under `node --test`); the backup zip (`CompressionStream`); BM25 search with `Intl.Segmenter`, which ranks deferred tools and past conversations, and `alike()`, which tells requests of the same kind apart (`core/search.js`), plus matching as people type over a fold of the text (`fold()`, `ranges()`, D133); ULIDs from `crypto.getRandomValues`; the system's voices; Web Locks and BroadcastChannel between tabs.
 
@@ -51,16 +51,17 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 ## Layout
 
 ```
-index.html        CSP <meta>, the first-paint line (light or dark, the look), import map, shell
-sandbox.html      strict CSP and a relay, allowed by its hash; runs untrusted code in a worker (D65, D162)
-preview.html      a web page in the preview or the browser, written by a relay under the policy Settings give it (D126, D143)
-manifesto.html    MANIFESTO.md as a page (manifesto.css over ui/style.css), linked from Settings
-sw.js             offline cache, per capability
-brand.js          export const BRAND = { name, domain }
-core/             the engine, standard web APIs only: llm.js anthropic.js sse.js loop.js events.js prompt.js deferred.js
+app/              what a deploy serves, as written (D243); the docs' paths to Jean's own files are in it
+  index.html      CSP <meta>, the first-paint line (light or dark, the look), import map, shell
+  sandbox.html    strict CSP and a relay, allowed by its hash; runs untrusted code in a worker (D65, D162)
+  preview.html    a web page in the preview or the browser, written by a relay under the policy Settings give it (D126, D143)
+  manifesto.html  MANIFESTO.md as a page (manifesto.css over ui/style.css), linked from Settings
+  sw.js           offline cache, per capability
+  brand.js        export const BRAND = { name, domain }
+  core/           the engine, standard web APIs only: llm.js anthropic.js sse.js loop.js events.js prompt.js deferred.js
                   rules.js fs.js files.js conversations.js settings.js memory.js skills.js search.js decide.js i18n.js
                   oauth.js zip.js ulid.js types.d.ts
-ui/               app.js (start), shell.js, base.js, state.js (signals; what the first screen draws), send.js (a message on
+  ui/             app.js (start), shell.js, base.js, state.js (signals; what the first screen draws), send.js (a message on
                   its way and its answer, loaded as the user types), chat.js, composer.js, complete.js, complete.css and
                   mentions.js (the box's / and @, D199), markdown.js, discovery.js,
                   caps.js (the unlock gate), auto.js, picker.js, dialogs.js and dialogs.css (Settings, with brains.js and
@@ -71,20 +72,24 @@ ui/               app.js (start), shell.js, base.js, state.js (signals; what the
                   trusted.js (Trusted Types), tips.js and tips.css (names and titles shown as tips, D233), sheet.js (a module's own style sheet), model.js and model-worker.js (the
                   two sides of a model's worker: the device's brain, Intuition, dictation), style.css (the room) and
                   looks/<id>.css (the other themes)
-caps/<id>/        one folder per capability: files made backup brain-local voice reflexes memory projects skills search
+  caps/<id>/      one folder per capability: files made backup brain-local voice reflexes memory projects skills search
                   connections live helpers check since names routines flows find browser ask you folders sync computer math
                   charts scores machine slides layouts
-locales/          <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
-                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ (D97); cli/, jean-cli's (D241)
-desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
-scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, cli.js, icons.js, screenshots.js, reflexes.js, directory.js
+  locales/        <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
+                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ (D97)
+  fonts/          the display font
+  icons/          the icon, and the PNGs installs need, drawn from it (D131)
+  screenshots/    the welcome screen, for the install dialog (D168)
+  bridge/         bridge.js (Node): this computer, for the Computer's commands and Claude Code, run by the user in a terminal (D198, D235)
+  ee/             the enterprise integrations, Elastic-2.0 (D139)
+cli/              jean-cli (Node): main.js, acp.js (Jean in an editor, through ACP), tools.js, brain.js, rpc.js, fs.js; locales/, its strings; README.md, its page on npm (D241)
 gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
-bridge/           bridge.js (Node): this computer, for the Computer's commands and Claude Code, run by the user in a terminal (D198, D235)
-cli/              jean-cli (Node): main.js, acp.js (Jean in an editor, through ACP), tools.js, brain.js, rpc.js, fs.js; README.md, its page on npm (D241)
+desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
+deploy/           docker/, the container image (D232)
+scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, cli.js, icons.js, screenshots.js, reflexes.js, directory.js
 test/             node --test suites; fixtures/ (the fake brain, a fake MCP mail service with sign-in, a fake skills index);
                   reflexes/ (the multilingual reflex test set and results.md)
 e2e/              Playwright smoke tests, one per capability, in Chromium and WebKit
-ee/               the enterprise integrations, Elastic-2.0 (D139)
 ```
 
 Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `cells.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
@@ -457,13 +462,13 @@ A connection is an address and, when the service asks, a key or a sign-in (D87â€
 
 ## jean-cli
 
-`cli/` is Jean outside the browser, on Node 22 or later, published as `jean-cli` (D241). `main.js` reads the command, and the terminal's language (`LC_ALL`, `LC_MESSAGES`, `LANG`, then the system's) picks `locales/cli/`'s.
+`cli/` is Jean outside the browser, on Node 22 or later, published as `jean-cli` (D241). `main.js` reads the command, and the terminal's language (`LC_ALL`, `LC_MESSAGES`, `LANG`, then the system's) picks `cli/locales/`'s.
 
 - **`jean-cli acp`** (`acp.js`): ACP on its input and output through `rpc.js`, JSON-RPC a message a line, requests answered side by side so `session/cancel` is heard during a prompt; anything printed goes to the error stream. `session/new` makes a conversation (`createConversation`) in the folder `--folder` names, which must hold Sync's `mirror.json`, in the project whose `folder` is the editor's folder's name, else the home one; its ULID is the session's. `session/load` reads one back and tells it again as updates, a call's later records as `tool_call_update`. `session/prompt` keeps the files the prompt shares (a file the editor names, its contents, a picture) as the project's (`addFile`, the pages that fit decided then), then the prompt or the notes since and the request, and runs `runTurn`: its updates go out as they are, but for brain entries (`brain-â€¦`), notes and an answer's `<suggestions>`, cut as it streams with `splitSuggestions`, and a diff's or a location's path goes out in full. A question is `session/request_permission`; "always" and "never" set the rule of a kind not kept to a folder, as in the browser. `max_steps` ends as `max_turn_requests`, a stop as `cancelled`, and a brain's error is worded as the browser words it. `settings.json` at the top of the folder, which `carried()` leaves out, is this computer's: `device` (who writes), `rules`, and `always` by folder.
 - **Tools** (`tools.js`): `list`, `find_in_files`, `open` and `change` on the editor's folder with `caps/folders/work.js`, whose `SPECS` and `USE` are what the capability tells the brain too. Listing and searching read the disk (`nodeFS`, writing in place there); opening and changing a text go through the editor when it offers `fs` (`fs/read_text_file`, `fs/write_text_file`), so its unsaved changes count. A change is checked against what was read (`lastRead`) and asked with its diff unless always allowed in that folder. `bash`, when the editor offers `terminal`, runs `bash -c` there (`terminal/create`, `wait_for_exit` within two minutes, else `kill`, then `output` and `release`), its terminal shown on the call while it runs and after. `read`, `recall`, `remember` and `skill` work on the project's and the person's files; the editor's MCP servers (`connect()`: a program, spoken to with `rpc.js`, or an address, through `mcpClient`) give deferred `<server>_<tool>` tools, with `find_tools` and `<connections>`.
 - **The brain** (`brain.js`): `--brain <provider>[:<name>]`, with `--address` for a server of the user's, else the first provider whose key is in the environment (`<PROVIDER>_API_KEY`, `HF_TOKEN`, `AI_GATEWAY_API_KEY`), those with a brain of their own first, else Claude Code once `claude auth status` says it is signed in: `bridge()` on a free port of 127.0.0.1, with a key made for it, as a `claudecode` brain. It is chosen at the first prompt.
 - **`jean-cli gateway`**: `gateway/gateway.js` behind `gateway/serve.js`'s listener, `--origin` added to `GATEWAY_CONFIG`'s origins, on `--port` (8787) and `--host` (127.0.0.1).
-- **The package** (`npm run cli`, `scripts/cli.js`): every module `main.js` reaches, statically or through the `import()`s it lists, copied as written into `dist/cli/` with `locales/cli/`, `brand.js`, `LICENSE`, `cli/README.md` and a `package.json` (`bin: jean-cli`; `@preact/signals-core` and `marked`). `isShipped()` keeps `locales/cli/` out of the web build.
+- **The package** (`npm run cli`, `scripts/cli.js`): every module `main.js` reaches, statically or through the `import()`s it lists, copied as written and where they are (Jean's own under `app/`) into `dist/cli/` with `cli/locales/`, `app/brand.js`, `LICENSE`, `cli/README.md` and a `package.json` (`bin: jean-cli`; `@preact/signals-core` and `marked`).
 
 ## Voice
 

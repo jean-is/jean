@@ -3,10 +3,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { LOOKS, LOOK_KEY, lookId, touched } from '../ui/looks.js'
-import { customCSS, FONTS } from '../ui/touches.js'
+import { LOOKS, LOOK_KEY, lookId, touched } from '../app/ui/looks.js'
+import { customCSS, FONTS } from '../app/ui/touches.js'
 
-const html = await readFile(new URL('../index.html', import.meta.url), 'utf8')
+const html = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 
 /** Selectors split at their top-level commas, not those inside :is(). @param {string} list */
 function selectors(list) {
@@ -23,7 +23,7 @@ function selectors(list) {
 
 for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
   test(`every rule of ui/looks/${id}.css starts with :root[data-look='${id}'], and its keyframes with ${id}-`, async () => {
-    const css = (await readFile(new URL(`../ui/looks/${id}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
+    const css = (await readFile(new URL(`../app/ui/looks/${id}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/@keyframes\s+([\w-]+)\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, (_, name) => (assert.ok(name.startsWith(`${id}-`), `@keyframes ${name}`), ''))
     const preludes = [...css.matchAll(/([^{};]+)\{/g)].map((match) => match[1].trim()).filter((prelude) => !prelude.startsWith('@'))
     assert.ok(preludes.length > 10)
@@ -58,7 +58,7 @@ const tokensOf = (css, selector) => Object.fromEntries([...(css.split(`${selecto
 
 for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
   test(`ui/looks/${id}.css reads at AA contrast in light and dark`, async () => {
-    const css = (await readFile(new URL(`../ui/looks/${id}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
+    const css = (await readFile(new URL(`../app/ui/looks/${id}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
     const dark = tokensOf(css, `:root[data-look='${id}']`)
     for (const [mode, tokens] of [['dark', dark], ['light', { ...dark, ...tokensOf(css, `:root[data-look='${id}'][data-theme='light']`) }]]) {
       const room = colour(tokens, 'room')
@@ -76,8 +76,8 @@ for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
 
 // Its name is in the room's catalogue, for the user's menu too (D153).
 test('every look has a name and a thumbnail in Settings', async () => {
-  const room = JSON.parse(await readFile(new URL('../locales/en.json', import.meta.url), 'utf8'))
-  const sheet = await readFile(new URL('../ui/dialogs.css', import.meta.url), 'utf8')
+  const room = JSON.parse(await readFile(new URL('../app/locales/en.json', import.meta.url), 'utf8'))
+  const sheet = await readFile(new URL('../app/ui/dialogs.css', import.meta.url), 'utf8')
   for (const id of Object.keys(LOOKS)) {
     assert.ok(room[`look.${id}.name`], id)
     assert.ok(sheet.includes(`[data-look-preview='${id}'] {`) && sheet.includes(`[data-theme='light'] [data-look-preview='${id}'] {`), id)

@@ -1,8 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lex, withFormulas } from '../ui/markdown.js'
-import { plainText } from '../ui/spoken.js'
-import { latexToMarkdown, wholeSoFar, readPies } from '../caps/math/latex.js'
+import { lex, withFormulas } from '../app/ui/markdown.js'
+import { plainText } from '../app/ui/spoken.js'
+import { latexToMarkdown, wholeSoFar, readPies } from '../app/caps/math/latex.js'
 
 /** What a text shows, in order: its words, and its formulas as [source], or [[source]] when set apart. @param {string} source */
 function shown(source) {

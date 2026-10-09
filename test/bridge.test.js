@@ -5,8 +5,8 @@ import { createServer, request } from 'node:http'
 import { mkdtemp, mkdir, writeFile, rm, realpath } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { bridge } from '../bridge/bridge.js'
-import { mcpClient } from '../caps/connections/mcp.js'
+import { bridge } from '../app/bridge/bridge.js'
+import { mcpClient } from '../app/caps/connections/mcp.js'
 
 const JEAN = 'https://jean.example'
 const KEY = 'k3y-for-the-test'
@@ -101,19 +101,19 @@ describe('the bridge (D198)', { skip: process.platform === 'win32' }, () => {
 
 // Claude Code (D235): the user's own, with their Claude plan, answers Jean's Anthropic requests here.
 describe('Claude Code through the bridge (D235)', { skip: process.platform === 'win32' }, () => {
-  /** @type {typeof import('../core/llm.js')} */
+  /** @type {typeof import('../app/core/llm.js')} */
   let llm
   /** @type {Awaited<ReturnType<typeof bridge>>} */
   let work
   /** @type {import('node:http').Server} */
   let server
-  /** @type {import('../core/types.js').BrainConfig} */
+  /** @type {import('../app/core/types.js').BrainConfig} */
   let brain
   /** @type {string} */
   let folder
 
   before(async () => {
-    llm = await import('../core/llm.js')
+    llm = await import('../app/core/llm.js')
     folder = await realpath(await mkdtemp(join(tmpdir(), 'bridge-claude-')))
     server = createServer((req, res) => work.handle(req, res))
     await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))

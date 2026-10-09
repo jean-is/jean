@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { basename, dirname, join, memoryFS, normalizeDir, normalizePath, readJSON, writeJSON } from '../core/fs.js'
+import { basename, dirname, join, memoryFS, normalizeDir, normalizePath, readJSON, writeJSON } from '../app/core/fs.js'
 
 test('normalizePath accepts relative POSIX paths and strips one trailing slash', () => {
   assert.equal(normalizePath('a'), 'a')

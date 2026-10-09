@@ -10,7 +10,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { SCREENSHOTS } from './manifest.js'
 import { handle } from './serve.js'
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url))
+const APP = fileURLToPath(new URL('../app', import.meta.url))
 /** Device pixels per CSS pixel: a phone's screen is dense, a desktop's often isn't. */
 export const SCALE = /** @type {Record<string, number>} */ ({ wide: 1, narrow: 2 })
 const QUALITY = 85
@@ -52,8 +52,8 @@ async function main () {
       await page.goto(`http://127.0.0.1:${port}/`)
       await page.locator('.hero-question').waitFor()
       await page.evaluate(() => document.fonts.ready.then(() => true))
-      await mkdir(dirname(join(ROOT, src)), { recursive: true })
-      await writeFile(join(ROOT, src), await page.screenshot({ type: 'jpeg', quality: QUALITY }))
+      await mkdir(dirname(join(APP, src)), { recursive: true })
+      await writeFile(join(APP, src), await page.screenshot({ type: 'jpeg', quality: QUALITY }))
       await page.close()
     }
   } finally {

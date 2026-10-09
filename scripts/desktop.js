@@ -14,6 +14,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { isShipped, walk } from './manifest.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
+/** What a web deploy serves, as `npm run build` leaves it (D243). */
+const APP = join(ROOT, 'app')
 /** Neutralino's project: its configuration, its binaries (bin/, kept between builds), Jean's files (app/), what it builds (build/). */
 const WORK = join(ROOT, 'dist', 'neutralino')
 const OUT = join(ROOT, 'dist', 'desktop')
@@ -35,10 +37,6 @@ export const DESKTOP = Object.freeze({ id: 'is.jean.desktop', binary: 'jean', po
  * where the centre of each sits, the app on the left and Applications on the right.
  */
 export const DMG = Object.freeze({ width: 600, height: 360, iconSize: 128, app: [150, 160], applications: [450, 160] })
-
-/** What a web deploy serves: the pages and what they load, and the bridge a line of Jean's fetches (D198); never the tooling, the tests or the docs. */
-export const TOP = ['index.html', 'sandbox.html', 'preview.html', 'manifesto.html', 'manifesto.css', 'brand.js', 'sw.js', 'capabilities.json', 'manifest.webmanifest', 'LICENSE']
-export const DIRS = ['core', 'ui', 'caps', 'locales', 'vendor', 'fonts', 'icons', 'ee', 'bridge']
 
 /** The host's calls the page may make (ui/host.js, and This computer for the bridge it starts, D198), and no other. */
 export const NATIVE = ['computer.getMemoryInfo', 'os.showFolderDialog', 'os.open', 'filesystem.getStats', 'filesystem.readDirectory', 'filesystem.readBinaryFile', 'filesystem.writeBinaryFile', 'filesystem.createDirectory', 'filesystem.remove',
@@ -186,10 +184,10 @@ export function finderScript (mount, app) {
 end tell`
 }
 
-/** @param {string} root */
-export async function shippedFiles (root) {
-  const nested = (await Promise.all(DIRS.map((dir) => walk(root, dir)))).flat()
-  return [...TOP, ...nested].filter(isShipped)
+/** What a web deploy serves: app/, but for its types, its dotfiles and its Markdown, the skills of Jean's own directory aside. @param {string} app */
+export async function shippedFiles (app) {
+  const entries = await readdir(app, { withFileTypes: true })
+  return (await Promise.all(entries.map((entry) => (entry.isDirectory() ? walk(app, entry.name) : [entry.name])))).flat().filter(isShipped)
 }
 
 /** @param {string} command @param {string[]} args @param {string} [cwd] */
@@ -232,7 +230,7 @@ async function binaries () {
 async function stage () {
   const app = join(WORK, 'app')
   await rm(app, { recursive: true, force: true })
-  const copies = [...(await shippedFiles(ROOT)).map((path) => [join(ROOT, path), join(app, path)]), [join(WORK, 'bin', 'LICENSE'), join(app, 'vendor', 'LICENSES', 'neutralinojs.txt')]]
+  const copies = [...(await shippedFiles(APP)).map((path) => [join(APP, path), join(app, path)]), [join(WORK, 'bin', 'LICENSE'), join(app, 'vendor', 'LICENSES', 'neutralinojs.txt')]]
   for (const [from, to] of copies) {
     await mkdir(dirname(to), { recursive: true })
     await copyFile(from, to)
@@ -252,7 +250,7 @@ async function bundle (binary, brand, version) {
   await mkdir(join(app, 'Contents', 'Resources'), { recursive: true })
   await rename(binary, join(app, 'Contents', 'MacOS', DESKTOP.binary))
   await writeFile(join(app, 'Contents', 'Info.plist'), infoPlist(brand, version))
-  await writeFile(join(app, 'Contents', 'Resources', 'icon.icns'), icns(await readFile(join(ROOT, 'icons', 'icon-512.png'))))
+  await writeFile(join(app, 'Contents', 'Resources', 'icon.icns'), icns(await readFile(join(APP, 'icons', 'icon-512.png'))))
   console.warn(`${relative(ROOT, app)}: built off a Mac, so without the browser pane's X-Frame-Options patch and unsigned; build on a Mac for the patched, signed app`)
 }
 
@@ -299,7 +297,7 @@ async function bundlePatched (binary, resourcesNeu, configFile, brand, version) 
   await copyFile(resourcesNeu, join(contents, 'Resources', 'resources.neu'))
   await copyFile(configFile, join(contents, 'Resources', 'neutralino.config.json'))
   await writeFile(join(contents, 'Info.plist'), infoPlist(brand, version))
-  await writeFile(join(contents, 'Resources', 'icon.icns'), icns(await readFile(join(ROOT, 'icons', 'icon-512.png'))))
+  await writeFile(join(contents, 'Resources', 'icon.icns'), icns(await readFile(join(APP, 'icons', 'icon-512.png'))))
   await run('codesign', ['--remove-signature', join(contents, 'MacOS', `${DESKTOP.binary}-bin`)])
   for (const path of [join(contents, 'MacOS', `${DESKTOP.binary}-bin`), join(contents, 'Frameworks', 'libjeanframe.dylib'), join(contents, 'MacOS', DESKTOP.binary), app]) {
     await run('codesign', ['--force', '--sign', '-', path])
@@ -371,9 +369,9 @@ async function main (argv) {
   const target = argv[0]
   if (target && target !== 'dmg') throw new Error(`unknown target ${target}: the one there is is dmg`)
   if (target === 'dmg' && process.platform !== 'darwin') throw new Error('a disk image is made on a Mac, with its own tools')
-  const { BRAND } = await import(pathToFileURL(join(ROOT, 'brand.js')).href)
+  const { BRAND } = await import(pathToFileURL(join(APP, 'brand.js')).href)
   const { version } = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
-  const description = /<meta name="description" content="([^"]*)">/.exec(await readFile(join(ROOT, 'index.html'), 'utf8'))?.[1]
+  const description = /<meta name="description" content="([^"]*)">/.exec(await readFile(join(APP, 'index.html'), 'utf8'))?.[1]
   const copyright = /^Copyright .+$/m.exec(await readFile(join(ROOT, 'LICENSE'), 'utf8'))?.[0]
   await mkdir(WORK, { recursive: true })
   await writeFile(join(WORK, 'neutralino.config.json'), `${JSON.stringify(neutralinoConfig(BRAND, { version, description, copyright }), null, 2)}\n`)

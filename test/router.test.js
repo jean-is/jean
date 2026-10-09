@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { placeIn } from '../ui/router.js'
+import { placeIn } from '../app/ui/router.js'
 
 test('the address names a conversation only with a valid ULID', () => {
   assert.equal(placeIn('#/c/01M3XN7APTVD76G6T68W6FRKC8').conversation, '01M3XN7APTVD76G6T68W6FRKC8')
@@ -12,7 +12,7 @@ test('the address names a conversation only with a valid ULID', () => {
 })
 
 test('a project other than home is in the address too', async () => {
-  const { placeIn, hashFor } = await import('../ui/router.js')
+  const { placeIn, hashFor } = await import('../app/ui/router.js')
   const id = '01M3XN7APTVD76G6T68W6FRKC8'
   const project = '01M3XN7APTVD76G6T68W6FRKC9'
   assert.deepEqual(placeIn(`#/p/${project}/c/${id}`), { project, conversation: id })
@@ -28,7 +28,7 @@ test('a project other than home is in the address too', async () => {
 })
 
 test('Settings is in the address over any place, on its section', async () => {
-  const { placeIn, settingsIn, withSettings } = await import('../ui/router.js')
+  const { placeIn, settingsIn, withSettings } = await import('../app/ui/router.js')
   const id = '01M3XN7APTVD76G6T68W6FRKC8'
   const project = '01M3XN7APTVD76G6T68W6FRKC9'
   assert.equal(withSettings('#/', 'general'), '#/settings')
@@ -50,8 +50,8 @@ test('Settings is in the address over any place, on its section', async () => {
 
 test('the windows beside a place come after a ?, in the order they opened, each with what it shows (D220)', async () => {
   const { signal } = await import('@preact/signals-core')
-  const { placeIn, settingsIn, beside } = await import('../ui/router.js')
-  const { keep, written } = await import('../ui/windows.js')
+  const { placeIn, settingsIn, beside } = await import('../app/ui/router.js')
+  const { keep, written } = await import('../app/ui/windows.js')
   const id = '01M3XN7APTVD76G6T68W6FRKC8'
   const address = `#/c/${id}/settings/brains?browser=https://example.com/a?b=c%26d&terminal`
   assert.deepEqual(placeIn(address), { project: null, conversation: id })

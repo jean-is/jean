@@ -4,7 +4,7 @@
 // is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
 import { test, expect } from '@playwright/test'
 import { start, openSettings, closeSettings, openTasks } from './helpers.js'
-import { LOOKS } from '../ui/looks.js'
+import { LOOKS } from '../app/ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
 

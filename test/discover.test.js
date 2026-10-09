@@ -2,16 +2,16 @@
 // BM25, Kev's packing in the Decisions API shape, Auto, suggestions and sources.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { runTurn } from '../core/loop.js'
-import { toChatMessages, splitSuggestions, userRecords, noteRecord } from '../core/events.js'
-import { changeNotes, frozenPrompt, promptRecord } from '../core/prompt.js'
-import { findTools, signature, identifier } from '../core/deferred.js'
-import { bm25, words } from '../core/search.js'
-import { KEV, pack, answers, render } from '../core/decide.js'
-import { documentPart, sourceNumber } from '../core/files.js'
-import { openaiMessages } from '../core/llm.js'
-import { chooseBrain, isLocal, tierFor } from '../ui/auto.js'
-import { REFLEXES, CAPABILITIES } from '../caps/reflexes/questions.js'
+import { runTurn } from '../app/core/loop.js'
+import { toChatMessages, splitSuggestions, userRecords, noteRecord } from '../app/core/events.js'
+import { changeNotes, frozenPrompt, promptRecord } from '../app/core/prompt.js'
+import { findTools, signature, identifier } from '../app/core/deferred.js'
+import { bm25, words } from '../app/core/search.js'
+import { KEV, pack, answers, render } from '../app/core/decide.js'
+import { documentPart, sourceNumber } from '../app/core/files.js'
+import { openaiMessages } from '../app/core/llm.js'
+import { chooseBrain, isLocal, tierFor } from '../app/ui/auto.js'
+import { REFLEXES, CAPABILITIES } from '../app/caps/reflexes/questions.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'm' }
 const done = (/** @type {any} */ stopReason, /** @type {any} */ message) => ({ type: 'done', stopReason, message })
@@ -28,7 +28,7 @@ function fakeStream(script) {
   return { stream: /** @type {any} */ (stream), requests }
 }
 
-/** @param {string} name @param {Partial<import('../core/loop.js').Tool>} [extra] @returns {import('../core/loop.js').Tool} */
+/** @param {string} name @param {Partial<import('../app/core/loop.js').Tool>} [extra] @returns {import('../app/core/loop.js').Tool} */
 const tool = (name, extra = {}) => ({
   spec: { name, description: `${name} things`, parameters: { type: 'object', properties: { x: { type: 'number' } }, required: ['x'] } },
   kind: 'read',

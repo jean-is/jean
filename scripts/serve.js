@@ -1,4 +1,4 @@
-// Tiny static file server for development. Serves the app folder on 127.0.0.1.
+// Tiny static file server for development. Serves app/, what a deploy serves (D243), on 127.0.0.1.
 // Usage: npm run serve            (PORT=8080 npm run serve to change the port)
 // With --gateway (npm run dev:gateway), it is the gateway too (D191), at /gateway on Jean's own
 // address, and makes up the policy that sets it for Jean and turns Connections on, as an
@@ -11,7 +11,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gateway } from '../gateway/gateway.js'
 import { listener } from '../gateway/serve.js'
 
-const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)))
+const APP = resolve(fileURLToPath(new URL('../app', import.meta.url)))
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.PORT) || 4173
 /** @type {import('../gateway/gateway.js').Config | null} */
@@ -45,7 +45,7 @@ export const TYPES = {
  * @param {string} requestUrl
  * @param {string} root  absolute path without a trailing separator
  */
-export function resolveRequest (requestUrl, root = ROOT) {
+export function resolveRequest (requestUrl, root = APP) {
   let pathname
   try {
     pathname = decodeURIComponent(new URL(requestUrl, 'http://localhost').pathname)
@@ -81,7 +81,7 @@ export async function handle (req, res) {
   if (!file) return fail(res, 404, 'Not found')
   const info = await stat(file).catch(() => null)
   if (!info?.isFile()) return fail(res, 404, 'Not found')
-  if (GATEWAY && file === join(ROOT, 'index.html')) {
+  if (GATEWAY && file === join(APP, 'index.html')) {
     return send(res, req, '.html', Buffer.from((await readFile(file, 'utf8')).replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')))
   }
   res.writeHead(200, {
@@ -112,7 +112,7 @@ function main () {
     process.exit(1)
   })
   server.listen(PORT, HOST, () => {
-    console.log(`Serving ${ROOT} at http://${HOST}:${PORT}/${GATEWAY ? `, with the gateway at http://${HOST}:${PORT}/gateway` : ''}`)
+    console.log(`Serving ${APP} at http://${HOST}:${PORT}/${GATEWAY ? `, with the gateway at http://${HOST}:${PORT}/gateway` : ''}`)
   })
 }
 

@@ -5,9 +5,9 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { sources } from './fixtures/keys.js'
-import { pageRights, pagePolicy, pageAllow, site } from '../ui/csp.js'
+import { pageRights, pagePolicy, pageAllow, site } from '../app/ui/csp.js'
 
-const html = await readFile(new URL('../index.html', import.meta.url), 'utf8')
+const html = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? ''
 
 test('the CSP hash matches the inline import map', () => {
@@ -30,7 +30,7 @@ test('the CSP allows exactly the inline scripts and styles there are', () => {
 test('light or dark is set before the first paint, with the key ui/state.js uses', async () => {
   const theme = /<script>([\s\S]*?)<\/script>/.exec(html)
   assert.ok(theme && theme.index < html.indexOf('<link rel="stylesheet"'), 'before the stylesheet, which would hold it back')
-  const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
+  const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
   const key = /THEME_KEY = '([^']+)'/.exec(state)?.[1]
   assert.ok(key && theme[1].includes(`localStorage.getItem('${key}')`))
 })
@@ -46,7 +46,7 @@ test('the CSP meta comes before any script', () => {
   assert.ok(html.indexOf('Content-Security-Policy') < html.indexOf('<script'))
 })
 
-const sandbox = await readFile(new URL('../sandbox.html', import.meta.url), 'utf8')
+const sandbox = await readFile(new URL('../app/sandbox.html', import.meta.url), 'utf8')
 const sandboxCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(sandbox)?.[1] ?? ''
 
 test('the sandbox allows exactly its inline relay, eval for Pyodide (D80, D162), and no network', () => {
@@ -60,12 +60,12 @@ test('the sandbox allows exactly its inline relay, eval for Pyodide (D80, D162),
 })
 
 test('the sandbox is only ever framed without allow-same-origin', async () => {
-  const client = await readFile(new URL('../ui/sandbox.js', import.meta.url), 'utf8')
+  const client = await readFile(new URL('../app/ui/sandbox.js', import.meta.url), 'utf8')
   assert.match(client, /setAttribute\('sandbox', 'allow-scripts'\)/)
   assert.doesNotMatch(client, /allow-same-origin'/)
 })
 
-const preview = await readFile(new URL('../preview.html', import.meta.url), 'utf8')
+const preview = await readFile(new URL('../app/preview.html', import.meta.url), 'utf8')
 const previewCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(preview)?.[1] ?? ''
 
 test('a page runs its own scripts by default, and reaches nothing unless Settings or policy lets it (D143)', () => {
@@ -119,24 +119,24 @@ test('a page may fill the screen and save files unless Settings says no; it can 
   const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
   assert.ok(relay.indexOf('URL.createObjectURL =') < relay.indexOf('document.write(data.page)'), 'what the page makes is known before it runs')
   assert.match(relay, /if \(!saved\(link\)\) parent\.postMessage\(\{ open: /)
-  const save = await readFile(new URL('../ui/save.js', import.meta.url), 'utf8')
+  const save = await readFile(new URL('../app/ui/save.js', import.meta.url), 'utf8')
   assert.match(save, /if \(allowed && blob instanceof Blob && navigator\.userActivation\?\.isActive !== false\) save\(/)
-  const client = await readFile(new URL('../ui/preview.js', import.meta.url), 'utf8')
+  const client = await readFile(new URL('../app/ui/preview.js', import.meta.url), 'utf8')
   assert.match(client, /savePage\(data, rights\.peek\(\)\.allows\.downloads\)/)
 })
 
 test('the preview is only ever framed without allow-same-origin, and the page never opens in a tab', async () => {
   // Where a file shows, in the preview and the browser alike (D190).
-  const client = await readFile(new URL('../ui/view.js', import.meta.url), 'utf8')
+  const client = await readFile(new URL('../app/ui/view.js', import.meta.url), 'utf8')
   const frames = [...client.matchAll(/<iframe\b[^>]*>/g)].map((match) => match[0])
   assert.equal(frames.length, 1)
   assert.match(frames[0], /\ssandbox="allow-scripts" allow=\$\{allow\} src=\$\{FRAME\}\s/, 'scripts, and nothing else: no same origin, pop-ups, forms or top navigation; what it allows set before its address (D158)')
   assert.doesNotMatch(client, /srcdoc|setAttribute\('sandbox'/, 'srcdoc would take index.html\'s policy instead of the preview\'s')
-  const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
+  const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
   assert.doesNotMatch(state, /createObjectURL[\s\S]{0,200}open\(/, 'a file in a tab of Jean\'s origin would run its scripts there')
 })
 
-const host = await readFile(new URL('../caps/browser/browser.html', import.meta.url), 'utf8')
+const host = await readFile(new URL('../app/caps/browser/browser.html', import.meta.url), 'utf8')
 const hostCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(host)?.[1] ?? ''
 
 test('the browser’s frame is in a document with no script, whose policy lets a frame show another site (D140)', () => {
@@ -154,7 +154,7 @@ test('the browser’s frame is in a document with no script, whose policy lets a
 test('only the browser’s frame keeps its site’s origin, and the site can never take Jean’s place (D140)', async () => {
   // Code lines only: comments say where it is never given.
   const code = Object.entries(await sources()).filter(([, text]) => text.split('\n').some((line) => line.includes('allow-same-origin') && !/^\s*(\/\/|\*|\/\*)/.test(line)))
-  assert.deepEqual(code.map(([path]) => path), ['caps/browser/browser.js'])
+  assert.deepEqual(code.map(([path]) => path), ['app/caps/browser/browser.js'])
   const browser = code[0][1]
   const flags = /const SANDBOX = '([^']+)'/.exec(browser)?.[1].split(' ') ?? []
   assert.ok(flags.includes('allow-scripts') && flags.includes('allow-same-origin'))

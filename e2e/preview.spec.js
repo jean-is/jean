@@ -6,9 +6,9 @@
 // On a phone it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, SALES, pdf, inkOf } from './helpers.js'
-import { writeZip } from '../core/zip.js'
-import { makeFile } from '../caps/made/formats.js'
-import { extractPages } from '../caps/files/extract.js'
+import { writeZip } from '../app/core/zip.js'
+import { makeFile } from '../app/caps/made/formats.js'
+import { extractPages } from '../app/caps/files/extract.js'
 import { readFile } from 'node:fs/promises'
 
 test('a web page Jean made shows in the preview and runs its script, which can send nothing away', async ({ page }) => {

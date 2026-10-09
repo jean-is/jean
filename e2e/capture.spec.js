@@ -27,7 +27,7 @@ function png(width, height) {
 
 for (const lang of ['en', 'ar', 'ja']) {
   test(`a picture and a capture of the screen, shown to the brain (${lang})`, async ({ page }) => {
-    const strings = JSON.parse(readFileSync(new URL(`../locales/${lang}.json`, import.meta.url), 'utf8'))
+    const strings = JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8'))
     await page.addInitScript(() => {
       MediaDevices.prototype.getDisplayMedia = async () => {
         const canvas = Object.assign(document.createElement('canvas'), { width: 640, height: 400 })

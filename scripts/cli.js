@@ -1,5 +1,5 @@
 // Puts jean-cli's package together in dist/cli/: every module cli/main.js reaches, statically or
-// through import(), copied as it is and where it is, its strings (locales/cli/), the licence, the
+// through import(), copied as it is and where it is, its strings (cli/locales/), the licence, the
 // page npm shows (cli/README.md), and a package.json whose command is cli/main.js. Nothing is
 // bundled or built: the package holds Jean's own files, as written. It needs Jean's own runtime
 // dependencies that those modules import, never its optional ones.
@@ -13,7 +13,7 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const OUT = join(ROOT, 'dist', 'cli')
 // What is imported with import(), which the graph doesn't follow: the agent, the bridge for Claude Code (D235),
 // the gateway (D191), what makes a Word document or a workbook, and the Anthropic adapter.
-export const ENTRIES = ['cli/main.js', 'cli/acp.js', 'bridge/bridge.js', 'gateway/gateway.js', 'gateway/serve.js', 'caps/made/formats.js', 'core/anthropic.js']
+export const ENTRIES = ['cli/main.js', 'cli/acp.js', 'app/bridge/bridge.js', 'gateway/gateway.js', 'gateway/serve.js', 'app/caps/made/formats.js', 'app/core/anthropic.js']
 /** The runtime dependencies its modules import, at Jean's own versions. */
 export const DEPENDENCIES = ['@preact/signals-core', 'marked']
 
@@ -23,8 +23,8 @@ export async function packageFiles (root) {
   const outside = problems.map((problem) => /^cannot resolve '([^']+)'/.exec(problem)?.[1] ?? problem)
   const unknown = outside.filter((name) => !name.startsWith('node:') && !DEPENDENCIES.includes(name))
   if (unknown.length) throw new Error(`jean-cli can't hold: ${[...new Set(unknown)].join(', ')}`)
-  const strings = (await readdir(join(root, 'locales', 'cli'))).filter((file) => file.endsWith('.json')).map((file) => `locales/cli/${file}`)
-  return [...found, ...strings, 'brand.js', 'LICENSE'].filter((path, i, all) => all.indexOf(path) === i).sort()
+  const strings = (await readdir(join(root, 'cli', 'locales'))).filter((file) => file.endsWith('.json')).map((file) => `cli/locales/${file}`)
+  return [...found, ...strings, 'app/brand.js', 'LICENSE'].filter((path, i, all) => all.indexOf(path) === i).sort()
 }
 
 async function main () {

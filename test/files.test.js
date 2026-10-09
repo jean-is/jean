@@ -1,14 +1,14 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS, walk } from '../core/fs.js'
-import { crc32, readZip, writeZip } from '../core/zip.js'
-import { decodeText, docx, extractPages, extractable, isBinary, paginate, sheetRows, slideText } from '../caps/files/extract.js'
-import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages, weigh } from '../core/files.js'
-import { isPicture } from '../core/events.js'
-import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
-import { officePage } from '../caps/files/office.js'
-import { evaluate, replaceInSheet, setCells } from '../caps/files/cells.js'
-import { makeFile, replaceOnce } from '../caps/made/formats.js'
+import { memoryFS, walk } from '../app/core/fs.js'
+import { crc32, readZip, writeZip } from '../app/core/zip.js'
+import { decodeText, docx, extractPages, extractable, isBinary, paginate, sheetRows, slideText } from '../app/caps/files/extract.js'
+import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages, weigh } from '../app/core/files.js'
+import { isPicture } from '../app/core/events.js'
+import { exportBackup, importBackup, isBackedUp } from '../app/caps/backup/archive.js'
+import { officePage } from '../app/caps/files/office.js'
+import { evaluate, replaceInSheet, setCells } from '../app/caps/files/cells.js'
+import { makeFile, replaceOnce } from '../app/caps/made/formats.js'
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 
@@ -96,7 +96,7 @@ test('slides and sheets', () => {
 })
 
 test('an Office file is drawn in a page of its own: its viewer’s modules as data under an import map, its parser and the file as data, nothing from anywhere (D183)',
-  { skip: !existsSync(new URL('../vendor/ooxml/graph.json', import.meta.url)) && 'npm run vendor makes vendor/ooxml' }, async (t) => {
+  { skip: !existsSync(new URL('../app/vendor/ooxml/graph.json', import.meta.url)) && 'npm run vendor makes vendor/ooxml' }, async (t) => {
     t.mock.method(globalThis, 'fetch', async (/** @type {URL} */ url) => new Response(await readFile(url)))
     const bytes = await zipOf({ '[Content_Types].xml': '<Types/>' })
     const page = await officePage('pptx', bytes, 'Plan <1>.pptx')
@@ -287,7 +287,7 @@ test('pagesThatFit keeps whole files that fit, else the first pages (at least on
 
 test('documentPart shows the recorded pages and says how to read the rest', () => {
   const text = joinPages(['p1', 'p2', 'p3'])
-  /** @type {import('../core/types.js').ResourceLink} */
+  /** @type {import('../app/core/types.js').ResourceLink} */
   const link = { type: 'resource_link', uri: 'files/x.pdf', name: 'x.pdf' }
   assert.equal(documentPart(link, text).text, text)
   const part = documentPart({ ...link, _meta: { pages: [1, 2], of: 3 } }, text)
@@ -297,7 +297,7 @@ test('documentPart shows the recorded pages and says how to read the rest', () =
 })
 
 test('a picture is shown to a brain that can see, and named to one that can’t', () => {
-  /** @type {import('../core/types.js').ResourceLink} */
+  /** @type {import('../app/core/types.js').ResourceLink} */
   const link = { type: 'resource_link', uri: 'files/s.png', name: 'Screen.png', mimeType: 'image/png', _meta: { source: 3 } }
   assert.ok(isPicture(link) && isPicture({ ...link, mimeType: 'image/jpeg' }))
   assert.ok(!isPicture({ ...link, mimeType: 'image/svg+xml' }) && !isPicture({ ...link, mimeType: undefined }))

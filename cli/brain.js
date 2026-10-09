@@ -7,9 +7,9 @@ import { execFile } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
-import { PROVIDERS } from '../core/llm.js'
+import { PROVIDERS } from '../app/core/llm.js'
 
-/** @import { BrainConfig, ProviderId } from '../core/types.js' */
+/** @import { BrainConfig, ProviderId } from '../app/core/types.js' */
 /** @typedef {{ brain: BrainConfig, apiKey?: string, close?: () => Promise<void> }} Chosen */
 
 /** Where each provider's key is: `<PROVIDER>_API_KEY`, unless its own tools name it otherwise. @type {Partial<Record<string, string>>} */
@@ -59,7 +59,7 @@ const signedIn = ([program, ...before]) => new Promise((done) => execFile(progra
  * key made for it. @param {string} model @param {string[]} claude @returns {Promise<Chosen>}
  */
 async function claudeCode(model, claude) {
-  const { bridge } = await import('../bridge/bridge.js')
+  const { bridge } = await import('../app/bridge/bridge.js')
   const key = randomUUID()
   const server = createServer()
   await new Promise((ready, failed) => server.once('error', failed).listen(0, '127.0.0.1', () => ready(undefined)))

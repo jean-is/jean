@@ -2,7 +2,7 @@
 // the answers it gets back. The card itself is in e2e/ask.spec.js.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { questionsOf, start, answered, reply, MAX_QUESTIONS, MAX_OPTIONS } from '../caps/ask/answers.js'
+import { questionsOf, start, answered, reply, MAX_QUESTIONS, MAX_OPTIONS } from '../app/caps/ask/answers.js'
 
 test('questions: read the way brains write them, without what can’t be shown', () => {
   assert.deepEqual(questionsOf({ questions: [

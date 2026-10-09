@@ -2,7 +2,7 @@
 // script, and what is found is marked where it stands in the text.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fold, terms, ranges, passage } from '../core/search.js'
+import { fold, terms, ranges, passage } from '../app/core/search.js'
 
 test('fold: lower case without accents, as long as the text', () => {
   assert.equal(fold('Résumé CAFÉ Ñandú'), 'resume cafe nandu')

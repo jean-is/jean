@@ -1,8 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readZip } from '../core/zip.js'
-import { extractPages } from '../caps/files/extract.js'
-import { csvRows, fileName, makeFile, replaceOnce, sheetsIn } from '../caps/made/formats.js'
+import { readZip } from '../app/core/zip.js'
+import { extractPages } from '../app/caps/files/extract.js'
+import { csvRows, fileName, makeFile, replaceOnce, sheetsIn } from '../app/caps/made/formats.js'
 
 const dec = new TextDecoder()
 const DATE = new Date(2026, 9, 3, 12, 0, 0)

@@ -10,7 +10,7 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { crc32 } from 'node:zlib'
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url))
+const APP = fileURLToPath(new URL('../app', import.meta.url))
 export const SOURCE = 'icons/icon.svg'
 /** Every PNG drawn from SOURCE, with its size in pixels. */
 export const PNGS = /** @type {Record<string, number>} */ ({
@@ -73,13 +73,13 @@ export function recordSource (png, source) {
 
 async function main () {
   const { chromium } = await import('@playwright/test')
-  const svg = await readFile(join(ROOT, SOURCE), 'utf8')
+  const svg = await readFile(join(APP, SOURCE), 'utf8')
   const browser = await chromium.launch()
   try {
     for (const [path, size] of Object.entries(PNGS)) {
       const page = await browser.newPage({ viewport: { width: size, height: size } })
       await page.setContent(`<style>* { margin: 0 } svg { display: block; width: 100vw; height: 100vh }</style>${svg}`)
-      await writeFile(join(ROOT, path), recordSource(await page.screenshot(), sourceOf(svg)))
+      await writeFile(join(APP, path), recordSource(await page.screenshot(), sourceOf(svg)))
       await page.close()
     }
   } finally {

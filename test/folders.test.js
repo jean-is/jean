@@ -1,15 +1,15 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS } from '../core/fs.js'
-import { makeFile, replaceOnce } from '../caps/made/formats.js'
-import { extractPages } from '../caps/files/extract.js'
-import { readZip } from '../core/zip.js'
+import { memoryFS } from '../app/core/fs.js'
+import { makeFile, replaceOnce } from '../app/caps/made/formats.js'
+import { extractPages } from '../app/caps/files/extract.js'
+import { readZip } from '../app/core/zip.js'
 import {
   ignoreRules, ignored, walkFolder, listingText, findInFolder, openText, lineRange, changeText, planChange, diffLines, lastRead, topLevel, exactText,
-} from '../caps/folders/work.js'
-import { replaceInWord } from '../caps/folders/word.js'
-import { copyFS, pickedFiles } from '../caps/folders/copy.js'
-import { sitePage, inFolder, SITE } from '../caps/folders/site.js'
+} from '../app/caps/folders/work.js'
+import { replaceInWord } from '../app/caps/folders/word.js'
+import { copyFS, pickedFiles } from '../app/caps/folders/copy.js'
+import { sitePage, inFolder, SITE } from '../app/caps/folders/site.js'
 
 const encoder = new TextEncoder()
 const contract = (/** @type {string} */ name, /** @type {string} */ clause) => makeFile(`${name}.docx`, `# Contract with ${name}\n\nThe parties agree as follows.\n\n${clause}\n\nSigned in Lyon.`).then((made) => made.bytes)

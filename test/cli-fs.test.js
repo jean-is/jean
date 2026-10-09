@@ -4,7 +4,7 @@ import { mkdtemp, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { nodeFS } from '../cli/fs.js'
-import { carried } from '../caps/sync/mirror.js'
+import { carried } from '../app/caps/sync/mirror.js'
 
 /** A folder of its own for each test, removed after it. @param {import('node:test').TestContext} t */
 async function folder(t) {

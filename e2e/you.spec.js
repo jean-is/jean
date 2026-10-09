@@ -6,7 +6,7 @@
 // Undo; they change it in About you. A long title stays inside the list. A toast shows over Settings.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openProfile, openSettings, openTasks } from './helpers.js'
-import { LOOKS } from '../ui/looks.js'
+import { LOOKS } from '../app/ui/looks.js'
 
 /** What settings.json holds for the name. @param {import('@playwright/test').Page} page */
 const savedName = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').name)

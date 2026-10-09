@@ -8,15 +8,15 @@
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { AutoTokenizer, PreTrainedModel, Tensor } from '@huggingface/transformers'
-import { pack, answers } from '../core/decide.js'
-import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
-import { tierFor } from '../ui/auto.js'
+import { pack, answers } from '../app/core/decide.js'
+import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../app/caps/reflexes/questions.js'
+import { tierFor } from '../app/ui/auto.js'
 
 const DIR = fileURLToPath(new URL('../test/reflexes/', import.meta.url))
 const MODEL = 'onnx-community/kev-0.6b-ONNX'
 const KINDS = ['personal', 'unhappy', 'demand', 'capability', 'lasting', 'table', 'email']
 
-/** @typedef {import('../core/decide.js').Question} Question */
+/** @typedef {import('../app/core/decide.js').Question} Question */
 
 /** The question Jean asks for each kind of label. @type {Record<string, Question>} */
 const QUESTIONS = {

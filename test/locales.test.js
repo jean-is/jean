@@ -4,21 +4,23 @@ import { readdir, readFile } from 'node:fs/promises'
 import { LOCALES } from './fixtures/locales.js'
 import { sources, keysIn, showsDialogs, owner, PARTS as OWN } from './fixtures/keys.js'
 
-const dir = new URL('../locales/', import.meta.url)
-const load = async (/** @type {string} */ file) => JSON.parse(await readFile(new URL(file, dir), 'utf8'))
+const dir = new URL('../app/locales/', import.meta.url)
+/** A part's folder: jean-cli's lives with it (D243). @param {string} part */
+const folder = (part) => (part === 'cli/' ? new URL('../cli/locales/', import.meta.url) : new URL(part, dir))
+const load = async (/** @type {string} */ part, /** @type {string} */ file) => JSON.parse(await readFile(new URL(file, folder(part)), 'utf8'))
 const placeholders = (/** @type {unknown} */ value) => new Set(JSON.stringify(value).match(/\{\w+\}/g) ?? [])
 
 // Each language has parts: the room's strings, the dialogs' (locales/dialogs/, D97), and those of
-// a capability that brings its own (locales/<id>/, D140).
+// a capability that brings its own (locales/<id>/, D140), and jean-cli's (cli/locales/).
 const PARTS = ['', 'dialogs/', ...OWN.map((id) => `${id}/`)]
-const english = Object.fromEntries(await Promise.all(PARTS.map(async (part) => [part, await load(`${part}en.json`)])))
+const english = Object.fromEntries(await Promise.all(PARTS.map(async (part) => [part, await load(part, 'en.json')])))
 const others = (await readdir(dir)).filter((file) => file.endsWith('.json') && file !== 'en.json')
 
 for (const file of others) {
   for (const part of PARTS) {
     test(`${part}${file} matches ${part}en.json`, async () => {
       const en = english[part]
-      const catalog = await load(`${part}${file}`)
+      const catalog = await load(part, file)
       assert.deepEqual(Object.keys(catalog).sort(), Object.keys(en).sort())
       const lang = file.slice(0, -'.json'.length)
       const categories = new Intl.PluralRules(lang).resolvedOptions().pluralCategories
@@ -34,7 +36,7 @@ for (const file of others) {
 }
 
 test('the language menu offers exactly the catalogues there are', async () => {
-  const state = await readFile(new URL('../ui/state.js', import.meta.url), 'utf8')
+  const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
   const listed = JSON.parse((/export const LOCALES = (\[[^\]]*\])/.exec(state)?.[1] ?? '[]').replace(/'/g, '"'))
   assert.deepEqual(listed, [...LOCALES].sort((a, b) => (a < b ? -1 : 1)))
   assert.deepEqual([...others.map((file) => file.slice(0, -5)), 'en'].sort(), [...LOCALES].sort())

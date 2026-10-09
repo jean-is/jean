@@ -9,9 +9,9 @@ import { test, expect, chromium, devices } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { start, connectFakeBrain, ask, turnOn, openTasks } from './helpers.js'
-import { extractPages } from '../caps/files/extract.js'
-import { makeFile } from '../caps/made/formats.js'
-import { readZip } from '../core/zip.js'
+import { extractPages } from '../app/caps/files/extract.js'
+import { makeFile } from '../app/caps/made/formats.js'
+import { readZip } from '../app/core/zip.js'
 
 const contract = (/** @type {string} */ name, /** @type {string} */ clause) => `# Contract with ${name}\n\nThe parties agree as follows.\n\n${clause}\n\nSigned in Lyon.`
 const CLIENTS = {

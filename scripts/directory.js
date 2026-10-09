@@ -12,12 +12,12 @@
 // every skill it lists, must answer a browser, match its digest or git's hashes, and at least one
 // must be made of instructions.
 // Usage: npm run directory
-import { DIRECTORY, covers } from '../caps/connections/directory.js'
-import { discover } from '../caps/connections/auth.js'
-import { mcpClient, MCPError } from '../caps/connections/mcp.js'
+import { DIRECTORY, covers } from '../app/caps/connections/directory.js'
+import { discover } from '../app/caps/connections/auth.js'
+import { mcpClient, MCPError } from '../app/caps/connections/mcp.js'
 import { gateway } from '../gateway/gateway.js'
-import { DEFAULT_SOURCES, fetchSkill, indexURL, readIndexes, siteOf } from '../caps/skills/sources.js'
-import { memoryFS } from '../core/fs.js'
+import { DEFAULT_SOURCES, fetchSkill, indexURL, readIndexes, siteOf } from '../app/caps/skills/sources.js'
+import { memoryFS } from '../app/core/fs.js'
 
 const ORIGIN = 'https://jean.example'
 // What Jean sends: the 2026-07-28 revision's headers first, then the 2025 session's (D87).
@@ -34,7 +34,7 @@ async function preflight(url, headers) {
   return headers.every((name) => allowed.includes(name) || allowed.includes('*'))
 }
 
-/** @param {import('../caps/connections/directory.js').Known} entry @returns {Promise<string[]>} what stands in the way */
+/** @param {import('../app/caps/connections/directory.js').Known} entry @returns {Promise<string[]>} what stands in the way */
 async function check({ url }) {
   if (!url) return ['no server']
   const problems = []
@@ -60,7 +60,7 @@ async function check({ url }) {
   return problems
 }
 
-/** @param {import('../caps/connections/directory.js').Known} entry @returns {Promise<string[]>} what stands in the way through a gateway */
+/** @param {import('../app/caps/connections/directory.js').Known} entry @returns {Promise<string[]>} what stands in the way through a gateway */
 async function throughGateway({ url, signIn = [], app }) {
   if (!url) return ['no server']
   const hosts = [new URL(url).hostname, ...signIn]

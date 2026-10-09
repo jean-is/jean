@@ -1,8 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { runTurn } from '../core/loop.js'
-import { LLMError } from '../core/llm.js'
-import { toChatMessages, userRecord, unanswered } from '../core/events.js'
+import { runTurn } from '../app/core/loop.js'
+import { LLMError } from '../app/core/llm.js'
+import { toChatMessages, userRecord, unanswered } from '../app/core/events.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'test-model' }
 
@@ -377,13 +377,13 @@ test('loop: a helper’s turn runs under its call, shares the numbering, and sta
     spec: { name: 'web', description: 'web', parameters: { type: 'object' } },
     kind: /** @type {const} */ ('fetch'),
     title: () => 'Web',
-    run: async (/** @type {any} */ args, /** @type {import('../core/loop.js').ToolContext} */ ctx) => `Source [${ctx.cite([{ title: 'Sky', url: 'https://sky.example' }])[0]}]: blue`,
+    run: async (/** @type {any} */ args, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => `Source [${ctx.cite([{ title: 'Sky', url: 'https://sky.example' }])[0]}]: blue`,
   }
   const delegateTool = {
     spec: { name: 'delegate', description: 'delegate', parameters: { type: 'object' } },
     kind: /** @type {const} */ ('think'),
     title: () => 'Delegate',
-    run: async (/** @type {any} */ args, /** @type {import('../core/loop.js').ToolContext} */ ctx) => (await ctx.turn({ system: 'helper', history: [{ role: 'user', content: 'Find the sky colour' }], declared: ['web'] })).text,
+    run: async (/** @type {any} */ args, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => (await ctx.turn({ system: 'helper', history: [{ role: 'user', content: 'Find the sky colour' }], declared: ['web'] })).text,
   }
   /** @type {any[]} */
   const persisted = [userRecord('Sky?', 'dev')]
@@ -425,7 +425,7 @@ test('a turn that starts on a call runs it alone, and a helper’s turn inside i
     spec: { name: 'delegate', description: 'delegate', parameters: { type: 'object' } },
     kind: /** @type {const} */ ('think'),
     title: () => 'Delegate',
-    run: async (/** @type {any} */ args, /** @type {import('../core/loop.js').ToolContext} */ ctx) => {
+    run: async (/** @type {any} */ args, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => {
       runs++
       return (await ctx.turn({ system: 'helper', history: [{ role: 'user', content: 'part' }], maxSteps: 2 })).text
     },

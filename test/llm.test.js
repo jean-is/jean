@@ -1,8 +1,8 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseSSE } from '../core/sse.js'
-import { PROVIDERS, LLMError, headersFor, streamChat, listModels, checkKey, warmCache, openaiMessages } from '../core/llm.js'
-import { minimumCacheable } from '../core/anthropic.js'
+import { parseSSE } from '../app/core/sse.js'
+import { PROVIDERS, LLMError, headersFor, streamChat, listModels, checkKey, warmCache, openaiMessages } from '../app/core/llm.js'
+import { minimumCacheable } from '../app/core/anthropic.js'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

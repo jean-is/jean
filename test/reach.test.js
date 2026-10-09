@@ -4,11 +4,11 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { runTurn } from '../core/loop.js'
-import { toChatMessages, userRecord } from '../core/events.js'
-import { PROVIDERS, streamChat } from '../core/llm.js'
-import { generateImage } from '../caps/computer/picture.js'
-import { buildSystemPrompt, promptState, changeNotes } from '../core/prompt.js'
+import { runTurn } from '../app/core/loop.js'
+import { toChatMessages, userRecord } from '../app/core/events.js'
+import { PROVIDERS, streamChat } from '../app/core/llm.js'
+import { generateImage } from '../app/caps/computer/picture.js'
+import { buildSystemPrompt, promptState, changeNotes } from '../app/core/prompt.js'
 
 const encoder = new TextEncoder()
 const sse = (/** @type {string} */ text) => new Response(new ReadableStream({
@@ -147,7 +147,7 @@ describe('sources in the loop', () => {
       spec: { name: 'mail', description: 'Latest emails', parameters: { type: 'object' } },
       kind: /** @type {const} */ ('fetch'),
       title: () => 'Mail',
-      run: async (/** @type {any} */ _, /** @type {import('../core/loop.js').ToolContext} */ ctx) => {
+      run: async (/** @type {any} */ _, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => {
         const [a, b] = ctx.cite([{ title: 'Invoice', url: 'mail://1' }, { title: 'Lunch', url: 'mail://2' }])
         ctx.meta.image = { uri: 'files/x.png', name: 'x.png' }
         return `Source [${a}]: Invoice\nSource [${b}]: Lunch`
@@ -229,11 +229,11 @@ describe('the <connections> section', () => {
 // ─── Connections (MCP) ───────────────────────────────────────────────────────
 
 import { createFakeMail } from './fixtures/fake-mail.js'
-import { mcpClient, paramHeaders, headerValue } from '../caps/connections/mcp.js'
-import { parseChallenge, discover, registerClient, authorization, finish, refresh } from '../caps/connections/auth.js'
-import { DIRECTORY, known, knownFor, covers } from '../caps/connections/directory.js'
+import { mcpClient, paramHeaders, headerValue } from '../app/caps/connections/mcp.js'
+import { parseChallenge, discover, registerClient, authorization, finish, refresh } from '../app/caps/connections/auth.js'
+import { DIRECTORY, known, knownFor, covers } from '../app/caps/connections/directory.js'
 import { gateway, covers as gatewayCovers, SERVICES } from '../gateway/gateway.js'
-import { listener, speakable } from '../caps/live/turns.js'
+import { listener, speakable } from '../app/caps/live/turns.js'
 
 /** @returns {Promise<{ origin: string, server: ReturnType<typeof createFakeMail>, close: () => Promise<void> }>} */
 async function fakeMail() {
@@ -438,7 +438,7 @@ describe('the services Jean knows (D95)', () => {
   test('each service Jean knows has its brand\'s logo, its own file: a plain drawing, or a picture (D159)', async () => {
     for (const { id, logo } of DIRECTORY) {
       assert.match(String(logo), /^[\w-]+\.(svg|png)$/, id)
-      const file = await readFile(new URL(`../caps/connections/logos/${logo}`, import.meta.url))
+      const file = await readFile(new URL(`../app/caps/connections/logos/${logo}`, import.meta.url))
       if (logo?.endsWith('.png')) { assert.deepEqual([...file.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47], id); continue }
       assert.match(String(file), /^<svg [^>]*xmlns="http:\/\/www\.w3\.org\/2000\/svg"/, id)
       assert.doesNotMatch(String(file), /<script|<foreignObject|<image|href=|url\((?!#)/i, id)

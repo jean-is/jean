@@ -6,30 +6,30 @@
 import { readFile } from 'node:fs/promises'
 import { basename, isAbsolute, join as joinPath } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { BRAND } from '../brand.js'
+import { BRAND } from '../app/brand.js'
 import { nodeFS } from './fs.js'
 import { peer, RpcError } from './rpc.js'
 import { chooseBrain } from './brain.js'
 import { connect, toolsFor } from './tools.js'
-import { MARK } from '../caps/sync/mirror.js'
-import { exactText } from '../caps/folders/work.js'
-import { decodeText, extractPages, isBinary, paginate } from '../caps/files/extract.js'
-import { runTurn } from '../core/loop.js'
-import { appendRecords, createConversation, loadConversation } from '../core/conversations.js'
-import { isPicture, linkedFiles, splitSuggestions, toChatMessages, userRecords } from '../core/events.js'
-import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState } from '../core/prompt.js'
-import { addFile, documentPart, estimateTokens, fileText, pagesThatFit, sourceNumber } from '../core/files.js'
-import { ensureHome, listProjects, parseFrontMatter } from '../core/settings.js'
-import { resolveRule, ruleFromPermission } from '../core/rules.js'
-import { join, readJSON, writeJSON } from '../core/fs.js'
-import { languageName, locale, t } from '../core/i18n.js'
-import { ulid } from '../core/ulid.js'
+import { MARK } from '../app/caps/sync/mirror.js'
+import { exactText } from '../app/caps/folders/work.js'
+import { decodeText, extractPages, isBinary, paginate } from '../app/caps/files/extract.js'
+import { runTurn } from '../app/core/loop.js'
+import { appendRecords, createConversation, loadConversation } from '../app/core/conversations.js'
+import { isPicture, linkedFiles, splitSuggestions, toChatMessages, userRecords } from '../app/core/events.js'
+import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState } from '../app/core/prompt.js'
+import { addFile, documentPart, estimateTokens, fileText, pagesThatFit, sourceNumber } from '../app/core/files.js'
+import { ensureHome, listProjects, parseFrontMatter } from '../app/core/settings.js'
+import { resolveRule, ruleFromPermission } from '../app/core/rules.js'
+import { join, readJSON, writeJSON } from '../app/core/fs.js'
+import { languageName, locale, t } from '../app/core/i18n.js'
+import { ulid } from '../app/core/ulid.js'
 
-/** @import { AcpUpdate, Envelope, ResourceLink, ToolCallInfo, RuleValue } from '../core/types.js' */
-/** @import { PermissionOption } from '../core/loop.js' */
+/** @import { AcpUpdate, Envelope, ResourceLink, ToolCallInfo, RuleValue } from '../app/core/types.js' */
+/** @import { PermissionOption } from '../app/core/loop.js' */
 /** @import { Room, Server } from './tools.js' */
 /**
- * @typedef {{ id: string, path: string, project: import('../core/settings.js').Project, cwd: string, records: Envelope[], servers: Server[],
+ * @typedef {{ id: string, path: string, project: import('../app/core/settings.js').Project, cwd: string, records: Envelope[], servers: Server[],
  *   kit: Awaited<ReturnType<typeof toolsFor>>, controller: AbortController | null, running: string, shown: Map<string, object[]>,
  *   said: { text: string, sent: number }, texts: Map<string, string | null>, pictures: Map<string, string | undefined> }} Session
  *   running: the call running now; shown: content added to a call while it runs (a terminal); said: the step's answer so far, and how much of it the editor has
@@ -53,7 +53,7 @@ const OPTIONS = ['allow_once', 'allow_always', 'reject_once', 'reject_always']
 
 /**
  * @param {{ input: AsyncIterable<Uint8Array | string>, write: (line: string) => void, folder: string, brain?: string, address?: string,
- *   version: string, env?: Record<string, string | undefined>, stream?: import('../core/loop.js').TurnOptions['stream'] }} options
+ *   version: string, env?: Record<string, string | undefined>, stream?: import('../app/core/loop.js').TurnOptions['stream'] }} options
  *   folder: the one Sync keeps; brain and address: `--brain` and `--address`; stream: a brain of the tests' own
  */
 export function agent({ input, write, folder, brain: named, address, version, env = process.env, stream }) {
@@ -114,7 +114,7 @@ export function agent({ input, write, folder, brain: named, address, version, en
       project = projects.find((each) => each.data.folder === basename(cwd)) ?? projects.find((each) => each.data.default === true)
       ;({ id, path } = await createConversation(jean, { projectDir: /** @type {any} */ (project).dir, by: own.device }))
     }
-    const found = /** @type {import('../core/settings.js').Project} */ (project)
+    const found = /** @type {import('../app/core/settings.js').Project} */ (project)
     const servers = (await Promise.all(mcpServers.map((server) => connect(server, cwd).catch((error) => {
       console.error(server?.name, error instanceof Error ? error.message : error)
       return null
@@ -147,7 +147,7 @@ export function agent({ input, write, folder, brain: named, address, version, en
   /**
    * The editor's folder, read and written through the editor where it lets Jean, so a file's unsaved
    * changes are seen and Jean's go into the editor; what isn't text, from the disk and to it.
-   * @param {import('../core/types.js').FS} disk @param {string} cwd @param {string} sessionId @returns {import('../core/types.js').FS}
+   * @param {import('../app/core/types.js').FS} disk @param {string} cwd @param {string} sessionId @returns {import('../app/core/types.js').FS}
    */
   function buffers(disk, cwd, sessionId) {
     const at = (/** @type {string} */ path) => joinPath(cwd, path)

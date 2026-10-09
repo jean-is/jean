@@ -86,7 +86,7 @@ Then open http://127.0.0.1:4173 and pick a brain. To try Jean without any accoun
 node test/fixtures/fake-brain.js
 ```
 
-**Deploying:** run `npm ci && npm run build`, then copy the folder to any static host served over HTTPS. Jean's code ships exactly as written. Only third-party code (copied into `vendor/`) and two generated listings are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once. For containers, see [deploy/docker/](deploy/docker/README.md).
+**Deploying:** run `npm ci && npm run build`, then copy `app/` to any static host served over HTTPS. Jean's code ships exactly as written. Only third-party code (copied into `app/vendor/`), two generated listings and a copy of the licence are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once. For containers, see [deploy/docker/](deploy/docker/README.md).
 
 **Gateway:** some services, like Gmail, Microsoft 365 or Slack, refuse requests from a browser, or only accept apps they registered. A small gateway, with nothing to install, reaches them for Jean: it relays to every service Jean knows that a browser can't reach, or to the `hosts` you name, and keeps the secret of an app you registered there (D191, D214). Run it on Node, or put `gateway/gateway.js` on Cloudflare Workers, Deno or Bun, then name it in Settings › Connections, or in policy (`urls.gateway`):
 
@@ -122,9 +122,11 @@ That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Ga
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
 | `npm run build:dmg` | The same, then the macOS disk image to hand out, on a Mac |
-| `npm run icons` | Draws the PNG icons that Android and iOS install with from `icons/icon.svg`, after changing it |
+| `npm run icons` | Draws the PNG icons that Android and iOS install with from `app/icons/icon.svg`, after changing it |
 | `npm run screenshots` | Takes the welcome screen's screenshots that the install dialog shows, after changing how it looks |
 | `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to and which sources of skills it can read |
+
+Jean itself, everything a deploy serves, is in `app/`; the root holds what never ships: jean-cli, the gateway, the desktop and container builds, the scripts, the tests and the docs.
 
 CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on every push and merge request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.
 
@@ -146,4 +148,4 @@ Jean revisits the ideas behind [DEVS](https://github.com/codename-co/devs) from 
 
 ## License
 
-Jean is open source under the [MIT license](LICENSE). The enterprise integrations in [`ee/`](ee/) are under the [Elastic License 2.0](ee/LICENSE) and need a key. An [additional grant](ee/GRANT.md) makes them MIT if keys can't be bought for twelve months (D139).
+Jean is open source under the [MIT license](LICENSE). The enterprise integrations in [`app/ee/`](app/ee/) are under the [Elastic License 2.0](app/ee/LICENSE) and need a key. An [additional grant](app/ee/GRANT.md) makes them MIT if keys can't be bought for twelve months (D139).

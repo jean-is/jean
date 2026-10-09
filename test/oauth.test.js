@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createVerifier, challengeS256, openRouterAuthURL, exchangeOpenRouterCode } from '../core/oauth.js'
-import { LLMError } from '../core/llm.js'
+import { createVerifier, challengeS256, openRouterAuthURL, exchangeOpenRouterCode } from '../app/core/oauth.js'
+import { LLMError } from '../app/core/llm.js'
 
 test('createVerifier: 64 base64url characters, different every time', () => {
   const a = createVerifier()

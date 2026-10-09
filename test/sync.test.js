@@ -1,10 +1,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS, walk } from '../core/fs.js'
-import { listProjects } from '../core/settings.js'
-import { claim, syncRound, settleHomes, carried, MARK, BASE } from '../caps/sync/mirror.js'
+import { memoryFS, walk } from '../app/core/fs.js'
+import { listProjects } from '../app/core/settings.js'
+import { claim, syncRound, settleHomes, carried, MARK, BASE } from '../app/caps/sync/mirror.js'
 
-/** @typedef {import('../core/types.js').FS} FS */
+/** @typedef {import('../app/core/types.js').FS} FS */
 
 const HOME = 'projects/01J00000000000000000000000-home'
 const A = `${HOME}/conversations/01J0000000000000000000000A.jsonl`

@@ -65,7 +65,7 @@ Give the gateway an HTTPS address of its own, such as `https://gateway.corp.exam
 
 ## What the image does
 
-- Serves the files `shippedFiles()` lists in `scripts/desktop.js`, after `npm run build`. It adds a `<meta name="app-policy">` to `index.html` and an empty `policy.json` beside it, so Jean reads a mounted policy, and finds an empty one rather than a 404 without it.
+- Serves `app/` as `npm run build` leaves it, as `shippedFiles()` in `scripts/desktop.js` lists it: without its types, dotfiles or Markdown. It adds a `<meta name="app-policy">` to `index.html` and an empty `policy.json` beside it, so Jean reads a mounted policy, and finds an empty one rather than a 404 without it.
 - Sends `Cache-Control: no-cache` and `X-Content-Type-Options: nosniff` with every file, plus `Content-Security-Policy: frame-ancestors 'self'`, so that only Jean frames Jean's pages. File names carry no version, so each file is checked again before use, and the service worker keeps them for offline use.
 - Compresses text and WebAssembly with gzip, and serves `.mjs`, `.wasm` and `.webmanifest` files with the types browsers require.
 

@@ -3,7 +3,7 @@
 // first message on, changed in place, and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, SALES } from './helpers.js'
-import { extractPages } from '../caps/files/extract.js'
+import { extractPages } from '../app/caps/files/extract.js'
 
 test.beforeEach(async ({ page }) => {
   // The clipboard is the browser's: record what reaches it.

@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { memoryFS } from '../core/fs.js'
-import { ulid } from '../core/ulid.js'
+import { memoryFS } from '../app/core/fs.js'
+import { ulid } from '../app/core/ulid.js'
 import {
   appendRecords,
   createConversation,
@@ -10,10 +10,10 @@ import {
   loadConversation,
   oneRowEach,
   rewriteRecords,
-} from '../core/conversations.js'
-import { noteRecord } from '../core/events.js'
+} from '../app/core/conversations.js'
+import { noteRecord } from '../app/core/events.js'
 
-/** @typedef {import('../core/types.js').Envelope} Envelope */
+/** @typedef {import('../app/core/types.js').Envelope} Envelope */
 
 const projectDir = 'projects/01HOME-home'
 const now = new Date('2026-01-02T03:04:05.000Z')

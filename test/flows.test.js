@@ -1,10 +1,10 @@
 // Flows (D218): the engine that runs a flow's steps, and a conversation drawn as one.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { order, fill, fillArgs, askOf, items, runFlow, result, layout, fromSteps, kindOf, COLUMN, LINE, MAX_ITEMS } from '../caps/flows/run.js'
-import { graphOf, stateOf, lastRun } from '../caps/flows/graph.js'
+import { order, fill, fillArgs, askOf, items, runFlow, result, layout, fromSteps, kindOf, COLUMN, LINE, MAX_ITEMS } from '../app/caps/flows/run.js'
+import { graphOf, stateOf, lastRun } from '../app/caps/flows/graph.js'
 
-/** @param {string} id @param {Partial<import('../caps/flows/run.js').Step>} [more] */
+/** @param {string} id @param {Partial<import('../app/caps/flows/run.js').Step>} [more] */
 const step = (id, more = {}) => ({ id, name: id.toUpperCase(), x: 0, y: 0, text: id, ...more })
 
 test('steps run after those they take from; a loop or a wire to nowhere is refused', () => {

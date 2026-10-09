@@ -2,7 +2,7 @@
 // seconds and frequencies Jean's synthesizer plays.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { notesOf, wholeNote } from '../caps/scores/notes.js'
+import { notesOf, wholeNote } from '../app/caps/scores/notes.js'
 
 test('notes become sounds: when, how long, how high and how loud', () => {
   const sequence = {

@@ -2,8 +2,8 @@
 // never its words: a comparison, steps, a note, or none.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lex } from '../ui/markdown.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted } from '../caps/layouts/shapes.js'
+import { lex } from '../app/ui/markdown.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted } from '../app/caps/layouts/shapes.js'
 
 /** The first block of some Markdown. @param {string} source @returns {any} */
 const first = (source) => lex(source).find((token) => token.type !== 'space')

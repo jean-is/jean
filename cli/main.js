@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // jean-cli (D241): Jean beside a terminal. `jean-cli acp` is Jean inside an editor that speaks ACP
 // (cli/acp.js), on the folder Sync keeps; `jean-cli gateway` runs the gateway (D191) on this
-// computer, for the services a browser can't reach. Its words are locales/cli/'s, in the language
+// computer, for the services a browser can't reach. Its words are cli/locales/'s, in the language
 // the terminal is set to.
 import { readdir, readFile, realpath } from 'node:fs/promises'
 import { createServer } from 'node:http'
@@ -9,8 +9,8 @@ import { homedir } from 'node:os'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
-import { BRAND } from '../brand.js'
-import { pickLocale, setLoader, t, useLocale, useStrings } from '../core/i18n.js'
+import { BRAND } from '../app/brand.js'
+import { pickLocale, setLoader, t, useLocale, useStrings } from '../app/core/i18n.js'
 
 const ROOT = new URL('../', import.meta.url)
 
@@ -35,8 +35,8 @@ export async function main(argv, env = process.env) {
   } })
   const { version } = JSON.parse(await readFile(new URL('package.json', ROOT), 'utf8'))
   if (values.version) return console.log(version)
-  setLoader(async (lang, part) => (part === 'cli' ? JSON.parse(await readFile(new URL(`locales/cli/${lang}.json`, ROOT), 'utf8')) : null))
-  await useLocale(pickLocale((await readdir(new URL('locales/cli/', ROOT))).map((file) => file.replace(/\.json$/, '')), wanted(env)))
+  setLoader(async (lang, part) => (part === 'cli' ? JSON.parse(await readFile(new URL(`locales/${lang}.json`, import.meta.url), 'utf8')) : null))
+  await useLocale(pickLocale((await readdir(new URL('locales/', import.meta.url))).map((file) => file.replace(/\.json$/, '')), wanted(env)))
   await useStrings('cli')
   const [command] = positionals
   if (command === 'acp' && !values.help) return acp(values, version, env)

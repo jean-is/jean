@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { DESKTOP, DIRS, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles, TOP } from '../scripts/desktop.js'
+import { DESKTOP, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles } from '../scripts/desktop.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
@@ -25,7 +26,7 @@ describe('desktop', () => {
     assert.equal(config.tokenSecurity, 'one-time')
     assert.deepEqual(config.nativeAllowList, NATIVE)
     // ui/host.js, and This computer for the bridge the desktop app starts (D198), the only program it runs.
-    const callers = await Promise.all(['../ui/host.js', '../caps/machine/machine.js'].map((path) => readFile(new URL(path, import.meta.url), 'utf8')))
+    const callers = await Promise.all(['../app/ui/host.js', '../app/caps/machine/machine.js'].map((path) => readFile(new URL(path, import.meta.url), 'utf8')))
     const called = callers.flatMap((text) => [...text.matchAll(/call\('([\w.]+)'/g)].map(([, method]) => method))
     assert.deepEqual([...new Set(called)].sort(), [...NATIVE].sort())
     assert.ok(NATIVE.every((method) => /^(os\.(showFolderDialog|open|spawnProcess|getSpawnedProcesses|updateSpawnedProcess)|filesystem\.\w+|computer\.getMemoryInfo)$/.test(method)))
@@ -47,7 +48,7 @@ describe('desktop', () => {
   })
 
   it('writes an Apple icon file around the PNG', async () => {
-    const png = await readFile(new URL('../icons/icon-512.png', import.meta.url))
+    const png = await readFile(new URL('../app/icons/icon-512.png', import.meta.url))
     const file = icns(png)
     assert.equal(file.toString('latin1', 0, 4), 'icns')
     assert.equal(file.readUInt32BE(4), file.length)
@@ -84,13 +85,12 @@ describe('desktop', () => {
     assert.match(script, /icon size of viewOptions to 128/)
   })
 
-  it('ships what a web deploy serves, and none of the tooling', async () => {
-    const files = await shippedFiles(ROOT)
-    for (const path of ['index.html', 'sandbox.html', 'sw.js', 'ui/app.js', 'caps/browser/browser.html', 'locales/en.json', 'caps/skills/directory/chart/SKILL.md']) assert.ok(files.includes(path), path)
+  it('ships app/, what a web deploy serves, without its types (D243)', async () => {
+    const files = await shippedFiles(join(ROOT, 'app'))
+    for (const path of ['index.html', 'sandbox.html', 'sw.js', 'ui/app.js', 'caps/browser/browser.html', 'locales/en.json', 'caps/skills/directory/chart/SKILL.md', 'bridge/bridge.js', 'screenshots/wide.jpg']) assert.ok(files.includes(path), path)
     for (const path of files) {
-      assert.ok(TOP.includes(path) || DIRS.includes(path.split('/')[0]), path)
       // No Markdown but the skills of Jean's own directory (D196).
-      assert.doesNotMatch(path, /(?<!\/SKILL)\.md$|(^|\/)\./, path)
+      assert.doesNotMatch(path, /(?<!\/SKILL)\.md$|\.d\.ts$|(^|\/)\./, path)
     }
   })
 })

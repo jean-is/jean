@@ -1,7 +1,7 @@
 // Whistle takes at most 30 s at a time (D205): longer dictation is cut where it is quietest.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { pieces, LONGEST } from '../caps/voice/whistle.js'
+import { pieces, LONGEST } from '../app/caps/voice/whistle.js'
 
 /** Speech-like noise, silent over the given ranges of seconds. @param {number} seconds @param {Array<[number, number]>} quiet */
 function audio(seconds, quiet = []) {

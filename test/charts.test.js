@@ -2,7 +2,7 @@
 // what draws inside the chart, with its numbers written as the user's language writes them.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readOption, localize, titleOf, soFar } from '../caps/charts/option.js'
+import { readOption, localize, titleOf, soFar } from '../app/caps/charts/option.js'
 
 const BARS = { title: { text: 'Sales' }, xAxis: { type: 'category', data: ['Jan', 'Feb'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [1200, 3400.5] }] }
 

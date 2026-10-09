@@ -5,14 +5,14 @@ import { join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = new URL('../../', import.meta.url)
-const DIRS = ['core', 'ui', 'caps', 'cli']
+const DIRS = ['app/core', 'app/ui', 'app/caps', 'cli']
 /**
  * Capabilities that bring their own part of the catalogue, locales/<id>/, loaded with them (D140, D146, D141, D157, D162, D196, D198,
- * D200, D215, D218), and jean-cli's, locales/cli/, which only cli/ uses.
+ * D200, D215, D218), and jean-cli's, cli/locales/, which only cli/ uses.
  */
 export const PARTS = ['browser', 'ask', 'folders', 'sync', 'computer', 'charts', 'scores', 'machine', 'slides', 'layouts', 'flows', 'cli']
 /** Where the modules that use a part's strings are. @param {string} id */
-export const owner = (id) => (id === 'cli' ? 'cli/' : `caps/${id}/`)
+export const owner = (id) => (id === 'cli' ? 'cli/' : `app/caps/${id}/`)
 
 /** Every module of Jean's, with its text. @returns {Promise<Record<string, string>>} */
 export async function sources() {
@@ -51,4 +51,4 @@ export function keysIn(text, keys) {
 }
 
 /** Modules that show a dialog import ui/dialogs.js, which loads the dialogs' strings. @param {string} path @param {string} text */
-export const showsDialogs = (path, text) => path === 'ui/dialogs.js' || /from '(\.\/|(\.\.\/)+ui\/)dialogs\.js'/.test(text)
+export const showsDialogs = (path, text) => path === 'app/ui/dialogs.js' || /from '(\.\/|(\.\.\/)+ui\/)dialogs\.js'/.test(text)
