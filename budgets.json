@@ -3,7 +3,7 @@
   "lines": {
     "core": 3000,
     "app": 29000,
-    "cli": 1500
+    "cli": 1000
   },
   "runtimeDependencies": {
     "max": 3,
