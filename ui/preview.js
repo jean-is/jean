@@ -12,12 +12,11 @@ import { app, effective, notify } from './state.js'
 import { save, savePage } from './save.js'
 import { icons } from './icons.js'
 import { addFile, fileMeta, fileText, splitPages } from '../core/files.js'
-import { callsIn, filesMade, latestOf, noteRecord, versionsOf } from '../core/events.js'
-import { appendRecords } from '../core/conversations.js'
+import { callsIn, filesMade, latestOf, versionsOf } from '../core/events.js'
 import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
-import { viewOf } from './view.js'
+import { changeCell, viewOf } from './view.js'
 import { keep } from './windows.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
@@ -34,8 +33,15 @@ const allow = computed(() => pageAllow(rights.value.allows))
 // A file the page made, saved for it; a cell of a workbook the user changed (D229).
 addEventListener('message', ({ source, data }) => {
   if (!source || source !== document.querySelector('app-preview')?.querySelector('iframe')?.contentWindow) return
-  if (data?.cell) change(data.cell, /** @type {Window} */ (source))
-  else savePage(data, rights.peek().allows.downloads)
+  const file = shown.peek()
+  if (!data?.cell || !file) return savePage(data, rights.peek().allows.downloads)
+  // In the version on show: what it holds becomes a copy with the change, as the bytes the brain read stay as they were (D229).
+  changeCell(data.cell, /** @type {Window} */ (source), { name: file.name, said: 'in the preview', read: () => app.fs.readBytes(`${app.projectDir}/${copy.peek()}`), keep: async (bytes, at) => {
+    const pages = (await (await import('../caps/files/extract.js')).extractPages(file.name, bytes)) ?? []
+    const link = await addFile(app.fs, { projectDir: app.projectDir, name: file.name, mimeType: file.mimeType, bytes, pages, by: app.deviceId })
+    where = { uri: link.uri, at }
+    return { was: file.uri, uri: link.uri }
+  } })
 })
 // Where the user was in the workbook they changed last, to show it there again.
 let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Place } | null} */ (null)
@@ -96,36 +102,6 @@ function picker() {
     @change=${(/** @type {Event} */ event) => { shown.value = all[Number(/** @type {HTMLSelectElement} */ (event.target).value)] }}>
     ${all.map((each, i) => html`<option value=${i} ?selected=${i === at.value}>${t('made.version', { n: each.version })}</option>`)}
   </select>`
-}
-
-/**
- * A cell the user changed in the workbook on show (D229), in the version on show: what it holds becomes a
- * copy with the change, as the bytes the brain read stay as they were, and a note says so, which the brain
- * hears with the next message; it shows again where the user was. One that changes only in a spreadsheet
- * app says so, and its box goes. @param {Record<string, unknown>} cell what the frame sent @param {Window} frame
- */
-async function change({ sheet, ref, value, sheetName, at }, frame) {
-  const file = shown.peek()
-  const conversation = app.current.peek()
-  if (!file || !conversation || !/\.xlsx$/i.test(file.name) || !Number.isInteger(sheet) || typeof ref !== 'string' || typeof value !== 'string' || value.length > 32767) return
-  try {
-    const dir = app.project.peek().dir
-    const bytes = await app.fs.readBytes(`${dir}/${copy.peek()}`)
-    if (!bytes) return notify(t('files.missing', { name: file.name }))
-    const [{ setCells }, { extractPages }] = await Promise.all([import('../caps/files/cells.js'), import('../caps/files/extract.js')])
-    const changed = await setCells(bytes, [{ sheet: Number(sheet), ref, value }], file.name)
-    const link = await addFile(app.fs, { projectDir: dir, name: file.name, mimeType: file.mimeType, bytes: changed, pages: (await extractPages(file.name, changed)) ?? [], by: app.deviceId })
-    const note = noteRecord(`The user changed ${file.name} in the preview: ${ref} in ${String(sheetName)} is ${value ? `now ${value}` : 'empty'}.`, { kind: 'cells', was: file.uri, uri: link.uri })
-    await appendRecords(app.fs, conversation.path, [note])
-    const { x, y } = /** @type {Record<string, unknown>} */ (at ?? {})
-    where = { uri: link.uri, at: { sheet: Number(sheet), x: Number(x) || 0, y: Number(y) || 0, ref } }
-    const now = app.current.peek()
-    if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
-  } catch (error) {
-    console.warn('Preview', error)
-    notify(t('preview.locked'))
-    frame.postMessage({ unchanged: true }, '*')
-  }
 }
 
 /** @param {Shown} file */

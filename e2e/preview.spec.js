@@ -289,5 +289,5 @@ test('a workbook’s cells change in the preview, in the version on show, which 
   expect(told).toEqual(['The user changed Budget.xlsx in the preview: B3 in Budget is now 500.', 'The user changed Budget.xlsx in the preview: A2 in Budget is now Loyer.'])
   const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.preview').getByRole('button', { name: 'Save Budget.xlsx' }).click()])
   const saved = new Uint8Array(await readFile(await download.path()))
-  expect(await extractPages('Budget.xlsx', saved)).toEqual(['Sheet: Budget\nItem\tAmount\nLoyer\t1200\nFood\t500\nTotal\t1650'])
+  expect(await extractPages('Budget.xlsx', saved)).toEqual(['Sheet: Budget\nItem\tAmount\nLoyer\t1200\nFood\t500\nTotal\t1700'])
 })

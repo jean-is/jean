@@ -11,6 +11,9 @@ import { html } from 'lit-html'
 import { markdown } from './markdown.js'
 import { pagePolicy } from './csp.js'
 import { styleSheet } from './sheet.js'
+import { app, notify } from './state.js'
+import { noteRecord } from '../core/events.js'
+import { appendRecords } from '../core/conversations.js'
 import { t } from '../core/i18n.js'
 
 const FRAME = new URL('../preview.html', import.meta.url).href
@@ -68,6 +71,32 @@ export async function viewOf(file, holds, page) {
   if (!text && !office && isBinary(bytes)) return unshown()
   if (/^(md|markdown)$/.test(ext) || file.prose) return html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
   return html`<pre class="view-text" dir="auto">${text}</pre>`
+}
+
+/**
+ * A cell the user changed in a workbook's frame (D229): checked, written into what `read` gives, kept by `keep`, which says what the note for the
+ * brain of the task on screen carries; one that changes only in a spreadsheet app says so. @param {unknown} cell @param {Window} frame
+ * @param {{ name: string, said: string, read: () => Promise<Uint8Array | null>, keep: (bytes: Uint8Array, at: import('../caps/files/office.js').Place) => Promise<{ was?: string, uri?: string }> }} file
+ */
+export async function changeCell(cell, frame, { name, said, read, keep }) {
+  const { sheet, ref, value, sheetName, at } = /** @type {Record<string, any>} */ (cell ?? {})
+  const conversation = app.current.peek()
+  if (!/\.xlsx$/i.test(name) || !Number.isInteger(sheet) || typeof ref !== 'string' || typeof value !== 'string' || value.length > 32767) return
+  try {
+    const bytes = await read()
+    if (!bytes) return notify(t('files.missing', { name }))
+    const changed = await (await import('../caps/files/cells.js')).setCells(bytes, [{ sheet, ref, value }], name)
+    const data = await keep(changed, { sheet, x: Number(at?.x) || 0, y: Number(at?.y) || 0, ref })
+    const note = noteRecord(`The user changed ${name} ${said}: ${ref} in ${String(sheetName)} is ${value ? `now ${value}` : 'empty'}.`, { kind: 'cells', ...data })
+    if (!conversation) return
+    await appendRecords(app.fs, conversation.path, [note])
+    const now = app.current.peek()
+    if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
+  } catch (error) {
+    console.warn('View', error)
+    notify(t('preview.locked'))
+    frame.postMessage({ unchanged: true }, '*')
+  }
 }
 
 /** What shows in place of a file that can't. */

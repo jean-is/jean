@@ -7,7 +7,7 @@ import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, p
 import { isPicture } from '../core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../caps/backup/archive.js'
 import { officePage } from '../caps/files/office.js'
-import { replaceInSheet, setCells } from '../caps/files/cells.js'
+import { evaluate, replaceInSheet, setCells } from '../caps/files/cells.js'
 import { makeFile, replaceOnce } from '../caps/made/formats.js'
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
@@ -139,6 +139,35 @@ test('extractPages reads real Office containers in presentation order', async ()
 
 // ─── Cells changed in place (D229) ───────────────────────────────────────────
 
+test('evaluate: arithmetic and totals over cells and ranges, text left out of totals; anything else is no number (D229)', () => {
+  const cells = /** @type {Record<string, number | null>} */ ({ '0,1': 2, '0,2': 3, '0,3': null, '1,1': 10, '1,4': NaN })
+  const at = (/** @type {number} */ col, /** @type {number} */ row) => cells[`${col},${row}`]
+  assert.equal(evaluate('A1+A2*B1', at), 32)
+  assert.equal(evaluate(' ( A1 + A2 ) * B1 ', at), 50)
+  assert.equal(evaluate('-A1^2', at), 4, 'as Excel: the minus first')
+  assert.equal(evaluate('B1/4-C9', at), 2.5, 'an empty cell is 0')
+  assert.equal(evaluate('0.1+0.2', at), 0.3)
+  assert.equal(evaluate('SUM(A1:A4)', at), 5, 'text and empty cells left out')
+  assert.equal(evaluate('AVERAGE(A1:A2,B1)', at), 5)
+  assert.equal(evaluate('MAX($A$1:A2)+MIN(A1,B1)+COUNT(B1:A3)', at), 8)
+  for (const formula of ['A3+1', 'B1/0', 'SUM(B1:B4)', 'IF(A1>1,1,0)', 'Sheet2!A1', 'A1&A2', 'SUM(A1:A2', 'AVERAGE(C1:C3)', 'A1:A2', '']) assert.equal(evaluate(formula, at), null, formula)
+})
+
+test('setCells works out again the formulas that use a changed cell, and theirs, in order: shared ones moved to where they are; one it can’t, or in a loop, without a result (D229)', async () => {
+  const c = (/** @type {string} */ ref, /** @type {string} */ inside) => `<c r="${ref}">${inside}</c>`
+  const bytes = await zipOf({
+    'xl/workbook.xml': `<workbook xmlns:r="${RELS}"><sheets><sheet name="Calc" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+    'xl/_rels/workbook.xml.rels': '<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/></Relationships>',
+    'xl/worksheets/sheet1.xml': '<worksheet><sheetData>'
+      + `<row r="1">${c('A1', '<v>1</v>')}${c('B1', '<f t="shared" ref="B1:B3" si="0">A1*10</f><v>10</v>')}${c('C1', '<f>SUM(B1:B3)</f><v>60</v>')}${c('D1', '<f>IF(A1&gt;0,1,0)</f><v>1</v>')}${c('F1', '<f>F2+1</f><v>0</v>')}</row>`
+      + `<row r="2">${c('A2', '<v>2</v>')}${c('B2', '<f t="shared" si="0"/><v>20</v>')}${c('C2', '<f>C1+A1</f><v>61</v>')}${c('F2', '<f>F1+A1</f><v>0</v>')}</row>`
+      + `<row r="3">${c('A3', '<v>3</v>')}${c('B3', '<f t="shared" si="0"/><v>30</v>')}</row></sheetData></worksheet>`,
+  })
+  const rows = async (/** @type {string} */ ref, /** @type {string} */ value) => (await extractPages('Calc.xlsx', await setCells(bytes, [{ sheet: 0, ref, value }], 'Calc.xlsx')))[0].split('\n').slice(1)
+  assert.deepEqual(await rows('A2', '5'), ['1\t10\t90\t1\t\t0', '5\t50\t91\t\t\t0', '3\t30'], 'what doesn’t use A2 stays as it was')
+  assert.deepEqual(await rows('A1', '4'), ['4\t40\t90\t=IF(A1>0,1,0)\t\t=F2+1', '2\t20\t94\t\t\t=F1+A1', '3\t30'])
+})
+
 const budget = () => makeFile('Budget.xlsx', 'Item,Amount\nRent,1200\nFood,450\nTotal,=SUM(B2:B3)').then((made) => made.bytes)
 /** Each part of a workbook, by name, as text. @param {Uint8Array} bytes */
 const partsOf = async (bytes) => Object.fromEntries(await Promise.all(readZip(bytes).map(async (entry) => [entry.name, dec.decode(await entry.read())])))
@@ -150,13 +179,13 @@ test('setCells: numbers, text, formulas and booleans in place, a style kept, a c
     { sheet: 0, ref: 'B2', value: '1300' }, { sheet: 0, ref: 'A3', value: 'Groceries & co' }, { sheet: 0, ref: 'B4', value: '' },
     { sheet: 0, ref: 'D1', value: ' Note ' }, { sheet: 0, ref: 'C5', value: '=B2*2' }, { sheet: 0, ref: 'C1', value: 'true' }, { sheet: 0, ref: 'A1', value: '007' },
   ], 'Budget.xlsx')
-  assert.deepEqual(await extractPages('Budget.xlsx', changed), ['Sheet: Budget\n007\tAmount\tTRUE\t Note \nRent\t1300\nGroceries & co\t450\nTotal\n\t\t=B2*2'])
+  assert.deepEqual(await extractPages('Budget.xlsx', changed), ['Sheet: Budget\n007\tAmount\tTRUE\t Note \nRent\t1300\nGroceries & co\t450\nTotal\n\t\t2600'])
   const [before, after] = [await partsOf(bytes), await partsOf(changed)]
   const sheet = after['xl/worksheets/sheet1.xml']
   assert.ok(sheet.includes('<c r="A1" s="1" t="inlineStr"><is><t>007</t></is></c>'), 'the header’s style kept; leading zeros keep it text')
   assert.ok(sheet.includes('<c r="C1" t="b"><v>1</v></c><c r="D1" t="inlineStr"><is><t xml:space="preserve"> Note </t></is></c></row>'), 'added after the row’s cells, in order')
   assert.ok(sheet.includes('<c r="A3" t="inlineStr"><is><t>Groceries &amp; co</t></is></c>'))
-  assert.ok(sheet.includes('<row r="4"><c r="A4" t="s"><v>4</v></c></row><row r="5"><c r="C5"><f>B2*2</f></c></row></sheetData>'), 'a cell without a style goes; a row comes in order')
+  assert.ok(sheet.includes('<row r="4"><c r="A4" t="s"><v>4</v></c></row><row r="5"><c r="C5"><f>B2*2</f><v>2600</v></c></row></sheetData>'), 'a cell without a style goes; a row comes in order; a formula comes with its result')
   assert.equal(after['xl/sharedStrings.xml'], before['xl/sharedStrings.xml'])
   assert.equal(after['xl/styles.xml'], before['xl/styles.xml'])
   assert.equal(after['xl/workbook.xml'].match(/fullCalcOnLoad="1"/g)?.length, 1)
@@ -211,16 +240,18 @@ test('replaceInSheet: a passage within one row, as Files reads it; one that ends
   const text = async (/** @type {Uint8Array} */ data) => (await extractPages('Budget.xlsx', data)).join('\n')
   assert.equal(await text(bytes), 'Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t450\nTotal\t1650')
   const changed = await replaceInSheet(bytes, 'Food\t450', 'Food\t500', 'Budget.xlsx', replaceOnce)
-  assert.equal(await text(changed), 'Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t500\nTotal\t1650')
+  assert.equal(await text(changed), 'Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t500\nTotal\t1700', 'the total worked out again')
   assert.ok((await partsOf(changed))['xl/worksheets/sheet1.xml'].includes('<row r="3"><c r="A3" t="s"><v>3</v></c><c r="B3"><v>500</v></c></row>'), 'only the cell that changed')
   assert.equal(await text(await replaceInSheet(bytes, 'Rent\t1200', 'Rent\t1200\tmonthly', 'Budget.xlsx', replaceOnce)), 'Sheet: Budget\nItem\tAmount\nRent\t1200\tmonthly\nFood\t450\nTotal\t1650')
-  assert.equal(await text(await replaceInSheet(bytes, 'nt\t12', 'nt\t13', 'Budget.xlsx', replaceOnce)), 'Sheet: Budget\nItem\tAmount\nRent\t1300\nFood\t450\nTotal\t1650')
+  assert.equal(await text(await replaceInSheet(bytes, 'nt\t12', 'nt\t13', 'Budget.xlsx', replaceOnce)), 'Sheet: Budget\nItem\tAmount\nRent\t1300\nFood\t450\nTotal\t1750')
   await assert.rejects(replaceInSheet(bytes, 'Item', 'Item\tCategory', 'Budget.xlsx', replaceOnce), /keep the cells a passage spans/)
   await assert.rejects(replaceInSheet(bytes, '450\nTotal', 'x', 'Budget.xlsx', replaceOnce), /one row at a time/)
   await assert.rejects(replaceInSheet(bytes, 'nowhere', 'x', 'Budget.xlsx', replaceOnce), /not in Budget\.xlsx/)
   await assert.rejects(replaceInSheet(bytes, 'Total\t1650', 'Total\t1700', 'Budget.xlsx', replaceOnce), /B4 in Budget is worked out by a formula, =SUM\(B2:B3\): give a new formula/)
   const doubled = await replaceInSheet(bytes, 'Total\t1650', 'Total\t=SUM(B2:B3)*2', 'Budget.xlsx', replaceOnce)
-  assert.equal(await text(doubled), 'Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t450\nTotal\t=SUM(B2:B3)*2', 'a formula without its result shows as itself')
+  assert.equal(await text(doubled), 'Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t450\nTotal\t3300')
+  const tested = await replaceInSheet(bytes, 'Total\t1650', 'Total\t=IF(B2>1000,1,0)', 'Budget.xlsx', replaceOnce)
+  assert.equal(await text(tested), 'Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t450\nTotal\t=IF(B2>1000,1,0)', 'one Jean can’t work out shows as itself')
   // Back as it was.
   assert.equal(await text(await replaceInSheet(changed, 'Food\t500', 'Food\t450', 'Budget.xlsx', replaceOnce)), await text(bytes))
 })
