@@ -38,10 +38,14 @@ await Promise.all([useStrings('dialogs'), styleSheet('ui/dialogs.css')])
 
 /** Whether each dialog was last told to be open. @type {WeakMap<HTMLDialogElement, boolean>} */
 const told = new WeakMap()
+/** What had the keyboard when each dialog opened. @type {WeakMap<HTMLDialogElement, globalThis.Element | null>} */
+const before = new WeakMap()
 
 /**
  * Opens or closes a dialog when app.dialog comes to name it or stops: a render meanwhile never
- * opens again one the browser closed (Escape) before its close event says so.
+ * opens again one the browser closed (Escape) before its close event says so. Closed, the keyboard
+ * goes back to what had it, as the browser does itself, except WebKit now and then when the dialog
+ * goes without a transition (reduced motion): the page is still inert to it until the next frame.
  * @param {Element} host @param {string} name
  */
 export function syncDialog(host, name) {
@@ -49,8 +53,14 @@ export function syncDialog(host, name) {
   const open = app.dialog.value === name
   if (dialog && told.get(dialog) !== open) {
     told.set(dialog, open)
-    if (open && !dialog.open) dialog.showModal()
-    else if (!open && dialog.open) dialog.close()
+    if (open && !dialog.open) {
+      before.set(dialog, document.activeElement)
+      dialog.showModal()
+    } else if (!open && dialog.open) {
+      dialog.close()
+      const back = before.get(dialog)
+      requestAnimationFrame(() => { if (document.activeElement === document.body && back instanceof HTMLElement && back.isConnected) back.focus() })
+    }
   }
   placeToasts()
 }
