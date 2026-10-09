@@ -252,3 +252,23 @@ for (const [lang, dir] of [['en', 'ltr'], ['ar', 'rtl'], ['ja', 'ltr']]) {
     await expect(button).not.toHaveAttribute('aria-label', label)
   })
 }
+
+test('an offer for something already on never shows while it loads again', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'WebKit runs here like a private window: nothing is kept for the next visit')
+  await start(page)
+  // On from Settings, so the offer was never answered.
+  await page.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('live')
+    await (await import('/ui/state.js')).updateSettings({ dictated: 3 })
+  })
+  await page.addInitScript(() => new MutationObserver(() => {
+    if (document.querySelector('aside.offer')) Object.assign(window, { offered: true })
+  }).observe(document, { childList: true, subtree: true }))
+  await page.reload()
+  await expect(page.locator('.hero-question')).toBeVisible()
+  expect(await page.evaluate(async () => {
+    await (await import('/ui/state.js')).app.ready
+    return (await import('/ui/caps.js')).loaded.value.has('live')
+  })).toBe(true)
+  expect(await page.evaluate(() => 'offered' in window)).toBe(false)
+})

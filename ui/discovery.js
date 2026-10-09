@@ -94,7 +94,8 @@ export function offerOnce(id) {
   const { settings } = effective.value
   // Peeked: an effect that offers must not run again because the offer it showed went away.
   const shown = app.offer.peek()
-  if ((shown && (shown.progress !== undefined || !AMBIENT.has(shown.id) || AMBIENT.has(id))) || isDenied(id) || loaded.value.has(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
+  // Turned on before, it is still loading after first paint, so not loaded yet: never offered.
+  if ((shown && (shown.progress !== undefined || !AMBIENT.has(shown.id) || AMBIENT.has(id))) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
   app.offer.value = { id }
 }
 

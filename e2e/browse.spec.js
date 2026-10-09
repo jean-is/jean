@@ -105,6 +105,37 @@ test('the user browses beside the conversation: back, forward, reload, full scre
   await expect(site(page).locator('h1')).toHaveText('The bakery')
 })
 
+test('Escape closes the browser while the keyboard is in it, or nowhere', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
+  const pane = page.locator('app-browser .browser')
+  const field = pane.locator('.browser-bar input')
+  // Opened empty, its address field has the keyboard.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await expect(field).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(pane).toHaveCount(0)
+  // What was typed in the address goes first, then the pane.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await field.fill('bakery')
+  await page.keyboard.press('Escape')
+  await expect(field).toHaveValue('')
+  await expect(pane).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(pane).toHaveCount(0)
+  // Once an address is sent, the keyboard is nowhere.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await go(page, `${SITE}/bakery.html`)
+  await expect(site(page).locator('h1')).toHaveText('The bakery')
+  await page.keyboard.press('Escape')
+  await expect(pane).toHaveCount(0)
+  // The box keeps its own Escape.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  await page.locator('#prompt').focus()
+  await page.keyboard.press('Escape')
+  await expect(pane).toBeVisible()
+})
+
 test('a site that refuses to be framed opens in a tab of its own, and Jean recommends installing it', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Browser')

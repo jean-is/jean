@@ -173,6 +173,14 @@ export function close() {
 
 export const toggle = () => (open.peek() ? close() : show())
 
+// Escape closes it while the keyboard is in the pane, or nowhere, as after an address is sent, and
+// no dialog over the room takes it; a site's own page keeps its keys, which never reach Jean.
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape' || event.isComposing || event.defaultPrevented || !open.peek()) return
+  const at = document.activeElement
+  if (at?.closest('app-browser') || ((!at || at === document.body) && !document.querySelector('dialog:modal'))) close()
+})
+
 // In the address (D220): the address it opened, as Jean knows it, not where a site went from there;
 // '' while it is empty. Another comes back only as a web page or one of Jean's own.
 keep('browser', {
@@ -507,7 +515,7 @@ class Browser extends Element {
             class=${shown && !shown.own && trail.moved ? 'is-moved' : ''} aria-label=${t('browser.address')} placeholder=${t('browser.placeholder')}
             .value=${live(typed.value ?? address)} @input=${(/** @type {InputEvent} */ event) => { typed.value = /** @type {HTMLInputElement} */ (event.target).value }}
             @focus=${(/** @type {FocusEvent} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}
-            @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.isComposing) typed.value = null }}
+            @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.isComposing && typed.value !== null) { typed.value = null; event.preventDefault() } }}
             @blur=${() => { typed.value = null }}>
         </form>
         ${button(t('browser.tab'), GLYPHS.tab, () => openTab(address), !shown || isLocal(shown.url))}
