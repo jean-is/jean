@@ -52,14 +52,10 @@ export function buildSystemPrompt(input) {
 }
 
 /** @param {string} name @param {string} body */
-function tag(name, body) {
-  return `<${name}>\n${body}\n</${name}>`
-}
+const tag = (name, body) => `<${name}>\n${body}\n</${name}>`
 
 /** Base prompt measured by scripts/budgets.js. */
-export function basePromptForBudget() {
-  return buildSystemPrompt({ assistantName: 'Jean', uiLanguage: 'English' })
-}
+export const basePromptForBudget = () => buildSystemPrompt({ assistantName: 'Jean', uiLanguage: 'English' })
 
 /**
  * What the brain is told about the world at this moment. Sections are kept as fingerprints,
@@ -83,9 +79,7 @@ function fingerprint(text) {
 const localDate = (date) => new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10)
 
 /** The record that freezes a conversation's prompt. @param {string} by @param {string} system @param {PromptState} state */
-export function promptRecord(by, system, state) {
-  return metaRecord(by, { prompt: { system, state } })
-}
+export const promptRecord = (by, system, state) => metaRecord(by, { prompt: { system, state } })
 
 /**
  * The frozen prompt, and the state the brain knows of now: the frozen state with every
@@ -123,9 +117,7 @@ export function frozenPrompt(records) {
  */
 export function changeNotes(known, now, sections = {}) {
   const notes = []
-  if (now.language !== known.language) {
-    notes.push(noteRecord(`The interface language is now ${now.language}.`, { kind: 'language', language: now.language }))
-  }
+  if (now.language !== known.language) notes.push(noteRecord(`The interface language is now ${now.language}.`, { kind: 'language', language: now.language }))
   if (now.date !== known.date) notes.push(noteRecord(`Today is ${now.date}.`, { kind: 'date', date: now.date }))
   for (const name of SECTIONS) {
     const version = now.sections?.[name] ?? ''

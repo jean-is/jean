@@ -22,11 +22,7 @@ const SERVER_BLOCK = /^server_tool_use$|_tool_result$/
 // Set when the organisation turned web search off (a 400 says so): Jean's own search from then on.
 let searchOff = false
 
-/**
- * streamChat() for Anthropic brains.
- * @param {Connection & Prompt} options
- * @returns {AsyncGenerator<StreamEvent, void, undefined>}
- */
+/** streamChat() for Anthropic brains. @param {Connection & Prompt} options @returns {AsyncGenerator<StreamEvent, void, undefined>} */
 export async function* streamAnthropic({ signal, fetch = globalThis.fetch, ...options }) {
   const send = (/** @type {ChatMessage[]} */ messages) => post(fetch, anthropicRequest({ ...options, messages }), signal)
   let res
@@ -49,8 +45,7 @@ const isStaleThinking = (error) => error instanceof LLMError && error.code === '
 /**
  * warmCache() for Anthropic brains. `messages` ends with the user message being written
  * (its text may still be empty). Returns null when warming isn't worth it.
- * @param {Connection & Prompt} options
- * @returns {Promise<Usage | null>}
+ * @param {Connection & Prompt} options @returns {Promise<Usage | null>}
  */
 export async function warmCache({ signal, fetch = globalThis.fetch, ...options }) {
   const request = anthropicRequest(options)
@@ -77,7 +72,7 @@ export async function warmCache({ signal, fetch = globalThis.fetch, ...options }
 export function minimumCacheable(model) {
   if (/^claude-(opus-5|fable-5|mythos-5|sonnet-5-5)/.test(model)) return 512
   if (/^claude-(opus-4-7|mythos-preview|3-5-haiku|haiku-3-5)/.test(model)) return 2048
-  if (/^claude-(opus-4-[56]|opus-4-5|haiku-4-5)/.test(model)) return 4096
+  if (/^claude-(opus-4-[56]|haiku-4-5)/.test(model)) return 4096
   return 1024
 }
 
@@ -242,10 +237,7 @@ function finishBlock(block) {
   }
 }
 
-/**
- * Anthropic counts cached input apart; Usage.inputTokens counts all of it.
- * @param {any} u @returns {Usage}
- */
+/** Anthropic counts cached input apart; Usage.inputTokens counts all of it. @param {any} u @returns {Usage} */
 function anthropicUsage(u) {
   const read = u.cache_read_input_tokens ?? 0
   const write = u.cache_creation_input_tokens ?? 0

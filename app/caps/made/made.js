@@ -22,16 +22,6 @@ await styleSheet(new URL('made.css', import.meta.url))
 
 // ─── Writing files ───────────────────────────────────────────────────────────
 
-/** Where paper is letter-sized: the user's region, as the browser gives it. */
-const LETTER = new Set(['US', 'CA', 'MX', 'PH', 'CL', 'CO', 'VE', 'PR'])
-function paper() {
-  try {
-    return LETTER.has(new Intl.Locale(navigator.language).maximize().region ?? '') ? 'letter' : 'a4'
-  } catch {
-    return 'a4'
-  }
-}
-
 /**
  * Files made in the conversation a call works for, oldest first: those of earlier answers, then
  * this one's, the computer's pages included (D164), or only those written here (`written`), which
@@ -53,8 +43,8 @@ function madeFiles(signal, written = false) {
  */
 async function keep(name, content, ctx) {
   // The writers load with the first file made, not with the first message.
-  const { makeFile } = await import('./formats.js')
-  const { name: kept, mimeType, bytes } = typeof content === 'string' ? await makeFile(name, content, { paper: paper() }) : { name, ...content }
+  const { makeFile, paperFor } = await import('./formats.js')
+  const { name: kept, mimeType, bytes } = typeof content === 'string' ? await makeFile(name, content, { paper: paperFor(navigator.language) }) : { name, ...content }
   const link = await addFile(app.fs, { projectDir: app.projectDir, name: kept, mimeType, bytes, pages: typeof content === 'string' ? [content] : content.pages, by: 'jean' })
   // Each version is a file of its own, by its content, and the earlier ones stay where they are (D164).
   const version = nextVersion(madeFiles(ctx.signal), kept, link.uri)

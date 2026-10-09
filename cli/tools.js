@@ -7,18 +7,17 @@ import { spawn } from 'node:child_process'
 import { basename, sep } from 'node:path'
 import { SPECS, USE, findInFolder, lastRead, listingText, openText, planChange, topLevel, walkFolder } from '../app/caps/folders/work.js'
 import { mcpClient, LEGACY } from '../app/caps/connections/mcp.js'
+import { recallTool } from '../app/caps/memory/recall.js'
 import { peer, RpcError } from './rpc.js'
 import { changeMemory, memoryText, oneLine, parseMemory } from '../app/core/memory.js'
-import { listSkills, skillLines } from '../app/core/skills.js'
-import { listConversations, loadConversation } from '../app/core/conversations.js'
-import { foldTurns, linkedFiles, splitSuggestions } from '../app/core/events.js'
+import { listSkills, skillLines, skillSteps } from '../app/core/skills.js'
+import { callsIn, linkedFiles } from '../app/core/events.js'
 import { readTool } from '../app/core/files.js'
 import { findTools, identifier } from '../app/core/deferred.js'
-import { dirname, join, walk } from '../app/core/fs.js'
-import { bm25 } from '../app/core/search.js'
+import { join } from '../app/core/fs.js'
 import { slug } from '../app/core/settings.js'
 
-/** @import { FS, Envelope, ToolCallInfo, ToolCallContent } from '../app/core/types.js' */
+/** @import { FS, Envelope, ToolCallContent } from '../app/core/types.js' */
 /** @import { Tool } from '../app/core/loop.js' */
 /** @import { McpTool } from '../app/caps/connections/mcp.js' */
 
@@ -52,16 +51,6 @@ const inside = (cwd, path) => {
   return relative.replace(/^\.?\/+|\/+$/g, '')
 }
 
-/** Letter-sized paper where the user's region uses it, for a Word document made here. */
-function paper() {
-  try {
-    const region = new Intl.Locale(Intl.DateTimeFormat().resolvedOptions().locale).maximize().region ?? ''
-    return /^(US|CA|MX|PH|CL|CO|VE|PR)$/.test(region) ? 'letter' : 'a4'
-  } catch {
-    return 'a4'
-  }
-}
-
 /** @param {Room} room @returns {Tool[]} */
 function folderTools(room) {
   const name = basename(room.cwd)
@@ -72,15 +61,14 @@ function folderTools(room) {
     ctx.meta.folder = name
     ctx.meta.read = { ...ctx.meta.read, ...read }
   }
-  const calls = () => room.records().flatMap(({ update }) => (update?.sessionUpdate === 'tool_call' ? [/** @type {ToolCallInfo} */ (update)] : []))
   /** A change against the file as Jean last read it in this conversation (D141). @param {any} args */
   const plan = async (args) => {
     const path = at(args)
     const now = await room.folder.stat?.(path)
-    const read = lastRead(calls(), name, path)
+    const read = lastRead(callsIn(room.records()), name, path)
     if (now && !read) throw new Error(`Open ${path} before changing it.`)
     if (now && read && (now.size !== read[0] || now.lastModified !== read[1])) throw new Error(`${path} changed since you read it: open it again, then change it.`)
-    return planChange(room.buffers, { path, old: String(args?.old ?? ''), new: String(args?.new ?? '') }, { paper: paper() })
+    return planChange(room.buffers, { path, old: String(args?.old ?? ''), new: String(args?.new ?? '') }, { locale: Intl.DateTimeFormat().resolvedOptions().locale })
   }
   /** @param {Awaited<ReturnType<typeof plan>>} change @returns {ToolCallContent} */
   const diff = (change) => ({ type: 'diff', path: change.path, oldText: change.before, newText: change.after })
@@ -154,38 +142,13 @@ const bashTool = (room) => ({
   },
 })
 
+/** The memory files of the room: the person's, and the project's unless it is the home one. @param {Room} room */
+const memoryFiles = (room) => (room.home ? ['memory.md'] : ['memory.md', join(room.dir, 'memory.md')])
+
 /** Memory and earlier conversations, as the Memory capability has them (caps/memory/memory.js). @param {Room} room @returns {Tool[]} */
 function memoryTools(room) {
-  const files = () => (room.home ? ['memory.md'] : ['memory.md', join(room.dir, 'memory.md')])
   return [
-    {
-      spec: {
-        name: 'recall',
-        description: 'Search the earlier conversations of this project for what was said, with words they would contain.',
-        parameters: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] },
-      },
-      kind: 'search',
-      title: (args) => `Recall: ${args?.query ?? ''}`,
-      run: async (args) => {
-        /** @type {{ title: string, at: string, user: string, answer: string }[]} */
-        const passages = []
-        for (const { path, title } of await listConversations(room.jean, room.dir)) {
-          if (path === room.path) continue
-          const conversation = await loadConversation(room.jean, path).catch(() => null)
-          for (const turn of foldTurns(conversation?.records ?? [])) {
-            const answer = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n')).text
-            if (turn.user?.text || answer) passages.push({ title, at: turn.at, user: turn.user?.text ?? '', answer })
-          }
-        }
-        const hits = bm25(passages.map((passage) => `${passage.user}\n${passage.answer}`), String(args?.query ?? '')).slice(0, 5)
-        if (!hits.length) return 'Nothing in the earlier conversations matches.'
-        const clip = (/** @type {string} */ text) => (text.length > 600 ? `${text.slice(0, 600)}…` : text)
-        return hits.map(({ index }) => {
-          const { title, at, user, answer } = passages[index]
-          return `From "${title || 'Untitled'}", ${at.slice(0, 10)}:\nThe user: ${clip(user)}\nThe answer: ${clip(answer)}`
-        }).join('\n\n')
-      },
-    },
+    recallTool({ fs: room.jean, projectDir: () => room.dir, own: () => room.path }),
     {
       spec: {
         name: 'remember',
@@ -197,7 +160,7 @@ function memoryTools(room) {
       run: async (args) => {
         const text = oneLine(String(args?.text ?? ''))
         if (!text) throw new Error('There is nothing to remember.')
-        const path = args?.scope === 'project' ? files().at(-1) ?? 'memory.md' : 'memory.md'
+        const path = args?.scope === 'project' ? memoryFiles(room).at(-1) ?? 'memory.md' : 'memory.md'
         let known = false
         await changeMemory(room.jean, path, (entries) => ((known = entries.some((other) => other.text.toLowerCase() === text.toLowerCase()))
           ? entries : [...entries, { text, at: new Date().toISOString(), by: 'jean', conversation: room.path }]))
@@ -215,20 +178,7 @@ const skillTool = (room) => ({
   spec: { name: 'skill', description: 'Read the steps of one of the skills listed in <skills>.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } },
   kind: 'read',
   title: (args) => `Skill ${args?.name ?? ''}`,
-  run: async (args) => {
-    const [name, ...rest] = String(args?.name ?? '').trim().split('/')
-    const all = await skills(room)
-    const skill = all.find((candidate) => candidate.name === name)
-    if (!skill) throw new Error(`There is no skill named "${name}". Skills: ${all.map((candidate) => candidate.name).join(', ') || 'none'}.`)
-    const folder = dirname(skill.path)
-    if (rest.length) {
-      const text = rest.includes('..') ? null : await room.jean.read(join(folder, ...rest))
-      if (text === null) throw new Error(`The skill "${name}" has no file "${rest.join('/')}".`)
-      return text
-    }
-    const beside = (await walk(room.jean, folder)).map((path) => path.slice(folder.length + 1)).filter((path) => path !== 'SKILL.md')
-    return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
-  },
+  run: async (args) => skillSteps(room.jean, await skills(room), String(args?.name ?? '')),
 })
 
 /** The name the brain calls a service's tool by: `github_create_issue`. @param {Server} server @param {string} name */
@@ -328,7 +278,7 @@ export async function toolsFor(room, servers) {
     ],
     /** The sections they add to the prompt: what Jean noticed, the skills, the services, the folder. */
     sections: async () => {
-      const memory = memoryText((await Promise.all((room.home ? ['memory.md'] : ['memory.md', join(room.dir, 'memory.md')]).map(async (path) => parseMemory(await room.jean.read(path))))).flat())
+      const memory = memoryText((await Promise.all(memoryFiles(room).map(async (path) => parseMemory(await room.jean.read(path))))).flat())
       const listed = skillLines(await skills(room))
       const connections = offered.filter(({ tools }) => tools.length).map(({ server, tools }) => `- ${server.name}: ${tools.map((tool) => toolName(server, tool.name)).join(', ')}`).join('\n')
       const folder = [

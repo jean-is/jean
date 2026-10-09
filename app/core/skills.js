@@ -3,7 +3,7 @@
 // steps are read when a request calls for them. Global ones live at the root, a project's in
 // its own folder, and a project's skill replaces a global one with the same name. A skill may
 // declare the kinds of fenced block it writes (`metadata.blocks`, D196), which Jean draws as widgets.
-import { join } from './fs.js'
+import { dirname, join, walk } from './fs.js'
 import { parseFrontMatter, stringifyFrontMatter } from './settings.js'
 
 /** @typedef {import('./types.js').FS} FS */
@@ -45,6 +45,24 @@ export async function listSkills(fs, dirs) {
     }
   }
   return [...found.values()]
+}
+
+/**
+ * A skill's steps, naming the files beside them, or one of those files ("name/references/forms.md").
+ * @param {FS} fs @param {Skill[]} skills those it is looked for in @param {string} named
+ */
+export async function skillSteps(fs, skills, named) {
+  const [name, ...rest] = named.trim().split('/')
+  const skill = skills.find((candidate) => candidate.name === name)
+  if (!skill) throw new Error(`There is no skill named "${name}". Skills: ${skills.map((candidate) => candidate.name).join(', ') || 'none'}.`)
+  const folder = dirname(skill.path)
+  if (rest.length) {
+    const text = rest.includes('..') ? null : await fs.read(join(folder, ...rest))
+    if (text === null) throw new Error(`The skill "${name}" has no file "${rest.join('/')}".`)
+    return text
+  }
+  const beside = (await walk(fs, folder)).map((path) => path.slice(folder.length + 1)).filter((path) => path !== 'SKILL.md')
+  return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
 }
 
 /** The <skills> section. @param {Skill[]} skills */

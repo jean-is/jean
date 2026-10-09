@@ -26,6 +26,15 @@ export function fileName(name) {
   return clean.length > 120 ? clean.slice(0, 120 - ext.length).trimEnd() + ext : clean
 }
 
+/** Letter-sized paper where the region of a locale uses it, else A4. @param {string} [locale] @returns {'a4' | 'letter'} */
+export function paperFor(locale) {
+  try {
+    return /^(US|CA|MX|PH|CL|CO|VE|PR)$/.test(new Intl.Locale(locale ?? '').maximize().region ?? '') ? 'letter' : 'a4'
+  } catch {
+    return 'a4'
+  }
+}
+
 /**
  * The file a name and its content make: the extension says which kind.
  * @param {string} name @param {string} content Markdown for .docx, CSV or Markdown tables for .xlsx, else the text itself

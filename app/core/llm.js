@@ -86,11 +86,7 @@ export function headersFor(brain, apiKey) {
   return headers
 }
 
-/**
- * Streams one model turn: text and thinking deltas, then every tool call, then exactly one 'done'.
- * @param {Connection & Prompt} options
- * @returns {AsyncGenerator<StreamEvent, void, undefined>}
- */
+/** Streams one model turn: text and thinking deltas, then every tool call, then exactly one 'done'. @param {Connection & Prompt} options @returns {AsyncGenerator<StreamEvent, void, undefined>} */
 export async function* streamChat({ signal, fetch = globalThis.fetch, ...options }) {
   if (options.brain.api === 'device') throw new LLMError('The on-device brain has its own runtime', { code: 'bad_request' })
   if (options.brain.api === 'anthropic') return yield* (await import('./anthropic.js')).streamAnthropic({ signal, fetch, ...options })
@@ -106,12 +102,9 @@ export async function* streamChat({ signal, fetch = globalThis.fetch, ...options
 /**
  * Writes the prompt cache for a conversation the user is about to continue (D49), so the
  * real reply starts sooner. Anthropic only; null for other brains or when it isn't worth it.
- * @param {Connection & Prompt} options
- * @returns {Promise<Usage | null>}
+ * @param {Connection & Prompt} options @returns {Promise<Usage | null>}
  */
-export async function warmCache(options) {
-  return options.brain.api === 'anthropic' ? (await import('./anthropic.js')).warmCache(options) : null
-}
+export const warmCache = async (options) => (options.brain.api === 'anthropic' ? (await import('./anthropic.js')).warmCache(options) : null)
 
 /** Lists models in provider order. @param {Connection} options @returns {Promise<ModelInfo[]>} */
 export async function listModels({ brain, apiKey, signal, fetch = globalThis.fetch }) {
@@ -122,9 +115,7 @@ export async function listModels({ brain, apiKey, signal, fetch = globalThis.fet
   delete headers['content-type'] // a GET has no body
   const url = vertex ? `${new URL(brain.baseURL).origin}/v1beta1/publishers/google/models` : endpoint(brain, anthropic ? '/models?limit=100' : '/models')
   const res = await fetchOrThrow(fetch, url, { headers }, signal)
-  const json = await res.json().catch((e) => {
-    throw wrapError(e, signal, 'bad_response')
-  })
+  const json = await res.json().catch((e) => { throw wrapError(e, signal, 'bad_response') })
   const list = vertex ? json?.publisherModels : json?.data
   if (!Array.isArray(list)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
   if (vertex) return list.map((/** @type {any} */ m) => ({ id: `google/${String(m.name).split('/').at(-1)}` })).filter((m) => m.id.includes('gemini'))
@@ -140,10 +131,7 @@ export async function checkKey({ brain, apiKey, signal, fetch = globalThis.fetch
   if (url) await fetchOrThrow(fetch, url, { headers: { authorization: `Bearer ${apiKey}` } }, signal)
 }
 
-/**
- * fetch() with every failure mapped to an LLMError. Also used by oauth.js.
- * @param {typeof globalThis.fetch} fetch @param {string} url @param {RequestInit} init @param {AbortSignal} [signal]
- */
+/** fetch() with every failure mapped to an LLMError. Also used by oauth.js. @param {typeof globalThis.fetch} fetch @param {string} url @param {RequestInit} init @param {AbortSignal} [signal] */
 export async function fetchOrThrow(fetch, url, init, signal) {
   let res
   try {
@@ -321,10 +309,7 @@ export function parseArgs(raw) {
 /** @param {unknown} value @returns {value is string} */
 const isText = (value) => typeof value === 'string' && value !== ''
 
-/**
- * @param {StopReason} stopReason @param {Usage|undefined} usage @param {string} content
- * @param {ToolCall[]} toolCalls @param {any[]} [raw] @returns {StreamEvent}
- */
+/** @param {StopReason} stopReason @param {Usage|undefined} usage @param {string} content @param {ToolCall[]} toolCalls @param {any[]} [raw] @returns {StreamEvent} */
 export function doneEvent(stopReason, usage, content, toolCalls, raw) {
   /** @type {AssistantMessage} */
   const message = { role: 'assistant', content, ...(toolCalls.length && { toolCalls }), ...(raw && { raw }) }

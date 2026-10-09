@@ -4,7 +4,7 @@
 import { join, readJSON, walk, writeJSON } from './fs.js'
 import { isPicture } from './events.js'
 
-/** @import { FS, ResourceLink, DocumentPart } from './types.js' */
+/** @import { FS, Envelope, ResourceLink, DocumentPart } from './types.js' */
 /** @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string }} FileMeta */
 
 const MARKER = /^\[\[page (\d+)\]\]$/m
@@ -18,8 +18,8 @@ export async function sha256Hex(bytes) {
 /** Rough and deliberately high: UTF-8 bytes / 3 (about right for CJK, generous for Latin). @param {string} text */
 export const estimateTokens = (text) => Math.ceil(new TextEncoder().encode(text).length / 3)
 
-/** @param {string[]} pages */
-export const joinPages = (pages) => pages.map((page, i) => `[[page ${i + 1}]]\n${page}`).join('\n\n')
+/** @param {string[]} pages @param {number} [first] the first one's number */
+export const joinPages = (pages, first = 1) => pages.map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')
 
 /** @param {string} text @returns {string[]} */
 export function splitPages(text) {
@@ -29,8 +29,7 @@ export function splitPages(text) {
 
 /**
  * Stores a file and its extracted text. Returns the link a conversation keeps.
- * @param {FS} fs
- * @param {{ projectDir: string, name: string, mimeType?: string, bytes: Uint8Array, pages: string[], by: string, now?: Date }} input
+ * @param {FS} fs @param {{ projectDir: string, name: string, mimeType?: string, bytes: Uint8Array, pages: string[], by: string, now?: Date }} input
  * @returns {Promise<ResourceLink>}
  */
 export async function addFile(fs, { projectDir, name, mimeType = '', bytes, pages, by, now = new Date() }) {
@@ -52,14 +51,10 @@ export async function addFile(fs, { projectDir, name, mimeType = '', bytes, page
 const textPath = (uri) => uri.replace(/\.[^./]+$/, '.md')
 
 /** @param {FS} fs @param {string} projectDir @param {string} uri */
-export async function fileText(fs, projectDir, uri) {
-  return fs.read(join(projectDir, textPath(uri)))
-}
+export const fileText = (fs, projectDir, uri) => fs.read(join(projectDir, textPath(uri)))
 
 /** @param {FS} fs @param {string} projectDir @param {string} uri @returns {Promise<FileMeta | null>} */
-export async function fileMeta(fs, projectDir, uri) {
-  return readJSON(fs, join(projectDir, textPath(uri).replace(/\.md$/, '.meta.json')))
-}
+export const fileMeta = (fs, projectDir, uri) => readJSON(fs, join(projectDir, textPath(uri).replace(/\.md$/, '.meta.json')))
 
 /**
  * Which pages of a file go into the brain's context: all of them if they fit the budget,
@@ -94,7 +89,7 @@ export function documentPart(link, text, picture) {
   const pages = splitPages(text)
   const [first, last] = link._meta?.pages ?? [1, pages.length]
   if (first === 1 && last >= pages.length) return { ...part, text: pages.length > 1 ? joinPages(pages) : pages[0] }
-  const shown = pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')
+  const shown = joinPages(pages.slice(first - 1, last), first)
   return { ...part, text: `${shown}\n\n(Pages ${first}–${last} of ${pages.length}. Use read for the others.)` }
 }
 
@@ -106,6 +101,10 @@ export function sourceNumber(earlier, link) {
   const numbers = earlier.map((other) => other._meta?.source ?? 0)
   return earlier.find((other) => other.uri === link.uri && other._meta?.source)?._meta?.source ?? Math.max(0, ...numbers) + 1
 }
+
+/** The number a turn's first new source is cited by: after every file and source so far (D71). @param {Envelope[]} records */
+export const nextSource = (records) => 1 + Math.max(0, ...records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link'
+  ? [update.content._meta?.source ?? 0] : update?.sessionUpdate === 'tool_call' ? (update._meta?.sources ?? []).map((source) => source.n) : [])))
 
 /**
  * "3", "2-5" or "4-" → a 1-based inclusive range within 1..count.
@@ -178,8 +177,7 @@ export function readTool({ fs, projectDir, files, maxTokens = 6000 }) {
 /**
  * What Jean's files take, in bytes, by kind, for Settings › Your data (D177): projects' conversations, files
  * and workspaces, and the rest (settings, memory, instructions, skills, routines, keys, indexes).
- * @param {FS} fs
- * @returns {Promise<Record<'conversations' | 'files' | 'workspace' | 'rest', number>>}
+ * @param {FS} fs @returns {Promise<Record<'conversations' | 'files' | 'workspace' | 'rest', number>>}
  */
 export async function weigh(fs) {
   const kinds = { conversations: 0, files: 0, workspace: 0, rest: 0 }

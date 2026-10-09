@@ -14,9 +14,9 @@ import { register } from '../../ui/caps.js'
 import { declared } from '../../ui/markdown.js'
 import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { SAME_KIND } from '../../ui/discovery.js'
-import { listSkills, saveSkill, skillLines } from '../../core/skills.js'
+import { listSkills, saveSkill, skillLines, skillSteps } from '../../core/skills.js'
 import { slug } from '../../core/settings.js'
-import { dirname, join, walk } from '../../core/fs.js'
+import { join } from '../../core/fs.js'
 import { t } from '../../core/i18n.js'
 import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf } from './sources.js'
 import { readDirectory } from './directory.js'
@@ -50,24 +50,8 @@ const skillTool = {
   run: (args) => steps(String(args?.name ?? '')),
 }
 
-/**
- * A skill's steps, naming the files beside them, or one of those files ("name/references/forms.md"),
- * for `skill` and for a skill named in the box (D199). @param {string} named
- */
-export async function steps(named) {
-  const [name, ...rest] = named.trim().split('/')
-  const all = await skills()
-  const skill = all.find((candidate) => candidate.name === name)
-  if (!skill) throw new Error(`There is no skill named "${name}". Skills: ${all.map((candidate) => candidate.name).join(', ') || 'none'}.`)
-  const folder = dirname(skill.path)
-  if (rest.length) {
-    const text = rest.includes('..') ? null : await app.fs.read(join(folder, ...rest))
-    if (text === null) throw new Error(`The skill "${name}" has no file "${rest.join('/')}".`)
-    return text
-  }
-  const beside = (await walk(app.fs, folder)).map((path) => path.slice(folder.length + 1)).filter((path) => path !== 'SKILL.md')
-  return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
-}
+/** A skill's steps, or one of the files beside them, for `skill` and for a skill named in the box (D199). @param {string} named */
+export const steps = async (named) => skillSteps(app.fs, await skills(), named)
 
 /** @type {import('../../core/loop.js').Tool} */
 const saveTool = {

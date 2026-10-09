@@ -61,13 +61,8 @@ export const DEFAULT_URLS = Object.freeze({
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
 })
 
-/**
- * @param {keyof typeof DEFAULT_URLS} name
- * @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy]
- */
-export function serviceURL(name, settings, policy = {}) {
-  return policy.urls?.[name] ?? settings.urls?.[name] ?? DEFAULT_URLS[name]
-}
+/** @param {keyof typeof DEFAULT_URLS} name @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy] */
+export const serviceURL = (name, settings, policy = {}) => policy.urls?.[name] ?? settings.urls?.[name] ?? DEFAULT_URLS[name]
 
 /**
  * Whether a brain or a connection is used in a project: in those it is kept to, or, kept to none,
@@ -82,14 +77,10 @@ export const isLocal = (brain) => brain.api === 'device' || brain.provider !== '
 export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
 
 /** @param {FS} fs @returns {Promise<Settings>} */
-export async function loadSettings(fs) {
-  return { ...DEFAULT_SETTINGS, ...await readJSON(fs, 'settings.json', {}) }
-}
+export const loadSettings = async (fs) => ({ ...DEFAULT_SETTINGS, ...await readJSON(fs, 'settings.json', {}) })
 
 /** @param {FS} fs @param {Settings} settings */
-export async function saveSettings(fs, settings) {
-  await writeJSON(fs, 'settings.json', settings)
-}
+export const saveSettings = (fs, settings) => writeJSON(fs, 'settings.json', settings)
 
 /**
  * Settings resolve as defaults ← user ← policy. Returns the effective settings
@@ -134,10 +125,7 @@ export async function listProjects(fs) {
   return projects
 }
 
-/**
- * @param {FS} fs @param {{ name: string, by: string, colour?: string, home?: boolean, now?: Date }} options
- * @returns {Promise<string>} its folder
- */
+/** @param {FS} fs @param {{ name: string, by: string, colour?: string, home?: boolean, now?: Date }} options @returns {Promise<string>} its folder */
 export async function createProject(fs, { name, by, colour, home = false, now = new Date() }) {
   const dir = `projects/${ulid(now.getTime())}-${home ? 'home' : slug(name) || 'project'}`
   const data = { format: 1, ...(home && { default: true }), name, ...(colour && { colour }), createdAt: now.toISOString(), by }
@@ -145,13 +133,8 @@ export async function createProject(fs, { name, by, colour, home = false, now = 
   return dir
 }
 
-/**
- * The default project, created on first run. Invisible until projects are discovered.
- * @param {FS} fs @param {{ by: string, name?: string }} options
- */
-export async function ensureHome(fs, { by, name = 'Home' }) {
-  return (await listProjects(fs)).find((project) => project.data.default === true)?.dir ?? createProject(fs, { name, by, home: true })
-}
+/** The default project, created on first run. Invisible until projects are discovered. @param {FS} fs @param {{ by: string, name?: string }} options */
+export const ensureHome = async (fs, { by, name = 'Home' }) => (await listProjects(fs)).find((project) => project.data.default === true)?.dir ?? createProject(fs, { name, by, home: true })
 
 /** Lower-case Latin letters, digits and single hyphens, for folder names: "Été à Paris!" → "ete-a-paris". @param {string} text */
 export const slug = (text) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64).replace(/-$/, '')

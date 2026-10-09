@@ -18,7 +18,7 @@ import { runTurn } from '../app/core/loop.js'
 import { appendRecords, createConversation, loadConversation } from '../app/core/conversations.js'
 import { isPicture, linkedFiles, splitSuggestions, toChatMessages, userRecords } from '../app/core/events.js'
 import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState } from '../app/core/prompt.js'
-import { addFile, documentPart, estimateTokens, fileText, pagesThatFit, sourceNumber } from '../app/core/files.js'
+import { addFile, documentPart, estimateTokens, fileText, joinPages, nextSource, pagesThatFit, sourceNumber } from '../app/core/files.js'
 import { ensureHome, listProjects, parseFrontMatter } from '../app/core/settings.js'
 import { resolveRule, ruleFromPermission } from '../app/core/rules.js'
 import { join, readJSON, writeJSON } from '../app/core/fs.js'
@@ -264,7 +264,7 @@ export function agent({ input, write, folder, brain: named, address, version, en
       if (!file) continue
       const pages = (await extractPages(file.name, file.bytes).catch(() => null)) ?? (isBinary(file.bytes) ? [''] : paginate(decodeText(file.bytes).split('\n')))
       const link = await addFile(jean, { projectDir: session.project.dir, name: file.name, mimeType: file.mimeType ?? '', bytes: file.bytes, pages, by: own.device })
-      session.texts.set(link.uri, pages.map((page, i) => `[[page ${i + 1}]]\n${page}`).join('\n\n'))
+      session.texts.set(link.uri, joinPages(pages))
       const [first, last] = pagesThatFit(pages, Math.max(budget, 1))
       budget -= pages.slice(0, last).reduce((sum, page) => sum + estimateTokens(page), 0)
       links.push({ ...link, _meta: { ...(last < pages.length && { pages: [first, last], of: pages.length }), source: sourceNumber([...linkedFiles(session.records), ...links], link) } })
@@ -359,7 +359,3 @@ export function agent({ input, write, folder, brain: named, address, version, en
   })
   return { closed }
 }
-
-/** The number the turn's first new source is cited by: after every file and source so far (D71). @param {Envelope[]} records */
-const nextSource = (records) => 1 + Math.max(0, ...records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link'
-  ? [update.content._meta?.source ?? 0] : update?.sessionUpdate === 'tool_call' ? (update._meta?.sources ?? []).map((source) => source.n) : [])))

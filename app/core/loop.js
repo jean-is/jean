@@ -154,11 +154,7 @@ export async function runTurn(options) {
     }
 
     const stopReason = done?.stopReason ?? 'other'
-    if (done?.usage) {
-      usage.inputTokens += done.usage.inputTokens ?? 0
-      usage.outputTokens += done.usage.outputTokens ?? 0
-      usage.cacheReadTokens += done.usage.cacheReadTokens ?? 0
-    }
+    for (const key of /** @type {const} */ (['inputTokens', 'outputTokens', 'cacheReadTokens'])) usage[key] += done?.usage?.[key] ?? 0
     // Thinking blocks and the provider's own search results are replayed unchanged by later turns.
     // How long it took is kept for the activity view.
     const raw = done?.message.raw
@@ -175,10 +171,7 @@ export async function runTurn(options) {
   return { stopReason: 'max_steps', usage, text: '' }
 }
 
-/**
- * @param {number} step @param {ToolCallInfo} brainEntry @param {string} thought @param {string} text
- * @returns {Envelope[]}
- */
+/** @param {number} step @param {ToolCallInfo} brainEntry @param {string} thought @param {string} text @returns {Envelope[]} */
 function stepRecords(step, brainEntry, thought, text) {
   /** @type {Envelope[]} */
   const records = [envelope('jean', { sessionUpdate: 'tool_call', ...brainEntry }, step)]
@@ -307,10 +300,7 @@ function safe(fn, fallback) {
   }
 }
 
-/**
- * How long to wait before asking again, or undefined when it wouldn't help.
- * @param {unknown} error @param {number | undefined} planned
- */
+/** How long to wait before asking again, or undefined when it wouldn't help. @param {unknown} error @param {number | undefined} planned */
 function retryWait(error, planned) {
   if (planned === undefined || !(error instanceof LLMError) || !error.retryable) return undefined
   const wait = Math.max(planned, error.retryAfter ?? 0)

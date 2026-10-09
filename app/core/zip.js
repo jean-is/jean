@@ -14,11 +14,7 @@ const DEFLATE = 8
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
-/**
- * Lists the entries of a zip from its central directory. Folders are skipped.
- * @param {Uint8Array} bytes
- * @returns {ZipEntry[]}
- */
+/** Lists the entries of a zip from its central directory. Folders are skipped. @param {Uint8Array} bytes @returns {ZipEntry[]} */
 export function readZip(bytes) {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   const end = findEnd(view)
@@ -64,12 +60,7 @@ function findEnd(view) {
   throw new Error('Not a zip file')
 }
 
-/**
- * Builds a zip. Entries are deflated when the platform can and it makes them smaller.
- * @param {{ name: string, bytes: Uint8Array }[]} files
- * @param {Date} [date]
- * @returns {Promise<Uint8Array>}
- */
+/** Builds a zip. Entries are deflated when the platform can and it makes them smaller. @param {{ name: string, bytes: Uint8Array }[]} files @param {Date} [date] @returns {Promise<Uint8Array>} */
 export async function writeZip(files, date = new Date()) {
   const time = ((date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1)) & 0xffff
   const day = (((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()) & 0xffff

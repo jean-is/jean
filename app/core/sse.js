@@ -3,10 +3,7 @@
 
 /** @typedef {{ event: string, data: string }} SSEEvent */
 
-/**
- * @param {ReadableStream<Uint8Array>} body
- * @returns {AsyncGenerator<SSEEvent, void, undefined>}
- */
+/** @param {ReadableStream<Uint8Array>} body @returns {AsyncGenerator<SSEEvent, void, undefined>} */
 export async function* parseSSE(body) {
   const reader = body.getReader()
   const decoder = new TextDecoder()
@@ -33,10 +30,7 @@ export async function* parseSSE(body) {
   }
 }
 
-/**
- * @param {{ event: string, data: string[] }} state
- * @param {string} line
- */
+/** @param {{ event: string, data: string[] }} state @param {string} line */
 function feed(state, line) {
   if (line === '') return dispatch(state)
   if (line.startsWith(':')) return null

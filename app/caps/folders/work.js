@@ -321,16 +321,16 @@ export function changeText(raw, old, replacement, name, replaceOnce) {
  * after, as a diff shows them, and the bytes to write. One passage, quoted exactly and found once; in
  * a Word document, within one paragraph; in a workbook, within one row; or, from an empty passage on a path that doesn't exist yet,
  * a file made: Word and Excel from Markdown and CSV (Things Jean made's writers), other files as text.
- * @param {FS} fs @param {{ path: string, old: string, new: string }} change @param {Readers & { paper?: 'a4' | 'letter' }} [readers]
+ * @param {FS} fs @param {{ path: string, old: string, new: string }} change @param {Readers & { locale?: string }} [readers] locale: whose paper a Word document is made on
  * @returns {Promise<{ path: string, before: string | null, after: string, bytes: Uint8Array }>}
  */
 export async function planChange(fs, { path, old, new: replacement }, readers = {}) {
-  const { replaceOnce, makeFile } = await import('../made/formats.js')
+  const { replaceOnce, makeFile, paperFor } = await import('../made/formats.js')
   const stamp = await stampOf(fs, path)
   if (!stamp) {
     if (old) throw new Error(`There is no file at ${path}. To make one, give an empty passage.`)
     if (/\.(docx|xlsx)$/i.test(path)) {
-      const made = await makeFile(path.split('/').at(-1) ?? path, replacement, { paper: readers.paper })
+      const made = await makeFile(path.split('/').at(-1) ?? path, replacement, { paper: paperFor(readers.locale) })
       return { path, before: null, after: replacement, bytes: made.bytes }
     }
     return { path, before: null, after: replacement, bytes: encoder.encode(replacement) }

@@ -9,7 +9,7 @@ import { envelope, userRecords, toChatMessages, applyUpdate, titleOf, linkedFile
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { t, locale, languageName } from '../core/i18n.js'
-import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber } from '../core/files.js'
+import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import {
@@ -186,10 +186,6 @@ async function prepare(text, brain, records, notes = []) {
 
 /** The highest level Auto used in a conversation: it never steps down within one. @param {Envelope[]} records */
 const autoLevel = (records) => Math.max(0, ...records.map((record) => /** @type {any} */ (record.update)?.rawInput?.auto?.level ?? 0))
-
-/** The number the turn's first new source is cited by: after every file and source so far (D71). @param {Envelope[]} records */
-const nextSource = (records) => 1 + Math.max(0, ...records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link'
-  ? [update.content._meta?.source ?? 0] : update?.sessionUpdate === 'tool_call' ? (update._meta?.sources ?? []).map((source) => source.n) : [])))
 
 /** The last answer's text, for "is the user unhappy with it?". @param {Envelope[]} records */
 const lastAnswer = (records) => {

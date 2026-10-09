@@ -3,11 +3,7 @@
 
 /** @import { FS, DirEntry } from './types.js' */
 
-/**
- * Like normalizePath, but '' (the root) is allowed.
- * @param {string} path
- * @returns {string}
- */
+/** Like normalizePath, but '' (the root) is allowed. @param {string} path @returns {string} */
 export function normalizeDir(path) {
   if (typeof path !== 'string') throw new TypeError(`Path must be a string, got ${typeof path}`)
   if (path.startsWith('/') || path.includes('\\')) throw new TypeError(`Invalid path: ${path}`)
@@ -19,23 +15,15 @@ export function normalizeDir(path) {
   return trimmed
 }
 
-/**
- * @param {string} path relative POSIX path, e.g. "projects/x/project.md"
- * @returns {string}
- */
+/** @param {string} path relative POSIX path, e.g. "projects/x/project.md" @returns {string} */
 export function normalizePath(path) {
   const normalized = normalizeDir(path)
   if (normalized === '') throw new TypeError('Empty path')
   return normalized
 }
 
-/**
- * Empty parts are ignored; joining nothing gives '' (the root).
- * @param {...string} parts
- */
-export function join(...parts) {
-  return parts.map(normalizeDir).filter(Boolean).join('/')
-}
+/** Empty parts are ignored; joining nothing gives '' (the root). @param {...string} parts */
+export const join = (...parts) => parts.map(normalizeDir).filter(Boolean).join('/')
 
 /** @param {string} path @returns {string} '' for top-level entries */
 export function dirname(path) {
@@ -50,8 +38,8 @@ export function basename(path) {
   return normalized.slice(normalized.lastIndexOf('/') + 1)
 }
 
-/** @param {DirEntry} a @param {DirEntry} b */
-const byName = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
+/** Entries in the order of their names' code units, as every FS lists them. @param {DirEntry} a @param {DirEntry} b */
+export const byName = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
 
 /** @param {unknown} text */
 function assertText(text) {
@@ -97,12 +85,12 @@ export function memoryFS(initial = {}) {
     return false
   }
 
-  /** @param {string} path */
-  const assertWritable = (path) => {
-    if (isDir(path)) throw new DOMException(`Is a directory: ${path}`, 'TypeMismatchError')
-    for (let dir = dirname(path); dir; dir = dirname(dir)) {
-      if (files.has(dir)) throw new DOMException(`Not a directory: ${dir}`, 'TypeMismatchError')
-    }
+  /** A path a file can be written at, normalized: not a directory, and under none of the files. @param {string} path */
+  const writable = (path) => {
+    const key = normalizePath(path)
+    if (isDir(key)) throw new DOMException(`Is a directory: ${key}`, 'TypeMismatchError')
+    for (let dir = dirname(key); dir; dir = dirname(dir)) if (files.has(dir)) throw new DOMException(`Not a directory: ${dir}`, 'TypeMismatchError')
+    return key
   }
 
   return {
@@ -114,21 +102,16 @@ export function memoryFS(initial = {}) {
       return value === undefined ? null : typeof value === 'string' ? encoder.encode(value) : value.slice()
     },
     async write(path, value) {
-      const key = normalizePath(path)
       assertText(value)
-      assertWritable(key)
-      put(key, value)
+      put(writable(path), value)
     },
     async writeBytes(path, bytes) {
-      const key = normalizePath(path)
       assertBytes(bytes)
-      assertWritable(key)
-      put(key, bytes.slice())
+      put(writable(path), bytes.slice())
     },
     async append(path, value) {
-      const key = normalizePath(path)
       assertText(value)
-      assertWritable(key)
+      const key = writable(path)
       put(key, (text(key) ?? '') + value)
     },
     async list(dir) {
@@ -167,11 +150,7 @@ export function memoryFS(initial = {}) {
   }
 }
 
-/**
- * Every file under `dir`, recursively, as paths relative to the root.
- * @param {FS} fs @param {string} [dir]
- * @returns {Promise<string[]>}
- */
+/** Every file under `dir`, recursively, as paths relative to the root. @param {FS} fs @param {string} [dir] @returns {Promise<string[]>} */
 export async function walk(fs, dir = '') {
   /** @type {string[]} */
   const paths = []
@@ -183,11 +162,7 @@ export async function walk(fs, dir = '') {
   return paths
 }
 
-/**
- * @param {FS} fs
- * @param {string} path
- * @param {any} [fallback] returned when the file is missing or not valid JSON
- */
+/** @param {FS} fs @param {string} path @param {any} [fallback] returned when the file is missing or not valid JSON */
 export async function readJSON(fs, path, fallback = null) {
   const text = await fs.read(path)
   if (text === null) return fallback
@@ -198,11 +173,5 @@ export async function readJSON(fs, path, fallback = null) {
   }
 }
 
-/**
- * @param {FS} fs
- * @param {string} path
- * @param {any} value
- */
-export async function writeJSON(fs, path, value) {
-  await fs.write(path, JSON.stringify(value, null, 2) + '\n')
-}
+/** @param {FS} fs @param {string} path @param {any} value */
+export const writeJSON = (fs, path, value) => fs.write(path, JSON.stringify(value, null, 2) + '\n')

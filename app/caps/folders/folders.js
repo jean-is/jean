@@ -472,15 +472,6 @@ const openTool = {
   },
 }
 
-/** Where paper is letter-sized: the user's region, as the browser gives it (as Things Jean made does). */
-function paper() {
-  try {
-    return /^(US|CA|MX|PH|CL|CO|VE|PR)$/.test(new Intl.Locale(navigator.language).maximize().region ?? '') ? 'letter' : 'a4'
-  } catch {
-    return 'a4'
-  }
-}
-
 /**
  * A change worked out against the file as it is, which must be as Jean last read it in this
  * conversation (D141): a file nobody has read is opened first, one that moved since is read again.
@@ -492,7 +483,7 @@ async function plan(fs, folder, args, calls) {
   const read = lastRead(calls, folder.name, path)
   if (now && !read) throw new Error(`Open ${path} before changing it.`)
   if (now && read && (now.size !== read[0] || now.lastModified !== read[1])) throw new Error(`${path} changed since you read it: someone edited it, or a sync brought a new version. Open it again, then change it.`)
-  return planChange(fs, { path, old: String(args?.old ?? ''), new: String(args?.new ?? '') }, { ...READS, paper: paper() })
+  return planChange(fs, { path, old: String(args?.old ?? ''), new: String(args?.new ?? '') }, { ...READS, locale: navigator.language })
 }
 
 /** Every call made in a conversation so far, this turn's included, in order. @param {ReturnType<typeof conversationOf>} conversation */

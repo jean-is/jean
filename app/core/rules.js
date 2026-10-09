@@ -6,16 +6,8 @@ export const RULE_KINDS = /** @type {const} */ (['read', 'edit', 'search', 'exec
 
 /** @type {Record<string, RuleValue>} */
 export const DEFAULT_RULES = {
-  read: 'allow',
-  edit: 'allow',
-  search: 'allow',
-  execute: 'allow',
-  think: 'allow',
-  fetch: 'ask',
-  move: 'ask',
-  delete: 'ask',
-  switch_mode: 'ask',
-  other: 'ask',
+  read: 'allow', edit: 'allow', search: 'allow', execute: 'allow', think: 'allow',
+  fetch: 'ask', move: 'ask', delete: 'ask', switch_mode: 'ask', other: 'ask',
 }
 
 /**
@@ -31,13 +23,5 @@ export function resolveRule(kind, { user = {}, project = {}, policy = {}, reserv
   return project[kind] ?? user[kind] ?? DEFAULT_RULES[kind] ?? 'ask'
 }
 
-/**
- * The rule an approval answer writes, if any.
- * @param {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} option
- * @returns {RuleValue | null}
- */
-export function ruleFromPermission(option) {
-  if (option === 'allow_always') return 'allow'
-  if (option === 'reject_always') return 'never'
-  return null
-}
+/** The rule an approval answer writes, if any. @param {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} option @returns {RuleValue | null} */
+export const ruleFromPermission = (option) => (option === 'allow_always' ? 'allow' : option === 'reject_always' ? 'never' : null)

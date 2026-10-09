@@ -16,9 +16,7 @@ const parts = new Set([''])
 const fetched = new Set()
 
 /** @param {(lang: string, part: string) => Promise<Record<string, any> | null>} fn */
-export function setLoader(fn) {
-  loader = fn
-}
+export const setLoader = (fn) => { loader = fn }
 
 /**
  * Every catalog has every key (test/locales.test.js), so English, the fallback, is only
@@ -49,11 +47,7 @@ export async function useStrings(part) {
   await load(locale.peek(), part)
 }
 
-/**
- * Translate a key. Reading `locale.value` makes callers reactive.
- * @param {string} key
- * @param {Record<string, string | number>} [params]
- */
+/** Translate a key. Reading `locale.value` makes callers reactive. @param {string} key @param {Record<string, string | number>} [params] */
 export function t(key, params = {}) {
   const lang = locale.value
   let entry = catalogs.get(lang)?.[key] ?? catalogs.get('en')?.[key] ?? key
@@ -61,9 +55,7 @@ export function t(key, params = {}) {
     const count = Number(params.count ?? 0)
     entry = entry[new Intl.PluralRules(lang).select(count)] ?? entry.other ?? ''
   }
-  return String(entry).replace(/\{(\w+)\}/g, (match, name) =>
-    name in params ? format(params[name], lang) : match,
-  )
+  return String(entry).replace(/\{(\w+)\}/g, (match, name) => (name in params ? format(params[name], lang) : match))
 }
 
 /** t(), with values that aren't text (a link, a time) kept where the translation puts them, never joined to strings. @param {string} key @param {Record<string, unknown>} params */
@@ -74,15 +66,10 @@ export function tParts(key, params) {
 }
 
 /** @param {string | number} value @param {string} lang */
-function format(value, lang) {
-  return typeof value === 'number' ? new Intl.NumberFormat(lang).format(value) : value
-}
+const format = (value, lang) => (typeof value === 'number' ? new Intl.NumberFormat(lang).format(value) : value)
 
 /** @param {string} [lang] @returns {'rtl' | 'ltr'} */
-export function dir(lang = locale.value) {
-  const base = lang.split('-')[0].toLowerCase()
-  return RTL.has(base) ? 'rtl' : 'ltr'
-}
+export const dir = (lang = locale.value) => (RTL.has(lang.split('-')[0].toLowerCase()) ? 'rtl' : 'ltr')
 
 /** Name of a language, written in `inLang` (defaults to itself). */
 export function languageName(/** @type {string} */ code, inLang = code) {
@@ -94,11 +81,7 @@ export function languageName(/** @type {string} */ code, inLang = code) {
   }
 }
 
-/**
- * Available locales that match the user's preferences, in their order, without repeats.
- * @param {string[]} available
- * @param {readonly string[]} preferred e.g. navigator.languages
- */
+/** Available locales that match the user's preferences, in their order, without repeats. @param {string[]} available @param {readonly string[]} preferred e.g. navigator.languages */
 export function preferredLocales(available, preferred) {
   /** @type {string[]} */
   const found = []
@@ -110,14 +93,8 @@ export function preferredLocales(available, preferred) {
   return found
 }
 
-/**
- * Best available locale for the user's preferences.
- * @param {string[]} available
- * @param {readonly string[]} preferred e.g. navigator.languages
- */
-export function pickLocale(available, preferred) {
-  return preferredLocales(available, preferred)[0] ?? (available.includes('en') ? 'en' : available[0])
-}
+/** Best available locale for the user's preferences. @param {string[]} available @param {readonly string[]} preferred e.g. navigator.languages */
+export const pickLocale = (available, preferred) => preferredLocales(available, preferred)[0] ?? (available.includes('en') ? 'en' : available[0])
 
 // Browsers say "fil" for the Filipino that the "tl" catalogue is written in.
 /** @type {Record<string, string>} */
@@ -148,21 +125,13 @@ export function formatDuration(ms) {
 /** "3 minutes ago", in the current locale. @param {string | number | Date} when */
 export function relativeTime(when, now = Date.now()) {
   const seconds = Math.round((new Date(when).getTime() - now) / 1000)
-  const units = /** @type {const} */ ([
-    ['year', 31536000], ['month', 2592000], ['week', 604800],
-    ['day', 86400], ['hour', 3600], ['minute', 60],
-  ])
+  const units = /** @type {const} */ ([['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]])
   const rtf = new Intl.RelativeTimeFormat(locale.value, { numeric: 'auto' })
-  for (const [unit, size] of units) {
-    if (Math.abs(seconds) >= size) return rtf.format(Math.round(seconds / size), unit)
-  }
+  for (const [unit, size] of units) if (Math.abs(seconds) >= size) return rtf.format(Math.round(seconds / size), unit)
   return rtf.format(0, 'second')
 }
 
-/**
- * First words of a text, segmented per language (works for CJK and Thai).
- * @param {string} text
- */
+/** First words of a text, segmented per language (works for CJK and Thai). @param {string} text */
 export function firstWords(text, max = 8) {
   const segmenter = new Intl.Segmenter(locale.value, { granularity: 'word' })
   let words = 0

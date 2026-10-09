@@ -6,15 +6,12 @@
 import { randomUUID } from 'node:crypto'
 import { appendFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { normalizeDir, normalizePath } from '../app/core/fs.js'
+import { byName, normalizeDir, normalizePath } from '../app/core/fs.js'
 
-/** @import { FS, DirEntry } from '../app/core/types.js' */
+/** @import { FS } from '../app/core/types.js' */
 
 /** What reading something that isn't there, or isn't a file, gives. */
 const none = () => null
-
-/** @param {DirEntry} a @param {DirEntry} b */
-const byName = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
 
 /** @param {string} root an absolute path @param {{ swap?: boolean }} [options] swap: through a .tmp @returns {FS} */
 export function nodeFS(root, { swap = true } = {}) {

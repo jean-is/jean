@@ -2,20 +2,11 @@
 // model's context from them. One log, two readers.
 /** @import { Envelope, AcpUpdate, ToolCall, ToolCallInfo, ChatMessage, ToolMessage, PlanEntry, ResourceLink, DocumentPart, SystemNoteData } from './types.js' */
 
-/**
- * @param {string} by @param {AcpUpdate} update @param {number} [step]
- * @returns {Envelope}
- */
-export function envelope(by, update, step) {
-  return step === undefined
-    ? { at: new Date().toISOString(), by, update }
-    : { at: new Date().toISOString(), by, step, update }
-}
+/** @param {string} by @param {AcpUpdate} update @param {number} [step] @returns {Envelope} */
+export const envelope = (by, update, step) => ({ at: new Date().toISOString(), by, ...(step !== undefined && { step }), update })
 
 /** @param {string} text @param {string} by */
-export function userRecord(text, by) {
-  return envelope(by, { sessionUpdate: 'user_message_chunk', content: { type: 'text', text } })
-}
+export const userRecord = (text, by) => envelope(by, { sessionUpdate: 'user_message_chunk', content: { type: 'text', text } })
 
 /**
  * One user message: a chunk per shared file, then the text. Consecutive user chunks
@@ -27,18 +18,11 @@ export function userRecords(text, files, by) {
   return text || !links.length ? [...links, userRecord(text, by)] : links
 }
 
-/**
- * A system note (D46): what changed, in English for the brain, plus data for the UI.
- * @param {string} text @param {SystemNoteData} data
- */
-export function noteRecord(text, data) {
-  return envelope('jean', { sessionUpdate: '_system_note', text, data })
-}
+/** A system note (D46): what changed, in English for the brain, plus data for the UI. @param {string} text @param {SystemNoteData} data */
+export const noteRecord = (text, data) => envelope('jean', { sessionUpdate: '_system_note', text, data })
 
 /** @param {string} by @param {Record<string, any>} meta @returns {Envelope} */
-export function metaRecord(by, meta) {
-  return { at: new Date().toISOString(), by, meta }
-}
+export const metaRecord = (by, meta) => ({ at: new Date().toISOString(), by, meta })
 
 /**
  * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[] }} Step
@@ -82,16 +66,8 @@ export function foldTurns(records) {
   return turns
 }
 
-/** Every file linked from the conversation, in order. @param {Envelope[]} records */
-export function linkedFiles(records) {
-  /** @type {ResourceLink[]} */
-  const links = []
-  for (const record of records) {
-    const update = record.update
-    if (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link') links.push(update.content)
-  }
-  return links
-}
+/** Every file linked from the conversation, in order. @param {Envelope[]} records @returns {ResourceLink[]} */
+export const linkedFiles = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link' ? [update.content] : []))
 
 /** A picture brains that can see take as it is: PNG, JPEG, WebP or GIF. @param {ResourceLink} link */
 export const isPicture = (link) => /^image\/(png|jpeg|webp|gif)$/.test(link.mimeType ?? '')
@@ -166,10 +142,7 @@ export function toChatMessages(records, document = (link) => ({ name: link.name,
 }
 
 /** @param {unknown} value */
-function stringify(value) {
-  if (value === undefined || value === null) return ''
-  return typeof value === 'string' ? value : JSON.stringify(value)
-}
+const stringify = (value) => (value === undefined || value === null ? '' : typeof value === 'string' ? value : JSON.stringify(value))
 
 /**
  * A reply's text without the follow-ups the brain suggested in a trailing <suggestions>
@@ -184,12 +157,8 @@ export function splitSuggestions(text) {
   return { text: text.slice(0, at).trimEnd(), suggestions: suggestions.slice(0, 3) }
 }
 
-/** Latest title from meta records. @param {Envelope[]} records */
-export function titleOf(records) {
-  let title = ''
-  for (const record of records) if (record.meta?.title) title = record.meta.title
-  return title
-}
+/** Latest title from meta records. @param {Envelope[]} records @returns {string} */
+export const titleOf = (records) => records.findLast((record) => record.meta?.title)?.meta?.title ?? ''
 
 /** The words of each request, in order. @param {Envelope[]} records @returns {string[]} */
 export const requestsOf = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text' && update.content.text ? [update.content.text] : []))

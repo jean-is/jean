@@ -62,8 +62,7 @@ async function acp(values, version, env) {
   if (!values.folder) throw new Error(t('cli.folder'))
   const { agent } = await import('./acp.js')
   const folder = resolve(values.folder.replace(/^~(?=$|\/)/, homedir()))
-  const { closed } = agent({ input: process.stdin, write: (line) => process.stdout.write(line), folder, brain: values.brain, address: values.address, version, env })
-  await closed
+  await agent({ input: process.stdin, write: (line) => process.stdout.write(line), folder, brain: values.brain, address: values.address, version, env }).closed
   process.exit(0)
 }
 

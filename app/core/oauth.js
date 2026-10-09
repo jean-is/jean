@@ -8,9 +8,7 @@ const AUTH_URL = 'https://openrouter.ai/auth'
 const KEYS_URL = 'https://openrouter.ai/api/v1/auth/keys'
 
 /** 48 random bytes → 64 base64url characters (RFC 7636 allows 43 to 128). */
-export function createVerifier() {
-  return base64url(crypto.getRandomValues(new Uint8Array(48)))
-}
+export const createVerifier = () => base64url(crypto.getRandomValues(new Uint8Array(48)))
 
 /** @param {string} verifier */
 export async function challengeS256(verifier) {
@@ -19,13 +17,7 @@ export async function challengeS256(verifier) {
 }
 
 /** @param {{ callbackURL: string, challenge: string }} options */
-export function openRouterAuthURL({ callbackURL, challenge }) {
-  const url = new URL(AUTH_URL)
-  url.searchParams.set('callback_url', callbackURL)
-  url.searchParams.set('code_challenge', challenge)
-  url.searchParams.set('code_challenge_method', 'S256')
-  return url.href
-}
+export const openRouterAuthURL = ({ callbackURL, challenge }) => `${AUTH_URL}?${new URLSearchParams({ callback_url: callbackURL, code_challenge: challenge, code_challenge_method: 'S256' })}`
 
 /**
  * @param {{ code: string, verifier: string, fetch?: typeof globalThis.fetch }} options
@@ -42,9 +34,5 @@ export async function exchangeOpenRouterCode({ code, verifier, fetch = globalThi
   return json.key
 }
 
-/** @param {Uint8Array} bytes */
-function base64url(bytes) {
-  let binary = ''
-  for (const byte of bytes) binary += String.fromCharCode(byte)
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-}
+/** @param {Uint8Array} bytes a few dozen */
+const base64url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')

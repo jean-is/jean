@@ -22,11 +22,7 @@ function setClean(fs, path, isClean) {
   else paths.delete(path)
 }
 
-/**
- * @param {FS} fs
- * @param {{ projectDir: string, by: string, now?: Date }} options
- * @returns {Promise<{ id: string, path: string, header: ConversationHeader }>}
- */
+/** @param {FS} fs @param {{ projectDir: string, by: string, now?: Date }} options @returns {Promise<{ id: string, path: string, header: ConversationHeader }>} */
 export async function createConversation(fs, { projectDir, by, now = new Date() }) {
   const id = ulid(now.getTime())
   const path = join(projectDir, 'conversations', `${id}.jsonl`)
@@ -37,12 +33,7 @@ export async function createConversation(fs, { projectDir, by, now = new Date() 
   return { id, path, header }
 }
 
-/**
- * Appends every record in a single fs.append call.
- * @param {FS} fs
- * @param {string} path
- * @param {Envelope[]} records
- */
+/** Appends every record in a single fs.append call. @param {FS} fs @param {string} path @param {Envelope[]} records */
 export async function appendRecords(fs, path, records) {
   if (!records.length) return
   let text = records.map((record) => JSON.stringify(record) + '\n').join('')
@@ -67,10 +58,7 @@ export async function rewriteRecords(fs, path, records) {
   setClean(fs, path, true)
 }
 
-/**
- * @param {string | undefined} line
- * @returns {any} the parsed object, or null when the line is not a JSON object
- */
+/** @param {string | undefined} line @returns {any} the parsed object, or null when the line is not a JSON object */
 function parseLine(line) {
   if (line === undefined) return null
   try {
@@ -81,19 +69,13 @@ function parseLine(line) {
   }
 }
 
-/**
- * @param {FS} fs
- * @param {string} path
- * @returns {Promise<Conversation | null>} null when the file does not exist
- */
+/** @param {FS} fs @param {string} path @returns {Promise<Conversation | null>} null when the file does not exist */
 export async function loadConversation(fs, path) {
   const text = await fs.read(path)
   if (text === null) return null
   const lines = text.split('\n').filter((line) => line.trim())
   const header = parseLine(lines[0])
-  if (header?.kind !== 'conversation' || header.format !== 1) {
-    throw new Error(`Not a conversation file (or unsupported format): ${path}`)
-  }
+  if (header?.kind !== 'conversation' || header.format !== 1) throw new Error(`Not a conversation file (or unsupported format): ${path}`)
   /** @type {Envelope[]} */
   const records = []
   let title = ''
@@ -112,12 +94,7 @@ export async function loadConversation(fs, path) {
   return { header, records, title, updatedAt }
 }
 
-/**
- * @param {FS} fs
- * @param {string} path
- * @param {string} id
- * @returns {Promise<ConversationSummary | null>}
- */
+/** @param {FS} fs @param {string} path @param {string} id @returns {Promise<ConversationSummary | null>} */
 async function summarize(fs, path, id) {
   try {
     const conversation = await loadConversation(fs, path)
@@ -136,17 +113,13 @@ async function summarize(fs, path, id) {
 const compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0)
 
 /**
- * Reads every conversation in full (fine for 0.1; an index in .cache/ can come later).
- * @param {FS} fs
- * @param {string} projectDir
- * @returns {Promise<ConversationSummary[]>} most recently updated first
+ * Reads every conversation in full (an index in .cache/ can come later).
+ * @param {FS} fs @param {string} projectDir @returns {Promise<ConversationSummary[]>} most recently updated first
  */
 export async function listConversations(fs, projectDir) {
   const dir = join(projectDir, 'conversations')
   const files = (await fs.list(dir)).filter((entry) => entry.kind === 'file' && entry.name.endsWith('.jsonl'))
-  const summaries = await Promise.all(
-    files.map((entry) => summarize(fs, join(dir, entry.name), entry.name.slice(0, -'.jsonl'.length))),
-  )
+  const summaries = await Promise.all(files.map((entry) => summarize(fs, join(dir, entry.name), entry.name.slice(0, -'.jsonl'.length))))
   return summaries
     .filter((summary) => summary !== null)
     .sort((a, b) => compare(b.updatedAt, a.updatedAt) || compare(b.id, a.id))
@@ -168,10 +141,7 @@ export function oneRowEach(list) {
   })
 }
 
-/**
- * @param {FS} fs
- * @param {string} path
- */
+/** @param {FS} fs @param {string} path */
 export async function deleteConversation(fs, path) {
   await fs.remove(path)
   setClean(fs, path, false)
