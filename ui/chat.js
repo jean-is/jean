@@ -136,8 +136,8 @@ function site(url) {
  * @param {boolean} last @param {import('./markdown.js').Sources} sources
  */
 function turnView(turn, live, files, upTo, last, sources) {
-  // Calls the file keeps as pending never ended, or are asked again in the live answer (D212).
-  const steps = [...turn.steps.map((step) => ({ ...step, tools: step.tools.filter((tool) => tool.status !== 'pending') })), ...(live?.steps ?? [])]
+  // Calls the file keeps as pending never ended, or are asked again in the live answer; one it keeps as running was cut short (D212).
+  const steps = [...turn.steps.map((step) => ({ ...step, tools: step.tools.filter((tool) => tool.status !== 'pending').map(cutShort) })), ...(live?.steps ?? [])]
   // The brain's follow-ups come in a trailing block, hidden from the answer itself.
   const { text, suggestions } = splitSuggestions(steps.map((step) => step.text).filter(Boolean).join('\n\n'))
   const entries = steps.flatMap((step) => step.tools)
@@ -170,6 +170,9 @@ function turnView(turn, live, files, upTo, last, sources) {
     ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
   </li>`
 }
+
+/** A call the file keeps as running, which the page closed on: it ended there, and may not have been done. @param {ToolCallInfo} tool */
+const cutShort = (tool) => (tool.status === 'in_progress' ? { ...tool, status: /** @type {const} */ ('failed'), rawOutput: t('activity.cutShort') } : tool)
 
 /**
  * What the user might send next: the brain's own follow-ups, those the reflexes picked from

@@ -53,6 +53,7 @@
   "activity.stop.pause": "Wstrzymano, potem wznowiono",
   "activity.stop.other": "Zatrzymano z innego powodu",
   "activity.unfinished": "Zatrzymano przed końcem",
+  "activity.cutShort": "Przerwane po zamknięciu strony: mogło nie zostać wykonane",
   "approval.title": "Potrzebna twoja zgoda",
   "approval.question": "Zezwolić? {action}",
   "approval.allowOnce": "Zezwól raz",

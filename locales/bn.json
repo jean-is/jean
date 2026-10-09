@@ -53,6 +53,7 @@
   "activity.stop.pause": "থামানো হয়েছিল, তারপর চালিয়ে যাওয়া হয়েছে",
   "activity.stop.other": "অন্য কারণে থেমে গেছে",
   "activity.unfinished": "শেষ হওয়ার আগেই থেমে গেছে",
+  "activity.cutShort": "পৃষ্ঠা বন্ধ হওয়ায় মাঝপথে থেমে গেছে: হয়তো সম্পন্ন হয়নি",
   "approval.title": "আপনার অনুমোদন দরকার",
   "approval.question": "অনুমতি দেবেন? {action}",
   "approval.allowOnce": "একবার অনুমতি দিন",

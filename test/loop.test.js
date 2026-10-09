@@ -72,7 +72,9 @@ test('loop: tool call allowed by rule, then final answer; records replay as cont
     { role: 'assistant', content: 'Let me read it.', toolCalls: [{ id: 'c1', name: 'read', args: { path: 'a.csv' } }], raw: ['native'] },
     { role: 'tool', toolCallId: 'c1', name: 'read', content: 'contents of a.csv' },
   ])
-  const toolRecord = persisted.find((record) => record.update?.toolCallId === 'c1')
+  // Its start is kept first, then its end, which replaces it when the records are read back.
+  assert.deepEqual(persisted.filter((record) => record.update?.toolCallId === 'c1').map((record) => record.update.status), ['in_progress', 'completed'])
+  const toolRecord = persisted.findLast((record) => record.update?.toolCallId === 'c1')
   assert.equal(toolRecord.update.status, 'completed')
   assert.equal(toolRecord.update.title, 'Read a.csv')
   // How long the brain and the tool took, for the activity view.
@@ -104,6 +106,28 @@ test('loop: ask → declined; never; unknown tool; invalid JSON', async () => {
     assert.equal(toolMessage.isError, true)
     assert.equal(asked, rule === 'ask' ? 1 : 0)
   }
+})
+
+test('loop: a declined call says so in its record; one running when the page closed is read back as cut short, and not run again', async () => {
+  const call = { id: 'a', name: 'read', args: { path: 'a' } }
+  const { stream } = fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })], [done('end', { role: 'assistant', content: 'ok' })]])
+  /** @type {any[]} */
+  const declined = []
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [readTool], stream: /** @type {any} */ (stream), rule: () => 'never', persist: async (added) => { declined.push(...added) } })
+  assert.equal(declined.find((record) => record.update?.toolCallId === 'a').update._meta.declined, true)
+  // A call that never ends: the page closes while it runs.
+  const slowTool = { ...readTool, run: () => new Promise(() => {}) }
+  /** @type {any[]} */
+  const records = [userRecord('go', 'dev')]
+  runTurn({ brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [slowTool], stream: /** @type {any} */ (fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })]]).stream),
+    rule: () => 'allow', persist: async (added) => { records.push(...added) } })
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  assert.equal(records.at(-1).update.status, 'in_progress')
+  assert.equal(unanswered(records), null)
+  assert.deepEqual(toChatMessages(records).slice(1), [
+    { role: 'assistant', content: '', toolCalls: [call] },
+    { role: 'tool', toolCallId: 'a', name: 'read', content: 'Cut short before it ended: it may not have been done.', isError: true },
+  ])
 })
 
 test('loop: stream errors persist partial output and rethrow', async () => {
@@ -383,10 +407,10 @@ test('loop: a helper’s turn runs under its call, shares the numbering, and sta
   // Its records: under the delegate call, at the parent's step, without its text or thinking blocks.
   const nested = persisted.filter((record) => record.update?._meta?.parent)
   assert.deepEqual(nested.map((record) => [record.update.toolCallId.replace(/brain-\d+-\w+/, 'brain'), record.update._meta.parent, record.step]), [
-    ['p1/brain', 'p1', 0], ['p1/h1', 'p1', 0], ['p1/brain', 'p1', 0],
+    ['p1/brain', 'p1', 0], ['p1/h1', 'p1', 0], ['p1/h1', 'p1', 0], ['p1/brain', 'p1', 0],
   ])
   assert.ok(nested.every((record) => !record.update._meta.raw))
-  assert.deepEqual(nested[1].update._meta.sources, [{ title: 'Sky', url: 'https://sky.example', n: 2 }])
+  assert.deepEqual(nested[2].update._meta.sources, [{ title: 'Sky', url: 'https://sky.example', n: 2 }])
   assert.ok(!persisted.some((record) => record.update?.sessionUpdate === 'agent_message_chunk' && record.update.content.text.includes('sky is blue')))
   assert.ok(live.every(({ update }) => update.sessionUpdate !== 'agent_message_chunk' || update.content.text === 'Blue [2].'))
   // Replayed, the parent's context holds the delegate call and its result only.

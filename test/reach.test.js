@@ -163,7 +163,7 @@ describe('sources in the loop', () => {
         [{ type: 'text', delta: 'Two emails.' }, { type: 'cite', sources: [{ title: 'Lunch', url: 'mail://2' }, { title: 'Web', url: 'https://w.example' }] }, done('end', { role: 'assistant', content: 'Two emails.' })],
       ]),
     })
-    const record = persisted.find((r) => r.update?.toolCallId === 'c1')?.update
+    const record = persisted.findLast((r) => r.update?.toolCallId === 'c1')?.update
     assert.deepEqual({ ...record._meta, ms: undefined }, { ms: undefined, sources: [{ title: 'Invoice', url: 'mail://1', n: 1 }, { title: 'Lunch', url: 'mail://2', n: 2 }], image: { uri: 'files/x.png', name: 'x.png' } })
     assert.equal(result.text, 'Two emails. [2, 3]')
   })

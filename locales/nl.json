@@ -53,6 +53,7 @@
   "activity.stop.pause": "Gepauzeerd, daarna verder",
   "activity.stop.other": "Gestopt om een andere reden",
   "activity.unfinished": "Gestopt voor het einde",
+  "activity.cutShort": "Afgebroken toen de pagina sloot: misschien niet gedaan",
   "approval.title": "Je toestemming is nodig",
   "approval.question": "Toestaan? {action}",
   "approval.allowOnce": "Eén keer toestaan",

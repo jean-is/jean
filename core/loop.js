@@ -258,10 +258,14 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
       context.answer = await askPermission({ toolCall: { ...info, ...(checked?.content && { content: checked.content }) }, step })
       decision = context.answer.startsWith('allow') ? 'allow' : 'never'
     }
-    if (decision === 'never') output = 'The user declined this action.'
-    else {
+    if (decision === 'never') {
+      output = 'The user declined this action.'
+      context.meta.declined = true
+    } else {
       if (tool.asks) await waiting?.(info)
       onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, status: 'in_progress' }, step)
+      // Its start is kept, so a page closed while it runs leaves it cut short, not unsaid; a question is kept as pending instead (D212).
+      if (!parent && !tool.asks) await ctx.persist([envelope('jean', { sessionUpdate: 'tool_call', ...info, status: 'in_progress' }, step)])
       const started = Date.now()
       try {
         output = await tool.run(call.args, context)

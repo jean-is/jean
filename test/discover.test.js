@@ -71,8 +71,9 @@ test('loop: only declared tools reach the brain; scripts call any tool, nested a
   })
   assert.deepEqual(requests[0].tools.map((/** @type {any} */ spec) => spec.name), ['run', 'secret'], 'hidden tools are never declared')
   const calls = persisted.filter((record) => record.update?.sessionUpdate === 'tool_call' && record.update.name)
-  assert.deepEqual(calls.map((record) => [record.update.toolCallId, record.update._meta?.parent]), [['c1.1', 'c1'], ['c1.2', 'c1'], ['c1', undefined]])
-  assert.equal(calls[2].update.rawOutput, 'hidden:1 refused: The user declined this action.')
+  // The script's own start is kept first; its nested calls are kept as they end (D216).
+  assert.deepEqual(calls.map((record) => [record.update.toolCallId, record.update._meta?.parent]), [['c1', undefined], ['c1.1', 'c1'], ['c1.2', 'c1'], ['c1', undefined]])
+  assert.equal(calls[3].update.rawOutput, 'hidden:1 refused: The user declined this action.')
   const messages = toChatMessages(persisted)
   assert.deepEqual(messages.filter((m) => m.role === 'tool').map((m) => /** @type {any} */ (m).toolCallId), ['c1'], 'nested calls stay out of the context')
 })
@@ -89,10 +90,10 @@ test('find_tools declares what it finds from the next request on, unless run can
   const persisted = []
   await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'q' }], stream, tools: [finder, ...all], declared: ['find_tools', 'read'], rule: () => 'allow', persist: async (records) => { persisted.push(...records) } })
   assert.deepEqual(requests.map((request) => request.tools.map((/** @type {any} */ spec) => spec.name)), [['find_tools', 'read'], ['find_tools', 'read', 'chart'], ['find_tools', 'read', 'chart']])
-  const found = persisted.find((record) => record.update?.toolCallId === 'f').update
+  const found = persisted.findLast((record) => record.update?.toolCallId === 'f').update
   assert.match(found.rawOutput, /^chart\(\{ x: number \}\): chart things/)
   assert.deepEqual(found._meta.declare, ['chart'])
-  assert.equal(persisted.find((record) => record.update?.toolCallId === 'g').update.rawOutput, 'chart:3')
+  assert.equal(persisted.findLast((record) => record.update?.toolCallId === 'g').update.rawOutput, 'chart:3')
 
   const viaRun = await finder.run({ query: 'chart' }, { declared: ['find_tools', 'run'], call: async () => '', declare: () => assert.fail('nothing to declare') })
   assert.match(viaRun, /inside run/)

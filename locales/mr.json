@@ -53,6 +53,7 @@
   "activity.stop.pause": "थांबले, मग पुढे सुरू ठेवले",
   "activity.stop.other": "दुसऱ्या कारणाने थांबले",
   "activity.unfinished": "पूर्ण होण्याआधी थांबले",
+  "activity.cutShort": "पान बंद झाल्याने मधेच थांबले: कदाचित पूर्ण झाले नसेल",
   "approval.title": "तुमची मंजुरी हवी आहे",
   "approval.question": "परवानगी द्यायची? {action}",
   "approval.allowOnce": "एकदा परवानगी द्या",

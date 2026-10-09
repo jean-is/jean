@@ -53,6 +53,7 @@
   "activity.stop.pause": "توقّف مؤقتًا ثم تابع",
   "activity.stop.other": "توقف لسبب آخر",
   "activity.unfinished": "توقف قبل الانتهاء",
+  "activity.cutShort": "انقطع عند إغلاق الصفحة: ربما لم يُنجَز",
   "approval.title": "موافقتك مطلوبة",
   "approval.question": "هل تسمح بهذا؟ {action}",
   "approval.allowOnce": "السماح مرة واحدة",

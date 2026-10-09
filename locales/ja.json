@@ -53,6 +53,7 @@
   "activity.stop.pause": "一時停止し、再開しました",
   "activity.stop.other": "別の理由で止まりました",
   "activity.unfinished": "完了前に止まりました",
+  "activity.cutShort": "ページが閉じられたため中断：完了していない可能性があります",
   "approval.title": "承認が必要です",
   "approval.question": "許可しますか？ {action}",
   "approval.allowOnce": "今回だけ許可",

@@ -143,7 +143,7 @@ export function toChatMessages(records, document = (link) => ({ name: link.name,
     }
     for (const step of [...turn.steps].sort((a, b) => a.index - b.index)) {
       // A script's own calls (codemode) are part of its result, not of the brain's turn.
-      const calls = step.tools.filter((tool) => tool.name && !tool._meta?.parent && tool.status !== 'in_progress')
+      const calls = step.tools.filter((tool) => tool.name && !tool._meta?.parent)
       if (!step.text && !calls.length) continue
       const brain = step.tools.find((tool) => tool.kind === 'think' && !tool.name && tool._meta?.raw)
       messages.push({
@@ -156,7 +156,7 @@ export function toChatMessages(records, document = (link) => ({ name: link.name,
         // A call that never ended (stopped, or the page closed) was cut short, unless it runs again now (D212).
         if (tool.status === 'pending' && turn === turns.at(-1) && step.index === resume?.step) continue
         /** @type {ToolMessage} */
-        const result = { role: 'tool', toolCallId: tool.toolCallId, name: String(tool.name), content: tool.status === 'pending' ? 'Cut short before it ended: it may not have been done.' : stringify(tool.rawOutput) }
+        const result = { role: 'tool', toolCallId: tool.toolCallId, name: String(tool.name), content: tool.status === 'pending' || tool.status === 'in_progress' ? 'Cut short before it ended: it may not have been done.' : stringify(tool.rawOutput) }
         if (tool.status !== 'completed') result.isError = true
         messages.push(result)
       }

@@ -53,6 +53,7 @@
   "activity.stop.pause": "잠시 멈췄다가 계속함",
   "activity.stop.other": "다른 이유로 멈춤",
   "activity.unfinished": "끝나기 전에 멈춤",
+  "activity.cutShort": "페이지가 닫혀 중단됨: 완료되지 않았을 수 있음",
   "approval.title": "승인이 필요해요",
   "approval.question": "허용할까요? {action}",
   "approval.allowOnce": "한 번 허용",

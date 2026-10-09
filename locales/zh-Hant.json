@@ -53,6 +53,7 @@
   "activity.stop.pause": "暫停後繼續",
   "activity.stop.other": "因其他原因停止",
   "activity.unfinished": "未完成就停止了",
+  "activity.cutShort": "頁面關閉時中斷：可能尚未完成",
   "approval.title": "需要你的同意",
   "approval.question": "要允許嗎？{action}",
   "approval.allowOnce": "允許一次",

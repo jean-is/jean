@@ -53,6 +53,7 @@
   "activity.stop.pause": "مکث شد، سپس ادامه یافت",
   "activity.stop.other": "به دلیل دیگری متوقف شد",
   "activity.unfinished": "پیش از پایان متوقف شد",
+  "activity.cutShort": "با بسته شدن صفحه نیمه‌کاره ماند: شاید انجام نشده باشد",
   "approval.title": "تأیید شما لازم است",
   "approval.question": "اجازه داده شود؟ {action}",
   "approval.allowOnce": "فقط این بار",

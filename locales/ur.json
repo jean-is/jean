@@ -53,6 +53,7 @@
   "activity.stop.pause": "رک کر پھر جاری رہا",
   "activity.stop.other": "کسی اور وجہ سے رک گیا",
   "activity.unfinished": "مکمل ہونے سے پہلے رک گیا",
+  "activity.cutShort": "صفحہ بند ہونے پر بیچ میں رک گیا: شاید مکمل نہیں ہوا",
   "approval.title": "آپ کی منظوری درکار ہے",
   "approval.question": "اجازت دیں؟ {action}",
   "approval.allowOnce": "ایک بار اجازت دیں",

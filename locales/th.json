@@ -53,6 +53,7 @@
   "activity.stop.pause": "หยุดชั่วคราว แล้วทำต่อ",
   "activity.stop.other": "หยุดด้วยเหตุผลอื่น",
   "activity.unfinished": "หยุดก่อนเสร็จ",
+  "activity.cutShort": "หยุดกลางคันเมื่อปิดหน้า: อาจยังไม่ได้ทำ",
   "approval.title": "ต้องการการอนุมัติจากคุณ",
   "approval.question": "อนุญาตไหม {action}",
   "approval.allowOnce": "อนุญาตครั้งเดียว",

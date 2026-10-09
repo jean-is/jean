@@ -53,6 +53,7 @@
   "activity.stop.pause": "Paused, then went on",
   "activity.stop.other": "Stopped for another reason",
   "activity.unfinished": "Stopped before finishing",
+  "activity.cutShort": "Cut short when the page closed: it may not have been done",
   "approval.title": "Your approval is needed",
   "approval.question": "Allow this? {action}",
   "approval.allowOnce": "Allow once",

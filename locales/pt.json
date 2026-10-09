@@ -53,6 +53,7 @@
   "activity.stop.pause": "Fez uma pausa e continuou",
   "activity.stop.other": "Parou por outro motivo",
   "activity.unfinished": "Parou antes de terminar",
+  "activity.cutShort": "Interrompido ao fechar a página: pode não ter sido feito",
   "approval.title": "É precisa a tua aprovação",
   "approval.question": "Permitir isto? {action}",
   "approval.allowOnce": "Permitir uma vez",

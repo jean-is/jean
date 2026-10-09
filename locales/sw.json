@@ -53,6 +53,7 @@
   "activity.stop.pause": "Ilisimama kidogo, kisha ikaendelea",
   "activity.stop.other": "Ilisimama kwa sababu nyingine",
   "activity.unfinished": "Ilisimama kabla ya kumaliza",
+  "activity.cutShort": "Ilikatizwa ukurasa ulipofungwa: huenda haikufanyika",
   "approval.title": "Idhini yako inahitajika",
   "approval.question": "Uruhusu hili? {action}",
   "approval.allowOnce": "Ruhusu mara moja",

@@ -53,6 +53,7 @@
   "activity.stop.pause": "Duraklatıldı, sonra devam edildi",
   "activity.stop.other": "Başka bir nedenle durdu",
   "activity.unfinished": "Bitmeden durdu",
+  "activity.cutShort": "Sayfa kapanınca yarıda kaldı: yapılmamış olabilir",
   "approval.title": "Onayın gerekiyor",
   "approval.question": "İzin verilsin mi? {action}",
   "approval.allowOnce": "Bir kez izin ver",
