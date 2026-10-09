@@ -165,11 +165,11 @@ function keyed(event) {
 }
 
 /**
- * Enter runs (never while an IME is composing), Shift+Enter adds a line; ↑ and ↓ go through what was
- * typed; Tab completes, an empty line with the commands, or indents at an interpreter's prompt, and
- * keeps the keys, which Shift+Tab, Escape and ⌘J take elsewhere; Ctrl+C stops what runs and drops
- * the line, and a statement's lines, unless text is selected; Ctrl+D on an empty line ends the
- * interpreter; Ctrl+L clears.
+ * Enter runs, an empty line too (never while an IME is composing), Shift+Enter adds a line; ↑ and ↓
+ * go through what was typed; Tab completes, an empty line with the commands, or indents at an
+ * interpreter's prompt, and keeps the keys, which Shift+Tab, Escape and ⌘J take elsewhere; Ctrl+C
+ * stops what runs and drops the line, and a statement's lines, unless text is selected; Ctrl+D on
+ * an empty line ends the interpreter; Ctrl+L clears.
  * @param {KeyboardEvent} event
  */
 function typing(event) {
@@ -185,8 +185,7 @@ function typing(event) {
     event.preventDefault()
     const command = area.value
     area.value = ''
-    // At a prompt, an empty line counts: it ends python's block.
-    if (command.trim() || repl) run(command)
+    run(command)
   } else if ((up && back > 0) || (down && back < typedBefore.length)) {
     event.preventDefault()
     if (back === typedBefore.length) draft = area.value
@@ -264,6 +263,13 @@ function run(command) {
 async function runNow(conversation, terminal, command) {
   const { repl } = terminal
   following = true
+  // An empty line shows the prompt again, as a shell does, and nothing runs; at an interpreter's
+  // prompt it counts: it ends python's block.
+  if (!repl && !command.trim()) {
+    terminal.entries.push({ command: '', prompt: promptOf(terminal), out: '', err: '' })
+    bump()
+    return
+  }
   const running = new AbortController()
   /** @type {Entry} */
   const entry = { command: command === END ? '' : command, prompt: promptOf(terminal), out: '', err: '', running }

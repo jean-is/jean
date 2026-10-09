@@ -579,6 +579,10 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   const first = await run('cat a.txt && cd /tmp && pwd')
   await expect(first.locator('pre')).toHaveText('hi\n/tmp\n')
   await expect(terminal.locator('.terminal-line')).toContainText('/tmp $')
+  // An empty line shows the prompt again, as a shell does; nothing runs, and the brain isn't told.
+  const empty = await run('')
+  await expect(empty).toHaveText('/tmp $')
+  await expect(empty.locator('pre, .terminal-note')).toHaveCount(0)
   // What it changes in /workspace is kept at once, as the user's own.
   await run('echo made > /workspace/b.txt')
   expect(await page.evaluate(async () => {
@@ -650,7 +654,7 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   const settings = await openSettings(page, 'Computer')
   await settings.getByRole('button', { name: 'Open the terminal' }).click()
   await expect(terminal).toBeVisible()
-  await expect(terminal.locator('.terminal-entry')).toHaveCount(4)
+  await expect(terminal.locator('.terminal-entry')).toHaveCount(5)
   // The whole pane is ringed while it has the keyboard, not the line; clear clears it, as Ctrl+L does.
   await expect(line).toBeFocused()
   expect(await terminal.evaluate((pane) => [getComputedStyle(pane).outlineStyle, getComputedStyle(pane.querySelector('textarea') ?? pane).outlineStyle])).toEqual(['solid', 'none'])
