@@ -1,5 +1,6 @@
 {
-  "computer.text": "คอมพิวเตอร์ในสภาพแวดล้อมแยกภายในแท็บนี้ ยืมหน่วยประมวลผลและหน่วยความจำของอุปกรณ์นี้ แต่ไม่เคยเข้าถึงสิ่งอื่นใดบนอุปกรณ์ /workspace มีไฟล์ในโฟลเดอร์ของคุณ หรือพื้นที่ทำงานของโปรเจกต์นี้",
+  "computer.text": "คอมพิวเตอร์ในสภาพแวดล้อมแยกภายในแท็บนี้ ยืมหน่วยประมวลผลและหน่วยความจำของอุปกรณ์นี้ แต่ไม่เคยเข้าถึงสิ่งอื่นใดบนอุปกรณ์",
+  "computer.sandbox": "สภาพแวดล้อมแยก",
   "computer.state.asleep": "พักอยู่",
   "computer.state.waking": "กำลังเริ่ม",
   "computer.state.ready": "พร้อม",
@@ -9,7 +10,6 @@
     "other": "{used} จาก {count} คอร์"
   },
   "computer.memory": "หน่วยความจำ",
-  "computer.workspace.short": "พื้นที่ทำงาน",
   "computer.of": "{used} จาก {total}",
   "computer.of.least": "{used} จากอย่างน้อย {total}",
   "computer.engines": "สิ่งที่รันได้",
@@ -27,6 +27,7 @@
   "computer.internet.any": "ทุกเว็บไซต์",
   "computer.sites": "เว็บไซต์ที่เข้าถึงได้เสมอ",
   "computer.registries": "แหล่งที่มาของแพ็กเกจ",
+  "computer.advanced": "รีเลย์และแหล่งที่มาของแพ็กเกจ",
   "computer.registries.text": "สำหรับมิเรอร์ เช่นของหน่วยงานคุณ คีย์จะอยู่บนอุปกรณ์นี้และส่งไปยังที่อยู่นั้นเท่านั้น",
   "computer.registry.pyodide": "Python, แพ็กเกจของ Pyodide",
   "computer.registry.pypi": "Python, PyPI",

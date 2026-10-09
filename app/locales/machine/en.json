@@ -1,5 +1,5 @@
 {
-  "machine.text": "Commands can also run on this computer, with its own programs and servers: open a terminal in one of your folders and paste this line. Tasks with that folder then run their commands there, until you press Ctrl+C in that terminal.",
+  "machine.text": "Run commands on your own computer, with its programs and servers, such as a site’s dev server. JavaScript and Python stay in the sandbox.",
   "machine.on": "Tasks with the folder {folder} run their commands on this computer, each asked first, until you press Ctrl+C in its terminal.",
   "machine.forget": "Stop using it",
   "machine.question": "Run this on your computer, in {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Commands can also run on this computer, with its own programs and servers, in a folder you choose: tasks with that folder then run their commands there.",
   "machine.choose": "Choose a folder…",
   "machine.failed": "It didn’t start: it needs Node.js on this computer, the node command a terminal runs.",
-  "machine.on.app": "Tasks with the folder {folder} run their commands on this computer, each asked first."
+  "machine.on.app": "Tasks with the folder {folder} run their commands on this computer, each asked first.",
+  "machine.default": "Default",
+  "machine.computers": "Computers",
+  "machine.lede": "Tasks use the sandbox, except those in the folder you connect on this computer.",
+  "machine.off": "Not connected",
+  "machine.in": "In {folder}",
+  "machine.step.open": "Open a terminal in one of your folders.",
+  "machine.step.paste": "Paste this line there, then press Enter.",
+  "machine.step.wait": "Waiting for the line to run: this page notices by itself.",
+  "machine.trusted": "Runs without asking in",
+  "machine.untrust": "Ask first again in {folder}"
 }

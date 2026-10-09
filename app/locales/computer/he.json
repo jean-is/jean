@@ -1,5 +1,6 @@
 {
-  "computer.text": "מחשב בסביבה מבודדת בכרטיסייה הזו: הוא שואל את המעבד והזיכרון של המכשיר הזה, ולעולם לא מגיע לשום דבר אחר בו. ב-⁦/workspace⁩ נמצאים קבצי התיקייה שלכם, או סביבת העבודה של הפרויקט הזה.",
+  "computer.text": "מחשב בסביבה מבודדת בכרטיסייה הזו: הוא שואל את המעבד והזיכרון של המכשיר הזה, ולעולם לא מגיע לשום דבר אחר בו.",
+  "computer.sandbox": "סביבה מבודדת",
   "computer.state.asleep": "במצב שינה",
   "computer.state.waking": "בהפעלה",
   "computer.state.ready": "בכוננות",
@@ -11,7 +12,6 @@
     "other": "{used} מתוך {count} ליבות"
   },
   "computer.memory": "זיכרון",
-  "computer.workspace.short": "סביבת עבודה",
   "computer.of": "{used} מתוך {total}",
   "computer.of.least": "{used} מתוך {total} לפחות",
   "computer.engines": "מה רץ עליו",
@@ -29,6 +29,7 @@
   "computer.internet.any": "כל אתר",
   "computer.sites": "אתרים שתמיד מותר לו לגשת אליהם",
   "computer.registries": "מאיפה מגיעות החבילות",
+  "computer.advanced": "שרת ממסר ומקורות החבילות",
   "computer.registries.text": "לשרת מראה, למשל של הארגון שלכם. מפתח נשאר במכשיר הזה ונשלח רק לכתובת שלו.",
   "computer.registry.pyodide": "Python, חבילות Pyodide",
   "computer.registry.pypi": "Python, PyPI",

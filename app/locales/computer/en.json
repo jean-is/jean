@@ -1,5 +1,6 @@
 {
-  "computer.text": "A computer in a sandbox in this tab: it borrows this device’s processor and memory, and never reaches anything else on it. /workspace holds your folder’s files, or this project’s workspace.",
+  "computer.text": "A computer in a sandbox in this tab: it borrows this device’s processor and memory, and never reaches anything else on it.",
+  "computer.sandbox": "Sandbox",
   "computer.state.asleep": "Asleep",
   "computer.state.waking": "Waking up",
   "computer.state.ready": "Ready",
@@ -10,7 +11,6 @@
     "other": "{used} of {count} cores"
   },
   "computer.memory": "Memory",
-  "computer.workspace.short": "Workspace",
   "computer.of": "{used} of {total}",
   "computer.of.least": "{used} of at least {total}",
   "computer.engines": "What it runs",
@@ -28,6 +28,7 @@
   "computer.internet.any": "Any site",
   "computer.sites": "Sites it may always reach",
   "computer.registries": "Where packages come from",
+  "computer.advanced": "Relay and package sources",
   "computer.registries.text": "For a mirror, such as your organization’s. A key stays on this device and goes only to its address.",
   "computer.registry.pyodide": "Python, Pyodide’s packages",
   "computer.registry.pypi": "Python, PyPI",

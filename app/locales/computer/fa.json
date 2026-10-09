@@ -1,5 +1,6 @@
 {
-  "computer.text": "رایانه‌ای در محیطی ایزوله در همین زبانه: پردازنده و حافظهٔ این دستگاه را قرض می‌گیرد و هرگز به چیز دیگری روی آن دست نمی‌زند. ⁦/workspace⁩ فایل‌های پوشهٔ شما یا فضای کار این پروژه را در خود دارد.",
+  "computer.text": "رایانه‌ای در محیطی ایزوله در همین زبانه: پردازنده و حافظهٔ این دستگاه را قرض می‌گیرد و هرگز به چیز دیگری روی آن دست نمی‌زند.",
+  "computer.sandbox": "محیط ایزوله",
   "computer.state.asleep": "در حالت خواب",
   "computer.state.waking": "در حال بیدار شدن",
   "computer.state.ready": "آماده",
@@ -10,7 +11,6 @@
     "other": "{used} از {count} هسته"
   },
   "computer.memory": "حافظه",
-  "computer.workspace.short": "فضای کار",
   "computer.of": "{used} از {total}",
   "computer.of.least": "{used} از دست‌کم {total}",
   "computer.engines": "آنچه اجرا می‌کند",
@@ -28,6 +28,7 @@
   "computer.internet.any": "هر سایتی",
   "computer.sites": "سایت‌هایی که همیشه می‌تواند به آن‌ها دسترسی داشته باشد",
   "computer.registries": "منبع بسته‌ها",
+  "computer.advanced": "رله و منبع بسته‌ها",
   "computer.registries.text": "برای یک آینه، مثلاً آینهٔ سازمان شما. کلید روی این دستگاه می‌ماند و فقط به نشانی آن فرستاده می‌شود.",
   "computer.registry.pyodide": "Python، بسته‌های Pyodide",
   "computer.registry.pypi": "Python، PyPI",

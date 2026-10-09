@@ -1,5 +1,6 @@
 {
-  "computer.text": "Un ordinateur dans un bac à sable, dans cet onglet : il emprunte le processeur et la mémoire de cet appareil, sans jamais rien atteindre d’autre. /workspace contient les fichiers de votre dossier, ou l’espace de travail de ce projet.",
+  "computer.text": "Un ordinateur dans un bac à sable, dans cet onglet : il emprunte le processeur et la mémoire de cet appareil, sans jamais rien atteindre d’autre.",
+  "computer.sandbox": "Bac à sable",
   "computer.state.asleep": "En veille",
   "computer.state.waking": "Réveil en cours",
   "computer.state.ready": "Disponible",
@@ -11,7 +12,6 @@
     "other": "{used} sur {count} cœurs"
   },
   "computer.memory": "Mémoire",
-  "computer.workspace.short": "Espace de travail",
   "computer.of": "{used} sur {total}",
   "computer.of.least": "{used} sur au moins {total}",
   "computer.engines": "Ce qu’il fait tourner",
@@ -29,6 +29,7 @@
   "computer.internet.any": "Tous les sites",
   "computer.sites": "Sites qu’il peut toujours joindre",
   "computer.registries": "D’où viennent les paquets",
+  "computer.advanced": "Relais et sources des paquets",
   "computer.registries.text": "Pour un miroir, comme celui de votre organisation. Une clé reste sur cet appareil et ne va qu’à son adresse.",
   "computer.registry.pyodide": "Python, paquets de Pyodide",
   "computer.registry.pypi": "Python, PyPI",

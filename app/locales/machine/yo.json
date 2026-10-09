@@ -1,5 +1,5 @@
 {
-  "machine.text": "Àwọn àṣẹ tún lè ṣiṣẹ́ lórí kọ̀ǹpútà yìí, pẹ̀lú àwọn ètò àti sáfà tirẹ̀: ẹ ṣí ibùdó àṣẹ nínú ọ̀kan lára àwọn fódà yín kí ẹ sì lẹ ìlà yìí sínú rẹ̀. Nígbà náà àwọn iṣẹ́ tó ní fódà náà yóò máa ṣiṣẹ́ àwọn àṣẹ wọn níbẹ̀, títí ẹ ó fi tẹ Ctrl+C nínú ibùdó àṣẹ náà.",
+  "machine.text": "Ẹ ṣiṣẹ́ àwọn àṣẹ lórí kọ̀ǹpútà tiyín, pẹ̀lú àwọn ètò àti sáfà rẹ̀, bí sáfà ìdàgbàsókè ojú òpó kan. JavaScript àti Python ṣì wà nínú àyíká àdádó.",
   "machine.on": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan, títí ẹ ó fi tẹ Ctrl+C nínú ibùdó àṣẹ rẹ̀.",
   "machine.forget": "Dẹ́kun lílò ó",
   "machine.question": "Ṣé kí èyí ṣiṣẹ́ lórí kọ̀ǹpútà yín, nínú {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Àwọn àṣẹ tún lè ṣiṣẹ́ lórí kọ̀ǹpútà yìí, pẹ̀lú àwọn ètò àti sáfà tirẹ̀, nínú fódà tí ẹ bá yàn: àwọn iṣẹ́ tó ní fódà náà ń ṣiṣẹ́ àwọn àṣẹ wọn níbẹ̀.",
   "machine.choose": "Yan fódà kan…",
   "machine.failed": "Kò bẹ̀rẹ̀: ó nílò Node.js lórí kọ̀ǹpútà yìí, ìyẹn àṣẹ node nínú ibùdó àṣẹ.",
-  "machine.on.app": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan."
+  "machine.on.app": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan.",
+  "machine.default": "Àtilẹ̀wá",
+  "machine.computers": "Àwọn kọ̀ǹpútà",
+  "machine.lede": "Àwọn iṣẹ́ ń lo àyíká àdádó, àyàfi àwọn tó wà nínú fódà tí ẹ so mọ́ kọ̀ǹpútà yìí.",
+  "machine.off": "Kò so pọ̀",
+  "machine.in": "Nínú {folder}",
+  "machine.step.open": "Ẹ ṣí ibùdó àṣẹ nínú ọ̀kan lára àwọn fódà yín.",
+  "machine.step.paste": "Ẹ lẹ ìlà yìí síbẹ̀, lẹ́yìn náà ẹ tẹ Enter.",
+  "machine.step.wait": "À ń dúró kí ìlà náà ṣiṣẹ́: ojú ìwé yìí yóò kíyèsí i fúnra rẹ̀.",
+  "machine.trusted": "Ó ń ṣiṣẹ́ láì béèrè nínú",
+  "machine.untrust": "Ẹ tún béèrè ṣáájú nínú {folder}"
 }

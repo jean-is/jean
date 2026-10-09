@@ -97,14 +97,14 @@ test('the desktop app syncs with a folder picked with the system’s dialog, and
   }
 })
 
-test('in the desktop app, Settings › Computer has the computer’s whole memory, as the system tells it (D176)', async ({ page }) => {
+test('in the desktop app, Settings › Computer has the computer’s whole memory, as the system tells it (D176, D249)', async ({ page }) => {
   const host = await desktop(page, tmpdir())
   await start(page)
   await turnOn(page, 'Computer')
   const settings = page.locator('app-settings dialog[open]')
   await settings.locator('.settings-nav button', { hasText: 'Computer' }).click()
   // Exactly, where the browser alone says at least a power of two, or nothing.
-  await expect(settings.locator('.gauges li').nth(1)).toHaveText(/Memory\s*0 MB of 96 GB/)
+  await expect(settings.locator('.stats > div').nth(1)).toHaveText(/Memory\s*0 MB of 96 GB/)
   expect(host.asked).toContain('computer.getMemoryInfo')
 })
 
@@ -118,8 +118,10 @@ test('in the desktop app, This computer starts its bridge itself in a folder the
   try {
     await start(page)
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('machine'))
-    const part = (await openSettings(page, 'Computer')).locator('.machine')
-    // No line to paste: a folder to choose, where the app starts the bridge through the user's shell.
+    // Its card, beside the sandbox's (D248): no line to paste, a folder to choose, where the app starts the bridge through the user's shell.
+    const settings = await openSettings(page, 'Computer')
+    await settings.getByRole('tab', { name: /This computer/ }).click()
+    const part = settings.locator('.machine')
     await expect(part).toContainText('in a folder you choose')
     await expect(page.locator('.machine-line')).toHaveCount(0)
     await part.getByRole('button', { name: 'Choose a folder…' }).click()

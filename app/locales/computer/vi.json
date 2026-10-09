@@ -1,5 +1,6 @@
 {
-  "computer.text": "Một máy tính trong môi trường biệt lập ngay trong thẻ này: nó mượn bộ xử lý và bộ nhớ của thiết bị này, và không bao giờ chạm tới thứ gì khác trên đó. /workspace chứa tệp trong thư mục của bạn, hoặc không gian làm việc của dự án này.",
+  "computer.text": "Một máy tính trong môi trường biệt lập ngay trong thẻ này: nó mượn bộ xử lý và bộ nhớ của thiết bị này, và không bao giờ chạm tới thứ gì khác trên đó.",
+  "computer.sandbox": "Môi trường biệt lập",
   "computer.state.asleep": "Đang ngủ",
   "computer.state.waking": "Đang khởi động",
   "computer.state.ready": "Sẵn sàng",
@@ -9,7 +10,6 @@
     "other": "{used} / {count} lõi"
   },
   "computer.memory": "Bộ nhớ",
-  "computer.workspace.short": "Không gian làm việc",
   "computer.of": "{used} / {total}",
   "computer.of.least": "{used} / ít nhất {total}",
   "computer.engines": "Những gì nó chạy",
@@ -27,6 +27,7 @@
   "computer.internet.any": "Mọi trang",
   "computer.sites": "Các trang luôn được truy cập",
   "computer.registries": "Nguồn của các gói",
+  "computer.advanced": "Máy chuyển tiếp và nguồn của các gói",
   "computer.registries.text": "Dành cho một bản sao (mirror), chẳng hạn của tổ chức bạn. Khóa ở lại trên thiết bị này và chỉ gửi đến địa chỉ đó.",
   "computer.registry.pyodide": "Python, gói của Pyodide",
   "computer.registry.pypi": "Python, PyPI",

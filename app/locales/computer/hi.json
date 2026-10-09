@@ -1,5 +1,6 @@
 {
-  "computer.text": "इस टैब में एक अलग-थलग माहौल वाला कंप्यूटर: यह इस डिवाइस का प्रोसेसर और मेमोरी उधार लेता है, और उस पर किसी और चीज़ तक कभी नहीं पहुँचता। /workspace में आपके फ़ोल्डर की फ़ाइलें, या इस प्रोजेक्ट का कार्यक्षेत्र होता है।",
+  "computer.text": "इस टैब में एक अलग-थलग माहौल वाला कंप्यूटर: यह इस डिवाइस का प्रोसेसर और मेमोरी उधार लेता है, और उस पर किसी और चीज़ तक कभी नहीं पहुँचता।",
+  "computer.sandbox": "अलग-थलग माहौल",
   "computer.state.asleep": "स्लीप मोड में",
   "computer.state.waking": "आरंभ जारी",
   "computer.state.ready": "तैयार",
@@ -10,7 +11,6 @@
     "other": "{count} में से {used} कोर"
   },
   "computer.memory": "मेमोरी",
-  "computer.workspace.short": "कार्यक्षेत्र",
   "computer.of": "{total} में से {used}",
   "computer.of.least": "कम से कम {total} में से {used}",
   "computer.engines": "इस पर क्या चलता है",
@@ -28,6 +28,7 @@
   "computer.internet.any": "कोई भी साइट",
   "computer.sites": "साइटें जिन तक यह हमेशा पहुँच सकता है",
   "computer.registries": "पैकेज कहाँ से आते हैं",
+  "computer.advanced": "रिले और पैकेज के स्रोत",
   "computer.registries.text": "किसी मिरर के लिए, जैसे आपके संगठन का। कुंजी इसी डिवाइस पर रहती है और सिर्फ़ उसी पते पर जाती है।",
   "computer.registry.pyodide": "Python, Pyodide के पैकेज",
   "computer.registry.pypi": "Python, PyPI",

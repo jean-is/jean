@@ -1,5 +1,5 @@
 {
-  "machine.text": "指令也可以在這台電腦上執行，使用它自己的程式和伺服器：在你的某個資料夾中開啟終端機，貼上這一行。之後帶有該資料夾的任務會在那裡執行指令，直到你在那個終端機中按下 Ctrl+C。",
+  "machine.text": "在你自己的電腦上執行指令，使用它的程式和伺服器，例如網站的開發伺服器。JavaScript 和 Python 仍在隔離環境中。",
   "machine.on": "帶有資料夾 {folder} 的任務會在這台電腦上執行指令，每條都會先詢問，直到你在它的終端機中按下 Ctrl+C。",
   "machine.forget": "停止使用",
   "machine.question": "在你的電腦上的 {folder} 中執行這條指令嗎？",
@@ -7,5 +7,15 @@
   "machine.app": "指令也可以在這台電腦上執行，使用它自己的程式和伺服器，在你選擇的資料夾中：帶有該資料夾的任務會在那裡執行指令。",
   "machine.choose": "選擇資料夾…",
   "machine.failed": "沒有啟動：這台電腦需要 Node.js，也就是終端機裡的 node 指令。",
-  "machine.on.app": "帶有資料夾 {folder} 的任務會在這台電腦上執行指令，每條都會先詢問。"
+  "machine.on.app": "帶有資料夾 {folder} 的任務會在這台電腦上執行指令，每條都會先詢問。",
+  "machine.default": "預設",
+  "machine.computers": "電腦",
+  "machine.lede": "任務使用隔離環境，只有你在這台電腦上連接的資料夾裡的任務除外。",
+  "machine.off": "未連接",
+  "machine.in": "在 {folder} 中",
+  "machine.step.open": "在你的某個資料夾中開啟終端機。",
+  "machine.step.paste": "在那裡貼上這一行，然後按 Enter。",
+  "machine.step.wait": "正在等待這一行執行：此頁面會自動察覺。",
+  "machine.trusted": "不需詢問即執行的資料夾",
+  "machine.untrust": "在 {folder} 中重新先詢問"
 }

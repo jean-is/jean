@@ -1,5 +1,6 @@
 {
-  "computer.text": "Komputer di lingkungan terisolasi di tab ini: ia meminjam prosesor dan memori perangkat ini, dan tidak pernah menjangkau hal lain di dalamnya. /workspace berisi file folder Anda, atau ruang kerja proyek ini.",
+  "computer.text": "Komputer di lingkungan terisolasi di tab ini: ia meminjam prosesor dan memori perangkat ini, dan tidak pernah menjangkau hal lain di dalamnya.",
+  "computer.sandbox": "Lingkungan terisolasi",
   "computer.state.asleep": "Tidur",
   "computer.state.waking": "Sedang bangun",
   "computer.state.ready": "Siap",
@@ -9,7 +10,6 @@
     "other": "{used} dari {count} inti"
   },
   "computer.memory": "Memori",
-  "computer.workspace.short": "Ruang kerja",
   "computer.of": "{used} dari {total}",
   "computer.of.least": "{used} dari setidaknya {total}",
   "computer.engines": "Yang dijalankannya",
@@ -27,6 +27,7 @@
   "computer.internet.any": "Situs mana pun",
   "computer.sites": "Situs yang selalu boleh diakses",
   "computer.registries": "Asal paket",
+  "computer.advanced": "Relai dan asal paket",
   "computer.registries.text": "Untuk mirror, misalnya milik organisasi Anda. Kunci tetap di perangkat ini dan hanya dikirim ke alamatnya.",
   "computer.registry.pyodide": "Python, paket Pyodide",
   "computer.registry.pypi": "Python, PyPI",

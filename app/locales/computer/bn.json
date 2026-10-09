@@ -1,5 +1,6 @@
 {
-  "computer.text": "এই ট্যাবের ভেতরে একটি আলাদা সুরক্ষিত পরিবেশের কম্পিউটার: এটি এই ডিভাইসের প্রসেসর আর মেমরি ধার নেয়, কিন্তু এর অন্য কিছুতে কখনো পৌঁছায় না। /workspace-এ থাকে আপনার ফোল্ডারের ফাইল, বা এই প্রকল্পের কর্মক্ষেত্র।",
+  "computer.text": "এই ট্যাবের ভেতরে একটি আলাদা সুরক্ষিত পরিবেশের কম্পিউটার: এটি এই ডিভাইসের প্রসেসর আর মেমরি ধার নেয়, কিন্তু এর অন্য কিছুতে কখনো পৌঁছায় না।",
+  "computer.sandbox": "আলাদা সুরক্ষিত পরিবেশ",
   "computer.state.asleep": "ঘুমিয়ে আছে",
   "computer.state.waking": "চালু হচ্ছে",
   "computer.state.ready": "প্রস্তুত",
@@ -10,7 +11,6 @@
     "other": "{count}টি কোরের মধ্যে {used}টি"
   },
   "computer.memory": "মেমরি",
-  "computer.workspace.short": "কর্মক্ষেত্র",
   "computer.of": "{total}-এর মধ্যে {used}",
   "computer.of.least": "অন্তত {total}-এর মধ্যে {used}",
   "computer.engines": "এতে যা চলে",
@@ -28,6 +28,7 @@
   "computer.internet.any": "যেকোনো সাইট",
   "computer.sites": "যেসব সাইটে এটি সবসময় যেতে পারে",
   "computer.registries": "প্যাকেজ কোথা থেকে আসে",
+  "computer.advanced": "রিলে ও প্যাকেজের উৎস",
   "computer.registries.text": "একটি মিররের জন্য, যেমন আপনার প্রতিষ্ঠানের। চাবি এই ডিভাইসেই থাকে আর শুধু তার ঠিকানায় যায়।",
   "computer.registry.pyodide": "Python, Pyodide-এর প্যাকেজ",
   "computer.registry.pypi": "Python, PyPI",

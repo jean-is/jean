@@ -1,5 +1,5 @@
 {
-  "machine.text": "Arahan juga boleh berjalan pada komputer ini, dengan program dan pelayannya sendiri: buka terminal dalam salah satu folder anda dan tampal baris ini. Tugasan dengan folder itu kemudian menjalankan arahannya di sana, sehingga anda menekan Ctrl+C dalam terminal itu.",
+  "machine.text": "Jalankan arahan pada komputer anda sendiri, dengan program dan pelayannya, seperti pelayan pembangunan sesebuah laman. JavaScript dan Python kekal dalam persekitaran terasing.",
   "machine.on": "Tugasan dengan folder {folder} menjalankan arahannya pada komputer ini, setiap satu ditanya dahulu, sehingga anda menekan Ctrl+C dalam terminalnya.",
   "machine.forget": "Berhenti menggunakannya",
   "machine.question": "Jalankan ini pada komputer anda, dalam {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Arahan juga boleh berjalan pada komputer ini, dengan program dan pelayannya sendiri, dalam folder yang anda pilih: tugasan dengan folder itu menjalankan arahannya di sana.",
   "machine.choose": "Pilih folder…",
   "machine.failed": "Ia tidak bermula: komputer ini memerlukan Node.js, iaitu arahan node dalam terminal.",
-  "machine.on.app": "Tugasan dengan folder {folder} menjalankan arahannya pada komputer ini, setiap satu ditanya dahulu."
+  "machine.on.app": "Tugasan dengan folder {folder} menjalankan arahannya pada komputer ini, setiap satu ditanya dahulu.",
+  "machine.default": "Lalai",
+  "machine.computers": "Komputer",
+  "machine.lede": "Tugasan menggunakan persekitaran terasing, kecuali tugasan dalam folder yang anda sambungkan pada komputer ini.",
+  "machine.off": "Tidak bersambung",
+  "machine.in": "Dalam {folder}",
+  "machine.step.open": "Buka terminal dalam salah satu folder anda.",
+  "machine.step.paste": "Tampal baris ini di sana, kemudian tekan Enter.",
+  "machine.step.wait": "Menunggu baris ini berjalan: halaman ini akan perasan sendiri.",
+  "machine.trusted": "Berjalan tanpa bertanya dalam",
+  "machine.untrust": "Tanya dahulu semula dalam {folder}"
 }

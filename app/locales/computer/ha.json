@@ -1,5 +1,6 @@
 {
-  "computer.text": "Kwamfuta a cikin keɓaɓɓen wuri a wannan shafin: tana aron na'urar sarrafawa da ƙwaƙwalwar wannan na'ura, kuma ba ta taɓa kaiwa ga wani abu dabam a kanta. /workspace yana ɗauke da fayilolinka, ko wurin aikin wannan aiki.",
+  "computer.text": "Kwamfuta a cikin keɓaɓɓen wuri a wannan shafin: tana aron na'urar sarrafawa da ƙwaƙwalwar wannan na'ura, kuma ba ta taɓa kaiwa ga wani abu dabam a kanta.",
+  "computer.sandbox": "Keɓaɓɓen wuri",
   "computer.state.asleep": "Cikin barci",
   "computer.state.waking": "Ana farkawa",
   "computer.state.ready": "A shirye",
@@ -10,7 +11,6 @@
     "other": "{used} cikin ƙwaya {count}"
   },
   "computer.memory": "Ƙwaƙwalwa",
-  "computer.workspace.short": "Wurin aiki",
   "computer.of": "{used} cikin {total}",
   "computer.of.least": "{used} cikin aƙalla {total}",
   "computer.engines": "Abin da take gudanarwa",
@@ -28,6 +28,7 @@
   "computer.internet.any": "Kowane shafi",
   "computer.sites": "Shafukan da za ta iya isa gare su koyaushe",
   "computer.registries": "Inda fakitoci ke fitowa",
+  "computer.advanced": "Mai isarwa da inda fakitoci ke fitowa",
   "computer.registries.text": "Don madubi, kamar na ƙungiyarka. Makulli yana zama a wannan na'urar kuma yana zuwa adireshinsa kawai.",
   "computer.registry.pyodide": "Python, fakitocin Pyodide",
   "computer.registry.pypi": "Python, PyPI",

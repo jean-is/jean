@@ -1,5 +1,6 @@
 {
-  "computer.text": "Een computer in een afgeschermde omgeving in dit tabblad: hij leent de processor en het geheugen van dit apparaat en bereikt verder niets erop. /workspace bevat de bestanden van je map, of de werkruimte van dit project.",
+  "computer.text": "Een computer in een afgeschermde omgeving in dit tabblad: hij leent de processor en het geheugen van dit apparaat en bereikt verder niets erop.",
+  "computer.sandbox": "Afgeschermde omgeving",
   "computer.state.asleep": "In slaap",
   "computer.state.waking": "Wordt gestart",
   "computer.state.ready": "Klaar",
@@ -10,7 +11,6 @@
     "other": "{used} van {count} kernen"
   },
   "computer.memory": "Geheugen",
-  "computer.workspace.short": "Werkruimte",
   "computer.of": "{used} van {total}",
   "computer.of.least": "{used} van minstens {total}",
   "computer.engines": "Wat erop draait",
@@ -28,6 +28,7 @@
   "computer.internet.any": "Elke site",
   "computer.sites": "Sites die hij altijd mag bereiken",
   "computer.registries": "Waar pakketten vandaan komen",
+  "computer.advanced": "Relay en pakketbronnen",
   "computer.registries.text": "Voor een mirror, zoals die van je organisatie. Een sleutel blijft op dit apparaat en gaat alleen naar dat adres.",
   "computer.registry.pyodide": "Python, pakketten van Pyodide",
   "computer.registry.pypi": "Python, PyPI",

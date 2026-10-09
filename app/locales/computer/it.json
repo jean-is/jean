@@ -1,5 +1,6 @@
 {
-  "computer.text": "Un computer in un ambiente isolato in questa scheda: prende in prestito il processore e la memoria di questo dispositivo, e non raggiunge mai nient’altro. /workspace contiene i file della tua cartella o lo spazio di lavoro di questo progetto.",
+  "computer.text": "Un computer in un ambiente isolato in questa scheda: prende in prestito il processore e la memoria di questo dispositivo, e non raggiunge mai nient’altro.",
+  "computer.sandbox": "Ambiente isolato",
   "computer.state.asleep": "A riposo",
   "computer.state.waking": "In avvio",
   "computer.state.ready": "Disponibile",
@@ -11,7 +12,6 @@
     "other": "{used} di {count} core"
   },
   "computer.memory": "Memoria",
-  "computer.workspace.short": "Spazio di lavoro",
   "computer.of": "{used} di {total}",
   "computer.of.least": "{used} di almeno {total}",
   "computer.engines": "Cosa esegue",
@@ -29,6 +29,7 @@
   "computer.internet.any": "Qualsiasi sito",
   "computer.sites": "Siti che può sempre raggiungere",
   "computer.registries": "Da dove arrivano i pacchetti",
+  "computer.advanced": "Relay e origine dei pacchetti",
   "computer.registries.text": "Per un mirror, come quello della tua organizzazione. Una chiave resta su questo dispositivo e va solo al suo indirizzo.",
   "computer.registry.pyodide": "Python, pacchetti di Pyodide",
   "computer.registry.pypi": "Python, PyPI",

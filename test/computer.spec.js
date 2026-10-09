@@ -456,17 +456,21 @@ test('the project’s workspace in the browser: a page that uses its other files
   await expect(pane.locator('.browser-list').getByRole('button', { name: 'site/' })).toBeVisible()
 })
 
-test('Settings › Computer: the computer itself (D176), the internet, its sites, the relay, packages and the workspace', async ({ page }) => {
+test('Settings › Computer: the sandbox, named (D248), itself (D176, D249), the internet, its sites, the relay and packages under them, and the workspace', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await turnOn(page, 'Computer')
   const settings = page.locator('app-settings dialog[open]')
   await settings.locator('.settings-nav button', { hasText: 'Computer' }).click()
-  // Asleep until something runs; Try types a line in the terminal, and Enter wakes Python up.
+  // The sandbox, the one computer until This computer is found: no cards to choose from. Asleep until
+  // something runs; Try types a line in the terminal, and Enter wakes Python up.
   const panel = settings.locator('.settings-panel')
-  await expect(panel.locator('.computer h3')).toHaveText('Asleep')
-  // Rings, how far in their middle; never less than a megabyte.
-  await expect(panel.locator('.gauges li')).toHaveText([/0%\s*Processor\s*0 of \d+ cores?\s*$/, /Memory\s*0 MB/, /0%\s*Workspace\s*0 MB of 256 MB\s*$/])
+  await expect(panel.locator('.computer h3')).toHaveText(/^Sandbox\s*Asleep$/)
+  await expect(panel.getByRole('tablist')).toHaveCount(0)
+  // What it borrows, as figures, never less than a megabyte; nothing to restart yet; how full the workspace is, by Empty it.
+  await expect(panel.locator('.stats > div')).toHaveText([/^Processor\s*0 of \d+ cores?$/, /^Memory\s*0 MB/])
+  await expect(panel.getByRole('button', { name: 'Restart the computer' })).toHaveCount(0)
+  await expect(panel.locator('.filled')).toHaveText(/^0 MB of 256 MB$/)
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Asleep/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Asleep/])
   await panel.locator('.engines li', { hasText: 'Python' }).getByRole('button', { name: 'Try' }).click()
   await expect(settings).toBeHidden()
@@ -477,10 +481,11 @@ test('Settings › Computer: the computer itself (D176), the internet, its sites
   // Ready now, with the shell and Python, and the memory they hold; its light is on the terminal's button.
   await expect(page.locator('app-shell > .views .terminal-toggle .ember')).toHaveAttribute('data-state', 'ready')
   await openSettings(page, 'Computer')
-  await expect(panel.locator('.computer h3')).toHaveText('Ready')
+  await expect(panel.locator('.computer h3')).toHaveText(/^Sandbox\s*Ready$/)
+  await expect(panel.getByRole('button', { name: 'Restart the computer' })).toBeVisible()
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Ready/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Ready/])
   // Of this device's memory, at least as much as Chromium says; WebKit doesn't say.
-  await expect(panel.locator('.gauges li').nth(1)).toHaveText(/Memory\s*[\d.]+ MB( of at least \d+ GB)?\s*$/)
+  await expect(panel.locator('.stats > div').nth(1)).toHaveText(/^Memory\s*[\d.]+ MB( of at least \d+ GB)?$/)
   await expect(settings.locator('.settings-panel')).toContainText('Ask first')
   await settings.locator('.segmented label', { hasText: 'Any site' }).click()
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.computer?.internet)).toBe('any')
@@ -488,7 +493,10 @@ test('Settings › Computer: the computer itself (D176), the internet, its sites
   await sites.fill('example.com')
   await sites.press('Enter')
   await expect(settings.locator('.sites li')).toHaveText(['example.com'])
-  await settings.locator('details.other summary').click()
+  // The relay and where packages come from, folded under the sites.
+  await expect(settings.getByRole('textbox', { name: 'Reach the web through' })).toBeHidden()
+  await settings.locator('details.other summary', { hasText: 'Relay and package sources' }).click()
+  await expect(settings.getByRole('textbox', { name: 'Reach the web through' })).toBeVisible()
   await expect(settings.locator('details.other')).toContainText('JavaScript, npm')
   await expect(settings.locator('.settings-panel')).toContainText('This project’s workspace')
 })

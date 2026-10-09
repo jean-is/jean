@@ -1,5 +1,6 @@
 {
-  "computer.text": "這個分頁裡隔離環境中的一台電腦：它借用這台裝置的處理器和記憶體，但絕不碰觸裝置上的其他任何東西。/workspace 存放你資料夾中的檔案，或這個專案的工作區。",
+  "computer.text": "這個分頁裡隔離環境中的一台電腦：它借用這台裝置的處理器和記憶體，但絕不碰觸裝置上的其他任何東西。",
+  "computer.sandbox": "隔離環境",
   "computer.state.asleep": "休眠中",
   "computer.state.waking": "正在喚醒",
   "computer.state.ready": "就緒",
@@ -9,7 +10,6 @@
     "other": "{used} / {count} 核心"
   },
   "computer.memory": "記憶體",
-  "computer.workspace.short": "工作區",
   "computer.of": "{used} / {total}",
   "computer.of.least": "{used} / 至少 {total}",
   "computer.engines": "可以執行的",
@@ -27,6 +27,7 @@
   "computer.internet.any": "任何網站",
   "computer.sites": "一律可以存取的網站",
   "computer.registries": "套件來源",
+  "computer.advanced": "中繼伺服器和套件來源",
   "computer.registries.text": "用於鏡像站，例如你的組織的鏡像站。金鑰留在這台裝置上，只會傳送到該位址。",
   "computer.registry.pyodide": "Python，Pyodide 的套件",
   "computer.registry.pypi": "Python，PyPI",

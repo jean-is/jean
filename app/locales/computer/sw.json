@@ -1,5 +1,6 @@
 {
-  "computer.text": "Kompyuta katika mazingira yaliyotengwa ndani ya kichupo hiki: inaazima kichakataji na kumbukumbu ya kifaa hiki, na kamwe haifikii kitu kingine chochote ndani yake. /workspace ina faili za folda yako, au nafasi ya kazi ya mradi huu.",
+  "computer.text": "Kompyuta katika mazingira yaliyotengwa ndani ya kichupo hiki: inaazima kichakataji na kumbukumbu ya kifaa hiki, na kamwe haifikii kitu kingine chochote ndani yake.",
+  "computer.sandbox": "Mazingira yaliyotengwa",
   "computer.state.asleep": "Usingizini",
   "computer.state.waking": "Kuamka",
   "computer.state.ready": "Tayari",
@@ -10,7 +11,6 @@
     "other": "{used} kati ya viini {count}"
   },
   "computer.memory": "Kumbukumbu",
-  "computer.workspace.short": "Nafasi ya kazi",
   "computer.of": "{used} kati ya {total}",
   "computer.of.least": "{used} kati ya angalau {total}",
   "computer.engines": "Kinachoendeshwa humo",
@@ -28,6 +28,7 @@
   "computer.internet.any": "Tovuti yoyote",
   "computer.sites": "Tovuti inazoweza kufikia kila wakati",
   "computer.registries": "Vifurushi vinatoka wapi",
+  "computer.advanced": "Kituo cha kupitisha na vyanzo vya vifurushi",
   "computer.registries.text": "Kwa kioo, kama cha shirika lako. Ufunguo unabaki kwenye kifaa hiki na unatumwa kwa anwani yake tu.",
   "computer.registry.pyodide": "Python, vifurushi vya Pyodide",
   "computer.registry.pypi": "Python, PyPI",

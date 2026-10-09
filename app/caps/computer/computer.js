@@ -499,6 +499,8 @@ define('app-terminal-toggle', TerminalToggle)
 
 // Settings is open when its panel shows, so its module is there to be had: imported, not loaded with the computer.
 const dialogs = signal(/** @type {typeof import('../../ui/dialogs.js') | null} */ (null))
+/** This computer, once on (D198), which shows both computers, a card each (D248). */
+const there = signal(/** @type {typeof import('../machine/machine.js') | null} */ (null))
 /** The project's workspace, measured when the panel shows. */
 const used = signal(/** @type {number | null} */ (null))
 
@@ -559,96 +561,93 @@ function amount(bytes, k = 1000) {
   return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: size && size < 1 ? 2 : 1 }).format(size)
 }
 
-/**
- * A share of a limit as a ring, how far it goes in its middle, then what it is (D176); with no
- * limit known, an empty ring. @param {string} label @param {unknown} value @param {number | null} part
- */
-const gauge = (label, value, part) => html`<li>
-  <span class="ring" aria-hidden="true"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5"/><circle cx="18" cy="18" r="15.5" pathLength="100"
-    stroke-dasharray=${`${Math.min(1, part ?? 0) * 100} 100`} opacity=${part ? 1 : 0}/></svg>${part === null ? nothing : new Intl.NumberFormat(locale.value, { style: 'percent', maximumFractionDigits: part && part < 0.01 ? 1 : 0 }).format(part)}</span>
-  <span class="muted">${label}</span><span>${value}</span>
-</li>`
+/** A figure's amount, set off from the words around it. @param {string} text */
+const strong = (text) => html`<strong>${text}</strong>`
 
 /**
- * The computer itself, at the top of Settings › Computer (D176), after DEVS's Device and HappyCapy's
- * Sandbox: its light, with Restart; the core it computes on, of this device's, the memory it holds, of
- * this device's, and the workspace, of what it takes in; then what it runs, each engine asleep or ready, with Try.
+ * The computer itself, at the top of Settings › Computer (D176, D249): its light, with Restart once awake;
+ * the core it computes on and the memory it holds, of this device's, as figures, since neither limit is ever
+ * neared; then what it runs, each engine asleep or ready, with Try, and the terminal Try opens.
  */
 function itself() {
   const { state, engines, computing, memory } = box.status.value
-  const cores = navigator.hardwareConcurrency || 1
-  const limit = rightsNow().rights.workspaceMB * 1e6
   const { bytes: total, exact } = deviceMemory.value
-  const strong = (/** @type {string} */ text) => html`<strong>${text}</strong>`
   return html`<section class="computer">
       <div class="setting">
-        <div><h3>${light(state)}<span role="status">${t(`computer.state.${state}`)}</span></h3><p class="muted">${t('computer.text')}</p></div>
-        <button class="button subtle" ?disabled=${state === 'asleep'} @click=${restart}>${icons.retry} ${t('computer.restart')}</button>
+        <div><h3>${light(state)}${t('computer.sandbox')}<span class="muted" role="status">${t(`computer.state.${state}`)}</span></h3><p class="muted">${t('computer.text')}</p></div>
+        ${state === 'asleep' ? nothing : html`<button class="button subtle" @click=${restart}>${icons.retry} ${t('computer.restart')}</button>`}
       </div>
-      <ul class="gauges">
-        ${gauge(t('computer.processor'), tParts('computer.cores', { count: cores, used: strong(new Intl.NumberFormat(locale.value).format(computing ? 1 : 0)) }), computing ? 1 / cores : 0)}
-        ${gauge(t('computer.memory'), total ? tParts(exact ? 'computer.of' : 'computer.of.least', { used: strong(amount(memory, 1024)), total: amount(total, 1024) }) : strong(amount(memory, 1024)), total ? memory / total : null)}
-        ${gauge(t('computer.workspace.short'), tParts('computer.of', { used: strong(amount(used.value ?? 0)), total: amount(limit) }), (used.value ?? 0) / limit)}
-      </ul>
+      <dl class="stats">
+        <div><dt>${t('computer.processor')}</dt><dd>${tParts('computer.cores', { count: navigator.hardwareConcurrency || 1, used: strong(new Intl.NumberFormat(locale.value).format(computing ? 1 : 0)) })}</dd></div>
+        <div><dt>${t('computer.memory')}</dt><dd>${total ? tParts(exact ? 'computer.of' : 'computer.of.least', { used: strong(amount(memory, 1024)), total: amount(total, 1024) }) : strong(amount(memory, 1024))}</dd></div>
+      </dl>
     </section>
     <section>
-      <h3>${t('computer.engines')}</h3>
+      <div class="section-head"><h3>${t('computer.engines')}</h3>
+        <button class="button subtle" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${prompt} ${t('computer.terminal.open')}</button></div>
       <ul class="list engines">${ENGINES.map(([id, mark, line]) => html`<li>
         <span class="item-icon" aria-hidden="true">${mark}</span>
         <span class="item-text"><span id=${`engine-${id}`}>${t(`computer.engine.${id}`)}</span><small>${t(`computer.engine.${id}.text`, { size: amount(14e6) })}</small></span>
         <small class="muted">${light(engines[id] ?? 'asleep')} ${t(`computer.state.${engines[id] ?? 'asleep'}`)}</small>
         <button class="button subtle" aria-describedby=${`engine-${id}`} @click=${() => terminal(line)}>${t('computer.try')}</button>
       </li>`)}</ul>
+      <p class="muted small">${tParts('computer.terminal.text', { keys })}</p>
     </section>`
 }
 
-/** Settings › Computer: the computer itself, the internet, the sites, the relay, where packages come from, the limits, the terminal and the workspace. */
+/**
+ * Settings › Computer (D249): the sandbox itself; the internet, with its sites, and the relay and where packages
+ * come from folded under them; the workspace, how full, by Empty it; then the time a command may take, This computer's too.
+ */
 function panel() {
   if (!dialogs.value) import('../../ui/dialogs.js').then((module) => { dialogs.value = module })
+  if (!there.value && loaded.value.has('machine')) import('../machine/machine.js').then((module) => { there.value = module })
   if (used.value === null) measure()
   const { rights, locked } = rightsNow()
   const held = (/** @type {string} */ key) => (locked.has(key) ? html`<p class="muted small">${t('computer.locked')}</p>` : nothing)
   const minutes = [60_000, 120_000, 300_000, 600_000]
-  return html`${itself()}
-    <section class="setting">
-      <div><h3>${t('computer.internet')}</h3><p class="muted">${t('computer.internet.text')}</p>${held('internet')}</div>
-      ${choice('internet', t('computer.internet'), ['off', 'ask', 'any'], rights.internet, locked.has('internet'), (internet) => setComputer({ internet: /** @type {any} */ (internet) }))}
-    </section>
-    ${rights.internet === 'off' ? nothing : html`<section>
-      <h3>${t('computer.sites')}</h3>
+  const limit = rights.workspaceMB * 1e6
+  const sandbox = html`${itself()}
+    <section>
+      <div class="setting">
+        <div><h3>${t('computer.internet')}</h3><p class="muted">${t('computer.internet.text')}</p>${held('internet')}</div>
+        ${choice('internet', t('computer.internet'), ['off', 'ask', 'any'], rights.internet, locked.has('internet'), (internet) => setComputer({ internet: /** @type {any} */ (internet) }))}
+      </div>
+      ${rights.internet === 'off' ? nothing : html`<h4>${t('computer.sites')}</h4>
       ${dialogs.value?.siteList({ sites: rights.sites, fixed: locked.has('sites'), set: (sites) => setComputer({ sites }) }) ?? nothing}
+      <details class="other">
+        <summary>${t('computer.advanced')}</summary>
+        <div class="setting">
+          <div><h4>${t('computer.relay')}</h4><p class="muted">${t('computer.relay.text')}</p>${held('relay')}</div>
+          <input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}" aria-label=${t('computer.relay')} .value=${rights.relay}
+            ?disabled=${locked.has('relay')} @change=${(/** @type {Event} */ e) => setComputer({ relay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>
+        </div>
+        <h4>${t('computer.registries')}</h4>
+        <p class="muted">${t('computer.registries.text')}</p>
+        ${REGISTRIES.map((kind) => html`<div class="stack">
+          <label>${t(`computer.registry.${kind}`)}<input dir="ltr" type="url" spellcheck="false" .value=${app.settings.value.computer?.registries?.[kind] ?? ''}
+            placeholder=${serviceURL(kind, app.settings.value, app.policy)} ?disabled=${locked.has(`registries.${kind}`)}
+            @change=${(/** @type {Event} */ e) => setComputer({ registries: { ...app.settings.value.computer?.registries, [kind]: /** @type {HTMLInputElement} */ (e.target).value.trim() } })}></label>
+          <label>${t('computer.registry.key')}<input type="password" autocomplete="off" spellcheck="false" dir="ltr" placeholder="••••"
+            @change=${async (/** @type {Event} */ e) => { const value = /** @type {HTMLInputElement} */ (e.target).value.trim(); await (value ? setSecret(app.fs, `computer-${kind}`, value) : deleteSecret(app.fs, `computer-${kind}`)) }}></label>
+        </div>`)}
+      </details>`}
     </section>
-    <section class="setting">
-      <div><h3>${t('computer.relay')}</h3><p class="muted">${t('computer.relay.text')}</p>${held('relay')}</div>
-      <input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}" aria-label=${t('computer.relay')} .value=${rights.relay}
-        ?disabled=${locked.has('relay')} @change=${(/** @type {Event} */ e) => setComputer({ relay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>
-    </section>
-    <details class="other">
-      <summary>${t('computer.registries')}</summary>
-      <p class="muted">${t('computer.registries.text')}</p>
-      ${REGISTRIES.map((kind) => html`<div class="stack">
-        <label>${t(`computer.registry.${kind}`)}<input dir="ltr" type="url" spellcheck="false" .value=${app.settings.value.computer?.registries?.[kind] ?? ''}
-          placeholder=${serviceURL(kind, app.settings.value, app.policy)} ?disabled=${locked.has(`registries.${kind}`)}
-          @change=${(/** @type {Event} */ e) => setComputer({ registries: { ...app.settings.value.computer?.registries, [kind]: /** @type {HTMLInputElement} */ (e.target).value.trim() } })}></label>
-        <label>${t('computer.registry.key')}<input type="password" autocomplete="off" spellcheck="false" dir="ltr" placeholder="••••"
-          @change=${async (/** @type {Event} */ e) => { const value = /** @type {HTMLInputElement} */ (e.target).value.trim(); await (value ? setSecret(app.fs, `computer-${kind}`, value) : deleteSecret(app.fs, `computer-${kind}`)) }}></label>
-      </div>`)}
-    </details>`}
-    <section class="setting">
+    <section>
+      <div class="setting">
+        <div><h3 id="workspace-name">${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text')}</p></div>
+        <button class="button subtle danger" ?disabled=${!used.value} @click=${empty}>${icons.trash} ${t('computer.workspace.empty')}</button>
+      </div>
+      <div class="filled"><meter value=${(used.value ?? 0) / limit} aria-labelledby="workspace-name"></meter><span>${tParts('computer.of', { used: strong(amount(used.value ?? 0)), total: amount(limit) })}</span></div>
+    </section>`
+  const shared = html`<section class="setting">
       <div><h3>${t('computer.time')}</h3>${held('timeMs')}</div>
       <select aria-label=${t('computer.time')} ?disabled=${locked.has('timeMs')} @change=${(/** @type {Event} */ e) => setComputer({ timeMs: Number(/** @type {HTMLSelectElement} */ (e.target).value) })}>
         ${minutes.map((ms) => html`<option value=${ms} ?selected=${rights.timeMs === ms}>${t('computer.minutes', { count: ms / 60_000 })}</option>`)}
       </select>
-    </section>
-    <section class="setting">
-      <div><h3>${t('computer.terminal')}</h3><p class="muted">${tParts('computer.terminal.text', { keys })}</p></div>
-      <button class="button subtle" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${prompt} ${t('computer.terminal.open')}</button>
-    </section>
-    ${loaded.value.get('machine')?.panel?.() ?? nothing}
-    <section class="setting">
-      <div><h3>${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text')}</p></div>
-      <button class="button subtle danger" ?disabled=${!used.value} @click=${empty}>${icons.trash} ${t('computer.workspace.empty')}</button>
     </section>`
+  const { state } = box.status.value
+  return there.value?.computers({ sandbox, shared, name: t('computer.sandbox'), light: state, text: t(`computer.state.${state}`) }) ?? html`${sandbox}${shared}`
 }
 
 register({

@@ -1,5 +1,5 @@
 {
-  "machine.text": "Befehle können auch auf diesem Computer laufen, mit seinen eigenen Programmen und Servern: Öffne ein Terminal in einem deiner Ordner und füge diese Zeile ein. Aufgaben mit diesem Ordner führen ihre Befehle dann dort aus, bis du in diesem Terminal Strg+C drückst.",
+  "machine.text": "Führe Befehle auf deinem eigenen Computer aus, mit seinen Programmen und Servern, etwa dem Entwicklungsserver einer Website. JavaScript und Python bleiben in der abgeschotteten Umgebung.",
   "machine.on": "Aufgaben mit dem Ordner {folder} führen ihre Befehle auf diesem Computer aus, jeden erst nach Rückfrage, bis du in seinem Terminal Strg+C drückst.",
   "machine.forget": "Nicht mehr verwenden",
   "machine.question": "Das auf deinem Computer ausführen, in {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Befehle können auch auf diesem Computer laufen, mit seinen eigenen Programmen und Servern, in einem Ordner deiner Wahl: Aufgaben mit diesem Ordner führen ihre Befehle dann dort aus.",
   "machine.choose": "Ordner wählen…",
   "machine.failed": "Er ist nicht gestartet: Er braucht Node.js auf diesem Computer, den Befehl node im Terminal.",
-  "machine.on.app": "Aufgaben mit dem Ordner {folder} führen ihre Befehle auf diesem Computer aus, jeden erst nach Rückfrage."
+  "machine.on.app": "Aufgaben mit dem Ordner {folder} führen ihre Befehle auf diesem Computer aus, jeden erst nach Rückfrage.",
+  "machine.default": "Standard",
+  "machine.computers": "Computer",
+  "machine.lede": "Aufgaben nutzen die abgeschottete Umgebung, außer denen im Ordner, den du auf diesem Computer verbindest.",
+  "machine.off": "Nicht verbunden",
+  "machine.in": "In {folder}",
+  "machine.step.open": "Öffne ein Terminal in einem deiner Ordner.",
+  "machine.step.paste": "Füge diese Zeile dort ein und drücke die Eingabetaste.",
+  "machine.step.wait": "Warten auf die Zeile: Diese Seite bemerkt es von selbst.",
+  "machine.trusted": "Ohne Nachfrage in",
+  "machine.untrust": "In {folder} wieder zuerst fragen"
 }

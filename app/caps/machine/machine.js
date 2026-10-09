@@ -41,11 +41,13 @@ let foundAt = 0
 let client = null
 /** @type {Promise<Pairing> | null} */
 let paired = null
+/** The pairing as last read or saved, for Settings: the line, and the folders always allowed. */
+const known = signal(/** @type {Pairing | null} */ (null))
 
 /** The line's port and key, made once and kept in .secrets/, with the folders always allowed; one at a time, so two renders make one key. */
 const pairing = () => (paired ??= (async () => {
   const kept = await getSecret(app.fs, SECRET)
-  if (kept) return /** @type {Pairing} */ (JSON.parse(kept))
+  if (kept) return (known.value = /** @type {Pairing} */ (JSON.parse(kept)))
   const bytes = crypto.getRandomValues(new Uint8Array(20))
   const pair = /** @type {Pairing} */ ({ port: 41_000 + ((bytes[0] << 8) | bytes[1]) % 1000, key: btoa(String.fromCharCode(...bytes.slice(2))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' })[c] ?? ''), always: [] })
   await setSecret(app.fs, SECRET, JSON.stringify(pair))
@@ -53,7 +55,7 @@ const pairing = () => (paired ??= (async () => {
   const brains = app.settings.peek().brains.map((brain) => (brain.provider === 'claudecode' ? { ...brain, baseURL: `http://127.0.0.1:${pair.port}/v1` } : brain))
   for (const brain of brains) if (brain.provider === 'claudecode') await setSecret(app.fs, brain.id, pair.key)
   if (brains.some((brain) => brain.provider === 'claudecode')) await updateSettings({ brains })
-  return pair
+  return (known.value = pair)
 })())
 
 /**
@@ -74,6 +76,7 @@ export async function claudeCode() {
 async function save(next) {
   await setSecret(app.fs, SECRET, JSON.stringify(next))
   paired = Promise.resolve(next)
+  known.value = next
 }
 
 /** What the user pastes in a terminal, in their folder: the bridge from where Jean is served, for this origin, with the key. @param {Pairing} pair */
@@ -169,15 +172,14 @@ export async function runThere(message, ctx, computer, timeMs) {
   return { done: { ok: true, exit: ran.exit, stdout: ran.stdout + serving, stderr: ran.stderr, cwd: ran.cwd }, left: [], kept: where }
 }
 
-const shown = signal('')
 /** @type {ReturnType<typeof setInterval> | undefined} */
 let watching
 
-/** Until the bridge answers, while its part of Settings shows: looked for every two seconds. */
+/** Until the bridge answers, while Settings › Computer shows the computers: looked for every two seconds. */
 function watch() {
   if (watching) return
   watching = setInterval(async () => {
-    if (!document.querySelector('.machine') || (await find(true)).on) {
+    if (!document.querySelector('.computers') || (await find(true)).on) {
       clearInterval(watching)
       watching = undefined
     }
@@ -190,35 +192,101 @@ async function forget() {
   if (id) await call('os.updateSpawnedProcess', { id: Number(id), event: 'stdInEnd' }).catch(() => {})
   sessionStorage.removeItem(RUNNING)
   await deleteSecret(app.fs, SECRET)
-  ;[client, paired, shown.value, failed.value] = [null, null, '', false]
+  ;[client, paired, known.value, failed.value] = [null, null, null, false]
   await find(true)
 }
 
 /** The folder the desktop app starts the bridge in, picked with the system's dialog. */
 const choose = () => pickFolder(t('machine.choose')).then((path) => start(path).catch(() => { failed.value = true }), () => {})
 
+/** "Always" taken back for a folder: its commands are asked first again. @param {Event} event @param {string} folder */
+async function untrust(event, folder) {
+  /** @type {HTMLElement} */ (event.currentTarget).closest('.machine')?.querySelector('button')?.focus()
+  const pair = await pairing()
+  await save({ ...pair, always: pair.always.filter((other) => other !== folder) })
+}
+
 /**
- * This computer, in Settings › Computer: on, in which folder, with Stop using it; or the line to paste
- * in a terminal, with Copy; in the desktop app, Choose a folder. The light is the Computer's (D176), here the bridge's.
+ * This computer's card in Settings › Computer: on, in which folder, with Stop using it and the folders
+ * where its commands run unasked; or three steps, the line to paste in a terminal with Copy, then a light
+ * that waits for it; in the desktop app, Choose a folder. The light is the Computer's (D176), here the bridge's.
  */
 function panel() {
   const found = bridge.value
   const own = inApp.value
-  if (!shown.value && !own) pairing().then((pair) => { shown.value = line(pair) })
-  if (!found.on) watch()
+  const pair = known.value
+  if (!pair && (!own || found.on)) pairing()
   const text = found.on ? t(own ? 'machine.on.app' : 'machine.on', { folder: found.folder }) : own ? t(failed.value ? 'machine.failed' : 'machine.app') : t('machine.text')
-  return html`<section class="setting machine">
+  return html`<section class="machine">
+    <div class="setting">
       <div>
-        <h3><span class="ember" data-state=${found.on ? 'ready' : 'asleep'} aria-hidden="true"></span><span role="status">${t('cap.machine.name')}</span></h3>
+        <h3><span class="ember" data-state=${found.on ? 'ready' : 'asleep'} aria-hidden="true"></span>${t('cap.machine.name')}<span class="muted" role="status">${state(found)}</span></h3>
         <p class="muted">${text}</p>
       </div>
       ${found.on ? html`<button class="button subtle" @click=${forget}>${t('machine.forget')}</button>`
         : own ? html`<button class="button subtle" @click=${choose}>${icons.folder} ${t('machine.choose')}</button>` : nothing}
-    </section>
-    ${found.on || own || !shown.value ? nothing : html`<div class="machine-line">
-      <code dir="ltr">${shown.value}</code>
-      <button class="button subtle" @click=${() => navigator.clipboard.writeText(shown.value).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('action.copy')}</button>
-    </div>`}`
+    </div>
+    ${found.on || own || !pair ? nothing : html`<ol class="machine-steps">
+      <li>${t('machine.step.open')}</li>
+      <li>${t('machine.step.paste')}<div class="machine-line">
+        <code dir="ltr">${line(pair)}</code>
+        <button class="button subtle" @click=${() => navigator.clipboard.writeText(line(pair)).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('action.copy')}</button>
+      </div></li>
+      <li><span class="ember" data-state="waking" aria-hidden="true"></span>${t('machine.step.wait')}</li>
+    </ol>`}
+    ${found.on && pair?.always.length ? html`<div class="sites">
+      <span class="muted">${t('machine.trusted')}</span>
+      <ul>${pair.always.map((folder) => html`<li><bdi>${folder}</bdi><button class="icon-button subtle" aria-label=${t('machine.untrust', { folder })}
+        @click=${(/** @type {Event} */ e) => untrust(e, folder)}>${icons.close}</button></li>`)}</ul>
+    </div>` : nothing}
+  </section>`
+}
+
+// ─── Two computers ───────────────────────────────────────────────────────────
+
+/** Which computer Settings › Computer shows (D248): the sandbox, the default, or this one; kept for the visit. */
+const viewing = signal(/** @type {'sandbox' | 'machine'} */ ('sandbox'))
+
+/** Settings › Computer, on this computer's card: from its offer, Brains' Connect and its trophy. */
+export function show() {
+  viewing.value = 'machine'
+  app.section.value = 'computer'
+  app.dialog.value = 'settings'
+}
+
+/** This computer's state, beside its name: in which folder, or not connected. @param {Found} found */
+const state = (found) => (found.on ? t('machine.in', { folder: found.folder }) : t('machine.off'))
+
+/** A computer's card, a tab: its icon, its name, its light and its state. @param {'sandbox' | 'machine'} id @param {unknown} icon @param {unknown} name @param {string} light @param {string} text */
+const card = (id, icon, name, light, text) => html`<button role="tab" id=${`computer-${id}`} aria-selected=${String(viewing.value === id)}
+  aria-controls="computer-shown" tabindex=${viewing.value === id ? 0 : -1} @click=${() => { viewing.value = id }}>
+  <span class="item-icon" aria-hidden="true">${icon}</span>
+  <span class="item-text"><span>${name}</span><small><span class="ember" data-state=${light} aria-hidden="true"></span>${text}</small></span>
+</button>`
+
+/** Between the two cards, any arrow goes to the other, whichever way the language reads; Home and End to the first and the last. @param {KeyboardEvent} event */
+function move(event) {
+  const to = event.key.startsWith('Arrow') ? (viewing.value === 'sandbox' ? 'machine' : 'sandbox') : event.key === 'Home' ? 'sandbox' : event.key === 'End' ? 'machine' : null
+  if (!to) return
+  event.preventDefault()
+  viewing.value = to
+  document.getElementById(`computer-${to}`)?.focus()
+}
+
+/**
+ * Settings › Computer once this computer is on (D248): what decides which computer a task uses, then the
+ * two, a card each as tabs, the sandbox first, as the default; under them, the one chosen, then what both use.
+ * @param {{ sandbox: unknown, shared: unknown, name: string, light: string, text: string }} parts the sandbox's, from the Computer
+ */
+export function computers({ sandbox, shared, name, light, text }) {
+  const found = bridge.value
+  if (!found.on) watch()
+  return html`<p class="lede">${t('machine.lede')}</p>
+    <div class="computers" role="tablist" aria-label=${t('machine.computers')} @keydown=${move}>
+      ${card('sandbox', icons.chip, html`${name}<span class="pill">${t('machine.default')}</span>`, light, text)}
+      ${card('machine', icons.computer, t('cap.machine.name'), found.on ? 'ready' : 'asleep', state(found))}
+    </div>
+    <div role="tabpanel" id="computer-shown" aria-labelledby=${`computer-${viewing.value}`}>${viewing.value === 'sandbox' ? sandbox : panel()}${shared}</div>`
 }
 
 /** The card for a command of the brain's on this computer: the command, then once, always in that folder, or no. */
@@ -250,7 +318,8 @@ class MachineApproval extends Element {
 }
 define('app-machine-approval', MachineApproval)
 
-register({ id: 'machine', panel })
+// Its part of Settings is the Computer's to place: `computers()`.
+register({ id: 'machine' })
 // Looked for once on, so Settings and the first command know at once whether it runs; in the desktop
 // app, started again in the folder it was started in.
 desktop.then(async (yes) => {

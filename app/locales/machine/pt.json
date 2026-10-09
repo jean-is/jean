@@ -1,5 +1,5 @@
 {
-  "machine.text": "Os comandos também podem correr neste computador, com os seus próprios programas e servidores: abre um terminal numa das tuas pastas e cola esta linha. As tarefas com essa pasta passam então a executar lá os seus comandos, até carregares em Ctrl+C nesse terminal.",
+  "machine.text": "Executa comandos no teu próprio computador, com os seus programas e servidores, como o servidor de desenvolvimento de um site. JavaScript e Python ficam no ambiente isolado.",
   "machine.on": "As tarefas com a pasta {folder} executam os seus comandos neste computador, cada um perguntado antes, até carregares em Ctrl+C no terminal.",
   "machine.forget": "Deixar de usar",
   "machine.question": "Executar isto no teu computador, em {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Os comandos também podem correr neste computador, com os seus próprios programas e servidores, numa pasta que escolhes: as tarefas com essa pasta executam lá os seus comandos.",
   "machine.choose": "Escolher uma pasta…",
   "machine.failed": "Não arrancou: precisa do Node.js neste computador, o comando node de um terminal.",
-  "machine.on.app": "As tarefas com a pasta {folder} executam os seus comandos neste computador, cada um perguntado antes."
+  "machine.on.app": "As tarefas com a pasta {folder} executam os seus comandos neste computador, cada um perguntado antes.",
+  "machine.default": "Predefinido",
+  "machine.computers": "Computadores",
+  "machine.lede": "As tarefas usam o ambiente isolado, exceto as da pasta que ligares neste computador.",
+  "machine.off": "Não ligado",
+  "machine.in": "Em {folder}",
+  "machine.step.open": "Abre um terminal numa das tuas pastas.",
+  "machine.step.paste": "Cola lá esta linha e carrega em Enter.",
+  "machine.step.wait": "À espera de que a linha corra: esta página dá por isso sozinha.",
+  "machine.trusted": "Sem perguntar em",
+  "machine.untrust": "Voltar a perguntar em {folder}"
 }

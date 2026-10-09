@@ -1,5 +1,5 @@
 {
-  "machine.text": "Umarni na iya gudana a wannan kwamfutar ma, da shirye-shiryenta da sabobinta: buɗe tashar umarni a ɗaya daga cikin fayilolin ajiyarka ka liƙa wannan layin. Sai ɗawainiyoyin da ke da wannan fayil ɗin ajiya su gudanar da umarninsu a can, har sai ka danna Ctrl+C a wannan tashar umarnin.",
+  "machine.text": "Gudanar da umarni a kwamfutarka, da shirye-shiryenta da sabobinta, kamar sabar haɓaka ta wani shafi. JavaScript da Python suna nan a keɓaɓɓen wuri.",
   "machine.on": "Ɗawainiyoyin da ke da fayil ɗin ajiya {folder} suna gudanar da umarninsu a wannan kwamfutar, ana tambaya kafin kowanne, har sai ka danna Ctrl+C a tashar umarninsa.",
   "machine.forget": "Daina amfani da ita",
   "machine.question": "A gudanar da wannan a kwamfutarka, a {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Umarni na iya gudana a wannan kwamfutar ma, da shirye-shiryenta da sabobinta, a fayil ɗin ajiya da ka zaɓa: ɗawainiyoyin da ke da wannan fayil ɗin ajiya suna gudanar da umarninsu a can.",
   "machine.choose": "Zaɓi fayil ɗin ajiya…",
   "machine.failed": "Bai fara ba: yana buƙatar Node.js a wannan kwamfutar, wato umarnin node a tashar umarni.",
-  "machine.on.app": "Ɗawainiyoyin da ke da fayil ɗin ajiya {folder} suna gudanar da umarninsu a wannan kwamfutar, ana tambaya kafin kowanne."
+  "machine.on.app": "Ɗawainiyoyin da ke da fayil ɗin ajiya {folder} suna gudanar da umarninsu a wannan kwamfutar, ana tambaya kafin kowanne.",
+  "machine.default": "Na asali",
+  "machine.computers": "Kwamfutoci",
+  "machine.lede": "Ɗawainiyoyi suna amfani da keɓaɓɓen wuri, sai dai waɗanda ke cikin fayil ɗin ajiyar da ka haɗa a wannan kwamfutar.",
+  "machine.off": "Ba a haɗa ba",
+  "machine.in": "A {folder}",
+  "machine.step.open": "Buɗe tashar umarni a ɗaya daga cikin fayilolin ajiyarka.",
+  "machine.step.paste": "Liƙa wannan layin a can, sannan ka danna Enter.",
+  "machine.step.wait": "Ana jiran layin ya gudana: wannan shafin zai lura da kansa.",
+  "machine.trusted": "Yana gudana ba tare da tambaya ba a",
+  "machine.untrust": "Sake tambaya da farko a {folder}"
 }

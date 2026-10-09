@@ -1,5 +1,6 @@
 {
-  "computer.text": "Um computador num ambiente isolado neste separador: usa o processador e a memória deste dispositivo, e nunca alcança mais nada nele. /workspace contém os ficheiros da tua pasta, ou o espaço de trabalho deste projeto.",
+  "computer.text": "Um computador num ambiente isolado neste separador: usa o processador e a memória deste dispositivo, e nunca alcança mais nada nele.",
+  "computer.sandbox": "Ambiente isolado",
   "computer.state.asleep": "Em repouso",
   "computer.state.waking": "A arrancar",
   "computer.state.ready": "Disponível",
@@ -11,7 +12,6 @@
     "other": "{used} de {count} núcleos"
   },
   "computer.memory": "Memória",
-  "computer.workspace.short": "Espaço de trabalho",
   "computer.of": "{used} de {total}",
   "computer.of.least": "{used} de pelo menos {total}",
   "computer.engines": "O que executa",
@@ -29,6 +29,7 @@
   "computer.internet.any": "Qualquer site",
   "computer.sites": "Sites que pode sempre alcançar",
   "computer.registries": "De onde vêm os pacotes",
+  "computer.advanced": "Relé e origem dos pacotes",
   "computer.registries.text": "Para um espelho, como o da tua organização. Uma chave fica neste dispositivo e só vai para o seu endereço.",
   "computer.registry.pyodide": "Python, pacotes do Pyodide",
   "computer.registry.pypi": "Python, PyPI",

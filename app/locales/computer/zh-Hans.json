@@ -1,5 +1,6 @@
 {
-  "computer.text": "这个标签页里隔离环境中的一台电脑：它借用这台设备的处理器和内存，但绝不触及设备上的其他任何东西。/workspace 存放你文件夹中的文件，或这个项目的工作区。",
+  "computer.text": "这个标签页里隔离环境中的一台电脑：它借用这台设备的处理器和内存，但绝不触及设备上的其他任何东西。",
+  "computer.sandbox": "隔离环境",
   "computer.state.asleep": "休眠中",
   "computer.state.waking": "正在唤醒",
   "computer.state.ready": "就绪",
@@ -9,7 +10,6 @@
     "other": "{used} / {count} 核"
   },
   "computer.memory": "内存",
-  "computer.workspace.short": "工作区",
   "computer.of": "{used} / {total}",
   "computer.of.least": "{used} / 至少 {total}",
   "computer.engines": "可以运行的",
@@ -27,6 +27,7 @@
   "computer.internet.any": "任何网站",
   "computer.sites": "始终可以访问的网站",
   "computer.registries": "软件包来源",
+  "computer.advanced": "中转服务器和软件包来源",
   "computer.registries.text": "用于镜像，比如你的组织的镜像。密钥留在这台设备上，只发送到该地址。",
   "computer.registry.pyodide": "Python，Pyodide 的软件包",
   "computer.registry.pypi": "Python，PyPI",

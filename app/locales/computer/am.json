@@ -1,5 +1,6 @@
 {
-  "computer.text": "በዚህ ትር ውስጥ በተለየ ጥበቃ ያለው አካባቢ የሚገኝ ኮምፒውተር፦ የዚህን መሣሪያ ፕሮሰሰርና ማህደረ ትውስታ ይዋሳል፣ በላዩ ላይ ያለ ሌላ ምንም ነገር ግን በፍጹም አይደርስም። /workspace የአቃፊዎን ፋይሎች ወይም የዚህን ፕሮጀክት የሥራ ቦታ ይይዛል።",
+  "computer.text": "በዚህ ትር ውስጥ በተለየ ጥበቃ ያለው አካባቢ የሚገኝ ኮምፒውተር፦ የዚህን መሣሪያ ፕሮሰሰርና ማህደረ ትውስታ ይዋሳል፣ በላዩ ላይ ያለ ሌላ ምንም ነገር ግን በፍጹም አይደርስም።",
+  "computer.sandbox": "ጥበቃ ያለው አካባቢ",
   "computer.state.asleep": "በእንቅልፍ ላይ",
   "computer.state.waking": "በመነሳት ላይ",
   "computer.state.ready": "ዝግጁ",
@@ -10,7 +11,6 @@
     "other": "ከ{count} ኮሮች {used}"
   },
   "computer.memory": "ማህደረ ትውስታ",
-  "computer.workspace.short": "የሥራ ቦታ",
   "computer.of": "ከ{total} {used}",
   "computer.of.least": "ቢያንስ ከ{total} {used}",
   "computer.engines": "የሚያሄደው",
@@ -28,6 +28,7 @@
   "computer.internet.any": "ማንኛውም ድረ-ገጽ",
   "computer.sites": "ሁልጊዜ ሊደርስባቸው የሚችላቸው ድረ-ገጾች",
   "computer.registries": "ጥቅሎች ከየት እንደሚመጡ",
+  "computer.advanced": "አስተላላፊና የጥቅሎች ምንጮች",
   "computer.registries.text": "ለመስታወት አገልጋይ፣ ለምሳሌ የድርጅትዎ። ቁልፍ በዚህ መሣሪያ ላይ ይቆያል፣ ወደ አድራሻው ብቻ ይላካል።",
   "computer.registry.pyodide": "Python፣ የPyodide ጥቅሎች",
   "computer.registry.pypi": "Python፣ PyPI",

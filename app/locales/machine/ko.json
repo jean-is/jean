@@ -1,5 +1,5 @@
 {
-  "machine.text": "명령은 이 컴퓨터에서도 그 프로그램과 서버로 실행할 수 있습니다. 내 폴더 중 하나에서 터미널을 열고 이 줄을 붙여 넣으세요. 그러면 그 폴더의 작업은 그 터미널에서 Ctrl+C를 누를 때까지 명령을 그곳에서 실행합니다.",
+  "machine.text": "내 컴퓨터에서 그 프로그램과 서버로 명령을 실행합니다. 예를 들어 사이트의 개발 서버입니다. JavaScript와 Python은 격리된 환경에 그대로 있습니다.",
   "machine.on": "{folder} 폴더의 작업은 터미널에서 Ctrl+C를 누를 때까지 이 컴퓨터에서 명령을 실행하며, 매번 먼저 묻습니다.",
   "machine.forget": "그만 사용",
   "machine.question": "내 컴퓨터의 {folder}에서 이것을 실행할까요?",
@@ -7,5 +7,15 @@
   "machine.app": "명령은 이 컴퓨터에서도, 그 프로그램과 서버로, 선택한 폴더에서 실행할 수 있습니다. 그 폴더의 작업은 명령을 그곳에서 실행합니다.",
   "machine.choose": "폴더 선택…",
   "machine.failed": "시작되지 않았습니다. 이 컴퓨터에 Node.js(터미널의 node 명령)가 필요합니다.",
-  "machine.on.app": "{folder} 폴더의 작업은 이 컴퓨터에서 명령을 실행하며, 매번 먼저 묻습니다."
+  "machine.on.app": "{folder} 폴더의 작업은 이 컴퓨터에서 명령을 실행하며, 매번 먼저 묻습니다.",
+  "machine.default": "기본",
+  "machine.computers": "컴퓨터",
+  "machine.lede": "작업은 격리된 환경을 사용합니다. 이 컴퓨터에서 연결한 폴더의 작업만 예외입니다.",
+  "machine.off": "연결 안 됨",
+  "machine.in": "{folder}에서",
+  "machine.step.open": "내 폴더 중 하나에서 터미널을 엽니다.",
+  "machine.step.paste": "그곳에 이 줄을 붙여 넣고 Enter를 누릅니다.",
+  "machine.step.wait": "이 줄이 실행되기를 기다리는 중: 이 페이지가 알아서 알아챕니다.",
+  "machine.trusted": "묻지 않고 실행하는 폴더",
+  "machine.untrust": "{folder}에서 다시 먼저 묻기"
 }

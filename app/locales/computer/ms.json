@@ -1,5 +1,6 @@
 {
-  "computer.text": "Komputer dalam persekitaran terasing dalam tab ini: ia meminjam pemproses dan memori peranti ini, dan tidak sekali-kali mencapai apa-apa lagi padanya. /workspace mengandungi fail folder anda, atau ruang kerja projek ini.",
+  "computer.text": "Komputer dalam persekitaran terasing dalam tab ini: ia meminjam pemproses dan memori peranti ini, dan tidak sekali-kali mencapai apa-apa lagi padanya.",
+  "computer.sandbox": "Persekitaran terasing",
   "computer.state.asleep": "Tidur",
   "computer.state.waking": "Sedang bangun",
   "computer.state.ready": "Sedia",
@@ -9,7 +10,6 @@
     "other": "{used} daripada {count} teras"
   },
   "computer.memory": "Memori",
-  "computer.workspace.short": "Ruang kerja",
   "computer.of": "{used} daripada {total}",
   "computer.of.least": "{used} daripada sekurang-kurangnya {total}",
   "computer.engines": "Apa yang dijalankannya",
@@ -27,6 +27,7 @@
   "computer.internet.any": "Mana-mana tapak",
   "computer.sites": "Tapak yang sentiasa boleh dicapainya",
   "computer.registries": "Dari mana pakej datang",
+  "computer.advanced": "Geganti dan sumber pakej",
   "computer.registries.text": "Untuk cermin, seperti milik organisasi anda. Kunci kekal pada peranti ini dan hanya dihantar ke alamatnya.",
   "computer.registry.pyodide": "Python, pakej Pyodide",
   "computer.registry.pypi": "Python, PyPI",

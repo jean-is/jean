@@ -1,5 +1,6 @@
 {
-  "computer.text": "Bu sekmede, yalıtılmış bir ortamda bir bilgisayar: bu cihazın işlemcisini ve belleğini ödünç alır, cihazdaki başka hiçbir şeye erişmez. /workspace klasörünün dosyalarını ya da bu projenin çalışma alanını içerir.",
+  "computer.text": "Bu sekmede, yalıtılmış bir ortamda bir bilgisayar: bu cihazın işlemcisini ve belleğini ödünç alır, cihazdaki başka hiçbir şeye erişmez.",
+  "computer.sandbox": "Yalıtılmış ortam",
   "computer.state.asleep": "Uykuda",
   "computer.state.waking": "Uyanıyor",
   "computer.state.ready": "Hazır",
@@ -10,7 +11,6 @@
     "other": "{used} / {count} çekirdek"
   },
   "computer.memory": "Bellek",
-  "computer.workspace.short": "Çalışma alanı",
   "computer.of": "{used} / {total}",
   "computer.of.least": "{used} / en az {total}",
   "computer.engines": "Üzerinde çalışanlar",
@@ -28,6 +28,7 @@
   "computer.internet.any": "Her site",
   "computer.sites": "Her zaman erişebileceği siteler",
   "computer.registries": "Paketlerin geldiği yer",
+  "computer.advanced": "Aktarıcı ve paket kaynakları",
   "computer.registries.text": "Kuruluşununki gibi bir yansı için. Bir anahtar bu cihazda kalır ve yalnızca o adrese gider.",
   "computer.registry.pyodide": "Python, Pyodide paketleri",
   "computer.registry.pypi": "Python, PyPI",

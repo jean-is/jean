@@ -1,5 +1,6 @@
 {
-  "computer.text": "या टॅबमधील एका वेगळ्या सुरक्षित वातावरणातील संगणक: तो या डिव्हाइसचा प्रोसेसर आणि मेमरी उसनी घेतो, आणि त्यावरील इतर कशालाही कधीच पोहोचत नाही. /workspace मध्ये तुमच्या फोल्डरच्या फायली, किंवा या प्रकल्पाचे कार्यक्षेत्र असते.",
+  "computer.text": "या टॅबमधील एका वेगळ्या सुरक्षित वातावरणातील संगणक: तो या डिव्हाइसचा प्रोसेसर आणि मेमरी उसनी घेतो, आणि त्यावरील इतर कशालाही कधीच पोहोचत नाही.",
+  "computer.sandbox": "वेगळे सुरक्षित वातावरण",
   "computer.state.asleep": "स्लीप मोडमध्ये",
   "computer.state.waking": "सुरू होत आहे",
   "computer.state.ready": "तयार",
@@ -10,7 +11,6 @@
     "other": "{count} पैकी {used} कोर"
   },
   "computer.memory": "मेमरी",
-  "computer.workspace.short": "कार्यक्षेत्र",
   "computer.of": "{total} पैकी {used}",
   "computer.of.least": "किमान {total} पैकी {used}",
   "computer.engines": "यावर काय चालते",
@@ -28,6 +28,7 @@
   "computer.internet.any": "कोणतीही साइट",
   "computer.sites": "ज्या साइट्सपर्यंत तो नेहमी पोहोचू शकतो",
   "computer.registries": "पॅकेज कुठून येतात",
+  "computer.advanced": "रिले आणि पॅकेजचे स्रोत",
   "computer.registries.text": "एखाद्या मिररसाठी, जसे तुमच्या संस्थेचा. किल्ली याच डिव्हाइसवर राहते आणि फक्त त्याच पत्त्यावर जाते.",
   "computer.registry.pyodide": "Python, Pyodide चे पॅकेज",
   "computer.registry.pypi": "Python, PyPI",

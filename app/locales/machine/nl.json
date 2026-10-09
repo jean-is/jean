@@ -1,5 +1,5 @@
 {
-  "machine.text": "Opdrachten kunnen ook op deze computer draaien, met zijn eigen programma’s en servers: open een terminal in een van je mappen en plak deze regel erin. Taken met die map voeren hun opdrachten dan daar uit, tot je in die terminal op Ctrl+C drukt.",
+  "machine.text": "Voer opdrachten uit op je eigen computer, met zijn programma’s en servers, zoals de ontwikkelserver van een site. JavaScript en Python blijven in de afgeschermde omgeving.",
   "machine.on": "Taken met de map {folder} voeren hun opdrachten uit op deze computer, elke eerst gevraagd, tot je in de terminal op Ctrl+C drukt.",
   "machine.forget": "Niet meer gebruiken",
   "machine.question": "Dit uitvoeren op je computer, in {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Opdrachten kunnen ook op deze computer draaien, met zijn eigen programma’s en servers, in een map die je kiest: taken met die map voeren hun opdrachten daar dan uit.",
   "machine.choose": "Kies een map…",
   "machine.failed": "Hij is niet gestart: hij heeft Node.js nodig op deze computer, de opdracht node in een terminal.",
-  "machine.on.app": "Taken met de map {folder} voeren hun opdrachten uit op deze computer, elke eerst gevraagd."
+  "machine.on.app": "Taken met de map {folder} voeren hun opdrachten uit op deze computer, elke eerst gevraagd.",
+  "machine.default": "Standaard",
+  "machine.computers": "Computers",
+  "machine.lede": "Taken gebruiken de afgeschermde omgeving, behalve die in de map die je op deze computer koppelt.",
+  "machine.off": "Niet gekoppeld",
+  "machine.in": "In {folder}",
+  "machine.step.open": "Open een terminal in een van je mappen.",
+  "machine.step.paste": "Plak deze regel daar en druk op Enter.",
+  "machine.step.wait": "Wachten tot de regel draait: deze pagina merkt het vanzelf.",
+  "machine.trusted": "Zonder te vragen in",
+  "machine.untrust": "In {folder} weer eerst vragen"
 }

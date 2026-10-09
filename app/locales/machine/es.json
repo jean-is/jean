@@ -1,5 +1,5 @@
 {
-  "machine.text": "Los comandos también pueden ejecutarse en esta computadora, con sus propios programas y servidores: abre una terminal en una de tus carpetas y pega esta línea. Las tareas con esa carpeta ejecutarán entonces sus comandos allí, hasta que pulses Ctrl+C en esa terminal.",
+  "machine.text": "Ejecuta comandos en tu propia computadora, con sus programas y servidores, como el servidor de desarrollo de un sitio. JavaScript y Python siguen en el entorno aislado.",
   "machine.on": "Las tareas con la carpeta {folder} ejecutan sus comandos en esta computadora, cada uno preguntado antes, hasta que pulses Ctrl+C en su terminal.",
   "machine.forget": "Dejar de usarla",
   "machine.question": "¿Ejecutar esto en tu computadora, en {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Los comandos también pueden ejecutarse en esta computadora, con sus propios programas y servidores, en una carpeta que elijas: las tareas con esa carpeta ejecutarán allí sus comandos.",
   "machine.choose": "Elegir una carpeta…",
   "machine.failed": "No se inició: necesita Node.js en esta computadora, el comando node de una terminal.",
-  "machine.on.app": "Las tareas con la carpeta {folder} ejecutan sus comandos en esta computadora, cada uno preguntado antes."
+  "machine.on.app": "Las tareas con la carpeta {folder} ejecutan sus comandos en esta computadora, cada uno preguntado antes.",
+  "machine.default": "Predeterminado",
+  "machine.computers": "Computadoras",
+  "machine.lede": "Las tareas usan el entorno aislado, salvo las de la carpeta que conectes en esta computadora.",
+  "machine.off": "Sin conectar",
+  "machine.in": "En {folder}",
+  "machine.step.open": "Abre una terminal en una de tus carpetas.",
+  "machine.step.paste": "Pega allí esta línea y pulsa Intro.",
+  "machine.step.wait": "Esperando a que se ejecute la línea: esta página lo notará sola.",
+  "machine.trusted": "Sin preguntar en",
+  "machine.untrust": "Volver a preguntar en {folder}"
 }

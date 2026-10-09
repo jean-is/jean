@@ -1,5 +1,6 @@
 {
-  "computer.text": "حاسوب في بيئة معزولة داخل هذا التبويب: يستعير معالج هذا الجهاز وذاكرته، ولا يصل أبدًا إلى أي شيء آخر عليه. يحوي ⁦/workspace⁩ ملفات مجلدك، أو مساحة عمل هذا المشروع.",
+  "computer.text": "حاسوب في بيئة معزولة داخل هذا التبويب: يستعير معالج هذا الجهاز وذاكرته، ولا يصل أبدًا إلى أي شيء آخر عليه.",
+  "computer.sandbox": "البيئة المعزولة",
   "computer.state.asleep": "في وضع السكون",
   "computer.state.waking": "قيد الاستيقاظ",
   "computer.state.ready": "على أهبة الاستعداد",
@@ -14,7 +15,6 @@
     "other": "{used} من {count} نواة"
   },
   "computer.memory": "الذاكرة",
-  "computer.workspace.short": "مساحة العمل",
   "computer.of": "{used} من {total}",
   "computer.of.least": "{used} من {total} على الأقل",
   "computer.engines": "ما يشغّله",
@@ -32,6 +32,7 @@
   "computer.internet.any": "أي موقع",
   "computer.sites": "مواقع يمكنه الوصول إليها دائمًا",
   "computer.registries": "مصدر الحزم",
+  "computer.advanced": "المُرحِّل ومصدر الحزم",
   "computer.registries.text": "لنسخة مطابقة، مثل نسخة مؤسستك. يبقى المفتاح على هذا الجهاز ولا يُرسَل إلا إلى عنوانها.",
   "computer.registry.pyodide": "Python، حزم Pyodide",
   "computer.registry.pypi": "Python، PyPI",

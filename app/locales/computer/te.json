@@ -1,5 +1,6 @@
 {
-  "computer.text": "ఈ ట్యాబ్‌లోని వేరుచేసిన వాతావరణంలో ఉన్న కంప్యూటర్: ఇది ఈ పరికరం ప్రాసెసర్‌ను, మెమరీని అరువు తీసుకుంటుంది, కానీ దానిలోని మరేదానినీ ఎప్పుడూ చేరదు. /workspace లో మీ ఫోల్డర్ ఫైళ్లు, లేదా ఈ ప్రాజెక్ట్ పనిస్థలం ఉంటాయి.",
+  "computer.text": "ఈ ట్యాబ్‌లోని వేరుచేసిన వాతావరణంలో ఉన్న కంప్యూటర్: ఇది ఈ పరికరం ప్రాసెసర్‌ను, మెమరీని అరువు తీసుకుంటుంది, కానీ దానిలోని మరేదానినీ ఎప్పుడూ చేరదు.",
+  "computer.sandbox": "వేరుచేసిన వాతావరణం",
   "computer.state.asleep": "నిద్రలో ఉంది",
   "computer.state.waking": "ప్రారంభమవుతోంది",
   "computer.state.ready": "సిద్ధం",
@@ -10,7 +11,6 @@
     "other": "{count} కోర్లలో {used}"
   },
   "computer.memory": "మెమరీ",
-  "computer.workspace.short": "పనిస్థలం",
   "computer.of": "{total}లో {used}",
   "computer.of.least": "కనీసం {total}లో {used}",
   "computer.engines": "దీనిపై నడిచేవి",
@@ -28,6 +28,7 @@
   "computer.internet.any": "ఏ సైట్ అయినా",
   "computer.sites": "ఎప్పుడూ చేరగల సైట్లు",
   "computer.registries": "ప్యాకేజీలు ఎక్కడి నుంచి వస్తాయి",
+  "computer.advanced": "రిలే, ప్యాకేజీల మూలాలు",
   "computer.registries.text": "మీ సంస్థది లాంటి మిర్రర్ కోసం. కీ ఈ పరికరంలోనే ఉంటుంది, దాని చిరునామాకే వెళ్తుంది.",
   "computer.registry.pyodide": "Python, Pyodide ప్యాకేజీలు",
   "computer.registry.pypi": "Python, PyPI",

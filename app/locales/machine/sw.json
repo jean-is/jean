@@ -1,5 +1,5 @@
 {
-  "machine.text": "Amri zinaweza pia kuendeshwa kwenye kompyuta hii, kwa programu na seva zake yenyewe: fungua terminali katika mojawapo ya folda zako na ubandike mstari huu. Kazi zenye folda hiyo zitaendesha amri zao huko, hadi ubonyeze Ctrl+C katika terminali hiyo.",
+  "machine.text": "Endesha amri kwenye kompyuta yako mwenyewe, kwa programu na seva zake, kama seva ya uundaji ya tovuti. JavaScript na Python hubaki katika mazingira yaliyotengwa.",
   "machine.on": "Kazi zenye folda {folder} huendesha amri zao kwenye kompyuta hii, kila moja ikiulizwa kwanza, hadi ubonyeze Ctrl+C katika terminali yake.",
   "machine.forget": "Acha kuitumia",
   "machine.question": "Endesha hii kwenye kompyuta yako, katika {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Amri zinaweza pia kuendeshwa kwenye kompyuta hii, kwa programu na seva zake, katika folda utakayochagua: kazi zenye folda hiyo huendesha amri zao huko.",
   "machine.choose": "Chagua folda…",
   "machine.failed": "Haikuanza: inahitaji Node.js kwenye kompyuta hii, yaani amri ya node kwenye terminali.",
-  "machine.on.app": "Kazi zenye folda {folder} huendesha amri zao kwenye kompyuta hii, kila moja ikiulizwa kwanza."
+  "machine.on.app": "Kazi zenye folda {folder} huendesha amri zao kwenye kompyuta hii, kila moja ikiulizwa kwanza.",
+  "machine.default": "Chaguomsingi",
+  "machine.computers": "Kompyuta",
+  "machine.lede": "Kazi hutumia mazingira yaliyotengwa, isipokuwa zile zilizo katika folda unayounganisha kwenye kompyuta hii.",
+  "machine.off": "Haijaunganishwa",
+  "machine.in": "Katika {folder}",
+  "machine.step.open": "Fungua terminali katika mojawapo ya folda zako.",
+  "machine.step.paste": "Bandika mstari huu hapo, kisha ubonyeze Enter.",
+  "machine.step.wait": "Inasubiri mstari uendeshwe: ukurasa huu utagundua wenyewe.",
+  "machine.trusted": "Huendesha bila kuuliza katika",
+  "machine.untrust": "Uliza kwanza tena katika {folder}"
 }

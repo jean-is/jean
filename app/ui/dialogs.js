@@ -184,9 +184,10 @@ function connectLocal(event) {
 /** The user's own Claude Code, with their Claude plan, through This computer (D235): turned on first, in Settings › Computer. */
 async function connectClaude() {
   status.value = { way: 'claude', kind: 'busy', message: t('brain.connecting') }
-  const found = (await unlock('machine')) && await (await import('../caps/machine/machine.js')).claudeCode()
+  const on = await unlock('machine')
+  const found = on && await (await import('../caps/machine/machine.js')).claudeCode()
   status.value = found && !found.ready ? { way: 'claude', kind: 'error', message: t(found.old ? 'brain.claude.restart' : 'brain.claude.missing', { computer: t('cap.machine.name') }) } : null
-  if (!found) openSettings('computer')
+  if (!found) on ? (await import('../caps/machine/machine.js')).show() : openSettings('computer')
   else if (found.ready) attempt('claude', t('provider.claudecode'), () => connectBrain({ provider: 'claudecode', baseURL: found.baseURL, apiKey: found.apiKey }))
 }
 
@@ -734,7 +735,7 @@ export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), computer: () => openSettings('computer'), machine: () => openSettings('computer'), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), computer: () => openSettings('computer'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },

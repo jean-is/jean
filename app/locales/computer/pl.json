@@ -1,5 +1,6 @@
 {
-  "computer.text": "Komputer w odizolowanym środowisku w tej karcie: korzysta z procesora i pamięci tego urządzenia, ale nie sięga do niczego innego na nim. /workspace zawiera pliki twojego folderu lub przestrzeń roboczą tego projektu.",
+  "computer.text": "Komputer w odizolowanym środowisku w tej karcie: korzysta z procesora i pamięci tego urządzenia, ale nie sięga do niczego innego na nim.",
+  "computer.sandbox": "Odizolowane środowisko",
   "computer.state.asleep": "W uśpieniu",
   "computer.state.waking": "Uruchamianie",
   "computer.state.ready": "W gotowości",
@@ -12,7 +13,6 @@
     "other": "{used} z {count} rdzenia"
   },
   "computer.memory": "Pamięć",
-  "computer.workspace.short": "Przestrzeń robocza",
   "computer.of": "{used} z {total}",
   "computer.of.least": "{used} z co najmniej {total}",
   "computer.engines": "Co na nim działa",
@@ -30,6 +30,7 @@
   "computer.internet.any": "Każda witryna",
   "computer.sites": "Witryny, do których zawsze może sięgać",
   "computer.registries": "Skąd pochodzą pakiety",
+  "computer.advanced": "Przekaźnik i źródła pakietów",
   "computer.registries.text": "Dla serwera lustrzanego, na przykład twojej organizacji. Klucz zostaje na tym urządzeniu i trafia tylko pod jego adres.",
   "computer.registry.pyodide": "Python, pakiety Pyodide",
   "computer.registry.pypi": "Python, PyPI",

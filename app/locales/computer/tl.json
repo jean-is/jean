@@ -1,5 +1,6 @@
 {
-  "computer.text": "Isang computer sa nakahiwalay na kapaligiran sa tab na ito: hinihiram nito ang processor at memory ng device na ito, at hindi kailanman umaabot sa iba pang bagay rito. Nasa /workspace ang mga file ng folder mo, o ang workspace ng proyektong ito.",
+  "computer.text": "Isang computer sa nakahiwalay na kapaligiran sa tab na ito: hinihiram nito ang processor at memory ng device na ito, at hindi kailanman umaabot sa iba pang bagay rito.",
+  "computer.sandbox": "Nakahiwalay na kapaligiran",
   "computer.state.asleep": "Tulog",
   "computer.state.waking": "Gumigising",
   "computer.state.ready": "Handa",
@@ -10,7 +11,6 @@
     "other": "{used} sa {count} core"
   },
   "computer.memory": "Memory",
-  "computer.workspace.short": "Workspace",
   "computer.of": "{used} sa {total}",
   "computer.of.least": "{used} sa hindi bababa sa {total}",
   "computer.engines": "Ang pinapatakbo nito",
@@ -28,6 +28,7 @@
   "computer.internet.any": "Kahit anong site",
   "computer.sites": "Mga site na lagi nitong maaabot",
   "computer.registries": "Saan nanggagaling ang mga package",
+  "computer.advanced": "Relay at pinagmumulan ng mga package",
   "computer.registries.text": "Para sa isang mirror, gaya ng sa organisasyon mo. Nananatili sa device na ito ang key at sa address lang nito ipinapadala.",
   "computer.registry.pyodide": "Python, mga package ng Pyodide",
   "computer.registry.pypi": "Python, PyPI",

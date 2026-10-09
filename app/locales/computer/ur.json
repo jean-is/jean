@@ -1,5 +1,6 @@
 {
-  "computer.text": "اس ٹیب میں ایک الگ تھلگ ماحول کا کمپیوٹر: یہ اس ڈیوائس کا پروسیسر اور میموری ادھار لیتا ہے، اور اس پر کسی اور چیز تک کبھی نہیں پہنچتا۔ ⁦/workspace⁩ میں آپ کے فولڈر کی فائلیں، یا اس پروجیکٹ کی ورک اسپیس ہوتی ہے۔",
+  "computer.text": "اس ٹیب میں ایک الگ تھلگ ماحول کا کمپیوٹر: یہ اس ڈیوائس کا پروسیسر اور میموری ادھار لیتا ہے، اور اس پر کسی اور چیز تک کبھی نہیں پہنچتا۔",
+  "computer.sandbox": "الگ تھلگ ماحول",
   "computer.state.asleep": "سلیپ موڈ میں",
   "computer.state.waking": "آغاز جاری",
   "computer.state.ready": "تیار",
@@ -10,7 +11,6 @@
     "other": "{count} میں سے {used} کور"
   },
   "computer.memory": "میموری",
-  "computer.workspace.short": "ورک اسپیس",
   "computer.of": "{total} میں سے {used}",
   "computer.of.least": "کم از کم {total} میں سے {used}",
   "computer.engines": "اس پر کیا چلتا ہے",
@@ -28,6 +28,7 @@
   "computer.internet.any": "کوئی بھی سائٹ",
   "computer.sites": "وہ سائٹس جن تک یہ ہمیشہ جا سکتا ہے",
   "computer.registries": "پیکجز کہاں سے آتے ہیں",
+  "computer.advanced": "ریلے اور پیکجز کے ذرائع",
   "computer.registries.text": "کسی مرر کے لیے، جیسے آپ کے ادارے کا۔ کلید اسی ڈیوائس پر رہتی ہے اور صرف اسی کے پتے پر جاتی ہے۔",
   "computer.registry.pyodide": "Python، Pyodide کے پیکجز",
   "computer.registry.pypi": "Python، PyPI",

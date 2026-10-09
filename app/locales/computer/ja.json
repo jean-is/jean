@@ -1,5 +1,6 @@
 {
-  "computer.text": "このタブの中の安全な環境にあるコンピューターです。この端末のプロセッサーとメモリーを借りますが、それ以外には一切触れません。/workspace にはフォルダーのファイル、またはこのプロジェクトの作業スペースがあります。",
+  "computer.text": "このタブの中の安全な環境にあるコンピューターです。この端末のプロセッサーとメモリーを借りますが、それ以外には一切触れません。",
+  "computer.sandbox": "安全な環境",
   "computer.state.asleep": "休止中",
   "computer.state.waking": "起動中",
   "computer.state.ready": "準備完了",
@@ -9,7 +10,6 @@
     "other": "{count} コア中 {used}"
   },
   "computer.memory": "メモリー",
-  "computer.workspace.short": "作業スペース",
   "computer.of": "{total} 中 {used}",
   "computer.of.least": "{total} 以上中 {used}",
   "computer.engines": "動かせるもの",
@@ -27,6 +27,7 @@
   "computer.internet.any": "すべてのサイト",
   "computer.sites": "いつでもアクセスできるサイト",
   "computer.registries": "パッケージの入手先",
+  "computer.advanced": "中継サーバーとパッケージの入手先",
   "computer.registries.text": "組織のミラーなどを使う場合に。キーはこの端末に残り、そのアドレスにだけ送られます。",
   "computer.registry.pyodide": "Python（Pyodide のパッケージ）",
   "computer.registry.pypi": "Python（PyPI）",

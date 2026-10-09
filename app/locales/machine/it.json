@@ -1,5 +1,5 @@
 {
-  "machine.text": "I comandi possono girare anche su questo computer, con i suoi programmi e server: apri un terminale in una delle tue cartelle e incolla questa riga. Le attività con quella cartella eseguono allora lì i loro comandi, finché non premi Ctrl+C in quel terminale.",
+  "machine.text": "Esegui comandi sul tuo computer, con i suoi programmi e server, come il server di sviluppo di un sito. JavaScript e Python restano nell’ambiente isolato.",
   "machine.on": "Le attività con la cartella {folder} eseguono i loro comandi su questo computer, ognuno chiesto prima, finché non premi Ctrl+C nel suo terminale.",
   "machine.forget": "Smetti di usarlo",
   "machine.question": "Eseguire questo sul tuo computer, in {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "I comandi possono girare anche su questo computer, con i suoi programmi e server, in una cartella che scegli: le attività con quella cartella eseguono lì i loro comandi.",
   "machine.choose": "Scegli una cartella…",
   "machine.failed": "Non è partito: serve Node.js su questo computer, il comando node di un terminale.",
-  "machine.on.app": "Le attività con la cartella {folder} eseguono i loro comandi su questo computer, ognuno chiesto prima."
+  "machine.on.app": "Le attività con la cartella {folder} eseguono i loro comandi su questo computer, ognuno chiesto prima.",
+  "machine.default": "Predefinito",
+  "machine.computers": "Computer",
+  "machine.lede": "Le attività usano l’ambiente isolato, tranne quelle nella cartella che colleghi su questo computer.",
+  "machine.off": "Non collegato",
+  "machine.in": "In {folder}",
+  "machine.step.open": "Apri un terminale in una delle tue cartelle.",
+  "machine.step.paste": "Incolla lì questa riga, poi premi Invio.",
+  "machine.step.wait": "In attesa che la riga parta: questa pagina se ne accorge da sola.",
+  "machine.trusted": "Senza chiedere in",
+  "machine.untrust": "Chiedi di nuovo prima in {folder}"
 }

@@ -1,5 +1,5 @@
 {
-  "machine.text": "Polecenia mogą też działać na tym komputerze, z jego własnymi programami i serwerami: otwórz terminal w jednym ze swoich folderów i wklej ten wiersz. Zadania z tym folderem będą wtedy uruchamiać tam swoje polecenia, dopóki nie naciśniesz Ctrl+C w tym terminalu.",
+  "machine.text": "Uruchamiaj polecenia na własnym komputerze, z jego programami i serwerami, na przykład serwer deweloperski strony. JavaScript i Python zostają w odizolowanym środowisku.",
   "machine.on": "Zadania z folderem {folder} uruchamiają polecenia na tym komputerze, każde po zapytaniu, dopóki nie naciśniesz Ctrl+C w jego terminalu.",
   "machine.forget": "Przestań używać",
   "machine.question": "Uruchomić to na twoim komputerze, w folderze {folder}?",
@@ -7,5 +7,15 @@
   "machine.app": "Polecenia mogą też działać na tym komputerze, z jego własnymi programami i serwerami, w wybranym przez ciebie folderze: zadania z tym folderem uruchamiają wtedy tam swoje polecenia.",
   "machine.choose": "Wybierz folder…",
   "machine.failed": "Nie uruchomił się: potrzebuje Node.js na tym komputerze, polecenia node w terminalu.",
-  "machine.on.app": "Zadania z folderem {folder} uruchamiają polecenia na tym komputerze, każde po zapytaniu."
+  "machine.on.app": "Zadania z folderem {folder} uruchamiają polecenia na tym komputerze, każde po zapytaniu.",
+  "machine.default": "Domyślne",
+  "machine.computers": "Komputery",
+  "machine.lede": "Zadania korzystają z odizolowanego środowiska, z wyjątkiem tych w folderze, który połączysz na tym komputerze.",
+  "machine.off": "Niepołączony",
+  "machine.in": "W folderze {folder}",
+  "machine.step.open": "Otwórz terminal w jednym ze swoich folderów.",
+  "machine.step.paste": "Wklej tam ten wiersz i naciśnij Enter.",
+  "machine.step.wait": "Czekam, aż wiersz zadziała: ta strona sama to zauważy.",
+  "machine.trusted": "Bez pytania w folderach",
+  "machine.untrust": "Znów pytaj najpierw w folderze {folder}"
 }

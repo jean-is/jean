@@ -1,5 +1,6 @@
 {
-  "computer.text": "Una computadora en un entorno aislado en esta pestaña: toma prestados el procesador y la memoria de este dispositivo, y nunca llega a nada más de él. /workspace contiene los archivos de tu carpeta o el espacio de trabajo de este proyecto.",
+  "computer.text": "Una computadora en un entorno aislado en esta pestaña: toma prestados el procesador y la memoria de este dispositivo, y nunca llega a nada más de él.",
+  "computer.sandbox": "Entorno aislado",
   "computer.state.asleep": "En reposo",
   "computer.state.waking": "Arrancando",
   "computer.state.ready": "Disponible",
@@ -11,7 +12,6 @@
     "other": "{used} de {count} núcleos"
   },
   "computer.memory": "Memoria",
-  "computer.workspace.short": "Espacio de trabajo",
   "computer.of": "{used} de {total}",
   "computer.of.least": "{used} de al menos {total}",
   "computer.engines": "Lo que ejecuta",
@@ -29,6 +29,7 @@
   "computer.internet.any": "Cualquier sitio",
   "computer.sites": "Sitios a los que siempre puede llegar",
   "computer.registries": "De dónde vienen los paquetes",
+  "computer.advanced": "Relé y origen de los paquetes",
   "computer.registries.text": "Para un espejo, como el de tu organización. Una clave se queda en este dispositivo y solo va a su dirección.",
   "computer.registry.pyodide": "Python, paquetes de Pyodide",
   "computer.registry.pypi": "Python, PyPI",

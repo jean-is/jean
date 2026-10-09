@@ -1,5 +1,6 @@
 {
-  "computer.text": "Ein Computer in einer abgeschotteten Umgebung in diesem Tab: Er leiht sich Prozessor und Arbeitsspeicher dieses Geräts und erreicht sonst nichts darauf. /workspace enthält die Dateien deines Ordners oder den Arbeitsbereich dieses Projekts.",
+  "computer.text": "Ein Computer in einer abgeschotteten Umgebung in diesem Tab: Er leiht sich Prozessor und Arbeitsspeicher dieses Geräts und erreicht sonst nichts darauf.",
+  "computer.sandbox": "Abgeschottete Umgebung",
   "computer.state.asleep": "Ruhezustand",
   "computer.state.waking": "Startet",
   "computer.state.ready": "Bereit",
@@ -10,7 +11,6 @@
     "other": "{used} von {count} Kernen"
   },
   "computer.memory": "Arbeitsspeicher",
-  "computer.workspace.short": "Arbeitsbereich",
   "computer.of": "{used} von {total}",
   "computer.of.least": "{used} von mindestens {total}",
   "computer.engines": "Was darauf läuft",
@@ -28,6 +28,7 @@
   "computer.internet.any": "Jede Website",
   "computer.sites": "Websites, die er immer erreichen darf",
   "computer.registries": "Woher Pakete kommen",
+  "computer.advanced": "Relay und Paketquellen",
   "computer.registries.text": "Für einen Spiegel, etwa den deiner Organisation. Ein Schlüssel bleibt auf diesem Gerät und geht nur an dessen Adresse.",
   "computer.registry.pyodide": "Python, Pakete von Pyodide",
   "computer.registry.pypi": "Python, PyPI",
