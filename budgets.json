@@ -12,7 +12,7 @@
   "gzipKB": {
     "firstLoad": 101,
     "css": 12,
-    "locale": 8,
+    "locale": 9,
     "capabilityCode": 50,
     "$comment": "capabilityCode excludes on-demand runtimes (QuickJS, Pyodide, Transformers.js) and model weights."
   },
