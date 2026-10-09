@@ -22,11 +22,15 @@ class Shell extends Element {
     // What opens beside the conversation, the browser and the terminal, keeps the main area's top
     // end: the header's, or, with the drawer open, the same place beside it (D170). The folder's
     // name goes before them, there and never in the drawer (D149).
-    const views = ['folders', 'computer', 'browser'].some((name) => loaded.value.has(name)) ? html`<div class="views">
+    const views = ['folders', 'computer', 'browser', 'flows'].some((name) => loaded.value.has(name)) ? html`<div class="views">
       ${loaded.value.has('folders') ? html`<app-folder></app-folder>` : nothing}
       ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>` : nothing}
       ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
-        aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}</div>` : nothing
+        aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
+      ${loaded.value.has('flows') && current?.records.length ? html`<button class="icon-button flows-toggle" @click=${() => import('../caps/flows/flows.js').then((module) => module.toggle())}
+        aria-label=${t('cap.flows.name')} title=${t('cap.flows.name')}>${icons.flow}</button>` : nothing}</div>` : nothing
+    // On a new task, a capability may show something of its own in place of the welcome: Flows' flow mode (D218).
+    const instead = current?.records.length ? null : [...loaded.value.values()].map((capability) => capability.main?.()).find(Boolean)
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
@@ -38,7 +42,7 @@ class Shell extends Element {
       </header>
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
-      <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : welcome()}</main>
+      <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>
       ${offerAside()}
       ${loaded.value.has('folders') ? html`<app-folder-ask></app-folder-ask>` : nothing}
       <app-composer></app-composer>

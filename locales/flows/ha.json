@@ -35,6 +35,7 @@
   "flows.removed": "An cire “{name}”.",
   "flows.empty": "Babu matakai tukuna. Ƙara ɗaya, ko ka bayyana gudanar a tattaunawa.",
   "flows.taskEmpty": "Ba a yi komai a wannan ɗawainiya ba tukuna.",
+  "flows.none": "Babu gudanai tukuna. Ka yi ɗaya a nan, ko ka bayyana shi a akwatin da ke ƙasa.",
   "flows.running": "Yana gudana: {name}",
   "flows.stepName": "Sunan mataki",
   "flows.instructions": "Umarni",

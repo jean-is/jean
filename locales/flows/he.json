@@ -35,6 +35,7 @@
   "flows.removed": "„{name}” הוסר.",
   "flows.empty": "אין שלבים עדיין. הוסיפו שלב, או תארו את התהליך בשיחה.",
   "flows.taskEmpty": "עדיין לא נעשה דבר במשימה הזו.",
+  "flows.none": "אין עדיין תהליכים. צרו אחד כאן, או תארו אותו בתיבה למטה.",
   "flows.running": "רץ: {name}",
   "flows.stepName": "שם השלב",
   "flows.instructions": "הוראות",

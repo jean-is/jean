@@ -35,6 +35,7 @@
   "flows.removed": "“{name}” ተወግዷል።",
   "flows.empty": "ገና ደረጃዎች የሉም። አንድ ያክሉ፣ ወይም ፍሰቱን በውይይቱ ይግለጹ።",
   "flows.taskEmpty": "በዚህ ተግባር ገና ምንም አልተሰራም።",
+  "flows.none": "ገና ፍሰቶች የሉም። እዚህ አንድ ይስሩ፣ ወይም ከታች ባለው ሳጥን ውስጥ ይግለጹት።",
   "flows.running": "በሂደት ላይ፦ {name}",
   "flows.stepName": "የደረጃው ስም",
   "flows.instructions": "መመሪያዎች",

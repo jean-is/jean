@@ -61,7 +61,7 @@ const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${shortcu
   ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧') : shortcut.replace('Control', 'Ctrl')}</bdi></kbd>`
 
 /** Where a capability found leads, under a new task, as Manus lists its own: its section of Settings, in Settings' order. */
-const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scroll'], ['routines', 'alarm'], ['flows', 'flow']])
+const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scroll'], ['routines', 'alarm']])
 
 /**
  * What the drawer holds, open beside the conversation or over it: a new task, which brings the
@@ -71,7 +71,7 @@ const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scrol
 export const sidebarBody = (where) => html`<button class="place" aria-keyshortcuts=${SHORTCUTS.new}
     @click=${() => turnPage(newConversation).then(focusComposer)}>${icons.compose}${t('action.new')}</button>
   ${PLACES.filter(([id]) => loaded.value.has(id)).map(([id, icon]) => html`<button class="place"
-    @click=${() => (id === 'flows' ? import('../caps/flows/flows.js').then((module) => module.show()) : import('./dialogs.js').then((module) => module.openSettings(id)))}>${icons[icon]}${t(`cap.${id}.name`)}</button>`)}
+    @click=${() => import('./dialogs.js').then((module) => module.openSettings(id))}>${icons[icon]}${t(`cap.${id}.name`)}</button>`)}
   <h2 class="sidebar-heading">${t('history.title')}</h2>
   ${conversationList(where)}
   ${profileEntry(where)}`

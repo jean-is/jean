@@ -35,6 +35,7 @@
   "flows.removed": "「{name}」を削除しました。",
   "flows.empty": "まだステップがありません。追加するか、会話でフローを説明してください。",
   "flows.taskEmpty": "このタスクではまだ何もしていません。",
+  "flows.none": "まだフローがありません。ここで作るか、下の入力欄で説明してください。",
   "flows.running": "実行中：{name}",
   "flows.stepName": "ステップの名前",
   "flows.instructions": "指示",

@@ -35,6 +35,7 @@
   "flows.removed": "«{name}» removido.",
   "flows.empty": "Ainda não há passos. Adicione um, ou descreva o fluxo na conversa.",
   "flows.taskEmpty": "Ainda nada feito nesta tarefa.",
+  "flows.none": "Ainda não há fluxos. Crie um aqui, ou descreva-o na caixa abaixo.",
   "flows.running": "Em curso: {name}",
   "flows.stepName": "Nome do passo",
   "flows.instructions": "Instruções",

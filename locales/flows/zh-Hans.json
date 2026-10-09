@@ -35,6 +35,7 @@
   "flows.removed": "已移除“{name}”。",
   "flows.empty": "还没有步骤。添加一个，或在对话中描述流程。",
   "flows.taskEmpty": "此任务还没有做任何事。",
+  "flows.none": "还没有流程。在这里新建一个，或在下方的输入框中描述它。",
   "flows.running": "运行中：{name}",
   "flows.stepName": "步骤名称",
   "flows.instructions": "说明",

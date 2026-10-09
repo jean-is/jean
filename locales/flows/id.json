@@ -35,6 +35,7 @@
   "flows.removed": "“{name}” dihapus.",
   "flows.empty": "Belum ada langkah. Tambahkan satu, atau jelaskan alurnya di percakapan.",
   "flows.taskEmpty": "Belum ada yang dikerjakan di tugas ini.",
+  "flows.none": "Belum ada alur. Buat satu di sini, atau jelaskan di kotak di bawah.",
   "flows.running": "Berjalan: {name}",
   "flows.stepName": "Nama langkah",
   "flows.instructions": "Instruksi",

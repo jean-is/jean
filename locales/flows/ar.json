@@ -35,6 +35,7 @@
   "flows.removed": "أُزيلت «{name}».",
   "flows.empty": "لا خطوات بعد. أضف خطوة، أو صف التدفق في المحادثة.",
   "flows.taskEmpty": "لم يُنجَز شيء في هذه المهمة بعد.",
+  "flows.none": "لا تدفقات بعد. أنشئ واحدًا هنا، أو صِفه في المربع أدناه.",
   "flows.running": "قيد التشغيل: {name}",
   "flows.stepName": "اسم الخطوة",
   "flows.instructions": "التعليمات",

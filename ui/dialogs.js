@@ -712,7 +712,7 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
   connections: () => openSettings('connections'), computer: () => openSettings('computer'), machine: () => openSettings('computer'), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
-  flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.show()) },
+  flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']

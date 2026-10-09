@@ -35,6 +35,7 @@
   "flows.removed": "Removed “{name}”.",
   "flows.empty": "No steps yet. Add one, or describe the flow in the conversation.",
   "flows.taskEmpty": "Nothing done in this task yet.",
+  "flows.none": "No flows yet. Make one here, or describe one in the box below.",
   "flows.running": "Running: {name}",
   "flows.stepName": "Name of the step",
   "flows.instructions": "Instructions",

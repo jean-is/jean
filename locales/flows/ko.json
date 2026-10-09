@@ -35,6 +35,7 @@
   "flows.removed": "“{name}” 삭제됨.",
   "flows.empty": "아직 단계가 없어요. 하나 추가하거나 대화에서 플로를 설명하세요.",
   "flows.taskEmpty": "이 작업에서는 아직 한 일이 없어요.",
+  "flows.none": "아직 플로가 없어요. 여기서 만들거나 아래 입력란에 설명하세요.",
   "flows.running": "실행 중: {name}",
   "flows.stepName": "단계 이름",
   "flows.instructions": "지시",

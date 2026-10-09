@@ -31,9 +31,10 @@ class Composer extends Element {
       : working ? (downloading ? t('dictation.downloading', { percent: Math.round((voice.progress ?? 0) * 100) }) : t(`dictation.${voice.state}`))
       : ''
     const files = !isDenied('files')
-    // A menu when + adds more than files.
+    // A menu when + adds more than files: on a new task, flow mode too (D218).
     const folders = loaded.value.has('folders')
-    const menu = CAPTURE || folders
+    const flows = loaded.value.has('flows') && !app.current.value?.records.length
+    const menu = CAPTURE || folders || flows
     const add = t(menu ? 'composer.add' : 'files.attach')
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
@@ -65,6 +66,8 @@ class Composer extends Element {
               ${folders ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
                 @click=${() => import('../caps/folders/folders.js').then((module) => module.choose())}>${icons.folder}${t('composer.folder')}</button>` : nothing}
               ${CAPTURE ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` : nothing}
+              ${flows ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
+                @click=${() => import('../caps/flows/flows.js').then((module) => module.edit())}>${icons.flow}${t('cap.flows.name')}</button>` : nothing}
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}

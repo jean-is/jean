@@ -1,15 +1,18 @@
-// Flows (D218): a task's steps on a canvas beside the conversation, which the user sees, changes
-// and runs again, by hand or by a routine, and any task seen the same way. A flow is one JSON file,
+// Flows (D218): a task's steps on a canvas, which the user sees, changes and runs again, by hand or
+// by a routine, and any task seen the same way. On a new task, + in the box puts the main area in
+// flow mode, on the room's flows; on a task, a button beside the terminal's and the browser's opens
+// a pane beside it, on that task and the flows it made or ran. A flow is one JSON file,
 // flows/<ulid>.json in its project (the home project's at the root). Running one, no brain writes
 // between its steps: each step is a call of its own under `run_flow`, kept in the conversation like
 // any call, under the rules, its approvals in the inbox. A text or a file is read; instructions are a
 // helper's turn (D98); a tool is called as a script calls it (D48). `save_flow` lets the brain draw
 // one; the canvas (canvas.js) lets the user change it.
+import { html } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, contributions, unlock } from '../../ui/caps.js'
 import { define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
-import { app, assistantName, newConversation, send } from '../../ui/state.js'
+import { app, assistantName, newConversation, send, turnPage } from '../../ui/state.js'
 import { join, readJSON, writeJSON } from '../../core/fs.js'
 import { ulid } from '../../core/ulid.js'
 import { fileText } from '../../core/files.js'
@@ -209,20 +212,13 @@ const stepTool = {
   },
 }
 
-register({
-  id: 'flows',
-  tools: [saveTool, runTool, stepTool],
-  lines: [
-    { name: 'save_flow', line: 'make or change a flow: steps the user sees, changes and runs again, by hand or on a schedule' },
-    { name: 'run_flow', line: 'run one of the user’s flows' },
-  ],
-})
+// ─── Where it shows ──────────────────────────────────────────────────────────
 
-// ─── The pane ────────────────────────────────────────────────────────────────
-
-/** Whether the pane is open, and what it shows: the task on screen, or one of the room's flows by its id. */
+/** Whether the pane beside a task is open, and what it shows: the task, or a flow it made or ran, by its id. */
 export const open = signal(false)
 export const shown = signal(/** @type {'task' | string} */ ('task'))
+/** The flow the main area shows in flow mode, on a new task ('' while the room has none); null out of it. */
+export const editing = signal(/** @type {string | null} */ (null))
 
 /** Opens the pane on a flow, or on the task on screen. @param {'task' | string} [what] */
 export function show(what = shown.peek()) {
@@ -232,11 +228,33 @@ export function show(what = shown.peek()) {
 export const close = () => { open.value = false }
 export const toggle = () => (open.peek() ? close() : show())
 
-/** Runs a flow in a task of its own, named after it: its steps are the turn, what they give the answer. @param {Saved} flow */
+/** Flow mode, on a new task: the main area shows a flow, the one changed last unless named. @param {string} [id] */
+export async function edit(id) {
+  if (app.current.peek()?.records.length) await turnPage(newConversation)
+  editing.value = id ?? [...flows.peek()].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))[0]?.id ?? ''
+}
+/** Where Flows opens: beside a task, on it; on a new task, in flow mode. */
+export const here = () => (app.current.peek()?.records.length ? show('task') : edit())
+// A message sent, or a task opened, leaves flow mode: the conversation takes the main area.
+effect(() => { if (app.current.value?.records.length) editing.value = null })
+
+/** Runs a flow in a task of its own, named after it: its steps are the turn, what they give the answer. Its steps then show beside it. @param {Saved} flow */
 export async function runNow(flow) {
+  editing.value = null
   newConversation()
+  show(flow.id)
   await send(flow.name, { notes: [metaRecord('jean', { title: flow.name })], call: { name: 'run_flow', args: { flow: flow.id, name: flow.name } } })
 }
+
+register({
+  id: 'flows',
+  tools: [saveTool, runTool, stepTool],
+  lines: [
+    { name: 'save_flow', line: 'make or change a flow: steps the user sees, changes and runs again, by hand or on a schedule' },
+    { name: 'run_flow', line: 'run one of the user’s flows' },
+  ],
+  main: () => (editing.value === null ? null : html`<app-flow-main></app-flow-main>`),
+})
 
 /** Makes a routine that runs a flow, or finds the one there is, and opens it in Settings to set when (D122). @param {Saved} flow */
 export async function schedule(flow) {
@@ -252,7 +270,8 @@ export async function schedule(flow) {
 }
 
 // The canvas imports this module, so it comes once this one has run: awaited here, each would wait for the other.
-import('./canvas.js').then(({ Flows }) => {
+import('./canvas.js').then(({ Flows, FlowMain }) => {
   define('app-flows', Flows)
+  define('app-flow-main', FlowMain)
   dock.join(document.createElement('app-flows'))
 })

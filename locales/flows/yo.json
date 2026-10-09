@@ -35,6 +35,7 @@
   "flows.removed": "A yọ “{name}” kúrò.",
   "flows.empty": "Kò sí ìgbésẹ̀ kankan síbẹ̀. Fi ọ̀kan kún un, tàbí ṣàlàyé ìṣàn náà nínú ìjíròrò.",
   "flows.taskEmpty": "Kò tíì sí ohun tí a ṣe nínú iṣẹ́ yìí.",
+  "flows.none": "Kò sí ìṣàn kankan síbẹ̀. Ṣe ọ̀kan níbí, tàbí ṣàlàyé rẹ̀ nínú àpótí ìsàlẹ̀.",
   "flows.running": "Ó ń lọ: {name}",
   "flows.stepName": "Orúkọ ìgbésẹ̀",
   "flows.instructions": "Ìtọ́sọ́nà",

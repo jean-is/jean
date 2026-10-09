@@ -268,7 +268,7 @@ function routineView(routine) {
           @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : nothing}
         <input type="time" .value=${live(routine.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>
       </div>
-      ${routine.flow ? html`<p><button class="link-button" title=${t('cap.flows.name')} @click=${() => { app.dialog.value = null; import('../caps/flows/flows.js').then((flows) => flows.show(routine.flow)) }}>${icons.flow}
+      ${routine.flow ? html`<p><button class="link-button" title=${t('cap.flows.name')} @click=${() => { app.dialog.value = null; import('../caps/flows/flows.js').then((flows) => flows.edit(routine.flow)) }}>${icons.flow}
         <span dir="auto">${routine.request}</span></button></p>` : html`<label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
         @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>`}
       ${runs.length ? html`<div class="routine-runs">${t('routines.runs')}<ul aria-label=${t('routines.runs')}>${runs.map((run) => html`<li>

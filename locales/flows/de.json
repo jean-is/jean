@@ -35,6 +35,7 @@
   "flows.removed": "„{name}“ entfernt.",
   "flows.empty": "Noch keine Schritte. Füge einen hinzu oder beschreibe den Ablauf im Gespräch.",
   "flows.taskEmpty": "In dieser Aufgabe ist noch nichts geschehen.",
+  "flows.none": "Noch keine Abläufe. Lege hier einen an oder beschreibe ihn unten im Feld.",
   "flows.running": "Läuft: {name}",
   "flows.stepName": "Name des Schritts",
   "flows.instructions": "Anweisungen",

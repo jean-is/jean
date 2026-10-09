@@ -35,6 +35,7 @@
   "flows.removed": "Inalis ang “{name}”.",
   "flows.empty": "Wala pang hakbang. Magdagdag ng isa, o ilarawan ang daloy sa usapan.",
   "flows.taskEmpty": "Wala pang nagawa sa gawaing ito.",
+  "flows.none": "Wala pang daloy. Gumawa ng isa rito, o ilarawan ito sa kahon sa ibaba.",
   "flows.running": "Tumatakbo: {name}",
   "flows.stepName": "Pangalan ng hakbang",
   "flows.instructions": "Mga tagubilin",

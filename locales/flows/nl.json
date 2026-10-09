@@ -35,6 +35,7 @@
   "flows.removed": "‘{name}’ verwijderd.",
   "flows.empty": "Nog geen stappen. Voeg er een toe, of beschrijf de stroom in het gesprek.",
   "flows.taskEmpty": "Nog niets gedaan in deze taak.",
+  "flows.none": "Nog geen stromen. Maak er hier een, of beschrijf er een in het vak hieronder.",
   "flows.running": "Bezig: {name}",
   "flows.stepName": "Naam van de stap",
   "flows.instructions": "Instructies",

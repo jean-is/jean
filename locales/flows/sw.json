@@ -35,6 +35,7 @@
   "flows.removed": "“{name}” imeondolewa.",
   "flows.empty": "Bado hakuna hatua. Ongeza moja, au eleza mtiririko kwenye mazungumzo.",
   "flows.taskEmpty": "Bado hakuna kilichofanyika katika kazi hii.",
+  "flows.none": "Bado hakuna mitiririko. Tengeneza mmoja hapa, au uueleze kwenye kisanduku hapa chini.",
   "flows.running": "Inaendeshwa: {name}",
   "flows.stepName": "Jina la hatua",
   "flows.instructions": "Maelekezo",

@@ -83,6 +83,20 @@
 .flow-port.is-out { inset-inline-end: -8px; cursor: crosshair; touch-action: none; }
 .flow-port.is-out:hover { border-color: var(--flame); background: var(--flame); }
 
+/* Flow mode, on a new task: the main area is the canvas, as wide as the room. */
+app-shell:has(app-flow-main) { block-size: 100dvh; }
+main:has(> app-flow-main) { align-self: stretch; box-sizing: border-box; inline-size: auto; min-block-size: 0; margin-inline: 0; padding-block: 0.25rem 1rem; padding-inline: clamp(1rem, 3vw, 1.75rem); }
+/* With the drawer open, the bar lies over the main area's top (ui/style.css): the canvas starts under it. */
+:root[data-sidebar] main:has(> app-flow-main) { padding-block-start: 0; }
+:root[data-sidebar] app-flow-main { margin-block-start: var(--top); }
+app-flow-main { flex: 1; display: flex; flex-direction: column; min-block-size: 0; }
+.flows-main { flex: 1; display: flex; flex-direction: column; min-block-size: 0; overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--room-2); }
+.flows-main > .flows-bar { display: flex; align-items: center; padding-block: 0.6rem; border-block-end: 1px solid var(--line); }
+.flows-main h2, .flows .pane-head h2 { margin: 0; font: 600 1rem/1.4 var(--sans); }
+.flows-none { flex: 1; display: grid; place-content: center; justify-items: center; gap: 1rem; padding: 2rem; text-align: center; }
+.flows-none p { margin: 0; max-inline-size: 26rem; }
+.flows-none .button { display: inline-flex; align-items: center; gap: 0.35rem; }
+
 /* A step's form, under the drawing. */
 .flows-form { display: grid; gap: 0.7rem; max-block-size: 48%; overflow: auto; padding-block: 0.9rem; padding-inline: 1.25rem; border-block-start: 1px solid var(--line); background: var(--room-2); }
 .flows-form textarea { inline-size: 100%; box-sizing: border-box; padding: 0.6rem 0.8rem; border: 1px solid var(--line-strong); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); line-height: 1.5; resize: vertical; }

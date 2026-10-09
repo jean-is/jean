@@ -35,6 +35,7 @@
   "flows.removed": "“{name}” kaldırıldı.",
   "flows.empty": "Henüz adım yok. Bir tane ekleyin ya da akışı sohbette anlatın.",
   "flows.taskEmpty": "Bu görevde henüz bir şey yapılmadı.",
+  "flows.none": "Henüz akış yok. Burada bir tane oluşturun ya da aşağıdaki kutuda anlatın.",
   "flows.running": "Çalışıyor: {name}",
   "flows.stepName": "Adımın adı",
   "flows.instructions": "Talimatlar",

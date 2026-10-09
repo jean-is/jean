@@ -35,6 +35,7 @@
   "flows.removed": "Đã gỡ “{name}”.",
   "flows.empty": "Chưa có bước nào. Thêm một bước, hoặc mô tả luồng trong cuộc trò chuyện.",
   "flows.taskEmpty": "Chưa làm gì trong nhiệm vụ này.",
+  "flows.none": "Chưa có luồng nào. Tạo một luồng ở đây, hoặc mô tả nó trong ô bên dưới.",
   "flows.running": "Đang chạy: {name}",
   "flows.stepName": "Tên bước",
   "flows.instructions": "Hướng dẫn",
