@@ -201,7 +201,7 @@
   "auto.noPrivate": "這台裝置上沒有不需要雲端就能使用的大腦。請新增一個，或允許使用雲端。",
   "offer.title": "新功能",
   "offer.yes": "開啟",
-  "offer.no": "暫時不要",
+  "offer.no": "不用了",
   "offer.on": "已開啟：{name}",
   "tool.offer": "已建議：{name}",
   "tool.javascript": "已計算",

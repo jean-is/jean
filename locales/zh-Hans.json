@@ -201,7 +201,7 @@
   "auto.noPrivate": "这台设备上没有不需要云端就能使用的大脑。请添加一个，或允许使用云端。",
   "offer.title": "新功能",
   "offer.yes": "开启",
-  "offer.no": "暂不",
+  "offer.no": "不用了",
   "offer.on": "已开启：{name}",
   "tool.offer": "已建议：{name}",
   "tool.javascript": "已计算",

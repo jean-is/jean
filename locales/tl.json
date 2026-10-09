@@ -205,7 +205,7 @@
   "auto.noPrivate": "Walang utak sa device na ito na magagamit nang walang cloud. Magdagdag ng isa, o payagan ang cloud.",
   "offer.title": "May bago",
   "offer.yes": "I-on",
-  "offer.no": "Hindi muna",
+  "offer.no": "Huwag na, salamat",
   "offer.on": "Naka-on na: {name}",
   "tool.offer": "Iminungkahi: {name}",
   "tool.javascript": "Nakuwenta",

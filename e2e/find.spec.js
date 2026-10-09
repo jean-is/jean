@@ -36,7 +36,7 @@ test('offered after ten conversations, it finds a conversation, a file and a set
   // Offers due before it (Intuition, Backup) go first: once they are answered, Search is offered.
   const offer = page.locator('.offer')
   await expect(async () => {
-    if (!(await offer.textContent())?.includes('look back on')) await offer.getByRole('button', { name: 'Not now' }).click({ timeout: 1000 })
+    if (!(await offer.textContent())?.includes('look back on')) await offer.getByRole('button', { name: 'No thanks' }).click({ timeout: 1000 })
     await expect(offer).toContainText('a lot to look back on', { timeout: 1000 })
   }).toPass()
   await offer.getByRole('button', { name: 'Turn on search' }).click()

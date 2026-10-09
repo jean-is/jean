@@ -201,7 +201,7 @@
   "auto.noPrivate": "이 기기에는 클라우드 없이 쓸 수 있는 두뇌가 없어요. 하나 추가하거나 클라우드를 허용하세요.",
   "offer.title": "새로운 기능",
   "offer.yes": "켜기",
-  "offer.no": "지금은 안 함",
+  "offer.no": "괜찮습니다",
   "offer.on": "켜짐: {name}",
   "tool.offer": "제안함: {name}",
   "tool.javascript": "계산함",

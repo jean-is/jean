@@ -6,7 +6,7 @@
 // covering the other, and its edge and the divider between them resize them (D144). A web page Jean
 // made opens there from its card (D172). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeTasks, BRAIN_URL, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, closeTasks, BRAIN_URL, SALES } from './helpers.js'
 
 const SITE = BRAIN_URL.replace(/\/v1$/, '/site')
 
@@ -178,6 +178,26 @@ test('the brain offers the browser, then opens a page there and reads it, asking
   const notes = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
     .flatMap((record) => (record.update?.sessionUpdate === '_system_note' ? [record.update.text] : [])))
   expect(notes).toContain(`The <page> section is now:\nThe browser beside the conversation shows ${SITE}/bakery.html.`)
+})
+
+test('No thanks is for good: the brain hears it again in a new task, and the user sees no card (D219)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Show me the bakery site')
+  await page.locator('.msg-jean .approval').getByRole('button', { name: 'No thanks' }).click()
+  await expect(page.locator('.follow-ups')).toBeVisible()
+  const list = await openTasks(page)
+  await list.locator('.place', { hasText: 'New task' }).click()
+  await expect(page.locator('.msg-jean')).toHaveCount(0)
+  await ask(page, 'Show me the bakery site')
+  // The answer goes on by itself: no card waits for the user.
+  await expect(page.locator('.msg-jean .prose')).toContainText('Anything else?')
+  await expect(page.locator('.follow-ups')).toBeVisible()
+  await expect(page.locator('.msg-jean .approval')).toHaveCount(0)
+  await expect(page.locator('app-browser .browser')).toHaveCount(0)
+  const results = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
+    .flatMap((record) => (typeof record.update?.rawOutput === 'string' ? [record.update.rawOutput] : [])))
+  expect(results).toContain('The user said no to it before. Go on without it.')
 })
 
 test('a web page Jean made opens from its card in the browser once it is on, as the card holds it (D172)', async ({ page }) => {

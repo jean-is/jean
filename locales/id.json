@@ -201,7 +201,7 @@
   "auto.noPrivate": "Tidak ada otak di perangkat ini yang bisa dipakai tanpa cloud. Tambahkan satu, atau izinkan cloud.",
   "offer.title": "Sesuatu yang baru",
   "offer.yes": "Aktifkan",
-  "offer.no": "Jangan sekarang",
+  "offer.no": "Tidak, terima kasih",
   "offer.on": "{name} aktif",
   "tool.offer": "Disarankan: {name}",
   "tool.javascript": "Dihitung",

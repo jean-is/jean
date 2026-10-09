@@ -205,7 +205,7 @@
   "auto.noPrivate": "Bu cihazda bulut olmadan çalışan bir beyin yok. Bir tane ekle ya da buluta izin ver.",
   "offer.title": "Yeni bir şey",
   "offer.yes": "Aç",
-  "offer.no": "Şimdi değil",
+  "offer.no": "Hayır, teşekkürler",
   "offer.on": "Açıldı: {name}",
   "tool.offer": "Önerildi: {name}",
   "tool.javascript": "Hesaplandı",

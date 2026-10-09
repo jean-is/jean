@@ -55,13 +55,15 @@ const offerTool = {
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
     if (id === 'search' && !loaded.value.has(id) && app.conversations.value.length < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (!loaded.value.has(id)) {
+      // A no is for good, here as above the box: the brain hears it again, and the user sees nothing (D219).
+      if (effective.value.settings.offers[id]) return 'The user said no to it before. Go on without it.'
       // One offer waits at a time, in the conversation that made it (D147).
       if (app.offering.peek()) return 'Another offer is waiting for the user. Go on without it.'
       const yes = await new Promise((resolve) => { app.offering.value = { id, conversation: conversationOf(ctx.signal)?.path, resolve } })
       app.offering.value = null
       if (!yes) {
         await answerOffer(id)
-        return 'The user said not now. Do not offer it again in this conversation.'
+        return 'The user said no. Go on without it.'
       }
       if (!(await unlock(id))) return 'It could not be turned on.'
       // A project to name, or a service to connect: the answer waits for the user.

@@ -213,7 +213,7 @@
   "auto.noPrivate": "אין במכשיר הזה מוח שעובד בלי הענן. הוסיפו אחד או אפשרו את הענן.",
   "offer.title": "משהו חדש",
   "offer.yes": "הפעלה",
-  "offer.no": "לא עכשיו",
+  "offer.no": "לא, תודה",
   "offer.on": "הופעל: {name}",
   "tool.offer": "הוצע: {name}",
   "tool.javascript": "חושב",

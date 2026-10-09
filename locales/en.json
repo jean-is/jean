@@ -205,7 +205,7 @@
   "auto.noPrivate": "There is no brain on this device to use without the cloud. Add one, or allow the cloud.",
   "offer.title": "Something new",
   "offer.yes": "Turn it on",
-  "offer.no": "Not now",
+  "offer.no": "No thanks",
   "offer.on": "{name} is on",
   "tool.offer": "Suggested: {name}",
   "tool.javascript": "Calculated",

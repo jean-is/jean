@@ -209,7 +209,7 @@
   "auto.noPrivate": "Aucun cerveau sur cet appareil ne fonctionne sans le cloud. Ajoutez-en un, ou autorisez le cloud.",
   "offer.title": "Quelque chose de nouveau",
   "offer.yes": "Activer",
-  "offer.no": "Pas maintenant",
+  "offer.no": "Non merci",
   "offer.on": "{name} : activé",
   "tool.offer": "Proposé : {name}",
   "tool.javascript": "Calcul effectué",

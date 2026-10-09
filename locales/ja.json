@@ -201,7 +201,7 @@
   "auto.noPrivate": "クラウドなしで使える頭脳がこの端末にありません。追加するか、クラウドを許可してください。",
   "offer.title": "新しい機能",
   "offer.yes": "オンにする",
-  "offer.no": "今はしない",
+  "offer.no": "いいえ、結構です",
   "offer.on": "{name}がオンになりました",
   "tool.offer": "提案：{name}",
   "tool.javascript": "計算しました",

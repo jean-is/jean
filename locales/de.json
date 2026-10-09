@@ -205,7 +205,7 @@
   "auto.noPrivate": "Auf diesem Gerät gibt es kein Gehirn, das ohne Cloud auskommt. Füge eins hinzu oder erlaube die Cloud.",
   "offer.title": "Etwas Neues",
   "offer.yes": "Einschalten",
-  "offer.no": "Jetzt nicht",
+  "offer.no": "Nein danke",
   "offer.on": "{name}: eingeschaltet",
   "tool.offer": "Vorgeschlagen: {name}",
   "tool.javascript": "Berechnet",

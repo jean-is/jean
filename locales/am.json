@@ -205,7 +205,7 @@
   "auto.noPrivate": "ያለ ደመና የሚሠራ አንጎል በዚህ መሣሪያ ላይ የለም። አንድ ያክሉ፣ ወይም ደመናን ይፍቀዱ።",
   "offer.title": "አዲስ ነገር",
   "offer.yes": "ያብሩት",
-  "offer.no": "ለአሁን ይቅር",
+  "offer.no": "አይ፣ አመሰግናለሁ",
   "offer.on": "በርቷል፦ {name}",
   "tool.offer": "የተጠቆመ፦ {name}",
   "tool.javascript": "ተሰልቷል",

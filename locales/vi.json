@@ -201,7 +201,7 @@
   "auto.noPrivate": "Không có bộ não nào trên thiết bị này dùng được mà không cần đám mây. Hãy thêm một bộ não, hoặc cho phép đám mây.",
   "offer.title": "Điều mới",
   "offer.yes": "Bật",
-  "offer.no": "Lúc khác",
+  "offer.no": "Không, cảm ơn",
   "offer.on": "Đã bật {name}",
   "tool.offer": "Đã gợi ý: {name}",
   "tool.javascript": "Đã tính toán",
