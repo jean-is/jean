@@ -164,7 +164,7 @@ export function setTheme(next) {
   else localStorage.removeItem(THEME_KEY)
 }
 
-/** Light to dark and back (⌘⇧L, D130): switching back to what the device shows is Auto again (D85). */
+/** Light to dark and back (⌘⇧D, D130, D238): switching back to what the device shows is Auto again (D85). */
 export function switchTheme() {
   const next = theme.value === 'light' ? 'dark' : 'light'
   setTheme(next === app.deviceTheme.value ? null : next)
@@ -183,10 +183,12 @@ export function setSidebar(open) {
   localStorage.setItem(SIDEBAR_KEY, open ? 'open' : 'closed')
 }
 
-/** The header's button: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over. */
+/** The header's button and ⌘B: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over or away. */
 export function toggleSidebar() {
-  if (app.wide.value) setSidebar(!sidebarOpen.value)
-  else app.dialog.value = 'history'
+  if (!app.wide.value) app.dialog.value = app.dialog.value === 'history' ? null : 'history'
+  else if (!document.startViewTransition) setSidebar(!sidebarOpen.value)
+  // Beside the conversation, it slides (D234).
+  else import('./slide.js').then(({ slide }) => slide())
 }
 
 let lookWrite = 0
@@ -429,6 +431,9 @@ export const retry = async () => (await sending()).retry()
 
 /** Goes back to a request, leaving out what came after it, and answers it again (D188). @param {number} upTo */
 export const rewind = async (upTo) => (await sending()).rewind(upTo)
+
+/** Duplicates the conversation up to a request into a new one, which answers it (D230). @param {number} upTo */
+export const fork = async (upTo) => (await sending()).fork(upTo)
 
 /** The user started typing, or a file is ready: the provider's cache may need writing again (D49). */
 export const warm = async () => (await sending()).warm()

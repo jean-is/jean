@@ -38,6 +38,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file
 - [ ] bash: how often a brain reaches for it, and whether its commands suit a non-technical user's files
 - [ ] This computer (D198) from Jean served over https: Chrome's local network prompt, Safari and Firefox reaching 127.0.0.1, Linux; a brain making, installing and serving a Vite project there, fixing what its log says
+- [ ] Claude Code (D235) with a real Pro and Max plan, in the desktop app and from Jean served over https: a long task with many tool calls and approvals, a reload in the middle, Auto's tiers, a plan's limit, and how long a first answer takes
 - [ ] This computer in the desktop app, opened from the Dock or Finder: the login shell finding Node from Homebrew, Volta and nvm; Linux; the folder dialog and Stop in the real window
 
 **With real services**
@@ -64,6 +65,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] An answer with charts and scores pasted into Word, Google Docs, Pages and Outlook: do its `data:` pictures come along, as they don't in Notion? (D196)
 - [ ] Charts and scores (D196) on a weak laptop (ECharts' first load, a score of a few hundred bars), heard on real speakers, in Firefox and real Safari, and with a screen reader
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
+- [ ] Workbooks whose cells were changed in the preview or a folder (D229) open in Excel, Numbers and LibreOffice without a repair, their formulas worked out again; with an IME, a cell is opened with F2 and a composed word kept whole
 
 **Voice**
 - [ ] Whisper dictation and Chrome's on-device recognition, Arc included (fixed by D61 and D110, to check again)

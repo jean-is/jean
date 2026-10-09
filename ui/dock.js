@@ -177,10 +177,12 @@ function layout() {
     dock.append(divider)
   }
   while (dividers.length > Math.max(0, open.length - 1)) dividers.pop()?.remove()
-  // Pane, divider, pane: in the order they opened, each with its share.
+  // Pane, divider, pane: in the order they opened, each with its share of those open, so that one
+  // alone fills the dock whatever share it had beside another (a flex-grow under 1 leaves room).
+  const total = open.reduce((sum, element) => sum + (sizes[element.localName] ?? 1), 0)
   open.forEach((element, i) => {
     element.style.order = String(2 * i)
-    element.style.flexGrow = String(sizes[element.localName] ?? 1)
+    element.style.flexGrow = String((open.length * (sizes[element.localName] ?? 1)) / total)
   })
   dividers.forEach((divider, i) => {
     divider.style.order = String(2 * i + 1)

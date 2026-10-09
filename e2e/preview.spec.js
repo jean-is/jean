@@ -7,6 +7,9 @@
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, SALES, pdf, inkOf } from './helpers.js'
 import { writeZip } from '../core/zip.js'
+import { makeFile } from '../caps/made/formats.js'
+import { extractPages } from '../caps/files/extract.js'
+import { readFile } from 'node:fs/promises'
 
 test('a web page Jean made shows in the preview and runs its script, which can send nothing away', async ({ page }) => {
   /** @type {string[]} */
@@ -235,3 +238,56 @@ async function deck(titles) {
   }
   return Buffer.from(await writeZip(Object.entries(files).map(([name, text]) => ({ name, bytes: new TextEncoder().encode(text) }))))
 }
+
+test('a workbook’s cells change in the preview, in the version on show, which the brain hears of (D229)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const budget = (await makeFile('Budget.xlsx', 'Item,Amount\nRent,1200\nFood,450\nTotal,=SUM(B2:B3)')).bytes
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Budget.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: Buffer.from(budget) })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Here is my budget')
+  await page.locator('.msg-files .file-chip').filter({ hasText: 'Budget.xlsx' }).click()
+  // The cells are drawn, not written out: they are reached where the grid shows them, and read in the box.
+  const frame = page.frameLocator('app-preview .preview iframe')
+  const grid = frame.locator('[data-xlsx-viewport-input]')
+  const box = frame.locator('body > input')
+  const [A2, B3] = [{ x: 90, y: 50 }, { x: 190, y: 70 }]
+  await expect(frame.locator('main')).toContainText('Budget', { timeout: 15_000 })
+  // A double click opens a box over the cell with what it holds; Enter keeps the change.
+  await grid.dblclick({ position: B3 })
+  await expect(box).toHaveAccessibleName('B3')
+  await expect(box).toHaveValue('450')
+  const first = await page.locator('app-preview .preview iframe').elementHandle()
+  await box.fill('500')
+  await box.press('Enter')
+  // Shown again, where it was, with the cell's new value; Escape gives the keys back to the grid.
+  await expect.poll(() => first?.evaluate((frame) => frame.isConnected), { timeout: 15_000 }).toBe(false)
+  await expect(box).toBeAttached({ timeout: 15_000 })
+  await grid.click({ position: B3 })
+  await page.keyboard.press('F2')
+  await expect(box).toHaveValue('500')
+  await page.keyboard.press('Escape')
+  await page.keyboard.press('ArrowUp')
+  await page.keyboard.press('ArrowLeft')
+  // Typing on the cell chosen starts with what is typed.
+  await page.keyboard.type('Loyer')
+  await expect(box).toHaveAccessibleName('A2')
+  const second = await page.locator('app-preview .preview iframe').elementHandle()
+  await page.keyboard.press('Enter')
+  await expect.poll(() => second?.evaluate((frame) => frame.isConnected), { timeout: 15_000 }).toBe(false)
+  // Both changes are in the file the message shared, as it shows again from there: no versions to pick from.
+  await expect(page.locator('app-preview').getByRole('combobox', { name: 'Versions' })).toHaveCount(0)
+  await page.locator('app-preview').getByRole('button', { name: 'Close' }).click()
+  await page.locator('.msg-files .file-chip').filter({ hasText: 'Budget.xlsx' }).click()
+  await expect(box).toBeAttached({ timeout: 15_000 })
+  await grid.click({ position: A2 })
+  await page.keyboard.press('F2')
+  await expect(box).toHaveValue('Loyer')
+  await page.keyboard.press('Escape')
+  const told = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
+    .flatMap((record) => (record.update?.sessionUpdate === '_system_note' && record.update.data.kind === 'cells' ? [record.update.text] : [])))
+  expect(told).toEqual(['The user changed Budget.xlsx in the preview: B3 in Budget is now 500.', 'The user changed Budget.xlsx in the preview: A2 in Budget is now Loyer.'])
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.preview').getByRole('button', { name: 'Save Budget.xlsx' }).click()])
+  const saved = new Uint8Array(await readFile(await download.path()))
+  expect(await extractPages('Budget.xlsx', saved)).toEqual(['Sheet: Budget\nItem\tAmount\nLoyer\t1200\nFood\t500\nTotal\t1700'])
+})

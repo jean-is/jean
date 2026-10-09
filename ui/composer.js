@@ -46,7 +46,7 @@ class Composer extends Element {
             <span class="attachment-note">${item.status === 'reading' ? t('files.reading')
               : item.status === 'failed' ? item.error ?? t('files.unreadable')
               : item.preview ? t('files.picture') : t('files.pages', { count: item.pages?.length ?? 0 })}</span>
-            <button type="button" class="icon-button subtle" aria-label=${t('files.remove', { name: item.name })} title=${t('action.remove')}
+            <button type="button" class="icon-button subtle" aria-label=${t('files.remove', { name: item.name })}
               @click=${() => removeAttachment(item.key)}>${icons.close}</button>
           </li>`)}</ul>` : nothing}
         <label class="visually-hidden" for="prompt">${t('composer.label')}</label>
@@ -59,7 +59,7 @@ class Composer extends Element {
         <span class="visually-hidden" role="status">${status}</span>
         <div class="composer-row">
           <div class="composer-tools">
-            ${files ? html`<button type="button" class="icon-button add" aria-label=${add} title=${add}
+            ${files ? html`<button type="button" class="icon-button add" aria-label=${add}
               popovertarget=${menu ? 'add-menu' : nothing} @click=${menu ? undefined : this.#files}>${icons.plus}</button>` : nothing}
             ${files && menu ? html`<div id="add-menu" class="menu" popover>
               <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button>
@@ -71,7 +71,7 @@ class Composer extends Element {
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
-              aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')} title=${t(listening ? 'dictation.stop' : 'dictation.start')}
+              aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
           </div>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
@@ -179,11 +179,11 @@ class Composer extends Element {
  */
 function primary(busy, empty, hands) {
   const on = hands !== 'off'
-  if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-label=${t('action.stop')} title=${t('action.stop')}>${icons.stop}</button>`
+  if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-label=${t('action.stop')}>${icons.stop}</button>`
   if (empty ? on || loaded.value.has('live') : on && busy) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
-    aria-label=${t(on ? 'live.stop' : 'live.start')} title=${t(on ? 'live.stop' : 'live.start')}
+    aria-label=${t(on ? 'live.stop' : 'live.start')}
     @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`
-  return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')} title=${t('action.send')}>${icons.send}</button>`
+  return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')}>${icons.send}</button>`
 }
 
 const LONG_PASTE = 2000

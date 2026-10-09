@@ -8,6 +8,7 @@ import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
+import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
@@ -26,16 +27,16 @@ class Shell extends Element {
       ${loaded.value.has('folders') ? html`<app-folder></app-folder>` : nothing}
       ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>` : nothing}
       ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
-        aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
+        aria-label=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
       ${loaded.value.has('flows') && current?.records.length ? html`<button class="icon-button flows-toggle" @click=${() => import('../caps/flows/flows.js').then((module) => module.toggle())}
-        aria-label=${t('cap.flows.name')} title=${t('cap.flows.name')}>${icons.flow}</button>` : nothing}</div>` : nothing
+        aria-label=${t('cap.flows.name')}>${icons.flow}</button>` : nothing}</div>` : nothing
     // On a new task, a capability may show something of its own in place of the welcome: Flows' flow mode (D218).
     const instead = current?.records.length ? null : [...loaded.value.values()].map((capability) => capability.main?.()).find(Boolean)
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
-        <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing}
-          aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')} title=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
+        <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing} aria-keyshortcuts=${SHORTCUTS.sidebar}
+          aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
         ${open ? findButton() : views}
@@ -64,23 +65,25 @@ effect(() => {
 
 /** Search, once it is found, at the top of the drawer, as in Manus (D133, D165). */
 export const findButton = () => (loaded.value.has('find') ? html`<button class="icon-button" aria-keyshortcuts=${SHORTCUTS.find}
-  aria-label=${t('cap.find.name')} title=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button>` : nothing)
+  aria-label=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button>` : nothing)
 
 const discovery = () => import('./discovery.js')
 
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
-// systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
-// ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
+// systems. A browser tab keeps ⌘N for a new window, so ⌘⇧O does it too, as in ChatGPT, and is the one shown (D236).
+// ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧S dictation, ⌘⇧H hands-free once found (D130, D238);
+// ⌘K opens search once it is found, or closes it (D133);
 // ⌘⇧B opens the browser once it is found, or closes it (D142). ⌘J opens the terminal, as in code editors,
 // brings the keys to it, or closes it once they are there, and turns the computer on first (D166, D170, D184).
+// ⌘B opens the drawer or puts it away, as in code editors (D234).
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
@@ -89,13 +92,21 @@ document.addEventListener('keydown', (event) => {
   if (key === ',' && !event.shiftKey) {
     event.preventDefault()
     if (app.dialog.value !== 'settings') import('./dialogs.js').then((module) => module.openSettings())
-  } else if (key === 'n' && !event.shiftKey) {
+  } else if (key === (event.shiftKey ? 'o' : 'n')) {
     event.preventDefault()
     turnPage(newConversation)
     focusComposer()
-  } else if (key === 'l' && event.shiftKey) {
+  } else if (key === 'd' && event.shiftKey) {
     event.preventDefault()
     switchTheme()
+  } else if (key === 'e' && event.shiftKey) {
+    event.preventDefault()
+    import('./inbox.js').then((module) => module.nextLook())
+  } else if ((key === 's' || (key === 'h' && loaded.value.has('live'))) && event.shiftKey) {
+    event.preventDefault()
+    app.dialog.value = null
+    if (key === 's') toggleDictation()
+    else import('../caps/live/live.js').then((module) => module.toggle())
   } else if (key === 'k' && !event.shiftKey && loaded.value.has('find')) {
     event.preventDefault()
     app.dialog.value = app.dialog.value === 'find' ? null : 'find'
@@ -105,6 +116,12 @@ document.addEventListener('keydown', (event) => {
     const over = app.dialog.value
     app.dialog.value = null
     import('../caps/browser/browser.js').then((module) => (over ? module.show() : module.toggle()))
+  } else if (key === 'b' && !event.shiftKey) {
+    event.preventDefault()
+    // A dialog over the room closes, and the drawer shows.
+    const over = app.dialog.value !== null && app.dialog.value !== 'history'
+    if (over) app.dialog.value = null
+    if (!over || !sidebarOpen.value) toggleSidebar()
   } else if (key === 'j' && !event.shiftKey && !isDenied('computer')) {
     event.preventDefault()
     app.dialog.value = null

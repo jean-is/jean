@@ -1,10 +1,12 @@
 // Keyboard shortcuts (D118), as in the Claude apps: ⌘, opens Settings and ⌘N starts a new
-// conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet.
-// ⌘⇧L switches between light and dark (D130).
+// conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet;
+// ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
+// ⌘⇧D switches between light and dark and ⌘⇧E goes to the next theme (D130, D238); ⌘B opens the
+// drawer or puts it away (D234).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
-test('⌘, opens Settings, and ⌘N starts a new conversation from anywhere', async ({ page }) => {
+test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
@@ -23,26 +25,69 @@ test('⌘, opens Settings, and ⌘N starts a new conversation from anywhere', as
   })
   await expect(settings).toBeVisible()
   // Even with Settings open: it closes, and the box waits for the first words.
-  await page.keyboard.press('ControlOrMeta+KeyN')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   await expect(settings).toBeHidden()
   await expect(page.locator('.hero-question')).toBeVisible()
   await expect(page.locator('#prompt')).toBeFocused()
 })
 
-test('⌘⇧L switches between light and dark, even mid-sentence', async ({ page }) => {
+test('⌘⇧D switches between light and dark, even mid-sentence', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
   await start(page)
   const root = page.locator('html')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.locator('#prompt').fill('Hello')
-  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyD')
   await expect(root).toHaveAttribute('data-theme', 'light')
   await expect(page.locator('#prompt')).toHaveValue('Hello')
   // Back to what the device shows, Jean follows the device again (D85).
-  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyD')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(root).toHaveAttribute('data-theme', 'light')
+})
+
+test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name (D238)', async ({ page }) => {
+  await start(page)
+  const root = page.locator('html')
+  await expect(root).toHaveAttribute('data-look', 'human')
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyE')
+  await expect(root).toHaveAttribute('data-look', 'mail')
+  await expect(page.locator('.toast')).toHaveText('Mail')
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyE')
+  await expect(root).toHaveAttribute('data-look', 'minimal')
+})
+
+test('⌘B opens the drawer or puts it away, beside the conversation or over it, and shows it from Settings', async ({ page }) => {
+  await start(page)
+  const tasks = page.locator('app-inbox')
+  await expect(page.locator('.sidebar-toggle')).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+B$/)
+  // Human's first screen has it open beside the conversation (D174); what is typed stays.
+  await expect(tasks).toBeVisible()
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(tasks).toHaveCount(0)
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(tasks).toBeVisible()
+  // A dialog over the room closes, and the drawer stays.
+  await page.keyboard.press('ControlOrMeta+Comma')
+  const settings = page.locator('app-settings dialog[open]')
+  await expect(settings).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(settings).toHaveCount(0)
+  await expect(page).not.toHaveURL(/\/settings/)
+  await expect(tasks).toBeVisible()
+  // On a narrow window it slides over the conversation, and away again.
+  await page.setViewportSize({ width: 600, height: 800 })
+  await expect(tasks).toHaveCount(0)
+  const drawer = page.locator('app-history dialog[open]')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(drawer).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(drawer).toHaveCount(0)
 })
 
 test('↑ from an empty box brings back what was asked, newest first, and ↓ goes back to an empty box (D187)', async ({ page }) => {
@@ -80,4 +125,22 @@ test('↑ from an empty box brings back what was asked, newest first, and ↓ go
   await box.fill('Hello')
   await box.press('ArrowUp')
   await expect(box).toHaveValue('Hello')
+})
+
+test('Settings lists the shortcuts to read, a capability\'s once it is found (D236)', async ({ page }) => {
+  await start(page)
+  const settings = await openSettings(page, 'Keyboard shortcuts')
+  const row = (/** @type {string} */ name) => settings.locator('.keyboard > div', { hasText: name })
+  await expect(row('New task').locator('kbd')).toHaveText(/^(⌘⇧O|Ctrl\+Shift\+O)$/)
+  await expect(row('New line').locator('kbd')).toHaveText(/^(⇧↩|Shift\+Enter)$/)
+  await expect(row('Light or dark').locator('kbd')).toHaveText(/^(⌘⇧D|Ctrl\+Shift\+D)$/)
+  await expect(row('Next theme').locator('kbd')).toHaveText(/^(⌘⇧E|Ctrl\+Shift\+E)$/)
+  await expect(row('Talk hands-free')).toHaveCount(0)
+  await expect(row('Search')).toHaveCount(0)
+  await closeSettings(page)
+  // Turned on, Search opens: ⌘, comes back to Settings over it.
+  await turnOn(page, 'Search')
+  await page.keyboard.press('ControlOrMeta+Comma')
+  await settings.locator('.settings-nav button', { hasText: 'Keyboard shortcuts' }).click()
+  await expect(row('Search').locator('kbd')).toHaveText(/^(⌘K|Ctrl\+K)$/)
 })

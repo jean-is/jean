@@ -3,7 +3,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind } from './state.js'
+import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind, fork } from './state.js'
 import { unlock, loaded, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
@@ -435,14 +435,16 @@ function approval({ toolCall, resolve }, helper, files) {
 const when = (at) => html`<time class="msg-time" datetime=${at} title=${new Intl.DateTimeFormat(locale.value, { dateStyle: 'full', timeStyle: 'short' }).format(new Date(at))}>${relativeTime(at, now.value)}</time>`
 
 /**
- * Under a request: when it was asked, Copy, and Try again once its answer is written, which goes back
- * to it when the user agrees (D188). @param {import('../core/events.js').UserTurn} user @param {boolean} answered
+ * Under a request: when it was asked, Copy, Try again once its answer is written, which goes back
+ * to it when the user agrees (D188), and Duplicate from here, which answers it in a new conversation
+ * (D230). @param {import('../core/events.js').UserTurn} user @param {boolean} answered
  */
 function requestActions({ text, at, upTo }, answered) {
   return html`<div class="msg-actions is-request">${when(at)}${text ? html`
-    <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+    <button class="icon-button subtle" aria-label=${t('action.copy')}
       @click=${() => navigator.clipboard.writeText(text).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
-    <button class="icon-button subtle" aria-label=${t('action.retry')} title=${t('action.retry')} ?disabled=${!answered} @click=${() => confirm(t('rewind.confirm')) && rewind(upTo)}>${icons.retry}</button>` : nothing}</div>`
+    <button class="icon-button subtle" aria-label=${t('action.retry')} ?disabled=${!answered} @click=${() => confirm(t('rewind.confirm')) && rewind(upTo)}>${icons.retry}</button>
+    <button class="icon-button subtle" aria-label=${t('action.fork')} @click=${() => fork(upTo)}>${icons.fork}</button>` : nothing}</div>`
 }
 
 /** @param {string} id @param {string} text @param {string} at when it was written */
@@ -453,7 +455,7 @@ function actions(id, text, at) {
   return html`<div class="msg-actions">
     <app-made .source=${text}></app-made>
     ${canSpeak() ? html`<button class="icon-button subtle ${isSpeaking ? 'is-active' : ''}" aria-pressed=${isSpeaking ? 'true' : 'false'}
-      aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')} title=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
+      aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
       @click=${() => toggleSpeech(id, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
     ${when(at)}
   </div>`

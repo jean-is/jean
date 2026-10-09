@@ -115,13 +115,13 @@ class AppScore extends HTMLElement {
       ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>
         <pre dir="ltr"><code>${source}</code></pre>`
       : html`<div class="score-player" dir="ltr">${this.notes.length ? html`
-        <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} title=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : PLAY}</button>
+        <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : PLAY}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
         <span class="score-time">${clock(this.at)} / ${clock(this.length)}</span>` : ''}
       </div>
       <div class="drawn-foot">
-        <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+        <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
       </div>`}`, this)
   }

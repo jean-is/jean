@@ -23,8 +23,9 @@ import { t, locale, formatBytes, useStrings, languageName, preferredLocales } fr
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './icons.js'
-import { sidebarBody } from './inbox.js'
+import { sidebarBody, keyNames } from './inbox.js'
 import { SHORTCUTS, findButton, placeToasts } from './shell.js'
+import { dictation } from './dictation.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
 import { styleSheet } from './sheet.js'
@@ -79,7 +80,7 @@ class History extends Element {
   render() {
     return html`<dialog class="drawer" aria-label=${t('history.title')} @close=${closed('history')} @click=${backdrop}>
       <header class="dialog-head">${findButton()}
-        <button class="icon-button" @click=${close} aria-label=${t('sidebar.close')} title=${t('sidebar.close')}>${icons.sidebar}</button>
+        <button class="icon-button" @click=${close} aria-keyshortcuts=${SHORTCUTS.sidebar} aria-label=${t('sidebar.close')}>${icons.sidebar}</button>
       </header>
       ${sidebarBody('drawer')}
     </dialog>`
@@ -170,6 +171,15 @@ function connectLocal(event) {
   attempt('local', provider === 'custom' ? new URL(baseURL).host : t(`provider.${provider}`), () => connectBrain({ provider, baseURL }))
 }
 
+/** The user's own Claude Code, with their Claude plan, through This computer (D235): turned on first, in Settings › Computer. */
+async function connectClaude() {
+  status.value = { way: 'claude', kind: 'busy', message: t('brain.connecting') }
+  const found = (await unlock('machine')) && await (await import('../caps/machine/machine.js')).claudeCode()
+  status.value = found && !found.ready ? { way: 'claude', kind: 'error', message: t(found.old ? 'brain.claude.restart' : 'brain.claude.missing', { computer: t('cap.machine.name') }) } : null
+  if (!found) openSettings('computer')
+  else if (found.ready) attempt('claude', t('provider.claudecode'), () => connectBrain({ provider: 'claudecode', baseURL: found.baseURL, apiKey: found.apiKey }))
+}
+
 /** Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, then the ways to add another. */
 function brains() {
   const { settings, locked } = effective.value
@@ -252,9 +262,9 @@ function answers(settings, brainsLocked) {
             ${brain.api === 'device' ? nothing : html`<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr"
                 aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
               <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
-            ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')} title=${t('projects.where')}
+            ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')}
               @click=${() => { placing.value = open ? null : brain.id }}>${icons.folder}</button>`}
-            ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')}
+            ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')}
               @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
             ${open ? where(brain, (projects) => keepBrain(brain.id, projects).catch(showError)) : nothing}
           </div>`
@@ -319,7 +329,7 @@ function keySteps(id) {
       <li>${outside('https://console.cloud.google.com/vertex-ai', t('brain.key.vertexOn'))}</li>
       <li>${outside('https://shell.cloud.google.com/?show=terminal', t('brain.key.shell'))}</li>
       <li>${t('brain.key.type')}
-        <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+        <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${copyCommand}>${icons.copy}</button></span></li>
       <li>${t('brain.key.hour')}</li>
     </ol>`
@@ -375,6 +385,9 @@ function ways(first) {
         <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>`)}
+    ${isDenied('machine') ? nothing : way('claude', icons.terminal, t('brain.claude.title'), t('provider.claudecode'), false, html`
+      <p>${t('brain.claude.text', { computer: t('cap.machine.name') })}</p>
+      <div class="row"><button class="button primary" ?disabled=${busy} @click=${connectClaude}>${t('brain.connect')}</button></div>`)}
     ${way('local', icons.computer, t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}>
@@ -436,6 +449,19 @@ const appearance = () => html`
     </label>`)}
   </span>`)}
   <section>${looks(effective.value.settings.look)}</section>`
+
+/** Its place in the menu: a keyboard, drawn here rather than with the first screen's icons. */
+const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
+  <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
+/** Each shortcut, and the capability it waits for, or dictation, which this browser may not have. */
+const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settings], ['keyboard.sidebar', SHORTCUTS.sidebar], ['settings.mode', SHORTCUTS.theme],
+  ['keyboard.look', SHORTCUTS.look], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live'],
+  ['cap.find.name', SHORTCUTS.find, 'find'], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
+  ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
+
+/** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
+const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : loaded.value.has(id)))
+  .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl>`
 
 function approvals() {
   const { settings, locked } = effective.value
@@ -517,7 +543,7 @@ export function siteList({ sites, fixed, set, any = false }) {
   return html`<div class="reach">
     <div class="sites">
       <ul aria-label=${t('pages.sites')}>${(sites.length || !any ? sites : ['*']).map((entry) => html`<li><bdi>${entry}</bdi>${sites.length && !fixed
-        ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })} title=${t('pages.siteRemove', { site: entry })}
+        ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })}
           @click=${(/** @type {Event} */ e) => remove(e, entry)}>${icons.close}</button>` : nothing}</li>`)}</ul>
       ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
         @keydown=${add} @input=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).removeAttribute('aria-invalid')}>`}
@@ -605,7 +631,7 @@ function data() {
 }
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'you' | 'connections' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
  * @property {string} label    its name in the menu
  * @property {unknown} icon
@@ -631,6 +657,7 @@ export const SECTIONS = {
   general: { label: 'settings.general', icon: icons.gear, show: general },
   brains: { label: 'settings.brains', icon: icons.spark, show: brains },
   appearance: { label: 'settings.appearance', icon: icons.contrast, show: appearance },
+  keyboard: { label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   connections: { label: 'cap.connections.name', icon: icons.plug, show: () => loaded.value.get('connections')?.panel?.() ?? nothing, when: () => loaded.value.has('connections') },
   skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
@@ -655,7 +682,7 @@ class Settings extends Element {
     const open = shown.find((id) => id === app.section.value) ?? 'general'
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
-      <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')} title=${t('action.close')}>${icons.close}</button>
+      <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map((id) => html`${SECTIONS[id].group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
           @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
@@ -797,7 +824,7 @@ const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
 function looks(look = {}) {
   const chosen = lookId(look.id)
   const size = look.size ?? 1
-  return html`<fieldset class="looks">
+  return html`<fieldset class="looks" aria-keyshortcuts=${SHORTCUTS.look}>
       <legend>${t('look.title')}</legend>
       ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>

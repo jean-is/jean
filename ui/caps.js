@@ -16,7 +16,7 @@ import { signal } from '@preact/signals-core'
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
  * @property {() => unknown} [panel]                      its section of Settings (connections), or its part of one (sync)
  * @property {() => unknown} [main]                       what it shows in the main area in place of the welcome, on a new task (flow mode, D218)
- * @property {(conversation: { id: string, path: string }) => Promise<void>} [started]  a conversation was just made by its first message (a folder it keeps, D149)
+ * @property {(conversation: { id: string, path: string }, from?: { id: string, records: import('../core/types.js').Envelope[] }) => Promise<void>} [started]  a conversation was just made by its first message, or duplicated from another (a folder it keeps, D149, D230)
  */
 
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({

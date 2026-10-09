@@ -237,7 +237,7 @@ const saveTool = {
 
 // The project's workspace shows in the browser at "/workspace/<path>" when the conversation has no
 // folder (D167), its pages put together as a folder's are (D156, caps/folders/site.js).
-const workspace = () => within(app.fs, join(app.projectDir, 'workspace'))
+export const workspace = () => within(app.fs, join(app.projectDir, 'workspace'))
 
 /** What a path of the project's workspace shows in the browser. @param {string} path */
 export const workspacePage = (path) => sitePage(workspace(), path, '/workspace')
@@ -490,7 +490,7 @@ class TerminalToggle extends Element {
   render() {
     if (!app.settings.value.terminal) return nothing
     const { state } = box.status.value
-    return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} title=${t('computer.terminal')} aria-keyshortcuts=${SHORTCUTS.terminal}
+    return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} aria-keyshortcuts=${SHORTCUTS.terminal}
       @click=${() => import('./terminal.js').then((module) => module.toggle())}>${prompt}${state === 'asleep' ? nothing : light(state)}</button>`
   }
 }

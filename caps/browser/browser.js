@@ -243,6 +243,8 @@ function frameTo(url, click = false) {
 }
 
 let asked = 0
+// Where the user was in the workbook they changed last, by its address, to show it there again (D229).
+let changing = /** @type {{ url: string, at: import('../files/office.js').Place } | null} */ (null)
 /**
  * A page of the conversation's folder, or of the project's workspace when it has none, put together
  * anew in a fresh frame; or why it can't show. @param {string} url @param {boolean} [click]
@@ -265,7 +267,8 @@ async function folderTo(url, click = false) {
   const release = () => { for (const run of holds.splice(0)) run() }
   const { allows, sites } = rights.peek()
   const view = 'file' in shown && at === asked ? await import('../../ui/view.js')
-    .then(({ viewOf }) => viewOf({ name: shown.path.split('/').at(-1) ?? '', bytes: shown.file, type: shown.type }, holds, { allows, sites, policy: policy.peek(), allow: allow.peek() })).catch(warn) : null
+    .then(({ viewOf }) => viewOf({ name: shown.path.split('/').at(-1) ?? '', bytes: shown.file, type: shown.type, cells: /\.xlsx$/i.test(shown.path) && !isMade(url) ? { ...(changing?.url === url && { at: changing.at }) } : undefined },
+      holds, { allows, sites, policy: policy.peek(), allow: allow.peek() })).catch(warn) : null
   if (at !== asked || !view) release()
   if (at !== asked) return
   loading.value = false
@@ -323,6 +326,7 @@ addEventListener('message', ({ source, data }) => {
   const shown = local.peek()
   const url = page.peek()?.url ?? ''
   const top = topOf(url)
+  if (data?.cell && shown && 'view' in shown && source && source === document.querySelector('app-browser .view')?.querySelector('iframe')?.contentWindow) return void change(url, shown.path, data.cell, /** @type {Window} */ (source))
   if (!shown || !('frame' in shown) || source !== shown.frame.contentWindow) return
   if (typeof data?.open !== 'string') return savePage(data, rights.peek().allows.downloads)
   const base = new URL(shown.path.split('/').map(encodeURIComponent).join('/'), 'https://folder.invalid/')
@@ -331,6 +335,21 @@ addEventListener('message', ({ source, data }) => {
   if (to.origin === base.origin) isMade(url) || visit(`${top}${decodeURIComponent(to.pathname.slice(1))}`, { click: true })
   else if (/^https?:$/.test(to.protocol)) visit(to.href, { click: true })
 })
+
+/** A cell the user changed in a workbook of the folder or the workspace, written where it is and shown again (D229). @param {string} url @param {string} path @param {unknown} cell @param {Window} source */
+async function change(url, path, cell, source) {
+  const fs = isWorkspace(url) ? (await computerOn())?.workspace() : (await (await foldersOn())?.computerFolder(undefined))?.fs
+  if (!fs) return
+  const { changeCell } = await import('../../ui/view.js')
+  await changeCell(cell, source, { name: path, said: isWorkspace(url) ? 'in /workspace' : 'in the folder', read: () => fs.readBytes(path), keep: async (bytes, at) => {
+    await fs.writeBytes(path, bytes)
+    changing = { url, at }
+    // A frame of its own for the file shown again: the one on show would keep its page.
+    local.value = null
+    frameTo(url)
+    return {}
+  } })
+}
 
 // A page Jean made or changed in the folder opens; the page on show comes again when a file it was
 // made of changed since: Jean's change, the user's own editor, a sync.
@@ -477,7 +496,7 @@ class Browser extends Element {
     const address = shown && isLocal(shown.url) ? shownAs(shown.url) : shown?.url ?? ''
     const folder = folders?.folderOf(app.current.value)
     const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => unknown} */ run, disabled = false) => html`<button class="icon-button"
-      title=${label} aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
+      aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
     return html`<aside class="pane browser ${full.value ? 'is-full' : ''}" aria-label=${t('cap.browser.name')}>
       <header class="pane-head browser-bar">
         ${button(t('browser.back'), GLYPHS.back, () => walk('back'), !trail.canBack)}
@@ -506,7 +525,7 @@ class Browser extends Element {
         ${shown && !shown.own && !isLocal(shown.url) && unsure.value ? html`<div class="browser-strip" role="status">
           <p>${t('browser.blank')}</p>
           <button class="button" @click=${() => ownTab(shown.url)}>${GLYPHS.tab} ${t('browser.tab')}</button>
-          <button class="icon-button subtle" title=${t('action.close')} aria-label=${t('action.close')} @click=${() => { shows.add(siteOf(shown.url)); unsure.value = false }}>${icons.close}</button>
+          <button class="icon-button subtle" aria-label=${t('action.close')} @click=${() => { shows.add(siteOf(shown.url)); unsure.value = false }}>${icons.close}</button>
         </div>` : nothing}
       </div>
     </aside>`

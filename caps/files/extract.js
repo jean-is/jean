@@ -87,7 +87,7 @@ function* tokens(source) {
 }
 
 /** @param {string} attrs @param {string} name */
-function attr(attrs, name) {
+export function attr(attrs, name) {
   const match = new RegExp(`(?:^|\\s)${name.replace(/[.:]/g, '\\$&')}="([^"]*)"`).exec(attrs)
   return match ? decodeEntities(match[1]) : null
 }
@@ -215,7 +215,7 @@ export function slideText(source) {
 }
 
 /** Id → Target from a .rels file. @param {string} source */
-function relationships(source) {
+export function relationships(source) {
   /** @type {Map<string, string>} */
   const map = new Map()
   for (const match of source.matchAll(/<Relationship\b([^>]*)>/g)) {
@@ -227,7 +227,7 @@ function relationships(source) {
 }
 
 /** @param {string} base folder of the part that owns the .rels @param {string} target */
-function resolveTarget(base, target) {
+export function resolveTarget(base, target) {
   if (target.startsWith('/')) return target.slice(1)
   const parts = base.split('/')
   for (const segment of target.split('/')) {
@@ -266,7 +266,7 @@ async function xlsx(xml) {
 }
 
 /** @param {string} source xl/sharedStrings.xml */
-function sharedStrings(source) {
+export function sharedStrings(source) {
   /** @type {string[]} */
   const strings = []
   let current = ''
@@ -284,7 +284,7 @@ function sharedStrings(source) {
 /**
  * @param {string} source a worksheet
  * @param {string[]} shared
- * @returns {string[]} tab-separated rows; gaps between cells are kept as empty columns
+ * @returns {string[]} tab-separated rows; gaps between cells are kept as empty columns; a formula without its result shows as itself
  */
 export function sheetRows(source, shared) {
   /** @type {string[]} */
@@ -294,10 +294,13 @@ export function sheetRows(source, shared) {
   let column = 0
   let type = ''
   let value = ''
+  let formula = ''
   let inValue = false
+  let inFormula = false
   for (const token of tokens(source)) {
     if ('text' in token) {
       if (inValue) value += token.text
+      else if (inFormula) formula += token.text
       continue
     }
     const { name, close, attrs, selfClosing } = token
@@ -309,19 +312,20 @@ export function sheetRows(source, shared) {
       const ref = attr(attrs, 'r')
       column = ref ? columnIndex(ref) : row.length
       type = attr(attrs, 't') ?? ''
-      value = ''
+      value = formula = ''
       if (selfClosing) row[column] = ''
     } else if (name === 'c' && close) {
       for (let i = row.length; i < column; i++) row[i] = ''
-      row[column] = cellValue(type, value, shared).replace(/[\t\n]+/g, ' ')
+      row[column] = (value || !formula ? cellValue(type, value, shared) : `=${formula}`).replace(/[\t\n]+/g, ' ')
     } else if (name === 'v' || name === 't') inValue = !close && !selfClosing
+    else if (name === 'f') inFormula = !close && !selfClosing
   }
   while (rows.length && !rows.at(-1)) rows.pop()
   return rows
 }
 
 /** "BC12" → 54 (zero-based). @param {string} ref */
-function columnIndex(ref) {
+export function columnIndex(ref) {
   let index = 0
   for (const char of /^[A-Z]+/i.exec(ref)?.[0].toUpperCase() ?? 'A') index = index * 26 + char.charCodeAt(0) - 64
   return index - 1

@@ -295,7 +295,7 @@ function nameOf(node) {
 }
 
 /** A button with a picture, its name said on hover and to screen readers. @param {string} text @param {unknown} icon @param {() => unknown} run */
-const iconButton = (text, icon, run) => html`<button class="icon-button" title=${text} aria-label=${text} @click=${run}>${icon}</button>`
+const iconButton = (text, icon, run) => html`<button class="icon-button" aria-label=${text} @click=${run}>${icon}</button>`
 
 /** What a flow's head offers: Run, and Schedule, which says when its routine runs next once it has one. @param {Saved} one */
 function actions(one) {

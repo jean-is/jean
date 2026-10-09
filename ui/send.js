@@ -1,7 +1,7 @@
 // Sending a message and answering it: the prompt and the notes since (D46), what the brain reads of
 // the files shared, Auto's choice of a brain, the run with its approvals, and the provider's cache
 // kept warm (D49). Loaded when the user starts typing or sends, not with the first screen (D148):
-// state.js's send, retry, rewind and warm load it.
+// state.js's send, retry, rewind, fork and warm load it.
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
 import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
@@ -14,7 +14,7 @@ import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, beginRun, endRun, stop, CITED,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, openConversation, turnPage, beginRun, endRun, stop, CITED,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -306,6 +306,30 @@ export async function rewind(upTo) {
   await rewriteRecords(app.fs, current.path, records)
   app.current.value = { ...current, records }
   await retry()
+}
+
+/**
+ * Duplicates the conversation up to the end of a request into a new one, which answers it; the
+ * conversation stays as it is (D230). @param {number} upTo how many records lead up to its end
+ */
+export async function fork(upTo) {
+  const current = app.current.value
+  if (!current) return
+  // What led up to the request keeps its times, and its title, which may have come after it; the request is asked now.
+  const from = current.records.slice(0, upTo).findLastIndex((record) => record.update?.sessionUpdate !== 'user_message_chunk') + 1
+  const at = new Date().toISOString()
+  const records = [...current.records.slice(0, from), ...current.records.slice(upTo).filter((record) => record.meta?.title),
+    ...current.records.slice(from, upTo).map((record) => ({ ...record, at }))]
+  const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+  await appendRecords(app.fs, created.path, records)
+  // What it keeps from the one it comes from, like its folder (D149).
+  await Promise.all([...loaded.value.values()].map((capability) => capability.started?.(created, current)))
+  await turnPage(() => openConversation(created.path))
+  refreshConversations()
+  const picked = await pickBrain('', records)
+  if (!picked) return
+  if (!titleOf(records)) import('./title.js').then(({ nameConversation }) => nameConversation(created.path, records, picked.brain))
+  await runAgent({ id: created.id, path: created.path, records }, picked.brain, picked.meta)
 }
 
 /**

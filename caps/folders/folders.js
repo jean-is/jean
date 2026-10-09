@@ -24,9 +24,8 @@ import { stringifyFrontMatter } from '../../core/settings.js'
 import { noteRecord } from '../../core/events.js'
 import { appendRecords } from '../../core/conversations.js'
 import { t, useStrings } from '../../core/i18n.js'
-import { walkFolder, listingText, findInFolder, openText, planChange, diffLines, lastRead, topLevel, readText, exactText } from './work.js'
+import { walkFolder, listingText, findInFolder, openText, planChange, diffLines, lastRead, topLevel, readText, exactText, replacerOf } from './work.js'
 import { copyFS, pickedFiles, droppedFiles } from './copy.js'
-import { replaceInWord } from './word.js'
 import { sitePage } from './site.js'
 import { styleSheet } from '../../ui/sheet.js'
 
@@ -377,11 +376,12 @@ async function followAgents(yes) {
 
 /**
  * A new conversation was made with its first message: it keeps the folder it started on, chosen
- * for it or its project's (D149). A project's AGENTS.md is the project's to offer, not each conversation's.
- * @param {{ id: string }} conversation
+ * for it or its project's (D149), or the one of the conversation it duplicates (D230). A project's
+ * AGENTS.md is the project's to offer, not each conversation's.
+ * @param {{ id: string }} conversation @param {{ id: string, records: Envelope[] }} [from]
  */
-async function started({ id }) {
-  const chosen = pending.peek()
+async function started({ id }, from) {
+  const chosen = from ? folderOf(from) : pending.peek()
   pending.value = undefined
   const folder = chosen === undefined ? projectFolder() : chosen
   if (folder?.handle || folder?.copy) await keep(id, chosen === undefined ? { ...folder, agents: false } : folder)
@@ -513,7 +513,7 @@ const callsOf = (conversation) => [
   ...(conversation && 'turn' in conversation ? conversation.turn?.steps.flatMap((step) => step.tools) ?? [] : []),
 ]
 
-/** What a Word document was before Jean changed it, this visit, by `_meta.undo`: undone exactly. @type {Map<string, Uint8Array>} */
+/** What a Word document or a workbook was before Jean changed it, this visit, by `_meta.undo`: undone exactly. @type {Map<string, Uint8Array>} */
 const before = new Map()
 /** Calls whose change the user has seen, or needn't: a copy's, or one in a folder always allowed. */
 const shown = new WeakSet()
@@ -524,7 +524,7 @@ const changeTool = {
     name: 'change',
     description: [
       "Change a file of the conversation's folder where it is: replace one passage, quoted exactly as open shows it, with new text.",
-      'The passage must be there once; in a Word document, within one paragraph. Open a file before changing it.',
+      'The passage must be there once; in a Word document, within one paragraph; in a spreadsheet, within one row, its cells apart by tabs, a formula starting with =. Open a file before changing it.',
       "An empty passage on a path that doesn't exist makes the file: a .docx from Markdown, an .xlsx from CSV, any other file as text.",
     ].join(' '),
     parameters: {
@@ -554,7 +554,7 @@ const changeTool = {
     const change = await plan(fs, folder, args, callsOf(conversation))
     // The user let Jean open the folder, but hasn't seen this change yet: the brain asks again, and the card shows it.
     if (!shown.has(ctx)) throw new Error(`"${folder.name}" is open now. Make the change again: the user sees it first.`)
-    const was = /\.docx$/i.test(change.path) && change.before !== null ? await fs.readBytes(change.path) : null
+    const was = /\.(docx|xlsx)$/i.test(change.path) && change.before !== null ? await fs.readBytes(change.path) : null
     await fs.writeBytes(change.path, change.bytes)
     if (was) before.set((ctx.meta.undo = crypto.randomUUID()), was)
     const now = await fs.stat?.(change.path)
@@ -663,14 +663,14 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
     const { folder, fs } = await working(undefined)
     if (folder.name !== call._meta?.folder) return notify(t('folders.undo.elsewhere'))
     const bytes = await fs.readBytes(diff.path)
-    const word = /\.docx$/i.test(diff.path)
+    const word = /\.(docx|xlsx)$/i.test(diff.path)
     const now = bytes && (word ? (await readText(fs, diff.path, READS)).text : exactText(bytes))
     if (now !== diff.newText) return notify(t('folders.undo.moved', { path: diff.path }))
     if (diff.oldText === null) await fs.remove(diff.path)
     else if (!word) await fs.write(diff.path, diff.oldText)
     else {
       const { replaceOnce } = await import('../made/formats.js')
-      await fs.writeBytes(diff.path, before.get(call._meta?.undo) ?? await replaceInWord(/** @type {Uint8Array} */ (bytes), String(call.rawInput?.new ?? ''), String(call.rawInput?.old ?? ''), diff.path, replaceOnce))
+      await fs.writeBytes(diff.path, before.get(call._meta?.undo) ?? await replacerOf(diff.path)(/** @type {Uint8Array} */ (bytes), String(call.rawInput?.new ?? ''), String(call.rawInput?.old ?? ''), diff.path, replaceOnce))
     }
     const note = noteRecord(`The user undid your change to ${diff.path}: it is as it was before.`, { kind: 'undone', call: call.toolCallId, path: diff.path })
     await appendRecords(app.fs, current.path, [note])

@@ -95,6 +95,80 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
   expect(kept).toEqual({ requests: ['Explain photosynthesis in simple words'], title: 'Explain photosynthesis simple' })
 })
 
+test('Duplicate from here: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {
+  await page.clock.install()
+  await start(page)
+  await connectFakeBrain(page)
+  for (const request of ['Explain photosynthesis in simple words', 'Explain gravity', 'Explain tides']) {
+    await ask(page, request)
+    await expect(page.locator('.msg-jean .prose').last()).toContainText(`You asked: ${request}`)
+    await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  }
+  const first = page.url()
+  await page.clock.fastForward('05:00')
+  const asked = page.locator('.msg-actions.is-request time')
+  await expect(asked).toHaveText(['5 minutes ago', '5 minutes ago', '5 minutes ago'])
+
+  await page.locator('.msg-actions.is-request').nth(1).getByRole('button', { name: 'Duplicate from here' }).click()
+  await expect(page).not.toHaveURL(first)
+  await expect(page.locator('.msg-user')).toHaveCount(2)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Explain gravity')
+  await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  // What led up to it keeps its times; the request is asked now.
+  await expect(asked).toHaveText(['5 minutes ago', 'now'])
+  await expect(page.locator('.msg-jean .msg-actions time')).toHaveText(['5 minutes ago', 'now'])
+  // Each in its own file, the copy with the title, newest first.
+  const tasks = await page.evaluate(async () => {
+    const [{ app }, { loadConversation, listConversations }, { foldTurns }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    return Promise.all((await listConversations(app.fs, app.projectDir)).map(async ({ path }) => {
+      const conversation = await loadConversation(app.fs, path)
+      return { title: conversation?.title, turns: foldTurns(conversation?.records ?? []).map((turn) => [turn.user?.text, turn.steps.some((step) => step.text)]) }
+    }))
+  })
+  const title = 'Explain photosynthesis simple'
+  expect(tasks).toEqual([
+    { title, turns: [['Explain photosynthesis in simple words', true], ['Explain gravity', true]] },
+    { title, turns: [['Explain photosynthesis in simple words', true], ['Explain gravity', true], ['Explain tides', true]] },
+  ])
+  await page.goBack()
+  await expect(asked).toHaveText(['5 minutes ago', '5 minutes ago', '5 minutes ago'])
+})
+
+test('a button\'s name, or what a title adds, shows as a tip above it, as a source does, once the pointer rests or the keyboard comes, never the browser\'s own (D233)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  const copy = page.locator('.msg-actions.is-request').first().getByRole('button', { name: 'Copy' })
+  const tip = page.locator('.tip')
+  // An icon button: its name, which it has once.
+  await expect(copy).not.toHaveAttribute('title')
+  await copy.hover()
+  await expect(tip).toHaveText('Copy')
+  const [shown, under] = await Promise.all([tip.boundingBox(), copy.boundingBox()])
+  expect((shown?.y ?? 0) + (shown?.height ?? 0)).toBeLessThanOrEqual(under?.y ?? 0)
+  await page.mouse.move(0, 0)
+  await expect(tip).toBeHidden()
+  // A title says more: lifted off while its tip shows, as the element's description, then put back.
+  const time = page.locator('.msg-actions.is-request time').first()
+  const year = String(new Date().getFullYear())
+  await time.hover()
+  await expect(tip).toContainText(year)
+  await expect(time).not.toHaveAttribute('title')
+  await expect(time).toHaveAttribute('aria-describedby', 'app-tip')
+  await page.mouse.move(0, 0)
+  await expect(tip).toBeHidden()
+  await expect(time).toHaveAttribute('title', new RegExp(year))
+  await expect(time).not.toHaveAttribute('aria-describedby')
+  // From the keyboard, at once (WebKit's Tab skips buttons, as Safari's does by default); Escape puts it away.
+  await page.keyboard.press('Shift')
+  await copy.focus()
+  await expect(tip).toHaveText('Copy')
+  await page.keyboard.press('Escape')
+  await expect(tip).toBeHidden()
+})
+
 test('Arabic: right to left, and the answer in Arabic', async ({ page }) => {
   await start(page, 'ar')
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')

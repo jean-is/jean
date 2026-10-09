@@ -4,20 +4,26 @@
 // that didn't fit in the message.
 import { effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
-import { app, currentFiles, warm, notify } from '../../ui/state.js'
+import { app, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
 import { rememberText } from '../../ui/send.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
-import { isPicture } from '../../core/events.js'
+import { isPicture, latestOf } from '../../core/events.js'
 import { extractPages } from './extract.js'
 import { fitPicture } from './pictures.js'
 import { t } from '../../core/i18n.js'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
+/** The conversation's files as they are now: a workbook the user changed in the preview, as its copy (D229). @param {AbortSignal} [signal] */
+const filesNow = (signal) => {
+  const records = conversationOf(signal)?.records ?? []
+  return currentFiles(signal).map((link) => ({ ...link, uri: latestOf(records, link.uri) }))
+}
+
 /** @param {any} args @param {AbortSignal} [signal] the run's, for its conversation's files */
 const find = (args, signal) => {
   const wanted = String(args?.file ?? '').trim().toLowerCase()
-  return currentFiles(signal).findLast((link) => link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted)
+  return filesNow(signal).findLast((link) => link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted)
 }
 
 /** A shared file's whole text, or a file's in the conversation's folder (D141), for scripts (codemode): never declared to the brain. @type {import('../../core/loop.js').Tool} */
@@ -43,7 +49,7 @@ const fileTool = {
 
 register({
   id: 'files',
-  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: currentFiles }), fileTool],
+  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: filesNow }), fileTool],
   lines: [{ name: 'read', line: 'read pages of a file the user shared' }],
   rules: ['Shared files are in the message, sometimes only their first pages. Use read for the others.'],
 })

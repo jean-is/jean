@@ -6,7 +6,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, LOCALES } from './state.js'
+import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { loaded } from './caps.js'
@@ -47,18 +47,20 @@ function conversationList(where) {
         ${asks < 0 ? nothing : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
         ${item.routine && !run ? icons.alarm : nothing}<span class="history-title" dir="auto">${run ? when.format(new Date(item.createdAt)) : item.title || t('conversation.untitled')}</span>
       </button>
-      ${earlier.length ? html`<button class="runs-toggle" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })} title=${t('history.runs', { count: earlier.length })}
+      ${earlier.length ? html`<button class="runs-toggle" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })}
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
-      <button class="icon-button subtle" popovertarget=${menu} aria-label=${t('action.more')} title=${t('action.more')}>${icons.more}</button>
+      <button class="icon-button subtle" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${menu} class="menu task-menu" popover><button type="button" popovertarget=${menu} popovertargetaction="hide"
         @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}${t('action.delete')}</button></div>
     </li>`
   })}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
 }
 
-/** A shortcut as the keyboard shows it, left to right in any language: ⌘⇧L on Apple's systems, Ctrl+Shift+L elsewhere. @param {string} shortcut */
-const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${shortcut.startsWith('Meta')
-  ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧') : shortcut.replace('Control', 'Ctrl')}</bdi></kbd>`
+/** A shortcut as the keyboard shows it: ⌘⇧D and ⇧↩ on Apple's systems, Ctrl+Shift+D and Shift+Enter elsewhere. @param {string} shortcut */
+export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩')
+  : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp ArrowDown', '↑ ↓')
+/** The same, left to right in any language. @param {string} shortcut */
+const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd>`
 
 /** Where a capability found leads, under a new task, as Manus lists its own: its section of Settings, in Settings' order. */
 const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scroll'], ['routines', 'alarm']])
@@ -152,6 +154,14 @@ function looks() {
 function pickLook(id) {
   if (sidebarOpen.value && app.sidebar.value === null) setSidebar(true)
   setLook({ id })
+}
+
+/** The next look, in the gallery's order, Human again after the last, its name shown (⌘⇧E, D238). */
+export function nextLook() {
+  const ids = Object.keys(LOOKS)
+  const id = ids[(ids.indexOf(chosenLook()) + 1) % ids.length]
+  setLook({ id })
+  notify(t(`look.${id}.name`))
 }
 
 /**

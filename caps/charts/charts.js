@@ -120,7 +120,7 @@ class AppChart extends HTMLElement {
     const title = option ? titleOf(option) : ''
     render(option ? html`<div class="chart" dir="ltr" role="img" aria-label=${title || t('charts.chart')}></div>
       <div class="drawn-foot">
-        <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+        <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
       </div>`
       : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>

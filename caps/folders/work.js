@@ -1,11 +1,12 @@
 // Work in a folder (D141): its files listed, searched, read and changed where they are, through an
 // FS on the folder (ui/opfs.js's folderFS, or a dropped folder's copy). No DOM: node tests run it on
 // core/fs.js's memoryFS. Word, Excel and PowerPoint are read by Files' readers; PDFs by pdf.js, which
-// only a browser has, so the capability passes it in.
+// only a browser has, so the capability passes it in. Word documents and workbooks change in place.
 import { join } from '../../core/fs.js'
 import { fold, terms, passage } from '../../core/search.js'
 import { extractPages } from '../files/extract.js'
 import { replaceInWord } from './word.js'
+import { replaceInSheet } from '../files/cells.js'
 
 /** @typedef {import('../../core/types.js').FS} FS */
 /** @typedef {{ path: string, kind: 'file' | 'directory' }} Entry */
@@ -26,6 +27,8 @@ const OPEN_CHARS = 24000
 const FOUND = 60
 const DOCUMENTS = /\.(docx|xlsx|pptx|pdf)$/i
 const encoder = new TextEncoder()
+/** What changes a passage of a Word document, or of a workbook, in place (D229). @param {string} path */
+export const replacerOf = (path) => (/\.xlsx$/i.test(path) ? replaceInSheet : replaceInWord)
 
 // ─── Listing ─────────────────────────────────────────────────────────────────
 
@@ -280,7 +283,7 @@ export function changeText(raw, old, replacement, name, replaceOnce) {
 /**
  * A change, worked out before it is made: the file's text before (null for a file it makes) and
  * after, as a diff shows them, and the bytes to write. One passage, quoted exactly and found once; in
- * a Word document, within one paragraph; or, from an empty passage on a path that doesn't exist yet,
+ * a Word document, within one paragraph; in a workbook, within one row; or, from an empty passage on a path that doesn't exist yet,
  * a file made: Word and Excel from Markdown and CSV (Things Jean made's writers), other files as text.
  * @param {FS} fs @param {{ path: string, old: string, new: string }} change @param {Readers & { paper?: 'a4' | 'letter' }} [readers]
  * @returns {Promise<{ path: string, before: string | null, after: string, bytes: Uint8Array }>}
@@ -298,8 +301,8 @@ export async function planChange(fs, { path, old, new: replacement }, readers = 
   }
   if (stamp.size > MAX_BYTES) throw new Error(`${path} is too big to change here.`)
   const bytes = /** @type {Uint8Array} */ (await fs.readBytes(path))
-  if (/\.docx$/i.test(path)) {
-    const changed = await replaceInWord(bytes, old, replacement, path, replaceOnce)
+  if (/\.(docx|xlsx)$/i.test(path)) {
+    const changed = await replacerOf(path)(bytes, old, replacement, path, replaceOnce)
     const text = async (/** @type {Uint8Array} */ data) => /** @type {string} */ (await textOf(path, data, readers))
     return { path, before: await text(bytes), after: await text(changed), bytes: changed }
   }

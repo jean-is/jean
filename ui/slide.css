@@ -1,0 +1,16 @@
+/* The drawer beside the conversation, opened or put away (D234): it slides from the start edge, its
+   top with it, and the conversation and the box move over as they will be, never two of them fading
+   into each other. Linked by ui/slide.js. */
+:root[data-sliding] main { view-transition-name: page; }
+:root[data-sliding] app-composer { view-transition-name: box; }
+:root[data-sliding][data-sidebar] .bar { view-transition-name: tasks-top; }
+:root[data-sliding][data-sidebar] app-inbox { view-transition-name: tasks; }
+:root[data-sliding]::view-transition-group(*) { animation-duration: 0.3s; animation-timing-function: var(--ease); }
+:root[data-sliding]::view-transition-old(page), :root[data-sliding]::view-transition-old(box) { display: none; }
+:root[data-sliding]::view-transition-new(page), :root[data-sliding]::view-transition-new(box) { inset-inline: 0; inline-size: auto; margin-inline: auto; animation: none; }
+:root[data-sliding]::view-transition-new(tasks-top), :root[data-sliding]::view-transition-new(tasks) { animation: slide-in 0.3s var(--ease) both; }
+:root[data-sliding]::view-transition-old(tasks-top), :root[data-sliding]::view-transition-old(tasks) { animation: slide-out 0.3s var(--ease) both; }
+@keyframes slide-in { from { translate: var(--to-start); } }
+@keyframes slide-out { to { translate: var(--to-start); } }
+:root { --to-start: -100%; }
+:root[dir='rtl'] { --to-start: 100%; }

@@ -61,7 +61,7 @@ class Picture extends HTMLElement {
     const name = this.getAttribute('name') ?? ''
     render(html`<figure>
       <img src=${this.#url} alt=${this.getAttribute('alt') ?? ''}>
-      <a class="icon-button subtle" href=${this.#url} download=${name} title=${t('made.image')} aria-label=${t('made.image')}>${icons.download}</a>
+      <a class="icon-button subtle" href=${this.#url} download=${name} aria-label=${t('made.image')}>${icons.download}</a>
     </figure>`, this)
   }
 

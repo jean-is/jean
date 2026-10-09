@@ -10,7 +10,7 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, unlock } from '../../ui/caps.js'
-import { app, conversationOf, notify } from '../../ui/state.js'
+import { app, conversationOf, notify, updateSettings } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { host, call, pickFolder } from '../../ui/host.js'
 import { icons } from '../../ui/icons.js'
@@ -49,8 +49,26 @@ const pairing = () => (paired ??= (async () => {
   const bytes = crypto.getRandomValues(new Uint8Array(20))
   const pair = /** @type {Pairing} */ ({ port: 41_000 + ((bytes[0] << 8) | bytes[1]) % 1000, key: btoa(String.fromCharCode(...bytes.slice(2))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' })[c] ?? ''), always: [] })
   await setSecret(app.fs, SECRET, JSON.stringify(pair))
+  // Claude Code's brain answers through the bridge: it follows the new port and key (D235).
+  const brains = app.settings.peek().brains.map((brain) => (brain.provider === 'claudecode' ? { ...brain, baseURL: `http://127.0.0.1:${pair.port}/v1` } : brain))
+  for (const brain of brains) if (brain.provider === 'claudecode') await setSecret(app.fs, brain.id, pair.key)
+  if (brains.some((brain) => brain.provider === 'claudecode')) await updateSettings({ brains })
   return pair
 })())
+
+/**
+ * Claude Code on this computer, with the user's Claude plan (D235): where Jean reaches it through the bridge, and
+ * whether it is there and signed in, or the bridge, started before it knew Claude Code, needs starting again; null
+ * while the bridge isn't running.
+ * @returns {Promise<{ baseURL: string, apiKey: string, ready: boolean, old: boolean } | null>}
+ */
+export async function claudeCode() {
+  if (!(await find(true)).on) return null
+  const pair = await pairing()
+  const about = await clientOf(pair).callTool({ name: 'about' }, { claude: true }, AbortSignal.timeout(20_000)).catch(() => null)
+  const claude = about?.structuredContent?.claude
+  return { baseURL: `http://127.0.0.1:${pair.port}/v1`, apiKey: pair.key, ready: claude === true, old: Boolean(about) && claude === undefined }
+}
 
 /** @param {Pairing} next */
 async function save(next) {

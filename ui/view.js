@@ -11,6 +11,9 @@ import { html } from 'lit-html'
 import { markdown } from './markdown.js'
 import { pagePolicy } from './csp.js'
 import { styleSheet } from './sheet.js'
+import { app, notify } from './state.js'
+import { noteRecord } from '../core/events.js'
+import { appendRecords } from '../core/conversations.js'
 import { t } from '../core/i18n.js'
 
 const FRAME = new URL('../preview.html', import.meta.url).href
@@ -19,9 +22,9 @@ await styleSheet(new URL('view.css', import.meta.url))
 
 /**
  * A file to show: its name, its bytes, its media type when known, its text when it isn't its bytes
- * as they are (what was read from a file shared), and whether it is Markdown whatever its name says
- * (a document Jean wrote).
- * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean }} File
+ * as they are (what was read from a file shared), whether it is Markdown whatever its name says
+ * (a document Jean wrote), and, for a workbook in the preview, that its cells change there (D229).
+ * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean, cells?: { at?: import('../caps/files/office.js').Place } }} File
  */
 /**
  * What a web page may do, as Settings and policy have it (D143, D158): its rights, its policy, and
@@ -60,7 +63,7 @@ export async function viewOf(file, holds, page) {
   }
   // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183).
   const csv = /^(csv|tsv)$/.test(ext) && page.allows.scripts ? await (await import('../caps/made/formats.js')).makeFile(name.replace(/\.[ct]sv$/i, '.xlsx'), new TextDecoder().decode(bytes)).catch(() => null) : null
-  if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name), name, pagePolicy(page.allows, page.sites, true), page.allow)
+  if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name, csv ? undefined : file.cells), name, pagePolicy(page.allows, page.sites, true), page.allow)
   // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
   const { extractPages, decodeText, isBinary } = await import('../caps/files/extract.js')
   const office = /^(docx|xlsx|pptx)$/.test(ext)
@@ -68,6 +71,32 @@ export async function viewOf(file, holds, page) {
   if (!text && !office && isBinary(bytes)) return unshown()
   if (/^(md|markdown)$/.test(ext) || file.prose) return html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
   return html`<pre class="view-text" dir="auto">${text}</pre>`
+}
+
+/**
+ * A cell the user changed in a workbook's frame (D229): checked, written into what `read` gives, kept by `keep`, which says what the note for the
+ * brain of the task on screen carries; one that changes only in a spreadsheet app says so. @param {unknown} cell @param {Window} frame
+ * @param {{ name: string, said: string, read: () => Promise<Uint8Array | null>, keep: (bytes: Uint8Array, at: import('../caps/files/office.js').Place) => Promise<{ was?: string, uri?: string }> }} file
+ */
+export async function changeCell(cell, frame, { name, said, read, keep }) {
+  const { sheet, ref, value, sheetName, at } = /** @type {Record<string, any>} */ (cell ?? {})
+  const conversation = app.current.peek()
+  if (!/\.xlsx$/i.test(name) || !Number.isInteger(sheet) || typeof ref !== 'string' || typeof value !== 'string' || value.length > 32767) return
+  try {
+    const bytes = await read()
+    if (!bytes) return notify(t('files.missing', { name }))
+    const changed = await (await import('../caps/files/cells.js')).setCells(bytes, [{ sheet, ref, value }], name)
+    const data = await keep(changed, { sheet, x: Number(at?.x) || 0, y: Number(at?.y) || 0, ref })
+    const note = noteRecord(`The user changed ${name} ${said}: ${ref} in ${String(sheetName)} is ${value ? `now ${value}` : 'empty'}.`, { kind: 'cells', ...data })
+    if (!conversation) return
+    await appendRecords(app.fs, conversation.path, [note])
+    const now = app.current.peek()
+    if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
+  } catch (error) {
+    console.warn('View', error)
+    notify(t('preview.locked'))
+    frame.postMessage({ unchanged: true }, '*')
+  }
 }
 
 /** What shows in place of a file that can't. */

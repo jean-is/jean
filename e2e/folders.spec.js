@@ -39,7 +39,7 @@ const BAKERY = {
 }
 const APP = { 'main.js': MAIN, '.gitignore': 'dist/\n', 'dist/bundle.js': 'built', 'AGENTS.md': '# How to work here\n\nUse two spaces, never tabs.\n' }
 
-/** Puts a folder where the picker finds it: Word documents written from Markdown by Jean's own writer. @param {import('@playwright/test').Page} page @param {string} name @param {Record<string, string>} files */
+/** Puts a folder where the picker finds it: Word documents and workbooks written from Markdown and CSV by Jean's own writer. @param {import('@playwright/test').Page} page @param {string} name @param {Record<string, string>} files */
 async function folder(page, name, files) {
   await page.evaluate(async ({ name, files }) => {
     const { makeFile } = await import('/caps/made/formats.js')
@@ -49,7 +49,7 @@ async function folder(page, name, files) {
       const parts = path.split('/')
       let dir = top
       for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part, { create: true })
-      const bytes = path.endsWith('.docx') ? (await makeFile(String(parts.at(-1)), content)).bytes : new TextEncoder().encode(content)
+      const bytes = /\.(docx|xlsx)$/.test(path) ? (await makeFile(String(parts.at(-1)), content)).bytes : new TextEncoder().encode(content)
       const writable = await (await dir.getFileHandle(String(parts.at(-1)), { create: true })).createWritable()
       await writable.write(bytes)
       await writable.close()
@@ -254,6 +254,12 @@ test.describe('in place', () => {
     await expect(page.locator('.folder-name')).toHaveText('app')
     await expect.poll(async () => new TextDecoder().decode(await bytes(page, 'Clients/notes.txt'))).toBe('Call Dana on Saturday.\n')
     expect(new TextDecoder().decode(await bytes(page, 'app/main.js'))).toBe(MAIN.replace('Hello', 'Bonjour'))
+    // Duplicated from its first request, a conversation keeps its own folder, though the room has none (D230).
+    await page.locator('.msg-actions.is-request').first().getByRole('button', { name: 'Duplicate from here' }).click()
+    await expect(page.locator('.msg-user')).toHaveCount(1)
+    await expect(page.locator('.folder-name')).toHaveText('app')
+    await expect(page.locator('.msg-jean .prose').last()).toContainText('main.js')
+    await answer(page)
 
     // A project opened on a folder: its new conversations start there, after a reload too.
     await turnOn(page, 'Projects')
@@ -293,6 +299,41 @@ test.describe('in place', () => {
     await answer(page)
     await context.close()
   })
+  test('a workbook of the folder changes in the browser, where it is: its total worked out again, the brain told (D229)', async ({ page }) => {
+    await start(page)
+    await connectFakeBrain(page)
+    await folder(page, 'Books', { 'Budget.xlsx': 'Item,Amount\nRent,1200\nFood,450\nTotal,=SUM(B2:B3)' })
+    await willPick(page, 'Books')
+    await turnOn(page, 'Folders')
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.folder-name')).toHaveText('Books')
+    await ask(page, 'Hello')
+    await answer(page)
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
+    await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+    await go(page, 'Books/Budget.xlsx')
+    // The cells are drawn, not written out: reached where the grid shows them, and read in the box.
+    const view = page.frameLocator('app-browser .view iframe')
+    const [grid, box, B3] = [view.locator('[data-xlsx-viewport-input]'), view.locator('body > input'), { x: 190, y: 70 }]
+    await expect(view.locator('main')).toContainText('Budget', { timeout: 15_000 })
+    const first = await page.locator('app-browser .view iframe').elementHandle()
+    await grid.dblclick({ position: B3 })
+    await expect(box).toHaveValue('450')
+    await box.fill('500')
+    await box.press('Enter')
+    // Written in the folder itself, its total worked out again, and shown again with it.
+    await expect.poll(async () => (await extractPages('Budget.xlsx', await bytes(page, 'Books/Budget.xlsx'))).join('\n'), { timeout: 15_000 })
+      .toBe('Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t500\nTotal\t1700')
+    await expect.poll(() => first?.evaluate((frame) => frame.isConnected), { timeout: 15_000 }).toBe(false)
+    await expect(box).toBeAttached({ timeout: 15_000 })
+    await grid.click({ position: B3 })
+    await page.keyboard.press('F2')
+    await expect(box).toHaveValue('500')
+    const told = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
+      .flatMap((record) => (record.update?.sessionUpdate === '_system_note' && record.update.data.kind === 'cells' ? [record.update.text] : [])))
+    expect(told).toEqual(['The user changed Budget.xlsx in the folder: B3 in Budget is now 500.'])
+  })
+
   test('the folder’s site shows in the browser as from a server; a page Jean makes or changes opens by itself, and one changed elsewhere comes again', async ({ page }) => {
     await start(page)
     await connectFakeBrain(page)

@@ -190,7 +190,7 @@ function sourcesView(state) {
         const site = siteOf(index.url)
         return html`<div class="source">
           <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${t('policy.locked')}</span>`
-            : html`<button class="icon-button subtle" title=${t('action.remove')} aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
+            : html`<button class="icon-button subtle" aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
           ${index.error ? html`<p class="muted small">${t('skills.unreachable', { source: site })}</p>` : nothing}
           <ul class="cards">${entries.map((entry) => html`<li><button class="card" @click=${() => preview(entry)}><strong dir="ltr">${entry.name}</strong><small dir="auto">${entry.description}</small></button></li>`)}</ul>
         </div>`
@@ -315,8 +315,8 @@ export function you() {
             <span class="noticed-actions">
               ${entry.conversation ? html`<button class="link-button small" title=${t('knows.from')}
                 @click=${() => openFrom(/** @type {string} */ (entry.conversation))}>${entry.at ? relativeTime(entry.at) : t('knows.from')}</button>` : nothing}
-              <button class="icon-button subtle" title=${t('knows.promote')} aria-label=${t('knows.promote')} @click=${() => promote(path, entry)}>${icons.pin}</button>
-              <button class="icon-button subtle" title=${t('action.delete')} aria-label=${t('action.delete')} @click=${() => forget(path, entry)}>${icons.trash}</button>
+              <button class="icon-button subtle" aria-label=${t('knows.promote')} @click=${() => promote(path, entry)}>${icons.pin}</button>
+              <button class="icon-button subtle" aria-label=${t('action.delete')} @click=${() => forget(path, entry)}>${icons.trash}</button>
             </span>
           </li>`)}</ul>` : html`<p class="muted small">${t('knows.nothing')}</p>`}`)}
         <p class="hint">${t('knows.cloud', { name: BRAND.name })}</p>

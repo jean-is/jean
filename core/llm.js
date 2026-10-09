@@ -32,6 +32,8 @@ export const PROVIDERS = {
   xai: { api: 'openai', baseURL: 'https://api.x.ai/v1', defaultModel: null, needsKey: true },
   ollama: { api: 'openai', baseURL: 'http://localhost:11434/v1', defaultModel: null, needsKey: false },
   lmstudio: { api: 'openai', baseURL: 'http://localhost:1234/v1', defaultModel: null, needsKey: false },
+  // The user's own Claude Code, with their Claude plan, through This computer's bridge (D235): its address and key are the bridge's.
+  claudecode: { api: 'anthropic', baseURL: '', defaultModel: 'opus', needsKey: true },
   custom: { api: 'openai', baseURL: '', defaultModel: null, needsKey: false },
 }
 
