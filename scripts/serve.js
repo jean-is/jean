@@ -3,7 +3,10 @@
 // With --gateway (npm run dev:gateway), it is the gateway too (D191), at /gateway on Jean's own
 // address, and makes up the policy that sets it for Jean and turns Connections on, as an
 // organisation's would (docs/enterprise.md). GATEWAY_CONFIG may add its apps, or name fewer hosts.
-import { createReadStream } from 'node:fs'
+// With --budgets (npm run dev, dev:gateway and start), it checks the budgets as it starts and after
+// each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244).
+import { execFile } from 'node:child_process'
+import { createReadStream, watch } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { extname, join, normalize, resolve, sep } from 'node:path'
@@ -11,7 +14,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gateway } from '../gateway/gateway.js'
 import { listener } from '../gateway/serve.js'
 
-const APP = resolve(fileURLToPath(new URL('../app', import.meta.url)))
+const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)))
+const APP = join(ROOT, 'app')
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.PORT) || 4173
 /** @type {import('../gateway/gateway.js').Config | null} */
@@ -103,6 +107,31 @@ function send (res, req, type, body) {
   res.end(req.method === 'HEAD' ? undefined : body)
 }
 
+/**
+ * The budgets, checked in a process of their own each time (Node keeps a module it imported, the
+ * prompt's included), said as Jean starts, then each time they change while one is over, and once
+ * all are met again.
+ */
+function watchBudgets () {
+  /** @type {{ text: string, over: boolean } | null} */
+  let said = null
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let timer
+  const check = () => execFile(process.execPath, [join(ROOT, 'scripts', 'budgets.js'), '--short'], (error, stdout) => {
+    const now = { text: stdout.trim(), over: Boolean(error) }
+    if (!said || ((now.over || said.over) && now.text !== said.text)) (now.over ? console.error : console.log)(now.text)
+    said = now
+  })
+  const later = (/** @type {string | null} */ file) => {
+    if (file?.startsWith('vendor')) return
+    clearTimeout(timer)
+    timer = setTimeout(check, 300)
+  }
+  for (const dir of [APP, join(ROOT, 'cli')]) watch(dir, { recursive: true }, (_, file) => later(file))
+  watch(join(ROOT, 'budgets.json'), () => later(null))
+  check()
+}
+
 function main () {
   const server = createServer((req, res) => {
     handle(req, res).catch(() => fail(res, 500, 'Server error'))
@@ -113,6 +142,7 @@ function main () {
   })
   server.listen(PORT, HOST, () => {
     console.log(`Serving ${APP} at http://${HOST}:${PORT}/${GATEWAY ? `, with the gateway at http://${HOST}:${PORT}/gateway` : ''}`)
+    if (process.argv.includes('--budgets')) watchBudgets()
   })
 }
 

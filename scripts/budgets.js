@@ -1,5 +1,6 @@
 // Checks the hard limits in budgets.json. Prints a table; exits 1 on any failure.
 // Usage: npm run budgets
+//        node scripts/budgets.js --short   a line or two, as the development server says them (D244)
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -79,7 +80,7 @@ async function subdirectories (dir) {
 // ─── Checks ──────────────────────────────────────────────────────────────────
 
 /**
- * @typedef {{ name: string, limit: string, actual: string, status: 'ok'|'FAIL'|'skip', notes: string[] }} Row
+ * @typedef {{ name: string, limit: string, actual: string, status: 'ok'|'FAIL'|'skip', notes: string[], share?: number }} Row
  */
 
 /**
@@ -92,7 +93,7 @@ async function subdirectories (dir) {
  */
 function measure (name, limit, actual, notes = [], format = String) {
   const status = actual <= limit && !notes.length ? 'ok' : 'FAIL'
-  return { name, limit: format(limit), actual: format(actual), status, notes }
+  return { name, limit: format(limit), actual: format(actual), status, notes, share: actual / limit }
 }
 
 /** @param {number} bytes */
@@ -119,7 +120,8 @@ async function checkDependencies (budgets) {
   const names = Object.keys(pkg.dependencies ?? {})
   const { max, allowed } = budgets.runtimeDependencies
   const extra = names.filter((name) => !allowed.includes(name))
-  return [measure('runtimeDependencies', max, names.length, extra.map((n) => `not allowed: ${n}`))]
+  // A list of names allowed, never nearly full.
+  return [{ ...measure('runtimeDependencies', max, names.length, extra.map((n) => `not allowed: ${n}`)), share: undefined }]
 }
 
 /** Each person loads one catalog, their own (core/i18n.js), so the first load counts the largest. Its dialogs' part loads with them (D97). */
@@ -223,6 +225,17 @@ function printTable (rows) {
   }
 }
 
+/**
+ * What the development server says (D244): each budget over, else those within 2% of their limit.
+ * @param {Row[]} rows
+ */
+export function brief (rows) {
+  const failed = rows.filter((r) => r.status === 'FAIL')
+  if (failed.length) return [...failed.map((r) => `budgets: FAILED ${r.name}: ${r.actual} of ${r.limit}${r.notes.map((note) => `; ${note}`).join('')}`), 'Going over a limit means deleting something first (AGENTS.md).'].join('\n')
+  const full = rows.filter((r) => (r.share ?? 0) >= 0.98)
+  return `budgets: all met${full.length ? `; nearly full: ${full.map((r) => `${r.name} ${r.actual} of ${r.limit}`).join(', ')}` : ''}`
+}
+
 async function main () {
   const budgets = JSON.parse((await readText('budgets.json', ROOT)) ?? 'null')
   if (!budgets) throw new Error('budgets.json not found')
@@ -233,9 +246,12 @@ async function main () {
     ...await checkAssets(budgets),
     ...await checkPrompt(budgets),
   ]
-  printTable(rows)
   const failed = rows.filter((r) => r.status === 'FAIL').length
-  console.log(failed ? `\n${failed} budget(s) over or unmeasurable.` : '\nAll budgets met. (KB = 1024 bytes, gzip level 9 per file.)')
+  if (process.argv.includes('--short')) console.log(brief(rows))
+  else {
+    printTable(rows)
+    console.log(failed ? `\n${failed} budget(s) over or unmeasurable.` : '\nAll budgets met. (KB = 1024 bytes, gzip level 9 per file.)')
+  }
   if (failed) process.exit(1)
 }
 

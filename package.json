@@ -6,9 +6,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "npm run build && node scripts/serve.js",
-    "dev:gateway": "npm run build && node scripts/serve.js --gateway",
-    "start": "npm run build && node scripts/serve.js",
+    "dev": "npm run build && node scripts/serve.js --budgets",
+    "dev:gateway": "npm run build && node scripts/serve.js --gateway --budgets",
+    "start": "npm run build && node scripts/serve.js --budgets",
     "build": "npm run vendor && npm run manifest",
     "build:desktop": "npm run build && node scripts/desktop.js",
     "build:dmg": "npm run build && node scripts/desktop.js dmg",

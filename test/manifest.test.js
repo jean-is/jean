@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
-import { countLines } from '../scripts/budgets.js'
+import { brief, countLines } from '../scripts/budgets.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
 import { jpegSize } from '../scripts/screenshots.js'
 import {
@@ -387,6 +387,14 @@ describe('budgets: line counting', () => {
     assert.equal(countLines('a\n'), 1)
     assert.equal(countLines('a\nb'), 2)
     assert.equal(countLines('a\n\nb\n'), 3)
+  })
+
+  it('says in a line or two what the development server says: each budget over, else those nearly full (D244)', () => {
+    const row = (/** @type {string} */ name, /** @type {number} */ actual, /** @type {string[]} */ notes = []) => ({ name, limit: '100', actual: String(actual), status: /** @type {const} */ (actual <= 100 && !notes.length ? 'ok' : 'FAIL'), notes, share: actual / 100 })
+    assert.equal(brief([row('lines.core', 50), row('lines.cli', 60)]), 'budgets: all met')
+    assert.equal(brief([row('lines.core', 50), row('lines.app', 99)]), 'budgets: all met; nearly full: lines.app 99 of 100')
+    assert.equal(brief([row('lines.app', 101), row('gzipKB.css', 0, ['missing ui/style.css'])]),
+      'budgets: FAILED lines.app: 101 of 100\nbudgets: FAILED gzipKB.css: 0 of 100; missing ui/style.css\nGoing over a limit means deleting something first (AGENTS.md).')
   })
 })
 

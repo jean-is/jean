@@ -80,7 +80,7 @@ npm install
 npm run dev
 ```
 
-Then open http://127.0.0.1:4173 and pick a brain. To try Jean without any account, start the fake brain used by the tests, and connect it under *On your computer → Other* at `http://127.0.0.1:4174/v1`:
+Then open http://127.0.0.1:4173 and pick a brain. The terminal says as soon as a change goes over a [budget](budgets.json). To try Jean without any account, start the fake brain used by the tests, and connect it under *On your computer → Other* at `http://127.0.0.1:4174/v1`:
 
 ```bash
 node test/fixtures/fake-brain.js
