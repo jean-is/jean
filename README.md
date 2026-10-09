@@ -87,11 +87,13 @@ node test/fixtures/fake-brain.js
 
 **Deploying:** run `npm ci && npm run build`, then copy the folder to any static host served over HTTPS. Jean's code ships exactly as written. Only third-party code (copied into `vendor/`) and two generated listings are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once.
 
-**Gateway:** some services, like Gmail, Microsoft 365 or Slack, refuse requests from a browser, or only accept apps they registered. A small gateway, with nothing to install, reaches them for Jean: it relays to the hosts you name, and keeps the secret of an app you registered there (D191). Run it on Node, or put `gateway/gateway.js` on Cloudflare Workers, Deno or Bun, then name it in Settings › Connections, or in policy (`urls.gateway`):
+**Gateway:** some services, like Gmail, Microsoft 365 or Slack, refuse requests from a browser, or only accept apps they registered. A small gateway, with nothing to install, reaches them for Jean: it relays to every service Jean knows that a browser can't reach, or to the `hosts` you name, and keeps the secret of an app you registered there (D191, D214). Run it on Node, or put `gateway/gateway.js` on Cloudflare Workers, Deno or Bun, then name it in Settings › Connections, or in policy (`urls.gateway`):
 
 ```bash
-GATEWAY_CONFIG='{"origins":["https://jean.example"],"hosts":["googleapis.com","accounts.google.com"],"clients":[]}' node gateway/serve.js
+GATEWAY_CONFIG='{"origins":["https://jean.example"]}' node gateway/serve.js
 ```
+
+That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier and Todoist need. Google (Gmail, Drive, Calendar, Chat), Slack, Figma, Asana, Zoom, HubSpot and Box take only apps registered with them: register one, with Jean's address as its redirect, and add it to `clients` (`{"issuer":"https://accounts.google.com","tokenEndpoint":"https://oauth2.googleapis.com/token","clientId":"…","clientSecret":"…"}`). `npm run directory` shows each service's sign-in server.
 
 **Desktop:** `npm run build:desktop` puts the same files in an app for macOS, Windows and Linux, in `dist/desktop/`: a window of the system's own web view, with Jean's files inside, made with [Neutralino](https://neutralino.js.org). It needs nothing else on macOS and Windows; Linux needs WebKitGTK. The window gives Jean only what Sync needs: the system's dialog for a folder, the folder's files, and its file manager (D155, D169). On a Mac, `npm run build:dmg` also makes the disk image to hand out.
 

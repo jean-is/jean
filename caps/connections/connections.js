@@ -213,7 +213,7 @@ async function save(connection, tools) {
 const change = (connection, patch) => updateSettings({ connections: (app.settings.value.connections ?? []).map((other) => (other.id === connection.id ? { ...other, ...patch } : other)) })
 
 /** Why it didn't connect: an address to check, or, for a service Jean knows, just that. @param {Connection} connection @param {string} key */
-const failed = (connection, key) => (knownFor(connection.url, app.policy, served.value.hosts) ? t('connections.failedKnown', { service: connection.name }) : t(key))
+const failed = (connection, key) => (knownFor(connection.url, app.policy, served.value) ? t('connections.failedKnown', { service: connection.name }) : t(key))
 
 /**
  * Connects a service; one that wants a sign-in sends the user there, and one that doesn't answer
@@ -240,7 +240,7 @@ async function connectTo(url, name, { key = '', gateway = false } = {}) {
 }
 
 /** The services Jean knows, those the gateway reaches included (D191), as the panel shows them. */
-export const services = () => known(app.policy, served.value.hosts)
+export const services = () => known(app.policy, served.value)
 
 /**
  * A service picked in the box (D199), connected as its tile connects it, its sign-in included;
@@ -270,7 +270,7 @@ async function signIn(connection, challenge) {
     const metadata = await discover(connection.url, { challenge, fetch })
     const redirectURI = location.origin + location.pathname
     // A service that can't register Jean takes the app the organisation registered there, or the gateway's.
-    const clientId = knownFor(connection.url, app.policy, served.value.hosts)?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
+    const clientId = knownFor(connection.url, app.policy, served.value)?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
       ?? await registerClient(metadata, { redirectURI, name: BRAND.name, fetch })
     const another = all().some((other) => other.id !== connection.id && other.url === connection.url)
     const { url, pending } = await authorization(metadata, { clientId, redirectURI, another })
@@ -376,14 +376,15 @@ function yours(connection) {
 
 /**
  * A service Jean knows: a click connects it, and once connected, another account. One not reached
- * yet is there too, disabled. @param {Listed} entry
+ * yet is there too, disabled. A name like an address may wrap before its dot ("monday" ".com").
+ * @param {Listed} entry
  */
 function tile(entry) {
   const again = all().some((connection) => connection.url === entry.url)
   const small = again ? t('connections.another') : ''
   return html`<li><button class="service ${entry.via ? '' : 'is-soon'}" ?disabled=${!entry.via || message.value?.kind === 'busy'}
     @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name, { gateway: entry.via === 'gateway' }) }}>
-    ${monogram(entry)}<span><strong><bdi>${entry.name}</bdi></strong>${small ? html`<small>${small}</small>`
+    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${small ? html`<small>${small}</small>`
       : entry.includes ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span>${entry.via ? icons.plus : nothing}
   </button></li>`
 }
@@ -424,7 +425,7 @@ function gateway() {
 function panel() {
   const shown = message.value
   const said = shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing
-  const services = known(app.policy, served.value.hosts)
+  const services = known(app.policy, served.value)
   const open = adding.value ?? !services.some((entry) => entry.via)
   return html`<header class="panel-head">
       <p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>

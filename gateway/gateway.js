@@ -10,7 +10,8 @@
 //
 // Its configuration, a JSON object in GATEWAY_CONFIG (never a file beside it: Jean's folder is served as it is):
 //   origins  the addresses Jean is served from, e.g. ["https://jean.example"]
-//   hosts    the hosts it relays to; a name covers its subdomains ("googleapis.com")
+//   hosts    the hosts it relays to; a name covers its subdomains ("googleapis.com"). Left out: those
+//            of every service Jean knows that a browser can't reach, their sign-ins included (D214)
 //   clients  apps registered with sign-in servers, e.g. Google's:
 //            [{ "issuer": "https://accounts.google.com", "tokenEndpoint": "https://oauth2.googleapis.com/token",
 //               "clientId": "…", "clientSecret": "…", "auth": "post" }]   auth: "post" (the default) or "basic"
@@ -23,6 +24,10 @@ const LIMIT = 10_000_000
 // What a request keeps on its way: what it is and who it is for, never where it comes from.
 const KEPT = /^(accept|content-type|authorization|last-event-id|mcp-[\w-]+)$/i
 const ANSWERED = ['content-type', 'cache-control', 'mcp-session-id', 'mcp-protocol-version', 'www-authenticate', 'retry-after']
+// The servers and sign-ins of the services Jean knows that a browser can't reach
+// (caps/connections/directory.js): those that register Jean need nothing more, the others an app in `clients`.
+export const SERVICES = Object.freeze(['googleapis.com', 'accounts.google.com', 'microsoft365.mcp.claude.com', 'login.microsoftonline.com', 'slack.com', 'dropbox.com', 'dropboxapi.com',
+  'figma.com', 'asana.com', 'zoom.us', 'hubspot.com', 'box.com', 'monday.com', 'airtable.com', 'calendly.com', 'otter.ai', 'gamma.app', 'zapier.com', 'todoist.com', 'todoist.net'])
 
 /**
  * @typedef {{ issuer: string, tokenEndpoint: string, clientId: string, clientSecret: string, auth?: 'post' | 'basic' }} Client
@@ -37,7 +42,7 @@ export const covers = (hosts, url) => (url.protocol === 'https:' || (url.protoco
 const parse = (text) => { try { return new URL(text) } catch { return null } }
 
 /** @param {Config} config @returns {(request: Request) => Promise<Response>} */
-export function gateway({ origins = [], hosts = [], clients = [] }) {
+export function gateway({ origins = [], hosts = [...SERVICES], clients = [] }) {
   return async (request) => {
     const origin = request.headers.get('origin') ?? ''
     const cors = new Headers({ vary: 'origin' })

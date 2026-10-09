@@ -43,6 +43,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Auto's tiers: the model ids exist, and the picker shows their prices
 - [ ] Each provider of D136 with a real key; `models.image` with OpenAI and OpenRouter keys
 - [ ] A real sign-in to each ready connection (Notion, Canva, Miro, Granola, ClickUp, Linear, Intercom, Wix, Attio, Fireflies), and a token renewal; a search through Exa, with no sign-in
+- [ ] Through a gateway (D214), a real sign-in to each service it reaches as it comes (Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Todoist: does each register Jean's address?), and with an app registered at Google, Slack, Figma, Asana, Zoom, HubSpot and Box
 - [ ] An organisation's own skills index for office work, served with CORS
 - [ ] An Artifactory instance for PyPI and npm with a key; micropip against an index that serves only HTML
 - [ ] "Since last time" with a real service after a real night away

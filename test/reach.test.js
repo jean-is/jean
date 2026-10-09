@@ -232,7 +232,7 @@ import { createFakeMail } from './fixtures/fake-mail.js'
 import { mcpClient, paramHeaders, headerValue } from '../caps/connections/mcp.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh } from '../caps/connections/auth.js'
 import { DIRECTORY, known, knownFor, covers } from '../caps/connections/directory.js'
-import { gateway, covers as gatewayCovers } from '../gateway/gateway.js'
+import { gateway, covers as gatewayCovers, SERVICES } from '../gateway/gateway.js'
 import { listener, speakable } from '../caps/live/turns.js'
 
 /** @returns {Promise<{ origin: string, server: ReturnType<typeof createFakeMail>, close: () => Promise<void> }>} */
@@ -397,7 +397,7 @@ describe('signing in to a connection', () => {
 })
 
 describe('the services Jean knows (D95)', () => {
-  test('each is reached from the browser, through the gateway that relays to its host, or not yet; those reached first (D191)', () => {
+  test('each is reached from the browser, through the gateway that relays to it and its sign-in and holds the app it takes, or not yet; those reached first (D191, D214)', () => {
     assert.equal(new Set(DIRECTORY.map((entry) => entry.id)).size, DIRECTORY.length)
     const services = known()
     assert.deepEqual(services.slice(0, 4).map((entry) => [entry.id, entry.via]), [['notion', 'browser'], ['canva', 'browser'], ['miro', 'browser'], ['granola', 'browser']])
@@ -405,13 +405,21 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(services.length, DIRECTORY.length)
     assert.ok(services.some((entry) => entry.id === 'microsoft-365' && entry.url === 'https://microsoft365.mcp.claude.com/mcp' && entry.via === null))
     assert.ok(services.some((entry) => entry.id === 'google-meet' && !entry.url && entry.via === null))
-    // A gateway that relays to Google's and Slack's hosts reaches those with an address; Meet still has none.
-    const through = known({}, ['googleapis.com', 'slack.com'])
-    assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'slack', 'google-chat'])
+    // A gateway that relays to Google's servers but not its sign-in, or holds no app of Google's, doesn't reach Gmail.
+    const google = { 'https://accounts.google.com': 'google-app' }
+    assert.equal(known({}, { hosts: ['googleapis.com'], clients: google }).find((entry) => entry.id === 'gmail')?.via, null)
+    assert.equal(known({}, { hosts: ['googleapis.com', 'accounts.google.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
+    const through = known({}, { hosts: ['googleapis.com', 'accounts.google.com', 'slack.com'], clients: google })
+    assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'google-chat'])
     const ready = DIRECTORY.filter((entry) => entry.ready).length
-    assert.deepEqual(through.slice(ready, ready + 5).map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'slack', 'google-chat'])
+    assert.deepEqual(through.slice(ready, ready + 4).map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'google-chat'])
+    // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
+    const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
+    assert.deepEqual(relayed({}), ['microsoft-365', 'dropbox', 'monday', 'airtable', 'calendly', 'otter', 'gamma', 'zapier', 'todoist'])
+    const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
+    assert.deepEqual(relayed(apps), DIRECTORY.filter((entry) => !entry.ready && entry.url).map((entry) => entry.id))
     assert.equal(through.find((entry) => entry.id === 'google-meet')?.via, null)
-    assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, ['googleapis.com'])?.id, 'gmail')
+    assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, { hosts: ['googleapis.com', 'accounts.google.com'], clients: google })?.id, 'gmail')
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1'), undefined)
   })
 
@@ -447,7 +455,7 @@ describe('the services Jean knows (D95)', () => {
     ] }
     const services = known(policy)
     const m365 = services.find((entry) => entry.id === 'microsoft-365')
-    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], logo: 'microsoft-365.svg', clientId: 'corp-app', ready: true, via: 'browser' })
+    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], signIn: ['login.microsoftonline.com'], logo: 'microsoft-365.svg', clientId: 'corp-app', ready: true, via: 'browser' })
     assert.equal(services.find((entry) => entry.id === 'crm')?.via, 'browser')
     assert.equal(services.find((entry) => entry.id === 'canva')?.via, null)
     assert.ok(!services.some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
@@ -493,6 +501,8 @@ describe('the gateway (D191)', () => {
     const served = await handle(new Request(AT, { headers: { origin: JEAN } }))
     assert.deepEqual(await served.json(), { format: 1, hosts: ['127.0.0.1'], clients: { 'https://accounts.example': 'app' } })
     assert.equal(served.headers.get('access-control-allow-origin'), JEAN)
+    // Naming no hosts, it relays to the services Jean knows that a browser can't reach (D214).
+    assert.deepEqual((await (await gateway({ origins: [JEAN] })(new Request(AT, { headers: { origin: JEAN } }))).json()).hosts, SERVICES)
     const elsewhere = await handle(new Request(`${AT}?url=${encodeURIComponent('http://127.0.0.1:9/mcp')}`, { method: 'POST', headers: { origin: 'https://elsewhere.example' } }))
     assert.equal(elsewhere.status, 403)
     assert.equal(elsewhere.headers.get('access-control-allow-origin'), null)

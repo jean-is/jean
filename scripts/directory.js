@@ -5,13 +5,17 @@
 // metadata and preflights, and registers nothing.
 // An entry marked ready that fails, or one that passes and isn't marked, is reported, and the
 // command fails. Passing is not enough to mark one ready: sign in once with a real account.
+// One not ready is checked through a gateway that relays to its server and sign-in hosts alone,
+// as known() trusts it to (D214): it has to answer there, and its sign-in to register Jean, or
+// name the sign-in server whose app the gateway holds.
 // Then the default sources of skills (caps/skills/sources.js, D121): each index or repository, and
 // every skill it lists, must answer a browser, match its digest or git's hashes, and at least one
 // must be made of instructions.
 // Usage: npm run directory
-import { DIRECTORY } from '../caps/connections/directory.js'
+import { DIRECTORY, covers } from '../caps/connections/directory.js'
 import { discover } from '../caps/connections/auth.js'
 import { mcpClient, MCPError } from '../caps/connections/mcp.js'
+import { gateway } from '../gateway/gateway.js'
 import { DEFAULT_SOURCES, fetchSkill, indexURL, readIndexes, siteOf } from '../caps/skills/sources.js'
 import { memoryFS } from '../core/fs.js'
 
@@ -56,6 +60,29 @@ async function check({ url }) {
   return problems
 }
 
+/** @param {import('../caps/connections/directory.js').Known} entry @returns {Promise<string[]>} what stands in the way through a gateway */
+async function throughGateway({ url, signIn = [], app }) {
+  if (!url) return ['no server']
+  const hosts = [new URL(url).hostname, ...signIn]
+  const handle = gateway({ origins: [ORIGIN], hosts })
+  const relayed = /** @type {typeof fetch} */ ((input, init) => {
+    const at = new URL('https://gateway.example/')
+    at.searchParams.set('url', String(input))
+    return handle(new Request(at, { ...init, headers: { ...init?.headers, origin: ORIGIN } }))
+  })
+  const listed = await mcpClient({ url, client: { name: 'Jean', version: '0' }, fetch: relayed }).listTools().then(() => null, (/** @type {Error} */ error) => error)
+  if (listed && !(listed instanceof MCPError && listed.auth)) return [`it doesn’t answer (${listed instanceof MCPError ? listed.status : listed.message})`]
+  const metadata = await discover(url, { challenge: listed instanceof MCPError ? listed.challenge : null, fetch: relayed }).catch((/** @type {Error} */ error) => error)
+  if (metadata instanceof Error) return [metadata.message[0].toLowerCase() + metadata.message.slice(1, -1)]
+  const problems = []
+  if (app && app !== metadata.issuer) problems.push(`its sign-in server is ${metadata.issuer}, not ${app}`)
+  if (!app && !metadata.registration_endpoint) problems.push(`it can’t register Jean: name the app its sign-in takes (${metadata.issuer})`)
+  for (const endpoint of [metadata.token_endpoint, !app && metadata.registration_endpoint]) {
+    if (endpoint && !covers(hosts, new URL(endpoint))) problems.push(`its sign-in is also at ${new URL(endpoint).hostname}`)
+  }
+  return problems
+}
+
 /**
  * A GET as a browser makes it from ORIGIN: every hop of a redirect has to allow the origin.
  * @param {string} url @returns {Promise<Response | string>} the response, or what stood in the way
@@ -89,9 +116,11 @@ let mismatches = 0
 for (const entry of DIRECTORY) {
   const problems = await check(entry)
   const works = !problems.length
-  const mismatch = works !== Boolean(entry.ready)
+  const relayed = entry.ready || !entry.url ? null : await throughGateway(entry)
+  const mismatch = works !== Boolean(entry.ready) || Boolean(relayed?.length)
   mismatches += Number(mismatch)
-  console.log(`${mismatch ? '✗' : ' '} ${entry.name.padEnd(16)} ${(entry.ready ? 'ready' : 'not yet').padEnd(8)} ${works ? 'reachable from a browser' : problems.join('; ')}`)
+  const gateway = !relayed ? '' : ` · through a gateway: ${relayed.join('; ') || (entry.app ? `with the app of ${entry.app}` : 'reachable')}`
+  console.log(`${mismatch ? '✗' : ' '} ${entry.name.padEnd(16)} ${(entry.ready ? 'ready' : 'not yet').padEnd(8)} ${works ? 'reachable from a browser' : problems.join('; ')}${gateway}`)
 }
 
 console.log('\nSources of skills')
