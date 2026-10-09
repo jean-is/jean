@@ -71,7 +71,7 @@ const discovery = () => import('./discovery.js')
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
-// systems. A browser tab keeps ⌘N for a new window; an installed Jean, or Firefox, lets it through.
+// systems. A browser tab keeps ⌘N for a new window, so ⌘⇧O does it too, as in ChatGPT, and is the one shown (D236).
 // ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
 // ⌘⇧B opens the browser once it is found, or closes it (D142). ⌘J opens the terminal, as in code editors,
 // brings the keys to it, or closes it once they are there, and turns the computer on first (D166, D170, D184).
@@ -79,9 +79,9 @@ const discovery = () => import('./discovery.js')
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyL: 'l', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
@@ -90,7 +90,7 @@ document.addEventListener('keydown', (event) => {
   if (key === ',' && !event.shiftKey) {
     event.preventDefault()
     if (app.dialog.value !== 'settings') import('./dialogs.js').then((module) => module.openSettings())
-  } else if (key === 'n' && !event.shiftKey) {
+  } else if (key === (event.shiftKey ? 'o' : 'n')) {
     event.preventDefault()
     turnPage(newConversation)
     focusComposer()

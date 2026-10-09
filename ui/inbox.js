@@ -56,9 +56,11 @@ function conversationList(where) {
   })}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
 }
 
-/** A shortcut as the keyboard shows it, left to right in any language: ⌘⇧L on Apple's systems, Ctrl+Shift+L elsewhere. @param {string} shortcut */
-const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${shortcut.startsWith('Meta')
-  ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧') : shortcut.replace('Control', 'Ctrl')}</bdi></kbd>`
+/** A shortcut as the keyboard shows it: ⌘⇧L and ⇧↩ on Apple's systems, Ctrl+Shift+L and Shift+Enter elsewhere. @param {string} shortcut */
+export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩')
+  : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp ArrowDown', '↑ ↓')
+/** The same, left to right in any language. @param {string} shortcut */
+const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd>`
 
 /** Where a capability found leads, under a new task, as Manus lists its own: its section of Settings, in Settings' order. */
 const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scroll'], ['routines', 'alarm']])

@@ -1,10 +1,11 @@
 // Keyboard shortcuts (D118), as in the Claude apps: ⌘, opens Settings and ⌘N starts a new
-// conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet.
+// conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet;
+// ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
 // ⌘⇧L switches between light and dark (D130); ⌘B opens the drawer or puts it away (D234).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
-test('⌘, opens Settings, and ⌘N starts a new conversation from anywhere', async ({ page }) => {
+test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
@@ -23,7 +24,7 @@ test('⌘, opens Settings, and ⌘N starts a new conversation from anywhere', as
   })
   await expect(settings).toBeVisible()
   // Even with Settings open: it closes, and the box waits for the first words.
-  await page.keyboard.press('ControlOrMeta+KeyN')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   await expect(settings).toBeHidden()
   await expect(page.locator('.hero-question')).toBeVisible()
   await expect(page.locator('#prompt')).toBeFocused()
@@ -110,4 +111,19 @@ test('↑ from an empty box brings back what was asked, newest first, and ↓ go
   await box.fill('Hello')
   await box.press('ArrowUp')
   await expect(box).toHaveValue('Hello')
+})
+
+test('Settings lists the shortcuts to read, a capability\'s once it is found (D236)', async ({ page }) => {
+  await start(page)
+  const settings = await openSettings(page, 'Keyboard shortcuts')
+  const row = (/** @type {string} */ name) => settings.locator('.keyboard > div', { hasText: name })
+  await expect(row('New task').locator('kbd')).toHaveText(/^(⌘⇧O|Ctrl\+Shift\+O)$/)
+  await expect(row('New line').locator('kbd')).toHaveText(/^(⇧↩|Shift\+Enter)$/)
+  await expect(row('Search')).toHaveCount(0)
+  await closeSettings(page)
+  // Turned on, Search opens: ⌘, comes back to Settings over it.
+  await turnOn(page, 'Search')
+  await page.keyboard.press('ControlOrMeta+Comma')
+  await settings.locator('.settings-nav button', { hasText: 'Keyboard shortcuts' }).click()
+  await expect(row('Search').locator('kbd')).toHaveText(/^(⌘K|Ctrl\+K)$/)
 })

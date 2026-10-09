@@ -83,7 +83,7 @@ Mail and Human start with the drawer open beside the conversation (D165). Names 
 - **`prefers-reduced-motion`:** a still glow, with no movement. The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces.
 - **`forced-colors`** is supported. The little light becomes an outline drawing in the system colours.
-- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘N a new conversation, ⌘⇧L switches between light and dark, ⌘K opens search and ⌘⇧B the browser once each is found, ⌘J the terminal, Ctrl outside Apple's systems (D118).
+- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧L switches between light and dark, ⌘K opens search and ⌘⇧B the browser once each is found, ⌘J the terminal, Ctrl outside Apple's systems (D118).
 
 ## Budget
 

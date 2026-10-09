@@ -23,7 +23,7 @@ import { t, locale, formatBytes, useStrings, languageName, preferredLocales } fr
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './icons.js'
-import { sidebarBody } from './inbox.js'
+import { sidebarBody, keyNames } from './inbox.js'
 import { SHORTCUTS, findButton, placeToasts } from './shell.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
@@ -449,6 +449,18 @@ const appearance = () => html`
   </span>`)}
   <section>${looks(effective.value.settings.look)}</section>`
 
+/** Its place in the menu: a keyboard, drawn here rather than with the first screen's icons. */
+const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
+  <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
+/** Each shortcut, and the capability it waits for. */
+const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settings], ['keyboard.sidebar', SHORTCUTS.sidebar], ['settings.mode', SHORTCUTS.theme],
+  ['cap.find.name', SHORTCUTS.find, 'find'], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
+  ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
+
+/** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
+const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || loaded.value.has(id))
+  .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl>`
+
 function approvals() {
   const { settings, locked } = effective.value
   return html`<section>
@@ -617,7 +629,7 @@ function data() {
 }
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'you' | 'connections' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
  * @property {string} label    its name in the menu
  * @property {unknown} icon
@@ -643,6 +655,7 @@ export const SECTIONS = {
   general: { label: 'settings.general', icon: icons.gear, show: general },
   brains: { label: 'settings.brains', icon: icons.spark, show: brains },
   appearance: { label: 'settings.appearance', icon: icons.contrast, show: appearance },
+  keyboard: { label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   connections: { label: 'cap.connections.name', icon: icons.plug, show: () => loaded.value.get('connections')?.panel?.() ?? nothing, when: () => loaded.value.has('connections') },
   skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
