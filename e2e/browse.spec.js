@@ -269,8 +269,9 @@ test('the browser and a file share the side of the window, neither covering the 
   await expect(page.locator('app-shell')).toHaveJSProperty('inert', true)
   ;[first, second] = await Promise.all([preview.boundingBox(), pane.boundingBox()])
   expect((first?.x ?? 0) + (first?.width ?? 0)).toBeLessThanOrEqual(second?.x ?? 0)
-  // Closing one gives the other the whole side; closing both gives the conversation back.
+  // Closing one gives the other the whole side, the smaller one too; closing both gives the conversation back.
   await page.setViewportSize({ width: 1280, height: 720 })
+  await divider.press('ArrowUp')
   await pane.locator('.browser-bar').getByRole('button', { name: 'Close' }).click()
   await expect(pane).toHaveCount(0)
   expect(await preview.boundingBox()).toEqual(alone)
