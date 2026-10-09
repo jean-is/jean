@@ -163,7 +163,7 @@ class FileMade extends Element {
       <span class="file-tile" aria-hidden="true">${this.#url ? html`<img src=${this.#url} alt="">` : TILES[kind] ?? icons.file}</span>
       <span class="file-about"><span class="file-name"><span dir="auto">${name}</span></span>
         <span class="file-meta"><span>${kind ? t(`made.kind.${kind}`) : ext.toUpperCase()}</span><span>${formatBytes(Number(this.getAttribute('size')) || 0)}</span>${version && versions.length > 1 ? html`<span>${t('made.version', { n: version })}</span>` : nothing}</span></span>
-      <button class="icon-button" title=${label} aria-label=${label} @click=${() => this.#save(name, type)}>${icons.download}</button>
+      <button class="icon-button" aria-label=${label} @click=${() => this.#save(name, type)}>${icons.download}</button>
       <button class="button" aria-label=${t('sources.open', { name })} @click=${open}>${t('made.open')}</button>
     </div>`
   }
@@ -212,8 +212,8 @@ class Made extends Element {
     if (!source) return nothing
     const tables = tablesIn(source)
     return html`
-      <button class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>
-      ${tables.map((table, i) => html`<button class="icon-button subtle" title=${t('made.csvTitle')}
+      <button class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>
+      ${tables.map((table, i) => html`<button class="icon-button subtle"
         aria-label=${tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle')}
         @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}`
   }

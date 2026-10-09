@@ -22,6 +22,7 @@
   "action.remove": "அகற்று",
   "action.copy": "நகலெடு",
   "action.retry": "மீண்டும் முயல்",
+  "action.fork": "இங்கிருந்து நகலாக்கு",
   "action.readAloud": "உரக்கப் படி",
   "action.stopReading": "படிப்பதை நிறுத்து",
   "dock.resize": "அளவை மாற்று",

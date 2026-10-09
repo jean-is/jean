@@ -22,6 +22,7 @@
   "action.remove": "Прибрати",
   "action.copy": "Копіювати",
   "action.retry": "Спробувати ще",
+  "action.fork": "Дублювати звідси",
   "action.readAloud": "Прочитати вголос",
   "action.stopReading": "Зупинити читання",
   "dock.resize": "Змінити розмір",

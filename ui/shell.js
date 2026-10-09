@@ -26,16 +26,16 @@ class Shell extends Element {
       ${loaded.value.has('folders') ? html`<app-folder></app-folder>` : nothing}
       ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>` : nothing}
       ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
-        aria-label=${t('cap.browser.name')} title=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
+        aria-label=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
       ${loaded.value.has('flows') && current?.records.length ? html`<button class="icon-button flows-toggle" @click=${() => import('../caps/flows/flows.js').then((module) => module.toggle())}
-        aria-label=${t('cap.flows.name')} title=${t('cap.flows.name')}>${icons.flow}</button>` : nothing}</div>` : nothing
+        aria-label=${t('cap.flows.name')}>${icons.flow}</button>` : nothing}</div>` : nothing
     // On a new task, a capability may show something of its own in place of the welcome: Flows' flow mode (D218).
     const instead = current?.records.length ? null : [...loaded.value.values()].map((capability) => capability.main?.()).find(Boolean)
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
         <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing}
-          aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')} title=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
+          aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
         ${open ? findButton() : views}
@@ -64,7 +64,7 @@ effect(() => {
 
 /** Search, once it is found, at the top of the drawer, as in Manus (D133, D165). */
 export const findButton = () => (loaded.value.has('find') ? html`<button class="icon-button" aria-keyshortcuts=${SHORTCUTS.find}
-  aria-label=${t('cap.find.name')} title=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button>` : nothing)
+  aria-label=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button>` : nothing)
 
 const discovery = () => import('./discovery.js')
 

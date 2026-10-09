@@ -99,7 +99,7 @@ class Terminal extends Element {
     if (!open.value) return nothing
     void moves.value
     const terminal = terminalOf(app.current.value?.id)
-    const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => void} */ run) => html`<button class="icon-button" title=${label} aria-label=${label} @click=${() => { run(); toLine() }}>${icon}</button>`
+    const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => void} */ run) => html`<button class="icon-button" aria-label=${label} @click=${() => { run(); toLine() }}>${icon}</button>`
     return html`<aside class="pane terminal" aria-label=${t('computer.terminal')} @keydown=${keyed} @click=${focusLine}>
       <header class="pane-head">
         <h2>${t('computer.terminal')}</h2>

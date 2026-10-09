@@ -68,8 +68,8 @@ class Preview extends Element {
       <header class="pane-head">
         <h2><span dir="auto">${file.name}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}
-        <button class="icon-button" title=${label} aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
-        <button class="icon-button" title=${t('action.close')} aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
+        <button class="icon-button" aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
+        <button class="icon-button" aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
       <div class="view">${view.value}</div>
     </aside>`

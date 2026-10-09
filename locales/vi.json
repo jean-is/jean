@@ -22,6 +22,7 @@
   "action.remove": "Gỡ bỏ",
   "action.copy": "Sao chép",
   "action.retry": "Thử lại",
+  "action.fork": "Nhân bản từ đây",
   "action.readAloud": "Đọc to",
   "action.stopReading": "Dừng đọc",
   "dock.resize": "Đổi kích thước",

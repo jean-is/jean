@@ -231,7 +231,8 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
   - "Simpler" and "Translate" were dropped: the small reflex model can't tell whether a text is wordy or full of jargon, and the language to translate into is the user's call.
 - **Follow-ups tied to the content:** the brain ends its reply with up to 3 follow-ups in a hidden block, and the UI turns them into buttons under the last answer. They cost a few output tokens and are automatically in the user's language.
 - **"Ask a smarter brain"** sits with them when Auto chose the brain and a higher level is available.
-- **Under each request,** how long ago it was asked, Copy and Try again, which, once the user agrees, goes back to it: everything after it in the task is removed and it is answered again. Under each answer, how long ago it came (D188).
+- **Under each request,** how long ago it was asked, Copy, Try again, which, once the user agrees, goes back to it: everything after it in the task is removed and it is answered again, and Duplicate from here, which answers it in a new task made of what led up to it, the first left as it was. Under each answer, how long ago it came (D188, D230).
+- **Tips.** An icon button's name, or what a title adds (a time's full date), shows above it as a cited source's does, once the pointer rests on it or the keyboard reaches it, never the browser's own tooltip (D233).
 - **Starters on the first screen** help non-technical users begin: summarize, write an email, explain, and "Chart a savings plan", which has the computer work a plan out with one script and draw it as a page that opens beside the conversation (D163).
 - **Suggestions double as discovery.** A "Chart this" button is how the computer gets discovered.
 

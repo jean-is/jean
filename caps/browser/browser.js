@@ -477,7 +477,7 @@ class Browser extends Element {
     const address = shown && isLocal(shown.url) ? shownAs(shown.url) : shown?.url ?? ''
     const folder = folders?.folderOf(app.current.value)
     const button = (/** @type {string} */ label, /** @type {unknown} */ icon, /** @type {() => unknown} */ run, disabled = false) => html`<button class="icon-button"
-      title=${label} aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
+      aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
     return html`<aside class="pane browser ${full.value ? 'is-full' : ''}" aria-label=${t('cap.browser.name')}>
       <header class="pane-head browser-bar">
         ${button(t('browser.back'), GLYPHS.back, () => walk('back'), !trail.canBack)}
@@ -506,7 +506,7 @@ class Browser extends Element {
         ${shown && !shown.own && !isLocal(shown.url) && unsure.value ? html`<div class="browser-strip" role="status">
           <p>${t('browser.blank')}</p>
           <button class="button" @click=${() => ownTab(shown.url)}>${GLYPHS.tab} ${t('browser.tab')}</button>
-          <button class="icon-button subtle" title=${t('action.close')} aria-label=${t('action.close')} @click=${() => { shows.add(siteOf(shown.url)); unsure.value = false }}>${icons.close}</button>
+          <button class="icon-button subtle" aria-label=${t('action.close')} @click=${() => { shows.add(siteOf(shown.url)); unsure.value = false }}>${icons.close}</button>
         </div>` : nothing}
       </div>
     </aside>`

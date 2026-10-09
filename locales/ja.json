@@ -22,6 +22,7 @@
   "action.remove": "外す",
   "action.copy": "コピー",
   "action.retry": "もう一度試す",
+  "action.fork": "ここから複製",
   "action.readAloud": "読み上げる",
   "action.stopReading": "読み上げを止める",
   "dock.resize": "サイズを変更",

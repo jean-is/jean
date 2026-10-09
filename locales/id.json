@@ -22,6 +22,7 @@
   "action.remove": "Buang",
   "action.copy": "Salin",
   "action.retry": "Coba lagi",
+  "action.fork": "Duplikat dari sini",
   "action.readAloud": "Bacakan",
   "action.stopReading": "Berhenti membacakan",
   "dock.resize": "Ubah ukuran",

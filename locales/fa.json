@@ -22,6 +22,7 @@
   "action.remove": "برداشتن",
   "action.copy": "رونوشت",
   "action.retry": "تلاش دوباره",
+  "action.fork": "تکثیر از اینجا",
   "action.readAloud": "خواندن با صدا",
   "action.stopReading": "توقف خواندن",
   "dock.resize": "تغییر اندازه",

@@ -22,6 +22,7 @@
   "action.remove": "Убрать",
   "action.copy": "Копировать",
   "action.retry": "Повторить",
+  "action.fork": "Дублировать отсюда",
   "action.readAloud": "Прочитать вслух",
   "action.stopReading": "Остановить чтение",
   "dock.resize": "Изменить размер",

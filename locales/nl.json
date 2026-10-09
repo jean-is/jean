@@ -22,6 +22,7 @@
   "action.remove": "Weghalen",
   "action.copy": "Kopiëren",
   "action.retry": "Opnieuw proberen",
+  "action.fork": "Vanaf hier dupliceren",
   "action.readAloud": "Voorlezen",
   "action.stopReading": "Stoppen met voorlezen",
   "dock.resize": "Formaat wijzigen",

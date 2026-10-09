@@ -79,7 +79,7 @@ class History extends Element {
   render() {
     return html`<dialog class="drawer" aria-label=${t('history.title')} @close=${closed('history')} @click=${backdrop}>
       <header class="dialog-head">${findButton()}
-        <button class="icon-button" @click=${close} aria-label=${t('sidebar.close')} title=${t('sidebar.close')}>${icons.sidebar}</button>
+        <button class="icon-button" @click=${close} aria-label=${t('sidebar.close')}>${icons.sidebar}</button>
       </header>
       ${sidebarBody('drawer')}
     </dialog>`
@@ -252,9 +252,9 @@ function answers(settings, brainsLocked) {
             ${brain.api === 'device' ? nothing : html`<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr"
                 aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
               <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
-            ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')} title=${t('projects.where')}
+            ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')}
               @click=${() => { placing.value = open ? null : brain.id }}>${icons.folder}</button>`}
-            ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')}
+            ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')}
               @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
             ${open ? where(brain, (projects) => keepBrain(brain.id, projects).catch(showError)) : nothing}
           </div>`
@@ -319,7 +319,7 @@ function keySteps(id) {
       <li>${outside('https://console.cloud.google.com/vertex-ai', t('brain.key.vertexOn'))}</li>
       <li>${outside('https://shell.cloud.google.com/?show=terminal', t('brain.key.shell'))}</li>
       <li>${t('brain.key.type')}
-        <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')} title=${t('action.copy')}
+        <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${copyCommand}>${icons.copy}</button></span></li>
       <li>${t('brain.key.hour')}</li>
     </ol>`
@@ -517,7 +517,7 @@ export function siteList({ sites, fixed, set, any = false }) {
   return html`<div class="reach">
     <div class="sites">
       <ul aria-label=${t('pages.sites')}>${(sites.length || !any ? sites : ['*']).map((entry) => html`<li><bdi>${entry}</bdi>${sites.length && !fixed
-        ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })} title=${t('pages.siteRemove', { site: entry })}
+        ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })}
           @click=${(/** @type {Event} */ e) => remove(e, entry)}>${icons.close}</button>` : nothing}</li>`)}</ul>
       ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
         @keydown=${add} @input=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).removeAttribute('aria-invalid')}>`}
@@ -655,7 +655,7 @@ class Settings extends Element {
     const open = shown.find((id) => id === app.section.value) ?? 'general'
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
-      <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')} title=${t('action.close')}>${icons.close}</button>
+      <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map((id) => html`${SECTIONS[id].group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
           @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}

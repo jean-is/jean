@@ -22,6 +22,7 @@
   "action.remove": "นำออก",
   "action.copy": "คัดลอก",
   "action.retry": "ลองอีกครั้ง",
+  "action.fork": "ทำสำเนาจากตรงนี้",
   "action.readAloud": "อ่านออกเสียง",
   "action.stopReading": "หยุดอ่าน",
   "dock.resize": "ปรับขนาด",

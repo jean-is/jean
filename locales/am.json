@@ -22,6 +22,7 @@
   "action.remove": "ያስወግዱ",
   "action.copy": "ይቅዱ",
   "action.retry": "እንደገና ይሞክሩ",
+  "action.fork": "ከዚህ ጀምሮ አባዛ",
   "action.readAloud": "በድምፅ ማንበብ",
   "action.stopReading": "ንባቡን ያቁሙ",
   "dock.resize": "መጠን ቀይር",

@@ -22,6 +22,7 @@
   "action.remove": "Ondoa",
   "action.copy": "Nakili",
   "action.retry": "Jaribu tena",
+  "action.fork": "Nakili kuanzia hapa",
   "action.readAloud": "Soma kwa sauti",
   "action.stopReading": "Acha kusoma",
   "dock.resize": "Badilisha ukubwa",

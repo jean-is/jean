@@ -1,0 +1,18 @@
+/* A title's tip (D233), as a source's looks (.cite-tip in style.css); placed by ui/tips.js. */
+.tip {
+  inset: auto;
+  inline-size: max-content;
+  max-inline-size: min(20rem, 100vw - 2rem);
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  overflow: visible;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.8rem;
+  background: var(--room-2);
+  color: var(--ink);
+  box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  white-space: pre-line;
+  pointer-events: none;
+}

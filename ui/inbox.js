@@ -47,9 +47,9 @@ function conversationList(where) {
         ${asks < 0 ? nothing : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
         ${item.routine && !run ? icons.alarm : nothing}<span class="history-title" dir="auto">${run ? when.format(new Date(item.createdAt)) : item.title || t('conversation.untitled')}</span>
       </button>
-      ${earlier.length ? html`<button class="runs-toggle" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })} title=${t('history.runs', { count: earlier.length })}
+      ${earlier.length ? html`<button class="runs-toggle" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })}
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
-      <button class="icon-button subtle" popovertarget=${menu} aria-label=${t('action.more')} title=${t('action.more')}>${icons.more}</button>
+      <button class="icon-button subtle" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${menu} class="menu task-menu" popover><button type="button" popovertarget=${menu} popovertargetaction="hide"
         @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}${t('action.delete')}</button></div>
     </li>`

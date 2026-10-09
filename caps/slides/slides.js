@@ -61,11 +61,11 @@ class AppSlides extends HTMLElement {
         </section>`)}
       </div>
       <div class="slides-bar">
-        <button class="icon-button subtle back" aria-label=${t('slides.previous')} title=${t('slides.previous')} ?disabled=${at === 0} @click=${() => this.go(at - 1)}>${icons.arrow}</button>
+        <button class="icon-button subtle back" aria-label=${t('slides.previous')} ?disabled=${at === 0} @click=${() => this.go(at - 1)}>${icons.arrow}</button>
         <span class="slides-where">${number(at + 1)} / ${number(slides.length)}</span>
-        <button class="icon-button subtle" aria-label=${t('slides.next')} title=${t('slides.next')} ?disabled=${at >= slides.length - 1} @click=${() => this.go(at + 1)}>${icons.arrow}</button>
-        ${document.fullscreenEnabled ? html`<button class="icon-button subtle end" aria-label=${t('slides.present')} title=${t('slides.present')} @click=${() => this.present()}>${PRESENT}</button>` : nothing}
-        <button class="icon-button subtle end" aria-label=${t('action.copy')} title=${t('action.copy')}
+        <button class="icon-button subtle" aria-label=${t('slides.next')} ?disabled=${at >= slides.length - 1} @click=${() => this.go(at + 1)}>${icons.arrow}</button>
+        ${document.fullscreenEnabled ? html`<button class="icon-button subtle end" aria-label=${t('slides.present')} @click=${() => this.present()}>${PRESENT}</button>` : nothing}
+        <button class="icon-button subtle end" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
       </div>`, this)
   }

@@ -22,6 +22,7 @@
   "action.remove": "निकालें",
   "action.copy": "कॉपी करें",
   "action.retry": "फिर से कोशिश करें",
+  "action.fork": "यहाँ से डुप्लिकेट करें",
   "action.readAloud": "ज़ोर से पढ़ें",
   "action.stopReading": "पढ़ना रोकें",
   "dock.resize": "आकार बदलें",

@@ -377,11 +377,12 @@ async function followAgents(yes) {
 
 /**
  * A new conversation was made with its first message: it keeps the folder it started on, chosen
- * for it or its project's (D149). A project's AGENTS.md is the project's to offer, not each conversation's.
- * @param {{ id: string }} conversation
+ * for it or its project's (D149), or the one of the conversation it duplicates (D230). A project's
+ * AGENTS.md is the project's to offer, not each conversation's.
+ * @param {{ id: string }} conversation @param {{ id: string, records: Envelope[] }} [from]
  */
-async function started({ id }) {
-  const chosen = pending.peek()
+async function started({ id }, from) {
+  const chosen = from ? folderOf(from) : pending.peek()
   pending.value = undefined
   const folder = chosen === undefined ? projectFolder() : chosen
   if (folder?.handle || folder?.copy) await keep(id, chosen === undefined ? { ...folder, agents: false } : folder)

@@ -22,6 +22,7 @@
   "action.remove": "Retirer",
   "action.copy": "Copier",
   "action.retry": "Réessayer",
+  "action.fork": "Dupliquer à partir d’ici",
   "action.readAloud": "Lire à voix haute",
   "action.stopReading": "Arrêter la lecture",
   "dock.resize": "Redimensionner",

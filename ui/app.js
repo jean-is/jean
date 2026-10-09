@@ -14,6 +14,8 @@ import { focusComposer } from './composer.js'
 import { startRouter } from './router.js'
 
 if (location.hostname === '127.0.0.1') import('./host.js') // the desktop app's key, taken before any other page could ask (D169, D211)
+// Titles show as tips (D233), loaded by the first pointer or focus.
+for (const type of ['pointerover', 'focusin']) addEventListener(type, (event) => import('./tips.js').then((tips) => tips.first(event)), { once: true })
 
 async function start() {
   const fs = await opfsFS().catch(() => null)

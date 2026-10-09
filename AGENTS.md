@@ -62,6 +62,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 - **Bidirectional text:** CSS uses logical properties only (`margin-inline-start`, never `margin-left`), and every message element gets `dir="auto"`.
 - **Vocabulary:** none of these words appear in the UI: "agent", "model", "MCP", "token". A `SKILL.md` is a skill. A routine is a task Jean does on a schedule (D115, D122). See the vocabulary in [docs/product.md](docs/product.md).
 - **Accessibility:** respect `prefers-reduced-motion`, `prefers-contrast` and `forced-colors`. Contrast meets WCAG AA everywhere, including in the dark first-run state.
+- **Tips:** an icon button's `aria-label` is its tip; never repeat it in a `title`, which is only for what the name doesn't say (D233).
 - **Text input:** never send on Enter while an IME is composing (`event.isComposing`).
 
 ## Prompts

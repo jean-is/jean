@@ -349,8 +349,8 @@ function row(connection) {
       ? html` · <bdi>${products(kept)}</bdi>` : nothing}</small>`}</span>`
   if (error || !tools) {
     return html`<li class="connection"><span class="item">${head}</span>${error === 'auth' ? html`<button class="button" @click=${() => { place = 'top'; signIn(connection, challenge) }}>${t('brain.connect')}</button>`
-      : error ? html`<button class="icon-button subtle" aria-label=${t('action.retry')} title=${t('action.retry')} @click=${() => list([connection])}>${icons.retry}</button>` : nothing}
-      ${own ? html`<button class="icon-button subtle" aria-label=${t('action.remove')} title=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}</li>`
+      : error ? html`<button class="icon-button subtle" aria-label=${t('action.retry')} @click=${() => list([connection])}>${icons.retry}</button>` : nothing}
+      ${own ? html`<button class="icon-button subtle" aria-label=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}</li>`
   }
   return html`<li class="connection"><details><summary>${head}${icons.chevron}</summary><div class="item-body">
     <ul class="chips">${tools.map((tool) => html`<li>${tool.title ?? tool.annotations?.title ?? tool.name}</li>`)}</ul>
@@ -429,7 +429,7 @@ function panel() {
   const open = adding.value ?? !services.some((entry) => entry.via)
   return html`<header class="panel-head">
       <p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
-      <button class="icon-button" aria-expanded=${String(open)} aria-controls="connection-add" aria-label=${t('connections.other')} title=${t('connections.other')}
+      <button class="icon-button" aria-expanded=${String(open)} aria-controls="connection-add" aria-label=${t('connections.other')}
         @click=${() => {
           adding.value = !open
           if (!open) requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('#connection-add input'))?.focus())
