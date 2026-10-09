@@ -26,12 +26,6 @@
   "computer.internet.ask": "Béèrè ná",
   "computer.internet.any": "Ojú-ìwé èyíkéyìí",
   "computer.sites": "Àwọn ojú-ìwé tí ó lè dé nígbà gbogbo",
-  "computer.relay.global": "Olùgbé-ìbéèrè-kọjá tí a ṣètò nínú Àwọn ìfọwọ́sí",
-  "computer.relay.own": "Tirẹ̀",
-  "computer.relay.none": "Tààrà",
-  "computer.relay.globalText": "Olùgbé-ìbéèrè-kọjá tí a ṣètò nínú Àwọn ìfọwọ́sí ni {relay}.",
-  "computer.relay.noneText": "Kò sí olùgbé-ìbéèrè-kọjá tí a ṣètò nínú Àwọn ìfọwọ́sí: àwọn ìbéèrè ń lọ tààrà, nípasẹ̀ proxy ẹ̀rọ yìí.",
-  "computer.relay.address": "Àdírẹ́sì olùgbé-ìbéèrè-kọjá",
   "computer.registries": "Ibi tí àwọn àpò ti ń wá",
   "computer.registries.text": "Fún àdàkọ kan, bíi ti àjọ yín. Kọ́kọ́rọ́ ń dúró lórí ẹ̀rọ yìí, a sì ń fi ránṣẹ́ sí àdírẹ́sì rẹ̀ nìkan.",
   "computer.registry.pyodide": "Python, àwọn àpò Pyodide",
@@ -48,6 +42,7 @@
   "computer.reach.always": "Gba {site} láàyè nígbà gbogbo",
   "computer.reach.no": "Rárá",
   "computer.relay": "Dé ayélujára nípasẹ̀",
+  "computer.relay.text": "Àdírẹ́sì olùgbé-ìbéèrè-kọjá, fún àwọn ojú-ìwé tí ń kọ ìbéèrè láti ojú-ìwé mìíràn. Òfo: tààrà, nípasẹ̀ proxy ẹ̀rọ yìí.",
   "computer.minutes": {
     "other": "ìṣẹ́jú {count}"
   },

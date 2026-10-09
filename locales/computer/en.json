@@ -27,12 +27,6 @@
   "computer.internet.ask": "Ask first",
   "computer.internet.any": "Any site",
   "computer.sites": "Sites it may always reach",
-  "computer.relay.global": "The relay set in Approvals",
-  "computer.relay.own": "Its own",
-  "computer.relay.none": "Directly",
-  "computer.relay.globalText": "The relay set in Approvals is {relay}.",
-  "computer.relay.noneText": "No relay is set in Approvals: requests go directly, through this device’s own proxy.",
-  "computer.relay.address": "The relay’s address",
   "computer.registries": "Where packages come from",
   "computer.registries.text": "For a mirror, such as your organization’s. A key stays on this device and goes only to its address.",
   "computer.registry.pyodide": "Python, Pyodide’s packages",
@@ -49,6 +43,7 @@
   "computer.reach.always": "Always allow {site}",
   "computer.reach.no": "No",
   "computer.relay": "Reach the web through",
+  "computer.relay.text": "A relay’s address, for sites that refuse requests from other sites. Empty: directly, through this device’s own proxy.",
   "computer.minutes": {
     "one": "{count} minute",
     "other": "{count} minutes"

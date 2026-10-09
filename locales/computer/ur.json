@@ -27,12 +27,6 @@
   "computer.internet.ask": "پہلے پوچھیں",
   "computer.internet.any": "کوئی بھی سائٹ",
   "computer.sites": "وہ سائٹس جن تک یہ ہمیشہ جا سکتا ہے",
-  "computer.relay.global": "«منظوریاں» میں مقرر ریلے",
-  "computer.relay.own": "اس کا اپنا",
-  "computer.relay.none": "براہِ راست",
-  "computer.relay.globalText": "«منظوریاں» میں مقرر ریلے {relay} ہے۔",
-  "computer.relay.noneText": "«منظوریاں» میں کوئی ریلے مقرر نہیں: درخواستیں براہِ راست، اس ڈیوائس کی اپنی پراکسی کے ذریعے جاتی ہیں۔",
-  "computer.relay.address": "ریلے کا پتہ",
   "computer.registries": "پیکجز کہاں سے آتے ہیں",
   "computer.registries.text": "کسی مرر کے لیے، جیسے آپ کے ادارے کا۔ کلید اسی ڈیوائس پر رہتی ہے اور صرف اسی کے پتے پر جاتی ہے۔",
   "computer.registry.pyodide": "Python، Pyodide کے پیکجز",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} کی ہمیشہ اجازت دیں",
   "computer.reach.no": "نہیں",
   "computer.relay": "ویب تک رسائی بذریعہ",
+  "computer.relay.text": "ایک ریلے کا پتہ، اُن سائٹس کے لیے جو دوسری سائٹس کی درخواستیں رد کرتی ہیں۔ خالی: براہِ راست، اس ڈیوائس کی اپنی پراکسی کے ذریعے۔",
   "computer.minutes": {
     "one": "{count} منٹ",
     "other": "{count} منٹ"

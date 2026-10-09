@@ -26,12 +26,6 @@
   "computer.internet.ask": "Tanya dulu",
   "computer.internet.any": "Situs mana pun",
   "computer.sites": "Situs yang selalu boleh diakses",
-  "computer.relay.global": "Relai yang diatur di Persetujuan",
-  "computer.relay.own": "Miliknya sendiri",
-  "computer.relay.none": "Langsung",
-  "computer.relay.globalText": "Relai yang diatur di Persetujuan adalah {relay}.",
-  "computer.relay.noneText": "Belum ada relai di Persetujuan: permintaan langsung dikirim, melalui proksi perangkat ini sendiri.",
-  "computer.relay.address": "Alamat relai",
   "computer.registries": "Asal paket",
   "computer.registries.text": "Untuk mirror, misalnya milik organisasi Anda. Kunci tetap di perangkat ini dan hanya dikirim ke alamatnya.",
   "computer.registry.pyodide": "Python, paket Pyodide",
@@ -48,6 +42,7 @@
   "computer.reach.always": "Selalu izinkan {site}",
   "computer.reach.no": "Tidak",
   "computer.relay": "Akses web melalui",
+  "computer.relay.text": "Alamat relai, untuk situs yang menolak permintaan dari situs lain. Kosong: langsung, melalui proksi perangkat ini sendiri.",
   "computer.minutes": {
     "other": "{count} menit"
   },

@@ -447,8 +447,7 @@ function general() {
         <option value="">${t('settings.voiceAuto')}</option>
         ${rankVoices(voices, locale.value, [locale.value, ...navigator.languages])
           .map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}
-      </select>`) : nothing}
-    <p class="about muted small"><a href="manifesto.html" target="_blank" rel="noopener">${BRAND.name} 0.7</a> · ${t('settings.about')}</p>`
+      </select>`) : nothing}`
 }
 
 const appearance = () => html`
@@ -492,19 +491,7 @@ function approvals() {
       </li>`
     })}</ul>
   </section>
-  ${pages()}
-  ${relay()}`
-}
-
-/**
- * The address the web is reached through, when there is one (D162): a relay with {url} in it, or
- * nothing, and the system's proxy alone. The Computer uses it; policy can set it (`relay`).
- */
-function relay() {
-  const set = app.policy.relay !== undefined
-  return setting(t('relay.title'), set ? t('policy.locked') : t('relay.text'), html`<input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}"
-    aria-label=${t('relay.title')} .value=${String(app.policy.relay ?? app.settings.value.relay ?? '')} ?disabled=${set}
-    @change=${(/** @type {Event} */ e) => updateSettings({ relay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>`)
+  ${pages()}`
 }
 
 /** What a web page may do when it opens beside the conversation (D143), each unless the organisation set it. */
@@ -659,8 +646,8 @@ const KNOWN = ['you', 'skills', 'routines']
 
 /**
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
- * Jean itself; what it knows and can do, where a capability's own section comes once it is on;
- * and what it may do and what it keeps.
+ * Jean itself; what it knows and can do, a capability's own section once it is on, then the case
+ * of them all; and what it may do and what it keeps.
  * @type {Record<Section, Place>}
  */
 export const SECTIONS = {
@@ -672,8 +659,8 @@ export const SECTIONS = {
   connections: { label: 'cap.connections.name', icon: icons.plug, show: () => loaded.value.get('connections')?.panel?.() ?? nothing, when: () => loaded.value.has('connections') },
   skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   routines: { label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
-  capabilities: { label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
   computer: { label: 'cap.computer.name', icon: icons.computer, show: () => loaded.value.get('computer')?.panel?.() ?? nothing, when: () => loaded.value.has('computer') },
+  capabilities: { label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
   approvals: { label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
   data: { label: 'settings.storage', icon: icons.data, show: data },
 }

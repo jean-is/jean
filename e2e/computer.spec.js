@@ -252,8 +252,11 @@ test('the internet: a new site asked about first, then always; a registry’s ke
   await expect(await command(page, '$ curl -s https://npm.example.com/left-pad')).toContainText('hello from npm.example.com')
   expect(seen.at(-1)).toEqual({ url: 'https://npm.example.com/left-pad', authorization: 'Bearer s3cret' })
 
-  // The relay set in Approvals: requests go through it.
-  await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ relay: 'https://relay.example.com/?u={url}' }))
+  // A relay, set in Settings › Computer: requests go through it.
+  await page.evaluate(async () => {
+    const { updateSettings, app } = await import('/ui/state.js')
+    await updateSettings({ computer: { ...app.settings.value.computer, relay: 'https://relay.example.com/?u={url}' } })
+  })
   await expect(await command(page, '$ curl -s https://data.example.com/c')).toContainText('hello from relay.example.com')
   expect(seen.at(-1)?.url).toBe(`https://relay.example.com/?u=${encodeURIComponent('https://data.example.com/c')}`)
 

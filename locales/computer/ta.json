@@ -27,12 +27,6 @@
   "computer.internet.ask": "முதலில் கேள்",
   "computer.internet.any": "எந்தத் தளமும்",
   "computer.sites": "எப்போதும் அணுகக்கூடிய தளங்கள்",
-  "computer.relay.global": "«ஒப்புதல்கள்» இல் அமைத்த ரிலே",
-  "computer.relay.own": "அதன் சொந்தம்",
-  "computer.relay.none": "நேரடியாக",
-  "computer.relay.globalText": "«ஒப்புதல்கள்» இல் அமைத்த ரிலே: {relay}.",
-  "computer.relay.noneText": "«ஒப்புதல்கள்» இல் எந்த ரிலேயும் அமைக்கப்படவில்லை: கோரிக்கைகள் நேரடியாக, இந்தச் சாதனத்தின் சொந்த ப்ராக்ஸி வழியாகச் செல்லும்.",
-  "computer.relay.address": "ரிலே முகவரி",
   "computer.registries": "தொகுப்புகள் எங்கிருந்து வருகின்றன",
   "computer.registries.text": "உங்கள் நிறுவனத்தினுடையது போன்ற ஒரு பிரதி தளத்துக்கு. சாவி இந்தச் சாதனத்திலேயே இருக்கும், அதன் முகவரிக்கு மட்டுமே செல்லும்.",
   "computer.registry.pyodide": "Python, Pyodide தொகுப்புகள்",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} ஐ எப்போதும் அனுமதி",
   "computer.reach.no": "இல்லை",
   "computer.relay": "இணையத்தை அணுகும் வழி",
+  "computer.relay.text": "மற்ற தளங்களிலிருந்து வரும் கோரிக்கைகளை மறுக்கும் தளங்களுக்கான ரிலே முகவரி. காலியாக இருந்தால்: நேரடியாக, இந்தச் சாதனத்தின் சொந்த ப்ராக்ஸி வழியாக.",
   "computer.minutes": {
     "one": "{count} நிமிடம்",
     "other": "{count} நிமிடங்கள்"

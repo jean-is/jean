@@ -27,12 +27,6 @@
   "computer.internet.ask": "Önce sor",
   "computer.internet.any": "Her site",
   "computer.sites": "Her zaman erişebileceği siteler",
-  "computer.relay.global": "Onaylar'da ayarlanan aktarıcı",
-  "computer.relay.own": "Kendine ait",
-  "computer.relay.none": "Doğrudan",
-  "computer.relay.globalText": "Onaylar'da ayarlanan aktarıcı: {relay}.",
-  "computer.relay.noneText": "Onaylar'da aktarıcı ayarlı değil: istekler doğrudan, bu cihazın kendi proxy'si üzerinden gider.",
-  "computer.relay.address": "Aktarıcının adresi",
   "computer.registries": "Paketlerin geldiği yer",
   "computer.registries.text": "Kuruluşununki gibi bir yansı için. Bir anahtar bu cihazda kalır ve yalnızca o adrese gider.",
   "computer.registry.pyodide": "Python, Pyodide paketleri",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} için her zaman izin ver",
   "computer.reach.no": "Hayır",
   "computer.relay": "Web'e şunun üzerinden eriş",
+  "computer.relay.text": "Başka sitelerden gelen istekleri reddeden siteler için bir aktarıcının adresi. Boş: doğrudan, bu cihazın kendi proxy'si üzerinden.",
   "computer.minutes": {
     "one": "{count} dakika",
     "other": "{count} dakika"

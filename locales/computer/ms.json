@@ -26,12 +26,6 @@
   "computer.internet.ask": "Tanya dahulu",
   "computer.internet.any": "Mana-mana tapak",
   "computer.sites": "Tapak yang sentiasa boleh dicapainya",
-  "computer.relay.global": "Geganti yang ditetapkan dalam Kelulusan",
-  "computer.relay.own": "Miliknya sendiri",
-  "computer.relay.none": "Terus",
-  "computer.relay.globalText": "Geganti yang ditetapkan dalam Kelulusan ialah {relay}.",
-  "computer.relay.noneText": "Tiada geganti ditetapkan dalam Kelulusan: permintaan pergi terus, melalui proksi peranti ini sendiri.",
-  "computer.relay.address": "Alamat geganti",
   "computer.registries": "Dari mana pakej datang",
   "computer.registries.text": "Untuk cermin, seperti milik organisasi anda. Kunci kekal pada peranti ini dan hanya dihantar ke alamatnya.",
   "computer.registry.pyodide": "Python, pakej Pyodide",
@@ -48,6 +42,7 @@
   "computer.reach.always": "Sentiasa benarkan {site}",
   "computer.reach.no": "Tidak",
   "computer.relay": "Capai web melalui",
+  "computer.relay.text": "Alamat geganti, untuk tapak yang menolak permintaan daripada tapak lain. Kosong: terus, melalui proksi peranti ini sendiri.",
   "computer.minutes": {
     "other": "{count} minit"
   },

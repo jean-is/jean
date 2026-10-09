@@ -27,12 +27,6 @@
   "computer.internet.ask": "Erst fragen",
   "computer.internet.any": "Jede Website",
   "computer.sites": "Websites, die er immer erreichen darf",
-  "computer.relay.global": "Das Relay aus „Berechtigungen“",
-  "computer.relay.own": "Ein eigenes",
-  "computer.relay.none": "Direkt",
-  "computer.relay.globalText": "Das Relay aus „Berechtigungen“ ist {relay}.",
-  "computer.relay.noneText": "In „Berechtigungen“ ist kein Relay eingestellt: Anfragen gehen direkt, über den Proxy dieses Geräts.",
-  "computer.relay.address": "Adresse des Relays",
   "computer.registries": "Woher Pakete kommen",
   "computer.registries.text": "Für einen Spiegel, etwa den deiner Organisation. Ein Schlüssel bleibt auf diesem Gerät und geht nur an dessen Adresse.",
   "computer.registry.pyodide": "Python, Pakete von Pyodide",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} immer erlauben",
   "computer.reach.no": "Nein",
   "computer.relay": "Ins Web über",
+  "computer.relay.text": "Die Adresse eines Relays, für Websites, die Anfragen anderer Websites ablehnen. Leer: direkt, über den Proxy dieses Geräts.",
   "computer.minutes": {
     "one": "{count} Minute",
     "other": "{count} Minuten"

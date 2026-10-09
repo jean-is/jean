@@ -26,12 +26,6 @@
   "computer.internet.ask": "ถามก่อน",
   "computer.internet.any": "ทุกเว็บไซต์",
   "computer.sites": "เว็บไซต์ที่เข้าถึงได้เสมอ",
-  "computer.relay.global": "รีเลย์ที่ตั้งไว้ใน \"การอนุมัติ\"",
-  "computer.relay.own": "รีเลย์ของตัวเอง",
-  "computer.relay.none": "โดยตรง",
-  "computer.relay.globalText": "รีเลย์ที่ตั้งไว้ใน \"การอนุมัติ\" คือ {relay}",
-  "computer.relay.noneText": "ไม่ได้ตั้งรีเลย์ใน \"การอนุมัติ\" คำขอจะส่งโดยตรงผ่านพร็อกซีของอุปกรณ์นี้",
-  "computer.relay.address": "ที่อยู่ของรีเลย์",
   "computer.registries": "แหล่งที่มาของแพ็กเกจ",
   "computer.registries.text": "สำหรับมิเรอร์ เช่นของหน่วยงานคุณ คีย์จะอยู่บนอุปกรณ์นี้และส่งไปยังที่อยู่นั้นเท่านั้น",
   "computer.registry.pyodide": "Python, แพ็กเกจของ Pyodide",
@@ -48,6 +42,7 @@
   "computer.reach.always": "อนุญาต {site} เสมอ",
   "computer.reach.no": "ไม่",
   "computer.relay": "เข้าถึงเว็บผ่าน",
+  "computer.relay.text": "ที่อยู่ของรีเลย์ สำหรับเว็บไซต์ที่ปฏิเสธคำขอจากเว็บไซต์อื่น ว่างไว้: เชื่อมต่อโดยตรงผ่านพร็อกซีของอุปกรณ์นี้",
   "computer.minutes": {
     "other": "{count} นาที"
   },

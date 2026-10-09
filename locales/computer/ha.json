@@ -27,12 +27,6 @@
   "computer.internet.ask": "A tambaya da farko",
   "computer.internet.any": "Kowane shafi",
   "computer.sites": "Shafukan da za ta iya isa gare su koyaushe",
-  "computer.relay.global": "Mai isarwa da aka saita a Amincewa",
-  "computer.relay.own": "Nata na kanta",
-  "computer.relay.none": "Kai tsaye",
-  "computer.relay.globalText": "Mai isarwa da aka saita a Amincewa shi ne {relay}.",
-  "computer.relay.noneText": "Babu mai isarwa da aka saita a Amincewa: buƙatu suna tafiya kai tsaye, ta hanyar proxy na wannan na'urar.",
-  "computer.relay.address": "Adireshin mai isarwa",
   "computer.registries": "Inda fakitoci ke fitowa",
   "computer.registries.text": "Don madubi, kamar na ƙungiyarka. Makulli yana zama a wannan na'urar kuma yana zuwa adireshinsa kawai.",
   "computer.registry.pyodide": "Python, fakitocin Pyodide",
@@ -49,6 +43,7 @@
   "computer.reach.always": "Koyaushe a bar {site}",
   "computer.reach.no": "A'a",
   "computer.relay": "Isa ga yanar gizo ta hanyar",
+  "computer.relay.text": "Adireshin mai isarwa, don shafukan da ke ƙin buƙatu daga wasu shafuka. Babu komai: kai tsaye, ta hanyar proxy na wannan na'urar.",
   "computer.minutes": {
     "one": "minti {count}",
     "other": "mintuna {count}"

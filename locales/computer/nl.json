@@ -27,12 +27,6 @@
   "computer.internet.ask": "Eerst vragen",
   "computer.internet.any": "Elke site",
   "computer.sites": "Sites die hij altijd mag bereiken",
-  "computer.relay.global": "De relay uit Toestemmingen",
-  "computer.relay.own": "Een eigen",
-  "computer.relay.none": "Rechtstreeks",
-  "computer.relay.globalText": "De relay uit Toestemmingen is {relay}.",
-  "computer.relay.noneText": "Er is geen relay ingesteld in Toestemmingen: verzoeken gaan rechtstreeks, via de proxy van dit apparaat.",
-  "computer.relay.address": "Adres van de relay",
   "computer.registries": "Waar pakketten vandaan komen",
   "computer.registries.text": "Voor een mirror, zoals die van je organisatie. Een sleutel blijft op dit apparaat en gaat alleen naar dat adres.",
   "computer.registry.pyodide": "Python, pakketten van Pyodide",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} altijd toestaan",
   "computer.reach.no": "Nee",
   "computer.relay": "Het web bereiken via",
+  "computer.relay.text": "Het adres van een relay, voor sites die verzoeken van andere sites weigeren. Leeg: rechtstreeks, via de proxy van dit apparaat.",
   "computer.minutes": {
     "one": "{count} minuut",
     "other": "{count} minuten"

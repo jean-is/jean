@@ -27,12 +27,6 @@
   "computer.internet.ask": "Uliza kwanza",
   "computer.internet.any": "Tovuti yoyote",
   "computer.sites": "Tovuti inazoweza kufikia kila wakati",
-  "computer.relay.global": "Kituo cha kupitisha kilichowekwa katika Idhini",
-  "computer.relay.own": "Chake chenyewe",
-  "computer.relay.none": "Moja kwa moja",
-  "computer.relay.globalText": "Kituo cha kupitisha kilichowekwa katika Idhini ni {relay}.",
-  "computer.relay.noneText": "Hakuna kituo cha kupitisha kilichowekwa katika Idhini: maombi huenda moja kwa moja, kupitia proksi ya kifaa hiki chenyewe.",
-  "computer.relay.address": "Anwani ya kituo cha kupitisha",
   "computer.registries": "Vifurushi vinatoka wapi",
   "computer.registries.text": "Kwa kioo, kama cha shirika lako. Ufunguo unabaki kwenye kifaa hiki na unatumwa kwa anwani yake tu.",
   "computer.registry.pyodide": "Python, vifurushi vya Pyodide",
@@ -49,6 +43,7 @@
   "computer.reach.always": "Ruhusu {site} kila wakati",
   "computer.reach.no": "Hapana",
   "computer.relay": "Fikia wavuti kupitia",
+  "computer.relay.text": "Anwani ya kituo cha kupitisha, kwa tovuti zinazokataa maombi kutoka tovuti nyingine. Tupu: moja kwa moja, kupitia proksi ya kifaa hiki chenyewe.",
   "computer.minutes": {
     "one": "dakika {count}",
     "other": "dakika {count}"

@@ -29,7 +29,6 @@ import { ulid } from './ulid.js'
  * @property {{ scripts?: boolean, web?: boolean, network?: boolean, sites?: string[] }} [pages]  what a web page in the preview may do, and which sites it may reach (D143)
  * @property {Partial<Record<keyof typeof DEFAULT_URLS, string>>} [urls]  overrides of the default addresses
  * @property {import('../caps/computer/net.js').ComputerSettings} [computer]  what the Computer may reach, and where its packages come from (D162)
- * @property {string} [relay]                  the address the web is reached through, with {url} in it, when there is one (D162)
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
  * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)

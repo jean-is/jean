@@ -11,24 +11,22 @@ const DEFAULTS = { pyodide: 'https://cdn.example/pyodide/v{version}/full/', pypi
 const decoder = new TextDecoder()
 const later = () => new Promise((resolve) => setTimeout(resolve, 5))
 
-test('Settings › Computer: defaults, the user’s, then policy’s, locked; the relay, global or its own', () => {
+test('Settings › Computer: defaults, the user’s, then policy’s, locked; the relay among them', () => {
   const plain = computerRights({}, {}, DEFAULTS)
   assert.equal(plain.rights.internet, 'ask')
   assert.equal(plain.rights.timeMs, COMPUTER_DEFAULTS.timeMs)
   assert.deepEqual(plain.rights.registries, DEFAULTS)
-  assert.equal(plain.relay, '')
+  assert.equal(plain.rights.relay, '')
   assert.equal(plain.locked.size, 0)
-  const mine = computerRights({ computer: { internet: 'any', sites: ['example.com'], registries: { npm: 'https://npm.corp/' } }, relay: 'https://relay.example/?u={url}' }, {}, DEFAULTS)
+  const mine = computerRights({ computer: { internet: 'any', sites: ['example.com'], registries: { npm: 'https://npm.corp/' }, relay: 'https://relay.example/?u={url}' } }, {}, DEFAULTS)
   assert.equal(mine.rights.internet, 'any')
   assert.equal(mine.rights.registries.npm, 'https://npm.corp/')
-  assert.equal(mine.relay, 'https://relay.example/?u={url}', 'the global relay, by default')
-  assert.equal(computerRights({ computer: { relay: 'own', ownRelay: 'https://mine/' }, relay: 'https://global/' }).relay, 'https://mine/')
-  assert.equal(computerRights({ computer: { relay: 'none' }, relay: 'https://global/' }).relay, '')
-  const theirs = computerRights({ computer: { internet: 'any' } }, { computer: { internet: 'off', registries: { pypi: 'https://pypi.corp/simple/' } }, relay: 'https://gateway.corp/{url}' }, DEFAULTS)
+  assert.equal(mine.rights.relay, 'https://relay.example/?u={url}')
+  const theirs = computerRights({ computer: { internet: 'any', relay: 'https://mine/' } }, { computer: { internet: 'off', relay: 'https://gateway.corp/{url}', registries: { pypi: 'https://pypi.corp/simple/' } } }, DEFAULTS)
   assert.equal(theirs.rights.internet, 'off')
   assert.equal(theirs.rights.registries.pypi, 'https://pypi.corp/simple/')
-  assert.deepEqual([...theirs.locked].sort(), ['globalRelay', 'internet', 'registries.pypi'])
-  assert.equal(theirs.global, 'https://gateway.corp/{url}')
+  assert.equal(theirs.rights.relay, 'https://gateway.corp/{url}')
+  assert.deepEqual([...theirs.locked].sort(), ['internet', 'registries.pypi', 'relay'])
 })
 
 test('a relay takes the address in place of {url}, or after its own', () => {

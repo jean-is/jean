@@ -26,12 +26,6 @@
   "computer.internet.ask": "Hỏi trước",
   "computer.internet.any": "Mọi trang",
   "computer.sites": "Các trang luôn được truy cập",
-  "computer.relay.global": "Máy chuyển tiếp đặt trong Phê duyệt",
-  "computer.relay.own": "Riêng của nó",
-  "computer.relay.none": "Trực tiếp",
-  "computer.relay.globalText": "Máy chuyển tiếp đặt trong Phê duyệt là {relay}.",
-  "computer.relay.noneText": "Chưa đặt máy chuyển tiếp trong Phê duyệt: yêu cầu đi trực tiếp, qua proxy của chính thiết bị này.",
-  "computer.relay.address": "Địa chỉ máy chuyển tiếp",
   "computer.registries": "Nguồn của các gói",
   "computer.registries.text": "Dành cho một bản sao (mirror), chẳng hạn của tổ chức bạn. Khóa ở lại trên thiết bị này và chỉ gửi đến địa chỉ đó.",
   "computer.registry.pyodide": "Python, gói của Pyodide",
@@ -48,6 +42,7 @@
   "computer.reach.always": "Luôn cho phép {site}",
   "computer.reach.no": "Không",
   "computer.relay": "Truy cập web qua",
+  "computer.relay.text": "Địa chỉ của một máy chuyển tiếp, cho các trang từ chối yêu cầu từ trang khác. Để trống: truy cập trực tiếp, qua proxy của chính thiết bị này.",
   "computer.minutes": {
     "other": "{count} phút"
   },

@@ -3,20 +3,24 @@
 // has no network of its own: Jean makes each request, with no cookies. Tested in Node.
 import { site } from '../../ui/csp.js'
 
-/** @typedef {{ internet: 'ask' | 'any' | 'off', sites: string[], relay: 'global' | 'own' | 'none', ownRelay: string, timeMs: number, limitMB: number, workspaceMB: number }} ComputerBase */
-/** Ask before a new site; two minutes a command; 100 MB a response; a workspace up to 256 MB; the global relay. */
-export const COMPUTER_DEFAULTS = /** @type {Readonly<ComputerBase>} */ (Object.freeze({ internet: 'ask', sites: [], relay: 'global', ownRelay: '', timeMs: 120_000, limitMB: 100, workspaceMB: 256 }))
+/** @typedef {{ internet: 'ask' | 'any' | 'off', sites: string[], relay: string, timeMs: number, limitMB: number, workspaceMB: number }} ComputerBase */
+/** Ask before a new site; two minutes a command; 100 MB a response; a workspace up to 256 MB; directly, without a relay. */
+export const COMPUTER_DEFAULTS = /** @type {Readonly<ComputerBase>} */ (Object.freeze({ internet: 'ask', sites: [], relay: '', timeMs: 120_000, limitMB: 100, workspaceMB: 256 }))
 
 /** Kinds of packages, each from a registry Settings can replace (an Artifactory instance): the default addresses' names in `DEFAULT_URLS`. */
 export const REGISTRIES = /** @type {const} */ (['pyodide', 'pypi', 'npm'])
 
-/** @typedef {ComputerBase & { registries: Partial<Record<typeof REGISTRIES[number], string>> }} ComputerRights */
+/**
+ * What the computer may reach: `relay` is the address requests go through, with {url} in it, or
+ * empty, and directly, through the device's own proxy.
+ * @typedef {ComputerBase & { registries: Partial<Record<typeof REGISTRIES[number], string>> }} ComputerRights
+ */
 /** @typedef {Partial<ComputerRights>} ComputerSettings */
 
 /**
  * Defaults ← user ← policy (`computer` in policy.json), and what the organisation set, locked. A
- * registry is locked by itself (`registries.npm`); the global relay is `relay` in settings and policy.
- * @param {{ computer?: ComputerSettings, relay?: string }} settings @param {{ computer?: ComputerSettings, relay?: string }} [policy]
+ * registry is locked by itself (`registries.npm`).
+ * @param {{ computer?: ComputerSettings }} settings @param {{ computer?: ComputerSettings }} [policy]
  * @param {Record<string, string>} [defaults] the registries' default addresses
  */
 export function computerRights(settings, policy = {}, defaults = {}) {
@@ -28,9 +32,7 @@ export function computerRights(settings, policy = {}, defaults = {}) {
     rights.registries[kind] = theirs.registries?.[kind] || mine.registries?.[kind] || defaults[kind] || ''
     if (theirs.registries?.[kind]) locked.add(`registries.${kind}`)
   }
-  const global = policy.relay ?? settings.relay ?? ''
-  if (policy.relay !== undefined) locked.add('globalRelay')
-  return { rights, locked, global, relay: rights.relay === 'own' ? rights.ownRelay : rights.relay === 'global' ? global : '' }
+  return { rights, locked }
 }
 
 /** A request through a relay: the address with {url} in it, or the relay's address and the request's after it. @param {string} url @param {string} relay */

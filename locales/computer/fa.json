@@ -27,12 +27,6 @@
   "computer.internet.ask": "اول بپرس",
   "computer.internet.any": "هر سایتی",
   "computer.sites": "سایت‌هایی که همیشه می‌تواند به آن‌ها دسترسی داشته باشد",
-  "computer.relay.global": "رلهٔ تنظیم‌شده در «تأییدها»",
-  "computer.relay.own": "رلهٔ خودش",
-  "computer.relay.none": "مستقیم",
-  "computer.relay.globalText": "رلهٔ تنظیم‌شده در «تأییدها» این است: {relay}.",
-  "computer.relay.noneText": "هیچ رله‌ای در «تأییدها» تنظیم نشده است: درخواست‌ها مستقیم، از طریق پروکسی خود این دستگاه، می‌روند.",
-  "computer.relay.address": "نشانی رله",
   "computer.registries": "منبع بسته‌ها",
   "computer.registries.text": "برای یک آینه، مثلاً آینهٔ سازمان شما. کلید روی این دستگاه می‌ماند و فقط به نشانی آن فرستاده می‌شود.",
   "computer.registry.pyodide": "Python، بسته‌های Pyodide",
@@ -49,6 +43,7 @@
   "computer.reach.always": "همیشه اجازه به {site}",
   "computer.reach.no": "نه",
   "computer.relay": "دسترسی به وب از طریق",
+  "computer.relay.text": "نشانی یک رله، برای سایت‌هایی که درخواست‌های سایت‌های دیگر را رد می‌کنند. خالی: مستقیم، از طریق پروکسی خود این دستگاه.",
   "computer.minutes": {
     "one": "{count} دقیقه",
     "other": "{count} دقیقه"

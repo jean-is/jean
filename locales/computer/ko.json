@@ -26,12 +26,6 @@
   "computer.internet.ask": "먼저 묻기",
   "computer.internet.any": "모든 사이트",
   "computer.sites": "항상 접속할 수 있는 사이트",
-  "computer.relay.global": "'승인'에서 설정한 중계 서버",
-  "computer.relay.own": "별도 지정",
-  "computer.relay.none": "직접",
-  "computer.relay.globalText": "'승인'에서 설정한 중계 서버는 {relay}입니다.",
-  "computer.relay.noneText": "'승인'에 설정된 중계 서버가 없습니다. 요청은 이 기기의 프록시를 통해 직접 전송됩니다.",
-  "computer.relay.address": "중계 서버 주소",
   "computer.registries": "패키지 출처",
   "computer.registries.text": "조직의 미러 등을 쓸 때 입력하세요. 키는 이 기기에 남고 해당 주소로만 전송됩니다.",
   "computer.registry.pyodide": "Python, Pyodide 패키지",
@@ -48,6 +42,7 @@
   "computer.reach.always": "{site} 항상 허용",
   "computer.reach.no": "아니요",
   "computer.relay": "웹 접속 경로",
+  "computer.relay.text": "다른 사이트에서 온 요청을 거부하는 사이트를 위한 중계 서버 주소입니다. 비워 두면 이 기기의 프록시를 통해 직접 접속합니다.",
   "computer.minutes": {
     "other": "{count}분"
   },

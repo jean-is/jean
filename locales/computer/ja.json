@@ -26,12 +26,6 @@
   "computer.internet.ask": "先に確認",
   "computer.internet.any": "すべてのサイト",
   "computer.sites": "いつでもアクセスできるサイト",
-  "computer.relay.global": "「承認」で設定した中継",
-  "computer.relay.own": "専用の中継",
-  "computer.relay.none": "直接",
-  "computer.relay.globalText": "「承認」で設定した中継は {relay} です。",
-  "computer.relay.noneText": "「承認」に中継が設定されていません。リクエストはこの端末のプロキシを通して直接送られます。",
-  "computer.relay.address": "中継のアドレス",
   "computer.registries": "パッケージの入手先",
   "computer.registries.text": "組織のミラーなどを使う場合に。キーはこの端末に残り、そのアドレスにだけ送られます。",
   "computer.registry.pyodide": "Python（Pyodide のパッケージ）",
@@ -48,6 +42,7 @@
   "computer.reach.always": "{site} を常に許可",
   "computer.reach.no": "いいえ",
   "computer.relay": "Web へのアクセス経路",
+  "computer.relay.text": "ほかのサイトからのリクエストを拒否するサイト向けの中継サーバーのアドレス。空欄なら、この端末のプロキシを通して直接アクセスします。",
   "computer.minutes": {
     "other": "{count} 分"
   },

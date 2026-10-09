@@ -27,12 +27,6 @@
   "computer.internet.ask": "আগে জিজ্ঞেস করুন",
   "computer.internet.any": "যেকোনো সাইট",
   "computer.sites": "যেসব সাইটে এটি সবসময় যেতে পারে",
-  "computer.relay.global": "«অনুমোদন»-এ ঠিক করা রিলে",
-  "computer.relay.own": "নিজস্ব",
-  "computer.relay.none": "সরাসরি",
-  "computer.relay.globalText": "«অনুমোদন»-এ ঠিক করা রিলে হলো {relay}।",
-  "computer.relay.noneText": "«অনুমোদন»-এ কোনো রিলে ঠিক করা নেই: অনুরোধগুলো সরাসরি, এই ডিভাইসের নিজের প্রক্সি দিয়ে যায়।",
-  "computer.relay.address": "রিলের ঠিকানা",
   "computer.registries": "প্যাকেজ কোথা থেকে আসে",
   "computer.registries.text": "একটি মিররের জন্য, যেমন আপনার প্রতিষ্ঠানের। চাবি এই ডিভাইসেই থাকে আর শুধু তার ঠিকানায় যায়।",
   "computer.registry.pyodide": "Python, Pyodide-এর প্যাকেজ",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} সবসময় অনুমতি দিন",
   "computer.reach.no": "না",
   "computer.relay": "ওয়েবে যাওয়ার পথ",
+  "computer.relay.text": "একটি রিলের ঠিকানা, সেই সাইটগুলোর জন্য যারা অন্য সাইট থেকে আসা অনুরোধ ফিরিয়ে দেয়। খালি: সরাসরি, এই ডিভাইসের নিজের প্রক্সি দিয়ে।",
   "computer.minutes": {
     "one": "{count} মিনিট",
     "other": "{count} মিনিট"

@@ -27,12 +27,6 @@
   "computer.internet.ask": "ముందుగా అడుగు",
   "computer.internet.any": "ఏ సైట్ అయినా",
   "computer.sites": "ఎప్పుడూ చేరగల సైట్లు",
-  "computer.relay.global": "«ఆమోదాలు»లో సెట్ చేసిన రిలే",
-  "computer.relay.own": "దాని సొంతది",
-  "computer.relay.none": "నేరుగా",
-  "computer.relay.globalText": "«ఆమోదాలు»లో సెట్ చేసిన రిలే: {relay}.",
-  "computer.relay.noneText": "«ఆమోదాలు»లో ఏ రిలేనూ సెట్ చేయలేదు: అభ్యర్థనలు నేరుగా, ఈ పరికరం సొంత ప్రాక్సీ ద్వారా వెళ్తాయి.",
-  "computer.relay.address": "రిలే చిరునామా",
   "computer.registries": "ప్యాకేజీలు ఎక్కడి నుంచి వస్తాయి",
   "computer.registries.text": "మీ సంస్థది లాంటి మిర్రర్ కోసం. కీ ఈ పరికరంలోనే ఉంటుంది, దాని చిరునామాకే వెళ్తుంది.",
   "computer.registry.pyodide": "Python, Pyodide ప్యాకేజీలు",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} ను ఎప్పుడూ అనుమతించు",
   "computer.reach.no": "వద్దు",
   "computer.relay": "వెబ్‌ను చేరే మార్గం",
+  "computer.relay.text": "ఇతర సైట్ల నుంచి వచ్చే అభ్యర్థనలను తిరస్కరించే సైట్ల కోసం ఒక రిలే చిరునామా. ఖాళీగా ఉంటే: నేరుగా, ఈ పరికరం సొంత ప్రాక్సీ ద్వారా.",
   "computer.minutes": {
     "one": "{count} నిమిషం",
     "other": "{count} నిమిషాలు"

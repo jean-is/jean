@@ -27,12 +27,6 @@
   "computer.internet.ask": "መጀመሪያ ጠይቅ",
   "computer.internet.any": "ማንኛውም ድረ-ገጽ",
   "computer.sites": "ሁልጊዜ ሊደርስባቸው የሚችላቸው ድረ-ገጾች",
-  "computer.relay.global": "በ«ፈቃዶች» የተዘጋጀው አስተላላፊ",
-  "computer.relay.own": "የራሱ",
-  "computer.relay.none": "በቀጥታ",
-  "computer.relay.globalText": "በ«ፈቃዶች» የተዘጋጀው አስተላላፊ {relay} ነው።",
-  "computer.relay.noneText": "በ«ፈቃዶች» ውስጥ አስተላላፊ አልተዘጋጀም፦ ጥያቄዎች በቀጥታ፣ በዚህ መሣሪያ የራሱ ፕሮክሲ በኩል ይሄዳሉ።",
-  "computer.relay.address": "የአስተላላፊው አድራሻ",
   "computer.registries": "ጥቅሎች ከየት እንደሚመጡ",
   "computer.registries.text": "ለመስታወት አገልጋይ፣ ለምሳሌ የድርጅትዎ። ቁልፍ በዚህ መሣሪያ ላይ ይቆያል፣ ወደ አድራሻው ብቻ ይላካል።",
   "computer.registry.pyodide": "Python፣ የPyodide ጥቅሎች",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site}ን ሁልጊዜ ፍቀድ",
   "computer.reach.no": "አይ",
   "computer.relay": "ድሩን የሚደርስበት መንገድ",
+  "computer.relay.text": "ከሌሎች ድረ-ገጾች የሚመጡ ጥያቄዎችን ለሚከለክሉ ድረ-ገጾች የአስተላላፊ አድራሻ። ባዶ ከሆነ፦ በቀጥታ፣ በዚህ መሣሪያ የራሱ ፕሮክሲ በኩል።",
   "computer.minutes": {
     "one": "{count} ደቂቃ",
     "other": "{count} ደቂቃዎች"

@@ -27,12 +27,6 @@
   "computer.internet.ask": "Magtanong muna",
   "computer.internet.any": "Kahit anong site",
   "computer.sites": "Mga site na lagi nitong maaabot",
-  "computer.relay.global": "Ang relay na nakatakda sa Mga pahintulot",
-  "computer.relay.own": "Sarili nito",
-  "computer.relay.none": "Direkta",
-  "computer.relay.globalText": "Ang relay na nakatakda sa Mga pahintulot ay {relay}.",
-  "computer.relay.noneText": "Walang relay na nakatakda sa Mga pahintulot: direktang pumupunta ang mga request, sa sariling proxy ng device na ito.",
-  "computer.relay.address": "Address ng relay",
   "computer.registries": "Saan nanggagaling ang mga package",
   "computer.registries.text": "Para sa isang mirror, gaya ng sa organisasyon mo. Nananatili sa device na ito ang key at sa address lang nito ipinapadala.",
   "computer.registry.pyodide": "Python, mga package ng Pyodide",
@@ -49,6 +43,7 @@
   "computer.reach.always": "Laging payagan ang {site}",
   "computer.reach.no": "Hindi",
   "computer.relay": "Abutin ang web sa pamamagitan ng",
+  "computer.relay.text": "Address ng isang relay, para sa mga site na tumatanggi sa mga request mula sa ibang site. Walang laman: direkta, sa sariling proxy ng device na ito.",
   "computer.minutes": {
     "one": "{count} minuto",
     "other": "{count} minuto"

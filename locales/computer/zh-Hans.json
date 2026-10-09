@@ -26,12 +26,6 @@
   "computer.internet.ask": "先询问",
   "computer.internet.any": "任何网站",
   "computer.sites": "始终可以访问的网站",
-  "computer.relay.global": "“授权”中设置的中转",
-  "computer.relay.own": "单独设置",
-  "computer.relay.none": "直接",
-  "computer.relay.globalText": "“授权”中设置的中转是 {relay}。",
-  "computer.relay.noneText": "“授权”中没有设置中转：请求直接发出，经由这台设备自己的代理。",
-  "computer.relay.address": "中转地址",
   "computer.registries": "软件包来源",
   "computer.registries.text": "用于镜像，比如你的组织的镜像。密钥留在这台设备上，只发送到该地址。",
   "computer.registry.pyodide": "Python，Pyodide 的软件包",
@@ -48,6 +42,7 @@
   "computer.reach.always": "始终允许 {site}",
   "computer.reach.no": "不",
   "computer.relay": "访问网络的中转",
+  "computer.relay.text": "中转服务器的地址，用于拒绝来自其他网站请求的网站。留空：直接访问，经由这台设备自己的代理。",
   "computer.minutes": {
     "other": "{count} 分钟"
   },

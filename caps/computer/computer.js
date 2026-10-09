@@ -115,7 +115,7 @@ async function execute(message, ctx) {
 
 /** @param {{ engine: string } & Record<string, any>} message @param {ToolContext} ctx @param {Awaited<ReturnType<typeof mountOf>>} mount @param {string} key */
 async function executeNow(message, ctx, mount, key) {
-  const { rights, relay } = rightsNow()
+  const { rights } = rightsNow()
   const what = String(message.command ?? message.code ?? '').trim().split('\n')[0].slice(0, 120)
   /** @type {{ epoch: number, of: string, held: import('./mount.js').Held }} */
   let state = { epoch: 0, of: '', held: new Map() }
@@ -135,7 +135,7 @@ async function executeNow(message, ctx, mount, key) {
       left = sent.left
       return { put: sent.put, gone: sent.gone, fresh }
     },
-    handle: (request) => online(request, ctx, { rights, relay, asked, what }),
+    handle: (request) => online(request, ctx, { rights, asked, what }),
   })
   // A server refused here could run on the user's own computer (D198).
   if (message.engine === 'shell' && /nothing can listen on a port here/.test(String(done.stderr ?? ''))) document.dispatchEvent(new CustomEvent('app-server-refused'))
@@ -266,9 +266,9 @@ export async function workspaceKeeps(path, uri) {
  * A request from the computer: refused, asked about once a run for a new site, or made, by Jean,
  * through the relay, with a registry's key when it goes to one.
  * @param {{ url: string, method?: string, headers?: Record<string, string>, body?: ArrayBuffer }} request @param {ToolContext} ctx
- * @param {{ rights: import('./net.js').ComputerRights, relay: string, asked: Map<string, Promise<string>>, what: string }} run
+ * @param {{ rights: import('./net.js').ComputerRights, asked: Map<string, Promise<string>>, what: string }} run
  */
-async function online(request, ctx, { rights, relay, asked, what }) {
+async function online(request, ctx, { rights, asked, what }) {
   const origin = location.origin
   const judged = judge(request.url, { rights, origin })
   if (judged.verdict === 'deny') throw new Error(judged.why)
@@ -282,7 +282,7 @@ async function online(request, ctx, { rights, relay, asked, what }) {
     const again = judge(to, { rights: rightsNow().rights, origin })
     return again.verdict === 'allow' || asked.has(again.site)
   }
-  const answer = await reach(request, { relay, token: token ?? undefined, limit: rights.limitMB * 1e6, allowed, signal: ctx.signal })
+  const answer = await reach(request, { relay: rights.relay, token: token ?? undefined, limit: rights.limitMB * 1e6, allowed, signal: ctx.signal })
   if (ctx.meta) (ctx.meta.reached ??= {})[judged.site] = (ctx.meta.reached[judged.site] ?? 0) + 1
   return answer
 }
@@ -606,7 +606,7 @@ function itself() {
 function panel() {
   if (!dialogs.value) import('../../ui/dialogs.js').then((module) => { dialogs.value = module })
   if (used.value === null) measure()
-  const { rights, locked, global } = rightsNow()
+  const { rights, locked } = rightsNow()
   const held = (/** @type {string} */ key) => (locked.has(key) ? html`<p class="muted small">${t('computer.locked')}</p>` : nothing)
   const minutes = [60_000, 120_000, 300_000, 600_000]
   return html`${itself()}
@@ -619,12 +619,9 @@ function panel() {
       ${dialogs.value?.siteList({ sites: rights.sites, fixed: locked.has('sites'), set: (sites) => setComputer({ sites }) }) ?? nothing}
     </section>
     <section class="setting">
-      <div><h3>${t('computer.relay')}</h3><p class="muted">${global ? t('computer.relay.globalText', { relay: global }) : t('computer.relay.noneText')}</p>${held('relay')}</div>
-      <select aria-label=${t('computer.relay')} ?disabled=${locked.has('relay')} @change=${(/** @type {Event} */ e) => setComputer({ relay: /** @type {any} */ (/** @type {HTMLSelectElement} */ (e.target).value) })}>
-        ${['global', 'own', 'none'].map((option) => html`<option value=${option} ?selected=${rights.relay === option}>${t(`computer.relay.${option}`)}</option>`)}
-      </select>
-      ${rights.relay === 'own' ? html`<input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}" aria-label=${t('computer.relay.address')} .value=${rights.ownRelay}
-        ?disabled=${locked.has('ownRelay')} @change=${(/** @type {Event} */ e) => setComputer({ ownRelay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>` : nothing}
+      <div><h3>${t('computer.relay')}</h3><p class="muted">${t('computer.relay.text')}</p>${held('relay')}</div>
+      <input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}" aria-label=${t('computer.relay')} .value=${rights.relay}
+        ?disabled=${locked.has('relay')} @change=${(/** @type {Event} */ e) => setComputer({ relay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>
     </section>
     <details class="other">
       <summary>${t('computer.registries')}</summary>

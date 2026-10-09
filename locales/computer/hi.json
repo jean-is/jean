@@ -27,12 +27,6 @@
   "computer.internet.ask": "पहले पूछें",
   "computer.internet.any": "कोई भी साइट",
   "computer.sites": "साइटें जिन तक यह हमेशा पहुँच सकता है",
-  "computer.relay.global": "«मंज़ूरियाँ» में तय रिले",
-  "computer.relay.own": "इसका अपना",
-  "computer.relay.none": "सीधे",
-  "computer.relay.globalText": "«मंज़ूरियाँ» में तय रिले {relay} है।",
-  "computer.relay.noneText": "«मंज़ूरियाँ» में कोई रिले तय नहीं है: अनुरोध सीधे, इस डिवाइस की अपनी प्रॉक्सी से जाते हैं।",
-  "computer.relay.address": "रिले का पता",
   "computer.registries": "पैकेज कहाँ से आते हैं",
   "computer.registries.text": "किसी मिरर के लिए, जैसे आपके संगठन का। कुंजी इसी डिवाइस पर रहती है और सिर्फ़ उसी पते पर जाती है।",
   "computer.registry.pyodide": "Python, Pyodide के पैकेज",
@@ -49,6 +43,7 @@
   "computer.reach.always": "{site} की हमेशा अनुमति दें",
   "computer.reach.no": "नहीं",
   "computer.relay": "वेब तक पहुँच इसके ज़रिए",
+  "computer.relay.text": "किसी रिले का पता, उन साइटों के लिए जो दूसरी साइटों से आए अनुरोध ठुकरा देती हैं। खाली: सीधे, इस डिवाइस की अपनी प्रॉक्सी से।",
   "computer.minutes": {
     "one": "{count} मिनट",
     "other": "{count} मिनट"
