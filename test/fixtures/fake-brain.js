@@ -52,6 +52,8 @@ await fs.writeFile('Savings plan.html', '<!doctype html><title>Savings plan</tit
 return { years, total }`
 
 const PORT = Number(process.env.PORT) || 4174
+// Milliseconds between streamed pieces: slow enough to watch by hand, less in the smoke tests.
+const PACE = Number(process.env.PACE ?? 35)
 let previous = ''
 const BAKERY = `http://127.0.0.1:${PORT}/site/bakery.html`
 /** @type {Record<string, { body: string, headers?: Record<string, string> }>} */
@@ -523,7 +525,7 @@ createServer(async (req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' })
   const send = (/** @type {object} */ delta, finish = null) =>
     res.write(`data: ${JSON.stringify({ choices: [{ index: 0, delta, finish_reason: finish }] })}\n\n`)
-  const pause = () => new Promise((resolve) => setTimeout(resolve, 35))
+  const pause = () => new Promise((resolve) => setTimeout(resolve, PACE))
   for (const word of 'Reading the request and planning a clear answer.'.split(' ')) {
     send({ reasoning: word + ' ' })
     await pause()

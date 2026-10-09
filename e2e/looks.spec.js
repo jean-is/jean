@@ -122,6 +122,7 @@ test('every theme is in the gallery with its thumbnail, and dresses the page whe
 })
 
 test('Depth turns the page as the camera circles the floor, the other way to an older conversation', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
   await start(page)
   await page.evaluate(async () => {
     const { app, setLook, refreshConversations } = await import('/ui/state.js')

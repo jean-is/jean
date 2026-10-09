@@ -47,6 +47,8 @@ const drive = (page, name, files) => page.evaluate(async ({ name, files }) => {
 async function answered(page, text) {
   await ask(page, text)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  // Its run is over too: a round leaves a conversation being answered for the next.
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 }
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium opens a folder in place')

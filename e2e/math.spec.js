@@ -96,7 +96,9 @@ test('a pie chart in a LaTeX block is drawn, its labels and numbers beside it', 
   await expect(pie.locator('> svg path')).toHaveCount(3)
   await expect(pie.locator('li')).toHaveText([/Loyer\s*50%/, /Santé\s*30\.5%/, /Autres\s*19\.5%/])
   await expect(page.locator('.msg-jean app-latex')).not.toContainText('tikzpicture')
-  // Its first slice, half the pie, starts at the right and turns anticlockwise, standing a little apart.
+  // Its first slice, half the pie, starts at the right and turns anticlockwise, standing a little apart,
+  // measured once the answer is written: until then, the block may be drawn again.
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const box = await pie.locator('> svg path').first().boundingBox()
   const whole = await pie.locator('> svg').boundingBox()
   expect(box && whole && box.y + box.height < whole.y + whole.height * 0.55).toBe(true)

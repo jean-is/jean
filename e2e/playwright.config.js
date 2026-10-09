@@ -15,15 +15,20 @@ export default defineConfig({
   testDir: '.',
   timeout: 60_000,
   fullyParallel: true,
+  // The tests mostly wait, on the fake brain and on timers, so more of them than the default half
+  // of the cores run at once; past this, they compete for the processor and flake.
+  workers: '85%',
   reporter: 'list',
-  use: { baseURL: `http://127.0.0.1:${APP}/`, serviceWorkers: 'block' },
+  // Without motion: Jean's light and face move for as long as a page is open, and with a few
+  // pages at once that alone kept the processor busy. Depth's test turns it back on for its pages.
+  use: { baseURL: `http://127.0.0.1:${APP}/`, serviceWorkers: 'block', reducedMotion: 'reduce' },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
   webServer: [
     { command: 'node scripts/serve.js', cwd: '..', port: APP, env: { PORT: String(APP) }, reuseExistingServer: false },
-    { command: 'node test/fixtures/fake-brain.js', cwd: '..', port: BRAIN, env: { PORT: String(BRAIN) }, reuseExistingServer: false },
+    { command: 'node test/fixtures/fake-brain.js', cwd: '..', port: BRAIN, env: { PORT: String(BRAIN), PACE: process.env.PACE ?? '5' }, reuseExistingServer: false },
     { command: 'node test/fixtures/fake-mail.js', cwd: '..', port: MAIL, env: { PORT: String(MAIL) }, reuseExistingServer: false },
     { command: 'node gateway/serve.js', cwd: '..', port: GATEWAY, env: { PORT: String(GATEWAY), GATEWAY_CONFIG: JSON.stringify(RELAYED) }, reuseExistingServer: false },
   ],

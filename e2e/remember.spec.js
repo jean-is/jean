@@ -44,8 +44,9 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await ask(page, 'What do you know?')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Nothing yet.')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  // Its section, not the toast that may still say what the bakery's remembered.
   const garden = await openKnows(page)
-  await expect(garden).not.toContainText('opens at 7')
+  await expect(garden.locator('.settings-panel')).not.toContainText('opens at 7')
   await page.keyboard.press('Escape')
 
   // Back in the bakery, it is there, on the page and in the brain's context.
