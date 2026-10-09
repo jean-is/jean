@@ -121,6 +121,7 @@
   "update.ready": "Une nouvelle version de {name} est prête.",
   "update.reload": "Actualiser",
   "error.auth": "{brain} a refusé la clé. Vérifiez-la, ou connectez un autre cerveau.",
+  "error.credits": "{brain} n’a plus de crédits. Ajoutez-en sur votre compte, ou choisissez un autre cerveau.",
   "error.rate_limit": "{brain} est occupé ou votre limite est atteinte. Patientez un instant puis réessayez.",
   "error.network": "La connexion a été coupée. Réessayez.",
   "error.cors_or_offline": "Impossible de joindre {brain}. Vous êtes peut-être hors ligne, ou le service n’accepte pas les requêtes de ce site ({origin}).",

@@ -121,6 +121,7 @@
   "update.ready": "Hay una nueva versión de {name} lista.",
   "update.reload": "Recargar",
   "error.auth": "{brain} rechazó la clave. Revísala o conecta otro cerebro.",
+  "error.credits": "{brain} se ha quedado sin créditos. Añade más a tu cuenta o elige otro cerebro.",
   "error.rate_limit": "{brain} está ocupado o has alcanzado tu límite. Espera un momento y vuelve a intentarlo.",
   "error.network": "Se cortó la conexión. Vuelve a intentarlo.",
   "error.cors_or_offline": "No se pudo contactar con {brain}. Puede que no tengas conexión, o que el servicio no acepte peticiones de este sitio ({origin}).",

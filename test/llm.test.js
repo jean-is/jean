@@ -263,7 +263,7 @@ describe('streamChat (OpenAI-compatible)', () => {
     await rejectsWith(run(brains.openrouter, limited), { code: 'rate_limit', status: 429, retryable: true })
   })
 
-  test('asks OpenRouter again for as long an answer as the credits left cover (402), and throws any other 402', async () => {
+  test('asks OpenRouter again for as long an answer as the credits left cover (402), and says any other 402 is credits run out', async () => {
     const short = { error: { code: 402, message: 'This request requires more credits, or fewer max_tokens. You requested up to 65536 tokens, but can only afford 62555. To increase, visit https://openrouter.ai/settings/credits and add more credits' } }
     const { fetch, calls } = mockFetch((_, init) => (JSON.parse(String(init.body)).max_tokens === undefined
       ? new Response(JSON.stringify(short), { status: 402 }) : sseResponse(openaiSSE([{ choices: [{ delta: { content: 'ok' }, finish_reason: 'stop' }] }]))()))
@@ -271,7 +271,7 @@ describe('streamChat (OpenAI-compatible)', () => {
     assert.equal(events.at(-1).message.content, 'ok')
     assert.deepEqual(calls.map((call) => call.body.max_tokens), [undefined, 62555])
     const broke = mockFetch(() => new Response(JSON.stringify({ error: { code: 402, message: 'Insufficient credits' } }), { status: 402 }))
-    await rejectsWith(collect(streamChat({ brain: brains.openrouter, apiKey: 'sk-or', messages: [], fetch: broke.fetch })), { status: 402, retryable: false })
+    await rejectsWith(collect(streamChat({ brain: brains.openrouter, apiKey: 'sk-or', messages: [], fetch: broke.fetch })), { code: 'credits', status: 402, retryable: false })
     assert.equal(broke.calls.length, 1)
   })
 
@@ -942,9 +942,13 @@ describe('listModels', () => {
     ])
   })
 
-  test('maps errors the same way', async () => {
+  test('maps errors the same way, an account out of credits too', async () => {
     const { fetch } = mockFetch(() => Response.json({ error: { type: 'authentication_error', message: 'invalid x-api-key' } }, { status: 401 }))
     await rejectsWith(listModels({ brain: brains.anthropic, apiKey: 'bad', fetch }), { code: 'auth', message: 'HTTP 401: invalid x-api-key' })
+    const broke = mockFetch(() => Response.json({ type: 'error', error: { type: 'invalid_request_error', message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.' } }, { status: 400 }))
+    await rejectsWith(collect(streamChat({ brain: brains.anthropic, apiKey: 'sk-ant', messages: [{ role: 'user', content: 'Hi' }], fetch: broke.fetch })), { code: 'credits', retryable: false })
+    const wrong = mockFetch(() => Response.json({ type: 'error', error: { type: 'invalid_request_error', message: 'messages: field required' } }, { status: 400 }))
+    await rejectsWith(collect(streamChat({ brain: brains.anthropic, apiKey: 'sk-ant', messages: [], fetch: wrong.fetch })), { code: 'bad_request' })
     const { fetch: notJSON } = mockFetch(() => new Response('<html></html>', { status: 200 }))
     await rejectsWith(listModels({ brain: brains.ollama, fetch: notJSON }), { code: 'bad_response' })
   })

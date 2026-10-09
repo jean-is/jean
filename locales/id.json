@@ -121,6 +121,7 @@
   "update.ready": "Versi baru {name} sudah siap.",
   "update.reload": "Muat ulang",
   "error.auth": "{brain} menolak kunci tersebut. Periksa kuncinya, atau hubungkan otak lain.",
+  "error.credits": "Kredit {brain} habis. Tambahkan ke akun Anda, atau pilih otak lain.",
   "error.rate_limit": "{brain} sedang sibuk atau batas Anda tercapai. Tunggu sebentar lalu coba lagi.",
   "error.network": "Koneksi terputus. Coba lagi.",
   "error.cors_or_offline": "Tidak bisa menghubungi {brain}. Mungkin Anda sedang offline, atau layanan tidak menerima permintaan dari situs ini ({origin}).",

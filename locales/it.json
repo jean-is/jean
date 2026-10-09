@@ -121,6 +121,7 @@
   "update.ready": "È pronta una nuova versione di {name}.",
   "update.reload": "Ricarica",
   "error.auth": "{brain} ha rifiutato la chiave. Controllala o collega un altro cervello.",
+  "error.credits": "{brain} ha esaurito i crediti. Aggiungine al tuo account o scegli un altro cervello.",
   "error.rate_limit": "{brain} è occupato o hai raggiunto il limite. Attendi un momento e riprova.",
   "error.network": "La connessione si è interrotta. Riprova.",
   "error.cors_or_offline": "Impossibile raggiungere {brain}. Forse sei offline, o il servizio non accetta richieste da questo sito ({origin}).",

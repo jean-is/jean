@@ -121,6 +121,7 @@
   "update.ready": "Versi baharu {name} sudah sedia.",
   "update.reload": "Muat semula",
   "error.auth": "{brain} menolak kunci itu. Semak kunci, atau sambungkan otak lain.",
+  "error.credits": "Kredit {brain} telah habis. Tambah kredit ke akaun anda, atau pilih otak lain.",
   "error.rate_limit": "{brain} sibuk atau had anda telah dicapai. Tunggu sebentar dan cuba lagi.",
   "error.network": "Sambungan terputus. Cuba lagi.",
   "error.cors_or_offline": "Tidak dapat menghubungi {brain}. Mungkin anda di luar talian, atau perkhidmatan tidak menerima permintaan daripada laman ini ({origin}).",

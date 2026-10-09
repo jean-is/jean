@@ -121,6 +121,7 @@
   "update.ready": "Sabuwar siga ta shirya: {name}.",
   "update.reload": "Sake lodawa",
   "error.auth": "{brain}: an ƙi makullin. Duba shi, ko haɗa wata ƙwaƙwalwa.",
+  "error.credits": "{brain} ya ƙare da kiredit. Ƙara wasu a asusunka, ko zaɓi wata ƙwaƙwalwa.",
   "error.rate_limit": "{brain}: akwai cunkoso ko iyakarka ta cika. Jira kaɗan sannan ka sake gwadawa.",
   "error.network": "Haɗin ya katse. Sake gwadawa.",
   "error.cors_or_offline": "{brain}: ba a iya kaiwa ba. Wataƙila ba ka kan layi, ko sabis ɗin ba ya karɓar buƙatu daga wannan shafi ({origin}).",

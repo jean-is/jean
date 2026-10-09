@@ -121,6 +121,7 @@
   "update.ready": "{name} 的新版本已就绪。",
   "update.reload": "重新加载",
   "error.auth": "{brain} 拒绝了密钥。请检查密钥，或连接另一个大脑。",
+  "error.credits": "{brain} 的额度已用完。请为账户充值，或选择其他大脑。",
   "error.rate_limit": "{brain} 繁忙或已达到你的额度上限。请稍等后重试。",
   "error.network": "连接中断了。请重试。",
   "error.cors_or_offline": "无法连接到 {brain}。你可能处于离线状态，或该服务不接受来自本站（{origin}）的请求。",

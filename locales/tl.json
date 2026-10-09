@@ -121,6 +121,7 @@
   "update.ready": "Handa na ang bagong bersyon: {name}.",
   "update.reload": "I-reload",
   "error.auth": "Tinanggihan ng {brain} ang susi. Suriin ito, o magkonekta ng ibang utak.",
+  "error.credits": "Ubos na ang credits ng {brain}. Magdagdag sa iyong account, o pumili ng ibang utak.",
   "error.rate_limit": "Abala ang {brain} o naabot mo na ang limit. Maghintay sandali at subukang muli.",
   "error.network": "Naputol ang koneksyon. Subukang muli.",
   "error.cors_or_offline": "Hindi maabot ang {brain}. Baka offline ka, o hindi tumatanggap ang serbisyo ng mga request mula sa site na ito ({origin}).",

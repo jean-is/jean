@@ -121,6 +121,7 @@
   "update.ready": "Toleo jipya la {name} liko tayari.",
   "update.reload": "Pakia upya",
   "error.auth": "{brain} imekataa ufunguo. Ukague, au unganisha ubongo mwingine.",
+  "error.credits": "{brain} imeishiwa na salio. Ongeza salio kwenye akaunti yako, au chagua ubongo mwingine.",
   "error.rate_limit": "{brain} ina shughuli nyingi au umefikia kikomo chako. Subiri kidogo kisha ujaribu tena.",
   "error.network": "Muunganisho umekatika. Jaribu tena.",
   "error.cors_or_offline": "Imeshindwa kufikia {brain}. Huenda uko nje ya mtandao, au huduma haikubali maombi kutoka tovuti hii ({origin}).",

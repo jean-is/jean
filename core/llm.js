@@ -66,7 +66,7 @@ const STREAM_ERRORS = new Map([
   ['invalid_request_error', 'bad_request'], ['not_found_error', 'not_found'],
 ])
 /** @type {Map<number, LLMErrorCode>} */
-const HTTP_ERRORS = new Map([[400, 'bad_request'], [401, 'auth'], [403, 'auth'], [404, 'not_found'], [422, 'bad_request'], [429, 'rate_limit']])
+const HTTP_ERRORS = new Map([[400, 'bad_request'], [401, 'auth'], [402, 'credits'], [403, 'auth'], [404, 'not_found'], [422, 'bad_request'], [429, 'rate_limit']])
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -335,8 +335,9 @@ export function doneEvent(stopReason, usage, content, toolCalls, raw) {
 async function httpError(res) {
   const detail = errorDetail(await res.text().catch(() => ''))
   const message = detail ? `HTTP ${res.status}: ${detail}` : `HTTP ${res.status}`
-  // Gemini and xAI answer a wrong key with 400: "Please pass a valid API key", "Incorrect API key provided".
-  const code = res.status === 400 && /(valid|incorrect) API key/i.test(detail) ? 'auth' : codeForStatus(res.status)
+  // Gemini and xAI answer a wrong key with 400: "Please pass a valid API key", "Incorrect API key provided";
+  // Anthropic, an account out of credits: "Your credit balance is too low" (others answer 402).
+  const code = res.status !== 400 ? codeForStatus(res.status) : /(valid|incorrect) API key/i.test(detail) ? 'auth' : /credit balance/i.test(detail) ? 'credits' : 'bad_request'
   return new LLMError(message, { status: res.status, code, retryAfter: waitAsked(res.headers.get('retry-after')) })
 }
 

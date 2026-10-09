@@ -63,7 +63,7 @@ export type StreamEvent =
 export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number }, input?: string[], output?: string[] }
 
 // Requests made by llm.js and anthropic.js.
-export type LLMErrorCode = 'auth' | 'rate_limit' | 'network' | 'cors_or_offline' | 'bad_request' | 'not_found' | 'server' | 'aborted' | 'bad_response' | 'refusal' | 'too_long'
+export type LLMErrorCode = 'auth' | 'credits' | 'rate_limit' | 'network' | 'cors_or_offline' | 'bad_request' | 'not_found' | 'server' | 'aborted' | 'bad_response' | 'refusal' | 'too_long'
 export type Connection = { brain: BrainConfig, apiKey?: string, signal?: AbortSignal, fetch?: typeof globalThis.fetch }
 export type Prompt = { system?: string, messages: ChatMessage[], tools?: ToolSpec[], maxTokens?: number }
 export type WireRequest = { url: string, headers: Record<string, string>, body: Record<string, any> }

@@ -121,6 +121,7 @@
   "update.ready": "{name} 的新版本已就緒。",
   "update.reload": "重新載入",
   "error.auth": "{brain} 拒絕了金鑰。請檢查金鑰，或連線另一個大腦。",
+  "error.credits": "{brain} 的額度已用完。請為帳戶儲值，或選擇其他大腦。",
   "error.rate_limit": "{brain} 忙碌中或已達到你的額度上限。請稍候再試。",
   "error.network": "連線中斷了。請重試。",
   "error.cors_or_offline": "無法連線到 {brain}。你可能處於離線狀態，或該服務不接受來自本網站（{origin}）的要求。",

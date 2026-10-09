@@ -121,6 +121,7 @@
   "update.ready": "Nowa wersja jest gotowa: {name}.",
   "update.reload": "Odśwież",
   "error.auth": "{brain} odrzucił klucz. Sprawdź go lub połącz inny mózg.",
+  "error.credits": "Brak środków na koncie: {brain}. Doładuj konto albo wybierz inny mózg.",
   "error.rate_limit": "{brain} jest zajęty albo osiągnięto twój limit. Poczekaj chwilę i spróbuj ponownie.",
   "error.network": "Połączenie zostało przerwane. Spróbuj ponownie.",
   "error.cors_or_offline": "Brak połączenia z: {brain}. Możesz być offline albo usługa nie przyjmuje żądań z tej strony ({origin}).",

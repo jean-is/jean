@@ -463,7 +463,7 @@ function actions(id, text, at) {
 
 /** @param {{ code: string, message: string }} error */
 function errorView(error) {
-  const fixable = ['auth', 'not_found', 'bad_request', 'cors_or_offline'].includes(error.code)
+  const fixable = ['auth', 'credits', 'not_found', 'bad_request', 'cors_or_offline'].includes(error.code)
   return html`<div class="msg msg-error" role="alert">
     <p>${error.message}</p>
     <div class="msg-error-actions">

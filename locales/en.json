@@ -121,6 +121,7 @@
   "update.ready": "A new version of {name} is ready.",
   "update.reload": "Reload",
   "error.auth": "{brain} refused the key. Check it, or connect another brain.",
+  "error.credits": "{brain} is out of credits. Add some to your account, or choose another brain.",
   "error.rate_limit": "{brain} is busy or your limit is reached. Wait a moment and try again.",
   "error.network": "The connection dropped. Try again.",
   "error.cors_or_offline": "Couldn’t reach {brain}. You may be offline, or the service doesn’t accept requests from this site ({origin}).",

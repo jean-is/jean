@@ -121,6 +121,7 @@
   "update.ready": "Ẹ̀yà {name} tuntun ti ṣetán.",
   "update.reload": "Tún gbé e wọlé",
   "error.auth": "{brain} kọ kọ́kọ́rọ́ náà. Ẹ ṣàyẹ̀wò rẹ̀, tàbí kí ẹ so ọpọlọ mìíràn pọ̀.",
+  "error.credits": "Kírẹ́dìtì {brain} ti tán. Ẹ fi kún un sí àkáǹtì yín, tàbí kí ẹ yan ọpọlọ mìíràn.",
   "error.rate_limit": "Ọwọ́ {brain} dí, tàbí ẹ ti dé òpin yín. Ẹ dúró díẹ̀, kí ẹ sì gbìyànjú lẹ́ẹ̀kan sí i.",
   "error.network": "Àsopọ̀ ti já. Ẹ gbìyànjú lẹ́ẹ̀kan sí i.",
   "error.cors_or_offline": "A kò lè dé ọ̀dọ̀ {brain}. Ó lè jẹ́ pé ẹ kò sí lórí íntánẹ́ẹ̀tì, tàbí iṣẹ́ náà kò gba ìbéèrè láti ojú-òpó yìí ({origin}).",

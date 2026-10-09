@@ -121,6 +121,7 @@
   "update.ready": "Đã có phiên bản mới của {name}.",
   "update.reload": "Tải lại",
   "error.auth": "{brain} đã từ chối khóa. Hãy kiểm tra lại, hoặc kết nối bộ não khác.",
+  "error.credits": "{brain} đã hết tín dụng. Hãy nạp thêm vào tài khoản, hoặc chọn bộ não khác.",
   "error.rate_limit": "{brain} đang bận hoặc bạn đã hết hạn mức. Chờ một chút rồi thử lại.",
   "error.network": "Mất kết nối. Hãy thử lại.",
   "error.cors_or_offline": "Không liên lạc được với {brain}. Có thể bạn đang ngoại tuyến, hoặc dịch vụ không nhận yêu cầu từ trang này ({origin}).",

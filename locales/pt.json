@@ -121,6 +121,7 @@
   "update.ready": "Está pronta uma nova versão de {name}.",
   "update.reload": "Recarregar",
   "error.auth": "{brain} recusou a chave. Verifica-a ou liga outro cérebro.",
+  "error.credits": "{brain} ficou sem créditos. Adiciona mais à tua conta ou escolhe outro cérebro.",
   "error.rate_limit": "{brain} está ocupado ou atingiste o teu limite. Espera um pouco e tenta de novo.",
   "error.network": "A ligação caiu. Tenta de novo.",
   "error.cors_or_offline": "Não foi possível contactar {brain}. Talvez estejas sem ligação, ou o serviço não aceita pedidos deste site ({origin}).",

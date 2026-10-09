@@ -121,6 +121,7 @@
   "update.ready": "Er is een nieuwe versie van {name} klaar.",
   "update.reload": "Opnieuw laden",
   "error.auth": "{brain} weigerde de sleutel. Controleer hem of verbind een ander brein.",
+  "error.credits": "{brain} heeft geen tegoed meer. Vul je account aan of kies een ander brein.",
   "error.rate_limit": "{brain} is druk of je limiet is bereikt. Wacht even en probeer het opnieuw.",
   "error.network": "De verbinding is weggevallen. Probeer het opnieuw.",
   "error.cors_or_offline": "{brain} is niet bereikbaar. Misschien ben je offline, of accepteert de dienst geen verzoeken van deze site ({origin}).",

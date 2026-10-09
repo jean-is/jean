@@ -121,6 +121,7 @@
   "update.ready": "Yeni sürüm hazır: {name}.",
   "update.reload": "Yeniden yükle",
   "error.auth": "{brain} anahtarı reddetti. Kontrol et ya da başka bir beyin bağla.",
+  "error.credits": "{brain} için kredi kalmadı. Hesabına kredi ekle ya da başka bir beyin seç.",
   "error.rate_limit": "{brain} meşgul ya da sınırına ulaştın. Biraz bekleyip tekrar dene.",
   "error.network": "Bağlantı koptu. Tekrar dene.",
   "error.cors_or_offline": "{brain} ile bağlantı kurulamadı. Çevrimdışı olabilirsin ya da hizmet bu siteden gelen istekleri kabul etmiyor ({origin}).",
