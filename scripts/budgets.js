@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gzipSync } from 'node:zlib'
 import { linkedStylesheets, moduleGraph, parseImportMap } from './graph.js'
+import { countLoc } from './loc.js'
 import { isMissing, walk } from './manifest.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -15,12 +16,6 @@ const ENTRY = 'ui/app.js'
 const KB = 1024
 
 // ─── Pure helpers (tested in test/manifest.test.js) ──────────────────────────
-
-/** @param {string} text */
-export function countLines (text) {
-  if (!text) return 0
-  return text.split('\n').length - (text.endsWith('\n') ? 1 : 0)
-}
 
 /** @param {string | Uint8Array} data */
 export const gzipSize = (data) => gzipSync(data, { level: 9 }).length
@@ -64,11 +59,11 @@ async function filesIn (dirs, pattern, root = APP) {
   return (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((p) => pattern.test(p))
 }
 
-/** @param {string[]} paths @param {string} [root] */
-async function totalLines (paths, root = APP) {
-  let lines = 0
-  for (const path of paths) lines += countLines((await readText(path, root)) ?? '')
-  return lines
+/** Their lines of code (scripts/loc.js, D246). @param {string[]} paths @param {string} [root] */
+async function totalLoc (paths, root = APP) {
+  let loc = 0
+  for (const path of paths) loc += countLoc((await readText(path, root)) ?? '', path)
+  return loc
 }
 
 /** @param {string} dir */
@@ -100,17 +95,17 @@ function measure (name, limit, actual, notes = [], format = String) {
 const kb = (bytes) => (bytes / KB).toFixed(1)
 
 /** @param {any} budgets */
-async function checkLines (budgets) {
+async function checkLoc (budgets) {
   const core = await filesIn(['core'], /\.m?js$/)
   const app = [
     ...await filesIn(['core', 'ui', 'caps'], /\.(m?js|html|css)$/),
     ...['brand.js', 'sw.js', 'index.html', 'sandbox.html', 'preview.html'],
   ]
   return [
-    measure('lines.core', budgets.lines.core, await totalLines(core)),
-    measure('lines.app', budgets.lines.app, await totalLines(app)),
+    measure('loc.core', budgets.loc.core, await totalLoc(core)),
+    measure('loc.app', budgets.loc.app, await totalLoc(app)),
     // jean-cli, which only its package has (D240).
-    measure('lines.cli', budgets.lines.cli, await totalLines(await filesIn(['cli'], /\.m?js$/, ROOT), ROOT)),
+    measure('loc.cli', budgets.loc.cli, await totalLoc(await filesIn(['cli'], /\.m?js$/, ROOT), ROOT)),
   ]
 }
 
@@ -240,7 +235,7 @@ async function main () {
   const budgets = JSON.parse((await readText('budgets.json', ROOT)) ?? 'null')
   if (!budgets) throw new Error('budgets.json not found')
   const rows = [
-    ...await checkLines(budgets),
+    ...await checkLoc(budgets),
     ...await checkDependencies(budgets),
     ...await checkFirstLoad(budgets),
     ...await checkAssets(budgets),

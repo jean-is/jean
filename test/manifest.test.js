@@ -4,7 +4,8 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
-import { brief, countLines } from '../scripts/budgets.js'
+import { brief } from '../scripts/budgets.js'
+import { countLoc } from '../scripts/loc.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
 import { jpegSize } from '../scripts/screenshots.js'
 import {
@@ -380,21 +381,37 @@ describe('budgets: import map and resolution', () => {
   })
 })
 
-describe('budgets: line counting', () => {
-  it('counts lines with or without a trailing newline', () => {
-    assert.equal(countLines(''), 0)
-    assert.equal(countLines('a'), 1)
-    assert.equal(countLines('a\n'), 1)
-    assert.equal(countLines('a\nb'), 2)
-    assert.equal(countLines('a\n\nb\n'), 3)
+describe('budgets: lines of code (D246)', () => {
+  it('counts lines with code, with or without a trailing newline, but not blank ones', () => {
+    assert.equal(countLoc('', 'a.js'), 0)
+    assert.equal(countLoc('a', 'a.js'), 1)
+    assert.equal(countLoc('a\n', 'a.js'), 1)
+    assert.equal(countLoc('a\n\n  \nb\n', 'a.js'), 2)
+  })
+
+  it('leaves out lines that only hold comments, and keeps code with a comment after it', () => {
+    const js = ['// a note', '/**', ' * @param {string} a', ' */', 'const a = 1 // one', '/* inline */ const b = 2', 'const c = /** @type {number} */ (a)', '/* a', 'b */'].join('\n')
+    assert.equal(countLoc(js, 'a.js'), 3)
+    assert.equal(countLoc('#!/usr/bin/env node\n// what it is\nmain()\n', 'main.js'), 2)
+  })
+
+  it("reads strings, templates and regular expressions as code, whatever they hold", () => {
+    assert.equal(countLoc("const url = 'https://example.com' // a site\nconst glob = \"**/*.js\"\nnext()", 'a.js'), 3)
+    assert.equal(countLoc('const page = `\n// not a comment\n${a /* one */ + `/* nor ${b} this */`}\n`\n// a comment', 'a.js'), 4)
+    assert.equal(countLoc('const re = /\\/\\/[/*]/g // slashes\nconst half = a / 2 // b / c\nreturn /[//]/.test(s)', 'a.js'), 3)
+  })
+
+  it('reads style sheets and pages by their own comments, with the scripts and styles a page holds', () => {
+    assert.equal(countLoc("/* the box */\n.a { content: '/*'; }\n/*\n.b {}\n*/\n.c {}", 'a.css'), 2)
+    assert.equal(countLoc('<!doctype html>\n<!-- the page\n-->\n<script>// a note\nrun()</script>\n<style>/* x */\n.a {}</style>', 'a.html'), 5)
   })
 
   it('says in a line or two what the development server says: each budget over, else those nearly full (D244)', () => {
     const row = (/** @type {string} */ name, /** @type {number} */ actual, /** @type {string[]} */ notes = []) => ({ name, limit: '100', actual: String(actual), status: /** @type {const} */ (actual <= 100 && !notes.length ? 'ok' : 'FAIL'), notes, share: actual / 100 })
-    assert.equal(brief([row('lines.core', 50), row('lines.cli', 60)]), 'budgets: all met')
-    assert.equal(brief([row('lines.core', 50), row('lines.app', 99)]), 'budgets: all met; nearly full: lines.app 99 of 100')
-    assert.equal(brief([row('lines.app', 101), row('gzipKB.css', 0, ['missing ui/style.css'])]),
-      'budgets: FAILED lines.app: 101 of 100\nbudgets: FAILED gzipKB.css: 0 of 100; missing ui/style.css\nGoing over a limit means deleting something first (AGENTS.md).')
+    assert.equal(brief([row('loc.core', 50), row('loc.cli', 60)]), 'budgets: all met')
+    assert.equal(brief([row('loc.core', 50), row('loc.app', 99)]), 'budgets: all met; nearly full: loc.app 99 of 100')
+    assert.equal(brief([row('loc.app', 101), row('gzipKB.css', 0, ['missing ui/style.css'])]),
+      'budgets: FAILED loc.app: 101 of 100\nbudgets: FAILED gzipKB.css: 0 of 100; missing ui/style.css\nGoing over a limit means deleting something first (AGENTS.md).')
   })
 })
 

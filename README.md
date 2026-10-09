@@ -52,7 +52,7 @@ Jean starts as a single box. Everything above is offered when you need it, like 
 
 | | 0.8 |
 |---|---|
-| Jean's own code | 21,988 lines, the core 2,872 of them |
+| Jean's own code | 20,429 lines of code, the core 1,755 of them |
 | First load | 96.3 KB gzipped, in the language with the largest catalogue |
 | Libraries loaded up front | 3: `@preact/signals-core`, `lit-html`, `marked` |
 | Build step | None: plain ES modules and an import map |
