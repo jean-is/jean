@@ -1,7 +1,6 @@
 // pi-style system prompt: a short preamble plus sections, frozen when a conversation
 // starts (D46). Later changes become system notes in the transcript, never edits.
 // Instructions stay in English (models follow them best); replies follow the user.
-// See prompts/system.md.
 import { metaRecord, noteRecord } from './events.js'
 
 /** @import { Envelope, PromptState } from './types.js' */
