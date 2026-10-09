@@ -1,4 +1,4 @@
-// Fifty-seven inline icons, 24×24, drawn with the current colour.
+// Fifty-eight inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -32,7 +32,7 @@ export const icons = {
   retry: icon(svg`<path d="M5 12a7 7 0 1 0 2-4.9M5 4v4h4"/>`),
   fork: icon(svg`<path d="M5 12h7l7-7M12 12l7 7M14 5h5v5M14 19h5v-5"/>`, 'flip-rtl'),
   key: icon(svg`<circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2 2"/>`),
-  computer: icon(svg`<rect x="3.5" y="5" width="17" height="11" rx="2"/><path d="M9 20h6M12 16v4"/>`),
+  computer: icon(svg`<rect x="4" y="4.5" width="16" height="11" rx="2"/><path d="M2.5 19h19"/>`),
   arrow: icon(svg`<path d="M5 12h14M13 6l6 6-6 6"/>`, 'flip-rtl'),
   attach: icon(svg`<path d="m19 11.5-7.1 7.1a4.5 4.5 0 0 1-6.4-6.4l7.4-7.4a3 3 0 0 1 4.2 4.2l-7.3 7.3a1.5 1.5 0 0 1-2.1-2.1l6.6-6.6"/>`),
   mic: icon(svg`<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>`),
@@ -50,6 +50,7 @@ export const icons = {
   pin: icon(svg`<path d="M9 4h6l-1 5 3 3v2H7v-2l3-3Z"/><path d="M12 14v6"/>`),
   scroll: icon(svg`<path d="M17.5 17V6a2 2 0 0 0-2-2h-10a2 2 0 0 0-2 2v1.5h4M7.5 6v12.5a2 2 0 0 0 4 0V17h9v1.5a2 2 0 0 1-2 2h-9M10.5 8.5h4M10.5 12h4"/>`),
   folder: icon(svg`<path d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3.5 11h17"/>`),
+  openfolder: icon(svg`<path d="M3.5 17.5V6.5a2 2 0 0 1 2-2h3.5l2 2.5h6.5a2 2 0 0 1 2 2V10.5"/><path d="M3.5 17.5 6.2 11.6a1.8 1.8 0 0 1 1.6-1.1h12.4a.9.9 0 0 1 .8 1.3l-2.6 5.9a2 2 0 0 1-1.8 1.3H5.5a2 2 0 0 1-2-2Z"/>`),
   code: icon(svg`<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>`),
   plug: icon(svg`<path d="M9 3.5V8M15 3.5V8M6.5 8h11v3a5.5 5.5 0 0 1-11 0ZM12 16.5V21"/>`),
   image: icon(svg`<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>`),
