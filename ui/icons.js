@@ -1,4 +1,4 @@
-// Fifty-eight inline icons, 24×24, drawn with the current colour.
+// Fifty-nine inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -51,6 +51,7 @@ export const icons = {
   scroll: icon(svg`<path d="M17.5 17V6a2 2 0 0 0-2-2h-10a2 2 0 0 0-2 2v1.5h4M7.5 6v12.5a2 2 0 0 0 4 0V17h9v1.5a2 2 0 0 1-2 2h-9M10.5 8.5h4M10.5 12h4"/>`),
   folder: icon(svg`<path d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/><path d="M3.5 11h17"/>`),
   openfolder: icon(svg`<path d="M3.5 17.5V6.5a2 2 0 0 1 2-2h3.5l2 2.5h6.5a2 2 0 0 1 2 2V10.5"/><path d="M3.5 17.5 6.2 11.6a1.8 1.8 0 0 1 1.6-1.1h12.4a.9.9 0 0 1 .8 1.3l-2.6 5.9a2 2 0 0 1-1.8 1.3H5.5a2 2 0 0 1-2-2Z"/>`),
+  layers: icon(svg`<path d="m12 4 8 4.25-8 4.25-8-4.25Z"/><path d="m4 12.25 8 4.25 8-4.25M4 16.25 12 20.5l8-4.25"/>`),
   code: icon(svg`<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>`),
   plug: icon(svg`<path d="M9 3.5V8M15 3.5V8M6.5 8h11v3a5.5 5.5 0 0 1-11 0ZM12 16.5V21"/>`),
   image: icon(svg`<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>`),

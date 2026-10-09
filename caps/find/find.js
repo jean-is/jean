@@ -204,7 +204,7 @@ function groups(words) {
   return [
     { heading: settings, options: places.map((place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
     { heading: t('cap.projects.name'), options: projects.map((project) => ({
-      icon: icons.folder, title: lit(nameOf(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
+      icon: icons.layers, title: lit(nameOf(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
     })) },
     { heading: t('history.title'), options: matching(conversations, words).map((item) => ({ icon: icons.history, ...found(item, words), go: opening(item) })) },
     { heading: t('cap.files.name'), options: matching(files, words).map((item) => ({

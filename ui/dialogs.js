@@ -263,7 +263,7 @@ function answers(settings, brainsLocked) {
                 aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
               <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
             ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')}
-              @click=${() => { placing.value = open ? null : brain.id }}>${icons.folder}</button>`}
+              @click=${() => { placing.value = open ? null : brain.id }}>${icons.layers}</button>`}
             ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')}
               @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
             ${open ? where(brain, (projects) => keepBrain(brain.id, projects).catch(showError)) : nothing}
@@ -556,7 +556,7 @@ export function siteList({ sites, fixed, set, any = false }) {
 const parts = signal(/** @type {Array<{ id: keyof typeof PARTS, bytes: number }> | null} */ (null))
 /** Each kind: its icon, its name and what it holds, when its name doesn't say. */
 const PARTS = /** @type {const} */ ({
-  conversations: ['history', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['code', 'cap.computer.name', 'storage.computer.text'],
+  conversations: ['history', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
   brains: ['chip', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['data', 'storage.rest', 'storage.rest.text'],
 })
 
@@ -731,7 +731,7 @@ class Settings extends Element {
 // circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
+  files: 'file', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */

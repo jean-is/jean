@@ -58,7 +58,7 @@ class Projects extends Element {
           <span dir="auto">${nameOf(project)}</span>
         </button>`)}
         <hr>
-        <button type="button" popovertarget="project-menu" popovertargetaction="hide" @click=${() => editProject()}>${icons.folder}${t('projects.new')}</button>
+        <button type="button" popovertarget="project-menu" popovertargetaction="hide" @click=${() => editProject()}>${icons.layers}${t('projects.new')}</button>
         ${here.data.default !== true ? html`<button type="button" popovertarget="project-menu" popovertargetaction="hide"
           @click=${() => editProject(here)}>${icons.gear}${t('projects.edit')}</button>` : nothing}
       </div>`
