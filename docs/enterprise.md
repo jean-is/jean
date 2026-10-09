@@ -44,7 +44,7 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 | Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back; a relay; a gateway to the services a browser can't reach, holding the apps registered with their sign-ins (`urls.gateway`, `gateway/`, D191); the Computer's internet (`computer` in policy: off, ask first or any site, a list of sites) and its package registries (Pyodide's, PyPI, npm: an Artifactory instance, its key kept on the device) (D162) | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
 | Records | Backup, export, a mirrored folder | Retention and legal hold by policy, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
 | Audit | The ACP event stream | OpenTelemetry export with identities, a hash-chained log, usage reports |
-| Deployment | Copy the folder; the headers are documented | Deployment kits (hosting, app registration, Intune), embedding in Teams, Outlook and SharePoint |
+| Deployment | Copy the folder, or run its container image ([deploy/docker/](../deploy/docker/README.md)); the headers are documented | Deployment kits (hosting, app registration, Intune), embedding in Teams, Outlook and SharePoint |
 
 Long-term-support releases, signed builds, SBOMs, security questionnaires and accessibility reports come with a subscription. They are services, not code.
 

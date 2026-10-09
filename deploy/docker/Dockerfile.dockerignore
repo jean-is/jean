@@ -1,0 +1,10 @@
+# The context is the repository's root. The image builds node_modules, vendor/ and the listings
+# itself, and never takes the local checkout's, its git history or its sessions' worktrees.
+.*
+node_modules
+vendor
+dist
+test-results
+playwright-report
+capabilities.json
+manifest.webmanifest

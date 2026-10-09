@@ -1,0 +1,32 @@
+# Jean, and its gateway when asked for (D232). See README.md beside this file.
+#   docker compose up -d --build                     Jean on http://localhost:8080
+#   docker compose --profile gateway up -d --build   and the gateway on http://localhost:8787
+# Variables come from the shell or from a .env file beside this one.
+name: jean
+services:
+  jean:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    image: jean
+    ports:
+      - "8080:8080"
+    environment:
+      - CONTENT_SECURITY_POLICY
+    # The organisation's policy, beside index.html (docs/enterprise.md):
+    # volumes:
+    #   - ./policy.json:/srv/policy.json:ro
+    restart: unless-stopped
+
+  gateway:
+    profiles: [gateway]
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+      target: gateway
+    image: jean-gateway
+    ports:
+      - "8787:8787"
+    environment:
+      - GATEWAY_CONFIG
+    restart: unless-stopped
