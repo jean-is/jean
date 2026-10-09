@@ -85,7 +85,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 
 ## Before the public launch
 
-- [ ] Final name and domain chosen and registered, because data is bound to the origin (D27, [open-questions.md](open-questions.md))
+- [x] Domain chosen and registered: jean.is, because data is bound to the origin (D27 · D242)
 - [ ] Profiles' data layout settled and built (D228), since data moves only before launch (D173)
 - [x] Multilingual reflex test set built; Kev measured in every launch language (D68)
 - [ ] Kev fine-tuned where it falls short: "personal", "unhappy" and "lasting" everywhere, and the low-resource languages (D68)
@@ -94,5 +94,5 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Tested on a managed Windows laptop with a weak graphics chip, and on Safari 16.4+
 - [ ] Contrast audited at every lighting stage; reduced motion checked
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds
-- [ ] Manifesto and README published, with the line count; `manifesto.html` is ready, and publishing waits for the name and domain
+- [ ] Manifesto and README published, with the line count; `manifesto.html` is ready to publish at jean.is
 - [ ] Mac app signed with a Developer ID and notarized, with the `allow-dyld-environment-variables` entitlement D160 needs; Windows app signed for SmartScreen

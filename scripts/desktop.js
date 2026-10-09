@@ -28,7 +28,7 @@ export const NEUTRALINO = '6.9.0'
  * Linux. None of them comes from BRAND, and none may change once people use the app: their
  * conversations and files would stay behind, under the old one.
  */
-export const DESKTOP = Object.freeze({ id: 'cx.jean.desktop', binary: 'jean', port: 24601 })
+export const DESKTOP = Object.freeze({ id: 'is.jean.desktop', binary: 'jean', port: 24601 })
 
 /**
  * The disk image's window, in points: desktop/dmg-background.svg's size, the icons' size, and

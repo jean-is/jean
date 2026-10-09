@@ -27,7 +27,7 @@ The brain is the first one whose key the environment holds (`ANTHROPIC_API_KEY`,
 Some services, such as Gmail, Microsoft 365 or Slack, don't accept connections from a browser. The gateway reaches them for Jean, without keeping anything:
 
 ```bash
-npx jean-cli gateway --origin https://jean.cx
+npx jean-cli gateway --origin https://jean.is
 ```
 
 Then give its address in Settings › Connections. `GATEWAY_CONFIG` holds the rest of its configuration, the secrets of apps you registered included, and `--port` and `--host` say where it listens.

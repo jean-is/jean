@@ -39,7 +39,7 @@ describe('desktop', () => {
 
   it('writes an Info.plist with the identifier, the name escaped and the microphone’s purpose', () => {
     const plist = infoPlist({ name: 'A & <B>' }, '1.2.3')
-    assert.match(plist, /<key>CFBundleIdentifier<\/key>\n {2}<string>cx\.jean\.desktop<\/string>/)
+    assert.match(plist, /<key>CFBundleIdentifier<\/key>\n {2}<string>is\.jean\.desktop<\/string>/)
     assert.match(plist, /<string>A &amp; &lt;B&gt;<\/string>/)
     assert.match(plist, /<key>CFBundleExecutable<\/key>\n {2}<string>jean<\/string>/)
     assert.match(plist, /<key>NSMicrophoneUsageDescription<\/key>/)

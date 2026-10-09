@@ -26,13 +26,13 @@ test('an address, a site or words: where the address field leads', () => {
 })
 
 test('a page shows beside the conversation only from another site, and over https unless it is on this computer', () => {
-  const jean = 'https://jean.cx/'
+  const jean = 'https://jean.is/'
   assert.ok(showable('https://example.com/', jean))
   assert.ok(showable('http://localhost:3000/', jean))
   assert.ok(showable('http://127.0.0.1:4181/site/', jean))
   assert.ok(!showable('http://example.com/', jean), 'a secure page can\'t frame an insecure one')
   assert.ok(showable('http://example.com/', 'http://127.0.0.1:4173/'), 'Jean itself over http (development)')
-  assert.ok(!showable('https://jean.cx/index.html', jean), 'never Jean itself')
+  assert.ok(!showable('https://jean.is/index.html', jean), 'never Jean itself')
   assert.ok(!showable('javascript:alert(1)', jean))
   assert.ok(!showable('not an address', jean))
   assert.equal(siteOf('https://www.Example.com:8443/a'), 'www.example.com:8443')

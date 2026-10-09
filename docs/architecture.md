@@ -93,7 +93,7 @@ Modules that a single capability or part of the UI uses live with it, tested und
 
 ```js
 // brand.js — the only place the name lives
-export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
+export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.is' })
 ```
 
 - **For display only** (D4): UI strings (`{name}`), the system prompt, the page title and the web-app manifest. The wordmark is the name set in the display face, so there is no logo file to redo.

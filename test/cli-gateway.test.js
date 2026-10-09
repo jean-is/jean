@@ -10,22 +10,22 @@ test('the gateway takes the origins on the line with GATEWAY_CONFIG, whose secre
   assert.deepEqual(gatewayConfig(env, ['http://localhost:4173', 'https://jean.example']), {
     origins: ['https://jean.example', 'http://localhost:4173'], hosts: ['slack.com'], clients: [{ issuer: 'https://a', clientSecret: 's' }],
   })
-  assert.deepEqual(gatewayConfig({}, ['https://jean.cx']), { origins: ['https://jean.cx'] })
+  assert.deepEqual(gatewayConfig({}, ['https://jean.is']), { origins: ['https://jean.is'] })
   assert.deepEqual(gatewayConfig({ GATEWAY_CONFIG: '' }), { origins: [] })
 })
 
 test('a page of Jean asking to reach a gateway on this computer is let through, and only Jean', async () => {
-  const handle = gateway({ origins: ['https://jean.cx'] })
+  const handle = gateway({ origins: ['https://jean.is'] })
   const ask = (/** @type {string} */ origin) => handle(new Request('http://127.0.0.1:8787/?url=https%3A%2F%2Fslack.com%2Fapi', {
     method: 'OPTIONS', headers: { origin, 'access-control-request-method': 'POST', 'access-control-request-private-network': 'true' },
   }))
-  const jean = await ask('https://jean.cx')
+  const jean = await ask('https://jean.is')
   assert.equal(jean.status, 204)
   assert.equal(jean.headers.get('access-control-allow-private-network'), 'true')
   const other = await ask('https://elsewhere.example')
   assert.equal(other.headers.get('access-control-allow-private-network'), null)
   // What it serves, asked from Jean's page, says so too.
-  const served = await handle(new Request('http://127.0.0.1:8787/', { method: 'OPTIONS', headers: { origin: 'https://jean.cx', 'access-control-request-private-network': 'true' } }))
+  const served = await handle(new Request('http://127.0.0.1:8787/', { method: 'OPTIONS', headers: { origin: 'https://jean.is', 'access-control-request-private-network': 'true' } }))
   assert.equal(served.headers.get('access-control-allow-private-network'), 'true')
 })
 
