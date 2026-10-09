@@ -8,7 +8,6 @@
   "machine.choose": "Ordner wählen…",
   "machine.failed": "Er ist nicht gestartet: Er braucht Node.js auf diesem Computer, den Befehl node im Terminal.",
   "machine.on.app": "Aufgaben mit dem Ordner {folder} führen ihre Befehle auf diesem Computer aus, jeden erst nach Rückfrage.",
-  "machine.default": "Standard",
   "machine.computers": "Computer",
   "machine.lede": "Aufgaben nutzen die abgeschottete Umgebung, außer denen im Ordner, den du auf diesem Computer verbindest.",
   "machine.off": "Nicht verbunden",

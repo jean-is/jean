@@ -8,7 +8,6 @@
   "machine.choose": "Klasör seç…",
   "machine.failed": "Başlamadı: bu bilgisayarda Node.js gerekiyor, yani terminaldeki node komutu.",
   "machine.on.app": "{folder} klasörünün görevleri komutlarını bu bilgisayarda çalıştırır, her biri önce sorularak.",
-  "machine.default": "Varsayılan",
   "machine.computers": "Bilgisayarlar",
   "machine.lede": "Görevler yalıtılmış ortamı kullanır; bu bilgisayarda bağladığın klasördekiler hariç.",
   "machine.off": "Bağlı değil",

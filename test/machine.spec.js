@@ -54,7 +54,8 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   const mine = settings.getByRole('tab', { name: /This computer/ })
   await expect(mine).toHaveAttribute('aria-selected', 'true')
   await expect(mine).toContainText('Not connected')
-  await expect(settings.getByRole('tab', { name: /Sandbox/ })).toContainText('Default')
+  // Each card has its picture (D250): a sand tray, a laptop.
+  await expect(settings.locator('.computers [role="tab"] .item-icon svg.art')).toHaveCount(2)
   const part = settings.locator('.machine')
   await expect(part.locator('.machine-steps > li')).toHaveText(['Open a terminal in one of your folders.', /^Paste this line there, then press Enter\./, 'Waiting for the line to run: this page notices by itself.'])
   const line = String(await page.locator('.machine-line code').textContent())
@@ -63,6 +64,8 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   try {
     await expect(part).toContainText('Tasks with the folder shop run their commands on this computer', { timeout: 15_000 })
     await expect(mine).toContainText('In shop')
+    // Its picture shows it too: its screen lit, its link filled.
+    await expect(mine.locator('.item-icon')).toHaveAttribute('data-state', 'ready')
     // The arrows go from card to card, whichever way: the sandbox's settings, then this computer's again.
     await mine.press('ArrowLeft')
     await expect(settings.getByRole('tab', { name: /Sandbox/ })).toBeFocused()

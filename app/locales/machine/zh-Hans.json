@@ -8,7 +8,6 @@
   "machine.choose": "选择文件夹…",
   "machine.failed": "没有启动：这台电脑需要 Node.js，即终端里的 node 命令。",
   "machine.on.app": "带有文件夹 {folder} 的任务会在这台电脑上运行命令，每条都会先询问。",
-  "machine.default": "默认",
   "machine.computers": "电脑",
   "machine.lede": "任务使用隔离环境，只有你在这台电脑上连接的文件夹里的任务除外。",
   "machine.off": "未连接",

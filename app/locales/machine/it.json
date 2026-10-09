@@ -8,7 +8,6 @@
   "machine.choose": "Scegli una cartella…",
   "machine.failed": "Non è partito: serve Node.js su questo computer, il comando node di un terminale.",
   "machine.on.app": "Le attività con la cartella {folder} eseguono i loro comandi su questo computer, ognuno chiesto prima.",
-  "machine.default": "Predefinito",
   "machine.computers": "Computer",
   "machine.lede": "Le attività usano l’ambiente isolato, tranne quelle nella cartella che colleghi su questo computer.",
   "machine.off": "Non collegato",

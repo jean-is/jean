@@ -8,7 +8,6 @@
   "machine.choose": "Yan fódà kan…",
   "machine.failed": "Kò bẹ̀rẹ̀: ó nílò Node.js lórí kọ̀ǹpútà yìí, ìyẹn àṣẹ node nínú ibùdó àṣẹ.",
   "machine.on.app": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan.",
-  "machine.default": "Àtilẹ̀wá",
   "machine.computers": "Àwọn kọ̀ǹpútà",
   "machine.lede": "Àwọn iṣẹ́ ń lo àyíká àdádó, àyàfi àwọn tó wà nínú fódà tí ẹ so mọ́ kọ̀ǹpútà yìí.",
   "machine.off": "Kò so pọ̀",

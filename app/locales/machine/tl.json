@@ -8,7 +8,6 @@
   "machine.choose": "Pumili ng folder…",
   "machine.failed": "Hindi ito nagsimula: kailangan nito ang Node.js sa computer na ito, ang command na node sa terminal.",
   "machine.on.app": "Pinapatakbo ng mga gawaing may folder na {folder} ang kanilang mga command sa computer na ito, bawat isa ay itinatanong muna.",
-  "machine.default": "Default",
   "machine.computers": "Mga computer",
   "machine.lede": "Ginagamit ng mga gawain ang nakahiwalay na kapaligiran, maliban sa mga nasa folder na ikinonekta mo sa computer na ito.",
   "machine.off": "Hindi nakakonekta",

@@ -8,7 +8,6 @@
   "machine.choose": "Chọn thư mục…",
   "machine.failed": "Không khởi động được: máy tính này cần có Node.js, tức lệnh node trong terminal.",
   "machine.on.app": "Các nhiệm vụ có thư mục {folder} chạy lệnh trên máy tính này, mỗi lệnh đều hỏi trước.",
-  "machine.default": "Mặc định",
   "machine.computers": "Máy tính",
   "machine.lede": "Các nhiệm vụ dùng môi trường biệt lập, trừ những nhiệm vụ trong thư mục bạn kết nối trên máy tính này.",
   "machine.off": "Chưa kết nối",

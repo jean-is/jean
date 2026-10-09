@@ -8,7 +8,6 @@
   "machine.choose": "Choisir un dossier…",
   "machine.failed": "Il n’a pas démarré : il lui faut Node.js sur cet ordinateur, la commande node d’un terminal.",
   "machine.on.app": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord.",
-  "machine.default": "Par défaut",
   "machine.computers": "Ordinateurs",
   "machine.lede": "Les tâches utilisent le bac à sable, sauf celles du dossier que vous connectez sur cet ordinateur.",
   "machine.off": "Non connecté",

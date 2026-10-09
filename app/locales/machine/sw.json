@@ -8,7 +8,6 @@
   "machine.choose": "Chagua folda…",
   "machine.failed": "Haikuanza: inahitaji Node.js kwenye kompyuta hii, yaani amri ya node kwenye terminali.",
   "machine.on.app": "Kazi zenye folda {folder} huendesha amri zao kwenye kompyuta hii, kila moja ikiulizwa kwanza.",
-  "machine.default": "Chaguomsingi",
   "machine.computers": "Kompyuta",
   "machine.lede": "Kazi hutumia mazingira yaliyotengwa, isipokuwa zile zilizo katika folda unayounganisha kwenye kompyuta hii.",
   "machine.off": "Haijaunganishwa",

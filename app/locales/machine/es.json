@@ -8,7 +8,6 @@
   "machine.choose": "Elegir una carpeta…",
   "machine.failed": "No se inició: necesita Node.js en esta computadora, el comando node de una terminal.",
   "machine.on.app": "Las tareas con la carpeta {folder} ejecutan sus comandos en esta computadora, cada uno preguntado antes.",
-  "machine.default": "Predeterminado",
   "machine.computers": "Computadoras",
   "machine.lede": "Las tareas usan el entorno aislado, salvo las de la carpeta que conectes en esta computadora.",
   "machine.off": "Sin conectar",

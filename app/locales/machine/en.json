@@ -8,7 +8,6 @@
   "machine.choose": "Choose a folder…",
   "machine.failed": "It didn’t start: it needs Node.js on this computer, the node command a terminal runs.",
   "machine.on.app": "Tasks with the folder {folder} run their commands on this computer, each asked first.",
-  "machine.default": "Default",
   "machine.computers": "Computers",
   "machine.lede": "Tasks use the sandbox, except those in the folder you connect on this computer.",
   "machine.off": "Not connected",

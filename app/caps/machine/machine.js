@@ -257,10 +257,44 @@ export function show() {
 /** This computer's state, beside its name: in which folder, or not connected. @param {Found} found */
 const state = (found) => (found.on ? t('machine.in', { folder: found.folder }) : t('machine.off'))
 
-/** A computer's card, a tab: its icon, its name, its light and its state. @param {'sandbox' | 'machine'} id @param {unknown} icon @param {unknown} name @param {string} light @param {string} text */
-const card = (id, icon, name, light, text) => html`<button role="tab" id=${`computer-${id}`} aria-selected=${String(viewing.value === id)}
+/**
+ * The sandbox's picture (D250): a glass box, its hidden edges dashed, with the computer that runs inside it, a block
+ * with a prompt on its screen and its lights, and a shield on the box: it is kept apart, and safe. Its screen lights up
+ * once the sandbox is awake, and its cursor blinks while it works.
+ */
+const SANDBOX = html`<svg class="art" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+  <path d="M8 15 24 7 40 15V35L24 27 8 35Z" fill="currentColor" fill-opacity=".05" stroke="none"/><path d="M8 35 24 27 40 35 24 43Z" fill="currentColor" fill-opacity=".1" stroke="none"/>
+  <path d="M24 7V27M8 35 24 27 40 35" stroke-dasharray="1.6 2.2" stroke-opacity=".55"/>
+  <path d="M15.5 26 24 30.25V39.25L15.5 35Z" fill="currentColor" fill-opacity=".32"/><path d="M24 30.25 32.5 26V35L24 39.25Z" fill="currentColor" fill-opacity=".5"/>
+  <path d="M15.5 26 24 21.75 32.5 26 24 30.25Z" fill="currentColor" fill-opacity=".18"/><path class="screen" d="M16.8 28.4 22.7 31.4V35.9L16.8 32.9Z" fill="currentColor" fill-opacity=".12"/>
+  <path d="M17.6 30.2 18.8 31.7 17.6 32" stroke-width="1"/><path class="cursor" d="M19.6 33 21.1 33.75" stroke-width="1"/>
+  <g class="leds" fill="currentColor" stroke="none"><circle cx="26.1" cy="31.9" r=".6"/><circle cx="27.8" cy="31" r=".6"/><circle cx="29.5" cy="30.2" r=".6"/></g>
+  <path d="M25.7 34.8 30.8 32.3M25.7 36.2 30.8 33.6" stroke-width="1" stroke-opacity=".7"/>
+  <path d="M8 15 24 23V43L8 35Z" fill="currentColor" fill-opacity=".07"/><path d="M24 23 40 15V35L24 43Z" fill="currentColor" fill-opacity=".11"/>
+  <path d="M8 15 24 7 40 15 24 23Z" fill="currentColor" fill-opacity=".06"/><path d="M11 20.5V24.5M11 27V28.5" stroke-opacity=".6"/>
+  <path d="M8 15 24 7 40 15V35L24 43 8 35ZM8 15 24 23 40 15M24 23V43"/>
+  <path d="M38 30.4 42.8 32.1V35.9C42.8 39.2 40.8 41.5 38 42.7 35.2 41.5 33.2 39.2 33.2 35.9V32.1Z" fill="currentColor"/><path class="on" d="M35.9 36.4 37.5 38 40.3 35" stroke-width="1.4"/>
+</svg>`
+
+/**
+ * This computer's picture (D250): a laptop in the same view, open where the sandbox is closed, a folder of the user's on
+ * its screen, and the link to it, through the bridge: its screen lights up and its link fills once the bridge answers.
+ */
+const LAPTOP = html`<svg class="art" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+  <path d="M24 22.5 43 32V13L24 3.5Z" fill="currentColor" fill-opacity=".14"/><path class="screen" d="M25.5 21 41.5 29V14L25.5 6Z" fill="currentColor" fill-opacity=".12"/>
+  <path d="M30 18.8V13.3l2.4 1.2 1.1 1.6 3.5 1.75V22.5Z" fill="currentColor" fill-opacity=".55"/>
+  <path d="M5 32 24 41.5V44L5 34.5Z" fill="currentColor" fill-opacity=".22"/><path d="M24 41.5 43 32V34.5L24 44Z" fill="currentColor" fill-opacity=".36"/>
+  <path d="M5 32 24 22.5 43 32 24 41.5Z" fill="currentColor" fill-opacity=".1"/><path d="M24.4 24.6 38.8 31.8 31.2 35.6 16.8 28.4Z" fill="currentColor" fill-opacity=".24"/>
+  <path d="M21.9 25.8 36.4 33M19.3 27.2 33.7 34.4M19.8 32.2 23.6 34.1 19.1 36.4 15.3 34.5Z"/>
+  <path d="M24 22.5V3.5L43 13V32M5 32 24 22.5 43 32V34.5L24 44 5 34.5ZM5 32 24 41.5 43 32M24 41.5V44M25.5 21V6L41.5 14V29ZM30 18.8V13.3l2.4 1.2 1.1 1.6 3.5 1.75V22.5Z"/>
+  <circle class="badge link" cx="38" cy="38.5" r="5.2" fill="currentColor" fill-opacity=".18"/>
+  <path class="on link" d="M37 40.6 36.3 41.3A1.5 1.5 0 0 1 34.2 39.2L35.6 37.8A1.5 1.5 0 0 1 37.7 37.8M39 36.4 39.7 35.7A1.5 1.5 0 0 1 41.8 37.8L40.4 39.2A1.5 1.5 0 0 1 38.3 39.2" stroke-width="1.2"/>
+</svg>`
+
+/** A computer's card, a tab: its picture, its name, its light and its state. @param {'sandbox' | 'machine'} id @param {unknown} picture @param {unknown} name @param {string} light @param {string} text */
+const card = (id, picture, name, light, text) => html`<button role="tab" id=${`computer-${id}`} aria-selected=${String(viewing.value === id)}
   aria-controls="computer-shown" tabindex=${viewing.value === id ? 0 : -1} @click=${() => { viewing.value = id }}>
-  <span class="item-icon" aria-hidden="true">${icon}</span>
+  <span class="item-icon" aria-hidden="true" data-state=${light}>${picture}</span>
   <span class="item-text"><span>${name}</span><small><span class="ember" data-state=${light} aria-hidden="true"></span>${text}</small></span>
 </button>`
 
@@ -275,7 +309,7 @@ function move(event) {
 
 /**
  * Settings › Computer once this computer is on (D248): what decides which computer a task uses, then the
- * two, a card each as tabs, the sandbox first, as the default; under them, the one chosen, then what both use.
+ * two, a card each as tabs, each with its picture, the sandbox first; under them, the one chosen, then what both use.
  * @param {{ sandbox: unknown, shared: unknown, name: string, light: string, text: string }} parts the sandbox's, from the Computer
  */
 export function computers({ sandbox, shared, name, light, text }) {
@@ -283,8 +317,8 @@ export function computers({ sandbox, shared, name, light, text }) {
   if (!found.on) watch()
   return html`<p class="lede">${t('machine.lede')}</p>
     <div class="computers" role="tablist" aria-label=${t('machine.computers')} @keydown=${move}>
-      ${card('sandbox', icons.chip, html`${name}<span class="pill">${t('machine.default')}</span>`, light, text)}
-      ${card('machine', icons.computer, t('cap.machine.name'), found.on ? 'ready' : 'asleep', state(found))}
+      ${card('sandbox', SANDBOX, name, light, text)}
+      ${card('machine', LAPTOP, t('cap.machine.name'), found.on ? 'ready' : 'asleep', state(found))}
     </div>
     <div role="tabpanel" id="computer-shown" aria-labelledby=${`computer-${viewing.value}`}>${viewing.value === 'sandbox' ? sandbox : panel()}${shared}</div>`
 }

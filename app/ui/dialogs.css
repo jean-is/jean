@@ -134,9 +134,18 @@ label.item, .list summary { cursor: pointer; }
 .filled { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--ink-soft); } .engines + p { margin: 0; }
 /* Once This computer is on (D248), the two computers, a card each as tabs, the one shown ringed in the flame,
    its light and state under its name; then its steps, the line to paste in a terminal all selected at a click (D198). */
-.computers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 0.5rem; margin-block: 0.75rem 1rem; }
+.computers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1.5rem 0.75rem; margin-block: 2rem 1rem; }
 .computers button[aria-selected='true']:not(:disabled) { border-color: var(--flame); background: oklch(from var(--flame) l c h / 0.08); }
-.computers :is(small, .item-text > span) { display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.4rem; } .pill { padding: 0 0.45rem; border-radius: 999px; background: var(--line); font-size: 0.72rem; white-space: nowrap; }
+.computers small { display: flex; align-items: center; gap: 0.4rem; }
+/* Each computer's picture (D250) stands on a glow, its floor, and rises out of the card: drawn in the look's colour, its faces
+   lighter tints of it, a badge in it knocked out as on the flame. Its screen lights up once awake or connected, the
+   sandbox's cursor blinks while it works, and the link to this computer fills once the bridge answers. */
+.computers button { gap: 1.4rem; padding-inline-start: 1.3rem; } .computers .item-icon { position: relative; inline-size: 3.5rem; border-radius: 0; background: radial-gradient(50% 24% at 50% 84%, oklch(from var(--flame) l c h / 0.3), transparent); }
+.art { position: absolute; inset-inline: -1rem; inset-block-end: -0.35rem; block-size: 5.5rem; color: var(--flame); fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+.art .on { stroke: var(--on-flame); } [data-state='asleep'] .art .leds { fill-opacity: 0.3; } :is([data-state='ready'], [data-state='working']) .art .screen { fill-opacity: 0.42; }
+:not([data-state='ready']) > .art .link.on { stroke: currentColor; } [data-state='ready'] .art .link.badge { fill-opacity: 1; }
+:is([data-state='waking'], [data-state='working']) .art .cursor { animation: cursor 1s steps(1) infinite; } @keyframes cursor { 50% { opacity: 0; } }
+@media (forced-colors: active) { .art .on { stroke: Canvas; } :not([data-state='ready']) > .art .link.on { stroke: CanvasText; } }
 /* Under the card chosen, its name and state again only for screen readers, a heading and a live status. */
 #computer-shown > section:first-child h3 { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (forced-colors: active) { .computers [aria-selected='true'] { outline: 2px solid Highlight; outline-offset: -2px; } }

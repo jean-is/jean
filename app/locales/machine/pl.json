@@ -8,7 +8,6 @@
   "machine.choose": "Wybierz folder…",
   "machine.failed": "Nie uruchomił się: potrzebuje Node.js na tym komputerze, polecenia node w terminalu.",
   "machine.on.app": "Zadania z folderem {folder} uruchamiają polecenia na tym komputerze, każde po zapytaniu.",
-  "machine.default": "Domyślne",
   "machine.computers": "Komputery",
   "machine.lede": "Zadania korzystają z odizolowanego środowiska, z wyjątkiem tych w folderze, który połączysz na tym komputerze.",
   "machine.off": "Niepołączony",

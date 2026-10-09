@@ -8,7 +8,6 @@
   "machine.choose": "フォルダーを選ぶ…",
   "machine.failed": "起動しませんでした。このコンピューターに Node.js（ターミナルの node コマンド）が必要です。",
   "machine.on.app": "フォルダー {folder} のタスクは、このコンピューターでコマンドを実行します。実行の前に毎回確認します。",
-  "machine.default": "標準",
   "machine.computers": "コンピューター",
   "machine.lede": "タスクは安全な環境を使います。このコンピューターでつないだフォルダーのタスクだけは別です。",
   "machine.off": "未接続",

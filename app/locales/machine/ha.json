@@ -8,7 +8,6 @@
   "machine.choose": "Zaɓi fayil ɗin ajiya…",
   "machine.failed": "Bai fara ba: yana buƙatar Node.js a wannan kwamfutar, wato umarnin node a tashar umarni.",
   "machine.on.app": "Ɗawainiyoyin da ke da fayil ɗin ajiya {folder} suna gudanar da umarninsu a wannan kwamfutar, ana tambaya kafin kowanne.",
-  "machine.default": "Na asali",
   "machine.computers": "Kwamfutoci",
   "machine.lede": "Ɗawainiyoyi suna amfani da keɓaɓɓen wuri, sai dai waɗanda ke cikin fayil ɗin ajiyar da ka haɗa a wannan kwamfutar.",
   "machine.off": "Ba a haɗa ba",

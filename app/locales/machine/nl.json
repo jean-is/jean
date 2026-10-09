@@ -8,7 +8,6 @@
   "machine.choose": "Kies een map…",
   "machine.failed": "Hij is niet gestart: hij heeft Node.js nodig op deze computer, de opdracht node in een terminal.",
   "machine.on.app": "Taken met de map {folder} voeren hun opdrachten uit op deze computer, elke eerst gevraagd.",
-  "machine.default": "Standaard",
   "machine.computers": "Computers",
   "machine.lede": "Taken gebruiken de afgeschermde omgeving, behalve die in de map die je op deze computer koppelt.",
   "machine.off": "Niet gekoppeld",

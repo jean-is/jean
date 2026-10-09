@@ -8,7 +8,6 @@
   "machine.choose": "選擇資料夾…",
   "machine.failed": "沒有啟動：這台電腦需要 Node.js，也就是終端機裡的 node 指令。",
   "machine.on.app": "帶有資料夾 {folder} 的任務會在這台電腦上執行指令，每條都會先詢問。",
-  "machine.default": "預設",
   "machine.computers": "電腦",
   "machine.lede": "任務使用隔離環境，只有你在這台電腦上連接的資料夾裡的任務除外。",
   "machine.off": "未連接",

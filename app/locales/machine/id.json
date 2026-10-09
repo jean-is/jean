@@ -8,7 +8,6 @@
   "machine.choose": "Pilih folder…",
   "machine.failed": "Tidak berjalan: komputer ini perlu Node.js, yaitu perintah node di terminal.",
   "machine.on.app": "Tugas dengan folder {folder} menjalankan perintahnya di komputer ini, masing-masing ditanyakan dulu.",
-  "machine.default": "Bawaan",
   "machine.computers": "Komputer",
   "machine.lede": "Tugas memakai lingkungan terisolasi, kecuali yang ada di folder yang Anda hubungkan di komputer ini.",
   "machine.off": "Belum terhubung",
