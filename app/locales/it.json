@@ -116,7 +116,6 @@
   "look.blueprint.name": "Cianografia",
   "look.mondrian.name": "Mondrian",
   "look.human.name": "Umano",
-  "profile.manifesto": "Manifesto",
   "storage.ephemeral": "Finestra privata: alla chiusura non verrà salvato nulla.",
   "update.ready": "È pronta una nuova versione di {name}.",
   "update.reload": "Ricarica",

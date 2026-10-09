@@ -55,7 +55,6 @@ app/              what a deploy serves, as written (D243); the docs' paths to Je
   index.html      CSP <meta>, the first-paint line (light or dark, the look), import map, shell
   sandbox.html    strict CSP and a relay, allowed by its hash; runs untrusted code in a worker (D65, D162)
   preview.html    a web page in the preview or the browser, written by a relay under the policy Settings give it (D126, D143)
-  manifesto.html  MANIFESTO.md as a page (manifesto.css over ui/style.css), linked from Settings
   sw.js           offline cache, per capability
   brand.js        export const BRAND = { name, domain }
   core/           the engine, standard web APIs only: llm.js anthropic.js sse.js loop.js events.js prompt.js deferred.js

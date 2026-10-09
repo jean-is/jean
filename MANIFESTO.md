@@ -25,4 +25,4 @@ You give Jean a task and your files. Jean reads them, works things out — runni
 
 Jean does not work while you are away: that would need a server watching over your things. When you come back, it tells you what changed since last time.
 
-Jean does not take over your computer. It lives inside the browser's walls, and it stays there.
+Jean does not take over your computer. It works inside the browser's walls, and steps outside them only into a folder you open for it, asking before it runs anything there.

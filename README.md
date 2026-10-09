@@ -134,7 +134,7 @@ CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on 
 
 | Document | What's in it |
 |---|---|
-| [MANIFESTO.md](MANIFESTO.md) | Why Jean exists, in one page (also served as `manifesto.html`) |
+| [MANIFESTO.md](MANIFESTO.md) | Why Jean exists, in one page |
 | [docs/product.md](docs/product.md) | The user, the vocabulary, progressive discovery, and how every feature behaves |
 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
 | [docs/design.md](docs/design.md) | The room that lights up, and the little light |

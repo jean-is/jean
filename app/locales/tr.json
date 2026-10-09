@@ -116,7 +116,6 @@
   "look.blueprint.name": "Mavi Kopya",
   "look.mondrian.name": "Mondrian",
   "look.human.name": "İnsan",
-  "profile.manifesto": "Manifesto",
   "storage.ephemeral": "Gizli pencere: kapattıktan sonra hiçbir şey kaydedilmez.",
   "update.ready": "Yeni sürüm hazır: {name}.",
   "update.reload": "Yeniden yükle",

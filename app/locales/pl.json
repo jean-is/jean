@@ -116,7 +116,6 @@
   "look.blueprint.name": "Plan",
   "look.mondrian.name": "Mondrian",
   "look.human.name": "Ludzki",
-  "profile.manifesto": "Manifest",
   "storage.ephemeral": "Okno prywatne: po zamknięciu nic nie zostanie zapisane.",
   "update.ready": "Nowa wersja jest gotowa: {name}.",
   "update.reload": "Odśwież",

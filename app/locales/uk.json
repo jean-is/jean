@@ -116,7 +116,6 @@
   "look.blueprint.name": "Креслення",
   "look.mondrian.name": "Мондріан",
   "look.human.name": "Людяний",
-  "profile.manifesto": "Маніфест",
   "storage.ephemeral": "Приватне вікно: після закриття нічого не збережеться.",
   "update.ready": "Готова нова версія: {name}.",
   "update.reload": "Перезавантажити",

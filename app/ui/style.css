@@ -722,7 +722,6 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 :dir(rtl) .submenu > .icon:last-child { rotate: 90deg; }
 .profile-menu .back > .icon { rotate: 180deg; }
 .profile-menu .back { font-weight: 600; }
-.profile-menu a > .icon:last-child { inline-size: 1rem; margin-inline-start: auto; }
 .profile-menu [aria-current='true'] { font-weight: 600; }
 .profile-menu [aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
 .menu button:disabled { opacity: 0.5; cursor: default; }

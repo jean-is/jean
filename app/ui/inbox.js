@@ -102,7 +102,7 @@ async function turn(event, next) {
 /** The look chosen, which shows once its style sheet is in. */
 const chosenLook = () => lookId(effective.value.settings.look?.id)
 
-/** The menu's actions: Settings and what is often reached for there, then the manifesto. @param {string} id */
+/** The menu's actions: Settings and what is often reached for there. @param {string} id */
 function actions(id) {
   const dark = theme.value === 'dark'
   const fixed = effective.value.locked.has('locale')
@@ -115,10 +115,7 @@ function actions(id) {
       ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`)}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.contrast}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
-    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>
-    <hr>
-    <a href="manifesto.html" target="_blank" rel="noopener" @click=${(/** @type {Event} */ e) => /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.currentTarget).closest('[popover]'))?.hidePopover()}>
-      ${icons.book}${t('profile.manifesto')}${icons.arrow}</a>`
+    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>`
 }
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */

@@ -116,7 +116,6 @@
   "look.blueprint.name": "Planta",
   "look.mondrian.name": "Mondrian",
   "look.human.name": "Humano",
-  "profile.manifesto": "Manifesto",
   "storage.ephemeral": "Janela privada: nada será guardado depois de a fechares.",
   "update.ready": "Está pronta uma nova versão de {name}.",
   "update.reload": "Recarregar",

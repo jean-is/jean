@@ -94,5 +94,5 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Tested on a managed Windows laptop with a weak graphics chip, and on Safari 16.4+
 - [ ] Contrast audited at every lighting stage; reduced motion checked
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds
-- [ ] Manifesto and README published, with the line count; `manifesto.html` is ready to publish at jean.is
+- [ ] Manifesto and README published, with the line count
 - [ ] Mac app signed with a Developer ID and notarized, with the `allow-dyld-environment-variables` entitlement D160 needs; Windows app signed for SmartScreen
