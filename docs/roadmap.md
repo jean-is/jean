@@ -29,7 +29,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Flows (D218): does a brain draw a flow whose Ask steps a small brain can follow, with `{{}}` where results go, and make one of a real task it just did? A step once for each of fifty items against rate limits; a routine that runs a flow over real days
 - [ ] `ask_user`: only what is needed, all at once, with an answer recommended
 - [ ] Meetings (D224): do assistants keep to their project, say "Nothing from me." when they have nothing, and answer each other in the second round? Does the chair say what each project will do? Three rounds of five speakers against rate limits, and a routine that holds one over real weeks
-- [ ] Problem solving (D225): does a brain pick the method the situation calls for, ask when it isn't clear, and write an 8D or an A3 that holds, in Arabic and Japanese too?
+- [ ] Methods (D225): does a brain pick the method the situation calls for, ask when it isn't clear, and write an 8D, an A3, a project plan with its critical path, OKRs or a risk register that holds, in Arabic and Japanese too? Do the Gantt and the risk heatmap draw as the skills describe them?
 - [ ] `write` for a document, with Markdown and CSV as the tool asks; the HTML pages they make, with a chart library from the internet
 - [ ] `browse` only when a page helps
 - [ ] Chart and Music score (D196): do brains read the skill and write strict JSON and ABC whose bars add up, in the user's language? The device's brain especially

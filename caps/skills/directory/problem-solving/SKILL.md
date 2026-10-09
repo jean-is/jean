@@ -1,6 +1,6 @@
 ---
 name: problem-solving
-description: "Solve a problem at work with the method that fits it: 8D for a complaint or a defect that reached a customer, DMAIC for a problem that keeps coming back and can be measured, an A3 to agree on a problem or a proposal on one page, PDCA for an improvement to try and check. Finds the root cause, then actions with owners and dates."
+description: "Solve a problem at work with the method that fits it: 8D for a complaint or a defect that reached a customer, a root cause analysis for an incident that is over, DMAIC for a problem that keeps coming back and can be measured, an A3 to agree on a problem or a proposal on one page, PDCA for a change to try and check, 5 Whys for a small one. States the problem with facts, finds and checks the root cause, weighs options, and plans actions with owners, dates and a measure."
 metadata:
   format: "1"
   blocks: echarts
@@ -73,24 +73,36 @@ metadata:
 ---
 # Problem solving
 
-Take a problem from what happened to what was done about it, with a method people at work recognise, and say which method and why.
+Take a problem from what happened to what was done about it, with a method people at work recognise, and say which method and why. The user is often on their own: where a method calls for a team, name who should take part rather than set up a committee.
 
 ## Choose the method
 
 1. When the room's instructions name a method, use it.
-2. Otherwise pick the one the situation calls for:
-   - **8D**, when a defect or a complaint reached a customer and something must be contained now: D0 prepare, D1 the team, D2 the problem, D3 containment, D4 root cause, D5 corrective actions, D6 put in place and checked, D7 prevent it happening again, D8 thank the team.
-   - **DMAIC**, when a problem keeps coming back and there is data: Define, Measure (the baseline, with numbers), Analyze, Improve, Control.
-   - **A3**, when people need to agree on one page: background, current condition, goal, root cause, countermeasures, plan, follow-up.
-   - **PDCA**, for a small change to try: Plan, Do, Check, Act, then again.
-3. When two fit, or it isn't clear what the user wants, ask with `ask_user`: the four methods and "No method, just help", each in a few words, recommending the one you would choose.
+2. Otherwise weigh how serious, how frequent and how measurable the problem is, and pick:
+   - **5 Whys** alone, for a small problem that happened once and is cheap to fix: the problem, the whys, one action.
+   - **8D**, when a defect or a complaint reached a customer, or could, and something must be contained now. Its disciplines: D0 prepare (is 8D worth it?), D1 who takes part, D2 the problem, D3 containment, D4 root cause, D5 the corrective action chosen and checked, D6 put in place, D7 prevent it elsewhere, D8 close and thank.
+   - **Root cause analysis**, for an incident that is over (an outage, a missed delivery, a costly mistake): what happened as a timeline, with times and sources, the causes, and actions, blaming no one.
+   - **DMAIC**, Six Sigma's method, when a problem keeps coming back and can be measured: Define (the problem, a goal with a number and a date), Measure (the baseline, and whether the measure can be trusted), Analyze (causes shown by the data), Improve (tried small first), Control (how the gain is kept).
+   - **A3**, when people need to agree on one page: background and why it matters, the current state as observed, the target with a number and a date, root causes, countermeasures, the plan, the follow-up.
+   - **PDCA**, for a change to try: Plan (a baseline and a prediction: "if we change this, that goes from a to b by then"), Do (on a small scale, noting what didn't go as planned), Check (expected against actual), Act (adopt, adapt or abandon, then another cycle).
+3. When two fit, or it isn't clear what the user wants, ask with `ask_user`: these methods and "No method, just help", each in a few words, recommending the one you would choose and why.
 
 ## Steps
 
-1. Find out what is missing for the method's first steps, from the conversation and the files shared: what happened, where, when, how often, to whom, what it costs, and what was done already. Ask only what you can't find, all at once.
-2. State the problem in one sentence with facts: what, where, when, how much. No cause and no solution in it.
-3. Look for the root cause: the 5 Whys, each answer a fact, stopping at a cause the team can act on; for several possible causes, a fishbone as a table (people, method, machine, material, measurement, environment). Mark each cause as checked or to check, and never present a guess as the cause.
-4. With data, work on the computer: a Pareto of causes or defects as an ```echarts chart (bars sorted down, the cumulative share as a line on a second axis), the baseline, and a control chart's limits when the process repeats. Give the numbers you computed, not estimates.
-5. Write the actions as numbered steps that start in bold, each with an owner, a date and how its effect will be checked. In 8D, keep containment apart from corrective actions.
-6. Name the risks and what could make it come back in a `> [!WARNING]` note.
-7. Offer the document the method makes: an A3 or an 8D report as Word, the action plan as Excel (`write`). For PDCA and DMAIC's Control, offer a routine that checks the measure on the date of the Check.
+1. **The facts.** Find what the method's first steps need, from the conversation and the files shared: what happened, where, when, who found it and how, how many, what it costs, and what was done already. Ask only what you can't find, all at once. When there is no data yet, say what to collect, how and for how long, and offer a simple tally sheet as Excel.
+2. **The problem in one sentence,** with numbers: what, where, when, how much. No cause and no solution in it. For 8D and DMAIC, add a table of what the problem IS and IS NOT: where, when, which products or people, how many. A cause must explain both columns.
+3. **Containment first** when customers or people are exposed: what protects them now, until the cause is fixed, and how to check that it works.
+4. **The root cause.** List the possible causes, as a fishbone in a table (people, method, machine, material, measurement, environment) when there are several. Ask why, each answer a fact, until a cause the user can act on and which, removed, stops the problem coming back; that is often fewer or more than five whys. Look for the process that let it happen, never for someone to blame. Test each cause against the facts and the IS / IS NOT table, and mark it confirmed, ruled out or to check. Never present an unchecked cause as the cause.
+5. **With data, work on the computer:** a Pareto of causes or defects as an ```echarts chart (bars sorted down, the cumulative share as a line on a second axis), the baseline, and a control chart's limits when the process repeats. Give the numbers you computed, not estimates.
+6. **Options.** For each confirmed cause, weigh at least three actions in a table: what each changes, its cost and effort, how soon it works, its risk and side effects. Leave the corner empty and put a ★ after the one you recommend, and say why.
+7. **The plan,** as numbered steps that start in bold, each with an owner, a date and the measure that shows it worked. Keep containment, correction and prevention apart. Say when containment can be removed: once the correction is proven.
+8. **Keep the gain.** How the result will be watched (the measure, how often, by whom, the limit that calls for action, and what to do then), what standard, checklist or training changes, and where else the same cause could act (other products, sites, teams). Before a launch or a change, rank what could still go wrong by severity, frequency and how hard it is to notice.
+9. **Close.** What was learned, the results against the target, and who to thank. Name the risks and what could make the problem come back in a `> [!WARNING]` note.
+
+## Before you answer
+
+Check that the problem has numbers; each cause rests on a fact; at least three options were weighed; every action has an owner, a date and a measure; and nothing blames a person. Say plainly what is still unknown.
+
+## Offer
+
+The document the method makes: an 8D report or an A3 as Word, with the method's headings, and the action plan as Excel (action, cause, kind, owner, due date, measure, status) with `write`. For PDCA's Check, DMAIC's Control and an 8D's follow-up, offer a routine that looks at the measure on the date set.
