@@ -2,7 +2,7 @@
 // kept in the project's files and shown under the answer, ready to save (D119); an answer
 // copied as rich text (pastes formatted into Word, Outlook and Google Docs), or its tables as
 // CSV (opens in Excel). Browser features only; no file-format library.
-import { html, nothing, render } from 'lit-html'
+import { html, nothing, render, svg } from 'lit-html'
 import { lexer } from 'marked'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
@@ -130,15 +130,22 @@ register({
   rules: ['Documents and spreadsheets the user asks for are files.', 'In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX.'],
 })
 
-/** The kinds of file Jean makes, by extension, in words people use (any other shows its extension), each with its icon. */
-const KINDS = /** @type {Record<string, string>} */ ({ docx: 'document', xlsx: 'sheet', csv: 'sheet', tsv: 'sheet', html: 'page', htm: 'page', svg: 'drawing', txt: 'text', md: 'text', markdown: 'text' })
-const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, text: icons.note })
+/** The kinds of file Jean and its computer make, by extension, each with its icon, and in words people use where there are some (any other shows its extension). */
+const KINDS = /** @type {Record<string, string>} */ ({ docx: 'document', xlsx: 'sheet', csv: 'sheet', tsv: 'sheet', html: 'page', htm: 'page', svg: 'drawing', txt: 'text', md: 'text', markdown: 'text',
+  png: 'picture', jpg: 'picture', jpeg: 'picture', gif: 'picture', webp: 'picture', pdf: 'pdf', pptx: 'slides', ics: 'event', vcf: 'contact',
+  json: 'code', xml: 'code', yaml: 'code', yml: 'code', css: 'code', js: 'code', py: 'code', sql: 'code', tex: 'code' })
+const WORDS = /** @type {Record<string, string>} */ ({ document: 'made.kind.document', sheet: 'made.kind.sheet', page: 'made.kind.page', drawing: 'made.kind.drawing', text: 'made.kind.text', picture: 'files.picture' })
+const glyph = (/** @type {unknown} */ paths) => html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths}</svg>`
+const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, text: icons.note, picture: icons.image, contact: icons.person, code: icons.code,
+  pdf: glyph(svg`<path d="M5.5 11V5.5a2 2 0 0 1 2-2H14l4.5 4.5v3M14 3.5V8h4.5M4 20.5v-6h1.8a1.8 1.8 0 0 1 0 3.6H4M10.25 14.5v6h.9a2.3 2.3 0 0 0 2.3-2.3v-1.4a2.3 2.3 0 0 0-2.3-2.3ZM20 14.5h-3.25v6M16.75 17.6h2.4"/>`),
+  slides: glyph(svg`<path d="M3.5 4.5h17M5 4.5V14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 14V4.5M12 15.5V18M8.5 20.5 12 18l3.5 2.5M9 12v-1.5M12 12V8M15 12V9.5"/>`),
+  event: glyph(svg`<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01" stroke-width="2.4"/>`) })
 
 /**
  * A file Jean made, under the answer: a card with its name, the kind of file it is and its size,
  * opened in the preview (D126) or saved. A web page opens in the browser once it is on, where its
- * links lead on and the other files of /workspace it uses come along (D172). A drawing (.svg) is
- * its own tile, a picture where its scripts never run.
+ * links lead on and the other files of /workspace it uses come along (D172). A picture is its own
+ * tile, and so is a drawing (.svg), where its scripts never run.
  */
 class FileMade extends Element {
   // A newer version of the file can take this one's place under the answer.
@@ -162,7 +169,7 @@ class FileMade extends Element {
     return html`<div class="file-card" @click=${(/** @type {MouseEvent} */ event) => /** @type {HTMLElement} */ (event.target).closest('button') || open()}>
       <span class="file-tile" aria-hidden="true">${this.#url ? html`<img src=${this.#url} alt="">` : TILES[kind] ?? icons.file}</span>
       <span class="file-about"><span class="file-name"><span dir="auto">${name}</span></span>
-        <span class="file-meta"><span>${kind ? t(`made.kind.${kind}`) : ext.toUpperCase()}</span><span>${formatBytes(Number(this.getAttribute('size')) || 0)}</span>${version && versions.length > 1 ? html`<span>${t('made.version', { n: version })}</span>` : nothing}</span></span>
+        <span class="file-meta"><span>${WORDS[kind] ? t(WORDS[kind]) : ext.toUpperCase()}</span><span>${formatBytes(Number(this.getAttribute('size')) || 0)}</span>${version && versions.length > 1 ? html`<span>${t('made.version', { n: version })}</span>` : nothing}</span></span>
       <button class="icon-button" aria-label=${label} @click=${() => this.#save(name, type)}>${icons.download}</button>
       <button class="button" aria-label=${t('sources.open', { name })} @click=${open}>${t('made.open')}</button>
     </div>`
@@ -187,10 +194,11 @@ class FileMade extends Element {
 
   async #preview() {
     const uri = this.getAttribute('uri')
-    const bytes = this.getAttribute('type') === 'image/svg+xml' ? await this.#bytes() : null
+    const type = this.getAttribute('type') ?? ''
+    const bytes = type.startsWith('image/') ? await this.#bytes() : null
     if (uri !== this.getAttribute('uri') || !this.isConnected) return
     URL.revokeObjectURL(this.#url)
-    this.#url = bytes ? URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: 'image/svg+xml' })) : ''
+    this.#url = bytes ? URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type })) : ''
     render(this.render(), this)
   }
 
