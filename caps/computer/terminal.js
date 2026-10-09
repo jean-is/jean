@@ -20,6 +20,7 @@ import { noteRecord } from '../../core/events.js'
 import { t, tParts, locale } from '../../core/i18n.js'
 import { typed, completions, clip, prompt, keys } from './computer.js'
 import { styleSheet } from '../../ui/sheet.js'
+import { keep } from '../../ui/windows.js'
 
 /** @typedef {import('../../core/loop.js').PermissionOption} PermissionOption */
 /**
@@ -79,6 +80,8 @@ export const close = () => { open.value = false }
 /** From ⌘J (`keys`), it closes only once the keys are in it. @param {boolean} [keys] */
 export const toggle = (keys = false) => (open.peek() && (!keys || pane.contains(document.activeElement)) ? close() : show())
 const toLine = () => pane.querySelector('textarea')?.focus()
+// In the address (D220): open or not; what it shows is the conversation's.
+keep('terminal', { get: () => (open.value ? '' : null), set: (state) => (state === null ? close() : open.peek() || show()) })
 
 /** Clear's icon: a broom, for what is swept away rather than deleted. */
 const broom = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<g transform="rotate(45 12 12)"><path d="M12 .5V10M9.5 10h5l2.5 10H7ZM8.9 12.5h6.2M10.3 15.5 10 20M13.7 15.5l.3 4.5"/></g>`}</svg>`

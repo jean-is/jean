@@ -44,7 +44,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 
 **Built on the browser, no dependency:** text from DOCX, XLSX and PPTX (zip through `DecompressionStream` and a small tag scanner, not `DOMParser`, so it runs in workers and under `node --test`); the backup zip (`CompressionStream`); BM25 search with `Intl.Segmenter`, which ranks deferred tools and past conversations, and `alike()`, which tells requests of the same kind apart (`core/search.js`), plus matching as people type over a fold of the text (`fold()`, `ranges()`, D133); ULIDs from `crypto.getRandomValues`; the system's voices; Web Locks and BroadcastChannel between tabs.
 
-**Routing is one hash** (D59, D137), read by `ui/router.js`: `#/c/<ulid>`, `#/p/<project ulid>/c/<ulid>` in a project other than home, and `…/settings/<section>` with Settings open over either.
+**Routing is one hash** (D59, D137, D220), read by `ui/router.js`: `#/c/<ulid>`, `#/p/<project ulid>/c/<ulid>` in a project other than home, `…/settings/<section>` with Settings open over either, and after a `?` the windows beside it, in the order they opened, each `name` or `name=state` (its slashes and colons as they are): `preview=files/<file>`, `browser=<address>` (`folder:`, `workspace:` and `made:` for Jean's own pages), `terminal`, `flow=<flow ulid>` (flow mode on a new task, the pane beside a task) or `flow=task`. `ui/windows.js` keeps them: each window's module calls `keep(name, { get, set })` as it loads, `get()` saying what it shows (null closed), `set()` showing a state again after checking it. Following an address, it waits for `app.ready`, closes the windows not named and those out of order, then loads each named window's module (once its capability is found) and sets it, giving the keys back where they were. The router writes the windows into the entry it is on, and follows them only when an address leads to another place.
 
 **Components are custom elements** (light DOM, prefix `app-`). Each capability is one module that defines its elements and registers its tools; unlocking it is an `import()`, and any of its elements already on the page upgrade. `:not(:defined)` styles what isn't discovered yet.
 
@@ -64,7 +64,7 @@ ui/               app.js (start), shell.js, base.js, state.js (signals; what the
                   its way and its answer, loaded as the user types), chat.js, composer.js, complete.js, complete.css and
                   mentions.js (the box's / and @, D199), markdown.js, discovery.js,
                   caps.js (the unlock gate), auto.js, picker.js, dialogs.js and dialogs.css (Settings, with brains.js and
-                  knows.js), router.js, opfs.js and storage-worker.js, sandbox.js (the sandbox's client), preview.js and
+                  knows.js), router.js and windows.js (the windows in the address), opfs.js and storage-worker.js, sandbox.js (the sandbox's client), preview.js and
                   preview.css, view.js and view.css (a file shown, in the preview and the browser), csp.js (a page's policy), dock.js and dock.css (panes beside the conversation), inbox.js (the
                   drawer's list), looks.js, touches.js, speech.js, voices.js, spoken.js, language.js, dictation.js, title.js, update.js,
                   host.js (the desktop app's host), persona.js (the little light), icons.js, save.js, secrets.js,

@@ -47,3 +47,36 @@ test('Settings is in the address over any place, on its section', async () => {
   assert.equal(settingsIn(''), null)
   assert.equal(settingsIn('#/settings/../../x'), 'general', 'a section is lower-case letters')
 })
+
+test('the windows beside a place come after a ?, in the order they opened, each with what it shows (D220)', async () => {
+  const { signal } = await import('@preact/signals-core')
+  const { placeIn, settingsIn, beside } = await import('../ui/router.js')
+  const { keep, written } = await import('../ui/windows.js')
+  const id = '01M3XN7APTVD76G6T68W6FRKC8'
+  const address = `#/c/${id}/settings/brains?browser=https://example.com/a?b=c%26d&terminal`
+  assert.deepEqual(placeIn(address), { project: null, conversation: id })
+  assert.equal(settingsIn(address), 'brains')
+  assert.equal(placeIn(`#/c/${id}?terminal`).conversation, id)
+  assert.equal(settingsIn(`#/c/${id}?terminal`), null)
+
+  const terminal = signal(/** @type {string | null} */ (null))
+  const browser = signal(/** @type {string | null} */ (null))
+  keep('terminal', { get: () => terminal.value, set: (state) => { terminal.value = state } })
+  keep('browser', { get: () => browser.value, set: (state) => { browser.value = state } })
+  assert.equal(written.value, '')
+  terminal.value = ''
+  const page = 'https://example.com/a b?q=1&r=2+3#top'
+  browser.value = page
+  assert.equal(written.value, 'terminal&browser=https://example.com/a%20b%3Fq%3D1%26r%3D2%2B3%23top')
+  assert.equal(beside.value, written.value, 'the router writes what changed')
+  // What the address holds comes back as it was.
+  assert.deepEqual([...new URLSearchParams(written.value)], [['terminal', ''], ['browser', page]])
+  terminal.value = null
+  terminal.value = ''
+  assert.equal(written.value, 'browser=https://example.com/a%20b%3Fq%3D1%26r%3D2%2B3%23top&terminal', 'reopened, it comes last')
+  for (const word of ['/workspace/charts/é.html', 'folder:Notes/index.html', 'made:files/sha256-ab.html']) {
+    browser.value = word
+    assert.equal(new URLSearchParams(written.value).get('browser'), word)
+  }
+  assert.match(written.value, /browser=made:files\/sha256-ab\.html/, 'slashes and colons stay as they are')
+})

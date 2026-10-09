@@ -39,6 +39,8 @@ import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { addressOf, showable, siteOf, pageText, installer, Trail } from './pages.js'
 import { styleSheet } from '../../ui/sheet.js'
+import { keep } from '../../ui/windows.js'
+import { fileMeta } from '../../core/files.js'
 
 const HOST = new URL('browser.html', import.meta.url).href
 const PAGE = new URL('../../preview.html', import.meta.url).href
@@ -171,6 +173,14 @@ export function close() {
 
 export const toggle = () => (open.peek() ? close() : show())
 
+// In the address (D220): the address it opened, as Jean knows it, not where a site went from there;
+// '' while it is empty. Another comes back only as a web page or one of Jean's own.
+keep('browser', {
+  get: () => (open.value ? page.value?.url ?? '' : null),
+  set: (url) => (url === null ? close() : open.peek() && url === (page.peek()?.url ?? '') ? null
+    : /^(https?:\/\/|folder:|workspace:|made:files\/[^/]+$)/i.test(url) ? visit(url) : show()),
+})
+
 /**
  * Takes the pane to an address. A site that can't show here (one the user opens in its own tab,
  * or one a secure page can't frame) opens in a new tab when the user asked for it, and says so in
@@ -276,9 +286,10 @@ export async function showMade({ uri, name }) {
   visit(same ? `${WORKSPACE}${name}` : `${MADE}${uri}`, { click: true })
 }
 
-/** A page Jean made, as one of its cards holds it; null once it is no longer there. @param {string} uri */
+/** A page Jean made, as one of its cards holds it, named as it is there; null once it is no longer there. @param {string} uri */
 async function madePage(uri) {
   const bytes = await app.fs.readBytes(`${app.projectDir}/${uri}`)
+  if (bytes && !named.has(uri)) named.set(uri, (await fileMeta(app.fs, app.projectDir, uri))?.name ?? '')
   return bytes && { html: new TextDecoder().decode(bytes), path: named.get(uri) ?? '', files: {} }
 }
 

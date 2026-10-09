@@ -1,9 +1,9 @@
 // The address keeps the minimum to come back to the same place: the open conversation, in the
 // home project (#/c/<ulid>) or another one (#/p/<ulid>/c/<ulid>; #/p/<ulid>/ is a new one there),
-// and Settings over it (D137), so reloading, sharing the tab or going back shows the same content.
-// A hash works on any static host and never reaches the server. The unsent draft survives a
-// reload too, per place, in this tab only (sessionStorage).
-import { effect } from '@preact/signals-core'
+// Settings over it (D137), and the windows beside it (D220, ui/windows.js), so reloading, sharing
+// the tab or going back shows the same content. A hash works on any static host and never reaches
+// the server. The unsent draft survives a reload too, per place, in this tab only (sessionStorage).
+import { effect, signal } from '@preact/signals-core'
 import { app, openConversation, newConversation, enterProject } from './state.js'
 import { join } from '../core/fs.js'
 
@@ -33,16 +33,20 @@ export function hashFor(project, id) {
 /** @param {string} place @param {string | null} section */
 export const withSettings = (place, section) => (section ? `${place.replace(/\/?$/, '/')}settings${section === 'general' ? '' : `/${section}`}` : place)
 
+/** The windows beside the place, as ui/windows.js writes them. */
+export const beside = signal('')
+
 /** @param {string} a @param {string} b */
 const samePlace = (a, b) => JSON.stringify(placeIn(a)) === JSON.stringify(placeIn(b))
 const place = () => hashFor(app.project.value, app.current.value?.id ?? null)
-const here = () => withSettings(place(), app.dialog.value === 'settings' ? app.section.value : null)
+const here = () => withSettings(place(), app.dialog.value === 'settings' ? app.section.value : null) + (beside.value && `?${beside.value}`)
 
 let following = false
 let backing = false
 
-/** Opens what the address points at; an unknown project or conversation falls back to a new one at home. */
-async function follow() {
+/** Opens what the address points at, with its windows unless it stays in the place; an unknown project or conversation falls back to a new one at home. */
+async function follow(windows = true) {
+  const asked = /\?(.*)/.exec(location.hash)?.[1] ?? ''
   following = true
   try {
     const { project: id, conversation } = placeIn(location.hash)
@@ -57,6 +61,10 @@ async function follow() {
     const section = settingsIn(location.hash)
     if (section) app.section.value = section
     if (section || app.dialog.value === 'settings') app.dialog.value = section ? 'settings' : null
+    if (windows && (asked || beside.peek())) {
+      beside.value = asked
+      import('./windows.js').then((module) => module.follow(asked))
+    }
   } finally {
     following = false
     write(true)
@@ -69,15 +77,17 @@ export function returnTo(hash) {
   return follow()
 }
 
-// One history entry per place, and per opening of Settings, which Back closes; its sections share
-// it. Closed where it opened, Settings goes back to the entry before, so Back won't open it again.
+// One history entry per place, and per opening of Settings, which Back closes; its sections and
+// the windows share it. Closed where it opened, Settings goes back to the entry before, so Back
+// won't open it again.
 function write(followed = false) {
   const address = here()
   const now = location.hash
   const moved = !samePlace(now, address)
   const open = settingsIn(now)
-  if (following || backing || (!moved && open === settingsIn(address))) return
-  if (!followed && (moved || !open)) history.pushState(!moved && 'over', '', address)
+  if (following || backing || address === now) return
+  if (!moved && open === settingsIn(address)) history.replaceState(history.state, '', address)
+  else if (!followed && (moved || !open)) history.pushState(!moved && 'over', '', address)
   else if (followed || settingsIn(address) || history.state !== 'over') history.replaceState(history.state, '', address)
   else {
     backing = true
@@ -97,7 +107,7 @@ function drafts() {
 export async function startRouter() {
   await follow()
   addEventListener('hashchange', () => {
-    if (!backing) return follow()
+    if (!backing) return follow(!samePlace(location.hash, place()))
     backing = false
     write()
   })

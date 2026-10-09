@@ -20,6 +20,7 @@ import { listSkills } from '../../core/skills.js'
 import { metaRecord, splitSuggestions } from '../../core/events.js'
 import { runFlow, fromSteps, askOf, fill, fillArgs, kindOf, result as resultOf } from './run.js'
 import { flowNamed } from './graph.js'
+import { keep } from '../../ui/windows.js'
 
 /** @typedef {import('./run.js').Flow} Flow */
 /** @typedef {import('./run.js').Step} Step */
@@ -237,6 +238,17 @@ export async function edit(id) {
 export const here = () => (app.current.peek()?.records.length ? show('task') : edit())
 // A message sent, or a task opened, leaves flow mode: the conversation takes the main area.
 effect(() => { if (app.current.value?.records.length) editing.value = null })
+// In the address (D220), as it shows: on a new task, flow mode's flow; beside a task, the task or a flow of it.
+keep('flow', {
+  get: () => editing.value ?? (open.value && app.current.value?.records.length ? shown.value : null),
+  set: (state) => {
+    if (state === null) {
+      editing.value = null
+      close()
+    } else if (app.current.peek()?.records.length) show(state || 'task')
+    else edit(state || undefined)
+  },
+})
 
 /** Runs a flow in a task of its own, named after it: its steps are the turn, what they give the answer. Its steps then show beside it. @param {Saved} flow */
 export async function runNow(flow) {

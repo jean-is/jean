@@ -17,6 +17,7 @@ import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
 import { viewOf } from './view.js'
+import { keep } from './windows.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
 
@@ -36,6 +37,15 @@ addEventListener('message', ({ source, data }) => {
 
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
+// In the address (D220): the file on show, by its place in the project, which says its name and kind.
+keep('preview', {
+  get: () => shown.value?.uri ?? null,
+  set: async (uri) => {
+    if (uri === null) return close()
+    const meta = /^files\/[^/]+$/.test(uri) && uri !== shown.peek()?.uri && await fileMeta(app.fs, app.projectDir, uri)
+    if (meta) preview({ uri, name: meta.name, mimeType: meta.mimeType })
+  },
+})
 
 // The versions of the file on show, when Jean made it: each one the conversation kept, oldest first (D164).
 const versions = computed(() => {

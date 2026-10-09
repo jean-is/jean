@@ -443,8 +443,10 @@ test('the project’s workspace in the browser: a page that uses its other files
   await expect(pane.locator('.browser-bar input')).toHaveValue('site/index.html')
   await expect(shown.locator('h1')).toHaveText('Loading')
   await expect(page.locator('app-preview .preview')).toHaveCount(0)
-  // Opened empty, after a reload, it offers the workspace, which is kept (Playwright's WebKit keeps nothing, like a private window).
+  // Closed, then opened empty after a reload (an open one comes back on its page, D220), it offers
+  // the workspace, which is kept (Playwright's WebKit keeps nothing, like a private window).
   if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return
+  await pane.getByRole('button', { name: 'Close' }).click()
   await page.reload()
   await page.locator('.views .browser-toggle').click()
   await pane.getByRole('button', { name: /Show .*\/workspace/ }).click()
