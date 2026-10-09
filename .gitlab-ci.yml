@@ -29,7 +29,8 @@ check:
 e2e:
   stage: test
   variables:
-    PLAYWRIGHT_JUNIT_OUTPUT_NAME: playwright-report/junit.xml
+    # From the working directory: the report's name alone would land beside test/playwright.config.js.
+    PLAYWRIGHT_JUNIT_OUTPUT_FILE: playwright-report/junit.xml
   script:
     - npm run build
     - npm run e2e -- --reporter=list,junit

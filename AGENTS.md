@@ -80,7 +80,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 ## Testing
 
 - Use `node --test` for `core/`, test-first for `core/` and storage.
-- One Playwright smoke test per capability, in `e2e/`, run in Chromium and WebKit against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers.
+- One Playwright smoke test per capability, `test/<capability>.spec.js` beside the unit tests' `*.test.js`, run in Chromium and WebKit against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers.
 - Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
 
 ## Commands

@@ -104,7 +104,7 @@ test('@ attaches a file shared before and points at an earlier task', async ({ p
 
 test('@ points at a file of the conversation’s folder', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'Chromium opens a folder in place; elsewhere it is a copy')
-  // The system's folder picker, played by a folder of the private file system (as e2e/folders.spec.js does).
+  // The system's folder picker, played by a folder of the private file system (as folders.spec.js does).
   await page.addInitScript(() => Object.assign(window, {
     showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Clients'),
   }))

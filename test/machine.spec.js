@@ -90,7 +90,7 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
   const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
   const bin = join(disk, 'bin')
   mkdirSync(bin)
-  writeFileSync(join(bin, 'claude'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('../test/fixtures/claude.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
+  writeFileSync(join(bin, 'claude'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/claude.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
   await start(page)
   await page.locator('.brain-chip').click()
   const settings = page.locator('app-settings dialog[open]')

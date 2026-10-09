@@ -8,5 +8,5 @@ test('jean-cli holds every module it reaches, through import() too, its strings,
   for (const path of ['cli/main.js', 'cli/acp.js', 'app/core/loop.js', 'app/core/anthropic.js', 'app/caps/folders/work.js', 'app/caps/made/formats.js', 'app/bridge/bridge.js', 'gateway/serve.js', 'cli/locales/en.json', 'cli/locales/zh-Hant.json', 'app/brand.js', 'LICENSE']) {
     assert.ok(files.includes(path), path)
   }
-  assert.deepEqual(files.filter((path) => /^(app\/(ui|vendor|ee|locales)|test|e2e|docs)\//.test(path)), [])
+  assert.deepEqual(files.filter((path) => /^(app\/(ui|vendor|ee|locales)|test|docs)\//.test(path)), [])
 })

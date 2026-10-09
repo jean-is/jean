@@ -1,6 +1,7 @@
 // Smoke tests, one per capability (AGENTS.md), in a real browser engine: the sandbox needs
 // one (an opaque-origin frame running a classic worker). Jean is served as written, and a
-// deterministic fake brain answers (D37). Usage: npm run e2e
+// deterministic fake brain answers (D37). Each is a <capability>.spec.js, beside the unit tests'
+// *.test.js, which node --test runs (D247). Usage: npm run e2e
 import { defineConfig, devices } from '@playwright/test'
 
 const APP = 4180
@@ -13,6 +14,7 @@ const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
 
 export default defineConfig({
   testDir: '.',
+  testMatch: '**/*.spec.js',
   timeout: 60_000,
   fullyParallel: true,
   // The tests mostly wait, on the fake brain and on timers, so more of them than the default half

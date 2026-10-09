@@ -1,5 +1,5 @@
 // Questions for the user (D146): what the brain asks, how each question starts on its card, and
-// the answers it gets back. The card itself is in e2e/ask.spec.js.
+// the answers it gets back. The card itself is in ask.spec.js, beside this.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { questionsOf, start, answered, reply, MAX_QUESTIONS, MAX_OPTIONS } from '../app/caps/ask/answers.js'

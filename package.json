@@ -22,7 +22,7 @@
     "budgets": "node scripts/budgets.js",
     "typecheck": "tsc --noEmit -p .",
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
-    "e2e": "playwright test -c e2e",
+    "e2e": "playwright test -c test",
     "reflexes": "node scripts/reflexes.js",
     "directory": "node scripts/directory.js"
   },

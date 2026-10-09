@@ -87,9 +87,10 @@ gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (No
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
 deploy/           docker/, the container image (D232)
 scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, cli.js, icons.js, screenshots.js, reflexes.js, directory.js
-test/             node --test suites; fixtures/ (the fake brain, a fake MCP mail service with sign-in, a fake skills index);
-                  reflexes/ (the multilingual reflex test set and results.md)
-e2e/              Playwright smoke tests, one per capability, in Chromium and WebKit
+test/             <name>.test.js, run by node --test, and <capability>.spec.js, Playwright's smoke tests in Chromium and
+                  WebKit, one per capability, side by side (D247), with helpers.js and playwright.config.js; fixtures/ (the
+                  fake brain, a fake MCP mail service with sign-in, a fake skills index), which both use; reflexes/ (the
+                  multilingual reflex test set and results.md)
 ```
 
 Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `cells.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
