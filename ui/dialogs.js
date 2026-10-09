@@ -11,7 +11,7 @@ import {
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
-import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, accept, begin, unlockAll } from './discovery.js'
+import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
 import { usedIn } from '../core/settings.js'
@@ -704,7 +704,7 @@ class Settings extends Element {
 // circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', computer: 'code', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm',
+  files: 'file', made: 'table', computer: 'code', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'folder', folders: 'computer', skills: 'scroll', routines: 'alarm', flows: 'flow',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
@@ -712,6 +712,7 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
   connections: () => openSettings('connections'), computer: () => openSettings('computer'), machine: () => openSettings('computer'), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
+  flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.show()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
@@ -719,7 +720,7 @@ const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [app.conversations.value.length, 2], backup: () => [app.conversations.value.length, 3],
   find: () => [app.conversations.value.length, FINDABLE], search: () => [app.conversations.value.length, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
-  browser: () => [effective.value.settings.browsed ?? 0, BROWSED] })
+  browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 const picked = signal('')
 
 /** @param {string} id */

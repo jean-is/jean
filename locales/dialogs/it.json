@@ -108,6 +108,8 @@
   "routines.confirmDelete": "Eliminare la routine «{title}»?",
   "routines.run": "Esegui ora",
   "routines.runs": "Esecuzioni precedenti",
+  "cap.flows.hint": "Chiedi due volte qualcosa che richiede diversi passaggi.",
+  "cap.flows.text": "I passaggi di un compito che ripeti, disegnati accanto alla conversazione: guardali, cambiali e rieseguili a mano o secondo un programma. Anche qualsiasi compito si può vedere come flusso.",
   "skills.from": "Da {source}",
   "skills.elsewhere": "Abilità da altrove",
   "skills.elsewhereText": "Abilità già pronte pubblicate da siti e organizzazioni. Vengono confrontate con le tue richieste su questo dispositivo, e una viene aggiunta solo se la scegli, dopo averne letto i passaggi.",

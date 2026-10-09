@@ -268,8 +268,9 @@ function routineView(routine) {
           @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : nothing}
         <input type="time" .value=${live(routine.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>
       </div>
-      <label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
-        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>
+      ${routine.flow ? html`<p><button class="link-button" title=${t('cap.flows.name')} @click=${() => { app.dialog.value = null; import('../caps/flows/flows.js').then((flows) => flows.show(routine.flow)) }}>${icons.flow}
+        <span dir="auto">${routine.request}</span></button></p>` : html`<label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
+        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>`}
       ${runs.length ? html`<div class="routine-runs">${t('routines.runs')}<ul aria-label=${t('routines.runs')}>${runs.map((run) => html`<li>
         <button class="button" @click=${() => openConversation(run.path)}>${when.format(new Date(run.createdAt))}</button></li>`)}</ul></div>` : nothing}
       <div class="row"><button class="button subtle danger" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button></div>

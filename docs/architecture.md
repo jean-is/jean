@@ -72,10 +72,10 @@ ui/               app.js (start), shell.js, base.js, state.js (signals; what the
                   two sides of a model's worker: the device's brain, Intuition, dictation), style.css (the room) and
                   looks/<id>.css (the other themes)
 caps/<id>/        one folder per capability: files made backup brain-local voice reflexes memory projects skills search
-                  connections live helpers check since names routines find browser ask you folders sync computer math
+                  connections live helpers check since names routines flows find browser ask you folders sync computer math
                   charts scores machine slides
 locales/          <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
-                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ (D97)
+                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ (D97)
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
 scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, icons.js, screenshots.js, reflexes.js, directory.js
 gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
@@ -86,7 +86,7 @@ e2e/              Playwright smoke tests, one per capability, in Chromium and We
 ee/               the enterprise integrations, Elastic-2.0 (D139)
 ```
 
-Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/slides/deck.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
+Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
 
 ## Brand
 
@@ -134,6 +134,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 | Memory | `remember`, `recall` |
 | Skills | `skill`, `save_skill`, `suggest_skill` (deferred) |
 | Routines | `schedule` (D122) |
+| Flows | `save_flow`, `run_flow`; *`flow_step`*, called by `run_flow` (D218) |
 | Web search | `web_search`, the provider's own where it has one (D91) |
 | Browser | `browse` (D140) |
 | Helpers | `delegate`; *`helper`*, called by `delegate` |
@@ -200,7 +201,8 @@ Follow-ups are one yes/no question each rather than one choice, because several 
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
   skills/<name>/SKILL.md         global skills (metadata: format, author, created; source and digest when from elsewhere;
                                  blocks, the kinds of block it writes that are drawn as widgets, D196)
-  routines/<ulid>.md             the home project's routines (front matter: the schedule, lastRun; body: the request)
+  routines/<ulid>.md             the home project's routines (front matter: the schedule, lastRun, the flow it runs; body: the request)
+  flows/<ulid>.json              the home project's flows: format, name, author, createdAt, updatedAt, steps, wires (D218)
   projects/
     <ulid>-<slug>/
       project.md                 format, name, colour, default (home), cloud: false, createdAt, by, assistantName, folder;
@@ -209,6 +211,7 @@ Follow-ups are one yes/no question each rather than one choice, because several 
       memory.md                  this project's (the home project uses the global one)
       skills/<name>/SKILL.md
       routines/<ulid>.md
+      flows/<ulid>.json
       files/sha256-<hash>.<ext>  original
       files/sha256-<hash>.md     extracted text, a "[[page N]]" line before each page
       files/sha256-<hash>.meta.json
@@ -409,6 +412,14 @@ A connection is an address and, when the service asks, a key or a sign-in (D87�
 - **Jean's own directory** (D196): `caps/skills/directory.js` lists its skills with their icons; each is `caps/skills/directory/<name>/SKILL.md`, the one kind of Markdown the build ships (`isShipped`), cached with the skills capability. They are read when Settings › Skills shows them, as tiles named by the dialogs' `skill.<name>`, and when a request is compared with ready-made skills; one is added from its own file, with no source or digest. The everyday ones come first (D208), steps alone that lean on `write`, `ask_user` and the chart widget. A skill may need a capability rather than a widget: PowerPoint (`pptx`, D201) has the brain install pptxgenjs from npm in the computer's home folder and run a script there, which saves the deck in /workspace.
 - **Widgets** (D196): a skill declares the kinds of block it writes in `metadata.blocks`. The skills capability keeps the kinds the room's skills declare in `declared` (`ui/markdown.js`), read again in a new room and whenever a skill comes or goes, and `ui/markdown.js` draws a declared block it has a widget for: ```echarts as `<app-chart>`, ```abc as `<app-score>`, ```marp as `<app-slides>`, each element defined by its capability, which the first one unlocks (never remembered, so never loaded at the start). Until it has loaded, the block's source shows; `.is-streaming` on the answer tells a widget that its block may still be partial, and `open` tells a chart or a deck that its closing fence, which marked doesn't wait for, isn't written yet: until it is, the chart draws what is whole of the block so far (`soFar()` in `option.js`), on the same chart, and the deck shows its last slide. A deck lexes its block with `lex()` and draws each slide's tokens with `blocks()` and `inline()`, so a slide's tables, formulas and charts are the answer's own. A fence still on its first line shows nothing yet.
 - **Routines** (D122): `caps/routines/schedule.js` reads and writes `routines/<ulid>.md` and says when one falls due, in local time, with working days from `Intl.Locale`'s week information. `caps/routines/routines.js` looks every half minute and when Jean comes free, runs a due routine of the room's project once nothing is under way and the user isn't reading (Web Locks keep it to one tab), and sends its request after a `routine` note. Nothing runs while the tab is closed; a routine that fell due meanwhile runs once at the next visit. A conversation is a run by that note (`routineOf()` in `core/events.js`): its summary carries the routine's file, `oneRowEach()` in `core/conversations.js` makes a routine's runs one row in the drawer, its newest, with the earlier ones `ui/inbox.js` unfolds under it, `ui/title.js` names a run after its routine, and `ui/knows.js` lists them under it. The note also gives how many runs came before, when the last ran and that run as `digest()` (`ui/mentions.js`) writes it, 8,000 characters at most; `routine_runs` lists a routine's runs, when each fell due and ran, or gives a day's as they went.
+
+## Flows
+
+`caps/flows/flows.js` is the capability (D218): the room's flows (`flows/<ulid>.json`, read with `readJSON`, kept whole), the tools, the pane's state and Run and Schedule. `run.js` is the engine, pure: the order (Kahn's), the steps run three at a time once those they take are done, `{{Name}}` filled (a string literal in `code`), once per item, a step that gives nothing, the result, the layout by depth, and `fromSteps()`, which makes a flow of steps named by the brain. `graph.js` draws a conversation as a flow from `foldTurns()` and the answer being written, and says what became of each call (`stateOf()`). `canvas.js` is `app-flows`, a pane of the dock.
+
+- **A run.** `run_flow` calls the hidden `flow_step` for each step (`rawInput.step` its id), which reads a text or a file, calls the step's tool through `ctx.call`, or runs an Ask as a child turn (`ctx.turn`, a helper's tools without `ask_user`, eight steps); each is a nested call, under the rules. Run and a routine's `flow` send the flow's name with `call`: `runAgent` starts the turn on that one call (`resume` at step 0, `maxSteps: 1`), and `_meta.answer`, what the last texts, files and Asks gave, is kept as the answer.
+- **States** come from the records alone (D216): done, failed, declined, waiting for the user (`_meta.waiting`, or a card in the inbox), running while the answer is written, cut short when a start was kept with no end; a flow's step with no call yet is queued while its run goes on and skipped once it ended, and one that gave nothing is "gave nothing".
+- **The canvas** places each card through CSSOM (`--x`, `--y`, from the start of the line), and the wires in an SVG mirrored in right-to-left. A flow's card moves with the pointer (captured, snapped to 8 px) or the arrow keys; a wire is drawn from a card's end to another card, or ticked in the step's form, refused when it would close a circle; a change shows at once and is kept 400 ms later. A task's card opens its line in the conversation (`data-call`).
 
 ## Folders
 

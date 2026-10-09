@@ -22,6 +22,7 @@ import { ulid } from './ulid.js'
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
+ * @property {number} [stepped]                how many requests took several calls (Flows is offered, D218)
  * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
  * @property {boolean} [terminal]             the user opened the terminal: the bar has a button for it (D166)
  * @property {{ width?: number, sizes?: Record<string, number> }} [dock]  how wide the dock is (a share of the window) and each pane's share of it, as the user set them (D144)

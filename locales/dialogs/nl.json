@@ -106,6 +106,8 @@
   "routines.confirmDelete": "Routine ‘{title}’ verwijderen?",
   "routines.run": "Nu uitvoeren",
   "routines.runs": "Eerdere uitvoeringen",
+  "cap.flows.hint": "Vraag twee keer om iets dat meerdere stappen kost.",
+  "cap.flows.text": "De stappen van een taak die je herhaalt, naast het gesprek getekend: bekijk ze, verander ze en voer ze opnieuw uit, met de hand of volgens een schema. Elke taak is ook als stroom te bekijken.",
   "skills.from": "Van {source}",
   "skills.elsewhere": "Vaardigheden van elders",
   "skills.elsewhereText": "Kant-en-klare vaardigheden die websites en organisaties publiceren. Ze worden op dit apparaat vergeleken met je verzoeken, en er wordt er pas een toegevoegd als je die kiest, nadat je de stappen hebt gelezen.",

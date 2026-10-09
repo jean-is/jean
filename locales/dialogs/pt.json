@@ -108,6 +108,8 @@
   "routines.confirmDelete": "Eliminar a rotina «{title}»?",
   "routines.run": "Executar agora",
   "routines.runs": "Execuções anteriores",
+  "cap.flows.hint": "Peça duas vezes algo que leve vários passos.",
+  "cap.flows.text": "Os passos de uma tarefa que repete, desenhados ao lado da conversa: veja-os, mude-os e volte a executá-los à mão ou num horário. Qualquer tarefa também pode ser vista como fluxo.",
   "skills.from": "De {source}",
   "skills.elsewhere": "Competências de outros lados",
   "skills.elsewhereText": "Competências já feitas, publicadas por sites e organizações. São comparadas com os teus pedidos neste dispositivo, e uma só é adicionada quando a escolhes, depois de leres os passos.",

@@ -14,7 +14,8 @@ import { parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
  * month's last day instead); at: the local time, "HH:MM". weekday: the days that aren't the
  * weekend where the user lives.
  * @typedef {{ every: 'day' | 'weekday' | 'week' | 'month', on?: number, at: string }} Schedule
- * @typedef {Schedule & { path: string, title: string, request: string, author: string, createdAt: string, lastRun?: string }} Routine
+ * flow: the id of a flow the routine runs, its request then the flow's name (D218).
+ * @typedef {Schedule & { path: string, title: string, request: string, author: string, createdAt: string, lastRun?: string, flow?: string }} Routine
  */
 
 export const EVERY = /** @type {const} */ (['day', 'weekday', 'week', 'month'])
@@ -94,7 +95,7 @@ export function parseRoutine(text, path) {
   const plan = schedule(data)
   const request = body.trim()
   if (!plan || !request || !data.title) return null
-  return { ...plan, path, title: String(data.title), request, author: String(data.author ?? ''), createdAt: String(data.createdAt ?? ''), ...(data.lastRun && { lastRun: String(data.lastRun) }) }
+  return { ...plan, path, title: String(data.title), request, author: String(data.author ?? ''), createdAt: String(data.createdAt ?? ''), ...(data.lastRun && { lastRun: String(data.lastRun) }), ...(data.flow && { flow: String(data.flow) }) }
 }
 
 /** The routines in a folder ('' for the home project's), oldest first. @param {FS} fs @param {string} dir @returns {Promise<Routine[]>} */
@@ -106,14 +107,14 @@ export async function listRoutines(fs, dir) {
 
 /**
  * A new routine, in a file named by a ULID that never changes.
- * @param {string} dir @param {{ title: string, request: string, by: string, now?: Date } & Schedule} fields @returns {Routine}
+ * @param {string} dir @param {{ title: string, request: string, by: string, now?: Date, flow?: string } & Schedule} fields @returns {Routine}
  */
-export function newRoutine(dir, { title, request, by, now = new Date(), ...plan }) {
-  return { ...plan, path: join(dir, 'routines', `${ulid(now.getTime())}.md`), title, request, author: by, createdAt: now.toISOString() }
+export function newRoutine(dir, { title, request, by, now = new Date(), flow, ...plan }) {
+  return { ...plan, path: join(dir, 'routines', `${ulid(now.getTime())}.md`), title, request, author: by, createdAt: now.toISOString(), ...(flow && { flow }) }
 }
 
 /** Writes a routine whole (a change, or the time it last ran). @param {FS} fs @param {Routine} routine */
-export async function writeRoutine(fs, { path, title, request, every, on, at, author, createdAt, lastRun }) {
-  const data = { format: 1, title, every, ...(on !== undefined && { on }), at, author, createdAt, ...(lastRun && { lastRun }) }
+export async function writeRoutine(fs, { path, title, request, every, on, at, author, createdAt, lastRun, flow }) {
+  const data = { format: 1, title, every, ...(on !== undefined && { on }), at, ...(flow && { flow }), author, createdAt, ...(lastRun && { lastRun }) }
   await fs.write(path, stringifyFrontMatter(data, `${request.trim()}\n`))
 }

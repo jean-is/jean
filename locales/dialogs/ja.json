@@ -104,6 +104,8 @@
   "routines.confirmDelete": "ルーティン「{title}」を削除しますか？",
   "routines.run": "今すぐ実行",
   "routines.runs": "これまでの実行",
+  "cap.flows.hint": "いくつもの手順がかかることを2回頼む。",
+  "cap.flows.text": "繰り返す作業の手順を会話の横に描きます。見て、変えて、手動または予定どおりにもう一度実行できます。どのタスクもフローとして見られます。",
   "skills.from": "提供元：{source}",
   "skills.elsewhere": "ほかの場所のスキル",
   "skills.elsewhereText": "サイトや組織が公開している既製のスキルです。このデバイス上であなたの依頼と照らし合わせ、手順を読んだうえで選んだときだけ追加されます。",

@@ -7,7 +7,7 @@
 // Routines lists, changes and deletes them, with their runs. A run comes with the last one as it
 // went, and `routine_runs` reads the others.
 import { effect } from '@preact/signals-core'
-import { register, loaded } from '../../ui/caps.js'
+import { register, loaded, unlock } from '../../ui/caps.js'
 import { app, brainsHere, newConversation, notify, send } from '../../ui/state.js'
 import { loadConversation } from '../../core/conversations.js'
 import { noteRecord, routineOf } from '../../core/events.js'
@@ -40,14 +40,14 @@ const runsOf = (path) => app.conversations.peek().filter((item) => item.routine 
 const scheduleTool = {
   spec: {
     name: 'schedule',
-    description: 'Make a routine: a request you send yourself on a schedule, in a conversation of its own, when the user wants something done regularly. title: a few words; request: what to do, as the user would ask it, standing on its own since a run doesn’t see this conversation (where the data is, what to work out, what to report); both in the user’s language. every: day, weekday (working days), week or month; on: the day of the week (monday…sunday) or of the month (1–31); at: the local time, HH:MM.',
+    description: 'Make a routine: a request you send yourself on a schedule, in a conversation of its own, when the user wants something done regularly. title: a few words; request: what to do, as the user would ask it, standing on its own since a run doesn’t see this conversation (where the data is, what to work out, what to report); both in the user’s language. Or flow: the name of one of the user’s flows, which the routine runs instead. every: day, weekday (working days), week or month; on: the day of the week (monday…sunday) or of the month (1–31); at: the local time, HH:MM.',
     parameters: {
       type: 'object',
       properties: {
-        title: { type: 'string' }, request: { type: 'string' },
+        title: { type: 'string' }, request: { type: 'string' }, flow: { type: 'string' },
         every: { type: 'string', enum: ['day', 'weekday', 'week', 'month'] }, on: { type: 'string' }, at: { type: 'string' },
       },
-      required: ['title', 'request', 'every', 'at'],
+      required: ['title', 'every', 'at'],
     },
   },
   kind: 'edit',
@@ -55,10 +55,13 @@ const scheduleTool = {
   run: async (args) => {
     const plan = schedule(args ?? {})
     const title = String(args?.title ?? '').trim()
-    const request = String(args?.request ?? '').trim()
+    // A flow it runs, by name (D218): its request is then the flow's name.
+    const flow = args?.flow && loaded.peek().has('flows') ? (await import('../flows/graph.js')).flowNamed(await (await import('../flows/flows.js')).refresh(), args.flow) : undefined
+    if (args?.flow && !flow) throw new Error(`No flow is called "${args.flow}".`)
+    const request = flow?.name ?? String(args?.request ?? '').trim()
     if (!plan) throw new Error('A routine needs every (day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday) or a month (1–31).')
     if (!title || !request) throw new Error('A routine needs a title and a request.')
-    await writeRoutine(app.fs, newRoutine(folder(), { title, request, by: 'jean', ...plan }))
+    await writeRoutine(app.fs, newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: /** @type {any} */ (flow).id }), ...plan }))
     notify(t('routines.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('routines')) })
     return `Made the routine "${title}": ${inEnglish(plan)}. It runs while the user has you open, or as soon as they open you after it falls due. Suggest they run it once now with Run now in Settings › Routines, to allow what it needs while they watch.`
   },
@@ -143,7 +146,9 @@ async function run(path, now, asked = false) {
   await writeRoutine(app.fs, { ...routine, lastRun: now.toISOString() })
   const told = await note(routine, time, asked)
   newConversation()
-  await send(routine.request, { notes: [told] })
+  // A routine that runs a flow: its steps are the turn (D218).
+  if (routine.flow && await unlock('flows')) await send(routine.request, { notes: [told], call: { name: 'run_flow', args: { flow: routine.flow, name: routine.request } } })
+  else await send(routine.request, { notes: [told] })
 }
 /** @param {string} path */
 export const runNow = (path) => run(path, new Date(), true)

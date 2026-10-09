@@ -104,6 +104,8 @@
   "routines.confirmDelete": "Padam rutin “{title}”?",
   "routines.run": "Jalankan sekarang",
   "routines.runs": "Larian terdahulu",
+  "cap.flows.hint": "Minta dua kali sesuatu yang memerlukan beberapa langkah.",
+  "cap.flows.text": "Langkah-langkah tugas yang anda ulangi, dilukis di sebelah perbualan: lihat, ubah dan jalankan semula secara manual atau mengikut jadual. Sebarang tugas juga boleh dilihat sebagai aliran.",
   "skills.from": "Daripada {source}",
   "skills.elsewhere": "Kemahiran dari tempat lain",
   "skills.elsewhereText": "Kemahiran sedia ada yang diterbitkan oleh laman web dan organisasi. Ia dibandingkan dengan permintaan anda pada peranti ini, dan satu hanya ditambah apabila anda memilihnya selepas membaca langkahnya.",

@@ -106,6 +106,8 @@
   "routines.confirmDelete": "Burahin ang rutinang “{title}”?",
   "routines.run": "Patakbuhin ngayon",
   "routines.runs": "Mga nakaraang takbo",
+  "cap.flows.hint": "Humiling nang dalawang beses ng bagay na ilang hakbang ang kailangan.",
+  "cap.flows.text": "Ang mga hakbang ng gawaing inuulit mo, nakaguhit sa tabi ng usapan: tingnan, baguhin, at patakbuhin ulit nang mano-mano o ayon sa iskedyul. Anumang gawain ay makikita rin bilang daloy.",
   "skills.from": "Mula sa {source}",
   "skills.elsewhere": "Mga kasanayan mula sa ibang lugar",
   "skills.elsewhereText": "Mga handang kasanayan na inilalathala ng mga site at organisasyon. Inihahambing ang mga ito sa mga kahilingan mo sa device na ito, at idinadagdag lang ang isa kapag pinili mo ito matapos basahin ang mga hakbang nito.",

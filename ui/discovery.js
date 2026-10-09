@@ -18,7 +18,7 @@ import { host } from './host.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'search', 'browser', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -29,6 +29,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   folders: 'opening a folder of their computer, to find, read and change its files where they are, showing each change first',
   skills: 'saving how a task the user repeats is done, to do it the same way every time',
   routines: 'doing a task on its own on a schedule (every day, week or month), while the user has you open or as soon as they are back',
+  flows: 'the steps of a task the user repeats, drawn beside the conversation, which they see, change and run again by hand or on a schedule',
   search: 'searching the web, when a question needs current or specific facts',
   browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
   machine: "running your commands on the user's own computer instead of the sandbox, in a folder of theirs, with its programs and ports, so a site's dev server (npm run dev) serves and shows in the browser; they paste a line in a terminal there",
@@ -109,6 +110,8 @@ export async function accept(id) {
   // Offered after the same kind of request a third time: make this one the first skill, or the
   // first routine when it came on three different days.
   if (id === 'skills' || id === 'routines') follow(id === 'skills' ? 'skill' : 'routine')
+  // Offered after a task of several steps: those steps become the first flow.
+  else if (id === 'flows' && stepped(app.current.peek()?.records ?? [])) follow('flow')
   else begin(id)
 }
 
@@ -120,6 +123,7 @@ export async function begin(id) {
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
   if (id === 'find') app.dialog.value = 'find'
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
+  if (id === 'flows') (await import('../caps/flows/flows.js')).show('task')
   if (id === 'machine') (await import('./dialogs.js')).openSettings('computer')
   // A folder to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
   if (id === 'folders' || id === 'sync') {
@@ -285,6 +289,12 @@ function sameKind(records, id) {
 /** Whether something the user keeps already covers a request: one of these texts is of its kind. @param {string} opening @param {string[]} texts */
 const covered = (opening, texts) => alike(opening, texts).some((score) => score >= SAME_KIND)
 
+/** Tasks of several steps before Flows is offered, and the calls that make one (D218). */
+export const STEPPED = 2
+const STEPS = 4
+/** Whether the last request took several calls: steps a flow could keep. @param {import('../core/types.js').Envelope[]} records */
+const stepped = (records) => (foldTurns(records).at(-1)?.steps ?? []).flatMap((step) => step.tools).filter((tool) => tool.name && !tool._meta?.parent).length >= STEPS
+
 /** Requests made on three different days look like a habit a routine could keep (D122). @param {Date[]} times */
 const habitual = (times) => new Set(times.map((time) => time.toDateString())).size >= 3
 
@@ -314,6 +324,15 @@ export async function followUps(answer, records, { id, path }) {
     else if (!covered(kind.opening, (await routines.routines()).map((routine) => `${routine.title} ${routine.request}`))) ids.push('routine')
   }
   if (path && skills?.suggested.has(path)) ids.push('ready')
+  // A task of several steps could be a flow, to see and run again (D218); twice, and Flows is offered.
+  if (stepped(records) && !isDenied('flows')) {
+    if (loaded.value.has('flows')) ids.push('flow')
+    else {
+      const count = (effective.value.settings.stepped ?? 0) + 1
+      await updateSettings({ stepped: count })
+      if (count >= STEPPED) offerOnce('flows')
+    }
+  }
   const decide = loaded.value.get('reflexes')?.decide
   const result = decide ? await quickly(decide(clip(answer), FOLLOW_UPS), 4000) : null
   for (const [id, answer] of Object.entries(result ?? {})) if (answer.type === 'noul' && answer.noul >= YES) ids.push(id)

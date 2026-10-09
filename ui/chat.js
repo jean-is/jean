@@ -4,7 +4,7 @@ import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind } from './state.js'
-import { unlock, SIZES } from './caps.js'
+import { unlock, loaded, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
@@ -247,7 +247,9 @@ function activity(steps, text, streaming, files) {
   // A request that failed is asked again after a moment (D202).
   const summary = streaming
     ? t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
-    : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : t('activity.answeredWith', { brain: last ? brainName(last) : '' })
+    : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : last ? t('activity.answeredWith', { brain: brainName(last) })
+      // A turn that was one call, with no brain asked (a flow run, D218): what that call did.
+      : toolLabel(tools.findLast((tool) => !tool._meta?.parent) ?? /** @type {ToolCallInfo} */ ({ toolCallId: '', title: '' }))
   // The offer made here, not in a conversation out of sight (D147).
   const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // What each brain step thought and wrote.
@@ -275,7 +277,7 @@ function activity(steps, text, streaming, files) {
     <details class="activity" data-status=${status}>
       <summary><span class="ember" aria-hidden="true"></span><span>${summary}</span>${icons.chevron}</summary>
       <ol class="activity-list">
-        ${repeat(rows, (row) => row.key, ({ entry, depth }) => html`<li data-status=${entry.status ?? 'pending'} class=${depth ? 'is-nested' : ''}
+        ${repeat(rows, (row) => row.key, ({ entry, depth }) => html`<li data-status=${entry.status ?? 'pending'} data-call=${entry.toolCallId} class=${depth ? 'is-nested' : ''}
           data-depth=${entry.name || depth ? depth : nothing}>
           <details class="step">
             <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${entry.name ? toolLabel(entry, files) : brainLine(entry)}</span>${icons.chevron}</summary>
@@ -283,6 +285,7 @@ function activity(steps, text, streaming, files) {
           </details>
         </li>`)}
       </ol>
+      ${loaded.value.has('flows') && tools.length ? html`<button class="link-button activity-flow" @click=${() => import('../caps/flows/flows.js').then((flows) => flows.show('task'))}>${t('activity.asFlow')}</button>` : nothing}
     </details>
     ${streaming ? inbox(entries, files) : nothing}
     ${streaming && offering ? offerCard(offering) : nothing}`
@@ -380,7 +383,7 @@ function offerCard({ id, resolve }) {
 }
 
 /** Brain label rendered in the current language from structured data. @param {ToolCallInfo} entry */
-function brainName(entry) {
+export function brainName(entry) {
   const { provider, model } = entry.rawInput ?? {}
   return provider && model ? brainLabel(/** @type {any} */ ({ provider, model, api: provider === 'device' ? 'device' : '' })) : entry.title
 }
@@ -390,7 +393,7 @@ function brainName(entry) {
  * from the tool's name; the brain's own title is the last resort.
  * @param {ToolCallInfo} tool @param {ResourceLink[]} [files]
  */
-function toolLabel(tool, files = []) {
+export function toolLabel(tool, files = []) {
   if (tool.name === 'helper') return tool.rawInput?.title ?? tool.title
   if (tool.name === 'write') return t('tool.write', { name: tool.rawInput?.name ?? '' })
   const path = tool.locations?.[0]?.path

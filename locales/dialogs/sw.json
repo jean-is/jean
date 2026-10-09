@@ -106,6 +106,8 @@
   "routines.confirmDelete": "Futa ratiba “{title}”?",
   "routines.run": "Endesha sasa",
   "routines.runs": "Mara zilizopita",
+  "cap.flows.hint": "Omba mara mbili kitu kinachohitaji hatua kadhaa.",
+  "cap.flows.text": "Hatua za kazi unayorudia, zimechorwa kando ya mazungumzo: zitazame, zibadilishe, na uziendeshe tena kwa mkono au kwa ratiba. Kazi yoyote pia inaweza kutazamwa kama mtiririko.",
   "skills.from": "Kutoka {source}",
   "skills.elsewhere": "Ujuzi kutoka kwingineko",
   "skills.elsewhereText": "Ujuzi uliotayarishwa ambao tovuti na mashirika huchapisha. Hulinganishwa na maombi yako kwenye kifaa hiki, na mmoja huongezwa tu unapouchagua baada ya kusoma hatua zake.",

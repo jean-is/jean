@@ -104,6 +104,8 @@
   "routines.confirmDelete": "Xóa tác vụ định kỳ “{title}”?",
   "routines.run": "Chạy ngay",
   "routines.runs": "Các lần chạy trước",
+  "cap.flows.hint": "Yêu cầu hai lần một việc cần nhiều bước.",
+  "cap.flows.text": "Các bước của một việc bạn lặp lại, được vẽ bên cạnh cuộc trò chuyện: xem, thay đổi và chạy lại bằng tay hoặc theo lịch. Việc nào cũng có thể xem dạng luồng.",
   "skills.from": "Từ {source}",
   "skills.elsewhere": "Kỹ năng từ nơi khác",
   "skills.elsewhereText": "Kỹ năng có sẵn do các trang web và tổ chức công bố. Chúng được so với yêu cầu của bạn ngay trên thiết bị này, và chỉ được thêm khi bạn chọn sau khi đọc các bước.",

@@ -106,6 +106,8 @@
   "routines.confirmDelete": "Routine „{title}“ löschen?",
   "routines.run": "Jetzt ausführen",
   "routines.runs": "Bisherige Ausführungen",
+  "cap.flows.hint": "Bitte zweimal um etwas, das mehrere Schritte braucht.",
+  "cap.flows.text": "Die Schritte einer Aufgabe, die du wiederholst, neben dem Gespräch gezeichnet: ansehen, ändern und wieder ausführen, von Hand oder nach Plan. Jede Aufgabe lässt sich auch als Ablauf ansehen.",
   "skills.from": "Von {source}",
   "skills.elsewhere": "Fähigkeiten von anderswo",
   "skills.elsewhereText": "Fertige Fähigkeiten, die Websites und Organisationen veröffentlichen. Sie werden auf diesem Gerät mit deinen Anfragen verglichen, und eine wird nur hinzugefügt, wenn du sie auswählst, nachdem du ihre Schritte gelesen hast.",

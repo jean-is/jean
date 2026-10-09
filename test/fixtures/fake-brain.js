@@ -277,6 +277,17 @@ createServer(async (req, res) => {
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  // Flows (D218): a step to do, a flow to draw (asked, or the steps just done), one to run.
+  else if (/doing one step of the user's flow/.test(system)) answer = /Total per client/.test(lastUser) ? 'Acme: 120\nBistro: 80' : ''
+  else if (/\b(?:make|draw|save)\b.*\bflow\b/i.test(question) && last.role === 'user' && declared.has('save_flow')) {
+    call = { name: 'save_flow', args: { name: 'Weekly invoices', steps: [
+      { name: 'Invoices', text: 'Acme,100\nAcme,20\nBistro,80' },
+      { name: 'Totals', ask: 'Total per client: {{Invoices}}' },
+      { name: 'Save', tool: 'write', args: { name: 'Totals.md', content: '{{Totals}}' } },
+    ] } }
+  } else if (toolName === 'save_flow') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : 'The flow is beside the conversation: run it whenever you like.'
+  else if (/\brun\b.*\bflow\b/i.test(question) && last.role === 'user' && declared.has('run_flow')) call = { name: 'run_flow', args: { flow: 'Weekly invoices' } }
+  else if (toolName === 'run_flow') answer = `The flow gave:\n\n${last.content}`
   else if (folder && mentions && last.role === 'user') call = { name: 'find_in_files', args: { text: mentions } }
   else if (toolName === 'find_in_files') answer = /^Not found/.test(last.content) ? 'No file there mentions it.' : `These files mention it:\n\n${[...new Set([...last.content.matchAll(/^(.+?):(\d+): /gm)].map((m) => m[1]))].map((path) => `- **${path}**`).join('\n')}`
   else if (folder && /what is in the folder/i.test(question) && last.role === 'user') call = { name: 'list', args: {} }

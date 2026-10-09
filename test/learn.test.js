@@ -297,4 +297,9 @@ test('routines are Markdown files named by ULID, the request in the body', async
   assert.equal(rest.length, 0, 'what isn’t a routine is skipped')
   assert.deepEqual(read, { ...routine, lastRun: '2026-10-04T08:00:00.000Z' })
   assert.equal(parseRoutine('---\ntitle: x\nevery: day\nat: "08:00"\n---\n', 'r.md'), null, 'a routine needs a request')
+  // One that runs a flow keeps it, its request the flow's name (D218).
+  const flowing = newRoutine('', { title: 'Invoices', request: 'Weekly invoices', flow: '01K0FLOW', by: 'dev', every: 'weekday', at: '09:00' })
+  await writeRoutine(fs, flowing)
+  assert.match(await fs.read(flowing.path) ?? '', /\nat: "09:00"\nflow: 01K0FLOW\n/)
+  assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === flowing.path), flowing)
 })

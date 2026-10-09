@@ -104,6 +104,8 @@
   "routines.confirmDelete": "刪除例行任務「{title}」？",
   "routines.run": "立即執行",
   "routines.runs": "歷次執行",
+  "cap.flows.hint": "兩次請求需要好幾個步驟的事。",
+  "cap.flows.text": "你反覆做的任務的步驟，畫在對話旁邊：查看、修改，並手動或按排程再次執行。任何任務也都可以看作流程。",
   "skills.from": "來自 {source}",
   "skills.elsewhere": "來自其他地方的技能",
   "skills.elsewhereText": "網站和組織發布的現成技能。它們會在這台裝置上與你的請求比對，只有在你讀過步驟並選擇後才會新增。",

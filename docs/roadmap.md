@@ -26,6 +26,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] / and @ (D199): does a brain follow a skill named with /, use the connection named, and keep to the earlier task named with @? On the device's brain, an earlier task's length in its context
 - [ ] Helpers: does a strong brain split only large tasks, giving each part what it needs? Does the device's brain ever call `delegate`? Three helpers at once against rate limits (OpenRouter's free models)
 - [ ] Double-check: one verdict per line, in any language; its cost on long answers
+- [ ] Flows (D218): does a brain draw a flow whose Ask steps a small brain can follow, with `{{}}` where results go, and make one of a real task it just did? A step once for each of fifty items against rate limits; a routine that runs a flow over real days
 - [ ] `ask_user`: only what is needed, all at once, with an answer recommended
 - [ ] `write` for a document, with Markdown and CSV as the tool asks; the HTML pages they make, with a chart library from the internet
 - [ ] `browse` only when a page helps

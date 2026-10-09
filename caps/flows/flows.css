@@ -1,0 +1,117 @@
+/* Flows (D218): a flow, or the task on screen, as cards joined by wires, in a pane of the dock.
+   A card sits at --x and --y from the start of the line, so right to left mirrors the drawing; the
+   wires are drawn left to right and mirrored with it. Logical properties only. */
+
+.flows-bar { gap: 0.4rem; padding-inline: 0.75rem; }
+.flows-pick { flex: 0 1 auto; inline-size: auto; min-inline-size: 0; max-inline-size: 14rem; padding-block: 0.4rem; }
+.flows-gap { flex: 1; }
+.flows-bar .button { display: inline-flex; align-items: center; gap: 0.35rem; padding-block: 0.4rem; white-space: nowrap; }
+.flows-bar .button > span { overflow: hidden; text-overflow: ellipsis; max-inline-size: 10rem; }
+.flows-run .icon { fill: currentColor; stroke: none; }
+/* On a phone, Schedule says itself on hover and to screen readers only. */
+@media (max-width: 40rem) { .flows-bar .button:not(.flows-run) > span { display: none; } }
+
+.flows-tools { display: flex; align-items: center; gap: 0.5rem; padding-block: 0.5rem; padding-inline: 1.25rem 0.75rem; border-block-end: 1px solid var(--line); }
+.flows-tools .flows-name { flex: 1; min-inline-size: 0; padding-block: 0.35rem; border-color: transparent; background: transparent; font-weight: 600; }
+.flows-tools .flows-name:is(:hover, :focus-visible) { border-color: var(--line-strong); }
+.flows-add { position: relative; flex: none; }
+.flows-add > summary { display: inline-flex; align-items: center; gap: 0.35rem; list-style: none; cursor: pointer; }
+.flows-add > summary::-webkit-details-marker { display: none; }
+.flows-menu { position: absolute; z-index: 3; inset-block-start: calc(100% + 0.3rem); inset-inline-end: 0; display: grid; min-inline-size: 11rem; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.9rem; background: var(--room); box-shadow: 0 0.6rem 1.6rem oklch(0 0 0 / 0.18); }
+.flows-menu .button { justify-content: flex-start; border-radius: 0.6rem; }
+
+/* The stage scrolls; the plane is as large as the drawing, on a grid of dots. */
+.flows-stage { position: relative; flex: 1; min-block-size: 9rem; overflow: auto; background: radial-gradient(circle, var(--line-strong) 1px, transparent 1.2px) 0 0 / 1.5rem 1.5rem; }
+.flows-plane { position: relative; inline-size: var(--w); block-size: var(--h); margin: 1.25rem; }
+.flows-wires { position: absolute; inset-block-start: 0; inset-inline-start: 0; overflow: visible; pointer-events: none; }
+:root[dir='rtl'] .flows-wires { scale: -1 1; }
+.flows-wires path { fill: none; stroke: var(--line-strong); stroke-width: 2; }
+.flows-wires path:is([data-state='done'], [data-state='empty'], [data-state='running']) { stroke: oklch(from var(--flame) l c h / 0.7); }
+.flows-wires path[data-state='running'], .flows-wires .is-drawn { stroke: var(--flame); stroke-dasharray: 6 6; animation: flowing 0.8s linear infinite; }
+@keyframes flowing { to { stroke-dashoffset: -12; } }
+.flows-empty { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; padding: 2rem; text-align: center; }
+
+/* A card: its kind and state, its name, a few words of what it does. */
+.flow-step {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  box-sizing: border-box;
+  inline-size: 200px;
+  block-size: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-block: 0.5rem;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.9rem;
+  background: var(--room);
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: border-color 0.2s, opacity 0.2s, box-shadow 0.2s;
+}
+.flows:has(.flows-tools) .flow-step { cursor: grab; touch-action: none; }
+.flow-step[data-moving] { z-index: 1; cursor: grabbing; box-shadow: 0 0.5rem 1.4rem oklch(0 0 0 / 0.2); transition: none; }
+.flow-step:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
+.flow-step[data-selected] { border-color: var(--flame); box-shadow: 0 0 0 1px var(--flame); }
+.flow-step strong, .flow-step small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flow-step strong { font-size: 0.9rem; font-weight: 600; }
+.flow-step small { font-size: 0.78rem; color: var(--ink-soft); }
+.flow-kind { display: flex; align-items: center; gap: 0.3rem; min-inline-size: 0; font-size: 0.74rem; color: var(--ink-soft); }
+.flow-kind > .icon { flex: none; inline-size: 0.95rem; block-size: 0.95rem; }
+.flow-kind > span:not(.flow-state) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flow-state { display: inline-flex; flex: none; margin-inline-start: auto; }
+.flow-state .icon { inline-size: 0.95rem; block-size: 0.95rem; }
+
+/* What each became: running glows, done is lit, a failure is red, what didn't run is faint. */
+.flow-step[data-state='running'] { border-color: var(--flame); box-shadow: 0 0 0.9rem oklch(from var(--glow) l c h / 0.6); animation: glowing 1.1s ease-in-out infinite; }
+@keyframes glowing { 50% { box-shadow: 0 0 0.3rem oklch(from var(--glow) l c h / 0.3); } }
+.flow-step[data-state='done'] .flow-state { color: var(--flame); }
+.flow-step[data-state='asking'] { border-color: var(--flame); border-style: dashed; }
+.flow-step:is([data-state='failed'], [data-state='declined']) { border-color: oklch(from var(--danger) l c h / 0.7); }
+.flow-step:is([data-state='failed'], [data-state='declined']) .flow-state { color: var(--danger); }
+.flow-step[data-state='cut'] { border-style: dashed; }
+.flow-step:is([data-state='queued'], [data-state='skipped']) { opacity: 0.6; }
+.flow-step[data-state='empty'] { opacity: 0.8; }
+
+/* A flow's card has an end to draw a wire from, and a start a wire comes into. */
+.flow-port { position: absolute; inset-block-start: calc(50% - 7px); inline-size: 14px; block-size: 14px; box-sizing: border-box; border: 2px solid var(--line-strong); border-radius: 50%; background: var(--room); }
+.flow-port.is-in { inset-inline-start: -8px; pointer-events: none; }
+.flow-port.is-out { inset-inline-end: -8px; cursor: crosshair; touch-action: none; }
+.flow-port.is-out:hover { border-color: var(--flame); background: var(--flame); }
+
+/* A step's form, under the drawing. */
+.flows-form { display: grid; gap: 0.7rem; max-block-size: 48%; overflow: auto; padding-block: 0.9rem; padding-inline: 1.25rem; border-block-start: 1px solid var(--line); background: var(--room-2); }
+.flows-form textarea { inline-size: 100%; box-sizing: border-box; padding: 0.6rem 0.8rem; border: 1px solid var(--line-strong); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); line-height: 1.5; resize: vertical; }
+.flows-form textarea:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
+.flows-form textarea[aria-invalid='true'] { border-color: var(--danger); }
+.flows-form fieldset { display: grid; gap: 0.3rem; margin: 0; padding: 0; border: 0; }
+.flows-form legend { margin-block-end: 0.3rem; padding: 0; font-size: 0.9rem; color: var(--ink-soft); }
+.flows-form .flows-check { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); }
+.flows-form .danger { color: var(--danger); }
+.flows-json { font: 0.82rem/1.5 var(--mono); }
+.flows-names { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin: 0; font-size: 0.85rem; color: var(--ink-soft); }
+.flows-chip { padding-block: 0.1rem; padding-inline: 0.6rem; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; cursor: pointer; }
+.flows-chip:hover { border-color: var(--flame); }
+.flows-result pre { max-block-size: 12rem; margin: 0.4rem 0 0; padding: 0.5rem 0.7rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--line); border-radius: 0.6rem; font: 0.8rem/1.5 var(--mono); }
+.flows-foot { padding-block: 0.6rem; padding-inline: 1.25rem; border-block-start: 1px solid var(--line); }
+.flows-foot .button { display: inline-flex; align-items: center; gap: 0.35rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flows-wires path, .flow-step { animation: none !important; transition: none; }
+}
+@media (prefers-contrast: more) {
+  .flows-wires path { stroke-width: 3; }
+  .flow-step { border-color: var(--ink); }
+}
+@media (forced-colors: active) {
+  .flows-wires path { stroke: CanvasText; }
+  .flows-wires path[data-state='running'], .flows-wires .is-drawn { stroke: Highlight; }
+  .flow-step { border-color: CanvasText; }
+  .flow-step:is([data-selected], [data-state='running']) { border-color: Highlight; outline: 2px solid Highlight; }
+  .flow-port { border-color: CanvasText; background: Canvas; }
+  .flows-stage { background-image: none; }
+}

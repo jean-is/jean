@@ -104,6 +104,8 @@
   "routines.confirmDelete": "Hapus rutinitas “{title}”?",
   "routines.run": "Jalankan sekarang",
   "routines.runs": "Riwayat",
+  "cap.flows.hint": "Minta dua kali sesuatu yang butuh beberapa langkah.",
+  "cap.flows.text": "Langkah-langkah tugas yang kamu ulangi, digambar di samping percakapan: lihat, ubah, dan jalankan lagi secara manual atau terjadwal. Tugas apa pun juga bisa dilihat sebagai alur.",
   "skills.from": "Dari {source}",
   "skills.elsewhere": "Keterampilan dari tempat lain",
   "skills.elsewhereText": "Keterampilan siap pakai yang diterbitkan situs dan organisasi. Semuanya dibandingkan dengan permintaan Anda di perangkat ini, dan satu hanya ditambahkan bila Anda memilihnya setelah membaca langkah-langkahnya.",

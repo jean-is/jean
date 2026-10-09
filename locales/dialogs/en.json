@@ -106,6 +106,8 @@
   "routines.confirmDelete": "Delete the routine “{title}”?",
   "routines.run": "Run now",
   "routines.runs": "Past runs",
+  "cap.flows.hint": "Ask twice for something that takes several steps.",
+  "cap.flows.text": "The steps of a task you repeat, drawn beside the conversation: see them, change them, and run them again by hand or on a schedule. Any task can be seen as a flow too.",
   "skills.from": "From {source}",
   "skills.elsewhere": "Skills from elsewhere",
   "skills.elsewhereText": "Ready-made skills that sites and organisations publish. They’re compared with your requests on this device, and one is added only when you choose it, after reading its steps.",

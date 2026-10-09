@@ -104,6 +104,8 @@
   "routines.confirmDelete": "루틴 ‘{title}’을(를) 삭제할까요?",
   "routines.run": "지금 실행",
   "routines.runs": "지난 실행",
+  "cap.flows.hint": "여러 단계가 필요한 일을 두 번 요청하세요.",
+  "cap.flows.text": "반복하는 작업의 단계를 대화 옆에 그려 둡니다. 보고, 바꾸고, 직접 또는 일정에 따라 다시 실행하세요. 어떤 작업이든 플로로 볼 수도 있어요.",
   "skills.from": "출처: {source}",
   "skills.elsewhere": "다른 곳의 스킬",
   "skills.elsewhereText": "사이트와 조직이 공개한 기성 스킬이에요. 이 기기에서 요청과 비교하며, 단계를 읽고 직접 고른 경우에만 추가돼요.",

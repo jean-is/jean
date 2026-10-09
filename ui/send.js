@@ -5,7 +5,7 @@
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
 import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
-import { userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered } from '../core/events.js'
+import { envelope, userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { t, locale, languageName } from '../core/i18n.js'
@@ -231,10 +231,11 @@ async function pickBrain(text, records, boost = 0) {
 /**
  * Sends a message, once a page being turned is (state.js's send waits for it).
  * @param {string} text
- * @param {{ boost?: number, notes?: Envelope[] }} [options] boost: Auto's levels above the last
- *   answer's; notes: what the brain is told just before the message ("Since last time")
+ * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any } }} [options] boost: Auto's levels above the last
+ *   answer's; notes: what the brain is told just before the message ("Since last time"); call: the one call the turn is,
+ *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218)
  */
-export async function send(text, { boost = 0, notes = [] } = {}) {
+export async function send(text, { boost = 0, notes = [], call } = {}) {
   const files = app.attachments.value
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
@@ -279,7 +280,7 @@ export async function send(text, { boost = 0, notes = [] } = {}) {
   }
   // The title is written alongside the answer (D112).
   if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
-  await runAgent(next, brain, meta)
+  await runAgent(next, brain, meta, call)
 }
 
 /** Run the agent on the current conversation, up to its last user message. */
@@ -307,8 +308,11 @@ export async function rewind(upTo) {
   await retry()
 }
 
-/** Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it */
-async function runAgent(conversation, brain, meta) {
+/**
+ * Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation
+ * @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it @param {{ name: string, args: any }} [call] the one call the turn is (D218)
+ */
+async function runAgent(conversation, brain, meta, call) {
   /** @type {Run} */
   const run = { ...conversation, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
   const { path, records: sent, turn, settled } = run
@@ -328,8 +332,9 @@ async function runAgent(conversation, brain, meta) {
     // The loop and the brains' adapters load with the first message, not with the first screen.
     const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
     const frozen = frozenPrompt(sent)
-    // A turn the page closed on while it waited for the user goes on from there, asking again (D212).
-    const resume = unanswered(sent)
+    // A turn the page closed on while it waited for the user goes on from there, asking again (D212); one that is a single call starts on it.
+    const one = call && { id: `call-${Date.now().toString(36)}`, ...call }
+    const resume = one ? { step: 0, calls: [one] } : unanswered(sent)
     const messages = toChatMessages(sent, await documents(sent, brain), resume)
     if (brain.api === 'device') await unlock('brain-local')
     const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
@@ -349,6 +354,7 @@ async function runAgent(conversation, brain, meta) {
       meta,
       firstSource: nextSource(sent),
       ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
+      ...(one && { maxSteps: 1 }),
       signal: run.controller.signal,
       rule: (kind, reserved) => (readOnly && !READING.has(kind) ? 'never' : resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved })),
       askPermission: (request) => approve(request.toolCall, path),
@@ -362,6 +368,14 @@ async function runAgent(conversation, brain, meta) {
         await appendRecords(app.fs, path, records)
       },
     })
+    // What the one call gave for the user to read is the answer.
+    const gave = one && settled.findLast(({ update }) => update?.sessionUpdate === 'tool_call' && update.toolCallId === one.id)?.update
+    const text = gave?.sessionUpdate === 'tool_call' && gave.status === 'completed' ? String(gave._meta?.answer ?? '').trim() : ''
+    if (text) {
+      const answer = envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)
+      settled.push(answer)
+      await appendRecords(app.fs, path, [answer])
+    }
     if (shown()) setPresence('done')
   } catch (error) {
     if (shown()) {

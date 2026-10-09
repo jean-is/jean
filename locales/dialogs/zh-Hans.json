@@ -104,6 +104,8 @@
   "routines.confirmDelete": "删除例行任务“{title}”？",
   "routines.run": "立即运行",
   "routines.runs": "历次运行",
+  "cap.flows.hint": "两次请求需要好几个步骤的事。",
+  "cap.flows.text": "你反复做的任务的步骤，画在对话旁边：查看、修改，并手动或按计划再次运行。任何任务也都可以看作流程。",
   "skills.from": "来自 {source}",
   "skills.elsewhere": "来自其他地方的技能",
   "skills.elsewhereText": "网站和组织发布的现成技能。它们会在这台设备上与你的请求进行比较，只有在你读过步骤并选择后才会添加。",

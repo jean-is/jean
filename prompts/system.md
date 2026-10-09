@@ -112,6 +112,7 @@ Each line appears in `<tools>` as `- name: line`. The tool's own description, se
 | Web search | `web_search: search the web for facts the conversation does not hold` (a provider that searches by itself gets its own tool instead, D91) | — |
 | Connections | none: their tools are deferred, and `<connections>` names them | Find the tools of the services in <connections> with find_tools. |
 | Routines (D122) | `schedule: make a routine, when the user wants something done regularly` | — |
+| Flows (D218) | `save_flow: make or change a flow: steps the user sees, changes and runs again, by hand or on a schedule` / `run_flow: run one of the user’s flows` | — |
 | Things Jean made (D119) | `write: make a file the user can save: .docx, .xlsx or text` / `edit: change part of a file you made` | Documents and spreadsheets the user asks for are files. / In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX. (D185) |
 | Helpers | `delegate: hand independent parts of a large task to helpers, who do them at the same time` | Use helpers only for independent parts of a large task. |
 | Browser (D140) | `browse: show the user a web page beside the conversation, and read it when the site allows` | — (`<page>` says which page is open) |

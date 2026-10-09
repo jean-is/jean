@@ -418,3 +418,27 @@ test('loop: a helper’s turn runs under its call, shares the numbering, and sta
   assert.deepEqual(replay.map((message) => message.role), ['user', 'assistant', 'tool', 'assistant'])
   assert.equal(replay[2].content, 'The sky is blue [2].')
 })
+
+test('a turn that starts on a call runs it alone, and a helper’s turn inside it doesn’t start on it again (D218)', async () => {
+  let runs = 0
+  const delegateTool = {
+    spec: { name: 'delegate', description: 'delegate', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('think'),
+    title: () => 'Delegate',
+    run: async (/** @type {any} */ args, /** @type {import('../core/loop.js').ToolContext} */ ctx) => {
+      runs++
+      return (await ctx.turn({ system: 'helper', history: [{ role: 'user', content: 'part' }], maxSteps: 2 })).text
+    },
+  }
+  const { stream, calls } = fakeStream([[{ type: 'text', delta: 'Part done.' }, done('end', { role: 'assistant', content: 'Part done.' })]])
+  /** @type {any[]} */
+  const persisted = []
+  const result = await runTurn({
+    brain, system: 's', history: [], resume: { step: 0, calls: [{ id: 'd', name: 'delegate', args: {} }] }, maxSteps: 1, tools: [delegateTool], stream: /** @type {any} */ (stream),
+    rule: () => 'allow', persist: async (records) => { persisted.push(...records) },
+  })
+  assert.equal(runs, 1)
+  assert.equal(calls.length, 1, 'only the helper asked the brain')
+  assert.equal(result.stopReason, 'max_steps')
+  assert.equal(persisted.findLast((record) => record.update?.toolCallId === 'd').update.rawOutput, 'Part done.')
+})
