@@ -31,6 +31,7 @@ These follow from keeping data on the device with no server. Companies already c
 - Provide an authoritative audit of local actions.
 - Remotely wipe or revoke data already on a device.
 - Run scheduled jobs while no tab is open; that would need an optional runner. Routines run while Jean is open, and catch up at the next visit (D122).
+- Hold jean-cli to policy (D241). It isn't served from the organisation's address, so it reads none: where Jean must keep to policy, block `npx jean-cli` with the machine's own controls.
 
 ## Open and enterprise
 

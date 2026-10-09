@@ -30,6 +30,42 @@ const encoder = new TextEncoder()
 /** What changes a passage of a Word document, or of a workbook, in place (D229). @param {string} path */
 export const replacerOf = (path) => (/\.xlsx$/i.test(path) ? replaceInSheet : replaceInWord)
 
+// ─── What the brain is told ──────────────────────────────────────────────────
+
+/** The tools' names, descriptions and parameters: the capability's, and jean-cli's in an editor's folder. */
+export const SPECS = {
+  list: {
+    name: 'list',
+    description: "List the files and folders of the conversation's folder by path, leaving out .git, node_modules and what .gitignore names.",
+    parameters: { type: 'object', properties: { path: { type: 'string', description: 'A folder inside it; omit for all of it' }, depth: { type: 'number', description: 'How many levels down; omit for all' } } },
+  },
+  find: {
+    name: 'find_in_files',
+    description: "Find text in the files of the conversation's folder, Word, Excel, PowerPoint and PDF included, case and accents aside, in any language. Answers path, line and passage.",
+    parameters: { type: 'object', properties: { text: { type: 'string', description: 'What to look for' }, path: { type: 'string', description: 'A folder inside it to look in' } }, required: ['text'] },
+  },
+  open: {
+    name: 'open',
+    description: "Read a file of the conversation's folder by its path, Word, Excel, PowerPoint and PDF included: all of it, or some lines.",
+    parameters: { type: 'object', properties: { path: { type: 'string' }, lines: { type: 'string', description: 'e.g. "120-180"; omit to start at the top' } }, required: ['path'] },
+  },
+  change: {
+    name: 'change',
+    description: [
+      "Change a file of the conversation's folder where it is: replace one passage, quoted exactly as open shows it, with new text.",
+      'The passage must be there once; in a Word document, within one paragraph; in a spreadsheet, within one row, its cells apart by tabs, a formula starting with =. Open a file before changing it.',
+      "An empty passage on a path that doesn't exist makes the file: a .docx from Markdown, an .xlsx from CSV, any other file as text.",
+    ].join(' '),
+    parameters: {
+      type: 'object',
+      properties: { path: { type: 'string' }, old: { type: 'string', description: 'The passage, exactly as it is now; empty to make a file' }, new: { type: 'string', description: 'What replaces it' } },
+      required: ['path', 'old', 'new'],
+    },
+  },
+}
+/** How <folder> tells the brain to use them. */
+export const USE = 'Work on its files where they are, by their path, with list({ path?, depth? }), find_in_files({ text, path? }), open({ path, lines? }) and change({ path, old, new }). The user sees each change first.'
+
 // ─── Listing ─────────────────────────────────────────────────────────────────
 
 /** @typedef {{ negate: boolean, dir: boolean, base: string, re: RegExp }} Rule */

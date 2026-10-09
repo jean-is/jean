@@ -47,6 +47,8 @@ export function gateway({ origins = [], hosts = [...SERVICES], clients = [] }) {
     const origin = request.headers.get('origin') ?? ''
     const cors = new Headers({ vary: 'origin' })
     if (origins.includes(origin)) cors.set('access-control-allow-origin', origin)
+    // Jean, from its address, may reach a gateway on this computer, as it reaches the bridge (Private Network Access).
+    if (origins.includes(origin) && request.headers.get('access-control-request-private-network') === 'true') cors.set('access-control-allow-private-network', 'true')
     const target = new URL(request.url).searchParams.get('url')
     if (!target) return Response.json({ format: 1, hosts, clients: Object.fromEntries(clients.map((client) => [client.issuer, client.clientId])) }, { headers: cors })
     const refuse = (/** @type {number} */ status, /** @type {string} */ error) => Response.json({ error }, { status, headers: cors })

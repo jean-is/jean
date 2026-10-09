@@ -60,13 +60,13 @@ export const isMissing = (error) => /** @type {{ code?: string }} */ (error)?.co
 
 /**
  * Whether a root-relative path belongs in a deployable cache list. Markdown isn't, but for the
- * skills of Jean's own directory (D196).
+ * skills of Jean's own directory (D196), nor jean-cli's strings, which only its package has.
  * @param {string} path  posix path relative to the app root
  */
 export function isShipped (path) {
   const segments = path.split('/')
   const name = segments[segments.length - 1]
-  return segments.every((s) => !s.startsWith('.')) && (name === 'SKILL.md' || !/\.(md|map)$|\.d\.ts$/.test(name))
+  return segments.every((s) => !s.startsWith('.')) && !path.startsWith('locales/cli/') && (name === 'SKILL.md' || !/\.(md|map)$|\.d\.ts$/.test(name))
 }
 
 /**

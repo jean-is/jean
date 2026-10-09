@@ -54,6 +54,7 @@ describe('manifest: file filters', () => {
     assert.equal(isShipped('vendor/lit-html/lit-html.d.ts'), false)
     assert.equal(isShipped('ui/.DS_Store'), false)
     assert.equal(isShipped('ui/.hidden/x.js'), false)
+    assert.equal(isShipped('locales/cli/fr.json'), false, "jean-cli's strings, in its package only")
   })
 
   it('collects the shell and locales, skipping missing dirs and non-shipped files', async () => {

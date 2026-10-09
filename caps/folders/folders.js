@@ -24,7 +24,7 @@ import { stringifyFrontMatter } from '../../core/settings.js'
 import { noteRecord } from '../../core/events.js'
 import { appendRecords } from '../../core/conversations.js'
 import { t, useStrings } from '../../core/i18n.js'
-import { walkFolder, listingText, findInFolder, openText, planChange, diffLines, lastRead, topLevel, readText, exactText, replacerOf } from './work.js'
+import { SPECS, USE, walkFolder, listingText, findInFolder, openText, planChange, diffLines, lastRead, topLevel, readText, exactText, replacerOf } from './work.js'
 import { copyFS, pickedFiles, droppedFiles } from './copy.js'
 import { sitePage } from './site.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -411,7 +411,7 @@ async function section(folder) {
   return [
     `The user's folder "${name}" is open in this conversation, on their computer${folder.copy ? ', as a copy: what you change is kept for the user to save' : ''}.`,
     fs ? `Its top level:\n${await topLevel(fs).catch(() => '(unreadable)')}` : 'The user lets you open it once you ask.',
-    'Work on its files where they are, by their path, with list({ path?, depth? }), find_in_files({ text, path? }), open({ path, lines? }) and change({ path, old, new }). The user sees each change first.',
+    USE,
     ...(agents ? [`Its AGENTS.md, which the user asked you to follow here:\n${agents.slice(0, 6000)}`] : []),
   ].join('\n')
 }
@@ -429,11 +429,7 @@ function stamp(ctx, folder, read) {
 
 /** @type {import('../../core/loop.js').Tool} */
 const listTool = {
-  spec: {
-    name: 'list',
-    description: "List the files and folders of the conversation's folder by path, leaving out .git, node_modules and what .gitignore names.",
-    parameters: { type: 'object', properties: { path: { type: 'string', description: 'A folder inside it; omit for all of it' }, depth: { type: 'number', description: 'How many levels down; omit for all' } } },
-  },
+  spec: SPECS.list,
   kind: 'read',
   deferred: true,
   title: (args) => `List ${args?.path || 'the folder'}`,
@@ -446,11 +442,7 @@ const listTool = {
 
 /** @type {import('../../core/loop.js').Tool} */
 const findTool = {
-  spec: {
-    name: 'find_in_files',
-    description: "Find text in the files of the conversation's folder, Word, Excel, PowerPoint and PDF included, case and accents aside, in any language. Answers path, line and passage.",
-    parameters: { type: 'object', properties: { text: { type: 'string', description: 'What to look for' }, path: { type: 'string', description: 'A folder inside it to look in' } }, required: ['text'] },
-  },
+  spec: SPECS.find,
   kind: 'search',
   deferred: true,
   title: (args) => `Find "${args?.text ?? ''}"`,
@@ -465,11 +457,7 @@ const findTool = {
 
 /** @type {import('../../core/loop.js').Tool} */
 const openTool = {
-  spec: {
-    name: 'open',
-    description: "Read a file of the conversation's folder by its path, Word, Excel, PowerPoint and PDF included: all of it, or some lines.",
-    parameters: { type: 'object', properties: { path: { type: 'string' }, lines: { type: 'string', description: 'e.g. "120-180"; omit to start at the top' } }, required: ['path'] },
-  },
+  spec: SPECS.open,
   kind: 'read',
   deferred: true,
   title: (args) => `Open ${args?.path ?? ''}`,
@@ -520,19 +508,7 @@ const shown = new WeakSet()
 
 /** @type {import('../../core/loop.js').Tool} */
 const changeTool = {
-  spec: {
-    name: 'change',
-    description: [
-      "Change a file of the conversation's folder where it is: replace one passage, quoted exactly as open shows it, with new text.",
-      'The passage must be there once; in a Word document, within one paragraph; in a spreadsheet, within one row, its cells apart by tabs, a formula starting with =. Open a file before changing it.',
-      "An empty passage on a path that doesn't exist makes the file: a .docx from Markdown, an .xlsx from CSV, any other file as text.",
-    ].join(' '),
-    parameters: {
-      type: 'object',
-      properties: { path: { type: 'string' }, old: { type: 'string', description: 'The passage, exactly as it is now; empty to make a file' }, new: { type: 'string', description: 'What replaces it' } },
-      required: ['path', 'old', 'new'],
-    },
-  },
+  spec: SPECS.change,
   kind: 'edit',
   deferred: true,
   title: (args) => `Change ${args?.path ?? ''}`,

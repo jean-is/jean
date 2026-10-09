@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { LOCALES } from './fixtures/locales.js'
-import { sources, keysIn, showsDialogs, PARTS as OWN } from './fixtures/keys.js'
+import { sources, keysIn, showsDialogs, owner, PARTS as OWN } from './fixtures/keys.js'
 
 const dir = new URL('../locales/', import.meta.url)
 const load = async (/** @type {string} */ file) => JSON.parse(await readFile(new URL(file, dir), 'utf8'))
@@ -52,7 +52,7 @@ test('every string is used, the dialogs’ strings only by modules that show a d
     assert.ok(users.length, `${key} is never used`)
     if (dialogs.includes(key)) for (const [path, text] of users) assert.ok(showsDialogs(path, text), `${key} is used by ${path}, which doesn't load the dialogs' strings`)
     for (const [id, keys] of Object.entries(own)) {
-      if (keys.includes(key)) for (const [path] of users) assert.ok(path.startsWith(`caps/${id}/`), `${key} is used by ${path}, outside the capability whose strings it is`)
+      if (keys.includes(key)) for (const [path] of users) assert.ok(path.startsWith(owner(id)), `${key} is used by ${path}, outside the part whose strings it is`)
     }
   }
 })

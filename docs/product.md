@@ -252,6 +252,10 @@ Dictation and read-aloud are always there, for accessibility. Live conversation 
 - **Instant switching.** The language changes immediately, with no reload, including in past conversations (activity labels are rendered from structured data).
 - **Conversations.** Jean replies in the language of the user's last message, and otherwise in the UI language.
 
+## In an editor
+
+People at home in a code editor can have Jean there, through `npx jean-cli acp` in any editor that speaks ACP, such as Zed (D241). It is the same Jean: the projects, memory, skills and conversations of the folder Sync keeps, so a conversation started in the editor shows in the drawer after the next round. It works on the editor's folder where it is: each change shows as the editor's own diff, approved first, and each command runs in the editor's terminal once the user agrees. The brain is the one whose key the editor's environment holds, or the user's own Claude Code with their Claude plan. `npx jean-cli gateway` runs the gateway for whoever serves Jean.
+
 ## Deliberately out of scope
 
 - An always-on cloud computer, and working while the user is away

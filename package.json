@@ -12,6 +12,7 @@
     "build": "npm run vendor && npm run manifest",
     "build:desktop": "npm run build && node scripts/desktop.js",
     "build:dmg": "npm run build && node scripts/desktop.js dmg",
+    "cli": "node scripts/cli.js",
     "serve": "node scripts/serve.js",
     "test": "node --test test/*.test.js",
     "vendor": "node scripts/vendor.js",
