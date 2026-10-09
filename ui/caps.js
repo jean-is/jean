@@ -47,6 +47,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   folders: () => import('../caps/folders/folders.js'),
   you: () => import('../caps/you/you.js'),
   math: () => import('../caps/math/math.js'),
+  layouts: () => import('../caps/layouts/layouts.js'),
   charts: () => import('../caps/charts/charts.js'),
   scores: () => import('../caps/scores/scores.js'),
   slides: () => import('../caps/slides/slides.js'),

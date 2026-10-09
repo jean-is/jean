@@ -1,0 +1,8 @@
+{
+  "layouts.recommended": "Disyorkan",
+  "layouts.note": "Nota",
+  "layouts.tip": "Petua",
+  "layouts.important": "Penting",
+  "layouts.warning": "Amaran",
+  "layouts.caution": "Awas"
+}

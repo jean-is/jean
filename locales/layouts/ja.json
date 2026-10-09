@@ -1,0 +1,8 @@
+{
+  "layouts.recommended": "おすすめ",
+  "layouts.note": "メモ",
+  "layouts.tip": "ヒント",
+  "layouts.important": "重要",
+  "layouts.warning": "警告",
+  "layouts.caution": "注意"
+}

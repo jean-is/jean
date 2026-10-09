@@ -1,0 +1,8 @@
+{
+  "layouts.recommended": "Рекомендовано",
+  "layouts.note": "Примітка",
+  "layouts.tip": "Порада",
+  "layouts.important": "Важливо",
+  "layouts.warning": "Попередження",
+  "layouts.caution": "Обережно"
+}

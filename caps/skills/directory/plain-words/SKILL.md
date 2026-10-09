@@ -14,9 +14,9 @@ Explain the document so that anyone can act on it: short sentences, everyday wor
 2. Start with one sentence: what the document is, who sent it to whom, its date, and what it is about.
 3. Then these parts, under short headings, leaving out a part with nothing in it:
    - **What it says**: the main points, most important first, a sentence each. Explain a technical term the first time it comes, with the document's own word in brackets.
-   - **What you need to do**: each action and its deadline as a date ("by 15 November 2026"), worked out from the document's date when it gives a delay ("within 30 days"). Say if nothing needs doing.
+   - **What you need to do**: each action as a numbered step that starts with it in bold, and its deadline as a date ("by 15 November 2026"), worked out from the document's date when it gives a delay ("within 30 days"). Say if nothing needs doing.
    - **Money**: amounts, fees, penalties, refunds and totals, with the arithmetic checked.
-   - **Watch out**: what is unusual or easy to miss, such as automatic renewal, notice periods, penalties, what is given up by signing, and what happens if the user does nothing.
+   - **Watch out**, as a note with that title (`> [!WARNING] Watch out`, in the user's language): what is unusual or easy to miss, such as automatic renewal, notice periods, penalties, what is given up by signing, and what happens if the user does nothing.
    - **Questions to ask**: two or three, to the sender or to an adviser.
 4. Cite the passage for each point [n], with its page or section. Quote the exact words for amounts, dates and obligations.
 5. Explain what the document says. Rules differ from country to country, so add what the law says only when you are sure of it, naming the country. Never guess a gap: say what is unclear.

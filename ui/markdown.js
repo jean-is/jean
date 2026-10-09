@@ -55,7 +55,7 @@ function cite(text) {
 }
 
 /** @param {Token[]} tokens */
-export const blocks = (tokens) => tokens.map(block)
+export const blocks = (tokens) => (shapes.value.blocks?.(tokens) ?? (unlock('layouts'), tokens)).map(block)
 
 /** @param {any} token @returns {unknown} */
 function block(token) {
@@ -63,9 +63,9 @@ function block(token) {
     case 'heading': return heading(token.depth, inline(token.tokens))
     case 'paragraph': return html`<p>${inline(token.tokens)}</p>`
     case 'code': return opening(token) ? nothing : token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr"><code>${token.text}</code></pre>`
-    case 'blockquote': return html`<blockquote>${blocks(token.tokens)}</blockquote>`
-    case 'list': return list(token)
-    case 'table': return table(token)
+    case 'blockquote': return shape(token) ?? html`<blockquote>${blocks(token.tokens)}</blockquote>`
+    case 'list': return shape(token) ?? list(token)
+    case 'table': return shape(token) ?? table(token)
     case 'hr': return html`<hr>`
     case 'math': return formula(token)
     case 'space': return nothing
@@ -73,6 +73,11 @@ function block(token) {
     default: return html`<p>${token.raw}</p>`
   }
 }
+
+// Shapes (D215): comparisons, steps and notes, laid out by the layouts capability, which the first answer loads.
+export const shapes = signal(/** @type {Record<string, (token: any) => any>} */ ({}))
+/** @param {any} token */
+const shape = (token) => shapes.value[token.type]?.(token)
 
 /** @param {number} depth @param {unknown} content */
 function heading(depth, content) {

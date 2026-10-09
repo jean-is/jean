@@ -1,0 +1,8 @@
+{
+  "layouts.recommended": "推荐",
+  "layouts.note": "备注",
+  "layouts.tip": "提示",
+  "layouts.important": "重要",
+  "layouts.warning": "警告",
+  "layouts.caution": "注意"
+}

@@ -1,0 +1,8 @@
+{
+  "layouts.recommended": "Empfohlen",
+  "layouts.note": "Hinweis",
+  "layouts.tip": "Tipp",
+  "layouts.important": "Wichtig",
+  "layouts.warning": "Warnung",
+  "layouts.caution": "Vorsicht"
+}

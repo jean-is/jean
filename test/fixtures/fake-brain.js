@@ -30,7 +30,10 @@
 // then changes it, and asks again when told the folder is open now. Asked to make a page "saying"
 // something, it makes it there, as a heading (D156). Asked to "Chart" something, for a jig or for
 // slides, it answers with a chart, a tune or a deck, as the skills of Jean's own directory write
-// them (D196, D200).
+// them (D196, D200). Asked to compare phone plans, it lays out a comparison, steps and notes, and asked
+// for the steps to buy a phone, it writes them apart, as bold numbered paragraphs, and asked for the
+// half year's sales, a table wider than the text, and to compare an iPhone and a Pixel, in French, a
+// comparison whose options say much (D215).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -113,6 +116,120 @@ const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of,
 /** Formulas in LaTeX, in a line, set apart and in a table, beside prices (D185). */
 const GOLDEN = 'The ratio tends to $\\varphi \\approx 1.618$:\n\n$$\\varphi = \\frac{1 + \\sqrt{5}}{2}$$\n\n| Terms | Ratio |\n|---|---|\n| $F_5 / F_4$ | 1.6667 |\n\nA book costs $5 and a pen $10.'
 /** A LaTeX document in a code block: sections, formulas set apart and in a line (D185). */
+/** @type {Record<string, string>} */
+const PLANS = {
+  en: `Here are the three plans, over 24 months:
+
+| | Free | Orange ★ | SFR |
+|---|---|---|---|
+| **Total over 24 months** | €480 | **€360** | €600 |
+| **Data** | 100 GB | 80 GB | **200 GB** |
+| **Commitment** | **None** | 12 months | 24 months |
+| **5G** | ✓ | ✓ | ✗ |
+
+**Orange** fits you best: the cheapest over two years, with enough data.
+
+1. **Get your number's code**: call 3179 from your phone.
+2. **Order the SIM** — online, in a few minutes.
+3. **Turn it on** when it arrives; your number moves within a day.
+
+> [!WARNING]
+> Leaving SFR before 24 months costs the months left.
+
+> 💡 **Tip:** ask Orange to match Free's price.
+
+| Month | Orange | SFR |
+|---|---|---|
+| January | €15 | €25 |
+| February | €15 | €25 |`,
+  ar: `إليك الباقات الثلاث على مدى 24 شهرًا:
+
+| | فري | أورنج ★ | إس إف آر |
+|---|---|---|---|
+| الإجمالي على 24 شهرًا | 480 € | **360 €** | 600 € |
+| البيانات | 100 غيغابايت | 80 غيغابايت | **200 غيغابايت** |
+| الالتزام | **بدون** | 12 شهرًا | 24 شهرًا |
+| 5G | ✓ | ✓ | ✗ |
+
+**أورنج** هي الأنسب لك: الأرخص على مدى عامين، مع بيانات كافية.
+
+1. **احصل على رمز رقمك**: اتصل بالرقم 3179 من هاتفك.
+2. **اطلب الشريحة** — عبر الإنترنت، في دقائق.
+3. **فعّلها** عند وصولها؛ ينتقل رقمك خلال يوم.
+
+> [!WARNING]
+> مغادرة إس إف آر قبل 24 شهرًا تكلّف الأشهر المتبقية.
+
+> 💡 **نصيحة:** اطلب من أورنج مطابقة سعر فري.`,
+  ja: `24か月で比べた3つのプランです：
+
+| | Free | Orange ★ | SFR |
+|---|---|---|---|
+| 24か月の合計 | 480ユーロ | **360ユーロ** | 600ユーロ |
+| データ | 100 GB | 80 GB | **200 GB** |
+| 契約期間 | **なし** | 12か月 | 24か月 |
+| 5G | ✓ | ✓ | ✗ |
+
+あなたには**Orange**が最適です。*2年間で最も安く*、データも十分です。
+
+1. **番号の移行コードを取得**：お使いの電話から3179に電話します。
+2. **SIMを注文** — オンラインで数分です。
+3. **届いたら有効化**：番号は1日以内に移ります。
+
+> [!WARNING]
+> 24か月より前にSFRを解約すると、残りの月の料金がかかります。
+
+> 💡 **ヒント：** Orangeに Free の料金に合わせてもらえるか聞いてみましょう。`,
+}
+const HALF = `The half year's sales, by region:
+
+| Region | January | February | March | April | May | June | Total | Change | Share |
+|---|---|---|---|---|---|---|---|---|---|
+| North-East | €12,400 | €13,150 | €14,020 | €15,380 | €16,240 | €17,900 | €89,090 | +44.4% | 31.0% |
+| South-West | €9,870 | €10,210 | €11,460 | €12,050 | €12,980 | €13,400 | €69,970 | +35.8% | 24.3% |
+| East | €7,120 | €7,480 | €8,030 | €8,610 | €9,150 | €9,820 | €50,210 | +37.9% | 17.5% |
+| West | €10,540 | €10,990 | €11,720 | €12,460 | €13,310 | €14,080 | €75,100 | +33.6% | 26.1% |
+
+The North-East grew fastest.`
+const PHONES = `Voici les deux téléphones :
+
+| | iPhone 17 Pro | Google Pixel 10 Pro (Android) |
+|---|---|---|
+| Prix neuf | 1 299 € au lancement, environ 1 130 € aujourd'hui | **749 €** (prix habituel 999 €) |
+| Mises à jour | 5 ans de suivi logiciel selon Back Market. Un revendeur annonce 7 ans, mais je n'ai pas trouvé de confirmation officielle d'Apple | **7 ans** de mises à jour de sécurité et du système |
+| Photo et vidéo | Triple capteur 48 Mpx, très prisé des créateurs de contenu | Photos et vidéos de très haute qualité, avec beaucoup d'IA |
+| Autonomie | Record de 33 heures | Plus de 24 h |
+| Simplicité | Très cohérent, peu de réglages à faire | Simple aussi, mais avec plus d'options à régler |
+
+Le Pixel coûte bien moins cher.`
+const BUY = `## Steps to buy
+
+**1. Choose new or used.**
+- The 18 Pro is $1,199 new.
+- A used or refurbished 15 Pro 128GB costs roughly $500–680 in the listings I found.
+
+**2. Choose the storage.**
+- The 18 Pro starts at 256GB. 512GB is $1,399, 1TB is $1,799 and 2TB is $2,399.
+
+**3. Decide how to pay.**
+- You can pay in full, or use Apple Upgrade, which starts at $34.99 a month over 24 months.
+- Compare the total over 24 months, not just the monthly amount.
+
+**4. Trade in your current phone** at Apple, your carrier or a reseller, and compare the offers before you commit.
+
+**5. Pick where to buy.**
+- For the 18 Pro, use Apple or your carrier.
+- Avoid private sellers unless you can check the phone in person.
+
+**6. If you buy used, check these:**
+- It is unlocked and works with your carrier.
+- Battery health is 85% or higher, or the battery is new.
+
+**7. Order and set up.**
+- Back up your old phone to iCloud or a computer first.
+- Don't ship your trade-in until the new phone works.
+
+If you tell me your budget and how long you'll keep the phone, I can recommend one and find a seller.`
 const EULER = "Voici :\n\n```latex\n\\section*{Formules d'Euler}\n\\subsection*{Identité d'Euler}\n\\[ e^{i\\pi} + 1 = 0 \\]\nPour un cube : $8 - 12 + 6 = 2$.\n```"
 /** A LaTeX block of one line: a formula alone. */
 const IDENTITY = 'Here it is:\n\n```latex\ne^{i\\pi} + 1 = 0\n```'
@@ -356,6 +473,10 @@ createServer(async (req, res) => {
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   else if (/\bslides\b/i.test(question) && last.role === 'user') answer = DECK
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
+  else if (/compare l'iphone et le pixel/i.test(question) && last.role === 'user') answer = PHONES
+  else if (/half year's sales/i.test(question) && last.role === 'user') answer = HALF
+  else if (/steps to buy a phone/i.test(question) && last.role === 'user') answer = BUY
+  else if (/compare the phone plans|قارن باقات الهاتف|携帯プランを比べて/i.test(question) && last.role === 'user') answer = PLANS[lang] ?? PLANS.en
   else if (/\bidentity\b/i.test(question) && last.role === 'user') answer = IDENTITY
   else if (/^Démontre/.test(question) && last.role === 'user') answer = PROOF
   else if (/camembert/i.test(question) && last.role === 'user') answer = BUDGET

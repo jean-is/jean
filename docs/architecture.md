@@ -73,9 +73,9 @@ ui/               app.js (start), shell.js, base.js, state.js (signals; what the
                   looks/<id>.css (the other themes)
 caps/<id>/        one folder per capability: files made backup brain-local voice reflexes memory projects skills search
                   connections live helpers check since names routines flows find browser ask you folders sync computer math
-                  charts scores machine slides
+                  charts scores machine slides layouts
 locales/          <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
-                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ (D97)
+                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ (D97)
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
 scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, icons.js, screenshots.js, reflexes.js, directory.js
 gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
@@ -86,7 +86,7 @@ e2e/              Playwright smoke tests, one per capability, in Chromium and We
 ee/               the enterprise integrations, Elastic-2.0 (D139)
 ```
 
-Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
+Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
 
 ## Brand
 

@@ -1,0 +1,8 @@
+{
+  "layouts.recommended": "추천",
+  "layouts.note": "참고",
+  "layouts.tip": "팁",
+  "layouts.important": "중요",
+  "layouts.warning": "경고",
+  "layouts.caution": "주의"
+}
