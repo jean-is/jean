@@ -8,6 +8,7 @@ import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
+import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
@@ -72,16 +73,17 @@ const discovery = () => import('./discovery.js')
 
 // As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new conversation; Ctrl outside Apple's
 // systems. A browser tab keeps ⌘N for a new window, so ⌘⇧O does it too, as in ChatGPT, and is the one shown (D236).
-// ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
+// ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧S dictation, ⌘⇧H hands-free once found (D130, D238);
+// ⌘K opens search once it is found, or closes it (D133);
 // ⌘⇧B opens the browser once it is found, or closes it (D142). ⌘J opens the terminal, as in code editors,
 // brings the keys to it, or closes it once they are there, and turns the computer on first (D166, D170, D184).
 // ⌘B opens the drawer or puts it away, as in code editors (D234).
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyL: 'l', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
@@ -94,9 +96,17 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault()
     turnPage(newConversation)
     focusComposer()
-  } else if (key === 'l' && event.shiftKey) {
+  } else if (key === 'd' && event.shiftKey) {
     event.preventDefault()
     switchTheme()
+  } else if (key === 'e' && event.shiftKey) {
+    event.preventDefault()
+    import('./inbox.js').then((module) => module.nextLook())
+  } else if ((key === 's' || (key === 'h' && loaded.value.has('live'))) && event.shiftKey) {
+    event.preventDefault()
+    app.dialog.value = null
+    if (key === 's') toggleDictation()
+    else import('../caps/live/live.js').then((module) => module.toggle())
   } else if (key === 'k' && !event.shiftKey && loaded.value.has('find')) {
     event.preventDefault()
     app.dialog.value = app.dialog.value === 'find' ? null : 'find'

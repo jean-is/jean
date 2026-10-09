@@ -164,7 +164,7 @@ export function setTheme(next) {
   else localStorage.removeItem(THEME_KEY)
 }
 
-/** Light to dark and back (⌘⇧L, D130): switching back to what the device shows is Auto again (D85). */
+/** Light to dark and back (⌘⇧D, D130, D238): switching back to what the device shows is Auto again (D85). */
 export function switchTheme() {
   const next = theme.value === 'light' ? 'dark' : 'light'
   setTheme(next === app.deviceTheme.value ? null : next)

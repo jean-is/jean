@@ -163,6 +163,7 @@
   "settings.appearance": "รูปลักษณ์",
   "settings.keyboard": "แป้นพิมพ์ลัด",
   "keyboard.sidebar": "แสดงหรือซ่อนแถบด้านข้าง",
+  "keyboard.look": "ธีมถัดไป",
   "keyboard.line": "ขึ้นบรรทัดใหม่",
   "keyboard.recall": "คำขอก่อนหน้า เมื่อข้อความของคุณว่างอยู่",
   "settings.capabilities": "ความสามารถ",

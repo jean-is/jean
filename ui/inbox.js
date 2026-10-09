@@ -6,7 +6,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, LOCALES } from './state.js'
+import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { loaded } from './caps.js'
@@ -56,7 +56,7 @@ function conversationList(where) {
   })}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
 }
 
-/** A shortcut as the keyboard shows it: ⌘⇧L and ⇧↩ on Apple's systems, Ctrl+Shift+L and Shift+Enter elsewhere. @param {string} shortcut */
+/** A shortcut as the keyboard shows it: ⌘⇧D and ⇧↩ on Apple's systems, Ctrl+Shift+D and Shift+Enter elsewhere. @param {string} shortcut */
 export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩')
   : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp ArrowDown', '↑ ↓')
 /** The same, left to right in any language. @param {string} shortcut */
@@ -154,6 +154,14 @@ function looks() {
 function pickLook(id) {
   if (sidebarOpen.value && app.sidebar.value === null) setSidebar(true)
   setLook({ id })
+}
+
+/** The next look, in the gallery's order, Human again after the last, its name shown (⌘⇧E, D238). */
+export function nextLook() {
+  const ids = Object.keys(LOOKS)
+  const id = ids[(ids.indexOf(chosenLook()) + 1) % ids.length]
+  setLook({ id })
+  notify(t(`look.${id}.name`))
 }
 
 /**

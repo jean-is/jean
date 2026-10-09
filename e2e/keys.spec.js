@@ -1,7 +1,8 @@
 // Keyboard shortcuts (D118), as in the Claude apps: ⌘, opens Settings and ⌘N starts a new
 // conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet;
 // ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
-// ⌘⇧L switches between light and dark (D130); ⌘B opens the drawer or puts it away (D234).
+// ⌘⇧D switches between light and dark and ⌘⇧E goes to the next theme (D130, D238); ⌘B opens the
+// drawer or puts it away (D234).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
@@ -30,20 +31,33 @@ test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere',
   await expect(page.locator('#prompt')).toBeFocused()
 })
 
-test('⌘⇧L switches between light and dark, even mid-sentence', async ({ page }) => {
+test('⌘⇧D switches between light and dark, even mid-sentence', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' })
   await start(page)
   const root = page.locator('html')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.locator('#prompt').fill('Hello')
-  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyD')
   await expect(root).toHaveAttribute('data-theme', 'light')
   await expect(page.locator('#prompt')).toHaveValue('Hello')
   // Back to what the device shows, Jean follows the device again (D85).
-  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyD')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(root).toHaveAttribute('data-theme', 'light')
+})
+
+test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name (D238)', async ({ page }) => {
+  await start(page)
+  const root = page.locator('html')
+  await expect(root).toHaveAttribute('data-look', 'human')
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyE')
+  await expect(root).toHaveAttribute('data-look', 'mail')
+  await expect(page.locator('.toast')).toHaveText('Mail')
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyE')
+  await expect(root).toHaveAttribute('data-look', 'minimal')
 })
 
 test('⌘B opens the drawer or puts it away, beside the conversation or over it, and shows it from Settings', async ({ page }) => {
@@ -119,6 +133,9 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   const row = (/** @type {string} */ name) => settings.locator('.keyboard > div', { hasText: name })
   await expect(row('New task').locator('kbd')).toHaveText(/^(⌘⇧O|Ctrl\+Shift\+O)$/)
   await expect(row('New line').locator('kbd')).toHaveText(/^(⇧↩|Shift\+Enter)$/)
+  await expect(row('Light or dark').locator('kbd')).toHaveText(/^(⌘⇧D|Ctrl\+Shift\+D)$/)
+  await expect(row('Next theme').locator('kbd')).toHaveText(/^(⌘⇧E|Ctrl\+Shift\+E)$/)
+  await expect(row('Talk hands-free')).toHaveCount(0)
   await expect(row('Search')).toHaveCount(0)
   await closeSettings(page)
   // Turned on, Search opens: ⌘, comes back to Settings over it.

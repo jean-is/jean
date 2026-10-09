@@ -25,6 +25,7 @@ import { rankVoices } from './language.js'
 import { icons } from './icons.js'
 import { sidebarBody, keyNames } from './inbox.js'
 import { SHORTCUTS, findButton, placeToasts } from './shell.js'
+import { dictation } from './dictation.js'
 import { LOOKS, lookId, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
 import { styleSheet } from './sheet.js'
@@ -452,13 +453,14 @@ const appearance = () => html`
 /** Its place in the menu: a keyboard, drawn here rather than with the first screen's icons. */
 const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
   <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
-/** Each shortcut, and the capability it waits for. */
+/** Each shortcut, and the capability it waits for, or dictation, which this browser may not have. */
 const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settings], ['keyboard.sidebar', SHORTCUTS.sidebar], ['settings.mode', SHORTCUTS.theme],
+  ['keyboard.look', SHORTCUTS.look], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live'],
   ['cap.find.name', SHORTCUTS.find, 'find'], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
   ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
-const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || loaded.value.has(id))
+const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : loaded.value.has(id)))
   .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl>`
 
 function approvals() {
@@ -822,7 +824,7 @@ const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
 function looks(look = {}) {
   const chosen = lookId(look.id)
   const size = look.size ?? 1
-  return html`<fieldset class="looks">
+  return html`<fieldset class="looks" aria-keyshortcuts=${SHORTCUTS.look}>
       <legend>${t('look.title')}</legend>
       ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
