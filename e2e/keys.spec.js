@@ -1,6 +1,6 @@
 // Keyboard shortcuts (D118), as in the Claude apps: ⌘, opens Settings and ⌘N starts a new
 // conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet.
-// ⌘⇧L switches between light and dark (D130).
+// ⌘⇧L switches between light and dark (D130); ⌘B opens the drawer or puts it away (D234).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask } from './helpers.js'
 
@@ -43,6 +43,36 @@ test('⌘⇧L switches between light and dark, even mid-sentence', async ({ page
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(root).toHaveAttribute('data-theme', 'light')
+})
+
+test('⌘B opens the drawer or puts it away, beside the conversation or over it, and shows it from Settings', async ({ page }) => {
+  await start(page)
+  const tasks = page.locator('app-inbox')
+  await expect(page.locator('.sidebar-toggle')).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+B$/)
+  // Human's first screen has it open beside the conversation (D174); what is typed stays.
+  await expect(tasks).toBeVisible()
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(tasks).toHaveCount(0)
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(tasks).toBeVisible()
+  // A dialog over the room closes, and the drawer stays.
+  await page.keyboard.press('ControlOrMeta+Comma')
+  const settings = page.locator('app-settings dialog[open]')
+  await expect(settings).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(settings).toHaveCount(0)
+  await expect(page).not.toHaveURL(/\/settings/)
+  await expect(tasks).toBeVisible()
+  // On a narrow window it slides over the conversation, and away again.
+  await page.setViewportSize({ width: 600, height: 800 })
+  await expect(tasks).toHaveCount(0)
+  const drawer = page.locator('app-history dialog[open]')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(drawer).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(drawer).toHaveCount(0)
 })
 
 test('↑ from an empty box brings back what was asked, newest first, and ↓ goes back to an empty box (D187)', async ({ page }) => {

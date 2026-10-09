@@ -34,7 +34,7 @@ class Shell extends Element {
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
-        <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing}
+        <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing} aria-keyshortcuts=${SHORTCUTS.sidebar}
           aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
           : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
@@ -75,10 +75,11 @@ const discovery = () => import('./discovery.js')
 // ⌘⇧L switches between light and dark (D130); ⌘K opens search once it is found, or closes it (D133);
 // ⌘⇧B opens the browser once it is found, or closes it (D142). ⌘J opens the terminal, as in code editors,
 // brings the keys to it, or closes it once they are there, and turns the computer on first (D166, D170, D184).
+// ⌘B opens the drawer or puts it away, as in code editors (D234).
 const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+N`, theme: `${MODIFIER}+Shift+L`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
 const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyL: 'l', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 
@@ -105,6 +106,12 @@ document.addEventListener('keydown', (event) => {
     const over = app.dialog.value
     app.dialog.value = null
     import('../caps/browser/browser.js').then((module) => (over ? module.show() : module.toggle()))
+  } else if (key === 'b' && !event.shiftKey) {
+    event.preventDefault()
+    // A dialog over the room closes, and the drawer shows.
+    const over = app.dialog.value !== null && app.dialog.value !== 'history'
+    if (over) app.dialog.value = null
+    if (!over || !sidebarOpen.value) toggleSidebar()
   } else if (key === 'j' && !event.shiftKey && !isDenied('computer')) {
     event.preventDefault()
     app.dialog.value = null

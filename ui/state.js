@@ -183,10 +183,12 @@ export function setSidebar(open) {
   localStorage.setItem(SIDEBAR_KEY, open ? 'open' : 'closed')
 }
 
-/** The header's button: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over. */
+/** The header's button and ⌘B: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over or away. */
 export function toggleSidebar() {
-  if (app.wide.value) setSidebar(!sidebarOpen.value)
-  else app.dialog.value = 'history'
+  if (!app.wide.value) app.dialog.value = app.dialog.value === 'history' ? null : 'history'
+  else if (!document.startViewTransition) setSidebar(!sidebarOpen.value)
+  // Beside the conversation, it slides (D234).
+  else import('./slide.js').then(({ slide }) => slide())
 }
 
 let lookWrite = 0

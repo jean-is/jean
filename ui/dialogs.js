@@ -79,7 +79,7 @@ class History extends Element {
   render() {
     return html`<dialog class="drawer" aria-label=${t('history.title')} @close=${closed('history')} @click=${backdrop}>
       <header class="dialog-head">${findButton()}
-        <button class="icon-button" @click=${close} aria-label=${t('sidebar.close')}>${icons.sidebar}</button>
+        <button class="icon-button" @click=${close} aria-keyshortcuts=${SHORTCUTS.sidebar} aria-label=${t('sidebar.close')}>${icons.sidebar}</button>
       </header>
       ${sidebarBody('drawer')}
     </dialog>`
