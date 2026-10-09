@@ -73,6 +73,48 @@ test('two projects keep separate memories, each in its own light', async ({ page
   expect(system).toContain('<memory>\n- the bakery opens at 7\n</memory>')
 })
 
+test('the projects’ assistants meet, each speaking for its project from what it knows (D224)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Memory')
+  await page.keyboard.press('Escape')
+  await turnOn(page, 'Projects')
+  for (const [name, fact] of [['Bakery', 'flour runs out on Friday'], ['Garden', 'the roses need pruning']]) {
+    if (name !== 'Bakery') {
+      await page.locator('app-projects .wordmark').click()
+      await page.locator('#project-menu button', { hasText: 'New project' }).click()
+    }
+    await createProject(page, name)
+    await ask(page, `Remember: ${fact}`)
+    await expect(page.locator('.msg-jean .prose').last()).toContainText('Noted.')
+    await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  }
+
+  // Held from home: both projects are asked for, and their memories are theirs, so the user allows it first.
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu .project', { hasText: 'Jean' }).click()
+  await ask(page, 'Hold a meeting about Saturday')
+  const card = page.locator('.inbox .approval')
+  await expect(card).toContainText('A meeting with Bakery and Garden')
+  await card.getByRole('button', { name: 'Always allow' }).click()
+  const answer = page.locator('.msg-jean .prose').last()
+  await expect(answer).toContainText('Bakery: For us: flour runs out on Friday.')
+  await expect(answer).toContainText('Garden: For us: the roses need pruning.')
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  // Each speaker under the meeting, twice, in the order they finish: the second time, having heard the other.
+  await page.locator('.activity > summary').last().click()
+  await expect(page.locator('.activity-list li[data-depth="0"]')).toContainText(['A meeting with Bakery and Garden'])
+  const spoke = page.locator('.activity-list li[data-depth="1"]')
+  await expect(spoke.filter({ hasText: 'title: Bakery' })).toHaveCount(2)
+  await expect(spoke.filter({ hasText: 'title: Garden' })).toHaveCount(2)
+  await expect(spoke.filter({ hasText: 'Round 1:' })).toHaveCount(2)
+  // Always allowed for those projects, and for nothing else: the next meeting doesn't ask.
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.rules.think)).toBeUndefined()
+  await ask(page, 'Another meeting, please')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('The meeting is over')
+  await expect(page.locator('.inbox .approval')).toHaveCount(0)
+})
+
 test('a brain kept to one project answers there, and isn’t offered in the others (D194)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

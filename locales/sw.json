@@ -321,6 +321,7 @@
   "cap.find.offer": "Sasa kuna mengi ya kurejea. Utafute kazi na faili zako zote mahali pamoja?",
   "cap.find.yes": "Washa utafutaji",
   "tool.delegate": "Gawa kazi kwa wasaidizi",
+  "tool.meet": "Mkutano na {names}",
   "tool.ask_user": {
     "one": "Swali kwako",
     "other": "Maswali {count} kwako"

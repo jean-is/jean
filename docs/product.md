@@ -48,7 +48,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 
 **Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there, and formulas (`math`) load with the first one in an answer, drawn as they are printed, a LaTeX document laid out with them (D185), and layouts (`layouts`) with the first answer, for its comparisons, steps and notes: options side by side, the best of each row lit and the pick framed, steps in rings, notes in their colour, and on a wide screen a table of three columns or more takes the room it needs beside the text (D215). The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
 
-**Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; sharing and collaboration ([enterprise.md](enterprise.md)).
+**Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; sharing and collaboration, and requests between people's Jeans ([enterprise.md](enterprise.md), D226); the same tasks on a phone, project by project, and the phone as a remote of Jean at work (D227); a personal and a work profile on one device (D228).
 
 | Capability | Offered when… | What appears |
 |---|---|---|
@@ -64,7 +64,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 | Skills | The same kind of request comes up a third time (its first words compared with earlier conversations', D83) | "Save it as a skill?" (saved as `SKILL.md`); once on, "Save this as a skill" among the follow-ups, or "See a ready-made skill for this" when one from elsewhere or from Jean's own directory fits, read before it is added (D121, D196). A skill can draw in answers: Chart makes charts, Music score makes scores to play (D196), Slides makes decks to page through and present (D200). PowerPoint makes decks as files, on the computer (D201) |
 | Routines | The same kind of request on three different days (D122), or the brain offers it when the user wants something done regularly | "Make it a routine?": Jean sends the request itself, every day, working day, week or month, while it is open or as soon as the user is back. Each run knows the last one, and the runs are one task in the list (D122) |
 | Flows | A request took four calls or more, twice (D218), or the brain offers it when the user wants a task of several steps done the same way again | "Save steps like these as a flow?" On a new task, + in the box puts the main area in flow mode: the room's flows, their steps as cards joined by wires, moved and wired by hand, each changed in its form; Run starts a task of its own, its steps one after another with no brain between them; Schedule makes it a routine. On a task, a button beside the terminal's and the browser's shows it as a flow beside it, each step with what it is doing or became, and the flows it made or ran |
-| Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, shown in the header, which opens on the others |
+| Projects | A distinct ongoing project shows up, or memories conflict across contexts (the brain offers it) | "Shall I make this a project? Its notes and files would stay separate." A room with its own light, shown in the header, which opens on the others; once there are two, their assistants meet when asked, each speaking for its project, the user allowing it first (D224) |
 | Assistant name | After some use inside a project (three conversations, D102) | "Want to give this project's assistant a name?" A name and a few words on how it should be, in the project's dialog; the header shows the name |
 | Web search | After five conversations, a request needs facts the conversation doesn't hold (the brain offers it; a reflex question later) (D145) | The brain's own search, or Wikipedia in the user's language; answers cite their pages (D91) |
 | Browser | The user has opened three links from answers, or a request is about a web page or site (the brain offers it) | Pages open beside the conversation, with back, forward, reload, an address or words to look up, a new tab and full screen; links from answers open there, and Jean can open a page there and read it (D140) |
@@ -81,6 +81,7 @@ A project is a self-contained folder with its own files, conversations, instruct
 
 | Level | Lifetime | Has its own |
 |---|---|---|
+| Profile (later, D228) | Permanent | A whole Jean: settings and keys, the person's instructions and memory, its projects |
 | Jean (the house) | Permanent | Global instructions and memory about the person |
 | Project ("Bakery · with Margot") | Permanent | Files, memory, conversations, rules, brain; optionally a name, persona and colour |
 | Helper | One task | A temporary sub-session, shown nested in the activity view |
@@ -90,6 +91,7 @@ A project is a self-contained folder with its own files, conversations, instruct
 - **Privacy by project.** A "Health" project can be pinned to the on-device brain, which is more reliable than any classifier. Rules can also be set per project, e.g. "Client X: never use the cloud".
 - **Small context.** Memory per project stays small, so it fits the on-device brain's context.
 - **Easy to move.** Backing up, exporting, sharing, syncing or deleting a project is one folder operation. Collaboration later becomes "invite someone to this project".
+- **Meetings** (D224). Asked to hold a meeting, Jean has the assistants of the other projects, or of those named, speak on the topic in rounds, each from its own project's instructions, memory and latest tasks, hearing what the others said; then it says what was decided, what each project will do and what needs the user. The user allows each meeting first, or always for those projects, and a routine holds a regular one. A project kept on this device doesn't hear a brain in the cloud.
 - **Hidden default.** There is always a default project, invisible until the Projects capability is discovered.
 
 ## Instructions and memory
@@ -99,7 +101,7 @@ One section of Settings, **About you** ("What Jean knows about you"), in two par
 1. **Your instructions** (`instructions.md`). Written by the user, authoritative, always included. They come in three layers: organisation policy (locked), then global, then project.
 2. **What Jean noticed** (`memory.md`). Curated by Jean. Every entry links to the conversation it came from and can be edited or deleted.
 
-Once they are on, Settings' Skills lists the skills, each saying where it came from, Jean's own ready-made skills as tiles to read and add, everyday ones first (a hard document in plain words, a formal letter, a budget, a comparison with a recommendation, calendar events, a quiz, D208; who's who in what the user shares, drawn as a map and kept as a spreadsheet, D223), the sources of skills from elsewhere, by default folders of Anthropic's skills for knowledge work on GitHub, and what they offer (D121, D196, D207), and Routines the routines, with when each runs next (D122).
+Once they are on, Settings' Skills lists the skills, each saying where it came from, Jean's own ready-made skills as tiles to read and add, everyday ones first (a hard document in plain words, a formal letter, a budget, a comparison with a recommendation, a problem solved with the method that fits it, 8D, DMAIC, A3 or PDCA, calendar events, a quiz, D208, D225; who's who in what the user shares, drawn as a map and kept as a spreadsheet, D223), the sources of skills from elsewhere, by default folders of Anthropic's skills for knowledge work on GitHub, and what they offer (D121, D196, D207), and Routines the routines, with when each runs next (D122).
 
 **Skills that draw** (D196). A skill can say which kinds of block it writes, and while one of the room's skills says so, those blocks are drawn in the answer instead of shown as code: Charts (ECharts) draws bars, lines, pies, heatmaps and more, in the theme's colours with numbers in the user's language; Music scores (ABC notation) draws the score and plays it, each note lit as it sounds; Slides (Marp's Markdown) shows a deck a slide at a time, in the room's look, to page through with buttons or the arrow keys, present full screen and print one slide under another (D200). Each is drawn as the answer writes it. Copy takes both the block's text and its picture, so it pastes as code in an editor and as a picture in a document, and copying the answer brings the pictures along in its formatting. All three are in Jean's own directory, tiles in Settings › Skills. Deleting the skill turns its blocks back into code. The directory's PowerPoint skill draws nothing in answers: it makes a deck as a `.pptx` on the computer, with its charts and tables PowerPoint's own, shown beside the conversation slide by slide (D201).
 
@@ -254,5 +256,5 @@ Dictation and read-aloud are always there, for accessibility. Live conversation 
 - An always-on cloud computer, and working while the user is away
 - Controlling the user's computer outside the browser
 - A proprietary app catalogue (Jean uses MCP)
-- Persona-heavy prompts and multi-agent role-play
+- Persona-heavy prompts, and assistants that work among themselves without the user
 - Built-in browser models (`LanguageModel`), and native code beyond the window the desktop version opens and Sync's folder (D155, D169), for now

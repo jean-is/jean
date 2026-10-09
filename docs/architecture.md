@@ -138,6 +138,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.cx' })
 | Web search | `web_search`, the provider's own where it has one (D91) |
 | Browser | `browse` (D140) |
 | Helpers | `delegate`; *`helper`*, called by `delegate` |
+| Projects | `meet`; *`speak`*, called by `meet` (D224) |
 | Folders | `list`, `find_in_files`, `open`, `change`, deferred and named in `<folder>` (D152) |
 | Connections | `<service>_<tool>` for each connection's tools, deferred (D89) |
 

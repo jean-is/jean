@@ -321,6 +321,7 @@
   "cap.find.offer": "Artık dönüp bakacak çok şey var. Tüm görevlerinde ve dosyalarında tek yerden arama yapılsın mı?",
   "cap.find.yes": "Aramayı aç",
   "tool.delegate": "İşi yardımcılara bölüştür",
+  "tool.meet": "{names} ile toplantı",
   "tool.ask_user": {
     "one": "Sana bir soru",
     "other": "Sana {count} soru"

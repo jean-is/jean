@@ -317,6 +317,7 @@
   "cap.find.offer": "Ohun púpọ̀ wà láti wo padà báyìí. Ṣé kí ẹ wá gbogbo iṣẹ́ àti fáìlì yín ní ibì kan?",
   "cap.find.yes": "Tan ìwádìí",
   "tool.delegate": "Pín iṣẹ́ fún àwọn olùrànlọ́wọ́",
+  "tool.meet": "Ìpàdé pẹ̀lú {names}",
   "tool.ask_user": {
     "other": "Ìbéèrè {count} fún yín"
   },

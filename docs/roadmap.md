@@ -14,7 +14,7 @@ Each version is deployed as soon as it is ready. The loud public launch waits fo
 | **0.6** ✅ | Delegate | Helpers (D98), the decision inbox (D99), Double-check (D100), "Since last time" (D101), assistant names (D102); then files Jean writes (D119) and sixteen themes (D111, D120) | A large task is split, approved step by step, and checked against its sources |
 | **0.7** ✅ | Learn and repeat | Skills from elsewhere (D121), routines (D122); then the preview (D126), search (D133), Settings as one place (D134), the browser (D140), questions on a card (D146), answers that go on out of sight (D147) | A repeated request finds a ready-made skill the user adds after reading it; a routine runs on its own, and one missed while Jean was closed runs at the next visit |
 | **0.8** ✅ | Work in place | Folders (D141, D149, D152); then Sync (D157), the desktop app (D155, D160, D169), the Computer and its terminal (D162–D166, D170), shown at work in Settings (D176), versions (D164), the workspace in the browser (D167, D172), the drawer (D165) | In a synced "Clients" folder Jean finds the three contracts that mention a clause and corrects one after showing the change; in a folder of code, `git diff` shows exactly Jean's change; after a reload each conversation and project is back on its own folder |
-| Later | Together | Sync through a drive's own API, once the domain is settled (D27); sharing (fragment links, Web Share); collaboration (an end-to-end-encrypted relay, D45; Yjs for shared documents); in `ee/`, under a key, what an organisation's IT asks for ([enterprise.md](enterprise.md#open-and-enterprise), D139) | — |
+| Later | Together | Sync project by project, through Dropbox's own API first, and the phone as a remote of a running Jean (D227); profiles (D228); sharing (fragment links, Web Share); collaboration and requests between people's Jeans (an end-to-end-encrypted relay, D45 · D226; Yjs for shared documents); in `ee/`, under a key, what an organisation's IT asks for ([enterprise.md](enterprise.md#open-and-enterprise), D139) | — |
 
 Everything above is checked end to end with `npm run e2e` in Chromium and WebKit against the fake brain, and under `node --test`, and each screen by eye in English, Arabic and Japanese.
 
@@ -28,6 +28,8 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Double-check: one verdict per line, in any language; its cost on long answers
 - [ ] Flows (D218): does a brain draw a flow whose Ask steps a small brain can follow, with `{{}}` where results go, and make one of a real task it just did? A step once for each of fifty items against rate limits; a routine that runs a flow over real days
 - [ ] `ask_user`: only what is needed, all at once, with an answer recommended
+- [ ] Meetings (D224): do assistants keep to their project, say "Nothing from me." when they have nothing, and answer each other in the second round? Does the chair say what each project will do? Three rounds of five speakers against rate limits, and a routine that holds one over real weeks
+- [ ] Problem solving (D225): does a brain pick the method the situation calls for, ask when it isn't clear, and write an 8D or an A3 that holds, in Arabic and Japanese too?
 - [ ] `write` for a document, with Markdown and CSV as the tool asks; the HTML pages they make, with a chart library from the internet
 - [ ] `browse` only when a page helps
 - [ ] Chart and Music score (D196): do brains read the skill and write strict JSON and ABC whose bars add up, in the user's language? The device's brain especially
@@ -80,6 +82,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 ## Before the public launch
 
 - [ ] Final name and domain chosen and registered, because data is bound to the origin (D27, [open-questions.md](open-questions.md))
+- [ ] Profiles' data layout settled and built (D228), since data moves only before launch (D173)
 - [x] Multilingual reflex test set built; Kev measured in every launch language (D68)
 - [ ] Kev fine-tuned where it falls short: "personal", "unhappy" and "lasting" everywhere, and the low-resource languages (D68)
 - [x] Budgets enforced in CI: `.gitlab-ci.yml` runs `npm run check` and `npm run e2e` on every push and merge request, once the repository has a GitLab remote

@@ -321,6 +321,7 @@
   "cap.find.offer": "አሁን ወደኋላ የሚታይ ብዙ ነገር አለ። ሁሉንም ተግባራትዎን እና ፋይሎችዎን በአንድ ቦታ ይፈልጉ?",
   "cap.find.yes": "ፍለጋን ያብሩ",
   "tool.delegate": "ሥራውን ለአጋዦች ማከፋፈል",
+  "tool.meet": "ከ{names} ጋር ስብሰባ",
   "tool.ask_user": {
     "one": "ለእርስዎ ጥያቄ",
     "other": "{count} ጥያቄዎች ለእርስዎ"

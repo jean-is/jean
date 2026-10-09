@@ -2,15 +2,18 @@
 // folder, with its conversations, files, instructions, memory and skills, and its own light:
 // the room and the little light take its colour (D78). The home project is always there; once
 // projects are discovered, the header shows the one the user is in, and opens on the others.
-// A project can be kept on this device, whatever brain Auto would otherwise pick.
+// A project can be kept on this device, whatever brain Auto would otherwise pick. Once there are
+// projects, their assistants can meet (./meeting.js, D224).
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
-import { app, enterProject, refreshProjects, newConversation, turnPage } from '../../ui/state.js'
+import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage } from '../../ui/state.js'
 import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
 import { createProject, stringifyFrontMatter } from '../../core/settings.js'
+import { splitSuggestions } from '../../core/events.js'
+import { nameOf, attendees, knows, speakerPrompt, request, minutes, report, pool, ROUNDS } from './meeting.js'
 import { BRAND } from '../../brand.js'
 import { t } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
@@ -30,9 +33,6 @@ export function editProject(project = null) {
   editing.value = project
   app.dialog.value = 'project'
 }
-
-/** The home project is the assistant's own room, and goes by its name. @param {Project} project */
-const nameOf = (project) => String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name)
 
 /** Each little light in a list shows its project's colour (CSSOM: the CSP allows no style attribute). @param {HTMLElement} host */
 function tint(host) {
@@ -163,4 +163,77 @@ class ProjectDialog extends Element {
 
 define('app-projects', Projects)
 define('app-project-dialog', ProjectDialog)
-register({ id: 'projects' })
+
+/** The projects of a meeting under way, by folder: a speaker speaks for no other. @type {Map<string, number>} */
+const meeting = new Map()
+
+/** Who joins, heard by the brain the task is answered with. @param {any} args @param {import('../../core/loop.js').ToolContext} ctx */
+const who = (args, ctx) => attendees(app.projects.value, { here: app.projectDir, names: Array.isArray(args?.projects) ? args.projects : [], brain: conversationOf(ctx.signal)?.brain ?? activeBrain.value })
+
+/** @type {import('../../core/loop.js').Tool} */
+const meetTool = {
+  spec: {
+    name: 'meet',
+    description: "Hold a meeting of the projects' assistants on a topic: each speaks for its project, from its memory, instructions and latest tasks, and from the second round answers the others. Without projects named, every other project joins. You get the minutes. To hold one regularly, make it a routine.",
+    parameters: {
+      type: 'object',
+      properties: {
+        topic: { type: 'string', description: 'What the meeting is about, and what each should bring' },
+        projects: { type: 'array', items: { type: 'string' }, description: "The projects' names" },
+        rounds: { type: 'integer', minimum: 1, maximum: ROUNDS, description: 'How many times each speaks (2 by default)' },
+      },
+      required: ['topic'],
+    },
+  },
+  kind: 'think',
+  title: (args) => `Meeting: ${args?.topic ?? ''}`,
+  // A project's memory and tasks are its own: the user allows each meeting, or always for those projects.
+  check: async (args, ctx) => {
+    const { joins } = who(args, ctx)
+    return { ask: !joins.every((project) => effective.value.settings.meet?.includes(project.id)), meta: { projects: joins.map((project) => project.id).join(' '), names: joins.map(nameOf) } }
+  },
+  run: async (args, ctx) => {
+    const { joins, out } = who(args, ctx)
+    if (!joins.length) throw new Error(out.length ? `No project can join: ${out.map(({ name, why }) => `${name} (${why})`).join('; ')}.` : 'There is no other project yet.')
+    if (ctx.answer === 'allow_always') await updateSettings({ meet: [...new Set([...app.settings.value.meet ?? [], ...joins.map((project) => project.id)])] })
+    const topic = String(args.topic ?? '')
+    /** @type {{ speaker: string, said: string }[][]} */
+    const rounds = []
+    for (const project of joins) meeting.set(project.dir, (meeting.get(project.dir) ?? 0) + 1)
+    try {
+      for (let round = 0; round < Math.min(ROUNDS, Math.max(1, Number(args.rounds) || 2)); round++) {
+        const said = await pool(joins.map((project) => () => ctx.call('speak', { title: nameOf(project), project: project.dir, topic, minutes: minutes(rounds) })))
+        rounds.push(joins.map((project, i) => ({ speaker: nameOf(project), said: said[i] })))
+      }
+    } finally {
+      for (const project of joins) meeting.set(project.dir, (meeting.get(project.dir) ?? 1) - 1)
+    }
+    return report(topic, rounds, out)
+  },
+}
+
+/** One assistant speaking at a meeting: a turn of its own, with no tools, from what its project knows. @type {import('../../core/loop.js').Tool} */
+const speakTool = {
+  spec: { name: 'speak', description: "A project's assistant speaking at a meeting (meet starts them).", parameters: { type: 'object', properties: { title: { type: 'string' }, project: { type: 'string' }, topic: { type: 'string' }, minutes: { type: 'string' } }, required: ['project', 'topic'] } },
+  kind: 'think',
+  hidden: true,
+  title: (args) => String(args?.title ?? ''),
+  run: async (args, ctx) => {
+    const project = app.projects.value.find((candidate) => candidate.dir === args?.project)
+    if (!project || !meeting.get(project.dir)) throw new Error('A project speaks only at a meeting it was asked to.')
+    const { text } = await ctx.turn({
+      system: speakerPrompt({ speaker: String(project.data.assistantName || nameOf(project)), project: nameOf(project), chair: assistantName(), body: project.body, ...await knows(app.fs, project) }),
+      history: [{ role: 'user', content: request(String(args.topic ?? ''), args.minutes) }],
+      tools: [],
+      declared: [],
+      maxSteps: 1,
+    })
+    return splitSuggestions(text).text.trim() || 'Nothing from me.'
+  },
+}
+
+register({
+  id: 'projects',
+  tools: [meetTool, speakTool],
+  lines: [{ name: 'meet', line: "hold a meeting of the projects' assistants, each speaking for its project" }],
+})

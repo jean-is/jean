@@ -400,6 +400,7 @@ export function toolLabel(tool, files = []) {
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${String(tool.rawInput?.capability)}.name`) })
+  if (tool.name === 'meet') return t('tool.meet', { names: new Intl.ListFormat(locale.value).format(tool._meta?.names ?? []) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   if (tool.name === 'ask_user') {
     const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : []

@@ -321,6 +321,7 @@
   "cap.find.offer": "Yanzu akwai abubuwa da yawa da za ka waiwaya. A bincika duk ɗawainiyoyinka da fayilolinka a wuri ɗaya?",
   "cap.find.yes": "Kunna bincike",
   "tool.delegate": "Raba aiki ga mataimaka",
+  "tool.meet": "Taro tare da {names}",
   "tool.ask_user": {
     "one": "Tambaya gare ka",
     "other": "Tambayoyi {count} gare ka"

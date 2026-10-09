@@ -17,7 +17,7 @@ What is still undecided. An answered question becomes an entry in [decisions.md]
 - **Handles:** on GitHub, `jean` and `jeancx` are taken and `jean-cx` exists but is empty (whose?). On npm, `jean` is an old IoC library.
 - **Criteria for an alternative:** a first name (a person you delegate to), 1–2 syllables, said the same way in English and French, unused in AI, with a short domain.
 - **Other names taken nearby:** LEAP (Liquid AI's on-device platform), Blur (an NFT marketplace), Space (ChatGPT's shared workspace).
-- **Also depends on it:** the collaboration relay's subdomain (D45), the desktop app's bundle id (D155), Client ID Metadata Documents (below) and a drive's own API for Sync (D157).
+- **Also depends on it:** the relay's subdomain (D45 · D226), the desktop app's bundle id (D155), Client ID Metadata Documents (below) and Jean's own Dropbox app key for Sync (D227).
 
 ## Display face
 
@@ -33,4 +33,8 @@ Instrument Serif ships for now (D34). Fraunces will probably replace it. To chec
   - **Slack and Dropbox:** CORS, plus open registration for Slack. Dropbox, like Figma, registers only the apps on its list: ask both to add Jean.
   - **Google Meet and Google Tasks:** a server at all.
 - **Helpers on a cheaper brain?** Helpers use the brain that delegated (D98). Auto could give them a lighter tier: cheaper, but one answer would then mix two models' work. To decide with real tasks.
+- **A catalogue of projects:** an index of project folders, as skills' discovery indexes are, or a plugin marketplace's `marketplace.json`, which already bundles skills and connections? And what a project carries without its secrets (connections as names and addresses only).
+- **Requests between people's Jeans (D226):** A2A's messages over the relay, or ACP's? How a person is named to send to: a pairing link once, then a name in the user's own list?
+- **Continuity (D227):** which settings follow a person (brains and connections listed without their keys, so another device asks only to sign in again, which amends D157's "settings stay on each")? Where a routine runs when several devices are open: the device that made it, or the first to claim the run in the mirror? What a phone keeps, when Safari evicts a site's data after 7 days unless it is installed?
+- **Profiles (D228):** the word in the UI ("Profile", as browsers say, or one of the house's), and whether a routine of a profile not open runs.
 - **Double-check with Intuition one day?** If the fine-tuned "Jean reflexes" checkpoint (D68) learns "does this passage support this sentence?" in every launch language, checks could stay on the device and cost nothing (D100).

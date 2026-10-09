@@ -321,6 +321,7 @@
   "cap.find.offer": "Er is nu veel om op terug te kijken. Al je taken en bestanden op één plek doorzoeken?",
   "cap.find.yes": "Zoeken aanzetten",
   "tool.delegate": "Het werk verdelen over helpers",
+  "tool.meet": "Een overleg met {names}",
   "tool.ask_user": {
     "one": "Een vraag voor jou",
     "other": "{count} vragen voor jou"

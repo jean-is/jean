@@ -317,6 +317,7 @@
   "cap.find.offer": "Giờ đã có nhiều thứ để xem lại. Tìm trong mọi nhiệm vụ và tệp của bạn ở một nơi nhé?",
   "cap.find.yes": "Bật tìm kiếm",
   "tool.delegate": "Chia việc cho những người phụ giúp",
+  "tool.meet": "Cuộc họp với {names}",
   "tool.ask_user": {
     "other": "{count} câu hỏi cho bạn"
   },

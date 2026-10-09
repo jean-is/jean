@@ -127,19 +127,19 @@ export const askUser = (questions, from, signal) => queue({ questions, from, con
 /**
  * An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then
  * follow. In the user's folder, "Always allow" holds for that folder only, which its tool keeps (D141);
- * for a site the computer reaches, for that site only (D162).
+ * for a site the computer reaches, for that site only (D162); for a meeting, for its projects only (D224).
  * @param {ToolCallInfo} toolCall @param {string} conversation
  */
 async function approve(toolCall, conversation) {
   const option = /** @type {PermissionOption} */ (await queue({ toolCall, conversation }))
-  const scope = toolCall._meta?.folder ? 'folder' : toolCall._meta?.site ? 'site' : ''
+  const scope = toolCall._meta?.folder ? 'folder' : toolCall._meta?.site ? 'site' : toolCall._meta?.projects ? 'projects' : ''
   if (scope && option === 'allow_always') {
     for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.name === toolCall.name && other.toolCall._meta?.[scope] === toolCall._meta?.[scope]) other.resolve('allow_once')
   }
   const rule = scope ? null : ruleFromPermission(option)
   if (rule && toolCall.kind) {
     await setRule(toolCall.kind, rule)
-    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind && !other.toolCall._meta?.folder && !other.toolCall._meta?.site) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')
+    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind && !other.toolCall._meta?.folder && !other.toolCall._meta?.site && !other.toolCall._meta?.projects) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')
   }
   return option
 }
@@ -314,7 +314,7 @@ export async function rewind(upTo) {
  */
 async function runAgent(conversation, brain, meta, call) {
   /** @type {Run} */
-  const run = { ...conversation, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
+  const run = { ...conversation, brain, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
   const { path, records: sent, turn, settled } = run
   const shown = () => app.current.peek()?.path === path
   let frame = 0

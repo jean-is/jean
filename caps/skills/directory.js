@@ -14,6 +14,7 @@ export const DIRECTORY = Object.freeze([
   { name: 'letter', icon: 'M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6' },
   { name: 'budget', icon: 'M5 7a7 2.5 0 1 0 14 0 7 2.5 0 1 0-14 0v10c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V7M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5' },
   { name: 'compare', icon: 'M12 3.5v16M8 19.5h8M4.5 7.5h15M4.5 7.5l-2.5 6h5zM19.5 7.5l-2.5 6h5z' },
+  { name: 'problem-solving', icon: 'M4 6.5h4.5M4 12h4.5M4 17.5h4.5M8.5 6.5 12 12l-3.5 5.5M12 12h8.5M17 9l3.5 3-3.5 3' },
   { name: 'calendar-event', icon: 'M4.5 6h15v13.5h-15zM4.5 10h15M8.5 3.5V8M15.5 3.5V8M8 13.5h2M14 13.5h2M8 16.5h2' },
   { name: 'quiz', icon: 'M3.5 12a8.5 8.5 0 1 0 17 0 8.5 8.5 0 1 0-17 0M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 16.5v.5' },
   { name: 'relations', icon: 'M4 6a2 2 0 1 0 4 0 2 2 0 1 0-4 0M16 6a2 2 0 1 0 4 0 2 2 0 1 0-4 0M10 18a2 2 0 1 0 4 0 2 2 0 1 0-4 0M8 6h8M6.9 7.8l4.2 8.4M17.1 7.8l-4.2 8.4' },

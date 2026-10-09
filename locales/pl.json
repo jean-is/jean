@@ -329,6 +329,7 @@
   "cap.find.offer": "Masz już sporo do przejrzenia. Przeszukiwać wszystkie zadania i pliki w jednym miejscu?",
   "cap.find.yes": "Włącz wyszukiwanie",
   "tool.delegate": "Podział pracy między pomocników",
+  "tool.meet": "Spotkanie projektów: {names}",
   "tool.ask_user": {
     "one": "Pytanie do ciebie",
     "few": "{count} pytania do ciebie",

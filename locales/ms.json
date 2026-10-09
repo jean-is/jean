@@ -317,6 +317,7 @@
   "cap.find.offer": "Kini ada banyak untuk dilihat semula. Cari dalam semua tugasan dan fail anda di satu tempat?",
   "cap.find.yes": "Hidupkan carian",
   "tool.delegate": "Membahagikan kerja kepada pembantu tugas",
+  "tool.meet": "Mesyuarat dengan {names}",
   "tool.ask_user": {
     "other": "{count} soalan untuk anda"
   },

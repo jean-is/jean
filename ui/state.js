@@ -333,14 +333,14 @@ export async function removeConversation(path) {
 
 /**
  * A conversation being answered, on screen or not (D147): `records` as sent, `turn` the answer so far, `settled` what of it is in the file.
- * @typedef {{ id: string, path: string, records: Envelope[], turn: Turn, settled: Envelope[], controller: AbortController }} Run
+ * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController }} Run
  */
 /** @type {Map<string, Run>} by path */
 const runs = new Map()
 
 /**
  * The conversation a call works for, by its run's signal (D147); without one, the one on screen.
- * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], turn?: Turn } | null}
+ * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], brain?: BrainConfig, turn?: Turn } | null}
  */
 export function conversationOf(signal) {
   for (const run of runs.values()) if (run.controller.signal === signal) return run

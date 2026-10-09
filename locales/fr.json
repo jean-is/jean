@@ -325,6 +325,7 @@
   "cap.find.offer": "Il y a maintenant beaucoup à retrouver. Chercher dans toutes vos tâches et vos fichiers au même endroit ?",
   "cap.find.yes": "Activer la recherche",
   "tool.delegate": "Répartir le travail entre assistants d’appoint",
+  "tool.meet": "Une réunion avec {names}",
   "tool.ask_user": {
     "one": "Une question pour vous",
     "many": "{count} questions pour vous",

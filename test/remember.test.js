@@ -9,6 +9,9 @@ import { parseSkill, listSkills, saveSkill, skillLines } from '../core/skills.js
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { alike } from '../core/search.js'
 import { importBackup, exportBackup } from '../caps/backup/archive.js'
+import { attendees, knows, speakerPrompt, request, minutes, report, pool } from '../caps/projects/meeting.js'
+import { createConversation, appendRecords } from '../core/conversations.js'
+import { userRecords, envelope, metaRecord } from '../core/events.js'
 
 test('front matter: one level of nesting, and strings that look like something else stay strings', () => {
   const text = stringifyFrontMatter({ name: 'weekly-report', description: 'true', count: '12', empty: '', metadata: { author: 'jean', format: '1' } }, '# Steps\n')
@@ -133,4 +136,61 @@ test('alike: the same kind of request scores high, in any language, whatever the
   assert.ok(ja > 0.6, `Japanese: ${ja}`)
   assert.deepEqual(alike('anything', []), [])
   assert.deepEqual(alike('', ['x']), [0])
+})
+
+test('meetings (D224): who joins, what each speaker knows of its own project only, and the minutes', async () => {
+  const fs = memoryFS()
+  const home = await ensureHome(fs, { by: 'dev' })
+  const made = []
+  for (const [i, name] of ['Bakery', 'Garden', 'Health', 'Clients', 'Club', 'Choir', 'Shop'].entries()) made.push(await createProject(fs, { name, by: 'dev', now: new Date(Date.now() + 1000 * (i + 1)) }))
+  const [bakery, garden, health] = made
+  await fs.write(`${health}/project.md`, stringifyFrontMatter({ ...parseFrontMatter((await fs.read(`${health}/project.md`)) ?? '').data, cloud: false }, ''))
+  const projects = await listProjects(fs)
+  const cloud = { id: 'cloud', provider: 'openrouter', api: 'openai', baseURL: 'https://openrouter.ai/api/v1', model: 'm' }
+  const device = { id: 'device', provider: 'device', api: 'device', baseURL: '', model: 'gemma' }
+  const names = (/** @type {{ joins: any[] }} */ { joins }) => joins.map((project) => project.data.name)
+
+  // From the bakery, every other project, the home one too; a project kept on this device hears no cloud brain; five at most.
+  const all = attendees(projects, { here: bakery, brain: /** @type {any} */ (cloud) })
+  assert.deepEqual(names(all), ['Home', 'Garden', 'Clients', 'Club', 'Choir'])
+  assert.deepEqual(all.out, [{ name: 'Health', why: 'kept on this device' }, { name: 'Shop', why: '5 speak at most' }])
+  assert.deepEqual(names(attendees(projects, { here: home, names: ['health', 'gard'], brain: /** @type {any} */ (device) })), ['Garden', 'Health'], 'named, by a part of the name, any case')
+  // A brain kept to some projects is heard only there (D194).
+  const kept = attendees(projects, { here: home, names: ['Garden', 'Bakery'], brain: /** @type {any} */ ({ ...cloud, projects: [projects[1].id] }) })
+  assert.deepEqual(names(kept), ['Bakery'])
+  assert.deepEqual(kept.out, [{ name: 'Garden', why: 'this brain is not used there' }])
+  assert.throws(() => attendees(projects, { here: home, names: ['Bakry'], brain: null }), /No project is called bakry\. The projects are: Jean, Bakery, Garden/)
+
+  // What the bakery's assistant knows: its instructions, memory and latest task, never the garden's.
+  await fs.write(`${bakery}/instructions.md`, 'Prices in euros.\n')
+  await fs.write(`${bakery}/memory.md`, stringifyMemory([{ text: 'Opens at 7', at: '2026-10-01T09:00:00.000Z', by: 'jean' }]))
+  await fs.write(`${garden}/memory.md`, stringifyMemory([{ text: 'Roses in March', at: '2026-10-01T09:00:00.000Z', by: 'jean' }]))
+  const task = await createConversation(fs, { projectDir: bakery, by: 'dev' })
+  await appendRecords(fs, task.path, [...userRecords('Order flour', [], 'dev'), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Ordered 40 kg of flour for Friday.' } }, 0), metaRecord('dev', { title: 'Flour order' })])
+  const known = await knows(fs, /** @type {any} */ (projects.find((project) => project.dir === bakery)))
+  assert.equal(known.instructions, 'Prices in euros.')
+  assert.equal(known.memory, '- Opens at 7')
+  assert.match(known.tasks, /^- Flour order, \d{4}-\d\d-\d\d: Ordered 40 kg of flour for Friday\.$/)
+  const system = speakerPrompt({ speaker: 'Margot', project: 'Bakery', chair: 'Jean', body: 'Warm and brief.\n', ...known })
+  assert.match(system, /^You are Margot, the assistant of the project "Bakery", in a meeting Jean holds/)
+  assert.match(system, /<how-to-be>\nWarm and brief\.\n<\/how-to-be>\n\n<instructions>\nPrices in euros\.\n<\/instructions>\n\n<memory>\n- Opens at 7\n<\/memory>\n\n<tasks>\n- Flour order/)
+  assert.doesNotMatch(system, /Roses/)
+
+  // Each round hears the ones before; the chair gets the minutes, who was left out, and what to tell the user.
+  const rounds = [[{ speaker: 'Bakery', said: 'We need flour by Friday.' }, { speaker: 'Garden', said: 'Nothing from me.' }]]
+  assert.equal(request('Saturday'), 'The topic: Saturday\n\nWhat do you say for your project?')
+  assert.equal(request('Saturday', minutes(rounds)), 'The topic: Saturday\n\nWhat was said so far:\n\nRound 1:\nBakery: We need flour by Friday.\nGarden: Nothing from me.\n\nWhat do you say for your project?')
+  assert.equal(report('Saturday', rounds, [{ name: 'Health', why: 'kept on this device' }]).split('\n\n').at(-2), 'Left out: Health (kept on this device).')
+  // Speakers take turns three at a time, in their order, and one that fails says so.
+  let busy = 0
+  let most = 0
+  const said = await pool(Array.from({ length: 5 }, (_, i) => async () => {
+    most = Math.max(most, ++busy)
+    await new Promise((resolve) => setTimeout(resolve, 5))
+    busy--
+    if (i === 3) throw new Error('rate limited')
+    return `speaker ${i}`
+  }))
+  assert.equal(most, 3)
+  assert.deepEqual(said, ['speaker 0', 'speaker 1', 'speaker 2', '(Could not speak: rate limited)', 'speaker 4'])
 })

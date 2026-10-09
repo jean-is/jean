@@ -321,6 +321,7 @@
   "cap.find.offer": "Es gibt jetzt einiges, auf das du zurückblicken kannst. Alle Aufgaben und Dateien an einem Ort durchsuchen?",
   "cap.find.yes": "Suche einschalten",
   "tool.delegate": "Arbeit auf Helfer verteilen",
+  "tool.meet": "Eine Besprechung mit {names}",
   "tool.ask_user": {
     "one": "Eine Frage an dich",
     "other": "{count} Fragen an dich"

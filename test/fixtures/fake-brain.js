@@ -33,7 +33,8 @@
 // them (D196, D200). Asked to compare phone plans, it lays out a comparison, steps and notes, and asked
 // for the steps to buy a phone, it writes them apart, as bold numbered paragraphs, and asked for the
 // half year's sales, a table wider than the text, and to compare an iPhone and a Pixel, in French, a
-// comparison whose options say much (D215).
+// comparison whose options say much (D215). Asked to hold a meeting, it calls one, each project's
+// assistant saying what its <memory> holds, then agreeing; it answers with what was said (D224).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -394,6 +395,9 @@ createServer(async (req, res) => {
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
+  else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
+  else if (toolName === 'meet') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : `The meeting is over:\n\n${(/Round 1:\n([\s\S]*?)\n\n/.exec(last.content)?.[1] ?? '').split('\n').map((line) => `- ${line}`).join('\n')}`
   // Flows (D218): a step to do, a flow to draw (asked, or the steps just done), one to run.
   else if (/doing one step of the user's flow/.test(system)) answer = /Total per client/.test(lastUser) ? 'Acme: 120\nBistro: 80' : ''
   else if (/\b(?:make|draw|save)\b.*\bflow\b/i.test(question) && last.role === 'user' && declared.has('save_flow')) {
