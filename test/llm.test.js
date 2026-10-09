@@ -263,6 +263,18 @@ describe('streamChat (OpenAI-compatible)', () => {
     await rejectsWith(run(brains.openrouter, limited), { code: 'rate_limit', status: 429, retryable: true })
   })
 
+  test('asks OpenRouter again for as long an answer as the credits left cover (402), and throws any other 402', async () => {
+    const short = { error: { code: 402, message: 'This request requires more credits, or fewer max_tokens. You requested up to 65536 tokens, but can only afford 62555. To increase, visit https://openrouter.ai/settings/credits and add more credits' } }
+    const { fetch, calls } = mockFetch((_, init) => (JSON.parse(String(init.body)).max_tokens === undefined
+      ? new Response(JSON.stringify(short), { status: 402 }) : sseResponse(openaiSSE([{ choices: [{ delta: { content: 'ok' }, finish_reason: 'stop' }] }]))()))
+    const events = await collect(streamChat({ brain: brains.openrouter, apiKey: 'sk-or', messages: [{ role: 'user', content: 'Hi' }], fetch }))
+    assert.equal(events.at(-1).message.content, 'ok')
+    assert.deepEqual(calls.map((call) => call.body.max_tokens), [undefined, 62555])
+    const broke = mockFetch(() => new Response(JSON.stringify({ error: { code: 402, message: 'Insufficient credits' } }), { status: 402 }))
+    await rejectsWith(collect(streamChat({ brain: brains.openrouter, apiKey: 'sk-or', messages: [], fetch: broke.fetch })), { status: 402, retryable: false })
+    assert.equal(broke.calls.length, 1)
+  })
+
   test('throws when the server sends no events at all', async () => {
     const { fetch } = mockFetch(() => new Response('{"choices":[]}', { status: 200 }))
     await rejectsWith(collect(streamChat({ brain: brains.ollama, messages: [], fetch })), { code: 'bad_response' })

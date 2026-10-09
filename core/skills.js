@@ -8,9 +8,10 @@ import { parseFrontMatter, stringifyFrontMatter } from './settings.js'
 
 /** @typedef {import('./types.js').FS} FS */
 /**
- * @typedef {{ name: string, description: string, title: string, body: string, path: string, source?: string, blocks?: string[] }} Skill
+ * @typedef {{ name: string, description: string, title: string, body: string, path: string, source?: string, blocks?: string[], metadata?: Record<string, any> }} Skill
  *   title: the first heading, in the user's language; source: where a skill from elsewhere came from (D121);
- *   blocks: the kinds of fenced block it writes, such as "echarts" (D196)
+ *   blocks: the kinds of fenced block it writes, such as "echarts" (D196); metadata: its front matter's, kept as it came,
+ *   with the name and few words it is shown with in each language it gives them in (`title-fr`, `text-fr`, D222)
  */
 
 /** The standard's names: lower-case letters, digits and single hyphens, up to 64 characters. */
@@ -28,7 +29,8 @@ export function parseSkill(text, path) {
   if (!NAME.test(name) || !description) return null
   const source = typeof data.metadata?.source === 'string' ? data.metadata.source : undefined
   const blocks = blocksOf(data.metadata?.blocks)
-  return { name, description, title: /^#\s+(.+)$/m.exec(body)?.[1].trim() ?? name.replace(/-/g, ' '), body: body.trim(), path, ...(source && { source }), ...(blocks.length && { blocks }) }
+  const metadata = typeof data.metadata === 'object' && data.metadata
+  return { name, description, title: /^#\s+(.+)$/m.exec(body)?.[1].trim() ?? name.replace(/-/g, ' '), body: body.trim(), path, ...(source && { source }), ...(blocks.length && { blocks }), ...(metadata && { metadata }) }
 }
 
 /** Every skill in these folders' skills/, by name. @param {FS} fs @param {string[]} dirs @returns {Promise<Skill[]>} */
@@ -50,14 +52,15 @@ export const skillLines = (skills) => skills.map((skill) => `- ${skill.name}: ${
 
 /**
  * Writes skills/<name>/SKILL.md in a folder ('' for the global ones). A skill from elsewhere keeps
- * where it came from and the digest it was checked against (D121); any skill, the kinds of block it draws.
+ * where it came from and the digest it was checked against (D121); any skill, the kinds of block it draws, and the
+ * metadata it came with (D222).
  * @param {FS} fs @param {string} dir
- * @param {{ name: string, description: string, body: string, by: string, now?: Date, source?: string, digest?: string, blocks?: string[] }} skill
+ * @param {{ name: string, description: string, body: string, by: string, now?: Date, source?: string, digest?: string, blocks?: string[], metadata?: Record<string, any> }} skill
  */
-export async function saveSkill(fs, dir, { name, description, body, by, now = new Date(), source, digest, blocks }) {
+export async function saveSkill(fs, dir, { name, description, body, by, now = new Date(), source, digest, blocks, metadata }) {
   if (!NAME.test(name)) throw new Error(`"${name}" is not a valid name: use lower-case letters, digits and hyphens.`)
   const path = join(dir, 'skills', name, 'SKILL.md')
-  const about = { format: '1', author: by, created: now.toISOString(), ...(source && { source }), ...(digest && { digest }), ...(blocks?.length && { blocks: blocks.join(' ') }) }
+  const about = { ...metadata, format: '1', author: by, created: now.toISOString(), ...(source && { source }), ...(digest && { digest }), ...(blocks?.length && { blocks: blocks.join(' ') }) }
   await fs.write(path, stringifyFrontMatter({ name, description: description.replace(/\s+/g, ' ').trim().slice(0, 1024), metadata: about }, `${body.trim()}\n`))
   return path
 }

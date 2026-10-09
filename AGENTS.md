@@ -58,6 +58,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
   - Plurals use `Intl.PluralRules`; dates, numbers and lists use `Intl.*`.
   - Never make a translation agree grammatically with the assistant's name.
   - A string that only dialogs show lives in `locales/dialogs/<lang>.json`, loaded with them; the rest in `locales/<lang>.json`. `test/locales.test.js` checks which modules use each one (D97).
+  - A ready-made skill's name and few words live in its own `SKILL.md`, as `title-<lang>` and `text-<lang>` in `metadata`, never in `locales/` (D222).
 - **Bidirectional text:** CSS uses logical properties only (`margin-inline-start`, never `margin-left`), and every message element gets `dir="auto"`.
 - **Vocabulary:** none of these words appear in the UI: "agent", "model", "MCP", "token". A `SKILL.md` is a skill. A routine is a task Jean does on a schedule (D115, D122). See the vocabulary in [docs/product.md](docs/product.md).
 - **Accessibility:** respect `prefers-reduced-motion`, `prefers-contrast` and `forced-colors`. Contrast meets WCAG AA everywhere, including in the dark first-run state.

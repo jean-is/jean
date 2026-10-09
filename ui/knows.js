@@ -13,6 +13,7 @@ import { openSettings, setting } from './dialogs.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
 import { DEFAULT_SOURCES, indexURL, siteOf } from '../caps/skills/sources.js'
+import { shownIn } from '../caps/skills/directory.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
@@ -166,14 +167,10 @@ function directoryView(state) {
     <p class="muted small">${t('skills.directoryText')}</p>
     <ul class="services ready-made">${open.map((entry) => html`<li><button class="service" @click=${() => preview(entry)}>
       <span class="monogram" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" focusable="false"><path d=${entry.icon}></path></svg></span>
-      <span><strong>${t(`skill.${entry.name}`)}</strong><small>${t(`skill.${entry.name}.text`)}</small></span>${icons.plus}
+      <span><strong>${shownIn(entry, locale.value).title}</strong><small>${shownIn(entry, locale.value).text}</small></span>${icons.plus}
     </button></li>`)}</ul>
   </section>` : nothing
 }
-
-/** What a skill is called, and when it is used: one of the directory's in the user's language. @param {Page} state @param {import('../core/skills.js').Skill} skill */
-const named = (state, skill) => (!skill.source && state.directory.some((entry) => entry.name === skill.name)
-  ? { title: t(`skill.${skill.name}`), text: t(`skill.${skill.name}.text`) } : { title: skill.title, text: skill.description })
 
 /** Skills from elsewhere, read when asked: each source's the user hasn't, as cards, narrowed by what is typed; a source is removed where it shows. @param {Page} state */
 function sourcesView(state) {
@@ -335,7 +332,7 @@ export function skills() {
       <div class="section-head"><h3>${t('skills.yours')}</h3><label class="button subtle">${icons.upload} ${t('skills.add')}
         <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}></label></div>
       ${state.skills.length ? html`<ul class="list">${state.skills.map((skill) => html`<li><details>
-        <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${named(state, skill).title}</strong><small dir="auto">${named(state, skill).text}</small>${skill.source
+        <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${shownIn(skill, locale.value).title}</strong><small dir="auto">${shownIn(skill, locale.value).text}</small>${skill.source
           ? html`<small>${icons.globe} ${t('skills.from', { source: siteOf(skill.source) })}</small>` : nothing}</span>${icons.chevron}</summary>
         <div class="item-body">
           <textarea class="steps" rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}

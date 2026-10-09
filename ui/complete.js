@@ -161,14 +161,13 @@ async function directory() {
   return app.policy.skills?.only ? [] : (await import('../caps/skills/directory.js')).readDirectory()
 }
 
-/** The room's skills; one of Jean's own named in the user's language (D196). @type {Maker} */
+/** The room's skills, each in the user's language when it gives its name in it (D222). @type {Maker} */
 async function skillsHere(show) {
   if (!loaded.value.has('skills')) return
-  const [list, own] = await Promise.all([(await import('../caps/skills/skills.js')).skills(), directory()])
+  const [list, own, { shownIn }] = await Promise.all([(await import('../caps/skills/skills.js')).skills(), directory(), import('../caps/skills/directory.js')])
   show({ heading: t('cap.skills.name'), options: list.map((skill) => {
     const mine = !skill.source && own.find((entry) => entry.name === skill.name)
-    const label = mine ? t(`skill.${skill.name}`) : skill.title
-    const detail = mine ? t(`skill.${skill.name}.text`) : skill.description
+    const { title: label, text: detail } = shownIn(skill, locale.value)
     return { icon: drawn(mine ? mine.icon : undefined), label, detail, words: words(`${skill.name} ${label}`, detail), pick: () => put(`/${skill.name}`) }
   }) })
 }
@@ -207,7 +206,7 @@ async function canDo(show) {
 async function readySkills(show) {
   if (isDenied('skills')) return
   const skills = loaded.value.has('skills') ? await import('../caps/skills/skills.js') : null
-  const [have, own, { siteOf }] = await Promise.all([skills ? skills.skills() : [], directory(), import('../caps/skills/sources.js')])
+  const [have, own, { siteOf }, { shownIn }] = await Promise.all([skills ? skills.skills() : [], directory(), import('../caps/skills/sources.js'), import('../caps/skills/directory.js')])
   /** @param {(import('../caps/skills/sources.js').Entry & { icon?: string })[]} entries */
   const group = (entries) => {
     const names = new Set(have.map((skill) => skill.name))
@@ -216,8 +215,7 @@ async function readySkills(show) {
     for (const entry of entries) {
       if (names.has(entry.name)) continue
       names.add(entry.name)
-      const label = entry.digest ? entry.name : t(`skill.${entry.name}`)
-      const detail = entry.digest ? entry.description : t(`skill.${entry.name}.text`)
+      const { title: label, text: detail } = shownIn(entry, locale.value)
       list.push({ icon: drawn(entry.icon), label, detail, ...(entry.digest && { aside: siteOf(entry.url) }), add: true,
         words: words(`${entry.name} ${label}`, detail), pick: async () => {
           put(`/${entry.name}`)

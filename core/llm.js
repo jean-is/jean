@@ -92,7 +92,12 @@ export function headersFor(brain, apiKey) {
 export async function* streamChat({ signal, fetch = globalThis.fetch, ...options }) {
   if (options.brain.api === 'device') throw new LLMError('The on-device brain has its own runtime', { code: 'bad_request' })
   if (options.brain.api === 'anthropic') return yield* (await import('./anthropic.js')).streamAnthropic({ signal, fetch, ...options })
-  const res = await post(fetch, openaiRequest(options), signal)
+  const res = await post(fetch, openaiRequest(options), signal).catch((error) => {
+    // OpenRouter weighs the credits left against the longest answer the brain may give, and says what they cover (402).
+    const affords = error.status === 402 && /can only afford (\d+)/.exec(error.message)?.[1]
+    if (!affords) throw error
+    return post(fetch, openaiRequest({ ...options, maxTokens: Number(affords) }), signal)
+  })
   yield* readOpenAI(sseEvents(res, signal))
 }
 

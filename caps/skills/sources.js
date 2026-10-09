@@ -14,8 +14,9 @@ import { alike } from '../../core/search.js'
 
 /** @typedef {import('../../core/types.js').FS} FS */
 /**
- * A skill an index or a repository offers. url: absolute (a folder's SKILL.md); source: where it is listed; files: a folder's, with git's hashes.
- * @typedef {{ name: string, type: 'skill-md' | 'archive' | 'folder', description: string, url: string, digest: string, source: string, files?: { path: string, sha: string, size: number }[] }} Entry
+ * A skill an index or a repository offers. url: absolute (a folder's SKILL.md); source: where it is listed; files: a folder's, with git's hashes;
+ * metadata: its SKILL.md's, for one of Jean's own (D222).
+ * @typedef {{ name: string, type: 'skill-md' | 'archive' | 'folder', description: string, url: string, digest: string, source: string, files?: { path: string, sha: string, size: number }[], metadata?: Record<string, any> }} Entry
  */
 /** What a source held when last read, or why it couldn't be, and until when (GitHub's limit). @typedef {{ url: string, at: string, skills: Entry[], error?: string, until?: string }} Index */
 
@@ -139,10 +140,10 @@ async function gunzip(bytes) {
 
 /**
  * What a download holds, once it matches its digest: the steps (SKILL.md's body), the text files
- * beside them, and the kinds of block it declares (D196). Anything that isn't text (a script, a
+ * beside them, the kinds of block it declares (D196) and its metadata (D222). Anything that isn't text (a script, a
  * program, a picture) means the skill needs more than instructions, and it isn't added (D116).
  * @param {Entry} entry @param {Uint8Array} bytes
- * @returns {Promise<{ body: string, files: { path: string, text: string }[], blocks: string[] }>}
+ * @returns {Promise<{ body: string, files: { path: string, text: string }[], blocks: string[], metadata?: Record<string, any> }>}
  */
 export async function unpack(entry, bytes) {
   if (bytes.length > MAX_BYTES) throw new SkillError('invalid', 'The skill is too large.')
@@ -162,7 +163,7 @@ export async function fetchSkill(entry, fetch = globalThis.fetch) {
   const bytesOf = async (/** @type {string} */ url) => new Uint8Array(await (await answer(fetch, url)).arrayBuffer())
   if (!entry.digest) {
     const { data, body } = parseFrontMatter(new TextDecoder().decode(await bytesOf(entry.url)))
-    return { body: body.trim(), files: [], blocks: blocksOf(data.metadata?.blocks) }
+    return { body: body.trim(), files: [], blocks: blocksOf(data.metadata?.blocks), metadata: data.metadata }
   }
   if (!entry.files) return unpack(entry, await bytesOf(entry.url))
   const odd = entry.files.find((file) => !TEXT.test(file.path))
@@ -198,7 +199,7 @@ function instructions(listed) {
   if (!steps) throw new SkillError('invalid', 'There is no SKILL.md at the root.')
   const { data, body } = parseFrontMatter(steps.text)
   if (!body.trim()) throw new SkillError('invalid', 'SKILL.md has no steps.')
-  return { body: body.trim(), files: files.filter((file) => file !== steps), blocks: blocksOf(data.metadata?.blocks) }
+  return { body: body.trim(), files: files.filter((file) => file !== steps), blocks: blocksOf(data.metadata?.blocks), metadata: data.metadata }
 }
 
 /** @param {string} url */

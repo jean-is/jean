@@ -43,7 +43,7 @@ async function copyJs (from, to) {
   await writeFile(to, text)
   const raw = Buffer.byteLength(text)
   const gzip = gzipSync(text, { level: 9 }).length
-  console.log(`${relative(ROOT, to).padEnd(48)} ${kb(raw).padStart(9)} ${kb(gzip).padStart(9)} gz`)
+  console.log(`${relative(ROOT, to).padEnd(48)} ${kb(raw).padStart(10)} ${kb(gzip).padStart(10)} gz`)
   return { raw, gzip }
 }
 
@@ -320,7 +320,7 @@ async function copyRuntime (runtime) {
     await writeFile(join(target, 'graph.json'), `${JSON.stringify(graph)}\n`)
   }
   for (const pkg of runtime.packages) await copyLicense(pkg)
-  console.log(`${`${runtime.dir}/ (on demand)`.padEnd(48)} ${kb(raw).padStart(9)}`)
+  console.log(`${`${runtime.dir}/ (on demand)`.padEnd(48)} ${kb(raw).padStart(10)}`)
 }
 
 async function main () {
@@ -332,7 +332,7 @@ async function main () {
   for (const pkg of ['@preact/signals-core', 'lit-html', 'marked']) await copyLicense(pkg)
   const raw = results.reduce((sum, r) => sum + r.raw, 0)
   const gzip = results.reduce((sum, r) => sum + r.gzip, 0)
-  console.log(`${`${results.length} files`.padEnd(48)} ${kb(raw).padStart(9)} ${kb(gzip).padStart(9)} gz`)
+  console.log(`${`${results.length} files`.padEnd(48)} ${kb(raw).padStart(10)} ${kb(gzip).padStart(10)} gz`)
   for (const runtime of RUNTIMES) {
     // Optional dependencies (D52): without them, their capability is simply unavailable.
     if (await readFile(join(MODULES, runtime.packages[0], 'package.json')).catch(() => null)) await copyRuntime(runtime)

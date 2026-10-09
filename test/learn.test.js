@@ -9,7 +9,8 @@ import { writeZip } from '../core/zip.js'
 import { saveSkill, parseSkill } from '../core/skills.js'
 import { loadSettings } from '../core/settings.js'
 import { SCHEMA, indexURL, siteOf, parseIndex, sha256, gitHash, unpack, untar, readIndexes, fetchSkill, bestFit, SkillError } from '../caps/skills/sources.js'
-import { DIRECTORY, readDirectory } from '../caps/skills/directory.js'
+import { DIRECTORY, readDirectory, shownIn } from '../caps/skills/directory.js'
+import { LOCALES } from './fixtures/locales.js'
 import { schedule, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../caps/routines/schedule.js'
 
 const text = (/** @type {string} */ value) => new TextEncoder().encode(value)
@@ -231,13 +232,37 @@ test('a skill declares the kinds of block it writes, which are drawn as widgets,
   assert.deepEqual((await unpack({ name: 'charts', type: 'skill-md', description: 'Draw charts.', url: 'https://x/SKILL.md', digest, source: 'https://x/i.json' }, file)).blocks, ['echarts', 'vega-lite'])
 })
 
-test('Jean’s own directory: each skill as its SKILL.md says, the charts drawn from ```echarts (a budget’s too), the scores from ```abc and the slides from ```marp; the others draw nothing, they write answers and files', async () => {
+test('a skill gives its name and a few words in each language in its metadata, kept when it is saved, and is shown in the user’s, else in English, else as written (D222)', async () => {
+  const named = '---\nname: chart\ndescription: Draw charts.\nmetadata:\n  format: "1"\n  licence: MIT\n  title-en: Chart\n  text-en: "Bars and lines"\n  title-fr: "Graphique"\n  text-fr: "Barres et lignes"\n---\n# Chart\n'
+  const skill = /** @type {import('../core/skills.js').Skill} */ (parseSkill(named, 'skills/chart/SKILL.md'))
+  assert.deepEqual(shownIn(skill, 'fr'), { title: 'Graphique', text: 'Barres et lignes' })
+  assert.deepEqual(shownIn(skill, 'ja'), { title: 'Chart', text: 'Bars and lines' }, 'English when the language isn’t given')
+  assert.deepEqual(shownIn(/** @type {any} */ (parseSkill(STEPS, 'skills/weekly-sales-report/SKILL.md')), 'fr'), { title: 'Weekly sales report', text: 'Summarize weekly sales by region.' }, 'as written')
+  assert.deepEqual(shownIn({ name: 'notes', description: 'Notes.' }, 'fr'), { title: 'notes', text: 'Notes.' }, 'an index’s entry by its name')
+  const fs = memoryFS()
+  const path = await saveSkill(fs, '', { ...skill, body: '# Chart\n\nChanged.', by: 'device', now: new Date('2026-10-09T10:00:00Z') })
+  const saved = /** @type {import('../core/skills.js').Skill} */ (parseSkill(/** @type {string} */ (await fs.read(path)), path))
+  assert.deepEqual(shownIn(saved, 'fr'), { title: 'Graphique', text: 'Barres et lignes' }, 'kept through an edit')
+  assert.equal(saved.metadata?.licence, 'MIT', 'what Jean doesn’t use is kept too')
+  assert.equal(saved.metadata?.author, 'device', 'Jean’s own keys are its own')
+})
+
+test('Jean’s own directory: each skill as its SKILL.md says, named in every language, the charts drawn from ```echarts (a budget’s and a map of who’s who too), the scores from ```abc and the slides from ```marp; the others draw nothing, they write answers and files', async () => {
   const fetchFile = async (/** @type {string | URL | Request} */ url) => new Response(await readFile(new URL(String(url))))
   const ready = await readDirectory({ fetch: /** @type {typeof fetch} */ (fetchFile) })
   assert.deepEqual(ready.map((entry) => entry.name), DIRECTORY.map((entry) => entry.name), 'every one can be read')
   assert.ok(ready.every((entry) => entry.digest === '' && entry.description.length > 40 && entry.icon))
   const blocks = await Promise.all(ready.map(async (entry) => parseSkill(await readFile(new URL(entry.url), 'utf8'), entry.url)?.blocks))
-  assert.deepEqual(blocks, [undefined, undefined, ['echarts'], undefined, undefined, undefined, ['echarts'], ['abc'], ['marp'], undefined])
+  assert.deepEqual(blocks, [undefined, undefined, ['echarts'], undefined, undefined, undefined, ['echarts'], ['echarts'], ['abc'], ['marp'], undefined])
+  for (const entry of ready) {
+    for (const tag of LOCALES) {
+      for (const key of [`title-${tag}`, `text-${tag}`]) {
+        const value = entry.metadata?.[key]
+        assert.ok(typeof value === 'string' && value.trim() && !/\{\w+\}/.test(value), `${entry.name}: ${key}`)
+      }
+    }
+    assert.doesNotMatch(`${entry.metadata?.['title-en']} ${entry.metadata?.['text-en']}`, /\b(models?|agents?|tokens?|MCP|routines?)\b/i, entry.name)
+  }
   const missing = await readDirectory({ fetch: /** @type {typeof fetch} */ (async () => new Response('', { status: 404 })) })
   assert.deepEqual(missing, [], 'one that can’t be read is left out')
 })

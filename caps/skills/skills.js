@@ -135,12 +135,12 @@ export async function lookFor(request) {
  * Adds a skill from elsewhere as the user saw it: its steps and the text beside them, with where
  * it came from and the digest it was checked against (one of Jean's own, with neither). Its
  * suggestions go.
- * @param {Entry} entry @param {{ body: string, files: { path: string, text: string }[], blocks?: string[] }} unpacked
+ * @param {Entry} entry @param {{ body: string, files: { path: string, text: string }[], blocks?: string[], metadata?: Record<string, any> }} unpacked
  */
-export async function adopt(entry, { body, files, blocks }) {
+export async function adopt(entry, { body, files, blocks, metadata }) {
   const dir = folders().at(-1) ?? ''
   for (const file of files) await app.fs.write(join(dir, 'skills', entry.name, file.path), file.text)
-  await saveSkill(app.fs, dir, { name: entry.name, description: entry.description, body, by: app.deviceId, blocks, ...(entry.digest && { source: entry.url, digest: entry.digest }) })
+  await saveSkill(app.fs, dir, { name: entry.name, description: entry.description, body, by: app.deviceId, blocks, metadata, ...(entry.digest && { source: entry.url, digest: entry.digest }) })
   await redeclare()
   for (const [path, other] of suggested) if (other.name === entry.name) suggested.delete(path)
   app.actions.value = Object.fromEntries(Object.entries(app.actions.value).map(([at, ids]) => [at, ids.filter((id) => id !== 'ready')]))

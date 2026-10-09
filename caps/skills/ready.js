@@ -12,17 +12,18 @@ import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
 import { adopt } from './skills.js'
 import { fetchSkill, siteOf } from './sources.js'
+import { shownIn } from './directory.js'
 
 /** @typedef {import('./sources.js').Entry} Entry */
-/** @typedef {{ body: string, files: { path: string, text: string }[], blocks?: string[] }} Unpacked */
+/** @typedef {{ body: string, files: { path: string, text: string }[], blocks?: string[], metadata?: Record<string, any> }} Unpacked */
 
 const shown = signal(/** @type {{ entry: Entry, unpacked?: Unpacked, failed?: string } | null} */ (null))
 /** The dialog it was opened from (Settings, on Skills), which it goes back to. */
 let from = /** @type {typeof app.dialog.value} */ (null)
 const back = () => { app.dialog.value = from }
 
-/** What a skill is called and when it is used: one of Jean's own in the user's language (D196). @param {Entry} entry */
-const about = (entry) => (entry.digest ? { name: entry.name, text: entry.description } : { name: t(`skill.${entry.name}`), text: t(`skill.${entry.name}.text`) })
+/** What a skill is called and when it is used, in the user's language when it gives it (D222). @param {Entry} entry */
+const about = (entry) => shownIn(entry, locale.value)
 
 /** Shows a skill from elsewhere, once downloaded and checked. @param {Entry} entry */
 export async function preview(entry) {
@@ -43,7 +44,7 @@ async function add() {
   if (!state?.unpacked) return
   await adopt(state.entry, state.unpacked)
   back()
-  notify(t('skills.added', { title: state.entry.digest ? /^#\s+(.+)$/m.exec(state.unpacked.body)?.[1].trim() ?? state.entry.name : about(state.entry).name }))
+  notify(t('skills.added', { title: state.entry.digest ? /^#\s+(.+)$/m.exec(state.unpacked.body)?.[1].trim() ?? state.entry.name : about(state.entry).title }))
 }
 
 class Ready extends Element {
@@ -58,7 +59,7 @@ class Ready extends Element {
       </header>
       ${state ? html`
         ${state.entry.digest ? html`<p class="muted small">${icons.globe} ${t('skills.from', { source: siteOf(state.entry.url) })}</p>` : nothing}
-        <p><strong dir="auto">${about(state.entry).name}</strong></p>
+        <p><strong dir="auto">${about(state.entry).title}</strong></p>
         <p dir="auto">${about(state.entry).text}</p>
         ${state.failed ? html`<p class="status is-error" role="alert">${t(`skills.ready.${state.failed}`)}</p>`
         : !state.unpacked ? html`<p class="status" role="status">${t('skills.ready.loading')}</p>`
