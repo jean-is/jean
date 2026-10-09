@@ -296,6 +296,7 @@
   "made.open": "Open",
   "made.version": "Version {n}",
   "preview.versions": "Versions",
+  "preview.locked": "This cell can only be changed in a spreadsheet app",
   "view.unshown": "This file can’t be shown here.",
   "made.kind.document": "Word document",
   "made.kind.sheet": "Spreadsheet",

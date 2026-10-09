@@ -292,6 +292,7 @@
   "made.open": "Mở",
   "made.version": "Phiên bản {n}",
   "preview.versions": "Các phiên bản",
+  "preview.locked": "Chỉ có thể thay đổi ô này trong ứng dụng bảng tính",
   "view.unshown": "Không thể hiển thị tệp này ở đây.",
   "made.kind.document": "Tài liệu Word",
   "made.kind.sheet": "Bảng tính",

@@ -300,6 +300,7 @@
   "made.open": "Abrir",
   "made.version": "Versión {n}",
   "preview.versions": "Versiones",
+  "preview.locked": "Esta celda solo se puede cambiar en una aplicación de hojas de cálculo",
   "view.unshown": "Este archivo no se puede mostrar aquí.",
   "made.kind.document": "Documento de Word",
   "made.kind.sheet": "Hoja de cálculo",

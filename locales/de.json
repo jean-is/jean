@@ -296,6 +296,7 @@
   "made.open": "Öffnen",
   "made.version": "Version {n}",
   "preview.versions": "Versionen",
+  "preview.locked": "Diese Zelle lässt sich nur in einer Tabellen-App ändern",
   "view.unshown": "Diese Datei lässt sich hier nicht anzeigen.",
   "made.kind.document": "Word-Dokument",
   "made.kind.sheet": "Tabelle",

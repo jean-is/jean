@@ -312,6 +312,7 @@
   "made.open": "فتح",
   "made.version": "الإصدار {n}",
   "preview.versions": "الإصدارات",
+  "preview.locked": "لا يمكن تغيير هذه الخلية إلا في تطبيق جداول بيانات",
   "view.unshown": "لا يمكن عرض هذا الملف هنا.",
   "made.kind.document": "مستند Word",
   "made.kind.sheet": "جدول بيانات",

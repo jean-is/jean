@@ -304,6 +304,7 @@
   "made.open": "Відкрити",
   "made.version": "Версія {n}",
   "preview.versions": "Версії",
+  "preview.locked": "Цю клітинку можна змінити лише в застосунку для таблиць",
   "view.unshown": "Цей файл не можна показати тут.",
   "made.kind.document": "Документ Word",
   "made.kind.sheet": "Таблиця",

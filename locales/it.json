@@ -300,6 +300,7 @@
   "made.open": "Apri",
   "made.version": "Versione {n}",
   "preview.versions": "Versioni",
+  "preview.locked": "Questa cella si può cambiare solo in un’app per fogli di calcolo",
   "view.unshown": "Questo file non si può mostrare qui.",
   "made.kind.document": "Documento Word",
   "made.kind.sheet": "Foglio di calcolo",

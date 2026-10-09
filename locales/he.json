@@ -304,6 +304,7 @@
   "made.open": "פתיחה",
   "made.version": "גרסה {n}",
   "preview.versions": "גרסאות",
+  "preview.locked": "אפשר לשנות את התא הזה רק באפליקציה של גיליונות אלקטרוניים",
   "view.unshown": "אי אפשר להציג כאן את הקובץ הזה.",
   "made.kind.document": "מסמך Word",
   "made.kind.sheet": "גיליון אלקטרוני",

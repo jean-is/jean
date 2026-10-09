@@ -64,6 +64,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] An answer with charts and scores pasted into Word, Google Docs, Pages and Outlook: do its `data:` pictures come along, as they don't in Notion? (D196)
 - [ ] Charts and scores (D196) on a weak laptop (ECharts' first load, a score of a few hundred bars), heard on real speakers, in Firefox and real Safari, and with a screen reader
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
+- [ ] Workbooks whose cells were changed in the preview or a folder (D229) open in Excel, Numbers and LibreOffice without a repair, their formulas worked out again; with an IME, a cell is opened with F2 and a composed word kept whole
 
 **Voice**
 - [ ] Whisper dictation and Chrome's on-device recognition, Arc included (fixed by D61 and D110, to check again)

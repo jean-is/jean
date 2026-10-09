@@ -292,6 +292,7 @@
   "made.open": "Buka",
   "made.version": "Versi {n}",
   "preview.versions": "Versi",
+  "preview.locked": "Sel ini hanya boleh diubah dalam aplikasi hamparan",
   "view.unshown": "Fail ini tidak boleh dipaparkan di sini.",
   "made.kind.document": "Dokumen Word",
   "made.kind.sheet": "Hamparan",

@@ -81,8 +81,9 @@ test('changeText: one passage, in the file’s own line endings and byte order m
   assert.throws(() => changeText('abc', 'z', 'b', 'x.txt', replaceOnce), /not in x\.txt/)
 })
 
-test('planChange: text exactly, a file made from an empty passage, a Word document in place, what can’t be changed said so', async () => {
-  const fs = memoryFS({ 'main.js': 'let a = 1\r\nlet b = 2\r\n', 'old.txt': new Uint8Array([0x63, 0x61, 0x66, 0xe9]), 'Acme.docx': await contract('Acme', 'Payment is due within 60 days of the invoice.'), 'deck.pptx': 'x' })
+test('planChange: text exactly, a file made from an empty passage, a Word document and a workbook in place, what can’t be changed said so', async () => {
+  const budget = (await makeFile('Budget.xlsx', 'Item,Amount\nRent,1200\nFood,450')).bytes
+  const fs = memoryFS({ 'main.js': 'let a = 1\r\nlet b = 2\r\n', 'old.txt': new Uint8Array([0x63, 0x61, 0x66, 0xe9]), 'Acme.docx': await contract('Acme', 'Payment is due within 60 days of the invoice.'), 'deck.pptx': 'x', 'Budget.xlsx': budget })
   const text = await planChange(fs, { path: 'main.js', old: 'let b = 2', new: 'let b = 3' })
   assert.deepEqual([text.before, text.after, new TextDecoder().decode(text.bytes)], ['let a = 1\r\nlet b = 2\r\n', 'let a = 1\r\nlet b = 3\r\n', 'let a = 1\r\nlet b = 3\r\n'])
   const made = await planChange(fs, { path: 'notes/new.md', old: '', new: '# New' })
@@ -98,6 +99,9 @@ test('planChange: text exactly, a file made from an empty passage, a Word docume
   assert.deepEqual(diffLines(word.before, word.after).rows.filter((row) => row.kind !== ' '), [
     { kind: '-', text: 'Payment is due within 60 days of the invoice.' }, { kind: '+', text: 'Payment is due within 30 days of the invoice.' },
   ])
+  const cells = await planChange(fs, { path: 'Budget.xlsx', old: 'Food\t450', new: 'Food\t500' })
+  assert.deepEqual(diffLines(cells.before, cells.after).rows.filter((row) => row.kind !== ' '), [{ kind: '-', text: 'Food\t450' }, { kind: '+', text: 'Food\t500' }])
+  assert.deepEqual(await extractPages('Budget.xlsx', cells.bytes), ['Sheet: Budget\nItem\tAmount\nRent\t1200\nFood\t500'])
 })
 
 test('replaceInWord: a passage over several runs takes the first one’s formatting, and the rest of the document stays as it was', async () => {

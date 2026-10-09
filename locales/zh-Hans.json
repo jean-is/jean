@@ -292,6 +292,7 @@
   "made.open": "打开",
   "made.version": "版本 {n}",
   "preview.versions": "版本",
+  "preview.locked": "此单元格只能在电子表格应用中更改",
   "view.unshown": "此文件无法在这里显示。",
   "made.kind.document": "Word 文档",
   "made.kind.sheet": "电子表格",

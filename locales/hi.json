@@ -296,6 +296,7 @@
   "made.open": "खोलें",
   "made.version": "संस्करण {n}",
   "preview.versions": "संस्करण",
+  "preview.locked": "यह सेल सिर्फ़ किसी स्प्रेडशीट ऐप में बदला जा सकता है",
   "view.unshown": "यह फ़ाइल यहाँ नहीं दिखाई जा सकती।",
   "made.kind.document": "Word दस्तावेज़",
   "made.kind.sheet": "स्प्रेडशीट",

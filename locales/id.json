@@ -292,6 +292,7 @@
   "made.open": "Buka",
   "made.version": "Versi {n}",
   "preview.versions": "Versi",
+  "preview.locked": "Sel ini hanya bisa diubah di aplikasi spreadsheet",
   "view.unshown": "File ini tidak bisa ditampilkan di sini.",
   "made.kind.document": "Dokumen Word",
   "made.kind.sheet": "Spreadsheet",

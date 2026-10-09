@@ -216,6 +216,9 @@ export const callsIn = (records, steps = []) => [
   ...steps.flatMap((step) => step.tools),
 ]
 
+/** Where a file of the conversation is as it is now: the copy the user last changed it into in the preview, else itself (D229). @param {Envelope[]} records @param {string} uri */
+export const latestOf = (records, uri) => records.flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'cells' && update.data.was === uri ? [update.data.uri] : [])).at(-1) ?? uri
+
 /** Every file the calls made, in order. @param {ToolCallInfo[]} calls @returns {MadeFile[]} */
 export const filesMade = (calls) => calls.flatMap((call) => [call._meta?.file, ...(call._meta?.files ?? [])].filter(Boolean))
 

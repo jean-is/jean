@@ -296,6 +296,7 @@
   "made.open": "খুলুন",
   "made.version": "সংস্করণ {n}",
   "preview.versions": "সংস্করণগুলো",
+  "preview.locked": "এই ঘরটি শুধু স্প্রেডশিট অ্যাপেই বদলানো যায়",
   "view.unshown": "এই ফাইলটি এখানে দেখানো যায় না।",
   "made.kind.document": "Word নথি",
   "made.kind.sheet": "স্প্রেডশিট",

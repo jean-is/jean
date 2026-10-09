@@ -11,8 +11,9 @@ import * as dock from './dock.js'
 import { app, effective, notify } from './state.js'
 import { save, savePage } from './save.js'
 import { icons } from './icons.js'
-import { fileMeta, fileText, splitPages } from '../core/files.js'
-import { callsIn, filesMade, versionsOf } from '../core/events.js'
+import { addFile, fileMeta, fileText, splitPages } from '../core/files.js'
+import { callsIn, filesMade, latestOf, noteRecord, versionsOf } from '../core/events.js'
+import { appendRecords } from '../core/conversations.js'
 import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
@@ -30,10 +31,14 @@ const view = signal(/** @type {unknown} */ (nothing))
 const rights = computed(() => pageRights(effective.value.settings, app.policy))
 const policy = computed(() => pagePolicy(rights.value.allows, rights.value.sites))
 const allow = computed(() => pageAllow(rights.value.allows))
-// A file the page made, saved for it.
+// A file the page made, saved for it; a cell of a workbook the user changed (D229).
 addEventListener('message', ({ source, data }) => {
-  if (source && source === document.querySelector('app-preview')?.querySelector('iframe')?.contentWindow) savePage(data, rights.peek().allows.downloads)
+  if (!source || source !== document.querySelector('app-preview')?.querySelector('iframe')?.contentWindow) return
+  if (data?.cell) change(data.cell, /** @type {Window} */ (source))
+  else savePage(data, rights.peek().allows.downloads)
 })
+// Where the user was in the workbook they changed last, to show it there again.
+let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Place } | null} */ (null)
 
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
@@ -46,6 +51,9 @@ keep('preview', {
     if (meta) preview({ uri, name: meta.name, mimeType: meta.mimeType })
   },
 })
+
+// What the file on show holds now: the copy the user last changed it into here (D229), else itself.
+const copy = computed(() => (shown.value ? latestOf(app.current.value?.records ?? [], shown.value.uri) : ''))
 
 // The versions of the file on show, when Jean made it: each one the conversation kept, oldest first (D164).
 const versions = computed(() => {
@@ -90,9 +98,39 @@ function picker() {
   </select>`
 }
 
+/**
+ * A cell the user changed in the workbook on show (D229), in the version on show: what it holds becomes a
+ * copy with the change, as the bytes the brain read stay as they were, and a note says so, which the brain
+ * hears with the next message; it shows again where the user was. One that changes only in a spreadsheet
+ * app says so, and its box goes. @param {Record<string, unknown>} cell what the frame sent @param {Window} frame
+ */
+async function change({ sheet, ref, value, sheetName, at }, frame) {
+  const file = shown.peek()
+  const conversation = app.current.peek()
+  if (!file || !conversation || !/\.xlsx$/i.test(file.name) || !Number.isInteger(sheet) || typeof ref !== 'string' || typeof value !== 'string' || value.length > 32767) return
+  try {
+    const dir = app.project.peek().dir
+    const bytes = await app.fs.readBytes(`${dir}/${copy.peek()}`)
+    if (!bytes) return notify(t('files.missing', { name: file.name }))
+    const [{ setCells }, { extractPages }] = await Promise.all([import('../caps/files/cells.js'), import('../caps/files/extract.js')])
+    const changed = await setCells(bytes, [{ sheet: Number(sheet), ref, value }], file.name)
+    const link = await addFile(app.fs, { projectDir: dir, name: file.name, mimeType: file.mimeType, bytes: changed, pages: (await extractPages(file.name, changed)) ?? [], by: app.deviceId })
+    const note = noteRecord(`The user changed ${file.name} in the preview: ${ref} in ${String(sheetName)} is ${value ? `now ${value}` : 'empty'}.`, { kind: 'cells', was: file.uri, uri: link.uri })
+    await appendRecords(app.fs, conversation.path, [note])
+    const { x, y } = /** @type {Record<string, unknown>} */ (at ?? {})
+    where = { uri: link.uri, at: { sheet: Number(sheet), x: Number(x) || 0, y: Number(y) || 0, ref } }
+    const now = app.current.peek()
+    if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
+  } catch (error) {
+    console.warn('Preview', error)
+    notify(t('preview.locked'))
+    frame.postMessage({ unchanged: true }, '*')
+  }
+}
+
 /** @param {Shown} file */
 async function download(file) {
-  const bytes = await app.fs.readBytes(`${app.projectDir}/${file.uri}`)
+  const bytes = await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
   if (bytes) save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), file.name)
   else notify(t('files.missing', { name: file.name }))
 }
@@ -102,6 +140,7 @@ async function download(file) {
 // it, or at once if it came too late.
 effect(() => {
   const file = shown.value
+  const uri = copy.value
   const rules = policy.value
   const allows = allow.value
   /** @type {(() => void)[]} */
@@ -109,8 +148,8 @@ effect(() => {
   const release = () => { for (const run of holds.splice(0)) run() }
   view.value = nothing
   if (file) {
-    show(file, holds, rules, allows).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
-      if (shown.peek() !== file) release()
+    show(file, uri, holds, rules, allows).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
+      if (shown.peek() !== file || copy.peek() !== uri) release()
       else if (template === null) close()
       else view.value = template
     })
@@ -137,22 +176,24 @@ effect(() => {
 })
 
 /**
- * @param {Shown} file @param {(() => void)[]} holds @param {string} rules a web page's policy
+ * @param {Shown} file @param {string} uri where what it holds now is (D229) @param {(() => void)[]} holds @param {string} rules a web page's policy
  * @param {string} allows what its frame allows
  * @returns {Promise<unknown>} null when the file is no longer there, or can't be read
  */
-async function show(file, holds, rules, allows) {
+async function show(file, uri, holds, rules, allows) {
   const dir = app.project.peek().dir
-  const bytes = await app.fs.readBytes(`${dir}/${file.uri}`)
+  const bytes = await app.fs.readBytes(`${dir}/${uri}`)
   if (!bytes) {
     notify(t('files.missing', { name: file.name }))
     return null
   }
   // Its text is what Jean wrote for a file it made, what was read from a shared one; a Word document Jean wrote is Markdown.
-  const prose = /\.docx$/i.test(file.name) && (await fileMeta(app.fs, dir, file.uri))?.author === 'jean'
-  const text = async () => splitPages((await fileText(app.fs, dir, file.uri)) ?? '').join('\n')
+  const prose = /\.docx$/i.test(file.name) && (await fileMeta(app.fs, dir, uri))?.author === 'jean'
+  const text = async () => splitPages((await fileText(app.fs, dir, uri)) ?? '').join('\n')
   const { allows: can, sites } = rights.peek()
-  return viewOf({ name: file.name, bytes, type: file.mimeType, text, prose }, holds, { allows: can, sites, policy: rules, allow: allows })
+  // A workbook's cells change here, and it shows again where the user was (D229).
+  const cells = /\.xlsx$/i.test(file.name) ? { ...(where?.uri === uri && { at: where.at }) } : undefined
+  return viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells }, holds, { allows: can, sites, policy: rules, allow: allows })
 }
 
 define('app-preview', Preview)

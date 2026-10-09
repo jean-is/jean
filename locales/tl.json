@@ -296,6 +296,7 @@
   "made.open": "Buksan",
   "made.version": "Bersyon {n}",
   "preview.versions": "Mga bersyon",
+  "preview.locked": "Sa isang spreadsheet app lang mababago ang cell na ito",
   "view.unshown": "Hindi maipapakita rito ang file na ito.",
   "made.kind.document": "Dokumento ng Word",
   "made.kind.sheet": "Spreadsheet",

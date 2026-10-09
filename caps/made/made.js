@@ -11,7 +11,7 @@ import { save } from '../../ui/save.js'
 import { markdown } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
-import { callsIn, filesMade, nextVersion, versionsOf } from '../../core/events.js'
+import { callsIn, filesMade, latestOf, nextVersion, versionsOf } from '../../core/events.js'
 import { t, locale, formatBytes } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 
@@ -46,14 +46,16 @@ function madeFiles(signal, written = false) {
 
 /**
  * Makes the file and keeps it in the project's files like a shared one, with what the brain
- * wrote as its text, so it can be changed later. The call records it; the answer shows it.
- * @param {string} name @param {string} content @param {import('../../core/loop.js').ToolContext} ctx
+ * wrote as its text, so it can be changed later; or keeps a workbook changed cell by cell, with
+ * what Files reads as its text (D229). The call records it; the answer shows it.
+ * @param {string} name @param {string | { bytes: Uint8Array, mimeType: string, pages: string[] }} content
+ * @param {import('../../core/loop.js').ToolContext} ctx
  */
 async function keep(name, content, ctx) {
   // The writers load with the first file made, not with the first message.
   const { makeFile } = await import('./formats.js')
-  const { name: kept, mimeType, bytes } = await makeFile(name, content, { paper: paper() })
-  const link = await addFile(app.fs, { projectDir: app.projectDir, name: kept, mimeType, bytes, pages: [content], by: 'jean' })
+  const { name: kept, mimeType, bytes } = typeof content === 'string' ? await makeFile(name, content, { paper: paper() }) : { name, ...content }
+  const link = await addFile(app.fs, { projectDir: app.projectDir, name: kept, mimeType, bytes, pages: typeof content === 'string' ? [content] : content.pages, by: 'jean' })
   // Each version is a file of its own, by its content, and the earlier ones stay where they are (D164).
   const version = nextVersion(madeFiles(ctx.signal), kept, link.uri)
   ctx.meta.file = /** @type {MadeFile} */ ({ uri: link.uri, name: kept, mimeType, size: bytes.length, version })
@@ -92,7 +94,7 @@ const writeTool = {
 const editTool = {
   spec: {
     name: 'edit',
-    description: 'Change part of a file you made with write: replace a passage of what you wrote (its Markdown, CSV or text), quoted exactly, with new text. The passage must be there once. The user gets the new version.',
+    description: 'Change part of a file you made with write: replace a passage of what you wrote (its Markdown, CSV or text), quoted exactly, with new text; in a spreadsheet the user changed, of how it reads, cells apart by tabs. The passage must be there once. The user gets the new version.',
     parameters: {
       type: 'object',
       properties: {
@@ -109,15 +111,31 @@ const editTool = {
   run: async (args, ctx) => {
     const files = madeFiles(ctx.signal, true)
     const wanted = String(args?.file ?? '').trim().toLowerCase()
-    const found = files.findLast((file) => file.name.toLowerCase() === wanted)
-    if (!found) throw new Error(`No file named "${args?.file}" was made in this conversation. Made: ${[...new Set(files.map((file) => file.name))].join(', ') || 'none'}. Use write to make it.`)
+    const made = files.findLast((file) => file.name.toLowerCase() === wanted)
+    if (!made) throw new Error(`No file named "${args?.file}" was made in this conversation. Made: ${[...new Set(files.map((file) => file.name))].join(', ') || 'none'}. Use write to make it.`)
+    // As it is now: a workbook holds the copy the user last changed it into in the preview (D229).
+    const found = { ...made, uri: latestOf(conversationOf(ctx.signal)?.records ?? [], made.uri) }
     const text = await fileText(app.fs, app.projectDir, found.uri)
     if (text === null) throw new Error(`${found.name} is no longer on this device. Use write to make it again.`)
     const { replaceOnce } = await import('./formats.js')
-    const changed = replaceOnce(splitPages(text).join('\n'), String(args?.old ?? ''), String(args?.new ?? ''), found.name)
+    const [old, replacement] = [String(args?.old ?? ''), String(args?.new ?? '')]
+    // A workbook the user changed in the preview has what Files reads as its text: it changes cell by cell (D229).
+    const changed = /\.xlsx$/i.test(found.name) && splitPages(text)[0]?.startsWith('Sheet: ') ? await changeCells(found, old, replacement, replaceOnce)
+      : replaceOnce(splitPages(text).join('\n'), old, replacement, found.name)
     const { kept, version } = await keep(found.name, changed, ctx)
     return `Changed ${kept}. The new version, version ${version}, shows under your answer, and the earlier one stays under its own.`
   },
+}
+
+/**
+ * A workbook's cells changed by a passage of how it reads (D229), with what Files reads of it now.
+ * @param {MadeFile} file @param {string} old @param {string} replacement @param {typeof import('./formats.js').replaceOnce} replaceOnce
+ */
+async function changeCells(file, old, replacement, replaceOnce) {
+  const bytes = await app.fs.readBytes(`${app.projectDir}/${file.uri}`)
+  if (!bytes) throw new Error(`${file.name} is no longer on this device. Use write to make it again.`)
+  const changed = await (await import('../files/cells.js')).replaceInSheet(bytes, old, replacement, file.name, replaceOnce)
+  return { bytes: changed, mimeType: file.mimeType, pages: (await (await import('../files/extract.js')).extractPages(file.name, changed)) ?? [] }
 }
 
 register({
@@ -202,8 +220,9 @@ class FileMade extends Element {
     render(this.render(), this)
   }
 
+  /** What it holds now: a workbook the user changed in the preview, the copy they changed it into (D229). */
   #bytes() {
-    return app.fs.readBytes(`${app.projectDir}/${this.getAttribute('uri')}`)
+    return app.fs.readBytes(`${app.projectDir}/${latestOf(app.current.peek()?.records ?? [], this.getAttribute('uri') ?? '')}`)
   }
 
   /** @param {string} name @param {string} type */

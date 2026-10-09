@@ -304,6 +304,7 @@
   "made.open": "Otwórz",
   "made.version": "Wersja {n}",
   "preview.versions": "Wersje",
+  "preview.locked": "Tę komórkę można zmienić tylko w aplikacji do arkuszy kalkulacyjnych",
   "view.unshown": "Nie da się tu pokazać tego pliku.",
   "made.kind.document": "Dokument Word",
   "made.kind.sheet": "Arkusz kalkulacyjny",

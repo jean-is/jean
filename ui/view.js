@@ -19,9 +19,9 @@ await styleSheet(new URL('view.css', import.meta.url))
 
 /**
  * A file to show: its name, its bytes, its media type when known, its text when it isn't its bytes
- * as they are (what was read from a file shared), and whether it is Markdown whatever its name says
- * (a document Jean wrote).
- * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean }} File
+ * as they are (what was read from a file shared), whether it is Markdown whatever its name says
+ * (a document Jean wrote), and, for a workbook in the preview, that its cells change there (D229).
+ * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean, cells?: { at?: import('../caps/files/office.js').Place } }} File
  */
 /**
  * What a web page may do, as Settings and policy have it (D143, D158): its rights, its policy, and
@@ -60,7 +60,7 @@ export async function viewOf(file, holds, page) {
   }
   // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183).
   const csv = /^(csv|tsv)$/.test(ext) && page.allows.scripts ? await (await import('../caps/made/formats.js')).makeFile(name.replace(/\.[ct]sv$/i, '.xlsx'), new TextDecoder().decode(bytes)).catch(() => null) : null
-  if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name), name, pagePolicy(page.allows, page.sites, true), page.allow)
+  if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name, csv ? undefined : file.cells), name, pagePolicy(page.allows, page.sites, true), page.allow)
   // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
   const { extractPages, decodeText, isBinary } = await import('../caps/files/extract.js')
   const office = /^(docx|xlsx|pptx)$/.test(ext)

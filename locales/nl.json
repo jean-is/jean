@@ -296,6 +296,7 @@
   "made.open": "Openen",
   "made.version": "Versie {n}",
   "preview.versions": "Versies",
+  "preview.locked": "Deze cel kan alleen in een spreadsheet-app worden gewijzigd",
   "view.unshown": "Dit bestand kan hier niet worden getoond.",
   "made.kind.document": "Word-document",
   "made.kind.sheet": "Spreadsheet",

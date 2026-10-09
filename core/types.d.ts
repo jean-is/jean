@@ -163,6 +163,8 @@ export type SystemNoteData =
   | { kind: 'undone', call: string, path: string }
   /** the user ran a command on the computer, in the terminal (D166) */
   | { kind: 'terminal', command: string, exit: number }
+  /** the user changed a workbook's cells in the preview: the file at `was` is the copy at `uri` now (D229) */
+  | { kind: 'cells', was: string, uri: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

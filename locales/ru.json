@@ -304,6 +304,7 @@
   "made.open": "Открыть",
   "made.version": "Версия {n}",
   "preview.versions": "Версии",
+  "preview.locked": "Эту ячейку можно изменить только в приложении для таблиц",
   "view.unshown": "Этот файл нельзя показать здесь.",
   "made.kind.document": "Документ Word",
   "made.kind.sheet": "Таблица",

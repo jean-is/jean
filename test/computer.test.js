@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { memoryFS } from '../core/fs.js'
 import { computerRights, relayed, covers, judge, registryOf, authorization, reach, COMPUTER_DEFAULTS } from '../caps/computer/net.js'
 import { outgoing, incoming, preview, decline, within } from '../caps/computer/mount.js'
-import { callsIn, filesMade, versionsOf, nextVersion } from '../core/events.js'
+import { callsIn, filesMade, versionsOf, nextVersion, latestOf } from '../core/events.js'
 
 const DEFAULTS = { pyodide: 'https://cdn.example/pyodide/v{version}/full/', pypi: 'https://pypi.example/pypi/{package_name}/json', npm: 'https://registry.example/' }
 const decoder = new TextDecoder()
@@ -174,4 +174,10 @@ test('a file made again is a version of its own: numbered in the conversation, t
   assert.equal(nextVersion(made, 'Chart.html', 'files/sha256-2.html'), 3, 'the last one again')
   assert.equal(nextVersion(made, 'Chart.html', 'files/sha256-9.html'), 4)
   assert.equal(nextVersion(made, 'New.html', 'files/sha256-9.html'), 1)
+  // A workbook the user changed in the preview stays the version it was, holding their last copy (D229).
+  const note = (/** @type {string} */ was, /** @type {string} */ uri) => ({ at: 't', by: 'jean', update: { sessionUpdate: '_system_note', text: 'The user changed Budget.xlsx', data: { kind: 'cells', was, uri } } })
+  const changed = /** @type {any[]} */ ([...records, call('f', { file: file('Budget.xlsx', 'files/sha256-5.xlsx') }), note('files/sha256-5.xlsx', 'files/sha256-6.xlsx'), note('files/sha256-5.xlsx', 'files/sha256-7.xlsx')])
+  assert.deepEqual(versionsOf(filesMade(callsIn(changed)), 'Budget.xlsx').map((each) => [each.version, each.uri]), [[1, 'files/sha256-5.xlsx']])
+  assert.equal(latestOf(changed, 'files/sha256-5.xlsx'), 'files/sha256-7.xlsx')
+  assert.equal(latestOf(changed, 'files/sha256-2.html'), 'files/sha256-2.html')
 })
