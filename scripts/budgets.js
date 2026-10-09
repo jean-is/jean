@@ -105,6 +105,8 @@ async function checkLines (budgets) {
   return [
     measure('lines.core', budgets.lines.core, await totalLines(core)),
     measure('lines.app', budgets.lines.app, await totalLines(app)),
+    // jean-cli, which only its package has (D240).
+    measure('lines.cli', budgets.lines.cli, await totalLines(await filesIn(['cli'], /\.m?js$/))),
   ]
 }
 
