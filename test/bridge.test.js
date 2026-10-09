@@ -98,3 +98,94 @@ describe('the bridge (D198)', { skip: process.platform === 'win32' }, () => {
     assert.equal(ran.structuredContent.stdout, '<h1>Hi</h1>')
   })
 })
+
+// Claude Code (D235): the user's own, with their Claude plan, answers Jean's Anthropic requests here.
+describe('Claude Code through the bridge (D235)', { skip: process.platform === 'win32' }, () => {
+  /** @type {typeof import('../core/llm.js')} */
+  let llm
+  /** @type {Awaited<ReturnType<typeof bridge>>} */
+  let work
+  /** @type {import('node:http').Server} */
+  let server
+  /** @type {import('../core/types.js').BrainConfig} */
+  let brain
+  /** @type {string} */
+  let folder
+
+  before(async () => {
+    llm = await import('../core/llm.js')
+    folder = await realpath(await mkdtemp(join(tmpdir(), 'bridge-claude-')))
+    server = createServer((req, res) => work.handle(req, res))
+    await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
+    const port = /** @type {import('node:net').AddressInfo} */ (server.address()).port
+    work = await bridge({ folder, origins: [JEAN], key: KEY, port, claude: [process.execPath, new URL('./fixtures/claude.js', import.meta.url).pathname] })
+    brain = { id: 'b', provider: 'claudecode', api: 'anthropic', baseURL: `http://127.0.0.1:${port}/v1`, model: 'opus' }
+  })
+  after(async () => {
+    server.close()
+    await work.close()
+    await rm(folder, { recursive: true, force: true })
+  })
+
+  /** One step, as Jean's loop reads it. @param {any[]} messages @param {any[]} [tools] */
+  async function step(messages, tools = []) {
+    let text = ''
+    /** @type {any} */
+    let done
+    /** @type {any[]} */
+    const calls = []
+    for await (const event of llm.streamChat({ brain, apiKey: KEY, system: 'You are Jean, briefly.', messages, tools })) {
+      if (event.type === 'text') text += event.delta
+      if (event.type === 'tool_call') calls.push(event.call)
+      if (event.type === 'done') done = event
+    }
+    return { text, calls, done }
+  }
+
+  test('it lists Claude Code’s own names, and says whether Claude Code is here and signed in', async () => {
+    assert.deepEqual((await llm.listModels({ brain, apiKey: KEY })).map((model) => model.id), ['haiku', 'sonnet', 'opus'])
+    await assert.rejects(llm.listModels({ brain, apiKey: 'nope' }), { code: 'auth' })
+    const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
+    const about = (await client.callTool({ name: 'about' }, { claude: true })).structuredContent
+    assert.deepEqual([about.version, about.claude], ['2', true])
+    process.env.CLAUDE_SIGNED_OUT = '1'
+    try {
+      assert.equal((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claude, false)
+    } finally {
+      delete process.env.CLAUDE_SIGNED_OUT
+    }
+    // Warming the cache ahead is Claude Code's own matter.
+    assert.equal(await llm.warmCache({ brain, apiKey: KEY, system: 'x'.repeat(4000), messages: [{ role: 'user', content: 'hi' }] }), null)
+  })
+
+  test('a conversation goes on in one Claude Code; another history is told to a new one', async () => {
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'hello' }]
+    const first = await step(messages)
+    assert.equal(first.text, 'Heard (opus, You are Jean): hello')
+    assert.equal(first.done.stopReason, 'end')
+    messages.push(first.done.message, { role: 'user', content: 'and again' })
+    // Only the new message reaches it: the rest it heard already.
+    assert.equal((await step(messages)).text, 'Heard (opus, You are Jean): and again')
+    // Gone back to the first request (D188), or another brain's turns: told in one.
+    const other = await step([{ role: 'user', content: 'hi' }, { role: 'assistant', content: 'Hello!' }, { role: 'system', content: 'A note' }, { role: 'user', content: 'what now?' }])
+    assert.equal(other.text, 'Heard (opus, You are Jean): <earlier-conversation>\nUser: hi\n\nAssistant: Hello!\n</earlier-conversation>\n<system-note>\nA note\n</system-note>\nwhat now?')
+  })
+
+  test('Claude Code calls Jean’s tools: the step ends with the call, and the next request brings its result', async () => {
+    const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
+    assert.deepEqual(asked.calls, [{ id: asked.calls[0]?.id, name: 'weather', args: { city: 'Lyon' } }])
+    assert.equal(asked.done.stopReason, 'tool_use')
+    // What the user said meanwhile comes with it.
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' }, { role: 'user', content: 'In Celsius' })
+    const answered = await step(messages, [weather])
+    assert.equal(answered.text, 'In Lyon: Sunny, 21°C / In Celsius')
+  })
+
+  test('a plan’s limit is the brain’s limit', async () => {
+    await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /hit your limit/ })
+  })
+})

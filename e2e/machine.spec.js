@@ -7,7 +7,8 @@ import { spawn } from 'node:child_process'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn } from './helpers.js'
+import { fileURLToPath } from 'node:url'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } from './helpers.js'
 
 test.skip(process.platform === 'win32', 'The bridge needs bash')
 
@@ -75,6 +76,42 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
     await expect(terminal.locator('.terminal-entry').last()).toContainText('serve.mjs')
   } finally {
     // Ctrl+C in the user's terminal: the bridge ends, and what it started.
+    if (bridge.pid) process.kill(-bridge.pid, 'SIGINT')
+  }
+})
+
+// Claude Code (D235): the user's own, signed in with their Claude plan, answers through the bridge; played
+// here by test/fixtures/claude.js, first on the PATH of the terminal the line is pasted in, never the real one.
+test('the user’s Claude plan answers, through Claude Code on this computer', async ({ page }) => {
+  test.setTimeout(120_000)
+  const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
+  const bin = join(disk, 'bin')
+  mkdirSync(bin)
+  writeFileSync(join(bin, 'claude'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('../test/fixtures/claude.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
+  await start(page)
+  await page.locator('.brain-chip').click()
+  const settings = page.locator('app-settings dialog[open]')
+  const way = settings.locator('.way.is-claude')
+  await way.locator('summary').click()
+  await expect(way).toContainText('Claude Pro or Max')
+  // This computer is off: Connect opens its part of Settings › Computer, with the line.
+  await way.getByRole('button', { name: 'Connect' }).click()
+  const part = settings.locator('.machine')
+  await expect(part).toContainText('paste this line')
+  const line = String(await page.locator('.machine-line code').textContent())
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
+  try {
+    await expect(part).toContainText('run their commands on this computer', { timeout: 15_000 })
+    await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
+    await way.locator('summary').click()
+    await way.getByRole('button', { name: 'Connect' }).click()
+    await expect(settings).toBeHidden()
+    // Claude Code runs here, but answers from Anthropic's: a brain in the cloud, never a private one.
+    await expect((await openSettings(page, 'Brains')).locator('.item', { hasText: 'Claude Code' }).first()).toContainText('In the cloud')
+    await closeSettings(page)
+    await ask(page, 'hello there')
+    await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \((haiku|sonnet|opus), .*hello there/, { timeout: 20_000 })
+  } finally {
     if (bridge.pid) process.kill(-bridge.pid, 'SIGINT')
   }
 })

@@ -22,6 +22,7 @@ export const TIERS = /** @type {Record<string, string[]>} */ ({
   vertex: ['google/gemini-3.5-flash-lite', 'google/gemini-3.8-flash', 'google/gemini-3.1-pro-preview'],
   mistral: ['mistral-small-latest', 'mistral-medium-latest', 'mistral-large-latest'],
   vercel: ['anthropic/claude-haiku-4.5', 'anthropic/claude-sonnet-5.5', 'anthropic/claude-opus-5.5'],
+  claudecode: ['haiku', 'sonnet', 'opus'],
 })
 
 // Whether a brain never leaves this computer is a setting's matter, known before Auto loads (D140).

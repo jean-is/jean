@@ -44,6 +44,7 @@ Jean starts as a single box. Everything above is offered when you need it, like 
   - **On this device:** Gemma 4 E2B on WebGPU, about 3.1 GB, downloaded once if you agree. It is offered only where it can run.
   - **One click:** sign in with OpenRouter.
   - **Your own key** (Anthropic, OpenAI or any OpenAI-compatible service), or a **local server** such as Ollama or LM Studio.
+  - **Your Claude plan** (Pro or Max), through Claude Code installed and signed in on your computer, which Jean reaches through This computer.
   - **Auto** picks a brain for each request. Once Intuition is on, that is the cheapest brain that can do the job, and the device's brain for personal content. A switch keeps everything off the cloud.
 - **Code a brain writes never runs in the page.** It runs in a sandboxed worker with an opaque origin and no network. The page itself has a strict Content Security Policy with Trusted Types, and never uses `innerHTML` or `eval`.
 

@@ -76,8 +76,8 @@ export function serviceURL(name, settings, policy = {}) {
  */
 export const usedIn = (item, project) => !item.projects || item.projects.includes(project)
 
-/** A brain that never leaves this computer. @param {BrainConfig} brain */
-export const isLocal = (brain) => brain.api === 'device' || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
+/** A brain that never leaves this computer (Claude Code's does, D235). @param {BrainConfig} brain */
+export const isLocal = (brain) => brain.api === 'device' || brain.provider !== 'claudecode' && /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
 
 /** @type {Settings} */
 export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }

@@ -170,6 +170,15 @@ function connectLocal(event) {
   attempt('local', provider === 'custom' ? new URL(baseURL).host : t(`provider.${provider}`), () => connectBrain({ provider, baseURL }))
 }
 
+/** The user's own Claude Code, with their Claude plan, through This computer (D235): turned on first, in Settings › Computer. */
+async function connectClaude() {
+  status.value = { way: 'claude', kind: 'busy', message: t('brain.connecting') }
+  const found = (await unlock('machine')) && await (await import('../caps/machine/machine.js')).claudeCode()
+  status.value = found && !found.ready ? { way: 'claude', kind: 'error', message: t(found.old ? 'brain.claude.restart' : 'brain.claude.missing', { computer: t('cap.machine.name') }) } : null
+  if (!found) openSettings('computer')
+  else if (found.ready) attempt('claude', t('provider.claudecode'), () => connectBrain({ provider: 'claudecode', baseURL: found.baseURL, apiKey: found.apiKey }))
+}
+
 /** Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, then the ways to add another. */
 function brains() {
   const { settings, locked } = effective.value
@@ -375,6 +384,9 @@ function ways(first) {
         <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>`)}
+    ${isDenied('machine') ? nothing : way('claude', icons.terminal, t('brain.claude.title'), t('provider.claudecode'), false, html`
+      <p>${t('brain.claude.text', { computer: t('cap.machine.name') })}</p>
+      <div class="row"><button class="button primary" ?disabled=${busy} @click=${connectClaude}>${t('brain.connect')}</button></div>`)}
     ${way('local', icons.computer, t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}>

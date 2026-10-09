@@ -82,6 +82,7 @@
   "provider.anthropic": "Anthropic",
   "provider.ollama": "Ollama",
   "provider.lmstudio": "LM Studio",
+  "provider.claudecode": "Claude Code",
   "provider.custom": "Nyingine",
   "provider.gemini": "Google Gemini",
   "provider.vertex": "Vertex AI",
