@@ -12,6 +12,9 @@ import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } fro
 
 test.skip(process.platform === 'win32', 'The bridge needs bash')
 
+/** Ctrl+C for the bridge and what it started, unless it has already ended: a failure before shows as it is. @param {import('node:child_process').ChildProcess} bridge */
+const stop = (bridge) => { if (bridge.pid && bridge.exitCode === null) process.kill(-bridge.pid, 'SIGINT') }
+
 test('a server refused in the sandbox runs on this computer instead, and shows in the browser', async ({ page, browserName }) => {
   test.setTimeout(120_000)
   // The user's folder on this machine, and the one the browser opens of the same name.
@@ -48,7 +51,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   const part = page.locator('app-settings dialog[open] .machine')
   await expect(part).toContainText('paste this line')
   const line = String(await page.locator('.machine-line code').textContent())
-  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| node --input-type=module - --port \d+ --origin http:\/\/127\.0\.0\.1:\d+ --key [\w-]+$/)
+  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| node --input-type=module - --port \d+ --origin http:\/\/127\.0\.0\.1:\d+ --key=[\w-]+$/)
   const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true })
   try {
     await expect(part).toContainText('Tasks with the folder shop run their commands on this computer', { timeout: 15_000 })
@@ -76,7 +79,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
     await expect(terminal.locator('.terminal-entry').last()).toContainText('serve.mjs')
   } finally {
     // Ctrl+C in the user's terminal: the bridge ends, and what it started.
-    if (bridge.pid) process.kill(-bridge.pid, 'SIGINT')
+    stop(bridge)
   }
 })
 
@@ -112,6 +115,6 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
     await ask(page, 'hello there')
     await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \((haiku|sonnet|opus), .*hello there/, { timeout: 20_000 })
   } finally {
-    if (bridge.pid) process.kill(-bridge.pid, 'SIGINT')
+    stop(bridge)
   }
 })

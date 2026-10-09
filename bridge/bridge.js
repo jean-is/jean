@@ -9,7 +9,7 @@
 // Jean's desktop app starts it itself, `--attached`: it ends when the app does, its input closing.
 // It also lets the user's own Claude Code answer as a brain, with their Claude plan (D235): see claude().
 //
-//   curl -fsSL <jean>/bridge/bridge.js | node --input-type=module - --port <port> --origin <jean> --key <key>
+//   curl -fsSL <jean>/bridge/bridge.js | node --input-type=module - --port <port> --origin <jean> --key=<key>
 //
 // No dependencies; Node 20 or later; macOS or Linux, with bash.
 import { createServer } from 'node:http'

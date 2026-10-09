@@ -77,7 +77,7 @@ async function save(next) {
 }
 
 /** What the user pastes in a terminal, in their folder: the bridge from where Jean is served, for this origin, with the key. @param {Pairing} pair */
-const line = ({ port, key }) => `curl -fsSL ${BRIDGE} | node --input-type=module - --port ${port} --origin ${location.origin} --key ${key}`
+const line = ({ port, key }) => `curl -fsSL ${BRIDGE} | node --input-type=module - --port ${port} --origin ${location.origin} --key=${key}`
 /** A text as one word for the shell. @param {string} text */
 const word = (text) => `'${text.replaceAll("'", `'\\''`)}'`
 /** The desktop app's bridge ended without answering (no node, say). */
@@ -93,7 +93,7 @@ async function start(path) {
   if (pair.path !== path) await save({ ...pair, path })
   if ((await find(true)).on) return
   const load = "await import('data:text/javascript,' + encodeURIComponent(await (await fetch(process.argv[1])).text()))"
-  const node = `exec node --input-type=module -e ${word(load)} -- ${word(BRIDGE)} --port ${pair.port} --origin ${word(location.origin)} --key ${pair.key} --folder ${word(path)} --attached`
+  const node = `exec node --input-type=module -e ${word(load)} -- ${word(BRIDGE)} --port ${pair.port} --origin ${word(location.origin)} --key=${pair.key} --folder ${word(path)} --attached`
   const { id } = await call('os.spawnProcess', { command: `exec "\${SHELL:-/bin/sh}" -lic ${word(node)}` })
   sessionStorage.setItem(RUNNING, String(id))
   failed.value = false
