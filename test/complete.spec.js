@@ -26,7 +26,7 @@ test('/ finds a ready-made skill, read before it is added, and names it and what
   await connectFakeBrain(page)
   const box = page.locator('#prompt')
   await box.pressSequentially('Plot sales by month /')
-  await expect(menu(page).locator('.complete-heading')).toHaveText(['What Jean can do', 'Ready-made skills', 'Connect a service'])
+  await expect(menu(page).locator('.complete-heading')).toHaveText(['What Jean can do', 'Skills to add', 'Connect a service'])
   // Typing narrows it, and the box says which option Enter picks.
   await box.pressSequentially('cha')
   await expect(menu(page).locator('[aria-selected="true"]')).toContainText('Chart')

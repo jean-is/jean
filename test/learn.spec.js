@@ -131,12 +131,13 @@ test('the third request of a kind finds a ready-made skill before offering to ma
     await ask(page, 'Summarize the weekly sales by region')
     await expect(page.locator('.follow-ups')).toBeVisible()
   }
-  const found = page.locator('.follow-up', { hasText: 'See a ready-made skill for this' })
+  const found = page.locator('.follow-up', { hasText: 'See a skill that does this' })
   await expect(found).toBeVisible()
   await expect(page.locator('.follow-up', { hasText: 'Save this as a skill' })).toHaveCount(0)
   await found.click()
   const ready = page.locator('app-skill-ready dialog[open]')
-  await expect(ready).toContainText('weekly-sales-report')
+  // Named by its steps' heading once they are read, as its toast names it (D261).
+  await expect(ready.getByRole('heading', { name: 'Weekly sales report' })).toBeVisible()
   await expect(ready.locator('.skill-steps')).toContainText('Say which region grew most.')
   await ready.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Weekly sales report”.')
