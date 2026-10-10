@@ -81,7 +81,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "sync": { "provider": "dropbox", "appKey": "…" },
   "directory": [{ "id": "microsoft-365", "url": "https://mcp.m365.corp.example/mcp", "clientId": "4f1c…" }, { "id": "figma", "hidden": true }],
   "images": { "openai": ["gpt-image-1"] },
-  "films": { "gemini": ["veo-3.1-generate-preview"] },
+  "films": { "openai": ["sora-2-pro"] },
   "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces" }
 }
 ```

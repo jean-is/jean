@@ -71,11 +71,11 @@ const discovery = () => import('./discovery.js')
 
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
-// As in the Claude apps, Ctrl outside Apple's systems (D118): ⌘, Settings, ⌘N and ⌘⇧O a new task (D236),
+// As in the Claude apps, Ctrl outside Apple's systems (D118): ⌘, Settings, ⌘/ its shortcuts (D257), ⌘N and ⌘⇧O a new task (D236),
 // ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧L the next language, ⌘⇧S dictation, ⌘⇧H hands-free (D130, D238,
 // D253), ⌘K search (D133), ⌘⇧B the browser (D142), ⌘J the terminal (D166, D170, D184), ⌘B the drawer (D234).
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
@@ -84,6 +84,9 @@ document.addEventListener('keydown', (event) => {
   if (key === ',' && !event.shiftKey) {
     event.preventDefault()
     if (app.dialog.value !== 'settings') import('./dialogs.js').then((module) => module.openSettings())
+  } else if (key === '/') {
+    event.preventDefault()
+    import('./dialogs.js').then((module) => module.sections().includes('keyboard') && module.openSettings('keyboard'))
   } else if (key === (event.shiftKey ? 'o' : 'n')) {
     event.preventDefault()
     turnPage(newConversation)
