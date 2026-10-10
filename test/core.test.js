@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, locale } from '../app/core/i18n.js'
+import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, locale } from '../app/core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../app/core/rules.js'
 import { buildSystemPrompt, basePromptForBudget } from '../app/core/prompt.js'
 import { foldTurns, toChatMessages, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../app/core/events.js'
@@ -88,6 +88,16 @@ test('i18n: locale picking, language names, first words', async () => {
   await useLocale('en')
   assert.equal(firstWords('one two three four', 2), 'one two…')
   assert.equal(firstWords('short text', 8), 'short text')
+})
+
+// Browsers have Intl.DurationFormat (Chrome 129, Safari 16.4, Firefox 136); Node only from 23, and the CLI, for Node 22, never says a duration.
+test('i18n: a duration is said in minutes and seconds, never in a fraction of a minute', { skip: !('DurationFormat' in Intl) }, () => {
+  const was = locale.value
+  locale.value = 'en'
+  assert.deepEqual([527, 1234, 2040, 19_000, 72_000, 120_400, 3_785_000].map(formatDuration), ['527 ms', '1.2 sec', '2 sec', '19 sec', '1 min, 12 sec', '2 min', '1 hr, 3 min, 5 sec'])
+  locale.value = 'fr'
+  assert.equal(formatDuration(72_000).replace(/\s/g, ' '), '1 min et 12 s')
+  locale.value = was
 })
 
 test('rules: policy, reserved, layers and approvals', () => {

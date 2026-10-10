@@ -1,9 +1,9 @@
 // Brains' prices from models.dev (D255): only what a price needs of the providers Jean knows, found by
-// a model's id or its bare name, and read again from the catalogue only once a week.
+// a model's id or its bare name, and read again from the catalogue only once a week; none for a plan's.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS } from '../app/core/fs.js'
-import { pricesFrom, priceIn, readPrices } from '../app/ui/prices.js'
+import { pricesFrom, priceIn, readPrices, priceOf, PLANS } from '../app/ui/prices.js'
 
 const URL = 'https://models.example/api.json'
 /** A slice of models.dev's catalogue: dollars per million tokens. */
@@ -34,6 +34,11 @@ test('a model is found by its id, or by its name without its maker’s, a varian
   assert.equal(priceIn(prices, 'gemini', 'gemini-3.8-flash')?.cacheRead, 0.5e-6)
   assert.equal(priceIn(prices, 'anthropic', 'claude-unknown'), undefined)
   assert.equal(priceIn(null, 'anthropic', 'claude-sonnet-5-5'), undefined)
+})
+
+test('a brain that answers from a plan costs nothing per token, without a catalogue read for it (D235)', () => {
+  assert.equal(PLANS.claudecode, 'Claude')
+  assert.deepEqual(priceOf('claudecode', 'haiku'), { prompt: 0, completion: 0 })
 })
 
 test('read from the catalogue once a week, kept in .cache/ meanwhile, and kept when it can’t be read', async () => {

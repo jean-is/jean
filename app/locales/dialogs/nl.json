@@ -4,6 +4,7 @@
   "picker.smart": "Slim",
   "picker.best": "Het beste",
   "picker.cost": "ongeveer {cost} per antwoord",
+  "picker.plan": "inbegrepen in je {plan}-abonnement",
   "picker.local": "Op je computer",
   "picker.neverCloud": "Nooit naar de cloud sturen",
   "picker.all": "Alle breinen",

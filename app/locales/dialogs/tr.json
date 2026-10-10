@@ -4,6 +4,7 @@
   "picker.smart": "Akıllı",
   "picker.best": "En iyisi",
   "picker.cost": "yanıt başına yaklaşık {cost}",
+  "picker.plan": "{plan} planına dahil",
   "picker.local": "Bilgisayarında",
   "picker.neverCloud": "Asla buluta gönderme",
   "picker.all": "Tüm beyinler",

@@ -116,10 +116,14 @@ export function formatBytes(bytes) {
   return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
 }
 
-/** "1.2 sec", in the current locale. @param {number} ms */
+/** "527 ms", "1.2 sec", "1 min, 12 sec", in the current locale: to the tenth of a second under ten, else to the second. @param {number} ms */
 export function formatDuration(ms) {
-  const [unit, size] = ms >= 6e4 ? ['minute', ms / 6e4] : ms >= 1e3 ? ['second', ms / 1e3] : ['millisecond', ms]
-  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
+  const tenths = Math.floor(ms / 100) % 10
+  const whole = Math.round(ms / 1e3)
+  const [duration, options] = ms < 999.5 ? [{ milliseconds: Math.round(ms) }, {}]
+    : ms < 1e4 && tenths ? [{ seconds: Math.floor(ms / 1e3), milliseconds: tenths * 100 }, /** @type {const} */ ({ milliseconds: 'numeric', fractionalDigits: 1 })]
+    : [{ hours: Math.floor(whole / 3600), minutes: Math.floor(whole / 60) % 60, seconds: whole % 60 }, {}]
+  return new Intl.DurationFormat(locale.value, { style: 'short', ...options }).format(duration)
 }
 
 /** "3 minutes ago", in the current locale. @param {string | number | Date} when */

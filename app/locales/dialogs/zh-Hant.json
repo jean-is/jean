@@ -4,6 +4,7 @@
   "picker.smart": "聰明",
   "picker.best": "最佳",
   "picker.cost": "每個回答約 {cost}",
+  "picker.plan": "包含在你的 {plan} 方案中",
   "picker.local": "在你的電腦上",
   "picker.neverCloud": "從不傳送到雲端",
   "picker.all": "所有大腦",

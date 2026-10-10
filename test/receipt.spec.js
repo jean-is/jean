@@ -72,7 +72,9 @@ test('an answer whose request reached outside this device says where', async ({ 
   await button.click()
   const card = page.locator('.receipt')
   await expect(card.locator('.receipt-verdict')).toHaveText('Sent outside this device')
-  await expect(card.locator('dd').last()).toHaveText('wiki.example.com')
+  // The brain stayed here; the site, apart from it, got only what was asked of it.
+  await expect(card.locator('.receipt-brain .receipt-where')).toHaveText('on this device')
+  await expect(card.locator('.receipt-hosts')).toHaveText('wiki.example.com')
 })
 
 test('an answer in the cloud costs what its provider’s prices say, from models.dev when the provider lists none (D255)', async ({ page }) => {
@@ -91,9 +93,11 @@ test('an answer in the cloud costs what its provider’s prices say, from models
   const button = page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' })
   await button.click()
   const card = page.locator('.receipt')
-  await expect(card.locator('.receipt-verdict')).toHaveText('Sent outside this device')
+  await expect(card.locator('.receipt-verdict')).toHaveText('Done in the cloud')
   await expect(card.locator('dd').nth(1)).toHaveText(/^about \$0\.0\d+$/)
-  await expect(card.locator('dd').last()).toHaveText('api.openai.example')
+  // Its address is the brain's own, which alone was given the conversation, not among the rest.
+  await expect(card.locator('.receipt-brain .receipt-host')).toHaveText('api.openai.example')
+  await expect(card.locator('.receipt-hosts')).toHaveCount(0)
   expect(read).toBe(1)
   // Open again, from what was kept.
   await page.keyboard.press('Escape')
@@ -101,3 +105,18 @@ test('an answer in the cloud costs what its provider’s prices say, from models
   await expect(card.locator('dd').nth(1)).toHaveText(/^about \$/)
   expect(read).toBe(1)
 })
+
+for (const [lang, about, plan] of [['en', 'About this answer', 'In your Claude plan'], ['ar', 'عن هذه الإجابة', 'مشمولة في اشتراكك في Claude'], ['ja', 'この回答について', 'Claude のプランに含まれます']]) {
+  test(`an answer from a Claude plan is in the plan, and no catalogue is read for it (D235, ${lang})`, async ({ page }) => {
+    await start(page, lang)
+    // Claude Code through the bridge, which the fake brain answers for.
+    let read = 0
+    await page.route('https://models.dev/api.json', (route) => (read++, route.fulfill({ json: {} })))
+    await page.evaluate((baseURL) => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'claude', provider: 'claudecode', api: 'openai', baseURL, model: 'haiku' })), BRAIN_URL)
+    await ask(page, 'Hello')
+    await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+    await page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: about }).click()
+    await expect(page.locator('.receipt dd').nth(1)).toHaveText(plan)
+    expect(read).toBe(0)
+  })
+}

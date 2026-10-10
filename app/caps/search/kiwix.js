@@ -14,8 +14,13 @@ export const isKiwix = (address) => !/\/api\.php(\?|$)/.test(address)
 
 /** Every match of a pattern's first group. @param {string} xml @param {RegExp} pattern global */
 const all = (xml, pattern) => [...xml.matchAll(pattern)].map((match) => match[1])
-/** The words of an element's text, tags and entities read. @param {string} [source] */
-const words = (source = '') => pageText(source).text.replace(/\s+/g, ' ').trim()
+// Tags that run inside a sentence, a link's or a pronunciation's: dropped without a space, so
+// "the <a>Moon</a>, including" stays "the Moon, including", where the scanner would part them.
+const INLINE = /<\/?(a|abbr|b|bdi|bdo|big|cite|code|data|dfn|em|font|i|kbd|mark|q|s|samp|small|span|strong|sub|sup|time|u|var|wbr)\b[^>]*>/gi
+/** The text of some HTML, tags and entities read, cut at `max` characters. @param {string} html @param {number} [max] */
+const text = (html, max) => pageText(html.replace(INLINE, ''), max).text
+/** The words of an element's text, on one line. @param {string} [source] */
+const words = (source = '') => text(source).replace(/\s+/g, ' ').trim()
 /** The server's root, which its addresses are under, from its home page or one it shows: its reader's, or a page's. @param {string} address */
 export const rootOf = (address) => new URL(address.replace(/[?#].*/, '').replace(/\/(viewer|content\/.*)$/, '').replace(/\/?$/, '/'))
 
@@ -42,11 +47,27 @@ export async function library(address, reach) {
 }
 
 /**
- * A page's first paragraphs, without their notes' numbers. @param {string} html @param {number} [max] characters
+ * The page without its tables, those inside them included: an infobox holds paragraphs of its own,
+ * a map's caption or a note, before the article's first. @param {string} html
+ */
+function withoutTables(html) {
+  let kept = ''
+  let depth = 0
+  let from = 0
+  for (const match of html.matchAll(/<(\/?)table\b[^>]*>/gi)) {
+    const at = match.index ?? 0
+    if (!match[1] && depth++ === 0) kept += html.slice(from, at)
+    else if (match[1] && depth > 0 && --depth === 0) from = at + match[0].length
+  }
+  return depth ? kept : kept + html.slice(from)
+}
+
+/**
+ * A page's first paragraphs, outside its tables and without their notes' numbers. @param {string} html @param {number} [max] characters
  */
 export function intro(html, max = 1200) {
-  const paragraphs = all(html.replace(/<sup\b[^>]*\breference\b[^>]*>[\s\S]*?<\/sup>/gi, ''), /<p\b[^>]*>([\s\S]*?)<\/p>/gi)
-  return pageText(paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join(''), max).text
+  const paragraphs = all(withoutTables(html.replace(/<sup\b[^>]*\breference\b[^>]*>[\s\S]*?<\/sup>/gi, '')), /<p\b[^>]*>([\s\S]*?)<\/p>/gi)
+  return text(paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join(''), max)
 }
 
 /**

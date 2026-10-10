@@ -4,6 +4,7 @@
   "picker.smart": "חכם",
   "picker.best": "הכי טוב",
   "picker.cost": "כ־{cost} לתשובה",
+  "picker.plan": "כלול במינוי {plan} שלך",
   "picker.local": "במחשב שלך",
   "picker.neverCloud": "לעולם לא לשלוח לענן",
   "picker.all": "כל המוחות",
