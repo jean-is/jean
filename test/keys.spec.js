@@ -1,8 +1,8 @@
 // Keyboard shortcuts (D118), as in the Claude apps: ⌘, opens Settings and ⌘N starts a new
 // conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet;
 // ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
-// ⌘⇧D switches between light and dark and ⌘⇧E goes to the next theme (D130, D238); ⌘B opens the
-// drawer or puts it away (D234).
+// ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language
+// (D130, D238, D253); ⌘B opens the drawer or puts it away (D234).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
@@ -58,6 +58,21 @@ test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name
   await expect(page.locator('#prompt')).toHaveValue('Hello')
   await page.keyboard.press('ControlOrMeta+Shift+KeyE')
   await expect(root).toHaveAttribute('data-look', 'minimal')
+})
+
+test('⌘⇧L goes to the next language, the browser\'s first, and says its name in its own words (D253)', async ({ page }) => {
+  await start(page)
+  const root = page.locator('html')
+  await page.locator('#prompt').fill('Hello')
+  // English is the browser's only one, so the others follow, in the menu's order.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'am')
+  await expect(page.locator('.toast')).toHaveText('አማርኛ')
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'ar')
+  await expect(root).toHaveAttribute('dir', 'rtl')
+  await expect(page.locator('.toast')).toHaveText('العربية')
 })
 
 test('⌘B opens the drawer or puts it away, beside the conversation or over it, and shows it from Settings', async ({ page }) => {
@@ -137,6 +152,7 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   await expect(row('New line').locator('kbd')).toHaveText(/^(⇧↩|Shift\+Enter)$/)
   await expect(row('Light or dark').locator('kbd')).toHaveText(/^(⌘⇧D|Ctrl\+Shift\+D)$/)
   await expect(row('Next theme').locator('kbd')).toHaveText(/^(⌘⇧E|Ctrl\+Shift\+E)$/)
+  await expect(row('Next language').locator('kbd')).toHaveText(/^(⌘⇧L|Ctrl\+Shift\+L)$/)
   await expect(row('Talk hands-free')).toHaveCount(0)
   await expect(row('Search')).toHaveCount(0)
   await closeSettings(page)

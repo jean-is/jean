@@ -167,6 +167,7 @@
   "settings.keyboard": "Keyboard shortcuts",
   "keyboard.sidebar": "Show or hide the sidebar",
   "keyboard.look": "Next theme",
+  "keyboard.language": "Next language",
   "keyboard.line": "New line",
   "keyboard.recall": "Earlier requests, when your message is empty",
   "settings.capabilities": "Capabilities",

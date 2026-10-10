@@ -71,14 +71,11 @@ const discovery = () => import('./discovery.js')
 
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
-// As in the Claude apps (D118): ⌘, for Settings, ⌘N for a new task, and ⌘⇧O, as in ChatGPT, since a browser
-// tab keeps ⌘N (D236); Ctrl outside Apple's systems. ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧S dictation,
-// ⌘⇧H hands-free once found (D130, D238); ⌘K opens search once it is found, or closes it (D133);
-// ⌘⇧B opens the browser once it is found, or closes it (D142). ⌘J opens the terminal, as in code editors,
-// brings the keys to it, or closes it once they are there, and turns the computer on first (D166, D170, D184).
-// ⌘B opens the drawer or puts it away, as in code editors (D234).
+// As in the Claude apps, Ctrl outside Apple's systems (D118): ⌘, Settings, ⌘N and ⌘⇧O a new task (D236),
+// ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧L the next language, ⌘⇧S dictation, ⌘⇧H hands-free (D130, D238,
+// D253), ⌘K search (D133), ⌘⇧B the browser (D142), ⌘J the terminal (D166, D170, D184), ⌘B the drawer (D234).
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
@@ -94,9 +91,9 @@ document.addEventListener('keydown', (event) => {
   } else if (key === 'd' && event.shiftKey) {
     event.preventDefault()
     switchTheme()
-  } else if (key === 'e' && event.shiftKey) {
+  } else if ((key === 'e' || key === 'l') && event.shiftKey) {
     event.preventDefault()
-    import('./inbox.js').then((module) => module.nextLook())
+    import('./inbox.js').then((module) => (key === 'e' ? module.nextLook() : module.nextLanguage()))
   } else if ((key === 's' || (key === 'h' && loaded.value.has('live'))) && event.shiftKey) {
     event.preventDefault()
     app.dialog.value = null

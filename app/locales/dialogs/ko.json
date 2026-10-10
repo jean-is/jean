@@ -164,6 +164,7 @@
   "settings.keyboard": "키보드 단축키",
   "keyboard.sidebar": "사이드바 보이기 또는 숨기기",
   "keyboard.look": "다음 테마",
+  "keyboard.language": "다음 언어",
   "keyboard.line": "줄 바꿈",
   "keyboard.recall": "이전 요청 (메시지가 비어 있을 때)",
   "settings.capabilities": "기능",

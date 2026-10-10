@@ -442,7 +442,7 @@ function general() {
   const voices = deviceVoices()
   return html`
     ${setting(t('settings.language'), null, html`<select aria-label=${t('settings.language')} ?disabled=${locked.has('locale')}
-      @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select>`)}
+      aria-keyshortcuts=${locked.has('locale') ? nothing : SHORTCUTS.language} @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select>`)}
     ${voices.some((voice) => voice.localService) ? setting(t('settings.voice'), t('settings.voiceText'),
       html`<select aria-label=${t('settings.voice')} @change=${(/** @type {Event} */ e) => setVoice(valueOf(e) || null)}>
         <option value="">${t('settings.voiceAuto')}</option>
@@ -463,14 +463,15 @@ const appearance = () => html`
 /** Its place in the menu: a keyboard, drawn here rather than with the first screen's icons. */
 const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
   <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
-/** Each shortcut, and the capability it waits for, or dictation, which this browser may not have. */
+/** Each shortcut, and the capability it waits for, or dictation, which this browser may not have, or the language, which policy may set. */
 const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settings], ['keyboard.sidebar', SHORTCUTS.sidebar], ['settings.mode', SHORTCUTS.theme],
-  ['keyboard.look', SHORTCUTS.look], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live'],
+  ['keyboard.look', SHORTCUTS.look], ['keyboard.language', SHORTCUTS.language, 'locale'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live'],
   ['cap.find.name', SHORTCUTS.find, 'find'], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
   ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
-const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : loaded.value.has(id)))
+const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable'
+  : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id)))
   .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl>`
 
 function approvals() {
