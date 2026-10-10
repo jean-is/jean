@@ -7,8 +7,9 @@
 /** @import { ModelInfo } from '../../core/types.js' */
 
 /**
- * A brain asked for the answer: when (ms), and whether it ran on this device.
- * @typedef {{ provider: string, model: string, local: boolean, started: number, ms?: number, input: number, output: number, cached: number }} Brain
+ * A brain asked for the answer: when (ms), whether it ran on this device, and whether it was the first
+ * of a run, as when the request is sent, or answered again (Try again, Duplicate from here, D188, D230).
+ * @typedef {{ provider: string, model: string, local: boolean, started: number, first: boolean, ms?: number, input: number, output: number, cached: number }} Brain
  * What the page reached while a conversation was answered, by address and number of requests, as
  * its browser recorded them, kept in the conversation once the answer ends (`meta.reached`).
  * @typedef {{ from: string, to: string, hosts: Record<string, number> }} Reached
@@ -22,7 +23,7 @@ const HERE = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/
 
 /** Every brain asked for the answer, its helpers' too. @param {Turn} turn @returns {Brain[]} */
 export const brainsOf = (turn) => turn.steps.flatMap((step) => step.tools).flatMap(({ name, kind, toolCallId, rawInput, rawOutput, _meta }) => (!name && kind === 'think' && rawInput?.provider ? [{
-  provider: rawInput.provider, model: rawInput.model, local: rawInput.local === true, started: parseInt(/brain-\d+-(\w+)$/.exec(toolCallId)?.[1] ?? '', 36),
+  provider: rawInput.provider, model: rawInput.model, local: rawInput.local === true, started: parseInt(/brain-\d+-(\w+)$/.exec(toolCallId)?.[1] ?? '', 36), first: /^brain-0-/.test(toolCallId),
   ms: _meta?.ms, input: rawOutput?.usage?.inputTokens ?? 0, output: rawOutput?.usage?.outputTokens ?? 0, cached: rawOutput?.usage?.cacheReadTokens ?? 0,
 }] : []))
 
@@ -43,7 +44,9 @@ export function factsOf(turn, all) {
   const outside = [...new Set([...reached.flatMap(({ hosts }) => Object.keys(hosts)), ...asked])].filter((host) => !HERE.test(host))
   const recorded = reached.length > 0 && brains.every(({ started }) => reached.some(({ from, to }) => Date.parse(from) <= started && started <= Date.parse(to)))
   const verdict = outside.length || brains.some((brain) => !brain.local) ? 'out' : recorded ? 'local' : 'unknown'
-  return { ms: Date.parse(end) - Date.parse(turn.at), brains, reached, outside, recorded, verdict }
+  // How long it took to write, from when it was last asked for: the request kept its first time.
+  const since = Math.max(Date.parse(turn.at), ...brains.flatMap(({ first, started }) => (first ? [started] : [])))
+  return { ms: Date.parse(end) - since, brains, reached, outside, recorded, verdict }
 }
 
 /**

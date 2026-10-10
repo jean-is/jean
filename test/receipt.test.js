@@ -40,7 +40,8 @@ test('done on this device only when its brains ran here and the browser recorded
   const { turn } = turnWith([{ local: true, at: 1000 }])
   const facts = factsOf(turn, [reached(500, 5500, { 'localhost:11434': 2 })])
   assert.equal(facts.verdict, 'local')
-  assert.equal(facts.ms, 5000)
+  // From the first request to a brain to the answer's end.
+  assert.equal(facts.ms, 4000)
   assert.deepEqual(facts.outside, [])
   // Another conversation's record, from before this request, isn't this answer's.
   assert.equal(factsOf(turn, [reached(-9000, -8000, {})]).verdict, 'unknown')
@@ -68,6 +69,15 @@ test('not certified when the browser’s record misses a request to a brain', ()
   assert.equal(factsOf(turn, [reached(2500, 5500, {})]).verdict, 'unknown')
   // Two runs of one answer, each recorded.
   assert.equal(factsOf(turn, [reached(500, 2000, {}), reached(2500, 5500, {})]).verdict, 'local')
+})
+
+test('the time is the answer’s, from when it was last asked for, a helper’s first step not counting', () => {
+  // Try again a minute after the request, kept with its first time (D188): the answer is written in 2 s.
+  const { records } = turnWith([{ local: true, at: 60_000 }, { local: true, at: 61_000, parent: 'call-1' }])
+  records.push({ ...envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: '.' } }, 0), at: at(62_000) })
+  assert.equal(factsOf(foldTurns(records)[0], []).ms, 2000)
+  // A run that asked no brain (a flow's one call, D218): from the request.
+  assert.equal(factsOf(foldTurns(turnWith([]).records)[0], []).ms, 5000)
 })
 
 test('free on this device, priced in the cloud, not known without a price', () => {
