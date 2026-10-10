@@ -160,6 +160,16 @@ export function nextLook() {
   notify(t(`look.${id}.name`))
 }
 
+/** The next language, in the menu's order, the browser's first, its name shown in its own words, unless policy sets it (⌘⇧L, D253). */
+export async function nextLanguage() {
+  if (effective.value.locked.has('locale')) return
+  const yours = preferredLocales(LOCALES, navigator.languages)
+  const codes = [...yours, ...LOCALES.filter((code) => !yours.includes(code))]
+  const code = codes[(codes.indexOf(locale.value) + 1) % codes.length]
+  await setLocale(code)
+  notify(languageName(code))
+}
+
 /**
  * The user at the foot of the drawer, open beside the conversation or over it (D150, D165): their
  * initial and their name, or "You" until it is known, opening a menu above them. It goes back to

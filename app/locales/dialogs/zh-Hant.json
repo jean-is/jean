@@ -164,6 +164,7 @@
   "settings.keyboard": "鍵盤快速鍵",
   "keyboard.sidebar": "顯示或隱藏側邊欄",
   "keyboard.look": "下一個主題",
+  "keyboard.language": "下一種語言",
   "keyboard.line": "換行",
   "keyboard.recall": "先前的請求（訊息為空時）",
   "settings.capabilities": "能力",

@@ -164,6 +164,7 @@
   "settings.keyboard": "ショートカットキー",
   "keyboard.sidebar": "サイドバーの表示・非表示",
   "keyboard.look": "次のテーマ",
+  "keyboard.language": "次の言語",
   "keyboard.line": "改行",
   "keyboard.recall": "以前の依頼（メッセージが空のとき）",
   "settings.capabilities": "機能",
