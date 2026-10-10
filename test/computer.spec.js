@@ -50,8 +50,8 @@ test('the savings starter: the computer works the plan out, its chart opens besi
   test.setTimeout(90_000)
   await start(page)
   await connectFakeBrain(page)
-  await page.locator('.starter', { hasText: 'Chart a savings plan' }).click()
-  await expect(page.locator('#prompt')).toHaveValue(/saving 200 a month at 4% a year/)
+  await page.locator('.starter', { hasText: 'Savings plan' }).click()
+  await expect(page.locator('#prompt')).toHaveValue(/savings over 10 years: 200 a month at 4% a year/)
   await page.locator('#prompt').press('Enter')
   // The computer isn't on yet: the brain offers it, and the answer goes on once it is.
   await page.locator('.msg-jean .approval .button.primary').click({ timeout: 30_000 })

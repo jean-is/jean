@@ -1,7 +1,20 @@
-// Discovery (0.3): the house lights up (Settings' Capabilities), "turn on everything" works, and
-// the brain picker offers Auto, the connected brains and "never send to the cloud".
+// Discovery (0.3): the first starter asks what Jean can do, the house lights up (Settings'
+// Capabilities), "turn on everything" works, and the brain picker offers Auto, the connected brains
+// and "never send to the cloud".
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, openSettings } from './helpers.js'
+
+test('the first starter asks what Jean can do, in a few plain words', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const first = page.locator('.starter').first()
+  await expect(first).toHaveText('What can you do?')
+  await first.click()
+  await expect(page.locator('#prompt')).toHaveValue('What can you do for me? Give me 3 examples I can try.')
+  await expect(page.locator('#prompt')).toBeFocused()
+  await page.locator('#prompt').press('Enter')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('What can you do for me?')
+})
 
 test('the house lights up as capabilities are turned on', async ({ page }) => {
   await start(page)
