@@ -1,0 +1,19 @@
+{
+  "search.text": "Apabila soalan memerlukan fakta yang tiada dalam perbualan, {name} mencarinya, dan setiap jawapan menunjukkan sumbernya.",
+  "search.where": "Tempat mencari",
+  "search.web": "Web",
+  "search.web.text": "Wikipedia, dalam bahasa anda. Otak yang mencari di web sendiri, seperti Claude, menggunakan cariannya sendiri.",
+  "search.library": "Perpustakaan luar talian",
+  "search.library.text": "Wikipedia dan buku lain daripada pelayan Kiwix, di komputer ini, di sekolah atau di tempat kerja. Setiap otak mencari di dalamnya, dan ia berfungsi tanpa internet.",
+  "search.address": "Alamat pelayan Kiwix",
+  "search.connect": "Sambung",
+  "search.failed": "Tiada pelayan Kiwix yang menjawab di alamat ini.",
+  "search.insecure": "Dari sini, hanya pelayan Kiwix di komputer ini, atau di alamat yang bermula dengan https://, boleh dicapai.",
+  "search.locked": "Ditetapkan oleh organisasi anda",
+  "search.books": {
+    "other": "{count} buku"
+  },
+  "search.articles": {
+    "other": "{count} artikel"
+  }
+}

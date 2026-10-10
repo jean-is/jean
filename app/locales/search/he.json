@@ -1,0 +1,25 @@
+{
+  "search.text": "כששאלה צריכה עובדות שאין בשיחה, מחפשים אותן, ורואים מאיפה כל תשובה הגיעה.",
+  "search.where": "איפה לחפש",
+  "search.web": "הרשת",
+  "search.web.text": "ויקיפדיה, בשפה שלכם. מוח שמחפש ברשת בעצמו, כמו Claude, משתמש בחיפוש משלו.",
+  "search.library": "ספרייה לא מקוונת",
+  "search.library.text": "ויקיפדיה וספרים נוספים משרת Kiwix, במחשב הזה, בבית הספר או בעבודה. כל מוח מחפש בה, והיא עובדת בלי אינטרנט.",
+  "search.address": "כתובת שרת ה-Kiwix",
+  "search.connect": "חיבור",
+  "search.failed": "אף שרת Kiwix לא ענה בכתובת הזו.",
+  "search.insecure": "מכאן אפשר להגיע רק לשרת Kiwix במחשב הזה, או בכתובת שמתחילה ב-https://.",
+  "search.locked": "נקבע על ידי הארגון שלך",
+  "search.books": {
+    "one": "ספר אחד",
+    "two": "{count} ספרים",
+    "many": "{count} ספרים",
+    "other": "{count} ספרים"
+  },
+  "search.articles": {
+    "one": "ערך אחד",
+    "two": "{count} ערכים",
+    "many": "{count} ערכים",
+    "other": "{count} ערכים"
+  }
+}

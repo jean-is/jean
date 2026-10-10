@@ -1,0 +1,23 @@
+{
+  "search.text": "Quando uma pergunta precisa de factos que não estão na conversa, procuram-se, e vê-se de onde vem cada resposta.",
+  "search.where": "Onde procurar",
+  "search.web": "A web",
+  "search.web.text": "A Wikipédia, na tua língua. Um cérebro que pesquisa na web por si, como o Claude, usa a sua própria pesquisa.",
+  "search.library": "Uma biblioteca sem ligação",
+  "search.library.text": "A Wikipédia e outros livros de um servidor Kiwix, neste computador, na escola ou no trabalho. Todos os cérebros pesquisam nela, e funciona sem internet.",
+  "search.address": "Endereço do servidor Kiwix",
+  "search.connect": "Ligar",
+  "search.failed": "Nenhum servidor Kiwix respondeu neste endereço.",
+  "search.insecure": "Daqui só se chega a um servidor Kiwix neste computador, ou num endereço que comece por https://.",
+  "search.locked": "Definido pela tua organização",
+  "search.books": {
+    "one": "{count} livro",
+    "many": "{count} livros",
+    "other": "{count} livros"
+  },
+  "search.articles": {
+    "one": "{count} artigo",
+    "many": "{count} artigos",
+    "other": "{count} artigos"
+  }
+}

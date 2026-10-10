@@ -1,0 +1,19 @@
+{
+  "search.text": "當問題需要對話中沒有的事實時，{name} 會去查找，並標明每個回答的出處。",
+  "search.where": "在哪裡查找",
+  "search.web": "網路",
+  "search.web.text": "你所用語言的維基百科。像 Claude 這樣能自己上網搜尋的大腦，會用它自己的搜尋。",
+  "search.library": "離線圖書館",
+  "search.library.text": "來自 Kiwix 伺服器的維基百科和其他書籍，可以在這台電腦上，也可以在學校或公司。每個大腦都會在其中搜尋，而且不需要連網。",
+  "search.address": "Kiwix 伺服器位址",
+  "search.connect": "連線",
+  "search.failed": "這個位址上沒有 Kiwix 伺服器回應。",
+  "search.insecure": "從這裡只能連到這台電腦上的 Kiwix 伺服器，或以 https:// 開頭的位址上的伺服器。",
+  "search.locked": "由你的組織設定",
+  "search.books": {
+    "other": "{count} 本書"
+  },
+  "search.articles": {
+    "other": "{count} 篇文章"
+  }
+}

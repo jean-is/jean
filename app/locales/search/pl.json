@@ -1,0 +1,25 @@
+{
+  "search.text": "Gdy do pytania potrzeba faktów, których nie ma w rozmowie, są one wyszukiwane, a przy każdej odpowiedzi widać, skąd pochodzi.",
+  "search.where": "Gdzie szukać",
+  "search.web": "Sieć",
+  "search.web.text": "Wikipedia w twoim języku. Mózg, który sam szuka w sieci, jak Claude, używa własnego wyszukiwania.",
+  "search.library": "Biblioteka offline",
+  "search.library.text": "Wikipedia i inne książki z serwera Kiwix: na tym komputerze, w szkole albo w pracy. Każdy mózg w niej szuka, a działa ona bez internetu.",
+  "search.address": "Adres serwera Kiwix",
+  "search.connect": "Połącz",
+  "search.failed": "Pod tym adresem nie odpowiedział żaden serwer Kiwix.",
+  "search.insecure": "Stąd można dotrzeć tylko do serwera Kiwix na tym komputerze albo pod adresem zaczynającym się od https://.",
+  "search.locked": "Ustawione przez twoją organizację",
+  "search.books": {
+    "one": "{count} książka",
+    "few": "{count} książki",
+    "many": "{count} książek",
+    "other": "{count} książki"
+  },
+  "search.articles": {
+    "one": "{count} artykuł",
+    "few": "{count} artykuły",
+    "many": "{count} artykułów",
+    "other": "{count} artykułu"
+  }
+}

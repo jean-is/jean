@@ -1,0 +1,19 @@
+{
+  "search.text": "会話にない事実が質問に必要なとき、{name}が調べ、それぞれの答えの出どころを示します。",
+  "search.where": "検索する場所",
+  "search.web": "ウェブ",
+  "search.web.text": "あなたの言語のウィキペディア。Claude のように自分でウェブを検索する頭脳は、自身の検索を使います。",
+  "search.library": "オフラインのライブラリ",
+  "search.library.text": "Kiwix サーバーにあるウィキペディアなどの本。このコンピューターでも、学校や職場のものでも使えます。どの頭脳もここを検索し、インターネットなしで動きます。",
+  "search.address": "Kiwix サーバーのアドレス",
+  "search.connect": "接続",
+  "search.failed": "このアドレスで応答する Kiwix サーバーはありませんでした。",
+  "search.insecure": "ここから接続できるのは、このコンピューター上の Kiwix サーバーか、https:// で始まるアドレスのものだけです。",
+  "search.locked": "組織によって設定されています",
+  "search.books": {
+    "other": "{count} 冊"
+  },
+  "search.articles": {
+    "other": "{count} 件の記事"
+  }
+}

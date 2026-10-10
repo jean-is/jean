@@ -1,0 +1,19 @@
+{
+  "search.text": "Saat sebuah pertanyaan butuh fakta yang tidak ada di percakapan, {name} mencarinya, dan setiap jawaban menunjukkan asalnya.",
+  "search.where": "Tempat mencari",
+  "search.web": "Web",
+  "search.web.text": "Wikipedia, dalam bahasa Anda. Otak yang mencari di web sendiri, seperti Claude, memakai pencariannya sendiri.",
+  "search.library": "Perpustakaan offline",
+  "search.library.text": "Wikipedia dan buku lain dari server Kiwix, di komputer ini, di sekolah, atau di kantor. Semua otak mencari di sana, dan perpustakaan ini bekerja tanpa internet.",
+  "search.address": "Alamat server Kiwix",
+  "search.connect": "Hubungkan",
+  "search.failed": "Tidak ada server Kiwix yang menjawab di alamat ini.",
+  "search.insecure": "Dari sini, hanya server Kiwix di komputer ini, atau di alamat yang diawali https://, yang bisa dijangkau.",
+  "search.locked": "Diatur oleh organisasi Anda",
+  "search.books": {
+    "other": "{count} buku"
+  },
+  "search.articles": {
+    "other": "{count} artikel"
+  }
+}

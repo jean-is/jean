@@ -1,0 +1,21 @@
+{
+  "search.text": "Kapag kailangan ng tanong ang mga katotohanang wala sa usapan, hinahanap ito ng {name}, at ipinapakita ng bawat sagot kung saan ito galing.",
+  "search.where": "Saan maghahanap",
+  "search.web": "Ang web",
+  "search.web.text": "Wikipedia, sa wika mo. Ang utak na mismong naghahanap sa web, gaya ng Claude, ay gumagamit ng sarili nitong paghahanap.",
+  "search.library": "Isang offline na aklatan",
+  "search.library.text": "Wikipedia at iba pang aklat mula sa isang Kiwix server, sa computer na ito, sa paaralan o sa trabaho. Naghahanap dito ang bawat utak, at gumagana ito kahit walang internet.",
+  "search.address": "Address ng Kiwix server",
+  "search.connect": "Ikonekta",
+  "search.failed": "Walang Kiwix server na sumagot sa address na ito.",
+  "search.insecure": "Mula rito, Kiwix server lang sa computer na ito, o sa address na nagsisimula sa https://, ang maaabot.",
+  "search.locked": "Itinakda ng organisasyon mo",
+  "search.books": {
+    "one": "{count} aklat",
+    "other": "{count} aklat"
+  },
+  "search.articles": {
+    "one": "{count} artikulo",
+    "other": "{count} artikulo"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "search.text": "አንድ ጥያቄ በውይይቱ ውስጥ የሌለ መረጃ ሲፈልግ ይፈለጋል፤ እያንዳንዱ መልስ ከየት እንደመጣም ይታያል።",
+  "search.where": "የት ይፈለግ",
+  "search.web": "ድር",
+  "search.web.text": "ውክፔዲያ፣ በእርስዎ ቋንቋ። እንደ Claude ያለ ራሱ በድር ላይ የሚፈልግ አንጎል የራሱን ፍለጋ ይጠቀማል።",
+  "search.library": "ከመስመር ውጭ ቤተ መጻሕፍት",
+  "search.library.text": "ውክፔዲያና ሌሎች መጻሕፍት ከKiwix ሰርቨር፣ በዚህ ኮምፒውተር፣ በትምህርት ቤት ወይም በሥራ ቦታ። ሁሉም አንጎሎች በውስጡ ይፈልጋሉ፣ ያለ ኢንተርኔትም ይሠራል።",
+  "search.address": "የKiwix ሰርቨሩ አድራሻ",
+  "search.connect": "ያገናኙ",
+  "search.failed": "በዚህ አድራሻ ምንም የKiwix ሰርቨር አልመለሰም።",
+  "search.insecure": "ከዚህ መድረስ የሚቻለው በዚህ ኮምፒውተር ላይ ያለ ወይም በhttps:// በሚጀምር አድራሻ ያለ የKiwix ሰርቨር ብቻ ነው።",
+  "search.locked": "በድርጅትዎ የተቀናበረ",
+  "search.books": {
+    "one": "{count} መጽሐፍ",
+    "other": "{count} መጻሕፍት"
+  },
+  "search.articles": {
+    "one": "{count} ጽሑፍ",
+    "other": "{count} ጽሑፎች"
+  }
+}

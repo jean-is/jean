@@ -1,0 +1,19 @@
+{
+  "search.text": "Khi câu hỏi cần những thông tin không có trong cuộc trò chuyện, {name} sẽ tìm, và mỗi câu trả lời cho biết nó đến từ đâu.",
+  "search.where": "Tìm ở đâu",
+  "search.web": "Web",
+  "search.web.text": "Wikipedia, bằng ngôn ngữ của bạn. Bộ não tự tìm trên web, như Claude, sẽ dùng công cụ tìm kiếm của riêng nó.",
+  "search.library": "Thư viện ngoại tuyến",
+  "search.library.text": "Wikipedia và các sách khác từ một máy chủ Kiwix, trên máy tính này, ở trường hay nơi làm việc. Mọi bộ não đều tìm trong đó, và nó chạy được khi không có internet.",
+  "search.address": "Địa chỉ của máy chủ Kiwix",
+  "search.connect": "Kết nối",
+  "search.failed": "Không có máy chủ Kiwix nào trả lời ở địa chỉ này.",
+  "search.insecure": "Từ đây chỉ kết nối được với máy chủ Kiwix trên máy tính này, hoặc ở địa chỉ bắt đầu bằng https://.",
+  "search.locked": "Do tổ chức của bạn thiết lập",
+  "search.books": {
+    "other": "{count} cuốn sách"
+  },
+  "search.articles": {
+    "other": "{count} bài viết"
+  }
+}

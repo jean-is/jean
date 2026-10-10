@@ -75,7 +75,7 @@ app/              what a deploy serves, as written (D243); the docs' paths to Je
                   connections live helpers check since names routines flows find browser ask you folders sync computer math
                   charts scores machine slides layouts
   locales/        <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
-                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ (D97)
+                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ search/ (D97)
   fonts/          the display font
   icons/          the icon, and the PNGs installs need, drawn from it (D131)
   screenshots/    the welcome screen, for the install dialog (D168)
@@ -92,7 +92,7 @@ test/             <name>.test.js, run by node --test, and <capability>.spec.js, 
                   multilingual reflex test set and results.md)
 ```
 
-Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `cells.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
+Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `cells.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/search/kiwix.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
 
 ## Brand
 
@@ -396,7 +396,7 @@ Jean's event format is ACP's `session/update`: `user_message_chunk`, `agent_mess
 ## Web search
 
 1. **The brain's own search** (D91): `web_search` is marked `native`, and the adapter declares the provider's tool instead: Anthropic's `web_search_20260209` from Claude 4.6 on (`web_search_20250305` before), or OpenRouter's `openrouter:web_search`. Anthropic's search blocks are kept on the brain entry and replayed as received; an organisation that turned search off gets Wikipedia.
-2. **Wikipedia,** in the user's language, for every other brain, the device's included (`urls.wikipedia`).
+2. **Wikipedia,** in the user's language, for every other brain, the device's included (`urls.wikipedia`). **A Kiwix server** named there instead (D254), any address but MediaWiki's `api.php`, is searched by every brain: the tool loses `native`. `caps/search/kiwix.js` reads the languages of its books from its catalogue (`/catalog/v2/languages`, three-letter codes that `Intl.getCanonicalLocales` turns into two), searches the books in the one asked (`/search?books.filter.lang=…&format=xml`; a library in a single language whatever the one asked, and when it has none of them, the brain hears which it has), keeps a page two books hold once, and puts each page's first paragraphs, read from the page with `pageText` (`caps/browser/pages.js`), in place of its snippet. A browser reaches a Kiwix server on this computer, or anywhere over HTTPS: a page served over HTTPS can't fetch plain HTTP from the network. **Settings › Web search** (`panel()` in `caps/search/search.js`, its strings in `locales/search/`) chooses between the web and a library: an address typed there is kept, as the server's root (`rootOf`: a page's or the reader's address leads there too), only once `library()` reads its catalogue (`/catalog/v2/entries`), and then lists its books, their languages and how many articles each holds; when nothing answers, it says so, or, for an HTTP address away from this computer typed in Jean served over HTTPS, that only this computer or HTTPS can be reached. Choosing the web removes `urls.wikipedia`; policy's locks the choice.
 3. **A search service connected like any other** (D192): Exa's needs no key and no sign-in, and is one of the services Jean knows; an organisation adds its own to the directory by policy. Search speaks MCP like every connection, so there is no search endpoint of its own in settings.
 
 There is no Jean proxy. Fetching an arbitrary address meets the same CORS wall.

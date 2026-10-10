@@ -1,0 +1,21 @@
+{
+  "search.text": "When a question needs facts the conversation doesn’t hold, {name} looks them up, and each answer shows where it comes from.",
+  "search.where": "Where to look",
+  "search.web": "The web",
+  "search.web.text": "Wikipedia, in your language. A brain that searches the web itself, like Claude, uses its own search.",
+  "search.library": "An offline library",
+  "search.library.text": "Wikipedia and other books from a Kiwix server, on this computer, at school or at work. Every brain searches it, and it works without the internet.",
+  "search.address": "Address of the Kiwix server",
+  "search.connect": "Connect",
+  "search.failed": "No Kiwix server answered at this address.",
+  "search.insecure": "Only a Kiwix server on this computer, or at an address that starts with https://, can be reached from here.",
+  "search.locked": "Set by your organization",
+  "search.books": {
+    "one": "{count} book",
+    "other": "{count} books"
+  },
+  "search.articles": {
+    "one": "{count} article",
+    "other": "{count} articles"
+  }
+}

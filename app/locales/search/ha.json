@@ -1,0 +1,21 @@
+{
+  "search.text": "Idan tambaya na bukatar bayanan da babu a cikin tattaunawar, ana bincika su, kuma ana nuna inda kowace amsa ta fito.",
+  "search.where": "Inda za a nema",
+  "search.web": "Yanar gizo",
+  "search.web.text": "Wikipedia, a harshenka. Ƙwaƙwalwar da ke bincike a yanar gizo da kanta, kamar Claude, tana amfani da nata binciken.",
+  "search.library": "Laburare ba tare da intanet ba",
+  "search.library.text": "Wikipedia da sauran littattafai daga sabar Kiwix, a wannan kwamfutar, a makaranta ko a wurin aiki. Kowace ƙwaƙwalwa tana bincike a ciki, kuma yana aiki ba tare da intanet ba.",
+  "search.address": "Adireshin sabar Kiwix",
+  "search.connect": "Haɗa",
+  "search.failed": "Babu sabar Kiwix da ta amsa a wannan adireshin.",
+  "search.insecure": "Daga nan, sabar Kiwix a wannan kwamfutar kaɗai ake iya kaiwa, ko a adireshin da ya fara da https://.",
+  "search.locked": "Ƙungiyarka ce ta saita",
+  "search.books": {
+    "one": "Littafi {count}",
+    "other": "Littattafai {count}"
+  },
+  "search.articles": {
+    "one": "Maƙala {count}",
+    "other": "Maƙaloli {count}"
+  }
+}

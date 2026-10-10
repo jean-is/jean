@@ -221,6 +221,36 @@ test('web search answers with sources that open', async ({ page }) => {
   await expect(page.locator('.activity-list')).toContainText('Searched the web · lighthouse')
 })
 
+test('web search reads the Kiwix server chosen in its section of Settings, for every brain (D254)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Web search')
+  // Its trophy leads to its section: the web by default, or a library, whose address is tried before it is kept.
+  await page.locator('app-settings .plaque .button').click()
+  const settings = page.locator('app-settings dialog[open]')
+  await expect(settings.getByRole('radio', { name: /The web/ })).toBeChecked()
+  await settings.getByRole('radio', { name: /An offline library/ }).check()
+  const field = settings.getByLabel('Address of the Kiwix server')
+  await field.fill(`${MAIL_URL}/nothing/`)
+  await settings.getByRole('button', { name: 'Connect' }).click()
+  await expect(settings.locator('.status.is-error')).toHaveText('No Kiwix server answered at this address.')
+  // The fake service's stand-in, by the address of a page in its reader: kept as the server's own.
+  await field.fill(`${MAIL_URL}/kiwix/viewer#wikipedia_fr_all_mini_2025-10/Phare`)
+  await settings.getByRole('button', { name: 'Connect' }).click()
+  await expect(settings.locator('.library')).toHaveText('3 books')
+  await expect(settings.locator('.list li').nth(1)).toHaveText(/Wikipédia\s+French · 2,687,612 articles/)
+  await expect(field).toHaveValue(`${MAIL_URL}/kiwix/`)
+  await page.keyboard.press('Escape')
+  const native = await page.evaluate(async () => (await import('/ui/caps.js')).contributions().tools.find((tool) => tool.spec.name === 'web_search')?.spec.native ?? null)
+  expect(native, 'no brain’s own search takes its place').toBeNull()
+  await ask(page, 'Search the web for lighthouse')
+  const answer = page.locator('.msg-jean .prose').last()
+  // Each page's first paragraph, read from the page itself, rather than the search's snippet.
+  await expect(answer).toContainText('A lighthouse is a tower designed to emit light')
+  await expect(answer.locator('a.cite')).toHaveCount(2)
+  await expect(answer.locator('a.cite').first()).toHaveAttribute('href', `${MAIL_URL}/kiwix/content/wikipedia_en_100_2026-08/Lighthouse`)
+})
+
 test('a script draws a picture with models.image, kept in the project', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

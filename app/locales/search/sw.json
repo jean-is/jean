@@ -1,0 +1,21 @@
+{
+  "search.text": "Swali linapohitaji ukweli usio kwenye mazungumzo, {name} huutafuta, na kila jibu huonyesha limetoka wapi.",
+  "search.where": "Mahali pa kutafuta",
+  "search.web": "Wavuti",
+  "search.web.text": "Wikipedia, kwa lugha yako. Akili inayotafuta kwenye wavuti yenyewe, kama Claude, hutumia utafutaji wake.",
+  "search.library": "Maktaba ya nje ya mtandao",
+  "search.library.text": "Wikipedia na vitabu vingine kutoka kwa seva ya Kiwix, kwenye kompyuta hii, shuleni au kazini. Kila akili hutafuta humo, na hufanya kazi bila intaneti.",
+  "search.address": "Anwani ya seva ya Kiwix",
+  "search.connect": "Unganisha",
+  "search.failed": "Hakuna seva ya Kiwix iliyojibu kwenye anwani hii.",
+  "search.insecure": "Kutoka hapa, unaweza kufikia tu seva ya Kiwix kwenye kompyuta hii, au kwenye anwani inayoanza na https://.",
+  "search.locked": "Imewekwa na shirika lako",
+  "search.books": {
+    "one": "Kitabu {count}",
+    "other": "Vitabu {count}"
+  },
+  "search.articles": {
+    "one": "Makala {count}",
+    "other": "Makala {count}"
+  }
+}

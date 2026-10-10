@@ -1,0 +1,21 @@
+{
+  "search.text": "Als een vraag feiten nodig heeft die niet in het gesprek staan, zoekt {name} ze op, en elk antwoord laat zien waar het vandaan komt.",
+  "search.where": "Waar zoeken",
+  "search.web": "Het web",
+  "search.web.text": "Wikipedia, in jouw taal. Een brein dat zelf op het web zoekt, zoals Claude, gebruikt zijn eigen zoekfunctie.",
+  "search.library": "Een offline bibliotheek",
+  "search.library.text": "Wikipedia en andere boeken van een Kiwix-server, op deze computer, op school of op het werk. Elk brein zoekt erin, en het werkt zonder internet.",
+  "search.address": "Adres van de Kiwix-server",
+  "search.connect": "Verbinden",
+  "search.failed": "Er antwoordde geen Kiwix-server op dit adres.",
+  "search.insecure": "Vanaf hier is alleen een Kiwix-server op deze computer bereikbaar, of een op een adres dat met https:// begint.",
+  "search.locked": "Ingesteld door je organisatie",
+  "search.books": {
+    "one": "{count} boek",
+    "other": "{count} boeken"
+  },
+  "search.articles": {
+    "one": "{count} artikel",
+    "other": "{count} artikelen"
+  }
+}

@@ -1,4 +1,4 @@
-// A fake mail service for local end-to-end checks of Connections (0.5), and a Wikipedia stand-in.
+// A fake mail service for local end-to-end checks of Connections (0.5), and Wikipedia's and Kiwix's stand-ins.
 // Usage: node test/fixtures/fake-mail.js   (PORT=4182 by default)
 //   /mcp           MCP 2026-07-28 (stateless), behind an OAuth sign-in: protected resource metadata,
 //                  authorization server metadata, dynamic client registration, an authorize page
@@ -12,12 +12,14 @@
 //                  first one's sign-in server, as Google's are (D193)
 //   /legacy/mcp    MCP 2025-11-25: initialize, then a session (Mcp-Session-Id)
 //   /wiki/{lang}/w/api.php   a few pages in the shape of Wikipedia's search API
+//   /kiwix/        a Kiwix server, as test/fixtures/kiwix.js answers
 //   /.well-known/agent-skills/index.json   a skills discovery index (D121): a SKILL.md, an archive
 //                  with a file beside its steps, one whose digest is wrong, and one holding a script
 import { createServer } from 'node:http'
 import { createHash, randomUUID } from 'node:crypto'
 import { gzipSync } from 'node:zlib'
 import { pathToFileURL } from 'node:url'
+import { kiwix } from './kiwix.js'
 
 const EMAILS = [
   { id: '3', from: 'Margot <margot@bakery.example>', date: '2026-10-02', subject: 'Croissants for Saturday', body: 'Can you confirm the order of 120 croissants for Saturday morning? We deliver at 7.' },
@@ -166,6 +168,12 @@ export function createFakeMail() {
       const token = randomUUID()
       tokens.add(token)
       return json(200, { access_token: token, token_type: 'Bearer', expires_in: 3600, refresh_token: 'refresh-me' })
+    }
+
+    // ─── Kiwix ───
+    if (url.pathname.startsWith('/kiwix/')) {
+      const answer = kiwix(url)
+      return res.writeHead(answer.status, { 'content-type': answer.headers.get('content-type') ?? '' }).end(await answer.text())
     }
 
     // ─── Wikipedia ───
