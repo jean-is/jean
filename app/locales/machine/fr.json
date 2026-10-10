@@ -1,5 +1,5 @@
 {
-  "machine.text": "Lancez des commandes sur votre propre ordinateur, avec ses programmes et serveurs, comme le serveur de développement d’un site. JavaScript et Python restent dans le bac à sable.",
+  "machine.text": "Lancez des commandes sur votre propre ordinateur, avec ses programmes et serveurs, comme le serveur de développement d’un site. JavaScript et Python restent dans l’ordinateur embarqué.",
   "machine.on": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord, jusqu’à ce que vous appuyiez sur Ctrl+C dans son terminal.",
   "machine.forget": "Ne plus l’utiliser",
   "machine.question": "Lancer ceci sur votre ordinateur, dans {folder} ?",
@@ -9,7 +9,7 @@
   "machine.failed": "Il n’a pas démarré : il lui faut Node.js sur cet ordinateur, la commande node d’un terminal.",
   "machine.on.app": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord.",
   "machine.computers": "Ordinateurs",
-  "machine.lede": "Les tâches utilisent le bac à sable, sauf celles du dossier que vous connectez sur cet ordinateur.",
+  "machine.lede": "Les tâches utilisent l’ordinateur embarqué, sauf celles du dossier que vous connectez sur votre ordinateur.",
   "machine.off": "Non connecté",
   "machine.in": "Dans {folder}",
   "machine.step.open": "Ouvrez un terminal dans l’un de vos dossiers.",

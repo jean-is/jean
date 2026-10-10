@@ -9,7 +9,7 @@
   "picker.all": "Tous les cerveaux",
   "cap.files.text": "Déposez des PDF, des fichiers Word, Excel, PowerPoint, CSV ou texte : {name} les lit. Les images et les captures d’écran vont aux cerveaux qui savent voir.",
   "cap.made.text": "Demandez un document Word, un tableur ou un autre fichier, et enregistrez-le d’un clic. Copiez les réponses avec leur mise en forme, téléchargez les tableaux pour Excel.",
-  "cap.computer.text": "Un ordinateur dans un bac à sable, dans cet onglet, jamais cet appareil lui-même : il exécute des commandes, du JavaScript et du Python sur les fichiers de votre dossier ou l’espace de travail du projet, et va sur Internet comme vous le permettez.",
+  "cap.computer.text": "Un ordinateur embarqué dans cet onglet, jamais cet appareil lui-même : il exécute des commandes, du JavaScript et du Python sur les fichiers de votre dossier ou l’espace de travail du projet, et va sur Internet comme vous le permettez.",
   "cap.reflexes.text": "Un petit assistant sur cet appareil ({size}, une seule fois) qui devine ce qu’il vous faut : le bon cerveau pour chaque message, des suggestions, de nouvelles choses à essayer. Rien ne quitte cet appareil.",
   "cap.backup.text": "Gardez une copie de tout dans un seul fichier, et restaurez-la sur n’importe quel appareil.",
   "cap.sync.text": "Garde vos tâches, vos fichiers et la mémoire identiques sur vos autres ordinateurs, grâce à un dossier que OneDrive, Dropbox, iCloud Drive ou Google Drive synchronise.",
@@ -290,5 +290,5 @@
   "brain.device.ready": "Le cerveau de cet appareil est prêt",
   "brain.device.private": "Privé · fonctionne hors ligne",
   "cap.machine.hint": "Demandez à lancer le serveur de développement d’un site, comme npm run dev.",
-  "cap.machine.text": "Lance les commandes de l’ordinateur sur cet appareil lui-même, dans l’un de vos dossiers, avec ses propres programmes et serveurs : le serveur de développement d’un site s’affiche dans le navigateur. Chaque commande est demandée d’abord, et Ctrl+C dans votre terminal arrête tout."
+  "cap.machine.text": "Lance les commandes sur votre ordinateur lui-même, dans l’un de vos dossiers, avec ses propres programmes et serveurs : le serveur de développement d’un site s’affiche dans le navigateur. Chaque commande est demandée d’abord, et Ctrl+C dans votre terminal arrête tout."
 }

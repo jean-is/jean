@@ -224,7 +224,7 @@
   "cap.files.yes": "Bon à savoir",
   "cap.made.name": "Documents et tableurs",
   "cap.computer.name": "Ordinateur",
-  "cap.computer.offer": "Besoin de chiffres exacts, ou de travail sur vos fichiers ? Activez un ordinateur dans un bac à sable sur cet appareil : il exécute des commandes, du JavaScript et du Python.",
+  "cap.computer.offer": "Besoin de chiffres exacts, ou de travail sur vos fichiers ? Activez un ordinateur embarqué sur cet appareil : il exécute des commandes, du JavaScript et du Python.",
   "cap.computer.yes": "Activer l’ordinateur",
   "cap.reflexes.name": "Intuition",
   "cap.reflexes.offer": "Laisser {name} sentir ce dont vous avez besoin ? Un petit assistant ({size}, une seule fois) choisit le bon cerveau et suggère la suite, sans rien envoyer nulle part.",
@@ -359,7 +359,7 @@
   "check.fix.prompt": "Tes sources n’étayent pas ces points. Vérifie-les à nouveau et corrige ta réponse :",
   "since.prompt": "Quoi de neuf depuis la dernière fois ?",
   "since.closed": "Le travail s’arrête quand cet onglet est fermé : tout ceci vient d’être lu.",
-  "cap.machine.name": "Cet ordinateur",
-  "cap.machine.offer": "Faire tourner le serveur de développement d’un site, ou vos propres programmes, sur cet ordinateur ?",
-  "cap.machine.yes": "Utiliser cet ordinateur"
+  "cap.machine.name": "Votre ordinateur",
+  "cap.machine.offer": "Faire tourner le serveur de développement d’un site, ou vos propres programmes, sur votre ordinateur ?",
+  "cap.machine.yes": "Utiliser votre ordinateur"
 }

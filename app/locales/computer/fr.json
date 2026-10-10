@@ -1,6 +1,6 @@
 {
-  "computer.text": "Un ordinateur dans un bac à sable, dans cet onglet : il emprunte le processeur et la mémoire de cet appareil, sans jamais rien atteindre d’autre.",
-  "computer.sandbox": "Bac à sable",
+  "computer.text": "Un ordinateur embarqué dans cet onglet : il emprunte le processeur et la mémoire de cet appareil, sans jamais rien atteindre d’autre.",
+  "computer.sandbox": "Ordinateur embarqué",
   "computer.state.asleep": "En veille",
   "computer.state.waking": "Réveil en cours",
   "computer.state.ready": "Disponible",
