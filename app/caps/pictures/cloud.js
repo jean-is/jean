@@ -1,6 +1,6 @@
 // Pictures and films from a connected brain's provider (D251), imported on first use: OpenAI's
-// Images API, which Ollama and other servers share, OpenRouter's chat and Gemini's own API; films
-// from the /videos of OpenAI and OpenRouter, and Gemini's Veo. What they make comes back as bytes,
+// Images API, which Ollama and other servers share, OpenRouter's chat and Gemini's Interactions API;
+// films from the /videos of OpenAI and OpenRouter, and Gemini's Omni. What they make comes back as bytes,
 // fetched only from the brain's own address with its key, never shown from the provider's (D35).
 import { LLMError, headersFor, post, endpoint, fetchOrThrow } from '../../core/llm.js'
 
@@ -14,13 +14,7 @@ const RATIOS = { square: '1:1', wide: '16:9', tall: '9:16' }
 
 /** A picture, made or changed from others. @param {Request} request @returns {Promise<{ bytes: Uint8Array, mimeType: string }>} */
 export async function picture({ brain, apiKey, model, prompt, from, shape, signal, fetch = globalThis.fetch }) {
-  if (brain.provider === 'gemini') {
-    const parts = [{ text: prompt }, ...from.map((file) => ({ inlineData: { mimeType: file.mimeType, data: base64(file.bytes) } }))]
-    const json = await answer(post(fetch, { url: `${google(brain)}/models/${model}:generateContent`, headers: keyed(brain, apiKey),
-      body: { contents: [{ parts }], generationConfig: { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: RATIOS[shape] } } } }, signal))
-    const made = json?.candidates?.[0]?.content?.parts?.find((/** @type {any} */ part) => part.inlineData)?.inlineData
-    return decoded(made && `data:${made.mimeType};base64,${made.data}`)
-  }
+  if (brain.provider === 'gemini') return interaction({ brain, apiKey, model, prompt, from, shape, signal, fetch }, { type: 'image', aspect_ratio: RATIOS[shape] })
   if (brain.provider === 'openrouter') {
     const content = from.length ? [{ type: 'text', text: prompt }, ...from.map((file) => ({ type: 'image_url', image_url: { url: `data:${file.mimeType};base64,${base64(file.bytes)}` } }))] : prompt
     const json = await answer(post(fetch, { url: endpoint(brain, '/chat/completions'), headers: headersFor(brain, apiKey),
@@ -41,26 +35,17 @@ export async function picture({ brain, apiKey, model, prompt, from, shape, signa
 }
 
 /**
- * A film: the provider makes it as a job, which is asked how it is coming every few seconds until
- * it is done, then downloaded. @param {Request} request @returns {Promise<{ bytes: Uint8Array, mimeType: string }>}
+ * A film: OpenAI and OpenRouter make it as a job, which is asked how it is coming every few seconds
+ * until it is done, then downloaded; Gemini in the one request. @param {Request} request @returns {Promise<{ bytes: Uint8Array, mimeType: string }>}
  */
 export async function film({ brain, apiKey, model, prompt, from: [first], shape, seconds = 8, signal, every = 10_000, fetch = globalThis.fetch }) {
   const tall = shape === 'tall'
+  // Omni makes 3 to 10 seconds.
+  if (brain.provider === 'gemini') return interaction({ brain, apiKey, model, prompt, from: first ? [first] : [], shape, signal, fetch }, { type: 'video', aspect_ratio: tall ? '9:16' : '16:9', duration: `${Math.min(10, seconds)}s` })
   /** Only from where the brain is, with its key. @param {string} url @param {Record<string, string>} headers */
   const get = (url, headers) => {
     if (new URL(url).origin !== new URL(brain.baseURL).origin) throw new LLMError(`The film is at another address: ${new URL(url).host}`, { code: 'bad_response' })
     return fetchOrThrow(fetch, url, { headers }, signal)
-  }
-  if (brain.provider === 'gemini') {
-    const headers = keyed(brain, apiKey)
-    let job = await answer(post(fetch, { url: `${google(brain)}/models/${model}:predictLongRunning`, headers, body: {
-      instances: [{ prompt, ...(first && { image: { bytesBase64Encoded: base64(first.bytes), mimeType: first.mimeType } }) }],
-      parameters: { aspectRatio: tall ? '9:16' : '16:9', durationSeconds: Math.min(8, seconds) },
-    } }, signal))
-    while (job?.name && !job.done) job = await pause(every, signal).then(() => answer(get(`${google(brain)}/${job.name}`, headers)))
-    const uri = job?.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri
-    if (!uri) throw new LLMError(job?.error?.message ?? 'No film came back', { code: 'bad_response' })
-    return { bytes: new Uint8Array(await (await get(uri, headers)).arrayBuffer()), mimeType: 'video/mp4' }
   }
   const url = endpoint(brain, '/videos')
   /** @type {any} */
@@ -81,7 +66,20 @@ export async function film({ brain, apiKey, model, prompt, from: [first], shape,
   return { bytes: new Uint8Array(await response.arrayBuffer()), mimeType: response.headers.get('content-type')?.split(';')[0] || 'video/mp4' }
 }
 
-/** Gemini's own API, beside its OpenAI-compatible one. @param {import('../../core/types.js').BrainConfig} brain */
+/**
+ * Gemini's Interactions API, beside its OpenAI-compatible one: a picture or a film comes back in
+ * the answer, waited for in the one request as Google advises, and not kept by Google.
+ * @param {Request} request @param {{ type: 'image' | 'video', aspect_ratio: string, duration?: string }} format
+ */
+async function interaction({ brain, apiKey, model, prompt, from, signal, fetch = globalThis.fetch }, format) {
+  const input = [{ type: 'text', text: prompt }, ...from.map((file) => ({ type: 'image', mime_type: file.mimeType, data: base64(file.bytes) }))]
+  const json = await answer(post(fetch, { url: `${google(brain)}/interactions`, headers: keyed(brain, apiKey), body: { model, input, response_format: format, background: false, store: false } }, signal))
+  const made = json?.steps?.flatMap((/** @type {any} */ step) => (step.type === 'model_output' && step.content) || []).find((/** @type {any} */ part) => part.type === format.type && part.data)
+  if (!made) throw new LLMError(json?.errors?.[0]?.message ?? `No ${format.type === 'video' ? 'film' : 'picture'} came back`, { code: 'bad_response' })
+  return { mimeType: made.mime_type, bytes: bytesOf(made.data) }
+}
+
+/** @param {import('../../core/types.js').BrainConfig} brain */
 const google = (brain) => brain.baseURL.replace(/\/openai\/?$/, '')
 /** @param {import('../../core/types.js').BrainConfig} brain @param {string} [apiKey] */
 const keyed = (brain, apiKey) => ({ ...plain(brain), 'content-type': 'application/json', ...(apiKey && { 'x-goog-api-key': apiKey }) })
@@ -120,5 +118,8 @@ function base64(bytes) {
 function decoded(url) {
   const match = /^data:(image\/[\w+.-]+);base64,(.+)$/.exec(url ?? '')
   if (!match) throw new LLMError('No picture came back', { code: 'bad_response' })
-  return { mimeType: match[1], bytes: Uint8Array.from(atob(match[2]), (char) => char.charCodeAt(0)) }
+  return { mimeType: match[1], bytes: bytesOf(match[2]) }
 }
+
+/** @param {string} data in base64 */
+const bytesOf = (data) => Uint8Array.from(atob(data), (char) => char.charCodeAt(0))

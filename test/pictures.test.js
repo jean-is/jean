@@ -53,15 +53,21 @@ describe('pictures', () => {
     assert.equal(made.mimeType, 'image/webp')
   })
 
-  test('Gemini: its own API, beside the OpenAI-compatible one, with its key', async () => {
-    const { fetch, calls } = mockFetch(() => Response.json({ candidates: [{ content: { parts: [{ text: 'Here' }, { inlineData: { mimeType: 'image/png', data: png } }] } }] }))
-    const made = await picture({ ...ask, from: [lighthouse], brain: brain('gemini'), apiKey: 'g', model: 'gemini-2.5-flash-image', shape: 'tall', fetch })
-    assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent')
+  test('Gemini: its Interactions API, beside the OpenAI-compatible one, with its key, not kept by Google', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ status: 'completed', steps: [{ type: 'thought' }, { type: 'model_output', content: [{ type: 'text', text: 'Here' }, { type: 'image', mime_type: 'image/jpeg', data: png }] }] }))
+    const made = await picture({ ...ask, from: [lighthouse], brain: brain('gemini'), apiKey: 'g', model: 'gemini-nano-banana-2.1', shape: 'tall', fetch })
+    assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/interactions')
     assert.equal(calls[0].init.headers['x-goog-api-key'], 'g')
     assert.equal(calls[0].init.headers.authorization, undefined)
-    assert.deepEqual(calls[0].body.contents[0].parts[1], { inlineData: { mimeType: 'image/png', data: png } })
-    assert.deepEqual(calls[0].body.generationConfig, { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: '9:16' } })
+    assert.deepEqual(calls[0].body, { model: 'gemini-nano-banana-2.1', input: [{ type: 'text', text: 'A lighthouse' }, { type: 'image', mime_type: 'image/png', data: png }],
+      response_format: { type: 'image', aspect_ratio: '9:16' }, background: false, store: false })
     assert.deepEqual([...made.bytes], [137, 80, 78, 71])
+    assert.equal(made.mimeType, 'image/jpeg')
+  })
+
+  test('Gemini: an interaction that made nothing says why', async () => {
+    const { fetch } = mockFetch(() => Response.json({ status: 'failed', errors: [{ code: 'safety', message: 'Blocked by safety filters' }] }))
+    await assert.rejects(picture({ ...ask, brain: brain('gemini'), model: 'gemini-nano-banana-2.1', fetch }), /Blocked by safety filters/)
   })
 
   test('a server that answers an address it doesn’t have with 200 says so (LM Studio)', async () => {
@@ -99,18 +105,15 @@ describe('films', () => {
     assert.deepEqual(calls.slice(1).map((call) => call.url), ['https://openrouter.ai/api/v1/videos/j', 'https://openrouter.ai/api/v1/videos/j/content'])
   })
 
-  test('Gemini’s Veo: a long-running operation, then the sample’s file, with the key', async () => {
-    const operation = 'models/veo-3.1-generate-preview/operations/op1'
-    const sample = 'https://generativelanguage.googleapis.com/v1beta/files/f1:download?alt=media'
-    let asked = 0
-    const { fetch, calls } = mockFetch((url) => (url === sample ? new Response(mp4)
-      : Response.json(url.endsWith(':predictLongRunning') || ++asked < 2 ? { name: operation } : { name: operation, done: true, response: { generateVideoResponse: { generatedSamples: [{ video: { uri: sample } }] } } })))
-    const made = await film({ ...ask, brain: brain('gemini'), apiKey: 'g', model: 'veo-3.1-generate-preview', shape: 'wide', seconds: 12, every: 0, fetch })
-    assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/models/veo-3.1-generate-preview:predictLongRunning')
-    assert.deepEqual(calls[0].body.parameters, { aspectRatio: '16:9', durationSeconds: 8 })
-    assert.equal(calls[1].url, `https://generativelanguage.googleapis.com/v1beta/${operation}`)
-    assert.equal(calls.at(-1)?.init.headers['x-goog-api-key'], 'g')
+  test('Gemini’s Omni: one interaction, the film in its answer, from a picture given as a part', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ status: 'completed', steps: [{ type: 'model_output', content: [{ type: 'video', mime_type: 'video/mp4', data: Buffer.from(mp4).toString('base64') }] }] }))
+    const made = await film({ ...ask, from: [lighthouse], brain: brain('gemini'), apiKey: 'g', model: 'gemini-omni-1.1-flash', shape: 'tall', seconds: 12, every: 0, fetch })
+    assert.equal(calls.length, 1)
+    assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/interactions')
+    assert.deepEqual(calls[0].body.input[1], { type: 'image', mime_type: 'image/png', data: png })
+    assert.deepEqual(calls[0].body.response_format, { type: 'video', aspect_ratio: '9:16', duration: '10s' })
     assert.deepEqual([...made.bytes], [...mp4])
+    assert.equal(made.mimeType, 'video/mp4')
   })
 
   test('a film somewhere other than where the brain is is never fetched, with its key or without', async () => {

@@ -24,11 +24,11 @@ await Promise.all([useStrings('pictures'), styleSheet(new URL('pictures.css', im
 
 /** Models by provider, preferred first: provider identities (D33) that policy replaces (`images`, `films`). */
 const MODELS = /** @type {Record<'picture' | 'film', Record<string, string[]>>} */ ({
-  picture: { openai: ['gpt-image-1.5', 'gpt-image-1'], gemini: ['gemini-3-pro-image-preview', 'gemini-2.5-flash-image'], openrouter: ['google/gemini-2.5-flash-image', 'openai/gpt-5-image'] },
-  film: { openai: ['sora-2', 'sora-2-pro'], gemini: ['veo-3.1-fast-generate-preview', 'veo-3.1-generate-preview'], openrouter: ['google/veo-3.1', 'openai/sora-2-pro'] },
+  picture: { openai: ['gpt-image-1.5', 'gpt-image-1'], gemini: ['gemini-nano-banana-2.1', 'gemini-3-pro-image'], openrouter: ['google/gemini-nano-banana-2.1', 'openai/gpt-5-image'] },
+  film: { openai: ['sora-2', 'sora-2-pro'], gemini: ['gemini-omni-1.1-flash'], openrouter: ['google/veo-3.1', 'openai/sora-2-pro'] },
 })
 /** Otherwise, a model that says it makes them (OpenRouter's list), or whose name does. */
-const MAKES = { picture: /image|dall-e|flux/i, film: /sora|veo|video/i }
+const MAKES = { picture: /image|banana|dall-e|flux/i, film: /sora|veo|video|gemini-omni/i }
 /** Servers that list picture models without the API to run them: LM Studio has no Images API. */
 const UNABLE = ['lmstudio']
 
