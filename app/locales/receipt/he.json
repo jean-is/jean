@@ -3,6 +3,8 @@
   "receipt.local": "נעשתה במכשיר הזה",
   "receipt.local.text": "הדפדפן תיעד מה נשלח בזמן כתיבתה: שום דבר לא יצא מהמכשיר הזה.",
   "receipt.out": "נשלחה אל מחוץ למכשיר הזה",
+  "receipt.inCloud": "נעשתה בענן",
+  "receipt.inCloud.text": "השיחה שלך נשלחה לענן כדי לכתוב את התשובה הזו.",
   "receipt.unknown": "לא מאושרת",
   "receipt.unknown.text": "התיעוד של הדפדפן לגבי מה שנשלח בזמן כתיבתה לא נשמר.",
   "receipt.time": "זמן",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "לא ידועה",
   "receipt.by": "נענה על ידי",
   "receipt.here": "במכשיר הזה",
-  "receipt.cloud": "בענן",
-  "receipt.sentTo": "נשלח אל",
+  "receipt.reached": "פניות נוספות אל",
   "receipt.save": "שמירת התעודה",
   "receipt.file": "תעודה {date}"
 }

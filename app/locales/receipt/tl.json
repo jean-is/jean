@@ -3,6 +3,8 @@
   "receipt.local": "Ginawa sa device na ito",
   "receipt.local.text": "Itinala ng browser mo ang ipinadala habang isinusulat ito: walang lumabas sa device na ito.",
   "receipt.out": "Ipinadala sa labas ng device na ito",
+  "receipt.inCloud": "Ginawa sa cloud",
+  "receipt.inCloud.text": "Ipinadala sa cloud ang usapan mo para isulat ang sagot na ito.",
   "receipt.unknown": "Hindi sertipikado",
   "receipt.unknown.text": "Hindi naitago ang tala ng browser mo sa ipinadala habang isinusulat ito.",
   "receipt.time": "Oras",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "Hindi alam",
   "receipt.by": "Sinagot ng",
   "receipt.here": "sa device na ito",
-  "receipt.cloud": "sa cloud",
-  "receipt.sentTo": "Ipinadala sa",
+  "receipt.reached": "Naabot din",
   "receipt.save": "I-save ang sertipiko",
   "receipt.file": "Sertipiko {date}"
 }

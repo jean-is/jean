@@ -6,18 +6,30 @@ app-receipt { display: contents; }
 .receipt-button { position: relative; }
 .receipt-button.is-local .icon { color: var(--flame-deep); }
 app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt; opacity: 1; }
-.receipt { position-anchor: --receipt; position-area: block-start span-inline-end; position-try-fallbacks: flip-block; inset: auto; inline-size: max-content; max-inline-size: min(22rem, 100vw - 2rem); margin: 0.35rem 0; padding: 0.8rem 0.9rem 0.6rem;
+.receipt { position-anchor: --receipt; position-area: block-start span-inline-end; position-try-fallbacks: flip-block; inset: auto; inline-size: min(21rem, 100vw - 2rem); margin: 0.35rem 0; padding: 0.9rem 0.9rem 0.5rem;
   border: 1px solid var(--line-strong); border-radius: 1rem; background: var(--room-2); color: var(--ink); box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); font-size: 0.85rem; line-height: 1.4;
   transition: opacity 0.2s, display 0.2s allow-discrete, overlay 0.2s allow-discrete; }
 .receipt:not(:popover-open) { opacity: 0; }
 .receipt:popover-open { @starting-style { opacity: 0; } }
 @supports not (anchor-name: --receipt) { .receipt { inset: auto 0 7rem; margin-inline: auto; } }
-.receipt-verdict { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-size: 0.95rem; }
-.receipt-verdict .icon { flex: none; color: var(--ink-soft); }
-.receipt-verdict.is-local .icon { color: var(--flame-deep); }
-.receipt-note { margin: 0.25rem 0 0; color: var(--ink-soft); }
-.receipt dl { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 1rem; margin: 0.7rem 0 0.4rem; padding-block: 0.6rem; border-block: 1px solid var(--line); }
-.receipt dt { color: var(--ink-soft); }
-.receipt dd { display: grid; margin: 0; overflow-wrap: anywhere; }
-.receipt .button { margin-inline-start: -0.6rem; padding: 0.4rem 0.6rem; font-size: 0.85rem; }
-@media (forced-colors: active) { .receipt { border-color: CanvasText; } }
+/* Where it was done: a mark, then the verdict and what it means. */
+.receipt-head { display: flex; gap: 0.7rem; align-items: center; }
+.receipt-mark { flex: none; display: grid; place-items: center; inline-size: 2.25rem; block-size: 2.25rem; border-radius: 50%; background: var(--line); color: var(--ink-soft); }
+.receipt-head.is-local .receipt-mark { background: oklch(from var(--flame-deep) l c h / 0.16); color: var(--flame-deep); }
+.receipt-verdict { margin: 0; font-size: 0.95rem; font-weight: 600; }
+.receipt-note { margin: 0.15rem 0 0; color: var(--ink-soft); font-size: 0.8rem; }
+/* How long and how much side by side; who answered and what else was reached below, each across. */
+.receipt dl { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.85rem 0 0.5rem; }
+.receipt dt { color: var(--ink-soft); font-size: 0.75rem; }
+.receipt dd { margin: 0; overflow-wrap: anywhere; }
+.receipt-stat { padding: 0.45rem 0.65rem; border-radius: 0.65rem; background: var(--line); }
+.receipt-stat dd { font-size: 0.9rem; }
+.receipt-list { grid-column: 1 / -1; display: grid; gap: 0.3rem; margin-block-start: 0.35rem; }
+.receipt-brain { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.5rem; }
+.receipt-host { color: var(--ink-soft); font-family: var(--mono); font-size: 0.75rem; }
+.receipt-where { display: inline-flex; align-items: center; gap: 0.25rem; color: var(--ink-soft); font-size: 0.75rem; }
+.receipt-where .icon { inline-size: 0.9rem; block-size: 0.9rem; color: var(--flame-deep); }
+.receipt-hosts { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.receipt-hosts bdi { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 1rem; font-size: 0.78rem; }
+.receipt .button { margin-inline-start: -0.6rem; padding: 0.4rem 0.6rem; color: var(--ink-soft); font-size: 0.8rem; }
+@media (forced-colors: active) { .receipt, .receipt-stat, .receipt-mark { border: 1px solid CanvasText; } .receipt-hosts bdi { border-color: CanvasText; } }

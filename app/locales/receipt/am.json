@@ -3,6 +3,8 @@
   "receipt.local": "በዚህ መሣሪያ ላይ የተሠራ",
   "receipt.local.text": "አሳሽዎ ይህ መልስ ሲጻፍ የተላከውን መዝግቧል፦ ከዚህ መሣሪያ ምንም አልወጣም።",
   "receipt.out": "ከዚህ መሣሪያ ውጭ ተልኳል",
+  "receipt.inCloud": "በደመና ላይ የተሠራ",
+  "receipt.inCloud.text": "ይህን መልስ ለመጻፍ ውይይትዎ ወደ ደመና ተልኳል።",
   "receipt.unknown": "አልተረጋገጠም",
   "receipt.unknown.text": "ይህ መልስ ሲጻፍ የተላከውን አሳሽዎ የመዘገበው አልተቀመጠም።",
   "receipt.time": "ጊዜ",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "አይታወቅም",
   "receipt.by": "የመለሰው",
   "receipt.here": "በዚህ መሣሪያ ላይ",
-  "receipt.cloud": "በደመና ላይ",
-  "receipt.sentTo": "የተላከው ወደ",
+  "receipt.reached": "ሌሎች የተገናኙ አድራሻዎች",
   "receipt.save": "የምስክር ወረቀቱን ያስቀምጡ",
   "receipt.file": "የምስክር ወረቀት {date}"
 }

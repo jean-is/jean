@@ -3,6 +3,8 @@
   "receipt.local": "Hecha en este dispositivo",
   "receipt.local.text": "Tu navegador registró lo que se envió mientras se escribía: nada salió de este dispositivo.",
   "receipt.out": "Enviada fuera de este dispositivo",
+  "receipt.inCloud": "Hecha en la nube",
+  "receipt.inCloud.text": "Tu conversación se envió a la nube para escribir esta respuesta.",
   "receipt.unknown": "Sin certificar",
   "receipt.unknown.text": "No se guardó el registro de tu navegador de lo que se envió mientras se escribía.",
   "receipt.time": "Tiempo",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "Desconocido",
   "receipt.by": "Respondido por",
   "receipt.here": "en este dispositivo",
-  "receipt.cloud": "en la nube",
-  "receipt.sentTo": "Enviado a",
+  "receipt.reached": "Otras direcciones contactadas",
   "receipt.save": "Guardar el certificado",
   "receipt.file": "Certificado {date}"
 }

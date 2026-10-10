@@ -3,6 +3,8 @@
   "receipt.local": "أُنجزت على هذا الجهاز",
   "receipt.local.text": "سجّل متصفحك ما أُرسل أثناء كتابتها: لم يغادر شيء هذا الجهاز.",
   "receipt.out": "أُرسلت خارج هذا الجهاز",
+  "receipt.inCloud": "أُنجزت في السحابة",
+  "receipt.inCloud.text": "أُرسلت محادثتك إلى السحابة لكتابة هذه الإجابة.",
   "receipt.unknown": "غير موثّقة",
   "receipt.unknown.text": "لم يُحفظ سجل متصفحك لما أُرسل أثناء كتابتها.",
   "receipt.time": "المدة",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "غير معروفة",
   "receipt.by": "الإجابة من",
   "receipt.here": "على هذا الجهاز",
-  "receipt.cloud": "في السحابة",
-  "receipt.sentTo": "أُرسل إلى",
+  "receipt.reached": "وصلت أيضًا إلى",
   "receipt.save": "حفظ الشهادة",
   "receipt.file": "شهادة {date}"
 }

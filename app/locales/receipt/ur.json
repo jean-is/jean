@@ -3,6 +3,8 @@
   "receipt.local": "اسی آلے پر کیا گیا",
   "receipt.local.text": "لکھتے وقت جو بھیجا گیا وہ آپ کے براؤزر نے درج کیا: اس آلے سے کچھ باہر نہیں گیا۔",
   "receipt.out": "اس آلے سے باہر بھیجا گیا",
+  "receipt.inCloud": "کلاؤڈ میں کیا گیا",
+  "receipt.inCloud.text": "یہ جواب لکھنے کے لیے آپ کی گفتگو کلاؤڈ میں بھیجی گئی۔",
   "receipt.unknown": "تصدیق شدہ نہیں",
   "receipt.unknown.text": "لکھتے وقت جو بھیجا گیا اس کا آپ کے براؤزر کا ریکارڈ محفوظ نہیں رکھا گیا۔",
   "receipt.time": "وقت",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "معلوم نہیں",
   "receipt.by": "جواب دینے والا",
   "receipt.here": "اس آلے پر",
-  "receipt.cloud": "کلاؤڈ میں",
-  "receipt.sentTo": "بھیجا گیا",
+  "receipt.reached": "دیگر پتے جن سے رابطہ ہوا",
   "receipt.save": "سرٹیفکیٹ محفوظ کریں",
   "receipt.file": "سرٹیفکیٹ {date}"
 }

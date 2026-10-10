@@ -26,6 +26,7 @@ import { factsOf, costOf, certificate, seal } from './certificate.js'
 await Promise.all([useStrings('receipt'), styleSheet(new URL('receipt.css', import.meta.url))])
 
 const INFO = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.5v.5"/></svg>`
+const CLOUD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 18.5h9.25a3.75 3.75 0 0 0 .5-7.47 5.25 5.25 0 0 0-10.1-1.03A4.25 4.25 0 0 0 7.5 18.5Z"/></svg>`
 
 // ─── What the page reached ───────────────────────────────────────────────────
 
@@ -98,18 +99,35 @@ function pricing({ provider, model }) {
 const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !cost ? (plan ? t('receipt.plan', { plan }) : t('receipt.free'))
   : t('receipt.costAbout', { cost: new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost) }))
 
-/** @param {Facts} facts @param {Turn} turn @param {string} text */
+/** Where a brain's requests go, as settings hold it, for its own line rather than among the rest. @param {string} provider */
+function hostOf(provider) {
+  try { return new URL(app.settings.value.brains.find((one) => one.provider === provider)?.baseURL ?? '').host } catch { return '' }
+}
+
+/**
+ * What the answer was, first: where it was done, then how long it took and what it cost, who answered,
+ * and the other addresses reached, apart from the brain's, which alone was given the conversation.
+ * @param {Facts} facts @param {Turn} turn @param {string} text
+ */
 function card(facts, turn, text) {
   const brains = [...new Map(facts.brains.map((brain) => [`${brain.provider} ${brain.model}`, brain])).values()]
+  const cloud = brains.some((brain) => !brain.local)
+  const hosts = new Map(brains.map(({ provider }) => [provider, hostOf(provider)]))
+  const others = facts.outside.filter((host) => ![...hosts.values()].includes(host))
   return html`
-    <p class="receipt-verdict is-${facts.verdict}">${facts.verdict === 'local' ? icons.shield : facts.verdict === 'out' ? icons.globe : INFO}<strong>${t(`receipt.${facts.verdict}`)}</strong></p>
-    ${facts.verdict === 'out' ? nothing : html`<p class="receipt-note">${t(`receipt.${facts.verdict}.text`)}</p>`}
+    <div class="receipt-head is-${facts.verdict}">
+      <span class="receipt-mark">${facts.verdict === 'local' ? icons.shield : cloud ? CLOUD : facts.verdict === 'out' ? icons.globe : INFO}</span>
+      <div><p class="receipt-verdict">${t(cloud ? 'receipt.inCloud' : `receipt.${facts.verdict}`)}</p>
+        ${cloud ? html`<p class="receipt-note">${t('receipt.inCloud.text')}</p>` : facts.verdict === 'out' ? nothing : html`<p class="receipt-note">${t(`receipt.${facts.verdict}.text`)}</p>`}</div>
+    </div>
     <dl>
-      <dt>${t('receipt.time')}</dt><dd>${formatDuration(facts.ms)}</dd>
-      <dt>${t('receipt.cost')}</dt><dd>${costText(costOf(facts.brains, pricing), facts.brains.map(({ provider }) => PLANS[provider]).find(Boolean))}</dd>
-      ${brains.length ? html`<dt>${t('receipt.by')}</dt><dd>${brains.map(({ provider, model, local }) => html`<span>
-        <bdi>${brainLabel(/** @type {any} */ ({ provider, model, api: provider === 'device' ? 'device' : '' }))}</bdi> · ${t(local ? 'receipt.here' : 'receipt.cloud')}</span>`)}</dd>` : nothing}
-      ${facts.outside.length ? html`<dt>${t('receipt.sentTo')}</dt><dd>${facts.outside.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd>` : nothing}
+      <div class="receipt-stat"><dt>${t('receipt.time')}</dt><dd>${formatDuration(facts.ms)}</dd></div>
+      <div class="receipt-stat"><dt>${t('receipt.cost')}</dt><dd>${costText(costOf(facts.brains, pricing), facts.brains.map(({ provider }) => PLANS[provider]).find(Boolean))}</dd></div>
+      ${brains.length ? html`<div class="receipt-list"><dt>${t('receipt.by')}</dt>${brains.map(({ provider, model, local }) => html`<dd class="receipt-brain">
+        <bdi>${brainLabel(/** @type {any} */ ({ provider, model, api: provider === 'device' ? 'device' : '' }))}</bdi>
+        ${facts.outside.includes(hosts.get(provider) ?? '') ? html`<bdi class="receipt-host" dir="ltr">${hosts.get(provider)}</bdi>` : nothing}
+        ${local && facts.verdict !== 'local' ? html`<span class="receipt-where">${icons.chip}${t('receipt.here')}</span>` : nothing}</dd>`)}</div>` : nothing}
+      ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
     <button class="button subtle" @click=${() => keepCertificate(facts, turn, text)}>${icons.download}${t('receipt.save')}</button>`
 }

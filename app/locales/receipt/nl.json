@@ -3,6 +3,8 @@
   "receipt.local": "Gemaakt op dit apparaat",
   "receipt.local.text": "Je browser heeft vastgelegd wat er tijdens het schrijven is verstuurd: niets heeft dit apparaat verlaten.",
   "receipt.out": "Buiten dit apparaat verstuurd",
+  "receipt.inCloud": "Gemaakt in de cloud",
+  "receipt.inCloud.text": "Je gesprek is naar de cloud gestuurd om dit antwoord te schrijven.",
   "receipt.unknown": "Niet gecertificeerd",
   "receipt.unknown.text": "Wat je browser vastlegde over wat er tijdens het schrijven is verstuurd, is niet bewaard.",
   "receipt.time": "Tijd",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "Onbekend",
   "receipt.by": "Beantwoord door",
   "receipt.here": "op dit apparaat",
-  "receipt.cloud": "in de cloud",
-  "receipt.sentTo": "Verstuurd naar",
+  "receipt.reached": "Ook bereikt",
   "receipt.save": "Certificaat opslaan",
   "receipt.file": "Certificaat {date}"
 }

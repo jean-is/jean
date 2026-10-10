@@ -3,6 +3,8 @@
   "receipt.local": "在這台裝置上完成",
   "receipt.local.text": "你的瀏覽器記錄了寫這個回答時送出的內容：沒有任何內容離開這台裝置。",
   "receipt.out": "已傳送到這台裝置之外",
+  "receipt.inCloud": "在雲端完成",
+  "receipt.inCloud.text": "為寫出這個回答，你的對話已傳送到雲端。",
   "receipt.unknown": "未認證",
   "receipt.unknown.text": "寫這個回答時送出了什麼，瀏覽器的記錄沒有保留。",
   "receipt.time": "用時",
@@ -13,8 +15,7 @@
   "receipt.costUnknown": "未知",
   "receipt.by": "回答者",
   "receipt.here": "在這台裝置上",
-  "receipt.cloud": "在雲端",
-  "receipt.sentTo": "傳送到",
+  "receipt.reached": "還存取了",
   "receipt.save": "儲存證書",
   "receipt.file": "證書 {date}"
 }
