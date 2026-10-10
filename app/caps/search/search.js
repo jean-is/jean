@@ -86,8 +86,11 @@ const choosing = signal(false)
 const trying = signal(false)
 const failure = signal(/** @type {'failed' | 'insecure' | null} */ (null))
 
-/** A page served over HTTPS reaches plain HTTP only on this computer. @param {string} url */
-const insecure = (url) => location.protocol === 'https:' && /^http:\/\/(?!(localhost|127\.0\.0\.1|\[::1\])(:|\/|$))/i.test(url)
+/**
+ * Plain HTTP away from this computer, which Jean's policy never reaches (connect-src: http://localhost and
+ * http://127.0.0.1 alone), however Jean is served. @param {string} url
+ */
+const insecure = (url) => URL.canParse(url) && new URL(url).protocol === 'http:' && !['localhost', '127.0.0.1'].includes(new URL(url).hostname)
 
 /** Web search reads there from now on: a Kiwix server, or Wikipedia again when ''. @param {string} url */
 function setAddress(url) {
@@ -106,10 +109,14 @@ function look(url) {
   })
 }
 
-/** Saves an address once a Kiwix server answers there, as its root. @param {SubmitEvent} event */
+/** Saves an address once a Kiwix server answers there, as its root; one Jean's policy blocks isn't tried. @param {SubmitEvent} event */
 async function connect(event) {
   event.preventDefault()
   const typed = String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('address') ?? '').trim()
+  if (insecure(typed)) {
+    failure.value = 'insecure'
+    return
+  }
   ;[trying.value, failure.value] = [true, null]
   try {
     const books = await library(typed)
@@ -119,7 +126,7 @@ async function connect(event) {
     await setAddress(url)
   } catch (error) {
     console.warn(typed, error)
-    failure.value = insecure(typed) ? 'insecure' : 'failed'
+    failure.value = 'failed'
   }
   trying.value = false
 }
@@ -143,7 +150,7 @@ function panel() {
   const saved = kiwix.value ? address.value : ''
   if (saved && shelf.value?.address !== saved) look(saved)
   const books = saved ? shelf.value?.books : undefined
-  const reason = failure.value ?? (saved && shelf.value?.failed ? 'failed' : null)
+  const reason = failure.value ?? (saved && shelf.value?.failed ? (insecure(saved) ? 'insecure' : 'failed') : null)
   return html`<p class="lede">${t('search.text', { name: BRAND.name })}</p>
     <section class="stack">
       <h3>${t('search.where')}</h3>
