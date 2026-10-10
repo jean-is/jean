@@ -1,0 +1,31 @@
+/*
+:root[data-theme='dark'] {
+  --room: #1e1e1e !important;
+  --ink: #ececec !important;
+  --flame: #0a84ff !important;
+}
+
+:root[data-theme='light'] {
+  --room: #ffffff !important;
+  --ink: #1d1d1f !important;
+  --flame: #0060df !important;
+}
+
+:root {
+  --sans: Georgia, serif !important;
+  --radius: 0.5rem !important;
+  --column: min(100% - 2.5rem, 56rem) !important;
+}
+
+.msg-user {
+  font-style: italic !important;
+}
+
+.msg-jean .prose {
+  line-height: 1.8 !important;
+}
+
+.composer {
+  border-radius: 0.5rem !important;
+}
+*/

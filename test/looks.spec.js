@@ -1,7 +1,8 @@
 // Looks (D111, D120): Human until one is picked (D174); each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view, in one sidebar with the name at its top and
-// the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS shows as it
-// is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
+// the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS starts as an outline,
+// commented out, and shows as it is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
+import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { start, openSettings, closeSettings, openTasks } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
@@ -19,6 +20,8 @@ test('Mail lists the conversations beside the open one, with the user’s touche
   await expect(page.locator('app-inbox')).toBeVisible()
   await expect(page.locator('app-inbox .profile')).toBeVisible()
   await settings.locator('details.other summary').click()
+  await expect(settings.locator('.look-css')).toHaveValue(await readFile(new URL('../app/ui/touches.css', import.meta.url), 'utf8'))
+  await expect.poll(() => savedLook(page)).toEqual({ id: 'mail' })
   await settings.locator('.look-css').fill('.hero-question { outline: 3px solid rgb(255, 0, 0); }')
   await expect(page.locator('.hero-question')).toHaveCSS('outline-color', 'rgb(255, 0, 0)')
   await expect.poll(() => savedLook(page)).toMatchObject({ id: 'mail', css: expect.stringContaining('outline') })

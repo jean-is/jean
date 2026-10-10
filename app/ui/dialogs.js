@@ -821,6 +821,8 @@ const plaque = (id, on) => html`<article class="plaque ${on ? 'is-lit' : ''}" ar
 /** @typedef {import('../core/settings.js').Look} Look */
 /** @param {Event} event */
 const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
+/** What the user's own CSS starts from, commented out (ui/touches.css): kept only once changed, emptied included. */
+const starter = await fetch(new URL('touches.css', import.meta.url)).then((response) => (response.ok ? response.text() : ''), () => '')
 
 /** Jean's looks, then the user's touches over the one chosen, shown as they change (D111). @param {Look} [look] */
 function looks(look = {}) {
@@ -851,8 +853,8 @@ function looks(look = {}) {
             <option value="">${t('look.font.look')}</option>
             ${Object.keys(FONTS).map((id) => html`<option value=${id} ?selected=${id === look.font}>${t(`look.font.${id}`)}</option>`)}
           </select></label>
-        <label>${t('look.css')}<textarea class="look-css" rows="6" dir="ltr" spellcheck="false" autocapitalize="off" .value=${live(look.css ?? '')}
-          @input=${(/** @type {Event} */ e) => setLook({ css: valueOf(e) || undefined }, { later: true })}></textarea></label>
+        <label>${t('look.css')}<textarea class="look-css" rows="6" dir="ltr" spellcheck="false" autocapitalize="off" .value=${live(look.css ?? starter)}
+          @input=${(/** @type {Event} */ e) => setLook({ css: valueOf(e) === starter ? undefined : valueOf(e) }, { later: true })}></textarea></label>
         <p class="hint">${t('look.cssHint')}</p>
         <div class="row"><button class="button subtle" ?disabled=${!touched(look)} @click=${(/** @type {Event} */ e) => {
           const summary = /** @type {HTMLElement} */ (e.currentTarget).closest('details')?.querySelector('summary')
