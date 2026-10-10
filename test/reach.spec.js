@@ -231,6 +231,13 @@ test('web search reads the Kiwix server chosen in its section of Settings, for e
   await expect(settings.getByRole('radio', { name: /The web/ })).toBeChecked()
   await settings.getByRole('radio', { name: /An offline library/ }).check()
   const field = settings.getByLabel('Address of the Kiwix server')
+  // Plain HTTP elsewhere on the network, as a Kiwix Hotspot serves, is refused before any request: Jean's policy blocks it.
+  const asked = /** @type {string[]} */ ([])
+  page.on('request', (request) => asked.push(request.url()))
+  await field.fill('http://192.0.2.1:4445/')
+  await settings.getByRole('button', { name: 'Connect' }).click()
+  await expect(settings.locator('.status.is-error')).toHaveText('Only a Kiwix server on this computer, or at an address that starts with https://, can be reached from here.')
+  expect(asked.filter((url) => url.includes('192.0.2.1'))).toEqual([])
   await field.fill(`${MAIL_URL}/nothing/`)
   await settings.getByRole('button', { name: 'Connect' }).click()
   await expect(settings.locator('.status.is-error')).toHaveText('No Kiwix server answered at this address.')
