@@ -47,7 +47,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 /* Settings: a menu beside the section open, like the Claude apps' (D113); a strip above it on a phone. */
 .settings { display: grid; grid-template: auto 1fr / 13rem 1fr; inline-size: min(100% - 2rem, 52rem); block-size: min(88dvh, 44rem); padding: 0; }
 /* Laid out whether open or closing, so they fade out as they were. */
-:is(.settings, .drawer, .project-dialog):not([open]) { display: none; }
+:is(.settings, .drawer, .project-dialog, .skill-ready):not([open]) { display: none; }
 .settings-close { grid-area: 1 / 1; justify-self: start; margin-block: 1rem 0.5rem; margin-inline-start: 1.1rem; }
 .settings-nav { grid-area: 2 / 1; display: flex; flex-direction: column; gap: 0.15rem; padding: 0.25rem 0.75rem 1rem; overflow: auto; scrollbar-width: none; }
 .settings-nav button { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.85rem; border: 0; border-radius: 0.8rem; background: none; color: var(--ink-soft); text-align: start; }
@@ -282,13 +282,43 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .key-command code { padding: 0.2rem 0.45rem; border-radius: 0.35rem; background: var(--line); font: 0.82rem var(--mono); overflow-wrap: anywhere; }
 /* Skills from elsewhere, each source with what it offers as cards, narrowed by a search (D121); a routine's schedule on one line (D122). */
 .source h4 { display: flex; align-items: center; gap: 0.3rem; }
-.skill-ready .muted { color: var(--ink-soft); font-size: 0.82rem; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.45rem; margin: 0 0 0.75rem; padding: 0; list-style: none; }
 .card { display: grid; align-content: start; gap: 0.25rem; padding: 0.7rem 0.85rem; } .card strong { font-size: 0.9rem; overflow-wrap: anywhere; }
 .card small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; color: var(--ink-soft); font-size: 0.8rem; line-height: 1.4; }
 .sheet .sources-search { inline-size: 100%; margin-block-end: 0.75rem; }
 .sources form > input, .sheet .routine-when > * { flex: 1 1 9rem; inline-size: auto; }
-.skill-steps { max-block-size: 45vh; overflow: auto; padding: 0.2rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+/* A ready-made skill before it is added (D261): its icon and name, then what it does and that it can
+   go again, its steps folded under them, scrolling between its head and its buttons, which stay in view. */
+.skill-ready { display: flex; flex-direction: column; padding: 0; timeline-scope: --ready; }
+/* A line under its head once what is under it has scrolled, where scroll timelines are known. */
+.ready-head { border-block-end: 1px solid transparent; animation: ready-scrolled linear both; animation-timeline: --ready; animation-range: 0 1.5rem; }
+@keyframes ready-scrolled { to { border-block-end-color: var(--line); } }
+.ready-head { justify-content: start; gap: 1rem; margin: 0; padding-block: 1.5rem 1rem; padding-inline: 1.5rem 3.75rem; }
+.ready-icon { flex: none; display: grid; place-items: center; inline-size: 3.5rem; aspect-ratio: 1; border-radius: 1.1rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--flame); }
+.ready-icon .icon { inline-size: 1.8rem; block-size: 1.8rem; stroke-width: 1.4; }
+.sheet .ready-kind { margin: 0 0 0.2rem; color: var(--ink-soft); font-size: 0.82rem; }
+.sheet .ready-from { display: flex; align-items: center; gap: 0.35rem; margin: 0.45rem 0 0; color: var(--ink-soft); font-size: 0.82rem; overflow-wrap: anywhere; }
+.ready-from .icon { flex: none; inline-size: 0.95rem; block-size: 0.95rem; }
+.ready-close { position: absolute; inset-block-start: 1rem; inset-inline-end: 1rem; }
+.ready-body { display: grid; gap: 1.1rem; min-block-size: 0; padding: 0.25rem 1.5rem 1.5rem; overflow-y: auto; scroll-timeline: --ready block; }
+.skill-ready .dialog-foot { padding-block-end: max(1.25rem, env(safe-area-inset-bottom)); }
+.sheet .ready-body > p { margin: 0; }
+.ready-facts { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; color: var(--ink-soft); font-size: 0.92rem; line-height: 1.45; }
+.ready-facts li { display: flex; align-items: start; gap: 0.65rem; }
+.ready-facts .icon { flex: none; inline-size: 1.1rem; block-size: 1.1rem; margin-block-start: 0.1rem; color: var(--flame); }
+.ready-steps { border: 1px solid var(--line); border-radius: 1rem; }
+/* A summary is slotted in its details' own tree, so its corners are set rather than inherited. */
+.ready-steps summary { display: flex; align-items: center; gap: 0.65rem; padding: 0.75rem 1rem; border-radius: calc(1rem - 1px); font-weight: 500; list-style: none; cursor: pointer; }
+.ready-steps summary::-webkit-details-marker { display: none; }
+.ready-steps summary:hover { background: var(--line); }
+.ready-steps summary:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
+.ready-steps summary > .icon:first-child { color: var(--flame); }
+.ready-steps summary > .icon:last-child { margin-inline-start: auto; color: var(--ink-faint); transition: rotate 0.25s var(--ease); }
+.ready-steps[open] summary { border-end-start-radius: 0; border-end-end-radius: 0; border-block-end: 1px solid var(--line); }
+.ready-steps[open] summary > .icon:last-child { rotate: 180deg; }
+.skill-steps { padding: 1rem 1.15rem; font-size: 0.9rem; line-height: 1.6; }
+.sheet .ready-steps .hint { display: flex; align-items: center; gap: 0.4rem; margin: 0; padding: 0 1.15rem 1rem; }
+.ready-steps .hint .icon { flex: none; inline-size: 1rem; block-size: 1rem; }
 
 /* ─── Looks (D111, D120) ────────────────────────────────────────────────── */
 /* A gallery of cards, each with a small picture of the look in the mode on screen: what the user

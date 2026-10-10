@@ -34,6 +34,11 @@ test('/ finds a ready-made skill, read before it is added, and names it and what
   await box.press('Enter')
   const ready = page.locator('app-skill-ready dialog[open]')
   await expect(ready).toContainText('Bars, lines, pies and more')
+  // Named as its tile is, its steps folded, since Jean's own are written for the brain (D261).
+  await expect(ready.getByRole('heading', { name: 'Chart' })).toBeVisible()
+  await expect(ready.locator('.skill-steps')).toBeHidden()
+  await ready.getByText('Read its steps').click()
+  await expect(ready.locator('.skill-steps')).toBeVisible()
   await ready.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Chart”.')
   await expect(box).toHaveValue('Plot sales by month /chart ')

@@ -58,6 +58,9 @@ test('a skill from elsewhere is checked, shown, and added only by the user', asy
   // One made of instructions shows its steps, and the files beside them, first.
   await source.getByRole('button', { name: 'meeting-notes' }).click()
   await expect(ready).toContainText('From 127.0.0.1:4182')
+  // Named by its steps' heading, which open at once (D261).
+  await expect(ready.getByRole('heading', { name: 'Meeting notes' })).toBeVisible()
+  await expect(ready.locator('.skill-steps')).toBeVisible()
   await expect(ready.locator('.skill-steps')).toContainText('List the action items, each with an owner.')
   await expect(ready).toContainText('With these files: references/template.md')
   await ready.locator('.button.primary').click()
