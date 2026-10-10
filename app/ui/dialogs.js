@@ -468,10 +468,12 @@ const appearance = () => html`
 /** Its place in the menu: a keyboard, drawn here rather than with the first screen's icons. */
 const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
   <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
+/** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
+const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
 /** Each shortcut, and the capability it waits for, or dictation, which this browser may not have, or the language, which policy may set. */
-const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settings], ['keyboard.sidebar', SHORTCUTS.sidebar], ['settings.mode', SHORTCUTS.theme],
-  ['keyboard.look', SHORTCUTS.look], ['keyboard.language', SHORTCUTS.language, 'locale'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live'],
-  ['cap.find.name', SHORTCUTS.find, 'find'], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
+const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.sidebar', SHORTCUTS.sidebar],
+  ['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look], ['keyboard.language', SHORTCUTS.language, 'locale'], ['dictation.start', SHORTCUTS.dictation, 'dictation'],
+  ['live.start', SHORTCUTS.live, 'live'], ['cap.find.name', SHORTCUTS.find, 'find'], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
   ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
@@ -690,7 +692,7 @@ class Settings extends Element {
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map((id) => html`${SECTIONS[id].group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
-          @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
+          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
       </nav>
       <div class="settings-panel">${SECTIONS[open].show()}</div>
     </dialog>`

@@ -2,7 +2,7 @@
 // conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet;
 // ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
 // ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language
-// (D130, D238, D253); ⌘B opens the drawer or puts it away (D234).
+// (D130, D238, D253); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
@@ -161,4 +161,25 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   await page.keyboard.press('ControlOrMeta+Comma')
   await settings.locator('.settings-nav button', { hasText: 'Keyboard shortcuts' }).click()
   await expect(row('Search').locator('kbd')).toHaveText(/^(⌘K|Ctrl\+K)$/)
+})
+
+test('⌘/ opens Settings on its keyboard shortcuts, from anywhere, Settings too (D257)', async ({ page }) => {
+  await start(page)
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('ControlOrMeta+Slash')
+  const settings = page.locator('app-settings dialog[open]')
+  const here = settings.locator('[aria-current="page"]')
+  await expect(here).toHaveText('Keyboard shortcuts')
+  await expect(here).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+\/$/)
+  await expect(page).toHaveURL(/\/settings\/keyboard/)
+  await expect(settings.locator('.keyboard > div', { hasText: 'Keyboard shortcuts' }).locator('kbd')).toHaveText(/^(⌘\/|Ctrl\+\/)$/)
+  await settings.locator('.settings-nav button', { hasText: 'Appearance' }).click()
+  // On a German keyboard "/" is Shift+7: the character is what counts.
+  await page.evaluate(() => {
+    const apple = /Mac|iPhone|iPad/.test(navigator.platform)
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: '/', code: 'Digit7', shiftKey: true, metaKey: apple, ctrlKey: !apple, bubbles: true }))
+  })
+  await expect(here).toHaveText('Keyboard shortcuts')
+  await closeSettings(page)
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
 })
