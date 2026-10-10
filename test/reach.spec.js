@@ -237,6 +237,9 @@ test('web search reads the Kiwix server chosen in its section of Settings, for e
   await field.fill('http://192.0.2.1:4445/')
   await settings.getByRole('button', { name: 'Connect' }).click()
   await expect(settings.locator('.status.is-error')).toHaveText('Only a Kiwix server on this computer, or at an address that starts with https://, can be reached from here.')
+  // Nor can the page itself: index.html's policy is narrowed to this computer before anything Jean keeps is read (D260).
+  await page.route('http://192.0.2.1:4445/**', (route) => route.fulfill({ body: 'reached' }))
+  expect(await page.evaluate(() => fetch('http://192.0.2.1:4445/').then(() => 'reached', () => 'refused'))).toBe('refused')
   expect(asked.filter((url) => url.includes('192.0.2.1'))).toEqual([])
   await field.fill(`${MAIL_URL}/nothing/`)
   await settings.getByRole('button', { name: 'Connect' }).click()

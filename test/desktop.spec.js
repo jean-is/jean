@@ -1,14 +1,16 @@
 // The desktop app (D155, D169): Sync's folder is picked with the system's dialog, its host works in it
 // by its path, and the folder's name opens it in the system's file manager; Settings › Computer has the
-// computer's memory from it (D176); This computer's bridge is started by it (D198). The host is played by the
-// test, on a folder of its own: Neutralino's globals, whose key comes once, and its calls over a
-// WebSocket. In WebKit too, the Mac app's engine, where a page alone can't open a folder.
+// computer's memory from it (D176); This computer's bridge is started by it (D198); plain HTTP reaches the
+// computer's own addresses, which a program it runs lists (D260). The host is played by the test, on a folder
+// of its own: Neutralino's globals, whose key comes once, and its calls and events over a WebSocket. In
+// WebKit too, the Mac app's engine, where a page alone can't open a folder.
 import { test, expect } from '@playwright/test'
 import { spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { start, turnOn, openSettings } from './helpers.js'
+import { kiwix } from './fixtures/kiwix.js'
 import { NATIVE } from '../scripts/desktop.js'
 
 const TOKEN = 'key.connect'
@@ -16,12 +18,15 @@ const TOKEN = 'key.connect'
 /**
  * Neutralino, as far as Jean uses it: the methods its configuration allows, on this computer's files.
  * @param {import('@playwright/test').Page} page @param {string} folder what its dialog picks
+ * @param {string} [ifconfig] what the program that lists the computer's addresses writes
  * @returns {Promise<{ opened: string[], asked: string[], programs: Map<number, import('node:child_process').ChildProcess> }>}
  */
-async function desktop(page, folder) {
+async function desktop(page, folder, ifconfig = '') {
   const seen = { opened: /** @type {string[]} */ ([]), asked: /** @type {string[]} */ ([]), programs: new Map() }
   let started = 0
   let given = false
+  /** @type {import('@playwright/test').WebSocketRoute | undefined} */
+  let socket
   await page.route('**/__neutralino_globals.js', (route) => {
     route.fulfill({ contentType: 'application/javascript', body: `var NL_OS='Darwin';var NL_PORT=${new URL(route.request().url()).port};var NL_TOKEN='${given ? '' : TOKEN}';` })
     given = true
@@ -40,10 +45,17 @@ async function desktop(page, folder) {
     'filesystem.writeBinaryFile': async ({ path, data }) => void await writeFile(path, Buffer.from(data, 'base64')),
     'filesystem.createDirectory': async ({ path }) => void await mkdir(path, { recursive: true }),
     'filesystem.remove': async ({ path }) => void await rm(path, { recursive: true }),
-    // A program, as Neutralino runs it: through /bin/sh, its input a pipe the app holds until it quits.
+    // A program, as Neutralino runs it: through /bin/sh, its input a pipe the app holds until it quits;
+    // the one that lists the computer's addresses writes what the test says, then ends, each an event.
     'os.spawnProcess': async ({ command }) => {
-      const child = spawn('/bin/sh', ['-c', command], { stdio: ['pipe', 'ignore', 'ignore'] })
       const id = started++
+      if (command.includes('ifconfig')) {
+        setTimeout(() => {
+          for (const data of [{ id, action: 'stdOut', data: ifconfig }, { id, action: 'exit', data: 0 }]) socket?.send(JSON.stringify({ event: 'spawnedProcess', data }))
+        })
+        return { id, pid: 0 }
+      }
+      const child = spawn('/bin/sh', ['-c', command], { stdio: ['pipe', 'ignore', 'ignore'] })
       seen.programs.set(id, child)
       child.on('exit', () => seen.programs.delete(id))
       return { id, pid: child.pid }
@@ -53,6 +65,7 @@ async function desktop(page, folder) {
   }
   await page.routeWebSocket(/connectToken=/, (ws) => {
     if (!ws.url().endsWith(`connectToken=${TOKEN.split('.')[1]}`)) return ws.close()
+    socket = ws
     ws.onMessage(async (message) => {
       const { id, method, accessToken, data } = JSON.parse(String(message))
       seen.asked.push(method)
@@ -106,6 +119,30 @@ test('in the desktop app, Settings › Computer has the computer’s whole memor
   // Exactly, where the browser alone says at least a power of two, or nothing.
   await expect(settings.locator('.stats > div').nth(1)).toHaveText(/Memory\s*0 MB of 96 GB/)
   expect(host.asked).toContain('computer.getMemoryInfo')
+})
+
+test('in the desktop app, plain HTTP reaches the computer’s own addresses, as the system lists them, and no other on the network (D260)', async ({ page }) => {
+  const host = await desktop(page, tmpdir(), 'lo0: flags=8049<UP,LOOPBACK,RUNNING>\n\tinet 127.0.0.1 netmask 0xff000000\nen0: flags=8863<UP,BROADCAST,RUNNING>\n\tinet6 fe80::1%en0 prefixlen 64\n\tinet 192.0.2.7 netmask 0xffffff00 broadcast 192.0.2.255\n')
+  // A Kiwix Hotspot at the computer's Wi-Fi address: whatever the policy lets through gets this far.
+  const reached = /** @type {string[]} */ ([])
+  await page.route('http://192.0.2.*/**', async (route) => {
+    reached.push(route.request().url())
+    const answer = kiwix(route.request().url().replace(/^http:\/\/[^/]+/, 'http://kiwix.test/kiwix'))
+    await route.fulfill({ status: answer.status, headers: Object.fromEntries(answer.headers), body: await answer.text() })
+  })
+  await start(page)
+  expect(await page.evaluate(() => fetch('http://192.0.2.8:4445/').then(() => 'reached', () => 'refused')), 'another computer on the network').toBe('refused')
+  await turnOn(page, 'Web search')
+  await page.locator('app-settings .plaque .button').click()
+  const settings = page.locator('app-settings dialog[open]')
+  await settings.getByRole('radio', { name: /An offline library/ }).check()
+  await settings.getByLabel('Address of the Kiwix server').fill('http://192.0.2.7:4445/')
+  await settings.getByRole('button', { name: 'Connect' }).click()
+  await expect(settings.locator('.library')).toHaveText('3 books')
+  expect(reached.length).toBeGreaterThan(0)
+  expect(reached.filter((url) => !url.startsWith('http://192.0.2.7:4445/'))).toEqual([])
+  expect(host.asked).toContain('os.spawnProcess')
+  expect(host.asked.filter((method) => !NATIVE.includes(method))).toEqual([])
 })
 
 test('in the desktop app, This computer starts its bridge itself in a folder the system’s dialog picks, and it ends when stopped or when the app quits (D198)', async ({ page }) => {

@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { DESKTOP, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles } from '../scripts/desktop.js'
+import { addressesIn } from '../app/ui/host.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
@@ -20,7 +21,7 @@ describe('desktop', () => {
     assert.ok(DESKTOP.port > 0, 'a random port would lose the data at every launch')
   })
 
-  it('gives the page only the host’s calls Sync, Settings › Computer and This computer’s bridge make, and writes nothing beside the app', async () => {
+  it('gives the page only the host’s calls Sync, Settings › Computer, the computer’s addresses and This computer’s bridge make, and writes nothing beside the app', async () => {
     const config = neutralinoConfig({ name: 'Jean' }, { version: '0.8.0' })
     assert.equal(config.enableNativeAPI, true)
     assert.equal(config.tokenSecurity, 'one-time')
@@ -30,7 +31,10 @@ describe('desktop', () => {
     const called = callers.flatMap((text) => [...text.matchAll(/call\('([\w.]+)'/g)].map(([, method]) => method))
     assert.deepEqual([...new Set(called)].sort(), [...NATIVE].sort())
     assert.ok(NATIVE.every((method) => /^(os\.(showFolderDialog|open|spawnProcess|getSpawnedProcesses|updateSpawnedProcess)|filesystem\.\w+|computer\.getMemoryInfo)$/.test(method)))
-    assert.ok(!/call\('os\.(spawnProcess|execCommand)'/.test(callers[0]), 'ui/host.js runs no program')
+    // ui/host.js runs one program, which lists the computer's addresses (D260): the system's own, word for word, never a command made of anything else.
+    assert.equal(callers[0].match(/call\('os\.(spawnProcess|execCommand)'/g)?.length, 1, 'ui/host.js runs one program')
+    assert.equal(callers[0].match(/\boutput\(/g)?.length, 2, 'from one place')
+    assert.ok(callers[0].includes("output((await host)?.os === 'Windows' ? 'ipconfig' : 'PATH=$PATH:/sbin:/usr/sbin; ifconfig 2>/dev/null || ip -o -4 addr show')"), 'the one that lists its addresses')
     assert.equal(config.enableExtensions, false)
     assert.equal(config.logging.enabled, false)
     assert.equal(config.dataLocation, 'system')
@@ -83,6 +87,15 @@ describe('desktop', () => {
     assert.match(script, /set bounds of theWindow to \{160, 120, 760, 480\}/)
     assert.match(script, /background picture of viewOptions to file "\.background:background\.tiff"/)
     assert.match(script, /icon size of viewOptions to 128/)
+  })
+
+  it('finds the computer’s own addresses in what ifconfig, ip and ipconfig list, in any language, and nothing else (D260)', () => {
+    assert.deepEqual(addressesIn('lo0: flags=8049<UP,LOOPBACK>\n\tinet 127.0.0.1 netmask 0xff000000\n\tinet6 ::1 prefixlen 128\nen0: flags=8863<UP>\n\tinet6 fe80::1c%en0 prefixlen 64\n\tinet 192.168.1.35 netmask 0xffffff00 broadcast 192.168.1.255\nbridge100: flags=8a63<UP>\n\tinet 192.168.64.1 netmask 0xffffff00 broadcast 192.168.64.255\n'), ['192.168.1.35', '192.168.64.1'])
+    assert.deepEqual(addressesIn('1: lo    inet 127.0.0.1/8 scope host lo\\       valid_lft forever\n3: wlp2s0    inet 192.168.1.35/24 brd 192.168.1.255 scope global dynamic wlp2s0\\       valid_lft 86000sec\n'), ['192.168.1.35'])
+    assert.deepEqual(addressesIn('wlan0     Link encap:Ethernet  HWaddr 00:11:22:33:44:55\n          inet addr:10.0.0.5  Bcast:10.0.0.255  Mask:255.255.255.0\n'), ['10.0.0.5'])
+    assert.deepEqual(addressesIn('   IPv4 Address. . . . . . . . . . . : 192.168.1.35\r\n   Subnet Mask . . . . . . . . . . . : 255.255.255.0\r\n   Default Gateway . . . . . . . . . : 192.168.1.1\r\n'), ['192.168.1.35'])
+    assert.deepEqual(addressesIn('   Adresse IPv4. . . . . . . . . . . . . .: 192.168.1.36(préféré)\r\n   Masque de sous-réseau. . . . . . . . . : 255.255.255.0\r\n   Passerelle par défaut. . . . . . . . . : 192.168.1.1\r\n'), ['192.168.1.36'])
+    assert.deepEqual(addressesIn(''), [])
   })
 
   it('ships app/, what a web deploy serves, without its types (D243)', async () => {

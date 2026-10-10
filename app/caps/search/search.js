@@ -87,10 +87,11 @@ const trying = signal(false)
 const failure = signal(/** @type {'failed' | 'insecure' | null} */ (null))
 
 /**
- * Plain HTTP away from this computer, which Jean's policy never reaches (connect-src: http://localhost and
- * http://127.0.0.1 alone), however Jean is served. @param {string} url
+ * Plain HTTP away from this computer, which Jean's policy never reaches: an address the policy ui/app.js
+ * narrows it with leaves out (localhost, 127.0.0.1 and, in the desktop app, the computer's own, D260). @param {string} url
  */
-const insecure = (url) => URL.canParse(url) && new URL(url).protocol === 'http:' && !['localhost', '127.0.0.1'].includes(new URL(url).hostname)
+const insecure = (url) => URL.canParse(url) && new URL(url).protocol === 'http:'
+  && !document.querySelector('meta[content^="connect-src"]')?.getAttribute('content')?.includes(` http://${new URL(url).hostname}:*`)
 
 /** Web search reads there from now on: a Kiwix server, or Wikipedia again when ''. @param {string} url */
 function setAddress(url) {

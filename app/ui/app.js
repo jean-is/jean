@@ -13,11 +13,15 @@ import './shell.js'
 import { focusComposer } from './composer.js'
 import { startRouter } from './router.js'
 
-if (location.hostname === '127.0.0.1') import('./host.js') // the desktop app's key, taken before any other page could ask (D169, D211)
+// The desktop app's key, taken before any other page could ask (D169, D211), and its addresses (D260).
+const nearby = location.hostname === '127.0.0.1' ? import('./host.js').then((host) => host.addresses()).catch(() => []) : []
 // Titles show as tips (D233), loaded by the first pointer or focus.
 for (const type of ['pointerover', 'focusin']) addEventListener(type, (event) => import('./tips.js').then((tips) => tips.first(event)), { once: true })
 
 async function start() {
+  // Plain HTTP reaches this computer alone (D260).
+  const reach = ['localhost', '127.0.0.1', ...await nearby]
+  document.head.append(Object.assign(document.createElement('meta'), { httpEquiv: 'Content-Security-Policy', content: `connect-src 'self' https: wss: ${reach.map((name) => `http://${name}:*`).join(' ')}` }))
   const fs = await opfsFS().catch(() => null)
   app.fs = fs ?? memoryFS()
   app.ephemeral.value = !fs

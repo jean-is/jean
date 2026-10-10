@@ -1,6 +1,7 @@
 // The desktop app's host (D155, D169): Neutralino, which serves Jean on 127.0.0.1, answers the calls
 // its configuration allows: the system's dialog for a folder, a folder opened in the system's file
-// manager, the files there, and how much memory the computer has. Its key comes once per launch, to the first page that asks: Jean asks
+// manager, the files there, how much memory the computer has, and the programs it runs, which list
+// its network addresses (D260). Its key comes once per launch, to the first page that asks: Jean asks
 // as it opens, before any other page could, and keeps it in the tab's session for a reload. A page
 // served from anywhere else has no host and asks nothing.
 import { normalizeDir, normalizePath } from '../core/fs.js'
@@ -16,6 +17,8 @@ export const host = globalThis.location?.hostname !== '127.0.0.1' ? Promise.reso
 
 let socket = /** @type {Promise<WebSocket> | null} */ (null)
 const waiting = /** @type {Map<string, { resolve: (value: any) => void, reject: (error: Error) => void }>} */ (new Map())
+/** Whoever listens to the host's events: what a program it started writes, and its end. */
+const listeners = /** @type {Set<(event: string, data: any) => void>} */ (new Set())
 
 /** A call to the host, answered with what it returns, or refused with its code as the error's name. @param {string} method @param {object} data @returns {Promise<any>} */
 export async function call(method, data) {
@@ -25,7 +28,8 @@ export async function call(method, data) {
     const ws = new WebSocket(`ws://127.0.0.1:${known.port}?connectToken=${known.token.split('.')[1]}`)
     ws.onopen = () => resolve(ws)
     ws.onmessage = ({ data }) => {
-      const { id, data: answer } = JSON.parse(data), request = waiting.get(id)
+      const { id, data: answer, event } = JSON.parse(data), request = waiting.get(id)
+      if (event) for (const listener of listeners) listener(event, answer)
       waiting.delete(id)
       if (answer?.error) request?.reject(Object.assign(new Error(answer.error.message), { name: answer.error.code }))
       else request?.resolve(answer?.returnValue)
@@ -41,6 +45,38 @@ export async function call(method, data) {
   return new Promise((resolve, reject) => waiting.set(id, { resolve, reject }))
 }
 
+/** What a program writes, run through the system's shell as This computer's bridge is, once it ends. @param {string} command @returns {Promise<string>} */
+async function output(command) {
+  const written = /** @type {Record<number, string>} */ ({}), ended = new Set()
+  let check = () => {}
+  /** @type {(event: string, data: any) => void} */
+  const listener = (event, { id, action, data } = {}) => {
+    if (event !== 'spawnedProcess') return
+    if (action === 'stdOut') written[id] = (written[id] ?? '') + data
+    if (action === 'exit') ended.add(id)
+    check()
+  }
+  listeners.add(listener)
+  try {
+    const { id } = await call('os.spawnProcess', { command })
+    return await new Promise((resolve) => {
+      check = () => ended.has(id) && resolve(written[id] ?? '')
+      check()
+    })
+  } finally {
+    listeners.delete(listener)
+  }
+}
+
+/**
+ * This computer's own network addresses (IPv4) in what ifconfig, ip or ipconfig lists: plain HTTP
+ * reaches them as it reaches localhost, since a request to them never leaves the computer (D260).
+ * @param {string} text
+ */
+export const addressesIn = (text) => [...new Set([...text.matchAll(/(?:\binet\s+(?:addr:)?|IPv4[^:\r\n]*:\s*)(\d{1,3}(?:\.\d{1,3}){3})\b/g)].map((match) => match[1]))].filter((address) => !address.startsWith('127.'))
+/** This computer's own network addresses, as the system lists them within 2 s. @returns {Promise<string[]>} */
+export const addresses = async () => addressesIn(await Promise.race([output((await host)?.os === 'Windows' ? 'ipconfig' : 'PATH=$PATH:/sbin:/usr/sbin; ifconfig 2>/dev/null || ip -o -4 addr show'),
+  new Promise((resolve) => setTimeout(resolve, 2000, ''))]))
 /** The system's dialog for a folder: its path; closed without one, an AbortError, as from the page's picker. @param {string} title @returns {Promise<string>} */
 export const pickFolder = (title) => call('os.showFolderDialog', { title }).then((path) => path || Promise.reject(new DOMException('No folder', 'AbortError')))
 /** This computer's memory, in bytes, as the system tells it (Settings › Computer, D176). @returns {Promise<number>} */

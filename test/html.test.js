@@ -27,6 +27,13 @@ test('the CSP allows exactly the inline scripts and styles there are', () => {
   assert.equal(csp.match(/'sha256-/g)?.length, scripts.length + styles.length, 'remove the CSP hashes of scripts and styles that are gone')
 })
 
+test('plain HTTP reaches this computer alone: index.html allows it, and ui/app.js narrows it before reading anything Jean keeps (D260)', async () => {
+  const boot = await readFile(new URL('../app/ui/app.js', import.meta.url), 'utf8')
+  assert.ok(csp.includes("connect-src 'self' https: wss: http:;"))
+  const narrowed = boot.indexOf("httpEquiv: 'Content-Security-Policy', content: `connect-src 'self' https: wss: ${reach.map(")
+  assert.ok(narrowed > 0 && narrowed < boot.indexOf('opfsFS()') && narrowed < boot.indexOf('loadSettings(app.fs)'), 'the narrower policy comes first')
+})
+
 test('light or dark is set before the first paint, with the key ui/state.js uses', async () => {
   const theme = /<script>([\s\S]*?)<\/script>/.exec(html)
   assert.ok(theme && theme.index < html.indexOf('<link rel="stylesheet"'), 'before the stylesheet, which would hold it back')
