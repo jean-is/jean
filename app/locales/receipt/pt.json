@@ -8,6 +8,7 @@
   "receipt.time": "Tempo",
   "receipt.cost": "Custo",
   "receipt.free": "Grátis",
+  "receipt.plan": "Incluído no teu plano {plan}",
   "receipt.costAbout": "cerca de {cost}",
   "receipt.costUnknown": "Desconhecido",
   "receipt.by": "Respondido por",

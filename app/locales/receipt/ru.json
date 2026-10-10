@@ -8,6 +8,7 @@
   "receipt.time": "Время",
   "receipt.cost": "Стоимость",
   "receipt.free": "Бесплатно",
+  "receipt.plan": "Входит в ваш план {plan}",
   "receipt.costAbout": "около {cost}",
   "receipt.costUnknown": "Неизвестна",
   "receipt.by": "Ответ",

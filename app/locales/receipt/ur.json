@@ -8,6 +8,7 @@
   "receipt.time": "وقت",
   "receipt.cost": "لاگت",
   "receipt.free": "مفت",
+  "receipt.plan": "آپ کے {plan} پلان میں شامل",
   "receipt.costAbout": "تقریباً {cost}",
   "receipt.costUnknown": "معلوم نہیں",
   "receipt.by": "جواب دینے والا",

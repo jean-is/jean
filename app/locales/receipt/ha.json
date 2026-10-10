@@ -8,6 +8,7 @@
   "receipt.time": "Lokaci",
   "receipt.cost": "Kuɗi",
   "receipt.free": "Kyauta",
+  "receipt.plan": "Yana cikin shirin {plan} ɗinka",
   "receipt.costAbout": "kusan {cost}",
   "receipt.costUnknown": "Ba a sani ba",
   "receipt.by": "Wanda ya amsa",

@@ -11,7 +11,7 @@ import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
-import { priceOf } from './prices.js'
+import { priceOf, PLANS } from './prices.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
@@ -57,12 +57,13 @@ class Picker extends Element {
     const models = remote ? app.models.value[remote.id] ?? [] : []
     const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
     const offered = tiers.filter((model) => models.some((info) => info.id === model))
+    const plan = remote && PLANS[remote.provider]
     const manual = (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => !settings.auto && active?.id === brain.id && active.model === model
     return html`<div id="brain-menu" class="menu brain-menu" popover
       @toggle=${(/** @type {ToggleEvent} */ e) => (this.#open.value = e.newState === 'open') && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
       ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => setBrainMode({ auto: true }))}
       ${remote ? offered.map((model) => option(TIER_ICONS[tiers.indexOf(model)], t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`),
-        [short(model), this.#open.value && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · '), manual(remote, model), () => pick(remote, model))) : nothing}
+        [short(model), plan ? t('picker.plan', { plan }) : this.#open.value && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · '), manual(remote, model), () => pick(remote, model))) : nothing}
       ${brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => brain.api === 'device'
         ? option(icons.chip, t('brain.device.title'), t('brain.device.private'), manual(brain, brain.model), () => pick(brain, brain.model))
         : option(isLocal(brain) ? icons.computer : icons.globe, short(brain.model), brainLabel(brain), manual(brain, brain.model), () => pick(brain, brain.model)))}

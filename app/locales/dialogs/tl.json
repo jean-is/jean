@@ -4,6 +4,7 @@
   "picker.smart": "Matalino",
   "picker.best": "Pinakamahusay",
   "picker.cost": "mga {cost} bawat sagot",
+  "picker.plan": "kasama sa {plan} plan mo",
   "picker.local": "Sa computer mo",
   "picker.neverCloud": "Huwag kailanman ipadala sa cloud",
   "picker.all": "Lahat ng utak",

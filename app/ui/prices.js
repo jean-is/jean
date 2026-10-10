@@ -13,6 +13,8 @@ import { serviceURL } from '../core/settings.js'
 
 /** models.dev's names for the providers Jean knows whose catalogue has no prices (OpenRouter's has). */
 const NAMES = { anthropic: 'anthropic', openai: 'openai', gemini: 'google', vertex: 'google-vertex', mistral: 'mistral', groq: 'groq', cerebras: 'cerebras', together: 'togetherai', fireworks: 'fireworks-ai', xai: 'xai', huggingface: 'huggingface', vercel: 'vercel' }
+/** The brains that answer from a plan the user pays for, not by the token, by provider: its name (D235). @type {Record<string, string>} */
+export const PLANS = { claudecode: 'Claude' }
 const FILE = '.cache/prices.json'
 const FRESH_MS = 7 * 86_400_000
 
@@ -57,10 +59,11 @@ const read = signal(/** @type {Prices | null} */ (null))
 let reading = null
 
 /**
- * A model's prices per token: those its provider lists, or models.dev's, read once a session the first
- * time one is wanted; a render that asks draws again once they are in. @param {string} provider @param {string} model @param {Pricing} [listed]
+ * A model's prices per token: nothing for a plan's, those its provider lists, or models.dev's, read once
+ * a session the first time one is wanted; a render that asks draws again once they are in. @param {string} provider @param {string} model @param {Pricing} [listed]
  */
 export function priceOf(provider, model, listed) {
+  if (PLANS[provider]) return { prompt: 0, completion: 0 }
   if (listed && !Number.isNaN(Number(listed.prompt) + Number(listed.completion))) return listed
   reading ??= readPrices(app.fs, serviceURL('prices', app.settings.value, app.policy)).then((prices) => { read.value = prices })
   return priceIn(read.value, provider, model)

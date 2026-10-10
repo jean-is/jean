@@ -8,6 +8,7 @@
   "receipt.time": "時間",
   "receipt.cost": "費用",
   "receipt.free": "無料",
+  "receipt.plan": "{plan} のプランに含まれます",
   "receipt.costAbout": "約{cost}",
   "receipt.costUnknown": "不明",
   "receipt.by": "回答",

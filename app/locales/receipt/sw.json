@@ -8,6 +8,7 @@
   "receipt.time": "Muda",
   "receipt.cost": "Gharama",
   "receipt.free": "Bure",
+  "receipt.plan": "Imo katika mpango wako wa {plan}",
   "receipt.costAbout": "takriban {cost}",
   "receipt.costUnknown": "Haijulikani",
   "receipt.by": "Limejibiwa na",

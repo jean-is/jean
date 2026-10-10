@@ -10,7 +10,7 @@ import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, brainLabel, loadModels } from '../../ui/state.js'
 import { deviceKey } from '../../ui/secrets.js'
-import { priceOf } from '../../ui/prices.js'
+import { priceOf, PLANS } from '../../ui/prices.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -94,8 +94,8 @@ function pricing({ provider, model }) {
   return found
 }
 
-/** "about $0.004", "Free", or "Not known". @param {number | null} cost */
-const costText = (cost) => (cost === null ? t('receipt.costUnknown') : !cost ? t('receipt.free')
+/** "about $0.004", "Free", "In your Claude plan" when a plan answered, or "Not known". @param {number | null} cost @param {string} [plan] */
+const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !cost ? (plan ? t('receipt.plan', { plan }) : t('receipt.free'))
   : t('receipt.costAbout', { cost: new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost) }))
 
 /** @param {Facts} facts @param {Turn} turn @param {string} text */
@@ -106,7 +106,7 @@ function card(facts, turn, text) {
     ${facts.verdict === 'out' ? nothing : html`<p class="receipt-note">${t(`receipt.${facts.verdict}.text`)}</p>`}
     <dl>
       <dt>${t('receipt.time')}</dt><dd>${formatDuration(facts.ms)}</dd>
-      <dt>${t('receipt.cost')}</dt><dd>${costText(costOf(facts.brains, pricing))}</dd>
+      <dt>${t('receipt.cost')}</dt><dd>${costText(costOf(facts.brains, pricing), facts.brains.map(({ provider }) => PLANS[provider]).find(Boolean))}</dd>
       ${brains.length ? html`<dt>${t('receipt.by')}</dt><dd>${brains.map(({ provider, model, local }) => html`<span>
         <bdi>${brainLabel(/** @type {any} */ ({ provider, model, api: provider === 'device' ? 'device' : '' }))}</bdi> · ${t(local ? 'receipt.here' : 'receipt.cloud')}</span>`)}</dd>` : nothing}
       ${facts.outside.length ? html`<dt>${t('receipt.sentTo')}</dt><dd>${facts.outside.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd>` : nothing}

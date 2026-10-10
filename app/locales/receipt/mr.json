@@ -8,6 +8,7 @@
   "receipt.time": "वेळ",
   "receipt.cost": "खर्च",
   "receipt.free": "विनामूल्य",
+  "receipt.plan": "तुमच्या {plan} प्लॅनमध्ये समाविष्ट",
   "receipt.costAbout": "सुमारे {cost}",
   "receipt.costUnknown": "माहीत नाही",
   "receipt.by": "उत्तर देणारा",

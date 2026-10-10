@@ -8,6 +8,7 @@
   "receipt.time": "Àkókò",
   "receipt.cost": "Iye owó",
   "receipt.free": "Ọ̀fẹ́",
+  "receipt.plan": "Ó wà nínú ètò {plan} yín",
   "receipt.costAbout": "nǹkan bí {cost}",
   "receipt.costUnknown": "A kò mọ̀",
   "receipt.by": "Ẹni tí ó dáhùn",

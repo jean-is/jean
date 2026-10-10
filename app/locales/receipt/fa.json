@@ -8,6 +8,7 @@
   "receipt.time": "زمان",
   "receipt.cost": "هزینه",
   "receipt.free": "رایگان",
+  "receipt.plan": "جزو اشتراک {plan} شما",
   "receipt.costAbout": "حدود {cost}",
   "receipt.costUnknown": "نامعلوم",
   "receipt.by": "پاسخ با",

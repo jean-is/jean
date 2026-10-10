@@ -8,6 +8,7 @@
   "receipt.time": "நேரம்",
   "receipt.cost": "செலவு",
   "receipt.free": "இலவசம்",
+  "receipt.plan": "உங்கள் {plan} திட்டத்தில் அடங்கும்",
   "receipt.costAbout": "சுமார் {cost}",
   "receipt.costUnknown": "தெரியவில்லை",
   "receipt.by": "பதிலளித்தது",

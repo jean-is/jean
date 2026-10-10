@@ -166,7 +166,7 @@ A chip in the message box, beside its send button, reads **Auto ▾**, or the na
 
 - **Auto** (recommended)
 - **On this device:** private, free, works offline
-- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover, using prices from the provider's catalogue (OpenRouter `/models`), or models.dev's, read only when a price is wanted and kept a week (D255).
+- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover, using prices from the provider's catalogue (OpenRouter `/models`), or models.dev's, read only when a price is wanted and kept a week (D255); a Claude plan's say "in your Claude plan" instead (D235).
 - **All brains**
 - **Never send to the cloud,** an explicit switch, while a brain is in the cloud
 
@@ -186,7 +186,7 @@ The picker offers the brains of the project the user is in. A brain is used in e
 - **Stable choices.** Auto steps up when needed and never steps down within a conversation; a new conversation starts again from the bottom. This keeps the provider's cache warm and the tool-call format consistent.
 - **Without Intuition,** Auto picks the Smart level (D70).
 - **Visible.** Every answer shows where it came from ("answered on this device"), with a one-tap "Ask a smarter brain".
-- **About this answer** (D252). Among an answer's buttons, one, a shield when the answer was done on this device, shows on hover or keyboard focus (a click or a tap keeps it) how long the answer took, what it cost (free on this device, about what the provider's prices say in the cloud, or not known), which brains answered and whether each ran on this device, and the addresses outside it that the page reached meanwhile, as the browser itself recorded them. *Done on this device* is said only when all of these agree. Its certificate saves as a file that holds the request's and the answer's fingerprints, never their words, sealed with a key the device never gives out, so it can go to whoever needs to see it.
+- **About this answer** (D252). Among an answer's buttons, one, a shield when the answer was done on this device, shows on hover or keyboard focus (a click or a tap keeps it) how long the answer took, what it cost (free on this device, about what the provider's prices say in the cloud, in your Claude plan when Claude Code answered, or not known), which brains answered and whether each ran on this device, and the addresses outside it that the page reached meanwhile, as the browser itself recorded them. *Done on this device* is said only when all of these agree. Its certificate saves as a file that holds the request's and the answer's fingerprints, never their words, sealed with a key the device never gives out, so it can go to whoever needs to see it.
 - **Optional budget** (later): a monthly cap.
 
 ## Files and outputs

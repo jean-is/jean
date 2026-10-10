@@ -4,6 +4,7 @@
   "picker.smart": "Умный",
   "picker.best": "Лучший",
   "picker.cost": "около {cost} за ответ",
+  "picker.plan": "входит в ваш план {plan}",
   "picker.local": "На вашем компьютере",
   "picker.neverCloud": "Никогда не отправлять в облако",
   "picker.all": "Все мозги",

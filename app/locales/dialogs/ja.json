@@ -4,6 +4,7 @@
   "picker.smart": "賢い",
   "picker.best": "最上",
   "picker.cost": "1回答あたり約{cost}",
+  "picker.plan": "{plan} のプランに含まれます",
   "picker.local": "お使いのコンピューター上",
   "picker.neverCloud": "クラウドに送らない",
   "picker.all": "すべての頭脳",

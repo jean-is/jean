@@ -8,6 +8,7 @@
   "receipt.time": "Tijd",
   "receipt.cost": "Kosten",
   "receipt.free": "Gratis",
+  "receipt.plan": "Inbegrepen in je {plan}-abonnement",
   "receipt.costAbout": "ongeveer {cost}",
   "receipt.costUnknown": "Onbekend",
   "receipt.by": "Beantwoord door",

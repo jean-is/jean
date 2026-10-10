@@ -8,6 +8,7 @@
   "receipt.time": "Thời gian",
   "receipt.cost": "Chi phí",
   "receipt.free": "Miễn phí",
+  "receipt.plan": "Đã bao gồm trong gói {plan} của bạn",
   "receipt.costAbout": "khoảng {cost}",
   "receipt.costUnknown": "Không rõ",
   "receipt.by": "Trả lời bởi",

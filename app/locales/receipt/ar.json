@@ -8,6 +8,7 @@
   "receipt.time": "المدة",
   "receipt.cost": "التكلفة",
   "receipt.free": "مجانًا",
+  "receipt.plan": "مشمولة في اشتراكك في {plan}",
   "receipt.costAbout": "حوالي {cost}",
   "receipt.costUnknown": "غير معروفة",
   "receipt.by": "الإجابة من",

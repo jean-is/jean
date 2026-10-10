@@ -4,6 +4,7 @@
   "picker.smart": "ฉลาด",
   "picker.best": "ดีที่สุด",
   "picker.cost": "ประมาณ {cost} ต่อคำตอบ",
+  "picker.plan": "รวมอยู่ในแพ็กเกจ {plan} ของคุณ",
   "picker.local": "บนคอมพิวเตอร์ของคุณ",
   "picker.neverCloud": "ไม่ส่งไปคลาวด์เลย",
   "picker.all": "สมองทั้งหมด",

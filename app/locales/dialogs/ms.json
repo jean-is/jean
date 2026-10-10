@@ -4,6 +4,7 @@
   "picker.smart": "Bijak",
   "picker.best": "Terbaik",
   "picker.cost": "kira-kira {cost} setiap jawapan",
+  "picker.plan": "termasuk dalam pelan {plan} anda",
   "picker.local": "Pada komputer anda",
   "picker.neverCloud": "Jangan sekali-kali hantar ke awan",
   "picker.all": "Semua otak",

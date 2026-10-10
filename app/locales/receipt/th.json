@@ -8,6 +8,7 @@
   "receipt.time": "เวลา",
   "receipt.cost": "ค่าใช้จ่าย",
   "receipt.free": "ฟรี",
+  "receipt.plan": "รวมอยู่ในแพ็กเกจ {plan} ของคุณ",
   "receipt.costAbout": "ประมาณ {cost}",
   "receipt.costUnknown": "ไม่ทราบ",
   "receipt.by": "ตอบโดย",

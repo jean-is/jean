@@ -8,6 +8,7 @@
   "receipt.time": "用時",
   "receipt.cost": "費用",
   "receipt.free": "免費",
+  "receipt.plan": "包含在你的 {plan} 方案中",
   "receipt.costAbout": "約 {cost}",
   "receipt.costUnknown": "未知",
   "receipt.by": "回答者",

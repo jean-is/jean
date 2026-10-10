@@ -8,6 +8,7 @@
   "receipt.time": "시간",
   "receipt.cost": "비용",
   "receipt.free": "무료",
+  "receipt.plan": "내 {plan} 요금제에 포함",
   "receipt.costAbout": "약 {cost}",
   "receipt.costUnknown": "알 수 없음",
   "receipt.by": "답변",

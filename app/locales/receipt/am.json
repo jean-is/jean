@@ -8,6 +8,7 @@
   "receipt.time": "ጊዜ",
   "receipt.cost": "ወጪ",
   "receipt.free": "ነጻ",
+  "receipt.plan": "በ{plan} ዕቅድዎ ውስጥ የተካተተ",
   "receipt.costAbout": "{cost} ገደማ",
   "receipt.costUnknown": "አይታወቅም",
   "receipt.by": "የመለሰው",

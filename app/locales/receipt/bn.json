@@ -8,6 +8,7 @@
   "receipt.time": "সময়",
   "receipt.cost": "খরচ",
   "receipt.free": "বিনামূল্যে",
+  "receipt.plan": "আপনার {plan} প্ল্যানে অন্তর্ভুক্ত",
   "receipt.costAbout": "প্রায় {cost}",
   "receipt.costUnknown": "জানা নেই",
   "receipt.by": "উত্তর দিয়েছে",

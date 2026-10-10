@@ -8,6 +8,7 @@
   "receipt.time": "Süre",
   "receipt.cost": "Maliyet",
   "receipt.free": "Ücretsiz",
+  "receipt.plan": "{plan} planına dahil",
   "receipt.costAbout": "yaklaşık {cost}",
   "receipt.costUnknown": "Bilinmiyor",
   "receipt.by": "Yanıtlayan",

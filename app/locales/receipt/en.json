@@ -8,6 +8,7 @@
   "receipt.time": "Time",
   "receipt.cost": "Cost",
   "receipt.free": "Free",
+  "receipt.plan": "In your {plan} plan",
   "receipt.costAbout": "about {cost}",
   "receipt.costUnknown": "Not known",
   "receipt.by": "Answered by",

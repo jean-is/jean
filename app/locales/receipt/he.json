@@ -8,6 +8,7 @@
   "receipt.time": "זמן",
   "receipt.cost": "עלות",
   "receipt.free": "חינם",
+  "receipt.plan": "כלול במינוי {plan} שלך",
   "receipt.costAbout": "כ־{cost}",
   "receipt.costUnknown": "לא ידועה",
   "receipt.by": "נענה על ידי",

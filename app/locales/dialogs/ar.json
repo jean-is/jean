@@ -4,6 +4,7 @@
   "picker.smart": "ذكي",
   "picker.best": "الأفضل",
   "picker.cost": "حوالي {cost} لكل إجابة",
+  "picker.plan": "مشمولة في اشتراكك في {plan}",
   "picker.local": "على حاسوبك",
   "picker.neverCloud": "لا ترسل إلى السحابة أبدًا",
   "picker.all": "كل العقول",

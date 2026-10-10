@@ -4,6 +4,7 @@
   "picker.smart": "ብልህ",
   "picker.best": "ምርጥ",
   "picker.cost": "በአንድ መልስ {cost} ገደማ",
+  "picker.plan": "በ{plan} ዕቅድዎ ውስጥ የተካተተ",
   "picker.local": "በኮምፒውተርዎ ላይ",
   "picker.neverCloud": "በፍጹም ወደ ደመና አይላክ",
   "picker.all": "ሁሉም አንጎሎች",

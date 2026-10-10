@@ -4,6 +4,7 @@
   "picker.smart": "똑똑함",
   "picker.best": "최고",
   "picker.cost": "답변당 약 {cost}",
+  "picker.plan": "내 {plan} 요금제에 포함",
   "picker.local": "내 컴퓨터에서",
   "picker.neverCloud": "클라우드로 절대 보내지 않기",
   "picker.all": "모든 두뇌",

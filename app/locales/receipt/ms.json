@@ -8,6 +8,7 @@
   "receipt.time": "Masa",
   "receipt.cost": "Kos",
   "receipt.free": "Percuma",
+  "receipt.plan": "Termasuk dalam pelan {plan} anda",
   "receipt.costAbout": "kira-kira {cost}",
   "receipt.costUnknown": "Tidak diketahui",
   "receipt.by": "Dijawab oleh",

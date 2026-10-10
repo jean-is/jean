@@ -8,6 +8,7 @@
   "receipt.time": "Oras",
   "receipt.cost": "Gastos",
   "receipt.free": "Libre",
+  "receipt.plan": "Kasama sa {plan} plan mo",
   "receipt.costAbout": "mga {cost}",
   "receipt.costUnknown": "Hindi alam",
   "receipt.by": "Sinagot ng",

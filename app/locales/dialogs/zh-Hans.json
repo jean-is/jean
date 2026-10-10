@@ -4,6 +4,7 @@
   "picker.smart": "聪明",
   "picker.best": "最佳",
   "picker.cost": "每个回答约 {cost}",
+  "picker.plan": "包含在你的 {plan} 套餐中",
   "picker.local": "在你的电脑上",
   "picker.neverCloud": "从不发送到云端",
   "picker.all": "所有大脑",

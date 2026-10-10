@@ -4,6 +4,7 @@
   "picker.smart": "Thông minh",
   "picker.best": "Tốt nhất",
   "picker.cost": "khoảng {cost} mỗi câu trả lời",
+  "picker.plan": "đã bao gồm trong gói {plan} của bạn",
   "picker.local": "Trên máy tính của bạn",
   "picker.neverCloud": "Không bao giờ gửi lên đám mây",
   "picker.all": "Tất cả bộ não",

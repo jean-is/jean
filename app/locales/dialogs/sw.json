@@ -4,6 +4,7 @@
   "picker.smart": "Werevu",
   "picker.best": "Bora zaidi",
   "picker.cost": "takriban {cost} kwa kila jibu",
+  "picker.plan": "imo katika mpango wako wa {plan}",
   "picker.local": "Kwenye kompyuta yako",
   "picker.neverCloud": "Kamwe usitume kwenye wingu",
   "picker.all": "Akili zote",

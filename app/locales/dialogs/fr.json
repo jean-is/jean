@@ -4,6 +4,7 @@
   "picker.smart": "Malin",
   "picker.best": "Le meilleur",
   "picker.cost": "environ {cost} par réponse",
+  "picker.plan": "inclus dans votre forfait {plan}",
   "picker.local": "Sur votre ordinateur",
   "picker.neverCloud": "Ne jamais envoyer dans le cloud",
   "picker.all": "Tous les cerveaux",

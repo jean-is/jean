@@ -8,6 +8,7 @@
   "receipt.time": "సమయం",
   "receipt.cost": "ఖర్చు",
   "receipt.free": "ఉచితం",
+  "receipt.plan": "మీ {plan} ప్లాన్‌లో భాగం",
   "receipt.costAbout": "సుమారు {cost}",
   "receipt.costUnknown": "తెలియదు",
   "receipt.by": "జవాబు ఇచ్చింది",
