@@ -21,7 +21,7 @@ import { keep } from './windows.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
 
-await styleSheet('ui/preview.css')
+await Promise.all([styleSheet('ui/preview.css'), styleSheet('ui/select.css')])
 
 const shown = signal(/** @type {Shown | null} */ (null))
 const view = signal(/** @type {unknown} */ (nothing))

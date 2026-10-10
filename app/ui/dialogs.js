@@ -33,8 +33,9 @@ import { styleSheet } from './sheet.js'
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
 // The dialogs' own strings and style sheet come with them (D97, D120): every module that shows a
-// dialog imports this one. The sheet goes after ui/style.css, so its rules win a tie.
-await Promise.all([useStrings('dialogs'), styleSheet('ui/dialogs.css')])
+// dialog imports this one. The sheet goes after ui/style.css, so its rules win a tie. Its lists to
+// pick from have the chevron that all have (ui/select.css).
+await Promise.all([useStrings('dialogs'), styleSheet('ui/dialogs.css'), styleSheet('ui/select.css')])
 
 /** Whether each dialog was last told to be open. @type {WeakMap<HTMLDialogElement, boolean>} */
 const told = new WeakMap()

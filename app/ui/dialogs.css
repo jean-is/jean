@@ -64,12 +64,6 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .setting p { margin: 0; }
 div.setting { margin-block-end: 0.75rem; }
 .setting :is(select, .you-name) { inline-size: 15rem; }
-/* A list to pick from has its own chevron, two strokes in the text's colour, as far from the end as the
-   text from the start: the system's sat against the edge. The system's again where colours are forced. */
-dialog select { --stroke: #0000 calc(50% - 1px), var(--ink-soft) calc(50% - 0.5px) calc(50% + 0.5px), #0000 calc(50% + 1px); appearance: none; padding-inline-end: 2.2rem;
-  background-image: linear-gradient(to top right, var(--stroke)), linear-gradient(to top left, var(--stroke)); background-size: 0.3rem 0.3rem; background-repeat: no-repeat; background-position: right 1.1rem center, right 0.8rem center; }
-dialog select:dir(rtl) { background-position: left 0.8rem center, left 1.1rem center; }
-@media (forced-colors: active) { dialog select { appearance: auto; } }
 /* The keyboard's shortcuts (D236): what each does, its keys at the end of its row. */
 .keyboard dd { margin: 0; margin-inline-start: auto; }
 .keyboard kbd { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 0.45rem; font: inherit; font-size: 0.85rem; color: var(--ink-soft); white-space: nowrap; }

@@ -1,0 +1,9 @@
+/* A list to pick from has its own chevron, two strokes in the text's colour, as far from the end as the
+   text from the start and as far again from the text: the system's sat against the edge. The system's
+   again where colours are forced. Loaded by each module that shows one (Settings, a file's versions, a
+   flow's steps), after ui/style.css. A list set closer to its edge says so with --at. */
+select { --at: 0.8rem; --stroke: #0000 calc(50% - 1px), var(--ink-soft) calc(50% - 0.5px) calc(50% + 0.5px), #0000 calc(50% + 1px);
+  appearance: none; padding-inline-end: calc(var(--at) * 2 + 0.6rem); background-image: linear-gradient(to top right, var(--stroke)), linear-gradient(to top left, var(--stroke));
+  background-size: 0.3rem 0.3rem; background-repeat: no-repeat; background-position: right calc(var(--at) + 0.3rem) center, right var(--at) center; }
+select:dir(rtl) { background-position: left var(--at) center, left calc(var(--at) + 0.3rem) center; }
+@media (forced-colors: active) { select { appearance: auto; } }
