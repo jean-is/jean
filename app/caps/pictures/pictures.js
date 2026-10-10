@@ -18,28 +18,35 @@ import { t, locale, useStrings, formatBytes } from '../../core/i18n.js'
 import * as device from './device.js'
 
 /** @typedef {import('../../core/types.js').BrainConfig} BrainConfig */
-/** @typedef {{ brain: BrainConfig, model: string } | { device: true }} Engine */
+/** @typedef {{ brain: BrainConfig, model: string, lengths?: number[] } | { device: true }} Engine */
 
 await Promise.all([useStrings('pictures'), styleSheet(new URL('pictures.css', import.meta.url))])
 
 /** Models by provider, preferred first: provider identities (D33) that policy replaces (`images`, `films`). */
 const MODELS = /** @type {Record<'picture' | 'film', Record<string, string[]>>} */ ({
   picture: { openai: ['gpt-image-1.5', 'gpt-image-1'], gemini: ['gemini-nano-banana-2.1', 'gemini-3-pro-image'], openrouter: ['google/gemini-nano-banana-2.1', 'openai/gpt-5-image'] },
-  film: { openai: ['sora-2', 'sora-2-pro'], gemini: ['gemini-omni-1.1-flash'], openrouter: ['google/veo-3.1', 'openai/sora-2-pro'] },
+  film: { openai: ['sora-2', 'sora-2-pro'], gemini: ['gemini-omni-1.1-flash'], openrouter: ['google/veo-3.1', 'google/veo-3.1-fast'] },
 })
-/** Otherwise, a model that says it makes them (OpenRouter's list), or whose name does. */
+/** Otherwise, a model that says it makes them (OpenRouter's lists), or whose name does. */
 const MAKES = { picture: /image|banana|dall-e|flux/i, film: /sora|veo|video|gemini-omni/i }
 /** Servers that list picture models without the API to run them: LM Studio has no Images API. */
 const UNABLE = ['lmstudio']
 
-/** A model of the brain's provider that makes pictures or films, if its list has one. @param {BrainConfig} brain @param {'picture' | 'film'} kind */
+/**
+ * A model of the brain's provider that makes pictures or films, if its list has one, with the seconds
+ * a film can last where the list says. OpenRouter lists its film models apart from the others.
+ * @param {BrainConfig} brain @param {'picture' | 'film'} kind @returns {Promise<{ model: string, lengths?: number[] } | undefined>}
+ */
 async function modelOf(brain, kind) {
   if (UNABLE.includes(brain.provider)) return undefined
-  await loadModels(brain)
-  const models = app.models.value[brain.id] ?? []
+  /** @type {{ id: string, output?: string[], lengths?: number[] }[]} */
+  const models = kind === 'film' && brain.provider === 'openrouter'
+    ? await import('./cloud.js').then(async ({ filmModels }) => filmModels({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined })).catch(() => [])
+    : await loadModels(brain).then(() => app.models.value[brain.id] ?? [])
   const preferred = /** @type {string[]} */ ((app.policy[kind === 'film' ? 'films' : 'images'] ?? MODELS[kind])[brain.provider] ?? [])
   const output = kind === 'film' ? 'video' : 'image'
-  return preferred.find((id) => models.some((info) => info.id === id)) ?? models.find((info) => info.output?.includes(output) || MAKES[kind].test(info.id))?.id
+  const info = preferred.map((id) => models.find((model) => model.id === id)).find(Boolean) ?? models.find((model) => model.output?.includes(output) || MAKES[kind].test(model.id))
+  return info && { model: info.id, lengths: info.lengths }
 }
 
 /**
@@ -56,9 +63,9 @@ async function engines(kind, changing) {
   const [near, far] = local ? [brains.filter(isLocal), brains.filter((brain) => !isLocal(brain))] : [brains, []]
   /** @type {Engine[]} */
   const found = []
-  for (const brain of near) await modelOf(brain, kind).then((model) => model && found.push({ brain, model }))
+  for (const brain of near) await modelOf(brain, kind).then((model) => model && found.push({ brain, ...model }))
   if (kind === 'picture' && !changing && await device.here()) found.push({ device: true })
-  for (const brain of far) await modelOf(brain, kind).then((model) => model && found.push({ brain, model }))
+  for (const brain of far) await modelOf(brain, kind).then((model) => model && found.push({ brain, ...model }))
   return found
 }
 
