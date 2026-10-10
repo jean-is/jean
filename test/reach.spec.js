@@ -1,4 +1,4 @@
-// Connections, web search, pictures and live conversation (0.5). The version's done-when: Jean
+// Connections, web search and live conversation (0.5). The version's done-when: Jean
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
@@ -219,19 +219,6 @@ test('web search answers with sources that open', async ({ page }) => {
   await expect(tip).toContainText('Lighthouse')
   await icon
   await expect(page.locator('.activity-list')).toContainText('Searched the web · lighthouse')
-})
-
-test('a script draws a picture with models.image, kept in the project', async ({ page }) => {
-  await start(page)
-  await connectFakeBrain(page)
-  await turnOn(page, 'Computer')
-  await page.keyboard.press('Escape')
-  await ask(page, 'Draw a lighthouse at dusk')
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is your picture.', { timeout: 30_000 })
-  const picture = page.locator('app-image img')
-  await expect(picture).toHaveJSProperty('naturalWidth', 96)
-  await expect(picture).toHaveAttribute('alt', 'Draw a lighthouse at dusk')
-  await expect(page.locator('app-image a[download]')).toHaveAttribute('download', 'draw-a-lighthouse-at-dusk.png')
 })
 
 for (const [lang, dir] of [['en', 'ltr'], ['ar', 'rtl'], ['ja', 'ltr']]) {

@@ -9,7 +9,7 @@
 // "What do you know?", and saves a skill when asked to (finding the tool first if needed).
 // From 0.5 it searches the web when asked to, reads the user's latest emails through a
 // connection (finding its tool first, or from a script when Calculations are on) and sums them
-// up citing each one, and draws with models.image; /images/generations answers with a picture.
+// up citing each one.
 // From 0.6 it splits a "briefing" between two helpers (each finds the mail tool, asks first, and
 // reports one email), answers Double-check's requests by comparing words, and gives a brief of
 // what's new when told the user is back. It sees pictures (a capture of the screen): it says how
@@ -35,6 +35,9 @@
 // half year's sales, a table wider than the text, and to compare an iPhone and a Pixel, in French, a
 // comparison whose options say much (D215). Asked to hold a meeting, it calls one, each project's
 // assistant saying what its <memory> holds, then agreeing; it answers with what was said (D224).
+// Asked to draw something, it offers pictures if they are off, then makes one, which
+// /images/generations answers; asked for a film, it makes one of 4 seconds, which /videos makes
+// at once (D251).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -310,12 +313,19 @@ createServer(async (req, res) => {
   if (req.method === 'OPTIONS') return res.end()
   if (req.url?.endsWith('/models')) {
     res.setHeader('Content-Type', 'application/json')
-    return res.end(JSON.stringify({ data: [{ id: 'fake-brain-1' }, { id: 'fake-brain-2' }, { id: 'fake-image-1' }] }))
+    return res.end(JSON.stringify({ data: [{ id: 'fake-brain-1' }, { id: 'fake-brain-2' }, { id: 'fake-image-1' }, { id: 'fake-video-1' }] }))
   }
   if (req.url?.endsWith('/images/generations')) {
     res.setHeader('Content-Type', 'application/json')
     return res.end(JSON.stringify({ data: [{ b64_json: picture() }] }))
   }
+  // A film's job, done as soon as it is asked for, and the film: the start of an MP4.
+  if (req.url?.endsWith('/videos')) {
+    for await (const chunk of req) void chunk
+    res.setHeader('Content-Type', 'application/json')
+    return res.end(JSON.stringify({ id: 'film-1', status: 'completed' }))
+  }
+  if (req.url?.endsWith('/videos/film-1/content')) return res.writeHead(200, { 'Content-Type': 'video/mp4' }).end(Buffer.from([0, 0, 0, 24, 102, 116, 121, 112, 105, 115, 111, 109]))
   const page = SITE[req.url?.split('?')[0] ?? '']
   if (page) return res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', ...page.headers }).end(page.body)
   if (!req.url?.endsWith('/chat/completions')) return res.writeHead(404).end()
@@ -487,8 +497,12 @@ createServer(async (req, res) => {
   else if (/^Démontre/.test(question) && last.role === 'user') answer = PROOF
   else if (/camembert/i.test(question) && last.role === 'user') answer = BUDGET
   else if (/euler/i.test(question) && last.role === 'user') answer = EULER
-  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: `return await models.image(${JSON.stringify(question)})` } }
-  else if (toolName === 'javascript' && /"shown":\s*true/.test(last.content)) answer = 'Here is your picture.'
+  else if (/\bfilm\b/i.test(question) && last.role === 'user' && declared.has('film')) call = { name: 'film', args: { description: question, seconds: 4 } }
+  else if (toolName === 'film') answer = /^Made /.test(last.content) ? 'Here is your film.' : `No film: ${last.content}`
+  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('picture')) call = { name: 'picture', args: { description: question } }
+  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'pictures' } }
+  else if (toolName === 'offer' && /It is on/.test(last.content) && /\b(draw|picture)\b/i.test(question)) call = { name: 'picture', args: { description: question } }
+  else if (toolName === 'picture') answer = /^Made /.test(last.content) ? 'Here is your picture.' : `No picture: ${last.content}`
   else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }
   else if (/web page/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery.html', content: PAGE } }
   else if (/svg logo/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Logo.svg', content: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f6e7cf"/><circle cx="60" cy="60" r="38" fill="#c8691c"/></svg>' } }

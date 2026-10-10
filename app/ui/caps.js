@@ -51,6 +51,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   charts: () => import('../caps/charts/charts.js'),
   scores: () => import('../caps/scores/scores.js'),
   slides: () => import('../caps/slides/slides.js'),
+  pictures: () => import('../caps/pictures/pictures.js'),
   receipt: () => import('../caps/receipt/receipt.js'),
 })
 

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "รูปภาพ",
+  "pictures.film": "วิดีโอ",
+  "pictures.savePicture": "บันทึกรูปภาพ",
+  "pictures.saveFilm": "บันทึกวิดีโอ",
+  "pictures.device": "รูปภาพบนอุปกรณ์นี้",
+  "pictures.deviceText": "สร้างที่นี่ เป็นส่วนตัวและฟรี แม้ออฟไลน์ ด้วย SD-Turbo ของ Stability AI ภายใต้สัญญาอนุญาตชุมชนของบริษัท",
+  "pictures.deviceAction": "ดาวน์โหลดครั้งเดียว ({size})",
+  "pictures.deviceReady": "พร้อมแล้ว",
+  "pictures.deviceFailed": "การดาวน์โหลดหยุดลง ลองอีกครั้ง",
+  "pictures.films": "วิดีโอ",
+  "pictures.filmsText": "สร้างวิดีโอโดยไม่ถามก่อน",
+  "pictures.filmsAsk": "กลับไปถามก่อน"
+}

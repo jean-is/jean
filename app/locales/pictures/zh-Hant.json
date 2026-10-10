@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "圖片",
+  "pictures.film": "影片",
+  "pictures.savePicture": "儲存圖片",
+  "pictures.saveFilm": "儲存影片",
+  "pictures.device": "在這台裝置上產生圖片",
+  "pictures.deviceText": "在這裡產生，私密、免費，離線也可以，使用 Stability AI 的 SD-Turbo，遵循其社群授權。",
+  "pictures.deviceAction": "下載一次（{size}）",
+  "pictures.deviceReady": "已就緒",
+  "pictures.deviceFailed": "下載中斷了。請重試。",
+  "pictures.films": "影片",
+  "pictures.filmsText": "產生影片前不再先詢問。",
+  "pictures.filmsAsk": "重新先詢問"
+}

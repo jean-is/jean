@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "이미지",
+  "pictures.film": "동영상",
+  "pictures.savePicture": "그림 저장",
+  "pictures.saveFilm": "동영상 저장",
+  "pictures.device": "이 기기에서 이미지",
+  "pictures.deviceText": "여기서 비공개로, 무료로, 오프라인에서도 만들어요. Stability AI의 SD-Turbo를 커뮤니티 라이선스에 따라 사용해요.",
+  "pictures.deviceAction": "한 번 다운로드({size})",
+  "pictures.deviceReady": "준비됨",
+  "pictures.deviceFailed": "다운로드가 멈췄어요. 다시 시도하세요.",
+  "pictures.films": "동영상",
+  "pictures.filmsText": "동영상은 먼저 묻지 않고 만들어요.",
+  "pictures.filmsAsk": "다시 먼저 묻기"
+}

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Una imagen",
+  "pictures.film": "Un vídeo",
+  "pictures.savePicture": "Guardar la imagen",
+  "pictures.saveFilm": "Guardar el vídeo",
+  "pictures.device": "Imágenes en este dispositivo",
+  "pictures.deviceText": "Creadas aquí, en privado y gratis, incluso sin conexión, con SD-Turbo de Stability AI, bajo su licencia comunitaria.",
+  "pictures.deviceAction": "Descargar una vez ({size})",
+  "pictures.deviceReady": "Listo",
+  "pictures.deviceFailed": "La descarga se detuvo. Vuelve a intentarlo.",
+  "pictures.films": "Vídeos",
+  "pictures.filmsText": "Los vídeos se crean sin preguntarte antes.",
+  "pictures.filmsAsk": "Volver a preguntar"
+}

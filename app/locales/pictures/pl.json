@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Obraz",
+  "pictures.film": "Film",
+  "pictures.savePicture": "Zapisz obrazek",
+  "pictures.saveFilm": "Zapisz film",
+  "pictures.device": "Obrazy na tym urządzeniu",
+  "pictures.deviceText": "Tworzone tutaj, prywatnie i za darmo, nawet offline, przez SD-Turbo od Stability AI, na jego licencji społecznościowej.",
+  "pictures.deviceAction": "Pobierz raz ({size})",
+  "pictures.deviceReady": "Gotowe",
+  "pictures.deviceFailed": "Pobieranie zostało przerwane. Spróbuj ponownie.",
+  "pictures.films": "Filmy",
+  "pictures.filmsText": "Filmy powstają bez pytania najpierw.",
+  "pictures.filmsAsk": "Znów pytaj najpierw"
+}

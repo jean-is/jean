@@ -288,5 +288,7 @@
   "brain.device.ready": "Bu cihazdaki beyin hazır",
   "brain.device.private": "Gizli · çevrimdışı çalışır",
   "cap.machine.hint": "Bir sitenin geliştirme sunucusunu çalıştırmayı iste, örneğin npm run dev.",
-  "cap.machine.text": "Bilgisayarın komutlarını bu cihazın kendisinde, klasörlerinden birinde, kendi programları ve sunucularıyla çalıştırır: bir sitenin geliştirme sunucusu tarayıcıda görünür. Her komut önce sorulur, terminalinde Ctrl+C her şeyi durdurur."
+  "cap.machine.text": "Bilgisayarın komutlarını bu cihazın kendisinde, klasörlerinden birinde, kendi programları ve sunucularıyla çalıştırır: bir sitenin geliştirme sunucusu tarayıcıda görünür. Her komut önce sorulur, terminalinde Ctrl+C her şeyi durdurur.",
+  "cap.pictures.hint": "Bir resim iste.",
+  "cap.pictures.text": "Bir açıklamadan resimler ve kısa videolar ya da değiştirilmiş bir resmin: bağladığın beyinlerle ya da bu cihazda gizlice. Bir videodan önce sana sorulur, çünkü daha pahalıdır."
 }

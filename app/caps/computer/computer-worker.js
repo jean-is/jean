@@ -611,7 +611,6 @@ globalThis.tools = new Proxy({}, { get: (_, name) => (args = {}) => __call(Strin
 globalThis.searchTools = (query) => tools.find_tools({ query })
 globalThis.models = {
   decide: async (state, questions) => JSON.parse(await tools.decide({ state, questions })),
-  image: async (prompt) => JSON.parse(await tools.image({ prompt })),
 }
 globalThis.file = (name) => tools.file({ file: name })
 globalThis.fs = {

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Een afbeelding",
+  "pictures.film": "Een video",
+  "pictures.savePicture": "Afbeelding opslaan",
+  "pictures.saveFilm": "Video opslaan",
+  "pictures.device": "Afbeeldingen op dit apparaat",
+  "pictures.deviceText": "Hier gemaakt, privé en gratis, ook offline, door SD-Turbo van Stability AI, onder zijn communitylicentie.",
+  "pictures.deviceAction": "Eén keer downloaden ({size})",
+  "pictures.deviceReady": "Klaar",
+  "pictures.deviceFailed": "Het downloaden is gestopt. Probeer het opnieuw.",
+  "pictures.films": "Video’s",
+  "pictures.filmsText": "Video’s worden gemaakt zonder eerst te vragen.",
+  "pictures.filmsAsk": "Weer eerst vragen"
+}

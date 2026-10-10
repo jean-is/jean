@@ -1,13 +1,12 @@
 // 0.5 "Reach": numbered sources from tools and from the brain's own search, the brain's own
-// search in both adapters, pictures for codemode, connections over MCP (both eras, and
-// signing in), Wikipedia, and live conversation's turn-taking.
+// search in both adapters, connections over MCP (both eras, and signing in), Wikipedia, and
+// live conversation's turn-taking.
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { runTurn } from '../app/core/loop.js'
 import { toChatMessages, userRecord } from '../app/core/events.js'
 import { PROVIDERS, streamChat } from '../app/core/llm.js'
-import { generateImage } from '../app/caps/computer/picture.js'
 import { buildSystemPrompt, promptState, changeNotes } from '../app/core/prompt.js'
 
 const encoder = new TextEncoder()
@@ -183,33 +182,6 @@ describe('sources in the loop', () => {
     const result = await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'Find it' }], stream })
     assert.equal(result.stopReason, 'end')
     assert.deepEqual(seen[1].at(-1), { role: 'assistant', content: 'Searching…', raw: [{ type: 'server_tool_use', id: 's' }] })
-  })
-})
-
-describe('pictures (models.image)', () => {
-  const png = Buffer.from([137, 80, 78, 71]).toString('base64')
-
-  test('OpenAI’s Images API, and compatible servers', async () => {
-    const { fetch, calls } = mockFetch(() => Response.json({ data: [{ b64_json: png }] }))
-    const picture = await generateImage({ brain: { ...custom, provider: 'openai' }, apiKey: 'k', model: 'gpt-image-1', prompt: 'A lighthouse', fetch })
-    assert.equal(calls[0].url, 'http://127.0.0.1:9/v1/images/generations')
-    assert.deepEqual(calls[0].body, { model: 'gpt-image-1', prompt: 'A lighthouse', n: 1 })
-    assert.equal(calls[0].init.headers.authorization, 'Bearer k')
-    assert.deepEqual([...picture.bytes], [137, 80, 78, 71])
-    assert.equal(picture.mimeType, 'image/png')
-  })
-
-  test('OpenRouter: a chat completion that answers with an image', async () => {
-    const { fetch, calls } = mockFetch(() => Response.json({ choices: [{ message: { content: '', images: [{ type: 'image_url', image_url: { url: `data:image/webp;base64,${png}` } }] } }] }))
-    const picture = await generateImage({ brain: openrouter, model: 'google/gemini-image', prompt: 'A lighthouse', fetch })
-    assert.equal(calls[0].url, 'https://openrouter.ai/api/v1/chat/completions')
-    assert.deepEqual(calls[0].body, { model: 'google/gemini-image', messages: [{ role: 'user', content: 'A lighthouse' }], modalities: ['image', 'text'] })
-    assert.equal(picture.mimeType, 'image/webp')
-  })
-
-  test('no picture in the answer is an error', async () => {
-    const { fetch } = mockFetch(() => Response.json({ data: [{ url: 'https://example.com/a.png' }] }))
-    await assert.rejects(generateImage({ brain: custom, model: 'dall-e-3', prompt: 'x', fetch }), /No picture/)
   })
 })
 

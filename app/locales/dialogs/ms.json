@@ -285,5 +285,7 @@
   "brain.device.ready": "Otak pada peranti ini sudah sedia",
   "brain.device.private": "Peribadi · berfungsi di luar talian",
   "cap.machine.hint": "Minta untuk menjalankan pelayan pembangunan sesebuah laman, seperti npm run dev.",
-  "cap.machine.text": "Menjalankan arahan komputer pada peranti ini sendiri, dalam salah satu folder anda, dengan program dan pelayannya sendiri: pelayan pembangunan laman dipaparkan dalam pelayar. Setiap arahan ditanya dahulu, dan Ctrl+C dalam terminal anda menghentikan semuanya."
+  "cap.machine.text": "Menjalankan arahan komputer pada peranti ini sendiri, dalam salah satu folder anda, dengan program dan pelayannya sendiri: pelayan pembangunan laman dipaparkan dalam pelayar. Setiap arahan ditanya dahulu, dan Ctrl+C dalam terminal anda menghentikan semuanya.",
+  "cap.pictures.hint": "Minta sebuah gambar.",
+  "cap.pictures.text": "Gambar dan video pendek daripada penerangan, atau gambar anda yang diubah: oleh otak yang anda sambungkan, atau secara peribadi pada peranti ini. Sebelum video, anda ditanya dahulu kerana kosnya lebih tinggi."
 }

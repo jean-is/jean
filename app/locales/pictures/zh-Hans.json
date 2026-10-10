@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "图片",
+  "pictures.film": "视频",
+  "pictures.savePicture": "保存图片",
+  "pictures.saveFilm": "保存视频",
+  "pictures.device": "在这台设备上生成图片",
+  "pictures.deviceText": "在这里生成，私密、免费，离线也可以，使用 Stability AI 的 SD-Turbo，遵循其社区许可。",
+  "pictures.deviceAction": "下载一次（{size}）",
+  "pictures.deviceReady": "已就绪",
+  "pictures.deviceFailed": "下载中断了。请重试。",
+  "pictures.films": "视频",
+  "pictures.filmsText": "生成视频前不再先询问。",
+  "pictures.filmsAsk": "重新先询问"
+}

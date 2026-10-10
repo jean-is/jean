@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "תמונה",
+  "pictures.film": "סרטון",
+  "pictures.savePicture": "שמירת התמונה",
+  "pictures.saveFilm": "שמירת הסרטון",
+  "pictures.device": "תמונות במכשיר הזה",
+  "pictures.deviceText": "נוצרות כאן, באופן פרטי ובחינם, גם בלי אינטרנט, על ידי SD-Turbo של Stability AI, לפי רישיון הקהילה שלה.",
+  "pictures.deviceAction": "הורדה חד־פעמית ({size})",
+  "pictures.deviceReady": "מוכן",
+  "pictures.deviceFailed": "ההורדה נעצרה. נסו שוב.",
+  "pictures.films": "סרטונים",
+  "pictures.filmsText": "סרטונים נוצרים בלי לשאול קודם.",
+  "pictures.filmsAsk": "לשאול שוב קודם"
+}

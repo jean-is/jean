@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Sebuah gambar",
+  "pictures.film": "Sebuah video",
+  "pictures.savePicture": "Simpan gambar",
+  "pictures.saveFilm": "Simpan video",
+  "pictures.device": "Gambar di perangkat ini",
+  "pictures.deviceText": "Dibuat di sini, secara pribadi dan gratis, bahkan offline, oleh SD-Turbo dari Stability AI, di bawah lisensi komunitasnya.",
+  "pictures.deviceAction": "Unduh sekali ({size})",
+  "pictures.deviceReady": "Siap",
+  "pictures.deviceFailed": "Unduhan terhenti. Coba lagi.",
+  "pictures.films": "Video",
+  "pictures.filmsText": "Video dibuat tanpa bertanya dulu.",
+  "pictures.filmsAsk": "Tanyakan dulu lagi"
+}

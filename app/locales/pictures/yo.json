@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Àwòrán kan",
+  "pictures.film": "Fídíò kan",
+  "pictures.savePicture": "Fi àwòrán pamọ́",
+  "pictures.saveFilm": "Fi fídíò pamọ́",
+  "pictures.device": "Àwòrán lórí ẹ̀rọ yìí",
+  "pictures.deviceText": "A ń ṣe wọ́n níbí, ní ìkọ̀kọ̀ àti lọ́fẹ̀ẹ́, kódà láìsí íntánẹ́ẹ̀tì, pẹ̀lú SD-Turbo ti Stability AI, lábẹ́ ìwé-àṣẹ àwùjọ rẹ̀.",
+  "pictures.deviceAction": "Gbà á sílẹ̀ lẹ́ẹ̀kan ({size})",
+  "pictures.deviceReady": "Ó ti ṣe tán",
+  "pictures.deviceFailed": "Ìgbàsílẹ̀ náà dúró. Ẹ gbìyànjú lẹ́ẹ̀kan sí i.",
+  "pictures.films": "Fídíò",
+  "pictures.filmsText": "A ń ṣe fídíò láìbéèrè ṣáájú.",
+  "pictures.filmsAsk": "Ẹ tún béèrè ṣáájú"
+}

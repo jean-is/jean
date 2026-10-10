@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "یک تصویر",
+  "pictures.film": "یک ویدیو",
+  "pictures.savePicture": "ذخیرهٔ تصویر",
+  "pictures.saveFilm": "ذخیرهٔ ویدیو",
+  "pictures.device": "تصویرها روی این دستگاه",
+  "pictures.deviceText": "همین‌جا، خصوصی و رایگان، حتی آفلاین، با SD-Turbo از Stability AI و تحت مجوز اجتماعی آن ساخته می‌شوند.",
+  "pictures.deviceAction": "یک بار بارگیری ({size})",
+  "pictures.deviceReady": "آماده",
+  "pictures.deviceFailed": "بارگیری متوقف شد. دوباره امتحان کنید.",
+  "pictures.films": "ویدیوها",
+  "pictures.filmsText": "ویدیوها بدون پرسیدنِ پیشین ساخته می‌شوند.",
+  "pictures.filmsAsk": "دوباره اول بپرس"
+}

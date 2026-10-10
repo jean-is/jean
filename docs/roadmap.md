@@ -46,7 +46,8 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] OpenRouter's web search: where its annotations arrive in the stream (all at the end would hide the `[n]` marks behind the follow-ups)
 - [ ] Auto's tiers: the model ids exist, and the picker shows their prices
 - [ ] About this answer (D252) with Ollama, the device's brain, OpenRouter (a cost) and Anthropic (models.dev's prices, D255: do they match the bill, cache reads included?); in Firefox and real Safari, whose Resource Timing may leave out a failed request; a saved certificate checked by hand with `verify()`
-- [ ] Each provider of D136 with a real key; `models.image` with OpenAI and OpenRouter keys
+- [ ] Each provider of D136 with a real key
+- [ ] Pictures and films (D251) with real keys: pictures from OpenAI, Gemini and OpenRouter, changed from a shared photo; a film from OpenAI, Gemini's Veo and OpenRouter, started from a picture too (OpenAI wants one of the film's size), and a page closed while one is made; Ollama with an image model, on macOS
 - [ ] A real sign-in to each ready connection (Notion, Canva, Miro, Granola, ClickUp, Linear, Intercom, Wix, Attio, Fireflies), and a token renewal; a search through Exa, with no sign-in
 - [ ] Through a gateway (D214), a real sign-in to each service it reaches as it comes (Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Todoist: does each register Jean's address?), and with an app registered at Google, Slack, Figma, Asana, Zoom, HubSpot and Box
 - [ ] An organisation's own skills index for office work, served with CORS
@@ -59,6 +60,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Real Safari and Edge: the sandbox and Python; Safari's private window signing in to a connection (nothing kept across the redirect); `pagehide` stamping the visit; on an iPhone, full screen (only for video) and Pyodide's memory
 - [ ] On a weak laptop: Intuition without WebGPU (q4 on WebAssembly), Python's start-up (about 13 MB), long PDFs, search over a few hundred conversations, `find_in_files` over thousands of files, a Sync round every minute, a workspace of a few hundred MB
 - [ ] The browser with real sites in Chrome, Edge, Firefox and Safari (which refuse, whether their load event fires); the install steps against each browser's menus in every language
+- [ ] Pictures on this device (D251): the 2.5 GB download and a picture in Chrome and Edge on a Mac, a Windows laptop with a weak graphics chip, with WebNN's flag on and off, and in Safari 26's WebGPU; how long a picture takes, and the memory it holds
 - [ ] Settings › Computer in Firefox and real Safari: the cores each reports, and the memory after a large pandas run
 - [ ] Folders in Chrome and Edge: the prompt at the first message, "Allow on every visit", a synced folder whose files change while Jean works; a handle kept in a real Incognito window (D152's mark)
 - [ ] Made files and changed Word documents in Word, Excel, Numbers, Google Docs and LibreOffice on Windows (a passage over several runs takes the first one's formatting)

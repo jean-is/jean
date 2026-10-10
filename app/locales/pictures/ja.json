@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "画像",
+  "pictures.film": "動画",
+  "pictures.savePicture": "画像を保存",
+  "pictures.saveFilm": "動画を保存",
+  "pictures.device": "この端末で画像",
+  "pictures.deviceText": "ここで、非公開・無料・オフラインでも作成します。Stability AI の SD-Turbo を、そのコミュニティライセンスのもとで使います。",
+  "pictures.deviceAction": "一度だけダウンロード（{size}）",
+  "pictures.deviceReady": "準備完了",
+  "pictures.deviceFailed": "ダウンロードが止まりました。もう一度お試しください。",
+  "pictures.films": "動画",
+  "pictures.filmsText": "動画は先に確認せずに作成します。",
+  "pictures.filmsAsk": "また先に確認する"
+}

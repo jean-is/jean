@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "একটি ছবি",
+  "pictures.film": "একটি ভিডিও",
+  "pictures.savePicture": "ছবি সংরক্ষণ করুন",
+  "pictures.saveFilm": "ভিডিও সংরক্ষণ করুন",
+  "pictures.device": "এই ডিভাইসে ছবি",
+  "pictures.deviceText": "এখানেই, গোপনে ও বিনামূল্যে, অফলাইনেও, Stability AI-এর SD-Turbo দিয়ে, এর কমিউনিটি লাইসেন্সের অধীনে তৈরি হয়।",
+  "pictures.deviceAction": "একবার ডাউনলোড করুন ({size})",
+  "pictures.deviceReady": "প্রস্তুত",
+  "pictures.deviceFailed": "ডাউনলোড থেমে গেছে। আবার চেষ্টা করুন।",
+  "pictures.films": "ভিডিও",
+  "pictures.filmsText": "ভিডিও আগে জিজ্ঞেস না করেই তৈরি হয়।",
+  "pictures.filmsAsk": "আবার আগে জিজ্ঞেস করুন"
+}

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Картинка",
+  "pictures.film": "Видео",
+  "pictures.savePicture": "Сохранить картинку",
+  "pictures.saveFilm": "Сохранить видео",
+  "pictures.device": "Картинки на этом устройстве",
+  "pictures.deviceText": "Создаются здесь, приватно и бесплатно, даже без интернета, с помощью SD-Turbo от Stability AI по её общественной лицензии.",
+  "pictures.deviceAction": "Скачать один раз ({size})",
+  "pictures.deviceReady": "Готово",
+  "pictures.deviceFailed": "Скачивание прервалось. Попробуйте снова.",
+  "pictures.films": "Видео",
+  "pictures.filmsText": "Видео создаются без вопроса заранее.",
+  "pictures.filmsAsk": "Снова спрашивать"
+}

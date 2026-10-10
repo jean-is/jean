@@ -291,5 +291,7 @@
   "brain.device.ready": "El cerebro de este dispositivo está listo",
   "brain.device.private": "Privado · funciona sin conexión",
   "cap.machine.hint": "Pide ejecutar el servidor de desarrollo de un sitio, como npm run dev.",
-  "cap.machine.text": "Ejecuta los comandos de la computadora en este mismo dispositivo, en una de tus carpetas, con sus propios programas y servidores: el servidor de desarrollo de un sitio se ve en el navegador. Cada comando se pregunta antes, y Ctrl+C en tu terminal lo detiene todo."
+  "cap.machine.text": "Ejecuta los comandos de la computadora en este mismo dispositivo, en una de tus carpetas, con sus propios programas y servidores: el servidor de desarrollo de un sitio se ve en el navegador. Cada comando se pregunta antes, y Ctrl+C en tu terminal lo detiene todo.",
+  "cap.pictures.hint": "Pide una imagen.",
+  "cap.pictures.text": "Imágenes y vídeos cortos a partir de una descripción, o una imagen tuya cambiada: con los cerebros que conectas, o en privado en este dispositivo. Antes de un vídeo se te pregunta, porque cuesta más."
 }

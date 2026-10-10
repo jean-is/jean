@@ -3,6 +3,7 @@
 // network. Both files come from the weights host at a pinned revision, are checked against their
 // SHA-256, and are kept with the other weights in Transformers.js's cache. The engine's import and
 // export names belong to this build: another build means new names here.
+import { download } from '../../ui/weights.js'
 
 /** @type {Array<[string, string, number]>} path on the weights host, SHA-256, bytes */
 const FILES = [
@@ -55,22 +56,6 @@ export async function whistle(host, progress) {
     if (words < 0) throw new Error(text(engine.s()))
     return String(JSON.parse(text(out)).text ?? '').trim()
   }).filter(Boolean).join(' ')
-}
-
-/** A file's bytes, from the cache, or else downloaded and checked. @param {string} url @param {string} hash @param {(bytes: number) => void} progress */
-async function download(url, hash, progress) {
-  const cache = await caches.open('transformers-cache')
-  const kept = await cache.match(url)
-  if (kept) return kept.arrayBuffer()
-  const response = await fetch(url)
-  if (!response.ok || !response.body) throw new Error(`${url}: HTTP ${response.status}`)
-  let bytes = 0
-  const counted = new TransformStream({ transform: (chunk, next) => (progress((bytes += chunk.length)), next.enqueue(chunk)) })
-  const data = await new Response(response.body.pipeThrough(counted)).arrayBuffer()
-  const sum = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', data)), (byte) => byte.toString(16).padStart(2, '0')).join('')
-  if (sum !== hash) throw new Error(`${url}: not the expected file`)
-  await cache.put(url, new Response(data))
-  return data
 }
 
 /**

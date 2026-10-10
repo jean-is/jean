@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Hoto",
+  "pictures.film": "Bidiyo",
+  "pictures.savePicture": "Adana hoton",
+  "pictures.saveFilm": "Adana bidiyon",
+  "pictures.device": "Hotuna a wannan na'urar",
+  "pictures.deviceText": "Ana ƙirƙira su a nan, a sirri kuma kyauta, har ma ba tare da intanet ba, ta SD-Turbo na Stability AI, ƙarƙashin lasisin al'ummarsa.",
+  "pictures.deviceAction": "Sauke sau ɗaya ({size})",
+  "pictures.deviceReady": "A shirye",
+  "pictures.deviceFailed": "Saukewar ta tsaya. Sake gwadawa.",
+  "pictures.films": "Bidiyo",
+  "pictures.filmsText": "Ana ƙirƙirar bidiyo ba tare da tambaya da farko ba.",
+  "pictures.filmsAsk": "Sake tambaya da farko"
+}

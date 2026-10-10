@@ -18,7 +18,7 @@ import { host } from './host.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
 
 /** What the brain may offer, described for it in English. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -32,6 +32,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   flows: 'the steps of a task the user repeats, drawn beside the conversation, which they see, change and run again by hand or on a schedule',
   search: 'searching the web, when a question needs current or specific facts',
   browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
+  pictures: 'making pictures and short films the user asks for, or changing a picture, with their brain\'s provider or on this device',
   machine: "running your commands on the user's own computer instead of the sandbox, in a folder of theirs, with its programs and ports, so a site's dev server (npm run dev) serves and shows in the browser; they paste a line in a terminal there",
   connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
   helpers: 'helpers that do the independent parts of a large task at the same time',
@@ -128,6 +129,7 @@ export async function begin(id) {
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()
   if (id === 'machine') (await import('../caps/machine/machine.js')).show()
+  if (id === 'pictures' && !(await (await import('../caps/pictures/pictures.js')).ready())) (await import('./dialogs.js')).openSettings('brains')
   // A folder to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
   if (id === 'folders' || id === 'sync') {
     const { choose } = await (id === 'sync' ? import('../caps/sync/sync.js') : import('../caps/folders/folders.js'))

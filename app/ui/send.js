@@ -124,22 +124,26 @@ function queue(decision) {
 /** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @param {AbortSignal} [signal] @returns {Promise<Answer[] | null>} */
 export const askUser = (questions, from, signal) => queue({ questions, from, conversation: conversationOf(signal)?.path })
 
+/** What an approval is kept to, when its tool keeps "Always allow" itself. */
+const SCOPES = ['folder', 'site', 'projects', 'film']
+
 /**
  * An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then
  * follow. In the user's folder, "Always allow" holds for that folder only, which its tool keeps (D141);
- * for a site the computer reaches, for that site only (D162); for a meeting, for its projects only (D224).
+ * for a site the computer reaches, for that site only (D162); for a meeting, for its projects only (D224);
+ * for a film, for films (D251).
  * @param {ToolCallInfo} toolCall @param {string} conversation
  */
 async function approve(toolCall, conversation) {
   const option = /** @type {PermissionOption} */ (await queue({ toolCall, conversation }))
-  const scope = toolCall._meta?.folder ? 'folder' : toolCall._meta?.site ? 'site' : toolCall._meta?.projects ? 'projects' : ''
+  const scope = SCOPES.find((key) => toolCall._meta?.[key]) ?? ''
   if (scope && option === 'allow_always') {
     for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.name === toolCall.name && other.toolCall._meta?.[scope] === toolCall._meta?.[scope]) other.resolve('allow_once')
   }
   const rule = scope ? null : ruleFromPermission(option)
   if (rule && toolCall.kind) {
     await setRule(toolCall.kind, rule)
-    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind && !other.toolCall._meta?.folder && !other.toolCall._meta?.site && !other.toolCall._meta?.projects) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')
+    for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind && !SCOPES.some((key) => other.toolCall._meta?.[key])) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')
   }
   return option
 }

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "صورة",
+  "pictures.film": "فيديو",
+  "pictures.savePicture": "حفظ الصورة",
+  "pictures.saveFilm": "حفظ الفيديو",
+  "pictures.device": "الصور على هذا الجهاز",
+  "pictures.deviceText": "تُنشأ هنا بخصوصية ومجانًا، حتى دون اتصال، بواسطة SD-Turbo من Stability AI وفق رخصتها المجتمعية.",
+  "pictures.deviceAction": "تنزيل لمرة واحدة ({size})",
+  "pictures.deviceReady": "جاهز",
+  "pictures.deviceFailed": "توقف التنزيل. حاول مرة أخرى.",
+  "pictures.films": "الفيديو",
+  "pictures.filmsText": "تُنشأ مقاطع الفيديو دون الاستئذان أولًا.",
+  "pictures.filmsAsk": "الاستئذان أولًا من جديد"
+}
