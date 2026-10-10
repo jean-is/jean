@@ -1,0 +1,19 @@
+{
+  "receipt.about": "এই উত্তর সম্পর্কে",
+  "receipt.local": "এই ডিভাইসেই করা হয়েছে",
+  "receipt.local.text": "লেখার সময় যা পাঠানো হয়েছে তা আপনার ব্রাউজার রেকর্ড করেছে: এই ডিভাইস থেকে কিছুই বাইরে যায়নি।",
+  "receipt.out": "এই ডিভাইসের বাইরে পাঠানো হয়েছে",
+  "receipt.unknown": "প্রত্যয়িত নয়",
+  "receipt.unknown.text": "লেখার সময় যা পাঠানো হয়েছে, তার ব্রাউজার-রেকর্ড রাখা হয়নি।",
+  "receipt.time": "সময়",
+  "receipt.cost": "খরচ",
+  "receipt.free": "বিনামূল্যে",
+  "receipt.costAbout": "প্রায় {cost}",
+  "receipt.costUnknown": "জানা নেই",
+  "receipt.by": "উত্তর দিয়েছে",
+  "receipt.here": "এই ডিভাইসে",
+  "receipt.cloud": "ক্লাউডে",
+  "receipt.sentTo": "যেখানে পাঠানো হয়েছে",
+  "receipt.save": "সার্টিফিকেট সংরক্ষণ করুন",
+  "receipt.file": "সার্টিফিকেট {date}"
+}

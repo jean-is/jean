@@ -1,0 +1,19 @@
+{
+  "receipt.about": "Tentang jawaban ini",
+  "receipt.local": "Dikerjakan di perangkat ini",
+  "receipt.local.text": "Browser Anda mencatat apa yang dikirim saat jawaban ini ditulis: tidak ada yang keluar dari perangkat ini.",
+  "receipt.out": "Dikirim ke luar perangkat ini",
+  "receipt.unknown": "Tidak tersertifikasi",
+  "receipt.unknown.text": "Catatan browser Anda tentang apa yang dikirim saat jawaban ini ditulis tidak disimpan.",
+  "receipt.time": "Waktu",
+  "receipt.cost": "Biaya",
+  "receipt.free": "Gratis",
+  "receipt.costAbout": "sekitar {cost}",
+  "receipt.costUnknown": "Tidak diketahui",
+  "receipt.by": "Dijawab oleh",
+  "receipt.here": "di perangkat ini",
+  "receipt.cloud": "di cloud",
+  "receipt.sentTo": "Dikirim ke",
+  "receipt.save": "Simpan sertifikat",
+  "receipt.file": "Sertifikat {date}"
+}

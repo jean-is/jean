@@ -1,0 +1,19 @@
+{
+  "receipt.about": "Về câu trả lời này",
+  "receipt.local": "Thực hiện trên thiết bị này",
+  "receipt.local.text": "Trình duyệt của bạn đã ghi lại những gì được gửi đi trong lúc viết: không có gì rời khỏi thiết bị này.",
+  "receipt.out": "Đã gửi ra ngoài thiết bị này",
+  "receipt.unknown": "Chưa được chứng nhận",
+  "receipt.unknown.text": "Bản ghi của trình duyệt về những gì được gửi đi trong lúc viết không được giữ lại.",
+  "receipt.time": "Thời gian",
+  "receipt.cost": "Chi phí",
+  "receipt.free": "Miễn phí",
+  "receipt.costAbout": "khoảng {cost}",
+  "receipt.costUnknown": "Không rõ",
+  "receipt.by": "Trả lời bởi",
+  "receipt.here": "trên thiết bị này",
+  "receipt.cloud": "trên đám mây",
+  "receipt.sentTo": "Đã gửi đến",
+  "receipt.save": "Lưu chứng nhận",
+  "receipt.file": "Chứng nhận {date}"
+}

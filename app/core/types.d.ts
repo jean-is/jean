@@ -60,7 +60,7 @@ export type StreamEvent =
   | { type: 'done', stopReason: StopReason, usage?: Usage, message: AssistantMessage }
 
 /** pricing in USD per token when known; input and output: what it can read and make (OpenRouter), e.g. ['text', 'image']. */
-export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number }, input?: string[], output?: string[] }
+export type ModelInfo = { id: string, name?: string, contextLength?: number, pricing?: { prompt?: number, completion?: number, cacheRead?: number }, input?: string[], output?: string[] }
 
 // Requests made by llm.js and anthropic.js.
 export type LLMErrorCode = 'auth' | 'credits' | 'rate_limit' | 'network' | 'cors_or_offline' | 'bad_request' | 'not_found' | 'server' | 'aborted' | 'bad_response' | 'refusal' | 'too_long'

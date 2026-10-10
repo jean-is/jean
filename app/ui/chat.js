@@ -165,7 +165,7 @@ function turnView(turn, live, files, upTo, last, sources) {
         ${!streaming && read.length ? readView(read) : nothing}
         ${!streaming && entries.some((entry) => entry._meta?.sources) ? sourcesView(entries.flatMap((entry) => entry._meta?.sources ?? [])) : nothing}
         ${!streaming && text ? html`<app-check at=${turn.at}></app-check>` : nothing}
-        ${!streaming && text ? actions(turn.at, text, turn.end ?? turn.at) : nothing}
+        ${!streaming && text ? actions(turn, text) : nothing}
       </article>` : nothing}
     ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
   </li>`
@@ -447,17 +447,19 @@ function requestActions({ text, at, upTo }, answered) {
     <button class="icon-button subtle" aria-label=${t('action.fork')} @click=${() => fork(upTo)}>${icons.fork}</button>` : nothing}</div>`
 }
 
-/** @param {string} id @param {string} text @param {string} at when it was written */
-function actions(id, text, at) {
-  const isSpeaking = speaking.value === id
+/** @param {Turn} turn @param {string} text */
+function actions(turn, text) {
+  const isSpeaking = speaking.value === turn.at
   // Copy and CSV belong to "Things Jean made", which loads with the first answer.
   unlock('made')
+  unlock('receipt')
   return html`<div class="msg-actions">
     <app-made .source=${text}></app-made>
     ${canSpeak() ? html`<button class="icon-button subtle ${isSpeaking ? 'is-active' : ''}" aria-pressed=${isSpeaking ? 'true' : 'false'}
       aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
-      @click=${() => toggleSpeech(id, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
-    ${when(at)}
+      @click=${() => toggleSpeech(turn.at, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
+    <app-receipt .turn=${turn} .text=${text}></app-receipt>
+    ${when(turn.end ?? turn.at)}
   </div>`
 }
 

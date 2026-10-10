@@ -45,6 +45,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Anthropic: cache reads and warming (`cache_read_input_tokens` on the second question); its own web search (chips, a second question replaying the results, `pause_turn`)
 - [ ] OpenRouter's web search: where its annotations arrive in the stream (all at the end would hide the `[n]` marks behind the follow-ups)
 - [ ] Auto's tiers: the model ids exist, and the picker shows their prices
+- [ ] About this answer (D252) with Ollama, the device's brain, OpenRouter (a cost) and Anthropic (models.dev's prices, D255: do they match the bill, cache reads included?); in Firefox and real Safari, whose Resource Timing may leave out a failed request; a saved certificate checked by hand with `verify()`
 - [ ] Each provider of D136 with a real key; `models.image` with OpenAI and OpenRouter keys
 - [ ] A real sign-in to each ready connection (Notion, Canva, Miro, Granola, ClickUp, Linear, Intercom, Wix, Attio, Fireflies), and a token renewal; a search through Exa, with no sign-in
 - [ ] Through a gateway (D214), a real sign-in to each service it reaches as it comes (Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Todoist: does each register Jean's address?), and with an app registered at Google, Slack, Figma, Asana, Zoom, HubSpot and Box

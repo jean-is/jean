@@ -46,6 +46,7 @@ Jean starts as a single box. Everything above is offered when you need it, like 
   - **Your own key** (Anthropic, OpenAI or any OpenAI-compatible service), or a **local server** such as Ollama or LM Studio.
   - **Your Claude plan** (Pro or Max), through Claude Code installed and signed in on your computer, which Jean reaches through This computer.
   - **Auto** picks a brain for each request. Once Intuition is on, that is the cheapest brain that can do the job, and the device's brain for personal content. A switch keeps everything off the cloud.
+- **Each answer says where it was done.** A button under it shows how long it took, what it cost, which brains answered, and whether anything left your device while it was written, as your browser recorded it. Its certificate, sealed by your device and holding none of your words, saves as a file for whoever has to check.
 - **Code a brain writes never runs in the page.** It runs in a sandboxed worker with an opaque origin and no network. The page itself has a strict Content Security Policy with Trusted Types, and never uses `innerHTML` or `eval`.
 
 ## Small on purpose

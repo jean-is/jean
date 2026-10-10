@@ -1,0 +1,19 @@
+{
+  "receipt.about": "Informazioni su questa risposta",
+  "receipt.local": "Fatta su questo dispositivo",
+  "receipt.local.text": "Il tuo browser ha registrato ciò che è stato inviato mentre veniva scritta: niente ha lasciato questo dispositivo.",
+  "receipt.out": "Inviata fuori da questo dispositivo",
+  "receipt.unknown": "Non certificata",
+  "receipt.unknown.text": "La registrazione del tuo browser di ciò che è stato inviato mentre veniva scritta non è stata conservata.",
+  "receipt.time": "Tempo",
+  "receipt.cost": "Costo",
+  "receipt.free": "Gratis",
+  "receipt.costAbout": "circa {cost}",
+  "receipt.costUnknown": "Non noto",
+  "receipt.by": "Risposto da",
+  "receipt.here": "su questo dispositivo",
+  "receipt.cloud": "nel cloud",
+  "receipt.sentTo": "Inviato a",
+  "receipt.save": "Salva il certificato",
+  "receipt.file": "Certificato {date}"
+}

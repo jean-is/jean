@@ -1,0 +1,19 @@
+{
+  "receipt.about": "Tentang jawapan ini",
+  "receipt.local": "Dibuat pada peranti ini",
+  "receipt.local.text": "Pelayar anda merekodkan apa yang dihantar semasa jawapan ini ditulis: tiada apa-apa yang keluar dari peranti ini.",
+  "receipt.out": "Dihantar ke luar peranti ini",
+  "receipt.unknown": "Tidak diperakui",
+  "receipt.unknown.text": "Rekod pelayar anda tentang apa yang dihantar semasa jawapan ini ditulis tidak disimpan.",
+  "receipt.time": "Masa",
+  "receipt.cost": "Kos",
+  "receipt.free": "Percuma",
+  "receipt.costAbout": "kira-kira {cost}",
+  "receipt.costUnknown": "Tidak diketahui",
+  "receipt.by": "Dijawab oleh",
+  "receipt.here": "pada peranti ini",
+  "receipt.cloud": "di awan",
+  "receipt.sentTo": "Dihantar ke",
+  "receipt.save": "Simpan sijil",
+  "receipt.file": "Sijil {date}"
+}

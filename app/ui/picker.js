@@ -3,6 +3,7 @@
 // (D194), then "never send to the cloud" while one is in the cloud, and all brains. One line each,
 // an icon and a name; the real name and a plain cost show on hover.
 import { html, nothing } from 'lit-html'
+import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, effective, activeBrain, brainsHere, brainLabel, setBrainMode, loadModels } from './state.js'
 import { useBrain } from './brains.js'
@@ -10,6 +11,7 @@ import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
+import { priceOf } from './prices.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
@@ -28,9 +30,9 @@ const short = (model) => model.slice(model.lastIndexOf('/') + 1)
 /** @param {BrainConfig} brain @param {string} model */
 const pick = (brain, model) => setBrainMode({ auto: false }).then(() => useBrain(brain.id, model))
 
-/** "about $0.003 per answer", from the provider's own prices. @param {import('../core/types.js').ModelInfo | undefined} info */
-function cost(info) {
-  const { prompt, completion } = info?.pricing ?? {}
+/** "about $0.003 per answer", from the provider's own prices, or models.dev's (D255). @param {import('../core/types.js').ModelInfo['pricing']} pricing */
+function cost(pricing) {
+  const { prompt, completion } = pricing ?? {}
   if (prompt === undefined || completion === undefined || Number.isNaN(prompt + completion)) return ''
   const amount = new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(READ * prompt + WRITTEN * completion)
   return t('picker.cost', { cost: amount })
@@ -44,6 +46,9 @@ const option = (icon, label, behind, selected, choose) => html`<button type="but
   title=${behind || nothing} aria-current=${selected ? 'true' : 'false'} @click=${choose}>${icon}<span><bdi>${label}</bdi></span>${selected ? icons.check : nothing}</button>`
 
 class Picker extends Element {
+  /** Prices are read once the menu opens, never before (D255). */
+  #open = signal(false)
+
   render() {
     const { settings } = effective.value
     const active = activeBrain.value
@@ -54,10 +59,10 @@ class Picker extends Element {
     const offered = tiers.filter((model) => models.some((info) => info.id === model))
     const manual = (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => !settings.auto && active?.id === brain.id && active.model === model
     return html`<div id="brain-menu" class="menu brain-menu" popover
-      @toggle=${(/** @type {ToggleEvent} */ e) => e.newState === 'open' && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
+      @toggle=${(/** @type {ToggleEvent} */ e) => (this.#open.value = e.newState === 'open') && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
       ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => setBrainMode({ auto: true }))}
       ${remote ? offered.map((model) => option(TIER_ICONS[tiers.indexOf(model)], t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`),
-        [short(model), cost(models.find((info) => info.id === model))].filter(Boolean).join(' · '), manual(remote, model), () => pick(remote, model))) : nothing}
+        [short(model), this.#open.value && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · '), manual(remote, model), () => pick(remote, model))) : nothing}
       ${brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => brain.api === 'device'
         ? option(icons.chip, t('brain.device.title'), t('brain.device.private'), manual(brain, brain.model), () => pick(brain, brain.model))
         : option(isLocal(brain) ? icons.computer : icons.globe, short(brain.model), brainLabel(brain), manual(brain, brain.model), () => pick(brain, brain.model)))}

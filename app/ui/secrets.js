@@ -7,30 +7,38 @@ import { readJSON, writeJSON } from '../core/fs.js'
 const FILE = '.secrets/keys.json'
 /** @type {Map<string, string>} used when IndexedDB is unavailable */
 const memory = new Map()
-/** @type {Promise<CryptoKey | null> | null} */
-let keyPromise = null
+/** @type {Map<string, Promise<any>>} */
+const keys = new Map()
 
-function masterKey() {
-  keyPromise ??= new Promise((resolve) => {
+/**
+ * A key this device keeps in IndexedDB, made the first time it is asked for, and non-extractable
+ * so it never leaves: the secrets' own, and the one that seals certificates (D252). Null where
+ * IndexedDB is unavailable. @template T @param {string} name @param {() => Promise<T>} make @returns {Promise<T | null>}
+ */
+export function deviceKey(name, make) {
+  if (!keys.has(name)) keys.set(name, new Promise((resolve) => {
     if (!globalThis.indexedDB) return resolve(null)
     const request = indexedDB.open('app-keys', 1)
     request.onupgradeneeded = () => request.result.createObjectStore('keys')
     request.onerror = () => resolve(null)
     request.onsuccess = () => {
       const db = request.result
-      const get = db.transaction('keys').objectStore('keys').get('main')
+      const get = db.transaction('keys').objectStore('keys').get(name)
       get.onerror = () => resolve(null)
       get.onsuccess = async () => {
         if (get.result) return resolve(get.result)
-        const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt'])
-        const put = db.transaction('keys', 'readwrite').objectStore('keys').put(key, 'main')
+        const key = await make()
+        const put = db.transaction('keys', 'readwrite').objectStore('keys').put(key, name)
         put.onsuccess = () => resolve(key)
         put.onerror = () => resolve(null)
       }
     }
-  })
-  return keyPromise
+  }))
+  return /** @type {Promise<T | null>} */ (keys.get(name))
 }
+
+/** @returns {Promise<CryptoKey | null>} */
+const masterKey = () => deviceKey('main', () => crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']))
 
 /** @param {FS} fs @param {string} id @returns {Promise<string | null>} */
 export async function getSecret(fs, id) {

@@ -1,0 +1,19 @@
+{
+  "receipt.about": "اس جواب کے بارے میں",
+  "receipt.local": "اسی آلے پر کیا گیا",
+  "receipt.local.text": "لکھتے وقت جو بھیجا گیا وہ آپ کے براؤزر نے درج کیا: اس آلے سے کچھ باہر نہیں گیا۔",
+  "receipt.out": "اس آلے سے باہر بھیجا گیا",
+  "receipt.unknown": "تصدیق شدہ نہیں",
+  "receipt.unknown.text": "لکھتے وقت جو بھیجا گیا اس کا آپ کے براؤزر کا ریکارڈ محفوظ نہیں رکھا گیا۔",
+  "receipt.time": "وقت",
+  "receipt.cost": "لاگت",
+  "receipt.free": "مفت",
+  "receipt.costAbout": "تقریباً {cost}",
+  "receipt.costUnknown": "معلوم نہیں",
+  "receipt.by": "جواب دینے والا",
+  "receipt.here": "اس آلے پر",
+  "receipt.cloud": "کلاؤڈ میں",
+  "receipt.sentTo": "بھیجا گیا",
+  "receipt.save": "سرٹیفکیٹ محفوظ کریں",
+  "receipt.file": "سرٹیفکیٹ {date}"
+}
