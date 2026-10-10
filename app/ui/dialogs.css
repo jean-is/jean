@@ -85,17 +85,20 @@ div.setting { margin-block-end: 0.75rem; }
 .rules { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
 /* A list in Settings (D134): the brains, the services, the skills, the routines, what Jean noticed.
    Rows in one rounded group, a hairline between them: an icon, what it is and a line about it, then
-   its controls; a row that opens shows the rest under it. */
-.list { display: grid; margin: 0 0 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 1rem; list-style: none; }
+   its controls; a row that opens shows the rest under it. Its corners inside its border, at its start
+   and its end, are said for what can't inherit them: a look that reshapes the list says its own. */
+.list { display: grid; margin: 0 0 0.75rem; padding: 0; border: 1px solid var(--line); border-radius: 1rem; list-style: none; --corner-start: calc(1rem - 1px); --corner-end: calc(1rem - 1px); }
 .list > * { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; min-inline-size: 0; padding: 0.65rem 0.9rem; }
 .list > * + * { border-block-start: 1px solid var(--line); }
 .list > :first-child { border-start-start-radius: inherit; border-start-end-radius: inherit; }
 .list > :last-child { border-end-start-radius: inherit; border-end-end-radius: inherit; }
 .list > :has(> details) { display: block; padding: 0; }
-.list details { border-radius: inherit; }
 .item, .list summary { flex: 1 1 14rem; display: flex; align-items: center; gap: 0.75rem; min-inline-size: 0; color: var(--ink); font-size: 0.95rem; }
 label.item, .list summary { cursor: pointer; }
-.list summary { padding: 0.65rem 0.9rem; border-radius: inherit; list-style: none; }
+.list summary { padding: 0.65rem 0.9rem; border-radius: 0; list-style: none; }
+/* A summary is slotted in its details' own tree, so it would inherit no corners: the list's are set. */
+.list > :first-child > details > summary { border-start-start-radius: var(--corner-start); border-start-end-radius: var(--corner-start); }
+.list > :last-child > details:not([open]) > summary { border-end-start-radius: var(--corner-end); border-end-end-radius: var(--corner-end); }
 .list summary::-webkit-details-marker { display: none; }
 .list summary:hover { background: var(--line); }
 .list summary:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
