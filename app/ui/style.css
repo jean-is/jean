@@ -427,10 +427,6 @@ a.cite:is(:hover, :focus-visible) .cite-tip { display: grid; }
 .cite-tip img { inline-size: 1rem; block-size: 1rem; }
 .cite-tip span { grid-column: 1 / -1; color: var(--ink-soft); font-weight: 400; }
 @supports not (position-area: block-start) { a.cite { position: relative; } .cite-tip { position: absolute; inset-block-end: 100%; inset-inline-start: 0; } }
-/* A picture Jean made (codemode's models.image), with a button to save it. */
-app-image figure { position: relative; inline-size: fit-content; margin: 0; }
-app-image img { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }
-app-image .icon-button { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; background: var(--glass); }
 
 /* ─── Follow-ups ────────────────────────────────────────────────────────── */
 

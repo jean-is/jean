@@ -170,8 +170,8 @@ export const openingOf = (records) => requestsOf(records)[0] ?? ''
 export const routineOf = (records) => records.flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'routine' ? [update.data] : []))[0]
 
 /**
- * A file Jean made or changed: Things Jean made's (`_meta.file`), or one the computer kept
- * (`_meta.files`), with its version in the conversation (D164).
+ * A file Jean made or changed: Things Jean made's (`_meta.file`), a picture or a film (`_meta.picture`,
+ * D251), or one the computer kept (`_meta.files`), with its version in the conversation (D164).
  * @typedef {{ uri: string, name: string, mimeType: string, size: number, version?: number }} MadeFile
  */
 
@@ -189,7 +189,7 @@ export const callsIn = (records, steps = []) => [
 export const latestOf = (records, uri) => records.flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'cells' && update.data.was === uri ? [update.data.uri] : [])).at(-1) ?? uri
 
 /** Every file the calls made, in order. @param {ToolCallInfo[]} calls @returns {MadeFile[]} */
-export const filesMade = (calls) => calls.flatMap((call) => [call._meta?.file, ...(call._meta?.files ?? [])].filter(Boolean))
+export const filesMade = (calls) => calls.flatMap((call) => [call._meta?.file, call._meta?.picture, ...(call._meta?.files ?? [])].filter(Boolean))
 
 /**
  * A file's versions in a conversation, oldest first, by its name, numbered: each one made, a

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "ምስል",
+  "pictures.film": "ቪዲዮ",
+  "pictures.savePicture": "ምስሉን ያስቀምጡ",
+  "pictures.saveFilm": "ቪዲዮውን ያስቀምጡ",
+  "pictures.device": "በዚህ መሣሪያ ላይ ምስሎች",
+  "pictures.deviceText": "እዚሁ፣ በግል እና በነፃ፣ ያለ ኢንተርኔትም፣ በStability AI SD-Turbo፣ በማኅበረሰብ ፈቃዱ ስር ይሠራሉ።",
+  "pictures.deviceAction": "አንድ ጊዜ ያውርዱ ({size})",
+  "pictures.deviceReady": "ዝግጁ",
+  "pictures.deviceFailed": "ማውረዱ ቆሟል። እንደገና ይሞክሩ።",
+  "pictures.films": "ቪዲዮዎች",
+  "pictures.filmsText": "ቪዲዮዎች አስቀድሞ ሳይጠየቁ ይሠራሉ።",
+  "pictures.filmsAsk": "እንደገና መጀመሪያ ጠይቅ"
+}

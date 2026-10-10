@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Uma imagem",
+  "pictures.film": "Um vídeo",
+  "pictures.savePicture": "Guardar a imagem",
+  "pictures.saveFilm": "Guardar o vídeo",
+  "pictures.device": "Imagens neste dispositivo",
+  "pictures.deviceText": "Criadas aqui, em privado e de graça, mesmo sem ligação, pelo SD-Turbo da Stability AI, sob a sua licença comunitária.",
+  "pictures.deviceAction": "Transferir uma vez ({size})",
+  "pictures.deviceReady": "Pronto",
+  "pictures.deviceFailed": "A transferência parou. Tenta de novo.",
+  "pictures.films": "Vídeos",
+  "pictures.filmsText": "Os vídeos são criados sem te perguntar antes.",
+  "pictures.filmsAsk": "Voltar a perguntar"
+}

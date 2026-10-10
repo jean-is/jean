@@ -288,5 +288,7 @@
   "brain.device.ready": "Ƙwaƙwalwar wannan na'urar ta shirya",
   "brain.device.private": "Na sirri · yana aiki ba tare da intanet ba",
   "cap.machine.hint": "Nemi a gudanar da sabar haɓaka ta wani shafi, kamar npm run dev.",
-  "cap.machine.text": "Yana gudanar da umarnin kwamfutar a wannan na'urar kanta, a ɗaya daga cikin fayilolin ajiyarka, da shirye-shiryenta da sabobinta: sabar haɓaka ta shafi tana bayyana a mai lilo. Ana tambaya kafin kowane umarni, kuma Ctrl+C a tashar umarninka yana dakatar da komai."
+  "cap.machine.text": "Yana gudanar da umarnin kwamfutar a wannan na'urar kanta, a ɗaya daga cikin fayilolin ajiyarka, da shirye-shiryenta da sabobinta: sabar haɓaka ta shafi tana bayyana a mai lilo. Ana tambaya kafin kowane umarni, kuma Ctrl+C a tashar umarninka yana dakatar da komai.",
+  "cap.pictures.hint": "Nemi hoto.",
+  "cap.pictures.text": "Hotuna da gajerun bidiyo daga bayani, ko hotonka da aka sauya: ta ƙwaƙwalwar da ka haɗa, ko a sirri a wannan na'urar. Kafin bidiyo za a tambaye ka, saboda ya fi tsada."
 }

@@ -288,5 +288,7 @@
   "brain.device.ready": "Het brein op dit apparaat is klaar",
   "brain.device.private": "Privé · werkt offline",
   "cap.machine.hint": "Vraag om de ontwikkelserver van een site te starten, zoals npm run dev.",
-  "cap.machine.text": "Voert de opdrachten van de computer uit op dit apparaat zelf, in een van je mappen, met zijn eigen programma’s en servers: de ontwikkelserver van een site verschijnt in de browser. Elke opdracht wordt eerst gevraagd, en Ctrl+C in je terminal stopt alles."
+  "cap.machine.text": "Voert de opdrachten van de computer uit op dit apparaat zelf, in een van je mappen, met zijn eigen programma’s en servers: de ontwikkelserver van een site verschijnt in de browser. Elke opdracht wordt eerst gevraagd, en Ctrl+C in je terminal stopt alles.",
+  "cap.pictures.hint": "Vraag om een afbeelding.",
+  "cap.pictures.text": "Afbeeldingen en korte video’s van een beschrijving, of een afbeelding van jou veranderd: door de breinen die je koppelt, of privé op dit apparaat. Voor een video wordt het je eerst gevraagd, want die kost meer."
 }

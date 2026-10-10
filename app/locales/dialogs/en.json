@@ -288,5 +288,7 @@
   "brain.device.ready": "The brain on this device is ready",
   "brain.device.private": "Private · works offline",
   "cap.machine.hint": "Ask to run a site’s dev server, such as npm run dev.",
-  "cap.machine.text": "Runs the computer’s commands on this device itself, in a folder of yours, with its own programs and servers: a site’s dev server shows in the browser. Each command is asked first, and Ctrl+C in your terminal stops it all."
+  "cap.machine.text": "Runs the computer’s commands on this device itself, in a folder of yours, with its own programs and servers: a site’s dev server shows in the browser. Each command is asked first, and Ctrl+C in your terminal stops it all.",
+  "cap.pictures.hint": "Ask for a picture.",
+  "cap.pictures.text": "Pictures and short films from a description, or a picture of yours changed: by the brains you connect, or privately on this device. A film is asked about first, since it costs more."
 }

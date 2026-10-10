@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Isang larawan",
+  "pictures.film": "Isang video",
+  "pictures.savePicture": "I-save ang larawan",
+  "pictures.saveFilm": "I-save ang video",
+  "pictures.device": "Mga larawan sa device na ito",
+  "pictures.deviceText": "Ginagawa rito, nang pribado at libre, kahit offline, ng SD-Turbo ng Stability AI, sa ilalim ng community license nito.",
+  "pictures.deviceAction": "I-download nang isang beses ({size})",
+  "pictures.deviceReady": "Handa na",
+  "pictures.deviceFailed": "Huminto ang pag-download. Subukang muli.",
+  "pictures.films": "Mga video",
+  "pictures.filmsText": "Ginagawa ang mga video nang hindi muna nagtatanong.",
+  "pictures.filmsAsk": "Magtanong muna ulit"
+}

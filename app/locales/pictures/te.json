@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "ఒక చిత్రం",
+  "pictures.film": "ఒక వీడియో",
+  "pictures.savePicture": "చిత్రాన్ని సేవ్ చేయి",
+  "pictures.saveFilm": "వీడియోను సేవ్ చేయి",
+  "pictures.device": "ఈ పరికరంలో చిత్రాలు",
+  "pictures.deviceText": "ఇక్కడే, ప్రైవేట్‌గా, ఉచితంగా, ఆఫ్‌లైన్‌లోనూ, Stability AI వారి SD-Turboతో, దాని కమ్యూనిటీ లైసెన్స్ కింద తయారవుతాయి.",
+  "pictures.deviceAction": "ఒక్కసారి డౌన్‌లోడ్ చేయి ({size})",
+  "pictures.deviceReady": "సిద్ధం",
+  "pictures.deviceFailed": "డౌన్‌లోడ్ ఆగిపోయింది. మళ్లీ ప్రయత్నించండి.",
+  "pictures.films": "వీడియోలు",
+  "pictures.filmsText": "వీడియోలు ముందుగా అడగకుండానే తయారవుతాయి.",
+  "pictures.filmsAsk": "మళ్లీ ముందుగా అడుగు"
+}

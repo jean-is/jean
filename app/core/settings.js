@@ -32,6 +32,7 @@ import { ulid } from './ulid.js'
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
  * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)
+ * @property {boolean} [films]                  films are made without asking first (D251)
  */
 
 /**

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Bir resim",
+  "pictures.film": "Bir video",
+  "pictures.savePicture": "Resmi kaydet",
+  "pictures.saveFilm": "Videoyu kaydet",
+  "pictures.device": "Bu cihazda resimler",
+  "pictures.deviceText": "Burada, gizli ve ücretsiz, çevrimdışı bile, Stability AI’nin SD-Turbo’suyla, topluluk lisansı altında oluşturulur.",
+  "pictures.deviceAction": "Bir kez indir ({size})",
+  "pictures.deviceReady": "Hazır",
+  "pictures.deviceFailed": "İndirme durdu. Tekrar dene.",
+  "pictures.films": "Videolar",
+  "pictures.filmsText": "Videolar önce sorulmadan oluşturulur.",
+  "pictures.filmsAsk": "Yine önce sor"
+}

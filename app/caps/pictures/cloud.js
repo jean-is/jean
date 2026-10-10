@@ -1,0 +1,124 @@
+// Pictures and films from a connected brain's provider (D251), imported on first use: OpenAI's
+// Images API, which Ollama and other servers share, OpenRouter's chat and Gemini's own API; films
+// from the /videos of OpenAI and OpenRouter, and Gemini's Veo. What they make comes back as bytes,
+// fetched only from the brain's own address with its key, never shown from the provider's (D35).
+import { LLMError, headersFor, post, endpoint, fetchOrThrow } from '../../core/llm.js'
+
+/**
+ * @typedef {{ name: string, mimeType: string, bytes: Uint8Array }} Picture
+ * @typedef {import('../../core/types.js').Connection & { model: string, prompt: string, from: Picture[], shape: 'wide' | 'tall' | 'square', seconds?: number, every?: number }} Request
+ *   every: how long to wait between asking how a film is coming, in ms
+ */
+
+const RATIOS = { square: '1:1', wide: '16:9', tall: '9:16' }
+
+/** A picture, made or changed from others. @param {Request} request @returns {Promise<{ bytes: Uint8Array, mimeType: string }>} */
+export async function picture({ brain, apiKey, model, prompt, from, shape, signal, fetch = globalThis.fetch }) {
+  if (brain.provider === 'gemini') {
+    const parts = [{ text: prompt }, ...from.map((file) => ({ inlineData: { mimeType: file.mimeType, data: base64(file.bytes) } }))]
+    const json = await answer(post(fetch, { url: `${google(brain)}/models/${model}:generateContent`, headers: keyed(brain, apiKey),
+      body: { contents: [{ parts }], generationConfig: { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: RATIOS[shape] } } } }, signal))
+    const made = json?.candidates?.[0]?.content?.parts?.find((/** @type {any} */ part) => part.inlineData)?.inlineData
+    return decoded(made && `data:${made.mimeType};base64,${made.data}`)
+  }
+  if (brain.provider === 'openrouter') {
+    const content = from.length ? [{ type: 'text', text: prompt }, ...from.map((file) => ({ type: 'image_url', image_url: { url: `data:${file.mimeType};base64,${base64(file.bytes)}` } }))] : prompt
+    const json = await answer(post(fetch, { url: endpoint(brain, '/chat/completions'), headers: headersFor(brain, apiKey),
+      body: { model, messages: [{ role: 'user', content }], modalities: ['image', 'text'], ...(shape !== 'square' && { image_config: { aspect_ratio: RATIOS[shape] } }) } }, signal))
+    return decoded(json?.choices?.[0]?.message?.images?.[0]?.image_url?.url)
+  }
+  // OpenAI's own answer in base64 anyway; others are asked to, rather than for an address.
+  const asked = { model, prompt, ...(shape !== 'square' && { size: shape === 'wide' ? '1536x1024' : '1024x1536' }), ...(!/^gpt-image/.test(model) && { response_format: 'b64_json' }) }
+  let made
+  if (from.length) {
+    const form = new FormData()
+    for (const [name, value] of Object.entries(asked)) form.set(name, value)
+    for (const file of from) form.append('image[]', new Blob([/** @type {BlobPart} */ (file.bytes)], { type: file.mimeType }), file.name)
+    made = fetchOrThrow(fetch, endpoint(brain, '/images/edits'), { method: 'POST', headers: plain(brain, apiKey), body: form }, signal)
+  } else made = post(fetch, { url: endpoint(brain, '/images/generations'), headers: headersFor(brain, apiKey), body: { ...asked, n: 1 } }, signal)
+  const json = await answer(made)
+  return decoded(json?.data?.[0]?.b64_json && `data:image/png;base64,${json.data[0].b64_json}`)
+}
+
+/**
+ * A film: the provider makes it as a job, which is asked how it is coming every few seconds until
+ * it is done, then downloaded. @param {Request} request @returns {Promise<{ bytes: Uint8Array, mimeType: string }>}
+ */
+export async function film({ brain, apiKey, model, prompt, from: [first], shape, seconds = 8, signal, every = 10_000, fetch = globalThis.fetch }) {
+  const tall = shape === 'tall'
+  /** Only from where the brain is, with its key. @param {string} url @param {Record<string, string>} headers */
+  const get = (url, headers) => {
+    if (new URL(url).origin !== new URL(brain.baseURL).origin) throw new LLMError(`The film is at another address: ${new URL(url).host}`, { code: 'bad_response' })
+    return fetchOrThrow(fetch, url, { headers }, signal)
+  }
+  if (brain.provider === 'gemini') {
+    const headers = keyed(brain, apiKey)
+    let job = await answer(post(fetch, { url: `${google(brain)}/models/${model}:predictLongRunning`, headers, body: {
+      instances: [{ prompt, ...(first && { image: { bytesBase64Encoded: base64(first.bytes), mimeType: first.mimeType } }) }],
+      parameters: { aspectRatio: tall ? '9:16' : '16:9', durationSeconds: Math.min(8, seconds) },
+    } }, signal))
+    while (job?.name && !job.done) job = await pause(every, signal).then(() => answer(get(`${google(brain)}/${job.name}`, headers)))
+    const uri = job?.response?.generateVideoResponse?.generatedSamples?.[0]?.video?.uri
+    if (!uri) throw new LLMError(job?.error?.message ?? 'No film came back', { code: 'bad_response' })
+    return { bytes: new Uint8Array(await (await get(uri, headers)).arrayBuffer()), mimeType: 'video/mp4' }
+  }
+  const url = endpoint(brain, '/videos')
+  /** @type {any} */
+  let job
+  if (brain.provider === 'openrouter') {
+    job = await answer(post(fetch, { url, headers: headersFor(brain, apiKey), body: { model, prompt, duration: seconds, aspect_ratio: tall ? '9:16' : '16:9',
+      ...(first && { frame_images: [{ type: 'image_url', image_url: { url: `data:${first.mimeType};base64,${base64(first.bytes)}` }, frame_type: 'first_frame' }] }) } }, signal))
+  } else {
+    // OpenAI takes 4, 8 or 12 seconds, and a picture to start from as a file.
+    const form = new FormData()
+    for (const [name, value] of Object.entries({ model, prompt, seconds: String(Math.min(12, Math.max(4, Math.round(seconds / 4) * 4))), size: tall ? '720x1280' : '1280x720' })) form.set(name, value)
+    if (first) form.set('input_reference', new Blob([/** @type {BlobPart} */ (first.bytes)], { type: first.mimeType }), first.name)
+    job = await answer(fetchOrThrow(fetch, url, { method: 'POST', headers: plain(brain, apiKey), body: form }, signal))
+  }
+  while (job?.id && !/^(completed|succeeded|failed|cancelled)$/.test(job.status)) job = await pause(every, signal).then(() => answer(get(job.polling_url ?? `${url}/${job.id}`, plain(brain, apiKey))))
+  if (!/^(completed|succeeded)$/.test(job?.status)) throw new LLMError(job?.error?.message ?? 'No film came back', { code: 'bad_response' })
+  const response = await get(`${url}/${job.id}/content`, plain(brain, apiKey))
+  return { bytes: new Uint8Array(await response.arrayBuffer()), mimeType: response.headers.get('content-type')?.split(';')[0] || 'video/mp4' }
+}
+
+/** Gemini's own API, beside its OpenAI-compatible one. @param {import('../../core/types.js').BrainConfig} brain */
+const google = (brain) => brain.baseURL.replace(/\/openai\/?$/, '')
+/** @param {import('../../core/types.js').BrainConfig} brain @param {string} [apiKey] */
+const keyed = (brain, apiKey) => ({ ...plain(brain), 'content-type': 'application/json', ...(apiKey && { 'x-goog-api-key': apiKey }) })
+
+/** The brain's headers without a type, for a form or a GET. @param {import('../../core/types.js').BrainConfig} brain @param {string} [apiKey] */
+function plain(brain, apiKey) {
+  const headers = headersFor(brain, apiKey)
+  delete headers['content-type']
+  return headers
+}
+
+/** What came back; an error, even with 200, as some servers answer an address they don't have (LM Studio). @param {Promise<Response>} response */
+async function answer(response) {
+  const json = await (await response).json().catch(() => null)
+  if (json?.error) throw new LLMError(String(json.error.message ?? json.error), { code: 'bad_request' })
+  return json
+}
+
+/** @param {number} ms @param {AbortSignal} [signal] */
+const pause = (ms, signal) => new Promise((resolve, reject) => {
+  const timer = setTimeout(resolve, ms)
+  signal?.addEventListener('abort', () => {
+    clearTimeout(timer)
+    reject(new LLMError('Request aborted', { code: 'aborted' }))
+  }, { once: true })
+})
+
+/** @param {Uint8Array} bytes */
+function base64(bytes) {
+  let text = ''
+  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+  return btoa(text)
+}
+
+/** A picture in a data: address, as bytes; an address elsewhere is no picture (D35). @param {string | undefined} url */
+function decoded(url) {
+  const match = /^data:(image\/[\w+.-]+);base64,(.+)$/.exec(url ?? '')
+  if (!match) throw new LLMError('No picture came back', { code: 'bad_response' })
+  return { mimeType: match[1], bytes: Uint8Array.from(atob(match[2]), (char) => char.charCodeAt(0)) }
+}

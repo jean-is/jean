@@ -1,0 +1,6 @@
+/* A picture or a film Jean made (D251), in the answer, with a button to save it. */
+app-picture figure { position: relative; inline-size: fit-content; margin: 0; }
+app-picture :is(img, video) { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+app-picture .icon-button { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; background: var(--glass); }
+/* Pictures on this device, in Settings › Brains. */
+.pictures-device progress { inline-size: 12rem; }

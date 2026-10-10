@@ -24,7 +24,6 @@ import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
 import { exactText } from '../folders/work.js'
 import { sitePage } from '../folders/site.js'
-import { imageTool } from './images.js'
 
 /** @typedef {import('../../core/loop.js').Tool} Tool */
 /** @typedef {import('../../core/loop.js').ToolContext} ToolContext */
@@ -402,8 +401,7 @@ const javascriptTool = {
       "await fs.readFile(path), fs.writeFile(path, text) and fs.readdir(path) work in /workspace, where the conversation's files are, and a web page or a picture written there opens beside the conversation;",
       'await fetch(url, init) reaches the internet as Settings allow;',
       'await tools.<name>({ … }) calls any tool, including ones found with await searchTools(query) and those of connected services;',
-      'await models.decide(state, questions) asks the on-device decision helper, when it is on (types noul, choice, score);',
-      'await models.image(description) makes a picture, which the user sees.',
+      'await models.decide(state, questions) asks the on-device decision helper, when it is on (types noul, choice, score).',
     ].join(' '),
     parameters: { type: 'object', properties: { code: { type: 'string', description: 'The script' } }, required: ['code'] },
   },
@@ -652,7 +650,7 @@ function panel() {
 
 register({
   id: 'computer',
-  tools: [bashTool, javascriptTool, pythonTool, imageTool, saveTool, reachTool],
+  tools: [bashTool, javascriptTool, pythonTool, saveTool, reachTool],
   lines: [
     { name: 'bash', line: 'commands on your own computer, a sandbox: /workspace holds the files; python3, pip, node, curl' },
     { name: 'javascript', line: 'JavaScript to work things out exactly; scripts read files and call tools' },

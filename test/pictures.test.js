@@ -1,0 +1,126 @@
+// Pictures and films from a connected brain's provider (D251): what each API is asked, what comes
+// back as bytes, and a film fetched only from where the brain is.
+import { describe, test } from 'node:test'
+import assert from 'node:assert/strict'
+import { PROVIDERS } from '../app/core/llm.js'
+import { picture, film } from '../app/caps/pictures/cloud.js'
+
+/** @param {(url: string, init: any) => Response | Promise<Response>} respond */
+function mockFetch(respond) {
+  /** @type {{ url: string, init: any, body: any }[]} */
+  const calls = []
+  const fetch = /** @type {typeof globalThis.fetch} */ (/** @type {unknown} */ (async (/** @type {string} */ url, /** @type {any} */ init = {}) => {
+    calls.push({ url: String(url), init, body: typeof init.body === 'string' ? JSON.parse(init.body) : init.body })
+    return respond(String(url), init)
+  }))
+  return { fetch, calls }
+}
+
+const brain = (/** @type {any} */ provider, baseURL = PROVIDERS[provider]?.baseURL ?? 'http://127.0.0.1:9/v1') => ({ id: provider, provider, api: /** @type {const} */ ('openai'), baseURL, model: 'm' })
+const png = Buffer.from([137, 80, 78, 71]).toString('base64')
+const lighthouse = { name: 'Lighthouse.png', mimeType: 'image/png', bytes: new Uint8Array([137, 80, 78, 71]) }
+const ask = { prompt: 'A lighthouse', from: [], shape: /** @type {const} */ ('square') }
+
+describe('pictures', () => {
+  test('OpenAI’s Images API, and the servers that share it, asked for base64', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ data: [{ b64_json: png }] }))
+    const made = await picture({ ...ask, brain: brain('openai'), apiKey: 'k', model: 'gpt-image-1.5', shape: 'wide', fetch })
+    assert.equal(calls[0].url, 'https://api.openai.com/v1/images/generations')
+    assert.deepEqual(calls[0].body, { model: 'gpt-image-1.5', prompt: 'A lighthouse', size: '1536x1024', n: 1 })
+    assert.equal(calls[0].init.headers.authorization, 'Bearer k')
+    assert.deepEqual([...made.bytes], [137, 80, 78, 71])
+    assert.equal(made.mimeType, 'image/png')
+    await picture({ ...ask, brain: brain('ollama'), model: 'x/z-image-turbo', fetch })
+    assert.deepEqual(calls[1].body, { model: 'x/z-image-turbo', prompt: 'A lighthouse', response_format: 'b64_json', n: 1 })
+  })
+
+  test('changing pictures: OpenAI’s edits, as a form with each picture', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ data: [{ b64_json: png }] }))
+    await picture({ ...ask, from: [lighthouse], brain: brain('openai'), apiKey: 'k', model: 'gpt-image-1.5', fetch })
+    assert.equal(calls[0].url, 'https://api.openai.com/v1/images/edits')
+    const form = /** @type {FormData} */ (calls[0].body)
+    assert.equal(form.get('prompt'), 'A lighthouse')
+    assert.equal(/** @type {File} */ (form.getAll('image[]')[0]).name, 'Lighthouse.png')
+    assert.equal(calls[0].init.headers['content-type'], undefined, 'the browser sets the form’s own type')
+  })
+
+  test('OpenRouter: a chat completion that answers with a picture, from pictures given as parts', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ choices: [{ message: { content: '', images: [{ type: 'image_url', image_url: { url: `data:image/webp;base64,${png}` } }] } }] }))
+    const made = await picture({ ...ask, from: [lighthouse], brain: brain('openrouter'), model: 'google/gemini-2.5-flash-image', fetch })
+    assert.equal(calls[0].url, 'https://openrouter.ai/api/v1/chat/completions')
+    assert.deepEqual(calls[0].body.modalities, ['image', 'text'])
+    assert.deepEqual(calls[0].body.messages[0].content[1], { type: 'image_url', image_url: { url: `data:image/png;base64,${png}` } })
+    assert.equal(made.mimeType, 'image/webp')
+  })
+
+  test('Gemini: its own API, beside the OpenAI-compatible one, with its key', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ candidates: [{ content: { parts: [{ text: 'Here' }, { inlineData: { mimeType: 'image/png', data: png } }] } }] }))
+    const made = await picture({ ...ask, from: [lighthouse], brain: brain('gemini'), apiKey: 'g', model: 'gemini-2.5-flash-image', shape: 'tall', fetch })
+    assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent')
+    assert.equal(calls[0].init.headers['x-goog-api-key'], 'g')
+    assert.equal(calls[0].init.headers.authorization, undefined)
+    assert.deepEqual(calls[0].body.contents[0].parts[1], { inlineData: { mimeType: 'image/png', data: png } })
+    assert.deepEqual(calls[0].body.generationConfig, { responseModalities: ['IMAGE'], imageConfig: { aspectRatio: '9:16' } })
+    assert.deepEqual([...made.bytes], [137, 80, 78, 71])
+  })
+
+  test('a server that answers an address it doesn’t have with 200 says so (LM Studio)', async () => {
+    const { fetch } = mockFetch(() => Response.json({ error: 'Unexpected endpoint or method. (POST /v1/images/generations)' }))
+    await assert.rejects(picture({ ...ask, brain: brain('custom'), model: 'z-image-turbo', fetch }), /Unexpected endpoint or method/)
+  })
+
+  test('an address instead of a picture is no picture (D35)', async () => {
+    const { fetch } = mockFetch(() => Response.json({ data: [{ url: 'https://example.com/a.png' }] }))
+    await assert.rejects(picture({ ...ask, brain: brain('custom'), model: 'flux', fetch }), /No picture/)
+  })
+})
+
+describe('films', () => {
+  const mp4 = new Uint8Array([0, 0, 0, 24, 102, 116, 121, 112])
+
+  test('OpenAI: a job, asked about until it is done, then its content', async () => {
+    let asked = 0
+    const { fetch, calls } = mockFetch((url) => (url.endsWith('/content') ? new Response(mp4, { headers: { 'content-type': 'video/mp4' } })
+      : Response.json({ id: 'v1', status: url.endsWith('/videos') ? 'queued' : ++asked < 2 ? 'in_progress' : 'completed' })))
+    const made = await film({ ...ask, from: [lighthouse], brain: brain('openai'), apiKey: 'k', model: 'sora-2', shape: 'tall', seconds: 7, every: 0, fetch })
+    assert.deepEqual(calls.map((call) => call.url.replace('https://api.openai.com/v1', '')), ['/videos', '/videos/v1', '/videos/v1', '/videos/v1/content'])
+    const form = /** @type {FormData} */ (calls[0].body)
+    assert.deepEqual([form.get('seconds'), form.get('size'), /** @type {File} */ (form.get('input_reference')).name], ['8', '720x1280', 'Lighthouse.png'])
+    assert.equal(calls[3].init.headers.authorization, 'Bearer k')
+    assert.deepEqual([...made.bytes], [...mp4])
+    assert.equal(made.mimeType, 'video/mp4')
+  })
+
+  test('OpenRouter: the same, in JSON, from where it says to ask', async () => {
+    const { fetch, calls } = mockFetch((url) => (url.endsWith('/content') ? new Response(mp4)
+      : Response.json(url.endsWith('/videos') ? { id: 'j', status: 'pending', polling_url: 'https://openrouter.ai/api/v1/videos/j' } : { id: 'j', status: 'completed' })))
+    await film({ ...ask, brain: brain('openrouter'), model: 'google/veo-3.1', shape: 'wide', seconds: 6, every: 0, fetch })
+    assert.deepEqual(calls[0].body, { model: 'google/veo-3.1', prompt: 'A lighthouse', duration: 6, aspect_ratio: '16:9' })
+    assert.deepEqual(calls.slice(1).map((call) => call.url), ['https://openrouter.ai/api/v1/videos/j', 'https://openrouter.ai/api/v1/videos/j/content'])
+  })
+
+  test('Gemini’s Veo: a long-running operation, then the sample’s file, with the key', async () => {
+    const operation = 'models/veo-3.1-generate-preview/operations/op1'
+    const sample = 'https://generativelanguage.googleapis.com/v1beta/files/f1:download?alt=media'
+    let asked = 0
+    const { fetch, calls } = mockFetch((url) => (url === sample ? new Response(mp4)
+      : Response.json(url.endsWith(':predictLongRunning') || ++asked < 2 ? { name: operation } : { name: operation, done: true, response: { generateVideoResponse: { generatedSamples: [{ video: { uri: sample } }] } } })))
+    const made = await film({ ...ask, brain: brain('gemini'), apiKey: 'g', model: 'veo-3.1-generate-preview', shape: 'wide', seconds: 12, every: 0, fetch })
+    assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/models/veo-3.1-generate-preview:predictLongRunning')
+    assert.deepEqual(calls[0].body.parameters, { aspectRatio: '16:9', durationSeconds: 8 })
+    assert.equal(calls[1].url, `https://generativelanguage.googleapis.com/v1beta/${operation}`)
+    assert.equal(calls.at(-1)?.init.headers['x-goog-api-key'], 'g')
+    assert.deepEqual([...made.bytes], [...mp4])
+  })
+
+  test('a film somewhere other than where the brain is is never fetched, with its key or without', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ id: 'j', status: 'pending', polling_url: 'https://elsewhere.example/j' }))
+    await assert.rejects(film({ ...ask, brain: brain('openrouter'), apiKey: 'k', model: 'm', every: 0, fetch }), /another address: elsewhere\.example/)
+    assert.equal(calls.length, 1)
+  })
+
+  test('a failed job says why', async () => {
+    const { fetch } = mockFetch(() => Response.json({ id: 'v', status: 'failed', error: { message: 'Blocked by moderation' } }))
+    await assert.rejects(film({ ...ask, brain: brain('openai'), model: 'sora-2', every: 0, fetch }), /Blocked by moderation/)
+  })
+})

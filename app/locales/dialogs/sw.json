@@ -288,5 +288,7 @@
   "brain.device.ready": "Ubongo wa kifaa hiki uko tayari",
   "brain.device.private": "Faragha · hufanya kazi bila mtandao",
   "cap.machine.hint": "Omba kuendesha seva ya uundaji ya tovuti, kama npm run dev.",
-  "cap.machine.text": "Huendesha amri za kompyuta kwenye kifaa hiki chenyewe, katika mojawapo ya folda zako, kwa programu na seva zake: seva ya uundaji ya tovuti huonekana kwenye kivinjari. Kila amri huulizwa kwanza, na Ctrl+C kwenye terminali yako husimamisha yote."
+  "cap.machine.text": "Huendesha amri za kompyuta kwenye kifaa hiki chenyewe, katika mojawapo ya folda zako, kwa programu na seva zake: seva ya uundaji ya tovuti huonekana kwenye kivinjari. Kila amri huulizwa kwanza, na Ctrl+C kwenye terminali yako husimamisha yote.",
+  "cap.pictures.hint": "Omba picha.",
+  "cap.pictures.text": "Picha na video fupi kutoka kwa maelezo, au picha yako iliyobadilishwa: kwa akili unazounganisha, au kwa faragha kwenye kifaa hiki. Kabla ya video utaulizwa kwanza, kwa sababu inagharimu zaidi."
 }

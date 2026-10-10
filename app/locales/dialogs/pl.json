@@ -294,5 +294,7 @@
   "brain.device.ready": "Mózg na tym urządzeniu jest gotowy",
   "brain.device.private": "Prywatnie · działa bez internetu",
   "cap.machine.hint": "Poproś o uruchomienie serwera deweloperskiego strony, np. npm run dev.",
-  "cap.machine.text": "Uruchamia polecenia komputera na tym urządzeniu, w jednym z twoich folderów, z jego własnymi programami i serwerami: serwer deweloperski strony widać w przeglądarce. O każde polecenie najpierw pyta, a Ctrl+C w twoim terminalu zatrzymuje wszystko."
+  "cap.machine.text": "Uruchamia polecenia komputera na tym urządzeniu, w jednym z twoich folderów, z jego własnymi programami i serwerami: serwer deweloperski strony widać w przeglądarce. O każde polecenie najpierw pyta, a Ctrl+C w twoim terminalu zatrzymuje wszystko.",
+  "cap.pictures.hint": "Poproś o obraz.",
+  "cap.pictures.text": "Obrazy i krótkie filmy z opisu albo twój zmieniony obraz: przez mózgi, które łączysz, albo prywatnie na tym urządzeniu. Przed filmem pojawi się pytanie, bo kosztuje więcej."
 }

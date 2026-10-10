@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "एक तस्वीर",
+  "pictures.film": "एक वीडियो",
+  "pictures.savePicture": "तस्वीर सहेजें",
+  "pictures.saveFilm": "वीडियो सहेजें",
+  "pictures.device": "इस डिवाइस पर तस्वीरें",
+  "pictures.deviceText": "यहीं, निजी रूप से और मुफ़्त, ऑफ़लाइन भी, Stability AI के SD-Turbo से, उसके कम्युनिटी लाइसेंस के तहत बनती हैं।",
+  "pictures.deviceAction": "एक बार डाउनलोड करें ({size})",
+  "pictures.deviceReady": "तैयार",
+  "pictures.deviceFailed": "डाउनलोड रुक गया। फिर से कोशिश करें।",
+  "pictures.films": "वीडियो",
+  "pictures.filmsText": "वीडियो पहले पूछे बिना बनते हैं।",
+  "pictures.filmsAsk": "फिर से पहले पूछें"
+}

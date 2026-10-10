@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Ein Bild",
+  "pictures.film": "Ein Video",
+  "pictures.savePicture": "Bild speichern",
+  "pictures.saveFilm": "Video speichern",
+  "pictures.device": "Bilder auf diesem Gerät",
+  "pictures.deviceText": "Hier erstellt, privat und kostenlos, auch offline, von SD-Turbo von Stability AI, unter dessen Community-Lizenz.",
+  "pictures.deviceAction": "Einmal herunterladen ({size})",
+  "pictures.deviceReady": "Bereit",
+  "pictures.deviceFailed": "Der Download wurde unterbrochen. Versuche es erneut.",
+  "pictures.films": "Videos",
+  "pictures.filmsText": "Videos werden erstellt, ohne vorher zu fragen.",
+  "pictures.filmsAsk": "Wieder zuerst fragen"
+}

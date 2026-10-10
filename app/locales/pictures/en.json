@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "A picture",
+  "pictures.film": "A film",
+  "pictures.savePicture": "Save the picture",
+  "pictures.saveFilm": "Save the film",
+  "pictures.device": "Pictures on this device",
+  "pictures.deviceText": "Made here, privately and for free, even offline, by Stability AI’s SD-Turbo, under its community license.",
+  "pictures.deviceAction": "Download once ({size})",
+  "pictures.deviceReady": "Ready",
+  "pictures.deviceFailed": "The download stopped. Try again.",
+  "pictures.films": "Films",
+  "pictures.filmsText": "Films are made without asking first.",
+  "pictures.filmsAsk": "Ask first again"
+}

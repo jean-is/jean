@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Picha",
+  "pictures.film": "Video",
+  "pictures.savePicture": "Hifadhi picha",
+  "pictures.saveFilm": "Hifadhi video",
+  "pictures.device": "Picha kwenye kifaa hiki",
+  "pictures.deviceText": "Hutengenezwa hapa, kwa faragha na bure, hata bila mtandao, na SD-Turbo ya Stability AI, chini ya leseni yake ya jamii.",
+  "pictures.deviceAction": "Pakua mara moja ({size})",
+  "pictures.deviceReady": "Tayari",
+  "pictures.deviceFailed": "Upakuaji umesimama. Jaribu tena.",
+  "pictures.films": "Video",
+  "pictures.filmsText": "Video hutengenezwa bila kuuliza kwanza.",
+  "pictures.filmsAsk": "Uliza kwanza tena"
+}

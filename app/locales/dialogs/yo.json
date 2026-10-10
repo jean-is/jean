@@ -285,5 +285,7 @@
   "brain.device.ready": "Ọpọlọ tí ó wà lórí ẹ̀rọ yìí ti ṣetán",
   "brain.device.private": "Àdáni · ó ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì",
   "cap.machine.hint": "Ẹ béèrè pé kí ó ṣiṣẹ́ sáfà ìdàgbàsókè ti ojú-òpó kan, bíi npm run dev.",
-  "cap.machine.text": "Ó ń ṣiṣẹ́ àwọn àṣẹ kọ̀ǹpútà lórí ẹ̀rọ yìí gan-an, nínú ọ̀kan lára àwọn fódà yín, pẹ̀lú àwọn ètò àti sáfà tirẹ̀: sáfà ìdàgbàsókè ojú-òpó ń hàn nínú aṣàwákiri. A ń béèrè ṣáájú àṣẹ kọ̀ọ̀kan, Ctrl+C nínú ibùdó àṣẹ yín sì ń dá gbogbo rẹ̀ dúró."
+  "cap.machine.text": "Ó ń ṣiṣẹ́ àwọn àṣẹ kọ̀ǹpútà lórí ẹ̀rọ yìí gan-an, nínú ọ̀kan lára àwọn fódà yín, pẹ̀lú àwọn ètò àti sáfà tirẹ̀: sáfà ìdàgbàsókè ojú-òpó ń hàn nínú aṣàwákiri. A ń béèrè ṣáájú àṣẹ kọ̀ọ̀kan, Ctrl+C nínú ibùdó àṣẹ yín sì ń dá gbogbo rẹ̀ dúró.",
+  "cap.pictures.hint": "Ẹ béèrè fún àwòrán kan.",
+  "cap.pictures.text": "Àwòrán àti fídíò kúkúrú láti inú àpèjúwe, tàbí àwòrán yín tí a yí padà: nípasẹ̀ àwọn ọpọlọ tí ẹ so pọ̀, tàbí ní ìkọ̀kọ̀ lórí ẹ̀rọ yìí. A ó bi yín kí a tó ṣe fídíò, nítorí ó wọ́n jù."
 }

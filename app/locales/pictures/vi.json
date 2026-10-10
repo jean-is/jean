@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Một hình ảnh",
+  "pictures.film": "Một video",
+  "pictures.savePicture": "Lưu hình ảnh",
+  "pictures.saveFilm": "Lưu video",
+  "pictures.device": "Hình ảnh trên thiết bị này",
+  "pictures.deviceText": "Được tạo ngay tại đây, riêng tư và miễn phí, kể cả ngoại tuyến, bằng SD-Turbo của Stability AI, theo giấy phép cộng đồng của nó.",
+  "pictures.deviceAction": "Tải về một lần ({size})",
+  "pictures.deviceReady": "Sẵn sàng",
+  "pictures.deviceFailed": "Quá trình tải đã dừng. Hãy thử lại.",
+  "pictures.films": "Video",
+  "pictures.filmsText": "Video được tạo mà không hỏi trước.",
+  "pictures.filmsAsk": "Hỏi trước lại"
+}

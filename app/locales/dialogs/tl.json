@@ -288,5 +288,7 @@
   "brain.device.ready": "Handa na ang utak sa device na ito",
   "brain.device.private": "Pribado · gumagana offline",
   "cap.machine.hint": "Ipapatakbo ang dev server ng isang site, gaya ng npm run dev.",
-  "cap.machine.text": "Pinapatakbo ang mga command ng computer sa mismong device na ito, sa isa sa mga folder mo, gamit ang sarili nitong mga program at server: lumalabas sa browser ang dev server ng isang site. Itinatanong muna ang bawat command, at pinahihinto ng Ctrl+C sa terminal mo ang lahat."
+  "cap.machine.text": "Pinapatakbo ang mga command ng computer sa mismong device na ito, sa isa sa mga folder mo, gamit ang sarili nitong mga program at server: lumalabas sa browser ang dev server ng isang site. Itinatanong muna ang bawat command, at pinahihinto ng Ctrl+C sa terminal mo ang lahat.",
+  "cap.pictures.hint": "Humingi ng larawan.",
+  "cap.pictures.text": "Mga larawan at maiikling video mula sa isang paglalarawan, o binagong larawan mo: sa pamamagitan ng mga utak na ikinonekta mo, o nang pribado sa device na ito. Bago ang isang video, tatanungin ka muna, dahil mas mahal ito."
 }

@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "Зображення",
+  "pictures.film": "Відео",
+  "pictures.savePicture": "Зберегти зображення",
+  "pictures.saveFilm": "Зберегти відео",
+  "pictures.device": "Зображення на цьому пристрої",
+  "pictures.deviceText": "Створюються тут, приватно й безкоштовно, навіть без інтернету, за допомогою SD-Turbo від Stability AI за її спільнотною ліцензією.",
+  "pictures.deviceAction": "Завантажити один раз ({size})",
+  "pictures.deviceReady": "Готово",
+  "pictures.deviceFailed": "Завантаження перервалося. Спробуйте знову.",
+  "pictures.films": "Відео",
+  "pictures.filmsText": "Відео створюються без попереднього запитання.",
+  "pictures.filmsAsk": "Знову питати"
+}

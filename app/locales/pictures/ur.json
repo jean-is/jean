@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "ایک تصویر",
+  "pictures.film": "ایک ویڈیو",
+  "pictures.savePicture": "تصویر محفوظ کریں",
+  "pictures.saveFilm": "ویڈیو محفوظ کریں",
+  "pictures.device": "اس آلے پر تصاویر",
+  "pictures.deviceText": "یہیں، نجی طور پر اور مفت، آف لائن بھی، Stability AI کے SD-Turbo سے، اس کے کمیونٹی لائسنس کے تحت بنتی ہیں۔",
+  "pictures.deviceAction": "ایک بار ڈاؤن لوڈ کریں ({size})",
+  "pictures.deviceReady": "تیار",
+  "pictures.deviceFailed": "ڈاؤن لوڈ رک گیا۔ دوبارہ کوشش کریں۔",
+  "pictures.films": "ویڈیوز",
+  "pictures.filmsText": "ویڈیوز پہلے پوچھے بغیر بنتی ہیں۔",
+  "pictures.filmsAsk": "پھر پہلے پوچھیں"
+}

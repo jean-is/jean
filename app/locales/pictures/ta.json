@@ -1,0 +1,14 @@
+{
+  "pictures.picture": "ஒரு படம்",
+  "pictures.film": "ஒரு வீடியோ",
+  "pictures.savePicture": "படத்தைச் சேமி",
+  "pictures.saveFilm": "வீடியோவைச் சேமி",
+  "pictures.device": "இந்தச் சாதனத்தில் படங்கள்",
+  "pictures.deviceText": "இங்கேயே, தனிப்பட்ட முறையிலும் இலவசமாகவும், இணையம் இல்லாமலும், Stability AI-இன் SD-Turbo மூலம், அதன் சமூக உரிமத்தின் கீழ் உருவாகின்றன.",
+  "pictures.deviceAction": "ஒருமுறை பதிவிறக்கு ({size})",
+  "pictures.deviceReady": "தயார்",
+  "pictures.deviceFailed": "பதிவிறக்கம் நின்றது. மீண்டும் முயலுங்கள்.",
+  "pictures.films": "வீடியோக்கள்",
+  "pictures.filmsText": "வீடியோக்கள் முதலில் கேட்காமல் உருவாக்கப்படுகின்றன.",
+  "pictures.filmsAsk": "மீண்டும் முதலில் கேள்"
+}
