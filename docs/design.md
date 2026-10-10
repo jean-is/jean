@@ -55,7 +55,7 @@ The room is Jean's own look; Jean starts in Human (D174). Settings › Appearanc
 
 Mail and Human start with the drawer open beside the conversation (D165). Names that are trademarks stay out of the UI, and `test/looks.test.js` checks every theme's text at AA by day and by night.
 
-**Make it yours** adds an accent colour, a background colour, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the little light and the room's glow, unless a project has a light of its own.
+**Make it yours** adds an accent colour, a background colour, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change. Their CSS starts from Jean's main hooks, commented out (`ui/touches.css`): the background, text and accent by night and by day, the typeface, corners and width, their requests, the answers and the box. It is kept only once changed. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the little light and the room's glow, unless a project has a light of its own.
 
 ## Typography
 

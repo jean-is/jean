@@ -1,0 +1,19 @@
+{
+  "receipt.about": "이 답변에 대해",
+  "receipt.local": "이 기기에서 처리됨",
+  "receipt.local.text": "답변을 쓰는 동안 보낸 내용을 브라우저가 기록했어요. 이 기기 밖으로 나간 것은 없어요.",
+  "receipt.out": "이 기기 밖으로 전송됨",
+  "receipt.unknown": "인증되지 않음",
+  "receipt.unknown.text": "답변을 쓰는 동안 보낸 내용에 대한 브라우저 기록이 남아 있지 않아요.",
+  "receipt.time": "시간",
+  "receipt.cost": "비용",
+  "receipt.free": "무료",
+  "receipt.costAbout": "약 {cost}",
+  "receipt.costUnknown": "알 수 없음",
+  "receipt.by": "답변",
+  "receipt.here": "이 기기",
+  "receipt.cloud": "클라우드",
+  "receipt.sentTo": "보낸 곳",
+  "receipt.save": "인증서 저장",
+  "receipt.file": "인증서 {date}"
+}

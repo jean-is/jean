@@ -1,0 +1,19 @@
+{
+  "receipt.about": "درباره این پاسخ",
+  "receipt.local": "روی همین دستگاه انجام شد",
+  "receipt.local.text": "مرورگر شما آنچه را هنگام نوشتن آن فرستاده شد ثبت کرد: چیزی از این دستگاه بیرون نرفت.",
+  "receipt.out": "به بیرون از این دستگاه فرستاده شد",
+  "receipt.unknown": "تأییدنشده",
+  "receipt.unknown.text": "ثبت مرورگر شما از آنچه هنگام نوشتن آن فرستاده شد نگه داشته نشد.",
+  "receipt.time": "زمان",
+  "receipt.cost": "هزینه",
+  "receipt.free": "رایگان",
+  "receipt.costAbout": "حدود {cost}",
+  "receipt.costUnknown": "نامعلوم",
+  "receipt.by": "پاسخ با",
+  "receipt.here": "روی این دستگاه",
+  "receipt.cloud": "در ابر",
+  "receipt.sentTo": "فرستاده شده به",
+  "receipt.save": "ذخیره گواهی",
+  "receipt.file": "گواهی {date}"
+}

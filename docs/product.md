@@ -46,7 +46,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
 - **Enterprise policy can unlock or deny capabilities in advance.** A denied capability is never offered and never downloaded.
 
-**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there, and formulas (`math`) load with the first one in an answer, drawn as they are printed, a LaTeX document laid out with them (D185), and layouts (`layouts`) with the first answer, for its comparisons, steps and notes: options side by side, the best of each row lit and the pick framed, steps in rings, notes in their colour, and on a wide screen a table of three columns or more takes the room it needs beside the text (D215). The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
+**Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there, and formulas (`math`) load with the first one in an answer, drawn as they are printed, a LaTeX document laid out with them (D185), and layouts (`layouts`) with the first answer, for its comparisons, steps and notes: options side by side, the best of each row lit and the pick framed, steps in rings, notes in their colour, and on a wide screen a table of three columns or more takes the room it needs beside the text (D215); and the receipt (`receipt`) with the first message, for About this answer (D252). The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
 
 **Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; sharing and collaboration, and requests between people's Jeans ([enterprise.md](enterprise.md), D226); the same tasks on a phone, project by project, and the phone as a remote of Jean at work (D227); a personal and a work profile on one device (D228).
 
@@ -164,7 +164,7 @@ A chip in the message box, beside its send button, reads **Auto ▾**, or the na
 
 - **Auto** (recommended)
 - **On this device:** private, free, works offline
-- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover, using prices from the provider's catalogue (OpenRouter `/models`, or models.dev).
+- **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover, using prices from the provider's catalogue (OpenRouter `/models`), or models.dev's, read only when a price is wanted and kept a week (D255).
 - **All brains**
 - **Never send to the cloud,** an explicit switch, while a brain is in the cloud
 
@@ -184,6 +184,7 @@ The picker offers the brains of the project the user is in. A brain is used in e
 - **Stable choices.** Auto steps up when needed and never steps down within a conversation; a new conversation starts again from the bottom. This keeps the provider's cache warm and the tool-call format consistent.
 - **Without Intuition,** Auto picks the Smart level (D70).
 - **Visible.** Every answer shows where it came from ("answered on this device"), with a one-tap "Ask a smarter brain".
+- **About this answer** (D252). Among an answer's buttons, one, a shield when the answer was done on this device, shows on hover or keyboard focus (a click or a tap keeps it) how long the answer took, what it cost (free on this device, about what the provider's prices say in the cloud, or not known), which brains answered and whether each ran on this device, and the addresses outside it that the page reached meanwhile, as the browser itself recorded them. *Done on this device* is said only when all of these agree. Its certificate saves as a file that holds the request's and the answer's fingerprints, never their words, sealed with a key the device never gives out, so it can go to whoever needs to see it.
 - **Optional budget** (later): a monthly cap.
 
 ## Files and outputs
@@ -233,7 +234,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 - **"Ask a smarter brain"** sits with them when Auto chose the brain and a higher level is available.
 - **Under each request,** how long ago it was asked, Copy, Try again, which, once the user agrees, goes back to it: everything after it in the task is removed and it is answered again, and Duplicate from here, which answers it in a new task made of what led up to it, the first left as it was. Under each answer, how long ago it came (D188, D230).
 - **Tips.** An icon button's name, or what a title adds (a time's full date), shows above it as a cited source's does, once the pointer rests on it or the keyboard reaches it, never the browser's own tooltip (D233).
-- **Starters on the first screen** help non-technical users begin: summarize, write an email, explain, and "Chart a savings plan", which has the computer work a plan out with one script and draw it as a page that opens beside the conversation (D163).
+- **Starters on the first screen** help non-technical users begin: first "What can you do?", which asks for three things to try, then summarize, write an email, explain, and "Savings plan", which has the computer work a plan out with one script and draw it as a page that opens beside the conversation (D163). Their requests are short and plain, so that the brain on this device understands them too.
 - **Suggestions double as discovery.** A "Chart this" button is how the computer gets discovered.
 
 ## Voice

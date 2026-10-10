@@ -59,6 +59,8 @@ export const DEFAULT_URLS = Object.freeze({
   gateway: '',
   // A web source's site icon, shown with its domain on its chip (D210): none when ''.
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
+  // Brains' prices (D255).
+  prices: 'https://models.dev/api.json',
 })
 
 /** @param {keyof typeof DEFAULT_URLS} name @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy] */

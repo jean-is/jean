@@ -1,0 +1,19 @@
+{
+  "receipt.about": "關於這個回答",
+  "receipt.local": "在這台裝置上完成",
+  "receipt.local.text": "你的瀏覽器記錄了寫這個回答時送出的內容：沒有任何內容離開這台裝置。",
+  "receipt.out": "已傳送到這台裝置之外",
+  "receipt.unknown": "未認證",
+  "receipt.unknown.text": "寫這個回答時送出了什麼，瀏覽器的記錄沒有保留。",
+  "receipt.time": "用時",
+  "receipt.cost": "費用",
+  "receipt.free": "免費",
+  "receipt.costAbout": "約 {cost}",
+  "receipt.costUnknown": "未知",
+  "receipt.by": "回答者",
+  "receipt.here": "在這台裝置上",
+  "receipt.cloud": "在雲端",
+  "receipt.sentTo": "傳送到",
+  "receipt.save": "儲存證書",
+  "receipt.file": "證書 {date}"
+}

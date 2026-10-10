@@ -3,6 +3,7 @@
 import { streamChat as defaultStream, LLMError } from './llm.js'
 import { envelope } from './events.js'
 import { signature } from './deferred.js'
+import { isLocal } from './settings.js'
 
 /** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, RuleValue, Source } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
@@ -103,8 +104,9 @@ export async function runTurn(options) {
 
   for (let step = options.resume ? options.resume.step + 1 : 0; step < maxSteps; step++) {
     const started = Date.now()
+    // Whether it runs on this device, as its certificate says (D252).
     /** @type {ToolCallInfo} */
-    const brainEntry = { toolCallId: `brain-${step}-${started.toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, ...meta } }
+    const brainEntry = { toolCallId: `brain-${step}-${started.toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, local: isLocal(brain), ...meta } }
     ctx.byName = new Map(tools().map((tool) => [tool.spec.name, tool]))
     onUpdate({ sessionUpdate: 'tool_call', ...brainEntry }, step)
 

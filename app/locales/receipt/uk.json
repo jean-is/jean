@@ -1,0 +1,19 @@
+{
+  "receipt.about": "Про цю відповідь",
+  "receipt.local": "Виконано на цьому пристрої",
+  "receipt.local.text": "Браузер записав, що надсилалося, поки відповідь писалася: нічого не покинуло цей пристрій.",
+  "receipt.out": "Надіслано за межі пристрою",
+  "receipt.unknown": "Не підтверджено",
+  "receipt.unknown.text": "Запис браузера про те, що надсилалося, поки відповідь писалася, не збережено.",
+  "receipt.time": "Час",
+  "receipt.cost": "Вартість",
+  "receipt.free": "Безкоштовно",
+  "receipt.costAbout": "близько {cost}",
+  "receipt.costUnknown": "Невідома",
+  "receipt.by": "Відповідь",
+  "receipt.here": "на цьому пристрої",
+  "receipt.cloud": "у хмарі",
+  "receipt.sentTo": "Надіслано до",
+  "receipt.save": "Зберегти сертифікат",
+  "receipt.file": "Сертифікат {date}"
+}

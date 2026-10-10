@@ -63,7 +63,7 @@ app/              what a deploy serves, as written (D243); the docs' paths to Je
   ui/             app.js (start), shell.js, base.js, state.js (signals; what the first screen draws), send.js (a message on
                   its way and its answer, loaded as the user types), chat.js, composer.js, complete.js, complete.css and
                   mentions.js (the box's / and @, D199), markdown.js, discovery.js,
-                  caps.js (the unlock gate), auto.js, picker.js, dialogs.js and dialogs.css (Settings, with brains.js and
+                  caps.js (the unlock gate), auto.js, picker.js and prices.js (brains' prices, D255), dialogs.js and dialogs.css (Settings, with brains.js and
                   knows.js), router.js and windows.js (the windows in the address), opfs.js and storage-worker.js, sandbox.js (the sandbox's client), preview.js and
                   preview.css, view.js and view.css (a file shown, in the preview and the browser), csp.js (a page's policy), dock.js and dock.css (panes beside the conversation), inbox.js (the
                   drawer's list), looks.js, touches.js, speech.js, voices.js, spoken.js, language.js, dictation.js, title.js, update.js,
@@ -73,9 +73,9 @@ app/              what a deploy serves, as written (D243); the docs' paths to Je
                   looks/<id>.css (the other themes)
   caps/<id>/      one folder per capability: files made backup brain-local voice reflexes memory projects skills search
                   connections live helpers check since names routines flows find browser ask you folders sync computer math
-                  charts scores machine slides layouts
+                  charts scores machine slides layouts receipt
   locales/        <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
-                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ search/ (D97)
+                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ receipt/ search/ (D97)
   fonts/          the display font
   icons/          the icon, and the PNGs installs need, drawn from it (D131)
   screenshots/    the welcome screen, for the install dialog (D168)
@@ -92,7 +92,7 @@ test/             <name>.test.js, run by node --test, and <capability>.spec.js, 
                   multilingual reflex test set and results.md)
 ```
 
-Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `cells.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/search/kiwix.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
+Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `cells.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/search/kiwix.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/receipt/certificate.js`, `ui/prices.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
 
 ## Brand
 
@@ -226,7 +226,7 @@ Follow-ups are one yes/no question each rather than one choice, because several 
       conversations/<ulid>.jsonl
       workspace/                 the Computer's /workspace when no folder is open: files by their own names (D162)
   .secrets/                      encrypted; never exported, synced or shared
-  .cache/                        disposable: search index, skills indexes (a day each), sync.json
+  .cache/                        disposable: search index, skills indexes (a day each), sync.json, brains' prices (a week, D255)
 ```
 
 There is always a default project, hidden until Projects is discovered, so one code path handles everything.
@@ -237,7 +237,7 @@ There is always a default project, hidden until Projects is discovered, so one c
 - **Format changes.** Every file carries a `format` version, to be upgraded lazily when read once Jean has users; until the public launch nothing is kept for earlier shapes (D173).
 - **Preventing loss:** `navigator.storage.persist()`; installing the app (Safari can wipe a site not visited for 7 days); backup offered early; Sync (D157) as a continuous copy in Chrome and Edge; usage shown in plain words; model weights evicted first, never user data.
 - **What takes up space** (D177, Settings › Your data): `weigh()` in `core/files.js` totals Jean's files by kind (the projects' conversations, files and workspaces, and the rest); `ui/dialogs.js` adds the browser's caches by name, `transformers-cache` as the brains on this device, `app-cap-…-computer` with the Computer's workspace, the other `app-shell-` and `app-cap-` caches as the offline copy, each response by its `Content-Length` unless it came compressed. What `estimate()` counts beyond them is everything else's.
-- **Secrets.** API keys and tokens are encrypted with a non-extractable `CryptoKey` kept in IndexedDB, and never exported, synced or shared. Folder handles can't be encrypted or kept in a file; IndexedDB keeps them, never in a backup.
+- **Secrets.** API keys and tokens are encrypted with a non-extractable `CryptoKey` kept in IndexedDB, and never exported, synced or shared. The key that seals certificates (D252) is kept there too (`deviceKey` in `ui/secrets.js`). Folder handles can't be encrypted or kept in a file; IndexedDB keeps them, never in a backup.
 - **Layout rules that keep sync possible:** one file per entity, named by ULID and never renamed; attachments named by content hash; no central index of record; `author` and timestamps on every entity; only `core/fs.js` touches storage.
 
 ## Service worker
@@ -387,11 +387,23 @@ Jean's event format is ACP's `session/update`: `user_message_chunk`, `agent_mess
 - **One stream, one record.** The core emits the events, the UI renders them live, and the conversation's JSONL stores them, each wrapped in an envelope with a time and an author. Text chunks merge into one record when a message finishes; a tool call is stored as it starts and again in its final state, which takes its place when the file is read (D216). The brain's context is derived from the same file.
 - **Translated labels.** Each line's label is rendered from `kind` and `locations`, so switching language relabels history; ACP's `title` is kept as a fallback.
 - **Approvals map onto rules:** `allow_always` writes Do it, `reject_always` writes Never, the "once" options keep Ask me first. A connection's tools that change something use `kind: "other"`, read-only ones `fetch` (D89). A declined call carries `_meta.declined` (D216).
-- **Every line opens** on what went in and came back (D103): a call's tool, arguments, result and duration; a brain step's thought and text, how it stopped, its duration and usage (`_meta.ms`). A script's calls nest under their call (`_meta.parent`); helpers' turns nest under theirs (D98). Auto's choice is on the brain entry (`rawInput.auto: { level, reason }`), shown in plain words (D70).
+- **Every line opens** on what went in and came back (D103): a call's tool, arguments, result and duration; a brain step's thought and text, how it stopped, its duration and usage (`_meta.ms`). A script's calls nest under their call (`_meta.parent`); helpers' turns nest under theirs (D98). Auto's choice is on the brain entry (`rawInput.auto: { level, reason }`), shown in plain words (D70), and so is whether the brain runs on this device (`rawInput.local`, from `isLocal`, D252).
 - **The decision inbox** (D99, D146, D147): approvals and questions, Jean's or its helpers' (`ask_user`), queue as cards under the live answer, answered in any order; "Always" or "Never" settles the other cards of that kind. Each card waits in its own conversation. Before Jean's own call waits for the user (an approval, or a tool with `asks`), the loop appends it as `pending` with `_meta.waiting`, and the step's later calls as `pending`; `unanswered()` (`core/events.js`) finds a last step whose first unended call waited, `openConversation()` then runs the conversation again, and `runTurn({ resume })` runs those calls in their step before the next one, `toChatMessages()` leaving their results out (D212). Elsewhere, a pending call reads as cut short, and the conversation shows only the live answer's; a call the file keeps as running, which the page closed on, reads as cut short to the brain and shows so in the activity (D216).
 - **Answers go on out of sight** (D147): a run is kept by its conversation's path, a call finds its conversation by its run's signal (`conversationOf` in `ui/state.js`), and the list marks each conversation being answered with a small light.
 - **Questions** (D146): up to five, each with up to six answers (`label`, `description`, `recommended`), one or several (`multiple`), shown one at a time; the result is `{"answers":[{"question","chose"|"wrote"|"skipped"}]}`. `caps/ask/answers.js` reads what the brain wrote and writes the answers.
 - **Enterprise audit:** a small adapter maps the stream to OpenTelemetry's GenAI conventions (`invoke_agent`, `execute_tool`, `chat`).
+
+## About this answer
+
+The `receipt` capability (D252) loads with the first message, so that the browser's record of the page's requests covers the first answer, and stays. `<app-receipt>`, among an answer's buttons, reads everything from the conversation's records (`caps/receipt/certificate.js`, pure):
+
+- **Time:** from when the answer was last asked for to its last record (`Turn.end`): the first brain step of its last run (`brain-0-…`), as a request sent, Try again, Duplicate from here and a retry each start one, since the request keeps the time it was first sent (D188, D230); the request's own time (`Turn.at`) when no brain was asked.
+- **Brains:** every brain entry of the turn, its helpers' included, with whether it runs on this device (`rawInput.local`) and when it was asked, which its id holds (`brain-<step>-<ms in base 36>`).
+- **Cost:** each cloud brain's usage times its prices per token, as the picker reads them (`priceOf` in `ui/prices.js`): its provider's catalogue (`app.models`), or models.dev's (D255), what was read again from the cache at its own price when it has one; 0 when every brain is local, null as soon as one price is missing.
+- **What the page reached.** A `PerformanceObserver` on `resource` entries (buffered) keeps the page's requests to anywhere but Jean's own address, once each ends. An effect on `app.running` notes when a conversation starts being answered (D147) and, a second after it stops (the browser tells of a request a moment after it ends; `takeRecords()` takes the rest), appends to it what overlapped that time, by host: `{"at":…,"by":<device>,"meta":{"reached":{"from":…,"to":…,"hosts":{"127.0.0.1:11434":3}}}}`. `foldTurns()` skips it, so the brain never reads it; a turn takes every such record whose `from` falls within it (a stopped answer tried again makes two), and going back to a request (D188) removes it with the rest.
+- **The verdict:** *Done on this device* when every brain is local, no host is outside this device (other than `localhost`, `127.0.0.1` and `[::1]`, with any port), whether the page reached it or a call was asked to reach it (its `rawInput.url`, which covers a site the browser's frame loads), and every brain entry started within a record; *Sent outside this device* when a brain is in the cloud or a host is outside; otherwise *Not certified* (an answer from before the capability loaded, or one the page closed on and went on later, D212).
+- **What the record misses,** which the docs, not the card, say: requests from workers (the weights of the device's brain, Intuition and dictation, downloads that carry nothing of the user's) and from frames (a page in the preview allowed to reach the internet, and what a site the browser shows loads after the address its call was given); requests that never ended (cut short by Stop); Jean's own address (its files). The sandbox has no network of its own (`connect-src 'none'`): what the Computer reaches goes through the page, and is counted. A request made while two conversations are answered counts for both, which can only make an answer look less private than it was.
+- **The certificate,** saved as JSON (`format: 1`, `kind: "certificate"`): when it was issued, the device's id, Jean's address, the conversation's id, the SHA-256 of the request's and of the answer's text (their words stay out), the verdict as `local`, the time, `recorded`, the brains with their usage, and the records of what was reached. Its `seal` holds the ECDSA P-256 signature (SHA-256) of the rest as compact JSON (`JSON.stringify` of the document without `seal`, keys in the order they came) and the public key as a JWK. The private key is non-extractable and kept in IndexedDB (`deviceKey('seal')`), made the first time; where IndexedDB is unavailable the certificate is saved without a seal. `verify()` checks one: import the JWK for ECDSA P-256, then `crypto.subtle.verify` over the document without its `seal`.
 
 ## Web search
 

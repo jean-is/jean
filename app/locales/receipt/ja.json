@@ -1,0 +1,19 @@
+{
+  "receipt.about": "この回答について",
+  "receipt.local": "この端末で完結",
+  "receipt.local.text": "回答の作成中に送信されたものはブラウザーが記録しています。この端末の外には何も送られていません。",
+  "receipt.out": "この端末の外に送信",
+  "receipt.unknown": "証明なし",
+  "receipt.unknown.text": "回答の作成中に送信されたもののブラウザーの記録は残っていません。",
+  "receipt.time": "時間",
+  "receipt.cost": "費用",
+  "receipt.free": "無料",
+  "receipt.costAbout": "約{cost}",
+  "receipt.costUnknown": "不明",
+  "receipt.by": "回答",
+  "receipt.here": "この端末",
+  "receipt.cloud": "クラウド",
+  "receipt.sentTo": "送信先",
+  "receipt.save": "証明書を保存",
+  "receipt.file": "証明書 {date}"
+}

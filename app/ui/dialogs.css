@@ -12,6 +12,9 @@ dialog {
 }
 dialog::backdrop { background: oklch(0.1 0.01 50 / 0.55); backdrop-filter: blur(6px); transition: opacity 0.35s, display 0.35s allow-discrete, overlay 0.35s allow-discrete; }
 dialog:not([open]), dialog:not([open])::backdrop { opacity: 0; }
+/* No ring round a whole dialog, which has the keyboard when it opened as the page loaded (ui/dialogs.js);
+   :root outweighs a look's own :focus-visible ring. */
+:root dialog[open]:focus-visible { outline: 0; }
 dialog[open] { @starting-style { opacity: 0; translate: 0 1rem; } }
 dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .sheet { inline-size: min(100% - 2rem, 34rem); max-block-size: min(88dvh, 52rem); padding: 1.25rem 1.5rem 1.5rem; border-radius: 1.6rem; }
@@ -53,7 +56,9 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .settings-nav [aria-current='page'] { font-weight: 600; }
 /* The menu's three groups (D134): Jean itself; what it knows and can do; what it may do and keeps. */
 .settings-nav hr { flex: none; margin: 0.45rem 0.85rem; border: 0; border-block-start: 1px solid var(--line); }
-.settings-panel { position: relative; grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; }
+/* Its scroll bar's gutter is kept on both sides, so one that takes room (with a mouse) never pushes the
+   settings off centre or comes and goes between sections. */
+.settings-panel { position: relative; grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; scrollbar-gutter: stable both-edges; }
 .settings-panel > :first-child { border-block-start: 0; padding-block-start: 0.25rem; }
 .setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
 .setting p { margin: 0; }

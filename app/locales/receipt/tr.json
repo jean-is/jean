@@ -1,0 +1,19 @@
+{
+  "receipt.about": "Bu yanıt hakkında",
+  "receipt.local": "Bu cihazda yapıldı",
+  "receipt.local.text": "Tarayıcın, yanıt yazılırken gönderilenleri kaydetti: Bu cihazdan hiçbir şey çıkmadı.",
+  "receipt.out": "Bu cihazın dışına gönderildi",
+  "receipt.unknown": "Onaylanmadı",
+  "receipt.unknown.text": "Tarayıcının, yanıt yazılırken gönderilenlere dair kaydı saklanmadı.",
+  "receipt.time": "Süre",
+  "receipt.cost": "Maliyet",
+  "receipt.free": "Ücretsiz",
+  "receipt.costAbout": "yaklaşık {cost}",
+  "receipt.costUnknown": "Bilinmiyor",
+  "receipt.by": "Yanıtlayan",
+  "receipt.here": "bu cihazda",
+  "receipt.cloud": "bulutta",
+  "receipt.sentTo": "Gönderildiği yer",
+  "receipt.save": "Sertifikayı kaydet",
+  "receipt.file": "Sertifika {date}"
+}

@@ -1,0 +1,19 @@
+{
+  "receipt.about": "เกี่ยวกับคำตอบนี้",
+  "receipt.local": "ทำบนอุปกรณ์นี้",
+  "receipt.local.text": "เบราว์เซอร์ของคุณบันทึกสิ่งที่ส่งออกไประหว่างเขียนคำตอบนี้: ไม่มีอะไรออกไปจากอุปกรณ์นี้",
+  "receipt.out": "ส่งออกไปนอกอุปกรณ์นี้",
+  "receipt.unknown": "ไม่ได้รับรอง",
+  "receipt.unknown.text": "ไม่ได้เก็บบันทึกของเบราว์เซอร์เกี่ยวกับสิ่งที่ส่งออกไประหว่างเขียนคำตอบนี้",
+  "receipt.time": "เวลา",
+  "receipt.cost": "ค่าใช้จ่าย",
+  "receipt.free": "ฟรี",
+  "receipt.costAbout": "ประมาณ {cost}",
+  "receipt.costUnknown": "ไม่ทราบ",
+  "receipt.by": "ตอบโดย",
+  "receipt.here": "บนอุปกรณ์นี้",
+  "receipt.cloud": "บนคลาวด์",
+  "receipt.sentTo": "ส่งไปยัง",
+  "receipt.save": "บันทึกใบรับรอง",
+  "receipt.file": "ใบรับรอง {date}"
+}

@@ -33,8 +33,9 @@ import { styleSheet } from './sheet.js'
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
 // The dialogs' own strings and style sheet come with them (D97, D120): every module that shows a
-// dialog imports this one. The sheet goes after ui/style.css, so its rules win a tie.
-await Promise.all([useStrings('dialogs'), styleSheet('ui/dialogs.css')])
+// dialog imports this one. The sheet goes after ui/style.css, so its rules win a tie. Its lists to
+// pick from have the chevron that all have (ui/select.css).
+await Promise.all([useStrings('dialogs'), styleSheet('ui/dialogs.css'), styleSheet('ui/select.css')])
 
 /** Whether each dialog was last told to be open. @type {WeakMap<HTMLDialogElement, boolean>} */
 const told = new WeakMap()
@@ -46,6 +47,8 @@ const before = new WeakMap()
  * opens again one the browser closed (Escape) before its close event says so. Closed, the keyboard
  * goes back to what had it, as the browser does itself, except WebKit now and then when the dialog
  * goes without a transition (reduced motion): the page is still inert to it until the next frame.
+ * Opened before the user did anything, as Settings is by the address a page loads with, the dialog
+ * itself takes the keyboard rather than its close button, which a ring would show; Tab leads to it.
  * @param {Element} host @param {string} name
  */
 export function syncDialog(host, name) {
@@ -56,6 +59,7 @@ export function syncDialog(host, name) {
     if (open && !dialog.open) {
       before.set(dialog, document.activeElement)
       dialog.showModal()
+      if (navigator.userActivation?.hasBeenActive === false) { dialog.tabIndex = -1; dialog.focus() }
     } else if (!open && dialog.open) {
       dialog.close()
       const back = before.get(dialog)
@@ -470,9 +474,9 @@ const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settin
   ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
-const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable'
+const keyboard = () => html`<section><dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable'
   : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id)))
-  .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl>`
+  .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl></section>`
 
 function approvals() {
   const { settings, locked } = effective.value
@@ -819,6 +823,8 @@ const plaque = (id, on) => html`<article class="plaque ${on ? 'is-lit' : ''}" ar
 /** @typedef {import('../core/settings.js').Look} Look */
 /** @param {Event} event */
 const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
+/** What the user's own CSS starts from, commented out (ui/touches.css): kept only once changed, emptied included. */
+const starter = await fetch(new URL('touches.css', import.meta.url)).then((response) => (response.ok ? response.text() : ''), () => '')
 
 /** Jean's looks, then the user's touches over the one chosen, shown as they change (D111). @param {Look} [look] */
 function looks(look = {}) {
@@ -849,8 +855,8 @@ function looks(look = {}) {
             <option value="">${t('look.font.look')}</option>
             ${Object.keys(FONTS).map((id) => html`<option value=${id} ?selected=${id === look.font}>${t(`look.font.${id}`)}</option>`)}
           </select></label>
-        <label>${t('look.css')}<textarea class="look-css" rows="6" dir="ltr" spellcheck="false" autocapitalize="off" .value=${live(look.css ?? '')}
-          @input=${(/** @type {Event} */ e) => setLook({ css: valueOf(e) || undefined }, { later: true })}></textarea></label>
+        <label>${t('look.css')}<textarea class="look-css" rows="6" dir="ltr" spellcheck="false" autocapitalize="off" .value=${live(look.css ?? starter)}
+          @input=${(/** @type {Event} */ e) => setLook({ css: valueOf(e) === starter ? undefined : valueOf(e) }, { later: true })}></textarea></label>
         <p class="hint">${t('look.cssHint')}</p>
         <div class="row"><button class="button subtle" ?disabled=${!touched(look)} @click=${(/** @type {Event} */ e) => {
           const summary = /** @type {HTMLElement} */ (e.currentTarget).closest('details')?.querySelector('summary')

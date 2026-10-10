@@ -63,7 +63,7 @@
 :root { --room: oklch(calc(0.15 + min(var(--warmth, 0), 9) * 0.0045) calc(0.014 + min(var(--warmth, 0), 9) * 0.0012) 52); }
 [data-theme='light'] { --room: oklch(calc(0.975 - min(var(--warmth, 0), 9) * 0.0015) calc(0.012 + min(var(--warmth, 0), 9) * 0.0016) 82); }
 
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; scrollbar-width: thin; }
 html { background: var(--room); transition: background-color 2s var(--ease), --tint 1.6s var(--ease); scrollbar-color: var(--line-strong) transparent; overscroll-behavior: none; }
 body {
   margin: 0;

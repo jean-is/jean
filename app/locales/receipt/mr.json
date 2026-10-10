@@ -1,0 +1,19 @@
+{
+  "receipt.about": "या उत्तराबद्दल",
+  "receipt.local": "याच उपकरणावर केले",
+  "receipt.local.text": "लिहिताना काय पाठवले गेले ते तुमच्या ब्राउझरने नोंदवले: या उपकरणाबाहेर काहीही गेले नाही.",
+  "receipt.out": "या उपकरणाबाहेर पाठवले",
+  "receipt.unknown": "प्रमाणित नाही",
+  "receipt.unknown.text": "लिहिताना काय पाठवले गेले याची तुमच्या ब्राउझरची नोंद ठेवली गेली नाही.",
+  "receipt.time": "वेळ",
+  "receipt.cost": "खर्च",
+  "receipt.free": "विनामूल्य",
+  "receipt.costAbout": "सुमारे {cost}",
+  "receipt.costUnknown": "माहीत नाही",
+  "receipt.by": "उत्तर देणारा",
+  "receipt.here": "या उपकरणावर",
+  "receipt.cloud": "क्लाउडमध्ये",
+  "receipt.sentTo": "येथे पाठवले",
+  "receipt.save": "प्रमाणपत्र जतन करा",
+  "receipt.file": "प्रमाणपत्र {date}"
+}

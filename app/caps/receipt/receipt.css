@@ -1,0 +1,23 @@
+/* About this answer (caps/receipt/receipt.js, D252), loaded with it, after ui/style.css: its button
+   among the answer's, a shield when the answer was done on this device, and the card it opens above
+   it, centred above the box where anchors aren't known. Logical properties only. */
+app-receipt { display: contents; }
+/* Its name, in words it doesn't show, kept within it: out of it, it made the page scroll as the answers above it grew. */
+.receipt-button { position: relative; }
+.receipt-button.is-local .icon { color: var(--flame-deep); }
+app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt; opacity: 1; }
+.receipt { position-anchor: --receipt; position-area: block-start span-inline-end; position-try-fallbacks: flip-block; inset: auto; inline-size: max-content; max-inline-size: min(22rem, 100vw - 2rem); margin: 0.35rem 0; padding: 0.8rem 0.9rem 0.6rem;
+  border: 1px solid var(--line-strong); border-radius: 1rem; background: var(--room-2); color: var(--ink); box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); font-size: 0.85rem; line-height: 1.4;
+  transition: opacity 0.2s, display 0.2s allow-discrete, overlay 0.2s allow-discrete; }
+.receipt:not(:popover-open) { opacity: 0; }
+.receipt:popover-open { @starting-style { opacity: 0; } }
+@supports not (anchor-name: --receipt) { .receipt { inset: auto 0 7rem; margin-inline: auto; } }
+.receipt-verdict { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-size: 0.95rem; }
+.receipt-verdict .icon { flex: none; color: var(--ink-soft); }
+.receipt-verdict.is-local .icon { color: var(--flame-deep); }
+.receipt-note { margin: 0.25rem 0 0; color: var(--ink-soft); }
+.receipt dl { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 1rem; margin: 0.7rem 0 0.4rem; padding-block: 0.6rem; border-block: 1px solid var(--line); }
+.receipt dt { color: var(--ink-soft); }
+.receipt dd { display: grid; margin: 0; overflow-wrap: anywhere; }
+.receipt .button { margin-inline-start: -0.6rem; padding: 0.4rem 0.6rem; font-size: 0.85rem; }
+@media (forced-colors: active) { .receipt { border-color: CanvasText; } }

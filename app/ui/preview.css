@@ -4,4 +4,4 @@
    properties only. */
 
 /* A file Jean made again: which version shows, to pick another (D164). */
-.pane-head .versions { flex: none; inline-size: auto; margin-inline-end: 0.35rem; padding-block: 0.3rem; padding-inline: 0.65rem 0.4rem; border-radius: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.pane-head .versions { --at: 0.65rem; flex: none; inline-size: auto; margin-inline-end: 0.35rem; padding-block: 0.3rem; padding-inline-start: var(--at); border-radius: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; }

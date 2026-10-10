@@ -369,7 +369,7 @@ createServer(async (req, res) => {
   const script = 'javascript'
   const fromScript = (/** @type {string} */ name) => ({ name: script, args: { code: `return await tools.${name}({ limit: 3 })` } })
   // The savings starter (D163), in English.
-  const savings = /saving 200 a month/i.test(question)
+  const savings = /savings over 10 years/i.test(question)
   // "$ ls": a command, on the computer (D162).
   const command = /^\$ ([\s\S]+)/.exec(question.trim())?.[1]
   const found = sourcesIn(last.role === 'tool' ? last.content : '')

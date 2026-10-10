@@ -27,7 +27,7 @@ import { flows, open, shown, editing, close, show, saveFlow, deleteFlow, newFlow
 /** @typedef {import('./run.js').State} State */
 /** @typedef {import('./graph.js').Node} Node */
 
-await Promise.all([useStrings('flows'), styleSheet(new URL('flows.css', import.meta.url))])
+await Promise.all([useStrings('flows'), styleSheet(new URL('flows.css', import.meta.url)), styleSheet(new URL('../../ui/select.css', import.meta.url))])
 
 /** A card's size, as flows.css draws it, and how far a move goes. */
 const CARD = { w: 200, h: 88 }

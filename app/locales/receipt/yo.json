@@ -1,0 +1,19 @@
+{
+  "receipt.about": "Nípa ìdáhùn yìí",
+  "receipt.local": "A ṣe é lórí ẹ̀rọ yìí",
+  "receipt.local.text": "Aṣàwákiri yín ṣàkọsílẹ̀ ohun tí a fi ránṣẹ́ nígbà tí a ń kọ ọ́: kò sí ohun tí ó kúrò lórí ẹ̀rọ yìí.",
+  "receipt.out": "A fi ránṣẹ́ sí ìta ẹ̀rọ yìí",
+  "receipt.unknown": "Kò ní ìwé ẹ̀rí",
+  "receipt.unknown.text": "A kò pa àkọsílẹ̀ aṣàwákiri yín ti ohun tí a fi ránṣẹ́ nígbà tí a ń kọ ọ́ mọ́.",
+  "receipt.time": "Àkókò",
+  "receipt.cost": "Iye owó",
+  "receipt.free": "Ọ̀fẹ́",
+  "receipt.costAbout": "nǹkan bí {cost}",
+  "receipt.costUnknown": "A kò mọ̀",
+  "receipt.by": "Ẹni tí ó dáhùn",
+  "receipt.here": "lórí ẹ̀rọ yìí",
+  "receipt.cloud": "nínú ìkùukùu",
+  "receipt.sentTo": "A fi ránṣẹ́ sí",
+  "receipt.save": "Fi ìwé ẹ̀rí pamọ́",
+  "receipt.file": "Ìwé ẹ̀rí {date}"
+}
