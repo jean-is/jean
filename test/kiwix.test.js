@@ -27,6 +27,9 @@ test('a page’s first paragraphs, without its tables or its notes’ numbers', 
   const text = intro(BOOKS['wikipedia_en_100_2026-08'].pages.Lighthouse)
   assert.equal(text, 'A lighthouse is a tower designed to emit light from a system of lamps and lenses, to serve as a navigational aid for maritime pilots at sea.\nLighthouses mark dangerous coastlines & hazardous shoals.\nThe Pharos of Alexandria was among the first.')
   assert.equal(intro('<p>Lighthouses mark coastlines.</p>', 11), 'Lighthouses…')
+  // A link or a pronunciation runs inside the sentence: no space where its tags were.
+  assert.equal(intro('<p>Canberra (<span class="IPA"><span title="stress">ˈ</span><span>k</span>æn</span>) is the capital of <a href="Australia">Australia</a>, inland.<br>A line.</p>'),
+    'Canberra (ˈkæn) is the capital of Australia, inland.\nA line.')
   assert.equal(intro('<div>No paragraph here.</div>'), '')
 })
 
