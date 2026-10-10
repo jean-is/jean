@@ -3,7 +3,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { PROVIDERS } from '../app/core/llm.js'
-import { picture, film } from '../app/caps/pictures/cloud.js'
+import { picture, film, filmModels } from '../app/caps/pictures/cloud.js'
 
 /** @param {(url: string, init: any) => Response | Promise<Response>} respond */
 function mockFetch(respond) {
@@ -97,12 +97,24 @@ describe('films', () => {
     assert.equal(made.mimeType, 'video/mp4')
   })
 
-  test('OpenRouter: the same, in JSON, from where it says to ask', async () => {
+  test('OpenRouter: the same, in JSON, from where it says to ask, as long as the model takes', async () => {
     const { fetch, calls } = mockFetch((url) => (url.endsWith('/content') ? new Response(mp4)
       : Response.json(url.endsWith('/videos') ? { id: 'j', status: 'pending', polling_url: 'https://openrouter.ai/api/v1/videos/j' } : { id: 'j', status: 'completed' })))
-    await film({ ...ask, brain: brain('openrouter'), model: 'google/veo-3.1', shape: 'wide', seconds: 6, every: 0, fetch })
-    assert.deepEqual(calls[0].body, { model: 'google/veo-3.1', prompt: 'A lighthouse', duration: 6, aspect_ratio: '16:9' })
+    await film({ ...ask, brain: brain('openrouter'), model: 'google/veo-3.1', shape: 'wide', seconds: 7, lengths: [4, 6, 8], every: 0, fetch })
+    assert.deepEqual(calls[0].body, { model: 'google/veo-3.1', prompt: 'A lighthouse', duration: 8, aspect_ratio: '16:9' }, 'the longer of two as near')
     assert.deepEqual(calls.slice(1).map((call) => call.url), ['https://openrouter.ai/api/v1/videos/j', 'https://openrouter.ai/api/v1/videos/j/content'])
+    await film({ ...ask, brain: brain('openrouter'), model: 'kwaivgi/kling-video-o1', seconds: 12, lengths: [5, 10], every: 0, fetch })
+    assert.equal(calls[3].body.duration, 10)
+  })
+
+  test('OpenRouter’s film models: listed apart from its /models, those that make one from a description', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ data: [
+      { id: 'google/veo-3.1', supported_durations: [4, 6, 8], supported_aspect_ratios: ['16:9', '9:16'] },
+      { id: 'black-forest-labs/flux-video-edit', supported_durations: null },
+    ] }))
+    assert.deepEqual(await filmModels({ brain: brain('openrouter'), apiKey: 'k', fetch }), [{ id: 'google/veo-3.1', output: ['video'], lengths: [4, 6, 8] }])
+    assert.equal(calls[0].url, 'https://openrouter.ai/api/v1/videos/models')
+    assert.equal(calls[0].init.headers.authorization, 'Bearer k')
   })
 
   test('Gemini’s Omni: one interaction, the film in its answer, from a picture given as a part', async () => {
@@ -119,6 +131,12 @@ describe('films', () => {
   test('a film somewhere other than where the brain is is never fetched, with its key or without', async () => {
     const { fetch, calls } = mockFetch(() => Response.json({ id: 'j', status: 'pending', polling_url: 'https://elsewhere.example/j' }))
     await assert.rejects(film({ ...ask, brain: brain('openrouter'), apiKey: 'k', model: 'm', every: 0, fetch }), /another address: elsewhere\.example/)
+    assert.equal(calls.length, 1)
+  })
+
+  test('a job that expired is asked about no more', async () => {
+    const { fetch, calls } = mockFetch(() => Response.json({ id: 'j', status: 'expired' }))
+    await assert.rejects(film({ ...ask, brain: brain('openrouter'), model: 'google/veo-3.1', every: 0, fetch }), /No film came back/)
     assert.equal(calls.length, 1)
   })
 

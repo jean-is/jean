@@ -1,13 +1,14 @@
 // Pictures and films from a connected brain's provider (D251), imported on first use: OpenAI's
 // Images API, which Ollama and other servers share, OpenRouter's chat and Gemini's Interactions API;
-// films from the /videos of OpenAI and OpenRouter, and Gemini's Omni. What they make comes back as bytes,
-// fetched only from the brain's own address with its key, never shown from the provider's (D35).
+// films from the /videos of OpenAI and OpenRouter, whose film models are listed apart, and Gemini's
+// Omni. What they make comes back as bytes, fetched only from the brain's own address with its key,
+// never shown from the provider's (D35).
 import { LLMError, headersFor, post, endpoint, fetchOrThrow } from '../../core/llm.js'
 
 /**
  * @typedef {{ name: string, mimeType: string, bytes: Uint8Array }} Picture
- * @typedef {import('../../core/types.js').Connection & { model: string, prompt: string, from: Picture[], shape: 'wide' | 'tall' | 'square', seconds?: number, every?: number }} Request
- *   every: how long to wait between asking how a film is coming, in ms
+ * @typedef {import('../../core/types.js').Connection & { model: string, prompt: string, from: Picture[], shape: 'wide' | 'tall' | 'square', seconds?: number, lengths?: number[], every?: number }} Request
+ *   lengths: the seconds a film can last on this model, where its list says; every: how long to wait between asking how a film is coming, in ms
  */
 
 const RATIOS = { square: '1:1', wide: '16:9', tall: '9:16' }
@@ -38,7 +39,7 @@ export async function picture({ brain, apiKey, model, prompt, from, shape, signa
  * A film: OpenAI and OpenRouter make it as a job, which is asked how it is coming every few seconds
  * until it is done, then downloaded; Gemini in the one request. @param {Request} request @returns {Promise<{ bytes: Uint8Array, mimeType: string }>}
  */
-export async function film({ brain, apiKey, model, prompt, from: [first], shape, seconds = 8, signal, every = 10_000, fetch = globalThis.fetch }) {
+export async function film({ brain, apiKey, model, prompt, from: [first], shape, seconds = 8, lengths, signal, every = 10_000, fetch = globalThis.fetch }) {
   const tall = shape === 'tall'
   // Omni makes 3 to 10 seconds.
   if (brain.provider === 'gemini') return interaction({ brain, apiKey, model, prompt, from: first ? [first] : [], shape, signal, fetch }, { type: 'video', aspect_ratio: tall ? '9:16' : '16:9', duration: `${Math.min(10, seconds)}s` })
@@ -51,7 +52,9 @@ export async function film({ brain, apiKey, model, prompt, from: [first], shape,
   /** @type {any} */
   let job
   if (brain.provider === 'openrouter') {
-    job = await answer(post(fetch, { url, headers: headersFor(brain, apiKey), body: { model, prompt, duration: seconds, aspect_ratio: tall ? '9:16' : '16:9',
+    // The length nearest the one asked among those the model takes (Veo: 4, 6 or 8), the longer of two as near.
+    const duration = lengths?.length ? [...lengths].sort((a, b) => b - a).reduce((best, length) => (Math.abs(length - seconds) < Math.abs(best - seconds) ? length : best)) : seconds
+    job = await answer(post(fetch, { url, headers: headersFor(brain, apiKey), body: { model, prompt, duration, aspect_ratio: tall ? '9:16' : '16:9',
       ...(first && { frame_images: [{ type: 'image_url', image_url: { url: `data:${first.mimeType};base64,${base64(first.bytes)}` }, frame_type: 'first_frame' }] }) } }, signal))
   } else {
     // OpenAI takes 4, 8 or 12 seconds, and a picture to start from as a file.
@@ -60,10 +63,21 @@ export async function film({ brain, apiKey, model, prompt, from: [first], shape,
     if (first) form.set('input_reference', new Blob([/** @type {BlobPart} */ (first.bytes)], { type: first.mimeType }), first.name)
     job = await answer(fetchOrThrow(fetch, url, { method: 'POST', headers: plain(brain, apiKey), body: form }, signal))
   }
-  while (job?.id && !/^(completed|succeeded|failed|cancelled)$/.test(job.status)) job = await pause(every, signal).then(() => answer(get(job.polling_url ?? `${url}/${job.id}`, plain(brain, apiKey))))
+  while (job?.id && !/^(completed|succeeded|failed|cancelled|expired)$/.test(job.status)) job = await pause(every, signal).then(() => answer(get(job.polling_url ?? `${url}/${job.id}`, plain(brain, apiKey))))
   if (!/^(completed|succeeded)$/.test(job?.status)) throw new LLMError(job?.error?.message ?? 'No film came back', { code: 'bad_response' })
   const response = await get(`${url}/${job.id}/content`, plain(brain, apiKey))
   return { bytes: new Uint8Array(await response.arrayBuffer()), mimeType: response.headers.get('content-type')?.split(';')[0] || 'video/mp4' }
+}
+
+/**
+ * OpenRouter's film models, which its /models leaves out, with the seconds each takes. Those
+ * without lengths change a film or animate a face: they make none from a description.
+ * @param {import('../../core/types.js').Connection} connection @returns {Promise<{ id: string, output: string[], lengths: number[] }[]>}
+ */
+export async function filmModels({ brain, apiKey, signal, fetch = globalThis.fetch }) {
+  const json = await answer(fetchOrThrow(fetch, endpoint(brain, '/videos/models'), { headers: plain(brain, apiKey) }, signal))
+  return (json?.data ?? []).filter((/** @type {any} */ model) => model.supported_durations?.length)
+    .map((/** @type {any} */ model) => ({ id: model.id, output: ['video'], lengths: model.supported_durations }))
 }
 
 /**
