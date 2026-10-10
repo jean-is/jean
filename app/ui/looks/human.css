@@ -73,8 +73,7 @@
   :root[data-look='human'][data-theme] { --glass: var(--room-2); --side: var(--room-2); --panel: var(--room-2); }
 }
 
-/* No room light. The system's scroll bars and type. */
-:root[data-look='human'] { scrollbar-color: auto; }
+/* No room light. The system's type. */
 :root[data-look='human'] .room { display: none; }
 :root[data-look='human'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone, .house-rank) { font-style: normal; letter-spacing: normal; text-shadow: none; }
 :root[data-look='human'] :is(.wordmark, .wordmark:hover) { font: 600 1.0625rem/1 var(--sans); text-shadow: none; }
@@ -126,7 +125,7 @@
 :root[data-look='human'] .button.primary { background: var(--fill); color: oklch(1 0 0); box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2), 0 0.5px 1.5px oklch(0 0 0 / 0.25); }
 :root[data-look='human'] .button.primary:hover { background: oklch(from var(--fill) calc(l - 0.04) c h); }
 :root[data-look='human'] .button.subtle { background: transparent; box-shadow: none; }
-:root[data-look='human'] :is(input:not([type='radio'], [type='checkbox'], .visually-hidden), select) { border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--field); }
+:root[data-look='human'] :is(input:not([type='radio'], [type='checkbox'], .visually-hidden), select) { border: 1px solid var(--line-strong); border-radius: 0.5rem; background-color: var(--field); }
 :root[data-look='human'] .segmented { border: 0; padding: 0.125rem; background: oklch(from var(--ink) l c h / 0.08); }
 :root[data-look='human'] .segmented span { padding: 0.25rem 0.875rem; color: var(--ink); font-size: 0.8125rem; }
 :root[data-look='human'] .segmented input:checked + span { background: var(--seg); color: var(--ink); font-weight: 500; box-shadow: 0 0.5px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06); }
@@ -193,6 +192,8 @@
   /* Settings is a window of its own: its sections in a sidebar, the open one's settings in groups. */
   :root[data-look='human'] .settings { background: linear-gradient(var(--side-to), var(--side) 13rem, var(--line) 13rem calc(13rem + 1px), var(--well) calc(13rem + 1px)); }
   :root[data-look='human'] .settings-nav { padding-inline: 0.625rem; }
+  /* The settings as far from the line beside the menu as from the window's edge. */
+  :root[data-look='human'] .settings-panel { padding-inline: 1.5rem; }
   :root[data-look='human'] .settings-panel > section { margin-block-end: 0.75rem; padding: 0.875rem 1rem; border: 0; border-radius: 0.75rem; background: var(--group); box-shadow: 0 0 0 1px var(--line); }
   /* A list in a group is the group's rows, from edge to edge. */
   :root[data-look='human'] .settings-panel > section > .list { margin-inline: -1rem; border-inline: 0; border-radius: 0; }

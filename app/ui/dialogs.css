@@ -12,6 +12,9 @@ dialog {
 }
 dialog::backdrop { background: oklch(0.1 0.01 50 / 0.55); backdrop-filter: blur(6px); transition: opacity 0.35s, display 0.35s allow-discrete, overlay 0.35s allow-discrete; }
 dialog:not([open]), dialog:not([open])::backdrop { opacity: 0; }
+/* No ring round a whole dialog, which has the keyboard when it opened as the page loaded (ui/dialogs.js);
+   :root outweighs a look's own :focus-visible ring. */
+:root dialog[open]:focus-visible { outline: 0; }
 dialog[open] { @starting-style { opacity: 0; translate: 0 1rem; } }
 dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .sheet { inline-size: min(100% - 2rem, 34rem); max-block-size: min(88dvh, 52rem); padding: 1.25rem 1.5rem 1.5rem; border-radius: 1.6rem; }
@@ -53,12 +56,20 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .settings-nav [aria-current='page'] { font-weight: 600; }
 /* The menu's three groups (D134): Jean itself; what it knows and can do; what it may do and keeps. */
 .settings-nav hr { flex: none; margin: 0.45rem 0.85rem; border: 0; border-block-start: 1px solid var(--line); }
-.settings-panel { position: relative; grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; }
+/* Its scroll bar's gutter is kept on both sides, so one that takes room (with a mouse) never pushes the
+   settings off centre or comes and goes between sections. */
+.settings-panel { position: relative; grid-area: 1 / 2 / 3; overflow: auto; padding-block: 1.6rem 1.5rem; padding-inline: 0.75rem 1.5rem; scrollbar-gutter: stable both-edges; }
 .settings-panel > :first-child { border-block-start: 0; padding-block-start: 0.25rem; }
 .setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
 .setting p { margin: 0; }
 div.setting { margin-block-end: 0.75rem; }
 .setting :is(select, .you-name) { inline-size: 15rem; }
+/* A list to pick from has its own chevron, two strokes in the text's colour, as far from the end as the
+   text from the start: the system's sat against the edge. The system's again where colours are forced. */
+dialog select { --stroke: #0000 calc(50% - 1px), var(--ink-soft) calc(50% - 0.5px) calc(50% + 0.5px), #0000 calc(50% + 1px); appearance: none; padding-inline-end: 2.2rem;
+  background-image: linear-gradient(to top right, var(--stroke)), linear-gradient(to top left, var(--stroke)); background-size: 0.3rem 0.3rem; background-repeat: no-repeat; background-position: right 1.1rem center, right 0.8rem center; }
+dialog select:dir(rtl) { background-position: left 0.8rem center, left 1.1rem center; }
+@media (forced-colors: active) { dialog select { appearance: auto; } }
 /* The keyboard's shortcuts (D236): what each does, its keys at the end of its row. */
 .keyboard dd { margin: 0; margin-inline-start: auto; }
 .keyboard kbd { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 0.45rem; font: inherit; font-size: 0.85rem; color: var(--ink-soft); white-space: nowrap; }

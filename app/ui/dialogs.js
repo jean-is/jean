@@ -46,6 +46,8 @@ const before = new WeakMap()
  * opens again one the browser closed (Escape) before its close event says so. Closed, the keyboard
  * goes back to what had it, as the browser does itself, except WebKit now and then when the dialog
  * goes without a transition (reduced motion): the page is still inert to it until the next frame.
+ * Opened before the user did anything, as Settings is by the address a page loads with, the dialog
+ * itself takes the keyboard rather than its close button, which a ring would show; Tab leads to it.
  * @param {Element} host @param {string} name
  */
 export function syncDialog(host, name) {
@@ -56,6 +58,7 @@ export function syncDialog(host, name) {
     if (open && !dialog.open) {
       before.set(dialog, document.activeElement)
       dialog.showModal()
+      if (navigator.userActivation?.hasBeenActive === false) { dialog.tabIndex = -1; dialog.focus() }
     } else if (!open && dialog.open) {
       dialog.close()
       const back = before.get(dialog)
@@ -470,9 +473,9 @@ const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settin
   ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
-const keyboard = () => html`<dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable'
+const keyboard = () => html`<section><dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable'
   : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id)))
-  .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl>`
+  .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl></section>`
 
 function approvals() {
   const { settings, locked } = effective.value
