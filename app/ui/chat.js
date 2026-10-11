@@ -34,8 +34,13 @@ setInterval(() => { now.value = Date.now() }, 60_000)
 
 class Conversation extends Element {
   #follow = true
+  /** @type {string | undefined} */
+  #shown
+  #opening = false
+  #opened = () => { this.#opening = false }
+  #grown = new ResizeObserver(() => this.#opening && this.#go(null))
   #onScroll = () => {
-    this.#follow = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
+    if (!this.#opening) this.#follow = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
   }
   #keep = () => {
     const turns = [...this.querySelectorAll('.turns > .turn')]
@@ -51,6 +56,7 @@ class Conversation extends Element {
     super.connectedCallback()
     addEventListener('scroll', this.#onScroll, { passive: true })
     addEventListener('pagehide', this.#keep)
+    this.#grown.observe(this)
     // Back where the reader was, or at the end: once the box below is drawn too, and again once the
     // capabilities are back, unless the reader has moved since.
     const back = spot?.id === app.current.peek()?.id ? spot : null
@@ -70,11 +76,13 @@ class Conversation extends Element {
     super.disconnectedCallback()
     removeEventListener('scroll', this.#onScroll)
     removeEventListener('pagehide', this.#keep)
+    this.#grown.disconnect()
   }
 
   /** @param {{ turn: number, offset: number } | null} back */
   #go(back) {
     const turn = back && this.querySelectorAll('.turns > .turn')[back.turn]
+    if (turn) this.#opening = false
     scrollTo({ top: turn ? turn.getBoundingClientRect().top + scrollY + back.offset : document.documentElement.scrollHeight, behavior: 'instant' })
     this.#onScroll()
   }
@@ -99,6 +107,13 @@ class Conversation extends Element {
   }
 
   updated() {
+    // Another conversation opens at its end, wherever the one before was read; until the reader does
+    // anything, the scrolling is Jean's, and what draws late (a picture, a card) keeps the end in view.
+    const id = app.current.peek()?.id
+    if (id !== this.#shown) {
+      [this.#shown, this.#follow, this.#opening] = [id, true, true]
+      for (const type of ['pointerdown', 'keydown', 'wheel']) addEventListener(type, this.#opened, { capture: true, passive: true, once: true })
+    }
     if (this.#follow) scrollTo({ top: document.documentElement.scrollHeight })
   }
 }

@@ -1,7 +1,8 @@
 // Pictures and films (D251): the brain offers them when asked to draw, makes a picture kept in the
 // project and shown in the answer, ready to save; a film is asked first, then shown and played there.
+// A conversation that ends on a picture opens at its end once the picture is drawn.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks } from './helpers.js'
 
 test('the brain offers pictures when asked to draw, then makes one, kept in the project', async ({ page }) => {
   await start(page)
@@ -69,6 +70,28 @@ test('Never on a film declines it, not every change; Always allow holds for film
   await expect(settings).toContainText('Films are made without asking first.')
   await settings.getByRole('button', { name: 'Ask first again' }).click()
   await expect(settings).not.toContainText('Films are made without asking first.')
+})
+
+test('a conversation that ends on a picture opens at its end, once the picture is drawn', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  for (const [index, text] of ['Explain photosynthesis in simple words', 'Write the bakery plan as a Word document', 'Explain photosynthesis again', 'Draw a lighthouse at dusk'].entries()) {
+    await ask(page, text)
+    await expect(page.locator('.msg-jean .msg-actions')).toHaveCount(index + 1)
+  }
+  await page.locator('.wordmark').click()
+  await ask(page, 'Explain the water cycle in simple words')
+  await expect(page.locator('.msg-jean .msg-actions')).toHaveCount(1)
+  // A large picture takes a while to read: here a second.
+  await page.evaluate(async () => {
+    const { fs } = (await import('/ui/state.js')).app
+    const read = fs.readBytes.bind(fs)
+    fs.readBytes = async (path) => { await new Promise((resolve) => setTimeout(resolve, 1000)); return read(path) }
+  })
+  await (await openTasks(page)).locator('.history-item', { hasText: 'Explain photosynthesis simple' }).click()
+  await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
+  await expect.poll(() => page.evaluate(() => Math.round(document.documentElement.scrollHeight - innerHeight - scrollY))).toBe(0)
 })
 
 for (const [lang, save] of [['ar', 'حفظ الصورة'], ['ja', '画像を保存']]) {

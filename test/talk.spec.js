@@ -1,10 +1,10 @@
 // Talk (0.1) and reply suggestions (0.3): an answer streams in, titled meanwhile, its follow-ups become
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
-// the conversation, in the address (D137), and a reload comes back to the line being read. A request
-// whose connection drops before its answer starts is asked again (D202), and a key connects though
-// its service is too busy to list its models.
+// the conversation, in the address (D137), a reload comes back to the line being read, and an
+// earlier conversation opens at its end. A request whose connection drops before its answer starts
+// is asked again (D202), and a key connects though its service is too busy to list its models.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
 test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await start(page)
@@ -269,6 +269,38 @@ test('a reload comes back to the same line of a long conversation, or to its end
     await expect.poll(() => page.evaluate(() => Math.round(scrollY))).toBe(line)
     expect(await page.evaluate(() => Math.round(document.documentElement.scrollHeight - innerHeight - scrollY))).toBe(up)
   }
+})
+
+test('an earlier conversation opens at its end, wherever the one left was read', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const asks = /** @param {string[]} asked */ async (asked) => {
+    for (const [index, text] of asked.entries()) {
+      await ask(page, text)
+      await expect(page.locator('.msg-jean .msg-actions')).toHaveCount(index + 1)
+    }
+  }
+  await asks(['Explain photosynthesis in simple words', 'Write the bakery plan as a Word document', 'Explain photosynthesis again', 'Write the cafe plan as a Word document'])
+  await page.locator('.wordmark').click()
+  await asks(['Explain the water cycle in simple words', 'Explain photosynthesis once more', 'Explain the water cycle again'])
+  const below = () => page.evaluate(() => Math.round(document.documentElement.scrollHeight - innerHeight - scrollY))
+  // Read from the top, then the other one opens: at its end, its last card drawn; and back, at this one's end.
+  const [first, second] = [['Explain photosynthesis simple', 'Explain photosynthesis in simple words'], ['Explain water cycle', 'Explain the water cycle in simple words']]
+  for (const [title, text] of [first, second, first]) {
+    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }))
+    await (await openTasks(page)).locator('.history-item', { hasText: title }).click()
+    await expect(page.locator('.msg-user').first()).toHaveText(text)
+    await expect.poll(below).toBe(0)
+  }
+  // Only to open it: what the reader unfolds then stays where it was, the end further down.
+  const steps = page.locator('details.activity').last()
+  const top = async () => Math.round((await steps.locator('> summary').boundingBox())?.y ?? 0)
+  const was = await top()
+  await steps.locator('> summary').click()
+  await expect(steps).toHaveAttribute('open', '')
+  await page.waitForTimeout(300)
+  expect(await top()).toBe(was)
+  expect(await below()).toBeGreaterThan(0)
 })
 
 test('light or dark: Auto follows the device, Light and Dark stay put', async ({ page }) => {
