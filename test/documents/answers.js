@@ -48,15 +48,16 @@ async function place() {
 /**
  * streamChat with OpenRouter told to use the brain's provider alone, when it names one, once the request has its place.
  * @param {{ provider?: string }} b @param {{ queued: number }} [timing] adds the time spent waiting for a place
+ * @param {Record<string, any>} [body] more for the request's body
  * @returns {typeof streamChat}
  */
-const streamOf = ({ provider }, timing = { queued: 0 }) => async function* (options) {
+const streamOf = ({ provider }, timing = { queued: 0 }, body = {}) => async function* (options) {
   const asked = performance.now()
   const release = await place()
   timing.queued += performance.now() - asked
   try {
-    yield* streamChat({ ...options, fetch: provider
-      ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), provider: { order: [provider], allow_fallbacks: false } }) })
+    yield* streamChat({ ...options, fetch: provider || Object.keys(body).length
+      ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), ...(provider && { provider: { order: [provider], allow_fallbacks: false } }), ...body }) })
       : globalThis.fetch })
   } finally {
     release()
@@ -64,24 +65,43 @@ const streamOf = ({ provider }, timing = { queued: 0 }) => async function* (opti
 }
 
 /**
- * One request's whole reply, retried as the loop retries. Its length is capped so that OpenRouter, which holds
- * credit for every request in flight, can take hundreds at once.
- * @param {string} system @param {string} content @param {string} apiKey
+ * A helper's request (notes, every_page): its whole reply, retried as the loop retries, and whether the provider cut
+ * it at its longest. Without reasoning: DeepInfra sometimes gives this brain's as text, and it fills the 16,384
+ * tokens a reply may have there.
+ * @param {string} system @param {string} content @param {string} apiKey @returns {Promise<{ text: string, cut: boolean }>}
  */
 async function complete(system, content, apiKey) {
   const retries = waits()
   for (let attempt = 0; ; attempt++) {
     try {
       let text = ''
-      for await (const event of streamOf(BRAINS.large)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }], maxTokens: 16000 })) {
+      let cut = false
+      for await (const event of streamOf(BRAINS.large, undefined, { reasoning: { enabled: false } })({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
         if (event.type === 'text') text += event.delta
+        else if (event.type === 'done') cut = event.stopReason === 'max_tokens'
       }
-      return text
+      return { text, cut }
     } catch (error) {
       if (attempt === retries.length) throw error
       await new Promise((resolve) => setTimeout(resolve, retries[attempt]))
     }
   }
+}
+
+const NONE_ONLY = /^\W*none\W*$/i
+
+/**
+ * A helper's reply about pages first–last, each headed [[page n]] after the opening given; a reply the provider cut
+ * is asked again of each half of the pages, and the halves' replies joined, those saying none left out.
+ * @param {string} system @param {string} opening @param {string[]} pages @param {number} first @param {number} last @param {string} apiKey
+ * @returns {Promise<string>}
+ */
+async function overPages(system, opening, pages, first, last, apiKey) {
+  const { text, cut } = await complete(system, `${opening}${pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')}`, apiKey)
+  if (!cut || first === last) return text.trim()
+  const middle = Math.floor((first + last) / 2)
+  const halves = (await Promise.all([overPages(system, opening, pages, first, middle, apiKey), overPages(system, opening, pages, middle + 1, last, apiKey)])).filter((half) => !NONE_ONLY.test(half))
+  return halves.join('\n') || 'none'
 }
 
 const SHARE = 0.25 // a shared file's share of the context (D55)
@@ -301,8 +321,7 @@ export async function summarise(pages, apiKey, progress = () => {}, group = 40, 
     if (note) return
     const first = g * group + 1
     const last = Math.min(pages.length, first + group - 1)
-    const text = await complete(NOTES, pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n'), apiKey)
-    out[g] = `Notes on pages ${first}–${last}:\n${text.trim()}`
+    out[g] = `Notes on pages ${first}–${last}:\n${await overPages(NOTES, '', pages, first, last, apiKey)}`
     kept = kept.then(() => progress(out, total))
   }))
   await kept
@@ -321,7 +340,7 @@ If nothing on these pages answers it, reply "none" and nothing else.`
  */
 export async function everyPage(question, files, apiKey, group = 40) {
   const parts = files.flatMap((file) => Array.from({ length: Math.ceil(file.pages.length / group) }, (_, g) => ({ file, first: g * group + 1, last: Math.min(file.pages.length, (g + 1) * group) })))
-  const answers = await Promise.all(parts.map(async ({ file, first, last }) => (await complete(MAP, `${question}\n\n${file.pages.slice(first - 1, last).map((page, j) => `[[page ${first + j}]]\n${page}`).join('\n\n')}`, apiKey)).trim()))
-  const found = parts.map(({ file, first, last }, i) => (/^\W*none\W*$/i.test(answers[i]) ? '' : `${file.name}, pages ${first}–${last}:\n${answers[i]}`)).filter(Boolean)
+  const answers = await Promise.all(parts.map(({ file, first, last }) => overPages(MAP, `${question}\n\n`, file.pages, first, last, apiKey)))
+  const found = parts.map(({ file, first, last }, i) => (NONE_ONLY.test(answers[i]) ? '' : `${file.name}, pages ${first}–${last}:\n${answers[i]}`)).filter(Boolean)
   return `Asked of ${parts.length} groups of pages; ${found.length} answered.${found.length ? `\n\n${found.join('\n\n')}` : ''}`
 }
