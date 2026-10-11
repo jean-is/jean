@@ -246,6 +246,7 @@ test('a web page Jean made opens from its card in the browser once it is on, as 
   const shown = page.frameLocator('.browser-page')
   await expect(shown.locator('h1')).toHaveCSS('color', 'rgb(180, 70, 20)')
   await expect(shown.locator('#out')).toHaveText('Baked by a script CSS1Compat')
+  await expect(shown.locator('#call')).toHaveText('ReferenceError')
   await expect(page.locator('app-preview .preview')).toHaveCount(0)
   expect(await page.evaluate(async () => (await (await import('/ui/caps.js')).loaded.value.get('browser')?.sections?.())?.page))
     .toBe('The browser beside the conversation shows Bakery.html, a page you made, as one of your answers kept it.')

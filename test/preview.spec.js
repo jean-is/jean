@@ -29,6 +29,8 @@ test('a web page Jean made shows in the preview and runs its script, which can s
   // Its style applies and its script runs, in standards mode; its fetch and its picture never leave.
   await expect(frame.locator('h1')).toHaveCSS('color', 'rgb(180, 70, 20)')
   await expect(frame.locator('#out')).toHaveText('Baked by a script CSS1Compat')
+  // Its call never starts: WebRTC, which no policy closes, isn't there (D267).
+  await expect(frame.locator('#call')).toHaveText('ReferenceError')
   // A link leads nowhere from here: the page stays. Nor can its script take it away.
   await frame.locator('#away').click()
   await page.waitForTimeout(800)

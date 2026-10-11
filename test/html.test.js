@@ -104,13 +104,16 @@ test('a page reaches any site, or only those listed, as typed or pasted (D143)',
   assert.match(pagePolicy({ ...on, network: false }, ['api.example.com']), /connect-src 'none';/)
 })
 
-test('the preview frame allows at most what Settings can, and its relay writes the policy first (D126, D143)', () => {
+test('the preview frame allows at most what Settings can, and its relay writes the policy first and takes WebRTC away (D126, D143, D267)', () => {
   assert.equal(previewCSP, pagePolicy({ scripts: true, web: true, network: true }, ['*', 'localhost:*', '127.0.0.1:*'], true), "preview.html's policy is the loosest a page can be given, a folder's included")
   assert.match(pagePolicy({ scripts: true, web: false, network: false }, [], true), /script-src 'unsafe-inline' data: blob: 'wasm-unsafe-eval';.* img-src data: blob:;/, "a folder's or an Office file's page: its scripts as data, its own workers, pictures and WebAssembly (D156, D183)")
   assert.ok(preview.indexOf('Content-Security-Policy') < preview.indexOf('<script'))
   const relay = /<script>([\s\S]*?)<\/script>/.exec(preview)?.[1] ?? ''
   assert.ok(relay.indexOf('http-equiv="Content-Security-Policy"') < relay.indexOf('document.write(data.page)'), "the page's policy, before the page")
   assert.match(relay, /typeof data\?\.policy !== 'string'/, 'no page without its policy')
+  // No policy closes WebRTC; the page's window is the only one it reaches, the sandbox giving a frame it opens an origin of its own.
+  assert.ok(relay.indexOf("delete globalThis[name]") < relay.indexOf('document.write(data.page)'), 'WebRTC gone before the page runs')
+  assert.match(relay, /name\.endsWith\('RTCPeerConnection'\)/, 'webkitRTCPeerConnection too')
   // What keeps the frame from being taken elsewhere is the page around it.
   assert.ok(csp.includes("frame-src 'self'"), "index.html's frame-src stays 'self'")
 })
