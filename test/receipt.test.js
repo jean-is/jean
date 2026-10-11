@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { foldTurns, envelope, userRecord, metaRecord } from '../app/core/events.js'
-import { brainsOf, factsOf, costOf, certificate, seal, verify } from '../app/caps/receipt/certificate.js'
+import { brainsOf, madeOf, factsOf, costOf, certificate, seal, verify } from '../app/caps/receipt/certificate.js'
 
 const T0 = Date.parse('2026-10-10T09:00:00.000Z')
 const at = (/** @type {number} */ ms) => new Date(T0 + ms).toISOString()
@@ -90,6 +90,22 @@ test('free on this device, priced in the cloud, not known without a price', () =
   const cached = brains.map((brain) => ({ ...brain, cached: 800 }))
   assert.equal(costOf(cached.slice(1), () => ({ prompt: 3e-6, completion: 15e-6, cacheRead: 0.3e-6 })), 200 * 3e-6 + 800 * 0.3e-6 + 200 * 15e-6)
   assert.equal(costOf(cached.slice(1), () => ({ prompt: 3e-6, completion: 15e-6 })), 1000 * 3e-6 + 200 * 15e-6)
+})
+
+test('who made a picture or a film, and where: on this device by its own name, or a provider in the cloud, which sends the answer out (D263)', async () => {
+  const picture = (/** @type {number} */ step, /** @type {object} */ made) => ({ ...envelope('jean', { sessionUpdate: 'tool_call', toolCallId: `c${step}`, title: 'A picture', name: 'picture', kind: 'edit', status: 'completed',
+    _meta: { picture: { uri: 'p.png', name: 'p.png', mimeType: 'image/png' }, made } }, step), at: at(1500) })
+  const here = { kind: 'picture', provider: 'device', model: 'Z-Image-Turbo', local: true }
+  const { records } = turnWith([{ local: true, at: 1000 }])
+  records.splice(2, 0, picture(1, here))
+  const turn = foldTurns(records)[0]
+  assert.deepEqual(madeOf(turn), [here])
+  const facts = factsOf(turn, [reached(500, 5500, {})])
+  assert.equal(facts.verdict, 'local')
+  assert.deepEqual((await certificate({ facts, turn, text: '', conversation: 'c', by: 'device', origin: 'https://jean.is' })).made, [here])
+  const cloud = { kind: 'picture', provider: 'openai', model: 'gpt-image-1.5', local: false }
+  records.splice(2, 1, picture(1, cloud))
+  assert.equal(factsOf(foldTurns(records)[0], [reached(500, 5500, {})]).verdict, 'out')
 })
 
 test('a sealed certificate holds the request’s and the answer’s fingerprints, not their words, and no change survives its seal', async () => {

@@ -101,14 +101,17 @@ async function make(kind, args, ctx) {
   if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : from.length ? 'change pictures' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains${kind === 'film' ? '' : ', where pictures on this device can be downloaded too'}.`)
   const shape = ['wide', 'tall'].includes(args?.shape) ? args.shape : kind === 'film' ? 'wide' : 'square'
   const cloud = await import('./cloud.js')
-  /** @type {{ bytes: Uint8Array, mimeType: string } | undefined} */
+  /** @type {{ bytes: Uint8Array, mimeType: string, model?: string } | undefined} */
   let made
+  /** @type {Engine | undefined} */
+  let by
   const failed = []
   // A picture that fails is asked of the next who can make it; a film, which costs, never.
   for (const engine of kind === 'film' ? found.slice(0, 1) : found) {
     try {
       made = 'device' in engine ? await device.paint(description, shape) : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined,
         prompt: description, from, shape, seconds: secondsOf(args), signal: ctx.signal })
+      by = engine
       break
     } catch (error) {
       if (ctx.signal?.aborted) throw error
@@ -121,6 +124,8 @@ async function make(kind, args, ctx) {
   const conversation = conversationOf(ctx.signal)
   const version = nextVersion(filesMade(callsIn(conversation?.records ?? [], conversation?.turn?.steps)), name, link.uri)
   ctx.meta.picture = { uri: link.uri, name, mimeType: made.mimeType, size: made.bytes.length, version }
+  // Who made it, as its answer's certificate says (D252).
+  ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', local: true }
   return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}. The user sees it in your answer.`
 }
 

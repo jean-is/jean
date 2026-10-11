@@ -14,6 +14,7 @@
   "receipt.costAbout": "about {cost}",
   "receipt.costUnknown": "Not known",
   "receipt.by": "Answered by",
+  "receipt.made": "Made by",
   "receipt.here": "on this device",
   "receipt.reached": "Also reached",
   "receipt.save": "Save the certificate",

@@ -14,6 +14,10 @@ test('the brain offers pictures when asked to draw, then makes one, kept in the 
   await expect(picture).toHaveAttribute('alt', 'Draw a lighthouse at dusk')
   await expect(page.locator('app-picture a[download]')).toHaveAttribute('download', 'draw-a-lighthouse-at-dusk.png')
   await expect(page.locator('.activity-list')).toContainText('A picture · Draw a lighthouse at dusk')
+  // About this answer names who made it (D264).
+  await page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' }).click()
+  await expect(page.locator('.receipt .receipt-list').filter({ hasText: 'Made by' })).toContainText('fake-image-1')
+  await page.keyboard.press('Escape')
   // Kept like a shared file, its description as its text.
   const kept = await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')

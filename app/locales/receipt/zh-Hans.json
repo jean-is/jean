@@ -14,6 +14,7 @@
   "receipt.costAbout": "约 {cost}",
   "receipt.costUnknown": "未知",
   "receipt.by": "回答者",
+  "receipt.made": "生成者",
   "receipt.here": "在这台设备上",
   "receipt.reached": "还访问了",
   "receipt.save": "保存证书",

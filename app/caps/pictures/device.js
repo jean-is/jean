@@ -66,8 +66,9 @@ const STAGES = {
     ]),
   },
 }
-/** The three, the quickest first, the finest last. */
+/** The three, the quickest first, the finest last; and their names, as an answer's certificate gives them (D252). */
 export const MAKERS = /** @type {Maker[]} */ (['sd-turbo', 'flux2-klein', 'z-image-turbo'])
+export const NAMES = { 'sd-turbo': 'SD-Turbo', 'flux2-klein': 'FLUX.2 [klein] 4B', 'z-image-turbo': 'Z-Image-Turbo' }
 const FILES = { 'sd-turbo': TURBO, 'flux2-klein': Object.values(STAGES['flux2-klein']).flat(), 'z-image-turbo': Object.values(STAGES['z-image-turbo']).flat() }
 /** What each weighs. */
 export const BYTES = { 'sd-turbo': total(TURBO), 'flux2-klein': total(FILES['flux2-klein']), 'z-image-turbo': total(FILES['z-image-turbo']) }
@@ -159,8 +160,8 @@ let busy = Promise.resolve()
 
 /**
  * A picture of a description by the one used, once its files are here, one at a time, as they
- * share the device's memory: SD-Turbo's 512 pixels square, the others' in the shape asked.
- * @param {string} description @param {keyof typeof SIZES} shape
+ * share the device's memory: SD-Turbo's 512 pixels square, the others' in the shape asked; with
+ * the name of the one that made it. @param {string} description @param {keyof typeof SIZES} shape
  */
 export function paint(description, shape) {
   const maker = used()
@@ -176,5 +177,5 @@ export function paint(description, shape) {
     return /** @type {Uint8Array} */ ((await stage({ maker, type: 'decode', files: files.decode, latent, width, height }, [latent.buffer])).bytes)
   })
   busy = made.then(() => {}, () => {})
-  return made.then((bytes) => ({ bytes: new Uint8Array(bytes), mimeType: 'image/png' }))
+  return made.then((bytes) => ({ bytes: new Uint8Array(bytes), mimeType: 'image/png', model: NAMES[/** @type {Maker} */ (maker)] }))
 }
