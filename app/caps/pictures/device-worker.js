@@ -6,6 +6,7 @@
 //
 // { type: 'load', host, files }   → progress…, { type: 'ready' }
 // { type: 'paint', prompt }       → { type: 'done', bytes }, a PNG
+// { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
@@ -36,6 +37,11 @@ async function handle({ id, type, ...data }) {
     } else if (type === 'paint') {
       const bytes = await paint(data.prompt)
       self.postMessage({ id, type: 'done', bytes }, { transfer: [bytes] })
+    } else if (type === 'unload' && loading) {
+      const { sessions } = await loading
+      loading = null
+      await Promise.all(sessions.map((session) => session.release()))
+      self.postMessage({ id, type: 'done' })
     }
   } catch (error) {
     if (type === 'load') loading = null

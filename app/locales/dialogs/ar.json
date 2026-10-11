@@ -296,7 +296,7 @@
   "brain.model": "إصدار العقل",
   "brain.device.title": "على هذا الجهاز",
   "brain.device.text": "خاص ومجاني ويعمل دون اتصال: لا شيء مما تكتبه يغادر هذا الحاسوب.",
-  "brain.device.action": "تنزيل لمرة واحدة ({size})",
+  "brain.device.action": "تنزيل ({size})",
   "brain.device.downloading": "جارٍ تنزيل العقل",
   "brain.device.progress": "{done} من {total}. يمكنك مواصلة استخدام هذه الصفحة.",
   "brain.device.loading": "أوشك على الجاهزية…",

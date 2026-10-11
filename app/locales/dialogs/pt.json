@@ -287,7 +287,7 @@
   "brain.model": "Versão do cérebro",
   "brain.device.title": "Neste dispositivo",
   "brain.device.text": "Privado, gratuito e funciona sem ligação: nada do que escreves sai deste computador.",
-  "brain.device.action": "Transferir uma vez ({size})",
+  "brain.device.action": "Transferir ({size})",
   "brain.device.downloading": "A transferir o cérebro",
   "brain.device.progress": "{done} de {total}. Podes continuar a usar esta página.",
   "brain.device.loading": "Quase pronto…",

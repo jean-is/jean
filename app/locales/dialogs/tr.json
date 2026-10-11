@@ -284,7 +284,7 @@
   "brain.model": "Beyin sürümü",
   "brain.device.title": "Bu cihazda",
   "brain.device.text": "Gizli, ücretsiz ve çevrimdışı çalışır: yazdığın hiçbir şey bu bilgisayardan çıkmaz.",
-  "brain.device.action": "Bir kez indir ({size})",
+  "brain.device.action": "İndir ({size})",
   "brain.device.downloading": "Beyin indiriliyor",
   "brain.device.progress": "{done} / {total}. Bu sayfayı kullanmaya devam edebilirsin.",
   "brain.device.loading": "Neredeyse hazır…",

@@ -284,7 +284,7 @@
   "brain.model": "मेंदूची आवृत्ती",
   "brain.device.title": "या उपकरणावर",
   "brain.device.text": "खाजगी, मोफत आणि ऑफलाइन: तुम्ही लिहिलेले काहीही या संगणकाबाहेर जात नाही.",
-  "brain.device.action": "एकदा डाउनलोड करा ({size})",
+  "brain.device.action": "डाउनलोड करा ({size})",
   "brain.device.downloading": "मेंदू डाउनलोड होत आहे",
   "brain.device.progress": "{total} पैकी {done}. तुम्ही हे पान वापरत राहू शकता.",
   "brain.device.loading": "जवळजवळ तयार…",

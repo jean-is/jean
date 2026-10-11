@@ -284,7 +284,7 @@
   "brain.model": "Bersyon ng utak",
   "brain.device.title": "Sa device na ito",
   "brain.device.text": "Pribado, libre, at gumagana offline: walang isinusulat mo ang lalabas sa computer na ito.",
-  "brain.device.action": "I-download nang isang beses ({size})",
+  "brain.device.action": "I-download ({size})",
   "brain.device.downloading": "Dina-download ang utak",
   "brain.device.progress": "{done} ng {total}. Puwede mong ituloy ang paggamit ng page na ito.",
   "brain.device.loading": "Malapit nang matapos…",

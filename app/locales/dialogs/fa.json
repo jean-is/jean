@@ -284,7 +284,7 @@
   "brain.model": "نسخهٔ مغز",
   "brain.device.title": "روی این دستگاه",
   "brain.device.text": "خصوصی، رایگان و آفلاین: هیچ‌چیز از نوشته‌هایتان از این رایانه بیرون نمی‌رود.",
-  "brain.device.action": "یک بار بارگیری ({size})",
+  "brain.device.action": "بارگیری ({size})",
   "brain.device.downloading": "در حال بارگیری مغز",
   "brain.device.progress": "{done} از {total}. می‌توانید به استفاده از این صفحه ادامه دهید.",
   "brain.device.loading": "تقریباً آماده است…",

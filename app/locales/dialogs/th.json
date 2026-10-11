@@ -281,7 +281,7 @@
   "brain.model": "รุ่นของสมอง",
   "brain.device.title": "บนอุปกรณ์นี้",
   "brain.device.text": "เป็นส่วนตัว ฟรี และใช้แบบออฟไลน์ได้: สิ่งที่คุณเขียนจะไม่ออกจากคอมพิวเตอร์เครื่องนี้",
-  "brain.device.action": "ดาวน์โหลดครั้งเดียว ({size})",
+  "brain.device.action": "ดาวน์โหลด ({size})",
   "brain.device.downloading": "กำลังดาวน์โหลดสมอง",
   "brain.device.progress": "{done} จาก {total} ใช้หน้านี้ต่อได้ตามปกติ",
   "brain.device.loading": "ใกล้เสร็จแล้ว…",

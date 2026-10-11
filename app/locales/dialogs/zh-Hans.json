@@ -281,7 +281,7 @@
   "brain.model": "大脑版本",
   "brain.device.title": "在这台设备上",
   "brain.device.text": "私密、免费、可离线使用：你写的任何内容都不会离开这台电脑。",
-  "brain.device.action": "下载一次（{size}）",
+  "brain.device.action": "下载（{size}）",
   "brain.device.downloading": "正在下载大脑",
   "brain.device.progress": "{done} / {total}。你可以继续使用此页面。",
   "brain.device.loading": "马上就好…",

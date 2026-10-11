@@ -1,9 +1,12 @@
 // Pictures and films from a connected brain's provider (D251): what each API is asked, what comes
-// back as bytes, and a film fetched only from where the brain is.
+// back as bytes, and a film fetched only from where the brain is. Then what FLUX.2 [klein]'s and
+// Z-Image-Turbo's graphs are given on this device (D263).
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { PROVIDERS } from '../app/core/llm.js'
 import { picture, film, filmModels } from '../app/caps/pictures/cloud.js'
+import { SIZES, chat, sigmas, positions, unpack } from '../app/caps/pictures/flux.js'
+import * as zimage from '../app/caps/pictures/zimage.js'
 
 /** @param {(url: string, init: any) => Response | Promise<Response>} respond */
 function mockFetch(respond) {
@@ -143,5 +146,53 @@ describe('films', () => {
   test('a failed job says why', async () => {
     const { fetch } = mockFetch(() => Response.json({ id: 'v', status: 'failed', error: { message: 'Blocked by moderation' } }))
     await assert.rejects(film({ ...ask, brain: brain('openai'), model: 'sora-2', every: 0, fetch }), /Blocked by moderation/)
+  })
+})
+
+describe('FLUX.2 [klein] on this device', () => {
+  test('its schedule is shifted as Black Forest Labs’ sampler shifts it, by the picture’s tokens and the steps', () => {
+    // get_schedule(4, 1024) in their flux2 repository.
+    sigmas(4, 1024).forEach((sigma, i) => assert.ok(Math.abs(sigma - [1, 0.9581, 0.884, 0.7175, 0][i]) < 1e-3, `${sigma}`))
+    // More tokens, more shift: the steps stay longer in the noise.
+    assert.ok(sigmas(4, 4096)[2] > sigmas(4, 1024)[2])
+  })
+
+  test('each shape is in sixteens, about a thousand tokens', () => {
+    for (const [width, height] of Object.values(SIZES)) {
+      assert.equal(width % 16 + height % 16, 0)
+      assert.ok(Math.abs((width / 16) * (height / 16) - 1024) <= 32)
+    }
+  })
+
+  test('the description is asked in Qwen3’s chat template, without thinking', () => {
+    assert.equal(chat('A lighthouse'), '<|im_start|>user\nA lighthouse<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n')
+  })
+
+  test('the picture’s tokens sit by row and column, the description’s one after another', () => {
+    const { image, text } = positions(2, 3)
+    assert.deepEqual([...image.slice(4 * 4, 5 * 4)], [0n, 1n, 1n, 0n])
+    assert.deepEqual([...text.slice(5 * 4, 6 * 4)], [0n, 0n, 0n, 5n])
+    assert.equal(text.length, 512 * 4)
+  })
+
+  test('the decoder gets the tokens a channel at a time', () => {
+    const latent = Float32Array.from({ length: 3 * 128 }, (_, i) => i)
+    const out = unpack(latent)
+    // Channel 2 of the second token, then channel 0 of the third.
+    assert.equal(out[2 * 3 + 1], 128 + 2)
+    assert.equal(out[0 * 3 + 2], 2 * 128)
+  })
+})
+
+describe('Z-Image-Turbo on this device', () => {
+  test('its schedule is diffusers’ with a shift of 3, its timesteps 1 less each sigma and the last 1, as its export’s demo drives it', () => {
+    const { sigmas: shifted, timesteps } = zimage.schedule(9)
+    const near = (/** @type {number[]} */ got, /** @type {number[]} */ want) => got.forEach((value, i) => assert.ok(Math.abs(value - want[i]) < 1e-3, `${i}: ${value}`))
+    near(shifted, [1, 0.9547, 0.9004, 0.834, 0.7511, 0.6447, 0.503, 0.305, 0.0089, 0])
+    near(timesteps, [0, 0.0453, 0.0996, 0.166, 0.2489, 0.3553, 0.497, 0.695, 1])
+  })
+
+  test('the description is asked in Qwen3’s chat template, as its pipeline asks it', () => {
+    assert.equal(zimage.chat('A bakery'), '<|im_start|>user\nA bakery<|im_end|>\n<|im_start|>assistant\n')
   })
 })

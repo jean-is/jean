@@ -281,7 +281,7 @@
   "brain.model": "Versi otak",
   "brain.device.title": "Pada peranti ini",
   "brain.device.text": "Peribadi, percuma dan berfungsi di luar talian: tiada apa yang anda tulis keluar dari komputer ini.",
-  "brain.device.action": "Muat turun sekali ({size})",
+  "brain.device.action": "Muat turun ({size})",
   "brain.device.downloading": "Memuat turun otak",
   "brain.device.progress": "{done} daripada {total}. Anda boleh terus menggunakan halaman ini.",
   "brain.device.loading": "Hampir siap…",

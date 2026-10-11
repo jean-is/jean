@@ -281,7 +281,7 @@
   "brain.model": "Ẹ̀yà ọpọlọ",
   "brain.device.title": "Lórí ẹ̀rọ yìí",
   "brain.device.text": "Àdáni ni, ọ̀fẹ́ ni, ó sì ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì: kò sí ohun tí ẹ kọ tí yóò kúrò lórí kọ̀ǹpútà yìí.",
-  "brain.device.action": "Gbà á sílẹ̀ lẹ́ẹ̀kan ({size})",
+  "brain.device.action": "Gbà á sílẹ̀ ({size})",
   "brain.device.downloading": "Ó ń gba ọpọlọ sílẹ̀",
   "brain.device.progress": "{done} nínú {total}. Ẹ lè máa lo ojú-ìwé yìí lọ.",
   "brain.device.loading": "Ó fẹ́rẹ̀ ṣetán…",

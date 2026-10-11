@@ -289,7 +289,7 @@
   "brain.model": "גרסת המוח",
   "brain.device.title": "במכשיר הזה",
   "brain.device.text": "פרטי, חינמי ועובד בלי אינטרנט: שום דבר שתכתבו לא יוצא מהמחשב הזה.",
-  "brain.device.action": "הורדה חד־פעמית ({size})",
+  "brain.device.action": "הורדה ({size})",
   "brain.device.downloading": "הורדת המוח",
   "brain.device.progress": "{done} מתוך {total}. אפשר להמשיך להשתמש בעמוד.",
   "brain.device.loading": "כמעט מוכן…",

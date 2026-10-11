@@ -284,7 +284,7 @@
   "brain.model": "Brain version",
   "brain.device.title": "On this device",
   "brain.device.text": "Private and free, and it works offline: nothing you write leaves this computer.",
-  "brain.device.action": "Download once ({size})",
+  "brain.device.action": "Download ({size})",
   "brain.device.downloading": "Downloading the brain",
   "brain.device.progress": "{done} of {total}. You can keep using this page.",
   "brain.device.loading": "Almost ready…",

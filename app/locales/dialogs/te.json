@@ -284,7 +284,7 @@
   "brain.model": "మెదడు వెర్షన్",
   "brain.device.title": "ఈ పరికరంలో",
   "brain.device.text": "ప్రైవేట్, ఉచితం, ఆఫ్‌లైన్‌లోనూ పనిచేస్తుంది: మీరు రాసేదేదీ ఈ కంప్యూటర్ దాటి వెళ్లదు.",
-  "brain.device.action": "ఒక్కసారి డౌన్‌లోడ్ చేయి ({size})",
+  "brain.device.action": "డౌన్‌లోడ్ చేయి ({size})",
   "brain.device.downloading": "మెదడు డౌన్‌లోడ్ అవుతోంది",
   "brain.device.progress": "{total} లో {done}. మీరు ఈ పేజీని వాడుతూనే ఉండొచ్చు.",
   "brain.device.loading": "దాదాపు సిద్ధం…",

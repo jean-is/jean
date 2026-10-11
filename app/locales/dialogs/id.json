@@ -281,7 +281,7 @@
   "brain.model": "Versi otak",
   "brain.device.title": "Di perangkat ini",
   "brain.device.text": "Pribadi, gratis, dan bisa offline: tidak ada yang Anda tulis keluar dari komputer ini.",
-  "brain.device.action": "Unduh sekali ({size})",
+  "brain.device.action": "Unduh ({size})",
   "brain.device.downloading": "Mengunduh otak",
   "brain.device.progress": "{done} dari {total}. Anda bisa tetap memakai halaman ini.",
   "brain.device.loading": "Hampir siap…",

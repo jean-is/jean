@@ -290,7 +290,7 @@
   "brain.model": "Версія мозку",
   "brain.device.title": "На цьому пристрої",
   "brain.device.text": "Приватно, безкоштовно й без інтернету: ніщо з написаного не залишає цей комп'ютер.",
-  "brain.device.action": "Завантажити один раз ({size})",
+  "brain.device.action": "Завантажити ({size})",
   "brain.device.downloading": "Завантаження мозку",
   "brain.device.progress": "{done} з {total}. Можна й далі користуватися сторінкою.",
   "brain.device.loading": "Майже готово…",

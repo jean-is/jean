@@ -290,7 +290,7 @@
   "brain.model": "Wersja mózgu",
   "brain.device.title": "Na tym urządzeniu",
   "brain.device.text": "Prywatnie, za darmo i bez internetu: nic, co piszesz, nie opuszcza tego komputera.",
-  "brain.device.action": "Pobierz raz ({size})",
+  "brain.device.action": "Pobierz ({size})",
   "brain.device.downloading": "Pobieranie mózgu",
   "brain.device.progress": "{done} z {total}. Możesz dalej korzystać z tej strony.",
   "brain.device.loading": "Prawie gotowe…",

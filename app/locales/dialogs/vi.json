@@ -281,7 +281,7 @@
   "brain.model": "Phiên bản bộ não",
   "brain.device.title": "Trên thiết bị này",
   "brain.device.text": "Riêng tư, miễn phí và chạy ngoại tuyến: không gì bạn viết rời khỏi máy tính này.",
-  "brain.device.action": "Tải về một lần ({size})",
+  "brain.device.action": "Tải về ({size})",
   "brain.device.downloading": "Đang tải bộ não",
   "brain.device.progress": "{done} trên {total}. Bạn vẫn có thể dùng trang này.",
   "brain.device.loading": "Sắp xong…",

@@ -284,7 +284,7 @@
   "brain.model": "মস্তিষ্কের সংস্করণ",
   "brain.device.title": "এই ডিভাইসে",
   "brain.device.text": "ব্যক্তিগত, বিনামূল্যে, অফলাইনেও চলে: আপনার লেখা কিছুই এই কম্পিউটারের বাইরে যায় না।",
-  "brain.device.action": "একবার ডাউনলোড করুন ({size})",
+  "brain.device.action": "ডাউনলোড করুন ({size})",
   "brain.device.downloading": "মস্তিষ্ক ডাউনলোড হচ্ছে",
   "brain.device.progress": "{total}-এর মধ্যে {done}। আপনি এই পাতাটি ব্যবহার চালিয়ে যেতে পারেন।",
   "brain.device.loading": "প্রায় তৈরি…",

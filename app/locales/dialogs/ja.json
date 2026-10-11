@@ -281,7 +281,7 @@
   "brain.model": "頭脳のバージョン",
   "brain.device.title": "この端末で",
   "brain.device.text": "プライベートで無料、オフラインでも使えます。書いた内容がこのコンピューターの外に出ることはありません。",
-  "brain.device.action": "一度だけダウンロード（{size}）",
+  "brain.device.action": "ダウンロード（{size}）",
   "brain.device.downloading": "頭脳をダウンロードしています",
   "brain.device.progress": "{total} 中 {done}。このページはそのまま使えます。",
   "brain.device.loading": "もうすぐ準備ができます…",

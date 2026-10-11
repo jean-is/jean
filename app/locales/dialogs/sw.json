@@ -284,7 +284,7 @@
   "brain.model": "Toleo la ubongo",
   "brain.device.title": "Kwenye kifaa hiki",
   "brain.device.text": "Faragha, bure, na hufanya kazi bila mtandao: hakuna unachoandika kinachotoka kwenye kompyuta hii.",
-  "brain.device.action": "Pakua mara moja ({size})",
+  "brain.device.action": "Pakua ({size})",
   "brain.device.downloading": "Inapakua ubongo",
   "brain.device.progress": "{done} kati ya {total}. Unaweza kuendelea kutumia ukurasa huu.",
   "brain.device.loading": "Karibu tayari…",

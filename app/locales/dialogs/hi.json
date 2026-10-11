@@ -284,7 +284,7 @@
   "brain.model": "दिमाग़ का संस्करण",
   "brain.device.title": "इस डिवाइस पर",
   "brain.device.text": "निजी, मुफ़्त और ऑफ़लाइन: आपका लिखा कुछ भी इस कंप्यूटर से बाहर नहीं जाता।",
-  "brain.device.action": "एक बार डाउनलोड करें ({size})",
+  "brain.device.action": "डाउनलोड करें ({size})",
   "brain.device.downloading": "दिमाग़ डाउनलोड हो रहा है",
   "brain.device.progress": "{total} में से {done}। आप यह पेज इस्तेमाल करते रह सकते हैं।",
   "brain.device.loading": "लगभग तैयार…",

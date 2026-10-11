@@ -281,7 +281,7 @@
   "brain.model": "두뇌 버전",
   "brain.device.title": "이 기기에서",
   "brain.device.text": "비공개, 무료, 오프라인 사용 가능: 입력한 내용은 이 컴퓨터를 떠나지 않아요.",
-  "brain.device.action": "한 번 다운로드({size})",
+  "brain.device.action": "다운로드({size})",
   "brain.device.downloading": "두뇌 다운로드 중",
   "brain.device.progress": "{total} 중 {done}. 이 페이지를 계속 사용할 수 있어요.",
   "brain.device.loading": "거의 다 됐어요…",

@@ -287,7 +287,7 @@
   "brain.model": "Versión del cerebro",
   "brain.device.title": "En este dispositivo",
   "brain.device.text": "Privado, gratuito y funciona sin conexión: nada de lo que escribes sale de este ordenador.",
-  "brain.device.action": "Descargar una vez ({size})",
+  "brain.device.action": "Descargar ({size})",
   "brain.device.downloading": "Descargando el cerebro",
   "brain.device.progress": "{done} de {total}. Puedes seguir usando esta página.",
   "brain.device.loading": "Casi listo…",

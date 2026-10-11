@@ -284,7 +284,7 @@
   "brain.model": "Sigar ƙwaƙwalwa",
   "brain.device.title": "A wannan na'urar",
   "brain.device.text": "Na sirri, kyauta, kuma yana aiki ba tare da intanet ba: babu abin da ka rubuta da zai bar wannan kwamfuta.",
-  "brain.device.action": "Sauke sau ɗaya ({size})",
+  "brain.device.action": "Sauke ({size})",
   "brain.device.downloading": "Ana sauke ƙwaƙwalwa",
   "brain.device.progress": "{done} cikin {total}. Za ka iya ci gaba da amfani da wannan shafi.",
   "brain.device.loading": "Kusan ta shirya…",

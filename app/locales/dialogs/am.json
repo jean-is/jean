@@ -284,7 +284,7 @@
   "brain.model": "የአንጎል ስሪት",
   "brain.device.title": "በዚህ መሣሪያ ላይ",
   "brain.device.text": "የግል እና ነፃ፣ ያለ ኢንተርኔትም ይሠራል፦ የሚጽፉት ምንም ነገር ከዚህ ኮምፒውተር አይወጣም።",
-  "brain.device.action": "አንድ ጊዜ ያውርዱ ({size})",
+  "brain.device.action": "ያውርዱ ({size})",
   "brain.device.downloading": "አንጎሉን በማውረድ ላይ",
   "brain.device.progress": "ከ{total} ውስጥ {done}። ይህን ገጽ መጠቀምዎን መቀጠል ይችላሉ።",
   "brain.device.loading": "ሊጠናቀቅ ጥቂት ቀርቷል…",

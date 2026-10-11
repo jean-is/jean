@@ -284,7 +284,7 @@
   "brain.model": "دماغ کا ورژن",
   "brain.device.title": "اس آلے پر",
   "brain.device.text": "نجی، مفت اور آف لائن: آپ کا لکھا کچھ بھی اس کمپیوٹر سے باہر نہیں جاتا۔",
-  "brain.device.action": "ایک بار ڈاؤن لوڈ کریں ({size})",
+  "brain.device.action": "ڈاؤن لوڈ کریں ({size})",
   "brain.device.downloading": "دماغ ڈاؤن لوڈ ہو رہا ہے",
   "brain.device.progress": "{total} میں سے {done}۔ آپ یہ صفحہ استعمال کرتے رہ سکتے ہیں۔",
   "brain.device.loading": "تقریباً تیار…",

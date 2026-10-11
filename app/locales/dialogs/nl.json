@@ -284,7 +284,7 @@
   "brain.model": "Versie van het brein",
   "brain.device.title": "Op dit apparaat",
   "brain.device.text": "Privé, gratis en werkt offline: niets van wat je schrijft verlaat deze computer.",
-  "brain.device.action": "Eén keer downloaden ({size})",
+  "brain.device.action": "Downloaden ({size})",
   "brain.device.downloading": "Het brein downloaden",
   "brain.device.progress": "{done} van {total}. Je kunt deze pagina blijven gebruiken.",
   "brain.device.loading": "Bijna klaar…",

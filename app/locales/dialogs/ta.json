@@ -284,7 +284,7 @@
   "brain.model": "மூளையின் பதிப்பு",
   "brain.device.title": "இந்தச் சாதனத்தில்",
   "brain.device.text": "தனிப்பட்டது, இலவசம், இணையம் இல்லாமலும் இயங்கும்: நீங்கள் எழுதுவது எதுவும் இந்தக் கணினியை விட்டு வெளியேறாது.",
-  "brain.device.action": "ஒருமுறை பதிவிறக்கு ({size})",
+  "brain.device.action": "பதிவிறக்கு ({size})",
   "brain.device.downloading": "மூளை பதிவிறக்கப்படுகிறது",
   "brain.device.progress": "{total} இல் {done}. இந்தப் பக்கத்தைத் தொடர்ந்து பயன்படுத்தலாம்.",
   "brain.device.loading": "கிட்டத்தட்ட தயார்…",

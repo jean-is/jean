@@ -33,6 +33,7 @@ import { ulid } from './ulid.js'
  * @property {string[]} [sources]              addresses of skills indexes, when the user changed the default list (D121)
  * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)
  * @property {boolean} [films]                  films are made without asking first (D251)
+ * @property {string} [pictures]               which makes pictures on this device (D263)
  */
 
 /**

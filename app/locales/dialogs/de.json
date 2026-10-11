@@ -284,7 +284,7 @@
   "brain.model": "Version des Gehirns",
   "brain.device.title": "Auf diesem Gerät",
   "brain.device.text": "Privat, kostenlos und offline nutzbar: Nichts, was du schreibst, verlässt diesen Computer.",
-  "brain.device.action": "Einmal herunterladen ({size})",
+  "brain.device.action": "Herunterladen ({size})",
   "brain.device.downloading": "Gehirn wird heruntergeladen",
   "brain.device.progress": "{done} von {total}. Du kannst diese Seite weiter nutzen.",
   "brain.device.loading": "Fast fertig…",
