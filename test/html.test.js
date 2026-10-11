@@ -116,6 +116,13 @@ test('the preview frame allows at most what Settings can, and its relay writes t
   assert.match(relay, /name\.endsWith\('RTCPeerConnection'\)/, 'webkitRTCPeerConnection too')
   // What keeps the frame from being taken elsewhere is the page around it.
   assert.ok(csp.includes("frame-src 'self'"), "index.html's frame-src stays 'self'")
+  // A page in an answer (D289): sendPrompt is there before the page runs, and its height is told once it is written.
+  assert.ok(relay.indexOf('globalThis.sendPrompt') < relay.indexOf('document.open()'), 'sendPrompt before the page')
+  assert.ok(relay.indexOf('new ResizeObserver') > relay.indexOf('document.write(data.page)'), 'its height, as it is written')
+  // One that comes as it is written takes the rest from Jean alone, and is closed once it is whole.
+  assert.match(relay, /if \(!data\.open\) document\.close\(\)/)
+  assert.match(relay, /from !== parent \|\| typeof next\?\.page !== 'string'/)
+  assert.match(relay, /if \(!next\.open\) removeEventListener\('message', more\), document\.close\(\)/)
 })
 
 test('a page may fill the screen and save files unless Settings says no; it can always copy (D158)', async () => {

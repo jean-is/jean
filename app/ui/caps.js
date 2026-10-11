@@ -53,13 +53,14 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   charts: () => import('../caps/charts/charts.js'),
   scores: () => import('../caps/scores/scores.js'),
   slides: () => import('../caps/slides/slides.js'),
+  interactive: () => import('../caps/interactive/interactive.js'),
   pictures: () => import('../caps/pictures/pictures.js'),
   receipt: () => import('../caps/receipt/receipt.js'),
   certificates: () => import('../caps/certificates/certificates.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
-const ON_SIGHT = ['charts', 'scores', 'slides']
+const ON_SIGHT = ['charts', 'scores', 'slides', 'interactive']
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
 export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6 })

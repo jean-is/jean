@@ -150,7 +150,7 @@ function latex(token) {
 
 /** Widgets (D196): a block of a kind the room's skills declare, which the skills capability keeps, drawn by its capability. */
 export const declared = signal(/** @type {ReadonlySet<string>} */ (new Set()))
-const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', marp: 'slides' })
+const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', marp: 'slides', html: 'interactive' })
 
 /** @param {any} token */
 function widget(token) {
@@ -160,10 +160,11 @@ function widget(token) {
   const open = !CLOSED.test(token.raw)
   return kind === 'abc' ? html`<app-score source=${token.text}></app-score>`
     : kind === 'marp' ? html`<app-slides source=${token.text} ?open=${open}></app-slides>`
+    : kind === 'html' ? html`<app-page source=${token.text} ?open=${open}></app-page>`
     : html`<app-chart source=${token.text} ?open=${open}></app-chart>`
 }
 
-// marked doesn't wait for a fenced block's closing fence: until it is written, the block is still being written.
+// marked doesn't wait for a closing fence: until it is written, the block is still being written.
 const CLOSED = /^ {0,3}(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n(?:[\s\S]*\n)? {0,3}\1[`~]* *\n*$/
 /** A fence whose first line is still being written, kind and all: nothing to show yet. @param {any} token */
 const opening = (token) => token.codeBlockStyle !== 'indented' && !token.raw.includes('\n')

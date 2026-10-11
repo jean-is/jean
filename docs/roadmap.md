@@ -33,6 +33,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] `write` for a document, with Markdown and CSV as the tool asks; the HTML pages they make, with a chart library from the internet
 - [ ] `browse` only when a page helps
 - [ ] Chart and Music score (D196): do brains read the skill and write strict JSON and ABC whose bars add up, in the user's language? The device's brain especially
+- [ ] Pages (D289): do brains make one only when a tool or something to explore helps, from its one rule (nothing from the internet, the room's colours, ECharts imported, `sendPrompt` from a button), and a bill splitter or the Monty Hall problem that works in Arabic and Japanese too? Do they write the script last, so the page shows as it is written? The device's brain especially
 - [ ] Slides (D200): do brains keep a slide to what fits, use `lead` and `invert` where they help, and pick Slides or PowerPoint as the user meant? Presented with a clicker, in the desktop app and on an iPad
 - [ ] PowerPoint (D201): does a brain install pptxgenjs in ~, start from the skill's script and keep within the slide, in Arabic and Japanese too? Do the decks open without a repair in PowerPoint, Keynote and Google Slides?
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file

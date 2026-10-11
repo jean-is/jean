@@ -240,7 +240,7 @@ class Made extends Element {
 
 /**
  * Copies an answer two ways at once: its Markdown as text, and laid out as rich text, in which a
- * chart, a score, a deck's slide or a LaTeX document (D185, D196, D200) is the picture its widget on screen draws, or else its code.
+ * chart, a score, a deck's slide or a LaTeX document (D185, D196, D200) is the picture its widget on screen draws, or else its code, as a page (D289) is.
  * @param {string} source Markdown @param {globalThis.Element | null} [answer] the answer on screen, with its widgets
  */
 export async function copyRich(source, answer) {
@@ -271,7 +271,7 @@ async function laidOut(source, answer) {
   for (const comment of comments) comment.remove()
   // Each widget's twin on screen, the same kind with the same source, draws its picture.
   const shown = [...answer?.querySelectorAll('.prose :is(app-chart, app-score, app-slides, app-latex)') ?? []]
-  for (const widget of holder.querySelectorAll('app-chart, app-score, app-slides, app-latex')) {
+  for (const widget of holder.querySelectorAll('app-chart, app-score, app-slides, app-latex, app-page')) {
     const code = widget.getAttribute('source') ?? ''
     const twin = shown.find((other) => other.localName === widget.localName && other.getAttribute('source') === code)
     if (twin) shown.splice(shown.indexOf(twin), 1)

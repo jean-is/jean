@@ -262,6 +262,41 @@ const CHART = 'Here are the sales:\n\n```echarts\n{"title":{"text":"Croissants s
 const JIG = 'Here is a jig:\n\n```abc\nX:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/8=116\nR:jig\nK:G\nGFG BAB | gfg d2B | GFG BAB | d2B G2B |\nGFG BAB | gfg d2B | c2c B2A | GFG B2G :|\n```\n\nPlay it lightly.'
 /** A deck, as the Slides skill writes it in Marp's Markdown (D200): numbered, a title slide, a table, its colours swapped on the last, a note for the speaker. */
 const DECK = 'Here are your slides:\n\n```marp\n---\npaginate: true\nfooter: Bakery · 2027\n---\n\n<!-- _class: lead -->\n# A second oven\n\n---\n\n## What it costs\n\n<!-- Say it pays back in 14 months. -->\n\n| | Cost |\n|---|---:|\n| Oven | €18,000 |\n\n---\n\n<!-- _class: invert -->\n## Paid back in 14 months\n```\n\nThree slides on the new oven.'
+/** A page in an answer, as the Interactive skill writes it (D289): the room's colours, a share worked out as it is typed, a button that sends it on, and a fetch that must not get out. */
+const SPLITTER = `Here is a bill splitter:
+
+\`\`\`html
+<style>.fields { display: flex; flex-wrap: wrap; gap: 0.75rem; } p { color: var(--color-text-secondary); }</style>
+<div class="fields"><label>Bill <input id="bill" type="number" value="120"></label> <label>People <input id="people" type="number" value="4"></label></div>
+<p>Each pays <output id="each"></output></p>
+<button id="ask" type="button">Ask how to round it</button>
+<script>
+  const [bill, people, each] = ['bill', 'people', 'each'].map((id) => document.getElementById(id))
+  const update = () => { each.textContent = people.valueAsNumber >= 1 ? new Intl.NumberFormat(document.documentElement.lang).format(bill.valueAsNumber / people.valueAsNumber) : '—' }
+  for (const input of [bill, people]) input.addEventListener('input', update)
+  document.getElementById('ask').addEventListener('click', () => sendPrompt('Each of us pays ' + each.textContent + '. How should we round it?'))
+  update()
+  fetch('http://127.0.0.1:4182/leak?page').catch(() => {})
+</script>
+\`\`\`
+
+Type the bill and how many you are.`
+/** A page that charts with ECharts, which Jean lends it (D289): a region to pick, its sales drawn. */
+const EXPLORER = `Pick a region:
+
+\`\`\`html
+<label>Region <select id="region"><option>North</option><option>South</option></select></label>
+<div id="chart" style="block-size: 220px"></div>
+<script type="module">
+  import * as echarts from 'echarts'
+  const sales = { North: [1200, 1340], South: [950, 1010] }
+  const region = document.getElementById('region')
+  const chart = echarts.init(document.getElementById('chart'))
+  const draw = () => chart.setOption({ xAxis: { type: 'category', data: ['Jan', 'Feb'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: sales[region.value] }] })
+  region.addEventListener('change', draw)
+  draw()
+</script>
+\`\`\``
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 /** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. It can fill the screen and save its prices, by a link or from its code (D158). */
 const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p><p id="call"></p>
@@ -507,6 +542,8 @@ createServer(async (req, res) => {
   else if (/^chart\b/i.test(question) && last.role === 'user') answer = CHART
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   else if (/\bslides\b/i.test(question) && last.role === 'user') answer = DECK
+  else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
+  else if (/sales explorer/i.test(question) && last.role === 'user') answer = EXPLORER
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
   else if (/compare l'iphone et le pixel/i.test(question) && last.role === 'user') answer = PHONES
   else if (/half year's sales/i.test(question) && last.role === 'user') answer = HALF

@@ -1,0 +1,9 @@
+/* Pages in answers (D289): framed as the other widgets are, so a page reads as one of its own, Copy at its top corner, shown on hover. The page's body adds a little to the padding, room for its focus rings. */
+app-page { position: relative; display: block; padding: 0.75rem 0.85rem; border: 1px solid var(--line); border-radius: 0.9rem; margin-block: 0 0.85rem; }
+app-page iframe { display: block; box-sizing: content-box; inline-size: 100%; block-size: 6rem; border: 0; background: transparent; }
+app-page .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
+app-page .drawn-foot .icon-button { background: var(--glass); }
+@media (hover: hover) { app-page:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
+@media print { app-page .drawn-foot { display: none; } }
+/* With its code off, its code, framed as code is. */
+app-page:has(> pre) { padding: 0; border: 0; }
