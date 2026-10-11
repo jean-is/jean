@@ -148,11 +148,6 @@ export async function setRule(kind, value) {
   await updateSettings({ rules: { ...app.settings.value.rules, [kind]: value } })
 }
 
-/** @param {string | null} voice */
-export async function setVoice(voice) {
-  await updateSettings({ voice })
-}
-
 // The pick belongs to this device, like the device's own mode, so it lives in localStorage:
 // index.html reads it before the first paint, and the room never flashes the other colour.
 export const THEME_KEY = 'app.theme'
@@ -208,11 +203,6 @@ export function setLook(patch, { later = false } = {}) {
   app.settings.value = { ...app.settings.value, look: patch ? { ...look, ...patch } : { id: look.id } }
   clearTimeout(lookWrite)
   lookWrite = setTimeout(() => saveSettings(app.fs, app.settings.value).catch(showError), later ? 500 : 0)
-}
-
-/** @param {Partial<Pick<Settings, 'auto' | 'cloud'>>} patch */
-export async function setBrainMode(patch) {
-  await updateSettings(patch)
 }
 
 /** @param {string} id */
@@ -279,36 +269,19 @@ export function newConversation() {
 }
 
 /**
- * A page the user asked for, as a view transition where there is one (D120): the title morphs, a
- * look may stage it. The root's data-turn says "from" while the page left is captured, then "to"
- * until the turn ends, with "back" when it goes to an older conversation (D125). It turns a frame
- * later: what is typed meanwhile is the new page's draft, and a message sent meanwhile waits.
- * Code that needs the new page at once changes it directly.
- * @param {() => unknown} change @param {boolean} [back]
+ * A page the user asked for, once the one asked for before it shows: a conversation read quickly
+ * never shows before one asked for earlier, and a message sent meanwhile waits for it (D120). It
+ * changes at once, with nothing over the page: the list stays at hand. Code that must not wait
+ * changes the page directly.
+ * @param {() => unknown} change
  */
-export async function turnPage(change, back = false) {
-  if (!document.startViewTransition) return change()
-  const root = document.documentElement
-  const way = back ? ' back' : ''
-  const before = app.draft.peek()
-  root.dataset.turn = `from${way}`
-  const transition = document.startViewTransition(async () => {
-    const typed = app.draft.peek()
-    if (typed !== before) app.draft.value = before
-    await change()
-    if (typed !== before) app.draft.value = typed
-    root.dataset.turn = `to${way}`
-  })
-  lastTurn = transition
-  transition.ready.catch(() => {}) // skipped in a hidden tab, the change made all the same
-  transition.finished.catch(() => {}).then(() => lastTurn === transition && root.removeAttribute('data-turn'))
-  turning = transition.updateCallbackDone.catch(() => {})
-  await transition.updateCallbackDone
+export async function turnPage(change) {
+  const changed = turning.then(change)
+  turning = changed.catch(() => {})
+  await changed
 }
-/** The page change under way, which a message waits for, and the last one asked for. */
+/** The page change under way, which a message and the next page wait for. @type {Promise<unknown>} */
 let turning = Promise.resolve()
-/** @type {ViewTransition | null} */
-let lastTurn = null
 
 /** @param {string} path */
 export async function openConversation(path) {

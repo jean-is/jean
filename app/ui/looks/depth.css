@@ -1,11 +1,10 @@
 /* Depth: a scene in three dimensions. A floor in true perspective lies under a cool night (a white
    studio by day), Jean's light glows where it meets the sky, and the camera circles the floor
-   while Jean works. A page turns like the camera orbiting a stage: the page left swings away, the
-   next swings in from the other side, and the floor turns under both, the way the user goes
-   (D125). Dialogs swing in like panels, messages rise from the floor, and suggestions lift under
-   the pointer. What moves is a transform or an opacity, drawn once and moved by the compositor.
-   Nothing moves for those who ask for less motion. Over ui/style.css, which comes after it, so
-   every rule here starts with :root[data-look='depth'], and its keyframes are named depth-*. */
+   while Jean works. Dialogs swing in like panels, messages rise from the floor, and suggestions
+   lift under the pointer. What moves is a transform or an opacity, drawn once and moved by the
+   compositor. Nothing moves for those who ask for less motion. Over ui/style.css, which comes
+   after it, so every rule here starts with :root[data-look='depth'], and its keyframes are named
+   depth-*. */
 
 :root[data-look='depth'] {
   --room: oklch(0.15 0.03 265);
@@ -27,14 +26,9 @@
   --display: 'SF Pro Display', 'Segoe UI Variable Display', 'Avenir Next', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
   --radius: 1.1rem;
   /* The camera: how far it stands from the page (by the screen's height, which sets how steeply
-     it looks down at the floor), how far behind the page lies the point it circles, where the
-     horizon is, and how it swings (it gathers, then overshoots a little). */
+     it looks down at the floor), and where the horizon is. */
   --depth-camera: min(62vh, 44rem);
-  --depth-stage: calc(var(--depth-camera) * -1.6);
   --depth-horizon: 56%;
-  --depth-swing: cubic-bezier(0.7, -0.2, 0.25, 1.2);
-  /* A new page comes from the end of the line, an older conversation from its start. */
-  --depth-way: -1;
 }
 :root[data-look='depth'][data-theme='light'] {
   --room: oklch(0.965 0.005 260);
@@ -54,8 +48,6 @@
   --haze: oklch(1 0 0);
   --lift: inset 0 1px 0 oklch(1 0 0), 0 1.5rem 2.5rem -1.25rem oklch(0.3 0.04 265 / 0.28), 0 3.5rem 5rem -3rem oklch(0.3 0.04 265 / 0.22);
 }
-:root[data-look='depth']:is([data-turn~='back'], [dir='rtl']) { --depth-way: 1; }
-:root[data-look='depth'][dir='rtl'][data-turn~='back'] { --depth-way: -1; }
 
 /* The scene: the sky; the floor; a haze along the horizon, which the floor fades into; Jean's
    light over all. A snapshot of the page would be opaque and hide them, so the root is never
@@ -118,13 +110,6 @@
 }
 @keyframes depth-breathe { to { transform: scale(2.12, 2.3); } }
 @media print, (forced-colors: active) { :root[data-look='depth'] body::after { display: none; } }
-/* A page turns: the floor turns a quarter with the camera, which steps back and rises a little
-   on the way, and the light flares as it swings. */
-:root[data-look='depth'][data-turn~='to'] .room::before { animation: depth-circle 80s linear infinite paused, depth-turn 1.1s var(--depth-swing) both, depth-dolly 1.1s ease-in-out both; }
-:root[data-look='depth'][data-turn~='to'] body::after { animation: depth-breathe 7s ease-in-out infinite alternate, depth-flare 1.1s ease-in-out; }
-@keyframes depth-turn { to { rotate: y calc(var(--depth-way) * 90deg); } }
-@keyframes depth-dolly { 50% { translate: 0 calc(var(--depth-y, 0px) + 4vh) calc(var(--depth-z, 0px) - var(--depth-camera) * 0.4); } }
-@keyframes depth-flare { 50% { opacity: 0.72; scale: 1.3 0.8; } }
 /* The camera circles while Jean works, and stops where it is. It lowers while the user writes and
    rises as the answer comes. */
 @keyframes depth-circle { to { transform: rotateX(90deg) rotateZ(90deg) scale(4); } }
@@ -150,9 +135,8 @@
 :root[data-look='depth'] :is(.starter, .follow-up):hover { transform: perspective(30rem) translateZ(1.2rem) rotateX(14deg); box-shadow: var(--lift); }
 :root[data-look='depth'] .look { transition: transform 0.35s var(--ease), border-color 0.2s, background-color 0.2s; }
 :root[data-look='depth'] .look:hover { transform: perspective(40rem) translateZ(0.8rem) rotateX(10deg); }
-/* Messages rise from the floor as they arrive; on a page that turns, as it comes to face the camera. */
+/* Messages rise from the floor as they arrive. */
 :root[data-look='depth'] .msg { animation: depth-rise 0.7s var(--ease) both; }
-:root[data-look='depth'][data-turn~='to'] .msg { animation-delay: 0.35s; }
 @keyframes depth-rise { from { opacity: 0; transform: perspective(50rem) translateZ(-10rem) rotateX(24deg); } }
 
 /* Dialogs swing up like panels; the conversations swing open like a door from their side. */
@@ -167,34 +151,3 @@
 :root[data-look='depth'] .drawer:not([open]) { transform: perspective(70rem) rotateY(70deg); }
 :root[data-look='depth'][dir='rtl'] .drawer { transform-origin: 100% 50%; }
 :root[data-look='depth'][dir='rtl'] .drawer:not([open]) { transform: perspective(70rem) rotateY(-70deg); }
-
-/* Another page (D125). The page left and the next are captured apart, each where it is, and
-   turn about a point behind them, seen by the floor's camera as the floor turns with them: the
-   one left swings away and fades, the next swings in from the other side, title and all. What stays on screen (the bar,
-   the box, an offer, the toasts) is captured too, to stay in front; an open dialog falls back and
-   fades, and the one closing goes at once. */
-:root[data-look='depth'][data-turn~='from'] main { view-transition-name: depth-from; }
-:root[data-look='depth'][data-turn~='to'] main { view-transition-name: depth-to; }
-:root[data-look='depth'][data-turn] :is(.hero-question, .conversation-title, app-persona) { view-transition-name: none; }
-:root[data-look='depth'][data-turn] .bar { view-transition-name: depth-bar; }
-:root[data-look='depth'][data-turn] app-composer { view-transition-name: depth-box; }
-:root[data-look='depth'][data-turn] .offer { view-transition-name: depth-offer; }
-:root[data-look='depth'][data-turn] .toasts { view-transition-name: depth-toasts; }
-:root[data-look='depth'][data-turn~='from'] dialog[open] { view-transition-name: depth-dialog; }
-:root[data-look='depth'][data-turn~='to'] dialog:not([open]) { display: none; transition: none; }
-:root[data-look='depth']::view-transition { perspective: var(--depth-camera); perspective-origin: 50% var(--depth-horizon); }
-/* A group is laid out from the top left corner before it is moved into place, so lengths there
-   are the viewport's: the pivot is behind its centre. */
-:root[data-look='depth']::view-transition-group(depth-from) { transform-origin: 50vw 50vh var(--depth-stage); animation: depth-leave 1.1s var(--depth-swing) both, depth-dolly 1.1s ease-in-out both; }
-:root[data-look='depth']::view-transition-group(depth-to) { transform-origin: 50vw 50vh var(--depth-stage); animation: depth-come 1.1s var(--depth-swing) both, depth-dolly 1.1s ease-in-out both; }
-:root[data-look='depth']::view-transition-old(depth-from) { animation: depth-fade 0.45s 0.2s ease-in both; }
-:root[data-look='depth']::view-transition-new(depth-to) { animation: depth-show 0.45s 0.4s ease-out both; }
-:root[data-look='depth']::view-transition-group(depth-dialog) { animation: depth-fall 0.4s ease-in both; }
-/* The bar shows the next page's at once: crossfaded, the name would show twice as the light leaves it. */
-:root[data-look='depth']::view-transition-old(depth-bar) { display: none; }
-:root[data-look='depth']::view-transition-new(depth-bar) { animation: none; }
-@keyframes depth-leave { to { rotate: y calc(var(--depth-way) * 90deg); } }
-@keyframes depth-come { from { rotate: y calc(var(--depth-way) * -90deg); } }
-@keyframes depth-fade { to { opacity: 0; } }
-@keyframes depth-show { from { opacity: 0; } }
-@keyframes depth-fall { to { opacity: 0; translate: 0 2rem -16rem; } }

@@ -737,8 +737,8 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .history-list li:hover, .history-list li.is-current { background: var(--line); }
 .history-item { flex: 1; display: flex; align-items: center; gap: 0.5rem; min-inline-size: 0; padding: 0.55rem 0.75rem; border: 0; background: none; text-align: start; }
 .history-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* A task's menu (D181), below its button, shows under the pointer, as in Manus (D165); always on a touchscreen. */
-@media (hover: hover) { .history-list li:not(:hover, :focus-within, :has(:popover-open)) .icon-button { opacity: 0; } }
+/* A task's menu (D181), below its button, shows under the pointer or the keyboard, as in Manus (D165), its title whole until then; always on a touchscreen. */
+@media (hover: hover) { .history-list li:not(:hover, :has(:focus-visible, :popover-open)) .icon-button { position: absolute; opacity: 0; } }
 .task-menu { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block; margin: 0.25rem 0; } .task-menu :is(button, .icon) { color: var(--danger); }
 /* Being answered (D147). */
 .history-item .ember { inline-size: 0.375rem; block-size: 0.375rem; background: var(--flame); animation: pulse 1.6s ease-in-out infinite; }

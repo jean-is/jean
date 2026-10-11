@@ -5,7 +5,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, activeBrain, setLocale, setRule, setVoice, setBrainMode, updateSettings, notify, loadModels,
+  app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels,
   showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter } from './brains.js'
@@ -269,12 +269,12 @@ function answers(settings, brainsLocked) {
   return html`<section>
       <h3 id="brains-yours">${t('brain.connectedTitle')}</h3>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-yours">
-        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => setBrainMode({ auto: true }), { icon: icons.spark, name: t('auto.name'), where: t('auto.text') })}</div>
+        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.spark, name: t('auto.name'), where: t('auto.text') })}</div>
         ${settings.brains.map((brain) => {
           const chosen = !settings.auto && brain.id === active?.id
           const open = !brainsLocked && placing.value === brain.id && placeable(brain)
           return html`<div class=${chosen ? 'is-selected' : ''}>
-            ${answer(chosen, () => setBrainMode({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain)}
+            ${answer(chosen, () => updateSettings({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain)}
             ${brain.api === 'device' ? nothing : html`<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr"
                 aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
               <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
@@ -288,7 +288,7 @@ function answers(settings, brainsLocked) {
       </div>
     </section>
     ${settings.brains.some((brain) => !isLocal(brain)) ? setting(t('picker.neverCloud'), null, html`<input type="checkbox" class="switch" role="switch"
-      aria-label=${t('picker.neverCloud')} .checked=${!settings.cloud} @change=${(/** @type {Event} */ e) => setBrainMode({ cloud: !(/** @type {HTMLInputElement} */ (e.target).checked) })}>`) : nothing}`
+      aria-label=${t('picker.neverCloud')} .checked=${!settings.cloud} @change=${(/** @type {Event} */ e) => updateSettings({ cloud: !(/** @type {HTMLInputElement} */ (e.target).checked) })}>`) : nothing}`
 }
 
 /** Whether the user has opened or closed a way: then none opens on its own. */
@@ -449,7 +449,7 @@ function general() {
     ${setting(t('settings.language'), null, html`<select aria-label=${t('settings.language')} ?disabled=${locked.has('locale')}
       aria-keyshortcuts=${locked.has('locale') ? nothing : SHORTCUTS.language} @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select>`)}
     ${voices.some((voice) => voice.localService) ? setting(t('settings.voice'), t('settings.voiceText'),
-      html`<select aria-label=${t('settings.voice')} @change=${(/** @type {Event} */ e) => setVoice(valueOf(e) || null)}>
+      html`<select aria-label=${t('settings.voice')} @change=${(/** @type {Event} */ e) => updateSettings({ voice: valueOf(e) || null })}>
         <option value="">${t('settings.voiceAuto')}</option>
         ${rankVoices(voices, locale.value, [locale.value, ...navigator.languages])
           .map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}

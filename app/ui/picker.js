@@ -5,7 +5,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, activeBrain, brainsHere, brainLabel, setBrainMode, loadModels } from './state.js'
+import { app, effective, activeBrain, brainsHere, brainLabel, updateSettings, loadModels } from './state.js'
 import { useBrain } from './brains.js'
 import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
@@ -28,7 +28,7 @@ export const openPicker = () => document.getElementById('brain-menu')?.showPopov
 const short = (model) => model.slice(model.lastIndexOf('/') + 1)
 
 /** @param {BrainConfig} brain @param {string} model */
-const pick = (brain, model) => setBrainMode({ auto: false }).then(() => useBrain(brain.id, model))
+const pick = (brain, model) => updateSettings({ auto: false }).then(() => useBrain(brain.id, model))
 
 /** "about $0.003 per answer", from the provider's own prices, or models.dev's (D255). @param {import('../core/types.js').ModelInfo['pricing']} pricing */
 function cost(pricing) {
@@ -61,7 +61,7 @@ class Picker extends Element {
     const manual = (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => !settings.auto && active?.id === brain.id && active.model === model
     return html`<div id="brain-menu" class="menu brain-menu" popover
       @toggle=${(/** @type {ToggleEvent} */ e) => (this.#open.value = e.newState === 'open') && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
-      ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => setBrainMode({ auto: true }))}
+      ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => updateSettings({ auto: true }))}
       ${remote ? offered.map((model) => option(TIER_ICONS[tiers.indexOf(model)], t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`),
         [short(model), plan ? t('picker.plan', { plan }) : this.#open.value && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · '), manual(remote, model), () => pick(remote, model))) : nothing}
       ${brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => brain.api === 'device'
@@ -69,7 +69,7 @@ class Picker extends Element {
         : option(isLocal(brain) ? icons.computer : icons.globe, short(brain.model), brainLabel(brain), manual(brain, brain.model), () => pick(brain, brain.model)))}
       <hr>
       ${remote ? html`<button type="button" role="switch" aria-checked=${settings.cloud ? 'false' : 'true'}
-        @click=${() => setBrainMode({ cloud: !settings.cloud })}>${icons.shield}<span>${t('picker.neverCloud')}</span></button>` : nothing}
+        @click=${() => updateSettings({ cloud: !settings.cloud })}>${icons.shield}<span>${t('picker.neverCloud')}</span></button>` : nothing}
       <button type="button" popovertarget="brain-menu" popovertargetaction="hide" @click=${() => openSettings('brains')}>${icons.gear}<span>${t('picker.all')}</span></button>
     </div>`
   }

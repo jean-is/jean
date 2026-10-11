@@ -1,10 +1,10 @@
 // Looks (D111, D120): Human until one is picked (D174); each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view, in one sidebar with the name at its top and
 // the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS starts as an outline,
-// commented out, and shows as it is typed; right to left, the sidebar changes sides. Depth turns the page with the camera (D125).
+// commented out, and shows as it is typed; right to left, the sidebar changes sides.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
-import { start, openSettings, closeSettings, openTasks } from './helpers.js'
+import { start, openSettings, closeSettings } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
@@ -122,44 +122,4 @@ test('every theme is in the gallery with its thumbnail, and dresses the page whe
     await expect(card.locator('input')).toBeChecked()
   }
   await expect.poll(() => savedLook(page)).toMatchObject({ id: 'human' })
-})
-
-test('Depth turns the page as the camera circles the floor, the other way to an older conversation', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' })
-  await start(page)
-  await page.evaluate(async () => {
-    const { app, setLook, refreshConversations } = await import('/ui/state.js')
-    const { createConversation, appendRecords } = await import('/core/conversations.js')
-    const { userRecords } = await import('/core/events.js')
-    await setLook({ id: 'depth' })
-    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test' })
-    await appendRecords(app.fs, path, userRecords('Plan a trip to Lisbon in May', [], 'test'))
-    await refreshConversations()
-    // What the next view transition animates, once it starts.
-    const begin = document.startViewTransition.bind(document)
-    Object.assign(window, { turned: new Promise((resolve) => {
-      document.startViewTransition = (update) => {
-        const transition = begin(update)
-        transition.ready.then(() => resolve({
-          turn: document.documentElement.dataset.turn,
-          animations: document.getAnimations().map((a) => `${a.animationName} ${a.effect?.pseudoElement ?? ''}`.trim()),
-        }))
-        return transition
-      }
-    }) })
-  })
-  // On a narrow window the drawer slides over the page, a dialog, which falls back as the page turns.
-  await page.setViewportSize({ width: 700, height: 800 })
-  await expect(page.locator('app-inbox')).toHaveCount(0)
-  await (await openTasks(page)).locator('.history-item').first().click()
-  const { turn, animations } = await page.evaluate(() => Reflect.get(window, 'turned'))
-  expect(turn).toBe('to back')
-  expect(animations).toEqual(expect.arrayContaining([
-    'depth-leave ::view-transition-group(depth-from)', 'depth-come ::view-transition-group(depth-to)',
-    'depth-turn ::before', 'depth-fall ::view-transition-group(depth-dialog)',
-  ]))
-  // The scene stays live behind the pages: the root isn't captured.
-  expect(animations.filter((name) => name.includes('(root)'))).toEqual([])
-  await expect(page.locator('.conversation-title')).toBeVisible()
-  await expect(page.locator('html')).not.toHaveAttribute('data-turn')
 })

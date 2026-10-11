@@ -133,14 +133,13 @@ const nameOf = (project) => String(project?.data.default === true ? project.data
 /** Where something is: in the room, or in another project, which is walked into first. @param {string} dir */
 const elsewhere = (dir) => (dir === app.projectDir ? undefined : app.projects.value.find((project) => project.dir === dir))
 
-/** A conversation, as the list opens one (D125): one started before the open one, or any from a new page, is back. @param {{ id: string, path: string, dir: string }} item */
-function opening({ id, path, dir }) {
-  const current = app.current.value?.id
+/** A conversation, as the list opens one. @param {{ path: string, dir: string }} item */
+function opening({ path, dir }) {
   const project = elsewhere(dir)
   return () => turnPage(async () => {
     if (project) await enterProject(project)
     await openConversation(path)
-  }, Boolean(project) || !current || id < current)
+  })
 }
 
 /** A file, in the preview beside the conversation (D126). @param {Entry} item */
