@@ -1,7 +1,7 @@
 // Backup: everything Jean keeps, in one zip the user saves wherever they like. Keys stay
 // on the device (they are never part of a backup). Restoring adds what is missing.
 import { register } from '../../ui/caps.js'
-import { app, answerOffer, notify, showError } from '../../ui/state.js'
+import { app, answerOffer, notify, showError, updateSettings } from '../../ui/state.js'
 import { exportBackup, importBackup } from './archive.js'
 import { save } from '../../ui/save.js'
 import { t } from '../../core/i18n.js'
@@ -26,6 +26,8 @@ export async function downloadBackup() {
 export async function restoreBackup(file) {
   try {
     const { added, updated } = await importBackup(app.fs, new Uint8Array(await file.arrayBuffer()))
+    // Most likely from another computer: Sync is offered once this one starts again (D286).
+    await updateSettings({ restored: true })
     notify(t('backup.restored', { count: added + updated }))
     // Projects and conversations are read at start; begin again from the restored folder, in the
     // room (Settings is in the address, D137).

@@ -1,7 +1,8 @@
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
 // few conversations, plenty of them, the same kind of request a third time, or on three different days,
-// links opened from answers),
+// links opened from answers, and for what brains rarely offer, D286: something said again, a task on three
+// days, an email, an invitation or a picture shared, a big request, a backup restored),
 // reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
 // that arrive mid-conversation can be reached (D47).
 import { effect, signal } from '@preact/signals-core'
@@ -9,8 +10,8 @@ import { register, unlock, isDenied, loaded, contributions } from './caps.js'
 import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
-import { words, alike } from '../core/search.js'
-import { foldTurns, openingOf, noteRecord, routineOf } from '../core/events.js'
+import { words, alike, restated } from '../core/search.js'
+import { foldTurns, openingOf, noteRecord, routineOf, isPicture } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 import { host } from './host.js'
 
@@ -243,8 +244,17 @@ effect(() => {
   if ((effective.value.settings.cited ?? 0) >= CITED) offerOnce('check')
 })
 effect(() => {
+  const shared = app.attachments.value.filter((item) => item.status === 'ready')
   // Rows of data: exact numbers are a script away.
-  if (app.attachments.value.some((item) => item.status === 'ready' && /\.(csv|tsv|xlsx?)$/i.test(item.name))) offerOnce('computer', true)
+  if (shared.some((item) => /\.(csv|tsv|xlsx?)$/i.test(item.name))) offerOnce('computer', true)
+  // An email, an invitation or a contact card, read or not: the service it came from could be connected (D286).
+  if (app.attachments.value.some((item) => /\.(eml|ics|vcf)$/i.test(item.name))) offerOnce('connections', true)
+  // A picture: it could be changed (D286).
+  if (shared.some((item) => item.link && isPicture(item.link))) offerOnce('pictures', true)
+})
+effect(() => {
+  // A backup restored here, most likely from another computer: Sync keeps the two the same (D286).
+  if (folders && effective.value.settings.restored) offerOnce('sync', true)
 })
 
 // ─── Reflexes ────────────────────────────────────────────────────────────────
@@ -328,6 +338,26 @@ const stepped = (records) => (foldTurns(records).at(-1)?.steps ?? []).flatMap((s
 const habitual = (times) => new Set(times.map((time) => time.toDateString())).size >= 3
 
 /**
+ * Whether the request that opened this conversation says again something the user said in an
+ * earlier one, other than a request of the same kind (D286): memory could keep it.
+ * @param {import('../core/types.js').Envelope[]} records @param {string | undefined} id its own, left out
+ */
+function said(records, id) {
+  const opening = openingOf(records)
+  if (!opening || loaded.value.has('memory') || foldTurns(records).length !== 1 || routineOf(records)) return false
+  return restated(opening, app.conversations.value.filter((item) => item.id !== id && item.opening && !item.routine).map((item) => item.opening), SAME_KIND)
+}
+
+/** Files made in one request before Helpers is offered (D286). */
+const MADE = 3
+/** Whether the last request was a big one: it made three files or more, or an answer of it stopped at its length limit. @param {import('../core/types.js').Envelope[]} records */
+function large(records) {
+  const tools = (foldTurns(records).at(-1)?.steps ?? []).flatMap((step) => step.tools).filter((tool) => !tool._meta?.parent)
+  return new Set(tools.flatMap((tool) => (tool.name === 'write' && tool.status === 'completed' ? [tool.rawInput?.name] : []))).size >= MADE
+    || tools.some((tool) => tool.rawOutput?.stopReason === 'max_tokens')
+}
+
+/**
  * Follow-ups from the translated catalogue that fit an answer: "Shorter" for a long one; for
  * the third request of a kind, a ready-made skill from elsewhere when one fits, otherwise "Save
  * this as a skill" (offered above the box until skills are on), and "Make this a routine" when
@@ -362,6 +392,11 @@ export async function followUps(answer, records, { id, path }) {
       if (count >= STEPPED) offerOnce('flows', true)
     }
   }
+  // What brains rarely offer themselves (D286): the same task on three different days could be a project
+  // (a routine's runs are one task), something said again could be kept, and a big request shared out.
+  if (!routineOf(records) && habitual(foldTurns(records).flatMap((turn) => (turn.user ? [new Date(turn.user.at)] : [])))) offerOnce('projects', true)
+  if (said(records, id)) offerOnce('memory', true)
+  if (large(records)) offerOnce('helpers', true)
   const decide = loaded.value.get('reflexes')?.decide
   const result = decide ? await quickly(decide(clip(answer), FOLLOW_UPS), 4000) : null
   for (const [id, answer] of Object.entries(result ?? {})) if (answer.type === 'noul' && answer.noul >= YES) ids.push(id)
