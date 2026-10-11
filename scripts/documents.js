@@ -527,7 +527,9 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
   const worker = async () => {
     while (todo.length && !stop) {
       if (await spent(key) - before >= dollars) { stop = true; console.log(`$${dollars} spent: run again, with a higher --dollars if need be, to go on.`); break }
+      // Another worker may have taken the last job while this one checked.
       const job = /** @type {any} */ (todo.shift())
+      if (!job) break
       const { condition } = job
       try {
         const c = await load(job.seed, job.size)
@@ -551,7 +553,8 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
         console.log(`${job.hypothesis} ${job.question.id} ${job.condition}: failed, ${message.slice(0, 120)}`)
-        if (/per-day|daily|quota/i.test(message)) stop = true
+        // A free brain's day, or the account's credit, has run out: the jobs left would all fail.
+        if (/per-day|daily|quota|HTTP 402/i.test(message)) { stop = true; console.log('Out of requests or credit: run again once there is more to go on.') }
       }
     }
   }
