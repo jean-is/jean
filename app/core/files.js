@@ -80,19 +80,21 @@ export function pagesThatFit(pages, budgetTokens) {
 }
 
 /**
- * A document's pages cut for searching: passages of about `size` tokens, never across a page, cut
- * where a line ends (a longer line in pieces). Each knows its page, where it lies in it, and what
- * heads it: the last heading above (a line starting with #), else its page's first line that reads
- * like one and isn't on most pages' tops (a running header, a page number), and a table's column names.
+ * A document's pages cut for searching: passages of about `size` tokens (100 scored best, D24), never across a page, cut
+ * where a line ends (a longer line in pieces) or a heading starts. Each knows its page, where it lies
+ * in it, and what heads it: the headings above, a level each (lines starting with #), else its page's
+ * first line that reads like one and isn't on most pages' tops (a running header, a page number), and
+ * a table's column names.
  * @param {string[]} pages @returns {{ page: number, start: number, end: number, head: string }[]}
  */
-export function passages(pages, size = 200) {
+export function passages(pages, size = 100) {
   /** @type {Map<string, number>} */
   const tops = new Map()
   for (const page of pages) for (const line of page.split('\n', 3)) tops.set(line.replace(/\d+/g, '#'), (tops.get(line.replace(/\d+/g, '#')) ?? 0) + 1)
   /** @type {{ page: number, start: number, end: number, head: string, bytes: number }[]} */
   const out = []
-  let heading = ''
+  /** @type {string[]} the headings above, a level each */
+  let path = []
   pages.forEach((text, i) => {
     let first = ''
     let columns = ''
@@ -101,18 +103,22 @@ export function passages(pages, size = 200) {
     let passage = null
     for (const line of text.split('\n')) {
       const tabular = /\t|^\|/.test(line)
+      const level = /^(#{1,6})\s/.exec(line)?.[1].length ?? 0
+      // A heading starts a passage, once the one before is half full.
+      if (level && passage && passage.bytes > size * 1.5) passage = (out.push(passage), null)
       const bytes = utf8(line) + 1
       const step = Math.max(1, Math.floor(size * 3 * (line.length + 1) / bytes))
       for (let cut = at; cut <= at + line.length; cut += step) {
         const end = Math.min(at + line.length, cut + step)
         const piece = bytes * (end - cut + 1) / (line.length + 1)
         if (passage && passage.bytes + piece > size * 3) passage = (out.push(passage), null)
-        // A passage that starts with a heading has its own.
-        passage ??= { page: i + 1, start: cut, end, bytes: 0, head: cut === at && /^#/.test(line) ? '' : [heading || first, tabular && columns !== line && columns !== (heading || first) ? columns : ''].filter(Boolean).join('\n') }
+        // A passage that starts with a heading is headed by the levels above it.
+        const above = (level && cut === at ? path.slice(0, level - 1) : path).filter(Boolean).join(' › ') || (level ? '' : first)
+        passage ??= { page: i + 1, start: cut, end, bytes: 0, head: [above, tabular && columns !== line && columns !== above ? columns : ''].filter(Boolean).join('\n') }
         passage.end = end
         passage.bytes += piece
       }
-      if (/^#/.test(line)) heading = line.replace(/^#+\s*/, '')
+      if (level) path = Object.assign(path.slice(0, level - 1), { [level - 1]: line.slice(level).trim() })
       // A first line heads the page only if it reads like a heading: not a table's row, not mostly figures.
       else if (!first && line.trim() && !tabular && (line.match(/\d/g)?.length ?? 0) <= line.length / 5 && !(pages.length > 2 && (tops.get(line.replace(/\d+/g, '#')) ?? 0) > pages.length / 2)) first = line.trim().slice(0, 120)
       columns = tabular ? columns || line : ''
@@ -124,18 +130,14 @@ export function passages(pages, size = 200) {
 }
 
 /** A document's passages and their index, made in memory. @param {string[]} pages */
-export function indexOf(pages, size = 200) {
+export function indexOf(pages, size = 100) {
   const cut = passages(pages, size)
   return { passages: cut, lexicon: lexicon(cut.map((p) => `${p.head}\n${pages[p.page - 1].slice(p.start, p.end)}`)) }
 }
 
 /** Page numbers as ranges. @param {number[]} numbers @returns {[number, number][]} */
-const ranges = (numbers) => [...new Set(numbers)].sort((a, b) => a - b).reduce((/** @type {[number, number][]} */ out, n) => {
-  const last = out[out.length - 1]
-  if (last && n === last[1] + 1) last[1] = n
-  else out.push([n, n])
-  return out
-}, [])
+const ranges = (numbers) => [...new Set(numbers)].sort((a, b) => a - b).reduce((/** @type {[number, number][]} */ out, n) => (n === out[out.length - 1]?.[1] + 1
+  ? out[out.length - 1][1] = n : out.push([n, n]), out), [])
 
 /**
  * The pages a brain reads of a file too long for its budget: page 1, then those whose passages best

@@ -243,39 +243,39 @@ const CJK = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/
 const STRONG = /[\p{L}\p{N}]/u
 const MIRROR = { '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '<': '>', '>': '<' }
 
+/** The size most of a PDF's text is set in, in tenths of its unit. @param {{ str?: string, height?: number }[]} items */
+export const bodySize = (items) => [...items.reduce((sizes, item) => sizes.set(Math.round((item.height ?? 0) * 10), (sizes.get(Math.round((item.height ?? 0) * 10)) ?? 0) + (item.str?.length ?? 0)), new Map())]
+  .sort((a, b) => b[1] - a[1])[0]?.[0] || Infinity
+
 /**
- * A PDF page's text from pdf.js's items, as people read it: lines where the PDF ends them, but none
+ * A PDF page's text from pdf.js's items, as people read it: headings marked as Markdown's by how much
+ * larger than the body (the whole document's, if given) they are set, lines where the PDF ends them, but none
  * inside a word cut at a hyphen or between Chinese or Japanese characters; a right-to-left line in
  * reading order, since pdf.js gives each word right but the words as drawn, left to right; Arabic
  * and Hebrew letters, and Chinese and Japanese characters, as themselves, not the shapes and radicals
  * some PDFs name them by.
- * @param {{ str?: string, dir?: string, hasEOL?: boolean }[]} items
+ * @param {{ str?: string, dir?: string, hasEOL?: boolean, height?: number }[]} items @param {number} [body] the body's size, from bodySize
  */
-export function pageText(items) {
-  /** @type {(typeof items)[]} */
-  const lines = [[]]
-  for (const item of items) {
-    lines[lines.length - 1].push(item)
-    if (item.hasEOL) lines.push([])
-  }
+export function pageText(items, body = bodySize(items)) {
+  const lines = items.reduce((/** @type {(typeof items)[]} */ all, item) => (all[all.length - 1].push(item), item.hasEOL && all.push([]), all), [[]])
   let out = ''
+  let mark = ''
   for (const [i, line] of lines.entries()) {
     const weight = (/** @type {boolean} */ rtl) => line.filter((item) => (item.dir === 'rtl') === rtl && STRONG.test(item.str ?? '')).reduce((n, item) => n + (item.str ?? '').length, 0)
-    /** @type {{ rtl: boolean, text: string }[]} */
-    const runs = []
-    for (const item of line) {
-      const last = runs[runs.length - 1]
-      if (item.dir !== 'rtl' && last && !last.rtl) last.text += item.str ?? ''
-      else runs.push({ rtl: item.dir === 'rtl', text: item.str ?? '' })
-    }
+    const runs = line.reduce((/** @type {{ rtl: boolean, text: string }[]} */ all, item) => (item.dir !== 'rtl' && all.length && !all[all.length - 1].rtl
+      ? all[all.length - 1].text += item.str ?? '' : all.push({ rtl: item.dir === 'rtl', text: item.str ?? '' }), all), [])
     // Read right to left, a run of left-to-right text keeps its order but the spaces and marks around it turn with the line.
     const turn = (/** @type {string} */ text = '') => [...text].reverse().map((c) => MIRROR[/** @type {'('} */ (c)] ?? c).join('')
     const text = (weight(true) > weight(false) ? runs.reverse().map(({ rtl, text }) => {
       const [, before, core, after] = rtl ? ['', '', text, ''] : /^([^\p{L}\p{N}]*)(.*?)([^\p{L}\p{N}]*)$/su.exec(text) ?? []
       return turn(after) + (core ?? '') + turn(before)
     }) : runs.map((run) => run.text)).join('').replace(/[ \t]+$/, '').replace(/[\u2e80-\u2fdf\uf900-\ufaff\ufb1d-\ufdff\ufe70-\ufefc]+/g, (forms) => forms.normalize('NFKC'))
+    const ratio = Math.max(0, ...line.map((item) => (item.str?.trim() ? Math.round((item.height ?? 0) * 10) : 0))) / body
     const joins = /-$/.test(out) && STRONG.test(text[0] ?? '') || CJK.test(out[out.length - 1] ?? '') && CJK.test(text[0] ?? '')
-    out += (i && !joins ? '\n' : '') + text
+    const level = ratio >= 1.4 ? '# ' : ratio >= 1.15 ? '## ' : ratio > 1.03 ? '### ' : ''
+    // A heading wrapped over two lines is one.
+    out += level && level === mark ? ` ${text}` : (i && !joins ? '\n' : '') + level + text
+    mark = text.trim() ? level : mark
   }
   return out.trim()
 }
@@ -283,8 +283,8 @@ export function pageText(items) {
 // ─── Excel ───────────────────────────────────────────────────────────────────
 
 /**
- * Each sheet as tab-separated rows, SHEET_ROWS rows per page, headed by the sheet name.
- * Values are as stored: dates stay serial numbers.
+ * Each sheet as tab-separated rows, SHEET_ROWS rows per page, each headed by the sheet name and its
+ * column names. Values are as stored, but for dates, written as dates.
  * @param {(path: string) => Promise<string | null>} xml
  */
 async function xlsx(xml) {

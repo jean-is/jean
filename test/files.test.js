@@ -127,6 +127,13 @@ test('pageText reads right-to-left lines in order, joins wrapped Japanese and co
   assert.equal(pageText([item('\u2f24阪拠点で\u2fac\u2f54の浸\u2f0a、2024年6\u2f49')]), '大阪拠点で雨水の浸入、2024年6月')
   assert.equal(pageText([item('Contract C-', 'ltr', true), item('4471 ends.')]), 'Contract C-4471 ends.')
   assert.equal(pageText([item('A first line  ', 'ltr', true), item('A second')]), 'A first line\nA second')
+  // Lines set larger than most of the page are headings, marked as Markdown's.
+  const sized = (/** @type {string} */ str, /** @type {number} */ height, eol = true) => ({ str, dir: 'ltr', hasEOL: eol, height })
+  assert.equal(pageText([sized('Contracts', 14), sized('Contract C-4471 — Warehousing', 11), sized('Term and termination', 9.5), sized('Either party may end it with sixty days of notice, in writing.', 9), sized('The notice period is sixty days for both parties alike.', 9, false)]),
+    '# Contracts\n## Contract C-4471 — Warehousing\n### Term and termination\nEither party may end it with sixty days of notice, in writing.\nThe notice period is sixty days for both parties alike.')
+  // A heading wrapped over two lines is one heading (the body's size given, as pdf.js gives the whole document's).
+  assert.equal(pageText([sized('Contract C-4510 — Cold-chain distribution agreement between Kestrava Logistics and Marlow', 11), sized('Furniture', 11), sized('This agreement is entered into by the parties named above, today.', 9, false)], 90),
+    '## Contract C-4510 — Cold-chain distribution agreement between Kestrava Logistics and Marlow Furniture\nThis agreement is entered into by the parties named above, today.')
 })
 
 test('a spreadsheet reads its dates as dates and names its columns on every page', async () => {
@@ -348,9 +355,9 @@ test('passages: a document cut for searching, never across a page, each knowing 
   for (const p of cut) assert.ok(estimateTokens(pages[p.page - 1].slice(p.start, p.end)) <= 160, 'about the size asked, a line more at most')
   for (const p of cut.filter((p) => p.page === 2)) assert.ok(p.start === 0 || pages[1][p.start - 1] === '\n', 'cut where a line ends')
   assert.deepEqual([...new Set(cut.map((p) => p.page))], [1, 2])
-  assert.match(cut.filter((p) => p.page === 1).at(-1)?.head ?? '', /^Contract C-4471 — Warehousing$/, 'the heading above it')
+  assert.equal(cut.filter((p) => p.page === 1).at(-1)?.head, 'Contracts › Contract C-4471 — Warehousing', 'the headings above it')
   const rows = cut.filter((p) => p.page === 2).slice(1)
-  assert.ok(rows.length && rows.every((p) => p.head === 'Contract C-4471 — Warehousing\nInvoice\tDate\tAmount'), 'and a table’s column names')
+  assert.ok(rows.length && rows.every((p) => p.head === 'Contracts › Contract C-4471 — Warehousing\nInvoice\tDate\tAmount'), 'and a table’s column names')
   // As a PDF comes out: no headings, a running header and page numbers on every page.
   const pdf = ['Compendium\n1 / 3\nContract C-4471 — Warehousing\n' + 'The notice period is sixty days.\n'.repeat(20), 'Compendium\n2 / 3\nIncident report IR-5003 — Lyon site\n' + 'A forklift hose broke.\n'.repeat(20), 'Compendium\n3 / 3\nEnd.']
   const heads = passages(pdf, 60).map((p) => `${p.page}:${p.head}`)
@@ -358,6 +365,17 @@ test('passages: a document cut for searching, never across a page, each knowing 
   // A page of a long table heads nothing with its first row.
   const ledger = ['Ledger\n1 / 3\nINV-221000 2025-08-08 Mirabel Motors 10,543.65 Disputed\n' + 'INV-221003 2025-08-09 Brellin Paper 1,234.50 Paid\n'.repeat(30), 'Ledger\n2 / 3\nx', 'Ledger\n3 / 3\ny']
   assert.deepEqual(passages(ledger, 60).filter((p) => p.page === 1).map((p) => p.head), passages(ledger, 60).filter((p) => p.page === 1).map(() => ''))
+  // Headings start passages and head them by their path: the levels above a heading, all of them below one.
+  const amended = ['# Amendments\n' + Array.from({ length: 12 }, (_, i) => `## Amendment 1 to contract C-${1000 + i}\nAgreed on ${i + 1} March 2021: the notice period for termination is changed to ${30 + i} days. All other terms remain unchanged.`).join('\n')]
+  for (const p of passages(amended, 60)) {
+    const text = amended[0].slice(p.start, p.end)
+    const code = /C-1\d{3}/.exec(text)?.[0]
+    assert.ok(code && (text.startsWith('## ') || text.startsWith('# ')), 'a heading starts it, with its code')
+    assert.ok(p.head === '' || p.head === 'Amendments', p.head)
+  }
+  const nested = passages(['# Contracts\n## Contract C-4471 — Warehousing\nParties.\n### Term and termination\n' + 'The notice period is sixty days. '.repeat(20)], 40)
+  // Short headings stay together (a heading starts a passage once the one before is half full); the text under them is headed by all three.
+  assert.deepEqual([...new Set(nested.map((p) => p.head))], ['', 'Contracts › Contract C-4471 — Warehousing › Term and termination'])
   // A line longer than a passage is cut too: minified data, a table without line ends.
   assert.ok(passages(['x'.repeat(5000)], 100).length > 3)
 })
