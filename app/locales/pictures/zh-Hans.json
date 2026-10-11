@@ -6,7 +6,7 @@
   "pictures.making": "正在生成图片",
   "pictures.makingFilm": "正在生成视频",
   "pictures.device": "在这台设备上生成图片",
-  "pictures.deviceText": "在这里生成，私密、免费，离线也可以。",
+  "pictures.deviceText": "在这里生成，私密、免费，离线也可以。每张都会先在这里检查：含裸露或色情内容的图片会被拒绝。",
   "pictures.sd-turbo": "快速",
   "pictures.flux2-klein": "精细",
   "pictures.sd-turbo.text": "几秒钟生成方形图片，使用 Stability AI 的 SD-Turbo，遵循其社区许可。",

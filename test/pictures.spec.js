@@ -1,8 +1,13 @@
 // Pictures and films (D251): the brain offers them when asked to draw, makes a picture kept in the
 // project and shown in the answer, ready to save; a film is asked first, then shown and played there.
-// A conversation that ends on a picture opens at its end once the picture is drawn.
+// A conversation that ends on a picture opens at its end once the picture is drawn. The fake brain is
+// on this computer, so its pictures go through the check (D275), which a worker stands in for.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks } from './helpers.js'
+
+/** SD-Turbo's worker, where the check runs, answering how likely each picture shows nudity or sex. @param {number} explicit */
+const checking = (explicit) => `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', explicit: ${explicit} })`
+test.beforeEach(({ page }) => page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking(0.01) })))
 
 test('the brain offers pictures when asked to draw, then makes one, kept in the project', async ({ page }) => {
   await start(page)
@@ -57,6 +62,30 @@ test('a picture takes its place at once, shows glimpses of it as it forms, then 
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is your picture.')
   // Its size is the picture's own.
   expect(await place.evaluate((figure) => figure.clientWidth / figure.clientHeight)).toBeCloseTo(1.5, 1)
+})
+
+test('a picture from this computer showing nudity or sex never shows: its glimpses hide, nothing is kept, and the brain hears why (D275)', async ({ page }) => {
+  await page.route('**/v1/models', async (route) => {
+    const response = await route.fetch()
+    await route.fulfill({ response, body: (await response.text()).replace('fake-image-1', 'gpt-image-1.5') })
+  })
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking(0.9) }))
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  await ask(page, 'Draw a lighthouse at dusk')
+  // How far along it is still shows, and its sign stays where its glimpses would be.
+  const place = page.locator('app-picture figure')
+  await expect(place).toHaveAttribute('aria-valuenow', '67')
+  await expect(place.locator('img.glimpse')).toHaveCount(0)
+  await expect(place.locator('.sign')).toBeVisible()
+  // The next who could make it isn't asked: the brain is told, and tells the user.
+  await expect(page.locator('.msg-jean .prose').last()).toContainText(/^No picture: .*Not made: it showed nudity or sex/)
+  await expect(page.locator('app-picture')).toHaveCount(0)
+  expect(await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return (await app.fs.list(`${app.projectDir}/files`)).filter((entry) => /\.png$/.test(entry.name))
+  })).toEqual([])
 })
 
 test('a film is asked first, then shown in the answer, ready to play and save', async ({ page }) => {
@@ -156,8 +185,10 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   const shown = settings.getByRole('tabpanel')
   // The finest one shown first, nothing downloaded yet.
   await expect(finest).toHaveAttribute('aria-selected', 'true')
-  await expect(quick).toContainText('2.5 GB')
+  // Each comes with the check its pictures go through (D275).
+  await expect(quick).toContainText('2.6 GB')
   await expect(shown).toContainText('Z-Image-Turbo')
+  await expect(settings).toContainText('Each is checked here first: pictures showing nudity or sex are refused.')
   await shown.getByRole('button', { name: /^Download/ }).click()
   await expect(finest).toContainText('Downloading')
   await expect(finest).toContainText('In use')
@@ -169,7 +200,7 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await expect(detailed).toBeFocused()
   await expect(shown).toContainText('FLUX.2 [klein]')
   // Another, downloaded too, is used from then on; the first can be used again, or removed.
-  await shown.getByRole('button', { name: 'Download (6.5 GB)' }).click()
+  await shown.getByRole('button', { name: 'Download (6.6 GB)' }).click()
   await expect(detailed).toContainText('In use')
   await expect(finest).toContainText('Downloaded')
   await finest.click()
@@ -178,7 +209,7 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await expect(detailed).toContainText('Downloaded')
   await detailed.click()
   await shown.getByRole('button', { name: 'Remove' }).click()
-  await expect(detailed).toContainText('6.5 GB')
-  await expect(quick).toContainText('2.5 GB')
+  await expect(detailed).toContainText('6.6 GB')
+  await expect(quick).toContainText('2.6 GB')
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictures)).toBe('z-image-turbo')
 })

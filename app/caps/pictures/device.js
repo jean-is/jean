@@ -5,12 +5,14 @@
 // run their three stages each in a worker of its own (stage-worker.js) on WebGPU. Their files come
 // once, with the user's consent, from the weights host at a pinned revision, checked against their
 // SHA-256 as Whistle's are; then private, free and offline. FLUX and Z-Image show the picture as it
-// forms, glimpsed after each step (D265).
+// forms, glimpsed after each step (D265). With each comes the check every picture made here goes
+// through before it shows (D275), which runs in SD-Turbo's worker.
 import { signal } from '@preact/signals-core'
 import { app, weightsHost, updateSettings } from '../../ui/state.js'
 import { modelWorker, downloading } from '../../ui/model.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { SIZES } from './flux.js'
+import * as check from './check.js'
 
 /** @typedef {[string, string, number]} File path on the weights host, SHA-256, bytes */
 /** @typedef {'sd-turbo' | 'flux2-klein' | 'z-image-turbo'} Maker */
@@ -70,9 +72,10 @@ const STAGES = {
 /** The three, the quickest first, the finest last; and their names, as an answer's certificate gives them (D252). */
 export const MAKERS = /** @type {Maker[]} */ (['sd-turbo', 'flux2-klein', 'z-image-turbo'])
 export const NAMES = { 'sd-turbo': 'SD-Turbo', 'flux2-klein': 'FLUX.2 [klein] 4B', 'z-image-turbo': 'Z-Image-Turbo' }
-const FILES = { 'sd-turbo': TURBO, 'flux2-klein': Object.values(STAGES['flux2-klein']).flat(), 'z-image-turbo': Object.values(STAGES['z-image-turbo']).flat() }
+/** Each one's files, the check's last, which they share. */
+const FILES = { 'sd-turbo': [...TURBO, check.FILE], 'flux2-klein': [...Object.values(STAGES['flux2-klein']).flat(), check.FILE], 'z-image-turbo': [...Object.values(STAGES['z-image-turbo']).flat(), check.FILE] }
 /** What each weighs. */
-export const BYTES = { 'sd-turbo': total(TURBO), 'flux2-klein': total(FILES['flux2-klein']), 'z-image-turbo': total(FILES['z-image-turbo']) }
+export const BYTES = { 'sd-turbo': total(FILES['sd-turbo']), 'flux2-klein': total(FILES['flux2-klein']), 'z-image-turbo': total(FILES['z-image-turbo']) }
 function total(/** @type {File[]} */ files) { return files.reduce((sum, [, , bytes]) => sum + bytes, 0) }
 
 /**
@@ -84,8 +87,8 @@ export const downloads = /** @type {Record<Maker, import('@preact/signals-core')
 /** Those whose files are here, once looked for. */
 export const kept = signal(/** @type {Set<Maker>} */ (new Set()))
 const turbo = modelWorker(new URL('./device-worker.js', import.meta.url), 'Pictures on this device stopped')
-/** SD-Turbo's sessions, loaded once in its worker, its files downloaded first if they aren't here. @param {(message: any) => void} [onMessage] */
-const load = (onMessage) => turbo.call({ type: 'load', host: weightsHost(), files: TURBO }, { onMessage })
+/** SD-Turbo's sessions, loaded once in its worker, its files downloaded first if they aren't here. */
+const load = () => turbo.call({ type: 'load', host: weightsHost(), files: TURBO })
 
 /** Those this device can run: WebGPU with 16-bit numbers (or WebNN, for SD-Turbo), and 8 GB of memory, all the browser tells. @returns {Promise<Maker[]>} */
 export async function fitting() {
@@ -120,7 +123,8 @@ export async function prepare(maker) {
   navigator.storage?.persist?.().catch(() => {})
   const onMessage = (/** @type {any} */ message) => { download.value = downloading(message, BYTES[maker]) }
   try {
-    await (maker === 'sd-turbo' ? load(onMessage) : stage({ type: 'fetch', files: FILES[maker] }, [], onMessage))
+    await stage({ type: 'fetch', files: FILES[maker] }, [], onMessage)
+    if (maker === 'sd-turbo') await load()
     download.value = { state: 'ready' }
     kept.value = new Set([...kept.value, maker])
     await use(maker)
@@ -130,11 +134,12 @@ export async function prepare(maker) {
   }
 }
 
-/** Removes one's files from this device. @param {Maker} maker */
+/** Removes one's files from this device, but for those another one here shares (the check's). @param {Maker} maker */
 export async function remove(maker) {
   if (maker === 'sd-turbo') turbo.post({ type: 'unload', id: turbo.id() })
   const cache = await caches.open('transformers-cache')
-  await Promise.all(FILES[maker].map(([path]) => cache.delete(new URL(path, weightsHost()).href)))
+  const shared = MAKERS.filter((other) => other !== maker && kept.value.has(other)).flatMap((other) => FILES[other])
+  await Promise.all(FILES[maker].filter((file) => !shared.includes(file)).map(([path]) => cache.delete(new URL(path, weightsHost()).href)))
   kept.value = new Set([...kept.value].filter((one) => one !== maker))
   downloads[maker].value = { state: 'idle' }
 }
@@ -158,6 +163,12 @@ async function stage(message, transfer = [], onMessage = () => {}) {
 }
 
 let busy = Promise.resolve()
+
+/**
+ * Whether a picture may show (D275): the check, on this device, finds no nudity or sex in it. Its file
+ * comes first if it isn't here, as for a picture from a server on this computer. @param {Uint8Array} bytes
+ */
+export const passes = async (bytes) => (await turbo.call({ type: 'check', host: weightsHost(), bytes })).explicit < check.LIMIT
 
 /** Its size in pixels: SD-Turbo's 512 square, the others' in the shape asked. @param {keyof typeof SIZES} shape */
 export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape])
