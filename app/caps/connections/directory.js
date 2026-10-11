@@ -64,13 +64,16 @@ export const DIRECTORY = Object.freeze([
   { id: 'zapier', name: 'Zapier', url: 'https://mcp.zapier.com/api/mcp/mcp', logo: 'zapier.png' },
   // Its service answers no browser.
   { id: 'todoist', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
+  // Each company's own instance, whose address policy gives, with the app its admin registered
+  // there, since it registers none; it answers no browser, whatever the address (D283).
+  { id: 'servicenow', name: 'ServiceNow', ready: false, logo: 'servicenow.png' },
 ])
 
 /** @typedef {Known & { via: 'browser' | 'gateway' | null }} Listed  how it is reached now; null: not yet */
 
 /**
  * The directory, with the organisation's entries merged in by id: one can add a service, change
- * an address or a client id, or hide one. What policy names is ready unless it says otherwise.
+ * an address or a client id, or hide one. What policy names is ready unless it, or the directory, says otherwise.
  * Those reached come first, from the browser or through the gateway: one that relays to the
  * service and its sign-in, and holds the app the sign-in takes when it registers none.
  * @param {{ directory?: Partial<Known>[] }} [policy] @param {Served} [served]
@@ -82,7 +85,7 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
   for (const change of policy.directory ?? []) {
     const id = String(change.id ?? '')
     const before = entries.get(id)
-    if (id && (before || change.name)) entries.set(id, /** @type {Known} */ ({ ...before, ready: true, ...change, id }))
+    if (id && (before || change.name)) entries.set(id, /** @type {Known} */ ({ ready: true, ...before, ...change, id }))
   }
   const relayed = (/** @type {Known} */ { url, signIn = [], app, clientId }) => [String(url), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address)))
     && (!app || Boolean(clientId ?? clients[app]))

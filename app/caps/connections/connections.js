@@ -386,13 +386,14 @@ function yours(connection) {
 
 /**
  * A service Jean knows: a click connects it, and once connected, another account. One not reached
- * yet is there too, disabled. A name like an address may wrap before its dot ("monday" ".com").
+ * yet is there too, disabled. A name like an address may wrap before its dot ("monday" ".com"),
+ * one in two words where its capital starts the second ("Service" "Now").
  * @param {Listed} entry
  */
 function tile(entry) {
   return html`<li><button class="service ${entry.via ? '' : 'is-soon'}" ?disabled=${!entry.via || message.value?.kind === 'busy'}
     @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name, { gateway: entry.via === 'gateway' }) }}>
-    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${entry.includes
+    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)|(?<=[a-z])(?=[A-Z])/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${entry.includes
       ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span>${entry.via ? icons.plus : nothing}
   </button></li>`
 }

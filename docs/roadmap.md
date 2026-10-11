@@ -52,6 +52,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] A real sign-in to each ready connection (Notion, Canva, Miro, Granola, ClickUp, Linear, Intercom, Wix, Attio, Fireflies), and a token renewal; a search through Exa, with no sign-in
 - [ ] Web search through Vikidia, and through a real Kiwix server's Wikipedia books, from Settings › Web search
 - [ ] Through a gateway (D214), a real sign-in to each service it reaches as it comes (Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Todoist: does each register Jean's address?), and with an app registered at Google, Slack, Figma, Asana, Zoom, HubSpot and Box
+- [ ] ServiceNow through a gateway (D283), on an instance with an app its admin registered: a real sign-in (does it take `resource`, or want the `mcp_server` scope?), its tools listed and one called
 - [ ] An organisation's own skills index for office work, served with CORS
 - [ ] An Artifactory instance for PyPI and npm with a key; micropip against an index that serves only HTML
 - [ ] "Since last time" with a real service after a real night away

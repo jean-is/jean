@@ -79,7 +79,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }],
   "skills": { "sources": ["https://skills.corp.example"], "only": true },
   "sync": { "provider": "dropbox", "appKey": "…" },
-  "directory": [{ "id": "microsoft-365", "url": "https://mcp.m365.corp.example/mcp", "clientId": "4f1c…" }, { "id": "figma", "hidden": true }],
+  "directory": [{ "id": "microsoft-365", "url": "https://mcp.m365.corp.example/mcp", "clientId": "4f1c…" }, { "id": "servicenow", "url": "https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default", "clientId": "9b2e…" }, { "id": "figma", "hidden": true }],
   "images": { "openai": ["gpt-image-1"] },
   "films": { "openai": ["sora-2-pro"] },
   "pictureCheck": { "suggestive": true, "hate": false },
