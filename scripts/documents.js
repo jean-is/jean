@@ -447,7 +447,7 @@ function notesOf(c, key) {
       await writeFile(path, JSON.stringify(all))
       await writeFile(`${path.replace(/\.json$/, '')}.cost.json`, JSON.stringify({ groups: all.length, requests: all.length - done.length, ms: performance.now() - started }))
       return all
-    })())
+    })().catch((error) => { notes.delete(c.dir); throw error }))
   }
   return /** @type {Promise<string[]>} */ (notes.get(c.dir))
 }
@@ -510,21 +510,21 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
         if (left < 20) { stop = true; console.log('The free requests for today are nearly spent: run again tomorrow to go on.'); break }
       }
       const job = /** @type {any} */ (todo.shift())
-      const c = await load(job.seed, job.size)
-      let extra = {}
-      let { files: shownFiles, lib } = c
       // Registered as search with helpers over every page; a map over 4,196 pages costs ~100 requests a question, beyond the free tier.
       const condition = job.condition === 'search+mapreduce' ? 'search' : job.condition
-      if (condition === 'summaries') {
-        const notes = await notesOf(c, key)
-        shownFiles = [...c.files, { name: 'Search notes.md', pages: notes }]
-        lib = await library(shownFiles)
-      }
-      if (job.condition === 'search+meaning') {
-        const { matrix, dims } = await passageVectors(c.dir, c.docs, dense, passage)
-        extra = { docs: c.docs, vectors: { matrix, dims, embedQuery: async (/** @type {string} */ text) => int8(await embed(/** @type {any} */ (dense), [text], 'query')).matrix } }
-      }
       try {
+        const c = await load(job.seed, job.size)
+        let extra = {}
+        let { files: shownFiles, lib } = c
+        if (condition === 'summaries') {
+          const notes = await notesOf(c, key)
+          shownFiles = [...c.files, { name: 'Search notes.md', pages: notes }]
+          lib = await library(shownFiles)
+        }
+        if (job.condition === 'search+meaning') {
+          const { matrix, dims } = await passageVectors(c.dir, c.docs, dense, passage)
+          extra = { docs: c.docs, vectors: { matrix, dims, embedQuery: async (/** @type {string} */ text) => int8(await embed(/** @type {any} */ (dense), [text], 'query')).matrix } }
+        }
         const run = await ask({ question: job.question, condition, brain: job.brain, files: shownFiles, lib, extra, apiKey: key })
         left -= run.calls.length + 1
         const graded = grade(job.question, run.text)
