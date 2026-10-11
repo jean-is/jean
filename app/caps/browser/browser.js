@@ -9,7 +9,8 @@
 // that frames it, on purpose: no event, no header. So a page from a site not seen showing yet
 // comes with a way out, a new tab, and a site the user opens that way is remembered: from then on
 // it opens in a tab of its own, and Jean recommends installing it as an app (a site's account
-// only works in its own tab too, since a framed site's cookies are cut off).
+// only works in its own tab too, since a framed site's cookies are cut off). A site a capability
+// knows refuses opens in a tab at once, never tried here (Vikidia's, D271).
 //
 // The page is framed in caps/browser/browser.html, whose policy alone lets a frame show another
 // site. Its frame keeps the site's own origin (allow-scripts with allow-same-origin, the one frame
@@ -138,6 +139,8 @@ let pending = null
 
 /** Sites the user opens in a tab of their own, on this device. */
 const windowed = () => effective.peek().settings.windowed ?? []
+/** A page whose site a capability knows refuses to show here. @param {string} url */
+const refused = (url) => [...unlocked.peek().values()].some((cap) => cap.ownTab?.(url))
 const searchPage = () => serviceURL('searchPage', app.settings.peek(), app.policy)
 const bump = () => { moves.value++ }
 
@@ -197,7 +200,7 @@ keep('browser', {
  */
 export function visit(url, { click = false } = {}) {
   typed.value = null
-  if (!isLocal(url) && (!showable(url, location.href) || windowed().includes(siteOf(url)))) {
+  if (!isLocal(url) && (!showable(url, location.href) || windowed().includes(siteOf(url)) || refused(url))) {
     if (click) openTab(url)
     if (!click || open.peek()) {
       page.value = { url, own: true }
@@ -573,7 +576,7 @@ function hosted(event) {
  */
 function own(url) {
   const way = installer(/** @type {any} */ (navigator))
-  const here = showable(url, location.href)
+  const here = showable(url, location.href) && !refused(url)
   return html`<div class="browser-note">
     <h2 dir="auto">${t('browser.own.title', { site: siteOf(url) })}</h2>
     <p>${t('browser.own.text')}</p>

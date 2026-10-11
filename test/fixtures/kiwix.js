@@ -28,11 +28,11 @@ export function kiwix(request, books = BOOKS) {
   if (path === 'catalog/v2/entries') {
     return xml(200, `<?xml version="1.0" encoding="UTF-8"?>\n<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/">
   <title>All Entries</title>${Object.entries(books).map(([name, book]) => `\n  <entry><id>urn:uuid:${name}</id><title>${book.title}</title><language>${book.lang}</language><name>${name.replace(/_\d{4}-\d\d$/, '')}</name>
-    <articleCount>${book.articles}</articleCount><link type="text/html" href="/kiwix/content/${name}"/></entry>`).join('')}\n</feed>`)
+    <category>${name.split('_')[0]}</category><articleCount>${book.articles}</articleCount><link type="text/html" href="/kiwix/content/${name}"/></entry>`).join('')}\n</feed>`)
   }
   if (path === 'search') {
-    const wanted = url.searchParams.get('books.filter.lang')?.split(',')
-    const searched = Object.entries(books).filter(([, book]) => !wanted || wanted.includes(book.lang))
+    const [wanted, category] = [url.searchParams.get('books.filter.lang')?.split(','), url.searchParams.get('books.filter.category')]
+    const searched = Object.entries(books).filter(([name, book]) => (!wanted || wanted.includes(book.lang)) && (!category || name.startsWith(`${category}_`)))
     if (new Set(searched.map(([, book]) => book.lang)).size > 1) return xml(400, '<error>Confusion of tongues: books in more than one language.</error>')
     const words = String(url.searchParams.get('pattern')).toLowerCase().split(/\s+/)
     const items = searched.flatMap(([name, book]) => Object.entries(book.pages).flatMap(([title, html]) => {

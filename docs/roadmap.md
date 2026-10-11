@@ -49,6 +49,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Each provider of D136 with a real key
 - [ ] Pictures and films (D251) with real keys: pictures from OpenAI, Gemini and OpenRouter, changed from a shared photo; a film from OpenAI, Gemini's Veo and OpenRouter, started from a picture too (OpenAI wants one of the film's size), and a page closed while one is made; Ollama with an image model, on macOS
 - [ ] A real sign-in to each ready connection (Notion, Canva, Miro, Granola, ClickUp, Linear, Intercom, Wix, Attio, Fireflies), and a token renewal; a search through Exa, with no sign-in
+- [ ] Web search through Vikidia, and through a real Kiwix server's Wikipedia books, from Settings › Web search
 - [ ] Through a gateway (D214), a real sign-in to each service it reaches as it comes (Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Todoist: does each register Jean's address?), and with an app registered at Google, Slack, Figma, Asana, Zoom, HubSpot and Box
 - [ ] An organisation's own skills index for office work, served with CORS
 - [ ] An Artifactory instance for PyPI and npm with a key; micropip against an index that serves only HTML

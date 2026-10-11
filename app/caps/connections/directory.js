@@ -6,12 +6,14 @@
 // the service and its sign-in and holds the app a sign-in that registers none takes (D191, D214);
 // otherwise not yet, shown but disabled. They are the services people
 // at work use most, never a developer's tools or a payment's (D192). A logo is the brand's own
-// file, in logos/ (D159).
+// file, in logos/ (D159). One that searches the web says so (`searches`), and Settings › Web
+// search offers it until it is connected; once it is, its tools say it themselves (D271).
 // Host-agnostic: no DOM.
 
 /**
- * @typedef {{ id: string, name: string, url?: string, includes?: string[], clientId?: string, ready?: boolean, hidden?: boolean, logo?: string, signIn?: string[], app?: string }} Known
+ * @typedef {{ id: string, name: string, url?: string, includes?: string[], clientId?: string, ready?: boolean, hidden?: boolean, logo?: string, signIn?: string[], app?: string, searches?: boolean }} Known
  *   includes: the products it reaches, by name; clientId: one registered with the service, when it can't register Jean;
+ *   searches: it searches the web;
  *   signIn: the hosts its sign-in is reached at besides its server's, which a gateway relays to as well;
  *   app: its sign-in server (the issuer), when it takes only apps registered there, one of which the gateway holds
  */
@@ -33,7 +35,7 @@ export const DIRECTORY = Object.freeze([
   { id: 'attio', name: 'Attio', url: 'https://mcp.attio.com/mcp', ready: true, logo: 'attio.svg' },
   { id: 'fireflies', name: 'Fireflies', url: 'https://api.fireflies.ai/mcp', ready: true, logo: 'fireflies.png' },
   // Web search with no key and no sign-in (D192).
-  { id: 'exa', name: 'Exa', url: 'https://mcp.exa.ai/mcp', ready: true, logo: 'exa.svg' },
+  { id: 'exa', name: 'Exa', url: 'https://mcp.exa.ai/mcp', ready: true, logo: 'exa.svg', searches: true },
   // Google's servers are a developer preview that refuses browsers.
   { id: 'gmail', name: 'Gmail', url: 'https://gmailmcp.googleapis.com/mcp/v1', signIn: ['accounts.google.com', 'oauth2.googleapis.com'], app: 'https://accounts.google.com', logo: 'gmail.svg' },
   { id: 'google-drive', name: 'Google Drive', url: 'https://drivemcp.googleapis.com/mcp/v1', signIn: ['accounts.google.com', 'oauth2.googleapis.com'], app: 'https://accounts.google.com', logo: 'google-drive.svg' },
@@ -88,6 +90,15 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
     .map((entry) => ({ ...entry, via: !entry.url ? null : entry.ready ? 'browser' : relayed(entry) ? 'gateway' : null }))
   return /** @type {Listed[]} */ ([...shown.filter((entry) => entry.via), ...shown.filter((entry) => !entry.via)])
 }
+
+/** The address of a service's logo, from its file's name. @param {string} logo */
+export const logoAt = (logo) => new URL(`logos/${logo}`, import.meta.url).href
+
+/**
+ * The services Jean knows that search the web and a click connects, those already connected left
+ * out: Settings › Web search offers them (D271). @param {Listed[]} listed @param {{ url: string }[]} connections
+ */
+export const searchers = (listed, connections) => listed.filter((entry) => entry.searches && entry.via && !connections.some((connection) => connection.url === entry.url))
 
 /**
  * The entry a connection was made from, by its address, while it is reached.

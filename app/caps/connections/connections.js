@@ -15,9 +15,9 @@ import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { openSettings, placeable, where } from '../../ui/dialogs.js'
 import { returnTo } from '../../ui/router.js'
-import { mcpClient, MCPError } from './mcp.js'
+import { mcpClient, MCPError, searchesWeb } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
-import { known, knownFor, covers } from './directory.js'
+import { known, knownFor, covers, logoAt } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
 import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
@@ -113,10 +113,15 @@ const list = (connections = all()) => Promise.all(connections.map(async (connect
 /** The name the brain calls a tool by, in a script too: `mail_search_emails`. @param {Connection} connection @param {string} name */
 const toolName = (connection, name) => identifier(`${slug(connection.name).slice(0, 16) || 'service'}_${name}`).slice(0, 64)
 
+/** What a tool is called where the user sees it. @param {McpTool} tool */
+function labelOf(tool) { return tool.title ?? tool.annotations?.title ?? tool.name }
+/** The logo of the service Jean knows a connection is made to, if any (D159). @param {Connection} connection */
+function logoOf(connection) { return known(app.policy).find((entry) => entry.url === connection.url)?.logo }
+
 /** @param {Connection} connection @param {McpTool} tool @returns {import('../../core/loop.js').Tool} */
 function asTool(connection, tool) {
   const { $schema, ...schema } = tool.inputSchema ?? {}
-  const label = tool.title ?? tool.annotations?.title ?? tool.name
+  const label = labelOf(tool)
   const call = (/** @type {any} */ args, /** @type {AbortSignal | undefined} */ signal) => client(connection).callTool(tool, args ?? {}, signal)
   return {
     spec: { name: toolName(connection, tool.name), description: `${connection.name}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } },
@@ -169,6 +174,11 @@ effect(() => register({
     const lines = here().map((connection) => [connection.name, ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
     return lines.length ? { connections: lines.map(([name, ...tools]) => `- ${name}${tools.length ? `: ${tools.join(', ')}` : ''}`).join('\n') } : {}
   },
+  // Each service whose tools search the web, as they say themselves, for Settings › Web search (D271).
+  searches: () => all().flatMap((connection) => {
+    const [tools, logo] = [(status.value[connection.id]?.tools ?? []).filter(searchesWeb).map(labelOf), logoOf(connection)]
+    return tools.length ? [{ name: connection.name, ...(logo && { logo: logoAt(logo) }), tools }] : []
+  }),
   panel,
 }))
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
@@ -177,7 +187,7 @@ export const listed = list()
 /** The room's connections as the box's / names them (D199): each with its logo and its tools' names. */
 export const offered = () => here().map((connection) => ({
   name: connection.name,
-  logo: known(app.policy).find((entry) => entry.url === connection.url)?.logo,
+  logo: logoOf(connection),
   tools: (status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name)),
 }))
 
@@ -330,7 +340,7 @@ effect(() => {
 // Declared, not assigned, as the panel is: Settings may show it before this module has run to its end.
 /** A service's logo (D159), or else its first letter. @param {Pick<Known, 'name' | 'logo'>} entry @param {string} [kind] */
 function monogram({ name, logo }, kind = 'monogram') {
-  return logo ? html`<img class="${kind} is-logo" src=${new URL(`logos/${logo}`, import.meta.url).href} alt="">` : html`<span class=${kind} aria-hidden="true">${[...name][0]}</span>`
+  return logo ? html`<img class="${kind} is-logo" src=${logoAt(logo)} alt="">` : html`<span class=${kind} aria-hidden="true">${[...name][0]}</span>`
 }
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
 function products(names) { return new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names) }
@@ -344,7 +354,7 @@ function row(connection) {
   const { tools, error, challenge } = status.value[connection.id] ?? {}
   const own = (app.settings.value.connections ?? []).includes(connection)
   const kept = connection.projects && projects().filter((project) => connection.projects?.includes(project.id)).map(nameOf)
-  const head = html`${monogram({ name: connection.name, logo: known(app.policy).find((entry) => entry.url === connection.url)?.logo }, 'item-icon')}<span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
+  const head = html`${monogram({ name: connection.name, logo: logoOf(connection) }, 'item-icon')}<span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
     ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}${kept?.length
       ? html` · <bdi>${products(kept)}</bdi>` : nothing}</small>`}</span>`
   if (error || !tools) {
@@ -353,7 +363,7 @@ function row(connection) {
       ${own ? html`<button class="icon-button subtle" aria-label=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}</li>`
   }
   return html`<li class="connection"><details><summary>${head}${icons.chevron}</summary><div class="item-body">
-    <ul class="chips">${tools.map((tool) => html`<li>${tool.title ?? tool.annotations?.title ?? tool.name}</li>`)}</ul>
+    <ul class="chips">${tools.map((tool) => html`<li>${labelOf(tool)}</li>`)}</ul>
     ${own ? yours(connection) : nothing}
     <div class="row"><small class="muted" dir="ltr">${new URL(connection.url).host}</small>${own
       ? html`<button class="button subtle danger" @click=${() => remove(connection)}>${t('connections.disconnect')}</button>` : html`<small class="muted">${t('policy.locked')}</small>`}</div>

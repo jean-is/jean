@@ -680,7 +680,7 @@ export const SECTIONS = {
   keyboard: { label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   connections: { label: 'cap.connections.name', icon: icons.plug, show: () => loaded.value.get('connections')?.panel?.() ?? nothing, when: () => loaded.value.has('connections') },
-  search: { label: 'cap.search.name', icon: icons.websearch, show: () => loaded.value.get('search')?.panel?.() ?? nothing, when: () => loaded.value.has('search'), also: () => 'Kiwix Wikipedia' },
+  search: { label: 'cap.search.name', icon: icons.websearch, show: () => loaded.value.get('search')?.panel?.() ?? nothing, when: () => loaded.value.has('search'), also: () => 'Kiwix Wikipedia Vikidia' },
   skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   routines: { label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
   computer: { label: 'cap.computer.name', icon: icons.computer, show: () => loaded.value.get('computer')?.panel?.() ?? nothing, when: () => loaded.value.has('computer') },

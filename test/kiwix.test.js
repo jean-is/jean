@@ -1,7 +1,9 @@
-// A Kiwix server as web search's Wikipedia (D254), against a stand-in that answers as libkiwix does.
+// A Kiwix server as web search's library or its Wikipedia (D254), against a stand-in that answers
+// as libkiwix does; and web search's sources, searched at once (D271).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { isKiwix, intro, library, searchKiwix } from '../app/caps/search/kiwix.js'
+import { searchSources, onSite } from '../app/caps/search/sources.js'
 import { kiwix, BOOKS } from './fixtures/kiwix.js'
 
 const ADDRESS = 'http://kiwix.test/kiwix'
@@ -36,9 +38,9 @@ test('a page’s first paragraphs, without its tables or its notes’ numbers', 
 test('the books a library holds: their titles, languages and pages, from its catalogue', async () => {
   const { fetch, asked } = served()
   assert.deepEqual(await library(`${ADDRESS}/viewer#wikipedia_fr_all_mini_2025-10/Phare`, { fetch }), [
-    { title: 'Wikipedia 100', languages: ['eng'], articles: 5056 },
-    { title: 'Wikipédia', languages: ['fra'], articles: 2687612 },
-    { title: 'Wikipédia & ses meilleurs articles', languages: ['fra'], articles: 52000 },
+    { title: 'Wikipedia 100', languages: ['eng'], articles: 5056, category: 'wikipedia' },
+    { title: 'Wikipédia', languages: ['fra'], articles: 2687612, category: 'wikipedia' },
+    { title: 'Wikipédia & ses meilleurs articles', languages: ['fra'], articles: 52000, category: 'wikipedia' },
   ])
   // The address of its reader, or of a page in it, leads to the same catalogue.
   await library(`${ADDRESS}/content/wikipedia_fr_all_mini_2025-10/Phare`, { fetch })
@@ -81,4 +83,54 @@ test('a page that can’t be read keeps the search’s snippet; a search refused
   assert.equal(pages[0].extract, 'Phare Un phare est une tour munie d’une source lumineuse, qui guide les navires....')
   const refused = /** @type {typeof globalThis.fetch} */ (async (input) => (String(input).includes('/search') ? new Response('', { status: 400 }) : kiwix(String(input))))
   await assert.rejects(searchKiwix(ADDRESS, 'phare', 'fr', { fetch: refused }), /The library answered 400/)
+})
+
+const VIKIDIA = 'https://{lang}.vikidia.test/w/api.php'
+/** The stand-in, Vikidia's search beside it, and the addresses asked. @param {typeof BOOKS} [books] */
+function sourcesServed(books) {
+  const { fetch: library, asked } = served(books)
+  const fetch = /** @type {typeof globalThis.fetch} */ (async (input, init) => {
+    const url = new URL(String(input))
+    if (!url.hostname.endsWith('vikidia.test')) return library(input, init)
+    asked.push(url)
+    return Response.json({ query: { pages: [{ index: 1, title: 'Phare', fullurl: 'https://fr.vikidia.test/wiki/Phare', extract: 'Un phare est un bâtiment qui guide les marins.' }] } })
+  })
+  return { fetch, asked }
+}
+
+test('the sources on are searched at once, three pages from each; Wikipedia from a Kiwix server reads its Wikipedia books alone (D271)', async () => {
+  const { fetch, asked } = sourcesServed({ ...BOOKS, 'vikidia_fr_all_maxi_2025-10': { title: 'Vikidia', lang: 'fra', articles: 40000, pages: { Phare: '<p>Un phare guide les marins.</p>' } } })
+  const { pages, notes } = await searchSources([{ id: 'wikipedia', address: ADDRESS }, { id: 'vikidia', address: VIKIDIA }], 'phare', 'fr', { fetch })
+  assert.deepEqual(pages.map((page) => page.url), [`${ADDRESS}/content/wikipedia_fr_all_mini_2025-10/Phare`, 'https://fr.vikidia.test/wiki/Phare'])
+  assert.deepEqual(notes, [])
+  const search = asked.find((url) => url.pathname === '/kiwix/search')
+  assert.equal(search?.searchParams.get('books.filter.category'), 'wikipedia')
+  assert.equal(search?.searchParams.get('pageLength'), '3')
+  assert.equal(asked.find((url) => url.hostname === 'fr.vikidia.test')?.searchParams.get('gsrlimit'), '3')
+  // The library itself reads every book: Vikidia's too.
+  const library = await searchSources([{ id: 'kiwix', address: ADDRESS }], 'marins', 'fr', { fetch })
+  assert.deepEqual(library.pages.map((page) => page.title), ['Phare'])
+  assert.match(library.pages[0].url, /vikidia_fr_all_maxi/)
+})
+
+test('a source with nothing in the language says which it has; one that doesn’t answer is told of; none answering fails', async () => {
+  const { fetch } = sourcesServed()
+  assert.deepEqual(await searchSources([{ id: 'vikidia', address: VIKIDIA }, { id: 'kiwix', address: ADDRESS }], 'phare', 'ja', { fetch }), { pages: [], notes: [
+    'Vikidia has no edition in "ja". Search again with one of its languages: fr, en, es, it, de, pt, ru, uk, ar, ca, eu, el, hy, oc, scn.',
+    'The library has no books in "ja". Search again with one of its languages: en, fr.',
+  ] })
+  const down = /** @type {typeof globalThis.fetch} */ (async (input, init) => (String(input).includes('vikidia') ? Promise.reject(new TypeError('Failed to fetch')) : fetch(input, init)))
+  const { pages, notes } = await searchSources([{ id: 'vikidia', address: VIKIDIA }, { id: 'kiwix', address: ADDRESS }], 'phare', 'fr', { fetch: down })
+  assert.deepEqual([pages.length, notes], [1, ["Vikidia didn't answer."]])
+  await assert.rejects(searchSources([{ id: 'vikidia', address: VIKIDIA }], 'phare', 'fr', { fetch: down }), /Failed to fetch/)
+})
+
+test('a page of Vikidia’s site, in any language, is known before it is tried; a Kiwix server standing for it is not (D271)', () => {
+  const vikidia = 'https://{lang}.vikidia.org/w/api.php'
+  assert.equal(onSite(vikidia, 'https://fr.vikidia.org/wiki/Phare'), true)
+  assert.equal(onSite(vikidia, 'https://vikidia.org/'), true)
+  assert.equal(onSite(vikidia, 'https://fr.wikipedia.org/wiki/Phare'), false)
+  assert.equal(onSite(vikidia, 'https://notvikidia.org/'), false)
+  assert.equal(onSite(`${ADDRESS}/`, `${ADDRESS}/content/vikidia_fr_all_maxi_2025-10/Phare`), false)
+  assert.equal(onSite('', 'https://fr.vikidia.org/'), false)
 })
