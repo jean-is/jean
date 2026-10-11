@@ -645,7 +645,7 @@ function panel() {
       </select>
     </section>`
   const { state } = box.status.value
-  return there.value?.computers({ sandbox, shared, name: t('computer.sandbox'), light: state, text: t(`computer.state.${state}`) }) ?? html`${sandbox}${shared}`
+  return there.value?.computers({ sandbox, shared, name: t('computer.sandbox'), light: state, text: t(`computer.state.${state}`), ready: t('computer.state.ready') }) ?? html`${sandbox}${shared}`
 }
 
 register({

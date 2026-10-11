@@ -11,7 +11,6 @@
   "machine.computers": "Komputery",
   "machine.lede": "Zadania korzystają z odizolowanego środowiska, z wyjątkiem tych w folderze, który połączysz na tym komputerze.",
   "machine.off": "Niepołączony",
-  "machine.in": "W folderze {folder}",
   "machine.step.open": "Otwórz terminal w jednym ze swoich folderów.",
   "machine.step.paste": "Wklej tam ten wiersz i naciśnij Enter.",
   "machine.step.wait": "Czekam, aż wiersz zadziała: ta strona sama to zauważy.",

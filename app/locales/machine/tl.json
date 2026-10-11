@@ -11,7 +11,6 @@
   "machine.computers": "Mga computer",
   "machine.lede": "Ginagamit ng mga gawain ang nakahiwalay na kapaligiran, maliban sa mga nasa folder na ikinonekta mo sa computer na ito.",
   "machine.off": "Hindi nakakonekta",
-  "machine.in": "Sa {folder}",
   "machine.step.open": "Magbukas ng terminal sa isa sa mga folder mo.",
   "machine.step.paste": "I-paste doon ang linyang ito, saka pindutin ang Enter.",
   "machine.step.wait": "Hinihintay na tumakbo ang linya: kusang mapapansin ito ng page na ito.",

@@ -11,7 +11,6 @@
   "machine.computers": "Computadoras",
   "machine.lede": "Las tareas usan el entorno aislado, salvo las de la carpeta que conectes en esta computadora.",
   "machine.off": "Sin conectar",
-  "machine.in": "En {folder}",
   "machine.step.open": "Abre una terminal en una de tus carpetas.",
   "machine.step.paste": "Pega allí esta línea y pulsa Intro.",
   "machine.step.wait": "Esperando a que se ejecute la línea: esta página lo notará sola.",

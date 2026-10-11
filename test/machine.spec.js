@@ -63,7 +63,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true })
   try {
     await expect(part).toContainText('Tasks with the folder shop run their commands on this computer', { timeout: 15_000 })
-    await expect(mine).toContainText('In shop')
+    await expect(mine).toContainText('Ready')
     // Its picture shows it too: its screen lit, its link filled.
     await expect(mine.locator('.item-icon')).toHaveAttribute('data-state', 'ready')
     // The arrows go from card to card, whichever way: the sandbox's settings, then this computer's again.

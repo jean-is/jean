@@ -11,7 +11,6 @@
   "machine.computers": "מחשבים",
   "machine.lede": "משימות משתמשות בסביבה המבודדת, חוץ מאלה שבתיקייה שתחברו במחשב הזה.",
   "machine.off": "לא מחובר",
-  "machine.in": "ב־{folder}",
   "machine.step.open": "פתחו מסוף באחת התיקיות שלכם.",
   "machine.step.paste": "הדביקו בו את השורה הזו ולחצו Enter.",
   "machine.step.wait": "ממתין שהשורה תרוץ: הדף הזה ישים לב לבד.",

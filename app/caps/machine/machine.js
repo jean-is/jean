@@ -230,8 +230,9 @@ async function untrust(event, folder) {
  * This computer's card in Settings › Computer: on, in which folder, with Stop using it and the folders
  * where its commands run unasked; or three steps, the line to paste in a terminal with Copy, then a light
  * that waits for it; in the desktop app, Choose a folder. The light is the Computer's (D176), here the bridge's.
+ * @param {string} ready the Computer's word for available
  */
-function panel() {
+function panel(ready) {
   const found = bridge.value
   const own = inApp.value
   const pair = known.value
@@ -240,7 +241,7 @@ function panel() {
   return html`<section class="machine">
     <div class="setting">
       <div>
-        <h3><span class="ember" data-state=${found.on ? 'ready' : 'asleep'} aria-hidden="true"></span>${t('cap.machine.name')}<span class="muted" role="status">${state(found)}</span></h3>
+        <h3><span class="ember" data-state=${found.on ? 'ready' : 'asleep'} aria-hidden="true"></span>${t('cap.machine.name')}<span class="muted" role="status">${state(found, ready)}</span></h3>
         <p class="muted">${text}</p>
       </div>
       ${found.on ? html`<button class="button subtle" @click=${forget}>${t('machine.forget')}</button>`
@@ -274,8 +275,8 @@ export function show() {
   app.dialog.value = 'settings'
 }
 
-/** This computer's state, beside its name: in which folder, or not connected. @param {Found} found */
-const state = (found) => (found.on ? t('machine.in', { folder: found.folder }) : t('machine.off'))
+/** This computer's state, beside its name: available, as the sandbox says it, or not connected. @param {Found} found @param {string} ready */
+const state = (found, ready) => (found.on ? ready : t('machine.off'))
 
 /**
  * The sandbox's picture (D250): a glass box, its hidden edges dashed, with the computer that runs inside it, a block
@@ -330,17 +331,17 @@ function move(event) {
 /**
  * Settings › Computer once this computer is on (D248): what decides which computer a task uses, then the
  * two, a card each as tabs, each with its picture, the sandbox first; under them, the one chosen, then what both use.
- * @param {{ sandbox: unknown, shared: unknown, name: string, light: string, text: string }} parts the sandbox's, from the Computer
+ * @param {{ sandbox: unknown, shared: unknown, name: string, light: string, text: string, ready: string }} parts the sandbox's, from the Computer
  */
-export function computers({ sandbox, shared, name, light, text }) {
+export function computers({ sandbox, shared, name, light, text, ready }) {
   const found = bridge.value
   if (!found.on) watch()
   return html`<p class="lede">${t('machine.lede')}</p>
     <div class="computers" role="tablist" aria-label=${t('machine.computers')} @keydown=${move}>
       ${card('sandbox', SANDBOX, name, light, text)}
-      ${card('machine', LAPTOP, t('cap.machine.name'), found.on ? 'ready' : 'asleep', state(found))}
+      ${card('machine', LAPTOP, t('cap.machine.name'), found.on ? 'ready' : 'asleep', state(found, ready))}
     </div>
-    <div role="tabpanel" id="computer-shown" aria-labelledby=${`computer-${viewing.value}`}>${viewing.value === 'sandbox' ? sandbox : panel()}${shared}</div>`
+    <div role="tabpanel" id="computer-shown" aria-labelledby=${`computer-${viewing.value}`}>${viewing.value === 'sandbox' ? sandbox : panel(ready)}${shared}</div>`
 }
 
 /** The card for a command of the brain's on this computer: the command, then once, always in that folder, or no. */

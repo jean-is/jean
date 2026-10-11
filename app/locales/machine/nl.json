@@ -11,7 +11,6 @@
   "machine.computers": "Computers",
   "machine.lede": "Taken gebruiken de afgeschermde omgeving, behalve die in de map die je op deze computer koppelt.",
   "machine.off": "Niet gekoppeld",
-  "machine.in": "In {folder}",
   "machine.step.open": "Open een terminal in een van je mappen.",
   "machine.step.paste": "Plak deze regel daar en druk op Enter.",
   "machine.step.wait": "Wachten tot de regel draait: deze pagina merkt het vanzelf.",

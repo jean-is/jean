@@ -11,7 +11,6 @@
   "machine.computers": "Computadores",
   "machine.lede": "As tarefas usam o ambiente isolado, exceto as da pasta que ligares neste computador.",
   "machine.off": "Não ligado",
-  "machine.in": "Em {folder}",
   "machine.step.open": "Abre um terminal numa das tuas pastas.",
   "machine.step.paste": "Cola lá esta linha e carrega em Enter.",
   "machine.step.wait": "À espera de que a linha corra: esta página dá por isso sozinha.",

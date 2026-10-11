@@ -11,7 +11,6 @@
   "machine.computers": "Komputer",
   "machine.lede": "Tugasan menggunakan persekitaran terasing, kecuali tugasan dalam folder yang anda sambungkan pada komputer ini.",
   "machine.off": "Tidak bersambung",
-  "machine.in": "Dalam {folder}",
   "machine.step.open": "Buka terminal dalam salah satu folder anda.",
   "machine.step.paste": "Tampal baris ini di sana, kemudian tekan Enter.",
   "machine.step.wait": "Menunggu baris ini berjalan: halaman ini akan perasan sendiri.",
