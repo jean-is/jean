@@ -144,7 +144,8 @@ test('xlsx: numbers, percentages, dates and formulas that only compute; everythi
   assert.match(sheet, /<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"\/>/)
   assert.match(files['xl/workbook.xml'], /<sheet name="Budget" sheetId="1" r:id="rId1"\/>.*<calcPr fullCalcOnLoad="1"\/>/)
   const text = (await extractPages(file.name, file.bytes) ?? []).join('\n')
-  assert.match(text, /^Sheet: Budget\nItem\tAmount\tShare\tDue\tTotal\nRent\t1200\t0.125\t46298\t1200\n/)
+  // Read back, a date is a date again, not the count of days Excel keeps.
+  assert.match(text, /^Sheet: Budget\nItem\tAmount\tShare\tDue\tTotal\nRent\t1200\t0.125\t2026-10-03\t1200\n/)
 })
 
 test('xlsx: totals over a range come with their result, unless the range holds another formula', async () => {

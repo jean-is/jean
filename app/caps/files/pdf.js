@@ -2,6 +2,7 @@
 // No font faces: glyphs are drawn as shapes, so pdf.js never needs eval. Character maps let it
 // read Chinese, Japanese and Korean text; standard font metrics keep words apart.
 import { scriptURL } from '../../ui/trusted.js'
+import { pageText } from './extract.js'
 
 const BASE = new URL('../../vendor/pdfjs/', import.meta.url)
 
@@ -43,7 +44,7 @@ export async function pdfPages(bytes) {
     for (let n = 1; n <= doc.numPages; n++) {
       const page = await doc.getPage(n)
       const { items } = await page.getTextContent()
-      pages.push(items.map((/** @type {any} */ item) => (item.str ?? '') + (item.hasEOL ? '\n' : '')).join('').replace(/[ \t]+\n/g, '\n').trim())
+      pages.push(pageText(items))
       page.cleanup()
     }
     return pages

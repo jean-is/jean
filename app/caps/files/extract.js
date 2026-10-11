@@ -1,7 +1,7 @@
 // Text out of the files people share: Word, PowerPoint and Excel (zips of XML), and
 // plain text. Returns pages, so the brain can read a long file a part at a time.
 // A small tag scanner instead of DOMParser keeps this runnable in workers and Node.
-// PDFs are read by pdf.js, in the Files capability.
+// PDFs are read by pdf.js, in the Files capability; their pages' text is joined here.
 import { readZip } from '../../core/zip.js'
 
 /** @typedef {import('../../core/zip.js').ZipEntry} ZipEntry */
@@ -237,6 +237,48 @@ export function resolveTarget(base, target) {
   return parts.join('/')
 }
 
+// ─── PDF ─────────────────────────────────────────────────────────────────────
+
+const CJK = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/
+const STRONG = /[\p{L}\p{N}]/u
+const MIRROR = { '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '<': '>', '>': '<' }
+
+/**
+ * A PDF page's text from pdf.js's items, as people read it: lines where the PDF ends them, but none
+ * inside a word cut at a hyphen or between Chinese or Japanese characters; a right-to-left line in
+ * reading order, since pdf.js gives each word right but the words as drawn, left to right; Arabic
+ * and Hebrew letters as letters, not the shapes some PDFs name them by.
+ * @param {{ str?: string, dir?: string, hasEOL?: boolean }[]} items
+ */
+export function pageText(items) {
+  /** @type {(typeof items)[]} */
+  const lines = [[]]
+  for (const item of items) {
+    lines[lines.length - 1].push(item)
+    if (item.hasEOL) lines.push([])
+  }
+  let out = ''
+  for (const [i, line] of lines.entries()) {
+    const weight = (/** @type {boolean} */ rtl) => line.filter((item) => (item.dir === 'rtl') === rtl && STRONG.test(item.str ?? '')).reduce((n, item) => n + (item.str ?? '').length, 0)
+    /** @type {{ rtl: boolean, text: string }[]} */
+    const runs = []
+    for (const item of line) {
+      const last = runs[runs.length - 1]
+      if (item.dir !== 'rtl' && last && !last.rtl) last.text += item.str ?? ''
+      else runs.push({ rtl: item.dir === 'rtl', text: item.str ?? '' })
+    }
+    // Read right to left, a run of left-to-right text keeps its order but the spaces and marks around it turn with the line.
+    const turn = (/** @type {string} */ text = '') => [...text].reverse().map((c) => MIRROR[/** @type {'('} */ (c)] ?? c).join('')
+    const text = (weight(true) > weight(false) ? runs.reverse().map(({ rtl, text }) => {
+      const [, before, core, after] = rtl ? ['', '', text, ''] : /^([^\p{L}\p{N}]*)(.*?)([^\p{L}\p{N}]*)$/su.exec(text) ?? []
+      return turn(after) + (core ?? '') + turn(before)
+    }) : runs.map((run) => run.text)).join('').replace(/[ \t]+$/, '').replace(/[\ufb1d-\ufdff\ufe70-\ufefc]+/g, (forms) => forms.normalize('NFKC'))
+    const joins = /-$/.test(out) && STRONG.test(text[0] ?? '') || CJK.test(out[out.length - 1] ?? '') && CJK.test(text[0] ?? '')
+    out += (i && !joins ? '\n' : '') + text
+  }
+  return out.trim()
+}
+
 // ─── Excel ───────────────────────────────────────────────────────────────────
 
 /**
@@ -248,6 +290,7 @@ async function xlsx(xml) {
   const workbook = (await xml('xl/workbook.xml')) ?? ''
   const targets = relationships((await xml('xl/_rels/workbook.xml.rels')) ?? '')
   const shared = sharedStrings((await xml('xl/sharedStrings.xml')) ?? '')
+  const dates = dateStyles((await xml('xl/styles.xml')) ?? '')
   /** @type {string[]} */
   const pages = []
   for (const match of workbook.matchAll(/<sheet\b([^>]*)>/g)) {
@@ -255,10 +298,12 @@ async function xlsx(xml) {
     const target = targets.get(attr(match[1], 'r:id') ?? '')
     const source = target ? await xml(resolveTarget('xl', target)) : null
     if (source === null) continue
-    const rows = sheetRows(source, shared)
+    const rows = sheetRows(source, shared, dates)
     for (let start = 0; start < Math.max(rows.length, 1); start += SHEET_ROWS) {
       const chunk = rows.slice(start, start + SHEET_ROWS)
       const range = rows.length > SHEET_ROWS ? ` (rows ${start + 1}–${start + chunk.length})` : ''
+      // Each page names its columns, as the first row does.
+      if (start) chunk.unshift(rows[0])
       pages.push(`Sheet: ${name}${range}\n${chunk.join('\n')}`.trimEnd())
     }
   }
@@ -284,15 +329,17 @@ export function sharedStrings(source) {
 /**
  * @param {string} source a worksheet
  * @param {string[]} shared
+ * @param {Set<number>} [dates] the styles that show a number as a date
  * @returns {string[]} tab-separated rows; gaps between cells are kept as empty columns; a formula without its result shows as itself
  */
-export function sheetRows(source, shared) {
+export function sheetRows(source, shared, dates = new Set()) {
   /** @type {string[]} */
   const rows = []
   /** @type {string[]} */
   let row = []
   let column = 0
   let type = ''
+  let date = false
   let value = ''
   let formula = ''
   let inValue = false
@@ -312,11 +359,12 @@ export function sheetRows(source, shared) {
       const ref = attr(attrs, 'r')
       column = ref ? columnIndex(ref) : row.length
       type = attr(attrs, 't') ?? ''
+      date = dates.has(Number(attr(attrs, 's') ?? -1))
       value = formula = ''
       if (selfClosing) row[column] = ''
     } else if (name === 'c' && close) {
       for (let i = row.length; i < column; i++) row[i] = ''
-      row[column] = (value || !formula ? cellValue(type, value, shared) : `=${formula}`).replace(/[\t\n]+/g, ' ')
+      row[column] = (value || !formula ? cellValue(date && !type ? 'd' : type, value, shared) : `=${formula}`).replace(/[\t\n]+/g, ' ')
     } else if (name === 'v' || name === 't') inValue = !close && !selfClosing
     else if (name === 'f') inFormula = !close && !selfClosing
   }
@@ -335,5 +383,20 @@ export function columnIndex(ref) {
 function cellValue(type, value, shared) {
   if (type === 's') return shared[Number(value)] ?? ''
   if (type === 'b') return value === '1' ? 'TRUE' : 'FALSE'
+  // A date is a count of days since 1899-12-30 (Excel's own count, its 1900 leap day included).
+  if (type === 'd' && /^\d+(\.\d+)?$/.test(value)) return new Date(Date.UTC(1899, 11, 30) + Number(value) * 86_400_000).toISOString().slice(0, Number(value) % 1 ? 16 : 10).replace('T', ' ')
   return value
+}
+
+/**
+ * The cell styles (their places in cellXfs) whose number format shows a date: Excel's own (14–22,
+ * 27–36, 45–47, 50–58) or one whose code has days, months or years outside quotes and brackets.
+ * @param {string} source xl/styles.xml
+ */
+export function dateStyles(source) {
+  const custom = new Map([...source.matchAll(/<numFmt\b([^>]*)>/g)].map((m) => [Number(attr(m[1], 'numFmtId')), decodeEntities(attr(m[1], 'formatCode') ?? '')]))
+  const isDate = (/** @type {number} */ id) => id >= 14 && id <= 22 || id >= 27 && id <= 36 || id >= 45 && id <= 47 || id >= 50 && id <= 58
+    || /[dmy]/i.test((custom.get(id) ?? '').replace(/"[^"]*"|\[[^\]]*\]|\\./g, ''))
+  const xfs = /<cellXfs\b[^>]*>([\s\S]*?)<\/cellXfs>/.exec(source)?.[1] ?? ''
+  return new Set([...xfs.matchAll(/<xf\b([^>]*)\/?>/g)].flatMap((m, i) => (isDate(Number(attr(m[1], 'numFmtId') ?? 0)) ? [i] : [])))
 }

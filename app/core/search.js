@@ -51,6 +51,8 @@ export function alike(text, others) {
 // Accents (Latin, Greek, Cyrillic, Vietnamese) and Arabic's vowel and hamza marks: a letter
 // with one is found by the letter. Marks that make another letter (kana's voicing, Indic vowels) stay.
 const ACCENT = /^[\u0300-\u036f\u064b-\u065f]+$/
+// Persian and Arabic shapes of the same letter (ی ي, ى ي, ک ك, ھ ه), which PDFs mix up too.
+const SAME = new Map([['\u06cc', '\u064a'], ['\u0649', '\u064a'], ['\u06a9', '\u0643'], ['\u06be', '\u0647']])
 /** @type {Map<string, string>} */
 const folded = new Map()
 
@@ -64,7 +66,7 @@ export function fold(text) {
     let same = folded.get(c)
     if (same === undefined) {
       const [base, ...marks] = c.normalize('NFD')
-      const lower = (marks.length && ACCENT.test(marks.join('')) ? base : c).toLowerCase()
+      const lower = SAME.get(c) ?? (marks.length && ACCENT.test(marks.join('')) ? base : c).toLowerCase()
       folded.set(c, (same = lower.length === c.length ? lower : c))
     }
     return same

@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../app/core/fs.js'
 import { crc32, readZip, writeZip } from '../app/core/zip.js'
-import { decodeText, docx, extractPages, extractable, isBinary, paginate, sheetRows, slideText } from '../app/caps/files/extract.js'
+import { decodeText, docx, extractPages, extractable, isBinary, pageText, paginate, sheetRows, slideText } from '../app/caps/files/extract.js'
 import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages, weigh } from '../app/core/files.js'
 import { isPicture } from '../app/core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../app/caps/backup/archive.js'
@@ -114,6 +114,26 @@ test('an Office file is drawn in a page of its own: its viewer’s modules as da
     assert.ok(!(await officePage('xlsx', bytes, 'Budget.xlsx')).includes('postMessage'))
     assert.ok(!(await officePage('docx', bytes, 'Plan.docx', {})).includes('postMessage'))
   })
+
+test('pageText reads right-to-left lines in order, joins wrapped Japanese and codes cut at a hyphen', () => {
+  const item = (/** @type {string} */ str, dir = 'ltr', eol = false) => ({ str, dir, hasEOL: eol })
+  // As pdf.js gives Arabic: each word right, the words left to right as drawn.
+  assert.equal(pageText([item('يوما', 'rtl'), item(' '), item('(90)'), item(' '), item('تسعون', 'rtl'), item(' '), item('C-4471'), item(' '), item('العقد', 'rtl', true), item('Line two.')]),
+    'العقد C-4471 تسعون (90) يوما\nLine two.')
+  assert.equal(pageText([item('.'), item('يوما', 'rtl'), item(' '), item('ستين', 'rtl', true)]), 'ستين يوما.')
+  assert.equal(pageText([item('ﺍﻟﺘﻜﻠﻔﺔ', 'rtl'), item(' .'), item('3'), item(' :'), item('ﺍﻟﻤﺼﺎﺑﻴﻦ', 'rtl')]), 'المصابين: 3. التكلفة')
+  assert.equal(pageText([item('契約は九十日前の書面通', 'ltr', true), item('知により解約できる。')]), '契約は九十日前の書面通知により解約できる。')
+  assert.equal(pageText([item('Contract C-', 'ltr', true), item('4471 ends.')]), 'Contract C-4471 ends.')
+  assert.equal(pageText([item('A first line  ', 'ltr', true), item('A second')]), 'A first line\nA second')
+})
+
+test('a spreadsheet reads its dates as dates and names its columns on every page', async () => {
+  const rows = Array.from({ length: 250 }, (_, i) => `| INV-${1000 + i} | 2024-0${1 + (i % 9)}-1${i % 10} | ${i}.50 |`)
+  const { bytes } = await makeFile('Ledger.xlsx', `## Ledger\n\n| Invoice | Date | Amount |\n| --- | --- | --- |\n${rows.join('\n')}\n`)
+  const pages = /** @type {string[]} */ (await extractPages('Ledger.xlsx', bytes))
+  assert.match(pages[0], /^Sheet: Ledger \(rows 1–200\)\nInvoice\tDate\tAmount\nINV-1000\t2024-01-10\t0\.5/)
+  assert.match(pages[1], /^Sheet: Ledger \(rows 201–251\)\nInvoice\tDate\tAmount\nINV-1199\t/)
+})
 
 test('extractPages reads real Office containers in presentation order', async () => {
   const pptx = await zipOf({

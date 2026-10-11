@@ -10,6 +10,8 @@ test('fold: lower case without accents, as long as the text', () => {
   assert.equal(fold('Ёлка Йошкар'), 'елка иошкар')
   // Arabic's hamza forms read as their letter, as Arabic search usually does.
   assert.equal(fold('أحمد'), 'احمد')
+  // Persian and Arabic shapes of one letter are one: as people type them, and as PDFs give them back.
+  assert.equal(fold('سببھ رصیف کتاب على'), fold('سببه رصيف كتاب علي'))
   // Marks that make another letter stay: kana's voicing, Devanagari's vowels, Hangul.
   for (const text of ['がっこう', 'हिंदी', '한국어', 'ภาษาไทย']) assert.equal(fold(text), text)
   // Every place in the folded text is the same place in the text.
