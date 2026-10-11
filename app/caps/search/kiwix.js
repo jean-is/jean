@@ -1,12 +1,12 @@
-// A Kiwix server as web search's Wikipedia (D254): kiwix-serve, Kiwix Desktop's own server or a
-// hotspot's, whose answers any browser may read. Its catalogue (OPDS) lists its books and their
+// A Kiwix server, as web search's library or its Wikipedia (D254, D271): kiwix-serve, Kiwix
+// Desktop's own server or a hotspot's, whose answers any browser may read. Its catalogue (OPDS) lists its books and their
 // languages, its search (OpenSearch, as RSS) finds pages in one language's books, and each
 // page's first paragraphs come from the page itself, as Wikipedia's search gives them.
 // Host-agnostic: fetch and a scanner, no DOM.
 import { pageText } from '../browser/pages.js'
 
 /** @typedef {{ title: string, url: string, extract: string }} Page */
-/** @typedef {{ title: string, languages: string[], articles: number }} Book  languages: three-letter, as Kiwix names them */
+/** @typedef {{ title: string, languages: string[], articles: number, category: string }} Book  languages: three-letter, as Kiwix names them; category: wikipedia, vikidia… */
 /** @typedef {{ fetch?: typeof globalThis.fetch, signal?: AbortSignal }} Reach */
 
 /** Whether web search's address is a Kiwix server's rather than MediaWiki's API, which is always api.php. @param {string} address */
@@ -43,6 +43,7 @@ export async function library(address, reach) {
     title: words(/<title>([\s\S]*?)<\/title>/.exec(entry)?.[1]),
     languages: (/<language>([^<]*)<\/language>/.exec(entry)?.[1] ?? '').split(',').map((code) => code.trim()).filter(Boolean),
     articles: Number(/<articleCount>(\d+)<\/articleCount>/.exec(entry)?.[1] ?? 0),
+    category: words(/<category>([\s\S]*?)<\/category>/.exec(entry)?.[1]),
   }))
 }
 
@@ -73,20 +74,22 @@ export function intro(html, max = 1200) {
 /**
  * The pages a Kiwix server finds for some words, in its books in one language; a library in a
  * single language is searched whatever the language asked. Each page's first paragraphs replace
- * the search's snippet once read. `languages`: those its books are in, by two-letter code.
+ * the search's snippet once read. `languages`: those its books are in, by two-letter code. With a
+ * category, only its books are searched (Wikipedia's, when the server stands for Wikipedia).
  * @param {string} address the server's, as its home page has it
  * @param {string} query @param {string} lang two-letter
- * @param {Reach & { count?: number }} [options]
+ * @param {Reach & { count?: number, category?: string }} [options]
  * @returns {Promise<{ pages: Page[], languages: string[] }>}
  */
-export async function searchKiwix(address, query, lang, { fetch, signal, count = 5 } = {}) {
+export async function searchKiwix(address, query, lang, { fetch, signal, count = 5, category } = {}) {
   const reach = { fetch, signal }
-  const codes = [...new Set((await library(address, reach)).flatMap((book) => book.languages))]
+  const books = (await library(address, reach)).filter((book) => !category || book.category === category)
+  const codes = [...new Set(books.flatMap((book) => book.languages))]
   const languages = [...new Set(codes.map(short))]
   const searched = codes.length === 1 ? codes : codes.filter((code) => short(code) === lang)
   if (!searched.length) return { pages: [], languages }
   const url = new URL('search', rootOf(address))
-  for (const [name, value] of Object.entries({ pattern: query, 'books.filter.lang': searched.join(','), format: 'xml', pageLength: String(count) })) url.searchParams.set(name, value)
+  for (const [name, value] of Object.entries({ pattern: query, 'books.filter.lang': searched.join(','), ...(category && { 'books.filter.category': category }), format: 'xml', pageLength: String(count) })) url.searchParams.set(name, value)
   // The same page in two books (a whole Wikipedia and one of its selections) is found once.
   /** @type {Map<string, Page>} */
   const found = new Map()

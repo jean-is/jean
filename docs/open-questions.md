@@ -6,6 +6,14 @@ What is still undecided. An answered question becomes an entry in [decisions.md]
 
 Instrument Serif ships for now (D34). Fraunces will probably replace it. To check before switching: a static instance (fixed optical size, softness and "wonk"), Latin subset, regular and italic, within the 30 KB budget.
 
+## Answer certificates
+
+What the certificates' next steps hang on ([certificates.md](certificates.md)):
+
+- **A text watermark for the device's brain:** feasible in its sampling, and how detected?
+- **Witnesses outside the US:** none found that answers browsers. Ship a gateway default, or leave each organisation to name its own?
+- **Which Settings** should name witnesses, the log and a brain's jurisdiction, and should policy lock them?
+
 ## Smaller questions
 
 - **First run while the brain downloads:** what do people see during the ~3 GB download, alongside "start right now with a free account"? Can the download resume after the tab closes?

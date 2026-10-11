@@ -35,6 +35,7 @@ import { ulid } from './ulid.js'
  * @property {boolean} [films]                  films are made without asking first (D251)
  * @property {string} [pictures]               which makes pictures on this device (D263)
  * @property {{ date?: boolean, log?: boolean }} [certificates]  certificates dated by witnesses, recorded in a public log, as the user chose (D276)
+ * @property {string[]} [searches]              web search's sources on (D271)
  */
 
 /**
@@ -56,6 +57,7 @@ import { ulid } from './ulid.js'
  */
 export const DEFAULT_URLS = Object.freeze({
   modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php', searchPage: 'https://{lang}.wikipedia.org/w/index.php?search={query}',
+  vikidia: 'https://{lang}.vikidia.org/w/api.php', kiwix: '',
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
   // The gateway to the services a browser can't reach (D191): none until one is named.
