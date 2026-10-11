@@ -26,19 +26,22 @@ function list(value) {
 }
 
 /**
- * The questions asked, without what can't be shown: empty ones, answers without words, and more
- * than the card holds. A single choice recommends one answer at most.
+ * The questions asked, even wrapped twice, without what can't be shown: empty ones, answers
+ * without words or repeating the question or another answer, and more than the card holds. A
+ * single choice recommends one answer at most.
  * @param {any} args @returns {Question[]}
  */
 export function questionsOf(args) {
-  return list(args?.questions).flatMap((item) => {
+  return list(args?.questions?.questions ?? args?.questions).flatMap((item) => {
     const question = text(typeof item === 'string' ? item : /** @type {any} */ (item)?.question)
     if (!question) return []
     const multiple = /** @type {any} */ (item)?.multiple === true
     let recommended = false
+    const seen = new Set([question])
     const options = list(/** @type {any} */ (item)?.options).flatMap((option) => {
       const label = text(typeof option === 'string' ? option : /** @type {any} */ (option)?.label)
-      if (!label) return []
+      if (!label || seen.has(label)) return []
+      seen.add(label)
       const wanted = /** @type {any} */ (option)?.recommended === true && (multiple || !recommended)
       recommended ||= wanted
       return [{ label, description: text(/** @type {any} */ (option)?.description), recommended: wanted }]

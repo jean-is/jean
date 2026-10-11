@@ -132,10 +132,10 @@ async function start() {
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  // Back from signing in: to a connection (?state=…), or to OpenRouter (?code=…).
+  // Back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
   const back = new URLSearchParams(location.search)
   const connected = back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()
-  if (!connected && back.has('code')) await (await import('./brains.js')).finishOpenRouter()
+  if (!connected && back.size) await (await import('./brains.js')).finishSignIn()
   // Watching for a new version, or finishing to bring one in.
   import('./update.js').then((update) => update.start())
 }

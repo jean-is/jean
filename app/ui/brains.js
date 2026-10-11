@@ -1,4 +1,4 @@
-// Connecting, choosing and removing brains, and the OpenRouter sign-in. Loaded with the
+// Connecting, choosing and removing brains, and the OpenRouter and ChatGPT sign-ins. Loaded with the
 // dialogs, or when the page comes back from signing in; Auto's loadModels() stays in state.js.
 import { BRAND } from '../brand.js'
 import { PROVIDERS, listModels, checkKey } from '../core/llm.js'
@@ -7,6 +7,7 @@ import { t } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { setSecret, deleteSecret } from './secrets.js'
 import { app, updateSettings, notify, send, showError } from './state.js'
+import { loaded } from './caps.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
@@ -56,7 +57,10 @@ export function continueWithBrain() {
 export async function removeBrain(id) {
   await deleteSecret(app.fs, id)
   const brains = app.settings.value.brains.filter((brain) => brain.id !== id)
+  // The last ChatGPT brain gone, the bridge signs out of it (D262).
+  const signOut = app.settings.value.brains.some((brain) => brain.id === id && brain.provider === 'chatgpt') && !brains.some((brain) => brain.provider === 'chatgpt')
   await updateSettings({ brains, activeBrain: brains[0]?.id ?? null })
+  if (signOut && loaded.peek().has('machine')) (await import('../caps/machine/machine.js')).chatgptSignOut().catch(() => {})
 }
 
 /** Changes a brain's version, without choosing it. @param {string} id @param {string} model */
@@ -75,29 +79,36 @@ export async function useBrain(id, model) {
   await updateSettings({ brains, activeBrain: id })
 }
 
+/** Leaves to sign in somewhere that comes back to this page, with what the user had typed and where they were. @param {string} url */
+export function leave(url) {
+  sessionStorage.setItem('app.draft', app.draft.value)
+  sessionStorage.setItem('app.route', location.hash)
+  location.assign(url)
+}
+
 export async function startOpenRouter() {
   const verifier = createVerifier()
   sessionStorage.setItem('app.pkce', verifier)
-  sessionStorage.setItem('app.draft', app.draft.value)
-  sessionStorage.setItem('app.route', location.hash)
   const callbackURL = location.origin + location.pathname
-  location.assign(openRouterAuthURL({ callbackURL, challenge: await challengeS256(verifier) }))
+  leave(openRouterAuthURL({ callbackURL, challenge: await challengeS256(verifier) }))
 }
 
-/** Finish the OpenRouter sign-in when the page comes back with ?code=… */
-export async function finishOpenRouter() {
+/** Finish a sign-in when the page comes back: from OpenRouter with ?code=…, from ChatGPT with ?chatgpt=… (D262). */
+export async function finishSignIn() {
   const params = new URLSearchParams(location.search)
   const code = params.get('code')
+  const chatgpt = params.get('chatgpt')
   const verifier = sessionStorage.getItem('app.pkce')
-  if (!code || !verifier) return
+  if (!(code && verifier) && !chatgpt) return
   sessionStorage.removeItem('app.pkce')
   app.draft.value = sessionStorage.getItem('app.draft') ?? ''
   sessionStorage.removeItem('app.draft')
   history.replaceState(null, '', location.pathname + (sessionStorage.getItem('app.route') ?? ''))
   sessionStorage.removeItem('app.route')
   dispatchEvent(new HashChangeEvent('hashchange'))
+  if (chatgpt) return (await import('./dialogs.js')).chatgptBack(chatgpt)
   try {
-    const apiKey = await exchangeOpenRouterCode({ code, verifier })
+    const apiKey = await exchangeOpenRouterCode({ code: String(code), verifier: String(verifier) })
     await connectBrain({ provider: 'openrouter', apiKey })
     notify(t('brain.connected'))
     continueWithBrain()

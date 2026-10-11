@@ -23,6 +23,7 @@
   "browser.folder": "Show {folder}",
   "browser.missing": "{page} isn’t in {folder}.",
   "browser.unshown": "{page} can’t be shown here.",
+  "browser.build": "{page} can’t show as it is: {file} has to be built first, with tools that don’t run in a browser. Ask for a page that runs as it is.",
   "browser.elsewhere": "{folder} isn’t open in this task.",
   "browser.shut": "Your browser didn’t allow opening {folder}. Reload to ask again."
 }

@@ -236,6 +236,33 @@ test('a page of the folder comes with what it uses: styles, pictures, fonts, scr
   assert.match(html, /<a href="about.html">About<\/a>/)
   assert.deepEqual(Object.keys(files).sort(), ['site/css/base.css', 'site/css/main.css', 'site/data/sales.csv', 'site/fonts/f.woff2', 'site/img/a.png', 'site/img/a2.png', 'site/img/bg.png', 'site/index.html', 'site/js/app.js', 'site/js/lazy.js', 'site/js/main.js', 'site/js/one.js', 'site/js/two.js'])
   assert.match(files['site/index.html'], /^\d+:\d+$/)
+  assert.ok(!('build' in shown))
+})
+
+test('a page made for a build names the first file that needs it; "/" is the top of its project, where its package.json is (D277)', async () => {
+  const fs = memoryFS({
+    'todo/package.json': '{"scripts":{"dev":"vite"}}', 'todo/index.html': '<div id="root"></div><script type="module" src="/src/main.jsx"></script>',
+    'todo/src/main.jsx': "import { createRoot } from 'react-dom/client'\nimport './index.css'",
+    'vanilla/package.json': '{}', 'vanilla/base.css': 'h1 { color: red }', 'vanilla/src/main.js': "import { a } from './a.js'\nimport './style.css'", 'vanilla/src/a.js': 'export const a = 1',
+    'vanilla/index.html': '<link rel="stylesheet" href="/base.css"><script type="module" src="/src/main.js"></script>',
+    'site/a.js': 'export const a = 1',
+    'site/index.html': '<script type="importmap">{"imports":{"vue":"https://esm.example/vue.js"}}</script><script type="module">import { createApp } from "vue"; import { a } from "./a.js"</script>',
+    'bare.html': '<script type="module">import confetti from "canvas-confetti"</script>', 'parts.html': '<script type="module">import App from "./App"</script>',
+  })
+  const build = async (/** @type {string} */ path) => {
+    const shown = await sitePage(fs, path)
+    return 'html' in shown ? shown.build : 'not a page'
+  }
+  assert.equal(await build('todo/index.html'), 'todo/src/main.jsx')
+  assert.equal(await build('vanilla/index.html'), 'vanilla/src/main.js')
+  assert.equal(await build('bare.html'), 'bare.html')
+  assert.equal(await build('parts.html'), 'parts.html')
+  // Packages by their names through an import map of the page's own, from another site, need no build.
+  assert.equal(await build('site/index.html'), undefined)
+  const vanilla = await sitePage(fs, 'vanilla/index.html')
+  assert.ok('html' in vanilla && vanilla.html.includes('<style>h1 { color: red }</style>') && 'vanilla/src/a.js' in vanilla.files)
+  assert.equal(inFolder('/src/a.js', 'todo/index.html', 'todo/'), 'todo/src/a.js')
+  assert.equal(inFolder('/../../a.js', 'todo/index.html', 'todo/'), 'a.js')
 })
 
 test('the folder itself: its index.html, or what it holds; any other file as it is, for the browser to show as the preview does; what isn’t there', async () => {

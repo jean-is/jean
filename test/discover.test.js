@@ -183,6 +183,11 @@ test('Auto: cheapest brain that can do it, private when personal, never steps do
   assert.equal(chooseBrain({ brains: [device, llava], cloud: false, signals: { pictures: true }, sees })?.brain.id, 'o')
   assert.equal(chooseBrain({ brains: [cloud, device], cloud: false, signals: { pictures: true }, sees })?.brain.id, 'd')
   assert.equal(chooseBrain({ brains: [cloud, device, llava], signals: { personal: true } })?.brain.id, 'd', 'the device first, without pictures')
+  // Offline, a brain on this device answers, and says why; with none, the cloud's is tried as before (D269).
+  assert.deepEqual(chooseBrain({ brains: [cloud, device], online: false, floor: 1 }), { brain: device, level: 1, reason: 'offline' })
+  assert.equal(chooseBrain({ brains: [device], online: false })?.reason, 'only')
+  assert.equal(chooseBrain({ brains: [cloud], online: false, signals: { demand: 0 } })?.brain.model, 'claude-haiku-4-5')
+  assert.equal(chooseBrain({ brains: [cloud, device], online: true })?.brain.id, 'c')
   assert.deepEqual([0, 1, 2, 3].map(tierFor), [0, 1, 1, 2])
   assert.ok(isLocal({ ...brain, baseURL: 'http://127.0.0.1:11434/v1' }))
   assert.ok(!isLocal(brain))

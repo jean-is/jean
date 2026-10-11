@@ -23,6 +23,7 @@
   "browser.folder": "{folder} দেখান",
   "browser.missing": "{page} {folder}-এ নেই।",
   "browser.unshown": "{page} এখানে দেখানো যায় না।",
+  "browser.build": "{page} যেমন আছে তেমন দেখানো যায় না: {file} আগে এমন টুল দিয়ে তৈরি করতে হয় যা ব্রাউজারে চলে না। এমন একটি পেজ চান যা যেমন আছে তেমনই চলে।",
   "browser.elsewhere": "{folder} এই কাজে খোলা নেই।",
   "browser.shut": "আপনার ব্রাউজার {folder} খুলতে দেয়নি। আবার জিজ্ঞাসা করাতে আবার লোড করুন।"
 }

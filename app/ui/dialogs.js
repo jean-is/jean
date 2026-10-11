@@ -8,7 +8,7 @@ import {
   app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels,
   showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS,
 } from './state.js'
-import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter } from './brains.js'
+import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, accept, begin, unlockAll } from './discovery.js'
@@ -138,8 +138,10 @@ async function useDevice() {
   try {
     await module.prepare()
     await addBrain({ id: ulid(), provider: 'device', api: 'device', baseURL: '', model: module.GEMMA.model })
-    notify(t('brain.device.ready'))
+    // Private from now on: the legend's card says what that means, once, in place of the toast (D270).
+    if (!module.onDevice.peek()) notify(t('brain.device.ready'))
     continueWithBrain()
+    if (module.onDevice.peek()) module.reveal()
   } catch (error) {
     console.warn('On-device brain', error)
   }
@@ -185,14 +187,30 @@ function connectLocal(event) {
   attempt('local', provider === 'custom' ? new URL(baseURL).host : t(`provider.${provider}`), () => connectBrain({ provider, baseURL }))
 }
 
-/** The user's own Claude Code, with their Claude plan, through This computer (D235): turned on first, in Settings › Computer. */
-async function connectClaude() {
-  status.value = { way: 'claude', kind: 'busy', message: t('brain.connecting') }
-  const on = await unlock('machine')
-  const found = on && await (await import('../caps/machine/machine.js')).claudeCode()
-  status.value = found && !found.ready ? { way: 'claude', kind: 'error', message: t(found.old ? 'brain.claude.restart' : 'brain.claude.missing', { computer: t('cap.machine.name') }) } : null
-  if (!found) on ? (await import('../caps/machine/machine.js')).show() : openSettings('computer')
-  else if (found.ready) attempt('claude', t('provider.claudecode'), () => connectBrain({ provider: 'claudecode', baseURL: found.baseURL, apiKey: found.apiKey }))
+/** The plans' ways, by the brain each adds (D235, D262). */
+const PLANNED = /** @type {const} */ ({ claude: 'claudecode', copilot: 'copilot', chatgpt: 'chatgpt' })
+
+/**
+ * A plan's brain, through This computer (D235, D262): turned on first, in Settings › Computer. Claude Code and
+ * Copilot are the user's own, signed in on it; ChatGPT is signed in to first, the page going there and back.
+ * @param {keyof typeof PLANNED} id
+ */
+async function connectPlan(id) {
+  const provider = PLANNED[id]
+  status.value = { way: id, kind: 'busy', message: t('brain.connecting') }
+  const machine = await unlock('machine') && await import('../caps/machine/machine.js')
+  const found = machine && await machine.plan(provider)
+  if (machine && found && !found.ready && !found.old && id === 'chatgpt') return machine.chatgptSignIn().then(leave, () => { status.value = { way: id, kind: 'error', message: t('brain.chatgpt.failed') } })
+  status.value = found && !found.ready ? { way: id, kind: 'error', message: t(found.old ? 'brain.claude.restart' : `brain.${id}.missing`, { computer: t('cap.machine.name') }) } : null
+  if (!found) machine ? machine.show() : openSettings('computer')
+  else if (found.ready) attempt(id, t(`provider.${provider}`), () => connectBrain({ provider, baseURL: found.baseURL, apiKey: found.apiKey }))
+}
+
+/** Back from ChatGPT's sign-in (D262): Settings › Brains, its way connecting, or saying why it can't. @param {string} outcome signed-in, declined or failed */
+export function chatgptBack(outcome) {
+  openSettings('brains')
+  if (outcome === 'signed-in') return connectPlan('chatgpt')
+  status.value = { way: 'chatgpt', kind: 'error', message: t(outcome === 'declined' ? 'brain.chatgpt.declined' : 'brain.chatgpt.failed') }
 }
 
 /** Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, then the ways to add another. */
@@ -371,7 +389,8 @@ function ways(first) {
   const module = local.value
   const device = module && deviceCheck.value?.ok && !effective.value.settings.brains.some((brain) => brain.provider === 'device') ? module : null
   const progress = device?.download.value
-  const opens = first && !wayPicked && (deviceCheck.value !== null || isDenied('brain-local'))
+  // The first way opens by itself, unless another says something (back from ChatGPT's sign-in): one at a time.
+  const opens = first && !wayPicked && !status.value && (deviceCheck.value !== null || isDenied('brain-local'))
   const busy = status.value?.kind === 'busy'
   return html`<ul class="list ways">
     ${device && progress ? way('device', icons.chip, t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
@@ -401,9 +420,9 @@ function ways(first) {
         <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>`)}
-    ${isDenied('machine') ? nothing : way('claude', icons.terminal, t('brain.claude.title'), t('provider.claudecode'), false, html`
-      <p>${t('brain.claude.text', { computer: t('cap.machine.name') })}</p>
-      <div class="row"><button class="button primary" ?disabled=${busy} @click=${connectClaude}>${t('brain.connect')}</button></div>`)}
+    ${isDenied('machine') ? nothing : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'copilot', 'chatgpt']).map((id) => way(id, icons.terminal, t(`brain.${id}.title`), t(`provider.${PLANNED[id]}`), status.value?.way === id, html`
+      <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
+      <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div>`))}
     ${way('local', icons.computer, t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}>

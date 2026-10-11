@@ -382,6 +382,11 @@ test.describe('in place', () => {
     await expect.poll(() => shown.locator('h1').evaluate((h1) => getComputedStyle(h1).color)).toBe('rgb(0, 0, 128)')
     // The brain knows what is on show.
     expect(await page.evaluate(async () => (await (await import('/ui/caps.js')).loaded.value.get('browser')?.sections?.())?.page)).toBe('The browser beside the conversation shows Site/index.html, from the user\'s folder.')
+    // A page made for a build says so in its place, naming the file, and This computer is offered (D277).
+    await folder(page, 'Site', { 'todo/package.json': '{}', 'todo/index.html': '<div id="root"></div><script type="module" src="/src/main.jsx"></script>' })
+    await go(page, 'Site/todo/')
+    await expect(pane.locator('.browser-note')).toHaveText('⁨todo/index.html⁩ can’t show as it is: ⁨main.jsx⁩ has to be built first, with tools that don’t run in a browser. Ask for a page that runs as it is.')
+    await expect(page.locator('aside.offer')).toContainText('Run a site’s dev server, or your own programs, on this computer?')
   })
 })
 

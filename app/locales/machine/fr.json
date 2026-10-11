@@ -1,6 +1,6 @@
 {
   "machine.text": "Lancez des commandes sur votre propre ordinateur, avec ses programmes et serveurs, comme le serveur de développement d’un site. JavaScript et Python restent dans l’ordinateur embarqué.",
-  "machine.on": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord, jusqu’à ce que vous appuyiez sur Ctrl+C dans son terminal.",
+  "machine.on": "Les tâches du dossier \"{folder}\" lancent leurs commandes sur cet ordinateur, chacune demandée d’abord, jusqu’à ce que vous appuyiez sur Ctrl+C dans son terminal.",
   "machine.forget": "Ne plus l’utiliser",
   "machine.question": "Lancer ceci sur votre ordinateur, dans {folder} ?",
   "machine.always": "Toujours autoriser dans {folder}",

@@ -23,6 +23,7 @@
   "browser.folder": "{folder} を表示",
   "browser.missing": "{page} は {folder} にありません。",
   "browser.unshown": "{page} はここでは表示できません。",
+  "browser.build": "{page} はこのままでは表示できません。{file} を先にビルドする必要があり、そのツールはブラウザーでは動きません。そのまま動くページを頼んでください。",
   "browser.elsewhere": "{folder} はこのタスクで開かれていません。",
   "browser.shut": "ブラウザーが {folder} を開くことを許可しませんでした。再読み込みすると、もう一度確認されます。"
 }

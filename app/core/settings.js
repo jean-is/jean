@@ -79,8 +79,8 @@ export const serviceURL = (name, settings, policy = {}) => policy.urls?.[name] ?
  */
 export const usedIn = (item, project) => !item.projects || item.projects.includes(project)
 
-/** A brain that never leaves this computer (Claude Code's does, D235). @param {BrainConfig} brain */
-export const isLocal = (brain) => brain.api === 'device' || brain.provider !== 'claudecode' && /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
+/** A brain that never leaves this computer (a plan's through the bridge does, D235, D262). @param {BrainConfig} brain */
+export const isLocal = (brain) => brain.api === 'device' || !/^c(laudecode|opilot|hatgpt)$/.test(brain.provider) && /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
 
 /** @type {Settings} */
 export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }
