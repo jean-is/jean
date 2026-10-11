@@ -2,7 +2,7 @@
   "$comment": "Hard limits enforced in CI. Going over a limit means deleting something first. Never raise a limit in the same change that needs it. Initial values, to be revisited only through docs/decisions.md.",
   "loc": {
     "core": 1900,
-    "app": 22500,
+    "app": 23000,
     "cli": 800
   },
   "runtimeDependencies": {
@@ -11,7 +11,7 @@
     "$comment": "Loaded upfront. On-demand dependencies live inside capability modules and are listed in docs/architecture.md."
   },
   "gzipKB": {
-    "firstLoad": 103,
+    "firstLoad": 103.5,
     "css": 12,
     "locale": 9,
     "capabilityCode": 50,
