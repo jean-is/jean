@@ -14,6 +14,7 @@
   "receipt.costAbout": "около {cost}",
   "receipt.costUnknown": "Неизвестна",
   "receipt.by": "Ответ",
+  "receipt.made": "Создано",
   "receipt.here": "на этом устройстве",
   "receipt.reached": "Также были запросы к",
   "receipt.save": "Сохранить сертификат",

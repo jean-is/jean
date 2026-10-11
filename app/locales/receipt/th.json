@@ -14,6 +14,7 @@
   "receipt.costAbout": "ประมาณ {cost}",
   "receipt.costUnknown": "ไม่ทราบ",
   "receipt.by": "ตอบโดย",
+  "receipt.made": "สร้างโดย",
   "receipt.here": "บนอุปกรณ์นี้",
   "receipt.reached": "ที่อยู่อื่นที่ติดต่อ",
   "receipt.save": "บันทึกใบรับรอง",

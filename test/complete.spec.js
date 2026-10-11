@@ -26,7 +26,7 @@ test('/ finds a ready-made skill, read before it is added, and names it and what
   await connectFakeBrain(page)
   const box = page.locator('#prompt')
   await box.pressSequentially('Plot sales by month /')
-  await expect(menu(page).locator('.complete-heading')).toHaveText(['What Jean can do', 'Ready-made skills', 'Connect a service'])
+  await expect(menu(page).locator('.complete-heading')).toHaveText(['What Jean can do', 'Skills to add', 'Connect a service'])
   // Typing narrows it, and the box says which option Enter picks.
   await box.pressSequentially('cha')
   await expect(menu(page).locator('[aria-selected="true"]')).toContainText('Chart')
@@ -34,6 +34,11 @@ test('/ finds a ready-made skill, read before it is added, and names it and what
   await box.press('Enter')
   const ready = page.locator('app-skill-ready dialog[open]')
   await expect(ready).toContainText('Bars, lines, pies and more')
+  // Named as its tile is, its steps folded, since Jean's own are written for the brain (D261).
+  await expect(ready.getByRole('heading', { name: 'Chart' })).toBeVisible()
+  await expect(ready.locator('.skill-steps')).toBeHidden()
+  await ready.getByText('Read its steps').click()
+  await expect(ready.locator('.skill-steps')).toBeVisible()
   await ready.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Chart”.')
   await expect(box).toHaveValue('Plot sales by month /chart ')

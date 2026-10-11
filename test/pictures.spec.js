@@ -14,6 +14,10 @@ test('the brain offers pictures when asked to draw, then makes one, kept in the 
   await expect(picture).toHaveAttribute('alt', 'Draw a lighthouse at dusk')
   await expect(page.locator('app-picture a[download]')).toHaveAttribute('download', 'draw-a-lighthouse-at-dusk.png')
   await expect(page.locator('.activity-list')).toContainText('A picture · Draw a lighthouse at dusk')
+  // About this answer names who made it (D264).
+  await page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' }).click()
+  await expect(page.locator('.receipt .receipt-list').filter({ hasText: 'Made by' })).toContainText('fake-image-1')
+  await page.keyboard.press('Escape')
   // Kept like a shared file, its description as its text.
   const kept = await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
@@ -77,3 +81,50 @@ for (const [lang, save] of [['ar', 'حفظ الصورة'], ['ja', '画像を保�
     await expect(page.locator('app-picture a[download]')).toHaveAttribute('aria-label', save)
   })
 }
+
+// Its workers stand in for SD-Turbo's and FLUX.2 [klein]'s (D263): their files come, and nothing runs.
+const LOADING = `self.onmessage = ({ data }) => {
+  self.postMessage({ id: data.id, type: 'progress', loaded: 1e9, total: 6.5e9 })
+  setTimeout(() => self.postMessage({ id: data.id, type: data.type === 'load' ? 'ready' : 'done' }), 600)
+}`
+
+test('pictures on this device: three to choose from as cards, each downloaded once, the one downloaded used, another used instead or removed', async ({ page }) => {
+  await page.addInitScript(() => {
+    const adapter = { features: new Set(['shader-f16']) }
+    Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => adapter }) })
+    Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 8 })
+  })
+  for (const worker of ['device-worker', 'stage-worker']) await page.route(`**/caps/pictures/${worker}.js`, (route) => route.fulfill({ contentType: 'text/javascript', body: LOADING }))
+  await start(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  const settings = await openSettings(page, 'Brains')
+  const [quick, detailed, finest] = ['Quick', 'Detailed', 'Finest'].map((name) => settings.getByRole('tab', { name: new RegExp(name) }))
+  const shown = settings.getByRole('tabpanel')
+  // The finest one shown first, nothing downloaded yet.
+  await expect(finest).toHaveAttribute('aria-selected', 'true')
+  await expect(quick).toContainText('2.5 GB')
+  await expect(shown).toContainText('Z-Image-Turbo')
+  await shown.getByRole('button', { name: /^Download/ }).click()
+  await expect(finest).toContainText('Downloading')
+  await expect(finest).toContainText('In use')
+  // The arrows go round the cards, as the language reads.
+  await finest.press('ArrowRight')
+  await expect(quick).toBeFocused()
+  await quick.press('ArrowLeft')
+  await finest.press('ArrowLeft')
+  await expect(detailed).toBeFocused()
+  await expect(shown).toContainText('FLUX.2 [klein]')
+  // Another, downloaded too, is used from then on; the first can be used again, or removed.
+  await shown.getByRole('button', { name: 'Download (6.5 GB)' }).click()
+  await expect(detailed).toContainText('In use')
+  await expect(finest).toContainText('Downloaded')
+  await finest.click()
+  await shown.getByRole('button', { name: 'Use this one' }).click()
+  await expect(finest).toContainText('In use')
+  await expect(detailed).toContainText('Downloaded')
+  await detailed.click()
+  await shown.getByRole('button', { name: 'Remove' }).click()
+  await expect(detailed).toContainText('6.5 GB')
+  await expect(quick).toContainText('2.5 GB')
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictures)).toBe('z-image-turbo')
+})

@@ -14,6 +14,7 @@
   "receipt.costAbout": "environ {cost}",
   "receipt.costUnknown": "Inconnu",
   "receipt.by": "Répondu par",
+  "receipt.made": "Créé par",
   "receipt.here": "sur cet appareil",
   "receipt.reached": "Autres adresses contactées",
   "receipt.save": "Enregistrer le certificat",
