@@ -64,8 +64,8 @@ test('a service Jean knows connects in one click; those not reached yet are ther
   await expect(mail).toContainText('3 actions')
   await mail.locator('summary').click()
   await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email'])
-  // Its tile stays, for another account.
-  await expect(back.getByRole('button', { name: /^Mail/ })).toContainText('Another account')
+  // Its tile stays, for another account, saying nothing more.
+  await expect(back.getByRole('button', { name: 'Mail', exact: true })).toBeEnabled()
 })
 
 test('a service that lists its tools to anyone but runs them only for someone signed in offers the sign-in once it refuses (D193)', async ({ page, browserName }) => {

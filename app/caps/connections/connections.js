@@ -380,12 +380,10 @@ function yours(connection) {
  * @param {Listed} entry
  */
 function tile(entry) {
-  const again = all().some((connection) => connection.url === entry.url)
-  const small = again ? t('connections.another') : ''
   return html`<li><button class="service ${entry.via ? '' : 'is-soon'}" ?disabled=${!entry.via || message.value?.kind === 'busy'}
     @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name, { gateway: entry.via === 'gateway' }) }}>
-    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${small ? html`<small>${small}</small>`
-      : entry.includes ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span>${entry.via ? icons.plus : nothing}
+    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${entry.includes
+      ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span>${entry.via ? icons.plus : nothing}
   </button></li>`
 }
 

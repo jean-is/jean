@@ -148,7 +148,6 @@
     "other": "{count} 件の操作"
   },
   "connections.disconnect": "接続を解除",
-  "connections.another": "別のアカウント",
   "projects.where": "使うプロジェクト",
   "projects.everywhere": "すべてのプロジェクト",
   "gateway.title": "ゲートウェイ",

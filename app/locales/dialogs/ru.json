@@ -157,7 +157,6 @@
     "other": "{count} действия"
   },
   "connections.disconnect": "Отключить",
-  "connections.another": "Другой аккаунт",
   "projects.where": "Где используется",
   "projects.everywhere": "Во всех проектах",
   "gateway.title": "Шлюз",
