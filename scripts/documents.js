@@ -466,12 +466,19 @@ function notesOf(c, key) {
   return /** @type {Promise<string[]>} */ (notes.get(c.dir))
 }
 
-/** What the key has spent so far, in dollars. @param {string} key */
+/** What the key has spent so far, in dollars, asked again for about two minutes while OpenRouter can't be reached. @param {string} key */
 async function spent(key) {
-  const res = await fetch('https://openrouter.ai/api/v1/key', { headers: { authorization: `Bearer ${key}` } })
-  const usage = (await res.json())?.data?.usage
-  if (typeof usage !== 'number') throw new Error('OpenRouter did not say what the key has spent')
-  return usage
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/key', { headers: { authorization: `Bearer ${key}` } })
+      const usage = (await res.json())?.data?.usage
+      if (typeof usage !== 'number') throw new Error('OpenRouter did not say what the key has spent')
+      return usage
+    } catch (error) {
+      if (attempt === 8) throw error
+      await new Promise((resolve) => setTimeout(resolve, 15000))
+    }
+  }
 }
 
 /** The overall sample: ten of each kind at XL, for the targets great results mean. */

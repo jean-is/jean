@@ -2,7 +2,8 @@
 // (core/loop.js, core/prompt.js, core/files.js), under one condition or another, and its answer is
 // graded without a brain: the last "Answer:" line against the gold, and whether what it was shown
 // held the evidence. Brains are OpenRouter's: the large one paid and held to one provider, so that
-// every answer comes from the same weights, the small one free; the key comes from OPENROUTER_API_KEY.
+// every answer comes from the same weights (its helpers' requests may also go to another serving it), the small
+// one free; the key comes from OPENROUTER_API_KEY.
 import { runTurn } from '../../app/core/loop.js'
 import { buildSystemPrompt } from '../../app/core/prompt.js'
 import { addFile, documentPart, estimateTokens, pagesThatFit, preselect, readTool, searchTool } from '../../app/core/files.js'
@@ -15,11 +16,12 @@ import { fuse, nearest } from './retrieval.js'
 /** @typedef {import('./corpus.js').Question} Question */
 
 /**
- * The brains: one with a large context, and a small one held to the device brain's 32k.
- * @type {Record<'large' | 'small', { model: string, provider?: string, context: number }>}
+ * The brains: one with a large context, and a small one held to the device brain's 32k. The large one's helper
+ * requests (notes, every_page) may also go to the providers named in helpers, which serve the same brain.
+ * @type {Record<'large' | 'small', { model: string, provider?: string, helpers?: string[], context: number }>}
  */
 export const BRAINS = {
-  large: { model: 'nvidia/nemotron-3-super-120b-a12b', provider: 'DeepInfra', context: 262144 },
+  large: { model: 'nvidia/nemotron-3-super-120b-a12b', provider: 'DeepInfra', helpers: ['DekaLLM'], context: 262144 },
   small: { model: 'liquid/lfm-2.5-2.6b:free', context: 32768 },
 }
 
@@ -31,29 +33,42 @@ const waits = () => WAITS.map((ms) => Math.round(ms * (0.5 + Math.random() / 2))
 /** Jean's brain entry for one of these. @param {{ model: string }} b */
 const entry = (b) => ({ id: 'eval', provider: 'openrouter', api: /** @type {'openai'} */ ('openai'), baseURL: PROVIDERS.openrouter.baseURL, model: b.model })
 
-// The requests in flight at once in this process, each until its reply has streamed whole; the rest wait their
-// turn here, since a provider refuses those past what it takes (DeepInfra about four of this brain's).
-let room = 4
-/** @type {(() => void)[]} */
-const waiting = []
+// The requests in flight at once in this process to each provider, each until its reply has streamed whole; the rest
+// wait their turn here, since a provider refuses those past what it takes (DeepInfra about four of this brain's).
+let size = 4
+/** @typedef {{ taken: boolean, take: (provider: string) => void }} Waiter */
+/** @type {Map<string, { room: number, waiting: Waiter[] }>} */
+const lanes = new Map()
 /** @param {number} n */
-export const setRequests = (n) => { room = n }
-/** A place among the requests in flight, and the function that gives it up. @returns {Promise<() => void>} */
-async function place() {
-  if (room > 0) room--
-  else await new Promise((resolve) => waiting.push(() => resolve(undefined)))
-  return () => { const next = waiting.shift(); if (next) next(); else room++ }
+export const setRequests = (n) => { size = n }
+/** @param {string} provider */
+const lane = (provider) => lanes.get(provider) ?? /** @type {{ room: number, waiting: Waiter[] }} */ (lanes.set(provider, { room: size, waiting: [] }).get(provider))
+/**
+ * A place among the requests in flight to whichever of these providers has one first, and the function that gives it up.
+ * @param {string[]} providers @returns {Promise<{ provider: string, release: () => void }>}
+ */
+async function place(providers) {
+  const free = providers.find((p) => lane(p).room > 0)
+  if (free !== undefined) lane(free).room--
+  const provider = free ?? await new Promise((resolve) => { const waiter = { taken: false, take: resolve }; for (const p of providers) lane(p).waiting.push(waiter) })
+  return { provider, release: () => {
+    const { waiting } = lane(provider)
+    // A waiter in several lanes is left behind in the others once one has taken it.
+    for (let next; (next = waiting.shift());) if (!next.taken) { next.taken = true; next.take(provider); return }
+    lane(provider).room++
+  } }
 }
 
 /**
- * streamChat with OpenRouter told to use the brain's provider alone, when it names one, once the request has its place.
- * @param {{ provider?: string }} b @param {{ queued: number }} [timing] adds the time spent waiting for a place
- * @param {Record<string, any>} [body] more for the request's body
+ * streamChat with OpenRouter told to use one provider alone, when the brain names one, once the request has its place:
+ * the brain's own, or for a helper's request whichever of its own and its helpers has a place first.
+ * @param {{ provider?: string, helpers?: string[] }} b @param {{ queued: number }} [timing] adds the time spent waiting for a place
+ * @param {Record<string, any>} [body] more for the request's body @param {boolean} [helper] a helper's request
  * @returns {typeof streamChat}
  */
-const streamOf = ({ provider }, timing = { queued: 0 }, body = {}) => async function* (options) {
+const streamOf = (b, timing = { queued: 0 }, body = {}, helper = false) => async function* (options) {
   const asked = performance.now()
-  const release = await place()
+  const { provider, release } = await place([b.provider ?? '', ...(helper && b.helpers || [])])
   timing.queued += performance.now() - asked
   try {
     yield* streamChat({ ...options, fetch: provider || Object.keys(body).length
@@ -65,9 +80,10 @@ const streamOf = ({ provider }, timing = { queued: 0 }, body = {}) => async func
 }
 
 /**
- * A helper's request (notes, every_page): its whole reply, retried as the loop retries, and whether the provider cut
- * it at its longest. Without reasoning: DeepInfra sometimes gives this brain's as text, and it fills the 16,384
- * tokens a reply may have there.
+ * A helper's request (notes, every_page): its whole reply, retried as the loop retries, each time from whichever
+ * provider has a place first (DekaLLM serves this brain in fp8, at about twice DeepInfra's pace, but its shared pool
+ * refuses about half), and whether the provider cut it at its longest. Without reasoning: DeepInfra sometimes gives
+ * this brain's as text, and it fills the 16,384 tokens a reply may have there.
  * @param {string} system @param {string} content @param {string} apiKey @returns {Promise<{ text: string, cut: boolean }>}
  */
 async function complete(system, content, apiKey) {
@@ -76,7 +92,7 @@ async function complete(system, content, apiKey) {
     try {
       let text = ''
       let cut = false
-      for await (const event of streamOf(BRAINS.large, undefined, { reasoning: { enabled: false } })({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
+      for await (const event of streamOf(BRAINS.large, undefined, { reasoning: { enabled: false } }, true)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
         if (event.type === 'text') text += event.delta
         else if (event.type === 'done') cut = event.stopReason === 'max_tokens'
       }
