@@ -7,7 +7,8 @@
 //                                                    score the strategies, keeping each run's results in .cache/results/
 //        npm run documents -- --bench scan,first-search  H1: a flat vector scan at 1, 10 and 40 times XL; H6: the first search of XL in Chromium slowed 4×
 //        npm run documents -- --report [--write]         results.md and strategies.json from every run kept
-//        npm run documents -- --answers H4,H5 [--concurrency 3]   the answer eval with OpenRouter's free brains (OPENROUTER_API_KEY),
+//        npm run documents -- --answers H4,H5 [--concurrency 3] [--dense e5]   the answer eval with OpenRouter's free brains (OPENROUTER_API_KEY),
+//        npm run documents -- --answers overall --conditions search,search+meaning   ten questions of each kind at XL, for the targets
 //                                 resuming where it stopped; it stops itself when the day's free requests run low
 // Generated files are kept in test/documents/.cache/ (never committed), keyed by seed and size.
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises'
@@ -142,7 +143,9 @@ async function main(argv) {
     await mkdir(`${CACHE}results/`, { recursive: true })
     for (const seed of o.value('seeds', '1').split(',').map(Number)) {
       for (const which of o.value('sizes', 's').split(',')) {
-        const { corpus: c, files: list } = await made({ seed, size: which, layout: 'compendium', ext: o.value('ext', 'pdf') })
+        const layout = /** @type {'compendium' | 'project'} */ (o.value('layout', 'compendium'))
+        const ext = layout === 'project' ? 'mixed' : o.value('ext', 'pdf')
+        const { corpus: c, files: list } = await made({ seed, size: which, layout, ext })
         const questions = c.questions.filter((q) => split === 'all' || q.split === split)
         const started = performance.now()
         const docs = prepare(list, size)
@@ -152,7 +155,7 @@ async function main(argv) {
         /** @type {Record<string, any>} */
         const strategies = Object.fromEntries(Object.entries(STRATEGIES).filter(([name]) => wanted.includes(name)))
         for (const model of new Set(wanted.filter((name) => /^(dense|hybrid):/.test(name)).map((name) => name.split(':')[1]))) {
-          const dir = `${CACHE}${seed}-${which}-compendium-${o.value('ext', 'pdf')}/`
+          const dir = `${CACHE}${seed}-${which}-${layout}${layout === 'compendium' ? `-${ext}` : ''}/`
           const { matrix, dims } = await passageVectors(dir, docs, model, size)
           const queries = int8(await embed(/** @type {any} */ (model), questions.map((q) => q.text), 'query'))
           const byId = new Map(questions.map((q, i) => [q.id, queries.matrix.subarray(i * dims, (i + 1) * dims)]))
@@ -161,8 +164,8 @@ async function main(argv) {
           Object.assign(strategies, Object.fromEntries(Object.entries(denseStrategies(model)).filter(([name]) => wanted.includes(name))))
         }
         const results = evaluate(questions, list, ctx, strategies, budgets)
-        const out = { seed, size: which, split, passage: size, ext: o.value('ext', 'pdf'), indexMs, passages: docs.reduce((n, d) => n + d.units.length, 0), pages: list.reduce((n, f) => n + f.pages.length, 0), budgets, results }
-        const name = `${CACHE}results/retrieval-${seed}-${which}-${split}-${size}-${o.value('ext', 'pdf')}.json`
+        const out = { seed, size: which, split, passage: size, ext, layout, indexMs, passages: docs.reduce((n, d) => n + d.units.length, 0), pages: list.reduce((n, f) => n + f.pages.length, 0), budgets, results }
+        const name = `${CACHE}results/retrieval-${seed}-${which}-${split}-${size}-${ext}.json`
         // A run adds its strategies to what an earlier run of the same corpus kept.
         if (existsSync(name)) {
           const before = JSON.parse(await readFile(name, 'utf8'))
@@ -177,7 +180,7 @@ async function main(argv) {
   }
   if (o.has('report')) await report(o.has('write'))
   const hypotheses = o.value('answers', '')
-  if (hypotheses) await answers(hypotheses.split(','), Number(o.value('concurrency', '3')), o.value('dense', 'qwen3'), Number(o.value('passage', '100')), Number(o.value('limit', 'Infinity')))
+  if (hypotheses) await answers(hypotheses.split(','), Number(o.value('concurrency', '3')), o.value('dense', 'e5'), Number(o.value('passage', '100')), Number(o.value('limit', 'Infinity')), o.value('conditions', 'search').split(','))
   const benches = o.value('bench', '')
   if (benches) {
     await mkdir(`${CACHE}results/`, { recursive: true })
@@ -279,7 +282,8 @@ async function report(write) {
     const score = (/** @type {number} */ size) => mean(dev.filter((run) => run.passage === size).flatMap((run) => run.results).filter((r) => r.by[strategy] && r.type !== 'negative').map((r) => r.by[strategy].at[32000].recall))
     tuned[strategy] = sizes.sort((a, b) => score(b) - score(a))[0]
   }
-  const test = all.filter((run) => run.split === 'test')
+  const formats = all.filter((run) => run.split === 'test' && run.ext !== 'pdf')
+  const test = all.filter((run) => run.split === 'test' && run.ext === 'pdf')
   // One run per corpus, each strategy's rows from the run at its tuned size.
   /** @type {import('../test/documents/report.js').Run[]} */
   const runs = []
@@ -385,6 +389,17 @@ ${sizes.length ? byType(sizes.includes('xl') ? 'xl' : /** @type {string} */ (siz
 
 ${answerRecords.length ? answerTable : 'Not run yet.'}${answerRecords.some((a) => a.deviation) ? '\n\nH8’s baseline ran as search without helpers: a map over every page of XL costs about 100 requests a question, beyond the free tier.' : ''}
 
+## By format
+
+The same questions with the compendium as Word, Markdown or text, and as a project of ten files (Word, Excel, PowerPoint, CSV, text and PDF), lexical search, recall within 32k tokens (absent things aside).
+
+${table(['Size', 'Format', 'Questions', 'pages', 'lexical', 'lexical+exact', 'preselect'], [...new Set([...test, ...formats].map((run) => `${run.size}|${run.ext}`))].sort().map((key) => {
+    const [size, ext] = key.split('|')
+    const list = [...test, ...formats].filter((run) => run.size === size && run.ext === ext && run.passage === 100).flatMap((run) => run.results).filter((r) => r.type !== 'negative')
+    const cell = (/** @type {string} */ s) => pct(mean(list.filter((r) => r.by[s]).map((r) => r.by[s].at[32000].recall)))
+    return [size.toUpperCase(), ext === 'mixed' ? 'project' : ext, list.length, cell('pages'), cell('lexical'), cell('lexical+exact'), cell('preselect')]
+  }))}
+
 ## Costs
 
 Making an XL compendium’s index in memory: ${indexCost.length ? `${Math.round(mean(indexCost))} ms in node on this computer` : 'not measured'}; in Chromium, see H6.
@@ -446,9 +461,10 @@ async function remaining(key) {
 /**
  * The answer eval for some hypotheses: each one's questions (its registered sample, from the test
  * split of the three seeds, as many of each kind and seed as can be), under its two conditions.
- * @param {string[]} ids @param {number} concurrency @param {string} dense @param {number} passage @param {number} [limit] at most this many answers this time
+ * @param {string[]} ids hypotheses, or overall @param {number} concurrency @param {string} dense @param {number} passage @param {number} [limit] at most this many answers this time
+ * @param {string[]} [conditions] overall's
  */
-async function answers(ids, concurrency, dense, passage, limit = Infinity) {
+async function answers(ids, concurrency, dense, passage, limit = Infinity, conditions = ['search']) {
   const key = process.env.OPENROUTER_API_KEY
   if (!key) throw new Error('Set OPENROUTER_API_KEY')
   const registered = JSON.parse(await readFile(`${ROOT}test/documents/hypotheses.json`, 'utf8'))
@@ -458,7 +474,9 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity) {
   /** @type {{ hypothesis: string, question: any, condition: string, brain: 'large' | 'small', seed: number, size: string }[]} */
   const jobs = []
   for (const id of ids) {
-    const h = registered.hypotheses.find((/** @type {any} */ x) => x.id === id)
+    // overall: ten of each kind at XL, for the targets great results mean, under the conditions named.
+    const h = id === 'overall' ? { rule: { size: 'xl', types: ['lookup', 'paraphrase', 'filter', 'aggregate', 'multihop', 'temporal', 'crosslingual', 'negative', 'global'], questions: 90, a: conditions[0], b: conditions[1] ?? conditions[0] } }
+      : registered.hypotheses.find((/** @type {any} */ x) => x.id === id)
     const r = h.rule
     const sizes = r.sizes ?? [r.size]
     /** @type {any[]} */
@@ -471,7 +489,7 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity) {
     const lists = [...groups.values()]
     const sample = []
     for (let i = 0; sample.length < Math.min(r.questions, pool.length); i++) for (const list of lists) if (list[i] && sample.length < r.questions) sample.push(list[i])
-    for (const { q, seed, size } of sample) for (const condition of [r.a, r.b]) jobs.push({ hypothesis: id, question: q, condition, brain: r.brain === 'small' ? 'small' : 'large', seed, size })
+    for (const { q, seed, size } of sample) for (const condition of new Set([r.a, r.b])) jobs.push({ hypothesis: id, question: q, condition, brain: r.brain === 'small' ? 'small' : 'large', seed, size })
   }
   const open = jobs.filter((job) => !done.has(`${job.question.id}|${job.condition}|${job.brain}`))
   const todo = open.slice(0, limit)
