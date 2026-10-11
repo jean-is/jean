@@ -16,6 +16,7 @@ import { host, call, pickFolder } from '../../ui/host.js'
 import { icons } from '../../ui/icons.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings } from '../../core/i18n.js'
+import { PROVIDERS } from '../../core/llm.js'
 import { mcpClient } from '../connections/mcp.js'
 
 /** @typedef {import('../../core/loop.js').ToolContext} ToolContext */
@@ -33,6 +34,10 @@ const desktop = host.then((known) => (inApp.value = Boolean(known) && known?.os 
 const RUNNING = 'app.bridge'
 // How long what Jean found of the bridge holds before a command asks again.
 const FRESH_MS = 5000
+/** The plans' brains (D235, D262): where each answers on the bridge, and what its `about` is asked for it. */
+const PLANS = /** @type {Record<string, [string, string]>} */ ({ claudecode: ['/v1', 'claude'], copilot: ['/copilot/v1', 'copilot'], chatgpt: ['/chatgpt/v1', 'chatgpt'] })
+// Where ChatGPT signs in for open-source apps (D262): an identity of the provider's, like its API's address.
+const ISSUER = 'https://auth.openai.com'
 
 /** The bridge as Jean last found it. */
 export const bridge = signal(/** @type {Found} */ ({ on: false }))
@@ -51,25 +56,40 @@ const pairing = () => (paired ??= (async () => {
   const bytes = crypto.getRandomValues(new Uint8Array(20))
   const pair = /** @type {Pairing} */ ({ port: 41_000 + ((bytes[0] << 8) | bytes[1]) % 1000, key: btoa(String.fromCharCode(...bytes.slice(2))).replace(/[+/=]/g, (c) => ({ '+': '-', '/': '_', '=': '' })[c] ?? ''), always: [] })
   await setSecret(app.fs, SECRET, JSON.stringify(pair))
-  // Claude Code's brain answers through the bridge: it follows the new port and key (D235).
-  const brains = app.settings.peek().brains.map((brain) => (brain.provider === 'claudecode' ? { ...brain, baseURL: `http://127.0.0.1:${pair.port}/v1` } : brain))
-  for (const brain of brains) if (brain.provider === 'claudecode') await setSecret(app.fs, brain.id, pair.key)
-  if (brains.some((brain) => brain.provider === 'claudecode')) await updateSettings({ brains })
+  // The plans' brains answer through the bridge: they follow the new port and key (D235, D262).
+  const brains = app.settings.peek().brains.map((brain) => (PLANS[brain.provider] ? { ...brain, baseURL: `http://127.0.0.1:${pair.port}${PLANS[brain.provider][0]}` } : brain))
+  for (const brain of brains) if (PLANS[brain.provider]) await setSecret(app.fs, brain.id, pair.key)
+  if (brains.some((brain) => PLANS[brain.provider])) await updateSettings({ brains })
   return (known.value = pair)
 })())
 
 /**
- * Claude Code on this computer, with the user's Claude plan (D235): where Jean reaches it through the bridge, and
- * whether it is there and signed in, or the bridge, started before it knew Claude Code, needs starting again; null
- * while the bridge isn't running.
+ * A plan's brain on this computer (D235, D262): where Jean reaches it through the bridge, and whether it is
+ * ready (Claude Code or Copilot there and signed in, the bridge signed in to ChatGPT with the plan's use), or
+ * the bridge, started before it knew that plan, needs starting again; null while the bridge isn't running.
+ * @param {string} provider claudecode, copilot or chatgpt
  * @returns {Promise<{ baseURL: string, apiKey: string, ready: boolean, old: boolean } | null>}
  */
-export async function claudeCode() {
+export async function plan(provider) {
   if (!(await find(true)).on) return null
   const pair = await pairing()
-  const about = await clientOf(pair).callTool({ name: 'about' }, { claude: true }, AbortSignal.timeout(20_000)).catch(() => null)
-  const claude = about?.structuredContent?.claude
-  return { baseURL: `http://127.0.0.1:${pair.port}/v1`, apiKey: pair.key, ready: claude === true, old: Boolean(about) && claude === undefined }
+  const [path, asked] = PLANS[provider]
+  const about = await clientOf(pair).callTool({ name: 'about' }, { [asked]: true }, AbortSignal.timeout(40_000)).catch(() => null)
+  const found = about?.structuredContent?.[asked]
+  return { baseURL: `http://127.0.0.1:${pair.port}${path}`, apiKey: pair.key, ready: found === true, old: Boolean(about) && found === undefined }
+}
+
+/** Where the page goes to sign in to ChatGPT, as Jean, through the bridge, which keeps the tokens; it comes back with ?chatgpt=… (D262). */
+export async function chatgptSignIn() {
+  const asked = { name: BRAND.name, issuer: ISSUER, api: PROVIDERS.chatgpt.baseURL, back: location.origin + location.pathname }
+  const result = await clientOf(await pairing()).callTool({ name: 'chatgpt' }, asked, AbortSignal.timeout(20_000))
+  if (!result.structuredContent?.url) throw new Error(result.content?.[0]?.text ?? 'The bridge gave no address.')
+  return String(result.structuredContent.url)
+}
+
+/** Signs the bridge out of ChatGPT, once its brain is removed: its tokens revoked and gone (D262). */
+export async function chatgptSignOut() {
+  if ((await find(true)).on) await clientOf(await pairing()).callTool({ name: 'chatgpt' }, { out: true }, AbortSignal.timeout(20_000))
 }
 
 /** @param {Pairing} next */

@@ -1,0 +1,12 @@
+{
+  "private.name": "Privat · offline",
+  "private.away": "Offline · antwortet weiter",
+  "private.title": "Alles bleibt auf diesem Gerät",
+  "private.text": "Die Antworten entstehen hier, in diesem Browser-Tab: kein Server, kein Konto, nichts zu installieren. Das können nur wenige Assistenten.",
+  "private.private": "Deine Gespräche verlassen dieses Gerät nie",
+  "private.free": "Kostenlos, ohne Konto oder Schlüssel",
+  "private.offline": "Antwortet auch ohne Internet weiter",
+  "private.try": "Probier es aus: Schalte das WLAN aus und frag etwas.",
+  "private.still": "Du bist offline, und die Antworten kommen weiter.",
+  "private.proof": "Das Schild unter jeder Antwort ist der Beweis, aus der eigenen Aufzeichnung deines Browsers."
+}

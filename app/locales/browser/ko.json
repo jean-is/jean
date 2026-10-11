@@ -23,6 +23,7 @@
   "browser.folder": "{folder} 보기",
   "browser.missing": "{page}은(는) {folder}에 없어요.",
   "browser.unshown": "{page}은(는) 여기에서 보여 줄 수 없어요.",
+  "browser.build": "{page}은(는) 지금 그대로는 보여 줄 수 없어요. {file}을(를) 먼저 빌드해야 하는데, 그 도구는 브라우저에서 실행되지 않아요. 그대로 실행되는 페이지를 요청하세요.",
   "browser.elsewhere": "{folder}은(는) 이 작업에서 열려 있지 않아요.",
   "browser.shut": "브라우저가 {folder} 열기를 허용하지 않았어요. 다시 묻도록 새로고침하세요."
 }

@@ -26,7 +26,8 @@ self.onmessage = async ({ data }) => {
   }
 }`
 
-test('offered where it can run, downloaded with consent, then answering on the device', async ({ page }) => {
+/** A device that can run the brain, its worker replaced by the one above. @param {import('@playwright/test').Page} page */
+async function capable(page) {
   await page.addInitScript(() => {
     const adapter = { features: new Set(['shader-f16']) }
     Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => adapter }) })
@@ -34,6 +35,20 @@ test('offered where it can run, downloaded with consent, then answering on the d
     Object.defineProperty(StorageManager.prototype, 'estimate', { configurable: true, value: async () => ({ quota: 50e9, usage: 0 }) })
   })
   await page.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: WORKER }))
+}
+
+/** Downloads the brain from Settings › Brains, its first way. @param {import('@playwright/test').Page} page */
+async function download(page) {
+  await page.locator('.brain-chip').click()
+  const dialog = page.locator('app-settings dialog[open]')
+  const device = dialog.locator('.way.is-device')
+  await device.locator('.button.primary').click()
+  await expect(device.locator('progress')).toBeVisible()
+  await expect(dialog).toBeHidden()
+}
+
+test('offered where it can run, downloaded with consent, then answering on the device', async ({ page }) => {
+  await capable(page)
   /** @type {string[]} */
   const sent = []
   page.on('request', (request) => request.method() === 'POST' && sent.push(request.url()))
@@ -46,8 +61,20 @@ test('offered where it can run, downloaded with consent, then answering on the d
   await device.locator('.button.primary').click()
   await expect(device.locator('progress')).toBeVisible()
   await expect(device.locator('.hint')).toContainText('You can keep using this page.')
-  await expect(page.locator('.toast')).toContainText('The brain on this device is ready')
   await expect(dialog).toBeHidden()
+
+  // Private from now on (D270): the legend in the box opens its card, once by itself, in place of a toast.
+  const card = page.locator('#private-card')
+  await expect(card).toBeVisible()
+  await expect(card.locator('h2')).toHaveText('Everything stays on this device')
+  await expect(card).toContainText('Try it: turn off Wi-Fi and ask something.')
+  await expect(page.locator('.toast')).toHaveCount(0)
+  await page.keyboard.press('Escape')
+  await expect(card).toBeHidden()
+  const legend = page.locator('.private-seal')
+  await expect(legend).toHaveText('Private · offline')
+  // Nothing at the top says it twice.
+  await expect(page.locator('.bar')).not.toContainText('Private')
 
   await ask(page, 'Hello there')
   const answer = page.locator('.msg-jean .prose').last()
@@ -57,7 +84,47 @@ test('offered where it can run, downloaded with consent, then answering on the d
   await expect(answer).not.toContainText('<turn|>')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   expect(sent).toEqual([])
+
+  // Offline, it says it still answers, and does; its card says so too, and a click in it leaves it open.
+  await page.context().setOffline(true)
+  await expect(legend).toHaveText('Offline · still answering')
+  await legend.click()
+  await expect(card).toContainText('You’re offline, and the answers keep coming.')
+  await card.locator('h2').click()
+  await expect(card).toBeVisible()
+  await page.keyboard.press('Escape')
+  await ask(page, 'Still there?')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Still there?')
+  await page.context().setOffline(false)
+  await expect(legend).toHaveText('Private · offline')
+  // On a narrow screen, the shield alone, still named.
+  await page.setViewportSize({ width: 375, height: 700 })
+  await expect(legend.locator('span')).toHaveCSS('clip-path', 'inset(50%)')
+  await expect(legend).toHaveAccessibleName('Private · offline')
 })
+
+for (const [lang, name, away, title] of [
+  ['ar', 'خاص · دون اتصال', 'دون اتصال · الإجابات مستمرة', 'كل شيء يبقى على هذا الجهاز'],
+  ['ja', 'プライベート・オフライン', 'オフライン・回答を続けています', 'すべてこの端末の中で完結します'],
+]) {
+  test(`private and offline, said in its language, within the window (${lang})`, async ({ page }) => {
+    await capable(page)
+    await start(page, lang)
+    await download(page)
+    const card = page.locator('#private-card')
+    await expect(card.locator('h2')).toHaveText(title)
+    const legend = page.locator('.private-seal')
+    const width = page.viewportSize()?.width ?? 0
+    const box = await card.boundingBox()
+    expect(box && box.x >= 0 && box.x + box.width <= width).toBe(true)
+    await page.keyboard.press('Escape')
+    await expect(legend).toHaveText(name)
+    const at = await legend.boundingBox()
+    expect(at && at.x >= 0 && at.x + at.width <= width).toBe(true)
+    await page.context().setOffline(true)
+    await expect(legend).toHaveText(away)
+  })
+}
 
 test('not offered where it can’t run', async ({ page }) => {
   await page.addInitScript(() => {

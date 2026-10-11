@@ -29,7 +29,7 @@ const SERVER_MODULES = /^(node:)?(http|https|http2|net)$|^express$/
 const OWN = /^(?:node:)?(path|fs|fs\/promises|os|util|events|process|buffer)$/
 const NODE = /^node:|^(assert|child_process|crypto|readline|stream|string_decoder|timers|tty|url|vm|worker_threads|zlib)(\/|$)/
 /** Why it can't, and what does instead. @param {string} name */
-const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts and styles inside it, and it opens beside the conversation by itself.\n`
+const noServer = (name) => `${name}: nothing can listen on a port here, so no server runs. Write the web page in /workspace, its scripts (plain JavaScript, as nothing builds them) and styles inside it, and it opens beside the conversation by itself.\n`
 
 /** The engines, once loaded: `shell` (just-bash and fflate), `quickjs`, `pyodide`. @type {Record<string, any>} */
 const engines = {}

@@ -23,6 +23,7 @@
   "browser.folder": "显示 {folder}",
   "browser.missing": "{folder} 中没有 {page}。",
   "browser.unshown": "{page} 无法在这里显示。",
+  "browser.build": "{page} 无法直接显示：{file} 需要先用构建工具处理，而这些工具不能在浏览器里运行。请要一个可以直接运行的页面。",
   "browser.elsewhere": "{folder} 没有在这个任务中打开。",
   "browser.shut": "你的浏览器没有允许打开 {folder}。刷新后它会再次询问。"
 }

@@ -164,7 +164,7 @@ On [open-questions.md](open-questions.md#answer-certificates).
 
 ## Notes for whoever picks this up
 
-- **Budgets:** the certificates work left `loc.app` at 22,344 of 22,500, and D275's branch adds about 42 lines. Section 3 or 4 will need room: tighten first, then ask the owner, then raise in a commit of its own with its own decision ([AGENTS.md](../AGENTS.md)). The first load is at 102.8 of 103 KB, so keep these phases out of it.
+- **Budgets:** since D278, `loc.app` allows 23,000 lines, of which about 22,550 are used, and D275's branch adds about 42 more. Section 3 or 4 will need room: tighten first, then ask the owner, then raise in a commit of its own with its own decision ([AGENTS.md](../AGENTS.md)). The first load, at about 103 of 103.5 KB, has the least room, so keep these phases out of it.
 - **Decision numbers in use:**
   - D272: the line budget;
   - D273: saying Jean is an AI;

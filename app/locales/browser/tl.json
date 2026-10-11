@@ -23,6 +23,7 @@
   "browser.folder": "Ipakita ang {folder}",
   "browser.missing": "Wala ang {page} sa {folder}.",
   "browser.unshown": "Hindi maipapakita rito ang {page}.",
+  "browser.build": "Hindi maipapakita ang {page} nang ganito lang: kailangan munang i-build ang {file}, gamit ang mga tool na hindi tumatakbo sa browser. Humingi ng page na gumagana nang ganito lang.",
   "browser.elsewhere": "Hindi bukas ang {folder} sa gawaing ito.",
   "browser.shut": "Hindi pinayagan ng browser mo na buksan ang {folder}. Mag-reload para magtanong ulit ito."
 }

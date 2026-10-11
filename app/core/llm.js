@@ -34,6 +34,10 @@ export const PROVIDERS = {
   lmstudio: { api: 'openai', baseURL: 'http://localhost:1234/v1', defaultModel: null, needsKey: false },
   // The user's own Claude Code, with their Claude plan, through This computer's bridge (D235): its address and key are the bridge's.
   claudecode: { api: 'anthropic', baseURL: '', defaultModel: 'opus', needsKey: true },
+  // The user's own Copilot CLI, with their Copilot plan, the same way (D262).
+  copilot: { api: 'anthropic', baseURL: '', defaultModel: 'claude-sonnet-5.5', needsKey: true },
+  // A ChatGPT plan, through the bridge, which signs in to it and keeps its tokens; this is where it sends Jean's requests (D262).
+  chatgpt: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true },
   custom: { api: 'openai', baseURL: '', defaultModel: null, needsKey: false },
 }
 

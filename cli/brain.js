@@ -1,8 +1,9 @@
 // Which brain answers outside the browser: the one named (`--brain anthropic`, `openrouter:<name>`,
-// `ollama:<name>`, `custom:<name>` with `--address`, `claudecode`), else the first whose key the
-// environment holds, else the user's own Claude Code with their Claude plan (D235), through a bridge
-// (bridge/bridge.js) started here on a free port, as This computer's. Keys come from the environment
-// only: none is ever written down.
+// `ollama:<name>`, `custom:<name>` with `--address`, `claudecode`, `copilot`, `chatgpt:<name>`), else the
+// first whose key the environment holds, else the user's own Claude Code with their Claude plan (D235).
+// A plan's brain answers through a bridge (bridge/bridge.js) started here on a free port, as This
+// computer's: Copilot is the user's own too, ChatGPT the sign-in Jean's bridge keeps on this computer
+// (D262). Keys come from the environment only: none is ever written down.
 import { execFile } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { createServer } from 'node:http'
@@ -16,10 +17,12 @@ import { PROVIDERS } from '../app/core/llm.js'
 const KEYS = { huggingface: 'HF_TOKEN', vercel: 'AI_GATEWAY_API_KEY' }
 /** @param {string} id */
 export const keyOf = (id) => KEYS[id] ?? `${id.toUpperCase().replace(/\W/g, '_')}_API_KEY`
+/** Where each plan's brain answers on the bridge, and its name in errors. @type {Partial<Record<ProviderId, string[]>>} */
+const PLANS = { claudecode: ['/v1', 'Claude Code'], copilot: ['/copilot/v1', 'GitHub Copilot'], chatgpt: ['/chatgpt/v1', 'ChatGPT'] }
 // Looked for in the environment: not the browser's own, one that needs a Google Cloud project, a
-// server on this computer (named), nor Claude Code (last); those that have a brain of their own first.
+// server on this computer (named), nor a plan's (Claude Code's last); those that have a brain of their own first.
 const LOOKED = /** @type {ProviderId[]} */ (Object.keys(PROVIDERS))
-  .filter((id) => !['device', 'vertex', 'ollama', 'lmstudio', 'claudecode', 'custom'].includes(id))
+  .filter((id) => !['device', 'vertex', 'ollama', 'lmstudio', 'custom'].includes(id) && !PLANS[id])
   .sort((a, b) => Number(!PROVIDERS[a].defaultModel) - Number(!PROVIDERS[b].defaultModel))
 
 /** @param {ProviderId} provider @param {string} model @param {string} [address] @returns {BrainConfig} */
@@ -36,8 +39,8 @@ export async function chooseBrain({ named = '', address, env = process.env, clau
   if (id) {
     const provider = /** @type {ProviderId} */ (id)
     if (!(provider in PROVIDERS) || provider === 'device') return null
-    if (provider === 'claudecode') return claudeCode(name || 'opus', claude)
     const model = name || PROVIDERS[provider].defaultModel
+    if (PLANS[provider] && model) return planned(provider, model, claude)
     if (!model || !(address || PROVIDERS[provider].baseURL)) return { needs: provider }
     return { brain: config(provider, model, address), apiKey: env[keyOf(provider)] }
   }
@@ -46,7 +49,7 @@ export async function chooseBrain({ named = '', address, env = process.env, clau
     const model = PROVIDERS[found].defaultModel
     return model ? { brain: config(found, model), apiKey: env[keyOf(found)] } : { needs: found }
   }
-  return (await signedIn(claude)) ? claudeCode('opus', claude) : null
+  return (await signedIn(claude)) ? planned('claudecode', 'opus', claude) : null
 }
 
 /** Whether Claude Code is here and signed in. @param {string[]} claude */
@@ -55,11 +58,12 @@ const signedIn = ([program, ...before]) => new Promise((done) => execFile(progra
 }))
 
 /**
- * Claude Code as a brain: a bridge of its own on 127.0.0.1, which only this process can call, with a
- * key made for it. @param {string} model @param {string[]} claude @returns {Promise<Chosen>}
+ * A plan's brain: a bridge of its own on 127.0.0.1, which only this process can call, with a key made
+ * for it. @param {ProviderId} provider @param {string} model @param {string[]} claude @returns {Promise<Chosen>}
  */
-async function claudeCode(model, claude) {
+async function planned(provider, model, claude) {
   const { bridge } = await import('../app/bridge/bridge.js')
+  const [path, label] = PLANS[provider] ?? []
   const key = randomUUID()
   const server = createServer()
   await new Promise((ready, failed) => server.once('error', failed).listen(0, '127.0.0.1', () => ready(undefined)))
@@ -67,7 +71,7 @@ async function claudeCode(model, claude) {
   const work = await bridge({ folder: tmpdir(), origins: [], key, port, claude })
   server.on('request', (req, res) => work.handle(req, res).catch((error) => { if (!res.headersSent) res.writeHead(500).end(String(error?.message ?? error)) }))
   return {
-    brain: { id: 'cli-claudecode', provider: 'claudecode', api: 'anthropic', baseURL: `http://127.0.0.1:${port}/v1`, model, label: 'Claude Code' },
+    brain: { id: `cli-${provider}`, provider, api: PROVIDERS[provider].api, baseURL: `http://127.0.0.1:${port}${path}`, model, label },
     apiKey: key,
     close: async () => {
       server.close()

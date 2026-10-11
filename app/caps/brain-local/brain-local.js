@@ -7,6 +7,9 @@ import { weightsHost } from '../../ui/state.js'
 import { modelWorker, downloading } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { gemmaParser } from './gemma.js'
+import './private.js'
+
+export { reveal, onDevice } from './private.js'
 
 /** @import { StreamEvent, ToolCall } from '../../core/types.js' */
 

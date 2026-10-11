@@ -112,10 +112,31 @@ export function parseArguments(source) {
   /** @type {string[]} */
   const strings = []
   const escaped = source.split(QUOTE).map((part, i) => (i % 2 ? `\u0000${strings.push(part) - 1}\u0000` : part)).join('')
-  const json = escaped
+  const json = balance(escaped)
     .replace(/([{,]\s*)([A-Za-z_][\w.-]*)\s*:/g, '$1"$2":')
     .replace(/\u0000(\d+)\u0000/g, (_, i) => JSON.stringify(strings[Number(i)]))
   return JSON.parse(json)
+}
+
+const CLOSERS = /** @type {Record<string, string>} */ ({ '{': '}', '[': ']' })
+
+/**
+ * Small brains lose count of their brackets: each one closes whatever is open, one too many is
+ * dropped, and what is still open is closed at the end. Strings are already set aside.
+ * @param {string} source
+ */
+function balance(source) {
+  /** @type {string[]} */
+  const open = []
+  let out = ''
+  for (const char of source) {
+    if (char === '}' || char === ']') out += open.pop() ?? ''
+    else {
+      if (CLOSERS[char]) open.push(CLOSERS[char])
+      out += char
+    }
+  }
+  return out + open.reverse().join('')
 }
 
 /**

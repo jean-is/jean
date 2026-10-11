@@ -48,6 +48,14 @@ test('arguments: bare keys, escaped strings with any character, numbers, lists, 
   assert.deepEqual(toolCall('call:list_files', 2).args, {})
 })
 
+test('arguments: brackets a small brain lost count of are closed, outside its strings', () => {
+  assert.deepEqual(parseArguments('{questions:{questions:[{question:<|"|>Which [day]?<|"|>,options:[{label:<|"|>Monday<|"|>}]}}}}'), {
+    questions: { questions: [{ question: 'Which [day]?', options: [{ label: 'Monday' }] }] },
+  })
+  assert.deepEqual(parseArguments('{list:[1,2'), { list: [1, 2] })
+  assert.deepEqual(parseArguments('{on:true}]}'), { on: true })
+})
+
 test('the cache is reused only when the new prompt continues the previous text', () => {
   assert.equal(continues('<bos>…<|turn>model\nHi<turn|>', '<bos>…<|turn>model\nHi<turn|>\n<|turn>user\nMore'), true)
   assert.equal(continues('<bos>…Hi <turn|>', '<bos>…Hi<turn|>\n'), false)

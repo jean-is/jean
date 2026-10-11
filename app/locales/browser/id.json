@@ -23,6 +23,7 @@
   "browser.folder": "Tampilkan {folder}",
   "browser.missing": "{page} tidak ada di {folder}.",
   "browser.unshown": "{page} tidak bisa ditampilkan di sini.",
+  "browser.build": "{page} tidak bisa ditampilkan apa adanya: {file} harus dibangun dulu dengan alat yang tidak berjalan di browser. Mintalah halaman yang berjalan apa adanya.",
   "browser.elsewhere": "{folder} tidak terbuka di tugas ini.",
   "browser.shut": "Browser Anda tidak mengizinkan membuka {folder}. Muat ulang agar ia bertanya lagi."
 }

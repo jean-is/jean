@@ -94,8 +94,8 @@ const moves = signal(0)
 const trail = new Trail()
 /** Sites seen showing in the frame, this visit: a page of theirs went on by itself. */
 const shows = new Set()
-/** The folder's page on show: its frame, the view of a file that isn't a page and how to let go of it, or a folder's list; the path its links start from, the files it was made of, by size and date; or why it can't show. */
-const local = signal(/** @type {({ frame: HTMLIFrameElement, html: string } | { view: unknown, release: () => void } | { title: string, list: { name: string, folder: boolean }[] }) & { path: string, files: Record<string, string> } | { note: string } | null} */ (null))
+/** The folder's page on show: its frame, the view of a file that isn't a page and how to let go of it, a folder's list, or why a page needs a build; the path its links start from, the files it was made of, by size and date; or why it can't show. */
+const local = signal(/** @type {({ frame: HTMLIFrameElement, html: string } | { view: unknown, release: () => void } | { title: string, list: { name: string, folder: boolean }[] } | { note: string }) & { path: string, files: Record<string, string> } | { note: string } | null} */ (null))
 // A file's view lets go of what it holds (a picture's address, a PDF) once it no longer shows.
 effect(() => {
   const shown = local.value
@@ -283,7 +283,11 @@ async function folderTo(url, click = false) {
   if (at !== asked || !view) release()
   if (at !== asked) return
   loading.value = false
-  local.value = 'html' in shown ? { ...shown, frame: pageFrame(shown.html, policy.peek(), allow.peek(), address) }
+  // A page made for a build says so in its place, and comes again once its files change; a dev server could run it on This computer (D198).
+  const build = 'build' in shown && typeof shown.build === 'string' ? shown.build : ''
+  if (build) document.dispatchEvent(new CustomEvent('app-server-refused'))
+  local.value = 'html' in shown ? (build ? { note: t('browser.build', { page: `\u2068${shown.path}\u2069`, file: `\u2068${build.split('/').at(-1)}\u2069` }), path: shown.path, files: shown.files }
+    : { ...shown, frame: pageFrame(shown.html, policy.peek(), allow.peek(), address) })
     : 'file' in shown && view ? { view, release, path: shown.path, files: shown.files }
     : 'list' in shown ? shown
     : { note: isMade(url) ? t('files.missing', { name: address }) : t(`browser.${'note' in shown ? shown.note : 'unshown'}`, { folder, page: path.join('/') }) }
@@ -632,7 +636,7 @@ async function read(url, signal) {
 const browseTool = {
   spec: {
     name: 'browse',
-    description: 'Show the user a web page in the browser beside the conversation, and read its text when the site allows it: the text is a numbered source to cite. Or show a file of /workspace there by its path, with the files its page uses (a page you make or change there shows by itself). Or go back, forward or reload there. <page> says which page is open.',
+    description: 'Show the user a web page in the browser beside the conversation, and read its text when the site allows it: the text is a numbered source to cite. Or show a file of /workspace there by its path, with the files its page uses, as they are written, since nothing builds them (a page you make or change there shows by itself). Or go back, forward or reload there. <page> says which page is open.',
     parameters: {
       type: 'object',
       properties: {
