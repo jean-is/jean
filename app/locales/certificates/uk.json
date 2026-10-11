@@ -23,5 +23,9 @@
   "certificates.answer": "Відповідь",
   "certificates.file": "{name} — файл, який він називає",
   "certificates.notFile": "{name} — не файл, який він називає",
-  "certificates.checking": "Перевірка: {name}"
+  "certificates.checking": "Перевірка: {name}",
+  "certificates.dated": "Дату засвідчено: {name}",
+  "certificates.badDate": "Дата, яка не підтверджується",
+  "certificates.logged": "У публічному журналі, запис {index}",
+  "certificates.notLogged": "Немає в публічному журналі, який він називає"
 }

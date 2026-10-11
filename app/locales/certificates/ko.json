@@ -23,5 +23,9 @@
   "certificates.answer": "답변",
   "certificates.file": "{name}은(는) 인증서에 적힌 파일이에요",
   "certificates.notFile": "{name}은(는) 인증서에 적힌 파일이 아니에요",
-  "certificates.checking": "{name} 확인 중"
+  "certificates.checking": "{name} 확인 중",
+  "certificates.dated": "{name}이(가) 날짜를 증명함",
+  "certificates.badDate": "맞지 않는 날짜",
+  "certificates.logged": "공개 로그의 항목 {index}",
+  "certificates.notLogged": "적힌 공개 로그에 없어요"
 }

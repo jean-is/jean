@@ -23,5 +23,9 @@
   "certificates.answer": "Réponse",
   "certificates.file": "{name} est un fichier qu’il nomme",
   "certificates.notFile": "{name} n’est pas un fichier qu’il nomme",
-  "certificates.checking": "Vérification de {name}"
+  "certificates.checking": "Vérification de {name}",
+  "certificates.dated": "Daté par {name}",
+  "certificates.badDate": "Une date qui ne tient pas",
+  "certificates.logged": "Dans un registre public, entrée {index}",
+  "certificates.notLogged": "Absent du registre public qu’il nomme"
 }

@@ -23,5 +23,9 @@
   "certificates.answer": "Answer",
   "certificates.file": "{name} is a file it names",
   "certificates.notFile": "{name} isn’t a file it names",
-  "certificates.checking": "Checking {name}"
+  "certificates.checking": "Checking {name}",
+  "certificates.dated": "Dated by {name}",
+  "certificates.badDate": "A date that doesn’t hold",
+  "certificates.logged": "In a public log, entry {index}",
+  "certificates.notLogged": "Not in the public log it names"
 }

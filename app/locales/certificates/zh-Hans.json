@@ -23,5 +23,9 @@
   "certificates.answer": "回答",
   "certificates.file": "{name} 是它提到的文件",
   "certificates.notFile": "{name} 不是它提到的文件",
-  "certificates.checking": "正在核对 {name}"
+  "certificates.checking": "正在核对 {name}",
+  "certificates.dated": "由 {name} 证明时间",
+  "certificates.badDate": "不成立的时间",
+  "certificates.logged": "在公开日志中，条目 {index}",
+  "certificates.notLogged": "不在它所写的公开日志中"
 }

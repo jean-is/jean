@@ -5,6 +5,7 @@ import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, currentFiles } from '../../ui/state.js'
 import { join } from '../../core/fs.js'
+import { serviceURL } from '../../core/settings.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { checkGiven, card } from './card.js'
@@ -21,9 +22,17 @@ function told(checked) {
   return [
     checked.intact ? `Intact: sealed by ${sealer} on ${checked.at}.` : `Not intact: changed since it was sealed, or not sealed by the key it names (${sealer}).`,
     `It says the answer was done: ${said.where}; answered by ${who(said.brains)}; made by ${who(said.made)}.`,
+    ...checked.timestamps.map(({ at, authority, intact }) => (intact ? `Dated ${at} by ${authority['2.5.4.3'] ?? 'a witness'}.` : 'One of its dates doesn\'t hold.')),
+    ...(checked.log ? [checked.log.intact ? `Recorded in a public log, entry ${checked.log.index}, on ${checked.log.at.toISOString?.() ?? checked.log.at}${checked.log.checked ? '' : ' (its promise not checked)'}.` : 'Not in the public log it names.'] : []),
     ...(checked.proven === undefined ? [] : [checked.proven ? `Its proof shows the request: "${checked.words?.request}", and the answer: "${checked.words?.answer}".` : 'The proof is not this certificate\'s.']),
     ...checked.files.map(({ name, named }) => `${name} is ${named ? '' : 'not '}a file it names.`),
   ].join('\n')
+}
+
+/** The public log's key, from the address settings or policy name (D276), to check its promise. */
+async function logKey() {
+  const pem = await (await fetch(`${serviceURL('transparencyLog', app.settings.value, app.policy)}/api/v1/log/publicKey`)).text()
+  return crypto.subtle.importKey('spki', Uint8Array.from(atob(pem.replace(/-----[^-]+-----|\s/g, '')), (char) => char.charCodeAt(0)), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify'])
 }
 
 /** @type {import('../../core/loop.js').Tool} */
@@ -42,7 +51,7 @@ const checkTool = {
       if (!link) throw new Error(`No file named "${name}". Files: ${shared.map((one) => one.name).join(', ') || 'none'}.`)
       return { name: link.name, bytes: (await app.fs.readBytes(join(app.projectDir, link.uri))) ?? new Uint8Array() }
     }))
-    const checked = await checkGiven(given)
+    const checked = await checkGiven(given, { logKey: await logKey().catch(() => null) })
     if (!checked) return 'None of these files is a certificate of an answer or its proof.'
     const own = checked.fingerprint === await (await import('../receipt/receipt.js')).fingerprint()
     ctx.meta.checked = { ...checked, own }

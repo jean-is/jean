@@ -7,7 +7,9 @@ import { createHash, X509Certificate, verify as verifyWith } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { Ajv2020 } from 'ajv/dist/2020.js'
 import { foldTurns, envelope, userRecord, userRecords, metaRecord } from '../app/core/events.js'
-import { brainsOf, madeOf, factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, check, proof, compact, disclose, disclosuresOf, disclosed } from '../app/caps/receipt/certificate.js'
+import { brainsOf, madeOf, factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, check, proof, compact, disclose, disclosuresOf, disclosed, witness, record } from '../app/caps/receipt/certificate.js'
+import { timestampRequest, tokenOf, readToken } from '../app/caps/receipt/der.js'
+import { reply, logged, logKey } from './fixtures/tsa.js'
 
 const T0 = Date.parse('2026-10-10T09:00:00.000Z')
 const at = (/** @type {number} */ ms) => new Date(T0 + ms).toISOString()
@@ -242,4 +244,37 @@ test('no change survives its seal, and another key shows as another fingerprint'
   assert.equal((await check({ certificate: await seal(credential, own, new Date(T0 - 86_400_000)) })).intact, false)
   await assert.rejects(check({ certificate: { protected: 'e30', payload: 'e30', signature: 'AA' } }))
   await assert.rejects(check({ proof: 'not a proof' }))
+})
+
+// ─── Witnesses (D276) ────────────────────────────────────────────────────────
+
+test('witnesses date a certificate on its signature and a public log records it, as JAdES and Sigstore keep them (D276)', async () => {
+  const own = await makeSeal(new Date(T0))
+  const { sealed } = await sealedAnswer(own)
+  const dated = await witness(await witness(sealed, (request) => reply(request)), (request) => reply(request))
+  assert.equal(dated.header?.etsiU.length, 2)
+  const recorded = await record(dated, logged)
+  assert.equal(valid('certificateFile', JSON.parse(JSON.stringify(recorded))), true)
+  const checked = await check({ certificate: recorded }, { logKey })
+  assert.equal(checked.intact, true)
+  assert.deepEqual(checked.timestamps.map(({ intact, authority }) => [intact, authority['2.5.4.3']]), [[true, 'Test TSA'], [true, 'Test TSA']])
+  assert.deepEqual([checked.log?.intact, checked.log?.checked], [true, true])
+  // The bundle carries the same tokens, and the certificate's digest and signature, which Node checks.
+  const bundle = /** @type {any} */ (recorded.sigstore)
+  assert.deepEqual(bundle.verificationMaterial.timestampVerificationData.rfc3161Timestamps.map((/** @type {any} */ one) => one.signedTimestamp), dated.header?.etsiU.map((/** @type {any} */ one) => one.sigTst.tstTokens[0].val))
+  const signingInput = Buffer.from(`${sealed.protected}.${sealed.payload}`)
+  assert.equal(Buffer.from(bundle.messageSignature.messageDigest.digest, 'base64').toString('hex'), createHash('sha256').update(signingInput).digest('hex'))
+  const x509 = new X509Certificate(Buffer.from(bundle.verificationMaterial.certificate.rawBytes, 'base64'))
+  assert.equal(verifyWith('sha256', signingInput, x509.publicKey, Buffer.from(bundle.messageSignature.signature, 'base64')), true)
+  // Without the log's key its promise isn't checked; with another's, it doesn't hold.
+  assert.equal((await check({ certificate: recorded })).log?.checked, false)
+  const other = (await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])).publicKey
+  assert.equal((await check({ certificate: recorded }, { logKey: other })).log?.intact, false)
+  // A token on another signature dates nothing here, and a witness that answers something else isn't kept.
+  const another = await sealedAnswer(own)
+  assert.deepEqual((await check({ certificate: { ...another.sealed, header: dated.header } })).timestamps.map(({ intact }) => intact), [false, false])
+  await assert.rejects(witness(sealed, () => reply(timestampRequest(new Uint8Array(32), Uint8Array.of(9)))))
+  // A real token from Sigstore's public authority reads as it should.
+  const real = await readToken(tokenOf(readFileSync(new URL('./fixtures/sigstore.tsr', import.meta.url))))
+  assert.deepEqual([real.intact, real.authority?.['2.5.4.3']], [true, 'sigstore-tsa'])
 })

@@ -10,7 +10,7 @@ import { check } from '../receipt/certificate.js'
 /**
  * A certificate as checked, kept as the call's `_meta.checked`: when it was sealed as text, and each
  * other file given by name, with whether the certificate names it.
- * @typedef {Omit<Reading, 'at'> & { at: string, files: { name: string, named: boolean }[], own?: boolean }} Checked
+ * @typedef {Omit<Reading, 'at'> & { at: string | Date, files: { name: string, named: boolean }[], own?: boolean }} Checked
  */
 
 /** @import { Reading } from '../receipt/certificate.js' */
@@ -20,10 +20,11 @@ const sri = async (bytes) => `sha256-${btoa(Array.from(new Uint8Array(await cryp
 
 /**
  * Checks what was given: a certificate (JSON), its proof (SD-JWT), and any other file, which only a
- * proof can say it names, its digests being salted. Null when none is a certificate or a proof.
- * @param {{ name: string, bytes: Uint8Array }[]} given @returns {Promise<Checked | null>}
+ * proof can say it names, its digests being salted; its log's promise checked with the log's key when
+ * that is known. Null when none is a certificate or a proof.
+ * @param {{ name: string, bytes: Uint8Array }[]} given @param {{ logKey?: CryptoKey | null }} [known] @returns {Promise<Checked | null>}
  */
-export async function checkGiven(given) {
+export async function checkGiven(given, known) {
   /** @type {{ certificate?: any, proof?: string }} */
   const found = {}
   const others = []
@@ -35,7 +36,7 @@ export async function checkGiven(given) {
   }
   if (!found.certificate && !found.proof) return null
   try {
-    const checked = await check(found)
+    const checked = await check(found, known)
     const named = new Set([...(checked.words?.files ?? []), ...(checked.words?.made ?? [])])
     return { ...checked, at: checked.at.toISOString(), files: others.map(({ name, sri }) => ({ name, named: named.has(sri) })) }
   } catch {
@@ -46,6 +47,9 @@ export async function checkGiven(given) {
 /** Who answered or made, as the certificate names them. @param {{ provider: string, model: string, host?: string, jurisdiction?: string }[]} [all] */
 const names = (all = []) => all.map(({ provider, model, host, jurisdiction }) => html`<dd class="receipt-brain"><bdi>${provider === 'device' ? model : `${provider} · ${model}`}</bdi>
   ${host ? html`<bdi class="receipt-host" dir="ltr">${host}${jurisdiction ? ` · ${jurisdiction}` : ''}</bdi>` : nothing}</dd>`)
+
+/** A time, in the reader's words. @param {string | Date} at */
+const when = (at) => new Intl.DateTimeFormat(locale.value, { dateStyle: 'long', timeStyle: 'short' }).format(new Date(at))
 
 /** A certificate, checked; or that what was given isn't one. @param {Checked | null} [checked] */
 export function card(checked) {
@@ -62,7 +66,9 @@ export function card(checked) {
     </div>
     <dl>
       <div class="receipt-list"><dt>${t('certificates.by')}</dt><dd>${by} <code class="receipt-host" dir="ltr">${checked.fingerprint.match(/.{1,4}/g)?.join(' ')}</code></dd></div>
-      <div class="receipt-list"><dt>${t('certificates.at')}</dt><dd>${new Intl.DateTimeFormat(locale.value, { dateStyle: 'long', timeStyle: 'short' }).format(new Date(checked.at))}</dd></div>
+      <div class="receipt-list"><dt>${t('certificates.at')}</dt><dd>${when(checked.at)}</dd></div>
+      ${checked.timestamps.map(({ at, authority, intact }) => html`<div class="receipt-list"><dt>${intact ? t('certificates.dated', { name: [authority['2.5.4.3'], authority['2.5.4.6']].filter(Boolean).join(' · ') }) : t('certificates.badDate')}</dt><dd>${at ? when(at) : nothing}</dd></div>`)}
+      ${checked.log ? html`<div class="receipt-list"><dt>${t(checked.log.intact ? 'certificates.logged' : 'certificates.notLogged', { index: checked.log.index })}</dt><dd>${when(checked.log.at)}</dd></div>` : nothing}
       ${said.brains?.length ? html`<div class="receipt-list"><dt>${t('certificates.brains')}</dt>${names(said.brains)}</div>` : nothing}
       ${said.made?.length ? html`<div class="receipt-list"><dt>${t('certificates.made')}</dt>${names(said.made)}</div>` : nothing}
       ${reached.length ? html`<div class="receipt-list"><dt>${t('certificates.reached')}</dt><dd class="receipt-hosts">${reached.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}

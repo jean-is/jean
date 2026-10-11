@@ -23,5 +23,9 @@
   "certificates.answer": "Jawapan",
   "certificates.file": "{name} ialah fail yang dinamakannya",
   "certificates.notFile": "{name} bukan fail yang dinamakannya",
-  "certificates.checking": "Menyemak {name}"
+  "certificates.checking": "Menyemak {name}",
+  "certificates.dated": "Ditarikhkan oleh {name}",
+  "certificates.badDate": "Tarikh yang tidak sah",
+  "certificates.logged": "Dalam log awam, entri {index}",
+  "certificates.notLogged": "Tiada dalam log awam yang dinamakannya"
 }

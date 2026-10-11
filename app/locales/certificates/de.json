@@ -23,5 +23,9 @@
   "certificates.answer": "Antwort",
   "certificates.file": "{name} ist eine Datei, die es nennt",
   "certificates.notFile": "{name} ist keine Datei, die es nennt",
-  "certificates.checking": "{name} wird geprüft"
+  "certificates.checking": "{name} wird geprüft",
+  "certificates.dated": "Datiert von {name}",
+  "certificates.badDate": "Ein Datum, das nicht hält",
+  "certificates.logged": "In einem öffentlichen Protokoll, Eintrag {index}",
+  "certificates.notLogged": "Nicht in dem öffentlichen Protokoll, das es nennt"
 }

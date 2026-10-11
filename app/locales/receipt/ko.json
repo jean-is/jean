@@ -22,5 +22,8 @@
   "receipt.file": "인증서 {date}",
   "receipt.proof.text": "인증서는 이 답변이 어떻게 만들어졌는지 보여 주지만 그 내용은 절대 담지 않아요. 누구에게 줘도 괜찮아요. 증빙에는 요청과 답변 내용이 더해지니, 읽어도 되는 사람에게만 주세요.",
   "receipt.proof.file": "증빙 {date}",
-  "receipt.checkAt": "누구나 {address}에서 확인할 수 있어요."
+  "receipt.checkAt": "누구나 {address}에서 확인할 수 있어요.",
+  "receipt.date": "{hosts}에서 날짜 증명 받기",
+  "receipt.log": "공개 로그 {host}에 기록하기: 공개되며 영구적이에요",
+  "receipt.unwitnessed": "{host}에 연결할 수 없었어요"
 }

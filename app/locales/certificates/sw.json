@@ -23,5 +23,9 @@
   "certificates.answer": "Jibu",
   "certificates.file": "{name} ni faili kinayoitaja",
   "certificates.notFile": "{name} si faili kinayoitaja",
-  "certificates.checking": "Inakagua {name}"
+  "certificates.checking": "Inakagua {name}",
+  "certificates.dated": "Kimewekewa tarehe na {name}",
+  "certificates.badDate": "Tarehe isiyosimama",
+  "certificates.logged": "Kwenye daftari la umma, ingizo {index}",
+  "certificates.notLogged": "Hakimo kwenye daftari la umma kinalolitaja"
 }

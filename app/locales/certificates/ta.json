@@ -23,5 +23,9 @@
   "certificates.answer": "பதில்",
   "certificates.file": "{name} அது பெயரிடும் ஒரு கோப்பு",
   "certificates.notFile": "{name} அது பெயரிடும் கோப்பு அல்ல",
-  "certificates.checking": "{name} சரிபார்க்கப்படுகிறது"
+  "certificates.checking": "{name} சரிபார்க்கப்படுகிறது",
+  "certificates.dated": "{name} தேதியிட்டது",
+  "certificates.badDate": "நிற்காத ஒரு தேதி",
+  "certificates.logged": "ஒரு பொதுப் பதிவேட்டில், பதிவு {index}",
+  "certificates.notLogged": "அது குறிப்பிடும் பொதுப் பதிவேட்டில் இல்லை"
 }

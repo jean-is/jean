@@ -23,5 +23,9 @@
   "certificates.answer": "Risposta",
   "certificates.file": "{name} è un file che nomina",
   "certificates.notFile": "{name} non è un file che nomina",
-  "certificates.checking": "Verifica di {name}"
+  "certificates.checking": "Verifica di {name}",
+  "certificates.dated": "Datato da {name}",
+  "certificates.badDate": "Una data che non regge",
+  "certificates.logged": "In un registro pubblico, voce {index}",
+  "certificates.notLogged": "Non è nel registro pubblico che nomina"
 }

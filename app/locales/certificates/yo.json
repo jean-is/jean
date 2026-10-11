@@ -23,5 +23,9 @@
   "certificates.answer": "Ìdáhùn",
   "certificates.file": "{name} jẹ́ fáìlì tí ó dárúkọ",
   "certificates.notFile": "{name} kì í ṣe fáìlì tí ó dárúkọ",
-  "certificates.checking": "Ń ṣàyẹ̀wò {name}"
+  "certificates.checking": "Ń ṣàyẹ̀wò {name}",
+  "certificates.dated": "{name} ló fi ọjọ́ sí i",
+  "certificates.badDate": "Ọjọ́ tí kò dúró",
+  "certificates.logged": "Nínú ìwé àkọsílẹ̀ gbogbogbò, àkọsílẹ̀ {index}",
+  "certificates.notLogged": "Kò sí nínú ìwé àkọsílẹ̀ gbogbogbò tí ó dárúkọ"
 }

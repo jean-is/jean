@@ -23,5 +23,9 @@
   "certificates.answer": "Resposta",
   "certificates.file": "{name} é um ficheiro que nomeia",
   "certificates.notFile": "{name} não é um ficheiro que nomeia",
-  "certificates.checking": "A verificar {name}"
+  "certificates.checking": "A verificar {name}",
+  "certificates.dated": "Datado por {name}",
+  "certificates.badDate": "Uma data que não se confirma",
+  "certificates.logged": "Num registo público, entrada {index}",
+  "certificates.notLogged": "Não está no registo público que nomeia"
 }

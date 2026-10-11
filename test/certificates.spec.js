@@ -5,6 +5,7 @@
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
+import { reply, logged, logPem } from './fixtures/tsa.js'
 
 /** An answer's certificate and its proof, saved from its card. @param {import('@playwright/test').Page} page */
 async function saved(page) {
@@ -70,4 +71,50 @@ test('a certificate shared in a conversation brings what checks it, and its card
   await expect(card).toContainText('This device')
   await expect(card.locator('q').first()).toHaveText('Hello')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Intact: sealed by this device')
+})
+
+test('witnesses date a certificate and a public log records it once the user chooses so, and the check page says by whom (D276)', async ({ page, browser, baseURL }) => {
+  const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'POST' }
+  /** @type {string[]} */
+  const sent = []
+  await page.route('https://timestamp.sigstore.dev/**', async (route) => {
+    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
+    sent.push('timestamp')
+    return route.fulfill({ headers: { ...cors, 'content-type': 'application/timestamp-reply' }, body: Buffer.from(await reply(new Uint8Array(route.request().postDataBuffer() ?? []))) })
+  })
+  await page.route('https://rekor.sigstore.dev/**', async (route) => {
+    const request = route.request()
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
+    if (request.url().endsWith('/publicKey')) return route.fulfill({ headers: cors, body: logPem })
+    sent.push('log')
+    return route.fulfill({ status: 201, headers: { ...cors, 'content-type': 'application/json' }, body: JSON.stringify(await logged(request.postDataJSON())) })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const button = page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' })
+  await expect(button).toHaveClass(/is-local/)
+  await button.click()
+  const card = page.locator('.receipt')
+  // Nothing goes out until the user says so, where the card says what goes where.
+  const date = card.getByRole('checkbox', { name: 'Date them with timestamp.sigstore.dev' })
+  const log = card.getByRole('checkbox', { name: 'Record them in a public log, rekor.sigstore.dev: public and permanent' })
+  await expect(date).not.toBeChecked()
+  await date.check()
+  await log.check()
+  const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: 'Save the certificate' }).click()])
+  const saved = JSON.parse(await readFile(await download.path(), 'utf8'))
+  expect(sent).toEqual(['timestamp', 'log'])
+  expect(saved.header.etsiU).toHaveLength(1)
+  expect(saved.sigstore.mediaType).toBe('application/vnd.dev.sigstore.bundle.v0.3+json')
+  const context = await browser.newContext({ baseURL })
+  const checker = await context.newPage()
+  await checker.goto('check.html')
+  await checker.locator('input[type="file"]').setInputFiles([file('Certificate.json', JSON.stringify(saved))])
+  const checked = checker.locator('.receipt-checked')
+  await expect(checked.locator('.receipt-verdict')).toHaveText('Sealed, and unchanged since')
+  await expect(checked).toContainText('Dated by Test TSA')
+  await expect(checked).toContainText(/In a public log, entry [\d,]+/)
+  await context.close()
 })

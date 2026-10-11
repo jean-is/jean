@@ -23,5 +23,9 @@
   "certificates.answer": "Sagot",
   "certificates.file": "Ang {name} ay isang file na pinangangalanan nito",
   "certificates.notFile": "Ang {name} ay hindi file na pinangangalanan nito",
-  "certificates.checking": "Sinusuri ang {name}"
+  "certificates.checking": "Sinusuri ang {name}",
+  "certificates.dated": "Nilagyan ng petsa ng {name}",
+  "certificates.badDate": "Isang petsang hindi tumatayo",
+  "certificates.logged": "Nasa isang pampublikong log, entry {index}",
+  "certificates.notLogged": "Wala sa pampublikong log na pinangangalanan nito"
 }

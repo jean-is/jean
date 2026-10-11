@@ -6,7 +6,7 @@
 // baseline (ETSI TS 119 182-1) by the device's key and the X.509 certificate that key issued itself;
 // the proof carries the disclosures, for whoever may read the words. check() reads either, and
 // certificate.schema.json describes both. No DOM, so it is tested with node --test.
-import { selfIssued, readCertificate } from './der.js'
+import { selfIssued, readCertificate, derSignature, p1363, timestampRequest, tokenOf, readToken } from './der.js'
 
 /** @import { Turn } from '../../core/events.js' */
 /** @import { ModelInfo } from '../../core/types.js' */
@@ -33,7 +33,7 @@ import { selfIssued, readCertificate } from './der.js'
  * The salts of a certificate's disclosures, kept in the conversation (`meta.certificate`) for its proof.
  * @typedef {{ request: string, answer: string, files: string[], made: string[] }} Salts
  * What check() found: the seal's state, who sealed it and when, what it says, and with a proof the words.
- * @typedef {{ intact: boolean, fingerprint: string, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string>, at: Date, says: any, proven?: boolean, words?: { request?: string, answer?: string, files: string[], made: string[] } }} Reading
+ * @typedef {{ intact: boolean, fingerprint: string, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string>, at: Date, says: any, timestamps: { at: Date | null, authority: Record<string, string>, intact: boolean }[], log: { index: number, at: Date, intact: boolean, checked: boolean } | null, proven?: boolean, words?: { request?: string, answer?: string, files: string[], made: string[] } }} Reading
  */
 
 /** This device itself, by name or address. */
@@ -112,6 +112,10 @@ const base64url = (bytes) => base64(bytes).replace(/\+/g, '-').replace(/\//g, '_
 const bytesOf = (text) => Uint8Array.from(atob(text.replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))
 /** @param {string} text @returns {any} */
 const json = (text) => JSON.parse(new TextDecoder().decode(bytesOf(text)))
+/** @param {Uint8Array} bytes */
+const hex = (bytes) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+/** @param {string} text */
+const fromHex = (text) => Uint8Array.from(text.match(/../g) ?? [], (pair) => parseInt(pair, 16))
 /** A SHA-256 in hexadecimal, in Subresource Integrity's form, as Verifiable Credentials write digests. @param {string} hex */
 const sri = (hex) => `sha256-${base64(Uint8Array.from(hex.match(/../g) ?? [], (pair) => parseInt(pair, 16)))}`
 /** 128 random bits, base64url: a disclosure's salt, which RFC 9901 asks to be unique and unguessable. */
@@ -198,6 +202,66 @@ export async function seal(credential, { keys, certificate }, now = new Date()) 
   return { payload, protected: protect, signature }
 }
 
+// ─── Witnesses (D276) ────────────────────────────────────────────────────────
+
+/** What witnesses date: the SHA-256 of the signature's base64url (JAdES 5.3.4). @param {Sealed} sealed */
+const imprintOf = (sealed) => sha256(encode(sealed.signature))
+
+/**
+ * Has a witness date a sealed certificate (JAdES B-T): an RFC 3161 request for its signature's
+ * imprint, sent by `send`, and its token, once it is the one asked for, kept in `etsiU`.
+ * @param {Sealed} sealed @param {(request: Uint8Array) => Promise<Uint8Array>} send @returns {Promise<Sealed>}
+ */
+export async function witness(sealed, send) {
+  const imprint = await imprintOf(sealed)
+  const nonce = crypto.getRandomValues(new Uint8Array(8))
+  nonce[0] = (nonce[0] & 0x7f) | 1
+  const token = tokenOf(await send(timestampRequest(imprint, nonce)))
+  const read = await readToken(token)
+  if (!read.intact || read.imprint.join() !== imprint.join() || read.nonce?.join() !== nonce.join()) throw new Error('witness')
+  return { ...sealed, header: { etsiU: [...(sealed.header?.etsiU ?? []), { sigTst: { tstTokens: [{ val: base64(token) }] } }] } }
+}
+
+/**
+ * Records a sealed certificate in a public log (Sigstore's Rekor, v1) as a hashedrekord: the SHA-256 of
+ * its signing input, its signature and its certificate, which the log checks; its answer kept as a
+ * Sigstore bundle (v0.3), with the witnesses' tokens. @param {Sealed} sealed @param {(entry: object) => Promise<any>} send @returns {Promise<Sealed>}
+ */
+export async function record(sealed, send) {
+  const certificate = bytesOf(String(json(sealed.protected).x5c?.[0] ?? ''))
+  const digest = await sha256(encode(`${sealed.protected}.${sealed.payload}`))
+  const signature = derSignature(bytesOf(sealed.signature))
+  const pem = `-----BEGIN CERTIFICATE-----\n${base64(certificate).match(/.{1,64}/g)?.join('\n')}\n-----END CERTIFICATE-----\n`
+  const [entry] = Object.values(await send({ apiVersion: '0.0.1', kind: 'hashedrekord', spec: { signature: { content: base64(signature), publicKey: { content: base64(encode(pem)) } }, data: { hash: { algorithm: 'sha256', value: hex(digest) } } } }))
+  const { inclusionProof: proof, signedEntryTimestamp } = entry.verification
+  const tokens = (sealed.header?.etsiU ?? []).map((/** @type {any} */ one) => one.sigTst.tstTokens[0].val)
+  return { ...sealed, sigstore: {
+    mediaType: 'application/vnd.dev.sigstore.bundle.v0.3+json',
+    verificationMaterial: {
+      certificate: { rawBytes: base64(certificate) },
+      tlogEntries: [{ logIndex: String(entry.logIndex), logId: { keyId: base64(fromHex(entry.logID)) }, kindVersion: { kind: 'hashedrekord', version: '0.0.1' }, integratedTime: String(entry.integratedTime),
+        inclusionPromise: { signedEntryTimestamp }, inclusionProof: { logIndex: String(proof.logIndex), rootHash: base64(fromHex(proof.rootHash)), treeSize: String(proof.treeSize), hashes: proof.hashes.map((/** @type {string} */ one) => base64(fromHex(one))), checkpoint: { envelope: proof.checkpoint } }, canonicalizedBody: entry.body }],
+      ...(tokens.length && { timestampVerificationData: { rfc3161Timestamps: tokens.map((/** @type {string} */ val) => ({ signedTimestamp: val })) } }),
+    },
+    messageSignature: { messageDigest: { algorithm: 'SHA2_256', digest: base64(digest) }, signature: base64(signature) },
+  } }
+}
+
+/**
+ * A sealed certificate's entry in a public log: whether it is this certificate's, its signing input's
+ * hash and its signature, and whether the log's promise, its signature over the entry's canonical
+ * JSON, holds by the log's key (checked: false where that key isn't given). @param {Sealed} sealed @param {CryptoKey | null} key
+ */
+async function logged(sealed, key) {
+  const entry = /** @type {any} */ (sealed.sigstore)?.verificationMaterial?.tlogEntries?.[0]
+  if (!entry) return null
+  const body = json(entry.canonicalizedBody)
+  const bound = body.spec?.data?.hash?.value === hex(await sha256(encode(`${sealed.protected}.${sealed.payload}`))) && body.spec?.signature?.content === base64(derSignature(bytesOf(sealed.signature)))
+  const promise = JSON.stringify({ body: entry.canonicalizedBody, integratedTime: Number(entry.integratedTime), logID: hex(bytesOf(entry.logId.keyId)), logIndex: Number(entry.logIndex) })
+  const kept = key && await crypto.subtle.verify(SIGNING, key, /** @type {BufferSource} */ (p1363(bytesOf(entry.inclusionPromise.signedEntryTimestamp), 32)), encode(promise))
+  return { index: Number(entry.logIndex), at: new Date(Number(entry.integratedTime) * 1000), intact: bound && kept !== false, checked: Boolean(key) }
+}
+
 /** The JWS in compact form, as the proof and the conversation keep it. @param {Sealed} sealed */
 export const compact = (sealed) => `${sealed.protected}.${sealed.payload}.${sealed.signature}`
 
@@ -217,10 +281,12 @@ export const proof = (sealed, disclosures) => `${compact(sealed)}~${disclosures.
  * What a certificate or a proof shows; an Error('format') when it is neither. Intact: its signature
  * holds by the key in its certificate, which its issuer is the thumbprint of, at a time that certificate
  * covers. With a proof, `proven` when it is this certificate's and each disclosure is one of its digests,
- * salted with 128 bits at least, and what they stand for: the words, and the files' digests.
- * @param {{ certificate?: Sealed, proof?: string }} given @returns {Promise<Reading>}
+ * salted with 128 bits at least, and what they stand for: the words, and the files' digests. Each
+ * witness's time, whether its token holds and is on this signature; the log's entry, whether it is
+ * this certificate's, and whether its promise holds by the log's key, when that is given (D276).
+ * @param {{ certificate?: Sealed, proof?: string }} given @param {{ logKey?: CryptoKey | null }} [known] @returns {Promise<Reading>}
  */
-export async function check({ certificate: file, proof: shown }) {
+export async function check({ certificate: file, proof: shown }, { logKey = null } = {}) {
   const [jws = '', ...rest] = shown?.split('~') ?? []
   const sealed = file ?? sealedOf(jws)
   if (!sealed.protected || !sealed.payload || !sealed.signature) throw new Error('format')
@@ -234,7 +300,10 @@ export async function check({ certificate: file, proof: shown }) {
   const signed = header.alg === 'ES256' && header['x5t#S256'] === base64url(await sha256(der))
     && await crypto.subtle.verify(SIGNING, key, /** @type {BufferSource} */ (bytesOf(sealed.signature)), encode(`${sealed.protected}.${sealed.payload}`))
   const intact = signed && credential.issuer === ISSUER + fingerprint && from <= at && at <= until
-  const result = { intact, fingerprint, selfIssued, subject, issuer, at, says: credential }
+  const imprint = (await imprintOf(sealed)).join()
+  const timestamps = await Promise.all((sealed.header?.etsiU ?? []).map((/** @type {any} */ one) => readToken(bytesOf(String(one.sigTst?.tstTokens?.[0]?.val ?? '')))
+    .then((read) => ({ at: read.at, authority: read.authority ?? {}, intact: read.intact && read.imprint.join() === imprint }), () => ({ at: null, authority: {}, intact: false }))))
+  const result = { intact, fingerprint, selfIssued, subject, issuer, at, says: credential, timestamps, log: await logged(sealed, logKey) }
   if (!shown) return result
   // Each digest's place: the request's words, the answer's, a file shared, a file made.
   const subjectOf = credential.credentialSubject ?? {}

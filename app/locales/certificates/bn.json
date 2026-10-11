@@ -23,5 +23,9 @@
   "certificates.answer": "উত্তর",
   "certificates.file": "{name} এমন একটি ফাইল যার নাম এটি বলে",
   "certificates.notFile": "{name} এমন ফাইল নয় যার নাম এটি বলে",
-  "certificates.checking": "{name} যাচাই করা হচ্ছে"
+  "certificates.checking": "{name} যাচাই করা হচ্ছে",
+  "certificates.dated": "{name} তারিখ দিয়েছে",
+  "certificates.badDate": "এমন তারিখ যা টেকে না",
+  "certificates.logged": "একটি সর্বজনীন খাতায়, এন্ট্রি {index}",
+  "certificates.notLogged": "এটি যে সর্বজনীন খাতার নাম বলে তাতে নেই"
 }

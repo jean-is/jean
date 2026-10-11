@@ -23,5 +23,9 @@
   "certificates.answer": "उत्तर",
   "certificates.file": "{name} ही ते नाव घेत असलेली फाइल आहे",
   "certificates.notFile": "{name} ही ते नाव घेत असलेली फाइल नाही",
-  "certificates.checking": "{name} तपासत आहे"
+  "certificates.checking": "{name} तपासत आहे",
+  "certificates.dated": "{name} ने तारीख दिली",
+  "certificates.badDate": "न टिकणारी तारीख",
+  "certificates.logged": "एका सार्वजनिक नोंदवहीत, नोंद {index}",
+  "certificates.notLogged": "ते नाव घेत असलेल्या सार्वजनिक नोंदवहीत नाही"
 }

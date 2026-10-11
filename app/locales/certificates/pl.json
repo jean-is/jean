@@ -23,5 +23,9 @@
   "certificates.answer": "Odpowiedź",
   "certificates.file": "{name} to plik, który wymienia",
   "certificates.notFile": "{name} to nie plik, który wymienia",
-  "certificates.checking": "Sprawdzanie: {name}"
+  "certificates.checking": "Sprawdzanie: {name}",
+  "certificates.dated": "Datowany przez {name}",
+  "certificates.badDate": "Data, która się nie zgadza",
+  "certificates.logged": "W publicznym rejestrze, wpis {index}",
+  "certificates.notLogged": "Nie ma go w publicznym rejestrze, który wymienia"
 }

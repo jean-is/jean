@@ -22,5 +22,8 @@
   "receipt.file": "Certificat {date}",
   "receipt.proof.text": "Le certificat montre comment cette réponse a été faite, jamais ses mots : tout le monde peut l’avoir. La preuve y ajoute la demande et la réponse, pour qui peut les lire.",
   "receipt.proof.file": "Preuve {date}",
-  "receipt.checkAt": "Tout le monde peut les vérifier sur {address}."
+  "receipt.checkAt": "Tout le monde peut les vérifier sur {address}.",
+  "receipt.date": "Les faire dater par {hosts}",
+  "receipt.log": "Les inscrire dans un registre public, {host} : public et permanent",
+  "receipt.unwitnessed": "{host} est injoignable"
 }

@@ -23,5 +23,9 @@
   "certificates.answer": "الإجابة",
   "certificates.file": "{name} ملف تذكره",
   "certificates.notFile": "{name} ليس ملفًا تذكره",
-  "certificates.checking": "جارٍ التحقق من {name}"
+  "certificates.checking": "جارٍ التحقق من {name}",
+  "certificates.dated": "أرّخها {name}",
+  "certificates.badDate": "تاريخ لا يصمد",
+  "certificates.logged": "في سجل عام، القيد {index}",
+  "certificates.notLogged": "ليست في السجل العام الذي تذكره"
 }

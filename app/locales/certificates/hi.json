@@ -23,5 +23,9 @@
   "certificates.answer": "जवाब",
   "certificates.file": "{name} एक फ़ाइल है जिसका यह नाम लेता है",
   "certificates.notFile": "{name} ऐसी फ़ाइल नहीं जिसका यह नाम लेता है",
-  "certificates.checking": "{name} की जाँच हो रही है"
+  "certificates.checking": "{name} की जाँच हो रही है",
+  "certificates.dated": "{name} ने तारीख़ लगाई",
+  "certificates.badDate": "ऐसी तारीख़ जो सही नहीं ठहरती",
+  "certificates.logged": "एक सार्वजनिक रजिस्टर में, प्रविष्टि {index}",
+  "certificates.notLogged": "उस सार्वजनिक रजिस्टर में नहीं जिसका यह नाम लेता है"
 }

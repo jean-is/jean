@@ -23,5 +23,9 @@
   "certificates.answer": "Amsa",
   "certificates.file": "{name} fayil ne da ta ambata",
   "certificates.notFile": "{name} ba fayil ne da ta ambata ba",
-  "certificates.checking": "Ana duba {name}"
+  "certificates.checking": "Ana duba {name}",
+  "certificates.dated": "{name} ya sa kwanan wata",
+  "certificates.badDate": "Kwanan watan da bai tsaya ba",
+  "certificates.logged": "A rajistar jama’a, shigarwa ta {index}",
+  "certificates.notLogged": "Ba ta cikin rajistar jama’ar da ta ambata"
 }

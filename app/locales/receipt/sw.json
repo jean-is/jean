@@ -22,5 +22,8 @@
   "receipt.file": "Cheti {date}",
   "receipt.proof.text": "Cheti kinaonyesha jinsi jibu hili lilivyotengenezwa, kamwe si maneno yake: mtu yeyote anaweza kukipata. Uthibitisho unaongeza ombi na jibu, kwa wale wanaoruhusiwa kuyasoma.",
   "receipt.proof.file": "Uthibitisho {date}",
-  "receipt.checkAt": "Mtu yeyote anaweza kuvikagua kwenye {address}."
+  "receipt.checkAt": "Mtu yeyote anaweza kuvikagua kwenye {address}.",
+  "receipt.date": "Viwekewe tarehe na {hosts}",
+  "receipt.log": "Viandike kwenye daftari la umma, {host}: la umma na la kudumu",
+  "receipt.unwitnessed": "Haikuwezekana kufikia {host}"
 }

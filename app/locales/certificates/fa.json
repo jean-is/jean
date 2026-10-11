@@ -23,5 +23,9 @@
   "certificates.answer": "پاسخ",
   "certificates.file": "{name} پرونده‌ای است که نام می‌برد",
   "certificates.notFile": "{name} پرونده‌ای نیست که نام ببرد",
-  "certificates.checking": "در حال بررسی {name}"
+  "certificates.checking": "در حال بررسی {name}",
+  "certificates.dated": "تاریخ‌گذاری‌شده توسط {name}",
+  "certificates.badDate": "تاریخی که درست درنمی‌آید",
+  "certificates.logged": "در یک دفتر عمومی، ردیف {index}",
+  "certificates.notLogged": "در دفتر عمومی‌ای که نام می‌برد نیست"
 }

@@ -23,5 +23,9 @@
   "certificates.answer": "జవాబు",
   "certificates.file": "{name} అది పేరు చెప్పే ఫైల్",
   "certificates.notFile": "{name} అది పేరు చెప్పే ఫైల్ కాదు",
-  "certificates.checking": "{name}ని తనిఖీ చేస్తోంది"
+  "certificates.checking": "{name}ని తనిఖీ చేస్తోంది",
+  "certificates.dated": "{name} తేదీ వేసింది",
+  "certificates.badDate": "నిలవని తేదీ",
+  "certificates.logged": "ఒక బహిరంగ రిజిస్టర్‌లో, నమోదు {index}",
+  "certificates.notLogged": "అది పేరు చెప్పిన బహిరంగ రిజిస్టర్‌లో లేదు"
 }

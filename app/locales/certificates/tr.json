@@ -23,5 +23,9 @@
   "certificates.answer": "Yanıt",
   "certificates.file": "{name}, adını verdiği bir dosya",
   "certificates.notFile": "{name}, adını verdiği bir dosya değil",
-  "certificates.checking": "{name} doğrulanıyor"
+  "certificates.checking": "{name} doğrulanıyor",
+  "certificates.dated": "{name} tarafından tarihlendi",
+  "certificates.badDate": "Geçerli olmayan bir tarih",
+  "certificates.logged": "Herkese açık bir kayıtta, girdi {index}",
+  "certificates.notLogged": "Adını verdiği herkese açık kayıtta yok"
 }

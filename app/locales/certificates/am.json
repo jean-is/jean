@@ -23,5 +23,9 @@
   "certificates.answer": "መልስ",
   "certificates.file": "{name} የሚጠቅሰው ፋይል ነው",
   "certificates.notFile": "{name} የሚጠቅሰው ፋይል አይደለም",
-  "certificates.checking": "{name}ን በማረጋገጥ ላይ"
+  "certificates.checking": "{name}ን በማረጋገጥ ላይ",
+  "certificates.dated": "ቀን የሰጠው {name}",
+  "certificates.badDate": "የማይጸና ቀን",
+  "certificates.logged": "በሕዝብ መዝገብ ውስጥ፣ ግቤት {index}",
+  "certificates.notLogged": "በሚጠቅሰው የሕዝብ መዝገብ ውስጥ የለም"
 }

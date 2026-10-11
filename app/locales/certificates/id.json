@@ -23,5 +23,9 @@
   "certificates.answer": "Jawaban",
   "certificates.file": "{name} adalah file yang disebutkannya",
   "certificates.notFile": "{name} bukan file yang disebutkannya",
-  "certificates.checking": "Memeriksa {name}"
+  "certificates.checking": "Memeriksa {name}",
+  "certificates.dated": "Diberi tanggal oleh {name}",
+  "certificates.badDate": "Tanggal yang tidak sahih",
+  "certificates.logged": "Di log publik, entri {index}",
+  "certificates.notLogged": "Tidak ada di log publik yang disebutkannya"
 }

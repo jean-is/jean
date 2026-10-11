@@ -22,5 +22,8 @@
   "receipt.file": "證書 {date}",
   "receipt.proof.text": "證書只說明這個回答是怎樣產生的，從不包含它的文字：誰都可以拿到。證明還附上請求和回答的原文，只給可以閱讀它們的人。",
   "receipt.proof.file": "證明 {date}",
-  "receipt.checkAt": "任何人都可以在 {address} 核對它們。"
+  "receipt.checkAt": "任何人都可以在 {address} 核對它們。",
+  "receipt.date": "請 {hosts} 證明時間",
+  "receipt.log": "記入公開日誌 {host}：公開且永久",
+  "receipt.unwitnessed": "無法連線 {host}"
 }

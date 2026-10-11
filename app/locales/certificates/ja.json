@@ -23,5 +23,9 @@
   "certificates.answer": "回答",
   "certificates.file": "{name} は記載されたファイルです",
   "certificates.notFile": "{name} は記載されたファイルではありません",
-  "certificates.checking": "{name} を確認中"
+  "certificates.checking": "{name} を確認中",
+  "certificates.dated": "{name} が日時を証明",
+  "certificates.badDate": "成り立たない日時",
+  "certificates.logged": "公開ログのエントリ {index}",
+  "certificates.notLogged": "記された公開ログにありません"
 }

@@ -23,5 +23,9 @@
   "certificates.answer": "תשובה",
   "certificates.file": "{name} הוא קובץ שהיא מציינת",
   "certificates.notFile": "{name} אינו קובץ שהיא מציינת",
-  "certificates.checking": "בודק את {name}"
+  "certificates.checking": "בודק את {name}",
+  "certificates.dated": "תוארך על ידי {name}",
+  "certificates.badDate": "תאריך שאינו עומד",
+  "certificates.logged": "ביומן ציבורי, רשומה {index}",
+  "certificates.notLogged": "אינה ביומן הציבורי שהיא מציינת"
 }

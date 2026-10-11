@@ -23,5 +23,9 @@
   "certificates.answer": "Câu trả lời",
   "certificates.file": "{name} là một tệp nó nêu tên",
   "certificates.notFile": "{name} không phải tệp nó nêu tên",
-  "certificates.checking": "Đang kiểm tra {name}"
+  "certificates.checking": "Đang kiểm tra {name}",
+  "certificates.dated": "Ghi ngày bởi {name}",
+  "certificates.badDate": "Một ngày không đứng vững",
+  "certificates.logged": "Trong một sổ công khai, mục {index}",
+  "certificates.notLogged": "Không có trong sổ công khai mà nó nêu"
 }

@@ -22,5 +22,8 @@
   "receipt.file": "Chứng nhận {date}",
   "receipt.proof.text": "Chứng nhận cho thấy câu trả lời này được tạo ra như thế nào, không bao giờ chứa lời của nó: ai cũng có thể giữ. Bằng chứng thêm vào yêu cầu và câu trả lời, dành cho những người được phép đọc.",
   "receipt.proof.file": "Bằng chứng {date}",
-  "receipt.checkAt": "Ai cũng có thể kiểm tra chúng tại {address}."
+  "receipt.checkAt": "Ai cũng có thể kiểm tra chúng tại {address}.",
+  "receipt.date": "Nhờ {hosts} ghi ngày",
+  "receipt.log": "Ghi vào một sổ công khai, {host}: công khai và vĩnh viễn",
+  "receipt.unwitnessed": "Không kết nối được với {host}"
 }

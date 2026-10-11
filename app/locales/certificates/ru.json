@@ -23,5 +23,9 @@
   "certificates.answer": "Ответ",
   "certificates.file": "{name} — файл, который он называет",
   "certificates.notFile": "{name} — не файл, который он называет",
-  "certificates.checking": "Проверка: {name}"
+  "certificates.checking": "Проверка: {name}",
+  "certificates.dated": "Дата заверена: {name}",
+  "certificates.badDate": "Дата, которая не подтверждается",
+  "certificates.logged": "В публичном журнале, запись {index}",
+  "certificates.notLogged": "Нет в публичном журнале, который он называет"
 }

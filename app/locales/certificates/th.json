@@ -23,5 +23,9 @@
   "certificates.answer": "คำตอบ",
   "certificates.file": "{name} เป็นไฟล์ที่ระบุไว้",
   "certificates.notFile": "{name} ไม่ใช่ไฟล์ที่ระบุไว้",
-  "certificates.checking": "กำลังตรวจสอบ {name}"
+  "certificates.checking": "กำลังตรวจสอบ {name}",
+  "certificates.dated": "ลงวันที่โดย {name}",
+  "certificates.badDate": "วันที่ที่ไม่ถูกต้อง",
+  "certificates.logged": "อยู่ในทะเบียนสาธารณะ รายการที่ {index}",
+  "certificates.notLogged": "ไม่อยู่ในทะเบียนสาธารณะที่ระบุไว้"
 }

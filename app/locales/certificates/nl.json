@@ -23,5 +23,9 @@
   "certificates.answer": "Antwoord",
   "certificates.file": "{name} is een bestand dat het noemt",
   "certificates.notFile": "{name} is geen bestand dat het noemt",
-  "certificates.checking": "{name} wordt gecontroleerd"
+  "certificates.checking": "{name} wordt gecontroleerd",
+  "certificates.dated": "Gedateerd door {name}",
+  "certificates.badDate": "Een datum die niet klopt",
+  "certificates.logged": "In een openbaar register, vermelding {index}",
+  "certificates.notLogged": "Niet in het openbare register dat het noemt"
 }
