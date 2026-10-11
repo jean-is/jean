@@ -86,11 +86,12 @@ cli/              jean-cli (Node): main.js, acp.js (Jean in an editor, through A
 gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
 deploy/           docker/, the container image (D232)
-scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, cli.js, icons.js, screenshots.js, reflexes.js, directory.js
+scripts/          vendor.js, manifest.js, graph.js, budgets.js, serve.js, desktop.js, cli.js, icons.js, screenshots.js, reflexes.js, offers.js, directory.js
 test/             <name>.test.js, run by node --test, and <capability>.spec.js, Playwright's smoke tests in Chromium and
                   WebKit, one per capability, side by side (D247), with helpers.js and playwright.config.js; fixtures/ (the
                   fake brain, a fake MCP mail service with sign-in, a fake skills index), which both use; reflexes/ (the
-                  multilingual reflex test set and results.md)
+                  multilingual reflex test set and results.md); offers/ (requests labelled with what the brain
+                  should offer, and results.md)
 ```
 
 Modules that a single capability or part of the UI uses live with it, tested under `node --test` where they are pure: `caps/files/extract.js`, `cells.js`, `office.js` and `midi.js`, `caps/made/formats.js`, `caps/check/claims.js`, `caps/routines/schedule.js`, `caps/skills/sources.js`, `caps/browser/pages.js`, `caps/ask/answers.js`, `caps/folders/work.js`, `word.js`, `copy.js` and `site.js`, `caps/sync/mirror.js`, `caps/computer/mount.js` and `net.js`, `caps/math/latex.js`, `caps/charts/option.js`, `caps/scores/notes.js`, `caps/search/kiwix.js`, `caps/slides/deck.js`, `caps/flows/run.js` and `graph.js`, `caps/layouts/shapes.js`, `caps/receipt/certificate.js`, `ui/prices.js`, `caps/skills/directory.js`, `caps/live/turns.js`, `caps/connections/mcp.js` (D96, D148, D196).
@@ -186,6 +187,8 @@ const { demand, personal, capability } = await decide(message, {
 **How Kev is asked** (D67): all of a state's questions in one forward pass, each with its options between Kev's delimiters (ids from its `config.json`); each option's score softmaxed within its question; a score read as its most likely level, since Kev hedges toward the middle; a yes, or an offer, at 0.6. Each message gets one pass for demand, personal and capability, and a second for "unhappy" with the previous answer, both capped at 2.5 s.
 
 **Measuring Kev** (D68, D84): `test/reflexes/<lang>.json` holds 44 labelled examples per launch language, machine-translated; `npm run reflexes` runs Kev on the CPU under Node with Jean's own questions and thresholds, and writes [test/reflexes/results.md](../test/reflexes/results.md). 67% overall: tables reliable everywhere, capability and email fine in the major languages, personal, unhappy and lasting near chance, the low-resource languages lowest. The next step, before launch, is a fine-tuned "Jean reflexes" checkpoint, published under Apache 2.0. The test set is the lasting asset.
+
+**Measuring offers** (D284): `test/offers/<lang>.json` holds 43 requests in eight languages, each labelled with the capability the brain's `offer` should name, or none. `npm run offers` reads the frozen prompt and declared tools a first conversation sends, from the page in headless Chromium, then sends each request through core's loop to the brain `BRAIN` names (as jean-cli's `--brain`, its key in `<PROVIDER>_API_KEY`), Jean's first tools answering as they do, and writes a section per brain into [test/offers/results.md](../test/offers/results.md): per capability, how often it was offered when needed, what came instead, and how often it was offered when not.
 
 | Question | Type | Status |
 |---|---|---|

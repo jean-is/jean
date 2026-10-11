@@ -11,7 +11,6 @@
   "machine.computers": "Computers",
   "machine.lede": "Tasks use the sandbox, except those in the folder you connect on this computer.",
   "machine.off": "Not connected",
-  "machine.in": "In {folder}",
   "machine.step.open": "Open a terminal in one of your folders.",
   "machine.step.paste": "Paste this line there, then press Enter.",
   "machine.step.wait": "Waiting for the line to run: this page notices by itself.",

@@ -11,7 +11,6 @@
   "machine.computers": "컴퓨터",
   "machine.lede": "작업은 격리된 환경을 사용합니다. 이 컴퓨터에서 연결한 폴더의 작업만 예외입니다.",
   "machine.off": "연결 안 됨",
-  "machine.in": "{folder}에서",
   "machine.step.open": "내 폴더 중 하나에서 터미널을 엽니다.",
   "machine.step.paste": "그곳에 이 줄을 붙여 넣고 Enter를 누릅니다.",
   "machine.step.wait": "이 줄이 실행되기를 기다리는 중: 이 페이지가 알아서 알아챕니다.",

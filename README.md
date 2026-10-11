@@ -122,6 +122,7 @@ That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Ga
 | `npm test` | The core and storage tests, with `node --test` |
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
+| `npm run offers` | Measures how often a brain offers what a request needs, and what it doesn't, on a multilingual test set (`BRAIN=<provider>:<model>`) |
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
 | `npm run build:dmg` | The same, then the macOS disk image to hand out, on a Mac |
 | `npm run icons` | Draws the PNG icons that Android and iOS install with from `app/icons/icon.svg`, after changing it |

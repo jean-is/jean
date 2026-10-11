@@ -2,7 +2,7 @@
 // Capabilities), "turn on everything" works, and the brain picker offers Auto, the connected brains
 // and "never send to the cloud".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, openSettings } from './helpers.js'
+import { start, connectFakeBrain, openSettings, ask, openTasks } from './helpers.js'
 
 test('the first starter asks what Jean can do, in a few plain words', async ({ page }) => {
   await start(page)
@@ -64,6 +64,50 @@ test('offers count the tasks of every project, wait their turn when due, and giv
     const shown = (await offer.textContent()) ?? ''
     left = left.filter((text) => !shown.includes(text))
   }
+})
+
+// A plain 1×1 PNG.
+const PIXEL = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', 'base64')
+
+test('what brains rarely offer is offered on events with no language: a file from a service, a picture (D286)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const offer = page.locator('aside.offer')
+  const input = page.locator('.composer input[type="file"]')
+  // An invitation shared: the calendar it came from could be connected.
+  await input.setInputFiles({ name: 'Lunch.ics', mimeType: 'text/calendar', buffer: Buffer.from('BEGIN:VCALENDAR\nBEGIN:VEVENT\nSUMMARY:Lunch\nEND:VEVENT\nEND:VCALENDAR\n') })
+  await expect(offer).toContainText('one of your services')
+  // A picture shared now takes its place: it could be changed.
+  await input.setInputFiles({ name: 'Garden.png', mimeType: 'image/png', buffer: PIXEL })
+  await expect(offer).toContainText('change a picture you share')
+})
+
+test('something said again from an earlier task offers memory, and a task continued on three days a project (D286)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const offer = page.locator('aside.offer')
+  await page.evaluate(async () => {
+    const { app, refreshConversations } = await import('/ui/state.js')
+    const { createConversation, appendRecords } = await import('/core/conversations.js')
+    const { userRecords, envelope, metaRecord } = await import('/core/events.js')
+    const said = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test' })
+    await appendRecords(app.fs, said.path, userRecords("I'm vegetarian and allergic to nuts, so keep that in mind for recipes. What could I cook tonight?", [], 'test'))
+    // A task continued yesterday and the day before.
+    const day = (/** @type {number} */ ago) => new Date(Date.now() - ago * 86_400_000).toISOString()
+    const garden = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test' })
+    const answer = envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Noted.' } }, 0)
+    await appendRecords(app.fs, garden.path, [metaRecord('test', { title: 'Garden plan' }), ...[2, 1].flatMap((ago) => [...userRecords(`Garden plan, day ${ago}`, [], 'test'), answer].map((record) => ({ ...record, at: day(ago) })))])
+    await refreshConversations()
+  })
+  await ask(page, "As I said, I'm vegetarian and allergic to nuts. Plan a dinner for six.")
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+  await expect(offer).toContainText('remember things like this')
+  await offer.getByRole('button', { name: 'No thanks' }).click()
+  const item = (await openTasks(page)).locator('.history-item', { hasText: 'Garden plan' })
+  await item.click()
+  await expect(item).toHaveAttribute('aria-current', 'true')
+  await ask(page, 'Now the vegetable beds.')
+  await expect(offer).toContainText('make this a project')
 })
 
 test('the picker: a menu above the chip, Auto by default, a brain by hand, never the cloud', async ({ page }) => {

@@ -7,7 +7,7 @@ import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, en
 import { parseMemory, stringifyMemory, memoryText } from '../app/core/memory.js'
 import { parseSkill, listSkills, saveSkill, skillLines } from '../app/core/skills.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../app/core/prompt.js'
-import { alike } from '../app/core/search.js'
+import { alike, restated } from '../app/core/search.js'
 import { importBackup, exportBackup } from '../app/caps/backup/archive.js'
 import { attendees, knows, speakerPrompt, request, minutes, report, pool } from '../app/caps/projects/meeting.js'
 import { createConversation, appendRecords } from '../app/core/conversations.js'
@@ -136,6 +136,32 @@ test('alike: the same kind of request scores high, in any language, whatever the
   assert.ok(ja > 0.6, `Japanese: ${ja}`)
   assert.deepEqual(alike('anything', []), [])
   assert.deepEqual(alike('', ['x']), [0])
+})
+
+test('restated: something said again in another request, in any script, but not a request of the same kind or a common phrasing (D286)', () => {
+  const earlier = [
+    "I'm vegetarian and allergic to nuts, so keep that in mind whenever you suggest recipes. What could I cook tonight?",
+    'Can you help me write an email to my boss about the budget?',
+    'Hello! Can you help me with something?',
+    'Please translate this into Spanish for me: see you next week.',
+    'Je suis végétarienne et allergique aux noix. Que puis-je cuisiner ce soir ?',
+    '私はベジタリアンでナッツアレルギーがあります。今夜は何を作ればいいですか？',
+    '我吃素，而且对坚果过敏。我今晚可以做点什么？',
+    'أنا نباتية وعندي حساسية من المكسرات، فتذكّر ذلك كلما اقترحت عليّ وصفات. ماذا يمكنني أن أطبخ الليلة؟',
+  ]
+  assert.ok(restated("As I said, I'm vegetarian and allergic to nuts. Plan a dinner party menu for six.", earlier, 0.5))
+  assert.ok(restated("Remember I'm allergic to nuts and vegetarian. Suggest a dessert.", earlier, 0.5))
+  assert.ok(restated('Comme je disais, je suis végétarienne et allergique aux noix. Propose un menu pour six.', earlier, 0.5))
+  assert.ok(restated('前にも言いましたが、私はベジタリアンでナッツアレルギーがあります。六人分の献立を考えてください。', earlier, 0.5))
+  assert.ok(restated('我说过，我吃素，而且对坚果过敏。帮我设计六个人的菜单。', earlier, 0.5))
+  assert.ok(restated('كما قلت، أنا نباتية وعندي حساسية من المكسرات. اقترح قائمة طعام لستة أشخاص.', earlier, 0.5))
+  // Common phrasings, other requests, and the same request again (Skills' business, D83) aren't.
+  assert.ok(!restated('Hello! Can you help me with my homework?', earlier, 0.5))
+  assert.ok(!restated('Can you help me write an email to my landlord about the heating?', earlier, 0.5))
+  assert.ok(!restated('Please translate this into French for me: thank you so much.', earlier, 0.5))
+  assert.ok(!restated('Write a short poem about autumn leaves.', earlier, 0.5))
+  assert.ok(!restated("I'm vegetarian and allergic to nuts, so keep that in mind whenever you suggest recipes. What could I cook tomorrow?", earlier, 0.5))
+  assert.ok(!restated("I'm vegetarian and allergic to nuts.", [], 0.5))
 })
 
 test('meetings (D224): who joins, what each speaker knows of its own project only, and the minutes', async () => {
