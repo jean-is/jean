@@ -11,3 +11,6 @@ test-results/
 playwright-report/
 # Desktop apps built by npm run build:desktop, and Neutralino's binaries it downloads (D155)
 dist/
+
+# The document evals’ generated corpora and vectors (npm run documents)
+test/documents/.cache/

@@ -24,6 +24,7 @@
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
     "e2e": "playwright test -c test",
     "reflexes": "node scripts/reflexes.js",
+    "documents": "node scripts/documents.js",
     "directory": "node scripts/directory.js"
   },
   "dependencies": {
