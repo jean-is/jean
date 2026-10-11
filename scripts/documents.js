@@ -7,9 +7,10 @@
 //                                                    score the strategies, keeping each run's results in .cache/results/
 //        npm run documents -- --bench scan,first-search  H1: a flat vector scan at 1, 10 and 40 times XL; H6: the first search of XL in Chromium slowed 4×
 //        npm run documents -- --report [--write]         results.md and strategies.json from every run kept
-//        npm run documents -- --answers H4,H5 [--concurrency 3] [--dense e5] [--dollars 10]   the answer eval with OpenRouter's brains (OPENROUTER_API_KEY),
+//        npm run documents -- --answers H4,H5 [--concurrency 3] [--requests 4] [--dense e5] [--dollars 10]   the answer eval with OpenRouter's brains (OPENROUTER_API_KEY),
 //        npm run documents -- --answers overall --conditions search,search+meaning   ten questions of each kind at XL, for the targets
-//                                 resuming where it stopped; it stops itself once the run has spent --dollars, or a free brain's day runs out
+//                                 that many questions at once, their requests that many at a time (the rest queued), resuming
+//                                 where it stopped; it stops itself once the run has spent --dollars, or a free brain's day runs out
 // Generated files are kept in test/documents/.cache/ (never committed), keyed by seed and size.
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -23,7 +24,7 @@ import { verdicts, rows as rowsOf, table, pct } from '../test/documents/report.j
 import { overlap } from '../test/documents/text.js'
 import { execFileSync } from 'node:child_process'
 import { embed, int8 } from '../test/documents/dense.js'
-import { BRAINS, ask, grade, grounded, library, summarise } from '../test/documents/answers.js'
+import { BRAINS, ask, grade, grounded, library, setRequests, summarise } from '../test/documents/answers.js'
 import { rng } from '../test/documents/corpus.js'
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url))
@@ -180,6 +181,7 @@ async function main(argv) {
   }
   if (o.has('report')) await report(o.has('write'))
   const hypotheses = o.value('answers', '')
+  setRequests(Number(o.value('requests', '4')))
   if (hypotheses) await answers(hypotheses.split(','), Number(o.value('concurrency', '3')), o.value('dense', 'e5'), Number(o.value('passage', '100')), Number(o.value('limit', 'Infinity')), o.value('conditions', 'search').split(','), Number(o.value('dollars', '10')))
   const benches = o.value('bench', '')
   if (benches) {

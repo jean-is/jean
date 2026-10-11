@@ -31,10 +31,37 @@ const waits = () => WAITS.map((ms) => Math.round(ms * (0.5 + Math.random() / 2))
 /** Jean's brain entry for one of these. @param {{ model: string }} b */
 const entry = (b) => ({ id: 'eval', provider: 'openrouter', api: /** @type {'openai'} */ ('openai'), baseURL: PROVIDERS.openrouter.baseURL, model: b.model })
 
-/** streamChat with OpenRouter told to use the brain's provider alone, when it names one. @param {{ provider?: string }} b @returns {typeof streamChat} */
-const streamOf = ({ provider }) => (options) => streamChat({ ...options, fetch: provider
-  ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), provider: { order: [provider], allow_fallbacks: false } }) })
-  : globalThis.fetch })
+// The requests in flight at once in this process, each until its reply has streamed whole; the rest wait their
+// turn here, since a provider refuses those past what it takes (DeepInfra about four of this brain's).
+let room = 4
+/** @type {(() => void)[]} */
+const waiting = []
+/** @param {number} n */
+export const setRequests = (n) => { room = n }
+/** A place among the requests in flight, and the function that gives it up. @returns {Promise<() => void>} */
+async function place() {
+  if (room > 0) room--
+  else await new Promise((resolve) => waiting.push(() => resolve(undefined)))
+  return () => { const next = waiting.shift(); if (next) next(); else room++ }
+}
+
+/**
+ * streamChat with OpenRouter told to use the brain's provider alone, when it names one, once the request has its place.
+ * @param {{ provider?: string }} b @param {{ queued: number }} [timing] adds the time spent waiting for a place
+ * @returns {typeof streamChat}
+ */
+const streamOf = ({ provider }, timing = { queued: 0 }) => async function* (options) {
+  const asked = performance.now()
+  const release = await place()
+  timing.queued += performance.now() - asked
+  try {
+    yield* streamChat({ ...options, fetch: provider
+      ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), provider: { order: [provider], allow_fallbacks: false } }) })
+      : globalThis.fetch })
+  } finally {
+    release()
+  }
+}
 
 /**
  * One request's whole reply, retried as the loop retries. Its length is capped so that OpenRouter, which holds
@@ -200,8 +227,9 @@ export async function ask({ question, condition, brain, files, lib, extra, apiKe
   /** @type {{ name: string, args: any, output: string, failed?: boolean }[]} */
   const calls = []
   const started = performance.now()
+  const timing = { queued: 0 }
   const result = await runTurn({
-    brain: entry(BRAINS[brain]), stream: streamOf(BRAINS[brain]),
+    brain: entry(BRAINS[brain]), stream: streamOf(BRAINS[brain], timing),
     apiKey, system, tools: list, maxSteps, rule: () => 'allow', retries: waits(),
     history: [{ role: 'user', content: question.text + ASK, documents }],
     onUpdate: (update) => {
@@ -211,7 +239,8 @@ export async function ask({ question, condition, brain, files, lib, extra, apiKe
       } else if (update.sessionUpdate === 'tool_call' && update.kind !== 'think' && update.toolCallId) calls.push(/** @type {any} */ ({ id: update.toolCallId, name: update.name, args: update.rawInput, output: '' }))
     },
   })
-  return { text: result.text, stopReason: result.stopReason, calls, ms: performance.now() - started, usage: result.usage, shown: documents.map((d) => d.text).join('\n\n') }
+  // Its time without the loop's own waits for a place (every_page's are part of what it costs).
+  return { text: result.text, stopReason: result.stopReason, calls, ms: performance.now() - started - timing.queued, usage: result.usage, shown: documents.map((d) => d.text).join('\n\n') }
 }
 
 const NONE = /^(none|n\/a|no\b|not (found|stated|given|mentioned|specified|in)|unknown|aucun|aucune|néant|なし|不明|لا يوجد|غير)/i
