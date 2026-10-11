@@ -280,4 +280,10 @@ describe('the check a picture made here goes through (D275)', () => {
     assert.equal(check.explicit([0, 0, 0, Math.log(2)]), 0.6)
     assert.equal(check.explicit([0, 0, 0, 0]), check.LIMIT)
   })
+
+  test('strict, it counts from low on: a suggestive picture doesn’t show either', () => {
+    assert.ok(check.explicit([0, 4, 0, 0], true) > 0.9)
+    assert.ok(check.explicit([4, 1, 0, 0], true) < check.LIMIT)
+    assert.equal(check.explicit([0, 0, 0, 0], true), 0.75)
+  })
 })

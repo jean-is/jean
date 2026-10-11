@@ -8,7 +8,7 @@
 // { type: 'load', host, files }   → progress…, { type: 'ready' }
 // { type: 'paint', prompt }       → { type: 'done', bytes }, a PNG
 // { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
-// { type: 'check', host, bytes }  → { type: 'done', explicit }, how likely the picture shows nudity or sex
+// { type: 'check', host, bytes }  → { type: 'done', logits }, the check's four levels for the picture
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
@@ -48,7 +48,7 @@ async function handle({ id, type, ...data }) {
       await Promise.all(sessions.map((session) => session.release()))
       self.postMessage({ id, type: 'done' })
     } else if (type === 'check') {
-      self.postMessage({ id, type: 'done', explicit: await explicit(data) })
+      self.postMessage({ id, type: 'done', logits: await levels(data) })
     }
   } catch (error) {
     if (type === 'load') loading = null
@@ -99,11 +99,11 @@ async function paint(prompt) {
 }
 
 /**
- * How likely a picture shows nudity or sex (D275), squashed whole into the square the check sees: on
+ * The check's levels for a picture (D275), squashed whole into the square the check sees: on
  * WebGPU where there is one, else WebAssembly, its file downloaded first if it isn't here.
  * @param {{ host: string, bytes: Uint8Array }} data
  */
-async function explicit({ host, bytes }) {
+async function levels({ host, bytes }) {
   const session = (checker ??= download(new URL(check.FILE[0], host).href, check.FILE[1], () => {})
     .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: ['webgpu', 'wasm'] }))
     .catch((error) => { checker = null; throw error }))
@@ -112,5 +112,5 @@ async function explicit({ host, bytes }) {
   context.drawImage(await createImageBitmap(new Blob([bytes])), 0, 0, check.SIDE, check.SIDE)
   const pixels = check.planes(context.getImageData(0, 0, check.SIDE, check.SIDE).data)
   const { logits } = await (await session).run({ pixel_values: new Tensor('float32', pixels, [1, 3, check.SIDE, check.SIDE]) })
-  return check.explicit(logits.data)
+  return Array.from(/** @type {Float32Array} */ (logits.data))
 }

@@ -2,7 +2,9 @@
 // shows (D275), as nothing else filters what these make: Freepik's NSFW classifier (MIT), an EVA-02
 // base that sees 448 pixels square, as onnx-community's converter exports it at 4 bits, which runs on
 // WebGPU and WebAssembly alike. It says how likely a picture is neutral, low, medium or high; medium
-// and high together, at half or more, show nudity or sex, as Freepik's own threshold has it.
+// and high together, at half or more, show nudity or sex, as Freepik's own threshold has it, and low
+// on, suggestive pictures too, which a strict check refuses. Nothing looser: high alone let bare
+// breasts through (Manet's Olympia, 0.46), and a bikini and a bare breast share medium.
 
 /** @typedef {[string, string, number]} File path on the weights host, SHA-256, bytes */
 
@@ -24,9 +26,13 @@ export function planes(rgba) {
   return values
 }
 
-/** How likely its four levels' logits say nudity or sex is: medium and high together. @param {ArrayLike<number>} logits */
-export function explicit(logits) {
+/**
+ * How likely its four levels' logits say a picture is past what the check lets show: from medium on
+ * (nudity or sex), or from low on when it is strict (suggestive too). @param {ArrayLike<number>} logits @param {boolean} [strict]
+ */
+export function explicit(logits, strict = false) {
   const top = Math.max(...Array.from(logits))
   const odds = Array.from(logits, (logit) => Math.exp(logit - top))
-  return (odds[2] + odds[3]) / odds.reduce((sum, odd) => sum + odd)
+  const sum = (/** @type {number[]} */ some) => some.reduce((total, odd) => total + odd)
+  return sum(odds.slice(strict ? 1 : 2)) / sum(odds)
 }

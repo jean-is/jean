@@ -164,11 +164,15 @@ async function stage(message, transfer = [], onMessage = () => {}) {
 
 let busy = Promise.resolve()
 
+/** Whether the check refuses suggestive pictures too (D275): as the organisation set it, which locks it, else as the user did. */
+export const strict = () => (app.policy.pictureCheck ?? /** @type {Record<string, unknown>} */ (app.settings.value).pictureCheck) === 'strict'
+
 /**
- * Whether a picture may show (D275): the check, on this device, finds no nudity or sex in it. Its file
- * comes first if it isn't here, as for a picture from a server on this computer. @param {Uint8Array} bytes
+ * Whether a picture may show (D275): the check, on this device, finds no nudity or sex in it, nor anything
+ * suggestive when it is strict. Its file comes first if it isn't here, as for a picture from a server on this computer.
+ * @param {Uint8Array} bytes
  */
-export const passes = async (bytes) => (await turbo.call({ type: 'check', host: weightsHost(), bytes })).explicit < check.LIMIT
+export const passes = async (bytes) => check.explicit((await turbo.call({ type: 'check', host: weightsHost(), bytes })).logits, strict()) < check.LIMIT
 
 /** Its size in pixels: SD-Turbo's 512 square, the others' in the shape asked. @param {keyof typeof SIZES} shape */
 export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape])

@@ -3,11 +3,17 @@
 // A conversation that ends on a picture opens at its end once the picture is drawn. The fake brain is
 // on this computer, so its pictures go through the check (D275), which a worker stands in for.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks } from './helpers.js'
 
-/** SD-Turbo's worker, where the check runs, answering how likely each picture shows nudity or sex. @param {number} explicit */
-const checking = (explicit) => `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', explicit: ${explicit} })`
-test.beforeEach(({ page }) => page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking(0.01) })))
+/** SD-Turbo's worker, where the check runs, giving each picture its levels: neutral, low (suggestive), medium and high. @param {number[]} logits */
+const checking = (logits) => `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', logits: ${JSON.stringify(logits)} })`
+test.beforeEach(({ page }) => page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([5, 0, 0, 0]) })))
+/** As if this device could make pictures, so Settings › Brains shows them. @param {import('@playwright/test').Page} page */
+const capable = (page) => page.addInitScript(() => {
+  const adapter = { features: new Set(['shader-f16']) }
+  Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => adapter }) })
+  Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 8 })
+})
 
 test('the brain offers pictures when asked to draw, then makes one, kept in the project', async ({ page }) => {
   await start(page)
@@ -69,7 +75,7 @@ test('a picture from this computer showing nudity or sex never shows: its glimps
     const response = await route.fetch()
     await route.fulfill({ response, body: (await response.text()).replace('fake-image-1', 'gpt-image-1.5') })
   })
-  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking(0.9) }))
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([0, 0, 1, 5]) }))
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
@@ -86,6 +92,32 @@ test('a picture from this computer showing nudity or sex never shows: its glimps
     const { app } = await import('/ui/state.js')
     return (await app.fs.list(`${app.projectDir}/files`)).filter((entry) => /\.png$/.test(entry.name))
   })).toEqual([])
+})
+
+test('a suggestive picture shows, unless the check is strict, as the user sets it or the organisation does, which locks it (D275)', async ({ page }) => {
+  await capable(page)
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([0, 5, 0, 0]) }))
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  await ask(page, 'Draw a lighthouse at dusk')
+  await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
+  // Strict, the next one isn't made.
+  let settings = await openSettings(page, 'Brains')
+  const strict = settings.getByRole('switch', { name: 'Refuse suggestive pictures too' })
+  await expect(strict).not.toBeChecked()
+  await expect(settings).toContainText('Nudity and sex are always refused.')
+  await strict.check()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictureCheck)).toBe('strict')
+  await closeSettings(page)
+  await ask(page, 'Draw a lighthouse at dawn')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText(/^No picture: .*Not made/)
+  // The organisation's level wins over the user's, and can't be changed.
+  await page.evaluate(async () => { (await import('/ui/state.js')).app.policy.pictureCheck = 'standard' })
+  settings = await openSettings(page, 'Brains')
+  await expect(strict).not.toBeChecked()
+  await expect(strict).toBeDisabled()
+  await expect(settings).toContainText('Set by your organization')
 })
 
 test('a film is asked first, then shown in the answer, ready to play and save', async ({ page }) => {
@@ -172,11 +204,7 @@ const LOADING = `self.onmessage = ({ data }) => {
 }`
 
 test('pictures on this device: three to choose from as cards, each downloaded once, the one downloaded used, another used instead or removed', async ({ page }) => {
-  await page.addInitScript(() => {
-    const adapter = { features: new Set(['shader-f16']) }
-    Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => adapter }) })
-    Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 8 })
-  })
+  await capable(page)
   for (const worker of ['device-worker', 'stage-worker']) await page.route(`**/caps/pictures/${worker}.js`, (route) => route.fulfill({ contentType: 'text/javascript', body: LOADING }))
   await start(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))

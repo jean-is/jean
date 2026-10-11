@@ -399,12 +399,15 @@ function shown(maker) {
 }
 
 /**
- * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), the three that can make
- * them a card each as tabs, as the Computer's two computers are (D248), the quickest first; under them, the one shown.
+ * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), whether their check is
+ * strict (D275), the three that can make them a card each as tabs, as the Computer's two computers are (D248), the quickest
+ * first; under them, the one shown.
  */
 function panel() {
   const makers = fit.value
   const chosen = viewed()
+  // The check's level, strict or not, unless the organisation set it (D275).
+  const set = app.policy.pictureCheck !== undefined
   return html`${effective.value.settings.films ? html`<section class="setting">
     <div><h3>${t('pictures.films')}</h3><p class="muted">${t('pictures.filmsText')}</p></div>
     <button class="button" @click=${() => updateSettings({ films: false })}>${t('pictures.filmsAsk')}</button>
@@ -412,6 +415,9 @@ function panel() {
   ${chosen ? html`<section class="pictures-device">
     <h3>${t('pictures.device')}</h3>
     <p class="muted">${t('pictures.deviceText')}</p>
+    <div class="setting"><div><span class="rule-kind">${t('pictures.strict')}</span><p class="muted small">${t(set ? 'pictures.locked' : 'pictures.strictText')}</p></div>
+      <input type="checkbox" class="switch" role="switch" aria-label=${t('pictures.strict')} .checked=${device.strict()} ?disabled=${set}
+        @change=${(/** @type {Event} */ e) => updateSettings(/** @type {{}} */ ({ pictureCheck: /** @type {HTMLInputElement} */ (e.target).checked ? 'strict' : undefined }))}></div>
     <div class="makers" role="tablist" aria-label=${t('pictures.device')} @keydown=${move}>${makers.map((maker) => card(maker, chosen))}</div>
     <div role="tabpanel" id="pictures-shown" aria-labelledby=${`pictures-${chosen}`}>${shown(chosen)}</div>
   </section>` : nothing}`
