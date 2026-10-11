@@ -1,6 +1,7 @@
 {
   "a11y.skip": "דילוג לתיבת ההודעה",
   "welcome.question": "במה אפשר לעזור?",
+  "welcome.ai": "זו שיחה עם בינה מלאכותית, לא עם אדם.",
   "starter.discover": "מה אפשר לעשות איתך?",
   "starter.discover.prompt": "מה אפשר לעשות איתך? תן לי 3 דוגמאות לנסות.",
   "starter.summarize": "לסכם טקסט ארוך",

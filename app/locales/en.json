@@ -1,6 +1,7 @@
 {
   "a11y.skip": "Skip to the message box",
   "welcome.question": "What can I do for you?",
+  "welcome.ai": "You’re talking with an AI, not a person.",
   "starter.discover": "What can you do?",
   "starter.discover.prompt": "What can you do for me? Give me 3 examples I can try.",
   "starter.summarize": "Summarize a long text",
