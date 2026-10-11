@@ -10,7 +10,10 @@
 /** @typedef {'lookup' | 'paraphrase' | 'filter' | 'aggregate' | 'multihop' | 'temporal' | 'crosslingual' | 'negative' | 'global'} Kind */
 /** @typedef {{ anchor: string, quote: string, within?: number }} Evidence  anchor: unique in the corpus; quote: first after it */
 /** @typedef {{ kind: 'number', value: number, tolerance?: number } | { kind: 'text', value: string, accept: string[] } | { kind: 'none' }} Answer */
-/** @typedef {{ id: string, type: Kind, lang: string, text: string, answer: Answer, evidence: Evidence[], distractors?: Evidence[], absent?: string[], split: 'dev' | 'test' }} Question */
+/**
+ * @typedef {{ id: string, type: Kind, lang: string, text: string, answer: Answer, evidence: Evidence[], distractors?: Evidence[], absent?: string[], lures?: Evidence[], split: 'dev' | 'test' }} Question
+ * distractors: an earlier value the answer replaced; lures: for a question about something absent, the nearest thing present, which a careless reading would answer with
+ */
 /** @typedef {{ kind: 'h1' | 'h2' | 'h3' | 'p' | 'table' | 'break', text?: string, header?: string[], rows?: string[][], lang?: string }} Block */
 /** @typedef {{ id: string, title: string, file: string, blocks: Block[] }} Section */
 
@@ -642,13 +645,28 @@ function ask(world, sections, size, seed, r, { byId, contractByCode }) {
   for (const p of unique.filter((_, i) => i % 3 !== 2)) add('filter', { lang: 'en', text: `Who is the ${p.title[0]} at the ${p.office.city} office who joined in ${iso(p.start).slice(0, 4)}?`, answer: { kind: 'text', value: p.name, accept: [p.name] }, evidence: [{ ...row(p), quote: `${p.title[0]} ${p.manager || '—'} ${iso(p.start)}` }] })
 
   // aggregate: a customer's invoices in a year, every row needed.
-  /** @type {Map<string, any[]>} */
-  const byYear = new Map()
-  for (const i of world.invoices) byYear.set(`${i.org.name}|${iso(i.day).slice(0, 4)}`, [...(byYear.get(`${i.org.name}|${iso(i.day).slice(0, 4)}`) ?? []), i])
-  for (const [key, list] of shuffle([...byYear.entries()].filter(([, list]) => list.length >= 2 && list.length <= 25))) {
-    const [org, year] = key.split('|')
+  // By year where a customer has a few invoices a year, else by quarter, else by month: two to twenty-five rows each.
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const periods = [(/** @type {string} */ d) => [d.slice(0, 4), d.slice(0, 4)], (/** @type {string} */ d) => [`${d.slice(0, 4)}Q${Math.ceil(Number(d.slice(5, 7)) / 3)}`, `the ${['first', 'second', 'third', 'fourth'][Math.ceil(Number(d.slice(5, 7)) / 3) - 1]} quarter of ${d.slice(0, 4)}`],
+    (/** @type {string} */ d) => [d.slice(0, 7), `${months[Number(d.slice(5, 7)) - 1]} ${d.slice(0, 4)}`]]
+  /** @type {Map<string, { said: string, list: any[] }>} */
+  const groups = new Map()
+  for (const [level, period] of periods.entries()) {
+    for (const i of world.invoices) {
+      const [key, said] = period(iso(i.day))
+      const group = groups.get(`${level}|${i.org.name}|${key}`) ?? { said, list: [] }
+      group.list.push(i)
+      groups.set(`${level}|${i.org.name}|${key}`, group)
+    }
+  }
+  /** @type {Set<string>} */
+  const totalled = new Set()
+  for (const [key, { said, list }] of shuffle([...groups.entries()].filter(([, g]) => g.list.length >= 2 && g.list.length <= 25))) {
+    const org = key.split('|')[1]
+    if (totalled.has(org)) continue
+    totalled.add(org)
     const total = Math.round(list.reduce((sum, i) => sum + i.amount, 0) * 100) / 100
-    add('aggregate', { lang: 'en', text: `What is the total amount invoiced to ${org} in ${year}?`, answer: { kind: 'number', value: total, tolerance: 0.01 }, evidence: list.map((i) => ({ anchor: `${i.id} ${iso(i.day)}`, quote: euros(i.amount), within: 120 })) })
+    add('aggregate', { lang: 'en', text: `What is the total amount invoiced to ${org} in ${said}?`, answer: { kind: 'number', value: total, tolerance: 0.01 }, evidence: list.map((i) => ({ anchor: `${i.id} ${iso(i.day)}`, quote: euros(i.amount), within: 120 })) })
   }
 
   // multihop: the manager of whoever signed a contract.
@@ -704,11 +722,16 @@ function ask(world, sections, size, seed, r, { byId, contractByCode }) {
   const codes = new Set(world.contracts.map((/** @type {any} */ c) => c.code))
   for (const c of shuffle(world.contracts)) {
     const near = [`C-${c.code.slice(2, 5)}${(Number(c.code[5]) + 1) % 10}`, `C-${c.code[2]}${(Number(c.code[3]) + 1) % 10}${c.code.slice(4)}`].find((code) => !codes.has(code) && Number(code.slice(2)) >= 1000)
-    if (near) add('negative', { lang: 'en', text: `What notice period applies to terminating contract ${near}?`, answer: { kind: 'none' }, evidence: [], absent: [near] })
+    if (near) add('negative', { lang: 'en', text: `What notice period applies to terminating contract ${near}?`, answer: { kind: 'none' }, evidence: [], absent: [near],
+      lures: [{ anchor: title(c), quote: c.lang === 'ar' ? `${c.notice} يوما` : c.lang === 'ja' ? `${c.notice}日前` : c.lang === 'fr' ? `(${c.notice}) jours` : String(c.notice) }] })
     if (c.penalty === null && c.lang === 'en') add('negative', { lang: 'en', text: `What late-payment penalty does contract ${c.code} set?`, answer: { kind: 'none' }, evidence: [], absent: [] })
   }
   const present = new Set(world.people.map((/** @type {any} */ p) => p.name))
-  for (const name of shuffle(GIVEN.flatMap((g) => FAMILY.map((f) => `${g} ${f}`))).filter((name) => !present.has(name)).slice(0, 6)) add('negative', { lang: 'en', text: `What is ${name}'s phone extension?`, answer: { kind: 'none' }, evidence: [], absent: [name] })
+  for (const name of shuffle(GIVEN.flatMap((g) => FAMILY.map((f) => `${g} ${f}`))).filter((name) => !present.has(name))) {
+    const [given] = name.split(' ')
+    const namesake = world.people.find((/** @type {any} */ p) => p.name.startsWith(`${given} `))
+    if (namesake) add('negative', { lang: 'en', text: `What is ${name}'s phone extension?`, answer: { kind: 'none' }, evidence: [], absent: [name], lures: [{ ...row(namesake), quote: `${iso(namesake.start)} ${namesake.ext}` }] })
+  }
 
   // global: everything the board put off, incidents counted at a site in a year.
   const postponed = world.meetings.filter((/** @type {any} */ m) => m.outcome === 'postponed')

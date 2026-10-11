@@ -25,7 +25,7 @@ async function extracted(c, layout, ext) {
 /** Every question's evidence and distractors found, each anchor once. @param {Question[]} questions @param {{ name: string, pages: string[] }[]} found */
 function assertFound(questions, found) {
   for (const q of questions) {
-    for (const e of [...q.evidence, ...(q.distractors ?? [])]) {
+    for (const e of [...q.evidence, ...(q.distractors ?? []), ...(q.lures ?? [])]) {
       assert.equal(occurrences(found, e.anchor), 1, `${q.id}: "${e.anchor}" once`)
       assert.ok(place(found, e), `${q.id}: "${e.quote}" after "${e.anchor}"`)
     }

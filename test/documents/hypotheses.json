@@ -1,0 +1,49 @@
+{
+  "$comment": "Registered before any result on the test split; scripts/documents.js reads these rules, marks each hypothesis confirmed, refuted or inconclusive, and writes the commit that last changed this file into results.md. Parameters (passage size, BM25's k1 and b, RRF's k, embedding prefixes, the better embedder) are chosen on the dev split only. A rule's CI is a paired bootstrap 95% interval (10,000 resamples) of the mean difference between two strategies over the same questions.",
+  "registered": "2026-10-11",
+  "corpus": { "seeds": [1, 2, 3], "split": "test", "layout": "compendium", "format": "pdf", "sizes": ["s", "m", "l", "xl"] },
+  "metrics": {
+    "recall@B": "share of a question's evidence spans at least half inside the passages a strategy returns, best first, until their tokens (Jean's estimate, bytes / 3) reach B",
+    "strict@B": "1 when every evidence span is covered within B, else 0",
+    "mrr": "1 / rank of the first passage covering any evidence, among the first 50; 0 if none",
+    "lure@B": "for a question about something absent: 1 when a lure (the nearest thing present) is covered within B",
+    "overlap": "share of the question's content words its evidence holds (test/documents/text.js); low: at most 0.2",
+    "accuracy": "answer eval: the final 'Answer:' line matches the gold (numbers within tolerance, text by its accepted words, 'none' for absent things)",
+    "hallucination": "answer eval: a wrong answer that does not say the documents lack it, over all answers",
+    "faithfulness": "answer eval: share of cited sources [n] whose text, as the brain received it, holds a gold evidence quote"
+  },
+  "budgets": [8000, 32000, 128000],
+  "hypotheses": [
+    { "id": "H1", "claim": "No vector database: a flat scan of Int8 vectors stays under 100 ms at p95 for ten times XL's passages; what dense retrieval costs is the embedding at ingestion",
+      "rule": { "bench": "scan", "passages": "10xXL", "p95Ms": { "lt": 100 } } },
+    { "id": "H2", "claim": "On lookups, filters and the latest of several values, lexical search finds the evidence at least as well as dense retrieval (within 2 points); on questions about absent things it surfaces lures no more often",
+      "rule": { "size": "xl", "budget": 32000, "types": ["lookup", "filter", "temporal"], "metric": "recall@B", "a": "lexical", "b": "dense", "ciLow": { "gte": -0.02 },
+        "and": { "types": ["negative"], "metric": "lure@B", "a": "dense", "b": "lexical", "ciLow": { "gte": -0.02 } } } },
+    { "id": "H3", "claim": "Manipulation check: with the user's own words as the query, dense retrieval beats lexical search on low-overlap paraphrases and other languages; if not, the question set is audited before anything is concluded",
+      "rule": { "size": "xl", "budget": 32000, "types": ["paraphrase", "crosslingual"], "overlap": "low", "metric": "recall@B", "a": "dense", "b": "lexical", "ciLow": { "gt": 0 } } },
+    { "id": "H4", "claim": "When the brain writes its own queries, lexical search answers paraphrases and other languages within 5 points of hybrid retrieval",
+      "rule": { "answers": true, "size": "xl", "types": ["paraphrase", "crosslingual"], "metric": "accuracy", "a": "search", "b": "search+meaning", "ci": { "within": [-0.05, 0.05] }, "refutedIf": { "ciHigh": { "lt": -0.05 } }, "questions": 200 } },
+    { "id": "H5", "claim": "Totals and counts across the whole need exhaustive search and a script, not the best passages: with a script, at least 80% are right and at least 20 points more than without",
+      "rule": { "answers": true, "size": "xl", "types": ["aggregate", "global"], "metric": "accuracy", "a": "search+script", "b": "search", "aAtLeast": 0.8, "ciLow": { "gte": 0.2 }, "questions": 60 } },
+    { "id": "H6", "claim": "Ingestion can stay in memory: the first search of an XL document, its index built on the spot, takes under 1.5 s in Chromium slowed four times",
+      "rule": { "bench": "first-search", "size": "xl", "cpuThrottle": 4, "ms": { "lt": 1500 } } },
+    { "id": "H7", "claim": "For a brain with 32k of context, the pages that match the question beat the first pages by at least 15 points on lookups",
+      "rule": { "answers": true, "brain": "small", "sizes": ["l", "xl"], "types": ["lookup"], "metric": "accuracy", "a": "preselect", "b": "pages", "mean": { "gte": 0.15 }, "ciLow": { "gt": 0 }, "questions": 60 } },
+    { "id": "H8", "claim": "Brain-written summaries made at ingestion do not beat exhaustive search with helpers on counts across the whole by 10 points or more",
+      "rule": { "answers": true, "sizes": ["l", "xl"], "types": ["global"], "metric": "accuracy", "a": "summaries", "b": "search+mapreduce", "ciHigh": { "lt": 0.1 }, "questions": 57 } }
+  ],
+  "targets": {
+    "$comment": "What great results mean for the strategy Jean would ship, on the answer eval at XL",
+    "accuracy": 0.85,
+    "hallucination": { "max": 0.05 },
+    "faithfulness": 0.95,
+    "negativeAbstention": 0.9
+  },
+  "questions": {
+    "$comment": "Questions per size and kind over the three seeds, dev / test, at registration",
+    "s": { "lookup": [3, 15], "paraphrase": [3, 9], "filter": [3, 9], "aggregate": [1, 8], "multihop": [0, 9], "temporal": [3, 6], "crosslingual": [4, 14], "negative": [3, 15], "global": [2, 4] },
+    "m": { "lookup": [13, 47], "paraphrase": [5, 25], "filter": [9, 36], "aggregate": [8, 28], "multihop": [9, 27], "temporal": [9, 27], "crosslingual": [12, 48], "negative": [10, 35], "global": [4, 14] },
+    "l": { "lookup": [25, 95], "paraphrase": [14, 58], "filter": [18, 72], "aggregate": [14, 58], "multihop": [15, 57], "temporal": [15, 57], "crosslingual": [22, 86], "negative": [18, 72], "global": [7, 23] },
+    "xl": { "lookup": [36, 144], "paraphrase": [17, 73], "filter": [24, 96], "aggregate": [17, 73], "multihop": [18, 72], "temporal": [18, 72], "crosslingual": [30, 114], "negative": [22, 86], "global": [8, 34] }
+  }
+}
