@@ -214,6 +214,8 @@
   "kind.execute.label": "Hacer cálculos",
   "kind.fetch.label": "Usar internet",
   "kind.other.label": "Enviar y compartir",
+  "seal.title": "El sello de este dispositivo",
+  "seal.text": "Los certificados guardados aquí se sellan con una clave que nunca sale de este dispositivo. Quien confíe en ellos puede comprobar esta huella o acordarla contigo de antemano.",
   "pages.title": "Páginas web",
   "pages.text": "Lo que puede hacer una página web cuando se abre junto a la conversación.",
   "pages.scripts": "Ejecutar su código",

@@ -500,7 +500,21 @@ function approvals() {
       </li>`
     })}</ul>
   </section>
-  ${pages()}`
+  ${pages()}
+  ${seal()}`
+}
+
+/** This device's seal (D274), once About this answer is here: its key's fingerprint, which whoever relies on its certificates checks, or agrees on beforehand. */
+const sealPrint = signal('')
+function seal() {
+  if (!loaded.value.has('receipt')) return nothing
+  if (!sealPrint.value) import('../caps/receipt/receipt.js').then(({ fingerprint }) => fingerprint()).then((print) => (sealPrint.value = print))
+  return html`<section>
+    <h3>${t('seal.title')}</h3>
+    <p class="muted">${t('seal.text')}</p>
+    <span class="key-command"><code dir="ltr">${sealPrint.value.match(/.{1,4}/g)?.join(' ')}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
+      @click=${() => navigator.clipboard.writeText(sealPrint.value).then(() => notify(t('toast.copied')))}>${icons.copy}</button></span>
+  </section>`
 }
 
 /** What a web page may do when it opens beside the conversation (D143), each unless the organisation set it. */

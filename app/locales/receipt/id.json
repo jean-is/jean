@@ -18,5 +18,8 @@
   "receipt.here": "di perangkat ini",
   "receipt.reached": "Alamat lain yang dihubungi",
   "receipt.save": "Simpan sertifikat",
-  "receipt.file": "Sertifikat {date}"
+  "receipt.proof": "Simpan bukti",
+  "receipt.file": "Sertifikat {date}",
+  "receipt.proof.text": "Sertifikat menunjukkan bagaimana jawaban ini dibuat, tidak pernah kata-katanya: siapa pun boleh memilikinya. Bukti menambahkan permintaan dan jawabannya, untuk mereka yang boleh membacanya.",
+  "receipt.proof.file": "Bukti {date}"
 }

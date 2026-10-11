@@ -18,5 +18,8 @@
   "receipt.here": "במכשיר הזה",
   "receipt.reached": "פניות נוספות אל",
   "receipt.save": "שמירת התעודה",
-  "receipt.file": "תעודה {date}"
+  "receipt.proof": "שמירת ההוכחה",
+  "receipt.file": "תעודה {date}",
+  "receipt.proof.text": "התעודה מראה איך נוצרה התשובה הזו, אף פעם לא את מילותיה: כל אחד יכול לקבל אותה. ההוכחה מוסיפה את הבקשה ואת התשובה, למי שמותר לו לקרוא אותן.",
+  "receipt.proof.file": "הוכחה {date}"
 }

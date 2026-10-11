@@ -211,6 +211,8 @@
   "kind.execute.label": "Berechnungen ausführen",
   "kind.fetch.label": "Das Internet nutzen",
   "kind.other.label": "Senden und teilen",
+  "seal.title": "Das Siegel dieses Geräts",
+  "seal.text": "Hier gespeicherte Zertifikate werden mit einem Schlüssel versiegelt, der dieses Gerät nie verlässt. Wer sich auf sie verlässt, kann diesen Fingerabdruck prüfen oder ihn vorab mit dir vereinbaren.",
   "pages.title": "Webseiten",
   "pages.text": "Was eine Webseite darf, wenn sie neben dem Gespräch geöffnet wird.",
   "pages.scripts": "Ihren Code ausführen",

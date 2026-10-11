@@ -21,6 +21,8 @@ export interface BrainConfig {
   headers?: Record<string, string>
   /** The projects it is used in, by id; without them, every one (D194) */
   projects?: string[]
+  /** Where it answers, ISO 3166, as the user or policy declares it: certificates name it (D274) */
+  jurisdiction?: string
 }
 
 // ─── Provider-neutral chat ───────────────────────────────────────────────────

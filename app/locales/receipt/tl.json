@@ -18,5 +18,8 @@
   "receipt.here": "sa device na ito",
   "receipt.reached": "Naabot din",
   "receipt.save": "I-save ang sertipiko",
-  "receipt.file": "Sertipiko {date}"
+  "receipt.proof": "I-save ang patunay",
+  "receipt.file": "Sertipiko {date}",
+  "receipt.proof.text": "Ipinapakita ng sertipiko kung paano ginawa ang sagot na ito, hindi kailanman ang mga salita nito: puwede itong hawakan ng kahit sino. Idinadagdag ng patunay ang hiling at ang sagot, para sa mga puwedeng bumasa ng mga ito.",
+  "receipt.proof.file": "Patunay {date}"
 }

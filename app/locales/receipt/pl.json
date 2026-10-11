@@ -18,5 +18,8 @@
   "receipt.here": "na tym urządzeniu",
   "receipt.reached": "Połączono też z",
   "receipt.save": "Zapisz certyfikat",
-  "receipt.file": "Certyfikat {date}"
+  "receipt.proof": "Zapisz dowód",
+  "receipt.file": "Certyfikat {date}",
+  "receipt.proof.text": "Certyfikat pokazuje, jak powstała ta odpowiedź, nigdy jej treści: każdy może go mieć. Dowód dodaje prośbę i odpowiedź dla tych, którzy mogą je przeczytać.",
+  "receipt.proof.file": "Dowód {date}"
 }

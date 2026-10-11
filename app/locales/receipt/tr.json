@@ -18,5 +18,8 @@
   "receipt.here": "bu cihazda",
   "receipt.reached": "Ayrıca ulaşılan adresler",
   "receipt.save": "Sertifikayı kaydet",
-  "receipt.file": "Sertifika {date}"
+  "receipt.proof": "Kanıtı kaydet",
+  "receipt.file": "Sertifika {date}",
+  "receipt.proof.text": "Sertifika bu yanıtın nasıl yapıldığını gösterir, sözcüklerini asla: Herkes ona sahip olabilir. Kanıt, isteği ve yanıtı ekler; onları okuyabilecek kişiler için.",
+  "receipt.proof.file": "Kanıt {date}"
 }
