@@ -1,7 +1,8 @@
 // Talk (0.1) and reply suggestions (0.3): an answer streams in, titled meanwhile, its follow-ups become
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
 // the conversation, in the address (D137), and a reload comes back to the line being read. A request
-// whose connection drops before its answer starts is asked again (D202).
+// whose connection drops before its answer starts is asked again (D202), and a key connects though
+// its service is too busy to list its models.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, BRAIN_URL } from './helpers.js'
 
@@ -39,6 +40,30 @@ test('a request whose connection drops before its answer starts is asked again a
   expect(dropped).toBe(1)
   await expect(page.locator('.msg-error')).toHaveCount(0)
   await expect(page.locator('.msg-jean .activity > summary')).toContainText('Answered with')
+})
+
+test('a key whose service is too busy to list its models connects all the same, on its first model, and the list is asked for later', async ({ page }) => {
+  await start(page)
+  // Gemini counts its list of models against the key's limits, and has taken the key when it answers 429.
+  let listed = 0
+  await page.route('https://generativelanguage.googleapis.com/**', (route) => (listed++, route.fulfill({ status: 429, json: { error: { code: 429, status: 'RESOURCE_EXHAUSTED' } } })))
+  await page.locator('.brain-chip').click()
+  const dialog = page.locator('app-settings dialog[open]')
+  const way = dialog.locator('.way.is-key')
+  await way.locator('summary').click()
+  await way.locator('select[name="provider"]').selectOption('gemini')
+  await way.locator('input[name="key"]').fill('test-key')
+  await way.locator('.button.primary').click()
+  await expect(dialog).toBeHidden()
+  const { brain, model } = await page.evaluate(async () => ({
+    brain: (await import('/ui/state.js')).app.settings.value.brains[0],
+    model: (await import('/core/llm.js')).PROVIDERS.gemini.defaultModel,
+  }))
+  expect(brain).toMatchObject({ provider: 'gemini', model })
+  expect(listed).toBe(1)
+  // The brains to pick from ask for it again.
+  await page.locator('.brain-chip').click()
+  await expect.poll(() => listed).toBe(2)
 })
 
 test('under a request, when it was asked, Copy and Try again; under an answer, when it came (D188)', async ({ page }) => {

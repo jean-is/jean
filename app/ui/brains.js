@@ -26,10 +26,15 @@ export async function connectBrain({ provider, apiKey, baseURL, model }) {
     ...(provider === 'openrouter' && { headers: { 'HTTP-Referer': location.origin, 'X-Title': BRAND.name } }),
   }
   await checkKey({ brain, apiKey })
-  const models = await listModels({ brain, apiKey })
-  if (!brain.model) brain.model = models[0]?.id ?? ''
+  // A provider counts its list of models against the key's limits, and answers 429 only once it has taken the key:
+  // with a model to start on, the brain is connected, and the list is asked for again later.
+  const models = await listModels({ brain, apiKey }).catch((error) => {
+    if (error?.code === 'rate_limit' && brain.model) return undefined
+    throw error
+  })
+  if (!brain.model) brain.model = models?.[0]?.id ?? ''
   if (apiKey) await setSecret(app.fs, brain.id, apiKey)
-  app.models.value = { ...app.models.value, [brain.id]: models }
+  if (models) app.models.value = { ...app.models.value, [brain.id]: models }
   await updateSettings({ brains: [...app.settings.value.brains, brain], activeBrain: brain.id })
   return brain
 }
