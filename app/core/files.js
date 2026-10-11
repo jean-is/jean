@@ -3,6 +3,7 @@
 // same file dropped twice is stored once. Conversations link to files, never copy them.
 import { join, readJSON, walk, writeJSON } from './fs.js'
 import { isPicture } from './events.js'
+import { lexicon, lookup, every } from './search.js'
 
 /** @import { FS, Envelope, ResourceLink, DocumentPart } from './types.js' */
 /** @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string }} FileMeta */
@@ -15,8 +16,12 @@ export async function sha256Hex(bytes) {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
+const encoder = new TextEncoder()
+/** @param {string} text */
+const utf8 = (text) => encoder.encode(text).length
+
 /** Rough and deliberately high: UTF-8 bytes / 3 (about right for CJK, generous for Latin). @param {string} text */
-export const estimateTokens = (text) => Math.ceil(new TextEncoder().encode(text).length / 3)
+export const estimateTokens = (text) => Math.ceil(utf8(text) / 3)
 
 /** @param {string[]} pages @param {number} [first] the first one's number */
 export const joinPages = (pages, first = 1) => pages.map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')
@@ -72,6 +77,84 @@ export function pagesThatFit(pages, budgetTokens) {
     last++
   }
   return [1, Math.max(last, 1)]
+}
+
+/**
+ * A document's pages cut for searching: passages of about `size` tokens, never across a page, cut
+ * where a line ends (a longer line in pieces). Each knows its page, where it lies in it, and what
+ * heads it: the last heading above (a line starting with #), else its page's first line that isn't
+ * on most pages' tops (a running header, a page number), and a table's column names.
+ * @param {string[]} pages @returns {{ page: number, start: number, end: number, head: string }[]}
+ */
+export function passages(pages, size = 200) {
+  /** @type {Map<string, number>} */
+  const tops = new Map()
+  for (const page of pages) for (const line of page.split('\n', 3)) tops.set(line.replace(/\d+/g, '#'), (tops.get(line.replace(/\d+/g, '#')) ?? 0) + 1)
+  /** @type {{ page: number, start: number, end: number, head: string, bytes: number }[]} */
+  const out = []
+  let heading = ''
+  pages.forEach((text, i) => {
+    let first = ''
+    let columns = ''
+    let at = 0
+    /** @type {typeof out[number] | null} */
+    let passage = null
+    for (const line of text.split('\n')) {
+      const tabular = /\t|^\|/.test(line)
+      const bytes = utf8(line) + 1
+      const step = Math.max(1, Math.floor(size * 3 * (line.length + 1) / bytes))
+      for (let cut = at; cut <= at + line.length; cut += step) {
+        const end = Math.min(at + line.length, cut + step)
+        const piece = bytes * (end - cut + 1) / (line.length + 1)
+        if (passage && passage.bytes + piece > size * 3) passage = (out.push(passage), null)
+        // A passage that starts with a heading has its own.
+        passage ??= { page: i + 1, start: cut, end, bytes: 0, head: cut === at && /^#/.test(line) ? '' : [heading || first, tabular && columns !== line && columns !== (heading || first) ? columns : ''].filter(Boolean).join('\n') }
+        passage.end = end
+        passage.bytes += piece
+      }
+      if (/^#/.test(line)) heading = line.replace(/^#+\s*/, '')
+      else if (!first && line.trim() && !(pages.length > 2 && (tops.get(line.replace(/\d+/g, '#')) ?? 0) > pages.length / 2)) first = line.trim().slice(0, 120)
+      columns = tabular ? columns || line : ''
+      at += line.length + 1
+    }
+    if (passage) out.push(passage)
+  })
+  return out.filter((p) => pages[p.page - 1].slice(p.start, p.end).trim()).map(({ page, start, end, head }) => ({ page, start, end, head }))
+}
+
+/** A document's passages and their index, made in memory. @param {string[]} pages */
+export function indexOf(pages, size = 200) {
+  const cut = passages(pages, size)
+  return { passages: cut, lexicon: lexicon(cut.map((p) => `${p.head}\n${pages[p.page - 1].slice(p.start, p.end)}`)) }
+}
+
+/** Page numbers as ranges. @param {number[]} numbers @returns {[number, number][]} */
+const ranges = (numbers) => [...new Set(numbers)].sort((a, b) => a - b).reduce((/** @type {[number, number][]} */ out, n) => {
+  const last = out[out.length - 1]
+  if (last && n === last[1] + 1) last[1] = n
+  else out.push([n, n])
+  return out
+}, [])
+
+/**
+ * The pages a brain reads of a file too long for its budget: page 1, then those whose passages best
+ * match the message; the first pages when nothing in it stands out (no word rarer than most).
+ * @param {string[]} pages @param {string} message @param {number} budget tokens
+ * @returns {[number, number][]} ranges of pages, 1-based
+ */
+export function preselect(pages, message, budget, index = indexOf(pages)) {
+  const hits = lookup([index.lexicon], message)
+  if (!hits.length || hits[0].score < 2 || pages.reduce((sum, page) => sum + estimateTokens(page), 0) <= budget) return [pagesThatFit(pages, budget)]
+  const chosen = [1]
+  let used = estimateTokens(pages[0])
+  for (const { passage } of hits) {
+    const page = index.passages[passage].page
+    const cost = estimateTokens(pages[page - 1])
+    if (chosen.includes(page) || used + cost > budget) continue
+    chosen.push(page)
+    used += cost
+  }
+  return ranges(chosen)
 }
 
 /**
@@ -188,4 +271,70 @@ export async function weigh(fs) {
     kinds[kind] += size
   }))
   return kinds
+}
+
+/**
+ * The `search_files` tool: the passages of the files the brain may read that hold the words asked,
+ * best first, each with its file, page and heading; or every place a phrase is, counted, in order.
+ * A file's index is made in memory the first time it is searched (its text never changes: files are
+ * named by content). A file not shared in the task is numbered as a source by the turn.
+ * @param {{ fs: FS, projectDir: () => string, files: (signal?: AbortSignal) => ResourceLink[], maxTokens?: number }} options
+ * @returns {import('./loop.js').Tool}
+ */
+export function searchTool({ fs, projectDir, files, maxTokens = 6000 }) {
+  /** @type {Map<string, Promise<{ pages: string[], index: ReturnType<typeof indexOf> }>>} */
+  const indexes = new Map()
+  /** @param {ResourceLink} link */
+  const load = (link) => indexes.get(link.uri) ?? indexes.set(link.uri, fileText(fs, projectDir(), link.uri).then((text) => {
+    const pages = splitPages(text ?? '')
+    return { pages, index: indexOf(pages) }
+  })).get(link.uri)
+  return {
+    spec: {
+      name: 'search_files',
+      description: 'Find passages in the files by words they hold: names, numbers and codes work best; write them as the files do, in their language. With every, each place a phrase is, counted: for totals, or the latest of several versions.',
+      parameters: { type: 'object', properties: { query: { type: 'string' }, file: { type: 'string', description: 'One file, by name; omit for all' }, every: { type: 'boolean' } }, required: ['query'] },
+    },
+    kind: 'search',
+    title: (args) => `Search ${args?.query ?? ''}`,
+    run: async (args, ctx) => {
+      const query = String(args?.query ?? '')
+      const wanted = String(args?.file ?? '').trim().toLowerCase()
+      const links = files(ctx?.signal).filter((link) => !isPicture(link) && (!wanted || link.name.toLowerCase() === wanted))
+      const loaded = /** @type {{ pages: string[], index: ReturnType<typeof indexOf> }[]} */ (await Promise.all(links.map(load)))
+      /** @type {Map<number, number>} */
+      const numbers = new Map()
+      const source = (/** @type {number} */ d) => numbers.get(d) ?? numbers.set(d, links[d]._meta?.source ?? ctx?.cite?.([{ title: links[d].name, url: links[d].uri }])[0] ?? d + 1).get(d)
+      const head = (/** @type {number} */ d, /** @type {number} */ page) => `Source [${source(d)}]: ${links[d].name}, page ${page}`
+      let out = ''
+      const room = (/** @type {string} */ text) => !out || estimateTokens(out + text) <= maxTokens
+      if (args?.every) {
+        const found = loaded.map(({ pages }) => every(pages, query))
+        const total = found.reduce((sum, list) => sum + list.length, 0)
+        const shown = new Set()
+        for (const [d, list] of found.entries()) {
+          for (const { page, at } of list) {
+            const text = loaded[d].pages[page - 1]
+            const line = text.slice(text.lastIndexOf('\n', at) + 1, (text.indexOf('\n', at) + 1 || text.length + 1) - 1).trim().slice(0, 300)
+            const block = `${shown.has(`${d}:${page}`) ? '' : `\n${head(d, page)}`}\n${line}`
+            if (!room(block)) break
+            shown.add(`${d}:${page}`)
+            out += block
+          }
+          if (list.length && !shown.has(`${d}:${list[list.length - 1].page}`)) out += `\n(${links[d].name}: also on pages ${ranges(list.map((place) => place.page)).map(([a, b]) => (a === b ? a : `${a}–${b}`)).join(', ')})`
+        }
+        const count = found.filter((list) => list.length).length
+        if (total) return `${total} ${total === 1 ? 'place' : 'places'} in ${count} ${count === 1 ? 'file' : 'files'}:${out}`
+      } else {
+        for (const { doc, passage } of lookup(loaded.map((l) => l.index.lexicon), query)) {
+          const p = loaded[doc].index.passages[passage]
+          const block = `${out ? '\n\n' : ''}${head(doc, p.page)}${p.head && !/^#/.test(loaded[doc].pages[p.page - 1].slice(p.start)) ? ` — ${p.head.split('\n')[0]}` : ''}\n${loaded[doc].pages[p.page - 1].slice(p.start, p.end).trim()}`
+          if (!room(block)) break
+          out += block
+        }
+        if (out) return out
+      }
+      return `Nothing in ${wanted && links.length ? links[0].name : 'the files'} matches "${query}".`
+    },
+  }
 }

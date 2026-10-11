@@ -2,7 +2,7 @@
 // script, and what is found is marked where it stands in the text.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fold, terms, ranges, passage } from '../app/core/search.js'
+import { fold, terms, ranges, passage, keys, lexicon, lookup, every } from '../app/core/search.js'
 
 test('fold: lower case without accents, as long as the text', () => {
   assert.equal(fold('Résumé CAFÉ Ñandú'), 'resume cafe nandu')
@@ -43,4 +43,29 @@ test('passage: around a place, from the start of a word where there are spaces',
   const emoji = `${'😀'.repeat(40)}x会議`
   const [from] = passage(emoji, emoji.indexOf('会'))
   assert.equal(emoji.codePointAt(from), 0x1f600)
+})
+
+test('keys: folded words, and a code like C-4471 whole as well as in its parts', () => {
+  assert.deepEqual(keys('Contract C-4471, préavis'), ['contract', 'c', '4471', 'preavis', 'c-4471'])
+  assert.ok(keys('解約予告期間').length > 1, 'Japanese splits without spaces')
+})
+
+test('lexicon and lookup: BM25 over several documents at once, rare words weighing most, accents and case aside', () => {
+  const a = lexicon(['Contract C-4471: a notice period of sixty days.', 'Invoices are due within thirty days of issue.', 'Contract C-4417: a notice period of ninety days.'])
+  const b = lexicon(['Préavis de résiliation : quatre-vingt-dix jours.', 'Amendment 2 to contract C-4471: the notice period is changed to 90 days.'])
+  const hits = lookup([a, b], 'notice period of contract C-4471')
+  assert.deepEqual(new Set(hits.slice(0, 2).map((hit) => `${hit.doc}:${hit.passage}`)), new Set(['0:0', '1:1']), 'the code decides, not the words every contract has')
+  assert.ok(hits.findIndex((hit) => hit.doc === 0 && hit.passage === 2) > 1, 'its look-alike comes after')
+  assert.deepEqual(lookup([b], 'PREAVIS resiliation').map((hit) => hit.passage), [0])
+  assert.deepEqual(lookup([a, b], 'zebra'), [])
+  assert.ok(hits.every((hit, i) => !i || hit.score <= hits[i - 1].score), 'best first')
+})
+
+test('every: each place a phrase is, in order, case, accents and line breaks aside, never inside a longer code', () => {
+  const pages = ['Contract C-4471 starts.\nSee contract\nc-4471 again, not C-44710.', 'Nothing here.', 'Le contrat C-4471 est résilié.']
+  assert.deepEqual(every(pages, 'contract C-4471'), [{ page: 1, at: 0 }, { page: 1, at: 28 }])
+  assert.deepEqual(every(pages, 'C-4471').map((place) => place.page), [1, 1, 3])
+  assert.deepEqual(every(pages, 'RESILIE'), [{ page: 3, at: 22 }])
+  assert.deepEqual(every(pages, 'C-4472'), [])
+  assert.deepEqual(every(['解約予告期間は九十日'], '予告期間'), [{ page: 1, at: 2 }])
 })

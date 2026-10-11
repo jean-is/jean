@@ -1,35 +1,74 @@
-// BM25 over short texts, with words split by Intl.Segmenter, so it works in every
-// script (CJK and Thai have no spaces). One engine for tools, past conversations and requests.
-// And searching as people type (D133): part of a word is enough, case and accents aside.
+// BM25 with words split by Intl.Segmenter, so it works in every script (CJK and Thai have no spaces),
+// over an index made once: one engine for tools, past conversations, requests and documents.
+// Every place a phrase is, for counting. And searching as people type (D133): part of a word is
+// enough, case and accents aside.
+
+/** @type {Map<string | undefined, Intl.Segmenter>} */
+const segmenters = new Map()
 
 /** Lower-cased words of a text. @param {string} text @param {string} [lang] */
 export function words(text, lang) {
-  const segmenter = new Intl.Segmenter(lang, { granularity: 'word' })
+  let segmenter = segmenters.get(lang)
+  if (!segmenter) segmenters.set(lang, (segmenter = new Intl.Segmenter(lang, { granularity: 'word' })))
   return [...segmenter.segment(text.toLowerCase())].filter((s) => s.isWordLike).map((s) => s.segment)
 }
 
+/** What a text is searched by: its folded words, and a code such as C-4471 whole as well as in parts. @param {string} text */
+export function keys(text) {
+  const folded = fold(text)
+  return [...words(folded), ...(folded.match(/\p{L}+-\d+/gu) ?? [])]
+}
+
+/** @typedef {{ lengths: Uint32Array, total: number, postings: Map<string, Uint32Array> }} Lexicon  postings: [text, count, text, count, …] */
+
+/** An index of texts for BM25. @param {string[]} texts @param {(text: string) => string[]} [split] @returns {Lexicon} */
+export function lexicon(texts, split = keys) {
+  const lengths = new Uint32Array(texts.length)
+  /** @type {Map<string, number[]>} */
+  const lists = new Map()
+  texts.forEach((text, i) => {
+    /** @type {Map<string, number>} */
+    const counts = new Map()
+    const all = split(text)
+    lengths[i] = all.length
+    for (const term of all) counts.set(term, (counts.get(term) ?? 0) + 1)
+    for (const [term, n] of counts) lists.get(term)?.push(i, n) ?? lists.set(term, [i, n])
+  })
+  return { lengths, total: lengths.reduce((sum, n) => sum + n, 0), postings: new Map([...lists].map(([term, list]) => [term, Uint32Array.from(list)])) }
+}
+
 /**
- * Ranks documents against a query. Returns indexes of the documents that match at all,
- * best first.
- * @param {string[]} docs @param {string} query
- * @returns {{ index: number, score: number }[]}
+ * The texts of several indexes that match a query, best first, scored as if they were one index.
+ * @param {Lexicon[]} lexicons @param {string} query @returns {{ doc: number, passage: number, score: number }[]}
  */
-export function bm25(docs, query, k1 = 1.2, b = 0.75) {
-  const tokenized = docs.map((doc) => words(doc))
-  const average = tokenized.reduce((sum, doc) => sum + doc.length, 0) / (docs.length || 1)
-  const terms = [...new Set(words(query))]
-  const idf = new Map(terms.map((term) => {
-    const n = tokenized.filter((doc) => doc.includes(term)).length
-    return [term, Math.log(1 + (docs.length - n + 0.5) / (n + 0.5))]
-  }))
-  return tokenized.map((doc, index) => {
-    let score = 0
-    for (const term of terms) {
-      const f = doc.filter((word) => word === term).length
-      if (f) score += (idf.get(term) ?? 0) * (f * (k1 + 1)) / (f + k1 * (1 - b + b * doc.length / (average || 1)))
-    }
-    return { index, score }
-  }).filter((hit) => hit.score > 0).sort((x, y) => y.score - x.score)
+export function lookup(lexicons, query, split = keys, k1 = 1.2, b = 0.75) {
+  const n = lexicons.reduce((sum, l) => sum + l.lengths.length, 0)
+  const average = lexicons.reduce((sum, l) => sum + l.total, 0) / (n || 1)
+  const scores = lexicons.map((l) => new Float64Array(l.lengths.length))
+  for (const term of new Set(split(query))) {
+    const df = lexicons.reduce((sum, l) => sum + (l.postings.get(term)?.length ?? 0) / 2, 0)
+    const idf = Math.log(1 + (n - df + 0.5) / (df + 0.5))
+    lexicons.forEach((l, d) => {
+      const list = l.postings.get(term) ?? []
+      for (let i = 0; i < list.length; i += 2) scores[d][list[i]] += idf * (list[i + 1] * (k1 + 1)) / (list[i + 1] + k1 * (1 - b + b * l.lengths[list[i]] / (average || 1)))
+    })
+  }
+  return scores.flatMap((list, doc) => [...list].flatMap((score, passage) => (score > 0 ? [{ doc, passage, score }] : []))).sort((x, y) => y.score - x.score)
+}
+
+/** Documents that match a query, best first. @param {string[]} docs @param {string} query @returns {{ index: number, score: number }[]} */
+export const bm25 = (docs, query) => lookup([lexicon(docs)], query).map(({ passage, score }) => ({ index: passage, score }))
+
+/**
+ * Every place a phrase is in some pages, in order: case, accents and line breaks aside, and never
+ * inside a longer word or code where words have spaces between them.
+ * @param {string[]} pages @param {string} phrase @returns {{ page: number, at: number }[]}
+ */
+export function every(pages, phrase) {
+  const parts = fold(phrase.normalize('NFC')).trim().split(/\s+/).filter(Boolean)
+  if (!parts.length) return []
+  const pattern = new RegExp(`${/^[a-z0-9]/.test(parts[0]) ? '(?<![a-z0-9])' : ''}${parts.map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')}${/[a-z0-9]$/.test(parts[parts.length - 1]) ? '(?![a-z0-9])' : ''}`, 'g')
+  return pages.flatMap((text, i) => [...fold(text).matchAll(pattern)].map((match) => ({ page: i + 1, at: match.index ?? 0 })))
 }
 
 /**

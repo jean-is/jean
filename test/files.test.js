@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../app/core/fs.js'
 import { crc32, readZip, writeZip } from '../app/core/zip.js'
 import { decodeText, docx, extractPages, extractable, isBinary, pageText, paginate, sheetRows, slideText } from '../app/caps/files/extract.js'
-import { addFile, documentPart, estimateTokens, fileMeta, fileText, joinPages, pagesThatFit, parsePages, readTool, splitPages, weigh } from '../app/core/files.js'
+import { addFile, documentPart, estimateTokens, fileMeta, fileText, indexOf, joinPages, pagesThatFit, parsePages, passages, preselect, readTool, searchTool, splitPages, weigh } from '../app/core/files.js'
 import { isPicture } from '../app/core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../app/caps/backup/archive.js'
 import { officePage } from '../app/caps/files/office.js'
@@ -334,6 +334,58 @@ test('parsePages', () => {
   assert.deepEqual(parsePages('7-99', 9), [7, 9])
   assert.deepEqual(parsePages(12, 9), [9, 9])
   assert.deepEqual(parsePages('nonsense', 9), [1, 9])
+})
+
+test('passages: a document cut for searching, never across a page, each knowing its page and what heads it', () => {
+  // As Markdown, Word and Excel come out: headings marked, tables tab-separated.
+  const pages = [
+    `# Contracts\n## Contract C-4471 — Warehousing\n${'Either party may end this Agreement with notice. '.repeat(30)}\nThe notice period is sixty days.`,
+    `Sheet: Ledger\nInvoice\tDate\tAmount\n${Array.from({ length: 80 }, (_, i) => `INV-${100 + i}\t2024-01-0${1 + (i % 9)}\t${i}.00`).join('\n')}`,
+  ]
+  const cut = passages(pages, 120)
+  for (const p of cut) assert.ok(estimateTokens(pages[p.page - 1].slice(p.start, p.end)) <= 160, 'about the size asked, a line more at most')
+  for (const p of cut.filter((p) => p.page === 2)) assert.ok(p.start === 0 || pages[1][p.start - 1] === '\n', 'cut where a line ends')
+  assert.deepEqual([...new Set(cut.map((p) => p.page))], [1, 2])
+  assert.match(cut.filter((p) => p.page === 1).at(-1)?.head ?? '', /^Contract C-4471 — Warehousing$/, 'the heading above it')
+  const rows = cut.filter((p) => p.page === 2).slice(1)
+  assert.ok(rows.length && rows.every((p) => p.head === 'Contract C-4471 — Warehousing\nInvoice\tDate\tAmount'), 'and a table’s column names')
+  // As a PDF comes out: no headings, a running header and page numbers on every page.
+  const pdf = ['Compendium\n1 / 3\nContract C-4471 — Warehousing\n' + 'The notice period is sixty days.\n'.repeat(20), 'Compendium\n2 / 3\nIncident report IR-5003 — Lyon site\n' + 'A forklift hose broke.\n'.repeat(20), 'Compendium\n3 / 3\nEnd.']
+  const heads = passages(pdf, 60).map((p) => `${p.page}:${p.head}`)
+  assert.ok(heads.includes('1:Contract C-4471 — Warehousing') && heads.includes('2:Incident report IR-5003 — Lyon site'), 'its page’s first line that isn’t on every page')
+  // A line longer than a passage is cut too: minified data, a table without line ends.
+  assert.ok(passages(['x'.repeat(5000)], 100).length > 3)
+})
+
+test('preselect: for a brain too small for a file, the pages that match the message, page 1 first, within the budget', () => {
+  const pages = Array.from({ length: 40 }, (_, i) => `Page ${i + 1}. ${'Boilerplate about warehousing services and storage. '.repeat(20)}${i === 26 ? 'Contract C-4471 sets a notice period of sixty days.' : ''}${i === 31 ? 'Amendment to contract C-4471: ninety days.' : ''}`)
+  const budget = estimateTokens(pages[0]) * 3.5
+  assert.deepEqual(preselect(pages, 'What notice period applies to contract C-4471?', budget), [[1, 1], [27, 27], [32, 32]])
+  assert.deepEqual(preselect(pages, 'Summarise this, please.', budget), [[1, 3]], 'nothing stands out: the first pages')
+  assert.deepEqual(preselect(pages.slice(0, 2), 'C-4471', budget * 10), [[1, 2]], 'all of it when it fits')
+})
+
+test('the search tool finds passages across files, best first, with their file, page and source; or every place, counted', async () => {
+  const fs = memoryFS()
+  const contracts = await addFile(fs, { projectDir: 'p', name: 'Contracts.pdf', bytes: enc.encode('%PDF-1'), pages: ['## Contract C-4471 — Warehousing\nThe notice period is sixty days.', '## Contract C-4417 — Transport\nThe notice period is ninety days.', '## Amendment 1 to contract C-4471\nThe notice period is changed to 90 days.'], by: 'd' })
+  const ledger = await addFile(fs, { projectDir: 'p', name: 'Ledger.xlsx', bytes: enc.encode('PK-2'), pages: ['Sheet: Ledger\nInvoice\tCustomer\tAmount\nINV-1\tBrellin Foods\t10.00\nINV-2\tOstmark Retail\t20.00\nINV-3\tBrellin Foods\t5.50'], by: 'd' })
+  const linked = { ...contracts, _meta: { source: 4 } }
+  const tool = searchTool({ fs, projectDir: () => 'p', files: () => [linked, ledger], maxTokens: 2000 })
+  /** @type {any[]} */
+  const cited = []
+  const ctx = { cite: (/** @type {any[]} */ sources) => sources.map((s) => (cited.push(s), 7)) }
+  const out = await tool.run({ query: 'notice period contract C-4471' }, ctx)
+  assert.match(out, /^Source \[4\]: Contracts\.pdf, page 1\n## Contract C-4471 — Warehousing\nThe notice period is sixty days\./m)
+  assert.ok(out.indexOf('page 3') < out.indexOf('page 2') || !out.includes('page 2'), 'the look-alike last, if at all')
+  const all = await tool.run({ query: 'Brellin Foods', every: true }, ctx)
+  assert.match(all, /^2 places in 1 file:/)
+  assert.match(all, /Source \[7\]: Ledger\.xlsx, page 1\n.*INV-1\tBrellin Foods\t10\.00\n.*INV-3\tBrellin Foods\t5\.50/s)
+  assert.deepEqual(cited, [{ title: 'Ledger.xlsx', url: ledger.uri }], 'a file not shared in the task gets its number from the turn')
+  assert.match(await tool.run({ query: 'C-4471', file: 'ledger.xlsx' }, ctx), /^Nothing in Ledger\.xlsx matches "C-4471"\./)
+  assert.match(await tool.run({ query: 'zebra' }, ctx), /^Nothing in the files matches "zebra"\./)
+  assert.equal(indexOf(['a b', 'c']).passages.length, 2)
+  // A page that starts with its own heading isn't headed by the one before.
+  assert.deepEqual(indexOf(['## Contract C-4471\nText.', '## Contract C-4417\nMore.']).passages.map((p) => p.head), ['', ''])
 })
 
 test('the read tool finds files by name and cuts long reads', async () => {
