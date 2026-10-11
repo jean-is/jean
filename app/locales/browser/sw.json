@@ -23,6 +23,7 @@
   "browser.folder": "Onyesha {folder}",
   "browser.missing": "{page} haimo katika {folder}.",
   "browser.unshown": "{page} haiwezi kuonyeshwa hapa.",
+  "browser.build": "{page} haiwezi kuonyeshwa ilivyo: {file} lazima ijengwe kwanza kwa zana zisizofanya kazi kwenye kivinjari. Omba ukurasa unaofanya kazi ulivyo.",
   "browser.elsewhere": "{folder} haijafunguliwa katika kazi hii.",
   "browser.shut": "Kivinjari chako hakikuruhusu kufungua {folder}. Pakia upya ili kiulize tena."
 }

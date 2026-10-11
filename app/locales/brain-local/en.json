@@ -1,0 +1,12 @@
+{
+  "private.name": "Private · offline",
+  "private.away": "Offline · still answering",
+  "private.title": "Everything stays on this device",
+  "private.text": "Answers are written right here, in this browser tab: no server, no account, nothing to install. Few assistants can do that.",
+  "private.private": "Your conversations never leave this device",
+  "private.free": "Free, with no account or key",
+  "private.offline": "Keeps answering without the internet",
+  "private.try": "Try it: turn off Wi-Fi and ask something.",
+  "private.still": "You’re offline, and the answers keep coming.",
+  "private.proof": "The shield under each answer is the proof, from your browser’s own record."
+}

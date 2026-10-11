@@ -1,0 +1,33 @@
+/* Private · offline (caps/brain-local/private.js, D270), loaded with it, after ui/style.css: the box sealed by its
+   border, a legend in its bottom row, on its own surface, and the card the legend opens above the box. Only the
+   look's own tokens: its accent (--flame, AA as text), its light (--glow) and its corners (--radius). Logical
+   properties only. */
+:root .composer:has(.private-seal) { border-color: oklch(from var(--flame) l c h / 0.6); anchor-name: --sealed; }
+.composer:has(.private-seal) .brain-chip { border-color: oklch(from var(--flame) l c h / 0.45); }
+app-seal { display: flex; min-inline-size: 0; }
+.private-seal { display: flex; align-items: center; gap: 0.35rem; min-inline-size: 0; padding: 0.3rem 0.4rem; border: 0; background: none; color: var(--ink-soft);
+  font-size: 0.8rem; white-space: nowrap; animation: arrive 0.6s var(--ease) both; transition: color 0.2s; }
+.private-seal:hover, .private-seal.is-away, app-seal:has(.private-card:popover-open) .private-seal { color: var(--ink); }
+.private-seal span { overflow: hidden; text-overflow: ellipsis; }
+.private-seal .icon { flex: none; inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+/* On a narrow screen, the shield alone, still named. */
+@media (width < 32rem) { .private-seal span { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); } }
+/* The card, above the box, from its start: within its width on any screen, either way the text runs. */
+.private-card { position-anchor: --sealed; position-area: block-start center; justify-self: start; position-try-fallbacks: flip-block; inset: auto; inline-size: min(22rem, 100vw - 2rem); margin: 0 0 0.85rem;
+  padding: 1rem 1.1rem 0.6rem; border: 1px solid oklch(from var(--flame) l c h / 0.45); border-radius: var(--radius); background: var(--room-2); color: var(--ink); font-size: 0.88rem; line-height: 1.45;
+  box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6), 0 0 3rem -1.5rem oklch(from var(--glow) l c h / 0.6); transition: opacity 0.2s, display 0.2s allow-discrete, overlay 0.2s allow-discrete; }
+.private-card:not(:popover-open) { opacity: 0; }
+.private-card:popover-open { @starting-style { opacity: 0; } }
+@supports not (anchor-name: --sealed) { .private-card { inset: auto 0 8rem; margin-inline: auto; } }
+.private-head { display: flex; gap: 0.7rem; align-items: center; margin-block-end: 0.6rem; }
+.private-mark { flex: none; display: grid; place-items: center; inline-size: 2.25rem; block-size: 2.25rem; border-radius: calc(var(--radius) * 99); background: oklch(from var(--flame) l c h / 0.16); }
+.private-card h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+.private-card p { margin: 0 0 0.6rem; }
+.private-facts { display: grid; gap: 0.4rem; margin: 0 0 0.7rem; padding: 0; list-style: none; }
+.private-facts li { display: flex; gap: 0.6rem; align-items: center; }
+.private-card .icon { flex: none; inline-size: 1.1rem; block-size: 1.1rem; color: var(--flame); }
+.private-now { padding: 0.5rem 0.7rem; border-radius: calc(var(--radius) / 2); background: oklch(from var(--flame) l c h / 0.1); }
+.private-card .private-proof { color: var(--ink-soft); font-size: 0.8rem; }
+@media (prefers-reduced-motion: reduce) { .private-seal { animation: none; } }
+@media (prefers-contrast: more) { :root .composer:has(.private-seal), .composer:has(.private-seal) .brain-chip, .private-card { border-color: var(--flame); } .private-seal { color: var(--ink); } }
+@media (forced-colors: active) { .private-card { border: 1px solid CanvasText; } .private-card .icon, .private-seal .icon { color: Highlight; } }

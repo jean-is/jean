@@ -20,6 +20,10 @@ test('questions: read the way brains write them, without what can’t be shown',
   assert.deepEqual(questionsOf({ questions: '[{"question":"Which day?","options":["Monday"]}]' }), [{ question: 'Which day?', options: [{ label: 'Monday', description: '', recommended: false }], multiple: false }])
   assert.deepEqual(questionsOf({ questions: 'not a list' }), [])
   assert.deepEqual(questionsOf(null), [])
+  // Wrapped twice, with answers that repeat the question or each other.
+  assert.deepEqual(questionsOf({ questions: { questions: [{ question: 'Which day?', options: [{ label: 'Which day?', recommended: true }, 'Monday', { label: 'Monday', recommended: true }] }] } }), [
+    { question: 'Which day?', options: [{ label: 'Monday', description: '', recommended: false }], multiple: false },
+  ])
   // No more than the card holds.
   const many = Array.from({ length: 9 }, (_, i) => ({ question: `Q${i}`, options: Array.from({ length: 9 }, (_, j) => `A${j}`) }))
   const kept = questionsOf({ questions: many })

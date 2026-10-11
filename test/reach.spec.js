@@ -79,7 +79,7 @@ test('a service that lists its tools to anyone but runs them only for someone si
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in first')
   const mail = (await openSettings(page, 'Connections')).locator('.connection')
   await expect(mail).toContainText('This service needs you to sign in')
-  await mail.getByRole('button', { name: 'Connect' }).click()
+  await mail.getByRole('button', { name: 'Connect', exact: true }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   // Back where the sign-in started: Settings on Connections, over the conversation, whose opening
   // doesn't close it. (WebKit runs here like a private window: the conversation is gone on the way.)
@@ -221,44 +221,115 @@ test('web search answers with sources that open', async ({ page }) => {
   await expect(page.locator('.activity-list')).toContainText('Searched the web · lighthouse')
 })
 
-test('web search reads the Kiwix server chosen in its section of Settings, for every brain (D254)', async ({ page }) => {
+/** What web search declares now: its description, and the brain's own search it gives way to, if any. @param {import('@playwright/test').Page} page */
+const webSearch = (page) => page.evaluate(async () => {
+  const spec = (await import('/ui/caps.js')).contributions().tools.find((tool) => tool.spec.name === 'web_search')?.spec
+  return { description: spec?.description, native: spec?.native ?? null }
+})
+
+test('web search reads the offline library, a source of its own at the Kiwix server named for it, for every brain (D254, D271)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Web search')
-  // Its trophy leads to its section: the web by default, or a library, whose address is tried before it is kept.
+  // Its trophy leads to its section: a switch for each source, Wikipedia alone on at first.
   await page.locator('app-settings .plaque .button').click()
   const settings = page.locator('app-settings dialog[open]')
-  await expect(settings.getByRole('radio', { name: /The web/ })).toBeChecked()
-  await settings.getByRole('radio', { name: /An offline library/ }).check()
+  await expect(settings.getByRole('switch', { name: 'Wikipedia' })).toBeChecked()
+  await expect(settings.getByRole('switch', { name: 'Vikidia' })).not.toBeChecked()
+  await expect(settings.getByRole('switch', { name: 'An offline library' })).not.toBeChecked()
+  // Wikipedia off, so that the library alone answers; the library on, which asks for its address, tried before it is kept.
+  await settings.getByRole('switch', { name: 'Wikipedia' }).click()
+  await settings.getByRole('switch', { name: 'An offline library' }).click()
   const field = settings.getByLabel('Address of the Kiwix server')
   // Plain HTTP elsewhere on the network, as a Kiwix Hotspot serves, is refused before any request: Jean's policy blocks it.
   const asked = /** @type {string[]} */ ([])
   page.on('request', (request) => asked.push(request.url()))
   await field.fill('http://192.0.2.1:4445/')
-  await settings.getByRole('button', { name: 'Connect' }).click()
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
   await expect(settings.locator('.status.is-error')).toHaveText('Only a Kiwix server on this computer, or at an address that starts with https://, can be reached from here.')
   // Nor can the page itself: index.html's policy is narrowed to this computer before anything Jean keeps is read (D260).
   await page.route('http://192.0.2.1:4445/**', (route) => route.fulfill({ body: 'reached' }))
   expect(await page.evaluate(() => fetch('http://192.0.2.1:4445/').then(() => 'reached', () => 'refused'))).toBe('refused')
   expect(asked.filter((url) => url.includes('192.0.2.1'))).toEqual([])
   await field.fill(`${MAIL_URL}/nothing/`)
-  await settings.getByRole('button', { name: 'Connect' }).click()
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
   await expect(settings.locator('.status.is-error')).toHaveText('No Kiwix server answered at this address.')
   // The fake service's stand-in, by the address of a page in its reader: kept as the server's own.
   await field.fill(`${MAIL_URL}/kiwix/viewer#wikipedia_fr_all_mini_2025-10/Phare`)
-  await settings.getByRole('button', { name: 'Connect' }).click()
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
   await expect(settings.locator('.library')).toHaveText('3 books')
-  await expect(settings.locator('.list li').nth(1)).toHaveText(/Wikipédia\s+French · 2,687,612 articles/)
+  await expect(settings.locator('.list li', { hasText: '2,687,612 articles' })).toHaveText(/Wikipédia\s+French · 2,687,612 articles/)
   await expect(field).toHaveValue(`${MAIL_URL}/kiwix/`)
   await page.keyboard.press('Escape')
-  const native = await page.evaluate(async () => (await import('/ui/caps.js')).contributions().tools.find((tool) => tool.spec.name === 'web_search')?.spec.native ?? null)
-  expect(native, 'no brain’s own search takes its place').toBeNull()
+  expect(await webSearch(page), 'no brain’s own search takes its place').toEqual({ native: null,
+    description: 'Search the offline library (Wikipedia and other books) for facts the conversation does not hold. Results are numbered sources to cite.' })
   await ask(page, 'Search the web for lighthouse')
   const answer = page.locator('.msg-jean .prose').last()
   // Each page's first paragraph, read from the page itself, rather than the search's snippet.
   await expect(answer).toContainText('A lighthouse is a tower designed to emit light')
   await expect(answer.locator('a.cite')).toHaveCount(2)
   await expect(answer.locator('a.cite').first()).toHaveAttribute('href', `${MAIL_URL}/kiwix/content/wikipedia_en_100_2026-08/Lighthouse`)
+})
+
+test('Wikipedia can be read from a Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271)', async ({ page }) => {
+  await start(page)
+  await turnOn(page, 'Web search')
+  await page.locator('app-settings .plaque .button').click()
+  const settings = page.locator('app-settings dialog[open]')
+  expect((await webSearch(page)).native).toBe('web_search')
+  await settings.getByText('Wikipedia from a Kiwix server').click()
+  await settings.getByLabel('Address of the Kiwix server').fill(`${MAIL_URL}/kiwix/`)
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
+  await expect(settings.locator('.library')).toHaveText('3 books')
+  await expect.poll(() => webSearch(page)).toEqual({ native: null, description: 'Search Wikipedia (offline) for facts the conversation does not hold. Results are numbered sources to cite.' })
+  // Removed, Wikipedia is read from the web again.
+  await settings.getByRole('button', { name: 'Remove' }).click()
+  await expect.poll(async () => (await webSearch(page)).native).toBe('web_search')
+  await settings.getByRole('switch', { name: 'Vikidia' }).click()
+  await expect.poll(() => webSearch(page)).toEqual({ native: null,
+    description: 'Search the web (Wikipedia, in any language) and Vikidia (the encyclopedia for children) for facts the conversation does not hold. Results are numbered sources to cite.' })
+  await expect(settings.locator('.list li', { hasText: 'Vikidia' })).toContainText('French, English, Spanish')
+})
+
+test('a page of Vikidia, whose site refuses to show inside another, opens in a tab at once, never tried beside the conversation (D271)', async ({ page }) => {
+  await page.context().route('https://fr.vikidia.org/**', (route) => route.fulfill({ contentType: 'text/html', body: '<title>Phare</title><p>Un phare guide les marins.</p>' }))
+  await start(page)
+  await page.evaluate(async () => {
+    const { unlock } = await import('/ui/caps.js')
+    await Promise.all([unlock('search'), unlock('browser')])
+  })
+  const click = () => page.evaluate(async () => (await import('/caps/browser/browser.js')).visit('https://fr.vikidia.org/wiki/Phare', { click: true }))
+  // The pane closed, a click opens the tab alone.
+  const [tab] = await Promise.all([page.waitForEvent('popup'), click()])
+  expect(tab.url()).toBe('https://fr.vikidia.org/wiki/Phare')
+  const pane = page.locator('app-browser')
+  await expect(pane.locator('aside')).toHaveCount(0)
+  // Open, it says why, with no way to try it here.
+  await page.evaluate(async () => (await import('/caps/browser/browser.js')).show())
+  await Promise.all([page.waitForEvent('popup'), click()])
+  await expect(pane.getByRole('heading', { name: 'fr.vikidia.org opens in a tab of its own' })).toBeVisible()
+  await expect(pane.getByRole('button', { name: 'Try here again' })).toHaveCount(0)
+  await expect(pane.locator('.browser-host')).toBeHidden()
+})
+
+test('Settings › Web search lists the connections that search the web, as their tools say, and offers those Jean knows (D271)', async ({ page }) => {
+  // Exa, at the fake service, which has its two tools and asks for no sign-in.
+  await withPolicy(page, { directory: [{ id: 'exa', url: `${MAIL_URL}/search/mcp` }] })
+  await start(page)
+  await turnOn(page, 'Web search')
+  await page.locator('app-settings .plaque .button').click()
+  const settings = page.locator('app-settings dialog[open]')
+  // A mailbox, whose search reads its emails, is connected too, once Connections is on.
+  await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ connections: [{ id: '01K7MAIL000000000000000000', name: 'Mail', url: `${url}/open/mcp`, auth: 'none' }] }), MAIL_URL)
+  const rows = settings.locator('.list li:not(:has(.switch))')
+  await expect(rows).toHaveCount(1)
+  await expect(rows.locator('img.is-logo')).toHaveAttribute('src', /\/caps\/connections\/logos\/exa\.svg$/)
+  // A click connects it, Connections turned on for it; then its tools say it searches, and it is offered no more.
+  await rows.getByRole('button', { name: 'Connect Exa' }).click()
+  await expect(page.locator('.toast')).toContainText('Exa is connected')
+  await expect(rows).toHaveCount(1)
+  await expect(rows).toHaveText(/^\s*Exa\s+web_search_exa\s*$/)
+  await expect(settings.locator('.settings-nav')).toContainText('Connections')
 })
 
 for (const [lang, dir] of [['en', 'ltr'], ['ar', 'rtl'], ['ja', 'ltr']]) {

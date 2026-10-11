@@ -20,7 +20,7 @@ In Zed's settings:
 }
 ```
 
-The brain is the first one whose key the environment holds (`ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`…), else your own Claude Code with your Claude plan, if you're signed in. `--brain` names another, such as `--brain openai:<its name>` or `--brain ollama:<its name>`, and `--address` gives a server of your own.
+The brain is the first one whose key the environment holds (`ANTHROPIC_API_KEY`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`…), else your own Claude Code with your Claude plan, if you're signed in. `--brain` names another, such as `--brain openai:<its name>` or `--brain ollama:<its name>`, and `--address` gives a server of your own. `--brain copilot` is your own Copilot CLI with your Copilot plan, and `--brain chatgpt:<its name>` your ChatGPT plan, once you have signed in to it from Jean's Settings › Brains on this computer.
 
 ## The gateway
 

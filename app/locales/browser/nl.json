@@ -23,6 +23,7 @@
   "browser.folder": "{folder} tonen",
   "browser.missing": "{page} staat niet in {folder}.",
   "browser.unshown": "{page} kan hier niet worden getoond.",
+  "browser.build": "{page} kan niet worden getoond zoals het is: {file} moet eerst worden gebouwd, met hulpmiddelen die niet in een browser werken. Vraag om een pagina die werkt zoals hij is.",
   "browser.elsewhere": "{folder} is niet geopend in deze taak.",
   "browser.shut": "Je browser stond niet toe dat {folder} werd geopend. Vernieuw om het opnieuw te laten vragen."
 }

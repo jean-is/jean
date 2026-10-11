@@ -23,6 +23,7 @@
   "browser.folder": "{folder} anzeigen",
   "browser.missing": "{page} ist nicht in {folder}.",
   "browser.unshown": "{page} lässt sich hier nicht anzeigen.",
+  "browser.build": "{page} lässt sich so nicht anzeigen: {file} muss erst mit Werkzeugen gebaut werden, die nicht im Browser laufen. Bitte um eine Seite, die so läuft, wie sie ist.",
   "browser.elsewhere": "{folder} ist in dieser Aufgabe nicht geöffnet.",
   "browser.shut": "Dein Browser hat das Öffnen von {folder} nicht erlaubt. Lade neu, damit er noch einmal fragt."
 }

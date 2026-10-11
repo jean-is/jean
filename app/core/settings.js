@@ -34,6 +34,8 @@ import { ulid } from './ulid.js'
  * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)
  * @property {boolean} [films]                  films are made without asking first (D251)
  * @property {string} [pictures]               which makes pictures on this device (D263)
+ * @property {{ date?: boolean, log?: boolean }} [certificates]  certificates dated by witnesses, recorded in a public log, as the user chose (D276)
+ * @property {string[]} [searches]              web search's sources on (D271)
  */
 
 /**
@@ -55,6 +57,7 @@ import { ulid } from './ulid.js'
  */
 export const DEFAULT_URLS = Object.freeze({
   modelWeights: 'https://huggingface.co/', wikipedia: 'https://{lang}.wikipedia.org/w/api.php', searchPage: 'https://{lang}.wikipedia.org/w/index.php?search={query}',
+  vikidia: 'https://{lang}.vikidia.org/w/api.php', kiwix: '',
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
   // The gateway to the services a browser can't reach (D191): none until one is named.
@@ -63,6 +66,8 @@ export const DEFAULT_URLS = Object.freeze({
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
   // Brains' prices (D255).
   prices: 'https://models.dev/api.json',
+  // Who dates a certificate (RFC 3161) and the public log it may go to (D276): Sigstore's, which answer browsers.
+  timestamp: 'https://timestamp.sigstore.dev/api/v1/timestamp', transparencyLog: 'https://rekor.sigstore.dev',
 })
 
 /** @param {keyof typeof DEFAULT_URLS} name @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy] */
@@ -74,8 +79,8 @@ export const serviceURL = (name, settings, policy = {}) => policy.urls?.[name] ?
  */
 export const usedIn = (item, project) => !item.projects || item.projects.includes(project)
 
-/** A brain that never leaves this computer (Claude Code's does, D235). @param {BrainConfig} brain */
-export const isLocal = (brain) => brain.api === 'device' || brain.provider !== 'claudecode' && /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
+/** A brain that never leaves this computer (a plan's through the bridge does, D235, D262). @param {BrainConfig} brain */
+export const isLocal = (brain) => brain.api === 'device' || !/^c(laudecode|opilot|hatgpt)$/.test(brain.provider) && /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(brain.baseURL)
 
 /** @type {Settings} */
 export const DEFAULT_SETTINGS = { format: 1, locale: null, brains: [], activeBrain: null, rules: {}, voice: null, unlocked: [], offers: {}, auto: true, cloud: true }

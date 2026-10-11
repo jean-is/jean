@@ -18,5 +18,12 @@
   "receipt.here": "a wannan na'urar",
   "receipt.reached": "Wasu adiresoshin da aka tuntuɓa",
   "receipt.save": "Ajiye takardar shaida",
-  "receipt.file": "Takardar shaida {date}"
+  "receipt.proof": "Ajiye hujja",
+  "receipt.file": "Takardar shaida {date}",
+  "receipt.proof.text": "Takardar shaida tana nuna yadda aka yi wannan amsa, ba kalmominta ba ko kaɗan: kowa zai iya samun ta. Hujja tana ƙara buƙatar da amsar, ga waɗanda aka yarda su karanta su.",
+  "receipt.proof.file": "Hujja {date}",
+  "receipt.checkAt": "Kowa zai iya duba su a {address}.",
+  "receipt.date": "A sa {hosts} su sa musu kwanan wata",
+  "receipt.log": "A rubuta su a rajistar jama’a, {host}: ta jama’a kuma ta dindindin",
+  "receipt.unwitnessed": "Ba a iya kai wa {host} ba"
 }

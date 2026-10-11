@@ -23,6 +23,7 @@
   "browser.folder": "Fi {folder} hàn",
   "browser.missing": "{page} kò sí nínú {folder}.",
   "browser.unshown": "A kò lè fi {page} hàn níbí.",
+  "browser.build": "A kò lè fi {page} hàn bí ó ṣe wà: a gbọ́dọ̀ kọ́ {file} ná pẹ̀lú àwọn irinṣẹ́ tí kì í ṣiṣẹ́ nínú aṣàwákiri. Béèrè ojú-ìwé tí ó ń ṣiṣẹ́ bí ó ṣe wà.",
   "browser.elsewhere": "A kò ṣí {folder} nínú iṣẹ́ yìí.",
   "browser.shut": "Aṣàwákiri rẹ kò gbà kí a ṣí {folder}. Tún-un gbé kí ó tún béèrè."
 }

@@ -18,5 +18,12 @@
   "receipt.here": "op dit apparaat",
   "receipt.reached": "Ook bereikt",
   "receipt.save": "Certificaat opslaan",
-  "receipt.file": "Certificaat {date}"
+  "receipt.proof": "Bewijs opslaan",
+  "receipt.file": "Certificaat {date}",
+  "receipt.proof.text": "Het certificaat laat zien hoe dit antwoord tot stand kwam, nooit de woorden zelf: iedereen mag het hebben. Het bewijs voegt de vraag en het antwoord toe, voor wie ze mag lezen.",
+  "receipt.proof.file": "Bewijs {date}",
+  "receipt.checkAt": "Iedereen kan ze controleren op {address}.",
+  "receipt.date": "Laten dateren door {hosts}",
+  "receipt.log": "Vastleggen in een openbaar register, {host}: openbaar en blijvend",
+  "receipt.unwitnessed": "{host} was niet bereikbaar"
 }

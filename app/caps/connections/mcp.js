@@ -29,6 +29,17 @@ export class MCPError extends Error {
  */
 
 /**
+ * Whether a tool searches the web, by what it says of itself (D271): its name says search, it or
+ * its description says the web, and its annotations neither close its world (a web search is MCP's
+ * own example of an open one) nor say it changes anything. @param {McpTool} tool
+ */
+export const searchesWeb = ({ name, description = '', annotations = {} }) => {
+  const words = name.split(/[\W_]+|(?<=[a-z])(?=[A-Z])/).map((word) => word.toLowerCase())
+  return words.includes('search') && /\b(web|internet)\b/i.test(`${words.join(' ')} ${description}`)
+    && annotations.openWorldHint !== false && annotations.readOnlyHint !== false
+}
+
+/**
  * @param {{ url: string, client: { name: string, version: string }, authorization?: () => Promise<string | undefined>, fetch?: typeof globalThis.fetch }} options
  *   authorization: the Authorization header, when the service needs one
  */

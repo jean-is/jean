@@ -3,6 +3,7 @@
 // the conversation, in the address (D137), a reload comes back to the line being read, and an
 // earlier conversation opens at its end. A request whose connection drops before its answer starts
 // is asked again (D202), and a key connects though its service is too busy to list its models.
+// Before anything is asked, the welcome says the user is talking with an AI (D273).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
@@ -21,6 +22,21 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await followUps.first().click()
   await expect(page.locator('.msg-user')).toHaveCount(2)
   await expect(page.locator('.msg-user').last()).toHaveText('Show it as a chart')
+})
+
+test('before anything is asked, the welcome says the user is talking with an AI, and the box says it to a screen reader (D273)', async ({ page }) => {
+  const said = { en: 'You’re talking with an AI, not a person.', ar: 'هذه محادثة مع ذكاء اصطناعي، لا مع إنسان.', ja: '会話の相手は人間ではなく、AIです。' }
+  for (const [lang, text] of Object.entries(said)) {
+    await start(page, lang)
+    await expect(page.locator('.welcome hgroup p')).toHaveText(text)
+    await expect(page.locator('.welcome hgroup p')).toBeInViewport()
+    await expect(page.locator('#prompt')).toHaveAccessibleDescription(text)
+  }
+  // Once asked, the conversation takes its place.
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
+  await expect(page.locator('#prompt')).not.toHaveAccessibleDescription(said.ja)
 })
 
 test('a request whose connection drops before its answer starts is asked again after a moment, saying so (D202)', async ({ page }) => {

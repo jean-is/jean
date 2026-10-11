@@ -168,4 +168,4 @@ function decoded(url) {
 }
 
 /** @param {string} data in base64 */
-const bytesOf = (data) => Uint8Array.from(atob(data), (char) => char.charCodeAt(0))
+export const bytesOf = (data) => Uint8Array.from(atob(data), (char) => char.charCodeAt(0))

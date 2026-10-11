@@ -23,6 +23,7 @@
   "browser.folder": "{folder}ን አሳይ",
   "browser.missing": "{page} በ{folder} ውስጥ የለም።",
   "browser.unshown": "{page} እዚህ ሊታይ አይችልም።",
+  "browser.build": "{page} እንዳለ ሊታይ አይችልም፤ {file} መጀመሪያ በአሳሽ ውስጥ በማይሠሩ መሣሪያዎች መገንባት አለበት። እንዳለ የሚሠራ ገጽ ይጠይቁ።",
   "browser.elsewhere": "{folder} በዚህ ተግባር ውስጥ አልተከፈተም።",
   "browser.shut": "አሳሽዎ {folder}ን እንዲከፈት አልፈቀደም። እንደገና እንዲጠይቅ እንደገና ይጫኑ።"
 }

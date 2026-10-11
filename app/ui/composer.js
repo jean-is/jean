@@ -50,7 +50,7 @@ class Composer extends Element {
               @click=${() => removeAttachment(item.key)}>${icons.close}</button>
           </li>`)}</ul>` : nothing}
         <label class="visually-hidden" for="prompt">${t('composer.label')}</label>
-        <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send"
+        <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby="welcome-ai"
           placeholder=${status || t('composer.placeholder')}
           .value=${current(app.draft.value)}
           @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}
@@ -74,6 +74,7 @@ class Composer extends Element {
               aria-keyshortcuts=${SHORTCUTS.dictation} aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
           </div>
+          <app-seal></app-seal>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
             ${brain?.api === 'device' && !auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
           </button>

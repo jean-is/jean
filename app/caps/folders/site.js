@@ -3,7 +3,10 @@
 // page's own scripts run only in an opaque origin, which no service worker serves, so what the page
 // uses from the folder goes in with it: style sheets as <style>, scripts, pictures, sounds and fonts
 // as data: addresses, modules through an import map of data: addresses (their imports first made
-// absolute), and the data files its scripts name, which its fetch() then finds. Never a hidden file
+// absolute), and the data files its scripts name, which its fetch() then finds. "/" is the top of the
+// page's project, where its package.json is, as its dev server would serve it; else the folder's. Code
+// a browser can't run as it is, made for a build (JSX, TypeScript, a style sheet imported, a package
+// by its name), is noted, so the browser says so in the page's place. Never a hidden file
 // (a name starting with a dot) or one outside the folder. A folder shows its index.html, or what it
 // holds, which the browser draws itself; any other file goes to the browser as it is, which shows it
 // as the preview does (D190). No DOM: node tests run it.
@@ -24,16 +27,19 @@ const TYPES = /** @type {Record<string, string>} */ ({
 })
 // Files a script may fetch: data, not pages or code.
 const DATA = /\.(json|geojson|csv|tsv|txt|md|xml|ya?ml|svg)$/i
+// What only a build turns into a page: code browsers don't run, and style sheets imported as modules.
+const BUILT = /\.(jsx|tsx|[mc]?ts|vue|svelte|css|s[ac]ss|less)$/i
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 /** @typedef {import('../../core/types.js').FS} FS */
-/** @typedef {{ fs: FS, page: string, files: Record<string, string>, modules: Map<string, string>, data: Record<string, string> }} Context */
+/** @typedef {{ fs: FS, page: string, root: string, files: Record<string, string>, modules: Map<string, string>, data: Record<string, string>, mapped: boolean, build?: string }} Context */
 /**
- * What a folder's address shows: a page put together; a file that isn't a page, with its media type,
- * as the preview shows it; or a folder's name and what it holds (D190). With the path its links are
- * resolved from and the files it was made of, by size and date. Or why it can't show (a file too big).
- * @typedef {({ html: string } | { file: Uint8Array, type: string } | { title: string, list: { name: string, folder: boolean }[] }) & { path: string, files: Record<string, string> } | { note: 'missing' | 'unshown' }} Shown
+ * What a folder's address shows: a page put together, with the first file of it that needs a build;
+ * a file that isn't a page, with its media type, as the preview shows it; or a folder's name and what
+ * it holds (D190). With the path its links are resolved from and the files it was made of, by size
+ * and date. Or why it can't show (a file too big).
+ * @typedef {({ html: string, build?: string } | { file: Uint8Array, type: string } | { title: string, list: { name: string, folder: boolean }[] }) & { path: string, files: Record<string, string> } | { note: 'missing' | 'unshown' }} Shown
  */
 
 const typeOf = (/** @type {string} */ path) => TYPES[/\.([a-z0-9]+)$/i.exec(path)?.[1].toLowerCase() ?? ''] ?? 'application/octet-stream'
@@ -49,14 +55,15 @@ export const dataURL = (/** @type {string} */ type, /** @type {Uint8Array} */ by
 
 /**
  * A reference in a file of the folder, as the path of the file it names: null for another site, a
- * data address, a place in the page (#…), a hidden file. "/" is the folder's top.
- * @param {string} ref @param {string} from the path of the file it is in
+ * data address, a place in the page (#…), a hidden file. "/" is `root`, the folder's top by default.
+ * @param {string} ref @param {string} from the path of the file it is in @param {string} [root] a folder's path, ending with /
  */
-export function inFolder(ref, from) {
+export function inFolder(ref, from, root = '') {
   const text = ref.trim().replace(/&amp;/g, '&')
   if (!text || /^([a-z][\w+.-]*:|\/\/|#)/i.test(text)) return null
   try {
-    const path = decodeURIComponent(new URL(text, address(from)).pathname.slice(1))
+    const top = text.startsWith('/')
+    const path = decodeURIComponent(new URL(top ? text.slice(1) : text, address(top ? root : from)).pathname.slice(1))
     return path.split('/').some((part) => part.startsWith('.')) ? null : path
   } catch {
     return null
@@ -89,7 +96,7 @@ async function bytesOf(ctx, path) {
 
 /** A file of the folder as a data address, or null. @param {Context} ctx @param {string} ref @param {string} from */
 async function asData(ctx, ref, from) {
-  const path = inFolder(ref, from)
+  const path = inFolder(ref, from, ctx.root)
   const bytes = path === null ? null : await bytesOf(ctx, path)
   return bytes && path !== null ? dataURL(typeOf(path), bytes) : null
 }
@@ -97,7 +104,7 @@ async function asData(ctx, ref, from) {
 /** A style sheet with what it uses inside it: the sheets it imports, then pictures and fonts. @param {Context} ctx @param {string} css @param {string} from @param {number} [depth] */
 async function style(ctx, css, from, depth = 0) {
   const imported = await replace(css, /@import\s+(?:url\(\s*)?(["']?)([^"')\s;]+)\1\s*\)?([^;]*);/gi, async (whole, _, ref, media) => {
-    const path = depth < 8 ? inFolder(ref, from) : null
+    const path = depth < 8 ? inFolder(ref, from, ctx.root) : null
     const bytes = path === null ? null : await bytesOf(ctx, path)
     if (!bytes || path === null) return whole
     const inner = await style(ctx, decoder.decode(bytes), path, depth + 1)
@@ -132,7 +139,9 @@ async function code(ctx, source, from, modular) {
   }
   if (!modular) return source
   return replace(source, /(\bimport\s*(?:[\w$*{}\s,]+?\s*from\s*)?|\bexport\s*[\w$*{}\s,]+?\s*from\s*|\bimport\s*\(\s*)(["'])([^"'\n]+)\2/g, async (whole, head, quote, spec) => {
-    const path = /^\.{0,2}\//.test(spec) ? inFolder(spec, from) : null
+    const path = /^\.{0,2}\//.test(spec) ? inFolder(spec, from, ctx.root) : null
+    // A package by its name, with no import map of the page's; a file without its ending, or one of BUILT's.
+    if (/^(\.{0,2}\/|[a-z][\w+.-]*:)/i.test(spec) ? path !== null && (BUILT.test(path) || !/\.\w+$/.test(path)) : !ctx.mapped) ctx.build ??= from
     return path === null ? whole : `${head}${quote}${await module(ctx, path)}${quote}`
   })
 }
@@ -160,7 +169,8 @@ async function page(ctx, html, from) {
       const type = /\stype\s*=\s*["']?([^"'\s>]+)/i.exec(rawAttributes)?.[1].toLowerCase() ?? ''
       const src = /\ssrc\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/i.exec(rawAttributes)?.[1].replace(/^["']|["']$/g, '')
       if (type && type !== 'module' && !/javascript|ecmascript/.test(type)) return whole
-      const path = src === undefined ? null : inFolder(src, from)
+      const path = src === undefined ? null : inFolder(src, from, ctx.root)
+      if (path !== null && BUILT.test(path)) ctx.build ??= path
       if (path === null) return src === undefined ? `<script${rawAttributes}>${await code(ctx, inner, from, type === 'module')}</script>` : whole
       const bytes = await bytesOf(ctx, path)
       if (!bytes) return whole
@@ -171,7 +181,7 @@ async function page(ctx, html, from) {
     const rel = /\srel\s*=\s*["']?([^"'>]*)/i.exec(rest)?.[1] ?? ''
     const href = /\shref\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/i.exec(rest)?.[1].replace(/^["']|["']$/g, '')
     if (tag.toLowerCase() === 'link' && /\bstylesheet\b/i.test(rel) && href !== undefined) {
-      const path = inFolder(href, from)
+      const path = inFolder(href, from, ctx.root)
       const bytes = path === null ? null : await bytesOf(ctx, path)
       const media = /\smedia\s*=\s*("[^"]*"|'[^']*')/i.exec(rest)?.[0] ?? ''
       if (bytes && path !== null) return `<style${media}>${await style(ctx, decoder.decode(bytes), path)}</style>`
@@ -211,10 +221,17 @@ export async function sitePage(fs, path, name = '') {
     return { title: dir.split('/').at(-1) || name, list, path: at, files: {} }
   }
   /** @type {Context} */
-  const ctx = { fs, page: clean, files: {}, modules: new Map(), data: {} }
+  const ctx = { fs, page: clean, root: '', files: {}, modules: new Map(), data: {}, mapped: false }
   const bytes = await bytesOf(ctx, clean)
   const type = typeOf(clean)
   if (!bytes) return { note: 'unshown' }
-  if (type === 'text/html') return { html: await page(ctx, decoder.decode(bytes), clean), path: clean, files: ctx.files }
-  return { file: bytes, type, path: clean, files: ctx.files }
+  if (type !== 'text/html') return { file: bytes, type, path: clean, files: ctx.files }
+  // Its project's top: the nearest folder up that holds a package.json.
+  for (const dir of clean.split('/').slice(0, -1).map((_, n, all) => `${all.slice(0, all.length - n).join('/')}/`)) {
+    if (!ctx.root && (await fs.stat?.(`${dir}package.json`).catch(() => null))) ctx.root = dir
+  }
+  const source = decoder.decode(bytes)
+  ctx.mapped = /<script\b[^>]*\btype\s*=\s*["']?importmap/i.test(source)
+  const html = await page(ctx, source, clean)
+  return { html, ...(ctx.build ? { build: ctx.build } : {}), path: clean, files: ctx.files }
 }

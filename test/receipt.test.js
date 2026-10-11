@@ -1,13 +1,22 @@
 // About this answer (D252): what its certificate says from the conversation's records, what the
-// answer cost, and its seal, which anyone can check and which no change survives.
+// answer cost, and its seal (D274): a W3C credential sealed as a JWS, which standard tools check and no
+// change survives, whose words and files are salted digests that only its proof discloses.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { createHash } from 'node:crypto'
-import { foldTurns, envelope, userRecord, metaRecord } from '../app/core/events.js'
-import { brainsOf, madeOf, factsOf, costOf, certificate, seal, verify } from '../app/caps/receipt/certificate.js'
+import { createHash, X509Certificate, verify as verifyWith } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { Ajv2020 } from 'ajv/dist/2020.js'
+import { foldTurns, envelope, userRecord, userRecords, metaRecord } from '../app/core/events.js'
+import { brainsOf, madeOf, factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, check, proof, compact, disclose, disclosuresOf, disclosed, witness, record } from '../app/caps/receipt/certificate.js'
+import { timestampRequest, tokenOf, readToken } from '../app/caps/receipt/der.js'
+import { reply, logged, logKey } from './fixtures/tsa.js'
 
 const T0 = Date.parse('2026-10-10T09:00:00.000Z')
 const at = (/** @type {number} */ ms) => new Date(T0 + ms).toISOString()
+const PICTURE = createHash('sha256').update('a picture').digest('hex')
+const SHARED = createHash('sha256').update('a shared file').digest('hex')
+const CONVERSATION = '01M4N18BCYXJ5WQDF3TW1C43KC'
+const VERSION = 'ca5970caf565'
 
 /**
  * A request at T0, then a brain asked at each given time (ms), as the loop records it, a helper's
@@ -94,32 +103,178 @@ test('free on this device, priced in the cloud, not known without a price', () =
 
 test('who made a picture or a film, and where: on this device by its own name, or a provider in the cloud, which sends the answer out (D263)', async () => {
   const picture = (/** @type {number} */ step, /** @type {object} */ made) => ({ ...envelope('jean', { sessionUpdate: 'tool_call', toolCallId: `c${step}`, title: 'A picture', name: 'picture', kind: 'edit', status: 'completed',
-    _meta: { picture: { uri: 'p.png', name: 'p.png', mimeType: 'image/png' }, made } }, step), at: at(1500) })
+    _meta: { picture: { uri: `files/sha256-${PICTURE}.png`, name: 'p.png', mimeType: 'image/png' }, made } }, step), at: at(1500) })
   const here = { kind: 'picture', provider: 'device', model: 'Z-Image-Turbo', local: true }
   const { records } = turnWith([{ local: true, at: 1000 }])
   records.splice(2, 0, picture(1, here))
   const turn = foldTurns(records)[0]
-  assert.deepEqual(madeOf(turn), [here])
+  assert.deepEqual(madeOf(turn), [{ ...here, sha256: PICTURE }])
   const facts = factsOf(turn, [reached(500, 5500, {})])
   assert.equal(facts.verdict, 'local')
-  assert.deepEqual((await certificate({ facts, turn, text: '', conversation: 'c', by: 'device', origin: 'https://jean.is' })).made, [here])
+  const { credential } = await certificate({ facts, turn, text: '', conversation: CONVERSATION, issuer: `${ISSUER}x`, origin: 'https://jean.is', version: VERSION })
+  assert.deepEqual(credential.credentialSubject.made.map(({ _sd, ...rest }) => rest), [{ kind: 'picture', digitalSourceType: 'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia', provider: 'device', model: 'Z-Image-Turbo', local: true }])
   const cloud = { kind: 'picture', provider: 'openai', model: 'gpt-image-1.5', local: false }
   records.splice(2, 1, picture(1, cloud))
   assert.equal(factsOf(foldTurns(records)[0], [reached(500, 5500, {})]).verdict, 'out')
 })
 
-test('a sealed certificate holds the request’s and the answer’s fingerprints, not their words, and no change survives its seal', async () => {
-  const { turn } = turnWith([{ local: true, at: 1000 }])
-  const facts = factsOf(turn, [reached(500, 5500, {})])
-  const document = await certificate({ facts, turn, text: 'Two meetings.', conversation: 'c1', by: 'device', origin: 'https://jean.is', now: new Date(T0 + 6000) })
-  assert.equal(document.local, true)
-  assert.equal(document.answer.sha256, createHash('sha256').update('Two meetings.').digest('hex'))
-  assert.equal(document.request.sha256, createHash('sha256').update('What is on my calendar?').digest('hex'))
-  assert.doesNotMatch(JSON.stringify(document), /calendar|meetings/)
-  const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
-  const saved = JSON.parse(JSON.stringify(await seal(document, keys), null, 2))
-  assert.equal(await verify(saved), true)
-  assert.equal(await verify({ ...saved, local: false }), false)
-  assert.equal(await verify({ ...saved, reached: [{ ...saved.reached[0], hosts: { 'api.example.com': 1 } }] }), false)
-  assert.equal(await verify(document), false)
+// ─── The certificate in standard forms (D274) ────────────────────────────────
+
+const GENERATED = 'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia'
+const schema = JSON.parse(readFileSync(new URL('../app/caps/receipt/certificate.schema.json', import.meta.url), 'utf8'))
+const ajv = new Ajv2020({ allErrors: true, strictTypes: false })
+ajv.addFormat('date-time', (text) => /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z$/.test(text) && !Number.isNaN(Date.parse(text)))
+ajv.addFormat('uri', (text) => URL.canParse(text))
+ajv.addSchema(schema)
+/** True, or why not. @param {string} part one of the schema's $defs @param {unknown} value */
+const valid = (part, value) => ajv.validate(`${schema.$id}#/$defs/${part}`, value) || ajv.errorsText()
+/** @param {string} part base64url JSON */
+const decoded = (part) => JSON.parse(Buffer.from(part, 'base64url').toString())
+/** @param {unknown} value */
+const encoded = (value) => Buffer.from(JSON.stringify(value)).toString('base64url')
+/** @param {string} hex */
+const sri = (hex) => `sha256-${Buffer.from(hex, 'hex').toString('base64')}`
+const madeHere = { kind: 'picture', provider: 'device', model: 'Z-Image-Turbo', revision: 'webnn/Z-Image-Turbo@02e1d8cc5d10d9ff6c7ed1f54b173bd981381bc2', local: true }
+
+/** An answer done here whose request shared a file and which made a picture on this device. */
+function answered() {
+  const { records } = turnWith([{ local: true, at: 1000 }])
+  const link = { type: /** @type {const} */ ('resource_link'), uri: `files/sha256-${SHARED}.pdf`, name: 'agenda.pdf', mimeType: 'application/pdf' }
+  records.splice(0, 1, ...userRecords('What is on my calendar?', [link], 'device').map((record) => ({ ...record, at: at(0) })))
+  records.splice(3, 0, { ...envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'c1', title: 'A picture', name: 'picture', kind: 'edit', status: 'completed',
+    _meta: { picture: { uri: `files/sha256-${PICTURE}.png`, name: 'p.png', mimeType: 'image/png' }, made: madeHere } }, 1), at: at(1500) })
+  const turn = foldTurns(records)[0]
+  return { turn, facts: factsOf(turn, [reached(500, 5500, {})]) }
+}
+
+/** Its certificate, sealed with a seal. @param {import('../app/caps/receipt/certificate.js').Seal} own */
+async function sealedAnswer(own, text = 'Two meetings.') {
+  const { turn, facts } = answered()
+  const made = await certificate({ facts, turn, text, conversation: CONVERSATION, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: 'https://jean.is', version: VERSION, now: new Date(T0 + 6000) })
+  return { turn, facts, text, ...made, sealed: await seal(made.credential, own, new Date(T0 + 6000)) }
+}
+
+/** Every digest a certificate holds, its words' and its files'. @param {any} credential @returns {string[]} */
+const digestsOf = ({ credentialSubject: { request, answer, made } }) => [request._sd[0], answer._sd[0], ...request.files.map((/** @type {any} */ one) => one['...']), ...made.map((/** @type {any} */ one) => one._sd[0])]
+
+test('a certificate is a W3C credential sealed as a JWS, which standard tools check, as its schema says', async () => {
+  const own = await makeSeal(new Date(T0))
+  const { sealed, credential } = await sealedAnswer(own)
+  assert.equal(valid('certificateFile', JSON.parse(JSON.stringify(sealed, null, 2))), true)
+  const header = decoded(sealed.protected)
+  assert.equal(valid('protectedHeader', header), true)
+  assert.equal(valid('credential', decoded(sealed.payload)), true)
+  assert.deepEqual(decoded(sealed.payload), credential)
+  assert.equal(credential.credentialSubject.answer.digitalSourceType, GENERATED)
+  // Node's own X.509 and ECDSA, not Jean's code, check the certificate and the signature.
+  const der = Buffer.from(header.x5c[0], 'base64')
+  const x509 = new X509Certificate(der)
+  assert.equal(x509.verify(x509.publicKey), true)
+  assert.equal(x509.ca, false)
+  assert.ok(Date.parse(x509.validFrom) <= header.iat * 1000 && header.iat * 1000 <= Date.parse(x509.validTo))
+  assert.equal(header['x5t#S256'], createHash('sha256').update(der).digest('base64url'))
+  assert.equal(verifyWith('sha256', Buffer.from(`${sealed.protected}.${sealed.payload}`), { key: x509.publicKey, dsaEncoding: 'ieee-p1363' }, Buffer.from(sealed.signature, 'base64url')), true)
+  // Its issuer is the RFC 7638 thumbprint of that key, as Node reckons it, and so is the certificate's name.
+  const { crv, kty, x, y } = x509.publicKey.export({ format: 'jwk' })
+  const print = createHash('sha256').update(JSON.stringify({ crv, kty, x, y })).digest('base64url')
+  assert.equal(credential.issuer, ISSUER + print)
+  assert.equal(x509.subject, `CN=${print}`)
+  const checked = await check({ certificate: sealed })
+  assert.deepEqual([checked.intact, checked.fingerprint, checked.selfIssued], [true, print, true])
+  assert.equal(checked.says.credentialSubject.where, 'device')
+  assert.equal(checked.says.credentialSubject.made[0].revision, madeHere.revision)
+})
+
+test('its words and files are salted digests: no guess confirms them, and only its proof discloses them', async () => {
+  const own = await makeSeal(new Date(T0))
+  const first = await sealedAnswer(own)
+  const saved = JSON.stringify(first.sealed) + JSON.stringify(first.credential)
+  for (const word of ['calendar', 'meetings', 'agenda', 'sha256-', PICTURE, SHARED]) assert.doesNotMatch(saved, new RegExp(word))
+  // The request's plain SHA-256 is none of its digests, and another certificate of the same answer shares none.
+  assert.ok(!digestsOf(first.credential).includes(createHash('sha256').update('What is on my calendar?').digest('base64url')))
+  const second = await sealedAnswer(own)
+  assert.deepEqual(digestsOf(first.credential).filter((digest) => digestsOf(second.credential).includes(digest)), [])
+  const salts = [first.salts.request, first.salts.answer, ...first.salts.files, ...first.salts.made]
+  assert.equal(salts.length, 4)
+  assert.ok(salts.every((salt) => /^[\w-]{22}$/.test(salt)))
+  assert.equal(new Set(salts).size, salts.length)
+  // What the conversation keeps, and the proof, follow the schema; the same salts make the same disclosures.
+  assert.equal(valid('kept', { id: first.credential.id, jws: compact(first.sealed), salts: first.salts }), true)
+  assert.deepEqual(disclosed(await disclosuresOf(first.salts, { turn: first.turn, text: first.text, made: first.facts.made })), first.disclosures)
+  const shown = proof(first.sealed, first.disclosures)
+  assert.equal(valid('proof', shown), true)
+  const [request, answer, file, made] = first.disclosures.map(decoded)
+  assert.deepEqual([valid('textDisclosure', request), valid('textDisclosure', answer), valid('fileDisclosure', file), valid('madeDisclosure', made)], [true, true, true, true])
+  const proven = await check({ certificate: first.sealed, proof: shown })
+  assert.equal(proven.proven, true)
+  assert.deepEqual(proven.words, { request: 'What is on my calendar?', answer: 'Two meetings.', files: [sri(SHARED)], made: [sri(PICTURE)] })
+  // The proof alone carries the certificate.
+  assert.equal((await check({ proof: shown })).intact, true)
+  // A word changed, or the proof of another certificate, proves nothing.
+  const changed = await disclose(first.salts.answer, 'text', 'Three meetings.')
+  assert.equal((await check({ certificate: first.sealed, proof: proof(first.sealed, [first.disclosures[0], changed.disclosure]) })).proven, false)
+  assert.equal((await check({ certificate: second.sealed, proof: shown })).proven, false)
+  // A salt short of 128 bits proves nothing, even where the issuer signed its digest.
+  const short = await disclose('AAAAAAAAAAA', 'text', 'Two meetings.')
+  const weak = structuredClone(first.credential)
+  weak.credentialSubject.answer._sd = [short.digest]
+  const weakly = await seal(weak, own, new Date(T0 + 6000))
+  assert.equal((await check({ certificate: weakly, proof: proof(weakly, [short.disclosure]) })).proven, false)
+  assert.notEqual(valid('textDisclosure', decoded(short.disclosure)), true)
+})
+
+test('no change survives its seal, and another key shows as another fingerprint', async () => {
+  const own = await makeSeal(new Date(T0))
+  const other = await makeSeal(new Date(T0))
+  const { sealed, credential } = await sealedAnswer(own)
+  const says = decoded(sealed.payload)
+  says.credentialSubject.where = 'cloud'
+  const header = decoded(sealed.protected)
+  const flipped = Buffer.from(sealed.signature, 'base64url')
+  flipped[0] ^= 1
+  for (const changed of [{ payload: encoded(says) }, { protected: encoded({ ...header, iat: header.iat + 1 }) }, { signature: flipped.toString('base64url') }]) {
+    assert.equal((await check({ certificate: { ...sealed, ...changed } })).intact, false)
+  }
+  // Sealed again by another key, it holds, but names that key, never this device's.
+  const forged = await check({ certificate: await seal({ ...credential, issuer: ISSUER + await thumbprint(other.keys.publicKey) }, other) })
+  assert.equal(forged.intact, true)
+  assert.notEqual(forged.fingerprint, await thumbprint(own.keys.publicKey))
+  // Another key under this device's name, or a time before its certificate, doesn't hold.
+  assert.equal((await check({ certificate: await seal(credential, other, new Date(T0 + 6000)) })).intact, false)
+  assert.equal((await check({ certificate: await seal(credential, own, new Date(T0 - 86_400_000)) })).intact, false)
+  await assert.rejects(check({ certificate: { protected: 'e30', payload: 'e30', signature: 'AA' } }))
+  await assert.rejects(check({ proof: 'not a proof' }))
+})
+
+// ─── Witnesses (D276) ────────────────────────────────────────────────────────
+
+test('witnesses date a certificate on its signature and a public log records it, as JAdES and Sigstore keep them (D276)', async () => {
+  const own = await makeSeal(new Date(T0))
+  const { sealed } = await sealedAnswer(own)
+  const dated = await witness(await witness(sealed, (request) => reply(request)), (request) => reply(request))
+  assert.equal(dated.header?.etsiU.length, 2)
+  const recorded = await record(dated, logged)
+  assert.equal(valid('certificateFile', JSON.parse(JSON.stringify(recorded))), true)
+  const checked = await check({ certificate: recorded }, { logKey })
+  assert.equal(checked.intact, true)
+  assert.deepEqual(checked.timestamps.map(({ intact, authority }) => [intact, authority['2.5.4.3']]), [[true, 'Test TSA'], [true, 'Test TSA']])
+  assert.deepEqual([checked.log?.intact, checked.log?.checked], [true, true])
+  // The bundle carries the same tokens, and the certificate's digest and signature, which Node checks.
+  const bundle = /** @type {any} */ (recorded.sigstore)
+  assert.deepEqual(bundle.verificationMaterial.timestampVerificationData.rfc3161Timestamps.map((/** @type {any} */ one) => one.signedTimestamp), dated.header?.etsiU.map((/** @type {any} */ one) => one.sigTst.tstTokens[0].val))
+  const signingInput = Buffer.from(`${sealed.protected}.${sealed.payload}`)
+  assert.equal(Buffer.from(bundle.messageSignature.messageDigest.digest, 'base64').toString('hex'), createHash('sha256').update(signingInput).digest('hex'))
+  const x509 = new X509Certificate(Buffer.from(bundle.verificationMaterial.certificate.rawBytes, 'base64'))
+  assert.equal(verifyWith('sha256', signingInput, x509.publicKey, Buffer.from(bundle.messageSignature.signature, 'base64')), true)
+  // Without the log's key its promise isn't checked; with another's, it doesn't hold.
+  assert.equal((await check({ certificate: recorded })).log?.checked, false)
+  const other = (await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])).publicKey
+  assert.equal((await check({ certificate: recorded }, { logKey: other })).log?.intact, false)
+  // A token on another signature dates nothing here, and a witness that answers something else isn't kept.
+  const another = await sealedAnswer(own)
+  assert.deepEqual((await check({ certificate: { ...another.sealed, header: dated.header } })).timestamps.map(({ intact }) => intact), [false, false])
+  await assert.rejects(witness(sealed, () => reply(timestampRequest(new Uint8Array(32), Uint8Array.of(9)))))
+  // A real token from Sigstore's public authority reads as it should.
+  const real = await readToken(tokenOf(readFileSync(new URL('./fixtures/sigstore.tsr', import.meta.url))))
+  assert.deepEqual([real.intact, real.authority?.['2.5.4.3']], [true, 'sigstore-tsa'])
 })

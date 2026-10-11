@@ -18,5 +18,12 @@
   "receipt.here": "lórí ẹ̀rọ yìí",
   "receipt.reached": "Àwọn àdírẹ́sì míì tí a kàn sí",
   "receipt.save": "Fi ìwé ẹ̀rí pamọ́",
-  "receipt.file": "Ìwé ẹ̀rí {date}"
+  "receipt.proof": "Fi àrídájú pamọ́",
+  "receipt.file": "Ìwé ẹ̀rí {date}",
+  "receipt.proof.text": "Ìwé ẹ̀rí ń fi bí a ṣe ṣe ìdáhùn yìí hàn, kì í ṣe ọ̀rọ̀ rẹ̀ láé: ẹnikẹ́ni lè ní in. Àrídájú ń fi ìbéèrè àti ìdáhùn kún un, fún àwọn tí a gbà láàyè láti kà wọ́n.",
+  "receipt.proof.file": "Àrídájú {date}",
+  "receipt.checkAt": "Ẹnikẹ́ni lè ṣàyẹ̀wò wọn ní {address}.",
+  "receipt.date": "Jẹ́ kí {hosts} fi ọjọ́ sí wọn",
+  "receipt.log": "Kọ wọ́n sínú ìwé àkọsílẹ̀ gbogbogbò, {host}: gbogbogbò àti títí láé",
+  "receipt.unwitnessed": "A kò lè dé ọ̀dọ̀ {host}"
 }

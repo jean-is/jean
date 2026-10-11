@@ -1,0 +1,12 @@
+{
+  "private.name": "Privato · offline",
+  "private.away": "Offline · risponde ancora",
+  "private.title": "Tutto resta su questo dispositivo",
+  "private.text": "Le risposte vengono scritte qui, in questa scheda del browser: niente server, niente account, niente da installare. Pochi assistenti ci riescono.",
+  "private.private": "Le tue conversazioni non lasciano mai questo dispositivo",
+  "private.free": "Gratis, senza account né chiave",
+  "private.offline": "Continua a rispondere senza internet",
+  "private.try": "Provalo: spegni il Wi-Fi e chiedi qualcosa.",
+  "private.still": "Sei offline, e le risposte continuano ad arrivare.",
+  "private.proof": "Lo scudo sotto ogni risposta ne è la prova, dal registro del tuo stesso browser."
+}

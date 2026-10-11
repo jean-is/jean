@@ -18,5 +18,12 @@
   "receipt.here": "บนอุปกรณ์นี้",
   "receipt.reached": "ที่อยู่อื่นที่ติดต่อ",
   "receipt.save": "บันทึกใบรับรอง",
-  "receipt.file": "ใบรับรอง {date}"
+  "receipt.proof": "บันทึกหลักฐาน",
+  "receipt.file": "ใบรับรอง {date}",
+  "receipt.proof.text": "ใบรับรองแสดงว่าคำตอบนี้สร้างขึ้นอย่างไร โดยไม่มีถ้อยคำของคำตอบเลย ใครก็มีได้ ส่วนหลักฐานจะเพิ่มคำขอและคำตอบ สำหรับผู้ที่อ่านได้",
+  "receipt.proof.file": "หลักฐาน {date}",
+  "receipt.checkAt": "ทุกคนตรวจสอบได้ที่ {address}",
+  "receipt.date": "ให้ {hosts} ลงวันที่",
+  "receipt.log": "บันทึกลงทะเบียนสาธารณะ {host}: เป็นสาธารณะและถาวร",
+  "receipt.unwitnessed": "ติดต่อ {host} ไม่ได้"
 }

@@ -3,7 +3,7 @@
 // ─── Brains (model providers) ────────────────────────────────────────────────
 
 export type ProviderId = 'device' | 'openrouter' | 'openai' | 'anthropic' | 'gemini' | 'vertex' | 'mistral' | 'huggingface' | 'vercel'
-  | 'groq' | 'cerebras' | 'together' | 'fireworks' | 'xai' | 'ollama' | 'lmstudio' | 'claudecode' | 'custom'
+  | 'groq' | 'cerebras' | 'together' | 'fireworks' | 'xai' | 'ollama' | 'lmstudio' | 'claudecode' | 'copilot' | 'chatgpt' | 'custom'
 /** Wire protocol spoken by the provider ('device': the on-device brain). */
 export type WireApi = 'device' | 'openai' | 'anthropic'
 
@@ -21,6 +21,8 @@ export interface BrainConfig {
   headers?: Record<string, string>
   /** The projects it is used in, by id; without them, every one (D194) */
   projects?: string[]
+  /** Where it answers, ISO 3166, as the user or policy declares it: certificates name it (D274) */
+  jurisdiction?: string
 }
 
 // ─── Provider-neutral chat ───────────────────────────────────────────────────

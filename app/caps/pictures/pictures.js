@@ -2,7 +2,8 @@
 // provider of a connected brain (OpenAI, Gemini, OpenRouter…), by Ollama, or by this device; kept
 // in the project's files as Things Jean made are, a name made again being a new version (D164),
 // and shown in the answer, ready to save. No studio: they are made where the work is. Its place there
-// shows at once, then how far along it is and glimpses of it, where its maker shows them (D265).
+// shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
+// picture made on this device or by a server on this computer shows nobody naked or sexual (D275).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -120,13 +121,21 @@ async function make(kind, args, ctx) {
   /** @type {Engine | undefined} */
   let by
   const failed = []
+  // Nothing filters a picture made on this device or by a server on this computer but Jean's check (D275).
+  const unfiltered = (/** @type {Engine} */ engine) => kind === 'picture' && ('device' in engine || isLocal(engine.brain))
   // A picture that fails is asked of the next who can make it; a film, which costs, never.
   for (const engine of kind === 'film' ? found.slice(0, 1) : found) {
     glimpses = []
     show({ frame: 'device' in engine ? device.size(shape) : cloud.frame(kind, shape, engine.brain.provider), done: undefined })
+    // Its glimpses show once checked, none after one that doesn't pass.
+    let unfit = false
+    const glimpse = async (/** @type {import('./cloud.js').Progress} */ { image, ...more }) => {
+      if (image && unfiltered(engine) && !unfit && !(await device.passes(cloud.bytesOf(image.data)).catch(() => false))) unfit = true
+      show({ ...more, image: unfit ? undefined : image })
+    }
     try {
-      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => show({ done, image: { type: 'image', mimeType: 'image/png', data: cloud.base64(bytes) } }))
-        : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined, prompt: description, from, shape, seconds: secondsOf(args), show, signal: ctx.signal })
+      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: cloud.base64(bytes) } }))
+        : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined, prompt: description, from, shape, seconds: secondsOf(args), show: glimpse, signal: ctx.signal })
       by = engine
       break
     } catch (error) {
@@ -135,13 +144,15 @@ async function make(kind, args, ctx) {
     }
   }
   if (!made) throw new Error(failed.join('\n'))
+  // Checked before it is kept, the next who could make it never asked instead.
+  if (by && unfiltered(by) && !(await device.passes(made.bytes))) throw new Error('Not made: it showed nudity or sex, which no picture made on this device or this computer shows. Tell the user so, without trying again in other words.')
   const name = `${String(args?.name ?? '').trim().replace(/\.\w+$/, '') || slug(description).slice(0, 40) || kind}.${made.mimeType.split('/')[1].replace('jpeg', 'jpg').replace('quicktime', 'mov')}`
   const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType: made.mimeType, bytes: made.bytes, pages: [description], by: 'jean' })
   const conversation = conversationOf(ctx.signal)
   const version = nextVersion(filesMade(callsIn(conversation?.records ?? [], conversation?.turn?.steps)), name, link.uri)
   ctx.meta.picture = { uri: link.uri, name, mimeType: made.mimeType, size: made.bytes.length, version }
   // Who made it, as its answer's certificate says (D252).
-  ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', local: true }
+  ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', ...('revision' in made && { revision: made.revision }), local: true }
   return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}. The user sees it in your answer.`
 }
 
@@ -388,12 +399,15 @@ function shown(maker) {
 }
 
 /**
- * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), the three that can make
- * them a card each as tabs, as the Computer's two computers are (D248), the quickest first; under them, the one shown.
+ * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), whether their check is
+ * strict (D275), the three that can make them a card each as tabs, as the Computer's two computers are (D248), the quickest
+ * first; under them, the one shown.
  */
 function panel() {
   const makers = fit.value
   const chosen = viewed()
+  // The check's level, strict or not, unless the organisation set it (D275).
+  const set = app.policy.pictureCheck !== undefined
   return html`${effective.value.settings.films ? html`<section class="setting">
     <div><h3>${t('pictures.films')}</h3><p class="muted">${t('pictures.filmsText')}</p></div>
     <button class="button" @click=${() => updateSettings({ films: false })}>${t('pictures.filmsAsk')}</button>
@@ -401,6 +415,9 @@ function panel() {
   ${chosen ? html`<section class="pictures-device">
     <h3>${t('pictures.device')}</h3>
     <p class="muted">${t('pictures.deviceText')}</p>
+    <div class="setting"><div><span class="rule-kind">${t('pictures.strict')}</span><p class="muted small">${t(set ? 'pictures.locked' : 'pictures.strictText')}</p></div>
+      <input type="checkbox" class="switch" role="switch" aria-label=${t('pictures.strict')} .checked=${device.strict()} ?disabled=${set}
+        @change=${(/** @type {Event} */ e) => updateSettings(/** @type {{}} */ ({ pictureCheck: /** @type {HTMLInputElement} */ (e.target).checked ? 'strict' : undefined }))}></div>
     <div class="makers" role="tablist" aria-label=${t('pictures.device')} @keydown=${move}>${makers.map((maker) => card(maker, chosen))}</div>
     <div role="tabpanel" id="pictures-shown" aria-labelledby=${`pictures-${chosen}`}>${shown(chosen)}</div>
   </section>` : nothing}`

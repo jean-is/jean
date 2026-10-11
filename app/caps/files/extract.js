@@ -8,7 +8,7 @@ import { readZip } from '../../core/zip.js'
 
 const PAGE_CHARS = 4000
 const SHEET_ROWS = 200
-const TEXT = /\.(txt|md|markdown|csv|tsv|json|xml|html?|log|ya?ml|ini|srt|vtt)$/i
+const TEXT = /\.(txt|md|markdown|csv|tsv|json|xml|html?|log|ya?ml|ini|srt|vtt|sd-jwt)$/i
 
 /** @param {string} name */
 export const extractable = (name) => /\.(docx|pptx|xlsx)$/i.test(name) || TEXT.test(name)

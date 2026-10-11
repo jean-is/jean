@@ -1,12 +1,14 @@
 // Pictures and films from a connected brain's provider (D251): what each API is asked, what comes
 // back as bytes, and a film fetched only from where the brain is. Then what FLUX.2 [klein]'s and
-// Z-Image-Turbo's graphs are given on this device (D263), and the glimpses of a picture as it forms (D265).
+// Z-Image-Turbo's graphs are given on this device (D263), the glimpses of a picture as it forms (D265),
+// and what the check a picture made here goes through sees and says (D275).
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { PROVIDERS } from '../app/core/llm.js'
 import { picture, film, filmModels, frame } from '../app/caps/pictures/cloud.js'
 import { SIZES, chat, sigmas, positions, unpack, glimpse } from '../app/caps/pictures/flux.js'
 import * as zimage from '../app/caps/pictures/zimage.js'
+import * as check from '../app/caps/pictures/check.js'
 
 /** @param {(url: string, init: any) => Response | Promise<Response>} respond */
 function mockFetch(respond) {
@@ -251,5 +253,37 @@ describe('Z-Image-Turbo on this device', () => {
 
   test('the description is asked in Qwen3’s chat template, as its pipeline asks it', () => {
     assert.equal(zimage.chat('A bakery'), '<|im_start|>user\nA bakery<|im_end|>\n<|im_start|>assistant\n')
+  })
+})
+
+describe('the check a picture made here goes through (D275)', () => {
+  test('its file is pinned by revision and SHA-256, as the makers’ are', () => {
+    const [path, hash, bytes] = check.FILE
+    assert.match(path, /\/resolve\/[0-9a-f]{40}\/onnx\/model_q4\.onnx$/)
+    assert.match(hash, /^[0-9a-f]{64}$/)
+    assert.equal(bytes, 59512872)
+  })
+
+  test('it sees a colour a plane at a time, normalized as CLIP’s', () => {
+    // Two pixels, white then black, their alpha left out.
+    const values = check.planes([255, 255, 255, 255, 0, 0, 0, 255])
+    const near = (/** @type {number} */ got, /** @type {number} */ want) => assert.ok(Math.abs(got - want) < 1e-4, `${got} ≠ ${want}`)
+    assert.equal(values.length, 6)
+    ;[1.9303, -1.7923, 2.0749, -1.7521, 2.1459, -1.4802].forEach((want, i) => near(values[i], want))
+  })
+
+  test('medium and high together say nudity or sex; at half or more, a picture doesn’t show', () => {
+    // Its levels: neutral, low, medium, high.
+    assert.ok(check.explicit([4, 1, 0, 0]) < 0.1)
+    assert.ok(check.explicit([0, 4, 0, 0]) < check.LIMIT)
+    assert.ok(check.explicit([0, 0, 1, 1]) > 0.7)
+    assert.equal(check.explicit([0, 0, 0, Math.log(2)]), 0.6)
+    assert.equal(check.explicit([0, 0, 0, 0]), check.LIMIT)
+  })
+
+  test('strict, it counts from low on: a suggestive picture doesn’t show either', () => {
+    assert.ok(check.explicit([0, 4, 0, 0], true) > 0.9)
+    assert.ok(check.explicit([4, 1, 0, 0], true) < check.LIMIT)
+    assert.equal(check.explicit([0, 0, 0, 0], true), 0.75)
   })
 })

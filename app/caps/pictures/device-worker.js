@@ -2,15 +2,18 @@
 // the largest sigma, one pass of the UNet guided by the description's CLIP encoding, then the VAE's
 // decoder. Through ONNX Runtime from Jean's own copy (D52), on WebNN where the browser offers it,
 // else WebGPU; its files from the host the page passes (D53), one after another, so only one is
-// held while it is read.
+// held while it is read. Every picture made on this device, or by a server on this computer, is
+// checked here before it shows (D275).
 //
 // { type: 'load', host, files }   → progress…, { type: 'ready' }
 // { type: 'paint', prompt }       → { type: 'done', bytes }, a PNG
 // { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
+// { type: 'check', host, bytes }  → { type: 'done', logits }, the check's four levels for the picture
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
 import { download } from '../../ui/weights.js'
+import * as check from './check.js'
 
 const SIGMA = 14.6146 // the scheduler's largest, at timestep 999
 const SCALE = 0.18215 // the VAE's latent scaling
@@ -21,6 +24,8 @@ const DIMENSIONS = [{ batch_size: 1 }, { batch_size: 1, num_channels: 4, height:
 
 /** @type {Promise<{ tokenizer: any, sessions: any[] }> | null} */
 let loading = null
+/** @type {Promise<any> | null} the check's session, kept for the next picture */
+let checker = null
 let busy = Promise.resolve()
 
 self.onmessage = ({ data }) => {
@@ -42,6 +47,8 @@ async function handle({ id, type, ...data }) {
       loading = null
       await Promise.all(sessions.map((session) => session.release()))
       self.postMessage({ id, type: 'done' })
+    } else if (type === 'check') {
+      self.postMessage({ id, type: 'done', logits: await levels(data) })
     }
   } catch (error) {
     if (type === 'load') loading = null
@@ -89,4 +96,21 @@ async function paint(prompt) {
   const canvas = new OffscreenCanvas(SIDE, SIDE)
   canvas.getContext('2d')?.putImageData(new ImageData(rgba, SIDE, SIDE), 0, 0)
   return (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()
+}
+
+/**
+ * The check's levels for a picture (D275), squashed whole into the square the check sees: on
+ * WebGPU where there is one, else WebAssembly, its file downloaded first if it isn't here.
+ * @param {{ host: string, bytes: Uint8Array }} data
+ */
+async function levels({ host, bytes }) {
+  const session = (checker ??= download(new URL(check.FILE[0], host).href, check.FILE[1], () => {})
+    .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: ['webgpu', 'wasm'] }))
+    .catch((error) => { checker = null; throw error }))
+  const context = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(check.SIDE, check.SIDE).getContext('2d'))
+  context.imageSmoothingQuality = 'high'
+  context.drawImage(await createImageBitmap(new Blob([bytes])), 0, 0, check.SIDE, check.SIDE)
+  const pixels = check.planes(context.getImageData(0, 0, check.SIDE, check.SIDE).data)
+  const { logits } = await (await session).run({ pixel_values: new Tensor('float32', pixels, [1, 3, check.SIDE, check.SIDE]) })
+  return Array.from(/** @type {Float32Array} */ (logits.data))
 }

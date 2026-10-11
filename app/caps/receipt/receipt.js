@@ -3,26 +3,28 @@
 // pictures and films, each by name and whether it ran on this device (D263), and what the page
 // reached outside it meanwhile, as the browser itself recorded it (Resource Timing), kept in the
 // conversation as each answer ends; saved, it is sealed with a key this device keeps and never
-// gives out. Loaded with the first message, so the browser's record covers the first answer, and
-// never offered.
+// gives out, in standard forms whose words are salted digests, which the proof adds (D274). Loaded
+// with the first message, so the browser's record covers the first answer, and never offered.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
-import { app, brainLabel, loadModels } from '../../ui/state.js'
+import { app, brainLabel, loadModels, updateSettings, notify } from '../../ui/state.js'
+import { serviceURL } from '../../core/settings.js'
 import { deviceKey } from '../../ui/secrets.js'
 import { priceOf, PLANS } from '../../ui/prices.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { appendRecords } from '../../core/conversations.js'
+import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
-import { t, locale, formatDuration, useStrings } from '../../core/i18n.js'
-import { factsOf, costOf, certificate, seal } from './certificate.js'
+import { t, tParts, locale, formatDuration, useStrings } from '../../core/i18n.js'
+import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record } from './certificate.js'
 
 /** @import { Turn } from '../../core/events.js' */
-/** @import { Envelope } from '../../core/types.js' */
-/** @import { Brain, Maker, Facts, Reached } from './certificate.js' */
+/** @import { Envelope, ProviderId } from '../../core/types.js' */
+/** @import { Brain, Maker, Facts, Reached, Seal, Salts, Sealed } from './certificate.js' */
 
 await Promise.all([useStrings('receipt'), styleSheet(new URL('receipt.css', import.meta.url))])
 
@@ -75,7 +77,12 @@ async function note(path, answer) {
   ended.delete(answer)
   const since = Math.min(...answering.values(), ...[...ended].map((other) => other.from))
   requests.splice(0, requests.length, ...requests.filter(({ end }) => end >= since))
-  const record = metaRecord(app.deviceId, { reached: /** @type {Reached} */ ({ from: new Date(from).toISOString(), to: new Date(to).toISOString(), hosts }) })
+  await append(path, { reached: /** @type {Reached} */ ({ from: new Date(from).toISOString(), to: new Date(to).toISOString(), hosts }) })
+}
+
+/** Keeps a note in a conversation, and in the one on screen. @param {string} path @param {Record<string, any>} meta */
+async function append(path, meta) {
+  const record = metaRecord(app.deviceId, meta)
   await appendRecords(app.fs, path, [record])
   const current = app.current.peek()
   if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
@@ -85,6 +92,9 @@ async function note(path, answer) {
 const kept = new WeakMap()
 /** What the conversation keeps of what its answers reached, read once for each version of its records. @param {Envelope[]} records @returns {Reached[]} */
 const reachedIn = (records) => kept.get(records) ?? /** @type {Reached[]} */ (kept.set(records, records.flatMap(({ meta }) => (meta?.reached ? [meta.reached] : []))).get(records))
+
+/** The page where anyone checks a certificate or its proof (D274). */
+const CHECK = new URL('../../check.html', import.meta.url).href
 
 // ─── The card ────────────────────────────────────────────────────────────────
 
@@ -102,7 +112,7 @@ const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !co
 
 /** Where a brain's requests go, as settings hold it, for its own line rather than among the rest. @param {string} provider */
 function hostOf(provider) {
-  try { return new URL(app.settings.value.brains.find((one) => one.provider === provider)?.baseURL ?? '').host } catch { return '' }
+  try { return new URL(app.settings.value.brains.find((one) => one.provider === provider)?.baseURL ?? PROVIDERS[/** @type {ProviderId} */ (provider)]?.baseURL ?? '').host } catch { return '' }
 }
 
 /** Each one once, by provider and model. @template {{ provider: string, model: string }} T @param {T[]} all */
@@ -140,15 +150,105 @@ function card(facts, turn, text) {
       ${made.length ? html`<div class="receipt-list"><dt>${t('receipt.made')}</dt>${made.map(entry)}</div>` : nothing}
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
-    <button class="button subtle" @click=${() => keepCertificate(facts, turn, text)}>${icons.download}${t('receipt.save')}</button>`
+    <p class="receipt-note">${t('receipt.proof.text')}</p>
+    ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
+    ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
+    <div class="receipt-saves">
+      <button class="button subtle" @click=${() => keepCertificate(facts, turn, text)}>${icons.download}${t('receipt.save')}</button>
+      <button class="button subtle" @click=${() => keepCertificate(facts, turn, text, true)}>${icons.download}${t('receipt.proof')}</button>
+    </div>
+    <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>`
 }
 
-/** Saves the answer's certificate, sealed with this device's key where the browser keeps one. @param {Facts} facts @param {Turn} turn @param {string} text */
-async function keepCertificate(facts, turn, text) {
-  const document = await certificate({ facts, turn, text, conversation: app.current.peek()?.id ?? '', by: app.deviceId, origin: location.origin })
-  const keys = await deviceKey('seal', () => crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']))
-  const sealed = keys ? await seal(document, keys) : document
-  save(new Blob([JSON.stringify(sealed, null, 2)], { type: 'application/json' }), `${t('receipt.file', { date: turn.at.slice(0, 10) })}.json`)
+// ─── Witnesses (D276) ────────────────────────────────────────────────────────
+
+/** @param {string} address */
+const hostIn = (address) => new URL(address).host
+const gatewayAt = () => serviceURL('gateway', app.settings.value, app.policy)
+/** What each gateway announces, asked once. @type {Map<string, Promise<{ timestamps: string[], logs: string[] }>>} */
+const announced = new Map()
+/** Who dates a certificate, the witness settings or policy name and those the gateway announces, and the public log. */
+async function witnesses() {
+  const gateway = gatewayAt()
+  if (gateway && !announced.has(gateway)) announced.set(gateway, fetch(gateway, { headers: { accept: 'application/json' } }).then((response) => response.json()).then(({ timestamps = [], logs = [] }) => ({ timestamps, logs }), () => ({ timestamps: [], logs: [] })))
+  const from = (gateway && await announced.get(gateway)) || { timestamps: [], logs: [] }
+  return { timestamps: [...new Set([serviceURL('timestamp', app.settings.value, app.policy), ...from.timestamps].filter(Boolean))], log: serviceURL('transparencyLog', app.settings.value, app.policy) || from.logs[0] || '' }
+}
+/** Them, as the card names them. */
+const vouchers = signal({ timestamps: /** @type {string[]} */ ([]), log: '' })
+effect(() => { if (app.settings.value) witnesses().then((found) => { vouchers.value = found }) })
+
+/** A choice the user makes once, where the card says what goes where: nothing is sent out unasked. @param {'date' | 'log'} key @param {string} label */
+const choice = (key, label) => html`<label class="receipt-choice"><input type="checkbox" .checked=${Boolean(app.settings.value.certificates?.[key])}
+  @change=${(/** @type {Event} */ event) => updateSettings({ certificates: { ...app.settings.value.certificates, [key]: /** @type {HTMLInputElement} */ (event.target).checked } })}><span>${label}</span></label>`
+
+/** Sends to a witness or the log: from the browser, else through the gateway, which reaches those that don't answer browsers. @param {string} address @param {RequestInit} init */
+async function reach(address, init) {
+  const response = await fetch(address, init).catch((error) => {
+    const gateway = gatewayAt()
+    if (!gateway) throw error
+    const url = new URL(gateway)
+    url.searchParams.set('url', address)
+    return fetch(url, init)
+  })
+  if (!response.ok) throw new Error(`${address}: HTTP ${response.status}`)
+  return response
+}
+
+/** Has the witnesses date a sealed certificate and the log record it, as the user chose; one that fails is said and left out. @param {Sealed} sealed */
+async function vouched(sealed) {
+  const { date, log } = app.settings.value.certificates ?? {}
+  const found = await witnesses()
+  /** @param {string} address @param {(sealed: Sealed) => Promise<Sealed>} vouch */
+  const by = (address, vouch) => vouch(sealed).catch((error) => (console.warn(address, error), notify(t('receipt.unwitnessed', { host: hostIn(address) })), sealed))
+  for (const address of date ? found.timestamps : []) {
+    sealed = await by(address, (one) => witness(one, async (body) => new Uint8Array(await (await reach(address, { method: 'POST', headers: { 'content-type': 'application/timestamp-query' }, body: /** @type {BodyInit} */ (body) })).arrayBuffer())))
+  }
+  if (log && found.log) sealed = await by(found.log, (one) => record(one, async (entry) => (await reach(`${found.log}/api/v1/log/entries`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(entry) })).json()))
+  return sealed
+}
+
+/** The device's seal, made with the first certificate and kept where the secrets' key is; one for this certificate alone where the browser keeps none. @returns {Promise<Seal>} */
+const sealOf = async () => (await deviceKey('seal-x509', () => makeSeal())) ?? makeSeal()
+
+/** The seal's fingerprint: its key's RFC 7638 thumbprint, which its certificates' issuer names, as Settings › Approvals shows it. */
+export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKey)
+
+/** @type {Promise<string> | undefined} */
+let version
+/** Jean's version: the files that ran, as the list the service worker serves names them. */
+const versionOf = () => (version ??= fetch(new URL('../../capabilities.json', import.meta.url)).then((response) => response.json()).then(({ version }) => String(version), () => ''))
+
+/** Where a brain or a maker outside this device was reached, and in which country when its settings say. @param {string} provider */
+function placed(provider) {
+  const host = hostOf(provider)
+  const jurisdiction = app.settings.value.brains.find((one) => one.provider === provider)?.jurisdiction
+  return { ...(host && { host }), ...(jurisdiction && { jurisdiction }) }
+}
+
+/**
+ * Saves the answer's certificate, made and sealed now and kept with its salts in the conversation
+ * (`meta.certificate`); or its proof, from the last one kept for this answer, made first if there is none.
+ * @param {Facts} facts @param {Turn} turn @param {string} text @param {boolean} [words]
+ */
+async function keepCertificate(facts, turn, text, words = false) {
+  const current = app.current.peek()
+  if (!current) return
+  const answered = turn.end ?? turn.at
+  const kept = words ? current.records.findLast(({ meta }) => meta?.certificate && saysOf(sealedOf(meta.certificate.jws)).credentialSubject?.answer?.at === answered)?.meta?.certificate : undefined
+  /** @type {{ sealed: import('./certificate.js').Sealed, salts: Salts }} */
+  let made
+  if (kept) made = { sealed: sealedOf(kept.jws), salts: kept.salts }
+  else {
+    const own = await sealOf()
+    const { credential, salts } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
+    made = { sealed: await vouched(await seal(credential, own)), salts }
+    await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts } })
+  }
+  const date = turn.at.slice(0, 10)
+  if (!words) return save(new Blob([JSON.stringify(made.sealed, null, 2)], { type: 'application/jose+json' }), `${t('receipt.file', { date })}.json`)
+  const disclosures = disclosed(await disclosuresOf(made.salts, { turn, text, made: facts.made }))
+  save(new Blob([proof(made.sealed, disclosures)], { type: 'application/vc+sd-jwt' }), `${t('receipt.proof.file', { date })}.sd-jwt`)
 }
 
 /** Under an answer: its button, a shield when it was done on this device, and the card it opens. */

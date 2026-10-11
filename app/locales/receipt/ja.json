@@ -18,5 +18,12 @@
   "receipt.here": "この端末",
   "receipt.reached": "ほかの接続先",
   "receipt.save": "証明書を保存",
-  "receipt.file": "証明書 {date}"
+  "receipt.proof": "証拠を保存",
+  "receipt.file": "証明書 {date}",
+  "receipt.proof.text": "証明書には、この回答がどう作られたかが記され、その文面は一切含まれないため、誰に渡しても大丈夫です。証拠には依頼と回答の文面も加わるので、読んでよい相手にだけ渡してください。",
+  "receipt.proof.file": "証拠 {date}",
+  "receipt.checkAt": "{address} で誰でも確かめられます。",
+  "receipt.date": "{hosts} で日時を証明する",
+  "receipt.log": "公開ログ {host} に記録する: 公開され、消せません",
+  "receipt.unwitnessed": "{host} に接続できませんでした"
 }

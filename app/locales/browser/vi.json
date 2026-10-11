@@ -23,6 +23,7 @@
   "browser.folder": "Hiện {folder}",
   "browser.missing": "{page} không có trong {folder}.",
   "browser.unshown": "Không thể hiển thị {page} ở đây.",
+  "browser.build": "Không thể hiển thị {page} như hiện tại: {file} cần được build trước bằng công cụ không chạy trong trình duyệt. Hãy yêu cầu một trang chạy được ngay như vậy.",
   "browser.elsewhere": "{folder} không được mở trong nhiệm vụ này.",
   "browser.shut": "Trình duyệt của bạn chưa cho phép mở {folder}. Hãy tải lại để nó hỏi lại."
 }

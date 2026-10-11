@@ -219,6 +219,7 @@ async function pickBrain(text, records, boost = 0) {
     brains,
     preferred: settings.activeBrain,
     cloud: cloudAllowed(),
+    online: navigator.onLine,
     // A conversation with a picture needs a brain that can see it.
     signals: { ...signals, pictures: currentFiles().some(isPicture) },
     floor: Math.min(2, autoLevel(records) + boost),

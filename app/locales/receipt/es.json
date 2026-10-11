@@ -18,5 +18,12 @@
   "receipt.here": "en este dispositivo",
   "receipt.reached": "Otras direcciones contactadas",
   "receipt.save": "Guardar el certificado",
-  "receipt.file": "Certificado {date}"
+  "receipt.proof": "Guardar la prueba",
+  "receipt.file": "Certificado {date}",
+  "receipt.proof.text": "El certificado muestra cómo se hizo esta respuesta, nunca sus palabras: cualquiera puede tenerlo. La prueba añade la petición y la respuesta, para quien pueda leerlas.",
+  "receipt.proof.file": "Prueba {date}",
+  "receipt.checkAt": "Cualquiera puede comprobarlos en {address}.",
+  "receipt.date": "Hacerlos fechar por {hosts}",
+  "receipt.log": "Inscribirlos en un registro público, {host}: público y permanente",
+  "receipt.unwitnessed": "No se pudo llegar a {host}"
 }

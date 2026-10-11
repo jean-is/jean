@@ -144,3 +144,47 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
     stop(bridge)
   }
 })
+
+// Copilot (D262): the user's own Copilot CLI, signed in with their plan, answers through the bridge, over ACP;
+// played here by test/fixtures/copilot.js, first on the PATH of the terminal the line is pasted in.
+test('the user’s Copilot plan answers, through Copilot on this computer', async ({ page }) => {
+  test.setTimeout(120_000)
+  const disk = mkdtempSync(join(tmpdir(), 'jean-e2e-'))
+  const bin = join(disk, 'bin')
+  mkdirSync(bin)
+  writeFileSync(join(bin, 'copilot'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/copilot.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
+  await start(page)
+  await page.locator('.brain-chip').click()
+  const settings = page.locator('app-settings dialog[open]')
+  const way = settings.locator('.way.is-copilot')
+  await way.locator('summary').click()
+  await expect(way).toContainText('GitHub Copilot plan')
+  await way.getByRole('button', { name: 'Connect' }).click()
+  const part = settings.locator('.machine')
+  const line = String(await part.locator('.machine-line code').textContent())
+  const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } })
+  try {
+    await expect(part).toContainText('run their commands on this computer', { timeout: 15_000 })
+    await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
+    await way.locator('summary').click()
+    await way.getByRole('button', { name: 'Connect' }).click()
+    await expect(settings).toBeHidden()
+    await expect((await openSettings(page, 'Brains')).locator('.item', { hasText: 'GitHub Copilot' }).first()).toContainText('In the cloud')
+    await closeSettings(page)
+    await ask(page, 'hello there')
+    await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \([\w.-]+, [\s\S]*hello there/, { timeout: 20_000 })
+  } finally {
+    stop(bridge)
+  }
+})
+
+// ChatGPT (D262): back from its sign-in without the plan's use, Settings › Brains says so, on its way.
+test('back from ChatGPT’s sign-in, declined, Settings › Brains says why', async ({ page }) => {
+  await start(page)
+  await page.evaluate(() => sessionStorage.setItem('app.draft', 'kept while away'))
+  await page.goto('/?chatgpt=declined')
+  const way = page.locator('app-settings dialog[open] .way.is-chatgpt')
+  await expect(way.locator('.status')).toHaveText('ChatGPT didn’t allow the use of your plan. To allow it, continue with ChatGPT again.')
+  await expect(way.getByRole('button', { name: 'Continue with ChatGPT' })).toBeVisible()
+  expect(new URL(page.url()).search).toBe('')
+})

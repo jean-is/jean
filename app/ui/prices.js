@@ -13,8 +13,8 @@ import { serviceURL } from '../core/settings.js'
 
 /** models.dev's names for the providers Jean knows whose catalogue has no prices (OpenRouter's has). */
 const NAMES = { anthropic: 'anthropic', openai: 'openai', gemini: 'google', vertex: 'google-vertex', mistral: 'mistral', groq: 'groq', cerebras: 'cerebras', together: 'togetherai', fireworks: 'fireworks-ai', xai: 'xai', huggingface: 'huggingface', vercel: 'vercel' }
-/** The brains that answer from a plan the user pays for, not by the token, by provider: its name (D235). @type {Record<string, string>} */
-export const PLANS = { claudecode: 'Claude' }
+/** The brains that answer from a plan the user pays for, not by the token, by provider: its name (D235, D262). @type {Record<string, string>} */
+export const PLANS = { claudecode: 'Claude', copilot: 'Copilot', chatgpt: 'ChatGPT' }
 const FILE = '.cache/prices.json'
 const FRESH_MS = 7 * 86_400_000
 

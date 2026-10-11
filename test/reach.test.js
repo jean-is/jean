@@ -201,9 +201,9 @@ describe('the <connections> section', () => {
 // ─── Connections (MCP) ───────────────────────────────────────────────────────
 
 import { createFakeMail } from './fixtures/fake-mail.js'
-import { mcpClient, paramHeaders, headerValue } from '../app/caps/connections/mcp.js'
+import { mcpClient, paramHeaders, headerValue, searchesWeb } from '../app/caps/connections/mcp.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh } from '../app/caps/connections/auth.js'
-import { DIRECTORY, known, knownFor, covers } from '../app/caps/connections/directory.js'
+import { DIRECTORY, known, knownFor, covers, searchers } from '../app/caps/connections/directory.js'
 import { gateway, covers as gatewayCovers, SERVICES } from '../gateway/gateway.js'
 import { listener, speakable } from '../app/caps/live/turns.js'
 
@@ -265,6 +265,18 @@ describe('MCP client', () => {
     assert.equal(headerValue('=?base64?literal?='), '=?base64?PT9iYXNlNjQ/bGl0ZXJhbD89?=')
     const schema = { properties: { region: { type: 'string', 'x-mcp-header': 'Region' }, filter: { type: 'object', properties: { team: { type: 'string', 'x-mcp-header': 'Team' } } }, query: { type: 'string' } } }
     assert.deepEqual(paramHeaders(schema, { region: 'eu', filter: { team: 'ops' }, query: 'x' }), { 'mcp-param-region': 'eu', 'mcp-param-team': 'ops' })
+  })
+
+  test('a tool searches the web when it says so itself: Exa’s search does, its page reader, a mailbox’s search and a closed world don’t (D271)', () => {
+    const open = { readOnlyHint: true, openWorldHint: true }
+    assert.equal(searchesWeb({ name: 'web_search_exa', description: 'Search the web for any topic.', annotations: open }), true)
+    assert.equal(searchesWeb({ name: 'web_fetch_exa', description: 'Read a webpage’s full content. Use after web_search_exa.', annotations: open }), false)
+    assert.equal(searchesWeb({ name: 'tavily-search', description: 'A powerful web search tool.' }), true)
+    assert.equal(searchesWeb({ name: 'searchInternet', description: 'Results for a query.' }), true)
+    assert.equal(searchesWeb({ name: 'searchWeb' }), true)
+    assert.equal(searchesWeb({ name: 'search_emails', description: 'The latest emails, matching a query.', annotations: { readOnlyHint: true } }), false)
+    assert.equal(searchesWeb({ name: 'web_search', annotations: { openWorldHint: false } }), false)
+    assert.equal(searchesWeb({ name: 'web_search', annotations: { readOnlyHint: false } }), false)
   })
 })
 
@@ -433,6 +445,14 @@ describe('the services Jean knows (D95)', () => {
     assert.ok(!services.some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
     assert.equal(knownFor('https://mcp.m365.corp.example/mcp', policy)?.clientId, 'corp-app')
     assert.equal(knownFor('https://mcp.canva.com/mcp', policy), undefined)
+  })
+
+  test('those that search the web are offered until connected: Exa, and one the organisation says searches, if reached (D271)', () => {
+    const ids = (/** @type {any} */ policy, /** @type {{ url: string }[]} */ connections = []) => searchers(known(policy), connections).map((entry) => entry.id)
+    assert.deepEqual(ids({}), ['exa'])
+    assert.deepEqual(ids({}, [{ url: 'https://mcp.exa.ai/mcp' }]), [])
+    assert.deepEqual(ids({ directory: [{ id: 'corp-search', name: 'Search', url: 'https://search.corp.example/mcp', searches: true }] }), ['exa', 'corp-search'])
+    assert.deepEqual(ids({ directory: [{ id: 'exa', ready: false }, { id: 'corp-search', name: 'Search', searches: true }] }), [])
   })
 
   test('a service that can\'t register Jean signs in with the client the organisation registered there', async () => {
