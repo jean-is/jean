@@ -2,7 +2,7 @@
 // back as bytes, and a film fetched only from where the brain is. Then what FLUX.2 [klein]'s and
 // Z-Image-Turbo's graphs are given on this device (D263), the glimpses of a picture as it forms (D265),
 // what the check a picture made here goes through sees and says (D275, D280), and the mark that says a
-// trained model made it (D279).
+// trained model made it (D279). Last, how often a worker tells the page how far its weights have come.
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { PROVIDERS } from '../app/core/llm.js'
@@ -13,6 +13,8 @@ import { readFileSync } from 'node:fs'
 import * as check from '../app/caps/pictures/check.js'
 import { marked, GENERATED } from '../app/caps/pictures/mark.js'
 import { crc32 } from '../app/core/zip.js'
+import { download, PACE } from '../app/ui/weights.js'
+import { createHash } from 'node:crypto'
 
 /** @param {(url: string, init: any) => Response | Promise<Response>} respond */
 function mockFetch(respond) {
@@ -353,5 +355,32 @@ describe('the mark that says a trained model made a picture (D279)', () => {
   test('anything but a PNG stays as it came', () => {
     const jpeg = Uint8Array.of(0xff, 0xd8, 0xff, 0xe0, 0, 16)
     assert.equal(marked(jpeg, 'x'), jpeg)
+  })
+})
+
+describe('weights', () => {
+  test('a download tells how far it has come every PACE ms and once it all has, not with each chunk', async (t) => {
+    const chunk = new Uint8Array(64 * 1024)
+    const body = new ReadableStream({
+      async start(controller) {
+        for (let i = 0; i < 400; i++) {
+          if (i % 100 === 0) await new Promise((resolve) => setTimeout(resolve, PACE + 10))
+          controller.enqueue(chunk)
+        }
+        controller.close()
+      },
+    })
+    const all = new Uint8Array(400 * chunk.length)
+    const kept = new Map()
+    Object.assign(globalThis, { caches: { open: async () => ({ match: async () => undefined, put: async (/** @type {string} */ url, /** @type {Response} */ response) => kept.set(url, response) }) } })
+    t.after(() => delete (/** @type {any} */ (globalThis)).caches)
+    t.mock.method(globalThis, 'fetch', async () => new Response(body))
+    /** @type {number[]} */
+    const told = []
+    const data = await download('https://weights.test/a.onnx', createHash('sha256').update(all).digest('hex'), (bytes) => told.push(bytes))
+    assert.equal(data.byteLength, all.length)
+    assert.ok(told.length >= 3 && told.length <= 6, `${told.length} times`)
+    assert.equal(told.at(-1), all.length)
+    assert.ok(kept.has('https://weights.test/a.onnx'))
   })
 })

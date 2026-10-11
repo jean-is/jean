@@ -2,7 +2,13 @@
 // Transformers.js keeps its own in, apart from app versions, or else downloaded, checked and kept.
 // For workers as well as the page: web-standard APIs only.
 
-/** A file's bytes, from the cache, or else downloaded and checked. @param {string} url @param {string} hash @param {(bytes: number) => void} progress */
+/** How often a worker tells the page how far its weights have come, in ms: each message redraws a download there. */
+export const PACE = 100
+
+/**
+ * A file's bytes, from the cache, or else downloaded and checked, with what of it has come, every
+ * PACE ms and once it all has. @param {string} url @param {string} hash @param {(bytes: number) => void} progress
+ */
 export async function download(url, hash, progress) {
   const cache = await caches.open('transformers-cache')
   const kept = await cache.match(url)
@@ -10,8 +16,19 @@ export async function download(url, hash, progress) {
   const response = await fetch(url)
   if (!response.ok || !response.body) throw new Error(`${url}: HTTP ${response.status}`)
   let bytes = 0
-  const counted = new TransformStream({ transform: (chunk, next) => (progress((bytes += chunk.length)), next.enqueue(chunk)) })
+  let told = performance.now()
+  const counted = new TransformStream({
+    transform: (chunk, next) => {
+      bytes += chunk.length
+      if (performance.now() - told >= PACE) {
+        progress(bytes)
+        told = performance.now()
+      }
+      next.enqueue(chunk)
+    },
+  })
   const data = await new Response(response.body.pipeThrough(counted)).arrayBuffer()
+  progress(bytes)
   const sum = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', data)), (byte) => byte.toString(16).padStart(2, '0')).join('')
   if (sum !== hash) throw new Error(`${url}: not the expected file`)
   await cache.put(url, new Response(data))
