@@ -104,9 +104,13 @@ async function paint(prompt) {
  * is one, else WebAssembly, their files downloaded first if they aren't here. @param {{ host: string, bytes: Uint8Array }} data
  */
 async function checked({ host, bytes }) {
-  const loaded = (checker ??= Promise.all([...check.FILES.map(([path, hash]) => download(new URL(path, host).href, hash, () => {})
-    .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: ['webgpu', 'wasm'] }))),
-  fetch(new URL('./concepts.json', import.meta.url)).then((response) => response.json())]).catch((error) => { checker = null; throw error }))
+  const loaded = (checker ??= (async () => {
+    const models = await Promise.all(check.FILES.map(([path, hash]) => download(new URL(path, host).href, hash, () => {})))
+    // One after the other: ONNX Runtime makes one session on WebGPU at a time, and refuses a second meanwhile.
+    const sessions = []
+    for (const model of models) sessions.push(await InferenceSession.create(new Uint8Array(model), { executionProviders: ['webgpu', 'wasm'] }))
+    return [...sessions, await (await fetch(new URL('./concepts.json', import.meta.url))).json()]
+  })().catch((error) => { checker = null; throw error }))
   const picture = await createImageBitmap(new Blob([bytes]))
   const seen = (/** @type {number} */ side, /** @type {number[][]} */ normalization) => {
     const context = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(side, side).getContext('2d'))
