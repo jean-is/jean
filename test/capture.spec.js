@@ -56,6 +56,15 @@ for (const lang of ['en', 'ar', 'ja']) {
     await ask(page, 'What does it show?')
     await expect(page.locator('.msg-jean .prose').last()).toContainText('I can see your picture: 1568 × 784 pixels.', { timeout: 30_000 })
     await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+    // Sent, it shows itself in the request, named after it, and opens whole.
+    const shared = page.locator('.msg-files .is-picture')
+    await expect(shared).toHaveAccessibleName('chart.png')
+    await expect(shared.locator('img')).toHaveJSProperty('naturalWidth', 1568)
+    expect((await shared.boundingBox())?.height).toBeGreaterThan(150)
+    await shared.click()
+    await expect(page.locator('app-preview .view-picture')).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.locator('app-preview .preview')).toHaveCount(0)
 
     // A capture of the screen, from the + menu: one frame, and the sharing stops at once.
     await page.getByRole('button', { name: strings['composer.add'] }).click()
@@ -66,6 +75,6 @@ for (const lang of ['en', 'ar', 'ja']) {
     expect(await page.evaluate(() => /** @type {any} */ (window).shared.getTracks().every((/** @type {MediaStreamTrack} */ track) => track.readyState === 'ended'))).toBe(true)
     await ask(page, 'And this one?')
     await expect(page.locator('.msg-jean .prose').last()).toContainText('I can see your picture: 640 × 400 pixels.', { timeout: 30_000 })
-    await expect(page.locator('.msg-files .file-chip').last()).toContainText(strings['capture.name'].replace(/\s*\{time\}\s*/, ''))
+    await expect(page.locator('.msg-files .is-picture').last()).toHaveAccessibleName(new RegExp(strings['capture.name'].replace(/\s*\{time\}\s*/, '')))
   })
 }

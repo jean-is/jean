@@ -166,7 +166,7 @@ function turnView(turn, live, files, upTo, last, sources) {
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
     ${routine?.kind === 'routine' ? html`<button class="since" @click=${() => import('./knows.js').then((knows) => knows.showRoutine(routine.routine))}>${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></button>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
-      <button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${isPicture(link) ? icons.image : icons.file}<span dir="auto">${link.name}</span></button>
+      ${isPicture(link) ? shared(link) : html`<button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>`}
     </li>`)}</ul>` : nothing}
     ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${withFormulas(turn.user.text)}</p>` : nothing}
     ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
@@ -184,6 +184,13 @@ function turnView(turn, live, files, upTo, last, sources) {
       </article>` : nothing}
     ${last && !streaming && !app.busy.value ? followUps(turn.at, suggestions, entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)) : nothing}
   </li>`
+}
+
+/** A picture the user shared shows itself, and opens whole. @param {ResourceLink} link */
+function shared(link) {
+  import('./shown.js')
+  return html`<button class="file-chip is-picture" @click=${() => openFile(link)} aria-label=${link.name} title=${t('files.open')}>
+    <app-shared uri=${link.uri} type=${link.mimeType}></app-shared></button>`
 }
 
 /** A call the file keeps as running, which the page closed on: it ended there, and may not have been done. @param {ToolCallInfo} tool */

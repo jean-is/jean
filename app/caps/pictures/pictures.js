@@ -9,7 +9,8 @@ import { app, effective, activeBrain, brainsHere, loadModels, cloudAllowed, conv
 import { getSecret } from '../../ui/secrets.js'
 import { isLocal } from '../../ui/auto.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { Element, define } from '../../ui/base.js'
+import { define } from '../../ui/base.js'
+import { Shown } from '../../ui/shown.js'
 import { icons } from '../../ui/icons.js'
 import { addFile } from '../../core/files.js'
 import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../core/events.js'
@@ -179,29 +180,15 @@ const filmTool = {
   },
 }
 
-/** A picture or a film Jean made, read from the project's files, in the user's language as it changes. Attributes, so they survive the upgrade. */
-class Picture extends Element {
-  #url = signal('')
-
+/** A picture or a film Jean made, read from the project's files, in the user's language as it changes. */
+class Picture extends Shown {
   render() {
-    const [url, name, alt, type] = [this.#url.value, this.getAttribute('name') ?? '', this.getAttribute('alt') ?? '', this.getAttribute('type') ?? '']
+    const [url, name, alt, type] = [this.url.value, this.getAttribute('name') ?? '', this.getAttribute('alt') ?? '', this.getAttribute('type') ?? '']
     const film = type.startsWith('video/')
     return url ? html`<figure>
       ${film ? html`<video src=${url} controls playsinline aria-label=${alt}></video>` : html`<img src=${url} alt=${alt}>`}
       <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>
     </figure>` : nothing
-  }
-
-  async connectedCallback() {
-    super.connectedCallback()
-    const bytes = await app.fs.readBytes(`${app.projectDir}/${this.getAttribute('uri')}`)
-    if (bytes && this.isConnected && !this.#url.peek()) this.#url.value = URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: this.getAttribute('type') ?? '' }))
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback()
-    URL.revokeObjectURL(this.#url.peek())
-    this.#url.value = ''
   }
 }
 

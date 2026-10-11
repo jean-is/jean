@@ -390,10 +390,12 @@ app-made:not(:defined) { display: none; }
 .attachment[data-status='failed'] { border-color: oklch(from var(--danger) l c h / 0.6); }
 .attachment[data-status='failed'] > .icon, .attachment[data-status='failed'] .attachment-note { color: var(--danger); }
 .attachment .icon-button.subtle { inline-size: 1.8rem; block-size: 1.8rem; }
-/* A picture waiting to be sent shows what it is, and opens whole. */
+/* A picture, sent or waiting to be, shows what it is, and opens whole. */
 .attachment:has(.attachment-preview) { padding-block: 0.25rem; padding-inline-start: 0.25rem; }
 .attachment-preview { flex: none; padding: 0; border: 0; border-radius: 0.45rem; background: none; }
 .attachment-preview img { display: block; block-size: 2.4rem; inline-size: auto; max-inline-size: 4rem; border: 1px solid var(--line); border-radius: 0.45rem; object-fit: cover; }
+.file-chip.is-picture { min-block-size: 12rem; padding: 0; overflow: hidden; }
+.is-picture img { display: block; block-size: 12rem; max-inline-size: 100%; object-fit: cover; }
 .read-list { font-size: 0.86rem; color: var(--ink-soft); }
 .read-list summary { display: inline-flex; align-items: center; gap: 0.45rem; list-style: none; cursor: pointer; border-radius: 0.5rem; }
 .read-list summary::-webkit-details-marker { display: none; }
