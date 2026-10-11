@@ -21,5 +21,6 @@
   "receipt.proof": "証拠を保存",
   "receipt.file": "証明書 {date}",
   "receipt.proof.text": "証明書には、この回答がどう作られたかが記され、その文面は一切含まれないため、誰に渡しても大丈夫です。証拠には依頼と回答の文面も加わるので、読んでよい相手にだけ渡してください。",
-  "receipt.proof.file": "証拠 {date}"
+  "receipt.proof.file": "証拠 {date}",
+  "receipt.checkAt": "{address} で誰でも確かめられます。"
 }

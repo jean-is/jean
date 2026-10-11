@@ -32,6 +32,8 @@ import { selfIssued, readCertificate } from './der.js'
  * @typedef {{ protected: string, payload: string, signature: string, header?: { etsiU: object[] }, sigstore?: object }} Sealed
  * The salts of a certificate's disclosures, kept in the conversation (`meta.certificate`) for its proof.
  * @typedef {{ request: string, answer: string, files: string[], made: string[] }} Salts
+ * What check() found: the seal's state, who sealed it and when, what it says, and with a proof the words.
+ * @typedef {{ intact: boolean, fingerprint: string, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string>, at: Date, says: any, proven?: boolean, words?: { request?: string, answer?: string, files: string[], made: string[] } }} Reading
  */
 
 /** This device itself, by name or address. */
@@ -216,7 +218,7 @@ export const proof = (sealed, disclosures) => `${compact(sealed)}~${disclosures.
  * holds by the key in its certificate, which its issuer is the thumbprint of, at a time that certificate
  * covers. With a proof, `proven` when it is this certificate's and each disclosure is one of its digests,
  * salted with 128 bits at least, and what they stand for: the words, and the files' digests.
- * @param {{ certificate?: Sealed, proof?: string }} given
+ * @param {{ certificate?: Sealed, proof?: string }} given @returns {Promise<Reading>}
  */
 export async function check({ certificate: file, proof: shown }) {
   const [jws = '', ...rest] = shown?.split('~') ?? []

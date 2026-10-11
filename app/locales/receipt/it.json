@@ -21,5 +21,6 @@
   "receipt.proof": "Salva la prova",
   "receipt.file": "Certificato {date}",
   "receipt.proof.text": "Il certificato mostra come è stata fatta questa risposta, mai le sue parole: chiunque può averlo. La prova aggiunge la richiesta e la risposta, per chi può leggerle.",
-  "receipt.proof.file": "Prova {date}"
+  "receipt.proof.file": "Prova {date}",
+  "receipt.checkAt": "Chiunque può verificarli su {address}."
 }

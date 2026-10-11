@@ -21,5 +21,6 @@
   "receipt.proof": "ማስረጃውን ያስቀምጡ",
   "receipt.file": "የምስክር ወረቀት {date}",
   "receipt.proof.text": "የምስክር ወረቀቱ ይህ መልስ እንዴት እንደተሠራ ያሳያል፤ ቃላቱን ግን በጭራሽ አያሳይም፦ ማንም ሊኖረው ይችላል። ማስረጃው ጥያቄውንና መልሱን ይጨምራል፤ ሊያነቧቸው ለተፈቀደላቸው።",
-  "receipt.proof.file": "ማስረጃ {date}"
+  "receipt.proof.file": "ማስረጃ {date}",
+  "receipt.checkAt": "ማንም ሰው እነዚህን በ{address} ማረጋገጥ ይችላል።"
 }

@@ -21,5 +21,6 @@
   "receipt.proof": "保存证明",
   "receipt.file": "证书 {date}",
   "receipt.proof.text": "证书只说明这个回答是怎样生成的，从不包含它的文字：谁都可以拿到。证明还附上请求和回答的原文，只给可以阅读它们的人。",
-  "receipt.proof.file": "证明 {date}"
+  "receipt.proof.file": "证明 {date}",
+  "receipt.checkAt": "任何人都可以在 {address} 核对它们。"
 }
