@@ -141,7 +141,7 @@ async function make(kind, args, ctx) {
   const version = nextVersion(filesMade(callsIn(conversation?.records ?? [], conversation?.turn?.steps)), name, link.uri)
   ctx.meta.picture = { uri: link.uri, name, mimeType: made.mimeType, size: made.bytes.length, version }
   // Who made it, as its answer's certificate says (D252).
-  ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', local: true }
+  ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', ...('revision' in made && { revision: made.revision }), local: true }
   return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}. The user sees it in your answer.`
 }
 

@@ -182,5 +182,7 @@ export function paint(description, shape, show = () => {}) {
     return /** @type {Uint8Array} */ ((await stage({ maker, type: 'decode', files: files.decode, latent, width, height }, [latent.buffer])).bytes)
   })
   busy = made.then(() => {}, () => {})
-  return made.then((bytes) => ({ bytes: new Uint8Array(bytes), mimeType: 'image/png', model: NAMES[/** @type {Maker} */ (maker)] }))
+  // Its weights' repository and pinned commit, as the answer's certificate names them (D274).
+  const revision = { 'sd-turbo': SD, 'flux2-klein': FLUX, 'z-image-turbo': Z }[/** @type {Maker} */ (maker)].replace('/resolve/', '@').slice(0, -1)
+  return made.then((bytes) => ({ bytes: new Uint8Array(bytes), mimeType: 'image/png', model: NAMES[/** @type {Maker} */ (maker)], revision }))
 }

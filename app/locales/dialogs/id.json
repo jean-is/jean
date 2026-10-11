@@ -208,6 +208,8 @@
   "kind.execute.label": "Menjalankan perhitungan",
   "kind.fetch.label": "Menggunakan internet",
   "kind.other.label": "Mengirim dan berbagi",
+  "seal.title": "Segel perangkat ini",
+  "seal.text": "Sertifikat yang disimpan di sini disegel dengan kunci yang tidak pernah keluar dari perangkat ini. Siapa pun yang mengandalkannya dapat memeriksa sidik jari ini, atau menyepakatinya dengan Anda sebelumnya.",
   "pages.title": "Halaman web",
   "pages.text": "Apa yang boleh dilakukan halaman web saat terbuka di samping percakapan.",
   "pages.scripts": "Menjalankan kodenya",

@@ -18,5 +18,8 @@
   "receipt.here": "이 기기",
   "receipt.reached": "그 밖의 연결된 곳",
   "receipt.save": "인증서 저장",
-  "receipt.file": "인증서 {date}"
+  "receipt.proof": "증빙 저장",
+  "receipt.file": "인증서 {date}",
+  "receipt.proof.text": "인증서는 이 답변이 어떻게 만들어졌는지 보여 주지만 그 내용은 절대 담지 않아요. 누구에게 줘도 괜찮아요. 증빙에는 요청과 답변 내용이 더해지니, 읽어도 되는 사람에게만 주세요.",
+  "receipt.proof.file": "증빙 {date}"
 }

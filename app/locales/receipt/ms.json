@@ -18,5 +18,8 @@
   "receipt.here": "pada peranti ini",
   "receipt.reached": "Alamat lain yang dihubungi",
   "receipt.save": "Simpan sijil",
-  "receipt.file": "Sijil {date}"
+  "receipt.proof": "Simpan bukti",
+  "receipt.file": "Sijil {date}",
+  "receipt.proof.text": "Sijil menunjukkan cara jawapan ini dibuat, tidak sekali-kali kata-katanya: sesiapa pun boleh memilikinya. Bukti menambah permintaan dan jawapan, untuk mereka yang dibenarkan membacanya.",
+  "receipt.proof.file": "Bukti {date}"
 }

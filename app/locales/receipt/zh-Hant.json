@@ -18,5 +18,8 @@
   "receipt.here": "在這台裝置上",
   "receipt.reached": "還存取了",
   "receipt.save": "儲存證書",
-  "receipt.file": "證書 {date}"
+  "receipt.proof": "儲存證明",
+  "receipt.file": "證書 {date}",
+  "receipt.proof.text": "證書只說明這個回答是怎樣產生的，從不包含它的文字：誰都可以拿到。證明還附上請求和回答的原文，只給可以閱讀它們的人。",
+  "receipt.proof.file": "證明 {date}"
 }

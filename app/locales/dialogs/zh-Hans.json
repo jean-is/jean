@@ -208,6 +208,8 @@
   "kind.execute.label": "运行计算",
   "kind.fetch.label": "使用互联网",
   "kind.other.label": "发送和分享",
+  "seal.title": "这台设备的印章",
+  "seal.text": "在这里保存的证书由一把从不离开这台设备的密钥盖章。依赖这些证书的人可以核对这个指纹，或事先与你约定好它。",
   "pages.title": "网页",
   "pages.text": "网页在对话旁打开时可以做什么。",
   "pages.scripts": "运行它的代码",
