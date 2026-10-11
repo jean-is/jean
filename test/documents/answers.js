@@ -1,7 +1,8 @@
 // The answer eval: a brain answers each question through Jean's own loop, prompt and file tools
 // (core/loop.js, core/prompt.js, core/files.js), under one condition or another, and its answer is
 // graded without a brain: the last "Answer:" line against the gold, and whether what it was shown
-// held the evidence. Brains are OpenRouter's free ones; the key comes from OPENROUTER_API_KEY.
+// held the evidence. Brains are OpenRouter's: the large one paid and held to one provider, so that
+// every answer comes from the same weights, the small one free; the key comes from OPENROUTER_API_KEY.
 import { runTurn } from '../../app/core/loop.js'
 import { buildSystemPrompt } from '../../app/core/prompt.js'
 import { addFile, documentPart, estimateTokens, pagesThatFit, preselect, readTool, searchTool } from '../../app/core/files.js'
@@ -13,10 +14,39 @@ import { fuse, nearest } from './retrieval.js'
 
 /** @typedef {import('./corpus.js').Question} Question */
 
-/** The brains: one with a large context, and a small one held to the device brain's 32k. */
+/**
+ * The brains: one with a large context, and a small one held to the device brain's 32k.
+ * @type {Record<'large' | 'small', { model: string, provider?: string, context: number }>}
+ */
 export const BRAINS = {
-  large: { model: 'nvidia/nemotron-3-super-120b-a12b:free', context: 262144 },
+  large: { model: 'nvidia/nemotron-3-super-120b-a12b', provider: 'DeepInfra', context: 262144 },
   small: { model: 'liquid/lfm-2.5-2.6b:free', context: 32768 },
+}
+
+const RETRIES = [5000, 20000, 60000]
+
+/** Jean's brain entry for one of these. @param {{ model: string }} b */
+const entry = (b) => ({ id: 'eval', provider: 'openrouter', api: /** @type {'openai'} */ ('openai'), baseURL: PROVIDERS.openrouter.baseURL, model: b.model })
+
+/** streamChat with OpenRouter told to use the brain's provider alone, when it names one. @param {{ provider?: string }} b @returns {typeof streamChat} */
+const streamOf = ({ provider }) => (options) => streamChat({ ...options, fetch: provider
+  ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), provider: { order: [provider], allow_fallbacks: false } }) })
+  : globalThis.fetch })
+
+/** One request's whole reply, retried as the loop retries. @param {string} system @param {string} content @param {string} apiKey */
+async function complete(system, content, apiKey) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      let text = ''
+      for await (const event of streamOf(BRAINS.large)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
+        if (event.type === 'text') text += event.delta
+      }
+      return text
+    } catch (error) {
+      if (attempt === RETRIES.length) throw error
+      await new Promise((resolve) => setTimeout(resolve, RETRIES[attempt]))
+    }
+  }
 }
 
 const SHARE = 0.25 // a shared file's share of the context (D55)
@@ -74,7 +104,7 @@ export async function script(code, file) {
 /**
  * The tools and the document part of a condition.
  * @param {string} condition @param {{ fs: any, links: any[] }} lib @param {{ name: string, pages: string[] }[]} files
- * @param {{ docs?: import('./retrieval.js').Doc[], vectors?: { matrix: Int8Array, dims: number, embedQuery: (text: string) => Promise<Int8Array> } }} extra
+ * @param {{ docs?: import('./retrieval.js').Doc[], vectors?: { matrix: Int8Array, dims: number, embedQuery: (text: string) => Promise<Int8Array> }, apiKey?: string }} extra
  */
 export function tools(condition, lib, files, extra = {}) {
   const read = readTool({ fs: lib.fs, projectDir: () => 'p', files: () => lib.links })
@@ -89,6 +119,16 @@ export function tools(condition, lib, files, extra = {}) {
     lines.push({ name: 'search_files', line: 'find passages in the files by the words they hold' })
     rules.push('For a file too long to read whole, search it, then read the pages that matter.')
     list.push(condition === 'search+meaning' ? hybrid(search, lib, extra) : search)
+  }
+  if (condition === 'search+mapreduce') {
+    lines.push({ name: 'every_page', line: 'ask one question of every 40 pages of the files' })
+    rules.push('For a count or a list across a whole file, ask every_page, then add up what each group of pages says.')
+    list.push({
+      spec: { name: 'every_page', description: 'Ask one question of every group of 40 pages of the shared files, each group answered on its own. Returns each group’s answer with its pages.', parameters: { type: 'object', properties: { question: { type: 'string' } }, required: ['question'] } },
+      kind: 'search',
+      title: () => 'Ask every page',
+      run: async (args) => everyPage(String(args?.question ?? ''), files, String(extra.apiKey)),
+    })
   }
   if (condition === 'search+script') {
     lines.push({ name: 'javascript', line: 'run JavaScript; file(name) returns a file’s whole text' })
@@ -136,9 +176,9 @@ function hybrid(lexical, lib, { docs, vectors }) {
  * @param {{ question: Question, condition: string, brain: keyof typeof BRAINS, files: { name: string, pages: string[] }[], lib: { fs: any, links: any[] }, extra?: any, apiKey: string, maxSteps?: number }} options
  */
 export async function ask({ question, condition, brain, files, lib, extra, apiKey, maxSteps = 12 }) {
-  const { model, context } = BRAINS[brain]
+  const { context } = BRAINS[brain]
   const budget = context * SHARE
-  const { list, lines, rules } = tools(condition, lib, files, extra)
+  const { list, lines, rules } = tools(condition, lib, files, { ...extra, apiKey })
   // What the brain reads of each file with the message, decided once (D55): the first pages, or the matching ones.
   const documents = lib.links.map((link, i) => {
     const pages = files[i].pages
@@ -153,8 +193,8 @@ export async function ask({ question, condition, brain, files, lib, extra, apiKe
   const calls = []
   const started = performance.now()
   const result = await runTurn({
-    brain: { id: 'eval', provider: 'openrouter', api: 'openai', baseURL: PROVIDERS.openrouter.baseURL, model },
-    apiKey, system, tools: list, maxSteps, rule: () => 'allow', retries: [5000, 20000, 60000],
+    brain: entry(BRAINS[brain]), stream: streamOf(BRAINS[brain]),
+    apiKey, system, tools: list, maxSteps, rule: () => 'allow', retries: RETRIES,
     history: [{ role: 'user', content: question.text + ASK, documents }],
     onUpdate: (update) => {
       if (update.sessionUpdate === 'tool_call_update' && (update.status === 'completed' || update.status === 'failed') && typeof update.rawOutput === 'string') {
@@ -220,13 +260,33 @@ export async function summarise(pages, apiKey, progress = () => {}, group = 40, 
   for (let g = out.length; g < total; g++) {
     const first = g * group + 1
     const last = Math.min(pages.length, first + group - 1)
-    let text = ''
-    for await (const event of streamChat({ brain: { id: 'eval', provider: 'openrouter', api: 'openai', baseURL: PROVIDERS.openrouter.baseURL, model: BRAINS.large.model }, apiKey, system: NOTES,
-      messages: [{ role: 'user', content: pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n') }] })) {
-      if (event.type === 'text') text += event.delta
-    }
+    const text = await complete(NOTES, pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n'), apiKey)
     out.push(`Notes on pages ${first}–${last}:\n${text.trim()}`)
     await progress(out, total)
   }
   return out
+}
+
+const MAP = `Answer the question from these pages alone. If it asks for a count or a total, first give these pages' count or total, then each item on its own line with its page.
+If nothing on these pages answers it, reply "none" and nothing else.`
+
+/**
+ * search+mapreduce's helper (H8): one question asked of every group of pages, by the large brain,
+ * eight groups at a time; returns each group's answer headed by its file and pages, those with none left out.
+ * @param {string} question @param {{ name: string, pages: string[] }[]} files @param {string} apiKey
+ */
+export async function everyPage(question, files, apiKey, group = 40) {
+  const parts = files.flatMap((file) => Array.from({ length: Math.ceil(file.pages.length / group) }, (_, g) => ({ file, first: g * group + 1, last: Math.min(file.pages.length, (g + 1) * group) })))
+  /** @type {string[]} */
+  const answers = Array(parts.length).fill('')
+  let next = 0
+  await Promise.all(Array.from({ length: 8 }, async () => {
+    while (next < parts.length) {
+      const i = next++
+      const { file, first, last } = parts[i]
+      answers[i] = (await complete(MAP, `${question}\n\n${file.pages.slice(first - 1, last).map((page, j) => `[[page ${first + j}]]\n${page}`).join('\n\n')}`, apiKey)).trim()
+    }
+  }))
+  const found = parts.map(({ file, first, last }, i) => (/^\W*none\W*$/i.test(answers[i]) ? '' : `${file.name}, pages ${first}–${last}:\n${answers[i]}`)).filter(Boolean)
+  return `Asked of ${parts.length} groups of pages; ${found.length} answered.${found.length ? `\n\n${found.join('\n\n')}` : ''}`
 }

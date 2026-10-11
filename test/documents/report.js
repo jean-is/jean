@@ -3,7 +3,7 @@
 // strategy is for, as test/documents/results.md and strategies.json.
 import { mean, pairedCI } from './stats.js'
 
-/** @typedef {{ id: string, type: string, lang: string, split: string, missing: number, overlap?: number, by: Record<string, { rr: number, ms: number, at: Record<string, { recall: number, strict: number, lure: number }> }> }} Row */
+/** @typedef {{ id: string, model?: string, type: string, lang: string, split: string, missing: number, overlap?: number, by: Record<string, { rr: number, ms: number, at: Record<string, { recall: number, strict: number, lure: number }> }> }} Row */
 /** @typedef {{ seed: number, size: string, split: string, passage: number, ext: string, indexMs: number, passages: number, pages: number, budgets: number[], results: Row[] }} Run */
 
 /** The value a question gives a metric: recall, strict or lure at a budget, or rr. @param {Row} row @param {string} strategy @param {string} metric @param {number} budget */
@@ -46,11 +46,15 @@ export function verdicts(hypotheses, { runs, bench, answers, dense }) {
       return out(cell.total < r.ms.lt ? 'confirmed' : 'refuted', `${Math.round(cell.total)} ms with the CPU ${r.cpuThrottle}× slower (index ${Math.round(cell.build)} ms, query ${Math.round(cell.query)} ms, ${cell.passages} passages); ${Math.round(bench['first-search-1x']?.total ?? NaN)} ms at full speed`)
     }
     if (r.answers) {
-      const list = answers.filter((row) => (r.types ?? []).includes(row.type) && (!r.size || row.id.includes(`-${r.size}-`)) && (!r.sizes || r.sizes.some((/** @type {string} */ s) => row.id.includes(`-${s}-`))))
-      if (!list.some((row) => row.by[r.a] && row.by[r.b])) return out('not run', '')
+      // The questions one brain answered under both conditions, from the brain that answered the most of them.
+      const paired = answers.filter((row) => (r.types ?? []).includes(row.type) && (!r.size || row.id.includes(`-${r.size}-`)) && (!r.sizes || r.sizes.some((/** @type {string} */ s) => row.id.includes(`-${s}-`))) && row.by[r.a] && row.by[r.b])
+      const count = (/** @type {string | undefined} */ model) => paired.filter((row) => row.model === model).length
+      const model = [...new Set(paired.map((row) => row.model))].sort((x, y) => count(y) - count(x))[0]
+      const list = paired.filter((row) => row.model === model)
+      if (!list.length) return out('not run', '')
       const c = compare(list, r.a, r.b, 'accuracy', 0)
-      const accuracy = (/** @type {string} */ s) => mean(list.filter((row) => row.by[s]).map((row) => value(row, s, 'accuracy', 0)))
-      const text = `${r.a} ${(accuracy(r.a) * 100).toFixed(0)}%, ${r.b} ${(accuracy(r.b) * 100).toFixed(0)}%; ${r.a} − ${r.b}: ${said(c)}`
+      const accuracy = (/** @type {string} */ s) => mean(list.map((row) => value(row, s, 'accuracy', 0)))
+      const text = `${model}: ${r.a} ${(accuracy(r.a) * 100).toFixed(0)}%, ${r.b} ${(accuracy(r.b) * 100).toFixed(0)}%; ${r.a} − ${r.b}: ${said(c)}`
       if (r.ci?.within) return out(c.low >= r.ci.within[0] && c.high <= r.ci.within[1] ? 'confirmed' : c.high < r.refutedIf.ciHigh.lt ? 'refuted' : 'inconclusive', text)
       if (r.ciHigh) return out(c.high < r.ciHigh.lt ? 'confirmed' : c.low >= r.ciHigh.lt ? 'refuted' : 'inconclusive', text)
       const enough = (r.aAtLeast === undefined || accuracy(r.a) >= r.aAtLeast) && (r.mean === undefined || c.mean >= r.mean.gte)

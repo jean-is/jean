@@ -7,9 +7,9 @@
 //                                                    score the strategies, keeping each run's results in .cache/results/
 //        npm run documents -- --bench scan,first-search  H1: a flat vector scan at 1, 10 and 40 times XL; H6: the first search of XL in Chromium slowed 4×
 //        npm run documents -- --report [--write]         results.md and strategies.json from every run kept
-//        npm run documents -- --answers H4,H5 [--concurrency 3] [--dense e5]   the answer eval with OpenRouter's free brains (OPENROUTER_API_KEY),
+//        npm run documents -- --answers H4,H5 [--concurrency 3] [--dense e5] [--dollars 10]   the answer eval with OpenRouter's brains (OPENROUTER_API_KEY),
 //        npm run documents -- --answers overall --conditions search,search+meaning   ten questions of each kind at XL, for the targets
-//                                 resuming where it stopped; it stops itself when the day's free requests run low
+//                                 resuming where it stopped; it stops itself once the run has spent --dollars, or a free brain's day runs out
 // Generated files are kept in test/documents/.cache/ (never committed), keyed by seed and size.
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -180,7 +180,7 @@ async function main(argv) {
   }
   if (o.has('report')) await report(o.has('write'))
   const hypotheses = o.value('answers', '')
-  if (hypotheses) await answers(hypotheses.split(','), Number(o.value('concurrency', '3')), o.value('dense', 'e5'), Number(o.value('passage', '100')), Number(o.value('limit', 'Infinity')), o.value('conditions', 'search').split(','))
+  if (hypotheses) await answers(hypotheses.split(','), Number(o.value('concurrency', '3')), o.value('dense', 'e5'), Number(o.value('passage', '100')), Number(o.value('limit', 'Infinity')), o.value('conditions', 'search').split(','), Number(o.value('dollars', '10')))
   const benches = o.value('bench', '')
   if (benches) {
     await mkdir(`${CACHE}results/`, { recursive: true })
@@ -306,10 +306,11 @@ async function report(write) {
   const answerRecords = existsSync(answersPath) ? (await readFile(answersPath, 'utf8')).split('\n').filter(Boolean).map((line) => JSON.parse(line)) : []
   /** @type {Map<string, any>} */
   const answerRows = new Map()
+  // A question's answers by brain: two conditions pair only when one brain answered both.
   for (const a of answerRecords) {
-    const row = answerRows.get(a.id) ?? { id: a.id, type: a.type, lang: a.lang, split: 'test', missing: 0, by: {} }
+    const row = answerRows.get(`${a.id}|${a.model}`) ?? { id: a.id, model: a.model, type: a.type, lang: a.lang, split: 'test', missing: 0, by: {} }
     row.by[a.condition] = { rr: 0, ms: a.ms, at: { 0: { accuracy: a.correct, hallucination: !a.correct && !a.abstained ? 1 : 0, grounded: a.grounded ? 1 : 0 } } }
-    answerRows.set(a.id, row)
+    answerRows.set(`${a.id}|${a.model}`, row)
   }
   const bench = existsSync(`${dir}bench.json`) ? JSON.parse(await readFile(`${dir}bench.json`, 'utf8')) : {}
   for (const cost of names.length ? [] : []) void cost
@@ -323,20 +324,27 @@ async function report(write) {
   for (const size of ['xs', 's', 'm', 'l', 'xl']) {
     const list = await Promise.all([1, 2, 3].map(async (seed) => { const p = `${CACHE}${seed}-${size}-compendium-pdf/stats.json`; return existsSync(p) ? JSON.parse(await readFile(p, 'utf8')) : null }))
     const found = list.filter(Boolean)
-    if (found.length) stats.push([size.toUpperCase(), Math.round(mean(found.map((x) => x.pages))), `${(mean(found.map((x) => x.characters)) / 1e6).toFixed(2)} M`, found[0].qwen ? `${(mean(found.map((x) => x.qwen)) / 1e6).toFixed(2)} M` : '–', `${(mean(found.map((x) => x.jean)) / 1e6).toFixed(2)} M`, found.reduce((n, x) => n + x.questions, 0)])
+    const count = (/** @type {number} */ n) => (n >= 1e6 ? `${(n / 1e6).toFixed(2)} M` : `${Math.round(n / 1e3)} k`)
+    if (found.length) stats.push([size.toUpperCase(), Math.round(mean(found.map((x) => x.pages))), count(mean(found.map((x) => x.characters))), found[0].qwen ? count(mean(found.map((x) => x.qwen))) : '–', count(mean(found.map((x) => x.jean))), found.reduce((n, x) => n + x.questions, 0)])
   }
   const recallTable = (/** @type {number} */ budget) => table(['Strategy', ...sizes.map((s) => s.toUpperCase())], strategies.map((s) => [`\`${s}\``, ...sizes.map((size) => pct(mean(rowsOf(runs, size).filter((r) => r.type !== 'negative' && r.by[s]).map((r) => r.by[s].at[budget].recall))))]))
   const byType = (/** @type {string} */ size) => table(['Strategy', ...types], strategies.map((s) => [`\`${s}\``, ...types.map((t) => {
     const list = rowsOf(runs, size, [t]).filter((r) => r.by[s])
     return t === 'negative' ? `${pct(mean(list.map((r) => r.by[s].at[32000].lure)))} lure` : pct(mean(list.map((r) => r.by[s].at[32000].recall)))
   })]))
-  const conditions = [...new Set(answerRecords.map((a) => `${a.condition}|${a.brain}`))]
-  const answerTable = table(['Condition', 'Brain', 'Answers', 'Right', 'Hallucinated', 'Evidence seen', 'Abstained on absent things', 'Calls', 'Seconds'], conditions.map((key) => {
-    const [condition, brain] = key.split('|')
-    const list = answerRecords.filter((a) => a.condition === condition && a.brain === brain)
+  const answerTableOf = (/** @type {any[]} */ records, /** @type {string[]} */ head) => table(head, [...new Set(records.map((a) => `${a.condition}|${a.model}`))].map((key) => {
+    const [condition, model] = key.split('|')
+    const list = records.filter((a) => a.condition === condition && a.model === model)
     const negatives = list.filter((a) => a.type === 'negative')
-    return [`\`${condition}\``, BRAINS[/** @type {'large'} */ (brain)].model, list.length, `${pct(mean(list.map((a) => a.correct)))}%`, `${pct(mean(list.map((a) => (!a.correct && !a.abstained ? 1 : 0))))}%`, `${pct(mean(list.map((a) => (a.grounded ? 1 : 0))))}%`, negatives.length ? `${pct(mean(negatives.map((a) => a.correct)))}%` : '–', mean(list.map((a) => a.steps)).toFixed(1), Math.round(mean(list.map((a) => a.ms)) / 1000)]
+    return [`\`${condition}\``, model, list.length, `${pct(mean(list.map((a) => a.correct)))}%`, `${pct(mean(list.map((a) => (!a.correct && !a.abstained ? 1 : 0))))}%`, `${pct(mean(list.map((a) => (a.grounded ? 1 : 0))))}%`, negatives.length ? `${pct(mean(negatives.map((a) => a.correct)))}%` : '–', mean(list.map((a) => a.steps)).toFixed(1), Math.round(mean(list.map((a) => a.ms)) / 1000)]
   }))
+  const answerTable = answerTableOf(answerRecords, ['Condition', 'Brain', 'Answers', 'Right', 'Hallucinated', 'Evidence seen', 'Abstained on absent things', 'Calls', 'Seconds'])
+  // The overall sample under the conditions and brains its run used, whichever hypothesis's run answered each question.
+  const overall = new Set(sample(OVERALL, registered.corpus.seeds).map(({ q }) => q.id))
+  const overallRuns = new Set(answerRecords.filter((a) => a.hypothesis === 'overall').map((a) => `${a.condition}|${a.model}`))
+  const overallRecords = answerRecords.filter((a) => overall.has(a.id) && overallRuns.has(`${a.condition}|${a.model}`))
+  const { targets } = registered
+  const targetTable = answerTableOf(overallRecords, ['Condition', 'Brain', 'Answers', `Right (target ${pct(targets.accuracy)}%)`, `Hallucinated (at most ${pct(targets.hallucination.max)}%)`, 'Evidence seen', `Abstained on absent things (${pct(targets.negativeAbstention)}%)`, 'Calls', 'Seconds'])
   const embedCosts = []
   for (const size of ['l', 'xl']) {
     for (const seed of [1, 2, 3]) {
@@ -387,7 +395,11 @@ ${sizes.length ? byType(sizes.includes('xl') ? 'xl' : /** @type {string} */ (siz
 
 ## Answers
 
-${answerRecords.length ? answerTable : 'Not run yet.'}${answerRecords.some((a) => a.deviation) ? '\n\nH8’s baseline ran as search without helpers: a map over every page of XL costs about 100 requests a question, beyond the free tier.' : ''}
+${answerRecords.length ? answerTable : 'Not run yet.'}
+
+Against the targets, on ten questions of each kind at XL (\`--answers overall\`); faithfulness isn't measured yet.
+
+${overallRecords.length ? targetTable : 'Not run yet.'}
 
 ## By format
 
@@ -452,46 +464,55 @@ function notesOf(c, key) {
   return /** @type {Promise<string[]>} */ (notes.get(c.dir))
 }
 
-/** How many of the day's free requests the key has left. @param {string} key */
-async function remaining(key) {
+/** What the key has spent so far, in dollars. @param {string} key */
+async function spent(key) {
   const res = await fetch('https://openrouter.ai/api/v1/key', { headers: { authorization: `Bearer ${key}` } })
-  return (await res.json())?.data?.free_model_daily_requests?.remaining ?? 0
+  const usage = (await res.json())?.data?.usage
+  if (typeof usage !== 'number') throw new Error('OpenRouter did not say what the key has spent')
+  return usage
+}
+
+/** The overall sample: ten of each kind at XL, for the targets great results mean. */
+const OVERALL = { size: 'xl', types: ['lookup', 'paraphrase', 'filter', 'aggregate', 'multihop', 'temporal', 'crosslingual', 'negative', 'global'], questions: 90 }
+
+/**
+ * A rule's questions from the test split: as many of each kind, seed and size as its sample allows, in an order fixed by the seed.
+ * @param {{ size?: string, sizes?: string[], types: string[], questions: number }} r @param {number[]} seeds
+ */
+function sample(r, seeds) {
+  /** @type {{ q: any, seed: number, size: string }[]} */
+  const pool = []
+  for (const size of r.sizes ?? [/** @type {string} */ (r.size)]) for (const seed of seeds) for (const q of corpus({ seed, size }).questions) if (q.split === 'test' && r.types.includes(q.type)) pool.push({ q, seed, size })
+  const random = rng(7)
+  const groups = new Map()
+  for (const item of pool.sort(() => random() - 0.5)) groups.set(`${item.q.type}|${item.seed}|${item.size}`, [...(groups.get(`${item.q.type}|${item.seed}|${item.size}`) ?? []), item])
+  const lists = [...groups.values()]
+  const out = []
+  for (let i = 0; out.length < Math.min(r.questions, pool.length); i++) for (const list of lists) if (list[i] && out.length < r.questions) out.push(list[i])
+  return out
 }
 
 /**
  * The answer eval for some hypotheses: each one's questions (its registered sample, from the test
  * split of the three seeds, as many of each kind and seed as can be), under its two conditions.
  * @param {string[]} ids hypotheses, or overall @param {number} concurrency @param {string} dense @param {number} passage @param {number} [limit] at most this many answers this time
- * @param {string[]} [conditions] overall's
+ * @param {string[]} [conditions] overall's @param {number} [dollars] at most this much spent this time
  */
-async function answers(ids, concurrency, dense, passage, limit = Infinity, conditions = ['search']) {
+async function answers(ids, concurrency, dense, passage, limit = Infinity, conditions = ['search'], dollars = 10) {
   const key = process.env.OPENROUTER_API_KEY
   if (!key) throw new Error('Set OPENROUTER_API_KEY')
   const registered = JSON.parse(await readFile(`${ROOT}test/documents/hypotheses.json`, 'utf8'))
   const path = `${CACHE}results/answers.jsonl`
   await mkdir(`${CACHE}results/`, { recursive: true })
-  const done = new Set(existsSync(path) ? (await readFile(path, 'utf8')).split('\n').filter(Boolean).map((line) => { const r = JSON.parse(line); return `${r.id}|${r.condition}|${r.brain}` }) : [])
+  const done = new Set(existsSync(path) ? (await readFile(path, 'utf8')).split('\n').filter(Boolean).map((line) => { const r = JSON.parse(line); return `${r.id}|${r.condition}|${r.model}` }) : [])
   /** @type {{ hypothesis: string, question: any, condition: string, brain: 'large' | 'small', seed: number, size: string }[]} */
   const jobs = []
   for (const id of ids) {
-    // overall: ten of each kind at XL, for the targets great results mean, under the conditions named.
-    const h = id === 'overall' ? { rule: { size: 'xl', types: ['lookup', 'paraphrase', 'filter', 'aggregate', 'multihop', 'temporal', 'crosslingual', 'negative', 'global'], questions: 90, a: conditions[0], b: conditions[1] ?? conditions[0] } }
-      : registered.hypotheses.find((/** @type {any} */ x) => x.id === id)
-    const r = h.rule
-    const sizes = r.sizes ?? [r.size]
-    /** @type {any[]} */
-    const pool = []
-    for (const size of sizes) for (const seed of registered.corpus.seeds) for (const q of corpus({ seed, size }).questions) if (q.split === 'test' && r.types.includes(q.type)) pool.push({ q, seed, size })
-    // As many of each kind, seed and size as the sample allows, in an order fixed by the seed.
-    const random = rng(7)
-    const groups = new Map()
-    for (const item of pool.sort(() => random() - 0.5)) groups.set(`${item.q.type}|${item.seed}|${item.size}`, [...(groups.get(`${item.q.type}|${item.seed}|${item.size}`) ?? []), item])
-    const lists = [...groups.values()]
-    const sample = []
-    for (let i = 0; sample.length < Math.min(r.questions, pool.length); i++) for (const list of lists) if (list[i] && sample.length < r.questions) sample.push(list[i])
-    for (const { q, seed, size } of sample) for (const condition of new Set([r.a, r.b])) jobs.push({ hypothesis: id, question: q, condition, brain: r.brain === 'small' ? 'small' : 'large', seed, size })
+    // overall: under the conditions named.
+    const r = id === 'overall' ? { ...OVERALL, a: conditions[0], b: conditions[1] ?? conditions[0] } : registered.hypotheses.find((/** @type {any} */ x) => x.id === id).rule
+    for (const { q, seed, size } of sample(r, registered.corpus.seeds)) for (const condition of new Set([r.a, r.b])) jobs.push({ hypothesis: id, question: q, condition, brain: r.brain === 'small' ? 'small' : 'large', seed, size })
   }
-  const open = jobs.filter((job) => !done.has(`${job.question.id}|${job.condition}|${job.brain}`))
+  const open = jobs.filter((job) => !done.has(`${job.question.id}|${job.condition}|${BRAINS[job.brain].model}`))
   const todo = open.slice(0, limit)
   console.log(`${jobs.length} answers asked for, ${jobs.length - open.length} already there, ${todo.length} to go now`)
   /** @type {Map<string, Promise<any>>} */
@@ -501,17 +522,13 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
     const docs = prepare(list, passage)
     return { files: list, lib: await library(list), docs, dir: `${CACHE}${seed}-${size}-compendium-pdf/` }
   })()).get(`${seed}-${size}`)
-  let left = await remaining(key)
+  const before = await spent(key)
   let stop = false
   const worker = async () => {
     while (todo.length && !stop) {
-      if (left < 20) {
-        left = await remaining(key)
-        if (left < 20) { stop = true; console.log('The free requests for today are nearly spent: run again tomorrow to go on.'); break }
-      }
+      if (await spent(key) - before >= dollars) { stop = true; console.log(`$${dollars} spent: run again, with a higher --dollars if need be, to go on.`); break }
       const job = /** @type {any} */ (todo.shift())
-      // Registered as search with helpers over every page; a map over 4,196 pages costs ~100 requests a question, beyond the free tier.
-      const condition = job.condition === 'search+mapreduce' ? 'search' : job.condition
+      const { condition } = job
       try {
         const c = await load(job.seed, job.size)
         let extra = {}
@@ -526,9 +543,9 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
           extra = { docs: c.docs, vectors: { matrix, dims, embedQuery: async (/** @type {string} */ text) => int8(await embed(/** @type {any} */ (dense), [text], 'query')).matrix } }
         }
         const run = await ask({ question: job.question, condition, brain: job.brain, files: shownFiles, lib, extra, apiKey: key })
-        left -= run.calls.length + 1
         const graded = grade(job.question, run.text)
-        const record = { ...(condition !== job.condition && { deviation: 'search without helpers' }), id: job.question.id, type: job.question.type, lang: job.question.lang, hypothesis: job.hypothesis, condition: job.condition, brain: job.brain, model: BRAINS[/** @type {'large'} */ (job.brain)].model, ...graded, grounded: grounded(job.question, run), steps: run.calls.length, stopReason: run.stopReason, ms: Math.round(run.ms), usage: run.usage, reply: run.text, calls: run.calls.map((call) => ({ name: call.name, args: call.args, output: call.output })), shownTokens: Math.round(run.shown.length / 3), at: new Date().toISOString() }
+        const { model, provider } = BRAINS[/** @type {'large'} */ (job.brain)]
+        const record = { id: job.question.id, type: job.question.type, lang: job.question.lang, hypothesis: job.hypothesis, condition, brain: job.brain, model, ...(provider && { provider }), ...graded, grounded: grounded(job.question, run), steps: run.calls.length, stopReason: run.stopReason, ms: Math.round(run.ms), usage: run.usage, reply: run.text, calls: run.calls.map((call) => ({ name: call.name, args: call.args, output: call.output })), shownTokens: Math.round(run.shown.length / 3), at: new Date().toISOString() }
         await writeFile(path, `${JSON.stringify(record)}\n`, { flag: 'a' })
         console.log(`${job.hypothesis} ${job.question.id} ${job.condition}: ${graded.correct ? 'right' : graded.abstained ? 'abstained' : 'wrong'} (${record.answer.slice(0, 60)}) in ${record.steps} calls, ${Math.round(run.ms / 1000)} s`)
       } catch (error) {
