@@ -97,6 +97,7 @@ npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
+npm run documents # the document evals: corpus, retrieval, answers with free brains, benches (-- --report --write)
 npm run directory # check from a browser's point of view which known services and sources of skills Jean can reach
 npm run serve   # serve app/ as it is
 ```
