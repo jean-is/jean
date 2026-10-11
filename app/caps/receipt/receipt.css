@@ -33,5 +33,12 @@ app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt;
 .receipt-hosts bdi { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 1rem; font-size: 0.78rem; }
 /* The certificate, for anyone, and the proof, with the words (D274), side by side under what tells them apart. */
 .receipt-saves { display: flex; flex-wrap: wrap; margin-inline-start: -0.6rem; }
+/* Whether witnesses date them and a public log records them (D276), said where they are saved. */
+.receipt-choice { display: flex; gap: 0.45rem; align-items: baseline; margin-block-start: 0.4rem; color: var(--ink-soft); font-size: 0.8rem; }
 .receipt .button { padding: 0.4rem 0.6rem; color: var(--ink-soft); font-size: 0.8rem; }
+/* A certificate checked (caps/certificates, D274): the same card, in the flow of an answer or of the check page. */
+.receipt.receipt-checked { inline-size: auto; max-inline-size: 30rem; margin: 0.75rem 0; opacity: 1; }
+.certificates-page { display: grid; gap: 1rem; justify-items: start; max-inline-size: 34rem; margin: 3rem auto; padding: 0 1rem; }
+.certificates-page .receipt-checked { inline-size: 100%; max-inline-size: none; }
+.receipt-checked q { white-space: pre-wrap; }
 @media (forced-colors: active) { .receipt, .receipt-stat, .receipt-mark { border: 1px solid CanvasText; } .receipt-hosts bdi { border-color: CanvasText; } }

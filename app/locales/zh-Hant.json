@@ -1,6 +1,7 @@
 {
   "a11y.skip": "跳到訊息框",
   "welcome.question": "有什麼可以幫你？",
+  "welcome.ai": "你正在和 AI 對話，而不是真人。",
   "starter.discover": "你能做什麼？",
   "starter.discover.prompt": "你能為我做什麼？給我 3 個可以試試的例子。",
   "starter.summarize": "摘要一篇長文",

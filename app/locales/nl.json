@@ -1,6 +1,7 @@
 {
   "a11y.skip": "Naar het berichtvak",
   "welcome.question": "Wat kan ik voor je doen?",
+  "welcome.ai": "Je praat met een AI, niet met een mens.",
   "starter.discover": "Wat kun je?",
   "starter.discover.prompt": "Wat kun je voor me doen? Geef me 3 voorbeelden om te proberen.",
   "starter.summarize": "Een lange tekst samenvatten",

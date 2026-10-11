@@ -1,6 +1,7 @@
 {
   "a11y.skip": "Ruka hadi kisanduku cha ujumbe",
   "welcome.question": "Nikusaidie nini?",
+  "welcome.ai": "Unazungumza na akili bandia (AI), si na binadamu.",
   "starter.discover": "Unaweza kufanya nini?",
   "starter.discover.prompt": "Unaweza kunifanyia nini? Nipe mifano 3 ninayoweza kujaribu.",
   "starter.summarize": "Fupisha maandishi marefu",

@@ -5,7 +5,7 @@
 // registered, it holds that app: Jean signs in with its client id, and the gateway adds the secret
 // where the code is traded for tokens, so the secret never reaches a browser. It keeps nothing.
 //
-//   GET <gateway>                  what it serves: { format: 1, hosts, clients: { <issuer>: <client id> } }
+//   GET <gateway>                  what it serves: { format: 1, hosts, clients: { <issuer>: <client id> }, timestamps?, logs? }
 //   any <gateway>?url=<address>    the request, relayed to that address
 //
 // Its configuration, a JSON object in GATEWAY_CONFIG (never a file beside it: Jean's folder is served as it is):
@@ -15,6 +15,8 @@
 //   clients  apps registered with sign-in servers, e.g. Google's:
 //            [{ "issuer": "https://accounts.google.com", "tokenEndpoint": "https://oauth2.googleapis.com/token",
 //               "clientId": "…", "clientSecret": "…", "auth": "post" }]   auth: "post" (the default) or "basic"
+//   timestamps  RFC 3161 services that date Jean's certificates, which a browser can't reach, e.g. a qualified one (D276)
+//   logs        public logs (Sigstore's Rekor) they may be recorded in; both are relayed to and announced
 //
 // Web-standard (fetch, Request, Response), with nothing to install: `node gateway/serve.js` runs it
 // on Node; Cloudflare Workers, `deno serve` and Bun take this module as it is. Requests carry at
@@ -31,7 +33,7 @@ export const SERVICES = Object.freeze(['googleapis.com', 'accounts.google.com', 
 
 /**
  * @typedef {{ issuer: string, tokenEndpoint: string, clientId: string, clientSecret: string, auth?: 'post' | 'basic' }} Client
- * @typedef {{ origins?: string[], hosts?: string[], clients?: Client[] }} Config
+ * @typedef {{ origins?: string[], hosts?: string[], clients?: Client[], timestamps?: string[], logs?: string[] }} Config
  */
 
 /** HTTPS, or HTTP on this computer, to a host the list covers. @param {string[]} hosts @param {URL} url */
@@ -42,7 +44,8 @@ export const covers = (hosts, url) => (url.protocol === 'https:' || (url.protoco
 const parse = (text) => { try { return new URL(text) } catch { return null } }
 
 /** @param {Config} config @returns {(request: Request) => Promise<Response>} */
-export function gateway({ origins = [], hosts = [...SERVICES], clients = [] }) {
+export function gateway({ origins = [], hosts = [...SERVICES], clients = [], timestamps = [], logs = [] }) {
+  hosts = [...hosts, ...[...timestamps, ...logs].flatMap((address) => parse(address)?.hostname ?? [])]
   return async (request) => {
     const origin = request.headers.get('origin') ?? ''
     const cors = new Headers({ vary: 'origin' })
@@ -50,7 +53,7 @@ export function gateway({ origins = [], hosts = [...SERVICES], clients = [] }) {
     // Jean, from its address, may reach a gateway on this computer, as it reaches the bridge (Private Network Access).
     if (origins.includes(origin) && request.headers.get('access-control-request-private-network') === 'true') cors.set('access-control-allow-private-network', 'true')
     const target = new URL(request.url).searchParams.get('url')
-    if (!target) return Response.json({ format: 1, hosts, clients: Object.fromEntries(clients.map((client) => [client.issuer, client.clientId])) }, { headers: cors })
+    if (!target) return Response.json({ format: 1, hosts, clients: Object.fromEntries(clients.map((client) => [client.issuer, client.clientId])), ...(timestamps.length && { timestamps }), ...(logs.length && { logs }) }, { headers: cors })
     const refuse = (/** @type {number} */ status, /** @type {string} */ error) => Response.json({ error }, { status, headers: cors })
     // Only Jean, from where it is served: a browser always says where a cross-origin request comes from.
     if (!cors.has('access-control-allow-origin')) return refuse(403, 'This gateway does not serve this origin.')

@@ -9,7 +9,8 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
-import { app, brainLabel, loadModels } from '../../ui/state.js'
+import { app, brainLabel, loadModels, updateSettings, notify } from '../../ui/state.js'
+import { serviceURL } from '../../core/settings.js'
 import { deviceKey } from '../../ui/secrets.js'
 import { priceOf, PLANS } from '../../ui/prices.js'
 import { save } from '../../ui/save.js'
@@ -18,12 +19,12 @@ import { styleSheet } from '../../ui/sheet.js'
 import { appendRecords } from '../../core/conversations.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
-import { t, locale, formatDuration, useStrings } from '../../core/i18n.js'
-import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed } from './certificate.js'
+import { t, tParts, locale, formatDuration, useStrings } from '../../core/i18n.js'
+import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record } from './certificate.js'
 
 /** @import { Turn } from '../../core/events.js' */
 /** @import { Envelope, ProviderId } from '../../core/types.js' */
-/** @import { Brain, Maker, Facts, Reached, Seal, Salts } from './certificate.js' */
+/** @import { Brain, Maker, Facts, Reached, Seal, Salts, Sealed } from './certificate.js' */
 
 await Promise.all([useStrings('receipt'), styleSheet(new URL('receipt.css', import.meta.url))])
 
@@ -92,6 +93,9 @@ const kept = new WeakMap()
 /** What the conversation keeps of what its answers reached, read once for each version of its records. @param {Envelope[]} records @returns {Reached[]} */
 const reachedIn = (records) => kept.get(records) ?? /** @type {Reached[]} */ (kept.set(records, records.flatMap(({ meta }) => (meta?.reached ? [meta.reached] : []))).get(records))
 
+/** The page where anyone checks a certificate or its proof (D274). */
+const CHECK = new URL('../../check.html', import.meta.url).href
+
 // ─── The card ────────────────────────────────────────────────────────────────
 
 /** A brain's prices per token, as the picker shows them: its provider's, or models.dev's (D255). @param {Brain} brain */
@@ -147,10 +151,61 @@ function card(facts, turn, text) {
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
     <p class="receipt-note">${t('receipt.proof.text')}</p>
+    ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
+    ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
     <div class="receipt-saves">
       <button class="button subtle" @click=${() => keepCertificate(facts, turn, text)}>${icons.download}${t('receipt.save')}</button>
       <button class="button subtle" @click=${() => keepCertificate(facts, turn, text, true)}>${icons.download}${t('receipt.proof')}</button>
-    </div>`
+    </div>
+    <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>`
+}
+
+// ─── Witnesses (D276) ────────────────────────────────────────────────────────
+
+/** @param {string} address */
+const hostIn = (address) => new URL(address).host
+const gatewayAt = () => serviceURL('gateway', app.settings.value, app.policy)
+/** What each gateway announces, asked once. @type {Map<string, Promise<{ timestamps: string[], logs: string[] }>>} */
+const announced = new Map()
+/** Who dates a certificate, the witness settings or policy name and those the gateway announces, and the public log. */
+async function witnesses() {
+  const gateway = gatewayAt()
+  if (gateway && !announced.has(gateway)) announced.set(gateway, fetch(gateway, { headers: { accept: 'application/json' } }).then((response) => response.json()).then(({ timestamps = [], logs = [] }) => ({ timestamps, logs }), () => ({ timestamps: [], logs: [] })))
+  const from = (gateway && await announced.get(gateway)) || { timestamps: [], logs: [] }
+  return { timestamps: [...new Set([serviceURL('timestamp', app.settings.value, app.policy), ...from.timestamps].filter(Boolean))], log: serviceURL('transparencyLog', app.settings.value, app.policy) || from.logs[0] || '' }
+}
+/** Them, as the card names them. */
+const vouchers = signal({ timestamps: /** @type {string[]} */ ([]), log: '' })
+effect(() => { if (app.settings.value) witnesses().then((found) => { vouchers.value = found }) })
+
+/** A choice the user makes once, where the card says what goes where: nothing is sent out unasked. @param {'date' | 'log'} key @param {string} label */
+const choice = (key, label) => html`<label class="receipt-choice"><input type="checkbox" .checked=${Boolean(app.settings.value.certificates?.[key])}
+  @change=${(/** @type {Event} */ event) => updateSettings({ certificates: { ...app.settings.value.certificates, [key]: /** @type {HTMLInputElement} */ (event.target).checked } })}><span>${label}</span></label>`
+
+/** Sends to a witness or the log: from the browser, else through the gateway, which reaches those that don't answer browsers. @param {string} address @param {RequestInit} init */
+async function reach(address, init) {
+  const response = await fetch(address, init).catch((error) => {
+    const gateway = gatewayAt()
+    if (!gateway) throw error
+    const url = new URL(gateway)
+    url.searchParams.set('url', address)
+    return fetch(url, init)
+  })
+  if (!response.ok) throw new Error(`${address}: HTTP ${response.status}`)
+  return response
+}
+
+/** Has the witnesses date a sealed certificate and the log record it, as the user chose; one that fails is said and left out. @param {Sealed} sealed */
+async function vouched(sealed) {
+  const { date, log } = app.settings.value.certificates ?? {}
+  const found = await witnesses()
+  /** @param {string} address @param {(sealed: Sealed) => Promise<Sealed>} vouch */
+  const by = (address, vouch) => vouch(sealed).catch((error) => (console.warn(address, error), notify(t('receipt.unwitnessed', { host: hostIn(address) })), sealed))
+  for (const address of date ? found.timestamps : []) {
+    sealed = await by(address, (one) => witness(one, async (body) => new Uint8Array(await (await reach(address, { method: 'POST', headers: { 'content-type': 'application/timestamp-query' }, body: /** @type {BodyInit} */ (body) })).arrayBuffer())))
+  }
+  if (log && found.log) sealed = await by(found.log, (one) => record(one, async (entry) => (await reach(`${found.log}/api/v1/log/entries`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(entry) })).json()))
+  return sealed
 }
 
 /** The device's seal, made with the first certificate and kept where the secrets' key is; one for this certificate alone where the browser keeps none. @returns {Promise<Seal>} */
@@ -187,7 +242,7 @@ async function keepCertificate(facts, turn, text, words = false) {
   else {
     const own = await sealOf()
     const { credential, salts } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
-    made = { sealed: await seal(credential, own), salts }
+    made = { sealed: await vouched(await seal(credential, own)), salts }
     await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts } })
   }
   const date = turn.at.slice(0, 10)

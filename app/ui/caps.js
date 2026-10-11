@@ -53,6 +53,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   slides: () => import('../caps/slides/slides.js'),
   pictures: () => import('../caps/pictures/pictures.js'),
   receipt: () => import('../caps/receipt/receipt.js'),
+  certificates: () => import('../caps/certificates/certificates.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */

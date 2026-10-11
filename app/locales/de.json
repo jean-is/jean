@@ -1,6 +1,7 @@
 {
   "a11y.skip": "Zum Nachrichtenfeld springen",
   "welcome.question": "Was kann ich für dich tun?",
+  "welcome.ai": "Du sprichst mit einer KI, nicht mit einem Menschen.",
   "starter.discover": "Was kannst du?",
   "starter.discover.prompt": "Was kannst du für mich tun? Nenn mir 3 Beispiele zum Ausprobieren.",
   "starter.summarize": "Einen langen Text zusammenfassen",

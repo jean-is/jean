@@ -21,5 +21,9 @@
   "receipt.proof": "Simpan bukti",
   "receipt.file": "Sertifikat {date}",
   "receipt.proof.text": "Sertifikat menunjukkan bagaimana jawaban ini dibuat, tidak pernah kata-katanya: siapa pun boleh memilikinya. Bukti menambahkan permintaan dan jawabannya, untuk mereka yang boleh membacanya.",
-  "receipt.proof.file": "Bukti {date}"
+  "receipt.proof.file": "Bukti {date}",
+  "receipt.checkAt": "Siapa pun dapat memeriksanya di {address}.",
+  "receipt.date": "Minta {hosts} memberi tanggal",
+  "receipt.log": "Catat di log publik, {host}: publik dan permanen",
+  "receipt.unwitnessed": "{host} tidak dapat dijangkau"
 }

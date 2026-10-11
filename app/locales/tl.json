@@ -1,6 +1,7 @@
 {
   "a11y.skip": "Lumaktaw sa kahon ng mensahe",
   "welcome.question": "Ano ang maitutulong ko?",
+  "welcome.ai": "AI ang kausap mo, hindi tao.",
   "starter.discover": "Ano ang kaya mong gawin?",
   "starter.discover.prompt": "Ano ang kaya mong gawin para sa akin? Bigyan mo ako ng 3 halimbawang masusubukan ko.",
   "starter.summarize": "Ibuod ang mahabang teksto",

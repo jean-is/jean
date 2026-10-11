@@ -1,6 +1,7 @@
 {
   "a11y.skip": "Lompat ke kotak mesej",
   "welcome.question": "Apa yang boleh saya bantu?",
+  "welcome.ai": "Anda sedang bercakap dengan AI, bukan dengan manusia.",
   "starter.discover": "Apa yang boleh kamu buat?",
   "starter.discover.prompt": "Apa yang boleh kamu buat untuk saya? Beri saya 3 contoh untuk dicuba.",
   "starter.summarize": "Ringkaskan teks yang panjang",

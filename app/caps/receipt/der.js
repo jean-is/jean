@@ -131,3 +131,65 @@ export function readCertificate(der) {
   const [from, until] = children(validity)
   return { spki: raw(spki), from: dateOf(from), until: dateOf(until), subject: names(subject), issuer: names(issuer), selfIssued: raw(issuer).join() === raw(subject).join() }
 }
+
+// ─── Timestamps (RFC 3161, D274) ─────────────────────────────────────────────
+
+const HASHES = /** @type {Record<string, string>} */ ({ '2.16.840.1.101.3.4.2.1': 'SHA-256', '2.16.840.1.101.3.4.2.2': 'SHA-384', '2.16.840.1.101.3.4.2.3': 'SHA-512' })
+const CURVES = /** @type {Record<string, string>} */ ({ '1.2.840.10045.3.1.7': 'P-256', '1.3.132.0.34': 'P-384', '1.3.132.0.35': 'P-521' })
+/** @param {Node} node */
+const valueOf = (node) => node.bytes.subarray(node.start, node.end)
+
+/** An RFC 3161 request for a time on a SHA-256, with a nonce, asking for the authority's certificate. @param {Uint8Array} imprint @param {Uint8Array} nonce */
+export const timestampRequest = (imprint, nonce) => seq(int(Uint8Array.of(1)), seq(seq(oid('2.16.840.1.101.3.4.2.1'), tlv(0x05)), octets(imprint)), int(nonce), Uint8Array.of(1, 1, 255))
+
+/** The token of an RFC 3161 answer, once granted. @param {Uint8Array} der */
+export function tokenOf(der) {
+  const [status, token] = children(read(der))
+  if (valueOf(children(status)[0])[0] > 1 || !token) throw new Error('refused')
+  return raw(token)
+}
+
+/** A key from its SPKI, for ECDSA or RSA signatures with a hash. @param {Uint8Array} spki @param {string} hash */
+async function keyOf(spki, hash) {
+  const [algorithm] = children(read(spki))
+  const [kind, curve] = children(algorithm)
+  const ec = dottedOf(kind) === '1.2.840.10045.2.1'
+  return crypto.subtle.importKey('spki', /** @type {BufferSource} */ (spki), ec ? { name: 'ECDSA', namedCurve: CURVES[dottedOf(curve)] } : { name: 'RSASSA-PKCS1-v1_5', hash }, false, ['verify'])
+}
+
+/** ECDSA's Ecdsa-Sig-Value as Web Crypto takes it, r‖s, each the curve's size. @param {Uint8Array} der @param {number} size */
+export const p1363 = (der, size) => concat(...children(read(der)).map((part) => {
+  const bytes = valueOf(part).subarray(Math.max(0, part.end - part.start - size))
+  return concat(new Uint8Array(size - bytes.length), bytes)
+}))
+
+/**
+ * What an RFC 3161 token says, and whether its signer's signature holds by a certificate it carries
+ * over attributes whose digest is its TSTInfo's: when, on what imprint, with which nonce, and who.
+ * @param {Uint8Array} token
+ */
+export async function readToken(token) {
+  const signed = children(children(children(read(token))[1])[0])
+  const tst = valueOf(children(children(signed[2])[1])[0])
+  const info = children(read(tst))
+  const signer = children(children(signed.at(-1) ?? signed[0])[0])
+  const hash = HASHES[dottedOf(children(signer[2])[0])]
+  const attributes = signer.find((node) => node.tag === 0xa0)
+  const signature = signer.findLast((node) => node.tag === 0x04)
+  if (!hash || !attributes || !signature) throw new Error('format')
+  const digest = children(attributes).map(children).find(([type]) => dottedOf(type) === '1.2.840.113549.1.9.4')?.[1]
+  const kept = digest ? valueOf(children(digest)[0]).join() : ''
+  const covered = kept === new Uint8Array(await crypto.subtle.digest(hash, /** @type {BufferSource} */ (tst))).join()
+  // The signed attributes are signed as a SET, where the token keeps them as [0].
+  const message = concat(Uint8Array.of(0x31), raw(attributes).subarray(1))
+  let authority = null
+  for (const certificate of children(signed.find((node) => node.tag === 0xa0) ?? read(Uint8Array.of(0x30, 0)))) {
+    const { spki, subject } = readCertificate(raw(certificate))
+    const key = await keyOf(spki, hash).catch(() => null)
+    const curve = /** @type {any} */ (key?.algorithm)?.namedCurve
+    const bytes = curve ? p1363(valueOf(signature), Math.ceil(Number(curve.slice(2)) / 8)) : valueOf(signature)
+    if (key && await crypto.subtle.verify(curve ? { name: 'ECDSA', hash } : 'RSASSA-PKCS1-v1_5', key, /** @type {BufferSource} */ (bytes), /** @type {BufferSource} */ (message))) authority = subject
+  }
+  const nonce = info.find((node, i) => i > 4 && node.tag === 0x02)
+  return { at: dateOf(info[4]), imprint: valueOf(children(info[2])[1]), nonce: nonce ? valueOf(nonce) : null, authority, intact: covered && authority !== null }
+}

@@ -34,6 +34,7 @@ import { ulid } from './ulid.js'
  * @property {string[]} [meet]                 projects whose assistants meet without asking first (D224)
  * @property {boolean} [films]                  films are made without asking first (D251)
  * @property {string} [pictures]               which makes pictures on this device (D263)
+ * @property {{ date?: boolean, log?: boolean }} [certificates]  certificates dated by witnesses, recorded in a public log, as the user chose (D276)
  */
 
 /**
@@ -63,6 +64,8 @@ export const DEFAULT_URLS = Object.freeze({
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
   // Brains' prices (D255).
   prices: 'https://models.dev/api.json',
+  // Who dates a certificate (RFC 3161) and the public log it may go to (D276): Sigstore's, which answer browsers.
+  timestamp: 'https://timestamp.sigstore.dev/api/v1/timestamp', transparencyLog: 'https://rekor.sigstore.dev',
 })
 
 /** @param {keyof typeof DEFAULT_URLS} name @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy] */
