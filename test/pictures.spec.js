@@ -1,12 +1,17 @@
 // Pictures and films (D251): the brain offers them when asked to draw, makes a picture kept in the
 // project and shown in the answer, ready to save; a film is asked first, then shown and played there.
 // A conversation that ends on a picture opens at its end once the picture is drawn. The fake brain is
-// on this computer, so its pictures go through the check (D275), which a worker stands in for.
+// on this computer, so its pictures go through the check (D275, D280), which a worker stands in for,
+// and say a trained model made them (D279).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks } from './helpers.js'
 
-/** SD-Turbo's worker, where the check runs, giving each picture its levels: neutral, low (suggestive), medium and high. @param {number[]} logits */
-const checking = (logits) => `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', logits: ${JSON.stringify(logits)} })`
+/**
+ * SD-Turbo's worker, where the check runs, giving each picture in turn its levels of nudity (neutral, low, medium,
+ * high) and the other areas it shows, the last for every one after. @param {number[]} logits @param {...string[]} areas
+ */
+const checking = (logits, ...areas) => `let n = 0; const areas = ${JSON.stringify(areas.length ? areas : [[]])}
+self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', logits: ${JSON.stringify(logits)}, areas: areas[Math.min(n++, areas.length - 1)] })`
 test.beforeEach(({ page }) => page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([5, 0, 0, 0]) })))
 /** As if this device could make pictures, so Settings › Brains shows them. @param {import('@playwright/test').Page} page */
 const capable = (page) => page.addInitScript(() => {
@@ -37,6 +42,12 @@ test('the brain offers pictures when asked to draw, then makes one, kept in the 
     return app.fs.read(`${app.projectDir}/${uri?.replace(/\.png$/, '.md')}`)
   })
   expect(kept).toContain('Draw a lighthouse at dusk')
+  // Made on this computer, it says a trained model made it, and which (D279).
+  const bytes = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return new TextDecoder().decode(await app.fs.readBytes(`${app.projectDir}/${document.querySelector('app-picture')?.getAttribute('uri')}`))
+  })
+  expect(bytes).toContain('Iptc4xmpExt:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia" Iptc4xmpExt:AISystemUsed="fake-image-1"')
 })
 
 test('a picture takes its place at once, shows glimpses of it as it forms, then develops there (D265)', async ({ page }) => {
@@ -94,7 +105,7 @@ test('a picture from this computer showing nudity or sex never shows: its glimps
   })).toEqual([])
 })
 
-test('a suggestive picture shows, unless the check is strict, as the user sets it or the organisation does, which locks it (D275)', async ({ page }) => {
+test('a suggestive picture shows, unless the user refuses those too, or the organisation does, which locks it (D275)', async ({ page }) => {
   await capable(page)
   await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([0, 5, 0, 0]) }))
   await start(page)
@@ -108,12 +119,12 @@ test('a suggestive picture shows, unless the check is strict, as the user sets i
   await expect(strict).not.toBeChecked()
   await expect(settings).toContainText('Nudity and sex are always refused.')
   await strict.check()
-  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictureCheck)).toBe('strict')
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictureCheck)).toEqual({ suggestive: true })
   await closeSettings(page)
   await ask(page, 'Draw a lighthouse at dawn')
   await expect(page.locator('.msg-jean .prose').last()).toContainText(/^No picture: .*Not made/)
   // The organisation's level wins over the user's, and can't be changed.
-  await page.evaluate(async () => { (await import('/ui/state.js')).app.policy.pictureCheck = 'standard' })
+  await page.evaluate(async () => { (await import('/ui/state.js')).app.policy.pictureCheck = { suggestive: false } })
   settings = await openSettings(page, 'Brains')
   await expect(strict).not.toBeChecked()
   await expect(strict).toBeDisabled()
@@ -203,6 +214,38 @@ const LOADING = `self.onmessage = ({ data }) => {
   setTimeout(() => self.postMessage({ id: data.id, type: data.type === 'load' ? 'ready' : 'done' }), 600)
 }`
 
+test('graphic violence is refused unless the user allows it, self-harm whatever the user says; symbols of hate as the organisation sets them (D280)', async ({ page }) => {
+  await capable(page)
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([5, 0, 0, 0], ['violence'], ['violence'], ['selfHarm']) }))
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  await ask(page, 'Draw a lighthouse at dusk')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText(/^No picture: .*Not made: it showed graphic violence or injuries, .* unless allowed in Settings › Brains/)
+  // Allowed, the next one shows.
+  let settings = await openSettings(page, 'Brains')
+  const violence = settings.getByRole('switch', { name: 'Refuse graphic violence' })
+  await expect(violence).toBeChecked()
+  await expect(settings).toContainText('Battles and fights without them are allowed.')
+  await expect(settings).toContainText('pictures showing nudity, sex or self-harm are refused')
+  await violence.uncheck()
+  await closeSettings(page)
+  await ask(page, 'Draw a battle at dusk')
+  await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is your picture.')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  // Self-harm has no switch: refused.
+  await ask(page, 'Draw a lighthouse at dawn')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText(/Not made: it showed self-harm, which pictures made on this device or this computer don't show\. /)
+  // The organisation allows symbols of hate, for its history teachers: no one changes it.
+  await page.evaluate(async () => { (await import('/ui/state.js')).app.policy.pictureCheck = { hate: false } })
+  settings = await openSettings(page, 'Brains')
+  const hate = settings.getByRole('switch', { name: 'Refuse symbols of hate' })
+  await expect(hate).not.toBeChecked()
+  await expect(hate).toBeDisabled()
+  await expect(settings.getByRole('switch', { name: 'Refuse graphic violence' })).toBeEnabled()
+})
+
 test('pictures on this device: three to choose from as cards, each downloaded once, the one downloaded used, another used instead or removed', async ({ page }) => {
   await capable(page)
   for (const worker of ['device-worker', 'stage-worker']) await page.route(`**/caps/pictures/${worker}.js`, (route) => route.fulfill({ contentType: 'text/javascript', body: LOADING }))
@@ -216,7 +259,7 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   // Each comes with the check its pictures go through (D275).
   await expect(quick).toContainText('2.6 GB')
   await expect(shown).toContainText('Z-Image-Turbo')
-  await expect(settings).toContainText('Each is checked here first: pictures showing nudity or sex are refused.')
+  await expect(settings).toContainText('Each is checked here first: pictures showing nudity, sex or self-harm are refused.')
   await shown.getByRole('button', { name: /^Download/ }).click()
   await expect(finest).toContainText('Downloading')
   await expect(finest).toContainText('In use')
@@ -228,7 +271,7 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await expect(detailed).toBeFocused()
   await expect(shown).toContainText('FLUX.2 [klein]')
   // Another, downloaded too, is used from then on; the first can be used again, or removed.
-  await shown.getByRole('button', { name: 'Download (6.6 GB)' }).click()
+  await shown.getByRole('button', { name: 'Download (6.7 GB)' }).click()
   await expect(detailed).toContainText('In use')
   await expect(finest).toContainText('Downloaded')
   await finest.click()
@@ -237,7 +280,7 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await expect(detailed).toContainText('Downloaded')
   await detailed.click()
   await shown.getByRole('button', { name: 'Remove' }).click()
-  await expect(detailed).toContainText('6.6 GB')
+  await expect(detailed).toContainText('6.7 GB')
   await expect(quick).toContainText('2.6 GB')
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictures)).toBe('z-image-turbo')
 })

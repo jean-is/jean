@@ -1,14 +1,18 @@
 // Pictures and films from a connected brain's provider (D251): what each API is asked, what comes
 // back as bytes, and a film fetched only from where the brain is. Then what FLUX.2 [klein]'s and
 // Z-Image-Turbo's graphs are given on this device (D263), the glimpses of a picture as it forms (D265),
-// and what the check a picture made here goes through sees and says (D275).
+// what the check a picture made here goes through sees and says (D275, D280), and the mark that says a
+// trained model made it (D279).
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { PROVIDERS } from '../app/core/llm.js'
 import { picture, film, filmModels, frame } from '../app/caps/pictures/cloud.js'
 import { SIZES, chat, sigmas, positions, unpack, glimpse } from '../app/caps/pictures/flux.js'
 import * as zimage from '../app/caps/pictures/zimage.js'
+import { readFileSync } from 'node:fs'
 import * as check from '../app/caps/pictures/check.js'
+import { marked, GENERATED } from '../app/caps/pictures/mark.js'
+import { crc32 } from '../app/core/zip.js'
 
 /** @param {(url: string, init: any) => Response | Promise<Response>} respond */
 function mockFetch(respond) {
@@ -257,11 +261,12 @@ describe('Z-Image-Turbo on this device', () => {
 })
 
 describe('the check a picture made here goes through (D275)', () => {
-  test('its file is pinned by revision and SHA-256, as the makers’ are', () => {
-    const [path, hash, bytes] = check.FILE
-    assert.match(path, /\/resolve\/[0-9a-f]{40}\/onnx\/model_q4\.onnx$/)
-    assert.match(hash, /^[0-9a-f]{64}$/)
-    assert.equal(bytes, 59512872)
+  test('its files are pinned by revision and SHA-256, as the makers’ are', () => {
+    assert.deepEqual(check.FILES.map(([, , bytes]) => bytes), [59512872, 63262114])
+    for (const [path, hash] of check.FILES) {
+      assert.match(path, /\/resolve\/[0-9a-f]{40}\/onnx\/[\w]+_q4\.onnx$|\/resolve\/[0-9a-f]{40}\/onnx\/model_q4\.onnx$/)
+      assert.match(hash, /^[0-9a-f]{64}$/)
+    }
   })
 
   test('it sees a colour a plane at a time, normalized as CLIP’s', () => {
@@ -270,6 +275,8 @@ describe('the check a picture made here goes through (D275)', () => {
     const near = (/** @type {number} */ got, /** @type {number} */ want) => assert.ok(Math.abs(got - want) < 1e-4, `${got} ≠ ${want}`)
     assert.equal(values.length, 6)
     ;[1.9303, -1.7923, 2.0749, -1.7521, 2.1459, -1.4802].forEach((want, i) => near(values[i], want))
+    // SigLIP's: a half each way.
+    assert.deepEqual([...check.planes([255, 255, 255, 255, 0, 0, 0, 255], check.SIGLIP)], [1, -1, 1, -1, 1, -1])
   })
 
   test('medium and high together say nudity or sex; at half or more, a picture doesn’t show', () => {
@@ -285,5 +292,66 @@ describe('the check a picture made here goes through (D275)', () => {
     assert.ok(check.explicit([0, 4, 0, 0], true) > 0.9)
     assert.ok(check.explicit([4, 1, 0, 0], true) < check.LIMIT)
     assert.equal(check.explicit([0, 0, 0, 0], true), 0.75)
+  })
+})
+
+describe('what else the check looks for (D280)', () => {
+  const concepts = JSON.parse(readFileSync(new URL('../app/caps/pictures/concepts.json', import.meta.url), 'utf8'))
+
+  test('a few words for each area, read into vectors at unit length, with the limit measured for it', () => {
+    assert.deepEqual(Object.keys(concepts.areas), ['hate', 'violence', 'selfHarm'])
+    assert.match(concepts.model, /^Xenova\/siglip-base-patch16-224@[0-9a-f]{40}$/)
+    assert.ok(check.FILES[1][0].startsWith(concepts.model.replace('@', '/resolve/')))
+    for (const { limit, words, vectors } of Object.values(concepts.areas)) {
+      assert.equal(words.length, vectors.length)
+      assert.ok(limit > 0 && limit < 0.2)
+      for (const vector of vectors) {
+        const values = check.unpacked(vector)
+        assert.equal(values.length, 768)
+        assert.ok(Math.abs(Math.hypot(...values) - 1) < 0.01)
+      }
+    }
+  })
+
+  test('a picture as close to one of an area’s words as its limit shows that area, however long its view', () => {
+    // Two areas whose one word each is an axis: a view 0.2 along the first and 0.05 along the second.
+    const axis = (/** @type {number} */ i) => {
+      const bytes = new Uint8Array(4 + 768)
+      new DataView(bytes.buffer).setFloat32(0, 1 / 127, true)
+      bytes[4 + i] = 127
+      return Buffer.from(bytes).toString('base64')
+    }
+    const areas = { areas: { first: { limit: 0.1, vectors: [axis(0)] }, second: { limit: 0.1, vectors: [axis(1)] } } }
+    const view = Array.from({ length: 768 }, (_, i) => [0.2, 0.05, Math.sqrt(1 - 0.2 ** 2 - 0.05 ** 2)][i] ?? 0)
+    assert.deepEqual(check.shown(view, areas), ['first'])
+    assert.deepEqual(check.shown(view.map((value) => value * 3), areas), ['first'])
+    assert.deepEqual(check.shown(view.map((value) => -value), areas), [])
+    // A word's own vector is as close as can be.
+    assert.ok(check.shown(check.unpacked(concepts.areas.selfHarm.vectors[1]), concepts).includes('selfHarm'))
+  })
+})
+
+describe('the mark that says a trained model made a picture (D279)', () => {
+  const png = Uint8Array.from(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC', 'base64'))
+
+  test('IPTC’s Digital Source Type and the maker, in an XMP packet right after the header, its CRC right', () => {
+    const out = marked(png, 'Z-Image-Turbo', 'webnn/Z-Image-Turbo@02e1d8c')
+    assert.deepEqual([...out.subarray(0, 33)], [...png.subarray(0, 33)])
+    assert.deepEqual([...out.subarray(out.length - (png.length - 33))], [...png.subarray(33)])
+    const view = new DataView(out.buffer)
+    const length = view.getUint32(33)
+    const body = out.subarray(37, 41 + length)
+    assert.equal(new TextDecoder().decode(body.subarray(0, 21)), 'iTXtXML:com.adobe.xmp')
+    assert.equal(view.getUint32(41 + length), crc32(body))
+    const xmp = new TextDecoder().decode(body)
+    assert.ok(xmp.includes(`Iptc4xmpExt:DigitalSourceType="${GENERATED}"`))
+    assert.ok(xmp.includes('Iptc4xmpExt:AISystemUsed="Z-Image-Turbo" Iptc4xmpExt:AISystemVersionUsed="webnn/Z-Image-Turbo@02e1d8c"'))
+    assert.ok(marked(png, 'a "quoted" <name>').length > png.length)
+    assert.ok(new TextDecoder().decode(marked(png, 'a "quoted" <name>')).includes('a &#34;quoted&#34; &#60;name&#62;'))
+  })
+
+  test('anything but a PNG stays as it came', () => {
+    const jpeg = Uint8Array.of(0xff, 0xd8, 0xff, 0xe0, 0, 16)
+    assert.equal(marked(jpeg, 'x'), jpeg)
   })
 })

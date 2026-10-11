@@ -3,12 +3,12 @@
 // decoder. Through ONNX Runtime from Jean's own copy (D52), on WebNN where the browser offers it,
 // else WebGPU; its files from the host the page passes (D53), one after another, so only one is
 // held while it is read. Every picture made on this device, or by a server on this computer, is
-// checked here before it shows (D275).
+// checked here before it shows (D275, D280).
 //
 // { type: 'load', host, files }   → progress…, { type: 'ready' }
 // { type: 'paint', prompt }       → { type: 'done', bytes }, a PNG
 // { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
-// { type: 'check', host, bytes }  → { type: 'done', logits }, the check's four levels for the picture
+// { type: 'check', host, bytes }  → { type: 'done', logits, areas }, its four levels of nudity, and the other areas it shows
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
@@ -24,7 +24,7 @@ const DIMENSIONS = [{ batch_size: 1 }, { batch_size: 1, num_channels: 4, height:
 
 /** @type {Promise<{ tokenizer: any, sessions: any[] }> | null} */
 let loading = null
-/** @type {Promise<any> | null} the check's session, kept for the next picture */
+/** @type {Promise<any[]> | null} the check's sessions, then the areas' words, kept for the next picture */
 let checker = null
 let busy = Promise.resolve()
 
@@ -48,7 +48,7 @@ async function handle({ id, type, ...data }) {
       await Promise.all(sessions.map((session) => session.release()))
       self.postMessage({ id, type: 'done' })
     } else if (type === 'check') {
-      self.postMessage({ id, type: 'done', logits: await levels(data) })
+      self.postMessage({ id, type: 'done', ...await checked(data) })
     }
   } catch (error) {
     if (type === 'load') loading = null
@@ -99,18 +99,23 @@ async function paint(prompt) {
 }
 
 /**
- * The check's levels for a picture (D275), squashed whole into the square the check sees: on
- * WebGPU where there is one, else WebAssembly, its file downloaded first if it isn't here.
- * @param {{ host: string, bytes: Uint8Array }} data
+ * What the check sees in a picture (D275, D280), squashed whole into the squares its two encoders see:
+ * Freepik's four levels of nudity, and the areas SigLIP's view of it is close to. On WebGPU where there
+ * is one, else WebAssembly, their files downloaded first if they aren't here. @param {{ host: string, bytes: Uint8Array }} data
  */
-async function levels({ host, bytes }) {
-  const session = (checker ??= download(new URL(check.FILE[0], host).href, check.FILE[1], () => {})
-    .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: ['webgpu', 'wasm'] }))
-    .catch((error) => { checker = null; throw error }))
-  const context = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(check.SIDE, check.SIDE).getContext('2d'))
-  context.imageSmoothingQuality = 'high'
-  context.drawImage(await createImageBitmap(new Blob([bytes])), 0, 0, check.SIDE, check.SIDE)
-  const pixels = check.planes(context.getImageData(0, 0, check.SIDE, check.SIDE).data)
-  const { logits } = await (await session).run({ pixel_values: new Tensor('float32', pixels, [1, 3, check.SIDE, check.SIDE]) })
-  return Array.from(/** @type {Float32Array} */ (logits.data))
+async function checked({ host, bytes }) {
+  const loaded = (checker ??= Promise.all([...check.FILES.map(([path, hash]) => download(new URL(path, host).href, hash, () => {})
+    .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: ['webgpu', 'wasm'] }))),
+  fetch(new URL('./concepts.json', import.meta.url)).then((response) => response.json())]).catch((error) => { checker = null; throw error }))
+  const picture = await createImageBitmap(new Blob([bytes]))
+  const seen = (/** @type {number} */ side, /** @type {number[][]} */ normalization) => {
+    const context = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(side, side).getContext('2d'))
+    context.imageSmoothingQuality = 'high'
+    context.drawImage(picture, 0, 0, side, side)
+    return new Tensor('float32', check.planes(context.getImageData(0, 0, side, side).data, normalization), [1, 3, side, side])
+  }
+  const [nudity, siglip, concepts] = await loaded
+  const { logits } = await nudity.run({ pixel_values: seen(check.SIDE, check.CLIP) })
+  const { pooler_output } = await siglip.run({ pixel_values: seen(check.SIGLIP_SIDE, check.SIGLIP) })
+  return { logits: Array.from(/** @type {Float32Array} */ (logits.data)), areas: check.shown(pooler_output.data, concepts) }
 }

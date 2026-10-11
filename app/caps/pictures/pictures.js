@@ -3,7 +3,8 @@
 // in the project's files as Things Jean made are, a name made again being a new version (D164),
 // and shown in the answer, ready to save. No studio: they are made where the work is. Its place there
 // shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
-// picture made on this device or by a server on this computer shows nobody naked or sexual (D275).
+// picture made on this device or by a server on this computer shows nobody naked or sexual (D275), nor,
+// unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -19,6 +20,7 @@ import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../c
 import { slug } from '../../core/settings.js'
 import { t, locale, useStrings, formatBytes } from '../../core/i18n.js'
 import * as device from './device.js'
+import { marked } from './mark.js'
 
 /** @typedef {import('../../core/types.js').BrainConfig} BrainConfig */
 /** @typedef {import('../../core/types.js').ImageBlock} ImageBlock */
@@ -130,7 +132,7 @@ async function make(kind, args, ctx) {
     // Its glimpses show once checked, none after one that doesn't pass.
     let unfit = false
     const glimpse = async (/** @type {import('./cloud.js').Progress} */ { image, ...more }) => {
-      if (image && unfiltered(engine) && !unfit && !(await device.passes(cloud.bytesOf(image.data)).catch(() => false))) unfit = true
+      if (image && unfiltered(engine) && !unfit && (await device.refused(cloud.bytesOf(image.data)).catch(() => 'nudity'))) unfit = true
       show({ ...more, image: unfit ? undefined : image })
     }
     try {
@@ -145,7 +147,10 @@ async function make(kind, args, ctx) {
   }
   if (!made) throw new Error(failed.join('\n'))
   // Checked before it is kept, the next who could make it never asked instead.
-  if (by && unfiltered(by) && !(await device.passes(made.bytes))) throw new Error('Not made: it showed nudity or sex, which no picture made on this device or this computer shows. Tell the user so, without trying again in other words.')
+  const refused = by && unfiltered(by) ? await device.refused(made.bytes) : undefined
+  if (refused) throw new Error(`Not made: it showed ${SHOWED[refused]}, which pictures made on this device or this computer don't show${['suggestive', 'hate', 'violence'].includes(refused) ? ' unless allowed in Settings › Brains' : ''}. Tell the user so, without trying again in other words.`)
+  // It says which trained model made it (D279); a provider's picture keeps its own marks.
+  if (by && unfiltered(by)) made = { ...made, bytes: marked(made.bytes, made.model || ('model' in by ? by.model : ''), 'revision' in made ? String(made.revision) : undefined) }
   const name = `${String(args?.name ?? '').trim().replace(/\.\w+$/, '') || slug(description).slice(0, 40) || kind}.${made.mimeType.split('/')[1].replace('jpeg', 'jpg').replace('quicktime', 'mov')}`
   const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType: made.mimeType, bytes: made.bytes, pages: [description], by: 'jean' })
   const conversation = conversationOf(ctx.signal)
@@ -155,6 +160,9 @@ async function make(kind, args, ctx) {
   ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', ...('revision' in made && { revision: made.revision }), local: true }
   return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}. The user sees it in your answer.`
 }
+
+/** What the brain hears a refused picture showed (D275, D280). */
+const SHOWED = { nudity: 'nudity or sex', suggestive: 'suggestive content', hate: 'symbols of hate or extremist propaganda', violence: 'graphic violence or injuries', selfHarm: 'self-harm' }
 
 const shape = { type: 'string', enum: ['square', 'wide', 'tall'] }
 
@@ -346,6 +354,17 @@ const BILLBOARD = html`<svg class="art" viewBox="0 0 48 48" aria-hidden="true" f
 /** Each one's picture. */
 const ART = { 'sd-turbo': CAMERA, 'flux2-klein': EASEL, 'z-image-turbo': BILLBOARD }
 
+/** What the user may change of what the check refuses (D275, D280); self-harm only an organisation may allow. */
+const CHECKED = /** @type {const} */ (['suggestive', 'hate', 'violence'])
+
+/** Whether the check refuses an area, a switch, unless the organisation set it. @param {typeof CHECKED[number]} area */
+function check(area) {
+  const set = app.policy.pictureCheck?.[area] !== undefined
+  const change = (/** @type {Event} */ e) => updateSettings(/** @type {{}} */ ({ pictureCheck: { .../** @type {any} */ (app.settings.value).pictureCheck, [area]: /** @type {HTMLInputElement} */ (e.target).checked } }))
+  return html`<div class="setting"><div><span class="rule-kind">${t(`pictures.${area}`)}</span><p class="muted small">${t(set ? 'pictures.locked' : `pictures.${area}Text`)}</p></div>
+    <input type="checkbox" class="switch" role="switch" aria-label=${t(`pictures.${area}`)} .checked=${device.refuses(area)} ?disabled=${set} @change=${change}></div>`
+}
+
 /** Which one Settings shows under the cards: the one the user picked, kept for the visit, else the one used, else the finest. */
 const viewing = signal(/** @type {Maker | null} */ (null))
 const viewed = () => viewing.value ?? device.used() ?? fit.value.at(-1)
@@ -406,8 +425,6 @@ function shown(maker) {
 function panel() {
   const makers = fit.value
   const chosen = viewed()
-  // The check's level, strict or not, unless the organisation set it (D275).
-  const set = app.policy.pictureCheck !== undefined
   return html`${effective.value.settings.films ? html`<section class="setting">
     <div><h3>${t('pictures.films')}</h3><p class="muted">${t('pictures.filmsText')}</p></div>
     <button class="button" @click=${() => updateSettings({ films: false })}>${t('pictures.filmsAsk')}</button>
@@ -415,9 +432,7 @@ function panel() {
   ${chosen ? html`<section class="pictures-device">
     <h3>${t('pictures.device')}</h3>
     <p class="muted">${t('pictures.deviceText')}</p>
-    <div class="setting"><div><span class="rule-kind">${t('pictures.strict')}</span><p class="muted small">${t(set ? 'pictures.locked' : 'pictures.strictText')}</p></div>
-      <input type="checkbox" class="switch" role="switch" aria-label=${t('pictures.strict')} .checked=${device.strict()} ?disabled=${set}
-        @change=${(/** @type {Event} */ e) => updateSettings(/** @type {{}} */ ({ pictureCheck: /** @type {HTMLInputElement} */ (e.target).checked ? 'strict' : undefined }))}></div>
+    ${CHECKED.map((area) => check(area))}
     <div class="makers" role="tablist" aria-label=${t('pictures.device')} @keydown=${move}>${makers.map((maker) => card(maker, chosen))}</div>
     <div role="tabpanel" id="pictures-shown" aria-labelledby=${`pictures-${chosen}`}>${shown(chosen)}</div>
   </section>` : nothing}`
