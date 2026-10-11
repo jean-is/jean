@@ -82,8 +82,8 @@ export function pagesThatFit(pages, budgetTokens) {
 /**
  * A document's pages cut for searching: passages of about `size` tokens, never across a page, cut
  * where a line ends (a longer line in pieces). Each knows its page, where it lies in it, and what
- * heads it: the last heading above (a line starting with #), else its page's first line that isn't
- * on most pages' tops (a running header, a page number), and a table's column names.
+ * heads it: the last heading above (a line starting with #), else its page's first line that reads
+ * like one and isn't on most pages' tops (a running header, a page number), and a table's column names.
  * @param {string[]} pages @returns {{ page: number, start: number, end: number, head: string }[]}
  */
 export function passages(pages, size = 200) {
@@ -113,7 +113,8 @@ export function passages(pages, size = 200) {
         passage.bytes += piece
       }
       if (/^#/.test(line)) heading = line.replace(/^#+\s*/, '')
-      else if (!first && line.trim() && !(pages.length > 2 && (tops.get(line.replace(/\d+/g, '#')) ?? 0) > pages.length / 2)) first = line.trim().slice(0, 120)
+      // A first line heads the page only if it reads like a heading: not a table's row, not mostly figures.
+      else if (!first && line.trim() && !tabular && (line.match(/\d/g)?.length ?? 0) <= line.length / 5 && !(pages.length > 2 && (tops.get(line.replace(/\d+/g, '#')) ?? 0) > pages.length / 2)) first = line.trim().slice(0, 120)
       columns = tabular ? columns || line : ''
       at += line.length + 1
     }

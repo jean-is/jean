@@ -355,6 +355,9 @@ test('passages: a document cut for searching, never across a page, each knowing 
   const pdf = ['Compendium\n1 / 3\nContract C-4471 — Warehousing\n' + 'The notice period is sixty days.\n'.repeat(20), 'Compendium\n2 / 3\nIncident report IR-5003 — Lyon site\n' + 'A forklift hose broke.\n'.repeat(20), 'Compendium\n3 / 3\nEnd.']
   const heads = passages(pdf, 60).map((p) => `${p.page}:${p.head}`)
   assert.ok(heads.includes('1:Contract C-4471 — Warehousing') && heads.includes('2:Incident report IR-5003 — Lyon site'), 'its page’s first line that isn’t on every page')
+  // A page of a long table heads nothing with its first row.
+  const ledger = ['Ledger\n1 / 3\nINV-221000 2025-08-08 Mirabel Motors 10,543.65 Disputed\n' + 'INV-221003 2025-08-09 Brellin Paper 1,234.50 Paid\n'.repeat(30), 'Ledger\n2 / 3\nx', 'Ledger\n3 / 3\ny']
+  assert.deepEqual(passages(ledger, 60).filter((p) => p.page === 1).map((p) => p.head), passages(ledger, 60).filter((p) => p.page === 1).map(() => ''))
   // A line longer than a passage is cut too: minified data, a table without line ends.
   assert.ok(passages(['x'.repeat(5000)], 100).length > 3)
 })
