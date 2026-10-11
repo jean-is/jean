@@ -102,7 +102,7 @@ Or, with nothing to clone, its secrets still in `GATEWAY_CONFIG`:
 npx jean-cli gateway --origin https://jean.example
 ```
 
-To try it on your computer, one command serves Jean with the gateway at `/gateway` on the same address, already set in Settings › Connections, with Connections turned on (a policy the development server makes up, as an organisation's would):
+To try it on your computer, one command serves Jean with the gateway at `/gateway` on the same address, already set for Connections (a policy the development server makes up, as an organisation's would), which is found as anywhere else, or turned on early from its trophy in Settings › Capabilities:
 
 ```bash
 npm run dev:gateway

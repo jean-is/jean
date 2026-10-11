@@ -12,6 +12,18 @@
       "autoPort": true
     },
     {
+      "name": "jean-gateway",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve.js",
+        "--gateway"
+      ],
+      "port": 4373,
+      "env": {
+        "PORT": "4373"
+      }
+    },
+    {
       "name": "fake-brain",
       "runtimeExecutable": "node",
       "runtimeArgs": [

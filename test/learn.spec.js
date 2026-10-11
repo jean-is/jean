@@ -259,6 +259,29 @@ test('a routine that fell due while Jean was closed runs at the next visit, once
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(count)
 })
 
+test('a routine\'s runs are not requests of the user\'s own: they make no kind (D122)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  await useSources(page, [])
+  await page.evaluate(async () => {
+    const { app, refreshConversations } = await import('/ui/state.js')
+    const { createConversation, appendRecords } = await import('/core/conversations.js')
+    const { userRecords, noteRecord } = await import('/core/events.js')
+    for (let i = 0; i < 2; i++) {
+      const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test' })
+      await appendRecords(app.fs, path, [noteRecord('This request is the routine Weekly sales.', { kind: 'routine', routine: 'routines/x.md', title: 'Weekly sales' }), ...userRecords('Summarize the weekly sales by region', [], 'test')])
+    }
+    await refreshConversations()
+  })
+  await newConversation(page)
+  await ask(page, 'Summarize the weekly sales by region')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
+  await expect(page.locator('.follow-ups')).toBeVisible()
+  await expect(page.locator('.follow-up', { hasText: 'Save this as a skill' })).toHaveCount(0)
+})
+
 test('requests of a kind on three different days offer a routine, at the time they were made', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

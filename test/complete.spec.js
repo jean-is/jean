@@ -1,9 +1,9 @@
 // The box's / and @ (D199): / names what Jean uses, the room's skills and what Jean can do, and
-// finds what isn't there yet, a ready-made skill read before it is added; @ attaches a file shared
+// once Skills is found, a ready-made skill, read before it is added; @ attaches a file shared
 // before, points at an earlier task, and at a file of the conversation's folder. The message keeps
 // the words picked, and the brain is told what each names just before it.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, turnOn } from './helpers.js'
+import { start, connectFakeBrain, turnOn, closeSettings } from './helpers.js'
 
 /** The menu above the box. @param {import('@playwright/test').Page} page */
 const menu = (page) => page.locator('#complete')
@@ -21,12 +21,22 @@ async function answered(page) {
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 }
 
-test('/ finds a ready-made skill, read before it is added, and names it and what Jean can do', async ({ page }) => {
+test('/ names what Jean can do, and once Skills is found, a ready-made skill, read before it is added', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const box = page.locator('#prompt')
+  // Before Skills and Connections are found, / names only what Jean can do now: no skills to add, no services.
   await box.pressSequentially('Plot sales by month /')
-  await expect(menu(page).locator('.complete-heading')).toHaveText(['What Jean can do', 'Skills to add', 'Connect a service'])
+  await expect(menu(page).locator('.complete-heading')).toHaveText(['What Jean can do'])
+  await box.press('Escape')
+  await turnOn(page, 'Skills')
+  await closeSettings(page)
+  // (Clicked first: after a modal, headless Chromium types nowhere until the box is.)
+  await box.click()
+  await box.press('ControlOrMeta+End')
+  await box.press('Backspace')
+  await box.pressSequentially('/')
+  await expect(menu(page).locator('.complete-heading')).toHaveText(['What Jean can do', 'Skills to add'])
   // Typing narrows it, and the box says which option Enter picks.
   await box.pressSequentially('cha')
   await expect(menu(page).locator('[aria-selected="true"]')).toContainText('Chart')

@@ -144,7 +144,7 @@ class Composer extends Element {
   #paste = (event) => {
     const files = [...(event.clipboardData?.files ?? [])]
     // A long paste is a document in disguise: offer files (an event, so any language works).
-    if (!files.length && (event.clipboardData?.getData('text').length ?? 0) > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files'))
+    if (!files.length && (event.clipboardData?.getData('text').length ?? 0) > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files', true))
     if (!files.length) return
     event.preventDefault()
     attachFiles(files)

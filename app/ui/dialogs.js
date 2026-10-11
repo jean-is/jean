@@ -11,7 +11,7 @@ import {
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
-import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, accept, begin, unlockAll } from './discovery.js'
+import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
 import { usedIn } from '../core/settings.js'
@@ -783,8 +783,8 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
 })
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
-const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [app.conversations.value.length, 2], backup: () => [app.conversations.value.length, 3],
-  find: () => [app.conversations.value.length, FINDABLE], search: () => [app.conversations.value.length, SEARCHABLE],
+const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
+  find: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 const picked = signal('')

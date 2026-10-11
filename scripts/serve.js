@@ -1,8 +1,9 @@
 // Tiny static file server for development. Serves app/, what a deploy serves (D243), on 127.0.0.1.
 // Usage: npm run serve            (PORT=8080 npm run serve to change the port)
 // With --gateway (npm run dev:gateway), it is the gateway too (D191), at /gateway on Jean's own
-// address, and makes up the policy that sets it for Jean and turns Connections on, as an
-// organisation's would (docs/enterprise.md). GATEWAY_CONFIG may add its apps, or name fewer hosts.
+// address, and makes up the policy that sets it for Jean, as an organisation's would
+// (docs/enterprise.md); Connections is still found as anywhere else (D281). GATEWAY_CONFIG may add
+// its apps, or name fewer hosts.
 // With --budgets (npm run dev, dev:gateway and start), it checks the budgets as it starts and after
 // each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244).
 import { execFile } from 'node:child_process'
@@ -80,7 +81,7 @@ export async function handle (req, res) {
   const { pathname } = new URL(req.url ?? '/', 'http://localhost')
   if (relay && pathname === '/gateway') return relay(req, res)
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
-  if (GATEWAY && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: { gateway: `http://${req.headers.host}/gateway` }, capabilities: { preUnlock: ['connections'] } })))
+  if (GATEWAY && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: { gateway: `http://${req.headers.host}/gateway` } })))
   const file = resolveRequest(req.url ?? '/')
   if (!file) return fail(res, 404, 'Not found')
   const info = await stat(file).catch(() => null)

@@ -36,6 +36,36 @@ test('the house lights up as capabilities are turned on', async ({ page }) => {
   await expect(house.locator('.house-rank')).toHaveText('Daylight')
 })
 
+test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Three tasks in another project: Backup and Intuition are about all of them, so they are due.
+  await page.evaluate(async () => {
+    const { app, refreshProjects } = await import('/ui/state.js')
+    const { createProject } = await import('/core/settings.js')
+    const { createConversation, appendRecords } = await import('/core/conversations.js')
+    const { userRecords } = await import('/core/events.js')
+    const projectDir = await createProject(app.fs, { name: 'Garden', by: 'test' })
+    for (let i = 1; i <= 3; i++) await appendRecords(app.fs, (await createConversation(app.fs, { projectDir, by: 'test' })).path, userRecords(`Garden note ${i}`, [], 'test'))
+    await refreshProjects()
+  })
+  // Intuition is due, and Backup too outside a private window (WebKit's here): whichever count came first shows first.
+  const offer = page.locator('aside.offer')
+  const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
+  let left = ['get a feel for what you need', ...(ephemeral ? [] : ['Keep a copy of everything'])]
+  await expect(offer).toContainText(new RegExp(left.join('|')))
+  // A spreadsheet shared now takes its place.
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Sales.csv', mimeType: 'text/csv', buffer: Buffer.from('month,total\nJan,10\n') })
+  await expect(offer).toContainText('Want exact numbers')
+  // Then what is due comes back, one after the other, none lost.
+  while (left.length) {
+    await offer.getByRole('button', { name: 'No thanks' }).click()
+    await expect(offer).toContainText(new RegExp(left.join('|')))
+    const shown = (await offer.textContent()) ?? ''
+    left = left.filter((text) => !shown.includes(text))
+  }
+})
+
 test('the picker: a menu above the chip, Auto by default, a brain by hand, never the cloud', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

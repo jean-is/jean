@@ -40,7 +40,8 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
   1. Events that carry no language: a file dropped, a long paste, a download finishing.
   2. Reflex questions answered by a local multilingual decision model (see [architecture.md](architecture.md#reflexes)).
   3. The model's own `offer(capability)` tool, as a backstop.
-- **Offers are short.** Jean introduces a capability in one sentence. If the user accepts, that capability's code loads and its tools join the conversation. Once discovered, it stays visible. "No thanks" is for good: nothing offers it again, above the box or in an answer, and its trophy still turns it on (D219).
+- **Offers are short.** Jean introduces a capability in one sentence. If the user accepts, that capability's code loads and its tools join the conversation. Once discovered, it stays visible. "No thanks" is for good: nothing offers it again, above the box or in an answer, and its trophy still turns it on (D219); stopping the answer isn't a no.
+- **One offer at a time.** One about what the user is doing now takes the place of one that is merely due, like Backup after three conversations, which comes back once nothing else is shown. Conversations are counted in every project (D281).
 - **"What Jean can do"**, Settings' Capabilities section, is a case of trophies (D127). Each capability is a medal, lit once found. Each undiscovered one is a silhouette that says how it is found ("Share a spreadsheet"), so the case doubles as a list of things to try. A rank shows how far the house is lit, and how many more it takes to reach the next. Curious users can turn a trophy on early from its plaque, and power users can unlock everything at once.
 - **Discovery and code loading are one decision.** Each capability is a module loaded on demand, so the simple first screen and the 103.5 KB first load are the same thing.
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
@@ -155,7 +156,7 @@ Jean's "computer" is the user's own browser, so the view can show everything: fi
 
 Typed at the start of a word, / and @ open a menu above the box that narrows as the user types on (D199):
 
-- **/** names what Jean uses for the message: one of the project's skills or connections, or something Jean can do (Web search, Computer, Documents and spreadsheets…). It also finds what isn't there yet: a ready-made skill, read before it is added, and a service Jean knows, connected in a click.
+- **/** names what Jean uses for the message: one of the project's skills or connections, or something Jean can do (Web search, Computer, Documents and spreadsheets…). Once Skills or Connections is found, it also finds what isn't there yet: a ready-made skill, read before it is added, and a service Jean knows, connected in a click.
 - **@** points at what Jean reads: a file or folder of the conversation's folder, a file shared or made in the project, attached again, or one of the project's earlier tasks.
 
 What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jean is told what each one names.
