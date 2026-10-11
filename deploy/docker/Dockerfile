@@ -10,7 +10,7 @@
 FROM node:24-alpine AS build
 WORKDIR /src
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+RUN npm ci --omit=dev --ignore-scripts --no-fund
 COPY . .
 # Jean reads the policy.json beside index.html (docs/enterprise.md): an empty one, until the
 # organisation mounts its own over it. Then app/, what a web deploy serves (scripts/desktop.js), into /site.

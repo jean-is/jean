@@ -19,7 +19,7 @@ default:
       files: [package-lock.json]
     paths: [.npm/]
   before_script:
-    - npm ci --cache .npm --prefer-offline --no-audit --no-fund
+    - npm ci --cache .npm --prefer-offline --no-fund
 
 check:
   stage: test
