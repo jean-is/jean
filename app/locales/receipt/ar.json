@@ -21,5 +21,6 @@
   "receipt.proof": "حفظ الإثبات",
   "receipt.file": "شهادة {date}",
   "receipt.proof.text": "تُظهر الشهادة كيف صُنعت هذه الإجابة، لا كلماتها أبدًا: يمكن لأي أحد أن يحصل عليها. ويضيف الإثبات الطلب والإجابة، لمن يحق له قراءتهما.",
-  "receipt.proof.file": "إثبات {date}"
+  "receipt.proof.file": "إثبات {date}",
+  "receipt.checkAt": "يمكن لأي أحد التحقق منهما في {address}."
 }

@@ -18,7 +18,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { appendRecords } from '../../core/conversations.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
-import { t, locale, formatDuration, useStrings } from '../../core/i18n.js'
+import { t, tParts, locale, formatDuration, useStrings } from '../../core/i18n.js'
 import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed } from './certificate.js'
 
 /** @import { Turn } from '../../core/events.js' */
@@ -92,6 +92,9 @@ const kept = new WeakMap()
 /** What the conversation keeps of what its answers reached, read once for each version of its records. @param {Envelope[]} records @returns {Reached[]} */
 const reachedIn = (records) => kept.get(records) ?? /** @type {Reached[]} */ (kept.set(records, records.flatMap(({ meta }) => (meta?.reached ? [meta.reached] : []))).get(records))
 
+/** The page where anyone checks a certificate or its proof (D274). */
+const CHECK = new URL('../../check.html', import.meta.url).href
+
 // ─── The card ────────────────────────────────────────────────────────────────
 
 /** A brain's prices per token, as the picker shows them: its provider's, or models.dev's (D255). @param {Brain} brain */
@@ -150,7 +153,8 @@ function card(facts, turn, text) {
     <div class="receipt-saves">
       <button class="button subtle" @click=${() => keepCertificate(facts, turn, text)}>${icons.download}${t('receipt.save')}</button>
       <button class="button subtle" @click=${() => keepCertificate(facts, turn, text, true)}>${icons.download}${t('receipt.proof')}</button>
-    </div>`
+    </div>
+    <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>`
 }
 
 /** The device's seal, made with the first certificate and kept where the secrets' key is; one for this certificate alone where the browser keeps none. @returns {Promise<Seal>} */

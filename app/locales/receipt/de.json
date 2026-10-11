@@ -21,5 +21,6 @@
   "receipt.proof": "Nachweis speichern",
   "receipt.file": "Zertifikat {date}",
   "receipt.proof.text": "Das Zertifikat zeigt, wie diese Antwort entstanden ist, nie ihren Wortlaut: Jeder darf es haben. Der Nachweis fügt die Anfrage und die Antwort hinzu, für alle, die sie lesen dürfen.",
-  "receipt.proof.file": "Nachweis {date}"
+  "receipt.proof.file": "Nachweis {date}",
+  "receipt.checkAt": "Jeder kann sie unter {address} prüfen."
 }

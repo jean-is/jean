@@ -3,7 +3,7 @@
 // Pictures have no text: brains that can see are shown them. Adds the `read` tool for pages
 // that didn't fit in the message.
 import { effect } from '@preact/signals-core'
-import { register, loaded } from '../../ui/caps.js'
+import { register, loaded, unlock } from '../../ui/caps.js'
 import { app, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
 import { rememberText } from '../../ui/send.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
@@ -86,6 +86,8 @@ async function readOne(file) {
     const { name, mimeType, bytes, pages } = await contents(file)
     const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType, bytes, pages, by: app.deviceId })
     rememberText(link, pages)
+    // A certificate of an answer, or its proof, brings what checks it (D274).
+    if (/\.sd-jwt$/i.test(name) || (/\.json$/i.test(name) && /"protected"[\s\S]*"signature"/.test(pages.join('\n')))) unlock('certificates')
     update({ status: 'ready', link, pages, ...(isPicture(link) && { preview: URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType })) }) })
   } catch (error) {
     console.warn(file.name, error)

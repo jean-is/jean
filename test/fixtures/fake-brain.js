@@ -37,7 +37,8 @@
 // assistant saying what its <memory> holds, then agreeing; it answers with what was said (D224).
 // Asked to draw something, it offers pictures if they are off, then makes one, which
 // /images/generations answers, streamed when asked, a glimpse a second twice, then the picture (D265);
-// asked for a film, it makes one of 4 seconds, which /videos makes at once (D251).
+// asked for a film, it makes one of 4 seconds, which /videos makes at once (D251). Asked whether a
+// certificate is genuine, it checks the files shared with check_certificate and says what it found (D274).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -425,6 +426,8 @@ createServer(async (req, res) => {
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
   else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
   else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
+  else if (/\bcertificate\b/i.test(question) && last.role === 'user' && declared.has('check_certificate')) call = { name: 'check_certificate', args: { files: documents.map(([, , name]) => name) } }
+  else if (toolName === 'check_certificate') answer = last.content.split('\n')[0]
   else if (toolName === 'meet') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : `The meeting is over:\n\n${(/Round 1:\n([\s\S]*?)\n\n/.exec(last.content)?.[1] ?? '').split('\n').map((line) => `- ${line}`).join('\n')}`
   // Flows (D218): a step to do, a flow to draw (asked, or the steps just done), one to run.
   else if (/doing one step of the user's flow/.test(system)) answer = /Total per client/.test(lastUser) ? 'Acme: 120\nBistro: 80' : ''
