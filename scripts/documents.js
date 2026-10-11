@@ -554,7 +554,8 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
         const message = error instanceof Error ? error.message : String(error)
         console.log(`${job.hypothesis} ${job.question.id} ${job.condition}: failed, ${message.slice(0, 120)}`)
         // A free brain's day, or the account's credit, has run out: the jobs left would all fail.
-        if (/per-day|daily|quota|HTTP 402/i.test(message)) { stop = true; console.log('Out of requests or credit: run again once there is more to go on.') }
+        // It exits with an error, so that a run chained after it doesn't start.
+        if (/per-day|daily|quota|HTTP 402/i.test(message) && !stop) { stop = true; process.exitCode = 1; console.log('Out of requests or credit: run again once there is more to go on.') }
       }
     }
   }
