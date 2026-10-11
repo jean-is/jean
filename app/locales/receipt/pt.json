@@ -18,5 +18,8 @@
   "receipt.here": "neste dispositivo",
   "receipt.reached": "Outros endereços contactados",
   "receipt.save": "Guardar o certificado",
-  "receipt.file": "Certificado {date}"
+  "receipt.proof": "Guardar a prova",
+  "receipt.file": "Certificado {date}",
+  "receipt.proof.text": "O certificado mostra como esta resposta foi feita, nunca as suas palavras: qualquer pessoa o pode ter. A prova acrescenta o pedido e a resposta, para quem os pode ler.",
+  "receipt.proof.file": "Prova {date}"
 }

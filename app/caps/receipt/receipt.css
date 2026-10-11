@@ -31,5 +31,7 @@ app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt;
 .receipt-where .icon { inline-size: 0.9rem; block-size: 0.9rem; color: var(--flame-deep); }
 .receipt-hosts { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .receipt-hosts bdi { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 1rem; font-size: 0.78rem; }
-.receipt .button { margin-inline-start: -0.6rem; padding: 0.4rem 0.6rem; color: var(--ink-soft); font-size: 0.8rem; }
+/* The certificate, for anyone, and the proof, with the words (D274), side by side under what tells them apart. */
+.receipt-saves { display: flex; flex-wrap: wrap; margin-inline-start: -0.6rem; }
+.receipt .button { padding: 0.4rem 0.6rem; color: var(--ink-soft); font-size: 0.8rem; }
 @media (forced-colors: active) { .receipt, .receipt-stat, .receipt-mark { border: 1px solid CanvasText; } .receipt-hosts bdi { border-color: CanvasText; } }

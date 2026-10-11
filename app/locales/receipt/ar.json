@@ -18,5 +18,8 @@
   "receipt.here": "على هذا الجهاز",
   "receipt.reached": "وصلت أيضًا إلى",
   "receipt.save": "حفظ الشهادة",
-  "receipt.file": "شهادة {date}"
+  "receipt.proof": "حفظ الإثبات",
+  "receipt.file": "شهادة {date}",
+  "receipt.proof.text": "تُظهر الشهادة كيف صُنعت هذه الإجابة، لا كلماتها أبدًا: يمكن لأي أحد أن يحصل عليها. ويضيف الإثبات الطلب والإجابة، لمن يحق له قراءتهما.",
+  "receipt.proof.file": "إثبات {date}"
 }

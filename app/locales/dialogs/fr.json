@@ -214,6 +214,8 @@
   "kind.execute.label": "Faire des calculs",
   "kind.fetch.label": "Utiliser Internet",
   "kind.other.label": "Envoyer et partager",
+  "seal.title": "Le sceau de cet appareil",
+  "seal.text": "Les certificats enregistrés ici sont scellés avec une clé qui ne quitte jamais cet appareil. Qui s’y fie peut vérifier cette empreinte, ou en convenir avec vous à l’avance.",
   "pages.title": "Pages web",
   "pages.text": "Ce qu’une page web peut faire quand elle s’ouvre à côté de la conversation.",
   "pages.scripts": "Exécuter son code",

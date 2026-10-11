@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tag:jean.is,2026:answer-certificate",
+  "title": "Answer certificate",
+  "description": "A JWS (RFC 7515, flattened JSON serialization) of an SD-JWT (RFC 9901) issuer-signed W3C VC 2.0, JAdES B-B or B-T (ETSI TS 119 182-1), without disclosures.",
+  "$ref": "#/$defs/certificateFile",
+  "$defs": {
+    "b64url": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+    "b64": { "type": "string", "pattern": "^[A-Za-z0-9+/]+={0,2}$" },
+    "digest": { "description": "SHA-256 of a disclosure's base64url ASCII, base64url", "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+    "salt": { "description": "At least 128 random bits, base64url", "type": "string", "pattern": "^[A-Za-z0-9_-]{22,}$" },
+    "sri": { "description": "W3C Subresource Integrity form of a SHA-256", "type": "string", "pattern": "^sha256-[A-Za-z0-9+/]{43}=$" },
+    "dateTime": { "type": "string", "format": "date-time" },
+    "ulid": { "type": "string", "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$" },
+    "host": { "type": "string", "pattern": "^([A-Za-z0-9.-]+|\\[[0-9A-Fa-f:.]+\\])(:[0-9]{1,5})?$" },
+    "jurisdiction": { "description": "ISO 3166-1 alpha-2, or ISO 3166-2", "type": "string", "pattern": "^[A-Z]{2}(-[A-Z0-9]{1,3})?$" },
+    "count": { "type": "integer", "minimum": 0 },
+    "generated": { "description": "IPTC Digital Source Type, the vocabulary C2PA and the AI Act Code of Practice use for AI-generated content (an identifier, never fetched)", "const": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia" },
+    "one": { "description": "Exactly one salted digest", "type": "array", "items": { "$ref": "#/$defs/digest" }, "minItems": 1, "maxItems": 1 },
+    "element": { "description": "A salted array element (RFC 9901 §4.2.4.2)", "type": "object", "required": ["..."], "properties": { "...": { "$ref": "#/$defs/digest" } }, "additionalProperties": false },
+
+    "certificateFile": {
+      "type": "object",
+      "required": ["protected", "payload", "signature"],
+      "properties": {
+        "protected": { "$ref": "#/$defs/b64url", "contentEncoding": "base64url", "contentMediaType": "application/json", "contentSchema": { "$ref": "#/$defs/protectedHeader" } },
+        "payload": { "$ref": "#/$defs/b64url", "contentEncoding": "base64url", "contentMediaType": "application/json", "contentSchema": { "$ref": "#/$defs/credential" } },
+        "signature": { "description": "ES256: r||s, 64 bytes", "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" },
+        "header": {
+          "type": "object", "required": ["etsiU"], "additionalProperties": false,
+          "properties": { "etsiU": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/sigTstEntry" } } }
+        },
+        "sigstore": { "$ref": "#/$defs/sigstoreBundle" }
+      },
+      "additionalProperties": false
+    },
+
+    "protectedHeader": {
+      "type": "object",
+      "required": ["alg", "typ", "iat", "x5c", "x5t#S256"],
+      "properties": {
+        "alg": { "const": "ES256" },
+        "typ": { "const": "vc+sd-jwt" },
+        "iat": { "description": "Claimed signing time, whole seconds (JAdES 5.1.11)", "type": "integer", "minimum": 0 },
+        "x5c": { "description": "The seal's certificate first, then any chain", "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/b64", "contentEncoding": "base64", "contentMediaType": "application/pkix-cert" } },
+        "x5t#S256": { "$ref": "#/$defs/digest" }
+      },
+      "additionalProperties": false
+    },
+
+    "credential": {
+      "type": "object",
+      "required": ["@context", "type", "id", "issuer", "validFrom", "_sd_alg", "credentialSubject", "evidence"],
+      "properties": {
+        "@context": { "const": ["https://www.w3.org/ns/credentials/v2"] },
+        "type": { "const": ["VerifiableCredential", "AnswerCertificate"] },
+        "id": { "type": "string", "pattern": "^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" },
+        "issuer": { "description": "RFC 9278 URI of the RFC 7638 thumbprint of x5c[0]'s key", "type": "string", "pattern": "^urn:ietf:params:oauth:jwk-thumbprint:sha-256:[A-Za-z0-9_-]{43}$" },
+        "validFrom": { "$ref": "#/$defs/dateTime" },
+        "_sd_alg": { "const": "sha-256" },
+        "credentialSubject": { "$ref": "#/$defs/subject" },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/resourceTiming" } }
+      },
+      "additionalProperties": false
+    },
+
+    "subject": {
+      "type": "object",
+      "required": ["conversation", "where", "recorded", "ms", "request", "answer", "brains", "made", "jean"],
+      "properties": {
+        "conversation": { "$ref": "#/$defs/ulid" },
+        "where": { "enum": ["device", "cloud", "outside", "unknown"] },
+        "recorded": { "description": "The browser's record covers every request to a brain", "type": "boolean" },
+        "ms": { "$ref": "#/$defs/count" },
+        "request": {
+          "type": "object", "required": ["at", "_sd", "files"], "additionalProperties": false,
+          "properties": {
+            "at": { "$ref": "#/$defs/dateTime" },
+            "_sd": { "$ref": "#/$defs/one", "description": "Disclosure [salt, \"text\", <request text>]" },
+            "files": { "type": "array", "items": { "$ref": "#/$defs/element" }, "description": "Each disclosure [salt, <sri of a shared file>]" }
+          }
+        },
+        "answer": {
+          "type": "object", "required": ["at", "digitalSourceType", "_sd"], "additionalProperties": false,
+          "properties": {
+            "at": { "$ref": "#/$defs/dateTime" },
+            "digitalSourceType": { "$ref": "#/$defs/generated" },
+            "_sd": { "$ref": "#/$defs/one", "description": "Disclosure [salt, \"text\", <answer text>]" }
+          }
+        },
+        "brains": { "type": "array", "items": { "$ref": "#/$defs/brain" } },
+        "made": { "type": "array", "items": { "$ref": "#/$defs/maker" } },
+        "jean": {
+          "type": "object", "required": ["origin", "version"], "additionalProperties": false,
+          "properties": {
+            "origin": { "type": "string", "format": "uri" },
+            "version": { "description": "capabilities.json version: the files that ran", "type": "string", "pattern": "^[0-9a-f]{12}$" }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "where": {
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "revision": { "description": "The weights' pinned revision, when Jean pins one", "type": "string", "minLength": 1 },
+        "local": { "type": "boolean" },
+        "host": { "$ref": "#/$defs/host" },
+        "jurisdiction": { "$ref": "#/$defs/jurisdiction" }
+      },
+      "if": { "properties": { "local": { "const": false } } },
+      "then": { "required": ["host"] }
+    },
+    "brain": {
+      "type": "object",
+      "$ref": "#/$defs/where",
+      "required": ["provider", "model", "local", "input", "output", "cached"],
+      "properties": {
+        "provider": true, "model": true, "revision": true, "local": true, "host": true, "jurisdiction": true,
+        "ms": { "$ref": "#/$defs/count" },
+        "input": { "$ref": "#/$defs/count" },
+        "output": { "$ref": "#/$defs/count" },
+        "cached": { "$ref": "#/$defs/count" }
+      },
+      "additionalProperties": false
+    },
+    "maker": {
+      "type": "object",
+      "$ref": "#/$defs/where",
+      "required": ["kind", "digitalSourceType", "provider", "model", "local", "_sd"],
+      "properties": {
+        "kind": { "enum": ["picture", "film"] },
+        "digitalSourceType": { "$ref": "#/$defs/generated" },
+        "provider": true, "model": true, "revision": true, "local": true, "host": true, "jurisdiction": true,
+        "_sd": { "$ref": "#/$defs/one", "description": "Disclosure [salt, \"digestSRI\", <sri of the file made>]" }
+      },
+      "additionalProperties": false
+    },
+
+    "resourceTiming": {
+      "description": "What the page reached while the answer was written, as the browser recorded it (Resource Timing)",
+      "type": "object",
+      "required": ["type", "from", "to", "hosts"],
+      "properties": {
+        "type": { "const": ["ResourceTimingRecord"] },
+        "from": { "$ref": "#/$defs/dateTime" },
+        "to": { "$ref": "#/$defs/dateTime" },
+        "hosts": { "type": "object", "propertyNames": { "$ref": "#/$defs/host" }, "additionalProperties": { "type": "integer", "minimum": 1 } }
+      },
+      "additionalProperties": false
+    },
+
+    "sigTstEntry": {
+      "description": "JAdES 5.3.4: one RFC 3161 token on the base64url signature value",
+      "type": "object", "required": ["sigTst"], "additionalProperties": false,
+      "properties": {
+        "sigTst": {
+          "type": "object", "required": ["tstTokens"], "additionalProperties": false,
+          "properties": {
+            "tstTokens": {
+              "type": "array", "minItems": 1, "maxItems": 1,
+              "items": { "type": "object", "required": ["val"], "additionalProperties": false, "properties": { "val": { "$ref": "#/$defs/b64", "contentEncoding": "base64" } } }
+            }
+          }
+        }
+      }
+    },
+
+    "sigstoreBundle": {
+      "description": "Sigstore bundle v0.3 (protobuf-specs JSON) for the hashedrekord of the JWS signing input",
+      "type": "object",
+      "required": ["mediaType", "verificationMaterial", "messageSignature"],
+      "properties": {
+        "mediaType": { "const": "application/vnd.dev.sigstore.bundle.v0.3+json" },
+        "verificationMaterial": {
+          "type": "object", "required": ["certificate", "tlogEntries"], "additionalProperties": false,
+          "properties": {
+            "certificate": { "type": "object", "required": ["rawBytes"], "additionalProperties": false, "properties": { "rawBytes": { "$ref": "#/$defs/b64" } } },
+            "tlogEntries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/tlogEntry" } },
+            "timestampVerificationData": {
+              "type": "object", "additionalProperties": false,
+              "properties": { "rfc3161Timestamps": { "type": "array", "items": { "type": "object", "required": ["signedTimestamp"], "additionalProperties": false, "properties": { "signedTimestamp": { "$ref": "#/$defs/b64" } } } } }
+            }
+          }
+        },
+        "messageSignature": {
+          "type": "object", "required": ["messageDigest", "signature"], "additionalProperties": false,
+          "properties": {
+            "messageDigest": { "type": "object", "required": ["algorithm", "digest"], "additionalProperties": false, "properties": { "algorithm": { "const": "SHA2_256" }, "digest": { "$ref": "#/$defs/b64" } } },
+            "signature": { "description": "The JWS signature as DER Ecdsa-Sig-Value", "$ref": "#/$defs/b64" }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "tlogEntry": {
+      "type": "object",
+      "required": ["logIndex", "logId", "kindVersion", "integratedTime", "inclusionPromise", "inclusionProof", "canonicalizedBody"],
+      "properties": {
+        "logIndex": { "type": "string", "pattern": "^[0-9]+$" },
+        "logId": { "type": "object", "required": ["keyId"], "additionalProperties": false, "properties": { "keyId": { "$ref": "#/$defs/b64" } } },
+        "kindVersion": { "type": "object", "required": ["kind", "version"], "additionalProperties": false, "properties": { "kind": { "const": "hashedrekord" }, "version": { "const": "0.0.1" } } },
+        "integratedTime": { "type": "string", "pattern": "^[0-9]+$" },
+        "inclusionPromise": { "type": "object", "required": ["signedEntryTimestamp"], "additionalProperties": false, "properties": { "signedEntryTimestamp": { "$ref": "#/$defs/b64" } } },
+        "inclusionProof": {
+          "type": "object", "required": ["logIndex", "rootHash", "treeSize", "hashes", "checkpoint"], "additionalProperties": false,
+          "properties": {
+            "logIndex": { "type": "string", "pattern": "^[0-9]+$" },
+            "rootHash": { "$ref": "#/$defs/b64" },
+            "treeSize": { "type": "string", "pattern": "^[0-9]+$" },
+            "hashes": { "type": "array", "items": { "$ref": "#/$defs/b64" } },
+            "checkpoint": { "type": "object", "required": ["envelope"], "additionalProperties": false, "properties": { "envelope": { "type": "string" } } }
+          }
+        },
+        "canonicalizedBody": { "$ref": "#/$defs/b64" }
+      },
+      "additionalProperties": false
+    },
+
+    "proof": {
+      "description": "RFC 9901 SD-JWT, compact: the certificate's JWS, then its disclosures, ending with ~ (no key binding)",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]{86}~([A-Za-z0-9_-]+~)+$"
+    },
+    "textDisclosure": {
+      "description": "Decoded: the request's or the answer's text",
+      "type": "array", "prefixItems": [{ "$ref": "#/$defs/salt" }, { "const": "text" }, { "type": "string" }], "items": false, "minItems": 3
+    },
+    "fileDisclosure": {
+      "description": "Decoded: a shared file, as an array element",
+      "type": "array", "prefixItems": [{ "$ref": "#/$defs/salt" }, { "$ref": "#/$defs/sri" }], "items": false, "minItems": 2
+    },
+    "madeDisclosure": {
+      "description": "Decoded: a picture's or a film's digest",
+      "type": "array", "prefixItems": [{ "$ref": "#/$defs/salt" }, { "const": "digestSRI" }, { "$ref": "#/$defs/sri" }], "items": false, "minItems": 3
+    },
+
+    "kept": {
+      "description": "meta.certificate, appended to the conversation when a certificate is saved, so the proof can be made again",
+      "type": "object", "required": ["id", "jws", "salts"], "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^urn:uuid:" },
+        "jws": { "description": "Compact form of the certificate as saved", "type": "string", "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]{86}$" },
+        "salts": {
+          "type": "object", "required": ["request", "answer", "files", "made"], "additionalProperties": false,
+          "properties": {
+            "request": { "$ref": "#/$defs/salt" },
+            "answer": { "$ref": "#/$defs/salt" },
+            "files": { "type": "array", "items": { "$ref": "#/$defs/salt" } },
+            "made": { "type": "array", "items": { "$ref": "#/$defs/salt" } }
+          }
+        }
+      }
+    }
+  }
+}

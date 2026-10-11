@@ -18,5 +18,8 @@
   "receipt.here": "auf diesem Gerät",
   "receipt.reached": "Außerdem erreicht",
   "receipt.save": "Zertifikat speichern",
-  "receipt.file": "Zertifikat {date}"
+  "receipt.proof": "Nachweis speichern",
+  "receipt.file": "Zertifikat {date}",
+  "receipt.proof.text": "Das Zertifikat zeigt, wie diese Antwort entstanden ist, nie ihren Wortlaut: Jeder darf es haben. Der Nachweis fügt die Anfrage und die Antwort hinzu, für alle, die sie lesen dürfen.",
+  "receipt.proof.file": "Nachweis {date}"
 }

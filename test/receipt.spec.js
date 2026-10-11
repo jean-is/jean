@@ -1,15 +1,16 @@
 // About this answer (D252): under an answer, a button shows on hover how long it took, what it cost
 // and where it was done, a shield when that was on this device; a click keeps the card, which saves
-// the answer's certificate, sealed with this device's key. An answer whose request reached an
-// address outside this device says so, and where.
+// the answer's certificate, sealed with this device's key, which holds no word of it, and its proof,
+// which holds them (D274). An answer whose request reached an address outside this device says so,
+// and where.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, MAIL_URL, BRAIN_URL } from './helpers.js'
 
-for (const [lang, about, local, free, save] of [
-  ['en', 'About this answer', 'Done on this device', 'Free', 'Save the certificate'],
-  ['ar', 'عن هذه الإجابة', 'أُنجزت على هذا الجهاز', 'مجانًا', 'حفظ الشهادة'],
-  ['ja', 'この回答について', 'この端末で完結', '無料', '証明書を保存'],
+for (const [lang, about, local, free, save, prove] of [
+  ['en', 'About this answer', 'Done on this device', 'Free', 'Save the certificate', 'Save the proof'],
+  ['ar', 'عن هذه الإجابة', 'أُنجزت على هذا الجهاز', 'مجانًا', 'حفظ الشهادة', 'حفظ الإثبات'],
+  ['ja', 'この回答について', 'この端末で完結', '無料', '証明書を保存', '証拠を保存'],
 ]) {
   test(`an answer done on this device says so, and saves a sealed certificate (${lang})`, async ({ page }) => {
     await start(page, lang)
@@ -37,14 +38,22 @@ for (const [lang, about, local, free, save] of [
     expect(box && at && box.x >= 0 && box.x + box.width <= (page.viewportSize()?.width ?? 0) && Math.abs(box.y + box.height - at.y) < 12).toBe(true)
     const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: save }).click()])
     const saved = JSON.parse(await readFile(await download.path(), 'utf8'))
-    expect(saved).toMatchObject({ kind: 'certificate', local: true, recorded: true, brains: [{ provider: 'custom', local: true }] })
-    expect(JSON.stringify(saved)).not.toContain('Hello')
-    // Anyone can check its seal with the key it carries; a change breaks it.
-    const checked = await page.evaluate(async (certificate) => {
-      const { verify } = await import('/caps/receipt/certificate.js')
-      return [await verify(certificate), await verify({ ...certificate, local: false })]
-    }, saved)
-    expect(checked).toEqual([true, false])
+    expect(Object.keys(saved).sort()).toEqual(['payload', 'protected', 'signature'])
+    const says = JSON.parse(Buffer.from(saved.payload, 'base64url').toString())
+    expect(says).toMatchObject({ type: ['VerifiableCredential', 'AnswerCertificate'], credentialSubject: { where: 'device', recorded: true, brains: [{ provider: 'custom', local: true }] } })
+    expect(Buffer.from(saved.payload, 'base64url').toString()).not.toContain('Hello')
+    // The proof, of that same certificate, adds the words.
+    const [proved] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: prove }).click()])
+    const shown = await readFile(await proved.path(), 'utf8')
+    expect(shown.startsWith(`${saved.protected}.${saved.payload}.${saved.signature}~`)).toBe(true)
+    // Anyone can check its seal with the certificate it carries; a change breaks it; the proof shows the request.
+    const checked = await page.evaluate(async ([certificate, proof]) => {
+      const { check } = await import('/caps/receipt/certificate.js')
+      const changed = { ...certificate, payload: certificate.payload.slice(0, -2) + (certificate.payload.endsWith('A') ? 'B' : 'A') }
+      const proven = await check({ certificate, proof })
+      return [(await check({ certificate })).intact, await check({ certificate: changed }).then(({ intact }) => intact, () => false), proven.proven, proven.words.request]
+    }, [saved, shown])
+    expect(checked).toEqual([true, false, true, 'Hello'])
     await page.keyboard.press('Escape')
     await expect(card).toBeHidden()
     // From the keyboard, at once, as a tip comes (WebKit's Tab skips buttons, as Safari's does by default).

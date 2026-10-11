@@ -211,6 +211,8 @@
   "kind.execute.label": "Kufanya hesabu",
   "kind.fetch.label": "Kutumia intaneti",
   "kind.other.label": "Kutuma na kushiriki",
+  "seal.title": "Muhuri wa kifaa hiki",
+  "seal.text": "Vyeti vinavyohifadhiwa hapa vinagongwa muhuri kwa ufunguo ambao hauondoki kamwe kwenye kifaa hiki. Anayevitegemea anaweza kukagua alama hii ya kidole, au kukubaliana nawe kuihusu mapema.",
   "pages.title": "Kurasa za wavuti",
   "pages.text": "Kile ukurasa wa wavuti unaweza kufanya unapofunguka kando ya mazungumzo.",
   "pages.scripts": "Kuendesha msimbo wake",
