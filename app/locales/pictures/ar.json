@@ -3,6 +3,8 @@
   "pictures.film": "فيديو",
   "pictures.savePicture": "حفظ الصورة",
   "pictures.saveFilm": "حفظ الفيديو",
+  "pictures.making": "جارٍ إنشاء الصورة",
+  "pictures.makingFilm": "جارٍ إنشاء الفيديو",
   "pictures.device": "الصور على هذا الجهاز",
   "pictures.deviceText": "تُنشأ هنا بخصوصية ومجانًا، حتى دون اتصال.",
   "pictures.sd-turbo": "سريع",

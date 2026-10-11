@@ -3,6 +3,8 @@
   "pictures.film": "视频",
   "pictures.savePicture": "保存图片",
   "pictures.saveFilm": "保存视频",
+  "pictures.making": "正在生成图片",
+  "pictures.makingFilm": "正在生成视频",
   "pictures.device": "在这台设备上生成图片",
   "pictures.deviceText": "在这里生成，私密、免费，离线也可以。",
   "pictures.sd-turbo": "快速",

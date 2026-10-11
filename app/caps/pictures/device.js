@@ -4,7 +4,8 @@
 // or Z-Image-Turbo, by Alibaba's Tongyi Lab, the finest, words in pictures too, in nine. These two
 // run their three stages each in a worker of its own (stage-worker.js) on WebGPU. Their files come
 // once, with the user's consent, from the weights host at a pinned revision, checked against their
-// SHA-256 as Whistle's are; then private, free and offline.
+// SHA-256 as Whistle's are; then private, free and offline. FLUX and Z-Image show the picture as it
+// forms, glimpsed after each step (D265).
 import { signal } from '@preact/signals-core'
 import { app, weightsHost, updateSettings } from '../../ui/state.js'
 import { modelWorker, downloading } from '../../ui/model.js'
@@ -147,7 +148,7 @@ async function stage(message, transfer = [], onMessage = () => {}) {
   const worker = new Worker(scriptURL(new URL('./stage-worker.js', import.meta.url)), { type: 'module' })
   try {
     return await new Promise((resolve, reject) => {
-      worker.onmessage = ({ data }) => (data.type === 'progress' ? onMessage(data) : data.type === 'error' ? reject(new Error(data.message)) : resolve(data))
+      worker.onmessage = ({ data }) => (data.type === 'done' ? resolve(data) : data.type === 'error' ? reject(new Error(data.message)) : onMessage(data))
       worker.onerror = (event) => reject(new Error(event.message || 'Pictures on this device stopped'))
       worker.postMessage({ host: weightsHost(), ...message }, transfer)
     })
@@ -158,12 +159,16 @@ async function stage(message, transfer = [], onMessage = () => {}) {
 
 let busy = Promise.resolve()
 
+/** Its size in pixels: SD-Turbo's 512 square, the others' in the shape asked. @param {keyof typeof SIZES} shape */
+export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape])
+
 /**
  * A picture of a description by the one used, once its files are here, one at a time, as they
- * share the device's memory: SD-Turbo's 512 pixels square, the others' in the shape asked; with
- * the name of the one that made it. @param {string} description @param {keyof typeof SIZES} shape
+ * share the device's memory, in its size; with the name of the one that made it, and glimpses of it
+ * as it forms, with how far along it is. @param {string} description @param {keyof typeof SIZES} shape
+ * @param {(glimpse: { done: number, bytes: Uint8Array }) => void} [show]
  */
-export function paint(description, shape) {
+export function paint(description, shape, show = () => {}) {
   const maker = used()
   const made = busy.then(async () => {
     if (maker === 'sd-turbo') {
@@ -173,7 +178,7 @@ export function paint(description, shape) {
     const [width, height] = SIZES[shape]
     const files = STAGES[/** @type {Exclude<Maker, 'sd-turbo'>} */ (maker)]
     const { embeds } = await stage({ maker, type: 'encode', files: files.encode, tokenizer: files.tokenizer, prompt: description })
-    const { latent } = await stage({ maker, type: 'denoise', files: files.denoise, embeds, width, height }, [embeds.buffer])
+    const { latent } = await stage({ maker, type: 'denoise', files: files.denoise, embeds, width, height }, [embeds.buffer], show)
     return /** @type {Uint8Array} */ ((await stage({ maker, type: 'decode', files: files.decode, latent, width, height }, [latent.buffer])).bytes)
   })
   busy = made.then(() => {}, () => {})

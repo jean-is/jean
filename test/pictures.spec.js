@@ -28,6 +28,37 @@ test('the brain offers pictures when asked to draw, then makes one, kept in the 
   expect(kept).toContain('Draw a lighthouse at dusk')
 })
 
+test('a picture takes its place at once, shows glimpses of it as it forms, then develops there (D265)', async ({ page }) => {
+  // Its brain's picture model is a GPT image model, which streams them.
+  await page.route('**/v1/models', async (route) => {
+    const response = await route.fetch()
+    await route.fulfill({ response, body: (await response.text()).replace('fake-image-1', 'gpt-image-1.5') })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  await ask(page, 'Draw a lighthouse at dusk')
+  const place = page.locator('app-picture figure')
+  await expect(place).toHaveAttribute('role', 'progressbar')
+  await expect(place).toHaveAccessibleName('Making the picture')
+  await expect(place.locator('.sign')).toBeVisible()
+  // As large as it will be: square, until it is here.
+  expect(await place.evaluate((figure) => figure.clientWidth / figure.clientHeight)).toBeCloseTo(1, 1)
+  await expect(place.locator('img.glimpse')).toHaveCount(1)
+  await expect(place).toHaveAttribute('aria-valuenow', '33')
+  await expect(place.locator('.sign')).toHaveCount(0)
+  await expect(place.locator('img.glimpse')).toHaveCount(2)
+  await expect(place).toHaveAttribute('aria-valuenow', '67')
+  // Then it develops over them, which go.
+  await expect(place.locator('img.develops')).toHaveJSProperty('naturalWidth', 96)
+  await expect(place).not.toHaveAttribute('role', /./)
+  await expect(place.locator('img.glimpse')).toHaveCount(0)
+  await expect(place.locator('img')).toHaveAttribute('alt', 'Draw a lighthouse at dusk')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is your picture.')
+  // Its size is the picture's own.
+  expect(await place.evaluate((figure) => figure.clientWidth / figure.clientHeight)).toBeCloseTo(1.5, 1)
+})
+
 test('a film is asked first, then shown in the answer, ready to play and save', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

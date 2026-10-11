@@ -39,6 +39,7 @@ const LONGEST_WAIT = 30_000
  * @property {(sources: Source[]) => number[]} cite               numbers what the result brings in, as the brain cites it
  * @property {Record<string, any>} meta                           kept on the call's record (`_meta`), e.g. a picture it made
  * @property {import('./types.js').ToolCallContent[]} content     kept on the call's record before its result, e.g. the diff of a change (D141)
+ * @property {(update: Partial<ToolCallInfo>) => void} progress  shown as it runs, never kept (D265)
  * @property {PermissionOption} [answer]                          what the user answered, when the call was asked
  * @property {(child: Partial<TurnOptions>) => Promise<{ stopReason: string, text: string }>} turn
  *   a helper's turn: the same brain, rules and source numbers, its calls recorded under this one
@@ -219,6 +220,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     signal,
     meta: {},
     content: [],
+    progress: (update) => onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, ...update, _meta: { ...info._meta, ...update._meta } }, step),
     cite: (sources) => ctx.cite(sources, context.meta),
     declared: [...ctx.declared],
     call: async (name, args) => {

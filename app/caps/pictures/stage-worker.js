@@ -6,7 +6,7 @@
 //
 // { type: 'fetch', host, files }                                        → progress…, { type: 'done' }
 // { maker, type: 'encode', host, files, tokenizer, prompt }             → { type: 'done', embeds }, Qwen3's, in halves
-// { maker, type: 'denoise', host, files, embeds, width, height }        → { type: 'done', latent }
+// { maker, type: 'denoise', host, files, embeds, width, height }        → { type: 'glimpse', done, bytes }… a PNG after each step (D265), { type: 'done', latent }
 // { maker, type: 'decode', host, files, latent, width, height }         → { type: 'done', bytes }, a PNG
 import '../../ui/model-worker.js'
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
@@ -83,6 +83,15 @@ async function png(sample, width, height) {
   return new Uint8Array(await (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer())
 }
 
+/**
+ * What it would be with no noise left, glimpsed after a step, as PNG (D265): how far along it is, its decoder still to come.
+ * @param {Float32Array} sample from a maker's glimpse @param {number} width @param {number} height @param {number} step @param {number} steps
+ */
+async function glance(sample, width, height, step, steps) {
+  const bytes = await png(sample, width, height)
+  self.postMessage({ type: 'glimpse', done: (step + 1) / (steps + 1), bytes }, { transfer: [bytes.buffer] })
+}
+
 /** @typedef {{ host: string, files: File[], tokenizer: File[], prompt: string }} Encode */
 /** @typedef {{ host: string, files: File[], embeds: Uint16Array, width: number, height: number }} Denoise */
 /** @typedef {{ host: string, files: File[], latent: Float32Array, width: number, height: number }} Decode */
@@ -112,6 +121,7 @@ const STAGES = {
           txt_ids: new Tensor('int64', ids.text, [1, flux.WORDS, 4]),
         })
         const velocity = numbers(noise_pred.data)
+        await glance(flux.glimpse(latent.map((value, i) => value - sigmas[step] * velocity[i]), rows, columns), columns * 2, rows * 2, step, flux.STEPS)
         for (let i = 0; i < latent.length; i++) latent[i] += (sigmas[step + 1] - sigmas[step]) * velocity[i]
       }
       return { latent }
@@ -146,6 +156,7 @@ const STAGES = {
         })
         // Its transformer gives the velocity's opposite.
         const velocity = numbers(sample.data)
+        await glance(zimage.glimpse(latent.map((value, i) => value + sigmas[step] * velocity[i]), height / 8, width / 8), width / 8, height / 8, step, zimage.STEPS)
         for (let i = 0; i < latent.length; i++) latent[i] -= (sigmas[step + 1] - sigmas[step]) * velocity[i]
       }
       return { latent }

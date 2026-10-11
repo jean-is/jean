@@ -1,7 +1,8 @@
 // Pictures and films (D251): made from a description, or from pictures of the conversation, by the
 // provider of a connected brain (OpenAI, Gemini, OpenRouter…), by Ollama, or by this device; kept
 // in the project's files as Things Jean made are, a name made again being a new version (D164),
-// and shown in the answer, ready to save. No studio: they are made where the work is.
+// and shown in the answer, ready to save. No studio: they are made where the work is. Its place there
+// shows at once, then how far along it is and glimpses of it, where its maker shows them (D265).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -19,6 +20,8 @@ import { t, locale, useStrings, formatBytes } from '../../core/i18n.js'
 import * as device from './device.js'
 
 /** @typedef {import('../../core/types.js').BrainConfig} BrainConfig */
+/** @typedef {import('../../core/types.js').ImageBlock} ImageBlock */
+/** @typedef {import('../../core/types.js').ToolCallInfo} ToolCallInfo */
 /** @typedef {import('./device.js').Maker} Maker */
 /** @typedef {{ brain: BrainConfig, model: string, lengths?: number[] } | { device: true }} Engine */
 
@@ -84,7 +87,7 @@ async function named(name, signal) {
   if (!found) throw new Error(`No picture named "${name}" in this conversation. Pictures: ${[...new Set(pictures(signal).map((file) => file.name))].join(', ') || 'none'}.`)
   const bytes = await app.fs.readBytes(`${app.projectDir}/${found.uri}`)
   if (!bytes) throw new Error(`${found.name} is no longer on this device.`)
-  return { name: found.name, mimeType: found.mimeType ?? 'image/png', bytes }
+  return { name: found.name, mimeType: found.mimeType ?? 'image/png', bytes, uri: found.uri }
 }
 
 /** @param {{ seconds?: unknown }} [args] */
@@ -98,10 +101,20 @@ async function make(kind, args, ctx) {
   const description = String(args?.description ?? '').trim()
   if (!description) throw new Error(`Describe the ${kind} to make.`)
   const from = await Promise.all([args?.from ?? []].flat().filter(Boolean).map((name) => named(String(name), ctx.signal)))
-  const found = await engines(kind, from.length > 0)
-  if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : from.length ? 'change pictures' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains${kind === 'film' ? '' : ', where pictures on this device can be downloaded too'}.`)
   const shape = ['wide', 'tall'].includes(args?.shape) ? args.shape : kind === 'film' ? 'wide' : 'square'
   const cloud = await import('./cloud.js')
+  // Its place in the answer, at once, over the picture it starts from; then its maker's size, how far along it is and glimpses of it.
+  const making = { kind, frame: cloud.frame(kind, shape), from: from[0]?.uri, done: /** @type {number | undefined} */ (undefined) }
+  /** @type {ImageBlock[]} */
+  let glimpses = []
+  const show = (/** @type {import('./cloud.js').Progress & { frame?: number[] }} */ { image, ...more }) => {
+    if (image) glimpses = [...glimpses, image]
+    Object.assign(making, more)
+    ctx.progress({ _meta: { making: { ...making } }, content: glimpses.map((content) => ({ type: 'content', content })) })
+  }
+  show({})
+  const found = await engines(kind, from.length > 0)
+  if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : from.length ? 'change pictures' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains${kind === 'film' ? '' : ', where pictures on this device can be downloaded too'}.`)
   /** @type {{ bytes: Uint8Array, mimeType: string, model?: string } | undefined} */
   let made
   /** @type {Engine | undefined} */
@@ -109,9 +122,11 @@ async function make(kind, args, ctx) {
   const failed = []
   // A picture that fails is asked of the next who can make it; a film, which costs, never.
   for (const engine of kind === 'film' ? found.slice(0, 1) : found) {
+    glimpses = []
+    show({ frame: 'device' in engine ? device.size(shape) : cloud.frame(kind, shape, engine.brain.provider), done: undefined })
     try {
-      made = 'device' in engine ? await device.paint(description, shape) : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined,
-        prompt: description, from, shape, seconds: secondsOf(args), signal: ctx.signal })
+      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => show({ done, image: { type: 'image', mimeType: 'image/png', data: cloud.base64(bytes) } }))
+        : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined, prompt: description, from, shape, seconds: secondsOf(args), show, signal: ctx.signal })
       by = engine
       break
     } catch (error) {
@@ -180,15 +195,83 @@ const filmTool = {
   },
 }
 
-/** A picture or a film Jean made, read from the project's files, in the user's language as it changes. */
+/** Each glimpse's address, made once: a GPT image model's are as large as the picture. @type {WeakMap<ImageBlock, string>} */
+const addresses = new WeakMap()
+const address = (/** @type {ImageBlock} */ image) => addresses.get(image) ?? addresses.set(image, `data:${image.mimeType};base64,${image.data}`).get(image)
+
+/** A film's sign while it is made: a frame of film, its holes down each side. */
+const FILM = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 3.5v17M16 3.5v17M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/></svg>`
+
+/**
+ * A picture or a film Jean made, read from the project's files, in the user's language as it changes. While it is
+ * made (D265), its place in the answer, in its size: the picture it starts from, blurred, a light passing over it,
+ * glimpses of it as it forms, sharper as it comes, and how far along it is, where its maker says; then it develops
+ * there. Given its call, whose picture it names in its attributes, as a picture of an earlier answer has them.
+ */
 class Picture extends Shown {
+  /** How it was coming, as its call said while it was made here: kept once the answer's end replaces its call, until it has developed. */
+  #making = signal(/** @type {Record<string, any> | undefined} */ (undefined))
+  /** Its glimpses, kept once its call ends, until it has developed over them. */
+  #glimpses = signal(/** @type {ImageBlock[]} */ ([]))
+  #developed = signal(false)
+  /** @type {number[] | undefined} its size once here, else its maker's */
+  #size
+
+  /** @param {ToolCallInfo} call */
+  set call(call) {
+    if (call._meta?.making) this.#making.value = call._meta.making
+    const picture = call._meta?.picture
+    if (!picture) this.#glimpses.value = (call.content ?? []).flatMap((part) => (part.type === 'content' && part.content.type === 'image' ? [part.content] : []))
+    else for (const [name, value] of [['type', picture.mimeType], ['name', picture.name], ['alt', call.rawInput?.description ?? ''], ['uri', picture.uri]]) if (this.getAttribute(name) !== value) this.setAttribute(name, value)
+  }
+
+  connectedCallback() {
+    // Its call, given before the element was defined.
+    if (Object.hasOwn(this, 'call')) {
+      const call = /** @type {any} */ (this).call
+      delete (/** @type {any} */ (this)).call
+      this.call = call
+    }
+    super.connectedCallback()
+  }
+
   render() {
     const [url, name, alt, type] = [this.url.value, this.getAttribute('name') ?? '', this.getAttribute('alt') ?? '', this.getAttribute('type') ?? '']
-    const film = type.startsWith('video/')
-    return url ? html`<figure>
-      ${film ? html`<video src=${url} controls playsinline aria-label=${alt}></video>` : html`<img src=${url} alt=${alt}>`}
-      <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>
-    </figure>` : nothing
+    const making = this.#making.value
+    const film = type.startsWith('video/') || making?.kind === 'film'
+    if (!url && !making) return nothing
+    const glimpses = this.#glimpses.value
+    const percent = !url && typeof making?.done === 'number' ? Math.round(making.done * 100) : undefined
+    // Once here, it develops over what showed it coming, which then goes.
+    const develops = making ? 'develops' : ''
+    const developed = () => { this.#developed.value = true }
+    return html`<figure class=${!making ? '' : this.#developed.value ? 'is-framed is-here' : 'is-framed'} role=${making && !url ? 'progressbar' : nothing}
+        aria-label=${making && !url ? t(film ? 'pictures.makingFilm' : 'pictures.making') : nothing} aria-valuenow=${percent ?? nothing}>
+      ${making && !this.#developed.value ? html`${making.from ? html`<app-shared class="from" uri=${making.from}></app-shared>` : nothing}
+        ${glimpses.map((image) => html`<img class="glimpse" src=${address(image)} alt="">`)}
+        <span class="light ${glimpses.length ? 'is-dim' : ''}" aria-hidden="true"></span>
+        ${glimpses.length || url ? nothing : html`<span class="sign">${film ? FILM : icons.image}</span>`}
+        ${percent === undefined ? nothing : html`<span class="done" aria-hidden="true"></span>`}` : nothing}
+      ${url ? html`${film ? html`<video class=${develops} src=${url} controls playsinline aria-label=${alt} @loadedmetadata=${this.#fit} @animationend=${developed}></video>`
+          : html`<img class=${develops} src=${url} alt=${alt} @load=${this.#fit} @animationend=${developed}>`}
+        <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>` : nothing}
+    </figure>`
+  }
+
+  /** Its size once here, rather than its maker's. @param {Event} event */
+  #fit = ({ target }) => {
+    const media = /** @type {HTMLImageElement & HTMLVideoElement} */ (target)
+    this.#size = [media.naturalWidth || media.videoWidth, media.naturalHeight || media.videoHeight]
+    this.updated()
+    // Without motion, it is simply there.
+    if (!media.getAnimations().length) this.#developed.value = true
+  }
+
+  /** Its size and how far along it is, for its place's style. */
+  updated() {
+    const making = this.#making.value
+    const [width, height] = this.#size ?? making?.frame ?? []
+    if (making && width && height) for (const [name, value] of [['--w', width], ['--h', height], ['--done', making.done ?? 0]]) this.style.setProperty(name, String(value))
   }
 }
 

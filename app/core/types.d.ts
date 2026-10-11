@@ -114,7 +114,9 @@ export type ToolKind = 'read' | 'edit' | 'delete' | 'move' | 'search' | 'execute
 export type ToolStatus = 'pending' | 'in_progress' | 'completed' | 'failed'
 export type ToolCallLocation = { path: string, line?: number }
 /** diff: a file changed in the user's folder (D141), as it was (null: made) and as it is now */
-export type ToolCallContent = { type: 'content', content: TextBlock } | { type: 'diff', path: string, oldText: string | null, newText: string }
+/** image: a picture as it forms, in base64, shown while its call runs and never kept (D265) */
+export type ImageBlock = { type: 'image', mimeType: string, data: string }
+export type ToolCallContent = { type: 'content', content: TextBlock | ImageBlock } | { type: 'diff', path: string, oldText: string | null, newText: string }
 export type PlanEntry = { content: string, priority: 'high' | 'medium' | 'low', status: 'pending' | 'in_progress' | 'completed' }
 
 export interface ToolCallInfo {
@@ -129,7 +131,8 @@ export interface ToolCallInfo {
   rawOutput?: any
   /**
    * ACP extension data, e.g. { raw } on brain entries; sources: what it brought in, by the
-   * number the brain cites (D71); picture: a picture or a film it made, as a project file (D251); file: a file it made (D119)
+   * number the brain cites (D71); picture: a picture or a film it made, as a project file (D251); file: a file it made (D119);
+   * making: how a picture or a film it makes is coming, live only (D265)
    */
   _meta?: Record<string, any> & { sources?: (Source & { n: number })[], picture?: { uri: string, name: string, mimeType: string, size: number, version?: number }, file?: { uri: string, name: string, mimeType: string, size: number } }
 }

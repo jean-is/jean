@@ -36,8 +36,8 @@
 // comparison whose options say much (D215). Asked to hold a meeting, it calls one, each project's
 // assistant saying what its <memory> holds, then agreeing; it answers with what was said (D224).
 // Asked to draw something, it offers pictures if they are off, then makes one, which
-// /images/generations answers; asked for a film, it makes one of 4 seconds, which /videos makes
-// at once (D251).
+// /images/generations answers, streamed when asked, a glimpse a second twice, then the picture (D265);
+// asked for a film, it makes one of 4 seconds, which /videos makes at once (D251).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -322,8 +322,18 @@ createServer(async (req, res) => {
     return res.end(JSON.stringify({ data: [{ id: 'fake-brain-1' }, { id: 'fake-brain-2' }, { id: 'fake-image-1' }, { id: 'fake-video-1' }] }))
   }
   if (req.url?.endsWith('/images/generations')) {
-    res.setHeader('Content-Type', 'application/json')
-    return res.end(JSON.stringify({ data: [{ b64_json: picture() }] }))
+    let body = ''
+    for await (const chunk of req) body += chunk
+    if (!JSON.parse(body).stream) return res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ data: [{ b64_json: picture() }] }))
+    res.writeHead(200, { 'Content-Type': 'text/event-stream' })
+    const send = (/** @type {any} */ event) => res.write(`event: ${event.type}\ndata: ${JSON.stringify({ ...event, output_format: 'png' })}\n\n`)
+    for (const i of [0, 1]) {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      send({ type: 'image_generation.partial_image', partial_image_index: i, b64_json: picture(24 * (i + 1), 16 * (i + 1)) })
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    send({ type: 'image_generation.completed', b64_json: picture() })
+    return res.end()
   }
   // A film's job, done as soon as it is asked for, and the film: the start of an MP4.
   if (req.url?.endsWith('/videos')) {

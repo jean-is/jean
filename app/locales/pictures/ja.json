@@ -3,6 +3,8 @@
   "pictures.film": "動画",
   "pictures.savePicture": "画像を保存",
   "pictures.saveFilm": "動画を保存",
+  "pictures.making": "画像を作成中",
+  "pictures.makingFilm": "動画を作成中",
   "pictures.device": "この端末で画像",
   "pictures.deviceText": "ここで、非公開・無料・オフラインでも作成します。",
   "pictures.sd-turbo": "高速",

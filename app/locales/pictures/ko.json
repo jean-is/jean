@@ -3,6 +3,8 @@
   "pictures.film": "동영상",
   "pictures.savePicture": "그림 저장",
   "pictures.saveFilm": "동영상 저장",
+  "pictures.making": "이미지를 만드는 중",
+  "pictures.makingFilm": "동영상을 만드는 중",
   "pictures.device": "이 기기에서 이미지",
   "pictures.deviceText": "여기서 비공개로, 무료로, 오프라인에서도 만들어요.",
   "pictures.sd-turbo": "빠름",

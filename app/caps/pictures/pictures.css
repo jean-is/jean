@@ -2,5 +2,39 @@
 app-picture figure { position: relative; inline-size: fit-content; margin: 0; }
 app-picture :is(img, video) { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 app-picture .icon-button { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; background: var(--glass); }
+/* While it is made (D265): its place, as large as it will be, the picture it starts from blurred under a light passing
+   over it, glimpses of it sharper as it comes and how far along it is; then it develops there, over them. */
+app-picture .is-framed {
+  inline-size: min(100%, var(--w) * 1px, 28rem * var(--w) / var(--h)); aspect-ratio: var(--w) / var(--h);
+  overflow: hidden; isolation: isolate; border: 1px solid var(--line); border-radius: 0.9rem; background: oklch(from var(--ink) l c h / 0.05);
+}
+/* Until it is here, the noise it is made from, faintly. */
+app-picture .is-framed:not(.is-here) { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)' opacity='.14'/%3E%3C/svg%3E"), oklch(from var(--ink) l c h / 0.05); }
+app-picture .is-framed :is(img, video) { inline-size: 100%; block-size: 100%; max-block-size: none; object-fit: cover; border: 0; border-radius: 0; }
+app-picture .is-framed > :is(.from, .glimpse, .light, .sign, .done) { position: absolute; }
+app-picture :is(.from, .glimpse, .sign) { inset: 0; }
+app-picture .from img { filter: blur(1.2rem) saturate(0.7); opacity: 0.6; scale: 1.15; }
+app-picture .glimpse { scale: 1.06; filter: blur(calc(0.2rem + (1 - var(--done, 0)) * 0.8rem)); animation: glimpse 1.2s var(--ease) both; transition: filter 1.2s var(--ease); }
+app-picture .light { inset: -40%; background: radial-gradient(closest-side, oklch(from var(--glow) l c h / 0.3), transparent); animation: pass 3.2s ease-in-out infinite alternate; transition: opacity 1s; }
+app-picture .light.is-dim { opacity: 0.35; }
+app-picture .sign { display: grid; place-items: center; color: var(--ink-soft); }
+app-picture .sign .icon { inline-size: 2rem; block-size: 2rem; stroke-width: 1.2; }
+app-picture .done {
+  inset-block-end: 0; inset-inline-start: 0; inline-size: calc(var(--done) * 100%); block-size: 0.2rem;
+  border-start-end-radius: 0.2rem; border-end-end-radius: 0.2rem; background: var(--flame); transition: inline-size 0.8s var(--ease);
+}
+app-picture .develops { position: relative; animation: develop 1.4s var(--ease) both; }
+@keyframes glimpse { from { opacity: 0; } }
+@keyframes pass { from { translate: -30% -12%; } to { translate: 30% 12%; } }
+@keyframes develop { from { opacity: 0; filter: blur(1rem) saturate(0.3) brightness(1.15); } 60% { opacity: 1; } }
+@media (prefers-contrast: more) {
+  app-picture .is-framed { border-color: var(--line-strong); }
+  app-picture .sign { color: var(--ink); }
+}
+@media (forced-colors: active) {
+  app-picture .is-framed { border-color: CanvasText; }
+  app-picture .light { display: none; }
+  app-picture .done { background: Highlight; }
+}
 /* Pictures on this device, in Settings › Brains. */
 .pictures-device progress { inline-size: 12rem; }

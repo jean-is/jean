@@ -1,11 +1,11 @@
 // Pictures and films from a connected brain's provider (D251): what each API is asked, what comes
 // back as bytes, and a film fetched only from where the brain is. Then what FLUX.2 [klein]'s and
-// Z-Image-Turbo's graphs are given on this device (D263).
+// Z-Image-Turbo's graphs are given on this device (D263), and the glimpses of a picture as it forms (D265).
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { PROVIDERS } from '../app/core/llm.js'
-import { picture, film, filmModels } from '../app/caps/pictures/cloud.js'
-import { SIZES, chat, sigmas, positions, unpack } from '../app/caps/pictures/flux.js'
+import { picture, film, filmModels, frame } from '../app/caps/pictures/cloud.js'
+import { SIZES, chat, sigmas, positions, unpack, glimpse } from '../app/caps/pictures/flux.js'
 import * as zimage from '../app/caps/pictures/zimage.js'
 
 /** @param {(url: string, init: any) => Response | Promise<Response>} respond */
@@ -35,6 +35,36 @@ describe('pictures', () => {
     assert.equal(made.mimeType, 'image/png')
     await picture({ ...ask, brain: brain('ollama'), model: 'x/z-image-turbo', fetch })
     assert.deepEqual(calls[1].body, { model: 'x/z-image-turbo', prompt: 'A lighthouse', response_format: 'b64_json', n: 1 })
+  })
+
+  test('a GPT image model shows the picture twice as it forms, in a stream, then the picture; a stream not asked for isn’t (D265)', async () => {
+    const event = (/** @type {any} */ data) => `event: ${data.type}\ndata: ${JSON.stringify(data)}\n\n`
+    const stream = [0, 1].map((i) => event({ type: 'image_generation.partial_image', b64_json: `glimpse${i}`, partial_image_index: i, output_format: 'png' })).join('')
+      + event({ type: 'image_generation.completed', b64_json: png, output_format: 'png' })
+    const { fetch, calls } = mockFetch(() => new Response(stream, { headers: { 'content-type': 'text/event-stream' } }))
+    /** @type {any[]} */
+    const shown = []
+    const made = await picture({ ...ask, brain: brain('openai'), apiKey: 'k', model: 'gpt-image-1.5', show: (progress) => shown.push(progress), fetch })
+    assert.deepEqual(calls[0].body, { model: 'gpt-image-1.5', prompt: 'A lighthouse', stream: true, partial_images: 2, n: 1 })
+    assert.deepEqual(shown, [1, 2].map((n) => ({ done: n / 3, image: { type: 'image', mimeType: 'image/png', data: `glimpse${n - 1}` } })))
+    assert.deepEqual([...made.bytes], [137, 80, 78, 71])
+    // Changed, in its form; and a stream that fails says why.
+    const failing = mockFetch(() => new Response(event({ type: 'error', error: { message: 'Your request was rejected' } }), { headers: { 'content-type': 'text/event-stream' } }))
+    await assert.rejects(picture({ ...ask, from: [lighthouse], brain: brain('openai'), model: 'gpt-image-1.5', show: () => {}, fetch: failing.fetch }), /rejected/)
+    assert.equal(/** @type {FormData} */ (failing.calls[0].body).get('partial_images'), '2')
+    // A picture nobody watches comes whole.
+    const whole = mockFetch(() => Response.json({ data: [{ b64_json: png }] }))
+    await picture({ ...ask, brain: brain('openai'), model: 'gpt-image-1.5', fetch: whole.fetch })
+    assert.equal(whole.calls[0].body.stream, undefined)
+  })
+
+  test('the place a picture or a film takes, as each provider makes it: OpenAI’s Images API 3:2, the others 16:9 (D265)', () => {
+    assert.deepEqual(frame('picture', 'wide', 'openai'), [1536, 1024])
+    assert.deepEqual(frame('picture', 'tall', 'ollama'), [1024, 1536])
+    assert.deepEqual(frame('picture', 'wide', 'gemini'), [1344, 768])
+    assert.deepEqual(frame('film', 'tall', 'openrouter'), [720, 1280])
+    assert.deepEqual(frame('picture', 'square'), [1024, 1024])
+    assert.deepEqual(frame('film', 'square', 'openai'), [1280, 720])
   })
 
   test('changing pictures: OpenAI’s edits, as a form with each picture', async () => {
@@ -90,8 +120,12 @@ describe('films', () => {
   test('OpenAI: a job, asked about until it is done, then its content', async () => {
     let asked = 0
     const { fetch, calls } = mockFetch((url) => (url.endsWith('/content') ? new Response(mp4, { headers: { 'content-type': 'video/mp4' } })
-      : Response.json({ id: 'v1', status: url.endsWith('/videos') ? 'queued' : ++asked < 2 ? 'in_progress' : 'completed' })))
-    const made = await film({ ...ask, from: [lighthouse], brain: brain('openai'), apiKey: 'k', model: 'sora-2', shape: 'tall', seconds: 7, every: 0, fetch })
+      : Response.json({ id: 'v1', status: url.endsWith('/videos') ? 'queued' : ++asked < 2 ? 'in_progress' : 'completed', progress: asked * 50 })))
+    /** @type {any[]} */
+    const shown = []
+    const made = await film({ ...ask, from: [lighthouse], brain: brain('openai'), apiKey: 'k', model: 'sora-2', shape: 'tall', seconds: 7, every: 0, show: (progress) => shown.push(progress), fetch })
+    // How far along it is, as the job says (D265).
+    assert.deepEqual(shown, [{ done: 0.5 }, { done: 1 }])
     assert.deepEqual(calls.map((call) => call.url.replace('https://api.openai.com/v1', '')), ['/videos', '/videos/v1', '/videos/v1', '/videos/v1/content'])
     const form = /** @type {FormData} */ (calls[0].body)
     assert.deepEqual([form.get('seconds'), form.get('size'), /** @type {File} */ (form.get('input_reference')).name], ['8', '720x1280', 'Lighthouse.png'])
@@ -175,6 +209,18 @@ describe('FLUX.2 [klein] on this device', () => {
     assert.equal(text.length, 512 * 4)
   })
 
+  test('a glimpse of the picture as it forms: each token’s 32 channels for each pixel of its 2×2, mixed into colours (D265)', () => {
+    // One token: channel 3 lit on its first pixel, channel 8 on its last; ComfyUI's Flux2 colours for them.
+    const latent = new Float32Array(128)
+    latent[3 * 4] = 1
+    latent[8 * 4 + 3] = 1
+    const rgb = glimpse(latent, 1, 1)
+    const near = (/** @type {number} */ got, /** @type {number} */ want) => assert.ok(Math.abs(got - want) < 1e-6, `${got} ≠ ${want}`)
+    ;[0.2144 - 0.0329, 0.3009 - 0.0718, 0.3652 - 0.0851].forEach((value, c) => near(rgb[c * 4], value))
+    ;[-0.3527 - 0.0329, -0.2712 - 0.0718, -0.1666 - 0.0851].forEach((value, c) => near(rgb[c * 4 + 3], value))
+    near(rgb[1], -0.0329)
+  })
+
   test('the decoder gets the tokens a channel at a time', () => {
     const latent = Float32Array.from({ length: 3 * 128 }, (_, i) => i)
     const out = unpack(latent)
@@ -190,6 +236,17 @@ describe('Z-Image-Turbo on this device', () => {
     const near = (/** @type {number[]} */ got, /** @type {number[]} */ want) => got.forEach((value, i) => assert.ok(Math.abs(value - want[i]) < 1e-3, `${i}: ${value}`))
     near(shifted, [1, 0.9547, 0.9004, 0.834, 0.7511, 0.6447, 0.503, 0.305, 0.0089, 0])
     near(timesteps, [0, 0.0453, 0.0996, 0.166, 0.2489, 0.3553, 0.497, 0.695, 1])
+  })
+
+  test('a glimpse of the picture as it forms: its 16 channels at each point, mixed into colours as FLUX.1’s VAE has them (D265)', () => {
+    // 2 × 1 points: channel 4 lit on the first, channel 13 on the second.
+    const latent = new Float32Array(16 * 2)
+    latent[4 * 2] = 1
+    latent[13 * 2 + 1] = 1
+    const rgb = zimage.glimpse(latent, 1, 2)
+    const near = (/** @type {number} */ got, /** @type {number} */ want) => assert.ok(Math.abs(got - want) < 1e-6, `${got} ≠ ${want}`)
+    ;[0.0859 - 0.0329, 0.0721 - 0.0718, 0.0329 - 0.0851].forEach((value, c) => near(rgb[c * 2], value))
+    ;[-0.1264 - 0.0329, -0.0522 - 0.0718, -0.1103 - 0.0851].forEach((value, c) => near(rgb[c * 2 + 1], value))
   })
 
   test('the description is asked in Qwen3’s chat template, as its pipeline asks it', () => {

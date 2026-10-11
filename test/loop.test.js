@@ -83,6 +83,38 @@ test('loop: tool call allowed by rule, then final answer; records replay as cont
   assert.deepEqual(toChatMessages(persisted).map((message) => message.role), ['user', 'assistant', 'tool', 'assistant'])
 })
 
+test('loop: a call says how it is coming as it runs, live only, never kept (a picture as it forms)', async () => {
+  const { stream } = fakeStream([
+    [{ type: 'tool_call', call: { id: 'c1', name: 'paint', args: {} } }, done('tool_use', { role: 'assistant', content: '', toolCalls: [{ id: 'c1', name: 'paint', args: {} }] })],
+    [done('end', { role: 'assistant', content: 'Done.' })],
+  ])
+  const paint = {
+    spec: { name: 'paint', description: 'paint', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('edit'),
+    title: () => 'Paint',
+    run: async (/** @type {any} */ _, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => {
+      ctx.progress({ _meta: { making: { done: 0.5 } }, content: [{ type: 'content', content: { type: 'image', mimeType: 'image/png', data: 'AAAA' } }] })
+      ctx.meta.picture = { uri: 'files/a.png' }
+      return 'Made it.'
+    },
+  }
+  /** @type {any[]} */
+  const live = []
+  /** @type {any[]} */
+  const persisted = []
+  await runTurn({
+    brain, system: 'sys', history: [{ role: 'user', content: 'Paint' }], tools: [paint], stream: /** @type {any} */ (stream),
+    rule: () => 'allow', onUpdate: (update) => live.push(update), persist: async (records) => { persisted.push(...records) },
+  })
+  const calls = live.filter((update) => update.toolCallId === 'c1')
+  assert.deepEqual(calls.map((update) => update.status), ['pending', 'in_progress', undefined, 'completed'])
+  assert.deepEqual(calls[2], { sessionUpdate: 'tool_call_update', toolCallId: 'c1', _meta: { making: { done: 0.5 } }, content: [{ type: 'content', content: { type: 'image', mimeType: 'image/png', data: 'AAAA' } }] })
+  // Its end replaces what it showed meanwhile, and nothing of it is kept.
+  assert.deepEqual(calls[3].content, [{ type: 'content', content: { type: 'text', text: 'Made it.' } }])
+  assert.ok(!JSON.stringify(persisted).includes('AAAA'))
+  assert.ok(!JSON.stringify(persisted).includes('making'))
+})
+
 test('loop: ask → declined; never; unknown tool; invalid JSON', async () => {
   const script = (/** @type {any} */ call) => [
     [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })],
