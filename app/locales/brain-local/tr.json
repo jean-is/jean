@@ -2,11 +2,11 @@
   "private.name": "Gizli · çevrimdışı",
   "private.away": "Çevrimdışı · yanıtlamaya devam ediyor",
   "private.title": "Her şey bu cihazda kalır",
-  "private.text": "Yanıtlar tam burada, bu tarayıcı sekmesinde yazılır: sunucu yok, hesap yok, kurulacak bir şey yok. Bunu yapabilen asistan pek azdır.",
+  "private.text": "Yanıtlar bu sekmede yazılır; sunucu yok, kurulacak bir şey yok. Bunu yapabilen asistan pek azdır.",
   "private.private": "Özel, hiçbir şey dışarı çıkmaz",
   "private.free": "Ücretsiz, hesap ya da anahtar gerekmez",
   "private.offline": "İnternet olmadan da yanıtlamaya devam eder",
-  "private.try": "Dene: Wi-Fi bağlantısını kapat ve bir şey sor.",
+  "private.try": "Wi-Fi’ı kapat ve gör.",
   "private.still": "Çevrimdışısın, ama yanıtlar gelmeye devam ediyor.",
   "private.proof": "Her yanıtın altındaki kalkan bunun kanıtı, tarayıcının kendi kaydından."
 }

@@ -67,7 +67,7 @@ test('offered where it can run, downloaded with consent, then answering on the d
   const card = page.locator('#private-card')
   await expect(card).toBeVisible()
   await expect(card.locator('h2')).toHaveText('Everything stays on this device')
-  await expect(card).toContainText('Try it: turn off Wi-Fi and ask something.')
+  await expect(card).toContainText('Turn off Wi-Fi and see.')
   await expect(page.locator('.toast')).toHaveCount(0)
   await page.keyboard.press('Escape')
   await expect(card).toBeHidden()
