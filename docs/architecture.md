@@ -157,6 +157,8 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.is' })
 
 Not used: the browsers' built-in models (too experimental) and native OS models.
 
+**Beside the page** (D285): a model on this device works on the GPU that draws the window, where each frame waits behind what was sent before it. `holdStill()` in `ui/model.js` holds the page still while the device's brain answers or a picture is made or checked here: it sets `--loops` on the root to `paused`, through CSSOM as `--warmth` is (D73), and every infinite animation takes its play state from it (`var(--loops, running)`), so only what changes is drawn, and an entrance still plays. `test/looks.test.js` checks that every loop does.
+
 **Kept to projects** (D194): a brain's `projects` keeps it to those projects, and without it the brain is in every one (`usedIn()` in `core/settings.js`, as for connections). `brainsHere` in `ui/state.js` is the room's project's, and Auto, the picker, `activeBrain`, Double-check, pictures and films, routines and Since last time read it; Settings › Brains lists every brain, one kept elsewhere unable to be chosen, and ticks where each is used (`where()` in `ui/dialogs.js`, which Connections shares).
 
 ## Reflexes

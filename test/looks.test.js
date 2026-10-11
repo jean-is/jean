@@ -2,7 +2,7 @@
 // checked values into CSS.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises'
 import { LOOKS, LOOK_KEY, lookId, touched } from '../app/ui/looks.js'
 import { customCSS, FONTS } from '../app/ui/touches.js'
 
@@ -127,4 +127,24 @@ test('the user’s own CSS comes last, as they wrote it', () => {
   const own = '.msg-user { border-radius: 0; }'
   const css = customCSS({ accent: '#aa3300', css: own })
   assert.ok(css.endsWith(own))
+})
+
+// While a model works on this device's GPU, every frame waits behind its work: loops, which draw a
+// frame each time, pause then, as ui/model.js sets --loops (D285). An entrance plays, or a picture's
+// glimpses would stay hidden.
+test('every loop in Jean’s style sheets pauses while a model works on this device', async () => {
+  const app = new URL('../app/', import.meta.url)
+  const sheets = (await readdir(app, { recursive: true })).filter((path) => path.endsWith('.css') && !path.startsWith('vendor'))
+  let loops = 0
+  for (const path of sheets) {
+    const css = (await readFile(new URL(path, app), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
+    for (const [declaration] of css.matchAll(/animation(?:-play-state)?:[^;{}]*/g)) {
+      if (/\binfinite\b/.test(declaration)) {
+        loops++
+        assert.match(declaration, /var\(--loops, running\)|\bpaused\b/, `${path}: ${declaration}`)
+      }
+      assert.doesNotMatch(declaration.replace('var(--loops, running)', ''), /\brunning\b/, `${path}: ${declaration}`)
+    }
+  }
+  assert.ok(loops > 20)
 })
