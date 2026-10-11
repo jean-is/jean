@@ -454,10 +454,10 @@ function notesOf(c, key) {
       const started = performance.now()
       const all = await summarise(c.files[0].pages, key, async (so, total) => {
         await writeFile(path, JSON.stringify(so))
-        process.stderr.write(`\rnotes: ${so.length} / ${total}`)
+        process.stderr.write(`\rnotes on ${c.dir.split('/').at(-2)}: ${so.filter(Boolean).length} / ${total}`)
       }, 40, done)
       await writeFile(path, JSON.stringify(all))
-      await writeFile(`${path.replace(/\.json$/, '')}.cost.json`, JSON.stringify({ groups: all.length, requests: all.length - done.length, ms: performance.now() - started }))
+      await writeFile(`${path.replace(/\.json$/, '')}.cost.json`, JSON.stringify({ groups: all.length, requests: all.length - done.filter(Boolean).length, ms: performance.now() - started }))
       return all
     })().catch((error) => { notes.delete(c.dir); throw error }))
   }

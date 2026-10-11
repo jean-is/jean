@@ -33,12 +33,16 @@ const streamOf = ({ provider }) => (options) => streamChat({ ...options, fetch: 
   ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), provider: { order: [provider], allow_fallbacks: false } }) })
   : globalThis.fetch })
 
-/** One request's whole reply, retried as the loop retries. @param {string} system @param {string} content @param {string} apiKey */
+/**
+ * One request's whole reply, retried as the loop retries. Its length is capped so that OpenRouter, which holds
+ * credit for every request in flight, can take hundreds at once.
+ * @param {string} system @param {string} content @param {string} apiKey
+ */
 async function complete(system, content, apiKey) {
   for (let attempt = 0; ; attempt++) {
     try {
       let text = ''
-      for await (const event of streamOf(BRAINS.large)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
+      for await (const event of streamOf(BRAINS.large)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }], maxTokens: 16000 })) {
         if (event.type === 'text') text += event.delta
       }
       return text
@@ -250,21 +254,28 @@ For each document, section, table or event the pages hold, write one line: what 
 Write in English whatever the pages' language, keep every code and number exactly, and leave nothing out. No introduction, no conclusion.`
 
 /**
- * Summary ingestion (H8): notes on every group of pages, written once by a brain, kept as a file
- * of their own that search then finds like any other. Returns that file's pages, one per group.
- * @param {string[]} pages @param {string} apiKey @param {(notes: string[], total: number) => Promise<void> | void} [progress] after each group, to keep them
+ * Summary ingestion (H8): notes on every group of pages, written once by a brain, every group asked at once,
+ * kept as a file of their own that search then finds like any other. Returns that file's pages, one per group.
+ * @param {string[]} pages @param {string} apiKey @param {(notes: (string | null)[], total: number) => Promise<void> | void} [progress] after each group, to keep them
+ * @param {(string | null)[]} [done] the notes kept so far, null for a group still without
  */
-export async function summarise(pages, apiKey, progress = () => {}, group = 40, done = /** @type {string[]} */ ([])) {
-  const out = [...done]
+export async function summarise(pages, apiKey, progress = () => {}, group = 40, done = []) {
   const total = Math.ceil(pages.length / group)
-  for (let g = out.length; g < total; g++) {
+  const out = Array.from({ length: total }, (_, g) => done[g] ?? null)
+  // Each group's notes are kept as they come, one write after another; a group that fails leaves the others' kept.
+  let kept = Promise.resolve()
+  const settled = await Promise.allSettled(out.map(async (note, g) => {
+    if (note) return
     const first = g * group + 1
     const last = Math.min(pages.length, first + group - 1)
     const text = await complete(NOTES, pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n'), apiKey)
-    out.push(`Notes on pages ${first}–${last}:\n${text.trim()}`)
-    await progress(out, total)
-  }
-  return out
+    out[g] = `Notes on pages ${first}–${last}:\n${text.trim()}`
+    kept = kept.then(() => progress(out, total))
+  }))
+  await kept
+  const failed = /** @type {PromiseRejectedResult | undefined} */ (settled.find((result) => result.status === 'rejected'))
+  if (failed) throw failed.reason
+  return /** @type {string[]} */ (out)
 }
 
 const MAP = `Answer the question from these pages alone. If it asks for a count or a total, first give these pages' count or total, then each item on its own line with its page.
@@ -272,21 +283,12 @@ If nothing on these pages answers it, reply "none" and nothing else.`
 
 /**
  * search+mapreduce's helper (H8): one question asked of every group of pages, by the large brain,
- * eight groups at a time; returns each group's answer headed by its file and pages, those with none left out.
+ * every group at once; returns each group's answer headed by its file and pages, those with none left out.
  * @param {string} question @param {{ name: string, pages: string[] }[]} files @param {string} apiKey
  */
 export async function everyPage(question, files, apiKey, group = 40) {
   const parts = files.flatMap((file) => Array.from({ length: Math.ceil(file.pages.length / group) }, (_, g) => ({ file, first: g * group + 1, last: Math.min(file.pages.length, (g + 1) * group) })))
-  /** @type {string[]} */
-  const answers = Array(parts.length).fill('')
-  let next = 0
-  await Promise.all(Array.from({ length: 8 }, async () => {
-    while (next < parts.length) {
-      const i = next++
-      const { file, first, last } = parts[i]
-      answers[i] = (await complete(MAP, `${question}\n\n${file.pages.slice(first - 1, last).map((page, j) => `[[page ${first + j}]]\n${page}`).join('\n\n')}`, apiKey)).trim()
-    }
-  }))
+  const answers = await Promise.all(parts.map(async ({ file, first, last }) => (await complete(MAP, `${question}\n\n${file.pages.slice(first - 1, last).map((page, j) => `[[page ${first + j}]]\n${page}`).join('\n\n')}`, apiKey)).trim()))
   const found = parts.map(({ file, first, last }, i) => (/^\W*none\W*$/i.test(answers[i]) ? '' : `${file.name}, pages ${first}–${last}:\n${answers[i]}`)).filter(Boolean)
   return `Asked of ${parts.length} groups of pages; ${found.length} answered.${found.length ? `\n\n${found.join('\n\n')}` : ''}`
 }
