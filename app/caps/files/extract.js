@@ -247,7 +247,8 @@ const MIRROR = { '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '<'
  * A PDF page's text from pdf.js's items, as people read it: lines where the PDF ends them, but none
  * inside a word cut at a hyphen or between Chinese or Japanese characters; a right-to-left line in
  * reading order, since pdf.js gives each word right but the words as drawn, left to right; Arabic
- * and Hebrew letters as letters, not the shapes some PDFs name them by.
+ * and Hebrew letters, and Chinese and Japanese characters, as themselves, not the shapes and radicals
+ * some PDFs name them by.
  * @param {{ str?: string, dir?: string, hasEOL?: boolean }[]} items
  */
 export function pageText(items) {
@@ -272,7 +273,7 @@ export function pageText(items) {
     const text = (weight(true) > weight(false) ? runs.reverse().map(({ rtl, text }) => {
       const [, before, core, after] = rtl ? ['', '', text, ''] : /^([^\p{L}\p{N}]*)(.*?)([^\p{L}\p{N}]*)$/su.exec(text) ?? []
       return turn(after) + (core ?? '') + turn(before)
-    }) : runs.map((run) => run.text)).join('').replace(/[ \t]+$/, '').replace(/[\ufb1d-\ufdff\ufe70-\ufefc]+/g, (forms) => forms.normalize('NFKC'))
+    }) : runs.map((run) => run.text)).join('').replace(/[ \t]+$/, '').replace(/[\u2e80-\u2fdf\uf900-\ufaff\ufb1d-\ufdff\ufe70-\ufefc]+/g, (forms) => forms.normalize('NFKC'))
     const joins = /-$/.test(out) && STRONG.test(text[0] ?? '') || CJK.test(out[out.length - 1] ?? '') && CJK.test(text[0] ?? '')
     out += (i && !joins ? '\n' : '') + text
   }

@@ -123,6 +123,8 @@ test('pageText reads right-to-left lines in order, joins wrapped Japanese and co
   assert.equal(pageText([item('.'), item('يوما', 'rtl'), item(' '), item('ستين', 'rtl', true)]), 'ستين يوما.')
   assert.equal(pageText([item('ﺍﻟﺘﻜﻠﻔﺔ', 'rtl'), item(' .'), item('3'), item(' :'), item('ﺍﻟﻤﺼﺎﺑﻴﻦ', 'rtl')]), 'المصابين: 3. التكلفة')
   assert.equal(pageText([item('契約は九十日前の書面通', 'ltr', true), item('知により解約できる。')]), '契約は九十日前の書面通知により解約できる。')
+  // Kangxi radicals and compatibility ideographs some PDFs name their characters by, as the characters.
+  assert.equal(pageText([item('\u2f24阪拠点で\u2fac\u2f54の浸\u2f0a、2024年6\u2f49')]), '大阪拠点で雨水の浸入、2024年6月')
   assert.equal(pageText([item('Contract C-', 'ltr', true), item('4471 ends.')]), 'Contract C-4471 ends.')
   assert.equal(pageText([item('A first line  ', 'ltr', true), item('A second')]), 'A first line\nA second')
 })
