@@ -1,7 +1,7 @@
-# Jean's CI: budgets, types and tests (npm run check), and the smoke tests in Chromium and
-# WebKit against the fake brain (npm run e2e). Both jobs run side by side; going over a budget
-# fails the pipeline (AGENTS.md). The image's browsers match the pinned @playwright/test:
-# change both together.
+# Jean's CI: budgets, types and tests (npm run check), the smoke tests in Chromium and WebKit
+# against the fake brain (npm run e2e), and the packages' audit. The jobs run side by side; going
+# over a budget fails the pipeline (AGENTS.md), and so does a known high or critical advisory.
+# The image's browsers match the pinned @playwright/test: change both together.
 
 workflow:
   rules:
@@ -19,12 +19,25 @@ default:
       files: [package-lock.json]
     paths: [.npm/]
   before_script:
-    - npm ci --cache .npm --prefer-offline --no-fund
+    - npm ci --cache .npm --prefer-offline --no-audit --no-fund
 
 check:
   stage: test
   script:
     - npm run check
+
+# Every package as the registry signed it, no known high or critical advisory in any of them (one
+# in a package that never ships is fixed by an override in package.json, scoped to its parent's
+# version), and the bill of materials of what ships, CycloneDX, kept with the pipeline.
+audit:
+  stage: test
+  script:
+    - npm audit signatures
+    - npm audit --audit-level=high
+    - npm sbom --omit=dev --sbom-format cyclonedx > sbom.cdx.json
+  artifacts:
+    paths:
+      - sbom.cdx.json
 
 e2e:
   stage: test
