@@ -73,19 +73,30 @@ export function denseStrategies(model) {
 
 /**
  * The rows of a flat Int8 matrix nearest a query, by dot product (vectors are normalised): a scan of
- * every row, no index.
+ * every row, keeping the best as it goes; no index.
  * @param {Int8Array} matrix @param {number} dims @param {Int8Array} query @param {number} top
  */
 export function nearest(matrix, dims, query, top) {
   const rows = matrix.length / dims
-  const scores = new Float32Array(rows)
+  /** @type {number[]} */
+  const best = []
+  /** @type {number[]} */
+  const scores = []
   for (let r = 0; r < rows; r++) {
     let dot = 0
     const base = r * dims
     for (let i = 0; i < dims; i++) dot += matrix[base + i] * query[i]
-    scores[r] = dot
+    if (best.length === top && dot <= scores[top - 1]) continue
+    let at = best.length
+    while (at > 0 && scores[at - 1] < dot) at--
+    best.splice(at, 0, r)
+    scores.splice(at, 0, dot)
+    if (best.length > top) {
+      best.pop()
+      scores.pop()
+    }
   }
-  return [...scores.keys()].sort((a, b) => scores[b] - scores[a]).slice(0, top)
+  return best
 }
 
 /** Reciprocal rank fusion of ranked lists. @template T @param {T[][]} lists @returns {T[]} */

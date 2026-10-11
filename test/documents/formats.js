@@ -44,6 +44,8 @@ export function html(blocks, title) {
   const attrs = (/** @type {Block} */ block) => block.lang ? ` lang="${block.lang}"${DIR[/** @type {'ar'} */ (block.lang)] ? ' dir="rtl"' : ''}` : ''
   const body = blocks.map((block) => {
     if (block.kind === 'break') return '<div class="break"></div>'
+    // A long table prints as lines, as ledgers exported from accounting software do (Chromium can't print XL's 64,000 rows as cells).
+    if (block.kind === 'table' && (block.rows?.length ?? 0) > 300) return `<pre${attrs(block)}>${[block.header, ...(block.rows ?? [])].map((row) => esc((row ?? []).join('\t'))).join('\n')}</pre>`
     if (block.kind === 'table') return `<table${attrs(block)}><thead><tr>${(block.header ?? []).map((cell) => `<th>${esc(cell)}</th>`).join('')}</tr></thead><tbody>${(block.rows ?? []).map((row) => `<tr>${row.map((cell) => `<td>${esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`
     return `<${block.kind}${attrs(block)}>${esc(block.text ?? '')}</${block.kind}>`
   }).join('\n')
@@ -52,7 +54,7 @@ export function html(blocks, title) {
 body { font: 9pt/1.3 Helvetica, Arial, sans-serif }
 h1 { font-size: 14pt } h2 { font-size: 11pt; margin: 8pt 0 4pt } h3 { font-size: 9.5pt; margin: 6pt 0 2pt } p { margin: 3pt 0; text-align: justify }
 table { border-collapse: collapse; font-size: 7.5pt; margin: 4pt 0 } td, th { border: 0.5pt solid #888; padding: 1pt 4pt; text-align: start }
-.break { break-before: page }
+.break { break-before: page } pre { font: 7pt/1.25 Menlo, Consolas, monospace; tab-size: 14; margin: 4pt 0; white-space: pre-wrap }
 </style><body>${body}</body></html>`
 }
 
