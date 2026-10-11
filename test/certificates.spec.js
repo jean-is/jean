@@ -74,6 +74,8 @@ test('a certificate shared in a conversation brings what checks it, and its card
 })
 
 test('witnesses date a certificate and a public log records it once the user chooses so, and the check page says by whom (D276)', async ({ page, browser, baseURL }) => {
+  // A whole answer, then the check page in a context of its own: under a full run's load, WebKit needs more than a minute.
+  test.setTimeout(90_000)
   const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'POST' }
   /** @type {string[]} */
   const sent = []
