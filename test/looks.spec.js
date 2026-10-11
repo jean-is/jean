@@ -78,16 +78,63 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await page.reload()
   await expect(tasks).toBeVisible()
 
-  // New task brings the keyboard to the box; a task's ⋮ menu holds Delete (D181).
+  // New task brings the keyboard to the box; a task's ⋮ menu holds Pin, which shows it under
+  // Pinned above the others, Rename, which a double click does too, Mark as unread, which lights it
+  // until it is opened, and Delete, the only one in red (D181, D288).
   await tasks.locator('.place', { hasText: 'New task' }).click()
   await expect(page.locator('#prompt')).toBeFocused()
   await page.evaluate(async () => {
     const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
     const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
     await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' })])
+    const later = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId, now: new Date(Date.now() + 1000) })
+    await appendRecords(app.fs, later.path, [metaRecord(app.deviceId, { title: 'Book a table' })])
     await refreshConversations()
   })
-  const row = tasks.locator('.history-list li', { hasText: 'Plan the week' })
+  /** Picks an action in a task's ⋮ menu. @param {import('@playwright/test').Locator} row @param {string} name */
+  const pick = async (row, name) => {
+    await row.hover()
+    await row.getByRole('button', { name: 'More options' }).click()
+    await row.getByRole('button', { name }).click()
+  }
+  const row = tasks.locator('.history-list li', { hasText: 'Plan the' })
+  const titles = tasks.locator('.history-title')
+  await expect(titles).toHaveText(['Book a table', 'Plan the week'])
+  await pick(row, 'Pin')
+  await expect(tasks.locator('.sidebar-heading')).toHaveText(['Pinned', 'Tasks'])
+  await expect(titles).toHaveText(['Plan the week', 'Book a table'])
+  await pick(row, 'Unpin')
+  await expect(tasks.locator('.sidebar-heading')).toHaveText(['Tasks'])
+  await expect(titles).toHaveText(['Book a table', 'Plan the week'])
+
+  const box = tasks.getByRole('textbox', { name: 'Rename' })
+  await pick(row, 'Rename')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Plan the week')
+  await box.fill('Plan the month')
+  await box.press('Enter')
+  await expect(titles).toHaveText(['Book a table', 'Plan the month'])
+  await expect(row.locator('.history-item')).toBeFocused()
+  await tasks.locator('.history-item', { hasText: 'Book a table' }).dblclick()
+  await box.fill('Something else')
+  await box.press('Escape')
+  await expect(titles).toHaveText(['Book a table', 'Plan the month'])
+
+  const light = row.getByRole('img', { name: 'Unread' })
+  await pick(row, 'Mark as unread')
+  await expect(light).toBeVisible()
+  await row.hover()
+  await row.getByRole('button', { name: 'More options' }).click()
+  // Red, its words or its icon's lines, as Delete is.
+  const red = (/** @type {string} */ name) => row.getByRole('button', { name }).evaluate((button) => [button, ...button.querySelectorAll('path')]
+    .some((part) => getComputedStyle(part).color === getComputedStyle(/** @type {Element} */ (button.parentElement?.lastElementChild)).color))
+  expect([await red('Pin'), await red('Rename'), await red('Mark as read')]).toEqual([false, false, false])
+  await row.getByRole('button', { name: 'Mark as read' }).click()
+  await expect(light).toHaveCount(0)
+  await pick(row, 'Mark as unread')
+  await row.locator('.history-item').click()
+  await expect(light).toHaveCount(0)
+
   await row.hover()
   await row.getByRole('button', { name: 'More options' }).click()
   page.once('dialog', (dialog) => dialog.accept())

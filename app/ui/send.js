@@ -14,7 +14,7 @@ import { getSecret } from './secrets.js'
 import { loaded, unlock, contributions } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, openConversation, turnPage, beginRun, endRun, stop, CITED,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -294,7 +294,7 @@ export async function retry() {
 }
 
 /**
- * Goes back to a request: what came after it is gone from the conversation, but its title, and the
+ * Goes back to a request: what came after it is gone from the conversation, but its title and pin, and the
  * request is answered again (D188). @param {number} upTo how many records lead up to its end
  */
 export async function rewind(upTo) {
@@ -304,7 +304,7 @@ export async function rewind(upTo) {
   await new Promise((resolve) => { const done = effect(() => { if (!app.running.value.includes(path ?? '')) queueMicrotask(() => resolve(done())) }) })
   const current = app.current.value
   if (!current || current.path !== path || app.busy.value) return
-  const records = [...current.records.slice(0, upTo), ...current.records.slice(upTo).filter((record) => record.meta?.title)]
+  const records = [...current.records.slice(0, upTo), ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
   await rewriteRecords(app.fs, current.path, records)
   app.current.value = { ...current, records }
   await retry()
@@ -419,9 +419,11 @@ async function runAgent(conversation, brain, meta, call) {
       app.busy.value = false
       app.live.value = null
     }
-    await refreshConversations()
-    setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const answer = lastAnswer(settled)
+    // An answer that came while the user was elsewhere waits for them, unread (D288); not one stopped, or deleted.
+    if (answer && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
+    else await refreshConversations()
+    setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records, conversation)
     if (answer && at && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) cited(path, at, records)

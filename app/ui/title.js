@@ -23,7 +23,8 @@ const naming = new Map()
 export function nameConversation(path, records, brain) {
   if (titleOf(records) || naming.has(path)) return naming.get(path)
   const job = titleFor(records, brain).then(async (title) => {
-    if (!title) return
+    // The user named it meanwhile (D288).
+    if (!title || app.conversations.peek().find((item) => item.path === path)?.title) return
     const record = metaRecord(app.deviceId, { title })
     await appendRecords(app.fs, path, [record])
     const current = app.current.peek()

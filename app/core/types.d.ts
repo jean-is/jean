@@ -187,7 +187,7 @@ export interface Envelope {
   /** agent records only: model call index within the turn */
   step?: number
   update?: AcpUpdate
-  meta?: { title?: string, prompt?: { system: string, state: PromptState }, [key: string]: any }
+  meta?: { title?: string, pinned?: boolean, unread?: boolean, prompt?: { system: string, state: PromptState }, [key: string]: any }
 }
 
 /** First JSONL line of a conversation file. */
@@ -202,8 +202,8 @@ export interface ConversationHeader {
   by: string
 }
 
-/** routine: the routine's file, for one of its runs (D122) */
-export type ConversationSummary = { id: string, path: string, title: string, opening: string, createdAt: string, updatedAt: string, routine?: string }
+/** routine: the routine's file, for one of its runs (D122); pinned: above the others in the list; unread: answered since the user last opened it */
+export type ConversationSummary = { id: string, path: string, title: string, opening: string, createdAt: string, updatedAt: string, routine?: string, pinned?: true, unread?: true }
 
 // ─── Rules ───────────────────────────────────────────────────────────────────
 

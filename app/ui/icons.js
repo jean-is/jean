@@ -22,6 +22,7 @@ export const icons = {
   speaker: icon(svg`<path d="M4 10v4h3.5L12 18V6L7.5 10H4Z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>`),
   copy: icon(svg`<rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>`),
   check: icon(svg`<path d="M5 12.5 10 17 19 7"/>`),
+  dot: icon(svg`<circle cx="12" cy="12" r="4" fill="currentColor"/>`),
   chevron: icon(svg`<path d="m8 10 4 4 4-4"/>`),
   spark: icon(svg`<path d="M12 5c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7Z"/>`),
   bolt: icon(svg`<path d="M13 3.5 5.5 13.5H12l-1 7 7.5-10H12l1-7Z"/>`),
