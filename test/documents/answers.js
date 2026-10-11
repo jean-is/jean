@@ -61,14 +61,17 @@ async function place(providers) {
 
 /**
  * streamChat with OpenRouter told to use one provider alone, when the brain names one, once the request has its place:
- * the brain's own, or for a helper's request whichever of its own and its helpers has a place first.
+ * the brain's own, or for a helper's request whichever of its own and its helpers has a place first, but the one
+ * it avoids (the last to refuse it: one that refuses at once always has a place, and would take every attempt).
  * @param {{ provider?: string, helpers?: string[] }} b @param {{ queued: number }} [timing] adds the time spent waiting for a place
- * @param {Record<string, any>} [body] more for the request's body @param {boolean} [helper] a helper's request
+ * @param {Record<string, any>} [body] more for the request's body @param {{ avoid: string, used: string }} [helper] a helper's request, told which provider took it
  * @returns {typeof streamChat}
  */
-const streamOf = (b, timing = { queued: 0 }, body = {}, helper = false) => async function* (options) {
+const streamOf = (b, timing = { queued: 0 }, body = {}, helper) => async function* (options) {
   const asked = performance.now()
-  const { provider, release } = await place([b.provider ?? '', ...(helper && b.helpers || [])])
+  const providers = [b.provider ?? '', ...(helper && b.helpers || [])]
+  const { provider, release } = await place(providers.length > 1 ? providers.filter((p) => p !== helper?.avoid) : providers)
+  if (helper) helper.used = provider
   timing.queued += performance.now() - asked
   try {
     yield* streamChat({ ...options, fetch: provider || Object.keys(body).length
@@ -81,24 +84,26 @@ const streamOf = (b, timing = { queued: 0 }, body = {}, helper = false) => async
 
 /**
  * A helper's request (notes, every_page): its whole reply, retried as the loop retries, each time from whichever
- * provider has a place first (DekaLLM serves this brain in fp8, at about twice DeepInfra's pace, but its shared pool
+ * provider has a place first but the last to refuse it (DekaLLM serves this brain in fp8, at about twice DeepInfra's pace, but its shared pool
  * refuses about half), and whether the provider cut it at its longest. Without reasoning: DeepInfra sometimes gives
  * this brain's as text, and it fills the 16,384 tokens a reply may have there.
  * @param {string} system @param {string} content @param {string} apiKey @returns {Promise<{ text: string, cut: boolean }>}
  */
 async function complete(system, content, apiKey) {
   const retries = waits()
+  const helper = { avoid: '', used: '' }
   for (let attempt = 0; ; attempt++) {
     try {
       let text = ''
       let cut = false
-      for await (const event of streamOf(BRAINS.large, undefined, { reasoning: { enabled: false } }, true)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
+      for await (const event of streamOf(BRAINS.large, undefined, { reasoning: { enabled: false } }, helper)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
         if (event.type === 'text') text += event.delta
         else if (event.type === 'done') cut = event.stopReason === 'max_tokens'
       }
       return { text, cut }
     } catch (error) {
       if (attempt === retries.length) throw error
+      helper.avoid = helper.used
       await new Promise((resolve) => setTimeout(resolve, retries[attempt]))
     }
   }
