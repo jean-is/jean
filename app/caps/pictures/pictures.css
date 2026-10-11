@@ -15,7 +15,7 @@ app-picture .is-framed > :is(.from, .glimpse, .light, .sign, .done) { position: 
 app-picture :is(.from, .glimpse, .sign) { inset: 0; }
 app-picture .from img { filter: blur(1.2rem) saturate(0.7); opacity: 0.6; scale: 1.15; }
 app-picture .glimpse { scale: 1.06; filter: blur(calc(0.2rem + (1 - var(--done, 0)) * 0.8rem)); animation: glimpse 1.2s var(--ease) both; transition: filter 1.2s var(--ease); }
-app-picture .light { inset: -40%; background: radial-gradient(closest-side, oklch(from var(--glow) l c h / 0.3), transparent); animation: pass 3.2s ease-in-out infinite alternate; transition: opacity 1s; }
+app-picture .light { inset: -40%; background: radial-gradient(closest-side, oklch(from var(--glow) l c h / 0.3), transparent); animation: pass 3.2s ease-in-out infinite alternate var(--loops, running); transition: opacity 1s; }
 app-picture .light.is-dim { opacity: 0.35; }
 app-picture .sign { display: grid; place-items: center; color: var(--ink-soft); }
 app-picture .sign .icon { inline-size: 2rem; block-size: 2rem; stroke-width: 1.2; }

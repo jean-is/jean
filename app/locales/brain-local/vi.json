@@ -2,11 +2,11 @@
   "private.name": "Riêng tư · ngoại tuyến",
   "private.away": "Ngoại tuyến · vẫn đang trả lời",
   "private.title": "Mọi thứ ở lại trên thiết bị này",
-  "private.text": "Câu trả lời được viết ngay tại đây, trong thẻ trình duyệt này: không máy chủ, không tài khoản, không cần cài đặt gì. Rất ít trợ lý làm được điều đó.",
+  "private.text": "Câu trả lời được viết ngay trong thẻ này, không máy chủ, không cần cài đặt gì. Rất ít trợ lý làm được điều đó.",
   "private.private": "Riêng tư, không gì rời khỏi đây",
   "private.free": "Miễn phí, không cần tài khoản hay khóa",
   "private.offline": "Vẫn trả lời khi không có internet",
-  "private.try": "Thử xem: tắt Wi-Fi rồi hỏi điều gì đó.",
+  "private.try": "Hãy tắt Wi-Fi và xem thử.",
   "private.still": "Bạn đang ngoại tuyến, và câu trả lời vẫn tiếp tục đến.",
   "private.proof": "Chiếc khiên dưới mỗi câu trả lời là bằng chứng, từ chính bản ghi của trình duyệt bạn."
 }

@@ -2,11 +2,11 @@
   "private.name": "Prywatnie · offline",
   "private.away": "Offline · nadal odpowiada",
   "private.title": "Wszystko zostaje na tym urządzeniu",
-  "private.text": "Odpowiedzi powstają tutaj, w tej karcie przeglądarki: bez serwera, bez konta, bez instalowania czegokolwiek. Niewielu asystentów to potrafi.",
+  "private.text": "Odpowiedzi powstają w tej karcie, bez serwera i bez instalacji. Niewielu asystentów to potrafi.",
   "private.private": "Prywatnie, nic stąd nie wychodzi",
   "private.free": "Za darmo, bez konta i klucza",
   "private.offline": "Odpowiada dalej bez internetu",
-  "private.try": "Wypróbuj: wyłącz Wi-Fi i o coś zapytaj.",
+  "private.try": "Wyłącz Wi-Fi i zobacz.",
   "private.still": "Jesteś offline, a odpowiedzi wciąż przychodzą.",
   "private.proof": "Tarcza pod każdą odpowiedzią jest dowodem, z własnego zapisu twojej przeglądarki."
 }

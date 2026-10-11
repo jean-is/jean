@@ -9,7 +9,7 @@
 // through before it shows (D275, D280), which runs in SD-Turbo's worker.
 import { signal } from '@preact/signals-core'
 import { app, weightsHost, updateSettings } from '../../ui/state.js'
-import { modelWorker, downloading } from '../../ui/model.js'
+import { modelWorker, downloading, holdStill } from '../../ui/model.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { SIZES } from './flux.js'
 import * as check from './check.js'
@@ -180,7 +180,7 @@ export const refuses = (area) => app.policy.pictureCheck?.[area] ?? (area === 's
  * @param {Uint8Array} bytes @returns {Promise<'nudity' | Area | undefined>}
  */
 export async function refused(bytes) {
-  const { logits, areas } = await turbo.call({ type: 'check', host: weightsHost(), bytes })
+  const { logits, areas } = await holdStill(turbo.call({ type: 'check', host: weightsHost(), bytes }))
   if (check.explicit(logits) >= check.LIMIT) return 'nudity'
   return refuses('suggestive') && check.explicit(logits, true) >= check.LIMIT ? 'suggestive' : /** @type {Area[]} */ (areas).find(refuses)
 }
@@ -196,7 +196,7 @@ export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape
  */
 export function paint(description, shape, show = () => {}) {
   const maker = used()
-  const made = busy.then(async () => {
+  const made = holdStill(busy.then(async () => {
     if (maker === 'sd-turbo') {
       await load()
       return /** @type {ArrayBuffer} */ ((await turbo.call({ type: 'paint', prompt: description })).bytes)
@@ -206,7 +206,7 @@ export function paint(description, shape, show = () => {}) {
     const { embeds } = await stage({ maker, type: 'encode', files: files.encode, tokenizer: files.tokenizer, prompt: description })
     const { latent } = await stage({ maker, type: 'denoise', files: files.denoise, embeds, width, height }, [embeds.buffer], show)
     return /** @type {Uint8Array} */ ((await stage({ maker, type: 'decode', files: files.decode, latent, width, height }, [latent.buffer])).bytes)
-  })
+  }))
   busy = made.then(() => {}, () => {})
   // Its weights' repository and pinned commit, as the answer's certificate names them (D274).
   const revision = { 'sd-turbo': SD, 'flux2-klein': FLUX, 'z-image-turbo': Z }[/** @type {Maker} */ (maker)].replace('/resolve/', '@').slice(0, -1)

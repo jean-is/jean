@@ -2,11 +2,11 @@
   "private.name": "Pribado · offline",
   "private.away": "Offline · sumasagot pa rin",
   "private.title": "Lahat ay nananatili sa device na ito",
-  "private.text": "Dito mismo isinusulat ang mga sagot, sa tab na ito ng browser: walang server, walang account, walang kailangang i-install. Kakaunti ang assistant na kaya ito.",
+  "private.text": "Sa tab na ito isinusulat ang mga sagot, walang server at walang kailangang i-install. Kakaunti ang assistant na kaya ito.",
   "private.private": "Pribado, walang lumalabas dito",
   "private.free": "Libre, walang account o key",
   "private.offline": "Patuloy na sumasagot kahit walang internet",
-  "private.try": "Subukan: patayin ang Wi-Fi at magtanong ng kahit ano.",
+  "private.try": "Patayin ang Wi-Fi at tingnan.",
   "private.still": "Offline ka, at patuloy pa ring dumarating ang mga sagot.",
   "private.proof": "Ang kalasag sa ilalim ng bawat sagot ang patunay, mula sa sariling tala ng browser mo."
 }

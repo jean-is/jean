@@ -106,14 +106,14 @@
   pointer-events: none;
   transform: scale(2);
   transition: opacity 1.6s var(--ease);
-  animation: depth-breathe 7s ease-in-out infinite alternate;
+  animation: depth-breathe 7s ease-in-out infinite alternate var(--loops, running);
 }
 @keyframes depth-breathe { to { transform: scale(2.12, 2.3); } }
 @media print, (forced-colors: active) { :root[data-look='depth'] body::after { display: none; } }
 /* The camera circles while Jean works, and stops where it is. It lowers while the user writes and
    rises as the answer comes. */
 @keyframes depth-circle { to { transform: rotateX(90deg) rotateZ(90deg) scale(4); } }
-:root[data-look='depth']:is([data-presence='thinking'], [data-presence='answering']) .room::before { animation-play-state: running; }
+:root[data-look='depth']:is([data-presence='thinking'], [data-presence='answering']) .room::before { animation-play-state: var(--loops, running); }
 :root[data-look='depth'][data-presence='listening'] .room::before { --depth-y: -6vh; }
 :root[data-look='depth'][data-presence='answering'] .room::before { --depth-y: 4vh; }
 :root[data-look='depth'][data-presence='listening'] body::after { opacity: 0.56; }

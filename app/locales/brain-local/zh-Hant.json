@@ -2,11 +2,11 @@
   "private.name": "私密 · 離線",
   "private.away": "離線 · 仍在回答",
   "private.title": "一切都留在這台裝置上",
-  "private.text": "回答就在這裡、在這個瀏覽器分頁中寫成：沒有伺服器，不用帳號，無需安裝。能做到這一點的助理寥寥無幾。",
+  "private.text": "回答就在這個分頁中寫成，無需伺服器，無需安裝。能做到這一點的助理寥寥無幾。",
   "private.private": "私密，什麼都不會離開這裡",
   "private.free": "免費，無需帳號或金鑰",
   "private.offline": "沒有網路也能繼續回答",
-  "private.try": "試試看：關掉 Wi-Fi，然後問點什麼。",
+  "private.try": "關掉 Wi-Fi 試試看。",
   "private.still": "你已離線，回答仍源源不絕地送來。",
   "private.proof": "每個回答下方的盾牌就是證明，來自你瀏覽器自己的記錄。"
 }
