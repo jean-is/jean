@@ -23,7 +23,10 @@ export const BRAINS = {
   small: { model: 'liquid/lfm-2.5-2.6b:free', context: 32768 },
 }
 
-const RETRIES = [5000, 20000, 60000]
+// The waits before asking again after a refusal such as too many requests, each between half and all of
+// these, so that requests refused together don't come back together; the loop waits 30 s at most.
+const WAITS = [5000, 10000, 20000, 30000, 30000, 30000, 30000, 30000]
+const waits = () => WAITS.map((ms) => Math.round(ms * (0.5 + Math.random() / 2)))
 
 /** Jean's brain entry for one of these. @param {{ model: string }} b */
 const entry = (b) => ({ id: 'eval', provider: 'openrouter', api: /** @type {'openai'} */ ('openai'), baseURL: PROVIDERS.openrouter.baseURL, model: b.model })
@@ -39,6 +42,7 @@ const streamOf = ({ provider }) => (options) => streamChat({ ...options, fetch: 
  * @param {string} system @param {string} content @param {string} apiKey
  */
 async function complete(system, content, apiKey) {
+  const retries = waits()
   for (let attempt = 0; ; attempt++) {
     try {
       let text = ''
@@ -47,8 +51,8 @@ async function complete(system, content, apiKey) {
       }
       return text
     } catch (error) {
-      if (attempt === RETRIES.length) throw error
-      await new Promise((resolve) => setTimeout(resolve, RETRIES[attempt]))
+      if (attempt === retries.length) throw error
+      await new Promise((resolve) => setTimeout(resolve, retries[attempt]))
     }
   }
 }
@@ -193,17 +197,17 @@ export async function ask({ question, condition, brain, files, lib, extra, apiKe
     return whole ? documentPart(link, pages.join('\n\n')) : { ...documentPart(link, ''), text: `${shown}\n\n(Pages ${chosen.map(([a, b]) => (a === b ? a : `${a}–${b}`)).join(', ')} of ${pages.length}${condition === 'preselect' ? ', chosen as those that match the request' : ''}. Use read for the others.)` }
   })
   const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: 'English', tools: lines, rules, now: new Date(Date.UTC(2026, 0, 15)) })
-  /** @type {{ name: string, args: any, output: string }[]} */
+  /** @type {{ name: string, args: any, output: string, failed?: boolean }[]} */
   const calls = []
   const started = performance.now()
   const result = await runTurn({
     brain: entry(BRAINS[brain]), stream: streamOf(BRAINS[brain]),
-    apiKey, system, tools: list, maxSteps, rule: () => 'allow', retries: RETRIES,
+    apiKey, system, tools: list, maxSteps, rule: () => 'allow', retries: waits(),
     history: [{ role: 'user', content: question.text + ASK, documents }],
     onUpdate: (update) => {
       if (update.sessionUpdate === 'tool_call_update' && (update.status === 'completed' || update.status === 'failed') && typeof update.rawOutput === 'string') {
         const call = calls.find((c) => c.id === update.toolCallId)
-        if (call) call.output = update.rawOutput
+        if (call) Object.assign(call, { output: update.rawOutput, failed: update.status === 'failed' })
       } else if (update.sessionUpdate === 'tool_call' && update.kind !== 'think' && update.toolCallId) calls.push(/** @type {any} */ ({ id: update.toolCallId, name: update.name, args: update.rawInput, output: '' }))
     },
   })

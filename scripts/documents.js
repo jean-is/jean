@@ -545,6 +545,9 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
           extra = { docs: c.docs, vectors: { matrix, dims, embedQuery: async (/** @type {string} */ text) => int8(await embed(/** @type {any} */ (dense), [text], 'query')).matrix } }
         }
         const run = await ask({ question: job.question, condition, brain: job.brain, files: shownFiles, lib, extra, apiKey: key })
+        // every_page failing is the provider's doing, not the brain's: the answer isn't kept, so that a later run asks again.
+        const lost = run.calls.find((call) => call.name === 'every_page' && call.failed)
+        if (lost) throw new Error(`every_page failed: ${lost.output}`)
         const graded = grade(job.question, run.text)
         const { model, provider } = BRAINS[/** @type {'large'} */ (job.brain)]
         const record = { id: job.question.id, type: job.question.type, lang: job.question.lang, hypothesis: job.hypothesis, condition, brain: job.brain, model, ...(provider && { provider }), ...graded, grounded: grounded(job.question, run), steps: run.calls.length, stopReason: run.stopReason, ms: Math.round(run.ms), usage: run.usage, reply: run.text, calls: run.calls.map((call) => ({ name: call.name, args: call.args, output: call.output })), shownTokens: Math.round(run.shown.length / 3), at: new Date().toISOString() }
