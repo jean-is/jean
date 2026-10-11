@@ -29,6 +29,7 @@ import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compa
 await Promise.all([useStrings('receipt'), styleSheet(new URL('receipt.css', import.meta.url))])
 
 const INFO = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.5v.5"/></svg>`
+const SEAL = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="9" r="5.5"/><path d="M8.8 13.5 7.5 20.5l4.5-2.5 4.5 2.5-1.3-7"/></svg>`
 const CLOUD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 18.5h9.25a3.75 3.75 0 0 0 .5-7.47 5.25 5.25 0 0 0-10.1-1.03A4.25 4.25 0 0 0 7.5 18.5Z"/></svg>`
 
 // ─── What the page reached ───────────────────────────────────────────────────
@@ -124,9 +125,10 @@ const named = ({ provider, model }) => (provider === 'device' ? model.split('/')
 /**
  * What the answer was, first: where it was done, then how long it took and what it cost, who answered,
  * who made its pictures and films, and the other addresses reached, apart from theirs, the brains'
- * alone given the conversation. @param {Facts} facts @param {Turn} turn @param {string} text
+ * alone given the conversation; last, folded, its certificate, the card being a glance.
+ * @param {Facts} facts @param {Turn} turn @param {string} text @param {string} id
  */
-function card(facts, turn, text) {
+function card(facts, turn, text, id) {
   const brains = once(facts.brains)
   const made = once(facts.made)
   const cloud = brains.some((brain) => !brain.local)
@@ -150,15 +152,19 @@ function card(facts, turn, text) {
       ${made.length ? html`<div class="receipt-list"><dt>${t('receipt.made')}</dt>${made.map(entry)}</div>` : nothing}
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
-    <p class="receipt-note">${t('receipt.proof.text')}</p>
-    ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
-    ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
-    <div class="receipt-saves">
-      <button class="button subtle" @click=${() => keepCertificate(facts, turn, text)}>${icons.download}${t('receipt.save')}</button>
-      <button class="button subtle" @click=${() => keepCertificate(facts, turn, text, true)}>${icons.download}${t('receipt.proof')}</button>
-    </div>
-    <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>`
+    <details class="receipt-certify">
+      <summary>${SEAL}${t('receipt.certificate')}${icons.chevron}</summary>
+      ${saving(`${id}-save`, 'receipt.save', () => keepCertificate(facts, turn, text))}
+      ${saving(`${id}-proof`, 'receipt.proof', () => keepCertificate(facts, turn, text, true))}
+      ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
+      ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
+      <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>
+    </details>`
 }
+
+/** A file to save, named by its own words and described by what it holds. @param {string} id @param {string} key @param {() => void} click */
+const saving = (id, key, click) => html`<button class="receipt-save" aria-labelledby=${id} aria-describedby=${`${id}-text`} @click=${click}>
+  ${icons.download}<span id=${id}>${t(key)}</span><small id=${`${id}-text`}>${t(`${key}.text`)}</small></button>`
 
 // ─── Witnesses (D276) ────────────────────────────────────────────────────────
 
@@ -269,9 +275,9 @@ class Receipt extends Element {
     return html`<button class="icon-button subtle receipt-button is-${facts.verdict}" popovertarget=${id}
         @pointerenter=${glimpse} @pointerleave=${glimpse} @focusin=${glimpse} @focusout=${glimpse} @click=${this.#pin}>
         ${facts.verdict === 'local' ? icons.shield : INFO}<span class="visually-hidden">${t('receipt.about')}</span></button>
-      <div id=${id} class="receipt" popover @pointerenter=${glimpse} @pointerleave=${glimpse} @focusout=${glimpse}
+      <div id=${id} class="receipt" popover @click=${this.#pin} @pointerenter=${glimpse} @pointerleave=${glimpse} @focusout=${glimpse}
         @toggle=${(/** @type {ToggleEvent} */ event) => { this.#open.value = event.newState === 'open'; if (!this.#open.value) this.#glance = '' }}>
-        ${this.#open.value ? card(facts, turn, text) : nothing}
+        ${this.#open.value ? card(facts, turn, text, id) : nothing}
       </div>`
   }
 
@@ -292,12 +298,13 @@ class Receipt extends Element {
     } else if (!coming && open && this.#glance === by) this.#timer = setTimeout(() => receipt.hidePopover(), 300)
   }
 
-  /** A click keeps the card a glance opened. @param {MouseEvent} event */
+  /** A click keeps the card a glance opened, on its button or within it. @param {MouseEvent} event */
   #pin = (event) => {
     clearTimeout(this.#timer)
     if (!this.#glance) return
     this.#glance = ''
-    event.preventDefault()
+    // On the button, it would close the card again.
+    if (event.currentTarget === this.firstElementChild) event.preventDefault()
   }
 }
 
