@@ -6,7 +6,7 @@ import { runTurn } from '../../app/core/loop.js'
 import { buildSystemPrompt } from '../../app/core/prompt.js'
 import { addFile, documentPart, estimateTokens, pagesThatFit, preselect, readTool, searchTool } from '../../app/core/files.js'
 import { memoryFS } from '../../app/core/fs.js'
-import { PROVIDERS } from '../../app/core/llm.js'
+import { PROVIDERS, streamChat } from '../../app/core/llm.js'
 import { lookup } from '../../app/core/search.js'
 import { norm, normalise } from './text.js'
 import { fuse, nearest } from './retrieval.js'
@@ -203,4 +203,30 @@ export function grade(q, reply) {
 export function grounded(q, run) {
   const seen = normalise([run.shown, ...run.calls.map((c) => c.output)].join('\n')).text
   return q.evidence.length ? q.evidence.every((e) => seen.includes(norm(e.quote))) : true
+}
+
+const NOTES = `You write search notes about pages of a company's documents, so that questions about them can be answered later without reading them again.
+For each document, section, table or event the pages hold, write one line: what it is, then its key facts: names, codes, dates, amounts, decisions, places, causes, outcomes.
+Write in English whatever the pages' language, keep every code and number exactly, and leave nothing out. No introduction, no conclusion.`
+
+/**
+ * Summary ingestion (H8): notes on every group of pages, written once by a brain, kept as a file
+ * of their own that search then finds like any other. Returns that file's pages, one per group.
+ * @param {string[]} pages @param {string} apiKey @param {(notes: string[], total: number) => Promise<void> | void} [progress] after each group, to keep them
+ */
+export async function summarise(pages, apiKey, progress = () => {}, group = 40, done = /** @type {string[]} */ ([])) {
+  const out = [...done]
+  const total = Math.ceil(pages.length / group)
+  for (let g = out.length; g < total; g++) {
+    const first = g * group + 1
+    const last = Math.min(pages.length, first + group - 1)
+    let text = ''
+    for await (const event of streamChat({ brain: { id: 'eval', provider: 'openrouter', api: 'openai', baseURL: PROVIDERS.openrouter.baseURL, model: BRAINS.large.model }, apiKey, system: NOTES,
+      messages: [{ role: 'user', content: pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n') }] })) {
+      if (event.type === 'text') text += event.delta
+    }
+    out.push(`Notes on pages ${first}–${last}:\n${text.trim()}`)
+    await progress(out, total)
+  }
+  return out
 }

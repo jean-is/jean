@@ -11,7 +11,7 @@ import { place } from './gold.js'
 /** @typedef {{ docs: Doc[], vectors?: Record<string, { matrix: Int8Array, dims: number, query: (q: Question) => Int8Array }> }} Context */
 
 /** The files, cut and indexed once. @param {{ name: string, pages: string[] }[]} files */
-export function prepare(files, size = 200) {
+export function prepare(files, size = 100) {
   return files.map((file, doc) => {
     const index = indexOf(file.pages, size)
     const units = index.passages.map((p) => ({ doc, page: p.page, start: p.start, end: p.end, tokens: estimateTokens(`${p.head}\n${file.pages[p.page - 1].slice(p.start, p.end)}`) }))

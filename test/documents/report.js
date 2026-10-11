@@ -79,7 +79,7 @@ export function verdicts(hypotheses, { runs, bench, answers, dense }) {
 }
 
 /** A Markdown table. @param {string[]} head @param {(string | number)[][]} body */
-export const table = (head, body) => [`| ${head.join(' | ')} |`, `|${head.map((_, i) => (i ? ':-:' : '---')).join('|')}|`, ...body.map((row) => `| ${row.join(' | ')} |`)].join('\n')
+export const table = (head, body) => [`| ${head.join(' | ')} |`, `|${head.map(() => '---').join('|')}|`, ...body.map((row) => `| ${row.join(' | ')} |`)].join('\n')
 
 /** @param {number} x */
 export const pct = (x) => (Number.isNaN(x) ? '–' : `${Math.round(x * 100)}`)

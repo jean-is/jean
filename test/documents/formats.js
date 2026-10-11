@@ -98,7 +98,7 @@ export async function bytesOf({ name, blocks }) {
 
 /**
  * PDF text, page by page, as Jean reads it: pdfjs-dist in node with the joining Jean's pdf.js uses.
- * @param {Uint8Array} bytes @param {(items: any[]) => string} join
+ * @param {Uint8Array} bytes @param {(items: any[], body?: number) => string} join
  */
 export async function pdfPages(bytes, join) {
   const { createRequire } = await import('node:module')
@@ -107,15 +107,18 @@ export async function pdfPages(bytes, join) {
   const base = require.resolve('pdfjs-dist/package.json').replace(/package\.json$/, '')
   const task = pdfjs.getDocument({ data: bytes.slice(), cMapUrl: `${base}cmaps/`, cMapPacked: true, standardFontDataUrl: `${base}standard_fonts/`, isEvalSupported: false, disableFontFace: true, useSystemFonts: false, verbosity: 0 })
   const doc = await task.promise
-  /** @type {string[]} */
+  /** @type {any[][]} */
   const pages = []
   for (let n = 1; n <= doc.numPages; n++) {
     const page = await doc.getPage(n)
-    pages.push(join((await page.getTextContent()).items))
+    pages.push((await page.getTextContent()).items)
     page.cleanup()
   }
   await task.destroy()
-  return pages
+  // As app/caps/files/pdf.js does: headings told by their size against the whole document's text.
+  const { bodySize } = await import('../../app/caps/files/extract.js')
+  const body = bodySize(pages.flat())
+  return pages.map((items) => join(items, body))
 }
 
 /**
