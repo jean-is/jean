@@ -159,6 +159,8 @@ Not used: the browsers' built-in models (too experimental) and native OS models.
 
 **Beside the page** (D285): a model on this device works on the GPU that draws the window, where each frame waits behind what was sent before it. `holdStill()` in `ui/model.js` holds the page still while the device's brain answers or a picture is made or checked here: it sets `--loops` on the root to `paused`, through CSSOM as `--warmth` is (D73), and every infinite animation takes its play state from it (`var(--loops, running)`), so only what changes is drawn, and an entrance still plays. `test/looks.test.js` checks that every loop does.
 
+**One runtime, kept compiled** (D287): every model's worker imports `ui/model-worker.js`, which points ONNX Runtime at its WebAssembly (`vendor/transformers/ort-wasm-simd-threaded.asyncify.wasm`) and turns off Transformers.js's own copy (`useWasmCache`), so ONNX Runtime streams it from the file. Served from the service worker's copy, Chrome keeps what it compiled and optimized beside it, and the next worker, in this visit or a later one, starts from that. On `npm run dev` it keeps nothing (`no-cache`, no validators), so each worker compiles it.
+
 **Kept to projects** (D194): a brain's `projects` keeps it to those projects, and without it the brain is in every one (`usedIn()` in `core/settings.js`, as for connections). `brainsHere` in `ui/state.js` is the room's project's, and Auto, the picker, `activeBrain`, Double-check, pictures and films, routines and Since last time read it; Settings › Brains lists every brain, one kept elsewhere unable to be chosen, and ticks where each is used (`where()` in `ui/dialogs.js`, which Connections shares).
 
 ## Reflexes
