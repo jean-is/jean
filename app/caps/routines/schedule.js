@@ -1,4 +1,4 @@
-// Routines (D115, D122): requests Jean sends itself on a schedule, one Markdown file each,
+// Routines (D115, D122): requests Jean sends itself on a schedule, or once later, one Markdown file each,
 // routines/<ulid>.md in the project they belong to (the home project's at the root). The front
 // matter holds the schedule, the body the request, in the user's words. With no server, a routine
 // runs while Jean is open, or as soon as Jean is opened after it fell due: the times missed
@@ -11,40 +11,46 @@ import { parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
 /** @typedef {import('../../core/types.js').FS} FS */
 /**
  * every: how often; on: the day, 0 (Sunday) to 6 for a week, 1 to 31 for a month (a shorter
- * month's last day instead); at: the local time, "HH:MM". weekday: the days that aren't the
- * weekend where the user lives.
- * @typedef {{ every: 'day' | 'weekday' | 'week' | 'month', on?: number, at: string }} Schedule
+ * month's last day instead), the date, "YYYY-MM-DD", once; at: the local time, "HH:MM", of which
+ * an hour takes the minutes. weekday: the days that aren't the weekend where the user lives.
+ * @typedef {{ every: 'once' | 'hour' | 'day' | 'weekday' | 'week' | 'month', on?: number | string, at: string }} Schedule
  * flow: the id of a flow the routine runs, its request then the flow's name (D218).
  * @typedef {Schedule & { path: string, title: string, request: string, author: string, createdAt: string, lastRun?: string, flow?: string }} Routine
  */
 
-export const EVERY = /** @type {const} */ (['day', 'weekday', 'week', 'month'])
+export const EVERY = /** @type {const} */ (['once', 'hour', 'day', 'weekday', 'week', 'month'])
 /** Day names as the brain writes them, Sunday first like Date#getDay. */
 export const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 const AT = /^([01]?\d|2[0-3]):([0-5]\d)$/
 
 /**
  * A schedule from what the brain or the page gives (a day by its number, or its English name
- * for a week), or null when it isn't one.
- * @param {{ every?: unknown, on?: unknown, at?: unknown }} given @returns {Schedule | null}
+ * for a week; once, a date, or a day's name or nothing for the next), or null when it isn't one.
+ * @param {{ every?: unknown, on?: unknown, at?: unknown }} given @param {Date} [now] @returns {Schedule | null}
  */
-export function schedule({ every, on, at }) {
+export function schedule({ every, on, at }, now = new Date()) {
   const time = AT.exec(String(at ?? '').trim())
   if (!EVERY.includes(/** @type {any} */ (every)) || !time) return null
-  const named = DAYS.indexOf(String(on ?? '').trim().toLowerCase())
+  const given = String(on ?? '').trim().toLowerCase()
+  const named = DAYS.indexOf(given)
   const day = named >= 0 ? named : Number(on)
   const kind = /** @type {Schedule['every']} */ (every)
+  const clock = `${time[1].padStart(2, '0')}:${time[2]}`
+  const next = kind === 'once' && (named >= 0 || !given) && dueTime(named >= 0 ? { every: 'week', on: named, at: clock } : { every: 'day', at: clock }, now, [], 1)
+  const date = next ? ymd(next) : given
+  if (kind === 'once' && ymd(new Date(`${date}T00:00`)) !== date) return null
   if (kind === 'week' && !(Number.isInteger(day) && day >= 0 && day <= 6)) return null
   if (kind === 'month' && !(Number.isInteger(day) && day >= 1 && day <= 31)) return null
-  return { every: kind, ...((kind === 'week' || kind === 'month') && { on: day }), at: `${time[1].padStart(2, '0')}:${time[2]}` }
+  return { every: kind, ...((kind === 'week' || kind === 'month') && { on: day }), ...(kind === 'once' && { on: date }), at: clock }
 }
 
 /** Whether a routine runs on this day. @param {Schedule} plan @param {Date} day @param {number[]} weekend */
 function runsOn(plan, day, weekend) {
+  if (plan.every === 'once') return ymd(day) === plan.on
   if (plan.every === 'day') return true
   if (plan.every === 'weekday') return !weekend.includes(day.getDay())
   if (plan.every === 'week') return day.getDay() === plan.on
-  return day.getDate() === Math.min(plan.on ?? 1, new Date(day.getFullYear(), day.getMonth() + 1, 0).getDate())
+  return day.getDate() === Math.min(Number(plan.on ?? 1), new Date(day.getFullYear(), day.getMonth() + 1, 0).getDate())
 }
 
 /** The time a routine runs on the day `offset` days from `now`'s. @param {Schedule} plan @param {Date} now @param {number} offset */
@@ -60,6 +66,10 @@ function on(plan, now, offset) {
  * @returns {Date | null}
  */
 export function dueTime(plan, now, weekend = [0, 6], way = -1) {
+  if (plan.every === 'hour') {
+    const time = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), Number(plan.at.slice(3)))
+    return (way < 0 ? time <= now : time > now) ? time : new Date(time.getTime() + way * 3_600_000)
+  }
   for (let offset = 0; Math.abs(offset) < 400; offset += way) {
     const time = on(plan, now, offset)
     if ((way < 0 ? time <= now : time > now) && runsOn(plan, time, weekend)) return time
@@ -77,15 +87,20 @@ export function due(routine, now, weekend) {
   return time && time.getTime() > since ? time : null
 }
 
+const two = (/** @type {number} */ n) => String(n).padStart(2, '0')
+/** A local date: "2026-10-05". @param {Date} time */
+const ymd = (time) => `${time.getFullYear()}-${two(time.getMonth() + 1)}-${two(time.getDate())}`
+
 /** A local time as the brain reads it: "2026-10-05 08:00 (Monday)". @param {Date} time */
 export function localStamp(time) {
-  const two = (/** @type {number} */ n) => String(n).padStart(2, '0')
-  return `${time.getFullYear()}-${two(time.getMonth() + 1)}-${two(time.getDate())} ${two(time.getHours())}:${two(time.getMinutes())} (${DAYS[time.getDay()].replace(/^./, (c) => c.toUpperCase())})`
+  return `${ymd(time)} ${two(time.getHours())}:${two(time.getMinutes())} (${DAYS[time.getDay()].replace(/^./, (c) => c.toUpperCase())})`
 }
 
 /** A schedule in English, for the brain. @param {Schedule} plan */
 export function inEnglish(plan) {
-  const day = plan.every === 'week' ? `every ${DAYS[plan.on ?? 0].replace(/^./, (c) => c.toUpperCase())}` : plan.every === 'month' ? `on day ${plan.on} of every month` : plan.every === 'weekday' ? 'every working day' : 'every day'
+  if (plan.every === 'once') return `once, on ${localStamp(new Date(`${plan.on}T${plan.at}`))}`
+  if (plan.every === 'hour') return `every hour at :${plan.at.slice(3)}`
+  const day = plan.every === 'week' ? `every ${DAYS[Number(plan.on ?? 0)].replace(/^./, (c) => c.toUpperCase())}` : plan.every === 'month' ? `on day ${plan.on} of every month` : plan.every === 'weekday' ? 'every working day' : 'every day'
   return `${day} at ${plan.at}`
 }
 

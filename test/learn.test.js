@@ -277,15 +277,26 @@ test('settings are read as written, over the defaults', async () => {
   assert.deepEqual((await loadSettings(memoryFS())).unlocked, [], 'no settings yet: the defaults')
 })
 
-test('a schedule is every day, working day, week or month, at a local time', () => {
+test('a schedule is every hour, day, working day, week or month, or once, at a local time', () => {
   assert.deepEqual(schedule({ every: 'day', at: '8:05' }), { every: 'day', at: '08:05' })
   assert.deepEqual(schedule({ every: 'week', on: 'Monday', at: '09:00' }), { every: 'week', on: 1, at: '09:00' })
   assert.deepEqual(schedule({ every: 'week', on: '0', at: '09:00' }), { every: 'week', on: 0, at: '09:00' })
   assert.deepEqual(schedule({ every: 'month', on: 31, at: '23:59', }), { every: 'month', on: 31, at: '23:59' })
   assert.deepEqual(schedule({ every: 'weekday', on: 3, at: '07:30' }), { every: 'weekday', at: '07:30' }, 'a day only for a week or a month')
-  for (const wrong of [{ every: 'hour', at: '08:00' }, { every: 'day', at: '25:00' }, { every: 'day' }, { every: 'week', at: '08:00' }, { every: 'month', on: 0, at: '08:00' }, { every: 'week', on: 'someday', at: '08:00' }]) assert.equal(schedule(wrong), null)
+  assert.deepEqual(schedule({ every: 'hour', on: 3, at: '9:15' }), { every: 'hour', at: '09:15' }, 'an hour takes the minutes')
+  // Once: a date, or the next of a day of the week, or the next time it says. Sunday 11 October 2026, 10:00.
+  const sunday = new Date(2026, 9, 11, 10, 0)
+  assert.deepEqual(schedule({ every: 'once', on: '2026-10-15', at: '09:00' }, sunday), { every: 'once', on: '2026-10-15', at: '09:00' })
+  assert.deepEqual(schedule({ every: 'once', on: 'Thursday', at: '09:00' }, sunday), { every: 'once', on: '2026-10-15', at: '09:00' })
+  assert.deepEqual(schedule({ every: 'once', on: 'sunday', at: '09:00' }, sunday), { every: 'once', on: '2026-10-18', at: '09:00' }, 'today’s time has passed: next week')
+  assert.deepEqual(schedule({ every: 'once', at: '18:00' }, sunday), { every: 'once', on: '2026-10-11', at: '18:00' })
+  assert.deepEqual(schedule({ every: 'once', at: '08:00' }, sunday), { every: 'once', on: '2026-10-12', at: '08:00' })
+  for (const wrong of [{ every: 'hourly', at: '08:00' }, { every: 'day', at: '25:00' }, { every: 'day' }, { every: 'week', at: '08:00' }, { every: 'month', on: 0, at: '08:00' }, { every: 'week', on: 'someday', at: '08:00' },
+    { every: 'once', on: '2026-02-30', at: '08:00' }, { every: 'once', on: 'someday', at: '08:00' }, { every: 'once', on: 15, at: '08:00' }]) assert.equal(schedule(wrong), null)
   assert.equal(inEnglish({ every: 'week', on: 1, at: '09:00' }), 'every Monday at 09:00')
   assert.equal(inEnglish({ every: 'month', on: 5, at: '08:00' }), 'on day 5 of every month at 08:00')
+  assert.equal(inEnglish({ every: 'hour', at: '09:15' }), 'every hour at :15')
+  assert.equal(inEnglish({ every: 'once', on: '2026-10-15', at: '09:00' }), 'once, on 2026-10-15 09:00 (Thursday)')
   assert.equal(localStamp(new Date(2026, 9, 5, 8, 0)), '2026-10-05 08:00 (Monday)')
 })
 
@@ -308,6 +319,23 @@ test('a routine falls due once for the times missed, and runs again at the next'
   assert.deepEqual(due(routine, at(3, 9)), at(3, 8), 'two times missed: one run')
   assert.equal(due({ ...routine, lastRun: at(3, 9).toISOString() }, at(3, 20)), null)
   assert.deepEqual(due({ ...routine, lastRun: at(3, 9).toISOString() }, at(4, 8, 1)), at(4, 8))
+
+  // Every hour, at its minutes.
+  const hourly = { ...routine, every: /** @type {const} */ ('hour'), at: '08:15' }
+  assert.deepEqual(dueTime(hourly, at(3, 9, 20)), at(3, 9, 15))
+  assert.deepEqual(dueTime(hourly, at(3, 9, 10)), at(3, 8, 15))
+  assert.deepEqual(dueTime(hourly, at(3, 23, 20), undefined, 1), at(4, 0, 15), 'next')
+  assert.deepEqual(due({ ...hourly, lastRun: at(3, 9, 16).toISOString() }, at(3, 10, 0)), null)
+  assert.deepEqual(due({ ...hourly, lastRun: at(3, 9, 16).toISOString() }, at(3, 12, 0)), at(3, 11, 15), 'three hours missed: one run')
+
+  // Once: on its day, then never again, though it can still be run by hand.
+  const once = { ...routine, every: /** @type {const} */ ('once'), on: '2026-10-08', at: '09:00' }
+  assert.equal(due(once, at(8, 8)), null)
+  assert.deepEqual(dueTime(once, at(8, 8), undefined, 1), at(8, 9), 'next')
+  assert.deepEqual(due(once, at(9, 12)), at(8, 9), 'missed: it runs at the next visit')
+  assert.equal(due({ ...once, lastRun: at(8, 9, 1).toISOString() }, at(20, 9)), null)
+  assert.equal(dueTime(once, at(8, 10), undefined, 1), null, 'nothing next once it has passed')
+  assert.deepEqual(due({ ...once, lastRun: at(5, 10).toISOString() }, at(8, 9)), at(8, 9), 'run by hand before: it still runs on its day')
 })
 
 test('routines are Markdown files named by ULID, the request in the body', async () => {
@@ -322,6 +350,10 @@ test('routines are Markdown files named by ULID, the request in the body', async
   assert.equal(rest.length, 0, 'what isn’t a routine is skipped')
   assert.deepEqual(read, { ...routine, lastRun: '2026-10-04T08:00:00.000Z' })
   assert.equal(parseRoutine('---\ntitle: x\nevery: day\nat: "08:00"\n---\n', 'r.md'), null, 'a routine needs a request')
+  const reminder = newRoutine('', { title: 'Rappel', request: 'Rappelle-moi d’appeler le notaire.', by: 'jean', every: 'once', on: '2026-10-15', at: '09:00' })
+  await writeRoutine(fs, reminder)
+  assert.match(/** @type {string} */ (await fs.read(reminder.path)), /\nevery: once\non: "?2026-10-15"?\nat: "09:00"\n/)
+  assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === reminder.path), reminder)
   // One that runs a flow keeps it, its request the flow's name (D218).
   const flowing = newRoutine('', { title: 'Invoices', request: 'Weekly invoices', flow: '01K0FLOW', by: 'dev', every: 'weekday', at: '09:00' })
   await writeRoutine(fs, flowing)

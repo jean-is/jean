@@ -28,7 +28,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
   folders: 'opening a folder of their computer, to find, read and change its files where they are, showing each change first',
   skills: 'saving how a task the user repeats is done, to do it the same way every time',
-  routines: 'doing a task on its own on a schedule (every day, week or month), while the user has you open or as soon as they are back',
+  routines: 'doing a task on its own on a schedule (every hour, day, week or month) or once later, like a reminder, while the user has you open or as soon as they are back',
   flows: 'the steps of a task the user repeats, drawn beside the conversation, which they see, change and run again by hand or on a schedule',
   search: 'searching the web, when a question needs current or specific facts',
   browser: 'a browser beside the conversation, to show the user a web page or site while you talk',

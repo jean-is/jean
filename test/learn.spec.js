@@ -176,6 +176,17 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await routine.locator('input[type="time"]').fill('09:30')
   await routine.locator('input[type="time"]').blur()
   await expect.poll(async () => (await routines(page)).map(({ every, on, at }) => ({ every, on, at }))).toEqual([{ every: 'week', on: 5, at: '09:30' }])
+  // Every hour, at its minutes; then once, on the next day its time comes, which the user changes.
+  await routine.locator('select').first().selectOption('hour')
+  await expect(routine.locator('input[type="time"]')).toHaveCount(0)
+  await routine.locator('select').nth(1).selectOption({ label: 'At minute 45' })
+  await expect.poll(async () => (await routines(page)).map(({ every, on, at }) => ({ every, on, at }))).toEqual([{ every: 'hour', on: undefined, at: '09:45' }])
+  await routine.locator('select').first().selectOption('once')
+  await expect(routine.locator('input[type="time"]')).toHaveValue('09:45')
+  await expect(routine.locator('input[type="date"]')).toHaveValue(/^\d{4}-\d\d-\d\d$/)
+  await routine.locator('input[type="date"]').fill('2099-01-15')
+  await routine.locator('input[type="date"]').blur()
+  await expect.poll(async () => (await routines(page)).map(({ every, on, at }) => ({ every, on, at }))).toEqual([{ every: 'once', on: '2099-01-15', at: '09:45' }])
   await page.keyboard.press('Escape')
 
   // Due since midnight: on the welcome screen, with Jean free, it runs in a conversation of its own.

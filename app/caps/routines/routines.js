@@ -1,5 +1,5 @@
-// Routines (docs/product.md, D122): a task the user wants done regularly, which Jean does on its
-// own, on a schedule: a request it sends itself, in a conversation of its own, under the same
+// Routines (docs/product.md, D122): a task the user wants done regularly, or once later, which
+// Jean does on its own, on a schedule: a request it sends itself, in a conversation of its own, under the same
 // rules as any (approvals wait in the inbox). There is no server: a routine runs while Jean is
 // open, once it is free and the user has left it alone for a minute, or as soon as Jean is opened
 // after it fell due, and the times missed meanwhile make one run. A routine runs in its project,
@@ -13,7 +13,7 @@ import { loadConversation } from '../../core/conversations.js'
 import { noteRecord, routineOf } from '../../core/events.js'
 import { t } from '../../core/i18n.js'
 import { digest } from '../../ui/mentions.js'
-import { due, dueTime, inEnglish, listRoutines, localStamp, newRoutine, schedule, writeRoutine } from './schedule.js'
+import { EVERY, due, dueTime, inEnglish, listRoutines, localStamp, newRoutine, schedule, writeRoutine } from './schedule.js'
 
 /** @typedef {import('./schedule.js').Routine} Routine */
 
@@ -40,12 +40,12 @@ const runsOf = (path) => app.conversations.peek().filter((item) => item.routine 
 const scheduleTool = {
   spec: {
     name: 'schedule',
-    description: 'Make a routine: a request you send yourself on a schedule, in a conversation of its own, when the user wants something done regularly. title: a few words; request: what to do, as the user would ask it, standing on its own since a run doesn’t see this conversation (where the data is, what to work out, what to report); both in the user’s language. Or flow: the name of one of the user’s flows, which the routine runs instead. every: day, weekday (working days), week or month; on: the day of the week (monday…sunday) or of the month (1–31); at: the local time, HH:MM.',
+    description: 'Make a routine: a request you send yourself on a schedule, in a conversation of its own, when the user wants something done regularly, or once later (a reminder). title: a few words; request: what to do, as the user would ask it, standing on its own since a run doesn’t see this conversation (where the data is, what to work out, what to report); both in the user’s language. Or flow: the name of one of the user’s flows, which the routine runs instead. every: once, hour, day, weekday (working days), week or month; on: the day of the week (monday…sunday) or of the month (1–31), or once the date (YYYY-MM-DD) or the day of the week, the next one; at: the local time, HH:MM, of which an hour takes the minutes.',
     parameters: {
       type: 'object',
       properties: {
         title: { type: 'string' }, request: { type: 'string' }, flow: { type: 'string' },
-        every: { type: 'string', enum: ['day', 'weekday', 'week', 'month'] }, on: { type: 'string' }, at: { type: 'string' },
+        every: { type: 'string', enum: [...EVERY] }, on: { type: 'string' }, at: { type: 'string' },
       },
       required: ['title', 'every', 'at'],
     },
@@ -59,11 +59,13 @@ const scheduleTool = {
     const flow = args?.flow && loaded.peek().has('flows') ? (await import('../flows/graph.js')).flowNamed(await (await import('../flows/flows.js')).refresh(), args.flow) : undefined
     if (args?.flow && !flow) throw new Error(`No flow is called "${args.flow}".`)
     const request = flow?.name ?? String(args?.request ?? '').trim()
-    if (!plan) throw new Error('A routine needs every (day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday) or a month (1–31).')
+    if (!plan) throw new Error('A routine needs every (once, hour, day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday), a month (1–31) or once (YYYY-MM-DD).')
     if (!title || !request) throw new Error('A routine needs a title and a request.')
+    if (!dueTime(plan, new Date(), week().weekend, 1)) throw new Error(`${inEnglish(plan)} has passed: it is ${localStamp(new Date())}.`)
     await writeRoutine(app.fs, newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: /** @type {any} */ (flow).id }), ...plan }))
     notify(t('routines.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('routines')) })
-    return `Made the routine "${title}": ${inEnglish(plan)}. It runs while the user has you open, or as soon as they open you after it falls due. Suggest they run it once now with Run now in Settings › Routines, to allow what it needs while they watch.`
+    return `Made the routine "${title}": ${inEnglish(plan)}. It runs while the user has you open, or as soon as they open you after it falls due.${plan.every === 'once' ? ''
+      : ' Suggest they run it once now with Run now in Settings › Routines, to allow what it needs while they watch.'}`
   },
 }
 
@@ -169,5 +171,5 @@ effect(() => {
 register({
   id: 'routines',
   tools: [scheduleTool, runsTool],
-  lines: [{ name: 'schedule', line: 'make a routine, when the user wants something done regularly' }, { name: 'routine_runs', line: 'read a routine’s earlier runs: what each did, answered and made' }],
+  lines: [{ name: 'schedule', line: 'make a routine, when the user wants something done regularly or later' }, { name: 'routine_runs', line: 'read a routine’s earlier runs: what each did, answered and made' }],
 })
