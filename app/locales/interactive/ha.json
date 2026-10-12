@@ -1,3 +1,7 @@
 {
-  "interactive.page": "Shafi mai mu'amala"
+  "interactive.page": "Shafi mai mu'amala",
+  "interactive.diagram": "Zane",
+  "interactive.map": "Taswira",
+  "interactive.mapShow": "Nuna taswirar",
+  "interactive.mapFrom": "Taswirori na zuwa daga {site}, wanda ke ganin wuraren da aka nuna."
 }

@@ -4,5 +4,6 @@
   "layouts.tip": "Ìmọ̀ràn",
   "layouts.important": "Pàtàkì",
   "layouts.warning": "Ìkìlọ̀",
-  "layouts.caution": "Ṣọ́ra"
+  "layouts.caution": "Ṣọ́ra",
+  "layouts.ticked": "{done} nínú {total}"
 }

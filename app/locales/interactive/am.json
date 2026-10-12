@@ -1,3 +1,7 @@
 {
-  "interactive.page": "በይነተገናኝ ገጽ"
+  "interactive.page": "በይነተገናኝ ገጽ",
+  "interactive.diagram": "ሥዕላዊ መግለጫ",
+  "interactive.map": "ካርታ",
+  "interactive.mapShow": "ካርታውን አሳይ",
+  "interactive.mapFrom": "ካርታዎች ከ{site} ይመጣሉ፤ የሚታዩትን ቦታዎች ያያል።"
 }

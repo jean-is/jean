@@ -225,6 +225,8 @@
   "pages.webText": "Picha, fonti na msimbo unaoviunganisha. Tovuti hizo zinaweza kujua kwamba ukurasa ulifunguliwa.",
   "pages.network": "Kutuma na kupokea kupitia intaneti",
   "pages.networkText": "Msimbo wake unaweza kufikia tovuti unazoruhusu. Kwa kurasa unazoziamini tu.",
+  "pages.maps": "Onyesha ramani",
+  "pages.mapsText": "Kutoka huduma ya ramani mtandaoni, ambayo huona maeneo yanayoonyeshwa.",
   "pages.sites": "Tovuti ambazo msimbo wake unaweza kufikia",
   "pages.siteAdd": "Ongeza tovuti",
   "pages.siteRemove": "Ondoa {site}",

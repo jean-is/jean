@@ -115,6 +115,35 @@
 .prose .is-warning { --icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3.5 2.5 20h19z'/><path d='M12 10v4M12 17h.01'/></svg>"); }
 .prose .is-caution { --icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 3h8l5 5v8l-5 5H8l-5-5V8z'/><path d='M12 8v5M12 16h.01'/></svg>"); }
 
+/* A timeline (D291): the times in a column of their own, each on a dot of a line that runs down beside what happens. */
+.prose ol.timeline { display: grid; grid-template-columns: max-content 1fr; column-gap: 1.1rem; padding: 0; list-style: none; }
+.prose .timeline > li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; margin: 0; }
+.prose .timeline time { padding-block: 0.1rem; color: var(--flame); font-weight: 650; font-variant-numeric: tabular-nums; text-align: end; white-space: nowrap; }
+.prose .timeline > li > div { position: relative; padding-block: 0.1rem 0.9rem; padding-inline-start: 1.1rem; border-inline-start: 1.5px solid var(--line-strong); }
+.prose .timeline > li:last-child > div { border-color: transparent; padding-block-end: 0; }
+.prose .timeline > li > div::before { content: ''; position: absolute; inset-inline-start: calc(-0.35rem - 0.75px); inset-block-start: 0.5rem; inline-size: 0.7rem; block-size: 0.7rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.2); }
+.prose .timeline > li > div > :last-child { margin-block-end: 0; }
+
+/* Key figures (D291): each number large, in the display face, its words under it, on cards side by side. */
+.prose ul.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.6rem; padding: 0; list-style: none; }
+.prose .figures > li { display: grid; gap: 0.3rem; align-content: start; margin: 0; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: calc(var(--radius) * 0.6); background: linear-gradient(160deg, oklch(from var(--flame) l c h / 0.1), transparent 65%); }
+.prose .figures strong { color: var(--ink); font: 400 clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem) / 1.05 var(--display); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+:is(:lang(ar), :lang(ja)) .prose .figures strong { font-family: var(--sans); font-weight: 600; }
+.prose .figures span { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.35; }
+
+/* A checklist (D291): how many are done, on a bar, then each thing to do, struck through once ticked. */
+.prose .checklist-count { display: flex; align-items: center; gap: 0.75rem; margin-block-end: 0.35rem; color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+.prose .checklist progress { flex: 1; max-inline-size: 12rem; block-size: 0.35rem; border: 0; border-radius: 1rem; background: var(--line); appearance: none; overflow: hidden; }
+.prose .checklist progress::-webkit-progress-bar { background: var(--line); }
+.prose .checklist progress::-webkit-progress-value { background: var(--flame); transition: inline-size 0.3s var(--ease); }
+.prose .checklist progress::-moz-progress-bar { background: var(--flame); }
+.prose .checklist ul { padding: 0; list-style: none; }
+.prose .checklist li { margin: 0; }
+.prose .checklist label { display: flex; align-items: baseline; gap: 0.65rem; padding-block: 0.3rem; cursor: pointer; }
+.prose .checklist input { flex: none; inline-size: 1.05rem; block-size: 1.05rem; margin: 0; accent-color: var(--flame); translate: 0 0.15rem; }
+.prose .checklist label > span { transition: color 0.2s; }
+.prose .checklist .is-done label > span { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--ink-faint); }
+
 /* Where colours are forced, the cards, the frame, the rings and the notes keep their edges. */
 @media (forced-colors: active) {
   .prose .is-compare :is(th, td):not(:first-child) { border-inline: 1px solid CanvasText; }
@@ -123,4 +152,6 @@
   .prose .steps > li::before { border: 1px solid CanvasText; }
   .prose .callout { border: 1px solid CanvasText; border-inline-start-width: 3px; }
   .prose .callout-title::before { background: CanvasText; }
+  .prose .timeline > li > div::before { background: CanvasText; }
+  .prose .figures > li { border-color: CanvasText; }
 }

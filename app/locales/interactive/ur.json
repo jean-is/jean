@@ -1,3 +1,7 @@
 {
-  "interactive.page": "انٹرایکٹو صفحہ"
+  "interactive.page": "انٹرایکٹو صفحہ",
+  "interactive.diagram": "خاکہ",
+  "interactive.map": "نقشہ",
+  "interactive.mapShow": "نقشہ دکھائیں",
+  "interactive.mapFrom": "نقشے {site} سے آتے ہیں، جو دکھائی گئی جگہیں دیکھتا ہے۔"
 }

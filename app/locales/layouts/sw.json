@@ -4,5 +4,6 @@
   "layouts.tip": "Kidokezo",
   "layouts.important": "Muhimu",
   "layouts.warning": "Onyo",
-  "layouts.caution": "Tahadhari"
+  "layouts.caution": "Tahadhari",
+  "layouts.ticked": "{done} kati ya {total}"
 }

@@ -1,3 +1,7 @@
 {
-  "interactive.page": "ইন্টারঅ্যাকটিভ পৃষ্ঠা"
+  "interactive.page": "ইন্টারঅ্যাকটিভ পৃষ্ঠা",
+  "interactive.diagram": "চিত্র",
+  "interactive.map": "মানচিত্র",
+  "interactive.mapShow": "মানচিত্র দেখান",
+  "interactive.mapFrom": "মানচিত্র আসে {site} থেকে, যা দেখানো জায়গাগুলো দেখতে পায়।"
 }

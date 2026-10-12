@@ -1,3 +1,7 @@
 {
-  "interactive.page": "Interactive page"
+  "interactive.page": "Interactive page",
+  "interactive.diagram": "Diagram",
+  "interactive.map": "Map",
+  "interactive.mapShow": "Show the map",
+  "interactive.mapFrom": "Maps come from {site}, which sees the places shown."
 }

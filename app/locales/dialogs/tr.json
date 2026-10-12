@@ -225,6 +225,8 @@
   "pages.webText": "Bağlantı verdiği resimler, yazı tipleri ve kod. Bu siteler sayfanın açıldığını anlayabilir.",
   "pages.network": "İnternet üzerinden gönderme ve alma",
   "pages.networkText": "Kodu, izin verdiğin sitelere ulaşabilir. Yalnızca güvendiğin sayfalar için.",
+  "pages.maps": "Haritaları göster",
+  "pages.mapsText": "İnternetteki bir harita hizmetinden gelir; gösterilen yerleri görür.",
   "pages.sites": "Kodunun ulaşabileceği siteler",
   "pages.siteAdd": "Site ekle",
   "pages.siteRemove": "Kaldır: {site}",

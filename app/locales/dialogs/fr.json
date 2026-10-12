@@ -228,6 +228,8 @@
   "pages.webText": "Les images, les polices et le code vers lesquels elle renvoie. Ces sites peuvent savoir que la page a été ouverte.",
   "pages.network": "Envoyer et recevoir par Internet",
   "pages.networkText": "Son code peut joindre les sites que vous autorisez. Seulement pour les pages de confiance.",
+  "pages.maps": "Afficher les cartes",
+  "pages.mapsText": "D’un service de cartes sur internet, qui voit les lieux qu’elles montrent.",
   "pages.sites": "Sites que son code peut joindre",
   "pages.siteAdd": "Ajouter un site",
   "pages.siteRemove": "Retirer {site}",

@@ -222,6 +222,8 @@
   "pages.webText": "Àwọn àwòrán, fọ́ǹtì àti ètò tí ó tọ́ka sí. Àwọn ojú-òpó wọ̀nyẹn lè mọ̀ pé a ṣí ojú-ìwé náà.",
   "pages.network": "Fífi ránṣẹ́ àti gbígbà lórí íntánẹ́ẹ̀tì",
   "pages.networkText": "Àwọn ètò rẹ̀ lè dé àwọn ojú-òpó tí ẹ bá gbà láàyè. Fún àwọn ojú-ìwé tí ẹ fọkàn tán nìkan.",
+  "pages.maps": "Fi àwọn máàpù hàn",
+  "pages.mapsText": "Láti iṣẹ́ máàpù kan lórí íńtánẹ́ẹ̀tì, tí ó ń rí àwọn ibi tí a fi hàn.",
   "pages.sites": "Àwọn ojú-òpó tí àwọn ètò rẹ̀ lè dé",
   "pages.siteAdd": "Ṣàfikún ojú-òpó",
   "pages.siteRemove": "Yọ {site} kúrò",

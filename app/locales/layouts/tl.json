@@ -4,5 +4,6 @@
   "layouts.tip": "Tip",
   "layouts.important": "Mahalaga",
   "layouts.warning": "Babala",
-  "layouts.caution": "Mag-ingat"
+  "layouts.caution": "Mag-ingat",
+  "layouts.ticked": "{done} sa {total}"
 }

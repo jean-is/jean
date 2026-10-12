@@ -1,3 +1,7 @@
 {
-  "interactive.page": "Ukurasa shirikishi"
+  "interactive.page": "Ukurasa shirikishi",
+  "interactive.diagram": "Mchoro",
+  "interactive.map": "Ramani",
+  "interactive.mapShow": "Onyesha ramani",
+  "interactive.mapFrom": "Ramani zinatoka {site}, ambayo huona maeneo yanayoonyeshwa."
 }

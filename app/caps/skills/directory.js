@@ -24,6 +24,7 @@ export const DIRECTORY = Object.freeze([
   { name: 'risk-analysis', icon: 'M12 4 21 19.5H3zM12 10v4.5M12 17v.5' },
   { name: 'design-thinking', icon: 'M9.5 17.5h5M10.5 20.5h3M12 3.5a5.5 5.5 0 0 0-3.4 9.8c.6.5.9 1.2.9 1.9v.3h5v-.3c0-.7.3-1.4.9-1.9A5.5 5.5 0 0 0 12 3.5z' },
   { name: 'chart', icon: 'M3.5 19.5h17M6.5 19.5v-6M10.5 19.5V9M14.5 19.5v-8M18.5 19.5V5.5' },
+  { name: 'visual', icon: 'M3.5 6.5l5-2 7 2 5-2v13l-5 2-7-2-5 2zM8.5 4.5v13M15.5 6.5v13' },
   { name: 'music-score', icon: 'M9 18.5V6l10-2v12.5M4 18.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0M14 16.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0' },
   { name: 'slides', icon: 'M3.5 4.5h17v11h-17zM12 15.5v4M8 19.5h8' },
   { name: 'pptx', icon: 'M6.5 3.5h8l4 4v13h-12zM14.5 3.5v4h4M9 14a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 11v3h3' },

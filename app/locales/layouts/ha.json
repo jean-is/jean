@@ -4,5 +4,6 @@
   "layouts.tip": "Dabara",
   "layouts.important": "Muhimmi",
   "layouts.warning": "Gargaɗi",
-  "layouts.caution": "Hattara"
+  "layouts.caution": "Hattara",
+  "layouts.ticked": "{done} cikin {total}"
 }

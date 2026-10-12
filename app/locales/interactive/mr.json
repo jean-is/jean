@@ -1,3 +1,7 @@
 {
-  "interactive.page": "संवादी पान"
+  "interactive.page": "संवादी पान",
+  "interactive.diagram": "आकृती",
+  "interactive.map": "नकाशा",
+  "interactive.mapShow": "नकाशा दाखवा",
+  "interactive.mapFrom": "नकाशे {site} वरून येतात, ज्याला दाखवलेली ठिकाणे दिसतात."
 }

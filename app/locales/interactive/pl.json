@@ -1,3 +1,7 @@
 {
-  "interactive.page": "Strona interaktywna"
+  "interactive.page": "Strona interaktywna",
+  "interactive.diagram": "Schemat",
+  "interactive.map": "Mapa",
+  "interactive.mapShow": "Pokaż mapę",
+  "interactive.mapFrom": "Mapy pochodzą z {site}, który widzi pokazywane miejsca."
 }

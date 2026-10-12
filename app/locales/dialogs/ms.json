@@ -222,6 +222,8 @@
   "pages.webText": "Gambar, fon dan kod yang dipautkannya. Laman-laman itu boleh tahu halaman telah dibuka.",
   "pages.network": "Menghantar dan menerima melalui internet",
   "pages.networkText": "Kodnya boleh mencapai laman yang anda benarkan. Hanya untuk halaman yang anda percayai.",
+  "pages.maps": "Tunjukkan peta",
+  "pages.mapsText": "Dari perkhidmatan peta di internet, yang melihat tempat yang ditunjukkan.",
   "pages.sites": "Laman yang boleh dicapai oleh kodnya",
   "pages.siteAdd": "Tambah laman",
   "pages.siteRemove": "Alih keluar {site}",

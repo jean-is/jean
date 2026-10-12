@@ -225,6 +225,8 @@
   "pages.webText": "Bilder, Schriften und Code, auf die sie verweist. Diese Websites können sehen, dass die Seite geöffnet wurde.",
   "pages.network": "Über das Internet senden und empfangen",
   "pages.networkText": "Ihr Code kann die Websites erreichen, die du erlaubst. Nur für Seiten, denen du vertraust.",
+  "pages.maps": "Karten anzeigen",
+  "pages.mapsText": "Von einem Kartendienst im Internet, der die gezeigten Orte sieht.",
   "pages.sites": "Websites, die ihr Code erreichen darf",
   "pages.siteAdd": "Website hinzufügen",
   "pages.siteRemove": "{site} entfernen",

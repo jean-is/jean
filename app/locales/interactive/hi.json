@@ -1,3 +1,7 @@
 {
-  "interactive.page": "इंटरैक्टिव पेज"
+  "interactive.page": "इंटरैक्टिव पेज",
+  "interactive.diagram": "आरेख",
+  "interactive.map": "नक्शा",
+  "interactive.mapShow": "नक्शा दिखाएँ",
+  "interactive.mapFrom": "नक्शे {site} से आते हैं, जो दिखाई गई जगहें देखता है।"
 }

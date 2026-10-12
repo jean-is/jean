@@ -225,6 +225,8 @@
   "pages.webText": "Hotuna, haruffa da shirye-shiryen da yake haɗawa da su. Waɗannan shafuka za su iya sanin cewa an buɗe shafin.",
   "pages.network": "Aikawa da karɓa ta intanet",
   "pages.networkText": "Shirye-shiryensa za su iya kaiwa shafukan da ka yarda da su. Sai don shafukan da ka amince da su.",
+  "pages.maps": "Nuna taswirori",
+  "pages.mapsText": "Daga sabis na taswira a intanet, wanda ke ganin wuraren da suke nunawa.",
   "pages.sites": "Shafukan da shirye-shiryensa za su iya kaiwa",
   "pages.siteAdd": "Ƙara shafi",
   "pages.siteRemove": "Cire {site}",

@@ -209,6 +209,50 @@ const PHONES = `Voici les deux téléphones :
 | Simplicité | Très cohérent, peu de réglages à faire | Simple aussi, mais avec plus d'options à régler |
 
 Le Pixel coûte bien moins cher.`
+/** Components (D291): a flowchart and a mind map in Mermaid, a trip in GeoJSON, and a page whose form and map are in step both ways. */
+const FLOW = 'Here is how to decide:\n\n```mermaid\nflowchart TD\n  A([Leaving home]) --> B{Is it raining?}\n  B -->|Yes| C[Take an umbrella]\n  B -- No --> D[Wear sunglasses]\n  C --> E([Go out])\n  D --> E\n```\n\nTake the umbrella when it rains.'
+const MIND = 'The world of coffee:\n\n```mermaid\nmindmap\n  root((Coffee))\n    Origins\n      Ethiopia\n      Yemen\n    Brewing\n      Espresso\n      Filter\n    Health\n```'
+const TRIP = 'Your trip:\n\n```geojson\n{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"Marseille"},"geometry":{"type":"Point","coordinates":[5.37,43.3]}},{"type":"Feature","properties":{"name":"Aix"},"geometry":{"type":"Point","coordinates":[5.45,43.53]}},{"type":"Feature","properties":{"name":"Route"},"geometry":{"type":"LineString","coordinates":[[5.37,43.3],[5.45,43.53]]}}]}\n```\n\nTwo stops, half an hour apart.'
+const PLANNER = `Pick a stop, here or on the map:
+
+\`\`\`html
+<main>
+  <label>Stop <select id="stop"><option>Marseille</option><option>Aix</option></select></label>
+  <p id="chosen">Marseille</p>
+</main>
+<aside><app-map id="map"></app-map></aside>
+<script>
+  const stops = { Marseille: [5.37, 43.3], Aix: [5.45, 43.53] }
+  const map = document.getElementById('map'), stop = document.getElementById('stop'), chosen = document.getElementById('chosen')
+  const show = (name) => {
+    chosen.textContent = name
+    stop.value = name
+    map.textContent = JSON.stringify({ type: 'FeatureCollection', features: Object.entries(stops).map(([each, at]) => ({ type: 'Feature', properties: { stop: each, name: each === name ? each + ' ★' : each }, geometry: { type: 'Point', coordinates: at } })) })
+  }
+  stop.addEventListener('change', () => show(stop.value))
+  map.addEventListener('pick', (event) => show(event.detail.stop))
+  show('Marseille')
+</script>
+\`\`\``
+
+/** A day planned (D291): key figures, a timeline of bold times, and a checklist, one thing already ticked. */
+const SATURDAY = `Your Saturday at the market:
+
+- **3** stalls
+- **€45** budget
+- **12** km on foot
+
+Your morning:
+
+- **08:30** Leave home, with the bags
+- **09:00–10:30** The market: bread, cheese, fruit
+- **11:00** Coffee at the corner
+
+Bring:
+
+- [ ] Shopping bags
+- [x] Cash
+- [ ] The list`
 const BUY = `## Steps to buy
 
 **1. Choose new or used.**
@@ -548,6 +592,11 @@ createServer(async (req, res) => {
   else if (/compare l'iphone et le pixel/i.test(question) && last.role === 'user') answer = PHONES
   else if (/half year's sales/i.test(question) && last.role === 'user') answer = HALF
   else if (/steps to buy a phone/i.test(question) && last.role === 'user') answer = BUY
+  else if (/plan my saturday/i.test(question) && last.role === 'user') answer = SATURDAY
+  else if (/take an umbrella/i.test(question) && last.role === 'user') answer = FLOW
+  else if (/mind map of coffee/i.test(question) && last.role === 'user') answer = MIND
+  else if (/my trip on a map/i.test(question) && last.role === 'user') answer = TRIP
+  else if (/stop planner/i.test(question) && last.role === 'user') answer = PLANNER
   else if (/compare the phone plans|قارن باقات الهاتف|携帯プランを比べて/i.test(question) && last.role === 'user') answer = PLANS[lang] ?? PLANS.en
   else if (/\bidentity\b/i.test(question) && last.role === 'user') answer = IDENTITY
   else if (/^Démontre/.test(question) && last.role === 'user') answer = PROOF

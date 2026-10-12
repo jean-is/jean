@@ -222,6 +222,8 @@
   "pages.webText": "Gambar, font, dan kode yang ditautkannya. Situs-situs itu bisa tahu halaman dibuka.",
   "pages.network": "Mengirim dan menerima lewat internet",
   "pages.networkText": "Kodenya bisa menjangkau situs yang Anda izinkan. Hanya untuk halaman yang Anda percayai.",
+  "pages.maps": "Tampilkan peta",
+  "pages.mapsText": "Dari layanan peta di internet, yang melihat tempat-tempat yang ditampilkan.",
   "pages.sites": "Situs yang boleh dijangkau kodenya",
   "pages.siteAdd": "Tambahkan situs",
   "pages.siteRemove": "Hapus {site}",

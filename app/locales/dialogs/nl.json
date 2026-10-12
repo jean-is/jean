@@ -225,6 +225,8 @@
   "pages.webText": "Afbeeldingen, lettertypen en code waarnaar ze verwijst. Die sites kunnen zien dat de pagina is geopend.",
   "pages.network": "Via internet verzenden en ontvangen",
   "pages.networkText": "De code kan de sites bereiken die je toestaat. Alleen voor pagina’s die je vertrouwt.",
+  "pages.maps": "Kaarten tonen",
+  "pages.mapsText": "Van een kaartdienst op internet, die de getoonde plaatsen ziet.",
   "pages.sites": "Sites die de code mag bereiken",
   "pages.siteAdd": "Site toevoegen",
   "pages.siteRemove": "{site} verwijderen",

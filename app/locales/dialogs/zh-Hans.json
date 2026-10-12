@@ -222,6 +222,8 @@
   "pages.webText": "它链接的图片、字体和代码。这些网站可能会知道页面被打开了。",
   "pages.network": "通过互联网收发",
   "pages.networkText": "它的代码可以访问你允许的网站。仅用于你信任的网页。",
+  "pages.maps": "显示地图",
+  "pages.mapsText": "来自互联网上的地图服务，它会看到所显示的地点。",
   "pages.sites": "它的代码可以访问的网站",
   "pages.siteAdd": "添加网站",
   "pages.siteRemove": "移除 {site}",

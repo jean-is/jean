@@ -222,6 +222,8 @@
   "pages.webText": "它連結的圖片、字型和程式碼。這些網站可能會知道頁面被開啟了。",
   "pages.network": "透過網際網路收發",
   "pages.networkText": "它的程式碼可以連到你允許的網站。僅用於你信任的網頁。",
+  "pages.maps": "顯示地圖",
+  "pages.mapsText": "來自網際網路上的地圖服務，它會看到所顯示的地點。",
   "pages.sites": "它的程式碼可以連到的網站",
   "pages.siteAdd": "新增網站",
   "pages.siteRemove": "移除 {site}",

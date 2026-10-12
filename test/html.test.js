@@ -77,7 +77,7 @@ const previewCSP = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec
 
 test('a page runs its own scripts by default, and reaches nothing unless Settings or policy lets it (D143)', () => {
   const { allows, locked } = pageRights({})
-  assert.deepEqual(allows, { scripts: true, fullscreen: true, downloads: true, web: false, network: false })
+  assert.deepEqual(allows, { scripts: true, fullscreen: true, downloads: true, web: false, network: false, maps: false })
   assert.equal(locked.size, 0)
   const policy = pagePolicy(allows)
   for (const directive of ["default-src 'none'", "script-src 'unsafe-inline';", "connect-src 'none'", "frame-src 'none'", "base-uri 'none'", "form-action 'none'"]) assert.ok(policy.includes(directive), directive)
@@ -86,7 +86,7 @@ test('a page runs its own scripts by default, and reaches nothing unless Setting
   assert.match(pagePolicy({ scripts: true, web: false, network: true }), /script-src 'unsafe-inline';.*connect-src https:;/)
   // The user's choice, then the organisation's, which is locked.
   const set = pageRights({ pages: { web: true, scripts: false, sites: ['a.example'] } }, { pages: { scripts: true, sites: ['corp.example'] } })
-  assert.deepEqual(set.allows, { scripts: true, fullscreen: true, downloads: true, web: true, network: false })
+  assert.deepEqual(set.allows, { scripts: true, fullscreen: true, downloads: true, web: true, network: false, maps: false })
   assert.deepEqual(set.sites, ['corp.example'])
   assert.deepEqual([...set.locked], ['scripts', 'sites'])
 })

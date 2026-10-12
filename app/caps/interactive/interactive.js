@@ -12,16 +12,21 @@
 // clipboard. Loaded with the first message, for its rule, then at each visit, so that pages written
 // before show again, or by the first page a conversation holds; written again in a new theme, look,
 // language or policy, as a chart is drawn again.
+// Components (D291): a ```mermaid block is a diagram, drawn here (./diagram.js); a ```geojson block,
+// a page made of a map (./map.js). A page is lent both when it holds one (<app-diagram>, <app-map>,
+// their text what the blocks hold), and lays out its <main> and an <aside> side by side, so that a
+// form and a map beside it are one page, in step through its own code. A map's library and every
+// address it reaches come through Jean, from the map service Settings name, once maps are allowed.
 import { html, nothing, render } from 'lit-html'
-import { computed, effect } from '@preact/signals-core'
-import { app, effective, theme, notify, send } from '../../ui/state.js'
+import { computed, effect, signal } from '@preact/signals-core'
+import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
 import { register } from '../../ui/caps.js'
-import { declared } from '../../ui/markdown.js'
+import { declared, drawn } from '../../ui/markdown.js'
 import { pageRights, pagePolicy, pageAllow } from '../../ui/csp.js'
+import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
-import { dataURL } from '../folders/site.js'
 
 await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.css', import.meta.url))])
 
@@ -29,8 +34,9 @@ register({
   id: 'interactive',
   rules: ["A tool or a thing to explore is a ```html block in the answer, not a file: offline, var(--color-*) colours, imports 'echarts', sendPrompt(text) sends a message."],
 })
-// A page needs no skill to declare it (D289): `html` stays among the kinds drawn, however often the room's skills are read again.
-effect(() => { if (!declared.value.has('html')) declared.value = new Set([...declared.value, 'html']) })
+// A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
+const KINDS = ['html', 'mermaid', 'geojson']
+effect(() => { if (KINDS.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...KINDS]) })
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
 const rights = computed(() => pageRights(effective.value.settings, app.policy))
@@ -68,19 +74,38 @@ const dark = getComputedStyle(document.documentElement).colorScheme === 'dark'
 export const init = (element, theme, options) => { const chart = m.init(element, theme ?? (dark ? 'dark' : null), options), set = chart.setOption.bind(chart); chart.setOption = (option, ...rest) => set({ backgroundColor: 'transparent', ...option }, ...rest); return chart }
 export const { ${names.join(', ')} } = m
 export default { ...m, init }`
-  return { text, url: dataURL('text/javascript', new TextEncoder().encode(stand)) }
+  return { text, url: `data:text/javascript;charset=utf-8,${encodeURIComponent(stand)}` }
 }, () => ({ text: '', url: 'data:text/javascript,' })))
 
+/** What a page is lent when it holds one, each read once: Jean's diagrams and maps, and MapLibre for the maps. @type {Map<string, Promise<string>>} */
+const parts = new Map()
+/** @param {string} path */
+const part = (path) => parts.get(path) ?? /** @type {Promise<string>} */ (parts.set(path, fetch(new URL(path, import.meta.url)).then((response) => response.text())).get(path))
+const LENT = /** @type {Record<string, string>} */ ({ diagram: './diagram.js', map: './map.js' })
+
+/** Where maps come from, unless policy or Settings name another service (`mapStyles`): OpenFreeMap's styles for light and dark. */
+const MAP_STYLES = Object.freeze({ light: 'https://tiles.openfreemap.org/styles/positron', dark: 'https://tiles.openfreemap.org/styles/dark' })
+/** The map service's styles, light and dark, as policy or Settings name them, and the addresses that may be fetched for a map: theirs. */
+const styles = () => /** @type {typeof MAP_STYLES} */ (app.policy.mapStyles ?? /** @type {any} */ (effective.peek().settings).mapStyles ?? MAP_STYLES)
+const mapSites = () => Object.values(styles()).map((address) => new URL(address).origin)
+
+// Each component a page holds is asked for as it appears, and lent then; the rest isn't.
+const LOADER = `<script>{const want={'app-diagram':'diagram','app-map':'map'},got=new Set()
+const look=()=>{for(const[tag,need]of Object.entries(want))if(!got.has(need)&&document.querySelector(tag)){got.add(need);const id=Math.random()
+addEventListener('message',function on({data,source}){if(source===parent&&data?.id===id)removeEventListener('message',on),import(URL.createObjectURL(new Blob([data.text],{type:'text/javascript'})))})
+parent.postMessage({need,id},'*')}};new MutationObserver(look).observe(document,{childList:true,subtree:true})}</script>`
+
 /**
- * What goes ahead of the page: its language and direction, ECharts, the room's colours and type, and
- * controls in its style. A frame whose colour scheme isn't the room's would be opaque; the page's own
- * root can't give these names other colours.
+ * What goes ahead of the page: its language and direction, ECharts, its components' loader, the room's
+ * colours and type, controls in its style, and its <main> and <aside> side by side on a wide screen. A
+ * frame whose colour scheme isn't the room's would be opaque; the page's own root can't give these names
+ * other colours.
  * @param {CSSStyleDeclaration} style @param {string} charts the address of ECharts' stand-in
  */
 function head(style, charts) {
   const lang = locale.peek()
   const variables = [...VARIABLES.map(([name, own]) => [name, style.getPropertyValue(`--${own}`).trim()]), ...ALIASES].map(([name, value]) => `--${name}: ${value} !important;`).join(' ')
-  return `<html lang="${lang}" dir="${dir(lang)}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script><style>
+  return `<html lang="${lang}" dir="${dir(lang)}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>
 :root { color-scheme: ${theme.peek()}; ${variables} --border-radius-md: calc(var(--border-radius-lg) / 2) !important; accent-color: var(--color-ring-primary); }
 body { margin: 0; padding: 0.25rem; color: var(--color-text-primary); font: 1rem/1.5 var(--font-sans); overflow-wrap: anywhere; }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -88,6 +113,8 @@ button, select, textarea, input:not([type=range], [type=checkbox], [type=radio],
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--color-ring-primary); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation: none !important; transition: none !important; } }
+@media (min-width: 36rem) { body:has(> main + aside) { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1rem; align-items: start; } }
+app-map, app-diagram { display: block; }
 </style>`
 }
 
@@ -121,19 +148,32 @@ class AppPage extends HTMLElement {
     if (this.isConnected) this.draw()
   }
 
-  draw() {
+  /**
+   * What its page is: its source, or a map's GeoJSON in <app-map>, closed once whole. While it is
+   * written, whole lines alone: its last may be the closing fence coming, which isn't the page's.
+   */
+  text() {
+    const open = this.hasAttribute('open')
     const source = this.getAttribute('source') ?? ''
+    const lines = open ? source.slice(0, source.lastIndexOf('\n') + 1) : source
+    return this.hasAttribute('map') ? `<app-map>${lines.replaceAll('&', '&amp;').replaceAll('<', '&lt;')}${open ? '' : '</app-map>'}` : lines
+  }
+
+  draw() {
+    const source = this.text()
     const { allows, sites } = rights.peek()
     if (!allows.scripts) {
       this.made = ''
-      return render(html`<pre dir="ltr"><code>${source}</code></pre>`, this)
+      return render(html`<pre dir="ltr"><code>${this.getAttribute('source')}</code></pre>`, this)
     }
     const policy = pagePolicy(allows, sites, true)
     const made = [policy, pageAllow(allows), theme.peek(), app.look.peek(), locale.peek()].join('\n')
     if (made === this.made) {
-      // More of a page being written goes on the page begun; a frame still loading takes what there is then.
+      // More of a page being written goes on the page begun; a frame still loading takes what there is
+      // then; a step back, as the answer settles, waits for it to come again.
       if (this.written === null || (this.whole && source === this.written)) return
-      if (!this.whole && source.startsWith(this.written.trimEnd())) return this.feed()
+      const kept = this.written.trimEnd()
+      if (!this.whole && (source.startsWith(kept) || kept.startsWith(source.trimEnd()))) return this.feed()
     }
     this.made = made
     this.written = null
@@ -143,45 +183,104 @@ class AppPage extends HTMLElement {
     const begin = { once: true, handleEvent: async (/** @type {Event} */ event) => {
       const frame = /** @type {HTMLIFrameElement} */ (event.target)
       const { url } = await library()
-      const now = this.getAttribute('source') ?? ''
+      const now = this.text()
       const open = this.hasAttribute('open')
       frame.contentWindow?.postMessage({ page: head(getComputedStyle(this), url) + now, policy, open }, '*')
       this.written = now
       this.whole = !open
     } }
-    render(html`<iframe sandbox="allow-scripts" allow=${pageAllow(allows)} loading="lazy" src=${FRAME} title=${t('interactive.page')} @load=${begin}></iframe>
+    render(html`<iframe sandbox="allow-scripts" allow=${pageAllow(allows)} loading="lazy" src=${FRAME} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${begin}></iframe>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
       </div>`, this)
   }
 
-  /** Gives the page what has come of it since, and closes it once it is whole. */
+  /** Gives the page what has come of it beyond what it was given, never twice, and closes it once it is whole. */
   feed() {
-    const source = this.getAttribute('source') ?? ''
+    const source = this.text()
     const open = this.hasAttribute('open')
-    const more = source.slice(this.written?.length)
+    const written = /** @type {string} */ (this.written)
+    const more = source.length > written.length ? source.slice(written.length) : ''
     if (!more && open) return
     this.querySelector('iframe')?.contentWindow?.postMessage({ page: more, open }, '*')
-    this.written = source
+    if (more) this.written = source
     this.whole = !open
   }
 
   /**
-   * What its page says (preview.html's relay, ECharts' stand-in): how tall it is, that it imports
-   * ECharts, and, on a click of the user's, text to send or a link to open. Anything else, or from
-   * another frame, is ignored.
+   * What its page says (preview.html's relay, ECharts' stand-in, its components): how tall it is, that
+   * it imports ECharts or holds a component, what a map of it would fetch; and, on a click of the
+   * user's, that maps are allowed, text to send or a link to open. Anything else, or from another
+   * frame, is ignored.
    * @param {MessageEvent} event
    */
   heard = ({ source, data }) => {
     const frame = this.querySelector('iframe')
     if (!frame || !source || source !== frame.contentWindow) return
+    const answer = (/** @type {Record<string, unknown>} */ reply, /** @type {Transferable[]} */ transfer = []) => frame.contentWindow?.postMessage({ ...reply, id: data.id }, '*', transfer)
     if (Number.isFinite(data?.height)) frame.style.blockSize = `${Math.max(32, Math.min(data.height, innerHeight * 0.85))}px`
     else if (data?.need === 'echarts') void library().then(({ text }) => frame.contentWindow?.postMessage({ echarts: text }, '*'))
+    else if (Object.hasOwn(LENT, data?.need)) void part(LENT[data.need]).then((text) => answer({ text }))
+    else if (data?.need === 'maplibre') void this.maps().then(answer)
+    else if (typeof data?.fetch === 'string') void this.fetched(data.fetch).then(({ bytes, error }) => answer({ bytes, error }, bytes ? [bytes.buffer] : []))
     else if (navigator.userActivation?.isActive === false) return
+    else if (data?.allow === 'maps') void this.allow().then((allowed) => answer({ allowed }))
     else if (typeof data?.prompt === 'string' && data.prompt.trim() && !app.busy.peek()) send(data.prompt.trim().slice(0, 2000))
     else if (typeof data?.open === 'string' && /^https:\/\//i.test(data.open)) window.open(data.open, '_blank', 'noopener')
+  }
+
+  /** MapLibre, its worker and its style sheet, the style for the room's light or dark, and whether maps are allowed; the words its card asks with. */
+  async maps() {
+    const [library, worker, css] = await Promise.all(['maplibre-gl.mjs', 'maplibre-gl-worker.js', 'maplibre-gl.css'].map((file) => part(`../../vendor/maplibre/${file}`)))
+    const style = styles()[theme.peek() === 'dark' ? 'dark' : 'light']
+    const site = new URL(style).hostname
+    return { library, worker, css, style, allowed: rights.peek().allows.maps, strings: { show: t('interactive.mapShow'), from: t('interactive.mapFrom', { site }) } }
+  }
+
+  /** Maps allowed, from now on, unless the organisation says otherwise. */
+  async allow() {
+    const { allows, locked } = rights.peek()
+    if (!allows.maps && !locked.has('maps')) await updateSettings({ pages: /** @type {any} */ ({ ...app.settings.peek().pages, maps: true }) })
+    return rights.peek().allows.maps
+  }
+
+  /** An address a map needs, once maps are allowed, from the map service alone. @param {string} address */
+  async fetched(address) {
+    try {
+      if (!rights.peek().allows.maps || !mapSites().includes(new URL(address).origin)) return { error: 'Not a map' }
+      const response = await fetch(address, { credentials: 'omit', referrerPolicy: 'no-referrer' })
+      return response.ok ? { bytes: new Uint8Array(await response.arrayBuffer()) } : { error: `HTTP ${response.status}` }
+    } catch (error) {
+      return { error: String(error) }
+    }
   }
 }
 
 customElements.define('app-page', AppPage)
+
+/** The diagrams' module, loaded with the first: until then, a diagram is its code. @type {import('@preact/signals-core').Signal<typeof import('./diagram.js') | null>} */
+const diagrams = signal(null)
+
+/** A diagram, with Copy; one that can't be read once written is its code. @param {string} source @param {boolean} open */
+function diagram(source, open) {
+  const module = diagrams.value
+  if (!module) return void import('./diagram.js').then((loaded) => { diagrams.value = loaded }), null
+  if (!open && !module.parse(source)) return null
+  /** @param {Event} event */
+  const copy = (event) => {
+    const shown = /** @type {HTMLElement & { picture: () => Promise<Blob> }} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('figure')?.querySelector('app-diagram'))
+    copyDrawing(source, shown.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
+  }
+  return html`<figure class="diagram"><app-diagram source=${source} role="img" aria-label=${t('interactive.diagram')}></app-diagram>
+    <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button></div></figure>`
+}
+
+/** Whether a whole block is GeoJSON. @param {string} source */
+const isGeo = (source) => { try { return typeof JSON.parse(source)?.type === 'string' } catch { return false } }
+
+drawn.value = { ...drawn.peek(),
+  html: (source, open) => html`<app-page source=${source} ?open=${open}></app-page>`,
+  geojson: (source, open) => (open || isGeo(source) ? html`<app-page map source=${source} ?open=${open}></app-page>` : null),
+  mermaid: diagram,
+}

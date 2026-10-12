@@ -4,5 +4,6 @@
   "layouts.tip": "ヒント",
   "layouts.important": "重要",
   "layouts.warning": "警告",
-  "layouts.caution": "注意"
+  "layouts.caution": "注意",
+  "layouts.ticked": "{total}件中{done}件"
 }

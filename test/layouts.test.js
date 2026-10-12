@@ -1,9 +1,9 @@
-// Layouts (D215): which shape a table, a numbered list or a quote has, told from its Markdown alone,
-// never its words: a comparison, steps, a note, or none.
+// Layouts (D215, D291): which shape a table, a list or a quote has, told from its Markdown alone,
+// never its words: a comparison, steps, a note, a timeline, key figures, a checklist, or none.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { lex } from '../app/ui/markdown.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted } from '../app/caps/layouts/shapes.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked } from '../app/caps/layouts/shapes.js'
 
 /** The first block of some Markdown. @param {string} source @returns {any} */
 const first = (source) => lex(source).find((token) => token.type !== 'space')
@@ -125,3 +125,31 @@ test('a GitHub alert, or a quote that starts with an emoji, is a note', () => {
   assert.deepEqual(noted(first('> 📌 À retenir')), { kind: 'note' })
   assert.equal(noted(first('> Être ou ne pas être')), null)
 })
+
+test('a list whose items start with a time or a date in bold is a timeline, in any language (D291)', () => {
+  assert.ok(timed(first('- **09:00** Preheat the oven\n- **9h30** Bake\n- **10.15** Serve')))
+  assert.ok(timed(first('- **2026-10-12** Launch\n- **1969**: the Moon\n- **12/10** Fair')))
+  assert.ok(timed(first('- **09:00–10:30** Talk\n- **11:00 - 12:00** Lunch')))
+  // A quantity, a word, a numbered list, a list with one item in bold, or one item, isn't.
+  assert.ok(!timed(first('- **2 eggs** beaten\n- **200 g** flour')))
+  assert.ok(!timed(first('- **Day 1** Paris\n- **Day 2** Lyon')))
+  assert.ok(!timed(first('1. **09:00** Arrive\n2. **10:00** Leave')))
+  assert.ok(!timed(first('- **09:00** Arrive\n- Then leave')))
+  assert.ok(!timed(first('- **09:00** Arrive')))
+})
+
+test('two to six items, each a number in bold and a few words, are key figures (D291)', () => {
+  assert.ok(figured(first('- **€118** in all\n- **4** people\n- **29,50 €** each')))
+  assert.ok(figured(first('- **85%** done\n- **1 200** km')))
+  // A word in the bold, many words after it, more than one paragraph, or seven items, aren't.
+  assert.ok(!figured(first('- **2 h** away\n- **4** people')))
+  assert.ok(!figured(first('- **4** people who will each pay their own share of the bill, tip included\n- **3** stalls')))
+  assert.ok(!figured(first('- **4** people\n\n  More about them.\n- **3** stalls')))
+  assert.ok(!figured(first(Array.from({ length: 7 }, (_, i) => `- **${i}** things`).join('\n'))))
+})
+
+test('a list of tasks, ticked or not, is a checklist (D291)', () => {
+  assert.ok(ticked(first('- [ ] Passport\n- [x] Tickets')))
+  assert.ok(!ticked(first('- [ ] Passport\n- Tickets')))
+})
+

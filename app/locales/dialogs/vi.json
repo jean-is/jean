@@ -222,6 +222,8 @@
   "pages.webText": "Hình ảnh, phông chữ và mã mà trang liên kết tới. Các trang web đó có thể biết trang đã được mở.",
   "pages.network": "Gửi và nhận qua internet",
   "pages.networkText": "Mã của trang có thể truy cập các trang web bạn cho phép. Chỉ dành cho trang bạn tin cậy.",
+  "pages.maps": "Hiện bản đồ",
+  "pages.mapsText": "Từ một dịch vụ bản đồ trên internet, nơi sẽ thấy các địa điểm được hiển thị.",
   "pages.sites": "Các trang web mà mã có thể truy cập",
   "pages.siteAdd": "Thêm trang web",
   "pages.siteRemove": "Xóa {site}",

@@ -4,5 +4,6 @@
   "layouts.tip": "ጠቃሚ ምክር",
   "layouts.important": "አስፈላጊ",
   "layouts.warning": "ማስጠንቀቂያ",
-  "layouts.caution": "ጥንቃቄ"
+  "layouts.caution": "ጥንቃቄ",
+  "layouts.ticked": "ከ{total} ውስጥ {done}"
 }

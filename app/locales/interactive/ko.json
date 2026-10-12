@@ -1,3 +1,7 @@
 {
-  "interactive.page": "인터랙티브 페이지"
+  "interactive.page": "인터랙티브 페이지",
+  "interactive.diagram": "다이어그램",
+  "interactive.map": "지도",
+  "interactive.mapShow": "지도 표시",
+  "interactive.mapFrom": "지도는 {site}에서 불러오며, 표시되는 장소가 그쪽에 전달됩니다."
 }

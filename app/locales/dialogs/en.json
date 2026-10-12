@@ -225,6 +225,8 @@
   "pages.webText": "Pictures, fonts and code it links to. Those sites can tell the page was opened.",
   "pages.network": "Send and receive over the internet",
   "pages.networkText": "Its code can reach the sites you allow. Only for pages you trust.",
+  "pages.maps": "Show maps",
+  "pages.mapsText": "From a map service on the internet, which sees the places they show.",
   "pages.sites": "Sites its code may reach",
   "pages.siteAdd": "Add a site",
   "pages.siteRemove": "Remove {site}",

@@ -231,6 +231,8 @@
   "pages.webText": "Obrazy, czcionki i kod, do których odsyła. Te witryny mogą się dowiedzieć, że strona została otwarta.",
   "pages.network": "Wysyłać i odbierać przez internet",
   "pages.networkText": "Jej kod może dotrzeć do witryn, na które pozwolisz. Tylko dla stron, którym ufasz.",
+  "pages.maps": "Pokazuj mapy",
+  "pages.mapsText": "Z serwisu map w internecie, który widzi pokazywane miejsca.",
   "pages.sites": "Witryny, do których może dotrzeć jej kod",
   "pages.siteAdd": "Dodaj witrynę",
   "pages.siteRemove": "Usuń {site}",

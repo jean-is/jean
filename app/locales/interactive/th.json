@@ -1,3 +1,7 @@
 {
-  "interactive.page": "หน้าแบบโต้ตอบ"
+  "interactive.page": "หน้าแบบโต้ตอบ",
+  "interactive.diagram": "แผนภาพ",
+  "interactive.map": "แผนที่",
+  "interactive.mapShow": "แสดงแผนที่",
+  "interactive.mapFrom": "แผนที่มาจาก {site} ซึ่งจะเห็นสถานที่ที่แสดง"
 }

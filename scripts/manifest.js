@@ -32,6 +32,8 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   math: ['vendor/temml'],
   charts: ['vendor/echarts'],
   scores: ['vendor/abcjs'],
+  // No capability of its own: a page that holds a map fetches it then, as it does the map's tiles (D291).
+  maps: ['vendor/maplibre'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
 /** Drawn for installs (D131): only the browser or the system fetches them, once, so the shell doesn't precache them. */

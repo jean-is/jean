@@ -4,5 +4,6 @@
   "layouts.tip": "చిట్కా",
   "layouts.important": "ముఖ్యం",
   "layouts.warning": "హెచ్చరిక",
-  "layouts.caution": "జాగ్రత్త"
+  "layouts.caution": "జాగ్రత్త",
+  "layouts.ticked": "{total}లో {done}"
 }

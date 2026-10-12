@@ -4,5 +4,6 @@
   "layouts.tip": "İpucu",
   "layouts.important": "Önemli",
   "layouts.warning": "Uyarı",
-  "layouts.caution": "Dikkat"
+  "layouts.caution": "Dikkat",
+  "layouts.ticked": "{total} içinden {done}"
 }

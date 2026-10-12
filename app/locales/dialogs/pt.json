@@ -228,6 +228,8 @@
   "pages.webText": "Imagens, fontes e código para os quais aponta. Esses sites podem saber que a página foi aberta.",
   "pages.network": "Enviar e receber pela internet",
   "pages.networkText": "O seu código pode chegar aos sites que permitires. Só para páginas em que confias.",
+  "pages.maps": "Mostrar mapas",
+  "pages.mapsText": "De um serviço de mapas na internet, que vê os lugares mostrados.",
   "pages.sites": "Sites a que o seu código pode chegar",
   "pages.siteAdd": "Adicionar um site",
   "pages.siteRemove": "Remover {site}",

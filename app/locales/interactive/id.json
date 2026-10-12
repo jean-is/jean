@@ -1,3 +1,7 @@
 {
-  "interactive.page": "Halaman interaktif"
+  "interactive.page": "Halaman interaktif",
+  "interactive.diagram": "Diagram",
+  "interactive.map": "Peta",
+  "interactive.mapShow": "Tampilkan peta",
+  "interactive.mapFrom": "Peta berasal dari {site}, yang melihat tempat-tempat yang ditampilkan."
 }

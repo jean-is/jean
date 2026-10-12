@@ -225,6 +225,8 @@
   "pages.webText": "Mga larawan, font at code na naka-link dito. Malalaman ng mga site na iyon na binuksan ang page.",
   "pages.network": "Magpadala at tumanggap sa internet",
   "pages.networkText": "Maaabot ng code nito ang mga site na papayagan mo. Para lang sa mga page na pinagkakatiwalaan mo.",
+  "pages.maps": "Ipakita ang mga mapa",
+  "pages.mapsText": "Mula sa isang serbisyo ng mapa sa internet, na nakakakita sa mga lugar na ipinapakita.",
   "pages.sites": "Mga site na maaabot ng code nito",
   "pages.siteAdd": "Magdagdag ng site",
   "pages.siteRemove": "Alisin ang {site}",
