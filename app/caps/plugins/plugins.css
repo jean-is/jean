@@ -1,0 +1,10 @@
+/* Plugins (D296): what they draw in the room, and the card of one read before it is added. */
+.plugin-above { inline-size: var(--column); margin: 0.5rem auto 0; padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--glass); font-size: 0.92rem; }
+.plugin-answer { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--ink-soft); }
+.plugin-answer .prose { display: contents; }
+.plugin-rights { margin: 0.3rem 0; padding-inline-start: 1.1rem; font-size: 0.86rem; color: var(--ink-soft); }
+.plugin-rights .is-loose { color: var(--ink); font-weight: 600; }
+.plugin-card { margin-block-start: 0.8rem; padding: 0.9rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); }
+.plugin-card h4 { margin: 0 0 0.3rem; }
+.plugin-card pre { max-block-size: 16rem; overflow: auto; font-size: 0.8rem; }
+.setting.plugin .button.danger { margin-block-start: 0.4rem; }

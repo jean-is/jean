@@ -19,7 +19,7 @@ import { host } from './host.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -37,6 +37,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   machine: "running commands on the user's own computer, such as a site's dev server",
   connections: 'connecting a service the user uses (email, documents, calendar…)',
   helpers: 'helpers doing the independent parts of a large task at the same time',
+  plugins: "adding a plugin someone made, for what Jean doesn't do yet",
   ...(folders && { sync: 'keeping their work the same on their other computers' }),
 })
 /** What policy leaves to offer: it is set before this module loads (ui/app.js). */

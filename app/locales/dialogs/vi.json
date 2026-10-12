@@ -159,6 +159,8 @@
   "gateway.title": "Cổng kết nối",
   "gateway.text": "Một số dịch vụ chưa nhận kết nối từ trình duyệt. {name} có thể dùng chúng qua một cổng kết nối do tổ chức của bạn hoặc chính bạn vận hành: nhập địa chỉ của cổng ở đây.",
   "cap.helpers.text": "Với việc lớn, {name} chia công việc thành nhiều phần, mỗi phần giao cho một người phụ giúp, tất cả cùng lúc. Bạn duyệt những gì họ làm, từng thẻ một.",
+  "cap.plugins.hint": "Hãy yêu cầu điều mà một plugin do ai đó làm có thể làm được.",
+  "cap.plugins.text": "Plugin do mọi người làm mở rộng những gì bạn có thể làm ở đây: kiểm tra những gì được gửi đi, đếm số từ dưới mỗi câu trả lời. Mỗi plugin chạy tách biệt khỏi tệp và khóa của bạn, và chỉ làm những gì bạn đã cho phép khi thêm nó.",
   "cap.check.text": "{name} đối chiếu từng nhận định trong câu trả lời với nguồn được trích, và cho bạn thấy những gì nguồn không ủng hộ.",
   "cap.since.text": "Khi bạn quay lại, một bản tóm tắt ngắn những gì mới trong các dịch vụ đã kết nối. Chỉ đọc, và không đọc gì khi thẻ này đóng.",
   "cap.names.text": "Đặt cho trợ lý của một dự án một cái tên riêng, cùng vài lời về cách nó nên cư xử.",

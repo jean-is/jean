@@ -708,7 +708,7 @@ function data() {
 }
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'plugins' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
  * @property {number} at       its place in the menu, lowest first
  * @property {string} label    its name in the menu
@@ -810,12 +810,12 @@ class Settings extends Element {
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image', plugins: 'bolt',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },

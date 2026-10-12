@@ -482,6 +482,7 @@ function actions(turn, text) {
       aria-label=${t(isSpeaking ? 'action.stopReading' : 'action.readAloud')}
       @click=${() => toggleSpeech(turn.at, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
     <app-receipt .turn=${turn} .text=${text}></app-receipt>
+    ${slots('answer').map((entry) => entry.draw({ text, at: turn.at }))}
     ${when(turn.end ?? turn.at)}
   </div>`
 }

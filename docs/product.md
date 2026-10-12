@@ -27,6 +27,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
 | Look (`ui/looks/`, D111, D120) | Theme (fifteen in a gallery, Human first and to start); light or dark is separate |
+| Extension, add-on, mod | Plugin (D296) |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
 

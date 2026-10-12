@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "name": "word-count",
+  "version": "1.0.0",
+  "title": "Word count",
+  "title-fr": "Nombre de mots",
+  "description": "Counts the words of each answer.",
+  "author": { "name": "Ada" },
+  "main": "main.js",
+  "rights": ["watch", "draw", "notify", "refuse"]
+}

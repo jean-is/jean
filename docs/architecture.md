@@ -75,9 +75,9 @@ app/              what a deploy serves, as written (D243); the docs' paths to Je
                   looks/<id>.css (the other themes)
   caps/<id>/      one folder per capability: files made backup brain-local voice reflexes memory projects skills search
                   connections live helpers check since names routines flows find browser ask you folders sync computer math
-                  charts scores machine slides layouts receipt certificates
+                  charts scores machine slides layouts receipt certificates plugins
   locales/        <lang>.json for the 33 languages, dialogs/<lang>.json, and the parts that load with a capability:
-                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ receipt/ certificates/ search/ (D97)
+                  browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ receipt/ certificates/ search/ plugins/ (D97)
   fonts/          the display font
   icons/          the icon, and the PNGs installs need, drawn from it (D131)
   screenshots/    the welcome screen, for the install dialog (D168)
@@ -170,6 +170,18 @@ No hook makes a reserved action (passwords, payments) less guarded than the rule
 
 **Slots.** `slots(name)` (`ui/caps.js`) gives what each loaded capability has in a slot, `{ at, draw }`, lowest `at` first: `views`, the header's end (the folder, the terminal, the browser, a task's flow); `main`, in place of the welcome (flow mode); `above`, above the box (the folder's question); `add`, the + menu (a folder, flow mode; the screen's capture is Jean's own, at 2); `activity`, under a task's activity (as a flow); `settings`, a section of Settings with its `id`, `label`, `icon` and `also` (Connections, Web search, the Computer), placed among Jean's own by `at`; `brains` and `data`, a part of Settings › Brains (pictures) and Your data (Sync).
 
+**Plugins** (`caps/plugins/`, D296) reach the same points from outside. Each one turned on runs in a frame of `sandbox.html` of its own (`sandbox="allow-scripts"`, no network), where `plugin-worker.js` imports its module from a blob and calls its `register(on, $)`. Messages are all it has:
+
+| Jean sends | The plugin answers |
+|---|---|
+| `start` (its code) | `started`, with what it hooks and the slots it draws in, or `failed` |
+| `event` (a hook's index, the event as plain data) | `next`, as often as it goes on, each answered with the rest of the chain's result; then `done` with its own, or `threw` |
+| `draw` (a slot, its props) | `drawn`, a tree |
+| `press` (a button's action) | — |
+| `answer` (to `next` or `store`) | `store` (a key, and a value to keep), `notify`, `redraw`, at any time |
+
+`proxy()` in `plugins.js` makes each of its hooks one of Jean's, in the user's tier: it sends the event, passes a changed one on only with `change`, and keeps an answer only within the plugin's rights (`allowed()`: on `tool.check`, more careful is `refuse`'s, looser `loosen`'s, unless the organisation set the kind's rule; elsewhere, `change`'s or, a refusal, `refuse`'s). It waits 5 s of the plugin's own time (`call()`, held still while `next` runs). `element()` draws a tree as text, buttons, rows and Markdown, at most 8 deep and 50 wide; the trees are kept by plugin, slot and key until it asks to `redraw`. `manifest.js`, pure, reads `plugin.json` and the address it comes from.
+
 ## Brain ladder
 
 1. **On this device:** Gemma 4 E2B, q4f16, through Transformers.js on WebGPU: native tool calling, 140+ languages, image and audio input. About 3.1 GB for text, downloaded once with consent; the image and audio encoders follow when first needed. Offered only where it runs: WebGPU with `shader-f16`, 3–5 GB of memory while answering, enough free storage (D42). The download screen offers a free account alongside.
@@ -234,6 +246,7 @@ Follow-ups are one yes/no question each rather than one choice, because several 
   settings.json                  defaults ← user ← policy (D30)
   instructions.md                global, written by the user
   memory.md                      global, curated by Jean: "- line <!-- at=… by=… conversation=… -->" (D79)
+  plugins/<name>/                plugin.json and its module, as they came, and data.json, what it keeps (D296)
   skills/<name>/SKILL.md         global skills (metadata: format, author, created; source and digest when from elsewhere;
                                  blocks, the kinds of block it writes that are drawn as widgets, D196; title-<lang> and
                                  text-<lang>, what it is called in each language, D222; any other kept as it came)
@@ -329,6 +342,7 @@ Its relay, inline under `'unsafe-inline'` (a hash would turn that keyword off), 
 - **A map** (D291) asks Jean, through the relay's frame, for MapLibre and for every address it needs, which Jean fetches from the map service alone, once maps are allowed; the page's own policy stays as it was.
 - **A page in an answer** (D289) is framed the same way, under the policy of a page whose scripts are data. Sent with `open`, the relay keeps it open and writes the rest as Jean sends it, closing it once it is whole; it says how tall it is (a `ResizeObserver` on its root) and gives it `sendPrompt(text)` before writing it, which Jean takes only from that frame, on a click of the user's.
 - **Copying** needs no switch: `allow` always has `clipboard-write *`, and `execCommand('copy')` works on a click anyway.
+- **Plugins** (D296) run in frames of `sandbox.html`, one each, as the Computer does: an opaque origin, no network, nothing of Jean's but the messages Jean sends.
 - **Saving goes through Jean.** The sandbox never has `allow-downloads` (WebKit takes a frame's download for a navigation, which `frame-src 'self'` refuses). The relay watches `URL.createObjectURL` before the page runs, and a `download` link to a `blob:` or `data:` address, clicked by the user or the page's code, hands the file to Jean, which saves it when Save files is on and the user has just clicked (`navigator.userActivation`).
 - **No WebRTC** (D267). It sends to whatever server it names, whatever the policy says (no browser knows `webrtc 'block'`), so the relay deletes `RTCPeerConnection` and its prefixed names from the page's window before writing the page. That window is the only one the page reaches: a frame it opens gets an opaque origin of its own from the sandbox, so its window throws a `SecurityError`, pop-ups are refused, and a worker has no `RTCPeerConnection`. `document.open()` keeps the same window.
 - **Nowhere to go:** no form, no pop-up, and `index.html`'s `frame-src 'self'` keeps the frame on Jean's addresses. `test/html.test.js` checks the policy each switch makes, which sites are taken as typed, that `preview.html`'s is the loosest, the relay's order, `frame-src 'self'` and the frame's one sandbox flag.

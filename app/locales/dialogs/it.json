@@ -165,6 +165,8 @@
   "gateway.title": "Gateway",
   "gateway.text": "Alcuni servizi non accettano ancora connessioni da un browser. Si raggiungono tramite un gateway gestito dalla tua organizzazione o da te: inserisci qui il suo indirizzo.",
   "cap.helpers.text": "Per un compito grande, il lavoro viene diviso in parti, ognuna affidata a un aiutante, tutte nello stesso momento. Approvi tu ciò che fanno, una scheda alla volta.",
+  "cap.plugins.hint": "Chiedi qualcosa che un plugin fatto da qualcuno potrebbe fare.",
+  "cap.plugins.text": "I plugin fatti dalle persone ampliano ciò che puoi fare qui: un controllo su ciò che viene inviato, un conteggio sotto ogni risposta. Ognuno funziona a parte rispetto ai tuoi file e alle tue chiavi, e fa solo ciò che hai permesso aggiungendolo.",
   "cap.check.text": "Ogni affermazione di una risposta viene confrontata con la fonte citata, e vedi ciò che le fonti non sostengono.",
   "cap.since.text": "Quando torni, un breve riepilogo delle novità dei tuoi servizi collegati. Si limita a leggere, e niente viene letto mentre questa scheda è chiusa.",
   "cap.names.text": "Dai all’assistente di un progetto un nome tutto suo e qualche parola su come deve essere.",

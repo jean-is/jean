@@ -168,6 +168,8 @@
   "gateway.title": "Brama",
   "gateway.text": "Niektóre usługi nie przyjmują jeszcze połączeń z przeglądarki. Można do nich dotrzeć przez bramę prowadzoną przez Twoją organizację lub przez Ciebie: wpisz tu jej adres.",
   "cap.helpers.text": "Przy dużym zadaniu praca dzieli się na części, każdą dla pomocnika, wszystkie naraz. Zatwierdzasz, co robią, karta po karcie.",
+  "cap.plugins.hint": "Poproś o coś, co mogłaby zrobić wtyczka, którą ktoś zrobił.",
+  "cap.plugins.text": "Wtyczki robione przez ludzi poszerzają to, co możesz tu zrobić: sprawdzanie tego, co jest wysyłane, liczenie pod każdą odpowiedzią. Każda działa z dala od twoich plików i kluczy i robi tylko to, na co pozwoliłeś, dodając ją.",
   "cap.check.text": "Każde stwierdzenie w odpowiedzi jest sprawdzane ze wskazanym źródłem, a ty widzisz, czego źródła nie potwierdzają.",
   "cap.since.text": "Po twoim powrocie krótkie podsumowanie nowości w połączonych usługach. Tylko odczyt, i nic, gdy ta karta jest zamknięta.",
   "cap.names.text": "Nadaj asystentowi projektu własne imię i kilka słów o tym, jaki ma być.",

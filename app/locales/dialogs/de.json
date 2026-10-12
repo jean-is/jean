@@ -162,6 +162,8 @@
   "gateway.title": "Gateway",
   "gateway.text": "Manche Dienste nehmen noch keine Verbindungen aus dem Browser an. Über ein Gateway, das deine Organisation oder du selbst betreibst, erreicht {name} sie: Gib hier seine Adresse ein.",
   "cap.helpers.text": "Bei einer großen Aufgabe teilt {name} die Arbeit in Teile auf, jeden für einen Helfer, alle gleichzeitig. Du gibst frei, was sie tun, eine Karte nach der anderen.",
+  "cap.plugins.hint": "Bitte um etwas, das ein Plugin, das jemand gemacht hat, tun könnte.",
+  "cap.plugins.text": "Plugins, die Menschen machen, erweitern, was du hier tun kannst: eine Prüfung dessen, was gesendet wird, eine Zählung unter jeder Antwort. Jedes läuft getrennt von deinen Dateien und Schlüsseln und tut nur, was du beim Hinzufügen erlaubt hast.",
   "cap.check.text": "{name} gleicht jede Aussage einer Antwort mit der zitierten Quelle ab und zeigt dir, was die Quellen nicht stützen.",
   "cap.since.text": "Wenn du zurückkommst, ein kurzer Überblick, was es in deinen verbundenen Diensten Neues gibt. Es wird nur gelesen, und nichts, solange dieser Tab geschlossen ist.",
   "cap.names.text": "Gib dem Assistenten eines Projekts einen eigenen Namen und ein paar Worte dazu, wie er sein soll.",
