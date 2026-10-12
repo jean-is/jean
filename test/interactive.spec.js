@@ -38,9 +38,12 @@ test('a page runs in the answer as it is written, sends what it works out on a c
   const tall = await inside.locator('html').evaluate((element) => /** @type {HTMLElement} */ (element).offsetHeight)
   await expect.poll(() => frame.evaluate((element) => element.clientHeight)).toBe(tall)
   await expect(inside.locator('html')).toHaveAttribute('dir', 'ltr')
-  const text = await inside.locator('p').first().evaluate((element) => getComputedStyle(element).color)
-  const soft = await page.evaluate(() => { const probe = document.createElement('p'); probe.style.color = 'var(--ink-soft)'; document.body.append(probe); const color = getComputedStyle(probe).color; probe.remove(); return color })
-  expect(text).toBe(soft)
+  // The room's colours, under their own names and under those brains guess, light fallbacks and all.
+  const room = (/** @type {string} */ token) => page.evaluate((name) => { const probe = document.createElement('p'); probe.style.color = `var(${name})`; document.body.append(probe); const color = getComputedStyle(probe).color; probe.remove(); return color }, token)
+  expect(await inside.locator('p').first().evaluate((element) => getComputedStyle(element).color)).toBe(await room('--ink-soft'))
+  expect(await inside.locator('label').first().evaluate((element) => getComputedStyle(element).color)).toBe(await room('--ink'))
+  // Its rule came with the first message, and it comes back at the next visit, so pages written show again.
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.unlocked)).toContain('interactive')
 
   // Typed, worked out in the page; sent on a click as the user's next message.
   await inside.locator('#people').fill('3')

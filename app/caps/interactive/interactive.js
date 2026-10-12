@@ -9,8 +9,9 @@
 // charts take the room's light or dark. It is as tall as what it shows, and speaks to Jean on a click
 // of the user's only: `sendPrompt(text)` sends the text as the user's next message, as a follow-up
 // does, and a link opens in a new tab. With Run its code off, it is code. Copy puts its source on the
-// clipboard. Loaded with the first message, for its rule, or by the first page a conversation holds;
-// written again in a new theme, look, language or policy, as a chart is drawn again.
+// clipboard. Loaded with the first message, for its rule, then at each visit, so that pages written
+// before show again, or by the first page a conversation holds; written again in a new theme, look,
+// language or policy, as a chart is drawn again.
 import { html, nothing, render } from 'lit-html'
 import { computed, effect } from '@preact/signals-core'
 import { app, effective, theme, notify, send } from '../../ui/state.js'
@@ -26,7 +27,7 @@ await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.cs
 
 register({
   id: 'interactive',
-  rules: ["A tool or something to explore can be a ```html block, run in the answer: offline, var(--color-*) colours, imports 'echarts', sendPrompt(text) sends a message."],
+  rules: ["A tool or a thing to explore is a ```html block in the answer, not a file: offline, var(--color-*) colours, imports 'echarts', sendPrompt(text) sends a message."],
 })
 // A page needs no skill to declare it (D289): `html` stays among the kinds drawn, however often the room's skills are read again.
 effect(() => { if (!declared.value.has('html')) declared.value = new Set([...declared.value, 'html']) })
@@ -39,6 +40,17 @@ const VARIABLES = Object.entries({
   'color-text-primary': 'ink', 'color-text-secondary': 'ink-soft', 'color-text-tertiary': 'ink-faint', 'color-text-danger': 'danger', 'color-text-inverse': 'on-flame',
   'color-border-primary': 'line-strong', 'color-border-secondary': 'line', 'color-background-secondary': 'glass', 'color-background-inverse': 'flame',
   'color-ring-primary': 'flame', 'font-sans': 'sans', 'font-mono': 'mono', 'border-radius-lg': 'radius',
+})
+/**
+ * The names brains give them when they guess, as Claude's do, often with light colours to fall back
+ * on: the room's colours too, so a page they write is readable in the dark. Its background is the answer's,
+ * and its accent the room's, as dark in light and dark alike, as brains write white on it.
+ */
+const ALIASES = Object.entries({
+  'color-text': 'var(--color-text-primary)', 'color-text-muted': 'var(--color-text-secondary)', 'color-muted': 'var(--color-text-secondary)',
+  'color-border': 'var(--color-border-primary)', 'color-surface': 'var(--color-background-secondary)', 'color-primary': 'oklch(from var(--color-ring-primary) 0.55 c h)',
+  'color-accent': 'var(--color-primary)', 'color-on-primary': 'white', 'color-danger': 'var(--color-text-danger)',
+  'color-background-primary': 'transparent', 'color-background': 'transparent', 'color-bg': 'transparent',
 })
 
 /**
@@ -61,14 +73,15 @@ export default { ...m, init }`
 
 /**
  * What goes ahead of the page: its language and direction, ECharts, the room's colours and type, and
- * controls in its style. A frame whose colour scheme isn't the room's would be opaque.
+ * controls in its style. A frame whose colour scheme isn't the room's would be opaque; the page's own
+ * root can't give these names other colours.
  * @param {CSSStyleDeclaration} style @param {string} charts the address of ECharts' stand-in
  */
 function head(style, charts) {
   const lang = locale.peek()
-  const variables = VARIABLES.map(([name, own]) => `--${name}: ${style.getPropertyValue(`--${own}`).trim()};`).join(' ')
+  const variables = [...VARIABLES.map(([name, own]) => [name, style.getPropertyValue(`--${own}`).trim()]), ...ALIASES].map(([name, value]) => `--${name}: ${value} !important;`).join(' ')
   return `<html lang="${lang}" dir="${dir(lang)}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script><style>
-:root { color-scheme: ${theme.peek()}; ${variables} --border-radius-md: calc(var(--border-radius-lg) / 2); accent-color: var(--color-ring-primary); }
+:root { color-scheme: ${theme.peek()}; ${variables} --border-radius-md: calc(var(--border-radius-lg) / 2) !important; accent-color: var(--color-ring-primary); }
 body { margin: 0; padding: 0.25rem; color: var(--color-text-primary); font: 1rem/1.5 var(--font-sans); overflow-wrap: anywhere; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button, select, textarea, input:not([type=range], [type=checkbox], [type=radio], [type=color]) { padding: 0.4em 0.8em; border: 1px solid var(--color-border-primary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); }

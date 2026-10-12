@@ -262,11 +262,11 @@ const CHART = 'Here are the sales:\n\n```echarts\n{"title":{"text":"Croissants s
 const JIG = 'Here is a jig:\n\n```abc\nX:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/8=116\nR:jig\nK:G\nGFG BAB | gfg d2B | GFG BAB | d2B G2B |\nGFG BAB | gfg d2B | c2c B2A | GFG B2G :|\n```\n\nPlay it lightly.'
 /** A deck, as the Slides skill writes it in Marp's Markdown (D200): numbered, a title slide, a table, its colours swapped on the last, a note for the speaker. */
 const DECK = 'Here are your slides:\n\n```marp\n---\npaginate: true\nfooter: Bakery · 2027\n---\n\n<!-- _class: lead -->\n# A second oven\n\n---\n\n## What it costs\n\n<!-- Say it pays back in 14 months. -->\n\n| | Cost |\n|---|---:|\n| Oven | €18,000 |\n\n---\n\n<!-- _class: invert -->\n## Paid back in 14 months\n```\n\nThree slides on the new oven.'
-/** A page in an answer, as the Interactive skill writes it (D289): the room's colours, a share worked out as it is typed, a button that sends it on, and a fetch that must not get out. */
+/** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a button that sends it on, and a fetch that must not get out. */
 const SPLITTER = `Here is a bill splitter:
 
 \`\`\`html
-<style>.fields { display: flex; flex-wrap: wrap; gap: 0.75rem; } p { color: var(--color-text-secondary); }</style>
+<style>.fields { display: flex; flex-wrap: wrap; gap: 0.75rem; color: var(--color-text, #222); } p { color: var(--color-text-secondary); }</style>
 <div class="fields"><label>Bill <input id="bill" type="number" value="120"></label> <label>People <input id="people" type="number" value="4"></label></div>
 <p>Each pays <output id="each"></output></p>
 <button id="ask" type="button">Ask how to round it</button>

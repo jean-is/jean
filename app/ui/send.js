@@ -173,7 +173,8 @@ async function context() {
 async function prepare(text, brain, records, notes = []) {
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
   // so do questions, so the brain can ask from the start (D146), noting the user's name (D150), and
-  // the receipt, so the browser's record of what the page reached covers the first answer (D252).
+  // the receipt, so the browser's record of what the page reached covers the first answer (D252), and
+  // pages, for their rule (D289); each comes back at the next visit, so pages already written show again.
   await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('receipt'), unlock('interactive')])
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47).

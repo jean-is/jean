@@ -60,7 +60,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
-const ON_SIGHT = ['charts', 'scores', 'slides', 'interactive']
+const ON_SIGHT = ['charts', 'scores', 'slides']
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
 export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6 })
