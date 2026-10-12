@@ -16,10 +16,13 @@ import { fileText } from '../../core/files.js'
 import { claimsIn, passage, sourceIn, request, verdicts, CHECKER } from './claims.js'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 /** @import { Envelope, BrainConfig } from '../../core/types.js' */
 /** @import { Turn } from '../../core/events.js' */
 /** @typedef {{ text: string, sources: number[], verdict: import('./claims.js').Verdict }} Checked */
+
+await styleSheet(new URL('check.css', import.meta.url))
 
 /** The answers being checked now, by their turn. */
 const checking = signal(/** @type {string[]} */ ([]))
