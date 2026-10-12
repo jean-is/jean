@@ -35,7 +35,9 @@ const waits = () => WAITS.map((ms) => Math.round(ms * (0.5 + Math.random() / 2))
 const entry = (b) => ({ id: 'eval', provider: 'openrouter', api: /** @type {'openai'} */ ('openai'), baseURL: PROVIDERS.openrouter.baseURL, model: b.model })
 
 // The requests in flight at once in this process to each provider, each until its reply has streamed whole; the rest
-// wait their turn here, since a provider refuses those past what it takes (DeepInfra about four of this brain's).
+// wait their turn here, since a provider refuses those past what it takes (DeepInfra about four of this brain's). Those
+// that finish what was begun wait at the front: an answer's next step, a request asked again, a cut reply's halves;
+// behind the hundreds every_page asks at once, each of an answer's steps waited about an hour.
 let size = 4
 /** @typedef {{ taken: boolean, take: (provider: string) => void }} Waiter */
 /** @type {Map<string, { room: number, waiting: Waiter[] }>} */
@@ -46,12 +48,16 @@ export const setRequests = (n) => { size = n }
 const lane = (provider) => lanes.get(provider) ?? /** @type {{ room: number, waiting: Waiter[] }} */ (lanes.set(provider, { room: size, waiting: [] }).get(provider))
 /**
  * A place among the requests in flight to whichever of these providers has one first, and the function that gives it up.
- * @param {string[]} providers @returns {Promise<{ provider: string, release: () => void }>}
+ * @param {string[]} providers @param {boolean} [front] waits at the front
+ * @returns {Promise<{ provider: string, release: () => void }>}
  */
-async function place(providers) {
+async function place(providers, front = false) {
   const free = providers.find((p) => lane(p).room > 0)
   if (free !== undefined) lane(free).room--
-  const provider = free ?? await new Promise((resolve) => { const waiter = { taken: false, take: resolve }; for (const p of providers) lane(p).waiting.push(waiter) })
+  const provider = free ?? await new Promise((resolve) => {
+    const waiter = { taken: false, take: resolve }
+    for (const p of providers) lane(p).waiting[front ? 'unshift' : 'push'](waiter)
+  })
   return { provider, release: () => {
     const { waiting } = lane(provider)
     // A waiter in several lanes is left behind in the others once one has taken it.
@@ -68,13 +74,14 @@ const IDLE = 180000
  * the brain's own, or for a helper's request whichever of its own and its helpers has a place first, but the one
  * it avoids (the last to refuse it: one that refuses at once always has a place, and would take every attempt).
  * @param {{ provider?: string, helpers?: string[] }} b @param {{ queued: number }} [timing] adds the time spent waiting for a place
- * @param {Record<string, any>} [body] more for the request's body @param {{ avoid: string, used: string }} [helper] a helper's request, told which provider took it
+ * @param {Record<string, any>} [body] more for the request's body
+ * @param {{ avoid: string, used: string, front: boolean }} [helper] a helper's request, told which provider took it; the loop's wait at the front
  * @returns {typeof streamChat}
  */
 const streamOf = (b, timing = { queued: 0 }, body = {}, helper) => async function* (options) {
   const asked = performance.now()
   const providers = [b.provider ?? '', ...(helper && b.helpers || [])]
-  const { provider, release } = await place(providers.length > 1 ? providers.filter((p) => p !== helper?.avoid) : providers)
+  const { provider, release } = await place(providers.length > 1 ? providers.filter((p) => p !== helper?.avoid) : providers, helper?.front ?? true)
   if (helper) helper.used = provider
   timing.queued += performance.now() - asked
   // A reply that stops coming is given up after a while, to be asked again, rather than keeping its place for good.
@@ -108,11 +115,12 @@ const LONGEST = 16384
  * provider has a place first but the last to refuse it (DekaLLM serves this brain in fp8, at about twice DeepInfra's
  * pace, but its shared pool refuses about half), and whether it was cut at its longest. Without reasoning: DeepInfra
  * sometimes gives this brain's as text, and it fills the 16,384 tokens a reply may have there.
- * @param {string} system @param {string} content @param {string} apiKey @returns {Promise<{ text: string, cut: boolean }>}
+ * @param {string} system @param {string} content @param {string} apiKey @param {boolean} [front] waits at the front, as it does when asked again
+ * @returns {Promise<{ text: string, cut: boolean }>}
  */
-async function complete(system, content, apiKey) {
+async function complete(system, content, apiKey, front = false) {
   const retries = waits()
-  const helper = { avoid: '', used: '' }
+  const helper = { avoid: '', used: '', front }
   for (let attempt = 0; ; attempt++) {
     try {
       let text = ''
@@ -124,7 +132,7 @@ async function complete(system, content, apiKey) {
       return { text, cut }
     } catch (error) {
       if (attempt === retries.length) throw error
-      helper.avoid = helper.used
+      Object.assign(helper, { avoid: helper.used, front: true })
       await new Promise((resolve) => setTimeout(resolve, retries[attempt]))
     }
   }
@@ -136,13 +144,14 @@ const NONE_ONLY = /^\W*none\W*$/i
  * A helper's reply about pages first–last, each headed [[page n]] after the opening given; a reply the provider cut
  * is asked again of each half of the pages, and the halves' replies joined, those saying none left out.
  * @param {string} system @param {string} opening @param {string[]} pages @param {number} first @param {number} last @param {string} apiKey
+ * @param {boolean} [front] waits at the front, as halves do
  * @returns {Promise<string>}
  */
-async function overPages(system, opening, pages, first, last, apiKey) {
-  const { text, cut } = await complete(system, `${opening}${pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')}`, apiKey)
+async function overPages(system, opening, pages, first, last, apiKey, front = false) {
+  const { text, cut } = await complete(system, `${opening}${pages.slice(first - 1, last).map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')}`, apiKey, front)
   if (!cut || first === last) return text.trim()
   const middle = Math.floor((first + last) / 2)
-  const halves = (await Promise.all([overPages(system, opening, pages, first, middle, apiKey), overPages(system, opening, pages, middle + 1, last, apiKey)])).filter((half) => !NONE_ONLY.test(half))
+  const halves = (await Promise.all([overPages(system, opening, pages, first, middle, apiKey, true), overPages(system, opening, pages, middle + 1, last, apiKey, true)])).filter((half) => !NONE_ONLY.test(half))
   return halves.join('\n') || 'none'
 }
 
