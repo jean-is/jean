@@ -93,6 +93,7 @@
   "skills.text": "Kroki zapisane z powtarzanych próśb, wykonywane, gdy prośba pasuje.",
   "skills.none": "Na razie brak umiejętności. Gdy poprosisz o to samo po raz trzeci, otrzymasz propozycję.",
   "skills.add": "Dodaj umiejętność z pliku",
+  "skills.addOne": "Dodaj umiejętność",
   "skills.invalid": "Ten plik nie jest umiejętnością.",
   "skills.added": "Dodano umiejętność „{title}”.",
   "skills.steps": "Kroki",

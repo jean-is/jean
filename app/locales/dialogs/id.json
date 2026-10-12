@@ -87,6 +87,7 @@
   "skills.text": "Langkah yang disimpan dari permintaan berulang, diikuti setiap kali ada permintaan yang cocok.",
   "skills.none": "Belum ada keterampilan. Saat Anda meminta hal yang sama untuk ketiga kalinya, satu akan ditawarkan.",
   "skills.add": "Tambah keterampilan dari file",
+  "skills.addOne": "Tambah keterampilan",
   "skills.invalid": "File ini bukan keterampilan.",
   "skills.added": "Keterampilan “{title}” ditambahkan.",
   "skills.steps": "Langkah",

@@ -1,8 +1,8 @@
 // Frozen prompts, system notes, shared files in messages, and replayed thinking (D46, D49).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { foldTurns, linkedFiles, noteRecord, toChatMessages, userRecords } from '../app/core/events.js'
-import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState } from '../app/core/prompt.js'
+import { foldTurns, linkedFiles, noteRecord, userRecords } from '../app/core/events.js'
+import { buildSystemPrompt, changeNotes, frozenPrompt, promptRecord, promptState, toChatMessages } from '../app/core/prompt.js'
 import { runTurn } from '../app/core/loop.js'
 import { documentPart, joinPages } from '../app/core/files.js'
 

@@ -27,6 +27,22 @@ span.complete-logo { background: oklch(from var(--flame) l c h / 0.14); color: v
 .complete-aside > span { overflow: hidden; text-overflow: ellipsis; }
 .complete-aside .icon { flex: none; inline-size: 1rem; block-size: 1rem; color: var(--flame); }
 .complete-detail { grid-column: 2 / -1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.82rem; color: var(--ink-soft); }
+/* The menus beside + (ui/plus.js, D292), which list the room's skills and connections drawn as here: beside their row, lit while
+   open, from its top down, or else up from its foot, or on its other side; a long list scrolls, a long name ends in an ellipsis. */
+#add-menu [aria-expanded='true'] { anchor-name: --add-sub; }
+.menu [aria-expanded='true'] { background: var(--line); }
+.add-sub {
+  position-anchor: --add-sub;
+  position-area: inline-end span-block-end;
+  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  margin-block: -0.4rem 0;
+  margin-inline: 0.6rem 0;
+  max-block-size: min(70dvh, 34rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.add-sub .complete-label { max-inline-size: 16rem; }
+.add-sub .complete-logo { flex: none; }
 @media (forced-colors: active) {
   .complete-option[aria-selected='true'] { outline: 2px solid Highlight; }
 }

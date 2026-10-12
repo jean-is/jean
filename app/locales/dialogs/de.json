@@ -89,6 +89,7 @@
   "skills.text": "Schritte, festgehalten aus wiederholten Anfragen, befolgt, sobald eine Anfrage passt.",
   "skills.none": "Noch keine Fähigkeiten. Wenn du zum dritten Mal etwas Ähnliches fragst, wird dir eine angeboten.",
   "skills.add": "Fähigkeit aus einer Datei hinzufügen",
+  "skills.addOne": "Fähigkeit hinzufügen",
   "skills.invalid": "Diese Datei ist keine Fähigkeit.",
   "skills.added": "Fähigkeit „{title}“ hinzugefügt.",
   "skills.steps": "Schritte",

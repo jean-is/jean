@@ -710,6 +710,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 @supports not (anchor-name: --add) { .profile-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
 .menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; }
 .submenu > .icon:last-child { inline-size: 1rem; rotate: -90deg; }
+.submenu > .icon + .icon { margin-inline-start: auto; }
 :dir(rtl) .submenu > .icon:last-child { rotate: 90deg; }
 .profile-menu .back > .icon { rotate: 180deg; }
 .profile-menu .back { font-weight: 600; }

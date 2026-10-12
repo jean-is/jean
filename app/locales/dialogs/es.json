@@ -91,6 +91,7 @@
   "skills.text": "Pasos guardados a partir de peticiones que repites, que se siguen cuando una petición coincide.",
   "skills.none": "Aún no hay habilidades. Cuando pidas lo mismo por tercera vez, se te ofrecerá una.",
   "skills.add": "Añadir una habilidad desde un archivo",
+  "skills.addOne": "Añadir una habilidad",
   "skills.invalid": "Este archivo no es una habilidad.",
   "skills.added": "Habilidad «{title}» añadida.",
   "skills.steps": "Pasos",

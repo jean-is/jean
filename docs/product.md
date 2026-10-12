@@ -161,6 +161,8 @@ Typed at the start of a word, / and @ open a menu above the box that narrows as 
 
 What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jean is told what each one names.
 
+Once Skills or Connections is found, + in the box has a row for each, which opens a menu beside it on hover or when pressed (D292): the project's skills, by name, or its connections. One picked goes in the message as / would put it, and the menu's last line adds another, in Settings.
+
 ## Brains: picker and Auto
 
 A chip in the message box, beside its send button, reads **Auto ▾**, or the name of the brain picked by hand (its provider is in the picker). It opens a menu above it, each choice on one line, an icon and a name, and the one answering ticked:

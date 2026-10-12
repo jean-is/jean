@@ -1,7 +1,9 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
-// + (files, a folder once Folders is on, a capture of the screen) and dictation; then the brain, and one button to go.
+// + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections) and dictation; then
+// the brain, and one button to go.
 import { html, nothing } from 'lit-html'
+import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, SHORTCUTS } from './state.js'
@@ -12,6 +14,11 @@ import { icons } from './icons.js'
 import { dictation, toggleDictation, live } from './dictation.js'
 
 const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening', thinking: 'activity.thinking', speaking: 'live.speaking' }
+
+/** The menu shown beside a row of +, the room's skills or connections (ui/plus.js, D292). @type {import('@preact/signals-core').Signal<{ id: string, view: () => unknown } | null>} */
+export const sub = signal(null)
+/** Pointed at or pressed, a row of + opens its menu beside it. @param {Event} event */
+const openSub = (event) => import('./plus.js').then((module) => module.open(event))
 
 class Composer extends Element {
   render() {
@@ -31,10 +38,11 @@ class Composer extends Element {
       : working ? (downloading ? t('dictation.downloading', { percent: Math.round((voice.progress ?? 0) * 100) }) : t(`dictation.${voice.state}`))
       : ''
     const files = !isDenied('files')
-    // A menu when + adds more than files: on a new task, flow mode too (D218).
+    // A menu when + adds more than files: on a new task, flow mode too (D218); a menu beside it of skills, and of connections, once found (D292).
     const folders = loaded.value.has('folders')
     const flows = loaded.value.has('flows') && !app.current.value?.records.length
-    const menu = CAPTURE || folders || flows
+    const pages = /** @type {const} */ (['skills', 'connections']).filter((id) => loaded.value.has(id))
+    const menu = CAPTURE || folders || flows || pages.length
     const add = t(menu ? 'composer.add' : 'files.attach')
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
@@ -68,6 +76,8 @@ class Composer extends Element {
               ${CAPTURE ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` : nothing}
               ${flows ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
                 @click=${() => import('../caps/flows/flows.js').then((module) => module.edit())}>${icons.flow}${t('cap.flows.name')}</button>` : nothing}
+              ${pages.map((id) => html`<button type="button" class="submenu" data-page=${id} aria-expanded=${sub.value?.id === id} @click=${openSub} @pointerenter=${openSub}>
+                ${icons[id === 'skills' ? 'scroll' : 'plug']}${t(`cap.${id}.name`)}${icons.chevron}</button>`)}${sub.value?.view()}
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}

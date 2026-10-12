@@ -91,6 +91,7 @@
   "skills.text": "Passaggi salvati da richieste che ripeti, seguiti quando una richiesta corrisponde.",
   "skills.none": "Ancora nessuna abilità. Quando chiederai la stessa cosa per la terza volta, te ne verrà proposta una.",
   "skills.add": "Aggiungi un’abilità da un file",
+  "skills.addOne": "Aggiungi un’abilità",
   "skills.invalid": "Questo file non è un’abilità.",
   "skills.added": "Abilità «{title}» aggiunta.",
   "skills.steps": "Passaggi",

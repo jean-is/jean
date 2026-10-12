@@ -91,6 +91,7 @@
   "skills.text": "Des étapes enregistrées à partir de demandes répétées, suivies dès qu’une demande correspond.",
   "skills.none": "Pas encore de compétence. Quand vous demanderez la même chose une troisième fois, on vous en proposera une.",
   "skills.add": "Ajouter une compétence depuis un fichier",
+  "skills.addOne": "Ajouter une compétence",
   "skills.invalid": "Ce fichier n’est pas une compétence.",
   "skills.added": "Compétence « {title} » ajoutée.",
   "skills.steps": "Étapes",

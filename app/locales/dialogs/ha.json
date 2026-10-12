@@ -89,6 +89,7 @@
   "skills.text": "Matakai da aka ajiye daga buƙatun da kake maimaitawa, ana bin su idan wata buƙata ta dace.",
   "skills.none": "Babu ƙwarewa tukuna. Idan ka nemi abu ɗaya karo na uku, za a ba ka shawarar ɗaya.",
   "skills.add": "Ƙara ƙwarewa daga fayil",
+  "skills.addOne": "Ƙara ƙwarewa",
   "skills.invalid": "Wannan fayil ba ƙwarewa ba ne.",
   "skills.added": "An ƙara ƙwarewar “{title}”.",
   "skills.steps": "Matakai",
