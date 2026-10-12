@@ -44,6 +44,15 @@ let size = 4
 const lanes = new Map()
 /** @param {number} n */
 export const setRequests = (n) => { size = n }
+/** @type {Map<string, Record<'done' | 'refused' | 'idle' | 'failed', number>>} */
+const tally = new Map()
+/** @param {string} provider @param {'done' | 'refused' | 'idle' | 'failed'} how */
+const count = (provider, how) => {
+  const t = tally.get(provider) ?? tally.set(provider, { done: 0, refused: 0, idle: 0, failed: 0 }).get(provider)
+  if (t) t[how]++
+}
+/** Each provider's requests in flight and waiting, and how those asked so far ended, for a run's progress. */
+export const queues = () => [...lanes].map(([provider, { room, waiting }]) => ({ provider: provider || 'any', inFlight: size - room, waiting: waiting.filter((w) => !w.taken).length, ...tally.get(provider) }))
 /** @param {string} provider */
 const lane = (provider) => lanes.get(provider) ?? /** @type {{ room: number, waiting: Waiter[] }} */ (lanes.set(provider, { room: size, waiting: [] }).get(provider))
 /**
@@ -97,8 +106,13 @@ const streamOf = (b, timing = { queued: 0 }, body = {}, helper) => async functio
       wait()
       yield event
     }
+    count(provider, 'done')
   } catch (error) {
-    if (idle.signal.aborted && !options.signal?.aborted) throw new LLMError(`Nothing came for ${IDLE / 60000} minutes`, { code: 'network' })
+    if (idle.signal.aborted && !options.signal?.aborted) {
+      count(provider, 'idle')
+      throw new LLMError(`Nothing came for ${IDLE / 60000} minutes`, { code: 'network' })
+    }
+    count(provider, error instanceof LLMError && error.status === 429 ? 'refused' : 'failed')
     throw error
   } finally {
     clearTimeout(timer)

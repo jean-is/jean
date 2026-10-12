@@ -24,7 +24,7 @@ import { verdicts, rows as rowsOf, table, pct } from '../test/documents/report.j
 import { overlap } from '../test/documents/text.js'
 import { execFileSync } from 'node:child_process'
 import { embed, int8 } from '../test/documents/dense.js'
-import { BRAINS, ask, grade, grounded, library, setRequests, summarise } from '../test/documents/answers.js'
+import { BRAINS, ask, grade, grounded, library, queues, setRequests, summarise } from '../test/documents/answers.js'
 import { rng } from '../test/documents/corpus.js'
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url))
@@ -571,7 +571,10 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
       }
     }
   }
+  // Every five minutes, how the requests stand with each provider.
+  const status = setInterval(() => console.log(`\nrequests: ${queues().map((q) => `${q.provider} ${q.inFlight} in flight, ${q.waiting} waiting, ${q.done ?? 0} done, ${q.refused ?? 0} refused, ${q.idle ?? 0} idle, ${q.failed ?? 0} failed`).join('; ')}`), 300000)
   await Promise.all(Array.from({ length: concurrency }, worker))
+  clearInterval(status)
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) await main(process.argv.slice(2))
