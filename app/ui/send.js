@@ -13,7 +13,7 @@ import { fire } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
-import { unlock, contributions } from './caps.js'
+import { unlock, contributions, slots } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
@@ -261,7 +261,9 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   const { brain, meta } = picked
   // What / and @ named in it, told just before it (D199).
   const named = /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : []
-  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named], files)
+  // What the box's modes ask of it (Visual answers, D300), told just before it too.
+  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? []) ?? [])
+  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named, ...modes], files)
   app.draft.value = ''
   if (files === app.attachments.value) app.attachments.value = []
   if (!current) {

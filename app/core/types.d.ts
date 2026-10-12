@@ -164,6 +164,8 @@ export type SystemNoteData =
   | { kind: 'habit', at: string[] }
   /** what / and @ named in the user's next message, by the words in it (D199) */
   | { kind: 'mentions', words: string[] }
+  /** a mode of the box was on for the user's next message: Visual answers, by its skill's name */
+  | { kind: 'mode', mode: string }
   /** the user undid a change made in their folder, by its call (D141) */
   | { kind: 'undone', call: string, path: string }
   /** the user ran a command on the computer, in the terminal (D166) */

@@ -10,3 +10,12 @@ app-page iframe { display: block; box-sizing: content-box; inline-size: 100%; bl
 .diagram app-diagram { display: block; }
 /* With its code off, its code, framed as code is. */
 app-page:has(> pre) { padding: 0; border: 0; }
+/* Visual answers on (./mode.js): pressed at the box's foot, its × to turn it off. */
+.mode-chip { display: inline-flex; align-items: center; gap: 0.35rem; min-inline-size: 0; margin-inline-start: 0.3rem; padding: 0.3rem 0.55rem; border: 1px solid oklch(from var(--flame) l c h / 0.45); border-radius: 999px; background: oklch(from var(--flame) l c h / 0.1); color: var(--ink); font-size: 0.84rem; }
+.mode-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mode-chip .icon { flex: none; inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.mode-chip .icon:last-child { inline-size: 0.8rem; block-size: 0.8rem; color: var(--ink-soft); }
+.mode-chip:hover { border-color: var(--flame); }
+.mode-chip:hover .icon:last-child { color: var(--ink); }
+@media (forced-colors: active) { .mode-chip { border-color: Highlight; } }
+@media (width < 30rem) { .mode-chip span { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); } }

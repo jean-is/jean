@@ -28,12 +28,15 @@ import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
+import { row, chip, notes } from './mode.js'
 
 await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.css', import.meta.url))])
 
 register({
   id: 'interactive',
   rules: ["Bills, loans, recipes, timezones, quizzes, science: end with a working ```html tool, not code: offline, var(--color-*), import 'echarts', sendPrompt(text)."],
+  // Visual answers as a mode of the box (./mode.js, D300): a row of +, then pressed at the box's foot while it is on.
+  slots: { add: { at: 6, draw: row }, modes: { at: 0, draw: chip, notes } },
 })
 // A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
 const KINDS = ['html', 'mermaid', 'geojson']

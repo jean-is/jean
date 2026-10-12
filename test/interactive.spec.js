@@ -194,3 +194,44 @@ test('a map shows once maps are allowed, its addresses fetched by Jean alone; a 
   expect(asked.filter((line) => line.startsWith('page'))).toEqual([])
 })
 
+
+test('Visual answers, a mode + turns on: shown pressed at the box’s foot, its skill’s steps told once in a task, then its name, until it is pressed off', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  /** Asks, then waits for the answer to end. @param {string} text */
+  const asked = async (text) => {
+    await ask(page, text)
+    await expect(page.locator('.msg-user').last()).toHaveText(text)
+    await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+    await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  }
+  await asked('Hello')
+  const told = () => page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return (app.current.value?.records ?? []).flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && update.data.kind === 'mode' ? [update.text] : []))
+  })
+  const chip = page.locator('.composer .mode-chip')
+  await expect(chip).toHaveCount(0)
+  // In +, by the skill's own name; picked, pressed at the box's foot, the keyboard in the box.
+  await page.locator('.composer .add').click()
+  await page.locator('#add-menu').getByRole('button', { name: 'Visual answers' }).click()
+  await expect(chip).toHaveText('Visual answers')
+  await expect(chip).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('#prompt')).toBeFocused()
+  await page.locator('.composer .add').click()
+  await expect(page.locator('#add-menu').getByRole('button', { name: 'Visual answers' })).toHaveAttribute('aria-pressed', 'true')
+  await page.keyboard.press('Escape')
+
+  await asked('Plan my day in Lyon')
+  await asked('And tomorrow')
+  const [first, second] = await told()
+  expect(first).toContain('The user turned on visual answers: for this message, follow the steps of the skill visual:')
+  expect(first).toContain('```geojson')
+  expect(second).toBe('The user turned on visual answers: for this message, follow the steps of the skill visual, given above.')
+
+  // Pressed, it goes, and nothing more is told.
+  await chip.click()
+  await expect(chip).toHaveCount(0)
+  await asked('Thanks')
+  expect(await told()).toHaveLength(2)
+})

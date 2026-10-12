@@ -163,7 +163,7 @@ Typed at the start of a word, / and @ open a menu above the box that narrows as 
 
 What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jean is told what each one names.
 
-Once Skills or Connections is found, + in the box has a row for each, which opens a menu beside it on hover or when pressed (D292): the project's skills, by name, or its connections. One picked goes in the message as / would put it, and the menu's last line adds another, in Settings.
+Once Skills or Connections is found, + in the box has a row for each, which opens a menu beside it on hover or when pressed (D292): the project's skills, by name, or its connections. One picked goes in the message as / would put it, and the menu's last line adds another, in Settings. Once pages in answers are on, + also has Visual answers, a mode (D300): picked, it shows pressed at the foot of the box, and each message asks for maps, diagrams, timelines and checklists where they help, as the ready-made skill of that name does, until it is pressed again.
 
 ## Brains: picker and Auto
 

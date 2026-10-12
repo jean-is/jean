@@ -1,7 +1,7 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
-// + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections) and dictation; then
-// the brain, and one button to go.
+// + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers) and dictation,
+// then the modes + turned on, the brain, and one button to go.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
@@ -83,6 +83,7 @@ class Composer extends Element {
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
               aria-keyshortcuts=${SHORTCUTS.dictation} aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
+            ${slots('modes').map((mode) => mode.draw())}
           </div>
           <app-seal></app-seal>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
