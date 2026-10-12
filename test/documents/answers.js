@@ -99,11 +99,15 @@ const streamOf = (b, timing = { queued: 0 }, body = {}, helper) => async functio
   }
 }
 
+// A helper's reply at its longest, DeepInfra's: DekaLLM allows 235,929, and a reply of its that kept repeating itself
+// would hold its place for an hour.
+const LONGEST = 16384
+
 /**
  * A helper's request (notes, every_page): its whole reply, retried as the loop retries, each time from whichever
- * provider has a place first but the last to refuse it (DekaLLM serves this brain in fp8, at about twice DeepInfra's pace, but its shared pool
- * refuses about half), and whether the provider cut it at its longest. Without reasoning: DeepInfra sometimes gives
- * this brain's as text, and it fills the 16,384 tokens a reply may have there.
+ * provider has a place first but the last to refuse it (DekaLLM serves this brain in fp8, at about twice DeepInfra's
+ * pace, but its shared pool refuses about half), and whether it was cut at its longest. Without reasoning: DeepInfra
+ * sometimes gives this brain's as text, and it fills the 16,384 tokens a reply may have there.
  * @param {string} system @param {string} content @param {string} apiKey @returns {Promise<{ text: string, cut: boolean }>}
  */
 async function complete(system, content, apiKey) {
@@ -113,7 +117,7 @@ async function complete(system, content, apiKey) {
     try {
       let text = ''
       let cut = false
-      for await (const event of streamOf(BRAINS.large, undefined, { reasoning: { enabled: false } }, helper)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }] })) {
+      for await (const event of streamOf(BRAINS.large, undefined, { reasoning: { enabled: false } }, helper)({ brain: entry(BRAINS.large), apiKey, system, messages: [{ role: 'user', content }], maxTokens: LONGEST })) {
         if (event.type === 'text') text += event.delta
         else if (event.type === 'done') cut = event.stopReason === 'max_tokens'
       }
