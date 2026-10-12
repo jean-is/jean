@@ -2,8 +2,8 @@
 // (core/loop.js, core/prompt.js, core/files.js), under one condition or another, and its answer is
 // graded without a brain: the last "Answer:" line against the gold, and whether what it was shown
 // held the evidence. Brains are OpenRouter's: the large one paid and held to one provider, so that
-// every answer comes from the same weights (its helpers' requests go to another serving it), the small one free;
-// the key comes from OPENROUTER_API_KEY.
+// every answer comes from the same weights (its helpers' requests may also go to another serving it), the small
+// one free; the key comes from OPENROUTER_API_KEY.
 import { runTurn } from '../../app/core/loop.js'
 import { buildSystemPrompt } from '../../app/core/prompt.js'
 import { addFile, documentPart, estimateTokens, pagesThatFit, preselect, readTool, searchTool } from '../../app/core/files.js'
@@ -17,12 +17,12 @@ import { fuse, nearest } from './retrieval.js'
 
 /**
  * The brains: one with a large context, and a small one held to the device brain's 32k. The large one's helper
- * requests (notes, every_page) go to the providers named in helpers, which serve the same brain: DekaLLM, in fp8.
- * DeepInfra, refusing 79 requests in 5 minutes and answering 3, keeps what it takes for the answers themselves.
+ * requests (notes, every_page) go to whichever of the providers named in helpers has a place first, which serve the
+ * same brain: DeepInfra, which refuses nearly all for a while at times, and DekaLLM, in fp8, at half its pace.
  * @type {Record<'large' | 'small', { model: string, provider?: string, helpers?: string[], context: number }>}
  */
 export const BRAINS = {
-  large: { model: 'nvidia/nemotron-3-super-120b-a12b', provider: 'DeepInfra', helpers: ['DekaLLM'], context: 262144 },
+  large: { model: 'nvidia/nemotron-3-super-120b-a12b', provider: 'DeepInfra', helpers: ['DeepInfra', 'DekaLLM'], context: 262144 },
   small: { model: 'liquid/lfm-2.5-2.6b:free', context: 32768 },
 }
 
@@ -45,10 +45,10 @@ const sizes = new Map()
 /** @typedef {{ taken: boolean, take: (provider: string) => void }} Waiter */
 /** @type {Map<string, { room: number, waiting: Waiter[] }>} */
 const lanes = new Map()
-/** @param {number} n the brain's own provider's @param {number} [helpers] each helper provider's */
+/** @param {number} n the brain's own provider's @param {number} [helpers] each other helper provider's */
 export const setRequests = (n, helpers = n) => {
   size = n
-  for (const p of BRAINS.large.helpers ?? []) sizes.set(p, helpers)
+  for (const p of BRAINS.large.helpers ?? []) if (p !== BRAINS.large.provider) sizes.set(p, helpers)
 }
 /** @param {string} provider */
 const sizeOf = (provider) => sizes.get(provider) ?? size

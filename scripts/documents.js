@@ -10,7 +10,7 @@
 //        npm run documents -- --answers H4,H5 [--concurrency 3] [--requests 4] [--helpers 4] [--dense e5] [--dollars 10]   the answer eval with OpenRouter's brains (OPENROUTER_API_KEY),
 //        npm run documents -- --answers overall --conditions search,search+meaning   ten questions of each kind at XL, for the targets
 //                                 that many questions at once, their requests that many at a time (the rest queued), the helpers'
-//                                 (notes, every_page) --helpers at a time with each of their own providers, resuming
+//                                 (notes, every_page) --helpers at a time with each provider not the answers' own, resuming
 //                                 where it stopped; it stops itself once the run has spent --dollars, or a free brain's day runs out
 // Generated files are kept in test/documents/.cache/ (never committed), keyed by seed and size.
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises'
