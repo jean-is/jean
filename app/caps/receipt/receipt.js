@@ -9,14 +9,13 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
-import { app, brainLabel, loadModels, updateSettings, notify } from '../../ui/state.js'
+import { app, brainLabel, loadModels, updateSettings, notify, keepRecords } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { deviceKey } from '../../ui/secrets.js'
 import { priceOf, PLANS } from '../../ui/prices.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { appendRecords } from '../../core/conversations.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
 import { t, tParts, locale, formatDuration, useStrings } from '../../core/i18n.js'
@@ -84,7 +83,7 @@ async function note(path, answer) {
 /** Keeps a note in a conversation, and in the one on screen. @param {string} path @param {Record<string, any>} meta */
 async function append(path, meta) {
   const record = metaRecord(app.deviceId, meta)
-  await appendRecords(app.fs, path, [record])
+  await keepRecords(path, [record])
   const current = app.current.peek()
   if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
 }

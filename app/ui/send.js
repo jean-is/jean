@@ -4,7 +4,7 @@
 // state.js's send, retry, rewind, fork and warm load it.
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
-import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
+import { createConversation, rewriteRecords } from '../core/conversations.js'
 import { envelope, userRecords, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered, routineOf, filesMade, callsIn } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes, toChatMessages } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
@@ -16,7 +16,7 @@ import { getSecret } from './secrets.js'
 import { unlock, contributions } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -270,7 +270,7 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     // What it keeps from the start, like the folder it starts on (D149).
     await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id }, () => {})
   }
-  await appendRecords(app.fs, current.path, added)
+  await keepRecords(current.path, added)
   // Listed at once, to come back to.
   if (!current.records.length) refreshConversations()
   const next = { ...current, records: [...current.records, ...added] }
@@ -327,7 +327,7 @@ export async function fork(upTo) {
   const records = [...current.records.slice(0, from), ...current.records.slice(upTo).filter((record) => record.meta?.title),
     ...current.records.slice(from, upTo).map((record) => ({ ...record, at }))]
   const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
-  await appendRecords(app.fs, created.path, records)
+  await keepRecords(created.path, records)
   // What it keeps from the one it comes from, like its folder (D149).
   await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id, from: current }, () => {})
   await turnPage(() => openConversation(created.path))
@@ -396,7 +396,7 @@ async function runAgent(conversation, brain, meta, call) {
       },
       persist: async (records) => {
         settled.push(...records)
-        await appendRecords(app.fs, path, records)
+        await keepRecords(path, records)
       },
     })
     // What the one call gave for the user to read is the answer.
@@ -405,7 +405,7 @@ async function runAgent(conversation, brain, meta, call) {
     if (text) {
       const answer = envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)
       settled.push(answer)
-      await appendRecords(app.fs, path, [answer])
+      await keepRecords(path, [answer])
     }
     if (shown()) setPresence('done')
   } catch (error) {

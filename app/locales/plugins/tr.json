@@ -10,7 +10,7 @@
   "plugins.asks": "İstediği:",
   "plugins.nothing": "Hiçbir şey: yalnızca çalışır.",
   "plugins.code": "Kodu",
-  "plugins.right.watch": "Olanları görmek: paylaştığın dosyalar, biten her yanıt ve çalışmadan önce her işlem",
+  "plugins.right.watch": "Konuşmalarındaki her şeyi saklandıkça görmek: içlerinde yazılan her şey, paylaştığın dosyalar ve çalışmadan önce her işlem",
   "plugins.right.draw": "Burada kendi şeylerini göstermek",
   "plugins.right.notify": "Sana kısa mesajlar göstermek",
   "plugins.right.change": "Gördüğünü, devam etmeden önce değiştirmek",

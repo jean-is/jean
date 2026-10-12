@@ -157,12 +157,18 @@ function heard(host, data) {
   else host.calls.get(data.id)?.(data)
 }
 
+/** Each plugin's reads and writes of its data, one after the other, so that none is lost. */
+const keeping = new Map()
+
 /** What a plugin keeps for itself, in its folder's data.json: a value read, or set. @param {Host} host @param {{ id: string, key: string, value?: any }} asked */
-async function keep(host, { id, key, value }) {
+function keep(host, { id, key, value }) {
   const path = join(DIR, host.manifest.name, 'data.json')
-  const data = await readJSON(app.fs, path, {})
-  if (value !== undefined) await writeJSON(app.fs, path, { ...data, [String(key)]: value })
-  post(host, { type: 'answer', id, value: value ?? data[String(key)] ?? null })
+  const turn = (keeping.get(path) ?? Promise.resolve()).then(async () => {
+    const data = await readJSON(app.fs, path, {})
+    if (value !== undefined) await writeJSON(app.fs, path, { ...data, [String(key)]: value })
+    post(host, { type: 'answer', id, value: value ?? data[String(key)] ?? null })
+  }).catch((/** @type {unknown} */ error) => console.warn('Plugin', host.manifest.name, error))
+  keeping.set(path, turn)
 }
 
 /**

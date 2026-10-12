@@ -124,7 +124,8 @@ export function contributions() {
     lines: caps.flatMap((cap) => cap.lines ?? []),
     rules: caps.flatMap((cap) => cap.rules ?? []),
     sections: caps.flatMap((cap) => (cap.sections ? [cap.sections] : [])),
-    hooks: caps.flatMap((cap) => cap.hooks ?? []),
+    // Each says whose it is: a capability's own are by its id (D299).
+    hooks: caps.flatMap((cap) => (cap.hooks ?? []).map((hook) => (hook.by ? hook : { ...hook, by: cap.id }))),
   }
 }
 

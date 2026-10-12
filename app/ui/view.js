@@ -11,9 +11,8 @@ import { html } from 'lit-html'
 import { markdown } from './markdown.js'
 import { pagePolicy, PAGE_SANDBOX } from './csp.js'
 import { styleSheet } from './sheet.js'
-import { app, notify } from './state.js'
+import { app, notify, keepRecords } from './state.js'
 import { noteRecord } from '../core/events.js'
-import { appendRecords } from '../core/conversations.js'
 import { t } from '../core/i18n.js'
 
 const FRAME = new URL('../preview.html', import.meta.url).href
@@ -89,7 +88,7 @@ export async function changeCell(cell, frame, { name, said, read, keep }) {
     const data = await keep(changed, { sheet, x: Number(at?.x) || 0, y: Number(at?.y) || 0, ref })
     const note = noteRecord(`The user changed ${name} ${said}: ${ref} in ${String(sheetName)} is ${value ? `now ${value}` : 'empty'}.`, { kind: 'cells', ...data })
     if (!conversation) return
-    await appendRecords(app.fs, conversation.path, [note])
+    await keepRecords(conversation.path, [note])
     const now = app.current.peek()
     if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
   } catch (error) {

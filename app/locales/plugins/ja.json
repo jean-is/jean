@@ -10,7 +10,7 @@
   "plugins.asks": "求めていること：",
   "plugins.nothing": "ありません。動くだけです。",
   "plugins.code": "コード",
-  "plugins.right.watch": "起きていることを見る：共有したファイル、終わった回答、実行前の各操作",
+  "plugins.right.watch": "会話のすべてを保存されるたびに見る：書かれたことすべて、共有したファイル、実行前の各操作",
   "plugins.right.draw": "ここに独自の表示を出す",
   "plugins.right.notify": "短いメッセージを表示する",
   "plugins.right.change": "見たものを、先に進む前に変える",

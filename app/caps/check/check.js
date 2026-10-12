@@ -9,9 +9,8 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, contributions } from '../../ui/caps.js'
 import { fire } from '../../core/hooks.js'
-import { app, activeBrain, brainsHere, send } from '../../ui/state.js'
+import { app, activeBrain, brainsHere, send, keepRecords } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
-import { appendRecords } from '../../core/conversations.js'
 import { foldTurns, linkedFiles, metaRecord, splitSuggestions } from '../../core/events.js'
 import { fileText } from '../../core/files.js'
 import { claimsIn, passage, sourceIn, request, verdicts, CHECKER } from './claims.js'
@@ -89,7 +88,7 @@ export async function check(path, at, records) {
     /** @type {Checked[]} */
     const checked = claims.map(({ text, sources, passages }) => ({ text, sources, verdict: passages.length ? found[asked.findIndex((claim) => claim.text === text)] : 'unknown' }))
     const record = metaRecord('jean', { check: { at, claims: checked } })
-    await appendRecords(app.fs, path, [record])
+    await keepRecords(path, [record])
     const current = app.current.peek()
     if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
   } catch (error) {

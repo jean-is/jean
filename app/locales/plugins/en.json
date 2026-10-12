@@ -10,7 +10,7 @@
   "plugins.asks": "It asks to:",
   "plugins.nothing": "Nothing: it only runs.",
   "plugins.code": "Its code",
-  "plugins.right.watch": "See what happens: the files you share, each answer as it ends, and each action before it runs",
+  "plugins.right.watch": "See everything in your conversations as it is kept: all that is written in them, the files you share, and each action before it runs",
   "plugins.right.draw": "Show things of its own here",
   "plugins.right.notify": "Show you short messages",
   "plugins.right.change": "Change what it sees before it goes on",

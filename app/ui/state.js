@@ -6,6 +6,7 @@ import { loadConversation, listConversations, deleteConversation, appendRecords 
 import { linkedFiles, metaRecord, unanswered } from '../core/events.js'
 import { t, useLocale } from '../core/i18n.js'
 import { LOOKS } from './looks.js'
+import { contributions } from './caps.js'
 
 /** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Turn } from '../core/events.js' */
@@ -312,10 +313,20 @@ export async function removeConversation(path) {
   await refreshConversations()
 }
 
+/**
+ * Keeps records at the end of a conversation, then fires record with each, for whoever follows them (D299):
+ * hooks that only watch, told once it is kept, so they never hold it up or change it. @param {string} path @param {Envelope[]} records
+ */
+export async function keepRecords(path, records) {
+  await appendRecords(app.fs, path, records)
+  const hooks = contributions().hooks.filter((hook) => hook.on === 'record')
+  if (hooks.length) import('../core/hooks.js').then(({ fire }) => { for (const record of records) fire(hooks, 'record', { task: path, type: record.update?.sessionUpdate ?? 'meta', record }, () => {}) })
+}
+
 /** Names a task, pins it or marks it read or unread (D288). @param {string} path @param {{ title?: string, pinned?: boolean, unread?: boolean }} meta */
 export async function markConversation(path, meta, by = 'user') {
   const record = metaRecord(by, meta)
-  await appendRecords(app.fs, path, [record])
+  await keepRecords(path, [record])
   const current = app.current.peek()
   if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
   await refreshConversations()

@@ -10,7 +10,7 @@
   "plugins.asks": "Es möchte:",
   "plugins.nothing": "Nichts: Es läuft nur.",
   "plugins.code": "Sein Code",
-  "plugins.right.watch": "Sehen, was geschieht: die Dateien, die du teilst, jede Antwort, wenn sie endet, und jede Aktion, bevor sie läuft",
+  "plugins.right.watch": "Alles in deinen Unterhaltungen sehen, sobald es gespeichert ist: alles, was darin geschrieben wird, die Dateien, die du teilst, und jede Aktion, bevor sie läuft",
   "plugins.right.draw": "Eigene Dinge hier zeigen",
   "plugins.right.notify": "Dir kurze Nachrichten zeigen",
   "plugins.right.change": "Ändern, was es sieht, bevor es weitergeht",

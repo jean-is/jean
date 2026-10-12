@@ -35,8 +35,12 @@ export async function fire(hooks, name, input, behaviour) {
     if (!hook) return behaviour(e)
     /** @type {Promise<any> | undefined} */
     let went
+    /** @type {any} what the rest of the chain gave it */
+    let gave
     try {
-      return await hook.run(e, (changed = e) => (went = step(i + 1, changed)))
+      const result = await hook.run(e, (changed = e) => (went = step(i + 1, changed).then((value) => (gave = value))))
+      // An answer of its own, not the one the chain gave it, says whose it is (D299).
+      return hook.by && result?.constructor === Object && result !== gave ? { ...result, by: hook.by } : result
     } catch (error) {
       const failed = () => console.warn(`${hook.by ?? 'A hook'} on ${name}`, error)
       // Once it went on, what came back stands, and what failed further in is that failure, not this hook's.

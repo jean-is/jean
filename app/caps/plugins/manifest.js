@@ -7,7 +7,7 @@
 /** What a plugin may do, in the order its card lists them. */
 export const RIGHTS = /** @type {const} */ (['watch', 'draw', 'notify', 'change', 'refuse', 'loosen'])
 /** The events a plugin may hook, and the slots it may draw in. */
-export const EVENTS = ['task.start', 'file.add', 'tool.check', 'turn.end']
+export const EVENTS = ['task.start', 'file.add', 'tool.check', 'turn.end', 'record']
 export const SLOTS = ['above', 'answer', 'settings']
 const NAME = /^[a-z0-9][a-z0-9-]{0,63}$/
 

@@ -10,7 +10,7 @@
   "plugins.asks": "요청하는 권한:",
   "plugins.nothing": "없음: 실행만 합니다.",
   "plugins.code": "코드",
-  "plugins.right.watch": "일어나는 일 보기: 공유한 파일, 끝난 답변, 실행 전의 각 작업",
+  "plugins.right.watch": "대화의 모든 내용을 저장될 때마다 보기: 대화에 쓰인 모든 것, 공유한 파일, 실행 전의 각 작업",
   "plugins.right.draw": "여기에 자체 내용 표시",
   "plugins.right.notify": "짧은 메시지 표시",
   "plugins.right.change": "보는 내용을 진행 전에 변경",

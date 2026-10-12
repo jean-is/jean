@@ -10,7 +10,7 @@
   "plugins.asks": "Pide:",
   "plugins.nothing": "Nada: solo se ejecuta.",
   "plugins.code": "Su código",
-  "plugins.right.watch": "Ver lo que pasa: los archivos que compartes, cada respuesta al terminar y cada acción antes de ejecutarse",
+  "plugins.right.watch": "Ver todo lo de tus conversaciones al guardarse: todo lo que se escribe en ellas, los archivos que compartes y cada acción antes de ejecutarse",
   "plugins.right.draw": "Mostrar cosas propias aquí",
   "plugins.right.notify": "Mostrarte mensajes breves",
   "plugins.right.change": "Cambiar lo que ve antes de seguir",

@@ -21,7 +21,7 @@ Nothing planned is ruled out by the architecture:
 | Config for managed browsers | ✅ Chrome and Edge only | `ManagedConfigurationPerOrigin` pushes JSON to web apps that IT has installed, read with `navigator.managed.getManagedConfiguration()`. It is a second policy source alongside `policy.json`. |
 | White-label | ✅ Comes for free | Change `BRAND` and it becomes "Acme Assistant". |
 | Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy points to (`skills.sources`, which users can't remove; `skills.only` keeps to it), and users add them after reading their steps (D121). Its catalogue of projects, what other products call agents (instructions, skills, connections without their secrets, a way of being), can be published the same way, each added after reading it. |
-| Audit | ✅ Best effort | The ACP event stream is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector. The gateway's log remains the authoritative one. |
+| Audit | ✅ Best effort | The ACP event stream, which the `record` event follows (D299), is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector. The gateway's log remains the authoritative one. |
 
 ## What it cannot do, by design
 
@@ -44,7 +44,7 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 | Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group |
 | Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back; a gateway to the services a browser can't reach, holding the apps registered with their sign-ins (`urls.gateway`, `gateway/`, D191); offline Wikipedia from the organisation's Kiwix server, for web search (`urls.wikipedia`, D254); the Computer's internet (`computer` in policy: off, ask first or any site, a list of sites, a relay) and its package registries (Pyodide's, PyPI, npm: an Artifactory instance, its key kept on the device) (D162) | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
 | Records | Backup, export, a mirrored folder | Retention and legal hold by policy, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
-| Audit | The ACP event stream | OpenTelemetry export with identities, a hash-chained log, usage reports |
+| Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299) | OpenTelemetry export with identities, a hash-chained log, usage reports |
 | Deployment | Copy `app/`, or run its container image ([deploy/docker/](../deploy/docker/README.md)); the headers are documented | Deployment kits (hosting, app registration, Intune), embedding in Teams, Outlook and SharePoint |
 
 Long-term-support releases, signed builds, SBOMs, security questionnaires and accessibility reports come with a subscription. They are services, not code.

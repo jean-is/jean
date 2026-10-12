@@ -30,7 +30,10 @@ async function add(page) {
   return settings
 }
 
-test('a plugin read from its address is added, runs apart, draws under each answer and above the box, keeps its data, and refuses only with the right', async ({ page }) => {
+/** What the plugin keeps, in its data.json. @param {import('@playwright/test').Page} page */
+const kept = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('plugins/word-count/data.json') ?? '{}'))
+
+test('a plugin read from its address is added, runs apart, draws under each answer and above the box, keeps its data, follows the records, and refuses only with the right', async ({ page }) => {
   await serve(page)
   await start(page)
   await connectFakeBrain(page)
@@ -52,7 +55,7 @@ test('a plugin read from its address is added, runs apart, draws under each answ
   const band = page.locator('.plugin-above')
   await expect(band).toContainText(/Last answer: [1-9]\d* words/)
   const words = Number(/Last answer: (\d+) words/.exec(await band.innerText())?.[1])
-  expect(await page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('plugins/word-count/data.json') ?? '{}'))).toEqual({ last: words })
+  expect(await kept(page)).toEqual({ last: words })
   await band.getByRole('button', { name: 'Reset' }).click()
   await expect(band).toContainText('Last answer: 0 words')
   await expect(page.locator('.toast')).toContainText('Word count: Reset.')
@@ -61,6 +64,8 @@ test('a plugin read from its address is added, runs apart, draws under each answ
   await ask(page, 'Make me a web page for the bakery')
   await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Word count keeps files as they are.')
+  // It follows the records kept, each refusal saying whose it was.
+  await expect.poll(async () => (await kept(page)).stopped?.by).toBe('word-count')
 
   // Added again without that right, its refusal counts for nothing.
   await page.unroute('https://plugins.test/word-count/**')

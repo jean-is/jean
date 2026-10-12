@@ -10,7 +10,7 @@
   "plugins.asks": "Plugin này yêu cầu:",
   "plugins.nothing": "Không gì cả: chỉ chạy thôi.",
   "plugins.code": "Mã của nó",
-  "plugins.right.watch": "Thấy những gì diễn ra: tệp bạn chia sẻ, mỗi câu trả lời khi kết thúc, và mỗi hành động trước khi chạy",
+  "plugins.right.watch": "Thấy mọi thứ trong các cuộc trò chuyện của bạn khi được lưu: mọi điều được viết trong đó, tệp bạn chia sẻ, và mỗi hành động trước khi chạy",
   "plugins.right.draw": "Hiển thị nội dung riêng ở đây",
   "plugins.right.notify": "Hiển thị cho bạn tin nhắn ngắn",
   "plugins.right.change": "Thay đổi những gì nó thấy trước khi tiếp tục",

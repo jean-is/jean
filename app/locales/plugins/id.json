@@ -10,7 +10,7 @@
   "plugins.asks": "Plugin ini meminta untuk:",
   "plugins.nothing": "Tidak ada: hanya berjalan.",
   "plugins.code": "Kodenya",
-  "plugins.right.watch": "Melihat apa yang terjadi: file yang Anda bagikan, setiap jawaban saat selesai, dan setiap tindakan sebelum dijalankan",
+  "plugins.right.watch": "Melihat semua isi percakapan Anda saat disimpan: semua yang ditulis di dalamnya, file yang Anda bagikan, dan setiap tindakan sebelum dijalankan",
   "plugins.right.draw": "Menampilkan hal miliknya sendiri di sini",
   "plugins.right.notify": "Menampilkan pesan singkat kepada Anda",
   "plugins.right.change": "Mengubah apa yang dilihatnya sebelum berlanjut",

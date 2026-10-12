@@ -175,6 +175,21 @@ test('loop: a tool.check hook refuses, with or without a reason, or lets through
   assert.deepEqual(await run(() => ({ decision: 'allow' }), { ...readTool, reserved: true }, 'never'), { output: 'The user declined this action.', asked: 0 })
 })
 
+test('loop: a call a hook refused or asked about keeps whose answer it was, for whoever follows the records; one the rules decided keeps none (D299)', async () => {
+  const run = async (/** @type {any[]} */ hooks, rule = 'allow') => {
+    const call = { id: 'a', name: 'read', args: { path: 'x' } }
+    const { stream } = fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })], [done('end', { role: 'assistant', content: 'ok' })]])
+    /** @type {any[]} */
+    const kept = []
+    await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [readTool], stream: /** @type {any} */ (stream), hooks,
+      rule: () => /** @type {any} */ (rule), askPermission: async () => 'allow_once', persist: async (added) => { kept.push(...added) } })
+    return kept.findLast((record) => record.update?.toolCallId === 'a').update._meta
+  }
+  assert.equal((await run([{ on: 'tool.check', by: 'school', tier: 'user', run: () => ({ decision: 'never', reason: 'Not at school.' }) }])).by, 'school')
+  assert.equal((await run([{ on: 'tool.check', by: 'careful', run: () => ({ decision: 'ask' }) }])).by, 'careful')
+  assert.equal((await run([{ on: 'tool.check', by: 'watching', run: (/** @type {any} */ e, /** @type {any} */ next) => next(e) }], 'never')).by, undefined)
+})
+
 test('loop: a declined call says so in its record; one running when the page closed is read back as cut short, and not run again', async () => {
   const call = { id: 'a', name: 'read', args: { path: 'a' } }
   const { stream } = fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })], [done('end', { role: 'assistant', content: 'ok' })]])

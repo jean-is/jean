@@ -5,9 +5,8 @@
 // The same Markdown copies as it was.
 import { html, nothing } from 'lit-html'
 import { shapes, blocks, inline, lex } from '../../ui/markdown.js'
-import { app } from '../../ui/state.js'
+import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
-import { appendRecords } from '../../core/conversations.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
 import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked } from './shapes.js'
@@ -71,7 +70,7 @@ function checklist(token) {
     if (!conversation) return
     const record = metaRecord(app.deviceId, { ticks: { list, done: [...doneIn(conversation.records)].filter((other) => other !== i).concat(on ? [i] : []).sort((a, b) => a - b) } })
     app.current.value = { ...conversation, records: [...conversation.records, record] }
-    appendRecords(app.fs, conversation.path, [record]).catch((error) => console.warn("Ticks", error))
+    keepRecords(conversation.path, [record]).catch((error) => console.warn("Ticks", error))
   }
   return html`<div class="checklist">
     <p class="checklist-count"><span dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress max=${token.items.length} .value=${done.size}></progress></p>

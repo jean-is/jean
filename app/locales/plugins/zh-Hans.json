@@ -10,7 +10,7 @@
   "plugins.asks": "它请求：",
   "plugins.nothing": "无：它只是运行。",
   "plugins.code": "它的代码",
-  "plugins.right.watch": "看到发生的事：你分享的文件、每个结束的回答，以及每个操作运行之前",
+  "plugins.right.watch": "看到你对话中保存下来的一切：其中写下的所有内容、你分享的文件，以及每个操作运行之前",
   "plugins.right.draw": "在这里显示自己的内容",
   "plugins.right.notify": "向你显示简短消息",
   "plugins.right.change": "在继续之前更改它看到的内容",

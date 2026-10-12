@@ -10,7 +10,7 @@
   "plugins.asks": "የሚጠይቀው፦",
   "plugins.nothing": "ምንም፤ ይሠራል ብቻ።",
   "plugins.code": "ኮዱ",
-  "plugins.right.watch": "የሚሆነውን ማየት፦ የሚያጋሯቸውን ፋይሎች፣ እያንዳንዱን መልስ ሲያልቅ፣ እና እያንዳንዱን ተግባር ከመፈጸሙ በፊት",
+  "plugins.right.watch": "በውይይቶችዎ ውስጥ ያለውን ሁሉ ሲቀመጥ ማየት፦ የተጻፈውን ሁሉ፣ የሚያጋሯቸውን ፋይሎች፣ እና እያንዳንዱን ተግባር ከመፈጸሙ በፊት",
   "plugins.right.draw": "የራሱን ነገሮች እዚህ ማሳየት",
   "plugins.right.notify": "አጫጭር መልዕክቶችን ማሳየት",
   "plugins.right.change": "የሚያየውን ከመቀጠሉ በፊት መቀየር",

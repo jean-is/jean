@@ -62,7 +62,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 **Browsers and devices**
 - [ ] The CSV demo on a real managed Windows laptop with a weak graphics chip, in Edge and Chrome, in three languages
 - [ ] Firefox: the sandbox, Python, the preview, search, a folder as a copy, working days (no week information in `Intl.Locale` yet), saving from a page
-- [ ] Plugins (D296): one added from a real repository on GitHub, in Firefox and real Safari too; one that hangs, loops or throws on every event; a long conversation with a plugin drawing under each answer, and the memory its frame holds; guards (D295) and routines a file sets off (D294) with the device's brain and with Intuition
+- [ ] Plugins (D296): one added from a real repository on GitHub, in Firefox and real Safari too; one that hangs, loops or throws on every event; a long conversation with a plugin drawing under each answer, and the memory its frame holds; one following `record` through a turn of many calls (D299); guards (D295) and routines a file sets off (D294) with the device's brain and with Intuition
 - [ ] Real Safari and Edge: the sandbox and Python; Safari's private window signing in to a connection (nothing kept across the redirect); `pagehide` stamping the visit; on an iPhone, full screen (only for video) and Pyodide's memory
 - [ ] On a weak laptop: Intuition without WebGPU (q4 on WebAssembly), Python's start-up (about 13 MB), long PDFs, search over a few hundred conversations, `find_in_files` over thousands of files, a Sync round every minute, a workspace of a few hundred MB
 - [ ] The browser with real sites in Chrome, Edge, Firefox and Safari (which refuse, whether their load event fires); the install steps against each browser's menus in every language

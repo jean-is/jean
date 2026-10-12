@@ -10,7 +10,7 @@
   "plugins.asks": "Prosi o:",
   "plugins.nothing": "Nic: po prostu działa.",
   "plugins.code": "Jej kod",
-  "plugins.right.watch": "Widzieć, co się dzieje: pliki, które udostępniasz, każdą odpowiedź, gdy się kończy, i każde działanie, zanim się wykona",
+  "plugins.right.watch": "Widzieć wszystko w twoich rozmowach, gdy jest zapisywane: wszystko, co w nich napisano, pliki, które udostępniasz, i każde działanie, zanim się wykona",
   "plugins.right.draw": "Pokazywać tu własne rzeczy",
   "plugins.right.notify": "Pokazywać ci krótkie wiadomości",
   "plugins.right.change": "Zmieniać to, co widzi, zanim pójdzie dalej",

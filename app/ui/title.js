@@ -2,10 +2,9 @@
 // the conversation, by the simplest brain at hand: the fast model of the provider answering, or
 // that brain itself. The message goes where it is going anyway, and the conversation's prompt
 // and cache are untouched. When there is no brain to ask, the message's first words.
-import { app, loadModels, refreshConversations } from './state.js'
+import { app, loadModels, refreshConversations, keepRecords } from './state.js'
 import { getSecret } from './secrets.js'
 import { TIERS } from './auto.js'
-import { appendRecords } from '../core/conversations.js'
 import { linkedFiles, metaRecord, openingOf, routineOf, titleOf } from '../core/events.js'
 import { firstWords } from '../core/i18n.js'
 import { fire } from '../core/hooks.js'
@@ -28,7 +27,7 @@ export function nameConversation(path, records, brain) {
     // The user named it meanwhile (D288).
     if (!title || app.conversations.peek().find((item) => item.path === path)?.title) return
     const record = metaRecord(app.deviceId, { title })
-    await appendRecords(app.fs, path, [record])
+    await keepRecords(path, [record])
     const current = app.current.peek()
     if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
     await refreshConversations()

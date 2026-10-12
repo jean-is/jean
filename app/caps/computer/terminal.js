@@ -13,9 +13,8 @@ import { html, svg, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
-import { app, updateSettings } from '../../ui/state.js'
+import { app, updateSettings, keepRecords } from '../../ui/state.js'
 import { icons } from '../../ui/icons.js'
-import { appendRecords } from '../../core/conversations.js'
 import { noteRecord } from '../../core/events.js'
 import { t, tParts, locale } from '../../core/i18n.js'
 import { typed, completions, clip, prompt, keys } from './computer.js'
@@ -321,7 +320,7 @@ async function tell(conversation, entry, command, at) {
   const text = [`The user ran ${at ? `at ${at}'s prompt` : 'a command'} on your computer, in the terminal: ${command}`, `Exit code: ${entry.exit}`,
     entry.out && clip(entry.out.replace(ESCAPES, ''), TOLD), entry.err && `stderr:\n${clip(entry.err.replace(ESCAPES, ''), TOLD)}`]
   const note = noteRecord(text.filter(Boolean).join('\n'), { kind: 'terminal', command, exit: entry.exit ?? 0 })
-  await appendRecords(app.fs, conversation.path, [note])
+  await keepRecords(conversation.path, [note])
   const now = app.current.peek()
   if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
 }
