@@ -26,8 +26,9 @@ export const BRAINS = {
 }
 
 // The waits before asking again after a refusal such as too many requests, each between half and all of
-// these, so that requests refused together don't come back together; the loop waits 30 s at most.
-const WAITS = [5000, 10000, 20000, 30000, 30000, 30000, 30000, 30000]
+// these, so that requests refused together don't come back together; the loop waits 30 s at most. About eight minutes in
+// all: DeepInfra refuses for minutes at a time, and an answer refused at last loses all it asked before, every_page's too.
+const WAITS = [5000, 10000, 20000, ...Array(20).fill(30000)]
 const waits = () => WAITS.map((ms) => Math.round(ms * (0.5 + Math.random() / 2)))
 
 /** Jean's brain entry for one of these. @param {{ model: string }} b */
