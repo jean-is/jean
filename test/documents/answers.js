@@ -8,7 +8,7 @@ import { runTurn } from '../../app/core/loop.js'
 import { buildSystemPrompt } from '../../app/core/prompt.js'
 import { addFile, documentPart, estimateTokens, pagesThatFit, preselect, readTool, searchTool } from '../../app/core/files.js'
 import { memoryFS } from '../../app/core/fs.js'
-import { PROVIDERS, streamChat } from '../../app/core/llm.js'
+import { LLMError, PROVIDERS, streamChat } from '../../app/core/llm.js'
 import { lookup } from '../../app/core/search.js'
 import { norm, normalise } from './text.js'
 import { fuse, nearest } from './retrieval.js'
@@ -60,6 +60,9 @@ async function place(providers) {
   } }
 }
 
+// How long a reply may send nothing, its first part included, before it is given up and asked again.
+const IDLE = 180000
+
 /**
  * streamChat with OpenRouter told to use one provider alone, when the brain names one, once the request has its place:
  * the brain's own, or for a helper's request whichever of its own and its helpers has a place first, but the one
@@ -74,11 +77,24 @@ const streamOf = (b, timing = { queued: 0 }, body = {}, helper) => async functio
   const { provider, release } = await place(providers.length > 1 ? providers.filter((p) => p !== helper?.avoid) : providers)
   if (helper) helper.used = provider
   timing.queued += performance.now() - asked
+  // A reply that stops coming is given up after a while, to be asked again, rather than keeping its place for good.
+  const idle = new AbortController()
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let timer
+  const wait = () => { clearTimeout(timer); timer = setTimeout(() => idle.abort(), IDLE) }
   try {
-    yield* streamChat({ ...options, fetch: provider || Object.keys(body).length
+    wait()
+    for await (const event of streamChat({ ...options, signal: options.signal ? AbortSignal.any([options.signal, idle.signal]) : idle.signal, fetch: provider || Object.keys(body).length
       ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), ...(provider && { provider: { order: [provider], allow_fallbacks: false } }), ...body }) })
-      : globalThis.fetch })
+      : globalThis.fetch })) {
+      wait()
+      yield event
+    }
+  } catch (error) {
+    if (idle.signal.aborted && !options.signal?.aborted) throw new LLMError(`Nothing came for ${IDLE / 60000} minutes`, { code: 'network' })
+    throw error
   } finally {
+    clearTimeout(timer)
     release()
   }
 }
