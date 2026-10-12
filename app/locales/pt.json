@@ -14,7 +14,6 @@
   "starter.savings.prompt": "Calcula as minhas poupanças em 10 anos: 200 por mês a 4% ao ano. Mostra-as num gráfico.",
   "composer.label": "A tua mensagem",
   "composer.add": "Adicionar à tua mensagem",
-  "composer.folder": "Uma pasta…",
   "composer.placeholder": "Pergunta o que quiseres ou descreve uma tarefa…",
   "action.send": "Enviar",
   "action.stop": "Parar",

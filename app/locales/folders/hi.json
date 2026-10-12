@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "यह कार्य अब किसी और फ़ोल्डर में चल रहा है।",
   "folders.field": "इस कंप्यूटर पर फ़ोल्डर",
   "folders.field.none": "कोई नहीं: यहाँ नए कार्य बिना फ़ोल्डर के शुरू होते हैं।",
-  "folders.choose": "चुनें…"
+  "folders.choose": "चुनें…",
+  "folders.add": "एक फ़ोल्डर…"
 }

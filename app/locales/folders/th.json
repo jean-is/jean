@@ -34,5 +34,6 @@
   "folders.undo.elsewhere": "งานนี้ทำงานในโฟลเดอร์อื่นแล้ว",
   "folders.field": "โฟลเดอร์บนคอมพิวเตอร์เครื่องนี้",
   "folders.field.none": "ไม่มี: งานใหม่ที่นี่เริ่มโดยไม่มีโฟลเดอร์",
-  "folders.choose": "เลือก…"
+  "folders.choose": "เลือก…",
+  "folders.add": "โฟลเดอร์…"
 }

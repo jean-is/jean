@@ -14,7 +14,6 @@
   "starter.savings.prompt": "10 साल में मेरी बचत का हिसाब लगाओ: हर महीने 200, 4% सालाना पर। इसे चार्ट में दिखाओ।",
   "composer.label": "आपका संदेश",
   "composer.add": "अपने संदेश में जोड़ें",
-  "composer.folder": "एक फ़ोल्डर…",
   "composer.placeholder": "कुछ भी पूछें, या कोई काम बताएँ…",
   "action.send": "भेजें",
   "action.stop": "रोकें",

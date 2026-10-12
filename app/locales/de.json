@@ -14,7 +14,6 @@
   "starter.savings.prompt": "Berechne meine Ersparnisse über 10 Jahre: 200 im Monat zu 4 % im Jahr. Zeig sie als Diagramm.",
   "composer.label": "Deine Nachricht",
   "composer.add": "Zu deiner Nachricht hinzufügen",
-  "composer.folder": "Einen Ordner …",
   "composer.placeholder": "Frag irgendetwas oder beschreibe eine Aufgabe…",
   "action.send": "Senden",
   "action.stop": "Stopp",

@@ -179,7 +179,7 @@ effect(() => register({
     const [tools, logo] = [(status.value[connection.id]?.tools ?? []).filter(searchesWeb).map(labelOf), logoOf(connection)]
     return tools.length ? [{ name: connection.name, ...(logo && { logo: logoAt(logo) }), tools }] : []
   }),
-  panel,
+  slots: { settings: { at: 60, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel } },
 }))
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()

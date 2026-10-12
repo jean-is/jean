@@ -34,5 +34,6 @@
   "folders.undo.elsewhere": "このタスクは今、別のフォルダーで作業しています。",
   "folders.field": "このコンピューターのフォルダー",
   "folders.field.none": "なし：ここでの新しいタスクはフォルダーなしで始まります。",
-  "folders.choose": "選ぶ…"
+  "folders.choose": "選ぶ…",
+  "folders.add": "フォルダー…"
 }

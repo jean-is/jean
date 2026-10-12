@@ -140,6 +140,40 @@ test('loop: ask → declined; never; unknown tool; invalid JSON', async () => {
   }
 })
 
+test('loop: a turn.step hook answers a step with its own brain, the turn’s own facts on it, and its key never', async () => {
+  const { stream: never } = fakeStream([])
+  const { stream: own, calls } = fakeStream([[{ type: 'text', delta: 'Here.' }, done('end', { role: 'assistant', content: 'Here.' })]])
+  /** @type {any[]} */
+  const seen = []
+  const hooks = [{ on: 'turn.step', run: (/** @type {any} */ e) => (seen.push(e), own(e)) }]
+  const result = await runTurn({ brain, apiKey: 'secret', system: 's', history: [{ role: 'user', content: 'hi' }], stream: /** @type {any} */ (never), hooks, about: { task: 'conversations/1.jsonl' } })
+  assert.equal(result.text, 'Here.')
+  assert.equal(calls.length, 1)
+  assert.equal(seen[0].task, 'conversations/1.jsonl')
+  assert.equal(seen[0].step, 0)
+  assert.equal(seen[0].brain.model, 'test-model')
+  assert.ok(!('apiKey' in seen[0]))
+})
+
+test('loop: a tool.check hook refuses, with or without a reason, or lets through what the rules would ask, but never a reserved action', async () => {
+  const run = async (/** @type {any} */ hook, /** @type {any} */ tool = readTool, rule = 'ask') => {
+    const call = { id: 'a', name: tool.spec.name, args: { path: 'x' } }
+    const { stream, calls } = fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })], [done('end', { role: 'assistant', content: 'ok' })]])
+    let asked = 0
+    await runTurn({
+      brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [tool], stream: /** @type {any} */ (stream), hooks: [{ on: 'tool.check', match: { kind: 'read' }, run: hook }],
+      rule: () => /** @type {any} */ (rule), askPermission: async () => { asked++; return 'reject_once' },
+    })
+    return { output: calls[1].at(-1).content, asked }
+  }
+  assert.deepEqual(await run(() => ({ decision: 'never' })), { output: 'The user declined this action.', asked: 0 })
+  assert.deepEqual(await run(() => ({ decision: 'never', reason: 'Not on Sundays.' })), { output: 'Not on Sundays.', asked: 0 })
+  assert.deepEqual(await run(() => ({ refuse: 'It could not be checked.' })), { output: 'It could not be checked.', asked: 0 })
+  assert.deepEqual(await run(() => ({ decision: 'allow' })), { output: 'contents of x', asked: 0 })
+  assert.deepEqual(await run((/** @type {any} */ e, /** @type {any} */ next) => next(e)), { output: 'The user declined this action.', asked: 1 })
+  assert.deepEqual(await run(() => ({ decision: 'allow' }), { ...readTool, reserved: true }, 'never'), { output: 'The user declined this action.', asked: 0 })
+})
+
 test('loop: a declined call says so in its record; one running when the page closed is read back as cut short, and not run again', async () => {
   const call = { id: 'a', name: 'read', args: { path: 'a' } }
   const { stream } = fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })], [done('end', { role: 'assistant', content: 'ok' })]])

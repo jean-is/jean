@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "Kazi hii sasa inafanyika katika folda nyingine.",
   "folders.field": "Folda kwenye kompyuta hii",
   "folders.field.none": "Hakuna: kazi mpya hapa huanza bila folda.",
-  "folders.choose": "Chagua…"
+  "folders.choose": "Chagua…",
+  "folders.add": "Folda…"
 }

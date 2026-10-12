@@ -8,10 +8,11 @@ import { createConversation, appendRecords, rewriteRecords } from '../core/conve
 import { envelope, userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
+import { fire } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
-import { loaded, unlock, contributions } from './caps.js'
+import { unlock, contributions } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED,
@@ -25,8 +26,6 @@ import {
 const DOCUMENT_SHARE = 0.25
 const DEVICE_CONTEXT = 32768
 const DEFAULT_CONTEXT = 128000
-// What a read-only turn may do ("Since last time"): read, search, look things up, work things out.
-const READING = new Set(['read', 'search', 'fetch', 'think', 'execute'])
 // Anthropic's default cache lifetime is 5 minutes (D49).
 const CACHE_TTL_MS = 5 * 60_000
 // Work in a folder takes more steps than a turn's usual 12 (D141).
@@ -268,7 +267,7 @@ export async function send(text, { boost = 0, notes = [], call } = {}) {
     const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
     current = { id: created.id, path: created.path, records: [] }
     // What it keeps from the start, like the folder it starts on (D149).
-    await Promise.all([...loaded.value.values()].map((capability) => capability.started?.(created)))
+    await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id }, () => {})
   }
   await appendRecords(app.fs, current.path, added)
   // Listed at once, to come back to.
@@ -326,7 +325,7 @@ export async function fork(upTo) {
   const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
   await appendRecords(app.fs, created.path, records)
   // What it keeps from the one it comes from, like its folder (D149).
-  await Promise.all([...loaded.value.values()].map((capability) => capability.started?.(created, current)))
+  await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id, from: current }, () => {})
   await turnPage(() => openConversation(created.path))
   refreshConversations()
   const picked = await pickBrain('', records)
@@ -354,8 +353,6 @@ async function runAgent(conversation, brain, meta, call) {
 
   beginRun(run)
   try {
-    // A brief of what's new since last time only reads, whatever the rules say.
-    const readOnly = foldTurns(sent).at(-1)?.notes.some((note) => note.data.kind === 'since')
     // The loop and the brains' adapters load with the first message, not with the first screen.
     const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
     const frozen = frozenPrompt(sent)
@@ -363,8 +360,8 @@ async function runAgent(conversation, brain, meta, call) {
     const one = call && { id: `call-${Date.now().toString(36)}`, ...call }
     const resume = one ? { step: 0, calls: [one] } : unanswered(sent)
     const messages = toChatMessages(sent, await documents(sent, brain), resume)
+    // The device's brain answers its steps itself, through its turn.step hook.
     if (brain.api === 'device') await unlock('brain-local')
-    const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
     asked.set(path, Date.now())
     const { settings } = effective.value
     await runTurn({
@@ -376,14 +373,16 @@ async function runAgent(conversation, brain, meta, call) {
       // Every tool can be called from a script; the brain sees the declared ones (D47).
       tools: () => contributions().tools,
       declared: frozen?.state.tools ?? [],
-      ...(stream && { stream }),
       label: brainLabel(brain),
       meta,
       firstSource: nextSource(sent),
       ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
       ...(one && { maxSteps: 1 }),
       signal: run.controller.signal,
-      rule: (kind, reserved) => (readOnly && !READING.has(kind) ? 'never' : resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved })),
+      // The capabilities' hooks, with the task and the kinds of note its turn came with (a brief of what's new since last time only reads).
+      hooks: () => contributions().hooks,
+      about: { task: path, notes: foldTurns(sent).at(-1)?.notes.map((note) => note.data.kind) ?? [] },
+      rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
         if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
@@ -427,19 +426,18 @@ async function runAgent(conversation, brain, meta, call) {
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records, conversation)
-    if (answer && at && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) cited(path, at, records)
+    if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted,
+      cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
   }
 }
 
 /**
- * An answer that cites its sources: Double-check checks it, and until it is on, citations in
- * regular use offer it (counted, an event with no language, D6).
- * @param {string} path @param {string} at @param {Envelope[]} records
+ * An answer that cites its sources: until Double-check is here to check it (its turn.end hook), citations
+ * in regular use offer it (counted, an event with no language, D6). @param {{ cites: boolean }} turn
  */
-async function cited(path, at, records) {
-  if (loaded.value.has('check')) return (await import('../caps/check/check.js')).check(path, at, records)
+async function cited({ cites }) {
   const count = effective.value.settings.cited ?? 0
-  if (count < CITED) await updateSettings({ cited: count + 1 })
+  if (cites && count < CITED) await updateSettings({ cited: count + 1 })
 }
 
 /**

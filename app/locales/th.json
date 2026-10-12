@@ -14,7 +14,6 @@
   "starter.savings.prompt": "คำนวณเงินออมของฉันใน 10 ปี: เดือนละ 200 ดอกเบี้ยปีละ 4% แล้วแสดงเป็นกราฟ",
   "composer.label": "ข้อความของคุณ",
   "composer.add": "เพิ่มในข้อความของคุณ",
-  "composer.folder": "โฟลเดอร์…",
   "composer.placeholder": "ถามอะไรก็ได้ หรือบอกงานที่ต้องการ…",
   "action.send": "ส่ง",
   "action.stop": "หยุด",

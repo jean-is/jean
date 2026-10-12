@@ -14,7 +14,6 @@
   "starter.savings.prompt": "احسب مدخراتي على مدى 10 سنوات: 200 شهريًا بفائدة 4% سنويًا. اعرضها لي في رسم بياني.",
   "composer.label": "رسالتك",
   "composer.add": "إضافة إلى رسالتك",
-  "composer.folder": "مجلد…",
   "composer.placeholder": "اسأل أي شيء، أو صِف مهمة…",
   "action.send": "إرسال",
   "action.stop": "إيقاف",

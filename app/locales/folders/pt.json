@@ -36,5 +36,6 @@
   "folders.undo.elsewhere": "Esta tarefa trabalha agora noutra pasta.",
   "folders.field": "Pasta neste computador",
   "folders.field.none": "Nenhuma: as tarefas novas aqui começam sem pasta.",
-  "folders.choose": "Escolher…"
+  "folders.choose": "Escolher…",
+  "folders.add": "Uma pasta…"
 }

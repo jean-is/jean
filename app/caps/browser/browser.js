@@ -33,7 +33,7 @@ import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
 import { register, loaded as unlocked } from '../../ui/caps.js'
-import { app, effective, updateSettings, notify } from '../../ui/state.js'
+import { app, effective, updateSettings, notify, SHORTCUTS } from '../../ui/state.js'
 import { icons } from '../../ui/icons.js'
 import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { savePage } from '../../ui/save.js'
@@ -678,6 +678,7 @@ const browseTool = {
 
 register({
   id: 'browser',
+  slots: { views: { at: 3, draw: () => html`<button class="icon-button browser-toggle" @click=${toggle} aria-label=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` } },
   tools: [browseTool],
   lines: [{ name: 'browse', line: 'show the user a web page beside the conversation, and read it when the site allows' }],
   // What the user is looking at, without what follows # (where a sign-in may leave a token).

@@ -3,7 +3,7 @@ import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, APPLE, SHORTCUTS } from './state.js'
-import { SIZES, loaded, unlock, isDenied } from './caps.js'
+import { SIZES, loaded, unlock, isDenied, slots } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -22,16 +22,11 @@ class Shell extends Element {
     // then what it opens, Search and the button that puts it away, at the far end, as in Manus.
     // What opens beside the conversation, the browser and the terminal, keeps the main area's top
     // end: the header's, or, with the drawer open, the same place beside it (D170). The folder's
-    // name goes before them, there and never in the drawer (D149).
-    const views = ['folders', 'computer', 'browser', 'flows'].some((name) => loaded.value.has(name)) ? html`<div class="views">
-      ${loaded.value.has('folders') ? html`<app-folder></app-folder>` : nothing}
-      ${loaded.value.has('computer') ? html`<app-terminal-toggle></app-terminal-toggle>` : nothing}
-      ${loaded.value.has('browser') ? html`<button class="icon-button browser-toggle" @click=${() => import('../caps/browser/browser.js').then((module) => module.toggle())}
-        aria-label=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` : nothing}
-      ${loaded.value.has('flows') && current?.records.length ? html`<button class="icon-button flows-toggle" @click=${() => import('../caps/flows/flows.js').then((module) => module.toggle())}
-        aria-label=${t('cap.flows.name')}>${icons.flow}</button>` : nothing}</div>` : nothing
+    // name goes before them, there and never in the drawer (D149). Each is its capability's, in the views slot.
+    const shown = slots('views')
+    const views = shown.length ? html`<div class="views">${shown.map((view) => view.draw(current))}</div>` : nothing
     // On a new task, a capability may show something of its own in place of the welcome: Flows' flow mode (D218).
-    const instead = current?.records.length ? null : [...loaded.value.values()].map((capability) => capability.main?.()).find(Boolean)
+    const instead = current?.records.length ? null : slots('main').map((main) => main.draw()).find(Boolean)
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
@@ -45,7 +40,7 @@ class Shell extends Element {
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
       <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>
       ${offerAside()}
-      ${loaded.value.has('folders') ? html`<app-folder-ask></app-folder-ask>` : nothing}
+      ${slots('above').map((above) => above.draw())}
       <app-composer></app-composer>
       <app-history></app-history>
       <app-find></app-find>

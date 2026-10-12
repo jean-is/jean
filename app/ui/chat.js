@@ -4,7 +4,7 @@ import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind, fork } from './state.js'
-import { unlock, loaded, SIZES } from './caps.js'
+import { unlock, slots, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
@@ -308,7 +308,7 @@ function activity(steps, text, streaming, files) {
           </details>
         </li>`)}
       </ol>
-      ${loaded.value.has('flows') && tools.length ? html`<button class="link-button activity-flow" @click=${() => import('../caps/flows/flows.js').then((flows) => flows.show('task'))}>${t('activity.asFlow')}</button>` : nothing}
+      ${tools.length ? slots('activity').map((action) => action.draw()) : nothing}
     </details>
     ${streaming ? inbox(entries, files) : nothing}
     ${streaming && offering ? offerCard(offering) : nothing}`

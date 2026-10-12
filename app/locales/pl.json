@@ -14,7 +14,6 @@
   "starter.savings.prompt": "Oblicz moje oszczędności przez 10 lat: 200 miesięcznie przy 4% rocznie. Pokaż je na wykresie.",
   "composer.label": "Twoja wiadomość",
   "composer.add": "Dodaj do wiadomości",
-  "composer.folder": "Folder…",
   "composer.placeholder": "Zapytaj o cokolwiek lub opisz zadanie…",
   "action.send": "Wyślij",
   "action.stop": "Zatrzymaj",

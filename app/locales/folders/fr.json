@@ -36,5 +36,6 @@
   "folders.undo.elsewhere": "Cette tâche travaille maintenant dans un autre dossier.",
   "folders.field": "Dossier sur cet ordinateur",
   "folders.field.none": "Aucun : les nouvelles tâches ici commencent sans dossier.",
-  "folders.choose": "Choisir…"
+  "folders.choose": "Choisir…",
+  "folders.add": "Un dossier…"
 }

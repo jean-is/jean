@@ -51,7 +51,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## UI rules
 
-- **Components:** custom elements, light DOM, prefix `app-`. One module per capability defines its elements and registers its tools; unlocking a capability means `import()`-ing that module.
+- **Components:** custom elements, light DOM, prefix `app-`. One module per capability defines its elements and registers its tools, hooks and slots (D293). Unlocking a capability means `import()`-ing that module.
 - **Strings:**
   - Every user-facing string goes through `t()`.
   - Never build sentences by concatenating strings.

@@ -47,7 +47,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 
 **Routing is one hash** (D59, D137, D220), read by `ui/router.js`: `#/c/<ulid>`, `#/p/<project ulid>/c/<ulid>` in a project other than home, `…/settings/<section>` with Settings open over either, and after a `?` the windows beside it, in the order they opened, each `name` or `name=state` (its slashes and colons as they are): `preview=files/<file>`, `browser=<address>` (`folder:`, `workspace:` and `made:` for Jean's own pages), `terminal`, `flow=<flow ulid>` (flow mode on a new task, the pane beside a task) or `flow=task`. `ui/windows.js` keeps them: each window's module calls `keep(name, { get, set })` as it loads, `get()` saying what it shows (null closed), `set()` showing a state again after checking it. Following an address, it waits for `app.ready`, closes the windows not named and those out of order, then loads each named window's module (once its capability is found) and sets it, giving the keys back where they were. The router writes the windows into the entry it is on, and follows them only when an address leads to another place.
 
-**Components are custom elements** (light DOM, prefix `app-`). Each capability is one module that defines its elements and registers its tools; unlocking it is an `import()`, and any of its elements already on the page upgrade. `:not(:defined)` styles what isn't discovered yet.
+**Components are custom elements** (light DOM, prefix `app-`). Each capability is one module that defines its elements and registers its tools, hooks and slots ([Events and slots](#events-and-slots)); unlocking it is an `import()`, and any of its elements already on the page upgrade. `:not(:defined)` styles what isn't discovered yet.
 
 ## Layout
 
@@ -59,7 +59,7 @@ app/              what a deploy serves, as written (D243); the docs' paths to Je
   check.html      the check page: a certificate of an answer or its proof, read there and kept nowhere (D274)
   sw.js           offline cache, per capability
   brand.js        export const BRAND = { name, domain }
-  core/           the engine, standard web APIs only: llm.js anthropic.js sse.js loop.js events.js prompt.js deferred.js
+  core/           the engine, standard web APIs only: llm.js anthropic.js sse.js loop.js hooks.js events.js prompt.js deferred.js
                   rules.js fs.js files.js conversations.js settings.js memory.js skills.js search.js decide.js i18n.js
                   oauth.js zip.js ulid.js types.d.ts
   ui/             app.js (start), shell.js, base.js, state.js (signals; what the first screen draws), send.js (a message on
@@ -120,6 +120,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.is' })
   - `meta` on the brain entry says why Auto chose it (D70).
   - A request that fails before anything of its answer came is asked again after 1, 2 and 4 s, or after the provider's `Retry-After` when longer, up to 30 s, if the error may pass (`LLMError.retryable`: the connection, the provider busy or its server failing, and the browser offline, which looks the same as a refused cross-origin request; never the device's brain). Meanwhile the brain entry has `_meta.retrying` and the activity says "Trying again…". Once part of an answer came, or after the last wait, the error shows with Try again (D202).
 - **`llm.js`** and **`anthropic.js`**: the OpenAI-compatible Chat Completions and Anthropic Messages adapters, over fetch and SSE (`sse.js`); together they reach almost every model. `llm.js` imports `anthropic.js` when an Anthropic brain is first used. Anthropic from the browser needs the `anthropic-dangerous-direct-browser-access: true` header; OpenRouter's PKCE sign-in (`oauth.js`) runs entirely in the browser. A `claudecode` or `copilot` brain is an Anthropic one, and a `chatgpt` brain an OpenAI-compatible one, whose address is This computer's bridge, which runs the user's own Claude Code or Copilot, or signs in to ChatGPT (D235 · D262). OpenRouter weighs the credits left against the longest answer a brain may give, which Jean leaves unsaid; when they fall short it answers 402 with how many tokens they cover, and Jean asks again for that many. Any other 402, or Anthropic's 400 that says the credit balance is too low, is `credits`: the error says the brain is out of credits, to add some or choose another brain, with Check the brain beside Try again, and isn't tried again by itself.
+- **`hooks.js`**: Jean's events, which hooks watch, change or answer ([Events and slots](#events-and-slots), D293).
 - **`events.js`**: the ACP records and their envelopes ([Activity events](#activity-events)), `splitSuggestions()` (D69), `versionsOf()` (D164), `isPicture`.
 - **`prompt.js`**: the base prompt, the frozen sections and the notes that change them (D46, D81).
 - **`deferred.js`**: `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63, D104).
@@ -150,6 +151,23 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.is' })
 | Projects | `meet`; *`speak`*, called by `meet` (D224) |
 | Folders | `list`, `find_in_files`, `open`, `change`, deferred and named in `<folder>` (D152) |
 | Connections | `<service>_<tool>` for each connection's tools, deferred (D89) |
+
+## Events and slots
+
+What Jean does passes through named events, and what the room draws for a capability goes through named slots that the capability fills (D293), the points plugins will reach too.
+
+**Hooks.** `fire(hooks, name, e, behaviour)` (`core/hooks.js`) runs the hooks on that event whose `match` the event holds (a value, one of a list, or a pattern its text matches), outermost tier first (`policy`, `user`, `jean`), in the order given within one. Each `run(e, next)` calls `next(e)` to go on, with the event or a changed copy, the last `next` reaching Jean's behaviour; returning without it answers the event. One that throws is passed over, or answers `{ refuse }` when it is a guard (`refuse` set); once it went on, what came back stands, and what Jean's behaviour throws goes through as it is. A capability lists its `hooks`, which `contributions()` gathers, read again at each event as tools are.
+
+| Event | Fired | Holds | A hook answers | Used by |
+|---|---|---|---|---|
+| `task.start` | once a conversation is made, by its first message or duplicated (`send()`, `fork()`) | `task`, `id`, `from` | | Folders, keeping the folder (D149, D230) |
+| `turn.step` | each request to a brain: a turn's steps (`core/loop.js`), a title (`ui/title.js`), Double-check | `brain`, `system`, `messages`, `tools`, `signal`, `step`; never the key | with the stream of events | the device's brain, answering its own |
+| `tool.check` | before a call runs, after the rules and the tool's `check` | `toolCallId`, `name`, `kind`, `args`, and the turn's `task` and the kinds of its `notes` | `{ decision, reason }` or `{ refuse }` | Since last time, refusing what isn't reading (D101) |
+| `turn.end` | a turn ended (`ui/send.js`) | `task`, `at`, `answer`, `records`, `aborted`, `cites` | in place of counting towards offering Double-check | Double-check (D100) |
+
+No hook makes a reserved action (passwords, payments) less guarded than the rules left it. A refusal's reason is what the brain reads; without one, "The user declined this action."
+
+**Slots.** `slots(name)` (`ui/caps.js`) gives what each loaded capability has in a slot, `{ at, draw }`, lowest `at` first: `views`, the header's end (the folder, the terminal, the browser, a task's flow); `main`, in place of the welcome (flow mode); `above`, above the box (the folder's question); `add`, the + menu (a folder, flow mode; the screen's capture is Jean's own, at 2); `activity`, under a task's activity (as a flow); `settings`, a section of Settings with its `id`, `label`, `icon` and `also` (Connections, Web search, the Computer), placed among Jean's own by `at`; `brains` and `data`, a part of Settings › Brains (pictures) and Your data (Sync).
 
 ## Brain ladder
 

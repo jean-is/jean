@@ -36,5 +36,6 @@
   "folders.undo.elsewhere": "Esta tarea trabaja ahora en otra carpeta.",
   "folders.field": "Carpeta en este ordenador",
   "folders.field.none": "Ninguna: las tareas nuevas aquí empiezan sin carpeta.",
-  "folders.choose": "Elegir…"
+  "folders.choose": "Elegir…",
+  "folders.add": "Una carpeta…"
 }

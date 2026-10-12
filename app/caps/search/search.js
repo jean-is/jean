@@ -11,6 +11,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
+import { icons } from '../../ui/icons.js'
 import { app, effective, updateSettings } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings, languageName } from '../../core/i18n.js'
@@ -72,7 +73,7 @@ effect(() => register({
   lines: [{ name: 'web_search', line: 'search the web for facts the conversation does not hold' }],
   // Vikidia's pages refuse to show beside the conversation: the browser opens them in a tab at once.
   ownTab: (url) => OWN_TAB.some((id) => onSite(serviceURL(id, app.settings.peek(), app.policy), url)),
-  panel,
+  slots: { settings: { at: 70, id: 'search', label: 'cap.search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia' } },
 }))
 
 // ─── Settings › Web search ───────────────────────────────────────────────────

@@ -37,5 +37,6 @@
   "folders.undo.elsewhere": "Це завдання тепер працює в іншій теці.",
   "folders.field": "Тека на цьому комп’ютері",
   "folders.field.none": "Немає: нові завдання тут починаються без теки.",
-  "folders.choose": "Вибрати…"
+  "folders.choose": "Вибрати…",
+  "folders.add": "Теку…"
 }

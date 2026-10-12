@@ -14,7 +14,6 @@
   "starter.savings.prompt": "10年間の積立を計算してください：毎月200、年利4%。グラフで見せてください。",
   "composer.label": "メッセージ",
   "composer.add": "メッセージに追加",
-  "composer.folder": "フォルダー…",
   "composer.placeholder": "何でも聞いてください。やりたいことを書いても大丈夫です…",
   "action.send": "送信",
   "action.stop": "停止",

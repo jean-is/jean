@@ -14,7 +14,6 @@
   "starter.savings.prompt": "10년 동안 내 저축을 계산해 줘: 매달 200, 연 4%. 그래프로 보여 줘.",
   "composer.label": "메시지",
   "composer.add": "메시지에 추가",
-  "composer.folder": "폴더…",
   "composer.placeholder": "무엇이든 묻거나 할 일을 설명해 주세요…",
   "action.send": "보내기",
   "action.stop": "중지",

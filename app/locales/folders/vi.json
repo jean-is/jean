@@ -34,5 +34,6 @@
   "folders.undo.elsewhere": "Nhiệm vụ này giờ làm việc trong một thư mục khác.",
   "folders.field": "Thư mục trên máy tính này",
   "folders.field.none": "Không có: các nhiệm vụ mới ở đây bắt đầu mà không có thư mục.",
-  "folders.choose": "Chọn…"
+  "folders.choose": "Chọn…",
+  "folders.add": "Một thư mục…"
 }

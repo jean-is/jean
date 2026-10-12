@@ -586,7 +586,12 @@ register({
     const folder = folderOf(app.current.peek())
     return folder ? { folder: await section(folder) } : {}
   },
-  started,
+  hooks: [{ on: 'task.start', run: async (e, next) => { await started(e, e.from); return next(e) } }],
+  slots: {
+    views: { at: 1, draw: () => html`<app-folder></app-folder>` },
+    above: { at: 1, draw: () => html`<app-folder-ask></app-folder-ask>` },
+    add: { at: 1, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => choose()}>${icons.folder}${t('folders.add')}</button>` },
+  },
 })
 
 // ─── Its pages, in the browser ───────────────────────────────────────────────

@@ -14,7 +14,6 @@
   "starter.savings.prompt": "算一下我 10 年的儲蓄：每月存 200，年利率 4%。用圖表給我看。",
   "composer.label": "你的訊息",
   "composer.add": "新增至訊息",
-  "composer.folder": "資料夾…",
   "composer.placeholder": "想問什麼都可以，或描述一項工作…",
   "action.send": "傳送",
   "action.stop": "停止",

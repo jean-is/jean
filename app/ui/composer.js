@@ -5,7 +5,7 @@ import { html, nothing } from 'lit-html'
 import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, SHORTCUTS } from './state.js'
-import { unlock, isDenied, loaded } from './caps.js'
+import { unlock, isDenied, loaded, slots } from './caps.js'
 import { t } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
 import { icons } from './icons.js'
@@ -31,10 +31,10 @@ class Composer extends Element {
       : working ? (downloading ? t('dictation.downloading', { percent: Math.round((voice.progress ?? 0) * 100) }) : t(`dictation.${voice.state}`))
       : ''
     const files = !isDenied('files')
-    // A menu when + adds more than files: on a new task, flow mode too (D218).
-    const folders = loaded.value.has('folders')
-    const flows = loaded.value.has('flows') && !app.current.value?.records.length
-    const menu = CAPTURE || folders || flows
+    // A menu when + adds more than files: what capabilities add there (a folder; on a new task, flow mode, D218), and a capture of the screen.
+    const more = [...slots('add'), ...(CAPTURE ? [{ at: 2, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` }] : [])]
+      .sort((a, b) => a.at - b.at).map((entry) => entry.draw(app.current.value)).filter((drawn) => drawn !== nothing)
+    const menu = more.length > 0
     const add = t(menu ? 'composer.add' : 'files.attach')
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
@@ -63,11 +63,7 @@ class Composer extends Element {
               popovertarget=${menu ? 'add-menu' : nothing} @click=${menu ? undefined : this.#files}>${icons.plus}</button>` : nothing}
             ${files && menu ? html`<div id="add-menu" class="menu" popover>
               <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button>
-              ${folders ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
-                @click=${() => import('../caps/folders/folders.js').then((module) => module.choose())}>${icons.folder}${t('composer.folder')}</button>` : nothing}
-              ${CAPTURE ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` : nothing}
-              ${flows ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
-                @click=${() => import('../caps/flows/flows.js').then((module) => module.edit())}>${icons.flow}${t('cap.flows.name')}</button>` : nothing}
+              ${more}
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}

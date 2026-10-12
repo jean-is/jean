@@ -36,5 +36,6 @@
   "folders.undo.elsewhere": "Questa attività ora lavora in un’altra cartella.",
   "folders.field": "Cartella su questo computer",
   "folders.field.none": "Nessuna: le nuove attività qui iniziano senza cartella.",
-  "folders.choose": "Scegli…"
+  "folders.choose": "Scegli…",
+  "folders.add": "Una cartella…"
 }

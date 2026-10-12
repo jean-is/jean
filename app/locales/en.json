@@ -14,7 +14,6 @@
   "starter.savings.prompt": "Calculate my savings over 10 years: 200 a month at 4% a year. Show it as a chart.",
   "composer.label": "Your message",
   "composer.add": "Add to your message",
-  "composer.folder": "A folder…",
   "composer.placeholder": "Ask anything, or describe a task…",
   "action.send": "Send",
   "action.stop": "Stop",

@@ -37,5 +37,6 @@
   "folders.undo.elsewhere": "To zadanie pracuje teraz w innym folderze.",
   "folders.field": "Folder na tym komputerze",
   "folders.field.none": "Brak: nowe zadania tutaj zaczynają się bez folderu.",
-  "folders.choose": "Wybierz…"
+  "folders.choose": "Wybierz…",
+  "folders.add": "Folder…"
 }

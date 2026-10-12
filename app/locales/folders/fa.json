@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "این کار اکنون در پوشهٔ دیگری انجام می‌شود.",
   "folders.field": "پوشه در این رایانه",
   "folders.field.none": "هیچ: کارهای تازه اینجا بدون پوشه شروع می‌شوند.",
-  "folders.choose": "انتخاب…"
+  "folders.choose": "انتخاب…",
+  "folders.add": "یک پوشه…"
 }

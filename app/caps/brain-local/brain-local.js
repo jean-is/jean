@@ -142,4 +142,5 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   }
 }
 
-register({ id: 'brain-local', stream })
+// It answers the steps of a turn on the device's brain itself (core/hooks.js), and leaves the others to their brains.
+register({ id: 'brain-local', hooks: [{ on: 'turn.step', run: (e, next) => (e.brain.api === 'device' ? stream(e) : next(e)) }] })

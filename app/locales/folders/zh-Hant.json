@@ -34,5 +34,6 @@
   "folders.undo.elsewhere": "這個任務現在在另一個資料夾中工作。",
   "folders.field": "這台電腦上的資料夾",
   "folders.field.none": "無：這裡的新任務開始時不帶資料夾。",
-  "folders.choose": "選擇…"
+  "folders.choose": "選擇…",
+  "folders.add": "資料夾…"
 }

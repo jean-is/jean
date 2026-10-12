@@ -449,5 +449,5 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  panel,
+  slots: { brains: { at: 1, draw: panel } },
 })

@@ -14,7 +14,6 @@
   "starter.savings.prompt": "Calcule mon épargne sur 10 ans : 200 par mois à 4 % par an. Montre-la en graphique.",
   "composer.label": "Votre message",
   "composer.add": "Ajouter à votre message",
-  "composer.folder": "Un dossier…",
   "composer.placeholder": "Posez une question ou décrivez une tâche…",
   "action.send": "Envoyer",
   "action.stop": "Arrêter",

@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "This task works in another folder now.",
   "folders.field": "Folder on this computer",
   "folders.field.none": "None: new tasks here start without one.",
-  "folders.choose": "Choose…"
+  "folders.choose": "Choose…",
+  "folders.add": "A folder…"
 }

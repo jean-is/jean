@@ -8,6 +8,8 @@ import { TIERS } from './auto.js'
 import { appendRecords } from '../core/conversations.js'
 import { linkedFiles, metaRecord, openingOf, routineOf, titleOf } from '../core/events.js'
 import { firstWords } from '../core/i18n.js'
+import { fire } from '../core/hooks.js'
+import { contributions } from './caps.js'
 
 /** @import { Envelope, BrainConfig } from '../core/types.js' */
 
@@ -48,17 +50,17 @@ async function titleFor(records, brain) {
   if (brain.api === 'device') return fallback
   try {
     const { streamChat } = await import('../core/llm.js')
-    const asked = await simplest(brain)
+    const [asked, apiKey] = await Promise.all([simplest(brain), getSecret(app.fs, brain.id)])
     let reply = ''
-    const events = streamChat({
+    // A step of its own, through the capabilities' hooks as a turn's are.
+    const events = await fire(contributions().hooks, 'turn.step', {
       brain: asked,
-      apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
       system: [TITLER, app.policy.instructions].filter(Boolean).join('\n\n'),
       messages: [{ role: 'user', content: [text.slice(0, 2000), names.length ? `(${names.join(', ')})` : ''].filter(Boolean).join('\n\n') }],
       tools: [],
       maxTokens: 400,
       signal: AbortSignal.timeout(20_000),
-    })
+    }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
     for await (const event of events) if (event.type === 'text') reply += event.delta
     return tidy(reply) || fallback
   } catch (error) {

@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "Sa ibang folder na nagtatrabaho ang gawaing ito.",
   "folders.field": "Folder sa computer na ito",
   "folders.field.none": "Wala: nagsisimula nang walang folder ang mga bagong gawain dito.",
-  "folders.choose": "Pumili…"
+  "folders.choose": "Pumili…",
+  "folders.add": "Isang folder…"
 }

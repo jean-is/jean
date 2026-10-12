@@ -14,7 +14,6 @@
   "starter.savings.prompt": "Calcula mis ahorros durante 10 años: 200 al mes al 4 % anual. Muéstramelos en un gráfico.",
   "composer.label": "Tu mensaje",
   "composer.add": "Añadir a tu mensaje",
-  "composer.folder": "Una carpeta…",
   "composer.placeholder": "Pregunta lo que quieras o describe una tarea…",
   "action.send": "Enviar",
   "action.stop": "Detener",

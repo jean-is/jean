@@ -10,7 +10,7 @@ import {
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave } from './brains.js'
 import { isLocal } from './auto.js'
-import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
+import { unlock, isDenied, loaded, slots, SIZES as BYTES } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
@@ -223,7 +223,7 @@ function brains() {
       ${first ? nothing : html`<h3>${t('brain.add')}</h3>`}
       ${ways(first)}
     </section>`}
-    ${loaded.value.get('pictures')?.panel?.() ?? nothing}`
+    ${slots('brains').map((part) => part.draw())}`
 }
 
 /** A brain's icon, name and where it runs: this device, this computer, or the cloud. @param {BrainConfig} brain */
@@ -666,12 +666,13 @@ function data() {
         </label>
       </div>
     </section>`}
-    ${loaded.value.get('sync')?.panel?.() ?? nothing}`
+    ${slots('data').map((part) => part.draw())}`
 }
 
 /**
  * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
+ * @property {number} at       its place in the menu, lowest first
  * @property {string} label    its name in the menu
  * @property {unknown} icon
  * @property {() => unknown} show
@@ -688,27 +689,27 @@ const KNOWN = ['you', 'skills', 'routines']
 
 /**
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
- * Jean itself; what it knows and can do, a capability's own section once it is on, then the case
- * of them all; and what it may do and what it keeps.
- * @type {Record<Section, Place>}
+ * Jean itself; what it knows and can do, a capability's own section once it is on (its settings
+ * slot: Connections, Web search, the Computer), then the case of them all; and what it may do and what it keeps.
+ * @type {Partial<Record<Section, Place>>}
  */
-export const SECTIONS = {
-  general: { label: 'settings.general', icon: icons.gear, show: general },
-  brains: { label: 'settings.brains', icon: icons.spark, show: brains },
-  appearance: { label: 'settings.appearance', icon: icons.contrast, show: appearance },
-  keyboard: { label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
-  you: { label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
-  connections: { label: 'cap.connections.name', icon: icons.plug, show: () => loaded.value.get('connections')?.panel?.() ?? nothing, when: () => loaded.value.has('connections') },
-  search: { label: 'cap.search.name', icon: icons.websearch, show: () => loaded.value.get('search')?.panel?.() ?? nothing, when: () => loaded.value.has('search'), also: () => 'Kiwix Wikipedia Vikidia' },
-  skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
-  routines: { label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
-  computer: { label: 'cap.computer.name', icon: icons.computer, show: () => loaded.value.get('computer')?.panel?.() ?? nothing, when: () => loaded.value.has('computer') },
-  capabilities: { label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
-  approvals: { label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
-  data: { label: 'settings.storage', icon: icons.data, show: data },
+const SECTIONS = {
+  general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
+  brains: { at: 20, label: 'settings.brains', icon: icons.spark, show: brains },
+  appearance: { at: 30, label: 'settings.appearance', icon: icons.contrast, show: appearance },
+  keyboard: { at: 40, label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
+  you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
+  skills: { at: 80, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
+  routines: { at: 90, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
+  capabilities: { at: 100, label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
+  approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
+  data: { at: 120, label: 'settings.storage', icon: icons.data, show: data },
 }
-/** The sections shown now. */
-export const sections = () => /** @type {Section[]} */ (Object.keys(SECTIONS)).filter((id) => SECTIONS[id].when?.() ?? true)
+/** The sections shown now, in their order. @returns {[Section, Place][]} */
+export const places = () => /** @type {[Section, Place][]} */ ([...Object.entries(SECTIONS), ...slots('settings').map((entry) => [entry.id, { ...entry, show: entry.draw }])])
+  .filter(([, place]) => place.when?.() ?? true).sort(([, a], [, b]) => a.at - b.at)
+/** Their names. */
+export const sections = () => places().map(([id]) => id)
 
 /** Opens Settings on one of its sections. @param {Section} [name] */
 export function openSettings(name = 'general') {
@@ -718,16 +719,16 @@ export function openSettings(name = 'general') {
 
 class Settings extends Element {
   render() {
-    const shown = sections()
-    const open = shown.find((id) => id === app.section.value) ?? 'general'
+    const shown = places()
+    const [open, place] = shown.find(([id]) => id === app.section.value) ?? shown[0]
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
-        ${shown.map((id) => html`${SECTIONS[id].group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
-          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
+        ${shown.map(([id, { group, icon, label }]) => html`${group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
+          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button>`)}
       </nav>
-      <div class="settings-panel">${SECTIONS[open].show()}</div>
+      <div class="settings-panel">${place.show()}</div>
     </dialog>`
   }
 

@@ -14,7 +14,6 @@
   "starter.savings.prompt": "Рассчитай мои накопления за 10 лет: 200 в месяц под 4% годовых. Покажи их на графике.",
   "composer.label": "Ваше сообщение",
   "composer.add": "Добавить к сообщению",
-  "composer.folder": "Папку…",
   "composer.placeholder": "Спросите что угодно или опишите задачу…",
   "action.send": "Отправить",
   "action.stop": "Остановить",

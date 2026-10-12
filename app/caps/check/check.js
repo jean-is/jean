@@ -7,7 +7,8 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
-import { register, loaded } from '../../ui/caps.js'
+import { register, loaded, contributions } from '../../ui/caps.js'
+import { fire } from '../../core/hooks.js'
 import { app, activeBrain, brainsHere, send } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
 import { appendRecords } from '../../core/conversations.js'
@@ -53,12 +54,12 @@ function brainOf(turn) {
   return brain && (model && brain.api !== 'device' ? { ...brain, model } : brain)
 }
 
-/** One request, no tools, the reply's text. @param {BrainConfig} brain @param {string} text */
+/** One request, no tools, the reply's text: a step of its own, which the device's brain answers through its hook. @param {BrainConfig} brain @param {string} text */
 async function ask(brain, text) {
-  const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : (await import('../../core/llm.js')).streamChat
-  if (!stream) throw new Error('No brain to ask')
+  if (brain.api === 'device' && !loaded.value.has('brain-local')) throw new Error('No brain to ask')
+  const [{ streamChat }, apiKey] = await Promise.all([import('../../core/llm.js'), getSecret(app.fs, brain.id)])
   let reply = ''
-  const events = stream({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined, system: CHECKER, messages: [{ role: 'user', content: text }], tools: [] })
+  const events = await fire(contributions().hooks, 'turn.step', { brain, system: CHECKER, messages: [{ role: 'user', content: text }], tools: [] }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
   for await (const event of events) if (event.type === 'text') reply += event.delta
   return reply
 }
@@ -122,4 +123,5 @@ class Check extends Element {
 }
 
 define('app-check', Check)
-register({ id: 'check' })
+// An answer that cites its sources is checked once it has come, in place of counting towards offering Double-check.
+register({ id: 'check', hooks: [{ on: 'turn.end', match: { cites: true }, run: (e) => check(e.task, e.at, e.records) }] })

@@ -4,6 +4,7 @@ import { streamChat as defaultStream, LLMError } from './llm.js'
 import { envelope } from './events.js'
 import { signature } from './deferred.js'
 import { isLocal } from './settings.js'
+import { fire } from './hooks.js'
 
 /** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, RuleValue, Source } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
@@ -12,6 +13,8 @@ import { isLocal } from './settings.js'
 // or after what the provider asks for, unless that is longer than LONGEST_WAIT.
 const RETRIES = [1000, 2000, 4000]
 const LONGEST_WAIT = 30_000
+/** How guarded each decision is: no hook makes a reserved action less guarded than the rules left it. */
+const STRICT = { allow: 0, ask: 1, never: 2 }
 
 /**
  * @typedef {Object} Tool
@@ -67,6 +70,9 @@ const LONGEST_WAIT = 30_000
  * @property {number} [maxSteps]
  * @property {number[]} [retries]                    the waits before asking again, in ms (D202)
  * @property {typeof defaultStream} [stream]          injectable for tests
+ * @property {import('./hooks.js').Hook[] | (() => import('./hooks.js').Hook[])} [hooks]  what the turn's events run through
+ *   (core/hooks.js): turn.step, each request to the brain, and tool.check, whether a call runs
+ * @property {Record<string, unknown>} [about]       what each of its events holds besides: its task, the kinds of note it came with
  */
 
 /** @param {TurnOptions} options */
@@ -87,7 +93,9 @@ export async function runTurn(options) {
     if (!numbers.has(key)) (meta.sources ??= []).push({ ...source, n: numbers.set(key, numbers.size + (options.firstSource ?? 1)).get(key) })
     return /** @type {number} */ (numbers.get(key))
   })
-  const ctx = { rule, askPermission, onUpdate, persist, signal, byName: new Map(tools().map((tool) => [tool.spec.name, tool])), declared, tools, cite, options, numbers }
+  /** @type {(name: string, e: Record<string, unknown>, behaviour: (e: any) => any) => Promise<any>} */
+  const on = (name, e, behaviour) => fire(typeof options.hooks === 'function' ? options.hooks() : options.hooks ?? [], name, { ...options.about, ...e }, behaviour)
+  const ctx = { rule, askPermission, onUpdate, persist, signal, on, byName: new Map(tools().map((tool) => [tool.spec.name, tool])), declared, tools, cite, options, numbers }
   const usage = { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0 }
   // A step's calls, in order. One waiting for the user's answer is kept as pending meanwhile, with those after it, so a
   // page closed before the answer asks again when the conversation opens (D212).
@@ -122,7 +130,8 @@ export async function runTurn(options) {
       const specs = [...ctx.byName.values()].filter((tool) => declared.has(tool.spec.name)).map((tool) => tool.spec)
       for (let attempt = 0, heard = false; ; attempt++) {
         try {
-          for await (const event of stream({ brain, apiKey, system, messages: history, tools: specs, signal })) {
+          // A hook may send the step elsewhere, or answer it itself (the device's brain); it never sees the key.
+          for await (const event of await on('turn.step', { step, brain, system, messages: history, tools: specs, signal }, (e) => stream({ ...e, apiKey }))) {
             heard = true
             if (event.type === 'text') {
               text += event.delta
@@ -190,6 +199,7 @@ function stepRecords(step, brainEntry, thought, text) {
  * @param {Tool | undefined} tool
  * @param {number} step
  * @param {Pick<Required<TurnOptions>, 'rule' | 'askPermission' | 'onUpdate' | 'persist'> & { signal?: AbortSignal, byName: Map<string, Tool>, declared: Set<string>, tools: () => Tool[],
+ *   on: (name: string, e: Record<string, unknown>, behaviour: (e: any) => any) => Promise<any>,
  *   cite: (sources: Source[], meta: Record<string, any>) => number[], options: TurnOptions, numbers: Map<string, number> }} ctx
  * @param {string} [parent]
  * @param {(info: ToolCallInfo) => Promise<void>} [waiting] keeps the call as pending while it waits for the user (D212)
@@ -246,17 +256,27 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
   // The brain hasn't seen a deferred tool's schema: without what it requires, it learns how to call it.
   else if (!parent && !ctx.declared.has(call.name) && lacking(tool, call.args).length) output = `It needs ${lacking(tool, call.args).join(', ')}. Call it like this:\n${signature(tool)}`
   else {
-    let decision = rule(tool.kind, Boolean(tool.reserved))
-    // A check that fails asks nothing: the run says what is wrong.
-    const checked = decision === 'never' ? undefined : await tool.check?.(call.args, context).catch(() => undefined)
+    const ruled = rule(tool.kind, Boolean(tool.reserved))
+    /** @type {{ checked?: Check | void }} what the check found */
+    const found = {}
+    // What the rules say, then the tool's check, which may ask where they allow; one that fails asks nothing: the run says what is wrong.
+    const said = await ctx.on('tool.check', { toolCallId: call.id, name: call.name, kind: tool.kind, args: call.args }, async () => {
+      found.checked = ruled === 'never' ? undefined : await tool.check?.(call.args, context).catch(() => undefined)
+      return { decision: found.checked?.ask && ruled === 'allow' ? 'ask' : ruled }
+    })
+    /** @type {RuleValue} */
+    let decision = said?.refuse ? 'never' : said?.decision ?? ruled
+    if (tool.reserved && STRICT[decision] < STRICT[ruled]) decision = ruled
+    const refused = decision === 'never' ? said?.refuse ?? said?.reason : undefined
+    const { checked } = found
     if (checked?.meta) info._meta = { ...info._meta, ...checked.meta }
-    if (decision === 'ask' || checked?.ask) {
+    if (decision === 'ask') {
       await waiting?.(info)
       context.answer = await askPermission({ toolCall: { ...info, ...(checked?.content && { content: checked.content }) }, step })
       decision = context.answer.startsWith('allow') ? 'allow' : 'never'
     }
     if (decision === 'never') {
-      output = 'The user declined this action.'
+      output = refused ?? 'The user declined this action.'
       context.meta.declined = true
     } else {
       if (tool.asks) await waiting?.(info)
