@@ -1490,140 +1490,140 @@
       },
       "m": {
         "lookup": {
-          "recall": 1,
-          "strict": 1,
-          "n": 31
+          "recall": 0.9787234042553191,
+          "strict": 0.9787234042553191,
+          "n": 47
         },
         "paraphrase": {
           "recall": 1,
           "strict": 1,
-          "n": 16
+          "n": 25
         },
         "filter": {
-          "recall": 0.9583333333333334,
-          "strict": 0.9583333333333334,
-          "n": 24
+          "recall": 1,
+          "strict": 1,
+          "n": 36
         },
         "aggregate": {
-          "recall": 0.993421052631579,
-          "strict": 0.9473684210526315,
-          "n": 19
+          "recall": 1,
+          "strict": 1,
+          "n": 28
         },
         "multihop": {
-          "recall": 0.3703703703703703,
-          "strict": 0,
-          "n": 18
+          "recall": 0.7901234567901233,
+          "strict": 0.5185185185185185,
+          "n": 27
         },
         "temporal": {
           "recall": 1,
           "strict": 1,
-          "n": 18
+          "n": 27
         },
         "crosslingual": {
-          "recall": 0.9393939393939394,
-          "strict": 0.9393939393939394,
-          "n": 33
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
         },
         "negative": {
-          "lure": 0.7916666666666666,
-          "n": 24
+          "lure": 0.8285714285714286,
+          "n": 35
         },
         "global": {
-          "recall": 0.9629629629629629,
-          "strict": 0.8888888888888888,
-          "n": 9
+          "recall": 1,
+          "strict": 1,
+          "n": 14
         }
       },
       "l": {
         "lookup": {
-          "recall": 0.7142857142857143,
-          "strict": 0.7142857142857143,
-          "n": 63
+          "recall": 0.8315789473684211,
+          "strict": 0.8315789473684211,
+          "n": 95
         },
         "paraphrase": {
-          "recall": 1,
-          "strict": 1,
-          "n": 38
-        },
-        "filter": {
-          "recall": 0.9148936170212766,
-          "strict": 0.9148936170212766,
-          "n": 47
-        },
-        "aggregate": {
-          "recall": 0.8799425687434738,
-          "strict": 0.6410256410256411,
-          "n": 39
-        },
-        "multihop": {
-          "recall": 0.09649122807017545,
-          "strict": 0,
-          "n": 38
-        },
-        "temporal": {
-          "recall": 1,
-          "strict": 1,
-          "n": 38
-        },
-        "crosslingual": {
-          "recall": 0.603448275862069,
-          "strict": 0.603448275862069,
+          "recall": 0.9482758620689655,
+          "strict": 0.9482758620689655,
           "n": 58
         },
+        "filter": {
+          "recall": 0.8888888888888888,
+          "strict": 0.8888888888888888,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.820420502418474,
+          "strict": 0.5689655172413793,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.25146198830409366,
+          "strict": 0.017543859649122806,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 0.9824561403508771,
+          "strict": 0.9824561403508771,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.6162790697674418,
+          "strict": 0.6162790697674418,
+          "n": 86
+        },
         "negative": {
-          "lure": 0.574468085106383,
-          "n": 47
+          "lure": 0.6666666666666666,
+          "n": 72
         },
         "global": {
-          "recall": 1,
-          "strict": 1,
-          "n": 16
+          "recall": 0.9937888198757764,
+          "strict": 0.9565217391304348,
+          "n": 23
         }
       },
       "xl": {
         "lookup": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.4166666666666667,
+          "strict": 0.4166666666666667,
+          "n": 96
         },
         "paraphrase": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.9375,
+          "strict": 0.9375,
+          "n": 48
         },
         "filter": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.8125,
+          "strict": 0.8125,
+          "n": 64
         },
         "aggregate": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.5498620912755975,
+          "strict": 0.14583333333333334,
+          "n": 48
         },
         "multihop": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.035460992907801414,
+          "strict": 0,
+          "n": 47
         },
         "temporal": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
         },
         "crosslingual": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.4868421052631579,
+          "strict": 0.4868421052631579,
+          "n": 76
         },
         "negative": {
-          "lure": null,
-          "n": 0
+          "lure": 0.1206896551724138,
+          "n": 58
         },
         "global": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.7672217701309774,
+          "strict": 0.5652173913043478,
+          "n": 23
         }
       }
     },
@@ -1698,138 +1698,138 @@
         "lookup": {
           "recall": 1,
           "strict": 1,
-          "n": 31
+          "n": 47
         },
         "paraphrase": {
           "recall": 1,
           "strict": 1,
-          "n": 16
+          "n": 25
         },
         "filter": {
           "recall": 1,
           "strict": 1,
-          "n": 24
+          "n": 36
         },
         "aggregate": {
-          "recall": 0.993421052631579,
-          "strict": 0.9473684210526315,
-          "n": 19
+          "recall": 0.9910714285714286,
+          "strict": 0.9285714285714286,
+          "n": 28
         },
         "multihop": {
-          "recall": 0.38888888888888884,
-          "strict": 0,
-          "n": 18
+          "recall": 0.43209876543209874,
+          "strict": 0.037037037037037035,
+          "n": 27
         },
         "temporal": {
           "recall": 1,
           "strict": 1,
-          "n": 18
+          "n": 27
         },
         "crosslingual": {
-          "recall": 0.9696969696969697,
-          "strict": 0.9696969696969697,
-          "n": 33
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
         },
         "negative": {
-          "lure": 0.7916666666666666,
-          "n": 24
+          "lure": 0.8,
+          "n": 35
         },
         "global": {
-          "recall": 0.9629629629629629,
-          "strict": 0.8888888888888888,
-          "n": 9
+          "recall": 0.9761904761904762,
+          "strict": 0.9285714285714286,
+          "n": 14
         }
       },
       "l": {
         "lookup": {
-          "recall": 1,
-          "strict": 1,
-          "n": 63
+          "recall": 0.9894736842105263,
+          "strict": 0.9894736842105263,
+          "n": 95
         },
         "paraphrase": {
           "recall": 1,
           "strict": 1,
-          "n": 38
+          "n": 58
         },
         "filter": {
-          "recall": 1,
-          "strict": 1,
-          "n": 47
+          "recall": 0.9861111111111112,
+          "strict": 0.9861111111111112,
+          "n": 72
         },
         "aggregate": {
-          "recall": 0.9195743254566784,
-          "strict": 0.7692307692307693,
-          "n": 39
+          "recall": 0.9269551498760424,
+          "strict": 0.8103448275862069,
+          "n": 58
         },
         "multihop": {
-          "recall": 0.3333333333333335,
+          "recall": 0.3333333333333333,
           "strict": 0,
-          "n": 38
+          "n": 57
         },
         "temporal": {
           "recall": 1,
           "strict": 1,
-          "n": 38
+          "n": 57
         },
         "crosslingual": {
-          "recall": 0.7241379310344828,
-          "strict": 0.7241379310344828,
-          "n": 58
+          "recall": 0.7441860465116279,
+          "strict": 0.7441860465116279,
+          "n": 86
         },
         "negative": {
-          "lure": 0.6170212765957447,
-          "n": 47
+          "lure": 0.625,
+          "n": 72
         },
         "global": {
           "recall": 1,
           "strict": 1,
-          "n": 16
+          "n": 23
         }
       },
       "xl": {
         "lookup": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 1,
+          "strict": 1,
+          "n": 96
         },
         "paraphrase": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.9375,
+          "strict": 0.9375,
+          "n": 48
         },
         "filter": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.984375,
+          "strict": 0.984375,
+          "n": 64
         },
         "aggregate": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.5242361568599959,
+          "strict": 0.14583333333333334,
+          "n": 48
         },
         "multihop": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.33333333333333354,
+          "strict": 0,
+          "n": 47
         },
         "temporal": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 1,
+          "strict": 1,
+          "n": 48
         },
         "crosslingual": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.6973684210526315,
+          "strict": 0.6973684210526315,
+          "n": 76
         },
         "negative": {
-          "lure": null,
-          "n": 0
+          "lure": 0.20689655172413793,
+          "n": 58
         },
         "global": {
-          "recall": null,
-          "strict": null,
-          "n": 0
+          "recall": 0.7672217701309774,
+          "strict": 0.5652173913043478,
+          "n": 23
         }
       }
     },
