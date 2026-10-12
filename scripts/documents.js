@@ -7,9 +7,10 @@
 //                                                    score the strategies, keeping each run's results in .cache/results/
 //        npm run documents -- --bench scan,first-search  H1: a flat vector scan at 1, 10 and 40 times XL; H6: the first search of XL in Chromium slowed 4×
 //        npm run documents -- --report [--write]         results.md and strategies.json from every run kept
-//        npm run documents -- --answers H4,H5 [--concurrency 3] [--requests 4] [--dense e5] [--dollars 10]   the answer eval with OpenRouter's brains (OPENROUTER_API_KEY),
+//        npm run documents -- --answers H4,H5 [--concurrency 3] [--requests 4] [--helpers 4] [--dense e5] [--dollars 10]   the answer eval with OpenRouter's brains (OPENROUTER_API_KEY),
 //        npm run documents -- --answers overall --conditions search,search+meaning   ten questions of each kind at XL, for the targets
-//                                 that many questions at once, their requests that many at a time (the rest queued), resuming
+//                                 that many questions at once, their requests that many at a time (the rest queued), the helpers'
+//                                 (notes, every_page) --helpers at a time with each of their own providers, resuming
 //                                 where it stopped; it stops itself once the run has spent --dollars, or a free brain's day runs out
 // Generated files are kept in test/documents/.cache/ (never committed), keyed by seed and size.
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises'
@@ -181,7 +182,7 @@ async function main(argv) {
   }
   if (o.has('report')) await report(o.has('write'))
   const hypotheses = o.value('answers', '')
-  setRequests(Number(o.value('requests', '4')))
+  setRequests(Number(o.value('requests', '4')), Number(o.value('helpers', o.value('requests', '4'))))
   if (hypotheses) await answers(hypotheses.split(','), Number(o.value('concurrency', '3')), o.value('dense', 'e5'), Number(o.value('passage', '100')), Number(o.value('limit', 'Infinity')), o.value('conditions', 'search').split(','), Number(o.value('dollars', '10')))
   const benches = o.value('bench', '')
   if (benches) {
