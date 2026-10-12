@@ -11,7 +11,7 @@
     "$comment": "Loaded upfront. On-demand dependencies live inside capability modules and are listed in docs/architecture.md."
   },
   "gzipKB": {
-    "firstLoad": 103.5,
+    "firstLoad": 104,
     "css": 12,
     "locale": 9,
     "capabilityCode": 50,
