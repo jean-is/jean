@@ -5,9 +5,9 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { runTurn } from '../app/core/loop.js'
-import { toChatMessages, userRecord } from '../app/core/events.js'
+import { userRecord } from '../app/core/events.js'
 import { PROVIDERS, streamChat } from '../app/core/llm.js'
-import { buildSystemPrompt, promptState, changeNotes } from '../app/core/prompt.js'
+import { buildSystemPrompt, promptState, changeNotes, toChatMessages } from '../app/core/prompt.js'
 
 const encoder = new TextEncoder()
 const sse = (/** @type {string} */ text) => new Response(new ReadableStream({

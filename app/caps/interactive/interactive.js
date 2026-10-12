@@ -10,8 +10,9 @@
 // of the user's only: `sendPrompt(text)` sends the text as the user's next message, as a follow-up
 // does, and a link opens in a new tab. With Run its code off, it is code. Copy puts its source on the
 // clipboard. Loaded with the first message, for its rule, then at each visit, so that pages written
-// before show again, or by the first page a conversation holds; written again in a new theme, look,
-// language or policy, as a chart is drawn again.
+// before show again, or by the first page a conversation holds. Written again under a new policy,
+// which a page keeps from its start; a new theme, look or language is put on the page as it is
+// (`room`), its charts, diagrams and maps following, so that what was typed in it stays.
 // Components (D291): a ```mermaid block is a diagram, drawn here (./diagram.js); a ```geojson block,
 // a page made of a map (./map.js). A page is lent both when it holds one (<app-diagram>, <app-map>,
 // their text what the blocks hold), and lays out its <main> and an <aside> side by side, so that a
@@ -70,8 +71,28 @@ const library = () => (echarts ??= fetch(new URL('../../vendor/echarts/echarts.m
   const names = (/export\s*\{([^}]*)\}\s*;?\s*$/.exec(text)?.[1] ?? '').split(',').map((name) => name.trim().split(/\s+as\s+/).pop()).filter((name) => /^\w+$/.test(String(name)) && name !== 'init')
   const stand = `const text = await new Promise((resolve) => { addEventListener('message', function got({ data, source }) { if (source === parent && typeof data?.echarts === 'string') removeEventListener('message', got), resolve(data.echarts) }); parent.postMessage({ need: 'echarts' }, '*') })
 const m = await import(URL.createObjectURL(new Blob([text], { type: 'text/javascript' })))
-const dark = getComputedStyle(document.documentElement).colorScheme === 'dark'
-export const init = (element, theme, options) => { const chart = m.init(element, theme ?? (dark ? 'dark' : null), options), set = chart.setOption.bind(chart); chart.setOption = (option, ...rest) => set({ backgroundColor: 'transparent', ...option }, ...rest); return chart }
+const dark = () => getComputedStyle(document.documentElement).colorScheme === 'dark'
+// Charts in the page's light or dark; on a new one, what was set on each since it last began afresh, which
+// setTheme forgets, is set again (up to 500 times, beyond which a chart keeps its colours).
+const own = new Map()
+addEventListener('message', ({ data, source }) => {
+  if (source === parent && data?.room) for (const [chart, { set, calls }] of own) {
+    if (chart.isDisposed()) { own.delete(chart); continue }
+    chart.setTheme(dark() ? 'dark' : {}, { silent: true })
+    calls.slice(1).forEach(([option, opts], i, rest) => set(option, { replaceMerge: opts?.replaceMerge, lazyUpdate: i < rest.length - 1, silent: true }))
+  }
+})
+export const init = (element, theme, options) => {
+  const chart = m.init(element, theme ?? (dark() ? 'dark' : null), options), set = chart.setOption.bind(chart), calls = []
+  if (theme == null) own.set(chart, { set, calls })
+  chart.setOption = (option, ...rest) => {
+    const given = { backgroundColor: 'transparent', ...option }
+    if (rest[0] === true || rest[0]?.notMerge) calls.length = 0
+    if (own.has(chart) && calls.push([given, typeof rest[0] === 'object' ? rest[0] : null]) > 500) own.delete(chart)
+    return set(given, ...rest)
+  }
+  return chart
+}
 export const { ${names.join(', ')} } = m
 export default { ...m, init }`
   return { text, url: `data:text/javascript;charset=utf-8,${encodeURIComponent(stand)}` }
@@ -95,18 +116,33 @@ const look=()=>{for(const[tag,need]of Object.entries(want))if(!got.has(need)&&do
 addEventListener('message',function on({data,source}){if(source===parent&&data?.id===id)removeEventListener('message',on),import(URL.createObjectURL(new Blob([data.text],{type:'text/javascript'})))})
 parent.postMessage({need,id},'*')}};new MutationObserver(look).observe(document,{childList:true,subtree:true})}</script>`
 
+// The room put on the page as it is: the style sheet before it, the root's language, direction, light or
+// dark and look, which diagrams and maps watch.
+const ROOM = `<script>{const sheet=document.currentScript.previousElementSibling,root=document.documentElement
+addEventListener('message',({data,source})=>{const room=data?.room;if(source!==parent||!room)return
+sheet.textContent=room.css;Object.assign(root,{lang:room.lang,dir:room.dir});Object.assign(root.dataset,{theme:room.theme,look:room.look})})}</script>`
+
 /**
- * What goes ahead of the page: its language and direction, ECharts, its components' loader, the room's
- * colours and type, controls in its style, and its <main> and <aside> side by side on a wide screen. A
- * frame whose colour scheme isn't the room's would be opaque; the page's own root can't give these names
- * other colours.
+ * The room as a page wears it: the user's language and its direction, light or dark, the look, and its
+ * colours and type, which the page's own root can't give other colours. A frame whose colour scheme
+ * isn't the room's would be opaque.
+ * @param {CSSStyleDeclaration} style
+ */
+function room(style) {
+  const lang = locale.peek()
+  const variables = [...VARIABLES.map(([name, own]) => [name, style.getPropertyValue(`--${own}`).trim()]), ...ALIASES].map(([name, value]) => `--${name}: ${value} !important;`).join(' ')
+  return { lang, dir: dir(lang), theme: theme.peek(), look: app.look.peek(), css: `:root { color-scheme: ${theme.peek()}; ${variables} }` }
+}
+
+/**
+ * What goes ahead of the page: the room, ECharts, its components' loader, controls in its style, and
+ * its <main> and <aside> side by side on a wide screen.
  * @param {CSSStyleDeclaration} style @param {string} charts the address of ECharts' stand-in
  */
 function head(style, charts) {
-  const lang = locale.peek()
-  const variables = [...VARIABLES.map(([name, own]) => [name, style.getPropertyValue(`--${own}`).trim()]), ...ALIASES].map(([name, value]) => `--${name}: ${value} !important;`).join(' ')
-  return `<html lang="${lang}" dir="${dir(lang)}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>
-:root { color-scheme: ${theme.peek()}; ${variables} --border-radius-md: calc(var(--border-radius-lg) / 2) !important; accent-color: var(--color-ring-primary); }
+  const { lang, dir, theme, look, css } = room(style)
+  return `<html lang="${lang}" dir="${dir}" data-theme="${theme}" data-look="${look}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>${css}</style>${ROOM}<style>
+:root { --border-radius-md: calc(var(--border-radius-lg) / 2) !important; accent-color: var(--color-ring-primary); }
 body { margin: 0; padding: 0.25rem; color: var(--color-text-primary); font: 1rem/1.5 var(--font-sans); overflow-wrap: anywhere; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button, select, textarea, input:not([type=range], [type=checkbox], [type=radio], [type=color]) { padding: 0.4em 0.8em; border: 1px solid var(--color-border-primary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); }
@@ -121,8 +157,12 @@ app-map, app-diagram { display: block; }
 class AppPage extends HTMLElement {
   /** `open` while its block's closing fence isn't written yet. */
   static observedAttributes = ['source', 'open']
-  /** What its frame was made for: the policy, theme, look and language. */
+  /** What its frame was made for: the policy. */
   made = ''
+  /** The theme, look and language its page wears. */
+  worn = ''
+  /** What starts its page once its frame has loaded. @type {{ once: true, handleEvent: (event: Event) => Promise<void> } | undefined} */
+  begin
   /** What of its source its page has been given; null while its frame loads. @type {string | null} */
   written = null
   /** Its page is closed: nothing more goes in. */
@@ -167,8 +207,15 @@ class AppPage extends HTMLElement {
       return render(html`<pre dir="ltr"><code>${this.getAttribute('source')}</code></pre>`, this)
     }
     const policy = pagePolicy(allows, sites, true)
-    const made = [policy, pageAllow(allows), theme.peek(), app.look.peek(), locale.peek()].join('\n')
+    const made = [policy, pageAllow(allows)].join('\n')
+    const worn = [theme.peek(), app.look.peek(), locale.peek()].join('\n')
     if (made === this.made) {
+      // A new theme, look or language, put on the page as it is; one still loading takes them as it starts.
+      if (worn !== this.worn) {
+        this.worn = worn
+        this.shell(allows)
+        if (this.written !== null) this.querySelector('iframe')?.contentWindow?.postMessage({ room: room(getComputedStyle(this)) }, '*')
+      }
       // More of a page being written goes on the page begun; a frame still loading takes what there is
       // then; a step back, as the answer settles, waits for it to come again.
       if (this.written === null || (this.whole && source === this.written)) return
@@ -176,11 +223,12 @@ class AppPage extends HTMLElement {
       if (!this.whole && (source.startsWith(kept) || kept.startsWith(source.trimEnd()))) return this.feed()
     }
     this.made = made
+    this.worn = worn
     this.written = null
     this.whole = false
     // A new page in a new frame: the one before is let go.
     render(nothing, this)
-    const begin = { once: true, handleEvent: async (/** @type {Event} */ event) => {
+    this.begin = { once: true, handleEvent: async (/** @type {Event} */ event) => {
       const frame = /** @type {HTMLIFrameElement} */ (event.target)
       const { url } = await library()
       const now = this.text()
@@ -189,7 +237,15 @@ class AppPage extends HTMLElement {
       this.written = now
       this.whole = !open
     } }
-    render(html`<iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} loading="lazy" src=${FRAME} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${begin}></iframe>
+    this.shell(allows)
+  }
+
+  /**
+   * Its frame and Copy, named in the user's language; drawn again, the frame stays as it is.
+   * @param {Record<import('../../ui/csp.js').PageRight, boolean>} allows
+   */
+  shell(allows) {
+    render(html`<iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} loading="lazy" src=${FRAME} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${this.begin}></iframe>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
@@ -230,12 +286,11 @@ class AppPage extends HTMLElement {
     else if (typeof data?.open === 'string' && /^https:\/\//i.test(data.open)) window.open(data.open, '_blank', 'noopener')
   }
 
-  /** MapLibre, its worker and its style sheet, the style for the room's light or dark, and whether maps are allowed; the words its card asks with. */
+  /** MapLibre, its worker and its style sheet, the styles for light and dark, and whether maps are allowed; the words its card asks with. */
   async maps() {
     const [library, worker, css] = await Promise.all(['maplibre-gl.mjs', 'maplibre-gl-worker.js', 'maplibre-gl.css'].map((file) => part(`../../vendor/maplibre/${file}`)))
-    const style = styles()[theme.peek() === 'dark' ? 'dark' : 'light']
-    const site = new URL(style).hostname
-    return { library, worker, css, style, allowed: rights.peek().allows.maps, strings: { show: t('interactive.mapShow'), from: t('interactive.mapFrom', { site }) } }
+    const site = new URL(styles()[theme.peek() === 'dark' ? 'dark' : 'light']).hostname
+    return { library, worker, css, styles: styles(), allowed: rights.peek().allows.maps, strings: { show: t('interactive.mapShow'), from: t('interactive.mapFrom', { site }) } }
   }
 
   /** Maps allowed, from now on, unless the organisation says otherwise. */

@@ -87,6 +87,7 @@
   "skills.text": "从重复请求中保存的步骤，请求匹配时就会按此执行。",
   "skills.none": "还没有技能。当你第三次提出同样的请求时，会建议你创建一个。",
   "skills.add": "从文件添加技能",
+  "skills.addOne": "添加技能",
   "skills.invalid": "这个文件不是技能。",
   "skills.added": "已添加技能“{title}”。",
   "skills.steps": "步骤",

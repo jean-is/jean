@@ -24,6 +24,7 @@ import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
+import { subRow } from '../../ui/composer.js'
 
 /** @import { Connection, Project } from '../../core/settings.js' */
 /** @import { McpTool, CallResult } from './mcp.js' */
@@ -180,7 +181,11 @@ effect(() => register({
     const [tools, logo] = [(status.value[connection.id]?.tools ?? []).filter(searchesWeb).map(labelOf), logoOf(connection)]
     return tools.length ? [{ name: connection.name, ...(logo && { logo: logoAt(logo) }), tools }] : []
   }),
-  slots: { settings: { at: 60, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel } },
+  slots: {
+    settings: { at: 60, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel },
+    // In +, a row whose menu beside it holds the room's connections (D292).
+    add: { at: 5, draw: () => subRow('connections', icons.plug) },
+  },
 }))
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()

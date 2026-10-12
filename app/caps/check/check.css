@@ -1,0 +1,22 @@
+/* Under an answer: whether its sources say what it says, drawn as the sources it read (.read-list). */
+.check li { flex-wrap: nowrap; align-items: baseline; }
+.check li > [dir] { flex: 1 1 auto; min-inline-size: 0; }
+.check .verdict { display: inline-flex; inline-size: 1rem; justify-content: center; color: var(--flame-deep); }
+.check .verdict .icon, .check.is-running .icon { inline-size: 1rem; block-size: 1rem; }
+.check [data-verdict='missing'] .verdict, .check [data-verdict='contradicted'] .verdict, .check.is-off > summary > .icon:first-child { color: var(--danger); }
+.check .follow-up { margin-block-start: 0.5rem; }
+/* While the sources are read, the tick draws itself and a light runs through the words, the way they read. */
+.check.is-running { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-size: 0.86rem; color: var(--ink-soft); }
+.check.is-running .icon { color: var(--flame); filter: drop-shadow(0 0 0.2rem oklch(from var(--glow) l c h / 0.8)); }
+.check.is-running path { stroke-dasharray: 21 30; animation: draw 2.4s var(--ease) infinite var(--loops, running); }
+.check.is-running span {
+  background: linear-gradient(90deg, var(--ink-soft) 40%, var(--flame) 50%, var(--ink-soft) 60%) 100% 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sweep 2.4s ease-in-out infinite var(--loops, running);
+}
+.check.is-running:dir(rtl) span { animation-direction: reverse; }
+@keyframes draw { from { stroke-dashoffset: 23; } 45%, 75% { stroke-dashoffset: 0; } to { stroke-dashoffset: -23; } }
+@keyframes sweep { to { background-position: 0 0; } }
+@media (forced-colors: active) { .check.is-running span { color: CanvasText; background: none; } }

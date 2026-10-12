@@ -89,6 +89,7 @@
   "skills.text": "Mga hakbang na na-save mula sa mga paulit-ulit na hiling, sinusunod tuwing may tugmang hiling.",
   "skills.none": "Wala pang kasanayan. Kapag ikatlong beses mo nang hiniling ang parehong bagay, may iaalok na isa.",
   "skills.add": "Magdagdag ng kasanayan mula sa file",
+  "skills.addOne": "Magdagdag ng kasanayan",
   "skills.invalid": "Hindi kasanayan ang file na ito.",
   "skills.added": "Naidagdag ang kasanayang “{title}”.",
   "skills.steps": "Mga hakbang",

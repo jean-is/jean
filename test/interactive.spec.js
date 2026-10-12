@@ -62,13 +62,25 @@ test('a page runs in the answer as it is written, sends what it works out with E
   expect(await page.evaluate(() => /** @type {any} */ (window).copied)).toBe(await first.getAttribute('source'))
   expect(leaks).toEqual([])
 
-  // Right to left in Arabic, and in Japanese: the page is written again in the user's language.
+  // Right to left in Arabic, and in Japanese, then dark: the room is put on the page as it is, which
+  // keeps its frame and what was typed in it.
+  const kept = first.locator('iframe').contentFrame()
+  await first.locator('iframe').evaluate((element) => { element.dataset.kept = '' })
   await speak(page, 'ar')
-  await expect(first.locator('iframe').contentFrame().locator('html')).toHaveAttribute('dir', 'rtl')
+  await expect(kept.locator('html')).toHaveAttribute('dir', 'rtl')
   await expect(first.locator('iframe')).toHaveAttribute('title', 'صفحة تفاعلية')
   await speak(page, 'ja')
-  await expect(first.locator('iframe').contentFrame().locator('html')).toHaveAttribute('lang', 'ja')
-  await expect(first.locator('iframe').contentFrame().locator('#each')).toHaveText('30')
+  await expect(kept.locator('html')).toHaveAttribute('lang', 'ja')
+  await expect(kept.locator('html')).toHaveAttribute('dir', 'ltr')
+  const light = await kept.locator('label').first().evaluate((element) => getComputedStyle(element).color)
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(kept.locator('html')).toHaveAttribute('data-theme', 'dark')
+  expect(await kept.locator('label').first().evaluate((element) => getComputedStyle(element).color)).not.toBe(light)
+  expect(await kept.locator('label').first().evaluate((element) => getComputedStyle(element).color)).toBe(await room('--ink'))
+  expect(await kept.locator('html').evaluate((element) => getComputedStyle(element).colorScheme)).toBe('dark')
+  await expect(first.locator('iframe')).toHaveAttribute('data-kept', '')
+  await expect(kept.locator('#people')).toHaveValue('3')
+  await expect(kept.locator('#each')).toHaveText('40')
 
   // Web pages' code off: it is code again.
   await speak(page, 'en')
@@ -89,6 +101,15 @@ test('a page charts with the ECharts Jean lends it, with nothing from the intern
   await expect(inside.locator('#chart canvas')).toBeVisible()
   await inside.locator('#region').selectOption('South')
   await expect(inside.locator('#chart canvas')).toBeVisible()
+  // Dark: the chart takes it as it is, keeping what the page set on it last.
+  const shown = () => inside.locator('#chart').evaluate(async (element) => {
+    const chart = /** @type {any} */ (await import('echarts')).getInstanceByDom(element)
+    return { data: chart.getOption().series[0].data, label: chart.getModel().getComponent('yAxis').get(['axisLabel', 'color']) }
+  })
+  const light = await shown()
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect.poll(async () => (await shown()).label).not.toBe(light.label)
+  expect((await shown()).data).toEqual([950, 1010])
   expect(outside).toEqual([])
 })
 
@@ -164,5 +185,12 @@ test('a map shows once maps are allowed, its addresses fetched by Jean alone; a 
   await page.mouse.click((box?.x ?? 0) + at.x, (box?.y ?? 0) + at.y)
   await expect(planner.locator('#chosen')).toHaveText('Marseille')
   await expect(planner.locator('#stop')).toHaveValue('Marseille')
+
+  // Dark: the map takes the service's dark style, its places drawn again on it, and the page keeps its stop.
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect.poll(() => asked).toContain('jean /map/dark.json')
+  await expect.poll(() => map.evaluate((element) => /** @type {any} */ (element).map?.queryRenderedFeatures({ layers: ['places'] }).length ?? 0)).toBe(2)
+  await expect(planner.locator('#stop')).toHaveValue('Marseille')
+  expect(asked.filter((line) => line.startsWith('page'))).toEqual([])
 })
 

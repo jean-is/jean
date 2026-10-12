@@ -87,6 +87,7 @@
   "skills.text": "반복한 요청에서 저장한 단계로, 요청이 맞을 때마다 따라요.",
   "skills.none": "아직 스킬이 없어요. 같은 요청을 세 번째로 하면 만들자고 제안해 드려요.",
   "skills.add": "파일에서 스킬 추가",
+  "skills.addOne": "스킬 추가",
   "skills.invalid": "이 파일은 스킬이 아니에요.",
   "skills.added": "스킬 ‘{title}’을(를) 추가했어요.",
   "skills.steps": "단계",

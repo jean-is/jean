@@ -1,6 +1,6 @@
-// ACP records: building them, folding them for display, and deriving the
-// model's context from them. One log, two readers.
-/** @import { Envelope, AcpUpdate, ToolCall, ToolCallInfo, ChatMessage, ToolMessage, PlanEntry, ResourceLink, DocumentPart, SystemNoteData } from './types.js' */
+// ACP records: building them and folding them for display. The brain reads the same log, as
+// core/prompt.js's toChatMessages() derives it. One log, two readers.
+/** @import { Envelope, AcpUpdate, ToolCall, ToolCallInfo, PlanEntry, ResourceLink, SystemNoteData } from './types.js' */
 
 /** @param {string} by @param {AcpUpdate} update @param {number} [step] @returns {Envelope} */
 export const envelope = (by, update, step) => ({ at: new Date().toISOString(), by, ...(step !== undefined && { step }), update })
@@ -97,52 +97,6 @@ export function unanswered(records) {
   const calls = step?.tools.filter((tool) => tool.name && !tool._meta?.parent && tool.status === 'pending') ?? []
   return step && calls[0]?._meta?.waiting ? { step: step.index, calls: calls.map((tool) => ({ id: tool.toolCallId, name: String(tool.name), args: tool.rawInput ?? {} })) } : null
 }
-
-/**
- * The model's context: system notes and user messages, then per step one assistant
- * message followed by its tool results. Brain entries (kind "think", no name) are skipped,
- * except for the provider-native blocks they keep for replay.
- * @param {Envelope[]} records
- * @param {(link: ResourceLink) => DocumentPart} [document] the text the brain reads for a linked file
- * @param {{ step: number } | null} [resume] the last turn's step whose unended calls run again now, their results to come (D212)
- * @returns {ChatMessage[]}
- */
-export function toChatMessages(records, document = (link) => ({ name: link.name, text: '' }), resume = null) {
-  /** @type {ChatMessage[]} */
-  const messages = []
-  const turns = foldTurns(records)
-  for (const turn of turns) {
-    for (const note of turn.notes) messages.push({ role: 'system', content: note.text })
-    if (turn.user) {
-      const documents = turn.user.files.map(document)
-      messages.push({ role: 'user', content: turn.user.text, ...(documents.length && { documents }) })
-    }
-    for (const step of [...turn.steps].sort((a, b) => a.index - b.index)) {
-      // A script's own calls (codemode) are part of its result, not of the brain's turn.
-      const calls = step.tools.filter((tool) => tool.name && !tool._meta?.parent)
-      if (!step.text && !calls.length) continue
-      const brain = step.tools.find((tool) => tool.kind === 'think' && !tool.name && tool._meta?.raw)
-      messages.push({
-        role: 'assistant',
-        content: step.text,
-        ...(calls.length && { toolCalls: calls.map((tool) => ({ id: tool.toolCallId, name: String(tool.name), args: tool.rawInput ?? {} })) }),
-        ...(brain && { raw: brain._meta?.raw, rawModel: brain.rawInput?.model }),
-      })
-      for (const tool of calls) {
-        // A call that never ended (stopped, or the page closed) was cut short, unless it runs again now (D212).
-        if (tool.status === 'pending' && turn === turns.at(-1) && step.index === resume?.step) continue
-        /** @type {ToolMessage} */
-        const result = { role: 'tool', toolCallId: tool.toolCallId, name: String(tool.name), content: tool.status === 'pending' || tool.status === 'in_progress' ? 'Cut short before it ended: it may not have been done.' : stringify(tool.rawOutput) }
-        if (tool.status !== 'completed') result.isError = true
-        messages.push(result)
-      }
-    }
-  }
-  return messages
-}
-
-/** @param {unknown} value */
-const stringify = (value) => (value === undefined || value === null ? '' : typeof value === 'string' ? value : JSON.stringify(value))
 
 /**
  * A reply's text without the follow-ups the brain suggested in a trailing <suggestions>

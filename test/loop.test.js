@@ -2,7 +2,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { runTurn } from '../app/core/loop.js'
 import { LLMError } from '../app/core/llm.js'
-import { toChatMessages, userRecord, unanswered } from '../app/core/events.js'
+import { userRecord, unanswered } from '../app/core/events.js'
+import { toChatMessages } from '../app/core/prompt.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'test-model' }
 

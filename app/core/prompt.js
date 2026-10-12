@@ -1,9 +1,10 @@
 // pi-style system prompt: a short preamble plus sections, frozen when a conversation
 // starts (D46). Later changes become system notes in the transcript, never edits.
 // Instructions stay in English (models follow them best); replies follow the user.
-import { metaRecord, noteRecord } from './events.js'
+// Then what the brain reads after it: the conversation's records as messages.
+import { metaRecord, noteRecord, foldTurns } from './events.js'
 
-/** @import { Envelope, PromptState } from './types.js' */
+/** @import { Envelope, PromptState, ChatMessage, ToolMessage, ResourceLink, DocumentPart } from './types.js' */
 
 const PREAMBLE = `You are {name}, an assistant that does work for people, right in their web browser.
 You read the files they share, work things out, and hand back results they can use.`
@@ -128,3 +129,49 @@ export function changeNotes(known, now, sections = {}) {
   if (added.length) notes.push(noteRecord(`New tools can be found with find_tools: ${added.join(', ')}.`, { kind: 'tools', added }))
   return notes
 }
+
+/**
+ * The model's context: system notes and user messages, then per step one assistant
+ * message followed by its tool results. Brain entries (kind "think", no name) are skipped,
+ * except for the provider-native blocks they keep for replay.
+ * @param {Envelope[]} records
+ * @param {(link: ResourceLink) => DocumentPart} [document] the text the brain reads for a linked file
+ * @param {{ step: number } | null} [resume] the last turn's step whose unended calls run again now, their results to come (D212)
+ * @returns {ChatMessage[]}
+ */
+export function toChatMessages(records, document = (link) => ({ name: link.name, text: '' }), resume = null) {
+  /** @type {ChatMessage[]} */
+  const messages = []
+  const turns = foldTurns(records)
+  for (const turn of turns) {
+    for (const note of turn.notes) messages.push({ role: 'system', content: note.text })
+    if (turn.user) {
+      const documents = turn.user.files.map(document)
+      messages.push({ role: 'user', content: turn.user.text, ...(documents.length && { documents }) })
+    }
+    for (const step of [...turn.steps].sort((a, b) => a.index - b.index)) {
+      // A script's own calls (codemode) are part of its result, not of the brain's turn.
+      const calls = step.tools.filter((tool) => tool.name && !tool._meta?.parent)
+      if (!step.text && !calls.length) continue
+      const brain = step.tools.find((tool) => tool.kind === 'think' && !tool.name && tool._meta?.raw)
+      messages.push({
+        role: 'assistant',
+        content: step.text,
+        ...(calls.length && { toolCalls: calls.map((tool) => ({ id: tool.toolCallId, name: String(tool.name), args: tool.rawInput ?? {} })) }),
+        ...(brain && { raw: brain._meta?.raw, rawModel: brain.rawInput?.model }),
+      })
+      for (const tool of calls) {
+        // A call that never ended (stopped, or the page closed) was cut short, unless it runs again now (D212).
+        if (tool.status === 'pending' && turn === turns.at(-1) && step.index === resume?.step) continue
+        /** @type {ToolMessage} */
+        const result = { role: 'tool', toolCallId: tool.toolCallId, name: String(tool.name), content: tool.status === 'pending' || tool.status === 'in_progress' ? 'Cut short before it ended: it may not have been done.' : stringify(tool.rawOutput) }
+        if (tool.status !== 'completed') result.isError = true
+        messages.push(result)
+      }
+    }
+  }
+  return messages
+}
+
+/** @param {unknown} value */
+const stringify = (value) => (value === undefined || value === null ? '' : typeof value === 'string' ? value : JSON.stringify(value))

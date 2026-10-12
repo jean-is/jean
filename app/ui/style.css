@@ -518,13 +518,6 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 button.since { padding: 0; border: 0; background: none; text-align: start; } button.since:hover > span { text-decoration: underline; }
 .since .icon { inline-size: 1.1rem; block-size: 1.1rem; color: var(--flame-deep); }
 .since-note { margin: 0.2rem 0 0.8rem; font-size: 0.86rem; color: var(--ink-soft); }
-.check.is-running { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-size: 0.86rem; color: var(--ink-soft); animation: pulse 1.6s ease-in-out infinite var(--loops, running); }
-.check.is-running .icon, .check .verdict .icon { inline-size: 1rem; block-size: 1rem; }
-.check li { flex-wrap: nowrap; align-items: baseline; }
-.check li > [dir] { flex: 1 1 auto; min-inline-size: 0; }
-.check .verdict { display: inline-flex; inline-size: 1rem; justify-content: center; color: var(--flame-deep); }
-.check [data-verdict='missing'] .verdict, .check [data-verdict='contradicted'] .verdict, .check.is-off > summary > .icon:first-child { color: var(--danger); }
-.check .follow-up { margin-block-start: 0.5rem; }
 .inbox-count { margin: 0; font-size: 0.86rem; color: var(--ink-soft); }
 .msg-error { padding: 1rem 1.1rem; border: 1px solid oklch(from var(--danger) l c h / 0.5); border-radius: var(--radius); background: oklch(from var(--danger) l c h / 0.08); }
 .msg-error p { margin: 0 0 0.75rem; }
@@ -717,6 +710,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 @supports not (anchor-name: --add) { .profile-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
 .menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; }
 .submenu > .icon:last-child { inline-size: 1rem; rotate: -90deg; }
+.submenu > .icon + .icon { margin-inline-start: auto; }
 :dir(rtl) .submenu > .icon:last-child { rotate: 90deg; }
 .profile-menu .back > .icon { rotate: 180deg; }
 .profile-menu .back { font-weight: 600; }

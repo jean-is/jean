@@ -89,6 +89,7 @@
   "skills.text": "Tekrarladığın isteklerden kaydedilen adımlar; bir istek uyduğunda izlenir.",
   "skills.none": "Henüz beceri yok. Aynı şeyi üçüncü kez istediğinde sana bir tane önerilecek.",
   "skills.add": "Dosyadan beceri ekle",
+  "skills.addOne": "Beceri ekle",
   "skills.invalid": "Bu dosya bir beceri değil.",
   "skills.added": "“{title}” becerisi eklendi.",
   "skills.steps": "Adımlar",

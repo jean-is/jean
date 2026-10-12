@@ -91,6 +91,7 @@
   "skills.text": "Passos guardados a partir de pedidos que repetes, seguidos sempre que um pedido corresponde.",
   "skills.none": "Ainda não há competências. Quando pedires o mesmo pela terceira vez, ser-te-á proposta uma.",
   "skills.add": "Adicionar uma competência a partir de um ficheiro",
+  "skills.addOne": "Adicionar uma competência",
   "skills.invalid": "Este ficheiro não é uma competência.",
   "skills.added": "Competência «{title}» adicionada.",
   "skills.steps": "Passos",

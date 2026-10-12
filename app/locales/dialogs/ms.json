@@ -87,6 +87,7 @@
   "skills.text": "Langkah yang disimpan daripada permintaan berulang, dipatuhi apabila sesuatu permintaan sepadan.",
   "skills.none": "Belum ada kemahiran. Apabila anda meminta perkara yang sama kali ketiga, satu akan ditawarkan.",
   "skills.add": "Tambah kemahiran daripada fail",
+  "skills.addOne": "Tambah kemahiran",
   "skills.invalid": "Fail ini bukan kemahiran.",
   "skills.added": "Kemahiran “{title}” ditambah.",
   "skills.steps": "Langkah",

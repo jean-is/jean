@@ -87,6 +87,7 @@
   "skills.text": "繰り返す依頼から保存した手順。依頼が合うときに使われます。",
   "skills.none": "スキルはまだありません。同じ依頼が3回目になると、作成を提案します。",
   "skills.add": "ファイルからスキルを追加",
+  "skills.addOne": "スキルを追加",
   "skills.invalid": "このファイルはスキルではありません。",
   "skills.added": "スキル「{title}」を追加しました。",
   "skills.steps": "手順",

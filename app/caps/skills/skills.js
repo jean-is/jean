@@ -12,6 +12,8 @@
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { declared } from '../../ui/markdown.js'
+import { subRow } from '../../ui/composer.js'
+import { icons } from '../../ui/icons.js'
 import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { SAME_KIND } from '../../ui/discovery.js'
 import { listSkills, saveSkill, skillLines, skillSteps } from '../../core/skills.js'
@@ -161,4 +163,6 @@ register({
     const text = skillLines(await skills())
     return text ? { skills: text } : {}
   },
+  // In +, a row whose menu beside it holds the room's skills (D292).
+  slots: { add: { at: 4, draw: () => subRow('skills', icons.scroll) } },
 })

@@ -89,6 +89,7 @@
   "skills.text": "Hatua zilizohifadhiwa kutoka maombi unayorudia, zinazofuatwa ombi linapolingana.",
   "skills.none": "Bado hakuna ujuzi. Ukiomba jambo lilelile mara ya tatu, utapendekezewa mmoja.",
   "skills.add": "Ongeza ujuzi kutoka faili",
+  "skills.addOne": "Ongeza ujuzi",
   "skills.invalid": "Faili hili si ujuzi.",
   "skills.added": "Ujuzi “{title}” umeongezwa.",
   "skills.steps": "Hatua",

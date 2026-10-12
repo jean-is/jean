@@ -87,6 +87,7 @@
   "skills.text": "從重複請求中保存的步驟，請求相符時就會照著執行。",
   "skills.none": "還沒有技能。當你第三次提出同樣的請求時，會建議你建立一個。",
   "skills.add": "從檔案新增技能",
+  "skills.addOne": "新增技能",
   "skills.invalid": "這個檔案不是技能。",
   "skills.added": "已新增技能「{title}」。",
   "skills.steps": "步驟",

@@ -153,7 +153,7 @@ const words = (label, detail = '') => searchable(`${label} ${detail}`)
 // ─── / ───────────────────────────────────────────────────────────────────────
 
 /** A skill's icon, as Jean's own directory draws it, or a scroll. @param {string} [path] */
-const drawn = (path) => (path ? html`<svg class="icon" viewBox="0 0 24 24" focusable="false"><path d=${path}></path></svg>` : icons.scroll)
+export const drawn = (path) => (path ? html`<svg class="icon" viewBox="0 0 24 24" focusable="false"><path d=${path}></path></svg>` : icons.scroll)
 
 /** Jean's own ready-made skills (D196), as Skills reads them. */
 const directory = async () => (await import('../caps/skills/skills.js')).directory()
@@ -170,7 +170,7 @@ async function skillsHere(show) {
 }
 
 /** A service's logo (D159), or its first letter. @param {string} name @param {string} [logo] */
-const logoOf = (name, logo) => (logo ? html`<img class="complete-logo" src=${new URL(`../caps/connections/logos/${logo}`, import.meta.url).href} alt="">`
+export const logoOf = (name, logo) => (logo ? html`<img class="complete-logo" src=${new URL(`../caps/connections/logos/${logo}`, import.meta.url).href} alt="">`
   : html`<span class="complete-logo" aria-hidden="true">${[...name][0]}</span>`)
 
 /** The room's connections. @type {Maker} */

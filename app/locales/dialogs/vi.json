@@ -87,6 +87,7 @@
   "skills.text": "Các bước được lưu từ những yêu cầu lặp lại, được làm theo mỗi khi có yêu cầu phù hợp.",
   "skills.none": "Chưa có kỹ năng nào. Khi bạn yêu cầu cùng một việc lần thứ ba, bạn sẽ được gợi ý tạo một kỹ năng.",
   "skills.add": "Thêm kỹ năng từ tệp",
+  "skills.addOne": "Thêm kỹ năng",
   "skills.invalid": "Tệp này không phải là kỹ năng.",
   "skills.added": "Đã thêm kỹ năng “{title}”.",
   "skills.steps": "Các bước",
