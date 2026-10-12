@@ -9,7 +9,7 @@
 // Loaded the first time a file shows, with its style sheet.
 import { html } from 'lit-html'
 import { markdown } from './markdown.js'
-import { pagePolicy } from './csp.js'
+import { pagePolicy, PAGE_SANDBOX } from './csp.js'
 import { styleSheet } from './sheet.js'
 import { app, notify } from './state.js'
 import { noteRecord } from '../core/events.js'
@@ -103,14 +103,14 @@ export async function changeCell(cell, frame, { name, said, read, keep }) {
 const unshown = () => Object.assign(document.createElement('p'), { className: 'view-note', textContent: t('view.unshown') })
 
 /**
- * A web page, in a frame of its own: an opaque origin (scripts, never with allow-same-origin)
+ * A web page, in a frame of its own: an opaque origin (scripts and forms, never allow-same-origin)
  * whose relay writes the policy ahead of the page. Both go in once, when the frame is ready. What
  * it allows is set before its address, since a frame takes it as it loads (D158).
  * @param {string} source @param {string} name @param {string} policy @param {string} allow
  */
 function frame(source, name, policy, allow) {
   const send = { once: true, handleEvent: (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage({ page: source, policy }, '*') }
-  return html`<iframe class="view-frame" sandbox="allow-scripts" allow=${allow} src=${FRAME} title=${name} @load=${send}></iframe>`
+  return html`<iframe class="view-frame" sandbox=${PAGE_SANDBOX} allow=${allow} src=${FRAME} title=${name} @load=${send}></iframe>`
 }
 
 /**

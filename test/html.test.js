@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { sources } from './fixtures/keys.js'
-import { pageRights, pagePolicy, pageAllow, site } from '../app/ui/csp.js'
+import { pageRights, pagePolicy, pageAllow, site, PAGE_SANDBOX } from '../app/ui/csp.js'
 
 const html = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? ''
@@ -147,7 +147,11 @@ test('the preview is only ever framed without allow-same-origin, and the page ne
   const client = await readFile(new URL('../app/ui/view.js', import.meta.url), 'utf8')
   const frames = [...client.matchAll(/<iframe\b[^>]*>/g)].map((match) => match[0])
   assert.equal(frames.length, 1)
-  assert.match(frames[0], /\ssandbox="allow-scripts" allow=\$\{allow\} src=\$\{FRAME\}\s/, 'scripts, and nothing else: no same origin, pop-ups, forms or top navigation; what it allows set before its address (D158)')
+  assert.match(frames[0], /\ssandbox=\$\{PAGE_SANDBOX\} allow=\$\{allow\} src=\$\{FRAME\}\s/, 'what it allows set before its address (D158)')
+  // Scripts and forms, and nothing else: no same origin, pop-ups or top navigation. A form's submit reaches the
+  // page's script, as Chromium fires it only where forms are allowed, and goes nowhere, under either policy.
+  assert.equal(PAGE_SANDBOX, 'allow-scripts allow-forms')
+  for (const policy of [previewCSP, pagePolicy({ scripts: true, web: true, network: true }, ['*'], true)]) assert.match(policy, /; form-action 'none'(;|$)/)
   assert.doesNotMatch(client, /srcdoc|setAttribute\('sandbox'/, 'srcdoc would take index.html\'s policy instead of the preview\'s')
   const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
   assert.doesNotMatch(state, /createObjectURL[\s\S]{0,200}open\(/, 'a file in a tab of Jean\'s origin would run its scripts there')
@@ -179,8 +183,8 @@ test('only the browser’s frame keeps its site’s origin, and the site can nev
   assert.match(browser, /frame = doc\.createElement\('iframe'\)/, 'made in browser.html, whose policy alone lets it show another site')
   assert.match(browser, /setAttribute\('sandbox', SANDBOX\)/)
   assert.match(browser, /if \(!isLocal\(url\) && \(!showable\(url, location\.href\)/, 'never one of Jean\'s own pages')
-  // A page of the user's folder never goes there: it is in a frame of the preview's kind, scripts only, an opaque origin (D156).
+  // A page of the user's folder never goes there: it is in a frame of the preview's kind, scripts and forms, an opaque origin (D156).
   assert.match(browser, /function frameTo\(url, click = false\) \{\n  if \(isLocal\(url\)\) return void folderTo\(url, click\)/)
   assert.match(browser, /const PAGE = new URL\('\.\.\/\.\.\/preview\.html', import\.meta\.url\)/)
-  assert.match(browser, /element\.setAttribute\('sandbox', 'allow-scripts'\)\n  element\.setAttribute\('allow', allows\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
+  assert.match(browser, /element\.setAttribute\('sandbox', PAGE_SANDBOX\)\n  element\.setAttribute\('allow', allows\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
 })

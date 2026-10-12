@@ -1,10 +1,10 @@
 // Pages in answers (D289): a ```html block is a page that runs in the answer, in every room, in a
-// frame of the preview's kind (scripts only, nothing to or from the internet), shown as it is
-// written, in the room's colours and the user's language, as tall as it is. A click on its button
-// sends the user's next message; it can chart with the ECharts Jean lends it; Copy gives its source;
-// with Run its code off, it is code. Components (D291): a ```mermaid block is a diagram drawn here,
-// a ```geojson block a map, shown once the user allows maps, every address it needs fetched by Jean;
-// a page holds a map beside its form, in step both ways.
+// frame of the preview's kind (scripts and forms, nothing to or from the internet), shown as it is
+// written, in the room's colours and the user's language, as tall as it is. Its form, sent with
+// Enter, sends the user's next message; it can chart with the ECharts Jean lends it; Copy gives
+// its source; with Run its code off, it is code. Components (D291): a ```mermaid block is a diagram
+// drawn here, a ```geojson block a map, shown once the user allows maps, every address it needs
+// fetched by Jean; a page holds a map beside its form, in step both ways.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, nextCopy } from './helpers.js'
 
@@ -16,7 +16,7 @@ async function speak(page, lang) {
   await closeSettings(page)
 }
 
-test('a page runs in the answer as it is written, sends what it works out on a click, and follows the language', async ({ page }) => {
+test('a page runs in the answer as it is written, sends what it works out with Enter, and follows the language', async ({ page }) => {
   const leaks = /** @type {string[]} */ ([])
   page.on('response', (response) => { if (response.url().includes('/leak')) leaks.push(response.url()) })
   await start(page)
@@ -32,8 +32,8 @@ test('a page runs in the answer as it is written, sends what it works out on a c
   const frame = answer.locator('app-page iframe')
   await expect(frame).toHaveAttribute('data-begun', '')
 
-  // In an opaque frame, scripts only, named for those who can't see it, as tall as the page.
-  await expect(frame).toHaveAttribute('sandbox', 'allow-scripts')
+  // In an opaque frame, scripts and forms, named for those who can't see it, as tall as the page.
+  await expect(frame).toHaveAttribute('sandbox', 'allow-scripts allow-forms')
   await expect(frame).toHaveAttribute('title', 'Interactive page')
   const inside = frame.contentFrame()
   await expect(inside.locator('#each')).toHaveText('30')
@@ -47,10 +47,10 @@ test('a page runs in the answer as it is written, sends what it works out on a c
   // Its rule came with the first message, and it comes back at the next visit, so pages written show again.
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.unlocked)).toContain('interactive')
 
-  // Typed, worked out in the page; sent on a click as the user's next message.
+  // Typed, worked out in the page; sent with Enter, its form's submit, as the user's next message.
   await inside.locator('#people').fill('3')
   await expect(inside.locator('#each')).toHaveText('40')
-  await inside.getByRole('button', { name: 'Ask how to round it' }).click()
+  await inside.locator('#people').press('Enter')
   await expect(page.locator('.msg-user').last()).toHaveText('Each of us pays 40. How should we round it?')
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
 

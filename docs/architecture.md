@@ -290,7 +290,7 @@ connect-src 'none'; base-uri 'none'; form-action 'none'
 - **Pyodide** needs `'unsafe-eval'` as it starts (Emscripten builds some functions with `eval`); with nothing to steal and nowhere to send it, that costs nothing. Its files are Jean's own pinned copy (D43), sent in like QuickJS's; its `fetch` serves only those, under an address that never resolves. `import js` reaches only Jean's `fetch` and what pyfetch needs. Its memory and time can't be capped without cross-origin isolation, so the parent's watchdog stops a run that goes quiet; 60 s to start.
 - **The internet goes through Jean** (D162): a request crosses to Jean, which judges it by Settings › Computer (`caps/computer/net.js`), asks first for a new site, and makes it with no cookies and no referrer, through the relay when there is one, adding a registry's key there. See [Computer](#computer).
 
-**The preview** (D126, D143, D158) shows a web page in `preview.html`, framed with `sandbox="allow-scripts"` only, given nothing but the page and its policy. `preview.html`'s own policy is the most Settings can allow:
+**The preview** (D126, D143, D158) shows a web page in `preview.html`, framed with `sandbox="allow-scripts allow-forms"` and nothing more (`PAGE_SANDBOX` in `ui/csp.js`), given nothing but the page and its policy. Forms, because Chromium fires a form's `submit`, and closes a dialog by its form, only where forms are allowed; both policies' `form-action 'none'` sends none. `preview.html`'s own policy is the most Settings can allow:
 
 ```text
 default-src 'none'; script-src 'unsafe-inline' data: blob: 'wasm-unsafe-eval' https:; style-src 'unsafe-inline' https:; img-src data: blob: https:; media-src data: https:;

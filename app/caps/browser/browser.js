@@ -17,10 +17,11 @@
 // that has both: it never holds Jean's origin, a blob or data), and can't take Jean's place.
 //
 // The conversation's folder shows there too (D156), at "<folder>/<path>": a page put together by
-// Folders (caps/folders/site.js) in a frame of the preview's kind (preview.html, scripts only), its
-// links followed here. A page Jean makes or changes there opens by itself, and the page on show
-// comes again when a file it was made of changes, whoever changed it. Without a folder, the
-// project's workspace shows the same way, at "/workspace/<path>", as the computer names it (D167).
+// Folders (caps/folders/site.js) in a frame of the preview's kind (preview.html, scripts and
+// forms), its links followed here. A page Jean makes or changes there opens by itself, and the
+// page on show comes again when a file it was made of changes, whoever changed it. Without a
+// folder, the project's workspace shows the same way, at "/workspace/<path>", as the computer
+// names it (D167).
 // A web page's card under an answer opens it here too: the workspace's page while it is still
 // that version, otherwise the card's version on its own, under its name (D172). A file there that
 // isn't a page shows as the preview shows it, by the same code (ui/view.js, D190): a PDF's pages,
@@ -34,7 +35,7 @@ import * as dock from '../../ui/dock.js'
 import { register, loaded as unlocked } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { icons } from '../../ui/icons.js'
-import { pageRights, pagePolicy, pageAllow } from '../../ui/csp.js'
+import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { savePage } from '../../ui/save.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
@@ -318,7 +319,7 @@ async function madePage(uri) {
  */
 function pageFrame(source, rules, allows, title) {
   const element = Object.assign(document.createElement('iframe'), { className: 'browser-page', title })
-  element.setAttribute('sandbox', 'allow-scripts')
+  element.setAttribute('sandbox', PAGE_SANDBOX)
   element.setAttribute('allow', allows)
   element.addEventListener('load', () => element.contentWindow?.postMessage({ page: source, policy: rules }, '*'), { once: true })
   element.src = PAGE

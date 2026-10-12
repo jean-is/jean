@@ -1,6 +1,6 @@
 // Pages in answers (D196, D289): a ```html block is a page that runs where it is, in every room, in a
-// frame of the preview's kind (preview.html, D126): an opaque origin, scripts only, under the policy
-// Settings give web pages (D143), so by default nothing comes from the internet and nothing goes to
+// frame of the preview's kind (preview.html, D126): an opaque origin, scripts and forms, under the
+// policy Settings give web pages (D143), so by default nothing comes from the internet or goes to
 // it. It comes as the answer writes it: its frame begins with the first lines and is given the rest
 // as it comes, so its markup shows at once and its script, written last, runs once it is whole. It is
 // given the user's language and its direction, the room's colours and type as MCP Apps' standard
@@ -22,7 +22,7 @@ import { computed, effect, signal } from '@preact/signals-core'
 import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
 import { register } from '../../ui/caps.js'
 import { declared, drawn } from '../../ui/markdown.js'
-import { pageRights, pagePolicy, pageAllow } from '../../ui/csp.js'
+import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -189,7 +189,7 @@ class AppPage extends HTMLElement {
       this.written = now
       this.whole = !open
     } }
-    render(html`<iframe sandbox="allow-scripts" allow=${pageAllow(allows)} loading="lazy" src=${FRAME} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${begin}></iframe>
+    render(html`<iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} loading="lazy" src=${FRAME} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${begin}></iframe>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
