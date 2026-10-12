@@ -83,7 +83,10 @@ async function place(providers, front = false) {
   } }
 }
 
-// How long a reply may send nothing, its first part included, before it is given up and asked again.
+// How long a reply may send nothing before it is given up and asked again: its first part, which waits for the whole
+// request to be read (an answer that read a page of dense notes, of 50,000 tokens, waited more than three minutes),
+// and then each part.
+const FIRST = 600000
 const IDLE = 180000
 
 /**
@@ -105,12 +108,14 @@ const streamOf = (b, timing = { queued: 0 }, body = {}, helper) => async functio
   const idle = new AbortController()
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   let timer
-  const wait = () => { clearTimeout(timer); timer = setTimeout(() => idle.abort(), IDLE) }
+  let silence = FIRST
+  const wait = () => { clearTimeout(timer); timer = setTimeout(() => idle.abort(), silence) }
   try {
     wait()
     for await (const event of streamChat({ ...options, signal: options.signal ? AbortSignal.any([options.signal, idle.signal]) : idle.signal, fetch: provider || Object.keys(body).length
       ? (url, init) => fetch(url, { ...init, body: JSON.stringify({ ...JSON.parse(String(init?.body)), ...(provider && { provider: { order: [provider], allow_fallbacks: false } }), ...body }) })
       : globalThis.fetch })) {
+      silence = IDLE
       wait()
       yield event
     }
@@ -118,7 +123,7 @@ const streamOf = (b, timing = { queued: 0 }, body = {}, helper) => async functio
   } catch (error) {
     if (idle.signal.aborted && !options.signal?.aborted) {
       count(provider, 'idle')
-      throw new LLMError(`Nothing came for ${IDLE / 60000} minutes`, { code: 'network' })
+      throw new LLMError(`Nothing came for ${silence / 60000} minutes`, { code: 'network' })
     }
     count(provider, error instanceof LLMError && error.status === 429 ? 'refused' : 'failed')
     throw error
