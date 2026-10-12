@@ -46,5 +46,6 @@
   "flows.after": "Neemt de resultaten van",
   "flows.each": "Eén keer voor elk item van de lijst die hij neemt",
   "flows.result": "Laatste resultaat",
-  "flows.remove": "Deze stap verwijderen"
+  "flows.remove": "Deze stap verwijderen",
+  "flows.asFlow": "Bekijk als stroom"
 }

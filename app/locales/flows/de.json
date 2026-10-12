@@ -46,5 +46,6 @@
   "flows.after": "Nimmt die Ergebnisse von",
   "flows.each": "Einmal für jeden Eintrag der Liste, die er nimmt",
   "flows.result": "Letztes Ergebnis",
-  "flows.remove": "Diesen Schritt entfernen"
+  "flows.remove": "Diesen Schritt entfernen",
+  "flows.asFlow": "Als Ablauf ansehen"
 }

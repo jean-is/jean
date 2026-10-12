@@ -295,7 +295,6 @@
   "suggest.flow.prompt": "احفظ ما فعلته للتو كتدفق، لأرى خطواته وأغيّرها وأشغّله من جديد.",
   "tool.save_flow": "حُفظ تدفق",
   "tool.run_flow": "شُغّل تدفق",
-  "activity.asFlow": "اعرضه كتدفق",
   "suggest.ready": "اعرض مهارة تقوم بهذا",
   "tool.remember": "دُوِّن لوقت لاحق",
   "tool.recall": "رُوجعت المهام السابقة",

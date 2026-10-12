@@ -275,7 +275,6 @@
   "suggest.flow.prompt": "방금 한 일을 플로로 저장해서, 단계를 보고 바꾸고 다시 실행할 수 있게 해 줘.",
   "tool.save_flow": "플로를 저장함",
   "tool.run_flow": "플로를 실행함",
-  "activity.asFlow": "플로로 보기",
   "suggest.ready": "이 작업에 맞는 스킬 보기",
   "tool.remember": "나중을 위해 기록함",
   "tool.recall": "이전 작업을 살펴봄",

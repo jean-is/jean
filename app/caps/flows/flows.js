@@ -18,11 +18,14 @@ import { ulid } from '../../core/ulid.js'
 import { fileText } from '../../core/files.js'
 import { listSkills } from '../../core/skills.js'
 import { metaRecord, splitSuggestions } from '../../core/events.js'
-import { t } from '../../core/i18n.js'
+import { t, useStrings } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
 import { runFlow, fromSteps, askOf, fill, fillArgs, kindOf, result as resultOf } from './run.js'
 import { flowNamed } from './graph.js'
 import { keep } from '../../ui/windows.js'
+
+// Its own strings, which its slots draw with, before it registers.
+await useStrings('flows')
 
 /** @typedef {import('./run.js').Flow} Flow */
 /** @typedef {import('./run.js').Step} Step */
@@ -271,7 +274,7 @@ register({
     views: { at: 4, draw: (/** @type {any} */ current) => (current?.records.length ? html`<button class="icon-button flows-toggle" @click=${toggle} aria-label=${t('cap.flows.name')}>${icons.flow}</button>` : nothing) },
     main: { at: 1, draw: () => (editing.value === null ? null : html`<app-flow-main></app-flow-main>`) },
     add: { at: 3, draw: (/** @type {any} */ current) => (current?.records.length ? nothing : html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => edit()}>${icons.flow}${t('cap.flows.name')}</button>`) },
-    activity: { at: 1, draw: () => html`<button class="link-button activity-flow" @click=${() => show('task')}>${t('activity.asFlow')}</button>` },
+    activity: { at: 1, draw: () => html`<button class="link-button activity-flow" @click=${() => show('task')}>${t('flows.asFlow')}</button>` },
   },
 })
 

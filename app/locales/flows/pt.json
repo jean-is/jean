@@ -46,5 +46,6 @@
   "flows.after": "Usa os resultados de",
   "flows.each": "Uma vez por cada item da lista que usa",
   "flows.result": "Último resultado",
-  "flows.remove": "Remover este passo"
+  "flows.remove": "Remover este passo",
+  "flows.asFlow": "Ver como fluxo"
 }

@@ -46,5 +46,6 @@
   "flows.after": "Takes the results of",
   "flows.each": "Once for each item of the list it takes",
   "flows.result": "Last result",
-  "flows.remove": "Remove this step"
+  "flows.remove": "Remove this step",
+  "flows.asFlow": "See as a flow"
 }

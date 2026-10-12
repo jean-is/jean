@@ -275,7 +275,6 @@
   "suggest.flow.prompt": "Lưu những gì bạn vừa làm thành một luồng, để tôi xem các bước, thay đổi chúng và chạy lại.",
   "tool.save_flow": "Đã lưu một luồng",
   "tool.run_flow": "Đã chạy một luồng",
-  "activity.asFlow": "Xem dạng luồng",
   "suggest.ready": "Xem kỹ năng làm được việc này",
   "tool.remember": "Đã ghi lại để dùng sau",
   "tool.recall": "Đã xem các nhiệm vụ trước",

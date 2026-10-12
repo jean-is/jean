@@ -46,5 +46,6 @@
   "flows.after": "Nhận kết quả của",
   "flows.each": "Một lần cho mỗi mục trong danh sách nó nhận",
   "flows.result": "Kết quả gần nhất",
-  "flows.remove": "Gỡ bước này"
+  "flows.remove": "Gỡ bước này",
+  "flows.asFlow": "Xem dạng luồng"
 }

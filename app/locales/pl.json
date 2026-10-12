@@ -287,7 +287,6 @@
   "suggest.flow.prompt": "Zapisz to, co właśnie zrobiłeś, jako przepływ, żebym mógł widzieć jego kroki, zmieniać je i uruchamiać go ponownie.",
   "tool.save_flow": "Zapisano przepływ",
   "tool.run_flow": "Uruchomiono przepływ",
-  "activity.asFlow": "Zobacz jako przepływ",
   "suggest.ready": "Zobacz pasującą umiejętność",
   "tool.remember": "Zanotowano na później",
   "tool.recall": "Przejrzano wcześniejsze zadania",

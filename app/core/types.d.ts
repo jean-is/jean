@@ -159,7 +159,7 @@ export type SystemNoteData =
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
   /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due, or that the user ran it */
-  | { kind: 'routine', routine: string, title: string, due: string, asked?: boolean }
+  | { kind: 'routine', routine: string, title: string, due: string, asked?: boolean, file?: string }
   /** when requests like this one were made before, for a routine to fit the habit (D122) */
   | { kind: 'habit', at: string[] }
   /** what / and @ named in the user's next message, by the words in it (D199) */

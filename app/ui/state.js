@@ -407,7 +407,7 @@ const sending = () => import('./send.js')
 
 /**
  * Sends a message, once a page being turned is: that frees the box.
- * @param {string} text @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any } }} [options] as send.js takes them
+ * @param {string} text @param {Parameters<typeof import('./send.js').send>[1]} [options] as send.js takes them
  */
 export async function send(text, options) {
   await turning

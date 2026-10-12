@@ -46,5 +46,6 @@
   "flows.after": "Mengambil hasil dari",
   "flows.each": "Sekali untuk setiap item daftar yang diambilnya",
   "flows.result": "Hasil terakhir",
-  "flows.remove": "Hapus langkah ini"
+  "flows.remove": "Hapus langkah ini",
+  "flows.asFlow": "Lihat sebagai alur"
 }

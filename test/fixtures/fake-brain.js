@@ -497,6 +497,8 @@ createServer(async (req, res) => {
   const regularly = (/^every\b/i.test(question.trim()) || /\broutine\b/i.test(question)) && last.role === 'user'
   const habit = /Requests like this one were made on \w{3} \w{3} \d\d \d{4} (\d\d:\d\d)/.exec(serialized)?.[1]
   const routine = { title: 'Weekly sales', request: 'Summarize the weekly sales by region', every: 'day', at: /\bat (\d\d:\d\d)/.exec(question)?.[1] ?? habit ?? '09:00' }
+  // A routine a file sets off (D294).
+  const eachTime = /^each time\b/i.test(question.trim()) && last.role === 'user'
   // 0.8: a folder's files, by the names <folder> gives its tools (D104, D141).
   const folder = /The user's folder /.test(serialized)
   const mentions = /\bmention(?:s)?\s+(?:the\s+)?["“]?(.+?)["”]?(?:\s+clause)?\?*$/i.exec(question.trim())?.[1]
@@ -505,6 +507,7 @@ createServer(async (req, res) => {
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  else if (system.startsWith('Answer the question about the file with yes or no')) answer = /<file>[\s\S]*\binvoice\b/i.test(lastUser) ? 'Yes.' : 'No.'
   else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
   else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
   else if (/\bcertificate\b/i.test(question) && last.role === 'user' && declared.has('check_certificate')) call = { name: 'check_certificate', args: { files: documents.map(([, , name]) => name) } }
@@ -620,6 +623,7 @@ createServer(async (req, res) => {
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
+  else if (eachTime && declared.has('schedule')) call = { name: 'schedule', args: { title: 'File it', request: 'Add the file to the register', when: 'file' } }
   else if (regularly && declared.has('schedule')) call = { name: 'schedule', args: routine }
   else if (regularly && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'make a routine on a schedule' } }
   else if (toolName === 'find_tools' && /schedule\(/.test(last.content)) call = { name: 'schedule', args: routine }

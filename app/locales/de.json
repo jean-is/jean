@@ -279,7 +279,6 @@
   "suggest.flow.prompt": "Speichere, was du gerade getan hast, als Ablauf, damit ich seine Schritte sehen, ändern und ihn wieder ausführen kann.",
   "tool.save_flow": "Ablauf gespeichert",
   "tool.run_flow": "Ablauf ausgeführt",
-  "activity.asFlow": "Als Ablauf ansehen",
   "suggest.ready": "Eine passende Fähigkeit ansehen",
   "tool.remember": "Für später gemerkt",
   "tool.recall": "Frühere Aufgaben durchgesehen",

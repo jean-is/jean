@@ -283,7 +283,6 @@
   "suggest.flow.prompt": "Salva quello che hai appena fatto come flusso, così posso vederne i passaggi, cambiarli e rieseguirlo.",
   "tool.save_flow": "Ha salvato un flusso",
   "tool.run_flow": "Ha eseguito un flusso",
-  "activity.asFlow": "Vedi come flusso",
   "suggest.ready": "Vedi un’abilità che fa questo",
   "tool.remember": "Annotato per dopo",
   "tool.recall": "Consultate le attività precedenti",

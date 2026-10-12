@@ -279,7 +279,6 @@
   "suggest.flow.prompt": "አሁን ያደረግከውን እንደ ፍሰት አስቀምጥ፣ ደረጃዎቹን እንዳይ፣ እንድቀይራቸውና እንደገና እንዳሄደው።",
   "tool.save_flow": "ፍሰት ተቀመጠ",
   "tool.run_flow": "ፍሰት ተሄደ",
-  "activity.asFlow": "እንደ ፍሰት እይ",
   "suggest.ready": "ይህን የሚሠራ ክህሎት ይመልከቱ",
   "tool.remember": "ለኋላ ተመዝግቧል",
   "tool.recall": "ቀደም ያሉ ተግባራት ታይተዋል",

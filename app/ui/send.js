@@ -5,7 +5,7 @@
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
 import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
-import { envelope, userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered } from '../core/events.js'
+import { envelope, userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered, routineOf, filesMade, callsIn } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission } from '../core/rules.js'
 import { fire } from '../core/hooks.js'
@@ -84,13 +84,13 @@ function contextTokens(brain) {
 /**
  * Links for the files about to be sent. Each records which pages go into the context,
  * decided now against the brain's budget and then frozen (files.js).
- * @param {BrainConfig} brain @param {Envelope[]} records
+ * @param {BrainConfig} brain @param {Envelope[]} records @param {import('./state.js').Attachment[]} items
  */
-function attachedLinks(brain, records) {
+function attachedLinks(brain, records, items) {
   let budget = contextTokens(brain) * DOCUMENT_SHARE
   /** @type {ResourceLink[]} */
   const links = []
-  for (const item of app.attachments.value) {
+  for (const item of items) {
     if (item.status !== 'ready' || !item.link || !item.pages) continue
     const [first, last] = pagesThatFit(item.pages, Math.max(budget, 1))
     budget -= item.pages.slice(0, last).reduce((sum, page) => sum + estimateTokens(page), 0)
@@ -167,9 +167,9 @@ async function context() {
 /**
  * The records a message adds: the frozen prompt when the conversation has none yet, or
  * notes for what changed since (D46), any notes the message comes with, then the message itself.
- * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes]
+ * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes] @param {import('./state.js').Attachment[]} [items] the files it shares
  */
-async function prepare(text, brain, records, notes = []) {
+async function prepare(text, brain, records, notes = [], items = app.attachments.value) {
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
   // so do questions, so the brain can ask from the start (D146), noting the user's name (D150), and
   // the receipt, so the browser's record of what the page reached covers the first answer (D252), and
@@ -184,7 +184,7 @@ async function prepare(text, brain, records, notes = []) {
   const head = frozen
     ? changeNotes(frozen.state, now, sections)
     : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
-  return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records), app.deviceId)]
+  return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records, items), app.deviceId)]
 }
 
 // ─── Auto ────────────────────────────────────────────────────────────────────
@@ -233,12 +233,12 @@ async function pickBrain(text, records, boost = 0) {
 /**
  * Sends a message, once a page being turned is (state.js's send waits for it).
  * @param {string} text
- * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any } }} [options] boost: Auto's levels above the last
+ * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[] }} [options] boost: Auto's levels above the last
  *   answer's; notes: what the brain is told just before the message ("Since last time"); call: the one call the turn is,
- *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218)
+ *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218); files: what it
+ *   shares, if not the box's (the file that set a routine off, D294)
  */
-export async function send(text, { boost = 0, notes = [], call } = {}) {
-  const files = app.attachments.value
+export async function send(text, { boost = 0, notes = [], call, files = app.attachments.value } = {}) {
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) {
@@ -260,9 +260,9 @@ export async function send(text, { boost = 0, notes = [], call } = {}) {
   const { brain, meta } = picked
   // What / and @ named in it, told just before it (D199).
   const named = /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : []
-  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named])
+  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named], files)
   app.draft.value = ''
-  app.attachments.value = []
+  if (files === app.attachments.value) app.attachments.value = []
   if (!current) {
     const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
     current = { id: created.id, path: created.path, records: [] }
@@ -273,6 +273,9 @@ export async function send(text, { boost = 0, notes = [], call } = {}) {
   // Listed at once, to come back to.
   if (!current.records.length) refreshConversations()
   const next = { ...current, records: [...current.records, ...added] }
+  // Each file it shares may set a routine off (D294), unless this is a routine's own run.
+  const routine = routineOf(next.records)?.routine
+  for (const file of linkedFiles(added)) fire(contributions().hooks, 'file.add', { task: next.path, file, routine }, () => {})
   const show = () => { app.current.value = next }
   // Unless the user went elsewhere meanwhile: then it is answered out of sight (D147).
   if (app.current.peek()?.path === from) {
@@ -427,6 +430,7 @@ async function runAgent(conversation, brain, meta, call) {
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records, conversation)
     if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted,
+      made: filesMade(callsIn(settled)), routine: routineOf(records)?.routine,
       cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
   }
 }

@@ -283,7 +283,6 @@
   "suggest.flow.prompt": "Guarde o que acabou de fazer como fluxo, para que eu possa ver os passos, mudá-los e executá-lo de novo.",
   "tool.save_flow": "Guardou um fluxo",
   "tool.run_flow": "Executou um fluxo",
-  "activity.asFlow": "Ver como fluxo",
   "suggest.ready": "Ver uma competência que faz isto",
   "tool.remember": "Anotado para mais tarde",
   "tool.recall": "Consultou tarefas anteriores",

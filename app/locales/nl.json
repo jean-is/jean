@@ -279,7 +279,6 @@
   "suggest.flow.prompt": "Bewaar wat je net deed als stroom, zodat ik de stappen kan zien, veranderen en hem opnieuw kan uitvoeren.",
   "tool.save_flow": "Stroom bewaard",
   "tool.run_flow": "Stroom uitgevoerd",
-  "activity.asFlow": "Bekijk als stroom",
   "suggest.ready": "Bekijk een passende vaardigheid",
   "tool.remember": "Genoteerd voor later",
   "tool.recall": "Eerdere taken doorzocht",

@@ -3,7 +3,7 @@
 // routines, requests Jean sends itself on a schedule, while open or caught up at the next visit (D122).
 import { createHash } from 'node:crypto'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, MAIL_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks, MAIL_URL } from './helpers.js'
 
 
 /** A new conversation, once the page has turned to it. @param {import('@playwright/test').Page} page */
@@ -311,4 +311,50 @@ test('requests of a kind on three different days offer a routine, at the time th
   await offer.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Made the routine “Weekly sales”.')
   expect((await routines(page)).map(({ every, at }) => ({ every, at }))).toEqual([{ every: 'day', at: '07:45' }])
+})
+
+test('a routine runs each time a file is shared that passes its question, with the file, and a run never sets one off (D294)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Routines')
+  await page.keyboard.press('Escape')
+  await newConversation(page)
+  await ask(page, 'Each time I share a file, add it to the register')
+  await expect(page.locator('.toast')).toContainText('Made the routine “File it”.')
+  expect((await routines(page)).map((one) => [one.title, 'when' in one && one.when])).toEqual([['File it', 'file']])
+
+  // Settings shows what sets it off, in place of a time, and the question a file must pass.
+  const knows = await openSettings(page, 'Routines')
+  const routine = knows.locator('.routines li')
+  await expect(routine.getByRole('button', { name: 'Run now' })).toHaveCount(0)
+  await routine.locator('button.item').click()
+  await expect(routine.locator('select').first()).toHaveValue('file')
+  await expect(routine.locator('input[type="time"]')).toHaveCount(0)
+  await routine.getByLabel('Only if the answer is yes to').fill('Is it an invoice?')
+  await routine.getByLabel('Only if the answer is yes to').blur()
+  await expect.poll(async () => (await routines(page)).map((one) => 'if' in one && one.if)).toEqual(['Is it an invoice?'])
+  await closeSettings(page)
+
+  // A file that isn't one sets nothing off; an invoice does, once Jean is free, and its run has the file.
+  await newConversation(page)
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('Ideas for the garden.') })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Here are my notes')
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(1)
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'invoice-42.txt', mimeType: 'text/plain', buffer: Buffer.from('Invoice 42: 3 chairs, 240 EUR.') })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'And this one')
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(2)
+  await newConversation(page)
+  await expect(page.locator('.since')).toHaveText('Routines · File it')
+  await expect(page.locator('.msg-user')).toContainText('Add the file to the register')
+  await expect(page.locator('.msg-files')).toContainText('invoice-42.txt')
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(1)
+  const note = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update)
+  expect(note.text).toContain('which you send yourself each time the user shares a file, when the answer to "Is it an invoice?" about it is yes; this time it is invoice-42.txt, which the user shared in another task')
+  // Its run shared the file again, and set nothing off, nor did the notes: back on the welcome, Jean is free, and nothing more runs.
+  await newConversation(page)
+  await page.waitForTimeout(2500)
+  await expect(page.locator('.hero-question')).toBeVisible()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.filter((item) => item.routine).length)).toBe(1)
 })

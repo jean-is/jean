@@ -46,5 +46,6 @@
   "flows.after": "تأخذ نتائج",
   "flows.each": "مرة لكل عنصر في القائمة التي تأخذها",
   "flows.result": "آخر نتيجة",
-  "flows.remove": "أزل هذه الخطوة"
+  "flows.remove": "أزل هذه الخطوة",
+  "flows.asFlow": "اعرضه كتدفق"
 }

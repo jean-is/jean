@@ -29,7 +29,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
   folders: 'working on the files of a folder of their computer, where they are',
   skills: 'saving how a task the user repeats is done',
-  routines: 'doing a task on a schedule, or once later like a reminder',
+  routines: 'doing a task on a schedule, once later like a reminder, or each time a file comes',
   flows: 'the steps of a task the user repeats, drawn and run again',
   search: 'searching the web for current or specific facts',
   browser: 'showing a web page beside the conversation',

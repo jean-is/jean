@@ -275,7 +275,6 @@
   "suggest.flow.prompt": "Simpan apa yang baru kamu lakukan sebagai aliran, supaya saya boleh melihat langkahnya, mengubahnya dan menjalankannya semula.",
   "tool.save_flow": "Menyimpan aliran",
   "tool.run_flow": "Menjalankan aliran",
-  "activity.asFlow": "Lihat sebagai aliran",
   "suggest.ready": "Lihat kemahiran untuk perkara ini",
   "tool.remember": "Dicatat untuk kemudian",
   "tool.recall": "Melihat tugasan terdahulu",

@@ -46,5 +46,6 @@
   "flows.after": "다음 결과를 받음",
   "flows.each": "받는 목록의 항목마다 한 번",
   "flows.result": "마지막 결과",
-  "flows.remove": "이 단계 삭제"
+  "flows.remove": "이 단계 삭제",
+  "flows.asFlow": "플로로 보기"
 }

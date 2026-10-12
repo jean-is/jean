@@ -14,6 +14,7 @@ import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
 import { DEFAULT_SOURCES, indexURL, siteOf } from '../caps/skills/sources.js'
 import { shownIn } from '../caps/skills/directory.js'
+import { EVERY, WHEN } from '../caps/routines/schedule.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
@@ -207,20 +208,23 @@ function sourcesView(state) {
 let changing = Promise.resolve()
 
 /**
- * Changes a routine's schedule or request, kept only when the schedule is one. Changes made in
- * quick succession apply one after the other, each to the routine as it is kept.
- * @param {Routine} routine @param {Partial<Routine>} change
+ * Changes a routine's schedule, what sets it off or its request, kept only when the schedule is one.
+ * Changes made in quick succession apply one after the other, each to the routine as it is kept.
+ * @param {Routine} routine @param {Record<string, unknown>} change
  */
 function changeRoutine(routine, change) {
   changing = changing.then(async () => {
-    const { schedule, writeRoutine } = await import('../caps/routines/schedule.js')
+    const { schedule, trigger, writeRoutine } = await import('../caps/routines/schedule.js')
     const kept = (await routinesModule?.routines())?.find((other) => other.path === routine.path)
     if (!kept) return
-    const changed = { ...kept, ...change }
-    // A week or a month needs its day: today's, until the user picks another; once, the next time it says.
+    const changed = /** @type {Record<string, any>} */ ({ ...kept, ...change })
+    const { path, title, request, author, createdAt, lastRun, flow } = changed
+    // A file sets it off (D294), or a time: a week or a month needs its day, today's until the user picks
+    // another; once, the next time it says; one a file set off before, at nine.
     const today = new Date()
-    const plan = schedule({ ...changed, on: changed.every === kept.every ? changed.on : changed.every === 'week' ? today.getDay() : changed.every === 'once' ? undefined : today.getDate() })
-    if (plan && changed.request.trim()) await writeRoutine(app.fs, { ...changed, on: undefined, ...plan })
+    const every = 'every' in kept ? kept.every : undefined
+    const plan = trigger(changed) ?? schedule({ at: '09:00', ...changed, on: changed.every === every ? changed.on : changed.every === 'week' ? today.getDay() : changed.every === 'once' ? undefined : today.getDate() })
+    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, lastRun, flow, ...plan })
   }).then(refresh, (error) => console.warn('Routine', error))
   return changing
 }
@@ -245,8 +249,10 @@ function routineView(routine) {
   const { first } = module.week()
   const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(locale.value, { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
   const value = (/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).value
+  // A time, or what sets it off (D294).
+  const timed = 'every' in routine ? routine : null
   // An hour's minutes, every five and the routine's own.
-  const minute = Number(routine.at.slice(3))
+  const minute = Number(timed?.at.slice(3) ?? 0)
   const minutes = [...new Set([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, minute])].sort((a, b) => a - b)
   const two = new Intl.NumberFormat(locale.value, { minimumIntegerDigits: 2 })
   const open = opened.value === routine.path
@@ -257,21 +263,24 @@ function routineView(routine) {
   return html`<li>
     <button class="item" aria-expanded=${open} @click=${() => { opened.value = open ? '' : routine.path }}><span class="item-icon">${icons.alarm}</span><span class="item-text">
       <strong dir="auto">${routine.title}</strong>${next ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</span>${icons.chevron}</button>
-    <button class="button" ?disabled=${app.busy.value} @click=${() => module.runNow(routine.path)}>${t('routines.run')}</button>
+    ${timed ? html`<button class="button" ?disabled=${app.busy.value} @click=${() => module.runNow(routine.path)}>${t('routines.run')}</button>` : nothing}
     ${open ? html`<div class="item-body">
       <div class="row routine-when">
-        <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { every: /** @type {any} */ (value(e)) })}>
-          ${(/** @type {const} */ (['once', 'hour', 'day', 'weekday', 'week', 'month'])).map((every) => html`<option value=${every} ?selected=${every === routine.every}>${t(`routines.every.${every}`)}</option>`)}
+        <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, WHEN.includes(/** @type {any} */ (value(e))) ? { when: value(e) } : { every: value(e), when: undefined })}>
+          ${EVERY.map((every) => html`<option value=${every} ?selected=${every === timed?.every}>${t(`routines.every.${every}`)}</option>`)}
+          ${WHEN.map((when) => html`<option value=${when} ?selected=${!timed && 'when' in routine && when === routine.when}>${t(`routines.when.${when}`)}</option>`)}
         </select>
-        ${routine.every === 'week' ? html`<select aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>
-          ${[0, 1, 2, 3, 4, 5, 6].map((i) => (first + i) % 7).map((day) => html`<option value=${day} ?selected=${day === routine.on}>${dayName(day)}</option>`)}
-        </select>` : routine.every === 'month' ? html`<input type="number" min="1" max="31" .value=${live(String(routine.on ?? 1))} aria-label=${t('routines.on')}
-          @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : routine.every === 'once' ? html`<input type="date" .value=${live(String(routine.on))}
+        ${timed?.every === 'week' ? html`<select aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>
+          ${[0, 1, 2, 3, 4, 5, 6].map((i) => (first + i) % 7).map((day) => html`<option value=${day} ?selected=${day === timed.on}>${dayName(day)}</option>`)}
+        </select>` : timed?.every === 'month' ? html`<input type="number" min="1" max="31" .value=${live(String(timed.on ?? 1))} aria-label=${t('routines.on')}
+          @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : timed?.every === 'once' ? html`<input type="date" .value=${live(String(timed.on))}
           aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: value(e) })}>` : nothing}
-        ${routine.every === 'hour' ? html`<select aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: `${routine.at.slice(0, 3)}${value(e).padStart(2, '0')}` })}>
+        ${!timed ? nothing : timed.every === 'hour' ? html`<select aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: `${timed.at.slice(0, 3)}${value(e).padStart(2, '0')}` })}>
           ${minutes.map((each) => html`<option value=${each} ?selected=${each === minute}>${t('routines.minute', { minute: two.format(each) })}</option>`)}
-        </select>` : html`<input type="time" .value=${live(routine.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>`}
+        </select>` : html`<input type="time" .value=${live(timed.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>`}
       </div>
+      ${'when' in routine ? html`<label>${t('routines.if')}<input type="text" dir="auto" .value=${live(routine.if ?? '')}
+        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { if: value(e) })}></label>` : nothing}
       ${routine.flow ? html`<p><button class="link-button" title=${t('cap.flows.name')} @click=${() => { app.dialog.value = null; import('../caps/flows/flows.js').then((flows) => flows.edit(routine.flow)) }}>${icons.flow}
         <span dir="auto">${routine.request}</span></button></p>` : html`<label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
         @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>`}

@@ -279,7 +279,6 @@
   "suggest.flow.prompt": "Save what you just did as a flow, so I can see its steps, change them and run it again.",
   "tool.save_flow": "Saved a flow",
   "tool.run_flow": "Ran a flow",
-  "activity.asFlow": "See as a flow",
   "suggest.ready": "See a skill that does this",
   "tool.remember": "Noted for later",
   "tool.recall": "Looked through earlier tasks",

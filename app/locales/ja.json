@@ -275,7 +275,6 @@
   "suggest.flow.prompt": "今やったことをフローとして保存して、手順を見たり変えたり、もう一度実行したりできるようにして。",
   "tool.save_flow": "フローを保存しました",
   "tool.run_flow": "フローを実行しました",
-  "activity.asFlow": "フローとして見る",
   "suggest.ready": "これに使えるスキルを見る",
   "tool.remember": "後のためにメモ",
   "tool.recall": "以前のタスクを確認",
