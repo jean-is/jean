@@ -7,7 +7,8 @@ import { isLocal } from '../core/settings.js'
 import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
 import { envelope, userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered, routineOf, filesMade, callsIn } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
-import { resolveRule, ruleFromPermission } from '../core/rules.js'
+import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
+import { yes } from './yes.js'
 import { fire } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
@@ -123,8 +124,8 @@ function queue(decision) {
 /** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @param {AbortSignal} [signal] @returns {Promise<Answer[] | null>} */
 export const askUser = (questions, from, signal) => queue({ questions, from, conversation: conversationOf(signal)?.path })
 
-/** What an approval is kept to, when its tool keeps "Always allow" itself. */
-const SCOPES = ['folder', 'site', 'projects', 'film']
+/** What an approval is kept to, when its tool keeps "Always allow" itself; or a guard's, which keeps asking (D295). */
+const SCOPES = ['folder', 'site', 'projects', 'film', 'guard']
 
 /**
  * An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then
@@ -382,8 +383,9 @@ async function runAgent(conversation, brain, meta, call) {
       ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
       ...(one && { maxSteps: 1 }),
       signal: run.controller.signal,
-      // The capabilities' hooks, with the task and the kinds of note its turn came with (a brief of what's new since last time only reads).
-      hooks: () => contributions().hooks,
+      // The organisation's guards and the person's (D295), then the capabilities' hooks, with the task and the kinds of
+      // note its turn came with (a brief of what's new since last time only reads).
+      hooks: () => [...guardHooks(app.policy.guards ?? [], 'policy', yes), ...guardHooks(app.settings.value.guards ?? [], 'user', yes), ...contributions().hooks],
       about: { task: path, notes: foldTurns(sent).at(-1)?.notes.map((note) => note.data.kind) ?? [] },
       rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => approve(request.toolCall, path),

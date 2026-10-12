@@ -124,7 +124,7 @@ export const BRAND = Object.freeze({ name: 'Jean', domain: 'jean.is' })
 - **`events.js`**: the ACP records and their envelopes ([Activity events](#activity-events)), `splitSuggestions()` (D69), `versionsOf()` (D164), `isPicture`.
 - **`prompt.js`**: the base prompt, the frozen sections and the notes that change them (D46, D81).
 - **`deferred.js`**: `find_tools`, tool signatures, and `reach`, which says how to call a tool that isn't declared (D63, D104).
-- **`rules.js`**, **`settings.js`**: the rules and their defaults; settings resolved as defaults ← user ← policy, `DEFAULT_URLS`, `PROVIDERS`, projects.
+- **`rules.js`**, **`settings.js`**: the rules and their defaults, and guards as `tool.check` hooks (`guardHooks()`, D295); settings resolved as defaults ← user ← policy, `DEFAULT_URLS`, `PROVIDERS`, projects.
 - **`fs.js`**, **`files.js`**, **`conversations.js`**: storage, shared files (original, text and metadata, source numbers), transcripts.
 - **`search.js`**: BM25 over short texts, `alike()`, and matching as people type (D133).
 - **`decide.js`**: Kev's input and answers in the Decisions API's shape; the questions themselves are in `caps/reflexes/questions.js` (D62).
@@ -162,7 +162,7 @@ What Jean does passes through named events, and what the room draws for a capabi
 |---|---|---|---|---|
 | `task.start` | once a conversation is made, by its first message or duplicated (`send()`, `fork()`) | `task`, `id`, `from` | | Folders, keeping the folder (D149, D230) |
 | `turn.step` | each request to a brain: a turn's steps (`core/loop.js`), a title (`ui/title.js`), Double-check | `brain`, `system`, `messages`, `tools`, `signal`, `step`; never the key | with the stream of events | the device's brain, answering its own |
-| `tool.check` | before a call runs, after the rules and the tool's `check` | `toolCallId`, `name`, `kind`, `args`, and the turn's `task` and the kinds of its `notes` | `{ decision, reason }` or `{ refuse }` | Since last time, refusing what isn't reading (D101) |
+| `tool.check` | before a call runs, after the rules and the tool's `check` | `toolCallId`, `name`, `kind`, `args`, `title`, `service` (a connection's id), and the turn's `task` and the kinds of its `notes` | `{ decision, reason, meta }` or `{ refuse }` | Since last time, refusing what isn't reading (D101); guards, the organisation's and the person's (D295) |
 | `turn.end` | a turn ended (`ui/send.js`) | `task`, `at`, `answer`, `records`, `aborted`, `cites`, `made` (the files it made), `routine` (when it is a routine's run) | with `cites` false, once Double-check has it in hand | Double-check (D100); routines a file Jean made sets off (D294) |
 | `file.add` | a message shared a file (`send()`) | `task`, `file`, `routine` | | routines a shared file sets off (D294) |
 

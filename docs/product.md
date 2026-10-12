@@ -133,6 +133,7 @@ Every kind of action has one of three settings: **Do it / Ask me first / Never**
 - **Automatic review** (later): a reflex question checks consequential actions against the user's instructions.
 - **Setting rules from approvals.** On an approval card, "Always allow" writes a "Do it" rule and "Never allow" writes a "Never" rule.
 - **Overrides.** Projects can override rules, and organisation policy can lock them.
+- **Rules for one kind of action or one service** (D295): under the rules, a line adds one: Ask me first or Never, for a kind of action or a connected service, and if the user likes only when the answer to their own question about it is yes ("Is it to a client?"). They only ever make Jean more careful; an organisation's come first, locked.
 
 ## What Jean is doing
 

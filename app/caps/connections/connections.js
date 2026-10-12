@@ -127,6 +127,7 @@ function asTool(connection, tool) {
     spec: { name: toolName(connection, tool.name), description: `${connection.name}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } },
     kind: tool.annotations?.readOnlyHint ? 'fetch' : 'other',
     deferred: true,
+    service: connection.id,
     title: () => `${connection.name}: ${label}`,
     // An access token refused before it expired is renewed once. A service that lists its tools
     // to anyone may still run them only for someone signed in (Google's, D193): its row offers it.

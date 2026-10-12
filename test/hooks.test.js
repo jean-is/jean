@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { fire } from '../app/core/hooks.js'
+import { guardHooks } from '../app/core/rules.js'
 
 /** Jean's own behaviour in these tests: it says what it was given, and counts its runs. */
 function jean() {
@@ -76,4 +77,27 @@ test('hooks: one that fails before going on is passed over, or refuses when it i
   } finally {
     console.warn = warn
   }
+})
+
+test('guards: a rule for one kind of action or one service only makes Jean more careful, and with a question, only when its answer is yes (D295)', async () => {
+  const asked = /** @type {string[]} */ ([])
+  const yes = async (/** @type {string} */ question, /** @type {string} */ text) => (asked.push(`${question} | ${text.split('\n')[0]}`), /client/.test(text))
+  const guards = [
+    { id: 'g1', service: 'mail', if: 'Is it to a client?', then: /** @type {const} */ ('ask') },
+    { id: 'g2', kind: 'delete', then: /** @type {const} */ ('never'), reason: 'Nothing is deleted here.' },
+    { id: 'g3', then: /** @type {const} */ ('never') },
+    { id: 'g4', kind: 'edit', then: /** @type {any} */ ('allow') },
+  ]
+  const hooks = guardHooks(guards, 'user', yes)
+  assert.equal(hooks.length, 2, 'a guard for nothing in particular, or one that would allow more, is no guard')
+  const check = (/** @type {any} */ e, /** @type {string} */ ruled) => fire(hooks, 'tool.check', e, () => ({ decision: ruled }))
+  assert.deepEqual(await check({ name: 'mail_send', service: 'mail', kind: 'other', title: 'Mail: send to a client', args: {} }, 'allow'), { decision: 'ask', meta: { guard: 'g1' } })
+  assert.deepEqual(await check({ name: 'mail_send', service: 'mail', kind: 'other', title: 'Mail: send to a friend', args: {} }, 'allow'), { decision: 'allow' })
+  assert.deepEqual(await check({ name: 'mail_send', service: 'mail', kind: 'other', title: 'Mail: send to a client', args: {} }, 'never'), { decision: 'never' })
+  assert.equal(asked.length, 2, 'already as careful: no question asked')
+  assert.deepEqual(await check({ name: 'rm', kind: 'delete', title: 'Delete a.txt', args: {} }, 'allow'), { decision: 'never', reason: 'Nothing is deleted here.' })
+  assert.deepEqual(await check({ name: 'read', kind: 'read', title: 'Read a.txt', args: {} }, 'allow'), { decision: 'allow' })
+  // A question that can't be answered counts as yes; the organisation's say so as theirs.
+  const unsure = guardHooks([{ id: 'p1', kind: 'fetch', if: 'Is it outside the company?', then: 'never' }], 'policy', async () => { throw new Error('offline') })
+  assert.deepEqual(await fire(unsure, 'tool.check', { kind: 'fetch', title: 'Open a page', args: {} }, () => ({ decision: 'allow' })), { decision: 'never', reason: "The organisation's rules refuse this action." })
 })

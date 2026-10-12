@@ -9,10 +9,9 @@
 // (D294), the file coming with its request, if it passes the routine's question: its hooks hear of
 // each file, but never in a routine's own run, so a routine never sets another off.
 import { effect } from '@preact/signals-core'
-import { register, loaded, unlock, contributions } from '../../ui/caps.js'
-import { app, activeBrain, brainsHere, newConversation, notify, send } from '../../ui/state.js'
-import { getSecret } from '../../ui/secrets.js'
-import { fire } from '../../core/hooks.js'
+import { register, loaded, unlock } from '../../ui/caps.js'
+import { app, brainsHere, newConversation, notify, send } from '../../ui/state.js'
+import { yes } from '../../ui/yes.js'
 import { fileText, splitPages } from '../../core/files.js'
 import { loadConversation } from '../../core/conversations.js'
 import { noteRecord, routineOf } from '../../core/events.js'
@@ -150,25 +149,8 @@ async function setOff(when, file) {
   }
 }
 
-/**
- * Whether a file is what a routine asks for: Intuition answers on the device when it is on (a yes
- * at 0.6, D67), else the room's brain, in a word, as a step of its own. @param {string} question @param {ResourceLink} file
- */
-async function passes(question, file) {
-  const text = `${file.name}\n\n${((await fileText(app.fs, app.projectDir, file.uri)) ?? '').slice(0, 2000)}`
-  const decide = loaded.peek().get('reflexes')?.decide
-  if (decide) {
-    const { yes } = await decide(text, { yes: { type: 'noul', instructions: question } })
-    return yes?.type === 'noul' && yes.noul >= 0.6
-  }
-  const brain = activeBrain.peek()
-  if (!brain) return false
-  const [{ streamChat }, apiKey] = await Promise.all([import('../../core/llm.js'), getSecret(app.fs, brain.id)])
-  const asked = { brain, system: 'Answer the question about the file with yes or no, in English, and nothing else.', messages: [{ role: 'user', content: `${question}\n\n<file>\n${text}\n</file>` }], tools: [], maxTokens: 400 }
-  let reply = ''
-  for await (const event of await fire(contributions().hooks, 'turn.step', asked, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))) if (event.type === 'text') reply += event.delta
-  return /^\W*yes\b/i.test(reply)
-}
+/** Whether a file is what a routine asks for, by its name and the start of its text; unsure, it isn't. @param {string} question @param {ResourceLink} file */
+const passes = async (question, file) => yes(question, `${file.name}\n\n${((await fileText(app.fs, app.projectDir, file.uri)) ?? '').slice(0, 2000)}`).catch(() => false)
 
 let checking = false
 

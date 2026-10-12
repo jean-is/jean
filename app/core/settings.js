@@ -11,6 +11,7 @@ import { ulid } from './ulid.js'
  * @property {BrainConfig[]} brains
  * @property {string | null} activeBrain
  * @property {Record<string, RuleValue>} rules
+ * @property {import('./rules.js').Guard[]} [guards]
  * @property {string | null} voice
  * @property {string} [name]                  what the user is called, set by them or once by Jean from a conversation; '' when they cleared it (D150)
  * @property {string[]} unlocked              capabilities discovered so far

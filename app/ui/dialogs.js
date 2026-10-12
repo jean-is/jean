@@ -519,8 +519,46 @@ function approvals() {
       </li>`
     })}</ul>
   </section>
+  ${guards()}
   ${pages()}
   ${seal()}`
+}
+
+/**
+ * Guards (D295): rules for one kind of action or one service that only ever make Jean more careful,
+ * the organisation's first and locked, then the person's, each removed with a click, and a line to add one.
+ */
+function guards() {
+  const { settings } = effective.value
+  const mine = settings.guards ?? []
+  const services = loaded.value.has('connections') ? [...(app.policy.connections ?? []), ...(settings.connections ?? [])] : []
+  /** @param {import('../core/rules.js').Guard} guard @param {boolean} locked */
+  const row = (guard, locked) => html`<li class="setting"><span class="rule-kind" dir="auto">${guard.service ? services.find((one) => one.id === guard.service)?.name ?? guard.service
+    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}${guard.if
+    ? html`<br><span class="muted small">${t('guards.when', { question: guard.if })}</span>` : nothing}</span>${locked ? nothing
+    : html`<button type="button" class="icon-button subtle" aria-label=${t('guards.remove')} @click=${() => updateSettings({ guards: mine.filter((other) => other !== guard) })}>${icons.trash}</button>`}</li>`
+  /** @param {SubmitEvent} event */
+  const add = (event) => {
+    event.preventDefault()
+    const form = /** @type {HTMLFormElement} */ (event.target)
+    const fields = new FormData(form)
+    const [on, value] = String(fields.get('for')).split(':')
+    const question = String(fields.get('if') ?? '').trim()
+    updateSettings({ guards: [...mine, { id: ulid(), [on]: value, then: /** @type {'ask' | 'never'} */ (fields.get('then')), ...(question && { if: question }) }] })
+    form.reset()
+  }
+  return html`<section>
+    <h3>${t('guards.title')}</h3>
+    <p class="muted">${t('guards.text')}</p>
+    <ul class="rules">${(app.policy.guards ?? []).map((/** @type {any} */ guard) => row(guard, true))}${mine.map((guard) => row(guard, false))}</ul>
+    <form class="row" @submit=${add}>
+      <select name="for" aria-label=${t('guards.for')}>${RULE_KINDS.map((kind) => html`<option value=${`kind:${kind}`}>${t(`kind.${kind}.label`)}</option>`)}
+        ${services.map((one) => html`<option value=${`service:${one.id}`}>${one.name}</option>`)}</select>
+      <select name="then" aria-label=${t('guards.then')}><option value="ask">${t('rules.ask')}</option><option value="never">${t('rules.never')}</option></select>
+      <input name="if" dir="auto" placeholder=${t('guards.if')} aria-label=${t('guards.if')}>
+      <button class="button">${t('guards.add')}</button>
+    </form>
+  </section>`
 }
 
 /** This device's seal (D274), once About this answer is here: its key's fingerprint, which whoever relies on its certificates checks, or agrees on beforehand. */

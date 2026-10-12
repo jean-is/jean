@@ -5,6 +5,7 @@ import { envelope } from './events.js'
 import { signature } from './deferred.js'
 import { isLocal } from './settings.js'
 import { fire } from './hooks.js'
+import { STRICT } from './rules.js'
 
 /** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, RuleValue, Source } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
@@ -13,8 +14,6 @@ import { fire } from './hooks.js'
 // or after what the provider asks for, unless that is longer than LONGEST_WAIT.
 const RETRIES = [1000, 2000, 4000]
 const LONGEST_WAIT = 30_000
-/** How guarded each decision is: no hook makes a reserved action less guarded than the rules left it. */
-const STRICT = { allow: 0, ask: 1, never: 2 }
 
 /**
  * @typedef {Object} Tool
@@ -24,6 +23,7 @@ const STRICT = { allow: 0, ask: 1, never: 2 }
  * @property {boolean} [hidden]     never declared to the brain; scripts can call it (codemode, D48)
  * @property {boolean} [deferred]   not declared when a conversation starts: found with find_tools (connections, D47)
  * @property {boolean} [asks]       waits for the user's answer when it runs (ask_user), so it is kept as pending meanwhile (D212)
+ * @property {string} [service]      whose it is: a connection's id, for the rules about it (D295)
  * @property {(args: any) => string} title
  * @property {(args: any) => import('./types.js').ToolCallLocation[]} [locations]
  * @property {(args: any, ctx: ToolContext) => Promise<Check | void>} [check]
@@ -260,7 +260,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     /** @type {{ checked?: Check | void }} what the check found */
     const found = {}
     // What the rules say, then the tool's check, which may ask where they allow; one that fails asks nothing: the run says what is wrong.
-    const said = await ctx.on('tool.check', { toolCallId: call.id, name: call.name, kind: tool.kind, args: call.args }, async () => {
+    const said = await ctx.on('tool.check', { toolCallId: call.id, name: call.name, kind: tool.kind, args: call.args, title: info.title, service: tool.service }, async () => {
       found.checked = ruled === 'never' ? undefined : await tool.check?.(call.args, context).catch(() => undefined)
       return { decision: found.checked?.ask && ruled === 'allow' ? 'ask' : ruled }
     })
@@ -269,7 +269,8 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     if (tool.reserved && STRICT[decision] < STRICT[ruled]) decision = ruled
     const refused = decision === 'never' ? said?.refuse ?? said?.reason : undefined
     const { checked } = found
-    if (checked?.meta) info._meta = { ...info._meta, ...checked.meta }
+    // What the card keeps: the check's, and a hook's (the guard that asks, D295).
+    if (checked?.meta || said?.meta) info._meta = { ...info._meta, ...checked?.meta, ...said?.meta }
     if (decision === 'ask') {
       await waiting?.(info)
       context.answer = await askPermission({ toolCall: { ...info, ...(checked?.content && { content: checked.content }) }, step })

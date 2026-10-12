@@ -73,6 +73,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "reflexes": { "backend": "local" },
   "capabilities": { "deny": ["connections", "computer"], "preUnlock": ["files", "memory", "projects"] },
   "rules": { "send": "ask", "share": "never" },
+  "guards": [{ "id": "no-mail-out", "service": "mail", "then": "never", "reason": "Mail is read-only here." }, { "id": "clients", "kind": "fetch", "if": "Does it send client data outside the company?", "then": "ask" }],
   "pages": { "scripts": true, "downloads": false, "web": false, "network": true, "sites": ["api.corp.example", "*.corp.example"], "maps": true },
   "mapStyles": { "light": "https://maps.corp.example/styles/light", "dark": "https://maps.corp.example/styles/dark" },
   "instructions": "Use British English. Never put client names in titles.",

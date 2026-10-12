@@ -507,7 +507,7 @@ createServer(async (req, res) => {
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
-  else if (system.startsWith('Answer the question about the file with yes or no')) answer = /<file>[\s\S]*\binvoice\b/i.test(lastUser) ? 'Yes.' : 'No.'
+  else if (system.startsWith('Answer the question about what follows with yes or no')) answer = /<about>[\s\S]*\b(invoice|html)\b/i.test(lastUser) ? 'Yes.' : 'No.'
   else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
   else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
   else if (/\bcertificate\b/i.test(question) && last.role === 'user' && declared.has('check_certificate')) call = { name: 'check_certificate', args: { files: documents.map(([, , name]) => name) } }
