@@ -33,7 +33,7 @@ await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.cs
 
 register({
   id: 'interactive',
-  rules: ["A tool or a thing to explore is a ```html block in the answer, not a file: offline, var(--color-*) colours, imports 'echarts', sendPrompt(text) sends a message."],
+  rules: ["Bills, loans, recipes, timezones, quizzes, science: end with a working ```html tool, not code: offline, var(--color-*), import 'echarts', sendPrompt(text)."],
 })
 // A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
 const KINDS = ['html', 'mermaid', 'geojson']
