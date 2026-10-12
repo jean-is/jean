@@ -60,8 +60,13 @@ const positions = (value) => (Array.isArray(value) && typeof value[0] === 'numbe
 class AppMap extends HTMLElement {
   shown = this.attachShadow({ mode: 'open' })
   changed = new MutationObserver(() => this.update())
+  room = new MutationObserver(() => this.restyle())
   /** @type {any} */
   map = null
+  /** What Jean lent it. @type {any} */
+  given = null
+  /** The address of the style it shows. */
+  base = ''
 
   connectedCallback() {
     this.changed.observe(this, { childList: true, characterData: true, subtree: true })
@@ -70,6 +75,7 @@ class AppMap extends HTMLElement {
 
   disconnectedCallback() {
     this.changed.disconnect()
+    this.room.disconnect()
     this.map?.remove()
     this.map = null
   }
@@ -85,7 +91,7 @@ class AppMap extends HTMLElement {
   }
 
   async start() {
-    const given = await lend()
+    const given = this.given = await lend()
     const box = Object.assign(document.createElement('div'), { className: 'box' })
     this.shown.replaceChildren(Object.assign(document.createElement('style'), { textContent: given.css + OWN }), box)
     if (!given.allowed) {
@@ -95,25 +101,15 @@ class AppMap extends HTMLElement {
       this.shown.append(card)
       await new Promise((resolve) => button.addEventListener('click', () => ask({ allow: 'maps' }).then(({ allowed }) => allowed && resolve(card.remove()))))
     }
-    const style = getComputedStyle(this)
-    const accent = rgba(style.getPropertyValue('--color-primary').trim() || '#2a6fdb')
-    const halo = rgba(style.colorScheme === 'dark' ? '#1b1b1d' : '#ffffff')
-    const ink = rgba(style.getPropertyValue('--color-text-primary').trim() || '#222')
-    const map = this.map = new given.maplibregl.Map({ container: box, style: routed(given.style), center: [0, 20], zoom: 1, attributionControl: { compact: true },
+    this.base = this.basemap()
+    const map = this.map = new given.maplibregl.Map({ container: box, style: routed(this.base), center: [0, 20], zoom: 1, attributionControl: { compact: true },
       transformRequest: (/** @type {string} */ url) => ({ url: routed(url) }) })
     map.addControl(new given.maplibregl.NavigationControl({ showCompass: false }))
+    // Its places, routes and areas on each style the map takes: the first, then the room's light or dark.
+    map.on('style.load', () => this.own())
     map.on('load', () => {
       // Its credits folded to their button, so that they hide no place.
       box.querySelector('.maplibregl-compact-show')?.classList.remove('maplibregl-compact-show')
-      map.addSource('own', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } })
-      map.addLayer({ id: 'areas', type: 'fill', source: 'own', filter: kind('Polygon'), paint: { 'fill-color': accent, 'fill-opacity': 0.18 } })
-      map.addLayer({ id: 'edges', type: 'line', source: 'own', filter: kind('Polygon'), paint: { 'line-color': accent, 'line-width': 2 } })
-      map.addLayer({ id: 'under', type: 'line', source: 'own', filter: kind('LineString'), layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': halo, 'line-width': 8 } })
-      map.addLayer({ id: 'routes', type: 'line', source: 'own', filter: kind('LineString'), layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': accent, 'line-width': 4 } })
-      map.addLayer({ id: 'places', type: 'circle', source: 'own', filter: kind('Point'), paint: { 'circle-radius': 7, 'circle-color': accent, 'circle-stroke-width': 2.5, 'circle-stroke-color': halo } })
-      map.addLayer({ id: 'names', type: 'symbol', source: 'own', filter: kind('Point'),
-        layout: { 'text-field': ['coalesce', ['get', 'name'], ['get', 'title'], ''], 'text-font': ['Noto Sans Bold'], 'text-size': 13, 'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-optional': true },
-        paint: { 'text-color': ink, 'text-halo-color': halo, 'text-halo-width': 1.6 } })
       for (const layer of ['areas', 'routes', 'places']) {
         map.on('click', layer, (/** @type {any} */ event) => this.dispatchEvent(new CustomEvent('pick', { bubbles: true, detail: { ...event.features[0]?.properties } })))
         map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer' })
@@ -121,6 +117,53 @@ class AppMap extends HTMLElement {
       }
       this.update(true)
     })
+    // The room's light or dark, or look, put on the page: the map service's other style, or its own colours.
+    this.room.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-look'] })
+  }
+
+  /** The map service's style for the page's light or dark. */
+  basemap() {
+    return this.given.styles[getComputedStyle(this).colorScheme === 'dark' ? 'dark' : 'light']
+  }
+
+  /** Its colours, from the page's, as MapLibre reads them. */
+  colours() {
+    const style = getComputedStyle(this)
+    return {
+      accent: rgba(style.getPropertyValue('--color-primary').trim() || '#2a6fdb'),
+      halo: rgba(style.colorScheme === 'dark' ? '#1b1b1d' : '#ffffff'),
+      ink: rgba(style.getPropertyValue('--color-text-primary').trim() || '#222'),
+    }
+  }
+
+  /** Its own layers on the map's style, in the room's accent, each place named. */
+  own() {
+    const map = this.map
+    const { accent, halo, ink } = this.colours()
+    map.addSource('own', { type: 'geojson', data: this.data ?? { type: 'FeatureCollection', features: [] } })
+    map.addLayer({ id: 'areas', type: 'fill', source: 'own', filter: kind('Polygon'), paint: { 'fill-color': accent, 'fill-opacity': 0.18 } })
+    map.addLayer({ id: 'edges', type: 'line', source: 'own', filter: kind('Polygon'), paint: { 'line-color': accent, 'line-width': 2 } })
+    map.addLayer({ id: 'under', type: 'line', source: 'own', filter: kind('LineString'), layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': halo, 'line-width': 8 } })
+    map.addLayer({ id: 'routes', type: 'line', source: 'own', filter: kind('LineString'), layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': accent, 'line-width': 4 } })
+    map.addLayer({ id: 'places', type: 'circle', source: 'own', filter: kind('Point'), paint: { 'circle-radius': 7, 'circle-color': accent, 'circle-stroke-width': 2.5, 'circle-stroke-color': halo } })
+    map.addLayer({ id: 'names', type: 'symbol', source: 'own', filter: kind('Point'),
+      layout: { 'text-field': ['coalesce', ['get', 'name'], ['get', 'title'], ''], 'text-font': ['Noto Sans Bold'], 'text-size': 13, 'text-offset': [0, 1.1], 'text-anchor': 'top', 'text-optional': true },
+      paint: { 'text-color': ink, 'text-halo-color': halo, 'text-halo-width': 1.6 } })
+  }
+
+  /** The room changed: the other style for the other light or dark, else its own layers in the new colours. */
+  restyle() {
+    const map = this.map
+    if (!map) return
+    const base = this.basemap()
+    if (base !== this.base) {
+      this.base = base
+      return map.setStyle(routed(base), { diff: false })
+    }
+    if (!map.getSource('own')) return
+    const { accent, halo, ink } = this.colours()
+    for (const [layer, property, colour] of /** @type {const} */ ([['areas', 'fill-color', accent], ['edges', 'line-color', accent], ['under', 'line-color', halo], ['routes', 'line-color', accent],
+      ['places', 'circle-color', accent], ['places', 'circle-stroke-color', halo], ['names', 'text-color', ink], ['names', 'text-halo-color', halo]])) map.setPaintProperty(layer, property, colour)
   }
 
   /** Its GeoJSON on the map, framed to fit, gently unless motion is better left out. @param {boolean} [first] */
