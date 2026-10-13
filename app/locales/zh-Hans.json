@@ -43,6 +43,7 @@
   "history.unread": "未读",
   "history.markUnread": "标为未读",
   "history.markRead": "标为已读",
+  "history.save": "保存副本",
   "rewind.confirm": "要重新问一次吗？此任务中这之后的所有内容都将被移除。之后创建或更改的文件保持不变。",
   "sidebar.open": "打开侧边栏",
   "sidebar.close": "关闭侧边栏",

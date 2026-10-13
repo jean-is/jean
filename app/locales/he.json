@@ -43,6 +43,7 @@
   "history.unread": "לא נקראה",
   "history.markUnread": "סימון כלא נקראה",
   "history.markRead": "סימון כנקראה",
+  "history.save": "שמירת עותק",
   "rewind.confirm": "לשאול את זה שוב? כל מה שבא אחריו במשימה הזו יוסר. קבצים שנוצרו או שונו מאז נשארים כפי שהם.",
   "sidebar.open": "פתיחת סרגל הצד",
   "sidebar.close": "סגירת סרגל הצד",

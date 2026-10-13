@@ -24,7 +24,7 @@ const renaming = signal(/** @type {string | null} */ (null))
  * The tasks, newest first, the open one marked (D165), those the user pinned under their own
  * heading above the others. One being answered has a light before its name, ringed while a decision
  * waits there (D147), and one answered since it was last open a still one (D288).
- * What can be done with one is in a menu at its end (D181); a double click renames it too. A routine's runs are one row, its newest, which unfolds the earlier
+ * What can be done with one is in a menu at its end (D181), saving it as a web page too (D305); a double click renames it too. A routine's runs are one row, its newest, which unfolds the earlier
  * ones under it by date; unfolded while one of them is open or under way (D122). Tab stops once
  * per task; the arrows do the rest (move).
  * @param {'drawer' | 'list'} where
@@ -70,6 +70,7 @@ function taskList(where, list) {
         action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => markConversation(item.path, { pinned: !item.pinned })),
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => markConversation(item.path, { unread: !item.unread }))}
+        ${action(menu, icons.download, t('history.save'), () => import('./export.js').then((module) => module.saveTask(app.fs, item)))}
         ${action(menu, icons.trash, t('action.delete'), () => confirm(t('history.confirmDelete')) && removeConversation(item.path))}</div>
     </li>`
   })}</ol>`

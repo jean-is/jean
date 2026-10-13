@@ -10,6 +10,7 @@ import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
+import { ENTRY as READER, renderListing } from './render.js'
 
 /** The folder a deploy serves (D243): every path here is relative to it. */
 const APP = fileURLToPath(new URL('../app', import.meta.url))
@@ -204,9 +205,10 @@ export const integrityOf = (hex) => `sha256-${Buffer.from(hex, 'hex').toString('
  * @param {string[]} locales
  * @param {Record<string, string>} integrity  path → Subresource Integrity value
  * @param {Record<string, { files: string[] }>} [capabilities]
+ * @param {Awaited<ReturnType<typeof renderListing>> | null} [render]  the render package, when there is a reader (D305)
  */
-export function buildCapabilities (version, shell, locales, integrity = {}, capabilities = {}) {
-  return `${JSON.stringify({ format: 2, version, shell, locales, integrity, capabilities }, null, 2)}\n`
+export function buildCapabilities (version, shell, locales, integrity = {}, capabilities = {}, render = null) {
+  return `${JSON.stringify({ format: 2, version, shell, locales, integrity, capabilities, ...(render && { render }) }, null, 2)}\n`
 }
 
 const PRELOAD_LINE = /^<link rel="modulepreload" href="[^"]*">\n/gm
@@ -264,6 +266,9 @@ export async function plan (root = APP) {
     hashes.push([path, sha256(data)])
   }
   const version = computeVersion(hashes)
+  /** @param {string} path */
+  const text = async (path) => (generated[path] ?? await readOrNull(root, path))?.toString('utf8') ?? null
+  const render = await readOrNull(root, READER) ? await renderListing(root, text) : null
   const integrity = Object.fromEntries(hashes.map(([path, hash]) => [path, integrityOf(hash)]))
   const sw = await readOrNull(root, 'sw.js')
   const stamped = sw && stampVersion(sw.toString('utf8'), version)
@@ -274,7 +279,7 @@ export async function plan (root = APP) {
     files: shell.length + locales.length + capabilityFiles.length,
     outputs: {
       ...generated,
-      'capabilities.json': buildCapabilities(version, shell, locales, integrity, capabilities),
+      'capabilities.json': buildCapabilities(version, shell, locales, integrity, capabilities, render),
       'sw.js': stamped,
       ...(licence ? { LICENSE: licence.toString('utf8') } : {}),
     },

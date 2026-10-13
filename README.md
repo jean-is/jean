@@ -88,7 +88,7 @@ Then open http://127.0.0.1:4173 and pick a brain. The terminal says as soon as a
 node test/fixtures/fake-brain.js
 ```
 
-**Deploying:** run `npm ci && npm run build`, then copy `app/` to any static host served over HTTPS. Jean's code ships exactly as written. Only third-party code (copied into `app/vendor/`), two generated listings and a copy of the licence are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once. For containers, see [deploy/docker/](deploy/docker/README.md).
+**Deploying:** run `npm ci && npm run build`, then copy `app/` to any static host served over HTTPS. When `capabilities.json` names a new version of the render package, which draws a task saved as a web page, publish it: `npm run render`, then `npm publish ./dist/render`. Jean's code ships exactly as written. Only third-party code (copied into `app/vendor/`), two generated listings and a copy of the licence are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once. For containers, see [deploy/docker/](deploy/docker/README.md).
 
 **Gateway:** some services, like Gmail, Microsoft 365 or Slack, refuse requests from a browser, or only accept apps they registered. A small gateway, with nothing to install, reaches them for Jean: it relays to every service Jean knows that a browser can't reach, or to the `hosts` you name, and keeps the secret of an app you registered there (D191, D214). Run it on Node, or put `gateway/gateway.js` on Cloudflare Workers, Deno or Bun, then name it in Settings › Connections, or in policy (`urls.gateway`):
 
@@ -123,6 +123,7 @@ That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Ga
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
 | `npm run offers` | Measures how often a brain offers what a request needs, and what it doesn't, on a multilingual test set (`BRAIN=<provider>:<model>`) |
+| `npm run render` | Builds, then the package that draws a task saved as a web page, `@codename/jean-render`, in `dist/render/` |
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
 | `npm run build:dmg` | The same, then the macOS disk image to hand out, on a Mac |
 | `npm run icons` | Draws the PNG icons that Android and iOS install with from `app/icons/icon.svg`, after changing it |

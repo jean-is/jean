@@ -43,6 +43,7 @@
   "history.unread": "Ongelezen",
   "history.markUnread": "Markeren als ongelezen",
   "history.markRead": "Markeren als gelezen",
+  "history.save": "Kopie opslaan",
   "rewind.confirm": "Dit opnieuw vragen? Alles wat erna kwam in deze taak wordt verwijderd. Bestanden die sindsdien zijn gemaakt of gewijzigd, blijven zoals ze zijn.",
   "sidebar.open": "Zijbalk openen",
   "sidebar.close": "Zijbalk sluiten",

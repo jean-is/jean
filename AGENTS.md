@@ -9,7 +9,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 ## Non-negotiables
 
 1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI, and by `npm run dev` after every change, which says as soon as one is over (D244). Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
-2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code ships exactly as written, from `app/`, which holds everything a deploy serves and nothing else; the root holds what never ships (D243). Paths to Jean's own files, here and in the docs (`core/fs.js`), are `app/`'s. There are two exceptions to "what is in the repo is what ships", and neither is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `app/vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json` and `manifest.webmanifest` in `app/`, with a copy of `LICENSE`. Deploying means `npm ci && npm run build`, then copying `app/`.
+2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code ships exactly as written, from `app/`, which holds everything a deploy serves and nothing else; the root holds what never ships (D243). Paths to Jean's own files, here and in the docs (`core/fs.js`), are `app/`'s. There are two exceptions to "what is in the repo is what ships", and neither is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `app/vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json` and `manifest.webmanifest` in `app/`, with a copy of `LICENSE`. Deploying means `npm ci && npm run build`, then copying `app/`, and publishing the render package when its version is new (`npm run render`, then `npm publish ./dist/render`, D305).
 3. **Three runtime dependencies are loaded upfront:** `@preact/signals-core`, `lit-html` and `marked` (lexer only). Everything else loads on demand inside a capability module. Adding a dependency requires an entry in [docs/decisions.md](docs/decisions.md).
 4. **Standards before inventions:**
    - **Model APIs:** OpenAI-compatible and Anthropic Messages.
@@ -89,6 +89,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 npm run dev     # build (vendor + manifest), then serve, checking the budgets after each change (npm start does the same)
 npm run dev:gateway  # the same, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
+npm run render  # build, then the package that draws a task saved as a web page, in dist/render/, for npm publish ./dist/render (D305)
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
 npm run build:dmg      # the same, then the macOS disk image, on a Mac
 npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it

@@ -23,7 +23,7 @@ import { computed, effect, signal } from '@preact/signals-core'
 import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
 import { register } from '../../ui/caps.js'
 import { declared, drawn } from '../../ui/markdown.js'
-import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
+import { pageRights, pagePolicy, pageAllow, mapStyles, PAGE_SANDBOX } from '../../ui/csp.js'
 import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -43,6 +43,8 @@ const KINDS = ['html', 'mermaid', 'geojson']
 effect(() => { if (KINDS.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...KINDS]) })
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
+// A task saved as a web page (D305) has it from the render package, whose server sends it as text: there its relay is written in the frame.
+const RELAY = new URL(FRAME).origin === location.origin ? null : await fetch(FRAME).then((response) => response.text())
 const rights = computed(() => pageRights(effective.value.settings, app.policy))
 
 /** MCP Apps' standard variables (its host context's `styles.variables`), from the room's own. */
@@ -107,10 +109,8 @@ const parts = new Map()
 const part = (path) => parts.get(path) ?? /** @type {Promise<string>} */ (parts.set(path, fetch(new URL(path, import.meta.url)).then((response) => response.text())).get(path))
 const LENT = /** @type {Record<string, string>} */ ({ diagram: './diagram.js', map: './map.js' })
 
-/** Where maps come from, unless policy or Settings name another service (`mapStyles`): OpenFreeMap's styles for light and dark. */
-const MAP_STYLES = Object.freeze({ light: 'https://tiles.openfreemap.org/styles/positron', dark: 'https://tiles.openfreemap.org/styles/dark' })
-/** The map service's styles, light and dark, as policy or Settings name them, and the addresses that may be fetched for a map: theirs. */
-const styles = () => /** @type {typeof MAP_STYLES} */ (app.policy.mapStyles ?? /** @type {any} */ (effective.peek().settings).mapStyles ?? MAP_STYLES)
+/** The map service's styles, light and dark, and the addresses that may be fetched for a map: theirs. */
+const styles = () => mapStyles(/** @type {any} */ (effective.peek().settings), app.policy)
 const mapSites = () => Object.values(styles()).map((address) => new URL(address).origin)
 
 // Each component a page holds is asked for as it appears, and lent then; the rest isn't.
@@ -248,7 +248,7 @@ class AppPage extends HTMLElement {
    * @param {Record<import('../../ui/csp.js').PageRight, boolean>} allows
    */
   shell(allows) {
-    render(html`<iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} loading="lazy" src=${FRAME} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${this.begin}></iframe>
+    render(html`<iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} loading="lazy" src=${RELAY === null ? FRAME : nothing} srcdoc=${RELAY ?? nothing} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${this.begin}></iframe>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>

@@ -3,6 +3,7 @@
 // the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS starts as an outline,
 // commented out, and shows as it is typed; right to left, the sidebar changes sides.
 import { readFile } from 'node:fs/promises'
+import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
 import { start, openSettings, closeSettings } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
@@ -80,13 +81,15 @@ test('the drawer opens beside the conversation or is put away, as the user left 
 
   // New task brings the keyboard to the box; a task's ⋮ menu holds Pin, which shows it under
   // Pinned above the others, Rename, which a double click does too, Mark as unread, which lights it
-  // until it is opened, and Delete, the only one in red (D181, D288).
+  // until it is opened, Save a copy, a web page that holds the task's own file and draws it once opened, and Delete,
+  // the only one in red (D181, D288, D305).
   await tasks.locator('.place', { hasText: 'New task' }).click()
   await expect(page.locator('#prompt')).toBeFocused()
   await page.evaluate(async () => {
-    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
-    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
-    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' })])
+    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const { path, header } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    const said = [userRecord('Which day is free? </script>', app.deviceId), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Thursday.\n<suggestions>\nBook it\n</suggestions>' } }, 0)]
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' }), ...said.map((record) => ({ ...record, at: header.createdAt }))])
     const later = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId, now: new Date(Date.now() + 1000) })
     await appendRecords(app.fs, later.path, [metaRecord(app.deviceId, { title: 'Book a table' })])
     await refreshConversations()
@@ -134,6 +137,18 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await pick(row, 'Mark as unread')
   await row.locator('.history-item').click()
   await expect(light).toHaveCount(0)
+
+  const [download] = await Promise.all([page.waitForEvent('download'), pick(row, 'Save a copy')])
+  expect(download.suggestedFilename()).toBe('Plan the month.html')
+  // Kept by its name: Playwright keeps a download without its extension, which browsers then show as text.
+  const file = test.info().outputPath(download.suggestedFilename())
+  await download.saveAs(file)
+  const saved = await page.context().newPage()
+  await saved.goto(pathToFileURL(file).href)
+  await expect(saved.locator('h1')).toHaveText('Plan the month')
+  await expect(saved.locator('section p')).toHaveText(['Which day is free? </script>', 'Thursday.'])
+  await expect(saved.locator('section.you')).toHaveCount(1)
+  await saved.close()
 
   await row.hover()
   await row.getByRole('button', { name: 'More options' }).click()

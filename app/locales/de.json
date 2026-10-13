@@ -43,6 +43,7 @@
   "history.unread": "Ungelesen",
   "history.markUnread": "Als ungelesen markieren",
   "history.markRead": "Als gelesen markieren",
+  "history.save": "Kopie speichern",
   "rewind.confirm": "Das noch einmal fragen? Alles danach in dieser Aufgabe wird entfernt. Seitdem erstellte oder geänderte Dateien bleiben, wie sie sind.",
   "sidebar.open": "Seitenleiste öffnen",
   "sidebar.close": "Seitenleiste schließen",

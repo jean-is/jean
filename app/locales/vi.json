@@ -43,6 +43,7 @@
   "history.unread": "Chưa đọc",
   "history.markUnread": "Đánh dấu là chưa đọc",
   "history.markRead": "Đánh dấu là đã đọc",
+  "history.save": "Lưu bản sao",
   "rewind.confirm": "Hỏi lại điều này? Mọi thứ sau đó trong nhiệm vụ này sẽ bị xóa. Các tệp đã tạo hoặc thay đổi từ đó vẫn giữ nguyên.",
   "sidebar.open": "Mở thanh bên",
   "sidebar.close": "Đóng thanh bên",

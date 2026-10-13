@@ -43,6 +43,7 @@
   "history.unread": "Non lue",
   "history.markUnread": "Marquer comme non lue",
   "history.markRead": "Marquer comme lue",
+  "history.save": "Enregistrer une copie",
   "rewind.confirm": "Redemander ceci ? Tout ce qui suit dans cette tâche sera supprimé. Les fichiers créés ou modifiés depuis restent tels quels.",
   "sidebar.open": "Ouvrir la barre latérale",
   "sidebar.close": "Fermer la barre latérale",

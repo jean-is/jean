@@ -43,6 +43,7 @@
   "history.unread": "Não lida",
   "history.markUnread": "Marcar como não lida",
   "history.markRead": "Marcar como lida",
+  "history.save": "Guardar uma cópia",
   "rewind.confirm": "Perguntar isto de novo? Tudo o que veio depois nesta tarefa será removido. Os arquivos criados ou alterados desde então ficam como estão.",
   "sidebar.open": "Abrir a barra lateral",
   "sidebar.close": "Fechar a barra lateral",

@@ -43,6 +43,7 @@
   "history.unread": "Unread",
   "history.markUnread": "Mark as unread",
   "history.markRead": "Mark as read",
+  "history.save": "Save a copy",
   "rewind.confirm": "Ask this again? Everything after it in this task will be removed. Files made or changed since stay as they are.",
   "sidebar.open": "Open sidebar",
   "sidebar.close": "Close sidebar",

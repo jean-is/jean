@@ -43,6 +43,7 @@
   "history.unread": "Nieprzeczytane",
   "history.markUnread": "Oznacz jako nieprzeczytane",
   "history.markRead": "Oznacz jako przeczytane",
+  "history.save": "Zapisz kopię",
   "rewind.confirm": "Zapytać o to ponownie? Wszystko, co nastąpiło później w tym zadaniu, zostanie usunięte. Pliki utworzone lub zmienione od tego czasu pozostaną bez zmian.",
   "sidebar.open": "Otwórz pasek boczny",
   "sidebar.close": "Zamknij pasek boczny",

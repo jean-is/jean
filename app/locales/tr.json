@@ -43,6 +43,7 @@
   "history.unread": "Okunmadı",
   "history.markUnread": "Okunmadı olarak işaretle",
   "history.markRead": "Okundu olarak işaretle",
+  "history.save": "Kopyasını kaydet",
   "rewind.confirm": "Bunu yeniden sormak istiyor musunuz? Bu görevde ondan sonra gelen her şey kaldırılacak. O zamandan beri oluşturulan veya değiştirilen dosyalar olduğu gibi kalır.",
   "sidebar.open": "Kenar çubuğunu aç",
   "sidebar.close": "Kenar çubuğunu kapat",
