@@ -26,6 +26,10 @@
   "plugins.error.size": "コードが大きすぎます。",
   "plugins.added": "{title} を追加しました。",
   "plugins.failed": "{title} を開始できなかったため、いまはオフです。",
+  "plugins.off": "{title} が何度も失敗したため、オフにしました。",
+  "plugins.failing": "何度も失敗したため、オフにしました。",
+  "plugins.safe": "セーフモード：今回はプラグインを実行しません。",
+  "plugins.leaveSafe": "セーフモードを終了",
   "plugins.says": "{title}：{text}",
   "plugins.confirmRemove": "{title} を削除しますか？保存していた内容も一緒に削除されます。"
 }

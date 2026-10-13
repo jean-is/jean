@@ -26,6 +26,10 @@
   "plugins.error.size": "ኮዱ በጣም ትልቅ ነው።",
   "plugins.added": "{title} ታክሏል።",
   "plugins.failed": "{title} አልጀመረም፤ ለአሁን ጠፍቷል።",
+  "plugins.off": "{title} በተደጋጋሚ ስላልተሳካ ጠፍቷል።",
+  "plugins.failing": "በተደጋጋሚ ስላልተሳካ ጠፍቷል።",
+  "plugins.safe": "የጥንቃቄ ሁነታ፦ በዚህ ጉብኝት ምንም ተሰኪ አይሠራም።",
+  "plugins.leaveSafe": "ከጥንቃቄ ሁነታ ውጣ",
   "plugins.says": "{title}፦ {text}",
   "plugins.confirmRemove": "{title} ይወገድ? ያስቀመጠውም አብሮ ይሄዳል።"
 }

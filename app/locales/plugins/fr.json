@@ -26,6 +26,10 @@
   "plugins.error.size": "Son code est trop volumineux.",
   "plugins.added": "{title} est ajouté.",
   "plugins.failed": "{title} n’a pas démarré : il est désactivé pour l’instant.",
+  "plugins.off": "{title} échouait sans cesse : il est désactivé.",
+  "plugins.failing": "Il échouait sans cesse, il a donc été désactivé.",
+  "plugins.safe": "Mode sans échec : aucun plugin ne tourne pendant cette visite.",
+  "plugins.leaveSafe": "Quitter le mode sans échec",
   "plugins.says": "{title} : {text}",
   "plugins.confirmRemove": "Retirer {title} ? Ce qu’il gardait part avec lui."
 }

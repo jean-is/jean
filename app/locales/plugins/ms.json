@@ -26,6 +26,10 @@
   "plugins.error.size": "Kodnya terlalu besar.",
   "plugins.added": "{title} telah ditambah.",
   "plugins.failed": "{title} tidak bermula, jadi ia dimatikan buat masa ini.",
+  "plugins.off": "{title} asyik gagal, jadi ia dimatikan.",
+  "plugins.failing": "Asyik gagal, jadi ia dimatikan.",
+  "plugins.safe": "Mod selamat: tiada pemalam berjalan semasa lawatan ini.",
+  "plugins.leaveSafe": "Keluar daripada mod selamat",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Buang {title}? Apa yang disimpannya akan turut dibuang."
 }

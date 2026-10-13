@@ -26,6 +26,10 @@
   "plugins.error.size": "شيفرتها كبيرة جدًا.",
   "plugins.added": "أُضيفت {title}.",
   "plugins.failed": "لم تبدأ {title}، فهي متوقفة الآن.",
+  "plugins.off": "أُوقفت {title} لأنها أخفقت مرارًا.",
+  "plugins.failing": "أُوقفت لأنها أخفقت مرارًا.",
+  "plugins.safe": "الوضع الآمن: لا تعمل أي إضافة خلال هذه الزيارة.",
+  "plugins.leaveSafe": "الخروج من الوضع الآمن",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "أتزيل {title}؟ ما احتفظت به يُزال معها."
 }

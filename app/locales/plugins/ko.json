@@ -26,6 +26,10 @@
   "plugins.error.size": "코드가 너무 큽니다.",
   "plugins.added": "{title}을(를) 추가했습니다.",
   "plugins.failed": "{title}이(가) 시작되지 않아 지금은 꺼져 있습니다.",
+  "plugins.off": "{title}이(가) 계속 실패해서 껐습니다.",
+  "plugins.failing": "계속 실패해서 껐습니다.",
+  "plugins.safe": "안전 모드: 이번 방문에서는 플러그인을 실행하지 않습니다.",
+  "plugins.leaveSafe": "안전 모드 종료",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title}을(를) 삭제할까요? 저장한 내용도 함께 삭제됩니다."
 }

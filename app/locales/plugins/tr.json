@@ -26,6 +26,10 @@
   "plugins.error.size": "Kodu çok büyük.",
   "plugins.added": "{title} eklendi.",
   "plugins.failed": "{title} başlamadı, bu yüzden şimdilik kapalı.",
+  "plugins.off": "{title} sürekli hata verdiği için kapatıldı.",
+  "plugins.failing": "Sürekli hata verdiği için kapatıldı.",
+  "plugins.safe": "Güvenli mod: Bu ziyarette hiçbir eklenti çalışmaz.",
+  "plugins.leaveSafe": "Güvenli moddan çık",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} kaldırılsın mı? Sakladıkları da onunla gider."
 }

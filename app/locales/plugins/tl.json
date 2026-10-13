@@ -26,6 +26,10 @@
   "plugins.error.size": "Masyadong malaki ang code nito.",
   "plugins.added": "Naidagdag ang {title}.",
   "plugins.failed": "Hindi nagsimula ang {title}, kaya naka-off muna ito.",
+  "plugins.off": "Paulit-ulit na pumalya ang {title}, kaya pinatay ito.",
+  "plugins.failing": "Paulit-ulit itong pumalya, kaya pinatay ito.",
+  "plugins.safe": "Ligtas na mode: walang plugin na tatakbo sa pagbisitang ito.",
+  "plugins.leaveSafe": "Umalis sa ligtas na mode",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Alisin ang {title}? Kasama nitong mawawala ang itinago nito."
 }

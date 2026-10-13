@@ -26,6 +26,10 @@
   "plugins.error.size": "Sein Code ist zu groß.",
   "plugins.added": "{title} ist hinzugefügt.",
   "plugins.failed": "{title} ist nicht gestartet und daher vorerst aus.",
+  "plugins.off": "{title} ist immer wieder fehlgeschlagen und deshalb ausgeschaltet.",
+  "plugins.failing": "Es ist immer wieder fehlgeschlagen und wurde deshalb ausgeschaltet.",
+  "plugins.safe": "Abgesicherter Modus: Bei diesem Besuch läuft kein Plugin.",
+  "plugins.leaveSafe": "Abgesicherten Modus verlassen",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} entfernen? Was es gespeichert hat, geht mit."
 }

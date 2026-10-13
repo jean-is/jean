@@ -26,6 +26,10 @@
   "plugins.error.size": "Kóòdù rẹ̀ ti tóbi jù.",
   "plugins.added": "A ti fi {title} kún un.",
   "plugins.failed": "{title} kò bẹ̀rẹ̀, nítorí náà ó wà ní pípa fún báyìí.",
+  "plugins.off": "{title} ń kùnà léraléra, nítorí náà a ti pa á.",
+  "plugins.failing": "Ó ń kùnà léraléra, nítorí náà a ti pa á.",
+  "plugins.safe": "Ipò àìléwu: kò sí àfikún kankan tí yóò ṣiṣẹ́ ní ìbẹ̀wò yìí.",
+  "plugins.leaveSafe": "Jáde kúrò nínú ipò àìléwu",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Ṣé kí a yọ {title} kúrò? Ohun tí ó pamọ́ yóò lọ pẹ̀lú rẹ̀."
 }

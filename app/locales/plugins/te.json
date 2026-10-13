@@ -26,6 +26,10 @@
   "plugins.error.size": "దీని కోడ్ చాలా పెద్దది.",
   "plugins.added": "{title} జోడించబడింది.",
   "plugins.failed": "{title} మొదలవలేదు, కాబట్టి ప్రస్తుతానికి ఆపివేయబడింది.",
+  "plugins.off": "{title} పదే పదే విఫలమైంది, కాబట్టి ఆపివేయబడింది.",
+  "plugins.failing": "పదే పదే విఫలమైంది, కాబట్టి ఆపివేయబడింది.",
+  "plugins.safe": "సురక్షిత మోడ్: ఈ సందర్శనలో ఏ ప్లగిన్ కూడా నడవదు.",
+  "plugins.leaveSafe": "సురక్షిత మోడ్ నుండి బయటకు రండి",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} ని తీసివేయాలా? అది ఉంచినవి కూడా దానితో పోతాయి."
 }

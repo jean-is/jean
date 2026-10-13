@@ -26,6 +26,10 @@
   "plugins.error.size": "এর কোড খুব বড়।",
   "plugins.added": "{title} যোগ হয়েছে।",
   "plugins.failed": "{title} চালু হয়নি, তাই আপাতত বন্ধ।",
+  "plugins.off": "{title} বারবার ব্যর্থ হয়েছে, তাই বন্ধ করা হয়েছে।",
+  "plugins.failing": "বারবার ব্যর্থ হয়েছে, তাই বন্ধ করা হয়েছে।",
+  "plugins.safe": "নিরাপদ মোড: এই ভিজিটে কোনো প্লাগইন চলবে না।",
+  "plugins.leaveSafe": "নিরাপদ মোড ছাড়ুন",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} সরাবেন? এটি যা রেখেছিল তা-ও চলে যাবে।"
 }

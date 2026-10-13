@@ -26,6 +26,10 @@
   "plugins.error.size": "کدش خیلی بزرگ است.",
   "plugins.added": "{title} افزوده شد.",
   "plugins.failed": "{title} شروع نشد، پس فعلاً خاموش است.",
+  "plugins.off": "{title} پشت سر هم خطا داد، پس خاموش شد.",
+  "plugins.failing": "پشت سر هم خطا داد، پس خاموش شد.",
+  "plugins.safe": "حالت امن: در این بازدید هیچ افزونه‌ای اجرا نمی‌شود.",
+  "plugins.leaveSafe": "خروج از حالت امن",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} حذف شود؟ آنچه نگه داشته بود هم با آن می‌رود."
 }

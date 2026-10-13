@@ -6,10 +6,13 @@ import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } fro
 
 const FIXTURE = new URL('./fixtures/plugins/word-count/', import.meta.url)
 
-/** Serves the test plugin at https://plugins.test/word-count/, its manifest changed as given. @param {import('@playwright/test').Page} page @param {Record<string, unknown>} [change] */
-async function serve(page, change = {}) {
+/**
+ * Serves the test plugin at https://plugins.test/word-count/, its manifest changed as given, and its code if given.
+ * @param {import('@playwright/test').Page} page @param {Record<string, unknown>} [change] @param {string} [main]
+ */
+async function serve(page, change = {}, main) {
   const manifest = { ...JSON.parse(await readFile(new URL('plugin.json', FIXTURE), 'utf8')), ...change }
-  const code = await readFile(new URL('main.js', FIXTURE), 'utf8')
+  const code = main ?? await readFile(new URL('main.js', FIXTURE), 'utf8')
   await page.route('https://plugins.test/word-count/**', (route) => route.fulfill({
     headers: { 'access-control-allow-origin': '*', 'content-type': 'text/plain' },
     body: route.request().url().endsWith('plugin.json') ? JSON.stringify(manifest) : code,
@@ -82,4 +85,42 @@ test('a plugin read from its address is added, runs apart, draws under each answ
   await expect(page.locator('iframe[sandbox="allow-scripts"][src$="sandbox.html"]')).toHaveCount(0)
   await closeSettings(page)
   await expect(page.locator('.plugin-above')).toHaveCount(0)
+})
+
+test('with ?safe no plugin runs until the user leaves safe mode, and one that keeps failing is turned off and says so (D307)', async ({ page }) => {
+  // It fails on each record Jean keeps, a request and its answer make three, and draws 2,500 words in its row.
+  await serve(page, {}, "export function register(on, $) { on('record', () => { throw new Error('Broken') }); $.slot('settings', () => Array(50).fill(Array(50).fill('word'))) }")
+  await start(page)
+  await page.goto('./?safe')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await connectFakeBrain(page)
+  await turnOn(page, 'Plugins')
+  await closeSettings(page)
+  const settings = await add(page)
+  const frames = page.locator('iframe[sandbox="allow-scripts"][src$="sandbox.html"]')
+  await expect(settings).toContainText('Safe mode: no plugin runs during this visit.')
+  await expect(settings.getByRole('switch', { name: 'Word count' })).toBeChecked()
+  await expect(frames).toHaveCount(0)
+
+  // Out of safe mode, without a reload, it runs.
+  await settings.getByRole('button', { name: 'Leave safe mode' }).click()
+  await expect(settings).not.toContainText('Safe mode')
+  expect(new URL(page.url()).searchParams.has('safe')).toBe(false)
+  await expect(frames).toHaveCount(1)
+  // What it draws stops at 500 of Jean's elements.
+  const row = settings.locator('.setting.plugin')
+  await expect(row.getByText('word', { exact: true }).first()).toBeVisible()
+  expect(await row.getByText('word', { exact: true }).count()).toBeLessThan(500)
+  await closeSettings(page)
+
+  await ask(page, 'Hello there')
+  await expect(page.locator('.toast')).toContainText('Word count kept failing, so it is turned off.')
+  await expect(frames).toHaveCount(0)
+  await openSettings(page, 'Plugins')
+  await expect(row).toContainText('It kept failing, so it was turned off.')
+  await expect(row.getByRole('switch', { name: 'Word count' })).not.toBeChecked()
+  // Turned on again, it runs, and the line goes.
+  await row.getByRole('switch', { name: 'Word count' }).check()
+  await expect(frames).toHaveCount(1)
+  await expect(row).not.toContainText('It kept failing')
 })

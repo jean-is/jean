@@ -26,6 +26,10 @@
   "plugins.error.size": "Its code is too large.",
   "plugins.added": "{title} is added.",
   "plugins.failed": "{title} didn’t start, so it is off for now.",
+  "plugins.off": "{title} kept failing, so it is turned off.",
+  "plugins.failing": "It kept failing, so it was turned off.",
+  "plugins.safe": "Safe mode: no plugin runs during this visit.",
+  "plugins.leaveSafe": "Leave safe mode",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Remove {title}? What it kept goes with it."
 }

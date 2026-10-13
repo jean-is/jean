@@ -26,6 +26,10 @@
   "plugins.error.size": "O código é grande demais.",
   "plugins.added": "{title} foi adicionado.",
   "plugins.failed": "{title} não arrancou, por isso está desligado por agora.",
+  "plugins.off": "{title} falhou várias vezes, por isso foi desligado.",
+  "plugins.failing": "Falhou várias vezes, por isso foi desligado.",
+  "plugins.safe": "Modo de segurança: nenhum plugin corre durante esta visita.",
+  "plugins.leaveSafe": "Sair do modo de segurança",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Remover {title}? O que guardou vai com ele."
 }

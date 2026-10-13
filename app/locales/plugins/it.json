@@ -26,6 +26,10 @@
   "plugins.error.size": "Il suo codice è troppo grande.",
   "plugins.added": "{title} è stato aggiunto.",
   "plugins.failed": "{title} non è partito, quindi per ora è spento.",
+  "plugins.off": "{title} continuava a non funzionare, quindi è stato spento.",
+  "plugins.failing": "Continuava a non funzionare, quindi è stato spento.",
+  "plugins.safe": "Modalità provvisoria: in questa visita non funziona nessun plugin.",
+  "plugins.leaveSafe": "Esci dalla modalità provvisoria",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Rimuovere {title}? Ciò che ha salvato se ne va con lui."
 }

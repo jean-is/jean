@@ -26,6 +26,10 @@
   "plugins.error.size": "Jej kod jest zbyt duży.",
   "plugins.added": "Dodano: {title}.",
   "plugins.failed": "{title} nie uruchomiła się, więc na razie jest wyłączona.",
+  "plugins.off": "{title} ciągle zawodziła, więc jest wyłączona.",
+  "plugins.failing": "Ciągle zawodziła, więc została wyłączona.",
+  "plugins.safe": "Tryb awaryjny: podczas tej wizyty nie działa żadna wtyczka.",
+  "plugins.leaveSafe": "Wyjdź z trybu awaryjnego",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Usunąć {title}? To, co zapisała, zniknie razem z nią."
 }

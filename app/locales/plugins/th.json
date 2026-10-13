@@ -26,6 +26,10 @@
   "plugins.error.size": "โค้ดใหญ่เกินไป",
   "plugins.added": "เพิ่ม {title} แล้ว",
   "plugins.failed": "{title} เริ่มทำงานไม่ได้ จึงปิดไว้ก่อน",
+  "plugins.off": "{title} ทำงานผิดพลาดซ้ำๆ จึงถูกปิดไว้",
+  "plugins.failing": "ทำงานผิดพลาดซ้ำๆ จึงถูกปิดไว้",
+  "plugins.safe": "โหมดปลอดภัย: การเข้าใช้ครั้งนี้จะไม่มีปลั๊กอินใดทำงาน",
+  "plugins.leaveSafe": "ออกจากโหมดปลอดภัย",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "ลบ {title} ไหม สิ่งที่มันเก็บไว้จะถูกลบไปด้วย"
 }

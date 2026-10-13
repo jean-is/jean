@@ -26,6 +26,10 @@
   "plugins.error.size": "Lambarsa ta yi girma da yawa.",
   "plugins.added": "An ƙara {title}.",
   "plugins.failed": "{title} bai fara ba, don haka a kashe yake yanzu.",
+  "plugins.off": "{title} ya yi ta kasawa, don haka an kashe shi.",
+  "plugins.failing": "Ya yi ta kasawa, don haka an kashe shi.",
+  "plugins.safe": "Yanayin tsaro: babu toshe da zai yi aiki a wannan ziyarar.",
+  "plugins.leaveSafe": "Fita daga yanayin tsaro",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "A cire {title}? Abin da ya ajiye zai tafi tare da shi."
 }

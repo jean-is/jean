@@ -26,6 +26,10 @@
   "plugins.error.size": "Его код слишком большой.",
   "plugins.added": "{title}: добавлено.",
   "plugins.failed": "{title}: не запустился, поэтому пока выключен.",
+  "plugins.off": "{title}: раз за разом давал сбой, поэтому выключен.",
+  "plugins.failing": "Раз за разом давал сбой, поэтому выключен.",
+  "plugins.safe": "Безопасный режим: в этот раз плагины не запускаются.",
+  "plugins.leaveSafe": "Выйти из безопасного режима",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Удалить {title}? Сохранённое им удалится вместе с ним."
 }

@@ -26,6 +26,10 @@
   "plugins.error.size": "Mã của nó quá lớn.",
   "plugins.added": "Đã thêm {title}.",
   "plugins.failed": "{title} không khởi động được, nên tạm thời đã tắt.",
+  "plugins.off": "{title} liên tục gặp lỗi nên đã bị tắt.",
+  "plugins.failing": "Liên tục gặp lỗi nên đã bị tắt.",
+  "plugins.safe": "Chế độ an toàn: không plugin nào chạy trong lần truy cập này.",
+  "plugins.leaveSafe": "Thoát chế độ an toàn",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Xóa {title}? Những gì nó lưu cũng sẽ bị xóa theo."
 }

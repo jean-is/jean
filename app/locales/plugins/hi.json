@@ -26,6 +26,10 @@
   "plugins.error.size": "इसका कोड बहुत बड़ा है।",
   "plugins.added": "{title} जुड़ गया।",
   "plugins.failed": "{title} शुरू नहीं हुआ, इसलिए अभी बंद है।",
+  "plugins.off": "{title} बार-बार विफल हुआ, इसलिए उसे बंद कर दिया गया।",
+  "plugins.failing": "यह बार-बार विफल हुआ, इसलिए इसे बंद कर दिया गया।",
+  "plugins.safe": "सुरक्षित मोड: इस बार कोई प्लगइन नहीं चलेगा।",
+  "plugins.leaveSafe": "सुरक्षित मोड से बाहर निकलें",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} हटाएँ? इसने जो रखा था वह भी साथ जाएगा।"
 }

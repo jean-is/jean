@@ -26,6 +26,10 @@
   "plugins.error.size": "它的代码太大。",
   "plugins.added": "已添加 {title}。",
   "plugins.failed": "{title} 未能启动，暂时已关闭。",
+  "plugins.off": "{title} 一再出错，已关闭。",
+  "plugins.failing": "一再出错，已关闭。",
+  "plugins.safe": "安全模式：本次访问不运行任何插件。",
+  "plugins.leaveSafe": "退出安全模式",
   "plugins.says": "{title}：{text}",
   "plugins.confirmRemove": "移除 {title}？它保存的内容也会一起移除。"
 }

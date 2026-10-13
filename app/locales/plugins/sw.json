@@ -26,6 +26,10 @@
   "plugins.error.size": "Msimbo wake ni mkubwa mno.",
   "plugins.added": "{title} imeongezwa.",
   "plugins.failed": "{title} haikuanza, kwa hiyo imezimwa kwa sasa.",
+  "plugins.off": "{title} imeshindwa mara kwa mara, kwa hiyo imezimwa.",
+  "plugins.failing": "Imeshindwa mara kwa mara, kwa hiyo imezimwa.",
+  "plugins.safe": "Hali salama: hakuna programu-jalizi inayoendeshwa katika ziara hii.",
+  "plugins.leaveSafe": "Toka kwenye hali salama",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Uondoe {title}? Ilichohifadhi kitaondoka nayo."
 }

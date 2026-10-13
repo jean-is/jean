@@ -26,6 +26,10 @@
   "plugins.error.size": "Zijn code is te groot.",
   "plugins.added": "{title} is toegevoegd.",
   "plugins.failed": "{title} is niet gestart en staat dus voorlopig uit.",
+  "plugins.off": "{title} mislukte steeds en staat daarom uit.",
+  "plugins.failing": "Deze plug-in mislukte steeds en is daarom uitgezet.",
+  "plugins.safe": "Veilige modus: tijdens dit bezoek draait geen enkele plug-in.",
+  "plugins.leaveSafe": "Veilige modus verlaten",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} verwijderen? Wat hij bewaarde gaat mee."
 }

@@ -4,7 +4,8 @@
 // sandbox of its own (plugin-worker.js), an opaque frame with no network, which only messages reach:
 // its hooks join Jean's events as the user's tier (D293) and count only within the rights granted when
 // it was added; what it draws (above the box, under an answer, in its row here) is a tree of Jean's
-// elements, which Jean draws. It never sees a key, a file of the user's or an address of Jean's.
+// elements, which Jean draws. It never sees a key, a file of the user's or an address of Jean's. One
+// that keeps failing is turned off, and with ?safe in the address none runs (D307).
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -23,8 +24,9 @@ await Promise.all([useStrings('plugins'), styleSheet(new URL('plugins.css', impo
 /** @typedef {import('../../core/hooks.js').Hook} Hook */
 /**
  * A plugin running: its frame, what it hooks and draws, and what waits on it: answers by id, and the
- * rest of the chain an event's next asks for, which holds the plugin's own time still.
- * @typedef {{ manifest: Manifest, frame: HTMLIFrameElement, hooks: Hook[], slots: string[], stop: () => void,
+ * rest of the chain an event's next asks for, which holds the plugin's own time still; and how many
+ * times it failed in this visit.
+ * @typedef {{ manifest: Manifest, frame: HTMLIFrameElement, hooks: Hook[], slots: string[], stop: () => void, failed: number,
  *   calls: Map<string, (data: any) => void>, nexts: Map<string, (e: any) => Promise<any>>, still: Map<string, (still: boolean) => void> }} Host
  */
 
@@ -33,6 +35,10 @@ const DIR = 'plugins'
 const PATIENCE = 5000
 // The largest module a plugin may have.
 const LARGEST = 1_000_000
+// A plugin whose hooks or drawings fail, or go unanswered, this many times in a visit is turned off.
+const FAILURES = 3
+// The most of Jean's elements a plugin's drawing has.
+const ELEMENTS = 500
 
 /** The plugins added, as their manifests say. */
 const installed = signal(/** @type {Manifest[]} */ ([]))
@@ -40,6 +46,8 @@ const installed = signal(/** @type {Manifest[]} */ ([]))
 const running = signal(/** @type {Map<string, Host>} */ (new Map()))
 /** What each plugin drew, by its name, slot and key: null while it draws. */
 const trees = signal(/** @type {Map<string, any>} */ (new Map()))
+/** Safe mode: with ?safe in the address, no plugin runs until the user leaves it (D307). */
+const safe = signal(new URLSearchParams(location.search).has('safe'))
 /** A plugin read from an address, shown before it is added. */
 const reading = signal(/** @type {{ manifest?: Manifest, json?: string, code?: string, base?: string, failed?: string } | null} */ (null))
 const worker = fetch(new URL('plugin-worker.js', import.meta.url)).then((response) => response.text())
@@ -47,7 +55,7 @@ let ids = 0
 
 /** @param {Manifest} manifest @param {string} right */
 const granted = (manifest, right) => manifest.rights.includes(/** @type {any} */ (right))
-/** Whether each plugin is on, on this device. @returns {Record<string, { on?: boolean }>} */
+/** Whether each plugin is on, on this device, and whether it was turned off for failing. @returns {Record<string, { on?: boolean, failed?: boolean }>} */
 const switches = () => /** @type {any} */ (effective.value.settings).plugins ?? {}
 /** Plain data, as a message carries it. @param {any} value */
 const plain = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)))
@@ -102,7 +110,7 @@ async function start(manifest) {
   frame.setAttribute('sandbox', 'allow-scripts')
   frame.hidden = true
   /** @type {Host} */
-  const host = { manifest, frame, hooks: [], slots: [], stop: () => {}, calls: new Map(), nexts: new Map(), still: new Map() }
+  const host = { manifest, frame, hooks: [], slots: [], stop: () => {}, failed: 0, calls: new Map(), nexts: new Map(), still: new Map() }
   const hear = (/** @type {MessageEvent} */ { source, data }) => { if (source === frame.contentWindow && data) heard(host, data) }
   host.stop = () => {
     removeEventListener('message', hear)
@@ -138,6 +146,21 @@ function stop(name) {
   left.delete(name)
   running.value = left
   forget(name)
+}
+
+/** Counts a plugin's failure, and turns it off at the last one, saying so; stopped meanwhile, it no longer counts. @param {Host} host */
+function failing(host) {
+  if (++host.failed !== FAILURES || running.peek().get(host.manifest.name) !== host) return
+  updateSettings(/** @type {any} */ ({ plugins: { ...switches(), [host.manifest.name]: { on: false, failed: true } } }))
+  notify(t('plugins.off', { title: shownIn(host.manifest, locale.peek()).title }))
+}
+
+/** Runs the plugins turned on again, leaving safe mode without reloading. */
+function leaveSafe() {
+  const url = new URL(location.href)
+  url.searchParams.delete('safe')
+  history.replaceState(history.state, '', url)
+  safe.value = false
 }
 
 /** What a plugin drew, to draw again. @param {string} name */
@@ -199,7 +222,10 @@ function proxy(host, index, { on, match }) {
       })
       const data = await call(host, { type: 'event', id, hook: index, e: sent }).finally(() => host.nexts.delete(id))
       if ('threw' in went) throw went.threw
-      if (data?.type !== 'done') console.warn('Plugin', host.manifest.name, on, data?.error ?? 'took too long')
+      if (data?.type !== 'done') {
+        console.warn('Plugin', host.manifest.name, on, data?.error ?? 'took too long')
+        failing(host)
+      }
       if (data?.type === 'done' && JSON.stringify(data.result) !== went.given && allowed(host.manifest, on, e, data.result, went.gave)) return data.result
       return 'gave' in went ? went.gave : next(e)
     },
@@ -229,22 +255,26 @@ function drawn(host, slot, props, key = '') {
   const tree = trees.value.get(at)
   if (tree === undefined) {
     trees.peek().set(at, null)
-    call(host, { type: 'draw', slot, props: plain(props) }).then((data) => { trees.value = new Map(trees.peek()).set(at, data?.type === 'drawn' ? data.tree : null) })
+    call(host, { type: 'draw', slot, props: plain(props) }).then((data) => {
+      if (data?.type !== 'drawn') failing(host)
+      trees.value = new Map(trees.peek()).set(at, data?.type === 'drawn' ? data.tree : null)
+    })
   }
   return element(host, tree ?? null)
 }
 
 /**
  * A tree a plugin drew, as Jean's own elements: text, a button whose press goes back to it, a row, and
- * Markdown as answers have it (no picture is ever loaded); anything else is left out. @param {Host} host @param {any} node
+ * Markdown as answers have it (no picture is ever loaded); anything else, and what goes past ELEMENTS,
+ * is left out. @param {Host} host @param {any} node @param {{ left: number }} [count]
  * @returns {unknown}
  */
-function element(host, node, depth = 0) {
-  if (node === null || node === undefined || depth > 8) return nothing
+function element(host, node, depth = 0, count = { left: ELEMENTS }) {
+  if (node === null || node === undefined || depth > 8 || --count.left < 0) return nothing
   if (typeof node === 'string' || typeof node === 'number') return html`<span dir="auto">${String(node)}</span>`
-  if (Array.isArray(node)) return node.slice(0, 50).map((child) => element(host, child, depth + 1))
+  if (Array.isArray(node)) return node.slice(0, 50).map((child) => element(host, child, depth + 1, count))
   if (typeof node !== 'object') return nothing
-  if ('row' in node) return html`<div class="row">${element(host, node.row, depth + 1)}</div>`
+  if ('row' in node) return html`<div class="row">${element(host, node.row, depth + 1, count)}</div>`
   if ('markdown' in node) return html`<div class="prose" dir="auto">${markdown(String(node.markdown))}</div>`
   if ('button' in node) return html`<button type="button" class="button subtle" @click=${() => post(host, { type: 'press', action: String(node.action ?? '') })}>${String(node.button)}</button>`
   if ('text' in node) return html`<span dir="auto" class=${node.muted ? 'muted' : ''}>${String(node.text)}</span>`
@@ -331,7 +361,8 @@ function panel() {
     const { title, description } = shownIn(manifest, lang)
     const host = running.value.get(manifest.name)
     return html`<li class="setting plugin">
-      <div><span class="rule-kind" dir="auto">${title}</span><p class="muted small" dir="auto">${description}</p>${rightsOf(manifest)}
+      <div><span class="rule-kind" dir="auto">${title}</span><p class="muted small" dir="auto">${description}</p>
+        ${switches()[manifest.name]?.failed ? html`<p class="small" role="status">${t('plugins.failing')}</p>` : nothing}${rightsOf(manifest)}
         ${host?.slots.includes('settings') ? drawn(host, 'settings', {}) : nothing}
         <button type="button" class="button subtle danger" @click=${() => remove(manifest)}>${icons.trash} ${t('action.remove')}</button></div>
       <input type="checkbox" class="switch" role="switch" aria-label=${title} .checked=${switches()[manifest.name]?.on === true}
@@ -340,6 +371,7 @@ function panel() {
   })
   return html`<section>
     <p class="muted">${t('plugins.text')}</p>
+    ${safe.value ? html`<div class="row"><p>${t('plugins.safe')}</p><button type="button" class="button" @click=${leaveSafe}>${t('plugins.leaveSafe')}</button></div>` : nothing}
     ${rows.length ? html`<ul class="rules">${rows}</ul>` : nothing}
     <form class="row" @submit=${look}>
       <input name="address" dir="ltr" autocomplete="off" placeholder=${t('plugins.address')} aria-label=${t('plugins.address')}>
@@ -349,9 +381,9 @@ function panel() {
   </section>`
 }
 
-// Each plugin turned on runs; one turned off or removed stops.
+// Each plugin turned on runs, unless in safe mode; one turned off or removed stops.
 effect(() => {
-  const on = new Set(installed.value.filter((manifest) => switches()[manifest.name]?.on === true).map((manifest) => manifest.name))
+  const on = new Set(safe.value ? [] : installed.value.filter((manifest) => switches()[manifest.name]?.on === true).map((manifest) => manifest.name))
   for (const name of running.peek().keys()) if (!on.has(name)) stop(name)
   for (const manifest of installed.value) if (on.has(manifest.name) && !running.peek().has(manifest.name)) start(manifest).catch((error) => console.warn('Plugin', manifest.name, error))
 })

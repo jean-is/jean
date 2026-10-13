@@ -26,6 +26,10 @@
   "plugins.error.size": "Його код завеликий.",
   "plugins.added": "{title}: додано.",
   "plugins.failed": "{title}: не запустився, тож поки вимкнений.",
+  "plugins.off": "{title}: раз у раз давав збій, тож вимкнений.",
+  "plugins.failing": "Раз у раз давав збій, тож його вимкнено.",
+  "plugins.safe": "Безпечний режим: цього разу жоден плагін не запускається.",
+  "plugins.leaveSafe": "Вийти з безпечного режиму",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Вилучити {title}? Збережене ним зникне разом із ним."
 }

@@ -26,6 +26,10 @@
   "plugins.error.size": "Kodenya terlalu besar.",
   "plugins.added": "{title} sudah ditambahkan.",
   "plugins.failed": "{title} tidak berjalan, jadi dimatikan untuk sementara.",
+  "plugins.off": "{title} terus gagal, jadi dimatikan.",
+  "plugins.failing": "Terus gagal, jadi dimatikan.",
+  "plugins.safe": "Mode aman: tidak ada plugin yang berjalan selama kunjungan ini.",
+  "plugins.leaveSafe": "Keluar dari mode aman",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "Hapus {title}? Apa yang disimpannya ikut terhapus."
 }

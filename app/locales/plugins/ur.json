@@ -26,6 +26,10 @@
   "plugins.error.size": "اس کا کوڈ بہت بڑا ہے۔",
   "plugins.added": "{title} شامل ہو گیا۔",
   "plugins.failed": "{title} شروع نہیں ہوا، اس لیے فی الحال بند ہے۔",
+  "plugins.off": "{title} بار بار ناکام ہوا، اس لیے اسے بند کر دیا گیا۔",
+  "plugins.failing": "یہ بار بار ناکام ہوا، اس لیے اسے بند کر دیا گیا۔",
+  "plugins.safe": "محفوظ موڈ: اس بار کوئی پلگ ان نہیں چلے گا۔",
+  "plugins.leaveSafe": "محفوظ موڈ سے باہر نکلیں",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "{title} ہٹائیں؟ اس نے جو رکھا تھا وہ بھی ساتھ جائے گا۔"
 }

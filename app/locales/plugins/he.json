@@ -26,6 +26,10 @@
   "plugins.error.size": "הקוד שלו גדול מדי.",
   "plugins.added": "{title} נוסף.",
   "plugins.failed": "{title} לא התחיל, ולכן הוא כבוי בינתיים.",
+  "plugins.off": "{title} נכשל שוב ושוב, ולכן הוא כובה.",
+  "plugins.failing": "נכשל שוב ושוב, ולכן הוא כובה.",
+  "plugins.safe": "מצב בטוח: אף תוסף לא רץ בביקור הזה.",
+  "plugins.leaveSafe": "יציאה ממצב בטוח",
   "plugins.says": "{title}: {text}",
   "plugins.confirmRemove": "להסיר את {title}? מה ששמר יוסר יחד איתו."
 }
