@@ -12,6 +12,8 @@
   "cap.made.text": "Humingi ng Word na dokumento, spreadsheet o ibang file, at i-save ito sa isang click. Kopyahin ang mga sagot nang may format, i-download ang mga talahanayan para sa Excel.",
   "cap.computer.text": "Isang computer sa nakahiwalay na kapaligiran sa tab na ito, hindi kailanman ang device na ito mismo: nagpapatakbo ito ng mga command, JavaScript at Python sa mga file ng folder mo o sa workspace ng proyekto, at umaabot sa internet hangga't papayagan mo.",
   "cap.reflexes.text": "Isang maliit na katulong sa device na ito ({size}, isang beses) na nakadarama kung ano ang kailangan mo: ang tamang utak para sa bawat mensahe, mga mungkahi, mga bagong susubukan. Walang lalabas sa device na ito.",
+  "cap.meaning.text": "Hinahanap ang sinasabi ng iyong mga file, kahit sa ibang salita o ibang wika, sa tulong ng isang maliit na katulong sa device na ito ({size}, isang beses). Walang lalabas sa device na ito.",
+  "cap.meaning.hint": "Magtanong tungkol sa iyong mga file gamit ang ibang salita kaysa sa kanila.",
   "cap.backup.text": "Magtago ng kopya ng lahat sa iisang file, at i-restore ito sa kahit anong device.",
   "cap.sync.text": "Pinapanatiling pareho ang mga gawain, file, at memorya mo sa iba mo pang computer, sa pamamagitan ng folder na sini-sync ng OneDrive, Dropbox, iCloud Drive o Google Drive.",
   "cap.brain-local.text": "Pribado, libre at offline: isang utak na tumatakbo sa computer na ito, kung sapat ang lakas nito.",

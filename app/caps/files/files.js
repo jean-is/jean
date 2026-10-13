@@ -3,8 +3,8 @@
 // Pictures have no text: brains that can see are shown them. Adds `read`, for pages that didn't
 // fit in the message, and `search_files`; both reach every file of the project (D24).
 import { effect } from '@preact/signals-core'
-import { register, loaded, unlock } from '../../ui/caps.js'
-import { app, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
+import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
+import { app, effective, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
 import { rememberText } from '../../ui/send.js'
 import { library } from '../../ui/complete.js'
 import { searchTool } from './search.js'
@@ -60,9 +60,14 @@ const fileTool = {
   },
 }
 
+/** search_files by meaning too, once meaning search is on (D302). @type {Parameters<typeof searchTool>[0]['meaning']} */
+const meaning = async (query, links) => (loaded.value.has('meaning') ? (await import('../meaning/meaning.js')).rank(query, links) : null)
+/** When words find nothing: meaning search might, if the user hasn't turned it down. */
+const unfound = () => (loaded.value.has('meaning') || isDenied('meaning') || effective.value.settings.offers.meaning ? '' : ' The words may differ: offer "meaning" to search by meaning.')
+
 register({
   id: 'files',
-  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), fileTool],
+  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, meaning, unfound }), fileTool],
   lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }],
   rules: ['Shared files are in the message, sometimes only some pages. Use read for the others, and search_files for any file of the project.'],
 })

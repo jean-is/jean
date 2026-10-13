@@ -10,7 +10,7 @@ import {
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave } from './brains.js'
 import { isLocal } from './auto.js'
-import { unlock, isDenied, loaded, slots, SIZES as BYTES } from './caps.js'
+import { unlock, isDenied, loaded, slots, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
@@ -809,7 +809,7 @@ class Settings extends Element {
 // circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
+  files: 'file', meaning: 'spark', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image', plugins: 'bolt',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
@@ -831,7 +831,7 @@ const picked = signal('')
 /** @param {string} id */
 async function turnOn(id) {
   picked.value = id
-  if (id === 'reflexes') return accept('reflexes')
+  if (WEIGHTS.includes(id)) return accept(id)
   if (!(await unlock(id))) return
   if (id === 'brain-local') openSettings('brains')
   else begin(id)
@@ -889,7 +889,7 @@ const plaque = (id, on) => html`<article class="plaque ${on ? 'is-lit' : ''}" ar
     <p>${t(`cap.${id}.text`, { name: BRAND.name, size: formatBytes(BYTES[id] ?? 0) })}</p>
   </div>
   ${!on ? html`<button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button>`
-    : id === 'reflexes' && !loaded.value.get(id)?.decide && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t('cap.reflexes.yes', { size: formatBytes(BYTES.reflexes) })}</button>`
+    : WEIGHTS.includes(id) && !loaded.value.get(id)?.ready && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t(`cap.${id}.yes`, { size: formatBytes(BYTES[id]) })}</button>`
     : OPENS[id] ? html`<button class="button" @click=${OPENS[id]}>${t('collection.open')}</button>`
     : html`<span class="plaque-on">${icons.check} ${t('collection.on')}</span>`}
 </article>`

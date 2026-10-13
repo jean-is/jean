@@ -69,7 +69,7 @@ export async function prepare() {
     await worker.call({ type: 'load', host: weightsHost(), model: KEV.model, device, dtype }, { onMessage: (message) => { download.value = downloading(message, KEV.bytes) } })
     trace('ready', device, since(began))
     download.value = { state: 'ready' }
-    register({ ...capability, decide })
+    register({ ...capability, decide, ready: true })
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     console.warn('◈', message)

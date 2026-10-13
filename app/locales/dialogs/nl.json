@@ -12,6 +12,8 @@
   "cap.made.text": "Vraag om een Word-document, een spreadsheet of een ander bestand, en bewaar het met één klik. Kopieer antwoorden met opmaak, download tabellen voor Excel.",
   "cap.computer.text": "Een computer in een afgeschermde omgeving in dit tabblad, nooit dit apparaat zelf: hij voert opdrachten, JavaScript en Python uit op de bestanden van je map of de werkruimte van het project, en gaat het internet op zoals jij toestaat.",
   "cap.reflexes.text": "Een kleine helper op dit apparaat ({size}, eenmalig) die aanvoelt wat je nodig hebt: het juiste brein voor elk bericht, suggesties, nieuwe dingen om te proberen. Niets verlaat dit apparaat.",
+  "cap.meaning.text": "Vindt wat er in je bestanden staat, ook in andere woorden of een andere taal, met een kleine helper op dit apparaat ({size}, eenmalig). Niets verlaat dit apparaat.",
+  "cap.meaning.hint": "Vraag naar je bestanden in andere woorden dan die van henzelf.",
   "cap.backup.text": "Bewaar een kopie van alles in één bestand en zet die op elk apparaat terug.",
   "cap.sync.text": "Houdt je taken, bestanden en het geheugen gelijk op je andere computers, via een map die OneDrive, Dropbox, iCloud Drive of Google Drive synchroniseert.",
   "cap.brain-local.text": "Privé, gratis en offline: een brein dat op deze computer draait, als die krachtig genoeg is.",

@@ -98,8 +98,8 @@ export async function closeSettings(page) {
 /** Turns a capability on from the house ("What Jean can do", in Settings): its trophy, then its plaque. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
   const house = (await openSettings(page, 'Capabilities')).locator('.house')
-  // A trophy's text starts with its name: "Computer" is not "This computer" (D198).
-  const named = new RegExp(`^\\s*${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\s|$)`)
+  // A trophy's text is its name, and "On" once lit: "Computer" is not "This computer" (D198), "Search" not "Search by meaning".
+  const named = new RegExp(`^\\s*${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*(On\\s*)?$`)
   await house.locator('.trophy', { hasText: named }).click()
   await house.locator('.plaque .button').click()
   // Lit once its module has loaded, so a message sent next declares its tools; or, for one that

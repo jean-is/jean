@@ -415,6 +415,21 @@ test('the search tool finds passages across files, best first, with their file, 
   assert.deepEqual(indexOf(['## Contract C-4471\nText.', '## Contract C-4417\nMore.']).passages.map((p) => p.head), ['', ''])
 })
 
+test('with meaning search on, the search tool adds what it finds to what words find, by their ranks; off, it says it may help', async () => {
+  const fs = memoryFS()
+  const notes = await addFile(fs, { projectDir: 'p', name: 'Notes.txt', bytes: enc.encode('n'), pages: ['Revenue grew 12% in Q3.', 'The earnings call is on Monday.'], by: 'd' })
+  /** @type {string[]} */
+  const asked = []
+  // Meaning puts page 1's passage first for "earnings", which words find on page 2 only.
+  const meaning = async (/** @type {string} */ query) => (asked.push(query), [{ doc: 0, passage: 0 }, { doc: 0, passage: 1 }])
+  const out = await searchTool({ fs, projectDir: () => 'p', files: () => [notes], meaning }).run({ query: 'earnings' }, {})
+  assert.deepEqual(asked, ['earnings'])
+  assert.ok(out.includes('Revenue grew 12%') && out.includes('earnings call'), 'both, fused')
+  const off = searchTool({ fs, projectDir: () => 'p', files: () => [notes], unfound: () => ' Offer meaning.' })
+  assert.match(await off.run({ query: 'income' }, {}), /^Nothing in the files matches "income"\. Offer meaning\.$/)
+  assert.doesNotMatch(await off.run({ query: 'income', every: true }, {}), /Offer meaning/, 'every place of a phrase is words alone')
+})
+
 test('the read tool finds files by name and cuts long reads', async () => {
   const fs = memoryFS()
   const pages = Array.from({ length: 5 }, (_, i) => `Page ${i + 1} `.repeat(400))

@@ -528,7 +528,14 @@ createServer(async (req, res) => {
   else if (/\brun\b.*\bflow\b/i.test(question) && last.role === 'user' && declared.has('run_flow')) call = { name: 'run_flow', args: { flow: 'Weekly invoices' } }
   else if (toolName === 'run_flow') answer = `The flow gave:\n\n${last.content}`
   else if (about && last.role === 'user' && declared.has('search_files')) call = { name: 'search_files', args: { query: about } }
-  else if (toolName === 'search_files') answer = /^Nothing in/.test(last.content) ? 'The files say nothing about it.' : `The files say: ${last.content.split('\n').find((line) => line.toLowerCase().includes(String(about).toLowerCase()))?.trim()} [${/Source \[(\d+)\]/.exec(last.content)?.[1]}]`
+  // Words found nothing, and the tool says searching by meaning might (D302): it offers that, then searches again.
+  else if (about && toolName === 'search_files' && /offer "meaning"/.test(last.content) && declared.has('offer')) call = { name: 'offer', args: { capability: 'meaning' } }
+  else if (about && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'search_files', args: { query: about } }
+  else if (toolName === 'search_files') {
+    const lines = last.content.split('\n')
+    const quoted = lines.find((line) => !line.startsWith('Source [') && line.toLowerCase().includes(String(about).toLowerCase())) ?? lines[1]
+    answer = /^Nothing in/.test(last.content) ? 'The files say nothing about it.' : `The files say: ${quoted?.trim()} [${/Source \[(\d+)\]/.exec(last.content)?.[1]}]`
+  }
   else if (folder && mentions && last.role === 'user') call = { name: 'find_in_files', args: { text: mentions } }
   else if (toolName === 'find_in_files') answer = /^Not found/.test(last.content) ? 'No file there mentions it.' : `These files mention it:\n\n${[...new Set([...last.content.matchAll(/^(.+?):(\d+): /gm)].map((m) => m[1]))].map((path) => `- **${path}**`).join('\n')}`
   else if (folder && /what is in the folder/i.test(question) && last.role === 'user') call = { name: 'list', args: {} }

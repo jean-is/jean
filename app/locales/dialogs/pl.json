@@ -12,6 +12,8 @@
   "cap.made.text": "Poproś o dokument Word, arkusz kalkulacyjny lub inny plik i zapisz go jednym kliknięciem. Kopiuj odpowiedzi z formatowaniem, pobieraj tabele do Excela.",
   "cap.computer.text": "Komputer w odizolowanym środowisku w tej karcie, nigdy samo to urządzenie: uruchamia polecenia, JavaScript i Pythona na plikach twojego folderu lub w przestrzeni roboczej projektu i korzysta z internetu tak, jak na to pozwolisz.",
   "cap.reflexes.text": "Mały pomocnik na tym urządzeniu ({size}, jednorazowo), który wyczuwa, czego potrzebujesz: odpowiedni mózg do każdej wiadomości, sugestie, nowe rzeczy do wypróbowania. Nic nie opuszcza tego urządzenia.",
+  "cap.meaning.text": "Znajduje to, co mówią twoje pliki, nawet innymi słowami lub w innym języku, dzięki małemu pomocnikowi na tym urządzeniu ({size}, jednorazowo). Nic nie opuszcza tego urządzenia.",
+  "cap.meaning.hint": "Zapytaj o swoje pliki innymi słowami niż ich własne.",
   "cap.backup.text": "Zachowaj kopię wszystkiego w jednym pliku i przywróć ją na dowolnym urządzeniu.",
   "cap.sync.text": "Utrzymuje twoje zadania, pliki i pamięć takie same na innych twoich komputerach, przez folder synchronizowany przez OneDrive, Dropbox, iCloud Drive lub Google Drive.",
   "cap.brain-local.text": "Prywatnie, za darmo i bez internetu: mózg działający na tym komputerze, jeśli jest wystarczająco mocny.",

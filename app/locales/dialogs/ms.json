@@ -12,6 +12,8 @@
   "cap.made.text": "Minta dokumen Word, hamparan atau fail lain, dan simpan dengan satu klik. Salin jawapan dengan formatnya, muat turun jadual untuk Excel.",
   "cap.computer.text": "Komputer dalam persekitaran terasing dalam tab ini, bukan peranti ini sendiri: ia menjalankan arahan, JavaScript dan Python pada fail folder anda atau ruang kerja projek, dan mencapai internet setakat yang anda benarkan.",
   "cap.reflexes.text": "Pembantu kecil pada peranti ini ({size}, sekali sahaja) yang dapat merasakan keperluan anda: otak yang sesuai untuk setiap mesej, cadangan, perkara baharu untuk dicuba. Tiada apa keluar dari peranti ini.",
+  "cap.meaning.text": "Mencari apa yang dikatakan fail anda, walaupun dengan perkataan lain atau dalam bahasa lain, dengan pembantu kecil pada peranti ini ({size}, sekali sahaja). Tiada apa keluar dari peranti ini.",
+  "cap.meaning.hint": "Tanya tentang fail anda dengan perkataan lain daripada perkataannya sendiri.",
   "cap.backup.text": "Simpan salinan semuanya dalam satu fail, dan pulihkannya pada mana-mana peranti.",
   "cap.sync.text": "Mengekalkan tugasan, fail dan memori anda sama pada komputer anda yang lain, melalui folder yang disegerakkan oleh OneDrive, Dropbox, iCloud Drive atau Google Drive.",
   "cap.brain-local.text": "Peribadi, percuma dan di luar talian: otak yang berjalan pada komputer ini, jika cukup berkuasa.",

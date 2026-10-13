@@ -130,7 +130,7 @@ function offerAside() {
     ${progress === undefined ? html`<div class="row">
       <button class="button primary" @click=${() => discovery().then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
       <button class="button subtle" @click=${() => discovery().then((module) => module.decline(id))}>${t('offer.no')}</button>
-    </div>` : html`<progress max="1" value=${progress} aria-label=${t('cap.reflexes.downloading')}></progress>`}
+    </div>` : html`<progress max="1" value=${progress} aria-label=${t(`cap.${id}.downloading`)}></progress>`}
   </aside>`
 }
 

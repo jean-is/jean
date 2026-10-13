@@ -6,7 +6,7 @@
 // reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
 // that arrive mid-conversation can be reached (D47).
 import { effect, signal } from '@preact/signals-core'
-import { register, unlock, isDenied, loaded, contributions } from './caps.js'
+import { register, unlock, isDenied, loaded, contributions, WEIGHTS } from './caps.js'
 import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
@@ -19,11 +19,12 @@ import { host } from './host.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'meaning', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
   files: 'reading files the user shares (PDF, Word, Excel, CSV…)',
+  meaning: "searching the project's files by meaning as well as by their words, in any language (a download, once)",
   computer: 'a computer in a sandbox, for exact numbers, data work and commands',
   memory: 'remembering lasting facts and preferences from one conversation to the next',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
@@ -118,7 +119,7 @@ export async function accept(id) {
   }
   if (!(await unlock(id))) return (app.offer.value = null)
   await answerOffer(id)
-  if (id === 'reflexes') return downloadReflexes()
+  if (WEIGHTS.includes(id)) return downloadWeights(id)
   app.offer.value = null
   notify(t('offer.on', { name: t(`cap.${id}.name`) }))
   // Offered after the same kind of request a third time: make this one the first skill, or the
@@ -131,6 +132,8 @@ export async function accept(id) {
 
 /** What a capability leads to as soon as it is on: a project or an assistant to name, a service to connect, a conversation to have. @param {string} id */
 export async function begin(id) {
+  // Accepted in an answer: its weights come now, the answer waiting for them.
+  if (WEIGHTS.includes(id)) await downloadWeights(id)
   if (id === 'projects') (await import('../caps/projects/projects.js')).editProject()
   if (id === 'names' && !app.project.value.data.default) (await import('../caps/projects/projects.js')).editProject(app.project.value)
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
@@ -154,20 +157,20 @@ export async function decline(id) {
   await answerOffer(id)
 }
 
-/** Kev's download, with its progress shown where it was accepted. */
-export async function downloadReflexes() {
-  const module = await import('../caps/reflexes/reflexes.js')
-  app.offer.value = { id: 'reflexes', progress: 0 }
+/** A capability's weights' download (Kev's, the embedder's), with its progress shown where it was accepted. @param {string} id one of WEIGHTS */
+export async function downloadWeights(id) {
+  const module = await (id === 'meaning' ? import('../caps/meaning/meaning.js') : import('../caps/reflexes/reflexes.js'))
+  app.offer.value = { id, progress: 0 }
   const stop = effect(() => {
     const state = module.download.value
-    if (state.state === 'downloading') app.offer.value = { id: 'reflexes', progress: state.loaded / state.total }
+    if (state.state === 'downloading') app.offer.value = { id, progress: state.loaded / state.total }
   })
   try {
     await module.prepare()
-    notify(t('offer.on', { name: t('cap.reflexes.name') }))
+    notify(t('offer.on', { name: t(`cap.${id}.name`) }))
   } catch (error) {
-    console.warn('Reflexes', error)
-    notify(t('cap.reflexes.failed'))
+    console.warn(id, error)
+    notify(t(`cap.${id}.failed`))
   } finally {
     stop()
     app.offer.value = null
@@ -184,7 +187,7 @@ export async function unlockAll() {
 // or in an answer, which then goes on.
 effect(() => {
   const shown = app.offer.value
-  if (shown && shown.progress === undefined && loaded.value.has(shown.id) && shown.id !== 'reflexes') app.offer.value = null
+  if (shown && shown.progress === undefined && loaded.value.has(shown.id) && !WEIGHTS.includes(shown.id)) app.offer.value = null
   const offering = app.offering.value
   if (offering && (loaded.value.has(offering.id) || effective.value.settings.offers[offering.id])) offering.resolve(loaded.value.has(offering.id))
 })

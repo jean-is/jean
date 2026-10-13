@@ -10,11 +10,14 @@ import { isPicture } from '../../core/events.js'
  * The `search_files` tool: the passages of the files the brain may read that hold the words asked,
  * best first, each with its file, page and heading; or every place a phrase is, counted, in order.
  * A file's index is made in memory the first time it is searched (its text never changes: files are
- * named by content). A file not shared in the task is numbered as a source by the turn.
- * @param {{ fs: FS, projectDir: () => string, files: (signal?: AbortSignal) => ResourceLink[], maxTokens?: number }} options
+ * named by content). A file not shared in the task is numbered as a source by the turn. With meaning
+ * search on, the passages nearest by meaning are fused with those by words (D302), by their ranks.
+ * @param {{ fs: FS, projectDir: () => string, files: (signal?: AbortSignal) => ResourceLink[], maxTokens?: number,
+ *   meaning?: (query: string, links: ResourceLink[]) => Promise<{ doc: number, passage: number }[] | null>, unfound?: () => string }} options
+ *   meaning: the passages nearest by meaning, or null while it is off; unfound: what to add when nothing matches
  * @returns {import('../../core/loop.js').Tool}
  */
-export function searchTool({ fs, projectDir, files, maxTokens = 6000 }) {
+export function searchTool({ fs, projectDir, files, maxTokens = 6000, meaning = async () => null, unfound = () => '' }) {
   /** @type {Map<string, Promise<{ pages: string[], index: ReturnType<typeof indexOf> }>>} */
   const indexes = new Map()
   /** @param {ResourceLink} link */
@@ -59,7 +62,9 @@ export function searchTool({ fs, projectDir, files, maxTokens = 6000 }) {
         const count = found.filter((list) => list.length).length
         if (total) return `${total} ${total === 1 ? 'place' : 'places'} in ${count} ${count === 1 ? 'file' : 'files'}:${out}`
       } else {
-        for (const { doc, passage } of lookup(loaded.map((l) => l.index.lexicon), query)) {
+        const words = lookup(loaded.map((l) => l.index.lexicon), query)
+        const near = await meaning(query, links)
+        for (const { doc, passage } of near ? fuse([words.slice(0, 200), near]) : words) {
           const p = loaded[doc].index.passages[passage]
           const block = `${out ? '\n\n' : ''}${head(doc, p.page)}${p.head && !/^#/.test(loaded[doc].pages[p.page - 1].slice(p.start)) ? ` — ${p.head.split('\n')[0]}` : ''}\n${loaded[doc].pages[p.page - 1].slice(p.start, p.end).trim()}`
           if (!room(block)) break
@@ -67,7 +72,22 @@ export function searchTool({ fs, projectDir, files, maxTokens = 6000 }) {
         }
         if (out) return out
       }
-      return `Nothing in ${wanted && links.length ? links[0].name : 'the files'} matches "${query}".`
+      return `Nothing in ${wanted && links.length ? links[0].name : 'the files'} matches "${query}".${args?.every ? '' : unfound()}`
     },
   }
+}
+
+/**
+ * Reciprocal rank fusion (k = 60): passages ranked by how high each list puts them, as the document
+ * evals' hybrid does. @param {{ doc: number, passage: number }[][]} lists
+ */
+function fuse(lists) {
+  /** @type {Map<string, { doc: number, passage: number, score: number }>} */
+  const scored = new Map()
+  for (const list of lists) list.forEach(({ doc, passage }, rank) => {
+    const key = `${doc}:${passage}`
+    const entry = scored.get(key) ?? scored.set(key, { doc, passage, score: 0 }).get(key)
+    if (entry) entry.score += 1 / (61 + rank)
+  })
+  return [...scored.values()].sort((a, b) => b.score - a.score)
 }

@@ -12,6 +12,8 @@
   "cap.made.text": "Bir Word belgesi, tablo ya da başka bir dosya iste, tek tıkla kaydet. Yanıtları biçimiyle kopyala, tabloları Excel için indir.",
   "cap.computer.text": "Bu sekmede, yalıtılmış bir ortamda bir bilgisayar; asla bu cihazın kendisi değil: klasörünün dosyalarında ya da projenin çalışma alanında komutlar, JavaScript ve Python çalıştırır ve izin verdiğin kadar internete çıkar.",
   "cap.reflexes.text": "Bu cihazda küçük bir yardımcı ({size}, bir kez) neye ihtiyacın olduğunu sezer: her mesaj için doğru beyin, öneriler, denenecek yeni şeyler. Hiçbir şey bu cihazdan çıkmaz.",
+  "cap.meaning.text": "Dosyalarının söylediğini, başka sözcüklerle ya da başka bir dilde de bulur; bu cihazdaki küçük bir yardımcıyla ({size}, bir kez). Hiçbir şey bu cihazdan çıkmaz.",
+  "cap.meaning.hint": "Dosyalarını, onların kendi sözcüklerinden başka sözcüklerle sor.",
   "cap.backup.text": "Her şeyin bir kopyasını tek bir dosyada tut ve herhangi bir cihazda geri yükle.",
   "cap.sync.text": "Görevlerini, dosyalarını ve hafızayı diğer bilgisayarlarında aynı tutar; bunu OneDrive, Dropbox, iCloud Drive veya Google Drive’ın eşitlediği bir klasörle yapar.",
   "cap.brain-local.text": "Gizli, ücretsiz ve çevrimdışı: yeterince güçlüyse bu bilgisayarda çalışan bir beyin.",

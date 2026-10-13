@@ -12,6 +12,8 @@
   "cap.made.text": "Bitte um ein Word-Dokument, eine Tabelle oder eine andere Datei und speichere sie mit einem Klick. Kopiere Antworten mit Formatierung und lade Tabellen für Excel herunter.",
   "cap.computer.text": "Ein Computer in einer abgeschotteten Umgebung in diesem Tab, nie dieses Gerät selbst: Er führt Befehle, JavaScript und Python mit den Dateien deines Ordners oder dem Arbeitsbereich des Projekts aus und geht ins Internet, wie du es erlaubst.",
   "cap.reflexes.text": "Ein kleiner Helfer auf diesem Gerät ({size}, einmalig), der spürt, was du brauchst: das passende Gehirn für jede Nachricht, Vorschläge, Neues zum Ausprobieren. Nichts verlässt dieses Gerät.",
+  "cap.meaning.text": "Findet, was in deinen Dateien steht, auch in anderen Worten oder einer anderen Sprache, mit einem kleinen Helfer auf diesem Gerät ({size}, einmalig). Nichts verlässt dieses Gerät.",
+  "cap.meaning.hint": "Frag nach deinen Dateien mit anderen Worten als ihren eigenen.",
   "cap.backup.text": "Behalte eine Kopie von allem in einer Datei und stelle sie auf jedem Gerät wieder her.",
   "cap.sync.text": "Hält deine Aufgaben, Dateien und das Gedächtnis auf deinen anderen Computern gleich, über einen Ordner, den OneDrive, Dropbox, iCloud Drive oder Google Drive synchronisiert.",
   "cap.brain-local.text": "Privat, kostenlos und offline: ein Gehirn, das auf diesem Computer läuft, wenn er leistungsstark genug ist.",

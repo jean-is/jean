@@ -12,6 +12,8 @@
   "cap.made.text": "Ask for a Word document, a spreadsheet or another file, and save it with a click. Copy answers with their formatting, and download tables for Excel.",
   "cap.computer.text": "A computer in a sandbox in this tab, never this device itself: it runs commands, JavaScript and Python on your folder’s files or the project’s workspace, and reaches the internet as you allow.",
   "cap.reflexes.text": "A small helper on this device ({size}, once) that senses what you need: the right brain for each message, suggestions, new things to try. Nothing leaves this device.",
+  "cap.meaning.text": "Finds what your files say, even in other words or another language, with a small helper on this device ({size}, once). Nothing leaves this device.",
+  "cap.meaning.hint": "Ask about your files in other words than theirs.",
   "cap.backup.text": "Keep a copy of everything in one file, and restore it on any device.",
   "cap.sync.text": "Keeps your tasks, files and memory the same on your other computers, through a folder that OneDrive, Dropbox, iCloud Drive or Google Drive syncs.",
   "cap.brain-local.text": "Private, free and offline: a brain that runs on this computer, if it is powerful enough.",

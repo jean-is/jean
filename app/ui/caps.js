@@ -18,6 +18,7 @@ import { signal } from '@preact/signals-core'
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)
  * @property {import('../core/hooks.js').Hook[]} [hooks]  what it does on Jean's events: task.start, turn.step, tool.check, turn.end…
  * @property {Record<string, Slot>} [slots]  what it draws in the room's slots, by name: views, main, above, add, activity, settings…
+ * @property {boolean} [ready]  its weights are here and loaded, for one of WEIGHTS
  */
 
 /**
@@ -42,6 +43,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   computer: () => import('../caps/computer/computer.js'),
   machine: () => import('../caps/machine/machine.js'),
   reflexes: () => import('../caps/reflexes/reflexes.js'),
+  meaning: () => import('../caps/meaning/meaning.js'),
   search: () => import('../caps/search/search.js'),
   connections: () => import('../caps/connections/connections.js'),
   live: () => import('../caps/live/live.js'),
@@ -69,7 +71,9 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
 const ON_SIGHT = ['charts', 'scores', 'slides']
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
-export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6 })
+export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6, meaning: 175e6 })
+/** Capabilities that work once their weights are downloaded, with consent, when they are turned on: Intuition, meaning search. */
+export const WEIGHTS = ['reflexes', 'meaning']
 
 /** Capabilities whose modules have loaded, by id. */
 export const loaded = signal(/** @type {Map<string, Capability>} */ (new Map()))
