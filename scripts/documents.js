@@ -260,6 +260,14 @@ const USES = {
   'hybrid:e5': { useWhen: 'paraphrases and other languages, keeping codes found by words', avoidWhen: 'the brain writes good queries itself', needs: ['an embedding model', 'embedding every passage at ingestion'], onDevice: true },
   'dense:qwen3': { useWhen: 'meaning over words with the strongest open embedder tried (~600 MB)', avoidWhen: 'codes, numbers and absent things; devices without room or time to embed', needs: ['an embedding model', 'embedding every passage at ingestion (slow on a CPU)'], onDevice: true },
   'hybrid:qwen3': { useWhen: 'paraphrases and other languages from the user’s own words', avoidWhen: 'the brain writes good queries itself; devices without room or time to embed', needs: ['an embedding model', 'embedding every passage at ingestion (slow on a CPU)'], onDevice: true },
+  'dense:granite': { useWhen: 'meaning over words, many languages, the smallest download (~100 MB), long passages (32k)', avoidWhen: 'codes, numbers and absent things: it ranks look-alikes', needs: ['an embedding model on the device or a service', 'embedding every passage at ingestion'], onDevice: true },
+  'hybrid:granite': { useWhen: 'paraphrases and other languages, keeping codes found by words', avoidWhen: 'the brain writes good queries itself', needs: ['an embedding model', 'embedding every passage at ingestion'], onDevice: true },
+  'dense:harrier': { useWhen: 'meaning over words, many languages (~340 MB)', avoidWhen: 'codes, numbers and absent things: it ranks look-alikes', needs: ['an embedding model on the device or a service', 'embedding every passage at ingestion'], onDevice: true },
+  'hybrid:harrier': { useWhen: 'paraphrases and other languages, keeping codes found by words', avoidWhen: 'the brain writes good queries itself', needs: ['an embedding model', 'embedding every passage at ingestion'], onDevice: true },
+  'dense:gemma': { useWhen: 'meaning over words, many languages (~310 MB)', avoidWhen: 'codes, numbers and absent things: it ranks look-alikes', needs: ['an embedding model on the device or a service', 'embedding every passage at ingestion'], onDevice: true },
+  'hybrid:gemma': { useWhen: 'paraphrases and other languages, keeping codes found by words', avoidWhen: 'the brain writes good queries itself', needs: ['an embedding model', 'embedding every passage at ingestion'], onDevice: true },
+  'dense:gemma2': { useWhen: 'meaning over words, many languages (~310 MB, its text model alone)', avoidWhen: 'codes, numbers and absent things: it ranks look-alikes', needs: ['an embedding model on the device or a service', 'embedding every passage at ingestion'], onDevice: true },
+  'hybrid:gemma2': { useWhen: 'paraphrases and other languages, keeping codes found by words', avoidWhen: 'the brain writes good queries itself', needs: ['an embedding model', 'embedding every passage at ingestion'], onDevice: true },
 }
 
 /** The registration's commit, the latest change to the hypotheses. */
