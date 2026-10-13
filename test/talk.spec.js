@@ -157,6 +157,10 @@ test('a double click or Enter puts a request in a box; Escape leaves it, Enter o
   await expect(page.locator('.msg-jean .prose')).toHaveCount(2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
   await expect(ended).toBeVisible()
+  // Settings › Keyboard shortcuts lists Enter on a request with the box's own keys.
+  const settings = await openSettings(page, 'Keyboard shortcuts')
+  await expect(settings.locator('.keyboard > div', { hasText: 'Edit a request, when it is selected' }).locator('kbd')).toHaveText(/^(↩|Enter)$/)
+  await closeSettings(page)
   const first = page.locator('p.msg-user').first()
   const box = page.locator('app-edit textarea')
   await first.dblclick()

@@ -184,6 +184,7 @@
   "keyboard.language": "ภาษาถัดไป",
   "keyboard.line": "ขึ้นบรรทัดใหม่",
   "keyboard.recall": "คำขอก่อนหน้า เมื่อข้อความของคุณว่างอยู่",
+  "keyboard.edit": "แก้ไขคำขอ เมื่อเลือกคำขอนั้นอยู่",
   "settings.capabilities": "ความสามารถ",
   "settings.approvals": "การอนุมัติ",
   "settings.mode": "สว่างหรือมืด",

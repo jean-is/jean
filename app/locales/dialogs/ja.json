@@ -184,6 +184,7 @@
   "keyboard.language": "次の言語",
   "keyboard.line": "改行",
   "keyboard.recall": "以前の依頼（メッセージが空のとき）",
+  "keyboard.edit": "依頼の編集（選択しているとき）",
   "settings.capabilities": "機能",
   "settings.approvals": "承認",
   "settings.mode": "ライトまたはダーク",

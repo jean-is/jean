@@ -184,6 +184,7 @@
   "keyboard.language": "下一種語言",
   "keyboard.line": "換行",
   "keyboard.recall": "先前的請求（訊息為空時）",
+  "keyboard.edit": "編輯請求（選取時）",
   "settings.capabilities": "能力",
   "settings.approvals": "授權",
   "settings.mode": "淺色或深色",

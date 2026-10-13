@@ -184,6 +184,7 @@
   "keyboard.language": "下一种语言",
   "keyboard.line": "换行",
   "keyboard.recall": "之前的请求（消息为空时）",
+  "keyboard.edit": "编辑请求（选中时）",
   "settings.capabilities": "能力",
   "settings.approvals": "授权",
   "settings.mode": "浅色或深色",

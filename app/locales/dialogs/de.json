@@ -187,6 +187,7 @@
   "keyboard.language": "Nächste Sprache",
   "keyboard.line": "Neue Zeile",
   "keyboard.recall": "Frühere Anfragen, wenn deine Nachricht leer ist",
+  "keyboard.edit": "Anfrage bearbeiten, wenn sie ausgewählt ist",
   "settings.capabilities": "Fähigkeiten",
   "settings.approvals": "Berechtigungen",
   "settings.mode": "Hell oder dunkel",

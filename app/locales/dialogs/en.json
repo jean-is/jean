@@ -187,6 +187,7 @@
   "keyboard.language": "Next language",
   "keyboard.line": "New line",
   "keyboard.recall": "Earlier requests, when your message is empty",
+  "keyboard.edit": "Edit a request, when it is selected",
   "settings.capabilities": "Capabilities",
   "settings.approvals": "Approvals",
   "settings.mode": "Light or dark",
