@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "Deze taak werkt nu in een andere map.",
   "folders.field": "Map op deze computer",
   "folders.field.none": "Geen: nieuwe taken hier beginnen zonder map.",
-  "folders.choose": "Kiezen…"
+  "folders.choose": "Kiezen…",
+  "folders.add": "Een map…"
 }

@@ -159,11 +159,13 @@ export type SystemNoteData =
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
   /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due, or that the user ran it */
-  | { kind: 'routine', routine: string, title: string, due: string, asked?: boolean }
+  | { kind: 'routine', routine: string, title: string, due: string, asked?: boolean, file?: string }
   /** when requests like this one were made before, for a routine to fit the habit (D122) */
   | { kind: 'habit', at: string[] }
   /** what / and @ named in the user's next message, by the words in it (D199) */
   | { kind: 'mentions', words: string[] }
+  /** a mode of the box was on for the user's next message: Visual answers, by its skill's name */
+  | { kind: 'mode', mode: string }
   /** the user undid a change made in their folder, by its call (D141) */
   | { kind: 'undone', call: string, path: string }
   /** the user ran a command on the computer, in the terminal (D166) */
@@ -187,7 +189,7 @@ export interface Envelope {
   /** agent records only: model call index within the turn */
   step?: number
   update?: AcpUpdate
-  meta?: { title?: string, prompt?: { system: string, state: PromptState }, [key: string]: any }
+  meta?: { title?: string, pinned?: boolean, unread?: boolean, prompt?: { system: string, state: PromptState }, [key: string]: any }
 }
 
 /** First JSONL line of a conversation file. */
@@ -202,8 +204,8 @@ export interface ConversationHeader {
   by: string
 }
 
-/** routine: the routine's file, for one of its runs (D122) */
-export type ConversationSummary = { id: string, path: string, title: string, opening: string, createdAt: string, updatedAt: string, routine?: string }
+/** routine: the routine's file, for one of its runs (D122); pinned: above the others in the list; unread: answered since the user last opened it */
+export type ConversationSummary = { id: string, path: string, title: string, opening: string, createdAt: string, updatedAt: string, routine?: string, pinned?: true, unread?: true }
 
 // ─── Rules ───────────────────────────────────────────────────────────────────
 

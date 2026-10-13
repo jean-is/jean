@@ -11,7 +11,7 @@ import { loadSettings } from '../app/core/settings.js'
 import { SCHEMA, indexURL, siteOf, parseIndex, sha256, gitHash, unpack, untar, readIndexes, fetchSkill, bestFit, SkillError } from '../app/caps/skills/sources.js'
 import { DIRECTORY, readDirectory, shownIn } from '../app/caps/skills/directory.js'
 import { LOCALES } from './fixtures/locales.js'
-import { schedule, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../app/caps/routines/schedule.js'
+import { schedule, trigger, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../app/caps/routines/schedule.js'
 
 const text = (/** @type {string} */ value) => new TextEncoder().encode(value)
 const STEPS = '---\nname: weekly-sales-report\ndescription: Summarize weekly sales by region.\n---\n# Weekly sales report\n\n1. Read the spreadsheet.\n2. Total by region.\n'
@@ -247,13 +247,13 @@ test('a skill gives its name and a few words in each language in its metadata, k
   assert.equal(saved.metadata?.author, 'device', 'Jean’s own keys are its own')
 })
 
-test('Jean’s own directory: each skill as its SKILL.md says, named in every language, the charts drawn from ```echarts (a budget’s and a map of who’s who too), the scores from ```abc and the slides from ```marp; the others draw nothing, they write answers and files', async () => {
+test('Jean’s own directory: each skill as its SKILL.md says, named in every language, the charts drawn from ```echarts (a budget’s and a map of who’s who too), maps and diagrams from ```geojson and ```mermaid, the scores from ```abc and the slides from ```marp; the others draw nothing, they write answers and files', async () => {
   const fetchFile = async (/** @type {string | URL | Request} */ url) => new Response(await readFile(new URL(String(url))))
   const ready = await readDirectory({ fetch: /** @type {typeof fetch} */ (fetchFile) })
   assert.deepEqual(ready.map((entry) => entry.name), DIRECTORY.map((entry) => entry.name), 'every one can be read')
   assert.ok(ready.every((entry) => entry.digest === '' && entry.description.length > 40 && entry.icon))
   const blocks = await Promise.all(ready.map(async (entry) => parseSkill(await readFile(new URL(entry.url), 'utf8'), entry.url)?.blocks))
-  assert.deepEqual(blocks, [undefined, undefined, ['echarts'], undefined, undefined, undefined, ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], undefined, ['echarts'], ['abc'], ['marp'], undefined])
+  assert.deepEqual(blocks, [undefined, undefined, ['echarts'], undefined, undefined, undefined, ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], undefined, ['echarts'], ['geojson', 'mermaid'], ['abc'], ['marp'], undefined])
   for (const entry of ready) {
     for (const tag of LOCALES) {
       for (const key of [`title-${tag}`, `text-${tag}`]) {
@@ -359,4 +359,21 @@ test('routines are Markdown files named by ULID, the request in the body', async
   await writeRoutine(fs, flowing)
   assert.match(await fs.read(flowing.path) ?? '', /\nat: "09:00"\nflow: 01K0FLOW\n/)
   assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === flowing.path), flowing)
+})
+
+test('a routine may run each time a file is shared or made, rather than at a time, if the file is what it asks for', async () => {
+  assert.deepEqual(trigger({ when: 'file', if: ' Est-ce une facture ? ' }), { when: 'file', if: 'Est-ce une facture ?' })
+  assert.deepEqual(trigger({ when: 'made' }), { when: 'made' })
+  assert.equal(trigger({ when: 'email' }), null)
+  assert.equal(trigger({ every: 'day', at: '08:00' }), null)
+  const fs = memoryFS()
+  const routine = newRoutine('', { title: 'Factures', request: 'Ajoute la facture au registre.', by: 'jean', now: new Date('2026-10-12T10:00:00Z'), when: 'file', if: 'Est-ce une facture ?' })
+  await writeRoutine(fs, routine)
+  assert.equal(await fs.read(routine.path), '---\nformat: 1\ntitle: Factures\nwhen: file\nif: Est-ce une facture ?\nauthor: jean\ncreatedAt: "2026-10-12T10:00:00.000Z"\n---\nAjoute la facture au registre.\n')
+  assert.deepEqual((await listRoutines(fs, ''))[0], routine)
+  assert.equal(inEnglish(routine), 'each time the user shares a file, when the answer to "Est-ce une facture ?" about it is yes')
+  assert.equal(inEnglish({ when: 'made' }), 'each time you make a file')
+  // Never due at a time: what sets it off is the file.
+  assert.equal(dueTime(routine, new Date('2026-10-13T10:00:00Z')), null)
+  assert.equal(due(routine, new Date('2026-10-13T10:00:00Z'), [0, 6]), null)
 })

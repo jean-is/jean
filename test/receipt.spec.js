@@ -1,8 +1,8 @@
 // About this answer (D252): under an answer, a button shows on hover how long it took, what it cost
-// and where it was done, a shield when that was on this device; a click keeps the card, which saves
-// the answer's certificate, sealed with this device's key, which holds no word of it, and its proof,
-// which holds them (D274). An answer whose request reached an address outside this device says so,
-// and where.
+// and where it was done, a shield when that was on this device; a click keeps the card, which saves,
+// folded at its foot, the answer's certificate, sealed with this device's key, which holds no word
+// of it, and its proof, which holds them (D274). An answer whose request reached an address outside
+// this device says so, and where.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, MAIL_URL, BRAIN_URL } from './helpers.js'
@@ -36,6 +36,9 @@ for (const [lang, about, local, free, save, prove] of [
     // Within the window, beside its button.
     const [box, at] = await Promise.all([card.boundingBox(), button.boundingBox()])
     expect(box && at && box.x >= 0 && box.x + box.width <= (page.viewportSize()?.width ?? 0) && Math.abs(box.y + box.height - at.y) < 12).toBe(true)
+    // Its certificate folded at its foot, the card being a glance.
+    await expect(card.getByRole('button', { name: save })).toBeHidden()
+    await card.locator('summary').click()
     const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: save }).click()])
     const saved = JSON.parse(await readFile(await download.path(), 'utf8'))
     expect(Object.keys(saved).sort()).toEqual(['payload', 'protected', 'signature'])

@@ -46,5 +46,6 @@
   "flows.after": "次の結果を受け取る",
   "flows.each": "受け取るリストの項目ごとに1回",
   "flows.result": "最後の結果",
-  "flows.remove": "このステップを削除"
+  "flows.remove": "このステップを削除",
+  "flows.asFlow": "フローとして見る"
 }

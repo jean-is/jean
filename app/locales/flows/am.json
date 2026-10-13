@@ -46,5 +46,6 @@
   "flows.after": "የሚወስደው ውጤት ከ",
   "flows.each": "ለሚወስደው ዝርዝር ለእያንዳንዱ ንጥል አንድ ጊዜ",
   "flows.result": "የመጨረሻ ውጤት",
-  "flows.remove": "ይህን ደረጃ አስወግድ"
+  "flows.remove": "ይህን ደረጃ አስወግድ",
+  "flows.asFlow": "እንደ ፍሰት እይ"
 }

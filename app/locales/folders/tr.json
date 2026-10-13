@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "Bu görev artık başka bir klasörde çalışıyor.",
   "folders.field": "Bu bilgisayardaki klasör",
   "folders.field.none": "Yok: buradaki yeni görevler klasörsüz başlar.",
-  "folders.choose": "Seç…"
+  "folders.choose": "Seç…",
+  "folders.add": "Bir klasör…"
 }

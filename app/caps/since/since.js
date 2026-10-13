@@ -32,4 +32,7 @@ effect(() => {
   if (app.back.value) queueMicrotask(() => brief())
 })
 
-register({ id: 'since' })
+// What a brief may do: read, search, look things up and work things out. Anything that would send, change or
+// delete is refused, whatever the rules say, in the turn that came with its note.
+const READING = ['read', 'search', 'fetch', 'think', 'execute']
+register({ id: 'since', hooks: [{ on: 'tool.check', run: (e, next) => (e.notes.includes('since') && !READING.includes(e.kind) ? { decision: 'never' } : next(e)) }] })

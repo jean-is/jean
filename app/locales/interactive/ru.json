@@ -1,0 +1,7 @@
+{
+  "interactive.page": "Интерактивная страница",
+  "interactive.diagram": "Схема",
+  "interactive.map": "Карта",
+  "interactive.mapShow": "Показать карту",
+  "interactive.mapFrom": "Карты загружаются с {site}, который видит показанные места."
+}

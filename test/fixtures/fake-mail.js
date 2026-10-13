@@ -176,6 +176,10 @@ export function createFakeMail() {
       return json(200, { access_token: token, token_type: 'Bearer', expires_in: 3600, refresh_token: 'refresh-me' })
     }
 
+    // ─── A map service (D291): a style with a background and no tiles, and fonts that hold nothing ───
+    if (/^\/map\/(light|dark)\.json$/.test(url.pathname)) return json(200, { version: 8, sources: {}, glyphs: `${origin}/map/fonts/{fontstack}/{range}.pbf`, layers: [{ id: 'land', type: 'background', paint: { 'background-color': url.pathname.includes('dark') ? '#20262c' : '#e6edf2' } }] })
+    if (url.pathname.startsWith('/map/fonts/')) return res.writeHead(200, { 'content-type': 'application/x-protobuf' }).end()
+
     // ─── Kiwix ───
     if (url.pathname.startsWith('/kiwix/')) {
       const answer = kiwix(url)

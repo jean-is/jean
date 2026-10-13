@@ -209,6 +209,50 @@ const PHONES = `Voici les deux téléphones :
 | Simplicité | Très cohérent, peu de réglages à faire | Simple aussi, mais avec plus d'options à régler |
 
 Le Pixel coûte bien moins cher.`
+/** Components (D291): a flowchart and a mind map in Mermaid, a trip in GeoJSON, and a page whose form and map are in step both ways. */
+const FLOW = 'Here is how to decide:\n\n```mermaid\nflowchart TD\n  A([Leaving home]) --> B{Is it raining?}\n  B -->|Yes| C[Take an umbrella]\n  B -- No --> D[Wear sunglasses]\n  C --> E([Go out])\n  D --> E\n```\n\nTake the umbrella when it rains.'
+const MIND = 'The world of coffee:\n\n```mermaid\nmindmap\n  root((Coffee))\n    Origins\n      Ethiopia\n      Yemen\n    Brewing\n      Espresso\n      Filter\n    Health\n```'
+const TRIP = 'Your trip:\n\n```geojson\n{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"Marseille"},"geometry":{"type":"Point","coordinates":[5.37,43.3]}},{"type":"Feature","properties":{"name":"Aix"},"geometry":{"type":"Point","coordinates":[5.45,43.53]}},{"type":"Feature","properties":{"name":"Route"},"geometry":{"type":"LineString","coordinates":[[5.37,43.3],[5.45,43.53]]}}]}\n```\n\nTwo stops, half an hour apart.'
+const PLANNER = `Pick a stop, here or on the map:
+
+\`\`\`html
+<main>
+  <label>Stop <select id="stop"><option>Marseille</option><option>Aix</option></select></label>
+  <p id="chosen">Marseille</p>
+</main>
+<aside><app-map id="map"></app-map></aside>
+<script>
+  const stops = { Marseille: [5.37, 43.3], Aix: [5.45, 43.53] }
+  const map = document.getElementById('map'), stop = document.getElementById('stop'), chosen = document.getElementById('chosen')
+  const show = (name) => {
+    chosen.textContent = name
+    stop.value = name
+    map.textContent = JSON.stringify({ type: 'FeatureCollection', features: Object.entries(stops).map(([each, at]) => ({ type: 'Feature', properties: { stop: each, name: each === name ? each + ' ★' : each }, geometry: { type: 'Point', coordinates: at } })) })
+  }
+  stop.addEventListener('change', () => show(stop.value))
+  map.addEventListener('pick', (event) => show(event.detail.stop))
+  show('Marseille')
+</script>
+\`\`\``
+
+/** A day planned (D291): key figures, a timeline of bold times, and a checklist, one thing already ticked. */
+const SATURDAY = `Your Saturday at the market:
+
+- **3** stalls
+- **€45** budget
+- **12** km on foot
+
+Your morning:
+
+- **08:30** Leave home, with the bags
+- **09:00–10:30** The market: bread, cheese, fruit
+- **11:00** Coffee at the corner
+
+Bring:
+
+- [ ] Shopping bags
+- [x] Cash
+- [ ] The list`
 const BUY = `## Steps to buy
 
 **1. Choose new or used.**
@@ -262,6 +306,43 @@ const CHART = 'Here are the sales:\n\n```echarts\n{"title":{"text":"Croissants s
 const JIG = 'Here is a jig:\n\n```abc\nX:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/8=116\nR:jig\nK:G\nGFG BAB | gfg d2B | GFG BAB | d2B G2B |\nGFG BAB | gfg d2B | c2c B2A | GFG B2G :|\n```\n\nPlay it lightly.'
 /** A deck, as the Slides skill writes it in Marp's Markdown (D200): numbered, a title slide, a table, its colours swapped on the last, a note for the speaker. */
 const DECK = 'Here are your slides:\n\n```marp\n---\npaginate: true\nfooter: Bakery · 2027\n---\n\n<!-- _class: lead -->\n# A second oven\n\n---\n\n## What it costs\n\n<!-- Say it pays back in 14 months. -->\n\n| | Cost |\n|---|---:|\n| Oven | €18,000 |\n\n---\n\n<!-- _class: invert -->\n## Paid back in 14 months\n```\n\nThree slides on the new oven.'
+/** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
+const SPLITTER = `Here is a bill splitter:
+
+\`\`\`html
+<style>.fields { display: flex; flex-wrap: wrap; gap: 0.75rem; color: var(--color-text, #222); } p { color: var(--color-text-secondary); }</style>
+<form id="split">
+<div class="fields"><label>Bill <input id="bill" type="number" value="120"></label> <label>People <input id="people" type="number" value="4"></label></div>
+<p>Each pays <output id="each"></output></p>
+<button>Ask how to round it</button>
+</form>
+<script>
+  const [bill, people, each] = ['bill', 'people', 'each'].map((id) => document.getElementById(id))
+  const update = () => { each.textContent = people.valueAsNumber >= 1 ? new Intl.NumberFormat(document.documentElement.lang).format(bill.valueAsNumber / people.valueAsNumber) : '—' }
+  for (const input of [bill, people]) input.addEventListener('input', update)
+  document.getElementById('split').addEventListener('submit', (event) => { event.preventDefault(); sendPrompt('Each of us pays ' + each.textContent + '. How should we round it?') })
+  update()
+  fetch('http://127.0.0.1:4182/leak?page').catch(() => {})
+</script>
+\`\`\`
+
+Type the bill and how many you are.`
+/** A page that charts with ECharts, which Jean lends it (D289): a region to pick, its sales drawn. */
+const EXPLORER = `Pick a region:
+
+\`\`\`html
+<label>Region <select id="region"><option>North</option><option>South</option></select></label>
+<div id="chart" style="block-size: 220px"></div>
+<script type="module">
+  import * as echarts from 'echarts'
+  const sales = { North: [1200, 1340], South: [950, 1010] }
+  const region = document.getElementById('region')
+  const chart = echarts.init(document.getElementById('chart'))
+  const draw = () => chart.setOption({ xAxis: { type: 'category', data: ['Jan', 'Feb'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: sales[region.value] }] })
+  region.addEventListener('change', draw)
+  draw()
+</script>
+\`\`\``
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 /** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. It can fill the screen and save its prices, by a link or from its code (D158). */
 const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p><p id="call"></p>
@@ -416,6 +497,8 @@ createServer(async (req, res) => {
   const regularly = (/^every\b/i.test(question.trim()) || /\broutine\b/i.test(question)) && last.role === 'user'
   const habit = /Requests like this one were made on \w{3} \w{3} \d\d \d{4} (\d\d:\d\d)/.exec(serialized)?.[1]
   const routine = { title: 'Weekly sales', request: 'Summarize the weekly sales by region', every: 'day', at: /\bat (\d\d:\d\d)/.exec(question)?.[1] ?? habit ?? '09:00' }
+  // A routine a file sets off (D294).
+  const eachTime = /^each time\b/i.test(question.trim()) && last.role === 'user'
   // 0.8: a folder's files, by the names <folder> gives its tools (D104, D141).
   const folder = /The user's folder /.test(serialized)
   const mentions = /\bmention(?:s)?\s+(?:the\s+)?["“]?(.+?)["”]?(?:\s+clause)?\?*$/i.exec(question.trim())?.[1]
@@ -424,6 +507,7 @@ createServer(async (req, res) => {
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  else if (system.startsWith('Answer the question about what follows with yes or no')) answer = /<about>[\s\S]*\b(invoice|html)\b/i.test(lastUser) ? 'Yes.' : 'No.'
   else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
   else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
   else if (/\bcertificate\b/i.test(question) && last.role === 'user' && declared.has('check_certificate')) call = { name: 'check_certificate', args: { files: documents.map(([, , name]) => name) } }
@@ -507,10 +591,17 @@ createServer(async (req, res) => {
   else if (/^chart\b/i.test(question) && last.role === 'user') answer = CHART
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   else if (/\bslides\b/i.test(question) && last.role === 'user') answer = DECK
+  else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
+  else if (/sales explorer/i.test(question) && last.role === 'user') answer = EXPLORER
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
   else if (/compare l'iphone et le pixel/i.test(question) && last.role === 'user') answer = PHONES
   else if (/half year's sales/i.test(question) && last.role === 'user') answer = HALF
   else if (/steps to buy a phone/i.test(question) && last.role === 'user') answer = BUY
+  else if (/plan my saturday/i.test(question) && last.role === 'user') answer = SATURDAY
+  else if (/take an umbrella/i.test(question) && last.role === 'user') answer = FLOW
+  else if (/mind map of coffee/i.test(question) && last.role === 'user') answer = MIND
+  else if (/my trip on a map/i.test(question) && last.role === 'user') answer = TRIP
+  else if (/stop planner/i.test(question) && last.role === 'user') answer = PLANNER
   else if (/compare the phone plans|قارن باقات الهاتف|携帯プランを比べて/i.test(question) && last.role === 'user') answer = PLANS[lang] ?? PLANS.en
   else if (/\bidentity\b/i.test(question) && last.role === 'user') answer = IDENTITY
   else if (/^Démontre/.test(question) && last.role === 'user') answer = PROOF
@@ -532,6 +623,7 @@ createServer(async (req, res) => {
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
+  else if (eachTime && declared.has('schedule')) call = { name: 'schedule', args: { title: 'File it', request: 'Add the file to the register', when: 'file' } }
   else if (regularly && declared.has('schedule')) call = { name: 'schedule', args: routine }
   else if (regularly && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'make a routine on a schedule' } }
   else if (toolName === 'find_tools' && /schedule\(/.test(last.content)) call = { name: 'schedule', args: routine }

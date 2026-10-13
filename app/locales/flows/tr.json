@@ -46,5 +46,6 @@
   "flows.after": "Şu adımların sonuçlarını alır",
   "flows.each": "Aldığı listenin her öğesi için bir kez",
   "flows.result": "Son sonuç",
-  "flows.remove": "Bu adımı kaldır"
+  "flows.remove": "Bu adımı kaldır",
+  "flows.asFlow": "Akış olarak gör"
 }

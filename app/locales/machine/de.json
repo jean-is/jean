@@ -11,7 +11,6 @@
   "machine.computers": "Computer",
   "machine.lede": "Aufgaben nutzen die abgeschottete Umgebung, außer denen im Ordner, den du auf diesem Computer verbindest.",
   "machine.off": "Nicht verbunden",
-  "machine.in": "In {folder}",
   "machine.step.open": "Öffne ein Terminal in einem deiner Ordner.",
   "machine.step.paste": "Füge diese Zeile dort ein und drücke die Eingabetaste.",
   "machine.step.wait": "Warten auf die Zeile: Diese Seite bemerkt es von selbst.",

@@ -3,20 +3,24 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' data: blob: 'wasm-unsafe-eval' https:; style-src 'unsafe-inline' https:; img-src data: blob: https:; media-src data: https:; font-src data: https:; connect-src https: http://localhost:* http://127.0.0.1:*; frame-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Preview</title>
-<!-- An HTML file, seen in Jean's preview (D126), a page of the user's folder in the browser (D156) or
-     an Office file drawn (D183), scripts and modules as data: in <iframe sandbox="allow-scripts">, so its
-     origin is opaque and it can't read Jean's storage. The page Jean sends replaces this one and
-     keeps its policy, the most Settings can allow (D143). The relay writes the policy Jean sends
-     ahead of the page, which adds to this one: by default the page's own scripts run, but nothing
-     loads from anywhere and nothing is sent, and no form or pop-up opens. WebRTC sends wherever it
-     is told, whatever a policy says (D267): the relay deletes it from the page's window first, the
-     one window the page reaches, as a frame it opens has an origin of its own. Jean's own frame-src
-     keeps the frame from being taken elsewhere; its links lead nowhere from here, except within
-     the page: the browser is told where they lead, and may follow. A link that saves a file the
-     page made (a blob or data, with `download`) hands the file to Jean, which saves it when Settings
+<!-- An HTML file, seen in Jean's preview (D126), a page of the user's folder in the browser (D156)
+     or an Office file drawn (D183), scripts and modules as data: in <iframe
+     sandbox="allow-scripts allow-forms">, so its origin is opaque and it can't read Jean's storage.
+     The page Jean sends replaces this one and keeps its policy, the most Settings can allow (D143).
+     The relay writes the policy Jean sends ahead of the page, which adds to this one: by default
+     the page's own scripts run, its forms reaching them, but nothing loads from anywhere and
+     nothing is sent: no form goes anywhere, and no pop-up opens. WebRTC sends wherever it is told,
+     whatever a policy says (D267): the relay deletes it from the page's window first, the one
+     window the page reaches, as a frame it opens has an origin of its own. Jean's own frame-src
+     keeps the frame from being taken elsewhere; its links lead nowhere from here, except within the
+     page: the browser is told where they lead, and may follow. A link that saves a file the page
+     made (a blob or data, with `download`) hands the file to Jean, which saves it when Settings
      lets it (D158): a frame's own download is a navigation, which Jean's frame-src refuses in
-     WebKit. A link its code clicks off the page, as most code that saves a file does, too. A
-     doctype first, or the policy would put every page in quirks mode. -->
+     WebKit. A link its code clicks off the page, as most code that saves a file does, too. A page
+     in an answer (D289) comes as it is written (`open`): the rest is written as it comes, and the
+     page closed once it is whole. It also says how tall it is, and may send the user's next message
+     with `sendPrompt(text)`, which Jean takes only on a click of the user's. A doctype first, or
+     the policy would put every page in quirks mode. -->
 <script>onmessage = ({ data, source }) => {
   if (source !== parent || typeof data?.page !== 'string' || typeof data?.policy !== 'string') return
   for (const name of Object.getOwnPropertyNames(globalThis)) if (name.endsWith('RTCPeerConnection')) delete globalThis[name]
@@ -35,16 +39,23 @@
   const { dispatchEvent } = EventTarget.prototype
   HTMLAnchorElement.prototype.click = function () { if (this.isConnected || !saved(this)) click.call(this) }
   HTMLAnchorElement.prototype.dispatchEvent = function (event) { return event.type === 'click' && !this.isConnected && saved(this) ? false : dispatchEvent.call(this, event) }
+  globalThis.sendPrompt = (text) => parent.postMessage({ prompt: String(text) }, '*')
   document.open()
   document.write(`<!doctype html><meta http-equiv="Content-Security-Policy" content="${data.policy.replaceAll('"', '&quot;')}">`)
   document.write(data.page)
-  document.close()
+  if (!data.open) document.close()
+  else addEventListener('message', function more({ data: next, source: from }) {
+    if (from !== parent || typeof next?.page !== 'string') return
+    document.write(next.page)
+    if (!next.open) removeEventListener('message', more), document.close()
+  })
   document.addEventListener('click', (event) => {
     const link = event.target.closest?.('a[href]:not([href^="#"])')
     if (!link || event.defaultPrevented) return
     event.preventDefault()
     if (!saved(link)) parent.postMessage({ open: link.getAttribute('href') }, '*')
   })
+  new ResizeObserver(() => parent.postMessage({ height: document.documentElement.offsetHeight }, '*')).observe(document.documentElement)
 }
 </script>
 </html>

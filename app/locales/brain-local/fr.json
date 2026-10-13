@@ -2,11 +2,11 @@
   "private.name": "Privé · hors ligne",
   "private.away": "Hors ligne · répond toujours",
   "private.title": "Tout reste sur cet appareil",
-  "private.text": "Les réponses s’écrivent ici même, dans cet onglet du navigateur : pas de serveur, pas de compte, rien à installer. Peu d’assistants en sont capables.",
-  "private.private": "Vos échanges ne quittent jamais cet appareil",
+  "private.text": "Les réponses s’écrivent dans cet onglet, sans serveur ni installation. Peu d’assistants en sont capables.",
+  "private.private": "Privé, rien ne sort d’ici",
   "private.free": "Gratuit, sans compte ni clé",
   "private.offline": "Continue de répondre sans internet",
-  "private.try": "Essayez : coupez le Wi-Fi et posez une question.",
+  "private.try": "Coupez le Wi-Fi pour voir.",
   "private.still": "Vous êtes hors ligne, et les réponses continuent d’arriver.",
   "private.proof": "Le bouclier sous chaque réponse en est la preuve, d’après le propre relevé de votre navigateur."
 }

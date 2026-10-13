@@ -46,5 +46,6 @@
   "flows.after": "לוקח את התוצאות של",
   "flows.each": "פעם אחת לכל פריט ברשימה שהוא לוקח",
   "flows.result": "תוצאה אחרונה",
-  "flows.remove": "הסרת השלב"
+  "flows.remove": "הסרת השלב",
+  "flows.asFlow": "להציג כתהליך"
 }

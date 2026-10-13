@@ -24,6 +24,8 @@
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
     "e2e": "playwright test -c test",
     "reflexes": "node scripts/reflexes.js",
+    "offers": "npm run build && node scripts/offers.js",
+    "concepts": "node scripts/concepts.js",
     "documents": "node scripts/documents.js",
     "directory": "node scripts/directory.js"
   },
@@ -50,6 +52,7 @@
     "echarts": "6.1.0",
     "fflate": "0.8.3",
     "just-bash": "3.6.0",
+    "maplibre-gl": "6.14.0",
     "pdfjs-dist": "6.4.299",
     "pyodide": "314.0.7",
     "quickjs-emscripten-core": "0.32.0",

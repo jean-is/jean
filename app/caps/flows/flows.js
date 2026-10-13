@@ -7,7 +7,7 @@
 // any call, under the rules, its approvals in the inbox. A text or a file is read; instructions are a
 // helper's turn (D98); a tool is called as a script calls it (D48). `save_flow` lets the brain draw
 // one; the canvas (canvas.js) lets the user change it.
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, contributions, unlock } from '../../ui/caps.js'
 import { define } from '../../ui/base.js'
@@ -18,9 +18,14 @@ import { ulid } from '../../core/ulid.js'
 import { fileText } from '../../core/files.js'
 import { listSkills } from '../../core/skills.js'
 import { metaRecord, splitSuggestions } from '../../core/events.js'
+import { t, useStrings } from '../../core/i18n.js'
+import { icons } from '../../ui/icons.js'
 import { runFlow, fromSteps, askOf, fill, fillArgs, kindOf, result as resultOf } from './run.js'
 import { flowNamed } from './graph.js'
 import { keep } from '../../ui/windows.js'
+
+// Its own strings, which its slots draw with, before it registers.
+await useStrings('flows')
 
 /** @typedef {import('./run.js').Flow} Flow */
 /** @typedef {import('./run.js').Step} Step */
@@ -265,7 +270,12 @@ register({
     { name: 'save_flow', line: 'make or change a flow: steps the user sees, changes and runs again, by hand or on a schedule' },
     { name: 'run_flow', line: 'run one of the user’s flows' },
   ],
-  main: () => (editing.value === null ? null : html`<app-flow-main></app-flow-main>`),
+  slots: {
+    views: { at: 4, draw: (/** @type {any} */ current) => (current?.records.length ? html`<button class="icon-button flows-toggle" @click=${toggle} aria-label=${t('cap.flows.name')}>${icons.flow}</button>` : nothing) },
+    main: { at: 1, draw: () => (editing.value === null ? null : html`<app-flow-main></app-flow-main>`) },
+    add: { at: 3, draw: (/** @type {any} */ current) => (current?.records.length ? nothing : html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => edit()}>${icons.flow}${t('cap.flows.name')}</button>`) },
+    activity: { at: 1, draw: () => html`<button class="link-button activity-flow" @click=${() => show('task')}>${t('flows.asFlow')}</button>` },
+  },
 })
 
 /** Makes a routine that runs a flow, or finds the one there is, and opens it in Settings to set when (D122). @param {Saved} flow */

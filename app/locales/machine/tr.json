@@ -11,7 +11,6 @@
   "machine.computers": "Bilgisayarlar",
   "machine.lede": "Görevler yalıtılmış ortamı kullanır; bu bilgisayarda bağladığın klasördekiler hariç.",
   "machine.off": "Bağlı değil",
-  "machine.in": "{folder} içinde",
   "machine.step.open": "Klasörlerinden birinde bir terminal aç.",
   "machine.step.paste": "Bu satırı oraya yapıştır, sonra Enter'a bas.",
   "machine.step.wait": "Satırın çalışması bekleniyor: bu sayfa kendiliğinden fark eder.",

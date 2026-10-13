@@ -150,20 +150,19 @@ function latex(token) {
 
 /** Widgets (D196): a block of a kind the room's skills declare, which the skills capability keeps, drawn by its capability. */
 export const declared = signal(/** @type {ReadonlySet<string>} */ (new Set()))
+/** How each kind is drawn, which its capability says once it has loaded: until then, its code. */
+export const drawn = signal(/** @type {Record<string, (source: string, open: boolean) => unknown>} */ ({}))
 const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', marp: 'slides' })
 
 /** @param {any} token */
 function widget(token) {
   const kind = String(token.lang).toLowerCase()
-  if (!declared.value.has(kind) || !Object.hasOwn(WIDGETS, kind)) return null
-  unlock(WIDGETS[kind])
-  const open = !CLOSED.test(token.raw)
-  return kind === 'abc' ? html`<app-score source=${token.text}></app-score>`
-    : kind === 'marp' ? html`<app-slides source=${token.text} ?open=${open}></app-slides>`
-    : html`<app-chart source=${token.text} ?open=${open}></app-chart>`
+  if (!declared.value.has(kind)) return null
+  if (Object.hasOwn(WIDGETS, kind)) unlock(WIDGETS[kind])
+  return drawn.value[kind]?.(token.text, !CLOSED.test(token.raw)) ?? null
 }
 
-// marked doesn't wait for a fenced block's closing fence: until it is written, the block is still being written.
+// marked doesn't wait for a closing fence: until it is written, the block is still being written.
 const CLOSED = /^ {0,3}(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n(?:[\s\S]*\n)? {0,3}\1[`~]* *\n*$/
 /** A fence whose first line is still being written, kind and all: nothing to show yet. @param {any} token */
 const opening = (token) => token.codeBlockStyle !== 'indented' && !token.raw.includes('\n')

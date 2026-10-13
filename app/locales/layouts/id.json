@@ -4,5 +4,6 @@
   "layouts.tip": "Tips",
   "layouts.important": "Penting",
   "layouts.warning": "Peringatan",
-  "layouts.caution": "Hati-hati"
+  "layouts.caution": "Hati-hati",
+  "layouts.ticked": "{done} dari {total}"
 }

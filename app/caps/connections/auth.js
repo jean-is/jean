@@ -40,15 +40,19 @@ export async function discover(server, { challenge, fetch = globalThis.fetch } =
   // One that names none (Atlassian's /v1) has it at its own origin, and takes no resource indicator (D195).
   const named = Boolean(resource?.authorization_servers?.length)
   const issuer = named ? resource.authorization_servers[0] : at.origin
-  const { origin, pathname } = new URL(issuer)
-  const tenant = pathname.replace(/\/$/, '')
-  const candidates = [`${origin}/.well-known/oauth-authorization-server${tenant}`, `${origin}/.well-known/openid-configuration${tenant}`, ...(tenant ? [`${origin}${tenant}/.well-known/openid-configuration`] : [])]
-  for (const url of candidates) {
-    const metadata = await getJSON(fetch, url)
-    // A document only counts for the issuer it was asked about (RFC 8414, section 3.3), as an
-    // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant".
-    if (metadata && href(metadata.issuer) === href(issuer) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
-      return { ...metadata, resource: named ? resource.resource ?? server.replace(/#.*$/, '') : undefined, scope: asked.scope ?? resource?.scopes_supported?.join(' ') }
+  // One that names itself (ServiceNow) may have it at its origin, whose metadata it serves (D283).
+  const issuers = named && href(issuer) === href(server) ? [issuer, at.origin] : [issuer]
+  for (const each of issuers) {
+    const { origin, pathname } = new URL(each)
+    const tenant = pathname.replace(/\/$/, '')
+    const candidates = [`${origin}/.well-known/oauth-authorization-server${tenant}`, `${origin}/.well-known/openid-configuration${tenant}`, ...(tenant ? [`${origin}${tenant}/.well-known/openid-configuration`] : [])]
+    for (const url of candidates) {
+      const metadata = await getJSON(fetch, url)
+      // A document only counts for the issuer it was asked about (RFC 8414, section 3.3), as an
+      // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant".
+      if (metadata && href(metadata.issuer) === href(each) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
+        return { ...metadata, resource: named ? resource.resource ?? server.replace(/#.*$/, '') : undefined, scope: asked.scope ?? resource?.scopes_supported?.join(' ') }
+      }
     }
   }
   throw new Error(named ? 'The sign-in service could not be found.' : 'This service does not say where to sign in.')

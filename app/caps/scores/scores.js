@@ -6,6 +6,7 @@
 import { html, render, svg } from 'lit-html'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
+import { drawn } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
@@ -213,3 +214,4 @@ function clock(seconds) {
 }
 
 customElements.define('app-score', AppScore)
+drawn.value = { ...drawn.peek(), abc: (source) => html`<app-score source=${source}></app-score>` }

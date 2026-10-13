@@ -8,6 +8,7 @@ import { html, render } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { app, theme, notify } from '../../ui/state.js'
 import { copyDrawing } from '../../ui/save.js'
+import { drawn } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
@@ -148,3 +149,4 @@ class AppChart extends HTMLElement {
 }
 
 customElements.define('app-chart', AppChart)
+drawn.value = { ...drawn.peek(), echarts: (source, open) => html`<app-chart source=${source} ?open=${open}></app-chart>` }

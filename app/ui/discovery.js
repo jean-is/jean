@@ -1,16 +1,17 @@
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
 // few conversations, plenty of them, the same kind of request a third time, or on three different days,
-// links opened from answers),
+// links opened from answers, and for what brains rarely offer, D286: something said again, a task on three
+// days, an email, an invitation or a picture shared, a big request, a backup restored),
 // reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
 // that arrive mid-conversation can be reached (D47).
-import { effect } from '@preact/signals-core'
+import { effect, signal } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions } from './caps.js'
 import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
 import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
-import { words, alike } from '../core/search.js'
-import { foldTurns, openingOf, noteRecord } from '../core/events.js'
+import { words, alike, restated } from '../core/search.js'
+import { foldTurns, openingOf, noteRecord, routineOf, isPicture } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 import { host } from './host.js'
 
@@ -18,26 +19,29 @@ import { host } from './host.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
 
-/** What the brain may offer, described for it in English. */
+/** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
-  files: 'reading files the user shares: PDF, Word, Excel, PowerPoint, CSV, text',
-  computer: 'a computer of your own in a sandbox: commands, JavaScript and Python, for exact calculations and data work (Python downloads about 14 MB the first time)',
-  memory: 'remembering lasting facts and preferences the user states, from one conversation to the next',
-  projects: 'a separate project for something the user keeps coming back to, with its own notes and files',
-  folders: 'opening a folder of their computer, to find, read and change its files where they are, showing each change first',
-  skills: 'saving how a task the user repeats is done, to do it the same way every time',
-  routines: 'doing a task on its own on a schedule (every hour, day, week or month) or once later, like a reminder, while the user has you open or as soon as they are back',
-  flows: 'the steps of a task the user repeats, drawn beside the conversation, which they see, change and run again by hand or on a schedule',
-  search: 'searching the web, when a question needs current or specific facts',
-  browser: 'a browser beside the conversation, to show the user a web page or site while you talk',
-  pictures: 'making pictures and short films the user asks for, or changing a picture, with their brain\'s provider or on this device',
-  machine: "running your commands on the user's own computer instead of the sandbox, in a folder of theirs, with its programs and ports, so a site's dev server (npm run dev) serves and shows in the browser; they paste a line in a terminal there",
-  connections: 'connecting a service the user uses (email, documents, calendar…), to read and act there with their approval',
-  helpers: 'helpers that do the independent parts of a large task at the same time',
-  ...(folders && { sync: 'keeping their conversations, files and memory the same on their other computers, through a folder their cloud drive syncs' }),
+  files: 'reading files the user shares (PDF, Word, Excel, CSV…)',
+  computer: 'a computer in a sandbox, for exact numbers, data work and commands',
+  memory: 'remembering lasting facts and preferences from one conversation to the next',
+  projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
+  folders: 'working on the files of a folder of their computer, where they are',
+  skills: 'saving how a task the user repeats is done',
+  routines: 'doing a task on a schedule, once later like a reminder, or each time a file comes',
+  flows: 'the steps of a task the user repeats, drawn and run again',
+  search: 'searching the web for current or specific facts',
+  browser: 'showing a web page beside the conversation',
+  pictures: 'making or changing pictures and short films',
+  machine: "running commands on the user's own computer, such as a site's dev server",
+  connections: 'connecting a service the user uses (email, documents, calendar…)',
+  helpers: 'helpers doing the independent parts of a large task at the same time',
+  plugins: "adding a plugin someone made, for what Jean doesn't do yet",
+  ...(folders && { sync: 'keeping their work the same on their other computers' }),
 })
+/** What policy leaves to offer: it is set before this module loads (ui/app.js). */
+const offerable = Object.keys(OFFERS).filter((id) => !isDenied(id))
 
 /** The tools a capability brings, by name. @param {string} id */
 const toolsOf = (id) => (loaded.value.get(id)?.tools ?? []).filter((tool) => !tool.hidden).map((tool) => tool.spec.name)
@@ -46,15 +50,15 @@ const toolsOf = (id) => (loaded.value.get(id)?.tools ?? []).filter((tool) => !to
 const offerTool = {
   spec: {
     name: 'offer',
-    description: `Suggest turning on something the user hasn't discovered yet, and wait for their answer. ${Object.entries(OFFERS).map(([id, about]) => `${id}: ${about}.`).join(' ')}`,
-    parameters: { type: 'object', properties: { capability: { type: 'string', enum: Object.keys(OFFERS) } }, required: ['capability'] },
+    description: `Suggest turning on something the user hasn't discovered yet, and wait for their answer. ${offerable.map((id) => `${id}: ${OFFERS[id]}.`).join(' ')}`,
+    parameters: { type: 'object', properties: { capability: { type: 'string', enum: offerable } }, required: ['capability'] },
   },
   kind: 'think',
   title: (args) => `Offer ${args?.capability ?? ''}`,
   run: async (args, ctx) => {
     const id = String(args?.capability ?? '')
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
-    if (id === 'search' && !loaded.value.has(id) && app.conversations.value.length < SEARCHABLE) return `"${id}" can't be offered yet.`
+    if (id === 'search' && !loaded.value.has(id) && everywhere.value < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (!loaded.value.has(id)) {
       // A no is for good, here as above the box: the brain hears it again, and the user sees nothing (D219).
       if (effective.value.settings.offers[id]) return 'The user said no to it before. Go on without it.'
@@ -63,12 +67,16 @@ const offerTool = {
       const yes = await new Promise((resolve) => { app.offering.value = { id, conversation: conversationOf(ctx.signal)?.path, resolve } })
       app.offering.value = null
       if (!yes) {
-        await answerOffer(id)
+        // Only the user's own no is for good: an answer stopped, or left for another project, said nothing (D219).
+        if (!ctx.signal?.aborted) await answerOffer(id)
         return 'The user said no. Go on without it.'
       }
-      if (!(await unlock(id))) return 'It could not be turned on.'
-      // A project to name, or a service to connect: the answer waits for the user.
-      await begin(id)
+      // Turned on meanwhile above the box or from its trophy, it has begun there.
+      if (!loaded.value.has(id)) {
+        if (!(await unlock(id))) return 'It could not be turned on.'
+        // A project to name, or a service to connect: the answer waits for the user.
+        await begin(id)
+      }
     }
     const names = toolsOf(id).filter((name) => !ctx.declared.includes(name))
     return names.length ? `It is on. New tools: ${names.join(', ')}. ${reach(names, ctx)}` : 'It is on.'
@@ -87,16 +95,18 @@ register({
 
 // ─── Offers above the box ────────────────────────────────────────────────────
 
-// Offers about nothing in particular give way to one about what the user is doing now.
-const AMBIENT = new Set(['backup', 'reflexes', 'find'])
-
-/** Offers a capability above the box, once, unless something more relevant is on offer. @param {string} id */
-export function offerOnce(id) {
+/**
+ * Offers a capability above the box, once, one at a time (D72): an offer about what the user is
+ * doing now takes the place of the one shown, unless a download is under way; one merely due
+ * (a count reached) waits until nothing is shown.
+ * @param {string} id @param {boolean} [now]
+ */
+export function offerOnce(id, now = false) {
   const { settings } = effective.value
   // Peeked: an effect that offers must not run again because the offer it showed went away.
   const shown = app.offer.peek()
   // Turned on before, it is still loading after first paint, so not loaded yet: never offered.
-  if ((shown && (shown.progress !== undefined || !AMBIENT.has(shown.id) || AMBIENT.has(id))) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
+  if ((shown && (shown.progress !== undefined || !now || shown.id === id)) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
   app.offer.value = { id }
 }
 
@@ -170,24 +180,39 @@ export async function unlockAll() {
   notify(t('collection.allOn'))
 }
 
-// An offer above the box goes once what it offers is on, however that happened.
+// An offer goes once what it offers is on, or turned down, however that happened: above the box,
+// or in an answer, which then goes on.
 effect(() => {
   const shown = app.offer.value
   if (shown && shown.progress === undefined && loaded.value.has(shown.id) && shown.id !== 'reflexes') app.offer.value = null
+  const offering = app.offering.value
+  if (offering && (loaded.value.has(offering.id) || effective.value.settings.offers[offering.id])) offering.resolve(loaded.value.has(offering.id))
 })
 
-// Events that carry no language.
+/** Conversations in every project: what search, backup and Intuition are offered for is all of them. */
+export const everywhere = signal(0)
+let counting = 0
 effect(() => {
-  const count = app.conversations.value.length
+  const here = app.conversations.value.length
+  const others = app.projects.value.filter((project) => project.dir !== app.projectDir)
+  const round = ++counting
+  Promise.all(others.map((project) => app.fs.list(`${project.dir}/conversations`))).then((lists) => {
+    if (round === counting) everywhere.value = here + lists.flat().filter((entry) => entry.kind === 'file' && entry.name.endsWith('.jsonl')).length
+  })
+})
+
+// Events that carry no language. Offers due at once wait their turn, in this order.
+effect(() => {
+  const count = everywhere.value
   if (count >= 3) offerOnce('backup')
-  else if (count >= 2 && effective.value.settings.brains.length) offerOnce('reflexes')
+  if (count >= 2 && effective.value.settings.brains.length) offerOnce('reflexes')
 })
 /** Conversations before search is offered: plenty to look back on, what was asked, answered and shared (D133). */
 export const FINDABLE = 10
 /** Conversations before the brain may offer web search, so the first ones show what Jean does on its own (D145). */
 export const SEARCHABLE = 5
 effect(() => {
-  if (app.conversations.value.length >= FINDABLE) offerOnce('find')
+  if (everywhere.value >= FINDABLE) offerOnce('find')
 })
 effect(() => {
   // Someone who dictates often may rather talk.
@@ -195,7 +220,7 @@ effect(() => {
 })
 effect(() => {
   // Back after time away, with services connected: what's new there?
-  if (app.back.value && ((effective.value.settings.connections ?? []).length || (app.policy.connections ?? []).length)) offerOnce('since')
+  if (app.back.value && ((effective.value.settings.connections ?? []).length || (app.policy.connections ?? []).length)) offerOnce('since', true)
 })
 effect(() => {
   // Some use inside a project: its assistant could have a name.
@@ -212,16 +237,25 @@ effect(() => {
   if ((effective.value.settings.browsed ?? 0) >= BROWSED) offerOnce('browser')
 })
 // A server the sandbox refused could run on the user's own computer (D198).
-document.addEventListener('app-server-refused', () => offerOnce('machine'))
+document.addEventListener('app-server-refused', () => offerOnce('machine', true))
 // A web page made or changed in the conversation's folder could show there too (D156).
-document.addEventListener('app-folder-changed', (event) => { if (/\.html?$/i.test(/** @type {CustomEvent} */ (event).detail.path)) offerOnce('browser') })
+document.addEventListener('app-folder-changed', (event) => { if (/\.html?$/i.test(/** @type {CustomEvent} */ (event).detail.path)) offerOnce('browser', true) })
 effect(() => {
   // Citations in regular use: each answer could be checked against them.
   if ((effective.value.settings.cited ?? 0) >= CITED) offerOnce('check')
 })
 effect(() => {
+  const shared = app.attachments.value.filter((item) => item.status === 'ready')
   // Rows of data: exact numbers are a script away.
-  if (app.attachments.value.some((item) => item.status === 'ready' && /\.(csv|tsv|xlsx?)$/i.test(item.name))) offerOnce('computer')
+  if (shared.some((item) => /\.(csv|tsv|xlsx?)$/i.test(item.name))) offerOnce('computer', true)
+  // An email, an invitation or a contact card, read or not: the service it came from could be connected (D286).
+  if (app.attachments.value.some((item) => /\.(eml|ics|vcf)$/i.test(item.name))) offerOnce('connections', true)
+  // A picture: it could be changed (D286).
+  if (shared.some((item) => item.link && isPicture(item.link))) offerOnce('pictures', true)
+})
+effect(() => {
+  // A backup restored here, most likely from another computer: Sync keeps the two the same (D286).
+  if (folders && effective.value.settings.restored) offerOnce('sync', true)
 })
 
 // ─── Reflexes ────────────────────────────────────────────────────────────────
@@ -254,9 +288,9 @@ export async function sense(text, previous) {
     previous ? quickly(decide(exchange(clip(previous), clip(text)), { unhappy: REFLEXES.unhappy })) : null,
   ])
   const { demand, personal, capability, lasting } = about ?? {}
-  if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(OFFERED[capability.choice])
+  if (capability?.type === 'choice' && capability.choice !== 'none' && capability.probabilities[capability.choice] >= YES) offerOnce(OFFERED[capability.choice], true)
   // A lasting fact, preference or correction: memory could keep it.
-  if (lasting?.type === 'noul' && lasting.noul >= YES) offerOnce('memory')
+  if (lasting?.type === 'noul' && lasting.noul >= YES) offerOnce('memory', true)
   return {
     ...(demand?.type === 'score' && { demand: likeliest(demand.probabilities) }),
     ...(personal?.type === 'noul' && { personal: personal.noul >= YES }),
@@ -280,10 +314,11 @@ export const SAME_KIND = 0.5
  * @returns {{ opening: string, times: Date[] } | null}
  */
 function sameKind(records, id) {
-  // Not the titles: a brain writes those, and this one may still be on its way.
+  // Not the titles: a brain writes those, and this one may still be on its way. Not a routine's
+  // runs either: their request is the routine's, sent by Jean (D122).
   const opening = firstWords(openingOf(records))
-  if (!opening || foldTurns(records).length !== 1) return null
-  const others = app.conversations.value.filter((item) => item.id !== id && item.opening)
+  if (!opening || foldTurns(records).length !== 1 || routineOf(records)) return null
+  const others = app.conversations.value.filter((item) => item.id !== id && item.opening && !item.routine)
   const scores = alike(opening, others.map((item) => firstWords(item.opening)))
   const kind = others.filter((_, i) => scores[i] >= SAME_KIND)
   if (kind.length < 2) return null
@@ -304,6 +339,26 @@ const stepped = (records) => (foldTurns(records).at(-1)?.steps ?? []).flatMap((s
 const habitual = (times) => new Set(times.map((time) => time.toDateString())).size >= 3
 
 /**
+ * Whether the request that opened this conversation says again something the user said in an
+ * earlier one, other than a request of the same kind (D286): memory could keep it.
+ * @param {import('../core/types.js').Envelope[]} records @param {string | undefined} id its own, left out
+ */
+function said(records, id) {
+  const opening = openingOf(records)
+  if (!opening || loaded.value.has('memory') || foldTurns(records).length !== 1 || routineOf(records)) return false
+  return restated(opening, app.conversations.value.filter((item) => item.id !== id && item.opening && !item.routine).map((item) => item.opening), SAME_KIND)
+}
+
+/** Files made in one request before Helpers is offered (D286). */
+const MADE = 3
+/** Whether the last request was a big one: it made three files or more, or an answer of it stopped at its length limit. @param {import('../core/types.js').Envelope[]} records */
+function large(records) {
+  const tools = (foldTurns(records).at(-1)?.steps ?? []).flatMap((step) => step.tools).filter((tool) => !tool._meta?.parent)
+  return new Set(tools.flatMap((tool) => (tool.name === 'write' && tool.status === 'completed' ? [tool.rawInput?.name] : []))).size >= MADE
+    || tools.some((tool) => tool.rawOutput?.stopReason === 'max_tokens')
+}
+
+/**
  * Follow-ups from the translated catalogue that fit an answer: "Shorter" for a long one; for
  * the third request of a kind, a ready-made skill from elsewhere when one fits, otherwise "Save
  * this as a skill" (offered above the box until skills are on), and "Make this a routine" when
@@ -321,11 +376,11 @@ export async function followUps(answer, records, { id, path }) {
     const found = skills && path ? await skills.lookFor(kind.opening).catch(() => null) : null
     if (found && path) skills?.suggested.set(path, found)
     else if (skills) ids.push('skill')
-    else offerOnce('skills')
+    else offerOnce('skills', true)
   }
   if (kind && habitual(kind.times) && !isDenied('routines')) {
     const routines = loaded.value.has('routines') ? await import('../caps/routines/routines.js') : null
-    if (!routines) offerOnce('routines')
+    if (!routines) offerOnce('routines', true)
     else if (!covered(kind.opening, (await routines.routines()).map((routine) => `${routine.title} ${routine.request}`))) ids.push('routine')
   }
   if (path && skills?.suggested.has(path)) ids.push('ready')
@@ -335,9 +390,14 @@ export async function followUps(answer, records, { id, path }) {
     else {
       const count = (effective.value.settings.stepped ?? 0) + 1
       await updateSettings({ stepped: count })
-      if (count >= STEPPED) offerOnce('flows')
+      if (count >= STEPPED) offerOnce('flows', true)
     }
   }
+  // What brains rarely offer themselves (D286): the same task on three different days could be a project
+  // (a routine's runs are one task), something said again could be kept, and a big request shared out.
+  if (!routineOf(records) && habitual(foldTurns(records).flatMap((turn) => (turn.user ? [new Date(turn.user.at)] : [])))) offerOnce('projects', true)
+  if (said(records, id)) offerOnce('memory', true)
+  if (large(records)) offerOnce('helpers', true)
   const decide = loaded.value.get('reflexes')?.decide
   const result = decide ? await quickly(decide(clip(answer), FOLLOW_UPS), 4000) : null
   for (const [id, answer] of Object.entries(result ?? {})) if (answer.type === 'noul' && answer.noul >= YES) ids.push(id)

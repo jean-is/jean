@@ -31,11 +31,23 @@ app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt;
 .receipt-where .icon { inline-size: 0.9rem; block-size: 0.9rem; color: var(--flame-deep); }
 .receipt-hosts { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .receipt-hosts bdi { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 1rem; font-size: 0.78rem; }
-/* The certificate, for anyone, and the proof, with the words (D274), side by side under what tells them apart. */
-.receipt-saves { display: flex; flex-wrap: wrap; margin-inline-start: -0.6rem; }
-/* Whether witnesses date them and a public log records them (D276), said where they are saved. */
-.receipt-choice { display: flex; gap: 0.45rem; align-items: baseline; margin-block-start: 0.4rem; color: var(--ink-soft); font-size: 0.8rem; }
-.receipt .button { padding: 0.4rem 0.6rem; color: var(--ink-soft); font-size: 0.8rem; }
+/* The certificate, folded under a line, the card being a glance: each file beside what it holds, for
+   anyone or with the words (D274), whether witnesses date them (D276) and where anyone checks them,
+   their words in one column after the icons'. */
+.receipt-certify { --lead: 1.65rem; margin-block-start: 0.75rem; padding-block-start: 0.35rem; border-block-start: 1px solid var(--line); }
+.receipt-certify > summary, .receipt-save { display: grid; grid-template-columns: var(--lead) 1fr auto; align-items: center; margin-inline: -0.5rem; padding: 0.4rem 0.5rem; border-radius: 0.6rem; }
+.receipt-certify > summary { font-weight: 500; list-style: none; cursor: pointer; }
+.receipt-certify > summary::-webkit-details-marker { display: none; }
+.receipt-certify > summary:hover, .receipt-save:hover { background: var(--line); }
+.receipt-certify .icon { inline-size: 1.05rem; block-size: 1.05rem; color: var(--ink-soft); transition: rotate 0.2s; }
+.receipt-certify[open] > summary .icon:last-child { rotate: 180deg; }
+.receipt-save { inline-size: calc(100% + 1rem); grid-template-columns: var(--lead) 1fr; align-items: start; border: 0; background: none; text-align: start; }
+.receipt-save .icon { grid-row: span 2; margin-block-start: 0.05rem; }
+.receipt-save small { color: var(--ink-soft); font-size: 0.78rem; }
+.receipt-choice { grid-template-columns: var(--lead) 1fr; gap: 0; margin-block-start: 0.35rem; color: var(--ink-soft); font-size: 0.8rem; }
+.receipt-save + .receipt-choice { margin-block-start: 0.6rem; }
+.receipt-choice input { inline-size: 1rem; block-size: 1rem; margin: 0.06rem 0 0; }
+.receipt-certify .receipt-note { margin: 0.6rem 0 0.4rem; padding-inline-start: var(--lead); }
 /* A certificate checked (caps/certificates, D274): the same card, in the flow of an answer or of the check page. */
 .receipt.receipt-checked { inline-size: auto; max-inline-size: 30rem; margin: 0.75rem 0; opacity: 1; }
 .certificates-page { display: grid; gap: 1rem; justify-items: start; max-inline-size: 34rem; margin: 3rem auto; padding: 0 1rem; }

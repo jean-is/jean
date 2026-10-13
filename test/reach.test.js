@@ -5,9 +5,9 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { runTurn } from '../app/core/loop.js'
-import { toChatMessages, userRecord } from '../app/core/events.js'
+import { userRecord } from '../app/core/events.js'
 import { PROVIDERS, streamChat } from '../app/core/llm.js'
-import { buildSystemPrompt, promptState, changeNotes } from '../app/core/prompt.js'
+import { buildSystemPrompt, promptState, changeNotes, toChatMessages } from '../app/core/prompt.js'
 
 const encoder = new TextEncoder()
 const sse = (/** @type {string} */ text) => new Response(new ReadableStream({
@@ -354,6 +354,30 @@ describe('signing in to a connection', () => {
     assert.equal(new URLSearchParams(asked.at(-1)?.body).has('resource'), false)
   })
 
+  test('a service that names itself as its sign-in server, whose metadata names its origin (ServiceNow), signs in at that origin, with a resource indicator (D283)', async () => {
+    const origin = 'https://acme.service-now.example'
+    const server = `${origin}/sncapps/mcp-server/mcp/sn_mcp_server_default`
+    const endpoints = { issuer: origin, authorization_endpoint: `${origin}/oauth_auth.do`, token_endpoint: `${origin}/oauth_token.do`, client_id_metadata_document_supported: true }
+    // As ServiceNow's own instance answers: asked about the service, the origin's metadata.
+    const servicenow = /** @type {typeof fetch} */ (async (url) => {
+      const { pathname } = new URL(String(url))
+      if (pathname === '/.well-known/oauth-protected-resource/sncapps/mcp-server/mcp/sn_mcp_server_default') return Response.json({ resource: server, authorization_servers: [server] })
+      if (pathname === '/.well-known/oauth-authorization-server/sncapps/mcp-server/mcp/sn_mcp_server_default' || pathname === '/.well-known/openid-configuration') return Response.json(endpoints)
+      return new Response('Not Found', { status: 404 })
+    })
+    const metadata = await discover(server, { challenge: `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource/sncapps/mcp-server/mcp/sn_mcp_server_default"`, fetch: servicenow })
+    assert.deepEqual([metadata.issuer, metadata.token_endpoint, metadata.resource], [origin, `${origin}/oauth_token.do`, server])
+    const redirectURI = 'http://127.0.0.1:4180/'
+    await assert.rejects(registerClient(metadata, { redirectURI, name: 'Jean' }), /only accepts apps it registered/)
+    const { url, pending } = await authorization(metadata, { clientId: 'acme-jean', redirectURI })
+    assert.equal(new URL(url).origin, origin)
+    assert.equal(new URL(url).searchParams.get('resource'), server)
+    assert.equal(pending.issuer, origin)
+    // A service that names another server is still held to the issuer it named.
+    const elsewhere = /** @type {typeof fetch} */ (async (url) => Response.json(String(url).includes('protected-resource') ? { resource: server, authorization_servers: [`${origin}/tenant`] } : endpoints))
+    await assert.rejects(discover(server, { fetch: elsewhere }), /could not be found/)
+  })
+
   test('a service may list its tools to anyone and run them only once signed in: its refusal says where (Google’s, D193)', async () => {
     const { origin, server, close } = await fakeMail()
     try {
@@ -445,6 +469,20 @@ describe('the services Jean knows (D95)', () => {
     assert.ok(!services.some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
     assert.equal(knownFor('https://mcp.m365.corp.example/mcp', policy)?.clientId, 'corp-app')
     assert.equal(knownFor('https://mcp.canva.com/mcp', policy), undefined)
+  })
+
+  test('ServiceNow is at each company\'s own address, which policy gives with the app its admin registered, and is reached through the gateway, which relays to every instance (D283)', () => {
+    const url = 'https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default'
+    const hosts = [...SERVICES]
+    const via = (/** @type {any} */ change, /** @type {any} */ served) => known({ directory: [{ id: 'servicenow', url, ...change }] }, served).find((entry) => entry.id === 'servicenow')?.via
+    assert.equal(known().find((entry) => entry.id === 'servicenow')?.via, null)
+    assert.equal(via({ clientId: 'acme-jean' }), null)
+    assert.equal(via({ clientId: 'acme-jean' }, { hosts }), 'gateway')
+    assert.equal(knownFor(url, { directory: [{ id: 'servicenow', url, clientId: 'acme-jean' }] }, { hosts })?.clientId, 'acme-jean')
+    // Or the app the gateway holds for that instance; and an instance whose admin lets browsers in says so.
+    assert.equal(via({ app: 'https://acme.service-now.com' }, { hosts }), null)
+    assert.equal(via({ app: 'https://acme.service-now.com' }, { hosts, clients: { 'https://acme.service-now.com': 'acme-app' } }), 'gateway')
+    assert.equal(via({ clientId: 'acme-jean', ready: true }), 'browser')
   })
 
   test('those that search the web are offered until connected: Exa, and one the organisation says searches, if reached (D271)', () => {

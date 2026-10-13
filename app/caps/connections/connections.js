@@ -24,6 +24,7 @@ import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
+import { subRow } from '../../ui/composer.js'
 
 /** @import { Connection, Project } from '../../core/settings.js' */
 /** @import { McpTool, CallResult } from './mcp.js' */
@@ -127,6 +128,7 @@ function asTool(connection, tool) {
     spec: { name: toolName(connection, tool.name), description: `${connection.name}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } },
     kind: tool.annotations?.readOnlyHint ? 'fetch' : 'other',
     deferred: true,
+    service: connection.id,
     title: () => `${connection.name}: ${label}`,
     // An access token refused before it expired is renewed once. A service that lists its tools
     // to anyone may still run them only for someone signed in (Google's, D193): its row offers it.
@@ -179,7 +181,11 @@ effect(() => register({
     const [tools, logo] = [(status.value[connection.id]?.tools ?? []).filter(searchesWeb).map(labelOf), logoOf(connection)]
     return tools.length ? [{ name: connection.name, ...(logo && { logo: logoAt(logo) }), tools }] : []
   }),
-  panel,
+  slots: {
+    settings: { at: 60, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel },
+    // In +, a row whose menu beside it holds the room's connections (D292).
+    add: { at: 5, draw: () => subRow('connections', icons.plug) },
+  },
 }))
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()
@@ -386,13 +392,14 @@ function yours(connection) {
 
 /**
  * A service Jean knows: a click connects it, and once connected, another account. One not reached
- * yet is there too, disabled. A name like an address may wrap before its dot ("monday" ".com").
+ * yet is there too, disabled. A name like an address may wrap before its dot ("monday" ".com"),
+ * one in two words where its capital starts the second ("Service" "Now").
  * @param {Listed} entry
  */
 function tile(entry) {
   return html`<li><button class="service ${entry.via ? '' : 'is-soon'}" ?disabled=${!entry.via || message.value?.kind === 'busy'}
     @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name, { gateway: entry.via === 'gateway' }) }}>
-    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${entry.includes
+    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)|(?<=[a-z])(?=[A-Z])/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${entry.includes
       ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span>${entry.via ? icons.plus : nothing}
   </button></li>`
 }

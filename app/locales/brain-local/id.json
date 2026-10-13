@@ -2,11 +2,11 @@
   "private.name": "Pribadi · offline",
   "private.away": "Offline · tetap menjawab",
   "private.title": "Semuanya tetap di perangkat ini",
-  "private.text": "Jawaban ditulis di sini, di tab browser ini: tanpa server, tanpa akun, tanpa perlu memasang apa pun. Hanya sedikit asisten yang bisa melakukannya.",
-  "private.private": "Percakapan Anda tidak pernah keluar dari perangkat ini",
+  "private.text": "Jawaban ditulis di tab ini, tanpa server dan tanpa memasang apa pun. Hanya sedikit asisten yang bisa melakukannya.",
+  "private.private": "Pribadi, tidak ada yang keluar dari sini",
   "private.free": "Gratis, tanpa akun atau kunci",
   "private.offline": "Tetap menjawab tanpa internet",
-  "private.try": "Coba: matikan Wi-Fi lalu tanyakan sesuatu.",
+  "private.try": "Matikan Wi-Fi dan lihat sendiri.",
   "private.still": "Anda sedang offline, dan jawaban terus berdatangan.",
   "private.proof": "Perisai di bawah setiap jawaban adalah buktinya, dari catatan browser Anda sendiri."
 }

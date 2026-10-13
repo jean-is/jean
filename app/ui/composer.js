@@ -1,17 +1,30 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
-// + (files, a folder once Folders is on, a capture of the screen) and dictation; then the brain, and one button to go.
+// + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers) and dictation,
+// then the modes + turned on, the brain, and one button to go.
 import { html, nothing } from 'lit-html'
+import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, SHORTCUTS } from './state.js'
-import { unlock, isDenied, loaded } from './caps.js'
+import { unlock, isDenied, loaded, slots } from './caps.js'
 import { t } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
 import { icons } from './icons.js'
 import { dictation, toggleDictation, live } from './dictation.js'
 
 const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening', thinking: 'activity.thinking', speaking: 'live.speaking' }
+
+/** The menu shown beside a row of +, the room's skills or connections (ui/plus.js, D292). @type {import('@preact/signals-core').Signal<{ id: string, view: () => unknown } | null>} */
+export const sub = signal(null)
+/**
+ * A row of + that opens a menu beside it, pointed at or pressed: Skills' and Connections' entries in the add slot (D293).
+ * @param {'skills' | 'connections'} id @param {unknown} icon
+ */
+export const subRow = (id, icon) => html`<button type="button" class="submenu" data-page=${id} aria-expanded=${sub.value?.id === id} @click=${openSub} @pointerenter=${openSub}>
+  ${icon}${t(`cap.${id}.name`)}${icons.chevron}</button>`
+/** @param {Event} event */
+const openSub = (event) => import('./plus.js').then((module) => module.open(event))
 
 class Composer extends Element {
   render() {
@@ -31,10 +44,11 @@ class Composer extends Element {
       : working ? (downloading ? t('dictation.downloading', { percent: Math.round((voice.progress ?? 0) * 100) }) : t(`dictation.${voice.state}`))
       : ''
     const files = !isDenied('files')
-    // A menu when + adds more than files: on a new task, flow mode too (D218).
-    const folders = loaded.value.has('folders')
-    const flows = loaded.value.has('flows') && !app.current.value?.records.length
-    const menu = CAPTURE || folders || flows
+    // A menu when + adds more than files: what capabilities add there (a folder; on a new task, flow mode, D218; a menu beside it of
+    // skills, and of connections, D292), and a capture of the screen.
+    const more = [...slots('add'), ...(CAPTURE ? [{ at: 2, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` }] : [])]
+      .sort((a, b) => a.at - b.at).map((entry) => entry.draw(app.current.value)).filter((drawn) => drawn !== nothing)
+    const menu = more.length > 0
     const add = t(menu ? 'composer.add' : 'files.attach')
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
@@ -63,16 +77,13 @@ class Composer extends Element {
               popovertarget=${menu ? 'add-menu' : nothing} @click=${menu ? undefined : this.#files}>${icons.plus}</button>` : nothing}
             ${files && menu ? html`<div id="add-menu" class="menu" popover>
               <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${this.#files}>${icons.attach}${t('files.attach')}</button>
-              ${folders ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
-                @click=${() => import('../caps/folders/folders.js').then((module) => module.choose())}>${icons.folder}${t('composer.folder')}</button>` : nothing}
-              ${CAPTURE ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${captureScreen}>${icons.capture}${t('capture.start')}</button>` : nothing}
-              ${flows ? html`<button type="button" popovertarget="add-menu" popovertargetaction="hide"
-                @click=${() => import('../caps/flows/flows.js').then((module) => module.edit())}>${icons.flow}${t('cap.flows.name')}</button>` : nothing}
+              ${more}${sub.value?.view()}
             </div>` : nothing}
             ${voice.state === 'unavailable' ? nothing : html`<button type="button"
               class="icon-button ${listening ? 'is-active is-listening' : working ? 'is-active is-working' : ''}" aria-pressed=${listening ? 'true' : 'false'} ?disabled=${working}
               aria-keyshortcuts=${SHORTCUTS.dictation} aria-label=${t(listening ? 'dictation.stop' : 'dictation.start')}
               @click=${toggleDictation}>${icons.mic}</button>`}
+            ${slots('modes').map((mode) => mode.draw())}
           </div>
           <app-seal></app-seal>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
@@ -144,7 +155,7 @@ class Composer extends Element {
   #paste = (event) => {
     const files = [...(event.clipboardData?.files ?? [])]
     // A long paste is a document in disguise: offer files (an event, so any language works).
-    if (!files.length && (event.clipboardData?.getData('text').length ?? 0) > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files'))
+    if (!files.length && (event.clipboardData?.getData('text').length ?? 0) > LONG_PASTE) import('./discovery.js').then((module) => module.offerOnce('files', true))
     if (!files.length) return
     event.preventDefault()
     attachFiles(files)

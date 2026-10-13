@@ -4,5 +4,6 @@
   "layouts.tip": "טיפ",
   "layouts.important": "חשוב",
   "layouts.warning": "אזהרה",
-  "layouts.caution": "זהירות"
+  "layouts.caution": "זהירות",
+  "layouts.ticked": "{done} מתוך {total}"
 }

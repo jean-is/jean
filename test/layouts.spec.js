@@ -103,3 +103,33 @@ test('in Japanese, a full-width colon ends a step’s title, and a note is title
   await expect(answer.locator('blockquote.callout.is-warning .callout-title')).toHaveText('警告')
   await expect(answer.locator('th.is-pick')).toHaveAttribute('data-pick', 'おすすめ')
 })
+
+test('a timeline, key figures and a checklist are laid out as what they are, and what is ticked is kept in the conversation (D291)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Plan my Saturday')
+  const answer = page.locator('.msg-jean .prose').last()
+  // Numbers in bold, each with a few words, make key figures.
+  await expect(answer.locator('.figures > li')).toHaveCount(3)
+  await expect(answer.locator('.figures strong')).toHaveText(['3', '€45', '12'])
+  // Times in bold make a timeline, a range among them; what joins a time to its line is left out.
+  const timeline = answer.locator('.timeline')
+  await expect(timeline.locator('time')).toHaveText(['08:30', '09:00–10:30', '11:00'])
+  await expect(timeline.locator('li > div').first()).toHaveText('Leave home, with the bags')
+  // A checklist: what the answer ticked, then the user's ticks, counted on a bar and kept as a meta record.
+  const checklist = answer.locator('.checklist')
+  await expect(checklist.locator('.checklist-count')).toContainText('1 of 3')
+  await expect(checklist.locator('li.is-done')).toHaveText('Cash')
+  await checklist.getByRole('checkbox', { name: 'Shopping bags' }).check()
+  await expect(checklist.locator('.checklist-count')).toContainText('2 of 3')
+  await expect(checklist.locator('progress')).toHaveJSProperty('value', 2)
+  await checklist.getByRole('checkbox', { name: 'Cash' }).uncheck()
+  await expect(checklist.locator('li.is-done')).toHaveText('Shopping bags')
+  const ticks = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const path = /** @type {any} */ (app.current.peek()).path
+    return (await app.fs.read(path)).trim().split('\n').map((line) => JSON.parse(line).meta?.ticks).filter(Boolean)
+  })
+  expect(ticks.at(-1)).toEqual({ list: 'Shopping bags\nCash\nThe list', done: [0] })
+})
+

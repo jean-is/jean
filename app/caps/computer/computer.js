@@ -645,7 +645,7 @@ function panel() {
       </select>
     </section>`
   const { state } = box.status.value
-  return there.value?.computers({ sandbox, shared, name: t('computer.sandbox'), light: state, text: t(`computer.state.${state}`) }) ?? html`${sandbox}${shared}`
+  return there.value?.computers({ sandbox, shared, name: t('computer.sandbox'), light: state, text: t(`computer.state.${state}`), ready: t('computer.state.ready') }) ?? html`${sandbox}${shared}`
 }
 
 register({
@@ -657,5 +657,8 @@ register({
     { name: 'python', line: 'Python, for data work' },
   ],
   rules: ['Compute numbers with code instead of estimating them.', 'In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX.'],
-  panel,
+  slots: {
+    views: { at: 2, draw: () => html`<app-terminal-toggle></app-terminal-toggle>` },
+    settings: { at: 95, id: 'computer', label: 'cap.computer.name', icon: icons.computer, draw: panel },
+  },
 })

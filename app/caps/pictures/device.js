@@ -6,10 +6,10 @@
 // once, with the user's consent, from the weights host at a pinned revision, checked against their
 // SHA-256 as Whistle's are; then private, free and offline. FLUX and Z-Image show the picture as it
 // forms, glimpsed after each step (D265). With each comes the check every picture made here goes
-// through before it shows (D275), which runs in SD-Turbo's worker.
+// through before it shows (D275, D280), which runs in SD-Turbo's worker.
 import { signal } from '@preact/signals-core'
 import { app, weightsHost, updateSettings } from '../../ui/state.js'
-import { modelWorker, downloading } from '../../ui/model.js'
+import { modelWorker, downloading, holdStill } from '../../ui/model.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { SIZES } from './flux.js'
 import * as check from './check.js'
@@ -73,7 +73,7 @@ const STAGES = {
 export const MAKERS = /** @type {Maker[]} */ (['sd-turbo', 'flux2-klein', 'z-image-turbo'])
 export const NAMES = { 'sd-turbo': 'SD-Turbo', 'flux2-klein': 'FLUX.2 [klein] 4B', 'z-image-turbo': 'Z-Image-Turbo' }
 /** Each one's files, the check's last, which they share. */
-const FILES = { 'sd-turbo': [...TURBO, check.FILE], 'flux2-klein': [...Object.values(STAGES['flux2-klein']).flat(), check.FILE], 'z-image-turbo': [...Object.values(STAGES['z-image-turbo']).flat(), check.FILE] }
+const FILES = { 'sd-turbo': [...TURBO, ...check.FILES], 'flux2-klein': [...Object.values(STAGES['flux2-klein']).flat(), ...check.FILES], 'z-image-turbo': [...Object.values(STAGES['z-image-turbo']).flat(), ...check.FILES] }
 /** What each weighs. */
 export const BYTES = { 'sd-turbo': total(FILES['sd-turbo']), 'flux2-klein': total(FILES['flux2-klein']), 'z-image-turbo': total(FILES['z-image-turbo']) }
 function total(/** @type {File[]} */ files) { return files.reduce((sum, [, , bytes]) => sum + bytes, 0) }
@@ -164,15 +164,26 @@ async function stage(message, transfer = [], onMessage = () => {}) {
 
 let busy = Promise.resolve()
 
-/** Whether the check refuses suggestive pictures too (D275): as the organisation set it, which locks it, else as the user did. */
-export const strict = () => (app.policy.pictureCheck ?? /** @type {Record<string, unknown>} */ (app.settings.value).pictureCheck) === 'strict'
+/** What the check refuses besides nudity and sex, unless set otherwise (D275, D280): suggestive pictures not, the rest yes. */
+export const REFUSED = { suggestive: false, hate: true, violence: true, selfHarm: true }
+/** @typedef {keyof typeof REFUSED} Area */
 
 /**
- * Whether a picture may show (D275): the check, on this device, finds no nudity or sex in it, nor anything
- * suggestive when it is strict. Its file comes first if it isn't here, as for a picture from a server on this computer.
- * @param {Uint8Array} bytes
+ * Whether the check refuses an area: as the organisation set it in policy (`pictureCheck`), which locks it, else
+ * as the user did, but for self-harm, which only an organisation allows, else as by default. @param {Area} area
  */
-export const passes = async (bytes) => check.explicit((await turbo.call({ type: 'check', host: weightsHost(), bytes })).logits, strict()) < check.LIMIT
+export const refuses = (area) => app.policy.pictureCheck?.[area] ?? (area === 'selfHarm' ? undefined : /** @type {any} */ (app.settings.value).pictureCheck?.[area]) ?? REFUSED[area]
+
+/**
+ * What a picture shows that the check refuses (D275, D280), on this device: nudity, else an area it refuses, else
+ * nothing. Its files come first if they aren't here, as for a picture from a server on this computer.
+ * @param {Uint8Array} bytes @returns {Promise<'nudity' | Area | undefined>}
+ */
+export async function refused(bytes) {
+  const { logits, areas } = await holdStill(turbo.call({ type: 'check', host: weightsHost(), bytes }))
+  if (check.explicit(logits) >= check.LIMIT) return 'nudity'
+  return refuses('suggestive') && check.explicit(logits, true) >= check.LIMIT ? 'suggestive' : /** @type {Area[]} */ (areas).find(refuses)
+}
 
 /** Its size in pixels: SD-Turbo's 512 square, the others' in the shape asked. @param {keyof typeof SIZES} shape */
 export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape])
@@ -185,7 +196,7 @@ export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape
  */
 export function paint(description, shape, show = () => {}) {
   const maker = used()
-  const made = busy.then(async () => {
+  const made = holdStill(busy.then(async () => {
     if (maker === 'sd-turbo') {
       await load()
       return /** @type {ArrayBuffer} */ ((await turbo.call({ type: 'paint', prompt: description })).bytes)
@@ -195,7 +206,7 @@ export function paint(description, shape, show = () => {}) {
     const { embeds } = await stage({ maker, type: 'encode', files: files.encode, tokenizer: files.tokenizer, prompt: description })
     const { latent } = await stage({ maker, type: 'denoise', files: files.denoise, embeds, width, height }, [embeds.buffer], show)
     return /** @type {Uint8Array} */ ((await stage({ maker, type: 'decode', files: files.decode, latent, width, height }, [latent.buffer])).bytes)
-  })
+  }))
   busy = made.then(() => {}, () => {})
   // Its weights' repository and pinned commit, as the answer's certificate names them (D274).
   const revision = { 'sd-turbo': SD, 'flux2-klein': FLUX, 'z-image-turbo': Z }[/** @type {Maker} */ (maker)].replace('/resolve/', '@').slice(0, -1)

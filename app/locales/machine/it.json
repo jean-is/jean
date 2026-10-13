@@ -11,7 +11,6 @@
   "machine.computers": "Computer",
   "machine.lede": "Le attività usano l’ambiente isolato, tranne quelle nella cartella che colleghi su questo computer.",
   "machine.off": "Non collegato",
-  "machine.in": "In {folder}",
   "machine.step.open": "Apri un terminale in una delle tue cartelle.",
   "machine.step.paste": "Incolla lì questa riga, poi premi Invio.",
   "machine.step.wait": "In attesa che la riga parta: questa pagina se ne accorge da sola.",

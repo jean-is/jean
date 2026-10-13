@@ -231,6 +231,24 @@ test('No thanks is for good: the brain hears it again in a new task, and the use
   expect(results).toContain('The user said no to it before. Go on without it.')
 })
 
+test('Stop is not No: the brain offers it again, and once it is on from elsewhere, the answer goes on', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Show me the bakery site')
+  const card = page.locator('.msg-jean .approval')
+  await expect(card.getByRole('button', { name: 'Turn it on' })).toBeVisible()
+  await page.locator('.composer .send.is-stop').click()
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.offers)).not.toHaveProperty('browser')
+  await ask(page, 'Show me the bakery site')
+  await expect(card.getByRole('button', { name: 'Turn it on' })).toBeVisible()
+  // Turned on elsewhere (above the box, or from its trophy), the card goes and the answer goes on.
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
+  await expect(page.locator('.approval')).toContainText(`${SITE}/bakery.html`)
+  await page.locator('.approval').getByRole('button', { name: 'Allow once' }).click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Fresh bread every morning, from 7 am.')
+})
+
 test('a web page Jean made opens from its card in the browser once it is on, as the card holds it (D172)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

@@ -7,19 +7,22 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
-import { register, loaded } from '../../ui/caps.js'
-import { app, activeBrain, brainsHere, send } from '../../ui/state.js'
+import { register, loaded, contributions } from '../../ui/caps.js'
+import { fire } from '../../core/hooks.js'
+import { app, activeBrain, brainsHere, send, keepRecords } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
-import { appendRecords } from '../../core/conversations.js'
 import { foldTurns, linkedFiles, metaRecord, splitSuggestions } from '../../core/events.js'
 import { fileText } from '../../core/files.js'
 import { claimsIn, passage, sourceIn, request, verdicts, CHECKER } from './claims.js'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
+import { styleSheet } from '../../ui/sheet.js'
 
 /** @import { Envelope, BrainConfig } from '../../core/types.js' */
 /** @import { Turn } from '../../core/events.js' */
 /** @typedef {{ text: string, sources: number[], verdict: import('./claims.js').Verdict }} Checked */
+
+await styleSheet(new URL('check.css', import.meta.url))
 
 /** The answers being checked now, by their turn. */
 const checking = signal(/** @type {string[]} */ ([]))
@@ -53,12 +56,12 @@ function brainOf(turn) {
   return brain && (model && brain.api !== 'device' ? { ...brain, model } : brain)
 }
 
-/** One request, no tools, the reply's text. @param {BrainConfig} brain @param {string} text */
+/** One request, no tools, the reply's text: a step of its own, which the device's brain answers through its hook. @param {BrainConfig} brain @param {string} text */
 async function ask(brain, text) {
-  const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : (await import('../../core/llm.js')).streamChat
-  if (!stream) throw new Error('No brain to ask')
+  if (brain.api === 'device' && !loaded.value.has('brain-local')) throw new Error('No brain to ask')
+  const [{ streamChat }, apiKey] = await Promise.all([import('../../core/llm.js'), getSecret(app.fs, brain.id)])
   let reply = ''
-  const events = stream({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined, system: CHECKER, messages: [{ role: 'user', content: text }], tools: [] })
+  const events = await fire(contributions().hooks, 'turn.step', { brain, system: CHECKER, messages: [{ role: 'user', content: text }], tools: [] }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
   for await (const event of events) if (event.type === 'text') reply += event.delta
   return reply
 }
@@ -85,7 +88,7 @@ export async function check(path, at, records) {
     /** @type {Checked[]} */
     const checked = claims.map(({ text, sources, passages }) => ({ text, sources, verdict: passages.length ? found[asked.findIndex((claim) => claim.text === text)] : 'unknown' }))
     const record = metaRecord('jean', { check: { at, claims: checked } })
-    await appendRecords(app.fs, path, [record])
+    await keepRecords(path, [record])
     const current = app.current.peek()
     if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
   } catch (error) {
@@ -122,4 +125,5 @@ class Check extends Element {
 }
 
 define('app-check', Check)
-register({ id: 'check' })
+// An answer that cites its sources is checked once it has come; what it cites is then in hand, so nothing counts it towards offering Double-check.
+register({ id: 'check', hooks: [{ on: 'turn.end', match: { cites: true }, run: (e, next) => { check(e.task, e.at, e.records); return next({ ...e, cites: false }) } }] })

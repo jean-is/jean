@@ -4,5 +4,6 @@
   "layouts.tip": "Совет",
   "layouts.important": "Важно",
   "layouts.warning": "Предупреждение",
-  "layouts.caution": "Осторожно"
+  "layouts.caution": "Осторожно",
+  "layouts.ticked": "{done} из {total}"
 }

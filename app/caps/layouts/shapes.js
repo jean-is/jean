@@ -56,6 +56,22 @@ export function marked(cell) {
 export const stepped = (token) => token.steps || (token.ordered && token.items.length > 1 && token.items.every(bold))
 /** @param {any} item */
 const bold = (item) => item.tokens[0]?.tokens?.[0]?.type === 'strong'
+/** What an item starts with in bold, or nothing. @param {any} item @returns {string} */
+const lead = (item) => (bold(item) ? item.tokens[0].tokens[0].text.trim() : '')
+
+// A time or a date in digits, so that it holds in every language (09:00, 9h30, 2026-10-12, 12/10, 1969), or two of them, from one to the other.
+const DAY = String.raw`(?:\d{1,2}[:h.]\d{2}|\d{4}(?:-\d{2}){0,2}|\d{1,2}[/.]\d{1,2}(?:[/.]\d{2,4})?)`
+const WHEN = new RegExp(`^${DAY}(?:\\s*[–-]\\s*${DAY})?$`)
+
+/** A timeline (D291): a list whose items each start with a time or a date, in bold. @param {any} token */
+export const timed = (token) => !token.ordered && token.items.length > 1 && token.items.every((/** @type {any} */ item) => WHEN.test(lead(item)))
+
+/** Key figures (D291): two to six items, each a number in bold and a few words. @param {any} token */
+export const figured = (token) => !token.ordered && token.items.length > 1 && token.items.length < 7
+  && token.items.every((/** @type {any} */ item) => AMOUNT.test(lead(item)) && item.tokens.length === 1 && item.text.replace(/[*_]/g, '').length < 60)
+
+/** A checklist (D291): a list of things to do, ticked or not. @param {any} token */
+export const ticked = (token) => token.items.every((/** @type {any} */ item) => item.task)
 
 /**
  * A step's bold start is its title when the line ends there or a colon or a dash follows it: what

@@ -11,7 +11,7 @@ import { signal, computed } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
 import { app, newConversation, openConversation, enterProject, turnPage, openFile } from '../../ui/state.js'
-import { syncDialog, closed, backdrop, openSettings, SECTIONS, sections } from '../../ui/dialogs.js'
+import { syncDialog, closed, backdrop, openSettings, places } from '../../ui/dialogs.js'
 import { focusComposer } from '../../ui/composer.js'
 import { icons } from '../../ui/icons.js'
 import { loadConversation } from '../../core/conversations.js'
@@ -196,12 +196,12 @@ function groups(words) {
   const lit = (/** @type {string} */ text) => marked(text, ranges(fold(text), words))
   // Settings' sections shown now, by their names, what else they go by, or Settings' own.
   const settings = t('settings.title')
-  const places = sections().map((id) => ({ label: t(SECTIONS[id].label), icon: SECTIONS[id].icon, go: () => openSettings(id), also: SECTIONS[id].also?.() ?? '' }))
+  const sections = places().map(([id, place]) => ({ label: t(place.label), icon: place.icon, go: () => openSettings(id), also: place.also?.() ?? '' }))
     .filter((place) => all(`${place.label} ${place.also} ${settings}`))
   const projects = loaded.value.has('projects') ? app.projects.value.filter((project) => all(nameOf(project))) : []
   const { conversations = [], files = [] } = library.value ?? {}
   return [
-    { heading: settings, options: places.map((place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
+    { heading: settings, options: sections.map((place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
     { heading: t('cap.projects.name'), options: projects.map((project) => ({
       icon: icons.layers, title: lit(nameOf(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
     })) },

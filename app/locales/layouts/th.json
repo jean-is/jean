@@ -4,5 +4,6 @@
   "layouts.tip": "เคล็ดลับ",
   "layouts.important": "สำคัญ",
   "layouts.warning": "คำเตือน",
-  "layouts.caution": "ข้อควรระวัง"
+  "layouts.caution": "ข้อควรระวัง",
+  "layouts.ticked": "{done} จาก {total}"
 }

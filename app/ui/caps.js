@@ -1,8 +1,9 @@
 // Capabilities: one module each, imported when it is first needed (unlocking it), then
 // remembered. A capability may add tools and prompt lines, which conversations started
 // later declare in their frozen prompt; an earlier conversation gets them through a
-// system note (D46, D47). Policy can deny a capability (never offered, never downloaded)
-// or unlock it in advance (docs/enterprise.md).
+// system note (D46, D47). What it does on Jean's events are its hooks (core/hooks.js), and what it
+// draws in the room's slots its slots, so the room knows none of them by name. Policy can deny a
+// capability (never offered, never downloaded) or unlock it in advance (docs/enterprise.md).
 import { signal } from '@preact/signals-core'
 
 /**
@@ -12,13 +13,17 @@ import { signal } from '@preact/signals-core'
  * @property {{ name: string, line: string }[]} [lines]  one line per tool, for the prompt
  * @property {string[]} [rules]                           a few prompt rules
  * @property {() => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, skills)
- * @property {typeof import('../core/llm.js').streamChat} [stream]  a brain that runs here (the on-device brain)
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
- * @property {() => unknown} [panel]                      its section of Settings (connections), or its part of one (sync)
  * @property {() => { name: string, logo?: string, tools: string[] }[]} [searches]  what else of it searches the web (D271)
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)
- * @property {() => unknown} [main]                       what it shows in the main area in place of the welcome, on a new task (flow mode, D218)
- * @property {(conversation: { id: string, path: string }, from?: { id: string, records: import('../core/types.js').Envelope[] }) => Promise<void>} [started]  a conversation was just made by its first message, or duplicated from another (a folder it keeps, D149, D230)
+ * @property {import('../core/hooks.js').Hook[]} [hooks]  what it does on Jean's events: task.start, turn.step, tool.check, turn.end…
+ * @property {Record<string, Slot>} [slots]  what it draws in the room's slots, by name: views, main, above, add, activity, settings…
+ */
+
+/**
+ * An entry in one of the room's slots: where it goes among the others (lowest first), and how it is drawn,
+ * with whatever else its slot reads (a section of Settings: its id, label and icon).
+ * @typedef {{ at: number, draw: (props?: any) => unknown } & Record<string, any>} Slot
  */
 
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
@@ -53,9 +58,11 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   charts: () => import('../caps/charts/charts.js'),
   scores: () => import('../caps/scores/scores.js'),
   slides: () => import('../caps/slides/slides.js'),
+  interactive: () => import('../caps/interactive/interactive.js'),
   pictures: () => import('../caps/pictures/pictures.js'),
   receipt: () => import('../caps/receipt/receipt.js'),
   certificates: () => import('../caps/certificates/certificates.js'),
+  plugins: () => import('../caps/plugins/plugins.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
@@ -117,5 +124,10 @@ export function contributions() {
     lines: caps.flatMap((cap) => cap.lines ?? []),
     rules: caps.flatMap((cap) => cap.rules ?? []),
     sections: caps.flatMap((cap) => (cap.sections ? [cap.sections] : [])),
+    // Each says whose it is: a capability's own are by its id (D299).
+    hooks: caps.flatMap((cap) => (cap.hooks ?? []).map((hook) => (hook.by ? hook : { ...hook, by: cap.id }))),
   }
 }
+
+/** What the loaded capabilities have in one of the room's slots, in their order. @param {string} name @returns {Slot[]} */
+export const slots = (name) => [...loaded.value.values()].flatMap((cap) => cap.slots?.[name] ?? []).sort((a, b) => a.at - b.at)

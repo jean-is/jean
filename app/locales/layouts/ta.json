@@ -4,5 +4,6 @@
   "layouts.tip": "உதவிக்குறிப்பு",
   "layouts.important": "முக்கியம்",
   "layouts.warning": "எச்சரிக்கை",
-  "layouts.caution": "கவனம்"
+  "layouts.caution": "கவனம்",
+  "layouts.ticked": "{total}-இல் {done}"
 }

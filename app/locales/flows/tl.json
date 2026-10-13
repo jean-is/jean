@@ -46,5 +46,6 @@
   "flows.after": "Kinukuha ang mga resulta ng",
   "flows.each": "Isang beses para sa bawat item ng listahang kinukuha nito",
   "flows.result": "Huling resulta",
-  "flows.remove": "Alisin ang hakbang na ito"
+  "flows.remove": "Alisin ang hakbang na ito",
+  "flows.asFlow": "Tingnan bilang daloy"
 }

@@ -154,7 +154,7 @@ label.item, .list summary { cursor: pointer; }
 .art { position: absolute; inset-inline: -1rem; inset-block-end: -0.35rem; block-size: 5.5rem; color: var(--flame); fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
 .art .on { stroke: var(--on-flame); } [data-state='asleep'] .art .leds { fill-opacity: 0.3; } :is([data-state='ready'], [data-state='working']) .art .screen { fill-opacity: 0.42; }
 :not([data-state='ready']) > .art .link.on { stroke: currentColor; } [data-state='ready'] .art .link.badge { fill-opacity: 1; }
-:is([data-state='waking'], [data-state='working']) .art .cursor { animation: cursor 1s steps(1) infinite; } @keyframes cursor { 50% { opacity: 0; } }
+:is([data-state='waking'], [data-state='working']) .art .cursor { animation: cursor 1s steps(1) infinite var(--loops, running); } @keyframes cursor { 50% { opacity: 0; } }
 @media (forced-colors: active) { .art .on { stroke: Canvas; } :not([data-state='ready']) > .art .link.on { stroke: CanvasText; } }
 /* Under the card chosen, its name and state again only for screen readers, a heading and a live status. */
 #computer-shown > section:first-child h3 { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

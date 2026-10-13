@@ -11,7 +11,6 @@
   "machine.computers": "電腦",
   "machine.lede": "任務使用隔離環境，只有你在這台電腦上連接的資料夾裡的任務除外。",
   "machine.off": "未連接",
-  "machine.in": "在 {folder} 中",
   "machine.step.open": "在你的某個資料夾中開啟終端機。",
   "machine.step.paste": "在那裡貼上這一行，然後按 Enter。",
   "machine.step.wait": "正在等待這一行執行：此頁面會自動察覺。",

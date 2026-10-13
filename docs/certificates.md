@@ -85,6 +85,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - Sigstore's Rekor, its answer kept as a Sigstore bundle;
   - the gateway's `timestamps` and `logs`;
   - Jean checks the log's promise with the log's key.
+- **The AI Act's mark on pictures made here** (D279): each picture made on this device or by a server on this computer carries IPTC's `DigitalSourceType` `trainedAlgorithmicMedia`, with AI System Used and AI System Version Used, as XMP in an `iTXt` chunk (`caps/pictures/mark.js`), written before the file is named by its hash, so the certificate's digest covers the marked file; a provider's picture is left as it comes.
 - **Tests:**
   - `test/receipt.test.js` (format, salting, schema with ajv, Node's own crypto as the independent verifier, witnesses);
   - `test/der.test.js`, `test/gateway.test.js`, `test/certificates.spec.js`;
@@ -143,10 +144,10 @@ Then:
 
 ### 4. AI Act marking (Art. 50(2) and (4)): blocks the public launch
 
-- [ ] **Pictures and films made on this device**, two layers:
-  - **Metadata:** a C2PA manifest with `c2pa.created`, `digitalSourceType` `trainedAlgorithmicMedia`, the model and its revision, and a `c2pa.hash.data` hard binding. It is signed with the device's X.509 certificate and timestamped by the witnesses. IPTC/XMP `DigitalSourceType` as well.
+- [ ] **Pictures made on this device or by a server on this computer** (the device makes no films), two layers. The IPTC/XMP metadata is done (D279); left:
+  - **Metadata:** a C2PA manifest with `c2pa.created`, `digitalSourceType` `trainedAlgorithmicMedia`, the model and its revision, and a `c2pa.hash.data` hard binding. It is signed with the device's X.509 certificate and timestamped by the witnesses.
   - **Watermark:** an imperceptible one, for example Adobe's open-source TrustMark, on ONNX Runtime, with weights pinned by `ui/weights.js`. Choosing it is a dependency decision.
-  - **Order:** mark before the file is named by its hash, so the certificate's digest covers the marked file.
+  - **Order:** mark before the file is named by its hash, so the certificate's digest covers the marked file, as `make()` does for the XMP.
   - **Code:** JUMBF, CBOR and COSE, or c2pa-rs in WASM, loaded on demand (its own decision).
 - [ ] **Pictures and films from the cloud:** pass the providers' marks through untouched, with a test that the bytes are unchanged.
 - [ ] **Files Jean makes** (`caps/made/formats.js`): metadata where the format can carry it.

@@ -11,7 +11,6 @@
   "machine.computers": "コンピューター",
   "machine.lede": "タスクは安全な環境を使います。このコンピューターでつないだフォルダーのタスクだけは別です。",
   "machine.off": "未接続",
-  "machine.in": "{folder} で",
   "machine.step.open": "自分のフォルダーのひとつでターミナルを開きます。",
   "machine.step.paste": "そこにこの行を貼り付けて、Enter を押します。",
   "machine.step.wait": "この行が動くのを待っています。このページは自動で気づきます。",

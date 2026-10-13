@@ -24,7 +24,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 ## Security rules
 
 - Never combine `allow-scripts` and `allow-same-origin` on an iframe that could hold Jean's own origin: code a brain wrote, a file, Jean's pages. The browser's frame, which only ever holds another site, is the one exception (D140).
-- Untrusted code (JavaScript or Python written by a model) runs only in the sandbox worker started by `sandbox.html`, never in the main document.
+- Untrusted code (JavaScript or Python written by a model, a plugin's module) runs only in a sandbox worker started by `sandbox.html`, never in the main document.
 - In the main document: no `innerHTML`, no `eval`, no `new Function`. Markdown is rendered from `marked` tokens into lit-html templates. Trusted Types is enforced.
 - No hard-coded third-party URL. Every external address comes from settings or policy.
 - Secrets never enter backups, exports, syncs or shares.
@@ -51,7 +51,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## UI rules
 
-- **Components:** custom elements, light DOM, prefix `app-`. One module per capability defines its elements and registers its tools; unlocking a capability means `import()`-ing that module.
+- **Components:** custom elements, light DOM, prefix `app-`. One module per capability defines its elements and registers its tools, hooks and slots (D293). Unlocking a capability means `import()`-ing that module.
 - **Strings:**
   - Every user-facing string goes through `t()`.
   - Never build sentences by concatenating strings.
@@ -97,6 +97,8 @@ npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
+npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
+npm run concepts  # read the picture check's words into app/caps/pictures/concepts.json, after changing one (D280)
 npm run documents # the document evals: corpus, retrieval, answers through OpenRouter, benches (-- --report --write)
 npm run directory # check from a browser's point of view which known services and sources of skills Jean can reach
 npm run serve   # serve app/ as it is

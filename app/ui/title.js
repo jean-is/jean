@@ -2,12 +2,13 @@
 // the conversation, by the simplest brain at hand: the fast model of the provider answering, or
 // that brain itself. The message goes where it is going anyway, and the conversation's prompt
 // and cache are untouched. When there is no brain to ask, the message's first words.
-import { app, loadModels, refreshConversations } from './state.js'
+import { app, loadModels, refreshConversations, keepRecords } from './state.js'
 import { getSecret } from './secrets.js'
 import { TIERS } from './auto.js'
-import { appendRecords } from '../core/conversations.js'
 import { linkedFiles, metaRecord, openingOf, routineOf, titleOf } from '../core/events.js'
 import { firstWords } from '../core/i18n.js'
+import { fire } from '../core/hooks.js'
+import { contributions } from './caps.js'
 
 /** @import { Envelope, BrainConfig } from '../core/types.js' */
 
@@ -23,9 +24,10 @@ const naming = new Map()
 export function nameConversation(path, records, brain) {
   if (titleOf(records) || naming.has(path)) return naming.get(path)
   const job = titleFor(records, brain).then(async (title) => {
-    if (!title) return
+    // The user named it meanwhile (D288).
+    if (!title || app.conversations.peek().find((item) => item.path === path)?.title) return
     const record = metaRecord(app.deviceId, { title })
-    await appendRecords(app.fs, path, [record])
+    await keepRecords(path, [record])
     const current = app.current.peek()
     if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
     await refreshConversations()
@@ -47,17 +49,17 @@ async function titleFor(records, brain) {
   if (brain.api === 'device') return fallback
   try {
     const { streamChat } = await import('../core/llm.js')
-    const asked = await simplest(brain)
+    const [asked, apiKey] = await Promise.all([simplest(brain), getSecret(app.fs, brain.id)])
     let reply = ''
-    const events = streamChat({
+    // A step of its own, through the capabilities' hooks as a turn's are.
+    const events = await fire(contributions().hooks, 'turn.step', {
       brain: asked,
-      apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
       system: [TITLER, app.policy.instructions].filter(Boolean).join('\n\n'),
       messages: [{ role: 'user', content: [text.slice(0, 2000), names.length ? `(${names.join(', ')})` : ''].filter(Boolean).join('\n\n') }],
       tools: [],
       maxTokens: 400,
       signal: AbortSignal.timeout(20_000),
-    })
+    }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
     for await (const event of events) if (event.type === 'text') reply += event.delta
     return tidy(reply) || fallback
   } catch (error) {

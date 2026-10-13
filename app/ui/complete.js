@@ -153,13 +153,10 @@ const words = (label, detail = '') => searchable(`${label} ${detail}`)
 // ─── / ───────────────────────────────────────────────────────────────────────
 
 /** A skill's icon, as Jean's own directory draws it, or a scroll. @param {string} [path] */
-const drawn = (path) => (path ? html`<svg class="icon" viewBox="0 0 24 24" focusable="false"><path d=${path}></path></svg>` : icons.scroll)
+export const drawn = (path) => (path ? html`<svg class="icon" viewBox="0 0 24 24" focusable="false"><path d=${path}></path></svg>` : icons.scroll)
 
-/** Jean's own ready-made skills (D196), read once, unless policy keeps to the organisation's sources. */
-async function directory() {
-  if (loaded.value.has('skills')) return (await import('../caps/skills/skills.js')).directory()
-  return app.policy.skills?.only ? [] : (await import('../caps/skills/directory.js')).readDirectory()
-}
+/** Jean's own ready-made skills (D196), as Skills reads them. */
+const directory = async () => (await import('../caps/skills/skills.js')).directory()
 
 /** The room's skills, each in the user's language when it gives its name in it (D222). @type {Maker} */
 async function skillsHere(show) {
@@ -173,7 +170,7 @@ async function skillsHere(show) {
 }
 
 /** A service's logo (D159), or its first letter. @param {string} name @param {string} [logo] */
-const logoOf = (name, logo) => (logo ? html`<img class="complete-logo" src=${new URL(`../caps/connections/logos/${logo}`, import.meta.url).href} alt="">`
+export const logoOf = (name, logo) => (logo ? html`<img class="complete-logo" src=${new URL(`../caps/connections/logos/${logo}`, import.meta.url).href} alt="">`
   : html`<span class="complete-logo" aria-hidden="true">${[...name][0]}</span>`)
 
 /** The room's connections. @type {Maker} */
@@ -200,13 +197,13 @@ async function canDo(show) {
 }
 
 /**
- * Ready-made skills the room doesn't have: Jean's own, then, once skills are on, those its sources
+ * Ready-made skills the room doesn't have, once Skills is found: Jean's own, then those its sources
  * publish (D121). Picked, one is read before it is added, and named in the box. @type {Maker}
  */
 async function readySkills(show) {
-  if (isDenied('skills')) return
-  const skills = loaded.value.has('skills') ? await import('../caps/skills/skills.js') : null
-  const [have, own, { siteOf }, { shownIn }] = await Promise.all([skills ? skills.skills() : [], directory(), import('../caps/skills/sources.js'), import('../caps/skills/directory.js')])
+  if (!loaded.value.has('skills')) return
+  const skills = await import('../caps/skills/skills.js')
+  const [have, own, { siteOf }, { shownIn }] = await Promise.all([skills.skills(), directory(), import('../caps/skills/sources.js'), import('../caps/skills/directory.js')])
   /** @param {(import('../caps/skills/sources.js').Entry & { icon?: string })[]} entries */
   const group = (entries) => {
     const names = new Set(have.map((skill) => skill.name))
@@ -219,30 +216,30 @@ async function readySkills(show) {
       list.push({ icon: drawn(entry.icon), label, detail, ...(entry.digest && { aside: siteOf(entry.url) }), add: true,
         words: words(`${entry.name} ${label}`, detail), pick: async () => {
           put(`/${entry.name}`)
-          if (await unlock('skills')) (await import('../caps/skills/ready.js')).preview(entry)
+          return import('../caps/skills/ready.js').then((module) => module.preview(entry))
         } })
     }
     return { heading: t('skills.directory'), options: list }
   }
   show(group(own))
-  if (skills) show(group([...own, ...(await skills.offered()).flatMap((index) => index.skills)]))
+  show(group([...own, ...(await skills.offered()).flatMap((index) => index.skills)]))
 }
 
 /**
- * Services Jean knows that aren't connected yet, those it can reach. Picked, one is connected,
- * its sign-in included, and named in the box. @type {Maker}
+ * Services Jean knows that aren't connected yet, those it can reach, once Connections is found.
+ * Picked, one is connected, its sign-in included, and named in the box. @type {Maker}
  */
 async function services(show) {
-  if (isDenied('connections')) return
-  const connections = loaded.value.has('connections') ? await import('../caps/connections/connections.js') : null
-  const known = connections ? connections.services() : (await import('../caps/connections/directory.js')).known(app.policy)
+  if (!loaded.value.has('connections')) return
+  const connections = await import('../caps/connections/connections.js')
+  const known = connections.services()
   const have = new Set([...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])].map((connection) => connection.url))
   const list = new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' })
   show({ heading: t('cap.connections.yes'), options: known.filter((entry) => entry.via && entry.url && !have.has(entry.url)).map((entry) => ({
     icon: logoOf(entry.name, entry.logo), label: entry.name, ...(entry.includes && { detail: list.format(entry.includes) }), add: true,
     words: words(entry.name, entry.includes?.join(' ')), pick: async () => {
       put(`/${entry.name}`)
-      if (await unlock('connections')) await (await import('../caps/connections/connections.js')).connectService(entry)
+      await connections.connectService(entry)
     },
   })) })
 }

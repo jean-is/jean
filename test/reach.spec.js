@@ -52,7 +52,7 @@ test('a service Jean knows connects in one click; those not reached yet are ther
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
   await expect(dialog.getByRole('button', { name: 'Notion' })).toBeEnabled()
-  for (const name of ['Gmail', 'Microsoft 365', 'Google Meet']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
+  for (const name of ['Gmail', 'Microsoft 365', 'Google Meet', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
   // Any other service is behind the + at the top.
   await expect(dialog.locator('#connection-add')).toHaveCount(0)
   await expect(dialog.locator('.panel-head .icon-button')).toHaveAttribute('aria-expanded', 'false')

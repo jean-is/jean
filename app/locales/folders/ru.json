@@ -37,5 +37,6 @@
   "folders.undo.elsewhere": "Эта задача теперь работает в другой папке.",
   "folders.field": "Папка на этом компьютере",
   "folders.field.none": "Нет: новые задачи здесь начинаются без папки.",
-  "folders.choose": "Выбрать…"
+  "folders.choose": "Выбрать…",
+  "folders.add": "Папку…"
 }

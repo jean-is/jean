@@ -4,5 +4,6 @@
   "layouts.tip": "Mẹo",
   "layouts.important": "Quan trọng",
   "layouts.warning": "Cảnh báo",
-  "layouts.caution": "Thận trọng"
+  "layouts.caution": "Thận trọng",
+  "layouts.ticked": "{done} trên {total}"
 }

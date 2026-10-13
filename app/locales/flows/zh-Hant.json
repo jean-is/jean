@@ -46,5 +46,6 @@
   "flows.after": "接收以下結果",
   "flows.each": "對接收的清單中每一項各執行一次",
   "flows.result": "上次結果",
-  "flows.remove": "移除此步驟"
+  "flows.remove": "移除此步驟",
+  "flows.asFlow": "以流程檢視"
 }

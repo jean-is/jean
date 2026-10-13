@@ -4,5 +4,6 @@
   "layouts.tip": "Suggerimento",
   "layouts.important": "Importante",
   "layouts.warning": "Avviso",
-  "layouts.caution": "Attenzione"
+  "layouts.caution": "Attenzione",
+  "layouts.ticked": "{done} su {total}"
 }

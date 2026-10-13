@@ -1,0 +1,7 @@
+{
+  "interactive.page": "操作できるページ",
+  "interactive.diagram": "図",
+  "interactive.map": "地図",
+  "interactive.mapShow": "地図を表示",
+  "interactive.mapFrom": "地図は {site} から読み込まれ、表示する場所が相手に伝わります。"
+}

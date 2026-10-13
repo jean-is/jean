@@ -36,5 +36,6 @@
   "folders.undo.elsewhere": "המשימה הזו עובדת עכשיו בתיקייה אחרת.",
   "folders.field": "תיקייה במחשב הזה",
   "folders.field.none": "אין: משימות חדשות כאן מתחילות בלי תיקייה.",
-  "folders.choose": "בחירה…"
+  "folders.choose": "בחירה…",
+  "folders.add": "תיקייה…"
 }

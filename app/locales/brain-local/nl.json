@@ -2,11 +2,11 @@
   "private.name": "Privé · offline",
   "private.away": "Offline · antwoordt nog steeds",
   "private.title": "Alles blijft op dit apparaat",
-  "private.text": "Antwoorden worden hier geschreven, in dit browsertabblad: geen server, geen account, niets te installeren. Weinig assistenten kunnen dat.",
-  "private.private": "Je gesprekken verlaten dit apparaat nooit",
+  "private.text": "Antwoorden worden in dit tabblad geschreven, zonder server en zonder installatie. Weinig assistenten kunnen dat.",
+  "private.private": "Privé, er gaat niets naar buiten",
   "private.free": "Gratis, zonder account of sleutel",
   "private.offline": "Blijft antwoorden zonder internet",
-  "private.try": "Probeer het: zet wifi uit en vraag iets.",
+  "private.try": "Zet wifi uit en kijk maar.",
   "private.still": "Je bent offline, en de antwoorden blijven komen.",
   "private.proof": "Het schild onder elk antwoord is het bewijs, uit de eigen registratie van je browser."
 }

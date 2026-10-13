@@ -7,6 +7,7 @@
 import { html, render, svg, nothing } from 'lit-html'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
+import { drawn } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { lex, blocks, inline } from '../../ui/markdown.js'
@@ -117,3 +118,4 @@ class AppSlides extends HTMLElement {
 }
 
 customElements.define('app-slides', AppSlides)
+drawn.value = { ...drawn.peek(), marp: (source, open) => html`<app-slides source=${source} ?open=${open}></app-slides>` }

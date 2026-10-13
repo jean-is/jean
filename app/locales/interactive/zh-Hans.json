@@ -1,0 +1,7 @@
+{
+  "interactive.page": "交互页面",
+  "interactive.diagram": "图示",
+  "interactive.map": "地图",
+  "interactive.mapShow": "显示地图",
+  "interactive.mapFrom": "地图来自 {site}，它会看到所显示的地点。"
+}

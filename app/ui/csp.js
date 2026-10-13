@@ -3,7 +3,7 @@
 // ahead of the page.
 
 /** Its own scripts run, and it may fill the screen and save files; nothing comes from the web, and nothing goes to it. */
-export const PAGE_DEFAULTS = Object.freeze({ scripts: true, fullscreen: true, downloads: true, web: false, network: false })
+export const PAGE_DEFAULTS = Object.freeze({ scripts: true, fullscreen: true, downloads: true, web: false, network: false, maps: false })
 
 /** @typedef {keyof typeof PAGE_DEFAULTS} PageRight */
 /** @typedef {Partial<Record<PageRight, boolean>> & { sites?: string[] }} PageSettings  sites: what its code may reach, any when empty */
@@ -67,3 +67,10 @@ export function pagePolicy({ scripts, web, network }, sites = [], folder = false
  * @param {Record<PageRight, boolean>} allows
  */
 export const pageAllow = ({ fullscreen }) => (fullscreen ? 'fullscreen *; clipboard-write *' : 'clipboard-write *')
+
+/**
+ * The frame's flags: its scripts, never with allow-same-origin, and its forms, since Chromium fires
+ * a form's submit, and closes a dialog by its form, only where forms are allowed, so a page that
+ * works out its sum on Enter did nothing. None is sent: both policies' form-action is 'none'.
+ */
+export const PAGE_SANDBOX = 'allow-scripts allow-forms'

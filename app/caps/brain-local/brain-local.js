@@ -4,7 +4,7 @@
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { weightsHost } from '../../ui/state.js'
-import { modelWorker, downloading } from '../../ui/model.js'
+import { modelWorker, downloading, holdStill } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { gemmaParser } from './gemma.js'
 import './private.js'
@@ -79,7 +79,7 @@ export async function prepare() {
  */
 export async function* stream({ system, messages, tools = [], maxTokens, signal }) {
   if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
-  await prepare()
+  await holdStill(prepare())
   const parser = gemmaParser()
   /** @type {StreamEvent[]} */
   const queue = []
@@ -95,13 +95,13 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
     queue.push(.../** @type {StreamEvent[]} */ (events))
     wake?.()
   }
-  worker.call({
+  holdStill(worker.call({
     type: 'generate',
     messages: openaiMessages(system, messages, { systemNotes: false, argsAsObject: true }),
     tools: tools.map(({ name, description, parameters }) => ({ type: 'function', function: { name, description, parameters } })),
     maxTokens: maxTokens ?? 4096,
     contextTokens: CONTEXT,
-  }, { id, onMessage: (message) => { if (message.type === 'chunk') push(parser.feed(message.text)) } }).then((done) => {
+  }, { id, onMessage: (message) => { if (message.type === 'chunk') push(parser.feed(message.text)) } })).then((done) => {
     push(parser.end())
     finished = { usage: done.usage }
   }, (error) => {
@@ -142,4 +142,5 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   }
 }
 
-register({ id: 'brain-local', stream })
+// It answers the steps of a turn on the device's brain itself (core/hooks.js), and leaves the others to their brains.
+register({ id: 'brain-local', hooks: [{ on: 'turn.step', run: (e, next) => (e.brain.api === 'device' ? stream(e) : next(e)) }] })

@@ -4,17 +4,19 @@
 // state.js's send, retry, rewind, fork and warm load it.
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
-import { createConversation, appendRecords, rewriteRecords } from '../core/conversations.js'
-import { envelope, userRecords, toChatMessages, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered } from '../core/events.js'
-import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../core/prompt.js'
-import { resolveRule, ruleFromPermission } from '../core/rules.js'
+import { createConversation, rewriteRecords } from '../core/conversations.js'
+import { envelope, userRecords, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered, routineOf, filesMade, callsIn } from '../core/events.js'
+import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes, toChatMessages } from '../core/prompt.js'
+import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
+import { yes } from './yes.js'
+import { fire } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
-import { loaded, unlock, contributions } from './caps.js'
+import { unlock, contributions, slots } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, openConversation, turnPage, beginRun, endRun, stop, CITED,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -25,8 +27,6 @@ import {
 const DOCUMENT_SHARE = 0.25
 const DEVICE_CONTEXT = 32768
 const DEFAULT_CONTEXT = 128000
-// What a read-only turn may do ("Since last time"): read, search, look things up, work things out.
-const READING = new Set(['read', 'search', 'fetch', 'think', 'execute'])
 // Anthropic's default cache lifetime is 5 minutes (D49).
 const CACHE_TTL_MS = 5 * 60_000
 // Work in a folder takes more steps than a turn's usual 12 (D141).
@@ -85,13 +85,13 @@ function contextTokens(brain) {
 /**
  * Links for the files about to be sent. Each records which pages go into the context,
  * decided now against the brain's budget and then frozen (files.js).
- * @param {BrainConfig} brain @param {Envelope[]} records
+ * @param {BrainConfig} brain @param {Envelope[]} records @param {import('./state.js').Attachment[]} items
  */
-function attachedLinks(brain, records) {
+function attachedLinks(brain, records, items) {
   let budget = contextTokens(brain) * DOCUMENT_SHARE
   /** @type {ResourceLink[]} */
   const links = []
-  for (const item of app.attachments.value) {
+  for (const item of items) {
     if (item.status !== 'ready' || !item.link || !item.pages) continue
     const [first, last] = pagesThatFit(item.pages, Math.max(budget, 1))
     budget -= item.pages.slice(0, last).reduce((sum, page) => sum + estimateTokens(page), 0)
@@ -124,8 +124,8 @@ function queue(decision) {
 /** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @param {AbortSignal} [signal] @returns {Promise<Answer[] | null>} */
 export const askUser = (questions, from, signal) => queue({ questions, from, conversation: conversationOf(signal)?.path })
 
-/** What an approval is kept to, when its tool keeps "Always allow" itself. */
-const SCOPES = ['folder', 'site', 'projects', 'film']
+/** What an approval is kept to, when its tool keeps "Always allow" itself; or a guard's, which keeps asking (D295). */
+const SCOPES = ['folder', 'site', 'projects', 'film', 'guard']
 
 /**
  * An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then
@@ -168,13 +168,14 @@ async function context() {
 /**
  * The records a message adds: the frozen prompt when the conversation has none yet, or
  * notes for what changed since (D46), any notes the message comes with, then the message itself.
- * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes]
+ * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes] @param {import('./state.js').Attachment[]} [items] the files it shares
  */
-async function prepare(text, brain, records, notes = []) {
+async function prepare(text, brain, records, notes = [], items = app.attachments.value) {
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
   // so do questions, so the brain can ask from the start (D146), noting the user's name (D150), and
-  // the receipt, so the browser's record of what the page reached covers the first answer (D252).
-  await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('receipt')])
+  // the receipt, so the browser's record of what the page reached covers the first answer (D252), and
+  // pages, for their rule (D289); each comes back at the next visit, so pages already written show again.
+  await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('receipt'), unlock('interactive')])
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred).map((tool) => tool.spec.name)
@@ -184,7 +185,7 @@ async function prepare(text, brain, records, notes = []) {
   const head = frozen
     ? changeNotes(frozen.state, now, sections)
     : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
-  return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records), app.deviceId)]
+  return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records, items), app.deviceId)]
 }
 
 // ─── Auto ────────────────────────────────────────────────────────────────────
@@ -233,12 +234,12 @@ async function pickBrain(text, records, boost = 0) {
 /**
  * Sends a message, once a page being turned is (state.js's send waits for it).
  * @param {string} text
- * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any } }} [options] boost: Auto's levels above the last
+ * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[] }} [options] boost: Auto's levels above the last
  *   answer's; notes: what the brain is told just before the message ("Since last time"); call: the one call the turn is,
- *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218)
+ *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218); files: what it
+ *   shares, if not the box's (the file that set a routine off, D294)
  */
-export async function send(text, { boost = 0, notes = [], call } = {}) {
-  const files = app.attachments.value
+export async function send(text, { boost = 0, notes = [], call, files = app.attachments.value } = {}) {
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) {
@@ -260,19 +261,24 @@ export async function send(text, { boost = 0, notes = [], call } = {}) {
   const { brain, meta } = picked
   // What / and @ named in it, told just before it (D199).
   const named = /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : []
-  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named])
+  // What the box's modes ask of it (Visual answers, D300), told just before it too.
+  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? []) ?? [])
+  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named, ...modes], files)
   app.draft.value = ''
-  app.attachments.value = []
+  if (files === app.attachments.value) app.attachments.value = []
   if (!current) {
     const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
     current = { id: created.id, path: created.path, records: [] }
     // What it keeps from the start, like the folder it starts on (D149).
-    await Promise.all([...loaded.value.values()].map((capability) => capability.started?.(created)))
+    await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id }, () => {})
   }
-  await appendRecords(app.fs, current.path, added)
+  await keepRecords(current.path, added)
   // Listed at once, to come back to.
   if (!current.records.length) refreshConversations()
   const next = { ...current, records: [...current.records, ...added] }
+  // Each file it shares may set a routine off (D294), unless this is a routine's own run.
+  const routine = routineOf(next.records)?.routine
+  for (const file of linkedFiles(added)) fire(contributions().hooks, 'file.add', { task: next.path, file, routine }, () => {})
   const show = () => { app.current.value = next }
   // Unless the user went elsewhere meanwhile: then it is answered out of sight (D147).
   if (app.current.peek()?.path === from) {
@@ -294,7 +300,7 @@ export async function retry() {
 }
 
 /**
- * Goes back to a request: what came after it is gone from the conversation, but its title, and the
+ * Goes back to a request: what came after it is gone from the conversation, but its title and pin, and the
  * request is answered again (D188). @param {number} upTo how many records lead up to its end
  */
 export async function rewind(upTo) {
@@ -304,7 +310,7 @@ export async function rewind(upTo) {
   await new Promise((resolve) => { const done = effect(() => { if (!app.running.value.includes(path ?? '')) queueMicrotask(() => resolve(done())) }) })
   const current = app.current.value
   if (!current || current.path !== path || app.busy.value) return
-  const records = [...current.records.slice(0, upTo), ...current.records.slice(upTo).filter((record) => record.meta?.title)]
+  const records = [...current.records.slice(0, upTo), ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
   await rewriteRecords(app.fs, current.path, records)
   app.current.value = { ...current, records }
   await retry()
@@ -323,9 +329,9 @@ export async function fork(upTo) {
   const records = [...current.records.slice(0, from), ...current.records.slice(upTo).filter((record) => record.meta?.title),
     ...current.records.slice(from, upTo).map((record) => ({ ...record, at }))]
   const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
-  await appendRecords(app.fs, created.path, records)
+  await keepRecords(created.path, records)
   // What it keeps from the one it comes from, like its folder (D149).
-  await Promise.all([...loaded.value.values()].map((capability) => capability.started?.(created, current)))
+  await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id, from: current }, () => {})
   await turnPage(() => openConversation(created.path))
   refreshConversations()
   const picked = await pickBrain('', records)
@@ -353,8 +359,6 @@ async function runAgent(conversation, brain, meta, call) {
 
   beginRun(run)
   try {
-    // A brief of what's new since last time only reads, whatever the rules say.
-    const readOnly = foldTurns(sent).at(-1)?.notes.some((note) => note.data.kind === 'since')
     // The loop and the brains' adapters load with the first message, not with the first screen.
     const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
     const frozen = frozenPrompt(sent)
@@ -362,8 +366,8 @@ async function runAgent(conversation, brain, meta, call) {
     const one = call && { id: `call-${Date.now().toString(36)}`, ...call }
     const resume = one ? { step: 0, calls: [one] } : unanswered(sent)
     const messages = toChatMessages(sent, await documents(sent, brain), resume)
+    // The device's brain answers its steps itself, through its turn.step hook.
     if (brain.api === 'device') await unlock('brain-local')
-    const stream = brain.api === 'device' ? loaded.value.get('brain-local')?.stream : undefined
     asked.set(path, Date.now())
     const { settings } = effective.value
     await runTurn({
@@ -375,14 +379,17 @@ async function runAgent(conversation, brain, meta, call) {
       // Every tool can be called from a script; the brain sees the declared ones (D47).
       tools: () => contributions().tools,
       declared: frozen?.state.tools ?? [],
-      ...(stream && { stream }),
       label: brainLabel(brain),
       meta,
       firstSource: nextSource(sent),
       ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
       ...(one && { maxSteps: 1 }),
       signal: run.controller.signal,
-      rule: (kind, reserved) => (readOnly && !READING.has(kind) ? 'never' : resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved })),
+      // The organisation's guards and the person's (D295), then the capabilities' hooks, with the task and the kinds of
+      // note its turn came with (a brief of what's new since last time only reads).
+      hooks: () => [...guardHooks(app.policy.guards ?? [], 'policy', yes), ...guardHooks(app.settings.value.guards ?? [], 'user', yes), ...contributions().hooks],
+      about: { task: path, notes: foldTurns(sent).at(-1)?.notes.map((note) => note.data.kind) ?? [] },
+      rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
         if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
@@ -391,7 +398,7 @@ async function runAgent(conversation, brain, meta, call) {
       },
       persist: async (records) => {
         settled.push(...records)
-        await appendRecords(app.fs, path, records)
+        await keepRecords(path, records)
       },
     })
     // What the one call gave for the user to read is the answer.
@@ -400,7 +407,7 @@ async function runAgent(conversation, brain, meta, call) {
     if (text) {
       const answer = envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)
       settled.push(answer)
-      await appendRecords(app.fs, path, [answer])
+      await keepRecords(path, [answer])
     }
     if (shown()) setPresence('done')
   } catch (error) {
@@ -419,24 +426,26 @@ async function runAgent(conversation, brain, meta, call) {
       app.busy.value = false
       app.live.value = null
     }
-    await refreshConversations()
-    setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const answer = lastAnswer(settled)
+    // An answer that came while the user was elsewhere waits for them, unread (D288); not one stopped, or deleted.
+    if (answer && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
+    else await refreshConversations()
+    setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records, conversation)
-    if (answer && at && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) cited(path, at, records)
+    if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted,
+      made: filesMade(callsIn(settled)), routine: routineOf(records)?.routine,
+      cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
   }
 }
 
 /**
- * An answer that cites its sources: Double-check checks it, and until it is on, citations in
- * regular use offer it (counted, an event with no language, D6).
- * @param {string} path @param {string} at @param {Envelope[]} records
+ * An answer that cites its sources: until Double-check is here to check it (its turn.end hook), citations
+ * in regular use offer it (counted, an event with no language, D6). @param {{ cites: boolean }} turn
  */
-async function cited(path, at, records) {
-  if (loaded.value.has('check')) return (await import('../caps/check/check.js')).check(path, at, records)
+async function cited({ cites }) {
   const count = effective.value.settings.cited ?? 0
-  if (count < CITED) await updateSettings({ cited: count + 1 })
+  if (cites && count < CITED) await updateSettings({ cited: count + 1 })
 }
 
 /**

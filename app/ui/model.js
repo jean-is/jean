@@ -43,6 +43,26 @@ export function modelWorker(url, stopped) {
   }
 }
 
+let working = 0
+
+/** Every loop's play state, `var(--loops, running)` in the style sheets, set on the root (CSSOM: the CSP refuses style attributes). @param {boolean} still */
+const loops = (still) => (still ? document.documentElement.style.setProperty('--loops', 'paused') : document.documentElement.style.removeProperty('--loops'))
+
+/**
+ * Holds the page still while a model works on this device's GPU (D285): every frame the browser
+ * draws waits there behind the model's work, so the page's loops pause and only what changes is
+ * drawn: typing, the answer, the picture as it forms. An entrance still plays.
+ * @template T @param {Promise<T>} work @returns {Promise<T>}
+ */
+export async function holdStill(work) {
+  loops(++working > 0)
+  try {
+    return await work
+  } finally {
+    loops(--working > 0)
+  }
+}
+
 /**
  * Weights coming in, as a download's state: loading once every byte is here. @param {{ loaded: number, total: number }} progress
  * @param {number} bytes what they are expected to weigh @returns {{ state: 'loading' } | { state: 'downloading', loaded: number, total: number }}

@@ -34,5 +34,6 @@
   "folders.undo.elsewhere": "Tugas ini sekarang bekerja di folder lain.",
   "folders.field": "Folder di komputer ini",
   "folders.field.none": "Tidak ada: tugas baru di sini dimulai tanpa folder.",
-  "folders.choose": "Pilih…"
+  "folders.choose": "Pilih…",
+  "folders.add": "Sebuah folder…"
 }

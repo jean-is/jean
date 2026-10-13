@@ -46,5 +46,6 @@
   "flows.after": "Inachukua matokeo ya",
   "flows.each": "Mara moja kwa kila kipengee cha orodha inayochukua",
   "flows.result": "Tokeo la mwisho",
-  "flows.remove": "Ondoa hatua hii"
+  "flows.remove": "Ondoa hatua hii",
+  "flows.asFlow": "Tazama kama mtiririko"
 }

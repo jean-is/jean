@@ -15,14 +15,13 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, unlock } from '../../ui/caps.js'
-import { app, conversationOf, refreshProjects, notify, assistantName, readBody } from '../../ui/state.js'
+import { app, conversationOf, refreshProjects, notify, assistantName, readBody, keepRecords } from '../../ui/state.js'
 import { folderFS } from '../../ui/opfs.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { join } from '../../core/fs.js'
 import { stringifyFrontMatter } from '../../core/settings.js'
 import { noteRecord } from '../../core/events.js'
-import { appendRecords } from '../../core/conversations.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { SPECS, USE, walkFolder, listingText, findInFolder, openText, planChange, diffLines, lastRead, topLevel, readText, exactText, replacerOf } from './work.js'
 import { copyFS, pickedFiles, droppedFiles } from './copy.js'
@@ -586,7 +585,12 @@ register({
     const folder = folderOf(app.current.peek())
     return folder ? { folder: await section(folder) } : {}
   },
-  started,
+  hooks: [{ on: 'task.start', run: async (e, next) => { await started(e, e.from); return next(e) } }],
+  slots: {
+    views: { at: 1, draw: () => html`<app-folder></app-folder>` },
+    above: { at: 1, draw: () => html`<app-folder-ask></app-folder-ask>` },
+    add: { at: 1, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => choose()}>${icons.folder}${t('folders.add')}</button>` },
+  },
 })
 
 // ─── Its pages, in the browser ───────────────────────────────────────────────
@@ -640,7 +644,7 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
       await fs.writeBytes(diff.path, before.get(call._meta?.undo) ?? await replacerOf(diff.path)(/** @type {Uint8Array} */ (bytes), String(call.rawInput?.new ?? ''), String(call.rawInput?.old ?? ''), diff.path, replaceOnce))
     }
     const note = noteRecord(`The user undid your change to ${diff.path}: it is as it was before.`, { kind: 'undone', call: call.toolCallId, path: diff.path })
-    await appendRecords(app.fs, current.path, [note])
+    await keepRecords(current.path, [note])
     const shown = app.current.peek()
     if (shown?.path === current.path) app.current.value = { ...shown, records: [...shown.records, note] }
   } catch (error) {

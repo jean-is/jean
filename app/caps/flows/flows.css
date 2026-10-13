@@ -27,7 +27,7 @@
 :root[dir='rtl'] .flows-wires { scale: -1 1; }
 .flows-wires path { fill: none; stroke: var(--line-strong); stroke-width: 2; }
 .flows-wires path:is([data-state='done'], [data-state='empty'], [data-state='running']) { stroke: oklch(from var(--flame) l c h / 0.7); }
-.flows-wires path[data-state='running'], .flows-wires .is-drawn { stroke: var(--flame); stroke-dasharray: 6 6; animation: flowing 0.8s linear infinite; }
+.flows-wires path[data-state='running'], .flows-wires .is-drawn { stroke: var(--flame); stroke-dasharray: 6 6; animation: flowing 0.8s linear infinite var(--loops, running); }
 @keyframes flowing { to { stroke-dashoffset: -12; } }
 .flows-empty { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; padding: 2rem; text-align: center; }
 
@@ -67,7 +67,7 @@
 .flow-state .icon { inline-size: 0.95rem; block-size: 0.95rem; }
 
 /* What each became: running glows, done is lit, a failure is red, what didn't run is faint. */
-.flow-step[data-state='running'] { border-color: var(--flame); box-shadow: 0 0 0.9rem oklch(from var(--glow) l c h / 0.6); animation: glowing 1.1s ease-in-out infinite; }
+.flow-step[data-state='running'] { border-color: var(--flame); box-shadow: 0 0 0.9rem oklch(from var(--glow) l c h / 0.6); animation: glowing 1.1s ease-in-out infinite var(--loops, running); }
 @keyframes glowing { 50% { box-shadow: 0 0 0.3rem oklch(from var(--glow) l c h / 0.3); } }
 .flow-step[data-state='done'] .flow-state { color: var(--flame); }
 .flow-step[data-state='asking'] { border-color: var(--flame); border-style: dashed; }

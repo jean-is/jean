@@ -74,7 +74,7 @@ test('loadConversation round-trips header and records', async () => {
   await appendRecords(fs, path, first)
   await appendRecords(fs, path, second)
   const loaded = await loadConversation(fs, path)
-  assert.deepEqual(loaded, { header, records: [...first, ...second], title: '', updatedAt: '2026-01-02T03:07:00.000Z' })
+  assert.deepEqual(loaded, { header, records: [...first, ...second], title: '', updatedAt: '2026-01-02T03:07:00.000Z', pinned: false, unread: false })
 })
 
 test('updatedAt falls back to createdAt and title to the latest meta.title', async () => {
@@ -85,12 +85,28 @@ test('updatedAt falls back to createdAt and title to the latest meta.title', asy
     records: [],
     title: '',
     updatedAt: now.toISOString(),
+    pinned: false,
+    unread: false,
   })
   await appendRecords(fs, path, [titled('2026-01-02T03:05:00.000Z', 'First'), say('2026-01-02T03:06:00.000Z', 'x')])
   await appendRecords(fs, path, [titled('2026-01-02T03:07:00.000Z', 'Second'), say('2026-01-02T03:08:00.000Z', 'y')])
   const loaded = await loadConversation(fs, path)
   assert.equal(loaded?.title, 'Second')
   assert.equal(loaded?.updatedAt, '2026-01-02T03:08:00.000Z')
+})
+
+test('the latest meta.pinned, meta.unread and meta.title hold, and none of them moves updatedAt', async () => {
+  const fs = memoryFS()
+  const a = await createConversation(fs, { projectDir, by: 'd', now })
+  const b = await createConversation(fs, { projectDir, by: 'd', now: new Date('2026-01-03T00:00:00.000Z') })
+  /** @param {Record<string, any>} meta @returns {Envelope} */
+  const marked = (meta) => ({ at: '2026-01-04T00:00:00.000Z', by: 'user', meta })
+  await appendRecords(fs, a.path, [say('2026-01-02T03:05:00.000Z', 'x'), marked({ pinned: true }), marked({ unread: true }), marked({ title: 'Renamed' })])
+  assert.deepEqual((await listConversations(fs, projectDir)).map(({ id, title, updatedAt, pinned, unread }) => [id, title, updatedAt, pinned, unread]),
+    [[b.id, '', '2026-01-03T00:00:00.000Z', undefined, undefined], [a.id, 'Renamed', '2026-01-02T03:05:00.000Z', true, true]])
+  await appendRecords(fs, a.path, [marked({ pinned: false }), marked({ unread: false })])
+  const loaded = await loadConversation(fs, a.path)
+  assert.deepEqual([loaded?.pinned, loaded?.unread], [false, false])
 })
 
 test('a malformed trailing line (crash mid-append) is ignored silently', async (t) => {
@@ -151,7 +167,7 @@ test('listConversations sorts by updatedAt desc, keeps how each opened, and skip
   const a = await createConversation(fs, { projectDir, by: 'd', now: new Date('2026-01-01T00:00:00.000Z') })
   const b = await createConversation(fs, { projectDir, by: 'd', now: new Date('2026-01-02T00:00:00.000Z') })
   const c = await createConversation(fs, { projectDir, by: 'd', now: new Date('2026-01-03T00:00:00.000Z') })
-  await appendRecords(fs, a.path, [titled('2026-01-05T00:00:00.000Z', 'A')])
+  await appendRecords(fs, a.path, [titled('2026-01-05T00:00:00.000Z', 'A'), say('2026-01-05T00:00:01.000Z', '')])
   await appendRecords(fs, b.path, [say('2026-01-04T00:00:00.000Z', 'hi')])
   await fs.write(`${projectDir}/conversations/broken.jsonl`, 'garbage\n')
   await fs.write(`${projectDir}/conversations/notes.txt`, 'ignored')
@@ -159,7 +175,7 @@ test('listConversations sorts by updatedAt desc, keeps how each opened, and skip
 
   const list = await listConversations(fs, projectDir)
   assert.deepEqual(list, [
-    { id: a.id, path: a.path, title: 'A', opening: '', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-05T00:00:00.000Z' },
+    { id: a.id, path: a.path, title: 'A', opening: '', createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-05T00:00:01.000Z' },
     { id: b.id, path: b.path, title: '', opening: 'hi', createdAt: '2026-01-02T00:00:00.000Z', updatedAt: '2026-01-04T00:00:00.000Z' },
     { id: c.id, path: c.path, title: '', opening: '', createdAt: '2026-01-03T00:00:00.000Z', updatedAt: '2026-01-03T00:00:00.000Z' },
   ])

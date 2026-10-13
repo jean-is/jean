@@ -67,7 +67,7 @@ test('offered where it can run, downloaded with consent, then answering on the d
   const card = page.locator('#private-card')
   await expect(card).toBeVisible()
   await expect(card.locator('h2')).toHaveText('Everything stays on this device')
-  await expect(card).toContainText('Try it: turn off Wi-Fi and ask something.')
+  await expect(card).toContainText('Turn off Wi-Fi and see.')
   await expect(page.locator('.toast')).toHaveCount(0)
   await page.keyboard.press('Escape')
   await expect(card).toBeHidden()
@@ -76,6 +76,12 @@ test('offered where it can run, downloaded with consent, then answering on the d
   // Nothing at the top says it twice.
   await expect(page.locator('.bar')).not.toContainText('Private')
 
+  // While it answers, the page's loops pause, and they run again once it has answered (D285).
+  const loops = () => page.evaluate(() => document.documentElement.style.getPropertyValue('--loops'))
+  await page.evaluate(() => {
+    const seen = /** @type {any} */ (window).loopsSeen = /** @type {string[]} */ ([])
+    new MutationObserver(() => seen.push(document.documentElement.style.getPropertyValue('--loops'))).observe(document.documentElement, { attributeFilter: ['style'] })
+  })
   await ask(page, 'Hello there')
   const answer = page.locator('.msg-jean .prose').last()
   await expect(answer).toContainText('On this device, I read:')
@@ -84,6 +90,8 @@ test('offered where it can run, downloaded with consent, then answering on the d
   await expect(answer).not.toContainText('<turn|>')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   expect(sent).toEqual([])
+  expect(await page.evaluate(() => /** @type {any} */ (window).loopsSeen)).toContain('paused')
+  expect(await loops()).toBe('')
 
   // Offline, it says it still answers, and does; its card says so too, and a click in it leaves it open.
   await page.context().setOffline(true)

@@ -6,7 +6,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
+import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, markConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { loaded } from './caps.js'
@@ -17,48 +17,95 @@ import { focusComposer } from './composer.js'
 
 /** Routines whose earlier runs the user unfolded or folded in the list, by the routine's file (D122). */
 const folds = signal(/** @type {Map<string, boolean>} */ (new Map()))
+/** The task whose name is being changed, by its menu's id (D288). */
+const renaming = signal(/** @type {string | null} */ (null))
 
 /**
- * The tasks, newest first, the open one marked (D165). One being answered has a light before its
- * name, ringed while a decision waits there (D147).
- * What can be done with one is in a menu at its end (D181). A routine's runs are one row, its newest, which unfolds the earlier
+ * The tasks, newest first, the open one marked (D165), those the user pinned under their own
+ * heading above the others. One being answered has a light before its name, ringed while a decision
+ * waits there (D147), and one answered since it was last open a still one (D288).
+ * What can be done with one is in a menu at its end (D181); a double click renames it too. A routine's runs are one row, its newest, which unfolds the earlier
  * ones under it by date; unfolded while one of them is open or under way (D122). Tab stops once
  * per task; the arrows do the rest (move).
  * @param {'drawer' | 'list'} where
  */
 function conversationList(where) {
+  const all = oneRowEach(app.conversations.value)
+  const pinned = all.filter((item) => item.pinned)
+  return html`${pinned.length ? html`<h2 class="sidebar-heading">${t('history.pinned')}</h2>${taskList(where, pinned)}` : nothing}
+    <h2 class="sidebar-heading">${t('history.title')}</h2>
+    ${pinned.length < all.length ? taskList(where, all.filter((item) => !item.pinned)) : pinned.length ? nothing : html`<p class="muted">${t('history.empty')}</p>`}`
+}
+
+/** One list of tasks. @param {'drawer' | 'list'} where @param {ReturnType<typeof oneRowEach>} list */
+function taskList(where, list) {
   const currentId = app.current.value?.id
   const running = app.running.value
   const waiting = [...app.decisions.value.map((decision) => decision.conversation), app.offering.value?.conversation]
   const [when, count] = [new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' }), new Intl.NumberFormat(locale.value)]
-  const rows = oneRowEach(app.conversations.value).flatMap((item) => {
+  const rows = list.flatMap((item) => {
     const earlier = item.earlier ?? []
     const open = earlier.some((run) => run.id === currentId || running.includes(run.path)) || Boolean(folds.value.get(item.routine ?? ''))
     return [{ item, earlier, open, run: false }, ...(open ? earlier.map((run) => ({ item: run, earlier: [], open: false, run: true })) : [])]
   })
   /** @param {string} routine @param {boolean} open */
   const fold = (routine, open) => { folds.value = new Map(folds.value).set(routine, !open) }
-  return rows.length ? html`<ol class="history-list" @keydown=${move}>${repeat(rows, ({ item }) => item.id, ({ item, earlier, open, run }) => {
+  return html`<ol class="history-list" @keydown=${move}>${repeat(rows, ({ item }) => item.id, ({ item, earlier, open, run }) => {
     const asks = running.includes(item.path) ? waiting.filter((path) => path === item.path).length : -1
     const menu = `task-${where}-${item.id}`
+    const name = run ? when.format(new Date(item.createdAt)) : item.title || t('conversation.untitled')
+    if (renaming.value === menu) return html`<li><input dir="auto" aria-label=${t('action.rename')} placeholder=${t('conversation.untitled')} .value=${item.title}
+      @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item, menu)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item, menu)}></li>`
     return html`<li class="${item.id === currentId ? 'is-current' : ''} ${run ? 'is-run' : ''}">
       <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'}
-        @click=${() => turnPage(() => openConversation(item.path))}>
-        ${asks < 0 ? nothing : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
-        ${item.routine && !run ? icons.alarm : nothing}<span class="history-title" dir="auto">${run ? when.format(new Date(item.createdAt)) : item.title || t('conversation.untitled')}</span>
+        @click=${() => turnPage(() => openConversation(item.path))} @dblclick=${() => item.routine || rename(menu)}>
+        ${asks < 0 ? item.unread ? html`<span class="ember" role="img" data-unread aria-label=${t('history.unread')}></span>` : nothing
+          : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
+        ${item.routine && !run ? icons.alarm : nothing}<span class="history-title" dir="auto">${name}</span>
       </button>
       ${earlier.length ? html`<button class="runs-toggle" tabindex="-1" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })}
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
       <button class="icon-button subtle" tabindex="-1" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
-      <div id=${menu} class="menu task-menu" popover><button type="button" popovertarget=${menu} popovertargetaction="hide"
-        @click=${() => confirm(t('history.confirmDelete')) && removeConversation(item.path)}>${icons.trash}${t('action.delete')}</button></div>
+      <div id=${menu} class="menu task-menu" popover>${item.routine ? nothing : [
+        action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => markConversation(item.path, { pinned: !item.pinned })),
+        action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
+        ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => markConversation(item.path, { unread: !item.unread }))}
+        ${action(menu, icons.trash, t('action.delete'), () => confirm(t('history.confirmDelete')) && removeConversation(item.path))}</div>
     </li>`
-  })}</ol>` : html`<p class="muted">${t('history.empty')}</p>`
+  })}</ol>`
+}
+
+/** One of a task's actions, which closes its menu. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act */
+const action = (menu, icon, label, act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
+
+/** A box in the task's place for its new name. @param {string} menu */
+function rename(menu) {
+  renaming.value = menu
+  requestAnimationFrame(() => {
+    const box = /** @type {HTMLInputElement | null} */ (document.querySelector('.history-list input'))
+    box?.focus()
+    box?.select()
+  })
 }
 
 /**
- * The keyboard in the list: ↑ ↓ go from task to task, Home and End to the first and the last, and
- * ← → along a task to its count and its ⋮ button, the other way round right to left.
+ * Enter or leaving the box names the task, Escape doesn't, and the keyboard goes back to it.
+ * @param {KeyboardEvent | FocusEvent} event @param {import('../core/types.js').ConversationSummary} item @param {string} menu
+ */
+function named(event, item, menu) {
+  const key = event instanceof KeyboardEvent ? event.key : ''
+  if (renaming.peek() !== menu || (event instanceof KeyboardEvent && (event.isComposing || !['Enter', 'Escape'].includes(key)))) return
+  event.preventDefault()
+  event.stopPropagation()
+  const title = /** @type {HTMLInputElement} */ (event.target).value.trim()
+  renaming.value = null
+  if (key !== 'Escape' && title && title !== item.title) markConversation(item.path, { title })
+  if (key) requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (document.getElementById(menu)?.closest('li')?.querySelector('.history-item'))?.focus())
+}
+
+/**
+ * The keyboard in the lists: ↑ ↓ go from task to task, pinned or not, Home and End to the first
+ * and the last, and ← → along a task to its count and its ⋮ button, the other way round right to left.
  * @param {KeyboardEvent} event
  */
 function move(event) {
@@ -67,7 +114,7 @@ function move(event) {
   const along = [...from.closest('li')?.querySelectorAll(':scope > button') ?? []]
   const at = along.indexOf(from)
   if (at < 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
-  const tasks = [...list.querySelectorAll(':scope > li > .history-item')]
+  const tasks = [...list.parentElement?.querySelectorAll('.history-list > li > .history-item') ?? []]
   const row = tasks.indexOf(along[0])
   const [back, on] = list.matches(':dir(rtl)') ? ['ArrowRight', 'ArrowLeft'] : ['ArrowLeft', 'ArrowRight']
   const to = new Map([['ArrowDown', tasks[row + 1]], ['ArrowUp', tasks[row - 1]], ['Home', tasks[0]], ['End', tasks.at(-1)], [on, along[at + 1]], [back, along[at - 1]]]).get(event.key)
@@ -94,7 +141,6 @@ export const sidebarBody = (where) => html`<button class="place" aria-keyshortcu
     @click=${() => turnPage(newConversation).then(focusComposer)}>${icons.compose}${t('action.new')}</button>
   ${PLACES.filter(([id]) => loaded.value.has(id)).map(([id, icon]) => html`<button class="place"
     @click=${() => import('./dialogs.js').then((module) => module.openSettings(id))}>${icons[icon]}${t(`cap.${id}.name`)}</button>`)}
-  <h2 class="sidebar-heading">${t('history.title')}</h2>
   ${conversationList(where)}
   ${profileEntry(where)}`
 

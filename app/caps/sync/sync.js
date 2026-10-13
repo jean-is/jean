@@ -154,7 +154,7 @@ function panel() {
   </section>`
 }
 
-register({ id: 'sync', panel })
+register({ id: 'sync', slots: { data: { at: 1, draw: panel } } })
 
 // The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again.
 const kept = await stored('readonly', (store) => store.get('folder'))

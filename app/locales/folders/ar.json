@@ -39,5 +39,6 @@
   "folders.undo.elsewhere": "تعمل هذه المهمة الآن في مجلد آخر.",
   "folders.field": "مجلد على هذا الكمبيوتر",
   "folders.field.none": "لا شيء: تبدأ المهام الجديدة هنا بلا مجلد.",
-  "folders.choose": "اختيار…"
+  "folders.choose": "اختيار…",
+  "folders.add": "مجلد…"
 }

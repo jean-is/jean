@@ -192,6 +192,17 @@ export const RUNTIMES = [
     patch: { 'echarts.mjs': [[/\.innerHTML=(?:""|null)/g, '.replaceChildren()', 6]] },
   },
   {
+    // Maps (D291): MapLibre GL's module build, its worker and its style sheet, lent to a page that holds
+    // a map. A page's opaque origin starts no module worker from a blob, and MapLibre takes a blob's
+    // address there for another origin's, which it would wrap in a module: it starts its worker as a
+    // classic one, from the address it is given, and the worker's one export, which a classic worker
+    // can't read, is taken off.
+    dir: 'vendor/maplibre',
+    packages: ['maplibre-gl'],
+    files: [['maplibre-gl/dist/maplibre-gl.mjs', 'maplibre-gl.mjs'], ['maplibre-gl/dist/maplibre-gl-worker.mjs', 'maplibre-gl-worker.js'], ['maplibre-gl/dist/maplibre-gl.css', 'maplibre-gl.css']],
+    patch: { 'maplibre-gl.mjs': [[/if\(!\w+\(e\)\)return (\w+)\(e,t\);/g, 'return $1(e,!1);', 1]], 'maplibre-gl-worker.js': [[/;export\{\w+ as default\};/g, ';', 1]] },
+  },
+  {
     // Scores (D196): abcjs draws ABC notation as SVG, its minified build made a module. It empties
     // with innerHTML and styles with style attributes, which Trusted Types and the CSP refuse: the
     // same, done with replaceChildren(), textContent and the CSSOM.

@@ -4,5 +4,6 @@
   "layouts.tip": "सुझाव",
   "layouts.important": "महत्वपूर्ण",
   "layouts.warning": "चेतावनी",
-  "layouts.caution": "सावधानी"
+  "layouts.caution": "सावधानी",
+  "layouts.ticked": "{total} में से {done}"
 }

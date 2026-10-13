@@ -7,7 +7,7 @@ import { ulid } from './ulid.js'
 import { openingOf, routineOf } from './events.js'
 
 /** @import { FS, Envelope, ConversationHeader, ConversationSummary } from './types.js' */
-/** @typedef {{ header: ConversationHeader, records: Envelope[], title: string, updatedAt: string }} Conversation */
+/** @typedef {{ header: ConversationHeader, records: Envelope[], title: string, updatedAt: string, pinned: boolean, unread: boolean }} Conversation */
 
 // Paths known to end with '\n', per FS. Before the first append to any other path we check
 // for a torn last line, so the next record starts on its own line instead of being glued to it.
@@ -80,6 +80,8 @@ export async function loadConversation(fs, path) {
   const records = []
   let title = ''
   let updatedAt = header.createdAt
+  let pinned = false
+  let unread = false
   for (let i = 1; i < lines.length; i++) {
     const record = parseLine(lines[i])
     if (!record) {
@@ -88,10 +90,13 @@ export async function loadConversation(fs, path) {
     }
     records.push(record)
     if (typeof record.meta?.title === 'string') title = record.meta.title
-    if (typeof record.at === 'string') updatedAt = record.at
+    if (typeof record.meta?.pinned === 'boolean') pinned = record.meta.pinned
+    if (typeof record.meta?.unread === 'boolean') unread = record.meta.unread
+    // Naming, pinning or reading a task leaves its place.
+    if (record.update && typeof record.at === 'string') updatedAt = record.at
   }
   setClean(fs, path, text.endsWith('\n'))
-  return { header, records, title, updatedAt }
+  return { header, records, title, updatedAt, pinned, unread }
 }
 
 /** @param {FS} fs @param {string} path @param {string} id @returns {Promise<ConversationSummary | null>} */
@@ -99,10 +104,10 @@ async function summarize(fs, path, id) {
   try {
     const conversation = await loadConversation(fs, path)
     if (!conversation) return null
-    const { header, records, title, updatedAt } = conversation
+    const { header, records, title, updatedAt, pinned, unread } = conversation
     // The opening request's start, for "the third request of a kind" (D83); a routine's run, by its note (D122).
     const routine = routineOf(records)?.routine
-    return { id, path, title, opening: openingOf(records).slice(0, 200), createdAt: header.createdAt, updatedAt, ...(routine && { routine }) }
+    return { id, path, title, opening: openingOf(records).slice(0, 200), createdAt: header.createdAt, updatedAt, ...(routine && { routine }), ...(pinned && { pinned }), ...(unread && { unread }) }
   } catch (err) {
     console.warn(`Skipping unreadable conversation ${path}`, err)
     return null

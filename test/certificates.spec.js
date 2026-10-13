@@ -17,6 +17,7 @@ async function saved(page) {
   await expect(button).toHaveClass(/is-local/)
   await button.click()
   const card = page.locator('.receipt')
+  await card.locator('summary').click()
   const [certificate] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: 'Save the certificate' }).click()])
   const [proof] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: 'Save the proof' }).click()])
   await page.keyboard.press('Escape')
@@ -99,6 +100,7 @@ test('witnesses date a certificate and a public log records it once the user cho
   await expect(button).toHaveClass(/is-local/)
   await button.click()
   const card = page.locator('.receipt')
+  await card.locator('summary').click()
   // Nothing goes out until the user says so, where the card says what goes where.
   const date = card.getByRole('checkbox', { name: 'Date them with timestamp.sigstore.dev' })
   const log = card.getByRole('checkbox', { name: 'Record them in a public log, rekor.sigstore.dev: public and permanent' })

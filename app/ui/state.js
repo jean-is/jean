@@ -2,10 +2,11 @@
 import { signal, computed } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
-import { loadConversation, listConversations, deleteConversation } from '../core/conversations.js'
-import { linkedFiles, unanswered } from '../core/events.js'
+import { loadConversation, listConversations, deleteConversation, appendRecords } from '../core/conversations.js'
+import { linkedFiles, metaRecord, unanswered } from '../core/events.js'
 import { t, useLocale } from '../core/i18n.js'
 import { LOOKS } from './looks.js'
+import { contributions } from './caps.js'
 
 /** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Turn } from '../core/events.js' */
@@ -296,6 +297,7 @@ export async function openConversation(path) {
   app.dialog.value = null
   if (loaded) app.current.value = { id: loaded.header.id, path, records: loaded.records.filter((record) => !kept.has(JSON.stringify(record))) }
   showRun()
+  if (loaded?.unread) markConversation(path, { unread: false })
   // A question or an approval the page closed on is asked again (D212).
   if (loaded && !run && unanswered(loaded.records)) sending().then((module) => { if (app.current.peek()?.path === path) module.retry() })
 }
@@ -308,6 +310,25 @@ export async function removeConversation(path) {
     app.current.value = null
     showRun()
   }
+  await refreshConversations()
+}
+
+/**
+ * Keeps records at the end of a conversation, then fires record with each, for whoever follows them (D299):
+ * hooks that only watch, told once it is kept, so they never hold it up or change it. @param {string} path @param {Envelope[]} records
+ */
+export async function keepRecords(path, records) {
+  await appendRecords(app.fs, path, records)
+  const hooks = contributions().hooks.filter((hook) => hook.on === 'record')
+  if (hooks.length) import('../core/hooks.js').then(({ fire }) => { for (const record of records) fire(hooks, 'record', { task: path, type: record.update?.sessionUpdate ?? 'meta', record }, () => {}) })
+}
+
+/** Names a task, pins it or marks it read or unread (D288). @param {string} path @param {{ title?: string, pinned?: boolean, unread?: boolean }} meta */
+export async function markConversation(path, meta, by = 'user') {
+  const record = metaRecord(by, meta)
+  await keepRecords(path, [record])
+  const current = app.current.peek()
+  if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
   await refreshConversations()
 }
 
@@ -397,7 +418,7 @@ const sending = () => import('./send.js')
 
 /**
  * Sends a message, once a page being turned is: that frees the box.
- * @param {string} text @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any } }} [options] as send.js takes them
+ * @param {string} text @param {Parameters<typeof import('./send.js').send>[1]} [options] as send.js takes them
  */
 export async function send(text, options) {
   await turning

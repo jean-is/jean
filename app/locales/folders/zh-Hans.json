@@ -34,5 +34,6 @@
   "folders.undo.elsewhere": "这个任务现在在另一个文件夹中工作。",
   "folders.field": "这台电脑上的文件夹",
   "folders.field.none": "无：这里的新任务开始时不带文件夹。",
-  "folders.choose": "选择…"
+  "folders.choose": "选择…",
+  "folders.add": "文件夹…"
 }

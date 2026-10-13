@@ -1,6 +1,6 @@
 // A conversation goes on out of sight (D147): going to another one leaves its answer under way,
 // its name in the list has a small light, ringed while a decision waits there, and coming back
-// shows the answer where it got to. The list shows no times. The fake brain asks three questions
+// shows the answer where it got to, and an answer that came meanwhile a still light until it is opened. The list shows no times. The fake brain asks three questions
 // before writing a letter. A task follows another at once, a title shows whole until the pointer
 // is on its task, which brings its menu's button, and the keyboard goes from task to task.
 import { test, expect } from '@playwright/test'
@@ -26,9 +26,13 @@ test('an answer goes on while the user is in another conversation', async ({ pag
   // Left before its answer is written: it is written all the same.
   await list.locator('.place', { hasText: 'New task' }).click()
   await expect(list.locator('.history-list li')).toHaveCount(2)
-  await expect(list.locator('.ember:not([data-waiting])')).toHaveCount(0)
-  await list.locator('.history-item', { hasText: 'Hello second conversation' }).click()
+  // Its answer came while the user was elsewhere: a still light says so until it is opened (D288).
+  const second = list.locator('.history-list li', { hasText: 'Hello second conversation' })
+  await expect(second.getByRole('img', { name: 'Unread' })).toBeVisible()
+  await expect(list.locator('.ember:not([data-waiting], [data-unread])')).toHaveCount(0)
+  await second.locator('.history-item').click()
   await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Hello from the second conversation')
+  await expect(second.locator('.ember')).toHaveCount(0)
 
   // Back to the first: its questions are where they were, and the letter comes once answered.
   await expect(list.locator('.ember[data-waiting]')).toHaveCount(1)

@@ -87,6 +87,19 @@ export function alike(text, others) {
   return rest.map((v) => [...first].reduce((dot, [word, weight]) => dot + weight * (v.get(word) ?? 0), 0) / (norm(first) * norm(v)))
 }
 
+/**
+ * Whether a text says again what one of several others said (D286): a clause of it, between
+ * punctuation of any script, of four words or more, as alike as `said` to one of theirs. Another
+ * text as alike as `same` to this one as a whole is a request of the same kind, left out.
+ * @param {string} text @param {string[]} others @param {number} same @param {number} [said]
+ */
+export function restated(text, others, same, said = 0.8) {
+  const clauses = (/** @type {string} */ value) => value.split(/(?!['’-])\p{P}/u).filter((clause) => words(clause).length >= 4)
+  const kinds = alike(text, others)
+  const before = others.filter((_, i) => kinds[i] < same).flatMap(clauses)
+  return before.length > 0 && clauses(text).some((clause) => alike(clause, before).some((score) => score >= said))
+}
+
 // Accents (Latin, Greek, Cyrillic, Vietnamese) and Arabic's vowel and hamza marks: a letter
 // with one is found by the letter. Marks that make another letter (kana's voicing, Indic vowels) stay.
 const ACCENT = /^[\u0300-\u036f\u064b-\u065f]+$/

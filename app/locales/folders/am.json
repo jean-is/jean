@@ -35,5 +35,6 @@
   "folders.undo.elsewhere": "ይህ ተግባር አሁን በሌላ አቃፊ ውስጥ ይሠራል።",
   "folders.field": "በዚህ ኮምፒውተር ላይ ያለ አቃፊ",
   "folders.field.none": "የለም፦ እዚህ ያሉ አዲስ ተግባራት ያለ አቃፊ ይጀምራሉ።",
-  "folders.choose": "ይምረጡ…"
+  "folders.choose": "ይምረጡ…",
+  "folders.add": "አቃፊ…"
 }

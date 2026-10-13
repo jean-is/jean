@@ -10,8 +10,8 @@ import {
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave } from './brains.js'
 import { isLocal } from './auto.js'
-import { unlock, isDenied, loaded, SIZES as BYTES } from './caps.js'
-import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, accept, begin, unlockAll } from './discovery.js'
+import { unlock, isDenied, loaded, slots, SIZES as BYTES } from './caps.js'
+import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
 import { usedIn } from '../core/settings.js'
@@ -223,7 +223,7 @@ function brains() {
       ${first ? nothing : html`<h3>${t('brain.add')}</h3>`}
       ${ways(first)}
     </section>`}
-    ${loaded.value.get('pictures')?.panel?.() ?? nothing}`
+    ${slots('brains').map((part) => part.draw())}`
 }
 
 /** A brain's icon, name and where it runs: this device, this computer, or the cloud. @param {BrainConfig} brain */
@@ -519,8 +519,46 @@ function approvals() {
       </li>`
     })}</ul>
   </section>
+  ${guards()}
   ${pages()}
   ${seal()}`
+}
+
+/**
+ * Guards (D295): rules for one kind of action or one service that only ever make Jean more careful,
+ * the organisation's first and locked, then the person's, each removed with a click, and a line to add one.
+ */
+function guards() {
+  const { settings } = effective.value
+  const mine = settings.guards ?? []
+  const services = loaded.value.has('connections') ? [...(app.policy.connections ?? []), ...(settings.connections ?? [])] : []
+  /** @param {import('../core/rules.js').Guard} guard @param {boolean} locked */
+  const row = (guard, locked) => html`<li class="setting"><span class="rule-kind" dir="auto">${guard.service ? services.find((one) => one.id === guard.service)?.name ?? guard.service
+    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}${guard.if
+    ? html`<br><span class="muted small">${t('guards.when', { question: guard.if })}</span>` : nothing}</span>${locked ? nothing
+    : html`<button type="button" class="icon-button subtle" aria-label=${t('guards.remove')} @click=${() => updateSettings({ guards: mine.filter((other) => other !== guard) })}>${icons.trash}</button>`}</li>`
+  /** @param {SubmitEvent} event */
+  const add = (event) => {
+    event.preventDefault()
+    const form = /** @type {HTMLFormElement} */ (event.target)
+    const fields = new FormData(form)
+    const [on, value] = String(fields.get('for')).split(':')
+    const question = String(fields.get('if') ?? '').trim()
+    updateSettings({ guards: [...mine, { id: ulid(), [on]: value, then: /** @type {'ask' | 'never'} */ (fields.get('then')), ...(question && { if: question }) }] })
+    form.reset()
+  }
+  return html`<section>
+    <h3>${t('guards.title')}</h3>
+    <p class="muted">${t('guards.text')}</p>
+    <ul class="rules">${(app.policy.guards ?? []).map((/** @type {any} */ guard) => row(guard, true))}${mine.map((guard) => row(guard, false))}</ul>
+    <form class="row" @submit=${add}>
+      <select name="for" aria-label=${t('guards.for')}>${RULE_KINDS.map((kind) => html`<option value=${`kind:${kind}`}>${t(`kind.${kind}.label`)}</option>`)}
+        ${services.map((one) => html`<option value=${`service:${one.id}`}>${one.name}</option>`)}</select>
+      <select name="then" aria-label=${t('guards.then')}><option value="ask">${t('rules.ask')}</option><option value="never">${t('rules.never')}</option></select>
+      <input name="if" dir="auto" placeholder=${t('guards.if')} aria-label=${t('guards.if')}>
+      <button class="button">${t('guards.add')}</button>
+    </form>
+  </section>`
 }
 
 /** This device's seal (D274), once About this answer is here: its key's fingerprint, which whoever relies on its certificates checks, or agrees on beforehand. */
@@ -666,12 +704,13 @@ function data() {
         </label>
       </div>
     </section>`}
-    ${loaded.value.get('sync')?.panel?.() ?? nothing}`
+    ${slots('data').map((part) => part.draw())}`
 }
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'capabilities' | 'approvals' | 'data'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'plugins' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
+ * @property {number} at       its place in the menu, lowest first
  * @property {string} label    its name in the menu
  * @property {unknown} icon
  * @property {() => unknown} show
@@ -688,27 +727,27 @@ const KNOWN = ['you', 'skills', 'routines']
 
 /**
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
- * Jean itself; what it knows and can do, a capability's own section once it is on, then the case
- * of them all; and what it may do and what it keeps.
- * @type {Record<Section, Place>}
+ * Jean itself; what it knows and can do, a capability's own section once it is on (its settings
+ * slot: Connections, Web search, the Computer), then the case of them all; and what it may do and what it keeps.
+ * @type {Partial<Record<Section, Place>>}
  */
-export const SECTIONS = {
-  general: { label: 'settings.general', icon: icons.gear, show: general },
-  brains: { label: 'settings.brains', icon: icons.spark, show: brains },
-  appearance: { label: 'settings.appearance', icon: icons.contrast, show: appearance },
-  keyboard: { label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
-  you: { label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
-  connections: { label: 'cap.connections.name', icon: icons.plug, show: () => loaded.value.get('connections')?.panel?.() ?? nothing, when: () => loaded.value.has('connections') },
-  search: { label: 'cap.search.name', icon: icons.websearch, show: () => loaded.value.get('search')?.panel?.() ?? nothing, when: () => loaded.value.has('search'), also: () => 'Kiwix Wikipedia Vikidia' },
-  skills: { label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
-  routines: { label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
-  computer: { label: 'cap.computer.name', icon: icons.computer, show: () => loaded.value.get('computer')?.panel?.() ?? nothing, when: () => loaded.value.has('computer') },
-  capabilities: { label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
-  approvals: { label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
-  data: { label: 'settings.storage', icon: icons.data, show: data },
+const SECTIONS = {
+  general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
+  brains: { at: 20, label: 'settings.brains', icon: icons.spark, show: brains },
+  appearance: { at: 30, label: 'settings.appearance', icon: icons.contrast, show: appearance },
+  keyboard: { at: 40, label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
+  you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
+  skills: { at: 80, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
+  routines: { at: 90, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
+  capabilities: { at: 100, label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
+  approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
+  data: { at: 120, label: 'settings.storage', icon: icons.data, show: data },
 }
-/** The sections shown now. */
-export const sections = () => /** @type {Section[]} */ (Object.keys(SECTIONS)).filter((id) => SECTIONS[id].when?.() ?? true)
+/** The sections shown now, in their order. @returns {[Section, Place][]} */
+export const places = () => /** @type {[Section, Place][]} */ ([...Object.entries(SECTIONS), ...slots('settings').map((entry) => [entry.id, { ...entry, show: entry.draw }])])
+  .filter(([, place]) => place.when?.() ?? true).sort(([, a], [, b]) => a.at - b.at)
+/** Their names. */
+export const sections = () => places().map(([id]) => id)
 
 /** Opens Settings on one of its sections. @param {Section} [name] */
 export function openSettings(name = 'general') {
@@ -718,16 +757,16 @@ export function openSettings(name = 'general') {
 
 class Settings extends Element {
   render() {
-    const shown = sections()
-    const open = shown.find((id) => id === app.section.value) ?? 'general'
+    const shown = places()
+    const [open, place] = shown.find(([id]) => id === app.section.value) ?? shown[0]
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
-        ${shown.map((id) => html`${SECTIONS[id].group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
-          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${SECTIONS[id].icon}${t(SECTIONS[id].label)}</button>`)}
+        ${shown.map(([id, { group, icon, label }]) => html`${group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
+          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button>`)}
       </nav>
-      <div class="settings-panel">${SECTIONS[open].show()}</div>
+      <div class="settings-panel">${place.show()}</div>
     </dialog>`
   }
 
@@ -771,20 +810,20 @@ class Settings extends Element {
 // trophy picked, at first the next to find, shows on a plaque that stays in view.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image', plugins: 'bolt',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
-const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [app.conversations.value.length, 2], backup: () => [app.conversations.value.length, 3],
-  find: () => [app.conversations.value.length, FINDABLE], search: () => [app.conversations.value.length, SEARCHABLE],
+const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
+  find: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 const picked = signal('')

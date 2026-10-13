@@ -11,7 +11,6 @@
   "machine.computers": "Komputer",
   "machine.lede": "Tugas memakai lingkungan terisolasi, kecuali yang ada di folder yang Anda hubungkan di komputer ini.",
   "machine.off": "Belum terhubung",
-  "machine.in": "Di {folder}",
   "machine.step.open": "Buka terminal di salah satu folder Anda.",
   "machine.step.paste": "Tempel baris ini di sana, lalu tekan Enter.",
   "machine.step.wait": "Menunggu baris ini berjalan: halaman ini akan tahu sendiri.",

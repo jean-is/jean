@@ -11,7 +11,6 @@
   "machine.computers": "Ordinateurs",
   "machine.lede": "Les tâches utilisent l’ordinateur embarqué, sauf celles du dossier que vous connectez sur votre ordinateur.",
   "machine.off": "Non connecté",
-  "machine.in": "Dans {folder}",
   "machine.step.open": "Ouvrez un terminal dans l’un de vos dossiers.",
   "machine.step.paste": "Collez-y cette ligne, puis appuyez sur Entrée.",
   "machine.step.wait": "En attente de la ligne : cette page le remarque d’elle-même.",

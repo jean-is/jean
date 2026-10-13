@@ -1,12 +1,15 @@
-// Layouts (D215): what an answer's Markdown shows it to be, laid out as that, from its structure alone
-// (./shapes.js): a comparison as its options side by side, steps one after the other, notes set apart,
-// a column of amounts at the end. Loaded with the first answer, never offered; until then, and for the
-// others, ui/markdown.js shows them as they are. The same Markdown copies as it was.
+// Layouts (D215, D291): what an answer's Markdown shows it to be, laid out as that, from its structure
+// alone (./shapes.js): a comparison as its options side by side, steps one after the other, notes set
+// apart, a column of amounts at the end, a timeline, key figures, a checklist to tick. Loaded with the
+// first answer, never offered; until then, and for the others, ui/markdown.js shows them as they are.
+// The same Markdown copies as it was.
 import { html, nothing } from 'lit-html'
 import { shapes, blocks, inline, lex } from '../../ui/markdown.js'
+import { app, keepRecords } from '../../ui/state.js'
+import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t, useStrings } from '../../core/i18n.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted } from './shapes.js'
+import { t, locale, dir, useStrings } from '../../core/i18n.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked } from './shapes.js'
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
 
@@ -29,8 +32,54 @@ function table(token) {
   </table></div>`
 }
 
-/** Steps, each number in a ring, a title on a line of its own. @param {any} token */
-const list = (token) => stepped(token) ? html`<ol class="steps" start=${token.start || 1}>${token.items.map(step)}</ol>` : null
+/** Steps, each number in a ring, a title on a line of its own; a timeline, key figures, a checklist. @param {any} token */
+const list = (token) => stepped(token) ? html`<ol class="steps" start=${token.start || 1}>${token.items.map(step)}</ol>`
+  : timed(token) ? html`<ol class="timeline">${token.items.map((/** @type {any} */ item) => html`<li>${told(item, (when, rest) => html`<time>${when}</time><div>${rest}</div>`)}</li>`)}</ol>`
+  : figured(token) ? html`<ul class="figures">${token.items.map((/** @type {any} */ item) => html`<li>${told(item, (number, rest) => html`<strong>${number}</strong><span>${rest}</span>`)}</li>`)}</ul>`
+  : ticked(token) ? checklist(token) : null
+
+/**
+ * An item's bold start, its words alone, and the rest of it, what joins them left out. @param {any} item
+ * @param {(lead: unknown, rest: unknown) => unknown} draw
+ */
+function told(item, draw) {
+  const [first, ...more] = item.tokens
+  const title = titled(first.tokens)
+  return draw(inline(first.tokens[0].tokens), [inline(title ? title.rest : first.tokens.slice(1)), more.map((/** @type {any} */ token) => blocks([token]))])
+}
+
+/** A list's own name, from what it holds, for the ticks kept for it. @param {any} token */
+const named = (token) => token.items.map((/** @type {any} */ item) => item.text).join('\n')
+
+/**
+ * A checklist: each thing to do ticked, struck through, and how many are done, with a bar. What is
+ * ticked is kept in the conversation, a meta record for the list (its items' words), the latest winning.
+ * @param {any} token
+ */
+function checklist(token) {
+  const list = named(token)
+  /** @param {import('../../core/types.js').Envelope[]} records */
+  const doneIn = (records) => new Set(/** @type {number[]} */ (records.findLast((record) => record.meta?.ticks?.list === list)?.meta?.ticks.done
+    ?? token.items.flatMap((/** @type {any} */ item, /** @type {number} */ i) => (item.checked ? [i] : []))))
+  const done = doneIn(app.current.value?.records ?? [])
+  const count = new Intl.NumberFormat(locale.value)
+  // Shown at once, from the ticks of the moment, then kept, in the order they were made.
+  /** @param {number} i @param {boolean} on */
+  const tick = (i, on) => {
+    const conversation = app.current.peek()
+    if (!conversation) return
+    const record = metaRecord(app.deviceId, { ticks: { list, done: [...doneIn(conversation.records)].filter((other) => other !== i).concat(on ? [i] : []).sort((a, b) => a - b) } })
+    app.current.value = { ...conversation, records: [...conversation.records, record] }
+    keepRecords(conversation.path, [record]).catch((error) => console.warn("Ticks", error))
+  }
+  return html`<div class="checklist">
+    <p class="checklist-count"><span dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress max=${token.items.length} .value=${done.size}></progress></p>
+    <ul>${token.items.map((/** @type {any} */ item, /** @type {number} */ i) => html`<li class=${done.has(i) ? 'is-done' : ''}><label>
+      <input type="checkbox" .checked=${done.has(i)} @change=${(/** @type {Event} */ e) => tick(i, /** @type {HTMLInputElement} */ (e.target).checked)}>
+      <span>${item.tokens.map((/** @type {any} */ part) => (part.type === 'checkbox' ? nothing : part.type === 'text' ? inline(part.tokens ?? [part]) : blocks([part])))}</span>
+    </label></li>`)}</ul>
+  </div>`
+}
 
 /** @param {any} item */
 function step(item) {

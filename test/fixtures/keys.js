@@ -8,9 +8,9 @@ const ROOT = new URL('../../', import.meta.url)
 const DIRS = ['app/core', 'app/ui', 'app/caps', 'cli']
 /**
  * Capabilities that bring their own part of the catalogue, locales/<id>/, loaded with them (D140, D146, D141, D157, D162, D196, D198,
- * D200, D215, D218, D251, D252, D254, D270), and jean-cli's, cli/locales/, which only cli/ uses.
+ * D200, D215, D218, D251, D252, D254, D270, D289), and jean-cli's, cli/locales/, which only cli/ uses.
  */
-export const PARTS = ['browser', 'ask', 'folders', 'sync', 'computer', 'charts', 'scores', 'machine', 'slides', 'layouts', 'flows', 'pictures', 'receipt', 'search', 'certificates', 'brain-local', 'cli']
+export const PARTS = ['browser', 'ask', 'folders', 'sync', 'computer', 'charts', 'scores', 'machine', 'slides', 'interactive', 'layouts', 'flows', 'pictures', 'receipt', 'search', 'certificates', 'brain-local', 'plugins', 'cli']
 /** Where the modules that use a part's strings are. @param {string} id */
 export const owner = (id) => (id === 'cli' ? 'cli/' : `app/caps/${id}/`)
 

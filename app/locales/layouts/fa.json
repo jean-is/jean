@@ -4,5 +4,6 @@
   "layouts.tip": "نکته",
   "layouts.important": "مهم",
   "layouts.warning": "هشدار",
-  "layouts.caution": "احتیاط"
+  "layouts.caution": "احتیاط",
+  "layouts.ticked": "{done} از {total}"
 }

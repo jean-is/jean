@@ -11,7 +11,6 @@
   "machine.computers": "Máy tính",
   "machine.lede": "Các nhiệm vụ dùng môi trường biệt lập, trừ những nhiệm vụ trong thư mục bạn kết nối trên máy tính này.",
   "machine.off": "Chưa kết nối",
-  "machine.in": "Trong {folder}",
   "machine.step.open": "Mở một terminal trong một thư mục của bạn.",
   "machine.step.paste": "Dán dòng này vào đó, rồi nhấn Enter.",
   "machine.step.wait": "Đang chờ dòng lệnh chạy: trang này sẽ tự nhận ra.",
