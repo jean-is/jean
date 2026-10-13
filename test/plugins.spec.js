@@ -105,7 +105,7 @@ test('a plugin read from its address is added, runs apart, draws under each answ
   await expect(page.locator('.plugin-above')).toHaveCount(0)
 })
 
-test('with ?safe no plugin runs until the user leaves safe mode, and one that keeps failing is turned off and says so (D307)', async ({ page }) => {
+test('with ?safe no plugin runs until the user leaves safe mode, and one that keeps failing is turned off and says so (D309)', async ({ page }) => {
   // It fails on each record Jean keeps, a request and its answer make three, and draws 2,500 words in its row.
   await serve(page, {}, "export function register(on, $) { on('record', () => { throw new Error('Broken') }); $.slot('settings', () => Array(50).fill(Array(50).fill('word'))) }")
   await start(page)

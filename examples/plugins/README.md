@@ -1,6 +1,6 @@
 # Example plugins
 
-Three plugins to play with Jean's hooks: the events a plugin watches or answers, the slots it draws in, and the rights the user grants it (D293, D296, D299, D307). Each one is a folder with a `plugin.json` and a `main.js`, as a plugin of anyone's would be.
+Three plugins to play with Jean's hooks: the events a plugin watches or answers, the slots it draws in, and the rights the user grants it (D293, D296, D299, D309). Each one is a folder with a `plugin.json` and a `main.js`, as a plugin of anyone's would be.
 
 | Plugin | Hooks | Draws in | Rights | To see it work |
 |---|---|---|---|---|

@@ -5,7 +5,7 @@
 // its hooks join Jean's events as the user's tier (D293) and count only within the rights granted when
 // it was added; what it draws (above the box, under an answer, in its row here) is a tree of Jean's
 // elements, which Jean draws. It never sees a key, a file of the user's or an address of Jean's. One
-// that keeps failing is turned off, and with ?safe in the address none runs (D307).
+// that keeps failing is turned off, and with ?safe in the address none runs (D309).
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -46,7 +46,7 @@ const installed = signal(/** @type {Manifest[]} */ ([]))
 const running = signal(/** @type {Map<string, Host>} */ (new Map()))
 /** What each plugin drew, by its name, slot and key: null while it draws. */
 const trees = signal(/** @type {Map<string, any>} */ (new Map()))
-/** Safe mode: with ?safe in the address, no plugin runs until the user leaves it (D307). */
+/** Safe mode: with ?safe in the address, no plugin runs until the user leaves it (D309). */
 const safe = signal(new URLSearchParams(location.search).has('safe'))
 /** The plugin just added, whose row opens to show what it draws there. */
 const opened = signal('')
