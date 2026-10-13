@@ -88,7 +88,7 @@ gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (No
 desktop/          launcher.c and jeanframe.m (the Mac app's framing patch, D160), dmg-background.svg (D155)
 deploy/           docker/, the container image (D232)
 examples/         plugins/: three plugins to try hooks with, and how one is made (README.md); served by npm run dev, never deployed
-scripts/          vendor.js, manifest.js, web.js, render.js, graph.js, budgets.js, serve.js, desktop.js, cli.js, icons.js, screenshots.js, reflexes.js, offers.js, directory.js
+scripts/          vendor.js, manifest.js, web.js, deploy.js, render.js, graph.js, budgets.js, serve.js, desktop.js, cli.js, icons.js, screenshots.js, reflexes.js, offers.js, directory.js
 test/             <name>.test.js, run by node --test, and <capability>.spec.js, Playwright's smoke tests in Chromium and
                   WebKit, one per capability, side by side (D247), with helpers.js and playwright.config.js; fixtures/ (the
                   fake brain, a fake MCP mail service with sign-in, a fake skills index), which both use; reflexes/ (the
