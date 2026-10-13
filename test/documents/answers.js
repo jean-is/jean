@@ -20,7 +20,7 @@ import { fuse, nearest } from './retrieval.js'
  * The brains: one with a large context, and a small one held to the device brain's 32k. The large one's helper
  * requests (notes, every_page) go to whichever of the providers named in helpers has a place first, which serve the
  * same brain: DeepInfra, which refuses nearly all for a while at times, and DekaLLM, in fp8, at half its pace.
- * @type {Record<'large' | 'small', { model: string, provider?: string, helpers?: string[], context: number }>}
+ * @type {Record<'large' | 'small', { model: string, provider?: string, host?: string, helpers?: string[], context: number }>}
  */
 export const BRAINS = {
   large: { model: 'nvidia/nemotron-3-super-120b-a12b', provider: 'DeepInfra', helpers: ['DeepInfra', 'DekaLLM'], context: 262144 },
@@ -33,8 +33,18 @@ export const BRAINS = {
 const WAITS = [5000, 10000, 20000, ...Array(20).fill(30000)]
 const waits = () => WAITS.map((ms) => Math.round(ms * (0.5 + Math.random() / 2)))
 
-/** Jean's brain entry for one of these. @param {{ model: string }} b */
-const entry = (b) => ({ id: 'eval', provider: 'openrouter', api: /** @type {'openai'} */ ('openai'), baseURL: PROVIDERS.openrouter.baseURL, model: b.model })
+/** Jean's brain entry for one of these: OpenRouter's, or a server on this computer's. @param {{ model: string, host?: string }} b */
+const entry = (b) => ({ id: 'eval', provider: b.host ?? 'openrouter', api: /** @type {'openai'} */ ('openai'), baseURL: PROVIDERS[b.host ?? 'openrouter'].baseURL, model: b.model })
+
+/**
+ * A brain on this computer in place of both, for a run (--brain lmstudio:<model>, ollama:<model>): served by
+ * LM Studio or Ollama as Jean reaches them, given the context it was loaded with. @param {string} spec @param {number} context
+ */
+export function localBrain(spec, context) {
+  const [host, ...rest] = spec.split(':')
+  if (!(host in PROVIDERS) || !rest.length) throw new Error(`--brain ${spec}: lmstudio:<model> or ollama:<model>`)
+  BRAINS.large = BRAINS.small = { model: rest.join(':'), host, context }
+}
 
 // The requests in flight at once in this process to each provider, each until its reply has streamed whole; the rest
 // wait their turn here, since a provider refuses those past what it takes (DeepInfra about four of this brain's). Those

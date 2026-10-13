@@ -9,6 +9,7 @@
 //        npm run documents -- --report [--write]         results.md and strategies.json from every run kept
 //        npm run documents -- --answers H4,H5 [--concurrency 3] [--requests 4] [--helpers 4] [--dense e5] [--dollars 10]   the answer eval with OpenRouter's brains (OPENROUTER_API_KEY),
 //        npm run documents -- --answers overall --conditions search,search+meaning   ten questions of each kind at XL, for the targets
+//        npm run documents -- --answers overall --brain lmstudio:<model> [--context 131072]   the same with a brain on this computer (LM Studio, Ollama), no key
 //                                 that many questions at once, their requests that many at a time (the rest queued), the helpers'
 //                                 (notes, every_page) --helpers at a time with each provider not the answers' own, resuming
 //                                 where it stopped; it stops itself once the run has spent --dollars, or a free brain's day runs out
@@ -25,7 +26,7 @@ import { verdicts, rows as rowsOf, table, pct } from '../test/documents/report.j
 import { overlap } from '../test/documents/text.js'
 import { execFileSync } from 'node:child_process'
 import { embed, int8 } from '../test/documents/dense.js'
-import { BRAINS, ask, grade, grounded, library, queues, setRequests, summarise } from '../test/documents/answers.js'
+import { BRAINS, ask, grade, grounded, library, localBrain, queues, setRequests, summarise } from '../test/documents/answers.js'
 import { rng } from '../test/documents/corpus.js'
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url))
@@ -183,6 +184,7 @@ async function main(argv) {
   if (o.has('report')) await report(o.has('write'))
   const hypotheses = o.value('answers', '')
   setRequests(Number(o.value('requests', '4')), Number(o.value('helpers', o.value('requests', '4'))))
+  if (o.has('brain')) localBrain(o.value('brain', ''), Number(o.value('context', '131072')))
   if (hypotheses) await answers(hypotheses.split(','), Number(o.value('concurrency', '3')), o.value('dense', 'e5'), Number(o.value('passage', '100')), Number(o.value('limit', 'Infinity')), o.value('conditions', 'search').split(','), Number(o.value('dollars', '10')))
   const benches = o.value('bench', '')
   if (benches) {
@@ -518,8 +520,10 @@ function sample(r, seeds) {
  * @param {string[]} [conditions] overall's @param {number} [dollars] at most this much spent this time
  */
 async function answers(ids, concurrency, dense, passage, limit = Infinity, conditions = ['search'], dollars = 10) {
-  const key = process.env.OPENROUTER_API_KEY
-  if (!key) throw new Error('Set OPENROUTER_API_KEY')
+  // A brain on this computer needs no key, and costs nothing.
+  const local = !!BRAINS.large.host
+  const key = local ? '' : process.env.OPENROUTER_API_KEY ?? ''
+  if (!local && !key) throw new Error('Set OPENROUTER_API_KEY')
   const registered = JSON.parse(await readFile(`${ROOT}test/documents/hypotheses.json`, 'utf8'))
   const path = `${CACHE}results/answers.jsonl`
   await mkdir(`${CACHE}results/`, { recursive: true })
@@ -531,7 +535,9 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
     const r = id === 'overall' ? { ...OVERALL, a: conditions[0], b: conditions[1] ?? conditions[0] } : registered.hypotheses.find((/** @type {any} */ x) => x.id === id).rule
     for (const { q, seed, size } of sample(r, registered.corpus.seeds)) for (const condition of new Set([r.a, r.b])) jobs.push({ hypothesis: id, question: q, condition, brain: r.brain === 'small' ? 'small' : 'large', seed, size })
   }
-  const open = jobs.filter((job) => !done.has(`${job.question.id}|${job.condition}|${BRAINS[job.brain].model}`))
+  // A brain on this computer is recorded by where it runs too (lmstudio:<model>), apart from a service's.
+  const named = (/** @type {'large' | 'small'} */ brain) => (BRAINS[brain].host ? `${BRAINS[brain].host}:${BRAINS[brain].model}` : BRAINS[brain].model)
+  const open = jobs.filter((job) => !done.has(`${job.question.id}|${job.condition}|${named(job.brain)}`))
   const todo = open.slice(0, limit)
   console.log(`${jobs.length} answers asked for, ${jobs.length - open.length} already there, ${todo.length} to go now`)
   /** @type {Map<string, Promise<any>>} */
@@ -541,11 +547,11 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
     const docs = prepare(list, passage)
     return { files: list, lib: await library(list), docs, dir: `${CACHE}${seed}-${size}-compendium-pdf/` }
   })()).get(`${seed}-${size}`)
-  const before = await spent(key)
+  const before = local ? 0 : await spent(key)
   let stop = false
   const worker = async () => {
     while (todo.length && !stop) {
-      if (await spent(key) - before >= dollars) { stop = true; console.log(`$${dollars} spent: run again, with a higher --dollars if need be, to go on.`); break }
+      if (!local && await spent(key) - before >= dollars) { stop = true; console.log(`$${dollars} spent: run again, with a higher --dollars if need be, to go on.`); break }
       // Another worker may have taken the last job while this one checked.
       const job = /** @type {any} */ (todo.shift())
       if (!job) break
@@ -568,7 +574,8 @@ async function answers(ids, concurrency, dense, passage, limit = Infinity, condi
         const lost = run.calls.find((call) => call.name === 'every_page' && call.failed)
         if (lost) throw new Error(`every_page failed: ${lost.output}`)
         const graded = grade(job.question, run.text)
-        const { model, provider } = BRAINS[/** @type {'large'} */ (job.brain)]
+        const { provider } = BRAINS[/** @type {'large'} */ (job.brain)]
+        const model = named(job.brain)
         const record = { id: job.question.id, type: job.question.type, lang: job.question.lang, hypothesis: job.hypothesis, condition, brain: job.brain, model, ...(provider && { provider }), ...graded, grounded: grounded(job.question, run), steps: run.calls.length, stopReason: run.stopReason, ms: Math.round(run.ms), usage: run.usage, reply: run.text, calls: run.calls.map((call) => ({ name: call.name, args: call.args, output: call.output })), shownTokens: Math.round(run.shown.length / 3), at: new Date().toISOString() }
         await writeFile(path, `${JSON.stringify(record)}\n`, { flag: 'a' })
         console.log(`${job.hypothesis} ${job.question.id} ${job.condition}: ${graded.correct ? 'right' : graded.abstained ? 'abstained' : 'wrong'} (${record.answer.slice(0, 60)}) in ${record.steps} calls, ${Math.round(run.ms / 1000)} s`)
