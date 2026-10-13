@@ -128,6 +128,8 @@ For absent things, how often the strategy handed over a lure (lower is better).
 | `search+meaning` | nvidia/nemotron-3-super-120b-a12b | 256 | 77% | 5% | 82% | 100% | 2.6 | 93 |
 | `search+mapreduce` | nvidia/nemotron-3-super-120b-a12b | 57 | 42% | 25% | 44% | – | 2.2 | 105 |
 | `summaries` | nvidia/nemotron-3-super-120b-a12b | 57 | 60% | 30% | 70% | – | 2.0 | 81 |
+| `search` | lmstudio:nemotron-3-nano-4b | 2 | 50% | 0% | 100% | – | 1.0 | 98 |
+| `search+meaning` | lmstudio:nemotron-3-nano-4b | 1 | 0% | 0% | 100% | – | 1.0 | 15 |
 
 Against the targets, on ten questions of each kind at XL (`--answers overall`); faithfulness isn't measured yet.
 
@@ -135,6 +137,8 @@ Against the targets, on ten questions of each kind at XL (`--answers overall`); 
 |---|---|---|---|---|---|---|---|---|
 | `search` | nvidia/nemotron-3-super-120b-a12b | 90 | 79% | 4% | 79% | 100% | 2.7 | 85 |
 | `search+meaning` | nvidia/nemotron-3-super-120b-a12b | 90 | 80% | 11% | 89% | 100% | 2.9 | 96 |
+| `search` | lmstudio:nemotron-3-nano-4b | 2 | 50% | 0% | 100% | – | 1.0 | 98 |
+| `search+meaning` | lmstudio:nemotron-3-nano-4b | 1 | 0% | 0% | 100% | – | 1.0 | 15 |
 
 ## By format
 
