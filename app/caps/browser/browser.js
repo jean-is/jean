@@ -682,10 +682,10 @@ register({
   slots: { views: { at: 3, draw: () => html`<button class="icon-button browser-toggle" @click=${toggle} aria-label=${t('cap.browser.name')} aria-keyshortcuts=${SHORTCUTS.browser}>${icons.globe}</button>` } },
   tools: [browseTool],
   lines: [{ name: 'browse', line: 'show the user a web page beside the conversation, and read it when the site allows' }],
-  // What the user is looking at, without what follows # (where a sign-in may leave a token).
-  sections: async () => {
+  // What the user is looking at, without what follows # (where a sign-in may leave a token): not for a task out of sight (D317).
+  sections: async (task) => {
     const shown = page.peek()
-    if (!open.peek() || !shown || shown.own) return {}
+    if (!open.peek() || !shown || shown.own || (task && task.id !== app.current.peek()?.id)) return {}
     if (isWorkspace(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the project's workspace.` }
     if (isMade(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, a page you made, as one of your answers kept it.` }
     if (isLocal(shown.url)) return { page: `The browser beside the conversation shows ${shownAs(shown.url)}, from the user's folder.` }

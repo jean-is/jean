@@ -12,7 +12,7 @@ import { signal } from '@preact/signals-core'
  * @property {import('../core/loop.js').Tool[]} [tools]
  * @property {{ name: string, line: string }[]} [lines]  one line per tool, for the prompt
  * @property {string[]} [rules]                           a few prompt rules
- * @property {() => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, skills)
+ * @property {(task: { id: string, records: import('../core/types.js').Envelope[] } | null) => Promise<import('../core/prompt.js').Sections>} [sections]  context it adds (memory, skills) for a task (null: a new one on screen)
  * @property {import('../core/decide.js').Decide} [decide]  reflexes, once their weights are loaded
  * @property {() => { name: string, logo?: string, tools: string[] }[]} [searches]  what else of it searches the web (D271)
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)

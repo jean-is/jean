@@ -1,8 +1,9 @@
 // Routines (docs/product.md, D122): a task the user wants done regularly, or once later, which
 // Jean does on its own, on a schedule: a request it sends itself, in a conversation of its own, under the same
 // rules as any (approvals wait in the inbox). There is no server: a routine runs while Jean is
-// open, once it is free and the user has left it alone for a minute, or as soon as Jean is opened
-// after it fell due, and the times missed meanwhile make one run. A routine runs in its project,
+// open, when it falls due, or as soon as Jean is opened after it fell due, and the times missed
+// meanwhile make one run. It shows in the user's place when they aren't there (nothing under way
+// or typed, and nobody reading), and otherwise runs out of sight (D147, D317). A routine runs in its project,
 // when the room is there. The brain makes one with `schedule` when the user asks; Settings'
 // Routines lists, changes and deletes them, with their runs. A run comes with the last one as it
 // went, and `routine_runs` reads the others. One may run each time a file is shared or made instead
@@ -101,17 +102,17 @@ const runsTool = {
 
 // ─── Running them ────────────────────────────────────────────────────────────
 
-// With a conversation on screen, a routine waits until the user has left Jean alone this long.
+// With a conversation on screen, a routine's run shows only once the user has left Jean alone this long.
 const ALONE_MS = 60_000
 let touched = 0
 for (const type of ['pointerdown', 'keydown']) addEventListener(type, () => { touched = Date.now() }, { capture: true, passive: true })
 
 /**
- * Whether Jean is free for a routine: a brain to ask, nothing under way, typed or waiting, no
+ * Whether a routine's run may show in the user's place: nothing under way, typed or waiting, no
  * dialog open, no brief of what's new about to start, and nobody reading a conversation.
  */
 function free() {
-  return brainsHere.peek().length > 0 && !app.busy.peek() && !app.draft.peek().trim() && !app.attachments.peek().length
+  return !app.busy.peek() && !app.draft.peek().trim() && !app.attachments.peek().length
     && !app.dialog.peek() && !app.decisions.peek().length && !app.offering.peek() && !(app.back.peek() && loaded.peek().has('since'))
     && (document.hidden || !app.current.peek() || Date.now() - touched > ALONE_MS)
 }
@@ -134,7 +135,7 @@ async function note(routine, time, asked = false, file) {
 
 // ─── What sets them off (D294) ───────────────────────────────────────────────
 
-/** Files that set a routine off, oldest first, waiting for Jean to be free in this tab, where they were shared or made. @type {{ routine: string, file: ResourceLink }[]} */
+/** Files that set a routine off, oldest first, waiting for its run in this tab, where they were shared or made. @type {{ routine: string, file: ResourceLink }[]} */
 const waiting = []
 
 /** A file was shared or made: each of the room's routines it sets off waits for its run. @param {'file' | 'made'} when @param {ResourceLink} file */
@@ -154,9 +155,9 @@ const passes = async (question, file) => yes(question, `${file.name}\n\n${((awai
 
 let checking = false
 
-/** Runs the first of the room's routines that fell due, else one a file set off, if Jean is free. */
+/** Begins the first of the room's routines that fell due, else one a file set off, with a brain to ask. */
 export async function check(now = new Date()) {
-  if (checking || !free()) return
+  if (checking || !brainsHere.peek().length) return
   checking = true
   try {
     const routine = (await routines()).find((candidate) => due(candidate, now, week().weekend))
@@ -174,19 +175,25 @@ export async function check(now = new Date()) {
 
 /**
  * A routine that fell due, one the user asked for now (Settings' Routines), which counts as the run due,
- * or one a file set off, which comes with it. @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file]
+ * or one a file set off, which comes with it. It shows when the user asked for it or Jean is free, and
+ * otherwise runs out of sight at once (D317), rather than waiting for the user to leave Jean alone. It
+ * returns once begun: what a run waits for, an approval or a question, holds up no other routine.
+ * @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file]
  */
 async function run(path, now, asked = false, file) {
   const routine = (await routines()).find((candidate) => candidate.path === path)
   const time = asked || file ? now : routine && due(routine, now, week().weekend)
-  if (!routine || !time || !(asked || free())) return
+  if (!routine || !time) return
   await writeRoutine(app.fs, { ...routine, lastRun: now.toISOString() })
   const told = await note(routine, time, asked, file)
-  newConversation()
-  const files = file ? [{ key: file.uri, name: file.name, status: /** @type {const} */ ('ready'), link: file, pages: splitPages((await fileText(app.fs, app.projectDir, file.uri)) ?? '') }] : undefined
+  const files = file ? [{ key: file.uri, name: file.name, status: /** @type {const} */ ('ready'), link: file, pages: splitPages((await fileText(app.fs, app.projectDir, file.uri)) ?? '') }] : []
   // A routine that runs a flow: its steps are the turn (D218).
-  if (routine.flow && await unlock('flows')) await send(routine.request, { notes: [told], call: { name: 'run_flow', args: { flow: routine.flow, name: routine.request } }, files, brain: brainOf(routine) })
-  else await send(routine.request, { notes: [told], files, brain: brainOf(routine) })
+  const call = routine.flow && await unlock('flows') ? { name: 'run_flow', args: { flow: routine.flow, name: routine.request } } : undefined
+  const options = { notes: [told], call, files, brain: brainOf(routine) }
+  const shown = asked || free()
+  if (shown) newConversation()
+  const sent = shown ? send(routine.request, options) : import('../../ui/send.js').then((module) => module.sendAside(routine.request, options))
+  sent.catch((error) => console.warn('Routines', error))
 }
 /**
  * Who answers a routine's runs (D303): Auto, or its brain at its version while the room still has it;
@@ -206,7 +213,7 @@ const later = () => {
   clearTimeout(soon)
   soon = setTimeout(() => check(), 1000)
 }
-// Every half minute, and a moment after Jean comes free, the tab comes back, or the room changes.
+// Every half minute, and a moment after the tab comes back, the room changes, or Jean comes free to show one.
 setInterval(() => check(), 30_000)
 document.addEventListener('visibilitychange', later)
 effect(() => {

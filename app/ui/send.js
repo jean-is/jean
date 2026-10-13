@@ -1,7 +1,8 @@
 // Sending a message and answering it: the prompt and the notes since (D46), what the brain reads of
 // the files shared, Auto's choice of a brain, the run with its approvals, and the provider's cache
 // kept warm (D49). Loaded when the user starts typing or sends, not with the first screen (D148):
-// state.js's send, retry, rewind, fork and warm load it, and so does editing a request (ui/edit.js, D312).
+// state.js's send, retry, rewind, fork and warm load it, and so do editing a request (ui/edit.js, D312) and a
+// routine's run out of sight (D317).
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
 import { createConversation, rewriteRecords } from '../core/conversations.js'
@@ -156,14 +157,15 @@ async function approve(toolCall, conversation) {
 
 /**
  * What the brain knows of the user and the room: the project, the instructions (the
- * organisation's, the user's, the project's), and what capabilities add (memory, skills).
+ * organisation's, the user's, the project's), and what capabilities add (memory, skills) for the task.
+ * @param {{ id: string, path: string, records: Envelope[] } | null} task null: one about to start on screen
  * @returns {Promise<import('../core/prompt.js').Sections>}
  */
-async function context() {
+async function context(task) {
   const { dir, data, body } = app.project.value
   const home = data.default === true
   const instructions = [app.policy.instructions, await readBody('instructions.md'), home ? '' : await readBody(`${dir}/instructions.md`)].filter(Boolean).join('\n\n')
-  const added = await Promise.all(contributions().sections.map((section) => section()))
+  const added = await Promise.all(contributions().sections.map((section) => section(task)))
   // The project's name, then what the user calls its assistant there and how it should be.
   const project = [String(data.name), ...(data.assistantName ? [`The user calls you ${data.assistantName} here.`] : []), ...(body.trim() ? [`How to be: ${body.trim()}`] : [])].join('\n')
   return Object.assign({ ...(!home && { project }), ...(instructions && { instructions }) }, ...added)
@@ -172,9 +174,11 @@ async function context() {
 /**
  * The records a message adds: the frozen prompt when the conversation has none yet, or
  * notes for what changed since (D46), any notes the message comes with, then the message itself.
- * @param {string} text @param {BrainConfig} brain @param {Envelope[]} records @param {Envelope[]} [notes] @param {import('./state.js').Attachment[]} [items] the files it shares
+ * @param {string} text @param {BrainConfig} brain @param {{ id: string, path: string, records: Envelope[] } | null} task the conversation it goes to, null for a new one on screen
+ * @param {Envelope[]} [notes] @param {import('./state.js').Attachment[]} [items] the files it shares
  */
-async function prepare(text, brain, records, notes = [], items = app.attachments.value) {
+async function prepare(text, brain, task, notes = [], items = app.attachments.value) {
+  const records = task?.records ?? []
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
   // so do questions, so the brain can ask from the start (D146), noting the user's name (D150), and
   // the receipt, so the browser's record of what the page reached covers the first answer (D252), and
@@ -183,7 +187,7 @@ async function prepare(text, brain, records, notes = [], items = app.attachments
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47); one the user turned off isn't either (D304).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred && !tool.off).map((tool) => tool.spec.name)
-  const sections = await context()
+  const sections = await context(task)
   const now = promptState({ language: languageName(locale.value, 'en'), tools: names, sections })
   const frozen = frozenPrompt(records)
   const head = frozen
@@ -264,11 +268,10 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     return
   }
   const { brain, meta } = picked
-  // What / and @ named in it, told just before it (D199).
-  const named = /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : []
+  const named = await mentioned(text)
   // What the box's modes ask of it (Visual answers, D300), told just before it too.
   const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? []) ?? [])
-  const added = await prepare(text.trim(), brain, current?.records ?? [], [...notes, ...named, ...modes], files)
+  const added = await prepare(text.trim(), brain, current, [...notes, ...named, ...modes], files)
   app.draft.value = ''
   if (files === app.attachments.value) app.attachments.value = []
   if (!current) {
@@ -294,6 +297,28 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   // The title is written alongside the answer (D112).
   if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
   await runAgent(next, brain, meta, call)
+}
+
+/** What / and @ named in a message, told just before it (D199). @param {string} text @returns {Promise<Envelope[]>} */
+const mentioned = async (text) => (/(?:^|\s)[/@]\S/u.test(text) ? import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : [])
+
+/**
+ * Sends a request in a task of its own, out of sight (D147), the page, the box and its files as they are: a routine's run
+ * while the user is busy (D317). The task starts on its project's folder, never one chosen on screen, and without the
+ * box's modes. @param {string} text @param {{ notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto' }} [options] as send()'s
+ */
+export async function sendAside(text, { notes = [], call, files = [], brain: chosen } = {}) {
+  const picked = await pickBrain(text, [], 0, chosen)
+  if (!picked) return notify(t('auto.noPrivate'))
+  const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+  await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id, aside: true }, () => {})
+  const task = { id: created.id, path: created.path, records: /** @type {Envelope[]} */ ([]) }
+  task.records = await prepare(text, picked.brain, task, [...notes, ...await mentioned(text)], files)
+  await keepRecords(task.path, task.records)
+  refreshConversations()
+  for (const file of linkedFiles(task.records)) fire(contributions().hooks, 'file.add', { task: task.path, file, routine: routineOf(task.records)?.routine }, () => {})
+  import('./title.js').then(({ nameConversation }) => nameConversation(task.path, task.records, picked.brain))
+  await runAgent(task, picked.brain, picked.meta, call)
 }
 
 /** Run the agent on the current conversation, up to its last user message. @param {string} [text] its words, for Auto */
@@ -506,7 +531,7 @@ export async function warm() {
   if (!records.length && !app.attachments.value.some((item) => item.status === 'ready')) return
   asked.set(current?.path ?? '', Date.now())
   try {
-    const all = [...records, ...await prepare('', brain, records)]
+    const all = [...records, ...await prepare('', brain, current)]
     const frozen = frozenPrompt(all)
     const declared = frozen?.state.tools ?? []
     const tools = contributions().tools.filter((tool) => declared.includes(tool.spec.name)).map((tool) => tool.spec)

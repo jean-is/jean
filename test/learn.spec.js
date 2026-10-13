@@ -270,6 +270,29 @@ test('a routine that fell due while Jean was closed runs at the next visit, once
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(count)
 })
 
+test('a routine that falls due while the user is busy runs at once, out of sight, the page and the box as they were (D122, D147)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Routines')
+  await page.keyboard.press('Escape')
+  await newConversation(page)
+  await ask(page, 'Every day at 07:00, summarize the weekly sales by region')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a routine now')
+  // Due while the user writes their next message in the task that made it, after a look at Settings.
+  await page.locator('#prompt').fill('And the monthly ones?')
+  await changeRoutine(page, { at: '00:00' })
+  await openSettings(page, 'Routines')
+  await closeSettings(page)
+  const tasks = await openTasks(page)
+  const run = tasks.locator('.history-list li', { hasText: 'Weekly sales' })
+  await expect(run.getByRole('img', { name: 'Unread' })).toBeVisible()
+  await expect(page.locator('.msg-user')).toHaveText(['Every day at 07:00, summarize the weekly sales by region'])
+  await expect(page.locator('#prompt')).toHaveValue('And the monthly ones?')
+  await run.locator('.history-item').click()
+  await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
+})
+
 test('a routine\'s runs are not requests of the user\'s own: they make no kind (D122)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

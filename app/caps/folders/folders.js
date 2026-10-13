@@ -377,11 +377,12 @@ async function followAgents(yes) {
  * A new conversation was made with its first message: it keeps the folder it started on, chosen
  * for it or its project's (D149), or the one of the conversation it duplicates (D230). A project's
  * AGENTS.md is the project's to offer, not each conversation's.
- * @param {{ id: string }} conversation @param {{ id: string, records: Envelope[] }} [from]
+ * @param {{ id: string, aside?: boolean }} conversation @param {{ id: string, records: Envelope[] }} [from]
  */
-async function started({ id }, from) {
-  const chosen = from ? folderOf(from) : pending.peek()
-  pending.value = undefined
+async function started({ id, aside }, from) {
+  // One started out of sight (a routine's run, D317) leaves the folder chosen on screen to the task the user starts there.
+  const chosen = from ? folderOf(from) : aside ? undefined : pending.peek()
+  if (!aside) pending.value = undefined
   const folder = chosen === undefined ? projectFolder() : chosen
   if (folder?.handle || folder?.copy) await keep(id, chosen === undefined ? { ...folder, agents: false } : folder)
 }
@@ -581,8 +582,8 @@ export async function scriptFile(path, ctx) {
 register({
   id: 'folders',
   tools: [listTool, findTool, openTool, changeTool],
-  sections: async () => {
-    const folder = folderOf(app.current.peek())
+  sections: async (task) => {
+    const folder = folderOf(task)
     return folder ? { folder: await section(folder) } : {}
   },
   hooks: [{ on: 'task.start', run: async (e, next) => { await started(e, e.from); return next(e) } }],
