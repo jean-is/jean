@@ -24,11 +24,13 @@ const BATCH = 16
 export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
 const worker = modelWorker(new URL('./embed-worker.js', import.meta.url), 'Meaning search stopped')
 
-/** WebGPU with fp16 shaders runs the q4f16 graph; everything else the q4 one on WebAssembly (as Kev). */
+/**
+ * WebGPU only, the q4f16 graph with fp16 shaders, else the q4 one: both keep the vocabulary quantized
+ * with an operator WebAssembly's runtime lacks (GatherBlockQuantized), so it is offered where WebGPU is (ui/discovery.js).
+ */
 async function backend() {
-  const gpu = /** @type {any} */ (navigator).gpu
-  const adapter = gpu ? await gpu.requestAdapter().catch(() => null) : null
-  return adapter?.features.has('shader-f16') ? { device: 'webgpu', dtype: 'q4f16' } : { device: 'wasm', dtype: 'q4' }
+  const adapter = await /** @type {any} */ (navigator).gpu?.requestAdapter().catch(() => null)
+  return { device: 'webgpu', dtype: adapter?.features.has('shader-f16') ? 'q4f16' : 'q4' }
 }
 const where = backend()
 

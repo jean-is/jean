@@ -62,8 +62,8 @@ const fileTool = {
 
 /** search_files by meaning too, once meaning search is on (D302). @type {Parameters<typeof searchTool>[0]['meaning']} */
 const meaning = async (query, links) => (loaded.value.has('meaning') ? (await import('../meaning/meaning.js')).rank(query, links) : null)
-/** When words find nothing: meaning search might, if the user hasn't turned it down. */
-const unfound = () => (loaded.value.has('meaning') || isDenied('meaning') || effective.value.settings.offers.meaning ? '' : ' The words may differ: offer "meaning" to search by meaning.')
+/** When words find nothing: meaning search might, where it runs (WebGPU), if the user hasn't turned it down. */
+const unfound = () => (!('gpu' in navigator) || loaded.value.has('meaning') || isDenied('meaning') || effective.value.settings.offers.meaning ? '' : ' The words may differ: offer "meaning" to search by meaning.')
 
 register({
   id: 'files',

@@ -29,6 +29,8 @@ self.onmessage = ({ data }) => {
 
 test('the brain offers search by meaning when words find nothing, and then finds the passage', async ({ page }) => {
   await page.route('**/caps/meaning/embed-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: WORKER }))
+  // It is offered where WebGPU is: a browser without it gets one with no adapter, which the fake doesn't need.
+  await page.addInitScript(() => { if (!('gpu' in navigator)) Object.defineProperty(Navigator.prototype, 'gpu', { get: () => ({ requestAdapter: async () => null }) }) })
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Quarterly notes.txt', mimeType: 'text/plain', buffer: Buffer.from('Revenue grew 12% in Q3, led by the North region.') })

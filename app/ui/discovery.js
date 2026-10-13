@@ -18,13 +18,14 @@ import { host } from './host.js'
 /** @typedef {import('./auto.js').Signals} Signals */
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
+const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', 'meaning', 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
   files: 'reading files the user shares (PDF, Word, Excel, CSV…)',
-  meaning: "searching the project's files by meaning as well as by their words, in any language (a download, once)",
+  ...(gpu && { meaning: "searching the project's files by meaning as well as by their words, in any language (a download, once)" }),
   computer: 'a computer in a sandbox, for exact numbers, data work and commands',
   memory: 'remembering lasting facts and preferences from one conversation to the next',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
