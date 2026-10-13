@@ -98,6 +98,23 @@ test('Jean draws a flow beside the task; the user moves it, runs it, sees the ru
   await expect(page.locator('.hero-question')).toBeVisible()
 })
 
+test('a step that read a skill names the skill under it, as the user’s list does', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    const { unlock } = await import('/ui/caps.js')
+    await Promise.all([unlock('flows'), unlock('skills')])
+    const [{ app }, { saveSkill }] = await Promise.all([import('/ui/state.js'), import('/core/skills.js')])
+    await saveSkill(app.fs, '', { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', body: '# Weekly sales summary\n\n1. Total the sales by region.', by: 'test' })
+  })
+  await ask(page, 'Follow the skill weekly-sales-summary')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Followed its steps.')
+  await page.locator('.views .flows-toggle').click()
+  const card = page.locator('app-flows aside.flows .flow-step[data-kind="call"]')
+  await expect(card.locator('small')).toHaveText('Weekly sales summary')
+  await expect(card).toHaveAttribute('aria-label', 'Action · Used a skill · Weekly sales summary · Done')
+})
+
 for (const lang of ['ar', 'ja']) {
   test(`flow mode speaks the user's language, and mirrors right to left (${lang})`, async ({ page }) => {
     await start(page, lang)
