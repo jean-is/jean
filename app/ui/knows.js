@@ -7,9 +7,10 @@
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
-import { app, effective, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
+import { app, effective, brainsHere, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
 import { openSettings, setting } from './dialogs.js'
+import { choices } from './picker.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
 import { DEFAULT_SOURCES, indexURL, siteOf } from '../caps/skills/sources.js'
@@ -218,13 +219,13 @@ function changeRoutine(routine, change) {
     const kept = (await routinesModule?.routines())?.find((other) => other.path === routine.path)
     if (!kept) return
     const changed = /** @type {Record<string, any>} */ ({ ...kept, ...change })
-    const { path, title, request, author, createdAt, lastRun, flow } = changed
+    const { path, title, request, author, createdAt, lastRun, flow, brain, model } = changed
     // A file sets it off (D294), or a time: a week or a month needs its day, today's until the user picks
     // another; once, the next time it says; one a file set off before, at nine.
     const today = new Date()
     const every = 'every' in kept ? kept.every : undefined
     const plan = trigger(changed) ?? schedule({ at: '09:00', ...changed, on: changed.every === every ? changed.on : changed.every === 'week' ? today.getDay() : changed.every === 'once' ? undefined : today.getDate() })
-    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, lastRun, flow, ...plan })
+    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, lastRun, flow, brain, model, ...plan })
   }).then(refresh, (error) => console.warn('Routine', error))
   return changing
 }
@@ -234,6 +235,28 @@ async function removeRoutine(routine) {
   if (!confirm(t('routines.confirmDelete', { title: routine.title }))) return
   await app.fs.remove(routine.path)
   await refresh()
+}
+
+/**
+ * Who answers a routine's runs (D303): the brain the user's messages have, Auto, or one the picker offers; its own
+ * at a version the picker no longer offers stays, and one the room no longer has answers as the user's messages do.
+ * @param {Routine} routine
+ */
+function brainChoice(routine) {
+  const offered = choices()
+  const own = brainsHere.value.find((brain) => brain.id === routine.brain)
+  const listed = offered.some(({ brain, model }) => brain.id === routine.brain && model === routine.model)
+  const pick = (/** @type {Event} */ e) => {
+    const value = /** @type {HTMLSelectElement} */ (e.target).value
+    const choice = /^\d+$/.test(value) ? offered[Number(value)] : undefined
+    changeRoutine(routine, choice ? { brain: choice.brain.id, model: choice.model } : { brain: value === 'auto' ? value : undefined, model: undefined })
+  }
+  return html`<label>${t('routines.brain')}<select @change=${pick}>
+    <option value="" ?selected=${!routine.brain || (routine.brain !== 'auto' && !own)}>${t('routines.brain.yours')}</option>
+    <option value="auto" ?selected=${routine.brain === 'auto'}>${t('auto.name')}</option>
+    ${offered.map(({ label, behind, brain, model }, i) => html`<option value=${i} title=${behind} ?selected=${brain.id === routine.brain && model === routine.model}>${label}</option>`)}
+    ${own && !listed ? html`<option selected>${(routine.model || own.model).split('/').at(-1)}</option>` : nothing}
+  </select></label>`
 }
 
 /** Settings' Routines, open on a routine: from one of its runs (D122). @param {string} path */
@@ -284,6 +307,7 @@ function routineView(routine) {
       ${routine.flow ? html`<p><button class="link-button" title=${t('cap.flows.name')} @click=${() => { app.dialog.value = null; import('../caps/flows/flows.js').then((flows) => flows.edit(routine.flow)) }}>${icons.flow}
         <span dir="auto">${routine.request}</span></button></p>` : html`<label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
         @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>`}
+      ${brainChoice(routine)}
       ${runs.length ? html`<div class="routine-runs">${t('routines.runs')}<ul aria-label=${t('routines.runs')}>${runs.map((run) => html`<li>
         <button class="button" @click=${() => openConversation(run.path)}>${when.format(new Date(run.createdAt))}</button></li>`)}</ul></div>` : nothing}
       <div class="row"><button class="button subtle danger" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button></div>

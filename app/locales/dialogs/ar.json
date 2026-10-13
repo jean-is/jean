@@ -118,6 +118,8 @@
   "routines.at": "الوقت",
   "routines.minute": "عند الدقيقة {minute}",
   "routines.request": "ما المطلوب",
+  "routines.brain": "العقل",
+  "routines.brain.yours": "كما في رسائلك",
   "routines.next": "المرة القادمة: {when}",
   "routines.confirmDelete": "هل تحذف المهمة الدورية «{title}»؟",
   "routines.run": "شغّلها الآن",

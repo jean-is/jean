@@ -108,6 +108,8 @@
   "routines.at": "Masa",
   "routines.minute": "Pada minit {minute}",
   "routines.request": "Apa yang perlu dibuat",
+  "routines.brain": "Otak",
+  "routines.brain.yours": "Sama seperti mesej anda",
   "routines.next": "Seterusnya: {when}",
   "routines.confirmDelete": "Padam rutin “{title}”?",
   "routines.run": "Jalankan sekarang",

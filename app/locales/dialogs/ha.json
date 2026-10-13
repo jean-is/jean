@@ -110,6 +110,8 @@
   "routines.at": "Lokaci",
   "routines.minute": "A minti {minute}",
   "routines.request": "Abin da za a yi",
+  "routines.brain": "Ƙwaƙwalwa",
+  "routines.brain.yours": "Kamar na saƙonninka",
   "routines.next": "Na gaba: {when}",
   "routines.confirmDelete": "A share aikin lokaci-lokaci “{title}”?",
   "routines.run": "Gudanar yanzu",

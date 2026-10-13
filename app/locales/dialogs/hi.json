@@ -110,6 +110,8 @@
   "routines.at": "समय",
   "routines.minute": "मिनट {minute} पर",
   "routines.request": "क्या करना है",
+  "routines.brain": "दिमाग़",
+  "routines.brain.yours": "आपके संदेशों वाला ही",
   "routines.next": "अगली बार: {when}",
   "routines.confirmDelete": "रूटीन “{title}” हटाएँ?",
   "routines.run": "अभी चलाएँ",

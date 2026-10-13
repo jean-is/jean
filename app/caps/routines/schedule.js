@@ -17,8 +17,9 @@ import { parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
  * @typedef {{ every: 'once' | 'hour' | 'day' | 'weekday' | 'week' | 'month', on?: number | string, at: string }} Schedule
  * when: what sets it off instead, a file the user shares or one Jean makes; if: a yes-or-no question about the file, in the user's words (D294).
  * @typedef {{ when: typeof WHEN[number], if?: string }} Trigger
- * flow: the id of a flow the routine runs, its request then the flow's name (D218).
- * @typedef {(Schedule | Trigger) & { path: string, title: string, request: string, author: string, createdAt: string, lastRun?: string, flow?: string }} Routine
+ * flow: the id of a flow the routine runs, its request then the flow's name (D218). brain: who answers its runs, 'auto' or a
+ * brain's id, and model the version with it; without it, the brain the user's messages have (D303).
+ * @typedef {(Schedule | Trigger) & { path: string, title: string, request: string, author: string, createdAt: string, lastRun?: string, flow?: string, brain?: string, model?: string }} Routine
  */
 
 export const EVERY = /** @type {const} */ (['once', 'hour', 'day', 'weekday', 'week', 'month'])
@@ -123,7 +124,8 @@ export function parseRoutine(text, path) {
   const plan = schedule(data) ?? trigger(data)
   const request = body.trim()
   if (!plan || !request || !data.title) return null
-  return { ...plan, path, title: String(data.title), request, author: String(data.author ?? ''), createdAt: String(data.createdAt ?? ''), ...(data.lastRun && { lastRun: String(data.lastRun) }), ...(data.flow && { flow: String(data.flow) }) }
+  return { ...plan, path, title: String(data.title), request, author: String(data.author ?? ''), createdAt: String(data.createdAt ?? ''), ...(data.lastRun && { lastRun: String(data.lastRun) }), ...(data.flow && { flow: String(data.flow) }),
+    ...(data.brain && { brain: String(data.brain) }), ...(data.brain && data.model && { model: String(data.model) }) }
 }
 
 /** The routines in a folder ('' for the home project's), oldest first. @param {FS} fs @param {string} dir @returns {Promise<Routine[]>} */
@@ -142,8 +144,8 @@ export function newRoutine(dir, { title, request, by, now = new Date(), flow, ..
 }
 
 /** Writes a routine whole (a change, or the time it last ran). @param {FS} fs @param {Routine} routine */
-export async function writeRoutine(fs, { path, title, request, author, createdAt, lastRun, flow, ...plan }) {
+export async function writeRoutine(fs, { path, title, request, author, createdAt, lastRun, flow, brain, model, ...plan }) {
   const when = 'when' in plan ? { when: plan.when, ...(plan.if && { if: plan.if }) } : { every: plan.every, ...(plan.on !== undefined && { on: plan.on }), at: plan.at }
-  const data = { format: 1, title, ...when, ...(flow && { flow }), author, createdAt, ...(lastRun && { lastRun }) }
+  const data = { format: 1, title, ...when, ...(flow && { flow }), ...(brain && { brain }), ...(brain && model && { model }), author, createdAt, ...(lastRun && { lastRun }) }
   await fs.write(path, stringifyFrontMatter(data, `${request.trim()}\n`))
 }

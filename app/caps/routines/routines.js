@@ -185,9 +185,19 @@ async function run(path, now, asked = false, file) {
   newConversation()
   const files = file ? [{ key: file.uri, name: file.name, status: /** @type {const} */ ('ready'), link: file, pages: splitPages((await fileText(app.fs, app.projectDir, file.uri)) ?? '') }] : undefined
   // A routine that runs a flow: its steps are the turn (D218).
-  if (routine.flow && await unlock('flows')) await send(routine.request, { notes: [told], call: { name: 'run_flow', args: { flow: routine.flow, name: routine.request } }, files })
-  else await send(routine.request, { notes: [told], files })
+  if (routine.flow && await unlock('flows')) await send(routine.request, { notes: [told], call: { name: 'run_flow', args: { flow: routine.flow, name: routine.request } }, files, brain: brainOf(routine) })
+  else await send(routine.request, { notes: [told], files, brain: brainOf(routine) })
 }
+/**
+ * Who answers a routine's runs (D303): Auto, or its brain at its version while the room still has it;
+ * otherwise nobody in particular, so the brain the user's messages have. @param {Routine} routine
+ */
+function brainOf(routine) {
+  if (routine.brain === 'auto') return /** @type {const} */ ('auto')
+  const brain = brainsHere.peek().find((one) => one.id === routine.brain)
+  return brain && { ...brain, model: routine.model || brain.model }
+}
+
 /** @param {string} path */
 export const runNow = (path) => run(path, new Date(), true)
 

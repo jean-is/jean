@@ -110,6 +110,8 @@
   "routines.at": "সময়",
   "routines.minute": "{minute} মিনিটে",
   "routines.request": "কী করতে হবে",
+  "routines.brain": "মস্তিষ্ক",
+  "routines.brain.yours": "আপনার বার্তাগুলোর মতোই",
   "routines.next": "পরের বার: {when}",
   "routines.confirmDelete": "রুটিন “{title}” মুছবেন?",
   "routines.run": "এখনই চালান",

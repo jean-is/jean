@@ -110,6 +110,8 @@
   "routines.at": "Oras",
   "routines.minute": "Sa minuto {minute}",
   "routines.request": "Ano ang gagawin",
+  "routines.brain": "Utak",
+  "routines.brain.yours": "Kapareho ng sa mga mensahe mo",
   "routines.next": "Susunod: {when}",
   "routines.confirmDelete": "Burahin ang rutinang “{title}”?",
   "routines.run": "Patakbuhin ngayon",

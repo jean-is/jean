@@ -112,6 +112,8 @@
   "routines.at": "Ora",
   "routines.minute": "Al minuto {minute}",
   "routines.request": "Cosa fare",
+  "routines.brain": "Cervello",
+  "routines.brain.yours": "Lo stesso dei tuoi messaggi",
   "routines.next": "Prossima volta: {when}",
   "routines.confirmDelete": "Eliminare la routine «{title}»?",
   "routines.run": "Esegui ora",

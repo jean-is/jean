@@ -110,6 +110,8 @@
   "routines.at": "Saa",
   "routines.minute": "Dakika {minute}",
   "routines.request": "Cha kufanya",
+  "routines.brain": "Ubongo",
+  "routines.brain.yours": "Sawa na wa jumbe zako",
   "routines.next": "Ijayo: {when}",
   "routines.confirmDelete": "Futa ratiba “{title}”?",
   "routines.run": "Endesha sasa",

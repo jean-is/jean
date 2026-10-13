@@ -108,6 +108,8 @@
   "routines.at": "Àkókò",
   "routines.minute": "Ní ìṣẹ́jú {minute}",
   "routines.request": "Ohun tí a ó ṣe",
+  "routines.brain": "Ọpọlọ",
+  "routines.brain.yours": "Bí ti àwọn ọ̀rọ̀ yín",
   "routines.next": "Ìgbà tó kàn: {when}",
   "routines.confirmDelete": "Ṣé kí a pa iṣẹ́ déédéé “{title}” rẹ́?",
   "routines.run": "Ṣe é báyìí",

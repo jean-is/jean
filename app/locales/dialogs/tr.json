@@ -110,6 +110,8 @@
   "routines.at": "Saat",
   "routines.minute": "Dakika {minute}",
   "routines.request": "Ne yapılacak",
+  "routines.brain": "Beyin",
+  "routines.brain.yours": "Mesajlarındakiyle aynı",
   "routines.next": "Sonraki: {when}",
   "routines.confirmDelete": "“{title}” rutini silinsin mi?",
   "routines.run": "Şimdi çalıştır",

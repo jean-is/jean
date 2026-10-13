@@ -110,6 +110,8 @@
   "routines.at": "Time",
   "routines.minute": "At minute {minute}",
   "routines.request": "What to do",
+  "routines.brain": "Brain",
+  "routines.brain.yours": "Same as your messages",
   "routines.next": "Next: {when}",
   "routines.confirmDelete": "Delete the routine “{title}”?",
   "routines.run": "Run now",

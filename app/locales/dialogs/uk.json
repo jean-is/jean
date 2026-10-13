@@ -114,6 +114,8 @@
   "routines.at": "Час",
   "routines.minute": "На хвилині {minute}",
   "routines.request": "Що зробити",
+  "routines.brain": "Мозок",
+  "routines.brain.yours": "Як для ваших повідомлень",
   "routines.next": "Наступного разу: {when}",
   "routines.confirmDelete": "Видалити регулярне завдання «{title}»?",
   "routines.run": "Запустити зараз",
