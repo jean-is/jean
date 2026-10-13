@@ -6,6 +6,8 @@
 // its apps, or name fewer hosts.
 // With --budgets (npm run dev, dev:gateway and start), it checks the budgets as it starts and after
 // each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244).
+// It serves examples/ too, at /examples/, to any page, so that Settings › Plugins reads the example
+// plugins at http://127.0.0.1:<port>/examples/plugins/<name>/; a deploy never has them.
 import { execFile } from 'node:child_process'
 import { createReadStream, watch } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
@@ -17,6 +19,7 @@ import { listener } from '../gateway/serve.js'
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const APP = join(ROOT, 'app')
+const EXAMPLES = join(ROOT, 'examples')
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.PORT) || 4173
 /** @type {import('../gateway/gateway.js').Config | null} */
@@ -82,7 +85,8 @@ export async function handle (req, res) {
   if (relay && pathname === '/gateway') return relay(req, res)
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
   if (GATEWAY && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: { gateway: `http://${req.headers.host}/gateway` } })))
-  const file = resolveRequest(req.url ?? '/')
+  const example = pathname.startsWith('/examples/')
+  const file = example ? resolveRequest(pathname.slice('/examples'.length), EXAMPLES) : resolveRequest(req.url ?? '/')
   if (!file) return fail(res, 404, 'Not found')
   const info = await stat(file).catch(() => null)
   if (!info?.isFile()) return fail(res, 404, 'Not found')
@@ -93,6 +97,7 @@ export async function handle (req, res) {
     'Content-Type': TYPES[extname(file).toLowerCase()] ?? 'application/octet-stream',
     'Content-Length': info.size,
     'Cache-Control': 'no-cache',
+    ...(example && { 'Access-Control-Allow-Origin': '*' }),
   })
   if (req.method === 'HEAD') return res.end()
   createReadStream(file).on('error', () => res.destroy()).pipe(res)

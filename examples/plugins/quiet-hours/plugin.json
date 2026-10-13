@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "name": "quiet-hours",
+  "version": "1.0.0",
+  "title": "Quiet hours",
+  "title-fr": "Heures calmes",
+  "title-ja": "静かな時間",
+  "description": "During the hours you choose, Jean asks you first before doing anything but reading, and deletes nothing. The rest of the time, your rules stand as they are.",
+  "description-fr": "Aux heures que vous choisissez, Jean vous demande d’abord avant de faire autre chose que lire, et ne supprime rien. Le reste du temps, vos règles s’appliquent telles quelles.",
+  "description-ja": "選んだ時間帯は、読む以外のことをする前に Jean が先に確認し、何も削除しません。それ以外の時間は、いつものルールのままです。",
+  "author": "Jean's examples",
+  "main": "main.js",
+  "rights": ["watch", "draw", "notify", "refuse"]
+}

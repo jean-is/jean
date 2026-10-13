@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "name": "trusted-sites",
+  "version": "1.0.0",
+  "title": "Trusted sites",
+  "title-fr": "Sites de confiance",
+  "title-ja": "信頼するサイト",
+  "description": "Jean asks you before it opens a page. Trust a site, and its pages open without asking; other sites still ask.",
+  "description-fr": "Jean vous demande avant d’ouvrir une page. Faites confiance à un site, et ses pages s’ouvrent sans demander ; les autres sites demandent toujours.",
+  "description-ja": "Jean はページを開く前に確認します。サイトを信頼すると、そのページは確認なしで開きます。ほかのサイトでは引き続き確認します。",
+  "author": "Jean's examples",
+  "main": "main.js",
+  "rights": ["watch", "draw", "loosen"]
+}

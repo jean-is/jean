@@ -135,3 +135,69 @@ test('with ?safe no plugin runs until the user leaves safe mode, and one that ke
   await expect(frames).toHaveCount(1)
   await expect(row).not.toContainText('It kept failing')
 })
+
+test('the example plugins (examples/plugins/) work together: a log of the records, quiet hours that ask first, and a site trusted that opens without asking', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Plugins')
+  await closeSettings(page)
+  await turnOn(page, 'Browser')
+  await closeSettings(page)
+  for (const [name, title] of [['activity-log', 'Activity log'], ['quiet-hours', 'Quiet hours'], ['trusted-sites', 'Trusted sites']]) {
+    const settings = await openSettings(page, 'Plugins')
+    // npm run dev serves them, as the tests' server does.
+    await settings.getByLabel('The address of a plugin').fill(`http://127.0.0.1:4180/examples/plugins/${name}/`)
+    await settings.getByRole('button', { name: 'Look at it' }).click()
+    await settings.getByRole('button', { name: 'Add it' }).click()
+    await expect(page.locator('.toast')).toContainText(`${title} is added.`)
+    await closeSettings(page)
+  }
+  /** The facts of the last answer's first action. */
+  const facts = async () => {
+    const last = page.locator('.msg-jean').last()
+    await last.locator('.activity summary').first().click()
+    await last.locator('.activity-list li[data-depth] summary').first().click()
+    return last.locator('li[data-depth] .step-facts').first()
+  }
+
+  // Activity log says under an answer what was done for it.
+  await ask(page, 'Hello there')
+  await expect(page.locator('.msg-jean .plugin-answer').first()).toHaveText('Answered without doing anything else')
+  // Trusted sites has nothing to offer yet, so its band takes no room.
+  await expect(page.locator('.plugin-above[aria-label="Trusted sites"]')).toBeHidden()
+
+  // Quiet hours, all the time: Jean asks before writing a page, and the activity says why.
+  let settings = await openSettings(page, 'Plugins')
+  await settings.getByRole('button', { name: 'All the time' }).click()
+  await closeSettings(page)
+  await expect(page.locator('.plugin-above[aria-label="Quiet hours"]')).toContainText("Quiet hours: I'll ask you first")
+  await ask(page, 'Make me a web page for the bakery')
+  await page.locator('.approval').getByRole('button', { name: 'Allow once' }).click()
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(2)
+  await expect(page.locator('.msg-jean .plugin-answer').last()).toHaveText('1 action · decided by quiet-hours')
+  await expect(await facts()).toContainText('Asked first by Quiet hours')
+  settings = await openSettings(page, 'Plugins')
+  await settings.getByRole('button', { name: 'Never' }).click()
+  await closeSettings(page)
+  await expect(page.locator('.plugin-above[aria-label="Quiet hours"]')).toBeHidden()
+
+  // Trusted sites: the bakery's site asks once, is trusted from the band, then opens without asking.
+  await ask(page, 'Open the bakery site')
+  const band = page.locator('.plugin-above[aria-label="Trusted sites"]')
+  await expect(band).toContainText('Open pages from 127.0.0.1:4181 without asking')
+  await band.getByRole('button', { name: 'Trust it' }).click()
+  await page.locator('.approval').getByRole('button', { name: 'Allow once' }).click()
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(3)
+  await ask(page, 'Open the bakery site again')
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(4)
+  await expect(page.locator('.approval')).toHaveCount(0)
+  await expect(await facts()).toContainText('Allowed by Trusted sites')
+
+  // The log has it all, what going back removed too.
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.locator('.msg-actions.is-request').last().getByRole('button', { name: 'Try again' }).click()
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(4)
+  settings = await openSettings(page, 'Plugins')
+  await expect(settings).toContainText('You went back to a request')
+  await expect(settings).toContainText('allowed by trusted-sites')
+})
