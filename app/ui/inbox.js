@@ -131,7 +131,7 @@ export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortc
 const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd>`
 
 /** Where a capability found leads, under a new task, as Manus lists its own: its section of Settings, in Settings' order. */
-const PLACES = /** @type {const} */ ([['connections', 'plug'], ['skills', 'scroll'], ['routines', 'alarm']])
+const PLACES = /** @type {const} */ ([['skills', 'scroll'], ['routines', 'alarm'], ['connections', 'plug']])
 
 /**
  * What the drawer holds, open beside the conversation or over it: a new task, which brings the

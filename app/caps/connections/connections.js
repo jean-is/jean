@@ -182,7 +182,7 @@ effect(() => register({
     return tools.length ? [{ name: connection.name, ...(logo && { logo: logoAt(logo) }), tools }] : []
   }),
   slots: {
-    settings: { at: 60, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel },
+    settings: { at: 80, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel },
     // In +, a row whose menu beside it holds the room's connections (D292).
     add: { at: 5, draw: () => subRow('connections', icons.plug) },
   },

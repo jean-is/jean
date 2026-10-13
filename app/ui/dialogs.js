@@ -728,8 +728,10 @@ const KNOWN = ['you', 'skills', 'routines']
 
 /**
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
- * Jean itself; what it knows and can do, a capability's own section once it is on (its settings
- * slot: Connections, Web search, the Computer), then the case of them all; and what it may do and what it keeps.
+ * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
+ * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
+ * settings slot: Connections, Web search, the Computer, Plugins), then the case of them all; and what
+ * it may do and what it keeps.
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {
@@ -738,8 +740,8 @@ const SECTIONS = {
   appearance: { at: 30, label: 'settings.appearance', icon: icons.contrast, show: appearance },
   keyboard: { at: 40, label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
-  skills: { at: 80, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
-  routines: { at: 90, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
+  skills: { at: 60, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
+  routines: { at: 70, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
   data: { at: 120, label: 'settings.storage', icon: icons.data, show: data },

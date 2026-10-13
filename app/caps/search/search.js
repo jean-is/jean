@@ -83,7 +83,7 @@ effect(() => register({
   // Vikidia's pages refuse to show beside the conversation: the browser opens them in a tab at once.
   ownTab: (url) => OWN_TAB.some((id) => onSite(serviceURL(id, app.settings.peek(), app.policy), url)),
   slots: {
-    settings: { at: 70, id: 'search', label: 'cap.search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia' },
+    settings: { at: 90, id: 'search', label: 'cap.search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia' },
     add: { at: 7, draw: row },
   },
 }))
