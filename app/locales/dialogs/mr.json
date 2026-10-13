@@ -112,6 +112,8 @@
   "routines.at": "वेळ",
   "routines.minute": "मिनिट {minute} ला",
   "routines.request": "काय करायचे",
+  "routines.brain": "मेंदू",
+  "routines.brain.yours": "तुमच्या संदेशांसारखाच",
   "routines.next": "पुढच्या वेळी: {when}",
   "routines.confirmDelete": "नियमित काम “{title}” हटवायचे?",
   "routines.run": "आता चालवा",

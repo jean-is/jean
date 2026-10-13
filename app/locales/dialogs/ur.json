@@ -112,6 +112,8 @@
   "routines.at": "وقت",
   "routines.minute": "منٹ {minute} پر",
   "routines.request": "کیا کرنا ہے",
+  "routines.brain": "دماغ",
+  "routines.brain.yours": "وہی جو آپ کے پیغامات کا ہے",
   "routines.next": "اگلی بار: {when}",
   "routines.confirmDelete": "معمول “{title}” حذف کریں؟",
   "routines.run": "ابھی چلائیں",

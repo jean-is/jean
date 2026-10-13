@@ -115,6 +115,8 @@
   "routines.at": "שעה",
   "routines.minute": "בדקה {minute}",
   "routines.request": "מה לעשות",
+  "routines.brain": "מוח",
+  "routines.brain.yours": "כמו בהודעות שלך",
   "routines.next": "בפעם הבאה: {when}",
   "routines.confirmDelete": "למחוק את השגרה “{title}”?",
   "routines.run": "הפעלה עכשיו",

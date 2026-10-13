@@ -187,16 +187,27 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await routine.locator('input[type="date"]').fill('2099-01-15')
   await routine.locator('input[type="date"]').blur()
   await expect.poll(async () => (await routines(page)).map(({ every, on, at }) => ({ every, on, at }))).toEqual([{ every: 'once', on: '2099-01-15', at: '09:45' }])
+  // Its own brain (D303): the one the user's messages have, until one the picker offers is picked, kept with its version.
+  const brain = routine.getByRole('combobox', { name: 'Brain', exact: true })
+  await expect(brain).toHaveValue('')
+  await expect(brain.locator('option').first()).toHaveText('Same as your messages')
+  await brain.selectOption({ label: 'fake-brain-1' })
+  await expect.poll(async () => (await routines(page)).map(({ brain, model }) => ({ brain: brain?.length, model }))).toEqual([{ brain: 26, model: 'fake-brain-1' }])
+  await brain.selectOption({ label: 'Auto' })
+  await expect.poll(async () => (await routines(page)).map(({ brain, model }) => ({ brain, model }))).toEqual([{ brain: 'auto', model: undefined }])
+  await brain.selectOption({ label: 'fake-brain-1' })
   await page.keyboard.press('Escape')
 
-  // Due since midnight: on the welcome screen, with Jean free, it runs in a conversation of its own.
-  await changeRoutine(page, { every: 'day', on: undefined, at: '00:00' })
+  // Due since midnight: on the welcome screen, with Jean free, it runs in a conversation of its own, on its own brain's version.
+  await changeRoutine(page, { every: 'day', on: undefined, at: '00:00', model: 'fake-brain-2' })
   await page.locator('.wordmark').click()
   await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
   await expect(page.locator('.msg-user')).toHaveText('Summarize the weekly sales by region')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   const note = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update)
   expect(note.text).toMatch(/^The next message is the user's routine "Weekly sales", which you send yourself every day at 00:00; it fell due on \d{4}-\d\d-\d\d 00:00 \(\w+day\), local time\./)
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.toolCallId?.startsWith('brain-'))?.update.rawInput.model)).toBe('fake-brain-2')
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).activeBrain.value?.model)).toBe('fake-brain-1')
   const ran = (await routines(page))[0].lastRun
   expect(ran).toBeTruthy()
 

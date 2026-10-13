@@ -112,6 +112,8 @@
   "routines.at": "ساعت",
   "routines.minute": "در دقیقهٔ {minute}",
   "routines.request": "چه کاری",
+  "routines.brain": "مغز",
+  "routines.brain.yours": "مانند پیام‌های شما",
   "routines.next": "دفعهٔ بعد: {when}",
   "routines.confirmDelete": "روال «{title}» حذف شود؟",
   "routines.run": "همین حالا اجرا شود",

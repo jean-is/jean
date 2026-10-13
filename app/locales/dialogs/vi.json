@@ -110,6 +110,8 @@
   "routines.at": "Giờ",
   "routines.minute": "Vào phút {minute}",
   "routines.request": "Việc cần làm",
+  "routines.brain": "Bộ não",
+  "routines.brain.yours": "Giống như tin nhắn của bạn",
   "routines.next": "Lần tới: {when}",
   "routines.confirmDelete": "Xóa tác vụ định kỳ “{title}”?",
   "routines.run": "Chạy ngay",

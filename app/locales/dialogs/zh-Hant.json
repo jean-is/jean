@@ -110,6 +110,8 @@
   "routines.at": "時間",
   "routines.minute": "第 {minute} 分鐘",
   "routines.request": "要做什麼",
+  "routines.brain": "大腦",
+  "routines.brain.yours": "與你的訊息相同",
   "routines.next": "下次：{when}",
   "routines.confirmDelete": "刪除例行任務「{title}」？",
   "routines.run": "立即執行",

@@ -112,6 +112,8 @@
   "routines.at": "Uhrzeit",
   "routines.minute": "Zur Minute {minute}",
   "routines.request": "Was zu tun ist",
+  "routines.brain": "Gehirn",
+  "routines.brain.yours": "Wie bei deinen Nachrichten",
   "routines.next": "Nächstes Mal: {when}",
   "routines.confirmDelete": "Routine „{title}“ löschen?",
   "routines.run": "Jetzt ausführen",

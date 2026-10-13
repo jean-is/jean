@@ -112,6 +112,8 @@
   "routines.at": "நேரம்",
   "routines.minute": "நிமிடம் {minute}",
   "routines.request": "என்ன செய்ய வேண்டும்",
+  "routines.brain": "மூளை",
+  "routines.brain.yours": "உங்கள் செய்திகளுக்கானதே",
   "routines.next": "அடுத்த முறை: {when}",
   "routines.confirmDelete": "“{title}” வழக்கத்தை நீக்கவா?",
   "routines.run": "இப்போது இயக்கு",

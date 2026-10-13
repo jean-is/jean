@@ -110,6 +110,8 @@
   "routines.at": "時刻",
   "routines.minute": "{minute}分",
   "routines.request": "やること",
+  "routines.brain": "頭脳",
+  "routines.brain.yours": "メッセージと同じ",
   "routines.next": "次回：{when}",
   "routines.confirmDelete": "ルーティン「{title}」を削除しますか？",
   "routines.run": "今すぐ実行",

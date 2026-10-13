@@ -114,6 +114,8 @@
   "routines.at": "Heure",
   "routines.minute": "À la minute {minute}",
   "routines.request": "Que faire",
+  "routines.brain": "Cerveau",
+  "routines.brain.yours": "Celui de vos messages",
   "routines.next": "Prochaine fois : {when}",
   "routines.confirmDelete": "Supprimer la routine « {title} » ?",
   "routines.run": "Lancer maintenant",

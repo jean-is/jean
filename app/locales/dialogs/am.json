@@ -112,6 +112,8 @@
   "routines.at": "ሰዓት",
   "routines.minute": "በደቂቃ {minute}",
   "routines.request": "ምን እንደሚሠራ",
+  "routines.brain": "አንጎል",
+  "routines.brain.yours": "እንደ መልእክቶችዎ",
   "routines.next": "ቀጣይ፦ {when}",
   "routines.confirmDelete": "መደበኛ ተግባሩ “{title}” ይሰረዝ?",
   "routines.run": "አሁን አስኪድ",

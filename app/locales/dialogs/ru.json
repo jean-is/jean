@@ -116,6 +116,8 @@
   "routines.at": "Время",
   "routines.minute": "На минуте {minute}",
   "routines.request": "Что сделать",
+  "routines.brain": "Мозг",
+  "routines.brain.yours": "Как для ваших сообщений",
   "routines.next": "В следующий раз: {when}",
   "routines.confirmDelete": "Удалить регулярную задачу «{title}»?",
   "routines.run": "Запустить сейчас",

@@ -112,6 +112,8 @@
   "routines.at": "సమయం",
   "routines.minute": "నిమిషం {minute} వద్ద",
   "routines.request": "ఏమి చేయాలి",
+  "routines.brain": "మెదడు",
+  "routines.brain.yours": "మీ సందేశాలకు ఉన్నదే",
   "routines.next": "తదుపరి: {when}",
   "routines.confirmDelete": "“{title}” రొటీన్‌ను తొలగించాలా?",
   "routines.run": "ఇప్పుడే నడుపు",

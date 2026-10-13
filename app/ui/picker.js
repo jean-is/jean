@@ -39,6 +39,28 @@ function cost(pricing) {
 }
 
 /**
+ * What the picker offers besides Auto, as a routine's own brain does too (D303): Fast, Smart and Best from the
+ * connected provider, then every other brain of the room's project (D194), each with what is behind it, its
+ * price once `priced` (D255). @param {boolean} [priced]
+ * @returns {{ icon: unknown, label: string, behind: string, brain: BrainConfig, model: string }[]}
+ */
+export function choices(priced = false) {
+  const brains = brainsHere.value
+  const remote = [activeBrain.value, ...brains].find((brain) => brain && !isLocal(brain))
+  const models = remote ? app.models.value[remote.id] ?? [] : []
+  const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
+  const offered = tiers.filter((model) => models.some((info) => info.id === model))
+  const plan = remote && PLANS[remote.provider]
+  return [
+    ...(remote ? offered.map((model) => ({ icon: TIER_ICONS[tiers.indexOf(model)], label: t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`), brain: remote, model,
+      behind: [short(model), plan ? t('picker.plan', { plan }) : priced && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · ') })) : []),
+    ...brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => (brain.api === 'device'
+      ? { icon: icons.chip, label: t('brain.device.title'), behind: t('brain.device.private'), brain, model: brain.model }
+      : { icon: isLocal(brain) ? icons.computer : icons.globe, label: short(brain.model), behind: brainLabel(brain), brain, model: brain.model })),
+  ]
+}
+
+/**
  * One choice: its icon and its name, what is behind it on hover; the one answering is ticked.
  * @param {unknown} icon @param {string} label @param {string} behind @param {boolean} selected @param {() => unknown} choose
  */
@@ -53,22 +75,13 @@ class Picker extends Element {
     const { settings } = effective.value
     const active = activeBrain.value
     const brains = brainsHere.value
-    const remote = [active, ...brains].find((brain) => brain && !isLocal(brain))
-    const models = remote ? app.models.value[remote.id] ?? [] : []
-    const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
-    const offered = tiers.filter((model) => models.some((info) => info.id === model))
-    const plan = remote && PLANS[remote.provider]
     const manual = (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => !settings.auto && active?.id === brain.id && active.model === model
     return html`<div id="brain-menu" class="menu brain-menu" popover
       @toggle=${(/** @type {ToggleEvent} */ e) => (this.#open.value = e.newState === 'open') && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
       ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => updateSettings({ auto: true }))}
-      ${remote ? offered.map((model) => option(TIER_ICONS[tiers.indexOf(model)], t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`),
-        [short(model), plan ? t('picker.plan', { plan }) : this.#open.value && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · '), manual(remote, model), () => pick(remote, model))) : nothing}
-      ${brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => brain.api === 'device'
-        ? option(icons.chip, t('brain.device.title'), t('brain.device.private'), manual(brain, brain.model), () => pick(brain, brain.model))
-        : option(isLocal(brain) ? icons.computer : icons.globe, short(brain.model), brainLabel(brain), manual(brain, brain.model), () => pick(brain, brain.model)))}
+      ${choices(this.#open.value).map(({ icon, label, behind, brain, model }) => option(icon, label, behind, manual(brain, model), () => pick(brain, model)))}
       <hr>
-      ${remote ? html`<button type="button" role="switch" aria-checked=${settings.cloud ? 'false' : 'true'}
+      ${[active, ...brains].some((brain) => brain && !isLocal(brain)) ? html`<button type="button" role="switch" aria-checked=${settings.cloud ? 'false' : 'true'}
         @click=${() => updateSettings({ cloud: !settings.cloud })}>${icons.shield}<span>${t('picker.neverCloud')}</span></button>` : nothing}
       <button type="button" popovertarget="brain-menu" popovertargetaction="hide" @click=${() => openSettings('brains')}>${icons.gear}<span>${t('picker.all')}</span></button>
     </div>`

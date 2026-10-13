@@ -359,6 +359,15 @@ test('routines are Markdown files named by ULID, the request in the body', async
   await writeRoutine(fs, flowing)
   assert.match(await fs.read(flowing.path) ?? '', /\nat: "09:00"\nflow: 01K0FLOW\n/)
   assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === flowing.path), flowing)
+  // One with a brain of its own keeps it and its version, a version without a brain meaning nothing (D303).
+  const own = { ...reminder, brain: '01K0BRAIN', model: 'openai/gpt-5:free' }
+  await writeRoutine(fs, own)
+  assert.match(await fs.read(own.path) ?? '', /\nat: "09:00"\nbrain: 01K0BRAIN\nmodel: "openai\/gpt-5:free"\n/)
+  assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === own.path), own)
+  await writeRoutine(fs, { ...reminder, brain: 'auto' })
+  assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === own.path), { ...reminder, brain: 'auto' })
+  await writeRoutine(fs, { ...reminder, model: 'gpt-5' })
+  assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === own.path), reminder)
 })
 
 test('a routine may run each time a file is shared or made, rather than at a time, if the file is what it asks for', async () => {

@@ -110,6 +110,8 @@
   "routines.at": "Waktu",
   "routines.minute": "Pada menit {minute}",
   "routines.request": "Yang harus dikerjakan",
+  "routines.brain": "Otak",
+  "routines.brain.yours": "Sama seperti pesan Anda",
   "routines.next": "Berikutnya: {when}",
   "routines.confirmDelete": "Hapus rutinitas “{title}”?",
   "routines.run": "Jalankan sekarang",

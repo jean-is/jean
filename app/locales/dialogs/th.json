@@ -110,6 +110,8 @@
   "routines.at": "เวลา",
   "routines.minute": "นาทีที่ {minute}",
   "routines.request": "สิ่งที่ต้องทำ",
+  "routines.brain": "สมอง",
+  "routines.brain.yours": "เหมือนกับข้อความของคุณ",
   "routines.next": "ครั้งถัดไป: {when}",
   "routines.confirmDelete": "ลบกิจวัตร “{title}” ไหม",
   "routines.run": "เรียกใช้เลย",

@@ -208,14 +208,15 @@ const lastAnswer = (records) => {
  * reflexes make of the message (they also offer a capability when one would help). Auto
  * loads with the first message, not with the first screen (D140).
  * @param {string} text @param {Envelope[]} records @param {number} [boost] levels above the last one
+ * @param {BrainConfig | 'auto'} [chosen] who answers whatever the box has: a routine's own brain, or Auto (D303)
  * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any> } | null>}
  */
-async function pickBrain(text, records, boost = 0) {
+async function pickBrain(text, records, boost = 0, chosen) {
   const { settings } = effective.value
   const { sense } = await import('./discovery.js')
   const signals = await sense(text, lastAnswer(records))
-  if (!settings.auto) {
-    const brain = activeBrain.value
+  if (chosen !== 'auto' && (chosen || !settings.auto)) {
+    const brain = chosen || activeBrain.value
     return brain && (cloudAllowed() || isLocal(brain)) ? { brain } : null
   }
   const brains = brainsHere.value
@@ -238,12 +239,12 @@ async function pickBrain(text, records, boost = 0) {
 /**
  * Sends a message, once a page being turned is (state.js's send waits for it).
  * @param {string} text
- * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[] }} [options] boost: Auto's levels above the last
+ * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto' }} [options] boost: Auto's levels above the last
  *   answer's; notes: what the brain is told just before the message ("Since last time"); call: the one call the turn is,
  *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218); files: what it
- *   shares, if not the box's (the file that set a routine off, D294)
+ *   shares, if not the box's (the file that set a routine off, D294); brain: who answers, if not the box's choice (a routine's, D303)
  */
-export async function send(text, { boost = 0, notes = [], call, files = app.attachments.value } = {}) {
+export async function send(text, { boost = 0, notes = [], call, files = app.attachments.value, brain: chosen } = {}) {
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) {
@@ -255,7 +256,7 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   const from = current?.path
   app.busy.value = true
   setPresence('thinking')
-  const picked = await pickBrain(text.trim(), current?.records ?? [], boost).finally(() => { app.busy.value = false })
+  const picked = await pickBrain(text.trim(), current?.records ?? [], boost, chosen).finally(() => { app.busy.value = false })
   if (!picked) {
     setPresence('idle')
     notify(t('auto.noPrivate'))

@@ -110,6 +110,8 @@
   "routines.at": "시간",
   "routines.minute": "{minute}분",
   "routines.request": "할 일",
+  "routines.brain": "두뇌",
+  "routines.brain.yours": "내 메시지와 같게",
   "routines.next": "다음: {when}",
   "routines.confirmDelete": "루틴 ‘{title}’을(를) 삭제할까요?",
   "routines.run": "지금 실행",

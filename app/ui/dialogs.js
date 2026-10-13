@@ -784,8 +784,8 @@ class Settings extends Element {
     if (!storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
     if (app.section.value === 'brains') checkDevice()
     if (this.#shown !== app.section.value) {
-      // Each brain's versions are asked for as Brains is entered: on each repaint, a list still on its way was asked for again.
-      if (app.section.value === 'brains') for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
+      // Each brain's versions are asked for as Brains or Routines (a routine's own brain, D303) is entered: on each repaint, a list still on its way was asked for again.
+      if (app.section.value === 'brains' || app.section.value === 'routines') for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
       // What Jean knows, its skills and routines are read again each time one is entered.
       if (KNOWN.includes(app.section.value)) {
         knowing ??= import('./knows.js').then((module) => (knows.value = module))

@@ -116,6 +116,8 @@
   "routines.at": "Godzina",
   "routines.minute": "W minucie {minute}",
   "routines.request": "Co zrobić",
+  "routines.brain": "Mózg",
+  "routines.brain.yours": "Ten sam co w Twoich wiadomościach",
   "routines.next": "Następnym razem: {when}",
   "routines.confirmDelete": "Usunąć rutynę „{title}”?",
   "routines.run": "Uruchom teraz",
