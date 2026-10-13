@@ -1,6 +1,6 @@
 // Discovery (0.3): the first starter asks what Jean can do, the house lights up (Settings'
 // Capabilities), "turn on everything" works, and the brain picker offers Auto, the connected brains
-// and "never send to the cloud".
+// and "Keep on this device".
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, openSettings, ask, openTasks } from './helpers.js'
 
@@ -110,7 +110,7 @@ test('something said again from an earlier task offers memory, and a task contin
   await expect(offer).toContainText('make this a project')
 })
 
-test('the picker: a menu above the chip, Auto by default, a brain by hand, never the cloud', async ({ page }) => {
+test('the picker: a menu above the chip, Auto by default, a brain by hand, kept on this device', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const chip = page.locator('.brain-chip')
@@ -120,18 +120,35 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, never
   await expect(picker.locator('[aria-current="true"]')).toContainText('Auto')
   const [menu, under] = await Promise.all([picker.boundingBox(), chip.boundingBox()])
   expect((menu?.y ?? 0) + (menu?.height ?? 0)).toBeLessThanOrEqual(under?.y ?? 0)
-  // Never sending to the cloud is offered once a brain is there.
+  // Keeping on this device is offered once a brain is in the cloud.
   await expect(picker.getByRole('switch')).toHaveCount(0)
   await picker.getByRole('button', { name: /fake-brain-1/ }).click()
   await expect(picker).toBeHidden()
   await expect(chip).toContainText('fake-brain-1')
   await page.evaluate(() => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'cloud', provider: 'openai', api: 'openai', baseURL: 'https://api.openai.invalid/v1', model: 'gpt-6-sol' })))
+  await expect(chip).toContainText('gpt-6-sol')
   await chip.click()
-  await picker.getByRole('switch').click()
+  await expect(picker.getByRole('button', { name: /gpt-6-sol/ })).toBeVisible()
+  // Kept on this device, the cloud's brains aren't offered, and the one picked by hand gives way to Auto.
+  await picker.getByRole('switch', { name: 'Keep on this device' }).click()
   await expect(picker.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
+  await expect(picker.getByRole('button', { name: /gpt-6-sol/ })).toHaveCount(0)
+  await expect(picker.getByRole('button', { name: /fake-brain-1/ })).toBeVisible()
+  await expect(picker.locator('[aria-current="true"]')).toContainText('Auto')
   await page.keyboard.press('Escape')
   await expect(picker).toBeHidden()
   const settings = await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value)
-  expect(settings.auto).toBe(false)
+  expect(settings.auto).toBe(true)
   expect(settings.cloud).toBe(false)
+  // A project kept on this device holds the switch on, and says why.
+  await page.evaluate(() => import('/ui/state.js').then(({ app, updateSettings }) => {
+    app.project.value = { ...app.project.value, data: { ...app.project.value.data, cloud: false } }
+    return updateSettings({ cloud: true })
+  }))
+  await chip.click()
+  const kept = picker.getByRole('switch', { name: 'Keep on this device' })
+  await expect(kept).toHaveAttribute('aria-checked', 'true')
+  await expect(kept).toBeDisabled()
+  await expect(kept).toHaveAttribute('title', 'This project is kept on this device')
+  await expect(picker.getByRole('button', { name: /gpt-6-sol/ })).toHaveCount(0)
 })

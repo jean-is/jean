@@ -174,7 +174,7 @@ A chip in the message box, beside its send button, reads **Auto ▾**, or the na
 - **On this device:** private, free, works offline
 - **Fast / Smart / Best,** taken from the connected provider. Each shows the real model name and a plain cost ("about 1¢ per answer") on hover, using prices from the provider's catalogue (OpenRouter `/models`), or models.dev's, read only when a price is wanted and kept a week (D255); a plan's say "in your Claude plan", "in your Copilot plan" or "in your ChatGPT plan" instead (D235 · D262).
 - **All brains**
-- **Never send to the cloud,** an explicit switch, while a brain is in the cloud
+- **Keep on this device,** an explicit switch, while a brain is in the cloud. While it is on, the picker offers no brain in the cloud, and one picked by hand gives way to Auto. In a project kept on this device, it is on and can't be turned off, and says why (D307)
 
 Organisation policy can hide or lock any of these.
 
