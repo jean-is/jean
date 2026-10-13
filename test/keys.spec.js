@@ -2,7 +2,8 @@
 // conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet;
 // ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
 // ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language
-// (D130, D238, D253); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257).
+// (D130, D238, D253); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
+// ⌘S saves a copy of the open task and ⌘⌫ deletes it, after asking (D313).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
@@ -153,6 +154,13 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   await expect(row('Light or dark').locator('kbd')).toHaveText(/^(⌘⇧D|Ctrl\+Shift\+D)$/)
   await expect(row('Next theme').locator('kbd')).toHaveText(/^(⌘⇧E|Ctrl\+Shift\+E)$/)
   await expect(row('Next language').locator('kbd')).toHaveText(/^(⌘⇧L|Ctrl\+Shift\+L)$/)
+  await expect(row('Save a copy').locator('kbd')).toHaveText(/^(⌘S|Ctrl\+S)$/)
+  await expect(row('Delete').locator('kbd')).toHaveText(/^(⌘⌫|Ctrl\+Delete)$/)
+  // In groups, the most used first, each under a name the user already knows, the tasks' in their ⋮ menu's words (D313).
+  const groups = settings.locator('.settings-panel section')
+  await expect(groups.locator('h3')).toHaveText(['Tasks', 'Your message', 'General', 'Appearance'])
+  await expect(groups.first().locator('dt')).toHaveText(['New task', 'Save a copy', 'Delete'])
+  await expect(groups.nth(2).locator('dt')).toHaveText(['Show or hide the sidebar', 'Settings', 'Keyboard shortcuts', 'Next language', 'Close'])
   await expect(row('Talk hands-free')).toHaveCount(0)
   await expect(row('Search')).toHaveCount(0)
   await closeSettings(page)
@@ -161,6 +169,7 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   await page.keyboard.press('ControlOrMeta+Comma')
   await settings.locator('.settings-nav button', { hasText: 'Keyboard shortcuts' }).click()
   await expect(row('Search').locator('kbd')).toHaveText(/^(⌘K|Ctrl\+K)$/)
+  await expect(groups.first().locator('dt')).toHaveText(['New task', 'Search', 'Save a copy', 'Delete'])
 })
 
 test('⌘/ opens Settings on its keyboard shortcuts, from anywhere, Settings too (D257)', async ({ page }) => {
@@ -182,4 +191,57 @@ test('⌘/ opens Settings on its keyboard shortcuts, from anywhere, Settings too
   await expect(here).toHaveText('Keyboard shortcuts')
   await closeSettings(page)
   await expect(page.locator('#prompt')).toHaveValue('Hello')
+})
+
+test('⌘S saves a copy of the open task, and ⌘⌫ deletes it after asking, from an empty box, as its ⋮ menu shows (D313)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ app, refreshConversations }, { createConversation, appendRecords }, { metaRecord, userRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    for (const [title, later] of /** @type {const} */ ([['Plan the week', 0], ['Book a table', 1000]])) {
+      const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId, now: new Date(Date.now() + later) })
+      await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title }), userRecord(title, app.deviceId)])
+    }
+    await refreshConversations()
+  })
+  const tasks = page.locator('app-inbox')
+  const row = (/** @type {string} */ name) => tasks.locator('.history-list li', { hasText: name })
+  await row('Plan the week').locator('.history-item').click()
+  await expect(page.locator('.msg-user')).toHaveText('Plan the week')
+  const [download] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('ControlOrMeta+KeyS')])
+  expect(download.suggestedFilename()).toBe('Plan the week.html')
+
+  // The open task's menu says the keys, the others' don't, since they act on the open one.
+  for (const [name, keys] of /** @type {const} */ ([['Plan the week', /^(⌘S|Ctrl\+S)$/], ['Book a table', null]])) {
+    await row(name).hover()
+    await row(name).getByRole('button', { name: 'More options' }).click()
+    const [save, remove] = [row(name).getByRole('button', { name: 'Save a copy' }), row(name).getByRole('button', { name: 'Delete' })]
+    if (keys) {
+      await expect(save.locator('kbd')).toHaveText(keys)
+      await expect(remove.locator('kbd')).toHaveText(/^(⌘⌫|Ctrl\+Delete)$/)
+      await expect(remove).toHaveAttribute('aria-keyshortcuts', /^(Meta\+Backspace|Control\+Delete)$/)
+    } else await expect(row(name).locator('.task-menu kbd')).toHaveCount(0)
+    await page.keyboard.press('Escape')
+  }
+
+  // What the user says to each question, in order: no, then yes.
+  const answers = [false, true]
+  const asked = /** @type {string[]} */ ([])
+  page.on('dialog', (dialog) => { asked.push(dialog.message()); return answers.shift() ? dialog.accept() : dialog.dismiss() })
+  // With words in the box, the keys are the box's; with Settings over the task, nothing.
+  const box = page.locator('#prompt')
+  await box.fill('Hello')
+  await box.press('ControlOrMeta+Backspace')
+  await page.keyboard.press('ControlOrMeta+Comma')
+  await expect(page.locator('app-settings dialog[open]')).toBeVisible()
+  await page.keyboard.press('ControlOrMeta+Backspace')
+  await closeSettings(page)
+  expect(asked).toEqual([])
+  await box.fill('')
+  await box.press('ControlOrMeta+Backspace')
+  await expect.poll(() => asked).toEqual(['Delete this task? This can’t be undone.'])
+  await expect(row('Plan the week')).toHaveCount(1)
+  await box.press('ControlOrMeta+Backspace')
+  await expect(row('Plan the week')).toHaveCount(0)
+  await expect(row('Book a table')).toHaveCount(1)
+  await expect(page.locator('.hero-question')).toBeVisible()
 })

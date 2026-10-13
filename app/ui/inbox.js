@@ -70,14 +70,21 @@ function taskList(where, list) {
         action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => markConversation(item.path, { pinned: !item.pinned })),
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => markConversation(item.path, { unread: !item.unread }))}
-        ${action(menu, icons.download, t('history.save'), () => import('./export.js').then((module) => module.saveTask(app.fs, item)))}
-        ${action(menu, icons.trash, t('action.delete'), () => confirm(t('history.confirmDelete')) && removeConversation(item.path))}</div>
+        ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
+        ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path), item.id === currentId ? SHORTCUTS.delete : undefined)}</div>
     </li>`
   })}</ol>`
 }
 
-/** One of a task's actions, which closes its menu. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act */
-const action = (menu, icon, label, act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
+/** One of a task's actions, which closes its menu, with its keys on the open task's. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act @param {string} [shortcut] */
+const action = (menu, icon, label, act, shortcut) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" aria-keyshortcuts=${shortcut ?? nothing}
+  @click=${act}>${icon}${label}${shortcut ? keys(shortcut) : nothing}</button>`
+
+/** Saves a copy of a task as a web page (D305), from its menu or ⌘S. @param {{ path: string, title: string }} task */
+export const saveCopy = (task) => import('./export.js').then((module) => module.saveTask(app.fs, task))
+
+/** Deletes a task once the user says so, from its menu or ⌘⌫ (D313). @param {string} path */
+export const deleteTask = async (path) => { if (confirm(t('history.confirmDelete'))) await removeConversation(path) }
 
 /** A box in the task's place for its new name. @param {string} menu */
 function rename(menu) {
@@ -124,8 +131,8 @@ function move(event) {
   to.focus()
 }
 
-/** A shortcut as the keyboard shows it: ⌘⇧D and ⇧↩ on Apple's systems, Ctrl+Shift+D and Shift+Enter elsewhere. @param {string} shortcut */
-export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩')
+/** A shortcut as the keyboard shows it: ⌘⇧D, ⇧↩ and ⌘⌫ on Apple's systems, Ctrl+Shift+D and Shift+Enter elsewhere. @param {string} shortcut */
+export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩').replace('Backspace', '⌫')
   : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp ArrowDown', '↑ ↓')
 /** The same, left to right in any language. @param {string} shortcut */
 const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd>`

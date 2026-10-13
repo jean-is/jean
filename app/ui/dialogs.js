@@ -490,16 +490,25 @@ const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" f
   <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
 const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
-/** Each shortcut, and the capability it waits for, or dictation, which this browser may not have, or the language, which policy may set. */
-const KEYS = [['action.new', SHORTCUTS.new], ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.sidebar', SHORTCUTS.sidebar],
-  ['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look], ['keyboard.language', SHORTCUTS.language, 'locale'], ['dictation.start', SHORTCUTS.dictation, 'dictation'],
-  ['live.start', SHORTCUTS.live, 'live'], ['cap.find.name', SHORTCUTS.find, 'find'], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
-  ['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['action.close', 'Escape']]
+/**
+ * The shortcuts in groups, the most used first, each under a name the user already knows: the tasks', in their ⋮ menu's
+ * words, the box's, then the rest under the section of Settings where each is set (D313). Each with the capability it
+ * waits for, or dictation, which this browser may not have, or the language, which policy may set.
+ * @type {[string, [string, string, string?][]][]}
+ */
+const KEYS = [
+  ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['action.delete', SHORTCUTS.delete]]],
+  ['composer.label', [['action.send', 'Enter'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
+  ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
+    ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'], ['action.close', 'Escape']]],
+  ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look]]]]
+
+/** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language unless policy sets it. @param {string} [id] */
+const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id))
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
-const keyboard = () => html`<section><dl class="list keyboard">${KEYS.filter(([, , id]) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable'
-  : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id)))
-  .map(([label, keys]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(keys)}</bdi></kbd></dd></div>`)}</dl></section>`
+const keyboard = () => KEYS.map(([heading, keys]) => html`<section><h3>${t(heading)}</h3><dl class="list keyboard">${keys.filter(([, , id]) => offered(id))
+  .map(([label, shortcut]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd></dd></div>`)}</dl></section>`)
 
 function approvals() {
   const { settings, locked } = effective.value

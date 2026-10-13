@@ -156,7 +156,7 @@ export const THEME_KEY = 'app.theme'
 export const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, language: `${MODIFIER}+Shift+L`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, language: `${MODIFIER}+Shift+L`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B`, save: `${MODIFIER}+S`, delete: `${MODIFIER}+${APPLE ? 'Backspace' : 'Delete'}` }
 
 /** Light or dark, kept on this device, or null: Auto, what the device shows. @param {Theme | null} next */
 export function setTheme(next) {
