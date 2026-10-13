@@ -4,7 +4,7 @@ import { memoryFS, walk } from '../app/core/fs.js'
 import { crc32, readZip, writeZip } from '../app/core/zip.js'
 import { decodeText, docx, extractPages, extractable, isBinary, pageText, paginate, sheetRows, slideText } from '../app/caps/files/extract.js'
 import { addFile, documentPart, estimateTokens, fileMeta, fileText, indexOf, joinPages, pagesThatFit, parsePages, passages, preselect, readTool, splitPages, weigh } from '../app/core/files.js'
-import { searchTool, every } from '../app/caps/files/search.js'
+import { searchTool, every, pack, unpack, indexed } from '../app/caps/files/search.js'
 import { isPicture } from '../app/core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../app/caps/backup/archive.js'
 import { officePage } from '../app/caps/files/office.js'
@@ -422,6 +422,29 @@ test('the search tool finds passages across files, best first, with their file, 
   assert.equal(indexOf(['a b', 'c']).passages.length, 2)
   // A page that starts with its own heading isn't headed by the one before.
   assert.deepEqual(indexOf(['## Contract C-4471\nText.', '## Contract C-4417\nMore.']).passages.map((p) => p.head), ['', ''])
+})
+
+test('a file\'s index is kept in .cache/words/ by its content: the next search reads it there, and one made by other code is made again', async () => {
+  const pages = ['## Contract C-4471 — Warehousing\nThe notice period is sixty days.\nCustomer\tAmount\nBrellin\t10', '## Amendment\nNinety days, from 1 May.']
+  const index = indexOf(pages)
+  const bytes = pack(index)
+  assert.deepEqual(unpack(bytes), index)
+  bytes[14] = 0x30 // {"format":0
+  assert.equal(unpack(bytes), null, 'another format')
+  const fs = memoryFS()
+  const notes = await addFile(fs, { projectDir: 'p', name: 'Notes.txt', bytes: enc.encode('n'), pages, by: 'd' })
+  const kept = `.cache/words/${String(notes.uri.split('/').pop()).replace(/\.[^.]*$/, '')}.idx`
+  assert.match(await searchTool({ fs, projectDir: () => 'p', files: () => [notes] }).run({ query: 'notice C-4471' }, {}), /sixty days/)
+  assert.deepEqual(unpack(/** @type {Uint8Array} */ (await fs.readBytes(kept))), index, 'kept once made')
+  // What is kept is what is searched: an index of other words, read by a search in another session.
+  await fs.writeBytes(kept, pack(indexOf(['zebra', 'okapi'])))
+  assert.match(await searchTool({ fs, projectDir: () => 'p', files: () => [notes] }).run({ query: 'zebra' }, {}), /^Source \[1\]: Notes\.txt, page 1\n/)
+  await fs.writeBytes(kept, enc.encode('not an index'))
+  assert.match(await searchTool({ fs, projectDir: () => 'p', files: () => [notes] }).run({ query: 'ninety' }, {}), /Ninety days/)
+  assert.deepEqual(unpack(/** @type {Uint8Array} */ (await fs.readBytes(kept))), index, 'made again')
+  // A file no longer there has no index kept for it: the same content may come back.
+  assert.equal(await indexed(fs, 'p', 'files/gone.txt'), null)
+  assert.equal(await fs.readBytes('.cache/words/gone.idx'), null)
 })
 
 test('with meaning search on, the search tool adds what it finds to what words find, by their ranks; off, it says it may help', async () => {

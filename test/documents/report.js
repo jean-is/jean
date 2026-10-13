@@ -43,7 +43,7 @@ export function verdicts(hypotheses, { runs, bench, answers, dense }) {
     if (r.bench === 'first-search') {
       const cell = bench[`first-search-${r.cpuThrottle}x`]
       if (!cell) return out('not run', '')
-      return out(cell.total < r.ms.lt ? 'confirmed' : 'refuted', `${Math.round(cell.total)} ms with the CPU ${r.cpuThrottle}× slower (index ${Math.round(cell.build)} ms, query ${Math.round(cell.query)} ms, ${cell.passages} passages); ${Math.round(bench['first-search-1x']?.total ?? NaN)} ms at full speed`)
+      return out(cell.total < r.ms.lt ? 'confirmed' : 'refuted', `${Math.round(cell.total)} ms with the CPU ${r.cpuThrottle}× slower (index ${Math.round(cell.build)} ms, query ${Math.round(cell.query)} ms, ${cell.passages} passages); ${Math.round(bench['first-search-1x']?.total ?? NaN)} ms at full speed${cell.kept === undefined ? '' : `; kept in .cache/words/ (${cell.keptMB.toFixed(1)} MB), read back and searched in ${Math.round(cell.kept)} ms, ${Math.round(bench['first-search-1x']?.kept ?? NaN)} at full speed`}`)
     }
     if (r.answers) {
       // The questions one brain answered under both conditions, from the brain that answered the most of them.

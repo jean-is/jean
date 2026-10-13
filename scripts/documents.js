@@ -230,16 +230,24 @@ async function main(argv) {
         const timing = await page.evaluate(async () => {
           const files = await import('/core/files.js')
           const search = await import('/core/search.js')
+          const kept = await import('/caps/files/search.js')
           const text = await (await fetch('/text.md')).text()
+          const question = 'What notice period applies to terminating contract C-4471?'
           const started = performance.now()
           const pages = files.splitPages(text)
           const index = files.indexOf(pages)
           const built = performance.now()
-          search.lookup([index.lexicon], 'What notice period applies to terminating contract C-4471?')
-          return { split: 0, build: built - started, query: performance.now() - built, total: performance.now() - started, passages: index.passages.length }
+          search.lookup([index.lexicon], question)
+          const searched = performance.now()
+          // The same index kept in .cache/words/ and read back by the next session (the storage's own read aside).
+          const bytes = kept.pack(index)
+          const read = performance.now()
+          const again = /** @type {NonNullable<ReturnType<typeof kept.unpack>>} */ (kept.unpack(bytes))
+          search.lookup([again.lexicon], question)
+          return { split: 0, build: built - started, query: searched - built, total: searched - started, passages: index.passages.length, kept: performance.now() - read, keptMB: bytes.length / 1e6 }
         })
         out[`first-search-${rate}x`] = timing
-        console.log(`first search of XL in Chromium, CPU ${rate}× slower: ${Math.round(timing.total)} ms (index ${Math.round(timing.build)} ms, query ${Math.round(timing.query)} ms, ${timing.passages} passages)`)
+        console.log(`first search of XL in Chromium, CPU ${rate}× slower: ${Math.round(timing.total)} ms (index ${Math.round(timing.build)} ms, query ${Math.round(timing.query)} ms, ${timing.passages} passages); its index kept (${timing.keptMB.toFixed(1)} MB), read and searched: ${Math.round(timing.kept)} ms`)
       }
       await chrome.close()
     }

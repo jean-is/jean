@@ -8,7 +8,7 @@ import { register } from '../../ui/caps.js'
 import { app, weightsHost } from '../../ui/state.js'
 import { modelWorker, downloading } from '../../ui/model.js'
 import { library } from '../../ui/complete.js'
-import { fileText, splitPages, indexOf } from '../../core/files.js'
+import { indexed } from '../files/search.js'
 import { isPicture } from '../../core/events.js'
 
 /** @import { Download } from '../brain-local/brain-local.js' */
@@ -91,10 +91,10 @@ function vectorsOf(link) {
     const path = `.cache/meaning/${dtype}/${key}.i8`
     const bytes = await app.fs.readBytes(path)
     if (bytes && bytes.length > 4) return { dims: new DataView(bytes.buffer, bytes.byteOffset).getUint32(0, true), matrix: new Int8Array(bytes.buffer, bytes.byteOffset + 4, bytes.length - 4) }
-    const text = await fileText(app.fs, app.projectDir, link.uri)
-    if (text === null) return null
-    const pages = splitPages(text)
-    const made = await embed(indexOf(pages).passages.map((p) => PASSAGE(`${p.head}\n${pages[p.page - 1].slice(p.start, p.end)}`)))
+    const found = await indexed(app.fs, app.projectDir, link.uri)
+    if (!found) return null
+    const { pages, index } = found
+    const made = await embed(index.passages.map((p) => PASSAGE(`${p.head}\n${pages[p.page - 1].slice(p.start, p.end)}`)))
     const out = new Uint8Array(4 + made.matrix.length)
     new DataView(out.buffer).setUint32(0, made.dims, true)
     out.set(new Uint8Array(made.matrix.buffer, made.matrix.byteOffset, made.matrix.length), 4)
