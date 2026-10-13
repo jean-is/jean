@@ -60,5 +60,5 @@
 :root[data-look='swiss'] .settings-nav [aria-current='page'] { background: var(--ink); color: var(--room); }
 :root[data-look='swiss'] dialog { border: 2px solid var(--ink); box-shadow: none; }
 /* Square corners everywhere. */
-:root[data-look='swiss'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .menu :is(button, a), .segmented, .segmented span, .send, .icon-button, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .trophy, .plaque, .service, .sheet, .settings-nav button, .sidebar-settings, .place, .history-list li, .prose pre, .status, input, select, textarea, .composer, .msg-user, .prose code, .monogram, .list, .item-icon, .noticed li) { border-radius: 0; }
+:root[data-look='swiss'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .menu :is(button, a), .segmented, .segmented span, .send, .icon-button, .toast, .notice, .skip, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .service, .sheet, .settings-nav button, .sidebar-settings, .place, .history-list li, .prose pre, .status, input, select, textarea, .composer, .msg-user, .prose code, .monogram, .list, .item-icon, .noticed li) { border-radius: 0; }
 :root[data-look='swiss'] .list { --corner-start: 0; --corner-end: 0; }

@@ -62,8 +62,8 @@ test('two computers keep each other’s conversations through a folder their dri
 
   // The first computer: an empty folder, which gets the mark and everything but keys and settings.
   await turnOn(page, 'Sync')
-  // Its plaque leads to its part of Your data.
-  await page.locator('app-settings .plaque').getByRole('button', { name: 'Open' }).click()
+  // Its row, still open, leads to its part of Your data.
+  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
   const panel = page.locator('app-settings section.sync')
   await expect(panel).toContainText('Synced with Jean')
   const first = await folder(page, 'Jean')

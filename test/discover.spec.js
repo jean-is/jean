@@ -18,21 +18,23 @@ test('the first starter asks what Jean can do, in a few plain words', async ({ p
 
 test('the house lights up as capabilities are turned on', async ({ page }) => {
   await start(page)
-  const house = (await openSettings(page, 'Capabilities')).locator('.house')
+  const settings = await openSettings(page, 'Capabilities')
+  const house = settings.locator('.house')
   await expect(house).toBeVisible()
   await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
-  // A case of trophies (D127): the plaque shows the next one to find, and how.
-  await expect(house.locator('.trophy:not(.is-lit)').first()).toHaveAttribute('aria-pressed', 'true')
-  await expect(house.locator('.plaque-how')).toContainText('How to find it')
-  const lit = house.locator('.trophy.is-lit')
+  // A case of trophies in Settings' own rows (D127, D316): the next one to find is open, and says how.
+  const next = settings.locator('.case > li:not(.is-lit)').first()
+  await expect(next.locator('button.item')).toHaveAttribute('aria-expanded', 'true')
+  await expect(next).toContainText('How to find it')
+  const lit = settings.locator('.case > li.is-lit')
   const before = await lit.count()
-  await house.locator('.plaque .button').click()
+  await next.locator('.item-body .button').click()
   await expect(lit).toHaveCount(before + 1)
-  await expect(house.locator('.house-ring .is-lit')).toHaveCount(before + 1)
+  await expect(house.locator('meter')).toHaveAttribute('value', String(before + 1))
   const warmth = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--warmth'))
   expect(Number(warmth)).toBeGreaterThan(0)
-  await house.locator(':scope > .button.wide').click()
-  await expect(house.locator('.trophy:not(.is-lit)')).toHaveCount(0)
+  await settings.getByRole('button', { name: 'Turn on everything' }).click()
+  await expect(settings.locator('.case > li:not(.is-lit)')).toHaveCount(0)
   await expect(house.locator('.house-rank')).toHaveText('Daylight')
 })
 

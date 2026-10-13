@@ -75,10 +75,9 @@
 
 /* No room light. The system's type. */
 :root[data-look='human'] .room { display: none; }
-:root[data-look='human'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone, .house-rank) { font-style: normal; letter-spacing: normal; text-shadow: none; }
+:root[data-look='human'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; letter-spacing: normal; text-shadow: none; }
 :root[data-look='human'] :is(.wordmark, .wordmark:hover) { font: 600 1.0625rem/1 var(--sans); text-shadow: none; }
 :root[data-look='human'] .wordmark app-persona { --persona-size: 1.5rem; margin-block-start: -0.2rem; }
-:root[data-look='human'] .house-rank { font-weight: 700; }
 :root[data-look='human'] :focus-visible { outline: 3px solid oklch(from var(--fill) l c h / 0.6); outline-offset: 1px; }
 :root[data-look='human'] :is(input, progress) { accent-color: var(--fill); }
 

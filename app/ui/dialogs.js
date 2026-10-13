@@ -807,19 +807,21 @@ class Settings extends Element {
       const panel = this.querySelector('.settings-panel')
       if (panel) panel.scrollTop = 0
       this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      // Capabilities opens on the next to find.
+      picked.value = ''
     }
     this.#shown = app.section.value
     // The trophies found catch the light one after another (CSSOM: the CSP forbids style attributes).
-    this.querySelectorAll('.trophy').forEach((trophy, i) => /** @type {HTMLElement} */ (trophy).style.setProperty('--i', String(i)))
+    this.querySelectorAll('.case > li').forEach((trophy, i) => /** @type {HTMLElement} */ (trophy).style.setProperty('--i', String(i)))
   }
 }
 
 // ─── What Jean can do ────────────────────────────────────────────────────────
 
-// The house (docs/design.md), in Settings, is a case of trophies (D127): each capability is one,
-// lit once found, a silhouette until then that says how it is found. A ring of a segment each
-// circles the little light, whose rank rises a quarter of the case at a time, to daylight. The
-// trophy picked, at first the next to find, shows on a plaque that stays in view.
+// The house (docs/design.md), in Settings, is a case of trophies (D127) in Settings' own parts
+// (D316): the little light, whose rank rises a quarter of the case at a time, to daylight, over a
+// bar of how much is found; then a capability a row of a list, lit once found, a silhouette until
+// then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'spark', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image', plugins: 'bolt',
@@ -838,7 +840,8 @@ const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () =>
   find: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
-const picked = signal('')
+/** The row open: '' for the next to find, null once the user closed it. */
+const picked = signal(/** @type {string | null} */ (''))
 
 /** @param {string} id */
 async function turnOn(id) {
@@ -849,11 +852,14 @@ async function turnOn(id) {
   else begin(id)
 }
 
-/** How far along a trophy found by counting is, a pip a step. @param {string} id */
-function pips(id) {
+/**
+ * How far along a capability found by counting is, a pip a step: seen in its row, and said once
+ * it is open, as a button's content is never read as a progress bar. @param {string} id @param {boolean} [said]
+ */
+function pips(id, said = false) {
   const [done = 0, goal = 0] = COUNTED[id]?.() ?? []
-  return goal ? html`<span class="pips" role="progressbar" aria-labelledby="trophy-how" aria-valuemax=${goal} aria-valuenow=${Math.min(done, goal)}>
-    ${Array.from({ length: goal }, (_, i) => html`<i class=${i < done ? 'is-lit' : ''}></i>`)}</span>` : nothing
+  return goal ? html`<span class="pips" role=${said ? 'progressbar' : nothing} aria-hidden=${said ? nothing : 'true'} aria-labelledby=${said ? `how-${id}` : nothing}
+    aria-valuemax=${goal} aria-valuenow=${Math.min(done, goal)}>${Array.from({ length: goal }, (_, i) => html`<i class=${i < done ? 'is-lit' : ''}></i>`)}</span>` : nothing
 }
 
 function capabilities() {
@@ -862,49 +868,43 @@ function capabilities() {
   const count = ids.filter((id) => lit.has(id)).length
   const total = ids.length
   const rank = count === total ? 4 : Math.floor((4 * count) / total)
-  const shown = ids.includes(picked.value) ? picked.value : ids.find((id) => !lit.has(id)) ?? ids[0]
-  // The ring starts at the top: a segment a trophy, in the order of the case, with a gap after each.
-  const arc = (2 * Math.PI * 46) / total
+  const shown = picked.value === null ? '' : ids.includes(picked.value) ? picked.value : ids.find((id) => !lit.has(id)) ?? ''
   return html`<section class="house" data-rank=${rank}>
-    <header class="house-head">
-      <span class="house-light">
-        <svg class="house-ring" viewBox="0 0 100 100" aria-hidden="true">${ids.map((id, i) => svg`<circle cx="50" cy="50" r="46"
-          stroke-dasharray="${arc * 0.8} ${arc * total}" stroke-dashoffset=${-i * arc} class=${lit.has(id) ? 'is-lit' : ''}/>`)}</svg>
-        <app-persona></app-persona>
-      </span>
+      <span class="house-light"><app-persona></app-persona></span>
       <div>
         <h3>${t('collection.title', { name: BRAND.name })}</h3>
         <p class="house-rank">${t(`collection.rank.${RANKS[rank]}`)}</p>
         <p class="muted small">${t('collection.count', { count, total })}${rank < 4 ? html` · ${t('collection.next', {
           count: Math.ceil(((rank + 1) * total) / 4) - count, rank: t(`collection.rank.${RANKS[rank + 1]}`) })}` : nothing}</p>
       </div>
-    </header>
-    <ul class="trophies">${ids.map((id) => html`<li><button class="trophy ${lit.has(id) ? 'is-lit' : ''}" aria-pressed=${id === shown}
-      @click=${() => { picked.value = id; document.querySelector('.plaque')?.scrollIntoView({ block: 'nearest' }) }}>
-      <span class="medal">${icons[ROOM_ICONS[id]]}</span>${t(`cap.${id}.name`)}
-      ${lit.has(id) ? html`<span class="visually-hidden">${t('collection.on')}</span>` : pips(id)}
-    </button></li>`)}</ul>
-    ${shown ? plaque(shown, lit.has(shown)) : nothing}
-    ${count < total ? html`<button class="button subtle wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
-  </section>`
+      <meter min="0" max=${total} value=${count} aria-hidden="true"></meter>
+    </section>
+    <section>
+      <ul class="list case">${ids.map((id) => trophy(id, lit.has(id), id === shown))}</ul>
+      ${count < total ? html`<button class="button subtle wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
+    </section>`
 }
 
 /**
- * The trophy picked: how it is found, what it does, and what it offers now: to turn it on early,
- * Intuition's download while it waits for one, or where it leads. @param {string} id @param {boolean} on
+ * A capability's row, in the order of the case: lit and on once found, else how it is found. Open, what it does
+ * and what it offers now: to turn it on early, Intuition's download while it waits for one, or where it leads.
+ * @param {string} id @param {boolean} on @param {boolean} open
  */
-const plaque = (id, on) => html`<article class="plaque ${on ? 'is-lit' : ''}" aria-live="polite">
-  <span class="medal">${icons[ROOM_ICONS[id]]}</span>
-  <div>
-    <h3>${t(`cap.${id}.name`)}</h3>
-    ${on ? nothing : html`<p class="plaque-how" id="trophy-how"><span>${t('collection.how')}</span>${t(`cap.${id}.hint`)}</p>${pips(id)}`}
+const trophy = (id, on, open) => html`<li class=${on ? 'is-lit' : ''}>
+  <button class="item" aria-expanded=${open} @click=${() => { picked.value = open ? null : id }}>
+    <span class="item-icon">${icons[ROOM_ICONS[id]]}</span>
+    <span class="item-text"><strong>${t(`cap.${id}.name`)}</strong>${on ? nothing
+      : html`<small id="how-${id}"><span class="visually-hidden">${t('collection.how')}</span> ${t(`cap.${id}.hint`)}</small>${pips(id)}`}</span>
+    ${on ? html`<small class="case-on"><span class="dot"></span>${t('collection.on')}</small>` : nothing}${icons.chevron}
+  </button>
+  ${open ? html`<div class="item-body">
+    ${on ? nothing : pips(id, true)}
     <p>${t(`cap.${id}.text`, { name: BRAND.name, size: formatBytes(BYTES[id] ?? 0) })}</p>
-  </div>
-  ${!on ? html`<button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button>`
-    : WEIGHTS.includes(id) && !loaded.value.get(id)?.ready && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t(`cap.${id}.yes`, { size: formatBytes(BYTES[id]) })}</button>`
-    : OPENS[id] ? html`<button class="button" @click=${OPENS[id]}>${t('collection.open')}</button>`
-    : html`<span class="plaque-on">${icons.check} ${t('collection.on')}</span>`}
-</article>`
+    ${!on ? html`<div class="row"><button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button></div>`
+      : WEIGHTS.includes(id) && !loaded.value.get(id)?.ready && !app.offer.value ? html`<div class="row"><button class="button" @click=${() => accept(id)}>${icons.download} ${t(`cap.${id}.yes`, { size: formatBytes(BYTES[id]) })}</button></div>`
+      : OPENS[id] ? html`<div class="row"><button class="button" @click=${OPENS[id]}>${t('collection.open')}</button></div>` : nothing}
+  </div>` : nothing}
+</li>`
 
 /** @typedef {import('../core/settings.js').Look} Look */
 /** @param {Event} event */

@@ -95,16 +95,18 @@ export async function closeSettings(page) {
   await expect(page).not.toHaveURL(/\/settings/)
 }
 
-/** Turns a capability on from the house ("What Jean can do", in Settings): its trophy, then its plaque. @param {import('@playwright/test').Page} page @param {string} name */
+/** Turns a capability on from the house ("What Jean can do", in Settings): its row opened, then its button. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
-  const house = (await openSettings(page, 'Capabilities')).locator('.house')
-  // A trophy's text is its name, and "On" once lit: "Computer" is not "This computer" (D198), "Search" not "Search by meaning".
-  const named = new RegExp(`^\\s*${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*(On\\s*)?$`)
-  await house.locator('.trophy', { hasText: named }).click()
-  await house.locator('.plaque .button').click()
+  const settings = await openSettings(page, 'Capabilities')
+  // A row's name, exactly: "Computer" is not "This computer" (D198), "Search" not "Search by meaning".
+  const row = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
+  const toggle = row.locator('button.item')
+  // The next to find is open already, and a click would close it.
+  if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click()
+  await row.locator('.item-body .button').click()
   // Lit once its module has loaded, so a message sent next declares its tools; or, for one that
   // leads somewhere at once (Connections), Settings is on its section (D134).
-  await expect(page.locator('app-settings .trophy.is-lit', { hasText: named })
+  await expect(page.locator('app-settings .case > li.is-lit').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
     .or(page.locator('app-settings .settings-nav [aria-current="page"]', { hasText: name }))).toHaveCount(1)
 }
 
