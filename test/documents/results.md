@@ -1,6 +1,6 @@
 # Document evals: results
 
-Made by `npm run documents -- --report --write` from the runs kept in `test/documents/.cache/results/`; the corpus, the questions and how they're scored are in [test/documents/](.), the hypotheses were registered in `hypotheses.json` at c1f7877 2026-10-11, before any result on the test split. Everything below is on the test split, the three seeds pooled, the compendium printed as a PDF by Chromium, unless it says otherwise. Each strategy uses the passage size it scored best with on the dev split (dense:e5 200, hybrid:e5 100, dense:qwen3 200, hybrid:qwen3 100, pages 100, lexical 100, lexical+exact 100, preselect 100 tokens).
+Made by `npm run documents -- --report --write` from the runs kept in `test/documents/.cache/results/`; the corpus, the questions and how they're scored are in [test/documents/](.), the hypotheses were registered in `hypotheses.json` at c1f7877 2026-10-11, before any result on the test split. Everything below is on the test split, the three seeds pooled, the compendium printed as a PDF by Chromium, unless it says otherwise. Each strategy uses the passage size it scored best with on the dev split (dense:gemma2q4 100, hybrid:gemma2q4 100, dense:gemma2 100, hybrid:gemma2 100, dense:granite32 100, hybrid:granite32 100, dense:granite 200, hybrid:granite 100, dense:harrier 200, hybrid:harrier 100, dense:gemma 100, hybrid:gemma 100, dense:e5 200, hybrid:e5 100, dense:qwen3 200, hybrid:qwen3 100, pages 100, lexical 100, lexical+exact 100, preselect 100 tokens).
 
 ## The corpus
 
@@ -17,8 +17,8 @@ Made by `npm run documents -- --report --write` from the runs kept in `test/docu
 |  | Claim | Verdict | Evidence |
 |---|---|---|---|
 | H1 | No vector database: a flat scan of Int8 vectors stays under 100 ms at p95 for ten times XL's passages; what dense retrieval costs is the embedding at ingestion | **refuted** | 245900 vectors of 384: p95 123.5 ms; 245900 vectors of 1024: p95 212.0 ms |
-| H2 | On lookups, filters and the latest of several values, lexical search finds the evidence at least as well as dense retrieval (within 2 points); on questions about absent things it surfaces lures no more often | **confirmed** | lexical − dense:e5, recall@32k: 15.1 points (95% CI 11.2 to 19.2, n = 312); on negative, dense:e5 − lexical, lure@32k: 27.9 points (95% CI 17.4 to 39.5, n = 86) |
-| H3 | Manipulation check: with the user's own words as the query, dense retrieval beats lexical search on low-overlap paraphrases and other languages; if not, the question set is audited before anything is concluded | **confirmed** | dense:e5 − lexical, recall@32k: 27.8 points (95% CI 19.3 to 36.4, n = 187) |
+| H2 | On lookups, filters and the latest of several values, lexical search finds the evidence at least as well as dense retrieval (within 2 points); on questions about absent things it surfaces lures no more often | **not run** | – |
+| H3 | Manipulation check: with the user's own words as the query, dense retrieval beats lexical search on low-overlap paraphrases and other languages; if not, the question set is audited before anything is concluded | **not run** | – |
 | H4 | When the brain writes its own queries, lexical search answers paraphrases and other languages within 5 points of hybrid retrieval | **refuted** | nvidia/nemotron-3-super-120b-a12b: search 56%, search+meaning 76%; search − search+meaning: -19.8 points (95% CI -27.3 to -12.3, n = 187) |
 | H5 | Totals and counts across the whole need exhaustive search and a script, not the best passages: with a script, at least 80% are right and at least 20 points more than without | **inconclusive** | nvidia/nemotron-3-super-120b-a12b:free: search+script 60%, search 50%; search+script − search: 10.0 points (95% CI -1.7 to 21.7, n = 60) |
 | H6 | Ingestion can stay in memory: the first search of an XL document, its index built on the spot, takes under 1.5 s in Chromium slowed four times | **refuted** | 8610 ms with the CPU 4× slower (index 8590 ms, query 19 ms, 24590 passages); 2002 ms at full speed |
@@ -38,6 +38,14 @@ Made by `npm run documents -- --report --write` from the runs kept in `test/docu
 | `hybrid:e5` | 100 | 95 | 88 | 82 |
 | `dense:qwen3` | 100 | 97 | 77 | 59 |
 | `hybrid:qwen3` | 100 | 93 | 87 | 81 |
+| `dense:granite` | 100 | 95 | 65 | – |
+| `hybrid:granite` | 100 | 96 | 84 | – |
+| `dense:harrier` | 100 | 97 | 81 | – |
+| `hybrid:harrier` | 100 | 98 | 91 | – |
+| `dense:gemma` | 100 | 93 | 90 | – |
+| `hybrid:gemma` | 100 | 93 | 90 | – |
+| `dense:gemma2` | 100 | 96 | 87 | 81 |
+| `hybrid:gemma2` | 100 | 95 | 91 | 89 |
 
 Within 8k tokens, a device brain’s share:
 
@@ -52,6 +60,14 @@ Within 8k tokens, a device brain’s share:
 | `hybrid:e5` | 100 | 89 | 81 | 75 |
 | `dense:qwen3` | 100 | 81 | 54 | 50 |
 | `hybrid:qwen3` | 100 | 90 | 80 | 76 |
+| `dense:granite` | 100 | 72 | 40 | – |
+| `hybrid:granite` | 100 | 85 | 72 | – |
+| `dense:harrier` | 100 | 85 | 57 | – |
+| `hybrid:harrier` | 100 | 92 | 80 | – |
+| `dense:gemma` | 100 | 92 | 87 | – |
+| `hybrid:gemma` | 97 | 92 | 86 | – |
+| `dense:gemma2` | 100 | 93 | 83 | 75 |
+| `hybrid:gemma2` | 99 | 92 | 88 | 84 |
 
 Within 128k tokens:
 
@@ -66,6 +82,14 @@ Within 128k tokens:
 | `hybrid:e5` | 100 | 97 | 88 | 83 |
 | `dense:qwen3` | 100 | 97 | 78 | 59 |
 | `hybrid:qwen3` | 100 | 94 | 88 | 81 |
+| `dense:granite` | 100 | 96 | 67 | – |
+| `hybrid:granite` | 100 | 98 | 86 | – |
+| `dense:harrier` | 100 | 98 | 83 | – |
+| `hybrid:harrier` | 100 | 99 | 92 | – |
+| `dense:gemma` | 100 | 93 | 90 | – |
+| `hybrid:gemma` | 100 | 93 | 91 | – |
+| `dense:gemma2` | 100 | 96 | 87 | 81 |
+| `hybrid:gemma2` | 100 | 96 | 91 | 89 |
 
 ## By kind of question at XL, within 32k tokens
 
@@ -82,6 +106,14 @@ For absent things, how often the strategy handed over a lure (lower is better).
 | `hybrid:e5` | 99 | 85 | 98 | 59 | 34 | 100 | 80 | 40 lure | 83 |
 | `dense:qwen3` | 42 | 94 | 81 | 55 | 4 | 98 | 49 | 12 lure | 77 |
 | `hybrid:qwen3` | 100 | 94 | 98 | 52 | 33 | 100 | 70 | 21 lure | 77 |
+| `dense:granite` | – | – | – | – | – | – | – | – lure | – |
+| `hybrid:granite` | – | – | – | – | – | – | – | – lure | – |
+| `dense:harrier` | – | – | – | – | – | – | – | – lure | – |
+| `hybrid:harrier` | – | – | – | – | – | – | – | – lure | – |
+| `dense:gemma` | – | – | – | – | – | – | – | – lure | – |
+| `hybrid:gemma` | – | – | – | – | – | – | – | – lure | – |
+| `dense:gemma2` | 94 | 100 | 94 | 88 | 9 | 100 | 66 | 50 lure | 100 |
+| `hybrid:gemma2` | 99 | 99 | 98 | 86 | 33 | 100 | 89 | 50 lure | 100 |
 
 ## Answers
 
@@ -134,6 +166,12 @@ Making an XL compendium’s index in memory: 2353 ms in node on this computer; i
 | Embedder | Passages embedded | Minutes per million characters | Minutes for one XL corpus (12.5 M characters) |
 |---|---|---|---|
 | e5 | 291235 | 0.26 | 3 |
+| gemma | 51733 | 3.36 | 42 |
+| gemma2 | 210334 | 4.26 | 53 |
+| gemma2q4 | 9164 | 6.16 | 77 |
+| granite | 51733 | 0.46 | 6 |
+| granite32 | 9164 | 1.67 | 21 |
+| harrier | 51733 | 3.74 | 47 |
 | qwen3 | 157495 | 5.05 | 63 |
 
 Time to rank one question’s passages at XL:
@@ -149,3 +187,11 @@ Time to rank one question’s passages at XL:
 | `hybrid:e5` | 27.8 | 31.3 |
 | `dense:qwen3` | 46.0 | 47.0 |
 | `hybrid:qwen3` | 55.8 | 59.5 |
+| `dense:granite` | – | – |
+| `hybrid:granite` | – | – |
+| `dense:harrier` | – | – |
+| `hybrid:harrier` | – | – |
+| `dense:gemma` | – | – |
+| `hybrid:gemma` | – | – |
+| `dense:gemma2` | 33.8 | 34.2 |
+| `hybrid:gemma2` | 42.5 | 45.6 |

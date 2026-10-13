@@ -1843,5 +1843,1653 @@
       "scanned PDFs, with no text layer, are not read",
       "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
     ]
+  },
+  "dense:granite": {
+    "useWhen": "meaning over words, many languages, the smallest download (~100 MB), long passages (32k)",
+    "avoidWhen": "codes, numbers and absent things: it ranks look-alikes",
+    "needs": [
+      "an embedding model on the device or a service",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 200,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 0.9787234042553191,
+          "strict": 0.9787234042553191,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 0.72,
+          "strict": 0.72,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 0.9534774436090225,
+          "strict": 0.75,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.9506172839506173,
+          "strict": 0.8518518518518519,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9583333333333334,
+          "strict": 0.9583333333333334,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8285714285714286,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.7368421052631579,
+          "strict": 0.7368421052631579,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 0.5517241379310345,
+          "strict": 0.5517241379310345,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.75,
+          "strict": 0.75,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.5190173107262357,
+          "strict": 0.1896551724137931,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.35087719298245607,
+          "strict": 0.05263157894736842,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 0.631578947368421,
+          "strict": 0.631578947368421,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.7674418604651163,
+          "strict": 0.7674418604651163,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.5555555555555556,
+          "n": 72
+        },
+        "global": {
+          "recall": 0.9420289855072462,
+          "strict": 0.9130434782608695,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "paraphrase": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "filter": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "aggregate": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "multihop": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "temporal": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "crosslingual": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "negative": {
+          "lure": null,
+          "n": 0
+        },
+        "global": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
+  },
+  "hybrid:granite": {
+    "useWhen": "paraphrases and other languages, keeping codes found by words",
+    "avoidWhen": "the brain writes good queries itself",
+    "needs": [
+      "an embedding model",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 100,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 0.92,
+          "strict": 0.92,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 0.943452380952381,
+          "strict": 0.8214285714285714,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.8641975308641976,
+          "strict": 0.6666666666666666,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9375,
+          "strict": 0.9375,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.9894736842105263,
+          "strict": 0.9894736842105263,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 0.7931034482758621,
+          "strict": 0.7931034482758621,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.9861111111111112,
+          "strict": 0.9861111111111112,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.808603786342123,
+          "strict": 0.6206896551724138,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.4502923976608185,
+          "strict": 0.05263157894736842,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.7558139534883721,
+          "strict": 0.7558139534883721,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.5694444444444444,
+          "n": 72
+        },
+        "global": {
+          "recall": 0.8840579710144927,
+          "strict": 0.8260869565217391,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "paraphrase": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "filter": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "aggregate": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "multihop": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "temporal": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "crosslingual": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "negative": {
+          "lure": null,
+          "n": 0
+        },
+        "global": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
+  },
+  "dense:harrier": {
+    "useWhen": "meaning over words, many languages (~340 MB)",
+    "avoidWhen": "codes, numbers and absent things: it ranks look-alikes",
+    "needs": [
+      "an embedding model on the device or a service",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 200,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 0.9880952380952381,
+          "strict": 0.9642857142857143,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.8271604938271605,
+          "strict": 0.6296296296296297,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9583333333333334,
+          "strict": 0.9583333333333334,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8285714285714286,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.8631578947368421,
+          "strict": 0.8631578947368421,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.8611111111111112,
+          "strict": 0.8611111111111112,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.8582479499315201,
+          "strict": 0.603448275862069,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.23976608187134507,
+          "strict": 0.017543859649122806,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 0.9649122807017544,
+          "strict": 0.9649122807017544,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.7674418604651163,
+          "strict": 0.7674418604651163,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.5833333333333334,
+          "n": 72
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "paraphrase": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "filter": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "aggregate": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "multihop": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "temporal": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "crosslingual": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "negative": {
+          "lure": null,
+          "n": 0
+        },
+        "global": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
+  },
+  "hybrid:harrier": {
+    "useWhen": "paraphrases and other languages, keeping codes found by words",
+    "avoidWhen": "the brain writes good queries itself",
+    "needs": [
+      "an embedding model",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 100,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 0.9880952380952381,
+          "strict": 0.9642857142857143,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.8395061728395061,
+          "strict": 0.5185185185185185,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.9894736842105263,
+          "strict": 0.9894736842105263,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.9861111111111112,
+          "strict": 0.9861111111111112,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.9261494252873563,
+          "strict": 0.8103448275862069,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.46783625730994133,
+          "strict": 0.03508771929824561,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.9069767441860465,
+          "strict": 0.9069767441860465,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.6527777777777778,
+          "n": 72
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "paraphrase": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "filter": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "aggregate": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "multihop": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "temporal": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "crosslingual": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "negative": {
+          "lure": null,
+          "n": 0
+        },
+        "global": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
+  },
+  "dense:gemma": {
+    "useWhen": "meaning over words, many languages (~310 MB)",
+    "avoidWhen": "codes, numbers and absent things: it ranks look-alikes",
+    "needs": [
+      "an embedding model on the device or a service",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 100,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.345679012345679,
+          "strict": 0,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8285714285714286,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.9894736842105263,
+          "strict": 0.9894736842105263,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.9861111111111112,
+          "strict": 0.9861111111111112,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.9739773495605137,
+          "strict": 0.896551724137931,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.3333333333333333,
+          "strict": 0,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.9186046511627907,
+          "strict": 0.9186046511627907,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.8194444444444444,
+          "n": 72
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "paraphrase": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "filter": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "aggregate": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "multihop": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "temporal": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "crosslingual": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "negative": {
+          "lure": null,
+          "n": 0
+        },
+        "global": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
+  },
+  "hybrid:gemma": {
+    "useWhen": "paraphrases and other languages, keeping codes found by words",
+    "avoidWhen": "the brain writes good queries itself",
+    "needs": [
+      "an embedding model",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 100,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.345679012345679,
+          "strict": 0,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8285714285714286,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.9894736842105263,
+          "strict": 0.9894736842105263,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.9861111111111112,
+          "strict": 0.9861111111111112,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.980316091954023,
+          "strict": 0.9137931034482759,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.3333333333333333,
+          "strict": 0,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.9186046511627907,
+          "strict": 0.9186046511627907,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.8194444444444444,
+          "n": 72
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "paraphrase": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "filter": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "aggregate": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "multihop": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "temporal": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "crosslingual": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        },
+        "negative": {
+          "lure": null,
+          "n": 0
+        },
+        "global": {
+          "recall": null,
+          "strict": null,
+          "n": 0
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
+  },
+  "dense:gemma2": {
+    "useWhen": "meaning over words, many languages (~310 MB, its text model alone)",
+    "avoidWhen": "codes, numbers and absent things: it ranks look-alikes",
+    "needs": [
+      "an embedding model on the device or a service",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 100,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.6666666666666669,
+          "strict": 0.2222222222222222,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8285714285714286,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.9789473684210527,
+          "strict": 0.9789473684210527,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.9861111111111112,
+          "strict": 0.9861111111111112,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.973023612628075,
+          "strict": 0.8793103448275862,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.18128654970760233,
+          "strict": 0,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.8255813953488372,
+          "strict": 0.8255813953488372,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.6944444444444444,
+          "n": 72
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": 0.9444444444444444,
+          "strict": 0.9444444444444444,
+          "n": 144
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 73
+        },
+        "filter": {
+          "recall": 0.9375,
+          "strict": 0.9375,
+          "n": 96
+        },
+        "aggregate": {
+          "recall": 0.8842072588997819,
+          "strict": 0.6575342465753424,
+          "n": 73
+        },
+        "multihop": {
+          "recall": 0.08796296296296294,
+          "strict": 0,
+          "n": 72
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 72
+        },
+        "crosslingual": {
+          "recall": 0.6578947368421053,
+          "strict": 0.6578947368421053,
+          "n": 114
+        },
+        "negative": {
+          "lure": 0.5,
+          "n": 86
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 34
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
+  },
+  "hybrid:gemma2": {
+    "useWhen": "paraphrases and other languages, keeping codes found by words",
+    "avoidWhen": "the brain writes good queries itself",
+    "needs": [
+      "an embedding model",
+      "embedding every passage at ingestion"
+    ],
+    "onDevice": true,
+    "passage": 100,
+    "scores": {
+      "s": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 15
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 8
+        },
+        "multihop": {
+          "recall": 1,
+          "strict": 1,
+          "n": 9
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 6
+        },
+        "crosslingual": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        },
+        "negative": {
+          "lure": 1,
+          "n": 15
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 4
+        }
+      },
+      "m": {
+        "lookup": {
+          "recall": 1,
+          "strict": 1,
+          "n": 47
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 25
+        },
+        "filter": {
+          "recall": 1,
+          "strict": 1,
+          "n": 36
+        },
+        "aggregate": {
+          "recall": 1,
+          "strict": 1,
+          "n": 28
+        },
+        "multihop": {
+          "recall": 0.54320987654321,
+          "strict": 0.07407407407407407,
+          "n": 27
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 27
+        },
+        "crosslingual": {
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 48
+        },
+        "negative": {
+          "lure": 0.8285714285714286,
+          "n": 35
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 14
+        }
+      },
+      "l": {
+        "lookup": {
+          "recall": 0.9894736842105263,
+          "strict": 0.9894736842105263,
+          "n": 95
+        },
+        "paraphrase": {
+          "recall": 1,
+          "strict": 1,
+          "n": 58
+        },
+        "filter": {
+          "recall": 0.9861111111111112,
+          "strict": 0.9861111111111112,
+          "n": 72
+        },
+        "aggregate": {
+          "recall": 0.9857674104124408,
+          "strict": 0.896551724137931,
+          "n": 58
+        },
+        "multihop": {
+          "recall": 0.3333333333333333,
+          "strict": 0,
+          "n": 57
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 57
+        },
+        "crosslingual": {
+          "recall": 0.9418604651162791,
+          "strict": 0.9418604651162791,
+          "n": 86
+        },
+        "negative": {
+          "lure": 0.6944444444444444,
+          "n": 72
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 23
+        }
+      },
+      "xl": {
+        "lookup": {
+          "recall": 0.9930555555555556,
+          "strict": 0.9930555555555556,
+          "n": 144
+        },
+        "paraphrase": {
+          "recall": 0.9863013698630136,
+          "strict": 0.9863013698630136,
+          "n": 73
+        },
+        "filter": {
+          "recall": 0.9791666666666666,
+          "strict": 0.9791666666666666,
+          "n": 96
+        },
+        "aggregate": {
+          "recall": 0.859617842503567,
+          "strict": 0.6575342465753424,
+          "n": 73
+        },
+        "multihop": {
+          "recall": 0.3333333333333331,
+          "strict": 0,
+          "n": 72
+        },
+        "temporal": {
+          "recall": 1,
+          "strict": 1,
+          "n": 72
+        },
+        "crosslingual": {
+          "recall": 0.8859649122807017,
+          "strict": 0.8859649122807017,
+          "n": 114
+        },
+        "negative": {
+          "lure": 0.5,
+          "n": 86
+        },
+        "global": {
+          "recall": 1,
+          "strict": 1,
+          "n": 34
+        }
+      }
+    },
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "commit": "c1f7877 2026-10-11",
+    "knownLimits": [
+      "scanned PDFs, with no text layer, are not read",
+      "Arabic letters some fonts draw as ligatures can come back from PDFs in the wrong order"
+    ]
   }
 }
