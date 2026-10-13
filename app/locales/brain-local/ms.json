@@ -8,5 +8,6 @@
   "private.offline": "Terus menjawab tanpa internet",
   "private.try": "Matikan Wi-Fi dan lihat sendiri.",
   "private.still": "Anda di luar talian, dan jawapan terus tiba.",
-  "private.proof": "Perisai di bawah setiap jawapan ialah buktinya, daripada rekod pelayar anda sendiri."
+  "private.proof": "Perisai di bawah setiap jawapan ialah buktinya, daripada rekod pelayar anda sendiri.",
+  "device.unfit": "Peranti ini tidak mempunyai memori yang cukup untuk menjalankan otak sendiri, jadi muat turun itu dipadam untuk mengosongkan {size}."
 }

@@ -8,5 +8,6 @@
   "private.offline": "Amsoshi suna ci gaba ba tare da intanet ba",
   "private.try": "Kashe Wi-Fi ka gani.",
   "private.still": "Ba ka da intanet, kuma amsoshi suna ci gaba da zuwa.",
-  "private.proof": "Garkuwar da ke ƙarƙashin kowace amsa ita ce shaida, daga rikodin burauzarka kanta."
+  "private.proof": "Garkuwar da ke ƙarƙashin kowace amsa ita ce shaida, daga rikodin burauzarka kanta.",
+  "device.unfit": "Wannan na'urar ba ta da isasshen wurin aiki da za ta tafiyar da ƙwaƙwalwa da kanta, don haka an goge abin da aka sauke domin a 'yantar da {size}."
 }

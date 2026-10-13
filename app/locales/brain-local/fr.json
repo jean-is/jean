@@ -8,5 +8,6 @@
   "private.offline": "Continue de répondre sans internet",
   "private.try": "Coupez le Wi-Fi pour voir.",
   "private.still": "Vous êtes hors ligne, et les réponses continuent d’arriver.",
-  "private.proof": "Le bouclier sous chaque réponse en est la preuve, d’après le propre relevé de votre navigateur."
+  "private.proof": "Le bouclier sous chaque réponse en est la preuve, d’après le propre relevé de votre navigateur.",
+  "device.unfit": "Cet appareil n’a pas assez de mémoire pour faire tourner un cerveau lui-même : le téléchargement a été supprimé pour libérer {size}."
 }

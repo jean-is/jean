@@ -8,5 +8,6 @@
   "private.offline": "Patuloy na sumasagot kahit walang internet",
   "private.try": "Patayin ang Wi-Fi at tingnan.",
   "private.still": "Offline ka, at patuloy pa ring dumarating ang mga sagot.",
-  "private.proof": "Ang kalasag sa ilalim ng bawat sagot ang patunay, mula sa sariling tala ng browser mo."
+  "private.proof": "Ang kalasag sa ilalim ng bawat sagot ang patunay, mula sa sariling tala ng browser mo.",
+  "device.unfit": "Kulang ang memory ng device na ito para magpatakbo ng sariling utak, kaya binura ang na-download para makapagbakante ng {size}."
 }

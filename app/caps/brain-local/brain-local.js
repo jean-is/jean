@@ -1,11 +1,13 @@
 // The first rung of the brain ladder (D42): Gemma 4 E2B on this device. Offered only
-// where it can run (WebGPU with shader-f16, enough memory and free space), downloaded
-// once with consent, then private, free and offline.
+// where it can run (WebGPU with shader-f16, enough memory and free space, a computer),
+// downloaded once with consent, then private, free and offline.
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { weightsHost } from '../../ui/state.js'
+import { weightsHost, effective } from '../../ui/state.js'
+import { memoryTotal } from '../../ui/host.js'
 import { modelWorker, downloading, holdStill } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
+import { t, formatBytes } from '../../core/i18n.js'
 import { gemmaParser } from './gemma.js'
 import './private.js'
 
@@ -20,7 +22,12 @@ export const GEMMA = Object.freeze({
   file: 'decoder_model_merged_q4f16.onnx_data',
 })
 const CONTEXT = 32768
-const MEMORY_GB = 8 // navigator.deviceMemory is coarse: 4 means "under 8"
+// Loaded, it holds about 7 GB, and 9 while it loads (D319): a computer of 12 GB. A browser says a power
+// of two, the nearest, ties down, so 12 GB says 8, as 8 GB does: 8 there, 12 where the desktop app knows.
+// Chrome on Android says 8 at most, and Safari nothing: a phone or a tablet is never offered it.
+const MEMORY_GB = 12
+/** Kept in this browser while the brain loads: still there at the next start, the load ended the tab (D319). */
+const LOADING = 'app.device-brain'
 
 /**
  * @typedef {{ state: 'idle' } | { state: 'downloading', loaded: number, total: number }
@@ -30,16 +37,18 @@ export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
 const worker = modelWorker(new URL('./brain-worker.js', import.meta.url), 'The on-device brain stopped')
 
 /**
- * Whether this device can run the brain, and if not, why.
- * @returns {Promise<{ ok: true } | { ok: false, reason: 'webgpu' | 'f16' | 'memory' | 'storage' }>}
+ * Whether this device can run the brain, and if not, why: short of memory, what was downloaded for it
+ * is deleted, and `freed` says how much.
+ * @returns {Promise<{ ok: true } | { ok: false, reason: 'webgpu' | 'f16' | 'storage' } | { ok: false, reason: 'memory', freed: number }>}
  */
 export async function checkDevice() {
-  const gpu = /** @type {any} */ (navigator).gpu
-  const adapter = gpu ? await gpu.requestAdapter({ powerPreference: 'high-performance' }).catch(() => null) : null
+  const nav = /** @type {any} */ (navigator)
+  const adapter = nav.gpu ? await nav.gpu.requestAdapter({ powerPreference: 'high-performance' }).catch(() => null) : null
   if (!adapter) return { ok: false, reason: 'webgpu' }
   if (!adapter.features.has('shader-f16')) return { ok: false, reason: 'f16' }
-  const memory = /** @type {any} */ (navigator).deviceMemory
-  if (memory && memory < MEMORY_GB) return { ok: false, reason: 'memory' }
+  const handheld = nav.userAgentData?.mobile || /Android|iPhone|iPad|Mobile/.test(nav.userAgent) || (/Macintosh/.test(nav.userAgent) && nav.maxTouchPoints > 1)
+  const exact = await memoryTotal().catch(() => 0)
+  if ((await crashed()) || handheld || (exact ? exact < MEMORY_GB * 1e9 : nav.deviceMemory < 8)) return { ok: false, reason: 'memory', freed: await forget() }
   if (!(await isDownloaded())) {
     const { quota = Infinity, usage = 0 } = (await navigator.storage?.estimate?.()) ?? {}
     if (quota - usage < GEMMA.bytes * 1.15) return { ok: false, reason: 'storage' }
@@ -58,15 +67,43 @@ export async function isDownloaded() {
   }
 }
 
+/** Marks a load under way, or one that ended the tab, or removes the mark. @param {'loading' | 'unfit' | null} value */
+const mark = (value) => (value ? localStorage.setItem(LOADING, value) : localStorage.removeItem(LOADING))
+
+/** Whether loading the brain ended this tab before: its mark is still there and no tab holds its lock. */
+async function crashed() {
+  if (localStorage.getItem(LOADING) === 'loading' && !(await navigator.locks.query()).held?.some((lock) => lock.name === LOADING)) mark('unfit')
+  return localStorage.getItem(LOADING) === 'unfit'
+}
+
+/** Deletes what was downloaded for the brain, unless it is one of the user's. @returns {Promise<number>} the bytes freed */
+async function forget() {
+  if (effective.peek().settings.brains.some((brain) => brain.api === 'device') || !(await caches.has('transformers-cache'))) return 0
+  const cache = await caches.open('transformers-cache')
+  const kept = (await cache.keys()).filter((request) => request.url.includes(GEMMA.model))
+  const sizes = await Promise.all(kept.map(async (request) => Number((await cache.match(request))?.headers.get('content-length')) || 0))
+  await Promise.all(kept.map((request) => cache.delete(request)))
+  return sizes.reduce((sum, size) => sum + size, 0)
+}
+
+/** What Settings › Brains says once it has deleted that download (D319). @param {number} freed */
+export const unfit = (freed) => t('device.unfit', { size: formatBytes(freed) })
+
 /** Downloads (first time) and loads the brain. Resolves when it can answer. */
 export async function prepare() {
   if (download.value.state === 'ready') return
   download.value = { state: 'downloading', loaded: 0, total: GEMMA.bytes }
   navigator.storage?.persist?.().catch(() => {})
   try {
-    await worker.call({ type: 'load', host: weightsHost(), model: GEMMA.model, dtype: GEMMA.dtype }, { onMessage: (message) => { download.value = downloading(message, GEMMA.bytes) } })
+    // One tab loads it at a time, and marks it while it does (D319).
+    await navigator.locks.request(LOADING, () => worker.call({ type: 'load', host: weightsHost(), model: GEMMA.model, dtype: GEMMA.dtype }, { onMessage: (message) => {
+      download.value = downloading(message, GEMMA.bytes)
+      if (download.value.state === 'loading') mark('loading')
+    } }))
+    mark(null)
     download.value = { state: 'ready' }
   } catch (error) {
+    mark(null)
     download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
     throw error
   }

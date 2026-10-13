@@ -8,5 +8,6 @@
   "private.offline": "Keeps answering without the internet",
   "private.try": "Turn off Wi-Fi and see.",
   "private.still": "You’re offline, and the answers keep coming.",
-  "private.proof": "The shield under each answer is the proof, from your browser’s own record."
+  "private.proof": "The shield under each answer is the proof, from your browser’s own record.",
+  "device.unfit": "This device doesn’t have enough memory to run a brain itself, so the download was deleted to free {size}."
 }

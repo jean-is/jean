@@ -8,5 +8,6 @@
   "private.offline": "Continua a rispondere senza internet",
   "private.try": "Spegni il Wi-Fi e vedrai.",
   "private.still": "Sei offline, e le risposte continuano ad arrivare.",
-  "private.proof": "Lo scudo sotto ogni risposta ne è la prova, dal registro del tuo stesso browser."
+  "private.proof": "Lo scudo sotto ogni risposta ne è la prova, dal registro del tuo stesso browser.",
+  "device.unfit": "Questo dispositivo non ha abbastanza memoria per far funzionare un cervello da sé, quindi il download è stato eliminato per liberare {size}."
 }

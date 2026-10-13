@@ -8,5 +8,6 @@
   "private.offline": "没有网络也能继续回答",
   "private.try": "关掉 Wi-Fi 试试看。",
   "private.still": "你已离线，回答仍在源源不断地到来。",
-  "private.proof": "每个回答下方的盾牌就是证明，来自你浏览器自己的记录。"
+  "private.proof": "每个回答下方的盾牌就是证明，来自你浏览器自己的记录。",
+  "device.unfit": "这台设备的内存不足以自行运行大脑，因此已删除下载的内容，释放了 {size}。"
 }

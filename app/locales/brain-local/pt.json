@@ -8,5 +8,6 @@
   "private.offline": "Continua a responder sem internet",
   "private.try": "Desliga o Wi-Fi e vê.",
   "private.still": "Estás sem ligação, e as respostas continuam a chegar.",
-  "private.proof": "O escudo por baixo de cada resposta é a prova, a partir do registo do teu próprio navegador."
+  "private.proof": "O escudo por baixo de cada resposta é a prova, a partir do registo do teu próprio navegador.",
+  "device.unfit": "Este dispositivo não tem memória suficiente para executar um cérebro por si só, por isso a transferência foi eliminada para libertar {size}."
 }

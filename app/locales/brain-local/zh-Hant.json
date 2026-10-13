@@ -8,5 +8,6 @@
   "private.offline": "沒有網路也能繼續回答",
   "private.try": "關掉 Wi-Fi 試試看。",
   "private.still": "你已離線，回答仍源源不絕地送來。",
-  "private.proof": "每個回答下方的盾牌就是證明，來自你瀏覽器自己的記錄。"
+  "private.proof": "每個回答下方的盾牌就是證明，來自你瀏覽器自己的記錄。",
+  "device.unfit": "這台裝置的記憶體不足以自行運行大腦，因此已刪除下載的內容，釋放了 {size}。"
 }

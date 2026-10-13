@@ -8,5 +8,6 @@
   "private.offline": "Antwortet auch ohne Internet weiter",
   "private.try": "Schalte das WLAN aus und sieh selbst.",
   "private.still": "Du bist offline, und die Antworten kommen weiter.",
-  "private.proof": "Das Schild unter jeder Antwort ist der Beweis, aus der eigenen Aufzeichnung deines Browsers."
+  "private.proof": "Das Schild unter jeder Antwort ist der Beweis, aus der eigenen Aufzeichnung deines Browsers.",
+  "device.unfit": "Dieses Gerät hat nicht genug Arbeitsspeicher, um selbst ein Gehirn auszuführen. Der Download wurde gelöscht, um {size} freizugeben."
 }

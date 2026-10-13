@@ -8,5 +8,6 @@
   "private.offline": "İnternet olmadan da yanıtlamaya devam eder",
   "private.try": "Wi-Fi’ı kapat ve gör.",
   "private.still": "Çevrimdışısın, ama yanıtlar gelmeye devam ediyor.",
-  "private.proof": "Her yanıtın altındaki kalkan bunun kanıtı, tarayıcının kendi kaydından."
+  "private.proof": "Her yanıtın altındaki kalkan bunun kanıtı, tarayıcının kendi kaydından.",
+  "device.unfit": "Bu cihazın kendi başına bir beyin çalıştıracak kadar belleği yok, bu yüzden {size} yer açmak için indirilenler silindi."
 }

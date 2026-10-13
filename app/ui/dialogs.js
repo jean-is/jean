@@ -116,7 +116,7 @@ class History extends Element {
 const status = signal(/** @type {{ way: string, kind: 'busy' | 'error', message: string } | null} */ (null))
 /** The on-device brain's module, loaded when Brains first opens to check this device. */
 const local = signal(/** @type {typeof import('../caps/brain-local/brain-local.js') | null} */ (null))
-const deviceCheck = signal(/** @type {{ ok: boolean, reason?: string } | null} */ (null))
+const deviceCheck = signal(/** @type {{ ok: boolean, reason?: string, freed?: number } | null} */ (null))
 let checking = false
 
 async function checkDevice() {
@@ -393,7 +393,9 @@ function ways(first) {
   // The first way opens by itself, unless another says something (back from ChatGPT's sign-in): one at a time.
   const opens = first && !wayPicked && !status.value && (deviceCheck.value !== null || isDenied('brain-local'))
   const busy = status.value?.kind === 'busy'
-  return html`<ul class="list ways">
+  // What was downloaded for the device's brain, on a device short of memory for it, has just been deleted (D319).
+  const freed = deviceCheck.value?.freed
+  return html`${freed && module ? html`<p class="hint">${module.unfit(freed)}</p>` : nothing}<ul class="list ways">
     ${device && progress ? way('device', icons.chip, t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
       <p>${t('brain.device.text', { name: BRAND.name })}</p>
       ${progress.state === 'downloading' ? html`

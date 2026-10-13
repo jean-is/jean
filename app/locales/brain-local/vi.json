@@ -8,5 +8,6 @@
   "private.offline": "Vẫn trả lời khi không có internet",
   "private.try": "Hãy tắt Wi-Fi và xem thử.",
   "private.still": "Bạn đang ngoại tuyến, và câu trả lời vẫn tiếp tục đến.",
-  "private.proof": "Chiếc khiên dưới mỗi câu trả lời là bằng chứng, từ chính bản ghi của trình duyệt bạn."
+  "private.proof": "Chiếc khiên dưới mỗi câu trả lời là bằng chứng, từ chính bản ghi của trình duyệt bạn.",
+  "device.unfit": "Thiết bị này không đủ bộ nhớ để tự chạy một bộ não, nên bản tải xuống đã bị xoá để giải phóng {size}."
 }

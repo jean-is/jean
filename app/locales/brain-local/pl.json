@@ -8,5 +8,6 @@
   "private.offline": "Odpowiada dalej bez internetu",
   "private.try": "Wyłącz Wi-Fi i zobacz.",
   "private.still": "Jesteś offline, a odpowiedzi wciąż przychodzą.",
-  "private.proof": "Tarcza pod każdą odpowiedzią jest dowodem, z własnego zapisu twojej przeglądarki."
+  "private.proof": "Tarcza pod każdą odpowiedzią jest dowodem, z własnego zapisu twojej przeglądarki.",
+  "device.unfit": "To urządzenie nie ma dość pamięci, by samo uruchomić mózg, więc pobrane pliki usunięto, aby zwolnić {size}."
 }

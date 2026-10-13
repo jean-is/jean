@@ -8,5 +8,6 @@
   "private.offline": "Majibu yanaendelea hata bila mtandao",
   "private.try": "Zima Wi-Fi uone.",
   "private.still": "Huna mtandao, na majibu bado yanakuja.",
-  "private.proof": "Ngao chini ya kila jibu ndiyo ushahidi, kutoka kwenye rekodi ya kivinjari chako chenyewe."
+  "private.proof": "Ngao chini ya kila jibu ndiyo ushahidi, kutoka kwenye rekodi ya kivinjari chako chenyewe.",
+  "device.unfit": "Kifaa hiki hakina kumbukumbu ya kutosha kuendesha ubongo chenyewe, kwa hiyo upakuaji umefutwa ili kuachilia {size}."
 }

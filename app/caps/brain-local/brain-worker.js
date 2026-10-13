@@ -7,7 +7,19 @@
 // { type: 'generate', messages, tools, maxTokens }    → { type: 'chunk', text }…, { type: 'done', usage }
 // { type: 'abort', id }                                stops that generation, or drops it while it waits its turn
 import { AutoTokenizer, Gemma4ForCausalLM, TextStreamer, InterruptableStoppingCriteria, Tensor } from '../../vendor/transformers/transformers.web.min.js'
+import { InferenceSession } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { weightsFrom } from '../../ui/model-worker.js'
+
+// Transformers.js gives each session the same options, the weights as their addresses in its cache:
+// each session reads only the file its graph names, as ONNX Runtime makes it, from a Blob, whose
+// size is known, rather than a Response, read in pieces then joined, twice its size for a while.
+const create = InferenceSession.create
+InferenceSession.create = async function (graph, options = {}) {
+  const names = graph instanceof Uint8Array ? new TextDecoder('latin1').decode(graph) : ''
+  const externalData = await Promise.all((options.externalData ?? []).filter(({ path }) => names.includes(path)).map(async ({ path, data }) =>
+    ({ path, data: data instanceof URL ? await (await caches.match(data.href)).blob() : data })))
+  return create.call(this, graph, { ...options, externalData })
+}
 
 /** @type {Promise<{ tokenizer: any, model: any }> | null} */
 let loading = null
@@ -44,14 +56,50 @@ async function handle(data) {
   }
 }
 
+// Transformers.js would read both weights files whole, then hold them until both sessions are made:
+// on a 32 GB Mac the load took 11 GB at its peak, which ends the tab on a phone. Here they go to its
+// cache as they come, and each session reads its own from there only while ONNX Runtime makes it,
+// which Transformers.js does one at a time: 9 GB at the peak, 7 once loaded (D319).
 function load({ host, model, dtype }, id) {
   const progress_callback = weightsFrom(host, id)
-  loading ??= Promise.all([
-    AutoTokenizer.from_pretrained(model, { progress_callback }),
-    // The causal-LM class loads the text sessions only; image and audio come later (D42).
-    Gemma4ForCausalLM.from_pretrained(model, { dtype, device: 'webgpu', progress_callback }),
-  ]).then(([tokenizer, model]) => ({ tokenizer, model }))
+  // The weights' two files: the embeddings (1.6 GB in q4f16) and the decoder (1.5 GB).
+  loading ??= Promise.all(['embed_tokens', 'decoder_model_merged'].map((part) => weights(`${host.replace(/\/$/, '')}/${model}/resolve/main/onnx/${part}_${dtype}.onnx_data`, progress_callback)))
+    .then((externalData) => Promise.all([
+      AutoTokenizer.from_pretrained(model, { progress_callback }),
+      // The causal-LM class loads the text sessions only; image and audio come later (D42).
+      Gemma4ForCausalLM.from_pretrained(model, { dtype, device: 'webgpu', progress_callback, use_external_data_format: false, session_options: { externalData } }),
+    ]))
+    .then(([tokenizer, model]) => ({ tokenizer, model }))
   return loading
+}
+
+/**
+ * A weights file in Transformers.js's cache, under the address it gives it, written there as it comes
+ * the first time. @param {string} url @param {(event: any) => void} progress
+ * @returns {Promise<{ path: string, data: URL }>}
+ */
+async function weights(url, progress) {
+  const cache = await caches.open('transformers-cache')
+  const file = url.slice(url.lastIndexOf('/') + 1)
+  // A file is kept only once all of it has come.
+  const kept = await cache.match(url)
+  let total = Number(kept?.headers.get('content-length')) || 0
+  if (!kept) {
+    const response = await fetch(url)
+    if (!response.ok || !response.body) throw new Error(`The weights could not be downloaded (${response.status})`)
+    total = Number(response.headers.get('content-length')) || 0
+    let loaded = 0
+    const counted = response.body.pipeThrough(new TransformStream({ transform: (chunk, out) => {
+      progress({ status: 'progress', file, loaded: (loaded += chunk.byteLength), total })
+      out.enqueue(chunk)
+    } }))
+    // As Transformers.js does: a cache may drop the length, which the progress reads.
+    const headers = new Headers(response.headers)
+    if (total) headers.set('content-length', String(total))
+    await cache.put(url, new Response(counted, { headers }))
+  }
+  progress({ status: 'progress', file, loaded: total, total })
+  return { path: file, data: new URL(url) }
 }
 
 async function generate({ messages, tools, maxTokens = 4096, contextTokens = 32768 }, id) {

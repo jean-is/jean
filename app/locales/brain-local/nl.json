@@ -8,5 +8,6 @@
   "private.offline": "Blijft antwoorden zonder internet",
   "private.try": "Zet wifi uit en kijk maar.",
   "private.still": "Je bent offline, en de antwoorden blijven komen.",
-  "private.proof": "Het schild onder elk antwoord is het bewijs, uit de eigen registratie van je browser."
+  "private.proof": "Het schild onder elk antwoord is het bewijs, uit de eigen registratie van je browser.",
+  "device.unfit": "Dit apparaat heeft niet genoeg geheugen om zelf een brein te draaien, dus de download is verwijderd om {size} vrij te maken."
 }

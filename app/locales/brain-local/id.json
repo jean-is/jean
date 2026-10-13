@@ -8,5 +8,6 @@
   "private.offline": "Tetap menjawab tanpa internet",
   "private.try": "Matikan Wi-Fi dan lihat sendiri.",
   "private.still": "Anda sedang offline, dan jawaban terus berdatangan.",
-  "private.proof": "Perisai di bawah setiap jawaban adalah buktinya, dari catatan browser Anda sendiri."
+  "private.proof": "Perisai di bawah setiap jawaban adalah buktinya, dari catatan browser Anda sendiri.",
+  "device.unfit": "Perangkat ini tidak punya cukup memori untuk menjalankan otak sendiri, jadi unduhannya dihapus untuk mengosongkan {size}."
 }

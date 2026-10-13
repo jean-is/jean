@@ -8,5 +8,6 @@
   "private.offline": "Ìdáhùn ń bá a lọ láìsí íntánẹ́ẹ̀tì",
   "private.try": "Ẹ pa Wi-Fi kí ẹ wò ó.",
   "private.still": "Ẹ kò sí lórí íntánẹ́ẹ̀tì, síbẹ̀ ìdáhùn ń bọ̀ ṣáá.",
-  "private.proof": "Àsà tí ó wà lábẹ́ ìdáhùn kọ̀ọ̀kan ni ẹ̀rí, láti inú àkọsílẹ̀ aṣàwákiri yín fúnra rẹ̀."
+  "private.proof": "Àsà tí ó wà lábẹ́ ìdáhùn kọ̀ọ̀kan ni ẹ̀rí, láti inú àkọsílẹ̀ aṣàwákiri yín fúnra rẹ̀.",
+  "device.unfit": "Ẹ̀rọ yìí kò ní ìrántí tó tó láti ṣiṣẹ́ ọpọlọ fúnra rẹ̀, nítorí náà a ti pa ìgbàsílẹ̀ náà rẹ́ láti tú {size} sílẹ̀."
 }

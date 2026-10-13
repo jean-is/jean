@@ -62,6 +62,8 @@ test('offered where it can run, downloaded with consent, then answering on the d
   await expect(device.locator('progress')).toBeVisible()
   await expect(device.locator('.hint')).toContainText('You can keep using this page.')
   await expect(dialog).toBeHidden()
+  // Loaded, the mark of a load under way is gone (D319).
+  expect(await page.evaluate(() => localStorage.getItem('app.device-brain'))).toBeNull()
 
   // Private from now on (D270): the legend in the box opens its card, once by itself, in place of a toast.
   const card = page.locator('#private-card')
@@ -145,4 +147,36 @@ test('not offered where it can’t run', async ({ page }) => {
   // The check has run once the module is in; without shader-f16 there is nothing to offer.
   await expect.poll(() => page.evaluate(async () => (await import('/caps/brain-local/brain-local.js')).checkDevice())).toEqual({ ok: false, reason: 'f16' })
   await expect(dialog.locator('.way.is-device')).toHaveCount(0)
+})
+
+test('never again where loading it ended the tab, what it downloaded deleted, nor on a phone or a computer that says under 8 GB', async ({ page }) => {
+  await capable(page)
+  await start(page)
+  // The tab ended while the brain loaded: its mark stayed, and what it had downloaded (D319).
+  await page.evaluate(async () => {
+    const cache = await caches.open('transformers-cache')
+    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/main/onnx/decoder_model_merged_q4f16.onnx_data'
+    await cache.put(url, new Response('x'.repeat(2.5e6), { headers: { 'content-length': '2500000' } }))
+    localStorage.setItem('app.device-brain', 'loading')
+  })
+  await page.locator('.brain-chip').click()
+  const dialog = page.locator('app-settings dialog[open]')
+  await expect(dialog.locator('p.hint').first()).toHaveText('This device doesn’t have enough memory to run a brain itself, so the download was deleted to free 2.5 MB.')
+  await expect(dialog.locator('.way.is-quick')).toBeVisible()
+  await expect(dialog.locator('.way.is-device')).toHaveCount(0)
+  expect(await page.evaluate(async () => (await (await caches.open('transformers-cache')).keys()).length)).toBe(0)
+
+  // From then on it isn't offered here, and nothing more is said; nor on a phone, nor a computer that says under 8 GB (12 GB says 8).
+  const check = () => page.evaluate(async () => (await import('/caps/brain-local/brain-local.js')).checkDevice())
+  expect(await check()).toEqual({ ok: false, reason: 'memory', freed: 0 })
+  await page.evaluate(() => {
+    localStorage.removeItem('app.device-brain')
+    Object.defineProperty(Navigator.prototype, 'userAgentData', { configurable: true, get: () => ({ mobile: true, brands: [] }) })
+  })
+  expect(await check()).toEqual({ ok: false, reason: 'memory', freed: 0 })
+  await page.evaluate(() => {
+    Object.defineProperty(Navigator.prototype, 'userAgentData', { configurable: true, get: () => ({ mobile: false, brands: [] }) })
+    Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 4 })
+  })
+  expect(await check()).toEqual({ ok: false, reason: 'memory', freed: 0 })
 })
