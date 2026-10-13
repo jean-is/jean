@@ -326,7 +326,8 @@ async function report(write) {
   const bench = existsSync(`${dir}bench.json`) ? JSON.parse(await readFile(`${dir}bench.json`, 'utf8')) : {}
   for (const cost of names.length ? [] : []) void cost
   const strategies = [...new Set(runs.flatMap((run) => run.results.flatMap((r) => Object.keys(r.by))))]
-  const denseNames = strategies.filter((s) => s.startsWith('dense:'))
+  // The embedders measured at XL, where H2 and H3 are judged; the best of them on the dev split.
+  const denseNames = strategies.filter((s) => s.startsWith('dense:') && test.some((run) => run.size === 'xl' && run.results[0]?.by[s]))
   const bestDense = denseNames.sort((a, b) => mean(dev.flatMap((run) => run.results).filter((r) => r.by[b]).map((r) => r.by[b].at[32000].recall)) - mean(dev.flatMap((run) => run.results).filter((r) => r.by[a]).map((r) => r.by[a].at[32000].recall)))[0] ?? 'dense:qwen3'
   const marks = verdicts(registered, { runs, bench, answers: [...answerRows.values()], dense: bestDense })
   const sizes = ['s', 'm', 'l', 'xl'].filter((size) => runs.some((run) => run.size === size))
