@@ -1,5 +1,6 @@
 // Tiny static file server for development. Serves app/, what a deploy serves (D243), on 127.0.0.1.
 // Usage: npm run serve            (PORT=8080 npm run serve to change the port)
+//        SITE=dist/web npm run serve   what a web deploy serves, after npm run build:web (D318)
 // With --gateway (npm run dev:gateway), it is the gateway too (D191), at /gateway on Jean's own
 // address, and makes up the policy that sets it for Jean, as an organisation's would
 // (docs/enterprise.md); Connections is still found as anywhere else (D281). GATEWAY_CONFIG may add
@@ -19,7 +20,7 @@ import { gateway } from '../gateway/gateway.js'
 import { listener } from '../gateway/serve.js'
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)))
-const APP = join(ROOT, 'app')
+const APP = resolve(ROOT, process.env.SITE || 'app')
 const EXAMPLES = join(ROOT, 'examples')
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.PORT) || 4173

@@ -205,7 +205,7 @@ export const integrityOf = (hex) => `sha256-${Buffer.from(hex, 'hex').toString('
  * @param {string[]} locales
  * @param {Record<string, string>} integrity  path → Subresource Integrity value
  * @param {Record<string, { files: string[] }>} [capabilities]
- * @param {Awaited<ReturnType<typeof renderListing>> | null} [render]  the render package, when there is a reader (D305)
+ * @param {(Awaited<ReturnType<typeof renderListing>> & { integrity: Record<string, string> }) | null} [render]  the render package, when there is a reader (D305)
  */
 export function buildCapabilities (version, shell, locales, integrity = {}, capabilities = {}, render = null) {
   return `${JSON.stringify({ format: 2, version, shell, locales, integrity, capabilities, ...(render && { render }) }, null, 2)}\n`
@@ -268,8 +268,10 @@ export async function plan (root = APP) {
   const version = computeVersion(hashes)
   /** @param {string} path */
   const text = async (path) => (generated[path] ?? await readOrNull(root, path))?.toString('utf8') ?? null
-  const render = await readOrNull(root, READER) ? await renderListing(root, text) : null
   const integrity = Object.fromEntries(hashes.map(([path, hash]) => [path, integrityOf(hash)]))
+  // Its modules' hashes as the package holds them, which a web deploy's minified files no longer match (D318).
+  const listing = await readOrNull(root, READER) ? await renderListing(root, text) : null
+  const render = listing && { ...listing, integrity: Object.fromEntries(listing.files.map((path) => [path, integrity[path]])) }
   const sw = await readOrNull(root, 'sw.js')
   const stamped = sw && stampVersion(sw.toString('utf8'), version)
   if (!stamped) throw new Error("sw.js is missing or has no `const VERSION = '…'` line")

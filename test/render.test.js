@@ -30,5 +30,7 @@ test('capabilities.json lists the package by a version of its own, each of its m
   assert.match(render.version, /^\d+\.\d+\.\d+-r[0-9a-f]{12}$/)
   assert.equal(render.entry, ENTRY)
   assert.deepEqual(render.map, STAND_INS)
-  for (const path of render.files) assert.match(integrity[path] ?? '', /^sha256-/, path)
+  // Its own, which a minified deploy's no longer match (D318); from app/, the same.
+  for (const path of render.files) assert.match(render.integrity[path] ?? '', /^sha256-/, path)
+  for (const path of render.files) assert.equal(render.integrity[path], integrity[path], path)
 })

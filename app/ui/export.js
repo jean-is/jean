@@ -117,7 +117,7 @@ ${reader ? `<script type="application/json" id="settings">${block(reader.setting
  */
 async function readerOf() {
   const [{ app, effective }, { declared }, { pageRights, mapStyles }] = await Promise.all([import('./state.js'), import('./markdown.js'), import('./csp.js')])
-  const { render, integrity } = await fetch(new URL('../capabilities.json', import.meta.url)).then((response) => response.json()).catch(() => ({}))
+  const { render } = await fetch(new URL('../capabilities.json', import.meta.url)).then((response) => response.json()).catch(() => ({}))
   const { settings } = effective.peek()
   const base = render && String(app.policy.urls?.render ?? /** @type {Record<string, string>} */ (settings.urls ?? {}).render ?? RENDER).replace('{version}', render.version)
   if (!base) return null
@@ -129,7 +129,7 @@ async function readerOf() {
   return {
     base, entry: at(render.entry),
     imports: Object.fromEntries([...Object.entries(own).map(([name, path]) => [name, at(path)]), ...Object.entries(render.map).map(([path, standIn]) => [at(path), at(standIn)])]),
-    integrity: Object.fromEntries(render.files.map((/** @type {string} */ path) => [at(path), integrity[path]])),
+    integrity: Object.fromEntries(render.files.map((/** @type {string} */ path) => [at(path), render.integrity[path]])),
     // Its pages offline, as Jean's are unless Settings say otherwise, and maps as they were.
     settings: { look: app.look.peek(), kinds: [...declared.peek()], pages: { ...allows, web: false, network: false }, ...(styles && { mapStyles: styles }) },
     sites: styles ? Object.values(styles).map((address) => new URL(address).origin) : [],

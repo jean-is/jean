@@ -10,6 +10,7 @@
     "dev:gateway": "npm run build && node scripts/serve.js --gateway --budgets",
     "start": "npm run build && node scripts/serve.js --budgets",
     "build": "npm run vendor && npm run manifest",
+    "build:web": "npm run build && node scripts/web.js",
     "render": "npm run build && node scripts/render.js",
     "build:desktop": "npm run build && node scripts/desktop.js",
     "build:dmg": "npm run build && node scripts/desktop.js dmg",
@@ -39,6 +40,7 @@
     "@neutralinojs/neu": "^11.7.2",
     "@playwright/test": "1.63.0",
     "ajv": "8.20.0",
+    "esbuild": "0.28.2",
     "typescript": "^7.0.2"
   },
   "engines": {

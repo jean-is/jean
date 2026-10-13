@@ -1,6 +1,7 @@
 // Smoke tests, one per capability (AGENTS.md), in a real browser engine: the sandbox needs
-// one (an opaque-origin frame running a classic worker). Jean is served as written, and a
-// deterministic fake brain answers (D37). Each is a <capability>.spec.js, beside the unit tests'
+// one (an opaque-origin frame running a classic worker). Jean is served as written, or as a web
+// deploy serves it with SITE=dist/web after npm run build:web (D318), and a deterministic fake
+// brain answers (D37). Each is a <capability>.spec.js, beside the unit tests'
 // *.test.js, which node --test runs (D247). Usage: npm run e2e
 import { defineConfig, devices } from '@playwright/test'
 
