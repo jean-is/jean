@@ -20,6 +20,8 @@ export const MODELS = {
   gemma: { id: 'onnx-community/embeddinggemma-300m-ONNX', dtype: 'q8', pooling: 'model', query: (t) => `task: search result | query: ${t}`, passage: (t) => `title: none | text: ${t}` },
   // Its text model alone: the vision and audio encoders aren't loaded (Transformers.js 4.3.1 or later).
   gemma2: { id: 'onnx-community/embeddinggemma-2-ONNX', dtype: 'q8', pooling: 'model', textOnly: true, query: (t) => `task: search result | query: ${t}`, passage: (t) => `title: none | text: ${t}` },
+  // In 4 bits, the weights a browser downloads (175 MB rather than 314).
+  gemma2q4: { id: 'onnx-community/embeddinggemma-2-ONNX', dtype: 'q4', pooling: 'model', textOnly: true, query: (t) => `task: search result | query: ${t}`, passage: (t) => `title: none | text: ${t}` },
 }
 
 /** @type {Map<string, Promise<any>>} */
