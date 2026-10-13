@@ -8,9 +8,9 @@ import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, MAIL_URL, BRAIN_URL } from './helpers.js'
 
 for (const [lang, about, local, free, save, prove] of [
-  ['en', 'About this answer', 'Done on this device', 'Free', 'Save the certificate', 'Save the proof'],
-  ['ar', 'عن هذه الإجابة', 'أُنجزت على هذا الجهاز', 'مجانًا', 'حفظ الشهادة', 'حفظ الإثبات'],
-  ['ja', 'この回答について', 'この端末で完結', '無料', '証明書を保存', '証拠を保存'],
+  ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],
+  ['ar', 'عن هذه الإجابة', 'خصوصيتك محفوظة', 'مجانًا', 'حفظ الشهادة', 'حفظ الإثبات'],
+  ['ja', 'この回答について', 'プライバシーは守られました', '無料', '証明書を保存', '証拠を保存'],
 ]) {
   test(`an answer done on this device says so, and saves a sealed certificate (${lang})`, async ({ page }) => {
     await start(page, lang)
@@ -38,7 +38,11 @@ for (const [lang, about, local, free, save, prove] of [
     expect(box && at && box.x >= 0 && box.x + box.width <= (page.viewportSize()?.width ?? 0) && Math.abs(box.y + box.height - at.y) < 12).toBe(true)
     // Its certificate folded at its foot, the card being a glance.
     await expect(card.getByRole('button', { name: save })).toBeHidden()
-    await card.locator('summary').click()
+    await card.locator('.receipt-certify > summary').click()
+    // Who dates it and where anyone checks it, one click further.
+    await expect(card.locator('.receipt-more .receipt-note')).toBeHidden()
+    await card.locator('.receipt-more > summary').click()
+    await expect(card.locator('.receipt-more .receipt-note')).toBeVisible()
     const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: save }).click()])
     const saved = JSON.parse(await readFile(await download.path(), 'utf8'))
     expect(Object.keys(saved).sort()).toEqual(['payload', 'protected', 'signature'])

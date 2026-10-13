@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Ruka hadi kisanduku cha ujumbe",
   "welcome.question": "Nikusaidie nini?",
-  "welcome.ai": "Unazungumza na akili bandia (AI), si na binadamu.",
   "starter.discover": "Unaweza kufanya nini?",
   "starter.discover.prompt": "Unaweza kunifanyia nini? Nipe mifano 3 ninayoweza kujaribu.",
   "starter.summarize": "Fupisha maandishi marefu",
@@ -15,6 +14,7 @@
   "composer.label": "Ujumbe wako",
   "composer.add": "Ongeza kwenye ujumbe wako",
   "composer.placeholder": "Uliza chochote, au eleza kazi…",
+  "composer.ai": "{name} ni akili bandia (AI); makosa yanaweza kutokea",
   "action.send": "Tuma",
   "action.stop": "Simamisha",
   "action.new": "Kazi mpya",

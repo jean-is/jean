@@ -72,7 +72,7 @@ function searchTool(sources) {
   }
 }
 
-/** Its row in + (D304): a switch, which leaves the menu open, as Never send to the cloud does. */
+/** Its row in + (D304): a switch, which leaves the menu open, as Keep on this device does. */
 const row = () => html`<button type="button" role="switch" aria-checked=${off.value ? 'false' : 'true'}
   @click=${() => updateSettings({ search: off.peek() })}>${icons.websearch}<span>${t('cap.search.name')}</span></button>`
 

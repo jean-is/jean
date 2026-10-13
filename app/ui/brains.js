@@ -5,8 +5,9 @@ import { PROVIDERS, listModels, checkKey } from '../core/llm.js'
 import { createVerifier, challengeS256, openRouterAuthURL, exchangeOpenRouterCode } from '../core/oauth.js'
 import { t } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
+import { isLocal } from '../core/settings.js'
 import { setSecret, deleteSecret } from './secrets.js'
-import { app, updateSettings, notify, send, showError } from './state.js'
+import { app, activeBrain, updateSettings, notify, send, showError } from './state.js'
 import { loaded } from './caps.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
@@ -77,6 +78,12 @@ export async function keepBrain(id, projects) {
 export async function useBrain(id, model) {
   const brains = app.settings.value.brains.map((brain) => (brain.id === id && model ? { ...brain, model } : brain))
   await updateSettings({ brains, activeBrain: id })
+}
+
+/** Keeps messages on this device, or lets them go to the cloud; a brain there picked by hand gives way to Auto. @param {boolean} on */
+export async function keepOnDevice(on) {
+  const brain = activeBrain.value
+  await updateSettings({ cloud: !on, ...(on && brain && !isLocal(brain) && { auto: true }) })
 }
 
 /** Leaves to sign in somewhere that comes back to this page, with what the user had typed and where they were. @param {string} url */

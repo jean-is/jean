@@ -1,7 +1,6 @@
 {
   "a11y.skip": "الانتقال إلى مربع الرسالة",
   "welcome.question": "كيف يمكنني مساعدتك؟",
-  "welcome.ai": "هذه محادثة مع ذكاء اصطناعي، لا مع إنسان.",
   "starter.discover": "ماذا يمكنني أن أفعل معك؟",
   "starter.discover.prompt": "ماذا يمكنني أن أفعل معك؟ أعطني 3 أمثلة أجرّبها.",
   "starter.summarize": "تلخيص نص طويل",
@@ -15,6 +14,7 @@
   "composer.label": "رسالتك",
   "composer.add": "إضافة إلى رسالتك",
   "composer.placeholder": "اسأل أي شيء، أو صِف مهمة…",
+  "composer.ai": "{name} ذكاء اصطناعي، والأخطاء واردة",
   "action.send": "إرسال",
   "action.stop": "إيقاف",
   "action.new": "مهمة جديدة",

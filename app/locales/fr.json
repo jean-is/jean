@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Aller à la zone de message",
   "welcome.question": "Que puis-je faire pour vous ?",
-  "welcome.ai": "Vous parlez à une IA, pas à un humain.",
   "starter.discover": "Que sais-tu faire ?",
   "starter.discover.prompt": "Que peux-tu faire pour moi ? Donne-moi 3 exemples à essayer.",
   "starter.summarize": "Résumer un long texte",
@@ -15,6 +14,7 @@
   "composer.label": "Votre message",
   "composer.add": "Ajouter à votre message",
   "composer.placeholder": "Posez une question ou décrivez une tâche…",
+  "composer.ai": "{name} est une IA et peut faire des erreurs",
   "action.send": "Envoyer",
   "action.stop": "Arrêter",
   "action.new": "Nouvelle tâche",

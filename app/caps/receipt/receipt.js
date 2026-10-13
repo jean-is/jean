@@ -124,10 +124,12 @@ const named = ({ provider, model }) => (provider === 'device' ? model.split('/')
 /**
  * What the answer was, first: where it was done, then how long it took and what it cost, who answered,
  * who made its pictures and films, and the other addresses reached, apart from theirs, the brains'
- * alone given the conversation; last, folded, its certificate, the card being a glance.
- * @param {Facts} facts @param {Turn} turn @param {string} text @param {string} id
+ * alone given the conversation; last, folded, its certificate, the card being a glance, and folded
+ * again within it, who dates it and where anyone checks it, open when a witness was chosen, so that
+ * nothing goes out unseen.
+ * @param {Facts} facts @param {Turn} turn @param {string} text @param {string} id @param {boolean} chosen
  */
-function card(facts, turn, text, id) {
+function card(facts, turn, text, id, chosen) {
   const brains = once(facts.brains)
   const made = once(facts.made)
   const cloud = brains.some((brain) => !brain.local)
@@ -155,9 +157,12 @@ function card(facts, turn, text, id) {
       <summary>${SEAL}${t('receipt.certificate')}${icons.chevron}</summary>
       ${saving(`${id}-save`, 'receipt.save', () => keepCertificate(facts, turn, text))}
       ${saving(`${id}-proof`, 'receipt.proof', () => keepCertificate(facts, turn, text, true))}
-      ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
-      ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
-      <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>
+      <details class="receipt-more" ?open=${chosen}>
+        <summary>${t('action.more')}${icons.chevron}</summary>
+        ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
+        ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
+        <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>
+      </details>
     </details>`
 }
 
@@ -259,6 +264,8 @@ async function keepCertificate(facts, turn, text, words = false) {
 /** Under an answer: its button, a shield when it was done on this device, and the card it opens. */
 class Receipt extends Element {
   #open = signal(false)
+  /** Whether a witness was chosen as the card opened: its choices then show unasked, and stay open while the user changes them. */
+  #chosen = false
   /** How a glance opened the card, or is about to: the mouse or the keyboard's focus. It closes as that leaves, unless clicked. */
   #glance = ''
   #coming = ''
@@ -275,8 +282,13 @@ class Receipt extends Element {
         @pointerenter=${glimpse} @pointerleave=${glimpse} @focusin=${glimpse} @focusout=${glimpse} @click=${this.#pin}>
         ${facts.verdict === 'local' ? icons.shield : INFO}<span class="visually-hidden">${t('receipt.about')}</span></button>
       <div id=${id} class="receipt" popover @click=${this.#pin} @pointerenter=${glimpse} @pointerleave=${glimpse} @focusout=${glimpse}
-        @toggle=${(/** @type {ToggleEvent} */ event) => { this.#open.value = event.newState === 'open'; if (!this.#open.value) this.#glance = '' }}>
-        ${this.#open.value ? card(facts, turn, text, id) : nothing}
+        @toggle=${(/** @type {ToggleEvent} */ event) => {
+          const { date, log } = app.settings.peek().certificates ?? {}
+          this.#chosen = Boolean(date || log)
+          this.#open.value = event.newState === 'open'
+          if (!this.#open.value) this.#glance = ''
+        }}>
+        ${this.#open.value ? card(facts, turn, text, id, this.#chosen) : nothing}
       </div>`
   }
 

@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Skip to the message box",
   "welcome.question": "What can I do for you?",
-  "welcome.ai": "You’re talking with an AI, not a person.",
   "starter.discover": "What can you do?",
   "starter.discover.prompt": "What can you do for me? Give me 3 examples I can try.",
   "starter.summarize": "Summarize a long text",
@@ -15,6 +14,7 @@
   "composer.label": "Your message",
   "composer.add": "Add to your message",
   "composer.placeholder": "Ask anything, or describe a task…",
+  "composer.ai": "{name} is AI and can make mistakes",
   "action.send": "Send",
   "action.stop": "Stop",
   "action.new": "New task",

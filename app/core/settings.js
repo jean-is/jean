@@ -16,7 +16,7 @@ import { ulid } from './ulid.js'
  * @property {string} [name]                  what the user is called, set by them or once by Jean from a conversation; '' when they cleared it (D150)
  * @property {string[]} unlocked              capabilities discovered so far
  * @property {boolean} auto                   Auto picks the brain for each message
- * @property {boolean} cloud                  false: never send to the cloud
+ * @property {boolean} cloud                  false: keep messages on this device
  * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)
  * @property {boolean} [memory]               false: Jean neither notes nor reads what it noticed
  * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)

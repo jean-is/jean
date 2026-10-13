@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Tsallaka zuwa akwatin saƙo",
   "welcome.question": "Wane taimako kake buƙata?",
-  "welcome.ai": "Wannan tattaunawa ce da ƙirƙirarriyar basira (AI), ba da mutum ba.",
   "starter.discover": "Me za a iya yi a nan?",
   "starter.discover.prompt": "Me za a iya yi a nan? Ba ni misalai 3 da zan iya gwadawa.",
   "starter.summarize": "Taƙaita dogon rubutu",
@@ -15,6 +14,7 @@
   "composer.label": "Saƙonka",
   "composer.add": "Ƙara wa saƙonka",
   "composer.placeholder": "Tambayi komai, ko bayyana wani aiki…",
+  "composer.ai": "{name}: ƙirƙirarriyar basira (AI), ana iya samun kuskure",
   "action.send": "Aika",
   "action.stop": "Tsayar",
   "action.new": "Sabuwar ɗawainiya",

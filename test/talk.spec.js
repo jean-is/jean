@@ -3,7 +3,7 @@
 // the conversation, in the address (D137), a reload comes back to the line being read, and an
 // earlier conversation opens at its end. A request whose connection drops before its answer starts
 // is asked again (D202), and a key connects though its service is too busy to list its models.
-// Before anything is asked, the welcome says the user is talking with an AI (D273).
+// Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
@@ -24,19 +24,28 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await expect(page.locator('.msg-user').last()).toHaveText('Show it as a chart')
 })
 
-test('before anything is asked, the welcome says the user is talking with an AI, and the box says it to a screen reader (D273)', async ({ page }) => {
-  const said = { en: 'You’re talking with an AI, not a person.', ar: 'هذه محادثة مع ذكاء اصطناعي، لا مع إنسان.', ja: '会話の相手は人間ではなく、AIです。' }
-  for (const [lang, text] of Object.entries(said)) {
-    await start(page, lang)
-    await expect(page.locator('.welcome hgroup p')).toHaveText(text)
-    await expect(page.locator('.welcome hgroup p')).toBeInViewport()
-    await expect(page.locator('#prompt')).toHaveAccessibleDescription(text)
-  }
-  // Once asked, the conversation takes its place.
+test('once a task has started, a line under the box says the assistant is an AI, and the box says it to a screen reader (D273)', async ({ page }) => {
+  await start(page)
+  // Not on the welcome: nothing has been asked yet.
+  await expect(page.locator('.ai-note')).toHaveCount(0)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
-  await expect(page.locator('#prompt')).not.toHaveAccessibleDescription(said.ja)
+  const said = { en: 'Jean is AI and can make mistakes', ar: 'Jean ذكاء اصطناعي، والأخطاء واردة', ja: 'JeanはAIのため、間違えることがあります' }
+  for (const [lang, text] of Object.entries(said)) {
+    if (lang !== 'en') {
+      const settings = await openSettings(page)
+      await settings.locator('.settings-panel select').first().selectOption(lang)
+      await closeSettings(page)
+    }
+    await expect(page.locator('.ai-note')).toHaveText(text)
+    await expect(page.locator('.ai-note')).toBeInViewport()
+    await expect(page.locator('#prompt')).toHaveAccessibleDescription(text)
+  }
+  // A new task has none until something is asked.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(page.locator('.ai-note')).toHaveCount(0)
+  await expect(page.locator('#prompt')).toHaveAccessibleDescription('')
 })
 
 test('a request whose connection drops before its answer starts is asked again after a moment, saying so (D202)', async ({ page }) => {

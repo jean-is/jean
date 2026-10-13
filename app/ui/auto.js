@@ -38,7 +38,7 @@ export const tierFor = (demand) => [0, 1, 1, 2][Math.min(3, Math.max(0, Math.rou
  * @param {{ brains: BrainConfig[], preferred?: string | null, cloud?: boolean, online?: boolean, signals?: Signals,
  *   floor?: number, has?: (brain: BrainConfig, model: string) => boolean, sees?: (brain: BrainConfig) => boolean,
  *   tiers?: Record<string, string[]> }} input
- *   floor: the level already used in this conversation; cloud false: "never send to the cloud";
+ *   floor: the level already used in this conversation; cloud false: "Keep on this device";
  *   online false: the browser is offline, so a brain on this device answers when there is one (D269);
  *   sees: whether a brain is shown pictures
  * @returns {{ brain: BrainConfig, level: number, reason: Reason } | null}

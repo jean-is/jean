@@ -134,11 +134,10 @@ function offerAside() {
   </aside>`
 }
 
-// Before anything is asked, it says the user is talking with an AI (EU AI Act, art. 50; D273).
 function welcome() {
   return html`<section class="welcome">
     <app-persona></app-persona>
-    <hgroup><h1 class="hero-question">${t('welcome.question')}</h1><p class="muted" id="welcome-ai">${t('welcome.ai')}</p></hgroup>
+    <h1 class="hero-question">${t('welcome.question')}</h1>
     <ul class="starters">${STARTERS.map((key) => html`<li>
       <button class="starter" @click=${() => { app.draft.value = t(`starter.${key}.prompt`); focusComposer() }}>${t(`starter.${key}`)}</button>
     </li>`)}</ul>

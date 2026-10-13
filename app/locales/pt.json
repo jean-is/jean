@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Ir para a caixa de mensagem",
   "welcome.question": "Em que posso ajudar?",
-  "welcome.ai": "Estás a falar com uma IA, não com uma pessoa.",
   "starter.discover": "O que sabes fazer?",
   "starter.discover.prompt": "O que podes fazer por mim? Dá-me 3 exemplos para experimentar.",
   "starter.summarize": "Resumir um texto longo",
@@ -15,6 +14,7 @@
   "composer.label": "A tua mensagem",
   "composer.add": "Adicionar à tua mensagem",
   "composer.placeholder": "Pergunta o que quiseres ou descreve uma tarefa…",
+  "composer.ai": "{name} é uma IA e pode cometer erros",
   "action.send": "Enviar",
   "action.stop": "Parar",
   "action.new": "Nova tarefa",

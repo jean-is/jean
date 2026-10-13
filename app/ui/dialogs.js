@@ -5,10 +5,10 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels,
+  app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels, cloudAllowed,
   showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS,
 } from './state.js'
-import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave } from './brains.js'
+import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, slots, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
@@ -234,14 +234,14 @@ function describe(brain) {
 }
 
 /**
- * Who may answer: Auto, or a brain, which can't be chosen in a project it isn't used in; then the
- * projects it is kept to. @param {boolean} checked @param {() => unknown} choose
- * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[] }} [kept]
+ * Who may answer: Auto, or a brain, which can't be chosen in a project it isn't used in, nor in the cloud while
+ * messages are kept on this device; then the projects it is kept to. @param {boolean} checked @param {() => unknown} choose
+ * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[] }} [kept] @param {boolean} [closed]
  */
-function answer(checked, choose, { icon, name, where }, kept = {}) {
+function answer(checked, choose, { icon, name, where }, kept = {}, closed = false) {
   const names = kept.projects ? app.projects.value.filter((project) => kept.projects?.includes(project.id)).map(projectName) : []
   return html`<label class="item">
-    <input type="radio" name="answers" .checked=${checked} ?disabled=${!usedIn(kept, app.project.value.id)} @change=${choose}>
+    <input type="radio" name="answers" .checked=${checked} ?disabled=${closed || !usedIn(kept, app.project.value.id)} @change=${choose}>
     <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${names.length
       ? html` · <bdi>${new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}</small></span>
   </label>`
@@ -279,11 +279,12 @@ const placing = signal(/** @type {string | null} */ (null))
 
 /**
  * Who answers, as the picker offers it: Auto, or one of the brains, each with its version and a
- * way to remove it. Then, while one is in the cloud, never sending there.
+ * way to remove it. Then, while one is in the cloud, keeping messages on this device, which a project kept there holds on.
  * @param {import('../core/settings.js').Settings} settings @param {boolean} brainsLocked
  */
 function answers(settings, brainsLocked) {
   const active = activeBrain.value
+  const kept = app.project.value.data.cloud === false
   return html`<section>
       <h3 id="brains-yours">${t('brain.connectedTitle')}</h3>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-yours">
@@ -292,7 +293,7 @@ function answers(settings, brainsLocked) {
           const chosen = !settings.auto && brain.id === active?.id
           const open = !brainsLocked && placing.value === brain.id && placeable(brain)
           return html`<div class=${chosen ? 'is-selected' : ''}>
-            ${answer(chosen, () => updateSettings({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain)}
+            ${answer(chosen, () => updateSettings({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain, !cloudAllowed() && !isLocal(brain))}
             ${brain.api === 'device' ? nothing : html`<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr"
                 aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
               <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
@@ -305,8 +306,8 @@ function answers(settings, brainsLocked) {
         })}
       </div>
     </section>
-    ${settings.brains.some((brain) => !isLocal(brain)) ? setting(t('picker.neverCloud'), null, html`<input type="checkbox" class="switch" role="switch"
-      aria-label=${t('picker.neverCloud')} .checked=${!settings.cloud} @change=${(/** @type {Event} */ e) => updateSettings({ cloud: !(/** @type {HTMLInputElement} */ (e.target).checked) })}>`) : nothing}`
+    ${settings.brains.some((brain) => !isLocal(brain)) ? setting(t('picker.keepOnDevice'), kept ? t('picker.projectKept') : null, html`<input type="checkbox" class="switch" role="switch"
+      aria-label=${t('picker.keepOnDevice')} .checked=${kept || !settings.cloud} ?disabled=${kept} @change=${(/** @type {Event} */ e) => keepOnDevice(/** @type {HTMLInputElement} */ (e.target).checked)}>`) : nothing}`
 }
 
 /** Whether the user has opened or closed a way: then none opens on its own. */

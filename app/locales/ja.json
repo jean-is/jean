@@ -1,7 +1,6 @@
 {
   "a11y.skip": "メッセージ欄へ移動",
   "welcome.question": "何をお手伝いしましょうか？",
-  "welcome.ai": "会話の相手は人間ではなく、AIです。",
   "starter.discover": "何ができますか？",
   "starter.discover.prompt": "私のために何ができますか？試せる例を3つ挙げてください。",
   "starter.summarize": "長い文章を要約する",
@@ -15,6 +14,7 @@
   "composer.label": "メッセージ",
   "composer.add": "メッセージに追加",
   "composer.placeholder": "何でも聞いてください。やりたいことを書いても大丈夫です…",
+  "composer.ai": "{name}はAIのため、間違えることがあります",
   "action.send": "送信",
   "action.stop": "停止",
   "action.new": "新しいタスク",

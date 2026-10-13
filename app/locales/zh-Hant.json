@@ -1,7 +1,6 @@
 {
   "a11y.skip": "跳到訊息框",
   "welcome.question": "有什麼可以幫你？",
-  "welcome.ai": "你正在和 AI 對話，而不是真人。",
   "starter.discover": "你能做什麼？",
   "starter.discover.prompt": "你能為我做什麼？給我 3 個可以試試的例子。",
   "starter.summarize": "摘要一篇長文",
@@ -15,6 +14,7 @@
   "composer.label": "你的訊息",
   "composer.add": "新增至訊息",
   "composer.placeholder": "想問什麼都可以，或描述一項工作…",
+  "composer.ai": "{name} 是 AI，可能會出錯",
   "action.send": "傳送",
   "action.stop": "停止",
   "action.new": "新任務",

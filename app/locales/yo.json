@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Lọ tààrà sí àpótí ọ̀rọ̀",
   "welcome.question": "Kí ni mo lè ṣe fún yín?",
-  "welcome.ai": "Ẹ ń bá AI sọ̀rọ̀, kì í ṣe ènìyàn.",
   "starter.discover": "Kí lo lè ṣe?",
   "starter.discover.prompt": "Kí lo lè ṣe fún mi? Fún mi ní àpẹẹrẹ 3 tí mo lè dán wò.",
   "starter.summarize": "Ṣe àkópọ̀ ọ̀rọ̀ gígùn",
@@ -15,6 +14,7 @@
   "composer.label": "Ọ̀rọ̀ yín",
   "composer.add": "Ṣàfikún sí ọ̀rọ̀ yín",
   "composer.placeholder": "Béèrè ohunkóhun, tàbí ṣàpèjúwe iṣẹ́ kan…",
+  "composer.ai": "{name} jẹ́ AI, ó sì lè ṣe àṣìṣe",
   "action.send": "Fi ránṣẹ́",
   "action.stop": "Dá dúró",
   "action.new": "Iṣẹ́ tuntun",

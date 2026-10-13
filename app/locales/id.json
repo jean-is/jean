@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Lompat ke kotak pesan",
   "welcome.question": "Apa yang bisa saya bantu?",
-  "welcome.ai": "Anda sedang berbicara dengan AI, bukan dengan manusia.",
   "starter.discover": "Apa yang bisa kamu lakukan?",
   "starter.discover.prompt": "Apa yang bisa kamu lakukan untukku? Beri aku 3 contoh yang bisa kucoba.",
   "starter.summarize": "Ringkas teks panjang",
@@ -15,6 +14,7 @@
   "composer.label": "Pesan Anda",
   "composer.add": "Tambahkan ke pesan Anda",
   "composer.placeholder": "Tanyakan apa saja, atau jelaskan sebuah tugas…",
+  "composer.ai": "{name} adalah AI dan bisa membuat kesalahan",
   "action.send": "Kirim",
   "action.stop": "Hentikan",
   "action.new": "Tugas baru",

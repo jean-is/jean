@@ -654,6 +654,10 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
 
 // ─── Elements ────────────────────────────────────────────────────────────────
 
+/** Reconnect and Disconnect: a link, whole or broken. */
+const LINK = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M9.5 14.5l5-5"/></svg>`
+const UNLINK = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M8.5 3.5V6M3.5 8.5H6M15.5 20.5V18M20.5 15.5H18"/></svg>`
+
 /** The header names the conversation's folder, and opens on a menu to change it (D149). */
 class FolderName extends Element {
   render() {
@@ -670,12 +674,12 @@ class FolderName extends Element {
         ${icons.folder}<span dir="auto">${folder.name}</span></button>
       <div id="folder-menu" class="menu folder-menu" popover>
         ${folder.copy ? html`<p class="folder-note">${t('folders.copy', { name: assistantName() })}</p>` : nothing}
-        ${missing ? item(icons.folder, t('folders.again', { folder: folder.name }), () => choose(!app.current.peek() && pending.peek() === undefined ? project : undefined)) : nothing}
+        ${missing ? item(LINK, t('folders.again'), () => choose(!app.current.peek() && pending.peek() === undefined ? project : undefined)) : nothing}
         ${shut ? item(icons.key, t('folders.allow'), () => permit(folder)) : nothing}
         ${changed.length ? item(icons.download, t('folders.save'), async () => save(new Blob([/** @type {BlobPart} */ (await folder.copy?.zip())], { type: 'application/zip' }), `${folder.name}.zip`)) : nothing}
         ${item(icons.folder, t('folders.another'), () => choose())}
         ${!onProject ? item(icons.spark, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
-        ${item(icons.close, t('folders.none'), () => use(null))}
+        ${item(UNLINK, t('folders.none'), () => use(null))}
       </div>`
   }
 

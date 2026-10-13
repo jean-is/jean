@@ -1,12 +1,13 @@
 // The brain picker, a menu above the chip in the box (docs/product.md, "Brains: picker and Auto"):
 // Auto, Fast / Smart / Best from the connected provider, every other brain of the room's project
-// (D194), then "never send to the cloud" while one is in the cloud, and all brains. One line each,
-// an icon and a name; the real name and a plain cost show on hover.
+// (D194), then "Keep on this device" while one is in the cloud, and all brains. One line each,
+// an icon and a name; the real name and a plain cost show on hover. Kept on this device, the cloud's brains aren't offered,
+// and a project kept there keeps the switch on.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, activeBrain, brainsHere, brainLabel, updateSettings, loadModels } from './state.js'
-import { useBrain } from './brains.js'
+import { app, effective, activeBrain, brainsHere, brainLabel, updateSettings, loadModels, cloudAllowed } from './state.js'
+import { useBrain, keepOnDevice } from './brains.js'
 import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'
@@ -41,12 +42,13 @@ function cost(pricing) {
 /**
  * What the picker offers besides Auto, as a routine's own brain does too (D303): Fast, Smart and Best from the
  * connected provider, then every other brain of the room's project (D194), each with what is behind it, its
- * price once `priced` (D255). @param {boolean} [priced]
+ * price once `priced` (D255); none in the cloud while messages are kept on this device. @param {boolean} [priced]
  * @returns {{ icon: unknown, label: string, behind: string, brain: BrainConfig, model: string }[]}
  */
 export function choices(priced = false) {
-  const brains = brainsHere.value
-  const remote = [activeBrain.value, ...brains].find((brain) => brain && !isLocal(brain))
+  const cloud = cloudAllowed()
+  const brains = brainsHere.value.filter((brain) => cloud || isLocal(brain))
+  const remote = cloud ? [activeBrain.value, ...brains].find((brain) => brain && !isLocal(brain)) : undefined
   const models = remote ? app.models.value[remote.id] ?? [] : []
   const tiers = remote ? /** @type {Record<string, string[]>} */ (app.policy.tiers ?? TIERS)[remote.provider] ?? [] : []
   const offered = tiers.filter((model) => models.some((info) => info.id === model))
@@ -76,13 +78,14 @@ class Picker extends Element {
     const active = activeBrain.value
     const brains = brainsHere.value
     const manual = (/** @type {BrainConfig} */ brain, /** @type {string} */ model) => !settings.auto && active?.id === brain.id && active.model === model
+    const kept = app.project.value.data.cloud === false
     return html`<div id="brain-menu" class="menu brain-menu" popover
       @toggle=${(/** @type {ToggleEvent} */ e) => (this.#open.value = e.newState === 'open') && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
       ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => updateSettings({ auto: true }))}
       ${choices(this.#open.value).map(({ icon, label, behind, brain, model }) => option(icon, label, behind, manual(brain, model), () => pick(brain, model)))}
       <hr>
-      ${[active, ...brains].some((brain) => brain && !isLocal(brain)) ? html`<button type="button" role="switch" aria-checked=${settings.cloud ? 'false' : 'true'}
-        @click=${() => updateSettings({ cloud: !settings.cloud })}>${icons.shield}<span>${t('picker.neverCloud')}</span></button>` : nothing}
+      ${[active, ...brains].some((brain) => brain && !isLocal(brain)) ? html`<button type="button" role="switch" aria-checked=${kept || !settings.cloud ? 'true' : 'false'}
+        ?disabled=${kept} title=${kept ? t('picker.projectKept') : nothing} @click=${() => keepOnDevice(settings.cloud)}>${icons.shield}<span>${t('picker.keepOnDevice')}</span></button>` : nothing}
       <button type="button" popovertarget="brain-menu" popovertargetaction="hide" @click=${() => openSettings('brains')}>${icons.gear}<span>${t('picker.all')}</span></button>
     </div>`
   }

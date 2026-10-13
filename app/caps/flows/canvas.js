@@ -17,7 +17,7 @@ import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { toolLabel, brainName } from '../../ui/chat.js'
 import { foldTurns } from '../../core/events.js'
-import { t, useStrings, relativeTime } from '../../core/i18n.js'
+import { t, useStrings, relativeTime, locale } from '../../core/i18n.js'
 import { COLUMN, LINE, kindOf, inputsOf, order } from './run.js'
 import { graphOf, lastRun, told, flowNamed } from './graph.js'
 import { flows, open, shown, editing, close, show, saveFlow, deleteFlow, newFlow, runNow, schedule, usable, skills, files } from './flows.js'
@@ -62,6 +62,21 @@ const related = computed(() => {
   const named = all.flatMap((call) => (call.name === 'save_flow' ? [call.rawInput?.name] : call.name === 'run_flow' ? [call.rawInput?.flow] : []))
   return flows.value.filter((one) => named.some((which) => flowNamed([one], which)))
 })
+/** The skills the task on screen read, by the names its calls gave them, in the room and language they are shown in. */
+const skillsRead = computed(() => {
+  const names = told(foldTurns(app.current.value?.records ?? []), app.live.value?.turn ?? null).all.flatMap((call) => (call.name === 'skill' ? [skillName(call)] : []))
+  return [locale.value, app.project.value.id, ...new Set(names)].join('\n')
+})
+/** How each of them is named in the user's list, in their language (D222), read while the pane shows the task. */
+const skillTitles = signal(/** @type {Map<string, string>} */ (new Map()))
+effect(() => {
+  if (!open.value || shown.value !== 'task') return
+  const [lang, , ...names] = skillsRead.value.split('\n')
+  if (names.length) void Promise.all([skills(), import('../skills/directory.js')]).then(([list, { shownIn }]) => {
+    skillTitles.value = new Map(list.filter((skill) => names.includes(skill.name)).map((skill) => [skill.name, shownIn(skill, lang).title]))
+  }).catch((error) => console.warn('Flows', error))
+})
+
 /** What the pane shows: one of those flows, or the task (null); and the flow of flow mode. */
 const paneFlow = computed(() => (shown.value === 'task' ? null : related.value.find((one) => one.id === shown.value) ?? null))
 const mainFlow = computed(() => flows.value.find((one) => one.id === editing.value) ?? null)
@@ -294,6 +309,18 @@ function nameOf(node) {
   return node.name
 }
 
+/** The skill a call read, by the name the brain gave it, without a file beside its steps. @param {import('../../core/types.js').ToolCallInfo} call */
+function skillName(call) {
+  return String(call.rawInput?.name ?? '').split('/')[0]
+}
+
+/** Under a task's card that read a skill: the skill, as the user's list names it, or by its name until that is read. @param {Node} node */
+function skillOf(node) {
+  if (node.call?.name !== 'skill') return ''
+  const name = skillName(node.call)
+  return skillTitles.value.get(name) ?? name.replace(/-/g, ' ')
+}
+
 /** A button with a picture, its name said on hover and to screen readers. @param {string} text @param {unknown} icon @param {() => unknown} run */
 const iconButton = (text, icon, run) => html`<button class="icon-button" aria-label=${text} @click=${run}>${icon}</button>`
 
@@ -445,18 +472,20 @@ export class FlowMain extends Element {
 function card(node, one, state, byId) {
   const { x, y } = placeOf(node)
   const name = one ? node.name : nameOf(node)
+  const skill = one ? '' : skillOf(node)
+  const detail = skill || node.detail
   const said = state ? t(`flows.state.${state}`) : ''
   const kind = t(`flows.kind.${node.kind}`)
   const after = one ? inputsOf(one, node.id).map((id) => byId.get(id)?.name).filter(Boolean) : []
   return html`<div class="flow-step" data-id=${node.id} data-kind=${node.kind} data-state=${state ?? nothing} ?data-selected=${one && selected.value === node.id}
     ?data-moving=${drag.value?.id === node.id} .style=${`--x: ${x}px; --y: ${y}px`} tabindex="0" role="button"
-    aria-label=${[kind, name, said, after.length ? t('flows.takes', { names: after.join(', ') }) : ''].filter(Boolean).join(' · ')} aria-expanded=${one ? String(selected.value === node.id) : nothing}
+    aria-label=${[kind, name, skill, said, after.length ? t('flows.takes', { names: after.join(', ') }) : ''].filter(Boolean).join(' · ')} aria-expanded=${one ? String(selected.value === node.id) : nothing}
     @pointerdown=${one ? (/** @type {PointerEvent} */ event) => grab(event, one, node) : nothing}
     @click=${one ? nothing : () => reveal(node)}
     @keydown=${(/** @type {KeyboardEvent} */ event) => (one ? keys(event, one, node) : (event.key === 'Enter' || event.key === ' ') && (event.preventDefault(), reveal(node)))}>
     <span class="flow-kind">${KINDS[node.kind] ?? icons.bolt}<span>${kind}</span>${state ? html`<span class="flow-state" title=${said}>${MARKS[state] ?? nothing}</span>` : nothing}</span>
     <strong dir="auto">${name}</strong>
-    ${node.detail ? html`<small dir="auto">${node.detail}</small>` : nothing}
+    ${detail ? html`<small dir="auto">${detail}</small>` : nothing}
     ${one ? html`<span class="flow-port is-in" aria-hidden="true"></span>
       <span class="flow-port is-out" title=${t('flows.wire')} aria-hidden="true" @pointerdown=${(/** @type {PointerEvent} */ event) => draw(event, one, node)}></span>` : nothing}
   </div>`
