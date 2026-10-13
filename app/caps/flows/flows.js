@@ -244,9 +244,11 @@ export const here = () => (app.current.peek()?.records.length ? show('task') : e
 // A message sent, or a task opened, leaves flow mode: the conversation takes the main area.
 effect(() => { if (app.current.value?.records.length) editing.value = null })
 // In the address (D220), as it shows: on a new task, flow mode's flow; beside a task, the task or a flow of it.
+// Shown once its pane is in the dock, so that it opens while the keys are kept where they were.
 keep('flow', {
   get: () => editing.value ?? (open.value && app.current.value?.records.length ? shown.value : null),
-  set: (state) => {
+  set: async (state) => {
+    await drawn
     if (state === null) {
       editing.value = null
       close()
@@ -292,7 +294,7 @@ export async function schedule(flow) {
 }
 
 // The canvas imports this module, so it comes once this one has run: awaited here, each would wait for the other.
-import('./canvas.js').then(({ Flows, FlowMain }) => {
+const drawn = import('./canvas.js').then(({ Flows, FlowMain }) => {
   define('app-flows', Flows)
   define('app-flow-main', FlowMain)
   dock.join(document.createElement('app-flows'))

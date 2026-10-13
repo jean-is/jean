@@ -13,8 +13,8 @@ import { beside } from './router.js'
 
 /**
  * A window, as the address keeps it: what it shows, null while it is closed ('' when it is open on
- * nothing in particular), and how to show that again (null closes it). Each window writes its own
- * state, and checks one it is given.
+ * nothing in particular), and how to show that again (null closes it), done once it shows. Each
+ * window writes its own state, and checks one it is given.
  * @typedef {{ get: () => string | null, set: (state: string | null) => unknown }} Kept
  */
 
