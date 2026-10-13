@@ -143,6 +143,39 @@ test('a capability that arrives mid-conversation is deferred, then declared by f
   assert.deepEqual(declared?.state.tools, ['find_tools', 'read', 'run'])
 })
 
+test('a tool the user turns off is told once to a conversation that knows it, and told again once it is on (D304)', () => {
+  const start = { language: 'English', date: '2026-10-13', tools: ['find_tools', 'web_search'] }
+  const records = [promptRecord('dev', 'sys', start)]
+  const off = changeNotes(start, { ...start, tools: ['find_tools'] }, {}, ['web_search'])
+  assert.deepEqual(off.map((note) => note.update), [{ sessionUpdate: '_system_note', text: 'Turned off by the user, not to be called until it is on again: web_search.', data: { kind: 'switch', off: ['web_search'] } }])
+  const known = /** @type {any} */ (frozenPrompt([...records, ...off])).state
+  assert.deepEqual(known, { ...start, off: ['web_search'] }, 'still declared, so the request stays the same')
+  assert.deepEqual(changeNotes(known, { ...start, tools: ['find_tools'] }, {}, ['web_search']), [], 'told once')
+  const on = changeNotes(known, start)
+  assert.deepEqual(on.map((note) => note.update), [{ sessionUpdate: '_system_note', text: 'Turned on again by the user: web_search.', data: { kind: 'switch', on: ['web_search'] } }])
+  assert.deepEqual(frozenPrompt([...records, ...off, ...on])?.state, start)
+  // A conversation that never knew it hears nothing of it off, and finds it once it is on.
+  const without = { ...start, tools: ['find_tools'] }
+  assert.deepEqual(changeNotes(without, without, {}, ['web_search']), [])
+  assert.deepEqual(changeNotes(without, start).map((note) => note.update.data), [{ kind: 'tools', added: ['web_search'] }])
+})
+
+test('a tool the user turned off stays in the requests that declared it, and is refused; find_tools never offers it (D304)', async () => {
+  const call = { id: 'a', name: 'web_search', args: { x: 1 } }
+  const { stream, requests } = fakeStream([
+    [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })],
+    [done('end', { role: 'assistant', content: 'done' })],
+  ])
+  /** @type {any[]} */
+  const persisted = []
+  const search = tool('web_search', { off: true })
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'q' }], stream, tools: [tool('find_tools'), search], declared: ['find_tools', 'web_search'],
+    rule: () => 'allow', persist: async (records) => { persisted.push(...records) } })
+  assert.equal(persisted.findLast((record) => record.update?.toolCallId === 'a').update.rawOutput, 'The user turned web_search off.')
+  assert.ok(requests.every((request) => request.tools.length === 2), 'the cache holds')
+  assert.equal(await findTools({ tools: () => [search] }).run({ query: 'search' }, /** @type {any} */ ({ declared: [] })), 'There are no other tools.')
+})
+
 test('Kev: one branch per question, end positions, answers in the Decisions API shape', () => {
   const encode = (/** @type {string} */ text) => [...text].map((char) => char.charCodeAt(0))
   const questions = { urgent: { type: /** @type {const} */ ('noul'), instructions: 'U?' }, team: { type: /** @type {const} */ ('choice'), instructions: 'T?', criteria: { a: 'billing', b: null } } }

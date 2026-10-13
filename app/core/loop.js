@@ -22,6 +22,7 @@ const LONGEST_WAIT = 30_000
  * @property {boolean} [reserved]   passwords, payments: never done by Jean
  * @property {boolean} [hidden]     never declared to the brain; scripts can call it (codemode, D48)
  * @property {boolean} [deferred]   not declared when a conversation starts: found with find_tools (connections, D47)
+ * @property {boolean} [off]        turned off by the user: declared only where it was, and refused (D304)
  * @property {boolean} [asks]       waits for the user's answer when it runs (ask_user), so it is kept as pending meanwhile (D212)
  * @property {string} [service]      whose it is: a connection's id, for the rules about it (D295)
  * @property {(args: any) => string} title
@@ -252,6 +253,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     }),
   }
   if (!tool) output = `There is no tool named "${call.name}".${ctx.declared.has('find_tools') ? ' Use find_tools to look for one.' : ''}`
+  else if (tool.off) output = `The user turned ${call.name} off.`
   else if (call.args && typeof call.args === 'object' && '__invalidJSON' in call.args) output = 'The arguments were not valid JSON. Try again.'
   // The brain hasn't seen a deferred tool's schema: without what it requires, it learns how to call it.
   else if (!parent && !ctx.declared.has(call.name) && lacking(tool, call.args).length) output = `It needs ${lacking(tool, call.args).join(', ')}. Call it like this:\n${signature(tool)}`

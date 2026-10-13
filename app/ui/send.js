@@ -177,13 +177,13 @@ async function prepare(text, brain, records, notes = [], items = app.attachments
   // pages, for their rule (D289); each comes back at the next visit, so pages already written show again.
   await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('receipt'), unlock('interactive')])
   const { tools, lines, rules } = contributions()
-  // Connections' tools are deferred: found with find_tools, never declared upfront (D47).
-  const names = tools.filter((tool) => !tool.hidden && !tool.deferred).map((tool) => tool.spec.name)
+  // Connections' tools are deferred: found with find_tools, never declared upfront (D47); one the user turned off isn't either (D304).
+  const names = tools.filter((tool) => !tool.hidden && !tool.deferred && !tool.off).map((tool) => tool.spec.name)
   const sections = await context()
   const now = promptState({ language: languageName(locale.value, 'en'), tools: names, sections })
   const frozen = frozenPrompt(records)
   const head = frozen
-    ? changeNotes(frozen.state, now, sections)
+    ? changeNotes(frozen.state, now, sections, tools.filter((tool) => tool.off).map((tool) => tool.spec.name))
     : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
   return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records, items), app.deviceId)]
 }

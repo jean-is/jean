@@ -38,6 +38,7 @@ import { ulid } from './ulid.js'
  * @property {string} [pictures]               which makes pictures on this device (D263)
  * @property {{ date?: boolean, log?: boolean }} [certificates]  certificates dated by witnesses, recorded in a public log, as the user chose (D276)
  * @property {string[]} [searches]              web search's sources on (D271)
+ * @property {boolean} [search]               false: web search is off, from + in the box (D304)
  */
 
 /**

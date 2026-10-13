@@ -1,6 +1,6 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
-// + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers) and dictation,
+// + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'

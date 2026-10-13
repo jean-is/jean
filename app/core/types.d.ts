@@ -154,6 +154,8 @@ export type SystemNoteData =
   | { kind: 'language', language: string }
   | { kind: 'date', date: string }
   | { kind: 'tools', added: string[] }
+  /** tools the user turned off, still declared, or on again (D304) */
+  | { kind: 'switch', off?: string[], on?: string[] }
   /** version: the section's fingerprint now, '' when it is empty */
   | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'folder' | 'page', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
@@ -176,9 +178,10 @@ export type SystemNoteData =
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.
  * tools: declared to the brain; deferred: known to exist, reached with find_tools (D47);
+ * off: declared or deferred, but turned off by the user since (D304);
  * sections: a fingerprint of each context section the brain has (project, instructions, memory, skills)
  */
-export type PromptState = { language: string, date: string, tools: string[], deferred?: string[], sections?: Record<string, string> }
+export type PromptState = { language: string, date: string, tools: string[], deferred?: string[], off?: string[], sections?: Record<string, string> }
 
 /** One JSONL line after the header. Exactly one of update/meta is present. */
 export interface Envelope {
