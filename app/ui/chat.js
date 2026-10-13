@@ -32,6 +32,9 @@ try {
 const now = signal(Date.now())
 setInterval(() => { now.value = Date.now() }, 60_000)
 
+/** The request in a box, by its time (D312): ui/edit.js. */
+export const editing = signal('')
+
 class Conversation extends Element {
   #follow = true
   /** @type {string | undefined} */
@@ -168,7 +171,8 @@ function turnView(turn, live, files, upTo, last, sources) {
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
       ${isPicture(link) ? shared(link) : html`<button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>`}
     </li>`)}</ul>` : nothing}
-    ${turn.user?.text ? html`<p class="msg msg-user" dir="auto">${withFormulas(turn.user.text)}</p>` : nothing}
+    ${turn.user?.text ? editing.value === turn.at ? html`<app-edit class="msg-user" .request=${turn.user}></app-edit>`
+      : html`<p class="msg msg-user" dir="auto" @dblclick=${() => !(last && app.busy.value) && import('./edit.js').then(() => { editing.value = turn.at })}>${withFormulas(turn.user.text)}</p>` : nothing}
     ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>

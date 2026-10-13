@@ -1,7 +1,7 @@
 // Sending a message and answering it: the prompt and the notes since (D46), what the brain reads of
 // the files shared, Auto's choice of a brain, the run with its approvals, and the provider's cache
 // kept warm (D49). Loaded when the user starts typing or sends, not with the first screen (D148):
-// state.js's send, retry, rewind, fork and warm load it.
+// state.js's send, retry, rewind, fork and warm load it, and so does editing a request (ui/edit.js, D312).
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
 import { createConversation, rewriteRecords } from '../core/conversations.js'
@@ -296,31 +296,42 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   await runAgent(next, brain, meta, call)
 }
 
-/** Run the agent on the current conversation, up to its last user message. */
-export async function retry() {
+/** Run the agent on the current conversation, up to its last user message. @param {string} [text] its words, for Auto */
+export async function retry(text = '') {
   const current = app.current.value
   if (!current || app.busy.value) return
-  const picked = await pickBrain('', current.records)
+  const picked = await pickBrain(text, current.records)
   if (picked) await runAgent(current, picked.brain, picked.meta)
 }
 
 /**
  * Goes back to a request: what came after it is gone from the conversation, but its title and pin, and the
- * request is answered again (D188). @param {number} upTo how many records lead up to its end
+ * request is answered again (D188); edited, it is asked now in its new words (D312).
+ * @param {number} upTo how many records lead up to its end @param {string} [text] its new words
  */
-export async function rewind(upTo) {
+export async function rewind(upTo, text) {
   // An answer being written to a later request stops, and ends, before anything is left out.
   const path = app.current.value?.path
   stop()
   await new Promise((resolve) => { const done = effect(() => { if (!app.running.value.includes(path ?? '')) queueMicrotask(() => resolve(done())) }) })
   const current = app.current.value
   if (!current || current.path !== path || app.busy.value) return
-  const records = [...current.records.slice(0, upTo), ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
+  // Edited, its words go too, and so does its note of what / and @ named (D199), unless the new words name all it did.
+  const from = text === undefined ? upTo : current.records.slice(0, upTo).findLastIndex((record) => record.update?.sessionUpdate !== 'user_message_chunk') + 1
+  const start = current.records.slice(0, from).findLastIndex((record) => record.update && record.update.sessionUpdate !== '_system_note') + 1
+  const told = current.records.slice(start, from).find(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'mentions')
+  const words = /** @type {string[]} */ (/** @type {any} */ (told?.update)?.data.words ?? [])
+  const kept = text === undefined || !told || (await import('./mentions.js')).holds(text, words).length === words.length
+  const records = [...current.records.slice(0, from).filter((record) => kept || record !== told),
+    ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
   await rewriteRecords(app.fs, current.path, records)
   // Whoever follows the records hears once what was left out (D299), as keepRecords() tells what is kept: nothing waits on it.
-  fire(contributions().hooks, 'record', { task: current.path, type: 'removed', records: current.records.slice(upTo).filter((record) => !records.includes(record)) }, () => {})
-  app.current.value = { ...current, records }
-  await retry()
+  fire(contributions().hooks, 'record', { task: current.path, type: 'removed', records: current.records.filter((record) => !records.includes(record)) }, () => {})
+  const named = text && /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text, kept ? words : [])) : []
+  const added = text === undefined ? [] : [...named, ...userRecords(text, linkedFiles(current.records.slice(from, upTo)), app.deviceId)]
+  await keepRecords(current.path, added)
+  app.current.value = { ...current, records: [...records, ...added] }
+  await retry(text)
 }
 
 /**

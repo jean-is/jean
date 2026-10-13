@@ -316,9 +316,9 @@ function point(word, what) {
  * What a message names with / and @, as the note the brain reads just before it (D199): the
  * room's skills, connections and what Jean can do, by name, picked or typed; and the paths and
  * tasks picked after an @. Nothing when it names nothing. What was picked is forgotten.
- * @param {string} text @returns {Promise<Envelope[]>}
+ * @param {string} text @param {string[]} [told] words a note already says, before an edited request (D312) @returns {Promise<Envelope[]>}
  */
-export async function pointed(text) {
+export async function pointed(text, told = []) {
   /** @type {Map<string, () => Promise<{ means: string, body?: string }>>} */
   const meanings = new Map()
   if (loaded.value.has('skills')) {
@@ -340,7 +340,7 @@ export async function pointed(text) {
   }
   picked.clear()
   const lower = text.toLowerCase()
-  const found = holds(text, [...meanings.keys()]).sort((a, b) => lower.indexOf(a.toLowerCase()) - lower.indexOf(b.toLowerCase()))
+  const found = holds(text, [...meanings.keys()]).filter((word) => !told.includes(word)).sort((a, b) => lower.indexOf(a.toLowerCase()) - lower.indexOf(b.toLowerCase()))
   if (!found.length) return []
   const named = await Promise.all(found.map(async (word) => ({ word, ...await /** @type {() => Promise<{ means: string, body?: string }>} */ (meanings.get(word))() })))
   return [noteRecord(pointing(named), { kind: 'mentions', words: found })]
