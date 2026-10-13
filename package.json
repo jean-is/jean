@@ -42,7 +42,7 @@
     "node": ">=22"
   },
   "optionalDependencies": {
-    "@huggingface/transformers": "4.3.0",
+    "@huggingface/transformers": "4.3.1",
     "@jitl/quickjs-wasmfile-release-sync": "0.32.0",
     "@silurus/ooxml": "0.88.0",
     "abcjs": "6.7.1",
