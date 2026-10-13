@@ -7,12 +7,13 @@
 // With --budgets (npm run dev, dev:gateway and start), it checks the budgets as it starts and after
 // each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244).
 // It serves examples/ too, at /examples/, to any page, so that Settings › Plugins reads the example
-// plugins at http://127.0.0.1:<port>/examples/plugins/<name>/; a deploy never has them.
+// plugins at http://127.0.0.1:<port>/examples/plugins/<name>/, and a folder there opened in a browser
+// lists its files; a deploy never has them.
 import { execFile } from 'node:child_process'
 import { createReadStream, watch } from 'node:fs'
-import { readFile, stat } from 'node:fs/promises'
+import { readdir, readFile, stat } from 'node:fs/promises'
 import { createServer } from 'node:http'
-import { extname, join, normalize, resolve, sep } from 'node:path'
+import { dirname, extname, join, normalize, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { gateway } from '../gateway/gateway.js'
 import { listener } from '../gateway/serve.js'
@@ -89,6 +90,11 @@ export async function handle (req, res) {
   const file = example ? resolveRequest(pathname.slice('/examples'.length), EXAMPLES) : resolveRequest(req.url ?? '/')
   if (!file) return fail(res, 404, 'Not found')
   const info = await stat(file).catch(() => null)
+  if (example && !info && pathname.endsWith('/')) {
+    const names = await readdir(dirname(file)).catch(() => null)
+    const links = names?.filter((name) => !name.startsWith('.')).map((name) => `<li><a href="${encodeURIComponent(name)}">${name}</a></li>`).join('')
+    if (names) return send(res, req, '.html', Buffer.from(`<!doctype html><meta charset="utf-8"><title>${pathname}</title><h1>${pathname}</h1><ul>${links}</ul>`))
+  }
   if (!info?.isFile()) return fail(res, 404, 'Not found')
   if (GATEWAY && file === join(APP, 'index.html')) {
     return send(res, req, '.html', Buffer.from((await readFile(file, 'utf8')).replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')))
