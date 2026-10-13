@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { KEEP, parseTarget, releaseName, remote } from '../scripts/deploy.js'
+import { KEEP, parseTarget, releaseName, remote, unpublished } from '../scripts/deploy.js'
 
 describe('deploy', () => {
   it('reads the server and its folder from DEPLOY_TO, as rsync writes them', () => {
@@ -27,5 +27,13 @@ describe('deploy', () => {
     assert.match(publish, /ln -sfn 'releases\/20261013-203143-88a08e7' current\.new; mv -T current\.new current/)
     assert.match(publish, new RegExp(`head -n -${KEEP} \\| xargs -r rm -rf`))
     for (const command of [prepare, publish]) assert.match(command, /^set -e; /)
+  })
+
+  it('publishes the render package only when npm lacks the version the build names (D321)', () => {
+    const listing = { render: { version: '0.8.0-r9e695e594201' } }
+    assert.equal(unpublished(listing, ['0.0.0-stage', '0.8.0-re4c5b5a2bb10']), '0.8.0-r9e695e594201')
+    assert.equal(unpublished(listing, []), '0.8.0-r9e695e594201', 'before its first version')
+    assert.equal(unpublished(listing, ['0.8.0-re4c5b5a2bb10', '0.8.0-r9e695e594201']), null)
+    assert.equal(unpublished({}, []), null, 'a build without a reader has no package')
   })
 })

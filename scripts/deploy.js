@@ -1,14 +1,17 @@
 // Puts a commit of Jean on a server reached over SSH (D320): builds it from git, never from the working
 // tree, with `npm run build:web`, uploads dist/web/ as a new release beside the earlier ones, then
-// points `current` at it in one step, keeping the last five. DEPLOY_TO names the server and its
-// folder, as rsync writes them, so no address is written here; the server serves <folder>/current.
-// It needs ssh and rsync here, and rsync with GNU cp and mv (Linux) there.
+// points `current` at it in one step, keeping the last five. Before the server, it publishes the render
+// package from the same build when npm doesn't have the version that build names (D321), under the
+// npm login here, which may ask for its one-time code; if that fails, the server is left as it was.
+// DEPLOY_TO names the server and its folder, as rsync writes them, so no address is written here; the
+// server serves <folder>/current. It needs ssh and rsync here, and rsync with GNU cp and mv (Linux) there.
 // Usage: DEPLOY_TO=host:/path npm run deploy [-- <commit>]     (HEAD by default)
 import { execFileSync } from 'node:child_process'
-import { mkdir, mkdtemp, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { NAME } from './render.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
@@ -47,6 +50,25 @@ export function remote (folder, release) {
   }
 }
 
+/**
+ * The render package's version that npm lacks, which a deploy publishes before the site names it: a page
+ * saved from the site draws itself with the version it names, from npm (D305). Null when npm has it,
+ * or when the build lists no render package.
+ * @param {{ render?: { version: string } }} listing  capabilities.json
+ * @param {string[]} published  the versions npm has
+ */
+export const unpublished = (listing, published) => (listing.render && !published.includes(listing.render.version) ? listing.render.version : null)
+
+/** The render package's versions on npm, none before its first. @param {string} cwd @returns {string[]} */
+function publishedVersions (cwd) {
+  try {
+    return [JSON.parse(execFileSync('npm', ['view', NAME, 'versions', '--json'], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }))].flat()
+  } catch (error) {
+    if (/\bE404\b/.test(String(/** @type {{ stdout?: unknown }} */ (error).stdout))) return []
+    throw error
+  }
+}
+
 /** @param {string} command @param {string[]} args @param {string} [cwd] */
 const run = (command, args, cwd) => execFileSync(command, args, { cwd, stdio: 'inherit' })
 
@@ -63,6 +85,12 @@ async function main () {
     run('tar', ['-xf', join(work, 'jean.tar'), '-C', source])
     run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], source)
     run('npm', ['run', 'build:web'], source)
+    const version = unpublished(JSON.parse(await readFile(join(source, 'app', 'capabilities.json'), 'utf8')), publishedVersions(source))
+    if (version) {
+      console.log(`deploy: publishing ${NAME}@${version}, which pages saved from this release draw themselves with`)
+      run(process.execPath, [join('scripts', 'render.js')], source)
+      run('npm', ['publish', './dist/render'], source)
+    }
     const { prepare, publish } = remote(folder, release)
     run('ssh', [host, prepare])
     run('rsync', ['-rlp', '--checksum', '--delete', `${join(source, 'dist', 'web')}/`, `${host}:${folder}/releases/${release}/`])
