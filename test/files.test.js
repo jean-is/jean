@@ -320,8 +320,11 @@ test('documentPart shows the recorded pages and says how to read the rest', () =
   /** @type {import('../app/core/types.js').ResourceLink} */
   const link = { type: 'resource_link', uri: 'files/x.pdf', name: 'x.pdf' }
   assert.equal(documentPart(link, text).text, text)
-  const part = documentPart({ ...link, _meta: { pages: [1, 2], of: 3 } }, text)
+  const part = documentPart({ ...link, _meta: { pages: [[1, 2]], of: 3 } }, text)
   assert.equal(part.text, '[[page 1]]\np1\n\n[[page 2]]\np2\n\n(Pages 1–2 of 3. Use read for the others.)')
+  // The pages that match a message, for a small brain: several ranges, each page with its number.
+  const five = joinPages(['p1', 'p2', 'p3', 'p4', 'p5'])
+  assert.equal(documentPart({ ...link, _meta: { pages: [[1, 1], [3, 4]], of: 5 } }, five).text, '[[page 1]]\np1\n\n[[page 3]]\np3\n\n[[page 4]]\np4\n\n(Pages 1, 3–4 of 5. Use read for the others.)')
   assert.equal(documentPart({ ...link, uri: 'files/y.txt' }, joinPages(['only'])).text, 'only')
   assert.match(documentPart(link, null).text, /no longer available/)
 })

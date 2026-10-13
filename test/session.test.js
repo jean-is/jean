@@ -7,7 +7,7 @@ import { runTurn } from '../app/core/loop.js'
 import { documentPart, joinPages } from '../app/core/files.js'
 
 /** @type {import('../app/core/types.js').ResourceLink} */
-const link = { type: 'resource_link', uri: 'files/sha256-ab.pdf', name: 'report.pdf', mimeType: 'application/pdf', size: 10, _meta: { pages: [1, 1], of: 2 } }
+const link = { type: 'resource_link', uri: 'files/sha256-ab.pdf', name: 'report.pdf', mimeType: 'application/pdf', size: 10, _meta: { pages: [[1, 1]], of: 2 } }
 
 test('a user message with files folds into one turn, and notes attach to the next turn', () => {
   const records = [
@@ -31,7 +31,7 @@ test('toChatMessages: notes where they fall, documents with their recorded pages
   const text = joinPages(['Page one.', 'Page two.'])
   const messages = toChatMessages(records, (l) => documentPart(l, text))
   assert.deepEqual(messages, [
-    { role: 'user', content: 'Summarise', documents: [{ name: 'report.pdf', text: '[[page 1]]\nPage one.\n\n(Pages 1–1 of 2. Use read for the others.)' }] },
+    { role: 'user', content: 'Summarise', documents: [{ name: 'report.pdf', text: '[[page 1]]\nPage one.\n\n(Page 1 of 2. Use read for the others.)' }] },
     { role: 'system', content: 'Today is 2026-10-03.' },
     { role: 'user', content: 'More' },
   ])

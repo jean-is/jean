@@ -106,11 +106,11 @@ export interface FS {
 
 /*
  * ACP content blocks (subset). A resource link points at a file in the project (uri relative
- * to the project folder); `_meta.pages` records which pages went into the brain's context,
+ * to the project folder); `_meta.pages` records which pages went into the brain's context, as ranges,
  * `_meta.source` the number the brain cites it by.
  */
 export type TextBlock = { type: 'text', text: string }
-export type ResourceLink = { type: 'resource_link', uri: string, name: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number], of?: number, source?: number } }
+export type ResourceLink = { type: 'resource_link', uri: string, name: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number][], of?: number, source?: number } }
 export type ContentBlock = TextBlock | ResourceLink
 export type ToolKind = 'read' | 'edit' | 'delete' | 'move' | 'search' | 'execute' | 'think' | 'fetch' | 'switch_mode' | 'other'
 export type ToolStatus = 'pending' | 'in_progress' | 'completed' | 'failed'

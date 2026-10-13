@@ -11,7 +11,7 @@ import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
 import { yes } from './yes.js'
 import { fire } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
-import { fileText, documentPart, pagesThatFit, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
+import { fileText, documentPart, pagesThatFit, preselect, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { unlock, contributions, slots } from './caps.js'
 import {
@@ -84,20 +84,24 @@ function contextTokens(brain) {
 
 /**
  * Links for the files about to be sent. Each records which pages go into the context,
- * decided now against the brain's budget and then frozen (files.js).
- * @param {BrainConfig} brain @param {Envelope[]} records @param {import('./state.js').Attachment[]} items
+ * decided now against the brain's budget and then frozen (files.js): the first ones, or for a
+ * brain of 32k or less, such as the device's, those that match the message (D55).
+ * @param {BrainConfig} brain @param {Envelope[]} records @param {import('./state.js').Attachment[]} items @param {string} text
  */
-function attachedLinks(brain, records, items) {
+function attachedLinks(brain, records, items, text) {
+  const small = contextTokens(brain) <= DEVICE_CONTEXT
   let budget = contextTokens(brain) * DOCUMENT_SHARE
   /** @type {ResourceLink[]} */
   const links = []
   for (const item of items) {
     if (item.status !== 'ready' || !item.link || !item.pages) continue
-    const [first, last] = pagesThatFit(item.pages, Math.max(budget, 1))
-    budget -= item.pages.slice(0, last).reduce((sum, page) => sum + estimateTokens(page), 0)
+    const pages = item.pages
+    const chosen = small ? preselect(pages, text, Math.max(budget, 1)) : [pagesThatFit(pages, Math.max(budget, 1))]
+    budget -= chosen.reduce((sum, [first, last]) => sum + pages.slice(first - 1, last).reduce((n, page) => n + estimateTokens(page), 0), 0)
+    const whole = chosen.length === 1 && chosen[0][1] >= pages.length
     // The number the brain cites it by, kept if the same file was shared before.
     const source = sourceNumber([...linkedFiles(records), ...links], item.link)
-    links.push({ ...item.link, _meta: { ...(last < item.pages.length && { pages: [first, last], of: item.pages.length }), source } })
+    links.push({ ...item.link, _meta: { ...(!whole && { pages: chosen, of: pages.length }), source } })
   }
   return links
 }
@@ -185,7 +189,7 @@ async function prepare(text, brain, records, notes = [], items = app.attachments
   const head = frozen
     ? changeNotes(frozen.state, now, sections)
     : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
-  return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records, items), app.deviceId)]
+  return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records, items, text), app.deviceId)]
 }
 
 // ─── Auto ────────────────────────────────────────────────────────────────────

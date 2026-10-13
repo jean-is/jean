@@ -39,6 +39,7 @@
 // /images/generations answers, streamed when asked, a glimpse a second twice, then the picture (D265);
 // asked for a film, it makes one of 4 seconds, which /videos makes at once (D251). Asked whether a
 // certificate is genuine, it checks the files shared with check_certificate and says what it found (D274).
+// Asked what the files say about something, it searches the project's files and quotes what it found (D24).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -504,6 +505,8 @@ createServer(async (req, res) => {
   const mentions = /\bmention(?:s)?\s+(?:the\s+)?["“]?(.+?)["”]?(?:\s+clause)?\?*$/i.exec(question.trim())?.[1]
   const edit = /\bin\s+(\S+),\s*change\s+["“](.+?)["”]\s+to\s+["“](.+?)["”]/i.exec(question)
   const make = /\bmake\s+(\S+\.html?)\s+saying\s+["“](.+?)["”]/i.exec(question)
+  // The project's files, searched from any of its tasks (D24).
+  const about = /\bwhat do (?:the|my|our) files say about (.+?)\?*$/i.exec(question.trim())?.[1]
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
@@ -524,6 +527,8 @@ createServer(async (req, res) => {
   } else if (toolName === 'save_flow') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : 'The flow is beside the conversation: run it whenever you like.'
   else if (/\brun\b.*\bflow\b/i.test(question) && last.role === 'user' && declared.has('run_flow')) call = { name: 'run_flow', args: { flow: 'Weekly invoices' } }
   else if (toolName === 'run_flow') answer = `The flow gave:\n\n${last.content}`
+  else if (about && last.role === 'user' && declared.has('search_files')) call = { name: 'search_files', args: { query: about } }
+  else if (toolName === 'search_files') answer = /^Nothing in/.test(last.content) ? 'The files say nothing about it.' : `The files say: ${last.content.split('\n').find((line) => line.toLowerCase().includes(String(about).toLowerCase()))?.trim()} [${/Source \[(\d+)\]/.exec(last.content)?.[1]}]`
   else if (folder && mentions && last.role === 'user') call = { name: 'find_in_files', args: { text: mentions } }
   else if (toolName === 'find_in_files') answer = /^Not found/.test(last.content) ? 'No file there mentions it.' : `These files mention it:\n\n${[...new Set([...last.content.matchAll(/^(.+?):(\d+): /gm)].map((m) => m[1]))].map((path) => `- **${path}**`).join('\n')}`
   else if (folder && /what is in the folder/i.test(question) && last.role === 'user') call = { name: 'list', args: {} }

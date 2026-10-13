@@ -259,10 +259,11 @@ async function folder(show) {
 /** A file's metadata, by its path: files are named by their content, so it never changes. @type {Map<string, Promise<import('../core/files.js').FileMeta | null>>} */
 const metas = new Map()
 
-/** Files shared or made in the room's project, the newest of each name first; picked, one is attached. @type {Maker} */
-async function files(show) {
-  if (isDenied('files')) return
-  const dir = app.projectDir
+/**
+ * The files shared or made in a project, the newest of each name first, with their metadata: what @ offers,
+ * and what read and search_files reach (D24). @param {string} dir the project's
+ */
+export async function library(dir) {
   const names = (await app.fs.list(join(dir, 'files'))).map((entry) => entry.name)
   const found = await Promise.all(names.filter((name) => name.endsWith('.meta.json')).map(async (name) => {
     const path = join(dir, 'files', name)
@@ -273,7 +274,13 @@ async function files(show) {
     return meta?.name && original ? [{ meta, link: /** @type {ResourceLink} */ ({ type: 'resource_link', uri: `files/${original}`, name: meta.name, ...(meta.mimeType && { mimeType: meta.mimeType }), size: meta.size }) }] : []
   }))
   const seen = new Set()
-  const newest = found.flat().sort((a, b) => (a.meta.createdAt < b.meta.createdAt ? 1 : -1)).filter(({ link }) => !seen.has(link.name) && seen.add(link.name))
+  return found.flat().sort((a, b) => (a.meta.createdAt < b.meta.createdAt ? 1 : -1)).filter(({ link }) => !seen.has(link.name) && seen.add(link.name))
+}
+
+/** Files shared or made in the room's project, the newest of each name first; picked, one is attached. @type {Maker} */
+async function files(show) {
+  if (isDenied('files')) return
+  const newest = await library(app.projectDir)
   show({ heading: t('cap.files.name'), options: newest.map(({ meta, link }) => ({
     icon: isPicture(link) ? icons.image : icons.file, label: link.name, aside: relativeTime(meta.createdAt), words: searchable(link.name), pick: () => attach(link),
   })) })

@@ -171,10 +171,10 @@ export function documentPart(link, text, picture) {
   if (isPicture(link) && picture) return { ...part, text: '(The picture follows.)', image: { mimeType: String(link.mimeType), data: picture } }
   if (isPicture(link)) return { ...part, text: '(A picture. You cannot see pictures: say so if the user asks about it.)' }
   const pages = splitPages(text)
-  const [first, last] = link._meta?.pages ?? [1, pages.length]
-  if (first === 1 && last >= pages.length) return { ...part, text: pages.length > 1 ? joinPages(pages) : pages[0] }
-  const shown = joinPages(pages.slice(first - 1, last), first)
-  return { ...part, text: `${shown}\n\n(Pages ${first}–${last} of ${pages.length}. Use read for the others.)` }
+  const chosen = link._meta?.pages ?? [[1, pages.length]]
+  if (chosen.length === 1 && chosen[0][0] === 1 && chosen[0][1] >= pages.length) return { ...part, text: pages.length > 1 ? joinPages(pages) : pages[0] }
+  const which = chosen.map(([a, b]) => (a === b ? a : `${a}–${b}`)).join(', ')
+  return { ...part, text: `${chosen.map(([a, b]) => joinPages(pages.slice(a - 1, b), a)).join('\n\n')}\n\n(${/[–,]/.test(which) ? 'Pages' : 'Page'} ${which} of ${pages.length}. Use read for the others.)` }
 }
 
 /**

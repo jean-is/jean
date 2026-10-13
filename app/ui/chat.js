@@ -221,7 +221,9 @@ function followUps(at, suggestions, brain) {
  * @returns {{ link: ResourceLink, range?: [number, number], of?: number }[]}
  */
 function whatJeanRead(upTo, entries, files) {
-  const items = upTo.flatMap((turn) => turn.user?.files ?? []).map((link) => ({ link, range: link._meta?.pages, of: link._meta?.of }))
+  // Each range of pages a file went in with, on a line of its own.
+  /** @type {{ link: ResourceLink, range?: [number, number], of?: number }[]} */
+  const items = upTo.flatMap((turn) => turn.user?.files ?? []).flatMap((link) => (link._meta?.pages ?? [undefined]).map((range) => ({ link, range, of: link._meta?.of })))
   for (const tool of entries) {
     if (tool.name !== 'read' || tool.status !== 'completed') continue
     const link = files.findLast((file) => file.uri === tool.locations?.[0]?.path)

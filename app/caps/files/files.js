@@ -1,11 +1,13 @@
 // Files: the user drops, pastes or picks files, or captures their screen; Jean extracts their
 // text, keeps the original in the project's library, and the next message links to them.
-// Pictures have no text: brains that can see are shown them. Adds the `read` tool for pages
-// that didn't fit in the message.
+// Pictures have no text: brains that can see are shown them. Adds `read`, for pages that didn't
+// fit in the message, and `search_files`; both reach every file of the project (D24).
 import { effect } from '@preact/signals-core'
 import { register, loaded, unlock } from '../../ui/caps.js'
 import { app, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
 import { rememberText } from '../../ui/send.js'
+import { library } from '../../ui/complete.js'
+import { searchTool } from './search.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
 import { isPicture, latestOf } from '../../core/events.js'
 import { extractPages } from './extract.js'
@@ -18,6 +20,17 @@ const MAX_BYTES = 100 * 1024 * 1024
 const filesNow = (signal) => {
   const records = conversationOf(signal)?.records ?? []
   return currentFiles(signal).map((link) => ({ ...link, uri: latestOf(records, link.uri) }))
+}
+
+/** The project's library, as @ lists it, kept up to date for read and search_files (D24). @type {import('../../core/types.js').ResourceLink[]} */
+let shelf = []
+const restock = () => library(app.projectDir).then((found) => { shelf = found.map(({ link }) => link) }).catch(() => {})
+effect(() => { if (app.project.value.dir) restock() })
+
+/** Every file the brain may read: the project's, then the conversation's, which win on a name. @param {AbortSignal} [signal] */
+const reachable = (signal) => {
+  const here = filesNow(signal)
+  return [...shelf.filter((link) => !here.some((other) => other.uri === link.uri || other.name === link.name)), ...here]
 }
 
 /** @param {any} args @param {AbortSignal} [signal] the run's, for its conversation's files */
@@ -49,9 +62,9 @@ const fileTool = {
 
 register({
   id: 'files',
-  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: filesNow }), fileTool],
-  lines: [{ name: 'read', line: 'read pages of a file the user shared' }],
-  rules: ['Shared files are in the message, sometimes only their first pages. Use read for the others.'],
+  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), fileTool],
+  lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }],
+  rules: ['Shared files are in the message, sometimes only some pages. Use read for the others, and search_files for any file of the project.'],
 })
 
 let persisted = false
@@ -70,6 +83,7 @@ export async function addFiles(list) {
     navigator.storage?.persist?.().catch(() => {})
   }
   await Promise.all(files.map(readOne))
+  restock()
   warm()
 }
 
