@@ -6,7 +6,8 @@
 // one free; the key comes from OPENROUTER_API_KEY.
 import { runTurn } from '../../app/core/loop.js'
 import { buildSystemPrompt } from '../../app/core/prompt.js'
-import { addFile, documentPart, estimateTokens, pagesThatFit, preselect, readTool, searchTool } from '../../app/core/files.js'
+import { addFile, documentPart, estimateTokens, pagesThatFit, preselect, readTool } from '../../app/core/files.js'
+import { searchTool } from '../../app/caps/files/search.js'
 import { memoryFS } from '../../app/core/fs.js'
 import { LLMError, PROVIDERS, streamChat } from '../../app/core/llm.js'
 import { lookup } from '../../app/core/search.js'
