@@ -276,6 +276,7 @@
   "cap.folders.yes": "Elegir una carpeta",
   "cap.skills.name": "Habilidades",
   "cap.skills.offer": "Es la tercera vez que pides algo así. ¿Guardarlo como habilidad, para que se haga siempre igual?",
+  "cap.skills.inAnswer": "¿Guardar como habilidad cómo quieres que se haga esto, para que se haga siempre igual? Puedes eliminarla cuando quieras.",
   "cap.skills.yes": "Guardarlo como habilidad",
   "cap.routines.name": "Rutinas",
   "cap.routines.offer": "Has pedido esto en tres días distintos. ¿Convertirlo en una rutina, que se haga sola según un horario?",

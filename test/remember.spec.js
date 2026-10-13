@@ -172,3 +172,33 @@ test('the third request of a kind becomes a skill', async ({ page }) => {
   expect(system).toContain('<skills>\n- weekly-sales-summary: When the user asks for a summary of the weekly sales by region.\n</skills>')
   await expect(page.locator('.follow-up', { hasText: 'Save this as a skill' })).toHaveCount(0)
 })
+
+test('asked for a skill, Jean asks what it needs, saves it, and its example tries it at once (D322)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Not found yet: the brain offers Skills, saying what they do rather than "the third time".
+  await ask(page, 'Make me a skill for my team update')
+  const card = page.locator('.msg-jean .approval')
+  await expect(card).toContainText('Keep how you want this done as a skill')
+  await card.getByRole('button', { name: 'Turn it on' }).click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('What will you give me')
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+
+  await ask(page, 'From my notes, in three short bullet points')
+  await expect(page.locator('.toast')).toContainText('Saved the skill “Team update”')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a skill now')
+  // Its steps as written, without the markup of a call its brain ended badly.
+  const saved = await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('skills/team-update/SKILL.md'))
+  expect(saved).toMatch(/2\. Write three short bullet points\.\n$/)
+  // The answer's first suggestion is the example, by the skill's name, as the result asked.
+  const example = page.locator('.follow-up').first()
+  await expect(example).toHaveText('/team-update Write my team update: we shipped the new menu and hired Sam.')
+
+  // Sent, it comes with the room's skills as they are now and the skill's steps.
+  await example.click()
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(3)
+  await expect(page.locator('.msg-user').last()).toContainText('Write my team update: we shipped the new menu and hired Sam.')
+  const notes = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.flatMap((record) => (record.update?.sessionUpdate === '_system_note' ? [record.update.text] : [])).join('\n'))
+  expect(notes).toContain('- team-update: When the user wants their weekly team update written from their notes.')
+  expect(notes).toContain('2. Write three short bullet points.')
+})

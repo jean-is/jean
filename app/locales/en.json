@@ -272,6 +272,7 @@
   "cap.folders.yes": "Choose a folder",
   "cap.skills.name": "Skills",
   "cap.skills.offer": "This is the third time you’ve asked for something like this. Save it as a skill, so it’s done the same way every time?",
+  "cap.skills.inAnswer": "Keep how you want this done as a skill, so it’s done the same way every time? You can delete it at any time.",
   "cap.skills.yes": "Save it as a skill",
   "cap.routines.name": "Routines",
   "cap.routines.offer": "You’ve asked for this on three different days. Make it a routine, done on its own on a schedule?",

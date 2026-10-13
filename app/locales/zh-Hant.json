@@ -268,6 +268,7 @@
   "cap.folders.yes": "選擇資料夾",
   "cap.skills.name": "技能",
   "cap.skills.offer": "這已經是你第三次提出類似的請求了。要儲存為技能，讓每次都按同樣方式完成嗎？",
+  "cap.skills.inAnswer": "要把你想要的做法儲存為技能，讓每次都按同樣方式完成嗎？隨時可以刪除。",
   "cap.skills.yes": "儲存為技能",
   "cap.routines.name": "例行任務",
   "cap.routines.offer": "你已經在三個不同的日子提出過這個請求。要把它設為按排程自動完成的例行任務嗎？",

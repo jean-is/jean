@@ -272,6 +272,7 @@
   "cap.folders.yes": "Ordner wählen",
   "cap.skills.name": "Fähigkeiten",
   "cap.skills.offer": "Das ist das dritte Mal, dass du so etwas fragst. Als Fähigkeit speichern, damit es jedes Mal gleich erledigt wird?",
+  "cap.skills.inAnswer": "Als Fähigkeit speichern, wie du das erledigt haben möchtest, damit es jedes Mal gleich gemacht wird? Du kannst sie jederzeit löschen.",
   "cap.skills.yes": "Als Fähigkeit speichern",
   "cap.routines.name": "Routinen",
   "cap.routines.offer": "Darum hast du an drei verschiedenen Tagen gebeten. Eine Routine daraus machen, die nach Zeitplan von selbst erledigt wird?",

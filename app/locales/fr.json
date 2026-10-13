@@ -276,6 +276,7 @@
   "cap.folders.yes": "Choisir un dossier",
   "cap.skills.name": "Compétences",
   "cap.skills.offer": "C’est la troisième fois que vous demandez quelque chose de ce genre. L’enregistrer comme compétence, pour que ce soit fait de la même façon à chaque fois ?",
+  "cap.skills.inAnswer": "Enregistrer comme compétence la façon dont vous voulez que ce soit fait, pour que ce soit fait de la même façon à chaque fois ? Vous pouvez la supprimer à tout moment.",
   "cap.skills.yes": "L’enregistrer comme compétence",
   "cap.routines.name": "Routines",
   "cap.routines.offer": "C’est le troisième jour où vous demandez cela. En faire une routine, faite toute seule selon un horaire ?",

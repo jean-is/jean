@@ -276,6 +276,7 @@
   "cap.folders.yes": "Escolher uma pasta",
   "cap.skills.name": "Competências",
   "cap.skills.offer": "É a terceira vez que pedes algo assim. Guardar isto como competência, para ser feito sempre da mesma maneira?",
+  "cap.skills.inAnswer": "Guardar como competência a forma como queres que isto seja feito, para ser feito sempre da mesma maneira? Podes eliminá-la quando quiseres.",
   "cap.skills.yes": "Guardar como competência",
   "cap.routines.name": "Rotinas",
   "cap.routines.offer": "Pediste isto em três dias diferentes. Torná-lo uma rotina, feita sozinha segundo um horário?",

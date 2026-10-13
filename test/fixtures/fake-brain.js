@@ -497,6 +497,15 @@ createServer(async (req, res) => {
   const sendTool = mailTool?.replace(/_search_emails$/, '_send_email')
   const searched = sourcesIn([...messages].reverse().find((m) => m.role === 'tool' && /^Source \[/m.test(m.content))?.content ?? '')
   const steps = '# Weekly sales summary\n\n1. Read the shared sales file.\n2. Total the sales by region.\n3. Answer with a short table.'
+  // No example: a skill is saved without one, which the answer gives (D322).
+  const weekly = { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps }
+  // A skill made with the user (D322): it offers Skills if they aren't on, asks what it needs, then saves it with
+  // an example, which the answer suggests first, as the result says; its steps end badly, as Haiku's did in Claude Code.
+  const asked = messages.filter((m) => m.role === 'user').map((m) => m.content)
+  const making = /make me a skill/i.test(asked.at(-1) ?? '')
+  const described = /make me a skill/i.test(asked.at(-2) ?? '') && last.role === 'user'
+  const team = { name: 'team-update', description: 'When the user wants their weekly team update written from their notes.', example: 'Write my team update: we shipped the new menu and hired Sam.', steps: '# Team update\n\n1. Read the notes.\n2. Write three short bullet points.</parameter>\n</invoke>\n' }
+  const tryIt = toolName === 'save_skill' ? /one click tries it: (.+)$/m.exec(last.content)?.[1] : undefined
   // 0.7: a routine, at the time asked, or at the time of the habit Jean noticed.
   const regularly = (/^every\b/i.test(question.trim()) || /\broutine\b/i.test(question)) && last.role === 'user'
   const habit = /Requests like this one were made on \w{3} \w{3} \d\d \d{4} (\d\d:\d\d)/.exec(serialized)?.[1]
@@ -645,9 +654,12 @@ createServer(async (req, res) => {
   else if (regularly && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'make a routine on a schedule' } }
   else if (toolName === 'find_tools' && /schedule\(/.test(last.content)) call = { name: 'schedule', args: routine }
   else if (toolName === 'schedule') answer = 'Done: it is a routine now.'
-  else if (skill && declared.has('save_skill')) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
+  else if (making && last.role === 'user' && !declared.has('save_skill') && declared.has('offer')) call = { name: 'offer', args: { capability: 'skills' } }
+  else if (making && (last.role === 'user' || (toolName === 'offer' && /It is on/.test(last.content)))) answer = 'Gladly. What will you give me, and what should come back?'
+  else if (described && declared.has('save_skill')) call = { name: 'save_skill', args: team }
+  else if (skill && declared.has('save_skill')) call = { name: 'save_skill', args: weekly }
   else if (skill && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'save a skill' } }
-  else if (toolName === 'find_tools' && /save_skill\(/.test(last.content)) call = { name: 'save_skill', args: { name: 'weekly-sales-summary', description: 'When the user asks for a summary of the weekly sales by region.', steps } }
+  else if (toolName === 'find_tools' && /save_skill\(/.test(last.content)) call = { name: 'save_skill', args: weekly }
   else if (toolName === 'save_skill') answer = 'Done: it is a skill now.'
   else if (table && /spreadsheet/i.test(question) && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: spreadsheetScript(table[2]) } }
   else if (table && last.role === 'user' && declared.has(script)) call = { name: script, args: { code: totalsScript(table[2]) } }
@@ -662,7 +674,7 @@ createServer(async (req, res) => {
     const doc = documents.at(-1)
     answer = `I read **${doc?.[2]}**${cite(doc)}. It starts with: “${doc?.[3].replace(/\[\[page \d+\]\]\n/g, '').slice(0, 120).trim()}”\n\nYou asked: *${question.slice(0, 80)}*`
   } else answer = REPLIES[lang](question.slice(0, 80))
-  if (answer) answer += `\n\n<suggestions>\n${(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang]).join('\n')}\n</suggestions>`
+  if (answer) answer += `\n\n<suggestions>\n${[...(tryIt ? [tryIt] : []), ...(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang])].slice(0, 3).join('\n')}\n</suggestions>`
 
   res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' })
   const send = (/** @type {object} */ delta, finish = null) =>

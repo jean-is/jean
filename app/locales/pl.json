@@ -280,6 +280,7 @@
   "cap.folders.yes": "Wybierz folder",
   "cap.skills.name": "Umiejętności",
   "cap.skills.offer": "To już trzeci raz, gdy prosisz o coś takiego. Zapisać to jako umiejętność, żeby za każdym razem było robione tak samo?",
+  "cap.skills.inAnswer": "Zapisać jako umiejętność sposób, w jaki chcesz to mieć zrobione, żeby za każdym razem było tak samo? Możesz ją usunąć w każdej chwili.",
   "cap.skills.yes": "Zapisz jako umiejętność",
   "cap.routines.name": "Rutyny",
   "cap.routines.offer": "Prosisz o to już trzeciego dnia. Zrobić z tego rutynę, wykonywaną samodzielnie według harmonogramu?",

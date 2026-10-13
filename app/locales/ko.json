@@ -268,6 +268,7 @@
   "cap.folders.yes": "폴더 선택",
   "cap.skills.name": "스킬",
   "cap.skills.offer": "이런 요청이 벌써 세 번째예요. 매번 같은 방식으로 하도록 스킬로 저장할까요?",
+  "cap.skills.inAnswer": "원하는 방식을 스킬로 저장해서 매번 같은 방식으로 하도록 할까요? 언제든 삭제할 수 있어요.",
   "cap.skills.yes": "스킬로 저장하기",
   "cap.routines.name": "루틴",
   "cap.routines.offer": "서로 다른 세 날에 같은 요청을 하셨어요. 일정에 맞춰 알아서 하는 루틴으로 만들까요?",

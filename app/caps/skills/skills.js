@@ -2,7 +2,8 @@
 // Agent Skill (core/skills.js), so it is done the same way every time. The prompt lists each
 // skill's name and when to use it; `skill` reads its steps when a request matches, and
 // `save_skill` writes one when the user asks for it, typically after "Save this as a skill",
-// suggested when the same kind of request comes up a third time (ui/discovery.js).
+// suggested when the same kind of request comes up a third time (ui/discovery.js), or once the
+// brain has asked what a new one needs; its example becomes the answer's first suggestion (D322).
 // Skills from elsewhere (D121): the indexes and repositories in settings and policy are read on
 // the device (./sources.js), and Jean's own directory with them (./directory.js, D196); the third
 // request of a kind looks there first, and `suggest_skill` lets the brain look. Either way the user
@@ -59,24 +60,27 @@ export const steps = async (named) => skillSteps(app.fs, await skills(), named)
 const saveTool = {
   spec: {
     name: 'save_skill',
-    description: 'Save how a task the user repeats is done, to do it the same way next time. name: a few English words joined by hyphens; description: when to use it; steps: Markdown starting with a "# " title. Description and steps in the user’s language.',
+    description: 'Save a skill: how a task is done, to do it the same way every time. For a new one the user asks for, first ask the few things you need to know (what it is for, what they will give it, what should come back and how) unless the conversation already says, then save it. name: a few English words joined by hyphens; description: when to use it; example: a short request that uses it, complete enough to send as it is; steps: Markdown starting with a "# " title. Description, example and steps in the user’s language.',
+    // The long text last: a brain that ends it badly loses nothing after it (D322).
     parameters: {
       type: 'object',
-      properties: { name: { type: 'string' }, description: { type: 'string' }, steps: { type: 'string' } },
-      required: ['name', 'description', 'steps'],
+      properties: { name: { type: 'string' }, description: { type: 'string' }, example: { type: 'string' }, steps: { type: 'string' } },
+      required: ['name', 'description', 'example', 'steps'],
     },
   },
   kind: 'edit',
   title: (args) => `Save the skill ${args?.name ?? ''}`,
   run: async (args) => {
     const name = slug(String(args?.name ?? '')) || 'skill'
-    const description = String(args?.description ?? '').trim()
-    const steps = String(args?.steps ?? '').trim()
+    // Steps cut where a brain that closed them badly went on with the markup of its call (D322).
+    const [description, steps, example] = [args?.description, String(args?.steps ?? '').split(/<\/(?:parameter|steps|invoke)>|<parameter name=/)[0], args?.example].map((value) => String(value ?? '').trim())
     if (!description || !steps) throw new Error('A skill needs a description and steps.')
     await saveSkill(app.fs, folders().at(-1) ?? '', { name, description, body: steps, by: 'jean' })
     const title = /^#\s+(.+)$/m.exec(steps)?.[1].trim() ?? name
     notify(t('skills.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('skills')) })
-    return `Saved the skill "${name}". It is listed for the next conversations.`
+    // In the room at once: the next message's note lists it, and /name in the box reads its steps. Saved without
+    // an example too, which the answer gives: a call made again for it would write the steps again (D322).
+    return `Saved the skill "${name}". From the user's next message on, it is in <skills>, and /${name} in their box uses it. Tell them it is ready and how to use it, in their own words or with /${name}, and give ${example ? 'your' : 'an'} example. Make it your first suggestion, so one click tries it: /${name} ${example || '<the example>'}`
   },
 }
 
@@ -156,7 +160,7 @@ register({
   tools: [skillTool, saveTool, suggestTool],
   lines: [
     { name: 'skill', line: 'read the steps of a skill before following it' },
-    { name: 'save_skill', line: 'save how a repeated task is done, when the user asks' },
+    { name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' },
   ],
   rules: ['When a request matches a skill, read it and follow its steps.'],
   sections: async () => {

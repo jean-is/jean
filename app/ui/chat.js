@@ -409,11 +409,14 @@ function autoReason({ level, reason }) {
   return reason === 'demand' ? t(`auto.demand.${level}`) : t(`auto.reason.${reason}`)
 }
 
+/** Offers whose sentence above the box says what set them off: in an answer, they say what they do (D322). */
+const IN_ANSWER = new Set(['skills'])
+
 /** The brain's offer, in the answer it is part of. @param {NonNullable<typeof app.offering.value>} offering */
 function offerCard({ id, resolve }) {
   return html`<div class="approval" role="group" aria-label=${t('offer.title')}>
     <p><strong>${t(`cap.${id}.name`)}</strong></p>
-    <p>${t(`cap.${id}.offer`, { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) })}</p>
+    <p>${t(IN_ANSWER.has(id) ? `cap.${id}.inAnswer` : `cap.${id}.offer`, { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve(true)}>${t('offer.yes')}</button>
       <button class="button subtle" @click=${() => resolve(false)}>${t('offer.no')}</button>

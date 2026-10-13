@@ -272,6 +272,7 @@
   "cap.folders.yes": "Bir klasör seç",
   "cap.skills.name": "Beceriler",
   "cap.skills.offer": "Böyle bir şeyi üçüncü kez istiyorsun. Her seferinde aynı şekilde yapılması için bunu bir beceri olarak kaydedelim mi?",
+  "cap.skills.inAnswer": "Bunun nasıl yapılmasını istediğini bir beceri olarak kaydedelim mi, her seferinde aynı şekilde yapılsın? İstediğin zaman silebilirsin.",
   "cap.skills.yes": "Beceri olarak kaydet",
   "cap.routines.name": "Rutinler",
   "cap.routines.offer": "Bunu üç farklı günde istedin. Bir programa göre kendiliğinden yapılan bir rutin hâline getirelim mi?",
