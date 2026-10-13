@@ -1,5 +1,10 @@
 {
   "plugins.text": "Pemalam menambah apa yang boleh anda lakukan di sini. Setiap satu berjalan berasingan daripada fail dan kunci anda, dan hanya melakukan apa yang anda benarkan semasa menambahnya.",
+  "plugins.yours": "Pemalam anda",
+  "plugins.none": "Belum ada pemalam. Tambah satu di bawah daripada alamatnya.",
+  "plugins.adding": "Tambah pemalam",
+  "plugins.addHint": "Alamat foldernya, atau halamannya di GitHub. Anda akan melihat apa yang dimintanya sebelum ia ditambah.",
+  "plugins.may": "Ia boleh:",
   "plugins.address": "Alamat sebuah pemalam",
   "plugins.look": "Lihat",
   "plugins.reading": "Membaca pemalam…",

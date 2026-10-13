@@ -1,5 +1,10 @@
 {
   "plugins.text": "Eklentiler burada yapabileceklerini genişletir. Her biri dosyalarından ve anahtarlarından ayrı çalışır ve yalnızca eklerken izin verdiğin şeyi yapar.",
+  "plugins.yours": "Eklentilerin",
+  "plugins.none": "Henüz eklenti yok. Aşağıdan adresiyle bir tane ekle.",
+  "plugins.adding": "Eklenti ekle",
+  "plugins.addHint": "Klasörünün adresi ya da GitHub’daki sayfası. Eklenmeden önce ne istediğini göreceksin.",
+  "plugins.may": "Yapabilecekleri:",
   "plugins.address": "Bir eklentinin adresi",
   "plugins.look": "Göz at",
   "plugins.reading": "Eklenti okunuyor…",

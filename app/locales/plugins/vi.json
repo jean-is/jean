@@ -1,5 +1,10 @@
 {
   "plugins.text": "Plugin mở rộng những gì bạn có thể làm ở đây. Mỗi plugin chạy tách biệt khỏi tệp và khóa của bạn, và chỉ làm những gì bạn đã cho phép khi thêm nó.",
+  "plugins.yours": "Plugin của bạn",
+  "plugins.none": "Chưa có plugin nào. Thêm một plugin ở dưới bằng địa chỉ của nó.",
+  "plugins.adding": "Thêm plugin",
+  "plugins.addHint": "Địa chỉ thư mục của nó, hoặc trang của nó trên GitHub. Bạn sẽ thấy nó yêu cầu gì trước khi thêm.",
+  "plugins.may": "Nó được phép:",
   "plugins.address": "Địa chỉ của một plugin",
   "plugins.look": "Xem thử",
   "plugins.reading": "Đang đọc plugin…",

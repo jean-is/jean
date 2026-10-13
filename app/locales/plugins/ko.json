@@ -1,5 +1,10 @@
 {
   "plugins.text": "플러그인으로 여기서 할 수 있는 일이 늘어납니다. 각 플러그인은 내 파일과 키와 떨어져 실행되고, 추가할 때 허용한 일만 합니다.",
+  "plugins.yours": "내 플러그인",
+  "plugins.none": "아직 플러그인이 없습니다. 아래에서 주소로 추가하세요.",
+  "plugins.adding": "플러그인 추가",
+  "plugins.addHint": "폴더 주소나 GitHub 페이지 주소. 추가하기 전에 무엇을 요청하는지 볼 수 있습니다.",
+  "plugins.may": "할 수 있는 일:",
   "plugins.address": "플러그인 주소",
   "plugins.look": "살펴보기",
   "plugins.reading": "플러그인을 읽는 중…",

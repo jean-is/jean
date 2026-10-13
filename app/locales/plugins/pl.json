@@ -1,5 +1,10 @@
 {
   "plugins.text": "Wtyczki poszerzają to, co możesz tu zrobić. Każda działa z dala od twoich plików i kluczy i robi tylko to, na co pozwoliłeś, dodając ją.",
+  "plugins.yours": "Twoje wtyczki",
+  "plugins.none": "Nie ma jeszcze wtyczek. Dodaj jedną poniżej z jej adresu.",
+  "plugins.adding": "Dodaj wtyczkę",
+  "plugins.addHint": "Adres jej folderu albo jej strona na GitHubie. Zobaczysz, o co prosi, zanim zostanie dodana.",
+  "plugins.may": "Może:",
   "plugins.address": "Adres wtyczki",
   "plugins.look": "Zobacz",
   "plugins.reading": "Czytanie wtyczki…",

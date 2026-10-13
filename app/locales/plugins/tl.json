@@ -1,5 +1,10 @@
 {
   "plugins.text": "Dinadagdagan ng mga plugin ang kaya mong gawin dito. Tumatakbo ang bawat isa nang hiwalay sa mga file at susi mo, at ginagawa lang ang pinayagan mo nang idagdag mo ito.",
+  "plugins.yours": "Ang mga plugin mo",
+  "plugins.none": "Wala pang plugin. Magdagdag ng isa sa ibaba mula sa address nito.",
+  "plugins.adding": "Magdagdag ng plugin",
+  "plugins.addHint": "Ang address ng folder nito, o ang pahina nito sa GitHub. Makikita mo ang hinihingi nito bago ito idagdag.",
+  "plugins.may": "Maaari nitong:",
   "plugins.address": "Ang address ng isang plugin",
   "plugins.look": "Tingnan",
   "plugins.reading": "Binabasa ang plugin…",

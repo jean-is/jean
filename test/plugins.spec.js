@@ -25,12 +25,19 @@ async function add(page) {
   await settings.getByLabel('The address of a plugin').fill('https://plugins.test/word-count')
   await settings.getByRole('button', { name: 'Look at it' }).click()
   const card = settings.locator('.plugin-card')
-  await expect(card.locator('h4')).toContainText('Word count')
+  await expect(card.locator('.item-text strong')).toContainText('Word count')
   await expect(card).toContainText('By Ada')
   await expect(card).toContainText('From plugins.test')
   await card.getByRole('button', { name: 'Add it' }).click()
   await expect(page.locator('.toast')).toContainText('Word count is added.')
   return settings
+}
+
+/** Opens a plugin's row in Settings › Plugins, by its title, where what it draws there shows. @param {import('@playwright/test').Locator} settings @param {string} title */
+async function openRow(settings, title) {
+  const row = settings.locator('.list.plugins details').filter({ has: settings.page().locator('summary', { hasText: title }) })
+  if (!(await row.evaluate((details) => /** @type {HTMLDetailsElement} */ (details).open))) await row.locator('summary').click()
+  return row
 }
 
 /** What the plugin keeps, in its data.json. @param {import('@playwright/test').Page} page */
@@ -43,7 +50,7 @@ test('a plugin read from its address is added, runs apart, draws under each answ
   await turnOn(page, 'Plugins')
   await closeSettings(page)
   const settings = await add(page)
-  const row = settings.locator('.setting.plugin')
+  const row = settings.locator('.list.plugins > li')
   await expect(row).toContainText('Show you short messages')
   await expect(row.getByRole('switch', { name: 'Word count' })).toBeChecked()
   await closeSettings(page)
@@ -119,7 +126,7 @@ test('with ?safe no plugin runs until the user leaves safe mode, and one that ke
   expect(new URL(page.url()).searchParams.has('safe')).toBe(false)
   await expect(frames).toHaveCount(1)
   // What it draws stops at 500 of Jean's elements.
-  const row = settings.locator('.setting.plugin')
+  const row = settings.locator('.list.plugins > li')
   await expect(row.getByText('word', { exact: true }).first()).toBeVisible()
   expect(await row.getByText('word', { exact: true }).count()).toBeLessThan(500)
   await closeSettings(page)
@@ -168,7 +175,7 @@ test('the example plugins (examples/plugins/) work together: a log of the record
 
   // Quiet hours, all the time: Jean asks before writing a page, and the activity says why.
   let settings = await openSettings(page, 'Plugins')
-  await settings.getByRole('button', { name: 'All the time' }).click()
+  await (await openRow(settings, 'Quiet hours')).getByRole('button', { name: 'All the time' }).click()
   await closeSettings(page)
   await expect(page.locator('.plugin-above[aria-label="Quiet hours"]')).toContainText("Quiet hours: I'll ask you first")
   await ask(page, 'Make me a web page for the bakery')
@@ -177,7 +184,7 @@ test('the example plugins (examples/plugins/) work together: a log of the record
   await expect(page.locator('.msg-jean .plugin-answer').last()).toHaveText('1 action · decided by quiet-hours')
   await expect(await facts()).toContainText('Asked first by Quiet hours')
   settings = await openSettings(page, 'Plugins')
-  await settings.getByRole('button', { name: 'Never' }).click()
+  await (await openRow(settings, 'Quiet hours')).getByRole('button', { name: 'Never' }).click()
   await closeSettings(page)
   await expect(page.locator('.plugin-above[aria-label="Quiet hours"]')).toBeHidden()
 

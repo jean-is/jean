@@ -1,5 +1,10 @@
 {
   "plugins.text": "Àwọn àfikún ń mú ohun tí ẹ lè ṣe níbí pọ̀ sí i. Ọ̀kọ̀ọ̀kan ń ṣiṣẹ́ lọ́tọ̀ sí àwọn fáìlì àti kọ́kọ́rọ́ yín, ó sì ń ṣe kìkì ohun tí ẹ gbà láyè nígbà tí ẹ fi kún un.",
+  "plugins.yours": "Àwọn àfikún yín",
+  "plugins.none": "Kò sí àfikún kankan síbẹ̀. Ẹ fi ọ̀kan kún un ní ìsàlẹ̀ láti àdírẹ́sì rẹ̀.",
+  "plugins.adding": "Fi àfikún kún un",
+  "plugins.addHint": "Àdírẹ́sì fódà rẹ̀, tàbí ojú-ìwé rẹ̀ lórí GitHub. Ẹ ó rí ohun tí ó ń béèrè kí a tó fi kún un.",
+  "plugins.may": "Ó lè:",
   "plugins.address": "Àdírẹ́sì àfikún kan",
   "plugins.look": "Wò ó",
   "plugins.reading": "À ń ka àfikún náà…",

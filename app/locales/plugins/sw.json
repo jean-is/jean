@@ -1,5 +1,10 @@
 {
   "plugins.text": "Programu-jalizi huongeza unachoweza kufanya hapa. Kila moja huendeshwa mbali na faili na funguo zako, na hufanya tu ulichoruhusu ulipoiongeza.",
+  "plugins.yours": "Programu-jalizi zako",
+  "plugins.none": "Bado hakuna programu-jalizi. Ongeza moja hapa chini kwa anwani yake.",
+  "plugins.adding": "Ongeza programu-jalizi",
+  "plugins.addHint": "Anwani ya folda yake, au ukurasa wake kwenye GitHub. Utaona inachoomba kabla haijaongezwa.",
+  "plugins.may": "Inaweza:",
   "plugins.address": "Anwani ya programu-jalizi",
   "plugins.look": "Iangalie",
   "plugins.reading": "Inasoma programu-jalizi…",

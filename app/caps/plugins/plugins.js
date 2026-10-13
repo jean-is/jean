@@ -48,6 +48,8 @@ const running = signal(/** @type {Map<string, Host>} */ (new Map()))
 const trees = signal(/** @type {Map<string, any>} */ (new Map()))
 /** Safe mode: with ?safe in the address, no plugin runs until the user leaves it (D307). */
 const safe = signal(new URLSearchParams(location.search).has('safe'))
+/** The plugin just added, whose row opens to show what it draws there. */
+const opened = signal('')
 /** A plugin read from an address, shown before it is added. */
 const reading = signal(/** @type {{ manifest?: Manifest, json?: string, code?: string, base?: string, failed?: string } | null} */ (null))
 const worker = fetch(new URL('plugin-worker.js', import.meta.url)).then((response) => response.text())
@@ -314,6 +316,7 @@ async function add() {
   await app.fs.write(join(DIR, manifest.name, 'plugin.json'), json)
   await app.fs.write(join(DIR, manifest.name, manifest.main), code)
   reading.value = null
+  opened.value = manifest.name
   await refresh()
   await updateSettings(/** @type {any} */ ({ plugins: { ...switches(), [manifest.name]: { on: true } } }))
   notify(t('plugins.added', { title: shownIn(manifest, locale.peek()).title }))
@@ -332,20 +335,21 @@ async function remove(manifest) {
   await refresh()
 }
 
-/** What a plugin asks to do, in plain words. @param {Manifest} manifest */
+/** What a plugin asks to do, in plain words, loosening apart. @param {Manifest} manifest */
 const rightsOf = (manifest) => html`<ul class="plugin-rights">${manifest.rights.map((right) => html`<li class=${right === 'loosen' ? 'is-loose' : ''}>${t(`plugins.right.${right}`)}</li>`)}</ul>`
+/** Its first letter, as its icon. @param {string} title */
+const initial = (title) => html`<span class="item-icon" aria-hidden="true">${[...title][0]?.toLocaleUpperCase()}</span>`
 
 /** The card of a plugin read from an address: who made it, where it comes from, what it asks, its code, and Add it. @param {NonNullable<typeof reading.value>} state */
 function card({ manifest, code, base, failed }) {
-  if (failed) return html`<p class="plugin-card" role="alert">${t(`plugins.error.${failed}`)}</p>`
+  if (failed) return html`<p class="plugin-card status is-error" role="alert">${t(`plugins.error.${failed}`)}</p>`
   if (!manifest) return html`<p class="plugin-card muted" role="status">${t('plugins.reading')}</p>`
   const { title, description } = shownIn(manifest, locale.value)
   return html`<article class="plugin-card" aria-label=${title}>
-    <h4 dir="auto">${title}${manifest.version ? html` <span class="muted small">${manifest.version}</span>` : nothing}</h4>
+    <div class="item">${initial(title)}<span class="item-text"><strong dir="auto">${title}</strong><small dir="auto">${[manifest.version,
+      manifest.author && t('plugins.by', { author: manifest.author }), t('plugins.from', { site: new URL(base ?? '').host })].filter(Boolean).join(' · ')}</small></span></div>
     <p dir="auto">${description}</p>
-    <p class="muted small" dir="auto">${manifest.author ? t('plugins.by', { author: manifest.author }) : nothing} ${t('plugins.from', { site: new URL(base ?? '').host })}</p>
-    <p>${t('plugins.asks')}</p>
-    ${manifest.rights.length ? rightsOf(manifest) : html`<p class="muted small">${t('plugins.nothing')}</p>`}
+    <div><p class="plugin-label">${t('plugins.asks')}</p>${manifest.rights.length ? rightsOf(manifest) : html`<p class="muted small">${t('plugins.nothing')}</p>`}</div>
     <details><summary>${t('plugins.code')}</summary><pre dir="ltr"><code>${code}</code></pre></details>
     <div class="row">
       <button type="button" class="button primary" @click=${add}>${t('plugins.add')}</button>
@@ -354,31 +358,49 @@ function card({ manifest, code, base, failed }) {
   </article>`
 }
 
-/** Settings › Plugins: the plugins added, each with its switch, what it asks and what it draws there; and a line to add one. */
+/**
+ * A plugin in Settings' list (D134): its name and what it does, or why it was turned off, its switch
+ * beside them; opened, what it draws there, what it may do, its version and maker, and Remove.
+ * @param {Manifest} manifest @param {string} lang
+ */
+function row(manifest, lang) {
+  const { title, description } = shownIn(manifest, lang)
+  const host = running.value.get(manifest.name)
+  const { on, failed } = switches()[manifest.name] ?? {}
+  return html`<li><details ?open=${opened.value === manifest.name}>
+      <summary>${initial(title)}<span class="item-text"><strong dir="auto">${title}</strong>${failed
+        ? html`<small class="is-error">${t('plugins.failing')}</small>` : html`<small dir="auto">${description}</small>`}</span>${icons.chevron}</summary>
+      <div class="item-body">
+        ${host?.slots.includes('settings') ? html`<div class="plugin-own">${drawn(host, 'settings', {})}</div>` : nothing}
+        <div><p class="plugin-label">${t('plugins.may')}</p>${manifest.rights.length ? rightsOf(manifest) : html`<p class="muted small">${t('plugins.nothing')}</p>`}</div>
+        <div class="row plugin-foot"><small class="muted" dir="auto">${[manifest.version, manifest.author && t('plugins.by', { author: manifest.author })].filter(Boolean).join(' · ')}</small>
+          <button type="button" class="button subtle danger" @click=${() => remove(manifest)}>${icons.trash} ${t('action.remove')}</button></div>
+      </div>
+    </details>
+    <input type="checkbox" class="switch" role="switch" aria-label=${title} .checked=${on === true}
+      @change=${(/** @type {Event} */ e) => turn(manifest, /** @type {HTMLInputElement} */ (e.target).checked)}></li>`
+}
+
+/** Settings › Plugins: safe mode, if on; the plugins added, as Settings' other lists; then a line to add one, and its card. */
 function panel() {
   const lang = locale.value
-  const rows = installed.value.map((manifest) => {
-    const { title, description } = shownIn(manifest, lang)
-    const host = running.value.get(manifest.name)
-    return html`<li class="setting plugin">
-      <div><span class="rule-kind" dir="auto">${title}</span><p class="muted small" dir="auto">${description}</p>
-        ${switches()[manifest.name]?.failed ? html`<p class="small" role="status">${t('plugins.failing')}</p>` : nothing}${rightsOf(manifest)}
-        ${host?.slots.includes('settings') ? drawn(host, 'settings', {}) : nothing}
-        <button type="button" class="button subtle danger" @click=${() => remove(manifest)}>${icons.trash} ${t('action.remove')}</button></div>
-      <input type="checkbox" class="switch" role="switch" aria-label=${title} .checked=${switches()[manifest.name]?.on === true}
-        @change=${(/** @type {Event} */ e) => turn(manifest, /** @type {HTMLInputElement} */ (e.target).checked)}>
-    </li>`
-  })
-  return html`<section>
-    <p class="muted">${t('plugins.text')}</p>
-    ${safe.value ? html`<div class="row"><p>${t('plugins.safe')}</p><button type="button" class="button" @click=${leaveSafe}>${t('plugins.leaveSafe')}</button></div>` : nothing}
-    ${rows.length ? html`<ul class="rules">${rows}</ul>` : nothing}
-    <form class="row" @submit=${look}>
-      <input name="address" dir="ltr" autocomplete="off" placeholder=${t('plugins.address')} aria-label=${t('plugins.address')}>
-      <button class="button">${t('plugins.look')}</button>
-    </form>
-    ${reading.value ? card(reading.value) : nothing}
-  </section>`
+  return html`<p class="lede">${t('plugins.text')}</p>
+    ${safe.value ? html`<div class="status plugin-safe" role="status"><span>${t('plugins.safe')}</span>
+      <button type="button" class="button" @click=${leaveSafe}>${t('plugins.leaveSafe')}</button></div>` : nothing}
+    <section>
+      <h3>${t('plugins.yours')}</h3>
+      ${installed.value.length ? html`<ul class="list plugins">${installed.value.map((manifest) => row(manifest, lang))}</ul>`
+        : html`<p class="empty muted small">${t('plugins.none')}</p>`}
+    </section>
+    <section>
+      <h3>${t('plugins.adding')}</h3>
+      <p class="hint">${t('plugins.addHint')}</p>
+      <form class="row plugin-address" @submit=${look}>
+        <input name="address" dir="ltr" autocomplete="off" placeholder=${t('plugins.address')} aria-label=${t('plugins.address')}>
+        <button class="button">${t('plugins.look')}</button>
+      </form>
+      ${reading.value ? card(reading.value) : nothing}
+    </section>`
 }
 
 // Each plugin turned on runs, unless in safe mode; one turned off or removed stops.

@@ -1,5 +1,10 @@
 {
   "plugins.text": "Plug-ins breiden uit wat je hier kunt. Elke plug-in draait los van je bestanden en sleutels, en doet alleen wat je toestond toen je hem toevoegde.",
+  "plugins.yours": "Je plug-ins",
+  "plugins.none": "Nog geen plug-in. Voeg er hieronder een toe via het adres.",
+  "plugins.adding": "Plug-in toevoegen",
+  "plugins.addHint": "Het adres van de map, of de pagina op GitHub. Je ziet wat hij vraagt voordat hij wordt toegevoegd.",
+  "plugins.may": "Hij mag:",
   "plugins.address": "Het adres van een plug-in",
   "plugins.look": "Bekijken",
   "plugins.reading": "De plug-in wordt gelezen…",

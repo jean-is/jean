@@ -1,5 +1,10 @@
 {
   "plugins.text": "Los plugins amplían lo que puedes hacer aquí. Cada uno funciona aparte de tus archivos y claves, y solo hace lo que permitiste al añadirlo.",
+  "plugins.yours": "Tus plugins",
+  "plugins.none": "Aún no hay plugins. Añade uno abajo con su dirección.",
+  "plugins.adding": "Añadir un plugin",
+  "plugins.addHint": "La dirección de su carpeta, o su página en GitHub. Verás lo que pide antes de añadirlo.",
+  "plugins.may": "Puede:",
   "plugins.address": "La dirección de un plugin",
   "plugins.look": "Verlo",
   "plugins.reading": "Leyendo el plugin…",

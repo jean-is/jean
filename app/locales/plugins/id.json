@@ -1,5 +1,10 @@
 {
   "plugins.text": "Plugin menambah apa yang bisa Anda lakukan di sini. Masing-masing berjalan terpisah dari file dan kunci Anda, dan hanya melakukan apa yang Anda izinkan saat menambahkannya.",
+  "plugins.yours": "Plugin Anda",
+  "plugins.none": "Belum ada plugin. Tambahkan satu di bawah dari alamatnya.",
+  "plugins.adding": "Tambahkan plugin",
+  "plugins.addHint": "Alamat foldernya, atau halamannya di GitHub. Anda akan melihat apa yang dimintanya sebelum ditambahkan.",
+  "plugins.may": "Ia boleh:",
   "plugins.address": "Alamat sebuah plugin",
   "plugins.look": "Lihat",
   "plugins.reading": "Membaca plugin…",

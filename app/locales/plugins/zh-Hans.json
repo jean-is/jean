@@ -1,5 +1,10 @@
 {
   "plugins.text": "插件可以扩展你在这里能做的事。每个插件都与你的文件和密钥隔开运行，只做你添加它时允许的事。",
+  "plugins.yours": "你的插件",
+  "plugins.none": "还没有插件。在下面用地址添加一个。",
+  "plugins.adding": "添加插件",
+  "plugins.addHint": "它的文件夹地址，或它在 GitHub 上的页面。添加前你会看到它要求做什么。",
+  "plugins.may": "它可以：",
   "plugins.address": "插件的地址",
   "plugins.look": "看看",
   "plugins.reading": "正在读取插件…",

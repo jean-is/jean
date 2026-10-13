@@ -1,5 +1,10 @@
 {
   "plugins.text": "Plugins add to what you can do here. Each runs apart from your files and keys, and does only what you allowed when you added it.",
+  "plugins.yours": "Your plugins",
+  "plugins.none": "No plugin yet. Add one below from its address.",
+  "plugins.adding": "Add a plugin",
+  "plugins.addHint": "The address of its folder, or of its page on GitHub. You’ll see what it asks before it’s added.",
+  "plugins.may": "It may:",
   "plugins.address": "The address of a plugin",
   "plugins.look": "Look at it",
   "plugins.reading": "Reading the plugin…",

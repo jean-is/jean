@@ -1,5 +1,10 @@
 {
   "plugins.text": "外掛可以擴充你在這裡能做的事。每個外掛都與你的檔案和金鑰隔開執行，只做你新增它時允許的事。",
+  "plugins.yours": "你的外掛",
+  "plugins.none": "還沒有外掛。在下面用網址新增一個。",
+  "plugins.adding": "新增外掛",
+  "plugins.addHint": "它的資料夾網址，或它在 GitHub 上的頁面。新增前你會看到它要求做什麼。",
+  "plugins.may": "它可以：",
   "plugins.address": "外掛的位址",
   "plugins.look": "看看",
   "plugins.reading": "正在讀取外掛…",

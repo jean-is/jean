@@ -1,12 +1,35 @@
-/* Plugins (D296): what they draw in the room, and the card of one read before it is added. */
+/* Plugins (D296): what they draw in the room, their list in Settings, and the card of one read before it is added. */
 .plugin-above { inline-size: var(--column); margin: 0.5rem auto 0; padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--glass); font-size: 0.92rem; }
 /* One that draws nothing there now takes no room. */
 .plugin-above:empty { display: none; }
 .plugin-answer { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--ink-soft); }
 .plugin-answer .prose { display: contents; }
-.plugin-rights { margin: 0.3rem 0; padding-inline-start: 1.1rem; font-size: 0.86rem; color: var(--ink-soft); }
+/* What a plugin draws is set in the room's type, its buttons small and plainly buttons. */
+:is(.plugin-above, .plugin-own) .button.subtle { padding: 0.3rem 0.85rem; border-color: var(--line-strong); color: var(--ink); font-size: 0.88rem; }
+.plugin-own .prose { font-size: inherit; line-height: 1.55; }
+.plugin-own .prose > :first-child { margin-block-start: 0; }
+.plugin-own .prose > :last-child { margin-block-end: 0; }
+
+/* The list (D134): each row opens under its name, the switch at the end of its first line, all on the icon's
+   line however long its description, and what opens takes the whole width; a closed row lit whole as it is
+   pointed at, an open one at its name. */
+.list.plugins > li { display: grid; grid-template-columns: 1fr auto; padding: 0; }
+.list.plugins > li > details { grid-area: 1 / 1 / 2 / 3; min-inline-size: 0; }
+.list.plugins > li > .switch { grid-area: 1 / 2; align-self: start; margin-block-start: 1rem; margin-inline-end: 0.9rem; }
+.list.plugins summary { align-items: flex-start; padding-inline-end: 4.4rem; }
+.list.plugins summary > .icon:last-child { margin-block-start: 0.6rem; }
+.list.plugins > li:has(> details:not([open]) > summary:hover) { background: var(--line); }
+.list.plugins details:not([open]) > summary:hover { background: none; }
+.list.plugins details:not([open]) .item-text small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.plugin-own { display: grid; gap: 0.5rem; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 0.8rem; font-size: 0.9rem; }
+.plugin-label { margin: 0 0 0.3rem; font-size: 0.8rem; font-weight: 600; color: var(--ink-soft); }
+.plugin-rights { display: grid; gap: 0.25rem; margin: 0; padding-inline-start: 1.1rem; font-size: 0.88rem; color: var(--ink-soft); }
 .plugin-rights .is-loose { color: var(--ink); font-weight: 600; }
-.plugin-card { margin-block-start: 0.8rem; padding: 0.9rem 1.1rem; border: 1px solid var(--line); border-radius: var(--radius); }
-.plugin-card h4 { margin: 0 0 0.3rem; }
+.plugin-foot { justify-content: space-between; }
+.plugin-safe { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-block: 0.75rem; }
+
+/* Adding one: its address, then its card, to read before Add it. */
+.plugin-address input { flex: 1 1 16rem; inline-size: auto; }
+.plugin-card { display: grid; gap: 0.75rem; margin-block: 0.9rem 0; padding: 0.9rem 1.1rem; border: 1px solid var(--line); border-radius: 1rem; }
+.plugin-card p { margin: 0; }
 .plugin-card pre { max-block-size: 16rem; overflow: auto; font-size: 0.8rem; }
-.setting.plugin .button.danger { margin-block-start: 0.4rem; }
