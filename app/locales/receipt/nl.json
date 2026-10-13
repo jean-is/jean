@@ -1,7 +1,7 @@
 {
   "receipt.about": "Over dit antwoord",
-  "receipt.local": "Gemaakt op dit apparaat",
-  "receipt.local.text": "Je browser heeft vastgelegd wat er tijdens het schrijven is verstuurd: niets heeft dit apparaat verlaten.",
+  "receipt.local": "Privé gebleven",
+  "receipt.local.text": "Er heeft niets dit apparaat verlaten om dit antwoord te schrijven. Dat laat je browser zelf zien.",
   "receipt.out": "Buiten dit apparaat verstuurd",
   "receipt.inCloud": "Gemaakt in de cloud",
   "receipt.inCloud.text": "Je gesprek is naar de cloud gestuurd om dit antwoord te schrijven.",

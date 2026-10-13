@@ -1,7 +1,7 @@
 {
   "receipt.about": "이 답변에 대해",
-  "receipt.local": "이 기기에서 처리됨",
-  "receipt.local.text": "답변을 쓰는 동안 보낸 내용을 브라우저가 기록했어요. 이 기기 밖으로 나간 것은 없어요.",
+  "receipt.local": "비공개로 유지됨",
+  "receipt.local.text": "이 답변을 쓰기 위해 이 기기 밖으로 나간 것은 없어요. 브라우저의 자체 기록이 이를 보여 줘요.",
   "receipt.out": "이 기기 밖으로 전송됨",
   "receipt.inCloud": "클라우드에서 처리됨",
   "receipt.inCloud.text": "이 답변을 쓰기 위해 대화가 클라우드로 전송되었습니다.",

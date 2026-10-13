@@ -1,7 +1,7 @@
 {
   "receipt.about": "Tentang jawaban ini",
-  "receipt.local": "Dikerjakan di perangkat ini",
-  "receipt.local.text": "Browser Anda mencatat apa yang dikirim saat jawaban ini ditulis: tidak ada yang keluar dari perangkat ini.",
+  "receipt.local": "Privasi terjaga",
+  "receipt.local.text": "Tidak ada yang keluar dari perangkat ini untuk menulis jawaban ini. Catatan browser Anda sendiri menunjukkannya.",
   "receipt.out": "Dikirim ke luar perangkat ini",
   "receipt.inCloud": "Dikerjakan di cloud",
   "receipt.inCloud.text": "Percakapan Anda dikirim ke cloud untuk menulis jawaban ini.",

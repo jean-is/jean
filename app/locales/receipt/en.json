@@ -1,7 +1,7 @@
 {
   "receipt.about": "About this answer",
-  "receipt.local": "Done on this device",
-  "receipt.local.text": "Your browser recorded what was sent while it was written: nothing left this device.",
+  "receipt.local": "Kept private",
+  "receipt.local.text": "Nothing left this device to write this answer. Your browser’s own record shows it.",
   "receipt.out": "Sent outside this device",
   "receipt.inCloud": "Done in the cloud",
   "receipt.inCloud.text": "Your conversation was sent to the cloud to write this answer.",

@@ -1,7 +1,7 @@
 {
   "receipt.about": "关于这个回答",
-  "receipt.local": "在这台设备上完成",
-  "receipt.local.text": "你的浏览器记录了写这个回答时发出的内容：没有任何内容离开这台设备。",
+  "receipt.local": "全程私密",
+  "receipt.local.text": "写这个回答时，没有任何内容离开这台设备。你的浏览器自己的记录可以证明。",
   "receipt.out": "已发送到这台设备之外",
   "receipt.inCloud": "在云端完成",
   "receipt.inCloud.text": "为写出这个回答，你的对话已发送到云端。",

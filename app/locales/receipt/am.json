@@ -1,7 +1,7 @@
 {
   "receipt.about": "ስለዚህ መልስ",
-  "receipt.local": "በዚህ መሣሪያ ላይ የተሠራ",
-  "receipt.local.text": "አሳሽዎ ይህ መልስ ሲጻፍ የተላከውን መዝግቧል፦ ከዚህ መሣሪያ ምንም አልወጣም።",
+  "receipt.local": "ግላዊነቱ ተጠብቋል",
+  "receipt.local.text": "ይህን መልስ ለመጻፍ ከዚህ መሣሪያ ምንም አልወጣም። የአሳሽዎ የራሱ መዝገብ ይህን ያሳያል።",
   "receipt.out": "ከዚህ መሣሪያ ውጭ ተልኳል",
   "receipt.inCloud": "በደመና ላይ የተሠራ",
   "receipt.inCloud.text": "ይህን መልስ ለመጻፍ ውይይትዎ ወደ ደመና ተልኳል።",

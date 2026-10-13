@@ -1,7 +1,7 @@
 {
   "receipt.about": "Kuhusu jibu hili",
-  "receipt.local": "Limefanywa kwenye kifaa hiki",
-  "receipt.local.text": "Kivinjari chako kilirekodi kilichotumwa wakati jibu likiandikwa: hakuna kilichotoka kwenye kifaa hiki.",
+  "receipt.local": "Faragha imelindwa",
+  "receipt.local.text": "Hakuna kilichotoka kwenye kifaa hiki ili kuandika jibu hili. Rekodi ya kivinjari chako yenyewe inaonyesha hivyo.",
   "receipt.out": "Limetumwa nje ya kifaa hiki",
   "receipt.inCloud": "Limefanywa kwenye wingu",
   "receipt.inCloud.text": "Mazungumzo yako yalitumwa kwenye wingu ili kuandika jibu hili.",

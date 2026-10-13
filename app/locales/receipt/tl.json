@@ -1,7 +1,7 @@
 {
   "receipt.about": "Tungkol sa sagot na ito",
-  "receipt.local": "Ginawa sa device na ito",
-  "receipt.local.text": "Itinala ng browser mo ang ipinadala habang isinusulat ito: walang lumabas sa device na ito.",
+  "receipt.local": "Nanatiling pribado",
+  "receipt.local.text": "Walang lumabas sa device na ito para isulat ang sagot na ito. Ipinapakita ito ng sariling tala ng browser mo.",
   "receipt.out": "Ipinadala sa labas ng device na ito",
   "receipt.inCloud": "Ginawa sa cloud",
   "receipt.inCloud.text": "Ipinadala sa cloud ang usapan mo para isulat ang sagot na ito.",

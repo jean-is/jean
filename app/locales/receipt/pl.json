@@ -1,7 +1,7 @@
 {
   "receipt.about": "O tej odpowiedzi",
-  "receipt.local": "Wykonana na tym urządzeniu",
-  "receipt.local.text": "Twoja przeglądarka zapisała, co zostało wysłane podczas pisania: nic nie opuściło tego urządzenia.",
+  "receipt.local": "Prywatność zachowana",
+  "receipt.local.text": "Nic nie opuściło tego urządzenia, by napisać tę odpowiedź. Potwierdza to zapis samej przeglądarki.",
   "receipt.out": "Wysłana poza to urządzenie",
   "receipt.inCloud": "Wykonana w chmurze",
   "receipt.inCloud.text": "Twoja rozmowa została wysłana do chmury, aby napisać tę odpowiedź.",

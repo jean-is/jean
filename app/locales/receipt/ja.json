@@ -1,7 +1,7 @@
 {
   "receipt.about": "この回答について",
-  "receipt.local": "この端末で完結",
-  "receipt.local.text": "回答の作成中に送信されたものはブラウザーが記録しています。この端末の外には何も送られていません。",
+  "receipt.local": "プライバシーは守られました",
+  "receipt.local.text": "この回答を書くために、この端末の外へは何も送られていません。ブラウザー自身の記録がそれを示しています。",
   "receipt.out": "この端末の外に送信",
   "receipt.inCloud": "クラウドで処理",
   "receipt.inCloud.text": "この回答を書くために、会話がクラウドに送信されました。",

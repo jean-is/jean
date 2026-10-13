@@ -1,7 +1,7 @@
 {
   "receipt.about": "Bu yanıt hakkında",
-  "receipt.local": "Bu cihazda yapıldı",
-  "receipt.local.text": "Tarayıcın, yanıt yazılırken gönderilenleri kaydetti: Bu cihazdan hiçbir şey çıkmadı.",
+  "receipt.local": "Gizli kaldı",
+  "receipt.local.text": "Bu yanıtı yazmak için bu cihazdan hiçbir şey çıkmadı. Bunu tarayıcının kendi kaydı gösteriyor.",
   "receipt.out": "Bu cihazın dışına gönderildi",
   "receipt.inCloud": "Bulutta yapıldı",
   "receipt.inCloud.text": "Bu yanıtı yazmak için konuşman buluta gönderildi.",

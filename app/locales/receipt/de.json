@@ -1,7 +1,7 @@
 {
   "receipt.about": "Über diese Antwort",
-  "receipt.local": "Auf diesem Gerät erstellt",
-  "receipt.local.text": "Dein Browser hat aufgezeichnet, was beim Schreiben gesendet wurde: Nichts hat dieses Gerät verlassen.",
+  "receipt.local": "Privat geblieben",
+  "receipt.local.text": "Nichts hat dieses Gerät verlassen, um diese Antwort zu schreiben. Dein Browser selbst belegt es.",
   "receipt.out": "Außerhalb dieses Geräts gesendet",
   "receipt.inCloud": "In der Cloud erstellt",
   "receipt.inCloud.text": "Dein Gespräch wurde in die Cloud gesendet, um diese Antwort zu schreiben.",
