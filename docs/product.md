@@ -33,7 +33,7 @@ These are i18n strings, so the UI words can change later at no cost. Folder name
 
 ## Progressive discovery
 
-Jean is learned the way *A Dark Room* is played: the first screen holds a single box ("What can I do for you?", and under it "You’re talking with an AI, not a person.", D273), and capabilities show up when a situation calls for them.
+Jean is learned the way *A Dark Room* is played: the first screen holds a single box ("What can I do for you?"; once something is asked, a line under it says "Jean is AI and can make mistakes", D273), and capabilities show up when a situation calls for them.
 
 **How it works:**
 

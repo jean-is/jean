@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Lumaktaw sa kahon ng mensahe",
   "welcome.question": "Ano ang maitutulong ko?",
-  "welcome.ai": "AI ang kausap mo, hindi tao.",
   "starter.discover": "Ano ang kaya mong gawin?",
   "starter.discover.prompt": "Ano ang kaya mong gawin para sa akin? Bigyan mo ako ng 3 halimbawang masusubukan ko.",
   "starter.summarize": "Ibuod ang mahabang teksto",
@@ -15,6 +14,7 @@
   "composer.label": "Ang mensahe mo",
   "composer.add": "Magdagdag sa mensahe mo",
   "composer.placeholder": "Magtanong ng kahit ano, o ilarawan ang isang gawain…",
+  "composer.ai": "AI si {name} at maaaring magkamali",
   "action.send": "Ipadala",
   "action.stop": "Itigil",
   "action.new": "Bagong gawain",

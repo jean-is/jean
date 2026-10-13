@@ -1,12 +1,13 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
-// then the modes + turned on, the brain, and one button to go.
+// then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
+// is an AI and can make mistakes (EU AI Act, art. 50; D273).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, SHORTCUTS } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
 import { t } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
@@ -64,7 +65,7 @@ class Composer extends Element {
               @click=${() => removeAttachment(item.key)}>${icons.close}</button>
           </li>`)}</ul>` : nothing}
         <label class="visually-hidden" for="prompt">${t('composer.label')}</label>
-        <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby="welcome-ai"
+        <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby="ai-note"
           placeholder=${status || t('composer.placeholder')}
           .value=${current(app.draft.value)}
           @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}
@@ -92,7 +93,8 @@ class Composer extends Element {
           ${primary(busy, empty, hands)}
         </div>
         ${files ? html`<input type="file" multiple class="visually-hidden" tabindex="-1" aria-hidden="true" @change=${this.#pick}>` : nothing}
-      </form>`
+      </form>
+      ${app.current.value?.records.length ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>` : nothing}`
   }
 
   connectedCallback() {

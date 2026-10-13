@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Mesaj kutusuna geç",
   "welcome.question": "Senin için ne yapabilirim?",
-  "welcome.ai": "Bir insanla değil, bir yapay zekâyla konuşuyorsun.",
   "starter.discover": "Neler yapabilirsin?",
   "starter.discover.prompt": "Benim için neler yapabilirsin? Deneyebileceğim 3 örnek ver.",
   "starter.summarize": "Uzun bir metni özetle",
@@ -15,6 +14,7 @@
   "composer.label": "Mesajın",
   "composer.add": "Mesajına ekle",
   "composer.placeholder": "Bir şey sor ya da bir görevi anlat…",
+  "composer.ai": "{name} bir yapay zekâdır ve hata yapabilir",
   "action.send": "Gönder",
   "action.stop": "Durdur",
   "action.new": "Yeni görev",

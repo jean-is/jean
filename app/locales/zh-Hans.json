@@ -1,7 +1,6 @@
 {
   "a11y.skip": "跳到消息框",
   "welcome.question": "有什么可以帮你？",
-  "welcome.ai": "你正在和 AI 对话，而不是真人。",
   "starter.discover": "你能做什么？",
   "starter.discover.prompt": "你能为我做什么？给我 3 个可以试试的例子。",
   "starter.summarize": "总结一篇长文",
@@ -15,6 +14,7 @@
   "composer.label": "你的消息",
   "composer.add": "添加到消息",
   "composer.placeholder": "想问什么都可以，或描述一项任务…",
+  "composer.ai": "{name} 是 AI，可能会出错",
   "action.send": "发送",
   "action.stop": "停止",
   "action.new": "新任务",

@@ -1,7 +1,6 @@
 {
   "a11y.skip": "رفتن به کادر پیام",
   "welcome.question": "چه کاری از دستم برمی‌آید؟",
-  "welcome.ai": "شما با یک هوش مصنوعی گفتگو می‌کنید، نه با یک انسان.",
   "starter.discover": "چه کارهایی بلدی؟",
   "starter.discover.prompt": "چه کارهایی می‌توانی برایم انجام دهی؟ 3 نمونه بده که بتوانم امتحان کنم.",
   "starter.summarize": "خلاصه کردن یک متن طولانی",
@@ -15,6 +14,7 @@
   "composer.label": "پیام شما",
   "composer.add": "افزودن به پیام شما",
   "composer.placeholder": "هر چیزی بپرسید یا کاری را شرح دهید…",
+  "composer.ai": "{name} هوش مصنوعی است و ممکن است اشتباه کند",
   "action.send": "ارسال",
   "action.stop": "توقف",
   "action.new": "کار تازه",

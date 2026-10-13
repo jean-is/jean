@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Zum Nachrichtenfeld springen",
   "welcome.question": "Was kann ich für dich tun?",
-  "welcome.ai": "Du sprichst mit einer KI, nicht mit einem Menschen.",
   "starter.discover": "Was kannst du?",
   "starter.discover.prompt": "Was kannst du für mich tun? Nenn mir 3 Beispiele zum Ausprobieren.",
   "starter.summarize": "Einen langen Text zusammenfassen",
@@ -15,6 +14,7 @@
   "composer.label": "Deine Nachricht",
   "composer.add": "Zu deiner Nachricht hinzufügen",
   "composer.placeholder": "Frag irgendetwas oder beschreibe eine Aufgabe…",
+  "composer.ai": "{name} ist eine KI und kann Fehler machen",
   "action.send": "Senden",
   "action.stop": "Stopp",
   "action.new": "Neue Aufgabe",

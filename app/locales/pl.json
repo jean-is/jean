@@ -1,7 +1,6 @@
 {
   "a11y.skip": "Przejdź do pola wiadomości",
   "welcome.question": "W czym mogę pomóc?",
-  "welcome.ai": "Rozmawiasz ze sztuczną inteligencją, nie z człowiekiem.",
   "starter.discover": "Co potrafisz?",
   "starter.discover.prompt": "Co możesz dla mnie zrobić? Podaj 3 przykłady, które mogę wypróbować.",
   "starter.summarize": "Streść długi tekst",
@@ -15,6 +14,7 @@
   "composer.label": "Twoja wiadomość",
   "composer.add": "Dodaj do wiadomości",
   "composer.placeholder": "Zapytaj o cokolwiek lub opisz zadanie…",
+  "composer.ai": "{name} to sztuczna inteligencja i może się mylić",
   "action.send": "Wyślij",
   "action.stop": "Zatrzymaj",
   "action.new": "Nowe zadanie",
