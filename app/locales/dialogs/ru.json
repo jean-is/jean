@@ -80,7 +80,7 @@
   "projects.edit": "Настройки проекта",
   "projects.name": "Название",
   "projects.colour": "Его свет",
-  "projects.local": "Держать этот проект на этом устройстве: никогда не отправлять в облако",
+  "projects.local": "Держать этот проект на этом устройстве",
   "projects.create": "Создать проект",
   "projects.save": "Сохранить",
   "projects.delete": "Удалить этот проект",

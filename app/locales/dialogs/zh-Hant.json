@@ -74,7 +74,7 @@
   "projects.edit": "專案設定",
   "projects.name": "名稱",
   "projects.colour": "燈光顏色",
-  "projects.local": "讓這個專案只留在本裝置：絕不傳送到雲端",
+  "projects.local": "讓這個專案只留在本裝置",
   "projects.create": "建立專案",
   "projects.save": "儲存",
   "projects.delete": "刪除此專案",

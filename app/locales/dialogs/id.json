@@ -74,7 +74,7 @@
   "projects.edit": "Pengaturan proyek",
   "projects.name": "Nama",
   "projects.colour": "Cahayanya",
-  "projects.local": "Simpan proyek ini di perangkat ini: jangan pernah kirim ke cloud",
+  "projects.local": "Simpan proyek ini di perangkat ini",
   "projects.create": "Buat proyek",
   "projects.save": "Simpan",
   "projects.delete": "Hapus proyek ini",

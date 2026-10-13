@@ -76,7 +76,7 @@
   "projects.edit": "Project settings",
   "projects.name": "Name",
   "projects.colour": "Its light",
-  "projects.local": "Keep this project on this device: never send it to the cloud",
+  "projects.local": "Keep this project on this device",
   "projects.create": "Create the project",
   "projects.save": "Save",
   "projects.delete": "Delete this project",

@@ -76,7 +76,7 @@
   "projects.edit": "تنظیمات پروژه",
   "projects.name": "نام",
   "projects.colour": "نورش",
-  "projects.local": "این پروژه روی همین دستگاه بماند: هرگز به ابر فرستاده نشود",
+  "projects.local": "این پروژه روی همین دستگاه بماند",
   "projects.create": "ساختن پروژه",
   "projects.save": "ذخیره",
   "projects.delete": "حذف این پروژه",

@@ -74,7 +74,7 @@
   "projects.edit": "프로젝트 설정",
   "projects.name": "이름",
   "projects.colour": "불빛",
-  "projects.local": "이 프로젝트는 이 기기에만 두기: 클라우드로 보내지 않음",
+  "projects.local": "이 프로젝트는 이 기기에만 두기",
   "projects.create": "프로젝트 만들기",
   "projects.save": "저장",
   "projects.delete": "이 프로젝트 삭제",

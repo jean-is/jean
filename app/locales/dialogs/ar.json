@@ -84,7 +84,7 @@
   "projects.edit": "إعدادات المشروع",
   "projects.name": "الاسم",
   "projects.colour": "ضوؤه",
-  "projects.local": "أبقِ هذا المشروع على هذا الجهاز: لا يُرسَل إلى السحابة أبدًا",
+  "projects.local": "أبقِ هذا المشروع على هذا الجهاز",
   "projects.create": "أنشئ المشروع",
   "projects.save": "احفظ",
   "projects.delete": "احذف هذا المشروع",

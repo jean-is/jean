@@ -76,7 +76,7 @@
   "projects.edit": "Projekteinstellungen",
   "projects.name": "Name",
   "projects.colour": "Sein Licht",
-  "projects.local": "Dieses Projekt auf diesem Gerät behalten: nie in die Cloud schicken",
+  "projects.local": "Dieses Projekt auf diesem Gerät behalten",
   "projects.create": "Projekt anlegen",
   "projects.save": "Speichern",
   "projects.delete": "Dieses Projekt löschen",

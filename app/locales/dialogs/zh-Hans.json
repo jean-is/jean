@@ -74,7 +74,7 @@
   "projects.edit": "项目设置",
   "projects.name": "名称",
   "projects.colour": "灯光颜色",
-  "projects.local": "让这个项目只留在本设备：绝不发送到云端",
+  "projects.local": "让这个项目只留在本设备",
   "projects.create": "创建项目",
   "projects.save": "保存",
   "projects.delete": "删除此项目",

@@ -74,7 +74,7 @@
   "projects.edit": "Cài đặt dự án",
   "projects.name": "Tên",
   "projects.colour": "Ánh sáng của nó",
-  "projects.local": "Giữ dự án này trên thiết bị này: không bao giờ gửi lên đám mây",
+  "projects.local": "Giữ dự án này trên thiết bị này",
   "projects.create": "Tạo dự án",
   "projects.save": "Lưu",
   "projects.delete": "Xóa dự án này",

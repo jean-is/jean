@@ -76,7 +76,7 @@
   "projects.edit": "प्रकल्पाची सेटिंग्ज",
   "projects.name": "नाव",
   "projects.colour": "त्याचा प्रकाश",
-  "projects.local": "हा प्रकल्प याच उपकरणावर ठेवा: कधीही क्लाउडवर पाठवू नका",
+  "projects.local": "हा प्रकल्प याच उपकरणावर ठेवा",
   "projects.create": "प्रकल्प तयार करा",
   "projects.save": "जतन करा",
   "projects.delete": "हा प्रकल्प हटवा",
