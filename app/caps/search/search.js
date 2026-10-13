@@ -8,6 +8,8 @@
 // is a numbered source the answer cites. No Jean server (D23). Settings has a section for it: a
 // switch for each source, a Kiwix server's address and its books, then the connections that
 // search the web too, as the capabilities that hold them say, and those Jean knows, a click away.
+// + in the box has a switch for it (D304): off, a task started meanwhile has no web search, the
+// brain's own included, and one that had it is told, its tools unchanged (D46), and refused.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
@@ -35,6 +37,9 @@ function numbered(pages, ctx) {
 const on = computed(() => /** @type {SourceId[]} */ (app.policy.searches ?? app.settings.value.searches ?? ['wikipedia']))
 /** Each source on, at its address: the library only once it has one. */
 const reading = computed(() => SOURCES.filter((id) => on.value.includes(id)).map((id) => ({ id, address: serviceURL(id, app.settings.value, app.policy) })).filter((source) => source.address))
+
+/** Whether the user turned web search off, from + in the box (D304). */
+const off = computed(() => app.settings.value.search === false)
 
 /** How the brain hears of each source. */
 const NAMED = { wikipedia: 'the web (Wikipedia, in any language)', vikidia: 'Vikidia (the encyclopedia for children)', kiwix: 'the offline library (Wikipedia and other books)' }
@@ -67,13 +72,20 @@ function searchTool(sources) {
   }
 }
 
+/** Its row in + (D304): a switch, which leaves the menu open, as Never send to the cloud does. */
+const row = () => html`<button type="button" role="switch" aria-checked=${off.value ? 'false' : 'true'}
+  @click=${() => updateSettings({ search: off.peek() })}>${icons.websearch}<span>${t('cap.search.name')}</span></button>`
+
 effect(() => register({
   id: 'search',
-  tools: [searchTool(reading.value)],
-  lines: [{ name: 'web_search', line: 'search the web for facts the conversation does not hold' }],
+  tools: [{ ...searchTool(reading.value), off: off.value }],
+  lines: off.value ? [] : [{ name: 'web_search', line: 'search the web for facts the conversation does not hold' }],
   // Vikidia's pages refuse to show beside the conversation: the browser opens them in a tab at once.
   ownTab: (url) => OWN_TAB.some((id) => onSite(serviceURL(id, app.settings.peek(), app.policy), url)),
-  slots: { settings: { at: 70, id: 'search', label: 'cap.search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia' } },
+  slots: {
+    settings: { at: 70, id: 'search', label: 'cap.search.name', icon: icons.websearch, draw: panel, also: () => 'Kiwix Wikipedia Vikidia' },
+    add: { at: 7, draw: row },
+  },
 }))
 
 // ─── Settings › Web search ───────────────────────────────────────────────────

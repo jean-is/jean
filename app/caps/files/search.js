@@ -1,10 +1,22 @@
 // search_files: the passages of the files the brain may read that hold the words asked, or every
 // place a phrase is (D24). Core ranks (search.js) and cuts passages (files.js); this is the tool.
 import { estimateTokens, fileText, indexOf, ranges, splitPages } from '../../core/files.js'
-import { lookup, every } from '../../core/search.js'
+import { lookup, fold } from '../../core/search.js'
 import { isPicture } from '../../core/events.js'
 
 /** @import { FS, ResourceLink } from '../../core/types.js' */
+
+/**
+ * Every place a phrase is in some pages, in order: case, accents and line breaks aside, and never
+ * inside a longer word or code where words have spaces between them.
+ * @param {string[]} pages @param {string} phrase @returns {{ page: number, at: number }[]}
+ */
+export function every(pages, phrase) {
+  const parts = fold(phrase.normalize('NFC')).trim().split(/\s+/).filter(Boolean)
+  if (!parts.length) return []
+  const pattern = new RegExp(`${/^[a-z0-9]/.test(parts[0]) ? '(?<![a-z0-9])' : ''}${parts.map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')}${/[a-z0-9]$/.test(parts[parts.length - 1]) ? '(?![a-z0-9])' : ''}`, 'g')
+  return pages.flatMap((text, i) => [...fold(text).matchAll(pattern)].map((match) => ({ page: i + 1, at: match.index ?? 0 })))
+}
 
 /**
  * The `search_files` tool: the passages of the files the brain may read that hold the words asked,

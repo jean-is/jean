@@ -1,7 +1,7 @@
 // The project's file library: files/sha256-<hash>.<ext> (the original), .md (its text,
 // with a [[page N]] line before each page) and .meta.json. Named by content, so the
 // same file dropped twice is stored once. Conversations link to files, never copy them.
-import { join, readJSON, walk, writeJSON } from './fs.js'
+import { encoder, join, readJSON, walk, writeJSON } from './fs.js'
 import { isPicture } from './events.js'
 import { lexicon, lookup } from './search.js'
 
@@ -16,7 +16,6 @@ export async function sha256Hex(bytes) {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
-const encoder = new TextEncoder()
 /** @param {string} text */
 const utf8 = (text) => encoder.encode(text).length
 

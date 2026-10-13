@@ -51,7 +51,7 @@ function assertBytes(bytes) {
   if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array')
 }
 
-const encoder = new TextEncoder()
+export const encoder = new TextEncoder()
 const decoder = new TextDecoder()
 
 /**

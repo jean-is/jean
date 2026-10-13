@@ -164,7 +164,7 @@ Typed at the start of a word, / and @ open a menu above the box that narrows as 
 
 What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jean is told what each one names.
 
-Once Skills or Connections is found, + in the box has a row for each, which opens a menu beside it on hover or when pressed (D292): the project's skills, by name, or its connections. One picked goes in the message as / would put it, and the menu's last line adds another, in Settings. Once pages in answers are on, + also has Visual answers, a mode (D300): picked, it shows pressed at the foot of the box, and each message asks for maps, diagrams, timelines and checklists where they help, as the ready-made skill of that name does, until it is pressed again.
+Once Skills or Connections is found, + in the box has a row for each, which opens a menu beside it on hover or when pressed (D292): the project's skills, by name, or its connections. One picked goes in the message as / would put it, and the menu's last line adds another, in Settings. Once Web search is found, + also has a switch for it (D304). Once pages in answers are on, + also has Visual answers, a mode (D300): picked, it shows pressed at the foot of the box, and each message asks for maps, diagrams, timelines and checklists where they help, as the ready-made skill of that name does, until it is pressed again.
 
 ## Brains: picker and Auto
 
@@ -219,6 +219,8 @@ There is no Jean server, so search comes from something the user or their organi
 1. The connected cloud brain's own search, with its sources (Anthropic and OpenRouter, which search only when a question needs it; OpenAI and Gemini later), while Wikipedia is the one source on.
 2. The sources built into Jean, each a switch in Settings › Web search (D271), for everyone else, the on-device brain included: Wikipedia, in the user's language, on from the start: free, callable from a browser, in 300+ languages (Wikidata later); Vikidia, the encyclopedia for 8 to 13 year olds, in fifteen languages, a click away; and an offline library, a Kiwix server on the user's computer, a school's hotspot or a company's network, which can also stand for Wikipedia (D254). With another one on, every brain searches what was chosen, its own search set aside. An organisation can choose them: Vikidia alone, for a school.
 3. A search service connected like any other (D192): Exa, which needs no key and no sign-in, is among the services Jean knows, and an organisation can add its own. Settings › Web search lists the connections that search the web, found from what their own tools say, and offers those Jean knows, a click away (D271).
+
+Once found, web search has a switch in + in the box (D304). Off, Jean searches nowhere in tasks started meanwhile, and a task under way is told not to; on again, it searches when a question needs it.
 
 When no route exists, Jean says so and suggests connecting a cloud brain. A shared community proxy should only be considered if real demand appears; DEVS's `proxy.devs.new` is the warning.
 

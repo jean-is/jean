@@ -4,7 +4,7 @@ import { memoryFS, walk } from '../app/core/fs.js'
 import { crc32, readZip, writeZip } from '../app/core/zip.js'
 import { decodeText, docx, extractPages, extractable, isBinary, pageText, paginate, sheetRows, slideText } from '../app/caps/files/extract.js'
 import { addFile, documentPart, estimateTokens, fileMeta, fileText, indexOf, joinPages, pagesThatFit, parsePages, passages, preselect, readTool, splitPages, weigh } from '../app/core/files.js'
-import { searchTool } from '../app/caps/files/search.js'
+import { searchTool, every } from '../app/caps/files/search.js'
 import { isPicture } from '../app/core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../app/caps/backup/archive.js'
 import { officePage } from '../app/caps/files/office.js'
@@ -390,6 +390,15 @@ test('preselect: for a brain too small for a file, the pages that match the mess
   assert.deepEqual(preselect(pages, 'What notice period applies to contract C-4471?', budget), [[1, 1], [27, 27], [32, 32]])
   assert.deepEqual(preselect(pages, 'Summarise this, please.', budget), [[1, 3]], 'nothing stands out: the first pages')
   assert.deepEqual(preselect(pages.slice(0, 2), 'C-4471', budget * 10), [[1, 2]], 'all of it when it fits')
+})
+
+test('every: each place a phrase is, in order, case, accents and line breaks aside, never inside a longer code', () => {
+  const pages = ['Contract C-4471 starts.\nSee contract\nc-4471 again, not C-44710.', 'Nothing here.', 'Le contrat C-4471 est résilié.']
+  assert.deepEqual(every(pages, 'contract C-4471'), [{ page: 1, at: 0 }, { page: 1, at: 28 }])
+  assert.deepEqual(every(pages, 'C-4471').map((place) => place.page), [1, 1, 3])
+  assert.deepEqual(every(pages, 'RESILIE'), [{ page: 3, at: 22 }])
+  assert.deepEqual(every(pages, 'C-4472'), [])
+  assert.deepEqual(every(['解約予告期間は九十日'], '予告期間'), [{ page: 1, at: 2 }])
 })
 
 test('the search tool finds passages across files, best first, with their file, page and source; or every place, counted', async () => {

@@ -2,7 +2,7 @@
 // script, and what is found is marked where it stands in the text.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fold, terms, ranges, passage, keys, lexicon, lookup, every } from '../app/core/search.js'
+import { fold, terms, ranges, passage, keys, lexicon, lookup } from '../app/core/search.js'
 
 test('fold: lower case without accents, as long as the text', () => {
   assert.equal(fold('Résumé CAFÉ Ñandú'), 'resume cafe nandu')
@@ -59,13 +59,4 @@ test('lexicon and lookup: BM25 over several documents at once, rare words weighi
   assert.deepEqual(lookup([b], 'PREAVIS resiliation').map((hit) => hit.passage), [0])
   assert.deepEqual(lookup([a, b], 'zebra'), [])
   assert.ok(hits.every((hit, i) => !i || hit.score <= hits[i - 1].score), 'best first')
-})
-
-test('every: each place a phrase is, in order, case, accents and line breaks aside, never inside a longer code', () => {
-  const pages = ['Contract C-4471 starts.\nSee contract\nc-4471 again, not C-44710.', 'Nothing here.', 'Le contrat C-4471 est résilié.']
-  assert.deepEqual(every(pages, 'contract C-4471'), [{ page: 1, at: 0 }, { page: 1, at: 28 }])
-  assert.deepEqual(every(pages, 'C-4471').map((place) => place.page), [1, 1, 3])
-  assert.deepEqual(every(pages, 'RESILIE'), [{ page: 3, at: 22 }])
-  assert.deepEqual(every(pages, 'C-4472'), [])
-  assert.deepEqual(every(['解約予告期間は九十日'], '予告期間'), [{ page: 1, at: 2 }])
 })

@@ -1,7 +1,6 @@
 // BM25 with words split by Intl.Segmenter, so it works in every script (CJK and Thai have no spaces),
 // over an index made once: one engine for tools, past conversations, requests and documents.
-// Every place a phrase is, for counting. And searching as people type (D133): part of a word is
-// enough, case and accents aside.
+// And searching as people type (D133): part of a word is enough, case and accents aside.
 
 /** @type {Map<string | undefined, Intl.Segmenter>} */
 const segmenters = new Map()
@@ -58,18 +57,6 @@ export function lookup(lexicons, query, split = keys, k1 = 1.2, b = 0.75) {
 
 /** Documents that match a query, best first. @param {string[]} docs @param {string} query @returns {{ index: number, score: number }[]} */
 export const bm25 = (docs, query) => lookup([lexicon(docs)], query).map(({ passage, score }) => ({ index: passage, score }))
-
-/**
- * Every place a phrase is in some pages, in order: case, accents and line breaks aside, and never
- * inside a longer word or code where words have spaces between them.
- * @param {string[]} pages @param {string} phrase @returns {{ page: number, at: number }[]}
- */
-export function every(pages, phrase) {
-  const parts = fold(phrase.normalize('NFC')).trim().split(/\s+/).filter(Boolean)
-  if (!parts.length) return []
-  const pattern = new RegExp(`${/^[a-z0-9]/.test(parts[0]) ? '(?<![a-z0-9])' : ''}${parts.map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')}${/[a-z0-9]$/.test(parts[parts.length - 1]) ? '(?![a-z0-9])' : ''}`, 'g')
-  return pages.flatMap((text, i) => [...fold(text).matchAll(pattern)].map((match) => ({ page: i + 1, at: match.index ?? 0 })))
-}
 
 /**
  * How alike a text is to each of several others, from 0 to 1: the cosine of their word

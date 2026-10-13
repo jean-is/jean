@@ -90,8 +90,8 @@ export const promptRecord = (by, system, state) => metaRecord(by, { prompt: { sy
 export function frozenPrompt(records) {
   const first = records.find((record) => record.meta?.prompt)?.meta?.prompt
   if (!first) return null
-  const state = { ...first.state, tools: [...first.state.tools], deferred: [...first.state.deferred ?? []], sections: { ...first.state.sections } }
-  /** @param {'tools' | 'deferred'} list @param {string[]} names */
+  const state = { ...first.state, tools: [...first.state.tools], deferred: [...first.state.deferred ?? []], off: /** @type {string[]} */ ([]), sections: { ...first.state.sections } }
+  /** @param {'tools' | 'deferred' | 'off'} list @param {string[]} names */
   const add = (list, names) => { state[list] = [...new Set([...state[list], ...names])].sort() }
   for (const record of records) {
     const update = record.update
@@ -102,20 +102,22 @@ export function frozenPrompt(records) {
     if (data.kind === 'language') state.language = data.language
     else if (data.kind === 'date') state.date = data.date
     else if (data.kind === 'tools') add('deferred', data.added)
+    else if (data.kind === 'switch') state.off = [...state.off, ...data.off ?? []].filter((name, i, all) => !data.on?.includes(name) && all.indexOf(name) === i).sort()
     else if (data.kind === 'section') state.sections[data.name] = data.version
   }
-  const { deferred, sections, ...rest } = state
-  return { system: first.system, state: { ...rest, ...(deferred.length && { deferred }), ...(Object.keys(sections).length && { sections }) } }
+  const { deferred, off, sections, ...rest } = state
+  return { system: first.system, state: { ...rest, ...(deferred.length && { deferred }), ...(off.length && { off }), ...(Object.keys(sections).length && { sections }) } }
 }
 
 /**
  * Notes for whatever changed between what the brain knows and now, one change per note.
  * A section that changed is given whole. Tools are only ever added, deferred: found with
- * find_tools (D47).
+ * find_tools (D47); one the user turns off stays declared, and the brain is told (D304).
  * @param {PromptState} known @param {PromptState} now @param {Sections} [sections] their text now
+ * @param {string[]} [off] the tools the user turned off now
  * @returns {Envelope[]}
  */
-export function changeNotes(known, now, sections = {}) {
+export function changeNotes(known, now, sections = {}, off = []) {
   const notes = []
   if (now.language !== known.language) notes.push(noteRecord(`The interface language is now ${now.language}.`, { kind: 'language', language: now.language }))
   if (now.date !== known.date) notes.push(noteRecord(`Today is ${now.date}.`, { kind: 'date', date: now.date }))
@@ -127,6 +129,11 @@ export function changeNotes(known, now, sections = {}) {
   }
   const added = now.tools.filter((name) => !known.tools.includes(name) && !known.deferred?.includes(name))
   if (added.length) notes.push(noteRecord(`New tools can be found with find_tools: ${added.join(', ')}.`, { kind: 'tools', added }))
+  const knows = (/** @type {string} */ name) => known.tools.includes(name) || Boolean(known.deferred?.includes(name))
+  const turned = off.filter((name) => knows(name) && !known.off?.includes(name))
+  if (turned.length) notes.push(noteRecord(`Turned off by the user, not to be called until it is on again: ${turned.join(', ')}.`, { kind: 'switch', off: turned }))
+  const back = (known.off ?? []).filter((name) => !off.includes(name) && now.tools.includes(name))
+  if (back.length) notes.push(noteRecord(`Turned on again by the user: ${back.join(', ')}.`, { kind: 'switch', on: back }))
   return notes
 }
 

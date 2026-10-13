@@ -2,7 +2,8 @@
 // first, and how much of the question's evidence that covers within a budget of tokens. No brain
 // is asked: the same passages, the same evidence spans, the same budgets for every strategy.
 import { estimateTokens, indexOf, preselect } from '../../app/core/files.js'
-import { lookup, every } from '../../app/core/search.js'
+import { lookup } from '../../app/core/search.js'
+import { every } from '../../app/caps/files/search.js'
 import { place } from './gold.js'
 
 /** @typedef {import('./corpus.js').Question} Question */

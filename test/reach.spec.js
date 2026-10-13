@@ -2,7 +2,7 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, openSettings, MAIL_URL, GATEWAY_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, openSettings, openTasks, MAIL_URL, GATEWAY_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -219,6 +219,64 @@ test('web search answers with sources that open', async ({ page }) => {
   await expect(tip).toContainText('Lighthouse')
   await icon
   await expect(page.locator('.activity-list')).toContainText('Searched the web · lighthouse')
+})
+
+test('Web search has a switch in + once it is found: off, a task started then has none, and one that had it is told and refused; on again, each is told (D304)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ urls: { wikipedia: `${url}/wiki/{lang}/w/api.php` } }), MAIL_URL)
+  await turnOn(page, 'Web search')
+  await page.keyboard.press('Escape')
+  const toggle = page.locator('#add-menu').getByRole('switch', { name: 'Web search' })
+  /** Turns it on or off from +, which stays open. @param {boolean} on */
+  const turn = async (on) => {
+    await page.locator('.composer .add').click()
+    await expect(toggle).toHaveAttribute('aria-checked', String(!on))
+    await toggle.click()
+    await expect(toggle).toHaveAttribute('aria-checked', String(on))
+    await expect(page.locator('#add-menu')).toBeVisible()
+    await page.keyboard.press('Escape')
+  }
+  /** Asks, then waits for its answer, the nth, to end. @param {string} text @param {number} n */
+  const asked = async (text, n) => {
+    await ask(page, text)
+    await expect(page.locator('.msg-jean')).toHaveCount(n)
+    await expect(page.locator('.msg-jean:not(.is-streaming)')).toHaveCount(n)
+    await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  }
+  /** What the task's brain was told of its tools since it started, and what it declares. */
+  const told = () => page.evaluate(async () => {
+    const records = (await import('/ui/state.js')).app.current.value?.records ?? []
+    return {
+      notes: records.flatMap(({ update }) => (update?.sessionUpdate === '_system_note' && ['switch', 'tools'].includes(update.data.kind) ? [update.data] : [])),
+      declared: records.find((record) => record.meta?.prompt)?.meta?.prompt.state.tools.includes('web_search'),
+      refused: records.some(({ update }) => update && 'rawOutput' in update && update.rawOutput === 'The user turned web_search off.'),
+    }
+  })
+  const answer = page.locator('.msg-jean .prose').last()
+  await asked('Search the web for lighthouse', 1)
+  await expect(answer).toContainText('Here is what the web says')
+
+  // Off: the task that had it keeps it declared, is told, and its search is refused.
+  await turn(false)
+  await asked('Search the web for lighthouse', 2)
+  await expect(answer).toContainText('I found nothing on the web.')
+  expect(await told()).toEqual({ notes: [{ kind: 'switch', off: ['web_search'] }], declared: true, refused: true })
+  // A task started meanwhile has none.
+  await (await openTasks(page)).locator('.place', { hasText: 'New task' }).click()
+  await asked('Search the web for lighthouse', 1)
+  await expect(answer).toContainText('Here is what I found')
+  expect(await told()).toEqual({ notes: [], declared: false, refused: false })
+
+  // On again: this task can find it, and the first one hears it is back.
+  await turn(true)
+  await asked('Thanks', 2)
+  expect((await told()).notes).toEqual([{ kind: 'tools', added: ['web_search'] }])
+  // The first task, the one less lately busy.
+  await (await openTasks(page)).locator('.history-item').last().click()
+  await expect(page.locator('.msg-jean')).toHaveCount(2)
+  await asked('Thanks', 3)
+  expect((await told()).notes).toEqual([{ kind: 'switch', off: ['web_search'] }, { kind: 'switch', on: ['web_search'] }])
 })
 
 /** What web search declares now: its description, and the brain's own search it gives way to, if any. @param {import('@playwright/test').Page} page */
