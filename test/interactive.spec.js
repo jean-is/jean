@@ -91,14 +91,19 @@ test('a page runs in the answer as it is written, sends what it works out with E
   await expect(first.locator('pre code')).toContainText('sendPrompt(')
 })
 
-test('a page charts with the ECharts Jean lends it, with nothing from the internet', async ({ page }) => {
+test('a page charts with the ECharts Jean lends it, with nothing from the internet, and made to fill a screen, is as tall as a page may be', async ({ page }) => {
   const outside = /** @type {string[]} */ ([])
   page.on('request', (request) => { if (!/^(data|blob):|^http:\/\/(127\.0\.0\.1|localhost):418/.test(request.url())) outside.push(request.url()) })
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Make me a sales explorer')
-  const inside = page.locator('.msg-jean app-page iframe').last().contentFrame()
+  const frame = page.locator('.msg-jean app-page iframe').last()
+  const inside = frame.contentFrame()
   await expect(inside.locator('#chart canvas')).toBeVisible()
+  // Its root and body as tall as its frame, whatever it holds: a page may be 85% of the window.
+  const most = await page.evaluate(() => Math.round(innerHeight * 0.85))
+  await expect.poll(() => frame.evaluate((element) => element.clientHeight)).toBe(most)
+  expect(await inside.locator('#chart canvas').evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(most / 2)
   await inside.locator('#region').selectOption('South')
   await expect(inside.locator('#chart canvas')).toBeVisible()
   // Dark: the chart takes it as it is, keeping what the page set on it last.

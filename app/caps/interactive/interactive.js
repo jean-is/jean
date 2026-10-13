@@ -6,7 +6,8 @@
 // given the user's language and its direction, the room's colours and type as MCP Apps' standard
 // variables (`--color-text-primary`…), a few base styles, and ECharts as `import * as echarts from
 // 'echarts'`: a stand-in that asks Jean for the library, sent only to a page that imports it, whose
-// charts take the room's light or dark. It is as tall as what it shows, and speaks to Jean on a click
+// charts take the room's light or dark. It is as tall as what it shows, or, made to fill a screen
+// (its root or body as tall as its frame, 100% or 100vh), as tall as a page may be; it speaks to Jean on a click
 // of the user's only: `sendPrompt(text)` sends the text as the user's next message, as a follow-up
 // does, and a link opens in a new tab. With Run its code off, it is code. Copy puts its source on the
 // clipboard. Loaded with the first message, for its rule, then at each visit, so that pages written
@@ -278,7 +279,7 @@ class AppPage extends HTMLElement {
     const frame = this.querySelector('iframe')
     if (!frame || !source || source !== frame.contentWindow) return
     const answer = (/** @type {Record<string, unknown>} */ reply, /** @type {Transferable[]} */ transfer = []) => frame.contentWindow?.postMessage({ ...reply, id: data.id }, '*', transfer)
-    if (Number.isFinite(data?.height)) frame.style.blockSize = `${Math.max(32, Math.min(data.height, innerHeight * 0.85))}px`
+    if (Number.isFinite(data?.height)) frame.style.blockSize = `${Math.max(32, data.fills ? innerHeight * 0.85 : Math.min(data.height, innerHeight * 0.85))}px`
     else if (data?.need === 'echarts') void library().then(({ text }) => frame.contentWindow?.postMessage({ echarts: text }, '*'))
     else if (Object.hasOwn(LENT, data?.need)) void part(LENT[data.need]).then((text) => answer({ text }))
     else if (data?.need === 'maplibre') void this.maps().then(answer)

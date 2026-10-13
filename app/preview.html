@@ -18,7 +18,8 @@
      lets it (D158): a frame's own download is a navigation, which Jean's frame-src refuses in
      WebKit. A link its code clicks off the page, as most code that saves a file does, too. A page
      in an answer (D289) comes as it is written (`open`): the rest is written as it comes, and the
-     page closed once it is whole. It also says how tall it is, and may send the user's next message
+     page closed once it is whole. It also says how tall it is, or that it is made to fill its frame
+     whatever it holds, as a page written for a whole screen is, and may send the user's next message
      with `sendPrompt(text)`, which Jean takes only on a click of the user's. A doctype first, or
      the policy would put every page in quirks mode. -->
 <script>onmessage = ({ data, source }) => {
@@ -55,7 +56,20 @@
     event.preventDefault()
     if (!saved(link)) parent.postMessage({ open: link.getAttribute('href') }, '*')
   })
-  new ResizeObserver(() => parent.postMessage({ height: document.documentElement.offsetHeight }, '*')).observe(document.documentElement)
+  // How tall it is, and whether it is made to fill its frame: its root or body as tall as the frame
+  // (100%, 100vh), whatever it holds, and so taller without them. Measured with a sheet of its own,
+  // so that no attribute of the page changes, which its diagrams watch.
+  const root = document.documentElement, own = new CSSStyleSheet()
+  own.replaceSync('html, body { height: auto !important; max-height: none !important }')
+  own.disabled = true
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, own]
+  new ResizeObserver(() => {
+    const height = root.offsetHeight
+    own.disabled = false
+    const fills = root.offsetHeight !== height
+    own.disabled = true
+    parent.postMessage({ height, fills }, '*')
+  }).observe(root)
 }
 </script>
 </html>

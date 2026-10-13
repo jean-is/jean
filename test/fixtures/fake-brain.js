@@ -329,11 +329,13 @@ const SPLITTER = `Here is a bill splitter:
 
 Type the bill and how many you are.`
 /** A page that charts with ECharts, which Jean lends it (D289): a region to pick, its sales drawn. */
+/** Written as brains write a page for a whole screen: its root and body as tall as the frame, the chart the rest. */
 const EXPLORER = `Pick a region:
 
 \`\`\`html
+<style>html, body { block-size: 100% } body { display: flex; flex-direction: column } #chart { flex: 1 }</style>
 <label>Region <select id="region"><option>North</option><option>South</option></select></label>
-<div id="chart" style="block-size: 220px"></div>
+<div id="chart"></div>
 <script type="module">
   import * as echarts from 'echarts'
   const sales = { North: [1200, 1340], South: [950, 1010] }
