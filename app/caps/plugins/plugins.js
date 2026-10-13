@@ -394,6 +394,8 @@ effect(() => register({
   slots: {
     above: { at: 50, draw: () => drawing('above').map((host) => html`<aside class="plugin-above" aria-label=${shownIn(host.manifest, locale.value).title}>${drawn(host, 'above', {})}</aside>`) },
     answer: { at: 50, draw: (/** @type {{ text: string, at: string }} */ { text, at }) => drawing('answer').map((host) => html`<span class="plugin-answer">${drawn(host, 'answer', { text }, at)}</span>`) },
+    // A call a plugin decided says so by its title (D299).
+    by: { at: 50, draw: (/** @type {{ by: string }} */ { by }) => installed.value.filter((manifest) => manifest.name === by).map((manifest) => shownIn(manifest, locale.value).title)[0] },
     settings: { at: 97, id: 'plugins', label: 'cap.plugins.name', icon: icons.bolt, draw: panel },
   },
 }))

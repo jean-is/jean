@@ -175,7 +175,7 @@ test('loop: a tool.check hook refuses, with or without a reason, or lets through
   assert.deepEqual(await run(() => ({ decision: 'allow' }), { ...readTool, reserved: true }, 'never'), { output: 'The user declined this action.', asked: 0 })
 })
 
-test('loop: a call a hook refused or asked about keeps whose answer it was, for whoever follows the records; one the rules decided keeps none (D299)', async () => {
+test('loop: a call a hook refused, asked about or allowed keeps whose answer it was and what it was, for whoever follows the records; one the rules decided keeps none (D299)', async () => {
   const run = async (/** @type {any[]} */ hooks, rule = 'allow') => {
     const call = { id: 'a', name: 'read', args: { path: 'x' } }
     const { stream } = fakeStream([[{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })], [done('end', { role: 'assistant', content: 'ok' })]])
@@ -185,8 +185,10 @@ test('loop: a call a hook refused or asked about keeps whose answer it was, for 
       rule: () => /** @type {any} */ (rule), askPermission: async () => 'allow_once', persist: async (added) => { kept.push(...added) } })
     return kept.findLast((record) => record.update?.toolCallId === 'a').update._meta
   }
-  assert.equal((await run([{ on: 'tool.check', by: 'school', tier: 'user', run: () => ({ decision: 'never', reason: 'Not at school.' }) }])).by, 'school')
-  assert.equal((await run([{ on: 'tool.check', by: 'careful', run: () => ({ decision: 'ask' }) }])).by, 'careful')
+  const whose = (/** @type {any} */ meta) => [meta.by, meta.decision]
+  assert.deepEqual(whose(await run([{ on: 'tool.check', by: 'school', tier: 'user', run: () => ({ decision: 'never', reason: 'Not at school.' }) }])), ['school', 'never'])
+  assert.deepEqual(whose(await run([{ on: 'tool.check', by: 'careful', run: () => ({ decision: 'ask' }) }])), ['careful', 'ask'])
+  assert.deepEqual(whose(await run([{ on: 'tool.check', by: 'trusting', run: () => ({ decision: 'allow' }) }], 'ask')), ['trusting', 'allow'])
   assert.equal((await run([{ on: 'tool.check', by: 'watching', run: (/** @type {any} */ e, /** @type {any} */ next) => next(e) }], 'never')).by, undefined)
 })
 

@@ -36,7 +36,7 @@ async function add(page) {
 /** What the plugin keeps, in its data.json. @param {import('@playwright/test').Page} page */
 const kept = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('plugins/word-count/data.json') ?? '{}'))
 
-test('a plugin read from its address is added, runs apart, draws under each answer and above the box, keeps its data, follows the records, and refuses only with the right', async ({ page }) => {
+test('a plugin read from its address is added, runs apart, draws under each answer and above the box, keeps its data, follows the records and what going back removes, and refuses only with the right, which the activity names', async ({ page }) => {
   await serve(page)
   await start(page)
   await connectFakeBrain(page)
@@ -67,8 +67,19 @@ test('a plugin read from its address is added, runs apart, draws under each answ
   await ask(page, 'Make me a web page for the bakery')
   await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Word count keeps files as they are.')
-  // It follows the records kept, each refusal saying whose it was.
+  // It follows the records kept, each refusal saying whose it was, and so does the activity.
   await expect.poll(async () => (await kept(page)).stopped?.by).toBe('word-count')
+  const activity = page.locator('.msg-jean').last().locator('.activity')
+  await activity.locator('summary').first().click()
+  const refused = activity.locator('.activity-list li[data-status="failed"]')
+  await refused.locator('summary').click()
+  await expect(refused.locator('.step-facts')).toContainText('Refused by Word count')
+  // Going back to the request, it hears what was removed, once (D188).
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.locator('.msg-actions.is-request').last().getByRole('button', { name: 'Try again' }).click()
+  await expect.poll(async () => (await kept(page)).removed).toBeGreaterThan(1)
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(2)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Word count keeps files as they are.')
 
   // Added again without that right, its refusal counts for nothing.
   await page.unroute('https://plugins.test/word-count/**')

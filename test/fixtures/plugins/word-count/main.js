@@ -1,6 +1,6 @@
 // A plugin for the tests (D296): it counts each answer's words, under the answer and above the box,
 // keeps the last count, says when it is reset, keeps files as they are, when it may refuse, and notes
-// what was stopped.
+// what was stopped, and how many records going back to a request removed.
 export function register(on, $) {
   let words = 0
   const count = (text) => text.split(/\s+/).filter(Boolean).length
@@ -16,6 +16,10 @@ export function register(on, $) {
   on('record', { type: 'tool_call' }, async (e, next) => {
     const call = e.record.update
     if (call._meta?.declined) await $.store.set('stopped', { title: call.title, by: call._meta.by ?? null })
+    return next(e)
+  })
+  on('record', { type: 'removed' }, async (e, next) => {
+    await $.store.set('removed', e.records.length)
     return next(e)
   })
   $.slot('answer', ({ text }) => ({ text: `${count(text)} words`, muted: true }))

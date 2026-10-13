@@ -271,9 +271,9 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     if (tool.reserved && STRICT[decision] < STRICT[ruled]) decision = ruled
     const refused = decision === 'never' ? said?.refuse ?? said?.reason : undefined
     const { checked } = found
-    // What the card keeps: the check's, and a hook's (the guard that asks, D295), with whose answer it was (D299).
+    // What the card keeps: the check's, and a hook's (the guard that asks, D295), with whose answer it was and what it was (D299).
     const by = decision === (said?.refuse ? 'never' : said?.decision) ? said?.by : undefined
-    if (checked?.meta || said?.meta || by) info._meta = { ...info._meta, ...checked?.meta, ...said?.meta, ...(by && { by }) }
+    if (checked?.meta || said?.meta || by) info._meta = { ...info._meta, ...checked?.meta, ...said?.meta, ...(by && { by, decision }) }
     if (decision === 'ask') {
       await waiting?.(info)
       context.answer = await askPermission({ toolCall: { ...info, ...(checked?.content && { content: checked.content }) }, step })

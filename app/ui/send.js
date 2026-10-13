@@ -317,6 +317,8 @@ export async function rewind(upTo) {
   if (!current || current.path !== path || app.busy.value) return
   const records = [...current.records.slice(0, upTo), ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
   await rewriteRecords(app.fs, current.path, records)
+  // Whoever follows the records hears once what was left out (D299), as keepRecords() tells what is kept: nothing waits on it.
+  fire(contributions().hooks, 'record', { task: current.path, type: 'removed', records: current.records.slice(upTo).filter((record) => !records.includes(record)) }, () => {})
   app.current.value = { ...current, records }
   await retry()
 }

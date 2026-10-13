@@ -351,11 +351,15 @@ function toolDetails(tool) {
   const input = shown(tool.rawInput)
   const output = shown(tool.rawOutput)
   return html`<div class="step-body">
-    <p class="step-facts"><code dir="ltr">${tool.name}</code>${tool._meta?.ms === undefined ? nothing : ` · ${formatDuration(tool._meta.ms)}`}</p>
+    <p class="step-facts"><code dir="ltr">${tool.name}</code>${tool._meta?.ms === undefined ? nothing : ` · ${formatDuration(tool._meta.ms)}`}${tool._meta?.by ? whose(tool._meta) : nothing}</p>
     ${input ? html`<p class="step-label">${t('activity.input')}</p><pre tabindex="0" dir="auto">${input}</pre>` : nothing}
     ${output ? html`<p class="step-label">${t('activity.output')}</p><pre tabindex="0" dir="auto">${output}</pre>` : nothing}
   </div>`
 }
+
+/** ui/whose.js, once a call says whose rule decided it (D299). */
+const said = signal(/** @type {typeof import('./whose.js') | null} */ (null))
+const whose = (/** @type {any} */ meta) => said.value?.whose(meta) ?? (import('./whose.js').then((module) => (said.value = module)), nothing)
 
 /**
  * Arguments and results as text: strings as they are, so code stays readable, the rest as JSON.
