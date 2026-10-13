@@ -2,7 +2,8 @@
 // is a deck, shown a slide at a time: numbered, its settings drawn (a title in the middle, the
 // colours swapped), its notes for the speaker never shown, paged with its buttons and keys, and
 // copied as its source and the slide's picture at once, and printed one slide under another. While
-// the answer writes it, the slide being written shows, then the first, unless the user has paged.
+// the answer writes it, the slide being written shows, then the first, unless the user has paged,
+// even when the answer ends without the block's closing fence.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
 
@@ -70,12 +71,13 @@ test('while its block is written, the slide being written shows, then the first,
     await (await import('/caps/skills/skills.js')).redeclare()
     await unlock('slides')
   })
-  // An answer as the brain writes it, drawn again in the same place as more of it comes.
-  const write = (/** @type {string} */ text) => page.evaluate(async (text) => {
+  // An answer as the brain writes it, drawn again in the same place as more of it comes, then once it has ended.
+  const write = (/** @type {string} */ text, still = true) => page.evaluate(async ([text, still]) => {
     const [{ render }, { markdown }] = await Promise.all([import('lit-html'), import('/ui/markdown.js')])
-    const answer = document.querySelector('#written') ?? document.body.appendChild(Object.assign(document.createElement('article'), { id: 'written', className: 'msg msg-jean is-streaming' }))
-    render(markdown(text), answer)
-  }, text)
+    const answer = document.querySelector('#written') ?? document.body.appendChild(Object.assign(document.createElement('article'), { id: 'written', className: 'msg msg-jean' }))
+    answer.classList.toggle('is-streaming', Boolean(still))
+    render(markdown(String(text), undefined, Boolean(still)), answer)
+  }, [text, still])
   const block = '```marp\n# One\n\n---\n\n## Two\n\n---\n\n## Three\n```'
   const slide = page.locator('#written app-slides .slide.is-shown')
 
@@ -83,6 +85,12 @@ test('while its block is written, the slide being written shows, then the first,
   await expect(slide).toHaveAttribute('aria-label', 'Slide 2 of 2')
   await expect(slide.getByRole('heading')).toHaveText('Two')
   await write(`Slides:\n\n${block}\n\nThree slides.`)
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 3')
+
+  // An answer that ends without the closing fence, as a brain may write it, is whole all the same.
+  await write(`Slides:\n\n${block.slice(0, -4)}`)
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 3 of 3')
+  await write(`Slides:\n\n${block.slice(0, -4)}`, false)
   await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 3')
 
   // Paged while it is written, it stays where the user is.

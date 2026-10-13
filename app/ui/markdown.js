@@ -11,6 +11,8 @@ import { unlock } from './caps.js'
 
 /** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
 let cited = null
+/** Whether the text being rendered is an answer still being written, whose last block may not be whole yet. */
+let writing = false
 
 // Formulas in LaTeX (D185): $…$ and \(…\) in a line, $$…$$ and \[…\] set apart. As in Pandoc, a $
 // opens before a non-space and closes after one, never before a digit, so "$5 and $10" stays text.
@@ -26,15 +28,17 @@ const parser = new Marked({ extensions: [
 /** marked's tokens, formulas among them. @param {string} source */
 export const lex = (source) => parser.lexer(source)
 
-/** @param {string} source @param {Sources} [sources] */
-export function markdown(source, sources) {
+/** @param {string} source @param {Sources} [sources] @param {boolean} [still] true while the answer is still being written */
+export function markdown(source, sources, still = false) {
   cited = sources ?? null
+  writing = still
   try {
     return blocks(lex(source))
   } catch {
     return html`<p>${source}</p>`
   } finally {
     cited = null
+    writing = false
   }
 }
 
@@ -145,7 +149,7 @@ export const withFormulas = (text, draw = formula) => text.split(FORMULAS).map((
 /** A LaTeX document, which the math capability lays out; until then, or if it can't, its source shows. @param {any} token */
 function latex(token) {
   drawing ??= unlock('math')
-  return html`<app-latex dir="auto" source=${token.text} ?open=${!CLOSED.test(token.raw)}></app-latex>`
+  return html`<app-latex dir="auto" source=${token.text} ?open=${open(token)}></app-latex>`
 }
 
 /** Widgets (D196): a block of a kind the room's skills declare, which the skills capability keeps, drawn by its capability. */
@@ -159,11 +163,14 @@ function widget(token) {
   const kind = String(token.lang).toLowerCase()
   if (!declared.value.has(kind)) return null
   if (Object.hasOwn(WIDGETS, kind)) unlock(WIDGETS[kind])
-  return drawn.value[kind]?.(token.text, !CLOSED.test(token.raw)) ?? null
+  return drawn.value[kind]?.(token.text, open(token)) ?? null
 }
 
-// marked doesn't wait for a closing fence: until it is written, the block is still being written.
+// marked doesn't wait for a closing fence: until it is written, the block is still being written. An
+// answer that ended without one (a brain may leave it out) is as whole as it will be.
 const CLOSED = /^ {0,3}(`{3,}(?!`)|~{3,}(?!~))[^\n]*\n(?:[\s\S]*\n)? {0,3}\1[`~]* *\n*$/
+/** @param {any} token */
+const open = (token) => writing && !CLOSED.test(token.raw)
 /** A fence whose first line is still being written, kind and all: nothing to show yet. @param {any} token */
 const opening = (token) => token.codeBlockStyle !== 'indented' && !token.raw.includes('\n')
 

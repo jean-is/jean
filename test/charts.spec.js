@@ -118,7 +118,7 @@ test('while its block is written, the chart is drawn as far as it goes, then to 
   const write = (/** @type {string} */ text) => page.evaluate(async (text) => {
     const [{ render }, { markdown }] = await Promise.all([import('lit-html'), import('/ui/markdown.js')])
     const answer = document.querySelector('#written') ?? document.body.appendChild(Object.assign(document.createElement('article'), { id: 'written', className: 'msg msg-jean is-streaming' }))
-    render(markdown(text), answer)
+    render(markdown(text, undefined, true), answer)
   }, text)
   const block = '```echarts\n{"title":{"text":"Croissants sold"},"xAxis":{"type":"category","data":["Mon","Tue","Wed"]},"yAxis":{"type":"value"},"series":[{"name":"Croissants","type":"bar","data":[120,1250.5,90]}]}\n```'
   const answer = page.locator('#written')
