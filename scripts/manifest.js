@@ -29,6 +29,7 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   computer: ['vendor/just-bash', 'vendor/quickjs', 'vendor/pyodide'],
   live: ['vendor/transformers'],
   pictures: ['vendor/transformers'],
+  meaning: ['vendor/transformers'],
   math: ['vendor/temml'],
   charts: ['vendor/echarts'],
   scores: ['vendor/abcjs'],
