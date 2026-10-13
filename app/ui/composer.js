@@ -193,7 +193,7 @@ class Composer extends Element {
  */
 function primary(busy, empty, hands) {
   const on = hands !== 'off'
-  if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-label=${t('action.stop')}>${icons.stop}</button>`
+  if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-keyshortcuts="Escape" aria-label=${t('action.stop')}>${icons.stop}</button>`
   if (empty ? on || loaded.value.has('live') : on && busy) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
     aria-keyshortcuts=${SHORTCUTS.live} aria-label=${t(on ? 'live.stop' : 'live.start')}
     @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`

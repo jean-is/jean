@@ -3,7 +3,7 @@
 // ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
 // ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language
 // (D130, D238, D253); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
-// ⌘S saves a copy of the open task and ⌘⌫ deletes it, after asking (D313).
+// ⌘S saves a copy of the open task and ⌘⌫ deletes it, after asking (D313); Escape stops an answer (D315).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
@@ -244,4 +244,31 @@ test('⌘S saves a copy of the open task, and ⌘⌫ deletes it after asking, fr
   await expect(row('Plan the week')).toHaveCount(0)
   await expect(row('Book a table')).toHaveCount(1)
   await expect(page.locator('.hero-question')).toBeVisible()
+})
+
+test('Escape stops the answer being written, as Stop does, once nothing else takes it: Settings, the / menu (D315)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // The answer waits for the user to turn the browser on.
+  await ask(page, 'Show me the bakery site')
+  await expect(page.locator('.msg-jean .approval').getByRole('button', { name: 'Turn it on' })).toBeVisible()
+  const stop = page.locator('.composer .send.is-stop')
+  await expect(stop).toHaveAttribute('aria-keyshortcuts', 'Escape')
+  const settings = await openSettings(page, 'Keyboard shortcuts')
+  await expect(settings.locator('.keyboard > div', { hasText: 'Stop' }).locator('kbd')).toHaveText('Esc')
+  await closeSettings(page)
+  await expect(stop).toBeVisible()
+  const box = page.locator('#prompt')
+  await box.click()
+  await box.pressSequentially('/')
+  await expect(page.locator('#complete .complete-heading').first()).toBeVisible()
+  await box.press('Escape')
+  await expect(page.locator('#complete .complete-heading')).toHaveCount(0)
+  await expect(stop).toBeVisible()
+  // Never while an IME composes.
+  await box.dispatchEvent('keydown', { key: 'Escape', isComposing: true, bubbles: true })
+  await expect(stop).toBeVisible()
+  await box.press('Escape')
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  await expect(box).toHaveValue('/')
 })

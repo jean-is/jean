@@ -477,6 +477,16 @@ async function suggestActions(at, answer, records, conversation) {
   if (ids.length) app.actions.value = { ...app.actions.value, [at]: ids }
 }
 
+// Escape stops the answer on screen, as Stop does, unless something else takes it first: a dialog, a menu,
+// the box's / and @ menu, a pane with the keyboard, or a field of its own, as a request being edited (D315).
+document.addEventListener('keydown', (event) => {
+  const at = /** @type {Element} */ (event.target)
+  if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing || !app.busy.peek() || at.closest('.pane')
+    || (at.matches(':read-write') && at.id !== 'prompt') || document.querySelector('dialog:modal, [popover]:not([popover=manual]):popover-open')) return
+  event.preventDefault()
+  stop()
+})
+
 // ─── Cache warming (D49) ─────────────────────────────────────────────────────
 
 /** When a brain was last asked, by conversation ('' before one exists): one answered out of sight (D147) keeps only its own cache warm. */

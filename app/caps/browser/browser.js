@@ -178,11 +178,12 @@ export function close() {
 export const toggle = () => (open.peek() ? close() : show())
 
 // Escape closes it while the keyboard is in the pane, or nowhere, as after an address is sent, and
-// no dialog over the room takes it; a site's own page keeps its keys, which never reach Jean.
+// no dialog over the room takes it, nor an answer being written, which it stops first (D315); a site's
+// own page keeps its keys, which never reach Jean.
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape' || event.isComposing || event.defaultPrevented || !open.peek()) return
   const at = document.activeElement
-  if (at?.closest('app-browser') || ((!at || at === document.body) && !document.querySelector('dialog:modal'))) close()
+  if (at?.closest('app-browser') || ((!at || at === document.body) && !document.querySelector('dialog:modal') && !app.busy.peek())) close()
 })
 
 // In the address (D220): the address it opened, as Jean knows it, not where a site went from there;
