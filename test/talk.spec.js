@@ -145,14 +145,18 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
   expect(kept).toEqual({ requests: ['Explain photosynthesis in simple words'], title: 'Explain photosynthesis simple' })
 })
 
-test('a double click puts a request in a box; Escape leaves it, Enter or Send, once agreed, asks it again in its new words (D312)', async ({ page }) => {
+test('a double click or Enter puts a request in a box; Escape leaves it, Enter or Send, once agreed, asks it again in its new words (D312)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
+  // A request is sent once the answer before it has ended.
+  const ended = page.locator('.send:not(.is-stop)')
   await ask(page, 'Explain photosynthesis in simple words')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  await expect(ended).toBeVisible()
   await ask(page, 'Explain gravity')
   await expect(page.locator('.msg-jean .prose')).toHaveCount(2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  await expect(ended).toBeVisible()
   const first = page.locator('p.msg-user').first()
   const box = page.locator('app-edit textarea')
   await first.dblclick()
@@ -161,8 +165,12 @@ test('a double click puts a request in a box; Escape leaves it, Enter or Send, o
   await box.press('Escape')
   await expect(box).toHaveCount(0)
   await expect(first).toHaveText('Explain photosynthesis in simple words')
+  await expect(first).toBeFocused()
+  // From the keyboard: Enter on a request puts it in the box, and goes no further.
+  await first.press('Enter')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Explain photosynthesis in simple words')
   // Until the user agrees, the new words stay in the box and nothing is removed.
-  await first.dblclick()
   await box.fill('Explain photosynthesis to a child')
   page.once('dialog', (dialog) => dialog.dismiss())
   await box.press('Enter')
@@ -178,6 +186,7 @@ test('a double click puts a request in a box; Escape leaves it, Enter or Send, o
   await expect(page.locator('.msg-jean .prose')).toHaveCount(1)
   await expect(page.locator('.msg-jean .prose')).toContainText('You asked: Explain photosynthesis to a child')
   await expect(page.locator('.msg-actions.is-request time')).toHaveText('now')
+  await expect(page.locator('#prompt')).toBeFocused()
   // The conversation's file says the same, its title kept.
   const kept = await page.evaluate(async () => {
     const [{ app }, { loadConversation }, { foldTurns }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
@@ -185,6 +194,14 @@ test('a double click puts a request in a box; Escape leaves it, Enter or Send, o
     return { requests: foldTurns(conversation?.records ?? []).map((turn) => turn.user?.text), title: conversation?.title }
   })
   expect(kept).toEqual({ requests: ['Explain photosynthesis to a child'], title: 'Explain photosynthesis simple' })
+  // While its answer is written, a request is neither edited nor in the keyboard's way.
+  await expect(page.locator('.msg-jean .prose')).toContainText('Anything else?')
+  await expect(ended).toBeVisible()
+  await ask(page, 'Write a letter to my bank')
+  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(page.locator('p.msg-user').last()).not.toHaveAttribute('tabindex')
+  await page.locator('p.msg-user').last().dblclick()
+  await expect(box).toHaveCount(0)
 })
 
 test('Duplicate from here: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {

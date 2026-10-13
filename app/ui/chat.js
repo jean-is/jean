@@ -164,6 +164,11 @@ function turnView(turn, live, files, upTo, last, sources) {
   const since = turn.notes.map((note) => note.data).find((data) => data.kind === 'since')
   // A routine's request, sent by Jean on its schedule (D122): its line opens the routine and its runs.
   const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
+  // A double click on its request, or Enter on it, edits it, once Try again could (D312); Enter goes no further.
+  const edit = (/** @type {Event} */ event) => {
+    event.preventDefault()
+    if (!(last && app.busy.value)) import('./edit.js').then(() => { editing.value = turn.at })
+  }
   return html`<li class="turn">
     ${since?.kind === 'since' ? html`<p class="since">${icons.clock}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
@@ -172,7 +177,8 @@ function turnView(turn, live, files, upTo, last, sources) {
       ${isPicture(link) ? shared(link) : html`<button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>`}
     </li>`)}</ul>` : nothing}
     ${turn.user?.text ? editing.value === turn.at ? html`<app-edit class="msg-user" .request=${turn.user}></app-edit>`
-      : html`<p class="msg msg-user" dir="auto" @dblclick=${() => !(last && app.busy.value) && import('./edit.js').then(() => { editing.value = turn.at })}>${withFormulas(turn.user.text)}</p>` : nothing}
+      : html`<p class="msg msg-user" dir="auto" tabindex=${last && app.busy.value ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
+        @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && edit(event)}>${withFormulas(turn.user.text)}</p>` : nothing}
     ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
