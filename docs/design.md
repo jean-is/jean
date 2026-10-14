@@ -89,7 +89,7 @@ Mail and Human start with the drawer open beside the conversation (D165). Names 
 
 | Item | Limit |
 |---|---|
-| CSS | ≤ 12 KB gzipped for the room; another look adds its own file only when chosen |
+| CSS | ≤ 12.5 KB gzipped for the room; another look adds its own file only when chosen |
 | Display font | ≤ 30 KB |
 | Images | 0 |
 | Icons | ~20 inline SVGs |
