@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Het onzichtbare watermerk is het watermerk dat dit verslag noemt",
   "certificates.watermark.other": "Het onzichtbare watermerk is niet het watermerk dat dit verslag noemt",
   "certificates.watermark.found": "Het draagt een onzichtbaar watermerk",
-  "certificates.watermark.none": "Geen onzichtbaar watermerk gevonden"
+  "certificates.watermark.none": "Geen onzichtbaar watermerk gevonden",
+  "certificates.watermark.unread": "Zodra {name} op dit apparaat naar een onzichtbaar watermerk heeft gezocht, zoekt deze pagina er ook naar"
 }

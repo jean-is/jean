@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Àmì omi àìrí rẹ̀ ni èyí tí àkọsílẹ̀ yìí dárúkọ",
   "certificates.watermark.other": "Àmì omi àìrí rẹ̀ kì í ṣe èyí tí àkọsílẹ̀ yìí dárúkọ",
   "certificates.watermark.found": "Ó ní àmì omi àìrí",
-  "certificates.watermark.none": "A kò rí àmì omi àìrí kankan"
+  "certificates.watermark.none": "A kò rí àmì omi àìrí kankan",
+  "certificates.watermark.unread": "Ní kété tí {name} bá ti wá àmì omi àìrí lórí ẹ̀rọ yìí, ojú-ìwé yìí náà yóò wá a"
 }

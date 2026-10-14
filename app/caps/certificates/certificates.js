@@ -11,9 +11,7 @@ import { serviceURL } from '../../core/settings.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { html } from 'lit-html'
-import { checkGiven, card, credentialsGiven, credentialsCard } from './card.js'
-import { NONE } from '../receipt/c2pa.js'
-import { dataOf } from '../pictures/watermark.js'
+import { checkGiven, card, credentialsGiven, credentialsCard, watermarksOf } from './card.js'
 
 /** @import { Checked, Credentials } from './card.js' */
 
@@ -63,11 +61,7 @@ const checkTool = {
     }))
     const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null) }), credentialsGiven(given)])
     // Each picture's watermark, when asked (D324): TrustMark's 61 bits, set beside those its credentials name.
-    for (const { name, bytes } of args?.watermark ? given.filter(({ name }) => /\.(png|jpe?g|webp|gif|avif)$/i.test(name)) : []) {
-      const data = dataOf(await (await import('../pictures/device.js')).watermarkOf(bytes))
-      const one = credentials.find((entry) => entry.name === name) ?? credentials[credentials.push({ ...NONE, name, absent: true }) - 1]
-      one.found = !data ? 'none' : !one.watermark ? 'found' : one.watermark === data ? 'match' : 'other'
-    }
+    if (args?.watermark) await watermarksOf(given, credentials, async (bytes) => (await import('../pictures/device.js')).watermarkOf(bytes))
     if (!checked && !credentials.length) return 'None of these files is a certificate of an answer, its proof, or a picture or film with Content Credentials.'
     // Both in `_meta.checked`, which places the card in the answer: the certificate's reading, and the credentials.
     const fingerprint = await (await import('../receipt/receipt.js')).fingerprint()

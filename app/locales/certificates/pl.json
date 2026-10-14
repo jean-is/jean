@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Niewidoczny znak wodny jest tym, który wymienia ten zapis",
   "certificates.watermark.other": "Niewidoczny znak wodny nie jest tym, który wymienia ten zapis",
   "certificates.watermark.found": "Ma niewidoczny znak wodny",
-  "certificates.watermark.none": "Nie znaleziono niewidocznego znaku wodnego"
+  "certificates.watermark.none": "Nie znaleziono niewidocznego znaku wodnego",
+  "certificates.watermark.unread": "Gdy {name} raz poszuka niewidocznego znaku wodnego na tym urządzeniu, ta strona też będzie go szukać"
 }

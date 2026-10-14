@@ -37,5 +37,6 @@
   "certificates.watermark.match": "보이지 않는 워터마크가 이 기록에 적힌 것과 같아요",
   "certificates.watermark.other": "보이지 않는 워터마크가 이 기록에 적힌 것과 달라요",
   "certificates.watermark.found": "보이지 않는 워터마크가 있어요",
-  "certificates.watermark.none": "보이지 않는 워터마크를 찾지 못했어요"
+  "certificates.watermark.none": "보이지 않는 워터마크를 찾지 못했어요",
+  "certificates.watermark.unread": "{name}이 이 기기에서 보이지 않는 워터마크를 한 번 찾고 나면, 이 페이지에서도 찾아요"
 }

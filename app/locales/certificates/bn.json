@@ -37,5 +37,6 @@
   "certificates.watermark.match": "এর অদৃশ্য ওয়াটারমার্কটি সেটিই, যার নাম এই বিবরণে আছে",
   "certificates.watermark.other": "এর অদৃশ্য ওয়াটারমার্কটি সেটি নয়, যার নাম এই বিবরণে আছে",
   "certificates.watermark.found": "এতে একটি অদৃশ্য ওয়াটারমার্ক আছে",
-  "certificates.watermark.none": "কোনো অদৃশ্য ওয়াটারমার্ক পাওয়া যায়নি"
+  "certificates.watermark.none": "কোনো অদৃশ্য ওয়াটারমার্ক পাওয়া যায়নি",
+  "certificates.watermark.unread": "{name} এই ডিভাইসে একবার অদৃশ্য ওয়াটারমার্ক খুঁজলে এই পেজও খুঁজবে"
 }

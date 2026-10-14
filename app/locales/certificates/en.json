@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Its invisible watermark is the one this record names",
   "certificates.watermark.other": "Its invisible watermark isn’t the one this record names",
   "certificates.watermark.found": "It carries an invisible watermark",
-  "certificates.watermark.none": "No invisible watermark found"
+  "certificates.watermark.none": "No invisible watermark found",
+  "certificates.watermark.unread": "Once {name} has looked for an invisible watermark on this device, this page looks for one too"
 }

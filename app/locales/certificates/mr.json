@@ -37,5 +37,6 @@
   "certificates.watermark.match": "त्याचा अदृश्य वॉटरमार्क या नोंदीत नाव असलेलाच आहे",
   "certificates.watermark.other": "त्याचा अदृश्य वॉटरमार्क या नोंदीत नाव असलेला नाही",
   "certificates.watermark.found": "त्यात एक अदृश्य वॉटरमार्क आहे",
-  "certificates.watermark.none": "कोणताही अदृश्य वॉटरमार्क सापडला नाही"
+  "certificates.watermark.none": "कोणताही अदृश्य वॉटरमार्क सापडला नाही",
+  "certificates.watermark.unread": "{name} ने या उपकरणावर एकदा अदृश्य वॉटरमार्क शोधला की हे पानही तो शोधेल"
 }

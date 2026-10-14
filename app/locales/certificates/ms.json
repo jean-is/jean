@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Tera air halimunannya ialah yang dinamakan rekod ini",
   "certificates.watermark.other": "Tera air halimunannya bukan yang dinamakan rekod ini",
   "certificates.watermark.found": "Ada tera air halimunan di dalamnya",
-  "certificates.watermark.none": "Tiada tera air halimunan ditemui"
+  "certificates.watermark.none": "Tiada tera air halimunan ditemui",
+  "certificates.watermark.unread": "Setelah {name} pernah mencari tera air halimunan pada peranti ini, halaman ini juga mencarinya"
 }

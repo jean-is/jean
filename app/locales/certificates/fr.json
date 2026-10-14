@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Son filigrane invisible est celui que nomme ce relevé",
   "certificates.watermark.other": "Son filigrane invisible n’est pas celui que nomme ce relevé",
   "certificates.watermark.found": "Il porte un filigrane invisible",
-  "certificates.watermark.none": "Aucun filigrane invisible trouvé"
+  "certificates.watermark.none": "Aucun filigrane invisible trouvé",
+  "certificates.watermark.unread": "Une fois que {name} a cherché un filigrane invisible sur cet appareil, cette page en cherche un aussi"
 }

@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Das unsichtbare Wasserzeichen ist das, das diese Angaben nennen",
   "certificates.watermark.other": "Das unsichtbare Wasserzeichen ist nicht das, das diese Angaben nennen",
   "certificates.watermark.found": "Es trägt ein unsichtbares Wasserzeichen",
-  "certificates.watermark.none": "Kein unsichtbares Wasserzeichen gefunden"
+  "certificates.watermark.none": "Kein unsichtbares Wasserzeichen gefunden",
+  "certificates.watermark.unread": "Sobald {name} auf diesem Gerät nach einem unsichtbaren Wasserzeichen gesucht hat, sucht auch diese Seite danach"
 }

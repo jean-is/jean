@@ -7,7 +7,8 @@ import { html, nothing } from 'lit-html'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/icons.js'
 import { check } from '../receipt/certificate.js'
-import { credentialsOf } from '../receipt/c2pa.js'
+import { credentialsOf, NONE } from '../receipt/c2pa.js'
+import { dataOf } from '../pictures/watermark.js'
 
 /**
  * A certificate as checked, kept as the call's `_meta.checked`: when it was sealed as text, and each
@@ -60,6 +61,23 @@ export async function credentialsGiven(given) {
     return found ? [{ ...found, name, at: found.at?.toISOString() ?? null }] : []
   }))
   return read.flat()
+}
+
+/** A picture's name, as one whose watermark is looked for. */
+export const PICTURE = /\.(png|jpe?g|webp|gif|avif)$/i
+
+/**
+ * Each picture's watermark (D324), its 100 bits as `read` gives them: TrustMark's 61, beside those its
+ * credentials name; a picture without credentials gets an entry of its own. @param {{ name: string, bytes: Uint8Array }[]} given
+ * @param {Credentials[]} credentials @param {(bytes: Uint8Array) => Promise<number[]>} read
+ */
+export async function watermarksOf(given, credentials, read) {
+  for (const { name, bytes } of given.filter(({ name }) => PICTURE.test(name))) {
+    const data = dataOf(await read(bytes))
+    const one = credentials.find((entry) => entry.name === name) ?? credentials[credentials.push({ ...NONE, name, absent: true }) - 1]
+    one.found = !data ? 'none' : !one.watermark ? 'found' : one.watermark === data ? 'match' : 'other'
+  }
+  return credentials
 }
 
 /** Who answered or made, as the certificate names them. @param {{ provider: string, model: string, host?: string, jurisdiction?: string }[]} [all] */

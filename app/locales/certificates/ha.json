@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Alamar ruwansa marar ganuwa ita ce wadda wannan bayani ya ambata",
   "certificates.watermark.other": "Alamar ruwansa marar ganuwa ba wadda wannan bayani ya ambata ba ce",
   "certificates.watermark.found": "Akwai alamar ruwa marar ganuwa a cikinsa",
-  "certificates.watermark.none": "Ba a sami alamar ruwa marar ganuwa ba"
+  "certificates.watermark.none": "Ba a sami alamar ruwa marar ganuwa ba",
+  "certificates.watermark.unread": "Bayan an nemi alamar ruwa marar ganuwa da {name} a wannan na’ura, wannan shafi ma zai nema"
 }

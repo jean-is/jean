@@ -37,5 +37,6 @@
   "certificates.watermark.match": "其隐形水印正是这份记录所写的",
   "certificates.watermark.other": "其隐形水印不是这份记录所写的",
   "certificates.watermark.found": "带有隐形水印",
-  "certificates.watermark.none": "未发现隐形水印"
+  "certificates.watermark.none": "未发现隐形水印",
+  "certificates.watermark.unread": "{name} 在这台设备上查找过一次隐形水印后，这个页面也会查找"
 }

@@ -37,5 +37,6 @@
   "certificates.watermark.match": "واترمارک نامرئی‌اش همانی است که این سابقه نام می‌برد",
   "certificates.watermark.other": "واترمارک نامرئی‌اش آنی نیست که این سابقه نام می‌برد",
   "certificates.watermark.found": "واترمارکی نامرئی دارد",
-  "certificates.watermark.none": "واترمارک نامرئی‌ای پیدا نشد"
+  "certificates.watermark.none": "واترمارک نامرئی‌ای پیدا نشد",
+  "certificates.watermark.unread": "وقتی {name} یک بار روی این دستگاه دنبال واترمارک نامرئی بگردد، این صفحه هم دنبالش می‌گردد"
 }

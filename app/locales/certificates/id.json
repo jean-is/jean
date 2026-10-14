@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Tanda air tak terlihatnya adalah yang disebutkan catatan ini",
   "certificates.watermark.other": "Tanda air tak terlihatnya bukan yang disebutkan catatan ini",
   "certificates.watermark.found": "Ada tanda air tak terlihat di dalamnya",
-  "certificates.watermark.none": "Tidak ditemukan tanda air tak terlihat"
+  "certificates.watermark.none": "Tidak ditemukan tanda air tak terlihat",
+  "certificates.watermark.unread": "Setelah {name} pernah mencari tanda air tak terlihat di perangkat ini, halaman ini juga mencarinya"
 }

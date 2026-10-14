@@ -37,5 +37,6 @@
   "certificates.watermark.match": "סימן המים הבלתי נראה הוא זה שהרישום מציין",
   "certificates.watermark.other": "סימן המים הבלתי נראה אינו זה שהרישום מציין",
   "certificates.watermark.found": "יש בו סימן מים בלתי נראה",
-  "certificates.watermark.none": "לא נמצא סימן מים בלתי נראה"
+  "certificates.watermark.none": "לא נמצא סימן מים בלתי נראה",
+  "certificates.watermark.unread": "אחרי חיפוש של סימן מים בלתי נראה ב־{name} במכשיר הזה, גם הדף הזה יחפש"
 }

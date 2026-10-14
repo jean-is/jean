@@ -37,5 +37,6 @@
   "certificates.watermark.match": "علامته المائية الخفية هي التي يذكرها هذا السجل",
   "certificates.watermark.other": "علامته المائية الخفية ليست التي يذكرها هذا السجل",
   "certificates.watermark.found": "يحمل علامة مائية خفية",
-  "certificates.watermark.none": "لم يُعثر على علامة مائية خفية"
+  "certificates.watermark.none": "لم يُعثر على علامة مائية خفية",
+  "certificates.watermark.unread": "بعد البحث عن علامة مائية خفية في {name} على هذا الجهاز، تبحث هذه الصفحة عنها أيضًا"
 }

@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Ang hindi nakikitang watermark nito ang pinangangalanan ng talang ito",
   "certificates.watermark.other": "Ang hindi nakikitang watermark nito ay hindi ang pinangangalanan ng talang ito",
   "certificates.watermark.found": "May hindi nakikitang watermark ito",
-  "certificates.watermark.none": "Walang nakitang hindi nakikitang watermark"
+  "certificates.watermark.none": "Walang nakitang hindi nakikitang watermark",
+  "certificates.watermark.unread": "Kapag naghanap na ang {name} ng hindi nakikitang watermark sa device na ito, maghahanap din ang page na ito"
 }

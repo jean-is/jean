@@ -37,5 +37,6 @@
   "certificates.watermark.match": "దాని కనిపించని వాటర్‌మార్క్ ఈ నమోదు పేరు చెప్పినదే",
   "certificates.watermark.other": "దాని కనిపించని వాటర్‌మార్క్ ఈ నమోదు పేరు చెప్పినది కాదు",
   "certificates.watermark.found": "దానిలో కనిపించని వాటర్‌మార్క్ ఉంది",
-  "certificates.watermark.none": "కనిపించని వాటర్‌మార్క్ ఏదీ కనబడలేదు"
+  "certificates.watermark.none": "కనిపించని వాటర్‌మార్క్ ఏదీ కనబడలేదు",
+  "certificates.watermark.unread": "ఈ పరికరంలో {name} ఒకసారి కనిపించని వాటర్‌మార్క్ కోసం వెతికాక, ఈ పేజీ కూడా వెతుకుతుంది"
 }

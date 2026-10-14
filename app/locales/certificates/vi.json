@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Hình mờ ẩn của nó đúng là cái mà bản ghi này nêu",
   "certificates.watermark.other": "Hình mờ ẩn của nó không phải cái mà bản ghi này nêu",
   "certificates.watermark.found": "Nó có một hình mờ ẩn",
-  "certificates.watermark.none": "Không tìm thấy hình mờ ẩn"
+  "certificates.watermark.none": "Không tìm thấy hình mờ ẩn",
+  "certificates.watermark.unread": "Khi {name} đã tìm hình mờ ẩn trên thiết bị này một lần, trang này cũng sẽ tìm"
 }

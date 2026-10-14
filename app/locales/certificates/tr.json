@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Görünmez filigranı, bu kaydın adını verdiği filigran",
   "certificates.watermark.other": "Görünmez filigranı, bu kaydın adını verdiği filigran değil",
   "certificates.watermark.found": "Görünmez bir filigran taşıyor",
-  "certificates.watermark.none": "Görünmez filigran bulunamadı"
+  "certificates.watermark.none": "Görünmez filigran bulunamadı",
+  "certificates.watermark.unread": "{name} bu cihazda bir kez görünmez filigran aradıktan sonra bu sayfa da arar"
 }

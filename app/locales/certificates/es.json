@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Su marca de agua invisible es la que nombra este registro",
   "certificates.watermark.other": "Su marca de agua invisible no es la que nombra este registro",
   "certificates.watermark.found": "Lleva una marca de agua invisible",
-  "certificates.watermark.none": "No se encontró ninguna marca de agua invisible"
+  "certificates.watermark.none": "No se encontró ninguna marca de agua invisible",
+  "certificates.watermark.unread": "Cuando {name} haya buscado una marca de agua invisible en este dispositivo, esta página también la buscará"
 }

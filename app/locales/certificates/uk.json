@@ -37,5 +37,6 @@
   "certificates.watermark.match": "Невидимий водяний знак — той, що названий у цих відомостях",
   "certificates.watermark.other": "Невидимий водяний знак — не той, що названий у цих відомостях",
   "certificates.watermark.found": "У ньому є невидимий водяний знак",
-  "certificates.watermark.none": "Невидимий водяний знак не знайдено"
+  "certificates.watermark.none": "Невидимий водяний знак не знайдено",
+  "certificates.watermark.unread": "Щойно {name} пошукає невидимий водяний знак на цьому пристрої, ця сторінка теж його шукатиме"
 }

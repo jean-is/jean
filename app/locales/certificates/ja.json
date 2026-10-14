@@ -37,5 +37,6 @@
   "certificates.watermark.match": "見えない透かしは、この記録に記されたものです",
   "certificates.watermark.other": "見えない透かしは、この記録に記されたものではありません",
   "certificates.watermark.found": "見えない透かしが入っています",
-  "certificates.watermark.none": "見えない透かしは見つかりませんでした"
+  "certificates.watermark.none": "見えない透かしは見つかりませんでした",
+  "certificates.watermark.unread": "{name} がこの端末で一度見えない透かしを探すと、このページでも探せるようになります"
 }

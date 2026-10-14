@@ -37,5 +37,6 @@
   "certificates.watermark.match": "اس کا پوشیدہ واٹر مارک وہی ہے جس کا اس تفصیل میں نام ہے",
   "certificates.watermark.other": "اس کا پوشیدہ واٹر مارک وہ نہیں جس کا اس تفصیل میں نام ہے",
   "certificates.watermark.found": "اس میں ایک پوشیدہ واٹر مارک ہے",
-  "certificates.watermark.none": "کوئی پوشیدہ واٹر مارک نہیں ملا"
+  "certificates.watermark.none": "کوئی پوشیدہ واٹر مارک نہیں ملا",
+  "certificates.watermark.unread": "جب {name} اس آلے پر ایک بار پوشیدہ واٹر مارک تلاش کر لے، یہ صفحہ بھی تلاش کرے گا"
 }

@@ -37,5 +37,6 @@
   "certificates.watermark.match": "ลายน้ำที่มองไม่เห็นตรงกับที่บันทึกนี้ระบุ",
   "certificates.watermark.other": "ลายน้ำที่มองไม่เห็นไม่ตรงกับที่บันทึกนี้ระบุ",
   "certificates.watermark.found": "มีลายน้ำที่มองไม่เห็น",
-  "certificates.watermark.none": "ไม่พบลายน้ำที่มองไม่เห็น"
+  "certificates.watermark.none": "ไม่พบลายน้ำที่มองไม่เห็น",
+  "certificates.watermark.unread": "เมื่อ {name} เคยค้นหาลายน้ำที่มองไม่เห็นบนอุปกรณ์นี้แล้ว หน้านี้ก็จะค้นหาด้วย"
 }

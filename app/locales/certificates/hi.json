@@ -37,5 +37,6 @@
   "certificates.watermark.match": "इसका अदृश्य वॉटरमार्क वही है जिसका इस ब्योरे में नाम है",
   "certificates.watermark.other": "इसका अदृश्य वॉटरमार्क वह नहीं है जिसका इस ब्योरे में नाम है",
   "certificates.watermark.found": "इसमें एक अदृश्य वॉटरमार्क है",
-  "certificates.watermark.none": "कोई अदृश्य वॉटरमार्क नहीं मिला"
+  "certificates.watermark.none": "कोई अदृश्य वॉटरमार्क नहीं मिला",
+  "certificates.watermark.unread": "जब {name} इस डिवाइस पर एक बार अदृश्य वॉटरमार्क खोज ले, तो यह पेज भी खोजेगा"
 }

@@ -37,5 +37,6 @@
   "certificates.watermark.match": "La sua filigrana invisibile è quella che nomina questo registro",
   "certificates.watermark.other": "La sua filigrana invisibile non è quella che nomina questo registro",
   "certificates.watermark.found": "Porta una filigrana invisibile",
-  "certificates.watermark.none": "Nessuna filigrana invisibile trovata"
+  "certificates.watermark.none": "Nessuna filigrana invisibile trovata",
+  "certificates.watermark.unread": "Quando {name} avrà cercato una filigrana invisibile su questo dispositivo, anche questa pagina la cercherà"
 }

@@ -37,5 +37,6 @@
   "certificates.watermark.match": "የማይታየው የውሃ ምልክቱ ይህ መዝገብ የሚጠቅሰው ነው",
   "certificates.watermark.other": "የማይታየው የውሃ ምልክቱ ይህ መዝገብ የሚጠቅሰው አይደለም",
   "certificates.watermark.found": "የማይታይ የውሃ ምልክት አለው",
-  "certificates.watermark.none": "የማይታይ የውሃ ምልክት አልተገኘም"
+  "certificates.watermark.none": "የማይታይ የውሃ ምልክት አልተገኘም",
+  "certificates.watermark.unread": "በዚህ መሣሪያ ላይ በ{name} አንድ ጊዜ የማይታይ የውሃ ምልክት ከተፈለገ በኋላ ይህ ገጽም ይፈልጋል"
 }

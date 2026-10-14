@@ -124,6 +124,35 @@ for (const [lang, watermarked, said] of [['en', true, 'It carries an invisible w
   })
 }
 
+for (const lang of ['en', 'ar', 'ja']) {
+  test(`the check page reads a picture’s watermark with the decoder this device keeps, never fetched, and says when it can’t (D324, ${lang})`, async ({ browser, baseURL }) => {
+    const { payloadOf, DECODER } = await import('../app/caps/pictures/watermark.js')
+    const { BRAND } = await import('../app/brand.js')
+    const strings = JSON.parse(await readFile(new URL(`../app/locales/certificates/${lang}.json`, import.meta.url), 'utf8'))
+    const context = await browser.newContext({ locale: lang, baseURL })
+    const reached = new Set()
+    context.on('request', (request) => reached.add(new URL(request.url()).host))
+    const checker = await context.newPage()
+    // SD-Turbo's worker, where the decoder runs, reading TrustMark's 100 bits for 61.
+    const bits = payloadOf(WATERMARKED)
+    await checker.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
+      body: `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', bits: ${JSON.stringify(bits)} })` }))
+    await checker.goto('check.html')
+    const input = checker.locator('input[type="file"]')
+    // Without the decoder on this device, what lets the page look.
+    await input.setInputFiles([await signedPicture()])
+    await expect(checker.locator('main > .receipt-note').last()).toHaveText(strings['certificates.watermark.unread'].replace('{name}', BRAND.name))
+    // With it, kept where Jean keeps it, the watermark is read.
+    await checker.evaluate(async (path) => (await caches.open('transformers-cache')).put(`https://huggingface.co/${path}`, new Response('kept')), DECODER[0])
+    await input.setInputFiles([await signedPicture()])
+    await expect(checker.locator('.receipt-checked .receipt-note')).toContainText(strings['certificates.watermark.found'])
+    await expect(checker.locator('main > .receipt-note')).toHaveCount(1)
+    // Nothing went anywhere but Jean's own files.
+    expect([...reached]).toEqual([new URL(baseURL ?? '').host])
+    await context.close()
+  })
+}
+
 test('a certificate shared in a conversation brings what checks it, and its card knows this device’s seal', async ({ page }) => {
   const { certificate, proof } = await saved(page)
   await (await openTasks(page)).locator('.place', { hasText: 'New task' }).click()
