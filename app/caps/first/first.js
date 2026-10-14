@@ -1,4 +1,4 @@
-// The first brain (D329): what the first message opens while there is none, in place of Settings ›
+// The first brain (D329): what the first message, or the chip, opens while there is none, in place of Settings ›
 // Brains. One way first, free, and beside it the device's brain where it can run, downloaded while
 // the cloud's answers; then two doors, to the plan or key the user already has and to a choice of
 // what matters. Never offered: its strings and look come with it, once, before any brain (D97).

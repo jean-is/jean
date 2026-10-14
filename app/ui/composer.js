@@ -213,9 +213,9 @@ function complete(area) {
 /** Whether this browser can share a screen (not phones, where + only adds files). */
 const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
-/** The brain picker, a menu above the chip, or choosing a first brain. */
+/** The brain picker, a menu above the chip, or the first brain's dialog (D329). */
 async function openPicker() {
-  if (!brainsHere.value.length) return (await import('./dialogs.js')).openSettings('brains')
+  if (!brainsHere.value.length) return (await import('../caps/first/first.js')).open()
   if (!customElements.get('app-picker')) (await import('./picker.js')).openPicker()
 }
 

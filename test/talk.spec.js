@@ -73,7 +73,8 @@ test('a key whose service is too busy to list its models connects all the same, 
   let listed = 0
   await page.route('https://generativelanguage.googleapis.com/**', (route) => (listed++, route.fulfill({ status: 429, json: { error: { code: 429, status: 'RESOURCE_EXHAUSTED' } } })))
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-settings dialog[open]')
+  const dialog = page.locator('app-first dialog[open]')
+  await dialog.locator('.first-doors button').first().click()
   const way = dialog.locator('.way.is-key')
   await way.locator('summary').click()
   await way.locator('select[name="provider"]').selectOption('gemini')

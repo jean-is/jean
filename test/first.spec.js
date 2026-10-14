@@ -1,4 +1,4 @@
-// The first brain (D329): the first message, with no brain yet, opens one free way, the device's
+// The first brain (D329): the first message, or the brain chip, with no brain yet, opens one free way, the device's
 // brain beside it where it can run, and two doors, to the plans and keys the user already has and to
 // a choice of what matters. OpenRouter's sign-in is stopped as it leaves; the device is made capable
 // and its worker replaced, as in device.spec.js, so no 3 GB download is needed.
@@ -49,9 +49,9 @@ test('the first message opens one free way and two doors; through the plans and 
   await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
 })
 
-test('what matters: the private answer says why it can’t be had here, the button says what each answer does, and Back returns', async ({ page }) => {
+test('the chip opens it too; what matters: the private answer says why it can’t be had here, the button says what each answer does, and Back returns', async ({ page }) => {
   await start(page)
-  await ask(page, 'Hello')
+  await page.locator('.brain-chip').click()
   const dialog = page.locator('app-first dialog[open]')
   await dialog.getByRole('button', { name: /I’d rather choose/ }).click()
   await expect(dialog.locator('h2')).toHaveText('What matters most to you?')

@@ -19,10 +19,11 @@ export async function start(page, lang = 'en') {
   await closeSettings(page)
 }
 
-/** Connects the fake brain through Settings' Brains, "On your computer" → Other. @param {import('@playwright/test').Page} page */
+/** Connects the fake brain through the first brain's dialog (D329): its plans and keys, "On your computer" → Other. @param {import('@playwright/test').Page} page */
 export async function connectFakeBrain(page) {
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-settings dialog[open]')
+  const dialog = page.locator('app-first dialog[open]')
+  await dialog.locator('.first-doors button').first().click()
   // One way to add a brain is open at a time (D134).
   const local = dialog.locator('.way.is-local')
   await local.locator('summary').click()
