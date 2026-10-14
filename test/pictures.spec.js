@@ -10,10 +10,12 @@ import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, open
 
 /**
  * SD-Turbo's worker, where the check runs, giving each picture in turn its levels of nudity (neutral, low, medium,
- * high) and the other areas it shows, the last for every one after. @param {number[]} logits @param {...string[]} areas
+ * high) and the other areas it shows, the last for every one after; and the watermark (D324), the picture as it came.
+ * @param {number[]} logits @param {...string[]} areas
  */
 const checking = (logits, ...areas) => `let n = 0; const areas = ${JSON.stringify(areas.length ? areas : [[]])}
-self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', logits: ${JSON.stringify(logits)}, areas: areas[Math.min(n++, areas.length - 1)] })`
+self.onmessage = ({ data }) => self.postMessage(data.type === 'watermark' ? { id: data.id, type: 'done', bytes: data.bytes }
+  : { id: data.id, type: 'done', logits: ${JSON.stringify(logits)}, areas: areas[Math.min(n++, areas.length - 1)] })`
 test.beforeEach(({ page }) => page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([5, 0, 0, 0]) })))
 /** As if this device could make pictures, so Settings › Brains shows them. @param {import('@playwright/test').Page} page */
 const capable = (page) => page.addInitScript(() => {
@@ -57,6 +59,8 @@ test('the brain offers pictures when asked to draw, then makes one, kept in the 
     const read = await credentialsOf(await app.fs.readBytes(`${app.projectDir}/${document.querySelector('app-picture')?.getAttribute('uri')}`) ?? new Uint8Array())
     return read && { intact: read.intact, bound: read.bound, generated: read.generated, maker: read.maker, selfIssued: read.selfIssued }
   })).toEqual({ intact: true, bound: true, generated: true, maker: 'fake-image-1', selfIssued: true })
+  // Which name the watermark its worker put in its pixels.
+  expect(bytes).toMatch(/c2pa\.soft-binding.*com\.adobe\.trustmark\.Q.*1\*[01]{61}/s)
 })
 
 test('a picture takes its place at once, shows glimpses of it as it forms, then develops there (D265)', async ({ page }) => {
@@ -274,7 +278,7 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   // The finest one shown first, nothing downloaded yet.
   await expect(finest).toHaveAttribute('aria-selected', 'true')
   // Each comes with the check its pictures go through (D275).
-  await expect(quick).toContainText('2.6 GB')
+  await expect(quick).toContainText('2.7 GB')
   await expect(shown).toContainText('Z-Image-Turbo')
   await expect(settings).toContainText('Each is checked here first: pictures showing nudity, sex or self-harm are refused.')
   await shown.getByRole('button', { name: /^Download/ }).click()
@@ -298,6 +302,6 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await detailed.click()
   await shown.getByRole('button', { name: 'Remove' }).click()
   await expect(detailed).toContainText('6.7 GB')
-  await expect(quick).toContainText('2.6 GB')
+  await expect(quick).toContainText('2.7 GB')
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictures)).toBe('z-image-turbo')
 })

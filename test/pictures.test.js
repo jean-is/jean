@@ -12,6 +12,7 @@ import * as zimage from '../app/caps/pictures/zimage.js'
 import { readFileSync } from 'node:fs'
 import * as check from '../app/caps/pictures/check.js'
 import { marked, GENERATED } from '../app/caps/pictures/mark.js'
+import { payloadOf, randomData, planes, watermarked, SIDE } from '../app/caps/pictures/watermark.js'
 import { crc32 } from '../app/core/zip.js'
 import { download, PACE } from '../app/ui/weights.js'
 import { createHash } from 'node:crypto'
@@ -330,6 +331,36 @@ describe('what else the check looks for (D280)', () => {
     assert.deepEqual(check.shown(view.map((value) => -value), areas), [])
     // A word's own vector is as close as can be.
     assert.ok(check.shown(check.unpacked(concepts.areas.selfHarm.vectors[1]), concepts).includes('selfHarm'))
+  })
+})
+
+describe('the watermark on a picture made here (D324)', () => {
+  test('TrustMark’s 100 bits: the 61 given, BCH_5’s 35, then its schema, as TrustMark’s own decoder reads them', () => {
+    // Read back, five of them flipped, by TrustMark's JavaScript data layer (Adobe's), when this was written.
+    const data = '0100101001010010100101001010010100101001010010100101001010010'
+    assert.equal(payloadOf([...data].map(Number)).join(''), `${data}11111100001001111101011000111000011` + '0001')
+  })
+
+  test('61 random bits, which the manifest’s soft binding names as TrustMark’s example does', () => {
+    const { data, softBinding } = randomData()
+    assert.equal(data.length, 61)
+    assert.ok(data.every((bit) => bit === 0 || bit === 1))
+    assert.deepEqual(softBinding, { alg: 'com.adobe.trustmark.Q', blocks: [{ scope: {}, value: `1*${data.join('')}` }] })
+  })
+
+  test('what the encoder changed, each colour’s mean taken away and held within ±0.2, is stretched over the picture', () => {
+    const plane = SIDE * SIDE
+    const cover = planes(new Uint8Array(plane * 4).fill(128))
+    // A change of 0.5 everywhere is held to 0.2, whose mean is taken away: nothing changes.
+    const flat = watermarked(new Uint8ClampedArray(plane * 4).fill(128), SIDE, SIDE, cover.map((value) => value + 0.5), cover)
+    assert.ok(flat.every((value) => value === 128))
+    // A checkerboard of ±0.1 in red only, at its own size, is ±12.75 there, rounded.
+    const board = cover.map((value, i) => (i < plane ? value + ((i % SIDE) + Math.floor(i / SIDE)) % 2 * 0.2 - 0.1 : value))
+    const out = watermarked(new Uint8ClampedArray(plane * 4).fill(128), SIDE, SIDE, board, cover)
+    assert.deepEqual([out[0], out[4], out[1], out[2]], [128 - 13, 128 + 13, 128, 128])
+    // At twice its size, between its squares.
+    const wide = watermarked(new Uint8ClampedArray(4 * plane * 4).fill(128), 2 * SIDE, 2 * SIDE, board, cover)
+    assert.ok(Math.abs(wide[4 * 4] - 128) < 13)
   })
 })
 

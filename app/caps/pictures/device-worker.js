@@ -3,17 +3,19 @@
 // decoder. Through ONNX Runtime from Jean's own copy (D52), on WebNN where the browser offers it,
 // else WebGPU; its files from the host the page passes (D53), one after another, so only one is
 // held while it is read. Every picture made on this device, or by a server on this computer, is
-// checked here before it shows (D275, D280).
+// checked here before it shows (D275, D280), and watermarked here once it passes (D324).
 //
 // { type: 'load', host, files }   → progress…, { type: 'ready' }
 // { type: 'paint', prompt }       → { type: 'done', bytes }, a PNG
 // { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
 // { type: 'check', host, bytes }  → { type: 'done', logits, areas }, its four levels of nudity, and the other areas it shows
+// { type: 'watermark', host, bytes, bits } → { type: 'done', bytes }, the PNG with TrustMark's watermark of those 100 bits
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
 import { download } from '../../ui/weights.js'
 import * as check from './check.js'
+import * as watermark from './watermark.js'
 
 const SIGMA = 14.6146 // the scheduler's largest, at timestep 999
 const SCALE = 0.18215 // the VAE's latent scaling
@@ -26,6 +28,8 @@ const DIMENSIONS = [{ batch_size: 1 }, { batch_size: 1, num_channels: 4, height:
 let loading = null
 /** @type {Promise<any[]> | null} the check's sessions, then the areas' words, kept for the next picture */
 let checker = null
+/** @type {Promise<any> | null} TrustMark's encoder, kept for the next picture */
+let marker = null
 let busy = Promise.resolve()
 
 self.onmessage = ({ data }) => {
@@ -49,6 +53,9 @@ async function handle({ id, type, ...data }) {
       self.postMessage({ id, type: 'done' })
     } else if (type === 'check') {
       self.postMessage({ id, type: 'done', ...await checked(data) })
+    } else if (type === 'watermark') {
+      const bytes = await watermarked(data)
+      self.postMessage({ id, type: 'done', bytes }, { transfer: [bytes] })
     }
   } catch (error) {
     if (type === 'load') loading = null
@@ -122,4 +129,28 @@ async function checked({ host, bytes }) {
   const { logits } = await nudity.run({ pixel_values: seen(check.SIDE, check.CLIP) })
   const { pooler_output } = await siglip.run({ pixel_values: seen(check.SIGLIP_SIDE, check.SIGLIP) })
   return { logits: Array.from(/** @type {Float32Array} */ (logits.data)), areas: check.shown(pooler_output.data, concepts) }
+}
+
+/**
+ * A picture with TrustMark's watermark of 100 bits (D324): the encoder sees it squashed to its square, and
+ * what it changes there is spread over the picture at its size. On WebGPU with its tensors laid out channels
+ * first, where ONNX Runtime's convolution reads the encoder's 6 input channels right (laid out channels last,
+ * it misreads any count that is a multiple of 3 but not of 4, in every browser), else WebAssembly. Its file
+ * downloaded first if it isn't here. @param {{ host: string, bytes: Uint8Array, bits: number[] }} data
+ */
+async function watermarked({ host, bytes, bits }) {
+  const [[path, hash]] = watermark.FILES
+  const encoder = await (marker ??= download(new URL(path, host).href, hash, () => {})
+    .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: [{ name: 'webgpu', preferredLayout: 'NCHW' }, 'wasm'] })).catch((error) => { marker = null; throw error }))
+  const picture = await createImageBitmap(new Blob([bytes]))
+  const [width, height, side] = [picture.width, picture.height, watermark.SIDE]
+  const square = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(side, side).getContext('2d'))
+  square.drawImage(picture, 0, 0, side, side)
+  const cover = watermark.planes(square.getImageData(0, 0, side, side).data)
+  const { image } = await encoder.run({ 'onnx::Concat_0': new Tensor('float32', cover, [1, 3, side, side]), 'onnx::Gemm_1': new Tensor('float32', Float32Array.from(bits), [1, 100]) })
+  const whole = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(width, height).getContext('2d'))
+  whole.drawImage(picture, 0, 0)
+  const pixels = whole.getImageData(0, 0, width, height)
+  whole.putImageData(new ImageData(watermark.watermarked(pixels.data, width, height, image.data, cover), width, height), 0, 0)
+  return (await whole.canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()
 }

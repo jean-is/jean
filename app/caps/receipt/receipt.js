@@ -231,13 +231,13 @@ export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKe
 
 /**
  * A picture made here with its Content Credentials (D324): signed by the seal, and dated by the first
- * witness when the user chose to have certificates dated, one that fails said and the picture left undated.
- * @param {Uint8Array} png @param {string} maker @param {string} [revision]
+ * witness when the user chose to have certificates dated, one that fails said and the picture left undated;
+ * with any other assertions given (its watermark's soft binding). @param {Uint8Array} png @param {string} maker @param {string} [revision] @param {[string, object][]} [assertions]
  */
-export async function credentialed(png, maker, revision) {
+export async function credentialed(png, maker, revision, assertions = []) {
   const [address] = app.settings.value.certificates?.date ? (await witnesses()).timestamps : []
   const date = address ? (/** @type {Uint8Array} */ imprint) => tokenFor(imprint, sender(address)).catch((error) => { unwitnessed(address, error); throw error }) : undefined
-  return signed(png, { maker, revision, generator: { name: BRAND.name, version: await versionOf() }, seal: await sealOf(), date })
+  return signed(png, { maker, revision, assertions, generator: { name: BRAND.name, version: await versionOf() }, seal: await sealOf(), date })
 }
 
 /** @type {Promise<string> | undefined} */

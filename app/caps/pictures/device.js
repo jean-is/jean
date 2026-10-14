@@ -6,13 +6,15 @@
 // once, with the user's consent, from the weights host at a pinned revision, checked against their
 // SHA-256 as Whistle's are; then private, free and offline. FLUX and Z-Image show the picture as it
 // forms, glimpsed after each step (D265). With each comes the check every picture made here goes
-// through before it shows (D275, D280), which runs in SD-Turbo's worker.
+// through before it shows (D275, D280), and the watermark it gets once it passes (D324), both run in
+// SD-Turbo's worker.
 import { signal } from '@preact/signals-core'
 import { app, weightsHost, updateSettings } from '../../ui/state.js'
 import { modelWorker, downloading, holdStill } from '../../ui/model.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { SIZES } from './flux.js'
 import * as check from './check.js'
+import * as watermark from './watermark.js'
 
 /** @typedef {[string, string, number]} File path on the weights host, SHA-256, bytes */
 /** @typedef {'sd-turbo' | 'flux2-klein' | 'z-image-turbo'} Maker */
@@ -72,8 +74,9 @@ const STAGES = {
 /** The three, the quickest first, the finest last; and their names, as an answer's certificate gives them (D252). */
 export const MAKERS = /** @type {Maker[]} */ (['sd-turbo', 'flux2-klein', 'z-image-turbo'])
 export const NAMES = { 'sd-turbo': 'SD-Turbo', 'flux2-klein': 'FLUX.2 [klein] 4B', 'z-image-turbo': 'Z-Image-Turbo' }
-/** Each one's files, the check's last, which they share. */
-const FILES = { 'sd-turbo': [...TURBO, ...check.FILES], 'flux2-klein': [...Object.values(STAGES['flux2-klein']).flat(), ...check.FILES], 'z-image-turbo': [...Object.values(STAGES['z-image-turbo']).flat(), ...check.FILES] }
+/** Each one's files, then the check's and the watermark's (D324), which they share. */
+const SHARED = [...check.FILES, ...watermark.FILES]
+const FILES = { 'sd-turbo': [...TURBO, ...SHARED], 'flux2-klein': [...Object.values(STAGES['flux2-klein']).flat(), ...SHARED], 'z-image-turbo': [...Object.values(STAGES['z-image-turbo']).flat(), ...SHARED] }
 /** What each weighs. */
 export const BYTES = { 'sd-turbo': total(FILES['sd-turbo']), 'flux2-klein': total(FILES['flux2-klein']), 'z-image-turbo': total(FILES['z-image-turbo']) }
 function total(/** @type {File[]} */ files) { return files.reduce((sum, [, , bytes]) => sum + bytes, 0) }
@@ -184,6 +187,12 @@ export async function refused(bytes) {
   if (check.explicit(logits) >= check.LIMIT) return 'nudity'
   return refuses('suggestive') && check.explicit(logits, true) >= check.LIMIT ? 'suggestive' : /** @type {Area[]} */ (areas).find(refuses)
 }
+
+/**
+ * A picture with TrustMark's watermark of 100 bits (D324), in SD-Turbo's worker, which the check runs in
+ * too, its file downloaded first if it isn't here. @param {Uint8Array} bytes @param {number[]} bits @returns {Promise<Uint8Array>}
+ */
+export const watermarked = async (bytes, bits) => new Uint8Array((await holdStill(turbo.call({ type: 'watermark', host: weightsHost(), bytes, bits }))).bytes)
 
 /** Its size in pixels: SD-Turbo's 512 square, the others' in the shape asked. @param {keyof typeof SIZES} shape */
 export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape])
