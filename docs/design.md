@@ -79,8 +79,8 @@ Mail and Human start with the drawer open beside the conversation (D165). Names 
 
 ## Accessibility
 
-- **WCAG AA contrast at every stage.** "Dark" applies to ambient surfaces only; text is always high-contrast.
-- **`prefers-reduced-motion`:** a still glow, with no movement. The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
+- **WCAG AA contrast at every stage**, measured in pixels in every look, mood, warmth and project colour (D325). "Dark" applies to ambient surfaces only; text is always high-contrast.
+- **`prefers-reduced-motion`:** a still glow, with no movement anywhere (D325). The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces.
 - **`forced-colors`** is supported. The little light becomes an outline drawing in the system colours.
 - **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘/ its keyboard shortcuts, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme, ⌘⇧L to the next language, ⌘⇧S dictates, ⌘K opens search, ⌘⇧B the browser and ⌘⇧H talks hands-free once each is found, ⌘J the terminal, ⌘B the drawer, ⌘S saves a copy of the open task and ⌘⌫ deletes it after asking, Ctrl outside Apple's systems, and Escape stops an answer once nothing over it, or with the keyboard, takes it (D118, D313, D315).

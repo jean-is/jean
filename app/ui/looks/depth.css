@@ -11,7 +11,7 @@
   --room-2: oklch(0.2 0.035 265);
   --ink: oklch(0.96 0.01 260);
   --ink-soft: oklch(0.84 0.02 260);
-  --ink-faint: oklch(0.74 0.025 260);
+  --ink-faint: oklch(0.82 0.025 260);
   --line: oklch(0.85 0.06 250 / 0.12);
   --line-strong: oklch(0.85 0.06 250 / 0.26);
   --glass: oklch(0.22 0.04 265 / 0.8);
@@ -35,7 +35,7 @@
   --room-2: oklch(0.995 0.002 260);
   --ink: oklch(0.22 0.02 265);
   --ink-soft: oklch(0.42 0.02 265);
-  --ink-faint: oklch(0.5 0.02 265);
+  --ink-faint: oklch(0.47 0.02 265);
   --line: oklch(0.22 0.02 265 / 0.1);
   --line-strong: oklch(0.22 0.02 265 / 0.2);
   --glass: oklch(1 0 0 / 0.8);

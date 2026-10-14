@@ -15,7 +15,7 @@
   --room-2: oklch(0.19 0.02 52);
   --ink: oklch(0.93 0.018 80);
   --ink-soft: oklch(0.93 0.018 80 / 0.68);
-  --ink-faint: oklch(0.93 0.018 80 / 0.42);
+  --ink-faint: oklch(0.93 0.018 80 / 0.6);
   --line: oklch(1 0 0 / 0.09);
   --line-strong: oklch(1 0 0 / 0.18);
   --glass: oklch(0.2 0.02 52 / 0.72);
@@ -40,7 +40,7 @@
   --room-2: oklch(0.94 0.02 80);
   --ink: oklch(0.24 0.02 50);
   --ink-soft: oklch(0.24 0.02 50 / 0.72);
-  --ink-faint: oklch(0.24 0.02 50 / 0.5);
+  --ink-faint: oklch(0.24 0.02 50 / 0.64);
   --line: oklch(0.2 0.02 50 / 0.1);
   --line-strong: oklch(0.2 0.02 50 / 0.2);
   --glass: oklch(1 0 0 / 0.72);
@@ -806,7 +806,7 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
 /* ─── Preferences ───────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
+  *, *::before, *::after, ::backdrop { animation: none !important; transition: none !important; }
   .room { --light: 0.42; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
