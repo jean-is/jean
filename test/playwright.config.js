@@ -27,7 +27,8 @@ export default defineConfig({
   // pages at once that alone kept the processor busy. Depth's test turns it back on for its pages.
   use: { baseURL: `http://127.0.0.1:${APP}/`, serviceWorkers: 'block', reducedMotion: 'reduce' },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Muted: a score's test plays music (WebKit has no such flag: start() in helpers.js silences it).
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--mute-audio'] } } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
   webServer: [

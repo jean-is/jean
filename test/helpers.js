@@ -6,8 +6,29 @@ export const MAIL_URL = 'http://127.0.0.1:4182'
 export const GATEWAY_URL = 'http://127.0.0.1:4183/'
 export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,Feb,1340\nSouth,Feb,1010\nEast,Jan,700\nEast,Feb,815\n'
 
+/**
+ * Silence: what a page plays through Web Audio (a score) goes to a gain of 0 instead of the
+ * speakers, its clock still running. Chromium is also muted by its flag (playwright.config.js);
+ * WebKit has none.
+ */
+function silence() {
+  const destination = Object.getOwnPropertyDescriptor(BaseAudioContext.prototype, 'destination')?.get
+  if (!destination) return
+  const muted = new WeakMap()
+  Object.defineProperty(AudioContext.prototype, 'destination', { configurable: true, get() {
+    if (!muted.has(this)) {
+      const gain = this.createGain()
+      gain.gain.value = 0
+      gain.connect(destination.call(this))
+      muted.set(this, gain)
+    }
+    return muted.get(this)
+  } })
+}
+
 /** @param {import('@playwright/test').Page} page @param {string} [lang] */
 export async function start(page, lang = 'en') {
+  await page.addInitScript(silence)
   await page.goto('./')
   await expect(page.locator('.hero-question')).toBeVisible()
   // The box has the keyboard from the start.
