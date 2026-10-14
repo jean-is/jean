@@ -154,7 +154,7 @@ Then:
   - **Order:** watermark the pixels first, then the XMP and the manifest, all before the file is named by its hash.
 - [x] **Pictures and films from the cloud:** the providers' marks pass through untouched; `test/c2pa.test.js` checks the bytes are unchanged.
 - [ ] **Pictures people share:** one with a side over 1568 pixels is kept redrawn smaller, for brains (`caps/files/pictures.js`), which drops its metadata; a watermark would survive. Keep the file as given and send brains the smaller copy.
-- [ ] **Files Jean makes** (`caps/made/formats.js`): metadata where the format can carry it.
+- [x] **Files Jean makes** (`caps/made/formats.js`, D324): Word documents and workbooks in their custom properties (IPTC's `DigitalSourceType`, `AISystemUsed`), drawings in XMP, web pages in schema.org's JSON-LD; Markdown, CSV and other text carry none. C2PA in Office files waits for validators that open them.
 - [ ] **Answers:**
   - the certificate is the metadata layer;
   - for cloud brains, rely on providers' marking, documented per provider;

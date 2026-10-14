@@ -1,8 +1,12 @@
 // Files Jean makes (D119): a Word document from Markdown, a spreadsheet from CSV or Markdown
 // tables, or any other text file as it is. Office files are zips of XML, written with
-// core/zip.js and the lexer Jean already loads: no file-format library. Pure, so Node's tests run it.
+// core/zip.js and the lexer Jean already loads: no file-format library. Those that can say so
+// say a trained model made them, as the AI Act asks (D324): Word's and Excel's in their document
+// properties, a drawing in its XMP, a web page in schema.org's terms. Pure, so Node's tests run it.
 import { lexer } from 'marked'
 import { writeZip } from '../../core/zip.js'
+import { xmpOf, GENERATED } from '../pictures/mark.js'
+import { BRAND } from '../../brand.js'
 
 const DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 const XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -50,8 +54,9 @@ export async function makeFile(name, content, { paper = 'a4', date } = {}) {
   if (!ext) throw new Error('Name the file with its kind, e.g. "Report.docx", "Budget.xlsx" or "Notes.txt".')
   if (BINARY.has(ext)) throw new Error(`A .${ext} file can't be made: it isn't text. Make a Word document (.docx, which Word saves as PDF too), a spreadsheet (.xlsx), a drawing (.svg) or a text file (.md, .csv, .html…).`)
   // A byte-order mark, so Excel reads a CSV as UTF-8.
-  return { name: clean, mimeType: TEXT[ext] ?? 'text/plain', bytes: encoder.encode((/^[ct]sv$/.test(ext) ? '\ufeff' : '') + content) }
+  return { name: clean, mimeType: TEXT[ext] ?? 'text/plain', bytes: encoder.encode((/^[ct]sv$/.test(ext) ? '\ufeff' : '') + (MARKS[ext]?.(content) ?? content)) }
 }
+
 
 /**
  * A file's text with one passage changed: the passage must be there exactly once.
@@ -90,6 +95,20 @@ const RTL = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/
 /** Whether a text reads right to left: its first letter does. @param {string} text */
 const rightToLeft = (text) => RTL.test(/\p{L}/u.exec(text)?.[0] ?? '')
 
+// ─── The AI Act's mark (D324) ────────────────────────────────────────────────
+
+/** What a web page says of how it was made, in schema.org's terms for IPTC's: a trained model, and the system. */
+const MADE = `<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","digitalSourceType":"https://schema.org/TrainedAlgorithmicMediaDigitalSource","creator":{"@type":"SoftwareApplication","name":${JSON.stringify(BRAND.name)}}}</script>`
+/** A web page's mark in its head, else at its start; a drawing's XMP in its metadata, after its opening tag. Text that already says so stays as it is. */
+const MARKS = /** @type {Record<string, (text: string) => string>} */ ({
+  html: (text) => (text.includes('TrainedAlgorithmicMediaDigitalSource') ? text : /<\/head>/i.test(text) ? text.replace(/<\/head>/i, (end) => `${MADE}${end}`) : `${MADE}\n${text}`),
+  svg: (text) => (text.includes(GENERATED) ? text : text.replace(/<svg\b[^>]*[^/]>/, (open) => `${open}<metadata>${xmpOf(BRAND.name)}</metadata>`)),
+})
+MARKS.htm = MARKS.html
+/** A Word document's or a workbook's custom properties: IPTC's Digital Source Type and the system, which Word and Excel show under Properties. */
+const CUSTOM = `${HEAD}<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/custom-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">${
+  [['DigitalSourceType', GENERATED], ['AISystemUsed', BRAND.name]].map(([name, value], i) => `<property fmtid="{D5CDD505-2E9C-101B-9397-08002B2CF9AE}" pid="${i + 2}" name="${name}"><vt:lpwstr>${xml(value)}</vt:lpwstr></property>`).join('')}</Properties>`
+
 // ─── Word ────────────────────────────────────────────────────────────────────
 
 const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
@@ -105,8 +124,9 @@ async function docx(markdown, paper, date) {
   const body = blocks(lexer(markdown, { gfm: true, breaks: true }), parts) || '<w:p/>'
   const section = `<w:sectPr>${PAPER[paper]}<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>`
   return zip({
-    '[Content_Types].xml': contentTypes([['word/document.xml', 'wordprocessingml.document.main'], ['word/styles.xml', 'wordprocessingml.styles'], ['word/numbering.xml', 'wordprocessingml.numbering']]),
-    '_rels/.rels': relationships([['rId1', 'officeDocument', 'word/document.xml']]),
+    '[Content_Types].xml': contentTypes([['word/document.xml', 'wordprocessingml.document.main'], ['word/styles.xml', 'wordprocessingml.styles'], ['word/numbering.xml', 'wordprocessingml.numbering'], ['docProps/custom.xml', 'custom-properties']]),
+    '_rels/.rels': relationships([['rId1', 'officeDocument', 'word/document.xml'], ['rId2', 'custom-properties', 'docProps/custom.xml']]),
+    'docProps/custom.xml': CUSTOM,
     'word/_rels/document.xml.rels': relationships([['rId1', 'styles', 'styles.xml'], ['rId2', 'numbering', 'numbering.xml'],
       ...parts.links.map((url, i) => /** @type {[string, string, string, string]} */ ([`rIdLink${i + 1}`, 'hyperlink', url, 'External']))]),
     'word/document.xml': `${HEAD}<w:document xmlns:w="${W}" xmlns:r="${OFFICE}"><w:body>${body}${section}</w:body></w:document>`,
@@ -412,8 +432,9 @@ async function xlsx(sheets, date) {
   const n = sheets.length
   return zip({
     '[Content_Types].xml': contentTypes([['xl/workbook.xml', 'spreadsheetml.sheet.main'], ...sheets.map((_, i) => /** @type {[string, string]} */ ([`xl/worksheets/sheet${i + 1}.xml`, 'spreadsheetml.worksheet'])),
-      ['xl/styles.xml', 'spreadsheetml.styles'], ['xl/sharedStrings.xml', 'spreadsheetml.sharedStrings']]),
-    '_rels/.rels': relationships([['rId1', 'officeDocument', 'xl/workbook.xml']]),
+      ['xl/styles.xml', 'spreadsheetml.styles'], ['xl/sharedStrings.xml', 'spreadsheetml.sharedStrings'], ['docProps/custom.xml', 'custom-properties']]),
+    '_rels/.rels': relationships([['rId1', 'officeDocument', 'xl/workbook.xml'], ['rId2', 'custom-properties', 'docProps/custom.xml']]),
+    'docProps/custom.xml': CUSTOM,
     'xl/_rels/workbook.xml.rels': relationships([...sheets.map((_, i) => /** @type {[string, string, string]} */ ([`rId${i + 1}`, 'worksheet', `worksheets/sheet${i + 1}.xml`])),
       [`rId${n + 1}`, 'styles', 'styles.xml'], [`rId${n + 2}`, 'sharedStrings', 'sharedStrings.xml']]),
     // Formulas have no saved results: they are worked out when the file opens.

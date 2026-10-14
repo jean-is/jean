@@ -2,6 +2,7 @@
 // this locale's spreadsheets read it. Files the brain writes (D119): a Word document from the
 // first message on, changed in place, and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
+import { readZip } from '../app/core/zip.js'
 import { start, connectFakeBrain, ask, turnOn, SALES } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 
@@ -66,6 +67,9 @@ test('a Word document from the first message, saved, then changed', async ({ pag
   const plan = await saved(page, first, 'Save Bakery plan.docx')
   expect(plan.name).toBe('Bakery plan.docx')
   expect(plan.text).toContain('# Bakery plan\nBake 120 croissants\nDeliver them\n| Day | Croissants |\n| Saturday | 120 |')
+  // It says a trained model made it, in its document properties (D324).
+  const custom = readZip(new Uint8Array(plan.bytes)).find((entry) => entry.name === 'docProps/custom.xml')
+  expect(new TextDecoder().decode(await custom?.read())).toContain('name="DigitalSourceType"><vt:lpwstr>http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia</vt:lpwstr>')
 
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   await ask(page, 'Add a step to it')
@@ -109,7 +113,7 @@ async function saved(page, answer, button) {
   const [download] = await Promise.all([page.waitForEvent('download'), answer.getByRole('button', { name: button }).click()])
   const name = download.suggestedFilename()
   const bytes = await streamBytes(download)
-  return { name, text: (await extractPages(name, new Uint8Array(bytes)) ?? []).join('\n') }
+  return { name, bytes, text: (await extractPages(name, new Uint8Array(bytes)) ?? []).join('\n') }
 }
 
 /** @param {import('@playwright/test').Download} download */

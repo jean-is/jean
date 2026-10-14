@@ -9,16 +9,17 @@ export const GENERATED = 'http://cv.iptc.org/newscodes/digitalsourcetype/trained
 const SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10]
 const escaped = (/** @type {string} */ text) => text.replace(/[<>&"]/g, (char) => `&#${char.charCodeAt(0)};`)
 
+/** An XMP packet saying which trained model made something, and at which revision; an SVG Jean writes carries one too (D324). @param {string} maker @param {string} [revision] */
+export const xmpOf = (maker, revision) => `<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/" Iptc4xmpExt:DigitalSourceType="${GENERATED}" Iptc4xmpExt:AISystemUsed="${escaped(maker)}"${revision ? ` Iptc4xmpExt:AISystemVersionUsed="${escaped(revision)}"` : ''}/></rdf:RDF></x:xmpmeta>`
+
 /**
  * The PNG with an XMP packet saying which trained model made it, in an iTXt chunk after its header;
  * anything else as it is. @param {Uint8Array} bytes @param {string} maker @param {string} [revision]
  */
 export function marked(bytes, maker, revision) {
   if (SIGNATURE.some((byte, i) => bytes[i] !== byte) || new TextDecoder().decode(bytes.subarray(12, 16)) !== 'IHDR') return bytes
-  const version = revision ? ` Iptc4xmpExt:AISystemVersionUsed="${escaped(revision)}"` : ''
-  const xmp = `<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/" Iptc4xmpExt:DigitalSourceType="${GENERATED}" Iptc4xmpExt:AISystemUsed="${escaped(maker)}"${version}/></rdf:RDF></x:xmpmeta>`
   // Its type, its keyword, uncompressed, no language: then the packet.
-  const body = new TextEncoder().encode(`iTXtXML:com.adobe.xmp\0\0\0\0\0${xmp}`)
+  const body = new TextEncoder().encode(`iTXtXML:com.adobe.xmp\0\0\0\0\0${xmpOf(maker, revision)}`)
   // The signature and IHDR (13 bytes, with its length, type and CRC), then the chunk: its length, its body, its CRC.
   const head = 8 + 25
   const out = new Uint8Array(bytes.length + body.length + 8)

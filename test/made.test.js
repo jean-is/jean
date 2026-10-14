@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { readZip } from '../app/core/zip.js'
 import { extractPages } from '../app/caps/files/extract.js'
 import { csvRows, fileName, makeFile, replaceOnce, sheetsIn } from '../app/caps/made/formats.js'
+import { BRAND } from '../app/brand.js'
 
 const dec = new TextDecoder()
 const DATE = new Date(2026, 9, 3, 12, 0, 0)
@@ -85,7 +86,7 @@ test('docx: Markdown becomes a Word document whose text reads back the same', as
 test('docx: styles, numbering, links, right-to-left paragraphs and the paper size', async () => {
   const { bytes } = await makeFile('Sales report.docx', REPORT, { date: DATE, paper: 'letter' })
   const files = await parts(bytes)
-  assert.deepEqual(Object.keys(files).sort(), ['[Content_Types].xml', '_rels/.rels', 'word/_rels/document.xml.rels', 'word/document.xml', 'word/numbering.xml', 'word/styles.xml'])
+  assert.deepEqual(Object.keys(files).sort(), ['[Content_Types].xml', '_rels/.rels', 'docProps/custom.xml', 'word/_rels/document.xml.rels', 'word/document.xml', 'word/numbering.xml', 'word/styles.xml'])
   const doc = files['word/document.xml']
   assert.match(doc, /<w:pStyle w:val="Heading1"\/>/)
   assert.match(doc, /<w:b\/><w:bCs\/><\/w:rPr><w:t xml:space="preserve">bold/)
@@ -167,6 +168,25 @@ test('xlsx: several sheets read back in order; a sheet in Arabic runs right to l
 })
 
 // ─── Changing a file ─────────────────────────────────────────────────────────
+
+test('a Word document, a workbook, a drawing and a web page say a trained model made them; other text stays as written (D324)', async () => {
+  const source = 'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia'
+  for (const [name, content] of [['Report.docx', '# Report'], ['Budget.xlsx', 'Item,Cost\nRent,1200']]) {
+    const files = await parts((await makeFile(name, content, { date: DATE })).bytes)
+    assert.match(files['docProps/custom.xml'], new RegExp(`name="DigitalSourceType"><vt:lpwstr>${source}</vt:lpwstr>.*name="AISystemUsed"><vt:lpwstr>${BRAND.name}<`))
+    assert.match(files['_rels/.rels'], /relationships\/custom-properties" Target="docProps\/custom.xml"/)
+    assert.match(files['[Content_Types].xml'], /PartName="\/docProps\/custom.xml" ContentType="application\/vnd.openxmlformats-officedocument.custom-properties\+xml"/)
+  }
+  const svg = dec.decode((await makeFile('Plan.svg', '<svg xmlns="http://www.w3.org/2000/svg" width="10"><rect/></svg>')).bytes)
+  assert.match(svg, new RegExp(`^<svg xmlns="http://www.w3.org/2000/svg" width="10"><metadata><x:xmpmeta .*DigitalSourceType="${source}" Iptc4xmpExt:AISystemUsed="${BRAND.name}"/></rdf:RDF></x:xmpmeta></metadata><rect/></svg>$`))
+  assert.equal(dec.decode((await makeFile('Again.svg', svg)).bytes), svg)
+  const page = dec.decode((await makeFile('Page.html', '<html><head><title>T</title></head><body>Hi</body></html>')).bytes)
+  assert.match(page, /<title>T<\/title><script type="application\/ld\+json">\{"@context":"https:\/\/schema.org",.*"https:\/\/schema.org\/TrainedAlgorithmicMediaDigitalSource".*<\/script><\/head>/)
+  assert.equal(JSON.parse(/<script[^>]*>(.*?)<\/script>/.exec(page)?.[1] ?? '').creator.name, BRAND.name)
+  assert.equal(dec.decode((await makeFile('Again.html', page)).bytes), page)
+  assert.match(dec.decode((await makeFile('Part.html', '<p>Hi</p>')).bytes), /^<script type="application\/ld\+json">.*<\/script>\n<p>Hi<\/p>$/)
+  assert.equal(dec.decode((await makeFile('Notes.md', '# Notes')).bytes), '# Notes')
+})
 
 test('replaceOnce: one passage changed as written; quoted twice or not at all, it says so', () => {
   assert.equal(replaceOnce('Total: 10 $', '10 $', '12 $ and $&', 'a.md'), 'Total: 12 $ and $&')
