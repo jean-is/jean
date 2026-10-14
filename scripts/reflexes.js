@@ -1,19 +1,21 @@
-// Measures the reflexes (Kev-0.6B) on the multilingual test set, language by language (D41):
+// Measures the reflexes (Kev-0.6B fine-tuned for them, D328) on the multilingual test set, language by language (D41):
 // the questions Jean asks (caps/reflexes/questions.js), packed the way Jean packs them
 // (core/decide.js), judged with Jean's own thresholds. Runs on the CPU through Transformers.js;
 // the first run downloads Kev (~375 MB) into its cache.
 // Usage: npm run reflexes                   every language in test/reflexes/
 //        npm run reflexes -- --lang fr,ja   some of them
 //        npm run reflexes -- --write        also write test/reflexes/results.md
+//        npm run reflexes -- --model <dir>  a checkpoint on this computer instead (its config.json, tokenizer and onnx/)
 import { readFile, readdir, writeFile } from 'node:fs/promises'
+import { basename, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { AutoTokenizer, PreTrainedModel, Tensor } from '@huggingface/transformers'
+import { env, AutoTokenizer, PreTrainedModel, Tensor } from '@huggingface/transformers'
 import { pack, answers } from '../app/core/decide.js'
 import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../app/caps/reflexes/questions.js'
 import { tierFor } from '../app/ui/auto.js'
 
 const DIR = fileURLToPath(new URL('../test/reflexes/', import.meta.url))
-const MODEL = 'onnx-community/kev-0.6b-ONNX'
+const MODEL = 'jean-is/kev-0.6b-reflexes-ONNX'
 const KINDS = ['personal', 'unhappy', 'demand', 'capability', 'lasting', 'table', 'email']
 
 /** @typedef {import('../app/core/decide.js').Question} Question */
@@ -45,8 +47,11 @@ async function main(argv) {
   const langs = (await readdir(DIR)).filter((file) => /^[\w-]+\.json$/.test(file)).map((file) => file.slice(0, -5))
     .filter((lang) => !only || only.includes(lang)).sort((a, b) => (a === 'en' ? -1 : b === 'en' ? 1 : a < b ? -1 : 1))
 
-  const tokenizer = await AutoTokenizer.from_pretrained(MODEL)
-  const model = await PreTrainedModel.from_pretrained(MODEL, { dtype: 'q4', device: 'cpu' })
+  const local = argv.includes('--model') ? resolve(argv[argv.indexOf('--model') + 1]) : null
+  if (local) Object.assign(env, { localModelPath: `${dirname(local)}/`, allowRemoteModels: false })
+  const name = local ? basename(local) : MODEL
+  const tokenizer = await AutoTokenizer.from_pretrained(name)
+  const model = await PreTrainedModel.from_pretrained(name, { dtype: 'q4', device: 'cpu' })
   const encode = (/** @type {string} */ text) => Array.from(tokenizer(text, { add_special_tokens: false }).input_ids.data, Number)
 
   /** @type {Record<string, Record<string, [number, number]>>} lang → kind → [right, total] */
@@ -76,16 +81,16 @@ async function main(argv) {
     console.log(`${lang.padEnd(8)} ${KINDS.map((kind) => `${kind} ${scores[lang][kind][0]}/${scores[lang][kind][1]}`).join('  ')}  total ${(total[0] / total[1] * 100).toFixed(0)}%`)
   }
   if (argv.includes('--verbose')) for (const miss of misses) console.log(miss)
-  if (argv.includes('--write')) await writeFile(`${DIR}results.md`, report(scores))
+  if (argv.includes('--write')) await writeFile(`${DIR}results.md`, report(scores, name))
 }
 
-/** @param {Record<string, Record<string, [number, number]>>} scores */
-function report(scores) {
+/** @param {Record<string, Record<string, [number, number]>>} scores @param {string} name the model's */
+function report(scores, name) {
   const percent = (/** @type {[number, number]} */ [right, total]) => `${Math.round(right / total * 100)}%`
   const sum = (/** @type {[number, number][]} */ pairs) => /** @type {[number, number]} */ (pairs.reduce((a, b) => [a[0] + b[0], a[1] + b[1]], [0, 0]))
   const rows = Object.entries(scores).map(([lang, byKind]) => `| ${lang} | ${KINDS.map((kind) => percent(byKind[kind])).join(' | ')} | **${percent(sum(Object.values(byKind)))}** |`)
   const all = KINDS.map((kind) => percent(sum(Object.values(scores).map((byKind) => byKind[kind]))))
-  return `# Reflexes: Kev-0.6B on the multilingual test set
+  return `# Reflexes: ${name} on the multilingual test set
 
 Written by \`npm run reflexes -- --write\`. Each cell is the share of examples where Jean would act
 as the label says, with its own threshold (yes at ${YES}); demand counts as right when its most
