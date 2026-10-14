@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "บันทึกว่า {name} ถูกสร้างขึ้นอย่างไรใช้ไม่ได้: ถูกเปลี่ยนตั้งแต่นั้น หรือไม่ได้ลงนามด้วยกุญแจที่ระบุ",
   "certificates.ai": "บันทึกระบุว่า AI เป็นผู้สร้าง",
   "certificates.notAi": "บันทึกไม่ได้ระบุว่า AI เป็นผู้สร้าง",
-  "certificates.unbound": "ที่นี่ไม่ได้ตรวจว่าไฟล์เปลี่ยนไปตั้งแต่นั้นหรือไม่"
+  "certificates.unbound": "ที่นี่ไม่ได้ตรวจว่าไฟล์เปลี่ยนไปตั้งแต่นั้นหรือไม่",
+  "certificates.noRecord": "{name} ไม่มีบันทึกว่าถูกสร้างขึ้นอย่างไร",
+  "certificates.watermark.match": "ลายน้ำที่มองไม่เห็นตรงกับที่บันทึกนี้ระบุ",
+  "certificates.watermark.other": "ลายน้ำที่มองไม่เห็นไม่ตรงกับที่บันทึกนี้ระบุ",
+  "certificates.watermark.found": "มีลายน้ำที่มองไม่เห็น",
+  "certificates.watermark.none": "ไม่พบลายน้ำที่มองไม่เห็น"
 }

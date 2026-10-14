@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name}: zapis pochodzenia, który się nie zgadza: zmieniony od tamtej pory albo niepodpisany kluczem, który wymienia",
   "certificates.ai": "Według zapisu to dzieło sztucznej inteligencji",
   "certificates.notAi": "Zapis nie mówi, że to dzieło sztucznej inteligencji",
-  "certificates.unbound": "Nie sprawdza się tu, czy plik zmienił się od tamtej pory"
+  "certificates.unbound": "Nie sprawdza się tu, czy plik zmienił się od tamtej pory",
+  "certificates.noRecord": "{name}: brak zapisu pochodzenia",
+  "certificates.watermark.match": "Niewidoczny znak wodny jest tym, który wymienia ten zapis",
+  "certificates.watermark.other": "Niewidoczny znak wodny nie jest tym, który wymienia ten zapis",
+  "certificates.watermark.found": "Ma niewidoczny znak wodny",
+  "certificates.watermark.none": "Nie znaleziono niewidocznego znaku wodnego"
 }

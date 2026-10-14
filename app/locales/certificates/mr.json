@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} मधील ते कसे बनले याची नोंद टिकत नाही: तेव्हापासून बदललेली, किंवा ती नाव घेत असलेल्या किल्लीने स्वाक्षरी केलेली नाही",
   "certificates.ai": "नोंदीनुसार ते एआयने बनवले",
   "certificates.notAi": "नोंदीत ते एआयने बनवले असे म्हटलेले नाही",
-  "certificates.unbound": "फाइल तेव्हापासून बदलली का, हे इथे तपासले जात नाही"
+  "certificates.unbound": "फाइल तेव्हापासून बदलली का, हे इथे तपासले जात नाही",
+  "certificates.noRecord": "{name} मध्ये ते कसे बनले याची कोणतीही नोंद नाही",
+  "certificates.watermark.match": "त्याचा अदृश्य वॉटरमार्क या नोंदीत नाव असलेलाच आहे",
+  "certificates.watermark.other": "त्याचा अदृश्य वॉटरमार्क या नोंदीत नाव असलेला नाही",
+  "certificates.watermark.found": "त्यात एक अदृश्य वॉटरमार्क आहे",
+  "certificates.watermark.none": "कोणताही अदृश्य वॉटरमार्क सापडला नाही"
 }

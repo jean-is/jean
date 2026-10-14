@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name}: Angaben zur Herkunft, die nicht halten: seither verändert oder nicht mit dem Schlüssel signiert, den sie nennen",
   "certificates.ai": "Die Angaben nennen eine KI als Urheber",
   "certificates.notAi": "Die Angaben nennen keine KI als Urheber",
-  "certificates.unbound": "Ob die Datei seither verändert wurde, wird hier nicht geprüft"
+  "certificates.unbound": "Ob die Datei seither verändert wurde, wird hier nicht geprüft",
+  "certificates.noRecord": "{name}: keine Angaben zur Herkunft",
+  "certificates.watermark.match": "Das unsichtbare Wasserzeichen ist das, das diese Angaben nennen",
+  "certificates.watermark.other": "Das unsichtbare Wasserzeichen ist nicht das, das diese Angaben nennen",
+  "certificates.watermark.found": "Es trägt ein unsichtbares Wasserzeichen",
+  "certificates.watermark.none": "Kein unsichtbares Wasserzeichen gefunden"
 }

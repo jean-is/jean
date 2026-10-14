@@ -250,9 +250,16 @@ export async function credentialsOf(bytes) {
     const at = datedOn?.at ?? null
     const made = (value('c2pa.actions.v2') ?? value('c2pa.actions'))?.actions?.find((/** @type {any} */ one) => one.action === 'c2pa.created')
     const generator = [claim.claim_generator_info].flat()[0]?.name ?? claim.claim_generator ?? ''
+    // The watermark it names, TrustMark's: the bits after its schema's number, as TrustMark's example writes them.
+    const soft = value('c2pa.soft-binding')
     return { intact: signed && listed.every(Boolean) && bound !== false && (!at || (from <= at && at <= until)), bound, subject, issuer, selfIssued, spki, at, witness: datedOn?.authority ?? null,
-      generated: /trainedAlgorithmicMedia$/.test(made?.digitalSourceType ?? ''), maker: String(made?.softwareAgent?.name ?? made?.softwareAgent ?? ''), generator: String(generator) }
+      generated: /trainedAlgorithmicMedia$/.test(made?.digitalSourceType ?? ''), maker: String(made?.softwareAgent?.name ?? made?.softwareAgent ?? ''), generator: String(generator),
+      watermark: soft?.alg === 'com.adobe.trustmark.Q' ? String(soft.blocks?.[0]?.value ?? '').split('*')[1] ?? null : null }
   } catch {
-    return { intact: false, bound: false, subject: {}, issuer: {}, selfIssued: false, spki: new Uint8Array(), at: null, witness: null, generated: false, maker: '', generator: '' }
+    return { ...NONE, bound: false }
   }
 }
+
+/** What a file without Content Credentials, or with ones that can't be read, shows. */
+export const NONE = { intact: false, bound: /** @type {boolean | undefined} */ (undefined), subject: /** @type {Record<string, string>} */ ({}), issuer: /** @type {Record<string, string>} */ ({}),
+  selfIssued: false, spki: new Uint8Array(), at: /** @type {Date | null} */ (null), witness: /** @type {Record<string, string> | null} */ (null), generated: false, maker: '', generator: '', watermark: /** @type {string | null} */ (null) }

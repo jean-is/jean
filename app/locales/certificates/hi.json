@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} में उसके बनने का ब्योरा सही नहीं ठहरता: तब से बदला गया, या उस कुंजी से हस्ताक्षरित नहीं जिसका उसमें नाम है",
   "certificates.ai": "ब्योरे के अनुसार इसे एआई ने बनाया",
   "certificates.notAi": "ब्योरे में यह नहीं लिखा कि इसे एआई ने बनाया",
-  "certificates.unbound": "फ़ाइल तब से बदली है या नहीं, यह यहाँ नहीं जाँचा जाता"
+  "certificates.unbound": "फ़ाइल तब से बदली है या नहीं, यह यहाँ नहीं जाँचा जाता",
+  "certificates.noRecord": "{name} में उसके बनने का कोई ब्योरा नहीं है",
+  "certificates.watermark.match": "इसका अदृश्य वॉटरमार्क वही है जिसका इस ब्योरे में नाम है",
+  "certificates.watermark.other": "इसका अदृश्य वॉटरमार्क वह नहीं है जिसका इस ब्योरे में नाम है",
+  "certificates.watermark.found": "इसमें एक अदृश्य वॉटरमार्क है",
+  "certificates.watermark.none": "कोई अदृश्य वॉटरमार्क नहीं मिला"
 }

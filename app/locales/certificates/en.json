@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} carries a record of how it was made that doesn’t hold: changed since, or not signed by the key it names",
   "certificates.ai": "It says AI made it",
   "certificates.notAi": "It doesn’t say AI made it",
-  "certificates.unbound": "Whether the file changed since isn’t checked here"
+  "certificates.unbound": "Whether the file changed since isn’t checked here",
+  "certificates.noRecord": "{name} carries no record of how it was made",
+  "certificates.watermark.match": "Its invisible watermark is the one this record names",
+  "certificates.watermark.other": "Its invisible watermark isn’t the one this record names",
+  "certificates.watermark.found": "It carries an invisible watermark",
+  "certificates.watermark.none": "No invisible watermark found"
 }

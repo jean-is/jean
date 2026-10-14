@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "ב־{name} יש רישום של אופן היצירה שאינו תקף: השתנה מאז, או שלא נחתם במפתח שהוא מציין",
   "certificates.ai": "הרישום מציין יצירה בידי בינה מלאכותית",
   "certificates.notAi": "הרישום אינו מציין יצירה בידי בינה מלאכותית",
-  "certificates.unbound": "כאן לא נבדק אם הקובץ השתנה מאז"
+  "certificates.unbound": "כאן לא נבדק אם הקובץ השתנה מאז",
+  "certificates.noRecord": "ב־{name} אין רישום של אופן היצירה",
+  "certificates.watermark.match": "סימן המים הבלתי נראה הוא זה שהרישום מציין",
+  "certificates.watermark.other": "סימן המים הבלתי נראה אינו זה שהרישום מציין",
+  "certificates.watermark.found": "יש בו סימן מים בלתי נראה",
+  "certificates.watermark.none": "לא נמצא סימן מים בלתי נראה"
 }

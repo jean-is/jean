@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "Bayanin yadda aka yi {name} bai tsaya ba: an canza shi tun lokacin, ko ba a sa masa hannu da maɓallin da ya ambata ba",
   "certificates.ai": "Bayanin ya ce ƙirƙirarriyar basira ce ta yi shi",
   "certificates.notAi": "Bayanin bai ce ƙirƙirarriyar basira ce ta yi shi ba",
-  "certificates.unbound": "Ba a duba a nan ko fayil ɗin ya canza tun lokacin ba"
+  "certificates.unbound": "Ba a duba a nan ko fayil ɗin ya canza tun lokacin ba",
+  "certificates.noRecord": "{name} ba shi da bayanin yadda aka yi shi",
+  "certificates.watermark.match": "Alamar ruwansa marar ganuwa ita ce wadda wannan bayani ya ambata",
+  "certificates.watermark.other": "Alamar ruwansa marar ganuwa ba wadda wannan bayani ya ambata ba ce",
+  "certificates.watermark.found": "Akwai alamar ruwa marar ganuwa a cikinsa",
+  "certificates.watermark.none": "Ba a sami alamar ruwa marar ganuwa ba"
 }

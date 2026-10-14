@@ -38,7 +38,10 @@ describe('the Content Credentials of a picture made here (D324)', () => {
     const length = view.getUint32(33)
     assert.deepEqual([...out.subarray(0, 33), ...out.subarray(33 + 12 + length)], [...marked(png, made.maker, made.revision)])
     const read = await credentialsOf(out)
-    assert.deepEqual([read?.intact, read?.bound, read?.generated, read?.maker, read?.generator, read?.selfIssued, read?.at], [true, true, true, 'Z-Image-Turbo', 'Jean', true, null])
+    assert.deepEqual([read?.intact, read?.bound, read?.generated, read?.maker, read?.generator, read?.selfIssued, read?.at, read?.watermark], [true, true, true, 'Z-Image-Turbo', 'Jean', true, null, null])
+    // The watermark its manifest names, as TrustMark's example writes it.
+    const named = await credentialed(png, { ...made, seal, assertions: [['c2pa.soft-binding', { alg: 'com.adobe.trustmark.Q', blocks: [{ scope: {}, value: '1*0110' }] }]] })
+    assert.deepEqual([(await credentialsOf(named))?.intact, (await credentialsOf(named))?.watermark], [true, '0110'])
     assert.deepEqual(read?.spki, new Uint8Array(await crypto.subtle.exportKey('spki', seal.keys.publicKey)))
     // A pixel changed, or the manifest's words, and it no longer holds.
     const changed = out.slice()

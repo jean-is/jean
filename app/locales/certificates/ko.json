@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name}의 만들어진 과정 기록이 맞지 않아요. 그 뒤에 바뀌었거나, 적힌 키로 서명되지 않았어요",
   "certificates.ai": "AI가 만들었다고 적혀 있어요",
   "certificates.notAi": "AI가 만들었다고 적혀 있지 않아요",
-  "certificates.unbound": "그 뒤로 파일이 바뀌었는지는 여기서 확인하지 않아요"
+  "certificates.unbound": "그 뒤로 파일이 바뀌었는지는 여기서 확인하지 않아요",
+  "certificates.noRecord": "{name}에는 만들어진 과정에 대한 기록이 없어요",
+  "certificates.watermark.match": "보이지 않는 워터마크가 이 기록에 적힌 것과 같아요",
+  "certificates.watermark.other": "보이지 않는 워터마크가 이 기록에 적힌 것과 달라요",
+  "certificates.watermark.found": "보이지 않는 워터마크가 있어요",
+  "certificates.watermark.none": "보이지 않는 워터마크를 찾지 못했어요"
 }

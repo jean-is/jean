@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} draagt een verslag van hoe het is gemaakt dat niet klopt: sindsdien gewijzigd, of niet ondertekend met de sleutel die het noemt",
   "certificates.ai": "Het zegt dat een AI het heeft gemaakt",
   "certificates.notAi": "Het zegt niet dat een AI het heeft gemaakt",
-  "certificates.unbound": "Of het bestand sindsdien is gewijzigd, wordt hier niet gecontroleerd"
+  "certificates.unbound": "Of het bestand sindsdien is gewijzigd, wordt hier niet gecontroleerd",
+  "certificates.noRecord": "{name} draagt geen verslag van hoe het is gemaakt",
+  "certificates.watermark.match": "Het onzichtbare watermerk is het watermerk dat dit verslag noemt",
+  "certificates.watermark.other": "Het onzichtbare watermerk is niet het watermerk dat dit verslag noemt",
+  "certificates.watermark.found": "Het draagt een onzichtbaar watermerk",
+  "certificates.watermark.none": "Geen onzichtbaar watermerk gevonden"
 }

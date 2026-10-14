@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "سابقهٔ ساخت {name} معتبر نیست: از آن زمان تغییر کرده، یا با کلیدی که نام می‌برد امضا نشده است",
   "certificates.ai": "می‌گوید هوش مصنوعی آن را ساخته است",
   "certificates.notAi": "نمی‌گوید هوش مصنوعی آن را ساخته است",
-  "certificates.unbound": "اینکه پرونده از آن زمان تغییر کرده یا نه، اینجا بررسی نمی‌شود"
+  "certificates.unbound": "اینکه پرونده از آن زمان تغییر کرده یا نه، اینجا بررسی نمی‌شود",
+  "certificates.noRecord": "{name} هیچ سابقه‌ای از چگونگی ساخته‌شدنش ندارد",
+  "certificates.watermark.match": "واترمارک نامرئی‌اش همانی است که این سابقه نام می‌برد",
+  "certificates.watermark.other": "واترمارک نامرئی‌اش آنی نیست که این سابقه نام می‌برد",
+  "certificates.watermark.found": "واترمارکی نامرئی دارد",
+  "certificates.watermark.none": "واترمارک نامرئی‌ای پیدا نشد"
 }

@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} lleva un registro de cómo se hizo que no se sostiene: cambió desde entonces, o no lo firmó la clave que nombra",
   "certificates.ai": "Dice que es obra de una IA",
   "certificates.notAi": "No dice que sea obra de una IA",
-  "certificates.unbound": "Aquí no se comprueba si el archivo cambió desde entonces"
+  "certificates.unbound": "Aquí no se comprueba si el archivo cambió desde entonces",
+  "certificates.noRecord": "{name} no lleva ningún registro de cómo se hizo",
+  "certificates.watermark.match": "Su marca de agua invisible es la que nombra este registro",
+  "certificates.watermark.other": "Su marca de agua invisible no es la que nombra este registro",
+  "certificates.watermark.found": "Lleva una marca de agua invisible",
+  "certificates.watermark.none": "No se encontró ninguna marca de agua invisible"
 }

@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "Bản ghi về cách {name} được tạo ra không đứng vững: đã thay đổi từ đó, hoặc không được ký bằng khóa mà nó nêu",
   "certificates.ai": "Bản ghi nói AI đã tạo ra nó",
   "certificates.notAi": "Bản ghi không nói AI đã tạo ra nó",
-  "certificates.unbound": "Ở đây không kiểm tra tệp có thay đổi từ đó hay không"
+  "certificates.unbound": "Ở đây không kiểm tra tệp có thay đổi từ đó hay không",
+  "certificates.noRecord": "{name} không có bản ghi nào về cách nó được tạo ra",
+  "certificates.watermark.match": "Hình mờ ẩn của nó đúng là cái mà bản ghi này nêu",
+  "certificates.watermark.other": "Hình mờ ẩn của nó không phải cái mà bản ghi này nêu",
+  "certificates.watermark.found": "Nó có một hình mờ ẩn",
+  "certificates.watermark.none": "Không tìm thấy hình mờ ẩn"
 }

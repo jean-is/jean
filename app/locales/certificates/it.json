@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} porta un registro della sua provenienza che non regge: modificato da allora, o non firmato dalla chiave che nomina",
   "certificates.ai": "Dice che è opera di un’IA",
   "certificates.notAi": "Non dice che sia opera di un’IA",
-  "certificates.unbound": "Qui non si verifica se il file è cambiato da allora"
+  "certificates.unbound": "Qui non si verifica se il file è cambiato da allora",
+  "certificates.noRecord": "{name} non porta alcun registro della sua provenienza",
+  "certificates.watermark.match": "La sua filigrana invisibile è quella che nomina questo registro",
+  "certificates.watermark.other": "La sua filigrana invisibile non è quella che nomina questo registro",
+  "certificates.watermark.found": "Porta una filigrana invisibile",
+  "certificates.watermark.none": "Nessuna filigrana invisibile trovata"
 }

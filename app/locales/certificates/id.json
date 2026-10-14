@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} membawa catatan cara pembuatan yang tidak berlaku: berubah sejak itu, atau tidak ditandatangani dengan kunci yang disebutkannya",
   "certificates.ai": "Catatannya menyebutkan AI yang membuatnya",
   "certificates.notAi": "Catatannya tidak menyebutkan AI yang membuatnya",
-  "certificates.unbound": "Apakah file berubah sejak itu tidak diperiksa di sini"
+  "certificates.unbound": "Apakah file berubah sejak itu tidak diperiksa di sini",
+  "certificates.noRecord": "{name} tidak membawa catatan cara pembuatannya",
+  "certificates.watermark.match": "Tanda air tak terlihatnya adalah yang disebutkan catatan ini",
+  "certificates.watermark.other": "Tanda air tak terlihatnya bukan yang disebutkan catatan ini",
+  "certificates.watermark.found": "Ada tanda air tak terlihat di dalamnya",
+  "certificates.watermark.none": "Tidak ditemukan tanda air tak terlihat"
 }

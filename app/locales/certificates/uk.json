@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name}: відомості про походження не підтверджуються — файл змінено відтоді або підписано не тим ключем, який у них названо",
   "certificates.ai": "Згідно з відомостями, створено ШІ",
   "certificates.notAi": "У відомостях не сказано, що це створено ШІ",
-  "certificates.unbound": "Чи змінився файл відтоді, тут не перевіряється"
+  "certificates.unbound": "Чи змінився файл відтоді, тут не перевіряється",
+  "certificates.noRecord": "{name}: відомостей про походження немає",
+  "certificates.watermark.match": "Невидимий водяний знак — той, що названий у цих відомостях",
+  "certificates.watermark.other": "Невидимий водяний знак — не той, що названий у цих відомостях",
+  "certificates.watermark.found": "У ньому є невидимий водяний знак",
+  "certificates.watermark.none": "Невидимий водяний знак не знайдено"
 }

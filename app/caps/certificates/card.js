@@ -16,9 +16,10 @@ import { credentialsOf } from '../receipt/c2pa.js'
  */
 
 /**
- * A picture's or a film's Content Credentials as checked, kept as the call's `_meta.credentials`: its
- * name, and whether the device that checks them is the one that signed them.
- * @typedef {NonNullable<Awaited<ReturnType<typeof credentialsOf>>> & { name: string, at: string | Date | null, own?: boolean }} Credentials
+ * A picture's or a film's Content Credentials as checked, kept as the call's `_meta.checked.credentials`:
+ * its name, whether the device that checks them is the one that signed them, whether it has none, and its
+ * watermark when looked for (D324): the one they name, another, one where they name none, or none.
+ * @typedef {NonNullable<Awaited<ReturnType<typeof credentialsOf>>> & { name: string, at: string | Date | null, own?: boolean, absent?: boolean, found?: 'match' | 'other' | 'found' | 'none' }} Credentials
  */
 
 /** @import { Reading } from '../receipt/certificate.js' */
@@ -75,11 +76,15 @@ const grouped = (fingerprint) => html`<code class="receipt-host" dir="ltr">${fin
 
 /** A picture's or a film's Content Credentials, checked (D324). @param {Credentials} one */
 export function credentialsCard(one) {
+  const found = one.found ? t(`certificates.watermark.${one.found}`) : ''
+  if (one.absent) return html`<div class="receipt receipt-checked"><div class="receipt-head ${one.found === 'found' ? 'is-local' : ''}">
+    <span class="receipt-mark">${one.found === 'found' ? icons.shield : icons.close}</span>
+    <div><p class="receipt-verdict">${t('certificates.noRecord', { name: one.name })}</p><p class="receipt-note">${found}</p></div></div></div>`
   return html`<div class="receipt receipt-checked">
     <div class="receipt-head ${one.intact ? 'is-local' : ''}">
       <span class="receipt-mark">${one.intact ? icons.shield : icons.close}</span>
       <div><p class="receipt-verdict">${t(one.intact ? 'certificates.credentials' : 'certificates.credentialsBroken', { name: one.name })}</p>
-        <p class="receipt-note">${t(one.generated ? 'certificates.ai' : 'certificates.notAi')}${one.bound === undefined && one.intact ? html`<br>${t('certificates.unbound')}` : nothing}</p></div>
+        <p class="receipt-note">${t(one.generated ? 'certificates.ai' : 'certificates.notAi')}${one.bound === undefined && one.intact ? html`<br>${t('certificates.unbound')}` : nothing}${found ? html`<br>${found}` : nothing}</p></div>
     </div>
     <dl>
       <div class="receipt-list"><dt>${t('certificates.by')}</dt><dd>${signer(one)} ${one.selfIssued ? grouped(one.subject['2.5.4.3'] ?? '') : html`<bdi class="receipt-host">${one.subject['2.5.4.10'] ?? one.subject['2.5.4.3'] ?? ''}</bdi>`}</dd></div>

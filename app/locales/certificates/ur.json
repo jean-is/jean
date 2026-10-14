@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} میں اس کے بننے کی تفصیل درست نہیں ٹھہرتی: تب سے بدلی گئی، یا اس کلید سے دستخط شدہ نہیں جس کا اس میں نام ہے",
   "certificates.ai": "تفصیل کے مطابق اسے مصنوعی ذہانت نے بنایا",
   "certificates.notAi": "تفصیل میں یہ نہیں لکھا کہ اسے مصنوعی ذہانت نے بنایا",
-  "certificates.unbound": "فائل تب سے بدلی یا نہیں، یہ یہاں نہیں جانچا جاتا"
+  "certificates.unbound": "فائل تب سے بدلی یا نہیں، یہ یہاں نہیں جانچا جاتا",
+  "certificates.noRecord": "{name} میں اس کے بننے کی کوئی تفصیل نہیں",
+  "certificates.watermark.match": "اس کا پوشیدہ واٹر مارک وہی ہے جس کا اس تفصیل میں نام ہے",
+  "certificates.watermark.other": "اس کا پوشیدہ واٹر مارک وہ نہیں جس کا اس تفصیل میں نام ہے",
+  "certificates.watermark.found": "اس میں ایک پوشیدہ واٹر مارک ہے",
+  "certificates.watermark.none": "کوئی پوشیدہ واٹر مارک نہیں ملا"
 }

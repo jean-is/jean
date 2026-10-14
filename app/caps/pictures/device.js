@@ -193,6 +193,8 @@ export async function refused(bytes) {
  * too, its file downloaded first if it isn't here. @param {Uint8Array} bytes @param {number[]} bits @returns {Promise<Uint8Array>}
  */
 export const watermarked = async (bytes, bits) => new Uint8Array((await holdStill(turbo.call({ type: 'watermark', host: weightsHost(), bytes, bits }))).bytes)
+/** The 100 bits TrustMark's decoder reads in a picture (D324), its file downloaded the first time. @param {Uint8Array} bytes @returns {Promise<number[]>} */
+export const watermarkOf = async (bytes) => (await holdStill(turbo.call({ type: 'detect', host: weightsHost(), bytes }))).bits
 
 /** Its size in pixels: SD-Turbo's 512 square, the others' in the shape asked. @param {keyof typeof SIZES} shape */
 export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape])

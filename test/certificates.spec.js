@@ -103,6 +103,27 @@ test('a picture with Content Credentials shared in a conversation brings what ch
   await expect(page.locator('.msg-jean .prose').last()).toContainText('c2pa.png: its Content Credentials hold; signed by C2PA Test Signing Cert, certified by Intermediate CA')
 })
 
+// TrustMark's 100 bits for 61, as its decoder reads them in a watermarked picture; and naught, as in one without.
+const WATERMARKED = [...'0100101001010010100101001010010100101001010010100101001010010'].map(Number)
+
+for (const [lang, watermarked, said] of [['en', true, 'It carries an invisible watermark'], ['ar', true, 'يحمل علامة مائية خفية'], ['ja', false, '見えない透かしは見つかりませんでした']]) {
+  test(`asked, the check looks for a picture’s invisible watermark too, whose bits TrustMark’s decoder reads (D324, ${lang})`, async ({ page }) => {
+    const { payloadOf } = await import('../app/caps/pictures/watermark.js')
+    const bits = watermarked ? payloadOf(WATERMARKED) : new Array(100).fill(0)
+    // SD-Turbo's worker, where the decoder runs.
+    await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
+      body: `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', bits: ${JSON.stringify(bits)} })` }))
+    await start(page, lang)
+    await connectFakeBrain(page)
+    await page.locator('.composer input[type="file"]').setInputFiles([await signedPicture()])
+    await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+    await ask(page, 'Does this picture carry a certificate or a watermark?')
+    await expect(page.locator('app-certificate .receipt-checked .receipt-note')).toContainText(said)
+    // The brain hears the same.
+    await expect(page.locator('.msg-jean .prose').last()).toContainText(watermarked ? 'its invisible watermark: TrustMark\'s' : 'its invisible watermark: none found')
+  })
+}
+
 test('a certificate shared in a conversation brings what checks it, and its card knows this device’s seal', async ({ page }) => {
   const { certificate, proof } = await saved(page)
   await (await openTasks(page)).locator('.place', { hasText: 'New task' }).click()

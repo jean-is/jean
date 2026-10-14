@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "Kumbukumbu ya jinsi {name} ilivyotengenezwa haisimami: imebadilika tangu hapo, au haikutiwa sahihi kwa ufunguo inaoutaja",
   "certificates.ai": "Kumbukumbu inasema akili bandia iliitengeneza",
   "certificates.notAi": "Kumbukumbu haisemi akili bandia iliitengeneza",
-  "certificates.unbound": "Kama faili imebadilika tangu hapo haikaguliwi hapa"
+  "certificates.unbound": "Kama faili imebadilika tangu hapo haikaguliwi hapa",
+  "certificates.noRecord": "{name} haina kumbukumbu ya jinsi ilivyotengenezwa",
+  "certificates.watermark.match": "Alama yake fiche ndiyo ile kumbukumbu hii inayoitaja",
+  "certificates.watermark.other": "Alama yake fiche si ile kumbukumbu hii inayoitaja",
+  "certificates.watermark.found": "Ina alama fiche",
+  "certificates.watermark.none": "Hakuna alama fiche iliyopatikana"
 }

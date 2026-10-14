@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} membawa rekod cara ia dibuat yang tidak sah: berubah sejak itu, atau tidak ditandatangani dengan kunci yang dinamakannya",
   "certificates.ai": "Rekodnya menyatakan AI yang membuatnya",
   "certificates.notAi": "Rekodnya tidak menyatakan AI yang membuatnya",
-  "certificates.unbound": "Sama ada fail berubah sejak itu tidak diperiksa di sini"
+  "certificates.unbound": "Sama ada fail berubah sejak itu tidak diperiksa di sini",
+  "certificates.noRecord": "{name} tidak membawa rekod cara ia dibuat",
+  "certificates.watermark.match": "Tera air halimunannya ialah yang dinamakan rekod ini",
+  "certificates.watermark.other": "Tera air halimunannya bukan yang dinamakan rekod ini",
+  "certificates.watermark.found": "Ada tera air halimunan di dalamnya",
+  "certificates.watermark.none": "Tiada tera air halimunan ditemui"
 }

@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} porte un relevé de sa fabrication qui ne tient pas : modifié depuis, ou pas signé par la clé qu’il nomme",
   "certificates.ai": "Il indique une création par une IA",
   "certificates.notAi": "Il n’indique pas de création par une IA",
-  "certificates.unbound": "Une modification du fichier depuis n’est pas vérifiée ici"
+  "certificates.unbound": "Une modification du fichier depuis n’est pas vérifiée ici",
+  "certificates.noRecord": "{name} ne porte aucun relevé de sa fabrication",
+  "certificates.watermark.match": "Son filigrane invisible est celui que nomme ce relevé",
+  "certificates.watermark.other": "Son filigrane invisible n’est pas celui que nomme ce relevé",
+  "certificates.watermark.found": "Il porte un filigrane invisible",
+  "certificates.watermark.none": "Aucun filigrane invisible trouvé"
 }

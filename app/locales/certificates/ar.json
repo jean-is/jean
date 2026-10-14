@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "يحمل {name} سجلًا لكيفية صنعه لا يصمد: تغيّر منذ ذلك الحين، أو لم يُوقَّع بالمفتاح الذي يذكره",
   "certificates.ai": "يذكر السجل أن الذكاء الاصطناعي صنعه",
   "certificates.notAi": "لا يذكر السجل أن الذكاء الاصطناعي صنعه",
-  "certificates.unbound": "لا يُتحقَّق هنا مما إذا كان الملف قد تغيّر منذ ذلك الحين"
+  "certificates.unbound": "لا يُتحقَّق هنا مما إذا كان الملف قد تغيّر منذ ذلك الحين",
+  "certificates.noRecord": "لا يحمل {name} أي سجل لكيفية صنعه",
+  "certificates.watermark.match": "علامته المائية الخفية هي التي يذكرها هذا السجل",
+  "certificates.watermark.other": "علامته المائية الخفية ليست التي يذكرها هذا السجل",
+  "certificates.watermark.found": "يحمل علامة مائية خفية",
+  "certificates.watermark.none": "لم يُعثر على علامة مائية خفية"
 }

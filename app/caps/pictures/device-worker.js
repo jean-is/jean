@@ -10,6 +10,7 @@
 // { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
 // { type: 'check', host, bytes }  → { type: 'done', logits, areas }, its four levels of nudity, and the other areas it shows
 // { type: 'watermark', host, bytes, bits } → { type: 'done', bytes }, the PNG with TrustMark's watermark of those 100 bits
+// { type: 'detect', host, bytes }  → { type: 'done', bits }, the 100 TrustMark's decoder reads in a picture
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
@@ -30,6 +31,8 @@ let loading = null
 let checker = null
 /** @type {Promise<any> | null} TrustMark's encoder, kept for the next picture */
 let marker = null
+/** @type {Promise<any> | null} its decoder, kept for the next */
+let reader = null
 let busy = Promise.resolve()
 
 self.onmessage = ({ data }) => {
@@ -56,6 +59,8 @@ async function handle({ id, type, ...data }) {
     } else if (type === 'watermark') {
       const bytes = await watermarked(data)
       self.postMessage({ id, type: 'done', bytes }, { transfer: [bytes] })
+    } else if (type === 'detect') {
+      self.postMessage({ id, type: 'done', bits: await detected(data) })
     }
   } catch (error) {
     if (type === 'load') loading = null
@@ -132,25 +137,42 @@ async function checked({ host, bytes }) {
 }
 
 /**
- * A picture with TrustMark's watermark of 100 bits (D324): the encoder sees it squashed to its square, and
- * what it changes there is spread over the picture at its size. On WebGPU with its tensors laid out channels
- * first, where ONNX Runtime's convolution reads the encoder's 6 input channels right (laid out channels last,
- * it misreads any count that is a multiple of 3 but not of 4, in every browser), else WebAssembly. Its file
- * downloaded first if it isn't here. @param {{ host: string, bytes: Uint8Array, bits: number[] }} data
+ * One of TrustMark's sessions (D324), its file downloaded first if it isn't here: on WebGPU with its tensors
+ * laid out channels first, where ONNX Runtime's convolution reads the encoder's 6 input channels right (laid
+ * out channels last, it misreads any count that is a multiple of 3 but not of 4, in every browser), else
+ * WebAssembly. @param {string} host @param {string[]} file
  */
-async function watermarked({ host, bytes, bits }) {
-  const [[path, hash]] = watermark.FILES
-  const encoder = await (marker ??= download(new URL(path, host).href, hash, () => {})
-    .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: [{ name: 'webgpu', preferredLayout: 'NCHW' }, 'wasm'] })).catch((error) => { marker = null; throw error }))
-  const picture = await createImageBitmap(new Blob([bytes]))
+const sessionOf = (host, [path, hash]) => download(new URL(path, host).href, hash, () => {})
+  .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: [{ name: 'webgpu', preferredLayout: 'NCHW' }, 'wasm'] }))
+/**
+ * A picture squashed to TrustMark's square, −1…1; to be read, its centre's square when one side is more than
+ * twice the other, as TrustMark watermarks those (none Jean makes is). @param {ImageBitmap} picture @param {boolean} [reading]
+ */
+function squared(picture, reading = false) {
   const [width, height, side] = [picture.width, picture.height, watermark.SIDE]
   const square = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(side, side).getContext('2d'))
-  square.drawImage(picture, 0, 0, side, side)
-  const cover = watermark.planes(square.getImageData(0, 0, side, side).data)
+  const crop = reading && Math.max(width, height) > 2 * Math.min(width, height) ? Math.min(width, height) : 0
+  square.drawImage(picture, crop ? (width - crop) / 2 : 0, crop ? (height - crop) / 2 : 0, crop || width, crop || height, 0, 0, side, side)
+  return watermark.planes(square.getImageData(0, 0, side, side).data)
+}
+
+/** A picture with TrustMark's watermark of 100 bits (D324): what the encoder changes in its square is spread over the picture at its size. @param {{ host: string, bytes: Uint8Array, bits: number[] }} data */
+async function watermarked({ host, bytes, bits }) {
+  const encoder = await (marker ??= sessionOf(host, watermark.FILES[0]).catch((error) => { marker = null; throw error }))
+  const picture = await createImageBitmap(new Blob([bytes]))
+  const [width, height, side] = [picture.width, picture.height, watermark.SIDE]
+  const cover = squared(picture)
   const { image } = await encoder.run({ 'onnx::Concat_0': new Tensor('float32', cover, [1, 3, side, side]), 'onnx::Gemm_1': new Tensor('float32', Float32Array.from(bits), [1, 100]) })
   const whole = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(width, height).getContext('2d'))
   whole.drawImage(picture, 0, 0)
   const pixels = whole.getImageData(0, 0, width, height)
   whole.putImageData(new ImageData(watermark.watermarked(pixels.data, width, height, image.data, cover), width, height), 0, 0)
   return (await whole.canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()
+}
+
+/** The 100 bits TrustMark's decoder reads in a picture (D324), each set where its output is above 0. @param {{ host: string, bytes: Uint8Array }} data */
+async function detected({ host, bytes }) {
+  const decoder = await (reader ??= sessionOf(host, watermark.DECODER).catch((error) => { reader = null; throw error }))
+  const { output } = await decoder.run({ image: new Tensor('float32', squared(await createImageBitmap(new Blob([bytes])), true), [1, 3, watermark.SIDE, watermark.SIDE]) })
+  return Array.from(/** @type {Float32Array} */ (output.data), (value) => (value > 0 ? 1 : 0))
 }

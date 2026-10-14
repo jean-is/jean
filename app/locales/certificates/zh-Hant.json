@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} 的製作紀錄不成立：此後已被更改，或並非由它所寫的金鑰簽署",
   "certificates.ai": "紀錄顯示由 AI 製作",
   "certificates.notAi": "紀錄未顯示由 AI 製作",
-  "certificates.unbound": "此處不檢查檔案此後是否被更改"
+  "certificates.unbound": "此處不檢查檔案此後是否被更改",
+  "certificates.noRecord": "{name} 沒有製作紀錄",
+  "certificates.watermark.match": "其隱形浮水印正是這份紀錄所寫的",
+  "certificates.watermark.other": "其隱形浮水印不是這份紀錄所寫的",
+  "certificates.watermark.found": "帶有隱形浮水印",
+  "certificates.watermark.none": "未發現隱形浮水印"
 }

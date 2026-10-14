@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "Àkọsílẹ̀ bí a ṣe ṣe {name} kò dúró: ó ti yí padà láti ìgbà náà, tàbí kọ́kọ́rọ́ tí ó dárúkọ kọ́ ló fọwọ́ sí i",
   "certificates.ai": "Àkọsílẹ̀ náà sọ pé AI ló ṣe é",
   "certificates.notAi": "Àkọsílẹ̀ náà kò sọ pé AI ló ṣe é",
-  "certificates.unbound": "A kò ṣàyẹ̀wò níbí bóyá fáìlì náà ti yí padà láti ìgbà náà"
+  "certificates.unbound": "A kò ṣàyẹ̀wò níbí bóyá fáìlì náà ti yí padà láti ìgbà náà",
+  "certificates.noRecord": "{name} kò ní àkọsílẹ̀ bí a ṣe ṣe é",
+  "certificates.watermark.match": "Àmì omi àìrí rẹ̀ ni èyí tí àkọsílẹ̀ yìí dárúkọ",
+  "certificates.watermark.other": "Àmì omi àìrí rẹ̀ kì í ṣe èyí tí àkọsílẹ̀ yìí dárúkọ",
+  "certificates.watermark.found": "Ó ní àmì omi àìrí",
+  "certificates.watermark.none": "A kò rí àmì omi àìrí kankan"
 }

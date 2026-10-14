@@ -12,7 +12,7 @@ import * as zimage from '../app/caps/pictures/zimage.js'
 import { readFileSync } from 'node:fs'
 import * as check from '../app/caps/pictures/check.js'
 import { marked, GENERATED } from '../app/caps/pictures/mark.js'
-import { payloadOf, randomData, planes, watermarked, SIDE } from '../app/caps/pictures/watermark.js'
+import { payloadOf, dataOf, randomData, planes, watermarked, SIDE } from '../app/caps/pictures/watermark.js'
 import { crc32 } from '../app/core/zip.js'
 import { download, PACE } from '../app/ui/weights.js'
 import { createHash } from 'node:crypto'
@@ -339,6 +339,19 @@ describe('the watermark on a picture made here (D324)', () => {
     // Read back, five of them flipped, by TrustMark's JavaScript data layer (Adobe's), when this was written.
     const data = '0100101001010010100101001010010100101001010010100101001010010'
     assert.equal(payloadOf([...data].map(Number)).join(''), `${data}11111100001001111101011000111000011` + '0001')
+  })
+
+  test('the 61 bits read back from a decoder’s 100, up to 5 of them flipped; past that, in another schema or all naught, none', () => {
+    const data = [...'0100101001010010100101001010010100101001010010100101001010010'].map(Number)
+    const bits = payloadOf(data)
+    assert.equal(dataOf(bits), data.join(''))
+    const flipped = bits.slice()
+    for (const i of [0, 17, 40, 63, 90]) flipped[i] ^= 1
+    assert.equal(dataOf(flipped), data.join(''))
+    flipped[30] ^= 1
+    assert.equal(dataOf(flipped), null)
+    assert.equal(dataOf([...bits.slice(0, 96), 0, 0, 1, 0]), null)
+    assert.equal(dataOf(new Array(100).fill(0)), null)
   })
 
   test('61 random bits, which the manifest’s soft binding names as TrustMark’s example does', () => {

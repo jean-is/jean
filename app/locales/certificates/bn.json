@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name}-এ এটি কীভাবে তৈরি হয়েছে তার বিবরণ টেকে না: তখন থেকে বদলানো, বা এটি যে চাবির নাম বলে তা দিয়ে স্বাক্ষরিত নয়",
   "certificates.ai": "বিবরণ অনুযায়ী এটি এআই তৈরি করেছে",
   "certificates.notAi": "বিবরণে বলা নেই যে এটি এআই তৈরি করেছে",
-  "certificates.unbound": "ফাইলটি তখন থেকে বদলেছে কি না, তা এখানে যাচাই করা হয় না"
+  "certificates.unbound": "ফাইলটি তখন থেকে বদলেছে কি না, তা এখানে যাচাই করা হয় না",
+  "certificates.noRecord": "{name}-এ এটি কীভাবে তৈরি হয়েছে তার কোনো বিবরণ নেই",
+  "certificates.watermark.match": "এর অদৃশ্য ওয়াটারমার্কটি সেটিই, যার নাম এই বিবরণে আছে",
+  "certificates.watermark.other": "এর অদৃশ্য ওয়াটারমার্কটি সেটি নয়, যার নাম এই বিবরণে আছে",
+  "certificates.watermark.found": "এতে একটি অদৃশ্য ওয়াটারমার্ক আছে",
+  "certificates.watermark.none": "কোনো অদৃশ্য ওয়াটারমার্ক পাওয়া যায়নি"
 }

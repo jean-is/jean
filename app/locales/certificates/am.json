@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} እንዴት እንደተሠራ የሚገልጸው መዝገብ አይጸናም፦ ከዚያ ወዲህ ተለውጧል፣ ወይም በሚጠቅሰው ቁልፍ አልተፈረመም",
   "certificates.ai": "መዝገቡ ሰው ሰራሽ አስተውሎት እንደሠራው ይናገራል",
   "certificates.notAi": "መዝገቡ ሰው ሰራሽ አስተውሎት እንደሠራው አይናገርም",
-  "certificates.unbound": "ፋይሉ ከዚያ ወዲህ መለወጡ እዚህ አይረጋገጥም"
+  "certificates.unbound": "ፋይሉ ከዚያ ወዲህ መለወጡ እዚህ አይረጋገጥም",
+  "certificates.noRecord": "{name} እንዴት እንደተሠራ የሚገልጽ መዝገብ የለውም",
+  "certificates.watermark.match": "የማይታየው የውሃ ምልክቱ ይህ መዝገብ የሚጠቅሰው ነው",
+  "certificates.watermark.other": "የማይታየው የውሃ ምልክቱ ይህ መዝገብ የሚጠቅሰው አይደለም",
+  "certificates.watermark.found": "የማይታይ የውሃ ምልክት አለው",
+  "certificates.watermark.none": "የማይታይ የውሃ ምልክት አልተገኘም"
 }

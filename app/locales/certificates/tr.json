@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name}, nasıl yapıldığına dair geçerli olmayan bir kayıt taşıyor: o zamandan beri değişmiş ya da adını verdiği anahtarla imzalanmamış",
   "certificates.ai": "Kayda göre yapay zekâ yapmış",
   "certificates.notAi": "Kayıt yapay zekânın yaptığını söylemiyor",
-  "certificates.unbound": "Dosyanın o zamandan beri değişip değişmediği burada denetlenmez"
+  "certificates.unbound": "Dosyanın o zamandan beri değişip değişmediği burada denetlenmez",
+  "certificates.noRecord": "{name}, nasıl yapıldığına dair bir kayıt taşımıyor",
+  "certificates.watermark.match": "Görünmez filigranı, bu kaydın adını verdiği filigran",
+  "certificates.watermark.other": "Görünmez filigranı, bu kaydın adını verdiği filigran değil",
+  "certificates.watermark.found": "Görünmez bir filigran taşıyor",
+  "certificates.watermark.none": "Görünmez filigran bulunamadı"
 }

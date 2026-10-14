@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "Hindi tumatayo ang tala ng {name} kung paano ito ginawa: nagbago mula noon, o hindi pinirmahan ng susing pinangangalanan nito",
   "certificates.ai": "Sinasabi ng tala na AI ang gumawa nito",
   "certificates.notAi": "Hindi sinasabi ng tala na AI ang gumawa nito",
-  "certificates.unbound": "Hindi sinusuri dito kung nagbago ang file mula noon"
+  "certificates.unbound": "Hindi sinusuri dito kung nagbago ang file mula noon",
+  "certificates.noRecord": "Walang tala ang {name} kung paano ito ginawa",
+  "certificates.watermark.match": "Ang hindi nakikitang watermark nito ang pinangangalanan ng talang ito",
+  "certificates.watermark.other": "Ang hindi nakikitang watermark nito ay hindi ang pinangangalanan ng talang ito",
+  "certificates.watermark.found": "May hindi nakikitang watermark ito",
+  "certificates.watermark.none": "Walang nakitang hindi nakikitang watermark"
 }

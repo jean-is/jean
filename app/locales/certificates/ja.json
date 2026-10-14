@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} の作られた経緯の記録は成り立ちません。その後変更されたか、記された鍵で署名されていません",
   "certificates.ai": "AI が作ったと記されています",
   "certificates.notAi": "AI が作ったとは記されていません",
-  "certificates.unbound": "その後ファイルが変更されたかどうかは、ここでは確認していません"
+  "certificates.unbound": "その後ファイルが変更されたかどうかは、ここでは確認していません",
+  "certificates.noRecord": "{name} には作られた経緯の記録がありません",
+  "certificates.watermark.match": "見えない透かしは、この記録に記されたものです",
+  "certificates.watermark.other": "見えない透かしは、この記録に記されたものではありません",
+  "certificates.watermark.found": "見えない透かしが入っています",
+  "certificates.watermark.none": "見えない透かしは見つかりませんでした"
 }

@@ -32,5 +32,10 @@
   "certificates.credentialsBroken": "{name} traz um registo da sua origem que não se sustenta: alterado desde então, ou não assinado pela chave que nomeia",
   "certificates.ai": "Diz que é obra de uma IA",
   "certificates.notAi": "Não diz que seja obra de uma IA",
-  "certificates.unbound": "Aqui não se verifica se o ficheiro mudou desde então"
+  "certificates.unbound": "Aqui não se verifica se o ficheiro mudou desde então",
+  "certificates.noRecord": "{name} não traz nenhum registo da sua origem",
+  "certificates.watermark.match": "A sua marca de água invisível é a que este registo nomeia",
+  "certificates.watermark.other": "A sua marca de água invisível não é a que este registo nomeia",
+  "certificates.watermark.found": "Traz uma marca de água invisível",
+  "certificates.watermark.none": "Nenhuma marca de água invisível encontrada"
 }
