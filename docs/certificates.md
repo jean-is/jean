@@ -155,12 +155,19 @@ Then:
 - [x] **Pictures and films from the cloud:** the providers' marks pass through untouched; `test/c2pa.test.js` checks the bytes are unchanged.
 - [ ] **Pictures people share:** one with a side over 1568 pixels is kept redrawn smaller, for brains (`caps/files/pictures.js`), which drops its metadata; a watermark would survive. Keep the file as given and send brains the smaller copy.
 - [x] **Files Jean makes** (`caps/made/formats.js`, D324): Word documents and workbooks in their custom properties (IPTC's `DigitalSourceType`, `AISystemUsed`), drawings in XMP, web pages in schema.org's JSON-LD; Markdown, CSV and other text carry none. C2PA in Office files waits for validators that open them.
-- [ ] **Answers:**
-  - the certificate is the metadata layer;
-  - for cloud brains, rely on providers' marking, documented per provider;
-  - for the device's brain, research a statistical watermark in its sampling (above 200 tokens).
+- [ ] **Answers:** free-form text can't carry metadata, so the code of practice asks one layer, a watermark above 200 tokens; the answer's certificate, when saved, is metadata beside it (D274, `trainedAlgorithmicMedia`). The guidelines let Jean rely on a brain's own watermark where it shows that it works and that a means of detection exists. What each does (2026-10-14, from the providers' announcements as reported; check their pages before relying on them):
+
+  | Brain | Text watermark | What Jean can do |
+  |---|---|---|
+  | Anthropic | On for models released from 2 Aug 2026, every surface and the API included, worldwide (SynthID-Text's method); older models in a transition; detection announced, not yet open | Nothing: it comes with the answer |
+  | OpenAI | textGrain, off by default in the API since 5 Oct 2026, for select models; on in ChatGPT and Codex in the EU; detection for approved researchers | The key's owner turns on Allow text watermarking (Organization or Project settings › Data controls › Text provenance); no request parameter exists, so Settings › Brains could say so |
+  | Google Gemini | SynthID-Text in Google's Gemini apps since 2024; its API, to check | To check |
+  | OpenRouter and gateways | Whatever the model's provider does | Same as that provider |
+  | Servers on this computer (Ollama, LM Studio), the device's brain | None: Jean is the only system between the model and the person | A statistical watermark in the device's own sampling (a green list keyed by the previous tokens, as SynthID-Text and Kirchenbauer et al.), detectable by anyone holding its key; an open key makes it forgeable and removable, a secret one leaves detection to whoever holds it. Ollama and LM Studio sample on their side, out of Jean's reach |
+
+  Left: check Gemini's API; the device's watermark (Transformers.js's sampling takes a logits processor), its key and its detector, measured on quality and on detection at 200 tokens; a line in Settings › Brains for OpenAI keys.
 - [ ] **Detection:** the check page and `check_certificate` read C2PA manifests (D324); watermarks are left, with TrustMark's decoder, in Jean (the check page reaches nothing); interoperable through C2PA by 2 Feb 2027.
-- [ ] **No stripping:** Jean never removes marks, and its terms forbid removing them.
+- [ ] **No stripping:** Jean never removes marks. Checked: a provider's picture or film is kept byte for byte (`test/c2pa.test.js`); answers' words are shown and copied as the brain wrote them, so a statistical watermark stays. Left: a shared picture over 1568 pixels (above); and terms that forbid removing them, though Jean has no account, so no terms of use ([open-questions.md](open-questions.md#answer-certificates)).
 - [ ] **Labels for deployers (Art. 50(4)):** "Label it as made with AI" when a picture, film or document is saved, with the Commission's icon (if its reuse terms allow shipping it) and a line in the user's language.
 
 ### 5. Open legal questions
