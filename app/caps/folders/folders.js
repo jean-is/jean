@@ -90,12 +90,13 @@ function toldOf(records) {
 // The handles can't be kept in a file: IndexedDB keeps them, by owner, never in a backup (D149).
 // "Always allow" is kept there too, for the folders it was given for. Reading a handle back can take
 // the browser down (Chrome 153 does, for a handle of the private file system in a private window):
-// a mark is written first and taken away after, so a page that finds it there, its last read never
-// finished, forgets the handles and keeps folders for the visit only, for half a day, rather than
-// going down at every start.
+// a page reads them holding a lock, under a mark it takes away once read or as it leaves. A page
+// that finds the mark while no page holds the lock knows the last read went down with its page: it
+// forgets the handles and keeps folders for the visit only, for half a day, rather than going down
+// at every start. A reload during the read, or another tab reading then, is no such thing.
 const ALWAYS = 'always'
-const READING = 'reading'
-const VISIT = 'visit'
+const READING = 'app.folders-reading'
+const VISIT = 'app.folders-visit'
 const VISIT_MS = 12 * 3600_000
 /** @type {Promise<IDBDatabase | null>} */
 const database = new Promise((resolve) => {
@@ -123,26 +124,27 @@ async function stored(mode, act) {
 
 /** Handles "Always allow" was given for, read once. @type {FileSystemDirectoryHandle[]} */
 let trusted = []
-/** Whether folders last the visit only: the last read of the handles never finished. */
+/** Whether folders last the visit only: the last read of the handles went down with its page. */
 let visitOnly = false
-{
-  const [unfinished, since = 0] = await Promise.all([stored('readonly', (store) => store.get(READING)), stored('readonly', (store) => store.get(VISIT))])
-  if (unfinished || Date.now() - since < VISIT_MS) {
-    if (unfinished) {
-      await stored('readwrite', (store) => store.clear())
-      await stored('readwrite', (store) => store.put(Date.now(), VISIT))
-    }
-    visitOnly = true
-  } else {
-    await stored('readwrite', (store) => store.put(true, READING))
-    const [keys = [], values = []] = await Promise.all([stored('readonly', (store) => store.getAllKeys()), stored('readonly', (store) => store.getAll())])
-    await stored('readwrite', (store) => store.delete(READING))
-    const kept = new Map(keys.map((key, i) => [String(key), values[i]]))
-    trusted = kept.get(ALWAYS) ?? []
-    for (const key of [ALWAYS, READING, VISIT]) kept.delete(key)
-    owned.value = kept
-  }
+const unmark = () => localStorage.removeItem(READING)
+if (localStorage.getItem(READING) && !(await navigator.locks.query()).held?.some((lock) => lock.name === READING)) {
+  unmark()
+  localStorage.setItem(VISIT, String(Date.now()))
+  await stored('readwrite', (store) => store.clear())
 }
+visitOnly = Date.now() - Number(localStorage.getItem(VISIT)) < VISIT_MS
+// Shared, as tabs that start together each read the handles.
+if (!visitOnly) await navigator.locks.request(READING, { mode: 'shared' }, async () => {
+  localStorage.setItem(READING, 'reading')
+  addEventListener('pagehide', unmark)
+  const [keys = [], values = []] = await Promise.all([stored('readonly', (store) => store.getAllKeys()), stored('readonly', (store) => store.getAll())])
+  removeEventListener('pagehide', unmark)
+  unmark()
+  const kept = new Map(keys.map((key, i) => [String(key), values[i]]))
+  trusted = kept.get(ALWAYS) ?? []
+  kept.delete(ALWAYS)
+  owned.value = kept
+})
 
 /**
  * A project or a conversation opened on a folder, or on none (null). A copy lasts the visit; a

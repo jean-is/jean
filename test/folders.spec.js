@@ -1,7 +1,8 @@
 // Folders (0.8, D141, D149), the version's done-when: a synced "Clients" folder, where Jean finds the
 // three contracts that mention a clause and corrects one after showing the change; a folder of code,
 // where the file changes by exactly Jean's change; two conversations in two folders and a project on
-// its own, each back on its own after a reload. Chromium opens a folder in place: the system's picker
+// its own, each back on its own after a reload, even one during the read of the folders, or with
+// another tab reading them. Chromium opens a folder in place: the system's picker
 // is played by a folder of the private file system, the same kind of handle. WebKit works on a copy.
 // Playwright's own contexts are private, where Chrome 153 closes the browser when a handle of the private
 // file system is read back from IndexedDB: what lasts across visits is checked in a profile of its own.
@@ -299,6 +300,86 @@ test.describe('in place', () => {
     await answer(page)
     await context.close()
   })
+
+  test('a reload while the folders are read back, or another tab reading them then, loses none; a read that took its page down forgets them for the visit', async ({ baseURL }, info) => {
+    const context = await chromium.launchPersistentContext(info.outputPath('profile'), { viewport: devices['Desktop Chrome'].viewport, baseURL, serviceWorkers: 'block' })
+    await picker(context)
+    // Once asked, the next read of the folders' store never ends: a page caught as it reads them back.
+    await context.addInitScript(() => {
+      const caught = new WeakSet()
+      const { getAll } = IDBObjectStore.prototype
+      IDBObjectStore.prototype.getAll = function (...args) {
+        if (this.name === 'folders' && localStorage.getItem('e2e.catch')) caught.add(this.transaction)
+        return getAll.apply(this, args)
+      }
+      const complete = /** @type {PropertyDescriptor} */ (Object.getOwnPropertyDescriptor(IDBTransaction.prototype, 'oncomplete'))
+      Object.defineProperty(IDBTransaction.prototype, 'oncomplete', { ...complete, set(/** @type {any} */ handler) {
+        if (!caught.has(this)) return complete.set?.call(this, handler)
+        localStorage.removeItem('e2e.catch')
+        localStorage.setItem('e2e.caught', 'yes')
+      } })
+    })
+    const catchRead = (/** @type {import('@playwright/test').Page} */ page) => page.evaluate(() => { localStorage.removeItem('e2e.caught'); localStorage.setItem('e2e.catch', 'yes') })
+    const caught = (/** @type {import('@playwright/test').Page} */ page) => expect.poll(() => page.evaluate(() => localStorage.getItem('e2e.caught'))).toBe('yes')
+    const page = context.pages()[0] ?? await context.newPage()
+    await start(page)
+    await folder(page, 'Clients', CLIENTS)
+    await turnOn(page, 'Folders')
+    await page.keyboard.press('Escape')
+    const name = page.locator('.folder-name')
+    await name.click()
+    await page.locator('#folder-menu button', { hasText: 'Use it in every new task' }).click()
+    // Kept once project.md names it, written after its handle.
+    await expect.poll(() => page.evaluate(async () => {
+      /** @param {FileSystemDirectoryHandle} dir @returns {Promise<boolean>} */
+      const named = async (dir) => {
+        for await (const entry of /** @type {any} */ (dir).values()) {
+          if (entry.kind === 'directory' ? entry.name !== 'picked' && await named(entry) : entry.name === 'project.md' && (await (await entry.getFile()).text()).includes('folder: Clients')) return true
+        }
+        return false
+      }
+      return named(await navigator.storage.getDirectory()).catch(() => false)
+    })).toBe(true)
+    await expect(name).not.toHaveClass(/is-shut/)
+
+    // Reloaded as it reads them back, as after a change to Jean: the next start has them.
+    await catchRead(page)
+    await page.reload()
+    await caught(page)
+    await page.reload()
+    await expect(name).toHaveText('Clients')
+    await expect(name).not.toHaveClass(/is-shut/)
+
+    // Another tab reading them back as this one starts: both have them.
+    await catchRead(page)
+    const other = await context.newPage()
+    await other.goto('./')
+    await caught(other)
+    await page.reload()
+    await expect(name).toHaveText('Clients')
+    await expect(name).not.toHaveClass(/is-shut/)
+    await other.close()
+
+    // A read that took its page down: the next start forgets them, and keeps one chosen again for the visit only.
+    await catchRead(page)
+    await page.reload()
+    await caught(page)
+    const crashed = page.waitForEvent('crash')
+    ;(await context.newCDPSession(page)).send('Page.crash').catch(() => {})
+    await crashed
+    const after = await context.newPage()
+    await after.goto('./')
+    const again = after.locator('.folder-name')
+    await expect(again).toHaveText('Clients')
+    await expect(again).toHaveClass(/is-shut/)
+    await again.click()
+    await after.locator('#folder-menu button', { hasText: 'Reconnect' }).click()
+    await expect(again).not.toHaveClass(/is-shut/)
+    await after.reload()
+    await expect(again).toHaveClass(/is-shut/)
+    await context.close()
+  })
+
   test('a workbook of the folder changes in the browser, where it is: its total worked out again, the brain told (D229)', async ({ page }) => {
     await start(page)
     await connectFakeBrain(page)
