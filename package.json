@@ -13,6 +13,7 @@
     "build:web": "npm run build && node scripts/web.js",
     "deploy": "node scripts/deploy.js",
     "render": "npm run build && node scripts/render.js",
+    "sounds": "node scripts/sounds.js",
     "build:desktop": "npm run build && node scripts/desktop.js",
     "build:dmg": "npm run build && node scripts/desktop.js dmg",
     "cli": "node scripts/cli.js",
@@ -61,6 +62,8 @@
     "pdfjs-dist": "6.4.299",
     "pyodide": "314.0.7",
     "quickjs-emscripten-core": "0.32.0",
+    "spessasynth_core": "4.3.22",
+    "stb-vorbis": "0.0.6",
     "temml": "0.13.5"
   },
   "overrides": {

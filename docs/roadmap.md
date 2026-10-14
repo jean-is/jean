@@ -77,7 +77,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Made files and changed Word documents in Word, Excel, Numbers, Google Docs and LibreOffice on Windows (a passage over several runs takes the first one's formatting)
 - [ ] Formulas (D185) on Windows, Linux and Android, whose math fonts differ or are missing, and with a screen reader
 - [ ] An answer with charts and scores pasted into Word, Google Docs, Pages and Outlook: do its `data:` pictures come along, as they don't in Notion? (D196)
-- [ ] Charts and scores (D196) on a weak laptop (ECharts' first load, a score of a few hundred bars), heard on real speakers, in Firefox and real Safari, and with a screen reader
+- [ ] Charts and scores (D196, D338) on a weak laptop and a phone (ECharts' first load, a score of a few hundred bars, MS Basic's 9 MB piano over a slow connection), heard on real speakers, in Firefox and real Safari, and with a screen reader
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
 - [ ] Workbooks whose cells were changed in the preview or a folder (D229) open in Excel, Numbers and LibreOffice without a repair, their formulas worked out again; with an IME, a cell is opened with F2 and a composed word kept whole
 

@@ -669,12 +669,12 @@ const sizeOf = async (response) => (response && !response.headers.has('content-e
 
 /**
  * What the browser keeps for Jean in its caches: the brains downloaded to this device (Transformers.js's
- * cache), and Jean's own code, the Computer's apart, to work offline (sw.js's).
+ * cache), and Jean's own code, the Computer's apart, to work offline (sw.js's), with a score's instruments (D338).
  */
 async function cached() {
   const kept = { brains: 0, computer: 0, app: 0 }
   for (const name of await caches.keys()) {
-    const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell|cap)-/.test(name) ? 'app' : null
+    const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell-|cap-|sounds$)/.test(name) ? 'app' : null
     if (!kind) continue
     const cache = await caches.open(name)
     for (const size of await Promise.all((await cache.keys()).map(async (request) => sizeOf(await cache.match(request))))) kept[kind] += size

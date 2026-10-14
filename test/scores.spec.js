@@ -1,6 +1,6 @@
 // Scores (D196): with the Music score skill of Jean's own directory added, a ```abc block in an
-// answer is a widget: drawn as a score by abcjs, played by Jean's own synthesizer, each note lit
-// as it sounds, paused where it is, and copied as its source and its picture at once.
+// answer is a widget: drawn as a score by abcjs, played on MS Basic's instruments (D338), each note
+// lit as it sounds, paused where it is, and copied as its source and its picture at once.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
 
@@ -25,6 +25,9 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await score.getByRole('button', { name: 'Play' }).click()
   await expect(score.getByRole('button', { name: 'Pause' })).toBeVisible()
   await expect(score.locator('.score-sheet .is-sounding').first()).toBeAttached()
+  // On its instruments: the piano's file came once and is kept apart from app versions, and what it plays isn't silence.
+  expect(await page.evaluate(async () => (await (await caches.open('app-sounds')).keys()).map((request) => request.url.split('/').pop()))).toEqual([expect.stringMatching(/^grand-piano\.[0-9a-f]{12}\.sf3$/)])
+  expect(await score.evaluate((element) => (/** @type {any} */ (element)).parts.reduce((/** @type {number} */ peak, /** @type {any} */ part) => part.buffer.getChannelData(0).reduce((/** @type {number} */ most, /** @type {number} */ value) => Math.max(most, Math.abs(value)), peak), 0))).toBeGreaterThan(0.05)
   await expect.poll(async () => Number(await score.locator('input[type="range"]').inputValue())).toBeGreaterThan(0.5)
   await score.getByRole('button', { name: 'Pause' }).click()
   await expect(score.getByRole('button', { name: 'Play' })).toBeVisible()

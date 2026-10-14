@@ -92,6 +92,7 @@ npm run build   # copy runtimes into app/vendor/, regenerate the manifest
 npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)
 npm run render  # build, then the package that draws a task saved as a web page, in dist/render/, for npm publish ./dist/render (D305)
+npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
 npm run build:dmg      # the same, then the macOS disk image, on a Mac
 npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it

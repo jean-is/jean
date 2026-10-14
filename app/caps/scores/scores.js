@@ -1,14 +1,17 @@
 // Scores (D196): a ```abc block in an answer, music in ABC notation, drawn as a score by abcjs and
-// played by Jean's own small synthesizer (./notes.js), each note lit as it sounds, with where it
-// is to move, and copied as its source and its picture at once. One score plays at a time. Drawn
-// again, at most every quarter second, while the answer is written. Loaded by the first score an
-// answer holds; until then, or when abcjs finds no music in a block, it shows as code.
+// played on the instruments it names, MS Basic's, made in a worker (./sound-worker.js, D338) the
+// first time it plays, while it waits showing how much of them has come; without them (offline the
+// first time, or in a saved copy), on Jean's own small synthesizer. Each note is lit as it sounds,
+// with where it is to move, and it is copied as its source and its picture at once. One score plays
+// at a time. Drawn again, at most every quarter second, while the answer is written. Loaded by the
+// first score an answer holds; until then, or when abcjs finds no music in a block, it shows as code.
 import { html, render, svg } from 'lit-html'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
+import { modelWorker } from '../../ui/model.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { notesOf, wholeNote } from './notes.js'
 
@@ -28,6 +31,7 @@ const PAUSE = icon(svg`<path d="M8.5 5.5v13M15.5 5.5v13"/>`)
 /** The sound, made at the first Play (browsers start it only on a click), and the score playing. */
 let context = /** @type {AudioContext | null} */ (null)
 let playing = /** @type {AppScore | null} */ (null)
+const sounds = modelWorker(new URL('./sound-worker.js', import.meta.url), 'The score’s sound stopped')
 
 /**
  * One note: a triangle wave and, softer, its octave, struck and fading as a plucked string does,
@@ -65,6 +69,12 @@ class AppScore extends HTMLElement {
   started = /** @type {number | null} */ (null)
   /** @type {GainNode | null} */
   out = null
+  /** The music as its instruments play it, a second at a time, as they come; false once they can't. @type {{ at: number, buffer: AudioBuffer }[] | false | null} */
+  parts = null
+  /** What of its instruments has come, while it waits for them to play. @type {number | null} */
+  loading = null
+  /** @type {AudioBufferSourceNode[]} */
+  sources = []
   /** @type {Element[]} */
   lit = []
   label = ''
@@ -86,6 +96,7 @@ class AppScore extends HTMLElement {
     if (source === this.drawn) return
     this.drawn = source
     this.pause()
+    this.parts = null
     this.paint()
     const sheet = /** @type {HTMLElement} */ (this.querySelector('.score-sheet'))
     /** @type {any} */
@@ -110,16 +121,16 @@ class AppScore extends HTMLElement {
 
   paint() {
     const music = this.moments.length > 0
-    const on = this.started !== null
+    const on = this.started !== null || this.loading !== null
     const source = this.getAttribute('source') ?? ''
     render(html`<div class="score-sheet" dir="ltr" role="img" aria-label=${this.label || t('scores.score')}></div>
       ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>
         <pre dir="ltr"><code>${source}</code></pre>`
-      : html`<div class="score-player" dir="ltr">${this.notes.length ? html`
+      : html`<div class="score-player" dir="ltr" aria-busy=${this.loading !== null}>${this.notes.length ? html`
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : PLAY}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
-        <span class="score-time">${clock(this.at)} / ${clock(this.length)}</span>` : ''}
+        <span class="score-time">${this.loading ? new Intl.NumberFormat(locale.value, { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}
       </div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
@@ -146,27 +157,78 @@ class AppScore extends HTMLElement {
     context ??= new AudioContext()
     void context.resume()
     if (this.at >= this.length - 0.05) this.at = 0
-    const out = context.createGain()
-    out.gain.value = 0.3
-    out.connect(context.destination)
-    const zero = context.currentTime + 0.05 - this.at
-    for (const note of this.notes) {
-      if (note.at + note.length > this.at) tone(context, out, note, zero + Math.max(note.at, this.at), zero + note.at + note.length)
-    }
-    this.out = out
-    this.started = zero
     playing = this
+    if (this.parts === null) this.load(context)
+    else if (this.parts && !this.parts.length) (this.loading = 0), this.paint()
+    else this.start(context)
+  }
+
+  /**
+   * The music as its instruments play it, asked of the worker: it starts with its first second, or
+   * on the synthesizer when they can't come. @param {AudioContext} sound
+   */
+  load(sound) {
+    const parts = (this.parts = /** @type {{ at: number, buffer: AudioBuffer }[]} */ ([]))
+    this.loading = 0
+    this.paint()
+    const ready = () => {
+      if (this.loading === null) return
+      this.loading = null
+      this.start(sound)
+    }
+    sounds.call({ notes: this.notes, rate: sound.sampleRate }, { onMessage: (message) => {
+      if (this.parts !== parts) return
+      if (message.type === 'progress') return this.loading !== null && ((this.loading = message.loaded / message.total), this.paint())
+      const buffer = sound.createBuffer(2, message.left.length, sound.sampleRate)
+      buffer.copyToChannel(message.left, 0)
+      buffer.copyToChannel(message.right, 1)
+      parts.push({ at: message.at, buffer })
+      if (this.started !== null) this.schedule(parts[parts.length - 1])
+      ready()
+    } }).catch((error) => {
+      console.warn('Score', error)
+      if (this.parts !== parts || parts.length) return
+      this.parts = false
+      ready()
+    })
+  }
+
+  /** Plays from where it is: its parts as they come, or each note on the synthesizer. @param {AudioContext} sound */
+  start(sound) {
+    const out = sound.createGain()
+    // As loud on either: MS Basic plays at about a third of the synthesizer's level, chords well below clipping.
+    out.gain.value = this.parts ? 2.5 : 0.3
+    out.connect(sound.destination)
+    this.out = out
+    this.started = sound.currentTime + 0.05 - this.at
+    if (this.parts) for (const part of this.parts) this.schedule(part)
+    else for (const note of this.notes) {
+      if (note.at + note.length > this.at) tone(sound, out, note, this.started + Math.max(note.at, this.at), this.started + note.at + note.length)
+    }
     this.tick()
   }
 
-  /** Stops where it is, fading out over a few milliseconds rather than cutting a note. */
-  pause() {
-    if (this.started === null || !context) return
-    this.at = Math.min(this.length, Math.max(0, context.currentTime - this.started))
-    const out = this.out
-    out?.gain.setTargetAtTime(0, context.currentTime, 0.015)
-    setTimeout(() => out?.disconnect(), 200)
+  /** A second of the music, from where it is. @param {{ at: number, buffer: AudioBuffer }} part */
+  schedule({ at, buffer }) {
+    if (!context || !this.out || this.started === null || at + buffer.duration <= this.at) return
+    const source = context.createBufferSource()
+    source.buffer = buffer
+    source.connect(this.out)
+    const offset = Math.max(0, this.at - at)
+    source.start(this.started + at + offset, offset)
+    this.sources.push(source)
+  }
+
+  /** Stops where it is, fading out over a few milliseconds rather than cutting a note; at the end, the last notes ring on. */
+  pause(end = false) {
+    if (this.loading !== null) this.loading = null
+    else if (this.started === null || !context) return
+    if (context && this.started !== null) this.at = Math.min(this.length, Math.max(0, context.currentTime - this.started))
+    const [out, sources] = [this.out, this.sources]
+    out?.gain.setTargetAtTime(0, context?.currentTime ?? 0, end ? 0.5 : 0.015)
+    setTimeout(() => (out?.disconnect(), sources.forEach((source) => source.stop())), end ? 3000 : 200)
     this.out = this.started = null
+    this.sources = []
     if (playing === this) playing = null
     cancelAnimationFrame(this.frame)
     this.light([])
@@ -187,7 +249,7 @@ class AppScore extends HTMLElement {
     if (this.started === null || !context) return
     const now = context.currentTime - this.started
     if (now >= this.length) {
-      this.pause()
+      this.pause(true)
       this.at = 0
       return this.paint()
     }

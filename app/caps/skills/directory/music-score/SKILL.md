@@ -99,5 +99,6 @@ GFG BAB | gfg d2B | c2c B2A | GFG B2G :|
 3. Bars: `|` between them, `|:` and `:|` around a repeat, `[1` and `[2` for first and second endings, `|]` at the end. Check that every bar adds up to the metre.
 4. Chords: their names in quotes before a note (`"Am"A2`), notes sounding together in square brackets (`[CEG]`). Lyrics go on a `w:` line under the music they're sung to, a syllable a note, a word's syllables joined by `-`.
 5. A melody with a bass, or several voices: `V:1` and `V:2 clef=bass` in the header, then each voice's music after its own `V:` line.
-6. One tune a block; for several, several blocks. Compose, or write out music in the public domain; of a song still under copyright, give the chords or a short phrase, not the whole melody.
-7. After the block, say in a sentence what the music is and how to play it.
+6. It plays on the piano. For another instrument, `%%MIDI program` and its General MIDI number before `K:` (40 violin, 42 cello, 73 flute, 71 clarinet, 56 trumpet, 24 guitar, 19 organ), or after a `V:` line for that voice alone.
+7. One tune a block; for several, several blocks. Compose, or write out music in the public domain; of a song still under copyright, give the chords or a short phrase, not the whole melody.
+8. After the block, say in a sentence what the music is and how to play it.

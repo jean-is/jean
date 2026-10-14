@@ -212,6 +212,21 @@ export const RUNTIMES = [
     wrap: { 'abcjs.mjs': ['renderAbc'] },
     patch: { 'abcjs.mjs': [[/\.innerHTML=""/g, '.replaceChildren()', 3], [/\.innerHTML="&nbsp;"/g, '.textContent="\\xa0"', 1], [/\.setAttribute\("style",/g, '.style.cssText=(', 7]] },
   },
+  {
+    // A score's sound (D338): spessasynth_core plays SoundFonts, in a worker; SoundFont 3's samples
+    // are Vorbis, which stb_vorbis decodes, in WebAssembly inside its module.
+    dir: 'vendor/spessasynth',
+    packages: ['spessasynth_core', 'stb-vorbis'],
+    files: [['spessasynth_core/dist/index.js', 'spessasynth.mjs'], ['stb-vorbis/dist/index.js', 'stb-vorbis.mjs']],
+    rewrite: { 'stb-vorbis': './stb-vorbis.mjs' },
+  },
+  {
+    // The instruments (D338): MS Basic, a file for each group that shares samples, and their index.
+    dir: 'vendor/sounds',
+    packages: ['@codename/jean-sounds'],
+    files: [],
+    folders: [['@codename/jean-sounds', '.', /\.sf3$|^sounds\.json$/]],
+  },
 ]
 
 /**

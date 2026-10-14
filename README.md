@@ -125,6 +125,7 @@ That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Ga
 | `npm run offers` | Measures how often a brain offers what a request needs, and what it doesn't, on a multilingual test set (`BRAIN=<provider>:<model>`) |
 | `npm run build:web` | Builds, then what a web deploy serves in `dist/web/`: Jean's own code minified, each file beside itself in brotli and gzip |
 | `npm run render` | Builds, then the package that draws a task saved as a web page, `@codename/jean-render`, in `dist/render/` |
+| `npm run sounds -- <folder>` | The instruments scores play, `@codename/jean-sounds`, made of MS Basic as MuseScore's repository holds it, in `dist/sounds/` |
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
 | `npm run build:dmg` | The same, then the macOS disk image to hand out, on a Mac |
 | `npm run icons` | Draws the PNG icons that Android and iOS install with from `app/icons/icon.svg`, after changing it |

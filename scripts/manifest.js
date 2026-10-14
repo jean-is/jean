@@ -33,11 +33,13 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   meaning: ['vendor/transformers'],
   math: ['vendor/temml'],
   charts: ['vendor/echarts'],
-  scores: ['vendor/abcjs'],
+  scores: ['vendor/abcjs', 'vendor/spessasynth', 'vendor/sounds'],
   // No capability of its own: a page that holds a map fetches it then, as it does the map's tiles (D291).
   maps: ['vendor/maplibre'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
+/** Fetched one at a time when first needed, and kept apart from app versions, never precached: a score's instruments (D338). */
+const ON_DEMAND = /^vendor\/sounds\/.+\.sf3$/
 /** Drawn for installs (D131): only the browser or the system fetches them, once, so the shell doesn't precache them. */
 const INSTALL_ICON = /^icons\/.+\.png$/
 /**
@@ -134,7 +136,7 @@ export async function collectFiles (root) {
   for (const entry of await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])) {
     if (!entry.isDirectory() || entry.name.startsWith('.')) continue
     const dirs = [`caps/${entry.name}`, `locales/${entry.name}`, ...(CAPABILITY_RUNTIMES[entry.name] ?? [])]
-    const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter(isShipped).sort()
+    const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((path) => isShipped(path) && !ON_DEMAND.test(path)).sort()
     capabilities[entry.name] = { files: [...new Set([...files, ...await borrowed(root, entry.name, files)])].sort() }
   }
   return { shell, locales, capabilities: Object.fromEntries(Object.entries(capabilities).sort(([a], [b]) => (a < b ? -1 : 1))) }
