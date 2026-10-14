@@ -108,6 +108,9 @@ test('scripts end on their value, their errors come back as text, and they have 
       'const nothing = 1',
       'await fs.writeFile("notes/a.txt", "kept")\nawait fs.readFile("notes/a.txt")',
       'await fetch("https://example.com/")',
+      // csv(): a title above the table, a quoted comma in the header, a line break in a cell; Excel's sep= line.
+      `JSON.stringify(csv(${JSON.stringify('Ventes 2026\n"Nom, prénom";Note;Montant\n"Dupont, Jean";"payé\nen mars";12,5\n"Martin, Léa";;40\n')}))`,
+      `JSON.stringify(csv(${JSON.stringify('sep=,\nName;Note,Total\nA;b,3\n')}))`,
     ]
     for (const code of scripts) {
       results.push(await run?.run({ code }, /** @type {any} */ (ctx)).catch((/** @type {Error} */ error) => `failed: ${error.message}`))
@@ -125,6 +128,10 @@ test('scripts end on their value, their errors come back as text, and they have 
     'Result: kept',
   ])
   expect(output[8]).toMatch(/^failed: The script failed: .*no internet.*Settings › Computer/s)
+  expect(output.slice(9)).toEqual([
+    `Result: ${JSON.stringify([{ 'Nom, prénom': 'Dupont, Jean', Note: 'payé\nen mars', Montant: '12,5' }, { 'Nom, prénom': 'Martin, Léa', Note: '', Montant: 40 }])}`,
+    `Result: ${JSON.stringify([{ 'Name;Note': 'A;b', Total: 3 }])}`,
+  ])
 })
 
 test('Python: its standard library, the last line as the result, errors as text, files, and the internet as Settings allow', async ({ page }) => {

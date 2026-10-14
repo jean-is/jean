@@ -407,7 +407,7 @@ Four mechanisms from pi 1.0, fitted to Jean, share one idea: what the brain has 
 | Global | What it does |
 |---|---|
 | `file(name)` | A shared file's whole text (spreadsheets as tab-separated rows), or a file of the conversation's folder, through the hidden `file` tool |
-| `csv(text)` | CSV or tab-separated text as rows: objects keyed by the header, numbers as numbers |
+| `csv(text)` | CSV or tab-separated text as rows: objects keyed by the header, numbers as numbers. The separator and quoted cells as `csvRows` reads them; the header is the first row of two filled cells or more, past a title line |
 | `tools.<name>(args)` | Any granted tool, deferred and connection tools included; not `bash`, `javascript`, `python`, `offer`, `delegate` or `ask_user` |
 | `fs.readFile`, `fs.writeFile`, `fs.readdir` | The computer's files: /workspace, kept after the run (D162) |
 | `fetch(url, init)` | The internet, through Jean, as Settings › Computer allow |
