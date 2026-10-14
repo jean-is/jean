@@ -1,5 +1,6 @@
 {
   "notifications.done": "Ó ti parí. Ìdáhùn yín ti ṣetán.",
-  "notifications.text": "Nígbà tí iṣẹ́ kan bá parí tí ẹ wà ní táàbù tàbí áàpù míì. Àkọlé rẹ̀ nìkan ló ń hàn.",
+  "notifications.waiting": "Ó ń dúró kí ẹ dáhùn.",
+  "notifications.text": "Nígbà tí iṣẹ́ kan bá parí tàbí tí ó ń dúró de ìdáhùn yín tí ẹ wà ní táàbù tàbí áàpù míì. Àkọlé rẹ̀ nìkan ló ń hàn.",
   "notifications.blocked": "Aṣàwákiri yín ń dí ìfitónilétí láti ojú-òpó yìí. Ẹ fàyè gbà wọ́n nínú ètò rẹ̀ fún ojú-òpó yìí."
 }

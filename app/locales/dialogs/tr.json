@@ -173,7 +173,7 @@
   "cap.plugins.text": "Daha fazlasını yapmak için eklenti ekle, örneğin gönderileni denetlemek. Her biri dosyalarından ve anahtarlarından uzak durur ve yalnızca izin verdiğin şeyi yapar.",
   "cap.check.text": "Bir yanıttaki her ifade, gösterdiği kaynakla karşılaştırılır ve kaynakların desteklemedikleri sana gösterilir.",
   "cap.since.text": "Döndüğünde, bağlı hizmetlerindeki yeniliklerin kısa bir özeti. Yalnızca okunur ve bu sekme kapalıyken hiçbir şey okunmaz.",
-  "cap.notifications.text": "Sen başka bir sekmede ya da uygulamadayken bir görev bitince bildirim. Görevin başlığını gösterir, yanıtı asla.",
+  "cap.notifications.text": "Sen yokken bir görev bitince ya da seni bekleyince bildirim. Yalnızca başlığı görünür, yanıtı asla.",
   "cap.names.text": "Bir projenin asistanına kendine ait bir ad ve nasıl olması gerektiğine dair birkaç söz ver.",
   "projects.assistant": "Asistanının adı",
   "projects.persona": "Nasıl olmalı, birkaç sözle",

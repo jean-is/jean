@@ -176,7 +176,7 @@
   "cap.plugins.text": "Aggiungi plugin per fare di più, come controllare ciò che viene inviato. Ognuno resta lontano dai tuoi file e dalle tue chiavi, e fa solo ciò che hai permesso.",
   "cap.check.text": "Ogni affermazione di una risposta viene confrontata con la fonte citata, e vedi ciò che le fonti non sostengono.",
   "cap.since.text": "Quando torni, un breve riepilogo delle novità dei tuoi servizi collegati. Si limita a leggere, e niente viene letto mentre questa scheda è chiusa.",
-  "cap.notifications.text": "Una notifica quando un’attività finisce mentre sei in un’altra scheda o app. Mostra il titolo dell’attività, mai la risposta.",
+  "cap.notifications.text": "Una notifica quando un’attività finisce o ti aspetta mentre sei altrove. Si vede solo il titolo, mai la risposta.",
   "cap.names.text": "Dai all’assistente di un progetto un nome tutto suo e qualche parola su come deve essere.",
   "projects.assistant": "Nome del suo assistente",
   "projects.persona": "Come deve essere, in poche parole",

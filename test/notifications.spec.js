@@ -1,7 +1,8 @@
 // Notifications (D334): a task done while the user is in another tab or app offers them as the user
 // comes back; accepted, the browser asks, and the next task done out of sight shows its title, never
-// its answer. A click brings Jean back on that task, coming back takes away those still shown, and
-// the switch in Settings › General turns them off. The browser's notifications are stood in for, and
+// its answer, as does one that stops for the user's answers: the fake brain asks three questions
+// before writing a letter. A click brings Jean back on that task, coming back takes away those still
+// shown, and the switch in Settings › General turns them off. The browser's notifications are stood in for, and
 // being elsewhere is the page without focus: the test sees what Jean asks of them.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks } from './helpers.js'
@@ -78,11 +79,29 @@ test('a task done out of sight offers notifications; on, the next one is told, a
   await page.evaluate(() => /** @type {any} */ (window).shown[0].onclick())
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Which neighbourhood should we stay in')
 
+  // One that stops for the user's answers out of sight is told as it starts waiting, never with its
+  // questions, tagged by its task as the first was; a click brings Jean back on them.
+  await leave(page)
+  await ask(page, 'Write a letter to my bank')
+  await expect.poll(async () => (await shown(page))[1]).toEqual({ title: 'Prepare holiday itinerary', body: 'Waiting for you to answer.', lang: 'en', dir: 'ltr', closed: false })
+  const [first, second] = await page.evaluate(() => /** @type {any} */ (window).shown.map((/** @type {any} */ item) => item.tag))
+  expect(second).toBe(first)
+  await tasks.locator('.place', { hasText: 'New task' }).click()
+  await back(page)
+  const card = page.locator('.inbox app-ask form.approval')
+  await expect(card).toHaveCount(0)
+  await page.evaluate(() => /** @type {any} */ (window).shown[1].onclick())
+  await expect(card.locator('.ask-progress')).toHaveText('Question 1 of 3')
+  await card.locator('.button.primary').click()
+  await card.locator('.button', { hasText: 'Skip' }).click()
+  await card.locator('.button', { hasText: 'Skip' }).click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Which tone should the letter have? Formal')
+
   // Its switch, in Settings › General, on; turned off, a task done out of sight is not told.
   const settings = await openSettings(page, 'General')
   const toggle = settings.getByRole('switch', { name: 'Notifications' })
   await expect(toggle).toBeChecked()
-  await expect(settings.locator('.setting', { has: page.getByRole('switch', { name: 'Notifications' }) })).toContainText('When a task is done while you’re in another tab or app. Only its title shows.')
+  await expect(settings.locator('.setting', { has: page.getByRole('switch', { name: 'Notifications' }) })).toContainText('When a task is done or waits for your answer while you’re in another tab or app. Only its title shows.')
   await toggle.click()
   await expect(toggle).not.toBeChecked()
   await closeSettings(page)
@@ -90,11 +109,11 @@ test('a task done out of sight offers notifications; on, the next one is told, a
   await ask(page, 'Thanks, that is all for today')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Thanks, that is all for today')
   await page.waitForTimeout(500)
-  expect(await shown(page)).toHaveLength(1)
+  expect(await shown(page)).toHaveLength(2)
 })
 
-for (const [lang, title, body, dir] of [['ar', 'الإشعارات', 'تمّت. إجابتك جاهزة.', 'rtl'], ['ja', '通知', '完了しました。回答の準備ができています。', 'ltr']]) {
-  test(`in ${lang}, the offer, the notification and its switch speak the user's language`, async ({ page }) => {
+for (const [lang, title, body, waiting, dir] of [['ar', 'الإشعارات', 'تمّت. إجابتك جاهزة.', 'تنتظر ردّك.', 'rtl'], ['ja', '通知', '完了しました。回答の準備ができています。', 'あなたの返事を待っています。', 'ltr']]) {
+  test(`in ${lang}, the offer, the notifications and their switch speak the user's language`, async ({ page }) => {
     await start(page, lang)
     await connectFakeBrain(page)
     const offer = page.locator('aside.offer')
@@ -104,6 +123,10 @@ for (const [lang, title, body, dir] of [['ar', 'الإشعارات', 'تمّت. 
     await leave(page)
     await ask(page, 'Which neighbourhood should we stay in')
     await expect.poll(() => shown(page)).toEqual([{ title: 'Prepare holiday itinerary', body, lang, dir, closed: false }])
+    await back(page)
+    await leave(page)
+    await ask(page, 'Write a letter to my bank')
+    await expect.poll(async () => (await shown(page))[1]).toEqual({ title: 'Prepare holiday itinerary', body: waiting, lang, dir, closed: false })
     await back(page)
     const settings = await openSettings(page)
     await expect(settings.getByRole('switch', { name: title })).toBeChecked()

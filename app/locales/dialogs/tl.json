@@ -173,7 +173,7 @@
   "cap.plugins.text": "Magdagdag ng mga plugin para makagawa ng higit pa, gaya ng pagsuri sa ipinapadala. Malayo ang bawat isa sa mga file at susi mo, at ginagawa lang ang pinayagan mo.",
   "cap.check.text": "Tsinetsek ng {name} ang bawat pahayag ng sagot laban sa pinagmulang binanggit nito, at ipinapakita sa iyo ang hindi sinusuportahan ng mga pinagmulan.",
   "cap.since.text": "Pagbalik mo, isang maikling buod ng bago sa mga nakakonektang serbisyo mo. Nagbabasa lang ito, at walang binabasa habang sarado ang tab na ito.",
-  "cap.notifications.text": "Isang abiso kapag natapos ang gawain habang nasa ibang tab o app ka. Ipinapakita nito ang pamagat ng gawain, hindi kailanman ang sagot.",
+  "cap.notifications.text": "Isang abiso kapag natapos ang gawain o naghihintay ito sa iyo habang wala ka. Pamagat lang nito ang lumalabas, hindi kailanman ang sagot.",
   "cap.names.text": "Bigyan ang assistant ng isang proyekto ng sarili nitong pangalan, at ilang salita kung paano ito dapat kumilos.",
   "projects.assistant": "Pangalan ng assistant nito",
   "projects.persona": "Paano ito dapat kumilos, sa ilang salita",

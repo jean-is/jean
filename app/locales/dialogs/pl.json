@@ -179,7 +179,7 @@
   "cap.plugins.text": "Dodaj wtyczki, by robić więcej, na przykład sprawdzać to, co jest wysyłane. Każda trzyma się z dala od twoich plików i kluczy i robi tylko to, na co pozwoliłeś.",
   "cap.check.text": "Każde stwierdzenie w odpowiedzi jest sprawdzane ze wskazanym źródłem, a ty widzisz, czego źródła nie potwierdzają.",
   "cap.since.text": "Po twoim powrocie krótkie podsumowanie nowości w połączonych usługach. Tylko odczyt, i nic, gdy ta karta jest zamknięta.",
-  "cap.notifications.text": "Powiadomienie, gdy zadanie się skończy, kiedy jesteś w innej karcie lub aplikacji. Pokazuje tytuł zadania, nigdy odpowiedź.",
+  "cap.notifications.text": "Powiadomienie, gdy zadanie się skończy lub czeka na ciebie, kiedy cię nie ma. Widać tylko jego tytuł, nigdy odpowiedź.",
   "cap.names.text": "Nadaj asystentowi projektu własne imię i kilka słów o tym, jaki ma być.",
   "projects.assistant": "Imię jego asystenta",
   "projects.persona": "Jaki ma być, w kilku słowach",

@@ -1,10 +1,11 @@
-// Notifications (D334): a task done while the user is in another tab or app, the browser says so, with
-// the task's title and never its answer; a click brings Jean back on it, and coming back takes away
-// those still shown. Offered the first time a task is done while the user was away, as they return:
-// accepting is the click the browser needs before it asks. Its switch is in Settings › General.
+// Notifications (D334): a task done, or waiting on an approval or questions, while the user is in another
+// tab or app, the browser says so, with the task's title and never its answer; a click brings Jean back
+// on it, and coming back takes away those still shown. Offered the first time a task is done while the
+// user was away, as they return: accepting is the click the browser needs before it asks. Its switch is
+// in Settings › General.
 import { html } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
-import { signal } from '@preact/signals-core'
+import { signal, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, updateSettings, turnPage, openConversation } from '../../ui/state.js'
 import { away } from '../../ui/discovery.js'
@@ -27,11 +28,11 @@ const on = () => allowed.value === 'granted' && app.settings.value.notifications
 const shown = new Set()
 addEventListener('focus', () => { for (const item of shown) item.close() })
 
-/** @param {{ task: string }} e */
-function tell({ task }) {
+/** @param {string} task @param {string} body what it is at */
+function tell(task, body) {
   const summary = app.conversations.peek().find((item) => item.path === task)
   const title = summary?.title || BRAND.name
-  const options = { body: t('notifications.done'), tag: task, lang: locale.peek(), dir: dir(), icon: 'icons/icon-192.png', data: { hash: hashFor(app.project.peek(), summary?.id ?? null) } }
+  const options = { body, tag: task, lang: locale.peek(), dir: dir(), icon: 'icons/icon-192.png', data: { hash: hashFor(app.project.peek(), summary?.id ?? null) } }
   try {
     const item = new Notification(title, options)
     shown.add(item)
@@ -42,6 +43,14 @@ function tell({ task }) {
     navigator.serviceWorker?.ready.then((registration) => registration.showNotification(title, options)).catch(console.warn)
   }
 }
+
+// A task that stops for the user, on an approval or questions in the inbox, is told once, as it starts
+// waiting: tagged by the task as well, so what comes next there replaces it. Their ids only grow.
+let last = 0
+effect(() => app.decisions.value.filter(({ id }) => id > last).forEach(({ id, conversation }) => {
+  last = id
+  if (conversation && on() && away()) tell(conversation, t('notifications.waiting'))
+}))
 
 /** Its switch, among Settings' General ones. @param {{ setting: typeof import('../../ui/dialogs.js').setting }} props */
 const draw = ({ setting }) => setting(t('cap.notifications.name'), t(allowed.value === 'denied' ? 'notifications.blocked' : 'notifications.text'),
@@ -56,6 +65,6 @@ function switched(checked) {
 
 register({
   id: 'notifications',
-  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (e.answer && on() && away()) tell(e); return next(e) } }],
+  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (e.answer && on() && away()) tell(e.task, t('notifications.done')); return next(e) } }],
   slots: { general: { at: 10, draw } },
 })

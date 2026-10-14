@@ -173,7 +173,7 @@
   "cap.plugins.text": "Add plugins to do more, like checking what is sent. Each is kept away from your files and keys, and does only what you allowed.",
   "cap.check.text": "{name} checks each claim of an answer against the source it cites, and shows you what the sources don’t support.",
   "cap.since.text": "When you come back, a short brief of what’s new in your connected services. It only reads, and nothing is read while this tab is closed.",
-  "cap.notifications.text": "A notification when a task is done while you’re in another tab or app. It shows the task’s title, never the answer.",
+  "cap.notifications.text": "A notification when a task is done or waits for you while you’re away. Only its title shows, never the answer.",
   "cap.names.text": "Give a project’s assistant a name of its own, and a few words on how it should be.",
   "projects.assistant": "Its assistant’s name",
   "projects.persona": "How it should be, in a few words",

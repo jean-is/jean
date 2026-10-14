@@ -176,7 +176,7 @@
   "cap.plugins.text": "Añade plugins para hacer más, como comprobar lo que se envía. Cada uno se mantiene lejos de tus archivos y claves, y solo hace lo que permitiste.",
   "cap.check.text": "{name} comprueba cada afirmación de una respuesta con la fuente que cita, y te muestra lo que las fuentes no respaldan.",
   "cap.since.text": "Cuando vuelves, un breve resumen de las novedades de tus servicios conectados. Solo se lee, y nada mientras esta pestaña está cerrada.",
-  "cap.notifications.text": "Una notificación cuando una tarea termina mientras estás en otra pestaña o app. Muestra el título de la tarea, nunca la respuesta.",
+  "cap.notifications.text": "Una notificación cuando una tarea termina o te espera mientras no estás. Solo se muestra su título, nunca la respuesta.",
   "cap.names.text": "Dale al asistente de un proyecto un nombre propio y unas palabras sobre cómo debe ser.",
   "projects.assistant": "Nombre de su asistente",
   "projects.persona": "Cómo debe ser, en pocas palabras",

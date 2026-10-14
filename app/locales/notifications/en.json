@@ -1,5 +1,6 @@
 {
   "notifications.done": "Done. Your answer is ready.",
-  "notifications.text": "When a task is done while you’re in another tab or app. Only its title shows.",
+  "notifications.waiting": "Waiting for you to answer.",
+  "notifications.text": "When a task is done or waits for your answer while you’re in another tab or app. Only its title shows.",
   "notifications.blocked": "Your browser blocks notifications from this site. Allow them in its settings for this site."
 }
