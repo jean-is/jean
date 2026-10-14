@@ -1,5 +1,6 @@
 // What the room's modules read of Jean in a task saved as a web page (D305), in ui/state.js's place:
-// the task and what the page was saved with (the look, what pages may do, the map service), light or
+// the task and what the page was saved with (the look, what pages may do, the map service, where a
+// score's instruments are, D338), light or
 // dark as the system has it, and nothing kept or sent, since a copy is read, not worked in. The words
 // come from the package, in the language the page was saved in, before any module that shows them runs.
 import { computed, signal } from '@preact/signals-core'
@@ -24,7 +25,7 @@ export const app = {
   current: signal(/** @type {{ id: string, path: string, records: import('../core/types.js').Envelope[] } | null} */ (null)),
   look: signal(String(saved.look ?? 'room')),
   busy: signal(false),
-  settings: signal({ pages: saved.pages ?? {}, ...(saved.mapStyles && { mapStyles: saved.mapStyles }) }),
+  settings: signal({ pages: saved.pages ?? {}, urls: saved.urls ?? {}, ...(saved.mapStyles && { mapStyles: saved.mapStyles }) }),
   policy: {},
   deviceId: 'reader',
 }

@@ -221,11 +221,12 @@ export const RUNTIMES = [
     rewrite: { 'stb-vorbis': './stb-vorbis.mjs' },
   },
   {
-    // The instruments (D338): MS Basic, a file for each group that shares samples, and their index.
+    // The instruments (D338): MS Basic, a file for each group that shares samples, their index, and the
+    // package's version, which a saved copy gets them at.
     dir: 'vendor/sounds',
     packages: ['@codename/jean-sounds'],
     files: [],
-    folders: [['@codename/jean-sounds', '.', /\.sf3$|^sounds\.json$/]],
+    folders: [['@codename/jean-sounds', '.', /\.sf3$|^(sounds|package)\.json$/]],
   },
 ]
 

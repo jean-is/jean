@@ -1,12 +1,12 @@
 // Scores (D196): a ```abc block in an answer, music in ABC notation, drawn as a score by abcjs and
-// played on the instruments it names, MS Basic's, made in a worker (./sound-worker.js, D338) the
-// first time it plays, while it waits showing how much of them has come; without them (offline the
-// first time, or in a saved copy), on Jean's own small synthesizer. Each note is lit as it sounds,
+// played on the instruments it names, MS Basic's, made (./sound.js, D338) the first time it plays, in
+// a worker, or on the page in a saved copy, while it waits showing how much of them has come; without
+// them (offline the first time), on Jean's own small synthesizer. Each note is lit as it sounds,
 // with where it is to move, and it is copied as its source and its picture at once. One score plays
 // at a time. Drawn again, at most every quarter second, while the answer is written. Loaded by the
 // first score an answer holds; until then, or when abcjs finds no music in a block, it shows as code.
 import { html, render, svg } from 'lit-html'
-import { notify } from '../../ui/state.js'
+import { app, notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
@@ -31,7 +31,9 @@ const PAUSE = icon(svg`<path d="M8.5 5.5v13M15.5 5.5v13"/>`)
 /** The sound, made at the first Play (browsers start it only on a click), and the score playing. */
 let context = /** @type {AudioContext | null} */ (null)
 let playing = /** @type {AppScore | null} */ (null)
-const sounds = modelWorker(new URL('./sound-worker.js', import.meta.url), 'The score’s sound stopped')
+/** Where the music is made: a worker of this Jean's own, or none in a saved copy, whose files come from an address that starts none. */
+const WORKER = new URL('./sound-worker.js', import.meta.url)
+const sounds = WORKER.origin === location.origin ? modelWorker(WORKER, 'The score’s sound stopped') : null
 
 /**
  * One note: a triangle wave and, softer, its octave, struck and fading as a plucked string does,
@@ -168,8 +170,8 @@ class AppScore extends HTMLElement {
   }
 
   /**
-   * The music as its instruments play it, asked of the worker: it starts with its first second, or
-   * on the synthesizer when they can't come. @param {AudioContext} sound
+   * The music as its instruments play it, made in the worker or, in a saved copy, on the page: it
+   * starts with its first second, or on the synthesizer when they can't come. @param {AudioContext} sound
    */
   load(sound) {
     const parts = (this.parts = /** @type {{ at: number, buffer: AudioBuffer }[]} */ ([]))
@@ -180,7 +182,8 @@ class AppScore extends HTMLElement {
       this.loading = null
       this.start(sound)
     }
-    sounds.call({ notes: this.notes, rate: sound.sampleRate }, { onMessage: (message) => {
+    const request = { notes: this.notes, rate: sound.sampleRate, base: (/** @type {Record<string, string>} */ (app.settings.peek().urls ?? {})).sounds }
+    const made = (/** @type {Record<string, any>} */ message) => {
       if (this.parts !== parts) return
       if (message.type === 'progress') return this.loading !== null && ((this.loading = message.loaded / message.total), this.paint())
       const buffer = sound.createBuffer(2, message.left.length, sound.sampleRate)
@@ -189,7 +192,9 @@ class AppScore extends HTMLElement {
       parts.push({ at: message.at, buffer })
       if (this.started !== null) this.schedule(parts[parts.length - 1])
       ready()
-    } }).catch((error) => {
+    }
+    const making = sounds ? sounds.call(request, { onMessage: made }) : import('./sound.js').then(({ render }) => render(request, made, () => this.parts !== parts))
+    making.catch((error) => {
       console.warn('Score', error)
       if (this.parts !== parts || parts.length) return
       this.parts = false

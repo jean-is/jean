@@ -59,6 +59,8 @@ function draw() {
 
 /** What a copy draws itself with, unless policy or Settings name another address (`urls.render`), none when '': the render package on jsDelivr, at the version that saved it. */
 const RENDER = 'https://cdn.jsdelivr.net/npm/@codename/jean-render@{version}/'
+/** Where its scores get their instruments (D338), unless policy or Settings name another address (`urls.sounds`): the sounds package on jsDelivr, at this Jean's version of it. */
+const SOUNDS = 'https://cdn.jsdelivr.net/npm/@codename/jean-sounds@{version}/'
 
 /** What a policy allows by its hash. @param {string} text */
 const hashOf = async (text) => `'sha256-${btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))}'`
@@ -73,13 +75,13 @@ const block = (value) => JSON.stringify(value).replaceAll('<', '\\u003c')
  * Without the package, its own style and lines alone, by their hashes, and its pictures. With it, inline scripts too,
  * which the relay of a page in an answer is, and that page's own (a hash would turn that keyword off,
  * as in preview.html), and its blobs and data, all from the package and nowhere else, maps from their
- * service; never a form or another base address.
+ * service, a score's instruments from theirs, decoded in WebAssembly (D338); never a form or another base address.
  * @param {string} drawing @param {Reader | null} reader
  */
 async function policyOf(drawing, reader) {
   if (!reader) return `default-src 'none'; img-src data:; style-src ${await hashOf(STYLE)}; script-src ${await hashOf(drawing)}`
   const { base, sites } = reader
-  return [`default-src 'none'`, `script-src 'unsafe-inline' data: blob: ${base}`, `style-src 'unsafe-inline' ${base}`, `img-src data: blob: ${base}`,
+  return [`default-src 'none'`, `script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${base}`, `style-src 'unsafe-inline' ${base}`, `img-src data: blob: ${base}`,
     `font-src data: ${base}`, `connect-src ${[base, ...sites].join(' ')}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'"].join('; ')
 }
 
@@ -117,9 +119,11 @@ ${reader ? `<script type="application/json" id="settings">${block(reader.setting
  */
 async function readerOf() {
   const [{ app, effective }, { declared }, { pageRights, mapStyles }] = await Promise.all([import('./state.js'), import('./markdown.js'), import('./csp.js')])
-  const { render } = await fetch(new URL('../capabilities.json', import.meta.url)).then((response) => response.json()).catch(() => ({}))
+  const [{ render }, sounds] = await Promise.all(['../capabilities.json', '../vendor/sounds/package.json'].map((path) => fetch(new URL(path, import.meta.url)).then((response) => response.json()).catch(() => ({}))))
   const { settings } = effective.peek()
-  const base = render && String(app.policy.urls?.render ?? /** @type {Record<string, string>} */ (settings.urls ?? {}).render ?? RENDER).replace('{version}', render.version)
+  const urls = /** @type {Record<string, string>} */ (settings.urls ?? {})
+  const base = render && String(app.policy.urls?.render ?? urls.render ?? RENDER).replace('{version}', render.version)
+  const instruments = sounds.version && String(app.policy.urls?.sounds ?? urls.sounds ?? SOUNDS).replace('{version}', sounds.version)
   if (!base) return null
   /** @param {string} path */
   const at = (path) => new URL(path, base).href
@@ -131,8 +135,8 @@ async function readerOf() {
     imports: Object.fromEntries([...Object.entries(own).map(([name, path]) => [name, at(path)]), ...Object.entries(render.map).map(([path, standIn]) => [at(path), at(standIn)])]),
     integrity: Object.fromEntries(render.files.map((/** @type {string} */ path) => [at(path), render.integrity[path]])),
     // Its pages offline, as Jean's are unless Settings say otherwise, and maps as they were.
-    settings: { look: app.look.peek(), kinds: [...declared.peek()], pages: { ...allows, web: false, network: false }, ...(styles && { mapStyles: styles }) },
-    sites: styles ? Object.values(styles).map((address) => new URL(address).origin) : [],
+    settings: { look: app.look.peek(), kinds: [...declared.peek()], pages: { ...allows, web: false, network: false }, ...(styles && { mapStyles: styles }), ...(instruments && { urls: { sounds: instruments } }) },
+    sites: [...(styles ? Object.values(styles).map((address) => new URL(address).origin) : []), ...(instruments ? [instruments] : [])],
   }
 }
 

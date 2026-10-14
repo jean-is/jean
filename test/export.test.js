@@ -38,18 +38,19 @@ test('its policy lets only its own style and drawing in, by their hashes, and it
   assert.ok(page.indexOf('Content-Security-Policy') < page.indexOf('<style>'))
 })
 
-test('with the render package, it loads Jean’s modules from there, each by its hash, and reaches nothing else but the map service', async () => {
+test('with the render package, it loads Jean’s modules from there, each by its hash, and reaches nothing else but the map service and a score’s instruments', async () => {
   const base = 'https://cdn.example/npm/@codename/jean-render@0.8.0-r0123456789ab/'
   const entry = `${base}ui/reader.js`
   const reader = {
     base, entry, imports: { 'lit-html': `${base}vendor/lit-html/lit-html.js`, [`${base}ui/state.js`]: `${base}ui/reader-state.js` },
     integrity: { [entry]: 'sha256-AAAA', [`${base}ui/reader-state.js`]: 'sha256-BBBB' },
-    settings: { look: 'mail', kinds: ['echarts'], pages: { scripts: true, maps: true }, mapStyles: { light: 'https://maps.example/</script>' } }, sites: ['https://maps.example'],
+    settings: { look: 'mail', kinds: ['echarts'], pages: { scripts: true, maps: true }, mapStyles: { light: 'https://maps.example/</script>' }, urls: { sounds: 'https://cdn.example/npm/@codename/jean-sounds@1.0.0/' } },
+    sites: ['https://maps.example', 'https://cdn.example/npm/@codename/jean-sounds@1.0.0/'],
   }
   const page = await pageOf(file, 'Plan the week', 'en', { reader })
   const policy = /<meta http-equiv="Content-Security-Policy" content="([^"]+)">/.exec(page)?.[1] ?? ''
-  assert.match(policy, new RegExp(`script-src 'unsafe-inline' data: blob: ${base}; `))
-  assert.match(policy, new RegExp(`connect-src ${base} https://maps.example; `))
+  assert.match(policy, new RegExp(`script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${base}; `), 'WebAssembly for a score\'s instruments (D338)')
+  assert.match(policy, new RegExp(`connect-src ${base} https://maps.example https://cdn.example/npm/@codename/jean-sounds@1.0.0/; `))
   assert.match(policy, /^default-src 'none'; .*form-action 'none'$/)
   const blocks = [...page.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script/gi)].map(([, attributes, text]) => ({ attributes, text }))
   assert.deepEqual(blocks.map((one) => one.attributes.trim()), ['type="application/jsonl"', '', 'type="application/json" id="settings"', 'type="importmap"',
