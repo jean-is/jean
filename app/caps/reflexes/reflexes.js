@@ -1,5 +1,5 @@
-// Intuition: reflexes on this device (D16, D41). Kev-0.6B answers typed questions in one
-// pass, in any language: which capability would help, how demanding a request is, whether
+// Intuition: reflexes on this device (D16, D41). Kev-0.6B, fine-tuned on Jean's questions in
+// 33 languages (D328), answers typed questions in one pass, in any language: which capability would help, how demanding a request is, whether
 // it shares something personal, whether the last answer missed, which follow-ups fit.
 // About 340 MB, downloaded once with consent; then free, private and quick.
 import { signal } from '@preact/signals-core'
@@ -10,7 +10,7 @@ import { modelWorker, downloading } from '../../ui/model.js'
 /** @import { Question } from '../../core/decide.js' */
 /** @import { Download } from '../brain-local/brain-local.js' */
 
-export const KEV = Object.freeze({ model: 'onnx-community/kev-0.6b-ONNX', bytes: 3.45e8 })
+export const KEV = Object.freeze({ model: 'jean-is/kev-0.6b-reflexes-ONNX', bytes: 3.45e8 })
 
 export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
 const worker = modelWorker(new URL('./kev-worker.js', import.meta.url), 'Reflexes stopped')

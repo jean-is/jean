@@ -37,8 +37,8 @@
 .prose .is-compare tr:last-child td { padding-block-end: 0.9rem; }
 .prose .is-compare tr:last-child td:not(:first-child) { border-end-start-radius: var(--card); border-end-end-radius: var(--card); }
 .prose .is-compare td.is-best { background: oklch(from var(--flame) l c h / 0.16); }
-.prose .is-compare .is-yes { color: oklch(from var(--flame) l max(c, 0.12) 150); }
-.prose .is-compare .is-no { color: var(--ink-faint); }
+.prose .is-compare .is-yes { --tone: oklch(from var(--flame) l max(c, 0.12) 150); color: var(--tone); }
+.prose .is-compare .is-no { color: var(--ink-soft); }
 /* The frame is drawn inside each cell, the line under it too, so that nothing breaks it. */
 .prose .is-compare .is-pick { --edge: inset 2px 0 var(--flame), inset -2px 0 var(--flame); border-block-end: 0; box-shadow: var(--edge), inset 0 -1px var(--line); }
 .prose .is-compare th.is-pick { box-shadow: var(--edge), inset 0 2px var(--flame), inset 0 -1px var(--line); }
@@ -108,6 +108,8 @@
 .prose .callout.is-warning { --tone: oklch(from var(--flame) l max(c, 0.1) 75); }
 .prose .callout.is-caution { --tone: var(--danger); }
 .prose .callout-title { display: flex; align-items: center; gap: 0.45rem; margin-block-end: 0.3rem; color: var(--tone); font-weight: 650; }
+/* By day a tone keeps its hue, but no more lightness than reads at AA on any look's paper and in the light (test/contrast.spec.js). */
+[data-theme='light'] .prose :is(.callout-title, .is-compare .is-yes) { color: oklch(from var(--tone) min(l, 0.45) c h); }
 .prose .callout-title::before { content: ''; flex: none; inline-size: 1.1em; block-size: 1.1em; background: currentColor; mask: var(--icon) center / contain no-repeat; }
 .prose .is-note { --icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='9'/><path d='M12 11v5M12 8h.01'/></svg>"); }
 .prose .is-tip { --icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1h5c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z'/></svg>"); }

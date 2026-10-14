@@ -101,11 +101,11 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [x] Domain chosen and registered: jean.is, because data is bound to the origin (D27 · D242)
 - [ ] Profiles' data layout settled and built (D228), since data moves only before launch (D173)
 - [x] Multilingual reflex test set built; Kev measured in every launch language (D68)
-- [ ] Kev fine-tuned where it falls short: "personal", "unhappy" and "lasting" everywhere, and the low-resource languages (D68)
+- [x] Kev fine-tuned where it falls short: "personal", "unhappy" and "lasting" everywhere, and the low-resource languages (D68 · D328)
 - [x] Budgets enforced in CI: `.gitlab-ci.yml` runs `npm run check` and `npm run e2e` on every push and merge request, once the repository has a GitLab remote
-- [ ] CSP verified in Chrome, Edge, Firefox and Safari, the sandbox document included (Chromium and WebKit are covered by the smoke tests)
+- [ ] CSP verified in Chrome, Edge, Firefox and Safari, the sandbox document included (D326: `npm run csp` passes in Chromium, WebKit, Chrome and Safari; Edge and Firefox themselves still to run)
 - [ ] Tested on a managed Windows laptop with a weak graphics chip, and on Safari 16.4+
-- [ ] Contrast audited at every lighting stage; reduced motion checked
+- [x] Contrast audited at every lighting stage; reduced motion checked (D325)
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds
 - [ ] Manifesto and README published, with the line count
 - [ ] What Jean generates marked as AI's (AI Act Art. 50(2), by launch or 2 Dec 2026): pictures made on the device or this computer carry IPTC's mark in their XMP (D279); still C2PA and a watermark on them, metadata on files, detection on the check page, labels for deployers ([certificates.md](certificates.md#4-ai-act-marking-art-502-and-4-blocks-the-public-launch))

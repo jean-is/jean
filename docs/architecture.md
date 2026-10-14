@@ -215,14 +215,14 @@ const { demand, personal, capability } = await decide(message, {
 
 | Backend | When |
 |---|---|
-| **Kev-0.6B** through Transformers.js | The default (D41, D67): q4f16 on WebGPU with `shader-f16`, otherwise q4 on WebAssembly; about 345 MB once, with consent; about 60 ms a message on WebGPU after warm-up |
+| **Kev-0.6B**, fine-tuned on Jean's questions (D328), through Transformers.js | The default (D41, D67): q4f16 on WebGPU with `shader-f16`, otherwise q4 on WebAssembly; about 345 MB once, with consent; about 60 ms a message on WebGPU after warm-up |
 | Jev through OpenRouter | Later, when a cloud brain is connected |
 | Ollaya (a local server) | Advanced users, later |
 | The brain itself, with constrained JSON | Last resort, later |
 
 **How Kev is asked** (D67): all of a state's questions in one forward pass, each with its options between Kev's delimiters (ids from its `config.json`); each option's score softmaxed within its question; a score read as its most likely level, since Kev hedges toward the middle; a yes, or an offer, at 0.6. Each message gets one pass for demand, personal and capability, and a second for "unhappy" with the previous answer, both capped at 2.5 s.
 
-**Measuring Kev** (D68, D84): `test/reflexes/<lang>.json` holds 44 labelled examples per launch language, machine-translated; `npm run reflexes` runs Kev on the CPU under Node with Jean's own questions and thresholds, and writes [test/reflexes/results.md](../test/reflexes/results.md). 67% overall: tables reliable everywhere, capability and email fine in the major languages, personal, unhappy and lasting near chance, the low-resource languages lowest. The next step, before launch, is a fine-tuned "Jean reflexes" checkpoint, published under Apache 2.0. The test set is the lasting asset.
+**Measuring Kev** (D68, D84): `test/reflexes/<lang>.json` holds 44 labelled examples per launch language, machine-translated; `npm run reflexes` runs Kev on the CPU under Node with Jean's own questions and thresholds, and writes [test/reflexes/results.md](../test/reflexes/results.md). Kev-0.6B made 66%, personal, unhappy and lasting near chance; fine-tuned on Jean's questions (`jean-is/kev-0.6b-reflexes-ONNX`, D328), 96%, every question at 91% or more, the low-resource languages lowest (80 to 89%). The test set is the lasting asset.
 
 **Measuring offers** (D284): `test/offers/<lang>.json` holds 43 requests in eight languages, each labelled with the capability the brain's `offer` should name, or none. `npm run offers` reads the frozen prompt and declared tools a first conversation sends, from the page in headless Chromium, then sends each request through core's loop to the brain `BRAIN` names (as jean-cli's `--brain`, its key in `<PROVIDER>_API_KEY`), Jean's first tools answering as they do, and writes a section per brain into [test/offers/results.md](../test/offers/results.md): per capability, how often it was offered when needed, what came instead, and how often it was offered when not.
 
@@ -297,7 +297,7 @@ There is always a default project, hidden until Projects is discovered, so one c
 
 ## Security
 
-Every HTML document has its own CSP in a `<meta>`, which works on any static host.
+Every HTML document has its own CSP in a `<meta>`, which works on any static host. Each is checked in every engine by the browser's own reports, Jean served with it again as a report-only header (D326, `npm run csp`).
 
 **`index.html`** runs only Jean's own code:
 
