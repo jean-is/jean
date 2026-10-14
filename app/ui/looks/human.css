@@ -94,7 +94,7 @@
 :root[data-look='human'] :is(.starter, .follow-up):hover { background: var(--control-hover); box-shadow: var(--raise); }
 
 /* The conversation: a large title, plain answers, the user's words in blue bubbles with a tail. */
-:root[data-look='human'] .conversation-title { margin: 0.75rem 0 1rem; font: 700 1.75rem/1.2 var(--display); color: var(--ink); }
+:root[data-look='human'] .conversation-title { margin: 0.75rem 0 1.5rem; font: 700 1.75rem/1.2 var(--display); color: var(--ink); }
 :root[data-look='human'] .prose { font-size: 1rem; line-height: 1.6; }
 :root[data-look='human'] .prose pre { border: 0; border-radius: 0.625rem; background: oklch(from var(--ink) l c h / 0.06); }
 :root[data-look='human'] .caret { inline-size: 0.125em; border-radius: 0; box-shadow: none; }
@@ -216,11 +216,12 @@
 :root[data-look='human'][data-sidebar] .wordmark { font-size: 0.9375rem; }
 :root[data-look='human'][data-sidebar] app-inbox { padding: 0 0.625rem var(--foot); --foot: 0.625rem; }
 :root[data-look='human'][data-sidebar] main { padding-block-start: 0; }
-/* The toolbar over the conversation, which the page scrolls under; its title in it, centred. */
+/* The toolbar over the conversation, which the page scrolls under; its title in it, centred, with more room
+   under it than between two requests, so that the first starts the conversation instead of hanging from it. */
 :root[data-look='human'][data-sidebar] app-shell::before { content: ''; position: fixed; z-index: 2; inset-block-start: 0; inset-inline: var(--list) 0; block-size: var(--top); background: linear-gradient(var(--room) 40%, oklch(from var(--room) l c h / 0)); pointer-events: none; }
 /* The browser's and the terminal's buttons sit in it, at its end (D170), over the title, which reaches under them on a narrower window. */
 :root[data-look='human'] app-shell > .views { margin-block-end: calc(-1 * var(--top)); background: none; }
-:root[data-look='human'][data-sidebar] .conversation-title { position: sticky; z-index: 2; inset-block-start: 0; margin: 0 0 0.75rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+:root[data-look='human'][data-sidebar] .conversation-title { position: sticky; z-index: 2; inset-block-start: 0; margin: 0 0 2rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
 :root[data-look='human'][data-sidebar] .notice { margin-block-start: var(--top); }
 
 @media print {
