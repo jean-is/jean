@@ -88,7 +88,7 @@ class Composer extends Element {
           </div>
           <app-seal></app-seal>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
-            ${brain?.api === 'device' && !auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
+            ${brain?.api === 'device' && !auto ? icons.lock : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
           ${primary(busy, empty, hands)}
         </div>

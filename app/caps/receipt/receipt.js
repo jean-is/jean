@@ -139,7 +139,7 @@ function card(facts, turn, text, id, chosen) {
   const entry = ({ provider, model, local }) => html`<dd class="receipt-brain">
     <bdi>${named({ provider, model })}</bdi>
     ${facts.outside.includes(hosts.get(provider) ?? '') ? html`<bdi class="receipt-host" dir="ltr">${hosts.get(provider)}</bdi>` : nothing}
-    ${local && facts.verdict !== 'local' ? html`<span class="receipt-where">${icons.chip}${t('receipt.here')}</span>` : nothing}</dd>`
+    ${local && facts.verdict !== 'local' ? html`<span class="receipt-where">${icons.lock}${t('receipt.here')}</span>` : nothing}</dd>`
   return html`
     <div class="receipt-head is-${facts.verdict}">
       <span class="receipt-mark">${facts.verdict === 'local' ? icons.shield : cloud ? CLOUD : facts.verdict === 'out' ? icons.globe : INFO}</span>

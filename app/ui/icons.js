@@ -61,7 +61,7 @@ export const icons = {
   flow: icon(svg`<rect x="3" y="4" width="6" height="5" rx="1.5"/><rect x="15" y="4" width="6" height="5" rx="1.5"/><rect x="9" y="15" width="6" height="5" rx="1.5"/><path d="M9 6.5h6M18 9v2.5a2 2 0 0 1-2 2h-4V15"/>`, 'flip-rtl'),
   tag: icon(svg`<path d="M4 12.5V4.5h8l8 8-8 8Z"/><circle cx="8.5" cy="9" r="1.4"/>`, 'flip-rtl'),
   wave: icon(svg`<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>`),
-  chip: icon(svg`<rect x="6.5" y="6.5" width="11" height="11" rx="2"/><path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21"/>`),
+  lock: icon(svg`<path d="M7.5 10V8a4.5 4.5 0 0 1 9 0v2"/><rect x="4.5" y="10" width="15" height="10.5" rx="3"/><circle cx="12" cy="15.25" r="1.25" fill="currentColor"/>`),
   capture: icon(svg`<path d="M4 8.5V6a2 2 0 0 1 2-2h2.5M15.5 4H18a2 2 0 0 1 2 2v2.5M20 15.5V18a2 2 0 0 1-2 2h-2.5M8.5 20H6a2 2 0 0 1-2-2v-2.5"/><circle cx="12" cy="12" r="3"/>`),
   terminal: icon(svg`<path d="m4.5 7 5 5-5 5M12 17.5h7.5"/>`),
 }

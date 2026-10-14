@@ -246,7 +246,7 @@ function brains() {
 
 /** A brain's icon, name and where it runs: this device, this computer, or the cloud. @param {BrainConfig} brain */
 function describe(brain) {
-  if (brain.api === 'device') return { icon: icons.chip, name: t('provider.device'), where: t('brain.device.private') }
+  if (brain.api === 'device') return { icon: icons.lock, name: t('provider.device'), where: t('brain.device.private') }
   const name = brain.provider === 'custom' ? new URL(brain.baseURL).host : t(`provider.${brain.provider}`)
   return isLocal(brain) ? { icon: icons.computer, name, where: t('picker.local') } : { icon: icons.globe, name, where: t('brain.cloud') }
 }
@@ -414,7 +414,7 @@ export function ways(first, all = true) {
   // What was downloaded for the device's brain, on a device short of memory for it, has just been deleted (D319).
   const freed = deviceCheck.value?.freed
   return html`${freed && module ? html`<p class="hint">${module.unfit(freed)}</p>` : nothing}<ul class="list ways">
-    ${device && progress ? way('device', icons.chip, t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
+    ${device && progress ? way('device', icons.lock, t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
       <p>${t('brain.device.text', { name: BRAND.name })}</p>
       ${progressOf(device) ?? html`
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
@@ -661,7 +661,7 @@ const parts = signal(/** @type {Array<{ id: keyof typeof PARTS, bytes: number }>
 /** Each kind: its icon, its name and what it holds, when its name doesn't say. */
 const PARTS = /** @type {const} */ ({
   conversations: ['history', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
-  brains: ['chip', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['data', 'storage.rest', 'storage.rest.text'],
+  brains: ['lock', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['data', 'storage.rest', 'storage.rest.text'],
 })
 
 /** A cached response's size: its length as sent, unless it came compressed, then its body's. @param {Response | undefined} response */
@@ -841,7 +841,7 @@ class Settings extends Element {
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'spark', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image', plugins: 'bolt',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'lock', machine: 'terminal', pictures: 'image', plugins: 'bolt',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
