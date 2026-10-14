@@ -102,7 +102,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [x] Multilingual reflex test set built; Kev measured in every launch language (D68)
 - [ ] Kev fine-tuned where it falls short: "personal", "unhappy" and "lasting" everywhere, and the low-resource languages (D68)
 - [x] Budgets enforced in CI: `.gitlab-ci.yml` runs `npm run check` and `npm run e2e` on every push and merge request, once the repository has a GitLab remote
-- [ ] CSP verified in Chrome, Edge, Firefox and Safari, the sandbox document included (Chromium and WebKit are covered by the smoke tests)
+- [ ] CSP verified in Chrome, Edge, Firefox and Safari, the sandbox document included (D326: `npm run csp` passes in Chromium, WebKit, Chrome and Safari; Edge and Firefox themselves still to run)
 - [ ] Tested on a managed Windows laptop with a weak graphics chip, and on Safari 16.4+
 - [x] Contrast audited at every lighting stage; reduced motion checked (D325)
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds

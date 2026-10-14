@@ -10,6 +10,9 @@
 // It serves examples/ too, at /examples/, to any page, so that Settings › Plugins reads the example
 // plugins at http://127.0.0.1:<port>/examples/plugins/<name>/, and a folder there opened in a browser
 // lists its files; a deploy never has them.
+// With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
+// sends what it blocks to /csp-reports, where GET lists them: every browser says what the policy
+// refused, without a hook into it (test/csp.spec.js). A `csp` cookie names whose they are.
 import { execFile } from 'node:child_process'
 import { createReadStream, watch } from 'node:fs'
 import { readdir, readFile, stat } from 'node:fs/promises'
@@ -28,6 +31,8 @@ const PORT = Number(process.env.PORT) || 4173
 const GATEWAY = process.argv.includes('--gateway') ? JSON.parse(process.env.GATEWAY_CONFIG ?? '{}') : null
 // For Jean wherever it is opened from here: 127.0.0.1 or localhost, on this port.
 const relay = GATEWAY && listener((request) => gateway({ ...GATEWAY, origins: [...GATEWAY.origins ?? [], new URL(request.url).origin] })(request))
+/** What the pages' policies refused, with --csp-reports, by whose they are. @type {{ from: string, report: unknown }[] | null} */
+const reports = process.argv.includes('--csp-reports') ? [] : null
 
 /** @type {Record<string, string>} */
 export const TYPES = {
@@ -85,6 +90,7 @@ function fail (res, status, message) {
 export async function handle (req, res) {
   const { pathname } = new URL(req.url ?? '/', 'http://localhost')
   if (relay && pathname === '/gateway') return relay(req, res)
+  if (reports && pathname === '/csp-reports') return cspReports(req, res, reports)
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
   if (GATEWAY && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: { gateway: `http://${req.headers.host}/gateway` } })))
   const example = pathname.startsWith('/examples/')
@@ -100,6 +106,13 @@ export async function handle (req, res) {
   if (GATEWAY && file === join(APP, 'index.html')) {
     return send(res, req, '.html', Buffer.from((await readFile(file, 'utf8')).replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')))
   }
+  if (reports && extname(file) === '.html') {
+    const page = await readFile(file)
+    const policy = /<meta http-equiv="Content-Security-Policy" content="([^"]+)">/.exec(page.toString('utf8'))?.[1]
+    const from = /(?:^|; )csp=([\w-]+)/.exec(req.headers.cookie ?? '')?.[1] ?? ''
+    if (policy) res.setHeader('Content-Security-Policy-Report-Only', `${policy.replaceAll('&quot;', '"')}; report-uri /csp-reports?from=${from}`)
+    return send(res, req, '.html', page)
+  }
   res.writeHead(200, {
     'Content-Type': TYPES[extname(file).toLowerCase()] ?? 'application/octet-stream',
     'Content-Length': info.size,
@@ -108,6 +121,23 @@ export async function handle (req, res) {
   })
   if (req.method === 'HEAD') return res.end()
   createReadStream(file).on('error', () => res.destroy()).pipe(res)
+}
+
+/**
+ * Keeps a report a page's policy sent (POST), or lists those of one `from` (GET).
+ * @param {import('node:http').IncomingMessage} req @param {import('node:http').ServerResponse} res
+ * @param {{ from: string, report: unknown }[]} reports
+ */
+async function cspReports (req, res, reports) {
+  const from = new URL(req.url ?? '/', 'http://localhost').searchParams.get('from') ?? ''
+  if (req.method === 'POST') {
+    let body = ''
+    for await (const chunk of req) body += chunk
+    try { reports.push({ from, report: JSON.parse(body) }) } catch { reports.push({ from, report: body }) }
+    res.writeHead(204)
+    return res.end()
+  }
+  return send(res, req, '.json', Buffer.from(JSON.stringify(reports.filter((item) => item.from === from).map((item) => item.report))))
 }
 
 /**

@@ -295,7 +295,7 @@ There is always a default project, hidden until Projects is discovered, so one c
 
 ## Security
 
-Every HTML document has its own CSP in a `<meta>`, which works on any static host.
+Every HTML document has its own CSP in a `<meta>`, which works on any static host. Each is checked in every engine by the browser's own reports, Jean served with it again as a report-only header (D326, `npm run csp`).
 
 **`index.html`** runs only Jean's own code:
 
