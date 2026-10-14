@@ -61,6 +61,8 @@ const MODELS = ['haiku', 'sonnet', 'opus'].map((id) => ({ id, display_name: id[0
 // A conversation's CLI ends after this long without a request, and the oldest beyond this many.
 const IDLE_MS = 30 * 60_000
 const KEPT_SESSIONS = 8
+// Claude Code's settings that fetch the keys of a gateway or a cloud provider it reaches, each a command it runs itself.
+const HELPERS = ['apiKeyHelper', 'awsAuthRefresh', 'awsCredentialExport', 'gcpAuthRefresh']
 // Claude Code's errors, as Anthropic's: Jean words them the same (a 402 is out of credits).
 const FAILURES = /** @type {Record<string, object>} */ ({
   authentication_failed: { type: 'authentication_error' }, billing_error: { type: 'billing_error', code: 402 },
@@ -418,10 +420,24 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
   /** @type {Map<string, Session>} */
   const sessions = new Map()
 
-  /** Whether Claude Code is on this computer and signed in; null when it isn't here. @returns {Promise<boolean | null>} */
-  const signedIn = () => new Promise((done) => execFile(program, [...before, 'auth', 'status', '--json'], { timeout: 15_000 }, (_, stdout) => {
-    try { done(Boolean(JSON.parse(stdout).loggedIn)) } catch { done(null) }
-  }))
+  /**
+   * What connects Claude Code to the user's provider in its own settings, which a conversation's process
+   * otherwise leaves out: their environment (a gateway's address and token, a cloud provider's switches),
+   * under the bridge's own, which wins as it does in Claude Code, and the helpers that fetch its keys.
+   * @returns {Promise<{ env: Record<string, string | undefined>, helpers: Record<string, string> }>}
+   */
+  async function reach() {
+    const settings = await readFile(join(process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude'), 'settings.json'), 'utf8').then(JSON.parse).catch(() => null)
+    return { env: { ...settings?.env, ...process.env }, helpers: Object.fromEntries(HELPERS.filter((name) => typeof settings?.[name] === 'string').map((name) => [name, settings[name]])) }
+  }
+
+  /** Whether Claude Code is on this computer and signed in, a gateway's token counting, which it sends as it is; null when it isn't here. @returns {Promise<boolean | null>} */
+  const signedIn = async () => {
+    const { env } = await reach()
+    return new Promise((done) => execFile(program, [...before, 'auth', 'status', '--json'], { timeout: 15_000 }, (_, stdout) => {
+      try { done(Boolean(JSON.parse(stdout).loggedIn || env.ANTHROPIC_AUTH_TOKEN)) } catch { done(null) }
+    }))
+  }
 
   /** @param {Session} session */
   function shut(session) {
@@ -449,13 +465,17 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     shut(session)
   }
 
-  /** A conversation's Claude Code: Jean's prompt as its own, Jean's tools its only ones, nothing of the user's settings or sessions. @param {string} model @param {string} system @param {object[]} tools */
-  function claudeCode(model, system, tools) {
+  /**
+   * A conversation's Claude Code: Jean's prompt as its own, Jean's tools its only ones, nothing of the user's
+   * settings or sessions but what connects it to their provider. @param {string} model @param {string} system @param {object[]} tools
+   */
+  async function claudeCode(model, system, tools) {
     const id = randomUUID()
     const mcp = { mcpServers: { jean: { type: 'http', url: `http://127.0.0.1:${port}/session/${id}`, headers: { authorization: `Bearer ${key}` } } } }
+    const { env, helpers } = await reach()
     const child = spawn(program, [...before, '-p', '--input-format', 'stream-json', '--output-format', 'stream-json', '--verbose', '--include-partial-messages',
       '--model', model, '--system-prompt', system, '--tools', '', '--strict-mcp-config', '--mcp-config', JSON.stringify(mcp), '--allowedTools', 'mcp__jean',
-      '--setting-sources', '', '--disable-slash-commands', '--no-session-persistence'], { cwd: temp, env: { ...process.env, MCP_TOOL_TIMEOUT: String(24 * 3_600_000) } })
+      '--setting-sources', '', '--settings', JSON.stringify(helpers), '--disable-slash-commands', '--no-session-persistence'], { cwd: temp, env: { ...env, MCP_TOOL_TIMEOUT: String(24 * 3_600_000) } })
     const lines = createInterface({ input: child.stdout, crlfDelay: Infinity })[Symbol.asyncIterator]()
     const session = keep({
       id, child, agent: 'claude', tools,
@@ -629,7 +649,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
       const more = last.content.filter((block) => block.type !== 'tool_result')
       results.forEach((block, i) => give(/** @type {Session} */ (session), block.tool_use_id, result(block, i === results.length - 1 ? more : [])))
     } else {
-      session ??= agent === 'claude' ? claudeCode(String(body.model), system, tools) : await copilot(String(body.model), system, tools)
+      session ??= agent === 'claude' ? await claudeCode(String(body.model), system, tools) : await copilot(String(body.model), system, tools)
       const tail = results.length ? [{ type: 'text', text: 'Go on from there.' }] : last.content
       session.say(session.count || history.length === 1 ? tail : [{ type: 'text', text: told(results.length ? history : history.slice(0, -1)) }, ...tail])
     }

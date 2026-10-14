@@ -2,8 +2,9 @@
 // A stand-in for Claude Code (D235), as the bridge runs it: `auth status --json`, and `-p` reading
 // stream-json messages, answering each with Anthropic's stream events. A message that asks for the
 // weather calls Jean's weather tool over the MCP server --mcp-config names, as Claude Code does, and
-// answers with what it says; "limit" ends as a plan's limit does; anything else is echoed with what
-// came with it. CLAUDE_SIGNED_OUT=1 plays one not signed in.
+// answers with what it says; "limit" ends as a plan's limit does; "gateway" tells where it would send
+// its requests and the settings it was given; anything else is echoed with what came with it.
+// CLAUDE_SIGNED_OUT=1 plays one not signed in.
 import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
 
@@ -12,7 +13,7 @@ if (argv[0] === 'auth') {
   console.log(JSON.stringify({ loggedIn: !process.env.CLAUDE_SIGNED_OUT, authMethod: 'claude.ai' }))
   process.exit(process.env.CLAUDE_SIGNED_OUT ? 1 : 0)
 }
-const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' } } })
+const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' }, settings: { type: 'string' } } })
 const server = JSON.parse(String(values['mcp-config'])).mcpServers.jean
 const out = (/** @type {object} */ line) => process.stdout.write(`${JSON.stringify(line)}\n`)
 const event = (/** @type {object} */ e) => out({ type: 'stream_event', event: e })
@@ -50,6 +51,8 @@ for await (const line of createInterface({ input: process.stdin })) {
     step([{ type: 'tool_use', id, name: 'mcp__jean__weather', input: { city: 'Lyon' } }], 'tool_use')
     const result = await call({ name: 'weather', arguments: { city: 'Lyon' }, _meta: { 'claudecode/toolUseId': id } })
     step([{ type: 'text', text: `In Lyon: ${result.content.map((/** @type {any} */ part) => part.text).join(' / ')}${result.isError ? ' (an error)' : ''}` }], 'end_turn')
+  } else if (/gateway/i.test(text)) {
+    step([{ type: 'text', text: `${process.env.ANTHROPIC_BASE_URL} ${values.settings}` }], 'end_turn')
   } else if (/limit/i.test(text)) {
     out({ type: 'assistant', message: { content: [{ type: 'text', text: 'You’ve hit your limit' }] }, error: 'rate_limit' })
     out({ type: 'result', subtype: 'success', is_error: true, result: 'You’ve hit your limit · resets 3pm' })

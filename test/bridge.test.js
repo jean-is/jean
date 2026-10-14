@@ -112,10 +112,13 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
   let brain
   /** @type {string} */
   let folder
+  // Claude Code's own folder, which holds its settings: this test's, not the user's.
+  const config = process.env.CLAUDE_CONFIG_DIR
 
   before(async () => {
     llm = await import('../app/core/llm.js')
     folder = await realpath(await mkdtemp(join(tmpdir(), 'bridge-claude-')))
+    process.env.CLAUDE_CONFIG_DIR = folder
     server = createServer((req, res) => work.handle(req, res))
     await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
     const port = /** @type {import('node:net').AddressInfo} */ (server.address()).port
@@ -126,6 +129,8 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     server.close()
     await work.close()
     await rm(folder, { recursive: true, force: true })
+    if (config === undefined) delete process.env.CLAUDE_CONFIG_DIR
+    else process.env.CLAUDE_CONFIG_DIR = config
   })
 
   /** One step, as Jean's loop reads it. @param {any[]} messages @param {any[]} [tools] */
@@ -188,6 +193,26 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
 
   test('a plan’s limit is the brain’s limit', async () => {
     await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /hit your limit/ })
+  })
+
+  test('a gateway in Claude Code’s settings is reached, through their environment and key helpers, the rest left out', async () => {
+    const settings = { env: { ANTHROPIC_BASE_URL: 'https://gateway.example', ANTHROPIC_AUTH_TOKEN: 't0ken' }, apiKeyHelper: '~/bin/key', hooks: { Stop: [] }, model: 'haiku' }
+    await writeFile(join(folder, 'settings.json'), JSON.stringify(settings))
+    // The bridge's own environment wins, as it does in Claude Code: the one these tests run in has none.
+    const own = { ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN: process.env.ANTHROPIC_AUTH_TOKEN }
+    delete process.env.ANTHROPIC_BASE_URL
+    delete process.env.ANTHROPIC_AUTH_TOKEN
+    try {
+      assert.equal((await step([{ role: 'user', content: 'Which gateway?' }])).text, 'https://gateway.example {"apiKeyHelper":"~/bin/key"}')
+      // Claude Code says it isn't signed in when a gateway's token is all it has, which it sends as it is.
+      process.env.CLAUDE_SIGNED_OUT = '1'
+      const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
+      assert.equal((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claude, true)
+    } finally {
+      delete process.env.CLAUDE_SIGNED_OUT
+      for (const [name, value] of Object.entries(own)) if (value !== undefined) process.env[name] = value
+      await rm(join(folder, 'settings.json'))
+    }
   })
 })
 
