@@ -102,7 +102,11 @@ class AppScore extends HTMLElement {
     /** @type {any} */
     let tune = null
     try {
-      tune = renderAbc(sheet, source, { responsive: 'resize', add_classes: true })[0]
+      // Its lines broken again for the width it has, four bars a line where they fit (abcjs's wrap):
+      // as written, a line of several staves could run twice past it, and the whole score shrank.
+      const { paddingInlineStart, paddingInlineEnd } = getComputedStyle(this)
+      const width = Math.max(400, this.clientWidth ? this.clientWidth - parseFloat(paddingInlineStart) - parseFloat(paddingInlineEnd) : 770)
+      tune = renderAbc(sheet, source, { responsive: 'resize', add_classes: true, staffwidth: width - 30, wrap: { minSpacing: 1.8, maxSpacing: 2.7, preferredMeasuresPerLine: 4 } })[0]
     } catch (error) {
       console.warn('Score', error)
     }
