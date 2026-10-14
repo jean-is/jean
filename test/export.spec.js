@@ -26,10 +26,6 @@ flowchart LR
   A[Plan] --> B[Book]
 \`\`\`
 
-\`\`\`html
-<p id="sum">…</p><script>document.getElementById('sum').textContent = 'Sum: ' + (2 + 3)</script>
-\`\`\`
-
 \`\`\`abc
 X:1
 T:Plan
@@ -37,6 +33,10 @@ M:4/4
 L:1/4
 K:C
 CDEF|G4|]
+\`\`\`
+
+\`\`\`html
+<p id="sum">…</p><script>document.getElementById('sum').textContent = 'Sum: ' + (2 + 3)</script>
 \`\`\`
 <suggestions>
 Book it
@@ -96,6 +96,8 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   await expect(answer.locator('app-math math')).toHaveCount(1)
   await expect(answer.locator('app-chart canvas').first()).toBeVisible()
   await expect(answer.locator('app-diagram svg')).toBeVisible()
+  // A page loads when it comes into view (D289), below the score here: WebKit starts it no sooner.
+  await answer.locator('app-page iframe').scrollIntoViewIfNeeded()
   await expect(answer.locator('app-page iframe').contentFrame().locator('#sum')).toHaveText('Sum: 5')
   const score = answer.locator('app-score')
   await score.getByRole('button', { name: 'Play' }).click()
@@ -118,7 +120,7 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   await offline.route(PACKAGE, (route) => route.abort('internetdisconnected'))
   const alone = await offline.newPage()
   await alone.goto(pathToFileURL(file).href)
-  await expect(alone.locator('body > section p')).toHaveText(['Plan my week', /^Here is \*\*the plan\*\*[\s\S]*Sum: ' \+ \(2 \+ 3\)<\/script>\n```\n\n```abc\n[\s\S]*G4\|\]\n```$/])
+  await expect(alone.locator('body > section p')).toHaveText(['Plan my week', /^Here is \*\*the plan\*\*[\s\S]*```abc\n[\s\S]*G4\|\]\n```\n\n```html\n[\s\S]*Sum: ' \+ \(2 \+ 3\)<\/script>\n```$/])
   await expect(alone.locator('main')).toHaveCount(0)
   await expect.poll(() => alone.locator('body > section img.made').evaluate((image) => /** @type {HTMLImageElement} */ (image).naturalWidth)).toBe(40)
   await offline.close()
