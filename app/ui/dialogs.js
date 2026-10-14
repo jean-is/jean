@@ -225,16 +225,22 @@ export function chatgptBack(outcome) {
   status.value = { way: 'chatgpt', kind: 'error', message: t(outcome === 'declined' ? 'brain.chatgpt.declined' : 'brain.chatgpt.failed') }
 }
 
-/** Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, then the ways to add another. */
+/** Whether the ways to add another brain are shown, once there are brains: asked for by Add a brain, for the visit. */
+const adding = signal(false)
+
+/**
+ * Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, and the ways to add
+ * another only once asked for, or while one says something (back from ChatGPT's sign-in).
+ */
 function brains() {
   const { settings, locked } = effective.value
   const brainsLocked = locked.has('brains')
   const first = !settings.brains.length
   return html`${first ? html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>` : answers(settings, brainsLocked)}
-    ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : html`<section>
+    ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : first || adding.value || status.value ? html`<section class="brains-add">
       ${first ? nothing : html`<h3>${t('brain.add')}</h3>`}
       ${ways(first)}
-    </section>`}
+    </section>` : nothing}
     ${slots('brains').map((part) => part.draw())}`
 }
 
@@ -247,14 +253,14 @@ function describe(brain) {
 
 /**
  * Who may answer: Auto, or a brain, which can't be chosen in a project it isn't used in, nor in the cloud while
- * messages are kept on this device; then the projects it is kept to. @param {boolean} checked @param {() => unknown} choose
- * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[] }} [kept] @param {boolean} [closed]
+ * messages are kept on this device; then its version, and the projects it is kept to. @param {boolean} checked @param {() => unknown} choose
+ * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[], api?: string, model?: string }} [kept] @param {boolean} [closed]
  */
 function answer(checked, choose, { icon, name, where }, kept = {}, closed = false) {
   const names = kept.projects ? app.projects.value.filter((project) => kept.projects?.includes(project.id)).map(projectName) : []
   return html`<label class="item">
     <input type="radio" name="answers" .checked=${checked} ?disabled=${closed || !usedIn(kept, app.project.value.id)} @change=${choose}>
-    <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${names.length
+    <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${kept.api !== 'device' && kept.model ? html` · <bdi>${kept.model}</bdi>` : nothing}${names.length
       ? html` · <bdi>${new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}</small></span>
   </label>`
 }
@@ -286,40 +292,40 @@ export function where(item, keep) {
   </fieldset>`
 }
 
-/** The brain whose projects are open under it. */
-const placing = signal(/** @type {string | null} */ (null))
+/** The brain whose version, projects and Remove are open under it. */
+const opened = signal(/** @type {string | null} */ (null))
 
 /**
- * Who answers, as the picker offers it: Auto, or one of the brains, each with its version and a
- * way to remove it. Then, while one is in the cloud, keeping messages on this device, which a project kept there holds on.
+ * Who answers, as the picker offers it: Auto, or one of the brains, each saying where it runs and its version, the
+ * rest under its button: its version to change, the projects it is used in, Remove. Then, while one is in the cloud,
+ * keeping messages on this device, which a project kept there holds on; Add a brain at the top, until it is asked for.
  * @param {import('../core/settings.js').Settings} settings @param {boolean} brainsLocked
  */
 function answers(settings, brainsLocked) {
-  const active = activeBrain.value
-  const kept = app.project.value.data.cloud === false
+  const active = activeBrain.value, kept = app.project.value.data.cloud === false
   return html`<section>
-      <h3 id="brains-yours">${t('brain.connectedTitle')}</h3>
+      <header class="brains-head"><h3 id="brains-yours">${t('brain.connectedTitle')}</h3>${brainsLocked || adding.value || status.value ? nothing : html`<button class="button subtle"
+        @click=${() => { adding.value = true; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.brains-add summary'))?.focus()) }}>${icons.plus} ${t('brain.add')}</button>`}</header>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-yours">
         <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.spark, name: t('auto.name'), where: t('auto.text') })}</div>
         ${settings.brains.map((brain) => {
           const chosen = !settings.auto && brain.id === active?.id
-          const open = !brainsLocked && placing.value === brain.id && placeable(brain)
+          const open = opened.value === brain.id, version = brain.api !== 'device'
           return html`<div class=${chosen ? 'is-selected' : ''}>
             ${answer(chosen, () => updateSettings({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain, !cloudAllowed() && !isLocal(brain))}
-            ${brain.api === 'device' ? nothing : html`<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr"
-                aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
-              <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
-            ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')}
-              @click=${() => { placing.value = open ? null : brain.id }}>${icons.layers}</button>`}
-            ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')}
-              @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
-            ${open ? where(brain, (projects) => keepBrain(brain.id, projects).catch(showError)) : nothing}
+            ${brainsLocked && !version ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('action.more')} @click=${() => { opened.value = open ? null : brain.id }}>${icons.chevron}</button>`}
+            ${open ? html`<div class="brain-more">
+              ${version ? html`<label>${t('brain.model')}<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}></label>
+                <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>` : nothing}
+              ${brainsLocked || !placeable(brain) ? nothing : where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}
+              ${brainsLocked ? nothing : html`<div class="row"><button class="button subtle danger" @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash} ${t('action.remove')}</button></div>`}
+            </div>` : nothing}
           </div>`
         })}
       </div>
-    </section>
-    ${settings.brains.some((brain) => !isLocal(brain)) ? setting(t('picker.keepOnDevice'), kept ? t('picker.projectKept') : null, html`<input type="checkbox" class="switch" role="switch"
-      aria-label=${t('picker.keepOnDevice')} .checked=${kept || !settings.cloud} ?disabled=${kept} @change=${(/** @type {Event} */ e) => keepOnDevice(/** @type {HTMLInputElement} */ (e.target).checked)}>`) : nothing}`
+      ${settings.brains.some((brain) => !isLocal(brain)) ? html`<div class="setting"><div><span class="rule-kind">${t('picker.keepOnDevice')}</span>${kept ? html`<p class="muted small">${t('picker.projectKept')}</p>` : nothing}</div>
+        <input type="checkbox" class="switch" role="switch" aria-label=${t('picker.keepOnDevice')} .checked=${kept || !settings.cloud} ?disabled=${kept} @change=${(/** @type {Event} */ e) => keepOnDevice(/** @type {HTMLInputElement} */ (e.target).checked)}></div>` : nothing}
+    </section>`
 }
 
 /** Whether the user has opened or closed a way: then none opens on its own. */
@@ -817,8 +823,8 @@ class Settings extends Element {
       const panel = this.querySelector('.settings-panel')
       if (panel) panel.scrollTop = 0
       this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-      // Capabilities opens on the next to find.
-      picked.value = ''
+      // Capabilities opens on the next to find; Brains with its brains' rows and its ways to add one closed.
+      picked.value = ''; adding.value = false; opened.value = null
     }
     this.#shown = app.section.value
     // The trophies found catch the light one after another (CSSOM: the CSP forbids style attributes).

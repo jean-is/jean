@@ -7,6 +7,7 @@
   "pictures.makingFilm": "正在生成视频",
   "pictures.device": "在这台设备上生成图片",
   "pictures.deviceText": "在这里生成，私密、免费，离线也可以。每张都会先在这里检查：含裸露、色情或自残内容的图片会被拒绝。",
+  "pictures.check": "还会拒绝的内容",
   "pictures.suggestive": "也拒绝带性暗示的图片",
   "pictures.suggestiveText": "包括暴露的泳装和内衣，以及带性暗示的姿势。裸露和色情内容始终会被拒绝。",
   "pictures.hate": "拒绝仇恨符号",

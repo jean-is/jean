@@ -122,14 +122,15 @@ test('a brain kept to one project answers there, and isn’t offered in the othe
   await turnOn(page, 'Projects')
   await createProject(page, 'Bakery')
   const brain = (await openSettings(page, 'Brains')).locator('.brains > div').nth(1)
-  await brain.getByRole('button', { name: 'Used in' }).click()
+  // Its version, where it is used and Remove are under its button (D331).
+  await brain.getByRole('button', { name: 'More options' }).click()
   const where = brain.getByRole('group', { name: 'Used in' })
   await expect(where.getByLabel('Every project')).toBeChecked()
   await where.getByLabel('Every project').uncheck()
   // Kept to the project the user is in, which can't be unticked while it is the only one.
   await expect(where.getByLabel('Bakery')).toBeChecked()
   await expect(where.getByLabel('Bakery')).toBeDisabled()
-  await expect(brain.locator('.item small')).toHaveText('On your computer · Bakery')
+  await expect(brain.locator('.item small')).toHaveText('On your computer · fake-brain-1 · Bakery')
   await page.keyboard.press('Escape')
   await ask(page, 'Hello')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')

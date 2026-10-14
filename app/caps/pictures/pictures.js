@@ -418,9 +418,9 @@ function shown(maker) {
 }
 
 /**
- * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), whether their check is
- * strict (D275), the three that can make them a card each as tabs, as the Computer's two computers are (D248), the quickest
- * first; under them, the one shown.
+ * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), the three that can make
+ * them a card each as tabs, as the Computer's two computers are (D248), the quickest first; under them, the one shown;
+ * last, folded, what else their check refuses (D275), which most never change.
  */
 function panel() {
   const makers = fit.value
@@ -432,9 +432,9 @@ function panel() {
   ${chosen ? html`<section class="pictures-device">
     <h3>${t('pictures.device')}</h3>
     <p class="muted">${t('pictures.deviceText')}</p>
-    ${CHECKED.map((area) => check(area))}
     <div class="makers" role="tablist" aria-label=${t('pictures.device')} @keydown=${move}>${makers.map((maker) => card(maker, chosen))}</div>
     <div role="tabpanel" id="pictures-shown" aria-labelledby=${`pictures-${chosen}`}>${shown(chosen)}</div>
+    <details class="other"><summary>${t('pictures.check')}</summary>${CHECKED.map((area) => check(area))}</details>
   </section>` : nothing}`
 }
 
