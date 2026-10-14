@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Der Download wurde unterbrochen. Versuche es erneut.",
   "pictures.films": "Videos",
   "pictures.filmsText": "Videos werden erstellt, ohne vorher zu fragen.",
-  "pictures.filmsAsk": "Wieder zuerst fragen"
+  "pictures.filmsAsk": "Wieder zuerst fragen",
+  "pictures.saveLabelled": "Bild mit dem Hinweis „Mit KI erstellt“ speichern",
+  "pictures.label": "Mit KI erstellt"
 }

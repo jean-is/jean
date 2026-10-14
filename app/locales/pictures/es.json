@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "La descarga se detuvo. Vuelve a intentarlo.",
   "pictures.films": "Vídeos",
   "pictures.filmsText": "Los vídeos se crean sin preguntarte antes.",
-  "pictures.filmsAsk": "Volver a preguntar"
+  "pictures.filmsAsk": "Volver a preguntar",
+  "pictures.saveLabelled": "Guardar la imagen con la etiqueta «Hecho con IA»",
+  "pictures.label": "Hecho con IA"
 }

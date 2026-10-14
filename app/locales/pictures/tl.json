@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Huminto ang pag-download. Subukang muli.",
   "pictures.films": "Mga video",
   "pictures.filmsText": "Ginagawa ang mga video nang hindi muna nagtatanong.",
-  "pictures.filmsAsk": "Magtanong muna ulit"
+  "pictures.filmsAsk": "Magtanong muna ulit",
+  "pictures.saveLabelled": "I-save ang larawan na may markang “Ginawa ng AI”",
+  "pictures.label": "Ginawa ng AI"
 }

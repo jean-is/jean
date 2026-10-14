@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "डाउनलोड रुक गया। फिर से कोशिश करें।",
   "pictures.films": "वीडियो",
   "pictures.filmsText": "वीडियो पहले पूछे बिना बनते हैं।",
-  "pictures.filmsAsk": "फिर से पहले पूछें"
+  "pictures.filmsAsk": "फिर से पहले पूछें",
+  "pictures.saveLabelled": "तस्वीर «एआई से बनी» लेबल के साथ सहेजें",
+  "pictures.label": "एआई से बनी"
 }

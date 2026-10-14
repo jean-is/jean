@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Завантаження перервалося. Спробуйте знову.",
   "pictures.films": "Відео",
   "pictures.filmsText": "Відео створюються без попереднього запитання.",
-  "pictures.filmsAsk": "Знову питати"
+  "pictures.filmsAsk": "Знову питати",
+  "pictures.saveLabelled": "Зберегти зображення з позначкою «Створено ШІ»",
+  "pictures.label": "Створено ШІ"
 }

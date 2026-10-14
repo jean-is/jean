@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "A transferência parou. Tenta de novo.",
   "pictures.films": "Vídeos",
   "pictures.filmsText": "Os vídeos são criados sem te perguntar antes.",
-  "pictures.filmsAsk": "Voltar a perguntar"
+  "pictures.filmsAsk": "Voltar a perguntar",
+  "pictures.saveLabelled": "Guardar a imagem com a indicação «Feito com IA»",
+  "pictures.label": "Feito com IA"
 }

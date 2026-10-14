@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "İndirme durdu. Tekrar dene.",
   "pictures.films": "Videolar",
   "pictures.filmsText": "Videolar önce sorulmadan oluşturulur.",
-  "pictures.filmsAsk": "Yine önce sor"
+  "pictures.filmsAsk": "Yine önce sor",
+  "pictures.saveLabelled": "Resmi “Yapay zekâyla yapıldı” etiketiyle kaydet",
+  "pictures.label": "Yapay zekâyla yapıldı"
 }

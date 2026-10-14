@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Скачивание прервалось. Попробуйте снова.",
   "pictures.films": "Видео",
   "pictures.filmsText": "Видео создаются без вопроса заранее.",
-  "pictures.filmsAsk": "Снова спрашивать"
+  "pictures.filmsAsk": "Снова спрашивать",
+  "pictures.saveLabelled": "Сохранить картинку с пометкой «Создано ИИ»",
+  "pictures.label": "Создано ИИ"
 }

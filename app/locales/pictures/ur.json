@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "ڈاؤن لوڈ رک گیا۔ دوبارہ کوشش کریں۔",
   "pictures.films": "ویڈیوز",
   "pictures.filmsText": "ویڈیوز پہلے پوچھے بغیر بنتی ہیں۔",
-  "pictures.filmsAsk": "پھر پہلے پوچھیں"
+  "pictures.filmsAsk": "پھر پہلے پوچھیں",
+  "pictures.saveLabelled": "تصویر «مصنوعی ذہانت سے بنی» کے لیبل کے ساتھ محفوظ کریں",
+  "pictures.label": "مصنوعی ذہانت سے بنی"
 }

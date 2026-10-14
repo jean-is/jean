@@ -1,7 +1,10 @@
-/* A picture or a film Jean made (D251), in the answer, with a button to save it. */
+/* A picture or a film Jean made (D251), in the answer, with a button to save it, and one to save a picture labelled (D324). */
 app-picture figure { position: relative; inline-size: fit-content; margin: 0; }
 app-picture :is(img, video) { display: block; max-inline-size: 100%; max-block-size: 28rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 app-picture .icon-button { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; background: var(--glass); }
+/* Beside it, saving it labelled as made with AI (D324): the Commission's icon, filled, its letters cut out. */
+app-picture .icon-button + .icon-button { inset-inline-end: 2.9rem; }
+app-picture .icon-ai { fill: currentColor; stroke: none; }
 /* While it is made (D265): its place, as large as it will be, the picture it starts from blurred under a light passing
    over it, glimpses of it sharper as it comes and how far along it is; then it develops there, over them. */
 app-picture .is-framed {

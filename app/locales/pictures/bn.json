@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "ডাউনলোড থেমে গেছে। আবার চেষ্টা করুন।",
   "pictures.films": "ভিডিও",
   "pictures.filmsText": "ভিডিও আগে জিজ্ঞেস না করেই তৈরি হয়।",
-  "pictures.filmsAsk": "আবার আগে জিজ্ঞেস করুন"
+  "pictures.filmsAsk": "আবার আগে জিজ্ঞেস করুন",
+  "pictures.saveLabelled": "ছবিটি «এআই দিয়ে তৈরি» লেবেলসহ সংরক্ষণ করুন",
+  "pictures.label": "এআই দিয়ে তৈরি"
 }

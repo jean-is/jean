@@ -168,7 +168,7 @@ Then:
   Left: check Gemini's API; the device's watermark (Transformers.js's sampling takes a logits processor), its key and its detector, measured on quality and on detection at 200 tokens; a line in Settings › Brains for OpenAI keys.
 - [ ] **Detection:** the check page and `check_certificate` read C2PA manifests (D324); watermarks are left, with TrustMark's decoder, in Jean (the check page reaches nothing); interoperable through C2PA by 2 Feb 2027.
 - [ ] **No stripping:** Jean never removes marks. Checked: a provider's picture or film is kept byte for byte (`test/c2pa.test.js`); answers' words are shown and copied as the brain wrote them, so a statistical watermark stays. Left: a shared picture over 1568 pixels (above); and terms that forbid removing them, though Jean has no account, so no terms of use ([open-questions.md](open-questions.md#answer-certificates)).
-- [ ] **Labels for deployers (Art. 50(4)):** "Label it as made with AI" when a picture, film or document is saved, with the Commission's icon (if its reuse terms allow shipping it) and a line in the user's language.
+- [x] **Labels for deployers (Art. 50(4)), on pictures** (D324): a picture's second save draws the Commission's basic icon, which anyone may use without attribution, and "Made with AI" in the user's language in its corner, and marks the copy again. Left: films (re-encoded) and documents, if users ask; a provider's labelled picture keeps only Jean's marks, its own C2PA chain staying with the picture as first saved (an ingredient in the new manifest would carry it).
 
 ### 5. Open legal questions
 

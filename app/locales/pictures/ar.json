@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "توقف التنزيل. حاول مرة أخرى.",
   "pictures.films": "الفيديو",
   "pictures.filmsText": "تُنشأ مقاطع الفيديو دون الاستئذان أولًا.",
-  "pictures.filmsAsk": "الاستئذان أولًا من جديد"
+  "pictures.filmsAsk": "الاستئذان أولًا من جديد",
+  "pictures.saveLabelled": "حفظ الصورة مع وسم «صُنع بالذكاء الاصطناعي»",
+  "pictures.label": "صُنع بالذكاء الاصطناعي"
 }

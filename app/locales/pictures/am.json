@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "ማውረዱ ቆሟል። እንደገና ይሞክሩ።",
   "pictures.films": "ቪዲዮዎች",
   "pictures.filmsText": "ቪዲዮዎች አስቀድሞ ሳይጠየቁ ይሠራሉ።",
-  "pictures.filmsAsk": "እንደገና መጀመሪያ ጠይቅ"
+  "pictures.filmsAsk": "እንደገና መጀመሪያ ጠይቅ",
+  "pictures.saveLabelled": "ምስሉን «በሰው ሰራሽ አስተውሎት የተሠራ» በሚል ምልክት ያስቀምጡ",
+  "pictures.label": "በሰው ሰራሽ አስተውሎት የተሠራ"
 }

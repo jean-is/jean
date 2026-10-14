@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "بارگیری متوقف شد. دوباره امتحان کنید.",
   "pictures.films": "ویدیوها",
   "pictures.filmsText": "ویدیوها بدون پرسیدنِ پیشین ساخته می‌شوند.",
-  "pictures.filmsAsk": "دوباره اول بپرس"
+  "pictures.filmsAsk": "دوباره اول بپرس",
+  "pictures.saveLabelled": "ذخیرهٔ تصویر با برچسب «ساخته‌شده با هوش مصنوعی»",
+  "pictures.label": "ساخته‌شده با هوش مصنوعی"
 }

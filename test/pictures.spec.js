@@ -3,7 +3,9 @@
 // A conversation that ends on a picture opens at its end once the picture is drawn. The fake brain is
 // on this computer, so its pictures go through the check (D275, D280), which a worker stands in for,
 // and say a trained model made them (D279), in Content Credentials too (D324).
+import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
+import { credentialsOf } from '../app/caps/receipt/c2pa.js'
 import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks } from './helpers.js'
 
 /**
@@ -204,14 +206,22 @@ test('a conversation that ends on a picture opens at its end, once the picture i
   await expect.poll(() => page.evaluate(() => Math.round(document.documentElement.scrollHeight - innerHeight - scrollY))).toBe(0)
 })
 
-for (const [lang, save] of [['ar', 'حفظ الصورة'], ['ja', '画像を保存']]) {
-  test(`a picture in the answer, in ${lang}`, async ({ page }) => {
+for (const [lang, save, labelled] of [['en', 'Save the picture', 'Save the picture labelled as made with AI'], ['ar', 'حفظ الصورة', 'حفظ الصورة مع وسم «صُنع بالذكاء الاصطناعي»'], ['ja', '画像を保存', '「AIで作成」の表示を付けて画像を保存']]) {
+  test(`a picture in the answer, in ${lang}, saved as it is or labelled as made with AI (D324)`, async ({ page }) => {
     await start(page, lang)
     await connectFakeBrain(page)
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
     await ask(page, 'Draw a lighthouse at dusk')
     await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
     await expect(page.locator('app-picture a[download]')).toHaveAttribute('aria-label', save)
+    // Labelled: the same picture, its corner labelled, a PNG under its name, its marks made again.
+    const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-picture').getByRole('button', { name: labelled }).click()])
+    expect(download.suggestedFilename()).toBe('draw-a-lighthouse-at-dusk.png')
+    const bytes = new Uint8Array(await readFile(await download.path()))
+    expect(new DataView(bytes.buffer).getUint32(16)).toBe(96)
+    const read = await credentialsOf(bytes)
+    expect([read?.intact, read?.generated, read?.maker]).toEqual([true, true, 'fake-image-1'])
+    expect(new TextDecoder().decode(bytes)).toContain('Iptc4xmpExt:AISystemUsed="fake-image-1"')
   })
 }
 

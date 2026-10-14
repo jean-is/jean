@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Il download si è interrotto. Riprova.",
   "pictures.films": "Video",
   "pictures.filmsText": "I video vengono creati senza chiederti prima.",
-  "pictures.filmsAsk": "Chiedi di nuovo prima"
+  "pictures.filmsAsk": "Chiedi di nuovo prima",
+  "pictures.saveLabelled": "Salva l’immagine con la dicitura «Fatto con l’IA»",
+  "pictures.label": "Fatto con l’IA"
 }

@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "ההורדה נעצרה. נסו שוב.",
   "pictures.films": "סרטונים",
   "pictures.filmsText": "סרטונים נוצרים בלי לשאול קודם.",
-  "pictures.filmsAsk": "לשאול שוב קודם"
+  "pictures.filmsAsk": "לשאול שוב קודם",
+  "pictures.saveLabelled": "שמירת התמונה עם התווית „נוצר בבינה מלאכותית”",
+  "pictures.label": "נוצר בבינה מלאכותית"
 }

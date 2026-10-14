@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "การดาวน์โหลดหยุดลง ลองอีกครั้ง",
   "pictures.films": "วิดีโอ",
   "pictures.filmsText": "สร้างวิดีโอโดยไม่ถามก่อน",
-  "pictures.filmsAsk": "กลับไปถามก่อน"
+  "pictures.filmsAsk": "กลับไปถามก่อน",
+  "pictures.saveLabelled": "บันทึกรูปภาพพร้อมป้าย «สร้างด้วย AI»",
+  "pictures.label": "สร้างด้วย AI"
 }

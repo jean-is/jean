@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Het downloaden is gestopt. Probeer het opnieuw.",
   "pictures.films": "Video’s",
   "pictures.filmsText": "Video’s worden gemaakt zonder eerst te vragen.",
-  "pictures.filmsAsk": "Weer eerst vragen"
+  "pictures.filmsAsk": "Weer eerst vragen",
+  "pictures.saveLabelled": "Afbeelding opslaan met het label ‘Gemaakt met AI’",
+  "pictures.label": "Gemaakt met AI"
 }

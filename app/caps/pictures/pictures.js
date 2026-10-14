@@ -21,6 +21,7 @@ import { slug } from '../../core/settings.js'
 import { t, locale, useStrings, formatBytes } from '../../core/i18n.js'
 import * as device from './device.js'
 import { marked } from './mark.js'
+import { saveLabelled, MARK } from './label.js'
 
 /** @typedef {import('../../core/types.js').BrainConfig} BrainConfig */
 /** @typedef {import('../../core/types.js').ImageBlock} ImageBlock */
@@ -221,6 +222,8 @@ const filmTool = {
 const addresses = new WeakMap()
 const address = (/** @type {ImageBlock} */ image) => addresses.get(image) ?? addresses.set(image, `data:${image.mimeType};base64,${image.data}`).get(image)
 
+/** The sign of saving a picture labelled as made with AI (D324): the Commission's icon. */
+const AI = html`<svg class="icon icon-ai" viewBox="80 92 384 384" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d=${MARK}/></svg>`
 /** A film's sign while it is made: a frame of film, its holes down each side. */
 const FILM = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 3.5v17M16 3.5v17M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/></svg>`
 
@@ -238,10 +241,13 @@ class Picture extends Shown {
   #developed = signal(false)
   /** @type {number[] | undefined} its size once here, else its maker's */
   #size
+  /** Who made it, as its call says, for the marks of a labelled copy. @type {{ model?: string, revision?: string } | undefined} */
+  #made
 
   /** @param {ToolCallInfo} call */
   set call(call) {
     if (call._meta?.making) this.#making.value = call._meta.making
+    if (call._meta?.made) this.#made = call._meta.made
     const picture = call._meta?.picture
     if (!picture) this.#glimpses.value = (call.content ?? []).flatMap((part) => (part.type === 'content' && part.content.type === 'image' ? [part.content] : []))
     else for (const [name, value] of [['type', picture.mimeType], ['name', picture.name], ['alt', call.rawInput?.description ?? ''], ['uri', picture.uri]]) if (this.getAttribute(name) !== value) this.setAttribute(name, value)
@@ -276,7 +282,8 @@ class Picture extends Shown {
         ${percent === undefined ? nothing : html`<span class="done" aria-hidden="true"></span>`}` : nothing}
       ${url ? html`${film ? html`<video class=${develops} src=${url} controls playsinline aria-label=${alt} @loadedmetadata=${this.#fit} @animationend=${developed}></video>`
           : html`<img class=${develops} src=${url} alt=${alt} @load=${this.#fit} @animationend=${developed}>`}
-        <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>` : nothing}
+        <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>
+        ${film ? nothing : html`<button class="icon-button subtle" aria-label=${t('pictures.saveLabelled')} @click=${this.#label}>${AI}</button>`}` : nothing}
     </figure>`
   }
 
@@ -287,6 +294,12 @@ class Picture extends Shown {
     this.updated()
     // Without motion, it is simply there.
     if (!media.getAnimations().length) this.#developed.value = true
+  }
+
+  /** Saves it labelled as made with AI (D324), from its file. */
+  #label = async () => {
+    const bytes = await app.fs.readBytes(`${app.projectDir}/${this.getAttribute('uri')}`)
+    if (bytes) await saveLabelled(bytes, this.getAttribute('name') ?? '', this.#made?.model ?? '', this.#made?.revision)
   }
 
   /** Its size and how far along it is, for its place's style. */

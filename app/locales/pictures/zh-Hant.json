@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "下載中斷了。請重試。",
   "pictures.films": "影片",
   "pictures.filmsText": "產生影片前不再先詢問。",
-  "pictures.filmsAsk": "重新先詢問"
+  "pictures.filmsAsk": "重新先詢問",
+  "pictures.saveLabelled": "儲存附「由 AI 生成」標示的圖片",
+  "pictures.label": "由 AI 生成"
 }

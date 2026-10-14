@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Upakuaji umesimama. Jaribu tena.",
   "pictures.films": "Video",
   "pictures.filmsText": "Video hutengenezwa bila kuuliza kwanza.",
-  "pictures.filmsAsk": "Uliza kwanza tena"
+  "pictures.filmsAsk": "Uliza kwanza tena",
+  "pictures.saveLabelled": "Hifadhi picha ikiwa na lebo “Imetengenezwa na akili bandia”",
+  "pictures.label": "Imetengenezwa na akili bandia"
 }

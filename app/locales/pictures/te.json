@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "డౌన్‌లోడ్ ఆగిపోయింది. మళ్లీ ప్రయత్నించండి.",
   "pictures.films": "వీడియోలు",
   "pictures.filmsText": "వీడియోలు ముందుగా అడగకుండానే తయారవుతాయి.",
-  "pictures.filmsAsk": "మళ్లీ ముందుగా అడుగు"
+  "pictures.filmsAsk": "మళ్లీ ముందుగా అడుగు",
+  "pictures.saveLabelled": "చిత్రాన్ని «కృత్రిమ మేధతో తయారైంది» అనే లేబుల్‌తో సేవ్ చేయి",
+  "pictures.label": "కృత్రిమ మేధతో తయారైంది"
 }

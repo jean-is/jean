@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "ダウンロードが止まりました。もう一度お試しください。",
   "pictures.films": "動画",
   "pictures.filmsText": "動画は先に確認せずに作成します。",
-  "pictures.filmsAsk": "また先に確認する"
+  "pictures.filmsAsk": "また先に確認する",
+  "pictures.saveLabelled": "「AIで作成」の表示を付けて画像を保存",
+  "pictures.label": "AIで作成"
 }

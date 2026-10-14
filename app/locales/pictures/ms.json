@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Muat turun terhenti. Cuba lagi.",
   "pictures.films": "Video",
   "pictures.filmsText": "Video dihasilkan tanpa bertanya dahulu.",
-  "pictures.filmsAsk": "Tanya dahulu semula"
+  "pictures.filmsAsk": "Tanya dahulu semula",
+  "pictures.saveLabelled": "Simpan gambar dengan label “Dibuat dengan AI”",
+  "pictures.label": "Dibuat dengan AI"
 }

@@ -108,5 +108,5 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Contrast audited at every lighting stage; reduced motion checked
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds
 - [ ] Manifesto and README published, with the line count
-- [ ] What Jean generates marked as AI's (AI Act Art. 50(2), by launch or 2 Dec 2026): pictures made on the device or this computer carry IPTC's mark in their XMP (D279) and Content Credentials the device signs, which the check page reads, and the files Jean makes say so where their format can (D324); still a watermark on pictures and labels for deployers ([certificates.md](certificates.md#4-ai-act-marking-art-502-and-4-blocks-the-public-launch))
+- [ ] What Jean generates marked as AI's (AI Act Art. 50(2), by launch or 2 Dec 2026): pictures made on the device or this computer carry IPTC's mark in their XMP (D279) and Content Credentials the device signs, which the check page reads, and the files Jean makes say so where their format can, and a picture saves labelled for deployers (D324); still a watermark on pictures ([certificates.md](certificates.md#4-ai-act-marking-art-502-and-4-blocks-the-public-launch))
 - [ ] Mac app signed with a Developer ID and notarized, with the `allow-dyld-environment-variables` entitlement D160 needs; Windows app signed for SmartScreen

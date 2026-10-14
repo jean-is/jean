@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Unduhan terhenti. Coba lagi.",
   "pictures.films": "Video",
   "pictures.filmsText": "Video dibuat tanpa bertanya dulu.",
-  "pictures.filmsAsk": "Tanyakan dulu lagi"
+  "pictures.filmsAsk": "Tanyakan dulu lagi",
+  "pictures.saveLabelled": "Simpan gambar dengan label “Dibuat dengan AI”",
+  "pictures.label": "Dibuat dengan AI"
 }

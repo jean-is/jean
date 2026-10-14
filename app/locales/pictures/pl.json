@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Pobieranie zostało przerwane. Spróbuj ponownie.",
   "pictures.films": "Filmy",
   "pictures.filmsText": "Filmy powstają bez pytania najpierw.",
-  "pictures.filmsAsk": "Znów pytaj najpierw"
+  "pictures.filmsAsk": "Znów pytaj najpierw",
+  "pictures.saveLabelled": "Zapisz obrazek z oznaczeniem „Stworzone przez sztuczną inteligencję”",
+  "pictures.label": "Stworzone przez sztuczną inteligencję"
 }

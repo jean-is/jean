@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "डाउनलोड थांबले. पुन्हा प्रयत्न करा.",
   "pictures.films": "व्हिडिओ",
   "pictures.filmsText": "व्हिडिओ आधी न विचारता बनतात.",
-  "pictures.filmsAsk": "पुन्हा आधी विचारा"
+  "pictures.filmsAsk": "पुन्हा आधी विचारा",
+  "pictures.saveLabelled": "चित्र «एआयने बनवलेले» लेबलसह जतन करा",
+  "pictures.label": "एआयने बनवलेले"
 }

@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "Quá trình tải đã dừng. Hãy thử lại.",
   "pictures.films": "Video",
   "pictures.filmsText": "Video được tạo mà không hỏi trước.",
-  "pictures.filmsAsk": "Hỏi trước lại"
+  "pictures.filmsAsk": "Hỏi trước lại",
+  "pictures.saveLabelled": "Lưu hình ảnh kèm nhãn «Tạo bằng AI»",
+  "pictures.label": "Tạo bằng AI"
 }

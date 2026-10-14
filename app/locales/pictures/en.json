@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "The download stopped. Try again.",
   "pictures.films": "Films",
   "pictures.filmsText": "Films are made without asking first.",
-  "pictures.filmsAsk": "Ask first again"
+  "pictures.filmsAsk": "Ask first again",
+  "pictures.saveLabelled": "Save the picture labelled as made with AI",
+  "pictures.label": "Made with AI"
 }

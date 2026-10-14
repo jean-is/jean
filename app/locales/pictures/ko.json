@@ -28,5 +28,7 @@
   "pictures.deviceFailed": "다운로드가 멈췄어요. 다시 시도하세요.",
   "pictures.films": "동영상",
   "pictures.filmsText": "동영상은 먼저 묻지 않고 만들어요.",
-  "pictures.filmsAsk": "다시 먼저 묻기"
+  "pictures.filmsAsk": "다시 먼저 묻기",
+  "pictures.saveLabelled": "‘AI로 만듦’ 표시를 붙여 그림 저장",
+  "pictures.label": "AI로 만듦"
 }
