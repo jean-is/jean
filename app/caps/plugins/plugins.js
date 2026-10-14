@@ -266,9 +266,10 @@ function drawn(host, slot, props, key = '') {
 }
 
 /**
- * A tree a plugin drew, as Jean's own elements: text, a button whose press goes back to it, a row, and
- * Markdown as answers have it (no picture is ever loaded); anything else, and what goes past ELEMENTS,
- * is left out. @param {Host} host @param {any} node @param {{ left: number }} [count]
+ * A tree a plugin drew, as Jean's own elements: text (with a label, text that stands for a picture, which
+ * a screen reader says in its place), a button whose press goes back to it, a row, and Markdown as
+ * answers have it (no picture is ever loaded); anything else, and what goes past ELEMENTS, is left out.
+ * @param {Host} host @param {any} node @param {{ left: number }} [count]
  * @returns {unknown}
  */
 function element(host, node, depth = 0, count = { left: ELEMENTS }) {
@@ -279,7 +280,7 @@ function element(host, node, depth = 0, count = { left: ELEMENTS }) {
   if ('row' in node) return html`<div class="row">${element(host, node.row, depth + 1, count)}</div>`
   if ('markdown' in node) return html`<div class="prose" dir="auto">${markdown(String(node.markdown))}</div>`
   if ('button' in node) return html`<button type="button" class="button subtle" @click=${() => post(host, { type: 'press', action: String(node.action ?? '') })}>${String(node.button)}</button>`
-  if ('text' in node) return html`<span dir="auto" class=${node.muted ? 'muted' : ''}>${String(node.text)}</span>`
+  if ('text' in node) return html`<span dir="auto" class=${node.muted ? 'muted' : ''} role=${node.label ? 'img' : nothing} aria-label=${node.label ? String(node.label) : nothing}>${String(node.text)}</span>`
   return nothing
 }
 
