@@ -151,6 +151,16 @@ test('the third request of a kind finds a ready-made skill before offering to ma
   expect(system).toContain('<skills>\n- weekly-sales-report: Summarize the weekly sales by region from a spreadsheet, with totals.\n</skills>')
 })
 
+test('before Routines is found, the brain offers it in its answer, saying what routines do (D322)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Every day at 08:00, summarize the weekly sales by region')
+  const card = page.locator('.msg-jean .approval')
+  await expect(card).toContainText('Make this a routine, done on its own on a schedule?')
+  await card.getByRole('button', { name: 'Turn it on' }).click()
+  await expect(page.locator('.toast')).toContainText('Made the routine “Weekly sales”.')
+})
+
 test('a routine made by the brain is shown, changed, and run when it falls due while Jean is open', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

@@ -98,6 +98,16 @@ test('Jean draws a flow beside the task; the user moves it, runs it, sees the ru
   await expect(page.locator('.hero-question')).toBeVisible()
 })
 
+test('before Flows is found, the brain offers it in its answer, saying what flows do (D322)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Make a flow that totals the invoices per client')
+  const card = page.locator('.msg-jean .approval')
+  await expect(card).toContainText('Keep this task’s steps as a flow, to see them, change them and run them again?')
+  await card.getByRole('button', { name: 'Turn it on' }).click()
+  await expect(page.locator('app-flows aside.flows .flow-step')).toHaveCount(3)
+})
+
 test('a step that read a skill names the skill under it, as the user’s list does', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

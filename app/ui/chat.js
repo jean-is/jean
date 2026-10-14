@@ -410,7 +410,7 @@ function autoReason({ level, reason }) {
 }
 
 /** Offers whose sentence above the box says what set them off: in an answer, they say what they do (D322). */
-const IN_ANSWER = new Set(['skills'])
+const IN_ANSWER = new Set(['skills', 'routines', 'flows'])
 
 /** The brain's offer, in the answer it is part of. @param {NonNullable<typeof app.offering.value>} offering */
 function offerCard({ id, resolve }) {

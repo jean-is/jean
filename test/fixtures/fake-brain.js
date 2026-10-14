@@ -18,7 +18,7 @@
 // spreadsheet of a shared table's totals from a script (D119). Asked for a "web page", it writes one
 // whose script would send what it holds away, as an injected page would (D126), and an "SVG logo" as a drawing.
 // From 0.7 it makes a routine when asked for something "every" day or for a routine, at the time
-// asked, or else at the time Jean says requests of the kind were made.
+// asked, or else at the time Jean says requests of the kind were made; with Routines off, it offers them first.
 // For the browser (D140) it serves a bakery's site, whose page links to its menu, and a page that
 // refuses to be framed; asked for "the bakery site", it opens it (offering the browser first if
 // it's off) and answers from the page; asked to "give me a link", it answers with one.
@@ -507,9 +507,16 @@ createServer(async (req, res) => {
   const team = { name: 'team-update', description: 'When the user wants their weekly team update written from their notes.', example: 'Write my team update: we shipped the new menu and hired Sam.', steps: '# Team update\n\n1. Read the notes.\n2. Write three short bullet points.</parameter>\n</invoke>\n' }
   const tryIt = toolName === 'save_skill' ? /one click tries it: (.+)$/m.exec(last.content)?.[1] : undefined
   // 0.7: a routine, at the time asked, or at the time of the habit Jean noticed.
-  const regularly = (/^every\b/i.test(question.trim()) || /\broutine\b/i.test(question)) && last.role === 'user'
+  const regular = /^every\b/i.test(question.trim()) || /\broutine\b/i.test(question)
+  const regularly = regular && last.role === 'user'
   const habit = /Requests like this one were made on \w{3} \w{3} \d\d \d{4} (\d\d:\d\d)/.exec(serialized)?.[1]
   const routine = { title: 'Weekly sales', request: 'Summarize the weekly sales by region', every: 'day', at: /\bat (\d\d:\d\d)/.exec(question)?.[1] ?? habit ?? '09:00' }
+  const flow = /\b(?:make|draw|save)\b.*\bflow\b/i.test(question)
+  const invoices = { name: 'Weekly invoices', steps: [
+    { name: 'Invoices', text: 'Acme,100\nAcme,20\nBistro,80' },
+    { name: 'Totals', ask: 'Total per client: {{Invoices}}' },
+    { name: 'Save', tool: 'write', args: { name: 'Totals.md', content: '{{Totals}}' } },
+  ] }
   // A routine a file sets off (D294).
   const eachTime = /^each time\b/i.test(question.trim()) && last.role === 'user'
   // 0.8: a folder's files, by the names <folder> gives its tools (D104, D141).
@@ -528,15 +535,12 @@ createServer(async (req, res) => {
   else if (/\bcertificate\b/i.test(question) && last.role === 'user' && declared.has('check_certificate')) call = { name: 'check_certificate', args: { files: documents.map(([, , name]) => name) } }
   else if (toolName === 'check_certificate') answer = last.content.split('\n')[0]
   else if (toolName === 'meet') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : `The meeting is over:\n\n${(/Round 1:\n([\s\S]*?)\n\n/.exec(last.content)?.[1] ?? '').split('\n').map((line) => `- ${line}`).join('\n')}`
-  // Flows (D218): a step to do, a flow to draw (asked, or the steps just done), one to run.
+  // Flows (D218): a step to do, a flow to draw (asked, or the steps just done, offering Flows first if they're off), one to run.
   else if (/doing one step of the user's flow/.test(system)) answer = /Total per client/.test(lastUser) ? 'Acme: 120\nBistro: 80' : ''
-  else if (/\b(?:make|draw|save)\b.*\bflow\b/i.test(question) && last.role === 'user' && declared.has('save_flow')) {
-    call = { name: 'save_flow', args: { name: 'Weekly invoices', steps: [
-      { name: 'Invoices', text: 'Acme,100\nAcme,20\nBistro,80' },
-      { name: 'Totals', ask: 'Total per client: {{Invoices}}' },
-      { name: 'Save', tool: 'write', args: { name: 'Totals.md', content: '{{Totals}}' } },
-    ] } }
-  } else if (toolName === 'save_flow') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : 'The flow is beside the conversation: run it whenever you like.'
+  else if (flow && last.role === 'user' && declared.has('save_flow')) call = { name: 'save_flow', args: invoices }
+  else if (flow && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'flows' } }
+  else if (flow && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'save_flow', args: invoices }
+  else if (toolName === 'save_flow') answer = last.content.startsWith('Error') ? `That didn't work: ${last.content}` : 'The flow is beside the conversation: run it whenever you like.'
   else if (/\brun\b.*\bflow\b/i.test(question) && last.role === 'user' && declared.has('run_flow')) call = { name: 'run_flow', args: { flow: 'Weekly invoices' } }
   else if (toolName === 'run_flow') answer = `The flow gave:\n\n${last.content}`
   else if (about && last.role === 'user' && declared.has('search_files')) call = { name: 'search_files', args: { query: about } }
@@ -651,6 +655,8 @@ createServer(async (req, res) => {
   else if (/what do you know/i.test(question) && last.role === 'user') answer = memory ? `I know this:\n\n${memory}` : 'Nothing yet.'
   else if (eachTime && declared.has('schedule')) call = { name: 'schedule', args: { title: 'File it', request: 'Add the file to the register', when: 'file' } }
   else if (regularly && declared.has('schedule')) call = { name: 'schedule', args: routine }
+  else if (regularly && declared.has('offer')) call = { name: 'offer', args: { capability: 'routines' } }
+  else if (regular && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'schedule', args: routine }
   else if (regularly && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'make a routine on a schedule' } }
   else if (toolName === 'find_tools' && /schedule\(/.test(last.content)) call = { name: 'schedule', args: routine }
   else if (toolName === 'schedule') answer = 'Done: it is a routine now.'
