@@ -61,6 +61,8 @@ const PORT = Number(process.env.PORT) || 4174
 const PACE = Number(process.env.PACE ?? 35)
 let previous = ''
 const BAKERY = `http://127.0.0.1:${PORT}/site/bakery.html`
+// An article of Wikipedia's, which browse reads through its API (D35): the test routes its site.
+const ARTICLE = 'https://en.wikipedia.test/wiki/Lighthouse'
 /** @type {Record<string, { body: string, headers?: Record<string, string> }>} */
 const SITE = {
   '/site/bakery.html': { body: '<!doctype html><title>The bakery</title><h1>The bakery</h1><p>Fresh bread every morning, from 7 am.</p><p><a href="menu.html">Menu</a></p>' },
@@ -396,7 +398,7 @@ function checked(text) {
 }
 
 /** Sources a tool's result lists: `Source [n]: title (address)` and what follows. @param {string} text */
-const sourcesIn = (text) => [...text.matchAll(/Source \[(\d+)\]: (.+?) \(([^)]+)\)\n?([^\n]*)/g)].map((m) => ({ n: m[1], title: m[2], url: m[3], more: m[4] }))
+const sourcesIn = (text) => [...text.matchAll(/Source \[(\d+)\]: (.+?) \(([^)]+)\)\n?(?:Picture: (\S+)\n)?([^\n]*)/g)].map((m) => ({ n: m[1], title: m[2], url: m[3], picture: m[4], more: m[5] }))
 
 createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -597,7 +599,11 @@ createServer(async (req, res) => {
   else if (found.length && /^mail:/.test(found[0].url)) {
     answer = `Your ${found.length} latest emails:\n\n${found.map((email) => `- **${email.title}**, ${email.more.replace(/:.*$/, '')} [${email.n}]`).join('\n')}`
   } else if (/search the web|look up/i.test(question) && last.role === 'user' && declared.has('web_search')) call = { name: 'web_search', args: { query: question.replace(/.*(?:search the web for|look up)\s*/i, '').replace(/[?.!]$/, '') } }
-  else if (toolName === 'web_search') answer = found.length ? `Here is what the web says:\n\n${found.map((page) => `- **${page.title}**: ${page.more.slice(0, 90)} [${page.n}]`).join('\n')}` : 'I found nothing on the web.'
+  // Asked for pictures, a source's, at the address it gave, and that address changed, as injected words would have it (D35).
+  else if (toolName === 'web_search') answer = found.length ? `Here is what the web says:\n\n${found.map((page) => `- **${page.title}**: ${page.more.slice(0, 90)} [${page.n}]`).join('\n')}${found.filter((page) => page.picture && /picture/i.test(question))
+    .map((page) => `\n\n![${page.title}](${page.picture}) ![${page.title}, again](${page.picture}?q=secret)`).join('')}` : 'I found nothing on the web.'
+  else if (/wikipedia article/i.test(question) && last.role === 'user' && declared.has('browse')) call = { name: 'browse', args: { url: ARTICLE } }
+  else if (toolName === 'browse' && found[0]?.picture) answer = `${found[0].more} [${found[0].n}]\n\n![${found[0].title}](${found[0].picture})`
   else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('browse')) call = { name: 'browse', args: { url: BAKERY } }
   else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'browser' } }
   else if (/bakery site/i.test(question) && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'browse', args: { url: BAKERY } }

@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { isKiwix, intro, library, searchKiwix } from '../app/caps/search/kiwix.js'
-import { searchSources, onSite } from '../app/caps/search/sources.js'
+import { searchSources, onSite, readWiki } from '../app/caps/search/sources.js'
 import { kiwix, BOOKS } from './fixtures/kiwix.js'
 
 const ADDRESS = 'http://kiwix.test/kiwix'
@@ -93,7 +93,8 @@ function sourcesServed(books) {
     const url = new URL(String(input))
     if (!url.hostname.endsWith('vikidia.test')) return library(input, init)
     asked.push(url)
-    return Response.json({ query: { pages: [{ index: 1, title: 'Phare', fullurl: 'https://fr.vikidia.test/wiki/Phare', extract: 'Un phare est un bâtiment qui guide les marins.' }] } })
+    return Response.json({ query: { pages: [{ index: 1, title: 'Phare', fullurl: 'https://fr.vikidia.test/wiki/Phare', extract: 'Un phare est un bâtiment qui guide les marins.',
+      thumbnail: { source: 'https://download.vikidia.test/fr/images/thumb/phare.jpg/500px-phare.jpg?utm_source=fr.vikidia.org&utm_campaign=api', width: 480, height: 640 } }] } })
   })
   return { fetch, asked }
 }
@@ -107,6 +108,9 @@ test('the sources on are searched at once, three pages from each; Wikipedia from
   assert.equal(search?.searchParams.get('books.filter.category'), 'wikipedia')
   assert.equal(search?.searchParams.get('pageLength'), '3')
   assert.equal(asked.find((url) => url.hostname === 'fr.vikidia.test')?.searchParams.get('gsrlimit'), '3')
+  // MediaWiki's pages bring their lead picture, which an answer may show (D35), without the words that track it.
+  assert.deepEqual(pages.map((page) => page.picture), [undefined, 'https://download.vikidia.test/fr/images/thumb/phare.jpg/500px-phare.jpg'])
+  assert.equal(asked.find((url) => url.hostname === 'fr.vikidia.test')?.searchParams.get('prop'), 'extracts|info|pageimages')
   // The library itself reads every book: Vikidia's too.
   const library = await searchSources([{ id: 'kiwix', address: ADDRESS }], 'marins', 'fr', { fetch })
   assert.deepEqual(library.pages.map((page) => page.title), ['Phare'])
@@ -133,4 +137,33 @@ test('a page of Vikidia’s site, in any language, is known before it is tried; 
   assert.equal(onSite(vikidia, 'https://notvikidia.org/'), false)
   assert.equal(onSite(`${ADDRESS}/`, `${ADDRESS}/content/vikidia_fr_all_maxi_2025-10/Phare`), false)
   assert.equal(onSite('', 'https://fr.vikidia.org/'), false)
+})
+
+test('an article of Wikipedia’s site is read through MediaWiki’s API, its whole text and its lead picture, since its page refuses other sites’ reads (D35)', async () => {
+  /** @type {URL[]} */
+  const asked = []
+  const fetch = /** @type {typeof globalThis.fetch} */ (async (input) => {
+    const url = new URL(String(input))
+    asked.push(url)
+    const title = url.searchParams.get('titles') ?? ''
+    if (title === 'Nowhere') return Response.json({ query: { pages: [{ ns: 0, title, missing: true }] } })
+    if (title === 'A[b]') return Response.json({ query: { pages: [{ title, invalid: true }] } })
+    return Response.json({ query: { pages: [{ title: title.replace(/_/g, ' '), fullurl: `https://${url.hostname}/wiki/${encodeURIComponent(title)}`, extract: 'The Pixel 10 is a smartphone.\n\n== Design ==\nIt has three cameras.',
+      thumbnail: { source: 'https://upload.wikimedia.test/pixel.png?utm_source=en.wikipedia.org&utm_campaign=api', width: 500, height: 500 } }] } })
+  })
+  const WIKI = 'https://{lang}.wikipedia.test/w/api.php'
+  assert.deepEqual(await readWiki(WIKI, 'https://en.wikipedia.test/wiki/Pixel_10#Design', { fetch }),
+    { title: 'Pixel 10', url: 'https://en.wikipedia.test/wiki/Pixel_10', extract: 'The Pixel 10 is a smartphone.\n\n== Design ==\nIt has three cameras.', picture: 'https://upload.wikimedia.test/pixel.png' })
+  const [read] = asked
+  assert.equal(`${read.origin}${read.pathname}`, 'https://en.wikipedia.test/w/api.php')
+  assert.deepEqual(['titles', 'redirects', 'prop', 'origin', 'exintro'].map((name) => read.searchParams.get(name)), ['Pixel_10', '1', 'extracts|info|pageimages', '*', null])
+  // In any language and script, from its mobile site or its edit address too.
+  await readWiki(WIKI, 'https://ar.m.wikipedia.test/wiki/%D9%85%D9%86%D8%A7%D8%B1%D8%A9', { fetch })
+  await readWiki(WIKI, 'https://ja.wikipedia.test/w/index.php?title=%E7%81%AF%E5%8F%B0&action=history', { fetch })
+  assert.deepEqual(asked.slice(1).map((url) => [url.hostname, url.searchParams.get('titles')]), [['ar.wikipedia.test', 'منارة'], ['ja.wikipedia.test', '灯台']])
+  // An article that isn't there, a title that can't be one, or an address that names none, is nothing: the last isn't asked.
+  assert.equal(await readWiki(WIKI, 'https://en.wikipedia.test/wiki/Nowhere', { fetch }), null)
+  assert.equal(await readWiki(WIKI, 'https://en.wikipedia.test/wiki/A%5Bb%5D', { fetch }), null)
+  assert.equal(await readWiki(WIKI, 'https://en.wikipedia.test/', { fetch }), null)
+  assert.equal(asked.length, 5)
 })

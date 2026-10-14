@@ -27,10 +27,10 @@ import { known, searchers, logoAt } from '../connections/directory.js'
 
 await useStrings('search')
 
-/** What the brain reads back: each page a numbered source. @param {Page[]} pages @param {import('../../core/loop.js').ToolContext} ctx */
+/** What the brain reads back: each page a numbered source, with its picture's address. @param {Page[]} pages @param {import('../../core/loop.js').ToolContext} ctx */
 function numbered(pages, ctx) {
-  const numbers = ctx.cite(pages.map((page) => ({ title: page.title, url: page.url, quote: page.extract.slice(0, 150) })))
-  return pages.map((page, i) => `Source [${numbers[i]}]: ${page.title} (${page.url})\n${page.extract}`).join('\n\n')
+  const numbers = ctx.cite(pages.map((page) => ({ title: page.title, url: page.url, quote: page.extract.slice(0, 150), picture: page.picture })))
+  return pages.map((page, i) => `Source [${numbers[i]}]: ${page.title} (${page.url})\n${page.picture ? `Picture: ${page.picture}\n` : ''}${page.extract}`).join('\n\n')
 }
 
 /** The sources on: the organisation's, else the user's, else Wikipedia alone. */

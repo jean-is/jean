@@ -38,6 +38,7 @@ import { icons } from '../../ui/icons.js'
 import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { savePage } from '../../ui/save.js'
 import { serviceURL } from '../../core/settings.js'
+import { SOURCES, onSite, readWiki } from '../search/sources.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { addressOf, showable, siteOf, pageText, installer, Trail } from './pages.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -615,18 +616,23 @@ document.addEventListener('click', (event) => {
 
 /**
  * A page's words, when its site lets other sites read it (CORS): most don't, and then there is
- * nothing to read from here. No cookies go with it. @param {string} url @param {AbortSignal} [signal]
+ * nothing to read from here. No cookies go with it. An article of a web search source's site
+ * (Wikipedia's, Vikidia's), whose pages don't, is read through its API, with its lead picture (D35).
+ * @param {string} url @param {AbortSignal} [signal]
  */
 async function read(url, signal) {
   const stop = new AbortController()
   const timer = setTimeout(() => stop.abort(), READ_MS)
   signal?.addEventListener('abort', () => stop.abort(), { once: true })
   try {
+    const wiki = SOURCES.map((id) => serviceURL(id, app.settings.peek(), app.policy)).find((address) => onSite(address, url))
+    const article = wiki && await readWiki(wiki, url, { signal: stop.signal })
+    if (article) return { title: article.title, text: article.extract.slice(0, READ_CHARS), manifest: false, picture: article.picture ?? '' }
     const response = await fetch(url, { credentials: 'omit', referrerPolicy: 'no-referrer', signal: stop.signal })
     const type = response.headers.get('content-type') ?? ''
     if (!response.ok || !/^text\/|json|xml/.test(type)) return null
     const body = await response.text()
-    return /html|xml/.test(type) ? pageText(body, READ_CHARS) : { title: '', text: body.slice(0, READ_CHARS), manifest: false }
+    return /html|xml/.test(type) ? pageText(body, READ_CHARS) : { title: '', text: body.slice(0, READ_CHARS), manifest: false, picture: '' }
   } catch {
     return null
   } finally {
@@ -672,8 +678,10 @@ const browseTool = {
     const found = await read(url, ctx.signal)
     if (!found?.text) return `${status} Its text can’t be read from here: the site doesn’t let other sites read it. Ask the user what they see, or search the web.`
     const title = found.title || siteOf(url)
-    const [n] = ctx.cite([{ title, url, quote: found.text.slice(0, 150) }])
-    return `${status}${found.manifest ? ' The site is made to install as an app.' : ''}\n\nSource [${n}]: ${title} (${url})\n${found.text}`
+    // Its picture, which an answer may show (D35): https alone, as Jean's policy loads.
+    const picture = found.picture && URL.canParse(found.picture, url) && new URL(found.picture, url).protocol === 'https:' ? new URL(found.picture, url).href : undefined
+    const [n] = ctx.cite([{ title, url, quote: found.text.slice(0, 150), picture }])
+    return `${status}${found.manifest ? ' The site is made to install as an app.' : ''}\n\nSource [${n}]: ${title} (${url})\n${picture ? `Picture: ${picture}\n` : ''}${found.text}`
   },
 }
 

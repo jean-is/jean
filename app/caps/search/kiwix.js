@@ -5,7 +5,7 @@
 // Host-agnostic: fetch and a scanner, no DOM.
 import { pageText } from '../browser/pages.js'
 
-/** @typedef {{ title: string, url: string, extract: string }} Page */
+/** @typedef {{ title: string, url: string, extract: string, picture?: string }} Page  picture: its lead picture's address, MediaWiki's */
 /** @typedef {{ title: string, languages: string[], articles: number, category: string }} Book  languages: three-letter, as Kiwix names them; category: wikipedia, vikidia… */
 /** @typedef {{ fetch?: typeof globalThis.fetch, signal?: AbortSignal }} Reach */
 

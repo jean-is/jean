@@ -56,12 +56,17 @@
   font-weight: 600;
   line-height: 1.6;
 }
+/* An option's picture, at the head of its card above its name (D35): as tall in every card, whole, on
+   white, as shops show what they sell, so that a photo on white and a cut-out look alike. */
+.prose .is-compare th .picture { --tall: 7rem; box-sizing: border-box; inline-size: 100%; block-size: var(--tall); max-block-size: none; margin-block: 0 0.6rem; padding: 0.35rem; background: white; }
+.prose .is-compare th app-shared.picture img { inline-size: 100%; block-size: 100%; }
 /* In a narrow column, as on a phone, the cards draw closer and the criteria get smaller, so that three fit. */
 @container (width < 34rem) {
   .prose .is-compare table { --gap: 0.3rem; --pad: 0.55rem; font-size: 0.88rem; }
   .prose .is-compare th { font-size: 0.95rem; }
   .prose .is-compare :is(th, td):first-child { font-size: 0.8rem; }
   .prose .is-compare th.is-pick::before { font-size: 0.68rem; }
+  .prose .is-compare th .picture { --tall: 4.5rem; padding: 0.2rem; }
 }
 
 /* Steps: each number in a ring, a line down to the next, its bold start a title on a line of its own. */
@@ -145,6 +150,10 @@
 .prose .checklist input { flex: none; inline-size: 1.05rem; block-size: 1.05rem; margin: 0; accent-color: var(--flame); translate: 0 0.15rem; }
 .prose .checklist label > span { transition: color 0.2s; }
 .prose .checklist .is-done label > span { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--ink-faint); }
+
+/* A picture a source gave, or one the user shared (D35): whole, on a line of its own, never taller than half the window. */
+.prose .picture, .prose app-shared.picture img { display: block; max-inline-size: 100%; max-block-size: min(20rem, 50vh); border-radius: calc(var(--radius) * 0.5); object-fit: contain; }
+.prose .picture { margin-block: 0.75rem; }
 
 /* Where colours are forced, the cards, the frame, the rings and the notes keep their edges. */
 @media (forced-colors: active) {

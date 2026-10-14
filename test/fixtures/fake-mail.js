@@ -28,7 +28,7 @@ const EMAILS = [
   { id: '1', from: 'Sam <sam@example.org>', date: '2026-09-30', subject: 'Lunch on Thursday?', body: 'Lunch on Thursday at the Italian place, 12:30?' },
 ]
 const PAGES = [
-  { title: 'Lighthouse', extract: 'A lighthouse is a tower, building, or other structure designed to emit light to serve as a navigational aid for maritime pilots at sea.' },
+  { title: 'Lighthouse', extract: 'A lighthouse is a tower, building, or other structure designed to emit light to serve as a navigational aid for maritime pilots at sea.', picture: 'https://upload.wikimedia.test/lighthouse.svg' },
   { title: 'Phare du Créac’h', extract: 'The Phare du Créac’h is a lighthouse on the island of Ouessant, one of the most powerful in the world.' },
 ]
 
@@ -191,7 +191,8 @@ export function createFakeMail() {
     if (wiki) {
       const query = String(url.searchParams.get('gsrsearch') ?? '').toLowerCase()
       const pages = PAGES.filter((page) => query.split(/\s+/).some((word) => `${page.title} ${page.extract}`.toLowerCase().includes(word)))
-      return json(200, { query: { pages: pages.map((page, i) => ({ index: i + 1, title: page.title, fullurl: `https://${wiki[1]}.wikipedia.org/wiki/${encodeURIComponent(page.title)}`, extract: page.extract })) } })
+      return json(200, { query: { pages: pages.map((page, i) => ({ index: i + 1, title: page.title, fullurl: `https://${wiki[1]}.wikipedia.org/wiki/${encodeURIComponent(page.title)}`, extract: page.extract,
+        ...(page.picture && { thumbnail: { source: page.picture, width: 500, height: 500 } }) })) } })
     }
 
     // ─── MCP ───

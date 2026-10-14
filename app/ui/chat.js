@@ -131,10 +131,10 @@ function citable(files, turns) {
   const sources = new Map()
   for (const link of files) {
     const number = link._meta?.source
-    if (number && !sources.has(number)) sources.set(number, { name: link.name, label: t('sources.open', { name: link.name }), open: () => openFile(link) })
+    if (number && !sources.has(number)) sources.set(number, { name: link.name, label: t('sources.open', { name: link.name }), open: () => openFile(link), ...(isPicture(link) && { file: link }) })
   }
-  for (const { n, title, url } of turns.flatMap((turn) => turn.steps.flatMap((step) => step.tools.flatMap((tool) => tool._meta?.sources ?? [])))) {
-    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { url, ...site(url) }) })
+  for (const { n, title, url, picture } of turns.flatMap((turn) => turn.steps.flatMap((step) => step.tools.flatMap((tool) => tool._meta?.sources ?? [])))) {
+    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { url, ...site(url) }), picture })
   }
   return sources
 }

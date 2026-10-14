@@ -33,8 +33,8 @@ export type ToolCall = { id: string, name: string, args: any }
  * as the provider's own (the brain's own web search); others declare it as a function.
  */
 export type ToolSpec = { name: string, description: string, parameters: object, native?: 'web_search' }
-/** Outside content the brain can cite as [n]: a web page, an email, a document from a connection. */
-export type Source = { title: string, url?: string, quote?: string }
+/** Outside content the brain can cite as [n]: a web page, an email, a document from a connection. picture: its own picture's address, which an answer may show (D35). */
+export type Source = { title: string, url?: string, quote?: string, picture?: string }
 /** A shared file's text, as the brain sees it; image: a picture, base64, for brains that can see. */
 export type DocumentPart = { name: string, text: string, source?: number, image?: { mimeType: string, data: string } }
 export type UserMessage = { role: 'user', content: string, documents?: DocumentPart[] }

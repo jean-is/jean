@@ -65,16 +65,19 @@ const BLOCK = /<\/?(p|div|br|hr|h[1-6]|li|dt|dd|tr|td|th|section|article|header|
 /**
  * A page's words, as a scanner reads them (no DOMParser: Trusted Types guard it in the page, and
  * this runs in Node): its title, its text line by line without its scripts, styles or drawings,
- * and whether it links a web app manifest, which makes it a site made to install as an app.
+ * whether it links a web app manifest, which makes it a site made to install as an app, and the
+ * picture it gives for itself when shared (Open Graph's, else X's), as written there.
  * @param {string} source HTML @param {number} [max] characters of text kept
  */
 export function pageText(source, max = 12000) {
   const title = decode(/<title[^>]*>([\s\S]*?)<\/title>/i.exec(source)?.[1] ?? '').replace(/\s+/g, ' ').trim()
   const manifest = /<link\b[^>]*\brel=["']?manifest\b/i.test(source)
+  const tag = /<meta\b[^>]*\b(?:property|name)=["']?(?:og|twitter):image["'\s>][^>]*>/i.exec(source)?.[0] ?? ''
+  const picture = decode(/\bcontent=(?:"([^"]*)"|'([^']*)')/i.exec(tag)?.slice(1).join('') ?? '').trim()
   const lines = decode(source.replace(/<!--[\s\S]*?-->/g, '').replace(HIDDEN, ' ').replace(BLOCK, '\n').replace(/<[^>]*>/g, ' '))
     .split('\n').map((line) => line.replace(/[\s ]+/g, ' ').trim()).filter(Boolean)
   const text = lines.join('\n')
-  return { title, text: text.length > max ? `${text.slice(0, max)}…` : text, manifest }
+  return { title, text: text.length > max ? `${text.slice(0, max)}…` : text, manifest, picture }
 }
 
 /**

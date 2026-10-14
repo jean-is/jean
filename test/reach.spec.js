@@ -202,9 +202,16 @@ test('web search answers with sources that open', async ({ page }) => {
   await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ urls: { wikipedia: `${url}/wiki/{lang}/w/api.php` } }), MAIL_URL)
   await turnOn(page, 'Web search')
   await page.keyboard.press('Escape')
-  await ask(page, 'Search the web for lighthouse')
+  await page.route('https://upload.wikimedia.test/*', (route) => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="30"/>' }))
+  const pictured = page.waitForRequest('https://upload.wikimedia.test/lighthouse.svg')
+  await ask(page, 'Search the web for lighthouse pictures')
   const answer = page.locator('.msg-jean .prose').last()
   await expect(answer).toContainText('Here is what the web says')
+  // A source's picture shows, asked for without saying from where; at an address the brain changed, its words (D35).
+  await expect(answer.locator('img.picture')).toHaveAttribute('src', 'https://upload.wikimedia.test/lighthouse.svg')
+  await expect(answer.locator('img.picture')).toHaveAttribute('alt', 'Lighthouse')
+  await expect(answer.locator('.image-alt')).toHaveText('[Lighthouse, again]')
+  expect((await pictured).headers().referer).toBeUndefined()
   // A web page's chip is a link (D140).
   await expect(answer.locator('a.cite')).toHaveCount(2)
   await expect(answer.locator('a.cite').first()).toHaveAttribute('href', /^https:\/\/en\.wikipedia\.org\/wiki\//)

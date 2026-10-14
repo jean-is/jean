@@ -1,16 +1,16 @@
 // Markdown → lit-html templates, from marked's tokens. No innerHTML anywhere:
-// raw HTML in model output is shown as text, and images are never loaded
-// (an image URL is a classic way for injected instructions to leak data).
+// raw HTML in model output is shown as text, and an image shows only as a source gave
+// it (D35: an image URL is a classic way for injected instructions to leak data).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Marked } from 'marked'
 import { unlock } from './caps.js'
 
 /** @typedef {import('marked').Token} Token */
-/** @typedef {Map<number, { name: string, label: string, open?: () => void, url?: string, site?: string, icon?: string }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened */
+/** @typedef {Map<number, { name: string, label: string, open?: () => void, url?: string, site?: string, icon?: string, picture?: string, file?: import('../core/types.js').ResourceLink }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened; a picture, its own or the one shared */
 
 /** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
-let cited = null
+export let cited = null
 /** Whether the text being rendered is an answer still being written, whose last block may not be whole yet. */
 let writing = false
 
@@ -125,7 +125,7 @@ export function inline(tokens = []) {
       case 'link': return safeHref(token.href)
         ? html`<a href=${token.href} target="_blank" rel="noopener noreferrer">${inline(token.tokens)}</a>`
         : inline(token.tokens)
-      case 'image': return html`<span class="image-alt">[${token.text || token.href}]</span>`
+      case 'image': return shape(token) ?? html`<span class="image-alt">[${token.text || token.href}]</span>`
       case 'escape': return token.text
       case 'math': return formula(token)
       default: return token.raw
