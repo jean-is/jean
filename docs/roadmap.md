@@ -59,6 +59,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] An organisation's own skills index for office work, served with CORS
 - [ ] An Artifactory instance for PyPI and npm with a key; micropip against an index that serves only HTML
 - [ ] "Since last time" with a real service after a real night away
+- [ ] Notifications (D334) for real: the offer's Yes asking in Chrome, Edge, Firefox and Safari, a task done in another app, the click bringing the task back; on Android, shown by the service worker, a tap opening the task; an iPhone with Jean installed on its home screen
 
 **Browsers and devices**
 - [ ] The CSV demo on a real managed Windows laptop with a weak graphics chip, in Edge and Chrome, in three languages

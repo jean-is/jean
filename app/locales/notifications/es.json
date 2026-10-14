@@ -1,0 +1,5 @@
+{
+  "notifications.done": "Listo. Tu respuesta te espera.",
+  "notifications.text": "Cuando una tarea termina mientras estás en otra pestaña o app. Solo se muestra su título.",
+  "notifications.blocked": "Tu navegador bloquea las notificaciones de este sitio. Permítelas en su configuración para este sitio."
+}

@@ -19,8 +19,9 @@ import { host } from './host.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 const gpu = 'gpu' in navigator // where search by meaning runs (D302)
+const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -93,7 +94,12 @@ register({
     { name: 'offer', line: 'suggest turning on something the user has not discovered yet' },
   ],
   rules: ['Offer at most one new thing per reply, and only when it clearly helps.'],
+  // A task done while the user was in another tab or app: as they come back, a notification could say so next time (D334).
+  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (told && e.answer && away()) addEventListener('focus', () => offerOnce('notifications', true), { once: true }); return next(e) } }],
 })
+
+/** Whether the user is elsewhere: another tab, or another app. */
+export const away = () => document.hidden || !document.hasFocus()
 
 // ─── Offers above the box ────────────────────────────────────────────────────
 
@@ -109,7 +115,10 @@ export function offerOnce(id, now = false) {
   const shown = app.offer.peek()
   // Turned on before, it is still loading after first paint, so not loaded yet: never offered.
   if ((shown && (shown.progress !== undefined || !now || shown.id === id)) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
+  const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
   app.offer.value = { id }
+  // Read to the end of a task, the offer drawn under it comes into view above the box, which would cover it.
+  if (end) scrollTo({ top: document.documentElement.scrollHeight })
 }
 
 /** @param {string} id */

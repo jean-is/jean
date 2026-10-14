@@ -50,6 +50,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   helpers: () => import('../caps/helpers/helpers.js'),
   check: () => import('../caps/check/check.js'),
   since: () => import('../caps/since/since.js'),
+  notifications: () => import('../caps/notifications/notifications.js'),
   names: () => import('../caps/names/names.js'),
   browser: () => import('../caps/browser/browser.js'),
   ask: () => import('../caps/ask/ask.js'),

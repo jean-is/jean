@@ -489,7 +489,8 @@ function general() {
         <option value="">${t('settings.voiceAuto')}</option>
         ${rankVoices(voices, locale.value, [locale.value, ...navigator.languages])
           .map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}
-      </select>`) : nothing}`
+      </select>`) : nothing}
+    ${slots('general').map((part) => part.draw({ setting }))}`
 }
 
 const appearance = () => html`
@@ -845,7 +846,7 @@ export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
