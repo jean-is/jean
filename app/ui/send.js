@@ -253,7 +253,7 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) {
     app.draft.value = text
-    import('./dialogs.js').then((module) => module.openSettings('brains'))
+    import('../caps/first/first.js').then((module) => module.open())
     return
   }
   let current = app.current.value

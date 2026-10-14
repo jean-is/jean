@@ -45,6 +45,7 @@ class Shell extends Element {
       <app-history></app-history>
       <app-find></app-find>
       <app-settings></app-settings>
+      <app-first></app-first>
       <app-picker></app-picker>
       <app-project-dialog></app-project-dialog>
       <app-toasts class="toasts" role="status" aria-live="polite" popover="manual"></app-toasts>

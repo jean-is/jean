@@ -1,0 +1,9 @@
+/* The first brain (D329): one way, wide; the device's brain beside it; two doors; then back from either. */
+.first-free { inline-size: 100%; padding-block: 0.8rem; font-size: 1rem; }
+.first-where { margin-block: 0.45rem 1rem; text-align: center; }
+.first-also { display: flex; align-items: flex-start; gap: 0.75rem; margin-block-end: 1rem; padding: 0.75rem 0.9rem; border-radius: 1rem; background: var(--line); cursor: pointer; }
+.first-also input { flex: none; margin: 0.2rem 0 0; }
+.first-doors > li { padding: 0; }
+.first-doors button.item { padding: 0.65rem 0.9rem; border: 0; border-radius: inherit; background: none; text-align: start; }
+.first-doors button.item:hover { background: var(--line); }
+.first-back { margin-inline-start: -0.9rem; } .first-back .icon { scale: -1 1; }

@@ -119,6 +119,8 @@ export async function finishSignIn() {
     await connectBrain({ provider: 'openrouter', apiKey })
     notify(t('brain.connected'))
     continueWithBrain()
+    // The device's brain, asked for with this one on the first brain's dialog, comes while it answers (D329).
+    if (sessionStorage.getItem('app.private')) import('../caps/first/first.js').then((module) => module.alsoPrivate())
   } catch (error) {
     showError(error)
   }

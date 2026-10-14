@@ -119,7 +119,7 @@ const local = signal(/** @type {typeof import('../caps/brain-local/brain-local.j
 const deviceCheck = signal(/** @type {{ ok: boolean, reason?: string, freed?: number } | null} */ (null))
 let checking = false
 
-async function checkDevice() {
+export async function checkDevice() {
   if (checking || isDenied('brain-local')) return
   checking = true
   try {
@@ -132,7 +132,7 @@ async function checkDevice() {
   }
 }
 
-async function useDevice() {
+export async function useDevice() {
   const module = local.value
   if (!module || !(await unlock('brain-local'))) return
   try {
@@ -145,6 +145,18 @@ async function useDevice() {
   } catch (error) {
     console.warn('On-device brain', error)
   }
+}
+
+/** The device's brain's module, where it can run and isn't added yet. */
+export const fit = () => (local.value && deviceCheck.value?.ok && !effective.value.settings.brains.some((brain) => brain.provider === 'device') ? local.value : null)
+
+/** The device's brain on its way: how much has come, then almost ready; nothing before or after. @param {NonNullable<typeof local.value>} device */
+export function progressOf(device) {
+  const progress = device.download.value
+  return progress.state === 'downloading' ? html`
+    <progress max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
+    <p class="hint">${t('brain.device.progress', { done: formatBytes(progress.loaded), total: formatBytes(progress.total) })}</p>`
+    : progress.state === 'loading' ? html`<p class="status" role="status">${t('brain.device.loading')}</p>` : null
 }
 
 const localProvider = signal(/** @type {'ollama' | 'lmstudio' | 'custom'} */ ('ollama'))
@@ -383,12 +395,12 @@ const providers = (ids) => new Intl.ListFormat(locale.value, { type: 'conjunctio
  * The ways to add a brain. Before the first, one is open once this device is checked (a way
  * added open beside an open one would close), unless the user picked one meanwhile: the
  * device's, where it can run (the first rung), or else OpenRouter's. The device's stays open
- * while it downloads.
- * @param {boolean} first
+ * while it downloads. Without those two, the ways the first brain's dialog leads to (D329).
+ * @param {boolean} first @param {boolean} [all]
  */
-function ways(first) {
+export function ways(first, all = true) {
   const module = local.value
-  const device = module && deviceCheck.value?.ok && !effective.value.settings.brains.some((brain) => brain.provider === 'device') ? module : null
+  const device = all ? fit() : null
   const progress = device?.download.value
   // The first way opens by itself, unless another says something (back from ChatGPT's sign-in): one at a time.
   const opens = first && !wayPicked && !status.value && (deviceCheck.value !== null || isDenied('brain-local'))
@@ -398,17 +410,13 @@ function ways(first) {
   return html`${freed && module ? html`<p class="hint">${module.unfit(freed)}</p>` : nothing}<ul class="list ways">
     ${device && progress ? way('device', icons.chip, t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
       <p>${t('brain.device.text', { name: BRAND.name })}</p>
-      ${progress.state === 'downloading' ? html`
-        <progress max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
-        <p class="hint">${t('brain.device.progress', { done: formatBytes(progress.loaded), total: formatBytes(progress.total) })}</p>`
-      : progress.state === 'loading' ? html`<p class="status" role="status">${t('brain.device.loading')}</p>`
-      : html`
+      ${progressOf(device) ?? html`
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}`)
     : nothing}
-    ${way('quick', icons.spark, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
+    ${all ? way('quick', icons.spark, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
       <p>${t('brain.quick.text')}</p>
-      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button></div>`)}
+      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button></div>`) : nothing}
     ${way('key', icons.key, t('brain.key.title'), providers(KEYED), false, html`
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}>
