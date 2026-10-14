@@ -26,15 +26,18 @@ self.onmessage = async ({ data }) => {
   }
 }`
 
-/** A device that can run the brain, its worker replaced by the one above. @param {import('@playwright/test').Page} page */
-async function capable(page) {
+// Downloaded, it loads and never ends: a page caught while the brain loads.
+const LOADS = `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'progress', loaded: 3.11e9, total: 3.11e9 })`
+
+/** A device that can run the brain, its worker replaced by the one above, or another. @param {import('@playwright/test').Page} page */
+async function capable(page, worker = WORKER) {
   await page.addInitScript(() => {
     const adapter = { features: new Set(['shader-f16']) }
     Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => adapter }) })
     Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 8 })
     Object.defineProperty(StorageManager.prototype, 'estimate', { configurable: true, value: async () => ({ quota: 50e9, usage: 0 }) })
   })
-  await page.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: WORKER }))
+  await page.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker }))
 }
 
 /** Downloads the brain from Settings › Brains, its first way, opened by its id in any language. @param {import('@playwright/test').Page} page */
@@ -176,4 +179,43 @@ test('never again where loading it ended the tab, what it downloaded deleted, no
     Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 4 })
   })
   expect(await check()).toEqual({ ok: false, reason: 'memory', freed: 0 })
+})
+
+test('a reload while it loads leaves it offered and its download kept; a load that took its page down doesn’t', async ({ page, browserName }) => {
+  await capable(page, LOADS)
+  await start(page)
+  await page.evaluate(async () => {
+    const cache = await caches.open('transformers-cache')
+    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/main/onnx/decoder_model_merged_q4f16.onnx_data'
+    await cache.put(url, new Response('x'.repeat(2.5e6), { headers: { 'content-length': '2500000' } }))
+  })
+  const module = '/caps/brain-local/brain-local.js'
+  const check = (/** @type {import('@playwright/test').Page} */ on) => on.evaluate(async (module) => (await import(module)).checkDevice(), module)
+  const kept = (/** @type {import('@playwright/test').Page} */ on) => on.evaluate(async () => (await (await caches.open('transformers-cache')).keys()).length)
+  const load = async () => {
+    await page.evaluate((module) => { import(module).then((brain) => brain.prepare()) }, module)
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('app.device-brain'))).toBe('loading')
+  }
+
+  // Reloaded as it loads, as after a change to Jean: the page took its mark away as it left (D319).
+  await load()
+  await page.reload()
+  expect(await page.evaluate(() => localStorage.getItem('app.device-brain'))).toBeNull()
+  expect(await check(page)).toEqual({ ok: true })
+  // The rest in Chromium alone: Playwright's WebKit empties Cache Storage on a reload, and only
+  // Chromium can take a page down here.
+  if (browserName !== 'chromium') return
+  expect(await kept(page)).toBe(1)
+
+  // A load that took its page down: the mark stays with no lock held, so the next start no longer
+  // offers it, and deletes what it had downloaded.
+  await load()
+  const crashed = page.waitForEvent('crash')
+  ;(await page.context().newCDPSession(page)).send('Page.crash').catch(() => {})
+  await crashed
+  const after = await page.context().newPage()
+  await capable(after)
+  await after.goto('./')
+  expect(await check(after)).toMatchObject({ ok: false, reason: 'memory' })
+  expect(await kept(after)).toBe(0)
 })
