@@ -1,7 +1,8 @@
 // Checking certificates (D274): the check page, which anyone opens, reads a certificate of an answer,
 // its proof and files, says whether its seal holds, who sealed it and what it says, and reaches
 // nothing outside Jean's own files; a certificate shared in a conversation brings check_certificate,
-// whose card in the answer says the same, and knows this device's own seal.
+// whose card in the answer says the same, and knows this device's own seal. A picture's Content
+// Credentials, read the same ways (D324).
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
@@ -59,6 +60,48 @@ for (const [lang, intact, broken, notNamed] of [
     await context.close()
   })
 }
+
+/** A picture C2PA's own tool signed with its test signer (test/c2pa.test.js), as given. @param {boolean} [changed] */
+const signedPicture = async (changed = false) => {
+  const buffer = await readFile(new URL('./fixtures/c2pa.png', import.meta.url))
+  if (changed) buffer[buffer.length - 3] ^= 1
+  return { name: 'c2pa.png', mimeType: 'image/png', buffer }
+}
+
+for (const [lang, holds, ai, broken] of [
+  ['en', 'c2pa.png carries a signed record of how it was made, unchanged since', 'It says AI made it', 'c2pa.png carries a record of how it was made that doesn’t hold: changed since, or not signed by the key it names'],
+  ['ar', 'يحمل c2pa.png سجلًا موقّعًا لكيفية صنعه، لم يتغيّر منذ ذلك الحين', 'يذكر السجل أن الذكاء الاصطناعي صنعه', 'يحمل c2pa.png سجلًا لكيفية صنعه لا يصمد: تغيّر منذ ذلك الحين، أو لم يُوقَّع بالمفتاح الذي يذكره'],
+  ['ja', 'c2pa.png には作られた経緯の署名付き記録があり、その後変更されていません', 'AI が作ったと記されています', 'c2pa.png の作られた経緯の記録は成り立ちません。その後変更されたか、記された鍵で署名されていません'],
+]) {
+  test(`the check page reads a picture’s Content Credentials: whether they hold, who signed them, and that AI made it (D324, ${lang})`, async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ locale: lang, baseURL })
+    const checker = await context.newPage()
+    await checker.goto('check.html')
+    const input = checker.locator('input[type="file"]')
+    await input.setInputFiles([await signedPicture()])
+    const card = checker.locator('.receipt-checked')
+    await expect(card.locator('.receipt-verdict')).toHaveText(holds)
+    await expect(card.locator('.receipt-note')).toHaveText(ai)
+    await expect(card).toContainText('C2PA Test Signing Cert')
+    await expect(card).toContainText('Test Maker')
+    // A byte changed since, and they no longer hold.
+    await input.setInputFiles([await signedPicture(true)])
+    await expect(card.locator('.receipt-verdict')).toHaveText(broken)
+    await context.close()
+  })
+}
+
+test('a picture with Content Credentials shared in a conversation brings what checks them, which says what they say (D324)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.locator('.composer input[type="file"]').setInputFiles([await signedPicture()])
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Does this picture carry a certificate?')
+  const card = page.locator('app-certificate .receipt-checked')
+  await expect(card.locator('.receipt-verdict')).toHaveText('c2pa.png carries a signed record of how it was made, unchanged since')
+  await expect(card).toContainText('A key certified by Intermediate CA')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('c2pa.png: its Content Credentials hold; signed by C2PA Test Signing Cert, certified by Intermediate CA')
+})
 
 test('a certificate shared in a conversation brings what checks it, and its card knows this device’s seal', async ({ page }) => {
   const { certificate, proof } = await saved(page)

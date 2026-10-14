@@ -2,7 +2,7 @@
 // project and shown in the answer, ready to save; a film is asked first, then shown and played there.
 // A conversation that ends on a picture opens at its end once the picture is drawn. The fake brain is
 // on this computer, so its pictures go through the check (D275, D280), which a worker stands in for,
-// and say a trained model made them (D279).
+// and say a trained model made them (D279), in Content Credentials too (D324).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks } from './helpers.js'
 
@@ -48,6 +48,13 @@ test('the brain offers pictures when asked to draw, then makes one, kept in the 
     return new TextDecoder().decode(await app.fs.readBytes(`${app.projectDir}/${document.querySelector('app-picture')?.getAttribute('uri')}`))
   })
   expect(bytes).toContain('Iptc4xmpExt:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia" Iptc4xmpExt:AISystemUsed="fake-image-1"')
+  // And Content Credentials that say so, signed by this device's seal (D324).
+  expect(await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const { credentialsOf } = await import('/caps/receipt/c2pa.js')
+    const read = await credentialsOf(await app.fs.readBytes(`${app.projectDir}/${document.querySelector('app-picture')?.getAttribute('uri')}`) ?? new Uint8Array())
+    return read && { intact: read.intact, bound: read.bound, generated: read.generated, maker: read.maker, selfIssued: read.selfIssued }
+  })).toEqual({ intact: true, bound: true, generated: true, maker: 'fake-image-1', selfIssued: true })
 })
 
 test('a picture takes its place at once, shows glimpses of it as it forms, then develops there (D265)', async ({ page }) => {

@@ -1,8 +1,8 @@
 {
   "certificates.title": "Check a certificate",
-  "certificates.text": "Drop a certificate saved from About this answer, its proof, or both, with any file it may name. Nothing leaves this page.",
+  "certificates.text": "Drop a certificate saved from About this answer, its proof, or both, with any file it may name. Or drop a picture or a film to read how it was made. Nothing leaves this page.",
   "certificates.choose": "Choose files",
-  "certificates.unreadable": "This isn’t a certificate of an answer, or its proof.",
+  "certificates.unreadable": "This isn’t a certificate of an answer, its proof, or a picture or a film that says how it was made.",
   "certificates.intact": "Sealed, and unchanged since",
   "certificates.broken": "Changed, or not sealed by the key it names",
   "certificates.where.device": "Done on the device that sealed it",
@@ -27,5 +27,10 @@
   "certificates.dated": "Dated by {name}",
   "certificates.badDate": "A date that doesn’t hold",
   "certificates.logged": "In a public log, entry {index}",
-  "certificates.notLogged": "Not in the public log it names"
+  "certificates.notLogged": "Not in the public log it names",
+  "certificates.credentials": "{name} carries a signed record of how it was made, unchanged since",
+  "certificates.credentialsBroken": "{name} carries a record of how it was made that doesn’t hold: changed since, or not signed by the key it names",
+  "certificates.ai": "It says AI made it",
+  "certificates.notAi": "It doesn’t say AI made it",
+  "certificates.unbound": "Whether the file changed since isn’t checked here"
 }

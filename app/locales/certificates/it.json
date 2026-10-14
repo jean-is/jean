@@ -1,8 +1,8 @@
 {
   "certificates.title": "Verifica un certificato",
-  "certificates.text": "Trascina un certificato salvato da Informazioni su questa risposta, la sua prova o entrambi, con qualsiasi file che possa nominare. Niente lascia questa pagina.",
+  "certificates.text": "Trascina un certificato salvato da Informazioni su questa risposta, la sua prova o entrambi, con qualsiasi file che possa nominare. Oppure trascina un’immagine o un video per leggerne la provenienza. Niente lascia questa pagina.",
   "certificates.choose": "Scegli i file",
-  "certificates.unreadable": "Questo non è il certificato di una risposta né la sua prova.",
+  "certificates.unreadable": "Questo non è il certificato di una risposta, né la sua prova, né un’immagine o un video che ne dica la provenienza.",
   "certificates.intact": "Sigillato, e invariato da allora",
   "certificates.broken": "Modificato, o non sigillato dalla chiave che nomina",
   "certificates.where.device": "Fatto sul dispositivo che lo ha sigillato",
@@ -27,5 +27,10 @@
   "certificates.dated": "Datato da {name}",
   "certificates.badDate": "Una data che non regge",
   "certificates.logged": "In un registro pubblico, voce {index}",
-  "certificates.notLogged": "Non è nel registro pubblico che nomina"
+  "certificates.notLogged": "Non è nel registro pubblico che nomina",
+  "certificates.credentials": "{name} porta un registro firmato della sua provenienza, invariato da allora",
+  "certificates.credentialsBroken": "{name} porta un registro della sua provenienza che non regge: modificato da allora, o non firmato dalla chiave che nomina",
+  "certificates.ai": "Dice che è opera di un’IA",
+  "certificates.notAi": "Non dice che sia opera di un’IA",
+  "certificates.unbound": "Qui non si verifica se il file è cambiato da allora"
 }

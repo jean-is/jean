@@ -1,8 +1,8 @@
 {
   "certificates.title": "Ein Zertifikat prüfen",
-  "certificates.text": "Lege ein über „Über diese Antwort“ gespeichertes Zertifikat ab, seinen Nachweis oder beides, mit jeder Datei, die es nennen kann. Nichts verlässt diese Seite.",
+  "certificates.text": "Lege ein über „Über diese Antwort“ gespeichertes Zertifikat ab, seinen Nachweis oder beides, mit jeder Datei, die es nennen kann. Oder lege ein Bild oder einen Film ab, um seine Herkunft zu lesen. Nichts verlässt diese Seite.",
   "certificates.choose": "Dateien auswählen",
-  "certificates.unreadable": "Das ist weder das Zertifikat einer Antwort noch sein Nachweis.",
+  "certificates.unreadable": "Das ist weder das Zertifikat einer Antwort noch sein Nachweis, noch ein Bild oder Film mit Angaben zu seiner Herkunft.",
   "certificates.intact": "Versiegelt und seitdem unverändert",
   "certificates.broken": "Verändert oder nicht mit dem Schlüssel versiegelt, den es nennt",
   "certificates.where.device": "Auf dem Gerät erledigt, das es versiegelt hat",
@@ -27,5 +27,10 @@
   "certificates.dated": "Datiert von {name}",
   "certificates.badDate": "Ein Datum, das nicht hält",
   "certificates.logged": "In einem öffentlichen Protokoll, Eintrag {index}",
-  "certificates.notLogged": "Nicht in dem öffentlichen Protokoll, das es nennt"
+  "certificates.notLogged": "Nicht in dem öffentlichen Protokoll, das es nennt",
+  "certificates.credentials": "{name}: signierte Angaben zur Herkunft, seither unverändert",
+  "certificates.credentialsBroken": "{name}: Angaben zur Herkunft, die nicht halten: seither verändert oder nicht mit dem Schlüssel signiert, den sie nennen",
+  "certificates.ai": "Die Angaben nennen eine KI als Urheber",
+  "certificates.notAi": "Die Angaben nennen keine KI als Urheber",
+  "certificates.unbound": "Ob die Datei seither verändert wurde, wird hier nicht geprüft"
 }

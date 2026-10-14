@@ -10,6 +10,7 @@ import { foldTurns, envelope, userRecord, userRecords, metaRecord } from '../app
 import { brainsOf, madeOf, factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, check, proof, compact, disclose, disclosuresOf, disclosed, witness, record } from '../app/caps/receipt/certificate.js'
 import { timestampRequest, tokenOf, readToken } from '../app/caps/receipt/der.js'
 import { reply, logged, logKey } from './fixtures/tsa.js'
+import { BRAND } from '../app/brand.js'
 
 const T0 = Date.parse('2026-10-10T09:00:00.000Z')
 const at = (/** @type {number} */ ms) => new Date(T0 + ms).toISOString()
@@ -178,7 +179,7 @@ test('a certificate is a W3C credential sealed as a JWS, which standard tools ch
   const { crv, kty, x, y } = x509.publicKey.export({ format: 'jwk' })
   const print = createHash('sha256').update(JSON.stringify({ crv, kty, x, y })).digest('base64url')
   assert.equal(credential.issuer, ISSUER + print)
-  assert.equal(x509.subject, `CN=${print}`)
+  assert.equal(x509.subject, `O=${BRAND.name}\nCN=${print}`)
   const checked = await check({ certificate: sealed })
   assert.deepEqual([checked.intact, checked.fingerprint, checked.selfIssued], [true, print, true])
   assert.equal(checked.says.credentialSubject.where, 'device')

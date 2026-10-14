@@ -1,8 +1,8 @@
 {
   "certificates.title": "Verificar um certificado",
-  "certificates.text": "Larga um certificado guardado a partir de Sobre esta resposta, a sua prova, ou ambos, com qualquer ficheiro que possa nomear. Nada sai desta página.",
+  "certificates.text": "Larga um certificado guardado a partir de Sobre esta resposta, a sua prova, ou ambos, com qualquer ficheiro que possa nomear. Ou larga uma imagem ou um vídeo para ler a sua origem. Nada sai desta página.",
   "certificates.choose": "Escolher ficheiros",
-  "certificates.unreadable": "Isto não é o certificado de uma resposta nem a sua prova.",
+  "certificates.unreadable": "Isto não é o certificado de uma resposta, nem a sua prova, nem uma imagem ou um vídeo que diga a sua origem.",
   "certificates.intact": "Selado, e sem alterações desde então",
   "certificates.broken": "Alterado, ou não selado pela chave que nomeia",
   "certificates.where.device": "Feito no dispositivo que o selou",
@@ -27,5 +27,10 @@
   "certificates.dated": "Datado por {name}",
   "certificates.badDate": "Uma data que não se confirma",
   "certificates.logged": "Num registo público, entrada {index}",
-  "certificates.notLogged": "Não está no registo público que nomeia"
+  "certificates.notLogged": "Não está no registo público que nomeia",
+  "certificates.credentials": "{name} traz um registo assinado da sua origem, inalterado desde então",
+  "certificates.credentialsBroken": "{name} traz um registo da sua origem que não se sustenta: alterado desde então, ou não assinado pela chave que nomeia",
+  "certificates.ai": "Diz que é obra de uma IA",
+  "certificates.notAi": "Não diz que seja obra de uma IA",
+  "certificates.unbound": "Aqui não se verifica se o ficheiro mudou desde então"
 }

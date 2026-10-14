@@ -1,8 +1,8 @@
 {
   "certificates.title": "証明書を確かめる",
-  "certificates.text": "「この回答について」から保存した証明書、その証拠、または両方を、名前が挙がっているかもしれないファイルと一緒にここへドロップしてください。このページからは何も送られません。",
+  "certificates.text": "「この回答について」から保存した証明書、その証拠、または両方を、名前が挙がっているかもしれないファイルと一緒にここへドロップしてください。画像や動画をドロップすると、どのように作られたかを読めます。このページからは何も送られません。",
   "certificates.choose": "ファイルを選ぶ",
-  "certificates.unreadable": "これは回答の証明書でも、その証拠でもありません。",
+  "certificates.unreadable": "これは回答の証明書でも、その証拠でも、作られた経緯を示す画像や動画でもありません。",
   "certificates.intact": "封印済みで、それ以降変更なし",
   "certificates.broken": "変更されているか、記された鍵で封印されていません",
   "certificates.where.device": "封印した端末で完結",
@@ -27,5 +27,10 @@
   "certificates.dated": "{name} が日時を証明",
   "certificates.badDate": "成り立たない日時",
   "certificates.logged": "公開ログのエントリ {index}",
-  "certificates.notLogged": "記された公開ログにありません"
+  "certificates.notLogged": "記された公開ログにありません",
+  "certificates.credentials": "{name} には作られた経緯の署名付き記録があり、その後変更されていません",
+  "certificates.credentialsBroken": "{name} の作られた経緯の記録は成り立ちません。その後変更されたか、記された鍵で署名されていません",
+  "certificates.ai": "AI が作ったと記されています",
+  "certificates.notAi": "AI が作ったとは記されていません",
+  "certificates.unbound": "その後ファイルが変更されたかどうかは、ここでは確認していません"
 }

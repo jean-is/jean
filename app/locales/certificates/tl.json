@@ -1,8 +1,8 @@
 {
   "certificates.title": "Suriin ang isang sertipiko",
-  "certificates.text": "Ilagay dito ang sertipikong na-save mula sa Tungkol sa sagot na ito, ang patunay nito, o pareho, kasama ang anumang file na maaari nitong pangalanan. Walang lumalabas sa page na ito.",
+  "certificates.text": "Ilagay dito ang sertipikong na-save mula sa Tungkol sa sagot na ito, ang patunay nito, o pareho, kasama ang anumang file na maaari nitong pangalanan. O maglagay ng larawan o video para mabasa kung paano ito ginawa. Walang lumalabas sa page na ito.",
   "certificates.choose": "Pumili ng mga file",
-  "certificates.unreadable": "Hindi ito sertipiko ng isang sagot, o ang patunay nito.",
+  "certificates.unreadable": "Hindi ito sertipiko ng isang sagot, hindi ang patunay nito, at hindi rin larawan o video na nagsasabi kung paano ito ginawa.",
   "certificates.intact": "Selyado, at hindi nagbago mula noon",
   "certificates.broken": "Binago, o hindi sineselyuhan ng susing pinangangalanan nito",
   "certificates.where.device": "Ginawa sa device na nag-selyo nito",
@@ -27,5 +27,10 @@
   "certificates.dated": "Nilagyan ng petsa ng {name}",
   "certificates.badDate": "Isang petsang hindi tumatayo",
   "certificates.logged": "Nasa isang pampublikong log, entry {index}",
-  "certificates.notLogged": "Wala sa pampublikong log na pinangangalanan nito"
+  "certificates.notLogged": "Wala sa pampublikong log na pinangangalanan nito",
+  "certificates.credentials": "May dalang pinirmahang tala ang {name} kung paano ito ginawa, hindi nagbago mula noon",
+  "certificates.credentialsBroken": "Hindi tumatayo ang tala ng {name} kung paano ito ginawa: nagbago mula noon, o hindi pinirmahan ng susing pinangangalanan nito",
+  "certificates.ai": "Sinasabi ng tala na AI ang gumawa nito",
+  "certificates.notAi": "Hindi sinasabi ng tala na AI ang gumawa nito",
+  "certificates.unbound": "Hindi sinusuri dito kung nagbago ang file mula noon"
 }

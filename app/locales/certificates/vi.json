@@ -1,8 +1,8 @@
 {
   "certificates.title": "Kiểm tra một chứng nhận",
-  "certificates.text": "Thả vào đây một chứng nhận đã lưu từ Về câu trả lời này, bằng chứng của nó, hoặc cả hai, kèm bất kỳ tệp nào nó có thể nêu tên. Không gì rời khỏi trang này.",
+  "certificates.text": "Thả vào đây một chứng nhận đã lưu từ Về câu trả lời này, bằng chứng của nó, hoặc cả hai, kèm bất kỳ tệp nào nó có thể nêu tên. Hoặc thả một hình ảnh hay video để đọc nó được tạo ra thế nào. Không gì rời khỏi trang này.",
   "certificates.choose": "Chọn tệp",
-  "certificates.unreadable": "Đây không phải chứng nhận của một câu trả lời, cũng không phải bằng chứng của nó.",
+  "certificates.unreadable": "Đây không phải chứng nhận của một câu trả lời, không phải bằng chứng của nó, cũng không phải hình ảnh hay video cho biết nó được tạo ra thế nào.",
   "certificates.intact": "Đã đóng dấu, và không đổi từ đó",
   "certificates.broken": "Đã bị thay đổi, hoặc không được đóng dấu bằng khóa mà nó nêu",
   "certificates.where.device": "Thực hiện trên thiết bị đã đóng dấu nó",
@@ -27,5 +27,10 @@
   "certificates.dated": "Ghi ngày bởi {name}",
   "certificates.badDate": "Một ngày không đứng vững",
   "certificates.logged": "Trong một sổ công khai, mục {index}",
-  "certificates.notLogged": "Không có trong sổ công khai mà nó nêu"
+  "certificates.notLogged": "Không có trong sổ công khai mà nó nêu",
+  "certificates.credentials": "{name} mang một bản ghi có chữ ký về cách nó được tạo ra, không thay đổi từ đó",
+  "certificates.credentialsBroken": "Bản ghi về cách {name} được tạo ra không đứng vững: đã thay đổi từ đó, hoặc không được ký bằng khóa mà nó nêu",
+  "certificates.ai": "Bản ghi nói AI đã tạo ra nó",
+  "certificates.notAi": "Bản ghi không nói AI đã tạo ra nó",
+  "certificates.unbound": "Ở đây không kiểm tra tệp có thay đổi từ đó hay không"
 }

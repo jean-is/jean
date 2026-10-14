@@ -1,8 +1,8 @@
 {
   "certificates.title": "Ṣàyẹ̀wò ìwé ẹ̀rí",
-  "certificates.text": "Ju ìwé ẹ̀rí tí a fi pamọ́ láti Nípa ìdáhùn yìí sí ibí, àrídájú rẹ̀, tàbí méjèèjì, pẹ̀lú fáìlì èyíkéyìí tí ó lè dárúkọ. Kò sí ohun tí ó kúrò ní ojú-ìwé yìí.",
+  "certificates.text": "Ju ìwé ẹ̀rí tí a fi pamọ́ láti Nípa ìdáhùn yìí sí ibí, àrídájú rẹ̀, tàbí méjèèjì, pẹ̀lú fáìlì èyíkéyìí tí ó lè dárúkọ. Tàbí ju àwòrán tàbí fídíò sí ibí láti ka bí a ṣe ṣe é. Kò sí ohun tí ó kúrò ní ojú-ìwé yìí.",
   "certificates.choose": "Yan àwọn fáìlì",
-  "certificates.unreadable": "Èyí kì í ṣe ìwé ẹ̀rí ìdáhùn kan, bẹ́ẹ̀ ni kì í ṣe àrídájú rẹ̀.",
+  "certificates.unreadable": "Èyí kì í ṣe ìwé ẹ̀rí ìdáhùn kan, kì í ṣe àrídájú rẹ̀, bẹ́ẹ̀ ni kì í ṣe àwòrán tàbí fídíò tí ó sọ bí a ṣe ṣe é.",
   "certificates.intact": "A ti fi èdìdì dì í, kò sì yí padà láti ìgbà náà",
   "certificates.broken": "A ti yí i padà, tàbí kọ́kọ́rọ́ tí ó dárúkọ kọ́ ló fi èdìdì dì í",
   "certificates.where.device": "A ṣe é lórí ẹ̀rọ tí ó fi èdìdì dì í",
@@ -27,5 +27,10 @@
   "certificates.dated": "{name} ló fi ọjọ́ sí i",
   "certificates.badDate": "Ọjọ́ tí kò dúró",
   "certificates.logged": "Nínú ìwé àkọsílẹ̀ gbogbogbò, àkọsílẹ̀ {index}",
-  "certificates.notLogged": "Kò sí nínú ìwé àkọsílẹ̀ gbogbogbò tí ó dárúkọ"
+  "certificates.notLogged": "Kò sí nínú ìwé àkọsílẹ̀ gbogbogbò tí ó dárúkọ",
+  "certificates.credentials": "{name} ní àkọsílẹ̀ tí a fọwọ́ sí nípa bí a ṣe ṣe é, kò yí padà láti ìgbà náà",
+  "certificates.credentialsBroken": "Àkọsílẹ̀ bí a ṣe ṣe {name} kò dúró: ó ti yí padà láti ìgbà náà, tàbí kọ́kọ́rọ́ tí ó dárúkọ kọ́ ló fọwọ́ sí i",
+  "certificates.ai": "Àkọsílẹ̀ náà sọ pé AI ló ṣe é",
+  "certificates.notAi": "Àkọsílẹ̀ náà kò sọ pé AI ló ṣe é",
+  "certificates.unbound": "A kò ṣàyẹ̀wò níbí bóyá fáìlì náà ti yí padà láti ìgbà náà"
 }

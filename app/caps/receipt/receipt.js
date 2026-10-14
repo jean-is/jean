@@ -19,7 +19,9 @@ import { styleSheet } from '../../ui/sheet.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
 import { t, tParts, locale, formatDuration, useStrings } from '../../core/i18n.js'
-import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record } from './certificate.js'
+import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record, tokenFor } from './certificate.js'
+import { credentialed as signed } from './c2pa.js'
+import { BRAND } from '../../brand.js'
 
 /** @import { Turn } from '../../core/events.js' */
 /** @import { Envelope, ProviderId } from '../../core/types.js' */
@@ -205,15 +207,18 @@ async function reach(address, init) {
   return response
 }
 
+/** What sends a witness its RFC 3161 request. @param {string} address */
+const sender = (address) => async (/** @type {Uint8Array} */ body) => new Uint8Array(await (await reach(address, { method: 'POST', headers: { 'content-type': 'application/timestamp-query' }, body: /** @type {BodyInit} */ (body) })).arrayBuffer())
+/** A witness that couldn't be reached, said. @param {string} address @param {unknown} error */
+const unwitnessed = (address, error) => (console.warn(address, error), notify(t('receipt.unwitnessed', { host: hostIn(address) })))
+
 /** Has the witnesses date a sealed certificate and the log record it, as the user chose; one that fails is said and left out. @param {Sealed} sealed */
 async function vouched(sealed) {
   const { date, log } = app.settings.value.certificates ?? {}
   const found = await witnesses()
   /** @param {string} address @param {(sealed: Sealed) => Promise<Sealed>} vouch */
-  const by = (address, vouch) => vouch(sealed).catch((error) => (console.warn(address, error), notify(t('receipt.unwitnessed', { host: hostIn(address) })), sealed))
-  for (const address of date ? found.timestamps : []) {
-    sealed = await by(address, (one) => witness(one, async (body) => new Uint8Array(await (await reach(address, { method: 'POST', headers: { 'content-type': 'application/timestamp-query' }, body: /** @type {BodyInit} */ (body) })).arrayBuffer())))
-  }
+  const by = (address, vouch) => vouch(sealed).catch((error) => (unwitnessed(address, error), sealed))
+  for (const address of date ? found.timestamps : []) sealed = await by(address, (one) => witness(one, sender(address)))
   if (log && found.log) sealed = await by(found.log, (one) => record(one, async (entry) => (await reach(`${found.log}/api/v1/log/entries`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(entry) })).json()))
   return sealed
 }
@@ -223,6 +228,17 @@ const sealOf = async () => (await deviceKey('seal-x509', () => makeSeal())) ?? m
 
 /** The seal's fingerprint: its key's RFC 7638 thumbprint, which its certificates' issuer names, as Settings › Approvals shows it. */
 export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKey)
+
+/**
+ * A picture made here with its Content Credentials (D324): signed by the seal, and dated by the first
+ * witness when the user chose to have certificates dated, one that fails said and the picture left undated.
+ * @param {Uint8Array} png @param {string} maker @param {string} [revision]
+ */
+export async function credentialed(png, maker, revision) {
+  const [address] = app.settings.value.certificates?.date ? (await witnesses()).timestamps : []
+  const date = address ? (/** @type {Uint8Array} */ imprint) => tokenFor(imprint, sender(address)).catch((error) => { unwitnessed(address, error); throw error }) : undefined
+  return signed(png, { maker, revision, generator: { name: BRAND.name, version: await versionOf() }, seal: await sealOf(), date })
+}
 
 /** @type {Promise<string> | undefined} */
 let version

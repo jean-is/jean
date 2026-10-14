@@ -1,8 +1,8 @@
 {
   "certificates.title": "Bir sertifikayı doğrula",
-  "certificates.text": "Bu yanıt hakkında üzerinden kaydedilmiş bir sertifikayı, kanıtını ya da ikisini, adını verebileceği dosyalarla birlikte bırak. Hiçbir şey bu sayfadan çıkmaz.",
+  "certificates.text": "Bu yanıt hakkında üzerinden kaydedilmiş bir sertifikayı, kanıtını ya da ikisini, adını verebileceği dosyalarla birlikte bırak. Ya da nasıl yapıldığını okumak için bir resim ya da video bırak. Hiçbir şey bu sayfadan çıkmaz.",
   "certificates.choose": "Dosya seç",
-  "certificates.unreadable": "Bu, bir yanıtın sertifikası ya da kanıtı değil.",
+  "certificates.unreadable": "Bu, bir yanıtın sertifikası, kanıtı ya da nasıl yapıldığını söyleyen bir resim veya video değil.",
   "certificates.intact": "Mühürlü ve o zamandan beri değişmemiş",
   "certificates.broken": "Değiştirilmiş ya da adını verdiği anahtarla mühürlenmemiş",
   "certificates.where.device": "Onu mühürleyen cihazda yapıldı",
@@ -27,5 +27,10 @@
   "certificates.dated": "{name} tarafından tarihlendi",
   "certificates.badDate": "Geçerli olmayan bir tarih",
   "certificates.logged": "Herkese açık bir kayıtta, girdi {index}",
-  "certificates.notLogged": "Adını verdiği herkese açık kayıtta yok"
+  "certificates.notLogged": "Adını verdiği herkese açık kayıtta yok",
+  "certificates.credentials": "{name}, nasıl yapıldığına dair imzalı bir kayıt taşıyor; o zamandan beri değişmemiş",
+  "certificates.credentialsBroken": "{name}, nasıl yapıldığına dair geçerli olmayan bir kayıt taşıyor: o zamandan beri değişmiş ya da adını verdiği anahtarla imzalanmamış",
+  "certificates.ai": "Kayda göre yapay zekâ yapmış",
+  "certificates.notAi": "Kayıt yapay zekânın yaptığını söylemiyor",
+  "certificates.unbound": "Dosyanın o zamandan beri değişip değişmediği burada denetlenmez"
 }

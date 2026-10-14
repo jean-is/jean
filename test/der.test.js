@@ -4,6 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { X509Certificate } from 'node:crypto'
 import { int, oid, read, children, selfIssued, readCertificate, derSignature } from '../app/caps/receipt/der.js'
+import { BRAND } from '../app/brand.js'
 
 const hex = (/** @type {Uint8Array} */ bytes) => Buffer.from(bytes).toString('hex')
 
@@ -17,15 +18,17 @@ test('integers are as short as they can be and never negative; object identifier
   assert.deepEqual(children(read(signature)).map(({ start, end }) => end - start), [33, 31])
 })
 
-test('the seal’s certificate is one Node reads, issued by its own key for ten years, never an authority', async () => {
+test('the seal’s certificate is one Node reads, issued by its own key for ten years, for documents, never an authority', async () => {
   const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
   const now = new Date('2026-10-11T08:00:00Z')
   const der = await selfIssued(keys, 'thumbprint', now)
   const x509 = new X509Certificate(Buffer.from(der))
-  assert.equal(x509.subject, 'CN=thumbprint')
-  assert.equal(x509.issuer, 'CN=thumbprint')
+  // The software as its organisation, which C2PA's validators ask of a signer's (D324).
+  assert.equal(x509.subject, `O=${BRAND.name}\nCN=thumbprint`)
+  assert.equal(x509.issuer, `O=${BRAND.name}\nCN=thumbprint`)
   assert.equal(x509.verify(x509.publicKey), true)
   assert.equal(x509.ca, false)
+  assert.deepEqual(x509.keyUsage, ['1.3.6.1.5.5.7.3.36'])
   assert.equal(new Date(x509.validTo).toISOString(), '2036-10-11T08:00:00.000Z')
   const { spki, from, until, subject, selfIssued: own } = readCertificate(der)
   assert.deepEqual(Buffer.from(spki), x509.publicKey.export({ format: 'der', type: 'spki' }))

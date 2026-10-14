@@ -1,8 +1,8 @@
 {
   "certificates.title": "Semak sijil",
-  "certificates.text": "Letakkan sijil yang disimpan daripada Tentang jawapan ini, buktinya, atau kedua-duanya, bersama mana-mana fail yang mungkin dinamakannya. Tiada apa-apa yang keluar dari halaman ini.",
+  "certificates.text": "Letakkan sijil yang disimpan daripada Tentang jawapan ini, buktinya, atau kedua-duanya, bersama mana-mana fail yang mungkin dinamakannya. Atau letakkan gambar atau video untuk membaca cara ia dibuat. Tiada apa-apa yang keluar dari halaman ini.",
   "certificates.choose": "Pilih fail",
-  "certificates.unreadable": "Ini bukan sijil sesuatu jawapan, dan bukan juga buktinya.",
+  "certificates.unreadable": "Ini bukan sijil sesuatu jawapan, bukan buktinya, dan bukan juga gambar atau video yang menyatakan cara ia dibuat.",
   "certificates.intact": "Dimeterai, dan tidak berubah sejak itu",
   "certificates.broken": "Diubah, atau tidak dimeterai dengan kunci yang dinamakannya",
   "certificates.where.device": "Dibuat pada peranti yang memeterainya",
@@ -27,5 +27,10 @@
   "certificates.dated": "Ditarikhkan oleh {name}",
   "certificates.badDate": "Tarikh yang tidak sah",
   "certificates.logged": "Dalam log awam, entri {index}",
-  "certificates.notLogged": "Tiada dalam log awam yang dinamakannya"
+  "certificates.notLogged": "Tiada dalam log awam yang dinamakannya",
+  "certificates.credentials": "{name} membawa rekod bertandatangan tentang cara ia dibuat, tidak berubah sejak itu",
+  "certificates.credentialsBroken": "{name} membawa rekod cara ia dibuat yang tidak sah: berubah sejak itu, atau tidak ditandatangani dengan kunci yang dinamakannya",
+  "certificates.ai": "Rekodnya menyatakan AI yang membuatnya",
+  "certificates.notAi": "Rekodnya tidak menyatakan AI yang membuatnya",
+  "certificates.unbound": "Sama ada fail berubah sejak itu tidak diperiksa di sini"
 }

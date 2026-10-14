@@ -1,8 +1,8 @@
 {
   "certificates.title": "Een certificaat controleren",
-  "certificates.text": "Sleep een certificaat dat je via Over dit antwoord hebt opgeslagen hierheen, het bewijs ervan, of allebei, met elk bestand dat het kan noemen. Niets verlaat deze pagina.",
+  "certificates.text": "Sleep een certificaat dat je via Over dit antwoord hebt opgeslagen hierheen, het bewijs ervan, of allebei, met elk bestand dat het kan noemen. Of sleep een afbeelding of een film hierheen om te lezen hoe die is gemaakt. Niets verlaat deze pagina.",
   "certificates.choose": "Bestanden kiezen",
-  "certificates.unreadable": "Dit is geen certificaat van een antwoord en ook niet het bewijs ervan.",
+  "certificates.unreadable": "Dit is geen certificaat van een antwoord, niet het bewijs ervan, en geen afbeelding of film die zegt hoe die is gemaakt.",
   "certificates.intact": "Verzegeld, en sindsdien ongewijzigd",
   "certificates.broken": "Gewijzigd, of niet verzegeld met de sleutel die het noemt",
   "certificates.where.device": "Gedaan op het apparaat dat het verzegelde",
@@ -27,5 +27,10 @@
   "certificates.dated": "Gedateerd door {name}",
   "certificates.badDate": "Een datum die niet klopt",
   "certificates.logged": "In een openbaar register, vermelding {index}",
-  "certificates.notLogged": "Niet in het openbare register dat het noemt"
+  "certificates.notLogged": "Niet in het openbare register dat het noemt",
+  "certificates.credentials": "{name} draagt een ondertekend verslag van hoe het is gemaakt, sindsdien ongewijzigd",
+  "certificates.credentialsBroken": "{name} draagt een verslag van hoe het is gemaakt dat niet klopt: sindsdien gewijzigd, of niet ondertekend met de sleutel die het noemt",
+  "certificates.ai": "Het zegt dat een AI het heeft gemaakt",
+  "certificates.notAi": "Het zegt niet dat een AI het heeft gemaakt",
+  "certificates.unbound": "Of het bestand sindsdien is gewijzigd, wordt hier niet gecontroleerd"
 }

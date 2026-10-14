@@ -1,6 +1,7 @@
 // Checking certificates (D274): a certificate of an answer, or its proof, shared in a conversation
 // brings this capability, whose check_certificate reads them with the files to match and shows what
 // it found in the answer (`_meta.checked`), as the check page does: Jean's words never decide it.
+// A picture or a film that carries Content Credentials brings it too, and is read the same way (D324).
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, currentFiles } from '../../ui/state.js'
@@ -8,9 +9,10 @@ import { join } from '../../core/fs.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { checkGiven, card } from './card.js'
+import { html } from 'lit-html'
+import { checkGiven, card, credentialsGiven, credentialsCard } from './card.js'
 
-/** @import { Checked } from './card.js' */
+/** @import { Checked, Credentials } from './card.js' */
 
 await Promise.all([useStrings('certificates'), styleSheet(new URL('../receipt/receipt.css', import.meta.url))])
 
@@ -29,6 +31,9 @@ function told(checked) {
   ].join('\n')
 }
 
+/** What the brain is told of a picture's or a film's Content Credentials (D324). @param {Credentials} one */
+const toldOf = (one) => `${one.name}: its Content Credentials ${one.intact ? 'hold' : 'don\'t hold: it changed since they were signed, or they weren\'t signed by the key they name'}; signed by ${one.own ? 'this device' : one.selfIssued ? 'a device\'s own key' : `${one.subject['2.5.4.10'] ?? one.subject['2.5.4.3']}, certified by ${one.issuer['2.5.4.3'] ?? 'an authority'}`}${one.at ? `, dated ${one.at}` : ''}; they ${one.generated ? `say AI made it${one.maker ? ` (${one.maker})` : ''}` : 'don\'t say AI made it'}${one.generator ? `, with ${one.generator}` : ''}.`
+
 /** The public log's key, from the address settings or policy name (D276), to check its promise. */
 async function logKey() {
   const pem = await (await fetch(`${serviceURL('transparencyLog', app.settings.value, app.policy)}/api/v1/log/publicKey`)).text()
@@ -39,8 +44,8 @@ async function logKey() {
 const checkTool = {
   spec: {
     name: 'check_certificate',
-    description: 'Check a certificate of an answer, or its proof, that the user shared: whether its seal holds, who sealed it and when, what it says, and with its proof the words and which of the other files given it names. The user sees the result in your answer.',
-    parameters: { type: 'object', properties: { files: { type: 'array', items: { type: 'string' }, description: 'Names of shared files: the certificate, its proof, files to match' } }, required: ['files'] },
+    description: 'Check a certificate of an answer, or its proof, that the user shared: whether its seal holds, who sealed it and when, what it says, and with its proof the words and which of the other files given it names. Also reads a picture\'s or film\'s Content Credentials: whether they hold, who signed them, and whether they say AI made it. The user sees the result in your answer.',
+    parameters: { type: 'object', properties: { files: { type: 'array', items: { type: 'string' }, description: 'Names of shared files: the certificate, its proof, files to match, pictures and films' } }, required: ['files'] },
   },
   kind: 'read',
   title: (args) => t('certificates.checking', { name: [args?.files ?? []].flat().join(', ') }),
@@ -51,18 +56,21 @@ const checkTool = {
       if (!link) throw new Error(`No file named "${name}". Files: ${shared.map((one) => one.name).join(', ') || 'none'}.`)
       return { name: link.name, bytes: (await app.fs.readBytes(join(app.projectDir, link.uri))) ?? new Uint8Array() }
     }))
-    const checked = await checkGiven(given, { logKey: await logKey().catch(() => null) })
-    if (!checked) return 'None of these files is a certificate of an answer or its proof.'
-    const own = checked.fingerprint === await (await import('../receipt/receipt.js')).fingerprint()
-    ctx.meta.checked = { ...checked, own }
-    return told({ ...checked, own })
+    const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null) }), credentialsGiven(given)])
+    if (!checked && !credentials.length) return 'None of these files is a certificate of an answer, its proof, or a picture or film with Content Credentials.'
+    // Both in `_meta.checked`, which places the card in the answer: the certificate's reading, and the credentials.
+    const fingerprint = await (await import('../receipt/receipt.js')).fingerprint()
+    const read = credentials.map((one) => ({ ...one, own: one.selfIssued && one.subject['2.5.4.3'] === fingerprint }))
+    ctx.meta.checked = { ...(checked && { ...checked, own: checked.fingerprint === fingerprint }), credentials: read }
+    return [checked && told(ctx.meta.checked), ...read.map(toldOf)].filter(Boolean).join('\n')
   },
 }
 
 /** In an answer: what check_certificate found. */
 class Certificate extends Element {
   render() {
-    return card(/** @type {{ call?: { _meta?: { checked?: Checked } } }} */ (/** @type {unknown} */ (this)).call?._meta?.checked)
+    const checked = /** @type {{ call?: { _meta?: { checked?: Partial<Checked> & { credentials?: Credentials[] } } } }} */ (/** @type {unknown} */ (this)).call?._meta?.checked
+    return html`${checked?.fingerprint || !checked?.credentials?.length ? card(checked?.fingerprint ? /** @type {Checked} */ (checked) : null) : ''}${(checked?.credentials ?? []).map(credentialsCard)}`
   }
 }
 
@@ -70,5 +78,5 @@ define('app-certificate', Certificate)
 register({
   id: 'certificates',
   tools: [checkTool],
-  lines: [{ name: 'check_certificate', line: 'check a certificate of an answer, or its proof, the user shared' }],
+  lines: [{ name: 'check_certificate', line: 'check a certificate of an answer, its proof, or a picture\'s or film\'s Content Credentials, the user shared' }],
 })

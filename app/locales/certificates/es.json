@@ -1,8 +1,8 @@
 {
   "certificates.title": "Comprobar un certificado",
-  "certificates.text": "Suelta un certificado guardado desde Sobre esta respuesta, su prueba o ambos, con cualquier archivo que pueda nombrar. Nada sale de esta página.",
+  "certificates.text": "Suelta un certificado guardado desde Sobre esta respuesta, su prueba o ambos, con cualquier archivo que pueda nombrar. O suelta una imagen o un vídeo para leer cómo se hizo. Nada sale de esta página.",
   "certificates.choose": "Elegir archivos",
-  "certificates.unreadable": "Esto no es el certificado de una respuesta ni su prueba.",
+  "certificates.unreadable": "Esto no es el certificado de una respuesta, ni su prueba, ni una imagen o un vídeo que diga cómo se hizo.",
   "certificates.intact": "Sellado, y sin cambios desde entonces",
   "certificates.broken": "Modificado, o no sellado por la clave que nombra",
   "certificates.where.device": "Hecho en el dispositivo que lo selló",
@@ -27,5 +27,10 @@
   "certificates.dated": "Fechado por {name}",
   "certificates.badDate": "Una fecha que no se sostiene",
   "certificates.logged": "En un registro público, entrada {index}",
-  "certificates.notLogged": "No está en el registro público que nombra"
+  "certificates.notLogged": "No está en el registro público que nombra",
+  "certificates.credentials": "{name} lleva un registro firmado de cómo se hizo, sin cambios desde entonces",
+  "certificates.credentialsBroken": "{name} lleva un registro de cómo se hizo que no se sostiene: cambió desde entonces, o no lo firmó la clave que nombra",
+  "certificates.ai": "Dice que es obra de una IA",
+  "certificates.notAi": "No dice que sea obra de una IA",
+  "certificates.unbound": "Aquí no se comprueba si el archivo cambió desde entonces"
 }

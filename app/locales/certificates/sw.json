@@ -1,8 +1,8 @@
 {
   "certificates.title": "Kagua cheti",
-  "certificates.text": "Dondosha hapa cheti kilichohifadhiwa kutoka Kuhusu jibu hili, uthibitisho wake, au vyote viwili, pamoja na faili yoyote kinayoweza kutaja. Hakuna kinachotoka kwenye ukurasa huu.",
+  "certificates.text": "Dondosha hapa cheti kilichohifadhiwa kutoka Kuhusu jibu hili, uthibitisho wake, au vyote viwili, pamoja na faili yoyote kinayoweza kutaja. Au dondosha picha au video ili kusoma jinsi ilivyotengenezwa. Hakuna kinachotoka kwenye ukurasa huu.",
   "certificates.choose": "Chagua faili",
-  "certificates.unreadable": "Hiki si cheti cha jibu, wala si uthibitisho wake.",
+  "certificates.unreadable": "Hiki si cheti cha jibu, wala uthibitisho wake, wala picha au video inayoeleza jinsi ilivyotengenezwa.",
   "certificates.intact": "Kimegongwa muhuri, na hakijabadilika tangu hapo",
   "certificates.broken": "Kimebadilishwa, au hakikugongwa muhuri kwa ufunguo kinaoutaja",
   "certificates.where.device": "Kimefanywa kwenye kifaa kilichokigonga muhuri",
@@ -27,5 +27,10 @@
   "certificates.dated": "Kimewekewa tarehe na {name}",
   "certificates.badDate": "Tarehe isiyosimama",
   "certificates.logged": "Kwenye daftari la umma, ingizo {index}",
-  "certificates.notLogged": "Hakimo kwenye daftari la umma kinalolitaja"
+  "certificates.notLogged": "Hakimo kwenye daftari la umma kinalolitaja",
+  "certificates.credentials": "{name} ina kumbukumbu iliyotiwa sahihi ya jinsi ilivyotengenezwa, haijabadilika tangu hapo",
+  "certificates.credentialsBroken": "Kumbukumbu ya jinsi {name} ilivyotengenezwa haisimami: imebadilika tangu hapo, au haikutiwa sahihi kwa ufunguo inaoutaja",
+  "certificates.ai": "Kumbukumbu inasema akili bandia iliitengeneza",
+  "certificates.notAi": "Kumbukumbu haisemi akili bandia iliitengeneza",
+  "certificates.unbound": "Kama faili imebadilika tangu hapo haikaguliwi hapa"
 }

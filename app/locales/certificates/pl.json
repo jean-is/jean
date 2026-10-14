@@ -1,8 +1,8 @@
 {
   "certificates.title": "Sprawdź certyfikat",
-  "certificates.text": "Upuść certyfikat zapisany z O tej odpowiedzi, jego dowód lub oba, z każdym plikiem, który może wymieniać. Nic nie opuszcza tej strony.",
+  "certificates.text": "Upuść certyfikat zapisany z O tej odpowiedzi, jego dowód lub oba, z każdym plikiem, który może wymieniać. Albo upuść obraz lub film, by przeczytać, jak powstał. Nic nie opuszcza tej strony.",
   "certificates.choose": "Wybierz pliki",
-  "certificates.unreadable": "To nie jest certyfikat odpowiedzi ani jego dowód.",
+  "certificates.unreadable": "To nie jest certyfikat odpowiedzi, jego dowód ani obraz lub film, który mówi, jak powstał.",
   "certificates.intact": "Zapieczętowany i od tego czasu niezmieniony",
   "certificates.broken": "Zmieniony albo niezapieczętowany kluczem, który wymienia",
   "certificates.where.device": "Wykonano na urządzeniu, które go zapieczętowało",
@@ -27,5 +27,10 @@
   "certificates.dated": "Datowany przez {name}",
   "certificates.badDate": "Data, która się nie zgadza",
   "certificates.logged": "W publicznym rejestrze, wpis {index}",
-  "certificates.notLogged": "Nie ma go w publicznym rejestrze, który wymienia"
+  "certificates.notLogged": "Nie ma go w publicznym rejestrze, który wymienia",
+  "certificates.credentials": "{name}: podpisany zapis pochodzenia, niezmieniony od tamtej pory",
+  "certificates.credentialsBroken": "{name}: zapis pochodzenia, który się nie zgadza: zmieniony od tamtej pory albo niepodpisany kluczem, który wymienia",
+  "certificates.ai": "Według zapisu to dzieło sztucznej inteligencji",
+  "certificates.notAi": "Zapis nie mówi, że to dzieło sztucznej inteligencji",
+  "certificates.unbound": "Nie sprawdza się tu, czy plik zmienił się od tamtej pory"
 }

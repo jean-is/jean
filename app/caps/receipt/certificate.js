@@ -208,17 +208,24 @@ export async function seal(credential, { keys, certificate }, now = new Date()) 
 const imprintOf = (sealed) => sha256(encode(sealed.signature))
 
 /**
- * Has a witness date a sealed certificate (JAdES B-T): an RFC 3161 request for its signature's
- * imprint, sent by `send`, and its token, once it is the one asked for, kept in `etsiU`.
- * @param {Sealed} sealed @param {(request: Uint8Array) => Promise<Uint8Array>} send @returns {Promise<Sealed>}
+ * A witness's RFC 3161 token for an imprint: a request with a nonce, sent by `send`, and the token, once
+ * it holds and is the one asked for. @param {Uint8Array} imprint @param {(request: Uint8Array) => Promise<Uint8Array>} send
  */
-export async function witness(sealed, send) {
-  const imprint = await imprintOf(sealed)
+export async function tokenFor(imprint, send) {
   const nonce = crypto.getRandomValues(new Uint8Array(8))
   nonce[0] = (nonce[0] & 0x7f) | 1
   const token = tokenOf(await send(timestampRequest(imprint, nonce)))
   const read = await readToken(token)
   if (!read.intact || read.imprint.join() !== imprint.join() || read.nonce?.join() !== nonce.join()) throw new Error('witness')
+  return token
+}
+
+/**
+ * Has a witness date a sealed certificate (JAdES B-T): its token for the signature's imprint, kept in `etsiU`.
+ * @param {Sealed} sealed @param {(request: Uint8Array) => Promise<Uint8Array>} send @returns {Promise<Sealed>}
+ */
+export async function witness(sealed, send) {
+  const token = await tokenFor(await imprintOf(sealed), send)
   return { ...sealed, header: { etsiU: [...(sealed.header?.etsiU ?? []), { sigTst: { tstTokens: [{ val: base64(token) }] } }] } }
 }
 

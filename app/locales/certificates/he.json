@@ -1,8 +1,8 @@
 {
   "certificates.title": "בדיקת תעודה",
-  "certificates.text": "גררו לכאן תעודה שנשמרה מ„על התשובה הזו”, את ההוכחה שלה או את שתיהן, עם כל קובץ שהיא עשויה לציין. שום דבר לא יוצא מהדף הזה.",
+  "certificates.text": "גררו לכאן תעודה שנשמרה מ„על התשובה הזו”, את ההוכחה שלה או את שתיהן, עם כל קובץ שהיא עשויה לציין. אפשר גם לגרור תמונה או סרטון כדי לקרוא איך נוצרו. שום דבר לא יוצא מהדף הזה.",
   "certificates.choose": "בחירת קבצים",
-  "certificates.unreadable": "זו לא תעודה של תשובה וגם לא ההוכחה שלה.",
+  "certificates.unreadable": "זו לא תעודה של תשובה, לא ההוכחה שלה, וגם לא תמונה או סרטון שמספרים איך נוצרו.",
   "certificates.intact": "חתומה, ולא השתנתה מאז",
   "certificates.broken": "השתנתה, או שלא נחתמה במפתח שהיא מציינת",
   "certificates.where.device": "נעשה במכשיר שחתם עליה",
@@ -27,5 +27,10 @@
   "certificates.dated": "תוארך על ידי {name}",
   "certificates.badDate": "תאריך שאינו עומד",
   "certificates.logged": "ביומן ציבורי, רשומה {index}",
-  "certificates.notLogged": "אינה ביומן הציבורי שהיא מציינת"
+  "certificates.notLogged": "אינה ביומן הציבורי שהיא מציינת",
+  "certificates.credentials": "ב־{name} יש רישום חתום של אופן היצירה, ללא שינוי מאז",
+  "certificates.credentialsBroken": "ב־{name} יש רישום של אופן היצירה שאינו תקף: השתנה מאז, או שלא נחתם במפתח שהוא מציין",
+  "certificates.ai": "הרישום מציין יצירה בידי בינה מלאכותית",
+  "certificates.notAi": "הרישום אינו מציין יצירה בידי בינה מלאכותית",
+  "certificates.unbound": "כאן לא נבדק אם הקובץ השתנה מאז"
 }

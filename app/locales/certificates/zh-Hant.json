@@ -1,8 +1,8 @@
 {
   "certificates.title": "核對證書",
-  "certificates.text": "把從「關於這個回答」儲存的證書、它的證明或兩者，連同它可能提到的任何檔案拖到這裡。任何內容都不會離開這個頁面。",
+  "certificates.text": "把從「關於這個回答」儲存的證書、它的證明或兩者，連同它可能提到的任何檔案拖到這裡。也可以拖入圖片或影片，查看它是如何製作的。任何內容都不會離開這個頁面。",
   "certificates.choose": "選擇檔案",
-  "certificates.unreadable": "這既不是回答的證書，也不是它的證明。",
+  "certificates.unreadable": "這既不是回答的證書，也不是它的證明，也不是說明製作經過的圖片或影片。",
   "certificates.intact": "已蓋章，此後未被更改",
   "certificates.broken": "已被更改，或並非由它所寫的金鑰蓋章",
   "certificates.where.device": "在蓋章的裝置上完成",
@@ -27,5 +27,10 @@
   "certificates.dated": "由 {name} 證明時間",
   "certificates.badDate": "不成立的時間",
   "certificates.logged": "在公開日誌中，條目 {index}",
-  "certificates.notLogged": "不在它所寫的公開日誌中"
+  "certificates.notLogged": "不在它所寫的公開日誌中",
+  "certificates.credentials": "{name} 帶有已簽署的製作紀錄，此後未被更改",
+  "certificates.credentialsBroken": "{name} 的製作紀錄不成立：此後已被更改，或並非由它所寫的金鑰簽署",
+  "certificates.ai": "紀錄顯示由 AI 製作",
+  "certificates.notAi": "紀錄未顯示由 AI 製作",
+  "certificates.unbound": "此處不檢查檔案此後是否被更改"
 }

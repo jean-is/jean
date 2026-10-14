@@ -1,8 +1,8 @@
 {
   "certificates.title": "인증서 확인",
-  "certificates.text": "«이 답변에 대해»에서 저장한 인증서, 그 증빙, 또는 둘 다를, 이름이 나올 수 있는 파일과 함께 여기에 놓으세요. 이 페이지에서 아무것도 나가지 않아요.",
+  "certificates.text": "«이 답변에 대해»에서 저장한 인증서, 그 증빙, 또는 둘 다를, 이름이 나올 수 있는 파일과 함께 여기에 놓으세요. 이미지나 동영상을 놓으면 어떻게 만들어졌는지 읽을 수 있어요. 이 페이지에서 아무것도 나가지 않아요.",
   "certificates.choose": "파일 선택",
-  "certificates.unreadable": "답변의 인증서도, 그 증빙도 아니에요.",
+  "certificates.unreadable": "답변의 인증서도, 그 증빙도, 만들어진 과정을 알려 주는 이미지나 동영상도 아니에요.",
   "certificates.intact": "봉인되었고 그 뒤로 바뀌지 않았어요",
   "certificates.broken": "바뀌었거나, 적힌 키로 봉인되지 않았어요",
   "certificates.where.device": "봉인한 기기에서 처리됨",
@@ -27,5 +27,10 @@
   "certificates.dated": "{name}이(가) 날짜를 증명함",
   "certificates.badDate": "맞지 않는 날짜",
   "certificates.logged": "공개 로그의 항목 {index}",
-  "certificates.notLogged": "적힌 공개 로그에 없어요"
+  "certificates.notLogged": "적힌 공개 로그에 없어요",
+  "certificates.credentials": "{name}에는 만들어진 과정에 대한 서명된 기록이 있고, 그 뒤로 바뀌지 않았어요",
+  "certificates.credentialsBroken": "{name}의 만들어진 과정 기록이 맞지 않아요. 그 뒤에 바뀌었거나, 적힌 키로 서명되지 않았어요",
+  "certificates.ai": "AI가 만들었다고 적혀 있어요",
+  "certificates.notAi": "AI가 만들었다고 적혀 있지 않아요",
+  "certificates.unbound": "그 뒤로 파일이 바뀌었는지는 여기서 확인하지 않아요"
 }

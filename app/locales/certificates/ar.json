@@ -1,8 +1,8 @@
 {
   "certificates.title": "التحقق من شهادة",
-  "certificates.text": "أفلِت شهادةً حُفظت من «عن هذه الإجابة»، أو إثباتها، أو كليهما، مع أي ملف قد تذكره. لا شيء يغادر هذه الصفحة.",
+  "certificates.text": "أفلِت شهادةً حُفظت من «عن هذه الإجابة»، أو إثباتها، أو كليهما، مع أي ملف قد تذكره. ويمكن إفلات صورة أو فيديو لقراءة كيف صُنع. لا شيء يغادر هذه الصفحة.",
   "certificates.choose": "اختيار ملفات",
-  "certificates.unreadable": "هذه ليست شهادة إجابة ولا إثباتها.",
+  "certificates.unreadable": "هذه ليست شهادة إجابة ولا إثباتها، ولا صورة أو فيديو يذكر كيف صُنع.",
   "certificates.intact": "مختومة، ولم تتغير منذ ذلك الحين",
   "certificates.broken": "تغيّرت، أو لم تُختم بالمفتاح الذي تذكره",
   "certificates.where.device": "أُنجزت على الجهاز الذي ختمها",
@@ -27,5 +27,10 @@
   "certificates.dated": "أرّخها {name}",
   "certificates.badDate": "تاريخ لا يصمد",
   "certificates.logged": "في سجل عام، القيد {index}",
-  "certificates.notLogged": "ليست في السجل العام الذي تذكره"
+  "certificates.notLogged": "ليست في السجل العام الذي تذكره",
+  "certificates.credentials": "يحمل {name} سجلًا موقّعًا لكيفية صنعه، لم يتغيّر منذ ذلك الحين",
+  "certificates.credentialsBroken": "يحمل {name} سجلًا لكيفية صنعه لا يصمد: تغيّر منذ ذلك الحين، أو لم يُوقَّع بالمفتاح الذي يذكره",
+  "certificates.ai": "يذكر السجل أن الذكاء الاصطناعي صنعه",
+  "certificates.notAi": "لا يذكر السجل أن الذكاء الاصطناعي صنعه",
+  "certificates.unbound": "لا يُتحقَّق هنا مما إذا كان الملف قد تغيّر منذ ذلك الحين"
 }

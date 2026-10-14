@@ -1,11 +1,12 @@
 // DER (X.690) as certificates need it: the seal's own X.509 certificate, made once for its key and
 // carried in each certificate's x5c (D274), read back by check(). Web Crypto only, so it runs where
 // the core does and is tested with node --test.
+import { BRAND } from '../../brand.js'
 
 const encoder = new TextEncoder()
 
 /** @param {...Uint8Array} parts */
-const concat = (...parts) => {
+export const concat = (...parts) => {
   const all = new Uint8Array(parts.reduce((sum, part) => sum + part.length, 0))
   parts.reduce((at, part) => (all.set(part, at), at + part.length), 0)
   return all
@@ -44,8 +45,8 @@ const time = (date) => {
   const text = date.toISOString().replace(/[-:T]|\.\d+/g, '')
   return date.getUTCFullYear() < 2050 ? tlv(0x17, encoder.encode(text.slice(2))) : tlv(0x18, encoder.encode(text))
 }
-/** A name of one common name. @param {string} common */
-const name = (common) => seq(tlv(0x31, seq(oid('2.5.4.3'), tlv(0x0c, encoder.encode(common)))))
+/** A name: the software that made the certificate, as C2PA's validators ask of a signer's organisation, then its common name. @param {string} common */
+const name = (common) => seq(...[['2.5.4.10', BRAND.name], ['2.5.4.3', common]].map(([type, value]) => tlv(0x31, seq(oid(type), tlv(0x0c, encoder.encode(value))))))
 const ECDSA_SHA256 = seq(oid('1.2.840.10045.4.3.2'))
 
 /** ECDSA's signature as Web Crypto gives it (r‖s, 64 bytes), as DER's Ecdsa-Sig-Value. @param {Uint8Array} signature */
@@ -53,7 +54,8 @@ export const derSignature = (signature) => seq(int(signature.subarray(0, 32)), i
 
 /**
  * The seal's certificate (X.509 v3), issued by its own key: named by the key's thumbprint and
- * nothing of the person's, valid ten years from now, for signatures that commit to what they sign.
+ * nothing of the person's, valid ten years from now, for signatures that commit to what they sign,
+ * on documents (RFC 9336), with the key identifiers C2PA's validators ask of a signer's (D324).
  * @param {CryptoKeyPair} keys @param {string} thumbprint @param {Date} [now]
  */
 export async function selfIssued(keys, thumbprint, now = new Date()) {
@@ -65,7 +67,8 @@ export async function selfIssued(keys, thumbprint, now = new Date()) {
   const id = new Uint8Array(await crypto.subtle.digest('SHA-256', spki)).subarray(0, 20)
   const extension = (/** @type {string} */ ext, /** @type {Uint8Array} */ value, critical = false) => seq(oid(ext), ...(critical ? [Uint8Array.of(1, 1, 255)] : []), octets(value))
   const tbs = seq(tlv(0xa0, int(Uint8Array.of(2))), int(serial), ECDSA_SHA256, name(thumbprint), seq(time(now), time(until)), name(thumbprint), spki,
-    tlv(0xa3, seq(extension('2.5.29.19', seq(), true), extension('2.5.29.15', bits(Uint8Array.of(0xc0), 6), true), extension('2.5.29.14', octets(id)))))
+    tlv(0xa3, seq(extension('2.5.29.19', seq(), true), extension('2.5.29.15', bits(Uint8Array.of(0xc0), 6), true), extension('2.5.29.37', seq(oid('1.3.6.1.5.5.7.3.36'))),
+      extension('2.5.29.14', octets(id)), extension('2.5.29.35', seq(tlv(0x80, id))))))
   const signature = new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, keys.privateKey, tbs))
   return seq(tbs, ECDSA_SHA256, bits(derSignature(signature)))
 }
@@ -149,12 +152,12 @@ export function tokenOf(der) {
   return raw(token)
 }
 
-/** A key from its SPKI, for ECDSA or RSA signatures with a hash. @param {Uint8Array} spki @param {string} hash */
-async function keyOf(spki, hash) {
+/** A key from its SPKI, for ECDSA or RSA signatures with a hash. @param {Uint8Array} spki @param {string} hash @param {string} [rsa] */
+export async function keyOf(spki, hash, rsa = 'RSASSA-PKCS1-v1_5') {
   const [algorithm] = children(read(spki))
   const [kind, curve] = children(algorithm)
   const ec = dottedOf(kind) === '1.2.840.10045.2.1'
-  return crypto.subtle.importKey('spki', /** @type {BufferSource} */ (spki), ec ? { name: 'ECDSA', namedCurve: CURVES[dottedOf(curve)] } : { name: 'RSASSA-PKCS1-v1_5', hash }, false, ['verify'])
+  return crypto.subtle.importKey('spki', /** @type {BufferSource} */ (spki), ec ? { name: 'ECDSA', namedCurve: CURVES[dottedOf(curve)] } : { name: rsa, hash }, false, ['verify'])
 }
 
 /** ECDSA's Ecdsa-Sig-Value as Web Crypto takes it, r‖s, each the curve's size. @param {Uint8Array} der @param {number} size */

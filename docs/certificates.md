@@ -3,7 +3,7 @@
 About this answer's certificates: the legal ground they stand on, what Jean has now, and the work left, written so that another agent can pick it up.
 - **Research date:** 2026-10-11. Laws and standards move, so check before relying on anything here.
 - **How it works:** [architecture.md](architecture.md) › About this answer, its bullets *The certificate*, *Checking* and *Witnesses*.
-- **Why:** [decisions.md](decisions.md), D252 · D264 · D274 and D276.
+- **Why:** [decisions.md](decisions.md), D252 · D264 · D274, D276 and D279 · D324.
 
 ## Principles
 
@@ -85,11 +85,16 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - Sigstore's Rekor, its answer kept as a Sigstore bundle;
   - the gateway's `timestamps` and `logs`;
   - Jean checks the log's promise with the log's key.
-- **The AI Act's mark on pictures made here** (D279): each picture made on this device or by a server on this computer carries IPTC's `DigitalSourceType` `trainedAlgorithmicMedia`, with AI System Used and AI System Version Used, as XMP in an `iTXt` chunk (`caps/pictures/mark.js`), written before the file is named by its hash, so the certificate's digest covers the marked file; a provider's picture is left as it comes.
+- **The AI Act's marks on pictures made here** (D279, D324): each picture made on this device or by a server on this computer carries, before the file is named by its hash, so the certificate's digest covers the marked file:
+  - IPTC's `DigitalSourceType` `trainedAlgorithmicMedia`, with AI System Used and AI System Version Used, as XMP in an `iTXt` chunk (`caps/pictures/mark.js`);
+  - Content Credentials (C2PA 2.2) in a `caBX` chunk (`caps/receipt/c2pa.js`): `c2pa.created` with that source type and the maker at its revision, a `c2pa.hash.data` hard binding, the claim signed by the seal and, when the user chose dating, timestamped by the first witness (`sigTst2`). c2patool 0.27.22 validates it all; it calls the signer untrusted, as it does any certificate outside its trust lists.
+
+  A provider's picture or film is left as it comes, byte for byte (`test/c2pa.test.js`).
+- **Reading Content Credentials** (D324): the check page and `check_certificate` read any picture's or film's manifest (PNG, JPEG, WebP, MP4, MOV), check its signature, its assertions and a data hash's binding, and say whether it says AI made it; a shared one brings Certificates. A film's box hashes (`c2pa.hash.bmff`) aren't checked, and the card says so.
 - **Tests:**
   - `test/receipt.test.js` (format, salting, schema with ajv, Node's own crypto as the independent verifier, witnesses);
-  - `test/der.test.js`, `test/gateway.test.js`, `test/certificates.spec.js`;
-  - fixtures: `test/fixtures/tsa.js` (an authority and a log) and `test/fixtures/sigstore.tsr` (a real token).
+  - `test/der.test.js`, `test/c2pa.test.js`, `test/gateway.test.js`, `test/certificates.spec.js`;
+  - fixtures: `test/fixtures/tsa.js` (an authority and a log), `test/fixtures/sigstore.tsr` (a real token), `test/fixtures/c2pa.png` and `c2pa.jpg` (signed by c2patool with its test signer).
 
 ## Work left
 
@@ -144,18 +149,17 @@ Then:
 
 ### 4. AI Act marking (Art. 50(2) and (4)): blocks the public launch
 
-- [ ] **Pictures made on this device or by a server on this computer** (the device makes no films), two layers. The IPTC/XMP metadata is done (D279); left:
-  - **Metadata:** a C2PA manifest with `c2pa.created`, `digitalSourceType` `trainedAlgorithmicMedia`, the model and its revision, and a `c2pa.hash.data` hard binding. It is signed with the device's X.509 certificate and timestamped by the witnesses.
-  - **Watermark:** an imperceptible one, for example Adobe's open-source TrustMark, on ONNX Runtime, with weights pinned by `ui/weights.js`. Choosing it is a dependency decision.
-  - **Order:** mark before the file is named by its hash, so the certificate's digest covers the marked file, as `make()` does for the XMP.
-  - **Code:** JUMBF, CBOR and COSE, or c2pa-rs in WASM, loaded on demand (its own decision).
-- [ ] **Pictures and films from the cloud:** pass the providers' marks through untouched, with a test that the bytes are unchanged.
+- [ ] **Pictures made on this device or by a server on this computer** (the device makes no films), two layers. The metadata is done: XMP (D279) and Content Credentials signed and timestamped (D324). Left:
+  - **Watermark:** Adobe's TrustMark (MIT, code and weights), variant Q, which C2PA's soft-binding list names `com.adobe.trustmark.Q`, on ONNX Runtime, with weights pinned by `ui/weights.js`: its encoder (17.3 MB) for each picture, its decoder (47.4 MB) to detect it. Its ONNX files are only on Adobe's CDN (`cai-watermark.adobe.net`), so the owner publishes them under a Hugging Face repository of theirs, which Jean pins by revision and SHA-256. Recorded in the manifest as a `c2pa.soft-binding` assertion.
+  - **Order:** watermark the pixels first, then the XMP and the manifest, all before the file is named by its hash.
+- [x] **Pictures and films from the cloud:** the providers' marks pass through untouched; `test/c2pa.test.js` checks the bytes are unchanged.
+- [ ] **Pictures people share:** one with a side over 1568 pixels is kept redrawn smaller, for brains (`caps/files/pictures.js`), which drops its metadata; a watermark would survive. Keep the file as given and send brains the smaller copy.
 - [ ] **Files Jean makes** (`caps/made/formats.js`): metadata where the format can carry it.
 - [ ] **Answers:**
   - the certificate is the metadata layer;
   - for cloud brains, rely on providers' marking, documented per provider;
   - for the device's brain, research a statistical watermark in its sampling (above 200 tokens).
-- [ ] **Detection:** the check page reads C2PA manifests and watermarks; interoperable through C2PA by 2 Feb 2027.
+- [ ] **Detection:** the check page and `check_certificate` read C2PA manifests (D324); watermarks are left, with TrustMark's decoder, in Jean (the check page reaches nothing); interoperable through C2PA by 2 Feb 2027.
 - [ ] **No stripping:** Jean never removes marks, and its terms forbid removing them.
 - [ ] **Labels for deployers (Art. 50(4)):** "Label it as made with AI" when a picture, film or document is saved, with the Commission's icon (if its reuse terms allow shipping it) and a line in the user's language.
 
@@ -165,18 +169,20 @@ On [open-questions.md](open-questions.md#answer-certificates).
 
 ## Notes for whoever picks this up
 
-- **Budgets:** since D278, `loc.app` allows 23,000 lines, of which about 22,550 are used, and D275's branch adds about 42 more. Section 3 or 4 will need room: tighten first, then ask the owner, then raise in a commit of its own with its own decision ([AGENTS.md](../AGENTS.md)). The first load, at about 103 of 103.5 KB, has the least room, so keep these phases out of it.
+- **Budgets:** `npm run budgets` says how much room is left; D323 made room for section 4. Section 3 will need more: tighten first, then ask the owner, then raise in a commit of its own with its own decision ([AGENTS.md](../AGENTS.md)). The first load has the least room, so keep these phases out of it: the check card reaches an answer through `_meta.checked`, which `chat.js` already shows.
 - **Decision numbers in use:**
   - D272: the line budget;
   - D273: saying Jean is an AI;
   - D274: certificates and checking;
   - D275: picture safeguards, on its own branch;
-  - D276: witnesses.
+  - D276: witnesses;
+  - D279 · D324: the XMP and Content Credentials on pictures made here.
 
   Find the highest in `docs/decisions.md` and every `.claude/worktrees/*` just before taking one.
 - **Shared checkout:** other sessions keep uncommitted edits in the shared checkout. Commit only your own hunks: rebuild shared files from `HEAD` plus your edits, test that snapshot, and commit it with a temporary index.
 - **Testing without the network:**
-  - the authority and log fixtures (`test/fixtures/tsa.js`);
+  - the authority and log fixtures (`test/fixtures/tsa.js`), whose tokens Jean reads but c2patool doesn't date by: for that, a local OpenSSL authority, with a `timeStamping` key usage, below;
   - Playwright routes for `timestamp.sigstore.dev` and `rekor.sigstore.dev`;
-  - `openssl ts -reply -section <name>` with a local config also makes test tokens.
+  - `openssl ts -reply -section <name>` with a local config also makes test tokens;
+  - c2patool (Content Authenticity's release from GitHub) validates a picture's manifest: `c2patool <file> --detailed`; it signs with its test signer given `-m <manifest.json>`, and `[builder.thumbnail] enabled = false` in `--settings` leaves out the thumbnail. c2pa-rs refuses a signer whose certificate has no organisation, and says only `claimSignature.mismatch`; `RUST_LOG=debug` shows the reason (`CoseX5ChainMissing`).
 - **Check before publishing:** submitting to a public log publishes permanently, so ask the owner first.

@@ -1,8 +1,8 @@
 {
   "certificates.title": "Periksa sertifikat",
-  "certificates.text": "Letakkan sertifikat yang disimpan dari Tentang jawaban ini, buktinya, atau keduanya, beserta file apa pun yang mungkin disebutkannya. Tidak ada yang keluar dari halaman ini.",
+  "certificates.text": "Letakkan sertifikat yang disimpan dari Tentang jawaban ini, buktinya, atau keduanya, beserta file apa pun yang mungkin disebutkannya. Atau letakkan gambar atau video untuk membaca cara pembuatannya. Tidak ada yang keluar dari halaman ini.",
   "certificates.choose": "Pilih file",
-  "certificates.unreadable": "Ini bukan sertifikat sebuah jawaban, juga bukan buktinya.",
+  "certificates.unreadable": "Ini bukan sertifikat sebuah jawaban, bukan buktinya, juga bukan gambar atau video yang menyebutkan cara pembuatannya.",
   "certificates.intact": "Tersegel, dan tidak berubah sejak itu",
   "certificates.broken": "Berubah, atau tidak disegel dengan kunci yang disebutkannya",
   "certificates.where.device": "Dikerjakan di perangkat yang menyegelnya",
@@ -27,5 +27,10 @@
   "certificates.dated": "Diberi tanggal oleh {name}",
   "certificates.badDate": "Tanggal yang tidak sahih",
   "certificates.logged": "Di log publik, entri {index}",
-  "certificates.notLogged": "Tidak ada di log publik yang disebutkannya"
+  "certificates.notLogged": "Tidak ada di log publik yang disebutkannya",
+  "certificates.credentials": "{name} membawa catatan bertanda tangan tentang cara pembuatannya, tidak berubah sejak itu",
+  "certificates.credentialsBroken": "{name} membawa catatan cara pembuatan yang tidak berlaku: berubah sejak itu, atau tidak ditandatangani dengan kunci yang disebutkannya",
+  "certificates.ai": "Catatannya menyebutkan AI yang membuatnya",
+  "certificates.notAi": "Catatannya tidak menyebutkan AI yang membuatnya",
+  "certificates.unbound": "Apakah file berubah sejak itu tidak diperiksa di sini"
 }

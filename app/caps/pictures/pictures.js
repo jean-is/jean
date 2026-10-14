@@ -4,7 +4,7 @@
 // and shown in the answer, ready to save. No studio: they are made where the work is. Its place there
 // shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
 // picture made on this device or by a server on this computer shows nobody naked or sexual (D275), nor,
-// unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279).
+// unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279, D324).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -149,8 +149,11 @@ async function make(kind, args, ctx) {
   // Checked before it is kept, the next who could make it never asked instead.
   const refused = by && unfiltered(by) ? await device.refused(made.bytes) : undefined
   if (refused) throw new Error(`Not made: it showed ${SHOWED[refused]}, which pictures made on this device or this computer don't show${['suggestive', 'hate', 'violence'].includes(refused) ? ' unless allowed in Settings › Brains' : ''}. Tell the user so, without trying again in other words.`)
-  // It says which trained model made it (D279); a provider's picture keeps its own marks.
-  if (by && unfiltered(by)) made = { ...made, bytes: marked(made.bytes, made.model || ('model' in by ? by.model : ''), 'revision' in made ? String(made.revision) : undefined) }
+  // It says which trained model made it, in its XMP (D279) and its Content Credentials (D324); a provider's picture keeps its own marks.
+  if (by && unfiltered(by)) {
+    const [maker, revision] = [made.model || ('model' in by ? by.model : ''), 'revision' in made ? String(made.revision) : undefined]
+    made = { ...made, bytes: await (await import('../receipt/receipt.js')).credentialed(marked(made.bytes, maker, revision), maker, revision) }
+  }
   const name = `${String(args?.name ?? '').trim().replace(/\.\w+$/, '') || slug(description).slice(0, 40) || kind}.${made.mimeType.split('/')[1].replace('jpeg', 'jpg').replace('quicktime', 'mov')}`
   const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType: made.mimeType, bytes: made.bytes, pages: [description], by: 'jean' })
   const conversation = conversationOf(ctx.signal)

@@ -1,8 +1,8 @@
 {
   "certificates.title": "核对证书",
-  "certificates.text": "把从“关于这个回答”保存的证书、它的证明或两者，连同它可能提到的任何文件拖到这里。任何内容都不会离开这个页面。",
+  "certificates.text": "把从“关于这个回答”保存的证书、它的证明或两者，连同它可能提到的任何文件拖到这里。也可以拖入图片或视频，查看它是如何制作的。任何内容都不会离开这个页面。",
   "certificates.choose": "选择文件",
-  "certificates.unreadable": "这既不是回答的证书，也不是它的证明。",
+  "certificates.unreadable": "这既不是回答的证书，也不是它的证明，也不是说明制作经过的图片或视频。",
   "certificates.intact": "已盖章，此后未被更改",
   "certificates.broken": "已被更改，或并非由它所写的密钥盖章",
   "certificates.where.device": "在盖章的设备上完成",
@@ -27,5 +27,10 @@
   "certificates.dated": "由 {name} 证明时间",
   "certificates.badDate": "不成立的时间",
   "certificates.logged": "在公开日志中，条目 {index}",
-  "certificates.notLogged": "不在它所写的公开日志中"
+  "certificates.notLogged": "不在它所写的公开日志中",
+  "certificates.credentials": "{name} 带有已签名的制作记录，此后未被更改",
+  "certificates.credentialsBroken": "{name} 的制作记录不成立：此后已被更改，或并非由它所写的密钥签名",
+  "certificates.ai": "记录显示由 AI 制作",
+  "certificates.notAi": "记录未显示由 AI 制作",
+  "certificates.unbound": "此处不检查文件此后是否被更改"
 }
