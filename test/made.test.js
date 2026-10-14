@@ -117,6 +117,19 @@ test('csvRows: commas, semicolons or tabs, quoted cells with separators, quotes 
   assert.deepEqual(csvRows('a\tb\n1\t2'), [['a', 'b'], ['1', '2']])
 })
 
+test('csvRows: the separator that splits the rows alike, or the one Excel\'s "sep=" line names', () => {
+  // A quoted comma in the header, decimal commas, a title above the table: semicolons all the same.
+  assert.deepEqual(csvRows('"Nom, prénom";Montant\n"Dupont, Jean";12,5\nMartin;3'), [['Nom, prénom', 'Montant'], ['Dupont, Jean', '12,5'], ['Martin', '3']])
+  assert.deepEqual(csvRows('Relevé de compte\nDate;Libellé;Montant\n01/02/2026;CB, Carrefour;-12,30\n02/02/2026;Virement;100'),
+    [['Relevé de compte'], ['Date', 'Libellé', 'Montant'], ['01/02/2026', 'CB, Carrefour', '-12,30'], ['02/02/2026', 'Virement', '100']])
+  // On a tie, a semicolon before a comma; commas still win where they split every row and semicolons don't.
+  assert.deepEqual(csvRows('Prix (€, TTC);Date\n12,5;2026-01-02'), [['Prix (€, TTC)', 'Date'], ['12,5', '2026-01-02']])
+  assert.deepEqual(csvRows('Name,Note\nBob,later; maybe\nAl,ok'), [['Name', 'Note'], ['Bob', 'later; maybe'], ['Al', 'ok']])
+  assert.deepEqual(csvRows('﻿sep=;\r\nName, first;Amount\r\nA, B;1'), [['Name, first', 'Amount'], ['A, B', '1']])
+  assert.deepEqual(csvRows('"sep=,"\na;b,c'), [['a;b', 'c']])
+  assert.deepEqual(csvRows('Name\nAlice\nBob'), [['Name'], ['Alice'], ['Bob']])
+})
+
 test('sheetsIn: Markdown tables named by their headings, each name its own and as Excel allows; or CSV named after the file', () => {
   const sheets = sheetsIn('# By month: 2026\n\n| Month | Sales |\n|---|---|\n| Jan | 1200 |\n\n# By month: 2026\n\n| A |\n|---|\n| 1 |\n\n| B |\n|---|\n| 2 |', 'Sales')
   assert.deepEqual(sheets.map((sheet) => sheet.name), ['By month 2026', 'By month 2026 2', 'By month 2026 3'])

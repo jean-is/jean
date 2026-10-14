@@ -169,8 +169,9 @@ test('shared files open in the preview: a table as a workbook, a PDF drawn, a de
     { name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) },
     { name: 'menu.pdf', mimeType: 'application/pdf', buffer: pdf('Croissant 2 euros') },
     { name: 'pitch.pptx', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', buffer: await deck(['Our bakery', 'Fresh every morning']) },
+    { name: 'export.xls', mimeType: 'application/vnd.ms-excel', buffer: Buffer.from('"Nom, prénom";Montant\r\n"Dupont, Jean";12,5\r\nMartin;3\r\n', 'latin1') },
   ])
-  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(3)
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(4)
   await ask(page, 'Here are my files')
   const chips = page.locator('.msg-files .file-chip')
   const pane = page.locator('app-preview .preview')
@@ -179,6 +180,10 @@ test('shared files open in the preview: a table as a workbook, a PDF drawn, a de
   await chips.filter({ hasText: 'sales.csv' }).click()
   const drawn = page.frameLocator('app-preview .preview iframe').locator('main')
   await expect(drawn).toContainText('sales', { timeout: 15_000 })
+  await expect(drawn.locator('canvas').first()).toBeVisible()
+  // So does an .xls that is text, as exports often are: in Windows-1252, its cells split by semicolons.
+  await chips.filter({ hasText: 'export.xls' }).click()
+  await expect(drawn.getByRole('button', { name: 'export' })).toBeVisible({ timeout: 15_000 })
   await expect(drawn.locator('canvas').first()).toBeVisible()
 
   await chips.filter({ hasText: 'menu.pdf' }).click()

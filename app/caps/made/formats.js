@@ -275,14 +275,17 @@ export function sheetsIn(content, title) {
 const plain = (tokens = []) => tokens.map((token) => (token.tokens ? plain(token.tokens) : token.type === 'br' ? ' ' : String(token.text ?? ''))).join('').trim()
 
 /**
- * CSV rows, separated by commas, semicolons or tabs (whichever the first line has most of),
- * with quoted cells that may hold any of them, line breaks included. Empty lines are skipped.
- * @param {string} text @returns {string[][]}
+ * CSV rows, separated by commas, semicolons or tabs, with quoted cells that may hold any of them,
+ * line breaks included. Empty lines are skipped. The separator is the one Excel's own first line
+ * names ("sep=;"), else the one that splits the most of the first rows into the same number of
+ * cells, so a title above the table, a quoted "Name, first" or decimal commas don't mislead it;
+ * on a tie, a tab before a semicolon before a comma, which ordinary text holds more of.
+ * @param {string} text @param {string} [separator] the separator, when known @returns {string[][]}
  */
-export function csvRows(text) {
+export function csvRows(text, separator) {
   const source = text.replace(/^\ufeff/, '').replace(/\r\n?/g, '\n')
-  const head = source.trimStart().split('\n')[0]
-  const separator = [',', ';', '\t'].map((s) => /** @type {const} */ ([s, head.split(s).length])).sort((a, b) => b[1] - a[1])[0][0]
+  const named = separator ? null : /^"?sep=(.)"?\n/i.exec(source)
+  if (!separator) return csvRows(source.slice(named?.[0].length ?? 0), named?.[1] ?? ['\t', ';', ','].map((s) => /** @type {const} */ ([s, alike(csvRows(source.slice(0, 65536), s).slice(0, 100))])).sort((a, b) => b[1] - a[1])[0][0])
   /** @type {string[][]} */
   const rows = [[]]
   let cell = ''
@@ -293,10 +296,8 @@ export function csvRows(text) {
       if (char === '"' && source[i + 1] === '"') cell += source[i++]
       else if (char === '"') quoted = false
       else cell += char
-    } else if (char === '"' && !cell.trim()) {
-      quoted = true
-      cell = ''
-    } else if (char === separator || char === '\n') {
+    } else if (char === '"' && !cell.trim()) quoted = true
+    else if (char === separator || char === '\n') {
       /** @type {string[]} */ (rows.at(-1)).push(cell.trim())
       cell = ''
       if (char === '\n') rows.push([])
@@ -305,6 +306,9 @@ export function csvRows(text) {
   /** @type {string[]} */ (rows.at(-1)).push(cell.trim())
   return rows.filter((row) => row.some(Boolean))
 }
+
+/** How many rows have the commonest number of cells, when that is more than one. @param {string[][]} rows */
+const alike = (rows) => Math.max(0, ...rows.map((row) => (row.length > 1 ? rows.filter((other) => other.length === row.length).length : 0)))
 
 const NUMBER = /^-?(?:0|[1-9]\d{0,14})(?:\.\d+)?$/
 const PERCENT = /^(-?(?:0|[1-9]\d{0,14})(\.\d+)?)\s?%$/

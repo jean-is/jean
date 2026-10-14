@@ -164,6 +164,9 @@ test('extractPages reads real Office containers in presentation order', async ()
 
   assert.deepEqual(await extractPages('notes.md', enc.encode('# Hi\nthere')), ['# Hi\nthere'])
   assert.equal(await extractPages('scan.pdf', new Uint8Array()), null)
+  // An .xls that is text, as exports often are, reads as its text; one of Excel's own isn't read here.
+  assert.deepEqual(await extractPages('export.xls', new Uint8Array([0x4e, 0xe9, 0x3b, 0x31])), ['Né;1'])
+  assert.equal(await extractPages('book.xls', new Uint8Array([0xd0, 0xcf, 0x11, 0xe0, 0, 0, 0, 0])), null)
   assert.ok(extractable('a.docx') && extractable('b.csv') && !extractable('c.pdf') && !extractable('d.exe'))
 })
 

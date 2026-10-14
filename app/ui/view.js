@@ -60,13 +60,15 @@ export async function viewOf(file, holds, page) {
       console.warn('View', error)
     }
   }
-  // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183).
-  const csv = /^(csv|tsv)$/.test(ext) && page.allows.scripts ? await (await import('../caps/made/formats.js')).makeFile(name.replace(/\.[ct]sv$/i, '.xlsx'), new TextDecoder().decode(bytes)).catch(() => null) : null
-  if (csv || (/^(docx|xlsx|pptx)$/.test(ext) && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name, csv ? undefined : file.cells), name, pagePolicy(page.allows, page.sites, true), page.allow)
-  // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
   const { extractPages, decodeText, isBinary } = await import('../caps/files/extract.js')
   const office = /^(docx|xlsx|pptx)$/.test(ext)
-  const text = file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : isBinary(bytes) ? '' : decodeText(bytes)
+  const plain = office || isBinary(bytes) ? '' : decodeText(bytes)
+  // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183), and so an
+  // .xls that is text, as many exports are, unless it is a web page or XML.
+  const csv = page.allows.scripts && (/^(csv|tsv)$/.test(ext) || (ext === 'xls' && /^\s*[^<\s]/.test(plain))) ? await (await import('../caps/made/formats.js')).makeFile(name.replace(/\.(csv|tsv|xls)$/i, '.xlsx'), plain).catch(() => null) : null
+  if (csv || (office && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name, csv ? undefined : file.cells), name, pagePolicy(page.allows, page.sites, true), page.allow)
+  // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
+  const text = file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : plain
   if (!text && !office && isBinary(bytes)) return unshown()
   if (/^(md|markdown)$/.test(ext) || file.prose) return html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
   return html`<pre class="view-text" dir="auto">${text}</pre>`
