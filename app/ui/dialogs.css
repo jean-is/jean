@@ -27,10 +27,13 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
   inline-size: min(22rem, 88vw);
   max-block-size: none;
   block-size: 100dvh;
-  padding: 1rem 1rem 1.5rem;
+  padding: 1rem 1rem var(--foot);
+  --foot: 1.5rem;
   border-block: 0;
   border-inline-start: 0;
   border-radius: 0;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .drawer[open] { @starting-style { opacity: 0; translate: -1rem 0; } }
 :dir(rtl) .drawer[open] { @starting-style { translate: 1rem 0; } }

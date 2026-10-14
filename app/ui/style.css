@@ -667,7 +667,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 :where(:root[data-sidebar]) app-shell { padding-inline-start: var(--list); }
 /* Sticky, in the room the shell leaves at its start, taking none of its own: fixed, Safari would
    place a menu anchored there (the user's, the project's, the folder's) as if it scrolled away. */
-:where(:root[data-sidebar]) :is(.bar, app-inbox) { align-self: flex-start; inline-size: var(--list); margin-inline-start: calc(-1 * var(--list)); border-inline-end: 1px solid var(--line); background: var(--room); }
+:where(:root[data-sidebar]) :is(.bar, app-inbox) { align-self: flex-start; inline-size: var(--list); margin-inline-start: calc(-1 * var(--list)); border-inline-end: 1px solid var(--line); background: var(--room); -webkit-user-select: none; user-select: none; }
 :where(:root[data-sidebar]) .bar { block-size: var(--top); margin-block-end: calc(-1 * var(--top)); padding: 0 0.75rem; }
 :where(:root[data-sidebar]) .wordmark { min-inline-size: 0; margin-inline-end: auto; }
 :where(:root[data-sidebar]) .sidebar-toggle { order: 1; }
@@ -675,7 +675,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 :where(:root[data-sidebar] app-shell:has(> .views button)) main { padding-block-start: 0; }
 :where(:root[data-sidebar]) .toasts { inset-inline-start: var(--list); }
 /* It scrolls without a bar of its own, which stood at its edge like a handle to drag (D181), as Settings' menu does. */
-app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display: flex; flex-direction: column; block-size: calc(100dvh - var(--top)); margin-block: var(--top) -100dvh; padding: 0.25rem 0.75rem 0.75rem; overflow-y: auto; overscroll-behavior: none; scrollbar-width: none; }
+app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display: flex; flex-direction: column; block-size: calc(100dvh - var(--top)); margin-block: var(--top) -100dvh; padding: 0.25rem 0.75rem var(--foot); --foot: 0.75rem; overflow-y: auto; overscroll-behavior: none; scrollbar-width: none; }
 /* A new task, then where each capability found leads, as Manus' rows; the tasks under their heading. */
 .place { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.75rem; border: 0; border-radius: 0.9rem; background: none; color: var(--ink); text-align: start; }
 .place:hover { background: var(--line); }
@@ -683,24 +683,11 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .sidebar-heading { margin: 1.25rem 0 0.25rem; padding-inline: 0.75rem; font: 500 0.8rem/1.4 var(--sans); color: var(--ink-soft); }
 .sidebar-heading + .muted { margin: 0; padding-inline: 0.75rem; font-size: 0.9rem; }
 
-/* At the foot of the drawer, as in the Claude apps (D115): the user (D150). */
-.sidebar-settings {
-  position: sticky;
-  inset-block-end: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  margin-block-start: auto;
-  padding: 0.6rem 0.75rem;
-  border: 0;
-  border-radius: 0.9rem;
-  background: inherit;
-  color: var(--ink-soft);
-  text-align: start;
-}
-.sidebar-settings:hover { color: var(--ink); box-shadow: inset 0 0 0 100vmax var(--line); }
-/* The user, there: their initial (or a silhouette) and their name, a menu above them (D150). */
-.profile { flex: none; padding-block: 0.45rem; color: var(--ink); }
+/* At the foot of the drawer, as in the Claude apps (D115): the user, their initial (or a silhouette) and their name, a menu above them (D150). */
+.sidebar-settings { position: sticky; inset-block-end: 0; flex: none; display: flex; align-items: center; gap: 0.65rem; margin-block-start: auto; padding: 0.45rem 0.75rem; border: 0; border-radius: 0.9rem; background: inherit; color: var(--ink); text-align: start; }
+.sidebar-settings:hover { box-shadow: inset 0 0 0 100vmax var(--line); }
+/* Under it, the drawer's padding, which the tasks scrolling past showed through. */
+.sidebar-settings::after { content: ''; position: absolute; inset: 100% 0 auto; block-size: var(--foot); background: inherit; }
 .profile > .icon { flex: none; inline-size: 1.15rem; block-size: 1.15rem; margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
 .avatar { flex: none; display: grid; place-items: center; inline-size: 1.85rem; block-size: 1.85rem; border: 1px solid transparent; border-radius: 50%; background: oklch(from var(--flame) l c h / 0.2); font-size: 0.85rem; font-weight: 600; line-height: 1; }
 .avatar .icon { inline-size: 1.05rem; block-size: 1.05rem; }

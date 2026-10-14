@@ -1,5 +1,5 @@
 // The user at the foot of the conversations (D150): "You" until their name is known, opening a
-// menu above them with Settings, About you, the language, the theme, dark mode and what Jean can do,
+// menu above them with Settings, the language, the theme, dark mode and what Jean can do,
 // the themes as thumbnails. A language or a theme picked there applies and the menu stays on its page,
 // the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user
 // gives for themselves in a conversation, while they have never set one, and says so with an

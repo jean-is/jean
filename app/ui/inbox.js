@@ -183,7 +183,6 @@ function actions(id) {
   const fixed = effective.value.locked.has('locale')
   return html`<button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
       @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button>
-    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('you')}>${icons.person}${t('settings.you')}</button>
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
     <button type="button" class="submenu" data-page="looks" @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
