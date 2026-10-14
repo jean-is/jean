@@ -229,6 +229,7 @@
   "backup.download": "הורדת גיבוי",
   "backup.restore": "שחזור מגיבוי",
   "backup.confirmRestore": "להוסיף את כל מה שיש בגיבוי הזה? שום דבר כאן לא יימחק.",
+  "backup.gemini": "עוברים מ-Gemini? שחזרו את הייצוא מ-Google Takeout (‏Gemini, ו“אפליקציות Gemini” מ“הפעילות שלי” בפורמט JSON) כדי להעביר את השיחות וה-Gems שלו אל {name}.",
   "collection.all": "להפעיל הכול",
   "collection.open": "פתיחה",
   "kind.read.label": "קריאת קבצים",

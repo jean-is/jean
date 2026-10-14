@@ -221,6 +221,7 @@
   "backup.download": "バックアップをダウンロード",
   "backup.restore": "バックアップから復元",
   "backup.confirmRestore": "このバックアップの内容をすべて追加しますか？ここにあるものは何も削除されません。",
+  "backup.gemini": "Gemini から移行しますか？Google Takeout のエクスポート（Gemini と、マイ アクティビティの Gemini アプリを JSON 形式で）を復元すると、会話と Gem を {name} に取り込めます。",
   "collection.all": "すべてオンにする",
   "collection.open": "開く",
   "kind.read.label": "ファイルの読み取り",

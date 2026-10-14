@@ -224,6 +224,7 @@
   "backup.download": "Sicherung herunterladen",
   "backup.restore": "Sicherung wiederherstellen",
   "backup.confirmRestore": "Alles aus dieser Sicherung hinzufügen? Hier wird nichts gelöscht.",
+  "backup.gemini": "Sie kommen von Gemini? Stellen Sie Ihren Google-Takeout-Export wieder her (Gemini und die Gemini-Apps aus „Meine Aktivitäten“ im JSON-Format), um seine Unterhaltungen und Gems in {name} zu übernehmen.",
   "collection.all": "Alles einschalten",
   "collection.open": "Öffnen",
   "kind.read.label": "Dateien lesen",

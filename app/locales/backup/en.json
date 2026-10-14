@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Bring in the conversations, Gems and files of this export? Nothing here will be deleted.",
+  "backup.imported": {
+    "one": "{count} conversation brought in.",
+    "other": "{count} conversations brought in."
+  },
+  "backup.chooseJson": "This export holds your Gemini activity as web pages. Export it again from Google Takeout, with JSON chosen for My Activity."
+}

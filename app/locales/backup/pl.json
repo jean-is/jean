@@ -1,0 +1,10 @@
+{
+  "backup.confirmImport": "Przenieść rozmowy, Gemy i pliki z tego eksportu? Nic tutaj nie zostanie usunięte.",
+  "backup.imported": {
+    "one": "Przeniesione rozmowy: {count}.",
+    "few": "Przeniesione rozmowy: {count}.",
+    "many": "Przeniesione rozmowy: {count}.",
+    "other": "Przeniesione rozmowy: {count}."
+  },
+  "backup.chooseJson": "Ten eksport zawiera aktywność w Gemini jako strony internetowe. Wyeksportuj ją ponownie z Google Takeout, wybierając JSON dla Mojej aktywności."
+}

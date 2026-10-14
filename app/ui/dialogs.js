@@ -727,9 +727,10 @@ function data() {
       <div class="row">
         <button class="button" @click=${backup}>${icons.download} ${t('backup.download')}</button>
         <label class="button subtle">${icons.upload} ${t('backup.restore')}
-          <input type="file" accept=".zip,application/zip" class="visually-hidden" @change=${restore}>
+          <input type="file" accept=".zip,.tgz,.json,application/zip,application/gzip" multiple class="visually-hidden" @change=${restore}>
         </label>
       </div>
+      <p class="hint">${t('backup.gemini', { name: BRAND.name })}</p>
     </section>`}
     ${slots('data').map((part) => part.draw())}`
 }
@@ -976,14 +977,15 @@ export async function backup() {
   await downloadBackup()
 }
 
-/** @param {Event} event */
+/** A backup of Jean's, or an export of Gemini's from Google Takeout, its parts together (D340). @param {Event} event */
 async function restore(event) {
   const input = /** @type {HTMLInputElement} */ (event.target)
-  const file = input.files?.[0]
+  const files = [...(input.files ?? [])]
   input.value = ''
-  if (!file || !confirm(t('backup.confirmRestore')) || !(await unlock('backup'))) return
-  const { restoreBackup } = await import('../caps/backup/backup.js')
-  await restoreBackup(file)
+  if (!files.length || !(await unlock('backup'))) return
+  const { restoreBackup, isBackup, bringIn } = await import('../caps/backup/backup.js')
+  if (!(await isBackup(files[0]))) await bringIn(files)
+  else if (confirm(t('backup.confirmRestore'))) await restoreBackup(files[0])
 }
 
 define('app-history', History)

@@ -221,6 +221,7 @@
   "backup.download": "백업 다운로드",
   "backup.restore": "백업 복원",
   "backup.confirmRestore": "이 백업의 모든 내용을 추가할까요? 여기 있는 것은 삭제되지 않아요.",
+  "backup.gemini": "Gemini에서 오셨나요? Google 테이크아웃 내보내기(Gemini, 그리고 내 활동의 Gemini 앱을 JSON 형식으로)를 복원하면 대화와 Gem을 {name}(으)로 가져올 수 있어요.",
   "collection.all": "모두 켜기",
   "collection.open": "열기",
   "kind.read.label": "파일 읽기",

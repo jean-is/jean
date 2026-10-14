@@ -224,6 +224,7 @@
   "backup.download": "Download a backup",
   "backup.restore": "Restore a backup",
   "backup.confirmRestore": "Add everything from this backup? Nothing here will be deleted.",
+  "backup.gemini": "Coming from Gemini? Restore your Google Takeout export (Gemini, and My Activity’s Gemini Apps in JSON) to bring its conversations and Gems into {name}.",
   "collection.all": "Turn on everything",
   "collection.open": "Open",
   "kind.read.label": "Reading files",

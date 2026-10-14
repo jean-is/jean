@@ -221,6 +221,7 @@
   "backup.download": "Unduh cadangan",
   "backup.restore": "Pulihkan cadangan",
   "backup.confirmRestore": "Tambahkan semua dari cadangan ini? Tidak ada yang dihapus di sini.",
+  "backup.gemini": "Pindah dari Gemini? Pulihkan ekspor Google Takeout Anda (Gemini, dan Aplikasi Gemini di Aktivitas Saya dalam JSON) untuk membawa percakapan dan Gems-nya ke {name}.",
   "collection.all": "Aktifkan semua",
   "collection.open": "Buka",
   "kind.read.label": "Membaca file",

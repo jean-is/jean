@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Bu dışa aktarımdaki konuşmalar, Gem’ler ve dosyalar alınsın mı? Buradaki hiçbir şey silinmez.",
+  "backup.imported": {
+    "one": "{count} konuşma alındı.",
+    "other": "{count} konuşma alındı."
+  },
+  "backup.chooseJson": "Bu dışa aktarım Gemini etkinliğinizi web sayfaları olarak içeriyor. Etkinliğim için JSON seçerek Google Takeout’tan yeniden dışa aktarın."
+}

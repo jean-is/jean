@@ -221,6 +221,7 @@
   "backup.download": "Gba ẹ̀dà ìpamọ́ sílẹ̀",
   "backup.restore": "Dá ẹ̀dà ìpamọ́ padà",
   "backup.confirmRestore": "Ṣé kí a fi gbogbo ohun tí ó wà nínú ẹ̀dà ìpamọ́ yìí kún un? A kò ní paarẹ́ ohunkóhun níbí.",
+  "backup.gemini": "Ṣé láti Gemini ni o ti ń bọ̀? Dá ìgbéjáde Google Takeout rẹ padà (Gemini, àti Àwọn Àpù Gemini nínú Iṣẹ́ Mi ní JSON) kí àwọn ìjíròrò àti Gems rẹ̀ lè wá sínú {name}.",
   "collection.all": "Tan gbogbo rẹ̀",
   "collection.open": "Ṣí i",
   "kind.read.label": "Kíka fáìlì",

@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "A kawo tattaunawa, Gems da fayiloli daga wannan fitarwa? Babu abin da za a share a nan.",
+  "backup.imported": {
+    "one": "An kawo tattaunawa {count}.",
+    "other": "An kawo tattaunawa {count}."
+  },
+  "backup.chooseJson": "Wannan fitarwa tana ɗauke da ayyukanka na Gemini a matsayin shafukan yanar gizo. Sake fitar da ita daga Google Takeout, ka zaɓi JSON don Ayyukana."
+}

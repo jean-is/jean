@@ -1,7 +1,7 @@
 // ULID: 48-bit millisecond time + 80 random bits, Crockford base32, 26 chars.
 // Lexicographically sortable by creation time. https://github.com/ulid/spec
 
-const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
+export const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
 
 /** @param {number} [time] milliseconds since epoch */
 export function ulid(time = Date.now()) {

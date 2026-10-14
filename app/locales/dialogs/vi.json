@@ -221,6 +221,7 @@
   "backup.download": "Tải bản sao lưu",
   "backup.restore": "Khôi phục bản sao lưu",
   "backup.confirmRestore": "Thêm mọi thứ từ bản sao lưu này? Không có gì ở đây bị xóa.",
+  "backup.gemini": "Bạn chuyển từ Gemini sang? Hãy khôi phục bản xuất Google Takeout của bạn (Gemini, và Ứng dụng Gemini trong Hoạt động của tôi ở định dạng JSON) để đưa các cuộc trò chuyện và Gem vào {name}.",
   "collection.all": "Bật tất cả",
   "collection.open": "Mở",
   "kind.read.label": "Đọc tệp",

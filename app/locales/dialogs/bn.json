@@ -224,6 +224,7 @@
   "backup.download": "ব্যাকআপ ডাউনলোড করুন",
   "backup.restore": "ব্যাকআপ পুনরুদ্ধার করুন",
   "backup.confirmRestore": "এই ব্যাকআপের সবকিছু যোগ করবেন? এখান থেকে কিছুই মোছা হবে না।",
+  "backup.gemini": "Gemini থেকে আসছেন? আপনার Google Takeout এক্সপোর্ট পুনরুদ্ধার করুন (Gemini, আর আমার অ্যাক্টিভিটির Gemini অ্যাপ JSON ফরম্যাটে), তাহলে এর কথোপকথন আর Gems {name}-এ চলে আসবে।",
   "collection.all": "সব চালু করুন",
   "collection.open": "খুলুন",
   "kind.read.label": "ফাইল পড়া",

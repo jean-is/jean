@@ -224,6 +224,7 @@
   "backup.download": "ምትኬ ያውርዱ",
   "backup.restore": "ከምትኬ ይመልሱ",
   "backup.confirmRestore": "ከዚህ ምትኬ ሁሉም ነገር ይታከል? እዚህ ያለ ምንም ነገር አይሰረዝም።",
+  "backup.gemini": "ከGemini ነው የመጡት? ውይይቶቹንና Gemsን ወደ {name} ለማምጣት የGoogle Takeout ወጪ ፋይልዎን ይመልሱ (Gemini፣ እና በየእኔ እንቅስቃሴ ውስጥ ያሉ Gemini መተግበሪያዎች በJSON)።",
   "collection.all": "ሁሉንም ያብሩ",
   "collection.open": "ይክፈቱ",
   "kind.read.label": "ፋይሎችን ማንበብ",

@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Die Unterhaltungen, Gems und Dateien aus diesem Export übernehmen? Hier wird nichts gelöscht.",
+  "backup.imported": {
+    "one": "{count} Unterhaltung übernommen.",
+    "other": "{count} Unterhaltungen übernommen."
+  },
+  "backup.chooseJson": "Dieser Export enthält Ihre Gemini-Aktivitäten als Webseiten. Exportieren Sie sie in Google Takeout erneut und wählen Sie JSON für „Meine Aktivitäten“."
+}

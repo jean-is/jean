@@ -221,6 +221,7 @@
   "backup.download": "下載備份",
   "backup.restore": "還原備份",
   "backup.confirmRestore": "要加入這份備份中的所有內容嗎？這裡的內容不會被刪除。",
+  "backup.gemini": "從 Gemini 過來嗎？還原你的 Google Takeout 匯出內容（Gemini，以及「我的活動」中 JSON 格式的 Gemini 應用程式），即可將其中的對話和 Gem 匯入 {name}。",
   "collection.all": "全部開啟",
   "collection.open": "開啟",
   "kind.read.label": "讀取檔案",

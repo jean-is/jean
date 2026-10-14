@@ -133,7 +133,7 @@ export function untar(bytes) {
 }
 
 /** @param {Uint8Array} bytes */
-async function gunzip(bytes) {
+export async function gunzip(bytes) {
   const stream = new Blob([/** @type {BlobPart} */ (bytes)]).stream().pipeThrough(new DecompressionStream('gzip'))
   return new Uint8Array(await new Response(stream).arrayBuffer())
 }

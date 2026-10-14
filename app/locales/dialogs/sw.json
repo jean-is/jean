@@ -224,6 +224,7 @@
   "backup.download": "Pakua nakala rudufu",
   "backup.restore": "Rejesha nakala rudufu",
   "backup.confirmRestore": "Ongeza kila kitu kutoka nakala rudufu hii? Hakuna kitakachofutwa hapa.",
+  "backup.gemini": "Unatoka Gemini? Rejesha faili lako la Google Takeout (Gemini, na Programu za Gemini katika Shughuli Zangu kwa JSON) ili kuleta mazungumzo na Gems zake kwenye {name}.",
   "collection.all": "Washa vyote",
   "collection.open": "Fungua",
   "kind.read.label": "Kusoma faili",

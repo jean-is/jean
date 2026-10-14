@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Dalhin ang mga usapan, Gems at file mula sa export na ito? Walang mabubura dito.",
+  "backup.imported": {
+    "one": "{count} usapan ang naidala.",
+    "other": "{count} usapan ang naidala."
+  },
+  "backup.chooseJson": "Nasa anyong mga web page ang iyong aktibidad sa Gemini sa export na ito. Mag-export ulit mula sa Google Takeout at piliin ang JSON para sa Aking Aktibidad."
+}

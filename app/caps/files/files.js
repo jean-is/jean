@@ -80,7 +80,13 @@ let persisted = false
  * @param {Iterable<File>} list
  */
 export async function addFiles(list) {
-  const files = [...list]
+  let files = [...list]
+  // An export from Google Takeout is brought in, not shared (D340).
+  const exported = files.filter((file) => /^takeout-.*\.(zip|tgz)$/i.test(file.name))
+  if (exported.length && (await unlock('backup'))) {
+    ;(await import('../backup/backup.js')).bringIn(exported)
+    files = files.filter((file) => !exported.includes(file))
+  }
   if (!files.length) return
   // Files are user data: ask the browser not to evict them (silent in Chrome and Edge).
   if (!persisted) {

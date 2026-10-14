@@ -227,6 +227,7 @@
   "backup.download": "Descargar una copia de seguridad",
   "backup.restore": "Restaurar una copia de seguridad",
   "backup.confirmRestore": "¿Añadir todo lo de esta copia de seguridad? No se borrará nada de aquí.",
+  "backup.gemini": "¿Vienes de Gemini? Restaura tu exportación de Google Takeout (Gemini y Aplicaciones de Gemini de Mi actividad en JSON) para traer sus conversaciones y Gems a {name}.",
   "collection.all": "Activarlo todo",
   "collection.open": "Abrir",
   "kind.read.label": "Leer archivos",

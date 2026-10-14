@@ -1,0 +1,10 @@
+{
+  "backup.confirmImport": "להעביר את השיחות, ה-Gems והקבצים מהייצוא הזה? שום דבר כאן לא יימחק.",
+  "backup.imported": {
+    "one": "הועברה שיחה {count}.",
+    "two": "הועברו {count} שיחות.",
+    "many": "הועברו {count} שיחות.",
+    "other": "הועברו {count} שיחות."
+  },
+  "backup.chooseJson": "הייצוא הזה מכיל את הפעילות שלכם ב-Gemini כדפי אינטרנט. ייצאו אותה שוב מ-Google Takeout ובחרו JSON עבור “הפעילות שלי”."
+}

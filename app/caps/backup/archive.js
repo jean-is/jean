@@ -27,6 +27,9 @@ export async function exportBackup(fs, { by, now = new Date() }) {
   return { bytes: await writeZip(files, now), files: paths.length }
 }
 
+/** Whether the bytes are a backup: a zip with its manifest. @param {Uint8Array} bytes */
+export const isBackupZip = (bytes) => bytes[0] === 0x50 && bytes[1] === 0x4b && readZip(bytes).some((entry) => entry.name === MANIFEST)
+
 /**
  * @param {FS} fs @param {Uint8Array} zip
  * @returns {Promise<{ added: number, updated: number, kept: number }>}

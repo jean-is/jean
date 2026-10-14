@@ -39,6 +39,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Slides (D200): do brains keep a slide to what fits, use `lead` and `invert` where they help, and pick Slides or PowerPoint as the user meant? Presented with a clicker, in the desktop app and on an iPad
 - [ ] PowerPoint (D201): does a brain install pptxgenjs in ~, start from the skill's script and keep within the slide, in Arabic and Japanese too? Do the decks open without a repair in PowerPoint, Keynote and Google Slides?
 - [ ] Folders: open before changing, exact passages, one paragraph in Word, `find_in_files` rather than opening every file
+- [ ] Gemini from Google Takeout (D340): a real export, in JSON, in English and in another language (its prefix to the request, its folders' names), with files shared, a Gem with files, and a part of several; are conversations grouped as they were in Gemini?
 - [ ] bash: how often a brain reaches for it, and whether its commands suit a non-technical user's files
 - [ ] This computer (D198) from Jean served over https: Chrome's local network prompt, Safari and Firefox reaching 127.0.0.1, Linux; a brain making, installing and serving a Vite project there, fixing what its log says
 - [ ] Claude Code (D235) with a real Pro and Max plan, in the desktop app and from Jean served over https: a long task with many tool calls and approvals, a reload in the middle, Auto's tiers, a plan's limit, and how long a first answer takes

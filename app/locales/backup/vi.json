@@ -1,0 +1,7 @@
+{
+  "backup.confirmImport": "Đưa các cuộc trò chuyện, Gem và tệp từ bản xuất này vào? Không có gì ở đây bị xóa.",
+  "backup.imported": {
+    "other": "Đã đưa vào {count} cuộc trò chuyện."
+  },
+  "backup.chooseJson": "Bản xuất này chứa hoạt động Gemini của bạn dưới dạng trang web. Hãy xuất lại từ Google Takeout và chọn JSON cho Hoạt động của tôi."
+}
