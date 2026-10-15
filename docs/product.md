@@ -97,6 +97,7 @@ A project is a self-contained folder with its own files, conversations, instruct
 - **Small context.** Memory per project stays small, so it fits the on-device brain's context.
 - **Easy to move.** Backing up, exporting, sharing, syncing or deleting a project is one folder operation. Collaboration later becomes "invite someone to this project".
 - **Meetings** (D224). Asked to hold a meeting, Jean has the assistants of the other projects, or of those named, speak on the topic in rounds, each from its own project's instructions, memory and latest tasks, hearing what the others said; then it says what was decided, what each project will do and what needs the user. The user allows each meeting first, or always for those projects, and a routine holds a regular one. A project kept on this device doesn't hear a brain in the cloud.
+- **Its place and its dialog** (D18). The header shows the project the user is in and opens on the others; the address carries it, and its colour tints the light (D78). The home project's name is never translated: the UI calls it by its assistant's. Its dialog shows who the project is first, its light as picked, large, beside its name and the colours; then its assistant, once names are found; then where it is kept, a switch for this device and its folder; Save and Delete at its foot, apart and always in view. What a project is, it says only when making one.
 - **Hidden default.** There is always a default project, invisible until the Projects capability is discovered.
 
 ## Instructions and memory
