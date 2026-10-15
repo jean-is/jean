@@ -8,6 +8,8 @@
 // One not ready is checked through a gateway that relays to its servers and sign-in hosts alone,
 // as known() trusts it to (D214): each has to answer there, and its sign-in to register Jean, or
 // name the sign-in server whose app the gateway holds; the scopes it asks for have to be listed (D344).
+// One reached through its own API (`api`, D349) has to let a page send it a token, and its sign-in
+// server be found through a gateway that relays to its sign-in hosts alone.
 // Then the default sources of skills (caps/skills/sources.js, D121): each index or repository, and
 // every skill it lists, must answer a browser, match its digest or git's hashes, and at least one
 // must be made of instructions.
@@ -15,6 +17,7 @@
 import { DIRECTORY, covers } from '../app/caps/connections/directory.js'
 import { discover } from '../app/caps/connections/auth.js'
 import { mcpClient, MCPError } from '../app/caps/connections/mcp.js'
+import { APIS } from '../app/caps/connections/google.js'
 import { gateway } from '../gateway/gateway.js'
 import { DEFAULT_SOURCES, fetchSkill, indexURL, readIndexes, siteOf } from '../app/caps/skills/sources.js'
 import { memoryFS } from '../app/core/fs.js'
@@ -60,6 +63,16 @@ async function check({ url }) {
   return problems
 }
 
+/** fetch through a gateway that relays to these hosts alone, from ORIGIN. @param {string[]} hosts */
+function relay(hosts) {
+  const handle = gateway({ origins: [ORIGIN], hosts })
+  return /** @type {typeof fetch} */ ((input, init) => {
+    const at = new URL('https://gateway.example/')
+    at.searchParams.set('url', String(input))
+    return handle(new Request(at, { ...init, headers: { ...init?.headers, origin: ORIGIN } }))
+  })
+}
+
 /**
  * What stands in the way through a gateway, for each server the entry reaches (D344), and any scope
  * it asks for that none of them lists.
@@ -69,12 +82,7 @@ async function throughGateway({ url, servers = [], signIn = [], app, scopes = []
   if (!url) return ['no server']
   const addresses = [url, ...servers]
   const hosts = [...addresses.map((address) => new URL(address).hostname), ...signIn]
-  const handle = gateway({ origins: [ORIGIN], hosts })
-  const relayed = /** @type {typeof fetch} */ ((input, init) => {
-    const at = new URL('https://gateway.example/')
-    at.searchParams.set('url', String(input))
-    return handle(new Request(at, { ...init, headers: { ...init?.headers, origin: ORIGIN } }))
-  })
+  const relayed = relay(hosts)
   const problems = []
   const listed = new Set()
   for (const address of addresses) {
@@ -99,6 +107,22 @@ async function throughGateway({ url, servers = [], signIn = [], app, scopes = []
   const missing = scopes.filter((scope) => !listed.has(scope))
   if (missing.length) problems.push(`no server lists ${missing.join(', ')}`)
   return [...new Set(problems)]
+}
+
+/**
+ * What stands in the way of one reached through its own API (D349): a page has to be able to send it
+ * a token, and its sign-in server, whose app the gateway holds, to be found through a gateway that
+ * relays to its sign-in hosts alone, its tokens there too.
+ * @param {import('../app/caps/connections/directory.js').Known} entry @returns {Promise<string[]>}
+ */
+async function throughAPI({ url, signIn = [], app }) {
+  const api = APIS[String(url)]
+  if (!api) return ['no tools of Jean’s call it']
+  const problems = await preflight(new URL(api.who, url).href, ['authorization', 'content-type']) ? [] : ['a browser can’t send it a token (CORS)']
+  const metadata = await discover(String(url), { issuer: app, fetch: relay(signIn) }).catch((/** @type {Error} */ error) => error)
+  if (metadata instanceof Error) return [...problems, metadata.message]
+  if (!covers(signIn, new URL(metadata.token_endpoint))) problems.push(`its sign-in is also at ${new URL(metadata.token_endpoint).hostname}`)
+  return problems
 }
 
 /**
@@ -132,9 +156,9 @@ const progress = (text) => process.stdout.isTTY && process.stdout.write(`\r\x1b[
 
 let mismatches = 0
 for (const entry of DIRECTORY) {
-  const problems = await check(entry)
+  const problems = entry.api ? ['its sign-in takes only apps registered there'] : await check(entry)
   const works = !problems.length
-  const relayed = entry.ready || !entry.url ? null : await throughGateway(entry)
+  const relayed = entry.ready || !entry.url ? null : await (entry.api ? throughAPI : throughGateway)(entry)
   const mismatch = works !== Boolean(entry.ready) || Boolean(relayed?.length)
   mismatches += Number(mismatch)
   const gateway = !relayed ? '' : ` · through a gateway: ${relayed.join('; ') || (entry.app ? `with the app of ${entry.app}` : 'reachable')}`

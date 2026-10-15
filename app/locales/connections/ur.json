@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "ای میلز تلاش کریں",
+  "google.read_email": "ای میل پڑھیں",
+  "google.create_draft": "مسودہ لکھیں",
+  "google.send_email": "ای میل بھیجیں",
+  "google.list_calendars": "کیلنڈرز دکھائیں",
+  "google.list_events": "ایونٹس دکھائیں",
+  "google.create_event": "ایونٹ شامل کریں",
+  "google.update_event": "ایونٹ تبدیل کریں",
+  "google.delete_event": "ایونٹ ہٹائیں",
+  "google.search_files": "فائلیں تلاش کریں",
+  "google.read_file": "فائل پڑھیں",
+  "google.create_document": "دستاویز بنائیں"
+}

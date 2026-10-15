@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "Buscar correos",
+  "google.read_email": "Leer un correo",
+  "google.create_draft": "Redactar un borrador",
+  "google.send_email": "Enviar un correo",
+  "google.list_calendars": "Ver los calendarios",
+  "google.list_events": "Ver los eventos",
+  "google.create_event": "Añadir un evento",
+  "google.update_event": "Cambiar un evento",
+  "google.delete_event": "Eliminar un evento",
+  "google.search_files": "Buscar archivos",
+  "google.read_file": "Leer un archivo",
+  "google.create_document": "Crear un documento"
+}

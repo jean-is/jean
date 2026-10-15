@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "Cari email",
+  "google.read_email": "Baca email",
+  "google.create_draft": "Tulis draf",
+  "google.send_email": "Kirim email",
+  "google.list_calendars": "Tampilkan kalender",
+  "google.list_events": "Tampilkan acara",
+  "google.create_event": "Tambah acara",
+  "google.update_event": "Ubah acara",
+  "google.delete_event": "Hapus acara",
+  "google.search_files": "Cari file",
+  "google.read_file": "Baca file",
+  "google.create_document": "Buat dokumen"
+}

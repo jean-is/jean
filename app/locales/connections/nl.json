@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "E-mails zoeken",
+  "google.read_email": "Een e-mail lezen",
+  "google.create_draft": "Een concept schrijven",
+  "google.send_email": "Een e-mail versturen",
+  "google.list_calendars": "Agenda's tonen",
+  "google.list_events": "Afspraken tonen",
+  "google.create_event": "Een afspraak toevoegen",
+  "google.update_event": "Een afspraak wijzigen",
+  "google.delete_event": "Een afspraak verwijderen",
+  "google.search_files": "Bestanden zoeken",
+  "google.read_file": "Een bestand lezen",
+  "google.create_document": "Een document maken"
+}

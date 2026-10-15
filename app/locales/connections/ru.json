@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "Искать письма",
+  "google.read_email": "Прочитать письмо",
+  "google.create_draft": "Написать черновик",
+  "google.send_email": "Отправить письмо",
+  "google.list_calendars": "Показать календари",
+  "google.list_events": "Показать события",
+  "google.create_event": "Добавить событие",
+  "google.update_event": "Изменить событие",
+  "google.delete_event": "Удалить событие",
+  "google.search_files": "Искать файлы",
+  "google.read_file": "Прочитать файл",
+  "google.create_document": "Создать документ"
+}

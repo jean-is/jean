@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "חיפוש אימיילים",
+  "google.read_email": "קריאת אימייל",
+  "google.create_draft": "כתיבת טיוטה",
+  "google.send_email": "שליחת אימייל",
+  "google.list_calendars": "הצגת יומנים",
+  "google.list_events": "הצגת אירועים",
+  "google.create_event": "הוספת אירוע",
+  "google.update_event": "שינוי אירוע",
+  "google.delete_event": "הסרת אירוע",
+  "google.search_files": "חיפוש קבצים",
+  "google.read_file": "קריאת קובץ",
+  "google.create_document": "יצירת מסמך"
+}

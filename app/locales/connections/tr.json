@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "E-posta ara",
+  "google.read_email": "E-posta oku",
+  "google.create_draft": "Taslak yaz",
+  "google.send_email": "E-posta gönder",
+  "google.list_calendars": "Takvimleri listele",
+  "google.list_events": "Etkinlikleri listele",
+  "google.create_event": "Etkinlik ekle",
+  "google.update_event": "Etkinliği değiştir",
+  "google.delete_event": "Etkinliği kaldır",
+  "google.search_files": "Dosya ara",
+  "google.read_file": "Dosya oku",
+  "google.create_document": "Belge oluştur"
+}

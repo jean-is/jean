@@ -16,6 +16,7 @@ import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { openSettings, placeable, where } from '../../ui/dialogs.js'
 import { returnTo } from '../../ui/router.js'
 import { mcpClient, MCPError, searchesWeb, toolsOf } from './mcp.js'
+import { apiClient } from './google.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor, covers, logoAt } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
@@ -84,10 +85,14 @@ const reach = (connection) => (connection.gateway ? (/** @type {RequestInfo | UR
 /** @type {Map<string, ReturnType<typeof mcpClient>>} */
 const clients = new Map()
 
-/** A client for each server of a connection (D344), made again once it signs in. @param {Connection} connection @param {string} [address] */
+/**
+ * A client for each server of a connection (D344), or for Google's API it calls, straight from the
+ * browser (D349), made again once it signs in. @param {Connection} connection @param {string} [address]
+ */
 function client(connection, address = connection.url) {
   const key = `${connection.id} ${connection.auth} ${address}`
-  return /** @type {ReturnType<typeof mcpClient>} */ (clients.get(key) ?? clients.set(key, mcpClient({ url: address, client: { name: BRAND.name, version: '0.6' }, authorization: () => credential(connection), fetch: reach(connection) })).get(key))
+  const authorization = () => credential(connection)
+  return /** @type {ReturnType<typeof mcpClient>} */ (clients.get(key) ?? clients.set(key, apiClient({ url: address, authorization }) ?? mcpClient({ url: address, client: { name: BRAND.name, version: '0.6' }, authorization, fetch: reach(connection) })).get(key))
 }
 
 /** What the brain reads when a service wants the user to sign in, first or again. @param {Connection} connection */
@@ -302,10 +307,11 @@ async function signIn(connection, challenge) {
   message.value = { kind: 'busy', text: t('brain.connecting') }
   try {
     const fetch = reach(connection)
-    const metadata = await discover(connection.url, { challenge, fetch })
+    // An API names no sign-in server; its entry does (D349).
+    const entry = knownFor(connection.url, app.policy, served.value)
+    const metadata = await discover(connection.url, { challenge, fetch, issuer: entry?.api ? entry.app : undefined })
     const redirectURI = location.origin + location.pathname
     // A service that can't register Jean takes the app the organisation registered there, or the gateway's.
-    const entry = knownFor(connection.url, app.policy, served.value)
     const clientId = entry?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
       ?? await registerClient(metadata, { redirectURI, name: BRAND.name, fetch })
     const another = all().some((other) => other.id !== connection.id && other.url === connection.url)

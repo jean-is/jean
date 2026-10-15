@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "Szukaj e-maili",
+  "google.read_email": "Przeczytaj e-mail",
+  "google.create_draft": "Napisz wersję roboczą",
+  "google.send_email": "Wyślij e-mail",
+  "google.list_calendars": "Pokaż kalendarze",
+  "google.list_events": "Pokaż wydarzenia",
+  "google.create_event": "Dodaj wydarzenie",
+  "google.update_event": "Zmień wydarzenie",
+  "google.delete_event": "Usuń wydarzenie",
+  "google.search_files": "Szukaj plików",
+  "google.read_file": "Przeczytaj plik",
+  "google.create_document": "Utwórz dokument"
+}

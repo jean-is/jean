@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "이메일 검색",
+  "google.read_email": "이메일 읽기",
+  "google.create_draft": "임시보관 메일 작성",
+  "google.send_email": "이메일 보내기",
+  "google.list_calendars": "캘린더 목록",
+  "google.list_events": "일정 목록",
+  "google.create_event": "일정 추가",
+  "google.update_event": "일정 변경",
+  "google.delete_event": "일정 삭제",
+  "google.search_files": "파일 검색",
+  "google.read_file": "파일 읽기",
+  "google.create_document": "문서 만들기"
+}

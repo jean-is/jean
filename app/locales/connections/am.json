@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "ኢሜሎችን ፈልግ",
+  "google.read_email": "ኢሜል አንብብ",
+  "google.create_draft": "ረቂቅ ጻፍ",
+  "google.send_email": "ኢሜል ላክ",
+  "google.list_calendars": "የቀን መቁጠሪያዎችን አሳይ",
+  "google.list_events": "ክስተቶችን አሳይ",
+  "google.create_event": "ክስተት አክል",
+  "google.update_event": "ክስተት ቀይር",
+  "google.delete_event": "ክስተት አስወግድ",
+  "google.search_files": "ፋይሎችን ፈልግ",
+  "google.read_file": "ፋይል አንብብ",
+  "google.create_document": "ሰነድ ፍጠር"
+}

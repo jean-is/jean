@@ -52,7 +52,9 @@ test('a service Jean knows connects in one click, with every server its one sign
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
   await expect(dialog.getByRole('button', { name: 'Notion' })).toBeEnabled()
-  for (const name of ['Google', 'Microsoft 365', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
+  // Google's APIs (D349) and its Workspace servers (D344) wait for a gateway that holds Google's app.
+  for (const name of ['Gmail', 'Google Calendar', 'Google Drive']) await expect(dialog.getByRole('button', { name, exact: true })).toBeDisabled()
+  for (const name of ['Google Workspace', 'Microsoft 365', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
   // Any other service is behind the + at the top.
   await expect(dialog.locator('#connection-add')).toHaveCount(0)
   await expect(dialog.locator('.panel-head .icon-button')).toHaveAttribute('aria-expanded', 'false')

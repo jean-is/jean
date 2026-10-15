@@ -25,21 +25,22 @@ const href = (url) => { try { return new URL(String(url)).href } catch { return 
 const getJSON = (fetch, url) => fetch(url, { headers: { accept: 'application/json' } }).then((res) => (res.ok ? res.json() : null)).catch(() => null)
 
 /**
- * Where and how to sign in to a service, from its 401's challenge when the browser could read it.
- * @param {string} server the service's address @param {{ challenge?: string | null, fetch?: typeof globalThis.fetch }} [options]
+ * Where and how to sign in to a service, from its 401's challenge when the browser could read it,
+ * or at the sign-in server Jean knows it has (`issuer`, an API's, D349).
+ * @param {string} server the service's address @param {{ challenge?: string | null, fetch?: typeof globalThis.fetch, issuer?: string }} [options]
  * @returns {Promise<Metadata>}
  */
-export async function discover(server, { challenge, fetch = globalThis.fetch } = {}) {
+export async function discover(server, { challenge, fetch = globalThis.fetch, issuer: known } = {}) {
   const asked = parseChallenge(challenge)
   const at = new URL(server)
   const path = at.pathname.replace(/\/$/, '')
   let resource = null
-  for (const url of [asked.resource_metadata, path && `${at.origin}/.well-known/oauth-protected-resource${path}`, `${at.origin}/.well-known/oauth-protected-resource`]) {
+  for (const url of known ? [] : [asked.resource_metadata, path && `${at.origin}/.well-known/oauth-protected-resource${path}`, `${at.origin}/.well-known/oauth-protected-resource`]) {
     if (url && (resource = await getJSON(fetch, url))?.authorization_servers?.length) break
   }
   // One that names none (Atlassian's /v1) has it at its own origin, and takes no resource indicator (D195).
   const named = Boolean(resource?.authorization_servers?.length)
-  const issuer = named ? resource.authorization_servers[0] : at.origin
+  const issuer = named ? resource.authorization_servers[0] : known ?? at.origin
   // One that names itself (ServiceNow) may have it at its origin, whose metadata it serves (D283).
   const issuers = named && href(issuer) === href(server) ? [issuer, at.origin] : [issuer]
   for (const each of issuers) {

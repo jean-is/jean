@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "ईमेल शोधा",
+  "google.read_email": "ईमेल वाचा",
+  "google.create_draft": "मसुदा लिहा",
+  "google.send_email": "ईमेल पाठवा",
+  "google.list_calendars": "कॅलेंडर दाखवा",
+  "google.list_events": "इव्हेंट दाखवा",
+  "google.create_event": "इव्हेंट जोडा",
+  "google.update_event": "इव्हेंट बदला",
+  "google.delete_event": "इव्हेंट काढा",
+  "google.search_files": "फाइल्स शोधा",
+  "google.read_file": "फाइल वाचा",
+  "google.create_document": "दस्तऐवज तयार करा"
+}

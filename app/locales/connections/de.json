@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "E-Mails suchen",
+  "google.read_email": "E-Mail lesen",
+  "google.create_draft": "Entwurf schreiben",
+  "google.send_email": "E-Mail senden",
+  "google.list_calendars": "Kalender auflisten",
+  "google.list_events": "Termine auflisten",
+  "google.create_event": "Termin hinzufügen",
+  "google.update_event": "Termin ändern",
+  "google.delete_event": "Termin entfernen",
+  "google.search_files": "Dateien suchen",
+  "google.read_file": "Datei lesen",
+  "google.create_document": "Dokument erstellen"
+}

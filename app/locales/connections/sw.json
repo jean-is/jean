@@ -1,0 +1,14 @@
+{
+  "google.search_emails": "Tafuta barua pepe",
+  "google.read_email": "Soma barua pepe",
+  "google.create_draft": "Andika rasimu",
+  "google.send_email": "Tuma barua pepe",
+  "google.list_calendars": "Onyesha kalenda",
+  "google.list_events": "Onyesha matukio",
+  "google.create_event": "Ongeza tukio",
+  "google.update_event": "Badilisha tukio",
+  "google.delete_event": "Ondoa tukio",
+  "google.search_files": "Tafuta faili",
+  "google.read_file": "Soma faili",
+  "google.create_document": "Unda hati"
+}
