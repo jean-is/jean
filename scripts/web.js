@@ -3,7 +3,9 @@
 // brotli (.br) and gzip (.gz), which the server sends as they are rather than compressing on the fly.
 // capabilities.json lists the minified files' hashes and the version they make, which sw.js carries,
 // so the service worker checks what is served; the render package keeps its own (D305).
-// Usage: npm run build:web     (runs npm run build first); deploying copies dist/web/
+// POLICY, a JSON object as the gateway's GATEWAY_CONFIG is, becomes the site's policy.json, which
+// index.html names, as an organisation would do by hand (docs/enterprise.md, D344).
+// Usage: [POLICY='{…}'] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -46,6 +48,14 @@ export async function minify (path, source) {
   const how = path.endsWith('.css') ? { loader: /** @type {const} */ ('css'), minifyWhitespace: true } : { loader: /** @type {const} */ ('js'), minify: true }
   const { code } = await transform(source, { ...how, charset: 'utf8', legalComments: 'none' })
   return notice + code
+}
+
+/**
+ * index.html naming the policy beside it, once. @param {string} html
+ */
+export function withPolicy (html) {
+  if (html.includes('name="app-policy"') || !html.includes('</head>')) throw new Error('index.html already names a policy, or has no </head>')
+  return html.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')
 }
 
 /**
@@ -99,16 +109,19 @@ async function inTurn (items, width, work) {
 
 async function main () {
   const files = await shippedFiles(APP)
+  const policy = process.env.POLICY ? `${JSON.stringify(JSON.parse(process.env.POLICY), null, 2)}\n` : null
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0
   for (const path of files) {
     const data = await readFile(join(APP, path))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : data
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : policy && path === 'index.html' ? Buffer.from(withPolicy(data.toString('utf8'))) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
   }
+  if (policy) await writeFile(join(OUT, 'policy.json'), policy)
+  if (policy) files.push('policy.json')
   const read = (/** @type {string} */ path) => readFile(join(OUT, path))
   const { version, listing, worker } = await restamp((await read('capabilities.json')).toString('utf8'), (await read('sw.js')).toString('utf8'), read)
   await writeFile(join(OUT, 'capabilities.json'), listing)
@@ -123,7 +136,7 @@ async function main () {
     }
   })
   const kb = (/** @type {number} */ bytes) => `${Math.round(bytes / 1024)} KB`
-  console.log(`web: version ${version}, ${files.length} files in dist/web, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them`)
+  console.log(`web: version ${version}, ${files.length} files in dist/web${policy ? ', policy.json among them' : ''}, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them`)
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

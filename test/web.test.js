@@ -2,10 +2,11 @@
 // beside itself compressed; capabilities.json and sw.js describe the files served.
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { brotliDecompressSync, gunzipSync } from 'node:zlib'
 import { buildCapabilities, computeVersion, integrityOf } from '../scripts/manifest.js'
-import { minifies, minify, precompress, restamp } from '../scripts/web.js'
+import { minifies, minify, precompress, restamp, withPolicy } from '../scripts/web.js'
 
 test('Jean’s own code is minified, never the service worker, the bridge, third-party code, the pages or the user’s starting CSS', () => {
   for (const path of ['brand.js', 'core/fs.js', 'ui/app.js', 'ui/style.css', 'ui/looks/neon.css', 'caps/computer/computer-worker.js', 'ee/keys.js']) assert.ok(minifies(path), path)
@@ -55,4 +56,13 @@ test('each file is beside itself in brotli and gzip, only when smaller, and neve
   assert.deepEqual(gunzipSync(copies['.gz']), text)
   assert.deepEqual(await precompress('ui/b.js', Buffer.from('a')), [])
   for (const path of ['fonts/display.woff2', 'icons/icon-512.png', 'screenshots/wide.jpg', 'vendor/pyodide/python_stdlib.zip']) assert.deepEqual(await precompress(path, text), [], path)
+})
+
+test('a deploy’s policy: index.html names the policy.json beside it, once, as an organisation would by hand (D344)', async () => {
+  const page = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
+  const named = withPolicy(page)
+  assert.equal(named.match(/<meta name="app-policy" content="policy.json">/g)?.length, 1)
+  assert.ok(named.indexOf('name="app-policy"') < named.indexOf('</head>'))
+  assert.equal(named.replace('<meta name="app-policy" content="policy.json">\n', ''), page)
+  assert.throws(() => withPolicy(named), /already names a policy/)
 })
