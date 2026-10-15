@@ -20,9 +20,8 @@ What the certificates' next steps hang on ([certificates.md](certificates.md)):
 - **Client ID Metadata Documents for Connections:** publish one at jean.is, so services without dynamic registration accept Jean (D88)? ServiceNow takes them (its admin pastes the document's address instead of registering an app, D283), and needs the redirect of each address Jean is served from.
 - **The services not available yet (D95):** what would let each one in at jean.is?
   - **Microsoft 365** (`microsoft365.mcp.claude.com`): Anthropic accepting Jean's origin, and a single-page-app redirect for Jean's domain on its Entra app.
-  - **Gmail, Google Drive, Google Calendar and Google Chat:** Google ending the developer preview, and its servers answering browsers.
+  - **Google** (D344): Google verifying Jean's app, so that anyone can sign in rather than the test users it lists (a review of its sensitive scopes, and a yearly security assessment for Gmail's and Drive's restricted ones); Google ending the developer preview, and its servers answering browsers.
   - **Slack and Dropbox:** CORS, plus open registration for Slack. Dropbox, like Figma, registers only the apps on its list: ask both to add Jean.
-  - **Google Meet and Google Tasks:** a server at all.
 - **Helpers on a cheaper brain?** Helpers use the brain that delegated (D98). Auto could give them a lighter tier: cheaper, but one answer would then mix two models' work. To decide with real tasks.
 - **A catalogue of projects:** an index of project folders, as skills' discovery indexes are, or a plugin marketplace's `marketplace.json`, which already bundles skills and connections? And what a project carries without its secrets (connections as names and addresses only).
 - **Requests between people's Jeans (D226):** A2A's messages over the relay, or ACP's? How a person is named to send to: a pairing link once, then a name in the user's own list?

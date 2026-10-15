@@ -15,7 +15,7 @@ import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { openSettings, placeable, where } from '../../ui/dialogs.js'
 import { returnTo } from '../../ui/router.js'
-import { mcpClient, MCPError, searchesWeb } from './mcp.js'
+import { mcpClient, MCPError, searchesWeb, toolsOf } from './mcp.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor, covers, logoAt } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
@@ -35,8 +35,8 @@ const PENDING = 'app.connect'
 // Longer results are cut, so one call can't flood a small brain's context.
 const MAX_OUTPUT = 12_000
 
-/** What each connection offers now: its tools, or why they couldn't be listed or run; a refusal's challenge, for the sign-in. */
-const status = signal(/** @type {Record<string, { tools?: McpTool[], error?: 'auth' | 'failed', challenge?: string | null }>} */ ({}))
+/** What each connection offers now: its tools, each with its server, or why they couldn't be listed or run; a refusal's challenge, for the sign-in. */
+const status = signal(/** @type {Record<string, { tools?: (McpTool & { at: string })[], error?: 'auth' | 'failed', challenge?: string | null }>} */ ({}))
 const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
 /** Where what was clicked says how it went: under the services, or under the address typed. */
 let place = /** @type {'top' | 'other'} */ ('top')
@@ -81,30 +81,45 @@ const reach = (connection) => (connection.gateway ? (/** @type {RequestInfo | UR
 
 // ─── Tools ───────────────────────────────────────────────────────────────────
 
-/** @type {Map<string, { url: string, auth: Connection['auth'], mcp: ReturnType<typeof mcpClient> }>} */
+/** @type {Map<string, ReturnType<typeof mcpClient>>} */
 const clients = new Map()
 
-/** A client per connection, made again once it signs in. @param {Connection} connection */
-function client(connection) {
-  const found = clients.get(connection.id)
-  if (found?.url === connection.url && found.auth === connection.auth) return found.mcp
-  const mcp = mcpClient({ url: connection.url, client: { name: BRAND.name, version: '0.6' }, authorization: () => credential(connection), fetch: reach(connection) })
-  clients.set(connection.id, { url: connection.url, auth: connection.auth, mcp })
-  return mcp
+/** A client for each server of a connection (D344), made again once it signs in. @param {Connection} connection @param {string} [address] */
+function client(connection, address = connection.url) {
+  const key = `${connection.id} ${connection.auth} ${address}`
+  return /** @type {ReturnType<typeof mcpClient>} */ (clients.get(key) ?? clients.set(key, mcpClient({ url: address, client: { name: BRAND.name, version: '0.6' }, authorization: () => credential(connection), fetch: reach(connection) })).get(key))
 }
 
-/** The Authorization header: a key, or an access token renewed before it runs out. @param {Connection} connection @param {boolean} [renew] */
+/** What the brain reads when a service wants the user to sign in, first or again. @param {Connection} connection */
+const signInFirst = (connection) => `${connection.name} needs the user to sign in. Ask them to click Connect beside ${connection.name} in Settings › Connections, then try again.`
+/** Renewals under way, one a connection, which each of its servers waits for. @type {Map<string, Promise<import('./auth.js').Tokens>>} */
+const renewing = new Map()
+
+/**
+ * New tokens, kept. A renewal the service refuses (not a network lost) leaves the connection to
+ * sign in again (D344). @param {Connection} connection @param {import('./auth.js').Tokens} tokens
+ */
+const renewal = (connection, tokens) => refresh(tokens, reach(connection)).then(async (fresh) => (await setSecret(app.fs, connection.id, JSON.stringify(fresh)), fresh), (error) => {
+  if (error instanceof TypeError) throw error
+  status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth' } }
+  throw new MCPError(signInFirst(connection), { status: 401 })
+}).finally(() => renewing.delete(connection.id))
+
+/** The Authorization header: a key, or an access token renewed before it runs out, once for all its servers. @param {Connection} connection @param {boolean} [renew] */
 async function credential(connection, renew = false) {
   const secret = connection.auth === 'none' ? null : await getSecret(app.fs, connection.id)
   if (!secret || connection.auth === 'key') return secret ? `Bearer ${secret}` : undefined
   let tokens = JSON.parse(secret)
-  if (renew || tokens.expiresAt < Date.now() + 60_000) await setSecret(app.fs, connection.id, JSON.stringify(tokens = await refresh(tokens, reach(connection))))
+  if (renew || tokens.expiresAt < Date.now() + 60_000) tokens = await (renewing.get(connection.id) ?? renewing.set(connection.id, renewal(connection, tokens)).get(connection.id))
   return `Bearer ${tokens.access}`
 }
 
+/** The tools of each server a connection reaches (D344). @param {Connection} connection */
+const toolsAt = (connection) => toolsOf([connection.url, ...connection.servers ?? []].map((address) => [address, client(connection, address)]))
+
 /** Asks each connection what it offers. @param {Connection[]} [connections] */
 const list = (connections = all()) => Promise.all(connections.map(async (connection) => {
-  const now = await client(connection).listTools().then((tools) => ({ tools }), (error) => {
+  const now = await toolsAt(connection).then((tools) => ({ tools }), (error) => {
     console.warn(connection.name, error)
     return { error: /** @type {'auth' | 'failed'} */ (error instanceof MCPError && error.auth ? 'auth' : 'failed') }
   })
@@ -119,26 +134,28 @@ function labelOf(tool) { return tool.title ?? tool.annotations?.title ?? tool.na
 /** The logo of the service Jean knows a connection is made to, if any (D159). @param {Connection} connection */
 function logoOf(connection) { return known(app.policy).find((entry) => entry.url === connection.url)?.logo }
 
-/** @param {Connection} connection @param {McpTool} tool @returns {import('../../core/loop.js').Tool} */
+/** @param {Connection} connection @param {McpTool & { at: string }} tool @returns {import('../../core/loop.js').Tool} */
 function asTool(connection, tool) {
   const { $schema, ...schema } = tool.inputSchema ?? {}
   const label = labelOf(tool)
-  const call = (/** @type {any} */ args, /** @type {AbortSignal | undefined} */ signal) => client(connection).callTool(tool, args ?? {}, signal)
+  const call = (/** @type {any} */ args, /** @type {AbortSignal | undefined} */ signal) => client(connection, tool.at).callTool(tool, args ?? {}, signal)
   return {
     spec: { name: toolName(connection, tool.name), description: `${connection.name}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } },
     kind: tool.annotations?.readOnlyHint ? 'fetch' : 'other',
     deferred: true,
     service: connection.id,
     title: () => `${connection.name}: ${label}`,
-    // An access token refused before it expired is renewed once. A service that lists its tools
-    // to anyone may still run them only for someone signed in (Google's, D193): its row offers it.
+    // An access token refused before it expired is renewed once, unless renewing it was refused. A
+    // service that lists its tools to anyone may still run them only for someone signed in (D193):
+    // its row offers it. Refused once signed in, it is what the sign-in didn't allow (D344).
     run: async (args, ctx) => answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
       if (!(error instanceof MCPError && error.auth)) throw error
       if (connection.auth === 'none') {
         status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth', challenge: error.challenge } }
-        throw new Error(`${connection.name} needs the user to sign in first. Ask them to click Connect beside ${connection.name} in Settings › Connections, then try again.`)
+        throw new Error(signInFirst(connection))
       }
-      if (error.status !== 401 || connection.auth !== 'oauth') throw error
+      if (error.status === 403 && connection.auth === 'oauth') throw new Error(`${connection.name} refused this: the user's sign-in doesn't allow it. To allow it, they can disconnect ${connection.name} in Settings › Connections and connect it again.`)
+      if (error.status !== 401 || connection.auth !== 'oauth' || status.value[connection.id]?.error === 'auth') throw error
       await credential(connection, true)
       return call(args, ctx.signal)
     }), ctx),
@@ -217,7 +234,7 @@ function unique(name, except) {
   return named
 }
 
-/** @param {Connection} connection @param {McpTool[]} tools */
+/** @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
 async function save(connection, tools) {
   await updateSettings({ connections: [...(app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), connection] })
   status.value = { ...status.value, [connection.id]: { tools } }
@@ -232,20 +249,22 @@ const change = (connection, patch) => updateSettings({ connections: (app.setting
 const failed = (connection, key) => (knownFor(connection.url, app.policy, served.value) ? t('connections.failedKnown', { service: connection.name }) : t(key))
 
 /**
- * Connects a service; one that wants a sign-in sends the user there, and one that doesn't answer
- * a browser is tried again through the gateway, when it relays to its host. True once connected.
+ * Connects a service, with each server it reaches; one that wants a sign-in sends the user there,
+ * at once when Jean knows what it asks for (D344), and one that doesn't answer a browser is tried
+ * again through the gateway, when it relays to its host. True once connected.
  * @param {string} url @param {string} name @param {{ key?: string, gateway?: boolean }} [options]
  */
 async function connectTo(url, name, { key = '', gateway = false } = {}) {
+  const entry = knownFor(url, app.policy, served.value)
   /** @type {Connection} */
-  const connection = { id: ulid(), name: unique(name), url, auth: key ? 'key' : 'none', ...(gateway && { gateway }) }
+  const connection = { id: ulid(), name: unique(name), url, auth: key ? 'key' : 'none', ...(gateway && { gateway }), ...(entry?.servers && { servers: entry.servers }) }
   message.value = { kind: 'busy', text: t('brain.connecting') }
+  if (entry?.scopes && !key) return signIn(connection).then(() => false)
   try {
     if (key) await setSecret(app.fs, connection.id, key)
-    await save(connection, await client(connection).listTools())
+    await save(connection, await toolsAt(connection))
     return true
   } catch (error) {
-    clients.delete(connection.id)
     if (key) await deleteSecret(app.fs, connection.id)
     else if (error instanceof MCPError && error.auth) return signIn(connection, error.challenge).then(() => false)
     if (error instanceof TypeError && !gateway && covers(served.value.hosts, new URL(url))) return connectTo(url, name, { key, gateway: true })
@@ -286,10 +305,11 @@ async function signIn(connection, challenge) {
     const metadata = await discover(connection.url, { challenge, fetch })
     const redirectURI = location.origin + location.pathname
     // A service that can't register Jean takes the app the organisation registered there, or the gateway's.
-    const clientId = knownFor(connection.url, app.policy, served.value)?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
+    const entry = knownFor(connection.url, app.policy, served.value)
+    const clientId = entry?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
       ?? await registerClient(metadata, { redirectURI, name: BRAND.name, fetch })
     const another = all().some((other) => other.id !== connection.id && other.url === connection.url)
-    const { url, pending } = await authorization(metadata, { clientId, redirectURI, another })
+    const { url, pending } = await authorization(metadata, { clientId, redirectURI, another, scopes: entry?.scopes, params: entry?.authorize })
     sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, connection: { ...connection, auth: 'oauth' }, route: location.hash, draft: app.draft.value }))
     location.assign(url)
   } catch (error) {
@@ -310,7 +330,7 @@ export async function finishSignIn() {
   openSettings('connections')
   try {
     await setSecret(app.fs, saved.connection.id, JSON.stringify(await finish(params, saved, reach(saved.connection))))
-    await save(saved.connection, await client(saved.connection).listTools())
+    await save(saved.connection, await toolsAt(saved.connection))
   } catch (error) {
     console.warn(error)
     message.value = { kind: 'error', text: failed(saved.connection, 'connections.failed') }
@@ -322,7 +342,6 @@ export async function finishSignIn() {
 async function remove(connection) {
   if (!confirm(t('connections.confirmRemove', { service: connection.name }))) return
   await deleteSecret(app.fs, connection.id)
-  clients.delete(connection.id)
   await updateSettings({ connections: (app.settings.value.connections ?? []).filter((other) => other.id !== connection.id) })
 }
 

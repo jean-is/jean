@@ -46,13 +46,13 @@ async function withPolicy(page, policy) {
   }, { once: true }))
 }
 
-test('a service Jean knows connects in one click; those not reached yet are there, disabled', async ({ page }) => {
-  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
+test('a service Jean knows connects in one click, with every server its one sign-in reaches (D344); those not reached yet are there, disabled', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp`, servers: [`${MAIL_URL}/search/mcp`], scopes: ['mail.read'] }] })
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
   await expect(dialog.getByRole('button', { name: 'Notion' })).toBeEnabled()
-  for (const name of ['Gmail', 'Microsoft 365', 'Google Meet', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
+  for (const name of ['Google', 'Microsoft 365', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
   // Any other service is behind the + at the top.
   await expect(dialog.locator('#connection-add')).toHaveCount(0)
   await expect(dialog.locator('.panel-head .icon-button')).toHaveAttribute('aria-expanded', 'false')
@@ -61,9 +61,9 @@ test('a service Jean knows connects in one click; those not reached yet are ther
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   const back = page.locator('app-settings dialog[open]')
   const mail = back.locator('.connection')
-  await expect(mail).toContainText('3 actions')
+  await expect(mail).toContainText('5 actions')
   await mail.locator('summary').click()
-  await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email'])
+  await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email', 'web_search_exa', 'web_fetch_exa'])
   // Its tile stays, for another account, saying nothing more.
   await expect(back.getByRole('button', { name: 'Mail', exact: true })).toBeEnabled()
 })
@@ -76,7 +76,7 @@ test('a service that lists its tools to anyone but runs them only for someone si
   await ask(page, 'Summarise my latest emails')
   await page.locator('.approval .button.primary').click()
   // The call is refused: the brain reads that the user has to sign in, and the connection offers it.
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in first')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in')
   const mail = (await openSettings(page, 'Connections')).locator('.connection')
   await expect(mail).toContainText('This service needs you to sign in')
   await mail.getByRole('button', { name: 'Connect', exact: true }).click()

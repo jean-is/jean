@@ -40,6 +40,17 @@ export const searchesWeb = ({ name, description = '', annotations = {} }) => {
 }
 
 /**
+ * The tools of the servers one sign-in reaches (D344), each kept with its server's address: those of
+ * each that answered, a name an earlier one took left out. None answered: it fails as the first did.
+ * @param {[string, { listTools: () => Promise<McpTool[]> }][]} servers @returns {Promise<(McpTool & { at: string })[]>}
+ */
+export const toolsOf = (servers) => Promise.allSettled(servers.map(([at, server]) => server.listTools().then((tools) => tools.map((tool) => ({ ...tool, at }))))).then((answers) => {
+  if (answers.every((answer) => answer.status === 'rejected')) throw /** @type {PromiseRejectedResult} */ (answers[0]).reason
+  const tools = answers.flatMap((answer) => (answer.status === 'fulfilled' ? answer.value : []))
+  return tools.filter((tool, i) => tools.findIndex((other) => other.name === tool.name) === i)
+})
+
+/**
  * @param {{ url: string, client: { name: string, version: string }, authorization?: () => Promise<string | undefined>, fetch?: typeof globalThis.fetch }} options
  *   authorization: the Authorization header, when the service needs one
  */

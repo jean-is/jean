@@ -89,7 +89,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 npm run dev     # build (vendor + manifest), then serve, checking the budgets after each change (npm start does the same)
 npm run dev:gateway  # the same, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
-npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318)
+npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)
 npm run render  # build, then the package that draws a task saved as a web page, in dist/render/, for npm publish ./dist/render (D305)
 npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)

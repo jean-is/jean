@@ -201,7 +201,7 @@ describe('the <connections> section', () => {
 // ─── Connections (MCP) ───────────────────────────────────────────────────────
 
 import { createFakeMail } from './fixtures/fake-mail.js'
-import { mcpClient, paramHeaders, headerValue, searchesWeb } from '../app/caps/connections/mcp.js'
+import { mcpClient, paramHeaders, headerValue, searchesWeb, toolsOf } from '../app/caps/connections/mcp.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh } from '../app/caps/connections/auth.js'
 import { DIRECTORY, known, knownFor, covers, searchers } from '../app/caps/connections/directory.js'
 import { gateway, covers as gatewayCovers, SERVICES } from '../gateway/gateway.js'
@@ -265,6 +265,17 @@ describe('MCP client', () => {
     assert.equal(headerValue('=?base64?literal?='), '=?base64?PT9iYXNlNjQ/bGl0ZXJhbD89?=')
     const schema = { properties: { region: { type: 'string', 'x-mcp-header': 'Region' }, filter: { type: 'object', properties: { team: { type: 'string', 'x-mcp-header': 'Team' } } }, query: { type: 'string' } } }
     assert.deepEqual(paramHeaders(schema, { region: 'eu', filter: { team: 'ops' }, query: 'x' }), { 'mcp-param-region': 'eu', 'mcp-param-team': 'ops' })
+  })
+
+  test('one sign-in, several servers: the tools of each that answered, each with its server, a name taken first kept; none answered fails as the first did (D344)', async () => {
+    const tool = (/** @type {string} */ name) => ({ name })
+    const servers = /** @type {[string, { listTools: () => Promise<any[]> }][]} */ ([
+      ['https://mail.example/mcp', { listTools: async () => [tool('search'), tool('read_mail')] }],
+      ['https://down.example/mcp', { listTools: async () => { throw new Error('down') } }],
+      ['https://docs.example/mcp', { listTools: async () => [tool('read_doc'), tool('search')] }],
+    ])
+    assert.deepEqual((await toolsOf(servers)).map(({ name, at }) => [name, at]), [['search', 'https://mail.example/mcp'], ['read_mail', 'https://mail.example/mcp'], ['read_doc', 'https://docs.example/mcp']])
+    await assert.rejects(toolsOf([servers[1], ['https://other.example/mcp', { listTools: async () => { throw new Error('also down') } }]]), /^Error: down$/)
   })
 
   test('a tool searches the web when it says so itself: Exa’s search does, its page reader, a mailbox’s search and a closed world don’t (D271)', () => {
@@ -378,6 +389,17 @@ describe('signing in to a connection', () => {
     await assert.rejects(discover(server, { fetch: elsewhere }), /could not be found/)
   })
 
+  test('a service Jean knows asks for its own scopes, and for what more its sign-in wants, another account as well (Google’s, D344)', async () => {
+    const google = /** @type {const} */ (DIRECTORY.find((entry) => entry.id === 'google'))
+    const metadata = { issuer: 'https://accounts.google.com', authorization_endpoint: 'https://accounts.google.com/o/oauth2/v2/auth', token_endpoint: 'https://oauth2.googleapis.com/token', resource: String(google?.url), scope: 'https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify' }
+    const asked = async (/** @type {boolean} */ another) => new URL((await authorization(metadata, { clientId: 'google-app', redirectURI: 'https://jean.example/', another, scopes: google?.scopes, params: google?.authorize })).url).searchParams
+    const first = await asked(false)
+    assert.equal(first.get('scope'), google?.scopes?.join(' '))
+    assert.ok(!first.get('scope')?.includes('https://mail.google.com/'))
+    assert.deepEqual([first.get('access_type'), first.get('prompt'), first.get('response_type'), first.get('resource')], ['offline', 'consent', 'code', 'https://gmailmcp.googleapis.com/mcp/v1'])
+    assert.equal((await asked(true)).get('prompt'), 'consent select_account')
+  })
+
   test('a service may list its tools to anyone and run them only once signed in: its refusal says where (Google’s, D193)', async () => {
     const { origin, server, close } = await fakeMail()
     try {
@@ -412,22 +434,28 @@ describe('the services Jean knows (D95)', () => {
     for (const entry of services.slice(0, 4)) assert.match(String(entry.url), /^https:\/\//)
     assert.equal(services.length, DIRECTORY.length)
     assert.ok(services.some((entry) => entry.id === 'microsoft-365' && entry.url === 'https://microsoft365.mcp.claude.com/mcp' && entry.via === null))
-    assert.ok(services.some((entry) => entry.id === 'google-meet' && !entry.url && entry.via === null))
-    // A gateway that relays to Google's servers but not its sign-in, or holds no app of Google's, doesn't reach Gmail.
+    assert.ok(services.some((entry) => entry.id === 'servicenow' && !entry.url && entry.via === null))
+    // A gateway that relays to Google's servers but not its sign-in, or holds no app of Google's, or
+    // relays to some of its servers only (D344), doesn't reach Google.
     const google = { 'https://accounts.google.com': 'google-app' }
-    assert.equal(known({}, { hosts: ['googleapis.com'], clients: google }).find((entry) => entry.id === 'gmail')?.via, null)
-    assert.equal(known({}, { hosts: ['googleapis.com', 'accounts.google.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
+    const via = (/** @type {string[]} */ hosts, clients = google) => known({}, { hosts, clients }).find((entry) => entry.id === 'google')?.via
+    assert.equal(via(['googleapis.com']), null)
+    assert.equal(via(['googleapis.com', 'accounts.google.com'], {}), null)
+    assert.equal(via(['gmailmcp.googleapis.com', 'oauth2.googleapis.com', 'accounts.google.com']), null)
+    const googles = String(DIRECTORY.find((entry) => entry.id === 'google')?.servers?.map((address) => new URL(address).hostname)).split(',')
+    assert.equal(googles.length, 7)
+    assert.equal(via(['gmailmcp.googleapis.com', ...googles, 'oauth2.googleapis.com', 'accounts.google.com']), 'gateway')
     const through = known({}, { hosts: ['googleapis.com', 'accounts.google.com', 'slack.com'], clients: google })
-    assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'google-chat'])
+    assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), ['google'])
     const ready = DIRECTORY.filter((entry) => entry.ready).length
-    assert.deepEqual(through.slice(ready, ready + 4).map((entry) => entry.id), ['gmail', 'google-drive', 'google-calendar', 'google-chat'])
+    assert.deepEqual(through.slice(ready, ready + 1).map((entry) => entry.id), ['google'])
     // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
     const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
     assert.deepEqual(relayed({}), ['microsoft-365', 'dropbox', 'monday', 'airtable', 'calendly', 'otter', 'gamma', 'zapier', 'todoist'])
     const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
     assert.deepEqual(relayed(apps), DIRECTORY.filter((entry) => !entry.ready && entry.url).map((entry) => entry.id))
-    assert.equal(through.find((entry) => entry.id === 'google-meet')?.via, null)
-    assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, { hosts: ['googleapis.com', 'accounts.google.com'], clients: google })?.id, 'gmail')
+    assert.equal(through.find((entry) => entry.id === 'servicenow')?.via, null)
+    assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, { hosts: ['googleapis.com', 'accounts.google.com'], clients: google })?.id, 'google')
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1'), undefined)
   })
 
