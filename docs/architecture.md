@@ -454,7 +454,7 @@ Every nested call goes through the rules (`ctx.call` in `core/loop.js`); a call 
 
 **Thinking blocks are kept** (D54) on each step's brain entry and replayed unchanged to the model that wrote them.
 
-**Caching and warming on Anthropic** (D49). One `cache_control` breakpoint on the system prompt's last block, plus top-level automatic caching for the conversation. When the user starts typing after about 5 minutes without a request, Jean sends the same prefix with `max_tokens: 0`, unstreamed, with the real request's thinking and effort, its breakpoint on the last message already there; skipped below the model's minimum cacheable size. OpenAI caches by itself; local servers keep their KV cache, which the frozen prefix keeps valid; the device's brain reads only what follows the text it already read (D58).
+**Caching and warming on Anthropic** (D49). One `cache_control` breakpoint on the system prompt's last block, plus top-level automatic caching for the conversation. When the user starts typing after about 5 minutes without a request, Jean sends the same prefix with `max_tokens: 0`, unstreamed, with the real request's thinking and effort, its breakpoint on the last message already there; skipped below the model's minimum cacheable size. OpenAI caches by itself; local servers keep their KV cache, which the frozen prefix keeps valid; the device's brain reads only what follows the text it already read (D58), a long prompt 2,048 tokens at a time, each part going into the cache before the next (D350).
 
 ## Retrieval and extraction
 
