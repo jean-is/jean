@@ -46,13 +46,17 @@ test('no number heads two entries', () => {
   assert.deepEqual(twice, [], `${twice.join(', ')} each head more than one entry`)
 })
 
-test('an entry says what was chosen and why in 200 words at most, before its Rejected list (D346)', () => {
-  const long = decisions.split('\n').filter((line) => line.startsWith('- **')).map((line) => {
-    const rejected = line.search(/\*Rejected[^*]*:\*/)
-    const words = line.slice(2, rejected < 0 ? undefined : rejected).split(/\s+/).filter(Boolean).length
-    return `${/D\d+/.exec(line)?.[0] ?? line.slice(4, 30)} (${words})`
-  }).filter((entry) => Number(/\((\d+)\)$/.exec(entry)?.[1]) > 200)
-  assert.deepEqual(long, [], 'move how it works to architecture.md or product.md')
+// The entries whose rejected items can't fit in 200 words without losing one: their length is a
+// ceiling that only goes down, and an entry leaves this list once it fits (D346).
+const CEILINGS = { D196: 504, D113: 208 }
+
+test('an entry is 200 words at most, its heading and rejected items included (D346)', () => {
+  const lengths = decisions.split('\n').filter((line) => line.startsWith('- **'))
+    .map((line) => [/D\d+/.exec(line)?.[0] ?? line.slice(4, 30), line.slice(2).split(/\s+/).filter(Boolean).length])
+  const long = lengths.filter(([id, words]) => words > (CEILINGS[id] ?? 200)).map(([id, words]) => `${id} (${words})`)
+  assert.deepEqual(long, [], 'move how it works to architecture.md or product.md, and say each reason in fewer words')
+  const fit = lengths.filter(([id, words]) => id in CEILINGS && words <= 200).map(([id]) => id)
+  assert.deepEqual(fit, [], 'these fit in 200 words now: take them out of CEILINGS')
 })
 
 test('what the header says of the numbers holds', () => {
