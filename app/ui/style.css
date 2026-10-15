@@ -688,6 +688,12 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .sidebar-settings:hover { box-shadow: inset 0 0 0 100vmax var(--line); }
 /* Under it, the drawer's padding, which the tasks scrolling past showed through. */
 .sidebar-settings::after { content: ''; position: absolute; inset: 100% 0 auto; block-size: var(--foot); background: inherit; }
+/* More tasks above or below fade out at the drawer's top or above the user, where scroll timelines are known (D348). */
+@supports (animation-timeline: scroll()) {
+  :is(app-inbox, .drawer, .sidebar-settings)::before { content: ''; position: sticky; z-index: 1; inset-block-start: -1rem; flex: none; block-size: 2.5rem; margin-block-end: -2.5rem; background: inherit; mask: linear-gradient(#000 1rem, #0000); opacity: 0; pointer-events: none; animation: tasks linear both; animation-timeline: scroll(); animation-range: 0 1.5rem; }
+  .sidebar-settings::before { position: absolute; inset: auto 0 100%; block-size: 1.5rem; margin: 0; mask: linear-gradient(#0000, #000); animation-direction: reverse; animation-range: calc(100% - 1.5rem) 100%; }
+}
+@keyframes tasks { to { opacity: 1; } }
 .profile > .icon { flex: none; inline-size: 1.15rem; block-size: 1.15rem; margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
 .avatar { flex: none; display: grid; place-items: center; inline-size: 1.85rem; block-size: 1.85rem; border: 1px solid transparent; border-radius: 50%; background: oklch(from var(--flame) l c h / 0.2); font-size: 0.85rem; font-weight: 600; line-height: 1; }
 .avatar .icon { inline-size: 1.05rem; block-size: 1.05rem; }
