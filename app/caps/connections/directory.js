@@ -70,6 +70,9 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'otter', name: 'Otter.ai', url: 'https://mcp.otter.ai/mcp', signIn: ['otter.ai'], logo: 'otter.png' },
   { id: 'gamma', name: 'Gamma', url: 'https://mcp.gamma.app/mcp', signIn: ['auth.gamma.app'], logo: 'gamma.svg' },
   { id: 'zapier', name: 'Zapier', url: 'https://mcp.zapier.com/api/mcp/mcp', logo: 'zapier.png' },
+  // A business's account, cards and invoices, not a payment service: its server sends no money, and a
+  // transfer it prepares waits for approval in Qonto's own app (D352). It and its sign-in answer no browser.
+  { id: 'qonto', name: 'Qonto', url: 'https://mcp.qonto.com/mcp', logo: 'qonto.png' },
   // Its service answers no browser.
   { id: 'todoist', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
   // Each company's own instance, whose address policy gives, with the app its admin registered
@@ -92,8 +95,7 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
   const entries = new Map(DIRECTORY.map((entry) => [entry.id, entry]))
   for (const change of policy.directory ?? []) {
     const id = String(change.id ?? '')
-    const before = entries.get(id)
-    if (id && (before || change.name)) entries.set(id, /** @type {Known} */ ({ ready: true, ...before, ...change, id }))
+    if (id && (entries.has(id) || change.name)) entries.set(id, /** @type {Known} */ ({ ready: true, ...entries.get(id), ...change, id }))
   }
   const relayed = (/** @type {Known} */ { url, servers = [], signIn = [], app, clientId, api }) => [...(api ? [] : [String(url), ...servers]), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address)))
     && (!app || Boolean(clientId ?? clients[app]))
