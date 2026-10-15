@@ -42,10 +42,10 @@ async function start() {
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, navigator.languages))
 
   const root = document.documentElement
-  document.title = BRAND.name
   effect(() => {
     root.lang = locale.value
     root.dir = dir(locale.value)
+    document.title = locale.value === 'en' && document.title || BRAND.name
   })
   effect(() => { root.dataset.presence = app.presence.value })
   // Light or dark: the device's mode, until the user picks the other one (index.html applies it

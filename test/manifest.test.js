@@ -12,7 +12,7 @@ import {
   extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
 } from '../scripts/graph.js'
 import {
-  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, plan, stampPreloads,
+  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, plan, SHARE, stampPreloads,
   stampVersion,
 } from '../scripts/manifest.js'
 import { resolveRequest } from '../scripts/serve.js'
@@ -283,6 +283,10 @@ describe('manifest: screenshots', () => {
       assert.ok(short >= 320 && long <= 3840 && long <= 2.3 * short, `${src}: Chromium skips a screenshot this shape`)
       assert.equal(width > height, form === 'wide', `${src}: wide is landscape, narrow portrait`)
     }
+  })
+
+  it('takes the picture a shared link shows at Open Graph\'s size (D355)', async () => {
+    assert.deepEqual(jpegSize(await read(SHARE.src)), { width: SHARE.width, height: SHARE.height }, `${SHARE.src} is not ${SHARE.width}x${SHARE.height}: run \`npm run screenshots\``)
   })
 
   it('reads a JPEG\'s size from its frame header, after the segments before it', () => {

@@ -123,7 +123,7 @@ That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Ga
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
 | `npm run offers` | Measures how often a brain offers what a request needs, and what it doesn't, on a multilingual test set (`BRAIN=<provider>:<model>`) |
-| `npm run build:web` | Builds, then what a web deploy serves in `dist/web/`: Jean's own code minified, each file beside itself in brotli and gzip; `ADDRESS=<its address>` makes the site a search engine for browsers' address bars |
+| `npm run build:web` | Builds, then what a web deploy serves in `dist/web/`: Jean's own code minified, each file beside itself in brotli and gzip; `ADDRESS=<its address>` makes the site a search engine for browsers' address bars, and gives search engines and shared links its title, cards and sitemap |
 | `npm run render` | Builds, then the package that draws a task saved as a web page, `@codename/jean-render`, in `dist/render/` |
 | `npm run sounds -- <folder>` | The instruments scores play, `@codename/jean-sounds`, made of MS Basic as MuseScore's repository holds it, in `dist/sounds/` |
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |

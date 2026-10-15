@@ -62,6 +62,11 @@ export const SCREENSHOTS = [
   { src: 'screenshots/wide.jpg', sizes: '1280x800', type: 'image/jpeg', form_factor: 'wide', label: SCREENSHOT_LABEL },
   { src: 'screenshots/narrow.jpg', sizes: '824x1784', type: 'image/jpeg', form_factor: 'narrow', label: SCREENSHOT_LABEL },
 ]
+/**
+ * What a link to the site shows where it is shared (D355): the welcome screen again, at Open Graph's
+ * 1200 × 630, its drawer closed, so the question stands in the middle. Only those sites fetch it.
+ */
+export const SHARE = { src: 'screenshots/share.jpg', width: 1200, height: 630, alt: SCREENSHOT_LABEL }
 export const VERSION_LINE = /^const VERSION = '.*'$/m
 
 /** @param {unknown} error */

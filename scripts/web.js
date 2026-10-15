@@ -6,10 +6,11 @@
 // POLICY, a JSON object as the gateway's GATEWAY_CONFIG is, becomes the site's policy.json, which
 // index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
 // the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
-// a search engine (D353).
+// a search engine (D353), and what search engines and shared links read: index.html's title, canonical
+// address, cards and schema.org data, robots.txt and sitemap.xml, every other page unindexed (D355).
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { promisify } from 'node:util'
@@ -17,6 +18,7 @@ import { brotliCompress, constants, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
 import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
+import { siteBase, siteFiles, unindexed, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -69,9 +71,7 @@ export function withPolicy (html) {
  * @param {string} description  index.html's, as the install's is
  */
 export function openSearch (site, brand, description) {
-  const url = URL.parse(site)
-  if (!url || !/^https?:$/.test(url.protocol) || url.href !== url.origin + url.pathname) throw new Error(`ADDRESS is the address the site is served from, as https://example.org/, not ${site}`)
-  const base = xml(url.href.replace(/\/?$/, '/'))
+  const base = xml(siteBase(site))
   return `<?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
   <ShortName>${xml(brand.name)}</ShortName>
@@ -146,25 +146,30 @@ async function main () {
   const { BRAND } = await import(pathToFileURL(join(APP, 'brand.js')).href)
   const description = /<meta name="description" content="([^"]*)">/.exec(await readFile(join(APP, 'index.html'), 'utf8'))?.[1] ?? ''
   const search = process.env.ADDRESS ? openSearch(process.env.ADDRESS, BRAND, description) : null
-  /** index.html naming the policy and the search the site has. @param {string} html */
+  const base = process.env.ADDRESS ? siteBase(process.env.ADDRESS) : null
+  const languages = (await readdir(join(APP, 'locales'))).filter((name) => name.endsWith('.json')).map((name) => name.slice(0, -'.json'.length)).sort()
+  /** index.html naming the policy and the search the site has, and as search engines read it. @param {string} html */
   const page = (html) => {
     const named = policy ? withPolicy(html) : html
-    return search ? withSearch(named, BRAND) : named
+    const searched = search ? withSearch(named, BRAND) : named
+    return base ? withSite(searched, base, BRAND, description, languages) : searched
   }
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0
   for (const path of files) {
     const data = await readFile(join(APP, path))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path === 'index.html' ? Buffer.from(page(data.toString('utf8'))) : data
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path === 'index.html' ? Buffer.from(page(data.toString('utf8'))) : base && path.endsWith('.html') ? Buffer.from(unindexed(data.toString('utf8'))) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
   }
-  if (policy) await writeFile(join(OUT, 'policy.json'), policy)
-  if (policy) files.push('policy.json')
-  if (search) await writeFile(join(OUT, 'opensearch.xml'), search)
-  if (search) files.push('opensearch.xml')
+  /** The files a deploy adds beside app/'s. @type {Record<string, string>} */
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base) }
+  for (const [path, text] of Object.entries(added)) {
+    await writeFile(join(OUT, path), text)
+    files.push(path)
+  }
   const read = (/** @type {string} */ path) => readFile(join(OUT, path))
   const { version, listing, worker } = await restamp((await read('capabilities.json')).toString('utf8'), (await read('sw.js')).toString('utf8'), read)
   await writeFile(join(OUT, 'capabilities.json'), listing)
@@ -179,7 +184,7 @@ async function main () {
     }
   })
   const kb = (/** @type {number} */ bytes) => `${Math.round(bytes / 1024)} KB`
-  console.log(`web: version ${version}, ${files.length} files in dist/web${policy || search ? `, ${new Intl.ListFormat('en').format([policy && 'policy.json', search && 'opensearch.xml'].filter((name) => typeof name === 'string'))} among them` : ''}, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them`)
+  console.log(`web: version ${version}, ${files.length} files in dist/web${Object.keys(added).length ? `, ${new Intl.ListFormat('en').format(Object.keys(added))} among them` : ''}, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them`)
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
