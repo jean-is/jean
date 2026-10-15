@@ -2,7 +2,9 @@
 // Usage: node test/fixtures/fake-mail.js   (PORT=4182 by default)
 //   /mcp           MCP 2026-07-28 (stateless), behind an OAuth sign-in: protected resource metadata,
 //                  authorization server metadata, dynamic client registration, an authorize page
-//                  that approves at once and sends the browser back, and a token endpoint (PKCE)
+//                  that approves at once and sends the browser back, and a token endpoint (PKCE),
+//                  with an ID token saying who signed in when asked with openid: ana, or ben for
+//                  another account (D357)
 //   /open/mcp      the same tools, no sign-in
 //   /fixed/mcp     the same tools, behind a sign-in server that can't register apps: it only
 //                  knows the client `jean-test`, registered for any address (D95)
@@ -95,7 +97,7 @@ const INDEX = { $schema: 'https://schemas.agentskills.io/discovery/0.2.0/schema.
 export function createFakeMail() {
   /** @type {Map<string, { redirect: string | null, secret?: string }>} null: any address */
   const clients = new Map([['jean-test', { redirect: null }], ['gateway-app', { redirect: null, secret: 'gateway-secret' }]])
-  /** @type {Map<string, { challenge: string, client: string, redirect: string, resource: string }>} */
+  /** @type {Map<string, { challenge: string, client: string, redirect: string, resource: string, scope?: string, prompt?: string }>} */
   const codes = new Map()
   const tokens = new Set(['test-token'])
   /** @type {Set<string>} */
@@ -137,7 +139,7 @@ export function createFakeMail() {
     if (/^\/\.well-known\/oauth-authorization-server(\/fixed|\/closed)?$/.test(url.pathname)) {
       return json(200, {
         issuer: `${origin}${at}`, authorization_endpoint: `${origin}/authorize`, token_endpoint: `${origin}/token`, ...(!fixed && { registration_endpoint: `${origin}/register` }),
-        code_challenge_methods_supported: ['S256'], authorization_response_iss_parameter_supported: true, scopes_supported: ['mail.read', 'offline_access'],
+        code_challenge_methods_supported: ['S256'], authorization_response_iss_parameter_supported: true, scopes_supported: ['mail.read', 'openid', 'email', 'offline_access'],
       })
     }
     if (url.pathname === '/register') {
@@ -152,7 +154,7 @@ export function createFakeMail() {
       const resource = [`${origin}/mcp`, `${origin}/fixed/mcp`, `${origin}/closed/mcp`, `${origin}/listed/mcp`].find((one) => one === query.resource)
       if (!client || (client.redirect ?? query.redirect_uri) !== query.redirect_uri || query.code_challenge_method !== 'S256' || !resource) return json(400, { error: 'invalid_request' })
       const code = randomUUID()
-      codes.set(code, { challenge: query.code_challenge, client: query.client_id, redirect: query.redirect_uri, resource: query.resource })
+      codes.set(code, { challenge: query.code_challenge, client: query.client_id, redirect: query.redirect_uri, resource: query.resource, scope: query.scope, prompt: query.prompt })
       const back = new URL(query.redirect_uri)
       back.searchParams.set('code', code)
       back.searchParams.set('state', query.state)
@@ -173,7 +175,10 @@ export function createFakeMail() {
       if (!verified || grant.client !== form.client_id || grant.redirect !== form.redirect_uri || grant.resource !== form.resource) return json(400, { error: 'invalid_grant' })
       const token = randomUUID()
       tokens.add(token)
-      return json(200, { access_token: token, token_type: 'Bearer', expires_in: 3600, refresh_token: 'refresh-me' })
+      const email = /select_account/.test(grant.prompt ?? '') ? 'ben@example.com' : 'ana@example.com'
+      const claims = { iss: origin, sub: email, aud: grant.client, email }
+      const idToken = grant.scope?.split(' ').includes('openid') && [{ alg: 'none' }, claims].map((part) => b64url(Buffer.from(JSON.stringify(part)))).join('.').concat('.')
+      return json(200, { access_token: token, token_type: 'Bearer', expires_in: 3600, refresh_token: 'refresh-me', ...(idToken && { id_token: idToken }) })
     }
 
     // ─── A map service (D291): a style with a background and no tiles, and fonts that hold nothing ───

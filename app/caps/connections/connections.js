@@ -60,11 +60,10 @@ const served = signal(/** @type {{ hosts: string[], clients: Record<string, stri
 effect(() => {
   const address = gatewayAt.value
   served.value = { hosts: [], clients: {} }
-  if (address) {
-    fetch(address, { headers: { accept: 'application/json' } }).then((res) => res.json()).then(({ hosts, clients }) => {
-      if (gatewayAt.peek() === address) served.value = { hosts: Array.isArray(hosts) ? hosts.map(String) : [], clients: { ...clients } }
-    }, (error) => console.warn(address, error))
-  }
+  if (!address) return
+  fetch(address, { headers: { accept: 'application/json' } }).then((res) => res.json()).then(({ hosts, clients }) => {
+    if (gatewayAt.peek() === address) served.value = { hosts: Array.isArray(hosts) ? hosts.map(String) : [], clients: { ...clients } }
+  }, (error) => console.warn(address, error))
 })
 
 /**
@@ -96,7 +95,7 @@ function client(connection, address = connection.url) {
 }
 
 /** What the brain reads when a service wants the user to sign in, first or again. @param {Connection} connection */
-const signInFirst = (connection) => `${connection.name} needs the user to sign in. Ask them to click Connect beside ${connection.name} in Settings › Connections, then try again.`
+const signInFirst = (connection, name = called(connection)) => `${name} needs the user to sign in. Ask them to click Connect beside ${name} in Settings › Connections, then try again.`
 /** Renewals under way, one a connection, which each of its servers waits for. @type {Map<string, Promise<import('./auth.js').Tokens>>} */
 const renewing = new Map()
 
@@ -131,8 +130,19 @@ const list = (connections = all()) => Promise.all(connections.map(async (connect
   status.value = { ...status.value, [connection.id]: now }
 }))
 
-/** The name the brain calls a tool by, in a script too: `mail_search_emails`. @param {Connection} connection @param {string} name */
-const toolName = (connection, name) => identifier(`${slug(connection.name).slice(0, 16) || 'service'}_${name}`).slice(0, 64)
+/** The connections whose tools' names start as this one's, its name's, in the order they were made (by ULID). @param {Connection} connection */
+const alike = (connection) => all().filter((other) => slug(other.name).slice(0, 16) === slug(connection.name).slice(0, 16)).sort((a, b) => (a.id < b.id ? -1 : 1))
+
+/**
+ * What the user and the brain call a connection: its name, and, when another is named alike, who
+ * signed in ("Gmail (ana@example.com)", D357), or else which it is ("Notion 1", "Notion 2").
+ * @param {Connection} connection
+ */
+const called = (connection, same = alike(connection)) => (same.length < 2 ? connection.name : connection.account ? `${connection.name} (${connection.account})`
+  : `${connection.name} ${same.findIndex((other) => other.id === connection.id) + 1 || same.length + 1}`)
+
+/** The name the brain calls a tool by, in a script too: `mail_search_emails`, then `mail_2_search_emails` for another account alike. @param {Connection} connection @param {string} name */
+const toolName = (connection, name, rank = alike(connection).findIndex((other) => other.id === connection.id)) => identifier(`${slug(connection.name).slice(0, 16) || 'service'}${rank > 0 ? `_${rank + 1}` : ''}_${name}`).slice(0, 64)
 
 /** What a tool is called where the user sees it. @param {McpTool} tool */
 function labelOf(tool) { return tool.title ?? tool.annotations?.title ?? tool.name }
@@ -145,11 +155,11 @@ function asTool(connection, tool) {
   const label = labelOf(tool)
   const call = (/** @type {any} */ args, /** @type {AbortSignal | undefined} */ signal) => client(connection, tool.at).callTool(tool, args ?? {}, signal)
   return {
-    spec: { name: toolName(connection, tool.name), description: `${connection.name}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } },
+    spec: { name: toolName(connection, tool.name), description: `${called(connection)}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } },
     kind: tool.annotations?.readOnlyHint ? 'fetch' : 'other',
     deferred: true,
     service: connection.id,
-    title: () => `${connection.name}: ${label}`,
+    title: () => `${called(connection)}: ${label}`,
     // An access token refused before it expired is renewed once, unless renewing it was refused. A
     // service that lists its tools to anyone may still run them only for someone signed in (D193):
     // its row offers it. Refused once signed in, it is what the sign-in didn't allow (D344).
@@ -159,7 +169,7 @@ function asTool(connection, tool) {
         status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth', challenge: error.challenge } }
         throw new Error(signInFirst(connection))
       }
-      if (error.status === 403 && connection.auth === 'oauth') throw new Error(`${connection.name} refused this: the user's sign-in doesn't allow it. To allow it, they can disconnect ${connection.name} in Settings › Connections and connect it again.`)
+      if (error.status === 403 && connection.auth === 'oauth') throw new Error(`${called(connection)} refused this: the user's sign-in doesn't allow it. To allow it, they can disconnect ${called(connection)} in Settings › Connections and connect it again.`)
       if (error.status !== 401 || connection.auth !== 'oauth' || status.value[connection.id]?.error === 'auth') throw error
       await credential(connection, true)
       return call(args, ctx.signal)
@@ -180,9 +190,9 @@ function answer(connection, label, result, ctx) {
   if (result.isError) throw new Error(items.map((item) => item.text ?? '').join('\n').trim() || 'The service reported an error.')
   const sources = items.flatMap((item) => linked(item) ?? [])
   const numbers = ctx.cite(sources.length ? sources.map(({ uri, title, name, description }) => ({ title: title ?? name ?? uri, url: uri, ...(description && { quote: description }) }))
-    : [{ title: `${connection.name}: ${label}` }])
+    : [{ title: `${called(connection)}: ${label}` }])
   let n = 0
-  const out = [...(sources.length ? [] : [`Source [${numbers[0]}]: ${connection.name}`]), ...items.map((item) => {
+  const out = [...(sources.length ? [] : [`Source [${numbers[0]}]: ${called(connection)}`]), ...items.map((item) => {
     const source = linked(item)
     return source ? `Source [${numbers[n++]}]: ${source.title ?? source.name ?? source.uri} (${source.uri})\n${source.text ?? source.description ?? ''}`.trim() : item.text ?? `(${item.type})`
   }), ...(items.length ? [] : [JSON.stringify(result.structuredContent ?? null)])].join('\n\n')
@@ -195,13 +205,13 @@ effect(() => register({
   rules: ['Find the tools of the services in <connections> with find_tools.'],
   // Each service of the room's project, and the names of its tools.
   sections: async () => {
-    const lines = here().map((connection) => [connection.name, ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
+    const lines = here().map((connection) => [called(connection), ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
     return lines.length ? { connections: lines.map(([name, ...tools]) => `- ${name}${tools.length ? `: ${tools.join(', ')}` : ''}`).join('\n') } : {}
   },
   // Each service whose tools search the web, as they say themselves, for Settings › Web search (D271).
   searches: () => all().flatMap((connection) => {
     const [tools, logo] = [(status.value[connection.id]?.tools ?? []).filter(searchesWeb).map(labelOf), logoOf(connection)]
-    return tools.length ? [{ name: connection.name, ...(logo && { logo: logoAt(logo) }), tools }] : []
+    return tools.length ? [{ name: called(connection), ...(logo && { logo: logoAt(logo) }), tools }] : []
   }),
   slots: {
     settings: { at: 80, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel },
@@ -214,7 +224,7 @@ export const listed = list()
 
 /** The room's connections as the box's / names them (D199): each with its logo and its tools' names. */
 export const offered = () => here().map((connection) => ({
-  name: connection.name,
+  name: called(connection),
   logo: logoOf(connection),
   tools: (status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name)),
 }))
@@ -229,29 +239,19 @@ function nameFor(url) {
   return name[0].toUpperCase() + name.slice(1)
 }
 
-/**
- * Tool names start with the connection's: two connections need two names, an account each
- * ("Notion", "Notion 2"). @param {string} name @param {string} [except] the connection renamed
- */
-function unique(name, except) {
-  let named = name
-  for (let n = 2; all().some((other) => other.id !== except && slug(other.name) === slug(named)); n++) named = `${name} ${n}`
-  return named
-}
-
 /** @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
 async function save(connection, tools) {
   await updateSettings({ connections: [...(app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), connection] })
   status.value = { ...status.value, [connection.id]: { tools } }
   message.value = null
-  notify(t('connections.connected', { service: connection.name }))
+  notify(t('connections.connected', { service: called(connection) }))
 }
 
 /** Changes the user's own connection: what it is called, or the projects it is used in. @param {Connection} connection @param {Partial<Connection>} patch */
 const change = (connection, patch) => updateSettings({ connections: (app.settings.value.connections ?? []).map((other) => (other.id === connection.id ? { ...other, ...patch } : other)) })
 
 /** Why it didn't connect: an address to check, or, for a service Jean knows, just that. @param {Connection} connection @param {string} key */
-const failed = (connection, key) => (knownFor(connection.url, app.policy, served.value) ? t('connections.failedKnown', { service: connection.name }) : t(key))
+const failed = (connection, key) => (knownFor(connection.url, app.policy, served.value) ? t('connections.failedKnown', { service: called(connection) }) : t(key))
 
 /**
  * Connects a service, with each server it reaches; one that wants a sign-in sends the user there,
@@ -262,7 +262,7 @@ const failed = (connection, key) => (knownFor(connection.url, app.policy, served
 async function connectTo(url, name, { key = '', gateway = false } = {}) {
   const entry = knownFor(url, app.policy, served.value)
   /** @type {Connection} */
-  const connection = { id: ulid(), name: unique(name), url, auth: key ? 'key' : 'none', ...(gateway && { gateway }), ...(entry?.servers && { servers: entry.servers }) }
+  const connection = { id: ulid(), name, url, auth: key ? 'key' : 'none', ...(gateway && { gateway }), ...(entry?.servers && { servers: entry.servers }) }
   message.value = { kind: 'busy', text: t('brain.connecting') }
   if (entry?.scopes && !key) return signIn(connection).then(() => false)
   try {
@@ -335,8 +335,9 @@ export async function finishSignIn() {
   app.draft.value = saved.draft ?? ''
   openSettings('connections')
   try {
-    await setSecret(app.fs, saved.connection.id, JSON.stringify(await finish(params, saved, reach(saved.connection))))
-    await save(saved.connection, await toolsAt(saved.connection))
+    const { account, ...tokens } = await finish(params, saved, reach(saved.connection))
+    await setSecret(app.fs, saved.connection.id, JSON.stringify(tokens))
+    await save(Object.assign(saved.connection, account && { account }), await toolsAt(saved.connection))
   } catch (error) {
     console.warn(error)
     message.value = { kind: 'error', text: failed(saved.connection, 'connections.failed') }
@@ -346,7 +347,7 @@ export async function finishSignIn() {
 
 /** @param {Connection} connection */
 async function remove(connection) {
-  if (!confirm(t('connections.confirmRemove', { service: connection.name }))) return
+  if (!confirm(t('connections.confirmRemove', { service: called(connection) }))) return
   await deleteSecret(app.fs, connection.id)
   await updateSettings({ connections: (app.settings.value.connections ?? []).filter((other) => other.id !== connection.id) })
 }
@@ -385,7 +386,7 @@ function row(connection) {
   const { tools, error, challenge } = status.value[connection.id] ?? {}
   const own = (app.settings.value.connections ?? []).includes(connection)
   const kept = connection.projects && projects().filter((project) => connection.projects?.includes(project.id)).map(nameOf)
-  const head = html`${monogram({ name: connection.name, logo: logoOf(connection) }, 'item-icon')}<span class="item-text"><strong><bdi>${connection.name}</bdi></strong>${error
+  const head = html`${monogram({ name: connection.name, logo: logoOf(connection) }, 'item-icon')}<span class="item-text"><strong><bdi>${called(connection)}</bdi></strong>${error
     ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}${kept?.length
       ? html` · <bdi>${products(kept)}</bdi>` : nothing}</small>`}</span>`
   if (error || !tools) {
@@ -402,7 +403,7 @@ function row(connection) {
 }
 
 /**
- * What the user sets on their own connection: its name, which tells two accounts apart, and, once
+ * What the user sets on their own connection: its name, two alike told apart by account, and, once
  * there are projects, where it is used: every project, or only those ticked (at least one).
  * @param {Connection} connection
  */
@@ -410,7 +411,7 @@ function yours(connection) {
   return html`<label class="connection-name">${t('projects.name')}<input dir="auto" maxlength="40" autocomplete="off" .value=${live(connection.name)}
       @change=${(/** @type {Event} */ e) => {
         const name = /** @type {HTMLInputElement} */ (e.target).value.trim()
-        if (name && name !== connection.name) change(connection, { name: unique(name, connection.id) })
+        if (name && name !== connection.name) change(connection, { name })
       }}></label>
     ${placeable(connection) ? where(connection, (projects) => change(connection, { projects })) : nothing}`
 }

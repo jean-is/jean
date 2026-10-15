@@ -50,8 +50,8 @@ import { ulid } from './ulid.js'
 
 /**
  * A service connected (D21, D87): the further servers its one sign-in reaches (D344), the projects
- * it is used in, when not every one, and whether it is reached through the gateway (D191).
- * @typedef {{ id: string, name: string, url: string, servers?: string[], auth: 'none' | 'key' | 'oauth', projects?: string[], gateway?: boolean }} Connection
+ * it is used in, when not every one, whether it is reached through the gateway (D191), and who signed in (D357).
+ * @typedef {{ id: string, name: string, url: string, servers?: string[], auth: 'none' | 'key' | 'oauth', projects?: string[], gateway?: boolean, account?: string }} Connection
  */
 
 /**

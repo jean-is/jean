@@ -119,6 +119,21 @@ test('a service connects again for another account, each with a name of its own'
   await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_at_work_search_emails', 'mail_at_work_read_email', 'mail_at_work_send_email'])
 })
 
+test('two accounts of a service are told apart by who signed in (D357)', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'WebKit runs here like a private window: the first account is gone when the second sign-in leaves the page')
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
+  await start(page)
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-settings dialog[open]')
+  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  // Alone, it goes by its name; another account asks which, and the fake service signs in ben.
+  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await expect(page.locator('.toast')).toContainText('Mail (ben@example.com) is connected')
+  await expect(dialog.locator('.connection strong')).toHaveText(['Mail (ana@example.com)', 'Mail (ben@example.com)'])
+  await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_2_search_emails', 'mail_2_read_email', 'mail_2_send_email'])
+})
+
 test('a service that answers no page waits for a gateway that relays to it (D191)', async ({ page }) => {
   await withPolicy(page, { directory: [{ id: 'closed', name: 'Closed Mail', url: `${MAIL_URL}/closed/mcp`, ready: false }] })
   await start(page)

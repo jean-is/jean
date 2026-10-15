@@ -9,7 +9,7 @@ import { createVerifier, challengeS256 } from '../../core/oauth.js'
 /**
  * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource?: string, scope?: string }} Metadata
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
- * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string }} Tokens
+ * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string }} Tokens  account: who signed in (D357)
  */
 
 /** `Bearer resource_metadata="…", scope="…"` → its parameters. @param {string | null | undefined} header @returns {Record<string, string>} */
@@ -83,12 +83,13 @@ export async function registerClient(metadata, { redirectURI, name, fetch = glob
  * Where to send the user, and what to keep until they come back. Signing in to another account of
  * a service asks which one (`prompt=select_account`, which a server that doesn't know it ignores).
  * A service Jean knows may say what to ask for (`scopes`) and what more its sign-in wants (`params`, D344).
+ * Who signs in (an ID token, D357) and renewals are asked for too, where the sign-in server offers them.
  * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string> }} options
  * @returns {Promise<{ url: string, pending: Pending }>}
  */
 export async function authorization(metadata, { clientId, redirectURI, another = false, scopes, params: more = {} }) {
   const [verifier, state] = [createVerifier(), createVerifier().slice(0, 32)]
-  const scope = [scopes?.join(' ') ?? metadata.scope, metadata.scopes_supported?.includes('offline_access') && 'offline_access'].filter(Boolean).join(' ')
+  const scope = [...new Set([scopes?.join(' ') ?? metadata.scope, ...['openid', 'email', 'offline_access'].filter((one) => metadata.scopes_supported?.includes(one))].join(' ').split(' ').filter(Boolean))].join(' ')
   const url = new URL(metadata.authorization_endpoint)
   const prompt = [more.prompt, another && 'select_account'].filter(Boolean).join(' ')
   const params = { ...more, response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, ...(metadata.resource && { resource: metadata.resource }), ...(scope && { scope }), ...(prompt && { prompt }) }
@@ -124,5 +125,14 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.access_token) throw new Error(json?.error_description ?? json?.error ?? `HTTP ${res.status}`)
   const expiresAt = json.expires_in ? Date.now() + json.expires_in * 1000 : undefined
-  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(expiresAt && { expiresAt }), tokenEndpoint, clientId, resource }
+  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(expiresAt && { expiresAt }), tokenEndpoint, clientId, resource, ...(json.id_token && { account: await accountOf(json.id_token) }) }
 }
+
+/**
+ * Who signed in, as an ID token says, for display: the email, or else the login, kept only when it
+ * looks like one (no spaces or brackets), since the brain reads it too (D357). The token came from
+ * the sign-in server itself, over HTTPS, so its signature isn't checked (OpenID Connect, 3.1.3.7).
+ * @param {unknown} idToken @returns {Promise<string | undefined>}
+ */
+export const accountOf = (idToken) => Promise.resolve().then(() => new Response(Uint8Array.from(atob(String(idToken).split('.')[1].replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))).json())
+  .then((claims) => [claims.email, claims.preferred_username].find((said) => typeof said === 'string' && /^[\p{L}\p{N}._%+@-]{1,80}$/u.test(said))).catch(() => undefined)
