@@ -50,8 +50,9 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'google', name: 'Google Workspace', url: 'https://gmailmcp.googleapis.com/mcp/v1', servers: ['drive', 'docs', 'sheets', 'slides', 'calendar', 'chat'].map((product) => `https://${product}mcp.googleapis.com/mcp/v1`).concat('https://people.googleapis.com/mcp/v1'),
     includes: ['Gmail', 'Drive', 'Docs', 'Sheets', 'Slides', 'Calendar', 'Chat', 'Contacts'], logo: 'google.svg', ...google(['gmail.modify', 'drive.readonly', 'drive.file', 'documents', 'spreadsheets', 'presentations', 'calendar.events',
       'calendar.calendarlist.readonly', 'chat.messages.readonly', 'chat.spaces.readonly', 'chat.messages.create', 'contacts.readonly', 'directory.readonly', 'userinfo.profile']) },
-  // Refuses any request that carries an Origin, as every browser's does.
-  { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://microsoft365.mcp.claude.com/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], signIn: ['login.microsoftonline.com'], logo: 'microsoft-365.svg' },
+  // Refuses any request that carries an Origin, as every browser's does. Its scope is named by its
+  // sign-in server alone, not by the server, and Microsoft refuses offline_access asked for alone.
+  { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://microsoft365.mcp.claude.com/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], signIn: ['login.microsoftonline.com'], logo: 'microsoft-365.svg', scopes: ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default', 'openid', 'email'] },
   { id: 'slack', name: 'Slack', url: 'https://mcp.slack.com/mcp', signIn: ['slack.com'], app: 'https://mcp.slack.com', logo: 'slack.svg' },
   { id: 'dropbox', name: 'Dropbox', url: 'https://mcp.dropbox.com/mcp', signIn: ['www.dropbox.com', 'api.dropboxapi.com'], logo: 'dropbox.svg' },
   // Only registers the apps on its list.

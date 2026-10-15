@@ -97,7 +97,8 @@ async function throughGateway({ url, servers = [], signIn = [], app, scopes = []
       problems.push(which + metadata.message[0].toLowerCase() + metadata.message.slice(1, -1))
       continue
     }
-    for (const scope of metadata.scope?.split(' ') ?? []) listed.add(scope)
+    // Named by the server, or else by its sign-in server (Microsoft 365's).
+    for (const scope of metadata.scope?.split(' ') ?? metadata.scopes_supported ?? []) listed.add(scope)
     if (app && app !== metadata.issuer) problems.push(`${which}its sign-in server is ${metadata.issuer}, not ${app}`)
     if (!app && !metadata.registration_endpoint) problems.push(`${which}it can’t register Jean: name the app its sign-in takes (${metadata.issuer})`)
     for (const endpoint of [metadata.token_endpoint, !app && metadata.registration_endpoint]) {

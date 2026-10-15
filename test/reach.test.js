@@ -398,6 +398,11 @@ describe('signing in to a connection', () => {
     assert.equal(first.get('scope'), google?.scopes?.join(' '))
     assert.ok(!first.get('scope')?.includes('https://mail.google.com/'))
     assert.deepEqual([first.get('access_type'), first.get('prompt'), first.get('response_type'), first.get('resource')], ['offline', 'consent', 'code', 'https://gmailmcp.googleapis.com/mcp/v1'])
+    // Microsoft 365's server names no scope, its sign-in server does, and Microsoft refuses offline_access alone.
+    const m365 = DIRECTORY.find((entry) => entry.id === 'microsoft-365')
+    const microsoft = { issuer: 'https://microsoft365.mcp.claude.com', authorization_endpoint: 'https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?prompt=select_account', token_endpoint: 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token', scopes_supported: ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default', 'offline_access', 'openid', 'email'] }
+    const signIn = new URL((await authorization(microsoft, { clientId: 'm365-app', redirectURI: 'https://jean.example/', scopes: m365?.scopes })).url).searchParams
+    assert.deepEqual([signIn.get('scope'), signIn.get('prompt')], ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default openid email offline_access', 'select_account'])
     assert.equal((await asked(true)).get('prompt'), 'consent select_account')
   })
 
@@ -497,7 +502,7 @@ describe('the services Jean knows (D95)', () => {
     ] }
     const services = known(policy)
     const m365 = services.find((entry) => entry.id === 'microsoft-365')
-    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], signIn: ['login.microsoftonline.com'], logo: 'microsoft-365.svg', clientId: 'corp-app', ready: true, via: 'browser' })
+    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], signIn: ['login.microsoftonline.com'], logo: 'microsoft-365.svg', scopes: ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default', 'openid', 'email'], clientId: 'corp-app', ready: true, via: 'browser' })
     assert.equal(services.find((entry) => entry.id === 'crm')?.via, 'browser')
     assert.equal(services.find((entry) => entry.id === 'canva')?.via, null)
     assert.ok(!services.some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
