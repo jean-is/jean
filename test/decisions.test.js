@@ -46,6 +46,15 @@ test('no number heads two entries', () => {
   assert.deepEqual(twice, [], `${twice.join(', ')} each head more than one entry`)
 })
 
+test('an entry says what was chosen and why in 200 words at most, before its Rejected list (D346)', () => {
+  const long = decisions.split('\n').filter((line) => line.startsWith('- **')).map((line) => {
+    const rejected = line.search(/\*Rejected[^*]*:\*/)
+    const words = line.slice(2, rejected < 0 ? undefined : rejected).split(/\s+/).filter(Boolean).length
+    return `${/D\d+/.exec(line)?.[0] ?? line.slice(4, 30)} (${words})`
+  }).filter((entry) => Number(/\((\d+)\)$/.exec(entry)?.[1]) > 200)
+  assert.deepEqual(long, [], 'move how it works to architecture.md or product.md')
+})
+
 test('what the header says of the numbers holds', () => {
   const unused = /[^.]*never used\./.exec(header)?.[0].match(/D\d+/g) ?? []
   for (const d of unused) {
