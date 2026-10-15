@@ -69,7 +69,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 The base prompt lives in `core/prompt.js` and stays within its 200-token budget. Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
 
-The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read, unless the user goes back to a request (D188).
+The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read, unless the user goes back to a request (D188). When a conversation nears its brain's window, a summary is appended and the brain reads on from the last one, the file keeping everything (D359).
 
 ## Docs
 

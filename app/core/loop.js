@@ -7,7 +7,7 @@ import { isLocal } from './settings.js'
 import { fire } from './hooks.js'
 import { STRICT } from './rules.js'
 
-/** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, RuleValue, Source } from './types.js' */
+/** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, ToolSpec, RuleValue, Source, Usage } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
 
 // A request that fails before anything of the answer came is asked again after these waits (D202),
@@ -74,6 +74,9 @@ const LONGEST_WAIT = 30_000
  * @property {import('./hooks.js').Hook[] | (() => import('./hooks.js').Hook[])} [hooks]  what the turn's events run through
  *   (core/hooks.js): turn.step, each request to the brain, and tool.check, whether a call runs
  * @property {Record<string, unknown>} [about]       what each of its events holds besides: its task, the kinds of note it came with
+ * @property {number} [window]                       how much the brain reads at most, in tokens: a turn with one may read on from a
+ *   summary (turn.compact, D359); a helper's has none
+ * @property {Usage} [usage]                         what the brain last read and wrote in the conversation, before this turn
  */
 
 /** @param {TurnOptions} options */
@@ -110,16 +113,21 @@ export async function runTurn(options) {
       history.push({ role: 'tool', toolCallId: call.id, name: call.name, content: result.output, ...(result.failed && { isError: true }) })
     }
   }
-  if (options.resume) await runCalls(options.resume.calls, options.resume.step)
+  // What the brain last read and wrote: how far into its window the conversation is (D359).
+  let last = options.usage
 
-  for (let step = options.resume ? options.resume.step + 1 : 0; step < maxSteps; step++) {
+  /**
+   * One request to the brain, asked again while it may pass (D202), its entry shown and kept with what it thought and
+   * wrote. A hook's own (a summary) keeps only its entry, `own` on it; what it wrote goes back to the hook.
+   * @param {number} step @param {ChatMessage[]} messages @param {ToolSpec[]} specs @param {Record<string, any>} [own]
+   */
+  const request = async (step, messages, specs, own) => {
     const started = Date.now()
     // Whether it runs on this device, as its certificate says (D252).
     /** @type {ToolCallInfo} */
-    const brainEntry = { toolCallId: `brain-${step}-${started.toString(36)}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, local: isLocal(brain), ...meta } }
-    ctx.byName = new Map(tools().map((tool) => [tool.spec.name, tool]))
-    onUpdate({ sessionUpdate: 'tool_call', ...brainEntry }, step)
-
+    const entry = { toolCallId: `brain-${step}-${started.toString(36)}${own ? '-own' : ''}`, title: label ?? brain.model, kind: 'think', status: 'in_progress', rawInput: { provider: brain.provider, model: brain.model, local: isLocal(brain), ...meta }, ...(own && { _meta: own }) }
+    onUpdate({ sessionUpdate: 'tool_call', ...entry }, step)
+    const shown = (/** @type {AcpUpdate} */ update) => own || onUpdate(update, step)
     let text = ''
     let thought = ''
     const cited = /** @type {Record<string, any>} */ ({})
@@ -128,41 +136,42 @@ export async function runTurn(options) {
     /** @type {Extract<import('./types.js').StreamEvent, { type: 'done' }> | null} */
     let done = null
     try {
-      const specs = [...ctx.byName.values()].filter((tool) => declared.has(tool.spec.name)).map((tool) => tool.spec)
-      for (let attempt = 0, heard = false; ; attempt++) {
+      for (let attempt = 0, heard = false, summed = false; ; attempt++) {
         try {
           // A hook may send the step elsewhere, or answer it itself (the device's brain); it never sees the key.
-          for await (const event of await on('turn.step', { step, brain, system, messages: history, tools: specs, signal }, (e) => stream({ ...e, apiKey }))) {
+          for await (const event of await on('turn.step', { step, brain, system, messages, tools: specs, signal }, (e) => stream({ ...e, apiKey }))) {
             heard = true
             if (event.type === 'text') {
               text += event.delta
-              onUpdate({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: event.delta } }, step)
+              shown({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: event.delta } })
             } else if (event.type === 'thinking') {
               thought += event.delta
-              onUpdate({ sessionUpdate: 'agent_thought_chunk', content: { type: 'text', text: event.delta } }, step)
-            } else if (event.type === 'cite') {
+              shown({ sessionUpdate: 'agent_thought_chunk', content: { type: 'text', text: event.delta } })
+            } else if (event.type === 'cite' && !own) {
               // The brain's own search cites pages after what it just wrote.
               const marks = ` [${[...new Set(cite(event.sources, cited))].join(', ')}]`
               text += marks
-              onUpdate({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: marks } }, step)
+              shown({ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: marks } })
             } else if (event.type === 'tool_call') calls.push(event.call)
             else if (event.type === 'done') done = event
           }
           break
         } catch (error) {
+          // Past the brain's window before anything of the answer came: it reads on from a summary, once, and is asked again (D359).
+          if (!own && !heard && !summed && error instanceof LLMError && error.code === 'too_long' && (summed = await compact(step, specs, 'too_long'))) continue
           // Nothing of the answer came, and it may pass: asked again after a moment, which its entry says meanwhile.
           const wait = heard || signal?.aborted ? undefined : retryWait(error, retries[attempt])
           if (wait === undefined) throw error
-          onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: brainEntry.toolCallId, _meta: { retrying: true } }, step)
+          onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: entry.toolCallId, _meta: { ...own, retrying: true } }, step)
           await pause(wait, signal)
           if (signal?.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
-          onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: brainEntry.toolCallId, _meta: { retrying: false } }, step)
+          onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: entry.toolCallId, _meta: { ...own, retrying: false } }, step)
         }
       }
     } catch (error) {
-      const failed = { ...brainEntry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ms: Date.now() - started } }
+      const failed = { ...entry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ...own, ms: Date.now() - started } }
       onUpdate({ sessionUpdate: 'tool_call_update', ...failed }, step)
-      await persist(stepRecords(step, failed, thought, text))
+      await persist(stepRecords(step, failed, own ? '' : thought, own ? '' : text))
       throw error
     }
 
@@ -171,10 +180,38 @@ export async function runTurn(options) {
     // Thinking blocks and the provider's own search results are replayed unchanged by later turns.
     // How long it took is kept for the activity view.
     const raw = done?.message.raw
-    const kept = { ...cited, ...(Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }), ms: Date.now() - started }
-    const completed = { ...brainEntry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, _meta: kept }
+    const kept = { ...own, ...cited, ...(!own && Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }), ms: Date.now() - started }
+    const completed = { ...entry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, _meta: kept }
     onUpdate({ sessionUpdate: 'tool_call_update', ...completed }, step)
-    await persist(stepRecords(step, completed, thought, text))
+    await persist(stepRecords(step, completed, own ? '' : thought, own ? '' : text))
+    return { stopReason, text, calls, done }
+  }
+
+  /**
+   * Before a step, a hook may have the brain sum up what came so far (turn.compact, D359): it answers with the record,
+   * kept here, which the brain reads on from. No call is waiting then (D212). Jean's own behaviour does nothing.
+   * @param {number} step @param {ToolSpec[]} specs @param {'window' | 'too_long'} reason
+   */
+  const compact = async (step, specs, reason) => {
+    const record = options.window && await on('turn.compact', { step, brain, system, messages: [...history], tools: specs, usage: last, window: options.window, reason, signal,
+      ask: (/** @type {ChatMessage[]} */ messages) => request(step, messages, specs, { compact: true }) }, () => null)
+    if (record?.update?.sessionUpdate !== '_compaction') return false
+    const kept = { ...record, step }
+    onUpdate(kept.update, step)
+    await persist([kept])
+    history.splice(0, history.length, { role: 'user', content: kept.update.text })
+    last = undefined
+    return true
+  }
+
+  if (options.resume) await runCalls(options.resume.calls, options.resume.step)
+
+  for (let step = options.resume ? options.resume.step + 1 : 0; step < maxSteps; step++) {
+    ctx.byName = new Map(tools().map((tool) => [tool.spec.name, tool]))
+    const specs = [...ctx.byName.values()].filter((tool) => declared.has(tool.spec.name)).map((tool) => tool.spec)
+    await compact(step, specs, 'window')
+    const { stopReason, text, calls, done } = await request(step, history, specs)
+    last = done?.usage
     history.push(done?.message ?? { role: 'assistant', content: text, toolCalls: calls })
 
     if (stopReason === 'pause') continue
@@ -246,7 +283,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     },
     // A helper's text is its result; its calls are kept, under this one, never as pending: a closed page asks its questions no more (D212).
     turn: (child) => runTurn({
-      ...ctx.options, label: undefined, meta: undefined, resume: null, ...child, numbers: ctx.numbers,
+      ...ctx.options, label: undefined, meta: undefined, resume: null, window: undefined, usage: undefined, ...child, numbers: ctx.numbers,
       askPermission: (request) => ctx.askPermission({ ...request, toolCall: under(request.toolCall, call.id) }),
       onUpdate: (update) => 'toolCallId' in update && onUpdate(under(update, call.id), step),
       persist: (records) => ctx.persist(records.flatMap(({ update, ...record }) => (update && 'toolCallId' in update && update.status !== 'pending' ? [{ ...record, step, update: under(update, call.id) }] : []))),

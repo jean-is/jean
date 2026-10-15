@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { runTurn } from '../app/core/loop.js'
 import { LLMError } from '../app/core/llm.js'
-import { userRecord, unanswered } from '../app/core/events.js'
+import { userRecord, unanswered, envelope } from '../app/core/events.js'
 import { toChatMessages } from '../app/core/prompt.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'test-model' }
@@ -525,4 +525,132 @@ test('a turn that starts on a call runs it alone, and a helper’s turn inside i
   assert.equal(calls.length, 1, 'only the helper asked the brain')
   assert.equal(result.stopReason, 'max_steps')
   assert.equal(persisted.findLast((record) => record.update?.toolCallId === 'd').update.rawOutput, 'Part done.')
+})
+
+test('loop: before each step a hook may have the brain sum up what came so far; the summary is kept, and the brain reads on from it (D359)', async () => {
+  const call = { id: 'c1', name: 'read', args: { path: 'a.csv' } }
+  const summary = 'They want a.csv summed; it holds 1,2,3.'
+  const { stream, calls } = fakeStream([
+    [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call], raw: [{ type: 'thinking' }] })],
+    [{ type: 'thinking', delta: 'Summing up.' }, { type: 'text', delta: summary }, done('end', { role: 'assistant', content: summary })],
+    [{ type: 'text', delta: 'The total is 6.' }, done('end', { role: 'assistant', content: 'The total is 6.' })],
+  ])
+  /** @type {any[]} */
+  const events = []
+  /** @type {import('../app/core/hooks.js').Hook} */
+  const hook = {
+    on: 'turn.compact',
+    run: async (e, next) => {
+      events.push({ ...e, messages: structuredClone(e.messages) })
+      if (e.step === 0) return next(e)
+      const asked = await e.ask([...e.messages, { role: 'user', content: 'Sum up.' }])
+      return envelope('jean', { sessionUpdate: '_compaction', text: `Summary: ${asked.text}`, data: { reason: e.reason } })
+    },
+  }
+  /** @type {any[]} */
+  const persisted = []
+  /** @type {any[]} */
+  const live = []
+  const result = await runTurn({
+    brain, system: 'sys', history: [{ role: 'user', content: 'Sum a.csv' }], tools: [readTool], rule: () => 'allow', window: 1000, hooks: [hook], about: { task: 't' },
+    stream: /** @type {any} */ (stream), onUpdate: (update) => live.push(update), persist: async (records) => { persisted.push(...records) },
+  })
+  assert.equal(result.text, 'The total is 6.')
+  assert.equal(result.usage.inputTokens, 30, 'the summary counts')
+  // Asked before each step, with what the brain last read and wrote and its window; the summary on the same prefix, tools included.
+  assert.deepEqual(events.map((e) => [e.step, e.reason, e.window, e.usage?.inputTokens, e.task]), [[0, 'window', 1000, undefined, 't'], [1, 'window', 1000, 10, 't']])
+  assert.deepEqual(events[1].tools.map((/** @type {any} */ tool) => tool.name), ['read'])
+  assert.deepEqual(calls[1], [...events[1].messages, { role: 'user', content: 'Sum up.' }])
+  assert.deepEqual(calls[2], [{ role: 'user', content: `Summary: ${summary}` }])
+  // Kept: the summary's own entry, without what it thought or wrote, then the record, on the step it comes before.
+  const kept = persisted.filter(({ step }) => step === 1)
+  assert.deepEqual(kept.map(({ update }) => [update.sessionUpdate, update.status, update._meta?.compact]), [
+    ['tool_call', 'completed', true], ['_compaction', undefined, undefined], ['tool_call', 'completed', undefined], ['agent_message_chunk', undefined, undefined],
+  ])
+  assert.notEqual(kept[0].update.toolCallId, kept[2].update.toolCallId)
+  assert.ok(!live.some((update) => update.sessionUpdate === 'agent_message_chunk' && update.content.text === summary), 'the summary is never the answer')
+  assert.ok(live.some((update) => update.sessionUpdate === '_compaction'))
+  // Replayed, the conversation reads on from the summary.
+  assert.deepEqual(toChatMessages([userRecord('Sum a.csv', 'dev'), ...persisted]), [{ role: 'user', content: `Summary: ${summary}` }, { role: 'assistant', content: 'The total is 6.' }])
+})
+
+test('loop: a turn without a window is never summed up, nor a helper’s, and Jean’s own behaviour leaves the conversation as it is (D359)', async () => {
+  const call = { id: 'p1', name: 'delegate', args: {} }
+  const { stream, calls } = fakeStream([
+    [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })],
+    [{ type: 'text', delta: 'Part.' }, done('end', { role: 'assistant', content: 'Part.' })],
+    [{ type: 'text', delta: 'Done.' }, done('end', { role: 'assistant', content: 'Done.' })],
+    [{ type: 'text', delta: 'Again.' }, done('end', { role: 'assistant', content: 'Again.' })],
+  ])
+  /** @type {number[]} */
+  const steps = []
+  /** @type {import('../app/core/hooks.js').Hook[]} */
+  const hooks = [{ on: 'turn.compact', run: (e, next) => { steps.push(e.step); return next(e) } }]
+  const delegateTool = {
+    spec: { name: 'delegate', description: 'delegate', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('think'),
+    title: () => 'Delegate',
+    run: async (/** @type {any} */ args, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => (await ctx.turn({ system: 'helper', history: [{ role: 'user', content: 'part' }] })).text,
+  }
+  const options = { brain, system: 's', tools: [delegateTool], rule: () => /** @type {const} */ ('allow'), hooks, stream: /** @type {any} */ (stream) }
+  const result = await runTurn({ ...options, history: [{ role: 'user', content: 'go' }], window: 1000 })
+  assert.equal(result.text, 'Done.')
+  assert.deepEqual(steps, [0, 1], 'the helper’s steps are not asked')
+  assert.deepEqual(calls[2].map((/** @type {any} */ message) => message.role), ['user', 'assistant', 'tool'])
+  steps.length = 0
+  await runTurn({ ...options, history: [{ role: 'user', content: 'again' }] })
+  assert.deepEqual(steps, [])
+})
+
+test('loop: a request past the brain’s window, before anything of the answer came, reads on from a summary and is asked again, once (D359)', async () => {
+  /** @param {number} fails how many asks of the step fail */
+  const brainThatFills = (fails) => {
+    /** @type {any[][]} */
+    const seen = []
+    let steps = 0
+    /** @param {any} request */
+    async function* stream(request) {
+      seen.push(structuredClone(request.messages))
+      if (request.messages.at(-1)?.content === 'Sum up.') {
+        yield { type: 'text', delta: 'Earlier: a long task.' }
+        return yield done('end', { role: 'assistant', content: 'Earlier: a long task.' })
+      }
+      if (++steps <= fails) throw new LLMError('HTTP 400: prompt is too long: 210000 tokens > 200000 maximum', { status: 400, code: 'too_long' })
+      yield { type: 'text', delta: 'Done.' }
+      yield done('end', { role: 'assistant', content: 'Done.' })
+    }
+    return { stream, seen }
+  }
+  /** @type {string[]} */
+  const reasons = []
+  /** @type {import('../app/core/hooks.js').Hook} */
+  const hook = {
+    on: 'turn.compact',
+    run: async (e, next) => {
+      if (e.reason !== 'too_long') return next(e)
+      reasons.push(e.reason)
+      const { text } = await e.ask([...e.messages, { role: 'user', content: 'Sum up.' }])
+      return envelope('jean', { sessionUpdate: '_compaction', text, data: { reason: e.reason } })
+    },
+  }
+  const once = brainThatFills(1)
+  /** @type {any[]} */
+  const persisted = []
+  const result = await runTurn({
+    brain, system: 's', history: [{ role: 'user', content: 'A long task' }], window: 1000, hooks: [hook], stream: /** @type {any} */ (once.stream), retries: [0, 0, 0],
+    persist: async (records) => { persisted.push(...records) },
+  })
+  assert.equal(result.text, 'Done.')
+  assert.deepEqual(reasons, ['too_long'])
+  assert.deepEqual(once.seen.at(-1), [{ role: 'user', content: 'Earlier: a long task.' }])
+  assert.deepEqual(persisted.map(({ update }) => [update.sessionUpdate, update.status]), [['tool_call', 'completed'], ['_compaction', undefined], ['tool_call', 'completed'], ['agent_message_chunk', undefined]])
+  // Still too long once summed up: the error stands, and it isn't summed up again.
+  reasons.length = 0
+  const twice = brainThatFills(2)
+  await assert.rejects(runTurn({ brain, system: 's', history: [{ role: 'user', content: 'A long task' }], window: 1000, hooks: [hook], stream: /** @type {any} */ (twice.stream), retries: [0, 0, 0] }), { code: 'too_long' })
+  assert.deepEqual(reasons, ['too_long'])
+  // Nothing to read on from: the error stands as it came.
+  const alone = brainThatFills(1)
+  await assert.rejects(runTurn({ brain, system: 's', history: [{ role: 'user', content: 'A long task' }], window: 1000, stream: /** @type {any} */ (alone.stream), retries: [0, 0, 0] }), { code: 'too_long' })
+  assert.equal(alone.seen.length, 1)
 })

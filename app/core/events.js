@@ -25,7 +25,7 @@ export const noteRecord = (text, data) => envelope('jean', { sessionUpdate: '_sy
 export const metaRecord = (by, meta) => ({ at: new Date().toISOString(), by, meta })
 
 /**
- * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[] }} Step
+ * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[], compaction?: { text: string } }} Step compaction: a summary read on from (D359)
  * @typedef {{ text: string, data: SystemNoteData }} Note
  * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number }} UserTurn upTo: how many records lead up to its end
  * @typedef {{ user: UserTurn | null, notes: Note[], steps: Step[], plan?: PlanEntry[], at: string, end?: string }} Turn
@@ -82,6 +82,7 @@ export function applyUpdate(turn, update, index) {
   if (!step) turn.steps.push((step = { index, text: '', thought: '', tools: [] }))
   if (update.sessionUpdate === 'agent_message_chunk') step.text += update.content.text
   else if (update.sessionUpdate === 'agent_thought_chunk') step.thought += update.content.text
+  else if (update.sessionUpdate === '_compaction') step.compaction = update
   else if (update.sessionUpdate === 'user_message_chunk' || update.sessionUpdate === '_system_note') return
   else if (update.sessionUpdate === 'tool_call' || update.sessionUpdate === 'tool_call_update') {
     const { sessionUpdate, ...info } = update

@@ -40,6 +40,8 @@
 // asked for a film, it makes one of 4 seconds, which /videos makes at once (D251). Asked whether a
 // certificate is genuine, it checks the files shared with check_certificate and says what it found (D274).
 // Asked what the files say about something, it searches the project's files and quotes what it found (D24).
+// Given "a very long task", it says it read most of a big window; asked to sum the conversation up, it does, and
+// read on from a summary, it says so (D359).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -530,7 +532,11 @@ createServer(async (req, res) => {
   const about = /\bwhat do (?:the|my|our) files say about (.+?)\?*$/i.exec(question.trim())?.[1]
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
-  if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  // A conversation summed up near its window (D359).
+  const summing = /This conversation has grown too long to keep in full/.test(lastUser)
+  if (summing) answer = 'Summary: the user wants the work carried on, step by step.'
+  else if (messages.find((m) => m.role !== 'system')?.content.includes('<summary>') && last.role === 'user') answer = 'I read on from the summary of the earlier work.'
+  else if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
   else if (system.startsWith('Answer the question about what follows with yes or no')) answer = /<about>[\s\S]*\b(invoice|html)\b/i.test(lastUser) ? 'Yes.' : 'No.'
   else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
   else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
@@ -686,7 +692,7 @@ createServer(async (req, res) => {
     const doc = documents.at(-1)
     answer = `I read **${doc?.[2]}**${cite(doc)}. It starts with: “${doc?.[3].replace(/\[\[page \d+\]\]\n/g, '').slice(0, 120).trim()}”\n\nYou asked: *${question.slice(0, 80)}*`
   } else answer = REPLIES[lang](question.slice(0, 80))
-  if (answer) answer += `\n\n<suggestions>\n${[...(tryIt ? [tryIt] : []), ...(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang])].slice(0, 3).join('\n')}\n</suggestions>`
+  if (answer && !summing) answer += `\n\n<suggestions>\n${[...(tryIt ? [tryIt] : []), ...(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang])].slice(0, 3).join('\n')}\n</suggestions>`
 
   res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' })
   const send = (/** @type {object} */ delta, finish = null) =>
@@ -706,7 +712,7 @@ createServer(async (req, res) => {
     }
     send({}, 'stop')
   }
-  const prompt = Math.ceil(serialized.length / 4)
+  const prompt = /a very long task/i.test(question) ? 100_000 : Math.ceil(serialized.length / 4)
   res.write(`data: ${JSON.stringify({ choices: [], usage: { prompt_tokens: prompt, completion_tokens: Math.ceil(answer.length / 4), prompt_tokens_details: { cached_tokens: Math.floor(cached / 4) } } })}\n\n`)
   res.end('data: [DONE]\n\n')
 }).listen(PORT, '127.0.0.1', () => console.log(`Fake brain on http://127.0.0.1:${PORT}/v1`))

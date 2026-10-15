@@ -191,9 +191,9 @@ export function agent({ input, write, folder, brain: named, address, version, en
     rpc.notify('session/update', { sessionId: session.id, update: shown })
   }
 
-  /** A live update: not Jean's own entry for a brain's step, nor a note; an answer without the follow-ups it ends with. @param {Session} session @param {AcpUpdate} update */
+  /** A live update: not Jean's own entry for a brain's step, nor a note or a summary (D359); an answer without the follow-ups it ends with. @param {Session} session @param {AcpUpdate} update */
   function tell(session, update) {
-    if (update.sessionUpdate === '_system_note') return
+    if (update.sessionUpdate.startsWith('_')) return
     if ('toolCallId' in update && update.toolCallId.startsWith('brain-')) {
       if (update.sessionUpdate === 'tool_call') session.said = { text: '', sent: 0 }
       return
@@ -213,7 +213,7 @@ export function agent({ input, write, folder, brain: named, address, version, en
   function replay(session) {
     const seen = new Set()
     for (const { update } of session.records) {
-      if (!update || update.sessionUpdate === '_system_note') continue
+      if (!update || update.sessionUpdate.startsWith('_')) continue
       if (update.sessionUpdate === 'agent_message_chunk') {
         const text = splitSuggestions(update.content.text).text
         if (text) send(session, { ...update, content: { type: 'text', text } })

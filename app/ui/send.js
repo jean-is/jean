@@ -12,7 +12,7 @@ import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
 import { yes } from './yes.js'
 import { fire } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
-import { fileText, documentPart, pagesThatFit, preselect, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
+import { fileText, documentPart, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { unlock, contributions, slots } from './caps.js'
 import {
@@ -32,6 +32,8 @@ const DEFAULT_CONTEXT = 128000
 const CACHE_TTL_MS = 5 * 60_000
 // Work in a folder takes more steps than a turn's usual 12 (D141).
 const FOLDER_STEPS = 40
+// Local servers whose window is asked of them, the smallest Ollama gives being 4,096 (D359).
+const SERVERS = ['ollama', 'lmstudio']
 
 // ─── Files ───────────────────────────────────────────────────────────────────
 
@@ -411,6 +413,15 @@ async function runAgent(conversation, brain, meta, call) {
     const messages = toChatMessages(sent, await documents(sent, brain), resume)
     // The device's brain answers its steps itself, through its turn.step hook.
     if (brain.api === 'device') await unlock('brain-local')
+    // What the brain last read and wrote says how full its window is, unless a summary came since. Compaction comes in once
+    // the conversation passes half of it (D359), as a request counted it or Jean estimates it, with what each call brings in.
+    const window = contextTokens(brain)
+    const before = sent.findLast(({ update }) => update?.sessionUpdate === '_compaction' || (update?.sessionUpdate === 'tool_call' && !update.name && !update._meta?.parent && update.rawOutput?.usage))?.update
+    const usage = before?.sessionUpdate === 'tool_call' ? before.rawOutput.usage : undefined
+    const counted = (/** @type {import('../core/types.js').Usage | undefined} */ used) => (used?.inputTokens ?? 0) + (used?.outputTokens ?? 0)
+    let size = 0
+    const grown = (/** @type {number} */ now) => (size = now) > (SERVERS.includes(brain.provider) ? 4096 : window) / 2 && unlock('compact')
+    await grown(Math.max(estimateMessages([frozen?.system, messages]), counted(usage)))
     asked.set(path, Date.now())
     const { settings } = effective.value
     await runTurn({
@@ -427,6 +438,8 @@ async function runAgent(conversation, brain, meta, call) {
       firstSource: nextSource(sent),
       ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
       ...(one && { maxSteps: 1 }),
+      window,
+      usage,
       signal: run.controller.signal,
       // The organisation's guards and the person's (D295), then the capabilities' hooks, with the task and the kinds of
       // note its turn came with (a brief of what's new since last time only reads).
@@ -436,6 +449,7 @@ async function runAgent(conversation, brain, meta, call) {
       askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
         if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
+        if (update.sessionUpdate === 'tool_call_update' && update.status === 'completed' && !update._meta?.parent) grown(update.rawOutput?.usage ? counted(update.rawOutput.usage) : size + estimateMessages(update.rawOutput))
         applyUpdate(turn, update, step)
         repaint()
       },

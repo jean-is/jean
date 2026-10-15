@@ -164,6 +164,9 @@ function turnView(turn, live, files, upTo, last, sources) {
   const since = turn.notes.map((note) => note.data).find((data) => data.kind === 'since')
   // A routine's request, sent by Jean on its schedule (D122): its line opens the routine and its runs.
   const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
+  // A summary the brain read on from (D359).
+  const summed = steps.findLast((step) => step.compaction)?.compaction
+  if (summed) unlock('compact')
   // A double click on its request, or Enter on it, edits it, once Try again could (D312); Enter goes no further.
   const edit = (/** @type {Event} */ event) => {
     event.preventDefault()
@@ -180,6 +183,7 @@ function turnView(turn, live, files, upTo, last, sources) {
       : html`<p class="msg msg-user" dir="auto" tabindex=${last && app.busy.value ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
         @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && edit(event)}>${withFormulas(turn.user.text)}</p>` : nothing}
     ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
+    ${summed ? html`<app-compaction .record=${summed}></app-compaction>` : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
         ${activity(steps, text, streaming, files)}
@@ -288,7 +292,7 @@ function activity(steps, text, streaming, files) {
   // The offer made here, not in a conversation out of sight (D147).
   const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // What each brain step thought and wrote.
-  const said = new Map(steps.map((step) => [step.tools.find((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
+  const said = new Map(steps.map((step) => [step.tools.findLast((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
   // Parts in the order the work was split (their calls are kept in the order they finished).
   const order = (/** @type {ToolCallInfo} */ tool) => Number(/\.(\d+)$/.exec(tool.toolCallId)?.[1] ?? 0)
   /** @type {{ entry: ToolCallInfo, depth: number, key: string }[]} */
@@ -315,7 +319,7 @@ function activity(steps, text, streaming, files) {
         ${repeat(rows, (row) => row.key, ({ entry, depth }) => html`<li data-status=${entry.status ?? 'pending'} data-call=${entry.toolCallId} class=${depth ? 'is-nested' : ''}
           data-depth=${entry.name || depth ? depth : nothing}>
           <details class="step">
-            <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${entry.name ? toolLabel(entry, files) : brainLine(entry)}</span>${icons.chevron}</summary>
+            <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${entry.name ? toolLabel(entry, files) : entry._meta?.compact ? html`<app-compaction .entry=${entry}></app-compaction>` : brainLine(entry)}</span>${icons.chevron}</summary>
             ${entry.name ? toolDetails(entry) : brainDetails(entry, said.get(entry.toolCallId))}
           </details>
         </li>`)}

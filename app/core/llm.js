@@ -70,7 +70,9 @@ const STREAM_ERRORS = new Map([
   ['invalid_request_error', 'bad_request'], ['not_found_error', 'not_found'],
 ])
 /** @type {Map<number, LLMErrorCode>} */
-const HTTP_ERRORS = new Map([[400, 'bad_request'], [401, 'auth'], [402, 'credits'], [403, 'auth'], [404, 'not_found'], [422, 'bad_request'], [429, 'rate_limit']])
+const HTTP_ERRORS = new Map([[400, 'bad_request'], [401, 'auth'], [402, 'credits'], [403, 'auth'], [404, 'not_found'], [413, 'too_long'], [422, 'bad_request'], [429, 'rate_limit']])
+// How providers and local servers say a request is past the brain's window (D359).
+const TOO_LONG = /prompt is too long|context.{0,12}(length|size|window)|maximum number of tokens/i
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -166,7 +168,8 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens 
   }
   // OpenAI's own API rejects max_tokens on its reasoning models; other servers only know max_tokens.
   if (maxTokens != null) body[brain.provider === 'openai' ? 'max_completion_tokens' : 'max_tokens'] = maxTokens
-  if (brain.provider === 'openrouter' || brain.provider === 'openai') body.stream_options = { include_usage: true }
+  // Local servers say how much they read too, which tells how full their window is (D359).
+  if (['openrouter', 'openai', 'ollama', 'lmstudio'].includes(brain.provider)) body.stream_options = { include_usage: true }
   return { url: endpoint(brain, '/chat/completions'), headers: headersFor(brain, apiKey), body }
 }
 
@@ -326,7 +329,7 @@ async function httpError(res) {
   const message = detail ? `HTTP ${res.status}: ${detail}` : `HTTP ${res.status}`
   // Gemini and xAI answer a wrong key with 400: "Please pass a valid API key", "Incorrect API key provided";
   // Anthropic, an account out of credits: "Your credit balance is too low" (others answer 402).
-  const code = res.status !== 400 ? codeForStatus(res.status) : /(valid|incorrect) API key/i.test(detail) ? 'auth' : /credit balance/i.test(detail) ? 'credits' : 'bad_request'
+  const code = res.status !== 400 ? codeForStatus(res.status) : /(valid|incorrect) API key/i.test(detail) ? 'auth' : /credit balance/i.test(detail) ? 'credits' : TOO_LONG.test(detail) ? 'too_long' : 'bad_request'
   return new LLMError(message, { status: res.status, code, retryAfter: waitAsked(res.headers.get('retry-after')) })
 }
 
@@ -352,7 +355,7 @@ function errorDetail(text) {
 /** An error object inside a stream: OpenRouter's { code, message } or Anthropic's { type, message }. @param {any} error */
 export function streamError(error) {
   const status = typeof error?.code === 'number' ? error.code : undefined
-  const code = STREAM_ERRORS.get(error?.type) ?? (status ? codeForStatus(status) : 'bad_response')
+  const code = TOO_LONG.test(error?.message) ? 'too_long' : STREAM_ERRORS.get(error?.type) ?? (status ? codeForStatus(status) : 'bad_response')
   return new LLMError(error?.message || 'The provider reported an error', { status, code })
 }
 

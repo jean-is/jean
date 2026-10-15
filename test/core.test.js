@@ -198,6 +198,39 @@ test('events: failed tools become error results; empty steps are skipped', () =>
   assert.deepEqual(messages.at(-1), { role: 'tool', toolCallId: 't1', name: 'read', content: 'The user declined this action.', isError: true })
 })
 
+test('events: the brain reads on from the last summary, and the room keeps it on the step it came before (D359)', () => {
+  const summary = (/** @type {string} */ text, /** @type {number} */ step) => envelope('jean', { sessionUpdate: '_compaction', text, data: { reason: 'window' } }, step)
+  const records = [
+    userRecord('Sum the files', 'dev1'),
+    envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'brain-0', title: 'model', kind: 'think', status: 'completed', _meta: { raw: ['thinking'] } }, 0),
+    envelope('jean', /** @type {any} */ (tool()), 0),
+    summary('First summary', 1),
+    envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Reading b.' } }, 1),
+    envelope('jean', /** @type {any} */ (tool({ toolCallId: 't2', rawInput: { path: 'b.csv' } })), 1),
+    envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'brain-2s', title: 'model', kind: 'think', status: 'completed', _meta: { compact: true } }, 2),
+    summary('Second summary', 2),
+    envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'The total is 12.' } }, 2),
+    noteRecord('Today is 2026-10-17.', { kind: 'date', date: '2026-10-17' }),
+    userRecord('Thanks', 'dev1'),
+  ]
+  // Nothing before it is read again, its thinking blocks included; what came after it is, as ever.
+  assert.deepEqual(toChatMessages(records), [
+    { role: 'user', content: 'Second summary' },
+    { role: 'assistant', content: 'The total is 12.' },
+    { role: 'system', content: 'Today is 2026-10-17.' },
+    { role: 'user', content: 'Thanks' },
+  ])
+  assert.deepEqual(toChatMessages(records.slice(0, 6)), [
+    { role: 'user', content: 'First summary' },
+    { role: 'assistant', content: 'Reading b.', toolCalls: [{ id: 't2', name: 'read', args: { path: 'b.csv' } }] },
+    { role: 'tool', toolCallId: 't2', name: 'read', content: '1,2,3' },
+  ])
+  // The room shows the conversation whole, each summary on the step it came before.
+  const [turn] = foldTurns(records)
+  assert.deepEqual(turn.steps.map((step) => step.compaction?.text), [undefined, 'First summary', 'Second summary'])
+  assert.equal(turn.steps[2].text, 'The total is 12.')
+})
+
 test('settings: front matter round trip and policy', () => {
   const text = stringifyFrontMatter({ format: 1, default: true, name: 'Bakery: Margot', by: 'dev1' }, 'Body\n')
   const { data, body } = parseFrontMatter(text)

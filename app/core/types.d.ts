@@ -148,6 +148,11 @@ export type AcpUpdate =
   | ({ sessionUpdate: 'tool_call_update' } & Partial<ToolCallInfo> & { toolCallId: string })
   | { sessionUpdate: 'plan', entries: PlanEntry[] }
   | { sessionUpdate: '_system_note', text: string, data: SystemNoteData }
+  /** a summary of the conversation so far, which the brain reads on from instead of what came before it (D359) */
+  | { sessionUpdate: '_compaction', text: string, data: CompactionData }
+
+/** Why the conversation was summed up (near its window, or past it), by which brain, and what the summary cost. */
+export type CompactionData = { reason: 'window' | 'too_long', brain?: { provider: ProviderId, model: string }, usage?: Usage }
 
 /** What a system note changed, for the UI label; `text` is what the brain reads (D46). */
 export type SystemNoteData =
