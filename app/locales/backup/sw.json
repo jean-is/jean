@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Leta mazungumzo, Gems na faili kutoka kwenye faili hili la kuhamisha? Hakuna kitakachofutwa hapa.",
+  "backup.confirmImport": "Leta mazungumzo, miradi na faili kutoka kwenye faili hili la kuhamisha? Hakuna kitakachofutwa hapa.",
   "backup.imported": {
     "one": "Mazungumzo {count} yameletwa.",
     "other": "Mazungumzo {count} yameletwa."

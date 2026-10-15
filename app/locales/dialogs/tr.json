@@ -224,7 +224,7 @@
   "backup.download": "Yedek indir",
   "backup.restore": "Yedeği geri yükle",
   "backup.confirmRestore": "Bu yedekteki her şey eklensin mi? Buradaki hiçbir şey silinmez.",
-  "backup.gemini": "Gemini’dan mı geliyorsunuz? Konuşmalarını ve Gem’lerini {name} uygulamasına taşımak için Google Takeout dışa aktarımınızı geri yükleyin (Gemini ve Etkinliğim’deki Gemini Uygulamaları, JSON biçiminde).",
+  "backup.elsewhere": "ChatGPT, Claude veya Gemini’dan mı geliyorsunuz? Konuşmalarını ve projelerini {name} uygulamasına taşımak için verilerinizin dışa aktarımını geri yükleyin (Google Takeout’tan: Gemini ve Etkinliğim’deki Gemini Uygulamaları, JSON biçiminde).",
   "collection.all": "Hepsini aç",
   "collection.open": "Aç",
   "kind.read.label": "Dosya okuma",

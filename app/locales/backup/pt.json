@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Trazer as conversas, os Gems e os ficheiros desta exportação? Nada daqui será apagado.",
+  "backup.confirmImport": "Trazer as conversas, os projetos e os ficheiros desta exportação? Nada daqui será apagado.",
   "backup.imported": {
     "one": "{count} conversa importada.",
     "many": "{count} conversas importadas.",

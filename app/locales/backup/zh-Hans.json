@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "导入此导出中的对话、Gem 和文件？这里的内容不会被删除。",
+  "backup.confirmImport": "导入此导出中的对话、项目和文件？这里的内容不会被删除。",
   "backup.imported": {
     "other": "已导入 {count} 个对话。"
   },

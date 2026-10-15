@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "A kawo tattaunawa, Gems da fayiloli daga wannan fitarwa? Babu abin da za a share a nan.",
+  "backup.confirmImport": "A kawo tattaunawa, ayyuka da fayiloli daga wannan fitarwa? Babu abin da za a share a nan.",
   "backup.imported": {
     "one": "An kawo tattaunawa {count}.",
     "other": "An kawo tattaunawa {count}."

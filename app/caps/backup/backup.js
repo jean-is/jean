@@ -44,20 +44,21 @@ export async function restoreBackup(file) {
 export const isBackup = async (file) => isBackupZip(new Uint8Array(await file.arrayBuffer()))
 
 /**
- * Brings in an export of Gemini's from Google Takeout, its parts together, once the user says yes:
- * its conversations into this project, its Gems as projects, its Drive's files (D340).
+ * Brings in an export of Gemini's from Google Takeout, of ChatGPT's or of Claude's, its parts
+ * together, once the user says yes: its conversations into this project, its Gems or projects as
+ * projects, its other files the project's (D340, D341).
  * @param {File[]} files
  */
 export async function bringIn(files) {
   if (!confirm(t('backup.confirmImport'))) return
   try {
-    const { unpack, importTakeout } = await import('./takeout.js')
+    const { unpack, importExport } = await import('./imports.js')
     const entries = (await Promise.all(files.map(async (file) => unpack(new Uint8Array(await file.arrayBuffer()), file.name)))).flat()
-    const result = await importTakeout(app.fs, entries, { projectDir: app.projectDir, by: app.deviceId, pages })
+    const result = await importExport(app.fs, entries, { projectDir: app.projectDir, by: app.deviceId, pages })
     if (!result || result === 'html') return notify(t(result ? 'backup.chooseJson' : 'backup.notABackup'))
     await Promise.all([refreshConversations(), refreshProjects()])
-    // Its Gems are projects now: the rooms they are in show.
-    if (result.gems) unlock('projects')
+    // Its Gems or projects are Jean's projects now: the rooms they are in show.
+    if (result.projects) unlock('projects')
     notify(t('backup.imported', { count: result.conversations }))
   } catch (error) {
     console.warn('Import', error)

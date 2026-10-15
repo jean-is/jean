@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Dalhin ang mga usapan, Gems at file mula sa export na ito? Walang mabubura dito.",
+  "backup.confirmImport": "Dalhin ang mga usapan, proyekto at file mula sa export na ito? Walang mabubura dito.",
   "backup.imported": {
     "one": "{count} usapan ang naidala.",
     "other": "{count} usapan ang naidala."

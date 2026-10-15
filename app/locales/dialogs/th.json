@@ -221,7 +221,7 @@
   "backup.download": "ดาวน์โหลดข้อมูลสำรอง",
   "backup.restore": "กู้คืนข้อมูลสำรอง",
   "backup.confirmRestore": "เพิ่มทุกอย่างจากข้อมูลสำรองนี้ไหม จะไม่มีอะไรที่นี่ถูกลบ",
-  "backup.gemini": "ย้ายมาจาก Gemini ใช่ไหม กู้คืนไฟล์ส่งออกจาก Google Takeout ของคุณ (Gemini และแอป Gemini ในกิจกรรมของฉันแบบ JSON) เพื่อนำบทสนทนาและ Gem เข้ามาใน {name}",
+  "backup.elsewhere": "ย้ายมาจาก ChatGPT, Claude หรือ Gemini ใช่ไหม กู้คืนไฟล์ส่งออกข้อมูลของคุณเพื่อนำบทสนทนาและโปรเจกต์เข้ามาใน {name} (จาก Google Takeout: Gemini และแอป Gemini ในกิจกรรมของฉันแบบ JSON)",
   "collection.all": "เปิดทั้งหมด",
   "collection.open": "เปิด",
   "kind.read.label": "อ่านไฟล์",

@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "ከዚህ ወጪ ፋይል ውይይቶቹ፣ Gems እና ፋይሎቹ ይምጡ? እዚህ ያለ ምንም ነገር አይሰረዝም።",
+  "backup.confirmImport": "ከዚህ ወጪ ፋይል ውይይቶቹ፣ ፕሮጀክቶቹ እና ፋይሎቹ ይምጡ? እዚህ ያለ ምንም ነገር አይሰረዝም።",
   "backup.imported": {
     "one": "{count} ውይይት መጥቷል።",
     "other": "{count} ውይይቶች መጥተዋል።"

@@ -2,7 +2,7 @@
 // (here, a fresh browser context) without deleting anything that was already there.
 import { test, expect } from '@playwright/test'
 import { readZip, writeZip } from '../app/core/zip.js'
-import { start, connectFakeBrain, ask, openSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks } from './helpers.js'
 
 test('a backup holds the conversations but no key, and restores on a fresh device', async ({ page, browser }) => {
   await start(page)
@@ -105,4 +105,46 @@ test('an export of Gemini’s from Google Takeout comes in once, shared in the b
   // Again, from Settings: nothing new.
   await (await openSettings(page, 'Your data')).locator('input[type="file"]').setInputFiles(file)
   await expect(page.locator('.toast').last()).toContainText('0 conversations brought in.')
+})
+
+test('ChatGPT’s export shared in the box and Claude’s restored in Settings, its parts together, come in by what they hold (D341)', async ({ page }) => {
+  const json = (/** @type {unknown} */ value) => new TextEncoder().encode(JSON.stringify(value))
+  /** A ChatGPT message. @param {string} role @param {string} text @param {number} time @param {Record<string, any>} [metadata] */
+  const said = (role, text, time, metadata = {}) => ({ author: { role }, create_time: time, content: { content_type: 'text', parts: [text] }, metadata })
+  const chatgpt = await writeZip([
+    { name: 'conversations.json', bytes: json([{ title: 'Trip to Lisbon', conversation_id: 'c1', create_time: 1769936400, current_node: 'a', mapping: {
+      u: { id: 'u', parent: null, message: said('user', 'Plan a day in Lisbon', 1769936400, { attachments: [{ id: 'file-N1', name: 'notes.txt' }] }) },
+      a: { id: 'a', parent: 'u', message: said('assistant', 'Start at **Belém**.', 1769936460) },
+    } }]) },
+    { name: 'file-N1-notes.txt', bytes: new TextEncoder().encode('Bring sunscreen') },
+  ])
+  const claude = await Promise.all([
+    writeZip([{ name: 'conversations.json', bytes: json([{ uuid: 'k1', name: 'Budget review', created_at: '2026-04-01T08:00:00.123456Z', chat_messages: [
+      { uuid: 'm1', sender: 'human', text: 'Check this budget', created_at: '2026-04-01T08:00:00.123456Z', content: [{ type: 'text', text: 'Check this budget' }], attachments: [] },
+      { uuid: 'm2', sender: 'assistant', text: 'Cut food.', created_at: '2026-04-01T08:00:09.5Z', content: [{ type: 'text', text: 'Cut *food*.' }], attachments: [] },
+    ] }]) }]),
+    writeZip([{ name: 'projects.json', bytes: json([{ uuid: 'p1', name: 'Tax help', prompt_template: 'Answer as a tax adviser.', docs: [{ filename: 'rules.md', content: '# Rules' }] }]) }]),
+  ])
+  await start(page)
+  page.on('dialog', (dialog) => dialog.accept())
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: '0f9a3c-2026-10-14-10-00-00.zip', mimeType: 'application/zip', buffer: Buffer.from(chatgpt) })
+  await expect(page.locator('.toast')).toContainText('1 conversation brought in.')
+  await expect(page.locator('.composer .attachment')).toHaveCount(0)
+  await (await openTasks(page)).locator('.history-item', { hasText: 'Trip to Lisbon' }).click()
+  await expect(page.locator('.msg-files').first()).toContainText('notes.txt')
+  await expect(page.locator('.msg-jean .prose strong')).toHaveText('Belém')
+
+  await (await openSettings(page, 'Your data')).locator('input[type="file"]').setInputFiles(claude.map((bytes, i) => ({ name: `data-2026-10-14-batch-000${i}.zip`, mimeType: 'application/zip', buffer: Buffer.from(bytes) })))
+  await expect(page.locator('.toast').last()).toContainText('1 conversation brought in.')
+  await closeSettings(page)
+  await (await openTasks(page)).locator('.history-item', { hasText: 'Budget review' }).click()
+  await expect(page.locator('.msg-user').first()).toContainText('Check this budget')
+  await expect(page.locator('.msg-jean .prose em')).toHaveText('food')
+  // Its project is Jean's now, with its instructions.
+  const tax = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const project = app.projects.value.find((candidate) => candidate.data.name === 'Tax help')
+    return project && app.fs.read(`${project.dir}/instructions.md`)
+  })
+  expect(tax).toContain('Answer as a tax adviser.')
 })

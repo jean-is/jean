@@ -224,7 +224,7 @@
   "backup.download": "Sauke ajiya",
   "backup.restore": "Maido da ajiya",
   "backup.confirmRestore": "A ƙara komai daga wannan ajiya? Babu abin da za a share a nan.",
-  "backup.gemini": "Daga Gemini kake? Maido da fitarwarka ta Google Takeout (Gemini, da Manhajojin Gemini a cikin Ayyukana a JSON) don kawo tattaunawarsa da Gems zuwa {name}.",
+  "backup.elsewhere": "Daga ChatGPT, Claude ko Gemini kake? Maido da fitarwar bayananka don kawo tattaunawarsa da ayyukansa zuwa {name} (daga Google Takeout: Gemini, da Manhajojin Gemini a cikin Ayyukana a JSON).",
   "collection.all": "Kunna duka",
   "collection.open": "Buɗe",
   "kind.read.label": "Karanta fayiloli",

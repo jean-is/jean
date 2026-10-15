@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "De gesprekken, Gems en bestanden uit deze export ophalen? Hier wordt niets verwijderd.",
+  "backup.confirmImport": "De gesprekken, projecten en bestanden uit deze export ophalen? Hier wordt niets verwijderd.",
   "backup.imported": {
     "one": "{count} gesprek opgehaald.",
     "other": "{count} gesprekken opgehaald."

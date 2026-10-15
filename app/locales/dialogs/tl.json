@@ -224,7 +224,7 @@
   "backup.download": "Mag-download ng backup",
   "backup.restore": "Mag-restore ng backup",
   "backup.confirmRestore": "Idagdag ang lahat mula sa backup na ito? Walang mabubura dito.",
-  "backup.gemini": "Galing ka sa Gemini? I-restore ang iyong export mula sa Google Takeout (Gemini, at Gemini Apps sa Aking Aktibidad sa JSON) para dalhin ang mga usapan at Gems nito sa {name}.",
+  "backup.elsewhere": "Galing ka sa ChatGPT, Claude o Gemini? I-restore ang export ng iyong data para dalhin ang mga usapan at proyekto nito sa {name} (mula sa Google Takeout: Gemini, at Gemini Apps sa Aking Aktibidad sa JSON).",
   "collection.all": "I-on lahat",
   "collection.open": "Buksan",
   "kind.read.label": "Pagbasa ng mga file",

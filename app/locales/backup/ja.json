@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "このエクスポートの会話、Gem、ファイルを取り込みますか？ここにあるものは何も削除されません。",
+  "backup.confirmImport": "このエクスポートの会話、プロジェクト、ファイルを取り込みますか？ここにあるものは何も削除されません。",
   "backup.imported": {
     "other": "{count} 件の会話を取り込みました。"
   },

@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Bawa percakapan, Gems, dan file dari ekspor ini? Tidak ada yang dihapus di sini.",
+  "backup.confirmImport": "Bawa percakapan, proyek, dan file dari ekspor ini? Tidak ada yang dihapus di sini.",
   "backup.imported": {
     "other": "{count} percakapan dibawa masuk."
   },

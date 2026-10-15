@@ -6,7 +6,8 @@ import { memoryFS } from '../app/core/fs.js'
 import { writeZip } from '../app/core/zip.js'
 import { loadConversation, listConversations } from '../app/core/conversations.js'
 import { listProjects, parseFrontMatter } from '../app/core/settings.js'
-import { markdownOf, gemsOf, activitiesOf, conversationsOf, importTakeout, unpack } from '../app/caps/backup/takeout.js'
+import { markdownOf, gemsOf, activitiesOf, conversationsOf } from '../app/caps/backup/takeout.js'
+import { importExport, unpack } from '../app/caps/backup/imports.js'
 
 const encoder = new TextEncoder()
 const DIR = 'Takeout/My Activity/Gemini Apps/'
@@ -106,7 +107,7 @@ test('an export comes in once: its conversations, their files, its Gems as proje
   const projectDir = 'projects/01HOME-home'
   await fs.write(`${projectDir}/project.md`, '---\nformat: 1\ndefault: true\nname: Home\n---\n')
   const entries = await unpack(await zip(exportFiles()), 'takeout-20260103T000000Z-001.zip')
-  assert.deepEqual(await importTakeout(fs, entries, { projectDir, by: 'device-1' }), { conversations: 2, gems: 1, files: 3 })
+  assert.deepEqual(await importExport(fs, entries, { projectDir, by: 'device-1' }), { conversations: 2, projects: 1, files: 3 })
 
   const list = await listConversations(fs, projectDir)
   assert.deepEqual(list.map((item) => [item.title, item.createdAt, item.updatedAt]), [
@@ -138,7 +139,7 @@ test('an export comes in once: its conversations, their files, its Gems as proje
   assert.equal(files.filter((name) => name.endsWith('.meta.json')).length, 3, 'the picture, the notes and the plan, not the mail')
 
   // Again: nothing new.
-  assert.deepEqual(await importTakeout(fs, entries, { projectDir, by: 'device-1' }), { conversations: 0, gems: 0, files: 1 })
+  assert.deepEqual(await importExport(fs, entries, { projectDir, by: 'device-1' }), { conversations: 0, projects: 0, files: 1 })
   assert.equal((await listConversations(fs, projectDir)).length, 2)
   assert.equal((await listProjects(fs)).length, 2)
 })
@@ -148,12 +149,12 @@ test('a tgz, a long path in a pax header, reads as a zip does; what isn’t Gemi
   const entries = await unpack(await gzip(tar([...exportFiles(), { path: deep, bytes: encoder.encode('# Deep') }])), 'takeout.tgz')
   assert.ok(entries.some((entry) => entry.path === deep))
   const fs = memoryFS()
-  assert.deepEqual(await importTakeout(fs, entries, { projectDir: 'projects/p', by: 'd' }), { conversations: 2, gems: 1, files: 4 })
+  assert.deepEqual(await importExport(fs, entries, { projectDir: 'projects/p', by: 'd' }), { conversations: 2, projects: 1, files: 4 })
 
   const alone = await unpack(encoder.encode(JSON.stringify([activity({ title: 'Prompted Hi', time: '2026-01-01T00:00:00Z' })])), 'MyActivity.json')
-  assert.deepEqual(await importTakeout(memoryFS(), alone, { projectDir: 'projects/p', by: 'd' }), { conversations: 1, gems: 0, files: 0 })
+  assert.deepEqual(await importExport(memoryFS(), alone, { projectDir: 'projects/p', by: 'd' }), { conversations: 1, projects: 0, files: 0 })
   const pages = [{ path: `${DIR}MyActivity.html`, bytes: encoder.encode('<div class="outer-cell">Gemini Apps</div>') }]
-  assert.equal(await importTakeout(memoryFS(), await unpack(await zip(pages), 'takeout.zip'), { projectDir: 'projects/p', by: 'd' }), 'html')
+  assert.equal(await importExport(memoryFS(), await unpack(await zip(pages), 'takeout.zip'), { projectDir: 'projects/p', by: 'd' }), 'html')
   const other = [{ path: 'Takeout/Drive/a.md', bytes: encoder.encode('a') }]
-  assert.equal(await importTakeout(memoryFS(), await unpack(await zip(other), 'takeout.zip'), { projectDir: 'projects/p', by: 'd' }), null)
+  assert.equal(await importExport(memoryFS(), await unpack(await zip(other), 'takeout.zip'), { projectDir: 'projects/p', by: 'd' }), null)
 })

@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Bawa masuk perbualan, Gems dan fail daripada eksport ini? Tiada apa di sini akan dipadam.",
+  "backup.confirmImport": "Bawa masuk perbualan, projek dan fail daripada eksport ini? Tiada apa di sini akan dipadam.",
   "backup.imported": {
     "other": "{count} perbualan dibawa masuk."
   },

@@ -230,7 +230,7 @@
   "backup.download": "Pobierz kopię zapasową",
   "backup.restore": "Przywróć kopię zapasową",
   "backup.confirmRestore": "Dodać wszystko z tej kopii? Nic tutaj nie zostanie usunięte.",
-  "backup.gemini": "Przechodzisz z Gemini? Przywróć eksport z Google Takeout (Gemini oraz Aplikacje Gemini z Mojej aktywności w formacie JSON), aby przenieść rozmowy i Gemy do {name}.",
+  "backup.elsewhere": "Przechodzisz z ChatGPT, Claude lub Gemini? Przywróć eksport swoich danych, aby przenieść rozmowy i projekty do {name} (z Google Takeout: Gemini oraz Aplikacje Gemini z Mojej aktywności w formacie JSON).",
   "collection.all": "Włącz wszystko",
   "collection.open": "Otwórz",
   "kind.read.label": "Czytanie plików",

@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Bring in the conversations, Gems and files of this export? Nothing here will be deleted.",
+  "backup.confirmImport": "Bring in the conversations, projects and files of this export? Nothing here will be deleted.",
   "backup.imported": {
     "one": "{count} conversation brought in.",
     "other": "{count} conversations brought in."

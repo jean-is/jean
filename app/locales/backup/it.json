@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Importare conversazioni, Gem e file di questa esportazione? Qui non verrà eliminato nulla.",
+  "backup.confirmImport": "Importare conversazioni, progetti e file di questa esportazione? Qui non verrà eliminato nulla.",
   "backup.imported": {
     "one": "{count} conversazione importata.",
     "many": "{count} conversazioni importate.",

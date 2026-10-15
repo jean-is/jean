@@ -224,7 +224,7 @@
   "backup.download": "بارگیری پشتیبان",
   "backup.restore": "بازیابی پشتیبان",
   "backup.confirmRestore": "همه‌چیز از این پشتیبان افزوده شود؟ هیچ‌چیز اینجا حذف نمی‌شود.",
-  "backup.gemini": "از Gemini می‌آیید؟ خروجی Google Takeout خود را بازیابی کنید (‏Gemini، و «برنامه‌های Gemini» در «فعالیت من» با قالب JSON) تا گفتگوها و Gemهای آن به {name} بیاید.",
+  "backup.elsewhere": "از ChatGPT،‏ Claude یا Gemini می‌آیید؟ خروجی داده‌های خود را بازیابی کنید تا گفتگوها و پروژه‌های آن به {name} بیاید (از Google Takeout: ‏Gemini، و «برنامه‌های Gemini» در «فعالیت من» با قالب JSON).",
   "collection.all": "همه را روشن کن",
   "collection.open": "باز کردن",
   "kind.read.label": "خواندن فایل‌ها",

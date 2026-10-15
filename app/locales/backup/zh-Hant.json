@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "要匯入這份匯出內容中的對話、Gem 和檔案嗎？這裡的內容不會被刪除。",
+  "backup.confirmImport": "要匯入這份匯出內容中的對話、專案和檔案嗎？這裡的內容不會被刪除。",
   "backup.imported": {
     "other": "已匯入 {count} 個對話。"
   },

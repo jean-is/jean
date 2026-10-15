@@ -221,7 +221,7 @@
   "backup.download": "下载备份",
   "backup.restore": "恢复备份",
   "backup.confirmRestore": "添加此备份中的所有内容？这里的内容不会被删除。",
-  "backup.gemini": "从 Gemini 过来？恢复您的 Google Takeout 导出（Gemini，以及“我的活动”中 JSON 格式的 Gemini 应用），即可将其中的对话和 Gem 导入 {name}。",
+  "backup.elsewhere": "从 ChatGPT、Claude 或 Gemini 过来？恢复您的数据导出，即可将其中的对话和项目导入 {name}（Google Takeout 中请选择 Gemini，以及“我的活动”中 JSON 格式的 Gemini 应用）。",
   "collection.all": "全部开启",
   "collection.open": "打开",
   "kind.read.label": "读取文件",

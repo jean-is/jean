@@ -227,7 +227,7 @@
   "backup.download": "Télécharger une sauvegarde",
   "backup.restore": "Restaurer une sauvegarde",
   "backup.confirmRestore": "Ajouter tout le contenu de cette sauvegarde ? Rien ne sera supprimé ici.",
-  "backup.gemini": "Vous venez de Gemini ? Restaurez votre export Google Takeout (Gemini, et Applications Gemini de Mon activité au format JSON) pour retrouver ses conversations et ses Gems dans {name}.",
+  "backup.elsewhere": "Vous venez de ChatGPT, de Claude ou de Gemini ? Restaurez l’export de vos données pour retrouver ses conversations et ses projets dans {name} (depuis Google Takeout : Gemini, et Applications Gemini de Mon activité au format JSON).",
   "collection.all": "Tout activer",
   "collection.open": "Ouvrir",
   "kind.read.label": "Lire des fichiers",

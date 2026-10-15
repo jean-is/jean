@@ -236,7 +236,7 @@
   "backup.download": "تنزيل نسخة احتياطية",
   "backup.restore": "استعادة نسخة احتياطية",
   "backup.confirmRestore": "إضافة كل ما في هذه النسخة الاحتياطية؟ لن يُحذف أي شيء هنا.",
-  "backup.gemini": "هل أتيت من Gemini؟ استعد ملف التصدير من Google Takeout (‏Gemini، و«تطبيقات Gemini» من «نشاطي» بتنسيق JSON) لنقل محادثاته وGems إلى {name}.",
+  "backup.elsewhere": "هل أتيت من ChatGPT أو Claude أو Gemini؟ استعد ملف تصدير بياناتك لنقل محادثاته ومشاريعه إلى {name} (من Google Takeout: ‏Gemini، و«تطبيقات Gemini» من «نشاطي» بتنسيق JSON).",
   "collection.all": "شغّل كل شيء",
   "collection.open": "افتح",
   "kind.read.label": "قراءة الملفات",

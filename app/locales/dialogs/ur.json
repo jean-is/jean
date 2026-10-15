@@ -224,7 +224,7 @@
   "backup.download": "بیک اپ ڈاؤن لوڈ کریں",
   "backup.restore": "بیک اپ بحال کریں",
   "backup.confirmRestore": "اس بیک اپ کی ہر چیز شامل کریں؟ یہاں سے کچھ حذف نہیں ہوگا۔",
-  "backup.gemini": "Gemini سے آ رہے ہیں؟ اپنی Google Takeout برآمد بحال کریں (‏Gemini، اور ”میری سرگرمی“ کی Gemini ایپس JSON میں) تاکہ اس کی گفتگوئیں اور Gems ‏{name} میں آ جائیں۔",
+  "backup.elsewhere": "ChatGPT،‏ Claude یا Gemini سے آ رہے ہیں؟ اپنے ڈیٹا کی برآمد بحال کریں تاکہ اس کی گفتگوئیں اور پروجیکٹس ‏{name} میں آ جائیں (Google Takeout سے: ‏Gemini، اور ”میری سرگرمی“ کی Gemini ایپس JSON میں)۔",
   "collection.all": "سب آن کریں",
   "collection.open": "کھولیں",
   "kind.read.label": "فائلیں پڑھنا",

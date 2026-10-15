@@ -221,7 +221,7 @@
   "backup.download": "Muat turun sandaran",
   "backup.restore": "Pulihkan sandaran",
   "backup.confirmRestore": "Tambah semua daripada sandaran ini? Tiada apa di sini akan dipadam.",
-  "backup.gemini": "Datang dari Gemini? Pulihkan eksport Google Takeout anda (Gemini, dan Apl Gemini dalam Aktiviti Saya dalam JSON) untuk membawa perbualan dan Gems ke {name}.",
+  "backup.elsewhere": "Datang dari ChatGPT, Claude atau Gemini? Pulihkan eksport data anda untuk membawa perbualan dan projeknya ke {name} (daripada Google Takeout: Gemini, dan Apl Gemini dalam Aktiviti Saya dalam JSON).",
   "collection.all": "Hidupkan semua",
   "collection.open": "Buka",
   "kind.read.label": "Membaca fail",

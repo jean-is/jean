@@ -730,7 +730,7 @@ function data() {
           <input type="file" accept=".zip,.tgz,.json,application/zip,application/gzip" multiple class="visually-hidden" @change=${restore}>
         </label>
       </div>
-      <p class="hint">${t('backup.gemini', { name: BRAND.name })}</p>
+      <p class="hint">${t('backup.elsewhere', { name: BRAND.name })}</p>
     </section>`}
     ${slots('data').map((part) => part.draw())}`
 }
@@ -977,7 +977,7 @@ export async function backup() {
   await downloadBackup()
 }
 
-/** A backup of Jean's, or an export of Gemini's from Google Takeout, its parts together (D340). @param {Event} event */
+/** A backup of Jean's, or an export of Gemini's from Google Takeout, of ChatGPT's or of Claude's, its parts together (D340, D341). @param {Event} event */
 async function restore(event) {
   const input = /** @type {HTMLInputElement} */ (event.target)
   const files = [...(input.files ?? [])]

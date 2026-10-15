@@ -224,7 +224,7 @@
   "backup.download": "బ్యాకప్ డౌన్‌లోడ్ చేయి",
   "backup.restore": "బ్యాకప్‌ను పునరుద్ధరించు",
   "backup.confirmRestore": "ఈ బ్యాకప్‌లోని అన్నింటినీ జోడించాలా? ఇక్కడ ఏదీ తొలగించబడదు.",
-  "backup.gemini": "Gemini నుండి వస్తున్నారా? మీ Google Takeout ఎగుమతిని పునరుద్ధరించండి (Gemini, ఇంకా నా యాక్టివిటీలోని Gemini యాప్‌లు JSON ఫార్మాట్‌లో); దాని సంభాషణలు, Gems {name}లోకి వస్తాయి.",
+  "backup.elsewhere": "ChatGPT, Claude లేదా Gemini నుండి వస్తున్నారా? మీ డేటా ఎగుమతిని పునరుద్ధరించండి; దాని సంభాషణలు, ప్రాజెక్ట్‌లు {name}లోకి వస్తాయి (Google Takeout నుండి: Gemini, ఇంకా నా యాక్టివిటీలోని Gemini యాప్‌లు JSON ఫార్మాట్‌లో).",
   "collection.all": "అన్నీ ఆన్ చేయి",
   "collection.open": "తెరువు",
   "kind.read.label": "ఫైళ్లు చదవడం",

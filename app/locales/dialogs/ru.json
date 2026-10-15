@@ -230,7 +230,7 @@
   "backup.download": "Скачать резервную копию",
   "backup.restore": "Восстановить из копии",
   "backup.confirmRestore": "Добавить всё из этой копии? Здесь ничего не будет удалено.",
-  "backup.gemini": "Переходите с Gemini? Восстановите экспорт из Google Takeout (Gemini и «Приложения Gemini» из «Моих действий» в формате JSON), чтобы перенести его разговоры и Gems в {name}.",
+  "backup.elsewhere": "Переходите с ChatGPT, Claude или Gemini? Восстановите экспорт своих данных, чтобы перенести его разговоры и проекты в {name} (из Google Takeout: Gemini и «Приложения Gemini» из «Моих действий» в формате JSON).",
   "collection.all": "Включить всё",
   "collection.open": "Открыть",
   "kind.read.label": "Чтение файлов",

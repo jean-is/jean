@@ -10,6 +10,7 @@ import { library } from '../../ui/complete.js'
 import { searchTool } from './search.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
 import { isPicture, latestOf } from '../../core/events.js'
+import { readZip } from '../../core/zip.js'
 import { extractPages } from './extract.js'
 import { fitPicture } from './pictures.js'
 import { t } from '../../core/i18n.js'
@@ -81,8 +82,10 @@ let persisted = false
  */
 export async function addFiles(list) {
   let files = [...list]
-  // An export from Google Takeout is brought in, not shared (D340).
-  const exported = files.filter((file) => /^takeout-.*\.(zip|tgz)$/i.test(file.name))
+  // An export of Gemini's, ChatGPT's or Claude's is brought in, not shared (D340, D341).
+  /** @type {File[]} */
+  const exported = []
+  for (const file of files) if (await isExport(file)) exported.push(file)
   if (exported.length && (await unlock('backup'))) {
     ;(await import('../backup/backup.js')).bringIn(exported)
     files = files.filter((file) => !exported.includes(file))
@@ -96,6 +99,19 @@ export async function addFiles(list) {
   await Promise.all(files.map(readOne))
   restock()
   warm()
+}
+
+/**
+ * Whether a file is an export to bring in rather than share: Google Takeout's, as Google names
+ * them, or a zip holding conversations.json or projects.json at its root, as ChatGPT's and Claude's do.
+ * @param {File} file
+ */
+async function isExport(file) {
+  try {
+    return /^takeout-.*\.(zip|tgz)$/i.test(file.name) || ((await file.slice(0, 2).text()) === 'PK' && readZip(new Uint8Array(await file.arrayBuffer())).some((entry) => /^(conversations(-\d+)?|projects)\.json$/.test(entry.name)))
+  } catch {
+    return false
+  }
 }
 
 /** @param {File} file */

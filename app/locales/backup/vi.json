@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Đưa các cuộc trò chuyện, Gem và tệp từ bản xuất này vào? Không có gì ở đây bị xóa.",
+  "backup.confirmImport": "Đưa các cuộc trò chuyện, dự án và tệp từ bản xuất này vào? Không có gì ở đây bị xóa.",
   "backup.imported": {
     "other": "Đã đưa vào {count} cuộc trò chuyện."
   },

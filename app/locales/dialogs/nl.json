@@ -224,7 +224,7 @@
   "backup.download": "Een back-up downloaden",
   "backup.restore": "Een back-up terugzetten",
   "backup.confirmRestore": "Alles uit deze back-up toevoegen? Hier wordt niets verwijderd.",
-  "backup.gemini": "Kom je van Gemini? Zet je Google Takeout-export terug (Gemini, en Gemini-apps uit Mijn activiteit in JSON) om de gesprekken en Gems naar {name} te halen.",
+  "backup.elsewhere": "Kom je van ChatGPT, Claude of Gemini? Zet de export van je gegevens terug om de gesprekken en projecten naar {name} te halen (uit Google Takeout: Gemini, en Gemini-apps uit Mijn activiteit in JSON).",
   "collection.all": "Alles aanzetten",
   "collection.open": "Openen",
   "kind.read.label": "Bestanden lezen",

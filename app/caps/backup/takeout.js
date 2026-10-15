@@ -1,42 +1,21 @@
-// Bringing in what Gemini kept (D340): Google Takeout's export, a .zip or a .tgz, or its parts
-// together, or MyActivity.json alone. My Activity's Gemini Apps, in JSON (Takeout's other format,
-// web pages, isn't read), has an activity per request: the request in `title` behind a word such as
+// Gemini's part of what Restore brings in (D340, imports.js): Google Takeout's export, or
+// MyActivity.json alone. My Activity's Gemini Apps, in JSON (Takeout's other format, web pages,
+// isn't read), has an activity per request: the request in `title` behind a word such as
 // "Prompted", the answer as HTML (`safeHtmlItem`), its time, the conversation's gemini.google.com/app/
 // link when it has one (else requests less than half an hour apart are one conversation), and the
-// files shared with it, beside the JSON (`imageFile`, `attachedFiles`). Conversations come into the
-// project, Gems (Gemini/gemini_gems_data.html, its labels read by their place, since their words are
-// the account's language) become projects with their instructions, and Drive's files the project's.
-// Nothing is deleted, and what was brought in before isn't brought in again.
-import { readZip } from '../../core/zip.js'
-import { join } from '../../core/fs.js'
-import { addFile } from '../../core/files.js'
-import { envelope, metaRecord, userRecords } from '../../core/events.js'
-import { createProject, listProjects, stringifyFrontMatter } from '../../core/settings.js'
-import { firstWords } from '../../core/i18n.js'
-import { ulid, ALPHABET } from '../../core/ulid.js'
-import { untar, gunzip } from '../skills/sources.js'
-import { decodeEntities, extractPages } from '../files/extract.js'
+// files shared with it, beside the JSON (`imageFile`, `attachedFiles`). Gems (Gemini/gemini_gems_data.html,
+// its labels read by their place, since their words are the account's language) become projects
+// with their instructions, and Drive's files the project's.
+import { decodeEntities } from '../files/extract.js'
 
-/** @import { FS, Envelope, ResourceLink } from '../../core/types.js' */
-/**
- * @typedef {{ path: string, read: () => Promise<Uint8Array> }} Entry a file of an archive, read when asked
- * @typedef {{ time: string, request: string, answer: string, files: string[], dir: string, link: string }} Activity
- */
+/** @import { Entry, Found, Shared } from './imports.js' */
+/** @typedef {{ time: string, request: string, answer: string, files: string[], dir: string, link: string }} Activity */
 
 const decoder = new TextDecoder()
 const PROMPTED = /^(Prompted|Asked|Said|Submitted query|送信したメッセージ[:：]|已提示[:：]?|Has dicho:|Preguntado:?)\s*/
 const LINK = /https?:\/\/(?:gemini|bard)\.google\.com\/(?:u\/\d+\/)?(?:app|chat)\/(?:c\/)?([\w-]{6,64})/
-const TYPES = /** @type {Record<string, string>} */ ({ png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf', mp4: 'video/mp4' })
 /** Gemini's folders, whatever the language ("Gemini Apps", "Applications Gemini"), or a file on its own. @param {string} path */
 const ofGemini = (path) => /(Gemini|Bard)[^/]*\/[^/]+$/i.test(path) || !path.includes('/')
-
-/** An archive's files: a zip, a tgz or a tar; anything else is a file of its own. @param {Uint8Array} bytes @param {string} name @returns {Promise<Entry[]>} */
-export async function unpack(bytes, name) {
-  if (bytes[0] === 0x50 && bytes[1] === 0x4b) return readZip(bytes).map((entry) => ({ path: entry.name, read: entry.read }))
-  const tar = bytes[0] === 0x1f && bytes[1] === 0x8b ? await gunzip(bytes) : bytes
-  const files = decoder.decode(tar.subarray(257, 262)) === 'ustar' ? untar(tar) : [{ path: name, bytes: tar }]
-  return files.map((file) => ({ path: file.path, read: async () => file.bytes }))
-}
 
 /**
  * An answer's HTML in Markdown, as Jean's answers are: paragraphs, headings, lists, emphasis, code,
@@ -148,20 +127,12 @@ export function conversationsOf(activities) {
   return [...groups]
 }
 
-/** A conversation's name: a ULID of its start, the rest from where it came from, so that it is the same each time. @param {string} time @param {string} key */
-async function nameOf(time, key) {
-  const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`gemini ${key}`)))
-  return ulid(Date.parse(time)).slice(0, 10) + [...hash.subarray(0, 16)].map((byte) => ALPHABET[byte % 32]).join('')
-}
-
 /**
- * Brings an export in. Null when it holds nothing of Gemini's, 'html' when its activity is there as
- * web pages only.
- * @param {FS} fs @param {Entry[]} entries
- * @param {{ projectDir: string, by: string, pages?: (name: string, bytes: Uint8Array) => Promise<string[] | null> }} options
- * @returns {Promise<{ conversations: number, gems: number, files: number } | 'html' | null>}
+ * What an export holds of Gemini's: its requests as conversations, its Gems and Drive's files. Null
+ * when it holds nothing of Gemini's, 'html' when its activity is there as web pages only.
+ * @param {Entry[]} entries @returns {Promise<Found | 'html' | null>}
  */
-export async function importTakeout(fs, entries, { projectDir, by, pages = extractPages }) {
+export async function geminiOf(entries) {
   const read = async (/** @type {Entry} */ entry) => decoder.decode(await entry.read())
   /** @type {Activity[]} */
   const activities = []
@@ -176,39 +147,11 @@ export async function importTakeout(fs, entries, { projectDir, by, pages = extra
   }
   if (!activities.length && !gems.length) return html ? 'html' : null
   const byPath = new Map(entries.map((entry) => [entry.path, entry]))
-  const result = { conversations: 0, gems: 0, files: 0 }
-  /** A file of the export, now the project's. @param {string} path @returns {Promise<ResourceLink | null>} */
-  const keep = async (path) => {
-    const entry = byPath.get(path)
-    if (!entry) return null
-    const bytes = await entry.read()
-    const name = path.slice(path.lastIndexOf('/') + 1)
-    result.files++
-    return addFile(fs, { projectDir, name, mimeType: TYPES[name.split('.').pop()?.toLowerCase() ?? ''], bytes, pages: (await pages(name, bytes).catch(() => null)) ?? [''], by })
+  /** A file of the export, if it is there. @param {string} path @returns {Shared[]} */
+  const file = (path) => [byPath.get(path)].flatMap((entry) => (entry ? [{ name: path.slice(path.lastIndexOf('/') + 1), read: entry.read }] : []))
+  return {
+    chats: conversationsOf(activities.sort((a, b) => Date.parse(a.time) - Date.parse(b.time))).map(([key, list]) => ({ key: `gemini ${key}`, title: '', turns: list.map((activity) => ({ ...activity, files: activity.files.flatMap((name) => file(activity.dir + name)) })) })),
+    rooms: gems.map((gem) => ({ ...gem, files: [] })),
+    files: entries.flatMap((entry) => (/(^|\/)Drive\//.test(entry.path) ? file(entry.path) : [])),
   }
-  for (const [key, list] of conversationsOf(activities.sort((a, b) => Date.parse(a.time) - Date.parse(b.time)))) {
-    const id = await nameOf(list[0].time, key)
-    const path = join(projectDir, 'conversations', `${id}.jsonl`)
-    if (await fs.exists(path)) continue
-    /** @type {Envelope[]} */
-    const records = [{ ...metaRecord(by, { title: firstWords(list[0].request || list[0].answer) }), at: list[0].time }]
-    for (const { time, request, answer, files, dir } of list) {
-      const links = (await Promise.all(files.map((name) => keep(dir + name)))).filter((link) => link !== null)
-      records.push(...userRecords(request, links, by).map((record) => ({ ...record, at: time })))
-      if (answer) records.push({ ...envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: answer } }, 0), at: time })
-    }
-    await fs.write(path, [{ format: 1, kind: 'conversation', id, createdAt: list[0].time, by }, ...records].map((line) => `${JSON.stringify(line)}\n`).join(''))
-    result.conversations++
-  }
-  const named = new Set((await listProjects(fs)).map((project) => String(project.data.name)))
-  for (const { name, instructions } of gems) {
-    const title = name || firstWords(instructions, 4)
-    if (named.has(title)) continue
-    named.add(title)
-    const dir = await createProject(fs, { name: title, by })
-    if (instructions) await fs.write(join(dir, 'instructions.md'), stringifyFrontMatter({ format: 1, kind: 'instructions' }, `${instructions}\n`))
-    result.gems++
-  }
-  for (const entry of entries) if (/(^|\/)Drive\//.test(entry.path)) await keep(entry.path)
-  return result
 }

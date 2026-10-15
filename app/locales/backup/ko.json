@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "이 내보내기의 대화, Gem, 파일을 가져올까요? 여기 있는 것은 삭제되지 않아요.",
+  "backup.confirmImport": "이 내보내기의 대화, 프로젝트, 파일을 가져올까요? 여기 있는 것은 삭제되지 않아요.",
   "backup.imported": {
     "other": "대화 {count}개를 가져왔어요."
   },
