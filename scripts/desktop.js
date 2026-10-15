@@ -94,8 +94,8 @@ export function neutralinoConfig (brand, { version, description, copyright }) {
   }
 }
 
-/** @param {string} text */
-const xml = (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+/** Text for XML, in an element or an attribute. @param {string} text */
+export const xml = (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
 /**
  * The macOS bundle's Info.plist. The system asks before the web view first uses the microphone,

@@ -3,7 +3,7 @@
 // a choice of what matters. OpenRouter's sign-in is stopped as it leaves; the device is made capable
 // and its worker replaced, as in device.spec.js, so no 3 GB download is needed.
 import { test, expect } from '@playwright/test'
-import { start, ask, BRAIN_URL } from './helpers.js'
+import { start, ask, connectFakeBrain, BRAIN_URL } from './helpers.js'
 
 const WORKER = `self.onmessage = ({ data }) => {
   if (data.type === 'load') {
@@ -47,6 +47,34 @@ test('the first message opens one free way and two doors; through the plans and 
   // What was asked is answered.
   await expect(page.locator('.msg-user').first()).toContainText('Explain photosynthesis')
   await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+})
+
+test('a search from the browser’s bar is sent as a new task, here the first, which asks for a brain, then answered; the address forgets it (D353)', async ({ page }) => {
+  await page.goto(`./?q=${encodeURIComponent('光合成を簡単に説明して & more')}`)
+  const dialog = page.locator('app-first dialog[open]')
+  await expect(dialog.locator('h2')).toHaveText('One step before I answer')
+  await expect(page).not.toHaveURL(/[?&]q=/)
+  await dialog.getByRole('button', { name: /I already use ChatGPT, Claude or Copilot/ }).click()
+  const local = dialog.locator('.way.is-local')
+  await local.locator('summary').click()
+  await local.locator('select').selectOption('custom')
+  await local.locator('input[name="baseURL"]').fill(BRAIN_URL)
+  await local.locator('.button.primary').click()
+  await expect(dialog).toBeHidden()
+  await expect(page.locator('.msg-user')).toHaveText(['光合成を簡単に説明して & more'])
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+  await expect(page.locator('#prompt')).toHaveValue('')
+})
+
+test('with a brain already, a search from the browser’s bar is answered at once, in a task of its own (D353)', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'WebKit runs here like a private window: nothing is kept for the next visit')
+  await start(page)
+  await connectFakeBrain(page)
+  await page.goto(`./?q=${encodeURIComponent('Explain photosynthesis in simple words')}`)
+  await expect(page.locator('.msg-user')).toHaveText(['Explain photosynthesis in simple words'])
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+  await expect(page.locator('app-first dialog[open]')).toHaveCount(0)
+  await expect(page).toHaveURL(/\/#\/c\/[0-9A-Z]{26}$/)
 })
 
 test('the chip opens it too; what matters: the private answer says why it can’t be had here, the button says what each answer does, and Back returns', async ({ page }) => {

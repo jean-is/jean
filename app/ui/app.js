@@ -6,7 +6,7 @@ import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, theme, sidebarOpen, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
+import { app, effective, activeBrain, theme, sidebarOpen, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
 import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import './shell.js'
@@ -132,10 +132,11 @@ async function start() {
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  // Back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
+  // A search from the browser's bar (D353) is sent. Or back from signing in: to a connection
+  // (?state=…), or to OpenRouter or ChatGPT.
   const back = new URLSearchParams(location.search)
-  const connected = back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()
-  if (!connected && back.size) await (await import('./brains.js')).finishSignIn()
+  if (back.has('q')) { history.replaceState(null, '', location.pathname + location.hash); send(back.get('q') ?? '') }
+  else if (!(back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()) && back.size) await (await import('./brains.js')).finishSignIn()
   // Watching for a new version, or finishing to bring one in.
   import('./update.js').then((update) => update.start())
 }
