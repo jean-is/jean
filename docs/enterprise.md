@@ -52,9 +52,9 @@ Long-term-support releases, signed builds, SBOMs, security questionnaires and ac
 **Promises.** The person's own security is never paid for. Features never move from open to `ee/`; they may move the other way. Without a key, enterprise features don't appear at all, so the unlock game never shows a paywall.
 
 **Keys.**
-- CODENAME SAS signs them (JWS, ES256). Jean checks them offline with Web Crypto and reads them from policy; it never calls home. The check lives in `ee/`.
+- WAREHOUSE SAS signs them (JWS, ES256). Jean checks them offline with Web Crypto and reads them from policy; it never calls home. The check lives in `ee/`.
 - A subscription key unlocks every version released before its end date, forever. When a subscription lapses, a running deployment keeps working; only upgrades of `ee/` stop.
-- A trial key is free for 30 days. An organisation generates one on a page CODENAME SAS runs. It is bound to the deployment's addresses, one trial per address, and has no fallback.
+- A trial key is free for 30 days. An organisation generates one on a page WAREHOUSE SAS runs. It is bound to the deployment's addresses, one trial per address, and has no fallback.
 - A policy that asks for enterprise features without a valid key stops Jean with a message for IT. Its rules are never dropped silently; removing those sections gives back the open version.
 - On `localhost`, no key is needed. Small organisations, non-profits and schools get free keys.
 - If no key can be bought for twelve consecutive months, every version of `ee/` published until then becomes MIT.
