@@ -1,7 +1,7 @@
-// Questions for the user (D146): when Jean, or one of its helpers, needs the user's choices to go
-// on, it asks them all at once with `ask_user`, and the card waits in the decision inbox, under
-// the answer being written (D99). One question at a time: the answers to pick from, the one Jean
-// recommends picked already, and room for the user's own words. Skip leaves a question
+// Questions for the user (D146, D343): when Jean, or one of its helpers, needs the user's choices to
+// go on, it asks them all at once with `ask_user`, and they wait at the top of the box, inside it, so
+// every look draws them as one with it. One question at a time: the answers to pick from, the one
+// Jean recommends picked already, and room for the user's own words. Skip leaves a question
 // unanswered, Back returns to the one before, and the last one sends every answer back to the
 // brain as JSON. Always there, like the inbox (product.md), and loaded with the first message, so
 // the brain can ask from the start without weighing on the first screen.
@@ -23,8 +23,8 @@ import { styleSheet } from '../../ui/sheet.js'
 await Promise.all([useStrings('ask'), styleSheet(new URL('ask.css', import.meta.url))])
 
 /**
- * The questions, in the inbox, answered one after the other. Where the user is stays with the
- * card, so it survives the answer being redrawn around it.
+ * The questions, at the top of the box, answered one after the other. Where the user is stays
+ * with them, so it survives the box being redrawn around them.
  */
 class Ask extends Element {
   /** @type {Questions} */
@@ -36,11 +36,25 @@ class Ask extends Element {
 
   connectedCallback() {
     if (!this.#answers.peek().length) this.#answers.value = this.decision.questions.map(start)
+    // The box grows by them: the end of the answer stays in view if it was.
+    const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
     super.connectedCallback()
+    if (end) scrollTo({ top: document.documentElement.scrollHeight })
   }
 
+  /** Next, or Skip: the last question sends every answer. @param {Partial<Answer>} patch @param {boolean} [moved] */
+  #go(patch, moved = true) {
+    const step = this.#step.peek()
+    const answers = this.#answers.peek().map((other, i) => (i === step ? { ...other, ...patch } : other))
+    if (step === this.decision.questions.length - 1) return this.decision.resolve(answers)
+    ;[this.#answers.value, this.#moved, this.#step.value] = [answers, moved, step + 1]
+  }
+
+  /** The box's words answer the question on screen, as the user's own, and the keyboard stays there (D343). @param {string} own */
+  answer(own) { this.#go({ own: own.trim(), writing: true, skipped: false, ...(!this.decision.questions[this.#step.peek()].multiple && { chosen: [] }) }, false) }
+
   render() {
-    const { questions, from, resolve } = this.decision
+    const { questions, from } = this.decision
     const step = this.#step.value
     const answers = this.#answers.value
     const question = questions[step]
@@ -51,17 +65,7 @@ class Ask extends Element {
     const set = (patch) => answers.map((other, i) => (i === step ? { ...other, ...patch } : other))
     // Changing an answer un-skips its question.
     const change = (/** @type {Partial<Answer>} */ patch) => { this.#answers.value = set({ ...patch, skipped: false }) }
-    /** Next, or Skip: the last question sends every answer. @param {boolean} skipped */
-    const go = (skipped) => {
-      if (last) return resolve(set({ skipped }))
-      this.#answers.value = set({ skipped })
-      this.#moved = true
-      this.#step.value = step + 1
-    }
-    const back = () => {
-      this.#moved = true
-      this.#step.value = step - 1
-    }
+    const back = () => { this.#moved = true; this.#step.value = step - 1 }
     /** @param {number} i */
     const pick = (i) => change({ chosen: question.multiple ? (answer.chosen.includes(i) ? answer.chosen.filter((j) => j !== i) : [...answer.chosen, i]) : [i], ...(!question.multiple && { writing: false }) })
     const write = () => change(question.multiple ? { writing: !answer.writing } : { chosen: [], writing: true })
@@ -70,21 +74,16 @@ class Ask extends Element {
       const own = /** @type {HTMLInputElement} */ (event.target).value
       change({ own, ...(own.trim() && { writing: true, ...(!question.multiple && { chosen: [] }) }) })
     }
-    /** @param {SubmitEvent} event */
-    const submit = (event) => {
+    /** Enter goes on, never while an IME is composing; the box's own form never sees it. @param {KeyboardEvent} event */
+    const enter = (event) => {
+      if (event.key !== 'Enter' || !(event.target instanceof HTMLInputElement)) return
       event.preventDefault()
-      if (answered(answer)) go(false)
+      if (!event.isComposing && event.keyCode !== 229 && answered(answer)) this.#go({ skipped: false })
     }
-    // Enter never sends while an IME is composing.
-    const composing = (/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && (event.isComposing || event.keyCode === 229) && event.preventDefault()
-    return html`<form class="approval ask" aria-label=${t('tool.ask_user', { count: questions.length })} @submit=${submit}>
+    return html`<div class="ask" role="group" aria-label=${t('tool.ask_user', { count: questions.length })} @keydown=${enter}>
       ${from ? html`<p class="approval-from">${icons.helpers}<span dir="auto">${from}</span></p>` : nothing}
-      ${questions.length > 1 ? html`<p class="ask-progress">
-        <span class="ask-pips" aria-hidden="true">${answers.map((other, i) => html`<i data-state=${i === step ? 'current' : i > step ? 'ahead' : other.skipped ? 'skipped' : 'answered'}></i>`)}</span>
-        <span>${t('ask.step', { n: step + 1, count: questions.length })}</span>
-      </p>` : nothing}
-      ${repeat([step], (i) => i, () => html`<fieldset class="ask-field">
-        <legend class="ask-question" dir="auto">${question.question}</legend>
+      ${repeat([step], (i) => i, () => html`<div class="ask-field" role="group" aria-labelledby="ask-question">
+        <p class="ask-question" id="ask-question" dir="auto">${question.question}</p>
         ${question.options.length ? html`<ul class="ask-options">
           ${question.options.map((option, i) => html`<li><label class="choice-option">
             <input type=${input} name="answer" .checked=${live(answer.chosen.includes(i))} @change=${() => pick(i)}>
@@ -93,26 +92,25 @@ class Ask extends Element {
           </label></li>`)}
           <li class="choice-option ask-own">
             <input type=${input} name="answer" aria-label=${t('ask.own')} .checked=${live(answer.writing)} @change=${write}>
-            <input class="ask-own-text" dir="auto" autocomplete="off" placeholder=${t('ask.own')} aria-label=${t('ask.own')}
-              .value=${live(answer.own)} @input=${typed} @keydown=${composing}>
+            <input class="ask-own-text" dir="auto" autocomplete="off" placeholder=${t('ask.own')} aria-label=${t('ask.own')} .value=${live(answer.own)} @input=${typed}>
           </li>
-        </ul>` : html`<input class="ask-own-text" name="answer" dir="auto" autocomplete="off" aria-label=${t('inbox.answer')}
-          .value=${live(answer.own)} @input=${typed} @keydown=${composing}>`}
-      </fieldset>`)}
-      <div class="approval-actions">
-        <button class="button primary" ?disabled=${!answered(answer)}>${t(last ? 'action.send' : 'ask.next')}</button>
-        <button class="button" type="button" @click=${() => go(true)}>${t('ask.skip')}</button>
+        </ul>` : html`<input class="ask-own-text" name="answer" dir="auto" autocomplete="off" aria-label=${t('inbox.answer')} .value=${live(answer.own)} @input=${typed}>`}
+      </div>`)}
+      <div class="ask-actions">
+        ${questions.length > 1 ? html`<p class="ask-progress">
+          <span class="ask-pips" aria-hidden="true">${answers.map((other, i) => html`<i data-state=${i === step ? 'current' : i > step ? 'ahead' : other.skipped ? 'skipped' : 'answered'}></i>`)}</span>
+          <span>${t('ask.step', { n: step + 1, count: questions.length })}</span>
+        </p>` : nothing}
         ${step ? html`<button class="button subtle" type="button" @click=${back}>${t('ask.back')}</button>` : nothing}
+        <button class="button" type="button" @click=${() => this.#go({ skipped: true })}>${t('ask.skip')}</button>
+        <button class="button primary" type="button" ?disabled=${!answered(answer)} @click=${() => this.#go({ skipped: false })}>${t(last ? 'action.send' : 'ask.next')}</button>
       </div>
-    </form>`
+    </div>`
   }
 
   updated() {
-    if (!this.#moved) return
+    if (this.#moved) /** @type {HTMLInputElement | null} */ (this.querySelector('.ask-field input:checked') ?? this.querySelector('.ask-field input'))?.focus()
     this.#moved = false
-    const field = this.querySelector('.ask-field')
-    const first = /** @type {HTMLInputElement | null | undefined} */ (field?.querySelector('input:checked') ?? field?.querySelector('input'))
-    first?.focus()
   }
 }
 define('app-ask', Ask)

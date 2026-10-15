@@ -88,7 +88,7 @@ test('a task done out of sight offers notifications; on, the next one is told, a
   expect(second).toBe(first)
   await tasks.locator('.place', { hasText: 'New task' }).click()
   await back(page)
-  const card = page.locator('.inbox app-ask form.approval')
+  const card = page.locator('.composer app-ask .ask')
   await expect(card).toHaveCount(0)
   await page.evaluate(() => /** @type {any} */ (window).shown[1].onclick())
   await expect(card.locator('.ask-progress')).toHaveText('Question 1 of 3')

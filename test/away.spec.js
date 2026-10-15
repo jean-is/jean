@@ -10,7 +10,7 @@ test('an answer goes on while the user is in another conversation', async ({ pag
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Write a letter to my bank')
-  const card = page.locator('.inbox app-ask form.approval')
+  const card = page.locator('.composer app-ask .ask')
   await expect(card.locator('.ask-progress')).toHaveText('Question 1 of 3')
 
   // Its name has the light, ringed: a decision waits there. No times in the list.

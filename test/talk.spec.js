@@ -117,7 +117,7 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
 
   // While a request is being answered, it can't be tried again; one before it can.
   await ask(page, 'Write a letter to my bank')
-  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(page.locator('.composer app-ask .ask')).toBeVisible()
   await expect(requests.last().getByRole('button', { name: 'Try again' })).toBeDisabled()
   const again = requests.first().getByRole('button', { name: 'Try again' })
   await expect(again).toBeEnabled()
@@ -125,7 +125,7 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
   page.once('dialog', (dialog) => dialog.dismiss())
   await again.click()
   await expect(page.locator('.msg-user')).toHaveCount(2)
-  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(page.locator('.composer app-ask .ask')).toBeVisible()
   // Then the answer being written stops, everything after the request goes, and it is answered again.
   page.once('dialog', (dialog) => {
     expect(dialog.message()).toContain('Everything after it in this task will be removed')
@@ -133,7 +133,7 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
   })
   await again.click()
   await expect(page.locator('.msg-user')).toHaveCount(1)
-  await expect(page.locator('.inbox app-ask form.approval')).toHaveCount(0)
+  await expect(page.locator('.composer app-ask .ask')).toHaveCount(0)
   await expect(page.locator('.msg-jean .prose')).toHaveCount(1)
   await expect(page.locator('.msg-jean .prose')).toContainText('Anything else?')
   await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
@@ -203,7 +203,7 @@ test('a double click or Enter puts a request in a box; Escape leaves it, Enter o
   await expect(page.locator('.msg-jean .prose')).toContainText('Anything else?')
   await expect(ended).toBeVisible()
   await ask(page, 'Write a letter to my bank')
-  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(page.locator('.composer app-ask .ask')).toBeVisible()
   await expect(page.locator('p.msg-user').last()).not.toHaveAttribute('tabindex')
   await page.locator('p.msg-user').last().dblclick()
   await expect(box).toHaveCount(0)

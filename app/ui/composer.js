@@ -1,13 +1,15 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
-// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
+// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). At its top, the
+// questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
 // is an AI and can make mistakes (EU AI Act, art. 50; D273).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
+import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
 import { t } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
@@ -51,8 +53,10 @@ class Composer extends Element {
       .sort((a, b) => a.at - b.at).map((entry) => entry.draw(app.current.value)).filter((drawn) => drawn !== nothing)
     const menu = more.length > 0
     const add = t(menu ? 'composer.add' : 'files.attach')
+    const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
+        ${repeat(asked, (decision) => decision.id, (decision) => html`<app-ask .decision=${decision}></app-ask>`)}
         <app-complete></app-complete>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
           <li class="attachment" data-status=${item.status} title=${item.error ?? ''}>
@@ -66,7 +70,7 @@ class Composer extends Element {
           </li>`)}</ul>` : nothing}
         <label class="visually-hidden" for="prompt">${t('composer.label')}</label>
         <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby="ai-note"
-          placeholder=${status || t('composer.placeholder')}
+          placeholder=${status || t(asked.length ? 'inbox.answer' : 'composer.placeholder')}
           .value=${current(app.draft.value)}
           @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}
           @focus=${() => !busy && setPresence('listening')}
@@ -90,7 +94,7 @@ class Composer extends Element {
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
             ${brain?.api === 'device' && !auto ? icons.lock : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
-          ${primary(busy, empty, hands)}
+          ${primary(busy && !(asked.length && !empty), empty, hands)}
         </div>
         ${files ? html`<input type="file" multiple class="visually-hidden" tabindex="-1" aria-hidden="true" @change=${this.#pick}>` : nothing}
       </form>
@@ -163,9 +167,9 @@ class Composer extends Element {
     attachFiles(files)
   }
 
-  /** A tap anywhere in the box but its buttons is for its words. @param {Event} event */
+  /** A tap anywhere in the box but its buttons and questions is for its words. @param {Event} event */
   #press = (event) => {
-    if (/** @type {Element} */ (event.target).closest('textarea, button')) return
+    if (/** @type {Element} */ (event.target).closest('textarea, button, app-ask')) return
     if (event.type === 'click') focusComposer()
     else event.preventDefault()
   }
@@ -182,8 +186,9 @@ class Composer extends Element {
   /** @param {Event} event */
   #submit = (event) => {
     event.preventDefault()
-    // send() waits for a page being turned, which frees the box, before it looks whether it is busy.
-    send(app.draft.value)
+    const asked = /** @type {(HTMLElement & { answer: (own: string) => void }) | null} */ (this.querySelector('app-ask'))
+    // While questions wait, the box's words answer the one on screen; send() waits for a page being turned, which frees the box, before it looks whether it is busy.
+    if (asked && app.draft.value.trim()) { asked.answer(app.draft.value); app.draft.value = '' } else send(app.draft.value)
   }
 }
 

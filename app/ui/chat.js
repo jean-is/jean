@@ -386,18 +386,18 @@ function shown(value) {
 }
 
 /**
- * The decision inbox: approvals and questions, Jean's or its helpers' (caps/ask, D146), wait here
- * as cards, one each, while the rest of the work goes on, and are answered in any order.
+ * The decision inbox: approvals, Jean's or its helpers', wait here as cards, one each, while the
+ * rest of the work goes on, and are answered in any order. Questions wait in the box (caps/ask, D343).
  * @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
  */
 function inbox(entries, files) {
-  const waiting = decisionsHere()
+  const waiting = decisionsHere().filter((decision) => 'toolCall' in decision)
   if (!waiting.length) return nothing
   // Which helper is asking: the one whose call the request sits under.
   const from = (/** @type {string} */ id) => entries.find((entry) => entry.name === 'helper' && id.startsWith(`${entry.toolCallId}/`))?.rawInput?.title
   return html`<section class="inbox" aria-label=${t('inbox.waiting', { count: waiting.length })}>
     ${waiting.length > 1 ? html`<p class="inbox-count">${t('inbox.waiting', { count: waiting.length })}</p>` : nothing}
-    ${repeat(waiting, (decision) => decision.id, (decision) => ('toolCall' in decision ? approval(decision, from(decision.toolCall.toolCallId), files) : html`<app-ask .decision=${decision}></app-ask>`))}
+    ${repeat(waiting, (decision) => decision.id, (decision) => approval(decision, from(decision.toolCall.toolCallId), files))}
   </section>`
 }
 
