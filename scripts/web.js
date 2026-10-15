@@ -7,7 +7,8 @@
 // index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
 // the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
 // a search engine (D353), and what search engines and shared links read: index.html's title, canonical
-// address, cards and schema.org data, robots.txt and sitemap.xml, every other page unindexed (D355).
+// address, cards and schema.org data, robots.txt and sitemap.xml, the privacy policy and the terms with
+// their canonical addresses (D356), every other page unindexed (D355).
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
@@ -18,7 +19,7 @@ import { brotliCompress, constants, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
 import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
-import { siteBase, siteFiles, unindexed, withSite } from './seo.js'
+import { LISTED, addressOf, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -154,12 +155,14 @@ async function main () {
     const searched = search ? withSearch(named, BRAND) : named
     return base ? withSite(searched, base, BRAND, description, languages) : searched
   }
+  /** A page as the site serves it: index.html as above, and with ADDRESS, a listed page with its canonical address and any other unindexed. @param {string} path @param {string} html */
+  const served = (path, html) => path === 'index.html' ? page(html) : !base ? html : LISTED.includes(path) ? withCanonical(html, addressOf(base, path)) : unindexed(html)
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0
   for (const path of files) {
     const data = await readFile(join(APP, path))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path === 'index.html' ? Buffer.from(page(data.toString('utf8'))) : base && path.endsWith('.html') ? Buffer.from(unindexed(data.toString('utf8'))) : data
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(served(path, data.toString('utf8'))) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)

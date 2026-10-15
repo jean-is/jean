@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Lompat ke kotak pesan",
   "welcome.question": "Apa yang bisa saya bantu?",
+  "welcome.privacy": "Privasi",
+  "welcome.terms": "Ketentuan",
   "starter.discover": "Apa yang bisa kamu lakukan?",
   "starter.discover.prompt": "Apa yang bisa kamu lakukan untukku? Beri aku 3 contoh yang bisa kucoba.",
   "starter.summarize": "Ringkas teks panjang",

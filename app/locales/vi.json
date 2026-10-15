@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Chuyển đến ô tin nhắn",
   "welcome.question": "Tôi có thể giúp gì cho bạn?",
+  "welcome.privacy": "Quyền riêng tư",
+  "welcome.terms": "Điều khoản",
   "starter.discover": "Bạn làm được gì?",
   "starter.discover.prompt": "Bạn có thể làm gì cho tôi? Cho tôi 3 ví dụ để thử.",
   "starter.summarize": "Tóm tắt một văn bản dài",

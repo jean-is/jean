@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Lọ tààrà sí àpótí ọ̀rọ̀",
   "welcome.question": "Kí ni mo lè ṣe fún yín?",
+  "welcome.privacy": "Ìpamọ́",
+  "welcome.terms": "Àwọn òfin",
   "starter.discover": "Kí lo lè ṣe?",
   "starter.discover.prompt": "Kí lo lè ṣe fún mi? Fún mi ní àpẹẹrẹ 3 tí mo lè dán wò.",
   "starter.summarize": "Ṣe àkópọ̀ ọ̀rọ̀ gígùn",

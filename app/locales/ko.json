@@ -1,6 +1,8 @@
 {
   "a11y.skip": "메시지 입력란으로 건너뛰기",
   "welcome.question": "무엇을 도와드릴까요?",
+  "welcome.privacy": "개인정보처리방침",
+  "welcome.terms": "약관",
   "starter.discover": "뭘 할 수 있어?",
   "starter.discover.prompt": "나를 위해 뭘 할 수 있어? 내가 해 볼 만한 예시 3가지를 알려 줘.",
   "starter.summarize": "긴 글 요약하기",

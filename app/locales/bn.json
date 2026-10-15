@@ -1,6 +1,8 @@
 {
   "a11y.skip": "বার্তার বাক্সে যান",
   "welcome.question": "আপনার কী সাহায্য লাগবে?",
+  "welcome.privacy": "গোপনীয়তা",
+  "welcome.terms": "শর্তাবলী",
   "starter.discover": "তুমি কী কী পারো?",
   "starter.discover.prompt": "তুমি আমার জন্য কী কী করতে পারো? আমি চেষ্টা করে দেখতে পারি এমন 3টি উদাহরণ দাও।",
   "starter.summarize": "দীর্ঘ লেখার সারাংশ",

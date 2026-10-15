@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Vai alla casella del messaggio",
   "welcome.question": "Cosa posso fare per te?",
+  "welcome.privacy": "Privacy",
+  "welcome.terms": "Termini",
   "starter.discover": "Cosa sai fare?",
   "starter.discover.prompt": "Cosa puoi fare per me? Dammi 3 esempi da provare.",
   "starter.summarize": "Riassumere un testo lungo",

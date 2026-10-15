@@ -188,3 +188,20 @@ test('only the browser’s frame keeps its site’s origin, and the site can nev
   assert.match(browser, /const PAGE = new URL\('\.\.\/\.\.\/preview\.html', import\.meta\.url\)/)
   assert.match(browser, /element\.setAttribute\('sandbox', PAGE_SANDBOX\)\n  element\.setAttribute\('allow', allows\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
 })
+
+test('the privacy policy and the terms run index.html’s theme line alone, and allow nothing else (D356)', async () => {
+  const theme = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
+  for (const path of ['privacy.html', 'terms.html']) {
+    const page = await readFile(new URL(`../app/${path}`, import.meta.url), 'utf8')
+    const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(page)?.[1] ?? ''
+    const scripts = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((match) => match[1])
+    const styles = [...page.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((match) => match[1])
+    assert.deepEqual(scripts, [theme], `${path}: the one script is index.html's first, byte for byte`)
+    assert.equal(styles.length, 1, path)
+    const sha = (/** @type {string} */ text) => `'sha256-${createHash('sha256').update(text).digest('base64')}'`
+    assert.equal(policy, `default-src 'none'; script-src ${sha(theme)}; style-src 'self' ${sha(styles[0])}; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'`, path)
+    assert.ok(page.indexOf('Content-Security-Policy') < page.indexOf('<script'), path)
+    assert.ok(page.indexOf('<script>') < page.indexOf('<link rel="stylesheet"'), `${path}: the theme before the stylesheet`)
+    assert.deepEqual([...page.matchAll(/<article id="(\w+)" class="prose"(?: lang="(\w+)")?>/g)].map(([, id, lang]) => [id, lang ?? 'en']), [['en', 'en'], ['fr', 'fr']], path)
+  }
+})

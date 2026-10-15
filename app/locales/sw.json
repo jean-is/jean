@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Ruka hadi kisanduku cha ujumbe",
   "welcome.question": "Nikusaidie nini?",
+  "welcome.privacy": "Faragha",
+  "welcome.terms": "Masharti",
   "starter.discover": "Unaweza kufanya nini?",
   "starter.discover.prompt": "Unaweza kunifanyia nini? Nipe mifano 3 ninayoweza kujaribu.",
   "starter.summarize": "Fupisha maandishi marefu",

@@ -74,6 +74,16 @@ export function resolveRequest (requestUrl, root = APP) {
 }
 
 /**
+ * The file asked for, or the page it names without `.html`, as every server of a web deploy
+ * answers (D356): /privacy is privacy.html, /caps/browser/browser that page; a file or a folder
+ * of that name, as LICENSE, is itself.
+ * @param {string} file  resolveRequest()'s
+ */
+export async function pageOf (file) {
+  return extname(file) || await stat(file).catch(() => null) ? file : `${file}.html`
+}
+
+/**
  * @param {import('node:http').ServerResponse} res
  * @param {number} status
  * @param {string} message
@@ -94,8 +104,9 @@ export async function handle (req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
   if (GATEWAY && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: { gateway: `http://${req.headers.host}/gateway` } })))
   const example = pathname.startsWith('/examples/')
-  const file = example ? resolveRequest(pathname.slice('/examples'.length), EXAMPLES) : resolveRequest(req.url ?? '/')
-  if (!file) return fail(res, 404, 'Not found')
+  const asked = example ? resolveRequest(pathname.slice('/examples'.length), EXAMPLES) : resolveRequest(req.url ?? '/')
+  if (!asked) return fail(res, 404, 'Not found')
+  const file = example ? asked : await pageOf(asked)
   const info = await stat(file).catch(() => null)
   if (example && !info && pathname.endsWith('/')) {
     const names = await readdir(dirname(file)).catch(() => null)

@@ -1,6 +1,8 @@
 {
   "a11y.skip": "پیغام کے خانے پر جائیں",
   "welcome.question": "آپ کو کس چیز میں مدد چاہیے؟",
+  "welcome.privacy": "رازداری",
+  "welcome.terms": "شرائط",
   "starter.discover": "تمہارے ساتھ کیا کیا ممکن ہے؟",
   "starter.discover.prompt": "تمہارے ساتھ کیا کیا ممکن ہے؟ مجھے 3 مثالیں دو جنہیں میں آزما سکوں۔",
   "starter.summarize": "لمبی تحریر کا خلاصہ",

@@ -1,6 +1,8 @@
 {
   "a11y.skip": "संदेश बॉक्स पर जाएँ",
   "welcome.question": "आपको किस चीज़ में मदद चाहिए?",
+  "welcome.privacy": "निजता",
+  "welcome.terms": "शर्तें",
   "starter.discover": "तुम्हारे साथ क्या-क्या मुमकिन है?",
   "starter.discover.prompt": "तुम्हारे साथ क्या-क्या मुमकिन है? मुझे 3 उदाहरण दो जिन्हें मैं आज़मा सकूँ।",
   "starter.summarize": "लंबे लेख का सार",

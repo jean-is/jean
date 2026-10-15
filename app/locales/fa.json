@@ -1,6 +1,8 @@
 {
   "a11y.skip": "رفتن به کادر پیام",
   "welcome.question": "چه کاری از دستم برمی‌آید؟",
+  "welcome.privacy": "حریم خصوصی",
+  "welcome.terms": "شرایط",
   "starter.discover": "چه کارهایی بلدی؟",
   "starter.discover.prompt": "چه کارهایی می‌توانی برایم انجام دهی؟ 3 نمونه بده که بتوانم امتحان کنم.",
   "starter.summarize": "خلاصه کردن یک متن طولانی",

@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Przejdź do pola wiadomości",
   "welcome.question": "W czym mogę pomóc?",
+  "welcome.privacy": "Prywatność",
+  "welcome.terms": "Warunki",
   "starter.discover": "Co potrafisz?",
   "starter.discover.prompt": "Co możesz dla mnie zrobić? Podaj 3 przykłady, które mogę wypróbować.",
   "starter.summarize": "Streść długi tekst",

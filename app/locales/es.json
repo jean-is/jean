@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Ir al cuadro de mensaje",
   "welcome.question": "¿Qué puedo hacer por ti?",
+  "welcome.privacy": "Privacidad",
+  "welcome.terms": "Términos",
   "starter.discover": "¿Qué sabes hacer?",
   "starter.discover.prompt": "¿Qué puedes hacer por mí? Dame 3 ejemplos que pueda probar.",
   "starter.summarize": "Resumir un texto largo",

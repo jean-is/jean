@@ -1,6 +1,8 @@
 {
   "a11y.skip": "דילוג לתיבת ההודעה",
   "welcome.question": "במה אפשר לעזור?",
+  "welcome.privacy": "פרטיות",
+  "welcome.terms": "תנאים",
   "starter.discover": "מה אפשר לעשות איתך?",
   "starter.discover.prompt": "מה אפשר לעשות איתך? תן לי 3 דוגמאות לנסות.",
   "starter.summarize": "לסכם טקסט ארוך",

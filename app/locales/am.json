@@ -1,6 +1,8 @@
 {
   "a11y.skip": "በቀጥታ ወደ መልእክት ሳጥኑ ይሂዱ",
   "welcome.question": "ምን ልርዳዎት?",
+  "welcome.privacy": "ግላዊነት",
+  "welcome.terms": "ውሎች",
   "starter.discover": "ምን ማድረግ ይችላሉ?",
   "starter.discover.prompt": "ለእኔ ምን ማድረግ ይችላሉ? ልሞክራቸው የምችላቸውን 3 ምሳሌዎች ይስጡኝ።",
   "starter.summarize": "ረጅም ጽሑፍ ማጠቃለል",

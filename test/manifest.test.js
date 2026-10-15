@@ -4,6 +4,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
+import { fileURLToPath } from 'node:url'
 import { brief } from '../scripts/budgets.js'
 import { countLoc } from '../scripts/loc.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
@@ -15,7 +16,7 @@ import {
   buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, plan, SHARE, stampPreloads,
   stampVersion,
 } from '../scripts/manifest.js'
-import { resolveRequest } from '../scripts/serve.js'
+import { pageOf, resolveRequest } from '../scripts/serve.js'
 import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, forImportMap, patchSource } from '../scripts/vendor.js'
 
 const IMPORT_MAP = {
@@ -437,5 +438,14 @@ describe('vendor and serve helpers', () => {
     assert.equal(resolveRequest('/core/..%5c..%5cetc', root), null)
     assert.equal(resolveRequest('/.git/config', root), null)
     assert.equal(resolveRequest('/%E0%A4%A', root), null)
+  })
+
+  it('answers a page without its .html, and a file or folder of that name as itself (D356)', async () => {
+    const app = fileURLToPath(new URL('../app/', import.meta.url))
+    assert.equal(await pageOf(`${app}privacy`), `${app}privacy.html`)
+    assert.equal(await pageOf(`${app}caps/browser/browser`), `${app}caps/browser/browser.html`)
+    assert.equal(await pageOf(`${app}privacy.html`), `${app}privacy.html`)
+    assert.equal(await pageOf(`${app}caps`), `${app}caps`)
+    assert.equal(await pageOf(`${app}nowhere`), `${app}nowhere.html`)
   })
 })

@@ -1,6 +1,8 @@
 {
   "a11y.skip": "ข้ามไปที่ช่องข้อความ",
   "welcome.question": "มีอะไรให้ช่วยไหม",
+  "welcome.privacy": "ความเป็นส่วนตัว",
+  "welcome.terms": "ข้อกำหนด",
   "starter.discover": "คุณทำอะไรได้บ้าง",
   "starter.discover.prompt": "คุณช่วยอะไรฉันได้บ้าง ขอตัวอย่าง 3 อย่างที่ฉันลองได้",
   "starter.summarize": "สรุปข้อความยาว",

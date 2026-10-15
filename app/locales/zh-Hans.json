@@ -1,6 +1,8 @@
 {
   "a11y.skip": "跳到消息框",
   "welcome.question": "有什么可以帮你？",
+  "welcome.privacy": "隐私",
+  "welcome.terms": "条款",
   "starter.discover": "你能做什么？",
   "starter.discover.prompt": "你能为我做什么？给我 3 个可以试试的例子。",
   "starter.summarize": "总结一篇长文",

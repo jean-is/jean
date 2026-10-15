@@ -1,6 +1,8 @@
 {
   "a11y.skip": "संदेशाच्या चौकटीकडे जा",
   "welcome.question": "तुम्हाला कशासाठी मदत हवी आहे?",
+  "welcome.privacy": "गोपनीयता",
+  "welcome.terms": "अटी",
   "starter.discover": "तुझ्यासोबत काय काय करता येईल?",
   "starter.discover.prompt": "तुझ्यासोबत काय काय करता येईल? मला करून पाहता येतील अशी 3 उदाहरणे दे.",
   "starter.summarize": "मोठ्या मजकुराचा सारांश",

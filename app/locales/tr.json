@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Mesaj kutusuna geç",
   "welcome.question": "Senin için ne yapabilirim?",
+  "welcome.privacy": "Gizlilik",
+  "welcome.terms": "Şartlar",
   "starter.discover": "Neler yapabilirsin?",
   "starter.discover.prompt": "Benim için neler yapabilirsin? Deneyebileceğim 3 örnek ver.",
   "starter.summarize": "Uzun bir metni özetle",

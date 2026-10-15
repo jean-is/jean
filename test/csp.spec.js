@@ -1,7 +1,8 @@
 // The pages' policies (D326): what Jean does refuses nothing in any engine. Jean is served here with
 // each page's own policy again as a report-only header (scripts/serve.js --csp-reports), so the
 // browser itself says what its policy blocks, Trusted Types included, in every frame: the room, the
-// sandbox where code runs, the frame of a page an answer holds, the check page. With the smoke tests
+// sandbox where code runs, the frame of a page an answer holds, the check page, the privacy policy and
+// the terms. With the smoke tests
 // in Chromium and WebKit; in Firefox and Chrome too with npm run csp (test/browsers.config.js).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings } from './helpers.js'
@@ -11,7 +12,7 @@ const CSP_SERVER = 'http://127.0.0.1:4184/'
 
 test.use({ baseURL: CSP_SERVER })
 
-test('nothing Jean does is refused by its own policies: the room, an answer, a page in it, the sandbox, Python and the check page', async ({ page, context }, info) => {
+test('nothing Jean does is refused by its own policies: the room, an answer, a page in it, the sandbox, Python, the check page, the privacy policy and the terms', async ({ page, context }, info) => {
   test.setTimeout(180_000)
   // The cookie names this run's reports (scripts/serve.js), apart from other browsers' at the same time.
   const from = `${info.project.name}-${Date.now()}`
@@ -20,6 +21,9 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   const said = []
   page.on('console', (message) => { if (/Content[ -]Security[ -]Policy|Refused to|TrustedHTML|TrustedScript/i.test(message.text())) said.push(message.text()) })
   await start(page)
+  // The welcome links to the privacy policy and the terms, in Jean's language (D356).
+  await expect(page.locator('.welcome a[href="privacy.html#en"]')).toHaveText('Privacy')
+  await expect(page.locator('.welcome a[href="terms.html#en"]')).toHaveText('Terms')
   const reports = async () => /** @type {any[]} */ (await (await page.request.get(`csp-reports?from=${from}`)).json())
   const lines = async () => (await reports()).map(line)
   // A refusal on purpose first, a picture from plain HTTP (img-src): its report says this browser reports at all.
@@ -55,6 +59,13 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   // The check page, where a certificate is checked (D274).
   await page.goto('check.html')
   await expect(page.locator('body')).not.toBeEmpty()
+  await page.waitForLoadState('networkidle')
+  // The privacy policy and the terms (D356), at their addresses without .html, with the person's look.
+  await page.goto('privacy')
+  await expect(page.locator('#en h1')).toHaveText('Privacy policy')
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'human')
+  await page.goto('terms#fr')
+  await expect(page.locator('#fr h1')).toHaveText('Conditions d’utilisation')
   await page.waitForLoadState('networkidle')
 
   // Reports come a moment after what they report.

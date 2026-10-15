@@ -1,6 +1,8 @@
 {
   "a11y.skip": "メッセージ欄へ移動",
   "welcome.question": "何をお手伝いしましょうか？",
+  "welcome.privacy": "プライバシー",
+  "welcome.terms": "利用規約",
   "starter.discover": "何ができますか？",
   "starter.discover.prompt": "私のために何ができますか？試せる例を3つ挙げてください。",
   "starter.summarize": "長い文章を要約する",

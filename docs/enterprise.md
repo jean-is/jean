@@ -77,7 +77,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "pages": { "scripts": true, "downloads": false, "web": false, "network": true, "sites": ["api.corp.example", "*.corp.example"], "maps": true },
   "mapStyles": { "light": "https://maps.corp.example/styles/light", "dark": "https://maps.corp.example/styles/dark" },
   "instructions": "Use British English. Never put client names in titles.",
-  "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "npm": "https://artifactory.corp.example/api/npm/npm/", "collaboration": "wss://relay.corp.example", "gateway": "https://gateway.corp.example/" },
+  "urls": { "modelWeights": "https://mirror.corp.example/hf/", "wikipedia": "https://wiki.corp.example/{lang}/w/api.php", "npm": "https://artifactory.corp.example/api/npm/npm/", "collaboration": "wss://relay.corp.example", "gateway": "https://gateway.corp.example/", "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" },
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }],
   "skills": { "sources": ["https://skills.corp.example"], "only": true },
   "sync": { "provider": "dropbox", "appKey": "…" },

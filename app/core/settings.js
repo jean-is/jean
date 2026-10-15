@@ -64,8 +64,9 @@ export const DEFAULT_URLS = Object.freeze({
   vikidia: 'https://{lang}.vikidia.org/w/api.php', kiwix: '',
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
-  // The gateway to the services a browser can't reach (D191): none until one is named.
-  gateway: '',
+  // What whoever serves Jean names: the gateway to the services a browser can't reach (D191), none until one is
+  // named; the privacy policy and terms the welcome links to (D356), jean.is's until then, none with ''.
+  gateway: '', privacy: 'privacy.html', terms: 'terms.html',
   // A web source's site icon, shown with its domain on its chip (D210): none when ''.
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
   // Brains' prices (D255).

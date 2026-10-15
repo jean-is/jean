@@ -1,6 +1,8 @@
 {
   "a11y.skip": "Zum Nachrichtenfeld springen",
   "welcome.question": "Was kann ich für dich tun?",
+  "welcome.privacy": "Datenschutz",
+  "welcome.terms": "Nutzungsbedingungen",
   "starter.discover": "Was kannst du?",
   "starter.discover.prompt": "Was kannst du für mich tun? Nenn mir 3 Beispiele zum Ausprobieren.",
   "starter.summarize": "Einen langen Text zusammenfassen",
