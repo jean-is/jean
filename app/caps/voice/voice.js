@@ -6,6 +6,8 @@ import { dictation } from '../../ui/dictation.js'
 import { app, effective, answerOffer, updateSettings, weightsHost, notify } from '../../ui/state.js'
 import { locale, t } from '../../core/i18n.js'
 import { modelWorker } from '../../ui/model.js'
+import { scriptURL } from '../../ui/trusted.js'
+import { passes, join } from './passes.js'
 
 register({ id: 'voice' })
 
@@ -18,6 +20,8 @@ const writer = (lang) => (WHISTLE.languages.includes(lang.split('-')[0]) ? WHIST
 /** Voice detection for live conversation, about 2 MB. */
 const SILERO = 'onnx-community/silero-vad'
 const worker = modelWorker(new URL('./whisper-worker.js', import.meta.url), 'Dictation stopped')
+// Voice detection in a worker of its own, so that live conversation hears a turn end on time, never behind a pass of Whisper.
+const detector = modelWorker(new URL('./whisper-worker.js', import.meta.url), 'Dictation stopped')
 /** The language's writer, loaded once, its download's progress shown in the box. @param {string} lang */
 const load = (lang) => worker.call({ type: 'load', host: weightsHost(), ...writer(lang) }, {
   onMessage: ({ loaded, total }) => { dictation.value = { ...dictation.value, progress: Math.min(loaded / total, 1) } },
@@ -93,14 +97,11 @@ export async function prepare(consented = false) {
 /** Writes down what was said. @param {Float32Array} audio 16 kHz mono @param {string} lang a tag ("fr-FR") */
 const write = async (audio, lang) => String((await worker.call({ type: 'transcribe', audio, language: lang.split('-')[0], engine: writer(lang).engine }, { transfer: [audio.buffer] })).text ?? '')
 
-/** What was said, in the interface language. @param {Float32Array} audio 16 kHz mono */
-export const transcribe = (audio) => write(audio, languageTag())
+/** What is said in the interface language, written as it comes (passes.js), for live conversation's 16 kHz frames. @param {(words: string) => void} show */
+export const writing = (show) => passes((audio) => write(audio, languageTag()), show, languageTag())
 
 /** How likely each 32 ms of the frames is speech. @param {Float32Array} frames 16 kHz mono @returns {Promise<number[]>} */
-export const detect = async (frames) => (await worker.call({ type: 'vad', host: weightsHost(), model: SILERO, audio: frames }, { transfer: [frames.buffer] })).speech
-
-/** Appends dictated words to the draft, keeping what was typed. @param {string} before @param {string} words */
-const join = (before, words) => (before && words && !/\s$/.test(before) ? `${before} ${words}` : before + words)
+export const detect = async (frames) => (await detector.call({ type: 'vad', host: weightsHost(), model: SILERO, audio: frames }, { transfer: [frames.buffer] })).speech
 
 /** @param {string} lang */
 function listen(lang) {
@@ -151,7 +152,7 @@ function listen(lang) {
   recognition.start()
 }
 
-/** Whistle or Whisper: record until the second press, then transcribe. @param {string} lang */
+/** Whistle or Whisper, written as it is said (passes.js) until the second press. @param {string} lang */
 async function record(lang) {
   const { offer, megabytes } = writer(lang)
   if (!effective.value.settings.offers[offer]) {
@@ -159,49 +160,45 @@ async function record(lang) {
     await answerOffer(offer)
   }
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-  const recorder = new MediaRecorder(stream)
-  /** @type {Blob[]} */
-  const chunks = []
+  // At the microphone's own rate: Firefox connects it to no other.
+  const context = new AudioContext()
+  const release = () => (stream.getTracks().forEach((track) => track.stop()), context.close())
+  await context.audioWorklet.addModule(scriptURL(new URL('./capture-worklet.js', import.meta.url))).catch((error) => release().then(() => Promise.reject(error)))
   const ready = load(lang)
-  // A failed download shouldn't wait for the user to stop talking.
-  ready.catch(() => recorder.state === 'recording' && recorder.stop())
-  recorder.ondataavailable = (event) => chunks.push(event.data)
-  recorder.onstop = async () => {
-    for (const track of stream.getTracks()) track.stop()
+  const before = app.draft.value
+  /** What the audio says, once the writer is here; failing, dictation ends at once. @param {Float32Array<ArrayBuffer>} audio */
+  const pass = (audio) => ready.then(() => resample(audio, context.sampleRate)).then((audio) => write(audio, lang)).catch((error) => {
+    stop()
+    throw error
+  })
+  const said = passes(pass, (words) => { app.draft.value = join(before, words) }, lang)
+  const stop = async () => {
+    if (session?.stop !== stop) return
+    release()
     session = null
     dictation.value = { state: 'transcribing' }
-    try {
-      await ready
-      const audio = await decode(new Blob(chunks, { type: recorder.mimeType }))
-      const words = (await write(audio, lang)).trim()
-      if (words) {
-        app.draft.value = join(app.draft.value, words)
-        counted()
-      } else notify(t('dictation.nothing'))
-    } catch (error) {
-      console.warn('Dictation', error)
-      notify(t('dictation.failed'))
-    } finally {
-      dictation.value = { state: 'idle' }
-    }
+    const words = await said.end().catch((error) => console.warn('Dictation', error))
+    dictation.value = { state: 'idle' }
+    if (words) counted()
+    else notify(t(words === undefined ? 'dictation.failed' : 'dictation.nothing'))
   }
-  session = { stop: () => recorder.stop() }
+  session = { stop }
+  // A failed download shouldn't wait for the user to stop talking.
+  ready.catch(stop)
+  const node = new AudioWorkletNode(context, 'capture')
+  node.port.onmessage = ({ data }) => said.hear(data)
+  context.createMediaStreamSource(stream).connect(node)
   dictation.value = { state: 'listening' }
-  recorder.start()
 }
 
-/** Mono, 16 kHz, as Whisper and Whistle want. @param {Blob} blob */
-async function decode(blob) {
-  const context = new AudioContext({ sampleRate: 16000 })
-  try {
-    const buffer = await context.decodeAudioData(await blob.arrayBuffer())
-    const mono = new Float32Array(buffer.length)
-    for (let c = 0; c < buffer.numberOfChannels; c++) {
-      const channel = buffer.getChannelData(c)
-      for (let i = 0; i < channel.length; i++) mono[i] += channel[i] / buffer.numberOfChannels
-    }
-    return mono
-  } finally {
-    context.close()
-  }
+/** 16 kHz, as Whisper and Whistle want. @param {Float32Array<ArrayBuffer>} audio @param {number} rate */
+async function resample(audio, rate) {
+  if (rate === 16000) return audio
+  const context = new OfflineAudioContext(1, Math.ceil((audio.length * 16000) / rate), 16000)
+  const buffer = context.createBuffer(1, audio.length, rate)
+  buffer.copyToChannel(audio, 0)
+  const source = new AudioBufferSourceNode(context, { buffer })
+  source.connect(context.destination)
+  source.start()
+  return (await context.startRendering()).getChannelData(0).slice()
 }

@@ -220,7 +220,8 @@ class Composer extends Element {
 function primary(busy, empty, hands) {
   const on = hands !== 'off'
   if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-keyshortcuts="Escape" aria-label=${t('action.stop')}>${icons.stop}</button>`
-  if (empty ? on || loaded.value.has('live') : on && busy) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
+  // While hands-free is on, the box fills as the user speaks: the button still ends it, and the turn sends itself.
+  if (on || (empty && loaded.value.has('live'))) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
     aria-keyshortcuts=${SHORTCUTS.live} aria-label=${t(on ? 'live.stop' : 'live.start')}
     @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`
   return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')}>${icons.send}</button>`

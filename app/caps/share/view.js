@@ -41,11 +41,7 @@ let ready = false
 const send = () => { if (ready && page) frame.contentWindow?.postMessage(page, '*') }
 addEventListener('message', ({ source, data }) => { if (source === frame.contentWindow && data === 'ready') ready = true, send() })
 
-const STYLE = `:root{color-scheme:light dark;font:1rem/1.5 system-ui,sans-serif}body{margin:0;display:flex;flex-direction:column;height:100dvh}
-header{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;padding:.5rem 1rem;border-block-end:1px solid #8884}header strong{margin-inline-end:auto}
-main{flex:1;display:flex;flex-direction:column}iframe{flex:1;border:0;width:100%}form,.said{max-width:28rem;margin:3rem auto;padding-inline:1rem;display:grid;gap:.75rem}
-button,a.button{font:inherit;padding:.4rem .9rem;border-radius:.6rem;border:1px solid #8886;background:none;color:inherit;text-decoration:none;cursor:pointer}
-.primary{background:CanvasText;color:Canvas}input,textarea{font:inherit;padding:.4rem;border-radius:.4rem;border:1px solid #8886}small{opacity:.75}[hidden]{display:none}`
+const STYLE = ':root{color-scheme:light dark;font:1rem/1.5 system-ui,sans-serif}body{margin:0;display:flex;flex-direction:column;height:100dvh}header{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;padding:.5rem 1rem;border-block-end:1px solid #8884}header strong{margin-inline-end:auto}main{flex:1;display:flex;flex-direction:column}iframe{flex:1;border:0;width:100%}form,.said{max-width:28rem;margin:3rem auto;padding-inline:1rem;display:grid;gap:.75rem}button,a.button{font:inherit;padding:.4rem .9rem;border-radius:.6rem;border:1px solid #8886;background:none;color:inherit;text-decoration:none;cursor:pointer}.primary{background:CanvasText;color:Canvas}input,textarea{font:inherit;padding:.4rem;border-radius:.4rem;border:1px solid #8886}small{opacity:.75}[hidden]{display:none}'
 
 /** The sealed copy, with the proof a password's share asks for. @param {string} [access] */
 async function fetchCopy(access) {
@@ -111,10 +107,7 @@ async function drawn(value) {
 }
 
 /** @param {Step} next */
-function show(next) {
-  step = next
-  draw()
-}
+const show = (next) => { step = next; draw() }
 
 /** A report: what is wrong, and the whole link when the reporter agrees, so whoever runs the host can see it. @param {SubmitEvent} event */
 async function report(event) {

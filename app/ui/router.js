@@ -105,8 +105,8 @@ function drafts() {
   }
 }
 
-/** A share opened in this Jean (D361), from its viewer's Continue: brought in, then the address is the task's (caps/share/share.js). */
-const bringShared = async () => location.hash.startsWith('#/shared/') && unlock('share').then((ok) => ok && import('../caps/share/share.js').then((module) => module.fromAddress()))
+/** A share opened in this Jean (D361), from its viewer's Continue: brought in, then the address is the task's (caps/share/share.js), which it follows. */
+const bringShared = async () => location.hash.startsWith('#/shared/') && unlock('share').then((ok) => ok && import('../caps/share/share.js').then((module) => module.fromAddress()).then(() => true))
 
 export async function startRouter() {
   await bringShared()

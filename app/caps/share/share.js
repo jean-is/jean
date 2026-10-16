@@ -60,11 +60,9 @@ const fileOf = (id) => join(DIR, `${id}.json`)
 
 /** The shares kept here. */
 async function read() {
-  const entries = await app.fs.list(DIR)
-  const found = await Promise.all(entries.filter((entry) => entry.name.endsWith('.json')).map(async (entry) => {
-    try { return [/** @type {Share | Received} */ (JSON.parse((await app.fs.read(join(DIR, entry.name))) ?? ''))] } catch { return [] }
-  }))
-  const all = found.flat().sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+  const files = (await app.fs.list(DIR)).filter((entry) => entry.name.endsWith('.json'))
+  const all = /** @type {(Share | Received)[]} */ ((await Promise.all(files.map((entry) => app.fs.read(join(DIR, entry.name)).then((text) => JSON.parse(text ?? '')).catch(() => null))))
+    .filter(Boolean).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)))
   shares.value = /** @type {Share[]} */ (all.filter((one) => one.kind === 'share'))
   received.value = /** @type {Received[]} */ (all.filter((one) => one.kind === 'received'))
 }
@@ -165,16 +163,12 @@ export async function update(share, quiet = false) {
 /** Stops sharing it, once the user says so: the host forgets it, and so does Jean. @param {Share} share */
 export async function stop(share) {
   if (!confirm(t('share.confirmStop'))) return
-  try {
-    const { token } = await kept(share).catch(() => ({ token: '' }))
-    const response = token ? await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }) : null
-    if (response && !response.ok && response.status !== 404) throw new Error(t('share.failed'))
-    await Promise.all([app.fs.remove(fileOf(share.id)), deleteSecret(app.fs, `share:${share.id}`)])
-    shares.value = shares.peek().filter((one) => one.id !== share.id)
-    notify(t('share.stopped'))
-  } catch (error) {
-    showError(error)
-  }
+  const { token } = await kept(share).catch(() => ({ token: '' }))
+  const response = token ? await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }).catch(() => null) : null
+  if (token && !(response?.ok || response?.status === 404)) return showError(new Error(t('share.failed')))
+  await Promise.all([app.fs.remove(fileOf(share.id)), deleteSecret(app.fs, `share:${share.id}`)])
+  shares.value = shares.peek().filter((one) => one.id !== share.id)
+  notify(t('share.stopped'))
 }
 
 /** Opens the dialog on what to share. @param {What} what */
@@ -244,19 +238,16 @@ export async function fromAddress() {
   await bringIn(remote, text)
   const { hashFor } = await import('../../ui/router.js')
   history.replaceState(null, '', location.pathname + hashFor(app.project.value, app.current.value?.id ?? null))
-  return true
 }
 
 // ─── Settings › Your data ────────────────────────────────────────────────────
 
 /** Shared links: each with its task, until when, and Copy, Update, Stop sharing. */
 function panel() {
-  const list = shares.value
-  if (!list.length) return nothing
   const date = new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' })
-  return html`<section class="share-part">
+  return !shares.value.length ? nothing : html`<section class="share-part">
     <h3>${t('share.links')}</h3>
-    <ul class="share-list">${list.map((share) => html`<li>
+    <ul class="share-list">${shares.value.map((share) => html`<li>
       <span class="share-title" dir="auto">${share.title || t('conversation.untitled')}</span>
       <span class="muted small">${share.password ? html`${icons.lock} ` : nothing}${t('share.until', { date: date.format(new Date(share.expires)) })}</span>
       <span class="row">
@@ -284,10 +275,7 @@ if (allowed()) {
     },
     hooks: [
       // A share that follows its task is sealed again once each answer ends.
-      { on: 'turn.end', match: { aborted: false }, run: (e, next) => {
-        for (const share of shares.peek()) if (share.keep && share.task === e.task) update(share, true)
-        return next(e)
-      } },
+      { on: 'turn.end', match: { aborted: false }, run: (e, next) => { for (const share of shares.peek()) if (share.keep && share.task === e.task) update(share, true); return next(e) } },
       // In a task someone else shared, a call to a service the user connected asks first, whatever the rules say:
       // what came before could steer it to the user's mailbox.
       { on: 'tool.check', run: async (e, next) => {
