@@ -137,6 +137,7 @@
   "look.classic.name": "คลาสสิก",
   "look.blueprint.name": "พิมพ์เขียว",
   "look.mondrian.name": "มอนเดรียน",
+  "look.tilde.name": "{name}",
   "look.human.name": "มนุษย์",
   "storage.ephemeral": "หน้าต่างส่วนตัว: จะไม่บันทึกอะไรหลังจากปิด",
   "update.ready": "{name} รุ่นใหม่พร้อมแล้ว",

@@ -137,6 +137,7 @@
   "look.classic.name": "Classique",
   "look.blueprint.name": "Plan",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Humain",
   "storage.ephemeral": "Fenêtre privée : rien ne sera conservé après sa fermeture.",
   "update.ready": "Une nouvelle version de {name} est prête.",

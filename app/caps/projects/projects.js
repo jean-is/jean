@@ -20,8 +20,8 @@ import { icons } from '../../ui/icons.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 
-/** A room's light: Jean's amber, then around the colour wheel. Only the hue tints the little light. */
-const COLOURS = Object.entries({ amber: 54, coral: 28, rose: 355, violet: 305, blue: 255, teal: 200, green: 150, olive: 105 })
+/** A room's colour: Jean's poppy, then around the colour wheel. Only the hue tints the wave. */
+const COLOURS = Object.entries({ coral: 29, amber: 54, rose: 355, violet: 305, blue: 255, teal: 200, green: 150, olive: 105 })
   .map(([name, hue]) => [name, `oklch(0.74 0.17 ${hue})`])
 
 /** The project whose dialog is open: null while a new one is being made. */
@@ -33,7 +33,7 @@ export function editProject(project = null) {
   app.dialog.value = 'project'
 }
 
-/** Each little light in a list shows its project's colour (CSSOM: the CSP allows no style attribute). @param {HTMLElement} host */
+/** Each wave in a list shows its project's colour (CSSOM: the CSP allows no style attribute). @param {HTMLElement} host */
 function tint(host) {
   for (const persona of host.querySelectorAll('app-persona[data-tint]')) /** @type {HTMLElement} */ (persona).style.setProperty('--tint', /** @type {string} */ (persona.getAttribute('data-tint')))
 }

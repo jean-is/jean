@@ -137,6 +137,7 @@
   "look.classic.name": "كلاسيكي",
   "look.blueprint.name": "مخطط",
   "look.mondrian.name": "موندريان",
+  "look.tilde.name": "{name}",
   "look.human.name": "إنساني",
   "storage.ephemeral": "نافذة خاصة: لن يُحفظ أي شيء بعد إغلاقها.",
   "update.ready": "إصدار جديد من {name} جاهز.",

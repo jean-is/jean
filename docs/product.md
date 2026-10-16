@@ -26,7 +26,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Sub-agent | Helper |
 | Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
-| Look (`ui/looks/`, D111, D120) | Theme (fifteen in a gallery, Human first and to start); light or dark is separate |
+| Look (`ui/looks/`, D111, D120) | Theme (sixteen in a gallery, Tilde, Jean's own, first and to start); light or dark is separate |
 | Extension, add-on, mod | Plugin (D296) |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
@@ -266,7 +266,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 **Settings** (D113) is a menu beside the section open, in three groups, each list a rounded group of rows: General, Brains, Appearance, Keyboard shortcuts; About you, then Skills, Routines, Connections, Web search, Computer and Plugins once found, then Capabilities; Approvals, Your data. The middle group goes from the person outwards: what Jean knows of them and has learned from them (About you, Skills, Routines, one module), then what it reaches and runs (their services, the web, a computer, others' code), the most used first, and as the case of trophies finds them, so a section found later mostly joins below the ones already known.
 
 - **Brains** is one group, one choice of who answers: Auto, then each brain with where it runs and its version, a button opening the rest (its version to change, the projects it is used in, Remove); Keep on this device at its foot; Add a brain at its top, which shows the ways to add one, one open at a time, until Settings closes; before any brain, the ways are the page. The pictures this device makes come after it, their check's switches folded under What else is refused, which most never change (D331).
-- **Capabilities** is a case of trophies made of Settings' own parts, so it reads as the sections around it: the light and its rank (Spark, Candle, Lantern, Hearth, then Daylight) over a bar of how much is found, as Storage's, then a row per capability in the case's order, its icon lit and On at its end once found, a dashed silhouette until then with how to find it under its name; the row open, at first the next to find, says what it does and turns it on, downloads it or opens it.
+- **Capabilities** is a case of trophies made of Settings' own parts, so it reads as the sections around it: the wave and its rank (Ripple, Wave, Current, Tide, then Ocean) over a bar of how much is found, as Storage's, then a row per capability in the case's order, its icon lit and On at its end once found, a dashed silhouette until then with how to find it under its name; the row open, at first the next to find, says what it does and turns it on, downloads it or opens it.
 
 **The drawer** (after Manus): New task, which brings the keyboard to the box, a row per place found (Skills, Routines, Connections), in Settings' order, the tasks under their heading, those the user pinned under Pinned above them, and the user at its foot, by name (D150), whose menu holds Settings, the language and the theme (as thumbnails; the menu stays open while they change), dark mode and what Jean can do. The UI calls a conversation a task.
 

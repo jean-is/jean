@@ -44,7 +44,6 @@
 }
 
 :root[data-look='mondrian'] .room { display: none; }
-:root[data-look='mondrian'] app-persona::before { display: none; }
 /* The grid: a line under the header, two down the sides of the page. */
 :root[data-look='mondrian'] .bar { background: var(--room); border-block-end: var(--stroke) solid var(--rule); }
 :root[data-look='mondrian'] main { padding-inline: 1.5rem; border-inline: var(--stroke) solid var(--rule); background: var(--room-2); }

@@ -137,6 +137,7 @@
   "look.classic.name": "Klasik",
   "look.blueprint.name": "Cetak Biru",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Manusiawi",
   "storage.ephemeral": "Jendela pribadi: tidak ada yang disimpan setelah ditutup.",
   "update.ready": "Versi baru {name} sudah siap.",

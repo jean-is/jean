@@ -29,11 +29,11 @@
   "collection.next": {
     "other": "{rank}まであと{count}"
   },
-  "collection.rank.spark": "火花",
-  "collection.rank.candle": "ろうそく",
-  "collection.rank.lantern": "ランタン",
-  "collection.rank.hearth": "暖炉",
-  "collection.rank.daylight": "陽の光",
+  "collection.rank.ripple": "さざ波",
+  "collection.rank.wave": "波",
+  "collection.rank.current": "流れ",
+  "collection.rank.tide": "潮",
+  "collection.rank.ocean": "大海",
   "cap.files.hint": "ファイルを共有するか、長い文章を貼り付ける。",
   "cap.made.hint": "最初のメッセージを送る。",
   "cap.computer.hint": "スプレッドシートを共有するか、正確な数字を求める。",

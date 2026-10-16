@@ -137,6 +137,7 @@
   "look.classic.name": "क्लासिक",
   "look.blueprint.name": "ब्लूप्रिंट",
   "look.mondrian.name": "मॉन्ड्रियन",
+  "look.tilde.name": "{name}",
   "look.human.name": "मानवीय",
   "storage.ephemeral": "निजी विंडो: बंद करने के बाद कुछ भी सहेजा नहीं जाएगा।",
   "update.ready": "नया संस्करण तैयार है: {name}।",

@@ -48,15 +48,15 @@ test('right to left, Mail’s sidebar sits on the right, the name at its top', a
   expect(top?.y).toBeLessThan(list?.y ?? 0)
 })
 
-test('a first visit has the window to itself, and Human and Mail open the drawer once there is a task, unless the user put it away', async ({ page }) => {
+test('a first visit has the window to itself, and Tilde, Human and Mail open the drawer once there is a task, unless the user put it away', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
   await page.goto('./')
-  // The first screen is Human's (D174), its drawer put away while the room has no task, its button at the header's start (D165, D369).
+  // The first screen is Tilde's (D373), its drawer put away while the room has no task, its button at the header's start (D165, D369).
   const question = page.locator('.hero-question')
   const toggle = page.locator('.sidebar-toggle')
   const tasks = page.locator('app-inbox')
   await expect(question).toBeVisible()
-  await expect(page.locator('html')).toHaveAttribute('data-look', 'human')
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')
   await expect(page.locator('html')).not.toHaveAttribute('data-sidebar')
   await expect(tasks).toHaveCount(0)
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
@@ -222,5 +222,5 @@ test('every theme is in the gallery with its thumbnail, and dresses the page whe
     else await expect(page.locator('html')).toHaveAttribute('data-look', id)
     await expect(card.locator('input')).toBeChecked()
   }
-  await expect.poll(() => savedLook(page)).toMatchObject({ id: 'human' })
+  await expect.poll(() => savedLook(page)).toMatchObject({ id: 'tilde' })
 })

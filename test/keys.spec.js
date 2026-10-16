@@ -51,14 +51,14 @@ test('⌘⇧D switches between light and dark, even mid-sentence', async ({ page
 test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name (D238)', async ({ page }) => {
   await start(page)
   const root = page.locator('html')
-  await expect(root).toHaveAttribute('data-look', 'human')
+  await expect(root).toHaveAttribute('data-look', 'tilde')
   await page.locator('#prompt').fill('Hello')
   await page.keyboard.press('ControlOrMeta+Shift+KeyE')
-  await expect(root).toHaveAttribute('data-look', 'mail')
-  await expect(page.locator('.toast')).toHaveText('Mail')
+  await expect(root).toHaveAttribute('data-look', 'human')
+  await expect(page.locator('.toast')).toHaveText('Human')
   await expect(page.locator('#prompt')).toHaveValue('Hello')
   await page.keyboard.press('ControlOrMeta+Shift+KeyE')
-  await expect(root).toHaveAttribute('data-look', 'minimal')
+  await expect(root).toHaveAttribute('data-look', 'mail')
 })
 
 test('⌘⇧L goes to the next language, the browser\'s first, and says its name in its own words (D253)', async ({ page }) => {

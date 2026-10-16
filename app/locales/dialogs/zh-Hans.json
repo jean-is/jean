@@ -29,11 +29,11 @@
   "collection.next": {
     "other": "还差 {count} 个即可达到“{rank}”"
   },
-  "collection.rank.spark": "火花",
-  "collection.rank.candle": "烛光",
-  "collection.rank.lantern": "提灯",
-  "collection.rank.hearth": "炉火",
-  "collection.rank.daylight": "日光",
+  "collection.rank.ripple": "涟漪",
+  "collection.rank.wave": "波浪",
+  "collection.rank.current": "洋流",
+  "collection.rank.tide": "潮汐",
+  "collection.rank.ocean": "海洋",
   "cap.files.hint": "分享一个文件，或粘贴一段长文本。",
   "cap.made.hint": "发送你的第一条消息。",
   "cap.computer.hint": "分享一个电子表格，或要求精确的数字。",

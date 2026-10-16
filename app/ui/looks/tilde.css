@@ -1,0 +1,61 @@
+/* Tilde: Jean's own look, and the one it starts in (docs/design.md). Human's frame, whose sheet it
+   brings in, in ink and paper: Gentium for the name and the big question, the wave in Jean's poppy,
+   buttons and the open row in ink, the user's words on the margin's grey, what waits for the user on
+   blush. Poppy marks, and never fills behind words. Over ui/style.css, which comes after it, so
+   every rule here starts with :root[data-look='tilde']. */
+@import url('human.css');
+
+:root[data-look='tilde'] {
+  --room: oklch(0.187 0 0);
+  --room-2: oklch(0.239 0 0);
+  --ink: oklch(0.955 0.005 95);
+  --ink-soft: oklch(0.728 0.006 95);
+  --ink-faint: oklch(0.689 0.006 95);
+  --glass: oklch(0.239 0 0 / 0.72);
+  --side: oklch(0.218 0 0);
+  --flame: oklch(0.713 0.18 29);
+  --flame-deep: oklch(0.65 0.19 29);
+  --on-flame: oklch(0.187 0 0);
+  --fill: var(--ink);
+  --on-fill: var(--room);
+  --current: oklch(0.285 0 0);
+  --wait: oklch(0.239 0.028 30);
+  --wait-line: oklch(0.332 0.054 31);
+  --display: Display, var(--sans);
+}
+:root[data-look='tilde'][data-theme='light'] {
+  --room: oklch(1 0 0);
+  --room-2: oklch(0.961 0.004 91);
+  --ink: oklch(0.191 0 0);
+  --ink-soft: oklch(0.482 0 0);
+  --ink-faint: oklch(0.528 0 0);
+  --glass: oklch(1 0 0 / 0.72);
+  --side: oklch(0.97 0.004 91);
+  --well: oklch(0.97 0.004 91);
+  --flame: oklch(0.558 0.192 30);
+  --flame-deep: oklch(0.499 0.173 30);
+  --on-flame: oklch(1 0 0);
+  --fill: var(--ink);
+  --on-fill: var(--room);
+  --current: oklch(0.928 0.007 89);
+  --wait: oklch(0.954 0.017 31);
+  --wait-line: oklch(0.889 0.037 30);
+}
+
+/* The name and the big question in Gentium; the wave a little larger on the first screen. */
+:root[data-look='tilde'] :is(.wordmark, .wordmark:hover) { font: 700 1.1875rem/1 var(--display); }
+:root[data-look='tilde'][data-sidebar] .wordmark { font-size: 1.0625rem; }
+:root[data-look='tilde'] .welcome app-persona { --persona-size: 5.5rem; }
+
+/* The user's words on the margin's grey, without a tail. */
+:root[data-look='tilde'] .msg-user { background: var(--room-2); color: var(--ink); }
+:root[data-look='tilde'] .msg-user::before, :root[data-look='tilde'] .msg-user::after { content: none; }
+
+/* The open row, the open section and the item under the pointer: a quiet grey, never a fill. */
+:root[data-look='tilde'] :is(.history-list li.is-current, .settings-nav button[aria-current='page'], .menu :is(button, a):hover) { background: var(--current); color: var(--ink); }
+:root[data-look='tilde'] .history-list li.is-current .icon-button { color: var(--ink-soft); }
+:root[data-look='tilde'] :is(.place, .sidebar-settings, .settings-nav) .icon { color: var(--ink-soft); }
+:root[data-look='tilde'] input.switch:checked { background: var(--fill); }
+
+/* What waits for the user, on blush (ember by night). */
+:root[data-look='tilde'] .approval { border-color: var(--wait-line); background: var(--wait); }

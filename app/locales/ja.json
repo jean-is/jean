@@ -137,6 +137,7 @@
   "look.classic.name": "クラシック",
   "look.blueprint.name": "設計図",
   "look.mondrian.name": "モンドリアン",
+  "look.tilde.name": "{name}",
   "look.human.name": "ヒューマン",
   "storage.ephemeral": "プライベートウィンドウです。閉じると何も保存されません。",
   "update.ready": "{name} の新しいバージョンがあります。",

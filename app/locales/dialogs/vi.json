@@ -29,11 +29,11 @@
   "collection.next": {
     "other": "Còn {count} nữa để đạt {rank}"
   },
-  "collection.rank.spark": "Tia lửa",
-  "collection.rank.candle": "Ngọn nến",
-  "collection.rank.lantern": "Đèn lồng",
-  "collection.rank.hearth": "Bếp lửa",
-  "collection.rank.daylight": "Ánh ban ngày",
+  "collection.rank.ripple": "Gợn sóng",
+  "collection.rank.wave": "Sóng",
+  "collection.rank.current": "Dòng chảy",
+  "collection.rank.tide": "Thủy triều",
+  "collection.rank.ocean": "Đại dương",
   "cap.files.hint": "Chia sẻ một tệp, hoặc dán một đoạn văn dài.",
   "cap.made.hint": "Gửi tin nhắn đầu tiên của bạn.",
   "cap.computer.hint": "Chia sẻ một bảng tính, hoặc yêu cầu con số chính xác.",

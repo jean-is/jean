@@ -137,6 +137,7 @@
   "look.classic.name": "Klasiko",
   "look.blueprint.name": "Blueprint",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Makatao",
   "storage.ephemeral": "Pribadong window: walang mase-save pagkasara mo.",
   "update.ready": "Handa na ang bagong bersyon: {name}.",

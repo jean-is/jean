@@ -137,6 +137,7 @@
   "look.classic.name": "Klasik",
   "look.blueprint.name": "Pelan",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Insani",
   "storage.ephemeral": "Tetingkap peribadi: tiada apa akan disimpan selepas anda menutupnya.",
   "update.ready": "Versi baharu {name} sudah sedia.",

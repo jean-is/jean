@@ -4,7 +4,7 @@
 
 Jean is for people who will never open a terminal. You open a page, give it a task and your files, and it reads them, works things out with real calculations, and hands back something you can use: a summary, a table, a document. It shows what it is doing while it works, and it asks before anything that matters.
 
-There is no Jean server. Everything Jean keeps lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Read the [manifesto](MANIFESTO.md) for why. Jean is a working name: the final name and domain are still [open](docs/open-questions.md).
+There is no Jean server. Everything Jean keeps lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Read the [manifesto](MANIFESTO.md) for why.
 
 ## What Jean does
 
@@ -28,7 +28,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - Double-check compares each cited claim with its source.
   - When you come back, Jean tells you what changed since last time.
 - **Listens and speaks:** dictation, read-aloud, and a live voice conversation, with speech recognised on your device.
-- **Looks the way you like:** a desktop app of today, the lit room, a mail-style layout with your conversations listed beside the one you read, or ink on paper, each by day or by night. Your own colours, text size, typeface or CSS go on top.
+- **Looks the way you like:** Jean's own, ink and paper with a small red wave, or a desktop app of today, the lit room, a mail-style layout with your conversations listed beside the one you read, or ink on paper, each by day or by night. Your own colours, text size, typeface or CSS go on top.
 - **Asks when it needs to.** When a task depends on your choices, Jean asks everything at once, one question at a time, with answers to pick from, the one it recommends picked already, and room for your own words.
 - **Asks first.** For each kind of action you choose *Do it*, *Ask me first* or *Never*. By default Jean reads and writes its own files freely, asks before sending, sharing, deleting or anything external, and never touches passwords or payments.
 
@@ -143,7 +143,7 @@ CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on 
 | [MANIFESTO.md](MANIFESTO.md) | Why Jean exists, in one page |
 | [docs/product.md](docs/product.md) | The user, the vocabulary, progressive discovery, and how every feature behaves |
 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
-| [docs/design.md](docs/design.md) | The room that lights up, and the little light |
+| [docs/design.md](docs/design.md) | Jean's identity, Tilde, its wave, and the themes |
 | [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, what is open and what is enterprise, and what the architecture allows later |
 | [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
 | [docs/decisions.md](docs/decisions.md) | Every decision as it stands, by topic, with the alternatives that were rejected |

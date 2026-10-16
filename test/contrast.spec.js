@@ -206,9 +206,9 @@ async function everyStage(page, look, screen, failures, warmths = [0, 1, 2, 3, 4
 
 /** The comparison the fake brain answers with a table, in the languages it knows it in. */
 const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الهاتف', ja: '携帯プランを比べて' }
-// Every look in English; Human, where Jean starts, and the room, whose light this is about, right to left and in Japanese
+// Every look in English; Tilde, where Jean starts, and the room, whose light this is about, right to left and in Japanese
 // too; and the room with more contrast asked for (prefers-contrast: more).
-const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['human', 'ar'], ['human', 'ja'], ['room', 'ar'], ['room', 'ja'], ['room', 'en', 'more']]
+const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['tilde', 'ar'], ['tilde', 'ja'], ['room', 'ar'], ['room', 'ja'], ['room', 'en', 'more']]
 
 for (const [look, lang, contrast = 'no-preference'] of RUNS) {
   test(`every word reads at AA in ${look} (${lang}${contrast === 'more' ? ', more contrast' : ''}), by night and by day, at every stage of the light`, async ({ page }) => {

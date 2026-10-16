@@ -2,10 +2,6 @@
 
 What is still undecided. An answered question becomes an entry in [decisions.md](decisions.md) and leaves this page.
 
-## Display face
-
-Instrument Serif ships for now (D34). Fraunces will probably replace it. To check before switching: a static instance (fixed optical size, softness and "wonk"), Latin subset, regular and italic, within the 30 KB budget.
-
 ## Answer certificates
 
 What the certificates' next steps hang on ([certificates.md](certificates.md)):

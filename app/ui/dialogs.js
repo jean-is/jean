@@ -837,7 +837,7 @@ class Settings extends Element {
 // ─── What Jean can do ────────────────────────────────────────────────────────
 
 // The house (docs/design.md), in Settings, is a case of trophies (D127) in Settings' own parts
-// (D316): the little light, whose rank rises a quarter of the case at a time, to daylight, over a
+// (D316): the wave, whose rank rises a quarter of the case at a time, to the ocean, over a
 // bar of how much is found; then a capability a row of a list, lit once found, a silhouette until
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
@@ -852,7 +852,7 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
-const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
+const RANKS = ['ripple', 'wave', 'current', 'tide', 'ocean']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
   find: () => [everywhere.value, FINDABLE], lock: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
@@ -939,7 +939,7 @@ function looks(look = {}) {
       ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
         <span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>
-        <span><strong>${t(`look.${id}.name`)}</strong></span>
+        <span><strong>${t(`look.${id}.name`, { name: BRAND.name })}</strong></span>
       </label>`)}
     </fieldset>
     <details class="other">

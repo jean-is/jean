@@ -29,11 +29,11 @@
   "collection.next": {
     "other": "{rank}까지 {count}개 남음"
   },
-  "collection.rank.spark": "불씨",
-  "collection.rank.candle": "촛불",
-  "collection.rank.lantern": "등불",
-  "collection.rank.hearth": "벽난로",
-  "collection.rank.daylight": "햇빛",
+  "collection.rank.ripple": "잔물결",
+  "collection.rank.wave": "파도",
+  "collection.rank.current": "해류",
+  "collection.rank.tide": "밀물",
+  "collection.rank.ocean": "대양",
   "cap.files.hint": "파일을 공유하거나 긴 글을 붙여 넣어 보세요.",
   "cap.made.hint": "첫 메시지를 보내 보세요.",
   "cap.computer.hint": "스프레드시트를 공유하거나 정확한 숫자를 물어보세요.",
