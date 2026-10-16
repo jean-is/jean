@@ -225,6 +225,7 @@
   "offer.no": "Không, cảm ơn",
   "offer.on": "Đã bật {name}",
   "tool.offer": "Đã gợi ý: {name}",
+  "tool.plan": "Đã cập nhật kế hoạch",
   "tool.javascript": "Đã tính toán",
   "tool.bash": "Đã chạy một lệnh",
   "tool.reach_site": "Đã xin phép truy cập một trang mới",

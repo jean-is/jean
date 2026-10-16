@@ -237,6 +237,7 @@
   "offer.no": "לא, תודה",
   "offer.on": "הופעל: {name}",
   "tool.offer": "הוצע: {name}",
+  "tool.plan": "עדכון התוכנית",
   "tool.javascript": "חושב",
   "tool.bash": "הריץ פקודה",
   "tool.reach_site": "ביקש גישה לאתר חדש",

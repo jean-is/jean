@@ -225,6 +225,7 @@
   "offer.no": "괜찮습니다",
   "offer.on": "켜짐: {name}",
   "tool.offer": "제안함: {name}",
+  "tool.plan": "계획 업데이트",
   "tool.javascript": "계산함",
   "tool.bash": "명령을 실행함",
   "tool.reach_site": "새 사이트 접속을 요청함",

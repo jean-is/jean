@@ -1,6 +1,7 @@
 // The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). At its top, the
-// questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343). Under it (D123):
+// questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343), after what a
+// capability draws there (a task paused between steps, D364). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
 // is an AI and can make mistakes (EU AI Act, art. 50; D273); before, it links to the privacy policy and terms (D356).
@@ -58,6 +59,7 @@ class Composer extends Element {
     const legal = /** @type {const} */ (['privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
+        ${slots('box').map((entry) => entry.draw())}
         ${repeat(asked, (decision) => decision.id, (decision) => html`<app-ask .decision=${decision}></app-ask>`)}
         <app-complete></app-complete>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`

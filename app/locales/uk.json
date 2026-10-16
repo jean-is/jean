@@ -237,6 +237,7 @@
   "offer.no": "Ні, дякую",
   "offer.on": "Увімкнено: {name}",
   "tool.offer": "Запропоновано: {name}",
+  "tool.plan": "План оновлено",
   "tool.javascript": "Обчислено",
   "tool.bash": "Виконано команду",
   "tool.reach_site": "Запитано доступ до нового сайту",

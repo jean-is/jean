@@ -532,7 +532,7 @@ function approvals() {
   return html`<section>
     <h3>${t('settings.rules')}</h3>
     <p class="muted">${t('settings.rulesText', { name: BRAND.name })}</p>
-    <ul class="rules">${RULE_KINDS.map((kind) => {
+    <ul class="rules">${[...RULE_KINDS, ...(loaded.value.has('plan') ? ['plan'] : [])].map((kind) => {
       const current = resolveRule(kind, { user: settings.rules })
       const isLocked = locked.has(`rules.${kind}`)
       return html`<li class="setting">

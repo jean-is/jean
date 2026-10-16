@@ -229,6 +229,7 @@
   "offer.no": "نه، ممنون",
   "offer.on": "روشن شد: {name}",
   "tool.offer": "پیشنهاد شد: {name}",
+  "tool.plan": "برنامه به‌روز شد",
   "tool.javascript": "محاسبه شد",
   "tool.bash": "یک فرمان اجرا شد",
   "tool.reach_site": "اجازهٔ دسترسی به یک سایت تازه خواسته شد",

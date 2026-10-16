@@ -23,7 +23,7 @@ import { signal } from '@preact/signals-core'
 // No word from the sandbox for this long, while nothing is waiting on Jean: stop it.
 const WATCHDOG_MS = 40_000
 // A script can't start another script, hand work to helpers, or interrupt the user with an offer or questions.
-const NOT_FROM_SCRIPTS = new Set(['run', 'javascript', 'python', 'bash', 'offer', 'delegate', 'helper', 'ask_user', 'flow_step'])
+const NOT_FROM_SCRIPTS = new Set(['run', 'javascript', 'python', 'bash', 'offer', 'delegate', 'helper', 'ask_user', 'flow_step', 'plan'])
 
 const ROOT = new URL('../', import.meta.url)
 

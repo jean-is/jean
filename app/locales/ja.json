@@ -225,6 +225,7 @@
   "offer.no": "いいえ、結構です",
   "offer.on": "{name}がオンになりました",
   "tool.offer": "提案：{name}",
+  "tool.plan": "計画を更新",
   "tool.javascript": "計算しました",
   "tool.bash": "コマンドを実行しました",
   "tool.reach_site": "新しいサイトへのアクセスを確認しました",

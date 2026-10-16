@@ -235,6 +235,7 @@
   "kind.execute.label": "Running calculations",
   "kind.fetch.label": "Using the internet",
   "kind.other.label": "Sending and sharing",
+  "kind.plan.label": "Starting a long task",
   "seal.title": "This device’s seal",
   "seal.text": "Certificates saved here are sealed with a key that never leaves this device. Whoever relies on them can check this fingerprint, or agree on it with you beforehand.",
   "pages.title": "Web pages",

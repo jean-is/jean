@@ -1,0 +1,13 @@
+{
+  "plan.title": "計畫",
+  "plan.done": "已完成 {done}/{total}",
+  "plan.pending": "待辦",
+  "plan.in_progress": "進行中",
+  "plan.completed": "已完成",
+  "plan.confirm": "按這個計畫進行嗎？",
+  "plan.go": "開始",
+  "plan.always": "總是直接開始",
+  "plan.paused": "在第 {count} 步暫停",
+  "plan.cost": "目前約 {cost}",
+  "plan.keepGoing": "繼續"
+}

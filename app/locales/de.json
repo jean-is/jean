@@ -229,6 +229,7 @@
   "offer.no": "Nein danke",
   "offer.on": "{name}: eingeschaltet",
   "tool.offer": "Vorgeschlagen: {name}",
+  "tool.plan": "Plan aktualisiert",
   "tool.javascript": "Berechnet",
   "tool.bash": "Befehl ausgeführt",
   "tool.reach_site": "Um Zugriff auf eine neue Website gebeten",

@@ -324,7 +324,11 @@ async function use(folder, project) {
     if (current) await keep(current.id, folder)
     else pending.value = folder
   }
-  if (folder) await offerAgents(folder, project ? 'project' : 'conversation')
+  if (folder) {
+    // Work in a folder takes many steps: plans come with it (D364).
+    unlock('plan')
+    await offerAgents(folder, project ? 'project' : 'conversation')
+  }
 }
 
 /** A project's folder: kept by its ULID, named in project.md (D149). @param {Project} project @param {Folder | null} folder */

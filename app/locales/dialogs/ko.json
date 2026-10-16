@@ -232,6 +232,7 @@
   "kind.execute.label": "계산 실행",
   "kind.fetch.label": "인터넷 사용",
   "kind.other.label": "보내기와 공유",
+  "kind.plan.label": "긴 작업 시작하기",
   "seal.title": "이 기기의 인장",
   "seal.text": "여기서 저장한 인증서는 이 기기를 절대 떠나지 않는 키로 봉인돼요. 인증서를 믿는 사람은 이 지문을 확인하거나, 미리 당신과 합의해 둘 수 있어요.",
   "pages.title": "웹 페이지",

@@ -1,0 +1,13 @@
+{
+  "plan.title": "منصوبہ",
+  "plan.done": "{total} میں سے {done} مکمل",
+  "plan.pending": "باقی",
+  "plan.in_progress": "جاری",
+  "plan.completed": "مکمل",
+  "plan.confirm": "اس منصوبے کے ساتھ آگے بڑھیں؟",
+  "plan.go": "آگے بڑھیں",
+  "plan.always": "ہمیشہ آگے بڑھیں",
+  "plan.paused": "مرحلہ {count} پر وقفہ",
+  "plan.cost": "اب تک تقریباً {cost}",
+  "plan.keepGoing": "جاری رکھیں"
+}

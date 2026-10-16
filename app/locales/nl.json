@@ -229,6 +229,7 @@
   "offer.no": "Nee, bedankt",
   "offer.on": "{name}: aan",
   "tool.offer": "Voorgesteld: {name}",
+  "tool.plan": "Plan bijgewerkt",
   "tool.javascript": "Berekend",
   "tool.bash": "Opdracht uitgevoerd",
   "tool.reach_site": "Gevraagd om een nieuwe site te bereiken",

@@ -229,6 +229,7 @@
   "offer.no": "नहीं, धन्यवाद",
   "offer.on": "चालू हुआ: {name}",
   "tool.offer": "सुझाया गया: {name}",
+  "tool.plan": "योजना अपडेट की गई",
   "tool.javascript": "गणना की गई",
   "tool.bash": "एक कमांड चलाई",
   "tool.reach_site": "नई साइट तक पहुँचने की अनुमति माँगी",

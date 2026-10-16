@@ -233,6 +233,7 @@
   "offer.no": "No, grazie",
   "offer.on": "{name}: attivo",
   "tool.offer": "Proposto: {name}",
+  "tool.plan": "Piano aggiornato",
   "tool.javascript": "Calcolato",
   "tool.bash": "Comando eseguito",
   "tool.reach_site": "Chiesto di raggiungere un nuovo sito",

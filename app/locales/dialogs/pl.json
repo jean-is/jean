@@ -241,6 +241,7 @@
   "kind.execute.label": "Wykonywanie obliczeń",
   "kind.fetch.label": "Korzystanie z internetu",
   "kind.other.label": "Wysyłanie i udostępnianie",
+  "kind.plan.label": "Rozpoczynanie długiego zadania",
   "seal.title": "Pieczęć tego urządzenia",
   "seal.text": "Certyfikaty zapisane tutaj są pieczętowane kluczem, który nigdy nie opuszcza tego urządzenia. Kto na nich polega, może sprawdzić ten odcisk albo uzgodnić go z tobą wcześniej.",
   "pages.title": "Strony internetowe",

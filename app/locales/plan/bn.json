@@ -1,0 +1,13 @@
+{
+  "plan.title": "পরিকল্পনা",
+  "plan.done": "{total}টির মধ্যে {done}টি হয়েছে",
+  "plan.pending": "বাকি",
+  "plan.in_progress": "চলছে",
+  "plan.completed": "হয়েছে",
+  "plan.confirm": "এই পরিকল্পনা নিয়ে এগোবেন?",
+  "plan.go": "এগিয়ে যান",
+  "plan.always": "সবসময় এগিয়ে যান",
+  "plan.paused": "ধাপ {count}-এ বিরতি",
+  "plan.cost": "এ পর্যন্ত প্রায় {cost}",
+  "plan.keepGoing": "চালিয়ে যান"
+}

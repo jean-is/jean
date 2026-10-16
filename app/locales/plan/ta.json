@@ -1,0 +1,13 @@
+{
+  "plan.title": "திட்டம்",
+  "plan.done": "{total}-இல் {done} முடிந்தது",
+  "plan.pending": "செய்ய வேண்டியது",
+  "plan.in_progress": "நடக்கிறது",
+  "plan.completed": "முடிந்தது",
+  "plan.confirm": "இந்தத் திட்டப்படி தொடரலாமா?",
+  "plan.go": "தொடங்கலாம்",
+  "plan.always": "எப்போதும் தொடங்கலாம்",
+  "plan.paused": "படி {count}-இல் இடைநிறுத்தம்",
+  "plan.cost": "இதுவரை சுமார் {cost}",
+  "plan.keepGoing": "தொடரவும்"
+}

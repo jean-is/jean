@@ -146,7 +146,8 @@ export type AcpUpdate =
   | { sessionUpdate: 'agent_thought_chunk', content: TextBlock }
   | ({ sessionUpdate: 'tool_call' } & ToolCallInfo)
   | ({ sessionUpdate: 'tool_call_update' } & Partial<ToolCallInfo> & { toolCallId: string })
-  | { sessionUpdate: 'plan', entries: PlanEntry[] }
+  /** the task's plan (D364): confirmed by the user or their rule, it may carry the task past its steps */
+  | { sessionUpdate: 'plan', entries: PlanEntry[], _meta?: { confirmed?: boolean } }
   | { sessionUpdate: '_system_note', text: string, data: SystemNoteData }
   | CompactionUpdate
 

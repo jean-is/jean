@@ -341,7 +341,7 @@ const runs = new Map()
 
 /**
  * The conversation a call works for, by its run's signal (D147); without one, the one on screen.
- * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], brain?: BrainConfig, turn?: Turn } | null}
+ * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], brain?: BrainConfig, turn?: Turn, settled?: Envelope[] } | null}
  */
 export function conversationOf(signal) {
   for (const run of runs.values()) if (run.controller.signal === signal) return run

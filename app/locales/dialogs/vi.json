@@ -232,6 +232,7 @@
   "kind.execute.label": "Tính toán",
   "kind.fetch.label": "Dùng internet",
   "kind.other.label": "Gửi và chia sẻ",
+  "kind.plan.label": "Bắt đầu một việc dài",
   "seal.title": "Con dấu của thiết bị này",
   "seal.text": "Các chứng nhận lưu ở đây được đóng dấu bằng một khóa không bao giờ rời khỏi thiết bị này. Người dựa vào chúng có thể kiểm tra dấu vân tay này, hoặc thống nhất trước với bạn về nó.",
   "pages.title": "Trang web",

@@ -24,6 +24,7 @@ const LONGEST_WAIT = 30_000
  * @property {boolean} [deferred]   not declared when a conversation starts: found with find_tools (connections, D47)
  * @property {boolean} [off]        turned off by the user: declared only where it was, and refused (D304)
  * @property {boolean} [asks]       waits for the user's answer when it runs (ask_user), so it is kept as pending meanwhile (D212)
+ * @property {boolean} [aside]      a step whose calls are all such isn't counted against the turn's steps, one in a row at most (the plan, D364)
  * @property {string} [service]      whose it is: a connection's id, for the rules about it (D295)
  * @property {(args: any) => string} title
  * @property {(args: any) => import('./types.js').ToolCallLocation[]} [locations]
@@ -44,6 +45,7 @@ const LONGEST_WAIT = 30_000
  * @property {Record<string, any>} meta                           kept on the call's record (`_meta`), e.g. a picture it made
  * @property {import('./types.js').ToolCallContent[]} content     kept on the call's record before its result, e.g. the diff of a change (D141)
  * @property {(update: Partial<ToolCallInfo>) => void} progress  shown as it runs, never kept (D265)
+ * @property {(update: AcpUpdate) => void} update                an ACP update of its own (a plan), shown at once and kept after the call, the latest of each kind (D364)
  * @property {PermissionOption} [answer]                          what the user answered, when the call was asked
  * @property {(child: Partial<TurnOptions>) => Promise<{ stopReason: string, text: string }>} turn
  *   a helper's turn: the same brain, rules and source numbers, its calls recorded under this one
@@ -73,7 +75,8 @@ const LONGEST_WAIT = 30_000
  * @property {typeof defaultStream} [stream]          injectable for tests
  * @property {import('./hooks.js').Hook[] | (() => import('./hooks.js').Hook[])} [hooks]  what the turn's events run through
  *   (core/hooks.js): turn.step, each request to the brain, and tool.check, whether a call runs
- * @property {Record<string, unknown>} [about]       what each of its events holds besides: its task, the kinds of note it came with
+ * @property {Record<string, unknown>} [about]       what each of its events holds besides: its task, the kinds of note it came with, and in
+ *   a helper's turn the call it works under (`parent`)
  * @property {number} [window]                       how much the brain reads at most, in tokens: a turn with one may read on from a
  *   summary (turn.compact, D359); a helper's has none
  * @property {Usage} [usage]                         what the brain last read and wrote in the conversation, before this turn
@@ -184,7 +187,7 @@ export async function runTurn(options) {
     const completed = { ...entry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, _meta: kept }
     onUpdate({ sessionUpdate: 'tool_call_update', ...completed }, step)
     await persist(stepRecords(step, completed, own ? '' : thought, own ? '' : text))
-    return { stopReason, text, calls, done }
+    return { stopReason, text, calls, done, entry: completed }
   }
 
   /**
@@ -206,17 +209,35 @@ export async function runTurn(options) {
 
   if (options.resume) await runCalls(options.resume.calls, options.resume.step)
 
-  for (let step = options.resume ? options.resume.step + 1 : 0; step < maxSteps; step++) {
+  // Steps go in blocks: at the end of one, a hook may give the turn another (turn.limit); a step whose calls only
+  // update the plan isn't counted, one in a row at most (D364).
+  const first = options.resume ? options.resume.step + 1 : 0
+  let [limit, from, blocks, free] = [maxSteps, first, 0, false]
+  /** @type {{ step: number, entry: ToolCallInfo } | undefined} */
+  let asked
+  for (let step = first; ; step++) {
+    if (step >= limit) {
+      if (maxSteps <= first || !(await on('turn.limit', { step, from, blocks, signal }, () => false))) break
+      ;[limit, from, blocks] = [step + maxSteps - first, step, blocks + 1]
+    }
     ctx.byName = new Map(tools().map((tool) => [tool.spec.name, tool]))
     const specs = [...ctx.byName.values()].filter((tool) => declared.has(tool.spec.name)).map((tool) => tool.spec)
     await compact(step, specs, 'window')
-    const { stopReason, text, calls, done } = await request(step, history, specs)
+    const { stopReason, text, calls, done, entry } = await request(step, history, specs)
+    asked = { step, entry }
     last = done?.usage
     history.push(done?.message ?? { role: 'assistant', content: text, toolCalls: calls })
 
     if (stopReason === 'pause') continue
     if (stopReason !== 'tool_use' || !calls.length) return { stopReason, usage, text }
     await runCalls(calls, step)
+    if ((free = !free && calls.every((call) => ctx.byName.get(call.name)?.aside))) limit++
+  }
+  // Out of steps: the last brain entry is kept again, stopped as ACP says it, which the room shows as a pause (D364).
+  if (asked) {
+    const stopped = { ...asked.entry, _meta: { ...asked.entry._meta, stopped: 'max_turn_requests' } }
+    onUpdate({ sessionUpdate: 'tool_call_update', ...stopped }, asked.step)
+    await persist([envelope('jean', { sessionUpdate: 'tool_call', ...stopped }, asked.step)])
   }
   return { stopReason: 'max_steps', usage, text: '' }
 }
@@ -263,12 +284,15 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
   let nested = 0
   /** @type {number | undefined} how long it ran, for the activity view */
   let ms
+  /** @type {Map<string, AcpUpdate>} its own updates, the latest of each kind */
+  const own = new Map()
   /** @type {ToolContext} */
   const context = {
     signal,
     meta: {},
     content: [],
     progress: (update) => onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, ...update, _meta: { ...info._meta, ...update._meta } }, step),
+    update: (update) => { own.set(update.sessionUpdate, update); onUpdate(update, step) },
     cite: (sources) => ctx.cite(sources, context.meta),
     declared: [...ctx.declared],
     call: async (name, args) => {
@@ -283,7 +307,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     },
     // A helper's text is its result; its calls are kept, under this one, never as pending: a closed page asks its questions no more (D212).
     turn: (child) => runTurn({
-      ...ctx.options, label: undefined, meta: undefined, resume: null, window: undefined, usage: undefined, ...child, numbers: ctx.numbers,
+      ...ctx.options, label: undefined, meta: undefined, resume: null, window: undefined, usage: undefined, about: { ...ctx.options.about, parent: call.id }, ...child, numbers: ctx.numbers,
       askPermission: (request) => ctx.askPermission({ ...request, toolCall: under(request.toolCall, call.id) }),
       onUpdate: (update) => 'toolCallId' in update && onUpdate(under(update, call.id), step),
       persist: (records) => ctx.persist(records.flatMap(({ update, ...record }) => (update && 'toolCallId' in update && update.status !== 'pending' ? [{ ...record, step, update: under(update, call.id) }] : []))),
@@ -342,7 +366,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     ...((ms !== undefined || Object.keys(context.meta).length) && { _meta: { ...info._meta, ...context.meta, ms } }),
   }
   onUpdate({ sessionUpdate: 'tool_call_update', ...final }, step)
-  await ctx.persist([envelope('jean', { sessionUpdate: 'tool_call', ...final }, step)])
+  await ctx.persist([envelope('jean', { sessionUpdate: 'tool_call', ...final }, step), ...[...own.values()].map((update) => envelope('jean', update, step))])
   return { info: final, output, failed }
 }
 

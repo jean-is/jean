@@ -30,7 +30,8 @@ const DEVICE_CONTEXT = 32768
 const DEFAULT_CONTEXT = 128000
 // Anthropic's default cache lifetime is 5 minutes (D49).
 const CACHE_TTL_MS = 5 * 60_000
-// Work in a folder takes more steps than a turn's usual 12 (D141).
+// A turn's block of steps, and in a folder, where work takes more (D141), before it stops or a moving plan goes on (D364).
+const STEPS = 12
 const FOLDER_STEPS = 40
 // Local servers whose window is asked of them, the smallest Ollama gives being 4,096 (D359).
 const SERVERS = ['ollama', 'lmstudio']
@@ -386,10 +387,25 @@ export async function fork(upTo) {
 }
 
 /**
+ * Goes on with the task on screen where it stopped between steps, at its limit or when its page closed (D364): the next
+ * block of steps, on the turn's own brain, whose thinking replays to the model that wrote it.
+ */
+export async function keepGoing() {
+  const current = app.current.value
+  if (!current || app.busy.value) return
+  const step = foldTurns(current.records).at(-1)?.steps.at(-1)
+  const { provider, model, auto } = step?.tools.findLast((tool) => tool.kind === 'think' && !tool.name && !tool._meta?.parent && !tool._meta?.compact)?.rawInput ?? {}
+  const own = brainsHere.value.find((brain) => brain.provider === provider && (cloudAllowed() || isLocal(brain)))
+  const picked = own ? { brain: { ...own, model }, meta: auto && { auto } } : await pickBrain('', current.records)
+  if (step && picked) await runAgent(current, picked.brain, picked.meta, undefined, step.index)
+}
+
+/**
  * Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation
  * @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it @param {{ name: string, args: any }} [call] the one call the turn is (D218)
+ * @param {number} [after] the step it goes on after, with a block of steps more (Keep going, D364)
  */
-async function runAgent(conversation, brain, meta, call) {
+async function runAgent(conversation, brain, meta, call, after) {
   /** @type {Run} */
   const run = { ...conversation, brain, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
   const { path, records: sent, turn, settled } = run
@@ -402,6 +418,7 @@ async function runAgent(conversation, brain, meta, call) {
     })
   }
 
+  let stopped = false
   beginRun(run)
   try {
     // The loop and the brains' adapters load with the first message, not with the first screen.
@@ -409,7 +426,7 @@ async function runAgent(conversation, brain, meta, call) {
     const frozen = frozenPrompt(sent)
     // A turn the page closed on while it waited for the user goes on from there, asking again (D212); one that is a single call starts on it.
     const one = call && { id: `call-${Date.now().toString(36)}`, ...call }
-    const resume = one ? { step: 0, calls: [one] } : unanswered(sent)
+    const resume = one ? { step: 0, calls: [one] } : after === undefined ? unanswered(sent) : { step: after, calls: [] }
     const messages = toChatMessages(sent, await documents(sent, brain), resume)
     // The device's brain answers its steps itself, through its turn.step hook.
     if (brain.api === 'device') await unlock('brain-local')
@@ -424,7 +441,7 @@ async function runAgent(conversation, brain, meta, call) {
     await grown(Math.max(estimateMessages([frozen?.system, messages]), counted(usage)))
     asked.set(path, Date.now())
     const { settings } = effective.value
-    await runTurn({
+    const ended = await runTurn({
       brain,
       apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
       system: frozen?.system ?? '',
@@ -436,8 +453,7 @@ async function runAgent(conversation, brain, meta, call) {
       label: brainLabel(brain),
       meta,
       firstSource: nextSource(sent),
-      ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
-      ...(one && { maxSteps: 1 }),
+      maxSteps: one ? 1 : (after ?? -1) + 1 + (frozen?.state.sections?.folder ? FOLDER_STEPS : STEPS),
       window,
       usage,
       signal: run.controller.signal,
@@ -458,6 +474,7 @@ async function runAgent(conversation, brain, meta, call) {
         await keepRecords(path, records)
       },
     })
+    stopped = ended.stopReason === 'max_steps'
     // What the one call gave for the user to read is the answer.
     const gave = one && settled.findLast(({ update }) => update?.sessionUpdate === 'tool_call' && update.toolCallId === one.id)?.update
     const text = gave?.sessionUpdate === 'tool_call' && gave.status === 'completed' ? String(gave._meta?.answer ?? '').trim() : ''
@@ -484,13 +501,13 @@ async function runAgent(conversation, brain, meta, call) {
       app.live.value = null
     }
     const answer = lastAnswer(settled)
-    // An answer that came while the user was elsewhere waits for them, unread (D288); not one stopped, or deleted.
-    if (answer && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
+    // An answer that came while the user was elsewhere waits for them, unread (D288), as does a task paused at its limit (D364); not one stopped, or deleted.
+    if ((answer || stopped) && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
     else await refreshConversations()
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records, conversation)
-    if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted,
+    if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted, stopped,
       made: filesMade(callsIn(settled)), routine: routineOf(records)?.routine,
       cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
   }

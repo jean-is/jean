@@ -1,0 +1,13 @@
+{
+  "plan.title": "计划",
+  "plan.done": "已完成 {done}/{total}",
+  "plan.pending": "待办",
+  "plan.in_progress": "进行中",
+  "plan.completed": "已完成",
+  "plan.confirm": "按这个计划进行吗？",
+  "plan.go": "开始",
+  "plan.always": "总是直接开始",
+  "plan.paused": "在第 {count} 步暂停",
+  "plan.cost": "目前约 {cost}",
+  "plan.keepGoing": "继续"
+}

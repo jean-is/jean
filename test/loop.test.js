@@ -449,6 +449,93 @@ test('loop: stops after maxSteps', async () => {
   assert.equal(result.stopReason, 'max_steps')
 })
 
+test('loop: a tool sends an update of its own, shown at once and kept after its call, the latest of each kind (D364)', async () => {
+  const call = { id: 'p1', name: 'plan', args: {} }
+  const entries = [{ content: 'Read', status: 'in_progress', priority: 'medium' }, { content: 'Sum', status: 'pending', priority: 'medium' }]
+  const { stream } = fakeStream([
+    [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })],
+    [{ type: 'text', delta: 'Done.' }, done('end', { role: 'assistant', content: 'Done.' })],
+  ])
+  /** @type {any[]} */
+  const live = []
+  /** @type {any[]} */
+  const persisted = []
+  const planTool = {
+    spec: { name: 'plan', description: 'plan', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('think'),
+    title: () => 'Plan',
+    run: async (/** @type {any} */ args, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => {
+      ctx.update({ sessionUpdate: 'plan', entries })
+      assert.deepEqual(live.at(-1), { sessionUpdate: 'plan', entries }, 'shown at once')
+      assert.ok(!persisted.some(({ update }) => update.sessionUpdate === 'plan'), 'kept only once the call ends')
+      ctx.update({ sessionUpdate: 'plan', entries, _meta: { confirmed: true } })
+      return 'Shown.'
+    },
+  }
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [planTool], rule: () => 'allow', stream: /** @type {any} */ (stream),
+    onUpdate: (update) => live.push(update), persist: async (records) => { persisted.push(...records) } })
+  const at = persisted.findIndex(({ update }) => update.sessionUpdate === 'tool_call' && update.toolCallId === 'p1' && update.status === 'completed')
+  assert.deepEqual(persisted.slice(at + 1, at + 2).map(({ update, step }) => [update, step]), [[{ sessionUpdate: 'plan', entries, _meta: { confirmed: true } }, 0]])
+  assert.equal(persisted.filter(({ update }) => update.sessionUpdate === 'plan').length, 1)
+})
+
+test('loop: at its limit, a hook may give the turn another block of steps; then it stops, its last brain entry kept again as ACP says it stopped (D364)', async () => {
+  const call = { id: 'x', name: 'read', args: { path: 'a' } }
+  const step = [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })]
+  const { stream, calls } = fakeStream([step, step, step, step, step])
+  /** @type {any[]} */
+  const asked = []
+  /** @type {import('../app/core/hooks.js').Hook} */
+  const hook = { on: 'turn.limit', run: (e) => { asked.push([e.step, e.from, e.blocks, e.task]); return e.blocks === 0 } }
+  /** @type {any[]} */
+  const persisted = []
+  const result = await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'loop' }], tools: [readTool], rule: () => 'allow', maxSteps: 2, hooks: [hook], about: { task: 't' },
+    stream: /** @type {any} */ (stream), persist: async (records) => { persisted.push(...records) } })
+  assert.equal(result.stopReason, 'max_steps')
+  assert.equal(calls.length, 4)
+  assert.deepEqual(asked, [[2, 0, 0, 't'], [4, 2, 1, 't']])
+  const last = persisted.at(-1)
+  assert.equal(last.step, 3)
+  assert.match(last.update.toolCallId, /^brain-3-/)
+  assert.deepEqual([last.update.status, last.update._meta.stopped], ['completed', 'max_turn_requests'])
+  // Without a hook, the block is all; a turn that answers in time isn't marked.
+  const again = fakeStream([step, step, step])
+  const kept = /** @type {any[]} */ ([])
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'loop' }], tools: [readTool], rule: () => 'allow', maxSteps: 2, stream: /** @type {any} */ (again.stream), persist: async (records) => { kept.push(...records) } })
+  assert.equal(again.calls.length, 2)
+  assert.equal(kept.filter(({ update }) => update._meta?.stopped).length, 1)
+})
+
+test('loop: a step whose calls only update the plan isn’t counted, one in a row at most; a helper’s turn never goes on past its limit (D364)', async () => {
+  const plan = { id: 'p', name: 'plan', args: {} }
+  const read = { id: 'r', name: 'read', args: { path: 'a' } }
+  const planned = [{ type: 'tool_call', call: plan }, done('tool_use', { role: 'assistant', content: '', toolCalls: [plan] })]
+  const reading = [{ type: 'tool_call', call: read }, done('tool_use', { role: 'assistant', content: '', toolCalls: [read] })]
+  const ended = [{ type: 'text', delta: 'Done.' }, done('end', { role: 'assistant', content: 'Done.' })]
+  const planTool = { spec: { name: 'plan', description: 'plan', parameters: { type: 'object' } }, kind: /** @type {const} */ ('think'), aside: true, title: () => 'Plan', run: async () => 'Shown.' }
+  const options = { brain, system: 's', history: [{ role: 'user', content: 'go' }], tools: [readTool, planTool], rule: () => /** @type {const} */ ('allow'), maxSteps: 2 }
+  const once = fakeStream([planned, reading, ended])
+  assert.equal((await runTurn({ ...options, stream: /** @type {any} */ (once.stream) })).stopReason, 'end')
+  const twice = fakeStream([planned, planned, reading, ended])
+  assert.equal((await runTurn({ ...options, stream: /** @type {any} */ (twice.stream) })).stopReason, 'max_steps')
+  assert.equal(twice.calls.length, 3)
+  // A helper's turn: its events say whose call it works under, which the hook leaves alone.
+  /** @type {any[]} */
+  const limits = []
+  const helper = fakeStream([reading, reading, reading, reading, ended])
+  const delegateTool = {
+    spec: { name: 'delegate', description: 'delegate', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('think'),
+    title: () => 'Delegate',
+    run: async (/** @type {any} */ args, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => (await ctx.turn({ system: 'helper', history: [{ role: 'user', content: 'part' }], maxSteps: 2 })).stopReason,
+  }
+  /** @type {import('../app/core/hooks.js').Hook} */
+  const hook = { on: 'turn.limit', run: (e) => { limits.push(e.parent); return !e.parent } }
+  await runTurn({ brain, system: 's', history: [], resume: { step: 0, calls: [{ id: 'd', name: 'delegate', args: {} }] }, maxSteps: 1, tools: [delegateTool, readTool], hooks: [hook],
+    rule: () => 'allow', stream: /** @type {any} */ (helper.stream) })
+  assert.deepEqual(limits, ['d'], 'a turn that is one call has no block to go on with')
+})
+
 test('loop: a helper’s turn runs under its call, shares the numbering, and stays out of the brain’s context', async () => {
   // The parent delegates; the helper reads a page and cites it; the parent answers.
   const { stream, calls } = fakeStream([

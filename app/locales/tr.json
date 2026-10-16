@@ -229,6 +229,7 @@
   "offer.no": "Hayır, teşekkürler",
   "offer.on": "Açıldı: {name}",
   "tool.offer": "Önerildi: {name}",
+  "tool.plan": "Plan güncellendi",
   "tool.javascript": "Hesaplandı",
   "tool.bash": "Bir komut çalıştırdı",
   "tool.reach_site": "Yeni bir siteye erişim istedi",

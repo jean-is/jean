@@ -232,6 +232,7 @@
   "kind.execute.label": "執行計算",
   "kind.fetch.label": "使用網際網路",
   "kind.other.label": "傳送和分享",
+  "kind.plan.label": "開始一項較長的任務",
   "seal.title": "這台裝置的印章",
   "seal.text": "在這裡儲存的證書由一把從不離開這台裝置的金鑰蓋章。依賴這些證書的人可以核對這個指紋，或事先與你約定好它。",
   "pages.title": "網頁",

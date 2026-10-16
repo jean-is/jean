@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plan",
+  "plan.done": "{done} van {total} klaar",
+  "plan.pending": "Te doen",
+  "plan.in_progress": "Bezig",
+  "plan.completed": "Klaar",
+  "plan.confirm": "Met dit plan aan de slag?",
+  "plan.go": "Aan de slag",
+  "plan.always": "Altijd aan de slag",
+  "plan.paused": "Gepauzeerd bij stap {count}",
+  "plan.cost": "tot nu toe ongeveer {cost}",
+  "plan.keepGoing": "Doorgaan"
+}

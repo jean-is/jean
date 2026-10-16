@@ -131,7 +131,7 @@ const short = (text, length) => (text.length > length ? `${text.slice(0, length)
 
 /**
  * What Jean knows for sure and the summary may not say: the sources and files by the numbers the brain cites them by
- * (D71), the notes in force, then the request being worked on, word for word, with what it came with. In English.
+ * (D71), the notes in force, the plan (D364), then the request being worked on, word for word, with what it came with. In English.
  * @param {Envelope[]} records @returns {string[]}
  */
 function known(records) {
@@ -156,6 +156,7 @@ function known(records) {
     ...(sources.size ? [`Sources cited so far, by number:\n${[...sources.values()].join('\n')}`] : []),
     ...(files.size ? [`Files the user shared, by number; read them again when needed:\n${[...files.values()].join('\n')}`] : []),
     ...(notes.size ? [`Notes in force:\n${[...notes.values()].map((text) => `- ${text}`).join('\n')}`] : []),
+    ...(request?.plan ? [`The plan, as it stood:\n${request.plan.map(({ content, status }) => `- [${status}] ${content}`).join('\n')}`] : []),
     ...(request?.user ? [`The request being worked on, word for word:\n<request>\n${[...request.notes.filter((note) => !STANDING.includes(note.data.kind)).map((note) => note.text), request.user.text].join('\n\n')}\n</request>`] : []),
   ]
 }

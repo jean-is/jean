@@ -1,0 +1,13 @@
+{
+  "plan.title": "План",
+  "plan.done": "Готово: {done} з {total}",
+  "plan.pending": "Попереду",
+  "plan.in_progress": "Виконується",
+  "plan.completed": "Готово",
+  "plan.confirm": "Діяти за цим планом?",
+  "plan.go": "Уперед",
+  "plan.always": "Завжди без питань",
+  "plan.paused": "Пауза на кроці {count}",
+  "plan.cost": "поки близько {cost}",
+  "plan.keepGoing": "Продовжити"
+}

@@ -245,6 +245,7 @@
   "offer.no": "لا، شكرًا",
   "offer.on": "تم تشغيل: {name}",
   "tool.offer": "اقتراح: {name}",
+  "tool.plan": "تحديث الخطة",
   "tool.javascript": "أجرى حسابًا",
   "tool.bash": "شغّل أمرًا",
   "tool.reach_site": "طلب الوصول إلى موقع جديد",

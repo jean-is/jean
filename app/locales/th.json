@@ -225,6 +225,7 @@
   "offer.no": "ไม่ล่ะ ขอบคุณ",
   "offer.on": "เปิดแล้ว: {name}",
   "tool.offer": "แนะนำ: {name}",
+  "tool.plan": "อัปเดตแผน",
   "tool.javascript": "คำนวณแล้ว",
   "tool.bash": "รันคำสั่งแล้ว",
   "tool.reach_site": "ขออนุญาตเข้าถึงเว็บไซต์ใหม่",

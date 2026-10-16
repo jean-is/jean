@@ -225,6 +225,7 @@
   "offer.no": "Tidak, terima kasih",
   "offer.on": "{name} aktif",
   "tool.offer": "Disarankan: {name}",
+  "tool.plan": "Rencana diperbarui",
   "tool.javascript": "Dihitung",
   "tool.bash": "Menjalankan perintah",
   "tool.reach_site": "Meminta izin ke situs baru",

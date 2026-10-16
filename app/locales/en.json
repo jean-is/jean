@@ -229,6 +229,7 @@
   "offer.no": "No thanks",
   "offer.on": "{name} is on",
   "tool.offer": "Suggested: {name}",
+  "tool.plan": "Updated the plan",
   "tool.javascript": "Calculated",
   "tool.bash": "Ran a command",
   "tool.reach_site": "Asked to reach a new site",

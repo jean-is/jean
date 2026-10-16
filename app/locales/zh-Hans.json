@@ -225,6 +225,7 @@
   "offer.no": "不用了",
   "offer.on": "已开启：{name}",
   "tool.offer": "已建议：{name}",
+  "tool.plan": "更新了计划",
   "tool.javascript": "已计算",
   "tool.bash": "运行了一条命令",
   "tool.reach_site": "请求访问一个新网站",

@@ -134,6 +134,7 @@ Every kind of action has one of three settings: **Do it / Ask me first / Never**
 | Changing files in the user's own folder (D152) | Ask me first, with the change shown; "Always allow" holds for that folder only |
 | Sending, sharing, deleting, anything external | Ask me first |
 | Making a film, which costs far more than a picture (D251) | Ask me first; "Always allow" holds for films only, until Settings › Brains asks first again |
+| Starting a long task on a plan, once plans are found (D364) | Ask me first: the plan waits for Go ahead |
 | Passwords, payments | Never (reserved for humans) |
 
 - **Automatic review** (later): a reflex question checks consequential actions against the user's instructions.
@@ -145,7 +146,7 @@ Every kind of action has one of three settings: **Do it / Ask me first / Never**
 
 A live, inspectable activity view built from standard ACP events:
 
-- **The plan:** steps, each with a status.
+- **The plan** (D364): for a task of three steps or more, its steps above the activity, each with its status, ticked off as they are done. The first waits at the top of the box for Go ahead, and the user's own words there change it. A confirmed plan carries the task on while it moves; a task that runs out of steps pauses there instead, with how far it got and what it cost so far, and Keep going.
 - **Each action:** a plain-language label, the files it touched (clickable), its status, and, one click down, what it was given and what came back (D103).
 - **Approval cards.**
 - **Pause and stop.**
