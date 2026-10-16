@@ -45,6 +45,7 @@ class Shell extends Element {
       <app-settings></app-settings>
       <app-picker></app-picker>
       <app-project-dialog></app-project-dialog>
+      ${slots('dialog').map((dialog) => dialog.draw())}
       <app-toasts class="toasts" role="status" aria-live="polite" popover="manual"></app-toasts>
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }

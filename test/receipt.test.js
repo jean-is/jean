@@ -185,6 +185,30 @@ test('a certificate is a W3C credential sealed as a JWS, which standard tools ch
   assert.equal(checked.says.credentialSubject.made[0].revision, madeHere.revision)
 })
 
+test('where it was done is salted too: a proof shows each address back in its place, or withholds them all (D361)', async () => {
+  const own = await makeSeal(new Date(T0))
+  const { turn } = turnWith([{ local: false, at: 1000 }])
+  const facts = factsOf(turn, [reached(500, 5500, { 'gateway.corp.example': 3 })])
+  const made = await certificate({ facts, turn, text: 'Two meetings.', conversation: CONVERSATION, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: 'https://jean.corp.example',
+    version: VERSION, placed: () => ({ host: 'ai.corp.example', jurisdiction: 'FR' }), now: new Date(T0 + 6000) })
+  const sealed = await seal(made.credential, own, new Date(T0 + 6000))
+  assert.equal(valid('credential', decoded(sealed.payload)), true)
+  for (const address of ['corp.example', 'jean.corp', 'gateway']) assert.doesNotMatch(sealed.payload + JSON.stringify(made.credential), new RegExp(address))
+  assert.equal(made.credential.credentialSubject.brains[0].jurisdiction, 'FR')
+  // The whole proof shows them back where they were.
+  const whole = await check({ proof: proof(sealed, made.disclosures) })
+  assert.equal(whole.proven, true)
+  assert.equal(whole.says.credentialSubject.brains[0].host, 'ai.corp.example')
+  assert.deepEqual(whole.says.evidence[0].hosts, { 'gateway.corp.example': 3 })
+  assert.equal(whole.says.credentialSubject.jean.origin, 'https://jean.corp.example')
+  // A share's discloses the words alone: it still proves them, and names no address.
+  const words = made.disclosures.filter((disclosure) => !made.places.includes(disclosure))
+  const shared = await check({ proof: proof(sealed, words) })
+  assert.deepEqual([shared.intact, shared.proven, shared.words?.answer], [true, true, 'Two meetings.'])
+  assert.equal(shared.says.credentialSubject.brains[0].host, undefined)
+  assert.equal(shared.says.evidence[0].hosts, undefined)
+})
+
 test('its words and files are salted digests: no guess confirms them, and only its proof discloses them', async () => {
   const own = await makeSeal(new Date(T0))
   const first = await sealedAnswer(own)
@@ -199,8 +223,9 @@ test('its words and files are salted digests: no guess confirms them, and only i
   assert.ok(salts.every((salt) => /^[\w-]{22}$/.test(salt)))
   assert.equal(new Set(salts).size, salts.length)
   // What the conversation keeps, and the proof, follow the schema; the same salts make the same disclosures.
-  assert.equal(valid('kept', { id: first.credential.id, jws: compact(first.sealed), salts: first.salts }), true)
-  assert.deepEqual(disclosed(await disclosuresOf(first.salts, { turn: first.turn, text: first.text, made: first.facts.made })), first.disclosures)
+  assert.equal(valid('kept', { id: first.credential.id, jws: compact(first.sealed), salts: first.salts, places: first.places }), true)
+  assert.deepEqual([...disclosed(await disclosuresOf(first.salts, { turn: first.turn, text: first.text, made: first.facts.made })), ...first.places], first.disclosures)
+  assert.ok(first.places.map(decoded).every((place) => valid('placeDisclosure', place) === true))
   const shown = proof(first.sealed, first.disclosures)
   assert.equal(valid('proof', shown), true)
   const [request, answer, file, made] = first.disclosures.map(decoded)

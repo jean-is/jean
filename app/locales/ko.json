@@ -256,6 +256,7 @@
   "cap.backup.name": "백업",
   "cap.backup.offer": "작업은 이 브라우저에만 있어요. 모든 것의 사본을 보관할까요?",
   "cap.backup.yes": "백업 다운로드",
+  "cap.share.name": "공유",
   "cap.sync.name": "동기화",
   "cap.sync.offer": "작업, 파일, 기억을 다른 컴퓨터에서도 똑같이 유지할까요? 클라우드 드라이브가 동기화하는 폴더를 고르면 돼요.",
   "cap.sync.yes": "폴더 선택",

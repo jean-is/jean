@@ -260,6 +260,7 @@
   "cap.backup.name": "Backup",
   "cap.backup.offer": "Your tasks live only in this browser. Keep a copy of everything?",
   "cap.backup.yes": "Download a backup",
+  "cap.share.name": "Sharing",
   "cap.sync.name": "Sync",
   "cap.sync.offer": "Keep your tasks, files and memory the same on your other computers? You choose a folder that your cloud drive syncs.",
   "cap.sync.yes": "Choose a folder",

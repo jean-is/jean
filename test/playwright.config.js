@@ -3,6 +3,8 @@
 // deploy serves it with SITE=dist/web after npm run build:web (D318), and a deterministic fake
 // brain answers (D37). Each is a <capability>.spec.js, beside the unit tests'
 // *.test.js, which node --test runs (D247). Usage: npm run e2e
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { defineConfig, devices } from '@playwright/test'
 
 const APP = 4180
@@ -10,6 +12,7 @@ const BRAIN = 4181
 const MAIL = 4182
 const GATEWAY = 4183
 const CSP = 4184
+const SHARE = 4185
 // The gateway (D191) serves Jean's origin, and holds the app the fake mail's closed service registered.
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
   clients: [{ issuer: `http://127.0.0.1:${MAIL}/closed`, tokenEndpoint: `http://127.0.0.1:${MAIL}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret' }] }
@@ -36,6 +39,9 @@ export default defineConfig({
     { command: 'node test/fixtures/fake-brain.js', cwd: '..', port: BRAIN, env: { PORT: String(BRAIN), PACE: process.env.PACE ?? '5' }, reuseExistingServer: false },
     { command: 'node test/fixtures/fake-mail.js', cwd: '..', port: MAIL, env: { PORT: String(MAIL) }, reuseExistingServer: false },
     { command: 'node gateway/serve.js', cwd: '..', port: GATEWAY, env: { PORT: String(GATEWAY), GATEWAY_CONFIG: JSON.stringify(RELAYED) }, reuseExistingServer: false },
+    // The share host (D361), for Jean's origin, keeping its shares in a folder of the run's; its viewer from the render package's address, which the test serves.
+    { command: 'node scripts/host.js --serve', cwd: '..', port: SHARE, reuseExistingServer: false,
+      env: { PORT: String(SHARE), HOST_DIR: join(tmpdir(), `jean-shares-${process.pid}`), HOST_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`], app: `http://127.0.0.1:${APP}/`, legal: 'https://legal.example/', name: 'Jean' }) } },
     // Jean again, each page's policy also a report-only header that says what it refused (test/csp.spec.js).
     { command: 'node scripts/serve.js --csp-reports', cwd: '..', port: CSP, env: { PORT: String(CSP) }, reuseExistingServer: false },
   ],

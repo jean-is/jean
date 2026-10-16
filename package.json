@@ -13,6 +13,7 @@
     "build:web": "npm run build && node scripts/web.js",
     "deploy": "node scripts/deploy.js",
     "render": "npm run build && node scripts/render.js",
+    "host": "npm run build && node scripts/host.js",
     "sounds": "node scripts/sounds.js",
     "build:desktop": "npm run build && node scripts/desktop.js",
     "build:dmg": "npm run build && node scripts/desktop.js dmg",

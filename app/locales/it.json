@@ -264,6 +264,7 @@
   "cap.backup.name": "Backup",
   "cap.backup.offer": "Le tue attività esistono solo in questo browser. Conservare una copia di tutto?",
   "cap.backup.yes": "Scarica un backup",
+  "cap.share.name": "Condivisione",
   "cap.sync.name": "Sincronizzazione",
   "cap.sync.offer": "Mantenere le tue attività, i tuoi file e la memoria uguali sugli altri tuoi computer? Scegli una cartella che il tuo spazio cloud sincronizza.",
   "cap.sync.yes": "Scegli una cartella",

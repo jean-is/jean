@@ -91,9 +91,9 @@
         "brains": { "type": "array", "items": { "$ref": "#/$defs/brain" } },
         "made": { "type": "array", "items": { "$ref": "#/$defs/maker" } },
         "jean": {
-          "type": "object", "required": ["origin", "version"], "additionalProperties": false,
+          "type": "object", "required": ["version", "_sd"], "additionalProperties": false,
           "properties": {
-            "origin": { "type": "string", "format": "uri" },
+            "_sd": { "$ref": "#/$defs/one", "description": "Disclosure [salt, \"origin\", <the address Jean is served from>]" },
             "version": { "description": "capabilities.json version: the files that ran", "type": "string", "pattern": "^[0-9a-f]{12}$" }
           }
         }
@@ -107,18 +107,16 @@
         "model": { "type": "string", "minLength": 1 },
         "revision": { "description": "The weights' pinned revision, when Jean pins one", "type": "string", "minLength": 1 },
         "local": { "type": "boolean" },
-        "host": { "$ref": "#/$defs/host" },
         "jurisdiction": { "$ref": "#/$defs/jurisdiction" }
-      },
-      "if": { "properties": { "local": { "const": false } } },
-      "then": { "required": ["host"] }
+      }
     },
     "brain": {
       "type": "object",
       "$ref": "#/$defs/where",
       "required": ["provider", "model", "local", "input", "output", "cached"],
       "properties": {
-        "provider": true, "model": true, "revision": true, "local": true, "host": true, "jurisdiction": true,
+        "provider": true, "model": true, "revision": true, "local": true, "jurisdiction": true,
+        "_sd": { "$ref": "#/$defs/one", "description": "Disclosure [salt, \"host\", <where it was reached>], outside this device" },
         "ms": { "$ref": "#/$defs/count" },
         "input": { "$ref": "#/$defs/count" },
         "output": { "$ref": "#/$defs/count" },
@@ -133,8 +131,8 @@
       "properties": {
         "kind": { "enum": ["picture", "film"] },
         "digitalSourceType": { "$ref": "#/$defs/generated" },
-        "provider": true, "model": true, "revision": true, "local": true, "host": true, "jurisdiction": true,
-        "_sd": { "$ref": "#/$defs/one", "description": "Disclosure [salt, \"digestSRI\", <sri of the file made>]" }
+        "provider": true, "model": true, "revision": true, "local": true, "jurisdiction": true,
+        "_sd": { "type": "array", "items": { "$ref": "#/$defs/digest" }, "minItems": 1, "maxItems": 2, "description": "Disclosures [salt, \"digestSRI\", <sri of the file made>], then [salt, \"host\", <where it was reached>] outside this device" }
       },
       "additionalProperties": false
     },
@@ -142,12 +140,12 @@
     "resourceTiming": {
       "description": "What the page reached while the answer was written, as the browser recorded it (Resource Timing)",
       "type": "object",
-      "required": ["type", "from", "to", "hosts"],
+      "required": ["type", "from", "to", "_sd"],
       "properties": {
         "type": { "const": ["ResourceTimingRecord"] },
         "from": { "$ref": "#/$defs/dateTime" },
         "to": { "$ref": "#/$defs/dateTime" },
-        "hosts": { "type": "object", "propertyNames": { "$ref": "#/$defs/host" }, "additionalProperties": { "type": "integer", "minimum": 1 } }
+        "_sd": { "$ref": "#/$defs/one", "description": "Disclosure [salt, \"hosts\", { <host>: <requests> }]" }
       },
       "additionalProperties": false
     },
@@ -236,12 +234,19 @@
       "description": "Decoded: a picture's or a film's digest",
       "type": "array", "prefixItems": [{ "$ref": "#/$defs/salt" }, { "const": "digestSRI" }, { "$ref": "#/$defs/sri" }], "items": false, "minItems": 3
     },
+    "placeDisclosure": {
+      "description": "Decoded: where it was done, which a proof may withhold: the address Jean is served from, a brain's or a maker's, or what the page reached",
+      "type": "array", "items": false, "minItems": 3,
+      "prefixItems": [{ "$ref": "#/$defs/salt" }, { "enum": ["origin", "host", "hosts"] },
+        { "anyOf": [{ "type": "string", "format": "uri" }, { "$ref": "#/$defs/host" }, { "type": "object", "propertyNames": { "$ref": "#/$defs/host" }, "additionalProperties": { "type": "integer", "minimum": 1 } }] }]
+    },
 
     "kept": {
       "description": "meta.certificate, appended to the conversation when a certificate is saved, so the proof can be made again",
-      "type": "object", "required": ["id", "jws", "salts"], "additionalProperties": false,
+      "type": "object", "required": ["id", "jws", "salts", "places"], "additionalProperties": false,
       "properties": {
         "id": { "type": "string", "pattern": "^urn:uuid:" },
+        "places": { "description": "Its place disclosures, whole: where it was done", "type": "array", "items": { "$ref": "#/$defs/b64url" } },
         "jws": { "description": "Compact form of the certificate as saved", "type": "string", "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]{86}$" },
         "salts": {
           "type": "object", "required": ["request", "answer", "files", "made"], "additionalProperties": false,

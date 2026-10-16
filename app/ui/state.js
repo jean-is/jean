@@ -27,8 +27,7 @@ import { contributions } from './caps.js'
  */
 /** @import { Question, Answer } from '../caps/ask/answers.js' */
 
-// The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
-export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
+export { LOCALES } from '../core/i18n.js'
 
 export const app = {
   fs: /** @type {FS} */ (/** @type {unknown} */ (null)),
@@ -61,7 +60,7 @@ export const app = {
   sidebar: signal(/** @type {boolean | null} */ (null)),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
   wide: signal(false),
-  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | null>} */
   dialog: signal(null),
   section: signal('general'),
   draft: signal(''),

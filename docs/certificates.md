@@ -74,6 +74,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - a W3C VC 2.0 sealed as a JWS in JAdES B-B, by the device's key and the X.509 certificate that key issues itself (`caps/receipt/der.js`);
   - the issuer is the RFC 9278 thumbprint URI of that key;
   - the words, shared files and made files are salted SD-JWT disclosures, kept in the conversation (`meta.certificate`);
+  - where it was done (Jean's address, each brain's and maker's outside the device, what the page reached) is salted too, kept whole as `places`, which a share's proof leaves out (D361);
   - the `.sd-jwt` proof carries them;
   - the schema is `caps/receipt/certificate.schema.json`;
   - Settings › Approvals shows the seal's fingerprint.

@@ -264,6 +264,7 @@
   "cap.backup.name": "Cópia de segurança",
   "cap.backup.offer": "As tuas tarefas só existem neste navegador. Guardar uma cópia de tudo?",
   "cap.backup.yes": "Transferir uma cópia de segurança",
+  "cap.share.name": "Partilha",
   "cap.sync.name": "Sincronização",
   "cap.sync.offer": "Manter as tuas tarefas, os teus ficheiros e a memória iguais nos teus outros computadores? Escolhes uma pasta que o teu armazenamento na nuvem sincroniza.",
   "cap.sync.yes": "Escolher uma pasta",

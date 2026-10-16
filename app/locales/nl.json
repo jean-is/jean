@@ -260,6 +260,7 @@
   "cap.backup.name": "Back-up",
   "cap.backup.offer": "Je taken bestaan alleen in deze browser. Een kopie van alles bewaren?",
   "cap.backup.yes": "Een back-up downloaden",
+  "cap.share.name": "Delen",
   "cap.sync.name": "Synchronisatie",
   "cap.sync.offer": "Je taken, bestanden en het geheugen gelijk houden op je andere computers? Je kiest een map die je cloudopslag synchroniseert.",
   "cap.sync.yes": "Een map kiezen",

@@ -1,7 +1,7 @@
 // The render package, @codename/jean-render (D305): Jean's own files, as they are in app/ and at
-// the same paths, that draw a task saved as a web page as Jean draws it. `renderPlan` says what it
-// holds, which `npm run manifest` lists in capabilities.json; `npm run render` puts it in
-// dist/render/, ready for `npm publish ./dist/render`.
+// the same paths, that draw a task saved as a web page as Jean draws it, and the viewer of a share's
+// host (D361). `renderPlan` says what it holds, which `npm run manifest` lists in capabilities.json;
+// `npm run render` puts it in dist/render/, ready for `npm publish ./dist/render`.
 // Usage: npm run render
 import { createHash } from 'node:crypto'
 import { cp, mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
@@ -16,6 +16,8 @@ export const NAME = '@codename/jean-render'
 
 /** What a saved copy loads first. */
 export const ENTRY = 'ui/reader.js'
+/** What a share's viewer loads first, on its host (D361). */
+export const VIEWER = 'caps/share/view.js'
 /** Modules the copy loads in place of the room's: what draws answers reads the page, not Jean's storage. */
 export const STAND_INS = Object.freeze({ 'ui/state.js': 'ui/reader-state.js' })
 /** What its modules read as files rather than import (style sheets, words, fonts, the pages' relay and the libraries lent to pages), whole folders included. */
@@ -36,7 +38,7 @@ const DYNAMIC = /\bimport\(\s*(?:'(\.\/[^']+)'|new URL\('([^']+)', import\.meta\
 export async function renderModules(read) {
   const importMap = parseImportMap(await read('index.html') ?? '')
   const stood = /** @type {Record<string, string>} */ (STAND_INS)
-  const queue = [ENTRY]
+  const queue = [ENTRY, VIEWER]
   const seen = new Set(queue)
   const found = []
   const optional = new Set()
@@ -80,7 +82,7 @@ export async function renderListing(root, read) {
   const hash = createHash('sha256')
   for (const path of await renderFiles(root, files)) hash.update(`${path}\0`).update(await readFile(join(root, path)))
   const { version } = JSON.parse(await readFile(join(root, '..', 'package.json'), 'utf8'))
-  return { version: `${version}-r${hash.digest('hex').slice(0, 12)}`, entry: ENTRY, files, map: STAND_INS }
+  return { version: `${version}-r${hash.digest('hex').slice(0, 12)}`, entry: ENTRY, viewer: VIEWER, files, map: STAND_INS }
 }
 
 async function main() {
@@ -95,7 +97,7 @@ async function main() {
   await cp(join(ROOT, 'LICENSE'), join(out, 'LICENSE'))
   const { repository } = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
   await writeFile(join(out, 'package.json'), `${JSON.stringify({
-    name: NAME, version: listing.version, description: 'Draws a task that Jean saved as a web page, with Jean\'s own files.',
+    name: NAME, version: listing.version, description: 'Draws a task that Jean saved as a web page, or shared by link, with Jean\'s own files.',
     license: 'MIT', type: 'module', ...(repository && { repository }), publishConfig: { access: 'public', tag: 'latest' },
   }, null, 2)}\n`)
   await writeFile(join(out, 'README.md'), `# ${NAME}\n\nThe files with which a task Jean saved as a web page draws itself, as Jean draws it: Jean's own, as they are in its app/ folder, at the same paths, and the libraries they use, whose licences are in vendor/LICENSES. A saved page names the version it was made with.\n`)
