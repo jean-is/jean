@@ -19,7 +19,7 @@
 //        npm run longtasks -- --tasks 20 --translated 3  GDPval tasks, and how many of them also in fr, ar and ja
 //        npm run longtasks -- --lang en,fr --k 3         the scenarios' languages, and runs of each for pass^k
 //        npm run longtasks -- --scenarios prices         some of the scenarios (test/longtasks/scenarios.js)
-//        npm run longtasks -- --cut 4 --most 60          where a task is cut short, and the brain steps any run stops at
+//        npm run longtasks -- --cut 2 --most 60          the block a cut task stops at, and the brain steps any run stops at
 //        npm run longtasks -- --window 32000             the brain's window GDPval's runs are given, in tokens (D359)
 //        npm run longtasks -- --parallel 4               tasks at a time
 //        npm run longtasks -- --write                    also write this brain's section of test/longtasks/results.md
@@ -30,6 +30,8 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { chooseBrain } from '../cli/brain.js'
+import { nodeFS } from '../cli/fs.js'
+import { loadConversation } from '../app/core/conversations.js'
 import { runTask, textOf, willing } from '../test/longtasks/jean.js'
 import { simulated } from '../test/longtasks/people.js'
 import { SCENARIOS } from '../test/longtasks/scenarios.js'
@@ -70,7 +72,7 @@ async function main(argv, env) {
   const options = {
     parts: flag('--parts', 'gdpval,steering,checkpoints,diagnosis').split(','),
     tasks: Number(flag('--tasks', '20')), translated: Number(flag('--translated', '3')), langs: /** @type {Lang[]} */ (flag('--lang', 'en,fr,ar,ja').split(',')),
-    k: Number(flag('--k', '3')), window: Number(flag('--window', '32000')), cut: Number(flag('--cut', '4')), parallel: Number(flag('--parallel', '4')),
+    k: Number(flag('--k', '3')), window: Number(flag('--window', '32000')), cut: Number(flag('--cut', '2')), parallel: Number(flag('--parallel', '4')),
     most: Number(flag('--most', '60')), scenarios: SCENARIOS.filter((scenario) => !only.length || only.includes(scenario.id)),
   }
   try {
@@ -153,7 +155,14 @@ function once(results, what, run, more) {
 async function kept(results, part) {
   const dir = `${results}${part}/`
   if (!existsSync(dir)) return []
-  return Promise.all((await readdir(dir)).filter((name) => name.endsWith('.json')).map(async (name) => JSON.parse(await readFile(`${dir}${name}`, 'utf8'))))
+  const conversations = nodeFS(`${CACHE}runs/.jean`)
+  return Promise.all((await readdir(dir)).filter((name) => name.endsWith('.json')).map(async (name) => {
+    /** @type {Kept} */
+    const run = JSON.parse(await readFile(`${dir}${name}`, 'utf8'))
+    // Its plan and summaries read again from its conversation, so that a reading mended since counts for runs kept before.
+    const records = (await loadConversation(conversations, run.path).catch(() => null))?.records
+    return records ? { ...run, plan: planOf(records), summaries: summariesOf(records, run.lang) } : run
+  }))
 }
 
 // ─── GDPval ──────────────────────────────────────────────────────────────────
@@ -373,7 +382,7 @@ async function report(named, { judge: judgeName, person }, results, { k, window,
         pct(mean(list.flatMap((v) => [v.onOff, v.onExpert, v.offExpert]).map((v) => (v.consistent ? 1 : 0))))]
     })
     const english = groups.English.map((v) => v.onOff)
-    if (english.length && winRate(english.map((v) => v.verdict), 'A') < 0.5) worse.push(`GDPval: the judge preferred the runs with the features off (on's win rate ${pct(winRate(english.map((v) => v.verdict), 'A'))}).`)
+    if (english.length && winRate(english.map((v) => v.verdict), 'A') < 0.5) worse.push(`GDPval: the judge preferred the runs with the features off, on's win rate ${pct(winRate(english.map((v) => v.verdict), 'A'))} (on better ${english.filter((v) => v.verdict === 'A').length}, off better ${english.filter((v) => v.verdict === 'B').length}, ${english.filter((v) => v.verdict === 'tie').length} ties of ${english.length}).`)
     const byCondition = ['on', 'off'].map((condition) => gdpval.filter((run) => run.condition === condition))
     parts.push(`### GDPval, ${new Set(gdpval.map((run) => run.task)).size} tasks of its gold subset
 
@@ -401,15 +410,23 @@ ${table(['Task', 'Occupation', 'Language', 'Files made, on / off', 'Verdict', 'R
     })
     const langs = [...new Set(steering.map((run) => run.lang))]
     const byLang = langs.map((lang) => [lang, ...['steer', 'wait'].map((condition) => pct(passHat(grouped(steering.filter((run) => run.lang === lang && run.condition === condition)), 1)))])
-    const [steer, wait] = ['steer', 'wait'].map((condition) => passHat(grouped(steering.filter((run) => run.condition === condition)), k))
-    if (steer < wait) worse.push(`Steering: pass^${k} was lower when the change of mind was read while Jean worked (${pct(steer)}) than when it was sent once it answered (${pct(wait)}).`)
+    const byScenario = [...new Set(steering.map((run) => run.task))].map((task) => [task, ...['steer', 'wait'].flatMap((condition) => {
+      const list = steering.filter((run) => run.task === task && run.condition === condition)
+      return [pct(passHat(grouped(list), 1)), pct(passHat(grouped(list), k)), num(mean(list.map((run) => run.plan.steps)))]
+    })])
+    for (const n of new Set([1, k])) {
+      const [steer, wait] = ['steer', 'wait'].map((condition) => passHat(grouped(steering.filter((run) => run.condition === condition)), n))
+      if (steer < wait) worse.push(`Steering: pass^${n} was lower when the change of mind was read while Jean worked (${pct(steer)}) than when it was sent once it answered (${pct(wait)}).`)
+    }
     parts.push(`### Steering and approvals, τ-bench's way
 
 A person played by ${person ? `a second brain, ${person},` : 'the same brain'} asks for a task, then changes their mind after two steps; they answer Jean's questions and approvals (each file made or changed is asked first) from what they want at that point. Success is every checkpoint of the changed request met at the end. pass^k is the chance that k runs in a row all succeed (${k} ${k === 1 ? 'run' : 'runs'} of each scenario and language).
 
 ${table(['The change of mind', ...Array.from({ length: k }, (_, i) => `pass^${i + 1}`), 'Checkpoints (partial credit)', 'Brain steps', 'Approvals asked / declined', 'Failed'], rows)}
 
-${table(['Language', 'pass^1 sent while it works', 'pass^1 sent once it answered'], byLang)}`)
+${table(['Language', 'pass^1 sent while it works', 'pass^1 sent once it answered'], byLang)}
+
+${table(['Scenario', 'pass^1 sent while it works', `pass^${k}`, 'Brain steps', 'pass^1 sent once it answered', `pass^${k}`, 'Brain steps'], byScenario)}`)
   }
 
   const checkpoints = await kept(results, 'checkpoints')
@@ -424,9 +441,12 @@ ${table(['Language', 'pass^1 sent while it works', 'pass^1 sent once it answered
         num(mean(list.filter((run) => run.blocks.length > 1).map((run) => run.blocks.filter((block) => block.plan).length))),
         stopped.length ? `${list.reduce((n, run) => n + (run.redone?.again ?? 0), 0)} of ${list.reduce((n, run) => n + (run.redone?.after ?? 0), 0)}` : '—']
     })
-    const [whole, cutScore, planScore] = ['whole', 'cut', 'plan'].map((condition) => mean(checkpoints.filter((run) => run.condition === condition).map((run) => score(checksOf(run)))))
-    if (planScore < cutScore) worse.push(`Checkpoints: with a plan, a task cut short scored less (${pct(planScore)}) than without one (${pct(cutScore)}).`)
-    if (cutScore < whole) worse.push(`Checkpoints: cut short and resumed with Keep going, tasks scored ${pct(cutScore)} against ${pct(whole)} whole.`)
+    // Only what was cut: a task done before the cut says nothing of it.
+    const cutShort = (/** @type {string} */ condition) => checkpoints.filter((run) => run.condition === condition && run.stopMade)
+    const whole = mean(checkpoints.filter((run) => run.condition === 'whole').map((run) => score(checksOf(run))))
+    const [cutScore, planScore] = ['cut', 'plan'].map((condition) => mean(cutShort(condition).map((run) => score(checksOf(run)))))
+    if (planScore < cutScore) worse.push(`Checkpoints: with a plan, tasks cut short scored less (${pct(planScore)}, ${cutShort('plan').length} cut) than without one (${pct(cutScore)}, ${cutShort('cut').length} cut).`)
+    if (cutScore < whole) worse.push(`Checkpoints: cut short and resumed with Keep going, tasks scored ${pct(cutScore)} (${cutShort('cut').length} cut) against ${pct(whole)} whole.`)
     parts.push(`### Long tasks cut short, TheAgentCompany's way
 
 Each long scenario in each language, its checkpoints read from the files Jean left; partial credit is half the share of checkpoints passed, plus half when all are. A cut task stops after ${cut} steps and the person presses Keep going up to three times; with a plan, a confirmed plan that moved carries it on by itself first.
@@ -443,7 +463,7 @@ ${table(['Run', 'Runs', 'Score', 'All checkpoints', 'Score at the first stop', '
       const cited = list.filter((summary) => summary.cited)
       return [lang, all.filter((run) => run.lang === lang && run.summaries.length).length, list.length, pct(mean(list.map((summary) => (summary.inLanguage ? 1 : 0)))),
         cited.length ? `${pct(mean(cited.map((summary) => summary.kept / summary.cited)))} (${cited.length})` : '—', pct(mean(list.map((summary) => (summary.request ? 1 : 0)))),
-        pct(mean(list.map((summary) => (summary.notes ? 1 : 0))))]
+        pct(mean(list.filter((summary) => summary.notes !== null).map((summary) => (summary.notes ? 1 : 0))))]
     })
     const withPlan = all.filter((run) => ['on', 'steer', 'wait', 'plan', 'small window', 'one step'].includes(run.condition))
     const long = withPlan.filter((run) => run.condition !== 'one step')

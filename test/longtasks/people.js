@@ -4,6 +4,7 @@
 import { streamChat, LLMError } from '../../app/core/llm.js'
 import { languageName } from '../../app/core/i18n.js'
 import { start } from '../../app/caps/ask/answers.js'
+import { diffLines } from '../../app/caps/folders/work.js'
 import { jsonIn } from './score.js'
 
 /** @import { Brain, User } from './jean.js' */
@@ -58,8 +59,10 @@ export function simulated(chosen, { lang, request, goal, changed, change, after 
     },
     approve: async (toolCall) => {
       said.approvals++
-      const shown = (toolCall.content ?? []).map((part) => (part.type === 'diff' ? `Change to ${part.path}:\n--- before\n${String(part.oldText ?? '(a new file)').slice(0, 3000)}\n+++ after\n${part.newText.slice(0, 3000)}` : '')).join('\n')
-      const text = await say(chosen, mind(), `The assistant asks your permission before it does this: ${toolCall.title}\n${shown || JSON.stringify(toolCall.rawInput ?? {}).slice(0, 3000)}\n\nShould it? Answer with one word, yes or no. Say no only if it goes against what you want now.`, { maxTokens: 512 })
+      // What the card shows: a change's lines, removed (-) and added (+) among a few that stay; else what it would do.
+      const shown = (toolCall.content ?? []).flatMap((part) => (part.type === 'diff'
+        ? [`${part.path}:\n${diffLines(part.oldText ?? null, part.newText, 2).rows.map((row) => `${row.kind} ${row.text}`).join('\n').slice(0, 4000)}`] : [])).join('\n')
+      const text = await say(chosen, mind(), `The assistant asks before it does one step of the work: ${toolCall.title}\n${shown || JSON.stringify(toolCall.rawInput ?? {}).slice(0, 4000)}\n\nIs this step in line with what you want now? It may do only part of the work: more steps may follow. Answer with one word, yes or no. Say no only if it does something you don't want: a wrong number, the wrong file, or what you changed your mind about.`, { maxTokens: 512 })
       const no = /^\W*(no|non)\b/i.test(text)
       if (no) said.declined++
       return no ? 'reject_once' : 'allow_once'

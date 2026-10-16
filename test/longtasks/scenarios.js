@@ -25,8 +25,8 @@ import { gives, names } from './score.js'
 export const LANGS = /** @type {Lang[]} */ (['en', 'fr', 'ar', 'ja'])
 const encoder = new TextEncoder()
 
-/** @param {Made[]} made @param {RegExp} kind */
-const one = (made, kind) => made.find((file) => kind.test(file.name))
+/** The file of a kind Jean made last: one made again under another name after a change of mind is the answer. @param {Made[]} made @param {RegExp} kind */
+const one = (made, kind) => made.findLast((file) => kind.test(file.name))
 /** @param {string} name @param {boolean} pass @returns {Check} */
 const check = (name, pass) => ({ name, pass })
 

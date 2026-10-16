@@ -122,7 +122,8 @@ export const brainSteps = (records) => records.filter(({ update }) => update?.se
 
 /**
  * What each summary of a run kept (D359, D363): the brain's words, in the conversation's language or not; the source
- * numbers cited before it that it gives again; and whether what Jean adds holds the request at work and the notes in force.
+ * numbers cited before it that it gives again; and whether what Jean adds holds the request at work and the notes in force
+ * (null where none was in force).
  * @param {Envelope[]} records @param {string} lang
  */
 export function summariesOf(records, lang) {
@@ -136,9 +137,16 @@ export function summariesOf(records, lang) {
     }))
     const kept = [...cited].filter((n) => text.includes(`[${n}]`))
     return [{ reason: update._meta?.reason, language: languageOf(text), inLanguage: languageOf(text) === lang, cited: cited.size, kept: kept.length,
-      request: /<request>[\s\S]+<\/request>/.test(read), notes: read.includes('Notes in force:'), chars: text.length }]
+      // Notes in force are kept only where there were some: null where there were none to keep.
+      request: /<request>[\s\S]+<\/request>/.test(read), notes: standing(records.slice(0, i)) ? read.includes('Notes in force:') : null, chars: text.length }]
   })
 }
+
+/** The kinds of note that hold until another of their kind, as caps/compact/compact.js keeps them. */
+const STANDING = ['language', 'date', 'section', 'tools', 'switch']
+
+/** Whether records hold a note in force. @param {Envelope[]} records */
+const standing = (records) => records.some(({ update }) => update?.sessionUpdate === '_system_note' && STANDING.includes(update.data.kind))
 
 /**
  * The work a run did again after it stopped (TheAgentCompany's question of what a cut costs): the calls after step

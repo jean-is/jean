@@ -70,7 +70,9 @@ test("a summary's language, the sources it gives again, and what Jean adds", () 
   const records = [record('agent_message_chunk', { content: { type: 'text', text: 'As the file says [1], and the other [2].' } }),
     record('compaction_update', { status: 'completed', summary: [{ type: 'text', text: "L'utilisateur veut un tableau des dépenses [1] pour le semestre et une note." }],
       _meta: { reason: 'window', text: '<summary>…</summary>\n\nNotes in force:\n- Today is 2026-10-16.\n\nThe request being worked on, word for word:\n<request>\nFais le tableau\n</request>' } })]
-  assert.deepEqual(summariesOf(records, 'fr'), [{ reason: 'window', language: 'fr', inLanguage: true, cited: 2, kept: 1, request: true, notes: true, chars: 76 }])
+  assert.deepEqual(summariesOf(records, 'fr'), [{ reason: 'window', language: 'fr', inLanguage: true, cited: 2, kept: 1, request: true, notes: null, chars: 76 }])
+  const noted = [record('_system_note', { text: 'Today is 2026-10-16.', data: { kind: 'date', date: '2026-10-16' } }), ...records]
+  assert.equal(summariesOf(noted, 'fr')[0].notes, true)
 })
 
 test('work done again after a stop: the same call with the same arguments', () => {
