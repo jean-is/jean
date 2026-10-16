@@ -31,6 +31,7 @@
     "offers": "npm run build && node scripts/offers.js",
     "concepts": "node scripts/concepts.js",
     "documents": "node scripts/documents.js",
+    "longtasks": "node scripts/longtasks.js",
     "directory": "node scripts/directory.js",
     "csp": "node scripts/csp.js"
   },

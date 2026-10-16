@@ -104,6 +104,7 @@ npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang f
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
 npm run concepts  # read the picture check's words into app/caps/pictures/concepts.json, after changing one (D280)
 npm run documents # the document evals: corpus, retrieval, answers through OpenRouter, benches (-- --report --write)
+npm run longtasks # Jean's long-task features against the same brain without them: GDPval, steering, checkpoints, summaries and plans (BRAIN=<provider>:<model>, -- --write)
 npm run directory # check from a browser's point of view which known services and sources of skills Jean can reach
 npm run csp     # the pages' policies in every browser here: Playwright's engines, Chrome and Edge themselves, then Safari and Firefox over WebDriver (D326)
 npm run serve   # serve app/ as it is

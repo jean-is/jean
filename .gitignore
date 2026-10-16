@@ -14,3 +14,5 @@ dist/
 
 # The document evals’ generated corpora and vectors (npm run documents)
 test/documents/.cache/
+# The long-task evals’ runs, GDPval as fetched, its translations, and pairs to grade by hand (npm run longtasks)
+test/longtasks/.cache/
