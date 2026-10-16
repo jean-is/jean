@@ -51,7 +51,7 @@
 :root[data-look='velvet'] .bar { border-block-end: 1px solid var(--line); background: var(--room); }
 :root[data-look='velvet'] .welcome { align-items: center; text-align: center; }
 :root[data-look='velvet'] .welcome app-persona { margin-inline: 0; }
-:root[data-look='velvet'] .starters { justify-content: center; }
+:root[data-look='velvet'] :is(.starters, .pitch ul) { justify-content: center; }
 :root[data-look='velvet'] .hero-question { margin-inline: 0; padding-inline: 0.15em; font-weight: 400; }
 :root[data-look='velvet'] .prose :is(h3, h4) { font-family: var(--display); font-weight: 600; font-size: 1.2rem; }
 :root[data-look='velvet'] .msg-user { border: 1px solid var(--line-strong); background: oklch(from var(--flame) l c h / 0.07); }

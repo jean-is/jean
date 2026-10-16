@@ -3,7 +3,8 @@
 // the conversation, in the address (D137), a reload comes back to the line being read, and an
 // earlier conversation opens at its end. A request whose connection drops before its answer starts
 // is asked again (D202), and a key connects though its service is too busy to list its models.
-// Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273).
+// Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
+// task, the welcome says what Jean is, the box under the question on a wide window, at the foot on a phone (D366).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
@@ -51,6 +52,32 @@ test('once a task has started, a line under the box says the assistant is an AI,
   await expect(page.locator('#prompt')).toHaveAccessibleDescription('')
 })
 
+test('before any task, the welcome says what Jean is; the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas (D366)', async ({ page }) => {
+  await start(page)
+  const pitch = page.locator('.pitch')
+  await expect(pitch.locator('p')).toHaveText('Bring your files and questions. Get back answers, documents and charts, right in this tab.')
+  await expect(pitch.locator('li')).toHaveText(['Nothing to install', 'Kept on this device', 'Free and open source'])
+  const top = async (/** @type {string} */ selector) => (await page.locator(selector).boundingBox())?.y ?? 0
+  const { width, height } = page.viewportSize() ?? { width: 1280, height: 720 }
+  expect(await top('.composer')).toBeLessThan(height * 0.7)
+  expect(await top('.starters')).toBeGreaterThan(await top('.composer'))
+  expect(await top('.legal')).toBeGreaterThan(height - 48)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await expect(async () => {
+    expect(await top('.composer')).toBeGreaterThan(844 * 0.7)
+    expect(await top('.starters')).toBeLessThan(await top('.composer'))
+  }).toPass()
+  await page.setViewportSize({ width, height })
+  // Once there is a task, a new one says nothing more.
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(pitch).toHaveCount(0)
+  await expect(page.locator('.starter')).toHaveCount(4)
+})
+
 test('a request whose connection drops before its answer starts is asked again after a moment, saying so (D202)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
@@ -76,7 +103,7 @@ test('a key whose service is too busy to list its models connects all the same, 
   let listed = 0
   await page.route('https://generativelanguage.googleapis.com/**', (route) => (listed++, route.fulfill({ status: 429, json: { error: { code: 429, status: 'RESOURCE_EXHAUSTED' } } })))
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-first dialog[open]')
+  const dialog = page.locator('app-first .first')
   await dialog.locator('.first-doors button').first().click()
   const way = dialog.locator('.way.is-key')
   await way.locator('summary').click()
