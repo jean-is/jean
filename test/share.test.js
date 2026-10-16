@@ -191,6 +191,7 @@ test('the viewer is the same page for every share, unindexed, and draws in an op
   const { ask } = hostOn()
   const page = await ask(`/${newId()}`)
   assert.equal(page.status, 200)
+  assert.equal((await ask(`/${newId()}`, { method: 'HEAD' })).status, 200)
   assert.equal(page.headers.get('x-robots-tag'), 'noindex')
   const policy = String(page.headers.get('content-security-policy'))
   assert.match(policy, /script-src https:\/\/cdn\.example 'sha256-/)

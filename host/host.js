@@ -99,12 +99,14 @@ export function host(config) {
       cors.set('access-control-allow-headers', 'authorization, content-type, share-days, share-proof')
       return new Response(null, { status: 204, headers: cors })
     }
-    if (url.pathname === '/' && request.method === 'GET') return answer(200, { format: 1, limit: LIMIT, days: DAYS })
-    if (url.pathname === '/frame' && request.method === 'GET') return new Response(RELAY, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': framed, 'x-content-type-options': 'nosniff', 'cache-control': 'public, max-age=3600' } })
+    // A HEAD is answered as a GET is, as link previews ask.
+    const reading = request.method === 'GET' || request.method === 'HEAD'
+    if (url.pathname === '/' && reading) return answer(200, { format: 1, limit: LIMIT, days: DAYS })
+    if (url.pathname === '/frame' && reading) return new Response(RELAY, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': framed, 'x-content-type-options': 'nosniff', 'cache-control': 'public, max-age=3600' } })
     const [, id, report] = ID.exec(url.pathname) ?? []
     if (!id) return answer(404, { error: 'Nothing is here.' })
     if (!url.pathname.startsWith('/v1/')) {
-      if (request.method !== 'GET' || !page) return answer(404, { error: 'Nothing is here.' })
+      if (!reading || !page) return answer(404, { error: 'Nothing is here.' })
       return new Response(page, { headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': await policy, 'x-content-type-options': 'nosniff', 'x-robots-tag': 'noindex', 'referrer-policy': 'no-referrer', 'cache-control': 'public, max-age=300' } })
     }
 
@@ -131,7 +133,7 @@ export function host(config) {
       return answer(202, {})
     }
 
-    if (request.method === 'GET') {
+    if (reading) {
       if (meta?.removed) return answer(410, { error: 'This was taken down.' })
       if (!live) return answer(404, { error: 'This is no longer shared.' })
       if (live.proof) {
