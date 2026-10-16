@@ -80,12 +80,14 @@ test('⌘B opens the drawer or puts it away, beside the conversation or over it,
   await start(page)
   const tasks = page.locator('app-inbox')
   await expect(page.locator('.sidebar-toggle')).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+B$/)
-  // Human's first screen has it open beside the conversation (D174); what is typed stays.
-  await expect(tasks).toBeVisible()
+  // Human's first screen has it put away while the room has no task (D174, D369); what is typed stays.
+  await expect(tasks).toHaveCount(0)
   await page.locator('#prompt').fill('Hello')
   await page.keyboard.press('ControlOrMeta+KeyB')
-  await expect(tasks).toHaveCount(0)
+  await expect(tasks).toBeVisible()
   await expect(page.locator('#prompt')).toHaveValue('Hello')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(tasks).toHaveCount(0)
   await page.keyboard.press('ControlOrMeta+KeyB')
   await expect(tasks).toBeVisible()
   // A dialog over the room closes, and the drawer stays.

@@ -13,6 +13,7 @@ const savedName = (page) => page.evaluate(async () => JSON.parse(await (await im
 
 test('the user’s menu changes the theme, the language and the mode, staying open, and opens Settings', async ({ page }) => {
   await start(page)
+  await openTasks(page)
   await expect(page.locator('app-inbox .profile-name')).toHaveText('You')
   // A theme picked there shows at once; the drawer stays open beside the conversation, the menu on its page.
   const menu = await openProfile(page)

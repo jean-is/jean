@@ -33,8 +33,9 @@ export async function start(page, lang = 'en') {
   await expect(page.locator('.hero-question')).toBeVisible()
   // The box has the keyboard from the start.
   await expect(page.locator('#prompt')).toBeFocused()
-  // The language is picked in Settings, its first choice.
-  const settings = await openSettings(page)
+  // The language is picked in Settings, its first choice, opened by its key so the drawer stays as a first visit has it (D369).
+  await page.keyboard.press('ControlOrMeta+Comma')
+  const settings = page.locator('app-settings dialog[open]')
   await settings.locator('.settings-panel select').first().selectOption(lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
   await closeSettings(page)

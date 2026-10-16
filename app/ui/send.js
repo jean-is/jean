@@ -17,7 +17,7 @@ import { getSecret } from './secrets.js'
 import { unlock, contributions, slots } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -283,19 +283,25 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id }, () => {})
   }
   await keepRecords(current.path, added)
-  // Listed at once, to come back to.
-  if (!current.records.length) refreshConversations()
+  // Listed at once, to come back to; the room's first as the page turns below, the drawer it opens with it (D369).
+  const first = !current.records.length && !app.conversations.value.length
+  if (!current.records.length && !first) refreshConversations()
   const next = { ...current, records: [...current.records, ...added] }
   // Each file it shares may set a routine off (D294), unless this is a routine's own run.
   const routine = routineOf(next.records)?.routine
   for (const file of linkedFiles(added)) fire(contributions().hooks, 'file.add', { task: next.path, file, routine }, () => {})
-  const show = () => { app.current.value = next }
+  const show = async () => {
+    if (first) await refreshConversations()
+    // Drawn before the new view is captured, as when it slides (D234).
+    if (first && sidebarOpen.peek()) await import('./inbox.js')
+    app.current.value = next
+  }
   // Unless the user went elsewhere meanwhile: then it is answered out of sight (D147).
   if (app.current.peek()?.path === from) {
     // The big welcome question morphs into the conversation title.
     if (!current.records.length && document.startViewTransition) await document.startViewTransition(show).updateCallbackDone
-    else show()
-  }
+    else await show()
+  } else if (first) refreshConversations()
   // The title is written alongside the answer (D112).
   if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
   await runAgent(next, brain, meta, call)

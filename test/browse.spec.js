@@ -298,12 +298,13 @@ test('the browser and a file share the side of the window, neither covering the 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await start(page)
   await connectFakeBrain(page)
-  // The drawer put away, the window is the conversation's and the dock's (D165).
-  await closeTasks(page)
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
   await ask(page, 'Here is my table')
+  // The drawer, open with the first task (D369), put away: the window is the conversation's and the dock's (D165).
+  await expect(page.locator('app-inbox')).toBeVisible()
+  await closeTasks(page)
   await page.locator('.msg-files .file-chip').click()
   const preview = page.locator('app-preview .preview')
   const pane = page.locator('app-browser .browser')

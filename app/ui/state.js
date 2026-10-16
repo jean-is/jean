@@ -172,11 +172,11 @@ export function switchTheme() {
 }
 
 // The drawer open beside the conversation or put away (D165) belongs to this device too, as the
-// user left it; until then, to the look: Mail and Human keep it open, the others put it away.
+// user left it; until then, to the look: Mail and Human keep it open once the room has a task (D369), the others put it away.
 export const SIDEBAR_KEY = 'app.sidebar'
 
 /** Whether the drawer is open beside the conversation now: a wide window, and the user's choice or the look's. */
-export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?? LOOKS[app.look.value].list === true))
+export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?? (LOOKS[app.look.value].list === true && app.conversations.value.length > 0)))
 
 /** The drawer open beside the conversation, or put away, from now on on this device. @param {boolean} open */
 export function setSidebar(open) {
@@ -245,9 +245,9 @@ export async function enterProject(project) {
   // What is under way stops: its calls work in the room on screen.
   for (const run of runs.values()) halt(run)
   newConversation()
+  const conversations = await listConversations(app.fs, project.dir)
   app.project.value = project
-  app.conversations.value = []
-  await refreshConversations()
+  app.conversations.value = conversations
 }
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */
