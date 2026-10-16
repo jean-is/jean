@@ -2,7 +2,7 @@
 
 ## Who and what
 
-- **One sentence:** Jean is an AI agent that runs in a browser tab. Nothing to install, no account, and your files never leave your machine.
+- **One sentence:** AI for your files, in a browser tab. Nothing to install, kept on your device, free and open source. Give Jean a spreadsheet, a PDF or a folder of documents, and get back the chart, the table or the report.
 - **First user:** a non-technical knowledge worker. Assume a managed Windows laptop running Edge or Chrome, a weak graphics chip and IT policies.
 - **The job:** drop in files (CSVs, PDFs, a folder of invoices). Jean reads them, works things out by running real code, and hands back files: a report, a spreadsheet, a chart.
 - **The browser is the security model.** The category's biggest problem is agents with shell access on your laptop. Jean stays inside the most battle-tested sandbox there is.

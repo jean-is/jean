@@ -1,6 +1,6 @@
 # Jean
 
-> An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.
+> AI for your files, in a browser tab. Give Jean a spreadsheet, a PDF or a folder of documents, and get back the chart, the table or the report. Nothing to install, kept on your device, free and open source.
 
 Jean is for people who will never open a terminal. You open a page, give it a task and your files, and it reads them, works things out with real calculations, and hands back something you can use: a summary, a table, a document. It shows what it is doing while it works, and it asks before anything that matters.
 
@@ -54,8 +54,8 @@ Jean starts as a single box. Everything above is offered when you need it, like 
 
 | | 0.8 |
 |---|---|
-| Jean's own code | 20,429 lines of code, the core 1,755 of them |
-| First load | 96.3 KB gzipped, in the language with the largest catalogue |
+| Jean's own code | 27,200 lines of code, the core 1,947 of them |
+| First load | 107.8 KB gzipped, in the language with the largest catalogue |
 | Libraries loaded up front | 3: `@preact/signals-core`, `lit-html`, `marked` |
 | Build step | None: plain ES modules and an import map |
 | Base prompt | 182 tokens |

@@ -10,7 +10,7 @@
 root.dataset.theme = localStorage.getItem('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
 if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
 <meta name="referrer" content="no-referrer">
-<meta name="description" content="An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.">
+<meta name="description" content="AI for your files, in a browser tab. Give it a spreadsheet, a PDF or a folder of documents, and get back the chart, the table or the report. Nothing to install, kept on your device, free and open source.">
 <title></title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">

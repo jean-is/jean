@@ -2,7 +2,7 @@
   "name": "jean",
   "version": "0.8.0",
   "private": true,
-  "description": "An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.",
+  "description": "AI for your files, in a browser tab. Give it a spreadsheet, a PDF or a folder of documents, and get back the chart, the table or the report. Nothing to install, kept on your device, free and open source.",
   "license": "MIT",
   "type": "module",
   "scripts": {
