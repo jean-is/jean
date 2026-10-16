@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { DESKTOP, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles } from '../scripts/desktop.js'
+import { DESKTOP, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles, shortCopies } from '../scripts/desktop.js'
 import { addressesIn } from '../app/ui/host.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -105,5 +105,9 @@ describe('desktop', () => {
       // No Markdown but the skills of Jean's own directory (D196).
       assert.doesNotMatch(path, /(?<!\/SKILL)\.md$|\.d\.ts$|(^|\/)\./, path)
     }
+  })
+
+  it('answers the privacy policy and the terms at their addresses without .html, from a folder of that name (D356)', async () => {
+    assert.deepEqual(shortCopies(await shippedFiles(join(ROOT, 'app'))), [['privacy.html', 'privacy/index.html'], ['terms.html', 'terms/index.html']])
   })
 })

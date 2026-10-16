@@ -3,7 +3,7 @@
 // questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
-// is an AI and can make mistakes (EU AI Act, art. 50; D273).
+// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, it links to the privacy policy and terms (D356).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
@@ -11,7 +11,8 @@ import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
-import { t } from '../core/i18n.js'
+import { t, locale } from '../core/i18n.js'
+import { serviceURL } from '../core/settings.js'
 import { requestsOf } from '../core/events.js'
 import { icons } from './icons.js'
 import { dictation, toggleDictation, live } from './dictation.js'
@@ -54,6 +55,7 @@ class Composer extends Element {
     const menu = more.length > 0
     const add = t(menu ? 'composer.add' : 'files.attach')
     const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
+    const legal = /** @type {const} */ (['privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
         ${repeat(asked, (decision) => decision.id, (decision) => html`<app-ask .decision=${decision}></app-ask>`)}
@@ -98,7 +100,8 @@ class Composer extends Element {
         </div>
         ${files ? html`<input type="file" multiple class="visually-hidden" tabindex="-1" aria-hidden="true" @change=${this.#pick}>` : nothing}
       </form>
-      ${app.current.value?.records.length ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>` : nothing}`
+      ${app.current.value?.records.length ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
+        : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${`${url}#${locale.value}`} target="_blank">${t(`welcome.${name}`)}</a>`)}</p>` : nothing}`
   }
 
   connectedCallback() {

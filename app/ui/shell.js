@@ -5,8 +5,7 @@ import { Element, define } from './base.js'
 import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, APPLE, SHORTCUTS } from './state.js'
 import { SIZES, loaded, unlock, isDenied, slots } from './caps.js'
 import { BRAND } from '../brand.js'
-import { t, formatBytes, locale } from '../core/i18n.js'
-import { serviceURL } from '../core/settings.js'
+import { t, formatBytes } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer } from './composer.js'
 import { toggleDictation } from './dictation.js'
@@ -149,15 +148,12 @@ function offerAside() {
 }
 
 function welcome() {
-  // The privacy policy and terms, in Jean's language where they have it (D356).
-  const pages = /** @type {const} */ (['privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url).map(([name, url], i) => html`${i ? ' · ' : ''}<a class="link-button" href=${`${url}#${locale.value}`} target="_blank">${t(`welcome.${name}`)}</a>`)
   return html`<section class="welcome">
     <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>
     <ul class="starters">${STARTERS.map((key) => html`<li>
       <button class="starter" @click=${() => { app.draft.value = t(`starter.${key}.prompt`); focusComposer() }}>${t(`starter.${key}`)}</button>
     </li>`)}</ul>
-    ${pages.length ? html`<p class="small muted">${pages}</p>` : nothing}
   </section>`
 }
 

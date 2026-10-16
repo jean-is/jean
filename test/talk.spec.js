@@ -26,10 +26,12 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
 
 test('once a task has started, a line under the box says the assistant is an AI, and the box says it to a screen reader (D273)', async ({ page }) => {
   await start(page)
-  // Not on the welcome: nothing has been asked yet.
+  // Not on the welcome: nothing has been asked yet. The line links to the privacy policy and the terms instead (D356).
   await expect(page.locator('.ai-note')).toHaveCount(0)
+  await expect(page.locator('.legal')).toBeInViewport()
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.legal')).toHaveCount(0)
   const said = { en: 'Jean is AI and can make mistakes', ar: 'Jean ذكاء اصطناعي، والأخطاء واردة', ja: 'JeanはAIのため、間違えることがあります' }
   for (const [lang, text] of Object.entries(said)) {
     if (lang !== 'en') {
@@ -45,6 +47,7 @@ test('once a task has started, a line under the box says the assistant is an AI,
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   await expect(page.locator('.hero-question')).toBeVisible()
   await expect(page.locator('.ai-note')).toHaveCount(0)
+  await expect(page.locator('.legal')).toBeVisible()
   await expect(page.locator('#prompt')).toHaveAccessibleDescription('')
 })
 

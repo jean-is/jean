@@ -12,6 +12,7 @@ import { copyFile, lstat, mkdir, readdir, readFile, rename, rm, stat, symlink, w
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { isShipped, walk } from './manifest.js'
+import { LISTED } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 /** What a web deploy serves, as `npm run build` leaves it (D243). */
@@ -190,6 +191,13 @@ export async function shippedFiles (app) {
   return (await Promise.all(entries.map((entry) => (entry.isDirectory() ? walk(app, entry.name) : [entry.name])))).flat().filter(isShipped)
 }
 
+/**
+ * The privacy policy and the terms, which links name without .html (D356), each also as a folder's index.html:
+ * Neutralino's server answers /terms with terms/index.html, never with terms.html. @param {string[]} files  shippedFiles()'s
+ * @returns {[string, string][]} each page and its copy
+ */
+export const shortCopies = (files) => LISTED.filter((path) => files.includes(path)).map((path) => [path, path.replace(/\.html$/, '/index.html')])
+
 /** @param {string} command @param {string[]} args @param {string} [cwd] */
 function run (command, args, cwd = ROOT) {
   return new Promise((resolve, reject) => {
@@ -226,11 +234,12 @@ async function binaries () {
   await writeFile(join(bin, 'VERSION'), NEUTRALINO)
 }
 
-/** Copies what a web deploy serves into Neutralino's resources, and Neutralino's notices beside the other runtimes'. */
+/** Copies what a web deploy serves into Neutralino's resources, with the short addresses' copies, and Neutralino's notices beside the other runtimes'. */
 async function stage () {
   const app = join(WORK, 'app')
   await rm(app, { recursive: true, force: true })
-  const copies = [...(await shippedFiles(APP)).map((path) => [join(APP, path), join(app, path)]), [join(WORK, 'bin', 'LICENSE'), join(app, 'vendor', 'LICENSES', 'neutralinojs.txt')]]
+  const files = await shippedFiles(APP)
+  const copies = [...[...files.map((path) => [path, path]), ...shortCopies(files)].map(([from, to]) => [join(APP, from), join(app, to)]), [join(WORK, 'bin', 'LICENSE'), join(app, 'vendor', 'LICENSES', 'neutralinojs.txt')]]
   for (const [from, to] of copies) {
     await mkdir(dirname(to), { recursive: true })
     await copyFile(from, to)

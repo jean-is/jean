@@ -21,9 +21,9 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   const said = []
   page.on('console', (message) => { if (/Content[ -]Security[ -]Policy|Refused to|TrustedHTML|TrustedScript/i.test(message.text())) said.push(message.text()) })
   await start(page)
-  // The welcome links to the privacy policy and the terms, in Jean's language (D356).
-  await expect(page.locator('.welcome a[href="privacy.html#en"]')).toHaveText('Privacy')
-  await expect(page.locator('.welcome a[href="terms.html#en"]')).toHaveText('Terms')
+  // On a new task, the line under the box links to the privacy policy and the terms, in Jean's language (D356).
+  await expect(page.locator('.legal a[href="privacy#en"]')).toHaveText('Privacy')
+  await expect(page.locator('.legal a[href="terms#en"]')).toHaveText('Terms')
   const reports = async () => /** @type {any[]} */ (await (await page.request.get(`csp-reports?from=${from}`)).json())
   const lines = async () => (await reports()).map(line)
   // A refusal on purpose first, a picture from plain HTTP (img-src): its report says this browser reports at all.

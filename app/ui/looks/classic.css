@@ -69,7 +69,7 @@
 :root[data-look='classic'] .hero-question { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; line-height: 1.15; background: none; color: var(--ink); }
 :root[data-look='classic'] app-composer { background: linear-gradient(transparent, var(--desktop) 45%); }
 /* Under the box is the desktop, where labels are white. */
-:root[data-look='classic'] .ai-note { color: oklch(1 0 0); }
+:root[data-look='classic'] app-composer > p { color: oklch(1 0 0); }
 :root[data-look='classic'] .composer { border: 0; padding: 0.5rem; background: var(--room); backdrop-filter: none; box-shadow: var(--raised); }
 :root[data-look='classic'] .composer:focus-within { box-shadow: var(--raised); }
 :root[data-look='classic'] .composer textarea { padding: 0.35rem 0.5rem; background: var(--field); box-shadow: var(--sunken); }

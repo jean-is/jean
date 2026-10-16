@@ -419,7 +419,7 @@ app-made:not(:defined) { display: none; }
   line-height: 1;
   vertical-align: 0.15em;
 }
-a.cite { color: inherit; text-decoration: none; }
+a.cite, app-composer > p a { color: inherit; text-decoration: none; }
 :is(a, button).cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
 .read-list .cite { margin: 0; font-size: 0.8em; }
 /* A web source's site, above its chip while the pointer is on it or it has focus (D210). */
@@ -555,9 +555,9 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
 .composer textarea::placeholder { color: var(--ink-faint); }
 .composer-row { display: flex; align-items: center; gap: 0.5rem; margin-block-start: 0.35rem; }
 .composer-tools { display: flex; flex: none; align-items: center; gap: 0.15rem; margin-inline-start: -0.45rem; }
-/* Once a task has started, under the box: {name} is AI and can make mistakes (D273). */
-app-composer:has(.ai-note) { padding-block-end: max(0.5rem, env(safe-area-inset-bottom)); }
-.ai-note { inline-size: var(--column); margin: 0.45rem auto 0; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
+/* Under the box: {name} is AI and can make mistakes (D273); before, legal links (D356). */
+app-composer:has(> p) { padding-block-end: max(0.5rem, env(safe-area-inset-bottom)); }
+app-composer > p { inline-size: var(--column); margin: 0.45rem auto 0; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
 .is-working { animation: pulse 1.1s ease-in-out infinite var(--loops, running); }
 .is-listening { color: var(--flame); box-shadow: 0 0 1rem -0.2rem oklch(from var(--glow) l c h / 0.8); animation: pulse 1.6s ease-in-out infinite var(--loops, running); }
 .brain-chip {
