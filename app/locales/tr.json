@@ -137,6 +137,7 @@
   "look.classic.name": "Klasik",
   "look.blueprint.name": "Mavi Kopya",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "İnsan",
   "storage.ephemeral": "Gizli pencere: kapattıktan sonra hiçbir şey kaydedilmez.",
   "update.ready": "Yeni sürüm hazır: {name}.",

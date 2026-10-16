@@ -137,6 +137,7 @@
   "look.classic.name": "क्लासिक",
   "look.blueprint.name": "आराखडा",
   "look.mondrian.name": "मॉन्ड्रियन",
+  "look.tilde.name": "{name}",
   "look.human.name": "मानवी",
   "storage.ephemeral": "खाजगी विंडो: बंद केल्यावर काहीही जतन होणार नाही.",
   "update.ready": "नवीन आवृत्ती तयार आहे: {name}.",

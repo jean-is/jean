@@ -2,16 +2,16 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-idas6hj8gcIoYFO7ll9w1MGv9kD4YBmVqD5aBDRHWP4='; style-src 'self' 'sha256-lrQK5jI/SuCliz8DUA7litnKOq7Kz6f6YjJzwQNTbyY='; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-qaXEBz0xo4fu4DrcERFpIUzEcZMCQFBv4tOZrbxY5g8='; style-src 'self' 'sha256-lrQK5jI/SuCliz8DUA7litnKOq7Kz6f6YjJzwQNTbyY='; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<script>{const root = document.documentElement, look = localStorage.getItem('app.look') ?? 'human'
+<script>{const root = document.documentElement, look = localStorage.getItem('app.look') ?? 'tilde'
 root.dataset.theme = localStorage.getItem('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
 if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="What Jean keeps on your device, what our servers see, and what goes to the services you choose.">
 <title>Privacy policy · Jean</title>
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="ui/style.css">
 <style>html { scroll-padding-block-start: 4.5rem; } .bar .wordmark { text-decoration: none; } article + article { margin-block-start: 5rem; }</style>
 </head>

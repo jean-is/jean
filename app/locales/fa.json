@@ -137,6 +137,7 @@
   "look.classic.name": "کلاسیک",
   "look.blueprint.name": "نقشه",
   "look.mondrian.name": "موندریان",
+  "look.tilde.name": "{name}",
   "look.human.name": "انسانی",
   "storage.ephemeral": "پنجرهٔ خصوصی: پس از بستن، چیزی ذخیره نمی‌شود.",
   "update.ready": "نسخهٔ تازهٔ {name} آماده است.",

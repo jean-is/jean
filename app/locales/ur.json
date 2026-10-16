@@ -137,6 +137,7 @@
   "look.classic.name": "کلاسک",
   "look.blueprint.name": "نقشہ",
   "look.mondrian.name": "مونڈریان",
+  "look.tilde.name": "{name}",
   "look.human.name": "انسانی",
   "storage.ephemeral": "نجی ونڈو: بند کرنے کے بعد کچھ محفوظ نہیں ہوگا۔",
   "update.ready": "نیا ورژن تیار ہے: {name}۔",

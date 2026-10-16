@@ -137,6 +137,7 @@
   "look.classic.name": "Cổ điển",
   "look.blueprint.name": "Bản vẽ",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Con người",
   "storage.ephemeral": "Cửa sổ riêng tư: sẽ không lưu gì sau khi bạn đóng.",
   "update.ready": "Đã có phiên bản mới của {name}.",

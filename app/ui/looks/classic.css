@@ -56,7 +56,7 @@
 
 /* The desktop, and no light in the room. */
 :root[data-look='classic'] { background: var(--desktop); }
-:root[data-look='classic'] .room, :root[data-look='classic'] app-persona::before { display: none; }
+:root[data-look='classic'] .room { display: none; }
 :root[data-look='classic'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; letter-spacing: 0; }
 /* The header: a taskbar, with the name as its start button. */
 :root[data-look='classic'] .bar { padding-block: 0.3rem; background: var(--room); box-shadow: var(--raised); }

@@ -214,7 +214,7 @@ function languages() {
 function looks() {
   const chosen = chosenLook()
   return choices(t('look.title'), html`<div class="look-tiles">${(/** @type {import('./looks.js').LookId[]} */ (Object.keys(LOOKS))).map((id) => html`<button
-    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>${t(`look.${id}.name`)}</button>`)}</div>`)
+    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>${t(`look.${id}.name`, { name: BRAND.name })}</button>`)}</div>`)
 }
 
 /**
@@ -227,7 +227,7 @@ function pickLook(id) {
   setLook({ id })
 }
 
-/** The next look, in the gallery's order, Human again after the last, its name shown (⌘⇧E, D238). */
+/** The next look, in the gallery's order, Tilde again after the last, its name shown (⌘⇧E, D238). */
 export function nextLook() {
   const ids = Object.keys(LOOKS)
   const id = ids[(ids.indexOf(chosenLook()) + 1) % ids.length]

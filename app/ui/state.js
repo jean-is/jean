@@ -56,7 +56,7 @@ export const app = {
   deviceTheme: signal(/** @type {Theme} */ ('dark')),
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
-  look: signal(/** @type {import('./looks.js').LookId} */ ('human')),
+  look: signal(/** @type {import('./looks.js').LookId} */ ('tilde')),
   /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
   sidebar: signal(/** @type {boolean | null} */ (null)),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
@@ -172,7 +172,7 @@ export function switchTheme() {
 }
 
 // The drawer open beside the conversation or put away (D165) belongs to this device too, as the
-// user left it; until then, to the look: Mail and Human keep it open once the room has a task (D369), the others put it away.
+// user left it; until then, to the look: Tilde, Mail and Human keep it open once the room has a task (D369), the others put it away.
 export const SIDEBAR_KEY = 'app.sidebar'
 
 /** Whether the drawer is open beside the conversation now: a wide window, and the user's choice or the look's. */

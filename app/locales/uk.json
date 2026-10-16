@@ -137,6 +137,7 @@
   "look.classic.name": "Класика",
   "look.blueprint.name": "Креслення",
   "look.mondrian.name": "Мондріан",
+  "look.tilde.name": "{name}",
   "look.human.name": "Людяний",
   "storage.ephemeral": "Приватне вікно: після закриття нічого не збережеться.",
   "update.ready": "Готова нова версія: {name}.",

@@ -137,6 +137,7 @@
   "look.classic.name": "클래식",
   "look.blueprint.name": "청사진",
   "look.mondrian.name": "몬드리안",
+  "look.tilde.name": "{name}",
   "look.human.name": "휴먼",
   "storage.ephemeral": "비공개 창: 닫으면 아무것도 저장되지 않아요.",
   "update.ready": "{name}의 새 버전이 준비됐어요.",

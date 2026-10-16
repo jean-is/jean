@@ -28,11 +28,11 @@
   "collection.next": {
     "other": "{count} lagi menuju {rank}"
   },
-  "collection.rank.spark": "Percikan",
-  "collection.rank.candle": "Lilin",
-  "collection.rank.lantern": "Lentera",
-  "collection.rank.hearth": "Perapian",
-  "collection.rank.daylight": "Cahaya siang",
+  "collection.rank.ripple": "Riak",
+  "collection.rank.wave": "Gelombang",
+  "collection.rank.current": "Arus",
+  "collection.rank.tide": "Pasang",
+  "collection.rank.ocean": "Samudra",
   "cap.files.hint": "Bagikan file, atau tempel teks panjang.",
   "cap.made.hint": "Kirim pesan pertama Anda.",
   "cap.computer.hint": "Bagikan spreadsheet, atau minta angka yang tepat.",

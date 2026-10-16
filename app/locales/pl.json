@@ -137,6 +137,7 @@
   "look.classic.name": "Klasyczny",
   "look.blueprint.name": "Plan",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Ludzki",
   "storage.ephemeral": "Okno prywatne: po zamknięciu nic nie zostanie zapisane.",
   "update.ready": "Nowa wersja jest gotowa: {name}.",

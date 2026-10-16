@@ -35,7 +35,7 @@
 }
 
 /* No light in the room and no halo: a page, with a rule under the masthead. */
-:root[data-look='paper'] .room, :root[data-look='paper'] app-persona::before { display: none; }
+:root[data-look='paper'] .room { display: none; }
 :root[data-look='paper'] .bar { background: var(--room); border-block-end: 1px solid var(--line); }
 :root[data-look='paper'] :is(.wordmark, .wordmark:hover) { text-shadow: none; }
 :root[data-look='paper'] .hero-question { background: none; color: var(--ink); }

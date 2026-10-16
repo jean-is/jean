@@ -137,6 +137,7 @@
   "look.classic.name": "Ya kale",
   "look.blueprint.name": "Ramani",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Kibinadamu",
   "storage.ephemeral": "Dirisha la faragha: hakuna kitakachohifadhiwa ukilifunga.",
   "update.ready": "Toleo jipya la {name} liko tayari.",

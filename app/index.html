@@ -2,18 +2,18 @@
 <html lang="en" dir="ltr" data-presence="idle">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-AVkAeWFclsxbwt9flrhS75Lc2bBapPCIrquC+SzWpws=' 'sha256-idas6hj8gcIoYFO7ll9w1MGv9kD4YBmVqD5aBDRHWP4='; style-src 'self' 'sha256-4TQiNejSsY6HYV6I9ZeOSbTB4w4ILCsQdptk1OWhWoI='; img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http:; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-AVkAeWFclsxbwt9flrhS75Lc2bBapPCIrquC+SzWpws=' 'sha256-qaXEBz0xo4fu4DrcERFpIUzEcZMCQFBv4tOZrbxY5g8='; style-src 'self' 'sha256-4TQiNejSsY6HYV6I9ZeOSbTB4w4ILCsQdptk1OWhWoI='; img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http:; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#1e1e1e">
-<script>{const root = document.documentElement, look = localStorage.getItem('app.look') ?? 'human'
+<meta name="theme-color" content="#131313">
+<script>{const root = document.documentElement, look = localStorage.getItem('app.look') ?? 'tilde'
 root.dataset.theme = localStorage.getItem('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
 if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.">
 <title></title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>@view-transition { navigation: auto; types: update; }</style>
 <link rel="stylesheet" href="ui/style.css">

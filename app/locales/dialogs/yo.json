@@ -28,11 +28,11 @@
   "collection.next": {
     "other": "Ó ku {count} kí a tó dé {rank}"
   },
-  "collection.rank.spark": "Iná kékeré",
-  "collection.rank.candle": "Àbẹ́là",
-  "collection.rank.lantern": "Fìtílà",
-  "collection.rank.hearth": "Ààrò",
-  "collection.rank.daylight": "Ìmọ́lẹ̀ ọ̀sán",
+  "collection.rank.ripple": "Ìgbì kékeré",
+  "collection.rank.wave": "Ìgbì",
+  "collection.rank.current": "Ìṣàn omi",
+  "collection.rank.tide": "Ìkún òkun",
+  "collection.rank.ocean": "Òkun ńlá",
   "cap.files.hint": "Ẹ pín fáìlì kan, tàbí ẹ lẹ ọ̀rọ̀ gígùn kan.",
   "cap.made.hint": "Ẹ fi ìfiránṣẹ́ àkọ́kọ́ yín ránṣẹ́.",
   "cap.computer.hint": "Ẹ pín ìwé ìṣirò kan, tàbí ẹ béèrè fún nọ́mbà pàtó.",

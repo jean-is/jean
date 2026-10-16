@@ -37,7 +37,7 @@
 }
 
 /* No light and no halo: type does the work, under a rule. */
-:root[data-look='swiss'] .room, :root[data-look='swiss'] app-persona::before { display: none; }
+:root[data-look='swiss'] .room { display: none; }
 :root[data-look='swiss'] .bar { background: var(--room); border-block-end: 2px solid var(--ink); }
 :root[data-look='swiss'] :is(.wordmark, .wordmark:hover) { font-size: 1.35rem; font-weight: 700; text-shadow: none; }
 :root[data-look='swiss'] :is(.hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; font-weight: 700; }

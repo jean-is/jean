@@ -78,7 +78,7 @@ async function start() {
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
   // stays on the device for index.html, the room's too, since a device without one starts in
-  // Human (D174); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
+  // Tilde (D373); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
   // allows), with their code loaded only once there are some.
   let dressing = Promise.resolve()
   effect(() => {

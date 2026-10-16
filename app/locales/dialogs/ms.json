@@ -28,11 +28,11 @@
   "collection.next": {
     "other": "{count} lagi untuk mencapai {rank}"
   },
-  "collection.rank.spark": "Percikan",
-  "collection.rank.candle": "Lilin",
-  "collection.rank.lantern": "Tanglung",
-  "collection.rank.hearth": "Perdiangan",
-  "collection.rank.daylight": "Cahaya siang",
+  "collection.rank.ripple": "Riak",
+  "collection.rank.wave": "Ombak",
+  "collection.rank.current": "Arus",
+  "collection.rank.tide": "Pasang",
+  "collection.rank.ocean": "Lautan",
   "cap.files.hint": "Kongsi fail, atau tampal teks yang panjang.",
   "cap.made.hint": "Hantar mesej pertama anda.",
   "cap.computer.hint": "Kongsi hamparan, atau minta nombor yang tepat.",

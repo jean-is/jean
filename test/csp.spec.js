@@ -63,7 +63,7 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   // The privacy policy and the terms (D356), at their addresses without .html, with the person's look.
   await page.goto('privacy')
   await expect(page.locator('#en h1')).toHaveText('Privacy policy')
-  await expect(page.locator('html')).toHaveAttribute('data-look', 'human')
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')
   await page.goto('terms#fr')
   await expect(page.locator('#fr h1')).toHaveText('Conditions d’utilisation')
   await page.waitForLoadState('networkidle')

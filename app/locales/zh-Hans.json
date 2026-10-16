@@ -137,6 +137,7 @@
   "look.classic.name": "经典",
   "look.blueprint.name": "蓝图",
   "look.mondrian.name": "蒙德里安",
+  "look.tilde.name": "{name}",
   "look.human.name": "人本",
   "storage.ephemeral": "无痕窗口：关闭后不会保存任何内容。",
   "update.ready": "{name} 的新版本已就绪。",

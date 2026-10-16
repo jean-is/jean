@@ -137,6 +137,7 @@
   "look.classic.name": "Classico",
   "look.blueprint.name": "Cianografia",
   "look.mondrian.name": "Mondrian",
+  "look.tilde.name": "{name}",
   "look.human.name": "Umano",
   "storage.ephemeral": "Finestra privata: alla chiusura non verrà salvato nulla.",
   "update.ready": "È pronta una nuova versione di {name}.",
