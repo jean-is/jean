@@ -5,11 +5,11 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
-import { notify, showError } from '../../ui/state.js'
+import { notify } from '../../ui/state.js'
 import { t, locale } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/icons.js'
-import { sharing, made, create } from './share.js'
+import { sharing, made, create, failed } from './share.js'
 
 /** Letters and digits that read alike in every script's fonts: none of 0, O, 1, l, I. */
 const LETTERS = 'abcdefghjkmnpqrstuvwxyz23456789'
@@ -33,7 +33,7 @@ async function submit(event) {
     const { link, expires } = await create(what, { password: word, days: Number(typed.get('days')) || 30, read: typed.get('read') === 'on', keep: typed.get('keep') === 'on' })
     made.value = { link, password: word, expires }
   } catch (error) {
-    showError(error)
+    failed(error)
   } finally {
     working.value = false
   }

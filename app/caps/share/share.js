@@ -58,6 +58,12 @@ export const allowed = () => Boolean(hostOf()) && app.policy.rules?.share !== 'n
 /** The share's file. @param {string} id */
 const fileOf = (id) => join(DIR, `${id}.json`)
 
+/** What went wrong in sharing's own words, which a toast says as they are (failed). */
+class Said extends Error {}
+
+/** Says what went wrong: sharing's own words, or any other error as errors are. @param {unknown} error */
+export const failed = (error) => (error instanceof Said ? notify(error.message) : showError(error))
+
 /** The shares kept here. */
 async function read() {
   const files = (await app.fs.list(DIR)).filter((entry) => entry.name.endsWith('.json'))
@@ -113,10 +119,10 @@ async function valueOf({ path, title, item }, reading) {
 async function upload(share, material, token, password) {
   const value = await valueOf({ path: share.task, title: share.title, ...(share.item && { item: share.item }) }, share.read)
   const { sealed, access } = await sealValue(value, { salt: bytesOf(share.salt), material })
-  if (sealed.length > LIMIT) throw new Error(t('share.tooBig'))
+  if (sealed.length > LIMIT) throw new Said(t('share.tooBig'))
   const response = await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'PUT', body: /** @type {BodyInit} */ (sealed),
-    headers: { authorization: `Bearer ${token}`, 'share-days': String(share.days), ...(password !== undefined || share.password ? { 'share-proof': await hashOf(access) } : {}) } })
-  if (!response.ok) throw new Error(t(response.status === 413 ? 'share.tooBig' : 'share.failed'))
+    headers: { authorization: `Bearer ${token}`, 'share-days': String(share.days), ...(password !== undefined || share.password ? { 'share-proof': await hashOf(access) } : {}) } }).catch(() => null)
+  if (!response?.ok) throw new Said(t(!response ? 'share.unreachable' : response.status === 413 ? 'share.tooBig' : 'share.failed'))
   return String((await response.json()).expires ?? '')
 }
 
@@ -143,7 +149,7 @@ export async function create(what, { password = '', days = 30, read: reading = f
 /** The token, and what the password made, of a share made here. @param {Share} share */
 async function kept(share) {
   const kept = JSON.parse((await getSecret(app.fs, `share:${share.id}`)) ?? 'null')
-  if (!kept?.token) throw new Error(t('share.notHere'))
+  if (!kept?.token) throw new Said(t('share.notHere'))
   return { token: String(kept.token), material: kept.material ? bytesOf(kept.material) : bytesOf(share.secret) }
 }
 
@@ -156,7 +162,7 @@ export async function update(share, quiet = false) {
     shares.value = shares.peek().map((one) => (one.id === share.id ? changed : one))
     if (!quiet) notify(t('share.updated'))
   } catch (error) {
-    if (!quiet) showError(error)
+    if (!quiet) failed(error)
   }
 }
 

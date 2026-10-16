@@ -38,17 +38,21 @@ export function deviceKey(name, make) {
 /** @param {FS} fs @param {string} id @returns {Promise<string | null>} */
 export const getSecret = async (fs, id) => (await readJSON(fs, FILE, {}))[id] ?? null
 
-/** @param {FS} fs @param {string} id @param {string} value */
-export async function setSecret(fs, id, value) {
-  const all = await readJSON(fs, FILE, {})
-  all[id] = value
-  await writeJSON(fs, FILE, all)
+/**
+ * Changes the secrets one change at a time, across tabs too, so that writers at once (a sign-in's
+ * connections, brains, shares) keep each other's; never over a file that can't be read, which
+ * JSON.parse throws on. @param {FS} fs @param {(all: Record<string, string>) => boolean} edit true when it changed them
+ */
+function changeSecrets(fs, edit) {
+  const run = async () => {
+    const all = JSON.parse((await fs.read(FILE)) ?? '{}')
+    if (edit(all)) await writeJSON(fs, FILE, all)
+  }
+  return navigator.locks ? navigator.locks.request('app-secrets', run) : run()
 }
 
-/** @param {FS} fs @param {string} id */
-export async function deleteSecret(fs, id) {
-  const all = await readJSON(fs, FILE, {})
-  if (!(id in all)) return
-  delete all[id]
-  await writeJSON(fs, FILE, all)
-}
+/** @param {FS} fs @param {string} id @param {string} value @returns {Promise<void>} */
+export const setSecret = (fs, id, value) => changeSecrets(fs, (all) => { all[id] = value; return true })
+
+/** @param {FS} fs @param {string} id @returns {Promise<void>} */
+export const deleteSecret = (fs, id) => changeSecrets(fs, (all) => id in all && delete all[id])

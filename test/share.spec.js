@@ -127,3 +127,37 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(settings.locator('.share-list li')).toHaveCount(1)
   await context.close()
 })
+
+test('a link that can’t be made or updated says why, in sharing’s own words', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async (host) => {
+    const [{ app, updateSettings }, { createConversation, appendRecords }, { metaRecord, userRecord }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' }), userRecord('Plan my week', app.deviceId)])
+    await (await import('/caps/share/share.js')).openShare({ path, title: 'Plan the week' })
+  }, SHARE_URL)
+  const dialog = page.locator('app-share-dialog dialog[open]')
+  const host = `${SHARE_URL}v1/*`
+  // Refused by the host as too big, then not reached at all.
+  await page.route(host, async (route) => (route.request().method() === 'PUT' ? route.fulfill({ response: await route.fetch(), status: 413 }) : route.continue()))
+  await dialog.getByRole('button', { name: 'Create link' }).click()
+  await expect(page.getByText('This is too big to share: a link holds 10 MB at most.')).toBeVisible()
+  await page.unroute(host)
+  await page.route(host, (route) => (route.request().method() === 'PUT' ? route.abort() : route.continue()))
+  await dialog.getByRole('button', { name: 'Create link' }).click()
+  await expect(page.getByText('This couldn’t be reached. Check your connection and try again.')).toBeVisible()
+  await page.unroute(host)
+  await dialog.getByRole('button', { name: 'Create link' }).click()
+  await expect(dialog.locator('input.share-link')).toHaveValue(/#/)
+  await dialog.getByRole('button', { name: 'Done' }).click()
+  // Updated from a device without its write token.
+  await page.evaluate(async () => {
+    const [{ app }, { deleteSecret }, { shares }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js'), import('/caps/share/share.js')])
+    await deleteSecret(app.fs, `share:${shares.peek()[0].id}`)
+  })
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('.share-list li').getByRole('button', { name: 'Update' }).click()
+  await expect(page.getByText('This link was made on another device: only that one can change it.')).toBeVisible()
+})
