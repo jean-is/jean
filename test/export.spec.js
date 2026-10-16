@@ -58,7 +58,8 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
     const { uri } = await addFile(app.fs, { projectDir: app.projectDir, name: 'bar.png', mimeType: 'image/png', bytes, pages: ['A red bar'], by: 'jean' })
     const picture = { sessionUpdate: 'tool_call', toolCallId: 'p1', title: 'Picture', kind: 'other', status: 'completed', rawInput: { description: 'A red bar' }, _meta: { picture: { uri, name: 'bar.png', mimeType: 'image/png', size: bytes.length } } }
     const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
-    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' }), userRecord('Plan my week', app.deviceId),
+    // A request the page closed on before anything came, then the one answered: each its own.
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Plan the week' }), userRecord('What is on Monday?', app.deviceId), userRecord('Plan my week', app.deviceId),
       envelope('jean', /** @type {any} */ (picture), 0), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: answer } }, 1)])
     await refreshConversations()
   }, ANSWER)
@@ -90,7 +91,7 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   saved.on('pageerror', (error) => errors.push(error.message))
   await saved.goto(pathToFileURL(file).href)
   await expect(saved.locator('h1.conversation-title')).toHaveText('Plan the week')
-  await expect(saved.locator('main .msg-user')).toHaveText('Plan my week')
+  await expect(saved.locator('main .msg-user')).toHaveText(['What is on Monday?', 'Plan my week'])
   const answer = saved.locator('main .msg-jean .prose')
   await expect(answer.locator('strong')).toHaveText('the plan')
   await expect(answer.locator('app-math math')).toHaveCount(1)
@@ -120,7 +121,7 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   await offline.route(PACKAGE, (route) => route.abort('internetdisconnected'))
   const alone = await offline.newPage()
   await alone.goto(pathToFileURL(file).href)
-  await expect(alone.locator('body > section p')).toHaveText(['Plan my week', /^Here is \*\*the plan\*\*[\s\S]*```abc\n[\s\S]*G4\|\]\n```\n\n```html\n[\s\S]*Sum: ' \+ \(2 \+ 3\)<\/script>\n```$/])
+  await expect(alone.locator('body > section p')).toHaveText(['What is on Monday?', 'Plan my week', /^Here is \*\*the plan\*\*[\s\S]*```abc\n[\s\S]*G4\|\]\n```\n\n```html\n[\s\S]*Sum: ' \+ \(2 \+ 3\)<\/script>\n```$/])
   await expect(alone.locator('main')).toHaveCount(0)
   await expect.poll(() => alone.locator('body > section img.made').evaluate((image) => /** @type {HTMLImageElement} */ (image).naturalWidth)).toBe(40)
   await offline.close()

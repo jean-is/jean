@@ -27,13 +27,14 @@ function draw() {
       const you = sessionUpdate === 'user_message_chunk'
       const made = [_meta?.picture, _meta?.file, ..._meta?.files ?? []].filter((file) => pictures[file?.uri] && !shown.has(file.uri))
       if (you || sessionUpdate === 'agent_message_chunk' || made.length) {
-        if (!block || block.you !== you || (you && previous !== sessionUpdate)) said.push((block = { you, at, step, text: '', made: new Array() }))
+        // A message's files come before its words, which end it.
+        if (!block || block.you !== you || (you && previous !== 'resource_link')) said.push((block = { you, at, step, text: '', made: new Array() }))
         if (step !== block.step) block.text += '\n\n'
         block.step = step
         block.text += content?.text ?? (content?.name ? `📎 ${content.name}\n` : '')
         for (const file of made) shown.add(file.uri), block.made.push({ src: pictures[file.uri], alt: rawInput?.description ?? file.name })
       }
-      previous = sessionUpdate
+      previous = content?.type ?? sessionUpdate
     } catch {}
   }
   const when = new Intl.DateTimeFormat(document.documentElement.lang, { dateStyle: 'medium', timeStyle: 'short' })

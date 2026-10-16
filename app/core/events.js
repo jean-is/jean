@@ -9,8 +9,7 @@ export const envelope = (by, update, step) => ({ at: new Date().toISOString(), b
 export const userRecord = (text, by) => envelope(by, { sessionUpdate: 'user_message_chunk', content: { type: 'text', text } })
 
 /**
- * One user message: a chunk per shared file, then the text. Consecutive user chunks
- * fold into a single message.
+ * One user message: a chunk per shared file, then the text, which ends it.
  * @param {string} text @param {ResourceLink[]} files @param {string} by
  */
 export function userRecords(text, files, by) {
@@ -47,7 +46,8 @@ export function foldTurns(records) {
     const kind = update.sessionUpdate
     if (kind === '_system_note') notes.push({ text: update.text, data: update.data })
     else if (kind === 'user_message_chunk') {
-      if (previous !== kind || !turn?.user) {
+      // Words end a message.
+      if (previous !== kind || !turn?.user || turn.user.text) {
         turn = { user: { text: '', files: [], at: record.at, upTo: 0 }, notes, steps: [], at: record.at }
         turns.push(turn)
         notes = []

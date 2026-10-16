@@ -2,7 +2,8 @@
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
 // the conversation, in the address (D137), a reload comes back to the line being read, and an
 // earlier conversation opens at its end. A request whose connection drops before its answer starts
-// is asked again (D202), and a key connects though its service is too busy to list its models.
+// is asked again (D202), one the page closed on before anything came stays apart from the next, and a
+// key connects though its service is too busy to list its models.
 // Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
@@ -210,6 +211,40 @@ test('a double click or Enter puts a request in a box; Escape leaves it, Enter o
   await expect(page.locator('p.msg-user').last()).not.toHaveAttribute('tabindex')
   await page.locator('p.msg-user').last().dblclick()
   await expect(box).toHaveCount(0)
+})
+
+test('a request the page closed on before anything came stays apart from the next one, on screen and for the brain, edited or not', async ({ page }) => {
+  await start(page)
+  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
+  test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
+  await connectFakeBrain(page)
+  await ask(page, 'Explain gravity')
+  await expect(page.locator('.msg-jean .prose')).toContainText('You asked: Explain gravity')
+  await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  // The brain never answers the next request: nothing after it is kept when the page closes.
+  let holding = true
+  /** @type {() => void} */
+  let asked = () => {}
+  const held = new Promise((resolve) => { asked = () => resolve(undefined) })
+  await page.route(`${BRAIN_URL}/chat/completions`, (route) => (holding ? asked() : route.fallback()))
+  await ask(page, 'Count slowly to five')
+  await held
+  await page.reload()
+  holding = false
+  const requests = page.locator('.msg-user')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five'])
+  await ask(page, 'Stop now')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Stop now'])
+  await expect(page.locator('.msg-jean .prose')).toHaveCount(2)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Stop now')
+  await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  // Edited, the last one goes alone; the one before stays.
+  await requests.last().dblclick()
+  await page.locator('app-edit textarea').fill('Stop at three')
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.locator('app-edit textarea').press('Enter')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Stop at three'])
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Stop at three')
 })
 
 test('Duplicate from here: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {
