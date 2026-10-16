@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Uliza kuhusu faili zako kwa maneno tofauti na yao.",
   "cap.backup.text": "Weka nakala ya kila kitu katika faili moja, na uirejeshe kwenye kifaa chochote.",
   "cap.sync.text": "Hufanya kazi, faili na kumbukumbu zako zibaki sawa kwenye kompyuta zako nyingine, kupitia folda ambayo OneDrive, Dropbox, iCloud Drive au Google Drive husawazisha.",
+  "cap.lock.text": "Kazi, faili na funguo zako hufunguka tu kwa ufunguo wako wa siri (passkey) au nenosiri lako.",
   "cap.brain-local.text": "Faragha, bure na bila mtandao: ubongo unaoendeshwa kwenye kompyuta hii, ikiwa ina nguvu ya kutosha.",
   "collection.count": {
     "one": "{count} kati ya {total} imegunduliwa",
@@ -52,6 +53,7 @@
   "cap.live.hint": "Tumia uandishi kwa sauti mara tatu.",
   "cap.backup.hint": "Anza kazi tatu.",
   "cap.sync.hint": "Taja kwamba unatumia pia kompyuta nyingine.",
+  "cap.lock.hint": "Unganisha huduma, au anza kazi kumi.",
   "cap.brain-local.hint": "Chagua ubongo unaofanya kazi kwenye kifaa hiki.",
   "knows.instructions": "Maagizo yako",
   "knows.instructionsText": "Umeyaandika wewe, na yanafuatwa katika kila kazi.",

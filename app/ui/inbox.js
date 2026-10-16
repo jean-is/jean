@@ -9,7 +9,7 @@ import { Element, define } from './base.js'
 import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, markConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
-import { loaded } from './caps.js'
+import { loaded, slots } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -189,7 +189,8 @@ function actions(id) {
       ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`)}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.contrast}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
-    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>`
+    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>
+    ${slots('profile').map((part) => part.draw(id))}`
 }
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */

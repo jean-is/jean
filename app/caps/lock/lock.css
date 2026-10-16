@@ -1,0 +1,10 @@
+/* The lock (D371): alone in the room before anything kept is read, the name and the ways in; its part of Settings › Your data. */
+main.lock { display: grid; align-content: center; justify-items: center; gap: 1rem; min-block-size: 100dvh; inline-size: min(100% - 2rem, 24rem); margin-inline: auto; text-align: center; }
+main.lock .lock-way, main.lock .lock-cant { inline-size: 100%; text-align: start; }
+main.lock .row { justify-content: center; }
+.lock-cant summary { color: var(--ink-soft); cursor: pointer; }
+.lock-cant > :not(summary) { margin-block-start: 0.75rem; }
+.lock-code { font: 600 1.15rem/1.4 ui-monospace, monospace; letter-spacing: 0.05em; user-select: all; }
+.lock-said { color: var(--danger); }
+.lock-said:empty { display: none; }
+main.lock .button.danger { color: var(--danger); }

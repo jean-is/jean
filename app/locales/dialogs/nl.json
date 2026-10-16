@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Vraag naar je bestanden in andere woorden dan die van henzelf.",
   "cap.backup.text": "Bewaar een kopie van alles in één bestand en zet die op elk apparaat terug.",
   "cap.sync.text": "Houdt je taken, bestanden en het geheugen gelijk op je andere computers, via een map die OneDrive, Dropbox, iCloud Drive of Google Drive synchroniseert.",
+  "cap.lock.text": "Je taken, bestanden en sleutels gaan alleen open met je toegangssleutel of wachtwoord.",
   "cap.brain-local.text": "Privé, gratis en offline: een brein dat op deze computer draait, als die krachtig genoeg is.",
   "collection.count": {
     "one": "{count} van {total} ontdekt",
@@ -52,6 +53,7 @@
   "cap.live.hint": "Gebruik dicteren drie keer.",
   "cap.backup.hint": "Begin drie taken.",
   "cap.sync.hint": "Vertel dat je ook een andere computer gebruikt.",
+  "cap.lock.hint": "Koppel een dienst of begin tien taken.",
   "cap.brain-local.hint": "Kies het brein dat op dit apparaat draait.",
   "knows.instructions": "Je instructies",
   "knows.instructionsText": "Door jou geschreven en in elke taak gevolgd.",

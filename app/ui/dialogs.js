@@ -842,12 +842,12 @@ class Settings extends Element {
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'spark', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'lock', machine: 'terminal', pictures: 'image', plugins: 'bolt',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', lock: 'key', 'brain-local': 'lock', machine: 'terminal', pictures: 'image', plugins: 'bolt',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), lock: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
@@ -855,7 +855,7 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
 const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
-  find: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
+  find: () => [everywhere.value, FINDABLE], lock: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 /** The row open: '' for the next to find, null once the user closed it. */

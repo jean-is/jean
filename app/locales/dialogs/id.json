@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Tanyakan tentang file Anda dengan kata-kata selain kata-katanya sendiri.",
   "cap.backup.text": "Simpan salinan semuanya dalam satu file, dan pulihkan di perangkat mana pun.",
   "cap.sync.text": "Menjaga tugas, file, dan memori Anda tetap sama di komputer Anda yang lain, melalui folder yang disinkronkan oleh OneDrive, Dropbox, iCloud Drive, atau Google Drive.",
+  "cap.lock.text": "Tugas, file, dan kunci API Anda hanya terbuka dengan kunci sandi atau kata sandi Anda.",
   "cap.brain-local.text": "Pribadi, gratis, dan offline: otak yang berjalan di komputer ini, jika cukup kuat.",
   "collection.count": {
     "other": "{count} dari {total} ditemukan"
@@ -50,6 +51,7 @@
   "cap.live.hint": "Gunakan dikte tiga kali.",
   "cap.backup.hint": "Mulai tiga tugas.",
   "cap.sync.hint": "Sebutkan bahwa Anda juga memakai komputer lain.",
+  "cap.lock.hint": "Hubungkan layanan, atau mulai sepuluh tugas.",
   "cap.brain-local.hint": "Pilih otak yang berjalan di perangkat ini.",
   "knows.instructions": "Instruksi Anda",
   "knows.instructionsText": "Ditulis oleh Anda, dan diikuti di setiap tugas.",

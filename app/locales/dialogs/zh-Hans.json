@@ -17,6 +17,7 @@
   "cap.meaning.hint": "用和文件里不同的说法，问问关于你的文件的问题。",
   "cap.backup.text": "把所有内容复制到一个文件中，并可在任何设备上恢复。",
   "cap.sync.text": "通过 OneDrive、Dropbox、iCloud Drive 或 Google Drive 同步的文件夹，让你的任务、文件和记忆在其他电脑上保持一致。",
+  "cap.lock.text": "你的任务、文件和密钥只能用你的通行密钥或密码打开。",
   "cap.brain-local.text": "私密、免费、离线：如果电脑性能足够，就能在这台电脑上运行的大脑。",
   "collection.count": {
     "other": "已发现 {count} / {total}"
@@ -50,6 +51,7 @@
   "cap.live.hint": "使用三次语音输入。",
   "cap.backup.hint": "开始三个任务。",
   "cap.sync.hint": "提到你也在用另一台电脑。",
+  "cap.lock.hint": "连接一个服务，或开始十个任务。",
   "cap.brain-local.hint": "选择在这台设备上运行的大脑。",
   "knows.instructions": "你的指示",
   "knows.instructionsText": "由你撰写，在每个任务中都会遵循。",

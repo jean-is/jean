@@ -38,6 +38,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   made: () => import('../caps/made/made.js'),
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
+  lock: () => import('../caps/lock/lock.js'),
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
   voice: () => import('../caps/voice/voice.js'),
   computer: () => import('../caps/computer/computer.js'),

@@ -32,7 +32,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Data rules
 
-- Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder).
+- Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder), sealed at rest by the storage worker (D371): never write to OPFS around it.
 - **Files and names:**
   - One file per entity, named with a ULID and never renamed.
   - Conversations are append-only JSONL of ACP records, except when the user goes back to a request, which removes what came after it (D188).

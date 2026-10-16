@@ -512,7 +512,7 @@ test('Settings › Computer: the sandbox, named (D248), itself (D176, D249), the
 test.describe('in the user’s folder', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium opens a folder in place')
   test.beforeEach(async ({ page }) => page.addInitScript(() => {
-    Object.assign(window, { showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Shop') })
+    Object.assign(window, { showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle('Shop') })
   }))
 
   test('a command that changes a file asks first, with the diff, then keeps it there', async ({ page }) => {
@@ -520,7 +520,7 @@ test.describe('in the user’s folder', () => {
     await start(page)
     await connectFakeBrain(page)
     await page.evaluate(async () => {
-      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })).getDirectoryHandle('Shop', { create: true })
+      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle('Shop', { create: true })
       const writable = await (await shop.getFileHandle('prices.csv', { create: true })).createWritable()
       await writable.write('item,price\ncoffee,2\n')
       await writable.close()
@@ -537,7 +537,7 @@ test.describe('in the user’s folder', () => {
     await card.locator('.button.primary').click()
     await expect(await answered(page)).toContainText('Kept in /workspace: prices.csv.')
     const text = await page.evaluate(async () => {
-      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Shop')
+      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle('Shop')
       return (await (await shop.getFileHandle('prices.csv')).getFile()).text()
     })
     expect(text).toBe('item,price\ncoffee,2\ntea,3\n')
@@ -546,7 +546,7 @@ test.describe('in the user’s folder', () => {
   test('in the terminal, the user’s own command keeps its change there at once (D166)', async ({ page }) => {
     await start(page)
     await page.evaluate(async () => {
-      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })).getDirectoryHandle('Shop', { create: true })
+      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle('Shop', { create: true })
       const writable = await (await shop.getFileHandle('prices.csv', { create: true })).createWritable()
       await writable.write('item,price\n')
       await writable.close()
@@ -561,7 +561,7 @@ test.describe('in the user’s folder', () => {
     await expect(page.locator('app-terminal .terminal-entry pre')).toContainText('2 prices.csv', { timeout: 30_000 })
     await expect(page.locator('app-folder-approval .approval')).toHaveCount(0)
     await expect.poll(() => page.evaluate(async () => {
-      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Shop')
+      const shop = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle('Shop')
       return (await (await shop.getFileHandle('prices.csv')).getFile()).text()
     })).toBe('item,price\ntea,3\n')
   })

@@ -17,6 +17,7 @@ Nothing planned is ruled out by the architecture:
 | Force a model or gateway | ✅ | The organisation self-hosts Jean by copying `dist/web/` (`npm run build:web`), with a `policy.json` next to `index.html`, enabled by adding `<meta name="app-policy" content="policy.json">` to `index.html` (`POLICY='{…}' npm run build:web` does both, D344). The policy pins the brain to their gateway (LiteLLM, Portkey, Cloudflare AI Gateway, Azure APIM); Jean already speaks the OpenAI-compatible format. Users sign in through the organisation's identity provider directly from the browser (OIDC), and the token is passed to the gateway. The gateway handles audit, cost and data-loss prevention; Jean builds no admin console. |
 | Hard enforcement | ✅ Via CSP | Browsers enforce every policy they receive, and all of them must pass. One HTTP header, `connect-src 'self' https://ai.corp.example`, means Jean cannot reach anything else, whatever its own built-in policy allows. No files need editing. `connect-src 'self'` alone gives a local-only mode. |
 | Forced proxy | ✅ Not Jean's job | Web pages can't set proxies. The browser or OS proxy policy (`ProxySettings`, PAC files) already applies to every request Jean makes, the Computer's included, since Jean makes them. Jean's duty is to make every external URL configurable so it can point to internal mirrors, and, for sites that refuse other sites' requests, to send the Computer's through a relay the organisation names (`computer.relay` in policy, D162). |
+| Encryption at rest | ✅ | Every file Jean keeps on a device is sealed with AES-256-GCM, its key behind the device's own until a lock keeps it behind the person's passkey or password, with a recovery code; `"lock": "required"` in policy asks for one at the first run and hides Turn off, and denying `lock` never offers it. Backups and Sync's folder stay readable copies ([encryption.md](encryption.md), D371). |
 | Disable capabilities | ✅ Comes for free | The policy feeds the unlock gate. A denied capability is never offered and its code is never downloaded. Admins can also unlock capabilities in advance. |
 | Config for managed browsers | ✅ Chrome and Edge only | `ManagedConfigurationPerOrigin` pushes JSON to web apps that IT has installed, read with `navigator.managed.getManagedConfiguration()`. It is a second policy source alongside `policy.json`. |
 | White-label | ✅ Comes for free | Change `BRAND` and it becomes "Acme Assistant". |
@@ -85,6 +86,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "images": { "openai": ["gpt-image-1"] },
   "films": { "openai": ["sora-2-pro"] },
   "pictureCheck": { "suggestive": true, "hate": false },
+  "lock": "required",
   "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces" }
 }
 ```

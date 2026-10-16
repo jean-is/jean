@@ -17,6 +17,7 @@
   "cap.meaning.hint": "ስለ ፋይሎችዎ በራሳቸው ቃላት ሳይሆን በሌላ ቃል ይጠይቁ።",
   "cap.backup.text": "የሁሉንም ነገር ቅጂ በአንድ ፋይል ያስቀምጡ፣ በማንኛውም መሣሪያ ላይም መልሰው ይጫኑት።",
   "cap.sync.text": "OneDrive፣ Dropbox፣ iCloud Drive ወይም Google Drive በሚያመሳስሉት አቃፊ በኩል ተግባራትዎን፣ ፋይሎችዎንና ትውስታን በሌሎች ኮምፒውተሮችዎ ላይ አንድ ዓይነት ያደርጋል።",
+  "cap.lock.text": "ተግባራትዎ፣ ፋይሎችዎ እና ቁልፎችዎ የሚከፈቱት በይለፍ ቁልፍዎ ወይም በይለፍ ቃልዎ ብቻ ነው።",
   "cap.brain-local.text": "የግል፣ ነፃ እና ያለ ኢንተርኔት የሚሠራ፦ ኮምፒውተሩ በቂ አቅም ካለው፣ በዚሁ ኮምፒውተር ላይ የሚሠራ አንጎል።",
   "collection.count": {
     "one": "ከ{total} ውስጥ {count} ተገኝቷል",
@@ -52,6 +53,7 @@
   "cap.live.hint": "በድምፅ መጻፍን ሦስት ጊዜ ይጠቀሙ።",
   "cap.backup.hint": "ሦስት ተግባራትን ይጀምሩ።",
   "cap.sync.hint": "ሌላ ኮምፒውተርም እንደሚጠቀሙ ይጥቀሱ።",
+  "cap.lock.hint": "አንድ አገልግሎት ያገናኙ፣ ወይም አሥር ተግባራትን ይጀምሩ።",
   "cap.brain-local.hint": "በዚህ መሣሪያ ላይ የሚሠራውን አንጎል ይምረጡ።",
   "knows.instructions": "መመሪያዎችዎ",
   "knows.instructionsText": "በእርስዎ የተጻፉ፣ በእያንዳንዱ ተግባር የሚከበሩ።",

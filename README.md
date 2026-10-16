@@ -72,7 +72,7 @@ Jean builds on standards, not inventions:
 
 ## Run it
 
-Jean needs Node 22 or later to develop, and a browser no older than Chrome or Edge 108, Safari 16.4 or Firefox 111. The brain on this device also needs WebGPU with `shader-f16`.
+Jean needs Node 22 or later to develop, and a browser no older than Chrome or Edge 108, Safari 16.4 or Firefox 114. The brain on this device also needs WebGPU with `shader-f16`.
 
 ```bash
 npm install

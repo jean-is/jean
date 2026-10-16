@@ -21,7 +21,7 @@ const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where S
 const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'plugins']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -116,7 +116,7 @@ export function offerOnce(id, now = false) {
   // Peeked: an effect that offers must not run again because the offer it showed went away.
   const shown = app.offer.peek()
   // Turned on before, it is still loading after first paint, so not loaded yet: never offered.
-  if ((shown && (shown.progress !== undefined || !now || shown.id === id)) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
+  if ((shown && (shown.progress !== undefined || !now || shown.id === id)) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (['backup', 'lock'].includes(id) && app.ephemeral.value)) return
   const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
   app.offer.value = { id }
   // Read to the end of a task, the offer drawn under it comes into view above the box, which would cover it.
@@ -151,6 +151,7 @@ export async function begin(id) {
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
   if (id === 'find') app.dialog.value = 'find'
+  if (id === 'lock' && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings('data')
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()
   if (id === 'machine') (await import('../caps/machine/machine.js')).show()
@@ -229,6 +230,11 @@ export const SEARCHABLE = 5
 effect(() => {
   if (everywhere.value >= FINDABLE) offerOnce('find')
 })
+effect(() => {
+  // Plenty kept, or a service's sign-in: it could open only to the person (D371). Policy may ask for it.
+  if (everywhere.value >= FINDABLE || (effective.value.settings.connections ?? []).length) offerOnce('lock')
+})
+if (app.policy.lock === 'required') unlock('lock')
 effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')

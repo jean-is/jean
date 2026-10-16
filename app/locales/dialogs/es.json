@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Pregunta por tus archivos con otras palabras que las suyas.",
   "cap.backup.text": "Guarda una copia de todo en un solo archivo y restáurala en cualquier dispositivo.",
   "cap.sync.text": "Mantiene tus tareas, tus archivos y la memoria iguales en tus otros ordenadores, mediante una carpeta que sincroniza OneDrive, Dropbox, iCloud Drive o Google Drive.",
+  "cap.lock.text": "Tus tareas, archivos y claves solo se abren con tu llave de acceso o tu contraseña.",
   "cap.brain-local.text": "Privado, gratuito y sin conexión: un cerebro que funciona en este ordenador, si es lo bastante potente.",
   "collection.count": {
     "one": "{count} de {total} descubierto",
@@ -54,6 +55,7 @@
   "cap.live.hint": "Usa el dictado tres veces.",
   "cap.backup.hint": "Empieza tres tareas.",
   "cap.sync.hint": "Menciona que también usas otro ordenador.",
+  "cap.lock.hint": "Conecta un servicio o empieza diez tareas.",
   "cap.brain-local.hint": "Elige el cerebro que funciona en este dispositivo.",
   "knows.instructions": "Tus instrucciones",
   "knows.instructionsText": "Escritas por ti y seguidas en cada tarea.",

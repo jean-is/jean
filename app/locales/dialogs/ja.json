@@ -17,6 +17,7 @@
   "cap.meaning.hint": "ファイルとは違う言葉で、ファイルについて質問してみましょう。",
   "cap.backup.text": "すべてを1つのファイルに保存し、どの端末でも復元できます。",
   "cap.sync.text": "OneDrive、Dropbox、iCloud Drive、Google Drive が同期するフォルダーを通して、タスク、ファイル、記憶をほかのコンピューターでも同じに保ちます。",
+  "cap.lock.text": "タスク、ファイル、キーは、あなたのパスキーかパスワードでだけ開きます。",
   "cap.brain-local.text": "プライベート、無料、オフライン。十分な性能があれば、このコンピューターで動く頭脳です。",
   "collection.count": {
     "other": "{total}件中{count}件を発見"
@@ -50,6 +51,7 @@
   "cap.live.hint": "音声入力を3回使う。",
   "cap.backup.hint": "タスクを3つ始める。",
   "cap.sync.hint": "ほかのコンピューターも使っていると伝えます。",
+  "cap.lock.hint": "サービスを接続するか、タスクを10個始める。",
   "cap.brain-local.hint": "このデバイスで動く頭脳を選ぶ。",
   "knows.instructions": "あなたの指示",
   "knows.instructionsText": "あなたが書き、すべてのタスクで守られます。",

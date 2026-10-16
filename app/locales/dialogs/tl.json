@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Magtanong tungkol sa iyong mga file gamit ang ibang salita kaysa sa kanila.",
   "cap.backup.text": "Magtago ng kopya ng lahat sa iisang file, at i-restore ito sa kahit anong device.",
   "cap.sync.text": "Pinapanatiling pareho ang mga gawain, file, at memorya mo sa iba mo pang computer, sa pamamagitan ng folder na sini-sync ng OneDrive, Dropbox, iCloud Drive o Google Drive.",
+  "cap.lock.text": "Bumubukas lang ang mga gawain, file at key mo gamit ang passkey o password mo.",
   "cap.brain-local.text": "Pribado, libre at offline: isang utak na tumatakbo sa computer na ito, kung sapat ang lakas nito.",
   "collection.count": {
     "one": "{count} sa {total} ang natuklasan",
@@ -52,6 +53,7 @@
   "cap.live.hint": "Magdikta nang tatlong beses.",
   "cap.backup.hint": "Magsimula ng tatlong gawain.",
   "cap.sync.hint": "Banggitin na gumagamit ka rin ng ibang computer.",
+  "cap.lock.hint": "Magkonekta ng serbisyo, o magsimula ng sampung gawain.",
   "cap.brain-local.hint": "Piliin ang utak na tumatakbo sa device na ito.",
   "knows.instructions": "Ang mga tagubilin mo",
   "knows.instructionsText": "Isinulat mo, at sinusunod sa bawat gawain.",

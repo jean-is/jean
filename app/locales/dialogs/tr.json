@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Dosyalarını, onların kendi sözcüklerinden başka sözcüklerle sor.",
   "cap.backup.text": "Her şeyin bir kopyasını tek bir dosyada tut ve herhangi bir cihazda geri yükle.",
   "cap.sync.text": "Görevlerini, dosyalarını ve hafızayı diğer bilgisayarlarında aynı tutar; bunu OneDrive, Dropbox, iCloud Drive veya Google Drive’ın eşitlediği bir klasörle yapar.",
+  "cap.lock.text": "Görevlerin, dosyaların ve anahtarların yalnızca geçiş anahtarınla ya da şifrenle açılır.",
   "cap.brain-local.text": "Gizli, ücretsiz ve çevrimdışı: yeterince güçlüyse bu bilgisayarda çalışan bir beyin.",
   "collection.count": {
     "one": "{total} içinden {count} keşfedildi",
@@ -52,6 +53,7 @@
   "cap.live.hint": "Dikteyi üç kez kullan.",
   "cap.backup.hint": "Üç görev başlat.",
   "cap.sync.hint": "Başka bir bilgisayar da kullandığından bahset.",
+  "cap.lock.hint": "Bir hizmet bağla ya da on görev başlat.",
   "cap.brain-local.hint": "Bu cihazda çalışan beyni seç.",
   "knows.instructions": "Talimatların",
   "knows.instructionsText": "Senin yazdığın ve her görevde uyulan talimatlar.",

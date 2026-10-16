@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Chiedi dei tuoi file con parole diverse dalle loro.",
   "cap.backup.text": "Conserva una copia di tutto in un solo file e ripristinala su qualsiasi dispositivo.",
   "cap.sync.text": "Mantiene le tue attività, i tuoi file e la memoria uguali sugli altri tuoi computer, tramite una cartella che OneDrive, Dropbox, iCloud Drive o Google Drive sincronizza.",
+  "cap.lock.text": "Le tue attività, i file e le chiavi si aprono solo con la tua passkey o la tua password.",
   "cap.brain-local.text": "Privato, gratuito e offline: un cervello che gira su questo computer, se è abbastanza potente.",
   "collection.count": {
     "one": "{count} su {total} scoperto",
@@ -54,6 +55,7 @@
   "cap.live.hint": "Usa la dettatura tre volte.",
   "cap.backup.hint": "Inizia tre attività.",
   "cap.sync.hint": "Accenna al fatto che usi anche un altro computer.",
+  "cap.lock.hint": "Collega un servizio o inizia dieci attività.",
   "cap.brain-local.hint": "Scegli il cervello che funziona su questo dispositivo.",
   "knows.instructions": "Le tue istruzioni",
   "knows.instructionsText": "Scritte da te e seguite in ogni attività.",

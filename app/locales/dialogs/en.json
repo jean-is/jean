@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Ask about your files in other words than theirs.",
   "cap.backup.text": "Keep a copy of everything in one file, and restore it on any device.",
   "cap.sync.text": "Keeps your tasks, files and memory the same on your other computers, through a folder that OneDrive, Dropbox, iCloud Drive or Google Drive syncs.",
+  "cap.lock.text": "Your tasks, files and keys open only with your passkey or password.",
   "cap.brain-local.text": "Private, free and offline: a brain that runs on this computer, if it is powerful enough.",
   "collection.count": {
     "one": "{count} of {total} discovered",
@@ -52,6 +53,7 @@
   "cap.live.hint": "Use dictation three times.",
   "cap.backup.hint": "Start three tasks.",
   "cap.sync.hint": "Mention that you also use another computer.",
+  "cap.lock.hint": "Connect a service, or start ten tasks.",
   "cap.brain-local.hint": "Choose the brain that runs on this device.",
   "knows.instructions": "Your instructions",
   "knows.instructionsText": "Written by you, and followed in every task.",

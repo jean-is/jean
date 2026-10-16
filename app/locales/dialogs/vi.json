@@ -17,6 +17,7 @@
   "cap.meaning.hint": "Hỏi về các tệp của bạn bằng những từ khác với từ trong tệp.",
   "cap.backup.text": "Giữ bản sao mọi thứ trong một tệp, và khôi phục trên bất kỳ thiết bị nào.",
   "cap.sync.text": "Giữ các nhiệm vụ, tệp và trí nhớ của bạn giống nhau trên các máy tính khác, qua một thư mục được OneDrive, Dropbox, iCloud Drive hoặc Google Drive đồng bộ.",
+  "cap.lock.text": "Các nhiệm vụ, tệp và khóa API của bạn chỉ mở được bằng khóa truy cập hoặc mật khẩu của bạn.",
   "cap.brain-local.text": "Riêng tư, miễn phí và ngoại tuyến: một bộ não chạy trên máy tính này, nếu máy đủ mạnh.",
   "collection.count": {
     "other": "Đã khám phá {count}/{total}"
@@ -50,6 +51,7 @@
   "cap.live.hint": "Dùng tính năng đọc chính tả ba lần.",
   "cap.backup.hint": "Bắt đầu ba nhiệm vụ.",
   "cap.sync.hint": "Nhắc rằng bạn cũng dùng một máy tính khác.",
+  "cap.lock.hint": "Kết nối một dịch vụ, hoặc bắt đầu mười nhiệm vụ.",
   "cap.brain-local.hint": "Chọn bộ não chạy trên thiết bị này.",
   "knows.instructions": "Chỉ dẫn của bạn",
   "knows.instructionsText": "Do bạn viết, và được làm theo trong mọi nhiệm vụ.",

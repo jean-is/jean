@@ -22,6 +22,10 @@ async function start() {
   // Plain HTTP reaches this computer alone (D260).
   const reach = ['localhost', '127.0.0.1', ...await nearby]
   document.head.append(Object.assign(document.createElement('meta'), { httpEquiv: 'Content-Security-Policy', content: `connect-src 'self' https: wss: ${reach.map((name) => `http://${name}:*`).join(' ')}` }))
+  setLoader(async (lang, part) => {
+    const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
+    return response.ok ? response.json() : null
+  })
   const fs = await opfsFS().catch(() => null)
   app.fs = fs ?? memoryFS()
   app.ephemeral.value = !fs
@@ -35,10 +39,6 @@ async function start() {
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
   configureCapabilities({ deny, remember: rememberUnlocked })
 
-  setLoader(async (lang, part) => {
-    const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
-    return response.ok ? response.json() : null
-  })
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, navigator.languages))
 
   const root = document.documentElement
