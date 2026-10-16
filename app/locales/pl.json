@@ -267,6 +267,7 @@
   "cap.backup.name": "Kopia zapasowa",
   "cap.backup.offer": "Twoje zadania istnieją tylko w tej przeglądarce. Zachować kopię wszystkiego?",
   "cap.backup.yes": "Pobierz kopię zapasową",
+  "cap.share.name": "Udostępnianie",
   "cap.sync.name": "Synchronizacja",
   "cap.sync.offer": "Utrzymywać twoje zadania, pliki i pamięć takie same na innych twoich komputerach? Wybierasz folder, który synchronizuje twój dysk w chmurze.",
   "cap.sync.yes": "Wybierz folder",

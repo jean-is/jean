@@ -7,7 +7,7 @@
 // unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { register, slots } from '../../ui/caps.js'
 import { app, effective, activeBrain, brainsHere, loadModels, cloudAllowed, conversationOf, updateSettings } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
 import { isLocal } from '../../ui/auto.js'
@@ -273,7 +273,8 @@ class Picture extends Shown {
         ${percent === undefined ? nothing : html`<span class="done" aria-hidden="true"></span>`}` : nothing}
       ${url ? html`${film ? html`<video class=${develops} src=${url} controls playsinline aria-label=${alt} @loadedmetadata=${this.#fit} @animationend=${developed}></video>`
           : html`<img class=${develops} src=${url} alt=${alt} @load=${this.#fit} @animationend=${developed}>`}
-        <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>` : nothing}
+        <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>
+        ${film ? nothing : slots('drawn').map((part) => part.draw({ picture: { uri: this.getAttribute('uri') ?? '', name, mimeType: type, size: 0 }, description: alt }))}` : nothing}
     </figure>`
   }
 

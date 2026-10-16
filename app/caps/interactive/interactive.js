@@ -22,7 +22,7 @@
 import { html, nothing, render } from 'lit-html'
 import { computed, effect, signal } from '@preact/signals-core'
 import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
-import { register } from '../../ui/caps.js'
+import { register, drawnActions } from '../../ui/caps.js'
 import { declared, drawn } from '../../ui/markdown.js'
 import { pageRights, pagePolicy, pageAllow, mapStyles, PAGE_SANDBOX } from '../../ui/csp.js'
 import { copyDrawing } from '../../ui/save.js'
@@ -253,6 +253,7 @@ class AppPage extends HTMLElement {
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+        ${this.hasAttribute('map') ? nothing : drawnActions('html', this.getAttribute('source') ?? '')}
       </div>`, this)
   }
 
@@ -332,7 +333,7 @@ function diagram(source, open) {
     copyDrawing(source, shown.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
   }
   return html`<figure class="diagram"><app-diagram source=${source} role="img" aria-label=${t('interactive.diagram')}></app-diagram>
-    <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button></div></figure>`
+    <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('mermaid', source)}</div></figure>`
 }
 
 /** Whether a whole block is GeoJSON. @param {string} source */

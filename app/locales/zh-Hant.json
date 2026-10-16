@@ -255,6 +255,7 @@
   "cap.backup.name": "備份",
   "cap.backup.offer": "你的任務只保存在這個瀏覽器裡。要保留一份完整副本嗎？",
   "cap.backup.yes": "下載備份",
+  "cap.share.name": "分享",
   "cap.sync.name": "同步",
   "cap.sync.offer": "讓你的任務、檔案和記憶在你的其他電腦上保持一致？你選一個由雲端硬碟同步的資料夾。",
   "cap.sync.yes": "選擇資料夾",

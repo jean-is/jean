@@ -263,6 +263,7 @@
   "cap.backup.name": "Sauvegarde",
   "cap.backup.offer": "Vos tâches ne vivent que dans ce navigateur. Garder une copie de tout ?",
   "cap.backup.yes": "Télécharger une sauvegarde",
+  "cap.share.name": "Partage",
   "cap.sync.name": "Synchronisation",
   "cap.sync.offer": "Garder vos tâches, vos fichiers et la mémoire identiques sur vos autres ordinateurs ? Vous choisissez un dossier que votre stockage en ligne synchronise.",
   "cap.sync.yes": "Choisir un dossier",

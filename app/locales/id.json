@@ -255,6 +255,7 @@
   "cap.backup.name": "Cadangan",
   "cap.backup.offer": "Tugas Anda hanya ada di browser ini. Simpan salinan semuanya?",
   "cap.backup.yes": "Unduh cadangan",
+  "cap.share.name": "Berbagi",
   "cap.sync.name": "Sinkronisasi",
   "cap.sync.offer": "Jaga agar tugas, file, dan memori Anda sama di komputer Anda yang lain? Anda memilih folder yang disinkronkan oleh penyimpanan cloud Anda.",
   "cap.sync.yes": "Pilih folder",

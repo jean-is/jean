@@ -68,6 +68,8 @@ export const DEFAULT_URLS = Object.freeze({
   // named; the privacy policy and terms linked under the box, by their addresses without .html (D356), jean.is's
   // until then, none with ''.
   gateway: '', privacy: 'privacy', terms: 'terms',
+  // The host shares go to (D361), none until one is named: jean.is's policy names hst.ing.
+  share: '',
   // A web source's site icon, shown with its domain on its chip (D210): none when ''.
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
   // Brains' prices (D255).

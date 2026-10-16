@@ -259,6 +259,7 @@
   "cap.backup.name": "Sicherung",
   "cap.backup.offer": "Deine Aufgaben gibt es nur in diesem Browser. Eine Kopie von allem behalten?",
   "cap.backup.yes": "Sicherung herunterladen",
+  "cap.share.name": "Teilen",
   "cap.sync.name": "Synchronisierung",
   "cap.sync.offer": "Deine Aufgaben, Dateien und das Gedächtnis auf deinen anderen Computern gleich halten? Du wählst einen Ordner, den dein Cloud-Speicher synchronisiert.",
   "cap.sync.yes": "Ordner wählen",

@@ -32,6 +32,9 @@ import { selfIssued, readCertificate, derSignature, p1363, timestampRequest, tok
  * @typedef {{ protected: string, payload: string, signature: string, header?: { etsiU: object[] }, sigstore?: object }} Sealed
  * The salts of a certificate's disclosures, kept in the conversation (`meta.certificate`) for its proof.
  * @typedef {{ request: string, answer: string, files: string[], made: string[] }} Salts
+ * Where it was done, disclosures too, which a proof may withhold (a share's does, D361): Jean's address,
+ * each brain's and maker's outside this device, what the page reached. Kept whole beside the salts.
+ * @typedef {string[]} Places
  * What check() found: the seal's state, who sealed it and when, what it says, and with a proof the words.
  * @typedef {{ intact: boolean, fingerprint: string, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string>, at: Date, says: any, timestamps: { at: Date | null, authority: Record<string, string>, intact: boolean }[], log: { index: number, at: Date, intact: boolean, checked: boolean } | null, proven?: boolean, words?: { request?: string, answer?: string, files: string[], made: string[] } }} Reading
  */
@@ -157,15 +160,36 @@ export const disclosed = ({ request, answer, files, made }) => [request, answer,
 
 /**
  * The certificate as saved, before its seal: a W3C VC 2.0 of what the answer was, its words and files
- * salted digests only, with the salts the conversation keeps for its proof.
+ * salted digests only, with the salts the conversation keeps for its proof; and where it was done,
+ * salted too, a proof showing it or not (`places`).
  * @param {{ facts: Facts, turn: Turn, text: string, conversation: string, issuer: string, origin: string, version: string, placed?: (provider: string) => Placed, now?: Date }} options
  */
 export async function certificate({ facts, turn, text, conversation, issuer, origin, version, placed = () => ({}), now = new Date() }) {
   const salts = { request: salt(), answer: salt(), files: sharedOf(turn).map(salt), made: facts.made.map(salt) }
   const { request, answer, files, made } = await disclosuresOf(salts, { turn, text, made: facts.made })
   const cloud = facts.brains.some((brain) => !brain.local)
-  /** @param {{ provider: string }} one */
-  const where = ({ provider }) => (provider === 'device' ? {} : placed(provider))
+  /** @type {Places} */
+  const places = []
+  /** An address as a disclosure of its own, its digest in its place. @param {string} name @param {unknown} value */
+  const place = async (name, value) => {
+    const { disclosure, digest } = await disclose(salt(), name, value)
+    places.push(disclosure)
+    return digest
+  }
+  /** Where a brain or a maker was reached: its country as it is, its address salted. @param {{ provider: string }} one */
+  const where = async ({ provider }) => {
+    const { host, jurisdiction } = provider === 'device' ? /** @type {Placed} */ ({}) : placed(provider)
+    return { ...(jurisdiction && { jurisdiction }), ...(host && { _sd: [await place('host', host)] }) }
+  }
+  const brains = []
+  for (const { provider, model, local, ms, input, output, cached } of facts.brains) brains.push({ provider, model, local, ...await where({ provider }), ...(ms !== undefined && { ms }), input, output, cached })
+  const makers = []
+  for (const [i, { kind, provider, model, revision, local }] of facts.made.entries()) {
+    const { _sd = [], ...rest } = await where({ provider })
+    makers.push({ kind, digitalSourceType: GENERATED, provider, model, ...(revision && { revision }), local, ...rest, _sd: [made[i].digest, ..._sd] })
+  }
+  const evidence = []
+  for (const { from, to, hosts } of facts.reached) evidence.push({ type: ['ResourceTimingRecord'], from, to, _sd: [await place('hosts', hosts)] })
   const credential = {
     '@context': ['https://www.w3.org/ns/credentials/v2'],
     type: ['VerifiableCredential', 'AnswerCertificate'],
@@ -180,13 +204,13 @@ export async function certificate({ facts, turn, text, conversation, issuer, ori
       ms: facts.ms,
       request: { at: turn.at, _sd: [request.digest], files: files.map(({ digest }) => ({ '...': digest })) },
       answer: { at: turn.end ?? turn.at, digitalSourceType: GENERATED, _sd: [answer.digest] },
-      brains: facts.brains.map(({ provider, model, local, ms, input, output, cached }) => ({ provider, model, local, ...where({ provider }), ...(ms !== undefined && { ms }), input, output, cached })),
-      made: facts.made.map(({ kind, provider, model, revision, local }, i) => ({ kind, digitalSourceType: GENERATED, provider, model, ...(revision && { revision }), local, ...where({ provider }), _sd: [made[i].digest] })),
-      jean: { origin, version },
+      brains,
+      made: makers,
+      jean: { version, _sd: [await place('origin', origin)] },
     },
-    evidence: facts.reached.map(({ from, to, hosts }) => ({ type: ['ResourceTimingRecord'], from, to, hosts })),
+    evidence,
   }
-  return { credential, salts, disclosures: disclosed({ request, answer, files, made }) }
+  return { credential, salts, places, disclosures: [...disclosed({ request, answer, files, made }), ...places] }
 }
 
 /**
@@ -305,14 +329,20 @@ export async function check({ certificate: file, proof: shown }, { logKey = null
     .then((read) => ({ at: read.at, authority: read.authority ?? {}, intact: read.intact && read.imprint.join() === imprint }), () => ({ at: null, authority: {}, intact: false }))))
   const result = { intact, fingerprint, selfIssued, subject, issuer, at, says: credential, timestamps, log: await logged(sealed, logKey) }
   if (!shown) return result
-  // Each digest's place: the request's words, the answer's, a file shared, a file made.
+  // Each digest's place: the request's words, the answer's, a file shared, a file made; then where it was
+  // done, each shown back in its place in what the certificate says: a brain's or maker's address, what was reached, Jean's.
   const subjectOf = credential.credentialSubject ?? {}
   /** @type {Map<string, [string, number]>} */
   const places = new Map([
     [subjectOf.request?._sd?.[0], ['request', 0]], [subjectOf.answer?._sd?.[0], ['answer', 0]],
     ...(subjectOf.request?.files ?? []).map((/** @type {any} */ one, /** @type {number} */ i) => [one['...'], ['files', i]]),
-    ...(subjectOf.made ?? []).map((/** @type {any} */ one, /** @type {number} */ i) => [one._sd?.[0], ['made', i]]),
+    ...(subjectOf.made ?? []).flatMap((/** @type {any} */ one, /** @type {number} */ i) => [[one._sd?.[0], ['made', i]], [one._sd?.[1], ['makers', i]]]),
+    ...(subjectOf.brains ?? []).map((/** @type {any} */ one, /** @type {number} */ i) => [one._sd?.[0], ['brains', i]]),
+    ...(credential.evidence ?? []).map((/** @type {any} */ one, /** @type {number} */ i) => [one._sd?.[0], ['evidence', i]]),
+    [subjectOf.jean?._sd?.[0], ['jean', 0]],
   ])
+  /** @type {Record<string, any[]>} where each address goes back */
+  const back = { brains: subjectOf.brains ?? [], makers: subjectOf.made ?? [], evidence: credential.evidence ?? [], jean: [subjectOf.jean ?? {}] }
   /** @type {{ request?: string, answer?: string, files: string[], made: string[] }} */
   const words = { files: [], made: [] }
   let proven = !file || compact(file) === jws
@@ -320,6 +350,7 @@ export async function check({ certificate: file, proof: shown }, { logKey = null
     const place = places.get(base64url(await sha256(encode(disclosure))))
     const [salted, ...claim] = json(disclosure)
     if (!place || !/^[\w-]{22,}$/.test(salted)) proven = false
+    else if (place[0] in back && ['host', 'hosts', 'origin'].includes(claim[0])) back[place[0]][place[1]][String(claim[0])] = claim[1]
     else if (place[0] === 'request' || place[0] === 'answer') words[place[0]] = String(claim[1])
     else words[/** @type {'files' | 'made'} */ (place[0])][place[1]] = String(claim.at(-1))
   }

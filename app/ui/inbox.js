@@ -9,7 +9,8 @@ import { Element, define } from './base.js'
 import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, markConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
-import { loaded, slots } from './caps.js'
+import { serviceURL } from '../core/settings.js'
+import { loaded, slots, unlock } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -71,6 +72,7 @@ function taskList(where, list) {
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => markConversation(item.path, { unread: !item.unread }))}
         ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
+        ${slots('task').map((part) => part.draw(item, menu))}
         ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path), item.id === currentId ? SHORTCUTS.delete : undefined)}</div>
     </li>`
   })}</ol>`
@@ -80,8 +82,11 @@ function taskList(where, list) {
 const action = (menu, icon, label, act, shortcut) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" aria-keyshortcuts=${shortcut ?? nothing}
   @click=${act}>${icon}${label}${shortcut ? keys(shortcut) : nothing}</button>`
 
-/** Saves a copy of a task as a web page (D305), from its menu or ⌘S. @param {{ path: string, title: string }} task */
-export const saveCopy = (task) => import('./export.js').then((module) => module.saveTask(app.fs, task))
+/** Saves a copy of a task as a web page (D305), from its menu or ⌘S; sharing it by link is found then, where a host is named (D361). @param {{ path: string, title: string }} task */
+export const saveCopy = async (task) => {
+  await import('./export.js').then((module) => module.saveTask(app.fs, task))
+  if (serviceURL('share', app.settings.value, app.policy) && app.policy.rules?.share !== 'never') unlock('share')
+}
 
 /** Deletes a task once the user says so, from its menu or ⌘⌫ (D313). @param {string} path */
 export const deleteTask = async (path) => { if (confirm(t('history.confirmDelete'))) await removeConversation(path) }

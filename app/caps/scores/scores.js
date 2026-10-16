@@ -9,6 +9,7 @@ import { html, render, svg } from 'lit-html'
 import { app, notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
+import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { modelWorker } from '../../ui/model.js'
@@ -141,6 +142,7 @@ class AppScore extends HTMLElement {
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+        ${drawnActions('abc', source)}
       </div>`}`, this)
   }
 

@@ -259,6 +259,7 @@
   "cap.backup.name": "Yedek",
   "cap.backup.offer": "Görevlerin yalnızca bu tarayıcıda duruyor. Her şeyin bir kopyası tutulsun mu?",
   "cap.backup.yes": "Yedek indir",
+  "cap.share.name": "Paylaşım",
   "cap.sync.name": "Eşitleme",
   "cap.sync.offer": "Görevlerin, dosyaların ve hafıza diğer bilgisayarlarında aynı kalsın mı? Bulut depolamanın eşitlediği bir klasör seçersin.",
   "cap.sync.yes": "Bir klasör seç",

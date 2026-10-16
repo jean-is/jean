@@ -259,6 +259,7 @@
   "cap.backup.name": "Backup",
   "cap.backup.offer": "Nasa browser na ito lang ang mga gawain mo. Magtago ng kopya ng lahat?",
   "cap.backup.yes": "Mag-download ng backup",
+  "cap.share.name": "Pagbabahagi",
   "cap.sync.name": "Sync",
   "cap.sync.offer": "Panatilihing pareho ang mga gawain, file, at memorya mo sa iba mo pang computer? Pipili ka ng folder na sini-sync ng cloud drive mo.",
   "cap.sync.yes": "Pumili ng folder",

@@ -36,8 +36,8 @@ for (const file of others) {
 }
 
 test('the language menu offers exactly the catalogues there are', async () => {
-  const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
-  const listed = JSON.parse((/export const LOCALES = (\[[^\]]*\])/.exec(state)?.[1] ?? '[]').replace(/'/g, '"'))
+  const i18n = await readFile(new URL('../app/core/i18n.js', import.meta.url), 'utf8')
+  const listed = JSON.parse((/export const LOCALES = (\[[^\]]*\])/.exec(i18n)?.[1] ?? '[]').replace(/'/g, '"'))
   assert.deepEqual(listed, [...LOCALES].sort((a, b) => (a < b ? -1 : 1)))
   assert.deepEqual([...others.map((file) => file.slice(0, -5)), 'en'].sort(), [...LOCALES].sort())
 })
