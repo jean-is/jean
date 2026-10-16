@@ -192,7 +192,7 @@ async function canDo(show) {
     .sort((a, b) => CATALOGUE.indexOf(a.id) - CATALOGUE.indexOf(b.id))
   show({ heading: t('collection.title', { name: BRAND.name }), options: caps.map((cap) => {
     const label = t(`cap.${cap.id}.name`)
-    return { icon: icons[ROOM_ICONS[cap.id]] ?? icons.spark, label, words: words(label), pick: () => put(`/${label}`) }
+    return { icon: icons[ROOM_ICONS[cap.id]] ?? icons.brain, label, words: words(label), pick: () => put(`/${label}`) }
   }) })
 }
 

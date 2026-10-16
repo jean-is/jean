@@ -1,27 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360">
-  <!-- The disk image's window (D155, DMG in scripts/desktop.js): the dark room, and the little light's way from the app to
-       Applications. No words, so it reads in every language. Finder writes the icons' names in black by day and in white by
-       night, so the floor they stand on is a shade both read on at AA (#9b6c40: 4.6:1 with black, 4.55:1 with white). -->
+  <!-- The disk image's window (D155, DMG in scripts/desktop.js), in Tilde (D373): its night surface, where the app's ink
+       tile shows, and the wave's way from the app to Applications, faint where it leaves and full where it arrives. No
+       words, so it reads in every language. Finder writes the icons' names in black by day and in white by night, so the
+       floor they stand on is a warm grey both read on at AA (#777674: 4.63:1 with black, 4.54:1 with white). -->
   <defs>
     <linearGradient id="floor" x1="0" y1="0" x2="0" y2="360" gradientUnits="userSpaceOnUse">
-      <stop offset="0.53" stop-color="#120c08"/>
-      <stop offset="0.62" stop-color="#9b6c40"/>
+      <stop offset="0.53" stop-color="#1f1f1f"/>
+      <stop offset="0.62" stop-color="#777674"/>
     </linearGradient>
-    <radialGradient id="glow" cx="150" cy="160" r="170" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fc9f30" stop-opacity="0.38"/>
-      <stop offset="0.5" stop-color="#c2621a" stop-opacity="0.14"/>
-      <stop offset="1" stop-color="#120c08" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="way" x1="236" y1="0" x2="364" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fb882b"/>
-      <stop offset="1" stop-color="#ffdb85"/>
+    <linearGradient id="way" x1="238" y1="0" x2="360" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff6e5e" stop-opacity="0.25"/>
+      <stop offset="0.7" stop-color="#ff6e5e"/>
     </linearGradient>
   </defs>
   <rect width="600" height="360" fill="url(#floor)"/>
-  <rect width="600" height="222" fill="url(#glow)"/>
-  <g fill="none" stroke="url(#way)" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M238 152Q300 126 352 152" stroke-width="14" stroke-opacity="0.16"/>
-    <path d="M238 152Q300 126 352 152" stroke-width="4" stroke-dasharray="0.1 12"/>
-    <path d="M348.9 140.8L356 154L341.2 156.3" stroke-width="4"/>
+  <g fill="none" stroke="url(#way)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M238 152q12-13 24 0t24 0t24 0t24 0L346 152"/>
+    <path d="M343 143L353 152L343 161"/>
   </g>
 </svg>

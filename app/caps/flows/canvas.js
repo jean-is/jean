@@ -43,7 +43,7 @@ const GLYPHS = {
   run: glyph(svg`<path d="M8 5.5v13l10.5-6.5Z"/>`),
 }
 /** Each kind of card, and each state, as a picture beside its words. */
-const KINDS = /** @type {Record<string, unknown>} */ ({ text: icons.note, file: icons.file, ask: icons.spark, tool: icons.bolt, request: icons.person, brain: icons.spark, answer: icons.check, call: icons.bolt })
+const KINDS = /** @type {Record<string, unknown>} */ ({ text: icons.note, file: icons.file, ask: icons.brain, tool: icons.bolt, request: icons.person, brain: icons.brain, answer: icons.check, call: icons.bolt })
 const MARKS = /** @type {Partial<Record<State, unknown>>} */ ({ done: icons.check, failed: icons.close, declined: icons.close, cut: icons.stop, asking: icons.person })
 
 /** The step whose form is open, a card being moved, a wire being drawn, and whether the pane fills the screen. */

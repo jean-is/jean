@@ -307,7 +307,7 @@ function answers(settings, brainsLocked) {
       <header class="brains-head"><h3 id="brains-yours">${t('brain.connectedTitle')}</h3>${brainsLocked || adding.value || status.value ? nothing : html`<button class="button subtle"
         @click=${() => { adding.value = true; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.brains-add summary'))?.focus()) }}>${icons.plus} ${t('brain.add')}</button>`}</header>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-yours">
-        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.spark, name: t('auto.name'), where: t('auto.text') })}</div>
+        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.brain, name: t('auto.name'), where: t('auto.text') })}</div>
         ${settings.brains.map((brain) => {
           const chosen = !settings.auto && brain.id === active?.id
           const open = opened.value === brain.id, version = brain.api !== 'device'
@@ -420,7 +420,7 @@ export function ways(first, all = true) {
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}`)
     : nothing}
-    ${all ? way('quick', icons.spark, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
+    ${all ? way('quick', icons.brain, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
       <p>${t('brain.quick.text')}</p>
       <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button></div>`) : nothing}
     ${way('key', icons.key, t('brain.key.title'), providers(KEYED), false, html`
@@ -763,7 +763,7 @@ const KNOWN = ['you', 'skills', 'routines']
  */
 const SECTIONS = {
   general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
-  brains: { at: 20, label: 'settings.brains', icon: icons.spark, show: brains },
+  brains: { at: 20, label: 'settings.brains', icon: icons.brain, show: brains },
   appearance: { at: 30, label: 'settings.appearance', icon: icons.contrast, show: appearance },
   keyboard: { at: 40, label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
@@ -841,7 +841,7 @@ class Settings extends Element {
 // bar of how much is found; then a capability a row of a list, lit once found, a silhouette until
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', meaning: 'spark', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
+  files: 'file', meaning: 'brain', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', share: 'upload', sync: 'sync', lock: 'key', 'brain-local': 'lock', machine: 'terminal', pictures: 'image', plugins: 'bolt',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */

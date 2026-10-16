@@ -685,7 +685,7 @@ class FolderName extends Element {
         ${shut ? item(icons.key, t('folders.allow'), () => permit(folder)) : nothing}
         ${changed.length ? item(icons.download, t('folders.save'), async () => save(new Blob([/** @type {BlobPart} */ (await folder.copy?.zip())], { type: 'application/zip' }), `${folder.name}.zip`)) : nothing}
         ${item(icons.folder, t('folders.another'), () => choose())}
-        ${!onProject ? item(icons.spark, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
+        ${!onProject ? item(icons.brain, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
         ${item(UNLINK, t('folders.none'), () => use(null))}
       </div>`
   }

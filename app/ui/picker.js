@@ -81,7 +81,7 @@ class Picker extends Element {
     const kept = app.project.value.data.cloud === false
     return html`<div id="brain-menu" class="menu brain-menu" popover
       @toggle=${(/** @type {ToggleEvent} */ e) => (this.#open.value = e.newState === 'open') && brains.forEach((brain) => isLocal(brain) || loadModels(brain))}>
-      ${option(icons.spark, t('auto.name'), t('auto.text'), settings.auto, () => updateSettings({ auto: true }))}
+      ${option(icons.brain, t('auto.name'), t('auto.text'), settings.auto, () => updateSettings({ auto: true }))}
       ${choices(this.#open.value).map(({ icon, label, behind, brain, model }) => option(icon, label, behind, manual(brain, model), () => pick(brain, model)))}
       <hr>
       ${[active, ...brains].some((brain) => brain && !isLocal(brain)) ? html`<button type="button" role="switch" aria-checked=${kept || !settings.cloud ? 'true' : 'false'}
