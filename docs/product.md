@@ -288,7 +288,7 @@ As in the Claude apps (D118), Ctrl outside Apple's systems: ⌘, Settings; ⌘/ 
 | Read-aloud (text to speech) | `speechSynthesis` with operating-system voices, using only voices where `localService` is true, in the answer's own language (D109), by the most natural voice there for it; when none speaks it, Jean says so (D114) | Kokoro for more natural voices (about 8 languages); cloud text-to-speech |
 | Live conversation | A chain: Silero voice detection → speech-to-text → brain (streamed) → speech, sentence by sentence; speaking over Jean interrupts it. Works with any brain. | Real-time speech models from the connected provider (OpenAI Realtime over WebRTC with the user's key, Gemini Live) |
 
-Dictation and read-aloud are always there, for accessibility. Live conversation is discovered after three dictations (D93); once on, it starts from the box's button while the box is empty, and its state shows in the box (D123). Kokoro voices and the providers' speech services are options for later.
+Dictation and read-aloud are always there, for accessibility. Live conversation is discovered after three dictations (D93); once on, it starts from the box's button while the box is empty, and its state shows in the box (D123), where what the user says is written as they say it, and sent once they stop, the button ending live conversation all the while (D374). Kokoro voices and the providers' speech services are options for later.
 
 ## Languages
 
