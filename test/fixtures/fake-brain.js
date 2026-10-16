@@ -41,7 +41,9 @@
 // certificate is genuine, it checks the files shared with check_certificate and says what it found (D274).
 // Asked what the files say about something, it searches the project's files and quotes what it found (D24).
 // Given "a very long task", it says it read most of a big window; asked to sum the conversation up, it does, and
-// read on from a summary, it says so (D359).
+// read on from a summary, it says so (D359). Asked to do something "step by step" with plans on, it plans it, waits for the
+// user's word, then does each step and ticks it off, adding what the user's words asked for; asked to count to twenty, it
+// takes a step a number, past its limit (D364). Counting slowly to five, a second a step, it stops when told to (D365).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -104,6 +106,31 @@ const LETTER = [
   { question: 'What should it ask for?', options: [{ label: 'A meeting' }, { label: 'A refund' }, { label: 'More time' }], multiple: true },
   { question: 'Who signs it?' },
 ]
+
+/** A move, planned step by step, in the user's language (D364). */
+const MOVE = {
+  en: ['Pack the boxes', 'Book the van', 'Clean the flat'],
+  fr: ['Faire les cartons', 'Réserver la camionnette', 'Nettoyer l’appartement'],
+  ar: ['توضيب الصناديق', 'حجز الشاحنة', 'تنظيف الشقة'],
+  ja: ['箱に詰める', 'トラックを予約する', '部屋を掃除する'],
+}
+const PLANNED = { en: 'Every step of the plan is done.', fr: 'Toutes les étapes du plan sont faites.', ar: 'أُنجزت كل خطوات الخطة.', ja: '計画のすべてのステップが完了しました。' }
+
+/**
+ * The plan's next update, or the answer once every step is done: no step done until the user confirms it, then one more
+ * at each update; the words the user changed it with add a step. @param {any[]} messages @param {'en' | 'fr' | 'ar' | 'ja'} lang
+ */
+function planned(messages, lang) {
+  const ids = new Set(messages.flatMap((m) => (m.tool_calls ?? []).filter((c) => c.function.name === 'plan').map((c) => c.id)))
+  const results = messages.filter((m) => m.role === 'tool' && ids.has(m.tool_call_id)).map((m) => String(m.content))
+  if (/didn't confirm|don't use plans/.test(results.at(-1) ?? '')) return { answer: 'All right: tell me what you would like instead.' }
+  const added = results.map((content) => /wants the plan changed: «(.+?)»/.exec(content)?.[1]).find(Boolean)
+  const steps = [...MOVE[lang], ...(added ? [added.replace(/^add a step to /i, '').replace(/^./, (c) => c.toUpperCase())] : [])]
+  const go = results.findIndex((content) => /confirmed the plan|plan is shown/.test(content))
+  const done = go < 0 ? 0 : results.length - go
+  if (done > steps.length) return { answer: PLANNED[lang] }
+  return { call: { name: 'plan', args: { entries: steps.map((content, i) => ({ content, status: i < done ? 'completed' : i === done ? 'in_progress' : 'pending' })) } } }
+}
 
 /** What the user answered, question by question. @param {string} content the tool's result */
 function told(content) {
@@ -534,7 +561,20 @@ createServer(async (req, res) => {
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
   // A conversation summed up near its window (D359).
   const summing = /This conversation has grown too long to keep in full/.test(lastUser)
+  // Plans (D364): planned step by step; or a count, a step a number, from the request at work on.
+  const stepwise = /step by step|خطوة بخطوة|段階的に/i.test(question) && declared.has('plan') && (last.role === 'user' || toolName === 'plan')
+  const counting = /count to twenty|عدّ إلى عشرين|二十まで数えて/i.test(question) && last.role !== 'assistant'
+  const slowly = /count slowly to five|عدّ ببطء إلى خمسة|ゆっくり五まで数えて/i.test(question) && last.role !== 'assistant'
+  const counted = messages.slice(messages.findLastIndex((m) => m.role === 'user')).filter((m) => m.role === 'tool').length
   if (summing) answer = 'Summary: the user wants the work carried on, step by step.'
+  else if (stepwise) ({ call = null, answer = '' } = planned(messages, lang))
+  else if (counting && counted < 20) call = { name: 'find_tools', args: { query: `number ${counted + 1}` } }
+  else if (counting) answer = 'I counted to twenty.'
+  else if (/^(?:stop|توقف|止めて)/i.test(question.trim()) && last.role === 'user') answer = 'Stopping here, as you asked.'
+  else if (slowly && counted < 5) {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    call = { name: 'find_tools', args: { query: `number ${counted + 1}` } }
+  } else if (slowly) answer = 'I counted to five, slowly.'
   else if (messages.find((m) => m.role !== 'system')?.content.includes('<summary>') && last.role === 'user') answer = 'I read on from the summary of the earlier work.'
   else if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
   else if (system.startsWith('Answer the question about what follows with yes or no')) answer = /<about>[\s\S]*\b(invoice|html)\b/i.test(lastUser) ? 'Yes.' : 'No.'

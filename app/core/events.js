@@ -1,6 +1,6 @@
 // ACP records: building them and folding them for display. The brain reads the same log, as
 // core/prompt.js's toChatMessages() derives it. One log, two readers.
-/** @import { Envelope, AcpUpdate, ToolCall, ToolCallInfo, PlanEntry, ResourceLink, SystemNoteData } from './types.js' */
+/** @import { Envelope, AcpUpdate, ToolCall, ToolCallInfo, PlanEntry, ResourceLink, SystemNoteData, CompactionUpdate } from './types.js' */
 
 /** @param {string} by @param {AcpUpdate} update @param {number} [step] @returns {Envelope} */
 export const envelope = (by, update, step) => ({ at: new Date().toISOString(), by, ...(step !== undefined && { step }), update })
@@ -25,9 +25,9 @@ export const noteRecord = (text, data) => envelope('jean', { sessionUpdate: '_sy
 export const metaRecord = (by, meta) => ({ at: new Date().toISOString(), by, meta })
 
 /**
- * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[], compaction?: { text: string } }} Step compaction: a summary read on from (D359)
+ * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[], compaction?: CompactionUpdate }} Step compaction: a summary read on from (D359)
  * @typedef {{ text: string, data: SystemNoteData }} Note
- * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number }} UserTurn upTo: how many records lead up to its end
+ * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number, steer?: boolean }} UserTurn upTo: how many records lead up to its end; steer: D365
  * @typedef {{ user: UserTurn | null, notes: Note[], steps: Step[], plan?: PlanEntry[], at: string, end?: string }} Turn
  *   notes are the system notes recorded just before this turn's user message; end is when its answer was last written.
  */
@@ -54,6 +54,7 @@ export function foldTurns(records) {
       }
       const user = /** @type {UserTurn} */ (turn.user)
       user.upTo = index + 1
+      if (update._meta?.steer) user.steer = true
       if (update.content.type === 'resource_link') user.files.push(update.content)
       else user.text += update.content.text
     } else {
@@ -82,7 +83,7 @@ export function applyUpdate(turn, update, index) {
   if (!step) turn.steps.push((step = { index, text: '', thought: '', tools: [] }))
   if (update.sessionUpdate === 'agent_message_chunk') step.text += update.content.text
   else if (update.sessionUpdate === 'agent_thought_chunk') step.thought += update.content.text
-  else if (update.sessionUpdate === '_compaction') step.compaction = update
+  else if (update.sessionUpdate === 'compaction_update') step.compaction = update
   else if (update.sessionUpdate === 'user_message_chunk' || update.sessionUpdate === '_system_note') return
   else if (update.sessionUpdate === 'tool_call' || update.sessionUpdate === 'tool_call_update') {
     const { sessionUpdate, ...info } = update

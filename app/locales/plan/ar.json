@@ -1,0 +1,13 @@
+{
+  "plan.title": "الخطة",
+  "plan.done": "تمّ {done} من {total}",
+  "plan.pending": "للتنفيذ",
+  "plan.in_progress": "قيد التنفيذ",
+  "plan.completed": "تمّ",
+  "plan.confirm": "هل نمضي في هذه الخطة؟",
+  "plan.go": "موافق",
+  "plan.always": "موافق دائمًا",
+  "plan.paused": "متوقف مؤقتًا عند الخطوة {count}",
+  "plan.cost": "نحو {cost} حتى الآن",
+  "plan.keepGoing": "متابعة"
+}

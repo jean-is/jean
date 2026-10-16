@@ -89,7 +89,7 @@ Mail and Human open the drawer beside the conversation once there is a task (D16
 
 | Item | Limit |
 |---|---|
-| CSS | ≤ 12.4 KB gzipped for the room; another look adds its own file only when chosen |
+| CSS | ≤ 12.6 KB gzipped for the room; another look adds its own file only when chosen |
 | Display font | ≤ 30 KB |
 | Images | 0 |
 | Icons | ~20 inline SVGs |

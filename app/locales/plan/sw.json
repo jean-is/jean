@@ -1,0 +1,13 @@
+{
+  "plan.title": "Mpango",
+  "plan.done": "{done} kati ya {total} zimekamilika",
+  "plan.pending": "Bado",
+  "plan.in_progress": "Inaendelea",
+  "plan.completed": "Imekamilika",
+  "plan.confirm": "Kuendelea na mpango huu?",
+  "plan.go": "Anza",
+  "plan.always": "Anza kila mara",
+  "plan.paused": "Imesitishwa kwenye hatua ya {count}",
+  "plan.cost": "takriban {cost} kufikia sasa",
+  "plan.keepGoing": "Endelea"
+}

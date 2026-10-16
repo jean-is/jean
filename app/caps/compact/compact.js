@@ -1,7 +1,8 @@
 // Compaction (D359): a conversation near its brain's window is summed up by that same brain, on the same system, tools
-// and history plus one request, and the brain reads on from the summary (core/loop.js's turn.compact). Its record adds
-// what Jean knows for sure: the sources and files by number, the notes in force and the request at work, word for word.
-// The file keeps everything and the room shows it whole: the summary is only read. Loaded the first time a conversation
+// and history plus one request, and the brain reads on from the summary (core/loop.js's turn.compact). Its record is ACP's
+// compaction_update: the summary, for the user to read, and in _meta what the brain reads, the summary and what Jean knows
+// for sure: the sources and files by number, the notes in force and the request at work, word for word. The file keeps
+// everything and the room shows it whole: the summary is only read. Loaded the first time a conversation
 // passes half its window (ui/send.js); Ollama and LM Studio are asked the window they gave their brain.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -16,8 +17,9 @@ import { envelope, foldTurns, linkedFiles } from '../../core/events.js'
 import { estimateMessages } from '../../core/files.js'
 import { LLMError } from '../../core/llm.js'
 import { t, useStrings } from '../../core/i18n.js'
+import { ulid } from '../../core/ulid.js'
 
-/** @import { BrainConfig, ChatMessage, Envelope, StreamEvent, ToolCallInfo, Usage } from '../../core/types.js' */
+/** @import { BrainConfig, ChatMessage, CompactionUpdate, Envelope, StreamEvent, ToolCallInfo, Usage } from '../../core/types.js' */
 
 await Promise.all([useStrings('compact'), styleSheet(new URL('compact.css', import.meta.url))])
 
@@ -96,8 +98,8 @@ async function compact(e, next) {
   const { text, usage } = await summary(e)
   if (!text) return next(e)
   const records = (e.task && (await loadConversation(app.fs, e.task))?.records) || []
-  return envelope('jean', { sessionUpdate: '_compaction', text: [`<summary>\n${text}\n</summary>`, ...known(records)].join('\n\n'),
-    data: { reason: e.reason, brain: { provider: e.brain.provider, model: e.brain.model }, ...(usage && { usage }) } })
+  return envelope('jean', { sessionUpdate: 'compaction_update', compactionId: ulid(), status: 'completed', summary: [{ type: 'text', text }],
+    _meta: { text: [`<summary>\n${text}\n</summary>`, ...known(records)].join('\n\n'), reason: e.reason, brain: { provider: e.brain.provider, model: e.brain.model }, ...(usage && { usage }) } })
 }
 
 /**
@@ -129,7 +131,8 @@ const short = (text, length) => (text.length > length ? `${text.slice(0, length)
 
 /**
  * What Jean knows for sure and the summary may not say: the sources and files by the numbers the brain cites them by
- * (D71), the notes in force, then the request being worked on, word for word, with what it came with. In English.
+ * (D71), the notes in force, the plan (D364), then the request being worked on, word for word, with what it came with, and what the
+ * user said since to steer it (D365). In English.
  * @param {Envelope[]} records @returns {string[]}
  */
 function known(records) {
@@ -149,12 +152,19 @@ function known(records) {
     const pages = (_meta?.pages ?? []).map(([first, last]) => (first === last ? `${first}` : `${first}–${last}`)).join(', ')
     if (_meta?.source) files.set(_meta.source, `[${_meta.source}] ${name}${pages ? ` (pages ${pages} of ${_meta.of} were given)` : ''}`)
   }
-  const request = foldTurns(records).findLast((turn) => turn.user)
+  // The request at work is the last one that wasn't a steer; what the user said since steers it (D365).
+  const turns = foldTurns(records)
+  const at = turns.findLastIndex((turn) => turn.user && !turn.user.steer)
+  const request = turns[at]
+  const since = turns.slice(at + 1).flatMap((turn) => (turn.user?.steer ? [turn.user.text] : []))
+  const plan = turns.slice(Math.max(at, 0)).findLast((turn) => turn.plan)?.plan
   return [
     ...(sources.size ? [`Sources cited so far, by number:\n${[...sources.values()].join('\n')}`] : []),
     ...(files.size ? [`Files the user shared, by number; read them again when needed:\n${[...files.values()].join('\n')}`] : []),
     ...(notes.size ? [`Notes in force:\n${[...notes.values()].map((text) => `- ${text}`).join('\n')}`] : []),
+    ...(plan ? [`The plan, as it stood:\n${plan.map(({ content, status }) => `- [${status}] ${content}`).join('\n')}`] : []),
     ...(request?.user ? [`The request being worked on, word for word:\n<request>\n${[...request.notes.filter((note) => !STANDING.includes(note.data.kind)).map((note) => note.text), request.user.text].join('\n\n')}\n</request>`] : []),
+    ...(since.length ? [`What the user said since, as the work went on, word for word:\n${since.map((text) => `<request>\n${text}\n</request>`).join('\n')}`] : []),
   ]
 }
 
@@ -184,9 +194,9 @@ async function* uncut(e, next) {
  */
 class Compaction extends Element {
   #entry = signal(/** @type {ToolCallInfo | undefined} */ (undefined))
-  #record = signal(/** @type {{ text: string } | undefined} */ (undefined))
+  #record = signal(/** @type {CompactionUpdate | undefined} */ (undefined))
   set entry(/** @type {ToolCallInfo} */ entry) { this.#entry.value = entry }
-  set record(/** @type {{ text: string }} */ record) { this.#record.value = record }
+  set record(/** @type {CompactionUpdate} */ record) { this.#record.value = record }
 
   connectedCallback() {
     // What it was given before it was defined.
@@ -204,7 +214,7 @@ class Compaction extends Element {
     const [entry, record] = [this.#entry.value, this.#record.value]
     if (entry) return t(entry.status === 'failed' ? 'compact.failed' : entry.status === 'completed' ? 'compact.done' : 'compact.doing')
     if (!record) return nothing
-    const text = /^<summary>\n([\s\S]*?)\n<\/summary>/.exec(record.text)?.[1] ?? record.text
+    const text = (record.summary ?? []).map((block) => block.text).join('\n\n')
     return html`<details class="read-list compaction">
       <summary>${icons.scroll}<span>${t('compact.divider')}</span><span class="link-button">${t('compact.read')}</span>${icons.chevron}</summary>
       <div class="prose" dir="auto">${markdown(text)}</div>

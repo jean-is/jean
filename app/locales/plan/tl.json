@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plano",
+  "plan.done": "{done} sa {total} tapos",
+  "plan.pending": "Gagawin pa",
+  "plan.in_progress": "Ginagawa",
+  "plan.completed": "Tapos",
+  "plan.confirm": "Ituloy ang planong ito?",
+  "plan.go": "Ituloy",
+  "plan.always": "Laging ituloy",
+  "plan.paused": "Naka-pause sa hakbang {count}",
+  "plan.cost": "mga {cost} sa ngayon",
+  "plan.keepGoing": "Magpatuloy"
+}

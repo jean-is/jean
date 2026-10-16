@@ -235,6 +235,7 @@
   "kind.execute.label": "Hesaplama yapma",
   "kind.fetch.label": "İnterneti kullanma",
   "kind.other.label": "Gönderme ve paylaşma",
+  "kind.plan.label": "Uzun bir işe başlamak",
   "seal.title": "Bu cihazın mührü",
   "seal.text": "Burada kaydedilen sertifikalar, bu cihazdan hiç çıkmayan bir anahtarla mühürlenir. Onlara güvenen kişi bu parmak izini doğrulayabilir ya da önceden seninle üzerinde anlaşabilir.",
   "pages.title": "Web sayfaları",

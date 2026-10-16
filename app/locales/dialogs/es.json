@@ -238,6 +238,7 @@
   "kind.execute.label": "Hacer cálculos",
   "kind.fetch.label": "Usar internet",
   "kind.other.label": "Enviar y compartir",
+  "kind.plan.label": "Empezar una tarea larga",
   "seal.title": "El sello de este dispositivo",
   "seal.text": "Los certificados guardados aquí se sellan con una clave que nunca sale de este dispositivo. Quien confíe en ellos puede comprobar esta huella o acordarla contigo de antemano.",
   "pages.title": "Páginas web",

@@ -1,0 +1,13 @@
+{
+  "plan.title": "계획",
+  "plan.done": "{total}개 중 {done}개 완료",
+  "plan.pending": "할 일",
+  "plan.in_progress": "진행 중",
+  "plan.completed": "완료",
+  "plan.confirm": "이 계획대로 진행할까요?",
+  "plan.go": "진행",
+  "plan.always": "항상 진행",
+  "plan.paused": "{count}단계에서 일시 중지",
+  "plan.cost": "지금까지 약 {cost}",
+  "plan.keepGoing": "계속하기"
+}

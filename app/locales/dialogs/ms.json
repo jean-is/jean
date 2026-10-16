@@ -232,6 +232,7 @@
   "kind.execute.label": "Menjalankan pengiraan",
   "kind.fetch.label": "Menggunakan internet",
   "kind.other.label": "Menghantar dan berkongsi",
+  "kind.plan.label": "Memulakan tugas panjang",
   "seal.title": "Meterai peranti ini",
   "seal.text": "Sijil yang disimpan di sini dimeterai dengan kunci yang tidak pernah keluar dari peranti ini. Sesiapa yang bergantung padanya boleh menyemak cap jari ini, atau bersetuju mengenainya dengan anda terlebih dahulu.",
   "pages.title": "Halaman web",

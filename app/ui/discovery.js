@@ -95,7 +95,9 @@ register({
   ],
   rules: ['Offer at most one new thing per reply, and only when it clearly helps.'],
   // A task done while the user was in another tab or app: as they come back, a notification could say so next time (D334).
-  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (told && e.answer && away()) addEventListener('focus', () => offerOnce('notifications', true), { once: true }); return next(e) } }],
+  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (told && e.answer && away()) addEventListener('focus', () => offerOnce('notifications', true), { once: true }); return next(e) } },
+    // A task of four calls or more, or one out of steps, finds plans, silently (D364).
+    { on: 'turn.end', run: (e, next) => { if (e.stopped || stepped(e.records)) unlock('plan'); return next(e) } }],
 })
 
 /** Whether the user is elsewhere: another tab, or another app. */

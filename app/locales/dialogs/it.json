@@ -238,6 +238,7 @@
   "kind.execute.label": "Eseguire calcoli",
   "kind.fetch.label": "Usare internet",
   "kind.other.label": "Inviare e condividere",
+  "kind.plan.label": "Iniziare un compito lungo",
   "seal.title": "Il sigillo di questo dispositivo",
   "seal.text": "I certificati salvati qui sono sigillati con una chiave che non lascia mai questo dispositivo. Chi vi fa affidamento può verificare questa impronta, o concordarla con te in anticipo.",
   "pages.title": "Pagine web",

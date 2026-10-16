@@ -17,7 +17,7 @@ import { signal } from '@preact/signals-core'
  * @property {() => { name: string, logo?: string, tools: string[] }[]} [searches]  what else of it searches the web (D271)
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)
  * @property {import('../core/hooks.js').Hook[]} [hooks]  what it does on Jean's events: task.start, turn.step, tool.check, turn.end…
- * @property {Record<string, Slot>} [slots]  what it draws in the room's slots, by name: views, main, above, add, activity, settings…
+ * @property {Record<string, Slot>} [slots]  what it draws in the room's slots, by name: views, main, above, add, box, progress, activity, settings…
  * @property {boolean} [ready]  its weights are here and loaded, for one of WEIGHTS
  */
 
@@ -67,6 +67,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   certificates: () => import('../caps/certificates/certificates.js'),
   plugins: () => import('../caps/plugins/plugins.js'),
   compact: () => import('../caps/compact/compact.js'),
+  plan: () => import('../caps/plan/plan.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */

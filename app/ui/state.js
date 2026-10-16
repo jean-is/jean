@@ -44,7 +44,7 @@ export const app = {
   conversations: signal(/** @type {import('../core/types.js').ConversationSummary[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<{ id: string, path: string, records: Envelope[] } | null>} */
   current: signal(null),
-  /** @type {import('@preact/signals-core').Signal<{ turn: Turn } | null>} */
+  /** @type {import('@preact/signals-core').Signal<{ turn: Turn, steers?: string[] } | null>} steers: D365 */
   live: signal(null),
   busy: signal(false),
   /** The conversations being answered, on screen or not, by path (D147). */
@@ -334,14 +334,14 @@ export async function markConversation(path, meta, by = 'user') {
 
 /**
  * A conversation being answered, on screen or not (D147): `records` as sent, `turn` the answer so far, `settled` what of it is in the file.
- * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController }} Run
+ * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController, steers?: string[] }} Run
  */
 /** @type {Map<string, Run>} by path */
 const runs = new Map()
 
 /**
  * The conversation a call works for, by its run's signal (D147); without one, the one on screen.
- * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], brain?: BrainConfig, turn?: Turn } | null}
+ * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], brain?: BrainConfig, turn?: Turn, settled?: Envelope[] } | null}
  */
 export function conversationOf(signal) {
   for (const run of runs.values()) if (run.controller.signal === signal) return run
@@ -370,7 +370,7 @@ export const decisionsHere = () => app.decisions.value.filter((decision) => deci
 function showRun() {
   const run = runs.get(app.current.peek()?.path ?? '')
   app.busy.value = Boolean(run)
-  app.live.value = run ? { turn: run.turn } : null
+  app.live.value = run ? { turn: run.turn, steers: run.steers } : null
   if (run) setPresence('thinking')
   else if (['thinking', 'answering'].includes(app.presence.peek())) setPresence('idle')
 }
@@ -433,6 +433,9 @@ export const rewind = async (upTo) => (await sending()).rewind(upTo)
 
 /** Duplicates the conversation up to a request into a new one, which answers it (D230). @param {number} upTo */
 export const fork = async (upTo) => (await sending()).fork(upTo)
+
+/** The box's words steer the task at work (D365). @param {string} text */
+export const steer = async (text) => (await sending()).steer(text)
 
 /** The user started typing, or a file is ready: the provider's cache may need writing again (D49). */
 export const warm = async () => (await sending()).warm()

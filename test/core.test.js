@@ -199,7 +199,8 @@ test('events: failed tools become error results; empty steps are skipped', () =>
 })
 
 test('events: the brain reads on from the last summary, and the room keeps it on the step it came before (D359)', () => {
-  const summary = (/** @type {string} */ text, /** @type {number} */ step) => envelope('jean', { sessionUpdate: '_compaction', text, data: { reason: 'window' } }, step)
+  const summary = (/** @type {string} */ text, /** @type {number} */ step) => envelope('jean', { sessionUpdate: 'compaction_update', compactionId: `c${step}`, status: 'completed',
+    summary: [{ type: 'text', text: text.toLowerCase() }], _meta: { text, reason: 'window' } }, step)
   const records = [
     userRecord('Sum the files', 'dev1'),
     envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'brain-0', title: 'model', kind: 'think', status: 'completed', _meta: { raw: ['thinking'] } }, 0),
@@ -227,7 +228,7 @@ test('events: the brain reads on from the last summary, and the room keeps it on
   ])
   // The room shows the conversation whole, each summary on the step it came before.
   const [turn] = foldTurns(records)
-  assert.deepEqual(turn.steps.map((step) => step.compaction?.text), [undefined, 'First summary', 'Second summary'])
+  assert.deepEqual(turn.steps.map((step) => step.compaction?.summary?.[0].text), [undefined, 'first summary', 'second summary'])
   assert.equal(turn.steps[2].text, 'The total is 12.')
 })
 

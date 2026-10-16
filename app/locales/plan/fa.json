@@ -1,0 +1,13 @@
+{
+  "plan.title": "برنامه",
+  "plan.done": "{done} از {total} انجام شد",
+  "plan.pending": "در انتظار",
+  "plan.in_progress": "در حال انجام",
+  "plan.completed": "انجام شد",
+  "plan.confirm": "با این برنامه پیش برویم؟",
+  "plan.go": "پیش برو",
+  "plan.always": "همیشه پیش برو",
+  "plan.paused": "در مرحلهٔ {count} متوقف شد",
+  "plan.cost": "تا اینجا حدود {cost}",
+  "plan.keepGoing": "ادامه"
+}

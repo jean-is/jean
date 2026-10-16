@@ -1,6 +1,7 @@
-// The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
+// The box. Enter sends (never while an IME is composing), steering a task at work (D365); Shift+Enter adds a line, ↑ from an empty box
 // brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). At its top, the
-// questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343). Under it (D123):
+// questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343), after what a
+// capability draws there (a task paused between steps, D364). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
 // is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to the privacy policy and terms (D356).
@@ -9,7 +10,7 @@ import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
 import { t, locale } from '../core/i18n.js'
 import { serviceURL } from '../core/settings.js'
@@ -70,6 +71,7 @@ class Composer extends Element {
     const fresh = !app.current.value?.records.length
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
+        ${slots('box').map((entry) => entry.draw())}
         ${repeat(asked, (decision) => decision.id, (decision) => html`<app-ask .decision=${decision}></app-ask>`)}
         <app-complete></app-complete>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
@@ -108,7 +110,7 @@ class Composer extends Element {
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
             ${brain?.api === 'device' && !auto ? icons.lock : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
-          ${primary(busy && !(asked.length && !empty), empty, hands)}
+          ${primary(busy && !app.draft.value.trim(), empty, hands)}
         </div>
         ${files ? html`<input type="file" multiple class="visually-hidden" tabindex="-1" aria-hidden="true" @change=${this.#pick}>` : nothing}
       </form>
@@ -204,13 +206,15 @@ class Composer extends Element {
   #submit = (event) => {
     event.preventDefault()
     const asked = /** @type {(HTMLElement & { answer: (own: string) => void }) | null} */ (this.querySelector('app-ask'))
-    // While questions wait, the box's words answer the one on screen; send() waits for a page being turned, which frees the box, before it looks whether it is busy.
-    if (asked && app.draft.value.trim()) { asked.answer(app.draft.value); app.draft.value = '' } else send(app.draft.value)
+    const words = app.draft.value.trim()
+    // While questions wait, the box's words answer the one on screen, else steer the task at work (D365); send() waits for a page
+    // being turned, which frees the box, before it looks whether it is busy.
+    if (asked && words) { asked.answer(app.draft.value); app.draft.value = '' } else if (words && app.busy.value) { app.draft.value = ''; steer(words) } else send(app.draft.value)
   }
 }
 
 /**
- * Stop, send, or, while the box is empty, start and end a live conversation (D123).
+ * Stop, while the box has no words (D365); send; or, while the box is empty, start and end a live conversation (D123).
  * @param {boolean} busy @param {boolean} empty @param {import('./dictation.js').Live} hands
  */
 function primary(busy, empty, hands) {

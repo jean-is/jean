@@ -168,6 +168,27 @@ test('a conversation opened again is told to the editor as it went, and goes on'
   await assert.rejects(second.editor.request('session/load', { sessionId: '01JA0000000000000000000099', cwd: second.cwd, mcpServers: [] }), /isn’t in .* anymore/)
 })
 
+test('a summary is told only to an editor that says it takes them, on replay too, without what the brain reads, which the brain reads on from (D359)', async (t) => {
+  const first = await setup(t, { stream: scripted([[{ type: 'text', delta: 'Hello.' }]]).stream })
+  const { sessionId } = await first.editor.request('session/new', { cwd: first.cwd, mcpServers: [] })
+  await first.editor.request('session/prompt', { sessionId, prompt: [{ type: 'text', text: 'Hi' }] })
+  first.end()
+  // The browser summed the conversation up, and Sync brought the record.
+  const { project } = /** @type {NonNullable<Awaited<ReturnType<typeof kept>>>} */ (await kept(first.folder, sessionId))
+  const update = { sessionUpdate: 'compaction_update', compactionId: '01JA0000000000000000000077', status: 'completed', summary: [{ type: 'text', text: 'They said hi.' }], _meta: { text: '<summary>\nThey said hi.\n</summary>', reason: 'window' } }
+  await writeFile(join(first.folder, 'projects', project, 'conversations', `${sessionId}.jsonl`), `${JSON.stringify({ at: new Date().toISOString(), by: 'jean', step: 0, update })}\n`, { flag: 'a' })
+  const plain = await setup(t, { base: first.base })
+  await plain.editor.request('session/load', { sessionId, cwd: plain.cwd, mcpServers: [] })
+  assert.ok(!plain.updates.some((one) => one.sessionUpdate === 'compaction_update'))
+  plain.end()
+  const brain = scripted([[{ type: 'text', delta: 'Again.' }]])
+  const taking = await setup(t, { base: first.base, capabilities: { session: { compaction: true } }, stream: brain.stream })
+  await taking.editor.request('session/load', { sessionId, cwd: taking.cwd, mcpServers: [] })
+  assert.deepEqual(taking.updates.find((one) => one.sessionUpdate === 'compaction_update'), { ...update, _meta: { reason: 'window' } })
+  await taking.editor.request('session/prompt', { sessionId, prompt: [{ type: 'text', text: 'Once more' }] })
+  assert.deepEqual(brain.asked[0].messages.map((/** @type {any} */ message) => [message.role, message.content]), [['user', update._meta.text], ['user', 'Once more']])
+})
+
 test('session/cancel stops the answer, which ends as cancelled', async (t) => {
   const brain = scripted([async (/** @type {{ signal: AbortSignal }} */ { signal }) => {
     await new Promise((resolve) => signal.addEventListener('abort', resolve))

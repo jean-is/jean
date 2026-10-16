@@ -1,0 +1,13 @@
+{
+  "plan.title": "योजना",
+  "plan.done": "{total} में से {done} पूरे",
+  "plan.pending": "बाकी",
+  "plan.in_progress": "चल रहा है",
+  "plan.completed": "पूरा",
+  "plan.confirm": "इस योजना के साथ आगे बढ़ें?",
+  "plan.go": "आगे बढ़ें",
+  "plan.always": "हमेशा आगे बढ़ें",
+  "plan.paused": "चरण {count} पर विराम",
+  "plan.cost": "अब तक लगभग {cost}",
+  "plan.keepGoing": "जारी रखें"
+}

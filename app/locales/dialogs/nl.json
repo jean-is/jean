@@ -235,6 +235,7 @@
   "kind.execute.label": "Berekeningen uitvoeren",
   "kind.fetch.label": "Het internet gebruiken",
   "kind.other.label": "Versturen en delen",
+  "kind.plan.label": "Een lange taak beginnen",
   "seal.title": "Het zegel van dit apparaat",
   "seal.text": "Certificaten die hier worden opgeslagen, worden verzegeld met een sleutel die dit apparaat nooit verlaat. Wie erop vertrouwt, kan deze vingerafdruk controleren of die vooraf met je afspreken.",
   "pages.title": "Webpagina’s",

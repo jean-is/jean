@@ -65,6 +65,6 @@ function switched(checked) {
 
 register({
   id: 'notifications',
-  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (e.answer && on() && away()) tell(e.task, t('notifications.done')); return next(e) } }],
+  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if ((e.answer || e.stopped) && on() && away()) tell(e.task, t(e.stopped ? 'notifications.waiting' : 'notifications.done')); return next(e) } }],
   slots: { general: { at: 10, draw } },
 })

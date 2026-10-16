@@ -1,0 +1,13 @@
+{
+  "plan.title": "ప్రణాళిక",
+  "plan.done": "{total}లో {done} పూర్తయ్యాయి",
+  "plan.pending": "చేయాల్సినది",
+  "plan.in_progress": "జరుగుతోంది",
+  "plan.completed": "పూర్తయింది",
+  "plan.confirm": "ఈ ప్రణాళికతో ముందుకు వెళ్దామా?",
+  "plan.go": "ముందుకు వెళ్దాం",
+  "plan.always": "ఎప్పుడూ ముందుకు వెళ్దాం",
+  "plan.paused": "దశ {count} వద్ద విరామం",
+  "plan.cost": "ఇప్పటివరకు సుమారు {cost}",
+  "plan.keepGoing": "కొనసాగించండి"
+}

@@ -26,6 +26,8 @@ test.beforeEach(async ({ page }) => {
 const leave = (page) => page.evaluate(() => { document.hasFocus = () => false })
 /** Back on the page. @param {import('@playwright/test').Page} page */
 const back = (page) => page.evaluate(() => { delete (/** @type {any} */ (document)).hasFocus; dispatchEvent(new Event('focus')) })
+/** The task's answer ended, so the box's words are a new request, not a steer of it (D365). @param {import('@playwright/test').Page} page */
+const ended = (page) => expect(page.locator('.composer .send.is-stop')).toHaveCount(0)
 /** @param {import('@playwright/test').Page} page */
 const shown = (page) => page.evaluate(() => /** @type {any} */ (window).shown.map(({ title, body, lang, dir, closed }) => ({ title, body, lang, dir, closed })))
 
@@ -35,6 +37,7 @@ const shown = (page) => page.evaluate(() => /** @type {any} */ (window).shown.ma
  * @param {import('@playwright/test').Page} page @param {string} text @param {import('@playwright/test').Locator} offer
  */
 async function doneWhileAway(page, text, offer) {
+  await ended(page)
   await leave(page)
   await ask(page, text)
   await expect(async () => {
@@ -65,6 +68,7 @@ test('a task done out of sight offers notifications; on, the next one is told, a
   expect(await page.evaluate(() => Notification.permission)).toBe('granted')
 
   // The next one done out of sight is told: its title, never its answer, in the user's language.
+  await ended(page)
   await leave(page)
   await ask(page, 'Which neighbourhood should we stay in')
   await expect.poll(() => shown(page)).toEqual([{ title: 'Prepare holiday itinerary', body: 'Done. Your answer is ready.', lang: 'en', dir: 'ltr', closed: false }])
@@ -81,6 +85,7 @@ test('a task done out of sight offers notifications; on, the next one is told, a
 
   // One that stops for the user's answers out of sight is told as it starts waiting, never with its
   // questions, tagged by its task as the first was; a click brings Jean back on them.
+  await ended(page)
   await leave(page)
   await ask(page, 'Write a letter to my bank')
   await expect.poll(async () => (await shown(page))[1]).toEqual({ title: 'Prepare holiday itinerary', body: 'Waiting for you to answer.', lang: 'en', dir: 'ltr', closed: false })

@@ -1,0 +1,13 @@
+{
+  "plan.title": "תוכנית",
+  "plan.done": "{done} מתוך {total} בוצעו",
+  "plan.pending": "לביצוע",
+  "plan.in_progress": "בביצוע",
+  "plan.completed": "בוצע",
+  "plan.confirm": "להמשיך לפי התוכנית?",
+  "plan.go": "קדימה",
+  "plan.always": "תמיד בלי לשאול",
+  "plan.paused": "מושהה בשלב {count}",
+  "plan.cost": "כ־{cost} עד עכשיו",
+  "plan.keepGoing": "להמשיך"
+}

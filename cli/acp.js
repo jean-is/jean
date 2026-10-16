@@ -60,7 +60,7 @@ export function agent({ input, write, folder, brain: named, address, version, en
   const jean = nodeFS(folder)
   /** @type {Map<string, Session>} */
   const sessions = new Map()
-  /** @type {{ fs?: { readTextFile?: boolean, writeTextFile?: boolean }, terminal?: boolean }} */
+  /** @type {{ fs?: { readTextFile?: boolean, writeTextFile?: boolean }, terminal?: boolean, session?: { compaction?: unknown } }} */
   let client = {}
   /** @type {Promise<import('./brain.js').Chosen> | null} */
   let chosen = null
@@ -187,13 +187,18 @@ export function agent({ input, write, folder, brain: named, address, version, en
   function send(session, update) {
     const shown = 'toolCallId' in update ? outward(session, update)
       : update.sessionUpdate === 'user_message_chunk' && update.content.type === 'resource_link'
-        ? { ...update, content: { ...update.content, uri: pathToFileURL(joinPath(folder, session.project.dir, update.content.uri)).href } } : update
+        ? { ...update, content: { ...update.content, uri: pathToFileURL(joinPath(folder, session.project.dir, update.content.uri)).href } }
+        // A summary without what the brain reads, which ACP's leaves out (D359).
+        : update.sessionUpdate === 'compaction_update' ? { ...update, _meta: { ...update._meta, text: undefined } } : update
     rpc.notify('session/update', { sessionId: session.id, update: shown })
   }
 
-  /** A live update: not Jean's own entry for a brain's step, nor a note or a summary (D359); an answer without the follow-ups it ends with. @param {Session} session @param {AcpUpdate} update */
+  /** What the editor is told: no note, and a summary only when it said it takes them (ACP's `session.compaction`, D359). @param {AcpUpdate} update */
+  const told = (update) => !update.sessionUpdate.startsWith('_') && (update.sessionUpdate !== 'compaction_update' || Boolean(client.session?.compaction))
+
+  /** A live update: not Jean's own entry for a brain's step, nor a note; an answer without the follow-ups it ends with. @param {Session} session @param {AcpUpdate} update */
   function tell(session, update) {
-    if (update.sessionUpdate.startsWith('_')) return
+    if (!told(update)) return
     if ('toolCallId' in update && update.toolCallId.startsWith('brain-')) {
       if (update.sessionUpdate === 'tool_call') session.said = { text: '', sent: 0 }
       return
@@ -213,7 +218,7 @@ export function agent({ input, write, folder, brain: named, address, version, en
   function replay(session) {
     const seen = new Set()
     for (const { update } of session.records) {
-      if (!update || update.sessionUpdate.startsWith('_')) continue
+      if (!update || !told(update)) continue
       if (update.sessionUpdate === 'agent_message_chunk') {
         const text = splitSuggestions(update.content.text).text
         if (text) send(session, { ...update, content: { type: 'text', text } })

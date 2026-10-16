@@ -1,0 +1,19 @@
+/* Plans (D364): loaded with them (caps/plan/plan.js), after ui/style.css. Above the answer's activity, the steps as a
+   checklist (.read-list), each with its light: hollow until it starts, lit while under way, a check once done. */
+.plan { margin-block-end: 0.5rem; }
+.plan ol { display: grid; gap: 0.3rem; margin: 0.45rem 0 0; padding: 0; list-style: none; }
+.plan li { display: flex; align-items: center; gap: 0.55rem; color: var(--ink); overflow-wrap: anywhere; }
+.plan li[data-status='completed'] { color: var(--ink-soft); }
+.plan li > .icon { inline-size: 0.95rem; block-size: 0.95rem; flex: none; color: var(--flame); }
+.plan li > .ember { margin-inline: 0.225rem; }
+.plan li[data-status='pending'] > .ember { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-faint); }
+
+/* At the top of the box, a task stopped between steps: how far it got, and Keep going. */
+.pause { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-block-end: 0.5rem; padding-block-end: 0.5rem; border-block-end: 1px solid var(--line); font-size: 0.9rem; cursor: auto; animation: arrive 0.3s var(--ease) both; }
+.pause p { flex: 1 1 12rem; margin: 0; color: var(--ink-soft); }
+.pause .button { padding: 0.25rem 0.8rem; font-size: 0.88rem; }
+
+@media (forced-colors: active) {
+  .plan li[data-status='pending'] > .ember { box-shadow: inset 0 0 0 1.5px CanvasText; }
+  .plan li > .icon { color: CanvasText; }
+}

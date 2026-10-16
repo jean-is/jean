@@ -1,0 +1,13 @@
+{
+  "plan.title": "ዕቅድ",
+  "plan.done": "ከ{total} {done} ተጠናቀዋል",
+  "plan.pending": "የሚቀር",
+  "plan.in_progress": "በሂደት ላይ",
+  "plan.completed": "ተጠናቋል",
+  "plan.confirm": "በዚህ ዕቅድ ይቀጠል?",
+  "plan.go": "ይጀመር",
+  "plan.always": "ሁልጊዜ ይጀመር",
+  "plan.paused": "በደረጃ {count} ቆሟል",
+  "plan.cost": "እስካሁን ወደ {cost} ገደማ",
+  "plan.keepGoing": "ይቀጥል"
+}
