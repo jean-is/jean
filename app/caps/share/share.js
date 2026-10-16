@@ -8,7 +8,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { app, notify, showError, refreshConversations, openConversation } from '../../ui/state.js'
+import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
 import { join } from '../../core/fs.js'
@@ -210,8 +210,7 @@ export async function bringIn(remote, text) {
     if (!response.ok) throw new Error(String(response.status))
     const value = await openValue(new Uint8Array(await response.arrayBuffer()), material)
     const [, ...records] = String(value.file ?? '').split('\n').filter(Boolean).map((line) => JSON.parse(line))
-    const at = new Date().toISOString()
-    const id = ulid()
+    const [at, id] = [new Date().toISOString(), ulid()]
     const path = join(app.projectDir, 'conversations', `${id}.jsonl`)
     // A picture keeps the name its bytes' SHA-256 gives it, or isn't kept.
     for (const [uri, data] of Object.entries(value.pictures ?? {})) {
@@ -268,9 +267,9 @@ if (allowed()) {
   register({
     id: 'share',
     slots: {
-      // In a task's ⋮ menu (ui/inbox.js), after Save a copy.
-      task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {string} */ menu) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide"
-        @click=${() => openShare({ path: item.path, title: item.title })}>${icons.upload}${t('share.menu')}</button>` },
+      // In a task's ⋮ menu (ui/inbox.js), after Save a copy, drawn as the menu's own actions: ⌘⇧U on the open task's (D377).
+      task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown, shortcut: string) => unknown} */ action) =>
+        action(icons.upload, t('share.menu'), () => openShare({ path: item.path, title: item.title }), SHORTCUTS.share) },
       // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made.
       drawn: { at: 1, draw: (/** @type {Item} */ item) => (app.current.value ? html`<button class="icon-button subtle" aria-label=${t('share.menu')}
         @click=${() => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item })}>${icons.upload}</button>` : nothing) },
