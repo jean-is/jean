@@ -160,14 +160,14 @@ async function record(lang) {
     await answerOffer(offer)
   }
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-  // At the microphone's own rate: Firefox connects it to no other.
+  // At the microphone's own rate, as Firefox wants; the worklet makes 16 kHz.
   const context = new AudioContext()
   const release = () => (stream.getTracks().forEach((track) => track.stop()), context.close())
   await context.audioWorklet.addModule(scriptURL(new URL('./capture-worklet.js', import.meta.url))).catch((error) => release().then(() => Promise.reject(error)))
   const ready = load(lang)
   const before = app.draft.value
   /** What the audio says, once the writer is here; failing, dictation ends at once. @param {Float32Array<ArrayBuffer>} audio */
-  const pass = (audio) => ready.then(() => resample(audio, context.sampleRate)).then((audio) => write(audio, lang)).catch((error) => {
+  const pass = (audio) => ready.then(() => write(audio, lang)).catch((error) => {
     stop()
     throw error
   })
@@ -185,20 +185,8 @@ async function record(lang) {
   session = { stop }
   // A failed download shouldn't wait for the user to stop talking.
   ready.catch(stop)
-  const node = new AudioWorkletNode(context, 'capture')
+  const node = new AudioWorkletNode(context, 'capture', { processorOptions: { rate: 16000 } })
   node.port.onmessage = ({ data }) => said.hear(data)
   context.createMediaStreamSource(stream).connect(node)
   dictation.value = { state: 'listening' }
-}
-
-/** 16 kHz, as Whisper and Whistle want. @param {Float32Array<ArrayBuffer>} audio @param {number} rate */
-async function resample(audio, rate) {
-  if (rate === 16000) return audio
-  const context = new OfflineAudioContext(1, Math.ceil((audio.length * 16000) / rate), 16000)
-  const buffer = context.createBuffer(1, audio.length, rate)
-  buffer.copyToChannel(audio, 0)
-  const source = new AudioBufferSourceNode(context, { buffer })
-  source.connect(context.destination)
-  source.start()
-  return (await context.startRendering()).getChannelData(0).slice()
 }

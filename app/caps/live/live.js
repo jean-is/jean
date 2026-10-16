@@ -33,10 +33,11 @@ async function start() {
     if (!(await prepare(Boolean(effective.value.settings.offers.live)))) return end()
     await listed()
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } })
-    const context = new AudioContext({ sampleRate: 16000 })
+    // At the microphone's own rate, as Firefox wants; the worklet makes the 16 kHz voice detection reads.
+    const context = new AudioContext()
     session = { stream, context }
     await context.audioWorklet.addModule(scriptURL(new URL('../voice/capture-worklet.js', import.meta.url)))
-    const node = new AudioWorkletNode(context, 'capture')
+    const node = new AudioWorkletNode(context, 'capture', { processorOptions: { rate: 16000 } })
     context.createMediaStreamSource(stream).connect(node)
     node.port.onmessage = hear()
     live.value = 'listening'

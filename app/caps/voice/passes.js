@@ -15,7 +15,7 @@ export const PASSES = Object.freeze({ again: 5, pause: 8, before: 3, longest: 15
 export const join = (before, words, spaced = true) => (before && words && spaced && !/\s$/.test(before) ? `${before} ${words}` : before + words)
 
 /**
- * @param {(audio: Float32Array<ArrayBuffer>) => Promise<string>} write what the audio says, at the microphone's rate
+ * @param {(audio: Float32Array<ArrayBuffer>) => Promise<string>} write what the audio says, at 16 kHz
  * @param {(words: string) => void} show everything written so far, each time it changes
  * @param {string} lang a tag ("fr-FR"): Chinese, Japanese, Thai, Lao, Khmer and Burmese join without spaces
  * @returns {{ hear: (frame: Float32Array) => void, end: () => Promise<string> }}
