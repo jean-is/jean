@@ -76,8 +76,11 @@ export async function openValue(sealed, material) {
 /** A link to a share: the host's address, its id, and the secret after `#`. @param {string} host @param {string} id @param {Uint8Array} secret */
 export const linkOf = (host, id, secret) => `${host.replace(/\/?$/, '/')}${id}#${base64url(secret)}`
 
-/** A share's id: 128 random bits, as its address names it. */
-export const newId = () => base64url(random(16))
+/**
+ * A share's id: the first 128 bits of its write token's SHA-256, so the host lets no other token put a
+ * copy there, even once it is no longer shared. @param {string} token
+ */
+export const idOf = async (token) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', encode(token))).slice(0, 16))
 
 /** Whether a text is an id or a secret of a share's link. @param {string} text */
 export const isPart = (text) => /^[\w-]{22,86}$/.test(text)

@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { envelope, userRecord, noteRecord, metaRecord, foldTurns } from '../app/core/events.js'
 import { copyOf } from '../app/caps/share/copy.js'
-import { sealValue, openValue, materialOf, keysOf, saltOf, random, linkOf, base64url, bytesOf, newId, isPart, hashOf } from '../app/caps/share/seal.js'
+import { sealValue, openValue, materialOf, keysOf, saltOf, random, linkOf, base64url, bytesOf, idOf, isPart, hashOf } from '../app/caps/share/seal.js'
 
 const PICTURE = { uri: 'files/sha256-aa.png', name: 'Cat.png', mimeType: 'image/png', size: 3 }
 const DOCUMENT = { uri: 'files/sha256-bb.docx', name: 'Letter.docx', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 9 }
@@ -74,7 +74,10 @@ test('a seal opens with its secret alone, and with a password only with that pas
 
 test('a link names the host, the id and the secret after #, which browsers never send', async () => {
   const secret = random(32)
-  const id = newId()
+  const token = base64url(random(32))
+  const id = await idOf(token)
+  assert.match(id, /^[\w-]{22}$/)
+  assert.equal(id, await idOf(token))
   const link = new URL(linkOf('https://hst.ing', id, secret))
   assert.equal(link.origin + link.pathname, `https://hst.ing/${id}`)
   assert.deepEqual(bytesOf(link.hash.slice(1)), secret)
@@ -124,7 +127,8 @@ async function sealed(password) {
   const secret = random(32)
   const salt = random(16)
   const { sealed: body, access } = await sealValue({ title: 'Cat' }, { secret, salt, password })
-  return { secret, salt, body, access, token: base64url(random(32)), id: newId() }
+  const token = base64url(random(32))
+  return { secret, salt, body, access, token, id: await idOf(token) }
 }
 
 test('the host keeps a sealed copy from the Jeans it serves, and records each change, never a read', async () => {
@@ -132,6 +136,8 @@ test('the host keeps a sealed copy from the Jeans it serves, and records each ch
   const share = await sealed()
   const put = (/** @type {string} */ origin, token = share.token) => ask(`/v1/${share.id}`, { method: 'PUT', origin, body: share.body, headers: { authorization: `Bearer ${token}`, 'share-days': '365' } })
   assert.equal((await put('https://evil.example')).status, 403)
+  // The id is its token's: no other token puts a copy there, before, during or after.
+  assert.equal((await put(JEAN, base64url(random(32)))).status, 403)
   const made = await put(JEAN)
   assert.equal(made.status, 201)
   assert.equal(made.headers.get('access-control-allow-origin'), JEAN)
@@ -150,6 +156,7 @@ test('the host keeps a sealed copy from the Jeans it serves, and records each ch
   assert.equal((await put(JEAN)).status, 200)
   assert.equal((await ask(`/v1/${share.id}`, { method: 'DELETE', origin: JEAN, headers: { authorization: `Bearer ${share.token}` } })).status, 200)
   assert.equal((await ask(`/v1/${share.id}`)).status, 404)
+  assert.equal((await put(JEAN, base64url(random(32)))).status, 403)
   assert.deepEqual(store.records.map(({ operation, address, port, id }) => [operation, address, port, id]), [['create', CLIENT.address, CLIENT.port, share.id], ['change', CLIENT.address, CLIENT.port, share.id], ['delete', CLIENT.address, CLIENT.port, share.id]])
 })
 
@@ -179,6 +186,7 @@ test('the host refuses what isn’t a share, too big, past its end or taken down
   store.metas.set(share.id, { ...store.metas.get(share.id), expires: new Date(Date.now() - 1000).toISOString() })
   assert.equal((await ask(`/v1/${share.id}`)).status, 404)
   assert.equal(store.metas.has(share.id), false)
+  assert.equal((await ask(`/v1/${share.id}`, { method: 'PUT', origin: JEAN, body: share.body, headers: { authorization: `Bearer ${base64url(random(32))}` } })).status, 403)
   store.metas.set(share.id, { removed: new Date().toISOString() })
   assert.equal((await ask(`/v1/${share.id}`)).status, 410)
   assert.equal((await ask(`/v1/${share.id}`, { method: 'PUT', origin: JEAN, body: share.body, headers })).status, 410)
@@ -189,9 +197,9 @@ test('the host refuses what isn’t a share, too big, past its end or taken down
 
 test('the viewer is the same page for every share, unindexed, and draws in an opaque frame', async () => {
   const { ask } = hostOn()
-  const page = await ask(`/${newId()}`)
+  const page = await ask(`/${base64url(random(16))}`)
   assert.equal(page.status, 200)
-  assert.equal((await ask(`/${newId()}`, { method: 'HEAD' })).status, 200)
+  assert.equal((await ask(`/${base64url(random(16))}`, { method: 'HEAD' })).status, 200)
   assert.equal(page.headers.get('x-robots-tag'), 'noindex')
   const policy = String(page.headers.get('content-security-policy'))
   assert.match(policy, /script-src https:\/\/cdn\.example 'sha256-/)

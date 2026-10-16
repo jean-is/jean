@@ -7,7 +7,8 @@
 //   GET    /<id>             the viewer, the same page for every share
 //   GET    /frame            where a share is drawn: a page whose own policy makes it an opaque origin, which writes the page it is sent
 //   GET    /v1/<id>          the sealed copy. A password's asks for its proof (Authorization: Share <proof>), and answers 401 { salt } without it
-//   PUT    /v1/<id>          keeps it, a new one or a change: Authorization: Bearer <write token>, Share-Days: 30 or 365, Share-Proof: the proof's hash for a password's
+//   PUT    /v1/<id>          keeps it, a new one or a change: Authorization: Bearer <write token>, whose SHA-256 the id is the start of, Share-Days: 30 or 365,
+//                            Share-Proof: the proof's hash for a password's
 //   DELETE /v1/<id>          stops sharing it, with its write token
 //   POST   /v1/<id>/report   a report for whoever runs the host: { words, link? }, the link only when the reporter gives it
 //
@@ -47,6 +48,8 @@ const ID = /^\/(?:v1\/)?([\w-]{22})(\/report)?$/
 const base64url = (bytes) => btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join('')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 /** @param {string} text */
 const hashOf = async (text) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))))
+/** The id a write token's share has: its SHA-256's first 16 bytes, so no other token ever puts a copy there. @param {string} token */
+const idOf = async (token) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token))).slice(0, 16))
 /** @param {string} text */
 const escape = (text) => text.replace(/[&<>"]/g, (mark) => `&${{ '&': 'amp', '<': 'lt', '>': 'gt', '"': 'quot' }[mark]};`)
 /** JSON in a script block, which nothing in it can end. @param {unknown} value */
@@ -159,6 +162,7 @@ export function host(config) {
     if (++mine.writes > WRITES) return answer(429, { error: 'Too many changes. Try again later.' })
     const token = /^Bearer ([\w-]{43})$/.exec(request.headers.get('authorization') ?? '')?.[1]
     if (!token) return answer(401, { error: 'A write token is needed.' })
+    if (await idOf(token) !== id) return answer(403, { error: 'This share is someone else’s.' })
     const tokenHash = await hashOf(token)
     if (meta?.removed) return answer(410, { error: 'This was taken down.' })
     if (live && live.token !== tokenHash) return answer(403, { error: 'This share is someone else’s.' })

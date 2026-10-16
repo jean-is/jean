@@ -21,7 +21,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { picturesOf, drawingOf } from '../../ui/export.js'
 import { copyOf } from './copy.js'
-import { sealValue, openValue, materialOf, keysOf, newId, random, base64url, bytesOf, linkOf, hashOf, isPart } from './seal.js'
+import { sealValue, openValue, materialOf, keysOf, idOf, random, base64url, bytesOf, linkOf, hashOf, isPart } from './seal.js'
 
 await Promise.all([useStrings('share'), styleSheet(new URL('share.css', import.meta.url))])
 
@@ -136,7 +136,7 @@ export async function create(what, { password = '', days = 30, read: reading = f
   const material = await materialOf(secret, salt, password || undefined)
   const at = new Date().toISOString()
   /** @type {Share} */
-  const share = { format: 1, kind: 'share', id: ulid(), host, remote: newId(), secret: base64url(secret), salt: base64url(salt), password: Boolean(password), task: what.path, title: what.title,
+  const share = { format: 1, kind: 'share', id: ulid(), host, remote: await idOf(token), secret: base64url(secret), salt: base64url(salt), password: Boolean(password), task: what.path, title: what.title,
     ...(what.item && { item: what.item }), days, read: reading, keep: keep && !what.item, expires: '', createdAt: at, updatedAt: at, author: app.deviceId }
   share.expires = await upload(share, material, token, password || undefined)
   // What only this device needs to change it: the token, and what the password made, never the password.
