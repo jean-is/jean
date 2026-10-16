@@ -14,9 +14,9 @@ import { handle } from './serve.js'
 const APP = fileURLToPath(new URL('../app', import.meta.url))
 /**
  * Device pixels per CSS pixel: a phone's screen is dense, a desktop's often isn't, and a shared
- * link's picture is drawn a quarter larger, so its words read in a small card.
+ * link's picture is drawn a tenth larger, so its words read in a small card and the first screen still fits it (D366).
  */
-export const SCALE = /** @type {Record<string, number>} */ ({ wide: 1, narrow: 2, share: 1.25 })
+export const SCALE = /** @type {Record<string, number>} */ ({ wide: 1, narrow: 2, share: 10 / 9 })
 const QUALITY = 85
 /** Start of frame markers, the ones that hold the size: C0 to CF, except C4, C8 and CC. */
 const FRAME = /** @param {number} marker */ (marker) => marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)

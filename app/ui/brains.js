@@ -86,9 +86,11 @@ export async function keepOnDevice(on) {
   await updateSettings({ cloud: !on, ...(on && brain && !isLocal(brain) && { auto: true }) })
 }
 
-/** Leaves to sign in somewhere that comes back to this page, with what the user had typed and where they were. @param {string} url */
+/** Leaves to sign in somewhere that comes back to this page, with what the user had typed and shared, and where they were. @param {string} url */
 export function leave(url) {
   sessionStorage.setItem('app.draft', app.draft.value)
+  // The files shared are kept in the project; the box's note of them comes back too, so the request goes with them (D366).
+  try { sessionStorage.setItem('app.files', JSON.stringify(app.attachments.value.filter((item) => item.status === 'ready').map(({ preview, ...item }) => item))) } catch {}
   sessionStorage.setItem('app.route', location.hash)
   location.assign(url)
 }
@@ -109,7 +111,8 @@ export async function finishSignIn() {
   if (!(code && verifier) && !chatgpt) return
   sessionStorage.removeItem('app.pkce')
   app.draft.value = sessionStorage.getItem('app.draft') ?? ''
-  sessionStorage.removeItem('app.draft')
+  app.attachments.value = JSON.parse(sessionStorage.getItem('app.files') ?? '[]')
+  for (const key of ['app.draft', 'app.files']) sessionStorage.removeItem(key)
   history.replaceState(null, '', location.pathname + (sessionStorage.getItem('app.route') ?? ''))
   sessionStorage.removeItem('app.route')
   dispatchEvent(new HashChangeEvent('hashchange'))

@@ -12,8 +12,6 @@ import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
-const STARTERS = ['discover', 'summarize', 'email', 'explain', 'savings']
-
 class Shell extends Element {
   render() {
     const current = app.current.value
@@ -45,7 +43,6 @@ class Shell extends Element {
       <app-history></app-history>
       <app-find></app-find>
       <app-settings></app-settings>
-      <app-first></app-first>
       <app-picker></app-picker>
       <app-project-dialog></app-project-dialog>
       <app-toasts class="toasts" role="status" aria-live="polite" popover="manual"></app-toasts>
@@ -135,7 +132,7 @@ document.addEventListener('keydown', (event) => {
 /** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
 function offerAside() {
   const offer = app.offer.value
-  if (!offer) return nothing
+  if (!offer || app.dialog.value === 'first') return nothing
   const { id, progress } = offer
   const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
   return html`<aside class="offer" role="status">
@@ -147,13 +144,13 @@ function offerAside() {
   </aside>`
 }
 
+// Before any task, in a browser's tab (not the desktop app, whose key the tab keeps): what Jean is (D366).
 function welcome() {
+  const pitch = !app.conversations.value.length && app.dialog.value !== 'first' && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
   return html`<section class="welcome">
     <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>
-    <ul class="starters">${STARTERS.map((key) => html`<li>
-      <button class="starter" @click=${() => { app.draft.value = t(`starter.${key}.prompt`); focusComposer() }}>${t(`starter.${key}`)}</button>
-    </li>`)}</ul>
+    ${pitch ? html`<div class="pitch"><p>${t('welcome.promise')}</p><ul>${['install', 'device', 'open'].map((key) => html`<li>${t(`welcome.${key}`)}</li>`)}</ul></div>` : nothing}
   </section>`
 }
 

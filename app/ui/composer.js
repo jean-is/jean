@@ -4,7 +4,7 @@
 // capability draws there (a task paused between steps, D364). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
-// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, it links to the privacy policy and terms (D356).
+// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to the privacy policy and terms (D356).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
@@ -19,6 +19,17 @@ import { icons } from './icons.js'
 import { dictation, toggleDictation, live } from './dictation.js'
 
 const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening', thinking: 'activity.thinking', speaking: 'live.speaking' }
+// The ideas, a sample spreadsheet first, and the box under the question while all fits a wide window (D366).
+const STARTERS = ['sample', 'email', 'summarize', 'savings']
+const root = document.documentElement, wide = matchMedia('(min-width: 48rem)')
+new ResizeObserver(() => root.toggleAttribute('data-centred', wide.matches && root.scrollHeight <= root.clientHeight)).observe(document.body)
+
+/** @param {string} key */
+async function idea(key) {
+  if (key === 'sample') await attachFiles([new File([await (await fetch('caps/files/sales.csv')).blob()], 'sales.csv', { type: 'text/csv' })])
+  app.draft.value = t(`starter.${key}.prompt`)
+  focusComposer()
+}
 
 /** The menu shown beside a row of +, the room's skills or connections (ui/plus.js, D292). @type {import('@preact/signals-core').Signal<{ id: string, view: () => unknown } | null>} */
 export const sub = signal(null)
@@ -57,6 +68,7 @@ class Composer extends Element {
     const add = t(menu ? 'composer.add' : 'files.attach')
     const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
     const legal = /** @type {const} */ (['privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
+    const fresh = !app.current.value?.records.length
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
         ${slots('box').map((entry) => entry.draw())}
@@ -102,7 +114,9 @@ class Composer extends Element {
         </div>
         ${files ? html`<input type="file" multiple class="visually-hidden" tabindex="-1" aria-hidden="true" @change=${this.#pick}>` : nothing}
       </form>
-      ${app.current.value?.records.length ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
+      ${app.dialog.value === 'first' ? html`<app-first></app-first>` : fresh && !slots('main').some((main) => main.draw())
+        ? html`<ul class="starters">${STARTERS.filter((key) => files || key !== 'sample').map((key) => html`<li><button class="starter" @click=${() => idea(key)}>${t(`starter.${key}`)}</button></li>`)}</ul>` : nothing}
+      ${!fresh ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
         : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${`${url}#${locale.value}`} target="_blank">${t(`welcome.${name}`)}</a>`)}</p>` : nothing}`
   }
 

@@ -40,10 +40,10 @@ export async function start(page, lang = 'en') {
   await closeSettings(page)
 }
 
-/** Connects the fake brain through the first brain's dialog (D329): its plans and keys, "On your computer" → Other. @param {import('@playwright/test').Page} page */
+/** Connects the fake brain through the first brain's step (D329, D366): its plans and keys, "On your computer" → Other. @param {import('@playwright/test').Page} page */
 export async function connectFakeBrain(page) {
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-first dialog[open]')
+  const dialog = page.locator('app-first .first')
   await dialog.locator('.first-doors button').first().click()
   // One way to add a brain is open at a time (D134).
   const local = dialog.locator('.way.is-local')
@@ -52,6 +52,8 @@ export async function connectFakeBrain(page) {
   await local.locator('input[name="baseURL"]').fill(BRAIN_URL)
   await local.locator('.button.primary').click()
   await expect(dialog).toBeHidden()
+  // The step is in the page, where an answer comes next: the pointer leaves, so nothing there is hovered by chance.
+  await page.mouse.move(0, 0)
 }
 
 /** @param {import('@playwright/test').Page} page @param {string} text */

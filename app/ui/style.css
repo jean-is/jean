@@ -188,7 +188,6 @@ app-persona[data-presence='oops'] .persona-mouth { scale: 0.6 -0.7; }
 .wordmark app-persona { margin-block-start: -0.35rem; }
 app-shell:has(.welcome) .wordmark app-persona { display: none; }
 .welcome app-persona, .wordmark app-persona { view-transition-name: persona; }
-::view-transition-group(persona) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
 
 /* ─── Frame ─────────────────────────────────────────────────────────────── */
 
@@ -252,7 +251,7 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 
 /* ─── Welcome ───────────────────────────────────────────────────────────── */
 
-.welcome { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2.5rem; padding-block: 8vh 4vh; }
+.welcome { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2.5rem; padding-block: 8vh 0; }
 .hero-question, .conversation-title { view-transition-name: hero; }
 .hero-question {
   /* background-clip: text paints only inside the box, which a 0.98 line height
@@ -271,8 +270,12 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
   transition: opacity 1.2s var(--ease), translate 1.2s var(--ease), filter 1.2s var(--ease);
   @starting-style { opacity: 0; translate: 0 0.6rem; filter: blur(8px); }
 }
-:is(:lang(ar), :lang(ja)) .hero-question { font-family: var(--sans); font-style: normal; font-weight: 300; line-height: 1.25; }
-.starters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+:is(:lang(ar), :lang(ja)) .hero-question { font-family: var(--sans); font-style: normal; font-weight: 300; line-height: 1.25; word-break: auto-phrase; }
+.pitch { display: grid; gap: 0.9rem; margin-block-start: -1rem; color: var(--ink-soft); }
+.pitch p { margin: 0; max-inline-size: 36rem; font-size: 1.1rem; text-wrap: balance; word-break: auto-phrase; }
+.pitch ul { display: flex; flex-wrap: wrap; gap: 0.3rem 1.25rem; margin: 0; padding: 0; list-style: none; font-size: 0.85rem; }
+.pitch li::before { content: '✓ ' / ''; color: var(--flame); }
+.starters { display: flex; flex-wrap: wrap; gap: 0.6rem; inline-size: var(--column); margin: 0.5rem auto 0; padding: 0; list-style: none; }
 .starter {
   padding: 0.55rem 1rem;
   border: 1px solid var(--line-strong);
@@ -524,7 +527,13 @@ button.since { padding: 0; border: 0; background: none; text-align: start; } but
 
 /* ─── The box ───────────────────────────────────────────────────────────── */
 
-app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem 0 max(1rem, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--room) 45%); }
+app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem 0 max(1rem, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--room) 45%); view-transition-name: composer; }
+/* Where a new task fits a wide window, its box under the question, its ideas under it; elsewhere at the foot, under them (D366). */
+[data-centred] app-shell:has(.welcome) > app-composer { flex: 1; position: static; background: none; }
+[data-centred] .welcome { justify-content: flex-end; }
+[data-centred] app-shell:has(.welcome) app-composer > p { margin-block-start: auto; }
+:root:not([data-centred]) app-composer > :is(ul, app-first) { order: -1; }
+:root:not([data-centred]) app-composer:has(> :is(ul, app-first)) { background-size: 100% 160%; background-position: bottom; }
 .composer {
   inline-size: var(--column);
   margin-inline: auto;
@@ -557,7 +566,7 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
 .composer-tools { display: flex; flex: none; align-items: center; gap: 0.15rem; margin-inline-start: -0.45rem; }
 /* Under the box: {name} is AI and can make mistakes (D273); before, legal links (D356). */
 app-composer:has(> p) { padding-block-end: max(0.5rem, env(safe-area-inset-bottom)); }
-app-composer > p { inline-size: var(--column); margin: 0.45rem auto 0; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
+app-composer > p { inline-size: var(--column); margin: 0 auto; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
 .is-working { animation: pulse 1.1s ease-in-out infinite var(--loops, running); }
 .is-listening { color: var(--flame); box-shadow: 0 0 1rem -0.2rem oklch(from var(--glow) l c h / 0.8); animation: pulse 1.6s ease-in-out infinite var(--loops, running); }
 .brain-chip {
@@ -775,7 +784,7 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
 .toast:not(:has(button)) { padding-inline-end: 1.1rem; }
 
 .noscript { padding: 2rem; text-align: center; }
-::view-transition-group(hero) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
+::view-transition-group(persona), ::view-transition-group(hero), ::view-transition-group(composer) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
 /* A new version comes in (index.html, ui/update.js): the page left holds, even with less motion. */
 :active-view-transition-type(update)::view-transition-old(*) { animation: hold 4s !important; }
 :active-view-transition-type(update)::view-transition-new(*) { animation: none; opacity: 0; }

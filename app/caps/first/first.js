@@ -1,14 +1,16 @@
 // The first brain (D329): what the first message, or the chip, opens while there is none, in place of Settings ›
-// Brains. One way first, free, and beside it the device's brain where it can run, downloaded while
-// the cloud's answers; then two doors, to the plan or key the user already has and to a choice of
-// what matters. Never offered: its strings and look come with it, once, before any brain (D97).
+// Brains, in the page under the box that keeps the request, where the ideas were (D366). One way first, free, and
+// beside it the device's brain where it can run, downloaded while the cloud's answers; then two doors, to the plan or
+// key the user already has and to a choice of what matters. Never offered: its strings and look come with it, once,
+// before any brain (D97).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { unlock } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { startOpenRouter } from '../../ui/brains.js'
-import { syncDialog, closed, backdrop, head, openSettings, ways, fit, progressOf, checkDevice, useDevice } from '../../ui/dialogs.js'
+import { close, head, openSettings, ways, fit, progressOf, checkDevice, useDevice } from '../../ui/dialogs.js'
+import { focusComposer } from '../../ui/composer.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, formatBytes, useStrings } from '../../core/i18n.js'
@@ -29,6 +31,8 @@ export function open() {
   screen.value = 'start'
   checkDevice()
   app.dialog.value = 'first'
+  // Shown under the box, it has the keyboard, as a dialog would (D366).
+  document.querySelector('app-first')?.querySelector('section')?.focus()
 }
 
 /** Back from OpenRouter's sign-in with the device's brain asked for: it comes while the cloud's answers, and Auto has both. */
@@ -76,9 +80,18 @@ const plans = () => html`${back()}${head(t('first.plansTitle'))}${ways(false, fa
 
 define('app-first', class extends Element {
   render() {
-    return html`<dialog class="sheet first" aria-label=${t('first.title')} @close=${closed('first')} @click=${backdrop}>
-      ${screen.value === 'start' ? start() : screen.value === 'choose' ? choose() : plans()}</dialog>`
+    return html`<section class="sheet first" tabindex="-1" aria-label=${t('first.title')} @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape') close() }}>
+      ${screen.value === 'start' ? start() : screen.value === 'choose' ? choose() : plans()}</section>`
   }
 
-  updated() { syncDialog(this, 'first') }
+  // The keyboard comes back to it when a screen takes away the button pressed; closed, the box has it back, where a
+  // keyboard won't cover the page.
+  updated() {
+    if (document.activeElement === document.body) this.querySelector('section')?.focus()
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    if (document.activeElement === document.body && matchMedia('(pointer: fine)').matches) focusComposer()
+  }
 })

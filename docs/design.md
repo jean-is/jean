@@ -6,7 +6,7 @@ Minimal stack, epic result. The style has to be memorable enough that people ret
 
 A nod to *A Dark Room*. **Jean is the light source.** Its presence is felt in how the room is lit, and when you look at the light, it looks back: a little flame with a face (see [The little light](#the-little-light)).
 
-- **First visit.** A dark, warm room, the little light, and one line of very large type: the question. Nothing else.
+- **First visit.** A dark, warm room, the little light, one line of very large type, the question, and the box right under it, its ideas below; in a browser's tab, one sentence and three facts say what Jean is (D366). Nothing else.
 - **Discovery lights the house.** Each discovered capability "catches the light": its surface warms in from the shadow, and the palette warms a step. When everything has been discovered, the house is in full daylight. People feel their progress instead of counting it.
 - **Each project is a room** with its own light colour. Switching project feels like walking into another room, with the ambient light cross-fading.
 - **What Jean can do is the house, kept as a case of trophies** (D113, D127, D316), drawn with Settings' own parts so it looks like the sections around it. In Settings' Capabilities section, the little light sits beside its rank, which rises a quarter of the case at a time: Spark, Candle, Lantern, Hearth, then Daylight once everything is found. The light grows a size with each rank, over a bar of how much is found, like Storage's. Below, each capability is a row of a list, in the case's order: its icon lit and On at its end once found, catching the light one after another as the section opens; a dashed silhouette until then, how to find it under its name, with pips when it is found by counting (two conversations, three dictations). A row opens to say what it does and to offer it: Turn on, a download, or Open. The next one to find is open as the section opens.
@@ -62,7 +62,7 @@ Mail and Human start with the drawer open beside the conversation (D165). Names 
 - **One expressive display face** for the name and big statements: OFL-licensed, Latin subset, ≤ 30 KB. Instrument Serif ships for now (D34); Fraunces will probably replace it, as a static instance (see [open-questions.md](open-questions.md)).
 - **The system UI font for everything else.** It covers every script with zero bytes, so there's no 10 MB CJK font.
 - **The wordmark is `BRAND.name` set in the display face,** so it survives a rename.
-- **Big editorial type at the start.** The first question is huge and shrinks into place once the conversation begins.
+- **Big editorial type at the start.** The first question is huge and shrinks into place once the conversation begins, as the box slides to the foot.
 
 ## Techniques (pure CSS)
 

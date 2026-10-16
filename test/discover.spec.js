@@ -1,19 +1,24 @@
-// Discovery (0.3): the first starter asks what Jean can do, the house lights up (Settings'
+// Discovery (0.3): the first idea shares a sample spreadsheet (D366), the house lights up (Settings'
 // Capabilities), "turn on everything" works, and the brain picker offers Auto, the connected brains
 // and "Keep on this device".
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, openSettings, ask, openTasks } from './helpers.js'
 
-test('the first starter asks what Jean can do, in a few plain words', async ({ page }) => {
+test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const first = page.locator('.starter').first()
-  await expect(first).toHaveText('What can you do?')
+  await expect(first).toHaveText('Try a sample spreadsheet')
   await first.click()
-  await expect(page.locator('#prompt')).toHaveValue('What can you do for me? Give me 3 examples I can try.')
+  await expect(page.locator('.attachment')).toContainText('sales.csv')
+  await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')
   await expect(page.locator('#prompt')).toBeFocused()
   await page.locator('#prompt').press('Enter')
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('What can you do for me?')
+  await expect(page.locator('.msg-files')).toContainText('sales.csv')
+  // A spreadsheet to chart: the brain offers the computer in its answer, which goes on once it is turned down.
+  await page.locator('.msg-jean').getByRole('button', { name: 'No thanks' }).click()
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+  expect(await page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('files'))).toBe(true)
 })
 
 test('the house lights up as capabilities are turned on', async ({ page }) => {
