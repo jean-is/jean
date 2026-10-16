@@ -1,7 +1,7 @@
 /* Tilde: Jean's own look, and the one it starts in (docs/design.md). Human's frame, whose sheet it
-   brings in, in ink and paper: Gentium for the name and the big question, the wave in Jean's poppy,
-   buttons and the open row in ink, the user's words on the margin's grey, what waits for the user on
-   blush. Poppy marks, and never fills behind words. Over ui/style.css, which comes after it, so
+   brings in, in ink and paper: Gentium for the name and the big question, the wave in Jean's water
+   blue, buttons and the open row in ink, the user's words on the margin's grey, what waits for the
+   user on foam. Water marks, and never fills behind words. Over ui/style.css, which comes after it, so
    every rule here starts with :root[data-look='tilde']. */
 @import url('human.css');
 
@@ -13,14 +13,14 @@
   --ink-faint: oklch(0.689 0.006 95);
   --glass: oklch(0.239 0 0 / 0.72);
   --side: oklch(0.218 0 0);
-  --flame: oklch(0.713 0.18 29);
-  --flame-deep: oklch(0.65 0.19 29);
+  --flame: oklch(0.781 0.118 209);
+  --flame-deep: oklch(0.7 0.118 209);
   --on-flame: oklch(0.187 0 0);
   --fill: var(--ink);
   --on-fill: var(--room);
   --current: oklch(0.285 0 0);
-  --wait: oklch(0.239 0.028 30);
-  --wait-line: oklch(0.332 0.054 31);
+  --wait: oklch(0.239 0.028 209);
+  --wait-line: oklch(0.332 0.05 209);
   --display: Display, var(--sans);
 }
 :root[data-look='tilde'][data-theme='light'] {
@@ -32,14 +32,14 @@
   --glass: oklch(1 0 0 / 0.72);
   --side: oklch(0.97 0.004 91);
   --well: oklch(0.97 0.004 91);
-  --flame: oklch(0.558 0.192 30);
-  --flame-deep: oklch(0.499 0.173 30);
+  --flame: oklch(0.5 0.086 209);
+  --flame-deep: oklch(0.44 0.074 209);
   --on-flame: oklch(1 0 0);
   --fill: var(--ink);
   --on-fill: var(--room);
   --current: oklch(0.928 0.007 89);
-  --wait: oklch(0.954 0.017 31);
-  --wait-line: oklch(0.889 0.037 30);
+  --wait: oklch(0.954 0.017 209);
+  --wait-line: oklch(0.889 0.037 209);
 }
 
 /* The name and the big question in Gentium; the wave a little larger on the first screen. */
@@ -57,5 +57,5 @@
 :root[data-look='tilde'] :is(.place, .sidebar-settings, .settings-nav) .icon { color: var(--ink-soft); }
 :root[data-look='tilde'] input.switch:checked { background: var(--fill); }
 
-/* What waits for the user, on blush (ember by night). */
+/* What waits for the user, on foam (deep water by night). */
 :root[data-look='tilde'] .approval { border-color: var(--wait-line); background: var(--wait); }

@@ -7,8 +7,8 @@
 @property --light-x { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
 @property --light-y { syntax: '<percentage>'; inherits: true; initial-value: 34%; }
 @property --light-size { syntax: '<length>'; inherits: true; initial-value: 70vmax; }
-/* The light's colour: Jean's poppy, or a project's own (D78), cross-fading between rooms. */
-@property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.56 0.19 29); }
+/* The light's colour: Jean's water blue, or a project's own (D78), cross-fading between rooms. */
+@property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.781 0.118 209); }
 
 :root {
   color-scheme: dark;
@@ -53,7 +53,7 @@
   --glow-alpha: 0.7;
 }
 
-/* A project's light colours the room (Jean's poppy by default, warmed: 29 + 11, 29 + 21). */
+/* A project's light colours the room (Jean's water by default), turned 11 degrees round the wheel by night, 21 by day. */
 @supports (color: oklch(from red l c h)) {
   :root { --glow: oklch(from var(--tint) 0.78 0.16 calc(h + 11)); }
   [data-theme='light'] { --glow: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); }
@@ -113,11 +113,14 @@ button { cursor: pointer; }
 @keyframes settle { from { --light: 0.75; } to { --light: 0.42; } }
 
 /* ─── The wave (ui/persona.js) ─────────────────────────────────────────── */
-/* Jean's presence, the tilde of its mark. Its colour is --tint's hue, Jean's poppy or a project's
-   own, at the lightness each mode needs; it travels the way the page reads, its ends fading out. */
+/* Jean's presence, the tilde of its mark. Its colour is --tint's hue and chroma, Jean's water or a
+   project's own, at the lightness each mode needs; it travels the way the page reads, its ends
+   fading out. */
 
-:root { --tint: oklch(0.56 0.19 29); --wave: oklch(from var(--tint) 0.7 0.18 h); }
-[data-theme='light'] { --wave: oklch(from var(--tint) 0.56 0.19 h); }
+/* Jean's water, and the room's own warm light, as other looks keep theirs; an accent or a project's colour wins. */
+:where(:root) { --tint: oklch(0.781 0.118 209); --wave: oklch(from var(--tint) 0.781 min(c, 0.18) h); }
+:where(:root:not([data-look])) { --tint: oklch(0.74 0.17 54); }
+[data-theme='light'] { --wave: oklch(from var(--tint) 0.56 min(c, 0.19) h); }
 app-persona {
   display: inline-block;
   flex: none;

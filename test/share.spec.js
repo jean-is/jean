@@ -81,9 +81,15 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   expect(onward).toMatch(/^http:\/\/127\.0\.0\.1:4180\/#\/shared\/[\w-]{22}\/[\w-]{43}$/)
   expect(errors).toEqual([])
 
-  // With a password, which the host asks a proof of before it hands the copy out.
+  // With a password, which the host asks a proof of before it hands the copy out; shared from the keys
+  // the open task's menu shows (D377).
+  await row.locator('.history-item').click()
   await menu()
-  await row.getByRole('button', { name: 'Share…' }).click()
+  const share = row.getByRole('button', { name: 'Share…' })
+  await expect(share).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+Shift\+U$/)
+  await expect(share.locator('kbd')).toHaveText(/^(⌘⇧U|Ctrl\+Shift\+U)$/)
+  await page.keyboard.press('Escape')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyU')
   await dialog.getByLabel('Anyone with the link and the password').check()
   const password = await dialog.getByLabel('Password', { exact: true }).inputValue()
   await dialog.getByRole('button', { name: 'Create link' }).click()
@@ -99,15 +105,17 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await locked.getByRole('button', { name: 'Open' }).click()
   await expect(locked.frameLocator('iframe[src="/frame"]').locator('main .msg-user')).toHaveText('Plan my week')
 
-  // Continued in Jean: brought in once the user says yes, after a note that it is someone else's.
+  // Continued in Jean: brought in once the user says yes, after a note that it is someone else's, in place of the task open.
   page.once('dialog', (asked) => asked.accept())
   await page.evaluate((hash) => { location.hash = hash }, new URL(onward).hash)
-  await expect(page.locator('app-conversation .msg-user')).toHaveText('Plan my week')
-  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update))
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update))
     .toMatchObject({ data: { kind: 'shared', from: '127.0.0.1:4185' } })
+  await expect(page.locator('app-conversation .msg-user')).toHaveText('Plan my week')
 
-  // Stopped from Settings › Your data: the first link no longer opens.
-  const settings = await openSettings(page, 'Your data')
+  // Settings › Keyboard shortcuts lists it, now it is found; then stopped from Your data: the first link no longer opens.
+  const settings = await openSettings(page, 'Keyboard shortcuts')
+  await expect(settings.locator('.keyboard > div', { hasText: 'Sharing' }).locator('kbd')).toHaveText(/^(⌘⇧U|Ctrl\+Shift\+U)$/)
+  await settings.locator('.settings-nav button', { hasText: 'Your data' }).click()
   await expect(settings.locator('.share-list li')).toHaveCount(2)
   page.once('dialog', (asked) => asked.accept())
   await settings.locator('.share-list li').last().getByRole('button', { name: 'Stop sharing' }).click()

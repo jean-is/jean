@@ -9,8 +9,8 @@
       <stop offset="0.62" stop-color="#777674"/>
     </linearGradient>
     <linearGradient id="way" x1="238" y1="0" x2="360" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ff6e5e" stop-opacity="0.25"/>
-      <stop offset="0.7" stop-color="#ff6e5e"/>
+      <stop offset="0" stop-color="#42cce0" stop-opacity="0.25"/>
+      <stop offset="0.7" stop-color="#42cce0"/>
     </linearGradient>
   </defs>
   <rect width="600" height="360" fill="url(#floor)"/>
