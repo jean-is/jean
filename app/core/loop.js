@@ -195,11 +195,11 @@ export async function runTurn(options) {
   const compact = async (step, specs, reason) => {
     const record = options.window && await on('turn.compact', { step, brain, system, messages: [...history], tools: specs, usage: last, window: options.window, reason, signal,
       ask: (/** @type {ChatMessage[]} */ messages) => request(step, messages, specs, { compact: true }) }, () => null)
-    if (record?.update?.sessionUpdate !== '_compaction') return false
+    if (record?.update?.sessionUpdate !== 'compaction_update' || record.update.status !== 'completed') return false
     const kept = { ...record, step }
     onUpdate(kept.update, step)
     await persist([kept])
-    history.splice(0, history.length, { role: 'user', content: kept.update.text })
+    history.splice(0, history.length, { role: 'user', content: kept.update._meta.text })
     last = undefined
     return true
   }

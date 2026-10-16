@@ -148,10 +148,10 @@ export function changeNotes(known, now, sections = {}, off = []) {
  * @returns {ChatMessage[]}
  */
 export function toChatMessages(records, document = (link) => ({ name: link.name, text: '' }), resume = null) {
-  const from = records.findLastIndex(({ update }) => update?.sessionUpdate === '_compaction')
+  const from = records.findLastIndex(({ update }) => update?.sessionUpdate === 'compaction_update' && update.status === 'completed')
   const summary = records[from]?.update
   /** @type {ChatMessage[]} */
-  const messages = summary?.sessionUpdate === '_compaction' ? [{ role: 'user', content: summary.text }] : []
+  const messages = summary?.sessionUpdate === 'compaction_update' ? [{ role: 'user', content: summary._meta?.text ?? '' }] : []
   const turns = foldTurns(records.slice(from + 1))
   for (const turn of turns) {
     for (const note of turn.notes) messages.push({ role: 'system', content: note.text })

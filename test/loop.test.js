@@ -544,7 +544,7 @@ test('loop: before each step a hook may have the brain sum up what came so far; 
       events.push({ ...e, messages: structuredClone(e.messages) })
       if (e.step === 0) return next(e)
       const asked = await e.ask([...e.messages, { role: 'user', content: 'Sum up.' }])
-      return envelope('jean', { sessionUpdate: '_compaction', text: `Summary: ${asked.text}`, data: { reason: e.reason } })
+      return envelope('jean', { sessionUpdate: 'compaction_update', compactionId: 'c', status: 'completed', summary: [{ type: 'text', text: asked.text }], _meta: { text: `Summary: ${asked.text}`, reason: e.reason } })
     },
   }
   /** @type {any[]} */
@@ -565,11 +565,11 @@ test('loop: before each step a hook may have the brain sum up what came so far; 
   // Kept: the summary's own entry, without what it thought or wrote, then the record, on the step it comes before.
   const kept = persisted.filter(({ step }) => step === 1)
   assert.deepEqual(kept.map(({ update }) => [update.sessionUpdate, update.status, update._meta?.compact]), [
-    ['tool_call', 'completed', true], ['_compaction', undefined, undefined], ['tool_call', 'completed', undefined], ['agent_message_chunk', undefined, undefined],
+    ['tool_call', 'completed', true], ['compaction_update', 'completed', undefined], ['tool_call', 'completed', undefined], ['agent_message_chunk', undefined, undefined],
   ])
   assert.notEqual(kept[0].update.toolCallId, kept[2].update.toolCallId)
   assert.ok(!live.some((update) => update.sessionUpdate === 'agent_message_chunk' && update.content.text === summary), 'the summary is never the answer')
-  assert.ok(live.some((update) => update.sessionUpdate === '_compaction'))
+  assert.ok(live.some((update) => update.sessionUpdate === 'compaction_update'))
   // Replayed, the conversation reads on from the summary.
   assert.deepEqual(toChatMessages([userRecord('Sum a.csv', 'dev'), ...persisted]), [{ role: 'user', content: `Summary: ${summary}` }, { role: 'assistant', content: 'The total is 6.' }])
 })
@@ -630,7 +630,7 @@ test('loop: a request past the brain’s window, before anything of the answer c
       if (e.reason !== 'too_long') return next(e)
       reasons.push(e.reason)
       const { text } = await e.ask([...e.messages, { role: 'user', content: 'Sum up.' }])
-      return envelope('jean', { sessionUpdate: '_compaction', text, data: { reason: e.reason } })
+      return envelope('jean', { sessionUpdate: 'compaction_update', compactionId: 'c', status: 'completed', summary: [{ type: 'text', text }], _meta: { text, reason: e.reason } })
     },
   }
   const once = brainThatFills(1)
@@ -643,7 +643,7 @@ test('loop: a request past the brain’s window, before anything of the answer c
   assert.equal(result.text, 'Done.')
   assert.deepEqual(reasons, ['too_long'])
   assert.deepEqual(once.seen.at(-1), [{ role: 'user', content: 'Earlier: a long task.' }])
-  assert.deepEqual(persisted.map(({ update }) => [update.sessionUpdate, update.status]), [['tool_call', 'completed'], ['_compaction', undefined], ['tool_call', 'completed'], ['agent_message_chunk', undefined]])
+  assert.deepEqual(persisted.map(({ update }) => [update.sessionUpdate, update.status]), [['tool_call', 'completed'], ['compaction_update', 'completed'], ['tool_call', 'completed'], ['agent_message_chunk', undefined]])
   // Still too long once summed up: the error stands, and it isn't summed up again.
   reasons.length = 0
   const twice = brainThatFills(2)

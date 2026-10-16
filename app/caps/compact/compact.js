@@ -1,7 +1,8 @@
 // Compaction (D359): a conversation near its brain's window is summed up by that same brain, on the same system, tools
-// and history plus one request, and the brain reads on from the summary (core/loop.js's turn.compact). Its record adds
-// what Jean knows for sure: the sources and files by number, the notes in force and the request at work, word for word.
-// The file keeps everything and the room shows it whole: the summary is only read. Loaded the first time a conversation
+// and history plus one request, and the brain reads on from the summary (core/loop.js's turn.compact). Its record is ACP's
+// compaction_update: the summary, for the user to read, and in _meta what the brain reads, the summary and what Jean knows
+// for sure: the sources and files by number, the notes in force and the request at work, word for word. The file keeps
+// everything and the room shows it whole: the summary is only read. Loaded the first time a conversation
 // passes half its window (ui/send.js); Ollama and LM Studio are asked the window they gave their brain.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -16,8 +17,9 @@ import { envelope, foldTurns, linkedFiles } from '../../core/events.js'
 import { estimateMessages } from '../../core/files.js'
 import { LLMError } from '../../core/llm.js'
 import { t, useStrings } from '../../core/i18n.js'
+import { ulid } from '../../core/ulid.js'
 
-/** @import { BrainConfig, ChatMessage, Envelope, StreamEvent, ToolCallInfo, Usage } from '../../core/types.js' */
+/** @import { BrainConfig, ChatMessage, CompactionUpdate, Envelope, StreamEvent, ToolCallInfo, Usage } from '../../core/types.js' */
 
 await Promise.all([useStrings('compact'), styleSheet(new URL('compact.css', import.meta.url))])
 
@@ -96,8 +98,8 @@ async function compact(e, next) {
   const { text, usage } = await summary(e)
   if (!text) return next(e)
   const records = (e.task && (await loadConversation(app.fs, e.task))?.records) || []
-  return envelope('jean', { sessionUpdate: '_compaction', text: [`<summary>\n${text}\n</summary>`, ...known(records)].join('\n\n'),
-    data: { reason: e.reason, brain: { provider: e.brain.provider, model: e.brain.model }, ...(usage && { usage }) } })
+  return envelope('jean', { sessionUpdate: 'compaction_update', compactionId: ulid(), status: 'completed', summary: [{ type: 'text', text }],
+    _meta: { text: [`<summary>\n${text}\n</summary>`, ...known(records)].join('\n\n'), reason: e.reason, brain: { provider: e.brain.provider, model: e.brain.model }, ...(usage && { usage }) } })
 }
 
 /**
@@ -184,9 +186,9 @@ async function* uncut(e, next) {
  */
 class Compaction extends Element {
   #entry = signal(/** @type {ToolCallInfo | undefined} */ (undefined))
-  #record = signal(/** @type {{ text: string } | undefined} */ (undefined))
+  #record = signal(/** @type {CompactionUpdate | undefined} */ (undefined))
   set entry(/** @type {ToolCallInfo} */ entry) { this.#entry.value = entry }
-  set record(/** @type {{ text: string }} */ record) { this.#record.value = record }
+  set record(/** @type {CompactionUpdate} */ record) { this.#record.value = record }
 
   connectedCallback() {
     // What it was given before it was defined.
@@ -204,7 +206,7 @@ class Compaction extends Element {
     const [entry, record] = [this.#entry.value, this.#record.value]
     if (entry) return t(entry.status === 'failed' ? 'compact.failed' : entry.status === 'completed' ? 'compact.done' : 'compact.doing')
     if (!record) return nothing
-    const text = /^<summary>\n([\s\S]*?)\n<\/summary>/.exec(record.text)?.[1] ?? record.text
+    const text = (record.summary ?? []).map((block) => block.text).join('\n\n')
     return html`<details class="read-list compaction">
       <summary>${icons.scroll}<span>${t('compact.divider')}</span><span class="link-button">${t('compact.read')}</span>${icons.chevron}</summary>
       <div class="prose" dir="auto">${markdown(text)}</div>

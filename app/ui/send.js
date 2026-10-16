@@ -416,7 +416,7 @@ async function runAgent(conversation, brain, meta, call) {
     // What the brain last read and wrote says how full its window is, unless a summary came since. Compaction comes in once
     // the conversation passes half of it (D359), as a request counted it or Jean estimates it, with what each call brings in.
     const window = contextTokens(brain)
-    const before = sent.findLast(({ update }) => update?.sessionUpdate === '_compaction' || (update?.sessionUpdate === 'tool_call' && !update.name && !update._meta?.parent && update.rawOutput?.usage))?.update
+    const before = sent.findLast(({ update }) => update?.sessionUpdate === 'compaction_update' || (update?.sessionUpdate === 'tool_call' && !update.name && !update._meta?.parent && update.rawOutput?.usage))?.update
     const usage = before?.sessionUpdate === 'tool_call' ? before.rawOutput.usage : undefined
     const counted = (/** @type {import('../core/types.js').Usage | undefined} */ used) => (used?.inputTokens ?? 0) + (used?.outputTokens ?? 0)
     let size = 0
