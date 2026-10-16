@@ -71,6 +71,8 @@
   "activity.stop.pause": "थांबले, मग पुढे सुरू ठेवले",
   "activity.stop.other": "दुसऱ्या कारणाने थांबले",
   "activity.unfinished": "पूर्ण होण्याआधी थांबले",
+  "steer.waiting": "पुढच्या पायरीवर वाचले जाईल",
+  "steer.back": "परत घ्या",
   "activity.cutShort": "पान बंद झाल्याने मधेच थांबले: कदाचित पूर्ण झाले नसेल",
   "approval.title": "तुमची मंजुरी हवी आहे",
   "approval.question": "परवानगी द्यायची? {action}",

@@ -71,6 +71,8 @@
   "activity.stop.pause": "Tạm dừng rồi tiếp tục",
   "activity.stop.other": "Dừng vì lý do khác",
   "activity.unfinished": "Dừng trước khi xong",
+  "steer.waiting": "Sẽ được đọc ở bước tiếp theo",
+  "steer.back": "Rút lại",
   "activity.cutShort": "Bị ngắt khi trang đóng: có thể chưa được thực hiện",
   "approval.title": "Cần bạn cho phép",
   "approval.question": "Cho phép việc này? {action}",

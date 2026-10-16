@@ -80,6 +80,8 @@ const LONGEST_WAIT = 30_000
  * @property {number} [window]                       how much the brain reads at most, in tokens: a turn with one may read on from a
  *   summary (turn.compact, D359); a helper's has none
  * @property {Usage} [usage]                         what the brain last read and wrote in the conversation, before this turn
+ * @property {() => Envelope[]} [steer]               what the user sent while the turn works, as their records, read before each step (D365);
+ *   a helper's turn reads none
  */
 
 /** @param {TurnOptions} options */
@@ -220,6 +222,10 @@ export async function runTurn(options) {
       if (maxSteps <= first || !(await on('turn.limit', { step, from, blocks, signal }, () => false))) break
       ;[limit, from, blocks] = [step + maxSteps - first, step, blocks + 1]
     }
+    // What the user sent meanwhile is read now, between steps, as theirs, before anything is summed up (D365).
+    const steered = options.steer?.() ?? []
+    if (steered.length) await persist(steered)
+    for (const { update } of steered) if (update?.sessionUpdate === 'user_message_chunk' && update.content.type === 'text') history.push({ role: 'user', content: update.content.text })
     ctx.byName = new Map(tools().map((tool) => [tool.spec.name, tool]))
     const specs = [...ctx.byName.values()].filter((tool) => declared.has(tool.spec.name)).map((tool) => tool.spec)
     await compact(step, specs, 'window')
@@ -307,7 +313,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     },
     // A helper's text is its result; its calls are kept, under this one, never as pending: a closed page asks its questions no more (D212).
     turn: (child) => runTurn({
-      ...ctx.options, label: undefined, meta: undefined, resume: null, window: undefined, usage: undefined, about: { ...ctx.options.about, parent: call.id }, ...child, numbers: ctx.numbers,
+      ...ctx.options, label: undefined, meta: undefined, resume: null, window: undefined, usage: undefined, steer: undefined, about: { ...ctx.options.about, parent: call.id }, ...child, numbers: ctx.numbers,
       askPermission: (request) => ctx.askPermission({ ...request, toolCall: under(request.toolCall, call.id) }),
       onUpdate: (update) => 'toolCallId' in update && onUpdate(under(update, call.id), step),
       persist: (records) => ctx.persist(records.flatMap(({ update, ...record }) => (update && 'toolCallId' in update && update.status !== 'pending' ? [{ ...record, step, update: under(update, call.id) }] : []))),

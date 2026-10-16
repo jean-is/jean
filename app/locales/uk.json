@@ -71,6 +71,8 @@
   "activity.stop.pause": "Пауза, потім продовження",
   "activity.stop.other": "Зупинка з іншої причини",
   "activity.unfinished": "Зупинено до завершення",
+  "steer.waiting": "Буде прочитано на наступному кроці",
+  "steer.back": "Забрати",
   "activity.cutShort": "Перервано під час закриття сторінки: можливо, не виконано",
   "approval.title": "Потрібен ваш дозвіл",
   "approval.question": "Дозволити? {action}",

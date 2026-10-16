@@ -71,6 +71,8 @@
   "activity.stop.pause": "Пауза, затем продолжение",
   "activity.stop.other": "Остановка по другой причине",
   "activity.unfinished": "Остановлено до завершения",
+  "steer.waiting": "Будет прочитано на следующем шаге",
+  "steer.back": "Забрать",
   "activity.cutShort": "Прервано при закрытии страницы: возможно, не выполнено",
   "approval.title": "Нужно ваше разрешение",
   "approval.question": "Разрешить? {action}",

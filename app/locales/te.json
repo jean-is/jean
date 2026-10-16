@@ -71,6 +71,8 @@
   "activity.stop.pause": "ఆగి, తర్వాత కొనసాగింది",
   "activity.stop.other": "వేరే కారణంతో ఆగింది",
   "activity.unfinished": "పూర్తి కాకముందే ఆగింది",
+  "steer.waiting": "తదుపరి దశలో చదవబడుతుంది",
+  "steer.back": "వెనక్కి తీసుకోండి",
   "activity.cutShort": "పేజీ మూసివేయడంతో మధ్యలో ఆగిపోయింది: పూర్తి కాకపోయి ఉండవచ్చు",
   "approval.title": "మీ ఆమోదం కావాలి",
   "approval.question": "అనుమతించాలా? {action}",

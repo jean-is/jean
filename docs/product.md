@@ -150,6 +150,7 @@ A live, inspectable activity view built from standard ACP events:
 - **Each action:** a plain-language label, the files it touched (clickable), its status, and, one click down, what it was given and what came back (D103).
 - **Approval cards.**
 - **Pause and stop.**
+- **Steering** (D365): what the user writes in the box while Jean works is read before its next step, as in Cowork, the work going on; until then it waits under the answer, and can be taken back.
 
 Jean's "computer" is the user's own browser, so the view can show everything: files read, code run, sources used, files made.
 

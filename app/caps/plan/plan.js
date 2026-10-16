@@ -112,15 +112,19 @@ function spent(steps) {
 function pause() {
   const records = app.current.value?.records
   if (!records || app.busy.value) return nothing
-  const turn = foldTurns(records).at(-1)
+  const turns = foldTurns(records)
+  // The request's turns, those after what steered it included (D365).
+  const request = turns.slice(Math.max(0, turns.findLastIndex((one) => one.user && !one.user.steer)))
+  const turn = turns.at(-1)
   const step = turn?.steps.at(-1)
   /** @type {ToolCallInfo | undefined} */
   const entry = step?.tools.findLast((tool) => tool.kind === 'think' && !tool.name && !tool._meta?.parent && !tool._meta?.compact)
   const stopped = entry?._meta?.stopped === 'max_turn_requests'
   if (!turn || !step || !(stopped || entry?.rawOutput?.stopReason === 'tool_use')) return nothing
-  const cost = spent(turn.steps)
+  const cost = spent(request.flatMap((one) => one.steps))
+  const plan = request.findLast((one) => one.plan)?.plan
   const money = new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 })
-  const facts = stopped ? [t('plan.paused', { count: step.index + 1 }), ...(turn.plan ? [t('plan.done', { done: done(turn.plan), total: turn.plan.length })] : []),
+  const facts = stopped ? [t('plan.paused', { count: step.index + 1 }), ...(plan ? [t('plan.done', { done: done(plan), total: plan.length })] : []),
     ...(cost ? [t('plan.cost', { cost: money.format(cost) })] : [])] : [t('activity.unfinished')]
   return html`<div class="pause" role="group" aria-label=${facts[0]}>
     <p>${facts.join(' · ')}</p>

@@ -71,6 +71,8 @@
   "activity.stop.pause": "Huminto sandali, saka nagpatuloy",
   "activity.stop.other": "Huminto dahil sa ibang dahilan",
   "activity.unfinished": "Huminto bago matapos",
+  "steer.waiting": "Babasahin sa susunod na hakbang",
+  "steer.back": "Bawiin",
   "activity.cutShort": "Naputol nang isara ang pahina: maaaring hindi ito nagawa",
   "approval.title": "Kailangan ang pahintulot mo",
   "approval.question": "Payagan ito? {action}",

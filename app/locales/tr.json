@@ -71,6 +71,8 @@
   "activity.stop.pause": "Duraklatıldı, sonra devam edildi",
   "activity.stop.other": "Başka bir nedenle durdu",
   "activity.unfinished": "Bitmeden durdu",
+  "steer.waiting": "Bir sonraki adımda okunacak",
+  "steer.back": "Geri al",
   "activity.cutShort": "Sayfa kapanınca yarıda kaldı: yapılmamış olabilir",
   "approval.title": "Onayın gerekiyor",
   "approval.question": "İzin verilsin mi? {action}",

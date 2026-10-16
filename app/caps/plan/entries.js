@@ -37,8 +37,8 @@ export function entriesOf(args) {
 /** How many of a plan's steps are done. @param {PlanEntry[]} [entries] */
 export const done = (entries = []) => entries.filter((entry) => entry.status === 'completed').length
 
-/** The records of the request at work, from its words on. @param {Envelope[]} records */
-const requestOf = (records) => records.slice(Math.max(0, records.findLastIndex(({ update }) => update?.sessionUpdate === 'user_message_chunk')))
+/** The records of the request at work, from its words on, what steered it included (D365). @param {Envelope[]} records */
+const requestOf = (records) => records.slice(Math.max(0, records.findLastIndex(({ update }) => update?.sessionUpdate === 'user_message_chunk' && !update._meta?.steer)))
 
 /** The request's plans, oldest first, with the step each came in. @param {Envelope[]} records */
 const plansOf = (records) => requestOf(records).flatMap(({ update, step = 0 }) => (update?.sessionUpdate === 'plan' ? [{ ...update, step }] : []))
@@ -47,7 +47,7 @@ const plansOf = (records) => requestOf(records).flatMap(({ update, step = 0 }) =
 export const confirmed = (records) => plansOf(records).some((plan) => plan._meta?.confirmed)
 
 /** Whether the request at work is a routine's, sent by Jean on its schedule, with nobody there to confirm (D122). @param {Envelope[]} records */
-export const routine = (records) => Boolean(foldTurns(records).findLast((turn) => turn.user)?.notes.some((note) => note.data.kind === 'routine'))
+export const routine = (records) => Boolean(foldTurns(records).findLast((turn) => turn.user && !turn.user.steer)?.notes.some((note) => note.data.kind === 'routine'))
 
 /**
  * Whether the request's confirmed plan moved in the block of steps that began at `from`: one more of its steps is done

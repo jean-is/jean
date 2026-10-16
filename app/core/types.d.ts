@@ -141,7 +141,8 @@ export interface ToolCallInfo {
 
 /** ACP session/update payloads used by Jean (https://agentclientprotocol.com). */
 export type AcpUpdate =
-  | { sessionUpdate: 'user_message_chunk', content: ContentBlock }
+  /** steer: sent while the task worked, read before its next step (D365) */
+  | { sessionUpdate: 'user_message_chunk', content: ContentBlock, _meta?: { steer?: boolean } }
   | { sessionUpdate: 'agent_message_chunk', content: TextBlock }
   | { sessionUpdate: 'agent_thought_chunk', content: TextBlock }
   | ({ sessionUpdate: 'tool_call' } & ToolCallInfo)

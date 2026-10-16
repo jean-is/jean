@@ -71,6 +71,8 @@
   "activity.stop.pause": "ቆም ተብሎ ቀጥሏል",
   "activity.stop.other": "በሌላ ምክንያት ቆሟል",
   "activity.unfinished": "ሳይጠናቀቅ ቆሟል",
+  "steer.waiting": "በሚቀጥለው ደረጃ ይነበባል",
+  "steer.back": "መልሶ መውሰድ",
   "activity.cutShort": "ገጹ ሲዘጋ ተቋርጧል፤ ላይፈጸም ይችላል",
   "approval.title": "የእርስዎ ፈቃድ ያስፈልጋል",
   "approval.question": "ይህ ይፈቀድ? {action}",

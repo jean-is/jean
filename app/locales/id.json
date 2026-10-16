@@ -71,6 +71,8 @@
   "activity.stop.pause": "Berhenti sejenak, lalu lanjut",
   "activity.stop.other": "Berhenti karena alasan lain",
   "activity.unfinished": "Berhenti sebelum selesai",
+  "steer.waiting": "Dibaca di langkah berikutnya",
+  "steer.back": "Tarik kembali",
   "activity.cutShort": "Terhenti saat halaman ditutup: mungkin belum selesai",
   "approval.title": "Persetujuan Anda diperlukan",
   "approval.question": "Izinkan ini? {action}",

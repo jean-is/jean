@@ -71,6 +71,8 @@
   "activity.stop.pause": "Berhenti seketika, kemudian diteruskan",
   "activity.stop.other": "Berhenti atas sebab lain",
   "activity.unfinished": "Berhenti sebelum selesai",
+  "steer.waiting": "Dibaca pada langkah seterusnya",
+  "steer.back": "Tarik balik",
   "activity.cutShort": "Terhenti apabila halaman ditutup: mungkin belum dibuat",
   "approval.title": "Kelulusan anda diperlukan",
   "approval.question": "Benarkan ini? {action}",

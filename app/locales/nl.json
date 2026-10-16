@@ -71,6 +71,8 @@
   "activity.stop.pause": "Gepauzeerd, daarna verder",
   "activity.stop.other": "Gestopt om een andere reden",
   "activity.unfinished": "Gestopt voor het einde",
+  "steer.waiting": "Wordt bij de volgende stap gelezen",
+  "steer.back": "Terugnemen",
   "activity.cutShort": "Afgebroken toen de pagina sloot: misschien niet gedaan",
   "approval.title": "Je toestemming is nodig",
   "approval.question": "Toestaan? {action}",

@@ -386,6 +386,41 @@ export async function fork(upTo) {
   await runAgent({ id: created.id, path: created.path, records }, picked.brain, picked.meta)
 }
 
+// ─── Steering (D365) ─────────────────────────────────────────────────────────
+
+/** The answers being written, by their conversation's path, for what the user sends meanwhile. @type {Map<string, Run>} */
+const working = new Map()
+
+/** Shows a run's waiting steers under its live answer, when it is on screen. @param {Run} run */
+const showSteers = (run) => app.current.peek()?.path === run.path && (app.live.value = { turn: run.turn, steers: run.steers })
+
+/** What the user sends while the task on screen works steers it: its brain reads it before the next step; until then it waits under the live answer. @param {string} text */
+export function steer(text) {
+  const run = working.get(app.current.peek()?.path ?? '')
+  if (!run) return void (app.draft.value = text)
+  run.steers = [...run.steers ?? [], text]
+  showSteers(run)
+}
+
+/** A steer taken back to the box before it was read. @param {number} i */
+export function takeBack(i) {
+  const run = working.get(app.current.peek()?.path ?? '')
+  const text = run?.steers?.[i]
+  if (!run || !text) return
+  run.steers = run.steers?.filter((_, j) => j !== i)
+  app.draft.value = [app.draft.peek().trim(), text].filter(Boolean).join('\n\n')
+  showSteers(run)
+}
+
+/** Steers not read yet go back to the box. @param {string[]} texts */
+const backToBox = (texts) => { app.draft.value = [app.draft.peek().trim(), ...texts].filter(Boolean).join('\n\n') }
+
+// A reload puts what the task on screen hasn't read back in the box, whose words the tab keeps (ui/router.js).
+addEventListener('pagehide', (event) => {
+  const steers = working.get(app.current.peek()?.path ?? '')?.steers
+  if (!event.persisted && steers?.length) backToBox(steers)
+})
+
 /**
  * Goes on with the task on screen where it stopped between steps, at its limit or when its page closed (D364): the next
  * block of steps, on the turn's own brain, whose thinking replays to the model that wrote it.
@@ -408,17 +443,20 @@ export async function keepGoing() {
 async function runAgent(conversation, brain, meta, call, after) {
   /** @type {Run} */
   const run = { ...conversation, brain, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
-  const { path, records: sent, turn, settled } = run
+  const { path, records: sent } = run
+  /** @type {Envelope[]} everything the run kept, steers' work included */
+  const all = []
   const shown = () => app.current.peek()?.path === path
   let frame = 0
   const repaint = () => {
     frame ||= requestAnimationFrame(() => {
       frame = 0
-      if (shown()) app.live.value = { turn }
+      if (shown()) app.live.value = { turn: run.turn, steers: run.steers }
     })
   }
 
-  let stopped = false
+  let [stopped, failed] = [false, false]
+  working.set(path, run)
   beginRun(run)
   try {
     // The loop and the brains' adapters load with the first message, not with the first screen.
@@ -466,41 +504,60 @@ async function runAgent(conversation, brain, meta, call, after) {
       onUpdate: (update, step) => {
         if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
         if (update.sessionUpdate === 'tool_call_update' && update.status === 'completed' && !update._meta?.parent) grown(update.rawOutput?.usage ? counted(update.rawOutput.usage) : size + estimateMessages(update.rawOutput))
-        applyUpdate(turn, update, step)
+        applyUpdate(run.turn, update, step)
         repaint()
       },
       persist: async (records) => {
-        settled.push(...records)
+        all.push(...records)
         await keepRecords(path, records)
+        if (!records.some(({ update }) => update?.sessionUpdate === 'user_message_chunk')) return void run.settled.push(...records)
+        // A steer read: what came before it is the conversation's now, and the live answer starts again under it (D365).
+        const before = [...run.settled, ...records]
+        ;[run.records, run.settled, run.turn] = [[...run.records, ...before], [], { user: null, notes: [], steps: [], at: new Date().toISOString() }]
+        const latest = app.current.peek()
+        if (latest?.path !== path) return
+        app.current.value = { ...latest, records: [...latest.records, ...before] }
+        showSteers(run)
+      },
+      // What the user sent meanwhile, read before the next step as one message of theirs, never before anything of the answer,
+      // where it would join the request's words (D365).
+      steer: () => {
+        const texts = all.length ? run.steers ?? [] : []
+        if (!texts.length) return []
+        run.steers = []
+        return [envelope(app.deviceId, { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: texts.join('\n\n') }, _meta: { steer: true } })]
       },
     })
     stopped = ended.stopReason === 'max_steps'
     // What the one call gave for the user to read is the answer.
-    const gave = one && settled.findLast(({ update }) => update?.sessionUpdate === 'tool_call' && update.toolCallId === one.id)?.update
+    const gave = one && all.findLast(({ update }) => update?.sessionUpdate === 'tool_call' && update.toolCallId === one.id)?.update
     const text = gave?.sessionUpdate === 'tool_call' && gave.status === 'completed' ? String(gave._meta?.answer ?? '').trim() : ''
     if (text) {
       const answer = envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)
-      settled.push(answer)
+      run.settled.push(answer)
+      all.push(answer)
       await keepRecords(path, [answer])
     }
     if (shown()) setPresence('done')
   } catch (error) {
+    failed = true
     if (shown()) {
       setPresence('idle')
       if (/** @type {any} */ (error)?.code !== 'aborted') showError(error)
     }
   } finally {
     cancelAnimationFrame(frame)
+    working.delete(path)
     endRun(run)
     // What was kept meanwhile, like the title, stays.
     const latest = app.current.peek()
-    const records = [...(latest?.path === path ? latest.records : sent), ...settled]
+    const records = [...(latest?.path === path ? latest.records : run.records), ...run.settled]
     if (shown()) {
       app.current.value = { ...conversation, records }
       app.busy.value = false
       app.live.value = null
     }
-    const answer = lastAnswer(settled)
+    const answer = lastAnswer(all)
     // An answer that came while the user was elsewhere waits for them, unread (D288), as does a task paused at its limit (D364); not one stopped, or deleted.
     if ((answer || stopped) && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
     else await refreshConversations()
@@ -508,8 +565,17 @@ async function runAgent(conversation, brain, meta, call, after) {
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records, conversation)
     if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted, stopped,
-      made: filesMade(callsIn(settled)), routine: routineOf(records)?.routine,
+      made: filesMade(callsIn(all)), routine: routineOf(records)?.routine,
       cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
+    // What the user sent as the last step answered is the next request, on screen or not; stopped or failed, it goes back to the box (D365).
+    const left = run.steers ?? []
+    if (left.length && (run.controller.signal.aborted || failed)) { if (shown()) backToBox(left) }
+    else if (left.length && shown()) send(left.join('\n\n'))
+    else if (left.length) {
+      const added = await prepare(left.join('\n\n'), brain, { ...conversation, records }, [], [])
+      await keepRecords(path, added)
+      runAgent({ ...conversation, records: [...records, ...added] }, brain, meta)
+    }
   }
 }
 

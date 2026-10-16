@@ -43,7 +43,7 @@
 // Given "a very long task", it says it read most of a big window; asked to sum the conversation up, it does, and
 // read on from a summary, it says so (D359). Asked to do something "step by step" with plans on, it plans it, waits for the
 // user's word, then does each step and ticks it off, adding what the user's words asked for; asked to count to twenty, it
-// takes a step a number, past its limit (D364).
+// takes a step a number, past its limit (D364). Counting slowly to five, a second a step, it stops when told to (D365).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -564,11 +564,17 @@ createServer(async (req, res) => {
   // Plans (D364): planned step by step; or a count, a step a number, from the request at work on.
   const stepwise = /step by step|خطوة بخطوة|段階的に/i.test(question) && declared.has('plan') && (last.role === 'user' || toolName === 'plan')
   const counting = /count to twenty|عدّ إلى عشرين|二十まで数えて/i.test(question) && last.role !== 'assistant'
+  const slowly = /count slowly to five|عدّ ببطء إلى خمسة|ゆっくり五まで数えて/i.test(question) && last.role !== 'assistant'
   const counted = messages.slice(messages.findLastIndex((m) => m.role === 'user')).filter((m) => m.role === 'tool').length
   if (summing) answer = 'Summary: the user wants the work carried on, step by step.'
   else if (stepwise) ({ call = null, answer = '' } = planned(messages, lang))
   else if (counting && counted < 20) call = { name: 'find_tools', args: { query: `number ${counted + 1}` } }
   else if (counting) answer = 'I counted to twenty.'
+  else if (/^(?:stop|توقف|止めて)/i.test(question.trim()) && last.role === 'user') answer = 'Stopping here, as you asked.'
+  else if (slowly && counted < 5) {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    call = { name: 'find_tools', args: { query: `number ${counted + 1}` } }
+  } else if (slowly) answer = 'I counted to five, slowly.'
   else if (messages.find((m) => m.role !== 'system')?.content.includes('<summary>') && last.role === 'user') answer = 'I read on from the summary of the earlier work.'
   else if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
   else if (system.startsWith('Answer the question about what follows with yes or no')) answer = /<about>[\s\S]*\b(invoice|html)\b/i.test(lastUser) ? 'Yes.' : 'No.'

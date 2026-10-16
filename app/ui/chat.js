@@ -103,8 +103,11 @@ class Conversation extends Element {
       <ol class="turns">
         ${repeat(turns, (turn) => turn.at, (turn, index) => {
           const last = index === turns.length - 1
-          return turnView(turn, last ? live?.turn ?? null : null, files, turns.slice(0, index + 1), last, sources)
+          return turnView(turn, last ? live?.turn ?? null : null, files, turns.slice(0, index + 1), last, sources, turns[index + 1]?.user?.steer)
         })}
+        ${(live?.steers ?? []).map((text, i) => html`<li class="turn"><p class="msg msg-user" dir="auto">${text}</p>
+          <div class="msg-actions is-request"><span class="msg-time">${t('steer.waiting')}</span><button class="icon-button subtle" aria-label=${t('steer.back')}
+            @click=${() => import('./send.js').then((module) => module.takeBack(i))}>${icons.close}</button></div></li>`)}
       </ol>
       ${error ? errorView(error) : nothing}`
   }
@@ -151,9 +154,9 @@ function site(url) {
 /**
  * @param {Turn} turn @param {Turn | null} live
  * @param {ResourceLink[]} files every file in the conversation @param {Turn[]} upTo this turn and those before it
- * @param {boolean} last @param {import('./markdown.js').Sources} sources
+ * @param {boolean} last @param {import('./markdown.js').Sources} sources @param {boolean} [steered] D365
  */
-function turnView(turn, live, files, upTo, last, sources) {
+function turnView(turn, live, files, upTo, last, sources, steered) {
   // Calls the file keeps as pending never ended, or are asked again in the live answer; one it keeps as running was cut short (D212).
   const steps = [...turn.steps.map((step) => ({ ...step, tools: step.tools.filter((tool) => tool.status !== 'pending').map(cutShort) })), ...(live?.steps ?? [])]
   // The brain's follow-ups come in a trailing block, hidden from the answer itself.
@@ -167,7 +170,7 @@ function turnView(turn, live, files, upTo, last, sources) {
   // A summary the brain read on from (D359).
   const summed = steps.findLast((step) => step.compaction)?.compaction
   if (summed) unlock('compact')
-  // The plan, as it is now (D364); a task that stopped between steps finds plans, which go on with it.
+  // The plan (D364).
   const plan = live?.plan ?? turn.plan
   if (last && !streaming && entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)?.rawOutput?.stopReason === 'tool_use') unlock('plan')
   // A double click on its request, or Enter on it, edits it, once Try again could (D312); Enter goes no further.
@@ -190,7 +193,7 @@ function turnView(turn, live, files, upTo, last, sources) {
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
         ${slots('progress').map((entry) => entry.draw({ plan }))}
-        ${activity(steps, text, streaming, files, plan?.find((entry) => entry.status === 'in_progress')?.content)}
+        ${activity(steps, text, streaming, files, plan?.find((entry) => entry.status === 'in_progress')?.content, steered)}
         ${text ? html`<div class="prose" dir="auto">${markdown(text, sources, streaming)}${streaming ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>` : nothing}
         ${entries.flatMap((entry) => (entry._meta?.picture || (entry._meta?.making && entry.status === 'in_progress') ? [html`<app-picture .call=${{ ...entry }}></app-picture>`] : []))}
         ${entries.flatMap((entry) => (entry._meta?.checked ? [html`<app-certificate .call=${entry}></app-certificate>`] : []))}
@@ -275,18 +278,18 @@ function sourcesView(cited) {
  * "What Jean is doing", from the turn's ACP records, in the order it happened: each time the
  * brain was asked, then the calls it made. What a script or a helper did shows under its call,
  * as a tree: a helper's brain, its calls, and their scripts' calls. Each line opens on what it
- * was given and what came back, so a step that went wrong can be looked into. While it works, a plan's step under way says
- * what it does (D364). @param {Step[]} steps @param {string} text @param {boolean} streaming @param {ResourceLink[]} files @param {string} [doing]
+ * was given and what came back, so a step that went wrong can be looked into; a plan's step under way says what it does (D364).
+ * @param {Step[]} steps @param {string} text @param {boolean} streaming @param {ResourceLink[]} files @param {string} [doing] @param {boolean} [steered]
  */
-function activity(steps, text, streaming, files, doing) {
+function activity(steps, text, streaming, files, doing, steered) {
   const entries = steps.flatMap((step) => step.tools)
   const tools = entries.filter((entry) => entry.name || entry._meta?.parent)
   const last = entries.findLast((entry) => !entry.name && !entry._meta?.parent)
   const failed = last?.status === 'failed'
   // Asked for tools and never read what they returned: out of steps, or closed in the middle.
-  const unfinished = !streaming && last?.rawOutput?.stopReason === 'tool_use'
+  const unfinished = !streaming && !steered && last?.rawOutput?.stopReason === 'tool_use'
   const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
-  // A task paused at its limit didn't fail: it waits at the top of the box (D364).
+  // A task paused at its limit didn't fail (D364).
   const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !last?._meta?.stopped) ? 'failed' : 'completed'
   // A request that failed is asked again after a moment (D202).
   const summary = streaming

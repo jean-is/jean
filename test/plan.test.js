@@ -42,6 +42,10 @@ test('plan: confirmed, moved and a routine’s, from the request at work’s rec
   assert.equal(moved(going, 0), true, 'a step got done in the block of steps 0 to 11')
   assert.equal(moved(going, 12), false, 'nothing more in the block from 12')
   assert.equal(moved([...going, plan(2, 20)], 12), true)
+  // What the user sent while it worked steers the request, which goes on (D365).
+  const steered = [...going, envelope('dev', { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: 'Skip the van' }, _meta: { steer: true } }), plan(2, 21)]
+  assert.equal(confirmed(steered), true)
+  assert.equal(moved(steered, 12), true)
   assert.equal(routine(records), false)
   assert.equal(routine([noteRecord('Routine: Weekly sales', { kind: 'routine', routine: 'r.md', title: 'Weekly sales', due: '2026-10-16T09:00:00Z' }), userRecord('Sum the sales', 'jean')]), true)
 })

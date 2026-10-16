@@ -71,6 +71,8 @@
   "activity.stop.pause": "இடைநிறுத்தி, பின் தொடர்ந்தது",
   "activity.stop.other": "வேறு காரணத்தால் நின்றது",
   "activity.unfinished": "முடிவதற்கு முன் நின்றது",
+  "steer.waiting": "அடுத்த படியில் படிக்கப்படும்",
+  "steer.back": "திரும்பப் பெறுக",
   "activity.cutShort": "பக்கம் மூடப்பட்டதால் இடையில் நின்றது: முடிக்கப்படாமல் இருக்கலாம்",
   "approval.title": "உங்கள் ஒப்புதல் தேவை",
   "approval.question": "அனுமதிக்கவா? {action}",

@@ -71,6 +71,8 @@
   "activity.stop.pause": "Pausiert, dann fortgesetzt",
   "activity.stop.other": "Aus einem anderen Grund gestoppt",
   "activity.unfinished": "Vor dem Ende gestoppt",
+  "steer.waiting": "Wird beim nächsten Schritt gelesen",
+  "steer.back": "Zurücknehmen",
   "activity.cutShort": "Abgebrochen, als die Seite geschlossen wurde: vielleicht nicht erledigt",
   "approval.title": "Deine Zustimmung wird benötigt",
   "approval.question": "Erlauben? {action}",

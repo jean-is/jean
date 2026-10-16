@@ -131,7 +131,8 @@ const short = (text, length) => (text.length > length ? `${text.slice(0, length)
 
 /**
  * What Jean knows for sure and the summary may not say: the sources and files by the numbers the brain cites them by
- * (D71), the notes in force, the plan (D364), then the request being worked on, word for word, with what it came with. In English.
+ * (D71), the notes in force, the plan (D364), then the request being worked on, word for word, with what it came with, and what the
+ * user said since to steer it (D365). In English.
  * @param {Envelope[]} records @returns {string[]}
  */
 function known(records) {
@@ -151,13 +152,19 @@ function known(records) {
     const pages = (_meta?.pages ?? []).map(([first, last]) => (first === last ? `${first}` : `${first}–${last}`)).join(', ')
     if (_meta?.source) files.set(_meta.source, `[${_meta.source}] ${name}${pages ? ` (pages ${pages} of ${_meta.of} were given)` : ''}`)
   }
-  const request = foldTurns(records).findLast((turn) => turn.user)
+  // The request at work is the last one that wasn't a steer; what the user said since steers it (D365).
+  const turns = foldTurns(records)
+  const at = turns.findLastIndex((turn) => turn.user && !turn.user.steer)
+  const request = turns[at]
+  const since = turns.slice(at + 1).flatMap((turn) => (turn.user?.steer ? [turn.user.text] : []))
+  const plan = turns.slice(Math.max(at, 0)).findLast((turn) => turn.plan)?.plan
   return [
     ...(sources.size ? [`Sources cited so far, by number:\n${[...sources.values()].join('\n')}`] : []),
     ...(files.size ? [`Files the user shared, by number; read them again when needed:\n${[...files.values()].join('\n')}`] : []),
     ...(notes.size ? [`Notes in force:\n${[...notes.values()].map((text) => `- ${text}`).join('\n')}`] : []),
-    ...(request?.plan ? [`The plan, as it stood:\n${request.plan.map(({ content, status }) => `- [${status}] ${content}`).join('\n')}`] : []),
+    ...(plan ? [`The plan, as it stood:\n${plan.map(({ content, status }) => `- [${status}] ${content}`).join('\n')}`] : []),
     ...(request?.user ? [`The request being worked on, word for word:\n<request>\n${[...request.notes.filter((note) => !STANDING.includes(note.data.kind)).map((note) => note.text), request.user.text].join('\n\n')}\n</request>`] : []),
+    ...(since.length ? [`What the user said since, as the work went on, word for word:\n${since.map((text) => `<request>\n${text}\n</request>`).join('\n')}`] : []),
   ]
 }
 

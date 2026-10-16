@@ -71,6 +71,8 @@
   "activity.stop.pause": "रुककर फिर जारी रहा",
   "activity.stop.other": "किसी और वजह से रुका",
   "activity.unfinished": "पूरा होने से पहले रुक गया",
+  "steer.waiting": "अगले चरण पर पढ़ा जाएगा",
+  "steer.back": "वापस लें",
   "activity.cutShort": "पेज बंद होने पर बीच में रुक गया: शायद पूरा नहीं हुआ",
   "approval.title": "आपकी मंज़ूरी चाहिए",
   "approval.question": "अनुमति दें? {action}",

@@ -27,7 +27,7 @@ export const metaRecord = (by, meta) => ({ at: new Date().toISOString(), by, met
 /**
  * @typedef {{ index: number, text: string, thought: string, tools: ToolCallInfo[], compaction?: CompactionUpdate }} Step compaction: a summary read on from (D359)
  * @typedef {{ text: string, data: SystemNoteData }} Note
- * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number }} UserTurn upTo: how many records lead up to its end
+ * @typedef {{ text: string, files: ResourceLink[], at: string, upTo: number, steer?: boolean }} UserTurn upTo: how many records lead up to its end; steer: D365
  * @typedef {{ user: UserTurn | null, notes: Note[], steps: Step[], plan?: PlanEntry[], at: string, end?: string }} Turn
  *   notes are the system notes recorded just before this turn's user message; end is when its answer was last written.
  */
@@ -54,6 +54,7 @@ export function foldTurns(records) {
       }
       const user = /** @type {UserTurn} */ (turn.user)
       user.upTo = index + 1
+      if (update._meta?.steer) user.steer = true
       if (update.content.type === 'resource_link') user.files.push(update.content)
       else user.text += update.content.text
     } else {

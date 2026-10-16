@@ -71,6 +71,8 @@
   "activity.stop.pause": "הושהה ואז נמשך",
   "activity.stop.other": "נעצר מסיבה אחרת",
   "activity.unfinished": "נעצר לפני הסיום",
+  "steer.waiting": "ייקרא בשלב הבא",
+  "steer.back": "לקחת בחזרה",
   "activity.cutShort": "נקטע כשהדף נסגר: ייתכן שלא בוצע",
   "approval.title": "נדרש אישור ממך",
   "approval.question": "לאשר? {action}",

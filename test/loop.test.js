@@ -536,6 +536,47 @@ test('loop: a step whose calls only update the plan isn’t counted, one in a ro
   assert.deepEqual(limits, ['d'], 'a turn that is one call has no block to go on with')
 })
 
+test('loop: what the user sent while the turn works is read before its next step, kept as theirs, and the work goes on; a helper’s turn never reads it (D365)', async () => {
+  const call = { id: 'c1', name: 'read', args: { path: 'a.csv' } }
+  const part = { id: 'p1', name: 'delegate', args: {} }
+  const { stream, calls } = fakeStream([
+    [{ type: 'tool_call', call }, done('tool_use', { role: 'assistant', content: '', toolCalls: [call] })],
+    [{ type: 'tool_call', call: part }, done('tool_use', { role: 'assistant', content: '', toolCalls: [part] })],
+    [{ type: 'text', delta: 'Part.' }, done('end', { role: 'assistant', content: 'Part.' })],
+    [{ type: 'text', delta: 'The total, in euros.' }, done('end', { role: 'assistant', content: 'The total, in euros.' })],
+  ])
+  /** @type {string[]} */
+  const queue = []
+  let asked = 0
+  const steer = () => {
+    asked++
+    return queue.length ? [envelope('dev', { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: queue.splice(0).join('\n\n') }, _meta: { steer: true } })] : []
+  }
+  const reading = { ...readTool, run: async () => { queue.push('Just the total, please', 'In euros'); return '1,2,3' } }
+  const delegateTool = {
+    spec: { name: 'delegate', description: 'delegate', parameters: { type: 'object' } },
+    kind: /** @type {const} */ ('think'),
+    title: () => 'Delegate',
+    run: async (/** @type {any} */ args, /** @type {import('../app/core/loop.js').ToolContext} */ ctx) => { queue.push('Never mind'); return (await ctx.turn({ system: 'helper', history: [{ role: 'user', content: 'part' }] })).text },
+  }
+  /** @type {any[]} */
+  const persisted = []
+  const result = await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'Sum a.csv' }], tools: [reading, delegateTool], rule: () => 'allow', steer,
+    stream: /** @type {any} */ (stream), persist: async (records) => { persisted.push(...records) } })
+  assert.equal(result.text, 'The total, in euros.')
+  // Read once the step's calls ended, as the user's, after their results; the helper's steps read nothing.
+  assert.deepEqual(calls[1].slice(-2), [{ role: 'tool', toolCallId: 'c1', name: 'read', content: '1,2,3' }, { role: 'user', content: 'Just the total, please\n\nIn euros' }])
+  assert.deepEqual(calls[2], [{ role: 'user', content: 'part' }])
+  assert.deepEqual(calls[3].at(-1), { role: 'user', content: 'Never mind' })
+  assert.equal(asked, 3)
+  const at = persisted.findIndex(({ update }) => update.sessionUpdate === 'user_message_chunk')
+  assert.deepEqual(persisted[at].update._meta, { steer: true })
+  assert.equal(persisted[at - 1].update.toolCallId, 'c1')
+  assert.match(persisted[at + 1].update.toolCallId, /^brain-1-/)
+  // Replayed, the brain reads it where it was read.
+  assert.deepEqual(toChatMessages([userRecord('Sum a.csv', 'dev'), ...persisted]).slice(0, 4).map((message) => message.role), ['user', 'assistant', 'tool', 'user'])
+})
+
 test('loop: a helper’s turn runs under its call, shares the numbering, and stays out of the brain’s context', async () => {
   // The parent delegates; the helper reads a page and cites it; the parent answers.
   const { stream, calls } = fakeStream([

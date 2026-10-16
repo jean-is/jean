@@ -71,6 +71,8 @@
   "activity.stop.pause": "Hizo una pausa y siguió",
   "activity.stop.other": "Se detuvo por otro motivo",
   "activity.unfinished": "Se detuvo antes de terminar",
+  "steer.waiting": "Se leerá en el siguiente paso",
+  "steer.back": "Retirar",
   "activity.cutShort": "Interrumpido al cerrarse la página: puede que no se haya hecho",
   "approval.title": "Se necesita tu aprobación",
   "approval.question": "¿Permitir esto? {action}",
