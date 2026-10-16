@@ -12,7 +12,7 @@
 /** @typedef {'tilde' | 'human' | 'mail' | 'minimal' | 'swiss' | 'paper' | 'room' | 'fjord' | 'velvet' | 'notebook' | 'blueprint' | 'classic' | 'mondrian' | 'terminal' | 'neon' | 'depth'} LookId */
 /** @type {Readonly<Record<LookId, { bar: [string, string], accent: string, list?: boolean, on?: LookId }>>} */
 export const LOOKS = Object.freeze({
-  tilde: { bar: ['#131313', '#ffffff'], accent: '#cc3324', list: true, on: 'human' },
+  tilde: { bar: ['#131313', '#ffffff'], accent: '#42cce0', list: true, on: 'human' },
   human: { bar: ['#1e1e1e', '#ffffff'], accent: '#0a84ff', list: true },
   mail: { bar: ['#060708', '#f4f5f7'], accent: '#3d82f6', list: true },
   minimal: { bar: ['#0a0a0a', '#fdfdfd'], accent: '#161616' },

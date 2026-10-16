@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!-- The tilde alone, for a browser's tab (docs/design.md); icon.svg is the app's icon. -->
   <rect width="64" height="64" rx="12" fill="#141414"/>
-  <path d="M12 32q10 -16 20 0t20 0" fill="none" stroke="#ff6e5e" stroke-width="8" stroke-linecap="round"/>
+  <path d="M12 32q10 -16 20 0t20 0" fill="none" stroke="#42cce0" stroke-width="8" stroke-linecap="round"/>
 </svg>

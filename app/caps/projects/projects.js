@@ -20,9 +20,9 @@ import { icons } from '../../ui/icons.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 
-/** A room's colour: Jean's poppy, then around the colour wheel. Only the hue tints the wave. */
-const COLOURS = Object.entries({ coral: 29, amber: 54, rose: 355, violet: 305, blue: 255, teal: 200, green: 150, olive: 105 })
-  .map(([name, hue]) => [name, `oklch(0.74 0.17 ${hue})`])
+/** A room's colour: Jean's water, then around the colour wheel. The hue and chroma tint the wave. */
+const COLOURS = [['teal', 'oklch(0.781 0.118 209)'], ...Object.entries({ coral: 29, amber: 54, rose: 355, violet: 305, blue: 255, green: 150, olive: 105 })
+  .map(([name, hue]) => [name, `oklch(0.74 0.17 ${hue})`])]
 
 /** The project whose dialog is open: null while a new one is being made. */
 const editing = signal(/** @type {Project | null} */ (null))
