@@ -115,5 +115,15 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const after = await context.newPage()
   await after.goto(link)
   await expect(after.getByText('This is no longer shared.')).toBeVisible()
+
+  // Without its write token here, the other is never said to be stopped: it stays listed, as it still opens.
+  await page.evaluate(async () => {
+    const [{ app }, { deleteSecret }, { shares }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js'), import('/caps/share/share.js')])
+    await deleteSecret(app.fs, `share:${shares.peek()[0].id}`)
+  })
+  page.once('dialog', (asked) => asked.accept())
+  await settings.locator('.share-list li').getByRole('button', { name: 'Stop sharing' }).click()
+  await expect(page.getByText('This link was made on another device: only that one can change it.')).toBeVisible()
+  await expect(settings.locator('.share-list li')).toHaveCount(1)
   await context.close()
 })

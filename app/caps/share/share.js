@@ -160,12 +160,16 @@ export async function update(share, quiet = false) {
   }
 }
 
-/** Stops sharing it, once the user says so: the host forgets it, and so does Jean. @param {Share} share */
+/**
+ * Stops sharing it, once the user says so: the host forgets it, then Jean does, never before. Without
+ * its write token here, or the host's yes, the link still opens, and Jean says so. @param {Share} share
+ */
 export async function stop(share) {
   if (!confirm(t('share.confirmStop'))) return
   const { token } = await kept(share).catch(() => ({ token: '' }))
-  const response = token ? await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }).catch(() => null) : null
-  if (token && !(response?.ok || response?.status === 404)) return showError(new Error(t('share.failed')))
+  const response = token && await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }).catch(() => null)
+  // Gone from the host already, past its time (404) or taken down (410), it no longer opens either.
+  if (!(response && (response.ok || response.status === 404 || response.status === 410))) return notify(t(token ? 'share.unreachable' : 'share.notHere'))
   await Promise.all([app.fs.remove(fileOf(share.id)), deleteSecret(app.fs, `share:${share.id}`)])
   shares.value = shares.peek().filter((one) => one.id !== share.id)
   notify(t('share.stopped'))
