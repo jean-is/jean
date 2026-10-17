@@ -19,7 +19,7 @@ metadata:
   title-fa: "حل مسئله"
   text-fa: "مسئله‌ها با روش مناسب: 8D، DMAIC، A3 یا PDCA"
   title-fr: "Résoudre un problème"
-  text-fr: "Les problèmes traités avec la bonne méthode : 8D, DMAIC, A3 ou PDCA"
+  text-fr: "Les problèmes traités avec la bonne méthode : 8D, DMAIC, A3 ou PDCA"
   title-ha: "Warware matsala"
   text-ha: "Matsaloli da hanyar da ta dace: 8D, DMAIC, A3 ko PDCA"
   title-he: "פתרון בעיות"

@@ -1,5 +1,5 @@
 {
-  "backup.confirmImport": "Importer les conversations, les projets et les fichiers de cet export ? Rien ne sera supprimé ici.",
+  "backup.confirmImport": "Importer les conversations, les projets et les fichiers de cet export ? Rien ne sera supprimé ici.",
   "backup.imported": {
     "one": "{count} conversation importée.",
     "many": "{count} conversations importées.",
