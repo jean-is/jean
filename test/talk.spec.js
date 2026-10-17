@@ -260,18 +260,18 @@ test('a request the page closed on before anything came stays apart from the nex
   holding = false
   const requests = page.locator('.msg-user')
   await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five'])
-  await ask(page, 'Stop now')
-  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Stop now'])
+  await ask(page, 'Then count to three')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Then count to three'])
   await expect(page.locator('.msg-jean .prose')).toHaveCount(2)
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Stop now')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Then count to three')
   await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
   // Edited, the last one goes alone; the one before stays.
   await requests.last().dblclick()
-  await page.locator('app-edit textarea').fill('Stop at three')
+  await page.locator('app-edit textarea').fill('Then count to two')
   page.once('dialog', (dialog) => dialog.accept())
   await page.locator('app-edit textarea').press('Enter')
-  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Stop at three'])
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Stop at three')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Then count to two'])
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Then count to two')
 })
 
 test('Duplicate from here: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {
