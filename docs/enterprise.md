@@ -14,7 +14,7 @@ Nothing planned is ruled out by the architecture:
 | Sync across my devices | ✅ | Four routes: <br>• A mirrored folder plus the user's existing sync tool (OneDrive, iCloud, Dropbox, Syncthing). Built in Chrome and Edge and the desktop app (D157). <br>• Each project to its own place, or kept on the device: work projects through the work drive, personal ones through the personal one (D227). <br>• A drive's own API, with OAuth in the browser, for phones, Safari and Firefox: Dropbox first, its app key from settings or policy (`sync`), then OneDrive with an app IT registers in Entra, and Google Drive through the gateway (D227). <br>• The phone as a remote of the Jean open on a laptop or at work, over the relay (D45 · D226, D227). |
 | Share | ⚠️ Needs an optional host | Files through the native share sheet (Web Share API). A task, or one page, chart, deck or picture, as a link to an end-to-end-encrypted copy on a host that can't read it: hst.ing for jean.is, the organisation's own copy, or none (`urls.share`, `rules.share`, D361, [sharing.md](sharing.md)). Skills are `SKILL.md` files, which also work in Claude, Codex and similar tools. |
 | Working together | ⚠️ Needs an optional server | A shared link opens in the recipient's own Jean, to continue with their brain and keys (D361). With no server, a project shared through a shared drive folder (D227). Then requests between people's Jeans, each answered by the person's own Jean and approved by them, over a tiny relay hosted by the maintainer on a subdomain of Jean's domain, which forwards end-to-end-encrypted traffic it can't read. Organisations can self-host it and point policy at their copy, or switch it off (D45 · D226). No editing live together: a call's screen sharing already does it. |
-| Force a model or gateway | ✅ | The organisation self-hosts Jean by copying `dist/web/` (`npm run build:web`), with a `policy.json` next to `index.html`, enabled by adding `<meta name="app-policy" content="policy.json">` to `index.html` (`POLICY='{…}' npm run build:web` does both, D344). The policy pins the brain to their gateway (LiteLLM, Portkey, Cloudflare AI Gateway, Azure APIM); Jean already speaks the OpenAI-compatible format. Users sign in through the organisation's identity provider directly from the browser (OIDC), and the token is passed to the gateway. The gateway handles audit, cost and data-loss prevention; Jean builds no admin console. |
+| Force a model or gateway | ✅ | The organisation self-hosts Jean by copying `dist/web/` (`npm run build:web`), with a `policy.json` next to `index.html`, enabled by adding `<meta name="app-policy" content="policy.json">` to `index.html` (`POLICY='{…}' npm run build:web` does both, D344). The policy pins the brain to their gateway (LiteLLM, Portkey, Cloudflare AI Gateway, Azure APIM); Jean already speaks the OpenAI-compatible format. Users sign in with the organisation's account at the first visit (OpenID Connect with PKCE, Entra ID first), and the gateway gets the token ([Signing in at work](#signing-in-at-work), D385). The gateway handles audit, cost and data-loss prevention; Jean builds no admin console. |
 | Hard enforcement | ✅ Via CSP | Browsers enforce every policy they receive, and all of them must pass. One HTTP header, `connect-src 'self' https://ai.corp.example`, means Jean cannot reach anything else, whatever its own built-in policy allows. No files need editing. `connect-src 'self'` alone gives a local-only mode. |
 | Forced proxy | ✅ Not Jean's job | Web pages can't set proxies. The browser or OS proxy policy (`ProxySettings`, PAC files) already applies to every request Jean makes, the Computer's included, since Jean makes them. Jean's duty is to make every external URL configurable so it can point to internal mirrors, and, for sites that refuse other sites' requests, to send the Computer's through a relay the organisation names (`computer.relay` in policy, D162). |
 | Encryption at rest | ✅ | Every file Jean keeps on a device is sealed with AES-256-GCM, its key behind the device's own until a lock keeps it behind the person's passkey or password, with a recovery code; `"lock": "required"` in policy asks for one at the first run and hides Turn off, and denying `lock` never offers it. Backups and Sync's folder stay readable copies ([encryption.md](encryption.md), D371). |
@@ -22,7 +22,7 @@ Nothing planned is ruled out by the architecture:
 | Config for managed browsers | ✅ Chrome and Edge only | `ManagedConfigurationPerOrigin` pushes JSON to web apps that IT has installed, read with `navigator.managed.getManagedConfiguration()`. It is a second policy source alongside `policy.json`. |
 | White-label | ✅ Comes for free | Change `BRAND` and it becomes "Acme Assistant". |
 | Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy points to (`skills.sources`, which users can't remove; `skills.only` keeps to it), and users add them after reading their steps (D121). Its catalogue of projects, what other products call agents (instructions, skills, connections without their secrets, a way of being), can be published the same way, each added after reading it. |
-| Audit | ✅ Best effort | The ACP event stream, which the `record` event follows (D299), is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector. The gateway's log remains the authoritative one. |
+| Audit | ✅ Best effort | The ACP event stream, which the `record` event follows (D299), is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector ([Audit to OpenTelemetry](#audit-to-opentelemetry), D386). The gateway's log remains the authoritative one. |
 
 ## What it cannot do, by design
 
@@ -40,12 +40,12 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 
 | Area | Open (MIT) | Enterprise (`ee/`) |
 |---|---|---|
-| Sign-in | OAuth and OIDC with PKCE against any standard provider, one resource at a time, as MCP sign-in does today | Entra in depth: Conditional Access, more groups than a token holds, admin consent, government clouds, Azure OpenAI without keys. Custom authorization servers: token exchange (RFC 8693), one sign-in for the gateway and every connection. Teams and Outlook (nested app authentication). |
+| Sign-in | OAuth and OIDC with PKCE against any standard provider, one resource at a time, as connections sign in, and the organisation's sign-in to its gateway (D385) | Entra in depth: Conditional Access, more groups than a token holds, admin consent, government clouds, Azure OpenAI without keys. Custom authorization servers: token exchange (RFC 8693), one sign-in for the gateway and every connection. Teams and Outlook (nested app authentication). |
 | Policy | `policy.json` beside `index.html`: allowed and locked brains, action rules, addresses, denied capabilities | Policy from managed configuration, a signed central file or identity-provider groups. Routing by sensitivity ("Confidential" only goes to the on-premises brain). Checks before sending (data-loss classifiers, Purview labels). Private catalogues of skills and projects with approval, by identity-provider group. A command that checks and simulates a policy. |
 | Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group |
 | Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back; a gateway to the services a browser can't reach, holding the apps registered with their sign-ins (`urls.gateway`, `gateway/`, D191); offline Wikipedia from the organisation's Kiwix server, for web search (`urls.wikipedia`, D254); the Computer's internet (`computer` in policy: off, ask first or any site, a list of sites, a relay) and its package registries (Pyodide's, PyPI, npm: an Artifactory instance, its key kept on the device) (D162) | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
 | Records | Backup, export, a mirrored folder | Retention and legal hold by policy, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
-| Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299) | OpenTelemetry export with identities, a hash-chained log, usage reports |
+| Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299) | OpenTelemetry export with identities (D386), a hash-chained log, usage reports |
 | Deployment | Copy `app/`, or run its container image ([deploy/docker/](../deploy/docker/README.md)); the headers are documented | Deployment kits (hosting, app registration, Intune), embedding in Teams, Outlook and SharePoint |
 
 Long-term-support releases, signed builds, SBOMs, security questionnaires and accessibility reports come with a subscription. They are services, not code.
@@ -53,7 +53,7 @@ Long-term-support releases, signed builds, SBOMs, security questionnaires and ac
 **Promises.** The person's own security is never paid for. Features never move from open to `ee/`; they may move the other way. Without a key, enterprise features don't appear at all, so the unlock game never shows a paywall.
 
 **Keys.**
-- WAREHOUSE SAS signs them (JWS, ES256). Jean checks them offline with Web Crypto and reads them from policy; it never calls home. The check lives in `ee/`.
+- WAREHOUSE SAS signs them (JWS, ES256). Jean checks them offline with Web Crypto and reads them from policy (`key`); it never calls home. The check lives in `ee/` (`ee/key.js`): the signature, the origins the key names, and its end against the date this version of `ee/` was released, or against today for a trial.
 - A subscription key unlocks every version released before its end date, forever. When a subscription lapses, a running deployment keeps working; only upgrades of `ee/` stop.
 - A trial key is free for 30 days. An organisation generates one on a page WAREHOUSE SAS runs. It is bound to the deployment's addresses, one trial per address, and has no fallback.
 - A policy that asks for enterprise features without a valid key stops Jean with a message for IT. Its rules are never dropped silently; removing those sections gives back the open version.
@@ -67,10 +67,8 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
 ```json
 {
   "brand": { "name": "Acme Assistant" },
-  "brains": {
-    "allowed": [{ "id": "corp", "type": "openai-compatible", "baseURL": "https://ai.corp.example/v1", "auth": "oidc" }],
-    "locked": true
-  },
+  "signIn": { "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0", "clientId": "<Jean's app>", "scopes": ["api://<gateway-app>/chat"] },
+  "brains": [{ "id": "corp", "provider": "custom", "api": "openai", "baseURL": "https://ai.corp.example/v1", "model": "gpt-5", "label": "Acme AI", "auth": "oidc" }],
   "reflexes": { "backend": "local" },
   "capabilities": { "deny": ["connections", "computer"], "preUnlock": ["files", "memory", "projects"] },
   "rules": { "send": "ask", "share": "never" },
@@ -82,14 +80,45 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "connections": [{ "id": "crm", "name": "CRM", "url": "https://mcp.crm.corp.example/mcp", "auth": "oauth" }],
   "skills": { "sources": ["https://skills.corp.example"], "only": true },
   "sync": { "provider": "dropbox", "appKey": "…" },
-  "directory": [{ "id": "microsoft-365", "url": "https://mcp.m365.corp.example/mcp", "clientId": "4f1c…" }, { "id": "servicenow", "url": "https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default", "clientId": "9b2e…" }, { "id": "figma", "hidden": true }],
+  "directory": [{ "id": "microsoft-365", "clientId": "4f1c…" }, { "id": "servicenow", "url": "https://acme.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default", "clientId": "9b2e…" }, { "id": "figma", "hidden": true }],
   "images": { "openai": ["gpt-image-1"] },
   "films": { "openai": ["sora-2-pro"] },
   "pictureCheck": { "suggestive": true, "hate": false },
   "lock": "required",
-  "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces" }
+  "key": "eyJhbGciOiJFUzI1NiIs…",
+  "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces", "auth": "oidc", "content": false }
 }
 ```
+
+Policy brains are the only brains, chosen among by Auto or by hand, and Settings says they are set by the organisation.
+
+## Signing in at work
+
+Policy's `signIn` names the organisation's identity provider and the app IT registered there for Jean; each policy brain with `"auth": "oidc"`, the organisation's AI gateway, gets its access token as its key, sent as `Authorization: Bearer`, the OpenAI-compatible way (D385, `caps/signin/`).
+
+- **When:** at the first visit, before the room shows. With the organisation's session already open, the identity provider sends the person straight back; a shared link opened then comes back to where it pointed.
+- **Where the tokens live:** in `.secrets/`, sealed at rest, behind the lock when there is one, and never in a backup, export, sync or share; the access token also as each such brain's key. The PKCE verifier waits in the tab's session storage during the sign-in.
+- **Renewal:** with the refresh token, five minutes before the access token ends, one tab at a time, and when the page shows again. Refused (Entra's refresh tokens for single-page apps last 24 hours), the tokens go and a toast asks to sign in again, keeping what was typed; unreachable, they stay for the next try. A sign-in that comes back refused asks from the same toast, never in a loop.
+- **Settings › Brains** says who is signed in, with Sign out, which signs out at the identity provider too and comes back to sign in afresh.
+- **Entra ID**, for IT:
+  1. Register an app for Jean as a *Single-page application*, with Jean's address as its redirect URI, which also comes back from signing out. The browser reaches the token endpoint only for such an app.
+  2. On the gateway's own app, expose a scope (`api://<gateway-app>/chat`) with v2 access tokens (`accessTokenAcceptedVersion: 2`), and grant Jean's app consent for it.
+  3. Name the issuer by tenant ID, as the tenant's discovery names it.
+  4. Have the gateway check the token: its issuer, its audience (the gateway's app) and the scope, as LiteLLM's JWT auth, Portkey or Azure API Management's `validate-jwt` do.
+- **Any other OpenID Connect provider** works the same way: its issuer, Jean's client id, the gateway's scopes, and refresh tokens (`offline_access`).
+
+## Audit to OpenTelemetry
+
+With a key, or on localhost, `audit` sends the audit stream to the organisation's collector (D386, `ee/`). Elsewhere, a policy with `audit` and no key that unlocks this version stops Jean with a message for IT.
+
+- **Traces, in OpenTelemetry's GenAI conventions:** one a turn, its `invoke_agent` span holding the conversation's and the project's ids. Under it:
+  - a `chat {model}` span for each request to a brain: the provider, the model, the tokens read, written and read from the cache, why it stopped, and its error;
+  - an `execute_tool {tool}` span for each call: its id and kind, the connection it reached, and `jean.decision`, `jean.decided_by` and `jean.declined` when a rule or the person decided it (D308). A script's or a helper's calls go under theirs.
+  - Going back to a request sends `remove_records`, with how many went.
+- **The resource:** `service.name` (`jean`, or `audit.service`), Jean's version, `device.id`, and `user.email` from the sign-in.
+- **Metadata only**, unless `"content": true`: then what was asked and answered, what each brain wrote, its reasoning too, and each call's arguments and result, as JSON strings.
+- **Credentials:** `"auth": "oidc"` sends the organisation's sign-in's token, which the collector's `oidc` authenticator checks. `"auth"` with its own `scopes`, `issuer` or `clientId` makes a sign-in of its own, at the first visit too. `headers` are fixed, and whoever can open Jean reads them in `policy.json`.
+- **Sending:** OTLP/HTTP JSON, in batches every five seconds or of 500, again later while the collector is unreachable or busy, at most 5,000 waiting, and what fits in one request as the page is hidden. The collector allows Jean's origin (`cors.allowed_origins` on its OTLP HTTP receiver). Best effort: the gateway's log stays the authoritative one.
 
 ## Decide now (cheap now, expensive later)
 
@@ -111,4 +140,5 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
 
 ## Sources
 
+- [Single-page apps on the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-overview) · [OpenTelemetry's GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai)
 - [ManagedConfigurationPerOrigin (Chrome)](https://chromeenterprise.google/intl/en_uk/policies/managed-configuration-per-origin/) · [ManagedConfigurationPerOrigin (Edge)](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-browser-policies/managedconfigurationperorigin) · [Managed Configuration API](https://wicg.github.io/WebApiDevice/managed_config/)

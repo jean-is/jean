@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "Wá ímeèlì",
-  "google.read_email": "Ka ímeèlì",
-  "google.create_draft": "Kọ àkọsílẹ̀ ímeèlì",
-  "google.send_email": "Fi ímeèlì ránṣẹ́",
-  "google.list_calendars": "Fi àwọn kàlẹ́ńdà hàn",
-  "google.list_events": "Fi àwọn ìṣẹ̀lẹ̀ hàn",
-  "google.create_event": "Ṣàfikún ìṣẹ̀lẹ̀",
-  "google.update_event": "Yí ìṣẹ̀lẹ̀ padà",
-  "google.delete_event": "Yọ ìṣẹ̀lẹ̀ kúrò",
-  "google.search_files": "Wá fáìlì",
-  "google.read_file": "Ka fáìlì",
-  "google.create_document": "Ṣẹ̀dá ìwé"
+  "api.search_emails": "Wá ímeèlì",
+  "api.read_email": "Ka ímeèlì",
+  "api.create_draft": "Kọ àkọsílẹ̀ ímeèlì",
+  "api.send_email": "Fi ímeèlì ránṣẹ́",
+  "api.list_calendars": "Fi àwọn kàlẹ́ńdà hàn",
+  "api.list_events": "Fi àwọn ìṣẹ̀lẹ̀ hàn",
+  "api.create_event": "Ṣàfikún ìṣẹ̀lẹ̀",
+  "api.update_event": "Yí ìṣẹ̀lẹ̀ padà",
+  "api.delete_event": "Yọ ìṣẹ̀lẹ̀ kúrò",
+  "api.search_files": "Wá fáìlì",
+  "api.read_file": "Ka fáìlì",
+  "api.create_document": "Ṣẹ̀dá ìwé"
 }

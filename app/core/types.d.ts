@@ -23,6 +23,8 @@ export interface BrainConfig {
   projects?: string[]
   /** Where it answers, ISO 3166, as the user or policy declares it: certificates name it (D274) */
   jurisdiction?: string
+  /** A policy brain whose key is the organisation's sign-in (D385) */
+  auth?: 'oidc'
 }
 
 // ─── Provider-neutral chat ───────────────────────────────────────────────────

@@ -2,7 +2,7 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, openSettings, openTasks, MAIL_URL, GATEWAY_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, openSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -31,20 +31,6 @@ test('Jean sums up the latest emails through a connection, with citations', asyn
   expect(await system(page)).toContain('<connections>\n- Mail: mail_search_emails, mail_read_email, mail_send_email\n</connections>')
   await expect(page.locator('.activity-list')).toContainText('Looked for the right tool')
 })
-
-/**
- * Serves Jean with an organisation's policy (docs/enterprise.md), as `<meta name="app-policy">`
- * does, so it is still there when the sign-in comes back.
- * @param {import('@playwright/test').Page} page @param {any} policy
- */
-async function withPolicy(page, policy) {
-  await page.route((url) => url.pathname === '/policy.json', (route) => route.fulfill({ json: policy }))
-  // Added once the page is parsed, before its modules run. (Rewriting the page itself would make
-  // Chromium treat it as a public site, which may not reach the fake service on this computer.)
-  await page.addInitScript(() => document.addEventListener('readystatechange', () => {
-    if (document.readyState === 'interactive') document.head.append(Object.assign(document.createElement('meta'), { name: 'app-policy', content: 'policy.json' }))
-  }, { once: true }))
-}
 
 test('a service Jean knows connects in one click, with every server its one sign-in reaches (D344); those not reached yet are there, disabled', async ({ page }) => {
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp`, servers: [`${MAIL_URL}/search/mcp`], scopes: ['mail.read'] }] })

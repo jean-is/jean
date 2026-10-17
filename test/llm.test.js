@@ -280,7 +280,7 @@ describe('streamChat (OpenAI-compatible)', () => {
     await rejectsWith(collect(streamChat({ brain: brains.ollama, messages: [], fetch })), { code: 'bad_response' })
   })
 
-  test('builds the request: URL, headers, body and message conversion', async () => {
+  test('builds the request: URL, headers, body, message conversion and OpenRouter asked for providers that keep nothing (D381)', async () => {
     const tools = [{ name: 'read', description: 'Read a file', parameters: { type: 'object', properties: { path: { type: 'string' } } } }]
     const messages = [
       { role: 'user', content: 'Read a.md' },
@@ -300,6 +300,7 @@ describe('streamChat (OpenAI-compatible)', () => {
     assert.deepEqual(body, {
       model: 'openrouter/auto',
       stream: true,
+      provider: { data_collection: 'deny' },
       stream_options: { include_usage: true },
       messages: [
         { role: 'system', content: 'Be brief.' },

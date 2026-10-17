@@ -50,9 +50,11 @@ export async function discover(server, { challenge, fetch = globalThis.fetch, is
     for (const url of candidates) {
       const metadata = await getJSON(fetch, url)
       // A document only counts for the issuer it was asked about (RFC 8414, section 3.3), as an
-      // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant".
-      if (metadata && href(metadata.issuer) === href(each) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
-        return { ...metadata, resource: named ? resource.resource ?? server.replace(/#.*$/, '') : undefined, scope: asked.scope ?? resource?.scopes_supported?.join(' ') }
+      // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant". Microsoft's
+      // for any account ("…/common/v2.0") names its issuer with {tenantid} in place of that tenant.
+      const issuer = String(metadata?.issuer).replace('{tenantid}', tenant.split('/')[1] ?? '')
+      if (metadata && href(issuer) === href(each) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
+        return { ...metadata, issuer, resource: named ? resource.resource ?? server.replace(/#.*$/, '') : undefined, scope: asked.scope ?? resource?.scopes_supported?.join(' ') }
       }
     }
   }

@@ -10,6 +10,9 @@ import { parseSSE } from './sse.js'
  * @import { SSEEvent } from './sse.js'
  */
 
+/** What OpenRouter is asked of every request: only providers that neither keep nor train on what they're sent (D381). */
+export const UNKEPT = Object.freeze({ data_collection: 'deny' })
+
 /**
  * keyCheck: where the model list is public, an address that refuses a wrong key.
  * @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean, keyCheck?: string }>}
@@ -160,7 +163,7 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens 
   // OpenAI and OpenRouter take system messages anywhere; local servers' chat templates often don't.
   const systemNotes = brain.provider === 'openai' || brain.provider === 'openrouter'
   /** @type {Record<string, any>} */
-  const body = { model: brain.model, stream: true, messages: openaiMessages(system, messages, { systemNotes }) }
+  const body = { model: brain.model, stream: true, messages: openaiMessages(system, messages, { systemNotes }), ...(brain.provider === 'openrouter' && { provider: UNKEPT }) }
   if (tools.length) {
     // OpenRouter runs the brain's own web search itself, and cites pages in annotations.
     body.tools = tools.map(({ name, description, parameters, native }) => (native && brain.provider === 'openrouter'

@@ -202,7 +202,7 @@ describe('the <connections> section', () => {
 
 import { createFakeMail } from './fixtures/fake-mail.js'
 import { mcpClient, MCPError, paramHeaders, headerValue, searchesWeb, toolsOf } from '../app/caps/connections/mcp.js'
-import { apiClient, APIS } from '../app/caps/connections/google.js'
+import { apiClient, APIS } from '../app/caps/connections/apis.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh, accountOf } from '../app/caps/connections/auth.js'
 import { DIRECTORY, known, knownFor, covers, searchers } from '../app/caps/connections/directory.js'
 import { gateway, covers as gatewayCovers, SERVICES } from '../gateway/gateway.js'
@@ -409,11 +409,6 @@ describe('signing in to a connection', () => {
     assert.equal(first.get('scope'), google?.scopes?.join(' '))
     assert.ok(!first.get('scope')?.includes('https://mail.google.com/'))
     assert.deepEqual([first.get('access_type'), first.get('prompt'), first.get('response_type'), first.get('resource')], ['offline', 'consent', 'code', 'https://gmailmcp.googleapis.com/mcp/v1'])
-    // Microsoft 365's server names no scope, its sign-in server does, and Microsoft refuses offline_access alone.
-    const m365 = DIRECTORY.find((entry) => entry.id === 'microsoft-365')
-    const microsoft = { issuer: 'https://microsoft365.mcp.claude.com', authorization_endpoint: 'https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?prompt=select_account', token_endpoint: 'https://login.microsoftonline.com/organizations/oauth2/v2.0/token', scopes_supported: ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default', 'offline_access', 'openid', 'email'] }
-    const signIn = new URL((await authorization(microsoft, { clientId: 'm365-app', redirectURI: 'https://jean.example/', scopes: m365?.scopes })).url).searchParams
-    assert.deepEqual([signIn.get('scope'), signIn.get('prompt')], ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default openid email offline_access', 'select_account'])
     assert.equal((await asked(true)).get('prompt'), 'consent select_account')
   })
 
@@ -450,7 +445,10 @@ describe('the services Jean knows (D95)', () => {
     assert.deepEqual(services.slice(0, 4).map((entry) => [entry.id, entry.via]), [['notion', 'browser'], ['canva', 'browser'], ['miro', 'browser'], ['granola', 'browser']])
     for (const entry of services.slice(0, 4)) assert.match(String(entry.url), /^https:\/\//)
     assert.equal(services.length, DIRECTORY.length)
-    assert.ok(services.some((entry) => entry.id === 'microsoft-365' && entry.url === 'https://microsoft365.mcp.claude.com/mcp' && entry.via === null))
+    // Microsoft's sign-in answers browsers, but only for the app policy names, or the gateway's (D382).
+    const microsoft = (/** @type {any} */ policy, /** @type {any} */ served) => known(policy, served).find((entry) => entry.id === 'microsoft-365')?.via
+    assert.deepEqual([microsoft({}), microsoft({ directory: [{ id: 'microsoft-365', clientId: 'jean-spa' }] })], [null, 'browser'])
+    assert.deepEqual([microsoft({}, { hosts: ['login.microsoftonline.com'], clients: { 'https://login.microsoftonline.com/common/v2.0': 'web-app' } }), microsoft({}, { hosts: ['login.microsoftonline.com'] })], ['gateway', null])
     assert.ok(services.some((entry) => entry.id === 'servicenow' && !entry.url && entry.via === null))
     // A gateway that relays to Google's servers but not its sign-in, or holds no app of Google's, or
     // relays to some of its servers only (D344), doesn't reach Google.
@@ -465,7 +463,7 @@ describe('the services Jean knows (D95)', () => {
     const through = known({}, { hosts: ['googleapis.com', 'accounts.google.com', 'slack.com'], clients: google })
     const googles4 = ['gmail', 'google-calendar', 'google-drive', 'google']
     assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), googles4)
-    const ready = DIRECTORY.filter((entry) => entry.ready).length
+    const ready = through.filter((entry) => entry.via === 'browser').length
     assert.deepEqual(through.slice(ready, ready + 4).map((entry) => entry.id), googles4)
     // Google's APIs answer browsers: a gateway needs only relay to their sign-in, with Google's app (D349).
     const signIn = known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'], clients: google })
@@ -473,9 +471,9 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
     // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
     const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
-    assert.deepEqual(relayed({}), ['microsoft-365', 'dropbox', 'monday', 'airtable', 'calendly', 'otter', 'gamma', 'zapier', 'qonto', 'todoist'])
+    assert.deepEqual(relayed({}), ['dropbox', 'monday', 'airtable', 'calendly', 'otter', 'gamma', 'zapier', 'qonto', 'todoist'])
     const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
-    assert.deepEqual(relayed(apps), DIRECTORY.filter((entry) => !entry.ready && entry.url).map((entry) => entry.id))
+    assert.deepEqual(relayed(apps), DIRECTORY.filter((entry) => (!entry.ready || entry.app) && entry.url).map((entry) => entry.id))
     assert.equal(through.find((entry) => entry.id === 'servicenow')?.via, null)
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, { hosts: ['googleapis.com', 'accounts.google.com'], clients: google })?.id, 'google')
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1'), undefined)
@@ -505,7 +503,7 @@ describe('the services Jean knows (D95)', () => {
 
   test('policy merges by id: a gateway and a client id switch one on; it can hide one, add one, or hold one back', () => {
     const policy = { directory: [
-      { id: 'microsoft-365', url: 'https://mcp.m365.corp.example/mcp', clientId: 'corp-app' },
+      { id: 'microsoft-365', clientId: 'corp-app' },
       { id: 'figma', hidden: true },
       { id: 'crm', name: 'CRM', url: 'https://mcp.crm.corp.example/mcp' },
       { id: 'canva', ready: false },
@@ -513,11 +511,11 @@ describe('the services Jean knows (D95)', () => {
     ] }
     const services = known(policy)
     const m365 = services.find((entry) => entry.id === 'microsoft-365')
-    assert.deepEqual({ ...m365 }, { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://mcp.m365.corp.example/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], signIn: ['login.microsoftonline.com'], logo: 'microsoft-365.svg', scopes: ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default', 'openid', 'email'], clientId: 'corp-app', ready: true, via: 'browser' })
+    assert.deepEqual({ ...m365 }, { ...DIRECTORY.find((entry) => entry.id === 'microsoft-365'), clientId: 'corp-app', via: 'browser' })
     assert.equal(services.find((entry) => entry.id === 'crm')?.via, 'browser')
     assert.equal(services.find((entry) => entry.id === 'canva')?.via, null)
     assert.ok(!services.some((entry) => entry.id === 'figma' || entry.id === 'nameless'))
-    assert.equal(knownFor('https://mcp.m365.corp.example/mcp', policy)?.clientId, 'corp-app')
+    assert.equal(knownFor('https://graph.microsoft.com/v1.0/', policy)?.clientId, 'corp-app')
     assert.equal(knownFor('https://mcp.canva.com/mcp', policy), undefined)
   })
 
@@ -588,11 +586,11 @@ describe('Google’s own APIs, for every Google account (D349)', () => {
 
   test('each is a server as an MCP one is: its tools listed once it says who is signed in, a token refused or a scope not given a refusal, any other error Google’s own words', async () => {
     assert.equal(apiClient({ url: 'https://mcp.notion.com/mcp', authorization: async () => undefined }), null)
-    assert.deepEqual(DIRECTORY.filter((entry) => entry.api).map((entry) => Boolean(APIS[String(entry.url)])), [true, true, true])
+    assert.deepEqual(DIRECTORY.filter((entry) => entry.api).map((entry) => Boolean(APIS[String(entry.url)])), [true, true, true, true])
     const { fetch, calls } = fakeGoogle({ '/gmail/v1/users/me/profile': () => ({ emailAddress: 'zoe@gmail.com' }) })
     const tools = await api(GMAIL, fetch).listTools()
     assert.deepEqual(tools.map((tool) => [tool.name, tool.annotations?.readOnlyHint, 'run' in tool]), [['search_emails', true, false], ['read_email', true, false], ['create_draft', false, false], ['send_email', false, false]])
-    assert.equal(tools[0].title, 'google.search_emails', 'its name in the user’s language (the key, with no catalogue here)')
+    assert.equal(tools[0].title, 'api.search_emails', 'its name in the user’s language (the key, with no catalogue here)')
     assert.equal(calls[0].init.headers.authorization, 'Bearer token')
     const refusing = (/** @type {number} */ status, /** @type {any} */ error) => api(GMAIL, async () => Response.json({ error }, { status })).listTools()
     await assert.rejects(refusing(401, { message: 'Invalid Credentials' }), (/** @type {any} */ error) => error instanceof MCPError && error.auth && error.status === 401)
@@ -712,6 +710,158 @@ describe('Google’s own APIs, for every Google account (D349)', () => {
     const { url } = await authorization(metadata, { clientId: 'google-app', redirectURI: 'https://jean.example/', scopes: gmail?.scopes, params: gmail?.authorize })
     const params = new URL(url).searchParams
     assert.deepEqual([params.get('scope'), params.get('access_type'), params.get('prompt'), params.get('resource')], ['https://www.googleapis.com/auth/gmail.modify openid email', 'offline', 'consent', null])
+  })
+})
+
+describe('Microsoft Graph, for every Microsoft account (D382)', () => {
+  const GRAPH = 'https://graph.microsoft.com/v1.0/'
+  /**
+   * A fake Graph: each request answered by the route of its method and path, under v1.0, or its whole
+   * address elsewhere (JSON, bytes, or nothing for null), each kept. @param {Record<string, (init: any, url: URL) => any>} routes
+   */
+  function fakeGraph(routes) {
+    /** @type {{ url: URL, init: any }[]} */
+    const calls = []
+    const fetch = /** @type {typeof globalThis.fetch} */ (/** @type {unknown} */ (async (/** @type {URL} */ input, /** @type {any} */ init = {}) => {
+      const url = new URL(input)
+      calls.push({ url, init })
+      const route = routes[`${init.method ?? 'GET'} ${url.origin === 'https://graph.microsoft.com' ? url.pathname.slice(6) : url.href}`]
+      const answer = route ? await route(init, url) : Response.json({ error: { code: 'itemNotFound', message: 'The resource could not be found.' } }, { status: 404 })
+      return answer instanceof Response ? answer : answer instanceof Uint8Array ? new Response(answer) : answer === null ? new Response(null, { status: 202 }) : Response.json(answer)
+    }))
+    return { fetch, calls }
+  }
+  /** @param {typeof globalThis.fetch} fetch */
+  const graph = (fetch) => /** @type {NonNullable<ReturnType<typeof apiClient>>} */ (apiClient({ url: GRAPH, authorization: async () => 'Bearer token', fetch }))
+  /** A tool called, its result as any. @param {ReturnType<typeof graph>} client @param {string} name @param {any} args */
+  const run = async (client, name, args) => /** @type {any} */ (await client.callTool(/** @type {any} */ ({ name }), args))
+  /** @param {{ url: URL, init: any }[]} calls */
+  const last = (calls) => /** @type {{ url: URL, init: any }} */ (calls.at(-1))
+
+  test('one server for Outlook, its calendar and OneDrive: its tools listed once it says who is signed in; a token refused or access denied a refusal, any other error Microsoft’s own words', async () => {
+    const { fetch, calls } = fakeGraph({ 'GET me': () => ({ id: 'u1' }) })
+    const tools = await graph(fetch).listTools()
+    assert.deepEqual(tools.map((tool) => tool.name), ['search_emails', 'read_email', 'create_draft', 'send_email', 'list_calendars', 'list_events', 'create_event', 'update_event', 'delete_event', 'search_files', 'read_file', 'create_document'])
+    assert.deepEqual(tools.filter((tool) => tool.annotations?.readOnlyHint).map((tool) => tool.name), ['search_emails', 'read_email', 'list_calendars', 'list_events', 'search_files', 'read_file'])
+    assert.deepEqual([calls[0].url.href, calls[0].init.headers.authorization], ['https://graph.microsoft.com/v1.0/me?$select=id', 'Bearer token'])
+    const refusing = (/** @type {number} */ status, /** @type {any} */ error) => graph(async () => Response.json({ error }, { status })).listTools()
+    await assert.rejects(refusing(401, { code: 'InvalidAuthenticationToken', message: 'Access token has expired or is not yet valid.' }), (/** @type {any} */ error) => error instanceof MCPError && error.status === 401)
+    await assert.rejects(refusing(403, { code: 'ErrorAccessDenied', message: 'Access is denied. Check credentials and try again.' }), (/** @type {any} */ error) => error instanceof MCPError && error.status === 403)
+    await assert.rejects(refusing(404, { code: 'MailboxNotEnabledForRESTAPI', message: 'The mailbox is either inactive, soft-deleted, or is hosted on-premise.' }), (/** @type {any} */ error) => !(error instanceof MCPError) && /on-premise/.test(error.message))
+  })
+
+  test('Outlook: a search as its search box does, or the latest; an email read as text, with its files but not those inline; a draft, a reply drafted in its thread, an email sent and a reply', async () => {
+    const mail = { id: 'm1', subject: 'Coffee', from: { emailAddress: { name: 'Sam', address: 'sam@example.com' } }, toRecipients: [{ emailAddress: { name: 'zoe@outlook.com', address: 'zoe@outlook.com' } }], ccRecipients: [],
+      receivedDateTime: '2026-10-15T07:00:00Z', bodyPreview: 'It’s on me', webLink: 'https://outlook.live.com/owa/?ItemID=m1' }
+    const { fetch, calls } = fakeGraph({
+      'GET me/messages': () => ({ value: [mail] }),
+      'GET me/messages/m1': () => ({ ...mail, body: { contentType: 'text', content: 'Café at 9?' } }),
+      'GET me/messages/m1/attachments': () => ({ value: [{ name: 'menu.pdf', isInline: false }, { name: 'image001.png', isInline: true }] }),
+      'POST me/messages': (init) => ({ ...JSON.parse(init.body), id: 'd1', webLink: 'https://outlook.live.com/owa/?ItemID=d1' }),
+      'POST me/messages/m1/createReply': () => ({ id: 'd2', subject: 'RE: Coffee', webLink: 'https://outlook.live.com/owa/?ItemID=d2' }),
+      'POST me/sendMail': () => null,
+      'POST me/messages/m1/reply': () => null,
+    })
+    const outlook = graph(fetch)
+    const query = () => last(calls).url.searchParams
+    const found = await run(outlook, 'search_emails', { query: 'from:sam "coffee"', max: 5 })
+    assert.deepEqual([query().get('$search'), query().get('$top'), query().get('$orderby')], ['"from:sam coffee"', '5', null])
+    const [{ resource }] = found.content
+    assert.deepEqual([resource.uri, resource.title, resource.description], [mail.webLink, 'Coffee', 'It’s on me'])
+    assert.equal(resource.text, 'id: m1\nFrom: Sam <sam@example.com>\nTo: zoe@outlook.com\nDate: 2026-10-15T07:00:00Z\n\nIt’s on me')
+    await run(outlook, 'search_emails', {})
+    assert.deepEqual([query().get('$search'), query().get('$orderby')], [null, 'receivedDateTime desc'])
+    const read = await run(outlook, 'read_email', { id: 'm1' })
+    assert.equal(read.content[0].resource.text, 'From: Sam <sam@example.com>\nTo: zoe@outlook.com\nDate: 2026-10-15T07:00:00Z\nFiles: menu.pdf\n\nCafé at 9?')
+    assert.equal(calls.find((call) => call.url.pathname.endsWith('/me/messages/m1'))?.init.headers.prefer, 'outlook.body-content-type="text"')
+    const sent = () => [last(calls).url.pathname.slice(6), JSON.parse(last(calls).init.body)]
+    await run(outlook, 'create_draft', { to: 'Sam <sam@example.com>, ana@example.com', subject: 'Lunch\r\nBcc: eve@example.com', body: 'Noon?' })
+    assert.deepEqual(sent(), ['me/messages', { subject: 'Lunch Bcc: eve@example.com', toRecipients: [{ emailAddress: { address: 'sam@example.com' } }, { emailAddress: { address: 'ana@example.com' } }], ccRecipients: [], bccRecipients: [],
+      body: { contentType: 'text', content: 'Noon?' } }])
+    const reply = await run(outlook, 'create_draft', { to: 'sam@example.com', body: 'Yes, 9 works.', reply_to: 'm1' })
+    assert.deepEqual(sent(), ['me/messages/m1/createReply', { message: { toRecipients: [{ emailAddress: { address: 'sam@example.com' } }], ccRecipients: [], bccRecipients: [] }, comment: 'Yes, 9 works.' }])
+    assert.deepEqual([reply.content[0].resource.uri, reply.content[0].resource.text], ['https://outlook.live.com/owa/?ItemID=d2', 'Draft saved (id: d2).'])
+    assert.deepEqual((await run(outlook, 'send_email', { to: ['ana@example.com'], subject: 'Hi', body: 'Hello' })).content, [{ type: 'text', text: 'Sent.' }])
+    assert.deepEqual(sent(), ['me/sendMail', { message: { subject: 'Hi', toRecipients: [{ emailAddress: { address: 'ana@example.com' } }], ccRecipients: [], bccRecipients: [], body: { contentType: 'text', content: 'Hello' } } }])
+    await run(outlook, 'send_email', { to: 'sam@example.com', body: 'See you', reply_to: 'm1' })
+    assert.equal(sent()[0], 'me/messages/m1/reply')
+  })
+
+  test('Outlook’s calendar: events from a day where the user is, earliest first, until a year on, or those with given words, in the user’s zone; one added for whole days, at a time with its offset or in a zone; one changed, one removed', async () => {
+    const item = { id: 'e1', subject: 'Lunch', webLink: 'https://outlook.live.com/calendar/item/e1', start: { dateTime: '2026-10-16T12:00:00.0000000', timeZone: 'Europe/Paris' }, end: { dateTime: '2026-10-16T13:00:00.0000000', timeZone: 'Europe/Paris' },
+      location: { displayName: 'Chez Paul' }, attendees: [{ emailAddress: { address: 'sam@example.com' } }], bodyPreview: '' }
+    const { fetch, calls } = fakeGraph({
+      'GET me/calendars': () => ({ value: [{ id: 'c1', name: 'Calendar', isDefaultCalendar: true, canEdit: true }, { id: 'c2', name: 'Holidays in France', canEdit: false }] }),
+      'GET me/calendar/calendarView': () => ({ value: [item, { ...item, id: 'e2', subject: 'Dentist', location: {} }] }),
+      'POST me/calendar/events': (init) => ({ ...item, ...JSON.parse(init.body) }),
+      'PATCH me/events/e1': (init) => ({ ...item, ...JSON.parse(init.body) }),
+      'DELETE me/events/e1': () => null,
+    })
+    const calendar = graph(fetch)
+    assert.deepEqual((await run(calendar, 'list_calendars', {})).content.map((/** @type {any} */ line) => line.text), ['c1: Calendar (their own), writer', 'c2: Holidays in France, reader'])
+    const found = await run(calendar, 'list_events', { from: '2026-10-16', query: 'chez' })
+    const asked = last(calls).url.searchParams
+    const start = new Date(2026, 9, 16).toISOString()
+    assert.deepEqual([asked.get('startDateTime'), asked.get('endDateTime'), asked.get('$orderby')], [start, new Date(Date.parse(start) + 366 * 86_400_000).toISOString(), 'start/dateTime'])
+    assert.equal(last(calls).init.headers.prefer, `outlook.timezone="${Intl.DateTimeFormat().resolvedOptions().timeZone}"`)
+    assert.deepEqual(found.content.map((/** @type {any} */ each) => each.resource.text), ['id: e1\n2026-10-16T12:00:00.0000000 → 2026-10-16T13:00:00.0000000 (Europe/Paris)\nWhere: Chez Paul\nWith: sam@example.com'])
+    const sent = () => [JSON.parse(last(calls).init.body), last(calls).init.method]
+    await run(calendar, 'create_event', { title: 'Holiday', start: '2026-12-24', end: '2026-12-26', time_zone: 'Europe/Paris' })
+    assert.deepEqual(sent(), [{ subject: 'Holiday', start: { dateTime: '2026-12-24T00:00:00', timeZone: 'Europe/Paris' }, isAllDay: true, end: { dateTime: '2026-12-26T00:00:00', timeZone: 'Europe/Paris' } }, 'POST'])
+    await run(calendar, 'create_event', { title: 'Call', start: '2026-10-16T15:00:00+09:00', end: '2026-10-16T15:30:00', time_zone: 'Asia/Tokyo', attendees: ['sam@example.com'] })
+    assert.deepEqual(sent()[0], { subject: 'Call', start: { dateTime: '2026-10-16T06:00:00.000', timeZone: 'UTC' }, isAllDay: false, end: { dateTime: '2026-10-16T15:30:00', timeZone: 'Asia/Tokyo' },
+      attendees: [{ emailAddress: { address: 'sam@example.com' }, type: 'required' }] })
+    await run(calendar, 'update_event', { id: 'e1', location: '' })
+    assert.deepEqual(sent(), [{ location: { displayName: '' } }, 'PATCH'])
+    assert.deepEqual((await run(calendar, 'delete_event', { id: 'e1' })).content, [{ type: 'text', text: 'Removed.' }])
+    assert.equal(last(calls).init.method, 'DELETE')
+  })
+
+  test('OneDrive: files found through Microsoft Search, or in a personal OneDrive when it finds none; a Word document read at its signed address, with no token, a film not; one made from Markdown', async () => {
+    const { makeFile } = await import('../app/caps/made/formats.js')
+    const plan = await makeFile('Plan.docx', '# Plan\n\nShip it.')
+    const item = { id: 'i1', name: 'Plan.docx', webUrl: 'https://contoso.sharepoint.com/Plan.docx', lastModifiedDateTime: '2026-10-15T08:00:00Z', parentReference: { driveId: 'b!d1' } }
+    const download = 'https://contoso.sharepoint.com/_layouts/15/download.aspx?tempauth=x'
+    let work = true
+    const { fetch, calls } = fakeGraph({
+      'POST search/query': () => (work ? { value: [{ hitsContainers: [{ hits: [{ resource: item }] }] }] } : Response.json({ error: { code: 'BadRequest', message: 'Not supported.' } }, { status: 400 })),
+      "GET me/drive/search(q='Zo%C3%A9''s%20plan')": () => ({ value: [{ id: 's1', name: 'Plan.docx', webUrl: 'https://1drv.ms/w/s1', lastModifiedDateTime: '2026-10-15T08:00:00Z', remoteItem: { id: 'r1', parentReference: { driveId: 'd2' } } }] }),
+      'GET drives/b!d1/items/i1': () => ({ ...item, '@microsoft.graph.downloadUrl': download }),
+      [`GET ${download}`]: () => plan.bytes,
+      'GET drives/b!d1/items/i2': () => ({ ...item, name: 'Film.mp4', '@microsoft.graph.downloadUrl': download }),
+      'PUT me/drive/root:/Notes.docx:/content': () => ({ ...item, id: 'i3', name: 'Notes.docx' }),
+    })
+    const drive = graph(fetch)
+    const found = await run(drive, 'search_files', { query: 'Zoé\'s plan', max: 5 })
+    assert.deepEqual(JSON.parse(last(calls).init.body), { requests: [{ entityTypes: ['driveItem'], query: { queryString: 'Zoé\'s plan' }, size: 5 }] })
+    assert.deepEqual([found.content[0].resource.uri, found.content[0].resource.text], [item.webUrl, 'id: b!d1/i1\nChanged 2026-10-15T08:00:00Z'])
+    work = false
+    assert.equal((await run(drive, 'search_files', { query: 'Zoé\'s plan' })).content[0].resource.text, 'id: d2/r1\nChanged 2026-10-15T08:00:00Z')
+    assert.match((await run(drive, 'read_file', { id: 'b!d1/i1' })).content[0].resource.text, /Plan[^]*Ship it\./)
+    assert.deepEqual([last(calls).url.href, last(calls).init.headers.authorization], [download, undefined])
+    await assert.rejects(run(drive, 'read_file', { id: 'b!d1/i2' }), /Film\.mp4 is a file whose text can’t be read here/)
+    assert.notEqual(last(calls).url.href, download)
+    const made = await run(drive, 'create_document', { name: 'Notes.docx', content: '# Notes' })
+    const { init, url } = last(calls)
+    assert.deepEqual([init.method, init.headers['content-type'], url.searchParams.get('@microsoft.graph.conflictBehavior'), made.content[0].resource.title], ['PUT', plan.mimeType, 'rename', 'Notes.docx'])
+    assert.ok(init.body instanceof Uint8Array)
+  })
+
+  test('signing in: Microsoft’s sign-in for any account found at the issuer its entry names, though its document says {tenantid}, asking for every scope at once, with no resource indicator', async () => {
+    const m365 = DIRECTORY.find((entry) => entry.id === 'microsoft-365')
+    const common = 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration'
+    const document = { authorization_endpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize', token_endpoint: 'https://login.microsoftonline.com/common/oauth2/v2.0/token', scopes_supported: ['openid', 'profile', 'email', 'offline_access'] }
+    /** @param {string} issuer @returns {typeof globalThis.fetch} */
+    const signIn = (issuer) => async (url) => (String(url) === common ? Response.json({ ...document, issuer }) : new Response(null, { status: 404 }))
+    const metadata = await discover(String(m365?.url), { issuer: m365?.app, fetch: signIn('https://login.microsoftonline.com/{tenantid}/v2.0') })
+    assert.equal(metadata.issuer, 'https://login.microsoftonline.com/common/v2.0')
+    const { url, pending } = await authorization(metadata, { clientId: 'jean-spa', redirectURI: 'https://jean.example/', scopes: m365?.scopes, params: m365?.authorize })
+    const params = new URL(url).searchParams
+    assert.deepEqual([params.get('scope'), params.get('resource'), params.get('prompt'), params.get('code_challenge_method')],
+      ['User.Read Mail.ReadWrite Mail.Send Calendars.ReadWrite Files.ReadWrite Files.Read.All openid email offline_access', null, null, 'S256'])
+    assert.equal(pending.issuer, 'https://login.microsoftonline.com/common/v2.0')
+    // A tenant's own document doesn't stand for every account's.
+    await assert.rejects(discover(String(m365?.url), { issuer: m365?.app, fetch: signIn('https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0') }), /does not say where to sign in/)
   })
 })
 

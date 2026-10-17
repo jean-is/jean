@@ -21,7 +21,8 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   const said = []
   page.on('console', (message) => { if (/Content[ -]Security[ -]Policy|Refused to|TrustedHTML|TrustedScript/i.test(message.text())) said.push(message.text()) })
   await start(page)
-  // On a new task, the line under the box links to the privacy policy and the terms, in Jean's language (D356).
+  // On a new task, the line under the box links to where files go (D381), the privacy policy and the terms, in Jean's language (D356).
+  await expect(page.locator('.legal a[href="files#en"]')).toHaveText('Where your files go')
   await expect(page.locator('.legal a[href="privacy#en"]')).toHaveText('Privacy')
   await expect(page.locator('.legal a[href="terms#en"]')).toHaveText('Terms')
   const reports = async () => /** @type {any[]} */ (await (await page.request.get(`csp-reports?from=${from}`)).json())
@@ -66,6 +67,8 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')
   await page.goto('terms#fr')
   await expect(page.locator('#fr h1')).toHaveText('Conditions d’utilisation')
+  await page.goto('files')
+  await expect(page.locator('#fr h1')).toHaveText('Où vont vos fichiers')
   await page.waitForLoadState('networkidle')
 
   // Reports come a moment after what they report.

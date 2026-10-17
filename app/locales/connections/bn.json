@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "ইমেল খুঁজুন",
-  "google.read_email": "ইমেল পড়ুন",
-  "google.create_draft": "খসড়া লিখুন",
-  "google.send_email": "ইমেল পাঠান",
-  "google.list_calendars": "ক্যালেন্ডারগুলো দেখান",
-  "google.list_events": "ইভেন্টগুলো দেখান",
-  "google.create_event": "ইভেন্ট যোগ করুন",
-  "google.update_event": "ইভেন্ট বদলান",
-  "google.delete_event": "ইভেন্ট সরান",
-  "google.search_files": "ফাইল খুঁজুন",
-  "google.read_file": "ফাইল পড়ুন",
-  "google.create_document": "ডকুমেন্ট তৈরি করুন"
+  "api.search_emails": "ইমেল খুঁজুন",
+  "api.read_email": "ইমেল পড়ুন",
+  "api.create_draft": "খসড়া লিখুন",
+  "api.send_email": "ইমেল পাঠান",
+  "api.list_calendars": "ক্যালেন্ডারগুলো দেখান",
+  "api.list_events": "ইভেন্টগুলো দেখান",
+  "api.create_event": "ইভেন্ট যোগ করুন",
+  "api.update_event": "ইভেন্ট বদলান",
+  "api.delete_event": "ইভেন্ট সরান",
+  "api.search_files": "ফাইল খুঁজুন",
+  "api.read_file": "ফাইল পড়ুন",
+  "api.create_document": "ডকুমেন্ট তৈরি করুন"
 }

@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "ईमेल शोधा",
-  "google.read_email": "ईमेल वाचा",
-  "google.create_draft": "मसुदा लिहा",
-  "google.send_email": "ईमेल पाठवा",
-  "google.list_calendars": "कॅलेंडर दाखवा",
-  "google.list_events": "इव्हेंट दाखवा",
-  "google.create_event": "इव्हेंट जोडा",
-  "google.update_event": "इव्हेंट बदला",
-  "google.delete_event": "इव्हेंट काढा",
-  "google.search_files": "फाइल्स शोधा",
-  "google.read_file": "फाइल वाचा",
-  "google.create_document": "दस्तऐवज तयार करा"
+  "api.search_emails": "ईमेल शोधा",
+  "api.read_email": "ईमेल वाचा",
+  "api.create_draft": "मसुदा लिहा",
+  "api.send_email": "ईमेल पाठवा",
+  "api.list_calendars": "कॅलेंडर दाखवा",
+  "api.list_events": "इव्हेंट दाखवा",
+  "api.create_event": "इव्हेंट जोडा",
+  "api.update_event": "इव्हेंट बदला",
+  "api.delete_event": "इव्हेंट काढा",
+  "api.search_files": "फाइल्स शोधा",
+  "api.read_file": "फाइल वाचा",
+  "api.create_document": "दस्तऐवज तयार करा"
 }

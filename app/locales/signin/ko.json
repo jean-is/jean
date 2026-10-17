@@ -1,0 +1,6 @@
+{
+  "signin.needed": "답변을 받으려면 조직 계정으로 로그인하세요.",
+  "signin.in": "로그인",
+  "signin.as": "{account}(으)로 로그인됨",
+  "signin.out": "로그아웃"
+}

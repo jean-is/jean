@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "メールを検索",
-  "google.read_email": "メールを読む",
-  "google.create_draft": "下書きを作成",
-  "google.send_email": "メールを送信",
-  "google.list_calendars": "カレンダーを一覧表示",
-  "google.list_events": "予定を一覧表示",
-  "google.create_event": "予定を追加",
-  "google.update_event": "予定を変更",
-  "google.delete_event": "予定を削除",
-  "google.search_files": "ファイルを検索",
-  "google.read_file": "ファイルを読む",
-  "google.create_document": "ドキュメントを作成"
+  "api.search_emails": "メールを検索",
+  "api.read_email": "メールを読む",
+  "api.create_draft": "下書きを作成",
+  "api.send_email": "メールを送信",
+  "api.list_calendars": "カレンダーを一覧表示",
+  "api.list_events": "予定を一覧表示",
+  "api.create_event": "予定を追加",
+  "api.update_event": "予定を変更",
+  "api.delete_event": "予定を削除",
+  "api.search_files": "ファイルを検索",
+  "api.read_file": "ファイルを読む",
+  "api.create_document": "ドキュメントを作成"
 }

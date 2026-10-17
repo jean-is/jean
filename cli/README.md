@@ -24,7 +24,7 @@ The brain is the first one whose key the environment holds (`ANTHROPIC_API_KEY`,
 
 ## The gateway
 
-Some services, such as Gmail, Microsoft 365 or Slack, don't accept connections from a browser. The gateway reaches them for Jean, without keeping anything:
+Some services, such as Google Workspace or Slack, don't accept connections from a browser. The gateway reaches them for Jean, without keeping anything:
 
 ```bash
 npx jean-cli gateway --origin https://jean.is
