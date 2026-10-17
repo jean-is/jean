@@ -340,7 +340,7 @@ There is always a default project, hidden until Projects is discovered, so one c
 - **On update:** download the new shell and new versions of unlocked capabilities only, then delete old caches. When the user lets it in, the new version takes the page's place where it was (`ui/update.js`, D138).
 - **Model weights** live in their own cache, so an update never downloads 3 GB again.
 - **A notification the page can't show itself** (Android's browsers refuse `new Notification()`) is shown by the service worker, and a tap on it focuses Jean's window at the task's address, or opens one there (D334).
-- **Offline:** history, files and the device's brain keep working; with only a cloud brain, Jean says so.
+- **Offline:** history, files and the device's brain keep working; with only a cloud brain, Jean says so. The site's policy holds as last read: `ui/app.js` keeps a copy in the `app-policy` cache, read whenever `policy.json` can't be, so an organisation's brains, locks and denied capabilities never lift with the network. The Computer and pages in answers need the site to start their frame, which Chromium loads past the service worker, sandboxed as it is: offline, the sandbox says so within 5 s of its frame loading.
 
 ## Security
 

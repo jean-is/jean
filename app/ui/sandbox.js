@@ -76,7 +76,7 @@ export function sandbox({ capability, worker, page, engines }) {
         tell()
         reject(new Error(message))
       }
-      const slow = setTimeout(() => fail('The sandbox did not start.'), 20_000)
+      let slow = setTimeout(() => fail('The sandbox did not start.'), 20_000)
       /** @param {MessageEvent} event */
       function listen({ source: from, data }) {
         if (from !== frame.contentWindow || !data) return
@@ -94,6 +94,9 @@ export function sandbox({ capability, worker, page, engines }) {
       }
       addEventListener('message', listen)
       frame.addEventListener('load', () => frame.contentWindow?.postMessage({ type: 'boot', source }, '*'), { once: true })
+      // Chromium loads a sandboxed frame past the service worker, so offline it holds the browser's
+      // error page, which never answers: say so in seconds rather than after the wait.
+      frame.addEventListener('load', () => { if (!navigator.onLine) slow = (clearTimeout(slow), setTimeout(() => fail('The sandbox did not start: this device is offline.'), 5000)) }, { once: true })
       frame.src = page.href
       document.body.append(frame)
     })

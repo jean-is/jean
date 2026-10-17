@@ -34,8 +34,14 @@ async function start() {
   app.deviceId = localStorage.getItem('app.device') ?? ulid()
   localStorage.setItem('app.device', app.deviceId)
   // Organisations opt in with <meta name="app-policy" content="policy.json"> (see docs/enterprise.md).
-  const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
-  app.policy = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response.json() : {})).catch(() => ({})) : {}
+  // The last one read is kept and holds while the site can't be reached: offline, or its server down,
+  // what an organisation set (its brains, locks, denied capabilities) doesn't come undone.
+  const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content') ?? ''
+  const kept = policyURL ? await globalThis.caches?.open('app-policy').catch(() => undefined) : undefined
+  const fresh = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response : null), () => null) : null
+  ;(fresh && kept?.put(policyURL, fresh.clone()))?.catch(() => {})
+  const policy = fresh ?? await kept?.match(policyURL)
+  app.policy = policy ? await policy.json().catch(() => ({})) : {}
   // Several profiles here (D228): their menu, and in a child's, what a parent set, in policy's shape.
   if (fs && (await fs.whole.list('profiles')).length > 1) await unlock('profiles')
   app.settings.value = await loadSettings(app.fs)
