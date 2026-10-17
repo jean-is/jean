@@ -261,6 +261,7 @@
   "pages.siteRemove": "{site} entfernen",
   "pages.sitesText": "Gib eine Website ein und drücke die Eingabetaste. * steht für jede Website, *.example.com für alle Adressen von example.com.",
   "policy.locked": "Von deiner Organisation festgelegt",
+  "policy.parent": "Von einem Elternteil festgelegt",
   "knows.title": "Was {name} über dich weiß",
   "you.name": "Dein Name",
   "you.nameText": "Steht unter deinen Aufgaben.",

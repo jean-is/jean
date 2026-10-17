@@ -14,6 +14,7 @@
   "search.failed": "لم يستجب أي خادم Kiwix على هذا العنوان.",
   "search.insecure": "لا يمكن الوصول من هنا إلا إلى خادم Kiwix على هذا الحاسوب، أو على عنوان يبدأ بـ https://.",
   "search.locked": "تم تحديده من قِبل مؤسستك",
+  "search.parent": "حدّده أحد الوالدين",
   "search.books": {
     "zero": "{count} كتاب",
     "one": "كتاب واحد",

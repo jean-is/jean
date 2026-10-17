@@ -14,6 +14,7 @@
   "search.failed": "Bu adreste hiçbir Kiwix sunucusu yanıt vermedi.",
   "search.insecure": "Buradan yalnızca bu bilgisayardaki ya da https:// ile başlayan bir adresteki Kiwix sunucusuna ulaşılabilir.",
   "search.locked": "Kuruluşun tarafından ayarlandı",
+  "search.parent": "Bir ebeveyn tarafından ayarlandı",
   "search.books": {
     "one": "{count} kitap",
     "other": "{count} kitap"

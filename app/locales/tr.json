@@ -397,5 +397,6 @@
   "since.closed": "Bu sekme kapalıyken çalışma durur; bu yüzden bunlar az önce okundu.",
   "cap.machine.name": "Bu bilgisayar",
   "cap.machine.offer": "Bir sitenin geliştirme sunucusunu ya da kendi programlarını bu bilgisayarda çalıştırmak ister misin?",
-  "cap.machine.yes": "Bu bilgisayarı kullan"
+  "cap.machine.yes": "Bu bilgisayarı kullan",
+  "profiles.add": "Profil ekle"
 }

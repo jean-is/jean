@@ -14,6 +14,7 @@
   "search.failed": "Không có máy chủ Kiwix nào trả lời ở địa chỉ này.",
   "search.insecure": "Từ đây chỉ kết nối được với máy chủ Kiwix trên máy tính này, hoặc ở địa chỉ bắt đầu bằng https://.",
   "search.locked": "Do tổ chức của bạn thiết lập",
+  "search.parent": "Do cha mẹ thiết lập",
   "search.books": {
     "other": "{count} cuốn sách"
   },

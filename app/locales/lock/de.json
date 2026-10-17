@@ -1,6 +1,7 @@
 {
   "lock.locked": "Gesperrt.",
   "lock.unreadable": "Was hier gespeichert war, lässt sich nicht öffnen.",
+  "lock.parent": "Ein Elternteil öffnet dieses Profil, mit seinem Passwort oder Passkey.",
   "lock.cant": "Lässt es sich nicht öffnen?",
   "lock.cantText": "Ohne deinen Passkey, dein Passwort oder deinen Wiederherstellungscode kann niemand öffnen, was hier gespeichert ist. Neu anfangen löscht es; danach kannst du ein Backup oder deinen synchronisierten Ordner wiederherstellen.",
   "lock.afresh": "Neu anfangen",

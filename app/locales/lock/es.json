@@ -1,6 +1,7 @@
 {
   "lock.locked": "Bloqueado.",
   "lock.unreadable": "Lo que se guardaba aquí no se puede abrir.",
+  "lock.parent": "Un padre o una madre abre este perfil, con su contraseña o llave de acceso.",
   "lock.cant": "¿No puedes abrirlo?",
   "lock.cantText": "Sin tu llave de acceso, tu contraseña o tu código de recuperación, nadie puede abrir lo que se guarda aquí. Empezar de cero lo borra; después puedes restaurar una copia de seguridad o tu carpeta sincronizada.",
   "lock.afresh": "Empezar de cero",

@@ -261,6 +261,7 @@
   "pages.siteRemove": "{site} ہٹائیں",
   "pages.sitesText": "سائٹ لکھیں اور Enter دبائیں۔ علامت * کا مطلب کوئی بھی سائٹ ہے، اور ⁦*.example.com⁩ کا مطلب ⁦example.com⁩ کے سبھی پتے۔",
   "policy.locked": "آپ کے ادارے کی طرف سے طے شدہ",
+  "policy.parent": "والدین میں سے کسی نے طے کیا",
   "knows.title": "آپ کے بارے میں کیا معلوم ہے",
   "you.name": "آپ کا نام",
   "you.nameText": "آپ کے کاموں کے نیچے دکھایا جاتا ہے۔",

@@ -113,9 +113,10 @@ export function applyPolicy(settings, policy = {}) {
     effective.locale = policy.locale
     locked.add('locale')
   }
-  if (policy.brains?.length) {
+  // Even none: a child's profile has the brains a parent left it (D228).
+  if (policy.brains) {
     effective.brains = policy.brains
-    if (!policy.brains.some((brain) => brain.id === effective.activeBrain)) effective.activeBrain = policy.brains[0].id
+    if (!policy.brains.some((brain) => brain.id === effective.activeBrain)) effective.activeBrain = policy.brains[0]?.id ?? null
     locked.add('brains')
   }
   for (const [kind, value] of Object.entries(policy.rules ?? {})) {
@@ -152,6 +153,14 @@ export async function createProject(fs, { name, by, colour, home = false, now = 
 
 /** The default project, created on first run. Invisible until projects are discovered. @param {FS} fs @param {{ by: string, name?: string }} options */
 export const ensureHome = async (fs, { by, name = 'Home' }) => (await listProjects(fs)).find((project) => project.data.default === true)?.dir ?? createProject(fs, { name, by, home: true })
+
+/** The profile, of those folders, whose projects hold a project or a task by its ULID, as an address names it (D228). @param {FS} fs @param {string[]} dirs @param {string} id */
+export async function profileOf(fs, dirs, id) {
+  for (const dir of dirs) {
+    for (const { name } of await fs.list(`${dir}/projects`)) if (name.startsWith(id) || await fs.exists(`${dir}/projects/${name}/conversations/${id}.jsonl`)) return dir
+  }
+  return null
+}
 
 /** Lower-case Latin letters, digits and single hyphens, for folder names: "Été à Paris!" → "ete-a-paris". @param {string} text */
 export const slug = (text) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64).replace(/-$/, '')

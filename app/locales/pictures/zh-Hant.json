@@ -15,6 +15,7 @@
   "pictures.violence": "拒絕血腥暴力",
   "pictures.violenceText": "血腥、肢解、重傷和屍體。不含這些的戰鬥和打鬥場面可以產生。",
   "pictures.locked": "由你的組織設定",
+  "pictures.parent": "由家長設定",
   "pictures.sd-turbo": "快速",
   "pictures.flux2-klein": "精細",
   "pictures.sd-turbo.text": "幾秒鐘產生方形圖片，使用 Stability AI 的 SD-Turbo，遵循其社群授權。",

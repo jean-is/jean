@@ -389,5 +389,6 @@
   "since.closed": "這個分頁關閉時工作會停止，所以這些是剛剛讀取的。",
   "cap.machine.name": "這台電腦",
   "cap.machine.offer": "在這台電腦上執行網站的開發伺服器或你自己的程式嗎？",
-  "cap.machine.yes": "使用這台電腦"
+  "cap.machine.yes": "使用這台電腦",
+  "profiles.add": "新增個人檔案"
 }

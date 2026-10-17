@@ -405,5 +405,6 @@
   "since.closed": "Il lavoro si ferma mentre questa scheda è chiusa: tutto questo è stato letto adesso.",
   "cap.machine.name": "Questo computer",
   "cap.machine.offer": "Eseguire il server di sviluppo di un sito, o i tuoi programmi, su questo computer?",
-  "cap.machine.yes": "Usa questo computer"
+  "cap.machine.yes": "Usa questo computer",
+  "profiles.add": "Aggiungi un profilo"
 }

@@ -1,6 +1,7 @@
 {
   "lock.locked": "Imefungwa.",
   "lock.unreadable": "Kilichohifadhiwa hapa hakiwezi kufunguliwa.",
+  "lock.parent": "Mzazi hufungua wasifu huu kwa nenosiri au ufunguo wake wa siri.",
   "lock.cant": "Huwezi kuifungua?",
   "lock.cantText": "Bila ufunguo wako wa siri, nenosiri au msimbo wa urejeshaji, hakuna anayeweza kufungua kilichohifadhiwa hapa. Kuanza upya kunakifuta; kisha unaweza kurejesha nakala rudufu au folda yako iliyosawazishwa.",
   "lock.afresh": "Anza upya",

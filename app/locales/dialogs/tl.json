@@ -261,6 +261,7 @@
   "pages.siteRemove": "Alisin ang {site}",
   "pages.sitesText": "Mag-type ng site, saka pindutin ang Enter. Ang * ay kahit anong site; ang *.example.com ay lahat ng address ng example.com.",
   "policy.locked": "Itinakda ng organisasyon mo",
+  "policy.parent": "Itinakda ng magulang",
   "knows.title": "Ang alam ng {name} tungkol sa iyo",
   "you.name": "Pangalan mo",
   "you.nameText": "Ipinapakita sa ilalim ng mga gawain mo.",

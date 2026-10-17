@@ -25,9 +25,9 @@ const screen = signal(/** @type {'start' | 'choose' | 'plans'} */ ('start'))
 const also = signal(false)
 const choice = signal(/** @type {'private' | 'now' | 'best'} */ ('now'))
 
-/** Before any brain, this; with brains kept to other projects, or set by policy, Settings › Brains. */
+/** Before any brain, this; with brains kept to other projects, or set by policy or a parent (D228), Settings › Brains. */
 export function open() {
-  if (effective.value.settings.brains.length || effective.value.locked.has('brains')) return openSettings('brains')
+  if (effective.value.settings.brains.length || effective.value.locked.has('brains') || app.policy.child) return openSettings('brains')
   screen.value = 'start'
   checkDevice()
   app.dialog.value = 'first'

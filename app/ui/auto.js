@@ -6,8 +6,8 @@ import { isLocal } from '../core/settings.js'
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 /** @typedef {'only' | 'private' | 'offline' | 'personal' | 'demand' | 'unhappy' | 'default'} Reason */
 /**
- * What the reflexes made of a message, when they're on (ui/discovery.js), and whether it shares a picture.
- * @typedef {{ demand?: number, personal?: boolean, unhappy?: boolean, pictures?: boolean }} Signals  demand: 0 (chat) to 3 (expert)
+ * What the reflexes made of a message, when they're on (ui/discovery.js), and whether it shares a picture; in a child's profile, a danger (D228).
+ * @typedef {{ demand?: number, personal?: boolean, unhappy?: boolean, pictures?: boolean, danger?: string }} Signals  demand: 0 (chat) to 3 (expert)
  */
 
 /**

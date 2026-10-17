@@ -150,6 +150,15 @@ export function memoryFS(initial = {}) {
   }
 }
 
+/** The FS seen from one of its folders as its root, a profile's (D228): nothing above is reached or heard of. @param {FS} fs @param {string} dir @returns {FS} */
+export function rootedFS(fs, dir) {
+  const at = (/** @type {string} */ path) => join(dir, normalizePath(path))
+  const view = /** @type {any} */ (Object.fromEntries(['read', 'readBytes', 'write', 'writeBytes', 'append', 'remove', 'exists', 'stat']
+    .map((op) => [op, (/** @type {string} */ path, /** @type {any} */ value) => /** @type {any} */ (fs)[op](at(path), value)])))
+  return { ...view, list: (path) => fs.list(join(dir, path)), estimate: fs.estimate,
+    watch: (cb) => fs.watch?.((path) => { if (path.startsWith(`${dir}/`)) cb(path.slice(dir.length + 1)) }) ?? (() => {}) }
+}
+
 /** Every file under `dir`, recursively, as paths relative to the root. @param {FS} fs @param {string} [dir] @returns {Promise<string[]>} */
 export async function walk(fs, dir = '') {
   /** @type {string[]} */

@@ -264,6 +264,7 @@
   "pages.siteRemove": "Retirer {site}",
   "pages.sitesText": "Tapez un site, puis appuyez sur Entrée. * désigne n’importe quel site, et *.example.com toutes les adresses d’example.com.",
   "policy.locked": "Défini par votre organisation",
+  "policy.parent": "Choisi par un parent",
   "knows.title": "Ce que {name} sait de vous",
   "you.name": "Votre prénom",
   "you.nameText": "Affiché sous vos tâches.",

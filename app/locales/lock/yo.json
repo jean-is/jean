@@ -1,6 +1,7 @@
 {
   "lock.locked": "Ó ti tì.",
   "lock.unreadable": "Kò ṣeé ṣí ohun tí a pa mọ́ síbí.",
+  "lock.parent": "Òbí kan ló ń ṣí profaili yìí pẹ̀lú ọ̀rọ̀ aṣínà tàbí passkey rẹ̀.",
   "lock.cant": "Ẹ kò lè ṣí i?",
   "lock.cantText": "Láìsí passkey, ọ̀rọ̀ aṣínà tàbí kóòdù ìmúpadàbọ̀sípò yín, kò sí ẹni tí ó lè ṣí ohun tí a pa mọ́ síbí. Bíbẹ̀rẹ̀ lọ́tun máa ń pa á rẹ́; lẹ́yìn náà ẹ lè dá ẹ̀dà àfipamọ́ tàbí fódà tí ẹ ń múṣọ̀kan padà.",
   "lock.afresh": "Bẹ̀rẹ̀ lọ́tun",

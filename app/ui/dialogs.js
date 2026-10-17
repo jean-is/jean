@@ -70,6 +70,8 @@ export function syncDialog(host, name) {
 }
 
 export const close = () => { app.dialog.value = null }
+/** What a locked setting says: whose it is, an organisation's or, in a child's profile, a parent's (D228). */
+export const lockedBy = () => t(app.policy.child ? 'policy.parent' : 'policy.locked')
 /**
  * A dialog closed (Escape, or another one opening): forget it only if it is still the open one, and
  * still closed. The event comes after the fact (a frame later in Chromium), maybe once it opened again.
@@ -237,7 +239,7 @@ function brains() {
   const brainsLocked = locked.has('brains')
   const first = !settings.brains.length
   return html`${first ? html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>` : answers(settings, brainsLocked)}
-    ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : first || adding.value || status.value ? html`<section class="brains-add">
+    ${brainsLocked ? html`<p class="muted">${lockedBy()}</p>` : first || adding.value || status.value ? html`<section class="brains-add">
       ${first ? nothing : html`<h3>${t('brain.add')}</h3>`}
       ${ways(first)}
     </section>` : nothing}
@@ -420,7 +422,7 @@ export function ways(first, all = true) {
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}`)
     : nothing}
-    ${all ? way('quick', icons.brain, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
+    ${all && !app.policy.child ? way('quick', icons.brain, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
       <p>${t('brain.quick.text')}</p>
       <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button></div>`) : nothing}
     ${way('key', icons.key, t('brain.key.title'), providers(KEYED), false, html`
@@ -536,7 +538,7 @@ function approvals() {
       const current = resolveRule(kind, { user: settings.rules })
       const isLocked = locked.has(`rules.${kind}`)
       return html`<li class="setting">
-        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}</span>
+        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</span>
         <span class="segmented" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>
           ${(/** @type {const} */ (['allow', 'ask', 'never'])).map((option) => html`<label>
             <input type="radio" name=${`rule-${kind}`} .checked=${current === option} ?disabled=${isLocked} @change=${() => setRule(kind, option)}>
@@ -561,7 +563,7 @@ function guards() {
   const services = loaded.value.has('connections') ? [...(app.policy.connections ?? []), ...(settings.connections ?? [])] : []
   /** @param {import('../core/rules.js').Guard} guard @param {boolean} locked */
   const row = (guard, locked) => html`<li class="setting"><span class="rule-kind" dir="auto">${guard.service ? services.find((one) => one.id === guard.service)?.name ?? guard.service
-    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}${guard.if
+    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}${guard.if
     ? html`<br><span class="muted small">${t('guards.when', { question: guard.if })}</span>` : nothing}</span>${locked ? nothing
     : html`<button type="button" class="icon-button subtle" aria-label=${t('guards.remove')} @click=${() => updateSettings({ guards: mine.filter((other) => other !== guard) })}>${icons.trash}</button>`}</li>`
   /** @param {SubmitEvent} event */
@@ -609,7 +611,7 @@ function pages() {
     <h3>${t('pages.title')}</h3>
     <p class="muted">${t('pages.text')}</p>
     <ul class="rules">${(/** @type {import('./csp.js').PageRight[]} */ (Object.keys(PAGE_DEFAULTS))).map((right) => html`<li class="setting">
-      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? t('policy.locked') : t(`pages.${right}Text`)}</p></div>
+      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? lockedBy() : t(`pages.${right}Text`)}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]}
         ?disabled=${locked.has(right) || (right === 'network' && !allows.scripts)}
         @change=${(/** @type {Event} */ e) => setPages({ [right]: /** @type {HTMLInputElement} */ (e.target).checked })}>
@@ -652,7 +654,7 @@ export function siteList({ sites, fixed, set, any = false }) {
       ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
         @keydown=${add} @input=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).removeAttribute('aria-invalid')}>`}
     </div>
-    <p class="muted small" id="sites-hint">${fixed ? t('policy.locked') : t('pages.sitesText')}</p>
+    <p class="muted small" id="sites-hint">${fixed ? lockedBy() : t('pages.sitesText')}</p>
   </div>`
 }
 

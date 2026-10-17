@@ -267,6 +267,7 @@
   "pages.siteRemove": "Вилучити {site}",
   "pages.sitesText": "Введіть сайт і натисніть Enter. * — будь-який сайт, *.example.com — усі адреси example.com.",
   "policy.locked": "Встановлено вашою організацією",
+  "policy.parent": "Встановлено батьками",
   "knows.title": "Що {name} знає про вас",
   "you.name": "Ваше ім’я",
   "you.nameText": "Показується під завданнями.",

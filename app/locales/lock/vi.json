@@ -1,6 +1,7 @@
 {
   "lock.locked": "Đã khóa.",
   "lock.unreadable": "Không mở được những gì đã lưu ở đây.",
+  "lock.parent": "Cha hoặc mẹ mở hồ sơ này bằng mật khẩu hoặc khóa truy cập của mình.",
   "lock.cant": "Không mở được?",
   "lock.cantText": "Không có khóa truy cập, mật khẩu hay mã khôi phục của bạn thì không ai mở được những gì lưu ở đây. Bắt đầu lại sẽ xóa nó; sau đó bạn có thể khôi phục một bản sao lưu hoặc thư mục đồng bộ của mình.",
   "lock.afresh": "Bắt đầu lại",

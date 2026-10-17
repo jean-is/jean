@@ -258,6 +258,7 @@
   "pages.siteRemove": "{site} 삭제",
   "pages.sitesText": "사이트를 입력하고 Enter를 누르세요. *는 모든 사이트, *.example.com은 example.com의 모든 주소입니다.",
   "policy.locked": "조직에서 설정함",
+  "policy.parent": "보호자가 설정함",
   "knows.title": "나에 대해 알고 있는 것",
   "you.name": "내 이름",
   "you.nameText": "작업 목록 아래에 표시돼요.",

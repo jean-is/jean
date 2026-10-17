@@ -261,6 +261,7 @@
   "pages.siteRemove": "Kaldır: {site}",
   "pages.sitesText": "Bir site yaz ve Enter’a bas. * her site, *.example.com ise example.com’un tüm adresleri demektir.",
   "policy.locked": "Kuruluşun tarafından ayarlandı",
+  "policy.parent": "Bir ebeveyn tarafından ayarlandı",
   "knows.title": "Senin hakkında bilinenler",
   "you.name": "Adın",
   "you.nameText": "Görevlerinin altında görünür.",

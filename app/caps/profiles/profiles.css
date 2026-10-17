@@ -1,0 +1,16 @@
+/* Profiles (D228): each one in the person's menu by its initial, as the person is at its foot; what a parent set, and what a parent is told. */
+.profile-switch .avatar, .profile-list .avatar { inline-size: 1.5rem; block-size: 1.5rem; font-size: 0.75rem; }
+.profile-switch[aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
+.profile-switch .icon:last-child { margin-inline-start: auto; }
+.profile-list .item { gap: 0.75rem; }
+.profile-tier dl, dl.profile-tier { display: grid; grid-template-columns: minmax(8rem, max-content) 1fr; gap: 0.35rem 1rem; margin: 0 0 1rem; }
+dl.profile-tier dt { color: var(--ink-soft); }
+dl.profile-tier dd { margin: 0; }
+.profile-tier fieldset { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; }
+.profile-tier fieldset > label:not(.check) { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; }
+.profile-tier legend { margin-block-end: 0.5rem; font-weight: 600; }
+.profile-concerns { display: grid; gap: 0.6rem; margin: 0 0 0.6rem; padding: 0; list-style: none; }
+.profile-concerns p { margin: 0; }
+.profile-concerns summary { color: var(--ink-soft); cursor: pointer; }
+label.check { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); }
+.profile-shared { margin-block-start: 1.25rem; }

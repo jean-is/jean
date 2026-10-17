@@ -261,6 +261,7 @@
   "pages.siteRemove": "Remove {site}",
   "pages.sitesText": "Type a site, then press Enter. * is any site; *.example.com is every address of example.com.",
   "policy.locked": "Set by your organization",
+  "policy.parent": "Set by a parent",
   "knows.title": "What {name} knows about you",
   "you.name": "Your name",
   "you.nameText": "Shown under your tasks.",

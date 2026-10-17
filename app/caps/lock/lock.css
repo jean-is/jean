@@ -8,3 +8,5 @@ main.lock .row { justify-content: center; }
 .lock-said { color: var(--danger); }
 .lock-said:empty { display: none; }
 main.lock .button.danger { color: var(--danger); }
+main.lock .lock-name { margin: 0; font-size: 1.15rem; font-weight: 600; }
+main.lock .lock-others { flex-wrap: wrap; }

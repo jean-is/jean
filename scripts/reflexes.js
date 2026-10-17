@@ -11,12 +11,12 @@ import { basename, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { env, AutoTokenizer, PreTrainedModel, Tensor } from '@huggingface/transformers'
 import { pack, answers } from '../app/core/decide.js'
-import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange } from '../app/caps/reflexes/questions.js'
+import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange, dangerOf } from '../app/caps/reflexes/questions.js'
 import { tierFor } from '../app/ui/auto.js'
 
 const DIR = fileURLToPath(new URL('../test/reflexes/', import.meta.url))
 const MODEL = 'jean-is/kev-0.6b-reflexes-ONNX'
-const KINDS = ['personal', 'unhappy', 'demand', 'capability', 'lasting', 'table', 'email']
+const KINDS = ['personal', 'unhappy', 'demand', 'capability', 'lasting', 'table', 'email', 'danger']
 
 /** @typedef {import('../app/core/decide.js').Question} Question */
 
@@ -65,16 +65,18 @@ async function main(argv) {
       const raw = states[id]
       if (raw === undefined) throw new Error(`${lang}.json has no ${id}`)
       const state = Array.isArray(raw) ? exchange(raw[0], raw[1]) : raw
-      const questions = { [kind]: QUESTIONS[kind] }
+      // A child's danger is two questions in one pass, read as Jean reads them (D228).
+      const questions = kind === 'danger' ? { danger: REFLEXES.danger, home: REFLEXES.home } : { [kind]: QUESTIONS[kind] }
       const { ids, ends } = pack(state, questions, encode)
       const { logits } = await model({
         input_ids: new Tensor('int64', BigInt64Array.from(ids, BigInt), [1, ids.length]),
         attention_mask: new Tensor('int64', new BigInt64Array(ids.length).fill(1n), [1, ids.length]),
       })
-      const answer = answers(questions, ends, logits.data)[kind]
+      const got = answers(questions, ends, logits.data)
+      const answer = kind === 'danger' ? { read: dangerOf(got) ?? 'none', ...got } : got[kind]
       const score = scores[lang][kind]
       score[1]++
-      if (correct(answer, label)) score[0]++
+      if (kind === 'danger' ? answer.read === label : correct(answer, label)) score[0]++
       else misses.push(`${lang} ${id} (${kind}, expected ${label}): ${JSON.stringify(answer)}`)
     }
     const total = Object.values(scores[lang]).reduce((sum, [right, all]) => [sum[0] + right, sum[1] + all], [0, 0])

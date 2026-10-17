@@ -261,6 +261,7 @@
   "pages.siteRemove": "{site} verwijderen",
   "pages.sitesText": "Typ een site en druk op Enter. * is elke site; *.example.com is elk adres van example.com.",
   "policy.locked": "Ingesteld door je organisatie",
+  "policy.parent": "Ingesteld door een ouder",
   "knows.title": "Wat {name} over je weet",
   "you.name": "Je naam",
   "you.nameText": "Staat onder je taken.",

@@ -397,5 +397,6 @@
   "since.closed": "Het werk ligt stil zolang dit tabblad dicht is; dit is zojuist gelezen.",
   "cap.machine.name": "Deze computer",
   "cap.machine.offer": "De ontwikkelserver van een site, of je eigen programma’s, op deze computer draaien?",
-  "cap.machine.yes": "Deze computer gebruiken"
+  "cap.machine.yes": "Deze computer gebruiken",
+  "profiles.add": "Een profiel toevoegen"
 }

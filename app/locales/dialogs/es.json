@@ -264,6 +264,7 @@
   "pages.siteRemove": "Quitar {site}",
   "pages.sitesText": "Escribe un sitio y pulsa Intro. * es cualquier sitio; *.example.com, todas las direcciones de example.com.",
   "policy.locked": "Definido por tu organización",
+  "policy.parent": "Elegido por un padre o una madre",
   "knows.title": "Lo que {name} sabe de ti",
   "you.name": "Tu nombre",
   "you.nameText": "Aparece bajo tus tareas.",

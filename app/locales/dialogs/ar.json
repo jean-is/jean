@@ -273,6 +273,7 @@
   "pages.siteRemove": "إزالة {site}",
   "pages.sitesText": "اكتب موقعًا ثم اضغط Enter. الرمز * يعني أي موقع، و⁦*.example.com⁩ يعني كل عناوين ⁦example.com⁩.",
   "policy.locked": "تم تحديده من قِبل مؤسستك",
+  "policy.parent": "حدّده أحد الوالدين",
   "knows.title": "ما يُعرف عنك",
   "you.name": "اسمك",
   "you.nameText": "يظهر أسفل مهامك.",

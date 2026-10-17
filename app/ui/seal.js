@@ -95,8 +95,9 @@ export async function open(vault, id, path, bytes) {
 
 /**
  * One way to the vault key, as kept in vault.json: this device's key, a passkey (its credential and
- * the salt its PRF is asked for), a password (PBKDF2's salt and count) or a recovery code.
- * @typedef {{ kind: 'device' | 'passkey' | 'password' | 'recovery', iv: string, data: string, salt?: string, iterations?: number, credential?: string }} Slot
+ * the salt its PRF is asked for), a password (PBKDF2's salt and count), a recovery code, or the vault
+ * key of a parent's profile, which a child's under 13 opens with (D228).
+ * @typedef {{ kind: 'device' | 'passkey' | 'password' | 'recovery' | 'parent', iv: string, data: string, salt?: string, iterations?: number, credential?: string, profile?: string }} Slot
  */
 
 /** @param {Uint8Array} bytes */
@@ -109,8 +110,8 @@ export const ITERATIONS = 600_000
 
 /**
  * The key a slot is sealed under, from what the person gives: a passkey's PRF output, a password, a
- * recovery code's bytes. A device slot's key is the device's own.
- * @param {Slot} slot @param {Uint8Array | string} secret
+ * recovery code's bytes, a parent's vault key. A device slot's key is the device's own.
+ * @param {Omit<Slot, 'iv' | 'data'>} slot @param {Uint8Array | string} secret
  */
 export async function slotKey(slot, secret) {
   const salt = decode(slot.salt ?? '')
@@ -134,11 +135,11 @@ export async function close(raw, key, slot) {
 export const unseal = async (slot, key) => new Uint8Array(await subtle.decrypt({ name: 'AES-GCM', iv: decode(slot.iv) }, key, decode(slot.data)))
 
 /**
- * This device's key for its slot, kept in IndexedDB (app-keys) and non-extractable: read, made, or
- * forgotten once a lock replaces it. Null when there is none, or no IndexedDB.
- * @param {'get' | 'make' | 'forget'} what @returns {Promise<CryptoKey | null>}
+ * This device's key for a vault's slot, kept in IndexedDB (app-keys) by the vault's root, a profile's
+ * (D228), and non-extractable: read, made, or forgotten once a lock replaces it. Null when there is
+ * none, or no IndexedDB. @param {'get' | 'make' | 'forget'} what @param {string} root @returns {Promise<CryptoKey | null>}
  */
-export function deviceKey(what) {
+export function deviceKey(what, root) {
   return new Promise((resolve) => {
     const request = indexedDB.open('app-keys', 1)
     request.onupgradeneeded = () => request.result.createObjectStore('keys')
@@ -146,7 +147,7 @@ export function deviceKey(what) {
     request.onsuccess = async () => {
       const key = what === 'make' ? await subtle.generateKey(AES, false, ['encrypt', 'decrypt']) : null
       const store = request.result.transaction('keys', what === 'get' ? 'readonly' : 'readwrite').objectStore('keys')
-      const asked = what === 'get' ? store.get('vault') : what === 'make' ? store.put(key, 'vault') : store.delete('vault')
+      const asked = what === 'get' ? store.get(root) : what === 'make' ? store.put(key, root) : store.delete(root)
       asked.onsuccess = () => resolve(what === 'get' ? asked.result ?? null : key)
       asked.onerror = () => resolve(null)
     }

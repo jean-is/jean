@@ -264,6 +264,7 @@
   "pages.siteRemove": "Remover {site}",
   "pages.sitesText": "Escreve um site e prime Enter. * é qualquer site; *.example.com, todos os endereços de example.com.",
   "policy.locked": "Definido pela tua organização",
+  "policy.parent": "Definido por um pai ou uma mãe",
   "knows.title": "O que {name} sabe sobre ti",
   "you.name": "O teu nome",
   "you.nameText": "Aparece por baixo das tuas tarefas.",

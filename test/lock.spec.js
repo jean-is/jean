@@ -8,8 +8,12 @@ const PASSWORD = 'a long and happy password'
 /** @param {import('@playwright/test').Page} page */
 const ephemeral = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
 
-/** The first bytes of a file as OPFS keeps it, as text. @param {import('@playwright/test').Page} page @param {string} name */
-const onDisk = (page, name) => page.evaluate(async (name) => (await (await (await navigator.storage.getDirectory()).getFileHandle(name)).getFile()).text(), name)
+/** The first bytes of a file of the profile as OPFS keeps it, as text (D228). @param {import('@playwright/test').Page} page @param {string} name */
+const onDisk = (page, name) => page.evaluate(async (name) => {
+  let dir = await navigator.storage.getDirectory()
+  for (const part of String(sessionStorage.getItem('app.profile')).split('/')) dir = await dir.getDirectoryHandle(part)
+  return (await (await dir.getFileHandle(name)).getFile()).text()
+}, name)
 
 /** The lock's part of Settings › Your data. @param {import('@playwright/test').Page} page */
 async function lockPart(page) {

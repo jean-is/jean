@@ -261,6 +261,7 @@
   "pages.siteRemove": "ያስወግዱ፦ {site}",
   "pages.sitesText": "ጣቢያ ይጻፉና Enter ይጫኑ። * ማንኛውም ጣቢያ ማለት ነው፤ *.example.com ደግሞ የexample.com ሁሉም አድራሻዎች ማለት ነው።",
   "policy.locked": "በድርጅትዎ የተቀናበረ",
+  "policy.parent": "በወላጅ የተቀናበረ",
   "knows.title": "ስለ እርስዎ የሚታወቀው",
   "you.name": "ስምዎ",
   "you.nameText": "ከተግባራትዎ በታች ይታያል።",

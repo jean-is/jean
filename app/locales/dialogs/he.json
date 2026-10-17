@@ -266,6 +266,7 @@
   "pages.siteRemove": "הסרת {site}",
   "pages.sitesText": "יש להקליד אתר ולהקיש Enter. הסימן * פירושו כל אתר, ו־⁦*.example.com⁩ כל הכתובות של ⁦example.com⁩.",
   "policy.locked": "נקבע על ידי הארגון שלך",
+  "policy.parent": "נקבע על ידי הורה",
   "knows.title": "מה ידוע עליך",
   "you.name": "השם שלך",
   "you.nameText": "מוצג מתחת למשימות.",

@@ -258,6 +258,7 @@
   "pages.siteRemove": "Hapus {site}",
   "pages.sitesText": "Ketik situs, lalu tekan Enter. * berarti situs apa pun; *.example.com berarti semua alamat example.com.",
   "policy.locked": "Diatur oleh organisasi Anda",
+  "policy.parent": "Diatur oleh orang tua",
   "knows.title": "Yang {name} ketahui tentang Anda",
   "you.name": "Nama Anda",
   "you.nameText": "Ditampilkan di bawah tugas Anda.",

@@ -258,6 +258,7 @@
   "pages.siteRemove": "移除 {site}",
   "pages.sitesText": "輸入網站後按 Enter。* 代表任何網站，*.example.com 代表 example.com 的所有位址。",
   "policy.locked": "由你的組織設定",
+  "policy.parent": "由家長設定",
   "knows.title": "{name} 對你的了解",
   "you.name": "你的名字",
   "you.nameText": "顯示在你的任務下方。",

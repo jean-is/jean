@@ -14,6 +14,7 @@
   "search.failed": "በዚህ አድራሻ ምንም የKiwix ሰርቨር አልመለሰም።",
   "search.insecure": "ከዚህ መድረስ የሚቻለው በዚህ ኮምፒውተር ላይ ያለ ወይም በhttps:// በሚጀምር አድራሻ ያለ የKiwix ሰርቨር ብቻ ነው።",
   "search.locked": "በድርጅትዎ የተቀናበረ",
+  "search.parent": "በወላጅ የተቀናበረ",
   "search.books": {
     "one": "{count} መጽሐፍ",
     "other": "{count} መጻሕፍት"

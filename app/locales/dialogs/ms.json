@@ -258,6 +258,7 @@
   "pages.siteRemove": "Alih keluar {site}",
   "pages.sitesText": "Taip laman, kemudian tekan Enter. * bermaksud mana-mana laman; *.example.com bermaksud semua alamat example.com.",
   "policy.locked": "Ditetapkan oleh organisasi anda",
+  "policy.parent": "Ditetapkan oleh ibu bapa",
   "knows.title": "Perkara yang {name} tahu tentang anda",
   "you.name": "Nama anda",
   "you.nameText": "Ditunjukkan di bawah tugasan anda.",

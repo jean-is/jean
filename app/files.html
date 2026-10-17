@@ -2,11 +2,11 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-qaXEBz0xo4fu4DrcERFpIUzEcZMCQFBv4tOZrbxY5g8='; style-src 'self' 'sha256-x5ltZnYj95oSxTCvBQ2IRKSE7A1JpopnMgfD+pqh0j8='; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-W1ahfFqNaan9DykWihCpQFoHd9/nXj3WUdoXekTsAvo='; style-src 'self' 'sha256-x5ltZnYj95oSxTCvBQ2IRKSE7A1JpopnMgfD+pqh0j8='; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<script>{const root = document.documentElement, look = localStorage.getItem('app.look') ?? 'tilde'
-root.dataset.theme = localStorage.getItem('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+<script>{const root = document.documentElement, mine = (key) => localStorage.getItem(`${key}:${sessionStorage.getItem('app.profile') ?? localStorage.getItem('app.profile') ?? ''}`), look = mine('app.look') ?? 'tilde'
+root.dataset.theme = mine('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
 if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="Where what you give Jean goes, for each brain you can choose: what a brain reads, how each answer says where it was done, and every address Jean contacts.">

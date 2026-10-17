@@ -16,7 +16,7 @@ import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, unlock } from '../../ui/caps.js'
 import { app, conversationOf, refreshProjects, notify, assistantName, readBody, keepRecords } from '../../ui/state.js'
-import { folderFS } from '../../ui/opfs.js'
+import { folderFS, mine } from '../../ui/opfs.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { join } from '../../core/fs.js'
@@ -101,7 +101,7 @@ const VISIT_MS = 12 * 3600_000
 /** @type {Promise<IDBDatabase | null>} */
 const database = new Promise((resolve) => {
   if (!globalThis.indexedDB) return resolve(null)
-  const request = indexedDB.open('app-folders', 1)
+  const request = indexedDB.open(mine('app-folders'), 1)
   request.onupgradeneeded = () => request.result.createObjectStore('folders')
   request.onerror = () => resolve(null)
   request.onsuccess = () => resolve(request.result)

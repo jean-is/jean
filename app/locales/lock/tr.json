@@ -1,6 +1,7 @@
 {
   "lock.locked": "Kilitli.",
   "lock.unreadable": "Burada tutulanlar açılamıyor.",
+  "lock.parent": "Bu profili bir ebeveyn kendi şifresiyle veya geçiş anahtarıyla açar.",
   "lock.cant": "Açamıyor musun?",
   "lock.cantText": "Geçiş anahtarın, şifren ya da kurtarma kodun olmadan burada tutulanları kimse açamaz. Baştan başlamak onları siler; sonra bir yedeği ya da eşitlenen klasörünü geri yükleyebilirsin.",
   "lock.afresh": "Baştan başla",

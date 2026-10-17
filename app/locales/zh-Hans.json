@@ -389,5 +389,6 @@
   "since.closed": "这个标签页关闭时工作会停止，所以这些是刚刚读取的。",
   "cap.machine.name": "这台电脑",
   "cap.machine.offer": "在这台电脑上运行网站的开发服务器或你自己的程序吗？",
-  "cap.machine.yes": "使用这台电脑"
+  "cap.machine.yes": "使用这台电脑",
+  "profiles.add": "添加个人资料"
 }

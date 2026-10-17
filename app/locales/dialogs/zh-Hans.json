@@ -258,6 +258,7 @@
   "pages.siteRemove": "移除 {site}",
   "pages.sitesText": "输入网站后按 Enter。* 表示任何网站，*.example.com 表示 example.com 的所有地址。",
   "policy.locked": "由你的组织设置",
+  "policy.parent": "由家长设置",
   "knows.title": "{name} 对你的了解",
   "you.name": "你的名字",
   "you.nameText": "显示在你的任务下方。",

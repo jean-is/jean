@@ -14,6 +14,7 @@
   "search.failed": "Aucun serveur Kiwix n’a répondu à cette adresse.",
   "search.insecure": "D’ici, seul un serveur Kiwix sur cet ordinateur, ou à une adresse qui commence par https://, est joignable.",
   "search.locked": "Défini par votre organisation",
+  "search.parent": "Choisi par un parent",
   "search.books": {
     "one": "{count} livre",
     "many": "{count} livres",

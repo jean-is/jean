@@ -362,7 +362,7 @@ const CHECKED = /** @type {const} */ (['suggestive', 'hate', 'violence'])
 function check(area) {
   const set = app.policy.pictureCheck?.[area] !== undefined
   const change = (/** @type {Event} */ e) => updateSettings(/** @type {{}} */ ({ pictureCheck: { .../** @type {any} */ (app.settings.value).pictureCheck, [area]: /** @type {HTMLInputElement} */ (e.target).checked } }))
-  return html`<div class="setting"><div><span class="rule-kind">${t(`pictures.${area}`)}</span><p class="muted small">${t(set ? 'pictures.locked' : `pictures.${area}Text`)}</p></div>
+  return html`<div class="setting"><div><span class="rule-kind">${t(`pictures.${area}`)}</span><p class="muted small">${t(set ? app.policy.child ? 'pictures.parent' : 'pictures.locked' : `pictures.${area}Text`)}</p></div>
     <input type="checkbox" class="switch" role="switch" aria-label=${t(`pictures.${area}`)} .checked=${device.refuses(area)} ?disabled=${set} @change=${change}></div>`
 }
 

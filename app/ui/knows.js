@@ -9,7 +9,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { app, effective, brainsHere, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
-import { openSettings, setting } from './dialogs.js'
+import { openSettings, setting, lockedBy } from './dialogs.js'
 import { choices } from './picker.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
@@ -191,7 +191,7 @@ function sourcesView(state) {
       ${offered.filter(({ index, entries }) => entries.length || index.error || !words).map(({ index, entries }) => {
         const site = siteOf(index.url)
         return html`<div class="source">
-          <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${t('policy.locked')}</span>`
+          <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${lockedBy()}</span>`
             : html`<button class="icon-button subtle" aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
           ${index.error ? html`<p class="muted small">${t('skills.unreachable', { source: site })}</p>` : nothing}
           <ul class="cards">${entries.map((entry) => html`<li><button class="card" @click=${() => preview(entry)}><strong dir="ltr">${entry.name}</strong><small dir="auto">${entry.description}</small></button></li>`)}</ul>
@@ -334,7 +334,7 @@ export function you() {
     <section>
       <h3>${icons.pin} ${t('knows.instructions')}</h3>
       <p class="muted small">${t('knows.instructionsText', { name: BRAND.name })}</p>
-      ${app.policy.instructions ? html`<p class="locked" dir="auto">${app.policy.instructions}</p><p class="muted small">${t('policy.locked')}</p>` : nothing}
+      ${app.policy.instructions ? html`<p class="locked" dir="auto">${app.policy.instructions}</p><p class="muted small">${lockedBy()}</p>` : nothing}
       ${Object.entries(state.instructions).map(([dir, text]) => html`<label>${both ? scope(dir) : nothing}
         <textarea rows="3" dir="auto" aria-label=${both ? nothing : t('knows.instructions')} placeholder=${t('knows.instructionsPlaceholder')} .value=${live(text)}
           @change=${(/** @type {Event} */ e) => writeInstructions(dir, /** @type {HTMLTextAreaElement} */ (e.target).value).then(() => notify(t('knows.saved')))}></textarea>

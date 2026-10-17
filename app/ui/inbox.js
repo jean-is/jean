@@ -10,7 +10,7 @@ import { app, effective, theme, sidebarOpen, newConversation, openConversation, 
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
-import { loaded, slots, unlock } from './caps.js'
+import { loaded, slots, unlock, isDenied } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -182,11 +182,13 @@ async function turn(event, next) {
 /** The look chosen, which shows once its style sheet is in. */
 const chosenLook = () => lookId(effective.value.settings.look?.id)
 
-/** The menu's actions: Settings and what is often reached for there. @param {string} id */
+/** The menu's actions: the profiles, or adding one (D228), then Settings and what is often reached for there. @param {string} id */
 function actions(id) {
   const dark = theme.value === 'dark'
   const fixed = effective.value.locked.has('locale')
-  return html`<button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
+  return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : app.ephemeral.value || isDenied('profiles') ? nothing
+      : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button><hr>`}
+    <button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
       @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button>
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>

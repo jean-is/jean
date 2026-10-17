@@ -79,7 +79,7 @@ test('a first visit has the window to itself, and Tilde, Human and Mail open the
   await expect(tasks).toHaveCount(0)
   await look(page, 'human')
   await expect(tasks).toBeVisible()
-  expect(await page.evaluate(() => localStorage.getItem('app.sidebar'))).toBeNull()
+  expect(await page.evaluate(() => localStorage.getItem(`app.sidebar:${sessionStorage.getItem('app.profile') ?? ''}`))).toBeNull()
   // Put away, it stays so in any look.
   await toggle.click()
   await expect(tasks).toHaveCount(0)

@@ -9,7 +9,7 @@ import { effect, signal } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions, WEIGHTS } from './caps.js'
 import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
-import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
+import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange, dangerOf } from '../caps/reflexes/questions.js'
 import { words, alike, restated } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord, routineOf, isPicture } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
@@ -307,6 +307,7 @@ export async function sense(text, previous) {
       personal: REFLEXES.personal,
       ...(Object.keys(candidates).length && { capability: REFLEXES.capability(candidates) }),
       ...(open('memory') && { lasting: REFLEXES.lasting }),
+      ...(app.policy.child && { danger: REFLEXES.danger, home: REFLEXES.home }),
     })),
     previous ? quickly(decide(exchange(clip(previous), clip(text)), { unhappy: REFLEXES.unhappy })) : null,
   ])
@@ -318,6 +319,7 @@ export async function sense(text, previous) {
     ...(demand?.type === 'score' && { demand: likeliest(demand.probabilities) }),
     ...(personal?.type === 'noul' && { personal: personal.noul >= YES }),
     ...(after?.unhappy?.type === 'noul' && { unhappy: after.unhappy.noul >= YES }),
+    danger: dangerOf(about ?? {}),
   }
 }
 
