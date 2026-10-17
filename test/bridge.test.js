@@ -3,6 +3,7 @@ import { test, describe, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { createServer, request } from 'node:http'
 import { generateKeyPairSync, createHash, sign } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -202,6 +203,27 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /hit your limit/ })
   })
 
+  test('beyond eight conversations, the least recently used idle one ends: the one used last and one in a step keep theirs', async () => {
+    /** @type {any[]} */
+    const first = [{ role: 'user', content: 'first' }]
+    first.push((await step(first)).done.message, { role: 'user', content: 'first, again' })
+    // A step under way until the file it made is gone.
+    const held = join(folder, 'held')
+    const holding = step([{ role: 'user', content: `hold ${held}` }])
+    while (!existsSync(held)) await new Promise((wait) => setTimeout(wait, 10))
+    /** @type {any[][]} */
+    const others = []
+    for (let i = 0; i < 8; i++) {
+      if (i === 6) first.push((await step(first)).done.message, { role: 'user', content: 'and on' })
+      others.push([{ role: 'user', content: `other ${i}` }])
+      others[i].push((await step(others[i])).done.message, { role: 'user', content: 'again' })
+    }
+    assert.equal((await step(first)).text, 'Heard (opus, You are Jean): and on')
+    await rm(held)
+    assert.equal((await holding).text, 'Held')
+    assert.match((await step(others[0])).text, /^Heard \(opus, You are Jean\): <earlier-conversation>/)
+  })
+
   test('a gateway in Claude Code’s settings is reached, through their environment and key helpers, the rest left out', async () => {
     const settings = { env: { ANTHROPIC_BASE_URL: 'https://gateway.example', ANTHROPIC_AUTH_TOKEN: 't0ken' }, apiKeyHelper: '~/bin/key', hooks: { Stop: [] }, model: 'haiku' }
     await writeFile(join(folder, 'settings.json'), JSON.stringify(settings))
@@ -336,6 +358,16 @@ describe('Copilot through the bridge (D262)', { skip: process.platform === 'win3
 
   test('a plan’s limit is the brain’s limit', async () => {
     await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /premium request quota/ })
+  })
+
+  test('beyond eight conversations, one whose call waits for Jean’s result keeps its Copilot', async () => {
+    const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
+    for (let i = 0; i < 8; i++) await step([{ role: 'user', content: `other ${i}` }])
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
+    assert.equal((await step(messages, [weather])).text, 'In Lyon: Sunny, 21°C')
   })
 })
 
