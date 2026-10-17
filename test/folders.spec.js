@@ -9,7 +9,7 @@
 import { test, expect, chromium, devices } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openTasks, giveFolder } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { readZip } from '../app/core/zip.js'
@@ -86,13 +86,23 @@ async function bakery(shown) {
   await expect.poll(() => shown.locator('img').evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBe(40)
 }
 
-/** A file of a picked folder, as bytes. @param {import('@playwright/test').Page} page @param {string} path */
+/**
+ * A file of a picked folder, as bytes; read again when Jean was writing it, since a file swapped in
+ * while it is read fails the read. @param {import('@playwright/test').Page} page @param {string} path
+ */
 async function bytes(page, path) {
   return new Uint8Array(await page.evaluate(async (path) => {
     const parts = path.split('/')
-    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')
-    for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
-    return [...new Uint8Array(await (await (await dir.getFileHandle(String(parts.at(-1)))).getFile()).arrayBuffer())]
+    for (let tries = 1; ; tries++) {
+      try {
+        let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')
+        for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
+        return [...new Uint8Array(await (await (await dir.getFileHandle(String(parts.at(-1)))).getFile()).arrayBuffer())]
+      } catch (error) {
+        if (/** @type {Error} */ (error).name !== 'NotFoundError' || tries === 20) throw error
+        await new Promise((resolve) => setTimeout(resolve, 50))
+      }
+    }
   }, path))
 }
 
@@ -471,7 +481,7 @@ test('where a folder can’t be opened in place, Jean works on a copy and the ch
   await connectFakeBrain(page)
   const chooser = page.waitForEvent('filechooser')
   await turnOn(page, 'Folders')
-  await (await chooser).setFiles(top)
+  await giveFolder(await chooser, top)
   await page.keyboard.press('Escape')
   await expect(page.locator('.folder-name')).toHaveText('Clients')
 
@@ -503,7 +513,7 @@ test('where a folder is a copy, its site shows in the browser too, and a page Je
   await page.keyboard.press('Escape')
   const chooser = page.waitForEvent('filechooser')
   await turnOn(page, 'Folders')
-  await (await chooser).setFiles(top)
+  await giveFolder(await chooser, top)
   await page.keyboard.press('Escape')
   await expect(page.locator('.folder-name')).toHaveText('Site')
   // The browser, open since it was turned on, shows the conversation's folder.
