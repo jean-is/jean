@@ -191,3 +191,36 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await expect(settings.locator('.share-list li')).toHaveCount(1)
 })
 
+test('a task brought in draws what its answers hold: a page on sight, a chart and a score with Jean’s own skills that declare them (D378)', async ({ page }) => {
+  await start(page)
+  const hash = await page.evaluate(async (host) => {
+    const [{ app, updateSettings }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope }, { unlock }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/ui/caps.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    const fence = (/** @type {string} */ kind, /** @type {string} */ text) => `\`\`\`${kind}\n${text}\n\`\`\``
+    const text = ['Here they are.', fence('echarts', JSON.stringify({ xAxis: { type: 'category', data: ['Mon', 'Tue'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [3, 5] }] })),
+      fence('abc', 'X:1\nT:Scale\nM:4/4\nK:C\nCDEF|GABc|'), fence('html', '<p>A small page</p>')].join('\n\n')
+    await appendRecords(app.fs, path, [metaRecord(app.deviceId, { title: 'Drawn' }), userRecord('Draw it', app.deviceId),
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)])
+    await unlock('share')
+    const { create, shares } = await import('/caps/share/share.js')
+    await create({ path, title: 'Drawn' }, {})
+    const [share] = shares.peek()
+    return `#/shared/${share.remote}/${share.secret}`
+  }, SHARE_URL)
+  // None of what draws them is here yet: no skill, and no message sent, which loads pages.
+  const loaded = () => page.evaluate(async () => [...(await import('/ui/caps.js')).loaded.peek().keys()].filter((id) => ['skills', 'interactive'].includes(id)).sort())
+  expect(await loaded()).toEqual([])
+
+  page.once('dialog', (asked) => asked.accept())
+  await page.evaluate((to) => { location.hash = to }, hash)
+  await expect(page.locator('.toast')).toContainText('The shared task is here. Added to your skills, to show all of it: Chart and Music score.')
+  const answer = page.locator('app-conversation .msg-jean .prose')
+  await expect(answer.locator('app-chart .chart canvas').first()).toBeVisible()
+  await expect(answer.locator('app-score .score-sheet svg')).toHaveCount(1)
+  await expect(answer.locator('app-page iframe')).toHaveCount(1)
+  await expect(answer.locator('pre code')).toHaveCount(0)
+  expect(await loaded()).toEqual(['interactive', 'skills'])
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['chart', 'music-score'])
+})

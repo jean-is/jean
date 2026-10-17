@@ -32,6 +32,7 @@
   "share.ended": "此連結自 {date} 起已無法開啟。更新後即可再次開啟。",
   "share.bring": "要把這個分享的任務加入 {name} 嗎？它會成為你的任務之一，你可以繼續進行。",
   "share.brought": "分享的任務已在這裡。",
+  "share.broughtWith": "分享的任務已在這裡。為了完整顯示，已新增至你的技能：{skills}。",
   "share.cantOpen": "無法開啟這個分享的任務。",
   "share.from": "透過 {name} 分享",
   "share.continue": "在 {name} 中繼續",

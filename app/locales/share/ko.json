@@ -32,6 +32,7 @@
   "share.ended": "이 링크는 {date}부터 열리지 않아요. 업데이트하면 다시 열려요.",
   "share.bring": "이 공유 작업을 {name}에 가져올까요? 내 작업 중 하나가 되어 이어서 할 수 있어요.",
   "share.brought": "공유 작업이 여기 있어요.",
+  "share.broughtWith": "공유 작업이 여기 있어요. 모두 보여 드리려고 내 스킬에 추가했어요: {skills}.",
   "share.cantOpen": "이 공유 작업을 열지 못했어요.",
   "share.from": "{name} 앱으로 공유됨",
   "share.continue": "{name}에서 계속하기",

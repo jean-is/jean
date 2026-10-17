@@ -32,6 +32,7 @@
   "share.ended": "このリンクは {date} に開けなくなりました。更新すると、また開けるようになります。",
   "share.bring": "この共有タスクを {name} に取り込みますか？あなたのタスクの1つになり、続けられます。",
   "share.brought": "共有タスクが届きました。",
+  "share.broughtWith": "共有タスクが届きました。すべて表示できるよう、スキルに追加しました：{skills}。",
   "share.cantOpen": "この共有タスクを開けませんでした。",
   "share.from": "{name} で共有",
   "share.continue": "{name} で続ける",

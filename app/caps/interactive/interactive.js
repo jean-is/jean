@@ -23,7 +23,7 @@ import { html, nothing, render } from 'lit-html'
 import { computed, effect, signal } from '@preact/signals-core'
 import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
 import { register, drawnActions } from '../../ui/caps.js'
-import { declared, drawn } from '../../ui/markdown.js'
+import { declared, drawn, PAGES } from '../../ui/markdown.js'
 import { pageRights, pagePolicy, pageAllow, mapStyles, PAGE_SANDBOX } from '../../ui/csp.js'
 import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
@@ -40,8 +40,7 @@ register({
   slots: { add: { at: 6, draw: row }, modes: { at: 0, draw: chip, notes } },
 })
 // A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
-const KINDS = ['html', 'mermaid', 'geojson']
-effect(() => { if (KINDS.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...KINDS]) })
+effect(() => { if (PAGES.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...PAGES]) })
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
 // A task saved as a web page (D305) has it from the render package, whose server sends it as text: there its relay is written in the frame.

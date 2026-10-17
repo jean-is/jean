@@ -32,6 +32,7 @@
   "share.ended": "Ten link przestał się otwierać {date}. Zaktualizuj go, żeby znów się otwierał.",
   "share.bring": "Dodać to udostępnione zadanie do {name}? Stanie się jednym z twoich zadań, które możesz kontynuować.",
   "share.brought": "Udostępnione zadanie jest tutaj.",
+  "share.broughtWith": "Udostępnione zadanie jest tutaj. Aby pokazać je w całości, dodano do twoich umiejętności: {skills}.",
   "share.cantOpen": "Nie udało się otworzyć tego udostępnionego zadania.",
   "share.from": "Udostępnione za pomocą {name}",
   "share.continue": "Kontynuuj w {name}",

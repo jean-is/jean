@@ -32,6 +32,7 @@
   "share.ended": "Questo link non si apre più dal {date}. Aggiornalo perché si riapra.",
   "share.bring": "Aggiungere questa attività condivisa a {name}? Diventa una delle tue attività, che puoi continuare.",
   "share.brought": "L’attività condivisa è qui.",
+  "share.broughtWith": "L’attività condivisa è qui. Per mostrarla tutta, aggiunto alle tue abilità: {skills}.",
   "share.cantOpen": "Non è stato possibile aprire questa attività condivisa.",
   "share.from": "Condiviso tramite {name}",
   "share.continue": "Continua in {name}",

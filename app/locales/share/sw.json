@@ -32,6 +32,7 @@
   "share.ended": "Kiungo hiki kiliacha kufunguka tarehe {date}. Kisasishe ili kifunguke tena.",
   "share.bring": "Leta kazi hii iliyoshirikiwa kwenye {name}? Itakuwa mojawapo ya kazi zako, unayoweza kuendelea nayo.",
   "share.brought": "Kazi iliyoshirikiwa iko hapa.",
+  "share.broughtWith": "Kazi iliyoshirikiwa iko hapa. Ili ionekane yote, imeongezwa kwenye ujuzi wako: {skills}.",
   "share.cantOpen": "Kazi hii iliyoshirikiwa haikuweza kufunguliwa.",
   "share.from": "Imeshirikiwa kupitia {name}",
   "share.continue": "Endelea kwenye {name}",

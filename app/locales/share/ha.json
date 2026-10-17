@@ -32,6 +32,7 @@
   "share.ended": "Wannan hanyar haɗin ta daina buɗewa tun {date}. Sabunta ta don ta sake buɗewa.",
   "share.bring": "A kawo wannan aikin da aka raba cikin {name}? Zai zama ɗaya daga cikin ayyukanka, wanda za ka iya ci gaba da shi.",
   "share.brought": "Aikin da aka raba yana nan.",
+  "share.broughtWith": "Aikin da aka raba yana nan. Don a nuna shi duka, an ƙara a cikin ƙwarewarka: {skills}.",
   "share.cantOpen": "Ba a iya buɗe wannan aikin da aka raba ba.",
   "share.from": "An raba ta hanyar {name}",
   "share.continue": "Ci gaba a cikin {name}",

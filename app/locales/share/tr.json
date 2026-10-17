@@ -32,6 +32,7 @@
   "share.ended": "Bu bağlantı {date} tarihinde açılmaz oldu. Yeniden açılması için güncelle.",
   "share.bring": "Bu paylaşılan görev {name} uygulamasına eklensin mi? Devam ettirebileceğin görevlerinden biri olur.",
   "share.brought": "Paylaşılan görev burada.",
+  "share.broughtWith": "Paylaşılan görev burada. Tamamını göstermek için becerilerine eklendi: {skills}.",
   "share.cantOpen": "Bu paylaşılan görev açılamadı.",
   "share.from": "{name} üzerinden paylaşıldı",
   "share.continue": "{name} uygulamasında devam et",

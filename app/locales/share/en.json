@@ -32,6 +32,7 @@
   "share.ended": "This link stopped opening on {date}. Update it to open it again.",
   "share.bring": "Bring this shared task into {name}? It becomes one of your tasks, which you can continue.",
   "share.brought": "The shared task is here.",
+  "share.broughtWith": "The shared task is here. Added to your skills, to show all of it: {skills}.",
   "share.cantOpen": "This shared task couldn’t be opened.",
   "share.from": "Shared via {name}",
   "share.continue": "Continue in {name}",

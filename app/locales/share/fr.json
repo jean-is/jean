@@ -32,6 +32,7 @@
   "share.ended": "Ce lien ne s’ouvre plus depuis le {date}. Mettez-le à jour pour qu’il s’ouvre de nouveau.",
   "share.bring": "Ajouter cette tâche partagée à {name} ? Elle devient l’une de vos tâches, que vous pouvez poursuivre.",
   "share.brought": "La tâche partagée est là.",
+  "share.broughtWith": "La tâche partagée est là. Pour l’afficher en entier, ajouté à vos compétences : {skills}.",
   "share.cantOpen": "Cette tâche partagée n’a pas pu être ouverte.",
   "share.from": "Partagé via {name}",
   "share.continue": "Continuer dans {name}",

@@ -32,6 +32,7 @@
   "share.ended": "Esta ligação deixou de abrir a {date}. Atualiza-a para voltar a abrir.",
   "share.bring": "Trazer esta tarefa partilhada para {name}? Passa a ser uma das tuas tarefas, que podes continuar.",
   "share.brought": "A tarefa partilhada está aqui.",
+  "share.broughtWith": "A tarefa partilhada está aqui. Para a mostrar por inteiro, foi adicionado às tuas competências: {skills}.",
   "share.cantOpen": "Não foi possível abrir esta tarefa partilhada.",
   "share.from": "Partilhado através de {name}",
   "share.continue": "Continuar em {name}",

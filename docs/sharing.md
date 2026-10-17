@@ -46,7 +46,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 
 | Step | Where it stands | How |
 |---|---|---|
-| Continue in Jean | Built | The shared task becomes the recipient's, after a note that it is someone else's |
+| Continue in Jean | Built | The shared task becomes the recipient's, after a note that it is someone else's, with Jean's own skills for the charts, scores and decks it holds (D378) |
 | Update the link | Built | From *Share…* again, which opens on the link made, its choices to change (D379); by hand in Settings › Your data, or after each answer |
 | Replies back | Later | Encrypted notes left on a share, arriving in the sharer's Jean as cards: the store-and-forward half of D226, for when the other tab is closed |
 | A shared project | Later, with D227 | A project synced to a shared folder of a drive. One file per ULID, `author` on each and append-only conversations were made for it |

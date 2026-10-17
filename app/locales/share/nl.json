@@ -32,6 +32,7 @@
   "share.ended": "Deze link gaat sinds {date} niet meer open. Werk hem bij om hem weer te openen.",
   "share.bring": "Deze gedeelde taak toevoegen aan {name}? Hij wordt een van je taken, die je kunt voortzetten.",
   "share.brought": "De gedeelde taak is er.",
+  "share.broughtWith": "De gedeelde taak is er. Om alles te tonen, toegevoegd aan je vaardigheden: {skills}.",
   "share.cantOpen": "Deze gedeelde taak kon niet worden geopend.",
   "share.from": "Gedeeld via {name}",
   "share.continue": "Verdergaan in {name}",

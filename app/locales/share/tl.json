@@ -32,6 +32,7 @@
   "share.ended": "Hindi na nabubuksan ang link na ito mula {date}. I-update ito para mabuksan ulit.",
   "share.bring": "Dalhin ang ibinahaging gawaing ito sa {name}? Magiging isa ito sa mga gawain mo, na maipagpapatuloy mo.",
   "share.brought": "Nandito na ang ibinahaging gawain.",
+  "share.broughtWith": "Nandito na ang ibinahaging gawain. Para maipakita ito nang buo, idinagdag sa mga kasanayan mo: {skills}.",
   "share.cantOpen": "Hindi mabuksan ang ibinahaging gawaing ito.",
   "share.from": "Ibinahagi sa pamamagitan ng {name}",
   "share.continue": "Ituloy sa {name}",

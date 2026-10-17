@@ -32,6 +32,7 @@
   "share.ended": "Đường liên kết này không mở được nữa từ {date}. Hãy cập nhật để mở lại.",
   "share.bring": "Đưa tác vụ được chia sẻ này vào {name}? Nó sẽ thành một tác vụ của bạn để bạn tiếp tục.",
   "share.brought": "Tác vụ được chia sẻ đã ở đây.",
+  "share.broughtWith": "Tác vụ được chia sẻ đã ở đây. Để hiển thị đầy đủ, đã thêm vào kỹ năng của bạn: {skills}.",
   "share.cantOpen": "Không mở được tác vụ được chia sẻ này.",
   "share.from": "Chia sẻ qua {name}",
   "share.continue": "Tiếp tục trong {name}",

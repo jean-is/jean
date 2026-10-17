@@ -32,6 +32,7 @@
   "share.ended": "Dieser Link lässt sich seit dem {date} nicht mehr öffnen. Aktualisiere ihn, damit er wieder aufgeht.",
   "share.bring": "Diese geteilte Aufgabe zu {name} hinzufügen? Sie wird eine deiner Aufgaben, die du fortsetzen kannst.",
   "share.brought": "Die geteilte Aufgabe ist da.",
+  "share.broughtWith": "Die geteilte Aufgabe ist da. Damit alles zu sehen ist, zu deinen Fähigkeiten hinzugefügt: {skills}.",
   "share.cantOpen": "Diese geteilte Aufgabe konnte nicht geöffnet werden.",
   "share.from": "Geteilt über {name}",
   "share.continue": "In {name} fortsetzen",

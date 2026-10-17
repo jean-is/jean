@@ -32,6 +32,7 @@
   "share.ended": "Pautan ini tidak boleh dibuka lagi sejak {date}. Kemas kini supaya ia boleh dibuka semula.",
   "share.bring": "Bawa tugasan kongsi ini ke {name}? Ia menjadi salah satu tugasan anda, yang boleh anda teruskan.",
   "share.brought": "Tugasan kongsi sudah di sini.",
+  "share.broughtWith": "Tugasan kongsi sudah di sini. Supaya semuanya ditunjukkan, ditambah pada kemahiran anda: {skills}.",
   "share.cantOpen": "Tugasan kongsi ini tidak dapat dibuka.",
   "share.from": "Dikongsi melalui {name}",
   "share.continue": "Teruskan dalam {name}",

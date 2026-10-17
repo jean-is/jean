@@ -32,6 +32,7 @@
   "share.ended": "ይህ አገናኝ ከ{date} ጀምሮ አይከፈትም። እንደገና እንዲከፈት ያዘምኑት።",
   "share.bring": "ይህን የተጋራ ተግባር ወደ {name} ያምጡት? ሊቀጥሉበት ከሚችሉት ተግባሮችዎ አንዱ ይሆናል።",
   "share.brought": "የተጋራው ተግባር እዚህ ነው።",
+  "share.broughtWith": "የተጋራው ተግባር እዚህ ነው። ሁሉንም ለማሳየት ወደ ክህሎቶችዎ ታክሏል፦ {skills}።",
   "share.cantOpen": "ይህ የተጋራ ተግባር ሊከፈት አልቻለም።",
   "share.from": "በ{name} በኩል የተጋራ",
   "share.continue": "በ{name} ውስጥ ይቀጥሉ",

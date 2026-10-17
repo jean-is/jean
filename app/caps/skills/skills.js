@@ -20,9 +20,9 @@ import { SAME_KIND } from '../../ui/discovery.js'
 import { listSkills, saveSkill, skillLines, skillSteps } from '../../core/skills.js'
 import { slug } from '../../core/settings.js'
 import { join } from '../../core/fs.js'
-import { t } from '../../core/i18n.js'
-import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf } from './sources.js'
-import { readDirectory } from './directory.js'
+import { t, locale } from '../../core/i18n.js'
+import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, fetchSkill } from './sources.js'
+import { readDirectory, shownIn } from './directory.js'
 
 /** @typedef {import('./sources.js').Entry} Entry */
 
@@ -87,13 +87,7 @@ const saveTool = {
 // ─── Skills from elsewhere (D121) ────────────────────────────────────────────
 
 /** @param {readonly unknown[]} addresses @returns {string[]} the indexes’ addresses */
-const indexes = (addresses) => addresses.flatMap((address) => {
-  try {
-    return [indexURL(String(address))]
-  } catch {
-    return []
-  }
-})
+const indexes = (addresses) => addresses.flatMap((address) => { try { return [indexURL(String(address))] } catch { return [] } })
 
 /** The organisation's sources of skills, which the user can't remove (D121). */
 export const locked = () => indexes(app.policy.skills?.sources ?? [])
@@ -134,6 +128,21 @@ export async function adopt(entry, { body, files, blocks, metadata }) {
   await redeclare()
   for (const [path, other] of suggested) if (other.name === entry.name) suggested.delete(path)
   app.actions.value = Object.fromEntries(Object.entries(app.actions.value).map(([at, ids]) => [at, ids.filter((id) => id !== 'ready')]))
+}
+
+/** Jean's own skill for each kind of block it draws once a skill declares it. */
+const DRAWS = /** @type {Record<string, string>} */ ({ echarts: 'chart', abc: 'music-score', marp: 'slides' })
+
+/**
+ * What a task brought in from elsewhere holds is drawn here (a share, D378): a kind of block no skill of the room
+ * declares comes with Jean's own skill that does, added as the user adds one, unless a skill of the room has its
+ * name. Their names, in the user's language. @param {string[]} kinds the kinds of block the task holds
+ */
+export async function drawWith(kinds) {
+  const have = await skills()
+  const ready = (await directory()).filter((entry) => kinds.some((kind) => DRAWS[kind] === entry.name && !have.some((skill) => skill.name === entry.name || skill.blocks?.includes(kind))))
+  for (const entry of ready) await adopt(entry, await fetchSkill(entry))
+  return ready.map((entry) => shownIn(entry, locale.peek()).title)
 }
 
 /** @type {import('../../core/loop.js').Tool} */

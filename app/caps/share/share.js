@@ -7,7 +7,9 @@
 // token and what its password made stay among the secrets, so only this device changes it.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { walkTokens } from 'marked'
+import { register, unlock } from '../../ui/caps.js'
+import { lex, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
@@ -264,7 +266,11 @@ export async function bringIn(remote, text) {
     received.value = [kept, ...received.peek()]
     await refreshConversations()
     await openConversation(path)
-    notify(t('share.brought'))
+    // What its answers draw is drawn here too (D378): a page on sight, a chart, a score or a deck with Jean's own skill that declares it.
+    const kinds = new Set(/** @type {string[]} */ ([]))
+    walkTokens(foldTurns(records).flatMap((turn) => turn.steps.flatMap((step) => lex(step.text))), (token) => { if (token.type === 'code') kinds.add(String(token.lang).toLowerCase()) })
+    const added = [...kinds].some((kind) => Object.hasOwn(WIDGETS, kind) && !PAGES.includes(kind)) && (await unlock('skills')) ? await (await import('../skills/skills.js')).drawWith([...kinds]).catch(() => []) : []
+    notify(added.length ? t('share.broughtWith', { skills: new Intl.ListFormat(locale.peek()).format(added) }) : t('share.brought'))
   } catch (error) {
     console.warn('Share', error)
     notify(t('share.cantOpen'))
