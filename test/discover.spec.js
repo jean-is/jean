@@ -8,7 +8,7 @@ test('the first idea shares a sample spreadsheet with a request about it, and Fi
   await start(page)
   await connectFakeBrain(page)
   const first = page.locator('.starter').first()
-  await expect(first).toHaveText('Try a sample spreadsheet')
+  await expect(first).toHaveText('Try a spreadsheet')
   await first.click()
   await expect(page.locator('.attachment')).toContainText('sales.csv')
   await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')

@@ -270,7 +270,7 @@ function sourcesView(cited) {
   return html`<details class="read-list">
     <summary>${icons.globe}<span>${t('sources.title')}</span>${icons.chevron}</summary>
     <ul>${cited.map(({ n, title, url }) => html`<li><span class="cite">${n}</span>${web(url)
-      ? html`<a class="link-button" href=${url} target="_blank" rel="noopener noreferrer" dir="auto">${title}</a>` : html`<span dir="auto">${title}</span>`}</li>`)}</ul>
+      ? html`<a class="link-button" href=${url} data-site=${site(url).site} target="_blank" rel="noopener noreferrer" dir="auto">${title}</a>` : html`<span dir="auto">${title}</span>`}</li>`)}</ul>
   </details>`
 }
 

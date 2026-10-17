@@ -7,7 +7,7 @@
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { live } from '../../ui/dictation.js'
-import { app, effective, send, stop, notify, setPresence } from '../../ui/state.js'
+import { app, effective, send, stop, notify } from '../../ui/state.js'
 import { prepare, writing, detect } from '../voice/voice.js'
 import { listener, speakable } from './turns.js'
 import { splitSuggestions } from '../../core/events.js'
@@ -139,10 +139,5 @@ function say(sentence, voice) {
   live.value = 'speaking'
   speechSynthesis.speak(utterance)
 }
-
-// The little light leans toward the user while it listens.
-effect(() => {
-  if (live.value === 'listening' && !app.busy.peek()) setPresence('listening')
-})
 
 register({ id: 'live' })

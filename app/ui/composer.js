@@ -6,7 +6,7 @@
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
 // is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to where files go (D381), the privacy policy and terms (D356).
 import { html, nothing } from 'lit-html'
-import { signal } from '@preact/signals-core'
+import { signal, effect } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
@@ -23,6 +23,13 @@ const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening
 const STARTERS = ['sample', 'email', 'summarize', 'savings']
 const root = document.documentElement, wide = matchMedia('(min-width: 48rem)')
 new ResizeObserver(() => root.toggleAttribute('data-centred', wide.matches && root.scrollHeight <= root.clientHeight)).observe(document.body)
+
+// The wave listens while dictation or hands-free does, not while the box merely has the keyboard.
+effect(() => {
+  const hearing = dictation.value.state === 'listening' || live.value === 'listening'
+  if (hearing && !app.busy.peek()) setPresence('listening')
+  else if (!hearing && app.presence.peek() === 'listening') setPresence('idle')
+})
 
 /** @param {string} key */
 async function idea(key) {
@@ -88,9 +95,7 @@ class Composer extends Element {
         <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby="ai-note"
           placeholder=${status || t(asked.length ? 'inbox.answer' : 'composer.placeholder')}
           .value=${current(app.draft.value)}
-          @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}
-          @focus=${() => !busy && setPresence('listening')}
-          @blur=${() => app.presence.value === 'listening' && setPresence('idle')}></textarea>
+          @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}></textarea>
         <span class="visually-hidden" role="status">${status}</span>
         <div class="composer-row">
           <div class="composer-tools">

@@ -24,7 +24,7 @@ Jean's identity is **Tilde** (D373, D376): a name everyone already has, a small 
 | State | The wave | The Room theme's light |
 |---|---|---|
 | Idle | Ripples slowly, travelling the way the page reads | Slow ambient breathing |
-| Listening (the user types or speaks) | Swells and settles, as a voice does | Leans toward the input |
+| Listening (the user dictates, or hands-free hears them) | Swells and settles, as a voice does | Leans toward the input |
 | Thinking and working | Small and quick | A subtle flicker |
 | Answering | Speaks in bursts | Warms and widens |
 | Waiting for approval | Holds still, tall, and pulses | Steady warm pulse on the approval card |
@@ -35,7 +35,7 @@ Jean's identity is **Tilde** (D373, D376): a name everyone already has, a small 
 
 Jean's presence is the tilde of its mark, set moving. It is one inline SVG in `ui/persona.js` (`<app-persona>`): a long wave seen through a window whose ends fade out, a smile and a frown. CSS does all of its moving: it reads `data-presence`, which mirrors `app.presence`, plus "waiting" while an approval is open and "oops" after an error.
 
-- **Where it lives.** Above the question on the first screen. When the conversation begins it flies into the header beside the wordmark (a view transition), and stays there showing the state; it sits beside the rank in Settings' Capabilities and on each project's card.
+- **Where it lives.** Above the question on the first screen. When the conversation begins it flies into the header beside the wordmark (a view transition), and stays there showing the state; it sits beside the rank in Settings' Capabilities and on each project's card. On paper, a printed task or one saved as PDF starts with it, still, before the name and, small, Jean's address, its links take the project's colour, deepened for paper, and its sources show open, each web page's site after its title. Beside the name in the header, the name's box is trimmed to its x-height, so that the wave sits on the middle of its lower-case letters in every look.
 - **It travels the way the page reads,** left to right, and right to left in Arabic, Hebrew, Persian and Urdu.
 - **At every size,** from about 7 rem on the first screen down to the header's 1.5 rem: one stroke, no detail to lose.
 - **It has no words and no gender.** It never speaks, never carries text, and nothing in the interface agrees with it grammatically. It is not tied to the name either, so it survives a rename.

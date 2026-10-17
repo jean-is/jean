@@ -111,7 +111,7 @@ test('the chip opens it too; what matters: the private answer says why it can’
 
 test('back from OpenRouter’s sign-in, the request is answered with the file it shared, here the sample spreadsheet (D366)', async ({ page }) => {
   await start(page)
-  await page.locator('.starter', { hasText: 'Try a sample spreadsheet' }).click()
+  await page.locator('.starter', { hasText: 'Try a spreadsheet' }).click()
   await expect(page.locator('.attachment')).toContainText('sales.csv')
   await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')
   await page.locator('#prompt').press('Enter')
