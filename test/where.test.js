@@ -32,4 +32,6 @@ test('the page names every service of the directory, and where those that refuse
     const host = new URL(url).host
     assert.ok(!/claude\.com$|anthropic/.test(host) || english.includes(`<code>${host}</code>`), `a service reached through another company's server names it: ${host}`)
   }
+  // One called straight from the browser, its sign-in too, names its own server, in both languages (D382).
+  for (const { url } of DIRECTORY.filter((entry) => entry.api && entry.ready)) for (const half of [english, french]) assert.ok(half.includes(`<code>${new URL(String(url)).host}</code>`), String(url))
 })

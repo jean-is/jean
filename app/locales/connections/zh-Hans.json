@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "搜索邮件",
-  "google.read_email": "阅读邮件",
-  "google.create_draft": "写草稿",
-  "google.send_email": "发送邮件",
-  "google.list_calendars": "列出日历",
-  "google.list_events": "列出日程",
-  "google.create_event": "添加日程",
-  "google.update_event": "更改日程",
-  "google.delete_event": "删除日程",
-  "google.search_files": "搜索文件",
-  "google.read_file": "读取文件",
-  "google.create_document": "创建文档"
+  "api.search_emails": "搜索邮件",
+  "api.read_email": "阅读邮件",
+  "api.create_draft": "写草稿",
+  "api.send_email": "发送邮件",
+  "api.list_calendars": "列出日历",
+  "api.list_events": "列出日程",
+  "api.create_event": "添加日程",
+  "api.update_event": "更改日程",
+  "api.delete_event": "删除日程",
+  "api.search_files": "搜索文件",
+  "api.read_file": "读取文件",
+  "api.create_document": "创建文档"
 }

@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "جست‌وجوی ایمیل‌ها",
-  "google.read_email": "خواندن ایمیل",
-  "google.create_draft": "نوشتن پیش‌نویس",
-  "google.send_email": "فرستادن ایمیل",
-  "google.list_calendars": "فهرست تقویم‌ها",
-  "google.list_events": "فهرست رویدادها",
-  "google.create_event": "افزودن رویداد",
-  "google.update_event": "تغییر رویداد",
-  "google.delete_event": "حذف رویداد",
-  "google.search_files": "جست‌وجوی فایل‌ها",
-  "google.read_file": "خواندن فایل",
-  "google.create_document": "ساختن سند"
+  "api.search_emails": "جست‌وجوی ایمیل‌ها",
+  "api.read_email": "خواندن ایمیل",
+  "api.create_draft": "نوشتن پیش‌نویس",
+  "api.send_email": "فرستادن ایمیل",
+  "api.list_calendars": "فهرست تقویم‌ها",
+  "api.list_events": "فهرست رویدادها",
+  "api.create_event": "افزودن رویداد",
+  "api.update_event": "تغییر رویداد",
+  "api.delete_event": "حذف رویداد",
+  "api.search_files": "جست‌وجوی فایل‌ها",
+  "api.read_file": "خواندن فایل",
+  "api.create_document": "ساختن سند"
 }

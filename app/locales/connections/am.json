@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "ኢሜሎችን ፈልግ",
-  "google.read_email": "ኢሜል አንብብ",
-  "google.create_draft": "ረቂቅ ጻፍ",
-  "google.send_email": "ኢሜል ላክ",
-  "google.list_calendars": "የቀን መቁጠሪያዎችን አሳይ",
-  "google.list_events": "ክስተቶችን አሳይ",
-  "google.create_event": "ክስተት አክል",
-  "google.update_event": "ክስተት ቀይር",
-  "google.delete_event": "ክስተት አስወግድ",
-  "google.search_files": "ፋይሎችን ፈልግ",
-  "google.read_file": "ፋይል አንብብ",
-  "google.create_document": "ሰነድ ፍጠር"
+  "api.search_emails": "ኢሜሎችን ፈልግ",
+  "api.read_email": "ኢሜል አንብብ",
+  "api.create_draft": "ረቂቅ ጻፍ",
+  "api.send_email": "ኢሜል ላክ",
+  "api.list_calendars": "የቀን መቁጠሪያዎችን አሳይ",
+  "api.list_events": "ክስተቶችን አሳይ",
+  "api.create_event": "ክስተት አክል",
+  "api.update_event": "ክስተት ቀይር",
+  "api.delete_event": "ክስተት አስወግድ",
+  "api.search_files": "ፋይሎችን ፈልግ",
+  "api.read_file": "ፋይል አንብብ",
+  "api.create_document": "ሰነድ ፍጠር"
 }

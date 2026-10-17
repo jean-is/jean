@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "Maghanap ng email",
-  "google.read_email": "Magbasa ng email",
-  "google.create_draft": "Sumulat ng draft",
-  "google.send_email": "Magpadala ng email",
-  "google.list_calendars": "Ipakita ang mga kalendaryo",
-  "google.list_events": "Ipakita ang mga event",
-  "google.create_event": "Magdagdag ng event",
-  "google.update_event": "Baguhin ang event",
-  "google.delete_event": "Alisin ang event",
-  "google.search_files": "Maghanap ng file",
-  "google.read_file": "Magbasa ng file",
-  "google.create_document": "Gumawa ng dokumento"
+  "api.search_emails": "Maghanap ng email",
+  "api.read_email": "Magbasa ng email",
+  "api.create_draft": "Sumulat ng draft",
+  "api.send_email": "Magpadala ng email",
+  "api.list_calendars": "Ipakita ang mga kalendaryo",
+  "api.list_events": "Ipakita ang mga event",
+  "api.create_event": "Magdagdag ng event",
+  "api.update_event": "Baguhin ang event",
+  "api.delete_event": "Alisin ang event",
+  "api.search_files": "Maghanap ng file",
+  "api.read_file": "Magbasa ng file",
+  "api.create_document": "Gumawa ng dokumento"
 }

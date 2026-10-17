@@ -1,8 +1,8 @@
 // The services Jean already knows (D95): click one, sign in, done. An address here is a provider
 // identity, like a brain's (D33), and policy can replace it (`directory` in policy.json). Each is
 // reached from the browser, once checked from one (`ready`: CORS that lets Authorization through, on
-// the service and its sign-in, and a sign-in open to any app; for one that needs no sign-in, CORS on
-// the service; `npm run directory` checks again); otherwise through the gateway, once it relays to
+// the service and its sign-in, and a sign-in open to any app, or to the one policy names; for one that
+// needs no sign-in, CORS on the service; `npm run directory` checks again); otherwise through the gateway, once it relays to
 // the service and its sign-in and holds the app a sign-in that registers none takes (D191, D214);
 // otherwise not yet, shown but disabled. They are the services people
 // at work use most, never a developer's tools or a payment's (D192). A logo is the brand's own
@@ -16,8 +16,8 @@
  *   clientId: one registered with the service, when it can't register Jean; searches: it searches the web;
  *   scopes: what its sign-in asks for, at once, rather than connecting without one first; authorize: more for its sign-in's address;
  *   signIn: the hosts its sign-in is reached at besides its server's, which a gateway relays to as well;
- *   app: its sign-in server (the issuer), when it takes only apps registered there, one of which the gateway holds;
- *   api: no MCP server, but an API that answers browsers, which Jean's own tools call (google.js), only its sign-in through the gateway
+ *   app: its sign-in server (the issuer), when it takes only apps registered there: the one policy names, or else the gateway's;
+ *   api: no MCP server, but an API that answers browsers, which Jean's own tools call (apis.js), its sign-in through the gateway unless it is ready
  */
 
 /** @typedef {{ hosts?: string[], clients?: Record<string, string> }} Served  what the gateway serves: the hosts it relays to, and its apps by issuer */
@@ -50,9 +50,10 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'google', name: 'Google Workspace', url: 'https://gmailmcp.googleapis.com/mcp/v1', servers: ['drive', 'docs', 'sheets', 'slides', 'calendar', 'chat'].map((product) => `https://${product}mcp.googleapis.com/mcp/v1`).concat('https://people.googleapis.com/mcp/v1'),
     includes: ['Gmail', 'Drive', 'Docs', 'Sheets', 'Slides', 'Calendar', 'Chat', 'Contacts'], logo: 'google.svg', ...google(['gmail.modify', 'drive.readonly', 'drive.file', 'documents', 'spreadsheets', 'presentations', 'calendar.events',
       'calendar.calendarlist.readonly', 'chat.messages.readonly', 'chat.spaces.readonly', 'chat.messages.create', 'contacts.readonly', 'directory.readonly', 'userinfo.profile']) },
-  // Refuses any request that carries an Origin, as every browser's does. Its scope is named by its
-  // sign-in server alone, not by the server, and Microsoft refuses offline_access asked for alone.
-  { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://microsoft365.mcp.claude.com/mcp', includes: ['Outlook', 'OneDrive', 'SharePoint', 'Teams'], signIn: ['login.microsoftonline.com'], logo: 'microsoft-365.svg', scopes: ['api://07c030f6-5743-41b7-ba00-0a6e85f37c17/.default', 'openid', 'email'] },
+  // Any Microsoft account's, through Microsoft Graph, its sign-in too from the browser: Microsoft's answers
+  // browsers for an app registered there as a single-page app, whose id policy gives, one sign-in for all (D382).
+  { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://graph.microsoft.com/v1.0/', api: true, ready: true, includes: ['Outlook', 'OneDrive', 'SharePoint'], signIn: ['login.microsoftonline.com'],
+    app: 'https://login.microsoftonline.com/common/v2.0', scopes: ['User.Read', 'Mail.ReadWrite', 'Mail.Send', 'Calendars.ReadWrite', 'Files.ReadWrite', 'Files.Read.All'], logo: 'microsoft-365.svg' },
   { id: 'slack', name: 'Slack', url: 'https://mcp.slack.com/mcp', signIn: ['slack.com'], app: 'https://mcp.slack.com', logo: 'slack.svg' },
   { id: 'dropbox', name: 'Dropbox', url: 'https://mcp.dropbox.com/mcp', signIn: ['www.dropbox.com', 'api.dropboxapi.com'], logo: 'dropbox.svg' },
   // Only registers the apps on its list.
@@ -85,7 +86,7 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
 /**
  * The directory, with the organisation's entries merged in by id: one can add a service, change
  * an address or a client id, or hide one. What policy names is ready unless it, or the directory, says otherwise.
- * Those reached come first, from the browser or through the gateway: one that relays to the
+ * Those reached come first, from the browser (one whose sign-in takes only registered apps, once policy names one) or through the gateway: one that relays to the
  * service, each of its servers and its sign-in (an API's sign-in alone), and holds the app the sign-in takes when it registers none.
  * @param {{ directory?: Partial<Known>[] }} [policy] @param {Served} [served]
  * @returns {Listed[]}
@@ -100,7 +101,7 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
   const relayed = (/** @type {Known} */ { url, servers = [], signIn = [], app, clientId, api }) => [...(api ? [] : [String(url), ...servers]), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address)))
     && (!app || Boolean(clientId ?? clients[app]))
   const shown = [...entries.values()].filter((entry) => !entry.hidden)
-    .map((entry) => ({ ...entry, via: !entry.url ? null : entry.ready ? 'browser' : relayed(entry) ? 'gateway' : null }))
+    .map((entry) => ({ ...entry, via: !entry.url ? null : entry.ready && (!entry.app || entry.clientId) ? 'browser' : relayed(entry) ? 'gateway' : null }))
   return /** @type {Listed[]} */ ([...shown.filter((entry) => entry.via), ...shown.filter((entry) => !entry.via)])
 }
 

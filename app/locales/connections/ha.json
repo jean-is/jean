@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "Nemo imel",
-  "google.read_email": "Karanta imel",
-  "google.create_draft": "Rubuta daftarin imel",
-  "google.send_email": "Aika imel",
-  "google.list_calendars": "Nuna kalandoji",
-  "google.list_events": "Nuna taruka",
-  "google.create_event": "Ƙara taro",
-  "google.update_event": "Canza taro",
-  "google.delete_event": "Cire taro",
-  "google.search_files": "Nemo fayiloli",
-  "google.read_file": "Karanta fayil",
-  "google.create_document": "Ƙirƙiri takarda"
+  "api.search_emails": "Nemo imel",
+  "api.read_email": "Karanta imel",
+  "api.create_draft": "Rubuta daftarin imel",
+  "api.send_email": "Aika imel",
+  "api.list_calendars": "Nuna kalandoji",
+  "api.list_events": "Nuna taruka",
+  "api.create_event": "Ƙara taro",
+  "api.update_event": "Canza taro",
+  "api.delete_event": "Cire taro",
+  "api.search_files": "Nemo fayiloli",
+  "api.read_file": "Karanta fayil",
+  "api.create_document": "Ƙirƙiri takarda"
 }

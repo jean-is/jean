@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "搜尋郵件",
-  "google.read_email": "閱讀郵件",
-  "google.create_draft": "撰寫草稿",
-  "google.send_email": "傳送郵件",
-  "google.list_calendars": "列出日曆",
-  "google.list_events": "列出活動",
-  "google.create_event": "新增活動",
-  "google.update_event": "變更活動",
-  "google.delete_event": "刪除活動",
-  "google.search_files": "搜尋檔案",
-  "google.read_file": "讀取檔案",
-  "google.create_document": "建立文件"
+  "api.search_emails": "搜尋郵件",
+  "api.read_email": "閱讀郵件",
+  "api.create_draft": "撰寫草稿",
+  "api.send_email": "傳送郵件",
+  "api.list_calendars": "列出日曆",
+  "api.list_events": "列出活動",
+  "api.create_event": "新增活動",
+  "api.update_event": "變更活動",
+  "api.delete_event": "刪除活動",
+  "api.search_files": "搜尋檔案",
+  "api.read_file": "讀取檔案",
+  "api.create_document": "建立文件"
 }
