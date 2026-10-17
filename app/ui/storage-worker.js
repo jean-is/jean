@@ -2,9 +2,11 @@
 // Request { id, op, path, text, from } → { id, result } | { id, error: { name, message } }.
 // `text` is a Uint8Array for writeBytes; readBytes answers with one (its buffer transferred).
 // Paths arrive normalized (see core/fs.js); '' is the root and is only valid for list.
-// Every file is sealed at rest (docs/encryption.md, D371): the vault opens at the first ping, with
-// this device's key, or once the page hands in the key a lock gave back; until then, only the
-// vault's own file, listing and removing work. Started on a folder of the user's instead (`root`,
+// Every file is sealed at rest (docs/encryption.md, D371): the vault, a profile's (D228), whose folder
+// comes with the first ping, opens with this device's key, or once the page hands in the key a lock
+// gave back; until then, only the vault's own file, listing and removing work. Outside that folder,
+// bytes go and come as given: other profiles' slots, and what the page sealed for a parent's profile.
+// Started on a folder of the user's instead (`root`,
 // D141), it works there in place, sealing nothing: no .tmp copy, which would show in the folder,
 // and no word to Jean's tabs, whose files these aren't.
 import { seal, records, open, vaultKey, vaultId, close, unseal, deviceKey, encode, VAULT, HEADER } from './seal.js'
@@ -17,6 +19,10 @@ let rootPromise = Promise.resolve().then(() => navigator.storage.getDirectory())
 rootPromise.catch(() => {}) // surfaced by ping and every op
 /** Whether it works in a folder of the user's. */
 let direct = false
+/** The vault's folder, a profile's: its files' paths, which their records are bound to, are from there. */
+let base = ''
+/** A path from the vault's folder, or null when it is outside. @param {string} path */
+const inner = (path) => (!base ? path : path.startsWith(`${base}/`) ? path.slice(base.length + 1) : null)
 /** The vault as vault.json keeps it: its id and its slots (ui/seal.js). @type {{ id: string, slots: import('./seal.js').Slot[] } | null} */
 let known = null
 /** What the first ping found: 'open', 'locked' (a lock's key is needed) or 'sealed' (nothing here opens the files). @type {Promise<string> | undefined} */
@@ -25,8 +31,8 @@ let state
 let settle = () => {}
 /** The vault's key and id, once open. */
 const ready = new Promise((resolve) => { settle = resolve })
-/** Files left as they are: a folder's, and the vault's own, which opens the others. @param {string} path */
-const plain = (path) => direct || path === VAULT
+/** Files left as they are: a folder's, those outside the vault's, and the vault's own, which opens the others. @param {string} path */
+const plain = (path) => direct || [null, VAULT].includes(inner(path))
 
 /** The vault opened with its key, unless the key is another vault's. @param {CryptoKey} key */
 async function use(key) {
@@ -38,21 +44,21 @@ async function use(key) {
 
 /** At the first ping: a first run makes the vault and its device slot; otherwise the device slot opens it, if it is there. */
 async function openVault() {
-  const kept = await readBytes(VAULT)
+  const kept = await readBytes(`${base}/${VAULT}`)
   known = kept && JSON.parse(decoder.decode(kept))
   if (!known) {
     // Files without a vault are another's, or kept before the seal: nothing opens them (D173).
-    if ((await list('')).some((entry) => entry.name !== '.cache')) return 'sealed'
+    if ((await list(base)).some((entry) => entry.name !== '.cache')) return 'sealed'
     const raw = crypto.getRandomValues(new Uint8Array(32))
-    const device = await deviceKey('make')
+    const device = await deviceKey('make', base)
     if (!device) throw new Error('No key can be kept on this device')
     const key = await vaultKey(raw)
     known = { id: encode(await vaultId(key)), slots: [await close(raw, device, { kind: 'device' })] }
-    await replace(VAULT, encoder.encode(JSON.stringify({ format: 1, ...known }, null, 2) + '\n'))
+    await replace(`${base}/${VAULT}`, encoder.encode(JSON.stringify({ format: 1, ...known }, null, 2) + '\n'))
     return use(key)
   }
   const slot = known.slots.find((each) => each.kind === 'device')
-  const device = slot && await deviceKey('get')
+  const device = slot && await deviceKey('get', base)
   const raw = slot && device && await unseal(slot, device).catch(() => null)
   if (raw) return use(await vaultKey(raw))
   return known.slots.some((each) => each.kind !== 'device') ? 'locked' : 'sealed'
@@ -203,14 +209,14 @@ async function opened(path) {
   const bytes = await kept(path)
   if (!bytes || plain(path)) return bytes
   const { key, id } = await ready
-  return open(key, id, path, bytes)
+  return open(key, id, String(inner(path)), bytes)
 }
 
 /** Bytes to write, sealed unless the file stays plain. @param {string} path @param {Uint8Array} bytes */
 async function sealed(path, bytes) {
   if (plain(path)) return bytes
   const { key, id } = await ready
-  return seal(key, id, path, bytes)
+  return seal(key, id, String(inner(path)), bytes)
 }
 
 /**
@@ -228,9 +234,9 @@ function replace(path, bytes) {
 
 /** @type {Record<string, (path: string, text: any) => Promise<any>>} */
 const ops = {
-  ping: async () => {
+  ping: async (root) => {
     await rootPromise
-    return (state ??= openVault())
+    return (state ??= ((base = root), openVault()))
   },
   // The vault's key from the page, once a lock gave it back.
   key: async (_, key) => {
@@ -260,8 +266,8 @@ const ops = {
     if (plain(path)) return writeBytes(path, bytes, true)
     const { key, id } = await ready
     const head = new Uint8Array(await ((await readFile(path))?.slice(0, HEADER).arrayBuffer() ?? new ArrayBuffer(0)))
-    if (head.length === HEADER) return writeBytes(path, await records(key, head, path, bytes), true)
-    return writeBytes(path, await seal(key, id, path, bytes), false)
+    if (head.length === HEADER) return writeBytes(path, await records(key, head, String(inner(path)), bytes), true)
+    return writeBytes(path, await seal(key, id, String(inner(path)), bytes), false)
   }),
   // Also drop a leftover tmp copy, or read() would bring the file back.
   remove: (path) =>

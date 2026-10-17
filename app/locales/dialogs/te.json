@@ -261,6 +261,7 @@
   "pages.siteRemove": "తీసివేయండి: {site}",
   "pages.sitesText": "సైట్‌ను టైప్ చేసి Enter నొక్కండి. * అంటే ఏ సైట్ అయినా, *.example.com అంటే example.com యొక్క అన్ని చిరునామాలు.",
   "policy.locked": "మీ సంస్థ నిర్ణయించింది",
+  "policy.parent": "తల్లిదండ్రులు నిర్ణయించారు",
   "knows.title": "మీ గురించి తెలిసినవి",
   "you.name": "మీ పేరు",
   "you.nameText": "మీ పనుల కింద చూపబడుతుంది.",

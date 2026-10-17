@@ -13,7 +13,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { app, effective, updateSettings } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings, languageName } from '../../core/i18n.js'
@@ -161,7 +161,7 @@ function kiwixForm(id) {
   return html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => connect(id, e)}>
       <label>${t('search.address')}<input name="address" type="url" required dir="ltr" placeholder="http://localhost:8080" autocomplete="off" spellcheck="false"
         .value=${saved} ?disabled=${locked}></label>
-      ${locked ? html`<p class="muted">${t('search.locked')}</p>` : html`<div class="row"><button class="button primary" ?disabled=${trying.value === id}>${t('search.connect')}</button>${id === 'wikipedia' && saved
+      ${locked ? html`<p class="muted">${t(app.policy.child ? 'search.parent' : 'search.locked')}</p>` : html`<div class="row"><button class="button primary" ?disabled=${trying.value === id}>${t('search.connect')}</button>${id === 'wikipedia' && saved
         ? html`<button type="button" class="button subtle" @click=${() => setAddress(id, '')}>${t('action.remove')}</button>` : nothing}</div>`}
     </form>
     ${reason ? html`<p class="status is-error" role="status">${t(`search.${reason}`)}${failure.value?.id !== id
@@ -219,7 +219,7 @@ function panel() {
     <section class="stack">
       <h3>${t('search.where')}</h3>
       <ul class="list">${SOURCES.map((id) => sourceRow(id, locked))}${searches().map(serviceRow)}${offers.map(offerRow)}</ul>
-      ${locked ? html`<p class="muted">${t('search.locked')}</p>` : nothing}
+      ${locked ? html`<p class="muted">${t(app.policy.child ? 'search.parent' : 'search.locked')}</p>` : nothing}
     </section>
     ${on.value.includes('kiwix') ? html`<section class="stack">${kiwixForm('kiwix')}</section>` : nothing}
     ${on.value.includes('wikipedia') ? html`<details class="other" ?open=${isKiwix(serviceURL('wikipedia', app.settings.value, app.policy))}>

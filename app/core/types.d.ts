@@ -189,6 +189,8 @@ export type SystemNoteData =
   | { kind: 'cells', was?: string, uri?: string }
   /** what follows was shared from someone else's Jean, through the host named (D361) */
   | { kind: 'shared', from: string }
+  /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */
+  | { kind: 'concern', concern: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

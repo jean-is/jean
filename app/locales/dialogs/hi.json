@@ -261,6 +261,7 @@
   "pages.siteRemove": "{site} हटाएँ",
   "pages.sitesText": "साइट लिखें और Enter दबाएँ। * का मतलब कोई भी साइट है, और *.example.com का मतलब example.com के सभी पते।",
   "policy.locked": "आपके संगठन द्वारा तय",
+  "policy.parent": "माता-पिता द्वारा तय",
   "knows.title": "आपके बारे में क्या पता है",
   "you.name": "आपका नाम",
   "you.nameText": "आपके कार्यों के नीचे दिखता है।",

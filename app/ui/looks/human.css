@@ -133,7 +133,7 @@
 :root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a) { gap: 0.5rem; padding: 0.25rem 0.625rem; border-radius: 0.4375rem; font-size: 0.8125rem; }
 :root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a):hover { background: var(--fill); color: var(--on-fill); }
 :root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a):hover .icon { color: inherit; }
-:root:is([data-look='human'], [data-look='tilde']) .menu .icon { inline-size: 1rem; block-size: 1rem; }
+:root:is([data-look='human'], [data-look='tilde']) .menu .icon { --glyph: var(--icon-s); }
 
 /* The conversations: rows in the sidebar or the drawer, the open one filled with blue. */
 :root:is([data-look='human'], [data-look='tilde']) :is(.place, .sidebar-settings) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }

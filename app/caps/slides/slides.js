@@ -4,12 +4,12 @@
 // and the slide's picture at once.
 // While the answer writes it, the slide being written shows; once written, the first, unless the
 // user has paged. Loaded by the first deck an answer holds; until then it shows as code.
-import { html, render, svg, nothing } from 'lit-html'
+import { html, render, nothing } from 'lit-html'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
 import { drawnActions } from '../../ui/caps.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { lex, blocks, inline } from '../../ui/markdown.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
@@ -17,7 +17,6 @@ import { readDeck } from './deck.js'
 
 await Promise.all([useStrings('slides'), styleSheet(new URL('slides.css', import.meta.url))])
 
-const PRESENT = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/>`}</svg>`
 /** Marp's classes the room's look draws: a title in the middle, and the colours swapped. */
 const CLASSES = ['lead', 'invert']
 
@@ -63,10 +62,10 @@ class AppSlides extends HTMLElement {
         </section>`)}
       </div>
       <div class="slides-bar">
-        <button class="icon-button subtle back" aria-label=${t('slides.previous')} ?disabled=${at === 0} @click=${() => this.go(at - 1)}>${icons.arrow}</button>
+        <button class="icon-button subtle back" aria-label=${t('slides.previous')} ?disabled=${at === 0} @click=${() => this.go(at - 1)}>${icons.back}</button>
         <span class="slides-where">${number(at + 1)} / ${number(slides.length)}</span>
         <button class="icon-button subtle" aria-label=${t('slides.next')} ?disabled=${at >= slides.length - 1} @click=${() => this.go(at + 1)}>${icons.arrow}</button>
-        ${document.fullscreenEnabled ? html`<button class="icon-button subtle end" aria-label=${t('slides.present')} @click=${() => this.present()}>${PRESENT}</button>` : nothing}
+        ${document.fullscreenEnabled ? html`<button class="icon-button subtle end" aria-label=${t('slides.present')} @click=${() => this.present()}>${icons.fullscreen}</button>` : nothing}
         <button class="icon-button subtle end" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
         ${drawnActions('marp', source)}

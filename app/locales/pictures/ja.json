@@ -15,6 +15,7 @@
   "pictures.violence": "残虐な暴力を作成しない",
   "pictures.violenceText": "流血、身体の損壊、重いけが、遺体です。それらのない戦闘や格闘は作成できます。",
   "pictures.locked": "組織によって設定されています",
+  "pictures.parent": "保護者が設定",
   "pictures.sd-turbo": "高速",
   "pictures.flux2-klein": "高精細",
   "pictures.sd-turbo.text": "正方形の画像を数秒で。Stability AI の SD-Turbo を、そのコミュニティライセンスのもとで使います。",

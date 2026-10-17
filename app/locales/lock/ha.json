@@ -1,6 +1,7 @@
 {
   "lock.locked": "A kulle yake.",
   "lock.unreadable": "Ba za a iya buɗe abin da aka ajiye a nan ba.",
+  "lock.parent": "Mahaifi ne ke buɗe wannan bayanin martaba da kalmar sirrinsa ko maɓallin shigarsa.",
   "lock.cant": "Ba ka iya buɗewa ba?",
   "lock.cantText": "Ba tare da maɓallin shigarka, kalmar sirrinka ko lambar maidowarka ba, babu wanda zai iya buɗe abin da aka ajiye a nan. Fara sabo yana goge shi; sannan za ka iya maido da wani ajiya ko jakar da ka daidaita.",
   "lock.afresh": "Fara sabo",

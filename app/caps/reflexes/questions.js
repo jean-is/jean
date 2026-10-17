@@ -14,6 +14,21 @@ export const REFLEXES = {
   unhappy: { type: 'noul', instructions: 'Is the user unhappy with the previous answer?' },
   /** Memory is offered on a yes. @type {Question} */
   lasting: { type: 'noul', instructions: 'Does the message state a lasting fact about the user, a preference or a correction?' },
+  /** Asked of each message in a child's profile (D228), with `home` in the same pass: a danger is told to their parent, but abuse at home. @type {Question} */
+  danger: { type: 'choice', instructions: 'Does this message from a child tell of a danger to them?', criteria: { harm: 'self-harm or suicide', abuse: 'abuse or violence done to them',
+    secrecy: 'an adult asking them for secrecy, pictures or a meeting', bullying: 'bullying or threats', none: 'no danger: schoolwork, a quarrel, a story, a small injury' } },
+  /** @type {Question} */
+  home: { type: 'noul', instructions: 'Is the person hurting this child a parent or someone they live with?' },
+}
+
+/**
+ * The danger a child's message tells of, if any. One from someone they live with is 'home', which their parent
+ * isn't told, since it may be them: whatever its kind but self-harm, as Kev often names abuse at home another (D228).
+ * @param {Record<string, import('../../core/decide.js').Answer>} answers
+ */
+export function dangerOf({ danger, home }) {
+  if (danger?.type !== 'choice' || danger.choice === 'none' || danger.probabilities[danger.choice] < YES) return undefined
+  return danger.choice !== 'harm' && home?.type === 'noul' && home.noul >= YES ? 'home' : danger.choice
 }
 
 /**

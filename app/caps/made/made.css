@@ -6,7 +6,7 @@ app-file { display: block; }
 .file-card:hover { border-color: oklch(from var(--flame) l c h / 0.5); }
 .file-tile { flex: none; display: grid; place-items: center; inline-size: 3.2rem; block-size: 3.2rem; margin-inline-end: 0.55rem; overflow: hidden; border: 1px solid var(--line-strong); border-inline-start: 0; border-start-end-radius: 0.7rem; border-end-end-radius: 0.7rem; box-shadow: 0 0.4rem 1.2rem -0.6rem oklch(0 0 0 / 0.45);
   background: oklch(from var(--room-2) calc(l + 0.05) c h); background: light-dark(oklch(1 0 0), oklch(from var(--room-2) calc(l + 0.05) c h)); }
-.file-tile .icon { inline-size: 1.6rem; block-size: 1.6rem; color: var(--flame); }
+.file-tile .icon { --glyph: var(--icon-l); color: var(--flame); }
 .file-tile img { inline-size: 100%; block-size: 100%; object-fit: cover; background: white; }
 .file-about { flex: 1; min-inline-size: 0; display: grid; gap: 0.1rem; }
 .file-name { overflow: hidden; font-size: 1.05rem; font-weight: 550; text-overflow: ellipsis; white-space: nowrap; }

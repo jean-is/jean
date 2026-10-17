@@ -13,14 +13,14 @@
   "cli.error.bad_response": "{brain} a envoyé une réponse illisible. Réessayez.",
   "cli.error.refusal": "{brain} a refusé de répondre à ceci.",
   "cli.error.unknown": "Un problème est survenu. Réessayez.",
-  "cli.folder": "Indiquez le dossier que la Synchronisation tient à jour : --folder <dossier>.",
+  "cli.folder": "Indiquez le dossier que la Synchronisation tient à jour : --folder <dossier>.",
   "cli.notSync": "{folder} n’est pas un dossier que la Synchronisation tient à jour. Indiquez celui choisi dans Réglages › Vos données.",
   "cli.lost": "Cette conversation n’est plus dans {folder}.",
   "cli.noBrain": "Aucun cerveau ne peut encore répondre. Mettez sa clé dans l’environnement, par exemple ANTHROPIC_API_KEY, ou connectez-vous à Claude Code.",
-  "cli.needsName": "Nommez le cerveau qui répond : --brain {provider}:<son nom>.",
+  "cli.needsName": "Nommez le cerveau qui répond : --brain {provider}:<son nom>.",
   "cli.help.acp": "{name} dans votre éditeur, sur le dossier que la Synchronisation tient à jour.",
-  "cli.help.brain": "--brain choisit le cerveau, par exemple anthropic, openrouter ou claudecode ; sa clé vient de l’environnement.",
+  "cli.help.brain": "--brain choisit le cerveau, par exemple anthropic, openrouter ou claudecode ; sa clé vient de l’environnement.",
   "cli.help.gateway": "La passerelle, pour les services qu’un navigateur ne peut pas atteindre, comme Gmail ou Slack.",
-  "cli.gateway.origin": "Indiquez l’adresse que vous ouvrez dans votre navigateur, par exemple https://{domain} : --origin <adresse>.",
+  "cli.gateway.origin": "Indiquez l’adresse que vous ouvrez dans votre navigateur, par exemple https://{domain} : --origin <adresse>.",
   "cli.gateway.ready": "La passerelle répond à {address}. Indiquez-la dans Réglages › Connexions."
 }

@@ -1,7 +1,7 @@
 // Memory, projects and skills (0.4), the version's done-when: two projects keep separate
 // memories, and a skill is created from repeated requests. Plus "What Jean knows about you".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } from './helpers.js'
 
 /** Makes a project in a light other than Jean's own (the first swatch), and says which.
  * @param {import('@playwright/test').Page} page @param {string} name */
@@ -51,11 +51,17 @@ test('two projects keep separate memories, each in its own light', async ({ page
   // Its section, not the toast that may still say what the bakery's remembered.
   const garden = await openKnows(page)
   await expect(garden.locator('.settings-panel')).not.toContainText('opens at 7')
-  await page.keyboard.press('Escape')
+  await closeSettings(page)
+  const left = page.url()
 
-  // Back in the bakery, it is there, on the page and in the brain's context.
+  // Back in the bakery, it is there, on the page and in the brain's context. Walked into in one
+  // step: Back returns to the garden's task, Forward to the bakery.
   await page.locator('app-projects .wordmark').click()
   await page.locator('#project-menu .project', { hasText: 'Bakery' }).click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
+  await page.goBack()
+  await expect(page).toHaveURL(left)
+  await page.goForward()
   await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
   await ask(page, 'What do you know?')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('the bakery opens at 7')
@@ -98,6 +104,7 @@ test('the projects’ assistants meet, each speaking for its project from what i
   // Held from home: both projects are asked for, and their memories are theirs, so the user allows it first.
   await page.locator('app-projects .wordmark').click()
   await page.locator('#project-menu .project', { hasText: 'Jean' }).click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Jean')
   await ask(page, 'Hold a meeting about Saturday')
   const card = page.locator('.inbox .approval')
   await expect(card).toContainText('A meeting with Bakery and Garden')

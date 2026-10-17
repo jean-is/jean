@@ -261,6 +261,7 @@
   "pages.siteRemove": "{site} काढा",
   "pages.sitesText": "साइट लिहा आणि Enter दाबा. * म्हणजे कोणतीही साइट, आणि *.example.com म्हणजे example.com चे सर्व पत्ते.",
   "policy.locked": "तुमच्या संस्थेने ठरवलेले",
+  "policy.parent": "पालकांनी ठरवलेले",
   "knows.title": "तुमच्याबद्दल काय माहीत आहे",
   "you.name": "तुमचे नाव",
   "you.nameText": "तुमच्या कार्यांखाली दाखवले जाते.",

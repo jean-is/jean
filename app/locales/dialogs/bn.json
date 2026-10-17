@@ -261,6 +261,7 @@
   "pages.siteRemove": "{site} সরান",
   "pages.sitesText": "একটি সাইট লিখে Enter চাপুন। * মানে যেকোনো সাইট, আর *.example.com মানে example.com-এর সব ঠিকানা।",
   "policy.locked": "আপনার প্রতিষ্ঠান নির্ধারণ করেছে",
+  "policy.parent": "বাবা বা মা নির্ধারণ করেছেন",
   "knows.title": "{name} আপনার সম্পর্কে যা জানে",
   "you.name": "আপনার নাম",
   "you.nameText": "আপনার কাজের তালিকার নিচে দেখানো হয়।",

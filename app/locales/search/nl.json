@@ -14,6 +14,7 @@
   "search.failed": "Er antwoordde geen Kiwix-server op dit adres.",
   "search.insecure": "Vanaf hier is alleen een Kiwix-server op deze computer bereikbaar, of een op een adres dat met https:// begint.",
   "search.locked": "Ingesteld door je organisatie",
+  "search.parent": "Ingesteld door een ouder",
   "search.books": {
     "one": "{count} boek",
     "other": "{count} boeken"

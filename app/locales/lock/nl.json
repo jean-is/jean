@@ -1,6 +1,7 @@
 {
   "lock.locked": "Op slot.",
   "lock.unreadable": "Wat hier bewaard was, kan niet worden geopend.",
+  "lock.parent": "Een ouder opent dit profiel, met zijn of haar wachtwoord of toegangssleutel.",
   "lock.cant": "Gaat het niet open?",
   "lock.cantText": "Zonder je toegangssleutel, wachtwoord of herstelcode kan niemand openen wat hier bewaard is. Opnieuw beginnen wist het; daarna kun je een back-up of je gesynchroniseerde map terugzetten.",
   "lock.afresh": "Opnieuw beginnen",

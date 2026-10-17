@@ -1,6 +1,7 @@
 {
   "lock.locked": "Locked.",
   "lock.unreadable": "What was kept here can’t be opened.",
+  "lock.parent": "A parent opens this profile, with their password or passkey.",
   "lock.cant": "Can’t open it?",
   "lock.cantText": "Without your passkey, password or recovery code, nobody can open what is kept here. Starting afresh deletes it; you can then restore a backup or your synced folder.",
   "lock.afresh": "Start afresh",

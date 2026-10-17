@@ -1,6 +1,7 @@
 {
   "lock.locked": "Berkunci.",
   "lock.unreadable": "Apa yang disimpan di sini tidak boleh dibuka.",
+  "lock.parent": "Ibu bapa membuka profil ini dengan kata laluan atau kunci laluan mereka.",
   "lock.cant": "Tidak dapat membukanya?",
   "lock.cantText": "Tanpa kunci laluan, kata laluan atau kod pemulihan anda, tiada sesiapa boleh membuka apa yang disimpan di sini. Bermula semula memadamkannya; selepas itu anda boleh memulihkan sandaran atau folder yang disegerakkan.",
   "lock.afresh": "Bermula semula",

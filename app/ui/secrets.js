@@ -1,6 +1,7 @@
 // API keys and tokens, in .secrets/, which is never exported, synced or shared, and sealed at
 // rest as every file is, behind the lock when there is one (docs/encryption.md, D371).
 import { readJSON, writeJSON } from '../core/fs.js'
+import { mine } from './opfs.js'
 
 /** @typedef {import('../core/types.js').FS} FS */
 
@@ -9,8 +10,8 @@ const FILE = '.secrets/keys.json'
 const keys = new Map()
 
 /**
- * A key this device keeps in IndexedDB, made the first time it is asked for, and non-extractable
- * so it never leaves: the one that seals certificates (D252). Null where
+ * A key this device keeps in IndexedDB for this profile (D228), made the first time it is asked for,
+ * and non-extractable so it never leaves: the one that seals certificates (D252). Null where
  * IndexedDB is unavailable. @template T @param {string} name @param {() => Promise<T>} make @returns {Promise<T | null>}
  */
 export function deviceKey(name, make) {
@@ -21,12 +22,12 @@ export function deviceKey(name, make) {
     request.onerror = () => resolve(null)
     request.onsuccess = () => {
       const db = request.result
-      const get = db.transaction('keys').objectStore('keys').get(name)
+      const get = db.transaction('keys').objectStore('keys').get(mine(name))
       get.onerror = () => resolve(null)
       get.onsuccess = async () => {
         if (get.result) return resolve(get.result)
         const key = await make()
-        const put = db.transaction('keys', 'readwrite').objectStore('keys').put(key, name)
+        const put = db.transaction('keys', 'readwrite').objectStore('keys').put(key, mine(name))
         put.onsuccess = () => resolve(key)
         put.onerror = () => resolve(null)
       }

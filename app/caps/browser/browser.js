@@ -27,14 +27,14 @@
 // isn't a page shows as the preview shows it, by the same code (ui/view.js, D190): a PDF's pages,
 // Markdown laid out, an Office file or a CSV as Office draws it, any other file as its text. A
 // folder's list is drawn here, not in a page's frame, which some panes that hold Jean refuse.
-import { html, svg, nothing } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
 import { register, loaded as unlocked } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify, SHORTCUTS } from '../../ui/state.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { savePage } from '../../ui/save.js'
 import { serviceURL } from '../../core/settings.js'
@@ -73,14 +73,6 @@ const READ_MS = 10000
 
 await Promise.all([useStrings('browser'), styleSheet(new URL('browser.css', import.meta.url))])
 
-// Back points the way the text goes; the others don't turn.
-const glyph = (/** @type {unknown} */ paths, flip = '') => html`<svg class="icon ${flip}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths}</svg>`
-const GLYPHS = {
-  back: glyph(svg`<path d="M19 12H5M11 6l-6 6 6 6"/>`, 'flip-rtl'),
-  tab: glyph(svg`<path d="M13.5 4.5h6v6M19.5 4.5 11 13M17 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h4"/>`),
-  full: glyph(svg`<path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15"/>`),
-  exit: glyph(svg`<path d="M9 4.5V9H4.5M19.5 9H15V4.5M15 19.5V15h4.5M4.5 15H9v4.5"/>`),
-}
 
 /** Whether the pane is open; what it shows: an address, in the frame or as a site that opens in a tab of its own. */
 const open = signal(false)
@@ -517,7 +509,7 @@ class Browser extends Element {
       aria-label=${label} ?disabled=${disabled} @click=${run}>${icon}</button>`
     return html`<aside class="pane browser ${full.value ? 'is-full' : ''}" aria-label=${t('cap.browser.name')}>
       <header class="pane-head browser-bar">
-        ${button(t('browser.back'), GLYPHS.back, () => walk('back'), !trail.canBack)}
+        ${button(t('browser.back'), icons.back, () => walk('back'), !trail.canBack)}
         ${button(t('browser.forward'), icons.arrow, () => walk('forward'), !trail.canForward)}
         ${button(t('browser.reload'), icons.retry, reload, !shown)}
         <form @submit=${submit}>
@@ -528,8 +520,8 @@ class Browser extends Element {
             @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.isComposing && typed.value !== null) { typed.value = null; event.preventDefault() } }}
             @blur=${() => { typed.value = null }}>
         </form>
-        ${button(t('browser.tab'), GLYPHS.tab, () => openTab(address), !shown || isLocal(shown.url))}
-        ${button(full.value ? t('browser.exitFullscreen') : t('browser.fullscreen'), full.value ? GLYPHS.exit : GLYPHS.full, fullscreen)}
+        ${button(t('browser.tab'), icons.external, () => openTab(address), !shown || isLocal(shown.url))}
+        ${button(full.value ? t('browser.exitFullscreen') : t('browser.fullscreen'), full.value ? icons['exit-fullscreen'] : icons.fullscreen, fullscreen)}
         ${button(t('action.close'), icons.close, close)}
       </header>
       <div class="browser-body">
@@ -542,7 +534,7 @@ class Browser extends Element {
           : 'list' in here ? listing(here, shown.url) : html`<div class="browser-note"><p>${here.note}</p></div>`) : nothing}
         ${shown && !shown.own && !isLocal(shown.url) && unsure.value ? html`<div class="browser-strip" role="status">
           <p>${t('browser.blank')}</p>
-          <button class="button" @click=${() => ownTab(shown.url)}>${GLYPHS.tab} ${t('browser.tab')}</button>
+          <button class="button" @click=${() => ownTab(shown.url)}>${icons.external} ${t('browser.tab')}</button>
           <button class="icon-button subtle" aria-label=${t('action.close')} @click=${() => { shows.add(siteOf(shown.url)); unsure.value = false }}>${icons.close}</button>
         </div>` : nothing}
       </div>
@@ -588,7 +580,7 @@ function own(url) {
     <h2 dir="auto">${t('browser.own.title', { site: siteOf(url) })}</h2>
     <p>${t('browser.own.text')}</p>
     <div class="row">
-      <button class="button primary" @click=${() => openTab(url)}>${GLYPHS.tab} ${t('browser.tab')}</button>
+      <button class="button primary" @click=${() => openTab(url)}>${icons.external} ${t('browser.tab')}</button>
       ${here ? html`<button class="button subtle" @click=${() => retry(url)}>${t('browser.retry')}</button>` : nothing}
     </div>
     <div class="browser-install">

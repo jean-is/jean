@@ -9,7 +9,7 @@ import { register, loaded } from '../../ui/caps.js'
 import { app, notify, conversationOf } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
 import { markdown } from '../../ui/markdown.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf } from '../../core/events.js'
 import { t, locale, formatBytes } from '../../core/i18n.js'
@@ -143,11 +143,10 @@ const KINDS = /** @type {Record<string, string>} */ ({ docx: 'document', xlsx: '
   png: 'picture', jpg: 'picture', jpeg: 'picture', gif: 'picture', webp: 'picture', pdf: 'pdf', pptx: 'slides', ics: 'event', vcf: 'contact',
   json: 'code', xml: 'code', yaml: 'code', yml: 'code', css: 'code', js: 'code', py: 'code', sql: 'code', tex: 'code' })
 const WORDS = /** @type {Record<string, string>} */ ({ document: 'made.kind.document', sheet: 'made.kind.sheet', page: 'made.kind.page', drawing: 'made.kind.drawing', text: 'made.kind.text', picture: 'files.picture' })
-const glyph = (/** @type {unknown} */ paths) => html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths}</svg>`
 const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, text: icons.note, picture: icons.image, contact: icons.person, code: icons.code,
-  pdf: glyph(svg`<path d="M5.5 11V5.5a2 2 0 0 1 2-2H14l4.5 4.5v3M14 3.5V8h4.5M4 20.5v-6h1.8a1.8 1.8 0 0 1 0 3.6H4M10.25 14.5v6h.9a2.3 2.3 0 0 0 2.3-2.3v-1.4a2.3 2.3 0 0 0-2.3-2.3ZM20 14.5h-3.25v6M16.75 17.6h2.4"/>`),
-  slides: glyph(svg`<path d="M3.5 4.5h17M5 4.5V14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 14V4.5M12 15.5V18M8.5 20.5 12 18l3.5 2.5M9 12v-1.5M12 12V8M15 12V9.5"/>`),
-  event: glyph(svg`<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01" stroke-width="2.4"/>`) })
+  pdf: icon(svg`<path d="M5.5 11V5.5a2 2 0 0 1 2-2H14l4.5 4.5v3M14 3.5V8h4.5M4 20.5v-6h1.8a1.8 1.8 0 0 1 0 3.6H4M10.25 14.5v6h.9a2.3 2.3 0 0 0 2.3-2.3v-1.4a2.3 2.3 0 0 0-2.3-2.3ZM20 14.5h-3.25v6M16.75 17.5h2.75"/>`),
+  slides: icon(svg`<path d="M3.5 4.5h17M5 4.5V14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 14V4.5M12 15.5V18M8.5 20.5 12 18l3.5 2.5M9 12v-1.5M12 12V8M15 12V9.5"/>`),
+  event: icon(svg`<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><circle cx="8" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="8" cy="17.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="17.5" r="1" fill="currentColor" stroke="none"/>`) })
 
 /**
  * A file Jean made, under the answer: a card with its name, the kind of file it is and its size,

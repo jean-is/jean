@@ -261,6 +261,7 @@
   "pages.siteRemove": "Ondoa {site}",
   "pages.sitesText": "Andika tovuti, kisha bonyeza Enter. * ni tovuti yoyote; *.example.com ni anwani zote za example.com.",
   "policy.locked": "Imewekwa na shirika lako",
+  "policy.parent": "Imewekwa na mzazi",
   "knows.title": "Kile {name} anachojua kukuhusu",
   "you.name": "Jina lako",
   "you.nameText": "Huonyeshwa chini ya kazi zako.",

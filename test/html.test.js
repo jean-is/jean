@@ -34,12 +34,16 @@ test('plain HTTP reaches this computer alone: index.html allows it, and ui/app.j
   assert.ok(narrowed > 0 && narrowed < boot.indexOf('opfsFS()') && narrowed < boot.indexOf('loadSettings(app.fs)'), 'the narrower policy comes first')
 })
 
-test('light or dark is set before the first paint, with the key ui/state.js uses', async () => {
+test('light or dark is set before the first paint, with the key ui/state.js uses, the profile’s own (D228)', async () => {
   const theme = /<script>([\s\S]*?)<\/script>/.exec(html)
   assert.ok(theme && theme.index < html.indexOf('<link rel="stylesheet"'), 'before the stylesheet, which would hold it back')
   const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
   const key = /THEME_KEY = '([^']+)'/.exec(state)?.[1]
-  assert.ok(key && theme[1].includes(`localStorage.getItem('${key}')`))
+  assert.ok(key && theme[1].includes(`mine('${key}')`))
+  // Keyed as ui/opfs.js keys them: this tab's profile, else the last opened here.
+  const opfs = await readFile(new URL('../app/ui/opfs.js', import.meta.url), 'utf8')
+  assert.ok(opfs.includes("const PROFILE = 'app.profile'") && opfs.includes('export const mine = (key) => `${key}:${here()}`'))
+  assert.ok(theme[1].includes("mine = (key) => localStorage.getItem(`${key}:${sessionStorage.getItem('app.profile') ?? localStorage.getItem('app.profile') ?? ''}`)"))
 })
 
 test('the CSP keeps its protections', () => {

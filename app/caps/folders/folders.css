@@ -9,7 +9,7 @@ app-folder-change { display: block; }
 .folder-name:hover { border-color: oklch(from var(--flame) l c h / 0.5); color: var(--ink); }
 .folder-name.is-shut { border-style: dashed; }
 .folder-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.folder-name .icon { flex: none; inline-size: 1rem; block-size: 1rem; }
+.folder-name .icon { flex: none; --glyph: var(--icon-s); }
 .folder-menu { position-anchor: --folder; position-area: block-end span-inline-start; margin: 0.25rem 0 0; max-inline-size: min(22rem, calc(100vw - 2rem)); }
 .folder-menu:not(:popover-open) { translate: 0 -0.4rem; }
 .folder-menu:popover-open { @starting-style { translate: 0 -0.4rem; } }
@@ -22,7 +22,7 @@ app-folder-change { display: block; }
 
 .folder-others { display: grid; gap: 0.3rem; margin: 0 0 0.75rem; padding: 0; list-style: none; font-size: 0.86rem; }
 .folder-others li { display: flex; align-items: center; gap: 0.4rem; overflow-wrap: anywhere; }
-.folder-others .icon { inline-size: 1rem; block-size: 1rem; flex: none; color: var(--ink-soft); }
+.folder-others .icon { --glyph: var(--icon-s); flex: none; color: var(--ink-soft); }
 .diff { margin: 0 0 0.75rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 0.7rem; background: var(--room); }
 .diff figcaption { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.4rem 0.75rem; border-block-end: 1px solid var(--line); font-size: 0.82rem; overflow-wrap: anywhere; }
 .diff pre { max-block-size: 18rem; margin: 0; padding-block: 0.35rem; overflow: auto; font: 0.82rem/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
@@ -35,7 +35,7 @@ app-folder-change { display: block; }
 .folder-change { inline-size: min(100%, 36rem); border: 1px solid var(--line-strong); border-radius: 1rem; background: oklch(from var(--room-2) l c h / 0.7); }
 .folder-change summary { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.6rem 0.5rem 0.85rem; list-style: none; cursor: pointer; }
 .folder-change summary::-webkit-details-marker { display: none; }
-.folder-change summary > .icon { flex: none; inline-size: 1.1rem; block-size: 1.1rem; color: var(--flame); }
+.folder-change summary > .icon { flex: none; --glyph: var(--icon-s); color: var(--flame); }
 .folder-change summary > .icon:last-child { color: var(--ink-soft); transition: rotate 0.3s var(--ease); }
 .folder-change[open] summary > .icon:last-child { rotate: 180deg; }
 .folder-change-path { flex: 1; min-inline-size: 0; overflow: hidden; font-weight: 550; text-overflow: ellipsis; white-space: nowrap; }
@@ -49,4 +49,4 @@ app-folder-change { display: block; }
 .folder-field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.2rem 1rem; }
 .folder-field-label { color: var(--ink); font-size: 0.95rem; } .folder-field .row { grid-area: 1 / 2 / 3; }
 .folder-field p { display: flex; align-items: center; gap: 0.4rem; margin: 0; }
-.folder-field .icon { flex: none; inline-size: 1rem; block-size: 1rem; }
+.folder-field .icon { flex: none; --glyph: var(--icon-s); }

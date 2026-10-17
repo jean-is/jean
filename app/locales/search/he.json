@@ -14,6 +14,7 @@
   "search.failed": "אף שרת Kiwix לא ענה בכתובת הזו.",
   "search.insecure": "מכאן אפשר להגיע רק לשרת Kiwix במחשב הזה, או בכתובת שמתחילה ב-https://.",
   "search.locked": "נקבע על ידי הארגון שלך",
+  "search.parent": "נקבע על ידי הורה",
   "search.books": {
     "one": "ספר אחד",
     "two": "{count} ספרים",

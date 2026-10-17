@@ -14,6 +14,7 @@
   "search.failed": "이 주소에서 응답한 Kiwix 서버가 없어요.",
   "search.insecure": "여기서는 이 컴퓨터에 있거나 https://로 시작하는 주소에 있는 Kiwix 서버에만 연결할 수 있어요.",
   "search.locked": "조직에서 설정함",
+  "search.parent": "보호자가 설정함",
   "search.books": {
     "other": "책 {count}권"
   },

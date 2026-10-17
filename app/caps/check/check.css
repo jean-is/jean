@@ -2,7 +2,7 @@
 .check li { flex-wrap: nowrap; align-items: baseline; }
 .check li > [dir] { flex: 1 1 auto; min-inline-size: 0; }
 .check .verdict { display: inline-flex; inline-size: 1rem; justify-content: center; color: var(--flame-deep); }
-.check .verdict .icon, .check.is-running .icon { inline-size: 1rem; block-size: 1rem; }
+.check .verdict .icon, .check.is-running .icon { --glyph: var(--icon-s); }
 .check [data-verdict='missing'] .verdict, .check [data-verdict='contradicted'] .verdict, .check.is-off > summary > .icon:first-child { color: var(--danger); }
 .check .follow-up { margin-block-start: 0.5rem; }
 /* While the sources are read, the tick draws itself and a light runs through the words, the way they read. */

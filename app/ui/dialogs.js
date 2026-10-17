@@ -1,6 +1,6 @@
 // The drawer and settings dialogs (native <dialog>: focus trap and Escape for free), and the brains
 // and the house of what Jean can do, in Settings.
-import { html, svg, nothing } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -22,7 +22,7 @@ import { PAGE_DEFAULTS, pageRights, site } from './csp.js'
 import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
-import { icons } from './icons.js'
+import { icons } from './menu-icons.js'
 import { sidebarBody, keyNames } from './inbox.js'
 import { findButton, placeToasts } from './shell.js'
 import { dictation } from './dictation.js'
@@ -70,6 +70,8 @@ export function syncDialog(host, name) {
 }
 
 export const close = () => { app.dialog.value = null }
+/** What a locked setting says: whose it is, an organisation's or, in a child's profile, a parent's (D228). */
+export const lockedBy = () => t(app.policy.child ? 'policy.parent' : 'policy.locked')
 /**
  * A dialog closed (Escape, or another one opening): forget it only if it is still the open one, and
  * still closed. The event comes after the fact (a frame later in Chromium), maybe once it opened again.
@@ -237,7 +239,7 @@ function brains() {
   const brainsLocked = locked.has('brains')
   const first = !settings.brains.length
   return html`${first ? html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>` : answers(settings, brainsLocked)}
-    ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : first || adding.value || status.value ? html`<section class="brains-add">
+    ${brainsLocked ? html`<p class="muted">${lockedBy()}</p>` : first || adding.value || status.value ? html`<section class="brains-add">
       ${first ? nothing : html`<h3>${t('brain.add')}</h3>`}
       ${ways(first)}
     </section>` : nothing}
@@ -246,9 +248,9 @@ function brains() {
 
 /** A brain's icon, name and where it runs: this device, this computer, or the cloud. @param {BrainConfig} brain */
 function describe(brain) {
-  if (brain.api === 'device') return { icon: icons.lock, name: t('provider.device'), where: t('brain.device.private') }
+  if (brain.api === 'device') return { icon: icons['brain-device'], name: t('provider.device'), where: t('brain.device.private') }
   const name = brain.provider === 'custom' ? new URL(brain.baseURL).host : t(`provider.${brain.provider}`)
-  return isLocal(brain) ? { icon: icons.computer, name, where: t('picker.local') } : { icon: icons.globe, name, where: t('brain.cloud') }
+  return isLocal(brain) ? { icon: icons['brain-device'], name, where: t('picker.local') } : { icon: icons.cloud, name, where: t('brain.cloud') }
 }
 
 /**
@@ -367,7 +369,7 @@ const KEY_PAGES = /** @type {Record<string, string>} */ ({
 const VERTEX_COMMAND = 'gcloud auth print-access-token'
 
 /** @param {string} href @param {string} text */
-const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.arrow}</a>`
+const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.external}</a>`
 
 /** Copies the command, or, where the browser won't, selects it to copy by hand. @param {Event} event */
 function copyCommand(event) {
@@ -414,15 +416,15 @@ export function ways(first, all = true) {
   // What was downloaded for the device's brain, on a device short of memory for it, has just been deleted (D319).
   const freed = deviceCheck.value?.freed
   return html`${freed && module ? html`<p class="hint">${module.unfit(freed)}</p>` : nothing}<ul class="list ways">
-    ${device && progress ? way('device', icons.lock, t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
+    ${device && progress ? way('device', icons['brain-device'], t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
       <p>${t('brain.device.text', { name: BRAND.name })}</p>
       ${progressOf(device) ?? html`
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}`)
     : nothing}
-    ${all ? way('quick', icons.brain, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
+    ${all && !app.policy.child ? way('quick', icons.cloud, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
       <p>${t('brain.quick.text')}</p>
-      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button></div>`) : nothing}
+      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.external}</button></div>`) : nothing}
     ${way('key', icons.key, t('brain.key.title'), providers(KEYED), false, html`
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}>
@@ -440,7 +442,7 @@ export function ways(first, all = true) {
     ${isDenied('machine') ? nothing : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'copilot', 'chatgpt']).map((id) => way(id, icons.terminal, t(`brain.${id}.title`), t(`provider.${PLANNED[id]}`), status.value?.way === id, html`
       <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
       <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div>`))}
-    ${way('local', icons.computer, t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
+    ${way('local', icons['brain-device'], t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}>
         <label>${t('brain.local.app')}
@@ -502,9 +504,6 @@ const appearance = () => html`
   </span>`)}
   <section>${looks(effective.value.settings.look)}</section>`
 
-/** Its place in the menu: a keyboard, drawn here rather than with the first screen's icons. */
-const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
-  <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
 const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
 /**
@@ -536,7 +535,7 @@ function approvals() {
       const current = resolveRule(kind, { user: settings.rules })
       const isLocked = locked.has(`rules.${kind}`)
       return html`<li class="setting">
-        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}</span>
+        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</span>
         <span class="segmented" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>
           ${(/** @type {const} */ (['allow', 'ask', 'never'])).map((option) => html`<label>
             <input type="radio" name=${`rule-${kind}`} .checked=${current === option} ?disabled=${isLocked} @change=${() => setRule(kind, option)}>
@@ -561,7 +560,7 @@ function guards() {
   const services = loaded.value.has('connections') ? [...(app.policy.connections ?? []), ...(settings.connections ?? [])] : []
   /** @param {import('../core/rules.js').Guard} guard @param {boolean} locked */
   const row = (guard, locked) => html`<li class="setting"><span class="rule-kind" dir="auto">${guard.service ? services.find((one) => one.id === guard.service)?.name ?? guard.service
-    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}${guard.if
+    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}${guard.if
     ? html`<br><span class="muted small">${t('guards.when', { question: guard.if })}</span>` : nothing}</span>${locked ? nothing
     : html`<button type="button" class="icon-button subtle" aria-label=${t('guards.remove')} @click=${() => updateSettings({ guards: mine.filter((other) => other !== guard) })}>${icons.trash}</button>`}</li>`
   /** @param {SubmitEvent} event */
@@ -609,7 +608,7 @@ function pages() {
     <h3>${t('pages.title')}</h3>
     <p class="muted">${t('pages.text')}</p>
     <ul class="rules">${(/** @type {import('./csp.js').PageRight[]} */ (Object.keys(PAGE_DEFAULTS))).map((right) => html`<li class="setting">
-      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? t('policy.locked') : t(`pages.${right}Text`)}</p></div>
+      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? lockedBy() : t(`pages.${right}Text`)}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]}
         ?disabled=${locked.has(right) || (right === 'network' && !allows.scripts)}
         @change=${(/** @type {Event} */ e) => setPages({ [right]: /** @type {HTMLInputElement} */ (e.target).checked })}>
@@ -652,7 +651,7 @@ export function siteList({ sites, fixed, set, any = false }) {
       ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
         @keydown=${add} @input=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).removeAttribute('aria-invalid')}>`}
     </div>
-    <p class="muted small" id="sites-hint">${fixed ? t('policy.locked') : t('pages.sitesText')}</p>
+    <p class="muted small" id="sites-hint">${fixed ? lockedBy() : t('pages.sitesText')}</p>
   </div>`
 }
 
@@ -660,8 +659,8 @@ export function siteList({ sites, fixed, set, any = false }) {
 const parts = signal(/** @type {Array<{ id: keyof typeof PARTS, bytes: number }> | null} */ (null))
 /** Each kind: its icon, its name and what it holds, when its name doesn't say. */
 const PARTS = /** @type {const} */ ({
-  conversations: ['history', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
-  brains: ['lock', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['data', 'storage.rest', 'storage.rest.text'],
+  conversations: ['list', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
+  brains: ['brain-device', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['cabinet', 'storage.rest', 'storage.rest.text'],
 })
 
 /** A cached response's size: its length as sent, unless it came compressed, then its body's. @param {Response | undefined} response */
@@ -725,7 +724,7 @@ function data() {
       <h3>${t('cap.backup.name')}</h3>
       <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
       <div class="row">
-        <button class="button" @click=${backup}>${icons.download} ${t('backup.download')}</button>
+        <button class="button" @click=${backup}>${icons.backup} ${t('backup.download')}</button>
         <label class="button subtle">${icons.upload} ${t('backup.restore')}
           <input type="file" accept=".zip,.tgz,.json,application/zip,application/gzip" multiple class="visually-hidden" @change=${restore}>
         </label>
@@ -764,14 +763,14 @@ const KNOWN = ['you', 'skills', 'routines']
 const SECTIONS = {
   general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
   brains: { at: 20, label: 'settings.brains', icon: icons.brain, show: brains },
-  appearance: { at: 30, label: 'settings.appearance', icon: icons.contrast, show: appearance },
-  keyboard: { at: 40, label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
+  appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: appearance },
+  keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   skills: { at: 60, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   routines: { at: 70, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
-  data: { at: 120, label: 'settings.storage', icon: icons.data, show: data },
+  data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: data },
 }
 /** The sections shown now, in their order. @returns {[Section, Place][]} */
 export const places = () => /** @type {[Section, Place][]} */ ([...Object.entries(SECTIONS), ...slots('settings').map((entry) => [entry.id, { ...entry, show: entry.draw }])])
@@ -841,8 +840,8 @@ class Settings extends Element {
 // bar of how much is found; then a capability a row of a list, lit once found, a silhouette until
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', meaning: 'brain', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', notifications: 'bell', names: 'tag', live: 'wave', backup: 'download', share: 'upload', sync: 'sync', lock: 'key', 'brain-local': 'lock', machine: 'terminal', pictures: 'image', plugins: 'bolt',
+  files: 'file', meaning: 'meaning', made: 'table', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', plugins: 'puzzle',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({

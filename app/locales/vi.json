@@ -389,5 +389,6 @@
   "since.closed": "Công việc dừng lại khi thẻ này đóng, nên những điều này vừa mới được đọc.",
   "cap.machine.name": "Máy tính này",
   "cap.machine.offer": "Chạy máy chủ phát triển của một trang web, hay chương trình của bạn, trên máy tính này?",
-  "cap.machine.yes": "Dùng máy tính này"
+  "cap.machine.yes": "Dùng máy tính này",
+  "profiles.add": "Thêm hồ sơ"
 }

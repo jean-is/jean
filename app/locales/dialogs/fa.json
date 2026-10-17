@@ -261,6 +261,7 @@
   "pages.siteRemove": "حذف {site}",
   "pages.sitesText": "یک سایت بنویسید و Enter را بزنید. نماد * یعنی هر سایتی، و ⁦*.example.com⁩ یعنی همهٔ نشانی‌های ⁦example.com⁩.",
   "policy.locked": "تعیین‌شده توسط سازمان شما",
+  "policy.parent": "تعیین‌شده توسط یکی از والدین",
   "knows.title": "آنچه {name} دربارهٔ شما می‌داند",
   "you.name": "نام شما",
   "you.nameText": "زیر کارهای شما نمایش داده می‌شود.",

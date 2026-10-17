@@ -27,6 +27,6 @@
   "receipt.proof.file": "Preuve {date}",
   "receipt.checkAt": "Tout le monde peut les vérifier sur {address}.",
   "receipt.date": "Les faire dater par {hosts}",
-  "receipt.log": "Les inscrire dans un registre public, {host} : public et permanent",
+  "receipt.log": "Les inscrire dans un registre public, {host} : public et permanent",
   "receipt.unwitnessed": "{host} est injoignable"
 }

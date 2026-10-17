@@ -9,7 +9,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, giveFolder } from './helpers.js'
 
 test.skip(process.platform === 'win32', 'The bridge needs bash')
 
@@ -33,7 +33,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   await connectFakeBrain(page)
   const chooser = browserName === 'chromium' ? null : page.waitForEvent('filechooser')
   await turnOn(page, 'Folders')
-  if (chooser) await (await chooser).setFiles(disk)
+  if (chooser) await giveFolder(await chooser, disk)
   await page.keyboard.press('Escape')
   await expect(page.locator('.folder-name')).toHaveText('shop')
   await turnOn(page, 'Computer')

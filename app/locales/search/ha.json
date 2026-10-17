@@ -14,6 +14,7 @@
   "search.failed": "Babu sabar Kiwix da ta amsa a wannan adireshin.",
   "search.insecure": "Daga nan, sabar Kiwix a wannan kwamfutar kaɗai ake iya kaiwa, ko a adireshin da ya fara da https://.",
   "search.locked": "Ƙungiyarka ce ta saita",
+  "search.parent": "Mahaifi ne ya saita",
   "search.books": {
     "one": "Littafi {count}",
     "other": "Littattafai {count}"

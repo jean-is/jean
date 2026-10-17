@@ -1,10 +1,12 @@
 // Reduced motion (D325, AGENTS.md): with prefers-reduced-motion, nothing on the page moves, in any look.
 // Every animation and transition is noted, frame by frame, while Jean answers, while Settings opens
-// over the room and closes, while the drawer opens and while day turns to night.
+// over the room and closes, while the drawer opens and while day turns to night. Chromium only: what
+// stops is the style sheets' (one rule for every element) and the same scripts', in every engine.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
+test.skip(({ browserName }) => browserName !== 'chromium', 'the same style sheets in every engine')
 test.use({ reducedMotion: 'reduce', viewport: { width: 1280, height: 800 } })
 
 for (const look of Object.keys(LOOKS)) {

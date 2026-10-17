@@ -10,10 +10,10 @@ import { app, effective, theme, sidebarOpen, newConversation, openConversation, 
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
-import { loaded, slots, unlock } from './caps.js'
+import { loaded, slots, unlock, isDenied } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
-import { icons } from './icons.js'
+import { icons } from './menu-icons.js'
 import { focusComposer } from './composer.js'
 
 /** Routines whose earlier runs the user unfolded or folded in the list, by the routine's file (D122). */
@@ -182,24 +182,26 @@ async function turn(event, next) {
 /** The look chosen, which shows once its style sheet is in. */
 const chosenLook = () => lookId(effective.value.settings.look?.id)
 
-/** The menu's actions: Settings and what is often reached for there. @param {string} id */
+/** The menu's actions: the profiles, or adding one (D228), then Settings and what is often reached for there. @param {string} id */
 function actions(id) {
   const dark = theme.value === 'dark'
   const fixed = effective.value.locked.has('locale')
-  return html`<button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
+  return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : app.ephemeral.value || isDenied('profiles') ? nothing
+      : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button><hr>`}
+    <button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
       @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button>
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
     <button type="button" class="submenu" data-page="looks" @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
       ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`)}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
-      ${icons.contrast}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
+      ${icons.moon}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
     <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>
     ${slots('profile').map((part) => part.draw(id))}`
 }
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
-const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.arrow}${title}</button>
+const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
   <hr>
   ${list}`
 

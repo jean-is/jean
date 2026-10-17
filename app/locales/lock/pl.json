@@ -1,6 +1,7 @@
 {
   "lock.locked": "Zablokowane.",
   "lock.unreadable": "Tego, co tu było przechowywane, nie da się otworzyć.",
+  "lock.parent": "Ten profil otwiera rodzic, swoim hasłem lub kluczem dostępu.",
   "lock.cant": "Nie możesz otworzyć?",
   "lock.cantText": "Bez klucza dostępu, hasła lub kodu odzyskiwania nikt nie otworzy tego, co tu jest przechowywane. Rozpoczęcie od nowa to usuwa; potem możesz przywrócić kopię zapasową lub zsynchronizowany folder.",
   "lock.afresh": "Zacznij od nowa",

@@ -69,8 +69,9 @@ async function arrive() {
       box.setSelectionRange(saved.caret[0], saved.caret[1])
     }
   }
-  // Whatever would play as the page arrives has played, the wait for it included (style.css).
+  // Whatever would play as the page arrives has played, the wait for it included (style.css); not
+  // what a scroll drives (the drawer's fades), which finished would stay at its end whatever the scroll.
   for (const animation of document.getAnimations()) {
-    if (animation.effect?.getComputedTiming().endTime !== Infinity) animation.finish()
+    if (animation.timeline === document.timeline && animation.effect?.getComputedTiming().endTime !== Infinity) animation.finish()
   }
 }

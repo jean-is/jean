@@ -10,7 +10,7 @@ import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { notify } from '../../ui/state.js'
 import { t, locale } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { sharing, shares, shareOf, linkFor, here, create, update, stop, failed } from './share.js'
 
 /** Letters and digits that read alike in every script's fonts: none of 0, O, 1, l, I. */
@@ -83,7 +83,7 @@ class ShareDialog extends Element {
           ${word ? html`<p>${t('share.password')}: <code class="share-password" dir="ltr">${word}</code></p>` : nothing}
           <div class="row">
             <button class="button primary" @click=${() => copy(link)}>${icons.copy} ${t('share.copyLink')}</button>
-            ${'share' in navigator ? html`<button class="button subtle" @click=${() => navigator.share({ title: what?.title, url: link }).catch(() => {})}>${icons.upload} ${t('share.send')}</button>` : nothing}
+            ${'share' in navigator ? html`<button class="button subtle" @click=${() => navigator.share({ title: what?.title, url: link }).catch(() => {})}>${icons.share} ${t('share.send')}</button>` : nothing}
           </div>
           ${mine.value ? nothing : html`<p class="hint">${t('share.notHere')}</p>`}
         </section>` : nothing}
@@ -106,7 +106,7 @@ class ShareDialog extends Element {
         </form></section>
         <footer class="dialog-foot">
           ${share ? html`<button class="button subtle danger" @click=${() => stop(share)}>${t('share.stop')}</button>` : nothing}
-          <button class="button ${share ? '' : 'primary'}" form="share-form" ?disabled=${working.value}>${icons.upload} ${t(working.value ? 'share.sealing' : share ? 'share.update' : 'share.create')}</button>
+          <button class="button ${share ? '' : 'primary'}" form="share-form" ?disabled=${working.value}>${icons.share} ${t(working.value ? 'share.sealing' : share ? 'share.update' : 'share.create')}</button>
         </footer>`}
     </dialog>`
   }

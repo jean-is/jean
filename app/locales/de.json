@@ -397,5 +397,6 @@
   "since.closed": "Solange dieser Tab geschlossen ist, ruht die Arbeit; das hier wurde gerade eben gelesen.",
   "cap.machine.name": "Dieser Computer",
   "cap.machine.offer": "Den Entwicklungsserver einer Website oder deine eigenen Programme auf diesem Computer ausführen?",
-  "cap.machine.yes": "Diesen Computer verwenden"
+  "cap.machine.yes": "Diesen Computer verwenden",
+  "profiles.add": "Profil hinzufügen"
 }

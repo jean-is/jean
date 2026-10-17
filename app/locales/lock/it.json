@@ -1,6 +1,7 @@
 {
   "lock.locked": "Bloccato.",
   "lock.unreadable": "Ciò che era conservato qui non si può aprire.",
+  "lock.parent": "Un genitore apre questo profilo, con la sua password o passkey.",
   "lock.cant": "Non riesci ad aprirlo?",
   "lock.cantText": "Senza la tua passkey, la password o il codice di recupero, nessuno può aprire ciò che è conservato qui. Ricominciare da capo lo cancella; poi potrai ripristinare un backup o la tua cartella sincronizzata.",
   "lock.afresh": "Ricomincia da capo",

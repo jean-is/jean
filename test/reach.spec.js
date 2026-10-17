@@ -223,6 +223,8 @@ test('web search answers with sources that open', async ({ page }) => {
   const icon = page.waitForRequest('https://icons.duckduckgo.com/ip3/en.wikipedia.org.ico')
   const tip = answer.locator('.cite-tip').first()
   await expect(tip).toBeHidden()
+  // Once the answer has ended: its end scrolls the page, which takes the source from under the pointer.
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   await answer.locator('a.cite').first().hover()
   await expect(tip).toBeVisible()
   await expect(tip).toContainText('en.wikipedia.org')
@@ -282,8 +284,9 @@ test('Web search has a switch in + once it is found: off, a task started then ha
   await turn(true)
   await asked('Thanks', 2)
   expect((await told()).notes).toEqual([{ kind: 'tools', added: ['web_search'] }])
-  // The first task, the one less lately busy.
+  // The first task, the one less lately busy, once it shows: this one has two answers too.
   await (await openTasks(page)).locator('.history-item').last().click()
+  await expect(answer).toContainText('I found nothing on the web.')
   await expect(page.locator('.msg-jean')).toHaveCount(2)
   await asked('Thanks', 3)
   expect((await told()).notes).toEqual([{ kind: 'switch', off: ['web_search'] }, { kind: 'switch', on: ['web_search'] }])

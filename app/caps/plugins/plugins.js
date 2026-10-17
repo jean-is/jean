@@ -12,7 +12,7 @@ import { register } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { markdown } from '../../ui/markdown.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { join, readJSON, writeJSON } from '../../core/fs.js'
 import { STRICT } from '../../core/rules.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
@@ -419,7 +419,7 @@ effect(() => register({
     answer: { at: 50, draw: (/** @type {{ text: string, at: string }} */ { text, at }) => drawing('answer').map((host) => html`<span class="plugin-answer">${drawn(host, 'answer', { text }, at)}</span>`) },
     // A call a plugin decided says so by its title (D299).
     by: { at: 50, draw: (/** @type {{ by: string }} */ { by }) => installed.value.filter((manifest) => manifest.name === by).map((manifest) => shownIn(manifest, locale.value).title)[0] },
-    settings: { at: 97, id: 'plugins', label: 'cap.plugins.name', icon: icons.bolt, draw: panel },
+    settings: { at: 97, id: 'plugins', label: 'cap.plugins.name', icon: icons.puzzle, draw: panel },
   },
 }))
 

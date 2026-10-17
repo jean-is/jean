@@ -14,6 +14,7 @@
   "search.failed": "Tidak ada server Kiwix yang menjawab di alamat ini.",
   "search.insecure": "Dari sini, hanya server Kiwix di komputer ini, atau di alamat yang diawali https://, yang bisa dijangkau.",
   "search.locked": "Diatur oleh organisasi Anda",
+  "search.parent": "Diatur oleh orang tua",
   "search.books": {
     "other": "{count} buku"
   },

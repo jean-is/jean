@@ -267,6 +267,7 @@
   "pages.siteRemove": "Usuń {site}",
   "pages.sitesText": "Wpisz witrynę i naciśnij Enter. * to dowolna witryna, *.example.com to wszystkie adresy example.com.",
   "policy.locked": "Ustawione przez twoją organizację",
+  "policy.parent": "Ustawione przez rodzica",
   "knows.title": "Co {name} wie o tobie",
   "you.name": "Twoje imię",
   "you.nameText": "Widoczne pod zadaniami.",

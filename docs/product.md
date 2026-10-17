@@ -28,6 +28,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Approval rule | Do it / Ask me first / Never |
 | Look (`ui/looks/`, D111, D120) | Theme (sixteen in a gallery, Tilde, Jean's own, first and to start); light or dark is separate |
 | Extension, add-on, mod | Plugin (D296) |
+| Account, user | Profile (D228); a child's is "set by a parent" (D389), never an account |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
 
@@ -42,7 +43,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
   2. Reflex questions answered by a local multilingual decision model (see [architecture.md](architecture.md#reflexes)).
   3. The model's own `offer(capability)` tool, as a backstop.
 - **Offers are short.** Jean introduces a capability in one sentence. If the user accepts, that capability's code loads and its tools join the conversation. Once discovered, it stays visible. "No thanks" is for good (kept in `offers`): nothing offers it again, above the box or in an answer, where the brain's `offer` hears it was turned down and shows no card, and its trophy still turns it on (D219); stopping the answer, or walking into another project, while its card waits isn't a no. The brain's `offer` waits inside the answer, which goes on once the capability is turned on or down; its description of each capability, a few words, goes with every request, those policy denies left out. "Turn on everything" never downloads weights without consent.
-- **One offer at a time,** above the box. One about what the user is doing now (a paste, a file, a reflex, a request of a kind, a server refused, coming back) takes the place of the one shown, unless a download is under way; one merely due (a count reached), like Backup after three conversations, waits until nothing is shown, then the next due in turn (Backup, Intuition, Search), so an offer left unanswered hides none for good. Conversations are counted in every project, since Backup, Search and Intuition are about all of them (D281), and nothing of a capability shows before it is found.
+- **One offer at a time,** above the box, and above the ideas where they are above it too (a phone). One about what the user is doing now (a paste, a file, a reflex, a request of a kind, a server refused, coming back) takes the place of the one shown, unless a download is under way; one merely due (a count reached), like Backup after three conversations, waits until nothing is shown, then the next due in turn (Backup, Intuition, Search), so an offer left unanswered hides none for good. Conversations are counted in every project, since Backup, Search and Intuition are about all of them (D281), and nothing of a capability shows before it is found.
 - **"What Jean can do"**, Settings' Capabilities section, is a case of trophies (D127, D316). Each capability is a row, lit once found. Each undiscovered one is a silhouette that says how it is found ("Share a spreadsheet"), so the case doubles as a list of things to try. A rank shows how far the house is lit, and how many more it takes to reach the next. Curious users can open a row and turn it on early, and power users can unlock everything at once.
 - **Discovery and code loading are one decision.** Each capability is a module loaded on demand, so the simple first screen and the small first load are the same thing.
 - **Capabilities are granted with consent, never present by default.** This is the same idea as the QuickJS sandbox.
@@ -50,7 +51,7 @@ Jean is learned the way *A Dark Room* is played: the first screen holds a single
 
 **Always available, never gated:** the box, read-aloud, dictation (for accessibility), the language switch, light or dark, the activity view, and "unlock everything" in settings. Things Jean made, questions (`ask`) and noting the user's name (`you`) are capabilities that are always there, and formulas (`math`) load with the first one in an answer, drawn as they are printed, a LaTeX document laid out with them (D185), and layouts (`layouts`) with the first answer, for its comparisons, steps, notes, timelines, key figures and checklists to tick (D291): options side by side, each with its picture when a source gave one (D35), the best of each row lit and the pick framed, steps in rings, notes in their colour, and on a wide screen a table of three columns or more takes the room it needs beside the text (D215); and the receipt (`receipt`) with the first message, for About this answer (D252); and pages (`interactive`), with the first message too, so that a tool or an explanation to play with (a bill splitter, a calculator, a quiz) can run right in the answer as it is written, a diagram in Mermaid is drawn and a map shows places and routes, once the user allows maps (D291), and a page can hold a map beside its form, the two in step, in the room's colours and the user's language, with no internet unless Settings allow it, charting with ECharts, its buttons able to send the next message (D289). The language, the theme and light or dark are also in the user's menu, at the foot of the drawer (D150, D153).
 
-**Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; replies to a shared task, and requests between people's Jeans ([enterprise.md](enterprise.md), D226); the same tasks on a phone, project by project, and the phone as a remote of Jean at work (D227); a personal and a work profile on one device (D228).
+**Later:** a bigger brain offered when a task outgrows the current one; "Make this a standing instruction?" when a remembered preference keeps coming back; replies to a shared task, and requests between people's Jeans ([enterprise.md](enterprise.md), D226); the same tasks on a phone, project by project, and the phone as a remote of Jean at work (D227).
 
 | Capability | Offered when… | What appears |
 |---|---|---|
@@ -88,7 +89,7 @@ A project is a self-contained folder with its own files, conversations, instruct
 
 | Level | Lifetime | Has its own |
 |---|---|---|
-| Profile (later, D228) | Permanent | A whole Jean: settings and keys, the person's instructions and memory, its projects |
+| Profile (D228) | Permanent | A whole Jean: settings and keys, a lock, the person's instructions and memory, its projects |
 | Jean (the house) | Permanent | Global instructions and memory about the person |
 | Project ("Bakery · with Margot") | Permanent | Files, memory, conversations, rules, brain; optionally a name, persona and colour |
 | Helper | One task | A temporary sub-session, shown nested in the activity view |
@@ -101,6 +102,20 @@ A project is a self-contained folder with its own files, conversations, instruct
 - **Meetings** (D224). Asked to hold a meeting, Jean has the assistants of the other projects, or of those named, speak on the topic in rounds, each from its own project's instructions, memory and latest tasks, hearing what the others said; then it says what was decided, what each project will do and what needs the user. The user allows each meeting first, or always for those projects, and a routine holds a regular one. A project kept on this device doesn't hear a brain in the cloud.
 - **Its place and its dialog** (D18). The header shows the project the user is in and opens on the others; the address carries it, and its colour tints the light (D78). The home project's name is never translated: the UI calls it by its assistant's. Its dialog shows who the project is first, its light as picked, large, beside its name and the colours; then its assistant, once names are found; then where it is kept, a switch for this device and its folder; Save and Delete at its foot, apart and always in view. What a project is, it says only when making one.
 - **Hidden default.** There is always a default project, invisible until the Projects capability is discovered.
+
+## Profiles
+
+A profile is a whole Jean on the device: a personal one and a work one, or one per child (D228). Nothing crosses between them.
+
+- **Unseen until a second.** The person's menu has "Add a profile" at its top; once there are two, it lists them first, the one open marked, a locked one with a lock. Choosing another opens it afresh, its lock first if it has one, and the lock screen lists the others too. Settings › Profiles names this one, opens or removes others, and adds one.
+- **An address opens its profile,** whichever was open last in that tab.
+- **A child's profile** (D389), set by a parent:
+  - The parent locks their own profile first, so the child can't open it, then ticks "For a child", picks the year of birth, reads what they decide and see, and confirms with their password or passkey. Jean asks then whether it may notify them on this device.
+  - Under 13, the profile opens only with the parent's password or passkey; from the school year the child turns 13 (4e in France), on its own, or with the child's own lock.
+  - Settings › Set by a parent shows the year of birth, each topic's choice (Explain for their age, Talk with us first, Later), Vikidia or Wikipedia, and what is turned off. "Change, with a parent's password or passkey" opens it, and while it is open Brains and Approvals can be changed too, then Done keeps them. Start for free is never offered there, and pictures are checked at the strictest. Whatever it locks says "Set by a parent".
+  - The child sees, until they say they read it, that if they write about a danger their parent is told that a concern came up and when, never their words, and not when the danger is at home.
+- **What a parent sees** in their own profile: in Settings › Profiles, each child's time today and over seven days; above the box until "Seen", and as a notification, a concern that came up in a child's profile, its kind and when, with "What you can do"; never what was written (D390).
+- **Honest limits:** a parent's settings decide how Jean answers, not what the device allows, which its own parental controls do; a child who opens the browser's developer tools, or clears the site's data, can get round them, as they can open another AI. Intuition reads a danger right a bit more than half the time across languages, so the brain's own reading backs it up.
 
 ## Instructions and memory
 

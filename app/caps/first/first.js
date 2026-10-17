@@ -14,7 +14,7 @@ import { focusComposer } from '../../ui/composer.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, formatBytes, useStrings } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 await Promise.all([useStrings('first'), styleSheet(new URL('first.css', import.meta.url))])
@@ -25,9 +25,9 @@ const screen = signal(/** @type {'start' | 'choose' | 'plans'} */ ('start'))
 const also = signal(false)
 const choice = signal(/** @type {'private' | 'now' | 'best'} */ ('now'))
 
-/** Before any brain, this; with brains kept to other projects, or set by policy, Settings › Brains. */
+/** Before any brain, this; with brains kept to other projects, or set by policy or a parent (D228), Settings › Brains. */
 export function open() {
-  if (effective.value.settings.brains.length || effective.value.locked.has('brains')) return openSettings('brains')
+  if (effective.value.settings.brains.length || effective.value.locked.has('brains') || app.policy.child) return openSettings('brains')
   screen.value = 'start'
   checkDevice()
   app.dialog.value = 'first'
@@ -49,12 +49,12 @@ export async function alsoPrivate() {
 const go = (to) => () => { screen.value = to }
 /** A door to another screen. @param {'choose' | 'plans'} to */
 const door = (to) => html`<li><button class="item" @click=${go(to)}><span class="item-text"><strong>${t(`first.${to}`)}</strong><small>${t(`first.${to}Text`)}</small></span>${icons.arrow}</button></li>`
-const back = () => html`<button class="button subtle first-back" @click=${go('start')}>${icons.arrow}${t('first.back')}</button>`
+const back = () => html`<button class="button subtle first-back" @click=${go('start')}>${icons.back}${t('first.back')}</button>`
 
 function start() {
   const device = fit()
   return html`${head(t('first.title'))}<p class="lede">${t('first.text', { name: BRAND.name })}</p>
-    <button class="button primary first-free" @click=${() => { if (also.value) sessionStorage.setItem('app.private', '1'); startOpenRouter() }}>${t('first.free')} ${icons.arrow}</button>
+    <button class="button primary first-free" @click=${() => { if (also.value) sessionStorage.setItem('app.private', '1'); startOpenRouter() }}>${t('first.free')} ${icons.external}</button>
     <p class="hint first-where">${t('first.freeText')}</p>
     ${device ? html`<label class="first-also"><input type="checkbox" .checked=${also.value} @change=${(/** @type {Event} */ e) => { also.value = /** @type {HTMLInputElement} */ (e.target).checked }}>
       <span class="item-text"><strong>${t('first.also')}</strong><small>${t('first.alsoText', { size: formatBytes(device.GEMMA.bytes) })}</small></span></label>` : nothing}

@@ -11,8 +11,8 @@ import { live as current } from 'lit-html/directives/live.js'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
-import { unlock, isDenied, loaded, slots } from './caps.js'
-import { t, locale } from '../core/i18n.js'
+import { SIZES, unlock, isDenied, loaded, slots } from './caps.js'
+import { t, locale, formatBytes } from '../core/i18n.js'
 import { serviceURL } from '../core/settings.js'
 import { requestsOf } from '../core/events.js'
 import { icons } from './icons.js'
@@ -49,6 +49,21 @@ export const subRow = (id, icon) => html`<button type="button" class="submenu" d
 /** @param {Event} event */
 const openSub = (event) => import('./plus.js').then((module) => module.open(event))
 
+/** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
+export function offerAside() {
+  const offer = app.offer.value
+  if (!offer || app.dialog.value === 'first') return nothing
+  const { id, progress } = offer
+  const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
+  return html`<aside class="offer" role="status">
+    <p>${t(`cap.${id}.offer`, params)}</p>
+    ${progress === undefined ? html`<div class="row">
+      <button class="button primary" @click=${() => import('./discovery.js').then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
+      <button class="button subtle" @click=${() => import('./discovery.js').then((module) => module.decline(id))}>${t('offer.no')}</button>
+    </div>` : html`<progress max="1" value=${progress} aria-label=${t(`cap.${id}.downloading`)}></progress>`}
+  </aside>`
+}
+
 class Composer extends Element {
   render() {
     const busy = app.busy.value
@@ -77,6 +92,7 @@ class Composer extends Element {
     const legal = /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
     const fresh = !app.current.value?.records.length
     return html`
+      ${fresh ? offerAside() : nothing}
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
         ${slots('box').map((entry) => entry.draw())}
         ${repeat(asked, (decision) => decision.id, (decision) => html`<app-ask .decision=${decision}></app-ask>`)}
@@ -113,7 +129,7 @@ class Composer extends Element {
           </div>
           <app-seal></app-seal>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
-            ${brain?.api === 'device' && !auto ? icons.lock : icons.brain}<span>${chipLabel.value}</span>${icons.chevron}
+            ${brain?.api === 'device' && !auto ? icons['brain-device'] : icons.brain}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
           ${primary(busy && !app.draft.value.trim(), empty, hands)}
         </div>
@@ -228,7 +244,7 @@ function primary(busy, empty, hands) {
   // While hands-free is on, the box fills as the user speaks: the button still ends it, and the turn sends itself.
   if (on || (empty && loaded.value.has('live'))) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
     aria-keyshortcuts=${SHORTCUTS.live} aria-label=${t(on ? 'live.stop' : 'live.start')}
-    @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`
+    @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.voice}</button>`
   return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')}>${icons.send}</button>`
 }
 

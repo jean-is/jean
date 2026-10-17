@@ -6,7 +6,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { notify } from '../../ui/state.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { parseSkill } from '../../core/skills.js'
 import { noteRecord } from '../../core/events.js'
 import { t, locale } from '../../core/i18n.js'

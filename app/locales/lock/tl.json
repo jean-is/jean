@@ -1,6 +1,7 @@
 {
   "lock.locked": "Naka-lock.",
   "lock.unreadable": "Hindi mabuksan ang mga itinago rito.",
+  "lock.parent": "Binubuksan ng isang magulang ang profile na ito gamit ang kanyang password o passkey.",
   "lock.cant": "Hindi mo mabuksan?",
   "lock.cantText": "Kung wala ang passkey, password o recovery code mo, walang makapagbubukas ng itinago rito. Ang pagsisimulang muli ay bumubura nito; pagkatapos, puwede mong ibalik ang isang backup o ang naka-sync mong folder.",
   "lock.afresh": "Magsimulang muli",

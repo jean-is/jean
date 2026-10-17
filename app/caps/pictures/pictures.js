@@ -5,7 +5,7 @@
 // shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
 // picture made on this device or by a server on this computer shows nobody naked or sexual (D275), nor,
 // unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279).
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
 import { app, effective, activeBrain, brainsHere, loadModels, cloudAllowed, conversationOf, updateSettings } from '../../ui/state.js'
@@ -14,7 +14,7 @@ import { isLocal } from '../../ui/auto.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { define } from '../../ui/base.js'
 import { Shown } from '../../ui/shown.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile } from '../../core/files.js'
 import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../core/events.js'
 import { slug } from '../../core/settings.js'
@@ -219,7 +219,7 @@ const addresses = new WeakMap()
 const address = (/** @type {ImageBlock} */ image) => addresses.get(image) ?? addresses.set(image, `data:${image.mimeType};base64,${image.data}`).get(image)
 
 /** A film's sign while it is made: a frame of film, its holes down each side. */
-const FILM = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 3.5v17M16 3.5v17M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/></svg>`
+const FILM = icon(svg`<rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 3.5v17M16 3.5v17M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/>`)
 
 /**
  * A picture or a film Jean made, read from the project's files, in the user's language as it changes. While it is
@@ -362,7 +362,7 @@ const CHECKED = /** @type {const} */ (['suggestive', 'hate', 'violence'])
 function check(area) {
   const set = app.policy.pictureCheck?.[area] !== undefined
   const change = (/** @type {Event} */ e) => updateSettings(/** @type {{}} */ ({ pictureCheck: { .../** @type {any} */ (app.settings.value).pictureCheck, [area]: /** @type {HTMLInputElement} */ (e.target).checked } }))
-  return html`<div class="setting"><div><span class="rule-kind">${t(`pictures.${area}`)}</span><p class="muted small">${t(set ? 'pictures.locked' : `pictures.${area}Text`)}</p></div>
+  return html`<div class="setting"><div><span class="rule-kind">${t(`pictures.${area}`)}</span><p class="muted small">${t(set ? app.policy.child ? 'pictures.parent' : 'pictures.locked' : `pictures.${area}Text`)}</p></div>
     <input type="checkbox" class="switch" role="switch" aria-label=${t(`pictures.${area}`)} .checked=${device.refuses(area)} ?disabled=${set} @change=${change}></div>`
 }
 

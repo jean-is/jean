@@ -267,6 +267,7 @@
   "pages.siteRemove": "Удалить {site}",
   "pages.sitesText": "Введите сайт и нажмите Enter. * — любой сайт, *.example.com — все адреса example.com.",
   "policy.locked": "Задано вашей организацией",
+  "policy.parent": "Задано родителем",
   "knows.title": "Что {name} знает о вас",
   "you.name": "Ваше имя",
   "you.nameText": "Показывается под задачами.",

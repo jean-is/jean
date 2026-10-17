@@ -10,7 +10,7 @@ import { app, notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
 import { drawnActions } from '../../ui/caps.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { modelWorker } from '../../ui/model.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
@@ -24,10 +24,7 @@ const [{ renderAbc }] = await Promise.all([
   styleSheet(new URL('scores.css', import.meta.url)),
 ])
 
-/** @param {unknown} paths */
-const icon = (paths) => html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths}</svg>`
-const PLAY = icon(svg`<path d="M8 5.5v13l10.5-6.5Z"/>`)
-const PAUSE = icon(svg`<path d="M8.5 5.5v13M15.5 5.5v13"/>`)
+const PAUSE = icon(svg`<path d="M9 5.5v13M15 5.5v13"/>`)
 
 /** The sound, made at the first Play (browsers start it only on a click), and the score playing. */
 let context = /** @type {AudioContext | null} */ (null)
@@ -134,7 +131,7 @@ class AppScore extends HTMLElement {
       ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>
         <pre dir="ltr"><code>${source}</code></pre>`
       : html`<div class="score-player" dir="ltr" aria-busy=${this.loading !== null}>${this.notes.length ? html`
-        <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : PLAY}</button>
+        <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : icons.play}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
         <span class="score-time">${this.loading ? new Intl.NumberFormat(locale.value, { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}

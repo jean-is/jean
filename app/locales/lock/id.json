@@ -1,6 +1,7 @@
 {
   "lock.locked": "Terkunci.",
   "lock.unreadable": "Yang disimpan di sini tidak bisa dibuka.",
+  "lock.parent": "Orang tua membuka profil ini dengan kata sandi atau kunci sandinya.",
   "lock.cant": "Tidak bisa membukanya?",
   "lock.cantText": "Tanpa kunci sandi, kata sandi, atau kode pemulihan Anda, tidak ada yang bisa membuka yang disimpan di sini. Memulai dari awal akan menghapusnya; setelah itu Anda bisa memulihkan cadangan atau folder yang disinkronkan.",
   "lock.afresh": "Mulai dari awal",

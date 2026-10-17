@@ -258,6 +258,7 @@
   "pages.siteRemove": "นำ {site} ออก",
   "pages.sitesText": "พิมพ์เว็บไซต์แล้วกด Enter เครื่องหมาย * คือเว็บไซต์ใดก็ได้ ส่วน *.example.com คือทุกที่อยู่ของ example.com",
   "policy.locked": "ตั้งค่าโดยองค์กรของคุณ",
+  "policy.parent": "ผู้ปกครองตั้งค่าไว้",
   "knows.title": "สิ่งที่ {name} รู้เกี่ยวกับคุณ",
   "you.name": "ชื่อของคุณ",
   "you.nameText": "แสดงใต้งานของคุณ",

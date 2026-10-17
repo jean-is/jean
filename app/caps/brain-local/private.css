@@ -9,7 +9,7 @@ app-seal { display: flex; min-inline-size: 0; }
   font-size: 0.8rem; white-space: nowrap; animation: arrive 0.6s var(--ease) both; transition: color 0.2s; }
 .private-seal:hover, .private-seal.is-away, app-seal:has(.private-card:popover-open) .private-seal { color: var(--ink); }
 .private-seal span { overflow: hidden; text-overflow: ellipsis; }
-.private-seal .icon { flex: none; inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.private-seal .icon { flex: none; --glyph: var(--icon-s); color: var(--flame); }
 /* On a narrow screen, the shield alone, still named. */
 @media (width < 32rem) { .private-seal span { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); } }
 /* The card, above the box, from its start: within its width on any screen, either way the text runs. */
@@ -25,7 +25,7 @@ app-seal { display: flex; min-inline-size: 0; }
 .private-card p { margin: 0 0 0.6rem; }
 .private-facts { display: grid; gap: 0.4rem; margin: 0 0 0.7rem; padding: 0; list-style: none; }
 .private-facts li { display: flex; gap: 0.6rem; align-items: center; }
-.private-card .icon { flex: none; inline-size: 1.1rem; block-size: 1.1rem; color: var(--flame); }
+.private-card .icon { flex: none; --glyph: var(--icon-s); color: var(--flame); }
 .private-now { padding: 0.5rem 0.7rem; border-radius: calc(var(--radius) / 2); background: oklch(from var(--flame) l c h / 0.1); }
 .private-card .private-proof { color: var(--ink-soft); font-size: 0.8rem; }
 @media (prefers-reduced-motion: reduce) { .private-seal { animation: none; } }

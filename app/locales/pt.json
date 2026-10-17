@@ -405,5 +405,6 @@
   "since.closed": "O trabalho para enquanto este separador está fechado: isto acabou de ser lido.",
   "cap.machine.name": "Este computador",
   "cap.machine.offer": "Correr o servidor de desenvolvimento de um site, ou os teus programas, neste computador?",
-  "cap.machine.yes": "Usar este computador"
+  "cap.machine.yes": "Usar este computador",
+  "profiles.add": "Adicionar um perfil"
 }

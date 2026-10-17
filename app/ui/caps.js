@@ -17,7 +17,7 @@ import { signal } from '@preact/signals-core'
  * @property {() => { name: string, logo?: string, tools: string[] }[]} [searches]  what else of it searches the web (D271)
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)
  * @property {import('../core/hooks.js').Hook[]} [hooks]  what it does on Jean's events: task.start, turn.step, tool.check, turn.end…
- * @property {Record<string, Slot>} [slots]  what it draws in the room's slots, by name: views, main, above, add, box, progress, activity, settings…
+ * @property {Record<string, Slot | Slot[]>} [slots]  what it draws in the room's slots, by name: views, main, above, add, box, progress, activity, settings…
  * @property {boolean} [ready]  its weights are here and loaded, for one of WEIGHTS
  */
 
@@ -39,6 +39,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
   lock: () => import('../caps/lock/lock.js'),
+  profiles: () => import('../caps/profiles/profiles.js'),
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
   voice: () => import('../caps/voice/voice.js'),
   computer: () => import('../caps/computer/computer.js'),

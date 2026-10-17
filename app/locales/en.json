@@ -397,5 +397,6 @@
   "since.closed": "Work stops while this tab is closed, so this was read just now.",
   "cap.machine.name": "This computer",
   "cap.machine.offer": "Run a site’s dev server, or your own programs, on this computer?",
-  "cap.machine.yes": "Use this computer"
+  "cap.machine.yes": "Use this computer",
+  "profiles.add": "Add a profile"
 }

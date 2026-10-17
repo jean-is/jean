@@ -258,6 +258,7 @@
   "pages.siteRemove": "Xóa {site}",
   "pages.sitesText": "Nhập một trang web rồi nhấn Enter. * là mọi trang web; *.example.com là mọi địa chỉ của example.com.",
   "policy.locked": "Do tổ chức của bạn thiết lập",
+  "policy.parent": "Do cha mẹ thiết lập",
   "knows.title": "Những gì {name} biết về bạn",
   "you.name": "Tên của bạn",
   "you.nameText": "Hiển thị bên dưới các nhiệm vụ của bạn.",

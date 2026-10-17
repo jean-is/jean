@@ -96,7 +96,7 @@ test('every look has a name and a thumbnail in Settings', async () => {
 
 test('a look is applied before the first paint, with the key ui/looks.js uses, Tilde until one is picked', () => {
   const script = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
-  assert.ok(script.includes(`localStorage.getItem('${LOOK_KEY}') ?? '${lookId(undefined)}'`))
+  assert.ok(script.includes(`mine('${LOOK_KEY}') ?? '${lookId(undefined)}'`))
   assert.ok(script.includes('ui/looks/${look}.css'))
 })
 

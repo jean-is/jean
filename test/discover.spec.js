@@ -43,19 +43,24 @@ test('the house lights up as capabilities are turned on', async ({ page }) => {
   await expect(house.locator('.house-rank')).toHaveText('Ocean')
 })
 
-test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', async ({ page }) => {
-  await start(page)
-  await connectFakeBrain(page)
-  // Three tasks in another project: Backup and Intuition are about all of them, so they are due.
-  await page.evaluate(async () => {
+/** Tasks in another project, which offers count too (D281). @param {import('@playwright/test').Page} page @param {number} count */
+async function tasksElsewhere(page, count) {
+  await page.evaluate(async (count) => {
     const { app, refreshProjects } = await import('/ui/state.js')
     const { createProject } = await import('/core/settings.js')
     const { createConversation, appendRecords } = await import('/core/conversations.js')
     const { userRecords } = await import('/core/events.js')
     const projectDir = await createProject(app.fs, { name: 'Garden', by: 'test' })
-    for (let i = 1; i <= 3; i++) await appendRecords(app.fs, (await createConversation(app.fs, { projectDir, by: 'test' })).path, userRecords(`Garden note ${i}`, [], 'test'))
+    for (let i = 1; i <= count; i++) await appendRecords(app.fs, (await createConversation(app.fs, { projectDir, by: 'test' })).path, userRecords(`Garden note ${i}`, [], 'test'))
     await refreshProjects()
-  })
+  }, count)
+}
+
+test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Three tasks in another project: Backup and Intuition are about all of them, so they are due.
+  await tasksElsewhere(page, 3)
   // Intuition is due, and Backup too outside a private window (WebKit's here): whichever count came first shows first.
   const offer = page.locator('aside.offer')
   const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
@@ -70,6 +75,24 @@ test('offers count the tasks of every project, wait their turn when due, and giv
     await expect(offer).toContainText(new RegExp(left.join('|')))
     const shown = (await offer.textContent()) ?? ''
     left = left.filter((text) => !shown.includes(text))
+  }
+})
+
+test('an offer on the first screen keeps above the ideas and the box, never under them, on a phone too', async ({ page }) => {
+  await start(page, 'fr')
+  await connectFakeBrain(page)
+  await tasksElsewhere(page, 2)
+  const offer = page.locator('aside.offer')
+  await expect(offer).toContainText('Télécharger')
+  // The page as it opens, not scrolled: what is at the centre of each of its buttons is that button, at every size.
+  const uncovered = () => offer.locator('button').evaluateAll((buttons) => buttons.map((button) => {
+    const { x, y, width, height } = button.getBoundingClientRect()
+    return button.contains(document.elementFromPoint(x + width / 2, y + height / 2))
+  }))
+  for (const [width, height] of [[390, 844], [360, 640], [1280, 600], [1440, 900]]) {
+    await page.setViewportSize({ width, height })
+    await expect.poll(uncovered).toEqual([true, true])
+    await expect(page.locator('.starter')).toHaveCount(4)
   }
 })
 

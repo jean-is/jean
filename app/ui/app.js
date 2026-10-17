@@ -5,7 +5,7 @@ import { memoryFS } from '../core/fs.js'
 import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
-import { opfsFS } from './opfs.js'
+import { opfsFS, mine } from './opfs.js'
 import { app, effective, activeBrain, theme, sidebarOpen, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
 import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
@@ -28,12 +28,16 @@ async function start() {
   })
   const fs = await opfsFS().catch(() => null)
   app.fs = fs ?? memoryFS()
+  app.whole = fs?.whole ?? null
   app.ephemeral.value = !fs
+  if (!fs) sessionStorage.removeItem('app.profile')
   app.deviceId = localStorage.getItem('app.device') ?? ulid()
   localStorage.setItem('app.device', app.deviceId)
   // Organisations opt in with <meta name="app-policy" content="policy.json"> (see docs/enterprise.md).
   const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
   app.policy = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response.json() : {})).catch(() => ({})) : {}
+  // Several profiles here (D228): their menu, and in a child's, what a parent set, in policy's shape.
+  if (fs && (await fs.whole.list('profiles')).length > 1) await unlock('profiles')
   app.settings.value = await loadSettings(app.fs)
   // Policy names capabilities by today's ids: `routines` are the tasks on a schedule (D122).
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
@@ -58,7 +62,7 @@ async function start() {
   const follow = () => { app.deviceTheme.value = daylight.matches ? 'light' : 'dark' }
   daylight.addEventListener('change', follow)
   follow()
-  const chosen = localStorage.getItem(THEME_KEY)
+  const chosen = localStorage.getItem(mine(THEME_KEY))
   app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
   const browserBar = document.querySelector('meta[name="theme-color"]')
   app.look.value = lookId(root.dataset.look ?? 'room')
@@ -76,7 +80,7 @@ async function start() {
   const measure = () => { app.wide.value = wide.matches }
   wide.addEventListener('change', measure)
   measure()
-  const side = localStorage.getItem(SIDEBAR_KEY)
+  const side = localStorage.getItem(mine(SIDEBAR_KEY))
   app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
@@ -86,7 +90,7 @@ async function start() {
   let dressing = Promise.resolve()
   effect(() => {
     const id = lookId(effective.value.settings.look?.id)
-    localStorage.setItem(LOOK_KEY, id)
+    localStorage.setItem(mine(LOOK_KEY), id)
     dressing = lookSheet(id).then(() => { if (id === lookId(app.settings.value.look?.id)) app.look.value = id })
   })
   const touches = new CSSStyleSheet()
@@ -122,9 +126,9 @@ async function start() {
   app.fs.watch?.((path) => (path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
 
   // Opened after time away: "Since last time" (an event with no language). Each device keeps its own.
-  const seen = Number(localStorage.getItem(SEEN_KEY)) || 0
+  const seen = Number(localStorage.getItem(mine(SEEN_KEY))) || 0
   if (seen && Date.now() - seen > AWAY_MS) app.back.value = seen
-  const stamp = () => localStorage.setItem(SEEN_KEY, String(Date.now()))
+  const stamp = () => localStorage.setItem(mine(SEEN_KEY), String(Date.now()))
   stamp()
   addEventListener('pagehide', stamp)
   document.addEventListener('visibilitychange', stamp)

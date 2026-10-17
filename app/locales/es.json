@@ -405,5 +405,6 @@
   "since.closed": "El trabajo se detiene mientras esta pestaña está cerrada: esto se acaba de leer.",
   "cap.machine.name": "Esta computadora",
   "cap.machine.offer": "¿Ejecutar el servidor de desarrollo de un sitio, o tus propios programas, en esta computadora?",
-  "cap.machine.yes": "Usar esta computadora"
+  "cap.machine.yes": "Usar esta computadora",
+  "profiles.add": "Añadir un perfil"
 }

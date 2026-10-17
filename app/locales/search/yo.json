@@ -14,6 +14,7 @@
   "search.failed": "Kò sí sáfà Kiwix kankan tó dáhùn ní àdírẹ́sì yìí.",
   "search.insecure": "Láti ibí, sáfà Kiwix lórí kọ̀ǹpútà yìí nìkan ni ẹ lè dé, tàbí èyí tó wà ní àdírẹ́sì tó bẹ̀rẹ̀ pẹ̀lú https://.",
   "search.locked": "Àjọ yín ló ṣètò rẹ̀",
+  "search.parent": "Òbí ló ṣètò rẹ̀",
   "search.books": {
     "other": "Ìwé {count}"
   },

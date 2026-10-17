@@ -165,6 +165,20 @@ export async function connect(page, url) {
   await page.keyboard.press('Escape')
 }
 
+/**
+ * Gives a folder to the file chooser, as the system's picker would to `<input webkitdirectory>`.
+ * Playwright then waits for the input's `input` event, but in WebKit listens only once the folder is
+ * given: when WebKit has read it first, the wait never ends (1 run in 6). The event is told again
+ * a moment later, which ends it either way; Jean listens for `change`.
+ * @param {import('@playwright/test').FileChooser} chooser @param {string} folder
+ */
+export async function giveFolder(chooser, folder) {
+  await chooser.element().evaluate((input) => input.addEventListener('input', (event) => {
+    if (event.isTrusted) for (const wait of [100, 1000, 5000]) setTimeout(() => input.dispatchEvent(new Event('input')), wait)
+  }, { once: true }))
+  await chooser.setFiles(folder)
+}
+
 /** A one-page PDF in Helvetica, one of the standard fonts. @param {string} text */
 export function pdf(text) {
   const stream = `BT /F1 24 Tf 20 90 Td (${text}) Tj ET`

@@ -27,32 +27,34 @@ Every file Jean keeps on a device is sealed with keys that never leave it, and a
 **What stays unsealed:**
 - **File and folder names:**
   - ULIDs, which tell when each file was made;
-  - project slugs, which are the projects' names;
+  - project and profile slugs, which are their names;
   - skill names;
   - files' content hashes, which tell whether a known file is here.
 - **Sizes and dates.**
+- **Each profile's name**, and a child's parent's profile, in its `vault.json` (D228), which the profiles' list reads before any opens.
 - **Outside OPFS:**
   - folder handles and their names, in IndexedDB;
-  - the look, the sidebar and the language, in `localStorage`;
+  - the look, the sidebar and the language, in `localStorage`, and in a child's profile the minutes spent each day;
   - the unsent draft, in `sessionStorage`, which Chromium writes to disk to restore sessions.
 
-The content hashes stay because Sync and file versions name files by them on every device. If anyone wants the slugs gone, the time to do it is when the profiles' layout is settled (D228).
+The content hashes stay because Sync and file versions name files by them on every device. The slugs stay since a backup or a synced folder is read by people too.
 
 ## Keys
 
 ```
-vault key (VK)   32 random bytes, one per Jean (one per profile once D228 lands)
+vault key (VK)   32 random bytes, one per profile (D228)
   file key       HKDF-SHA-256(VK, salt = the file's salt, "file") → AES-256-GCM; a new one at each whole write
   vault id       first 8 bytes of HKDF-SHA-256(VK, "id"); written in every file's header
 slots            VK sealed with AES-256-GCM, once under each of these keys, in .secrets/vault.json:
-  device         a non-extractable key in IndexedDB (app-keys, "vault"); present only while there is no lock
+  device         a non-extractable key in IndexedDB (app-keys, by the profile's folder); present only while there is no lock
   passkey        HKDF(the passkey's PRF output for the slot's salt, "passkey")
   password       PBKDF2-SHA-256(password, salt, 600,000); the iteration count is kept in the slot
   recovery       HKDF(the recovery code's 128 bits, "recovery")
+  parent         HKDF(the parent's profile's VK, the slot's salt, "parent"): a child's under 13, alone (D389)
 ```
 
 - **VK never rests anywhere unsealed.** The worker holds it as a non-extractable `CryptoKey` for HKDF. The page holds its bytes only while the lock adds a slot, read back from a slot just opened, and wipes them after.
-- **`.secrets/vault.json` is the one file the worker never seals**, because it opens all the others. It holds `format`, the vault id and the slots, and nothing else. Like the rest of `.secrets/`, it is outside every backup, sync and share.
+- **`.secrets/vault.json` is the one file the worker never seals**, because it opens all the others. It holds `format`, the vault id, the slots, and the profile's name and, for a child's, its parent's profile and the public key what is told to it is sealed with (D390). Like the rest of `.secrets/`, it is outside every backup, sync and share.
 - **Changing the lock rewrites `vault.json` only.** Turning it on or off, or changing how it opens, seals no file again.
 - **Setting a lock removes the device slot**, and deletes its key from IndexedDB. Turning the lock off makes a new one.
 - **The browser clears the key and the files together.** IndexedDB and OPFS sit in one storage bucket, which the Storage Standard clears as a whole, so neither outlives the other. This includes Safari's seven-day rule.
@@ -98,17 +100,19 @@ The worker opens the vault at the first `ping` and answers with one of three sta
    - `ui/opfs.js` imports the lock, which shows the lock screen before anything Jean keeps is read.
    - Once unlocked, the page hands the worker its key (`key`), and Jean starts.
 3. **`sealed`:** files are here but no slot opens them, or `vault.json` is missing.
-   - Jean says that what was kept here can't be opened, and offers to start afresh, which deletes what is here after a confirmation.
+   - Jean says that what was kept here can't be opened, and offers to start afresh, which deletes the profile after a confirmation; another opens, or a first run makes one.
    - A backup or the synced folder, which hold plain copies, can be restored after.
    - Files kept before the seal land here too (D173).
 
 **Around those states:**
 - **Until the key is in,** only `vault.json`, listing, `stat` and removing work. Every other read and write waits.
-- **Other tabs ask for the key** on a BroadcastChannel (`app-vault`). An unlocked tab answers with its `CryptoKey`; a structured clone carries it without its bytes ever becoming readable. The lock screen shows only if no tab has answered within 300 ms.
+- **Other tabs of the profile ask for the key** on a BroadcastChannel of its own (`app-vault:<folder>`), so none hands its key to another profile's. An unlocked tab answers with its `CryptoKey`; a structured clone carries it without its bytes ever becoming readable. The lock screen shows only if no tab has answered within 300 ms.
 - **Lock now** sends `lock` on that channel, and every tab reloads onto the lock screen.
 - **The probe** (`ui/opfs.js`) runs once the key is in, so it also proves the key works.
 - **If IndexedDB can't keep the device key,** OPFS counts as unusable: Jean keeps data for the visit only and says so, as in a private window. It never writes plain files.
-- **The lock screen speaks the language chosen,** kept in `localStorage` (`app.locale`) by the lock, since settings are sealed until it opens.
+- **The lock screen speaks the language chosen,** kept in `localStorage` (`app.locale:<folder>`) by the lock, since settings are sealed until it opens. It names the profile and lists the others, to open one instead.
+- **A child's under 13** (D389) has only a `parent` slot: its lock screen shows the parent's ways in, read from their `vault.json`, and opens the child's with the parent's VK, which is wiped at once.
+- **What a child's profile tells its parent's** (D390), a concern or the minutes spent, can't be sealed with either vault: it is sealed for the parent's profile alone (ECDH P-256 with a key made for each, then AES-256-GCM), whose private half is in the parent's sealed `.secrets/family.json`, and written in `family/<the parent's ULID>/`, outside every profile, where the worker keeps bytes as they come.
 
 ## The lock
 

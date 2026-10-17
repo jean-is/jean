@@ -3,22 +3,24 @@
 // is sealed either way, by the storage worker (ui/seal.js); a lock changes only the slots of
 // vault.json, which open the vault key, so nothing is sealed again. Locked, Jean shows this before
 // anything it keeps is read, and another tab that has the key hands it over; once found, it is set,
-// changed or turned off in Settings › Your data, and Lock now is in the person's menu.
+// changed or turned off in Settings › Your data, and Lock now is in the person's menu. Each profile
+// has a vault and a lock of its own (D228); a child's under 13 opens with their parent's.
 import { html, nothing, render } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, notify, LOCALES } from '../../ui/state.js'
 import { slotKey, close, unseal, vaultKey, deviceKey, encode, decode, VAULT, ITERATIONS } from '../../ui/seal.js'
 import { save } from '../../ui/save.js'
+import { mine, here, switchTo } from '../../ui/opfs.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, useLocale, pickLocale, locale, dir } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../ui/seal.js').Slot} Slot */
 
 // The lock screen speaks the language chosen, which settings, sealed, can't tell before it opens.
-const LOCALE = 'app.locale'
+const LOCALE = mine('app.locale')
 const chosen = localStorage.getItem(LOCALE)
 await Promise.all([useStrings('lock'), styleSheet(new URL('lock.css', import.meta.url))])
 effect(() => localStorage.setItem(LOCALE, locale.value))
@@ -27,16 +29,17 @@ effect(() => localStorage.setItem(LOCALE, locale.value))
 const passkeys = !!globalThis.PublicKeyCredential && !/^[\d.]+$|:/.test(location.hostname)
   && /** @type {any} */ (await /** @type {any} */ (PublicKeyCredential).getClientCapabilities?.().catch(() => null))?.['extension:prf'] !== false
 
-/** vault.json: its id, and the slots that open the vault key. */
-const vault = signal(/** @type {{ id: string, slots: Slot[] } | null} */ (app.fs && JSON.parse(await app.fs.read(VAULT) ?? 'null')))
-/** @param {Slot['kind']} kind */
-const slotOf = (kind) => vault.value?.slots.find((slot) => slot.kind === kind)
+/** vault.json: its id, the slots that open the vault key, and the profile's name and parent (D228). @typedef {{ id: string, slots: Slot[], name?: string, parent?: { profile: string, key: JsonWebKey } }} Vault */
+const vault = signal(/** @type {Vault | null} */ (app.fs && JSON.parse(await app.fs.read(VAULT) ?? 'null')))
+/** @param {Slot['kind']} kind @param {Vault | null} [of] */
+const slotOf = (kind, of = vault.value) => of?.slots.find((slot) => slot.kind === kind)
 /** Whether a lock replaced this device's key. */
-const isOn = () => !!vault.value && !slotOf('device')
-/** @param {Slot[]} slots */
+export const isOn = () => !!vault.value && !slotOf('device')
+/** New slots, with the rest of vault.json as it is now, since Profiles writes its name there. @param {Slot[]} slots */
 async function keep(slots) {
-  await app.fs.write(VAULT, JSON.stringify({ format: 1, id: vault.value?.id, slots }, null, 2) + '\n')
-  vault.value = { id: vault.value?.id ?? '', slots }
+  const kept = { ...JSON.parse(await app.fs.read(VAULT) ?? '{}'), slots }
+  await app.fs.write(VAULT, JSON.stringify({ format: 1, ...kept }, null, 2) + '\n')
+  vault.value = kept
 }
 
 /** What went wrong, said under the ways in; whether the recovery code is asked for. */
@@ -51,7 +54,7 @@ const hex = (code) => code.replace(/[^0-9a-f]/gi, '').toUpperCase()
 
 // ─── Tabs ────────────────────────────────────────────────────────────────────
 
-const channel = new BroadcastChannel('app-vault')
+const channel = new BroadcastChannel(mine('app-vault'))
 /** The vault key, once a lock gave it here: another tab opening locked is handed it. @type {CryptoKey | null} */
 let held = null
 /** @type {((key: CryptoKey) => void) | null} */
@@ -78,10 +81,10 @@ async function evaluate(slots) {
   return { slot, output: new Uint8Array(output) }
 }
 
-/** The vault key from what the person gives: the passkey, the password or the recovery code. @param {Slot['kind']} kind @param {string} [given] */
-async function rawFrom(kind, given = '') {
-  const { slot, output } = kind === 'passkey' ? await evaluate(vault.value?.slots.filter((each) => each.kind === kind) ?? [])
-    : { slot: slotOf(kind), output: kind === 'password' ? given : new Uint8Array((hex(given).match(/../g) ?? []).map((pair) => parseInt(pair, 16))) }
+/** The vault key from what the person gives: the passkey, the password or the recovery code. @param {Slot['kind']} kind @param {string} given @param {Vault | null} of */
+async function rawFrom(kind, given, of) {
+  const { slot, output } = kind === 'passkey' ? await evaluate(of?.slots.filter((each) => each.kind === kind) ?? [])
+    : { slot: slotOf(kind, of), output: kind === 'password' ? given : new Uint8Array((hex(given).match(/../g) ?? []).map((pair) => parseInt(pair, 16))) }
   if (!slot) throw new Error(`No ${kind}`)
   return unseal(slot, await slotKey(slot, output))
 }
@@ -92,13 +95,13 @@ const form = (submit, fields, button) => html`<form class="stack lock-way" @subm
     minlength=${type === 'new-password' ? 12 : nothing} spellcheck="false" dir="ltr" required></label>`)}
   <div class="row"><button class="button primary">${button}</button></div></form>`
 
-/** The ways in, each giving the vault key to `then`. @param {(raw: Uint8Array) => unknown} then */
-function ways(then) {
+/** The ways into a vault, this profile's or a parent's, each giving its key to `then`. @param {(raw: Uint8Array) => unknown} then @param {Vault | null} [of] */
+export function ways(then, of = vault.value) {
   /** @param {Slot['kind']} kind @param {FormData} [given] */
   const go = async (kind, given) => {
     said.value = ''
     try {
-      await then(await rawFrom(kind, String(given?.get('secret') ?? '')))
+      await then(await rawFrom(kind, String(given?.get('secret') ?? ''), of))
       coding.value = false
     } catch (error) {
       console.warn('Lock', error)
@@ -106,8 +109,8 @@ function ways(then) {
     }
   }
   return html`${coding.value ? form((data) => go('recovery', data), [['secret', 'lock.codeLabel']], t('lock.unlock')) : html`
-    ${slotOf('passkey') ? html`<div class="row"><button class="button primary" @click=${() => go('passkey')}>${icons.key} ${t('lock.unlock')}</button></div>` : nothing}
-    ${slotOf('password') ? form((data) => go('password', data), [['secret', 'lock.passwordLabel', 'current-password']], t('lock.unlock')) : nothing}
+    ${slotOf('passkey', of) ? html`<div class="row"><button class="button primary" @click=${() => go('passkey')}>${icons.lock} ${t('lock.unlock')}</button></div>` : nothing}
+    ${slotOf('password', of) ? form((data) => go('password', data), [['secret', 'lock.passwordLabel', 'current-password']], t('lock.unlock')) : nothing}
     <div class="row"><button class="link-button" @click=${() => { coding.value = true }}>${t('lock.useCode')}</button></div>`}
     <p class="lock-said" role="alert">${said.value}</p>`
 }
@@ -116,30 +119,46 @@ function ways(then) {
 
 /**
  * Before anything Jean keeps is read (ui/opfs.js): the key from another tab, else the lock screen,
- * which hands the worker the key the person opened it with. Sealed, with nothing here that opens it,
- * it offers to start afresh.
- * @param {import('../../ui/opfs.js').Call} call @param {'locked' | 'sealed'} state
+ * which hands the worker the key the person opened it with, or their parent opened its parent's
+ * with (D228). Sealed, with nothing here that opens it, it offers to start afresh, but in a child's.
+ * @param {import('../../ui/opfs.js').Call} call @param {'locked' | 'sealed'} state @param {string} root the profile's folder
  */
-export async function locked(call, state) {
+export async function locked(call, state, root) {
   await useLocale(chosen ?? pickLocale(LOCALES, navigator.languages))
   Object.assign(document.documentElement, { lang: locale.value, dir: dir(locale.value) })
-  vault.value = JSON.parse(await call('read', VAULT) ?? 'null')
+  vault.value = JSON.parse(await call('read', `${root}/${VAULT}`) ?? 'null')
+  const parent = slotOf('parent')
+  /** @param {string} dir @returns {Promise<Vault | null>} */
+  const read = async (dir) => JSON.parse(await call('read', `${dir}/${VAULT}`) ?? 'null')
+  const opener = parent ? await read(String(parent.profile)) : vault.value
+  // The other profiles, to go to instead.
+  const others = await Promise.all((await call('list', 'profiles')).map((/** @type {{ name: string }} */ { name }) => `profiles/${name}`)
+    .filter((/** @type {string} */ dir) => dir !== root).map(async (/** @type {string} */ dir) => /** @type {const} */ ([dir, (await read(dir))?.name ?? ''])))
   const screen = document.body.appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
   let stop = () => {}
   await new Promise((resolve) => {
     waiting = (key) => call('key', '', /** @type {any} */ (key)).then(() => { held = key; resolve(undefined) }, () => {})
     channel.postMessage('ask')
+    // The profile goes, and a first run makes another, or another profile opens.
     async function afresh() {
       if (!confirm(t('lock.afreshConfirm'))) return
-      for (const entry of await call('list', '')) await call('remove', entry.name)
-      await deviceKey('forget')
+      await call('remove', root)
+      await deviceKey('forget', root)
       location.reload()
     }
     // Drawn once no tab has answered, so a key handed over shows nothing.
     setTimeout(() => {
       if (!held) stop = effect(() => void render(html`<h1 class="wordmark">${BRAND.name}</h1>
-        <p class="muted">${t(state === 'sealed' ? 'lock.unreadable' : 'lock.locked')}</p>
-        ${state === 'locked' ? ways(async (raw) => { const key = await vaultKey(raw); raw.fill(0); await waiting?.(key) }) : nothing}
+        ${vault.value?.name ? html`<p class="lock-name" dir="auto">${vault.value.name}</p>` : nothing}
+        <p class="muted">${t(state === 'sealed' ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
+        ${state === 'locked' ? ways(async (raw) => {
+          const own = parent ? await unseal(parent, await slotKey(parent, raw)) : raw
+          const key = await vaultKey(own)
+          for (const bytes of [raw, own]) bytes.fill(0)
+          await waiting?.(key)
+        }, opener) : nothing}
+        ${others.length ? html`<div class="row lock-others">${others.map(([dir, name]) => html`<button class="button subtle" @click=${() => switchTo(dir)}>
+          <span dir="auto">${name || dir.slice(36)}</span></button>`)}</div>` : nothing}
         <details class="lock-cant" ?open=${state === 'sealed'}><summary>${t('lock.cant')}</summary>
           <p class="muted">${t('lock.cantText')}</p>
           <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>`, screen))
@@ -176,7 +195,7 @@ async function setUp(kind, raw) {
   said.value = ''
   try {
     const device = slotOf('device')
-    raw ??= await unseal(/** @type {Slot} */ (device), /** @type {CryptoKey} */ (await deviceKey('get')))
+    raw ??= await unseal(/** @type {Slot} */ (device), /** @type {CryptoKey} */ (await deviceKey('get', here())))
     step.value = kind === 'password' ? { at: 'password', raw } : { at: 'code', raw, slot: await newPasskey(raw), bytes: random(16) }
   } catch (error) {
     console.warn('Lock', error)
@@ -199,7 +218,7 @@ async function lockWith(typed, shown) {
   /** @type {Slot} */
   const recovery = { kind: 'recovery', salt: encode(random(16)), iv: '', data: '' }
   await keep([shown.slot, await close(shown.raw, await slotKey(recovery, shown.bytes), recovery)])
-  await deviceKey('forget')
+  await deviceKey('forget', here())
   held = await vaultKey(shown.raw)
   done(shown.raw)
   notify(t('lock.locked'))
@@ -207,7 +226,7 @@ async function lockWith(typed, shown) {
 
 /** The lock off: this device's key opens the vault again. @param {Uint8Array} raw */
 async function turnOff(raw) {
-  await keep([await close(raw, /** @type {CryptoKey} */ (await deviceKey('make')), { kind: 'device' })])
+  await keep([await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', here())), { kind: 'device' })])
   done(raw)
 }
 
@@ -220,6 +239,8 @@ function done(raw) {
 }
 
 function panel() {
+  // A child's under 13 opens with their parent's way in alone (D228).
+  if (slotOf('parent')) return html`<section class="lock-part"><h3>${t('cap.lock.name')}</h3><p class="muted">${t('lock.parent')}</p></section>`
   const [now, on] = [step.value, isOn()]
   const code = now.at === 'code' && toCode(now.bytes)
   return html`<section class="lock-part">
@@ -239,7 +260,7 @@ function panel() {
         <button class="button subtle" @click=${() => { step.value = { at: 'ask', then: 'change' } }}>${t('lock.change')}</button>
         ${app.policy.lock === 'required' ? nothing : html`<button class="button subtle" @click=${() => { step.value = { at: 'ask', then: 'off' } }}>${t('lock.off')}</button>`}</div>`
       : html`<div class="row">
-        ${passkeys ? html`<button class="button" @click=${() => setUp('passkey', now.raw)}>${icons.key} ${t('lock.passkey')}</button>` : nothing}
+        ${passkeys ? html`<button class="button" @click=${() => setUp('passkey', now.raw)}>${icons.lock} ${t('lock.passkey')}</button>` : nothing}
         <button class="button ${passkeys ? 'subtle' : ''}" @click=${() => setUp('password', now.raw)}>${t('lock.password')}</button></div>`}
     ${now.at === 'ask' ? nothing : html`<p class="lock-said" role="alert">${said.value}</p>`}
     ${now.at === 'rest' && !now.raw ? nothing : html`<button class="link-button" @click=${() => done('raw' in now ? now.raw : undefined)}>${t('lock.cancel')}</button>`}

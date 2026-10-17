@@ -397,6 +397,8 @@ test('Settings opens over the conversation, in the address: Back closes it, a re
 
 test('a reload comes back to the same line of a long conversation, or to its end', async ({ page }) => {
   await start(page)
+  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
+  test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
   await connectFakeBrain(page)
   // Answers with a file's card (D119), above the line and in the last answer.
   const asked = ['Explain photosynthesis in simple words', 'Write the bakery plan as a Word document', 'Explain photosynthesis again', 'Write the cafe plan as a Word document']
@@ -405,8 +407,6 @@ test('a reload comes back to the same line of a long conversation, or to its end
     await expect(page.locator('.msg-jean .msg-actions')).toHaveCount(index + 1)
   }
   await expect(page.locator('app-file .file-card')).toHaveCount(2)
-  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
-  test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
   // The cards come with their capability, after the conversation: here a second late.
   await page.route('**/caps/made/made.js', async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 1000))

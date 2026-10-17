@@ -14,6 +14,7 @@
   "search.failed": "Hakuna seva ya Kiwix iliyojibu kwenye anwani hii.",
   "search.insecure": "Kutoka hapa, unaweza kufikia tu seva ya Kiwix kwenye kompyuta hii, au kwenye anwani inayoanza na https://.",
   "search.locked": "Imewekwa na shirika lako",
+  "search.parent": "Imewekwa na mzazi",
   "search.books": {
     "one": "Kitabu {count}",
     "other": "Vitabu {count}"

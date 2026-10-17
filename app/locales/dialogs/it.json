@@ -264,6 +264,7 @@
   "pages.siteRemove": "Rimuovi {site}",
   "pages.sitesText": "Scrivi un sito e premi Invio. * è qualsiasi sito; *.example.com, tutti gli indirizzi di example.com.",
   "policy.locked": "Impostato dalla tua organizzazione",
+  "policy.parent": "Scelto da un genitore",
   "knows.title": "Cosa sa {name} di te",
   "you.name": "Il tuo nome",
   "you.nameText": "Compare sotto le tue attività.",

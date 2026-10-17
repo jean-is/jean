@@ -258,6 +258,7 @@
   "pages.siteRemove": "{site} を削除",
   "pages.sitesText": "サイトを入力して Enter を押します。* はすべてのサイト、*.example.com は example.com のすべてのアドレスです。",
   "policy.locked": "組織によって設定されています",
+  "policy.parent": "保護者が設定",
   "knows.title": "{name}があなたについて知っていること",
   "you.name": "お名前",
   "you.nameText": "タスクの一覧の下に表示されます。",

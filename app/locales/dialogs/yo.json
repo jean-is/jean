@@ -258,6 +258,7 @@
   "pages.siteRemove": "Yọ {site} kúrò",
   "pages.sitesText": "Ẹ tẹ ojú-òpó kan, lẹ́yìn náà ẹ tẹ Enter. * túmọ̀ sí ojú-òpó èyíkéyìí; *.example.com túmọ̀ sí gbogbo àdírẹ́sì example.com.",
   "policy.locked": "Àjọ yín ló ṣètò rẹ̀",
+  "policy.parent": "Òbí ló ṣètò rẹ̀",
   "knows.title": "Ohun tí {name} mọ̀ nípa yín",
   "you.name": "Orúkọ yín",
   "you.nameText": "A máa fi hàn ní ìsàlẹ̀ àwọn iṣẹ́ yín.",

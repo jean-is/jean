@@ -413,5 +413,6 @@
   "since.closed": "Gdy ta karta jest zamknięta, praca stoi, więc to zostało przeczytane przed chwilą.",
   "cap.machine.name": "Ten komputer",
   "cap.machine.offer": "Uruchamiać serwer deweloperski strony albo własne programy na tym komputerze?",
-  "cap.machine.yes": "Używaj tego komputera"
+  "cap.machine.yes": "Używaj tego komputera",
+  "profiles.add": "Dodaj profil"
 }

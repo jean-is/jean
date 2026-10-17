@@ -44,6 +44,7 @@
 // read on from a summary, it says so (D359). Asked to do something "step by step" with plans on, it plans it, waits for the
 // user's word, then does each step and ticks it off, adding what the user's words asked for; asked to count to twenty, it
 // takes a step a number, past its limit (D364). Counting slowly to five, a second a step, it stops when told to (D365).
+// In a child's profile, told of being bullied, or hit at home, it raises a concern, saying so when it is at home (D228).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -701,6 +702,9 @@ createServer(async (req, res) => {
   else if (following && last.role === 'user' && declared.has('skill')) call = { name: 'skill', args: { name: following[1] } }
   else if (toolName === 'skill') answer = 'Followed its steps.'
   else if (introduced && last.role === 'user' && declared.has('save_name')) call = { name: 'save_name', args: { name: introduced[1] } }
+  // In a child's profile (D228), a danger told: it raises a concern, its kind alone, and says at home when it is.
+  else if (declared.has('raise_concern') && last.role === 'user' && /\b(bullied|hits me)\b/i.test(question)) call = { name: 'raise_concern', args: { kind: /hits me/i.test(question) ? 'abuse' : 'bullying', home: /\bat home\b/i.test(question) } }
+  else if (toolName === 'raise_concern') answer = `I'm sorry this is happening to you. ${last.content}`
   else if (toolName === 'save_name') answer = `Nice to meet you, ${introduced?.[1] ?? 'friend'}.`
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'

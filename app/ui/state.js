@@ -1,5 +1,5 @@
 // Application state (signals) and the actions that change it.
-import { signal, computed } from '@preact/signals-core'
+import { signal, computed, batch } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
 import { loadConversation, listConversations, deleteConversation, appendRecords } from '../core/conversations.js'
@@ -7,6 +7,7 @@ import { linkedFiles, metaRecord, unanswered } from '../core/events.js'
 import { t, useLocale } from '../core/i18n.js'
 import { LOOKS } from './looks.js'
 import { contributions } from './caps.js'
+import { mine } from './opfs.js'
 
 /** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Turn } from '../core/events.js' */
@@ -31,6 +32,8 @@ export { LOCALES } from '../core/i18n.js'
 
 export const app = {
   fs: /** @type {FS} */ (/** @type {unknown} */ (null)),
+  /** The whole FS, every profile's (D228), which only Profiles reaches; null where nothing is kept. */
+  whole: /** @type {FS | null} */ (null),
   deviceId: '',
   /** Every project, and the one the room is in: its conversations, files, memory and light. */
   projects: signal(/** @type {Project[]} */ ([])),
@@ -60,7 +63,7 @@ export const app = {
   sidebar: signal(/** @type {boolean | null} */ (null)),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
   wide: signal(false),
-  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | 'profile' | null>} */
   dialog: signal(null),
   section: signal('general'),
   draft: signal(''),
@@ -160,8 +163,8 @@ export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`
 /** Light or dark, kept on this device, or null: Auto, what the device shows. @param {Theme | null} next */
 export function setTheme(next) {
   app.chosenTheme.value = next
-  if (next) localStorage.setItem(THEME_KEY, next)
-  else localStorage.removeItem(THEME_KEY)
+  if (next) localStorage.setItem(mine(THEME_KEY), next)
+  else localStorage.removeItem(mine(THEME_KEY))
 }
 
 /** Light to dark and back (⌘⇧D, D130, D238): switching back to what the device shows is Auto again (D85). */
@@ -180,7 +183,7 @@ export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?
 /** The drawer open beside the conversation, or put away, from now on on this device. @param {boolean} open */
 export function setSidebar(open) {
   app.sidebar.value = open
-  localStorage.setItem(SIDEBAR_KEY, open ? 'open' : 'closed')
+  localStorage.setItem(mine(SIDEBAR_KEY), open ? 'open' : 'closed')
 }
 
 /** The header's button and ⌘B: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over or away. */
@@ -243,10 +246,10 @@ export async function enterProject(project) {
   if (project.dir === app.projectDir) return
   // What is under way stops: its calls work in the room on screen.
   for (const run of runs.values()) halt(run)
-  newConversation()
   const conversations = await listConversations(app.fs, project.dir)
-  app.project.value = project
-  app.conversations.value = conversations
+  // In one step, once its conversations are read: the address and the box's draft go from the task
+  // left to a new one there, never through a new one in the room left.
+  batch(() => { newConversation(); app.project.value = project; app.conversations.value = conversations })
 }
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */

@@ -18,7 +18,7 @@ import { noteRecord, metaRecord, foldTurns, splitSuggestions } from '../../core/
 import { STRICT } from '../../core/rules.js'
 import { BRAND } from '../../brand.js'
 import { ulid } from '../../core/ulid.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { picturesOf, drawingOf } from '../../ui/export.js'
@@ -298,8 +298,8 @@ function state(path) {
   const act = () => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' })
   return share && Date.parse(share.expires) > Date.now()
     ? html`<button class="button subtle share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
-      title=${t('share.until', { date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.upload} ${t('share.shared')}</button>`
-    : html`<button class="icon-button" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.upload}</button>`
+      title=${t('share.until', { date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.share} ${t('share.shared')}</button>`
+    : html`<button class="icon-button" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
 }
 
 /** Shared links: each with its task, until when, and Copy, Update, Stop sharing. */
@@ -326,10 +326,10 @@ if (allowed()) {
     slots: {
       // In a task's ⋮ menu (ui/inbox.js), after Save a copy, drawn as the menu's own actions: ⌘⇧U on the open task's (D377).
       task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown, shortcut: string) => unknown} */ action) =>
-        action(icons.upload, t('share.menu'), () => openShare({ path: item.path, title: item.title }), SHORTCUTS.share) },
+        action(icons.share, t('share.menu'), () => openShare({ path: item.path, title: item.title }), SHORTCUTS.share) },
       // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made.
       drawn: { at: 1, draw: (/** @type {Item} */ item) => (app.current.value ? html`<button class="icon-button subtle" aria-label=${t('share.menu')}
-        @click=${() => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item })}>${icons.upload}</button>` : nothing) },
+        @click=${() => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item })}>${icons.share}</button>` : nothing) },
       views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current.path) : nothing) },
       data: { at: 3, draw: panel },
       dialog: { at: 1, draw: () => html`<app-share-dialog></app-share-dialog>` },

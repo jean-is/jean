@@ -216,7 +216,7 @@ const lastAnswer = (records) => {
  * loads with the first message, not with the first screen (D140).
  * @param {string} text @param {Envelope[]} records @param {number} [boost] levels above the last one
  * @param {BrainConfig | 'auto'} [chosen] who answers whatever the box has: a routine's own brain, or Auto (D303)
- * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any> } | null>}
+ * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any>, signals: import('./auto.js').Signals } | null>}
  */
 async function pickBrain(text, records, boost = 0, chosen) {
   const { settings } = effective.value
@@ -224,7 +224,7 @@ async function pickBrain(text, records, boost = 0, chosen) {
   const signals = await sense(text, lastAnswer(records))
   if (chosen !== 'auto' && (chosen || !settings.auto)) {
     const brain = chosen || activeBrain.value
-    return brain && (cloudAllowed() || isLocal(brain)) ? { brain } : null
+    return brain && (cloudAllowed() || isLocal(brain)) ? { brain, signals } : null
   }
   const brains = brainsHere.value
   const [{ chooseBrain, TIERS }] = await Promise.all([import('./auto.js'), ...brains.filter((brain) => !isLocal(brain)).map(loadModels)])
@@ -240,7 +240,7 @@ async function pickBrain(text, records, boost = 0, chosen) {
     sees: seesPictures,
     tiers: app.policy.tiers ?? TIERS,
   })
-  return choice && { brain: choice.brain, meta: { auto: { level: choice.level, reason: choice.reason } } }
+  return choice && { brain: choice.brain, meta: { auto: { level: choice.level, reason: choice.reason } }, signals }
 }
 
 /**
@@ -270,10 +270,10 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     import('./picker.js').then((module) => module.openPicker())
     return
   }
-  const { brain, meta } = picked
+  const { brain, meta, signals } = picked
   const named = await mentioned(text)
-  // What the box's modes ask of it (Visual answers, D300), told just before it too.
-  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? []) ?? [])
+  // What the box's modes ask of it (Visual answers, D300), and what the reflexes read in it (a danger, D228), told just before it too.
+  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? [], signals) ?? [])
   const added = await prepare(text.trim(), brain, current, [...notes, ...named, ...modes], files)
   app.draft.value = ''
   if (files === app.attachments.value) app.attachments.value = []

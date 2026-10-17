@@ -87,7 +87,8 @@ test('back after time away, Jean starts with a brief of what’s new, reading on
   await connectFakeBrain(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('since'))
   // Last on screen two days ago.
-  await page.addInitScript(() => localStorage.setItem('app.seen', String(Date.now() - 2 * 86_400_000)))
+  // Kept per profile (D228).
+  await page.addInitScript(() => localStorage.setItem(`app.seen:${sessionStorage.getItem('app.profile') ?? ''}`, String(Date.now() - 2 * 86_400_000)))
   await page.reload()
   await expect(page.locator('.since')).toHaveText('Since last time · 2 days ago')
   await expect(page.locator('.since-note')).toHaveText('Work stops while this tab is closed, so this was read just now.')

@@ -16,7 +16,7 @@ import { splitSuggestions } from '../../core/events.js'
 import { nameOf, attendees, knows, speakerPrompt, request, minutes, report, pool, ROUNDS } from './meeting.js'
 import { BRAND } from '../../brand.js'
 import { t } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 
