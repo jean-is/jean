@@ -16,6 +16,9 @@ export const DIRECTORY = Object.freeze([
   { name: 'compare', icon: 'M12 3.5v16M8 19.5h8M4.5 7.5h15M4.5 7.5l-2.5 6h5zM19.5 7.5l-2.5 6h5z' },
   { name: 'calendar-event', icon: 'M4.5 6h15v13.5h-15zM4.5 10h15M8.5 3.5V8M15.5 3.5V8M8 13.5h2M14 13.5h2M8 16.5h2' },
   { name: 'quiz', icon: 'M3.5 12a8.5 8.5 0 1 0 17 0 8.5 8.5 0 1 0-17 0M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 16.5v.5' },
+  { name: 'learn-it', icon: 'M12 6.5c-2-1.5-5-2-8.5-1.5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5v-13C17 4.5 14 5 12 6.5zM12 6.5v13' },
+  { name: 'flash-cards', icon: 'M4 9.5h12v10H4zM8 9.5v-4h12v10h-4' },
+  { name: 'study-plan', icon: 'M3.5 12a8.5 8.5 0 1 0 17 0 8.5 8.5 0 1 0-17 0M12 7v5l3.5 2' },
   { name: 'relations', icon: 'M4 6a2 2 0 1 0 4 0 2 2 0 1 0-4 0M16 6a2 2 0 1 0 4 0 2 2 0 1 0-4 0M10 18a2 2 0 1 0 4 0 2 2 0 1 0-4 0M8 6h8M6.9 7.8l4.2 8.4M17.1 7.8l-4.2 8.4' },
   { name: 'project-plan', icon: 'M4 4.5v15h16M7 7.5h6M9.5 11.5h7M12.5 15.5h5.5' },
   { name: 'goals', icon: 'M3.5 12a8.5 8.5 0 1 0 17 0 8.5 8.5 0 1 0-17 0M7.5 12a4.5 4.5 0 1 0 9 0 4.5 4.5 0 1 0-9 0M11 12a1 1 0 1 0 2 0 1 1 0 1 0-2 0' },
@@ -47,13 +50,8 @@ export function shownIn({ name, description, title = name, metadata = {} }, lang
 export async function readDirectory({ fetch = globalThis.fetch, base = new URL('directory/', import.meta.url) } = {}) {
   const read = await Promise.all(DIRECTORY.map(async ({ name, icon }) => {
     const url = new URL(`${name}/SKILL.md`, base).href
-    try {
-      const response = await fetch(url)
-      const skill = response.ok ? parseSkill(await response.text(), url) : null
-      return skill?.name === name ? [{ name, type: /** @type {const} */ ('skill-md'), description: skill.description, url, digest: '', source: '', icon, metadata: skill.metadata }] : []
-    } catch {
-      return []
-    }
+    const skill = await fetch(url).then(async (response) => (response.ok ? parseSkill(await response.text(), url) : null)).catch(() => null)
+    return skill?.name === name ? [{ name, type: /** @type {const} */ ('skill-md'), description: skill.description, url, digest: '', source: '', icon, metadata: skill.metadata }] : []
   }))
   return read.flat()
 }

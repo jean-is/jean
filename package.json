@@ -31,6 +31,7 @@
     "e2e": "playwright test -c test",
     "reflexes": "node scripts/reflexes.js",
     "offers": "npm run build && node scripts/offers.js",
+    "tutor": "npm run build && node scripts/tutor.js",
     "concepts": "node scripts/concepts.js",
     "documents": "node scripts/documents.js",
     "longtasks": "node scripts/longtasks.js",
