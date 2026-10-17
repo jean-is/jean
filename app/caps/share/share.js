@@ -7,7 +7,9 @@
 // token and what its password made stay among the secrets, so only this device changes it.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { walkTokens } from 'marked'
+import { register, unlock } from '../../ui/caps.js'
+import { lex, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
@@ -45,9 +47,17 @@ const DIR = 'shares'
 /** The shares made here, newest first, and those brought in. */
 export const shares = signal(/** @type {Share[]} */ ([]))
 const received = signal(/** @type {Received[]} */ ([]))
-/** What the dialog shares, and the link once it is made. */
+/** What the dialog shares. */
 export const sharing = signal(/** @type {What | null} */ (null))
-export const made = signal(/** @type {{ link: string, password: string, expires: string } | null} */ (null))
+
+/** What an item is known by: a block's text, or a picture's place in the project. @param {Item} [item] */
+const keyOf = (item) => (!item ? null : 'text' in item ? item.text : item.picture.uri)
+
+/** The link last made here of what is shared, a task or one thing of it, which the dialog opens on (D379). @param {What} what @param {Share[]} [list] */
+export const shareOf = ({ path, item }, list = shares.value) => list.find((one) => one.task === path && keyOf(one.item) === keyOf(item))
+
+/** A share's link. @param {Share} share */
+export const linkFor = (share) => linkOf(share.host, share.remote, bytesOf(share.secret))
 
 /** The host's address, or '' where none is named. */
 export const hostOf = () => String(serviceURL('share', app.settings.value, app.policy) ?? '')
@@ -114,14 +124,14 @@ async function valueOf({ path, title, item }, reading) {
 
 /**
  * Seals the copy and hands it to the host, with the write token and, for a password's share, the
- * proof's hash. @param {Share} share @param {Uint8Array} material @param {string} token @param {string} [password]
+ * proof's hash. @param {Share} share @param {Uint8Array} material @param {string} token
  */
-async function upload(share, material, token, password) {
+async function upload(share, material, token) {
   const value = await valueOf({ path: share.task, title: share.title, ...(share.item && { item: share.item }) }, share.read)
   const { sealed, access } = await sealValue(value, { salt: bytesOf(share.salt), material })
   if (sealed.length > LIMIT) throw new Said(t('share.tooBig'))
   const response = await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'PUT', body: /** @type {BodyInit} */ (sealed),
-    headers: { authorization: `Bearer ${token}`, 'share-days': String(share.days), ...(password !== undefined || share.password ? { 'share-proof': await hashOf(access) } : {}) } }).catch(() => null)
+    headers: { authorization: `Bearer ${token}`, 'share-days': String(share.days), ...(share.password && { 'share-proof': await hashOf(access) }) } }).catch(() => null)
   if (!response?.ok) throw new Said(t(!response ? 'share.unreachable' : response.status === 413 ? 'share.tooBig' : 'share.failed'))
   return String((await response.json()).expires ?? '')
 }
@@ -138,12 +148,12 @@ export async function create(what, { password = '', days = 30, read: reading = f
   /** @type {Share} */
   const share = { format: 1, kind: 'share', id: ulid(), host, remote: await idOf(token), secret: base64url(secret), salt: base64url(salt), password: Boolean(password), task: what.path, title: what.title,
     ...(what.item && { item: what.item }), days, read: reading, keep: keep && !what.item, expires: '', createdAt: at, updatedAt: at, author: app.deviceId }
-  share.expires = await upload(share, material, token, password || undefined)
+  share.expires = await upload(share, material, token)
   // What only this device needs to change it: the token, and what the password made, never the password.
   await setSecret(app.fs, `share:${share.id}`, JSON.stringify({ token, ...(password && { material: base64url(material) }) }))
   await app.fs.write(fileOf(share.id), `${JSON.stringify(share, null, 2)}\n`)
   shares.value = [share, ...shares.peek()]
-  return { link: linkOf(host, share.remote, secret), expires: share.expires }
+  return share
 }
 
 /** The token, and what the password made, of a share made here. @param {Share} share */
@@ -153,18 +163,40 @@ async function kept(share) {
   return { token: String(kept.token), material: kept.material ? bytesOf(kept.material) : bytesOf(share.secret) }
 }
 
-/** Seals the task again as it is now, under the same link, for as long again. @param {Share} share @param {boolean} [quiet] */
-export async function update(share, quiet = false) {
+/** Whether this device can change a share: whether its write token is here. @param {Share} share */
+export const here = (share) => kept(share).then(() => true, () => false)
+
+/**
+ * Changes to shares go one after another, so that none undoes another: a share the dialog changes or
+ * stops while the answer it follows seals it again, with what it was.
+ */
+let queue = /** @type {Promise<unknown>} */ (Promise.resolve())
+/** @template T @param {() => Promise<T>} task */
+const inTurn = (task) => { const run = queue.then(task); queue = run.catch(() => {}); return run }
+
+/**
+ * Seals the task again as it is now, under the same link, for as long again, with what the dialog
+ * changed (D379): the password, a new one or '' for none, how long, what goes and the title. Said
+ * unless quiet; the share as it is now, or nothing when it couldn't be, or is no longer shared.
+ * @param {Share} share @param {{ quiet?: boolean, password?: string } & Partial<Pick<Share, 'days' | 'read' | 'keep' | 'title'>>} [changes]
+ */
+export const update = (share, { quiet = false, password, ...choices } = {}) => inTurn(async () => {
+  const now = shares.peek().find((one) => one.id === share.id)
+  if (!now) return
   try {
-    const { token, material } = await kept(share)
-    const changed = { ...share, expires: await upload(share, material, token), updatedAt: new Date().toISOString() }
-    await app.fs.write(fileOf(share.id), `${JSON.stringify(changed, null, 2)}\n`)
-    shares.value = shares.peek().map((one) => (one.id === share.id ? changed : one))
+    const { token, material } = await kept(now)
+    const made = password === undefined ? material : await materialOf(bytesOf(now.secret), bytesOf(now.salt), password || undefined)
+    const changed = { ...now, ...choices, password: password === undefined ? now.password : Boolean(password), updatedAt: new Date().toISOString() }
+    changed.expires = await upload(changed, made, token)
+    if (password !== undefined) await setSecret(app.fs, `share:${now.id}`, JSON.stringify({ token, ...(password && { material: base64url(made) }) }))
+    await app.fs.write(fileOf(now.id), `${JSON.stringify(changed, null, 2)}\n`)
+    shares.value = shares.peek().map((one) => (one.id === now.id ? changed : one))
     if (!quiet) notify(t('share.updated'))
+    return changed
   } catch (error) {
     if (!quiet) failed(error)
   }
-}
+})
 
 /**
  * Stops sharing it, once the user says so: the host forgets it, then Jean does, never before. Without
@@ -172,19 +204,20 @@ export async function update(share, quiet = false) {
  */
 export async function stop(share) {
   if (!confirm(t('share.confirmStop'))) return
-  const { token } = await kept(share).catch(() => ({ token: '' }))
-  const response = token && await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }).catch(() => null)
-  // Gone from the host already, past its time (404) or taken down (410), it no longer opens either.
-  if (!(response && (response.ok || response.status === 404 || response.status === 410))) return notify(t(token ? 'share.unreachable' : 'share.notHere'))
-  await Promise.all([app.fs.remove(fileOf(share.id)), deleteSecret(app.fs, `share:${share.id}`)])
-  shares.value = shares.peek().filter((one) => one.id !== share.id)
-  notify(t('share.stopped'))
+  await inTurn(async () => {
+    const { token } = await kept(share).catch(() => ({ token: '' }))
+    const response = token && await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }).catch(() => null)
+    // Gone from the host already, past its time (404) or taken down (410), it no longer opens either.
+    if (!(response && (response.ok || response.status === 404 || response.status === 410))) return notify(t(token ? 'share.unreachable' : 'share.notHere'))
+    await Promise.all([app.fs.remove(fileOf(share.id)), deleteSecret(app.fs, `share:${share.id}`)])
+    shares.value = shares.peek().filter((one) => one.id !== share.id)
+    notify(t('share.stopped'))
+  })
 }
 
-/** Opens the dialog on what to share. @param {What} what */
+/** Opens the dialog on what to share, or on the link already made of it. @param {What} what */
 export async function openShare(what) {
   sharing.value = { ...what, sealed: what.item ? 0 : await sealedIn(what.path) }
-  made.value = null
   await import('./dialog.js')
   app.dialog.value = 'share'
 }
@@ -233,7 +266,11 @@ export async function bringIn(remote, text) {
     received.value = [kept, ...received.peek()]
     await refreshConversations()
     await openConversation(path)
-    notify(t('share.brought'))
+    // What its answers draw is drawn here too (D378): a page on sight, a chart, a score or a deck with Jean's own skill that declares it.
+    const kinds = new Set(/** @type {string[]} */ ([]))
+    walkTokens(foldTurns(records).flatMap((turn) => turn.steps.flatMap((step) => lex(step.text))), (token) => { if (token.type === 'code') kinds.add(String(token.lang).toLowerCase()) })
+    const added = [...kinds].some((kind) => Object.hasOwn(WIDGETS, kind) && !PAGES.includes(kind)) && (await unlock('skills')) ? await (await import('../skills/skills.js')).drawWith([...kinds]).catch(() => []) : []
+    notify(added.length ? t('share.broughtWith', { skills: new Intl.ListFormat(locale.peek()).format(added) }) : t('share.brought'))
   } catch (error) {
     console.warn('Share', error)
     notify(t('share.cantOpen'))
@@ -260,7 +297,7 @@ function panel() {
       <span class="share-title" dir="auto">${share.title || t('conversation.untitled')}</span>
       <span class="muted small">${share.password ? html`${icons.lock} ` : nothing}${t('share.until', { date: date.format(new Date(share.expires)) })}</span>
       <span class="row">
-        <button class="icon-button subtle" aria-label=${t('share.copyLink')} @click=${() => navigator.clipboard.writeText(linkOf(share.host, share.remote, bytesOf(share.secret))).then(() => notify(t('toast.copied')))}>${icons.copy}</button>
+        <button class="icon-button subtle" aria-label=${t('share.copyLink')} @click=${() => navigator.clipboard.writeText(linkFor(share)).then(() => notify(t('toast.copied')))}>${icons.copy}</button>
         <button class="button subtle" @click=${() => update(share)}>${t('share.update')}</button>
         <button class="button subtle danger" @click=${() => stop(share)}>${t('share.stop')}</button>
       </span>
@@ -284,7 +321,7 @@ if (allowed()) {
     },
     hooks: [
       // A share that follows its task is sealed again once each answer ends.
-      { on: 'turn.end', match: { aborted: false }, run: (e, next) => { for (const share of shares.peek()) if (share.keep && share.task === e.task) update(share, true); return next(e) } },
+      { on: 'turn.end', match: { aborted: false }, run: (e, next) => { for (const share of shares.peek()) if (share.keep && share.task === e.task) update(share, { quiet: true }); return next(e) } },
       // In a task someone else shared, a call to a service the user connected asks first, whatever the rules say:
       // what came before could steer it to the user's mailbox.
       { on: 'tool.check', run: async (e, next) => {
