@@ -185,10 +185,17 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     const asked = await step(messages, [weather])
     assert.deepEqual(asked.calls, [{ id: asked.calls[0]?.id, name: 'weather', args: { city: 'Lyon' } }])
     assert.equal(asked.done.stopReason, 'tool_use')
-    // What the user said meanwhile comes with it.
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
+    assert.equal((await step(messages, [weather])).text, 'In Lyon: Sunny, 21°C')
+  })
+
+  test('what the user sent while a call ran (D365) is their next message, which Claude Code reads within its turn, apart from the result', async () => {
+    const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
     messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' }, { role: 'user', content: 'In Celsius' })
-    const answered = await step(messages, [weather])
-    assert.equal(answered.text, 'In Lyon: Sunny, 21°C / In Celsius')
+    assert.equal((await step(messages, [weather])).text, 'In Lyon: Sunny, 21°C, then heard: In Celsius')
   })
 
   test('a plan’s limit is the brain’s limit', async () => {
@@ -308,10 +315,23 @@ describe('Copilot through the bridge (D262)', { skip: process.platform === 'win3
     assert.deepEqual(asked.calls, [{ id: asked.calls[0]?.id, name: 'weather', args: { city: 'Lyon' } }])
     assert.match(asked.calls[0].id, /^call_/)
     assert.deepEqual([asked.thinking, asked.done.stopReason], ['Lyon, then.', 'tool_use'])
-    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' }, { role: 'user', content: 'In Celsius' })
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
     const answered = await step(messages, [weather])
-    assert.equal(answered.text, 'In Lyon: Sunny, 21°C / In Celsius')
+    assert.equal(answered.text, 'In Lyon: Sunny, 21°C')
     assert.deepEqual(answered.done.usage, { inputTokens: 30, outputTokens: 5, cacheReadTokens: 10 })
+  })
+
+  test('what the user sent while a call ran (D365) is their next message: once the call has its result, Copilot ends that turn and answers it', async () => {
+    const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'The user declined this action.', isError: true },
+      { role: 'user', content: 'Actually, leave out Training' })
+    const answered = await step(messages, [weather])
+    // The result reached the call alone; what the turn it ended said is gone.
+    assert.equal(answered.text, 'Heard (gpt-5-mini, You are Jean, jean-weather), after The user declined this action. (an error): Actually, leave out Training')
+    assert.equal(answered.done.stopReason, 'end')
   })
 
   test('a plan’s limit is the brain’s limit', async () => {

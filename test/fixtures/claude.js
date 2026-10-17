@@ -2,8 +2,9 @@
 // A stand-in for Claude Code (D235), as the bridge runs it: `auth status --json`, and `-p` reading
 // stream-json messages, answering each with Anthropic's stream events. A message that asks for the
 // weather calls Jean's weather tool over the MCP server --mcp-config names, as Claude Code does, and
-// answers with what it says; "limit" ends as a plan's limit does; "gateway" tells where it would send
-// its requests and the settings it was given; anything else is echoed with what came with it.
+// answers with what it says, and with a message that came meanwhile, which Claude Code reads within the
+// turn; "limit" ends as a plan's limit does; "gateway" tells where it would send its requests and the
+// settings it was given; anything else is echoed with what came with it.
 // CLAUDE_SIGNED_OUT=1 plays one not signed in.
 import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
@@ -42,15 +43,27 @@ async function call(params) {
   return (await res.json()).result
 }
 
+/** Its messages, as they come, even while a turn works. @type {any[][]} */
+const inbox = []
+/** @type {(() => void) | null} */
+let wake = null
+createInterface({ input: process.stdin }).on('line', (line) => {
+  inbox.push(JSON.parse(line).message.content)
+  wake?.()
+}).on('close', () => process.exit(0))
+const textOf = (/** @type {any[]} */ content) => content.filter((block) => block.type === 'text').map((block) => block.text).join('\n')
+
 out({ type: 'system', subtype: 'init', model: values.model, tools: [] })
-for await (const line of createInterface({ input: process.stdin })) {
-  const content = JSON.parse(line).message.content
-  const text = content.filter((/** @type {any} */ block) => block.type === 'text').map((/** @type {any} */ block) => block.text).join('\n')
+for (;;) {
+  if (!inbox.length) await new Promise((woken) => { wake = () => { wake = null; woken(undefined) } })
+  const text = textOf(/** @type {any[]} */ (inbox.shift()))
   if (/weather/i.test(text)) {
     const id = `toolu_${++calls}`
     step([{ type: 'tool_use', id, name: 'mcp__jean__weather', input: { city: 'Lyon' } }], 'tool_use')
     const result = await call({ name: 'weather', arguments: { city: 'Lyon' }, _meta: { 'claudecode/toolUseId': id } })
-    step([{ type: 'text', text: `In Lyon: ${result.content.map((/** @type {any} */ part) => part.text).join(' / ')}${result.isError ? ' (an error)' : ''}` }], 'end_turn')
+    await new Promise((read) => setImmediate(read))
+    const meanwhile = inbox.splice(0).map((content) => `, then heard: ${textOf(content)}`).join('')
+    step([{ type: 'text', text: `In Lyon: ${result.content.map((/** @type {any} */ part) => part.text).join(' / ')}${result.isError ? ' (an error)' : ''}${meanwhile}` }], 'end_turn')
   } else if (/gateway/i.test(text)) {
     step([{ type: 'text', text: `${process.env.ANTHROPIC_BASE_URL} ${values.settings}` }], 'end_turn')
   } else if (/limit/i.test(text)) {
