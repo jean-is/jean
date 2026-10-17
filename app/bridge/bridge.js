@@ -73,6 +73,8 @@ const SEARCH = { name: 'web_search', description: 'Search the web for facts the 
 // How long Copilot's model list holds; the calls it announced that a step waits for before it ends without them.
 const MODELS_MS = 3_600_000
 const ANNOUNCED_MS = 1000
+// What a steer waits for Copilot to say the calls it runs are done, at most, before it is said anyway.
+const SETTLED_MS = 5000
 // What Copilot says before its first words, of the tools it was told to leave out or doesn't know.
 const NOTICE = /^Info: /
 // Before Jean's prompt in Copilot's AGENTS.md: its own prompt makes it a coding assistant, which Jean's replaces.
@@ -133,9 +135,9 @@ function told(history) {
   return `<earlier-conversation>\n${lines.join('\n\n')}\n</earlier-conversation>`
 }
 
-/** A tool's result from Jean, as MCP's, with whatever else its turn brought (system notes) after it. @param {any} block @param {any[]} more */
-function result(block, more) {
-  const content = [...(typeof block.content === 'string' ? [{ type: 'text', text: block.content }] : block.content ?? []), ...more]
+/** A tool's result from Jean, as MCP's. @param {any} block */
+function result(block) {
+  const content = (typeof block.content === 'string' ? [{ type: 'text', text: block.content }] : block.content ?? [])
     .flatMap((part) => (part.type === 'text' ? [{ type: 'text', text: part.text }] : part.type === 'image' && part.source?.data ? [{ type: 'image', data: part.source.data, mimeType: part.source.media_type }] : []))
   return { content, ...(block.is_error && { isError: true }) }
 }
@@ -547,15 +549,24 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     const announced = []
     /** Whether it has said anything yet, after which nothing it says is a notice. */
     let spoken = false
+    /** The calls it runs, until it says they are done, and what waits for none to run. @type {Set<string>} */
+    const running = new Set()
+    /** @type {(() => void) | null} */
+    let settled = null
+    /** The prompts it was given, and the one it answers: until a later one's turn comes, what that one says goes nowhere. */
+    let [given, answering] = [0, 1]
     const request = acp(/** @type {any} */ (child), (message) => {
       const update = message.params?.update
       const text = update?.content?.type === 'text' ? String(update.content.text) : ''
-      if (update?.sessionUpdate === 'agent_message_chunk' && text && (spoken || !NOTICE.test(text))) {
+      const heard = given <= answering
+      if (update?.sessionUpdate === 'agent_message_chunk' && heard && text && (spoken || !NOTICE.test(text))) {
         spoken = true
         push({ type: 'text', text })
       }
-      if (update?.sessionUpdate === 'agent_thought_chunk' && text) push({ type: 'thinking', text })
-      if (update?.sessionUpdate === 'tool_call') announced.push({ id: String(update.toolCallId), title: String(update.title) })
+      if (update?.sessionUpdate === 'agent_thought_chunk' && heard && text) push({ type: 'thinking', text })
+      if (update?.sessionUpdate === 'tool_call') running.add(String(update.toolCallId))
+      if (update?.sessionUpdate === 'tool_call' && heard) announced.push({ id: String(update.toolCallId), title: String(update.title) })
+      if (update?.sessionUpdate === 'tool_call_update' && /^(completed|failed)$/.test(update.status) && running.delete(String(update.toolCallId)) && !running.size) settled?.()
       // Jean's tools are allowed: Jean asks the user, as with any brain.
       const allow = message.method === 'session/request_permission' && message.params?.options?.find((/** @type {any} */ option) => /^allow/.test(option.kind))
       return allow ? { outcome: { outcome: 'selected', optionId: allow.optionId } } : undefined
@@ -570,14 +581,29 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     const session = keep({
       id, child: /** @type {any} */ (child), agent: 'copilot', tools,
       // A message that starts with / is the user's words, never one of Copilot's commands: a zero-width space goes before it.
-      say: (content) => void opened.then(async (sessionId) => {
-        const prompt = content.flatMap((block, i) => (block.type === 'text' ? [{ type: 'text', text: `${i || !block.text.startsWith('/') ? '' : '\u200b'}${block.text}` }]
-          : block.type === 'image' && block.source?.data ? [{ type: 'image', data: block.source.data, mimeType: block.source.media_type }] : []))
-        const answered = await request('session/prompt', { sessionId, prompt })
-        announced.length = 0
-        push(answered.error ? { type: 'error', error: answered.error } : { type: 'end', ...answered.result })
-      }, (error) => push({ type: 'error', error })),
+      // One said while it answers (a steer, D365) goes once the calls it runs are done: Copilot ends that turn, cancelled,
+      // keeping their results, and answers this one next.
+      say: (content) => {
+        const mine = ++given
+        void opened.then(async (sessionId) => {
+          const prompt = content.flatMap((block, i) => (block.type === 'text' ? [{ type: 'text', text: `${i || !block.text.startsWith('/') ? '' : '\u200b'}${block.text}` }]
+            : block.type === 'image' && block.source?.data ? [{ type: 'image', data: block.source.data, mimeType: block.source.media_type }] : []))
+          if (answering < mine) await new Promise((done) => {
+            settled = () => done(undefined)
+            if (!running.size) done(undefined)
+            setTimeout(done, SETTLED_MS)
+          })
+          settled = null
+          const answered = await request('session/prompt', { sessionId, prompt })
+          answering = Math.max(answering, mine + 1)
+          announced.length = 0
+          running.clear()
+          if (mine === given) push(answered.error ? { type: 'error', error: answered.error } : { type: 'end', ...answered.result })
+        }, (error) => push({ type: 'error', error }))
+      },
       call: (params) => {
+        // A call of a turn a steer ends is not Jean's to run.
+        if (given > answering) return { content: [{ type: 'text', text: 'Not run: the user said something new.' }], isError: true }
         const name = String(params?.name ?? '')
         const [known] = announced.splice(Math.max(0, announced.findIndex((each) => each.title === `jean-${name}`)), 1)
         const toolId = known?.id ?? `toolu_${randomUUID()}`
@@ -646,8 +672,11 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     const answers = (/** @type {Session} */ each) => (results.length ? results.every((block) => each.asked.some((call) => call.id === block.tool_use_id)) : !each.asked.length)
     let session = [...sessions.values()].find((each) => each.agent === agent && each.count === history.length - 2 && each.seen === mark(history.slice(0, each.count)) && answers(each))
     if (session && results.length) {
+      // What the user sent meanwhile (D365) is their next message, said before the results reach the calls, which the CLI
+      // reads once they are in: Claude Code within its turn, Copilot in the next.
       const more = last.content.filter((block) => block.type !== 'tool_result')
-      results.forEach((block, i) => give(/** @type {Session} */ (session), block.tool_use_id, result(block, i === results.length - 1 ? more : [])))
+      if (more.length) session.say(more)
+      results.forEach((block) => give(/** @type {Session} */ (session), block.tool_use_id, result(block)))
     } else {
       session ??= agent === 'claude' ? await claudeCode(String(body.model), system, tools) : await copilot(String(body.model), system, tools)
       const tail = results.length ? [{ type: 'text', text: 'Go on from there.' }] : last.content
