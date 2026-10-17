@@ -189,9 +189,9 @@ test('only the browser’s frame keeps its site’s origin, and the site can nev
   assert.match(browser, /element\.setAttribute\('sandbox', PAGE_SANDBOX\)\n  element\.setAttribute\('allow', allows\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
 })
 
-test('the privacy policy and the terms run index.html’s theme line alone, and allow nothing else (D356)', async () => {
+test('the privacy policy, the terms and where files go run index.html’s theme line alone, and allow nothing else (D356, D381)', async () => {
   const theme = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
-  for (const path of ['privacy.html', 'terms.html']) {
+  for (const path of ['privacy.html', 'terms.html', 'files.html']) {
     const page = await readFile(new URL(`../app/${path}`, import.meta.url), 'utf8')
     const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(page)?.[1] ?? ''
     const scripts = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((match) => match[1])

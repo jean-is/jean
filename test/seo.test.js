@@ -49,8 +49,8 @@ test('every page but the home page, the privacy policy and the terms is kept out
   }
 })
 
-test('the privacy policy and the terms stay listed, each at its one address without .html (D356)', async () => {
-  assert.deepEqual(LISTED, ['privacy.html', 'terms.html'])
+test('the privacy policy, the terms and where files go stay listed, each at its one address without .html (D356, D381)', async () => {
+  assert.deepEqual(LISTED, ['privacy.html', 'terms.html', 'files.html'])
   assert.equal(addressOf('https://example.org/teams/jean/', 'privacy.html'), 'https://example.org/teams/jean/privacy')
   for (const path of LISTED) {
     const page = await read(path)
@@ -67,7 +67,7 @@ test('robots.txt lets crawlers read everything and names the sitemap, at a hostâ
   const root = siteFiles('https://example.org/')
   assert.equal(root['robots.txt'], 'User-agent: *\nAllow: /\n\nSitemap: https://example.org/sitemap.xml\n')
   assert.deepEqual([...root['sitemap.xml'].matchAll(/<url><loc>([^<]*)<\/loc><\/url>/g)].map(([, address]) => address),
-    ['https://example.org/', 'https://example.org/privacy', 'https://example.org/terms'])
+    ['https://example.org/', 'https://example.org/privacy', 'https://example.org/terms', 'https://example.org/files'])
   const nested = siteFiles('https://example.org/teams/jean/')
   assert.deepEqual(Object.keys(nested), ['sitemap.xml'])
   assert.match(nested['sitemap.xml'], /<loc>https:\/\/example\.org\/teams\/jean\/<\/loc>/)

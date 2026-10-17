@@ -72,9 +72,9 @@ export function withSite (html, base, brand, description, languages) {
 
 /**
  * The pages besides the home page that search engines list: the privacy policy and the terms (D356),
- * which Google's check of an app that signs in to it reads too.
+ * which Google's check of an app that signs in to it reads too, and where files go (D381).
  */
-export const LISTED = ['privacy.html', 'terms.html']
+export const LISTED = ['privacy.html', 'terms.html', 'files.html']
 
 /**
  * A listed page's address: whole, and without .html, which every server of a web deploy answers (D356).

@@ -4,7 +4,7 @@
 // capability draws there (a task paused between steps, D364). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
-// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to the privacy policy and terms (D356).
+// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to where files go (D381), the privacy policy and terms (D356).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
@@ -67,7 +67,7 @@ class Composer extends Element {
     const menu = more.length > 0
     const add = t(menu ? 'composer.add' : 'files.attach')
     const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
-    const legal = /** @type {const} */ (['privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
+    const legal = /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
     const fresh = !app.current.value?.records.length
     return html`
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
