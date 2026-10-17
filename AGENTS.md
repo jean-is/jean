@@ -32,7 +32,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Data rules
 
-- Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder).
+- Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder), sealed at rest by the storage worker (D371): never write to OPFS around it.
 - **Files and names:**
   - One file per entity, named with a ULID and never renamed.
   - Conversations are append-only JSONL of ACP records, except when the user goes back to a request, which removes what came after it (D188).
@@ -88,10 +88,12 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 ```bash
 npm run dev     # build (vendor + manifest), then serve, checking the budgets after each change (npm start does the same)
 npm run dev:gateway  # the same, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
+npm run dev:share    # the same, with a share host on its own port (SHARE_PORT, 8788), already set for Jean, its viewer drawing from app/
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
 npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml (D353) and what search engines and shared links read (D355)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)
-npm run render  # build, then the package that draws a task saved as a web page, in dist/render/, for npm publish ./dist/render (D305)
+npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
+npm run host    # build, then the share host in dist/host/, its viewer from the render package of this version (D361)
 npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
 npm run build:dmg      # the same, then the macOS disk image, on a Mac

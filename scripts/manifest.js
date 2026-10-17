@@ -192,8 +192,8 @@ export function buildWebmanifest (brand, description) {
     start_url: './',
     scope: './',
     display: 'standalone',
-    background_color: '#120c08',
-    theme_color: '#120c08',
+    background_color: '#131313',
+    theme_color: '#131313',
     icons: ICONS,
     screenshots: SCREENSHOTS,
   }

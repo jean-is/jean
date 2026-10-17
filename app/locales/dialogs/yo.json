@@ -16,7 +16,9 @@
   "cap.meaning.text": "Ó ń wá ohun tí àwọn fáìlì yín sọ, kódà ní ọ̀rọ̀ míì tàbí ní èdè míì, pẹ̀lú olùrànlọ́wọ́ kékeré kan lórí ẹ̀rọ yìí ({size}, lẹ́ẹ̀kan ṣoṣo). Kò sí ohun tí yóò kúrò lórí ẹ̀rọ yìí.",
   "cap.meaning.hint": "Ẹ béèrè nípa àwọn fáìlì yín ní ọ̀rọ̀ tí kì í ṣe tiwọn.",
   "cap.backup.text": "Ẹ pa ẹ̀dà ohun gbogbo mọ́ sínú fáìlì kan, kí ẹ sì dá a padà lórí ẹ̀rọ èyíkéyìí.",
+  "cap.share.text": "Ẹ fi iṣẹ́ kan ránṣẹ́, tàbí ojú-ìwé, àwòrán ìṣirò, ìgbékalẹ̀ tàbí àwòrán kan, gẹ́gẹ́ bí ìjápọ̀ tí ẹnikẹ́ni tí ẹ fi ránṣẹ́ sí lè ṣí.",
   "cap.sync.text": "Ó ń jẹ́ kí àwọn iṣẹ́, fáìlì àti ìrántí yín jẹ́ bákan náà lórí àwọn kọ̀ǹpútà yín mìíràn, nípasẹ̀ fódà kan tí OneDrive, Dropbox, iCloud Drive tàbí Google Drive ń mú ṣọ̀kan.",
+  "cap.lock.text": "Àwọn iṣẹ́, fáìlì àti kọ́kọ́rọ́ yín máa ń ṣí pẹ̀lú passkey tàbí ọ̀rọ̀ aṣínà yín nìkan.",
   "cap.brain-local.text": "Àdáni, ọ̀fẹ́, ó sì ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì: ọpọlọ tí ó ń ṣiṣẹ́ lórí kọ̀ǹpútà yìí, bí ó bá lágbára tó.",
   "collection.count": {
     "other": "A ti ṣàwárí {count} nínú {total}"
@@ -27,11 +29,11 @@
   "collection.next": {
     "other": "Ó ku {count} kí a tó dé {rank}"
   },
-  "collection.rank.spark": "Iná kékeré",
-  "collection.rank.candle": "Àbẹ́là",
-  "collection.rank.lantern": "Fìtílà",
-  "collection.rank.hearth": "Ààrò",
-  "collection.rank.daylight": "Ìmọ́lẹ̀ ọ̀sán",
+  "collection.rank.ripple": "Ìgbì kékeré",
+  "collection.rank.wave": "Ìgbì",
+  "collection.rank.current": "Ìṣàn omi",
+  "collection.rank.tide": "Ìkún òkun",
+  "collection.rank.ocean": "Òkun ńlá",
   "cap.files.hint": "Ẹ pín fáìlì kan, tàbí ẹ lẹ ọ̀rọ̀ gígùn kan.",
   "cap.made.hint": "Ẹ fi ìfiránṣẹ́ àkọ́kọ́ yín ránṣẹ́.",
   "cap.computer.hint": "Ẹ pín ìwé ìṣirò kan, tàbí ẹ béèrè fún nọ́mbà pàtó.",
@@ -49,7 +51,9 @@
   "cap.names.hint": "Ẹ bẹ̀rẹ̀ iṣẹ́ díẹ̀ nínú iṣẹ́ àkànṣe kan.",
   "cap.live.hint": "Ẹ lo kíkọ pẹ̀lú ohùn ní ẹ̀ẹ̀mẹta.",
   "cap.backup.hint": "Ẹ bẹ̀rẹ̀ iṣẹ́ mẹ́ta.",
+  "cap.share.hint": "Ẹ fi ẹ̀dà iṣẹ́ kan pamọ́.",
   "cap.sync.hint": "Ẹ sọ pé ẹ tún ń lo kọ̀ǹpútà mìíràn.",
+  "cap.lock.hint": "Ẹ so iṣẹ́ ìsìn kan pọ̀, tàbí ẹ bẹ̀rẹ̀ iṣẹ́ mẹ́wàá.",
   "cap.brain-local.hint": "Ẹ yan ọpọlọ tí ń ṣiṣẹ́ lórí ẹ̀rọ yìí.",
   "knows.instructions": "Àwọn ìtọ́sọ́nà yín",
   "knows.instructionsText": "Ẹ̀yin ni ẹ kọ wọ́n, a sì ń tẹ̀lé wọn nínú gbogbo iṣẹ́.",

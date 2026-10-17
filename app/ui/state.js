@@ -27,8 +27,7 @@ import { contributions } from './caps.js'
  */
 /** @import { Question, Answer } from '../caps/ask/answers.js' */
 
-// The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
-export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
+export { LOCALES } from '../core/i18n.js'
 
 export const app = {
   fs: /** @type {FS} */ (/** @type {unknown} */ (null)),
@@ -56,12 +55,12 @@ export const app = {
   deviceTheme: signal(/** @type {Theme} */ ('dark')),
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
-  look: signal(/** @type {import('./looks.js').LookId} */ ('human')),
+  look: signal(/** @type {import('./looks.js').LookId} */ ('tilde')),
   /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
   sidebar: signal(/** @type {boolean | null} */ (null)),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
   wide: signal(false),
-  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | null>} */
   dialog: signal(null),
   section: signal('general'),
   draft: signal(''),
@@ -156,7 +155,7 @@ export const THEME_KEY = 'app.theme'
 export const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, language: `${MODIFIER}+Shift+L`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B`, save: `${MODIFIER}+S`, delete: `${MODIFIER}+${APPLE ? 'Backspace' : 'Delete'}` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, language: `${MODIFIER}+Shift+L`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B`, save: `${MODIFIER}+S`, share: `${MODIFIER}+Shift+U`, delete: `${MODIFIER}+${APPLE ? 'Backspace' : 'Delete'}` }
 
 /** Light or dark, kept on this device, or null: Auto, what the device shows. @param {Theme | null} next */
 export function setTheme(next) {
@@ -172,7 +171,7 @@ export function switchTheme() {
 }
 
 // The drawer open beside the conversation or put away (D165) belongs to this device too, as the
-// user left it; until then, to the look: Mail and Human keep it open once the room has a task (D369), the others put it away.
+// user left it; until then, to the look: Tilde, Mail and Human keep it open once the room has a task (D369), the others put it away.
 export const SIDEBAR_KEY = 'app.sidebar'
 
 /** Whether the drawer is open beside the conversation now: a wide window, and the user's choice or the look's. */

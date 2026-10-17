@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "Cerca email",
-  "google.read_email": "Leggi un'email",
-  "google.create_draft": "Scrivi una bozza",
-  "google.send_email": "Invia un'email",
-  "google.list_calendars": "Elenca i calendari",
-  "google.list_events": "Elenca gli eventi",
-  "google.create_event": "Aggiungi un evento",
-  "google.update_event": "Modifica un evento",
-  "google.delete_event": "Rimuovi un evento",
-  "google.search_files": "Cerca file",
-  "google.read_file": "Leggi un file",
-  "google.create_document": "Crea un documento"
+  "api.search_emails": "Cerca email",
+  "api.read_email": "Leggi un'email",
+  "api.create_draft": "Scrivi una bozza",
+  "api.send_email": "Invia un'email",
+  "api.list_calendars": "Elenca i calendari",
+  "api.list_events": "Elenca gli eventi",
+  "api.create_event": "Aggiungi un evento",
+  "api.update_event": "Modifica un evento",
+  "api.delete_event": "Rimuovi un evento",
+  "api.search_files": "Cerca file",
+  "api.read_file": "Leggi un file",
+  "api.create_document": "Crea un documento"
 }

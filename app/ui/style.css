@@ -1,14 +1,14 @@
-/* Jean — the room lights up. Pure CSS: oklch, @property light, logical properties only. */
+/* Jean's room, under every look. Pure CSS: oklch, @property light, logical properties only. */
 
-@font-face { font-family: Display; src: url(../fonts/display.woff2) format('woff2'); font-display: swap; }
-@font-face { font-family: Display; font-style: italic; src: url(../fonts/display-italic.woff2) format('woff2'); font-display: swap; }
+/* Gentium Book Plus Bold (fonts/OFL.txt), every weight, so no bold is ever made up. */
+@font-face { font-family: Display; font-weight: 100 900; src: url(../fonts/display.woff2) format('woff2'); font-display: swap; }
 
 @property --light { syntax: '<number>'; inherits: true; initial-value: 0.4; }
 @property --light-x { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
 @property --light-y { syntax: '<percentage>'; inherits: true; initial-value: 34%; }
 @property --light-size { syntax: '<length>'; inherits: true; initial-value: 70vmax; }
-/* The light's colour: Jean's amber, or a project's own (D78), cross-fading between rooms. */
-@property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.74 0.17 54); }
+/* The light's colour: Jean's water blue, or a project's own (D78), cross-fading between rooms. */
+@property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.781 0.118 209); }
 
 :root {
   color-scheme: dark;
@@ -53,7 +53,7 @@
   --glow-alpha: 0.7;
 }
 
-/* A project's light colours the room (the same amber by default: 54 + 11 = 65, 54 + 21 = 75). */
+/* A project's light colours the room (Jean's water by default), turned 11 degrees round the wheel by night, 21 by day. */
 @supports (color: oklch(from red l c h)) {
   :root { --glow: oklch(from var(--tint) 0.78 0.16 calc(h + 11)); }
   [data-theme='light'] { --glow: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); }
@@ -112,80 +112,49 @@ button { cursor: pointer; }
 @keyframes warm { from { --light: 0.62; } to { --light: 0.78; } }
 @keyframes settle { from { --light: 0.75; } to { --light: 0.42; } }
 
-/* ─── The little light (ui/persona.js) ──────────────────────────────────── */
-/* The light, with a face. Every colour comes from --tint, the light's colour: Jean's amber, or a
-   project's own (any CSS colour, on the root or on one element). By day it is drawn in ink. */
+/* ─── The wave (ui/persona.js) ─────────────────────────────────────────── */
+/* Jean's presence, the tilde of its mark. Its colour is --tint's hue and chroma, Jean's water or a
+   project's own, at the lightness each mode needs; it travels the way the page reads, its ends
+   fading out. */
 
-:root { --tint: oklch(0.74 0.17 54); }
+/* Jean's water, and the room's own warm light, as other looks keep theirs; an accent or a project's colour wins. */
+:where(:root) { --tint: oklch(0.781 0.118 209); --wave: oklch(from var(--tint) 0.781 min(c, 0.18) h); }
+:where(:root:not([data-look])) { --tint: oklch(0.74 0.17 54); }
+[data-theme='light'] { --wave: oklch(from var(--tint) 0.56 min(c, 0.19) h); }
 app-persona {
-  position: relative;
   display: inline-block;
   flex: none;
   inline-size: var(--persona-size, 2rem);
   aspect-ratio: 1;
-  container-type: inline-size;
-  color: oklch(from var(--tint) 0.26 0.05 calc(h - 14));
-  --persona-halo: oklch(from var(--tint) 0.78 0.16 calc(h + 11));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
-/* :where() leaves prefers-contrast's ink rim on top. */
-:where([data-theme='light']) app-persona { --persona-halo: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); --persona-rim: oklch(from var(--tint) 0.55 0.16 calc(h - 9)); }
-app-persona::before {
-  content: '';
-  position: absolute;
-  inset: -40%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, oklch(from var(--persona-halo) l c h / var(--glow-alpha)), transparent);
-  opacity: 0.5;
-  transition: opacity 0.8s var(--ease);
-  animation: glow 4s ease-in-out infinite alternate var(--loops, running);
-}
-.persona { position: relative; display: block; inline-size: 100%; block-size: 100%; overflow: visible; }
-.persona * { transition: opacity 0.3s, translate 0.6s var(--ease), scale 0.4s var(--ease); }
-.persona-flame { transform-origin: 50px 91px; animation: sway 3s ease-in-out infinite alternate var(--loops, running); }
-.persona-body, .persona-sparks { fill: oklch(from var(--tint) 0.74 0.17 h); }
-.persona-body { stroke: var(--persona-rim, none); stroke-width: 3; paint-order: stroke; }
-.persona-inner { fill: oklch(from var(--tint) 0.91 0.115 calc(h + 30)); }
-.persona-eyes { fill: currentColor; transform-origin: 50px 62px; animation: blink 5s infinite var(--loops, running); }
-.persona-eyes circle { fill: oklch(1 0 0 / 0.9); }
-.persona-face path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; transform-origin: 50px 71px; }
-.persona-cheeks { fill: oklch(0.69 0.16 27 / 0.5); }
-.persona-sparks circle, .persona-happy { opacity: 0; }
-@container (inline-size < 2.6rem) { .persona-cheeks, .persona-eyes circle { display: none; } }
+.persona { display: block; inline-size: 100%; block-size: 100%; fill: none; stroke: var(--wave); stroke-width: 5; stroke-linecap: round; }
+.persona-wave { transform-box: fill-box; transform-origin: center; scale: 1 0.9; transition: scale 0.4s var(--ease), opacity 0.3s; }
+.persona-line { animation: travel 4.5s linear infinite var(--loops, running); }
+[dir='rtl'] .persona-line { animation-direction: reverse; }
+.persona-smile, .persona-frown { opacity: 0; transition: opacity 0.3s; }
 
-app-persona[data-presence='listening']::before { opacity: 0.8; }
-app-persona[data-presence='listening'] .persona-face { translate: 0 2.5px; }
-app-persona[data-presence='thinking']::before { animation-duration: 0.9s; }
-app-persona[data-presence='thinking'] .persona-flame { animation-duration: 0.8s; }
-app-persona[data-presence='thinking'] .persona-face { animation: ponder 2.4s ease-in-out infinite alternate var(--loops, running); }
-app-persona[data-presence='thinking'] .persona-mouth { scale: 0.55 0.8; }
-app-persona[data-presence='thinking'] .persona-sparks circle { animation: rise 1.8s ease-out infinite var(--loops, running); }
-app-persona[data-presence='thinking'] .persona-sparks circle:nth-child(2) { animation-delay: 0.6s; }
-app-persona[data-presence='thinking'] .persona-sparks circle:nth-child(3) { animation-delay: 1.2s; }
-app-persona[data-presence='answering']::before { opacity: 1; }
-app-persona[data-presence='answering'] .persona { animation: bob 0.8s ease-in-out infinite alternate var(--loops, running); }
-app-persona[data-presence='done']::before { opacity: 0.8; }
-app-persona[data-presence='done'] .persona { animation: hop 0.8s var(--ease); }
-app-persona[data-presence='done'] .persona-eyes { opacity: 0; }
-app-persona[data-presence='done'] .persona-happy { opacity: 1; }
-app-persona[data-presence='waiting']::before { animation-duration: 0.9s; }
-app-persona[data-presence='waiting'] .persona-face { translate: 2px 2.5px; }
-app-persona[data-presence='waiting'] .persona-mouth { scale: 0.7 1; }
-app-persona[data-presence='oops']::before { opacity: 0.25; }
-app-persona[data-presence='oops'] .persona-flame { scale: 1.03 0.94; animation-play-state: paused; }
-app-persona[data-presence='oops'] .persona-face { translate: -2px 2px; }
-app-persona[data-presence='oops'] .persona-mouth { scale: 0.6 -0.7; }
+app-persona[data-presence='listening'] .persona-wave { animation: voice 1.7s ease-in-out infinite var(--loops, running); }
+app-persona[data-presence='listening'] .persona-line { animation-duration: 1.5s; }
+app-persona[data-presence='thinking'] .persona-wave { scale: 1 0.45; }
+app-persona[data-presence='thinking'] .persona-line { animation-duration: 0.7s; }
+app-persona[data-presence='answering'] .persona-wave { animation: speak 1.2s ease-in-out infinite var(--loops, running); }
+app-persona[data-presence='answering'] .persona-line { animation-duration: 1.2s; }
+app-persona[data-presence='waiting'] .persona-wave { scale: 1 1.1; animation: waits 1.8s ease-in-out infinite var(--loops, running); }
+app-persona[data-presence='waiting'] .persona-line { animation-play-state: paused; }
+app-persona:is([data-presence='done'], [data-presence='oops']) .persona-wave { opacity: 0; }
+app-persona[data-presence='done'] .persona-smile { opacity: 1; animation: hop 0.8s var(--ease); }
+app-persona[data-presence='oops'] .persona-frown { opacity: 1; stroke: var(--ink-faint); }
 
-@keyframes glow { from { scale: 0.92; } to { scale: 1.06; } }
-@keyframes sway { from { transform: skewX(2deg) scale(1, 0.98); } to { transform: skewX(-2.5deg) scale(1, 1.03); } }
-@keyframes blink { 0%, 93%, 100% { scale: 1; } 96% { scale: 1 0.1; } }
-@keyframes ponder { from { translate: -3px -3.5px; } to { translate: 2px -3.5px; } }
-@keyframes rise { from { opacity: 0; translate: 0 4px; } 25% { opacity: 1; } to { opacity: 0; translate: 2px -16px; } }
-@keyframes bob { from { translate: 0 1%; } to { translate: 0 -3%; } }
+@keyframes travel { from { translate: -24px; } }
+@keyframes voice { 0%, 100% { scale: 1 0.75; } 20% { scale: 1 1.35; } 45% { scale: 1 0.9; } 70% { scale: 1 1.25; } }
+@keyframes speak { 0%, 100% { scale: 1 0.5; } 15% { scale: 1 1.15; } 30% { scale: 1 0.6; } 50% { scale: 1 1.05; } 65% { scale: 1 0.45; } 80% { scale: 1 0.95; } }
+@keyframes waits { 50% { opacity: 0.4; } }
 @keyframes hop { 40% { translate: 0 -12%; } }
 
 /* On the first screen it sits above the question; once the conversation begins it flies into the header. */
-.welcome app-persona { --persona-size: clamp(4.5rem, 11vw, 7rem); margin-block-end: -1rem; margin-inline-start: calc(var(--persona-size) * -0.17); }
-.wordmark app-persona { margin-block-start: -0.35rem; }
+.welcome app-persona { --persona-size: clamp(4.5rem, 11vw, 7rem); margin-block-end: -1rem; }
 app-shell:has(.welcome) .wordmark app-persona { display: none; }
 .welcome app-persona, .wordmark app-persona { view-transition-name: persona; }
 
@@ -219,7 +188,7 @@ app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-s
   border: 0;
   background: none;
   padding: 0.1rem 0.25rem;
-  font: 400 1.9rem/1 var(--display);
+  font: 700 1.9rem/1 var(--display);
   letter-spacing: -0.01em;
   color: var(--ink);
   text-shadow: 0 0 1.4rem oklch(from var(--glow) l c h / 0.45);
@@ -255,12 +224,12 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 .hero-question, .conversation-title { view-transition-name: hero; }
 .hero-question {
   /* background-clip: text paints only inside the box, which a 0.98 line height
-     would leave short of descenders and the italic overhang: pad, then cancel. */
+     would leave short of descenders: pad, then cancel. */
   margin-block: 0 -0.15em;
   margin-inline: 0 -0.15em;
   padding-block: 0 0.15em;
   padding-inline: 0 0.15em;
-  font: italic 400 clamp(2.8rem, 9vw, 6.2rem)/0.98 var(--display);
+  font: 700 clamp(2.8rem, 9vw, 6.2rem)/0.98 var(--display);
   letter-spacing: -0.02em;
   text-wrap: balance;
   background: linear-gradient(170deg, var(--ink) 35%, var(--flame) 115%);
@@ -288,7 +257,7 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 
 /* ─── Conversation ──────────────────────────────────────────────────────── */
 
-.conversation-title { margin: 1.5rem 0 1rem; font: italic 400 clamp(1.7rem, 4vw, 2.4rem)/1.1 var(--display); color: var(--ink-soft); text-wrap: balance; }
+.conversation-title { margin: 1.5rem 0 1rem; font: 700 clamp(1.7rem, 4vw, 2.4rem)/1.1 var(--display); color: var(--ink-soft); text-wrap: balance; }
 :is(:lang(ar), :lang(ja)) .conversation-title { font-family: var(--sans); font-style: normal; font-weight: 400; }
 .turns { display: flex; flex-direction: column; gap: 1.75rem; margin: 0; padding: 0; list-style: none; }
 .turn { display: flex; flex-direction: column; gap: 1rem; }
@@ -463,7 +432,7 @@ html[data-dropping] .drop-zone { opacity: 1; }
   border-radius: 2rem;
   background: oklch(from var(--room) l c h / 0.8);
   backdrop-filter: blur(6px);
-  font: italic 400 clamp(1.8rem, 5vw, 3rem)/1.1 var(--display);
+  font: 700 clamp(1.8rem, 5vw, 3rem)/1.1 var(--display);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.25s var(--ease);
@@ -813,14 +782,11 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {
-  :root, :root[data-look][data-theme] { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
-  app-persona { --persona-rim: var(--ink); }
+  :root, :root[data-look][data-theme] { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); --wave: var(--ink); }
 }
 @media (forced-colors: active) {
-  .room, app-persona::before, .persona-inner, .persona-cheeks, .persona-eyes circle { display: none; }
-  app-persona { forced-color-adjust: none; color: CanvasText; }
-  .persona-body { fill: Canvas; stroke: CanvasText; }
-  .persona-sparks { fill: CanvasText; }
+  .room { display: none; }
+  .persona { stroke: CanvasText; }
   .send, .button.primary { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   :is(.history-item .ember, .ember:is([data-state='waking'], [data-state='working'], [data-state='ready'])) { forced-color-adjust: none; background: CanvasText; }
   .menu [role='switch']::after { forced-color-adjust: none; background-color: GrayText; }

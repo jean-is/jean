@@ -135,6 +135,7 @@ function card(facts, turn, text, id, chosen) {
   const cloud = brains.some((brain) => !brain.local)
   const hosts = new Map([...brains, ...made].map(({ provider }) => [provider, hostOf(provider)]))
   const others = facts.outside.filter((host) => ![...hosts.values()].includes(host))
+  const files = serviceURL('files', app.settings.value, app.policy)
   /** One of them: its name, the address it was reached at outside this device, or that it ran here. @param {Brain | Maker} one */
   const entry = ({ provider, model, local }) => html`<dd class="receipt-brain">
     <bdi>${named({ provider, model })}</bdi>
@@ -153,6 +154,7 @@ function card(facts, turn, text, id, chosen) {
       ${made.length ? html`<div class="receipt-list"><dt>${t('receipt.made')}</dt>${made.map(entry)}</div>` : nothing}
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
+    ${files ? html`<p class="receipt-note"><a href=${`${files}#${locale.value}`} target="_blank">${t('receipt.files')}</a></p>` : nothing}
     <details class="receipt-certify">
       <summary>${SEAL}${t('receipt.certificate')}${icons.chevron}</summary>
       ${saving(`${id}-save`, 'receipt.save', () => keepCertificate(facts, turn, text))}
@@ -246,18 +248,18 @@ async function keepCertificate(facts, turn, text, words = false) {
   if (!current) return
   const answered = turn.end ?? turn.at
   const kept = words ? current.records.findLast(({ meta }) => meta?.certificate && saysOf(sealedOf(meta.certificate.jws)).credentialSubject?.answer?.at === answered)?.meta?.certificate : undefined
-  /** @type {{ sealed: import('./certificate.js').Sealed, salts: Salts }} */
+  /** @type {{ sealed: import('./certificate.js').Sealed, salts: Salts, places: string[] }} */
   let made
-  if (kept) made = { sealed: sealedOf(kept.jws), salts: kept.salts }
+  if (kept) made = { sealed: sealedOf(kept.jws), salts: kept.salts, places: kept.places ?? [] }
   else {
     const own = await sealOf()
-    const { credential, salts } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
-    made = { sealed: await vouched(await seal(credential, own)), salts }
-    await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts } })
+    const { credential, salts, places } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
+    made = { sealed: await vouched(await seal(credential, own)), salts, places }
+    await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts, places } })
   }
   const date = turn.at.slice(0, 10)
   if (!words) return save(new Blob([JSON.stringify(made.sealed, null, 2)], { type: 'application/jose+json' }), `${t('receipt.file', { date })}.json`)
-  const disclosures = disclosed(await disclosuresOf(made.salts, { turn, text, made: facts.made }))
+  const disclosures = [...disclosed(await disclosuresOf(made.salts, { turn, text, made: facts.made })), ...made.places]
   save(new Blob([proof(made.sealed, disclosures)], { type: 'application/vc+sd-jwt' }), `${t('receipt.proof.file', { date })}.sd-jwt`)
 }
 

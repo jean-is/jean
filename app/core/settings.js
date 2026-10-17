@@ -43,7 +43,7 @@ import { ulid } from './ulid.js'
  */
 
 /**
- * A look by its id (Human when absent, D174), and what the user changed over it: colours as
+ * A look by its id (Tilde when absent, D373), and what the user changed over it: colours as
  * `#rrggbb`, a text size as a share of the browser's, a typeface, and their own CSS.
  * @typedef {{ id?: string, accent?: string, background?: string, size?: number, font?: string, css?: string }} Look
  */
@@ -65,9 +65,11 @@ export const DEFAULT_URLS = Object.freeze({
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
   // What whoever serves Jean names: the gateway to the services a browser can't reach (D191), none until one is
-  // named; the privacy policy and terms linked under the box, by their addresses without .html (D356), jean.is's
-  // until then, none with ''.
-  gateway: '', privacy: 'privacy', terms: 'terms',
+  // named; the privacy policy and terms linked under the box, by their addresses without .html (D356), and where
+  // files go (D381), linked there and from About this answer, jean.is's until then, none with ''.
+  gateway: '', privacy: 'privacy', terms: 'terms', files: 'files',
+  // The host shares go to (D361), none until one is named: jean.is's policy names hst.ing.
+  share: '',
   // A web source's site icon, shown with its domain on its chip (D210): none when ''.
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
   // Brains' prices (D255).

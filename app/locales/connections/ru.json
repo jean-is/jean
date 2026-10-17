@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "Искать письма",
-  "google.read_email": "Прочитать письмо",
-  "google.create_draft": "Написать черновик",
-  "google.send_email": "Отправить письмо",
-  "google.list_calendars": "Показать календари",
-  "google.list_events": "Показать события",
-  "google.create_event": "Добавить событие",
-  "google.update_event": "Изменить событие",
-  "google.delete_event": "Удалить событие",
-  "google.search_files": "Искать файлы",
-  "google.read_file": "Прочитать файл",
-  "google.create_document": "Создать документ"
+  "api.search_emails": "Искать письма",
+  "api.read_email": "Прочитать письмо",
+  "api.create_draft": "Написать черновик",
+  "api.send_email": "Отправить письмо",
+  "api.list_calendars": "Показать календари",
+  "api.list_events": "Показать события",
+  "api.create_event": "Добавить событие",
+  "api.update_event": "Изменить событие",
+  "api.delete_event": "Удалить событие",
+  "api.search_files": "Искать файлы",
+  "api.read_file": "Прочитать файл",
+  "api.create_document": "Создать документ"
 }

@@ -1,16 +1,16 @@
-// Gmail, Google Calendar and Google Drive through Google's own APIs, for every Google account (D349):
-// Google's MCP servers (D344) are a preview for Workspace accounts, not to be offered outside one's
-// own domain. These APIs answer browsers, so their calls go straight to Google, and only the
-// sign-in, whose app the gateway holds, goes through it. Each is a server as the MCP client is one
-// (mcp.js): its tools listed once it says who is signed in, so that a token refused shows, and
-// called, a refusal an MCPError, what a call brings in resources cited by their address.
-// Host-agnostic: fetch, Web Crypto and Intl.
+// Jean's own tools over a service's own API, where its MCP server can't serve everyone: Gmail, Google
+// Calendar and Google Drive for every Google account (D349), Google's MCP servers being a preview for
+// Workspace accounts (D344); Outlook, its calendar, OneDrive and SharePoint for every Microsoft account,
+// through Microsoft Graph (D382). These APIs answer browsers, so their calls go straight to the service,
+// never through a gateway. Each is a server as the MCP client is one (mcp.js): its tools listed once
+// it says who is signed in, so that a token refused shows, and called, a refusal an MCPError, what a
+// call brings in resources cited by their address. Host-agnostic: fetch, Web Crypto and Intl.
 import { MCPError } from './mcp.js'
-import { t, useStrings } from '../../core/i18n.js'
+import { t, useStrings, locale } from '../../core/i18n.js'
 
 /** @import { McpTool, CallResult } from './mcp.js' */
 /**
- * @typedef {(path: string, init?: RequestInit & { as?: 'text' }) => Promise<any>} Call  a request with the user's token: its JSON, or its text
+ * @typedef {(path: string, init?: RequestInit & { as?: 'text' | 'bytes' }) => Promise<any>} Call  a request with the user's token: its JSON, its text or its bytes
  * @typedef {McpTool & { run: (args: any, call: Call) => Promise<any[]> }} Direct
  */
 
@@ -117,10 +117,12 @@ const gmail = [
 // ─── Google Calendar ─────────────────────────────────────────────────────────
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/
+/** The user's time zone, by its IANA name. */
+const here = () => Intl.DateTimeFormat().resolvedOptions().timeZone
 /** An instant, a day meaning its start where the user is. @param {string | number} at */
 const instant = (at) => new Date(DAY.test(String(at)) ? `${at}T00:00` : at).toISOString()
 /** A start or an end: a day, for a whole day, or a time, in a time zone. @param {string} at @param {string} [zone] */
-const when = (at, zone) => (DAY.test(at) ? { date: at } : { dateTime: at, timeZone: zone ?? Intl.DateTimeFormat().resolvedOptions().timeZone })
+const when = (at, zone = here()) => (DAY.test(at) ? { date: at } : { dateTime: at, timeZone: zone })
 /** An event as Calendar takes it, from what was given. @param {any} args */
 const event = ({ title, start, end, time_zone, location, description, attendees }) => ({ ...(title !== undefined && { summary: title }), ...(start && { start: when(start, time_zone) }), ...(end && { end: when(end, time_zone) }),
   ...(location !== undefined && { location }), ...(description !== undefined && { description }), ...(attendees && { attendees: [attendees].flat().map((email) => ({ email })) }) })
@@ -188,11 +190,121 @@ const drive = [
   }),
 ]
 
+// ─── Microsoft Graph ─────────────────────────────────────────────────────────
+
+/** Query options as Graph reads them, their `$` unescaped. @param {Record<string, string | number | undefined>} options */
+const odata = (options) => Object.entries(options).flatMap(([name, value]) => (value === undefined ? [] : `${name}=${encodeURIComponent(value)}`)).join('&')
+/** "Sam <sam@example.com>", or the address alone. @param {any} who */
+const person = ({ emailAddress: { name = '', address = '' } = {} }) => (name && name !== address ? `${name} <${address}>` : address)
+/** Who wrote an email, to whom, when. @param {any} mail */
+const mailHeads = (mail) => [...Object.entries({ From: mail.from && [mail.from], To: mail.toRecipients, Cc: mail.ccRecipients }).flatMap(([name, people]) => (people?.length ? `${name}: ${people.map(person).join(', ')}` : [])), ...(mail.receivedDateTime ? [`Date: ${mail.receivedDateTime}`] : [])]
+/** Addresses as Graph takes them, from a list or between commas, each "Sam <sam@example.com>" or the address alone. @param {unknown} list */
+const recipients = (list) => [list ?? []].flat().flatMap((each) => String(each).split(',')).map((one) => one.trim()).filter(Boolean).map((one) => ({ emailAddress: { address: /<([^>]*)>/.exec(one)?.[1] ?? one } }))
+/** An email as Graph takes it, or a reply in its thread, its text above what it answers. @param {any} args */
+const outgoing = ({ to, cc, bcc, subject, body = '', reply_to }) => {
+  const message = { ...(subject !== undefined && { subject: oneLine(subject) }), toRecipients: recipients(to), ccRecipients: recipients(cc), bccRecipients: recipients(bcc) }
+  return reply_to ? { message, comment: body } : { message: { ...message, body: { contentType: 'text', content: body } } }
+}
+const MAIL = 'id,subject,from,toRecipients,ccRecipients,receivedDateTime,bodyPreview,webLink'
+/** An email, cited by its address in Outlook. @param {any} mail @param {string} text */
+const asMail = (mail, text) => resource(mail.webLink, mail.subject || '(no subject)', text, mail.bodyPreview)
+
+/** @type {Direct[]} */
+const outlook = [
+  tool('search_emails', 'Finds emails as Outlook’s search box does (from:, to:, subject:, hasattachment:true, received>=2026-10-01…), or the latest, each with its id, who wrote it, when and how it starts.',
+    object({ query: string('Outlook’s search, e.g. "from:sam subject:budget"'), max }), true, async ({ query, max = 10 }, call) => {
+      const { value = [] } = await call(`me/messages?${odata({ $select: MAIL, $top: max, ...(query ? { $search: `"${String(query).replace(/"/g, '')}"` } : { $orderby: 'receivedDateTime desc' }) })}`)
+      return value.map((/** @type {any} */ mail) => asMail(mail, [`id: ${mail.id}`, ...mailHeads(mail), '', mail.bodyPreview].join('\n')))
+    }),
+  tool('read_email', 'Reads an email whole, by its id, with the names of the files it carries.', object({ id: string('The email’s id, from search_emails') }, ['id']), true, async ({ id }, call) => {
+    const at = `me/messages/${encodeURIComponent(id)}`
+    const [mail, { value: files = [] }] = await Promise.all([call(`${at}?${odata({ $select: `${MAIL},body` })}`, { headers: { prefer: 'outlook.body-content-type="text"' } }), call(`${at}/attachments?${odata({ $select: 'name,isInline' })}`)])
+    const names = files.flatMap((/** @type {any} */ file) => (file.isInline ? [] : file.name))
+    return [asMail(mail, [...mailHeads(mail), ...(names.length ? [`Files: ${names.join(', ')}`] : []), '', mail.body?.content ?? ''].join('\n'))]
+  }),
+  tool('create_draft', 'Writes a draft in Outlook, which the user sends themselves; a reply stays in its thread.', composing, false, async (args, call) => {
+    const draft = await call(args.reply_to ? `me/messages/${encodeURIComponent(args.reply_to)}/createReply` : 'me/messages', { method: 'POST', body: JSON.stringify(args.reply_to ? outgoing(args) : outgoing(args).message) })
+    return [asMail(draft, `Draft saved (id: ${draft.id}).`)]
+  }),
+  tool('send_email', 'Sends an email from Outlook; a reply stays in its thread.', composing, false, async (args, call) => {
+    await call(args.reply_to ? `me/messages/${encodeURIComponent(args.reply_to)}/reply` : 'me/sendMail', { method: 'POST', body: JSON.stringify(outgoing(args)) })
+    return [{ type: 'text', text: 'Sent.' }]
+  }),
+]
+
+// Times go in with their offset, kept in UTC, or in the zone given, and come back in the user's.
+const EVENT = 'id,subject,start,end,location,attendees,bodyPreview,webLink'
+const inZone = () => ({ headers: { prefer: `outlook.timezone="${here()}"` } })
+/** A start or an end: a time with its offset, a whole day from its midnight, or a time in a zone. @param {string} at @param {string} [zone] */
+const slot = (at, zone = here()) => (/([zZ]|[+-]\d\d:?\d\d)$/.test(at) ? { dateTime: new Date(at).toISOString().slice(0, -1), timeZone: 'UTC' } : { dateTime: DAY.test(at) ? `${at}T00:00:00` : at, timeZone: zone })
+/** An event as Graph takes it, from what was given. @param {any} args */
+const meeting = ({ title, start, end, time_zone, location, description, attendees }) => ({ ...(title !== undefined && { subject: title }), ...(start && { start: slot(start, time_zone), isAllDay: DAY.test(start) }), ...(end && { end: slot(end, time_zone) }), ...(location !== undefined && { location: { displayName: location } }),
+  ...(description !== undefined && { body: { contentType: 'text', content: description } }), ...(attendees && { attendees: [attendees].flat().map((address) => ({ emailAddress: { address }, type: 'required' })) }) })
+/** @param {any} item */
+const asMeeting = (item) => resource(item.webLink, item.subject || '(no title)', [`id: ${item.id}`, `${item.start?.dateTime} → ${item.end?.dateTime} (${item.start?.timeZone})`, item.location?.displayName && `Where: ${item.location.displayName}`,
+  item.attendees?.length && `With: ${item.attendees.map((/** @type {any} */ one) => one.emailAddress?.address).join(', ')}`, item.bodyPreview].filter(Boolean).join('\n'))
+/** A calendar of the user's, their own if none is named. @param {string} [id] */
+const calendarAt = (id) => (id ? `me/calendars/${encodeURIComponent(id)}` : 'me/calendar')
+
+/** @type {Direct[]} */
+const outlookCalendar = [
+  tool('list_calendars', 'Lists the user’s calendars, with their ids.', object({}), true, async (_, call) => {
+    const { value = [] } = await call(`me/calendars?${odata({ $select: 'id,name,isDefaultCalendar,canEdit' })}`)
+    return value.map((/** @type {any} */ item) => ({ type: 'text', text: `${item.id}: ${item.name}${item.isDefaultCalendar ? ' (their own)' : ''}, ${item.canEdit ? 'writer' : 'reader'}` }))
+  }),
+  tool('list_events', 'Lists a calendar’s events from a time on, earliest first, or those with given words.', object({ calendar: calendarId, from: string('An ISO 8601 time or a day; now if left out'), to: string('The same; a year on if left out'), query: string('Words to find'), max }), true,
+    async ({ calendar, from = Date.now(), to, query = '', max = 10 }, call) => {
+      const start = instant(from)
+      const { value = [] } = await call(`${calendarAt(calendar)}/calendarView?${odata({ startDateTime: start, endDateTime: to ? instant(to) : new Date(Date.parse(start) + 366 * 86_400_000).toISOString(), $orderby: 'start/dateTime', $top: query ? 200 : max, $select: EVENT })}`, inZone())
+      return value.filter((/** @type {any} */ item) => [item.subject, item.location?.displayName, item.bodyPreview].join(' ').toLowerCase().includes(String(query).toLowerCase())).slice(0, max).map(asMeeting)
+    }),
+  tool('create_event', 'Adds an event to a calendar; its guests are sent an invitation.', object({ calendar: calendarId, ...fields }, ['title', 'start', 'end']), false,
+    async ({ calendar, ...args }, call) => [asMeeting(await call(`${calendarAt(calendar)}/events`, { method: 'POST', body: JSON.stringify(meeting(args)), ...inZone() }))]),
+  tool('update_event', 'Changes what is given of an event; its guests are told.', object({ id: eventId, ...fields }, ['id']), false,
+    async ({ id, ...args }, call) => [asMeeting(await call(`me/events/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify(meeting(args)), ...inZone() }))]),
+  tool('delete_event', 'Removes an event; its guests are told it is cancelled.', object({ id: eventId }, ['id']), false, async ({ id }, call) => {
+    await call(`me/events/${encodeURIComponent(id)}`, { method: 'DELETE' })
+    return [{ type: 'text', text: 'Removed.' }]
+  }),
+]
+
+/** A file, where it is: one shared with the user is in another's drive, which its id names. @param {any} found */
+const asItem = (found) => {
+  const item = found.remoteItem ?? found
+  return resource(found.webUrl ?? item.webUrl, found.name, `id: ${item.parentReference?.driveId}/${item.id}\n${found.folder ? 'A folder, changed' : 'Changed'} ${found.lastModifiedDateTime}`)
+}
+/** A file's address, from its id as asItem gives it: its drive's, then its own. @param {string} id */
+const itemAt = (id) => `drives/${String(id).split('/').map(encodeURIComponent).join('/items/')}`
+
+/** @type {Direct[]} */
+const onedrive = [
+  tool('search_files', 'Finds files in OneDrive and SharePoint, the user’s own and those shared with them, by words in them or in their names.', object({ query: string('Words to find'), max }, ['query']), true, async ({ query, max = 10 }, call) => {
+    // Microsoft Search reaches SharePoint, for a work or school account; a personal account's OneDrive is searched in itself.
+    const hits = await call('search/query', { method: 'POST', body: JSON.stringify({ requests: [{ entityTypes: ['driveItem'], query: { queryString: query }, size: max }] }) })
+      .then(({ value }) => value?.[0]?.hitsContainers?.flatMap((/** @type {any} */ found) => found.hits ?? []).map((/** @type {any} */ hit) => hit.resource) ?? [], () => [])
+    return (hits.length ? hits : (await call(`me/drive/search(q='${encodeURIComponent(String(query).replace(/'/g, "''"))}')?${odata({ $top: max })}`)).value ?? []).map(asItem)
+  }),
+  tool('read_file', 'Reads a file’s text: a Word document, a presentation, a spreadsheet’s sheets, or a text file.', object({ id: string('The file’s id, from search_files') }, ['id']), true, async ({ id }, call) => {
+    const { extractable, extractPages } = await import('../files/extract.js')
+    const item = await call(`${itemAt(id)}?$select=name,webUrl,@microsoft.graph.downloadUrl`)
+    if (!extractable(item.name)) throw new Error(`${item.name} is a file whose text can’t be read here.`)
+    // Its content is at an address signed already, fetched with no token: /content redirects there, which a request with one can't follow.
+    return [resource(item.webUrl, item.name, ((await extractPages(item.name, await call(item['@microsoft.graph.downloadUrl'], { as: 'bytes' }))) ?? []).join('\n\n'))]
+  }),
+  tool('create_document', 'Makes a file in the user’s OneDrive: a Word document from Markdown, a spreadsheet from CSV or Markdown tables, or a text file.',
+    object({ name: string('Its name, with its kind: Report.docx, Budget.xlsx, Notes.md'), content: string('Markdown for a document, CSV or Markdown tables for a spreadsheet, else the text itself') }, ['name', 'content']), false, async ({ name, content }, call) => {
+      const { makeFile, paperFor } = await import('../made/formats.js')
+      const file = await makeFile(name, content, { paper: paperFor(locale.value) })
+      return [asItem(await call(`me/drive/root:/${encodeURIComponent(file.name)}:/content?@microsoft.graph.conflictBehavior=rename`, { method: 'PUT', headers: { 'content-type': file.mimeType }, body: /** @type {BodyInit} */ (file.bytes) }))]
+    }),
+]
+
 /** Each API by its address (caps/connections/directory.js), with what says who is signed in. @type {Record<string, { who: string, tools: Direct[] }>} */
 export const APIS = {
   'https://gmail.googleapis.com/gmail/v1/users/me/': { who: 'profile', tools: gmail },
   'https://www.googleapis.com/calendar/v3/': { who: 'users/me/calendarList?maxResults=1', tools: calendar },
   'https://www.googleapis.com/drive/v3/': { who: 'about?fields=user', tools: drive },
+  'https://graph.microsoft.com/v1.0/': { who: 'me?$select=id', tools: [...outlook, ...outlookCalendar, ...onedrive] },
 }
 
 /**
@@ -204,19 +316,21 @@ export function apiClient({ url, authorization, fetch = globalThis.fetch }) {
   if (!api) return null
   /** @param {AbortSignal} [signal] @returns {Call} */
   const caller = (signal) => async (path, { as, ...init } = {}) => {
-    const auth = await authorization()
-    const res = await fetch(new URL(path, url), { ...init, signal, headers: { ...(auth && { authorization: auth }), ...(typeof init.body === 'string' && { 'content-type': 'application/json' }), ...init.headers } })
-    if (res.ok) return as ? res.text() : res.status === 204 ? null : res.json()
+    const at = new URL(path, url)
+    // The API's own origin alone gets the token: a file's download address is signed already (Graph's).
+    const auth = at.origin === new URL(url).origin ? await authorization() : undefined
+    const res = await fetch(at, { ...init, signal, headers: { ...(auth && { authorization: auth }), ...(typeof init.body === 'string' && { 'content-type': 'application/json' }), ...init.headers } })
+    if (res.ok) return as === 'bytes' ? new Uint8Array(await res.arrayBuffer()) : as ? res.text() : res.status === 202 || res.status === 204 ? null : res.json()
     const { error } = await res.json().catch(() => ({}))
     // A token refused, or a sign-in that doesn't allow this, as an MCP server refuses them (D344).
-    if (res.status === 401 || /SCOPE_INSUFFICIENT|insufficientPermissions/.test(JSON.stringify(error ?? ''))) throw new MCPError(error?.message ?? `HTTP ${res.status}`, { status: res.status })
+    if (res.status === 401 || /SCOPE_INSUFFICIENT|insufficientPermissions|ErrorAccessDenied|Authorization_RequestDenied/.test(JSON.stringify(error ?? ''))) throw new MCPError(error?.message ?? `HTTP ${res.status}`, { status: res.status })
     throw new Error(error?.message ?? `HTTP ${res.status}`)
   }
   return {
     /** @param {AbortSignal} [signal] @returns {Promise<McpTool[]>} */
     listTools: async (signal) => {
       await Promise.all([caller(signal)(api.who), useStrings('connections')])
-      return api.tools.map(({ run, ...each }) => ({ ...each, title: t(`google.${each.name}`) }))
+      return api.tools.map(({ run, ...each }) => ({ ...each, title: t(`api.${each.name}`) }))
     },
     /** @param {McpTool} tool @param {Record<string, any>} args @param {AbortSignal} [signal] @returns {Promise<CallResult>} */
     callTool: async (tool, args, signal) => {

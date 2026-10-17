@@ -24,7 +24,7 @@ export const icons = {
   check: icon(svg`<path d="M5 12.5 10 17 19 7"/>`),
   dot: icon(svg`<circle cx="12" cy="12" r="4" fill="currentColor"/>`),
   chevron: icon(svg`<path d="m8 10 4 4 4-4"/>`),
-  spark: icon(svg`<path d="M12 5c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7Z"/>`),
+  brain: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M7.5 12.5c1.5-2.4 3-2.4 4.5 0s3 2.4 4.5 0"/>`),
   bolt: icon(svg`<path d="M13 3.5 5.5 13.5H12l-1 7 7.5-10H12l1-7Z"/>`),
   star: icon(svg`<path d="m12 4 2.5 5.1 5.6.8-4 4 .9 5.6-5-2.6-5 2.6.9-5.6-4-4 5.6-.8Z"/>`),
   more: icon(svg`<path d="M12 5.5v.01M12 12v.01M12 18.5v.01" stroke-width="2.6"/>`),

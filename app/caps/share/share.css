@@ -1,0 +1,6 @@
+/* Sharing by link (D361): who opens it, the link, and Settings' shared links, each on a line with its actions. */
+.share-dialog fieldset { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; }
+.share-link { inline-size: 100%; font-family: ui-monospace, monospace; }
+.share-list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.share-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.75rem; }
+.share-title { flex: 1 1 10rem; min-inline-size: 0; font-weight: 600; overflow-wrap: anywhere; }

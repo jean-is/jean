@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "மின்னஞ்சல்களைத் தேடு",
-  "google.read_email": "மின்னஞ்சலைப் படி",
-  "google.create_draft": "வரைவை எழுது",
-  "google.send_email": "மின்னஞ்சல் அனுப்பு",
-  "google.list_calendars": "நாள்காட்டிகளைக் காட்டு",
-  "google.list_events": "நிகழ்வுகளைக் காட்டு",
-  "google.create_event": "நிகழ்வைச் சேர்",
-  "google.update_event": "நிகழ்வை மாற்று",
-  "google.delete_event": "நிகழ்வை நீக்கு",
-  "google.search_files": "கோப்புகளைத் தேடு",
-  "google.read_file": "கோப்பைப் படி",
-  "google.create_document": "ஆவணத்தை உருவாக்கு"
+  "api.search_emails": "மின்னஞ்சல்களைத் தேடு",
+  "api.read_email": "மின்னஞ்சலைப் படி",
+  "api.create_draft": "வரைவை எழுது",
+  "api.send_email": "மின்னஞ்சல் அனுப்பு",
+  "api.list_calendars": "நாள்காட்டிகளைக் காட்டு",
+  "api.list_events": "நிகழ்வுகளைக் காட்டு",
+  "api.create_event": "நிகழ்வைச் சேர்",
+  "api.update_event": "நிகழ்வை மாற்று",
+  "api.delete_event": "நிகழ்வை நீக்கு",
+  "api.search_files": "கோப்புகளைத் தேடு",
+  "api.read_file": "கோப்பைப் படி",
+  "api.create_document": "ஆவணத்தை உருவாக்கு"
 }

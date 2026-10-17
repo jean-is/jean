@@ -9,7 +9,8 @@ import { Element, define } from './base.js'
 import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, markConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
-import { loaded } from './caps.js'
+import { serviceURL } from '../core/settings.js'
+import { loaded, slots, unlock } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './icons.js'
@@ -71,6 +72,7 @@ function taskList(where, list) {
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => markConversation(item.path, { unread: !item.unread }))}
         ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
+        ${slots('task').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {() => unknown} */ act, /** @type {string} */ shortcut) => action(menu, icon, label, act, item.id === currentId ? shortcut : undefined)))}
         ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path), item.id === currentId ? SHORTCUTS.delete : undefined)}</div>
     </li>`
   })}</ol>`
@@ -80,8 +82,11 @@ function taskList(where, list) {
 const action = (menu, icon, label, act, shortcut) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" aria-keyshortcuts=${shortcut ?? nothing}
   @click=${act}>${icon}${label}${shortcut ? keys(shortcut) : nothing}</button>`
 
-/** Saves a copy of a task as a web page (D305), from its menu or ⌘S. @param {{ path: string, title: string }} task */
-export const saveCopy = (task) => import('./export.js').then((module) => module.saveTask(app.fs, task))
+/** Saves a copy of a task as a web page (D305), from its menu or ⌘S; sharing it by link is found then, where a host is named (D361). @param {{ path: string, title: string }} task */
+export const saveCopy = async (task) => {
+  await import('./export.js').then((module) => module.saveTask(app.fs, task))
+  if (serviceURL('share', app.settings.value, app.policy) && app.policy.rules?.share !== 'never') unlock('share')
+}
 
 /** Deletes a task once the user says so, from its menu or ⌘⌫ (D313). @param {string} path */
 export const deleteTask = async (path) => { if (confirm(t('history.confirmDelete'))) await removeConversation(path) }
@@ -189,7 +194,8 @@ function actions(id) {
       ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`)}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.contrast}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
-    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>`
+    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>
+    ${slots('profile').map((part) => part.draw(id))}`
 }
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
@@ -213,7 +219,7 @@ function languages() {
 function looks() {
   const chosen = chosenLook()
   return choices(t('look.title'), html`<div class="look-tiles">${(/** @type {import('./looks.js').LookId[]} */ (Object.keys(LOOKS))).map((id) => html`<button
-    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>${t(`look.${id}.name`)}</button>`)}</div>`)
+    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>${t(`look.${id}.name`, { name: BRAND.name })}</button>`)}</div>`)
 }
 
 /**
@@ -226,7 +232,7 @@ function pickLook(id) {
   setLook({ id })
 }
 
-/** The next look, in the gallery's order, Human again after the last, its name shown (⌘⇧E, D238). */
+/** The next look, in the gallery's order, Tilde again after the last, its name shown (⌘⇧E, D238). */
 export function nextLook() {
   const ids = Object.keys(LOOKS)
   const id = ids[(ids.indexOf(chosenLook()) + 1) % ids.length]

@@ -5,10 +5,10 @@
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks } from './helpers.js'
 
-/** The system's folder picker, played by `picked/<e2e.pick>` in the private file system. @param {import('@playwright/test').Page} page */
+/** The system's folder picker, played by `.picked/<e2e.pick>` in the private file system, where Jean’s own files (sealed, D371) never are. @param {import('@playwright/test').Page} page */
 const picker = (page) => page.addInitScript(() => {
   Object.assign(window, {
-    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true }))
+    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true }))
       .getDirectoryHandle(localStorage.getItem('e2e.pick') ?? 'Jean', { create: true }),
   })
 })
@@ -24,13 +24,13 @@ const folder = (page, name) => page.evaluate(async (name) => {
       else files[`${at}${entry}`] = await (await handle.getFile()).text()
     }
   }
-  await walk(await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })).getDirectoryHandle(name, { create: true }), '')
+  await walk(await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle(name, { create: true }), '')
   return files
 }, name)
 
 /** The drive: the folder becomes exactly these files. @param {import('@playwright/test').Page} page @param {string} name @param {Record<string, string>} files */
 const drive = (page, name, files) => page.evaluate(async ({ name, files }) => {
-  const picked = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })
+  const picked = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })
   await picked.removeEntry(name, { recursive: true }).catch(() => {})
   const top = await picked.getDirectoryHandle(name, { create: true })
   for (const [path, text] of Object.entries(files)) {

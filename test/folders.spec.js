@@ -44,7 +44,7 @@ const APP = { 'main.js': MAIN, '.gitignore': 'dist/\n', 'dist/bundle.js': 'built
 async function folder(page, name, files) {
   await page.evaluate(async ({ name, files }) => {
     const { makeFile } = await import('/caps/made/formats.js')
-    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })
+    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })
     const top = await root.getDirectoryHandle(name, { create: true })
     for (const [path, content] of Object.entries(files)) {
       const parts = path.split('/')
@@ -62,7 +62,7 @@ async function folder(page, name, files) {
 async function write(page, path, text) {
   await page.evaluate(async ({ path, text }) => {
     const parts = path.split('/')
-    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')
+    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')
     for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
     const writable = await (await dir.getFileHandle(String(parts.at(-1)))).createWritable()
     await writable.write(text)
@@ -90,7 +90,7 @@ async function bakery(shown) {
 async function bytes(page, path) {
   return new Uint8Array(await page.evaluate(async (path) => {
     const parts = path.split('/')
-    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')
+    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')
     for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
     return [...new Uint8Array(await (await (await dir.getFileHandle(String(parts.at(-1)))).getFile()).arrayBuffer())]
   }, path))
@@ -118,7 +118,7 @@ async function openConversation(page, title) {
 /** The system's folder picker, played by a folder of the private file system. @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} target */
 const picker = (target) => target.addInitScript(() => {
   Object.assign(window, {
-    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle(localStorage.getItem('e2e.pick') ?? 'Clients'),
+    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle(localStorage.getItem('e2e.pick') ?? 'Clients'),
   })
 })
 
@@ -165,7 +165,7 @@ test.describe('in place', () => {
     await page.locator('app-folder-approval').getByRole('button', { name: 'Change it' }).click()
     await expect(await answer(page)).toContainText('Done: Changed notes.txt.')
     await page.evaluate(async () => {
-      const dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Clients')
+      const dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle('Clients')
       const writable = await (await dir.getFileHandle('notes.txt')).createWritable()
       await writable.write('Call Dana on Wednesday.\n')
       await writable.close()
@@ -211,17 +211,11 @@ test.describe('in place', () => {
     // What git diff would show: that line, and nothing else, its line endings kept.
     expect(new TextDecoder().decode(await bytes(page, 'app/main.js'))).toBe(MAIN.replace('Hello', 'Bonjour'))
     // The conversation's prompt has the folder, its top level and the AGENTS.md the user took.
+    // Jean's own files, read through its FS, since they are sealed on disk (D371).
     const prompt = await page.evaluate(async () => {
-      /** @param {FileSystemDirectoryHandle} dir @returns {Promise<string[]>} */
-      const texts = async (dir) => {
-        const found = []
-        for await (const entry of /** @type {any} */ (dir).values()) {
-          if (entry.kind === 'directory' && entry.name !== 'picked') found.push(...await texts(entry))
-          else if (entry.name.endsWith('.jsonl')) found.push(await (await entry.getFile()).text())
-        }
-        return found
-      }
-      return (await texts(await navigator.storage.getDirectory())).join('\n')
+      const [{ app }, { walk }] = await Promise.all([import('/ui/state.js'), import('/core/fs.js')])
+      const paths = (await walk(app.fs)).filter((path) => path.endsWith('.jsonl') && !path.startsWith('.'))
+      return (await Promise.all(paths.map((path) => app.fs.read(path)))).join('\n')
     })
     expect(prompt).toContain('The user\'s folder \\"app\\" is open in this conversation')
     expect(prompt).toContain('Use two spaces, never tabs.')
@@ -331,14 +325,9 @@ test.describe('in place', () => {
     await page.locator('#folder-menu button', { hasText: 'Use it in every new task' }).click()
     // Kept once project.md names it, written after its handle.
     await expect.poll(() => page.evaluate(async () => {
-      /** @param {FileSystemDirectoryHandle} dir @returns {Promise<boolean>} */
-      const named = async (dir) => {
-        for await (const entry of /** @type {any} */ (dir).values()) {
-          if (entry.kind === 'directory' ? entry.name !== 'picked' && await named(entry) : entry.name === 'project.md' && (await (await entry.getFile()).text()).includes('folder: Clients')) return true
-        }
-        return false
-      }
-      return named(await navigator.storage.getDirectory()).catch(() => false)
+      const [{ app }, { walk }] = await Promise.all([import('/ui/state.js'), import('/core/fs.js')])
+      for (const path of await walk(app.fs)) if (path.endsWith('project.md') && !path.startsWith('.') && (await app.fs.read(path))?.includes('folder: Clients')) return true
+      return false
     })).toBe(true)
     await expect(name).not.toHaveClass(/is-shut/)
 

@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "البحث في رسائل البريد",
-  "google.read_email": "قراءة رسالة بريد",
-  "google.create_draft": "كتابة مسودة",
-  "google.send_email": "إرسال رسالة بريد",
-  "google.list_calendars": "عرض التقويمات",
-  "google.list_events": "عرض الأحداث",
-  "google.create_event": "إضافة حدث",
-  "google.update_event": "تغيير حدث",
-  "google.delete_event": "حذف حدث",
-  "google.search_files": "البحث عن ملفات",
-  "google.read_file": "قراءة ملف",
-  "google.create_document": "إنشاء مستند"
+  "api.search_emails": "البحث في رسائل البريد",
+  "api.read_email": "قراءة رسالة بريد",
+  "api.create_draft": "كتابة مسودة",
+  "api.send_email": "إرسال رسالة بريد",
+  "api.list_calendars": "عرض التقويمات",
+  "api.list_events": "عرض الأحداث",
+  "api.create_event": "إضافة حدث",
+  "api.update_event": "تغيير حدث",
+  "api.delete_event": "حذف حدث",
+  "api.search_files": "البحث عن ملفات",
+  "api.read_file": "قراءة ملف",
+  "api.create_document": "إنشاء مستند"
 }

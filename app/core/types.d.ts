@@ -185,6 +185,8 @@ export type SystemNoteData =
   | { kind: 'terminal', command: string, exit: number }
   /** the user changed a workbook's cells: in the preview, the file at `was` is the copy at `uri` now; in a folder or the workspace, where it is (D229) */
   | { kind: 'cells', was?: string, uri?: string }
+  /** what follows was shared from someone else's Jean, through the host named (D361) */
+  | { kind: 'shared', from: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

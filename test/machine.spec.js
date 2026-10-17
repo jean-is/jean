@@ -26,7 +26,7 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   // Chromium opens a folder in place, played here by one of the private file system; elsewhere it is a copy.
   if (browserName === 'chromium') {
     await page.addInitScript(() => {
-      Object.assign(window, { showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })).getDirectoryHandle('shop', { create: true }) })
+      Object.assign(window, { showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle('shop', { create: true }) })
     })
   }
   await start(page)

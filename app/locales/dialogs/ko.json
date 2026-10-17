@@ -16,7 +16,9 @@
   "cap.meaning.text": "다른 말이나 다른 언어로 물어도 파일에 담긴 내용을 찾아요. 이 기기의 작은 도우미({size}, 한 번만)가 하며, 아무것도 이 기기를 떠나지 않아요.",
   "cap.meaning.hint": "파일에 쓰인 말과 다른 말로 파일에 대해 물어보세요.",
   "cap.backup.text": "모든 것을 파일 하나에 복사해 두고 어느 기기에서든 복원하세요.",
+  "cap.share.text": "작업이나 페이지, 차트, 슬라이드, 그림을 보내는 사람 누구나 열 수 있는 링크로 보내요.",
   "cap.sync.text": "OneDrive, Dropbox, iCloud Drive, Google Drive가 동기화하는 폴더를 통해 작업, 파일, 기억을 다른 컴퓨터에서도 똑같이 유지해요.",
+  "cap.lock.text": "작업, 파일, 키는 패스키나 비밀번호로만 열려요.",
   "cap.brain-local.text": "비공개, 무료, 오프라인: 성능이 충분하면 이 컴퓨터에서 돌아가는 두뇌예요.",
   "collection.count": {
     "other": "{total}개 중 {count}개 발견"
@@ -27,11 +29,11 @@
   "collection.next": {
     "other": "{rank}까지 {count}개 남음"
   },
-  "collection.rank.spark": "불씨",
-  "collection.rank.candle": "촛불",
-  "collection.rank.lantern": "등불",
-  "collection.rank.hearth": "벽난로",
-  "collection.rank.daylight": "햇빛",
+  "collection.rank.ripple": "잔물결",
+  "collection.rank.wave": "파도",
+  "collection.rank.current": "해류",
+  "collection.rank.tide": "밀물",
+  "collection.rank.ocean": "대양",
   "cap.files.hint": "파일을 공유하거나 긴 글을 붙여 넣어 보세요.",
   "cap.made.hint": "첫 메시지를 보내 보세요.",
   "cap.computer.hint": "스프레드시트를 공유하거나 정확한 숫자를 물어보세요.",
@@ -49,7 +51,9 @@
   "cap.names.hint": "프로젝트에서 작업을 몇 개 시작해 보세요.",
   "cap.live.hint": "받아쓰기를 세 번 사용해 보세요.",
   "cap.backup.hint": "작업을 세 개 시작해 보세요.",
+  "cap.share.hint": "작업의 사본을 저장하세요.",
   "cap.sync.hint": "다른 컴퓨터도 쓴다고 말해 보세요.",
+  "cap.lock.hint": "서비스를 연결하거나 작업을 열 개 시작해 보세요.",
   "cap.brain-local.hint": "이 기기에서 실행되는 두뇌를 골라 보세요.",
   "knows.instructions": "내 지침",
   "knows.instructionsText": "내가 직접 쓰고, 모든 작업에서 지켜져요.",

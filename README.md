@@ -1,10 +1,10 @@
 # Jean
 
-> An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.
+> AI for your files, in a browser tab. Give Jean a spreadsheet, a PDF or a folder of documents, and get back the chart, the table or the report. Nothing to install, kept on your device, free and open source.
 
 Jean is for people who will never open a terminal. You open a page, give it a task and your files, and it reads them, works things out with real calculations, and hands back something you can use: a summary, a table, a document. It shows what it is doing while it works, and it asks before anything that matters.
 
-There is no Jean server. Everything Jean keeps lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Read the [manifesto](MANIFESTO.md) for why. Jean is a working name: the final name and domain are still [open](docs/open-questions.md).
+There is no Jean server. Everything Jean keeps lives in your browser as plain files, and the thinking happens on your device or with a provider you choose. Read the [manifesto](MANIFESTO.md) for why.
 
 ## What Jean does
 
@@ -28,7 +28,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
   - Double-check compares each cited claim with its source.
   - When you come back, Jean tells you what changed since last time.
 - **Listens and speaks:** dictation, read-aloud, and a live voice conversation, with speech recognised on your device.
-- **Looks the way you like:** a desktop app of today, the lit room, a mail-style layout with your conversations listed beside the one you read, or ink on paper, each by day or by night. Your own colours, text size, typeface or CSS go on top.
+- **Looks the way you like:** Jean's own, ink and paper with a small blue wave, or a desktop app of today, the lit room, a mail-style layout with your conversations listed beside the one you read, or ink on paper, each by day or by night. Your own colours, text size, typeface or CSS go on top.
 - **Asks when it needs to.** When a task depends on your choices, Jean asks everything at once, one question at a time, with answers to pick from, the one it recommends picked already, and room for your own words.
 - **Asks first.** For each kind of action you choose *Do it*, *Ask me first* or *Never*. By default Jean reads and writes its own files freely, asks before sending, sharing, deleting or anything external, and never touches passwords or payments.
 
@@ -54,8 +54,8 @@ Jean starts as a single box. Everything above is offered when you need it, like 
 
 | | 0.8 |
 |---|---|
-| Jean's own code | 20,429 lines of code, the core 1,755 of them |
-| First load | 96.3 KB gzipped, in the language with the largest catalogue |
+| Jean's own code | 27,200 lines of code, the core 1,947 of them |
+| First load | 107.8 KB gzipped, in the language with the largest catalogue |
 | Libraries loaded up front | 3: `@preact/signals-core`, `lit-html`, `marked` |
 | Build step | None: plain ES modules and an import map |
 | Base prompt | 182 tokens |
@@ -72,7 +72,7 @@ Jean builds on standards, not inventions:
 
 ## Run it
 
-Jean needs Node 22 or later to develop, and a browser no older than Chrome or Edge 108, Safari 16.4 or Firefox 111. The brain on this device also needs WebGPU with `shader-f16`.
+Jean needs Node 22 or later to develop, and a browser no older than Chrome or Edge 108, Safari 16.4 or Firefox 114. The brain on this device also needs WebGPU with `shader-f16`.
 
 ```bash
 npm install
@@ -90,7 +90,7 @@ node test/fixtures/fake-brain.js
 
 **Deploying:** run `npm ci && npm run build:web`, then copy `dist/web/` to any static host served over HTTPS, and have it send the `.br` and `.gz` copies beside each file as they are (Caddy's `precompressed br gzip`, nginx's `gzip_static on`). For a server you reach over SSH, `DEPLOY_TO=host:/path npm run deploy` does it for a commit in git (`HEAD` unless you name one after `--`): it uploads the commit as a new release beside the last five and switches `/path/current`, which the server serves, to it at once. When `capabilities.json` names a new version of the render package, which draws a task saved as a web page, it has to be on npm before the site names it: `npm run deploy` publishes it first, under your npm login; with any other host, run `npm run render`, then `npm publish ./dist/render`. Jean's code runs exactly as written: `dist/web/` holds `app/` with Jean's own code minified, and `npm run serve` serves `app/` as it is. Only third-party code (copied into `app/vendor/`), two generated listings and a copy of the licence are added at build time, and none of them is committed. A browser ties Jean's data to the address it is served from, so choose that address once, and give it as `ADDRESS=https://…/` to have browsers offer Jean as a search engine, a search sent to Jean at once. For containers, see [deploy/docker/](deploy/docker/README.md).
 
-**Gateway:** some services, like Gmail, Microsoft 365 or Slack, refuse requests from a browser, or only accept apps they registered. A small gateway, with nothing to install, reaches them for Jean: it relays to every service Jean knows that a browser can't reach, or to the `hosts` you name, and keeps the secret of an app you registered there (D191, D214). Run it on Node, or put `gateway/gateway.js` on Cloudflare Workers, Deno or Bun, then name it in Settings › Connections, or in policy (`urls.gateway`):
+**Gateway:** some services, like Google Workspace or Slack, refuse requests from a browser, or only accept apps they registered. A small gateway, with nothing to install, reaches them for Jean: it relays to every service Jean knows that a browser can't reach, or to the `hosts` you name, and keeps the secret of an app you registered there (D191, D214). Run it on Node, or put `gateway/gateway.js` on Cloudflare Workers, Deno or Bun, then name it in Settings › Connections, or in policy (`urls.gateway`):
 
 ```bash
 GATEWAY_CONFIG='{"origins":["https://jean.example"]}' node gateway/serve.js
@@ -108,7 +108,7 @@ To try it on your computer, one command serves Jean with the gateway at `/gatewa
 npm run dev:gateway
 ```
 
-That is all Microsoft 365, Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Qonto and Todoist need. Gmail, Google Calendar, Google Drive and Google Workspace, Slack, Figma, Asana, Zoom, HubSpot and Box take only apps registered with them (Gmail, Calendar and Drive are then called from the browser, only their sign-in through the gateway): register one, with Jean's address as its redirect, and add it to `clients` (`{"issuer":"https://accounts.google.com","tokenEndpoint":"https://oauth2.googleapis.com/token","clientId":"…","clientSecret":"…"}`). `npm run directory` shows each service's sign-in server. ServiceNow is each company's own instance, which registers no app itself: its admin registers one (Machine Identity Console › Inbound integrations, OAuth - Authorization code grant, its token format JWT, Jean's address as its redirect), and policy names the instance's MCP server with that app's client id (`"directory": [{ "id": "servicenow", "url": "https://<instance>.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default", "clientId": "…" }]`); an app with a secret goes in `clients` instead, with the instance as its issuer, and policy names it as `app` in place of `clientId`. With `npm run dev:gateway`, the redirect is `http://127.0.0.1:4173/`, and the apps go in `GATEWAY_CONFIG` before the command.
+That is all Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Qonto and Todoist need. Gmail, Google Calendar, Google Drive and Google Workspace, Slack, Figma, Asana, Zoom, HubSpot and Box take only apps registered with them (Gmail, Calendar and Drive are then called from the browser, only their sign-in through the gateway): register one, with Jean's address as its redirect, and add it to `clients` (`{"issuer":"https://accounts.google.com","tokenEndpoint":"https://oauth2.googleapis.com/token","clientId":"…","clientSecret":"…"}`). Microsoft 365 needs no gateway: register an app in Microsoft Entra for any organisation's accounts and personal ones, as a single-page app with Jean's address as its redirect, and give its client id in policy (`"directory": [{ "id": "microsoft-365", "clientId": "…" }]`); a web app whose secret the gateway holds instead (`"issuer":"https://login.microsoftonline.com/common/v2.0"`) renews for 90 days rather than one (D382). `npm run directory` shows each service's sign-in server. ServiceNow is each company's own instance, which registers no app itself: its admin registers one (Machine Identity Console › Inbound integrations, OAuth - Authorization code grant, its token format JWT, Jean's address as its redirect), and policy names the instance's MCP server with that app's client id (`"directory": [{ "id": "servicenow", "url": "https://<instance>.service-now.com/sncapps/mcp-server/mcp/sn_mcp_server_default", "clientId": "…" }]`); an app with a secret goes in `clients` instead, with the instance as its issuer, and policy names it as `app` in place of `clientId`. With `npm run dev:gateway`, the redirect is `http://127.0.0.1:4173/`, and the apps go in `GATEWAY_CONFIG` before the command.
 
 **Desktop:** `npm run build:desktop` puts the same files in an app for macOS, Windows and Linux, in `dist/desktop/`: a window of the system's own web view, with Jean's files inside, made with [Neutralino](https://neutralino.js.org). It needs nothing else on macOS and Windows; Linux needs WebKitGTK. The window gives Jean only what Sync needs: the system's dialog for a folder, the folder's files, and its file manager (D155, D169). On a Mac, `npm run build:dmg` also makes the disk image to hand out.
 
@@ -143,7 +143,7 @@ CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on 
 | [MANIFESTO.md](MANIFESTO.md) | Why Jean exists, in one page |
 | [docs/product.md](docs/product.md) | The user, the vocabulary, progressive discovery, and how every feature behaves |
 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
-| [docs/design.md](docs/design.md) | The room that lights up, and the little light |
+| [docs/design.md](docs/design.md) | Jean's identity, Tilde, its wave, and the themes |
 | [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, what is open and what is enterprise, and what the architecture allows later |
 | [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
 | [docs/decisions.md](docs/decisions.md) | Every decision as it stands, by topic, with the alternatives that were rejected |

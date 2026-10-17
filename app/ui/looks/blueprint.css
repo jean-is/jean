@@ -51,7 +51,6 @@
 /* The print, darker at its edges. */
 :root[data-look='blueprint'] .room { background: radial-gradient(120% 90% at 50% 40%, transparent 50%, oklch(0.22 0.1 256 / 0.45)); animation: none; }
 :root[data-look='blueprint'][data-theme='light'] .room { display: none; }
-:root[data-look='blueprint'] app-persona::before { display: none; }
 :root[data-look='blueprint'] .bar { background: var(--room); border-block-end: 1px solid var(--line-strong); }
 :root[data-look='blueprint'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; font-weight: 700; text-transform: uppercase; }
 :root[data-look='blueprint']:not(:lang(ar), :lang(fa), :lang(ur)) :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .starter, .follow-up, .button) { letter-spacing: 0.04em; }

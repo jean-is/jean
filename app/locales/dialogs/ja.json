@@ -16,7 +16,9 @@
   "cap.meaning.text": "言い回しや言語が違っても、ファイルに書かれていることを見つけます。この端末上の小さなヘルパー（{size}、1回のみ）を使い、何も端末の外に出ません。",
   "cap.meaning.hint": "ファイルとは違う言葉で、ファイルについて質問してみましょう。",
   "cap.backup.text": "すべてを1つのファイルに保存し、どの端末でも復元できます。",
+  "cap.share.text": "タスク、またはページ・グラフ・スライド・画像を、送った相手なら誰でも開けるリンクとして送ります。",
   "cap.sync.text": "OneDrive、Dropbox、iCloud Drive、Google Drive が同期するフォルダーを通して、タスク、ファイル、記憶をほかのコンピューターでも同じに保ちます。",
+  "cap.lock.text": "タスク、ファイル、キーは、あなたのパスキーかパスワードでだけ開きます。",
   "cap.brain-local.text": "プライベート、無料、オフライン。十分な性能があれば、このコンピューターで動く頭脳です。",
   "collection.count": {
     "other": "{total}件中{count}件を発見"
@@ -27,11 +29,11 @@
   "collection.next": {
     "other": "{rank}まであと{count}"
   },
-  "collection.rank.spark": "火花",
-  "collection.rank.candle": "ろうそく",
-  "collection.rank.lantern": "ランタン",
-  "collection.rank.hearth": "暖炉",
-  "collection.rank.daylight": "陽の光",
+  "collection.rank.ripple": "さざ波",
+  "collection.rank.wave": "波",
+  "collection.rank.current": "流れ",
+  "collection.rank.tide": "潮",
+  "collection.rank.ocean": "大海",
   "cap.files.hint": "ファイルを共有するか、長い文章を貼り付ける。",
   "cap.made.hint": "最初のメッセージを送る。",
   "cap.computer.hint": "スプレッドシートを共有するか、正確な数字を求める。",
@@ -49,7 +51,9 @@
   "cap.names.hint": "プロジェクトでタスクをいくつか始める。",
   "cap.live.hint": "音声入力を3回使う。",
   "cap.backup.hint": "タスクを3つ始める。",
+  "cap.share.hint": "タスクのコピーを保存する。",
   "cap.sync.hint": "ほかのコンピューターも使っていると伝えます。",
+  "cap.lock.hint": "サービスを接続するか、タスクを10個始める。",
   "cap.brain-local.hint": "このデバイスで動く頭脳を選ぶ。",
   "knows.instructions": "あなたの指示",
   "knows.instructionsText": "あなたが書き、すべてのタスクで守られます。",

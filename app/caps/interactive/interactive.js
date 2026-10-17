@@ -22,8 +22,8 @@
 import { html, nothing, render } from 'lit-html'
 import { computed, effect, signal } from '@preact/signals-core'
 import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
-import { register } from '../../ui/caps.js'
-import { declared, drawn } from '../../ui/markdown.js'
+import { register, drawnActions } from '../../ui/caps.js'
+import { declared, drawn, PAGES } from '../../ui/markdown.js'
 import { pageRights, pagePolicy, pageAllow, mapStyles, PAGE_SANDBOX } from '../../ui/csp.js'
 import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
@@ -40,8 +40,7 @@ register({
   slots: { add: { at: 6, draw: row }, modes: { at: 0, draw: chip, notes } },
 })
 // A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
-const KINDS = ['html', 'mermaid', 'geojson']
-effect(() => { if (KINDS.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...KINDS]) })
+effect(() => { if (PAGES.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...PAGES]) })
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
 // A task saved as a web page (D305) has it from the render package, whose server sends it as text: there its relay is written in the frame.
@@ -253,6 +252,7 @@ class AppPage extends HTMLElement {
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+        ${this.hasAttribute('map') ? nothing : drawnActions('html', this.getAttribute('source') ?? '')}
       </div>`, this)
   }
 
@@ -332,7 +332,7 @@ function diagram(source, open) {
     copyDrawing(source, shown.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
   }
   return html`<figure class="diagram"><app-diagram source=${source} role="img" aria-label=${t('interactive.diagram')}></app-diagram>
-    <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button></div></figure>`
+    <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('mermaid', source)}</div></figure>`
 }
 
 /** Whether a whole block is GeoJSON. @param {string} source */

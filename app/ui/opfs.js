@@ -116,25 +116,32 @@ function rpc(worker, from) {
 }
 
 /**
- * Round-trips a small file. Fails (rather than hangs) in Firefox private windows and the like.
- * The probe path is per tab so two tabs starting together don't remove each other's probe.
+ * Opens the vault, through the lock when it has one (docs/encryption.md), then round-trips a small
+ * file. Fails (rather than hangs) in Firefox private windows and the like. The probe path is per
+ * tab so two tabs starting together don't remove each other's probe.
  * @param {Call} call
  * @param {string} from
  */
 async function probe(call, from) {
   const path = `.cache/probe-${from}`
-  const steps = async () => {
-    await call('ping')
+  const state = await quickly(call('ping'))
+  if (state === 'locked' || state === 'sealed') await (await import('../caps/lock/lock.js')).locked(call, state)
+  else if (state !== 'open') return false
+  return quickly((async () => {
     await call('write', path, 'ok')
     const back = await call('read', path)
     await call('remove', path)
     return back === 'ok'
-  }
+  })())
+}
+
+/** What a step of the start gives, or false when it fails or hangs. @template T @param {Promise<T>} promise */
+async function quickly(promise) {
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   let timer
   const timeout = new Promise((resolve) => (timer = setTimeout(resolve, PROBE_TIMEOUT_MS, false)))
   try {
-    return await Promise.race([steps(), timeout])
+    return await Promise.race([promise, timeout])
   } catch {
     return false
   } finally {

@@ -230,7 +230,7 @@ function followUps(at, suggestions, brain) {
   return html`<ul class="follow-ups" aria-label=${t('suggest.title')}>
     ${suggestions.map((suggestion) => html`<li><button class="follow-up" dir="auto" @click=${() => send(suggestion)}><span>${withFormulas(suggestion)}</span></button></li>`)}
     ${actions.map((id) => html`<li><button class="follow-up" @click=${() => import('./discovery.js').then((module) => module.follow(id))}>${t(`suggest.${id}`)}</button></li>`)}
-    ${smarter ? html`<li><button class="follow-up is-smarter" @click=${askSmarter}>${icons.spark}${t('auto.smarter')}</button></li>` : nothing}
+    ${smarter ? html`<li><button class="follow-up is-smarter" @click=${askSmarter}>${icons.brain}${t('auto.smarter')}</button></li>` : nothing}
   </ul>`
 }
 

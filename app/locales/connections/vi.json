@@ -1,14 +1,14 @@
 {
-  "google.search_emails": "Tìm email",
-  "google.read_email": "Đọc email",
-  "google.create_draft": "Viết thư nháp",
-  "google.send_email": "Gửi email",
-  "google.list_calendars": "Xem các lịch",
-  "google.list_events": "Xem các sự kiện",
-  "google.create_event": "Thêm sự kiện",
-  "google.update_event": "Đổi sự kiện",
-  "google.delete_event": "Xoá sự kiện",
-  "google.search_files": "Tìm tệp",
-  "google.read_file": "Đọc tệp",
-  "google.create_document": "Tạo tài liệu"
+  "api.search_emails": "Tìm email",
+  "api.read_email": "Đọc email",
+  "api.create_draft": "Viết thư nháp",
+  "api.send_email": "Gửi email",
+  "api.list_calendars": "Xem các lịch",
+  "api.list_events": "Xem các sự kiện",
+  "api.create_event": "Thêm sự kiện",
+  "api.update_event": "Đổi sự kiện",
+  "api.delete_event": "Xoá sự kiện",
+  "api.search_files": "Tìm tệp",
+  "api.read_file": "Đọc tệp",
+  "api.create_document": "Tạo tài liệu"
 }

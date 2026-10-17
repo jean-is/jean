@@ -22,6 +22,10 @@ async function start() {
   // Plain HTTP reaches this computer alone (D260).
   const reach = ['localhost', '127.0.0.1', ...await nearby]
   document.head.append(Object.assign(document.createElement('meta'), { httpEquiv: 'Content-Security-Policy', content: `connect-src 'self' https: wss: ${reach.map((name) => `http://${name}:*`).join(' ')}` }))
+  setLoader(async (lang, part) => {
+    const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
+    return response.ok ? response.json() : null
+  })
   const fs = await opfsFS().catch(() => null)
   app.fs = fs ?? memoryFS()
   app.ephemeral.value = !fs
@@ -35,10 +39,6 @@ async function start() {
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
   configureCapabilities({ deny, remember: rememberUnlocked })
 
-  setLoader(async (lang, part) => {
-    const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
-    return response.ok ? response.json() : null
-  })
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, navigator.languages))
 
   const root = document.documentElement
@@ -78,7 +78,7 @@ async function start() {
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
   // stays on the device for index.html, the room's too, since a device without one starts in
-  // Human (D174); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
+  // Tilde (D373); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
   // allows), with their code loaded only once there are some.
   let dressing = Promise.resolve()
   effect(() => {

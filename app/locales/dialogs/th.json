@@ -16,7 +16,9 @@
   "cap.meaning.text": "ค้นหาสิ่งที่ไฟล์ของคุณบอก แม้จะใช้คำอื่นหรือภาษาอื่น ด้วยผู้ช่วยตัวเล็กบนอุปกรณ์นี้ ({size} ครั้งเดียว) ไม่มีอะไรออกจากอุปกรณ์นี้",
   "cap.meaning.hint": "ถามเกี่ยวกับไฟล์ของคุณด้วยคำที่ต่างจากคำในไฟล์",
   "cap.backup.text": "เก็บสำเนาทุกอย่างไว้ในไฟล์เดียว และกู้คืนได้บนทุกอุปกรณ์",
+  "cap.share.text": "ส่งงาน หรือหน้าเว็บ แผนภูมิ สไลด์ หรือรูปภาพ เป็นลิงก์ที่ใครก็ตามที่คุณส่งให้เปิดได้",
   "cap.sync.text": "ทำให้งาน ไฟล์ และความจำของคุณเหมือนกันในคอมพิวเตอร์เครื่องอื่น ผ่านโฟลเดอร์ที่ OneDrive, Dropbox, iCloud Drive หรือ Google Drive ซิงก์อยู่",
+  "cap.lock.text": "งาน ไฟล์ และคีย์ของคุณเปิดได้ด้วยพาสคีย์หรือรหัสผ่านของคุณเท่านั้น",
   "cap.brain-local.text": "ส่วนตัว ฟรี และออฟไลน์: สมองที่ทำงานบนคอมพิวเตอร์เครื่องนี้ หากเครื่องแรงพอ",
   "collection.count": {
     "other": "ค้นพบแล้ว {count} จาก {total}"
@@ -27,11 +29,11 @@
   "collection.next": {
     "other": "อีก {count} ถึงระดับ{rank}"
   },
-  "collection.rank.spark": "ประกายไฟ",
-  "collection.rank.candle": "เทียน",
-  "collection.rank.lantern": "ตะเกียง",
-  "collection.rank.hearth": "เตาผิง",
-  "collection.rank.daylight": "แสงตะวัน",
+  "collection.rank.ripple": "ระลอก",
+  "collection.rank.wave": "คลื่น",
+  "collection.rank.current": "กระแสน้ำ",
+  "collection.rank.tide": "น้ำขึ้น",
+  "collection.rank.ocean": "มหาสมุทร",
   "cap.files.hint": "แชร์ไฟล์ หรือวางข้อความยาวๆ",
   "cap.made.hint": "ส่งข้อความแรกของคุณ",
   "cap.computer.hint": "แชร์สเปรดชีต หรือขอตัวเลขที่แม่นยำ",
@@ -49,7 +51,9 @@
   "cap.names.hint": "เริ่มงานสักสองสามงานในโปรเจกต์",
   "cap.live.hint": "ใช้การพูดเพื่อพิมพ์สามครั้ง",
   "cap.backup.hint": "เริ่มงานสามงาน",
+  "cap.share.hint": "บันทึกสำเนาของงาน",
   "cap.sync.hint": "บอกว่าคุณใช้คอมพิวเตอร์อีกเครื่องด้วย",
+  "cap.lock.hint": "เชื่อมต่อบริการ หรือเริ่มงานสิบงาน",
   "cap.brain-local.hint": "เลือกสมองที่ทำงานบนอุปกรณ์นี้",
   "knows.instructions": "คำแนะนำของคุณ",
   "knows.instructionsText": "คุณเป็นผู้เขียน และทำตามในทุกงาน",

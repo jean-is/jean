@@ -307,7 +307,7 @@ function answers(settings, brainsLocked) {
       <header class="brains-head"><h3 id="brains-yours">${t('brain.connectedTitle')}</h3>${brainsLocked || adding.value || status.value ? nothing : html`<button class="button subtle"
         @click=${() => { adding.value = true; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.brains-add summary'))?.focus()) }}>${icons.plus} ${t('brain.add')}</button>`}</header>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-yours">
-        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.spark, name: t('auto.name'), where: t('auto.text') })}</div>
+        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.brain, name: t('auto.name'), where: t('auto.text') })}</div>
         ${settings.brains.map((brain) => {
           const chosen = !settings.auto && brain.id === active?.id
           const open = opened.value === brain.id, version = brain.api !== 'device'
@@ -420,7 +420,7 @@ export function ways(first, all = true) {
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}`)
     : nothing}
-    ${all ? way('quick', icons.spark, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
+    ${all ? way('quick', icons.brain, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
       <p>${t('brain.quick.text')}</p>
       <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button></div>`) : nothing}
     ${way('key', icons.key, t('brain.key.title'), providers(KEYED), false, html`
@@ -514,7 +514,7 @@ const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
  * @type {[string, [string, string, string?][]][]}
  */
 const KEYS = [
-  ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['action.delete', SHORTCUTS.delete]]],
+  ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['cap.share.name', SHORTCUTS.share, 'share'], ['action.delete', SHORTCUTS.delete]]],
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
     ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'], ['action.close', 'Escape']]],
@@ -763,7 +763,7 @@ const KNOWN = ['you', 'skills', 'routines']
  */
 const SECTIONS = {
   general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
-  brains: { at: 20, label: 'settings.brains', icon: icons.spark, show: brains },
+  brains: { at: 20, label: 'settings.brains', icon: icons.brain, show: brains },
   appearance: { at: 30, label: 'settings.appearance', icon: icons.contrast, show: appearance },
   keyboard: { at: 40, label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
@@ -837,25 +837,25 @@ class Settings extends Element {
 // ─── What Jean can do ────────────────────────────────────────────────────────
 
 // The house (docs/design.md), in Settings, is a case of trophies (D127) in Settings' own parts
-// (D316): the little light, whose rank rises a quarter of the case at a time, to daylight, over a
+// (D316): the wave, whose rank rises a quarter of the case at a time, to the ocean, over a
 // bar of how much is found; then a capability a row of a list, lit once found, a silhouette until
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', meaning: 'spark', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'lock', machine: 'terminal', pictures: 'image', plugins: 'bolt',
+  files: 'file', meaning: 'brain', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', share: 'upload', sync: 'sync', lock: 'key', 'brain-local': 'lock', machine: 'terminal', pictures: 'image', plugins: 'bolt',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), share: () => openSettings('data'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), lock: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
-const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
+const RANKS = ['ripple', 'wave', 'current', 'tide', 'ocean']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
-  find: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
+  find: () => [everywhere.value, FINDABLE], lock: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 /** The row open: '' for the next to find, null once the user closed it. */
@@ -939,7 +939,7 @@ function looks(look = {}) {
       ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
         <span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>
-        <span><strong>${t(`look.${id}.name`)}</strong></span>
+        <span><strong>${t(`look.${id}.name`, { name: BRAND.name })}</strong></span>
       </label>`)}
     </fieldset>
     <details class="other">

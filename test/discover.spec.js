@@ -40,7 +40,7 @@ test('the house lights up as capabilities are turned on', async ({ page }) => {
   expect(Number(warmth)).toBeGreaterThan(0)
   await settings.getByRole('button', { name: 'Turn on everything' }).click()
   await expect(settings.locator('.case > li:not(.is-lit)')).toHaveCount(0)
-  await expect(house.locator('.house-rank')).toHaveText('Daylight')
+  await expect(house.locator('.house-rank')).toHaveText('Ocean')
 })
 
 test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', async ({ page }) => {

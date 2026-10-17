@@ -8,6 +8,7 @@ import { html, render, svg, nothing } from 'lit-html'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
+import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { lex, blocks, inline } from '../../ui/markdown.js'
@@ -68,6 +69,7 @@ class AppSlides extends HTMLElement {
         ${document.fullscreenEnabled ? html`<button class="icon-button subtle end" aria-label=${t('slides.present')} @click=${() => this.present()}>${PRESENT}</button>` : nothing}
         <button class="icon-button subtle end" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+        ${drawnActions('marp', source)}
       </div>`, this)
   }
 

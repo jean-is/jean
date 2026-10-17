@@ -16,7 +16,9 @@
   "cap.meaning.text": "Tìm điều các tệp của bạn nói, kể cả bằng từ ngữ khác hay ngôn ngữ khác, nhờ một trợ thủ nhỏ trên thiết bị này ({size}, một lần). Không gì rời khỏi thiết bị này.",
   "cap.meaning.hint": "Hỏi về các tệp của bạn bằng những từ khác với từ trong tệp.",
   "cap.backup.text": "Giữ bản sao mọi thứ trong một tệp, và khôi phục trên bất kỳ thiết bị nào.",
+  "cap.share.text": "Gửi một tác vụ, hoặc một trang, biểu đồ, bản trình bày hay hình ảnh, dưới dạng đường liên kết mà bất kỳ ai bạn gửi đều mở được.",
   "cap.sync.text": "Giữ các nhiệm vụ, tệp và trí nhớ của bạn giống nhau trên các máy tính khác, qua một thư mục được OneDrive, Dropbox, iCloud Drive hoặc Google Drive đồng bộ.",
+  "cap.lock.text": "Các nhiệm vụ, tệp và khóa API của bạn chỉ mở được bằng khóa truy cập hoặc mật khẩu của bạn.",
   "cap.brain-local.text": "Riêng tư, miễn phí và ngoại tuyến: một bộ não chạy trên máy tính này, nếu máy đủ mạnh.",
   "collection.count": {
     "other": "Đã khám phá {count}/{total}"
@@ -27,11 +29,11 @@
   "collection.next": {
     "other": "Còn {count} nữa để đạt {rank}"
   },
-  "collection.rank.spark": "Tia lửa",
-  "collection.rank.candle": "Ngọn nến",
-  "collection.rank.lantern": "Đèn lồng",
-  "collection.rank.hearth": "Bếp lửa",
-  "collection.rank.daylight": "Ánh ban ngày",
+  "collection.rank.ripple": "Gợn sóng",
+  "collection.rank.wave": "Sóng",
+  "collection.rank.current": "Dòng chảy",
+  "collection.rank.tide": "Thủy triều",
+  "collection.rank.ocean": "Đại dương",
   "cap.files.hint": "Chia sẻ một tệp, hoặc dán một đoạn văn dài.",
   "cap.made.hint": "Gửi tin nhắn đầu tiên của bạn.",
   "cap.computer.hint": "Chia sẻ một bảng tính, hoặc yêu cầu con số chính xác.",
@@ -49,7 +51,9 @@
   "cap.names.hint": "Bắt đầu vài nhiệm vụ trong một dự án.",
   "cap.live.hint": "Dùng tính năng đọc chính tả ba lần.",
   "cap.backup.hint": "Bắt đầu ba nhiệm vụ.",
+  "cap.share.hint": "Lưu một bản sao của tác vụ.",
   "cap.sync.hint": "Nhắc rằng bạn cũng dùng một máy tính khác.",
+  "cap.lock.hint": "Kết nối một dịch vụ, hoặc bắt đầu mười nhiệm vụ.",
   "cap.brain-local.hint": "Chọn bộ não chạy trên thiết bị này.",
   "knows.instructions": "Chỉ dẫn của bạn",
   "knows.instructionsText": "Do bạn viết, và được làm theo trong mọi nhiệm vụ.",

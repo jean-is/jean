@@ -16,7 +16,9 @@
   "cap.meaning.text": "即使換了說法或換了語言，也能找到你的檔案裡寫的內容，靠的是這台裝置上的一個小幫手（{size}，只需一次）。任何內容都不會離開這台裝置。",
   "cap.meaning.hint": "用和檔案裡不同的說法，問問關於你的檔案的問題。",
   "cap.backup.text": "把所有內容複製到一個檔案中，並可在任何裝置上還原。",
+  "cap.share.text": "把一個任務，或一個頁面、圖表、簡報或圖片，以連結的形式傳送，收到的人都能開啟。",
   "cap.sync.text": "透過 OneDrive、Dropbox、iCloud Drive 或 Google Drive 同步的資料夾，讓你的任務、檔案和記憶在其他電腦上保持一致。",
+  "cap.lock.text": "你的任務、檔案和金鑰只能用你的密碼金鑰或密碼打開。",
   "cap.brain-local.text": "私密、免費、離線：如果電腦效能足夠，就能在這台電腦上執行的大腦。",
   "collection.count": {
     "other": "已發現 {count} / {total}"
@@ -27,11 +29,11 @@
   "collection.next": {
     "other": "還差 {count} 個即可達到「{rank}」"
   },
-  "collection.rank.spark": "火花",
-  "collection.rank.candle": "燭光",
-  "collection.rank.lantern": "提燈",
-  "collection.rank.hearth": "爐火",
-  "collection.rank.daylight": "日光",
+  "collection.rank.ripple": "漣漪",
+  "collection.rank.wave": "波浪",
+  "collection.rank.current": "洋流",
+  "collection.rank.tide": "潮汐",
+  "collection.rank.ocean": "海洋",
   "cap.files.hint": "分享一個檔案，或貼上一段長文字。",
   "cap.made.hint": "傳送你的第一則訊息。",
   "cap.computer.hint": "分享一個試算表，或要求精確的數字。",
@@ -49,7 +51,9 @@
   "cap.names.hint": "在一個專案裡開始幾個任務。",
   "cap.live.hint": "使用三次語音輸入。",
   "cap.backup.hint": "開始三個任務。",
+  "cap.share.hint": "儲存一個任務的副本。",
   "cap.sync.hint": "提到你也在用另一台電腦。",
+  "cap.lock.hint": "連接一個服務，或開始十個任務。",
   "cap.brain-local.hint": "選擇在這台裝置上執行的大腦。",
   "knows.instructions": "你的指示",
   "knows.instructionsText": "由你撰寫，在每個任務中都會遵循。",
