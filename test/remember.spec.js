@@ -3,15 +3,19 @@
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings } from './helpers.js'
 
-/** @param {import('@playwright/test').Page} page @param {string} name */
+/** Makes a project in a light other than Jean's own (the first swatch), and says which.
+ * @param {import('@playwright/test').Page} page @param {string} name */
 async function createProject(page, name) {
   const dialog = page.locator('app-project-dialog dialog[open]')
   await expect(dialog).toBeVisible()
   await dialog.locator('input[name="name"]').fill(name)
-  await dialog.locator('.swatch').nth(4).click()
+  const swatch = dialog.locator('.swatch').nth(4)
+  await swatch.click()
+  const light = await swatch.locator('input').inputValue()
   await dialog.locator('.button.primary').click()
   await expect(dialog).toBeHidden()
   await expect(page.locator('app-projects .wordmark')).toHaveText(name)
+  return light
 }
 
 /** Settings' About you, once it has read what Jean knows (D134). @param {import('@playwright/test').Page} page */
@@ -27,10 +31,10 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await turnOn(page, 'Memory')
   await page.keyboard.press('Escape')
   await turnOn(page, 'Projects')
-  await createProject(page, 'Bakery')
+  const light = await createProject(page, 'Bakery')
   await expect(page).toHaveURL(/#\/p\/[0-9A-Z]{26}\/$/)
   const tint = await page.evaluate(() => document.documentElement.style.getPropertyValue('--tint'))
-  expect(tint).toContain('255')
+  expect(tint).toBe(light)
 
   await ask(page, 'Remember: the bakery opens at 7')
   await expect(page.locator('.toast')).toContainText('Remembered: the bakery opens at 7')
