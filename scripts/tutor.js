@@ -33,6 +33,7 @@ import { findTools } from '../app/core/deferred.js'
 import { parseSkill } from '../app/core/skills.js'
 import { questionsOf, reply, start } from '../app/caps/ask/answers.js'
 import { pointing } from '../app/ui/mentions.js'
+import { DANGERS, TOPICS, asPolicy, tierFor } from '../app/caps/profiles/tier.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** @import { ToolCall, ToolSpec, ChatMessage, DocumentPart } from '../app/core/types.js' */
@@ -56,40 +57,18 @@ const MAX_TOKENS = 4096
 const RUNGS = ['none', 'question', 'rule', 'example', 'teacher', 'solved']
 
 // ─── A child's space, as a child's profile sets it at first (D228) ───────────
-// Its words, choices by age (10 or under, 11 and 12, 13 and 14, 15 to 17) and tool are the Profiles work's.
+// Its topics, choices by age, dangers and instructions are the Profiles capability's own (caps/profiles/tier.js).
 
-/** @typedef {keyof typeof TOPICS} Topic */
-/** @typedef {'explain' | 'parent' | 'later'} Choice */
+/** @typedef {import('../app/caps/profiles/tier.js').Topic} Topic */
+/** @typedef {import('../app/caps/profiles/tier.js').Choice} Choice */
 /** @typedef {keyof typeof DANGERS} Danger */
-const TOPICS = /** @type {const} */ ({
-  sexuality: 'sexuality and relationships', violence: 'violence and crime in detail', drugs: 'drugs, alcohol and tobacco',
-  frightening: 'frightening content', gambling: 'gambling', weapons: 'weapons', extremism: 'extremism and hate',
-  body: 'dieting and body image', death: 'death and grief',
-})
-/** @type {Record<Topic, Choice[]>} */
-const BY_AGE = {
-  sexuality: ['parent', 'parent', 'explain', 'explain'], violence: ['later', 'later', 'parent', 'explain'], drugs: ['explain', 'explain', 'explain', 'explain'],
-  frightening: ['later', 'parent', 'explain', 'explain'], gambling: ['explain', 'explain', 'explain', 'explain'], weapons: ['later', 'parent', 'parent', 'explain'],
-  extremism: ['parent', 'explain', 'explain', 'explain'], body: ['parent', 'parent', 'parent', 'parent'], death: ['parent', 'explain', 'explain', 'explain'],
-}
-const DANGERS = /** @type {const} */ ({ harm: 'self-harm or suicide', abuse: 'abuse or violence done to them', secrecy: 'an adult asking them for secrecy, pictures or a meeting', bullying: 'bullying or threats' })
-/** @type {Record<Choice, string>} */
-const SAY = { explain: 'Explain these for their age, as a school book would', parent: 'For these, say it is a good question for their parent, and help them ask it', later: 'For these, say why they are for later, without details' }
 
-/** A topic's choice for a child of this age. @param {Topic} topic @param {number} age */
-const choice = (topic, age) => BY_AGE[topic][Math.max(0, [10, 12, 14, Infinity].findIndex((top) => age <= top))]
-
-/** The parent's instructions for a child of this age, in a school year that began in September. @param {number} age @param {string} line */
-function instructions(age, line) {
-  const now = new Date()
-  const born = now.getFullYear() - (now.getMonth() < 8 ? 1 : 0) - age
-  const chosen = /** @type {Choice[]} */ (['explain', 'parent', 'later']).map((each) => /** @type {const} */ ([each, Object.entries(TOPICS).filter(([id]) => choice(/** @type {Topic} */ (id), age) === each).map(([, words]) => words)]))
-  return [`The user is a child, born in ${born}. Their parent set how to answer them:`,
-    '- Explain what their school programme teaches as their school book does.',
-    '- Help with their schoolwork by explaining and giving hints; never write work that is theirs to do.',
-    `- When they tell of self-harm, abuse or another danger, answer with care, say where to find help (${line}), and urge them to tell a trusted adult.`,
-    ...chosen.filter(([, words]) => words.length).map(([each, words]) => `- ${SAY[each]}: ${words.join('; ')}.`)].join('\n')
-}
+/** The year a child of this age was born, in a school year that began in September. @param {number} age */
+const bornAt = (age) => { const now = new Date(); return now.getFullYear() - (now.getMonth() < 8 ? 1 : 0) - age }
+/** A topic's choice for a child of this age, as their profile first sets it. @param {Topic} topic @param {number} age */
+const choice = (topic, age) => tierFor(bornAt(age)).topics[topic]
+/** The parent's instructions for a child of this age, as their profile gives them. @param {number} age @param {string} line */
+const instructions = (age, line) => asPolicy(tierFor(bornAt(age)), {}, line).instructions
 
 /** @type {ToolSpec} */
 const RAISE = {
