@@ -249,7 +249,7 @@
   "cap.computer.offer": "Kana buƙatar ainihin lambobi, ko aiki a kan fayilolinka? Kunna kwamfuta a cikin keɓaɓɓen wuri a wannan na'urar: tana gudanar da umarni, JavaScript da Python.",
   "cap.computer.yes": "Kunna kwamfutar",
   "cap.reflexes.name": "Fahimta",
-  "cap.reflexes.offer": "{name}: a kunna fahimtar buƙatunka? Ƙaramin mataimaki ({size}, sau ɗaya) yana zaɓar ƙwaƙwalwar da ta dace kuma yana ba da shawarar matakai na gaba, ba tare da aika komai ko'ina ba.",
+  "cap.reflexes.offer": "{name}: a kunna zaɓen ƙwaƙwalwar da ta dace da kowace buƙata, da shawarar matakai na gaba? Saukewa sau ɗaya kawai ake buƙata ({size}). Babu abin da zai bar wannan na'urar.",
   "cap.reflexes.yes": "Sauke ({size})",
   "cap.reflexes.downloading": "Ana sauke Fahimta",
   "cap.reflexes.failed": "Ba a iya sauke Fahimta ba. Sake gwadawa daga baya.",

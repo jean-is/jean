@@ -59,7 +59,7 @@ test('offers count the tasks of every project, wait their turn when due, and giv
   // Intuition is due, and Backup too outside a private window (WebKit's here): whichever count came first shows first.
   const offer = page.locator('aside.offer')
   const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
-  let left = ['get a feel for what you need', ...(ephemeral ? [] : ['Keep a copy of everything'])]
+  let left = ['pick the right brain for each request', ...(ephemeral ? [] : ['Keep a copy of everything'])]
   await expect(offer).toContainText(new RegExp(left.join('|')))
   // A spreadsheet shared now takes its place.
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Sales.csv', mimeType: 'text/csv', buffer: Buffer.from('month,total\nJan,10\n') })

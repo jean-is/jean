@@ -249,7 +249,7 @@
   "cap.computer.offer": "Kailangan mo ba ng eksaktong numero, o trabaho sa mga file mo? Buksan ang isang computer sa isang nakahiwalay na kapaligiran sa device na ito: nagpapatakbo ito ng mga command, JavaScript at Python.",
   "cap.computer.yes": "Buksan ang computer",
   "cap.reflexes.name": "Kutob",
-  "cap.reflexes.offer": "Hayaang maramdaman ng {name} ang kailangan mo? Isang maliit na katulong ({size}, isang beses) ang pipili ng tamang utak at magmumungkahi ng susunod na hakbang, nang walang ipinapadala kahit saan.",
+  "cap.reflexes.offer": "Hayaang piliin ng {name} ang tamang utak sa bawat kahilingan at imungkahi ang susunod na hakbang? Isang beses lang ang pag-download ({size}). Walang lalabas sa device na ito.",
   "cap.reflexes.yes": "I-download ({size})",
   "cap.reflexes.downloading": "Dina-download ang Kutob",
   "cap.reflexes.failed": "Hindi ma-download ang Kutob. Subukang muli mamaya.",

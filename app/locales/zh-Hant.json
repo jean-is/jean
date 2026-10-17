@@ -245,7 +245,7 @@
   "cap.computer.offer": "需要精確的數字，或處理你的檔案嗎？在這台裝置上的隔離環境中開啟一台電腦：它能執行指令、JavaScript 和 Python。",
   "cap.computer.yes": "開啟電腦",
   "cap.reflexes.name": "直覺",
-  "cap.reflexes.offer": "讓 {name} 了解你的需要嗎？一個小幫手（{size}，只需一次）會選擇合適的大腦並建議下一步，不會傳送任何內容到任何地方。",
+  "cap.reflexes.offer": "讓 {name} 為每個請求選擇合適的大腦，並建議下一步嗎？只需下載一次（{size}）。任何內容都不會離開這台裝置。",
   "cap.reflexes.yes": "下載（{size}）",
   "cap.reflexes.downloading": "正在下載直覺",
   "cap.reflexes.failed": "無法下載直覺。請稍後再試。",

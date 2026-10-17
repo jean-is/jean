@@ -245,7 +245,7 @@
   "cap.computer.offer": "Perlukan nombor yang tepat, atau kerja pada fail anda? Hidupkan komputer dalam persekitaran terasing pada peranti ini: ia menjalankan arahan, JavaScript dan Python.",
   "cap.computer.yes": "Hidupkan komputer",
   "cap.reflexes.name": "Gerak hati",
-  "cap.reflexes.offer": "Biar {name} memahami keperluan anda? Pembantu kecil ({size}, sekali sahaja) memilih otak yang sesuai dan mencadangkan langkah seterusnya, tanpa menghantar apa-apa ke mana-mana.",
+  "cap.reflexes.offer": "Biar {name} memilih otak yang sesuai untuk setiap permintaan dan mencadangkan langkah seterusnya? Hanya perlu muat turun sekali ({size}). Tiada apa keluar dari peranti ini.",
   "cap.reflexes.yes": "Muat turun ({size})",
   "cap.reflexes.downloading": "Memuat turun Gerak hati",
   "cap.reflexes.failed": "Gerak hati tidak dapat dimuat turun. Cuba lagi kemudian.",

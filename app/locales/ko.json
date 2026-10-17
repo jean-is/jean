@@ -245,7 +245,7 @@
   "cap.computer.offer": "정확한 숫자나 파일 작업이 필요하세요? 이 기기의 격리된 환경에서 컴퓨터를 켜세요. 명령, JavaScript, Python을 실행합니다.",
   "cap.computer.yes": "컴퓨터 켜기",
   "cap.reflexes.name": "직감",
-  "cap.reflexes.offer": "{name}에게 필요한 것을 알아채게 할까요? 작은 도우미({size}, 한 번만)가 알맞은 두뇌를 고르고 다음 단계를 추천해요. 아무것도 밖으로 보내지 않아요.",
+  "cap.reflexes.offer": "{name}에게 요청마다 알맞은 두뇌를 고르고 다음 단계를 추천하게 할까요? 한 번만 다운로드하면 돼요({size}). 아무것도 이 기기를 떠나지 않아요.",
   "cap.reflexes.yes": "다운로드({size})",
   "cap.reflexes.downloading": "직감 다운로드 중",
   "cap.reflexes.failed": "직감을 다운로드하지 못했어요. 나중에 다시 시도하세요.",

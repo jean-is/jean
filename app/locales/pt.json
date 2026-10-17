@@ -253,7 +253,7 @@
   "cap.computer.offer": "Precisas de números exatos ou de trabalho nos teus ficheiros? Ativa um computador num ambiente isolado neste dispositivo: executa comandos, JavaScript e Python.",
   "cap.computer.yes": "Ativar o computador",
   "cap.reflexes.name": "Intuição",
-  "cap.reflexes.offer": "Deixar {name} perceber o que precisas? Um pequeno assistente ({size}, uma só vez) escolhe o cérebro certo e sugere os próximos passos, sem enviar nada para lado nenhum.",
+  "cap.reflexes.offer": "Deixar {name} escolher o cérebro certo para cada pedido e sugerir os próximos passos? Basta uma única transferência ({size}). Nada sai deste dispositivo.",
   "cap.reflexes.yes": "Transferir ({size})",
   "cap.reflexes.downloading": "A transferir a Intuição",
   "cap.reflexes.failed": "Não foi possível transferir a Intuição. Tenta mais tarde.",

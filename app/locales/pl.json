@@ -257,7 +257,7 @@
   "cap.computer.offer": "Potrzebujesz dokładnych liczb albo pracy na plikach? Włącz komputer w odizolowanym środowisku na tym urządzeniu: uruchamia polecenia, JavaScript i Pythona.",
   "cap.computer.yes": "Włącz komputer",
   "cap.reflexes.name": "Intuicja",
-  "cap.reflexes.offer": "Czy {name} ma wyczuwać, czego potrzebujesz? Mały pomocnik ({size}, jednorazowo) wybiera odpowiedni mózg i podsuwa kolejne kroki, niczego nigdzie nie wysyłając.",
+  "cap.reflexes.offer": "Czy {name} ma wybierać odpowiedni mózg do każdej prośby i podsuwać kolejne kroki? Wystarczy jednorazowe pobranie ({size}). Nic nie opuszcza tego urządzenia.",
   "cap.reflexes.yes": "Pobierz ({size})",
   "cap.reflexes.downloading": "Pobieranie Intuicji",
   "cap.reflexes.failed": "Nie udało się pobrać Intuicji. Spróbuj później.",

@@ -253,7 +253,7 @@
   "cap.computer.offer": "¿Quieres cifras exactas o trabajo hecho en tus archivos? Activa una computadora en un entorno aislado en este dispositivo: ejecuta comandos, JavaScript y Python.",
   "cap.computer.yes": "Activar la computadora",
   "cap.reflexes.name": "Intuición",
-  "cap.reflexes.offer": "¿Dejar que {name} capte lo que necesitas? Un pequeño ayudante ({size}, una sola vez) elige el cerebro adecuado y sugiere los siguientes pasos, sin enviar nada a ninguna parte.",
+  "cap.reflexes.offer": "¿Dejar que {name} elija el cerebro adecuado para cada petición y sugiera los siguientes pasos? Basta con una sola descarga ({size}). Nada sale de este dispositivo.",
   "cap.reflexes.yes": "Descargar ({size})",
   "cap.reflexes.downloading": "Descargando la Intuición",
   "cap.reflexes.failed": "No se pudo descargar la Intuición. Vuelve a intentarlo más tarde.",

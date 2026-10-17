@@ -249,7 +249,7 @@
   "cap.computer.offer": "Kesin rakamlar mı, dosyalarında iş mi lazım? Bu cihazda yalıtılmış bir ortamda bir bilgisayarı aç: komutlar, JavaScript ve Python çalıştırır.",
   "cap.computer.yes": "Bilgisayarı aç",
   "cap.reflexes.name": "Sezgi",
-  "cap.reflexes.offer": "{name} neye ihtiyacın olduğunu sezsin mi? Küçük bir yardımcı ({size}, bir kez) doğru beyni seçer ve sonraki adımları önerir, hiçbir yere bir şey göndermeden.",
+  "cap.reflexes.offer": "{name} her istek için doğru beyni seçsin ve sonraki adımları önersin mi? Tek bir indirme yeterli ({size}). Hiçbir şey bu cihazdan çıkmaz.",
   "cap.reflexes.yes": "İndir ({size})",
   "cap.reflexes.downloading": "Sezgi indiriliyor",
   "cap.reflexes.failed": "Sezgi indirilemedi. Daha sonra tekrar dene.",

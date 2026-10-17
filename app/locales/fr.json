@@ -253,7 +253,7 @@
   "cap.computer.offer": "Besoin de chiffres exacts, ou de travail sur vos fichiers ? Activez un ordinateur embarqué sur cet appareil : il exécute des commandes, du JavaScript et du Python.",
   "cap.computer.yes": "Activer l’ordinateur",
   "cap.reflexes.name": "Intuition",
-  "cap.reflexes.offer": "Laisser {name} sentir ce dont vous avez besoin ? Un petit assistant ({size}, une seule fois) choisit le bon cerveau et suggère la suite, sans rien envoyer nulle part.",
+  "cap.reflexes.offer": "Laisser {name} choisir le cerveau adapté à chaque demande et vous proposer les étapes suivantes ? Il suffit d’un seul téléchargement ({size}). Rien ne quitte cet appareil.",
   "cap.reflexes.yes": "Télécharger ({size})",
   "cap.reflexes.downloading": "Téléchargement de l’Intuition",
   "cap.reflexes.failed": "L’Intuition n’a pas pu être téléchargée. Réessayez plus tard.",

@@ -249,7 +249,7 @@
   "cap.computer.offer": "Want exact numbers, or work done on your files? Turn on a computer in a sandbox on this device: it runs commands, JavaScript and Python.",
   "cap.computer.yes": "Turn on the computer",
   "cap.reflexes.name": "Intuition",
-  "cap.reflexes.offer": "Let {name} get a feel for what you need? A small helper ({size}, once) picks the right brain and suggests next steps, without sending anything anywhere.",
+  "cap.reflexes.offer": "Let {name} pick the right brain for each request and suggest next steps? It takes a one-time download ({size}). Nothing leaves this device.",
   "cap.reflexes.yes": "Download ({size})",
   "cap.reflexes.downloading": "Downloading Intuition",
   "cap.reflexes.failed": "Intuition couldn’t be downloaded. Try again later.",

@@ -253,7 +253,7 @@
   "cap.computer.offer": "Ti servono numeri esatti o lavoro sui tuoi file? Attiva un computer in un ambiente isolato su questo dispositivo: esegue comandi, JavaScript e Python.",
   "cap.computer.yes": "Attiva il computer",
   "cap.reflexes.name": "Intuito",
-  "cap.reflexes.offer": "Lasciare che {name} capisca cosa ti serve? Un piccolo aiutante ({size}, una volta sola) sceglie il cervello giusto e suggerisce i prossimi passi, senza inviare nulla.",
+  "cap.reflexes.offer": "Lasciare che {name} scelga il cervello giusto per ogni richiesta e suggerisca i prossimi passi? Basta un solo download ({size}). Nulla lascia questo dispositivo.",
   "cap.reflexes.yes": "Scarica ({size})",
   "cap.reflexes.downloading": "Download dell'Intuito",
   "cap.reflexes.failed": "Impossibile scaricare l'Intuito. Riprova più tardi.",

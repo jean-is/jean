@@ -245,7 +245,7 @@
   "cap.computer.offer": "需要精确的数字，或处理你的文件吗？在这台设备上的隔离环境中开启一台电脑：它能运行命令、JavaScript 和 Python。",
   "cap.computer.yes": "开启电脑",
   "cap.reflexes.name": "直觉",
-  "cap.reflexes.offer": "让 {name} 了解你的需要吗？一个小助手（{size}，仅一次）会选择合适的大脑并建议下一步，不向任何地方发送任何内容。",
+  "cap.reflexes.offer": "让 {name} 为每个请求选择合适的大脑，并建议下一步吗？只需下载一次（{size}）。任何内容都不会离开这台设备。",
   "cap.reflexes.yes": "下载（{size}）",
   "cap.reflexes.downloading": "正在下载直觉",
   "cap.reflexes.failed": "无法下载直觉。请稍后重试。",

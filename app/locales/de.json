@@ -249,7 +249,7 @@
   "cap.computer.offer": "Brauchst du genaue Zahlen oder Arbeit an deinen Dateien? Schalte einen Computer in einer abgeschotteten Umgebung auf diesem Gerät ein: Er führt Befehle, JavaScript und Python aus.",
   "cap.computer.yes": "Computer einschalten",
   "cap.reflexes.name": "Intuition",
-  "cap.reflexes.offer": "Soll {name} ein Gespür dafür bekommen, was du brauchst? Ein kleiner Helfer ({size}, einmalig) wählt das passende Gehirn und schlägt nächste Schritte vor, ohne etwas zu senden.",
+  "cap.reflexes.offer": "Soll {name} für jede Anfrage das passende Gehirn wählen und nächste Schritte vorschlagen? Dafür reicht ein einmaliger Download ({size}). Nichts verlässt dieses Gerät.",
   "cap.reflexes.yes": "Herunterladen ({size})",
   "cap.reflexes.downloading": "Intuition wird heruntergeladen",
   "cap.reflexes.failed": "Intuition konnte nicht heruntergeladen werden. Versuche es später erneut.",

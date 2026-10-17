@@ -1,4 +1,4 @@
-// Fifty-nine inline icons, 24×24, drawn with the current colour.
+// Sixty inline icons, 24×24, drawn with the current colour.
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
@@ -57,6 +57,7 @@ export const icons = {
   image: icon(svg`<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>`),
   helpers: icon(svg`<circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14.5 14.6a4.5 4.5 0 0 1 6 4.9"/>`),
   clock: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`),
+  bell: icon(svg`<path d="M12 3.5v2M6.5 16v-5a5.5 5.5 0 0 1 11 0v5l1.5 1.5h-14ZM10 17.5a2 2 0 0 0 4 0"/>`),
   alarm: icon(svg`<circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 1.5M4 7.5 7 4.5M20 7.5l-3-3M7.5 19 6 20.5M16.5 19l1.5 1.5"/>`),
   flow: icon(svg`<rect x="3" y="4" width="6" height="5" rx="1.5"/><rect x="15" y="4" width="6" height="5" rx="1.5"/><rect x="9" y="15" width="6" height="5" rx="1.5"/><path d="M9 6.5h6M18 9v2.5a2 2 0 0 1-2 2h-4V15"/>`, 'flip-rtl'),
   tag: icon(svg`<path d="M4 12.5V4.5h8l8 8-8 8Z"/><circle cx="8.5" cy="9" r="1.4"/>`, 'flip-rtl'),

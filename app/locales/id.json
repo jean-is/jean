@@ -245,7 +245,7 @@
   "cap.computer.offer": "Perlu angka yang tepat, atau pekerjaan pada file Anda? Nyalakan komputer di lingkungan terisolasi di perangkat ini: ia menjalankan perintah, JavaScript, dan Python.",
   "cap.computer.yes": "Nyalakan komputer",
   "cap.reflexes.name": "Intuisi",
-  "cap.reflexes.offer": "Biarkan {name} merasakan apa yang Anda butuhkan? Pembantu kecil ({size}, sekali saja) memilih otak yang tepat dan menyarankan langkah berikutnya, tanpa mengirim apa pun ke mana pun.",
+  "cap.reflexes.offer": "Biarkan {name} memilih otak yang tepat untuk setiap permintaan dan menyarankan langkah berikutnya? Cukup unduh sekali ({size}). Tidak ada yang keluar dari perangkat ini.",
   "cap.reflexes.yes": "Unduh ({size})",
   "cap.reflexes.downloading": "Mengunduh Intuisi",
   "cap.reflexes.failed": "Intuisi tidak bisa diunduh. Coba lagi nanti.",

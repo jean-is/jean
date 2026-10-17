@@ -245,7 +245,7 @@
   "cap.computer.offer": "Cần con số chính xác hay làm việc với tệp của bạn? Bật một máy tính trong môi trường biệt lập trên thiết bị này: nó chạy lệnh, JavaScript và Python.",
   "cap.computer.yes": "Bật máy tính",
   "cap.reflexes.name": "Trực giác",
-  "cap.reflexes.offer": "Để {name} cảm nhận điều bạn cần? Một trợ thủ nhỏ ({size}, một lần) chọn bộ não phù hợp và gợi ý bước tiếp theo, không gửi gì đi đâu cả.",
+  "cap.reflexes.offer": "Để {name} chọn bộ não phù hợp cho từng yêu cầu và gợi ý bước tiếp theo? Chỉ cần tải về một lần ({size}). Không gì rời khỏi thiết bị này.",
   "cap.reflexes.yes": "Tải về ({size})",
   "cap.reflexes.downloading": "Đang tải Trực giác",
   "cap.reflexes.failed": "Không tải được Trực giác. Hãy thử lại sau.",

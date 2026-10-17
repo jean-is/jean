@@ -245,7 +245,7 @@
   "cap.computer.offer": "正確な数字や、ファイルでの作業が必要ですか？この端末上の安全な環境でコンピューターをオンにすると、コマンド、JavaScript、Python を実行できます。",
   "cap.computer.yes": "コンピューターをオンにする",
   "cap.reflexes.name": "直感",
-  "cap.reflexes.offer": "{name}にあなたのニーズをつかませますか？小さなヘルパー（{size}、1回のみ）が合う頭脳を選び、次の一歩を提案します。何も外に送りません。",
+  "cap.reflexes.offer": "{name}が依頼ごとに合う頭脳を選び、次の一歩を提案するようにしますか？ダウンロードは1回だけです（{size}）。何も端末の外に出ません。",
   "cap.reflexes.yes": "ダウンロード（{size}）",
   "cap.reflexes.downloading": "直感をダウンロード中",
   "cap.reflexes.failed": "直感をダウンロードできませんでした。あとでもう一度お試しください。",

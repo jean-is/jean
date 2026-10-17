@@ -245,7 +245,7 @@
   "cap.computer.offer": "Ṣé ẹ nílò nọ́mbà pàtó, tàbí iṣẹ́ lórí àwọn fáìlì yín? Ẹ tan kọ̀ǹpútà kan nínú àyíká àdádó lórí ẹ̀rọ yìí: ó ń ṣe àwọn àṣẹ, JavaScript àti Python.",
   "cap.computer.yes": "Tan kọ̀ǹpútà",
   "cap.reflexes.name": "Ìmọ̀lára",
-  "cap.reflexes.offer": "Ṣé kí {name} máa ní ìmọ̀lára ohun tí ẹ nílò? Olùrànlọ́wọ́ kékeré kan ({size}, lẹ́ẹ̀kan ṣoṣo) ń yan ọpọlọ tí ó yẹ, ó sì ń dá àbá ìgbésẹ̀ tó kàn, láìfi ohunkóhun ránṣẹ́ sí ibikíbi.",
+  "cap.reflexes.offer": "Ṣé kí {name} máa yan ọpọlọ tí ó yẹ fún ìbéèrè kọ̀ọ̀kan, kí ó sì máa dá àbá ìgbésẹ̀ tó kàn? Ẹ ó gbà á sílẹ̀ lẹ́ẹ̀kan ṣoṣo ({size}). Kò sí ohun tí yóò kúrò lórí ẹ̀rọ yìí.",
   "cap.reflexes.yes": "Gbà á sílẹ̀ ({size})",
   "cap.reflexes.downloading": "Ó ń gba Ìmọ̀lára sílẹ̀",
   "cap.reflexes.failed": "A kò lè gba Ìmọ̀lára sílẹ̀. Ẹ gbìyànjú lẹ́ẹ̀kan sí i nígbà míì.",

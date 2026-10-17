@@ -249,7 +249,7 @@
   "cap.computer.offer": "Exacte getallen nodig, of werk aan je bestanden? Zet een computer aan in een afgeschermde omgeving op dit apparaat: hij voert opdrachten, JavaScript en Python uit.",
   "cap.computer.yes": "Computer aanzetten",
   "cap.reflexes.name": "Intuïtie",
-  "cap.reflexes.offer": "Wil je dat {name} aanvoelt wat je nodig hebt? Een kleine helper ({size}, eenmalig) kiest het juiste brein en stelt volgende stappen voor, zonder iets te versturen.",
+  "cap.reflexes.offer": "Wil je dat {name} voor elk verzoek het juiste brein kiest en volgende stappen voorstelt? Daarvoor is één download nodig ({size}). Niets verlaat dit apparaat.",
   "cap.reflexes.yes": "Downloaden ({size})",
   "cap.reflexes.downloading": "Intuïtie downloaden",
   "cap.reflexes.failed": "Intuïtie kon niet worden gedownload. Probeer het later opnieuw.",

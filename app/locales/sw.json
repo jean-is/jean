@@ -249,7 +249,7 @@
   "cap.computer.offer": "Unahitaji namba kamili, au kazi kwenye faili zako? Washa kompyuta katika mazingira yaliyotengwa kwenye kifaa hiki: inaendesha amri, JavaScript na Python.",
   "cap.computer.yes": "Washa kompyuta",
   "cap.reflexes.name": "Hisia",
-  "cap.reflexes.offer": "Ungependa {name} ahisi unachohitaji? Msaidizi mdogo ({size}, mara moja) huchagua ubongo unaofaa na kupendekeza hatua zinazofuata, bila kutuma chochote popote.",
+  "cap.reflexes.offer": "Ungependa {name} achague ubongo unaofaa kwa kila ombi na kupendekeza hatua zinazofuata? Inatosha kupakua mara moja ({size}). Hakuna kinachotoka kwenye kifaa hiki.",
   "cap.reflexes.yes": "Pakua ({size})",
   "cap.reflexes.downloading": "Inapakua Hisia",
   "cap.reflexes.failed": "Hisia haikuweza kupakuliwa. Jaribu tena baadaye.",
