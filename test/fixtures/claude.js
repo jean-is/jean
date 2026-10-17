@@ -3,8 +3,11 @@
 // stream-json messages, answering each with Anthropic's stream events. A message that asks for the
 // weather calls Jean's weather tool over the MCP server --mcp-config names, as Claude Code does, and
 // answers with what it says; "limit" ends as a plan's limit does; "gateway" tells where it would send
-// its requests and the settings it was given; anything else is echoed with what came with it.
+// its requests and the settings it was given; "hold <file>" makes the file and answers once it is gone;
+// anything else is echoed with what came with it.
 // CLAUDE_SIGNED_OUT=1 plays one not signed in.
+import { existsSync } from 'node:fs'
+import { writeFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
 
@@ -57,6 +60,10 @@ for await (const line of createInterface({ input: process.stdin })) {
     out({ type: 'assistant', message: { content: [{ type: 'text', text: 'You’ve hit your limit' }] }, error: 'rate_limit' })
     out({ type: 'result', subtype: 'success', is_error: true, result: 'You’ve hit your limit · resets 3pm' })
     continue
+  } else if (/^hold /.test(text)) {
+    await writeFile(text.slice(5), '')
+    while (existsSync(text.slice(5))) await new Promise((wait) => setTimeout(wait, 10))
+    step([{ type: 'text', text: 'Held' }], 'end_turn')
   } else {
     step([{ type: 'text', text: `Heard (${values.model}, ${String(values['system-prompt']).slice(0, 12)}): ${text}` }], 'end_turn')
   }

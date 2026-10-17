@@ -58,7 +58,7 @@ const TOOLS = [
 
 // Claude Code's names for the latest of each, which it keeps current: Auto's tiers, in order.
 const MODELS = ['haiku', 'sonnet', 'opus'].map((id) => ({ id, display_name: id[0].toUpperCase() + id.slice(1) }))
-// A conversation's CLI ends after this long without a request, and the oldest beyond this many.
+// A conversation's CLI ends after this long without a request, and the least recently used idle one beyond this many.
 const IDLE_MS = 30 * 60_000
 const KEPT_SESSIONS = 8
 // Claude Code's settings that fetch the keys of a gateway or a cloud provider it reaches, each a command it runs itself.
@@ -447,9 +447,17 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     rm(join(temp, session.id), { recursive: true, force: true }).catch(() => {})
   }
 
-  /** A conversation's process, kept with the others, the oldest ending beyond KEPT_SESSIONS. @param {Pick<Session, 'id' | 'child' | 'agent' | 'tools' | 'say' | 'call' | 'step'>} own */
+  /**
+   * Beyond limit, the least recently used processes end, of those idle: their idle timer runs (none is in a step) and
+   * no call of theirs waits for Jean's results. While every one is busy, there are more, until steps end. @param {number} limit
+   */
+  function trim(limit) {
+    for (const each of sessions.values()) if (sessions.size > limit && each.idle && !each.asked.length && !each.waiting.size) shut(each)
+  }
+
+  /** A conversation's process, kept with the others. @param {Pick<Session, 'id' | 'child' | 'agent' | 'tools' | 'say' | 'call' | 'step'>} own */
   function keep(own) {
-    if (sessions.size >= KEPT_SESSIONS) shut(/** @type {Session} */ (sessions.values().next().value))
+    trim(KEPT_SESSIONS - 1)
     /** @type {Session} */
     const session = { ...own, count: 0, seen: '', asked: [], given: new Map(), waiting: new Map(), stderr: '' }
     session.child.stderr.on('data', (chunk) => { session.stderr = (session.stderr + chunk).slice(-2000) })
@@ -655,6 +663,7 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     }
     const here = session
     clearTimeout(here.idle)
+    here.idle = undefined
     here.count = history.length
     here.seen = mark(history)
     here.asked = []
@@ -664,7 +673,11 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' })
     await here.step(res, signal)
     signal.removeEventListener('abort', stop)
-    if (sessions.has(here.id)) here.idle = setTimeout(() => shut(here), IDLE_MS)
+    // Idle again, and the one used last: last of the map, which holds them by their last use.
+    if (!sessions.delete(here.id)) return
+    sessions.set(here.id, here)
+    here.idle = setTimeout(() => shut(here), IDLE_MS)
+    trim(KEPT_SESSIONS)
   }
 
   /** Jean's result for a call a CLI made, now or once it comes. @param {Session} session @param {string} id @param {object} given */
