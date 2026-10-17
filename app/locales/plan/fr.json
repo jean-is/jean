@@ -4,7 +4,7 @@
   "plan.pending": "À faire",
   "plan.in_progress": "En cours",
   "plan.completed": "Faite",
-  "plan.confirm": "Suivre ce plan ?",
+  "plan.confirm": "Suivre ce plan ?",
   "plan.go": "Allez-y",
   "plan.always": "Toujours, sans demander",
   "plan.paused": "En pause à l’étape {count}",

@@ -66,3 +66,17 @@ test('the UI never says "model", "agent" or "token" in English, and "routine" on
     if (/\broutines?\b/i.test(String(value))) assert.match(key, /routine|schedule/, key)
   }
 })
+
+// French sets ? ! : ; apart with a narrow no-break space (U+202F): after a plain one, the sign can wrap onto a line of its own.
+test('French never puts a plain space before ? ! : ;', async () => {
+  for (const part of PARTS) {
+    for (const [key, value] of Object.entries(await load(part, 'fr.json'))) {
+      for (const text of typeof value === 'string' ? [value] : Object.values(value)) assert.doesNotMatch(text, / [?!:;]/, `${part}fr.json ${key}`)
+    }
+  }
+  const skills = new URL('../app/caps/skills/directory/', import.meta.url)
+  for (const name of await readdir(skills)) {
+    const skill = await readFile(new URL(`${name}/SKILL.md`, skills), 'utf8')
+    for (const [, text] of skill.matchAll(/^\s*(?:title|text)-fr:(.*)$/gm)) assert.doesNotMatch(text, / [?!:;]/, `${name}/SKILL.md`)
+  }
+})
