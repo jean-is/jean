@@ -86,7 +86,10 @@ test('a task shared by link opens in the host’s viewer, with its password, and
 
   // Shared again from the keys the open task's menu shows (D377), the dialog opens on the link made
   // (D379): a password added under the same link, which the host then asks a proof of, for a year.
+  // The open task's top says it is shared, until when, and opens the dialog too.
   await row.locator('.history-item').click()
+  const state = page.locator('.views').getByRole('button', { name: 'Shared', exact: true })
+  await expect(state).toHaveAttribute('title', /^Until /)
   await menu()
   const share = row.getByRole('button', { name: 'Share…' })
   await expect(share).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+Shift\+U$/)
@@ -104,7 +107,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(dialog.locator('input.share-link')).toHaveValue(link)
   await close()
   // Opened again, it shows the choices made, the password kept unless changed, and never shown again.
-  await page.keyboard.press('ControlOrMeta+Shift+KeyU')
+  await state.click()
   await expect(dialog.getByLabel('Anyone with the link and the password')).toBeChecked()
   await expect(dialog.getByLabel('For how long')).toHaveValue('365')
   await expect(dialog.getByRole('button', { name: 'Change the password' })).toBeVisible()
@@ -127,6 +130,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update))
     .toMatchObject({ data: { kind: 'shared', from: '127.0.0.1:4185' } })
   await expect(page.locator('app-conversation .msg-user')).toHaveText('Plan my week')
+  await expect(page.locator('.views').getByRole('button', { name: 'Share…' })).toBeVisible()
 
   // Settings › Keyboard shortcuts lists it, now it is found, and Your data the one link made.
   const settings = await openSettings(page, 'Keyboard shortcuts')

@@ -288,6 +288,20 @@ export async function fromAddress() {
 
 // ─── Settings › Your data ────────────────────────────────────────────────────
 
+/**
+ * At the top of the open task, beside what opens next to it (D379): Share…, or Shared once its link
+ * opens, a lock when a password closes it, until when as its tip; either opens the dialog on it.
+ * @param {string} path
+ */
+function state(path) {
+  const share = shareOf({ path, title: '' })
+  const act = () => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' })
+  return share && Date.parse(share.expires) > Date.now()
+    ? html`<button class="button subtle share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
+      title=${t('share.until', { date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.upload} ${t('share.shared')}</button>`
+    : html`<button class="icon-button" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.upload}</button>`
+}
+
 /** Shared links: each with its task, until when, and Copy, Update, Stop sharing. */
 function panel() {
   const date = new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' })
@@ -316,6 +330,7 @@ if (allowed()) {
       // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made.
       drawn: { at: 1, draw: (/** @type {Item} */ item) => (app.current.value ? html`<button class="icon-button subtle" aria-label=${t('share.menu')}
         @click=${() => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item })}>${icons.upload}</button>` : nothing) },
+      views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current.path) : nothing) },
       data: { at: 3, draw: panel },
       dialog: { at: 1, draw: () => html`<app-share-dialog></app-share-dialog>` },
     },
