@@ -1,5 +1,5 @@
 // Application state (signals) and the actions that change it.
-import { signal, computed } from '@preact/signals-core'
+import { signal, computed, batch } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
 import { loadConversation, listConversations, deleteConversation, appendRecords } from '../core/conversations.js'
@@ -246,10 +246,10 @@ export async function enterProject(project) {
   if (project.dir === app.projectDir) return
   // What is under way stops: its calls work in the room on screen.
   for (const run of runs.values()) halt(run)
-  newConversation()
   const conversations = await listConversations(app.fs, project.dir)
-  app.project.value = project
-  app.conversations.value = conversations
+  // In one step, once its conversations are read: the address and the box's draft go from the task
+  // left to a new one there, never through a new one in the room left.
+  batch(() => { newConversation(); app.project.value = project; app.conversations.value = conversations })
 }
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */
