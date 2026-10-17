@@ -13,7 +13,7 @@ import { serviceURL } from '../core/settings.js'
 import { loaded, slots, unlock } from './caps.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
-import { icons } from './icons.js'
+import { icons } from './menu-icons.js'
 import { focusComposer } from './composer.js'
 
 /** Routines whose earlier runs the user unfolded or folded in the list, by the routine's file (D122). */
@@ -193,13 +193,13 @@ function actions(id) {
     <button type="button" class="submenu" data-page="looks" @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
       ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`)}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
-      ${icons.contrast}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
+      ${icons.moon}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
     <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>
     ${slots('profile').map((part) => part.draw(id))}`
 }
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
-const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.arrow}${title}</button>
+const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
   <hr>
   ${list}`
 

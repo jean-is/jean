@@ -67,6 +67,19 @@ Tilde, Human and Mail open the drawer beside the conversation once there is a ta
 - **The wordmark is `BRAND.name` set in the display face,** so it survives a rename.
 - **Big type at the start.** The first question is large and shrinks into place once the conversation begins, as the box slides to the foot.
 
+## Icons
+
+Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, and each glyph has one meaning: a person learns an icon by what it did the last time (D393). The first screen's glyphs (the box, the answers, the header) are in `ui/icons.js`; the others that more than one module draws are in `ui/menu-icons.js`, which the drawer, the menus, Settings and the capabilities load; a glyph only one capability draws stays in its module. All are drawn with the same `icon()`, and `test/icons.test.js` checks the rules it can.
+
+- **One grid, four keylines.** 24 units with 3 of margin. A glyph fills one of four keylines, each 17 units on its long side: a circle 17 across, a square of 15, a portrait 13 × 17 and a landscape 17 × 13, centred on 12, 12. A glyph that points, like a bolt or a star, may reach a unit past, never outside 2–22.
+- **One pen, the text's.** Every stroke is 1.5 px at every size (`--pen`, with `vector-effect: non-scaling-stroke`), about the stem of the system font beside it; 2 px when the device asks for more contrast, 1.25 px in Minimal.
+- **Human's corners.** A shape 11 units or larger takes a radius of 2.5, a smaller one 1.5; every cap and join is round, like the ends of the tilde; two parallel strokes stay 3 units apart, so nothing fills in at 16 px.
+- **A frame says where, a mark says what.** The frames are a laptop for this device, a window for this tab and a lens for searching; the marks are the tilde for a brain, `>_` for commands and the globe for the web. A new capability's glyph combines two of them: Web search is the lens over the globe, a brain on this device the tilde on its laptop.
+- **The tilde means a brain, and only a brain:** any brain (in a circle), a brain on this device, Search by meaning and Live conversation, each half a wave 5 units across and 2 high, never mirrored. A brain is never a sparkle, a robot or a chip.
+- **Solid means a state.** Nothing is filled for decoration: a fill marks what is on (the case's lit tile, the unread dot, a menu's dots, a keyboard's keys), in the stroke's colour, never water.
+- **It turns with the page.** A glyph that points along the line (an arrow, the drawer, a list, a branch) has `flip-rtl`, mirrored in Arabic, Hebrew, Persian and Urdu; clocks, ticks, play, search and the tilde stay as drawn.
+- **Three sizes.** `--icon-s` (1rem) in menus, chips and inline with text, `--icon-m` (1.25rem) in buttons and Settings' menu, `--icon-l` (1.75rem) for a ready-made skill, a file Jean made and a picture on its way; a place sets `--glyph` to one of them.
+
 ## Techniques (pure CSS)
 
 - **Colour:** oklch colours with `color-mix()` and relative colours (`oklch(from …)`)
@@ -78,13 +91,13 @@ Tilde, Human and Mail open the drawer beside the conversation once there is a ta
 - **Layout:**
   - `:has()` and container queries
   - Logical properties only, so right-to-left layouts are free
-- **What it doesn't use:** no canvas, no images, no animation library and no icon pack. There are about 20 inline SVG icons, and one inline SVG wave.
+- **What it doesn't use:** no canvas, no images, no animation library and no icon pack: the icons are Jean's own set ([Icons](#icons)), and the wave one inline SVG more.
 
 ## Accessibility
 
 - **WCAG AA contrast at every stage**, measured in pixels in every look, mood, warmth and project colour (D325). "Dark" applies to ambient surfaces only; text is always high-contrast.
 - **`prefers-reduced-motion`:** nothing moves (D325). The wave keeps its poses (small, tall, a smile, a frown), so each state still reads.
-- **`prefers-contrast: more`:** stronger borders and flat surfaces, and the wave in the ink's colour.
+- **`prefers-contrast: more`:** stronger borders and flat surfaces, the icons' pen at 2 px, and the wave in the ink's colour.
 - **`forced-colors`** is supported. The wave takes the system's text colour.
 - **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘/ its keyboard shortcuts, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme, ⌘⇧L to the next language, ⌘⇧S dictates, ⌘K opens search, ⌘⇧B the browser and ⌘⇧H talks hands-free once each is found, ⌘J the terminal, ⌘B the drawer, ⌘S saves a copy of the open task and ⌘⌫ deletes it after asking, Ctrl outside Apple's systems, and Escape stops an answer once nothing over it, or with the keyboard, takes it (D118, D313, D315).
 
@@ -95,5 +108,5 @@ Tilde, Human and Mail open the drawer beside the conversation once there is a ta
 | CSS | ≤ 12.6 KB gzipped for the room; another look adds its own file only when chosen |
 | Display font | ≤ 30 KB |
 | Images | 0 |
-| Icons | ~20 inline SVGs |
+| Icons | One set of inline SVGs, the first screen's glyphs alone in the first load ([Icons](#icons)) |
 | Presence | One inline SVG, animated with CSS only |

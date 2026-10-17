@@ -13,7 +13,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { app, effective, updateSettings } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings, languageName } from '../../core/i18n.js'

@@ -26,7 +26,6 @@ app-slides .slide :is(header, footer) p { margin: 0; }
 app-slides .slides-stage:fullscreen { display: grid; place-items: center; background: #000; }
 app-slides .slides-stage:fullscreen .slide { inline-size: min(100vw, 100vh * 16 / 9); border: 0; border-radius: 0; }
 app-slides .slides-bar { display: flex; align-items: center; gap: 0.3rem; margin-block-start: 0.4rem; }
-app-slides .slides-bar .back .icon { scale: -1 1; }
 app-slides .slides-where { color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 app-slides .slides-bar .end { margin-inline-start: auto; }
 app-slides .slides-bar .end + .end { margin-inline-start: 0; }

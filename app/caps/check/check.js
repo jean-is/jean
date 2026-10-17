@@ -15,7 +15,7 @@ import { foldTurns, linkedFiles, metaRecord, splitSuggestions } from '../../core
 import { fileText } from '../../core/files.js'
 import { claimsIn, passage, sourceIn, request, verdicts, CHECKER } from './claims.js'
 import { t, locale } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 /** @import { Envelope, BrainConfig } from '../../core/types.js' */
@@ -105,7 +105,7 @@ const MARKS = /** @type {Record<string, keyof typeof icons>} */ ({ supported: 'c
 class Check extends Element {
   render() {
     const at = this.getAttribute('at') ?? ''
-    if (checking.value.includes(at)) return html`<p class="check is-running" role="status">${icons.check}<span>${t('check.running')}</span></p>`
+    if (checking.value.includes(at)) return html`<p class="check is-running" role="status">${icons['double-check']}<span>${t('check.running')}</span></p>`
     const records = app.current.value?.records ?? []
     /** @type {Checked[] | undefined} */
     const claims = records.findLast((record) => record.meta?.check?.at === at)?.meta?.check.claims

@@ -20,7 +20,7 @@ import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
 import { t, relativeTime, locale } from '../core/i18n.js'
-import { icons } from './icons.js'
+import { icons } from './menu-icons.js'
 
 /** @typedef {import('../core/memory.js').Entry} Entry */
 /** @typedef {import('../caps/routines/schedule.js').Routine} Routine */

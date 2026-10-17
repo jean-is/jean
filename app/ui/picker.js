@@ -11,7 +11,7 @@ import { useBrain, keepOnDevice } from './brains.js'
 import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
 import { t, locale } from '../core/i18n.js'
-import { icons } from './icons.js'
+import { icons } from './menu-icons.js'
 import { priceOf, PLANS } from './prices.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
@@ -57,8 +57,8 @@ export function choices(priced = false) {
     ...(remote ? offered.map((model) => ({ icon: TIER_ICONS[tiers.indexOf(model)], label: t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`), brain: remote, model,
       behind: [short(model), plan ? t('picker.plan', { plan }) : priced && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · ') })) : []),
     ...brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => (brain.api === 'device'
-      ? { icon: icons.lock, label: t('brain.device.title'), behind: t('brain.device.private'), brain, model: brain.model }
-      : { icon: isLocal(brain) ? icons.computer : icons.globe, label: short(brain.model), behind: brainLabel(brain), brain, model: brain.model })),
+      ? { icon: icons['brain-device'], label: t('brain.device.title'), behind: t('brain.device.private'), brain, model: brain.model }
+      : { icon: isLocal(brain) ? icons['brain-device'] : icons.cloud, label: short(brain.model), behind: brainLabel(brain), brain, model: brain.model })),
   ]
 }
 

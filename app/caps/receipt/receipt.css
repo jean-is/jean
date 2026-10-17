@@ -28,7 +28,7 @@ app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt;
 .receipt-brain { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.5rem; }
 .receipt-host { color: var(--ink-soft); font-family: var(--mono); font-size: 0.75rem; }
 .receipt-where { display: inline-flex; align-items: center; gap: 0.25rem; color: var(--ink-soft); font-size: 0.75rem; }
-.receipt-where .icon { inline-size: 0.9rem; block-size: 0.9rem; color: var(--flame-deep); }
+.receipt-where .icon { --glyph: var(--icon-s); color: var(--flame-deep); }
 .receipt-hosts { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .receipt-hosts bdi { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 1rem; font-size: 0.78rem; }
 /* The certificate, folded under a line, the card being a glance: each file beside what it holds, for
@@ -39,7 +39,7 @@ app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt;
 .receipt-certify > summary { font-weight: 500; list-style: none; cursor: pointer; }
 .receipt-certify > summary::-webkit-details-marker { display: none; }
 .receipt-certify > summary:hover, .receipt-save:hover { background: var(--line); }
-.receipt-certify .icon { inline-size: 1.05rem; block-size: 1.05rem; color: var(--ink-soft); transition: rotate 0.2s; }
+.receipt-certify .icon { --glyph: var(--icon-s); color: var(--ink-soft); transition: rotate 0.2s; }
 .receipt-certify[open] > summary .icon:last-child { rotate: 180deg; }
 .receipt-save { inline-size: calc(100% + 1rem); grid-template-columns: var(--lead) 1fr; align-items: start; border: 0; background: none; text-align: start; }
 .receipt-save .icon { grid-row: span 2; margin-block-start: 0.05rem; }
@@ -49,7 +49,7 @@ app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt;
   border-radius: 0.6rem; color: var(--ink-soft); font-size: 0.8rem; list-style: none; cursor: pointer; }
 .receipt-more > summary::-webkit-details-marker { display: none; }
 .receipt-more > summary:hover { background: var(--line); color: var(--ink); }
-.receipt-more > summary .icon { inline-size: 0.9rem; block-size: 0.9rem; color: inherit; }
+.receipt-more > summary .icon { --glyph: var(--icon-s); color: inherit; }
 .receipt-more[open] > summary .icon { rotate: 180deg; }
 .receipt-more > summary + .receipt-choice { margin-block-start: 0.4rem; }
 .receipt-choice input { inline-size: 1rem; block-size: 1rem; margin: 0.06rem 0 0; }
