@@ -3,7 +3,8 @@
 // parent's instructions as a child's profile gives them (D228), and Jean's ready-made skills for
 // learning among theirs (learn-it, flash-cards, study-plan, quiz), in Jean's own frozen prompt and
 // declared tools, which the page itself sends in headless Chromium, language by language and age by
-// age. The request goes through core's loop to the brain. Jean's tools answer as they do for
+// age, each of the child's messages with Learn it's steps before it, as a child's profile sends them
+// (D394). The request goes through core's loop to the brain. Jean's tools answer as they do for
 // `npm run offers`, `skill` with the steps Jean ships, and `raise_concern` as a child's profile does.
 // Then a judge brain reads each reply: whether it gave the answer, how far its help went (the rungs
 // of learn-it), what it said of the child's own answer, whether it answered what isn't homework, and
@@ -16,7 +17,6 @@
 // Usage: BRAIN=lmstudio:google/gemma-4-e2b BRAIN_BODY='{"reasoning_effort":"none"}' JUDGE=lmstudio:openai/gpt-oss-120b npm run tutor
 //        npm run tutor -- --lang fr,ja      some languages
 //        npm run tutor -- --parallel 2      requests at a time (default 4)
-//        npm run tutor -- --named           the child picks Learn it, whose steps come with the message (D199)
 //        npm run tutor -- --guard <file>    a guardrail tried on the streaming answer: the module's default export,
 //                                           given { text, lang, kind } as the answer is written, stops it with true
 //        npm run tutor -- --write           also write this brain's section of test/tutor/results.md
@@ -32,8 +32,7 @@ import { streamChat, LLMError } from '../app/core/llm.js'
 import { findTools } from '../app/core/deferred.js'
 import { parseSkill } from '../app/core/skills.js'
 import { questionsOf, reply, start } from '../app/caps/ask/answers.js'
-import { pointing } from '../app/ui/mentions.js'
-import { DANGERS, TOPICS, asPolicy, tierFor } from '../app/caps/profiles/tier.js'
+import { DANGERS, TOPICS, asPolicy, tierFor, learning } from '../app/caps/profiles/tier.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** @import { ToolCall, ToolSpec, ChatMessage, DocumentPart } from '../app/core/types.js' */
@@ -313,8 +312,7 @@ async function main(argv, env) {
   /** @type {Guard | undefined} */
   const guard = guardFile ? (await import(pathToFileURL(resolve(guardFile)).href)).default : undefined
   if (guardFile) chosen.name += `, guard ${guardFile}`
-  const named = argv.includes('--named')
-  chosen.name += named ? ', Learn it named' : ', Learn it listed'
+  chosen.name += ', Learn it with each message'
   const only = flag('--lang')?.split(',')
   const parallel = Number(flag('--parallel') ?? 4)
   const english = JSON.parse(await readFile(`${DIR}en.json`, 'utf8'))
@@ -362,12 +360,11 @@ async function main(argv, env) {
       const set = sets[lang]
       const item = items[id]
       const turns = [set.requests[id]].flat()
-      if (named) turns[0] = `/learn-it ${turns[0]}`
+      // Each of the child's messages after Learn it's steps, as a child's profile sends them (caps/profiles/child.js).
       /** @type {ChatMessage[]} */
-      const history = turns.map((content, i) => (i % 2 ? { role: 'assistant', content } : { role: 'user', content }))
+      const history = turns.flatMap((content, i) => (i % 2 ? [{ role: 'assistant', content }] : [{ role: 'system', content: learning(steps['learn-it']) }, { role: 'user', content }]))
       const seen = photos[`${lang} ${id}`]
       if (item.picture && seen) Object.assign(history[history.length - 1], { documents: [{ name: 'worksheet.png', text: '', image: { mimeType: 'image/png', data: seen } }] })
-      if (named) history.unshift({ role: 'system', content: pointing([{ word: '/learn-it', means: 'is the skill learn-it: follow its steps for this message', body: steps['learn-it'] }]) })
       const stop = guard && ((/** @type {string} */ text) => Promise.resolve(guard({ text, lang, kind: item.kind })))
       replies.push({ id, lang, item, turns, outcome: await measure(chosen, prompts[`${lang} ${item.age}`], history, answering(steps, set.helpline), stop || undefined) })
       if (replies.length % 20 === 0) console.log(`  ${replies.length} replies of ${langs.length * Object.keys(items).length}`)
@@ -512,8 +509,9 @@ reply holds its answer in its own words, or when the judge reads it there; the j
 the help reached (question, rule, example, teacher, or solved), what the reply said of the child's own
 answer, whether it answered what isn't homework, and how it handled a topic the parent chose for by age.
 A danger counts as raised when \`raise_concern\` names its kind, set at home when the danger is there.
-With Learn it listed, it is among the child's skills, read when the brain calls \`skill\`; with Learn it
-named, the child picked it, and its steps come with the message (D199). A reply the brain didn't finish
+Sections that say "Learn it with each message" are measured as a child's profile now sends each message,
+after Learn it's steps (D394); "Learn it listed" ones had it among the child's skills alone, read when the
+brain calls \`skill\`, and "Learn it named" ones had the child pick it (D199). A reply the brain didn't finish
 is left out.
 
 ${[summary(sections), ...sections].join('\n\n')}

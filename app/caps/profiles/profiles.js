@@ -67,8 +67,7 @@ async function hear() {
   // A new one is told on this device too, once its notifications are allowed.
   const fresh = unseen()
   if (fresh.length > before && globalThis.Notification?.permission === 'granted') {
-    const options = { body: t('profiles.never'), tag: 'family', lang: locale.peek(), icon: 'icons/icon-192.png' }
-    const title = said(fresh[0])
+    const [title, options] = [said(fresh[0]), { body: t('profiles.never'), tag: 'family', lang: locale.peek(), icon: 'icons/icon-192.png' }]
     try { new Notification(title, options) } catch { navigator.serviceWorker?.ready.then((registration) => registration.showNotification(title, options)).catch(console.warn) }
   }
 }

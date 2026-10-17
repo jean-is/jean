@@ -26,6 +26,8 @@ const BY_AGE = {
 const OFF = ['connections', 'machine', 'plugins', 'browser']
 /** The picture check refusing everything it can (D275, D280). */
 export const STRICTEST = { suggestive: true, hate: true, violence: true, selfHarm: true }
+/** What each of a child's messages comes with (D394): Learn it's steps, as if they had named it, rather than left for a brain to pick. @param {string} steps */
+export const learning = (steps) => `For this message, follow the steps of the skill learn-it:\n\n${steps.trim()}`
 /** The kinds of danger told to a parent (D228), by their words in the prompt. */
 export const DANGERS = /** @type {const} */ ({ harm: 'self-harm or suicide', abuse: 'abuse or violence done to them', secrecy: 'an adult asking them for secrecy, pictures or a meeting', bullying: 'bullying or threats' })
 

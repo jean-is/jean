@@ -107,6 +107,8 @@ test('a parent’s first choices follow the child’s age, from the school year 
   assert.match(policy.instructions, /For these, say why they are for later, without details: violence and crime in detail; frightening content; weapons\./)
   assert.match(policy.instructions, /Be brief\.$/)
   assert.equal(helpline(['ja']), 'the child helpline, 0120-0-78310')
+  const { learning } = await import('../app/caps/profiles/tier.js')
+  assert.equal(learning('# Learn it\n\n1. Start from what they sent.\n'), 'For this message, follow the steps of the skill learn-it:\n\n# Learn it\n\n1. Start from what they sent.')
   assert.equal(helpline(['xx']), 'their country’s child helpline')
 })
 

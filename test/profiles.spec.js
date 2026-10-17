@@ -147,6 +147,10 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   // Bullied at school: the brain raises a concern. Hit at home: the parent isn't told.
   await ask(page, 'The kids at school bullied me again today')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Their parent is told that a concern came up')
+  // The message came after Learn it's steps, as if the child had named it (D394).
+  const learning = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
+    .find((record) => record.update?.sessionUpdate === '_system_note' && /** @type {any} */ (record.update).data.mode === 'learn-it'))
+  expect(/** @type {any} */ (learning)?.update.text).toMatch(/^For this message, follow the steps of the skill learn-it:\n\n# /)
   await page.keyboard.press('ControlOrMeta+Shift+O')
   await ask(page, 'My dad hits me at home')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Their parent isn\'t told')

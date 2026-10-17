@@ -2,7 +2,8 @@
 // of the settings it locks, which say "Set by a parent", and changes only with the parent's password
 // or passkey, which lifts its locks while they change it. A danger Intuition reads in a message, or
 // the brain raises, is told to the parent's profile, its kind and when, never the words, unless it is
-// at home; so is the time spent here. The child is told so from the start.
+// at home; so is the time spent here. The child is told so from the start. Each message comes with
+// Learn it's steps, read from Jean's own directory whether or not the profile has the skill (D394).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { configureCapabilities } from '../../ui/caps.js'
@@ -11,10 +12,11 @@ import { here, mine } from '../../ui/opfs.js'
 import { VAULT, close, unseal, slotKey, deviceKey, encode } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
 import { noteRecord } from '../../core/events.js'
+import { parseSkill } from '../../core/skills.js'
 import { ulid } from '../../core/ulid.js'
 import { t } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
-import { TIER, TOPICS, CHOICES, DANGERS, age, tierFor, asPolicy, helpline } from './tier.js'
+import { TIER, TOPICS, CHOICES, DANGERS, age, tierFor, asPolicy, helpline, learning } from './tier.js'
 import { inbox, sealFor } from './family.js'
 
 /** @import { Tier, Topic } from './tier.js' */
@@ -31,8 +33,8 @@ const org = app.policy
 const tier = signal(/** @type {Tier} */ (await readJSON(app.fs, TIER, null) ?? tierFor(new Date().getFullYear() - 10)))
 /** The parent's vault key while they change what they set, which seals the slots again for the child's age when they're done. @type {Uint8Array | null} */
 let opened = null
-const asking = signal(false)
-const changing = signal(false)
+/** Whether the parent's way in is asked for, or they are in. */
+const stage = signal(/** @type {'' | 'asking' | 'changing'} */ (''))
 /** The lock's ways in, and what can be turned off, loaded once the parent asks. @type {[typeof import('../lock/lock.js'), string[]] | null} */
 let loaded = null
 
@@ -41,14 +43,13 @@ app.policy = asPolicy(tier.value, org, line)
 
 async function ask() {
   loaded ??= await Promise.all([import('../lock/lock.js'), import('../../ui/discovery.js').then((module) => module.CATALOGUE)])
-  asking.value = true
+  stage.value = 'asking'
 }
 
 /** The parent in, with their vault key: what they set no longer locks anything until they're done. @param {Uint8Array} raw */
 function enter(raw) {
   opened = raw
-  asking.value = false
-  changing.value = true
+  stage.value = 'changing'
   app.policy = { ...org, child: true }
   configureCapabilities({ deny: org.capabilities?.deny ?? [], remember: rememberUnlocked })
   app.settings.value = { ...app.settings.peek() }
@@ -72,8 +73,7 @@ async function done() {
     : own.length ? own : [device ?? await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', here())), { kind: 'device' })]
   if (!slots.some((each) => each.kind === 'device')) await deviceKey('forget', here())
   await app.fs.write(VAULT, JSON.stringify({ ...kept, slots }, null, 2) + '\n')
-  raw.fill(0)
-  opened?.fill(0)
+  for (const bytes of [raw, opened]) bytes?.fill(0)
   // Opened afresh at the place, Settings closed: the parent is done.
   history.replaceState(null, '', location.pathname + location.hash.replace(/settings.*$/, ''))
   location.reload()
@@ -112,8 +112,8 @@ function editor(now, catalogue) {
 
 /** Settings › Set by a parent. */
 const section = () => html`<h2>${t('profiles.tier')}</h2><p class="muted">${t('profiles.tierText')}</p>
-  ${changing.value && loaded ? editor(tier.value, loaded[1]) : html`${summary(tier.value)}
-    ${asking.value && loaded ? loaded[0].ways(enter, theirs) : html`<div class="row"><button class="button" @click=${ask}>${icons.key} ${t('profiles.change')}</button></div>`}`}
+  ${stage.value === 'changing' && loaded ? editor(tier.value, loaded[1]) : html`${summary(tier.value)}
+    ${stage.value === 'asking' && loaded ? loaded[0].ways(enter, theirs) : html`<div class="row"><button class="button" @click=${ask}>${icons.key} ${t('profiles.change')}</button></div>`}`}
   <p class="hint profile-shared">${t('profiles.shared')}</p>`
 
 // ─── A danger, told to the parent ────────────────────────────────────────────
@@ -130,12 +130,16 @@ async function concern(kind, task, by) {
   family.postMessage(inbox(parent.profile))
 }
 
-/** What the brain is told before a message Intuition read a danger in. @param {unknown} _ @param {import('../../ui/auto.js').Signals} [signals] */
+let learn = ''
+fetch(new URL('../skills/directory/learn-it/SKILL.md', import.meta.url)).then(async (response) => { learn = response.ok ? parseSkill(await response.text(), response.url)?.body ?? '' : '' }).catch(console.warn)
+
+/** What the brain is told before each message: Learn it's steps, then a danger Intuition read in it. @param {unknown} _ @param {import('../../ui/auto.js').Signals} [signals] */
 function notes(_, signals) {
   const kind = /** @type {keyof typeof DANGERS | 'home' | undefined} */ (signals?.danger)
-  if (!kind) return []
+  const steps = learn ? [noteRecord(learning(learn), { kind: 'mode', mode: 'learn-it' })] : []
+  if (!kind) return steps
   if (kind !== 'home') concern(kind, app.current.peek()?.id ?? '', 'reflexes').catch(console.warn)
-  return [noteRecord(kind === 'home'
+  return [...steps, noteRecord(kind === 'home'
     ? `Intuition read that this message may tell of abuse or violence at home. Their parent isn't told. Answer with care, give ${line}, and urge them to tell another adult they trust: a teacher, the school nurse, a relative.`
     : `Intuition read that this message may tell of ${DANGERS[kind]}. Answer with care, say where to find help (${line}), and urge them to tell a trusted adult. Their parent is told that a concern came up and when, never the words.`,
   { kind: 'concern', concern: kind })]
