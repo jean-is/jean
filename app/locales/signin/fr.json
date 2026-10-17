@@ -1,0 +1,6 @@
+{
+  "signin.needed": "Connectez-vous avec le compte de votre organisation pour obtenir des réponses.",
+  "signin.in": "Se connecter",
+  "signin.as": "Compte connecté : {account}",
+  "signin.out": "Se déconnecter"
+}

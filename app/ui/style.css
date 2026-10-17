@@ -751,6 +751,7 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
   animation: arrive 0.4s var(--ease) both;
 }
 .toast:not(:has(button)) { padding-inline-end: 1.1rem; }
+.toast button { flex: none; }
 
 .noscript { padding: 2rem; text-align: center; }
 ::view-transition-group(persona), ::view-transition-group(hero), ::view-transition-group(composer) { animation-duration: 0.7s; animation-timing-function: var(--ease); }

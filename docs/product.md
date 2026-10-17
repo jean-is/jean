@@ -188,6 +188,8 @@ A chip in the message box, beside its send button, reads **Auto ▾**, or the na
 
 Organisation policy can hide or lock any of these.
 
+**At work** (D385), the organisation's policy names its own brains, behind its AI gateway, and its sign-in. The first visit goes to the organisation's sign-in page, which sends the person straight back when they are signed in already, and the first answer comes from the gateway, with no step before it. Settings › Brains says who is signed in, with Sign out. When the sign-in ends, a toast asks to sign in again, keeping what was typed.
+
 The picker offers the brains of the project the user is in. A brain is used in every project, or only in those ticked under it in Settings › Brains, so a key a client pays for answers for that client only (D194).
 
 **How Auto decides** (reflex questions, asked locally, per request):

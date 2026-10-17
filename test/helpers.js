@@ -27,6 +27,20 @@ function silence() {
   } })
 }
 
+/**
+ * Serves Jean with an organisation's policy (docs/enterprise.md), as `<meta name="app-policy">`
+ * does, so it is still there when the sign-in comes back.
+ * @param {import('@playwright/test').Page} page @param {any} policy
+ */
+export async function withPolicy(page, policy) {
+  await page.route((url) => url.pathname === '/policy.json', (route) => route.fulfill({ json: policy }))
+  // Added once the page is parsed, before its modules run. (Rewriting the page itself would make
+  // Chromium treat it as a public site, which may not reach the fake service on this computer.)
+  await page.addInitScript(() => document.addEventListener('readystatechange', () => {
+    if (document.readyState === 'interactive') document.head.append(Object.assign(document.createElement('meta'), { name: 'app-policy', content: 'policy.json' }))
+  }, { once: true }))
+}
+
 /** @param {import('@playwright/test').Page} page @param {string} [lang] */
 export async function start(page, lang = 'en') {
   await page.addInitScript(silence)

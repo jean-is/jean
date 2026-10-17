@@ -95,6 +95,16 @@ export function leave(url) {
   location.assign(url)
 }
 
+/** Back from signing in: what the user had typed and shared comes back, where they were. */
+export function comeBack() {
+  app.draft.value = sessionStorage.getItem('app.draft') ?? ''
+  app.attachments.value = JSON.parse(sessionStorage.getItem('app.files') ?? '[]')
+  for (const key of ['app.draft', 'app.files']) sessionStorage.removeItem(key)
+  history.replaceState(null, '', location.pathname + (sessionStorage.getItem('app.route') ?? ''))
+  sessionStorage.removeItem('app.route')
+  dispatchEvent(new HashChangeEvent('hashchange'))
+}
+
 export async function startOpenRouter() {
   const verifier = createVerifier()
   sessionStorage.setItem('app.pkce', verifier)
@@ -110,12 +120,7 @@ export async function finishSignIn() {
   const verifier = sessionStorage.getItem('app.pkce')
   if (!(code && verifier) && !chatgpt) return
   sessionStorage.removeItem('app.pkce')
-  app.draft.value = sessionStorage.getItem('app.draft') ?? ''
-  app.attachments.value = JSON.parse(sessionStorage.getItem('app.files') ?? '[]')
-  for (const key of ['app.draft', 'app.files']) sessionStorage.removeItem(key)
-  history.replaceState(null, '', location.pathname + (sessionStorage.getItem('app.route') ?? ''))
-  sessionStorage.removeItem('app.route')
-  dispatchEvent(new HashChangeEvent('hashchange'))
+  comeBack()
   if (chatgpt) return (await import('./dialogs.js')).chatgptBack(chatgpt)
   try {
     const apiKey = await exchangeOpenRouterCode({ code: String(code), verifier: String(verifier) })

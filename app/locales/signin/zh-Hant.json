@@ -1,0 +1,6 @@
+{
+  "signin.needed": "使用你所屬組織的帳號登入，才能取得回答。",
+  "signin.in": "登入",
+  "signin.as": "已登入：{account}",
+  "signin.out": "登出"
+}
