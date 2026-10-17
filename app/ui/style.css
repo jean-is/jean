@@ -441,7 +441,7 @@ html[data-dropping] .drop-zone { opacity: 1; }
   transition: opacity 0.25s var(--ease);
 }
 :is(:lang(ar), :lang(ja)) .drop-zone { font-family: var(--sans); font-style: normal; }
-.offer { inline-size: var(--column); margin: 0.5rem auto 0; padding: 0.9rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.4); border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.07); }
+.offer { inline-size: var(--column); margin: 0.5rem auto 0; padding: 0.9rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.4); border-radius: var(--radius); background: color-mix(in srgb, var(--flame) 7%, var(--room)); }
 .offer p { margin: 0 0 0.6rem; }
 .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
@@ -500,12 +500,12 @@ button.since { padding: 0; border: 0; background: none; text-align: start; } but
 /* ─── The box ───────────────────────────────────────────────────────────── */
 
 app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem 0 max(1rem, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--room) 45%); view-transition-name: composer; }
-/* Where a new task fits a wide window, its box under the question, its ideas under it; elsewhere at the foot, under them (D366). */
+/* Where a new task fits a wide window, its box under the question, its ideas under it; elsewhere at the foot, under them and an offer (D366). */
 [data-centred] app-shell:has(.welcome) > app-composer { flex: 1; position: static; background: none; }
 [data-centred] .welcome { justify-content: flex-end; }
 [data-centred] app-shell:has(.welcome) app-composer > p { margin-block-start: auto; }
-:root:not([data-centred]) app-composer > :is(ul, app-first) { order: -1; }
-:root:not([data-centred]) app-composer:has(> :is(ul, app-first)) { background-size: 100% 160%; background-position: bottom; }
+:root:not([data-centred]) app-composer > :not(form, p) { order: -1; }
+:root:not([data-centred]) app-composer:has(> :not(form, p)) { background-size: 100% 160%; background-position: bottom; }
 .composer {
   inline-size: var(--column);
   margin-inline: auto;

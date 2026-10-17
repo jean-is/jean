@@ -58,4 +58,4 @@
 :root[data-look='tilde'] input.switch:checked { background: var(--fill); }
 
 /* What waits for the user, on foam (deep water by night). */
-:root[data-look='tilde'] .approval { border-color: var(--wait-line); background: var(--wait); }
+:root[data-look='tilde'] :is(.approval, .offer) { border-color: var(--wait-line); background: var(--wait); }

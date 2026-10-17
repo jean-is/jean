@@ -3,11 +3,11 @@ import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, APPLE, SHORTCUTS } from './state.js'
-import { SIZES, loaded, unlock, isDenied, slots } from './caps.js'
+import { loaded, unlock, isDenied, slots } from './caps.js'
 import { BRAND } from '../brand.js'
-import { t, formatBytes } from '../core/i18n.js'
+import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
-import { focusComposer } from './composer.js'
+import { focusComposer, offerAside } from './composer.js'
 import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
@@ -38,7 +38,7 @@ class Shell extends Element {
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
       <p class="print-mark"><app-persona still></app-persona><span>${BRAND.name}<small dir="auto">${BRAND.domain}</small></span></p>
       <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>
-      ${offerAside()}
+      ${current?.records.length ? offerAside() : nothing}
       ${slots('above').map((above) => above.draw())}
       <app-composer></app-composer>
       <app-history></app-history>
@@ -61,8 +61,6 @@ effect(() => {
 /** Search, once it is found, at the top of the drawer, as in Manus (D133, D165). */
 export const findButton = () => (loaded.value.has('find') ? html`<button class="icon-button" aria-keyshortcuts=${SHORTCUTS.find}
   aria-label=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button>` : nothing)
-
-const discovery = () => import('./discovery.js')
 
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
@@ -131,21 +129,6 @@ document.addEventListener('keydown', (event) => {
     import('./inbox.js').then((module) => module.deleteTask(path))
   }
 })
-
-/** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
-function offerAside() {
-  const offer = app.offer.value
-  if (!offer || app.dialog.value === 'first') return nothing
-  const { id, progress } = offer
-  const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
-  return html`<aside class="offer" role="status">
-    <p>${t(`cap.${id}.offer`, params)}</p>
-    ${progress === undefined ? html`<div class="row">
-      <button class="button primary" @click=${() => discovery().then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
-      <button class="button subtle" @click=${() => discovery().then((module) => module.decline(id))}>${t('offer.no')}</button>
-    </div>` : html`<progress max="1" value=${progress} aria-label=${t(`cap.${id}.downloading`)}></progress>`}
-  </aside>`
-}
 
 // Before any task, in a browser's tab (not the desktop app, whose key the tab keeps): what Jean is (D366).
 function welcome() {
