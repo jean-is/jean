@@ -188,6 +188,22 @@ test('events: a request knows the records up to its end, its files and words inc
   assert.equal(second.user?.upTo, 6)
 })
 
+test('events: a request sent after one that kept nothing is a turn of its own, and a message keeps its files with its words', () => {
+  const file = { type: /** @type {const} */ ('resource_link'), uri: 'files/a.csv', name: 'a.csv' }
+  // The page reloaded before the first request's first step was kept; then the user asked again, sharing a file.
+  const records = [userRecord('Count slowly to five', 'dev1'), ...userRecords('Stop now', [file], 'dev1'), userRecord('Really', 'dev1')]
+  assert.deepEqual(foldTurns(records).map(({ user }) => [user?.text, user?.files, user?.upTo]), [
+    ['Count slowly to five', [], 1],
+    ['Stop now', [file], 3],
+    ['Really', [], 4],
+  ])
+  assert.deepEqual(toChatMessages(records), [
+    { role: 'user', content: 'Count slowly to five' },
+    { role: 'user', content: 'Stop now', documents: [{ name: 'a.csv', text: '' }] },
+    { role: 'user', content: 'Really' },
+  ])
+})
+
 test('events: failed tools become error results; empty steps are skipped', () => {
   const records = [
     userRecord('Delete it', 'dev1'),

@@ -350,8 +350,9 @@ export async function rewind(upTo, text) {
   await new Promise((resolve) => { const done = effect(() => { if (!app.running.value.includes(path ?? '')) queueMicrotask(() => resolve(done())) }) })
   const current = app.current.value
   if (!current || current.path !== path || app.busy.value) return
-  // Edited, its words go too, and so does its note of what / and @ named (D199), unless the new words name all it did.
-  const from = text === undefined ? upTo : current.records.slice(0, upTo).findLastIndex((record) => record.update?.sessionUpdate !== 'user_message_chunk') + 1
+  // Edited, its words go too, with its files, which come just before them (a request before ends with its own words),
+  // and so does its note of what / and @ named (D199), unless the new words name all it did.
+  const from = text === undefined ? upTo : current.records.slice(0, upTo - 1).findLastIndex(({ update }) => update?.sessionUpdate !== 'user_message_chunk' || update.content.type !== 'resource_link') + 1
   const start = current.records.slice(0, from).findLastIndex((record) => record.update && record.update.sessionUpdate !== '_system_note') + 1
   const told = current.records.slice(start, from).find(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'mentions')
   const words = /** @type {string[]} */ (/** @type {any} */ (told?.update)?.data.words ?? [])
@@ -376,7 +377,7 @@ export async function fork(upTo) {
   const current = app.current.value
   if (!current) return
   // What led up to the request keeps its times, and its title, which may have come after it; the request is asked now.
-  const from = current.records.slice(0, upTo).findLastIndex((record) => record.update?.sessionUpdate !== 'user_message_chunk') + 1
+  const from = current.records.slice(0, upTo - 1).findLastIndex(({ update }) => update?.sessionUpdate !== 'user_message_chunk' || update.content.type !== 'resource_link') + 1
   const at = new Date().toISOString()
   const records = [...current.records.slice(0, from), ...current.records.slice(upTo).filter((record) => record.meta?.title),
     ...current.records.slice(from, upTo).map((record) => ({ ...record, at }))]
