@@ -13,7 +13,7 @@ kept its verdict with the deliverables swapped, and `--hand` lays out pairs for 
 `--agreement` compares with it. GDPval-AA (Artificial Analysis) runs brains in its own harness with a shell and web
 search for up to 100 turns, graded pairwise into an ELO: its numbers aren't on this page's scale.
 
-## gpt-5-mini (copilot), 2026-10-16
+## gpt-5-mini (copilot), 2026-10-17
 
 ### GDPval, 20 tasks of its gold subset
 
@@ -67,21 +67,21 @@ A person played by the same brain asks for a task, then changes their mind after
 
 | The change of mind | pass^1 | pass^2 | pass^3 | Checkpoints (partial credit) | Brain steps | Approvals asked / declined | Failed |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Sent while it works (D365) | 53% | 28% | 17% | 70% | 6.2 | 278 / 64 | 0 |
-| Sent once it answered | 64% | 47% | 42% | 77% | 9.4 | 447 / 140 | 0 |
+| Sent while it works (D365) | 61% | 44% | 33% | 76% | 5.6 | 287 / 68 | 0 |
+| Sent once it answered | 56% | 33% | 17% | 72% | 6.4 | 316 / 95 | 0 |
 
 | Language | pass^1 sent while it works | pass^1 sent once it answered |
 |---|---:|---:|
-| ar | 56% | 78% |
-| en | 56% | 33% |
-| fr | 44% | 78% |
-| ja | 56% | 67% |
+| ar | 89% | 78% |
+| en | 33% | 33% |
+| fr | 33% | 33% |
+| ja | 89% | 78% |
 
 | Scenario | pass^1 sent while it works | pass^3 | Brain steps | pass^1 sent once it answered | pass^3 | Brain steps |
 |---|---:|---:|---:|---:|---:|---:|
-| expenses | 67% | 25% | 5.0 | 92% | 75% | 8.5 |
-| meetings | 42% | 0% | 5.1 | 42% | 25% | 5.6 |
-| prices | 50% | 25% | 8.6 | 58% | 25% | 14.2 |
+| expenses | 67% | 50% | 5.5 | 58% | 0% | 6.2 |
+| meetings | 58% | 50% | 4.9 | 50% | 50% | 4.8 |
+| prices | 58% | 0% | 6.4 | 58% | 0% | 8.4 |
 
 ### Long tasks cut short, TheAgentCompany's way
 
@@ -100,7 +100,7 @@ Summaries from every run that had one, most from the long scenarios run again as
 | Language | Runs with a summary | Summaries | In its language | Sources given again | Request kept word for word | Notes in force kept |
 |---|---:|---:|---:|---:|---:|---:|
 | ar | 2 | 2 | 50% | — | 100% | — |
-| en | 3 | 4 | 100% | — | 100% | — |
+| en | 4 | 5 | 100% | — | 100% | — |
 | fr | 2 | 2 | 100% | — | 100% | — |
 | ja | 2 | 6 | 83% | — | 100% | — |
 
@@ -118,6 +118,4 @@ Over all languages: 0% of 125 long tasks had a plan, first shown at step — (me
 ### Where a feature made things worse
 
 - GDPval: the judge preferred the runs with the features off, on's win rate 48% (on better 5, off better 6, 9 ties of 20).
-- Steering: pass^1 was lower when the change of mind was read while Jean worked (53%) than when it was sent once it answered (64%).
-- Steering: pass^3 was lower when the change of mind was read while Jean worked (17%) than when it was sent once it answered (42%).
-- Compaction: 2 of 14 summaries weren't in the conversation's language.
+- Compaction: 2 of 15 summaries weren't in the conversation's language.
