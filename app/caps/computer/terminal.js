@@ -14,10 +14,10 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
 import { app, updateSettings, keepRecords } from '../../ui/state.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { noteRecord } from '../../core/events.js'
 import { t, tParts, locale } from '../../core/i18n.js'
-import { typed, completions, clip, prompt, keys } from './computer.js'
+import { typed, completions, clip, keys } from './computer.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { keep } from '../../ui/windows.js'
 
@@ -83,7 +83,7 @@ const toLine = () => pane.querySelector('textarea')?.focus()
 keep('terminal', { get: () => (open.value ? '' : null), set: (state) => (state === null ? close() : open.peek() || show()) })
 
 /** Clear's icon: a broom, for what is swept away rather than deleted. */
-const broom = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<g transform="rotate(45 12 12)"><path d="M12 .5V10M9.5 10h5l2.5 10H7ZM8.9 12.5h6.2M10.3 15.5 10 20M13.7 15.5l.3 4.5"/></g>`}</svg>`
+const broom = icon(svg`<g transform="rotate(45 12 12)"><path d="M12 .5V10M9.5 10h5l2.5 10H7ZM8.9 12.5h6.2M10.3 15.5 10 20M13.7 15.5l.3 4.5"/></g>`)
 
 const stop = () => { for (const entry of current().entries) entry.running?.abort() }
 const clear = () => {
@@ -106,7 +106,7 @@ class Terminal extends Element {
         ${button(t('action.close'), icons.close, close)}
       </header>
       <div class="terminal-body" dir="ltr" tabindex="-1" @scroll=${scrolled}>
-        ${terminal.entries.length ? nothing : html`<p class="terminal-hint" dir="auto">${prompt}<span>${tParts('computer.terminal.text', { keys })}</span></p>`}
+        ${terminal.entries.length ? nothing : html`<p class="terminal-hint" dir="auto">${icons.terminal}<span>${tParts('computer.terminal.text', { keys })}</span></p>`}
         <div role="log">${terminal.entries.map(entry)}</div>
         <form class="terminal-line" @submit=${(/** @type {Event} */ event) => event.preventDefault()}>
           <span aria-hidden="true">${promptOf(terminal)}</span>

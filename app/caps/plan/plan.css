@@ -4,7 +4,7 @@
 .plan ol { display: grid; gap: 0.3rem; margin: 0.45rem 0 0; padding: 0; list-style: none; }
 .plan li { display: flex; align-items: center; gap: 0.55rem; color: var(--ink); overflow-wrap: anywhere; }
 .plan li[data-status='completed'] { color: var(--ink-soft); }
-.plan li > .icon { inline-size: 0.95rem; block-size: 0.95rem; flex: none; color: var(--flame); }
+.plan li > .icon { --glyph: var(--icon-s); flex: none; color: var(--flame); }
 .plan li > .ember { margin-inline: 0.225rem; }
 .plan li[data-status='pending'] > .ember { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-faint); }
 

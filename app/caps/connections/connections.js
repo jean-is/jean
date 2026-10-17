@@ -24,7 +24,7 @@ import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, locale } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { subRow } from '../../ui/composer.js'
 
 /** @import { Connection, Project } from '../../core/settings.js' */

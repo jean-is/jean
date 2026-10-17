@@ -13,7 +13,7 @@ import { readJSON, writeJSON } from '../../core/fs.js'
 import { noteRecord } from '../../core/events.js'
 import { ulid } from '../../core/ulid.js'
 import { t } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { TIER, TOPICS, CHOICES, DANGERS, age, tierFor, asPolicy, helpline } from './tier.js'
 import { inbox, sealFor } from './family.js'
 

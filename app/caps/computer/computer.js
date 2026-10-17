@@ -13,7 +13,7 @@ import { sandbox } from '../../ui/sandbox.js'
 import { Element, define } from '../../ui/base.js'
 import { app, conversationOf, updateSettings, SHORTCUTS } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { serviceURL } from '../../core/settings.js'
 import { join, walk } from '../../core/fs.js'
 import { addFile, sha256Hex } from '../../core/files.js'
@@ -476,8 +476,6 @@ export async function completions(word, commands) {
 
 /** The terminal's key, left to right in any language: ⌘J on Apple's systems, Ctrl+J elsewhere (D184). */
 export const keys = html`<kbd><bdi dir="ltr">${SHORTCUTS.terminal.replace('Meta+', '⌘').replace('Control', 'Ctrl')}</bdi></kbd>`
-/** The terminal's prompt, the shell's: ">_". */
-export const prompt = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4.5 7 5 5-5 5M12 17.5h7.5"/></svg>`
 
 /** The computer's light (D176): unlit asleep, steady once ready, breathing while it wakes or works. @param {string} state */
 const light = (state) => html`<span class="ember" data-state=${state} aria-hidden="true"></span>`
@@ -488,7 +486,7 @@ class TerminalToggle extends Element {
     if (!app.settings.value.terminal) return nothing
     const { state } = box.status.value
     return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} aria-keyshortcuts=${SHORTCUTS.terminal}
-      @click=${() => import('./terminal.js').then((module) => module.toggle())}>${prompt}${state === 'asleep' ? nothing : light(state)}</button>`
+      @click=${() => import('./terminal.js').then((module) => module.toggle())}>${icons.terminal}${state === 'asleep' ? nothing : light(state)}</button>`
   }
 }
 define('app-terminal-toggle', TerminalToggle)
@@ -582,7 +580,7 @@ function itself() {
     </section>
     <section>
       <div class="section-head"><h3>${t('computer.engines')}</h3>
-        <button class="button subtle" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${prompt} ${t('computer.terminal.open')}</button></div>
+        <button class="button subtle" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${icons.terminal} ${t('computer.terminal.open')}</button></div>
       <ul class="list engines">${ENGINES.map(([id, mark, line]) => html`<li>
         <span class="item-icon" aria-hidden="true">${mark}</span>
         <span class="item-text"><span id=${`engine-${id}`}>${t(`computer.engine.${id}`)}</span><small>${t(`computer.engine.${id}.text`, { size: amount(14e6) })}</small></span>

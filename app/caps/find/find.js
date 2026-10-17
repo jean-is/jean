@@ -13,7 +13,7 @@ import { register, loaded } from '../../ui/caps.js'
 import { app, newConversation, openConversation, enterProject, turnPage, openFile } from '../../ui/state.js'
 import { syncDialog, closed, backdrop, openSettings, places } from '../../ui/dialogs.js'
 import { focusComposer } from '../../ui/composer.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
 import { foldTurns, splitSuggestions } from '../../core/events.js'
 import { fold, terms, ranges, passage } from '../../core/search.js'
@@ -188,7 +188,7 @@ function groups(words) {
     return [
       { heading: '', options: [{ icon: icons.compose, title: t('action.new'), go: () => turnPage(newConversation).then(focusComposer) }] },
       { heading: t('history.title'), options: app.conversations.value.slice(0, RECENT).map((item) => ({
-        icon: icons.history, title: item.title || t('conversation.untitled'), when: item.updatedAt, go: opening({ ...item, dir: app.projectDir }),
+        icon: icons.list, title: item.title || t('conversation.untitled'), when: item.updatedAt, go: opening({ ...item, dir: app.projectDir }),
       })) },
     ]
   }
@@ -205,7 +205,7 @@ function groups(words) {
     { heading: t('cap.projects.name'), options: projects.map((project) => ({
       icon: icons.layers, title: lit(nameOf(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
     })) },
-    { heading: t('history.title'), options: matching(conversations, words).map((item) => ({ icon: icons.history, ...found(item, words), go: opening(item) })) },
+    { heading: t('history.title'), options: matching(conversations, words).map((item) => ({ icon: icons.list, ...found(item, words), go: opening(item) })) },
     { heading: t('cap.files.name'), options: matching(files, words).map((item) => ({
       icon: item.link?.mimeType?.startsWith('image/') ? icons.image : icons.file, ...found(item, words), go: showing(item),
     })) },

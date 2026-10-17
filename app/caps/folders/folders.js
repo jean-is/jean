@@ -11,14 +11,14 @@
 // project or conversation it belongs to, and the browser asks again once a visit, at the first
 // message sent there or from a card when a call needs it. Elsewhere a folder is a read-only copy for
 // the visit, and what Jean changes is saved as one zip. Nothing of Jean's is written into a folder.
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, unlock } from '../../ui/caps.js'
 import { app, conversationOf, refreshProjects, notify, assistantName, readBody, keepRecords } from '../../ui/state.js'
 import { folderFS, mine } from '../../ui/opfs.js'
 import { save } from '../../ui/save.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { join } from '../../core/fs.js'
 import { stringifyFrontMatter } from '../../core/settings.js'
 import { noteRecord } from '../../core/events.js'
@@ -662,8 +662,8 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
 // ─── Elements ────────────────────────────────────────────────────────────────
 
 /** Reconnect and Disconnect: a link, whole or broken. */
-const LINK = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M9.5 14.5l5-5"/></svg>`
-const UNLINK = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M8.5 3.5V6M3.5 8.5H6M15.5 20.5V18M20.5 15.5H18"/></svg>`
+const LINK = icon(svg`<path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M9.5 14.5l5-5"/>`)
+const UNLINK = icon(svg`<path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M8.5 3.5V6M3.5 8.5H6M15.5 20.5V18M20.5 15.5H18"/>`)
 
 /** The header names the conversation's folder, and opens on a menu to change it (D149). */
 class FolderName extends Element {
@@ -682,10 +682,10 @@ class FolderName extends Element {
       <div id="folder-menu" class="menu folder-menu" popover>
         ${folder.copy ? html`<p class="folder-note">${t('folders.copy', { name: assistantName() })}</p>` : nothing}
         ${missing ? item(LINK, t('folders.again'), () => choose(!app.current.peek() && pending.peek() === undefined ? project : undefined)) : nothing}
-        ${shut ? item(icons.key, t('folders.allow'), () => permit(folder)) : nothing}
+        ${shut ? item(icons.shield, t('folders.allow'), () => permit(folder)) : nothing}
         ${changed.length ? item(icons.download, t('folders.save'), async () => save(new Blob([/** @type {BlobPart} */ (await folder.copy?.zip())], { type: 'application/zip' }), `${folder.name}.zip`)) : nothing}
         ${item(icons.folder, t('folders.another'), () => choose())}
-        ${!onProject ? item(icons.brain, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
+        ${!onProject ? item(icons.layers, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
         ${item(UNLINK, t('folders.none'), () => use(null))}
       </div>`
   }

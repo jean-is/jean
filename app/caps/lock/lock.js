@@ -14,7 +14,7 @@ import { save } from '../../ui/save.js'
 import { mine, here, switchTo } from '../../ui/opfs.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, useLocale, pickLocale, locale, dir } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../ui/seal.js').Slot} Slot */
@@ -109,7 +109,7 @@ export function ways(then, of = vault.value) {
     }
   }
   return html`${coding.value ? form((data) => go('recovery', data), [['secret', 'lock.codeLabel']], t('lock.unlock')) : html`
-    ${slotOf('passkey', of) ? html`<div class="row"><button class="button primary" @click=${() => go('passkey')}>${icons.key} ${t('lock.unlock')}</button></div>` : nothing}
+    ${slotOf('passkey', of) ? html`<div class="row"><button class="button primary" @click=${() => go('passkey')}>${icons.lock} ${t('lock.unlock')}</button></div>` : nothing}
     ${slotOf('password', of) ? form((data) => go('password', data), [['secret', 'lock.passwordLabel', 'current-password']], t('lock.unlock')) : nothing}
     <div class="row"><button class="link-button" @click=${() => { coding.value = true }}>${t('lock.useCode')}</button></div>`}
     <p class="lock-said" role="alert">${said.value}</p>`
@@ -260,7 +260,7 @@ function panel() {
         <button class="button subtle" @click=${() => { step.value = { at: 'ask', then: 'change' } }}>${t('lock.change')}</button>
         ${app.policy.lock === 'required' ? nothing : html`<button class="button subtle" @click=${() => { step.value = { at: 'ask', then: 'off' } }}>${t('lock.off')}</button>`}</div>`
       : html`<div class="row">
-        ${passkeys ? html`<button class="button" @click=${() => setUp('passkey', now.raw)}>${icons.key} ${t('lock.passkey')}</button>` : nothing}
+        ${passkeys ? html`<button class="button" @click=${() => setUp('passkey', now.raw)}>${icons.lock} ${t('lock.passkey')}</button>` : nothing}
         <button class="button ${passkeys ? 'subtle' : ''}" @click=${() => setUp('password', now.raw)}>${t('lock.password')}</button></div>`}
     ${now.at === 'ask' ? nothing : html`<p class="lock-said" role="alert">${said.value}</p>`}
     ${now.at === 'rest' && !now.raw ? nothing : html`<button class="link-button" @click=${() => done('raw' in now ? now.raw : undefined)}>${t('lock.cancel')}</button>`}

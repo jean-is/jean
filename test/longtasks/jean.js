@@ -71,6 +71,7 @@ Object.assign(room, {
   'base.js': { Element: class {}, define: () => {} },
   'sheet.js': { styleSheet: async () => {} },
   'icons.js': { icons: new Proxy({}, { get: () => '' }) },
+  'menu-icons.js': { icon: () => '', icons: new Proxy({}, { get: () => '' }) },
   'markdown.js': { markdown: (/** @type {string} */ text) => text },
   'save.js': { save: async () => {} },
   'prices.js': { priceOf: () => null },

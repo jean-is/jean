@@ -8,7 +8,7 @@ import { unlock } from '../../ui/caps.js'
 import { app, effective } from '../../ui/state.js'
 import { syncDialog, closed, backdrop, head, openSettings } from '../../ui/dialogs.js'
 import { t } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { self, make, refresh } from './profiles.js'
 
 /** Whether it is a child's; then what was chosen, while the parent's way in is asked for. */

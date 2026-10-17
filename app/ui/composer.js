@@ -113,7 +113,7 @@ class Composer extends Element {
           </div>
           <app-seal></app-seal>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
-            ${brain?.api === 'device' && !auto ? icons.lock : icons.brain}<span>${chipLabel.value}</span>${icons.chevron}
+            ${brain?.api === 'device' && !auto ? icons['brain-device'] : icons.brain}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
           ${primary(busy && !app.draft.value.trim(), empty, hands)}
         </div>
@@ -228,7 +228,7 @@ function primary(busy, empty, hands) {
   // While hands-free is on, the box fills as the user speaks: the button still ends it, and the turn sends itself.
   if (on || (empty && loaded.value.has('live'))) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
     aria-keyshortcuts=${SHORTCUTS.live} aria-label=${t(on ? 'live.stop' : 'live.start')}
-    @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`
+    @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.voice}</button>`
   return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')}>${icons.send}</button>`
 }
 
