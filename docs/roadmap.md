@@ -117,5 +117,5 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds
 - [ ] Manifesto and README published, with the line count
 - [ ] What Jean generates marked as AI's (AI Act Art. 50(2), by launch or 2 Dec 2026): pictures made on the device or this computer carry IPTC's mark in their XMP (D279); still C2PA and a watermark on them, metadata on files, detection on the check page, labels for deployers ([certificates.md](certificates.md#4-ai-act-marking-art-502-and-4-blocks-the-public-launch))
-- [ ] At work, with a real Entra tenant (D385): Jean's single-page app, a gateway that checks its tokens (LiteLLM's JWT auth, Azure API Management), renewal after an hour and again after 24 hours
+- [ ] At work, with a real Entra tenant (D385): Jean's single-page app, a gateway that checks its tokens (LiteLLM's JWT auth, Azure API Management), renewal after an hour and again after 24 hours; and the audit export (D386) into a real OpenTelemetry Collector, with its `oidc` authenticator and CORS
 - [ ] Mac app signed with a Developer ID and notarized, with the `allow-dyld-environment-variables` entitlement D160 needs; Windows app signed for SmartScreen

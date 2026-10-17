@@ -40,8 +40,9 @@ async function start() {
   configureCapabilities({ deny, remember: rememberUnlocked })
 
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, navigator.languages))
-  // The organisation's sign-in (D385).
+  // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
+  if (app.policy.key || app.policy.audit) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
 
   const root = document.documentElement
   effect(() => {
@@ -103,7 +104,7 @@ async function start() {
   // conversation, then every capability, but not what is always there (CSSOM, which the CSP
   // allows; style attributes it doesn't).
   effect(() => {
-    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin'].includes(id)).length
+    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit'].includes(id)).length
     root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
   })
 

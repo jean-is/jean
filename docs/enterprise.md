@@ -22,7 +22,7 @@ Nothing planned is ruled out by the architecture:
 | Config for managed browsers | ✅ Chrome and Edge only | `ManagedConfigurationPerOrigin` pushes JSON to web apps that IT has installed, read with `navigator.managed.getManagedConfiguration()`. It is a second policy source alongside `policy.json`. |
 | White-label | ✅ Comes for free | Change `BRAND` and it becomes "Acme Assistant". |
 | Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy points to (`skills.sources`, which users can't remove; `skills.only` keeps to it), and users add them after reading their steps (D121). Its catalogue of projects, what other products call agents (instructions, skills, connections without their secrets, a way of being), can be published the same way, each added after reading it. |
-| Audit | ✅ Best effort | The ACP event stream, which the `record` event follows (D299), is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector. The gateway's log remains the authoritative one. |
+| Audit | ✅ Best effort | The ACP event stream, which the `record` event follows (D299), is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector ([Audit to OpenTelemetry](#audit-to-opentelemetry), D386). The gateway's log remains the authoritative one. |
 
 ## What it cannot do, by design
 
@@ -45,7 +45,7 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 | Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group |
 | Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back; a gateway to the services a browser can't reach, holding the apps registered with their sign-ins (`urls.gateway`, `gateway/`, D191); offline Wikipedia from the organisation's Kiwix server, for web search (`urls.wikipedia`, D254); the Computer's internet (`computer` in policy: off, ask first or any site, a list of sites, a relay) and its package registries (Pyodide's, PyPI, npm: an Artifactory instance, its key kept on the device) (D162) | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
 | Records | Backup, export, a mirrored folder | Retention and legal hold by policy, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
-| Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299) | OpenTelemetry export with identities, a hash-chained log, usage reports |
+| Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299) | OpenTelemetry export with identities (D386), a hash-chained log, usage reports |
 | Deployment | Copy `app/`, or run its container image ([deploy/docker/](../deploy/docker/README.md)); the headers are documented | Deployment kits (hosting, app registration, Intune), embedding in Teams, Outlook and SharePoint |
 
 Long-term-support releases, signed builds, SBOMs, security questionnaires and accessibility reports come with a subscription. They are services, not code.
@@ -53,7 +53,7 @@ Long-term-support releases, signed builds, SBOMs, security questionnaires and ac
 **Promises.** The person's own security is never paid for. Features never move from open to `ee/`; they may move the other way. Without a key, enterprise features don't appear at all, so the unlock game never shows a paywall.
 
 **Keys.**
-- WAREHOUSE SAS signs them (JWS, ES256). Jean checks them offline with Web Crypto and reads them from policy; it never calls home. The check lives in `ee/`.
+- WAREHOUSE SAS signs them (JWS, ES256). Jean checks them offline with Web Crypto and reads them from policy (`key`); it never calls home. The check lives in `ee/` (`ee/key.js`): the signature, the origins the key names, and its end against the date this version of `ee/` was released, or against today for a trial.
 - A subscription key unlocks every version released before its end date, forever. When a subscription lapses, a running deployment keeps working; only upgrades of `ee/` stop.
 - A trial key is free for 30 days. An organisation generates one on a page WAREHOUSE SAS runs. It is bound to the deployment's addresses, one trial per address, and has no fallback.
 - A policy that asks for enterprise features without a valid key stops Jean with a message for IT. Its rules are never dropped silently; removing those sections gives back the open version.
@@ -85,7 +85,8 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "films": { "openai": ["sora-2-pro"] },
   "pictureCheck": { "suggestive": true, "hate": false },
   "lock": "required",
-  "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces" }
+  "key": "eyJhbGciOiJFUzI1NiIs…",
+  "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces", "auth": "oidc", "content": false }
 }
 ```
 
@@ -105,6 +106,19 @@ Policy's `signIn` names the organisation's identity provider and the app IT regi
   3. Name the issuer by tenant ID, as the tenant's discovery names it.
   4. Have the gateway check the token: its issuer, its audience (the gateway's app) and the scope, as LiteLLM's JWT auth, Portkey or Azure API Management's `validate-jwt` do.
 - **Any other OpenID Connect provider** works the same way: its issuer, Jean's client id, the gateway's scopes, and refresh tokens (`offline_access`).
+
+## Audit to OpenTelemetry
+
+With a key, or on localhost, `audit` sends the audit stream to the organisation's collector (D386, `ee/`). Elsewhere, a policy with `audit` and no key that unlocks this version stops Jean with a message for IT.
+
+- **Traces, in OpenTelemetry's GenAI conventions:** one a turn, its `invoke_agent` span holding the conversation's and the project's ids. Under it:
+  - a `chat {model}` span for each request to a brain: the provider, the model, the tokens read, written and read from the cache, why it stopped, and its error;
+  - an `execute_tool {tool}` span for each call: its id and kind, the connection it reached, and `jean.decision`, `jean.decided_by` and `jean.declined` when a rule or the person decided it (D308). A script's or a helper's calls go under theirs.
+  - Going back to a request sends `remove_records`, with how many went.
+- **The resource:** `service.name` (`jean`, or `audit.service`), Jean's version, `device.id`, and `user.email` from the sign-in.
+- **Metadata only**, unless `"content": true`: then what was asked and answered, what each brain wrote, its reasoning too, and each call's arguments and result, as JSON strings.
+- **Credentials:** `"auth": "oidc"` sends the organisation's sign-in's token, which the collector's `oidc` authenticator checks. `"auth"` with its own `scopes`, `issuer` or `clientId` makes a sign-in of its own, at the first visit too. `headers` are fixed, and whoever can open Jean reads them in `policy.json`.
+- **Sending:** OTLP/HTTP JSON, in batches every five seconds or of 500, again later while the collector is unreachable or busy, at most 5,000 waiting, and what fits in one request as the page is hidden. The collector allows Jean's origin (`cors.allowed_origins` on its OTLP HTTP receiver). Best effort: the gateway's log stays the authoritative one.
 
 ## Decide now (cheap now, expensive later)
 
@@ -126,5 +140,5 @@ Policy's `signIn` names the organisation's identity provider and the app IT regi
 
 ## Sources
 
-- [Single-page apps on the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-overview)
+- [Single-page apps on the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-overview) · [OpenTelemetry's GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai)
 - [ManagedConfigurationPerOrigin (Chrome)](https://chromeenterprise.google/intl/en_uk/policies/managed-configuration-per-origin/) · [ManagedConfigurationPerOrigin (Edge)](https://learn.microsoft.com/en-us/deployedge/microsoft-edge-browser-policies/managedconfigurationperorigin) · [Managed Configuration API](https://wicg.github.io/WebApiDevice/managed_config/)
