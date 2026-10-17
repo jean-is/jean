@@ -117,10 +117,11 @@ button { cursor: pointer; }
    project's own, at the lightness each mode needs; it travels the way the page reads, its ends
    fading out. */
 
-/* Jean's water, and the room's own warm light, as other looks keep theirs; an accent or a project's colour wins. */
-:where(:root) { --tint: oklch(0.781 0.118 209); --wave: oklch(from var(--tint) 0.781 min(c, 0.18) h); }
+/* Jean's water, and the room's own warm light, as other looks keep theirs; an accent or a project's colour wins, on each wave. */
+:where(:root) { --tint: oklch(0.781 0.118 209); }
 :where(:root:not([data-look])) { --tint: oklch(0.74 0.17 54); }
-[data-theme='light'] { --wave: oklch(from var(--tint) 0.56 min(c, 0.19) h); }
+app-persona { --wave: oklch(from var(--tint) 0.781 min(c, 0.18) h); }
+[data-theme='light'] app-persona { --wave: oklch(from var(--tint) 0.56 min(c, 0.19) h); }
 app-persona {
   display: inline-block;
   flex: none;
@@ -195,6 +196,8 @@ app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-s
   transition: text-shadow 0.6s var(--ease);
 }
 .wordmark:hover { text-shadow: 0 0 2rem oklch(from var(--glow) l c h / 0.8); }
+/* The name's box is its x-height, centred on the wave's. */
+:is(.wordmark, .print-mark) span { text-box: trim-both ex alphabetic; }
 
 .icon-button {
   display: inline-grid;
@@ -723,7 +726,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 /* The header shows the room the user is in, and opens on a menu below it (D82). */
 app-projects { display: contents; }
 app-projects .wordmark { anchor-name: --project; min-inline-size: 0; }
-app-projects .wordmark span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+app-projects .wordmark span { overflow-x: clip; text-overflow: ellipsis; white-space: nowrap; }
 app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--ink-soft); }
 .project-menu { position-anchor: --project; position-area: block-end span-inline-end; margin: 0.25rem 0 0; max-block-size: 70dvh; overflow-y: auto; }
 :is(.project-menu, .task-menu):not(:popover-open) { translate: 0 -0.4rem; }
@@ -762,17 +765,28 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
 
 /* ─── Paper: print, or save as PDF ──────────────────────────────────────── */
 
+.print-mark { display: none; }
 @media print {
-  /* Also over a look's colours (ui/looks/), which outrank :root alone. */
-  :root, :root[data-look][data-theme] { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: #8a4a12; }
+  /* Also over a look's colours (ui/looks/) and an accent's; links in the project's colour. */
+  :root, :root[data-look][data-theme] { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: oklch(from var(--tint) 0.45 min(c, 0.13) h) !important; }
+  :root app-persona { --wave: oklch(from var(--tint) 0.56 min(c, 0.19) h); }
   html, body { background: #fff; }
+  /* The mark and Jean's address. */
+  .print-mark { display: flex; align-items: center; gap: 0.35rem; margin: 0 0 2rem; font: 700 1.25rem/1 var(--display); }
+  .print-mark app-persona { --persona-size: 1.6rem; }
+  .print-mark small { margin-inline: 0.4rem; font: 0.75rem/1 var(--sans); color: var(--ink-soft); }
   .room, .bar, app-inbox, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups { display: none !important; }
-  main { inline-size: auto; }
+  /* Without a look's frame. */
+  :is(html, :root[data-look]) main { inline-size: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+  :is(html, :root[data-look]) .conversation-title { margin: 0 0 1rem; padding: 0; background: none; color: var(--ink); }
   app-shell { padding: 0 !important; }
   .msg { animation: none; }
   .msg-user { background: none; border: 1px solid var(--line); }
   .prose pre { background: none; }
-  .read-list ul { display: grid; }
+  /* Sources open, with each page's site. */
+  .read-list::details-content { display: block; content-visibility: visible; }
+  .read-list summary .icon:last-child { display: none; }
+  .read-list [data-site]::after { content: attr(data-site); display: inline-block; margin-inline-start: 0.5em; color: var(--ink-soft); }
 }
 
 /* ─── Preferences ───────────────────────────────────────────────────────── */
@@ -783,7 +797,8 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {
-  :root, :root[data-look][data-theme] { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); --wave: var(--ink); }
+  :root, :root[data-look][data-theme] { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
+  :root app-persona { --wave: var(--ink); }
 }
 @media (forced-colors: active) {
   .room { display: none; }

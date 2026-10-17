@@ -12,8 +12,8 @@ const wave = html`<svg class="persona" viewBox="12 18 40 28" aria-hidden="true" 
 
 class Persona extends Element {
   render() {
-    // Beyond the room's presence: waiting for the user's approval here, and sorry after an error.
-    this.dataset.presence = decisionsHere().length ? 'waiting' : app.error.value ? 'oops' : app.presence.value
+    // Beyond the room's presence: waiting for the user's approval here, and sorry after an error. A still one (on paper) is the tilde alone.
+    this.dataset.presence = this.hasAttribute('still') ? 'still' : decisionsHere().length ? 'waiting' : app.error.value ? 'oops' : app.presence.value
     return wave
   }
 }
