@@ -11,6 +11,6 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["app/brand.js", "app/core/**/*.js", "app/core/**/*.d.ts", "app/ui/**/*.js", "app/caps/**/*.js", "gateway/gateway.js", "host/host.js"],
+  "include": ["app/brand.js", "app/core/**/*.js", "app/core/**/*.d.ts", "app/ui/**/*.js", "app/caps/**/*.js", "app/ee/**/*.js", "gateway/gateway.js", "host/host.js"],
   "exclude": ["app/ui/*-worker.js", "app/caps/**/*-worker.js", "app/caps/**/*-worklet.js", "node_modules", "app/vendor"]
 }

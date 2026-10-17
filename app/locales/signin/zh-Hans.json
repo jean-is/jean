@@ -1,0 +1,6 @@
+{
+  "signin.needed": "使用你所在组织的账号登录，才能获得回答。",
+  "signin.in": "登录",
+  "signin.as": "已登录：{account}",
+  "signin.out": "退出登录"
+}

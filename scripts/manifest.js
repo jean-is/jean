@@ -34,6 +34,8 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   math: ['vendor/temml'],
   charts: ['vendor/echarts'],
   scores: ['vendor/abcjs', 'vendor/spessasynth', 'vendor/sounds'],
+  // Not a runtime, but on demand as one: the enterprise integrations, which only their loader imports (D139).
+  enterprise: ['ee'],
   // No capability of its own: a page that holds a map fetches it then, as it does the map's tiles (D291).
   maps: ['vendor/maplibre'],
 })
