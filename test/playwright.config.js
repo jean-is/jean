@@ -13,6 +13,7 @@ const MAIL = 4182
 const GATEWAY = 4183
 const CSP = 4184
 const SHARE = 4185
+const HOME = 4186
 // The gateway (D191) serves Jean's origin, and holds the app the fake mail's closed service registered.
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
   clients: [{ issuer: `http://127.0.0.1:${MAIL}/closed`, tokenEndpoint: `http://127.0.0.1:${MAIL}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret' }] }
@@ -42,6 +43,8 @@ export default defineConfig({
     // The share host (D361), for Jean's origin, keeping its shares in a folder of the run's; its viewer from the render package's address, which the test serves.
     { command: 'node scripts/host.js --serve', cwd: '..', port: SHARE, reuseExistingServer: false,
       env: { PORT: String(SHARE), HOST_DIR: join(tmpdir(), `jean-shares-${process.pid}`), HOST_CONFIG: JSON.stringify({ origins: [`http://127.0.0.1:${APP}`], app: `http://127.0.0.1:${APP}/`, legal: 'https://legal.example/', name: 'Jean' }) } },
+    // Jean as jean.is's deploy has it, its page under the first screen and its pages in other languages (test/home.spec.js, D397).
+    { command: 'node scripts/serve.js --home', cwd: '..', port: HOME, env: { PORT: String(HOME) }, reuseExistingServer: false },
     // Jean again, each page's policy also a report-only header that says what it refused (test/csp.spec.js).
     { command: 'node scripts/serve.js --csp-reports', cwd: '..', port: CSP, env: { PORT: String(CSP) }, reuseExistingServer: false },
   ],

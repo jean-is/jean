@@ -9,6 +9,7 @@
     "dev": "npm run build && node scripts/serve.js --budgets",
     "dev:gateway": "npm run build && node scripts/serve.js --gateway --budgets",
     "dev:share": "npm run build && node scripts/serve.js --share --budgets",
+    "dev:home": "npm run build && node scripts/serve.js --home --budgets",
     "start": "npm run build && node scripts/serve.js --budgets",
     "build": "npm run vendor && npm run manifest",
     "build:web": "npm run build && node scripts/web.js",

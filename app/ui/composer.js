@@ -22,7 +22,8 @@ const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening
 // The ideas, a sample spreadsheet first, and the box under the question while all fits a wide window (D366).
 const STARTERS = ['sample', 'email', 'summarize', 'savings']
 const root = document.documentElement, wide = matchMedia('(min-width: 48rem)')
-new ResizeObserver(() => root.toggleAttribute('data-centred', wide.matches && root.scrollHeight <= root.clientHeight)).observe(document.body)
+// The room's own height, without jean.is's page under it (D397).
+new ResizeObserver(() => root.toggleAttribute('data-centred', wide.matches && (document.querySelector('app-shell') ?? root).scrollHeight <= root.clientHeight)).observe(document.body)
 
 // The wave listens while dictation or hands-free does, not while the box merely has the keyboard.
 effect(() => {
@@ -32,7 +33,7 @@ effect(() => {
 })
 
 /** @param {string} key */
-async function idea(key) {
+export async function idea(key) {
   if (key === 'sample') await attachFiles([new File([await (await fetch('caps/files/sales.csv')).blob()], 'sales.csv', { type: 'text/csv' })])
   app.draft.value = t(`starter.${key}.prompt`)
   focusComposer()

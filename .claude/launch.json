@@ -37,6 +37,18 @@
       }
     },
     {
+      "name": "jean-home",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve.js",
+        "--home"
+      ],
+      "port": 4386,
+      "env": {
+        "PORT": "4386"
+      }
+    },
+    {
       "name": "fake-brain",
       "runtimeExecutable": "node",
       "runtimeArgs": [

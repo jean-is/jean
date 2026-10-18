@@ -19,10 +19,10 @@ export function siteBase (address) {
 }
 
 /**
- * The home page's title: the name, then the description's first sentence.
+ * The home page's title: the name, then the description's first sentence, in any script.
  * @param {{ name: string }} brand @param {string} description
  */
-export const titleOf = (brand, description) => `${brand.name} · ${description.split(/(?<=\.)\s/)[0].replace(/\.$/, '')}`
+export const titleOf = (brand, description) => `${brand.name} · ${description.split(/(?<=[.!?؟])\s+|(?<=[。！？])/u)[0].replace(/[.。]$/u, '')}`
 
 /**
  * index.html as search engines and shared links read it, once: its empty title filled, then before
@@ -33,8 +33,9 @@ export const titleOf = (brand, description) => `${brand.name} · ${description.s
  * @param {{ name: string }} brand
  * @param {string} description  index.html's
  * @param {string[]} languages  the catalogues' languages
+ * @param {string} [address]  the page's own, if not the site's: a language's (D397)
  */
-export function withSite (html, base, brand, description, languages) {
+export function withSite (html, base, brand, description, languages, address = base) {
   if (!html.includes('<title></title>') || html.includes('rel="canonical"') || !html.includes('</head>')) throw new Error('index.html has a title or a canonical address already, or no </head>')
   const title = titleOf(brand, description)
   const picture = base + SHARE.src
@@ -43,7 +44,7 @@ export function withSite (html, base, brand, description, languages) {
     'og:site_name': brand.name,
     'og:title': title,
     'og:description': description,
-    'og:url': base,
+    'og:url': address,
     'og:image': picture,
     'og:image:width': String(SHARE.width),
     'og:image:height': String(SHARE.height),
@@ -61,7 +62,7 @@ export function withSite (html, base, brand, description, languages) {
     ],
   }
   const head = [
-    `<link rel="canonical" href="${xml(base)}">`,
+    `<link rel="canonical" href="${xml(address)}">`,
     ...Object.entries(card).map(([property, content]) => `<meta property="${property}" content="${xml(content)}">`),
     '<meta name="twitter:card" content="summary_large_image">',
     // A data block, which no policy runs; `<` escaped so nothing in it closes the script.
@@ -101,16 +102,17 @@ export function unindexed (html) {
 }
 
 /**
- * The files beside the site that crawlers read: sitemap.xml, its home page and the listed ones; and
- * robots.txt, letting them read everything and naming the sitemap, only at the host's root, the one
- * place they look.
+ * The files beside the site that crawlers read: sitemap.xml, its home page, the home page's other
+ * languages' (D397) and the listed ones; and robots.txt, letting them read everything and naming the
+ * sitemap, only at the host's root, the one place they look.
  * @param {string} base  siteBase()'s
+ * @param {string[]} [languages]  the home page's addresses in other languages
  * @returns {Record<string, string>}
  */
-export function siteFiles (base) {
+export function siteFiles (base, languages = []) {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[base, ...LISTED.map((path) => addressOf(base, path))].map((address) => `  <url><loc>${xml(address)}</loc></url>`).join('\n')}
+${[base, ...languages, ...LISTED.map((path) => addressOf(base, path))].map((address) => `  <url><loc>${xml(address)}</loc></url>`).join('\n')}
 </urlset>
 `
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${base}sitemap.xml\n`
