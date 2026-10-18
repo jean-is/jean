@@ -1,6 +1,7 @@
 // BM25 with words split by Intl.Segmenter, so it works in every script (CJK and Thai have no spaces),
 // over an index made once: one engine for tools, past conversations, requests and documents.
-// And searching as people type (D133): part of a word is enough, case and accents aside.
+// And searching as people type (D133): part of a word is enough, case and accents aside. And lists
+// in the order of the names they show, as the user's language sorts them.
 
 /** @type {Map<string | undefined, Intl.Segmenter>} */
 const segmenters = new Map()
@@ -114,6 +115,12 @@ export function fold(text) {
 
 /** What was typed, as the folded words to look for, once each. @param {string} query @param {string} [lang] */
 export const terms = (query, lang) => [...new Set(words(fold(query.normalize('NFC')), lang))]
+
+/**
+ * A copy of a list in the order a language sorts the names it shows, numbers in them as numbers ("Notion 2"
+ * before "Notion 10"). @template T @param {readonly T[]} list @param {(item: T) => string} name @param {string} [lang]
+ */
+export const byName = (list, name, lang, order = new Intl.Collator(lang, { numeric: true })) => [...list].sort((a, b) => order.compare(name(a), name(b)))
 
 /**
  * Every place the terms are in a folded text, as [start, end), in order, joined where they touch.

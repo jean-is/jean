@@ -205,6 +205,7 @@ import { mcpClient, MCPError, paramHeaders, headerValue, searchesWeb, toolsOf } 
 import { apiClient, APIS } from '../app/caps/connections/apis.js'
 import { parseChallenge, discover, registerClient, authorization, finish, refresh, accountOf } from '../app/caps/connections/auth.js'
 import { DIRECTORY, known, knownFor, covers, searchers } from '../app/caps/connections/directory.js'
+import { byName } from '../app/core/search.js'
 import { gateway, covers as gatewayCovers, SERVICES } from '../gateway/gateway.js'
 import { listener, speakable } from '../app/caps/live/turns.js'
 
@@ -439,10 +440,10 @@ describe('signing in to a connection', () => {
 })
 
 describe('the services Jean knows (D95)', () => {
-  test('each is reached from the browser, through the gateway that relays to it and its sign-in and holds the app it takes, or not yet; those reached first (D191, D214)', () => {
+  test('each is reached from the browser, through the gateway that relays to it and its sign-in and holds the app it takes, or not yet; those reached first, each part by name (D191, D214)', () => {
     assert.equal(new Set(DIRECTORY.map((entry) => entry.id)).size, DIRECTORY.length)
     const services = known()
-    assert.deepEqual(services.slice(0, 4).map((entry) => [entry.id, entry.via]), [['notion', 'browser'], ['canva', 'browser'], ['miro', 'browser'], ['granola', 'browser']])
+    assert.deepEqual(services.slice(0, 4).map((entry) => [entry.id, entry.via]), [['atlassian', 'browser'], ['attio', 'browser'], ['canva', 'browser'], ['clickup', 'browser']])
     for (const entry of services.slice(0, 4)) assert.match(String(entry.url), /^https:\/\//)
     assert.equal(services.length, DIRECTORY.length)
     // Microsoft's sign-in answers browsers, but only for the app policy names, or the gateway's (D382).
@@ -463,17 +464,18 @@ describe('the services Jean knows (D95)', () => {
     const through = known({}, { hosts: ['googleapis.com', 'accounts.google.com', 'slack.com'], clients: google })
     const googles4 = ['gmail', 'google-calendar', 'google-drive', 'google']
     assert.deepEqual(through.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), googles4)
-    const ready = through.filter((entry) => entry.via === 'browser').length
-    assert.deepEqual(through.slice(ready, ready + 4).map((entry) => entry.id), googles4)
+    // Those reached come first, from the browser or through the gateway alike, then those not yet, each part by name.
+    const reached = through.filter((entry) => entry.via)
+    assert.deepEqual(through.slice(0, reached.length), byName(reached, (entry) => entry.name))
     // Google's APIs answer browsers: a gateway needs only relay to their sign-in, with Google's app (D349).
     const signIn = known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'], clients: google })
     assert.deepEqual(signIn.filter((entry) => entry.via === 'gateway').map((entry) => entry.id), ['gmail', 'google-calendar', 'google-drive'])
     assert.equal(known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
     // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
     const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
-    assert.deepEqual(relayed({}), ['dropbox', 'monday', 'airtable', 'calendly', 'otter', 'gamma', 'zapier', 'qonto', 'todoist'])
+    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'monday', 'otter', 'qonto', 'todoist', 'zapier'])
     const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
-    assert.deepEqual(relayed(apps), DIRECTORY.filter((entry) => (!entry.ready || entry.app) && entry.url).map((entry) => entry.id))
+    assert.deepEqual(relayed(apps), byName(DIRECTORY.filter((entry) => (!entry.ready || entry.app) && entry.url), (entry) => entry.name).map((entry) => entry.id))
     assert.equal(through.find((entry) => entry.id === 'servicenow')?.via, null)
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1', {}, { hosts: ['googleapis.com', 'accounts.google.com'], clients: google })?.id, 'google')
     assert.equal(knownFor('https://gmailmcp.googleapis.com/mcp/v1'), undefined)

@@ -20,6 +20,7 @@ import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
 import { t, relativeTime, locale } from '../core/i18n.js'
+import { byName } from '../core/search.js'
 import { icons } from './menu-icons.js'
 
 /** @typedef {import('../core/memory.js').Entry} Entry */
@@ -163,7 +164,7 @@ const preview = async (entry) => (await import('../caps/skills/ready.js')).previ
  */
 function directoryView(state) {
   const have = state.skills.map((skill) => skill.name)
-  const open = state.directory.filter((entry) => !have.includes(entry.name))
+  const open = byName(state.directory.filter((entry) => !have.includes(entry.name)), (entry) => shownIn(entry, locale.value).title, locale.value)
   return open.length ? html`<section>
     <h3>${t('skills.directory')}</h3>
     <p class="muted small">${t('skills.directoryText')}</p>
@@ -371,7 +372,7 @@ export function skills() {
     <section>
       <div class="section-head"><h3>${t('skills.yours')}</h3><label class="button subtle">${icons.upload} ${t('skills.add')}
         <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}></label></div>
-      ${state.skills.length ? html`<ul class="list">${state.skills.map((skill) => html`<li><details>
+      ${state.skills.length ? html`<ul class="list">${byName(state.skills, (skill) => shownIn(skill, locale.value).title, locale.value).map((skill) => html`<li><details>
         <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${shownIn(skill, locale.value).title}</strong><small dir="auto">${shownIn(skill, locale.value).text}</small>${skill.source
           ? html`<small>${icons.globe} ${t('skills.from', { source: siteOf(skill.source) })}</small>` : nothing}</span>${icons.chevron}</summary>
         <div class="item-body">

@@ -9,6 +9,8 @@
 // file, in logos/ (D159). One that searches the web says so (`searches`), and Settings › Web
 // search offers it until it is connected; once it is, its tools say it themselves (D271).
 // Host-agnostic: no DOM.
+import { locale } from '../../core/i18n.js'
+import { byName } from '../../core/search.js'
 
 /**
  * @typedef {{ id: string, name: string, url?: string, servers?: string[], includes?: string[], clientId?: string, ready?: boolean, hidden?: boolean, logo?: string, signIn?: string[], app?: string, scopes?: string[], authorize?: Record<string, string>, searches?: boolean, api?: boolean }} Known
@@ -87,7 +89,7 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
  * The directory, with the organisation's entries merged in by id: one can add a service, change
  * an address or a client id, or hide one. What policy names is ready unless it, or the directory, says otherwise.
  * Those reached come first, from the browser (one whose sign-in takes only registered apps, once policy names one) or through the gateway: one that relays to the
- * service, each of its servers and its sign-in (an API's sign-in alone), and holds the app the sign-in takes when it registers none.
+ * service, each of its servers and its sign-in (an API's sign-in alone), and holds the app the sign-in takes when it registers none. Each part is by name.
  * @param {{ directory?: Partial<Known>[] }} [policy] @param {Served} [served]
  * @returns {Listed[]}
  */
@@ -100,7 +102,7 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
   }
   const relayed = (/** @type {Known} */ { url, servers = [], signIn = [], app, clientId, api }) => [...(api ? [] : [String(url), ...servers]), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address)))
     && (!app || Boolean(clientId ?? clients[app]))
-  const shown = [...entries.values()].filter((entry) => !entry.hidden)
+  const shown = byName([...entries.values()].filter((entry) => !entry.hidden), (entry) => entry.name, locale.value)
     .map((entry) => ({ ...entry, via: !entry.url ? null : entry.ready && (!entry.app || entry.clientId) ? 'browser' : relayed(entry) ? 'gateway' : null }))
   return /** @type {Listed[]} */ ([...shown.filter((entry) => entry.via), ...shown.filter((entry) => !entry.via)])
 }

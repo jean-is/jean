@@ -2,7 +2,7 @@
 // script, and what is found is marked where it stands in the text.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fold, terms, ranges, passage, keys, lexicon, lookup } from '../app/core/search.js'
+import { fold, terms, ranges, passage, keys, lexicon, lookup, byName } from '../app/core/search.js'
 
 test('fold: lower case without accents, as long as the text', () => {
   assert.equal(fold('Résumé CAFÉ Ñandú'), 'resume cafe nandu')
@@ -59,4 +59,12 @@ test('lexicon and lookup: BM25 over several documents at once, rare words weighi
   assert.deepEqual(lookup([b], 'PREAVIS resiliation').map((hit) => hit.passage), [0])
   assert.deepEqual(lookup([a, b], 'zebra'), [])
   assert.ok(hits.every((hit, i) => !i || hit.score <= hits[i - 1].score), 'best first')
+})
+
+test('byName: a list in the order a language sorts the names it shows, numbers in them as numbers', () => {
+  assert.deepEqual(byName(['Notion 10', 'zoom', 'Écrire', 'Notion 2', 'Box'], (name) => name, 'en'), ['Box', 'Écrire', 'Notion 2', 'Notion 10', 'zoom'])
+  const skills = [{ title: 'Lettre' }, { title: 'Budget' }]
+  assert.deepEqual(byName(skills, (skill) => skill.title, 'fr').map((skill) => skill.title), ['Budget', 'Lettre'])
+  assert.deepEqual(skills.map((skill) => skill.title), ['Lettre', 'Budget'])
+  assert.deepEqual(byName(['かんたん', 'ワード', 'アンケート'], (name) => name, 'ja'), ['アンケート', 'かんたん', 'ワード'])
 })
