@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "Maghanap ng email",
+  "api.read_email": "Magbasa ng email",
+  "api.create_draft": "Sumulat ng draft",
+  "api.send_email": "Magpadala ng email",
+  "api.list_calendars": "Ipakita ang mga kalendaryo",
+  "api.list_events": "Ipakita ang mga event",
+  "api.create_event": "Magdagdag ng event",
+  "api.update_event": "Baguhin ang event",
+  "api.delete_event": "Alisin ang event",
+  "api.search_files": "Maghanap ng file",
+  "api.read_file": "Magbasa ng file",
+  "api.create_document": "Gumawa ng dokumento"
+}

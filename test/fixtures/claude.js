@@ -2,8 +2,13 @@
 // A stand-in for Claude Code (D235), as the bridge runs it: `auth status --json`, and `-p` reading
 // stream-json messages, answering each with Anthropic's stream events. A message that asks for the
 // weather calls Jean's weather tool over the MCP server --mcp-config names, as Claude Code does, and
-// answers with what it says; "limit" ends as a plan's limit does; anything else is echoed with what
-// came with it. CLAUDE_SIGNED_OUT=1 plays one not signed in.
+// answers with what it says, and with a message that came meanwhile, which Claude Code reads within the
+// turn; "limit" ends as a plan's limit does; "gateway" tells where it would send its requests and the
+// settings it was given; "hold <file>" makes the file and answers once it is gone; anything else is
+// echoed with what came with it.
+// CLAUDE_SIGNED_OUT=1 plays one not signed in.
+import { existsSync } from 'node:fs'
+import { writeFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
 
@@ -12,7 +17,7 @@ if (argv[0] === 'auth') {
   console.log(JSON.stringify({ loggedIn: !process.env.CLAUDE_SIGNED_OUT, authMethod: 'claude.ai' }))
   process.exit(process.env.CLAUDE_SIGNED_OUT ? 1 : 0)
 }
-const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' } } })
+const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' }, settings: { type: 'string' } } })
 const server = JSON.parse(String(values['mcp-config'])).mcpServers.jean
 const out = (/** @type {object} */ line) => process.stdout.write(`${JSON.stringify(line)}\n`)
 const event = (/** @type {object} */ e) => out({ type: 'stream_event', event: e })
@@ -41,19 +46,37 @@ async function call(params) {
   return (await res.json()).result
 }
 
+/** Its messages, as they come, even while a turn works. @type {any[][]} */
+const inbox = []
+/** @type {(() => void) | null} */
+let wake = null
+createInterface({ input: process.stdin }).on('line', (line) => {
+  inbox.push(JSON.parse(line).message.content)
+  wake?.()
+}).on('close', () => process.exit(0))
+const textOf = (/** @type {any[]} */ content) => content.filter((block) => block.type === 'text').map((block) => block.text).join('\n')
+
 out({ type: 'system', subtype: 'init', model: values.model, tools: [] })
-for await (const line of createInterface({ input: process.stdin })) {
-  const content = JSON.parse(line).message.content
-  const text = content.filter((/** @type {any} */ block) => block.type === 'text').map((/** @type {any} */ block) => block.text).join('\n')
+for (;;) {
+  if (!inbox.length) await new Promise((woken) => { wake = () => { wake = null; woken(undefined) } })
+  const text = textOf(/** @type {any[]} */ (inbox.shift()))
   if (/weather/i.test(text)) {
     const id = `toolu_${++calls}`
     step([{ type: 'tool_use', id, name: 'mcp__jean__weather', input: { city: 'Lyon' } }], 'tool_use')
     const result = await call({ name: 'weather', arguments: { city: 'Lyon' }, _meta: { 'claudecode/toolUseId': id } })
-    step([{ type: 'text', text: `In Lyon: ${result.content.map((/** @type {any} */ part) => part.text).join(' / ')}${result.isError ? ' (an error)' : ''}` }], 'end_turn')
+    await new Promise((read) => setImmediate(read))
+    const meanwhile = inbox.splice(0).map((content) => `, then heard: ${textOf(content)}`).join('')
+    step([{ type: 'text', text: `In Lyon: ${result.content.map((/** @type {any} */ part) => part.text).join(' / ')}${result.isError ? ' (an error)' : ''}${meanwhile}` }], 'end_turn')
+  } else if (/gateway/i.test(text)) {
+    step([{ type: 'text', text: `${process.env.ANTHROPIC_BASE_URL} ${values.settings}` }], 'end_turn')
   } else if (/limit/i.test(text)) {
     out({ type: 'assistant', message: { content: [{ type: 'text', text: 'You’ve hit your limit' }] }, error: 'rate_limit' })
     out({ type: 'result', subtype: 'success', is_error: true, result: 'You’ve hit your limit · resets 3pm' })
     continue
+  } else if (/^hold /.test(text)) {
+    await writeFile(text.slice(5), '')
+    while (existsSync(text.slice(5))) await new Promise((wait) => setTimeout(wait, 10))
+    step([{ type: 'text', text: 'Held' }], 'end_turn')
   } else {
     step([{ type: 'text', text: `Heard (${values.model}, ${String(values['system-prompt']).slice(0, 12)}): ${text}` }], 'end_turn')
   }

@@ -18,7 +18,7 @@ metadata:
   title-fa: "به زبان ساده"
   text-fa: "توضیح اسناد دشوار: چه می‌گویند و چه باید کرد"
   title-fr: "En termes simples"
-  text-fr: "Les documents difficiles expliqués : ce qu’ils disent, et que faire"
+  text-fr: "Les documents difficiles expliqués : ce qu’ils disent, et que faire"
   title-ha: "Cikin sauƙaƙan kalmomi"
   text-ha: "Bayanin takardu masu wuya: abin da suke faɗa da abin da za a yi"
   title-he: "במילים פשוטות"

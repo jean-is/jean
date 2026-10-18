@@ -1,0 +1,38 @@
+{
+  "description": "Akili bandia (AI) ya kila mtu, kwenye kichupo cha kivinjari. Uliza kwa maneno au kwa faili, upate ulichoomba kikiwa tayari: jibu lenye vyanzo vyake, waraka, chati. Tumia AI unayoichagua, na uweke kazi yako kwenye kifaa chako. Hakuna cha kusakinisha, bure na chanzo huria.",
+  "labels": {
+    "welcome": "Skrini ya kukaribisha: mawazo ya kuanzia, na kisanduku cha kuuliza chochote",
+    "chart": "Lahajedwali iliyoshirikiwa, na mauzo yake kwenye chati",
+    "sources": "Mkataba wa kupangisha uliosomwa, na kila sehemu ya jibu ikiurejelea",
+    "share": "Kazi iliyoshirikiwa na rafiki kupitia kiungo"
+  },
+  "chart": {
+    "title": "Mauzo kwa eneo",
+    "file": "Mauzo.csv",
+    "columns": [
+      "Eneo",
+      "Januari",
+      "Februari",
+      "Machi"
+    ],
+    "regions": [
+      "Kaskazini",
+      "Kusini",
+      "Mashariki"
+    ],
+    "ask": "Tengeneza chati ya mauzo kwa eneo, mwezi kwa mwezi",
+    "before": "Haya ni mauzo ya robo ya kwanza ya mwaka, kwa eneo:",
+    "heading": "Mauzo, robo ya kwanza",
+    "after": "**Kaskazini** inauza zaidi, na **Mashariki** imekua kwa kasi zaidi: ongezeko la 37% kutoka Januari hadi Machi."
+  },
+  "sources": {
+    "title": "Kuhama kwenye nyumba",
+    "file": "Mkataba wa kupangisha.pdf",
+    "pages": [
+      "Mkataba wa kupangisha nyumba yenye samani\n\nKifungu cha 7. Notisi. Mpangaji anaweza kusitisha mkataba wakati wowote kwa notisi ya mwezi mmoja, itakayotumwa kwa barua iliyosajiliwa au kukabidhiwa kwa mkono dhidi ya stakabadhi.",
+      "Kifungu cha 9. Amana. Amana sawa na kodi ya mwezi mmoja itarudishwa ndani ya mwezi mmoja baada ya kurudisha funguo, ukiondoa gharama za matengenezo yoyote."
+    ],
+    "ask": "Natakiwa kutoa notisi ya muda gani ili kuhama, na nitarudishiwa amana yangu lini?",
+    "answer": "Haya ndiyo mkataba wako unasema:\n\n- **Notisi:** mwezi mmoja, kwa barua iliyosajiliwa au kukabidhiwa kwa mkono dhidi ya stakabadhi [1].\n- **Amana:** inarudishwa ndani ya mwezi mmoja baada ya kurudisha funguo, ukiondoa gharama za matengenezo yoyote [1].\n\nKwa hiyo ukituma barua leo, unaweza kuhama baada ya mwezi mmoja."
+  }
+}

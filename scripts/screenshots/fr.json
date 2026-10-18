@@ -1,0 +1,38 @@
+{
+  "description": "L’IA pour tous, dans un onglet du navigateur. Demandez avec des mots ou avec un fichier, et recevez ce que vous vouliez, déjà fait : une réponse avec ses sources, un document, un graphique. Utilisez l’IA de votre choix, et gardez votre travail sur votre appareil. Rien à installer, c’est gratuit et open source.",
+  "labels": {
+    "welcome": "L’écran d’accueil : des idées pour commencer, et une zone pour tout demander",
+    "chart": "Un tableur partagé, et ses ventes tracées en graphique",
+    "sources": "Un bail lu, chaque point de la réponse renvoyant au texte",
+    "share": "Une tâche partagée avec un ami par un lien"
+  },
+  "chart": {
+    "title": "Ventes par région",
+    "file": "Ventes.csv",
+    "columns": [
+      "Région",
+      "Janvier",
+      "Février",
+      "Mars"
+    ],
+    "regions": [
+      "Nord",
+      "Sud",
+      "Est"
+    ],
+    "ask": "Fais un graphique des ventes par région, mois par mois",
+    "before": "Voici les ventes du premier trimestre, par région :",
+    "heading": "Ventes du premier trimestre",
+    "after": "Le **Nord** vend le plus, et l’**Est** progresse le plus vite : +37 % de janvier à mars."
+  },
+  "sources": {
+    "title": "Quitter l’appartement",
+    "file": "Bail.pdf",
+    "pages": [
+      "Bail d’un appartement meublé\n\nArticle 7. Préavis. Le locataire peut mettre fin au bail à tout moment avec un préavis d’un mois, envoyé par lettre recommandée ou remis en main propre contre récépissé.",
+      "Article 9. Dépôt de garantie. Le dépôt de garantie, d’un mois de loyer, est restitué dans un délai d’un mois après la remise des clés, déduction faite du coût des éventuelles réparations."
+    ],
+    "ask": "Quel préavis dois-je donner pour partir, et quand vais-je récupérer ma caution ?",
+    "answer": "Voici ce que dit votre bail :\n\n- **Préavis :** un mois, par lettre recommandée ou remis en main propre contre récépissé [1].\n- **Dépôt de garantie :** rendu dans le mois qui suit la remise des clés, moins le coût des éventuelles réparations [1].\n\nSi vous envoyez la lettre aujourd’hui, vous pourrez donc partir dans un mois."
+  }
+}

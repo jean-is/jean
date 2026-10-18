@@ -41,6 +41,11 @@
 // certificate is genuine, it checks the files shared with check_certificate and says what it found (D274),
 // looking for a picture's watermark too when the question names one (D324).
 // Asked what the files say about something, it searches the project's files and quotes what it found (D24).
+// Given "a very long task", it says it read most of a big window; asked to sum the conversation up, it does, and
+// read on from a summary, it says so (D359). Asked to do something "step by step" with plans on, it plans it, waits for the
+// user's word, then does each step and ticks it off, adding what the user's words asked for; asked to count to twenty, it
+// takes a step a number, past its limit (D364). Counting slowly to five, a second a step, it stops when told to (D365).
+// In a child's profile, told of being bullied, or hit at home, it raises a concern, saying so when it is at home (D228).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -62,6 +67,8 @@ const PORT = Number(process.env.PORT) || 4174
 const PACE = Number(process.env.PACE ?? 35)
 let previous = ''
 const BAKERY = `http://127.0.0.1:${PORT}/site/bakery.html`
+// An article of Wikipedia's, which browse reads through its API (D35): the test routes its site.
+const ARTICLE = 'https://en.wikipedia.test/wiki/Lighthouse'
 /** @type {Record<string, { body: string, headers?: Record<string, string> }>} */
 const SITE = {
   '/site/bakery.html': { body: '<!doctype html><title>The bakery</title><h1>The bakery</h1><p>Fresh bread every morning, from 7 am.</p><p><a href="menu.html">Menu</a></p>' },
@@ -101,6 +108,31 @@ const LETTER = [
   { question: 'What should it ask for?', options: [{ label: 'A meeting' }, { label: 'A refund' }, { label: 'More time' }], multiple: true },
   { question: 'Who signs it?' },
 ]
+
+/** A move, planned step by step, in the user's language (D364). */
+const MOVE = {
+  en: ['Pack the boxes', 'Book the van', 'Clean the flat'],
+  fr: ['Faire les cartons', 'Réserver la camionnette', 'Nettoyer l’appartement'],
+  ar: ['توضيب الصناديق', 'حجز الشاحنة', 'تنظيف الشقة'],
+  ja: ['箱に詰める', 'トラックを予約する', '部屋を掃除する'],
+}
+const PLANNED = { en: 'Every step of the plan is done.', fr: 'Toutes les étapes du plan sont faites.', ar: 'أُنجزت كل خطوات الخطة.', ja: '計画のすべてのステップが完了しました。' }
+
+/**
+ * The plan's next update, or the answer once every step is done: no step done until the user confirms it, then one more
+ * at each update; the words the user changed it with add a step. @param {any[]} messages @param {'en' | 'fr' | 'ar' | 'ja'} lang
+ */
+function planned(messages, lang) {
+  const ids = new Set(messages.flatMap((m) => (m.tool_calls ?? []).filter((c) => c.function.name === 'plan').map((c) => c.id)))
+  const results = messages.filter((m) => m.role === 'tool' && ids.has(m.tool_call_id)).map((m) => String(m.content))
+  if (/didn't confirm|don't use plans/.test(results.at(-1) ?? '')) return { answer: 'All right: tell me what you would like instead.' }
+  const added = results.map((content) => /wants the plan changed: «(.+?)»/.exec(content)?.[1]).find(Boolean)
+  const steps = [...MOVE[lang], ...(added ? [added.replace(/^add a step to /i, '').replace(/^./, (c) => c.toUpperCase())] : [])]
+  const go = results.findIndex((content) => /confirmed the plan|plan is shown/.test(content))
+  const done = go < 0 ? 0 : results.length - go
+  if (done > steps.length) return { answer: PLANNED[lang] }
+  return { call: { name: 'plan', args: { entries: steps.map((content, i) => ({ content, status: i < done ? 'completed' : i === done ? 'in_progress' : 'pending' })) } } }
+}
 
 /** What the user answered, question by question. @param {string} content the tool's result */
 function told(content) {
@@ -397,7 +429,7 @@ function checked(text) {
 }
 
 /** Sources a tool's result lists: `Source [n]: title (address)` and what follows. @param {string} text */
-const sourcesIn = (text) => [...text.matchAll(/Source \[(\d+)\]: (.+?) \(([^)]+)\)\n?([^\n]*)/g)].map((m) => ({ n: m[1], title: m[2], url: m[3], more: m[4] }))
+const sourcesIn = (text) => [...text.matchAll(/Source \[(\d+)\]: (.+?) \(([^)]+)\)\n?(?:Picture: (\S+)\n)?([^\n]*)/g)].map((m) => ({ n: m[1], title: m[2], url: m[3], picture: m[4], more: m[5] }))
 
 createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -529,7 +561,24 @@ createServer(async (req, res) => {
   const about = /\bwhat do (?:the|my|our) files say about (.+?)\?*$/i.exec(question.trim())?.[1]
   // Read already in this conversation: it changes the file straight away, and reads it again if told it moved.
   const opened = (/** @type {string} */ path) => messages.some((m) => (m.tool_calls ?? []).some((/** @type {any} */ c) => c.function.name === 'open' && JSON.parse(c.function.arguments).path === path))
-  if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
+  // A conversation summed up near its window (D359).
+  const summing = /This conversation has grown too long to keep in full/.test(lastUser)
+  // Plans (D364): planned step by step; or a count, a step a number, from the request at work on.
+  const stepwise = /step by step|خطوة بخطوة|段階的に/i.test(question) && declared.has('plan') && (last.role === 'user' || toolName === 'plan')
+  const counting = /count to twenty|عدّ إلى عشرين|二十まで数えて/i.test(question) && last.role !== 'assistant'
+  const slowly = /count slowly to five|عدّ ببطء إلى خمسة|ゆっくり五まで数えて/i.test(question) && last.role !== 'assistant'
+  const counted = messages.slice(messages.findLastIndex((m) => m.role === 'user')).filter((m) => m.role === 'tool').length
+  if (summing) answer = 'Summary: the user wants the work carried on, step by step.'
+  else if (stepwise) ({ call = null, answer = '' } = planned(messages, lang))
+  else if (counting && counted < 20) call = { name: 'find_tools', args: { query: `number ${counted + 1}` } }
+  else if (counting) answer = 'I counted to twenty.'
+  else if (/^(?:stop|توقف|止めて)/i.test(question.trim()) && last.role === 'user') answer = 'Stopping here, as you asked.'
+  else if (slowly && counted < 5) {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    call = { name: 'find_tools', args: { query: `number ${counted + 1}` } }
+  } else if (slowly) answer = 'I counted to five, slowly.'
+  else if (messages.find((m) => m.role !== 'system')?.content.includes('<summary>') && last.role === 'user') answer = 'I read on from the summary of the earlier work.'
+  else if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
   else if (system.startsWith('Answer the question about what follows with yes or no')) answer = /<about>[\s\S]*\b(invoice|html)\b/i.test(lastUser) ? 'Yes.' : 'No.'
   else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
   else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
@@ -598,7 +647,11 @@ createServer(async (req, res) => {
   else if (found.length && /^mail:/.test(found[0].url)) {
     answer = `Your ${found.length} latest emails:\n\n${found.map((email) => `- **${email.title}**, ${email.more.replace(/:.*$/, '')} [${email.n}]`).join('\n')}`
   } else if (/search the web|look up/i.test(question) && last.role === 'user' && declared.has('web_search')) call = { name: 'web_search', args: { query: question.replace(/.*(?:search the web for|look up)\s*/i, '').replace(/[?.!]$/, '') } }
-  else if (toolName === 'web_search') answer = found.length ? `Here is what the web says:\n\n${found.map((page) => `- **${page.title}**: ${page.more.slice(0, 90)} [${page.n}]`).join('\n')}` : 'I found nothing on the web.'
+  // Asked for pictures, a source's, at the address it gave, and that address changed, as injected words would have it (D35).
+  else if (toolName === 'web_search') answer = found.length ? `Here is what the web says:\n\n${found.map((page) => `- **${page.title}**: ${page.more.slice(0, 90)} [${page.n}]`).join('\n')}${found.filter((page) => page.picture && /picture/i.test(question))
+    .map((page) => `\n\n![${page.title}](${page.picture}) ![${page.title}, again](${page.picture}?q=secret)`).join('')}` : 'I found nothing on the web.'
+  else if (/wikipedia article/i.test(question) && last.role === 'user' && declared.has('browse')) call = { name: 'browse', args: { url: ARTICLE } }
+  else if (toolName === 'browse' && found[0]?.picture) answer = `${found[0].more} [${found[0].n}]\n\n![${found[0].title}](${found[0].picture})`
   else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('browse')) call = { name: 'browse', args: { url: BAKERY } }
   else if (/bakery site/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'browser' } }
   else if (/bakery site/i.test(question) && toolName === 'offer' && /It is on/.test(last.content)) call = { name: 'browse', args: { url: BAKERY } }
@@ -650,6 +703,9 @@ createServer(async (req, res) => {
   else if (following && last.role === 'user' && declared.has('skill')) call = { name: 'skill', args: { name: following[1] } }
   else if (toolName === 'skill') answer = 'Followed its steps.'
   else if (introduced && last.role === 'user' && declared.has('save_name')) call = { name: 'save_name', args: { name: introduced[1] } }
+  // In a child's profile (D228), a danger told: it raises a concern, its kind alone, and says at home when it is.
+  else if (declared.has('raise_concern') && last.role === 'user' && /\b(bullied|hits me)\b/i.test(question)) call = { name: 'raise_concern', args: { kind: /hits me/i.test(question) ? 'abuse' : 'bullying', home: /\bat home\b/i.test(question) } }
+  else if (toolName === 'raise_concern') answer = `I'm sorry this is happening to you. ${last.content}`
   else if (toolName === 'save_name') answer = `Nice to meet you, ${introduced?.[1] ?? 'friend'}.`
   else if (remember && last.role === 'user' && declared.has('remember')) call = { name: 'remember', args: { text: remember[1], scope: system.includes('<project>') ? 'project' : 'person' } }
   else if (toolName === 'remember') answer = 'Noted.'
@@ -681,7 +737,7 @@ createServer(async (req, res) => {
     const doc = documents.at(-1)
     answer = `I read **${doc?.[2]}**${cite(doc)}. It starts with: “${doc?.[3].replace(/\[\[page \d+\]\]\n/g, '').slice(0, 120).trim()}”\n\nYou asked: *${question.slice(0, 80)}*`
   } else answer = REPLIES[lang](question.slice(0, 80))
-  if (answer) answer += `\n\n<suggestions>\n${[...(tryIt ? [tryIt] : []), ...(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang])].slice(0, 3).join('\n')}\n</suggestions>`
+  if (answer && !summing) answer += `\n\n<suggestions>\n${[...(tryIt ? [tryIt] : []), ...(answer === EULER ? EULER_NEXT : SUGGESTIONS[lang])].slice(0, 3).join('\n')}\n</suggestions>`
 
   res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' })
   const send = (/** @type {object} */ delta, finish = null) =>
@@ -701,7 +757,7 @@ createServer(async (req, res) => {
     }
     send({}, 'stop')
   }
-  const prompt = Math.ceil(serialized.length / 4)
+  const prompt = /a very long task/i.test(question) ? 100_000 : Math.ceil(serialized.length / 4)
   res.write(`data: ${JSON.stringify({ choices: [], usage: { prompt_tokens: prompt, completion_tokens: Math.ceil(answer.length / 4), prompt_tokens_details: { cached_tokens: Math.floor(cached / 4) } } })}\n\n`)
   res.end('data: [DONE]\n\n')
 }).listen(PORT, '127.0.0.1', () => console.log(`Fake brain on http://127.0.0.1:${PORT}/v1`))

@@ -1,0 +1,6 @@
+{
+  "signin.needed": "Inicia sesión con la cuenta de tu organización para obtener respuestas.",
+  "signin.in": "Iniciar sesión",
+  "signin.as": "Sesión iniciada: {account}",
+  "signin.out": "Cerrar sesión"
+}

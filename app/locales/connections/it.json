@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "Cerca email",
+  "api.read_email": "Leggi un'email",
+  "api.create_draft": "Scrivi una bozza",
+  "api.send_email": "Invia un'email",
+  "api.list_calendars": "Elenca i calendari",
+  "api.list_events": "Elenca gli eventi",
+  "api.create_event": "Aggiungi un evento",
+  "api.update_event": "Modifica un evento",
+  "api.delete_event": "Rimuovi un evento",
+  "api.search_files": "Cerca file",
+  "api.read_file": "Leggi un file",
+  "api.create_document": "Crea un documento"
+}

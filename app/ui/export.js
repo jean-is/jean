@@ -27,13 +27,14 @@ function draw() {
       const you = sessionUpdate === 'user_message_chunk'
       const made = [_meta?.picture, _meta?.file, ..._meta?.files ?? []].filter((file) => pictures[file?.uri] && !shown.has(file.uri))
       if (you || sessionUpdate === 'agent_message_chunk' || made.length) {
-        if (!block || block.you !== you || (you && previous !== sessionUpdate)) said.push((block = { you, at, step, text: '', made: new Array() }))
+        // A message's files come before its words, which end it.
+        if (!block || block.you !== you || (you && previous !== 'resource_link')) said.push((block = { you, at, step, text: '', made: new Array() }))
         if (step !== block.step) block.text += '\n\n'
         block.step = step
         block.text += content?.text ?? (content?.name ? `📎 ${content.name}\n` : '')
         for (const file of made) shown.add(file.uri), block.made.push({ src: pictures[file.uri], alt: rawInput?.description ?? file.name })
       }
-      previous = sessionUpdate
+      previous = content?.type ?? sessionUpdate
     } catch {}
   }
   const when = new Intl.DateTimeFormat(document.documentElement.lang, { dateStyle: 'medium', timeStyle: 'short' })
@@ -59,6 +60,8 @@ function draw() {
 
 /** What a copy draws itself with, unless policy or Settings name another address (`urls.render`), none when '': the render package on jsDelivr, at the version that saved it. */
 const RENDER = 'https://cdn.jsdelivr.net/npm/@codename/jean-render@{version}/'
+/** Where its scores get their instruments (D338), unless policy or Settings name another address (`urls.sounds`): the sounds package on jsDelivr, at this Jean's version of it. */
+const SOUNDS = 'https://cdn.jsdelivr.net/npm/@codename/jean-sounds@{version}/'
 
 /** What a policy allows by its hash. @param {string} text */
 const hashOf = async (text) => `'sha256-${btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))}'`
@@ -73,13 +76,13 @@ const block = (value) => JSON.stringify(value).replaceAll('<', '\\u003c')
  * Without the package, its own style and lines alone, by their hashes, and its pictures. With it, inline scripts too,
  * which the relay of a page in an answer is, and that page's own (a hash would turn that keyword off,
  * as in preview.html), and its blobs and data, all from the package and nowhere else, maps from their
- * service; never a form or another base address.
+ * service, a score's instruments from theirs, decoded in WebAssembly (D338); never a form or another base address.
  * @param {string} drawing @param {Reader | null} reader
  */
 async function policyOf(drawing, reader) {
   if (!reader) return `default-src 'none'; img-src data:; style-src ${await hashOf(STYLE)}; script-src ${await hashOf(drawing)}`
   const { base, sites } = reader
-  return [`default-src 'none'`, `script-src 'unsafe-inline' data: blob: ${base}`, `style-src 'unsafe-inline' ${base}`, `img-src data: blob: ${base}`,
+  return [`default-src 'none'`, `script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${base}`, `style-src 'unsafe-inline' ${base}`, `img-src data: blob: ${base}`,
     `font-src data: ${base}`, `connect-src ${[base, ...sites].join(' ')}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'"].join('; ')
 }
 
@@ -111,29 +114,59 @@ ${reader ? `<script type="application/json" id="settings">${block(reader.setting
 }
 
 /**
- * The render package for this Jean (D305), from capabilities.json, which lists its modules and their
- * hashes, at the address Settings or policy give it; null when they give none, or this Jean lists none.
+ * What a page needs to draw itself with the render package, wherever that package is: its listing in
+ * capabilities.json, paths relative to it; Jean's own import map; what it was saved with; the version
+ * of the instruments a score plays (D338), and whether maps were allowed.
+ * @typedef {{ render: { version: string, entry: string, files: string[], integrity: Record<string, string>, map: Record<string, string> }, imports: Record<string, string>, settings: Record<string, unknown>, sounds?: string, maps?: boolean }} Drawing
+ */
+
+/**
+ * The reader at a render package's address, for a drawing, with a score's instruments and the map
+ * service's styles where they are allowed. @param {string} base @param {Drawing} drawing
+ * @param {{ instruments?: string | null, styles?: Record<string, string> | null }} [where] @returns {Reader}
+ */
+export function readerAt(base, { render, imports, settings }, { instruments = null, styles = null } = {}) {
+  /** @param {string} path */
+  const at = (path) => new URL(path, base).href
+  return {
+    base, entry: at(render.entry),
+    imports: Object.fromEntries([...Object.entries(imports).map(([name, path]) => [name, at(path)]), ...Object.entries(render.map).map(([path, standIn]) => [at(path), at(standIn)])]),
+    integrity: Object.fromEntries(render.files.map((path) => [at(path), render.integrity[path]])),
+    settings: { ...settings, ...(styles && { mapStyles: styles }), ...(instruments && { urls: { sounds: instruments } }) },
+    sites: [...(styles ? Object.values(styles).map((address) => new URL(address).origin) : []), ...(instruments ? [instruments] : [])],
+  }
+}
+
+/**
+ * This Jean's drawing (D305), from capabilities.json, which lists the render package's modules and
+ * their hashes, and the map service's styles when maps are allowed; null when this Jean lists none.
+ * @returns {Promise<{ drawing: Drawing, styles: Record<string, string> | null } | null>}
+ */
+export async function drawingOf() {
+  const [{ app, effective }, { declared }, { pageRights, mapStyles }] = await Promise.all([import('./state.js'), import('./markdown.js'), import('./csp.js')])
+  const [{ render }, sounds] = await Promise.all(['../capabilities.json', '../vendor/sounds/package.json'].map((path) => fetch(new URL(path, import.meta.url)).then((response) => response.json()).catch(() => ({}))))
+  if (!render) return null
+  const { settings } = effective.peek()
+  const { allows } = pageRights(settings, app.policy)
+  const styles = allows.maps ? mapStyles(/** @type {any} */ (settings), app.policy) : null
+  const imports = JSON.parse(document.querySelector('script[type="importmap"]')?.textContent ?? '{}').imports ?? {}
+  // Its pages offline, as Jean's are unless Settings say otherwise, and maps as they were.
+  return { drawing: { render, imports, settings: { look: app.look.peek(), kinds: [...declared.peek()], pages: { ...allows, web: false, network: false } }, sounds: sounds.version, maps: Boolean(styles) }, styles }
+}
+
+/**
+ * The render package for this Jean (D305), at the address Settings or policy give it; null when they
+ * give none, or this Jean lists none.
  * @returns {Promise<Reader | null>}
  */
 async function readerOf() {
-  const [{ app, effective }, { declared }, { pageRights, mapStyles }] = await Promise.all([import('./state.js'), import('./markdown.js'), import('./csp.js')])
-  const { render } = await fetch(new URL('../capabilities.json', import.meta.url)).then((response) => response.json()).catch(() => ({}))
-  const { settings } = effective.peek()
-  const base = render && String(app.policy.urls?.render ?? /** @type {Record<string, string>} */ (settings.urls ?? {}).render ?? RENDER).replace('{version}', render.version)
-  if (!base) return null
-  /** @param {string} path */
-  const at = (path) => new URL(path, base).href
-  const own = JSON.parse(document.querySelector('script[type="importmap"]')?.textContent ?? '{}').imports ?? {}
-  const { allows } = pageRights(settings, app.policy)
-  const styles = allows.maps ? mapStyles(/** @type {any} */ (settings), app.policy) : null
-  return {
-    base, entry: at(render.entry),
-    imports: Object.fromEntries([...Object.entries(own).map(([name, path]) => [name, at(path)]), ...Object.entries(render.map).map(([path, standIn]) => [at(path), at(standIn)])]),
-    integrity: Object.fromEntries(render.files.map((/** @type {string} */ path) => [at(path), render.integrity[path]])),
-    // Its pages offline, as Jean's are unless Settings say otherwise, and maps as they were.
-    settings: { look: app.look.peek(), kinds: [...declared.peek()], pages: { ...allows, web: false, network: false }, ...(styles && { mapStyles: styles }) },
-    sites: styles ? Object.values(styles).map((address) => new URL(address).origin) : [],
-  }
+  const [found, { app, effective }] = await Promise.all([drawingOf(), import('./state.js')])
+  if (!found) return null
+  const { drawing, styles } = found
+  const urls = /** @type {Record<string, string>} */ (effective.peek().settings.urls ?? {})
+  const base = String(app.policy.urls?.render ?? urls.render ?? RENDER).replace('{version}', drawing.render.version)
+  const instruments = drawing.sounds && String(app.policy.urls?.sounds ?? urls.sounds ?? SOUNDS).replace('{version}', drawing.sounds)
+  return base ? readerAt(base, drawing, { instruments, styles }) : null
 }
 
 /** A file's bytes as a `data:` address. @param {Uint8Array} bytes @param {string} type @returns {Promise<string>} */
@@ -147,7 +180,7 @@ const dataOf = (bytes, type) => new Promise((resolve, reject) => {
  * the project, by its address there: in the page, they show without the project.
  * @param {import('../core/types.js').FS} fs @param {string} path the conversation's @param {string} file
  */
-async function picturesOf(fs, path, file) {
+export async function picturesOf(fs, path, file) {
   const project = path.slice(0, path.lastIndexOf('/conversations/'))
   const records = file.split('\n').flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } })
   const made = filesMade(callsIn(records)).filter((one) => one.mimeType.startsWith('image/'))

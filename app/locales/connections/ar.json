@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "البحث في رسائل البريد",
+  "api.read_email": "قراءة رسالة بريد",
+  "api.create_draft": "كتابة مسودة",
+  "api.send_email": "إرسال رسالة بريد",
+  "api.list_calendars": "عرض التقويمات",
+  "api.list_events": "عرض الأحداث",
+  "api.create_event": "إضافة حدث",
+  "api.update_event": "تغيير حدث",
+  "api.delete_event": "حذف حدث",
+  "api.search_files": "البحث عن ملفات",
+  "api.read_file": "قراءة ملف",
+  "api.create_document": "إنشاء مستند"
+}

@@ -103,8 +103,11 @@ class Conversation extends Element {
       <ol class="turns">
         ${repeat(turns, (turn) => turn.at, (turn, index) => {
           const last = index === turns.length - 1
-          return turnView(turn, last ? live?.turn ?? null : null, files, turns.slice(0, index + 1), last, sources)
+          return turnView(turn, last ? live?.turn ?? null : null, files, turns.slice(0, index + 1), last, sources, turns[index + 1]?.user?.steer)
         })}
+        ${(live?.steers ?? []).map((text, i) => html`<li class="turn"><p class="msg msg-user" dir="auto">${text}</p>
+          <div class="msg-actions is-request"><span class="msg-time">${t('steer.waiting')}</span><button class="icon-button subtle" aria-label=${t('steer.back')}
+            @click=${() => import('./send.js').then((module) => module.takeBack(i))}>${icons.close}</button></div></li>`)}
       </ol>
       ${error ? errorView(error) : nothing}`
   }
@@ -131,10 +134,10 @@ function citable(files, turns) {
   const sources = new Map()
   for (const link of files) {
     const number = link._meta?.source
-    if (number && !sources.has(number)) sources.set(number, { name: link.name, label: t('sources.open', { name: link.name }), open: () => openFile(link) })
+    if (number && !sources.has(number)) sources.set(number, { name: link.name, label: t('sources.open', { name: link.name }), open: () => openFile(link), ...(isPicture(link) && { file: link }) })
   }
-  for (const { n, title, url } of turns.flatMap((turn) => turn.steps.flatMap((step) => step.tools.flatMap((tool) => tool._meta?.sources ?? [])))) {
-    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { url, ...site(url) }) })
+  for (const { n, title, url, picture } of turns.flatMap((turn) => turn.steps.flatMap((step) => step.tools.flatMap((tool) => tool._meta?.sources ?? [])))) {
+    if (!sources.has(n)) sources.set(n, { name: title, label: t('sources.open', { name: title }), ...(web(url) && { url, ...site(url) }), picture })
   }
   return sources
 }
@@ -151,9 +154,9 @@ function site(url) {
 /**
  * @param {Turn} turn @param {Turn | null} live
  * @param {ResourceLink[]} files every file in the conversation @param {Turn[]} upTo this turn and those before it
- * @param {boolean} last @param {import('./markdown.js').Sources} sources
+ * @param {boolean} last @param {import('./markdown.js').Sources} sources @param {boolean} [steered] D365
  */
-function turnView(turn, live, files, upTo, last, sources) {
+function turnView(turn, live, files, upTo, last, sources, steered) {
   // Calls the file keeps as pending never ended, or are asked again in the live answer; one it keeps as running was cut short (D212).
   const steps = [...turn.steps.map((step) => ({ ...step, tools: step.tools.filter((tool) => tool.status !== 'pending').map(cutShort) })), ...(live?.steps ?? [])]
   // The brain's follow-ups come in a trailing block, hidden from the answer itself.
@@ -164,13 +167,19 @@ function turnView(turn, live, files, upTo, last, sources) {
   const since = turn.notes.map((note) => note.data).find((data) => data.kind === 'since')
   // A routine's request, sent by Jean on its schedule (D122): its line opens the routine and its runs.
   const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
+  // A summary the brain read on from (D359).
+  const summed = steps.findLast((step) => step.compaction)?.compaction
+  if (summed) unlock('compact')
+  // The plan (D364).
+  const plan = live?.plan ?? turn.plan
+  if (last && !streaming && entries.findLast((entry) => entry.kind === 'think' && !entry.name && !entry._meta?.parent)?.rawOutput?.stopReason === 'tool_use') unlock('plan')
   // A double click on its request, or Enter on it, edits it, once Try again could (D312); Enter goes no further.
   const edit = (/** @type {Event} */ event) => {
     event.preventDefault()
     if (!(last && app.busy.value)) import('./edit.js').then(() => { editing.value = turn.at })
   }
   return html`<li class="turn">
-    ${since?.kind === 'since' ? html`<p class="since">${icons.clock}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
+    ${since?.kind === 'since' ? html`<p class="since">${icons.since}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
     ${routine?.kind === 'routine' ? html`<button class="since" @click=${() => import('./knows.js').then((knows) => knows.showRoutine(routine.routine))}>${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></button>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
@@ -180,9 +189,11 @@ function turnView(turn, live, files, upTo, last, sources) {
       : html`<p class="msg msg-user" dir="auto" tabindex=${last && app.busy.value ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
         @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && edit(event)}>${withFormulas(turn.user.text)}</p>` : nothing}
     ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
+    ${summed ? html`<app-compaction .record=${summed}></app-compaction>` : nothing}
     ${streaming || text || entries.length ? html`
       <article class="msg msg-jean ${streaming ? 'is-streaming' : ''}" aria-busy=${streaming ? 'true' : 'false'}>
-        ${activity(steps, text, streaming, files)}
+        ${slots('progress').map((entry) => entry.draw({ plan }))}
+        ${activity(steps, text, streaming, files, plan?.find((entry) => entry.status === 'in_progress')?.content, steered)}
         ${text ? html`<div class="prose" dir="auto">${markdown(text, sources, streaming)}${streaming ? html`<span class="caret" aria-hidden="true"></span>` : nothing}</div>` : nothing}
         ${entries.flatMap((entry) => (entry._meta?.picture || (entry._meta?.making && entry.status === 'in_progress') ? [html`<app-picture .call=${{ ...entry }}></app-picture>`] : []))}
         ${entries.flatMap((entry) => (entry._meta?.checked ? [html`<app-certificate .call=${entry}></app-certificate>`] : []))}
@@ -219,7 +230,7 @@ function followUps(at, suggestions, brain) {
   return html`<ul class="follow-ups" aria-label=${t('suggest.title')}>
     ${suggestions.map((suggestion) => html`<li><button class="follow-up" dir="auto" @click=${() => send(suggestion)}><span>${withFormulas(suggestion)}</span></button></li>`)}
     ${actions.map((id) => html`<li><button class="follow-up" @click=${() => import('./discovery.js').then((module) => module.follow(id))}>${t(`suggest.${id}`)}</button></li>`)}
-    ${smarter ? html`<li><button class="follow-up is-smarter" @click=${askSmarter}>${icons.spark}${t('auto.smarter')}</button></li>` : nothing}
+    ${smarter ? html`<li><button class="follow-up is-smarter" @click=${askSmarter}>${icons.brain}${t('auto.smarter')}</button></li>` : nothing}
   </ul>`
 }
 
@@ -259,7 +270,7 @@ function sourcesView(cited) {
   return html`<details class="read-list">
     <summary>${icons.globe}<span>${t('sources.title')}</span>${icons.chevron}</summary>
     <ul>${cited.map(({ n, title, url }) => html`<li><span class="cite">${n}</span>${web(url)
-      ? html`<a class="link-button" href=${url} target="_blank" rel="noopener noreferrer" dir="auto">${title}</a>` : html`<span dir="auto">${title}</span>`}</li>`)}</ul>
+      ? html`<a class="link-button" href=${url} data-site=${site(url).site} target="_blank" rel="noopener noreferrer" dir="auto">${title}</a>` : html`<span dir="auto">${title}</span>`}</li>`)}</ul>
   </details>`
 }
 
@@ -267,28 +278,29 @@ function sourcesView(cited) {
  * "What Jean is doing", from the turn's ACP records, in the order it happened: each time the
  * brain was asked, then the calls it made. What a script or a helper did shows under its call,
  * as a tree: a helper's brain, its calls, and their scripts' calls. Each line opens on what it
- * was given and what came back, so a step that went wrong can be looked into.
- * @param {Step[]} steps @param {string} text @param {boolean} streaming @param {ResourceLink[]} files
+ * was given and what came back, so a step that went wrong can be looked into; a plan's step under way says what it does (D364).
+ * @param {Step[]} steps @param {string} text @param {boolean} streaming @param {ResourceLink[]} files @param {string} [doing] @param {boolean} [steered]
  */
-function activity(steps, text, streaming, files) {
+function activity(steps, text, streaming, files, doing, steered) {
   const entries = steps.flatMap((step) => step.tools)
   const tools = entries.filter((entry) => entry.name || entry._meta?.parent)
   const last = entries.findLast((entry) => !entry.name && !entry._meta?.parent)
   const failed = last?.status === 'failed'
   // Asked for tools and never read what they returned: out of steps, or closed in the middle.
-  const unfinished = !streaming && last?.rawOutput?.stopReason === 'tool_use'
+  const unfinished = !streaming && !steered && last?.rawOutput?.stopReason === 'tool_use'
   const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
-  const status = streaming ? (working ? 'working' : 'thinking') : failed || unfinished ? 'failed' : 'completed'
+  // A task paused at its limit didn't fail (D364).
+  const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !last?._meta?.stopped) ? 'failed' : 'completed'
   // A request that failed is asked again after a moment (D202).
   const summary = streaming
-    ? t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
+    ? doing && !last?._meta?.retrying && (working || !text) ? doing : t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
     : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : last ? t('activity.answeredWith', { brain: brainName(last) })
       // A turn that was one call, with no brain asked (a flow run, D218): what that call did.
       : toolLabel(tools.findLast((tool) => !tool._meta?.parent) ?? /** @type {ToolCallInfo} */ ({ toolCallId: '', title: '' }))
   // The offer made here, not in a conversation out of sight (D147).
   const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // What each brain step thought and wrote.
-  const said = new Map(steps.map((step) => [step.tools.find((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
+  const said = new Map(steps.map((step) => [step.tools.findLast((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
   // Parts in the order the work was split (their calls are kept in the order they finished).
   const order = (/** @type {ToolCallInfo} */ tool) => Number(/\.(\d+)$/.exec(tool.toolCallId)?.[1] ?? 0)
   /** @type {{ entry: ToolCallInfo, depth: number, key: string }[]} */
@@ -310,12 +322,12 @@ function activity(steps, text, streaming, files) {
   for (const entry of entries) if (!entry._meta?.parent) add(entry, 0)
   return html`
     <details class="activity" data-status=${status}>
-      <summary><span class="ember" aria-hidden="true"></span><span>${summary}</span>${icons.chevron}</summary>
+      <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${summary}</span>${icons.chevron}</summary>
       <ol class="activity-list">
         ${repeat(rows, (row) => row.key, ({ entry, depth }) => html`<li data-status=${entry.status ?? 'pending'} data-call=${entry.toolCallId} class=${depth ? 'is-nested' : ''}
           data-depth=${entry.name || depth ? depth : nothing}>
           <details class="step">
-            <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${entry.name ? toolLabel(entry, files) : brainLine(entry)}</span>${icons.chevron}</summary>
+            <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${entry.name ? toolLabel(entry, files) : entry._meta?.compact ? html`<app-compaction .entry=${entry}></app-compaction>` : brainLine(entry)}</span>${icons.chevron}</summary>
             ${entry.name ? toolDetails(entry) : brainDetails(entry, said.get(entry.toolCallId))}
           </details>
         </li>`)}
@@ -386,18 +398,18 @@ function shown(value) {
 }
 
 /**
- * The decision inbox: approvals and questions, Jean's or its helpers' (caps/ask, D146), wait here
- * as cards, one each, while the rest of the work goes on, and are answered in any order.
+ * The decision inbox: approvals, Jean's or its helpers', wait here as cards, one each, while the
+ * rest of the work goes on, and are answered in any order. Questions wait in the box (caps/ask, D343).
  * @param {ToolCallInfo[]} entries @param {ResourceLink[]} files
  */
 function inbox(entries, files) {
-  const waiting = decisionsHere()
+  const waiting = decisionsHere().filter((decision) => 'toolCall' in decision)
   if (!waiting.length) return nothing
   // Which helper is asking: the one whose call the request sits under.
   const from = (/** @type {string} */ id) => entries.find((entry) => entry.name === 'helper' && id.startsWith(`${entry.toolCallId}/`))?.rawInput?.title
   return html`<section class="inbox" aria-label=${t('inbox.waiting', { count: waiting.length })}>
     ${waiting.length > 1 ? html`<p class="inbox-count">${t('inbox.waiting', { count: waiting.length })}</p>` : nothing}
-    ${repeat(waiting, (decision) => decision.id, (decision) => ('toolCall' in decision ? approval(decision, from(decision.toolCall.toolCallId), files) : html`<app-ask .decision=${decision}></app-ask>`))}
+    ${repeat(waiting, (decision) => decision.id, (decision) => approval(decision, from(decision.toolCall.toolCallId), files))}
   </section>`
 }
 

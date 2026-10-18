@@ -36,8 +36,8 @@ for (const file of others) {
 }
 
 test('the language menu offers exactly the catalogues there are', async () => {
-  const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
-  const listed = JSON.parse((/export const LOCALES = (\[[^\]]*\])/.exec(state)?.[1] ?? '[]').replace(/'/g, '"'))
+  const i18n = await readFile(new URL('../app/core/i18n.js', import.meta.url), 'utf8')
+  const listed = JSON.parse((/export const LOCALES = (\[[^\]]*\])/.exec(i18n)?.[1] ?? '[]').replace(/'/g, '"'))
   assert.deepEqual(listed, [...LOCALES].sort((a, b) => (a < b ? -1 : 1)))
   assert.deepEqual([...others.map((file) => file.slice(0, -5)), 'en'].sort(), [...LOCALES].sort())
 })
@@ -64,5 +64,19 @@ test('the UI never says "model", "agent" or "token" in English, and "routine" on
   for (const [key, value] of Object.entries(Object.assign({}, ...Object.values(english)))) {
     assert.doesNotMatch(String(value), /\b(models?|agents?|tokens?|MCP)\b/i, key)
     if (/\broutines?\b/i.test(String(value))) assert.match(key, /routine|schedule/, key)
+  }
+})
+
+// French sets ? ! : ; apart with a narrow no-break space (U+202F): after a plain one, the sign can wrap onto a line of its own.
+test('French never puts a plain space before ? ! : ;', async () => {
+  for (const part of PARTS) {
+    for (const [key, value] of Object.entries(await load(part, 'fr.json'))) {
+      for (const text of typeof value === 'string' ? [value] : Object.values(value)) assert.doesNotMatch(text, / [?!:;]/, `${part}fr.json ${key}`)
+    }
+  }
+  const skills = new URL('../app/caps/skills/directory/', import.meta.url)
+  for (const name of await readdir(skills)) {
+    const skill = await readFile(new URL(`${name}/SKILL.md`, skills), 'utf8')
+    for (const [, text] of skill.matchAll(/^\s*(?:title|text)-fr:(.*)$/gm)) assert.doesNotMatch(text, / [?!:;]/, `${name}/SKILL.md`)
   }
 })

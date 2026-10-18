@@ -19,13 +19,13 @@
 .complete-heading { padding: 0.55rem 0.75rem 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); }
 .complete-option { display: grid; grid-template-columns: auto minmax(min(9rem, 50%), 1fr) minmax(0, auto); align-items: center; gap: 0.1rem 0.7rem; padding: 0.5rem 0.75rem; border-radius: 0.8rem; cursor: pointer; }
 .complete-option[aria-selected='true'] { background: var(--line); }
-.complete-option > .icon, .complete-logo { inline-size: 1.15rem; block-size: 1.15rem; color: var(--ink-soft); }
+.complete-option > .icon, .complete-logo { --glyph: var(--icon-m); inline-size: var(--glyph); block-size: var(--glyph); color: var(--ink-soft); }
 .complete-logo { display: grid; place-items: center; border-radius: 0.3rem; object-fit: contain; font-size: 0.75rem; font-weight: 600; }
 span.complete-logo { background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); }
 .complete-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .complete-aside { display: flex; align-items: center; gap: 0.4rem; min-inline-size: 0; font-size: 0.78rem; color: var(--ink-faint); white-space: nowrap; }
 .complete-aside > span { overflow: hidden; text-overflow: ellipsis; }
-.complete-aside .icon { flex: none; inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.complete-aside .icon { flex: none; --glyph: var(--icon-s); color: var(--flame); }
 .complete-detail { grid-column: 2 / -1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.82rem; color: var(--ink-soft); }
 /* The menus beside + (ui/plus.js, D292), which list the room's skills and connections drawn as here: beside their row, lit while
    open, from its top down, or else up from its foot, or on its other side; a long list scrolls, a long name ends in an ellipsis. */

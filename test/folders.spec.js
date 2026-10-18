@@ -1,14 +1,15 @@
 // Folders (0.8, D141, D149), the version's done-when: a synced "Clients" folder, where Jean finds the
 // three contracts that mention a clause and corrects one after showing the change; a folder of code,
 // where the file changes by exactly Jean's change; two conversations in two folders and a project on
-// its own, each back on its own after a reload. Chromium opens a folder in place: the system's picker
+// its own, each back on its own after a reload, even one during the read of the folders, or with
+// another tab reading them. Chromium opens a folder in place: the system's picker
 // is played by a folder of the private file system, the same kind of handle. WebKit works on a copy.
 // Playwright's own contexts are private, where Chrome 153 closes the browser when a handle of the private
 // file system is read back from IndexedDB: what lasts across visits is checked in a profile of its own.
 import { test, expect, chromium, devices } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openTasks, giveFolder } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { readZip } from '../app/core/zip.js'
@@ -43,7 +44,7 @@ const APP = { 'main.js': MAIN, '.gitignore': 'dist/\n', 'dist/bundle.js': 'built
 async function folder(page, name, files) {
   await page.evaluate(async ({ name, files }) => {
     const { makeFile } = await import('/caps/made/formats.js')
-    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })
+    const root = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })
     const top = await root.getDirectoryHandle(name, { create: true })
     for (const [path, content] of Object.entries(files)) {
       const parts = path.split('/')
@@ -61,7 +62,7 @@ async function folder(page, name, files) {
 async function write(page, path, text) {
   await page.evaluate(async ({ path, text }) => {
     const parts = path.split('/')
-    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')
+    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')
     for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
     const writable = await (await dir.getFileHandle(String(parts.at(-1)))).createWritable()
     await writable.write(text)
@@ -85,13 +86,23 @@ async function bakery(shown) {
   await expect.poll(() => shown.locator('img').evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBe(40)
 }
 
-/** A file of a picked folder, as bytes. @param {import('@playwright/test').Page} page @param {string} path */
+/**
+ * A file of a picked folder, as bytes; read again when Jean was writing it, since a file swapped in
+ * while it is read fails the read. @param {import('@playwright/test').Page} page @param {string} path
+ */
 async function bytes(page, path) {
   return new Uint8Array(await page.evaluate(async (path) => {
     const parts = path.split('/')
-    let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')
-    for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
-    return [...new Uint8Array(await (await (await dir.getFileHandle(String(parts.at(-1)))).getFile()).arrayBuffer())]
+    for (let tries = 1; ; tries++) {
+      try {
+        let dir = await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')
+        for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part)
+        return [...new Uint8Array(await (await (await dir.getFileHandle(String(parts.at(-1)))).getFile()).arrayBuffer())]
+      } catch (error) {
+        if (/** @type {Error} */ (error).name !== 'NotFoundError' || tries === 20) throw error
+        await new Promise((resolve) => setTimeout(resolve, 50))
+      }
+    }
   }, path))
 }
 
@@ -117,7 +128,7 @@ async function openConversation(page, title) {
 /** The system's folder picker, played by a folder of the private file system. @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} target */
 const picker = (target) => target.addInitScript(() => {
   Object.assign(window, {
-    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle(localStorage.getItem('e2e.pick') ?? 'Clients'),
+    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle(localStorage.getItem('e2e.pick') ?? 'Clients'),
   })
 })
 
@@ -164,7 +175,7 @@ test.describe('in place', () => {
     await page.locator('app-folder-approval').getByRole('button', { name: 'Change it' }).click()
     await expect(await answer(page)).toContainText('Done: Changed notes.txt.')
     await page.evaluate(async () => {
-      const dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Clients')
+      const dir = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle('Clients')
       const writable = await (await dir.getFileHandle('notes.txt')).createWritable()
       await writable.write('Call Dana on Wednesday.\n')
       await writable.close()
@@ -210,17 +221,11 @@ test.describe('in place', () => {
     // What git diff would show: that line, and nothing else, its line endings kept.
     expect(new TextDecoder().decode(await bytes(page, 'app/main.js'))).toBe(MAIN.replace('Hello', 'Bonjour'))
     // The conversation's prompt has the folder, its top level and the AGENTS.md the user took.
+    // Jean's own files, read through its FS, since they are sealed on disk (D371).
     const prompt = await page.evaluate(async () => {
-      /** @param {FileSystemDirectoryHandle} dir @returns {Promise<string[]>} */
-      const texts = async (dir) => {
-        const found = []
-        for await (const entry of /** @type {any} */ (dir).values()) {
-          if (entry.kind === 'directory' && entry.name !== 'picked') found.push(...await texts(entry))
-          else if (entry.name.endsWith('.jsonl')) found.push(await (await entry.getFile()).text())
-        }
-        return found
-      }
-      return (await texts(await navigator.storage.getDirectory())).join('\n')
+      const [{ app }, { walk }] = await Promise.all([import('/ui/state.js'), import('/core/fs.js')])
+      const paths = (await walk(app.fs)).filter((path) => path.endsWith('.jsonl') && !path.startsWith('.'))
+      return (await Promise.all(paths.map((path) => app.fs.read(path)))).join('\n')
     })
     expect(prompt).toContain('The user\'s folder \\"app\\" is open in this conversation')
     expect(prompt).toContain('Use two spaces, never tabs.')
@@ -299,6 +304,81 @@ test.describe('in place', () => {
     await answer(page)
     await context.close()
   })
+
+  test('a reload while the folders are read back, or another tab reading them then, loses none; a read that took its page down forgets them for the visit', async ({ baseURL }, info) => {
+    const context = await chromium.launchPersistentContext(info.outputPath('profile'), { viewport: devices['Desktop Chrome'].viewport, baseURL, serviceWorkers: 'block' })
+    await picker(context)
+    // Once asked, the next read of the folders' store never ends: a page caught as it reads them back.
+    await context.addInitScript(() => {
+      const caught = new WeakSet()
+      const { getAll } = IDBObjectStore.prototype
+      IDBObjectStore.prototype.getAll = function (...args) {
+        if (this.name === 'folders' && localStorage.getItem('e2e.catch')) caught.add(this.transaction)
+        return getAll.apply(this, args)
+      }
+      const complete = /** @type {PropertyDescriptor} */ (Object.getOwnPropertyDescriptor(IDBTransaction.prototype, 'oncomplete'))
+      Object.defineProperty(IDBTransaction.prototype, 'oncomplete', { ...complete, set(/** @type {any} */ handler) {
+        if (!caught.has(this)) return complete.set?.call(this, handler)
+        localStorage.removeItem('e2e.catch')
+        localStorage.setItem('e2e.caught', 'yes')
+      } })
+    })
+    const catchRead = (/** @type {import('@playwright/test').Page} */ page) => page.evaluate(() => { localStorage.removeItem('e2e.caught'); localStorage.setItem('e2e.catch', 'yes') })
+    const caught = (/** @type {import('@playwright/test').Page} */ page) => expect.poll(() => page.evaluate(() => localStorage.getItem('e2e.caught'))).toBe('yes')
+    const page = context.pages()[0] ?? await context.newPage()
+    await start(page)
+    await folder(page, 'Clients', CLIENTS)
+    await turnOn(page, 'Folders')
+    await page.keyboard.press('Escape')
+    const name = page.locator('.folder-name')
+    await name.click()
+    await page.locator('#folder-menu button', { hasText: 'Use it in every new task' }).click()
+    // Kept once project.md names it, written after its handle.
+    await expect.poll(() => page.evaluate(async () => {
+      const [{ app }, { walk }] = await Promise.all([import('/ui/state.js'), import('/core/fs.js')])
+      for (const path of await walk(app.fs)) if (path.endsWith('project.md') && !path.startsWith('.') && (await app.fs.read(path))?.includes('folder: Clients')) return true
+      return false
+    })).toBe(true)
+    await expect(name).not.toHaveClass(/is-shut/)
+
+    // Reloaded as it reads them back, as after a change to Jean: the next start has them.
+    await catchRead(page)
+    await page.reload()
+    await caught(page)
+    await page.reload()
+    await expect(name).toHaveText('Clients')
+    await expect(name).not.toHaveClass(/is-shut/)
+
+    // Another tab reading them back as this one starts: both have them.
+    await catchRead(page)
+    const other = await context.newPage()
+    await other.goto('./')
+    await caught(other)
+    await page.reload()
+    await expect(name).toHaveText('Clients')
+    await expect(name).not.toHaveClass(/is-shut/)
+    await other.close()
+
+    // A read that took its page down: the next start forgets them, and keeps one chosen again for the visit only.
+    await catchRead(page)
+    await page.reload()
+    await caught(page)
+    const crashed = page.waitForEvent('crash')
+    ;(await context.newCDPSession(page)).send('Page.crash').catch(() => {})
+    await crashed
+    const after = await context.newPage()
+    await after.goto('./')
+    const again = after.locator('.folder-name')
+    await expect(again).toHaveText('Clients')
+    await expect(again).toHaveClass(/is-shut/)
+    await again.click()
+    await after.locator('#folder-menu button', { hasText: 'Reconnect' }).click()
+    await expect(again).not.toHaveClass(/is-shut/)
+    await after.reload()
+    await expect(again).toHaveClass(/is-shut/)
+    await context.close()
+  })
+
   test('a workbook of the folder changes in the browser, where it is: its total worked out again, the brain told (D229)', async ({ page }) => {
     await start(page)
     await connectFakeBrain(page)
@@ -401,7 +481,7 @@ test('where a folder can’t be opened in place, Jean works on a copy and the ch
   await connectFakeBrain(page)
   const chooser = page.waitForEvent('filechooser')
   await turnOn(page, 'Folders')
-  await (await chooser).setFiles(top)
+  await giveFolder(await chooser, top)
   await page.keyboard.press('Escape')
   await expect(page.locator('.folder-name')).toHaveText('Clients')
 
@@ -433,7 +513,7 @@ test('where a folder is a copy, its site shows in the browser too, and a page Je
   await page.keyboard.press('Escape')
   const chooser = page.waitForEvent('filechooser')
   await turnOn(page, 'Folders')
-  await (await chooser).setFiles(top)
+  await giveFolder(await chooser, top)
   await page.keyboard.press('Escape')
   await expect(page.locator('.folder-name')).toHaveText('Site')
   // The browser, open since it was turned on, shows the conversation's folder.

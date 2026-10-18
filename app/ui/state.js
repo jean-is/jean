@@ -1,5 +1,5 @@
 // Application state (signals) and the actions that change it.
-import { signal, computed } from '@preact/signals-core'
+import { signal, computed, batch } from '@preact/signals-core'
 import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
 import { loadConversation, listConversations, deleteConversation, appendRecords } from '../core/conversations.js'
@@ -7,6 +7,7 @@ import { linkedFiles, metaRecord, unanswered } from '../core/events.js'
 import { t, useLocale } from '../core/i18n.js'
 import { LOOKS } from './looks.js'
 import { contributions } from './caps.js'
+import { mine } from './opfs.js'
 
 /** @import { FS, BrainConfig, Envelope, ModelInfo, ToolCallInfo, ResourceLink } from '../core/types.js' */
 /** @import { Turn } from '../core/events.js' */
@@ -27,11 +28,12 @@ import { contributions } from './caps.js'
  */
 /** @import { Question, Answer } from '../caps/ask/answers.js' */
 
-// The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
-export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
+export { LOCALES } from '../core/i18n.js'
 
 export const app = {
   fs: /** @type {FS} */ (/** @type {unknown} */ (null)),
+  /** The whole FS, every profile's (D228), which only Profiles reaches; null where nothing is kept. */
+  whole: /** @type {FS | null} */ (null),
   deviceId: '',
   /** Every project, and the one the room is in: its conversations, files, memory and light. */
   projects: signal(/** @type {Project[]} */ ([])),
@@ -44,7 +46,7 @@ export const app = {
   conversations: signal(/** @type {import('../core/types.js').ConversationSummary[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<{ id: string, path: string, records: Envelope[] } | null>} */
   current: signal(null),
-  /** @type {import('@preact/signals-core').Signal<{ turn: Turn } | null>} */
+  /** @type {import('@preact/signals-core').Signal<{ turn: Turn, steers?: string[] } | null>} steers: D365 */
   live: signal(null),
   busy: signal(false),
   /** The conversations being answered, on screen or not, by path (D147). */
@@ -56,15 +58,17 @@ export const app = {
   deviceTheme: signal(/** @type {Theme} */ ('dark')),
   chosenTheme: signal(/** @type {Theme | null} */ (null)),
   /** The look on screen (D111), once its style sheet is in; settings hold the one chosen. */
-  look: signal(/** @type {import('./looks.js').LookId} */ ('human')),
+  look: signal(/** @type {import('./looks.js').LookId} */ ('tilde')),
   /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
   sidebar: signal(/** @type {boolean | null} */ (null)),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
   wide: signal(false),
-  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | null>} */
+  /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | 'profile' | null>} */
   dialog: signal(null),
   section: signal('general'),
   draft: signal(''),
+  /** jean.is's page under the first screen asked for again from under the box, through a change of address too (D397). */
+  about: signal(globalThis.sessionStorage?.getItem('app.about') === 'true'),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
   decisions: signal(/** @type {Decision[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<ServiceWorker | null>} */
@@ -140,8 +144,9 @@ export function notify(message, action) {
 
 /** @param {string} lang */
 export async function setLocale(lang) {
-  await useLocale(lang)
+  // Kept first: on jean.is, the page under the first screen may follow it to another address (D397).
   await updateSettings({ locale: lang })
+  await useLocale(lang)
 }
 
 /** @param {string} kind @param {import('../core/types.js').RuleValue} value */
@@ -156,13 +161,13 @@ export const THEME_KEY = 'app.theme'
 export const APPLE = /Mac|iPhone|iPad/.test(navigator.platform)
 const MODIFIER = APPLE ? 'Meta' : 'Control'
 /** For aria-keyshortcuts. */
-export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, language: `${MODIFIER}+Shift+L`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B`, save: `${MODIFIER}+S`, delete: `${MODIFIER}+${APPLE ? 'Backspace' : 'Delete'}` }
+export const SHORTCUTS = { settings: `${MODIFIER}+,`, new: `${MODIFIER}+Shift+O`, theme: `${MODIFIER}+Shift+D`, look: `${MODIFIER}+Shift+E`, language: `${MODIFIER}+Shift+L`, dictation: `${MODIFIER}+Shift+S`, live: `${MODIFIER}+Shift+H`, find: `${MODIFIER}+K`, browser: `${MODIFIER}+Shift+B`, terminal: `${MODIFIER}+J`, sidebar: `${MODIFIER}+B`, save: `${MODIFIER}+S`, share: `${MODIFIER}+Shift+U`, delete: `${MODIFIER}+${APPLE ? 'Backspace' : 'Delete'}` }
 
 /** Light or dark, kept on this device, or null: Auto, what the device shows. @param {Theme | null} next */
 export function setTheme(next) {
   app.chosenTheme.value = next
-  if (next) localStorage.setItem(THEME_KEY, next)
-  else localStorage.removeItem(THEME_KEY)
+  if (next) localStorage.setItem(mine(THEME_KEY), next)
+  else localStorage.removeItem(mine(THEME_KEY))
 }
 
 /** Light to dark and back (⌘⇧D, D130, D238): switching back to what the device shows is Auto again (D85). */
@@ -172,16 +177,16 @@ export function switchTheme() {
 }
 
 // The drawer open beside the conversation or put away (D165) belongs to this device too, as the
-// user left it; until then, to the look: Mail and Human keep it open, the others put it away.
+// user left it; until then, to the look: Tilde, Mail and Human keep it open once the room has a task (D369), the others put it away.
 export const SIDEBAR_KEY = 'app.sidebar'
 
 /** Whether the drawer is open beside the conversation now: a wide window, and the user's choice or the look's. */
-export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?? LOOKS[app.look.value].list === true))
+export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?? (LOOKS[app.look.value].list === true && app.conversations.value.length > 0)))
 
 /** The drawer open beside the conversation, or put away, from now on on this device. @param {boolean} open */
 export function setSidebar(open) {
   app.sidebar.value = open
-  localStorage.setItem(SIDEBAR_KEY, open ? 'open' : 'closed')
+  localStorage.setItem(mine(SIDEBAR_KEY), open ? 'open' : 'closed')
 }
 
 /** The header's button and ⌘B: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over or away. */
@@ -244,11 +249,14 @@ export async function enterProject(project) {
   if (project.dir === app.projectDir) return
   // What is under way stops: its calls work in the room on screen.
   for (const run of runs.values()) halt(run)
-  newConversation()
-  app.project.value = project
-  app.conversations.value = []
-  await refreshConversations()
+  const conversations = await listConversations(app.fs, project.dir)
+  // In one step, once its conversations are read: the address and the box's draft go from the task
+  // left to a new one there, never through a new one in the room left.
+  batch(() => { newConversation(); app.project.value = project; app.conversations.value = conversations })
 }
+
+/** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
+export const firstVisit = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */
 export const assistantName = () => String(app.project.value.data.assistantName || BRAND.name)
@@ -334,14 +342,14 @@ export async function markConversation(path, meta, by = 'user') {
 
 /**
  * A conversation being answered, on screen or not (D147): `records` as sent, `turn` the answer so far, `settled` what of it is in the file.
- * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController }} Run
+ * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController, steers?: string[] }} Run
  */
 /** @type {Map<string, Run>} by path */
 const runs = new Map()
 
 /**
  * The conversation a call works for, by its run's signal (D147); without one, the one on screen.
- * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], brain?: BrainConfig, turn?: Turn } | null}
+ * @param {AbortSignal} [signal] @returns {{ id: string, path: string, records: Envelope[], brain?: BrainConfig, turn?: Turn, settled?: Envelope[] } | null}
  */
 export function conversationOf(signal) {
   for (const run of runs.values()) if (run.controller.signal === signal) return run
@@ -370,7 +378,7 @@ export const decisionsHere = () => app.decisions.value.filter((decision) => deci
 function showRun() {
   const run = runs.get(app.current.peek()?.path ?? '')
   app.busy.value = Boolean(run)
-  app.live.value = run ? { turn: run.turn } : null
+  app.live.value = run ? { turn: run.turn, steers: run.steers } : null
   if (run) setPresence('thinking')
   else if (['thinking', 'answering'].includes(app.presence.peek())) setPresence('idle')
 }
@@ -433,6 +441,9 @@ export const rewind = async (upTo) => (await sending()).rewind(upTo)
 
 /** Duplicates the conversation up to a request into a new one, which answers it (D230). @param {number} upTo */
 export const fork = async (upTo) => (await sending()).fork(upTo)
+
+/** The box's words steer the task at work (D365). @param {string} text */
+export const steer = async (text) => (await sending()).steer(text)
 
 /** The user started typing, or a file is ready: the provider's cache may need writing again (D49). */
 export const warm = async () => (await sending()).warm()

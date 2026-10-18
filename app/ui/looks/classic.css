@@ -56,7 +56,7 @@
 
 /* The desktop, and no light in the room. */
 :root[data-look='classic'] { background: var(--desktop); }
-:root[data-look='classic'] .room, :root[data-look='classic'] app-persona::before { display: none; }
+:root[data-look='classic'] .room { display: none; }
 :root[data-look='classic'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; letter-spacing: 0; }
 /* The header: a taskbar, with the name as its start button. */
 :root[data-look='classic'] .bar { padding-block: 0.3rem; background: var(--room); box-shadow: var(--raised); }
@@ -68,6 +68,8 @@
 :root[data-look='classic'] .welcome { padding-block: 4vh; }
 :root[data-look='classic'] .hero-question { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; line-height: 1.15; background: none; color: var(--ink); }
 :root[data-look='classic'] app-composer { background: linear-gradient(transparent, var(--desktop) 45%); }
+/* Under the box is the desktop, where labels are white. */
+:root[data-look='classic'] app-composer > p { color: oklch(1 0 0); }
 :root[data-look='classic'] .composer { border: 0; padding: 0.5rem; background: var(--room); backdrop-filter: none; box-shadow: var(--raised); }
 :root[data-look='classic'] .composer:focus-within { box-shadow: var(--raised); }
 :root[data-look='classic'] .composer textarea { padding: 0.35rem 0.5rem; background: var(--field); box-shadow: var(--sunken); }

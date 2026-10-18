@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "name": "glance",
+  "version": "1.0.0",
+  "title": "At a glance",
+  "title-fr": "En un coup d’œil",
+  "title-ja": "ひと目で",
+  "description": "Under each long answer, one line that shows it at a glance: how long it takes to read, a small map of its parts in order, and how many links it holds.",
+  "description-fr": "Sous chaque longue réponse, une ligne qui la montre d’un coup d’œil : le temps qu’il faut pour la lire, une petite carte de ses parties dans l’ordre, et le nombre de liens qu’elle contient.",
+  "description-ja": "長い回答の下に、ひと目でわかる一行を表示します。読むのにかかる時間、各部分を順に並べた小さな地図、含まれるリンクの数です。",
+  "author": "Jean's examples",
+  "main": "main.js",
+  "rights": ["draw"]
+}

@@ -1,0 +1,268 @@
+/* jean.is's page under the app's first screen (D397), which scripts/home.js writes there: the app's own
+   tokens and buttons, in Tilde as a first visit has it, any other look's where it differs. Logical
+   properties only; classes start with home-. */
+
+/* Shown once the app is ready, which has taken it away by then unless this is a first visit in a tab
+   (ui/home.js); without scripts, as it is written. Never printed. */
+@media (scripting: enabled) { :root:not(.is-ready) .home { display: none; } }
+@media print { .home { display: none; } }
+@media (prefers-reduced-motion: no-preference) { html:has(> body > .home) { scroll-behavior: smooth; } }
+/* Once the drawer is open beside the room, as it is after a first request, the page sits beside it too, and
+   About Jean brings it into view under the main area's top. */
+@media (min-width: 48rem) { :root[data-sidebar] body > .home { margin-inline-start: var(--list); scroll-margin-block-start: var(--top); } }
+
+.home {
+  --home-side: var(--side, var(--room-2));
+  --home-fill: var(--fill, var(--ink));
+  --home-on-fill: var(--on-fill, var(--room));
+  --home-control: var(--control, oklch(from var(--ink) l c h / 0.08));
+  --home-raise: var(--raise, 0 0 0 1px var(--line-strong));
+  --home-float: var(--float, 0 1.25rem 3.5rem -0.75rem oklch(0 0 0 / 0.45));
+  --home-pane: 1.25rem;
+  --home-menu: 0.75rem;
+  --home-row: 0.625rem;
+  --home-gutter: clamp(1.25rem, 8vw, 7.5rem);
+  position: relative;
+  background: var(--room);
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+/* Weightless, so every class of the page's own spaces its element as it says. */
+:where(.home) :where(h2, h3, p, ul, ol, dl, dd, figure, fieldset) { margin: 0; }
+:where(.home) :where(ul, ol) { padding: 0; list-style: none; }
+.home a { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+.home a.button { color: var(--ink); text-decoration: none; }
+.home :is(h2, h3, .home-why, .home-sub, .home-door-why) { text-wrap: balance; }
+.home:lang(ja) { line-break: strict; }
+.home:lang(ja) :is(h2, h3, p) { word-break: auto-phrase; }
+.home .flip-rtl { display: inline-block; }
+.home .icon { flex: none; }
+
+/* "Jean for you": who it is for, on the fold. */
+.home-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem var(--home-gutter); border-block: 1px solid var(--line); background: var(--home-side); }
+.home-strip-label { margin-inline-end: 0.25rem; color: var(--ink-soft); font-size: 0.875rem; white-space: nowrap; }
+.home-strip .button { padding-block: 0.3rem; font-size: 0.875rem; }
+
+/* Sections */
+.home-section { display: flex; flex-direction: column; gap: 1.75rem; padding: 4.5rem var(--home-gutter); }
+.home-section.is-side { background: var(--home-side); }
+.home-head { display: flex; flex-direction: column; gap: 0.6rem; max-inline-size: 46rem; }
+.home-head.is-centred { align-self: center; align-items: center; text-align: center; }
+.home-why { color: var(--ink-soft); font-size: 1.1rem; line-height: 1.65; }
+.home-title { color: var(--ink); font: 700 clamp(1.75rem, 4vw, 2.5rem)/1.15 var(--display); }
+.home-title.is-small { font-size: clamp(1.5rem, 3vw, 2rem); }
+.home-sub { color: var(--ink-soft); font-size: 1.1rem; }
+.home:is(:lang(ar), :lang(ja)) :is(.home-title, .home-door-title, .home-mark) { font-family: var(--sans); }
+
+/* The range: the words in and out, who it's for, four tries and how one went. */
+.home-formats { display: grid; gap: 0.5rem; justify-items: center; }
+.home-formats > div { display: flex; align-items: baseline; justify-content: center; gap: 0.4rem; }
+.home-formats dt { flex: none; min-inline-size: 3.5rem; margin-inline-end: 0.35rem; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; text-align: end; }
+.home-formats ul { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.home-formats li { padding: 0.15rem 0.7rem; border-radius: 999px; background: var(--room-2); font-size: 0.8125rem; }
+.home-filter { position: relative; isolation: isolate; display: inline-flex; flex-wrap: wrap; align-self: center; gap: 0.25rem; padding: 0.2rem; border: 0; border-radius: 999px; background: var(--room-2); }
+.home-filter input { position: absolute; opacity: 0; pointer-events: none; }
+.home-filter label { display: block; padding: 0.3rem 0.9rem; border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; cursor: pointer; transition: color 0.3s var(--ease); }
+.home-filter input:checked + label { background: var(--home-fill); color: var(--home-on-fill); }
+/* Once ui/home.js measures the choice, one mark slides from choice to choice under them. */
+.home-filter-mark { display: none; }
+.home-filter.is-sliding .home-filter-mark { position: absolute; z-index: -1; display: block; inset-block: 0.2rem; inset-inline-start: var(--at); inline-size: var(--size); border-radius: 999px; background: var(--home-fill); transition: inset-inline-start 0.35s var(--ease), inline-size 0.35s var(--ease); }
+.home-filter.is-sliding input:checked + label { background: none; }
+.home-filter input:focus-visible + label { outline: 2px solid var(--flame); outline-offset: 2px; }
+.home:has(#home-for-home:checked) .home-tile:not([data-for='home']),
+.home:has(#home-for-family:checked) .home-tile:not([data-for='family']),
+.home:has(#home-for-work:checked) .home-tile:not([data-for='work']) { display: none; }
+
+/* One row, four tiles in view (two under 70rem), the rest a turn away: the buttons, in the margins, once
+   ui/home.js has them turn the row, and hidden where it ends; the row scrolls without them too. Room for
+   the active tile's ring, which the scrolling row would clip. */
+.home-row { position: relative; }
+.home-tiles { display: flex; gap: 1rem; margin: -0.3rem; padding: 0.3rem; overflow-x: auto; scroll-snap-type: inline mandatory; scroll-padding-inline: 0.3rem; scrollbar-width: none; }
+@media (prefers-reduced-motion: no-preference) { .home-tiles { scroll-behavior: smooth; } }
+.home-tile { display: flex; flex: 0 0 calc((100% - 3rem) / 4); flex-direction: column; gap: 0.7rem; min-block-size: 21rem; padding: 0.9rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); scroll-snap-align: start; }
+.home-turn { position: absolute; z-index: 1; inset-block-start: calc(50% - 1.375rem); display: none; place-items: center; inline-size: 2.75rem; block-size: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); cursor: pointer; }
+.home-turn.is-back { inset-inline-start: -3.25rem; }
+.home-turn.is-next { inset-inline-end: -3.25rem; }
+.home-turn.is-back .icon { rotate: 180deg; }
+.home-row.is-turning .home-turn:not(:disabled) { display: grid; }
+.home-turn:hover { background: var(--room-2); }
+.home-tile { transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+.home-tile.is-active { border-color: oklch(from var(--home-fill) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--home-fill) l c h / 0.12); }
+.home-where, .home-step, .home-door-name, .home-foot-head { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
+.home-ask { font-size: 0.95rem; font-weight: 500; line-height: 1.45; }
+.home-file { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.1rem 0.55rem 0.1rem 0.4rem; border-radius: 0.4375rem; background: var(--room-2); color: var(--ink); font-size: 0.8125rem; font-weight: 400; vertical-align: middle; }
+.home-file .icon { inline-size: 0.95rem; block-size: 0.95rem; color: var(--flame); }
+.home-go { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin-block-start: auto; font-size: 0.8125rem; }
+.home-go .button { white-space: nowrap; }
+
+/* The tiles' pictures, drawn until each is a capture of its request done in that language. */
+.home-art { position: relative; display: grid; flex: 1; place-items: center; min-block-size: 8rem; overflow: hidden; border-radius: var(--home-row); background: var(--room-2); }
+.home-art svg { inline-size: 86%; block-size: auto; }
+.home-art.is-map svg { inline-size: 100%; block-size: 100%; }
+.home-bars { display: flex; align-items: flex-end; gap: 0.6rem; block-size: 70%; padding-block-end: 0.75rem; }
+.home-bars i { display: block; inline-size: 1.6rem; border-start-start-radius: 0.3rem; border-start-end-radius: 0.3rem; background: oklch(from var(--ink) l c h / 0.18); }
+.home-bars i:nth-child(1) { block-size: 46%; }
+.home-bars i:nth-child(2) { block-size: 34%; }
+.home-bars i:nth-child(3) { block-size: 40%; }
+.home-bars i:nth-child(4) { block-size: 94%; background: var(--flame); }
+.home-badge { position: absolute; inset-block-start: 0.6rem; inset-inline-end: 0.6rem; padding: 0.1rem 0.5rem; border-radius: 999px; background: var(--room); box-shadow: var(--home-raise); font-size: 0.75rem; }
+.home-quiz { display: flex; flex-direction: column; gap: 0.4rem; inline-size: 82%; font-size: 0.8125rem; }
+.home-quiz b { margin-block-end: 0.15rem; font-weight: 600; }
+.home-quiz > span { padding: 0.25rem 0.6rem; border-radius: 999px; background: var(--home-control); box-shadow: var(--home-raise); }
+.home-quiz > span:nth-of-type(2) { background: var(--home-fill); color: var(--home-on-fill); box-shadow: none; }
+.home-staff { stroke: var(--line-strong); stroke-width: 1.2; }
+.home-note-head { fill: var(--ink); }
+.home-note-stem { stroke: var(--ink); stroke-width: 1.6; }
+.home-note-head.is-lit { fill: var(--flame); }
+.home-note-stem.is-lit { stroke: var(--flame); }
+.home-road { fill: none; stroke: var(--line-strong); stroke-width: 5; stroke-linecap: round; }
+.home-route { fill: none; stroke: var(--flame); stroke-width: 3.5; stroke-linecap: round; }
+.home-start { fill: var(--ink); }
+.home-end { fill: var(--room); stroke: var(--ink); stroke-width: 2.5; }
+.home-grid { stroke: var(--line); stroke-width: 1; }
+.home-wash { fill: oklch(from var(--flame) l c h / 0.14); }
+.home-wash-strong { fill: oklch(from var(--flame) l c h / 0.45); }
+.home-curve { fill: none; stroke: var(--flame); stroke-width: 3; stroke-linecap: round; }
+.home-water { fill: var(--flame); }
+.home-soft { fill: oklch(from var(--ink) l c h / 0.16); }
+.home-ink { fill: var(--ink); }
+.home-ink-soft { fill: oklch(from var(--ink) l c h / 0.55); }
+.home-card { fill: var(--room); stroke: var(--line-strong); stroke-width: 1; }
+.home-shadow { opacity: 0.7; }
+.home-box { fill: none; stroke: var(--ink-soft); stroke-width: 1.4; }
+.home-tick { fill: none; stroke: var(--flame); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.home-bar { fill: oklch(from var(--ink) l c h / 0.28); }
+.home-today { stroke: var(--flame); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.home-link-line { fill: none; stroke: var(--line-strong); stroke-width: 1.6; }
+.home-string { fill: none; stroke: var(--ink-soft); stroke-width: 1.2; }
+.home-sun { fill: oklch(from var(--flame) l c h / 0.35); }
+.home-house { fill: oklch(from var(--ink) l c h / 0.22); }
+.home-leaf { fill: oklch(from var(--flame) l c h / 0.3); }
+.home-trunk { stroke: var(--ink-soft); stroke-width: 3; }
+.home-blossom { fill: var(--room); }
+
+/* How it went: the active tile's request, replayed. Every replay is in the page, stacked in one place so the page
+   never moves as they change, the active tile's shown. */
+.home-replays { display: grid; scroll-margin-block-start: 5rem; }
+.home-replays > .home-replay { grid-area: 1 / 1; transition: opacity 0.25s var(--ease), visibility 0.25s; }
+.home-replays > .home-replay[inert] { visibility: hidden; opacity: 0; }
+.home-replay { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); }
+.home-replay > li { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; min-inline-size: 0; font-size: 0.875rem; }
+.home-replay > li + li { padding-inline-start: 1.25rem; border-inline-start: 1px solid var(--line); }
+.home-asked { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: var(--radius); background: var(--room-2); line-height: 1.45; }
+.home-asked .home-file { background: var(--room); }
+.home-ticks li { display: flex; gap: 0.4rem; align-items: baseline; }
+.home-ticks li::before { content: '✓' / ''; color: var(--flame); }
+.home-receipt { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.7rem 0.8rem; border-radius: var(--home-menu); background: var(--room); box-shadow: var(--home-float); font-size: 0.8125rem; }
+.home-receipt b { display: flex; align-items: center; gap: 0.35rem; font-weight: 600; }
+.home-receipt .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.home-receipt span { color: var(--ink-soft); }
+.home-replay .button { margin-block-start: auto; }
+
+/* Why Jean: the doors, Confidential first. */
+.home-doors { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.home-door { display: flex; flex-direction: column; gap: 0.6rem; min-inline-size: 0; min-block-size: 23.5rem; padding: 1.35rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); scroll-margin-block-start: 5rem; }
+.home-door.is-featured { grid-column: span 2; border-color: var(--line-strong); }
+.home-door-why { color: var(--ink-soft); font-size: 0.875rem; line-height: 1.5; }
+.home-door-title { color: var(--ink); font: 700 1.4rem/1.2 var(--display); }
+.home-door.is-featured .home-door-title { font-size: 1.75rem; }
+.home-door-go { display: flex; flex-direction: column; gap: 0.2rem; margin-block-start: auto; font-size: 0.875rem; font-weight: 500; }
+.home-door-go a { align-self: flex-start; }
+.home-door details { margin-block-start: auto; font-size: 0.875rem; }
+.home-door summary { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--ink); font-weight: 500; cursor: pointer; list-style: none; }
+.home-door summary::-webkit-details-marker { display: none; }
+.home-door summary .icon { inline-size: 1rem; block-size: 1rem; transition: rotate 0.2s; }
+.home-door details[open] summary .icon { rotate: 180deg; }
+.home-door details > ul { display: flex; flex-direction: column; gap: 0.4rem; margin-block-start: 0.6rem; }
+.home-note { color: var(--ink-soft); font-size: 0.8125rem; }
+.home-versus { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+.home-versus > div { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.7rem 0.85rem; border-radius: var(--home-menu); font-size: 0.875rem; }
+.home-versus > div:first-child { background: var(--room-2); color: var(--ink-soft); }
+.home-versus > div:last-child { border: 1.5px solid var(--home-fill); }
+.home-versus dt { color: var(--ink); font-size: 0.8125rem; font-weight: 600; }
+.home-sealed { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.7rem 0.55rem 0.9rem; border: 1.5px solid var(--flame); border-radius: 1.375rem; background: var(--glass); font-size: 0.8125rem; }
+.home-sealed > span:first-child { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink-faint); text-overflow: ellipsis; white-space: nowrap; }
+.home-sealed > span:last-child { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--flame); font-weight: 500; white-space: nowrap; }
+.home-sealed .icon, .home-rows .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.home-rows li, .home-people li { display: flex; align-items: center; gap: 0.6rem; padding-block: 0.4rem; border-block-end: 1px solid var(--line); font-size: 0.875rem; }
+.home-rows li:last-child, .home-people li:last-child { border-block-end: 0; }
+.home-people i { display: grid; flex: none; place-items: center; inline-size: 1.75rem; block-size: 1.75rem; border-radius: 50%; background: var(--room-2); font-size: 0.8125rem; font-style: normal; font-weight: 600; }
+.home-people span { display: flex; flex-direction: column; min-inline-size: 0; line-height: 1.35; }
+.home-people small { color: var(--ink-soft); font-size: 0.8125rem; }
+.home-source { color: var(--ink-faint); font-size: 0.75rem; }
+.home-offer { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.8rem 0.9rem; border: 1px solid var(--wait-line, var(--line-strong)); border-radius: var(--radius); background: var(--wait, var(--room-2)); font-size: 0.8125rem; line-height: 1.45; }
+.home-offer > span { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.home-offer .button, .home-link .button { padding: 0.2rem 0.75rem; font-size: 0.8125rem; }
+.home-link { display: flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.35rem 0.35rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; color: var(--ink-soft); font: 0.78rem/1.5 var(--mono); }
+.home-link > span:first-child { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-dots li { display: flex; gap: 0.45rem; font-size: 0.875rem; line-height: 1.45; }
+.home-dots li::before { content: '·' / ''; color: var(--flame); font-weight: 700; }
+
+/* Questions, in the words people search with. */
+.home-questions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3.5rem; align-items: start; }
+.home-questions > div { display: flex; flex-direction: column; min-inline-size: 0; }
+.home-questions details { padding-block: 1rem; border-block-end: 1px solid var(--line); }
+.home-questions summary { display: flex; justify-content: space-between; gap: 1rem; font-weight: 500; cursor: pointer; list-style: none; }
+.home-questions summary::-webkit-details-marker { display: none; }
+.home-questions summary .icon { inline-size: 1.1rem; block-size: 1.1rem; color: var(--ink-soft); }
+.home-questions details[open] .is-closed, .home-questions details:not([open]) .is-open { display: none; }
+.home-questions p { margin-block-start: 0.4rem; color: var(--ink-soft); font-size: 0.95rem; }
+
+/* The foot */
+.home-foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2.5rem; padding: 3rem var(--home-gutter); border-block-start: 1px solid var(--line); background: var(--home-side); font-size: 0.875rem; }
+.home-foot > * { display: flex; flex-direction: column; gap: 0.4rem; }
+.home-foot ul { display: flex; flex-direction: column; gap: 0.4rem; }
+.home-foot a { color: var(--ink); text-decoration: none; }
+.home-foot a:hover { text-decoration: underline; }
+.home-foot p { color: var(--ink-soft); }
+.home-foot .home-mark { color: var(--ink); font: 700 1.1875rem/1.2 var(--display); }
+.home-languages { display: block; align-self: flex-start; margin-block-start: 0.6rem; }
+.home .home-foot .home-languages > select { inline-size: auto; padding-block: 0.3rem; padding-inline: 0.75rem 0.5rem; border: 0; border-radius: 999px; background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); font-size: 0.8125rem; cursor: pointer; }
+
+/* Two columns under 70rem, one on a phone. */
+@media not (min-width: 70rem) {
+  .home-tile { flex-basis: calc((100% - 1rem) / 2); }
+  .home-doors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-replay { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-replay > li:nth-child(3) { padding-inline-start: 0; border-inline-start: 0; }
+}
+
+/* On a phone, the box stays docked at the foot while the page scrolls under it, the ideas leaving with
+   the first screen; the tries scroll sideways, and every door but the first is its promise. */
+@media not (min-width: 48rem) {
+  body:has(> .home) app-composer { padding-block-end: 8rem; }
+  body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
+  body:has(> .home) app-composer > p { display: none; }
+  .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
+  .home-strip { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }
+  .home-strip .button { flex: none; }
+  .home-section { gap: 1.1rem; padding-block: 2.5rem; }
+  .home-head.is-centred { align-self: stretch; align-items: flex-start; text-align: start; }
+  .home-why, .home-sub { font-size: 0.95rem; }
+  .home-formats { justify-items: start; }
+  .home-formats > div { justify-content: flex-start; }
+  .home-formats dt { min-inline-size: 2.25rem; text-align: start; }
+  .home-filter { align-self: flex-start; }
+  .home-tiles { gap: 0.75rem; margin-inline-end: calc(-1 * var(--home-gutter)); padding-inline-end: var(--home-gutter); }
+  .home-tile { flex: none; inline-size: 13.5rem; min-block-size: 18.5rem; }
+  .home-row.is-turning .home-turn:not(:disabled) { display: none; }
+  .home-replay, .home-doors, .home-questions, .home-foot { grid-template-columns: minmax(0, 1fr); }
+  .home-replay { gap: 0.75rem; padding: 1rem; }
+  .home-replay > li + li { padding-block-start: 0.75rem; padding-inline-start: 0; border-block-start: 1px solid var(--line); border-inline-start: 0; }
+  .home-doors { gap: 0.6rem; }
+  .home-door { min-block-size: 0; gap: 0.35rem; padding: 1rem 1.1rem; }
+  .home-door.is-featured { grid-column: auto; gap: 0.6rem; }
+  .home-door-title { font-size: 1.15rem; }
+  .home-door.is-featured .home-door-title { font-size: 1.4rem; }
+  .home-door:not(.is-featured) .home-door-title { order: -1; }
+  .home-door:not(.is-featured) .home-door-name { order: -2; }
+  .home-door:not(.is-featured) > :is(ul, .home-offer, .home-link, .home-note, .home-source, p:not([class])) { display: none; }
+  .home-foot { gap: 1.25rem; padding: 2rem 1.25rem 9rem; }
+}
+@media (forced-colors: active) {
+  .home-filter input:checked + label, .home-filter.is-sliding input:checked + label { forced-color-adjust: none; color: HighlightText; }
+  .home-filter:not(.is-sliding) input:checked + label, .home-filter-mark { forced-color-adjust: none; background: Highlight; }
+  .home-tile.is-active { outline: 2px solid Highlight; }
+  .home-bars i:nth-child(4) { background: Highlight; }
+}

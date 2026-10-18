@@ -1,0 +1,7 @@
+{
+  "backup.confirmImport": "Ṣé kí a mú àwọn ìjíròrò, iṣẹ́ àkànṣe àti fáìlì inú ìgbéjáde yìí wọlé? A kò ní paarẹ́ ohunkóhun níbí.",
+  "backup.imported": {
+    "other": "A ti mú ìjíròrò {count} wọlé."
+  },
+  "backup.chooseJson": "Ìgbéjáde yìí ní iṣẹ́ Gemini rẹ gẹ́gẹ́ bí ojú-ìwé wẹ́ẹ̀bù. Tún un gbé jáde láti Google Takeout, kí o yan JSON fún Iṣẹ́ Mi."
+}

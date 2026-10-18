@@ -1,6 +1,6 @@
 // The drawer and settings dialogs (native <dialog>: focus trap and Escape for free), and the brains
 // and the house of what Jean can do, in Settings.
-import { html, svg, nothing } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -22,7 +22,7 @@ import { PAGE_DEFAULTS, pageRights, site } from './csp.js'
 import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
-import { icons } from './icons.js'
+import { icons } from './menu-icons.js'
 import { sidebarBody, keyNames } from './inbox.js'
 import { findButton, placeToasts } from './shell.js'
 import { dictation } from './dictation.js'
@@ -70,6 +70,8 @@ export function syncDialog(host, name) {
 }
 
 export const close = () => { app.dialog.value = null }
+/** What a locked setting says: whose it is, an organisation's or, in a child's profile, a parent's (D228). */
+export const lockedBy = () => t(app.policy.child ? 'policy.parent' : 'policy.locked')
 /**
  * A dialog closed (Escape, or another one opening): forget it only if it is still the open one, and
  * still closed. The event comes after the fact (a frame later in Chromium), maybe once it opened again.
@@ -119,7 +121,7 @@ const local = signal(/** @type {typeof import('../caps/brain-local/brain-local.j
 const deviceCheck = signal(/** @type {{ ok: boolean, reason?: string, freed?: number } | null} */ (null))
 let checking = false
 
-async function checkDevice() {
+export async function checkDevice() {
   if (checking || isDenied('brain-local')) return
   checking = true
   try {
@@ -132,7 +134,7 @@ async function checkDevice() {
   }
 }
 
-async function useDevice() {
+export async function useDevice() {
   const module = local.value
   if (!module || !(await unlock('brain-local'))) return
   try {
@@ -145,6 +147,18 @@ async function useDevice() {
   } catch (error) {
     console.warn('On-device brain', error)
   }
+}
+
+/** The device's brain's module, where it can run and isn't added yet. */
+export const fit = () => (local.value && deviceCheck.value?.ok && !effective.value.settings.brains.some((brain) => brain.provider === 'device') ? local.value : null)
+
+/** The device's brain on its way: how much has come, then almost ready; nothing before or after. @param {NonNullable<typeof local.value>} device */
+export function progressOf(device) {
+  const progress = device.download.value
+  return progress.state === 'downloading' ? html`
+    <progress max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
+    <p class="hint">${t('brain.device.progress', { done: formatBytes(progress.loaded), total: formatBytes(progress.total) })}</p>`
+    : progress.state === 'loading' ? html`<p class="status" role="status">${t('brain.device.loading')}</p>` : null
 }
 
 const localProvider = signal(/** @type {'ollama' | 'lmstudio' | 'custom'} */ ('ollama'))
@@ -213,36 +227,42 @@ export function chatgptBack(outcome) {
   status.value = { way: 'chatgpt', kind: 'error', message: t(outcome === 'declined' ? 'brain.chatgpt.declined' : 'brain.chatgpt.failed') }
 }
 
-/** Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, then the ways to add another. */
+/** Whether the ways to add another brain are shown, once there are brains: asked for by Add a brain, for the visit. */
+const adding = signal(false)
+
+/**
+ * Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, and the ways to add
+ * another only once asked for, or while one says something (back from ChatGPT's sign-in).
+ */
 function brains() {
   const { settings, locked } = effective.value
   const brainsLocked = locked.has('brains')
   const first = !settings.brains.length
   return html`${first ? html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>` : answers(settings, brainsLocked)}
-    ${brainsLocked ? html`<p class="muted">${t('policy.locked')}</p>` : html`<section>
+    ${brainsLocked ? html`<p class="muted">${lockedBy()}</p>` : first || adding.value || status.value ? html`<section class="brains-add">
       ${first ? nothing : html`<h3>${t('brain.add')}</h3>`}
       ${ways(first)}
-    </section>`}
+    </section>` : nothing}
     ${slots('brains').map((part) => part.draw())}`
 }
 
 /** A brain's icon, name and where it runs: this device, this computer, or the cloud. @param {BrainConfig} brain */
 function describe(brain) {
-  if (brain.api === 'device') return { icon: icons.chip, name: t('provider.device'), where: t('brain.device.private') }
+  if (brain.api === 'device') return { icon: icons['brain-device'], name: t('provider.device'), where: t('brain.device.private') }
   const name = brain.provider === 'custom' ? new URL(brain.baseURL).host : t(`provider.${brain.provider}`)
-  return isLocal(brain) ? { icon: icons.computer, name, where: t('picker.local') } : { icon: icons.globe, name, where: t('brain.cloud') }
+  return isLocal(brain) ? { icon: icons['brain-device'], name, where: t('picker.local') } : { icon: icons.cloud, name, where: t('brain.cloud') }
 }
 
 /**
  * Who may answer: Auto, or a brain, which can't be chosen in a project it isn't used in, nor in the cloud while
- * messages are kept on this device; then the projects it is kept to. @param {boolean} checked @param {() => unknown} choose
- * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[] }} [kept] @param {boolean} [closed]
+ * messages are kept on this device; then its version, and the projects it is kept to. @param {boolean} checked @param {() => unknown} choose
+ * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[], api?: string, model?: string }} [kept] @param {boolean} [closed]
  */
 function answer(checked, choose, { icon, name, where }, kept = {}, closed = false) {
   const names = kept.projects ? app.projects.value.filter((project) => kept.projects?.includes(project.id)).map(projectName) : []
   return html`<label class="item">
     <input type="radio" name="answers" .checked=${checked} ?disabled=${closed || !usedIn(kept, app.project.value.id)} @change=${choose}>
-    <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${names.length
+    <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${kept.api !== 'device' && kept.model ? html` · <bdi>${kept.model}</bdi>` : nothing}${names.length
       ? html` · <bdi>${new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}</small></span>
   </label>`
 }
@@ -274,40 +294,40 @@ export function where(item, keep) {
   </fieldset>`
 }
 
-/** The brain whose projects are open under it. */
-const placing = signal(/** @type {string | null} */ (null))
+/** The brain whose version, projects and Remove are open under it. */
+const opened = signal(/** @type {string | null} */ (null))
 
 /**
- * Who answers, as the picker offers it: Auto, or one of the brains, each with its version and a
- * way to remove it. Then, while one is in the cloud, keeping messages on this device, which a project kept there holds on.
+ * Who answers, as the picker offers it: Auto, or one of the brains, each saying where it runs and its version, the
+ * rest under its button: its version to change, the projects it is used in, Remove. Then, while one is in the cloud,
+ * keeping messages on this device, which a project kept there holds on; Add a brain at the top, until it is asked for.
  * @param {import('../core/settings.js').Settings} settings @param {boolean} brainsLocked
  */
 function answers(settings, brainsLocked) {
-  const active = activeBrain.value
-  const kept = app.project.value.data.cloud === false
+  const active = activeBrain.value, kept = app.project.value.data.cloud === false
   return html`<section>
-      <h3 id="brains-yours">${t('brain.connectedTitle')}</h3>
+      <header class="brains-head"><h3 id="brains-yours">${t('brain.connectedTitle')}</h3>${brainsLocked || adding.value || status.value ? nothing : html`<button class="button subtle"
+        @click=${() => { adding.value = true; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.brains-add summary'))?.focus()) }}>${icons.plus} ${t('brain.add')}</button>`}</header>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-yours">
-        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.spark, name: t('auto.name'), where: t('auto.text') })}</div>
+        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.brain, name: t('auto.name'), where: t('auto.text') })}</div>
         ${settings.brains.map((brain) => {
           const chosen = !settings.auto && brain.id === active?.id
-          const open = !brainsLocked && placing.value === brain.id && placeable(brain)
+          const open = opened.value === brain.id, version = brain.api !== 'device'
           return html`<div class=${chosen ? 'is-selected' : ''}>
             ${answer(chosen, () => updateSettings({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain, !cloudAllowed() && !isLocal(brain))}
-            ${brain.api === 'device' ? nothing : html`<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr"
-                aria-label=${t('brain.model')} title=${t('brain.model')} @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}>
-              <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>`}
-            ${brainsLocked || !placeable(brain) ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('projects.where')}
-              @click=${() => { placing.value = open ? null : brain.id }}>${icons.layers}</button>`}
-            ${brainsLocked ? nothing : html`<button class="icon-button subtle" aria-label=${t('action.remove')}
-              @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash}</button>`}
-            ${open ? where(brain, (projects) => keepBrain(brain.id, projects).catch(showError)) : nothing}
+            ${brainsLocked && !version ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('action.more')} @click=${() => { opened.value = open ? null : brain.id }}>${icons.chevron}</button>`}
+            ${open ? html`<div class="brain-more">
+              ${version ? html`<label>${t('brain.model')}<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}></label>
+                <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>` : nothing}
+              ${brainsLocked || !placeable(brain) ? nothing : where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}
+              ${brainsLocked ? nothing : html`<div class="row"><button class="button subtle danger" @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash} ${t('action.remove')}</button></div>`}
+            </div>` : nothing}
           </div>`
         })}
       </div>
-    </section>
-    ${settings.brains.some((brain) => !isLocal(brain)) ? setting(t('picker.keepOnDevice'), kept ? t('picker.projectKept') : null, html`<input type="checkbox" class="switch" role="switch"
-      aria-label=${t('picker.keepOnDevice')} .checked=${kept || !settings.cloud} ?disabled=${kept} @change=${(/** @type {Event} */ e) => keepOnDevice(/** @type {HTMLInputElement} */ (e.target).checked)}>`) : nothing}`
+      ${settings.brains.some((brain) => !isLocal(brain)) ? html`<div class="setting"><div><span class="rule-kind">${t('picker.keepOnDevice')}</span>${kept ? html`<p class="muted small">${t('picker.projectKept')}</p>` : nothing}</div>
+        <input type="checkbox" class="switch" role="switch" aria-label=${t('picker.keepOnDevice')} .checked=${kept || !settings.cloud} ?disabled=${kept} @change=${(/** @type {Event} */ e) => keepOnDevice(/** @type {HTMLInputElement} */ (e.target).checked)}></div>` : nothing}
+    </section>`
 }
 
 /** Whether the user has opened or closed a way: then none opens on its own. */
@@ -349,7 +369,7 @@ const KEY_PAGES = /** @type {Record<string, string>} */ ({
 const VERTEX_COMMAND = 'gcloud auth print-access-token'
 
 /** @param {string} href @param {string} text */
-const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.arrow}</a>`
+const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.external}</a>`
 
 /** Copies the command, or, where the browser won't, selects it to copy by hand. @param {Event} event */
 function copyCommand(event) {
@@ -383,12 +403,12 @@ const providers = (ids) => new Intl.ListFormat(locale.value, { type: 'conjunctio
  * The ways to add a brain. Before the first, one is open once this device is checked (a way
  * added open beside an open one would close), unless the user picked one meanwhile: the
  * device's, where it can run (the first rung), or else OpenRouter's. The device's stays open
- * while it downloads.
- * @param {boolean} first
+ * while it downloads. Without those two, the ways the first brain's dialog leads to (D329).
+ * @param {boolean} first @param {boolean} [all]
  */
-function ways(first) {
+export function ways(first, all = true) {
   const module = local.value
-  const device = module && deviceCheck.value?.ok && !effective.value.settings.brains.some((brain) => brain.provider === 'device') ? module : null
+  const device = all ? fit() : null
   const progress = device?.download.value
   // The first way opens by itself, unless another says something (back from ChatGPT's sign-in): one at a time.
   const opens = first && !wayPicked && !status.value && (deviceCheck.value !== null || isDenied('brain-local'))
@@ -396,19 +416,15 @@ function ways(first) {
   // What was downloaded for the device's brain, on a device short of memory for it, has just been deleted (D319).
   const freed = deviceCheck.value?.freed
   return html`${freed && module ? html`<p class="hint">${module.unfit(freed)}</p>` : nothing}<ul class="list ways">
-    ${device && progress ? way('device', icons.chip, t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
+    ${device && progress ? way('device', icons['brain-device'], t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
       <p>${t('brain.device.text', { name: BRAND.name })}</p>
-      ${progress.state === 'downloading' ? html`
-        <progress max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
-        <p class="hint">${t('brain.device.progress', { done: formatBytes(progress.loaded), total: formatBytes(progress.total) })}</p>`
-      : progress.state === 'loading' ? html`<p class="status" role="status">${t('brain.device.loading')}</p>`
-      : html`
+      ${progressOf(device) ?? html`
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}`)
     : nothing}
-    ${way('quick', icons.spark, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
+    ${all && !app.policy.child ? way('quick', icons.cloud, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
       <p>${t('brain.quick.text')}</p>
-      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.arrow}</button></div>`)}
+      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.external}</button></div>`) : nothing}
     ${way('key', icons.key, t('brain.key.title'), providers(KEYED), false, html`
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}>
@@ -426,7 +442,7 @@ function ways(first) {
     ${isDenied('machine') ? nothing : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'copilot', 'chatgpt']).map((id) => way(id, icons.terminal, t(`brain.${id}.title`), t(`provider.${PLANNED[id]}`), status.value?.way === id, html`
       <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
       <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div>`))}
-    ${way('local', icons.computer, t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
+    ${way('local', icons['brain-device'], t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}>
         <label>${t('brain.local.app')}
@@ -475,7 +491,8 @@ function general() {
         <option value="">${t('settings.voiceAuto')}</option>
         ${rankVoices(voices, locale.value, [locale.value, ...navigator.languages])
           .map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}
-      </select>`) : nothing}`
+      </select>`) : nothing}
+    ${slots('general').map((part) => part.draw({ setting }))}`
 }
 
 const appearance = () => html`
@@ -487,9 +504,6 @@ const appearance = () => html`
   </span>`)}
   <section>${looks(effective.value.settings.look)}</section>`
 
-/** Its place in the menu: a keyboard, drawn here rather than with the first screen's icons. */
-const KEYBOARD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${svg`<rect x="2.5" y="6" width="19" height="12" rx="2.5"/>
-  <path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M6.5 14h.01M17.5 14h.01M9.5 14h5"/>`}</svg>`
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
 const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
 /**
@@ -499,7 +513,7 @@ const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
  * @type {[string, [string, string, string?][]][]}
  */
 const KEYS = [
-  ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['action.delete', SHORTCUTS.delete]]],
+  ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['cap.share.name', SHORTCUTS.share, 'share'], ['action.delete', SHORTCUTS.delete]]],
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
     ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'], ['action.close', 'Escape']]],
@@ -517,11 +531,11 @@ function approvals() {
   return html`<section>
     <h3>${t('settings.rules')}</h3>
     <p class="muted">${t('settings.rulesText', { name: BRAND.name })}</p>
-    <ul class="rules">${RULE_KINDS.map((kind) => {
+    <ul class="rules">${[...RULE_KINDS, ...(loaded.value.has('plan') ? ['plan'] : [])].map((kind) => {
       const current = resolveRule(kind, { user: settings.rules })
       const isLocked = locked.has(`rules.${kind}`)
       return html`<li class="setting">
-        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}</span>
+        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</span>
         <span class="segmented" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>
           ${(/** @type {const} */ (['allow', 'ask', 'never'])).map((option) => html`<label>
             <input type="radio" name=${`rule-${kind}`} .checked=${current === option} ?disabled=${isLocked} @change=${() => setRule(kind, option)}>
@@ -546,7 +560,7 @@ function guards() {
   const services = loaded.value.has('connections') ? [...(app.policy.connections ?? []), ...(settings.connections ?? [])] : []
   /** @param {import('../core/rules.js').Guard} guard @param {boolean} locked */
   const row = (guard, locked) => html`<li class="setting"><span class="rule-kind" dir="auto">${guard.service ? services.find((one) => one.id === guard.service)?.name ?? guard.service
-    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${t('policy.locked')}</span>` : nothing}${guard.if
+    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}${guard.if
     ? html`<br><span class="muted small">${t('guards.when', { question: guard.if })}</span>` : nothing}</span>${locked ? nothing
     : html`<button type="button" class="icon-button subtle" aria-label=${t('guards.remove')} @click=${() => updateSettings({ guards: mine.filter((other) => other !== guard) })}>${icons.trash}</button>`}</li>`
   /** @param {SubmitEvent} event */
@@ -594,7 +608,7 @@ function pages() {
     <h3>${t('pages.title')}</h3>
     <p class="muted">${t('pages.text')}</p>
     <ul class="rules">${(/** @type {import('./csp.js').PageRight[]} */ (Object.keys(PAGE_DEFAULTS))).map((right) => html`<li class="setting">
-      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? t('policy.locked') : t(`pages.${right}Text`)}</p></div>
+      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? lockedBy() : t(`pages.${right}Text`)}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]}
         ?disabled=${locked.has(right) || (right === 'network' && !allows.scripts)}
         @change=${(/** @type {Event} */ e) => setPages({ [right]: /** @type {HTMLInputElement} */ (e.target).checked })}>
@@ -637,7 +651,7 @@ export function siteList({ sites, fixed, set, any = false }) {
       ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"
         @keydown=${add} @input=${(/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).removeAttribute('aria-invalid')}>`}
     </div>
-    <p class="muted small" id="sites-hint">${fixed ? t('policy.locked') : t('pages.sitesText')}</p>
+    <p class="muted small" id="sites-hint">${fixed ? lockedBy() : t('pages.sitesText')}</p>
   </div>`
 }
 
@@ -645,8 +659,8 @@ export function siteList({ sites, fixed, set, any = false }) {
 const parts = signal(/** @type {Array<{ id: keyof typeof PARTS, bytes: number }> | null} */ (null))
 /** Each kind: its icon, its name and what it holds, when its name doesn't say. */
 const PARTS = /** @type {const} */ ({
-  conversations: ['history', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
-  brains: ['chip', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['data', 'storage.rest', 'storage.rest.text'],
+  conversations: ['list', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
+  brains: ['brain-device', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['cabinet', 'storage.rest', 'storage.rest.text'],
 })
 
 /** A cached response's size: its length as sent, unless it came compressed, then its body's. @param {Response | undefined} response */
@@ -654,12 +668,12 @@ const sizeOf = async (response) => (response && !response.headers.has('content-e
 
 /**
  * What the browser keeps for Jean in its caches: the brains downloaded to this device (Transformers.js's
- * cache), and Jean's own code, the Computer's apart, to work offline (sw.js's).
+ * cache), and Jean's own code, the Computer's apart, to work offline (sw.js's), with a score's instruments (D338).
  */
 async function cached() {
   const kept = { brains: 0, computer: 0, app: 0 }
   for (const name of await caches.keys()) {
-    const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell|cap)-/.test(name) ? 'app' : null
+    const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell-|cap-|sounds$)/.test(name) ? 'app' : null
     if (!kind) continue
     const cache = await caches.open(name)
     for (const size of await Promise.all((await cache.keys()).map(async (request) => sizeOf(await cache.match(request))))) kept[kind] += size
@@ -710,11 +724,12 @@ function data() {
       <h3>${t('cap.backup.name')}</h3>
       <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
       <div class="row">
-        <button class="button" @click=${backup}>${icons.download} ${t('backup.download')}</button>
+        <button class="button" @click=${backup}>${icons.backup} ${t('backup.download')}</button>
         <label class="button subtle">${icons.upload} ${t('backup.restore')}
-          <input type="file" accept=".zip,application/zip" class="visually-hidden" @change=${restore}>
+          <input type="file" accept=".zip,.tgz,.json,application/zip,application/gzip" multiple class="visually-hidden" @change=${restore}>
         </label>
       </div>
+      <p class="hint">${t('backup.elsewhere', { name: BRAND.name })}</p>
     </section>`}
     ${slots('data').map((part) => part.draw())}`
 }
@@ -747,15 +762,15 @@ const KNOWN = ['you', 'skills', 'routines']
  */
 const SECTIONS = {
   general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
-  brains: { at: 20, label: 'settings.brains', icon: icons.spark, show: brains },
-  appearance: { at: 30, label: 'settings.appearance', icon: icons.contrast, show: appearance },
-  keyboard: { at: 40, label: 'settings.keyboard', icon: KEYBOARD, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
+  brains: { at: 20, label: 'settings.brains', icon: icons.brain, show: brains },
+  appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: appearance },
+  keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   skills: { at: 60, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   routines: { at: 70, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
-  data: { at: 120, label: 'settings.storage', icon: icons.data, show: data },
+  data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: data },
 }
 /** The sections shown now, in their order. @returns {[Section, Place][]} */
 export const places = () => /** @type {[Section, Place][]} */ ([...Object.entries(SECTIONS), ...slots('settings').map((entry) => [entry.id, { ...entry, show: entry.draw }])])
@@ -809,8 +824,8 @@ class Settings extends Element {
       const panel = this.querySelector('.settings-panel')
       if (panel) panel.scrollTop = 0
       this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-      // Capabilities opens on the next to find.
-      picked.value = ''
+      // Capabilities opens on the next to find; Brains with its brains' rows and its ways to add one closed.
+      picked.value = ''; adding.value = false; opened.value = null
     }
     this.#shown = app.section.value
     // The trophies found catch the light one after another (CSSOM: the CSP forbids style attributes).
@@ -821,25 +836,25 @@ class Settings extends Element {
 // ─── What Jean can do ────────────────────────────────────────────────────────
 
 // The house (docs/design.md), in Settings, is a case of trophies (D127) in Settings' own parts
-// (D316): the little light, whose rank rises a quarter of the case at a time, to daylight, over a
+// (D316): the wave, whose rank rises a quarter of the case at a time, to the ocean, over a
 // bar of how much is found; then a capability a row of a list, lit once found, a silhouette until
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', meaning: 'spark', made: 'table', computer: 'computer', reflexes: 'lamp', memory: 'note', find: 'search', projects: 'layers', folders: 'openfolder', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'check', since: 'clock', names: 'tag', live: 'wave', backup: 'download', sync: 'sync', 'brain-local': 'chip', machine: 'terminal', pictures: 'image', plugins: 'bolt',
+  files: 'file', meaning: 'meaning', made: 'table', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', plugins: 'puzzle',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), plugins: () => openSettings('plugins'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), share: () => openSettings('data'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), lock: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
-const RANKS = ['spark', 'candle', 'lantern', 'hearth', 'daylight']
+const RANKS = ['ripple', 'wave', 'current', 'tide', 'ocean']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
-  find: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
+  find: () => [everywhere.value, FINDABLE], lock: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
   live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 /** The row open: '' for the next to find, null once the user closed it. */
@@ -923,7 +938,7 @@ function looks(look = {}) {
       ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
         <span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>
-        <span><strong>${t(`look.${id}.name`)}</strong></span>
+        <span><strong>${t(`look.${id}.name`, { name: BRAND.name })}</strong></span>
       </label>`)}
     </fieldset>
     <details class="other">
@@ -961,14 +976,15 @@ export async function backup() {
   await downloadBackup()
 }
 
-/** @param {Event} event */
+/** A backup of Jean's, or an export of Gemini's from Google Takeout, of ChatGPT's or of Claude's, its parts together (D340, D341). @param {Event} event */
 async function restore(event) {
   const input = /** @type {HTMLInputElement} */ (event.target)
-  const file = input.files?.[0]
+  const files = [...(input.files ?? [])]
   input.value = ''
-  if (!file || !confirm(t('backup.confirmRestore')) || !(await unlock('backup'))) return
-  const { restoreBackup } = await import('../caps/backup/backup.js')
-  await restoreBackup(file)
+  if (!files.length || !(await unlock('backup'))) return
+  const { restoreBackup, isBackup, bringIn } = await import('../caps/backup/backup.js')
+  if (!(await isBackup(files[0]))) await bringIn(files)
+  else if (confirm(t('backup.confirmRestore'))) await restoreBackup(files[0])
 }
 
 define('app-history', History)

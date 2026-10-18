@@ -23,6 +23,8 @@ export interface BrainConfig {
   projects?: string[]
   /** Where it answers, ISO 3166, as the user or policy declares it: certificates name it (D274) */
   jurisdiction?: string
+  /** A policy brain whose key is the organisation's sign-in (D385) */
+  auth?: 'oidc'
 }
 
 // ─── Provider-neutral chat ───────────────────────────────────────────────────
@@ -33,8 +35,8 @@ export type ToolCall = { id: string, name: string, args: any }
  * as the provider's own (the brain's own web search); others declare it as a function.
  */
 export type ToolSpec = { name: string, description: string, parameters: object, native?: 'web_search' }
-/** Outside content the brain can cite as [n]: a web page, an email, a document from a connection. */
-export type Source = { title: string, url?: string, quote?: string }
+/** Outside content the brain can cite as [n]: a web page, an email, a document from a connection. picture: its own picture's address, which an answer may show (D35). */
+export type Source = { title: string, url?: string, quote?: string, picture?: string }
 /** A shared file's text, as the brain sees it; image: a picture, base64, for brains that can see. */
 export type DocumentPart = { name: string, text: string, source?: number, image?: { mimeType: string, data: string } }
 export type UserMessage = { role: 'user', content: string, documents?: DocumentPart[] }
@@ -141,13 +143,24 @@ export interface ToolCallInfo {
 
 /** ACP session/update payloads used by Jean (https://agentclientprotocol.com). */
 export type AcpUpdate =
-  | { sessionUpdate: 'user_message_chunk', content: ContentBlock }
+  /** steer: sent while the task worked, read before its next step (D365) */
+  | { sessionUpdate: 'user_message_chunk', content: ContentBlock, _meta?: { steer?: boolean } }
   | { sessionUpdate: 'agent_message_chunk', content: TextBlock }
   | { sessionUpdate: 'agent_thought_chunk', content: TextBlock }
   | ({ sessionUpdate: 'tool_call' } & ToolCallInfo)
   | ({ sessionUpdate: 'tool_call_update' } & Partial<ToolCallInfo> & { toolCallId: string })
-  | { sessionUpdate: 'plan', entries: PlanEntry[] }
+  /** the task's plan (D364): confirmed by the user or their rule, it may carry the task past its steps */
+  | { sessionUpdate: 'plan', entries: PlanEntry[], _meta?: { confirmed?: boolean } }
   | { sessionUpdate: '_system_note', text: string, data: SystemNoteData }
+  | CompactionUpdate
+
+/**
+ * A summary of the conversation so far, ACP's (D359): `summary` the brain's, for the user to read; in `_meta`, what the
+ * brain reads on from instead of what came before it, why it was summed up (near its window, or past it), by which brain,
+ * and what the summary cost. Only a completed one is kept.
+ */
+export type CompactionUpdate = { sessionUpdate: 'compaction_update', compactionId: string, status: 'in_progress' | 'completed' | 'failed' | 'cancelled', summary?: TextBlock[],
+  _meta?: { text: string, reason: 'window' | 'too_long', brain?: { provider: ProviderId, model: string }, usage?: Usage } }
 
 /** What a system note changed, for the UI label; `text` is what the brain reads (D46). */
 export type SystemNoteData =
@@ -174,6 +187,10 @@ export type SystemNoteData =
   | { kind: 'terminal', command: string, exit: number }
   /** the user changed a workbook's cells: in the preview, the file at `was` is the copy at `uri` now; in a folder or the workspace, where it is (D229) */
   | { kind: 'cells', was?: string, uri?: string }
+  /** what follows was shared from someone else's Jean, through the host named (D361) */
+  | { kind: 'shared', from: string }
+  /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */
+  | { kind: 'concern', concern: string }
 
 /**
  * What a conversation's brain was told, frozen at its start (D46), then changed by notes.

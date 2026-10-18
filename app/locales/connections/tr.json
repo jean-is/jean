@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "E-posta ara",
+  "api.read_email": "E-posta oku",
+  "api.create_draft": "Taslak yaz",
+  "api.send_email": "E-posta gönder",
+  "api.list_calendars": "Takvimleri listele",
+  "api.list_events": "Etkinlikleri listele",
+  "api.create_event": "Etkinlik ekle",
+  "api.update_event": "Etkinliği değiştir",
+  "api.delete_event": "Etkinliği kaldır",
+  "api.search_files": "Dosya ara",
+  "api.read_file": "Dosya oku",
+  "api.create_document": "Belge oluştur"
+}

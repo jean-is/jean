@@ -280,7 +280,7 @@ describe('streamChat (OpenAI-compatible)', () => {
     await rejectsWith(collect(streamChat({ brain: brains.ollama, messages: [], fetch })), { code: 'bad_response' })
   })
 
-  test('builds the request: URL, headers, body and message conversion', async () => {
+  test('builds the request: URL, headers, body, message conversion and OpenRouter asked for providers that keep nothing (D381)', async () => {
     const tools = [{ name: 'read', description: 'Read a file', parameters: { type: 'object', properties: { path: { type: 'string' } } } }]
     const messages = [
       { role: 'user', content: 'Read a.md' },
@@ -300,6 +300,7 @@ describe('streamChat (OpenAI-compatible)', () => {
     assert.deepEqual(body, {
       model: 'openrouter/auto',
       stream: true,
+      provider: { data_collection: 'deny' },
       stream_options: { include_usage: true },
       messages: [
         { role: 'system', content: 'Be brief.' },
@@ -314,15 +315,17 @@ describe('streamChat (OpenAI-compatible)', () => {
     })
   })
 
-  test('local servers: no key, no stream_options, trailing slash, max_tokens only when given', async () => {
+  test('local servers: no key, usage asked of Ollama and LM Studio (D359), trailing slash, max_tokens only when given', async () => {
     const ok = openaiSSE([{ choices: [{ delta: { content: 'ok' }, finish_reason: 'stop' }] }])
     const { fetch, calls } = mockFetch(sseResponse(ok))
     await collect(streamChat({ brain: { ...brains.ollama, headers: { 'X-Extra': '1' } }, messages: [], fetch }))
     await collect(streamChat({ brain: brains.ollama, messages: [], fetch, maxTokens: 100 }))
     assert.equal(calls[0].url, 'http://localhost:11434/v1/chat/completions')
     assert.deepEqual(calls[0].headers, { 'content-type': 'application/json', 'x-extra': '1' })
-    assert.deepEqual(calls[0].body, { model: 'qwen3', stream: true, messages: [] })
+    assert.deepEqual(calls[0].body, { model: 'qwen3', stream: true, messages: [], stream_options: { include_usage: true } })
     assert.equal(calls[1].body.max_tokens, 100)
+    await collect(streamChat({ brain: { ...brains.ollama, provider: 'custom' }, messages: [], fetch }))
+    assert.equal(calls[2].body.stream_options, undefined)
   })
 
   test('OpenAI itself gets max_completion_tokens', async () => {
@@ -445,7 +448,7 @@ describe('streamChat (Anthropic)', () => {
   })
 
   test('maps stop reasons', async () => {
-    const cases = { end_turn: 'end', tool_use: 'tool_use', max_tokens: 'max_tokens', refusal: 'refusal', pause_turn: 'pause', stop_sequence: 'other' }
+    const cases = { end_turn: 'end', tool_use: 'tool_use', max_tokens: 'max_tokens', model_context_window_exceeded: 'max_tokens', refusal: 'refusal', pause_turn: 'pause', stop_sequence: 'other' }
     for (const [stop, expected] of Object.entries(cases)) {
       const { events } = await run(brains.anthropic, textTurn(stop))
       assert.equal(events.at(-1).stopReason, expected, stop)
@@ -752,6 +755,7 @@ describe('errors', () => {
     401: ['auth', false],
     403: ['auth', false],
     404: ['not_found', false],
+    413: ['too_long', false],
     418: ['bad_response', false],
     422: ['bad_request', false],
     429: ['rate_limit', true],
@@ -781,6 +785,27 @@ describe('errors', () => {
         return true
       })
     }
+  })
+
+  test('a request past the brain’s window is too long, however the provider says it (D359)', async () => {
+    /** @type {[any, number, any][]} */
+    const said = [
+      [brains.anthropic, 400, { type: 'error', error: { type: 'invalid_request_error', message: 'prompt is too long: 210000 tokens > 200000 maximum' } }],
+      [brains.openai, 400, { error: { message: "This model's maximum context length is 128000 tokens. However, your messages resulted in 140000 tokens.", type: 'invalid_request_error', code: 'context_length_exceeded' } }],
+      [brains.openai, 400, { error: { code: 400, message: 'The input token count (1100000) exceeds the maximum number of tokens allowed (1048576).', status: 'INVALID_ARGUMENT' } }],
+      [brains.ollama, 400, { error: { message: 'the request exceeds the available context size, try increasing it' } }],
+      [brains.anthropic, 413, { type: 'error', error: { type: 'request_too_large', message: 'Request exceeds the maximum size' } }],
+    ]
+    for (const [brain, status, body] of said) {
+      const { fetch } = mockFetch(() => Response.json(body, { status }))
+      await rejectsWith(collect(streamChat({ brain, apiKey: 'k', messages: [{ role: 'user', content: 'Hi' }], fetch })), { code: 'too_long', retryable: false })
+    }
+    // OpenRouter says it in the stream too.
+    const sse = openaiSSE([{ error: { code: 400, message: "This endpoint's maximum context length is 8192 tokens. However, you requested about 9000 tokens." } }])
+    await rejectsWith(run(brains.openrouter, sse), { code: 'too_long' })
+    // Anything else wrong with the request stays what it was.
+    const { fetch } = mockFetch(() => Response.json({ error: { message: 'messages: field required' } }, { status: 400 }))
+    await rejectsWith(collect(streamChat({ brain: brains.openai, apiKey: 'k', messages: [], fetch })), { code: 'bad_request' })
   })
 
   test('extracts provider messages from different error shapes', async () => {

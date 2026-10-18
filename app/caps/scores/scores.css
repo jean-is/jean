@@ -6,6 +6,8 @@ app-score .score-sheet .is-sounding { color: var(--flame); fill: var(--flame); }
 app-score .score-player { display: flex; align-items: center; gap: 0.6rem; margin-block: 0.4rem 0.2rem; }
 app-score .score-player input { flex: 1; min-inline-size: 0; accent-color: var(--flame); }
 app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* While its instruments come (D338), Pause breathes, and the time says how much of them has. */
+app-score .score-player[aria-busy='true'] .icon-button { animation: glow 0.8s ease-in-out infinite alternate var(--loops, running); }
 @media print { app-score .score-player { display: none; } }
 app-score .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
 app-score .drawn-foot .icon-button { background: var(--glass); }

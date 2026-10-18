@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "E-mails zoeken",
+  "api.read_email": "Een e-mail lezen",
+  "api.create_draft": "Een concept schrijven",
+  "api.send_email": "Een e-mail versturen",
+  "api.list_calendars": "Agenda's tonen",
+  "api.list_events": "Afspraken tonen",
+  "api.create_event": "Een afspraak toevoegen",
+  "api.update_event": "Een afspraak wijzigen",
+  "api.delete_event": "Een afspraak verwijderen",
+  "api.search_files": "Bestanden zoeken",
+  "api.read_file": "Een bestand lezen",
+  "api.create_document": "Een document maken"
+}

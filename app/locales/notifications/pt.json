@@ -1,0 +1,6 @@
+{
+  "notifications.done": "Concluído. A tua resposta está pronta.",
+  "notifications.waiting": "Espera que respondas.",
+  "notifications.text": "Quando uma tarefa termina ou espera a tua resposta enquanto estás noutro separador ou app. Só se vê o título.",
+  "notifications.blocked": "O teu navegador bloqueia as notificações deste site. Permite-as nas definições dele para este site."
+}

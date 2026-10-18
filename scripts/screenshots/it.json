@@ -1,0 +1,38 @@
+{
+  "description": "L’IA per tutti, in una scheda del browser. Chiedi a parole o con un file e ricevi già fatto ciò che hai chiesto: una risposta con le sue fonti, un documento, un grafico. Usa l’IA che preferisci e conserva il tuo lavoro sul tuo dispositivo. Niente da installare, gratis e open source.",
+  "labels": {
+    "welcome": "La schermata iniziale: idee da cui partire e un riquadro per chiedere qualsiasi cosa",
+    "chart": "Un foglio di calcolo condiviso, e le sue vendite in un grafico",
+    "sources": "Un contratto d’affitto letto, e ogni parte della risposta che rimanda al testo",
+    "share": "Un’attività condivisa con un amico tramite un link"
+  },
+  "chart": {
+    "title": "Vendite per regione",
+    "file": "Vendite.csv",
+    "columns": [
+      "Regione",
+      "Gennaio",
+      "Febbraio",
+      "Marzo"
+    ],
+    "regions": [
+      "Nord",
+      "Sud",
+      "Est"
+    ],
+    "ask": "Fai un grafico delle vendite per regione, mese per mese",
+    "before": "Ecco le vendite del primo trimestre, per regione:",
+    "heading": "Vendite, primo trimestre",
+    "after": "Il **Nord** vende di più, e l’**Est** è cresciuto più in fretta: +37% da gennaio a marzo."
+  },
+  "sources": {
+    "title": "Lasciare l’appartamento",
+    "file": "Contratto d’affitto.pdf",
+    "pages": [
+      "Contratto di locazione di un appartamento arredato\n\nArticolo 7. Preavviso. L’inquilino può recedere dal contratto in qualsiasi momento con un mese di preavviso, inviato con raccomandata o consegnato a mano contro ricevuta.",
+      "Articolo 9. Deposito cauzionale. Il deposito, pari a una mensilità, viene restituito entro un mese dalla riconsegna delle chiavi, dedotto il costo di eventuali riparazioni."
+    ],
+    "ask": "Con quanto preavviso devo disdire, e quando mi ridanno il deposito?",
+    "answer": "Ecco cosa dice il tuo contratto:\n\n- **Preavviso:** un mese, con raccomandata o consegnato a mano contro ricevuta [1].\n- **Deposito:** ti viene restituito entro un mese dalla riconsegna delle chiavi, meno il costo di eventuali riparazioni [1].\n\nQuindi, se mandi la lettera oggi, puoi andartene tra un mese."
+  }
+}

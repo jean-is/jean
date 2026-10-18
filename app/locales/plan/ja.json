@@ -1,0 +1,13 @@
+{
+  "plan.title": "計画",
+  "plan.done": "{total}件中{done}件完了",
+  "plan.pending": "未着手",
+  "plan.in_progress": "進行中",
+  "plan.completed": "完了",
+  "plan.confirm": "この計画で進めますか？",
+  "plan.go": "進める",
+  "plan.always": "常に進める",
+  "plan.paused": "ステップ{count}で一時停止",
+  "plan.cost": "ここまで約{cost}",
+  "plan.keepGoing": "続ける"
+}

@@ -17,6 +17,7 @@
   "receipt.made": "生成者",
   "receipt.here": "在这台设备上",
   "receipt.reached": "还访问了",
+  "receipt.files": "你的文件去了哪里",
   "receipt.certificate": "证书",
   "receipt.save": "保存证书",
   "receipt.save.text": "只说明这个回答是怎样生成的，不含对话内容，可以放心分享。",

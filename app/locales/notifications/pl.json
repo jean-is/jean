@@ -1,0 +1,6 @@
+{
+  "notifications.done": "Gotowe. Odpowiedź czeka.",
+  "notifications.waiting": "Czeka, aż odpowiesz.",
+  "notifications.text": "Gdy zadanie się skończy lub czeka na twoją odpowiedź, kiedy jesteś w innej karcie lub aplikacji. Widać tylko jego tytuł.",
+  "notifications.blocked": "Twoja przeglądarka blokuje powiadomienia z tej witryny. Zezwól na nie w jej ustawieniach dla tej witryny."
+}

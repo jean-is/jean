@@ -3,16 +3,26 @@
 // brotli (.br) and gzip (.gz), which the server sends as they are rather than compressing on the fly.
 // capabilities.json lists the minified files' hashes and the version they make, which sw.js carries,
 // so the service worker checks what is served; the render package keeps its own (D305).
-// Usage: npm run build:web     (runs npm run build first); deploying copies dist/web/
+// POLICY, a JSON object as the gateway's GATEWAY_CONFIG is, becomes the site's policy.json, which
+// index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
+// the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
+// a search engine (D353), and what search engines and shared links read: index.html's title, canonical
+// address, cards and schema.org data, robots.txt and sitemap.xml, the privacy policy and the terms with
+// their canonical addresses (D356), every other page unindexed (D355). An ADDRESS on the brand's own
+// domain, jean.is's, adds its page under the app's first screen, in index.html and in one page per
+// language beside it (scripts/home.js, D397).
+// Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { promisify } from 'node:util'
 import { brotliCompress, constants, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
-import { shippedFiles } from './desktop.js'
+import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
+import { homeFiles, inLanguage, ownSite } from './home.js'
+import { LISTED, addressOf, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -30,7 +40,7 @@ const SHOWN = ['ui/touches.css']
 export const minifies = (path) => (/^(core|ui|caps|ee)\/.+\.(js|css)$/.test(path) || path === 'brand.js') && !SHOWN.includes(path)
 
 /** Formats that are compressed already, which brotli and gzip only make bigger. */
-const PACKED = /\.(woff2|png|jpe?g|zip)$/
+const PACKED = /\.(woff2|png|jpe?g|webp|zip|sf3)$/
 
 /**
  * A file of Jean's as it ships: no comments, whitespace or long local names, and nothing else changed.
@@ -46,6 +56,43 @@ export async function minify (path, source) {
   const how = path.endsWith('.css') ? { loader: /** @type {const} */ ('css'), minifyWhitespace: true } : { loader: /** @type {const} */ ('js'), minify: true }
   const { code } = await transform(source, { ...how, charset: 'utf8', legalComments: 'none' })
   return notice + code
+}
+
+/**
+ * index.html naming the policy beside it, once. @param {string} html
+ */
+export function withPolicy (html) {
+  if (html.includes('name="app-policy"') || !html.includes('</head>')) throw new Error('index.html already names a policy, or has no </head>')
+  return html.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')
+}
+
+/**
+ * The site as a search engine for browsers' address bars (OpenSearch, D353): a search opens it with
+ * `?q=`, which Jean puts in the box. Its addresses are whole, as Chromium and Firefox refuse relative
+ * ones, so it is written for one address. Safari adds no search engines.
+ * @param {string} site  the address the site is served from
+ * @param {{ name: string }} brand
+ * @param {string} description  index.html's, as the install's is
+ */
+export function openSearch (site, brand, description) {
+  const base = xml(siteBase(site))
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>${xml(brand.name)}</ShortName>
+  <Description>${xml(description)}</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="192" height="192" type="image/png">${base}icons/icon-192.png</Image>
+  <Url type="text/html" method="get" template="${base}?q={searchTerms}"/>
+</OpenSearchDescription>
+`
+}
+
+/**
+ * index.html naming the site's OpenSearch description, once. @param {string} html @param {{ name: string }} brand
+ */
+export function withSearch (html, brand) {
+  if (html.includes('rel="search"') || !html.includes('</head>')) throw new Error('index.html already names a search, or has no </head>')
+  return html.replace('</head>', `<link rel="search" type="application/opensearchdescription+xml" title="${xml(brand.name)}" href="opensearch.xml">\n</head>`)
 }
 
 /**
@@ -99,15 +146,44 @@ async function inTurn (items, width, work) {
 
 async function main () {
   const files = await shippedFiles(APP)
+  const policy = process.env.POLICY ? `${JSON.stringify(JSON.parse(process.env.POLICY), null, 2)}\n` : null
+  const { BRAND } = await import(pathToFileURL(join(APP, 'brand.js')).href)
+  const index = await readFile(join(APP, 'index.html'), 'utf8')
+  const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
+  const search = process.env.ADDRESS ? openSearch(process.env.ADDRESS, BRAND, description) : null
+  const base = process.env.ADDRESS ? siteBase(process.env.ADDRESS) : null
+  const languages = (await readdir(join(APP, 'locales'))).filter((name) => name.endsWith('.json')).map((name) => name.slice(0, -'.json'.length)).sort()
+  /**
+   * index.html naming the policy and the search the site has, and as search engines read it: at the
+   * site's address, or in another language at its own (D397).
+   * @param {string} html @param {string | null} [said]  its description in that language @param {string | null} [address]
+   */
+  const page = (html, said = null, address = base) => {
+    const named = policy ? withPolicy(html) : html
+    const searched = search ? withSearch(named, BRAND) : named
+    const described = said ? inLanguage(searched, said) : searched
+    return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base) : described
+  }
+  /** A page as the site serves it: index.html as above, and with ADDRESS, a listed page with its canonical address and any other unindexed. @param {string} path @param {string} html */
+  const served = (path, html) => path === 'index.html' ? page(html) : !base ? html : LISTED.includes(path) ? withCanonical(html, addressOf(base, path)) : unindexed(html)
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0
   for (const path of files) {
     const data = await readFile(join(APP, path))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : data
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(served(path, data.toString('utf8'))) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
+  }
+  // jean.is's page under the app's first screen, in index.html and in its other languages' pages.
+  const home = base && ownSite(base, BRAND) ? await homeFiles(base, BRAND, (said, address) => page(index, said, address)) : {}
+  const elsewhere = Object.keys(home).filter((path) => path.endsWith('.html') && path !== 'index.html').map((path) => addressOf(base ?? '', path))
+  /** The files a deploy adds beside app/'s, or writes over them (index.html). @type {Record<string, string>} */
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base, elsewhere), ...home }
+  for (const [path, text] of Object.entries(added)) {
+    await writeFile(join(OUT, path), text)
+    if (!files.includes(path)) files.push(path)
   }
   const read = (/** @type {string} */ path) => readFile(join(OUT, path))
   const { version, listing, worker } = await restamp((await read('capabilities.json')).toString('utf8'), (await read('sw.js')).toString('utf8'), read)
@@ -123,7 +199,7 @@ async function main () {
     }
   })
   const kb = (/** @type {number} */ bytes) => `${Math.round(bytes / 1024)} KB`
-  console.log(`web: version ${version}, ${files.length} files in dist/web, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them`)
+  console.log(`web: version ${version}, ${files.length} files in dist/web${Object.keys(added).length ? `, ${new Intl.ListFormat('en').format(Object.keys(added))} among them` : ''}, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them`)
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

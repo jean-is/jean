@@ -2,7 +2,7 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, openSettings, openTasks, MAIL_URL, GATEWAY_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, openSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -32,27 +32,15 @@ test('Jean sums up the latest emails through a connection, with citations', asyn
   await expect(page.locator('.activity-list')).toContainText('Looked for the right tool')
 })
 
-/**
- * Serves Jean with an organisation's policy (docs/enterprise.md), as `<meta name="app-policy">`
- * does, so it is still there when the sign-in comes back.
- * @param {import('@playwright/test').Page} page @param {any} policy
- */
-async function withPolicy(page, policy) {
-  await page.route((url) => url.pathname === '/policy.json', (route) => route.fulfill({ json: policy }))
-  // Added once the page is parsed, before its modules run. (Rewriting the page itself would make
-  // Chromium treat it as a public site, which may not reach the fake service on this computer.)
-  await page.addInitScript(() => document.addEventListener('readystatechange', () => {
-    if (document.readyState === 'interactive') document.head.append(Object.assign(document.createElement('meta'), { name: 'app-policy', content: 'policy.json' }))
-  }, { once: true }))
-}
-
-test('a service Jean knows connects in one click; those not reached yet are there, disabled', async ({ page }) => {
-  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
+test('a service Jean knows connects in one click, with every server its one sign-in reaches (D344); those not reached yet are there, disabled', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp`, servers: [`${MAIL_URL}/search/mcp`], scopes: ['mail.read'] }] })
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
   await expect(dialog.getByRole('button', { name: 'Notion' })).toBeEnabled()
-  for (const name of ['Gmail', 'Microsoft 365', 'Google Meet', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
+  // Google's APIs (D349) and its Workspace servers (D344) wait for a gateway that holds Google's app.
+  for (const name of ['Gmail', 'Google Calendar', 'Google Drive']) await expect(dialog.getByRole('button', { name, exact: true })).toBeDisabled()
+  for (const name of ['Google Workspace', 'Microsoft 365', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
   // Any other service is behind the + at the top.
   await expect(dialog.locator('#connection-add')).toHaveCount(0)
   await expect(dialog.locator('.panel-head .icon-button')).toHaveAttribute('aria-expanded', 'false')
@@ -61,9 +49,9 @@ test('a service Jean knows connects in one click; those not reached yet are ther
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   const back = page.locator('app-settings dialog[open]')
   const mail = back.locator('.connection')
-  await expect(mail).toContainText('3 actions')
+  await expect(mail).toContainText('5 actions')
   await mail.locator('summary').click()
-  await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email'])
+  await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email', 'web_search_exa', 'web_fetch_exa'])
   // Its tile stays, for another account, saying nothing more.
   await expect(back.getByRole('button', { name: 'Mail', exact: true })).toBeEnabled()
 })
@@ -76,7 +64,7 @@ test('a service that lists its tools to anyone but runs them only for someone si
   await ask(page, 'Summarise my latest emails')
   await page.locator('.approval .button.primary').click()
   // The call is refused: the brain reads that the user has to sign in, and the connection offers it.
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in first')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in')
   const mail = (await openSettings(page, 'Connections')).locator('.connection')
   await expect(mail).toContainText('This service needs you to sign in')
   await mail.getByRole('button', { name: 'Connect', exact: true }).click()
@@ -115,6 +103,21 @@ test('a service connects again for another account, each with a name of its own'
   await accounts.nth(1).getByLabel('Name').blur()
   await expect(accounts.nth(1).locator('summary')).toContainText('Mail at work')
   await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_at_work_search_emails', 'mail_at_work_read_email', 'mail_at_work_send_email'])
+})
+
+test('two accounts of a service are told apart by who signed in (D357)', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'WebKit runs here like a private window: the first account is gone when the second sign-in leaves the page')
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
+  await start(page)
+  await turnOn(page, 'Connections')
+  const dialog = page.locator('app-settings dialog[open]')
+  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  // Alone, it goes by its name; another account asks which, and the fake service signs in ben.
+  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await expect(page.locator('.toast')).toContainText('Mail (ben@example.com) is connected')
+  await expect(dialog.locator('.connection strong')).toHaveText(['Mail (ana@example.com)', 'Mail (ben@example.com)'])
+  await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_2_search_emails', 'mail_2_read_email', 'mail_2_send_email'])
 })
 
 test('a service that answers no page waits for a gateway that relays to it (D191)', async ({ page }) => {
@@ -202,9 +205,16 @@ test('web search answers with sources that open', async ({ page }) => {
   await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ urls: { wikipedia: `${url}/wiki/{lang}/w/api.php` } }), MAIL_URL)
   await turnOn(page, 'Web search')
   await page.keyboard.press('Escape')
-  await ask(page, 'Search the web for lighthouse')
+  await page.route('https://upload.wikimedia.test/*', (route) => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="30"/>' }))
+  const pictured = page.waitForRequest('https://upload.wikimedia.test/lighthouse.svg')
+  await ask(page, 'Search the web for lighthouse pictures')
   const answer = page.locator('.msg-jean .prose').last()
   await expect(answer).toContainText('Here is what the web says')
+  // A source's picture shows, asked for without saying from where; at an address the brain changed, its words (D35).
+  await expect(answer.locator('img.picture')).toHaveAttribute('src', 'https://upload.wikimedia.test/lighthouse.svg')
+  await expect(answer.locator('img.picture')).toHaveAttribute('alt', 'Lighthouse')
+  await expect(answer.locator('.image-alt')).toHaveText('[Lighthouse, again]')
+  expect((await pictured).headers().referer).toBeUndefined()
   // A web page's chip is a link (D140).
   await expect(answer.locator('a.cite')).toHaveCount(2)
   await expect(answer.locator('a.cite').first()).toHaveAttribute('href', /^https:\/\/en\.wikipedia\.org\/wiki\//)
@@ -213,6 +223,8 @@ test('web search answers with sources that open', async ({ page }) => {
   const icon = page.waitForRequest('https://icons.duckduckgo.com/ip3/en.wikipedia.org.ico')
   const tip = answer.locator('.cite-tip').first()
   await expect(tip).toBeHidden()
+  // Once the answer has ended: its end scrolls the page, which takes the source from under the pointer.
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   await answer.locator('a.cite').first().hover()
   await expect(tip).toBeVisible()
   await expect(tip).toContainText('en.wikipedia.org')
@@ -272,8 +284,9 @@ test('Web search has a switch in + once it is found: off, a task started then ha
   await turn(true)
   await asked('Thanks', 2)
   expect((await told()).notes).toEqual([{ kind: 'tools', added: ['web_search'] }])
-  // The first task, the one less lately busy.
+  // The first task, the one less lately busy, once it shows: this one has two answers too.
   await (await openTasks(page)).locator('.history-item').last().click()
+  await expect(answer).toContainText('I found nothing on the web.')
   await expect(page.locator('.msg-jean')).toHaveCount(2)
   await asked('Thanks', 3)
   expect((await told()).notes).toEqual([{ kind: 'switch', off: ['web_search'] }, { kind: 'switch', on: ['web_search'] }])

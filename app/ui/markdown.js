@@ -1,16 +1,16 @@
 // Markdown → lit-html templates, from marked's tokens. No innerHTML anywhere:
-// raw HTML in model output is shown as text, and images are never loaded
-// (an image URL is a classic way for injected instructions to leak data).
+// raw HTML in model output is shown as text, and an image shows only as a source gave
+// it (D35: an image URL is a classic way for injected instructions to leak data).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Marked } from 'marked'
 import { unlock } from './caps.js'
 
 /** @typedef {import('marked').Token} Token */
-/** @typedef {Map<number, { name: string, label: string, open?: () => void, url?: string, site?: string, icon?: string }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened */
+/** @typedef {Map<number, { name: string, label: string, open?: () => void, url?: string, site?: string, icon?: string, picture?: string, file?: import('../core/types.js').ResourceLink }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened; a picture, its own or the one shared */
 
 /** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
-let cited = null
+export let cited = null
 /** Whether the text being rendered is an answer still being written, whose last block may not be whole yet. */
 let writing = false
 
@@ -125,7 +125,7 @@ export function inline(tokens = []) {
       case 'link': return safeHref(token.href)
         ? html`<a href=${token.href} target="_blank" rel="noopener noreferrer">${inline(token.tokens)}</a>`
         : inline(token.tokens)
-      case 'image': return html`<span class="image-alt">[${token.text || token.href}]</span>`
+      case 'image': return shape(token) ?? html`<span class="image-alt">[${token.text || token.href}]</span>`
       case 'escape': return token.text
       case 'math': return formula(token)
       default: return token.raw
@@ -156,12 +156,15 @@ function latex(token) {
 export const declared = signal(/** @type {ReadonlySet<string>} */ (new Set()))
 /** How each kind is drawn, which its capability says once it has loaded: until then, its code. */
 export const drawn = signal(/** @type {Record<string, (source: string, open: boolean) => unknown>} */ ({}))
-const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', marp: 'slides' })
+/** The capability that draws each kind, which the first one shown loads. */
+export const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', marp: 'slides', html: 'interactive', mermaid: 'interactive', geojson: 'interactive' })
+/** Pages, diagrams and maps, drawn in every room, which no skill declares (D289, D291): before any message too, in a task brought in (D378). */
+export const PAGES = Object.keys(WIDGETS).filter((kind) => WIDGETS[kind] === 'interactive')
 
 /** @param {any} token */
 function widget(token) {
   const kind = String(token.lang).toLowerCase()
-  if (!declared.value.has(kind)) return null
+  if (!declared.value.has(kind) && !PAGES.includes(kind)) return null
   if (Object.hasOwn(WIDGETS, kind)) unlock(WIDGETS[kind])
   return drawn.value[kind]?.(token.text, open(token)) ?? null
 }
@@ -176,16 +179,10 @@ const opening = (token) => token.codeBlockStyle !== 'indented' && !token.raw.inc
 
 /** @param {string} href */
 function safeHref(href) {
-  try {
-    return ['http:', 'https:', 'mailto:'].includes(new URL(href).protocol)
-  } catch {
-    return false
-  }
+  try { return ['http:', 'https:', 'mailto:'].includes(new URL(href).protocol) } catch { return false }
 }
 
 const ENTITIES = /** @type {Record<string, string>} */ ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ' })
 
 /** @param {string} text */
-function decode(text) {
-  return text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (entity) => ENTITIES[entity])
-}
+const decode = (text) => text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (entity) => ENTITIES[entity])

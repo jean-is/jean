@@ -5,16 +5,16 @@
 // shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
 // picture made on this device or by a server on this computer shows nobody naked or sexual (D275), nor,
 // unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279, D324).
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { register, slots } from '../../ui/caps.js'
 import { app, effective, activeBrain, brainsHere, loadModels, cloudAllowed, conversationOf, updateSettings } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
 import { isLocal } from '../../ui/auto.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { define } from '../../ui/base.js'
 import { Shown } from '../../ui/shown.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile } from '../../core/files.js'
 import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../core/events.js'
 import { slug } from '../../core/settings.js'
@@ -229,7 +229,7 @@ const address = (/** @type {ImageBlock} */ image) => addresses.get(image) ?? add
 /** The sign of saving a picture labelled as made with AI (D324): the Commission's icon. */
 const AI = html`<svg class="icon icon-ai" viewBox="80 92 384 384" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d=${MARK}/></svg>`
 /** A film's sign while it is made: a frame of film, its holes down each side. */
-const FILM = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 3.5v17M16 3.5v17M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/></svg>`
+const FILM = icon(svg`<rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 3.5v17M16 3.5v17M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/>`)
 
 /**
  * A picture or a film Jean made, read from the project's files, in the user's language as it changes. While it is
@@ -287,7 +287,8 @@ class Picture extends Shown {
       ${url ? html`${film ? html`<video class=${develops} src=${url} controls playsinline aria-label=${alt} @loadedmetadata=${this.#fit} @animationend=${developed}></video>`
           : html`<img class=${develops} src=${url} alt=${alt} @load=${this.#fit} @animationend=${developed}>`}
         <a class="icon-button subtle" href=${url} download=${name} aria-label=${t(film ? 'pictures.saveFilm' : 'pictures.savePicture')}>${icons.download}</a>
-        ${film ? nothing : html`<button class="icon-button subtle" aria-label=${t('pictures.saveLabelled')} @click=${this.#label}>${AI}</button>`}` : nothing}
+        ${film ? nothing : html`<button class="icon-button subtle" aria-label=${t('pictures.saveLabelled')} @click=${this.#label}>${AI}</button>
+          ${slots('drawn').map((part) => part.draw({ picture: { uri: this.getAttribute('uri') ?? '', name, mimeType: type, size: 0 }, description: alt }))}`}` : nothing}
     </figure>`
   }
 
@@ -381,7 +382,7 @@ const CHECKED = /** @type {const} */ (['suggestive', 'hate', 'violence'])
 function check(area) {
   const set = app.policy.pictureCheck?.[area] !== undefined
   const change = (/** @type {Event} */ e) => updateSettings(/** @type {{}} */ ({ pictureCheck: { .../** @type {any} */ (app.settings.value).pictureCheck, [area]: /** @type {HTMLInputElement} */ (e.target).checked } }))
-  return html`<div class="setting"><div><span class="rule-kind">${t(`pictures.${area}`)}</span><p class="muted small">${t(set ? 'pictures.locked' : `pictures.${area}Text`)}</p></div>
+  return html`<div class="setting"><div><span class="rule-kind">${t(`pictures.${area}`)}</span><p class="muted small">${t(set ? app.policy.child ? 'pictures.parent' : 'pictures.locked' : `pictures.${area}Text`)}</p></div>
     <input type="checkbox" class="switch" role="switch" aria-label=${t(`pictures.${area}`)} .checked=${device.refuses(area)} ?disabled=${set} @change=${change}></div>`
 }
 
@@ -438,9 +439,9 @@ function shown(maker) {
 }
 
 /**
- * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), whether their check is
- * strict (D275), the three that can make them a card each as tabs, as the Computer's two computers are (D248), the quickest
- * first; under them, the one shown.
+ * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), the three that can make
+ * them a card each as tabs, as the Computer's two computers are (D248), the quickest first; under them, the one shown;
+ * last, folded, what else their check refuses (D275), which most never change.
  */
 function panel() {
   const makers = fit.value
@@ -452,9 +453,9 @@ function panel() {
   ${chosen ? html`<section class="pictures-device">
     <h3>${t('pictures.device')}</h3>
     <p class="muted">${t('pictures.deviceText')}</p>
-    ${CHECKED.map((area) => check(area))}
     <div class="makers" role="tablist" aria-label=${t('pictures.device')} @keydown=${move}>${makers.map((maker) => card(maker, chosen))}</div>
     <div role="tabpanel" id="pictures-shown" aria-labelledby=${`pictures-${chosen}`}>${shown(chosen)}</div>
+    <details class="other"><summary>${t('pictures.check')}</summary>${CHECKED.map((area) => check(area))}</details>
   </section>` : nothing}`
 }
 

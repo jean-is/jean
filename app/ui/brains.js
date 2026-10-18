@@ -86,11 +86,23 @@ export async function keepOnDevice(on) {
   await updateSettings({ cloud: !on, ...(on && brain && !isLocal(brain) && { auto: true }) })
 }
 
-/** Leaves to sign in somewhere that comes back to this page, with what the user had typed and where they were. @param {string} url */
+/** Leaves to sign in somewhere that comes back to this page, with what the user had typed and shared, and where they were. @param {string} url */
 export function leave(url) {
   sessionStorage.setItem('app.draft', app.draft.value)
+  // The files shared are kept in the project; the box's note of them comes back too, so the request goes with them (D366).
+  try { sessionStorage.setItem('app.files', JSON.stringify(app.attachments.value.filter((item) => item.status === 'ready').map(({ preview, ...item }) => item))) } catch {}
   sessionStorage.setItem('app.route', location.hash)
   location.assign(url)
+}
+
+/** Back from signing in: what the user had typed and shared comes back, where they were. */
+export function comeBack() {
+  app.draft.value = sessionStorage.getItem('app.draft') ?? ''
+  app.attachments.value = JSON.parse(sessionStorage.getItem('app.files') ?? '[]')
+  for (const key of ['app.draft', 'app.files']) sessionStorage.removeItem(key)
+  history.replaceState(null, '', location.pathname + (sessionStorage.getItem('app.route') ?? ''))
+  sessionStorage.removeItem('app.route')
+  dispatchEvent(new HashChangeEvent('hashchange'))
 }
 
 export async function startOpenRouter() {
@@ -108,17 +120,15 @@ export async function finishSignIn() {
   const verifier = sessionStorage.getItem('app.pkce')
   if (!(code && verifier) && !chatgpt) return
   sessionStorage.removeItem('app.pkce')
-  app.draft.value = sessionStorage.getItem('app.draft') ?? ''
-  sessionStorage.removeItem('app.draft')
-  history.replaceState(null, '', location.pathname + (sessionStorage.getItem('app.route') ?? ''))
-  sessionStorage.removeItem('app.route')
-  dispatchEvent(new HashChangeEvent('hashchange'))
+  comeBack()
   if (chatgpt) return (await import('./dialogs.js')).chatgptBack(chatgpt)
   try {
     const apiKey = await exchangeOpenRouterCode({ code: String(code), verifier: String(verifier) })
     await connectBrain({ provider: 'openrouter', apiKey })
     notify(t('brain.connected'))
     continueWithBrain()
+    // The device's brain, asked for with this one on the first brain's dialog, comes while it answers (D329).
+    if (sessionStorage.getItem('app.private')) import('../caps/first/first.js').then((module) => module.alsoPrivate())
   } catch (error) {
     showError(error)
   }

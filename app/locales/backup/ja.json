@@ -1,0 +1,7 @@
+{
+  "backup.confirmImport": "このエクスポートの会話、プロジェクト、ファイルを取り込みますか？ここにあるものは何も削除されません。",
+  "backup.imported": {
+    "other": "{count} 件の会話を取り込みました。"
+  },
+  "backup.chooseJson": "このエクスポートには Gemini のアクティビティがウェブページとして含まれています。マイ アクティビティの形式に JSON を選んで、Google Takeout からもう一度エクスポートしてください。"
+}

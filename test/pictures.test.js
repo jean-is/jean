@@ -91,6 +91,7 @@ describe('pictures', () => {
     const made = await picture({ ...ask, from: [lighthouse], brain: brain('openrouter'), model: 'google/gemini-2.5-flash-image', fetch })
     assert.equal(calls[0].url, 'https://openrouter.ai/api/v1/chat/completions')
     assert.deepEqual(calls[0].body.modalities, ['image', 'text'])
+    assert.deepEqual(calls[0].body.provider, { data_collection: 'deny' }, 'only providers that keep nothing (D381)')
     assert.deepEqual(calls[0].body.messages[0].content[1], { type: 'image_url', image_url: { url: `data:image/png;base64,${png}` } })
     assert.equal(made.mimeType, 'image/webp')
   })

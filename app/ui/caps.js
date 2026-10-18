@@ -17,14 +17,14 @@ import { signal } from '@preact/signals-core'
  * @property {() => { name: string, logo?: string, tools: string[] }[]} [searches]  what else of it searches the web (D271)
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)
  * @property {import('../core/hooks.js').Hook[]} [hooks]  what it does on Jean's events: task.start, turn.step, tool.check, turn.end…
- * @property {Record<string, Slot>} [slots]  what it draws in the room's slots, by name: views, main, above, add, activity, settings…
+ * @property {Record<string, Slot | Slot[]>} [slots]  what it draws in the room's slots, by name: views, main, above, add, box, progress, activity, settings…
  * @property {boolean} [ready]  its weights are here and loaded, for one of WEIGHTS
  */
 
 /**
  * An entry in one of the room's slots: where it goes among the others (lowest first), and how it is drawn,
  * with whatever else its slot reads (a section of Settings: its id, label and icon).
- * @typedef {{ at: number, draw: (props?: any) => unknown } & Record<string, any>} Slot
+ * @typedef {{ at: number, draw: (...props: any[]) => unknown } & Record<string, any>} Slot
  */
 
 const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
@@ -38,6 +38,8 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   made: () => import('../caps/made/made.js'),
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
+  lock: () => import('../caps/lock/lock.js'),
+  profiles: () => import('../caps/profiles/profiles.js'),
   'brain-local': () => import('../caps/brain-local/brain-local.js'),
   voice: () => import('../caps/voice/voice.js'),
   computer: () => import('../caps/computer/computer.js'),
@@ -50,6 +52,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   helpers: () => import('../caps/helpers/helpers.js'),
   check: () => import('../caps/check/check.js'),
   since: () => import('../caps/since/since.js'),
+  notifications: () => import('../caps/notifications/notifications.js'),
   names: () => import('../caps/names/names.js'),
   browser: () => import('../caps/browser/browser.js'),
   ask: () => import('../caps/ask/ask.js'),
@@ -65,6 +68,9 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   receipt: () => import('../caps/receipt/receipt.js'),
   certificates: () => import('../caps/certificates/certificates.js'),
   plugins: () => import('../caps/plugins/plugins.js'),
+  compact: () => import('../caps/compact/compact.js'),
+  plan: () => import('../caps/plan/plan.js'),
+  share: () => import('../caps/share/share.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
@@ -108,7 +114,8 @@ export function unlock(id) {
   if (!pending) {
     pending = LOADERS[id]().then(() => {
       if (!ON_SIGHT.includes(id)) gate.remember(id)
-      navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id })
+      // An opaque origin, such as a share's frame (D361), throws when asked for its service worker.
+      try { navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id }) } catch {}
       return true
     }, (error) => {
       console.warn(`Capability ${id}`, error)
@@ -135,3 +142,6 @@ export function contributions() {
 
 /** What the loaded capabilities have in one of the room's slots, in their order. @param {string} name @returns {Slot[]} */
 export const slots = (name) => [...loaded.value.values()].flatMap((cap) => cap.slots?.[name] ?? []).sort((a, b) => a.at - b.at)
+
+/** What capabilities add under a drawing in an answer, beside Copy: Share's (D361). @param {string} kind the block's @param {string} source */
+export const drawnActions = (kind, source) => slots('drawn').map((part) => part.draw({ text: `\`\`\`${kind}\n${source}\n\`\`\`` }))

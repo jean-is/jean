@@ -14,6 +14,7 @@
   "search.failed": "Walang Kiwix server na sumagot sa address na ito.",
   "search.insecure": "Mula rito, Kiwix server lang sa computer na ito, o sa address na nagsisimula sa https://, ang maaabot.",
   "search.locked": "Itinakda ng organisasyon mo",
+  "search.parent": "Itinakda ng magulang",
   "search.books": {
     "one": "{count} aklat",
     "other": "{count} aklat"

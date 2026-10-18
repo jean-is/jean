@@ -21,19 +21,25 @@ function selectors(list) {
   return [...found, list.slice(start)].map((selector) => selector.trim())
 }
 
+/** The ids that use a look's sheet: its own, and those of the looks built on it (`on`). @param {string} id */
+const users = (id) => [id, ...Object.entries(LOOKS).filter(([, look]) => 'on' in look && look.on === id).map(([other]) => other)]
+/** What a look's rules start with: its own id, or :is() of its users'. @param {string} id */
+const prefix = (id) => (users(id).length > 1 ? `:root:is(${users(id).map((user) => `[data-look='${user}']`).join(', ')})` : `:root[data-look='${id}']`)
+
 for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
-  test(`every rule of ui/looks/${id}.css starts with :root[data-look='${id}'], and its keyframes with ${id}-`, async () => {
+  test(`every rule of ui/looks/${id}.css starts with ${prefix(id)}, and its keyframes with ${id}-`, async () => {
     const css = (await readFile(new URL(`../app/ui/looks/${id}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/@keyframes\s+([\w-]+)\s*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, (_, name) => (assert.ok(name.startsWith(`${id}-`), `@keyframes ${name}`), ''))
     const preludes = [...css.matchAll(/([^{};]+)\{/g)].map((match) => match[1].trim()).filter((prelude) => !prelude.startsWith('@'))
     assert.ok(preludes.length > 10)
     for (const prelude of preludes) {
-      for (const selector of selectors(prelude)) assert.ok(selector.startsWith(`:root[data-look='${id}']`), selector)
+      for (const selector of selectors(prelude)) assert.ok(selector.startsWith(prefix(id)) || selector.startsWith(`:root[data-look='${id}']`), selector)
     }
   })
 }
 
-// Text meets WCAG AA (4.5:1) on both surfaces, by night and by day: every look's own tokens.
+// Text meets WCAG AA (4.5:1) on both surfaces, by night and by day: every look's own tokens, over
+// those of the look it builds on.
 /** sRGB, 0–1, gamma-encoded, of an oklch() colour. @param {number} L @param {number} C @param {number} H */
 function srgb(L, C, H) {
   const [a, b] = [C * Math.cos((H * Math.PI) / 180), C * Math.sin((H * Math.PI) / 180)]
@@ -58,9 +64,13 @@ const tokensOf = (css, selector) => Object.fromEntries([...(css.split(`${selecto
 
 for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
   test(`ui/looks/${id}.css reads at AA contrast in light and dark`, async () => {
-    const css = (await readFile(new URL(`../app/ui/looks/${id}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
-    const dark = tokensOf(css, `:root[data-look='${id}']`)
-    for (const [mode, tokens] of [['dark', dark], ['light', { ...dark, ...tokensOf(css, `:root[data-look='${id}'][data-theme='light']`) }]]) {
+    const sheet = async (/** @type {string} */ look) => (await readFile(new URL(`../app/ui/looks/${look}.css`, import.meta.url), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
+    const css = await sheet(id)
+    const on = /** @type {{ on?: string }} */ (LOOKS[/** @type {keyof typeof LOOKS} */ (id)]).on
+    const base = on ? await sheet(on) : ''
+    const dark = { ...(on && tokensOf(base, prefix(on))), ...tokensOf(css, prefix(id)) }
+    const light = { ...dark, ...(on && tokensOf(base, `${prefix(on)}[data-theme='light']`)), ...tokensOf(css, `${prefix(id)}[data-theme='light']`) }
+    for (const [mode, tokens] of [['dark', dark], ['light', light]]) {
       const room = colour(tokens, 'room')
       for (const surface of [room, colour(tokens, 'room-2', room)]) {
         for (const text of ['ink', 'ink-soft', 'ink-faint', 'flame']) {
@@ -84,18 +94,18 @@ test('every look has a name and a thumbnail in Settings', async () => {
   }
 })
 
-test('a look is applied before the first paint, with the key ui/looks.js uses, Human until one is picked', () => {
+test('a look is applied before the first paint, with the key ui/looks.js uses, Tilde until one is picked', () => {
   const script = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
-  assert.ok(script.includes(`localStorage.getItem('${LOOK_KEY}') ?? '${lookId(undefined)}'`))
+  assert.ok(script.includes(`mine('${LOOK_KEY}') ?? '${lookId(undefined)}'`))
   assert.ok(script.includes('ui/looks/${look}.css'))
 })
 
-test('an unknown look is Human (D174)', () => {
+test('an unknown look is Tilde (D373)', () => {
   assert.equal(lookId('mail'), 'mail')
   assert.equal(lookId('room'), 'room')
-  assert.equal(lookId('../style'), 'human')
-  assert.equal(lookId('toString'), 'human')
-  assert.equal(lookId(undefined), 'human')
+  assert.equal(lookId('../style'), 'tilde')
+  assert.equal(lookId('toString'), 'tilde')
+  assert.equal(lookId(undefined), 'tilde')
 })
 
 test('no touches, no CSS', () => {

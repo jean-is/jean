@@ -1,0 +1,38 @@
+{
+  "description": "AI cho mọi người, ngay trong một thẻ trình duyệt. Hỏi bằng lời hoặc bằng một tệp, và nhận lại thành quả hoàn chỉnh đúng như bạn yêu cầu: câu trả lời kèm nguồn, tài liệu, biểu đồ. Dùng AI bạn chọn, và giữ công việc của bạn trên thiết bị của chính mình. Không cần cài đặt, miễn phí và mã nguồn mở.",
+  "labels": {
+    "welcome": "Màn hình chào mừng: gợi ý để bắt đầu và ô để hỏi bất cứ điều gì",
+    "chart": "Một bảng tính được chia sẻ, với doanh số vẽ thành biểu đồ",
+    "sources": "Một hợp đồng thuê nhà đã đọc, mỗi phần câu trả lời đều dẫn về đó",
+    "share": "Một nhiệm vụ được chia sẻ với bạn bè qua đường liên kết"
+  },
+  "chart": {
+    "title": "Doanh số theo khu vực",
+    "file": "Doanh số.csv",
+    "columns": [
+      "Khu vực",
+      "Tháng 1",
+      "Tháng 2",
+      "Tháng 3"
+    ],
+    "regions": [
+      "Bắc",
+      "Nam",
+      "Đông"
+    ],
+    "ask": "Vẽ biểu đồ doanh số theo khu vực, theo từng tháng",
+    "before": "Đây là doanh số quý một, theo khu vực:",
+    "heading": "Doanh số quý một",
+    "after": "**Bắc** bán nhiều nhất, còn **Đông** tăng nhanh nhất: tăng 37% từ tháng 1 đến tháng 3."
+  },
+  "sources": {
+    "title": "Trả nhà",
+    "file": "Hợp đồng thuê nhà.pdf",
+    "pages": [
+      "Hợp đồng thuê căn hộ có nội thất\n\nĐiều 7. Báo trước. Bên thuê có thể chấm dứt hợp đồng bất cứ lúc nào, với điều kiện báo trước một tháng bằng thư bảo đảm hoặc giao tận tay có biên nhận.",
+      "Điều 9. Tiền đặt cọc. Tiền đặt cọc bằng một tháng tiền thuê được hoàn trả trong vòng một tháng kể từ khi giao lại chìa khóa, sau khi trừ chi phí sửa chữa nếu có."
+    ],
+    "ask": "Muốn dọn đi thì phải báo trước bao lâu, và khi nào tôi được trả lại tiền cọc?",
+    "answer": "Đây là những gì hợp đồng của bạn ghi:\n\n- **Báo trước:** một tháng, bằng thư bảo đảm hoặc giao tận tay có biên nhận [1].\n- **Tiền đặt cọc:** được trả lại trong vòng một tháng sau khi bạn giao lại chìa khóa, trừ chi phí sửa chữa nếu có [1].\n\nVậy nếu hôm nay bạn gửi thư, một tháng nữa bạn có thể dọn đi."
+  }
+}

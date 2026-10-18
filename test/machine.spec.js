@@ -9,7 +9,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, giveFolder } from './helpers.js'
 
 test.skip(process.platform === 'win32', 'The bridge needs bash')
 
@@ -26,14 +26,14 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   // Chromium opens a folder in place, played here by one of the private file system; elsewhere it is a copy.
   if (browserName === 'chromium') {
     await page.addInitScript(() => {
-      Object.assign(window, { showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })).getDirectoryHandle('shop', { create: true }) })
+      Object.assign(window, { showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle('shop', { create: true }) })
     })
   }
   await start(page)
   await connectFakeBrain(page)
   const chooser = browserName === 'chromium' ? null : page.waitForEvent('filechooser')
   await turnOn(page, 'Folders')
-  if (chooser) await (await chooser).setFiles(disk)
+  if (chooser) await giveFolder(await chooser, disk)
   await page.keyboard.press('Escape')
   await expect(page.locator('.folder-name')).toHaveText('shop')
   await turnOn(page, 'Computer')
@@ -118,8 +118,7 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
   mkdirSync(bin)
   writeFileSync(join(bin, 'claude'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/claude.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
   await start(page)
-  await page.locator('.brain-chip').click()
-  const settings = page.locator('app-settings dialog[open]')
+  const settings = await openSettings(page, 'Brains')
   const way = settings.locator('.way.is-claude')
   await way.locator('summary').click()
   await expect(way).toContainText('Claude Pro or Max')
@@ -154,8 +153,7 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   mkdirSync(bin)
   writeFileSync(join(bin, 'copilot'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/copilot.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
   await start(page)
-  await page.locator('.brain-chip').click()
-  const settings = page.locator('app-settings dialog[open]')
+  const settings = await openSettings(page, 'Brains')
   const way = settings.locator('.way.is-copilot')
   await way.locator('summary').click()
   await expect(way).toContainText('GitHub Copilot plan')

@@ -188,6 +188,22 @@ test('events: a request knows the records up to its end, its files and words inc
   assert.equal(second.user?.upTo, 6)
 })
 
+test('events: a request sent after one that kept nothing is a turn of its own, and a message keeps its files with its words', () => {
+  const file = { type: /** @type {const} */ ('resource_link'), uri: 'files/a.csv', name: 'a.csv' }
+  // The page reloaded before the first request's first step was kept; then the user asked again, sharing a file.
+  const records = [userRecord('Count slowly to five', 'dev1'), ...userRecords('Stop now', [file], 'dev1'), userRecord('Really', 'dev1')]
+  assert.deepEqual(foldTurns(records).map(({ user }) => [user?.text, user?.files, user?.upTo]), [
+    ['Count slowly to five', [], 1],
+    ['Stop now', [file], 3],
+    ['Really', [], 4],
+  ])
+  assert.deepEqual(toChatMessages(records), [
+    { role: 'user', content: 'Count slowly to five' },
+    { role: 'user', content: 'Stop now', documents: [{ name: 'a.csv', text: '' }] },
+    { role: 'user', content: 'Really' },
+  ])
+})
+
 test('events: failed tools become error results; empty steps are skipped', () => {
   const records = [
     userRecord('Delete it', 'dev1'),
@@ -196,6 +212,40 @@ test('events: failed tools become error results; empty steps are skipped', () =>
   ]
   const messages = toChatMessages(records)
   assert.deepEqual(messages.at(-1), { role: 'tool', toolCallId: 't1', name: 'read', content: 'The user declined this action.', isError: true })
+})
+
+test('events: the brain reads on from the last summary, and the room keeps it on the step it came before (D359)', () => {
+  const summary = (/** @type {string} */ text, /** @type {number} */ step) => envelope('jean', { sessionUpdate: 'compaction_update', compactionId: `c${step}`, status: 'completed',
+    summary: [{ type: 'text', text: text.toLowerCase() }], _meta: { text, reason: 'window' } }, step)
+  const records = [
+    userRecord('Sum the files', 'dev1'),
+    envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'brain-0', title: 'model', kind: 'think', status: 'completed', _meta: { raw: ['thinking'] } }, 0),
+    envelope('jean', /** @type {any} */ (tool()), 0),
+    summary('First summary', 1),
+    envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Reading b.' } }, 1),
+    envelope('jean', /** @type {any} */ (tool({ toolCallId: 't2', rawInput: { path: 'b.csv' } })), 1),
+    envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'brain-2s', title: 'model', kind: 'think', status: 'completed', _meta: { compact: true } }, 2),
+    summary('Second summary', 2),
+    envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'The total is 12.' } }, 2),
+    noteRecord('Today is 2026-10-17.', { kind: 'date', date: '2026-10-17' }),
+    userRecord('Thanks', 'dev1'),
+  ]
+  // Nothing before it is read again, its thinking blocks included; what came after it is, as ever.
+  assert.deepEqual(toChatMessages(records), [
+    { role: 'user', content: 'Second summary' },
+    { role: 'assistant', content: 'The total is 12.' },
+    { role: 'system', content: 'Today is 2026-10-17.' },
+    { role: 'user', content: 'Thanks' },
+  ])
+  assert.deepEqual(toChatMessages(records.slice(0, 6)), [
+    { role: 'user', content: 'First summary' },
+    { role: 'assistant', content: 'Reading b.', toolCalls: [{ id: 't2', name: 'read', args: { path: 'b.csv' } }] },
+    { role: 'tool', toolCallId: 't2', name: 'read', content: '1,2,3' },
+  ])
+  // The room shows the conversation whole, each summary on the step it came before.
+  const [turn] = foldTurns(records)
+  assert.deepEqual(turn.steps.map((step) => step.compaction?.summary?.[0].text), [undefined, 'first summary', 'second summary'])
+  assert.equal(turn.steps[2].text, 'The total is 12.')
 })
 
 test('settings: front matter round trip and policy', () => {

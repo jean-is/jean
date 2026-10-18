@@ -1,0 +1,13 @@
+{
+  "plan.title": "Ètò",
+  "plan.done": "{done} nínú {total} ti parí",
+  "plan.pending": "Kò tíì ṣe",
+  "plan.in_progress": "Ń lọ lọ́wọ́",
+  "plan.completed": "Ti parí",
+  "plan.confirm": "Ṣé kí a tẹ̀síwájú pẹ̀lú ètò yìí?",
+  "plan.go": "Bẹ̀rẹ̀",
+  "plan.always": "Máa bẹ̀rẹ̀ nígbà gbogbo",
+  "plan.paused": "Ó dúró ní ìgbésẹ̀ {count}",
+  "plan.cost": "nǹkan bí {cost} títí di ìsinsìnyí",
+  "plan.keepGoing": "Tẹ̀síwájú"
+}

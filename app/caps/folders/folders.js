@@ -11,14 +11,14 @@
 // project or conversation it belongs to, and the browser asks again once a visit, at the first
 // message sent there or from a card when a call needs it. Elsewhere a folder is a read-only copy for
 // the visit, and what Jean changes is saved as one zip. Nothing of Jean's is written into a folder.
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, unlock } from '../../ui/caps.js'
 import { app, conversationOf, refreshProjects, notify, assistantName, readBody, keepRecords } from '../../ui/state.js'
-import { folderFS } from '../../ui/opfs.js'
+import { folderFS, mine } from '../../ui/opfs.js'
 import { save } from '../../ui/save.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { join } from '../../core/fs.js'
 import { stringifyFrontMatter } from '../../core/settings.js'
 import { noteRecord } from '../../core/events.js'
@@ -90,17 +90,18 @@ function toldOf(records) {
 // The handles can't be kept in a file: IndexedDB keeps them, by owner, never in a backup (D149).
 // "Always allow" is kept there too, for the folders it was given for. Reading a handle back can take
 // the browser down (Chrome 153 does, for a handle of the private file system in a private window):
-// a mark is written first and taken away after, so a page that finds it there, its last read never
-// finished, forgets the handles and keeps folders for the visit only, for half a day, rather than
-// going down at every start.
+// a page reads them holding a lock, under a mark it takes away once read or as it leaves. A page
+// that finds the mark while no page holds the lock knows the last read went down with its page: it
+// forgets the handles and keeps folders for the visit only, for half a day, rather than going down
+// at every start. A reload during the read, or another tab reading then, is no such thing.
 const ALWAYS = 'always'
-const READING = 'reading'
-const VISIT = 'visit'
+const READING = 'app.folders-reading'
+const VISIT = 'app.folders-visit'
 const VISIT_MS = 12 * 3600_000
 /** @type {Promise<IDBDatabase | null>} */
 const database = new Promise((resolve) => {
   if (!globalThis.indexedDB) return resolve(null)
-  const request = indexedDB.open('app-folders', 1)
+  const request = indexedDB.open(mine('app-folders'), 1)
   request.onupgradeneeded = () => request.result.createObjectStore('folders')
   request.onerror = () => resolve(null)
   request.onsuccess = () => resolve(request.result)
@@ -123,26 +124,27 @@ async function stored(mode, act) {
 
 /** Handles "Always allow" was given for, read once. @type {FileSystemDirectoryHandle[]} */
 let trusted = []
-/** Whether folders last the visit only: the last read of the handles never finished. */
+/** Whether folders last the visit only: the last read of the handles went down with its page. */
 let visitOnly = false
-{
-  const [unfinished, since = 0] = await Promise.all([stored('readonly', (store) => store.get(READING)), stored('readonly', (store) => store.get(VISIT))])
-  if (unfinished || Date.now() - since < VISIT_MS) {
-    if (unfinished) {
-      await stored('readwrite', (store) => store.clear())
-      await stored('readwrite', (store) => store.put(Date.now(), VISIT))
-    }
-    visitOnly = true
-  } else {
-    await stored('readwrite', (store) => store.put(true, READING))
-    const [keys = [], values = []] = await Promise.all([stored('readonly', (store) => store.getAllKeys()), stored('readonly', (store) => store.getAll())])
-    await stored('readwrite', (store) => store.delete(READING))
-    const kept = new Map(keys.map((key, i) => [String(key), values[i]]))
-    trusted = kept.get(ALWAYS) ?? []
-    for (const key of [ALWAYS, READING, VISIT]) kept.delete(key)
-    owned.value = kept
-  }
+const unmark = () => localStorage.removeItem(READING)
+if (localStorage.getItem(READING) && !(await navigator.locks.query()).held?.some((lock) => lock.name === READING)) {
+  unmark()
+  localStorage.setItem(VISIT, String(Date.now()))
+  await stored('readwrite', (store) => store.clear())
 }
+visitOnly = Date.now() - Number(localStorage.getItem(VISIT)) < VISIT_MS
+// Shared, as tabs that start together each read the handles.
+if (!visitOnly) await navigator.locks.request(READING, { mode: 'shared' }, async () => {
+  localStorage.setItem(READING, 'reading')
+  addEventListener('pagehide', unmark)
+  const [keys = [], values = []] = await Promise.all([stored('readonly', (store) => store.getAllKeys()), stored('readonly', (store) => store.getAll())])
+  removeEventListener('pagehide', unmark)
+  unmark()
+  const kept = new Map(keys.map((key, i) => [String(key), values[i]]))
+  trusted = kept.get(ALWAYS) ?? []
+  kept.delete(ALWAYS)
+  owned.value = kept
+})
 
 /**
  * A project or a conversation opened on a folder, or on none (null). A copy lasts the visit; a
@@ -322,7 +324,11 @@ async function use(folder, project) {
     if (current) await keep(current.id, folder)
     else pending.value = folder
   }
-  if (folder) await offerAgents(folder, project ? 'project' : 'conversation')
+  if (folder) {
+    // Work in a folder takes many steps: plans come with it (D364).
+    unlock('plan')
+    await offerAgents(folder, project ? 'project' : 'conversation')
+  }
 }
 
 /** A project's folder: kept by its ULID, named in project.md (D149). @param {Project} project @param {Folder | null} folder */
@@ -656,8 +662,8 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
 // ─── Elements ────────────────────────────────────────────────────────────────
 
 /** Reconnect and Disconnect: a link, whole or broken. */
-const LINK = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M9.5 14.5l5-5"/></svg>`
-const UNLINK = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M8.5 3.5V6M3.5 8.5H6M15.5 20.5V18M20.5 15.5H18"/></svg>`
+const LINK = icon(svg`<path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M9.5 14.5l5-5"/>`)
+const UNLINK = icon(svg`<path d="M11 6.5 12.5 5a3.5 3.5 0 0 1 5 5L16 11.5M13 17.5 11.5 19a3.5 3.5 0 0 1-5-5L8 12.5M8.5 3.5V6M3.5 8.5H6M15.5 20.5V18M20.5 15.5H18"/>`)
 
 /** The header names the conversation's folder, and opens on a menu to change it (D149). */
 class FolderName extends Element {
@@ -676,10 +682,10 @@ class FolderName extends Element {
       <div id="folder-menu" class="menu folder-menu" popover>
         ${folder.copy ? html`<p class="folder-note">${t('folders.copy', { name: assistantName() })}</p>` : nothing}
         ${missing ? item(LINK, t('folders.again'), () => choose(!app.current.peek() && pending.peek() === undefined ? project : undefined)) : nothing}
-        ${shut ? item(icons.key, t('folders.allow'), () => permit(folder)) : nothing}
+        ${shut ? item(icons.shield, t('folders.allow'), () => permit(folder)) : nothing}
         ${changed.length ? item(icons.download, t('folders.save'), async () => save(new Blob([/** @type {BlobPart} */ (await folder.copy?.zip())], { type: 'application/zip' }), `${folder.name}.zip`)) : nothing}
         ${item(icons.folder, t('folders.another'), () => choose())}
-        ${!onProject ? item(icons.spark, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
+        ${!onProject ? item(icons.layers, home ? t('folders.keep') : t('folders.keepIn', { project: String(project.data.name) }), () => setProjectFolder(project, folder)) : nothing}
         ${item(UNLINK, t('folders.none'), () => use(null))}
       </div>`
   }

@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plan",
+  "plan.done": "Zrobione: {done} z {total}",
+  "plan.pending": "Do zrobienia",
+  "plan.in_progress": "W toku",
+  "plan.completed": "Zrobione",
+  "plan.confirm": "Realizować ten plan?",
+  "plan.go": "Realizuj",
+  "plan.always": "Zawsze realizuj",
+  "plan.paused": "Wstrzymano na kroku {count}",
+  "plan.cost": "dotąd około {cost}",
+  "plan.keepGoing": "Kontynuuj"
+}

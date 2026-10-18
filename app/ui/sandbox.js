@@ -23,7 +23,7 @@ import { signal } from '@preact/signals-core'
 // No word from the sandbox for this long, while nothing is waiting on Jean: stop it.
 const WATCHDOG_MS = 40_000
 // A script can't start another script, hand work to helpers, or interrupt the user with an offer or questions.
-const NOT_FROM_SCRIPTS = new Set(['run', 'javascript', 'python', 'bash', 'offer', 'delegate', 'helper', 'ask_user', 'flow_step'])
+const NOT_FROM_SCRIPTS = new Set(['run', 'javascript', 'python', 'bash', 'offer', 'delegate', 'helper', 'ask_user', 'flow_step', 'plan'])
 
 const ROOT = new URL('../', import.meta.url)
 
@@ -76,7 +76,7 @@ export function sandbox({ capability, worker, page, engines }) {
         tell()
         reject(new Error(message))
       }
-      const slow = setTimeout(() => fail('The sandbox did not start.'), 20_000)
+      let slow = setTimeout(() => fail('The sandbox did not start.'), 20_000)
       /** @param {MessageEvent} event */
       function listen({ source: from, data }) {
         if (from !== frame.contentWindow || !data) return
@@ -94,6 +94,9 @@ export function sandbox({ capability, worker, page, engines }) {
       }
       addEventListener('message', listen)
       frame.addEventListener('load', () => frame.contentWindow?.postMessage({ type: 'boot', source }, '*'), { once: true })
+      // Chromium loads a sandboxed frame past the service worker, so offline it holds the browser's
+      // error page, which never answers: say so in seconds rather than after the wait.
+      frame.addEventListener('load', () => { if (!navigator.onLine) slow = (clearTimeout(slow), setTimeout(() => fail('The sandbox did not start: this device is offline.'), 5000)) }, { once: true })
       frame.src = page.href
       document.body.append(frame)
     })

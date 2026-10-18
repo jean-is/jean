@@ -51,14 +51,14 @@ test('⌘⇧D switches between light and dark, even mid-sentence', async ({ page
 test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name (D238)', async ({ page }) => {
   await start(page)
   const root = page.locator('html')
-  await expect(root).toHaveAttribute('data-look', 'human')
+  await expect(root).toHaveAttribute('data-look', 'tilde')
   await page.locator('#prompt').fill('Hello')
   await page.keyboard.press('ControlOrMeta+Shift+KeyE')
-  await expect(root).toHaveAttribute('data-look', 'mail')
-  await expect(page.locator('.toast')).toHaveText('Mail')
+  await expect(root).toHaveAttribute('data-look', 'human')
+  await expect(page.locator('.toast')).toHaveText('Human')
   await expect(page.locator('#prompt')).toHaveValue('Hello')
   await page.keyboard.press('ControlOrMeta+Shift+KeyE')
-  await expect(root).toHaveAttribute('data-look', 'minimal')
+  await expect(root).toHaveAttribute('data-look', 'mail')
 })
 
 test('⌘⇧L goes to the next language, the browser\'s first, and says its name in its own words (D253)', async ({ page }) => {
@@ -80,12 +80,14 @@ test('⌘B opens the drawer or puts it away, beside the conversation or over it,
   await start(page)
   const tasks = page.locator('app-inbox')
   await expect(page.locator('.sidebar-toggle')).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+B$/)
-  // Human's first screen has it open beside the conversation (D174); what is typed stays.
-  await expect(tasks).toBeVisible()
+  // Human's first screen has it put away while the room has no task (D174, D369); what is typed stays.
+  await expect(tasks).toHaveCount(0)
   await page.locator('#prompt').fill('Hello')
   await page.keyboard.press('ControlOrMeta+KeyB')
-  await expect(tasks).toHaveCount(0)
+  await expect(tasks).toBeVisible()
   await expect(page.locator('#prompt')).toHaveValue('Hello')
+  await page.keyboard.press('ControlOrMeta+KeyB')
+  await expect(tasks).toHaveCount(0)
   await page.keyboard.press('ControlOrMeta+KeyB')
   await expect(tasks).toBeVisible()
   // A dialog over the room closes, and the drawer stays.
@@ -262,13 +264,16 @@ test('Escape stops the answer being written, as Stop does, once nothing else tak
   await box.click()
   await box.pressSequentially('/')
   await expect(page.locator('#complete .complete-heading').first()).toBeVisible()
+  // With words in the box, its button sends them, which steers the task (D365); Escape still stops it.
+  await expect(stop).toHaveCount(0)
+  const working = page.locator('.msg-jean.is-streaming')
   await box.press('Escape')
   await expect(page.locator('#complete .complete-heading')).toHaveCount(0)
-  await expect(stop).toBeVisible()
+  await expect(working).toHaveCount(1)
   // Never while an IME composes.
   await box.dispatchEvent('keydown', { key: 'Escape', isComposing: true, bubbles: true })
-  await expect(stop).toBeVisible()
+  await expect(working).toHaveCount(1)
   await box.press('Escape')
-  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+  await expect(working).toHaveCount(0)
   await expect(box).toHaveValue('/')
 })

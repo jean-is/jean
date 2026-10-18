@@ -16,7 +16,7 @@ const FALLBACK_MODELS = new Set(['claude-fable-5-1', 'claude-opus-5-5', 'claude-
 const FALLBACK_BETA = 'server-side-fallback-2026-07-01'
 
 /** @type {Map<string, StopReason>} */
-const STOP = new Map([['end_turn', 'end'], ['tool_use', 'tool_use'], ['max_tokens', 'max_tokens'], ['refusal', 'refusal'], ['pause_turn', 'pause']])
+const STOP = new Map([['end_turn', 'end'], ['tool_use', 'tool_use'], ['max_tokens', 'max_tokens'], ['model_context_window_exceeded', 'max_tokens'], ['refusal', 'refusal'], ['pause_turn', 'pause']])
 // The provider's own tools and their results: echoed back whole in later requests.
 const SERVER_BLOCK = /^server_tool_use$|_tool_result$/
 // Set when the organisation turned web search off (a 400 says so): Jean's own search from then on.

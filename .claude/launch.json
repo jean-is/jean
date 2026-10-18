@@ -24,6 +24,31 @@
       }
     },
     {
+      "name": "jean-share",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve.js",
+        "--share"
+      ],
+      "port": 4473,
+      "env": {
+        "PORT": "4473",
+        "SHARE_PORT": "4474"
+      }
+    },
+    {
+      "name": "jean-home",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve.js",
+        "--home"
+      ],
+      "port": 4386,
+      "env": {
+        "PORT": "4386"
+      }
+    },
+    {
       "name": "fake-brain",
       "runtimeExecutable": "node",
       "runtimeArgs": [

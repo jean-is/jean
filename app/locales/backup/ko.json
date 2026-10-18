@@ -1,0 +1,7 @@
+{
+  "backup.confirmImport": "이 내보내기의 대화, 프로젝트, 파일을 가져올까요? 여기 있는 것은 삭제되지 않아요.",
+  "backup.imported": {
+    "other": "대화 {count}개를 가져왔어요."
+  },
+  "backup.chooseJson": "이 내보내기에는 Gemini 활동이 웹페이지로 들어 있어요. 내 활동 형식을 JSON으로 선택해 Google 테이크아웃에서 다시 내보내세요."
+}

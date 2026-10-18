@@ -1,0 +1,13 @@
+{
+  "plan.title": "Rencana",
+  "plan.done": "{done} dari {total} selesai",
+  "plan.pending": "Belum",
+  "plan.in_progress": "Sedang dikerjakan",
+  "plan.completed": "Selesai",
+  "plan.confirm": "Lanjut dengan rencana ini?",
+  "plan.go": "Lanjut",
+  "plan.always": "Selalu lanjut",
+  "plan.paused": "Dijeda di langkah {count}",
+  "plan.cost": "sekitar {cost} sejauh ini",
+  "plan.keepGoing": "Teruskan"
+}

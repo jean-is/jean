@@ -74,6 +74,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - a W3C VC 2.0 sealed as a JWS in JAdES B-B, by the device's key and the X.509 certificate that key issues itself (`caps/receipt/der.js`);
   - the issuer is the RFC 9278 thumbprint URI of that key;
   - the words, shared files and made files are salted SD-JWT disclosures, kept in the conversation (`meta.certificate`);
+  - where it was done (Jean's address, each brain's and maker's outside the device, what the page reached) is salted too, kept whole as `places`, which a share's proof leaves out (D361);
   - the `.sd-jwt` proof carries them;
   - the schema is `caps/receipt/certificate.schema.json`;
   - Settings › Approvals shows the seal's fingerprint.
@@ -177,7 +178,7 @@ On [open-questions.md](open-questions.md#answer-certificates).
 
 ## Notes for whoever picks this up
 
-- **Budgets:** `npm run budgets` says how much room is left; D323 made room for section 4. Section 3 will need more: tighten first, then ask the owner, then raise in a commit of its own with its own decision ([AGENTS.md](../AGENTS.md)). The first load has the least room, so keep these phases out of it: the check card reaches an answer through `_meta.checked`, which `chat.js` already shows.
+- **Budgets:** `npm run budgets` says how much room is left. Section 3 will need more: tighten first, then ask the owner, then raise in a commit of its own with its own decision ([AGENTS.md](../AGENTS.md)). The first load has the least room, so keep these phases out of it: the check card reaches an answer through `_meta.checked`, which `chat.js` already shows.
 - **Decision numbers in use:**
   - D272: the line budget;
   - D273: saying Jean is an AI;

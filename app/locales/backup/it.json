@@ -1,0 +1,9 @@
+{
+  "backup.confirmImport": "Importare conversazioni, progetti e file di questa esportazione? Qui non verrà eliminato nulla.",
+  "backup.imported": {
+    "one": "{count} conversazione importata.",
+    "many": "{count} conversazioni importate.",
+    "other": "{count} conversazioni importate."
+  },
+  "backup.chooseJson": "Questa esportazione contiene la tua attività Gemini come pagine web. Esportala di nuovo da Google Takeout scegliendo JSON per Le mie attività."
+}

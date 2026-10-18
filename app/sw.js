@@ -1,6 +1,6 @@
 // Service worker: offline shell and per-capability caches (classic script).
 // VERSION is rewritten by scripts/manifest.js whenever any shipped file changes.
-const VERSION = 'ed4a90d2e9c4'
+const VERSION = 'a671fb0ce942'
 const SHELL = `app-shell-${VERSION}`
 // Capability caches carry the version too: an update re-caches every unlocked capability,
 // copying unchanged files over, so old code is never served next to a new shell.
@@ -81,6 +81,13 @@ self.addEventListener('message', (event) => {
     const reply = (ok) => event.source?.postMessage({ type: 'CAPABILITY_CACHED', id, ok })
     event.waitUntil(cacheCapability(id).then(reply))
   }
+})
+
+// A notification the page couldn't show itself (Android's browsers, D334): a tap brings Jean back, on its task.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const at = url(event.notification.data?.hash ?? '')
+  event.waitUntil(self.clients.matchAll({ type: 'window' }).then(([client]) => (client ? client.focus().then(() => client.navigate(at)) : self.clients.openWindow(at))))
 })
 
 async function cacheCapability (id) {

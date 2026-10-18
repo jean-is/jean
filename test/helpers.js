@@ -4,25 +4,63 @@ import { expect } from '@playwright/test'
 export const BRAIN_URL = 'http://127.0.0.1:4181/v1'
 export const MAIL_URL = 'http://127.0.0.1:4182'
 export const GATEWAY_URL = 'http://127.0.0.1:4183/'
+export const SHARE_URL = 'http://127.0.0.1:4185/'
 export const SALES = 'region,month,sales\nNorth,Jan,1200\nSouth,Jan,950\nNorth,Feb,1340\nSouth,Feb,1010\nEast,Jan,700\nEast,Feb,815\n'
+
+/**
+ * Silence: what a page plays through Web Audio (a score) goes to a gain of 0 instead of the
+ * speakers, its clock still running. Chromium is also muted by its flag (playwright.config.js);
+ * WebKit has none.
+ */
+function silence() {
+  const destination = Object.getOwnPropertyDescriptor(BaseAudioContext.prototype, 'destination')?.get
+  if (!destination) return
+  const muted = new WeakMap()
+  Object.defineProperty(AudioContext.prototype, 'destination', { configurable: true, get() {
+    if (!muted.has(this)) {
+      const gain = this.createGain()
+      gain.gain.value = 0
+      gain.connect(destination.call(this))
+      muted.set(this, gain)
+    }
+    return muted.get(this)
+  } })
+}
+
+/**
+ * Serves Jean with an organisation's policy (docs/enterprise.md), as `<meta name="app-policy">`
+ * does, so it is still there when the sign-in comes back.
+ * @param {import('@playwright/test').Page} page @param {any} policy
+ */
+export async function withPolicy(page, policy) {
+  await page.route((url) => url.pathname === '/policy.json', (route) => route.fulfill({ json: policy }))
+  // Added once the page is parsed, before its modules run. (Rewriting the page itself would make
+  // Chromium treat it as a public site, which may not reach the fake service on this computer.)
+  await page.addInitScript(() => document.addEventListener('readystatechange', () => {
+    if (document.readyState === 'interactive') document.head.append(Object.assign(document.createElement('meta'), { name: 'app-policy', content: 'policy.json' }))
+  }, { once: true }))
+}
 
 /** @param {import('@playwright/test').Page} page @param {string} [lang] */
 export async function start(page, lang = 'en') {
+  await page.addInitScript(silence)
   await page.goto('./')
   await expect(page.locator('.hero-question')).toBeVisible()
   // The box has the keyboard from the start.
   await expect(page.locator('#prompt')).toBeFocused()
-  // The language is picked in Settings, its first choice.
-  const settings = await openSettings(page)
+  // The language is picked in Settings, its first choice, opened by its key so the drawer stays as a first visit has it (D369).
+  await page.keyboard.press('ControlOrMeta+Comma')
+  const settings = page.locator('app-settings dialog[open]')
   await settings.locator('.settings-panel select').first().selectOption(lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
   await closeSettings(page)
 }
 
-/** Connects the fake brain through Settings' Brains, "On your computer" → Other. @param {import('@playwright/test').Page} page */
+/** Connects the fake brain through the first brain's step (D329, D366): its plans and keys, "On your computer" → Other. @param {import('@playwright/test').Page} page */
 export async function connectFakeBrain(page) {
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-settings dialog[open]')
+  const dialog = page.locator('app-first .first')
+  await dialog.locator('.first-doors button').first().click()
   // One way to add a brain is open at a time (D134).
   const local = dialog.locator('.way.is-local')
   await local.locator('summary').click()
@@ -30,6 +68,8 @@ export async function connectFakeBrain(page) {
   await local.locator('input[name="baseURL"]').fill(BRAIN_URL)
   await local.locator('.button.primary').click()
   await expect(dialog).toBeHidden()
+  // The step is in the page, where an answer comes next: the pointer leaves, so nothing there is hovered by chance.
+  await page.mouse.move(0, 0)
 }
 
 /** @param {import('@playwright/test').Page} page @param {string} text */
@@ -123,6 +163,20 @@ export async function connect(page, url) {
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   await expect(dialog.locator('.connection')).toContainText('3 actions')
   await page.keyboard.press('Escape')
+}
+
+/**
+ * Gives a folder to the file chooser, as the system's picker would to `<input webkitdirectory>`.
+ * Playwright then waits for the input's `input` event, but in WebKit listens only once the folder is
+ * given: when WebKit has read it first, the wait never ends (1 run in 6). The event is told again
+ * a moment later, which ends it either way; Jean listens for `change`.
+ * @param {import('@playwright/test').FileChooser} chooser @param {string} folder
+ */
+export async function giveFolder(chooser, folder) {
+  await chooser.element().evaluate((input) => input.addEventListener('input', (event) => {
+    if (event.isTrusted) for (const wait of [100, 1000, 5000]) setTimeout(() => input.dispatchEvent(new Event('input')), wait)
+  }, { once: true }))
+  await chooser.setFiles(folder)
 }
 
 /** A one-page PDF in Helvetica, one of the standard fonts. @param {string} text */

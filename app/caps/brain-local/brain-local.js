@@ -26,7 +26,7 @@ const CONTEXT = 32768
 // of two, the nearest, ties down, so 12 GB says 8, as 8 GB does: 8 there, 12 where the desktop app knows.
 // Chrome on Android says 8 at most, and Safari nothing: a phone or a tablet is never offered it.
 const MEMORY_GB = 12
-/** Kept in this browser while the brain loads: still there at the next start, the load ended the tab (D319). */
+/** Kept in this browser while the brain loads: still there at the next start, the load took its page down (D319). */
 const LOADING = 'app.device-brain'
 
 /**
@@ -67,12 +67,13 @@ export async function isDownloaded() {
   }
 }
 
-/** Marks a load under way, or one that ended the tab, or removes the mark. @param {'loading' | 'unfit' | null} value */
-const mark = (value) => (value ? localStorage.setItem(LOADING, value) : localStorage.removeItem(LOADING))
+// The mark of a load under way goes once it has loaded or failed, or as its page leaves (a reload,
+// a closed tab): only a page that went down while it loaded leaves it behind (D319).
+const unmark = () => { removeEventListener('pagehide', unmark); localStorage.removeItem(LOADING) }
 
 /** Whether loading the brain ended this tab before: its mark is still there and no tab holds its lock. */
 async function crashed() {
-  if (localStorage.getItem(LOADING) === 'loading' && !(await navigator.locks.query()).held?.some((lock) => lock.name === LOADING)) mark('unfit')
+  if (localStorage.getItem(LOADING) === 'loading' && !(await navigator.locks.query()).held?.some((lock) => lock.name === LOADING)) localStorage.setItem(LOADING, 'unfit')
   return localStorage.getItem(LOADING) === 'unfit'
 }
 
@@ -98,14 +99,14 @@ export async function prepare() {
     // One tab loads it at a time, and marks it while it does (D319).
     await navigator.locks.request(LOADING, () => worker.call({ type: 'load', host: weightsHost(), model: GEMMA.model, dtype: GEMMA.dtype }, { onMessage: (message) => {
       download.value = downloading(message, GEMMA.bytes)
-      if (download.value.state === 'loading') mark('loading')
+      if (download.value.state === 'loading') { localStorage.setItem(LOADING, 'loading'); addEventListener('pagehide', unmark) }
     } }))
-    mark(null)
     download.value = { state: 'ready' }
   } catch (error) {
-    mark(null)
     download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
     throw error
+  } finally {
+    unmark()
   }
 }
 

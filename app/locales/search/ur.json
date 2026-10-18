@@ -14,6 +14,7 @@
   "search.failed": "اس پتے پر کسی Kiwix سرور نے جواب نہیں دیا۔",
   "search.insecure": "یہاں سے صرف اسی کمپیوٹر پر، یا https:// سے شروع ہونے والے پتے پر، Kiwix سرور تک پہنچا جا سکتا ہے۔",
   "search.locked": "آپ کے ادارے کی طرف سے طے شدہ",
+  "search.parent": "والدین میں سے کسی نے طے کیا",
   "search.books": {
     "one": "{count} کتاب",
     "other": "{count} کتابیں"

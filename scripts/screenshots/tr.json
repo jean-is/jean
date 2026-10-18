@@ -1,0 +1,38 @@
+{
+  "description": "Herkesin yapay zekâsı, bir tarayıcı sekmesinde. Sözle sor ya da bir dosya ver, istediğini hazır al: kaynaklarıyla bir yanıt, bir belge, bir grafik. Seçtiğin yapay zekâyı kullan, çalışmalarını kendi cihazında tut. Kurulacak bir şey yok, ücretsiz ve açık kaynak.",
+  "labels": {
+    "welcome": "Karşılama ekranı: başlamak için fikirler ve her şeyi sorabileceğin bir kutu",
+    "chart": "Paylaşılan bir tablo ve satışlarının grafiği",
+    "sources": "Okunan bir kira sözleşmesi ve her bölümü ona dayanan bir yanıt",
+    "share": "Bir arkadaşla bağlantı üzerinden paylaşılan bir görev"
+  },
+  "chart": {
+    "title": "Bölgelere göre satışlar",
+    "file": "Satışlar.csv",
+    "columns": [
+      "Bölge",
+      "Ocak",
+      "Şubat",
+      "Mart"
+    ],
+    "regions": [
+      "Kuzey",
+      "Güney",
+      "Doğu"
+    ],
+    "ask": "Satışların bölgelere göre, ay ay grafiğini çiz",
+    "before": "İşte ilk çeyreğin satışları, bölgelere göre:",
+    "heading": "Satışlar, ilk çeyrek",
+    "after": "En çok **Kuzey** satıyor, en hızlı büyüyen ise **Doğu**: ocaktan marta %37 artış."
+  },
+  "sources": {
+    "title": "Evden taşınma",
+    "file": "Kira sözleşmesi.pdf",
+    "pages": [
+      "Eşyalı daire kira sözleşmesi\n\nMadde 7. Bildirim. Kiracı, sözleşmeyi bir ay önceden bildirmek kaydıyla her zaman feshedebilir; bildirim taahhütlü mektupla gönderilir ya da imza karşılığı elden teslim edilir.",
+      "Madde 9. Depozito. Bir aylık kira tutarındaki depozito, anahtarların tesliminden itibaren bir ay içinde, varsa onarım masrafları düşülerek iade edilir."
+    ],
+    "ask": "Taşınmak için ne kadar önceden haber vermem gerekiyor ve depozitomu ne zaman geri alırım?",
+    "answer": "Kira sözleşmende yazanlar şunlar:\n\n- **Bildirim:** bir ay önceden, taahhütlü mektupla ya da imza karşılığı elden [1].\n- **Depozito:** anahtarları teslim ettikten sonra bir ay içinde, varsa onarım masrafları düşülerek iade edilir [1].\n\nYani mektubu bugün gönderirsen bir ay sonra taşınabilirsin."
+  }
+}

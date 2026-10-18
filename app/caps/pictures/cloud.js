@@ -4,7 +4,7 @@
 // Omni. What they make comes back as bytes, fetched only from the brain's own address with its key,
 // never shown from the provider's (D35). As it comes, what it will look like and how far along it
 // is, where the provider says (D265).
-import { LLMError, headersFor, post, endpoint, fetchOrThrow, sseEvents, parseData } from '../../core/llm.js'
+import { LLMError, headersFor, post, endpoint, fetchOrThrow, sseEvents, parseData, UNKEPT } from '../../core/llm.js'
 
 /**
  * @typedef {{ name: string, mimeType: string, bytes: Uint8Array }} Picture
@@ -34,7 +34,7 @@ export async function picture({ brain, apiKey, model, prompt, from, shape, show,
   if (brain.provider === 'openrouter') {
     const content = from.length ? [{ type: 'text', text: prompt }, ...from.map((file) => ({ type: 'image_url', image_url: { url: `data:${file.mimeType};base64,${base64(file.bytes)}` } }))] : prompt
     const json = await answer(post(fetch, { url: endpoint(brain, '/chat/completions'), headers: headersFor(brain, apiKey),
-      body: { model, messages: [{ role: 'user', content }], modalities: ['image', 'text'], ...(shape !== 'square' && { image_config: { aspect_ratio: RATIOS[shape] } }) } }, signal))
+      body: { model, messages: [{ role: 'user', content }], modalities: ['image', 'text'], provider: UNKEPT, ...(shape !== 'square' && { image_config: { aspect_ratio: RATIOS[shape] } }) } }, signal))
     return decoded(json?.choices?.[0]?.message?.images?.[0]?.image_url?.url)
   }
   // OpenAI's own answer in base64 anyway, and show it as it forms; others are asked to, rather than for an address.

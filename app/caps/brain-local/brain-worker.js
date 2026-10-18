@@ -1,7 +1,8 @@
 // The on-device brain: Gemma 4 E2B through Transformers.js and WebGPU, in a worker so
 // the page stays responsive. Keeps one KV cache: when the next prompt continues the
 // previous one (the frozen prefix of D46 makes that the normal case), only the new
-// tokens are read, so a second question about the same document starts at once.
+// tokens are read, so a second question about the same document starts at once. A long
+// prompt is read a part at a time into that cache (D350).
 //
 // { type: 'load', host, model, dtype }                → progress…, { type: 'ready' }
 // { type: 'generate', messages, tools, maxTokens }    → { type: 'chunk', text }…, { type: 'done', usage }
@@ -20,6 +21,12 @@ InferenceSession.create = async function (graph, options = {}) {
     ({ path, data: data instanceof URL ? await (await caches.match(data.href)).blob() : data })))
   return create.call(this, graph, { ...options, externalData })
 }
+
+// ONNX Runtime's WebAssembly counts a tensor's bytes in 32 bits, and attention over the tokens read
+// at once holds 8 heads × those tokens × all the tokens so far, in 16 bits: from a 16,384-token prompt
+// read whole it passed 4 GB and failed, and every run after it failed too, until a reload. Read 2,048
+// at a time, it stays under 1 GB at the full context (D350).
+const PART = 2048
 
 /** @type {Promise<{ tokenizer: any, model: any }> | null} */
 let loading = null
@@ -128,20 +135,22 @@ async function generate({ messages, tools, maxTokens = 4096, contextTokens = 327
     skip_special_tokens: false,
     callback_function: (chunk) => self.postMessage({ id, type: 'chunk', text: chunk }),
   })
+  // The cache is this generation's now, kept again once the answer is whole.
+  let cache = cached?.cache
+  cached = null
+  /** The prompt's first `end` tokens, of which the brain reads those after the cache. @param {number} end */
+  const prompt = (end) => ({ input_ids: toTensor(ids.slice(0, end)), attention_mask: toTensor(Array(end).fill(1)),
+    ...(cache && { past_key_values: cache }), do_sample: false, return_dict_in_generate: true })
   let result
   try {
-    result = await model.generate({
-      input_ids: toTensor(ids),
-      attention_mask: toTensor(ids.map(() => 1)),
-      ...(cached && { past_key_values: cached.cache }),
-      max_new_tokens: Math.min(maxTokens, contextTokens - ids.length),
-      do_sample: false,
-      streamer,
-      stopping_criteria: [stopping],
-      return_dict_in_generate: true,
-    })
+    // Each part but the last goes into the cache, its one token generated and dropped; the last comes with the answer.
+    for (let read = reused + PART; read < ids.length; read += PART) {
+      if (stopping.interrupted) throw Object.assign(new Error('Request aborted'), { code: 'aborted' })
+      ;({ past_key_values: cache } = await model.generate({ ...prompt(read), max_new_tokens: 1 }))
+    }
+    result = await model.generate({ ...prompt(ids.length), max_new_tokens: Math.min(maxTokens, contextTokens - ids.length), streamer, stopping_criteria: [stopping] })
   } catch (error) {
-    await forget() // the cache may be half updated
+    await cache?.dispose() // it may be half updated
     throw error
   } finally {
     stopping = null

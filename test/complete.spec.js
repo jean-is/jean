@@ -199,12 +199,12 @@ test('@ points at a file of the conversation’s folder', async ({ page, browser
   test.skip(browserName !== 'chromium', 'Chromium opens a folder in place; elsewhere it is a copy')
   // The system's folder picker, played by a folder of the private file system (as folders.spec.js does).
   await page.addInitScript(() => Object.assign(window, {
-    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked')).getDirectoryHandle('Clients'),
+    showDirectoryPicker: async () => (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked')).getDirectoryHandle('Clients'),
   }))
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => {
-    const clients = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('picked', { create: true })).getDirectoryHandle('Clients', { create: true })
+    const clients = await (await (await navigator.storage.getDirectory()).getDirectoryHandle('.picked', { create: true })).getDirectoryHandle('Clients', { create: true })
     const contracts = await clients.getDirectoryHandle('Contracts', { create: true })
     for (const [dir, name, text] of /** @type {const} */ ([[contracts, 'Acme.txt', 'Late payment: 60 days.'], [clients, 'notes.txt', 'Call Dana.']])) {
       const writable = await (await dir.getFileHandle(name, { create: true })).createWritable()

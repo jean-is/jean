@@ -20,7 +20,8 @@ export const extractable = (name) => /\.(docx|pptx|xlsx)$/i.test(name) || TEXT.t
  */
 export async function extractPages(name, bytes) {
   const ext = name.toLowerCase().split('.').pop()
-  if (TEXT.test(name)) return paginate(decodeText(bytes).split('\n'))
+  // An .xls that is text, as many exports are, reads as its text; one of Excel's own isn't read.
+  if (TEXT.test(name) || (ext === 'xls' && !isBinary(bytes))) return paginate(decodeText(bytes).split('\n'))
   if (ext !== 'docx' && ext !== 'pptx' && ext !== 'xlsx') return null
   const entries = new Map(readZip(bytes).map((entry) => [entry.name, entry]))
   /** @param {string} path */

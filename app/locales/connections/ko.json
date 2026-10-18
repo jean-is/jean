@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "이메일 검색",
+  "api.read_email": "이메일 읽기",
+  "api.create_draft": "임시보관 메일 작성",
+  "api.send_email": "이메일 보내기",
+  "api.list_calendars": "캘린더 목록",
+  "api.list_events": "일정 목록",
+  "api.create_event": "일정 추가",
+  "api.update_event": "일정 변경",
+  "api.delete_event": "일정 삭제",
+  "api.search_files": "파일 검색",
+  "api.read_file": "파일 읽기",
+  "api.create_document": "문서 만들기"
+}

@@ -1,10 +1,10 @@
 // Layouts (D215, D291): what an answer's Markdown shows it to be, laid out as that, from its structure
 // alone (./shapes.js): a comparison as its options side by side, steps one after the other, notes set
-// apart, a column of amounts at the end, a timeline, key figures, a checklist to tick. Loaded with the
-// first answer, never offered; until then, and for the others, ui/markdown.js shows them as they are.
-// The same Markdown copies as it was.
+// apart, a column of amounts at the end, a timeline, key figures, a checklist to tick, and the pictures
+// sources gave (D35). Loaded with the first answer, never offered; until then, and for the others,
+// ui/markdown.js shows them as they are. The same Markdown copies as it was.
 import { html, nothing } from 'lit-html'
-import { shapes, blocks, inline, lex } from '../../ui/markdown.js'
+import { shapes, blocks, inline, lex, cited } from '../../ui/markdown.js'
 import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -97,4 +97,30 @@ function blockquote(token) {
     : html`<p class="callout-title">${note.title ? inline(/** @type {any} */ (lex(note.title)[0])?.tokens) : t(`layouts.${note.kind}`)}</p>${blocks(lex(note.text))}`}</blockquote>`
 }
 
-shapes.value = { table, list, blockquote, blocks: sequenced }
+/** An address as it reads, escaped or not. @param {string} address */
+function unescaped(address) {
+  try {
+    return decodeURI(address)
+  } catch {
+    return address
+  }
+}
+
+/**
+ * A picture a source gave, at the address it gave, or one the user shared, by its name (D35): never
+ * an address the brain wrote, which injected words could have filled with what the conversation
+ * holds. One that doesn't load goes. Any other picture stays its words. @param {any} token
+ */
+function image(token) {
+  const href = unescaped(token.href)
+  const source = [...(cited?.values() ?? [])].find(({ name, picture, file }) => {
+    const address = file ? name : picture
+    return address !== undefined && unescaped(address) === href
+  })
+  if (source?.file) import('../../ui/shown.js')
+  return source?.file ? html`<app-shared class="picture" role="img" aria-label=${token.text} uri=${source.file.uri} type=${source.file.mimeType ?? ''}></app-shared>`
+    : source ? html`<img class="picture" src=${source.picture} alt=${token.text} referrerpolicy="no-referrer" loading="lazy" @error=${(/** @type {Event} */ e) => /** @type {HTMLElement} */ (e.target).remove()}>`
+    : null
+}
+
+shapes.value = { table, list, blockquote, image, blocks: sequenced }

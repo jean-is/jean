@@ -9,6 +9,7 @@ import { effect } from '@preact/signals-core'
 import { app, theme, notify } from '../../ui/state.js'
 import { copyDrawing } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
+import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
@@ -123,6 +124,7 @@ class AppChart extends HTMLElement {
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+        ${drawnActions('echarts', source)}
       </div>`
       : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>
         <pre dir="ltr"><code>${source}</code></pre>`, this)

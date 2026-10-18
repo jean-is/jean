@@ -1,0 +1,13 @@
+{
+  "plan.title": "แผน",
+  "plan.done": "เสร็จ {done} จาก {total}",
+  "plan.pending": "รอทำ",
+  "plan.in_progress": "กำลังทำ",
+  "plan.completed": "เสร็จแล้ว",
+  "plan.confirm": "ดำเนินการตามแผนนี้ไหม",
+  "plan.go": "ดำเนินการ",
+  "plan.always": "ดำเนินการเสมอ",
+  "plan.paused": "หยุดพักที่ขั้นตอน {count}",
+  "plan.cost": "ประมาณ {cost} จนถึงตอนนี้",
+  "plan.keepGoing": "ทำต่อ"
+}

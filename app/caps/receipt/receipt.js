@@ -5,7 +5,7 @@
 // conversation as each answer ends; saved, it is sealed with a key this device keeps and never
 // gives out, in standard forms whose words are salted digests, which the proof adds (D274). Loaded
 // with the first message, so the browser's record covers the first answer, and never offered.
-import { html, nothing } from 'lit-html'
+import { html, svg, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
@@ -14,7 +14,7 @@ import { serviceURL } from '../../core/settings.js'
 import { deviceKey } from '../../ui/secrets.js'
 import { priceOf, PLANS } from '../../ui/prices.js'
 import { save } from '../../ui/save.js'
-import { icons } from '../../ui/icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
@@ -29,9 +29,8 @@ import { BRAND } from '../../brand.js'
 
 await Promise.all([useStrings('receipt'), styleSheet(new URL('receipt.css', import.meta.url))])
 
-const INFO = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.5v.5"/></svg>`
-const SEAL = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="9" r="5.5"/><path d="M8.8 13.5 7.5 20.5l4.5-2.5 4.5 2.5-1.3-7"/></svg>`
-const CLOUD = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 18.5h9.25a3.75 3.75 0 0 0 .5-7.47 5.25 5.25 0 0 0-10.1-1.03A4.25 4.25 0 0 0 7.5 18.5Z"/></svg>`
+const INFO = icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.75" r="1.1" fill="currentColor" stroke="none"/>`)
+const SEAL = icon(svg`<circle cx="12" cy="9" r="5.5"/><path d="M8.8 13.5 7.5 20.5l4.5-2.5 4.5 2.5-1.3-7"/>`)
 
 // ─── What the page reached ───────────────────────────────────────────────────
 
@@ -137,14 +136,15 @@ function card(facts, turn, text, id, chosen) {
   const cloud = brains.some((brain) => !brain.local)
   const hosts = new Map([...brains, ...made].map(({ provider }) => [provider, hostOf(provider)]))
   const others = facts.outside.filter((host) => ![...hosts.values()].includes(host))
+  const files = serviceURL('files', app.settings.value, app.policy)
   /** One of them: its name, the address it was reached at outside this device, or that it ran here. @param {Brain | Maker} one */
   const entry = ({ provider, model, local }) => html`<dd class="receipt-brain">
     <bdi>${named({ provider, model })}</bdi>
     ${facts.outside.includes(hosts.get(provider) ?? '') ? html`<bdi class="receipt-host" dir="ltr">${hosts.get(provider)}</bdi>` : nothing}
-    ${local && facts.verdict !== 'local' ? html`<span class="receipt-where">${icons.chip}${t('receipt.here')}</span>` : nothing}</dd>`
+    ${local && facts.verdict !== 'local' ? html`<span class="receipt-where">${icons['brain-device']}${t('receipt.here')}</span>` : nothing}</dd>`
   return html`
     <div class="receipt-head is-${facts.verdict}">
-      <span class="receipt-mark">${facts.verdict === 'local' ? icons.shield : cloud ? CLOUD : facts.verdict === 'out' ? icons.globe : INFO}</span>
+      <span class="receipt-mark">${facts.verdict === 'local' ? icons.shield : cloud ? icons.cloud : facts.verdict === 'out' ? icons.globe : INFO}</span>
       <div><p class="receipt-verdict">${t(cloud ? 'receipt.inCloud' : `receipt.${facts.verdict}`)}</p>
         ${cloud ? html`<p class="receipt-note">${t('receipt.inCloud.text')}</p>` : facts.verdict === 'out' ? nothing : html`<p class="receipt-note">${t(`receipt.${facts.verdict}.text`)}</p>`}</div>
     </div>
@@ -155,6 +155,7 @@ function card(facts, turn, text, id, chosen) {
       ${made.length ? html`<div class="receipt-list"><dt>${t('receipt.made')}</dt>${made.map(entry)}</div>` : nothing}
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
+    ${files ? html`<p class="receipt-note"><a href=${`${files}#${locale.value}`} target="_blank">${t('receipt.files')}</a></p>` : nothing}
     <details class="receipt-certify">
       <summary>${SEAL}${t('receipt.certificate')}${icons.chevron}</summary>
       ${saving(`${id}-save`, 'receipt.save', () => keepCertificate(facts, turn, text))}
@@ -262,18 +263,18 @@ async function keepCertificate(facts, turn, text, words = false) {
   if (!current) return
   const answered = turn.end ?? turn.at
   const kept = words ? current.records.findLast(({ meta }) => meta?.certificate && saysOf(sealedOf(meta.certificate.jws)).credentialSubject?.answer?.at === answered)?.meta?.certificate : undefined
-  /** @type {{ sealed: import('./certificate.js').Sealed, salts: Salts }} */
+  /** @type {{ sealed: import('./certificate.js').Sealed, salts: Salts, places: string[] }} */
   let made
-  if (kept) made = { sealed: sealedOf(kept.jws), salts: kept.salts }
+  if (kept) made = { sealed: sealedOf(kept.jws), salts: kept.salts, places: kept.places ?? [] }
   else {
     const own = await sealOf()
-    const { credential, salts } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
-    made = { sealed: await vouched(await seal(credential, own)), salts }
-    await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts } })
+    const { credential, salts, places } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
+    made = { sealed: await vouched(await seal(credential, own)), salts, places }
+    await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts, places } })
   }
   const date = turn.at.slice(0, 10)
   if (!words) return save(new Blob([JSON.stringify(made.sealed, null, 2)], { type: 'application/jose+json' }), `${t('receipt.file', { date })}.json`)
-  const disclosures = disclosed(await disclosuresOf(made.salts, { turn, text, made: facts.made }))
+  const disclosures = [...disclosed(await disclosuresOf(made.salts, { turn, text, made: facts.made })), ...made.places]
   save(new Blob([proof(made.sealed, disclosures)], { type: 'application/vc+sd-jwt' }), `${t('receipt.proof.file', { date })}.sd-jwt`)
 }
 

@@ -43,8 +43,6 @@ function leave() {
   try {
     sessionStorage.setItem(HANDOVER, JSON.stringify({ place: location.hash, state: history.state, scroll: scrollY, caret }))
   } catch {}
-  // Captured whole, even in a look that turns its pages part by part (depth).
-  document.documentElement.style.setProperty('view-transition-name', 'root')
   // Another address: this one again, but for its hash, would only scroll. The new page drops it.
   location.replace(`${location.pathname}?${Date.now().toString(36)}${location.hash}`)
 }
@@ -69,8 +67,9 @@ async function arrive() {
       box.setSelectionRange(saved.caret[0], saved.caret[1])
     }
   }
-  // Whatever would play as the page arrives has played, the wait for it included (style.css).
+  // Whatever would play as the page arrives has played, the wait for it included (style.css); not
+  // what a scroll drives (the drawer's fades), which finished would stay at its end whatever the scroll.
   for (const animation of document.getAnimations()) {
-    if (animation.effect?.getComputedTiming().endTime !== Infinity) animation.finish()
+    if (animation.timeline === document.timeline && animation.effect?.getComputedTiming().endTime !== Infinity) animation.finish()
   }
 }

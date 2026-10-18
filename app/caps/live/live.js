@@ -1,13 +1,14 @@
 // Live conversation (docs/product.md, "Voice"): hands-free. Silero hears when the user starts
-// and stops speaking, Whisper writes it down, the message goes like a typed one, and the answer
+// and stops speaking, Whistle or Whisper writes it in the box as it is said, as dictation does
+// (caps/voice/passes.js), the message goes like a typed one once they stop, and the answer
 // is read aloud sentence by sentence while it streams. Speaking over Jean interrupts it. Voice
 // detection and speech to text run on this device, in dictation's worker (about 82 MB, once);
 // reading aloud uses the system's voices, like read-aloud, in the answer's own language.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { live } from '../../ui/dictation.js'
-import { app, effective, send, stop, notify, setPresence } from '../../ui/state.js'
-import { prepare, transcribe, detect } from '../voice/voice.js'
+import { app, effective, send, stop, notify } from '../../ui/state.js'
+import { prepare, writing, detect } from '../voice/voice.js'
 import { listener, speakable } from './turns.js'
 import { splitSuggestions } from '../../core/events.js'
 import { plainText } from '../../ui/spoken.js'
@@ -15,9 +16,8 @@ import { listed, voiceFor, noVoice } from '../../ui/voices.js'
 import { locale, t } from '../../core/i18n.js'
 import { scriptURL } from '../../ui/trusted.js'
 
-// Silero reads 512 samples at a time (32 ms); this many come before speech is sure, so its start isn't lost.
-const FRAME = 512
-const PREROLL = 20
+// The microphone's frames of 96 ms (three of Silero's 32 ms) that come before speech is sure, so its start isn't lost.
+const PREROLL = 7
 
 /** @type {{ stream: MediaStream, context: AudioContext } | null} */
 let session = null
@@ -33,10 +33,11 @@ async function start() {
     if (!(await prepare(Boolean(effective.value.settings.offers.live)))) return end()
     await listed()
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1 } })
-    const context = new AudioContext({ sampleRate: 16000 })
+    // At the microphone's own rate, as Firefox wants; the worklet makes the 16 kHz voice detection reads.
+    const context = new AudioContext()
     session = { stream, context }
-    await context.audioWorklet.addModule(scriptURL(new URL('./capture-worklet.js', import.meta.url)))
-    const node = new AudioWorkletNode(context, 'capture')
+    await context.audioWorklet.addModule(scriptURL(new URL('../voice/capture-worklet.js', import.meta.url)))
+    const node = new AudioWorkletNode(context, 'capture', { processorOptions: { rate: 16000 } })
     context.createMediaStreamSource(stream).connect(node)
     node.port.onmessage = hear()
     live.value = 'listening'
@@ -55,30 +56,27 @@ function end() {
   live.value = 'off'
 }
 
-/** Turns the microphone's frames into the user's turns. */
+/** Turns the microphone's frames into the user's turns, each written in the box as it is said. */
 function hear() {
   const turn = listener()
-  /** @type {Float32Array[]} the frames of what is being said, and a few from just before */
-  let heard = []
-  let speaking = false
+  /** @type {Float32Array[]} the last frames, for the start of what is said */
+  let recent = []
+  /** @type {ReturnType<typeof writing> | null} the turn being said: the box shows it alone, not one still being finished */
+  let saying = null
   return async (/** @type {MessageEvent<Float32Array>} */ { data }) => {
-    const chances = await detect(data.slice())
-    for (const [i, chance] of chances.entries()) {
-      heard.push(data.subarray(i * FRAME, (i + 1) * FRAME))
-      const change = turn(chance, live.value === 'speaking')
-      if (change === 'start') {
-        speaking = true
-        // Speaking over Jean: stop reading aloud, and stop the answer if it is still coming.
-        quiet()
-      } else if (change === 'end' && session) {
-        speaking = false
-        const audio = new Float32Array(heard.length * FRAME)
-        heard.forEach((frame, n) => audio.set(frame, n * FRAME))
-        heard = []
-        said(audio)
-      }
-      if (!speaking) heard = heard.slice(-PREROLL)
+    const changes = (await detect(data.slice())).map((chance) => turn(chance, live.value === 'speaking'))
+    if (changes.includes('start')) {
+      // Speaking over Jean: stop reading aloud, and stop the answer if it is still coming.
+      quiet()
+      const said = writing((words) => { if (saying === said) app.draft.value = words })
+      saying = said
+      for (const frame of recent) said.hear(frame)
     }
+    saying?.hear(data)
+    recent = [...recent, data].slice(-PREROLL)
+    if (!changes.includes('end')) return
+    if (saying && session) finish(saying)
+    saying = null
   }
 }
 
@@ -90,10 +88,10 @@ function quiet() {
   live.value = 'listening'
 }
 
-/** @param {Float32Array} audio */
-async function said(audio) {
+/** The turn's last words, then the message. @param {ReturnType<typeof writing>} said */
+async function finish(said) {
   live.value = 'thinking'
-  const text = (await transcribe(audio).catch(() => '')).trim()
+  const text = await said.end().catch(() => '')
   if (!session) return
   if (!text) return void (live.value = 'listening')
   await send(text)
@@ -141,10 +139,5 @@ function say(sentence, voice) {
   live.value = 'speaking'
   speechSynthesis.speak(utterance)
 }
-
-// The little light leans toward the user while it listens.
-effect(() => {
-  if (live.value === 'listening' && !app.busy.peek()) setPresence('listening')
-})
 
 register({ id: 'live' })

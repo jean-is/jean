@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "חיפוש אימיילים",
+  "api.read_email": "קריאת אימייל",
+  "api.create_draft": "כתיבת טיוטה",
+  "api.send_email": "שליחת אימייל",
+  "api.list_calendars": "הצגת יומנים",
+  "api.list_events": "הצגת אירועים",
+  "api.create_event": "הוספת אירוע",
+  "api.update_event": "שינוי אירוע",
+  "api.delete_event": "הסרת אירוע",
+  "api.search_files": "חיפוש קבצים",
+  "api.read_file": "קריאת קובץ",
+  "api.create_document": "יצירת מסמך"
+}

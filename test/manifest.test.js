@@ -4,18 +4,20 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { after, describe, it } from 'node:test'
+import { fileURLToPath } from 'node:url'
 import { brief } from '../scripts/budgets.js'
 import { countLoc } from '../scripts/loc.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
-import { jpegSize } from '../scripts/screenshots.js'
+import { jpegSize, webpSize } from '../scripts/screenshots.js'
+import { LOCALES } from '../app/core/i18n.js'
 import {
   extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
 } from '../scripts/graph.js'
 import {
-  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, plan, stampPreloads,
-  stampVersion,
+  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, manifestOf, PAGES, plan, SHARE, shotsOf,
+  stampPreloads, stampVersion,
 } from '../scripts/manifest.js'
-import { resolveRequest } from '../scripts/serve.js'
+import { pageOf, resolveRequest } from '../scripts/serve.js'
 import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, forImportMap, patchSource } from '../scripts/vendor.js'
 
 const IMPORT_MAP = {
@@ -190,6 +192,19 @@ describe('manifest: outputs', () => {
     assert.equal(JSON.parse(buildWebmanifest({ name: 'Test' })).description, undefined)
   })
 
+  it('names the same app in every language, from manifests/, its addresses climbing back to app/ (D396)', () => {
+    assert.equal(manifestOf('en'), 'manifest.webmanifest')
+    assert.equal(manifestOf('fr'), 'manifests/fr.webmanifest')
+    const manifest = JSON.parse(buildWebmanifest({ name: 'Test' }, 'One sentence.', 'fr', { welcome: 'Accueil' }))
+    assert.equal(manifest.id, './')
+    assert.equal(manifest.start_url, '../')
+    assert.equal(manifest.scope, '../')
+    assert.equal(manifest.icons[0].src, '../icons/icon.svg')
+    assert.deepEqual(manifest.screenshots[0], { src: '../screenshots/fr/welcome-wide.webp', sizes: '1440x900', type: 'image/webp', form_factor: 'wide', label: 'Accueil' })
+    assert.deepEqual([manifest.lang, manifest.dir], ['fr', 'ltr'])
+    assert.equal(JSON.parse(buildWebmanifest({ name: 'Test' }, undefined, 'ar', {})).dir, 'rtl')
+  })
+
   it('lists PNG icons Android can install with, one of them maskable, and none "any maskable"', () => {
     const { icons } = JSON.parse(buildWebmanifest({ name: 'Test' }))
     const png = (/** @type {string} */ sizes) => icons.some((/** @type {any} */ icon) => icon.type === 'image/png' && icon.sizes === sizes && !icon.purpose)
@@ -273,22 +288,59 @@ describe('manifest: icons', () => {
 })
 
 describe('manifest: screenshots', () => {
-  it('takes one wide and one narrow screenshot, at the size the web manifest says, in a shape Chromium shows', async () => {
-    const { screenshots } = JSON.parse(buildWebmanifest({ name: 'Test' }))
-    assert.deepEqual(screenshots.map((/** @type {any} */ shot) => shot.form_factor), ['wide', 'narrow'])
-    for (const { src, sizes, form_factor: form } of screenshots) {
-      const [width, height] = sizes.split('x').map(Number)
-      assert.deepEqual(jpegSize(await read(src)), { width, height }, `${src} is not ${sizes}: run \`npm run screenshots\``)
-      const [short, long] = [Math.min(width, height), Math.max(width, height)]
-      assert.ok(short >= 320 && long <= 3840 && long <= 2.3 * short, `${src}: Chromium skips a screenshot this shape`)
-      assert.equal(width > height, form === 'wide', `${src}: wide is landscape, narrow portrait`)
+  it('describes Jean in every language’s own words, English’s being index.html’s (D396)', async () => {
+    const english = /<meta name="description" content="([^"]*)">/.exec((await read('index.html')).toString('utf8'))?.[1]
+    assert.ok(english)
+    assert.equal((await shotsOf('en')).description, undefined, 'English’s is index.html’s')
+    for (const lang of LOCALES.filter((code) => code !== 'en')) {
+      const { description } = await shotsOf(lang)
+      assert.ok(description && description !== english, `${lang}: no description of its own in scripts/screenshots/${lang}.json`)
     }
+    const { outputs } = await plan(await fixture({ 'brand.js': 'export const BRAND = { name: "P" }\n', 'sw.js': "const VERSION = 'dev'\n" }))
+    assert.equal(JSON.parse(outputs[manifestOf('ja')]).description, (await shotsOf('ja')).description)
+  })
+
+  it('takes each page wide and narrow in every language, at the size its manifest says, in a shape Chromium shows (D396)', async () => {
+    for (const lang of LOCALES) {
+      const shots = await shotsOf(lang)
+      assert.equal(shots.chart.columns.length, 4, `${lang}: a column for the regions and one for each month`)
+      assert.equal(shots.chart.regions.length, 3, lang)
+      assert.equal(shots.sources.answer.match(/\[1\]/g)?.length, 2, `${lang}: the answer cites the lease`)
+      const { screenshots } = JSON.parse(buildWebmanifest({ name: 'Test' }, undefined, lang, shots.labels))
+      for (const form of ['wide', 'narrow']) {
+        // Chromium shows a form's first 8, and only those of the first one's shape.
+        const ones = screenshots.filter((/** @type {any} */ shot) => shot.form_factor === form)
+        assert.equal(ones.length, PAGES.length, `${lang} ${form}`)
+        assert.ok(ones.length <= 8 && new Set(ones.map((/** @type {any} */ shot) => shot.sizes)).size === 1, `${lang} ${form}`)
+      }
+      for (const { src, sizes, form_factor: form, label } of screenshots) {
+        assert.ok(label, `${src} has no label`)
+        const [width, height] = sizes.split('x').map(Number)
+        assert.deepEqual(webpSize(await read(src.replace(/^\.\.\//, ''))), { width, height }, `${src} is not ${sizes}: run \`npm run screenshots -- ${lang}\``)
+        const [short, long] = [Math.min(width, height), Math.max(width, height)]
+        assert.ok(short >= 320 && long <= 3840 && long <= 2.3 * short, `${src}: Chromium skips a screenshot this shape`)
+        assert.equal(width > height, form === 'wide', `${src}: wide is landscape, narrow portrait`)
+      }
+    }
+  })
+
+  it('takes the picture a shared link shows at Open Graph\'s size (D355)', async () => {
+    assert.deepEqual(jpegSize(await read(SHARE.src)), { width: SHARE.width, height: SHARE.height }, `${SHARE.src} is not ${SHARE.width}x${SHARE.height}: run \`npm run screenshots\``)
   })
 
   it('reads a JPEG\'s size from its frame header, after the segments before it', () => {
     const jpeg = Buffer.from('ffd8' + 'ffe000040000' + 'ffc0000b08' + '0008' + '0010' + '0101' + '1100', 'hex')
     assert.deepEqual(jpegSize(jpeg), { width: 16, height: 8 })
     assert.equal(jpegSize(Buffer.from('89504e470d0a1a0a', 'hex')), null)
+  })
+
+  it('reads a WebP\'s size from its first chunk, lossy or lossless', () => {
+    const riff = (/** @type {string} */ chunk, /** @type {string} */ body) => Buffer.concat([Buffer.from('RIFF\0\0\0\0WEBP', 'latin1'), Buffer.from(chunk, 'latin1'), Buffer.alloc(4), Buffer.from(body, 'hex'), Buffer.alloc(8)])
+    assert.deepEqual(webpSize(riff('VP8 ', '0000009d012a' + '1000' + '0800')), { width: 16, height: 8 })
+    // 14 bits each, less one: 15 and 7.
+    assert.deepEqual(webpSize(riff('VP8L', '2f' + '0fc00100')), { width: 16, height: 8 })
+    assert.deepEqual(webpSize(riff('VP8X', '00000000' + '0f0000' + '070000')), { width: 16, height: 8 })
+    assert.equal(webpSize(Buffer.from('89504e470d0a1a0a', 'hex')), null)
   })
 })
 
@@ -433,5 +485,14 @@ describe('vendor and serve helpers', () => {
     assert.equal(resolveRequest('/core/..%5c..%5cetc', root), null)
     assert.equal(resolveRequest('/.git/config', root), null)
     assert.equal(resolveRequest('/%E0%A4%A', root), null)
+  })
+
+  it('answers a page without its .html, and a file or folder of that name as itself (D356)', async () => {
+    const app = fileURLToPath(new URL('../app/', import.meta.url))
+    assert.equal(await pageOf(`${app}privacy`), `${app}privacy.html`)
+    assert.equal(await pageOf(`${app}caps/browser/browser`), `${app}caps/browser/browser.html`)
+    assert.equal(await pageOf(`${app}privacy.html`), `${app}privacy.html`)
+    assert.equal(await pageOf(`${app}caps`), `${app}caps`)
+    assert.equal(await pageOf(`${app}nowhere`), `${app}nowhere.html`)
   })
 })

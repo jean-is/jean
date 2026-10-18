@@ -12,7 +12,7 @@ for (const [lang, about, local, free, save, prove] of [
   ['ar', 'عن هذه الإجابة', 'خصوصيتك محفوظة', 'مجانًا', 'حفظ الشهادة', 'حفظ الإثبات'],
   ['ja', 'この回答について', 'プライバシーは守られました', '無料', '証明書を保存', '証拠を保存'],
 ]) {
-  test(`an answer done on this device says so, and saves a sealed certificate (${lang})`, async ({ page }) => {
+  test(`an answer done on this device says so, and ${lang === 'en' ? 'saves' : 'offers'} a sealed certificate (${lang})`, async ({ page }) => {
     await start(page, lang)
     // The fake brain is on this computer, as Ollama would be.
     await connectFakeBrain(page)
@@ -43,6 +43,9 @@ for (const [lang, about, local, free, save, prove] of [
     await expect(card.locator('.receipt-more .receipt-note')).toBeHidden()
     await card.locator('.receipt-more > summary').click()
     await expect(card.locator('.receipt-more .receipt-note')).toBeVisible()
+    await expect(card.getByRole('button', { name: prove })).toBeVisible()
+    // What the certificate and its proof hold, and the keyboard, are the same in every language.
+    if (lang !== 'en') return
     const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: save }).click()])
     const saved = JSON.parse(await readFile(await download.path(), 'utf8'))
     expect(Object.keys(saved).sort()).toEqual(['payload', 'protected', 'signature'])

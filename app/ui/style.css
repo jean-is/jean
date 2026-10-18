@@ -1,21 +1,21 @@
-/* Jean — the room lights up. Pure CSS: oklch, @property light, logical properties only. */
+/* Jean's room, under every look. Pure CSS: oklch, @property light, logical properties only. */
 
-@font-face { font-family: Display; src: url(../fonts/display.woff2) format('woff2'); font-display: swap; }
-@font-face { font-family: Display; font-style: italic; src: url(../fonts/display-italic.woff2) format('woff2'); font-display: swap; }
+/* Gentium Book Plus Bold (fonts/OFL.txt), every weight, so no bold is ever made up. */
+@font-face { font-family: Display; font-weight: 100 900; src: url(../fonts/display.woff2) format('woff2'); font-display: swap; }
 
 @property --light { syntax: '<number>'; inherits: true; initial-value: 0.4; }
 @property --light-x { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
 @property --light-y { syntax: '<percentage>'; inherits: true; initial-value: 34%; }
 @property --light-size { syntax: '<length>'; inherits: true; initial-value: 70vmax; }
-/* The light's colour: Jean's amber, or a project's own (D78), cross-fading between rooms. */
-@property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.74 0.17 54); }
+/* The light's colour: Jean's water blue, or a project's own (D78), cross-fading between rooms. */
+@property --tint { syntax: '<color>'; inherits: true; initial-value: oklch(0.781 0.118 209); }
 
 :root {
   color-scheme: dark;
   --room-2: oklch(0.19 0.02 52);
   --ink: oklch(0.93 0.018 80);
   --ink-soft: oklch(0.93 0.018 80 / 0.68);
-  --ink-faint: oklch(0.93 0.018 80 / 0.42);
+  --ink-faint: oklch(0.93 0.018 80 / 0.6);
   --line: oklch(1 0 0 / 0.09);
   --line-strong: oklch(1 0 0 / 0.18);
   --glass: oklch(0.2 0.02 52 / 0.72);
@@ -30,6 +30,10 @@
   --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', 'Helvetica Neue', sans-serif;
   --mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
   --radius: 1.25rem;
+  --pen: 1.5;
+  --icon-s: 1rem;
+  --icon-m: 1.25rem;
+  --icon-l: 1.75rem;
   --column: min(100% - 2.5rem, 46rem);
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
 }
@@ -40,7 +44,7 @@
   --room-2: oklch(0.94 0.02 80);
   --ink: oklch(0.24 0.02 50);
   --ink-soft: oklch(0.24 0.02 50 / 0.72);
-  --ink-faint: oklch(0.24 0.02 50 / 0.5);
+  --ink-faint: oklch(0.24 0.02 50 / 0.64);
   --line: oklch(0.2 0.02 50 / 0.1);
   --line-strong: oklch(0.2 0.02 50 / 0.2);
   --glass: oklch(1 0 0 / 0.72);
@@ -53,7 +57,7 @@
   --glow-alpha: 0.7;
 }
 
-/* A project's light colours the room (the same amber by default: 54 + 11 = 65, 54 + 21 = 75). */
+/* A project's light colours the room (Jean's water by default), turned 11 degrees round the wheel by night, 21 by day. */
 @supports (color: oklch(from red l c h)) {
   :root { --glow: oklch(from var(--tint) 0.78 0.16 calc(h + 11)); }
   [data-theme='light'] { --glow: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); }
@@ -112,83 +116,52 @@ button { cursor: pointer; }
 @keyframes warm { from { --light: 0.62; } to { --light: 0.78; } }
 @keyframes settle { from { --light: 0.75; } to { --light: 0.42; } }
 
-/* ─── The little light (ui/persona.js) ──────────────────────────────────── */
-/* The light, with a face. Every colour comes from --tint, the light's colour: Jean's amber, or a
-   project's own (any CSS colour, on the root or on one element). By day it is drawn in ink. */
+/* ─── The wave (ui/persona.js) ─────────────────────────────────────────── */
+/* Jean's presence, the tilde of its mark. Its colour is --tint's hue and chroma, Jean's water or a
+   project's own, at the lightness each mode needs; it travels the way the page reads, its ends
+   fading out. */
 
-:root { --tint: oklch(0.74 0.17 54); }
+/* Jean's water, and the room's own warm light, as other looks keep theirs; an accent or a project's colour wins, on each wave. */
+:where(:root) { --tint: oklch(0.781 0.118 209); }
+:where(:root:not([data-look])) { --tint: oklch(0.74 0.17 54); }
+app-persona { --wave: oklch(from var(--tint) 0.781 min(c, 0.18) h); }
+[data-theme='light'] app-persona { --wave: oklch(from var(--tint) 0.56 min(c, 0.19) h); }
 app-persona {
-  position: relative;
   display: inline-block;
   flex: none;
   inline-size: var(--persona-size, 2rem);
   aspect-ratio: 1;
-  container-type: inline-size;
-  color: oklch(from var(--tint) 0.26 0.05 calc(h - 14));
-  --persona-halo: oklch(from var(--tint) 0.78 0.16 calc(h + 11));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
-/* :where() leaves prefers-contrast's ink rim on top. */
-:where([data-theme='light']) app-persona { --persona-halo: oklch(from var(--tint) 0.86 0.12 calc(h + 21)); --persona-rim: oklch(from var(--tint) 0.55 0.16 calc(h - 9)); }
-app-persona::before {
-  content: '';
-  position: absolute;
-  inset: -40%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, oklch(from var(--persona-halo) l c h / var(--glow-alpha)), transparent);
-  opacity: 0.5;
-  transition: opacity 0.8s var(--ease);
-  animation: glow 4s ease-in-out infinite alternate var(--loops, running);
-}
-.persona { position: relative; display: block; inline-size: 100%; block-size: 100%; overflow: visible; }
-.persona * { transition: opacity 0.3s, translate 0.6s var(--ease), scale 0.4s var(--ease); }
-.persona-flame { transform-origin: 50px 91px; animation: sway 3s ease-in-out infinite alternate var(--loops, running); }
-.persona-body, .persona-sparks { fill: oklch(from var(--tint) 0.74 0.17 h); }
-.persona-body { stroke: var(--persona-rim, none); stroke-width: 3; paint-order: stroke; }
-.persona-inner { fill: oklch(from var(--tint) 0.91 0.115 calc(h + 30)); }
-.persona-eyes { fill: currentColor; transform-origin: 50px 62px; animation: blink 5s infinite var(--loops, running); }
-.persona-eyes circle { fill: oklch(1 0 0 / 0.9); }
-.persona-face path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; transform-origin: 50px 71px; }
-.persona-cheeks { fill: oklch(0.69 0.16 27 / 0.5); }
-.persona-sparks circle, .persona-happy { opacity: 0; }
-@container (inline-size < 2.6rem) { .persona-cheeks, .persona-eyes circle { display: none; } }
+.persona { display: block; inline-size: 100%; block-size: 100%; fill: none; stroke: var(--wave); stroke-width: 5; stroke-linecap: round; }
+.persona-wave { transform-box: fill-box; transform-origin: center; scale: 1 0.9; transition: scale 0.4s var(--ease), opacity 0.3s; }
+.persona-line { animation: travel 4.5s linear infinite var(--loops, running); }
+[dir='rtl'] .persona-line { animation-direction: reverse; }
+.persona-smile, .persona-frown { opacity: 0; transition: opacity 0.3s; }
 
-app-persona[data-presence='listening']::before { opacity: 0.8; }
-app-persona[data-presence='listening'] .persona-face { translate: 0 2.5px; }
-app-persona[data-presence='thinking']::before { animation-duration: 0.9s; }
-app-persona[data-presence='thinking'] .persona-flame { animation-duration: 0.8s; }
-app-persona[data-presence='thinking'] .persona-face { animation: ponder 2.4s ease-in-out infinite alternate var(--loops, running); }
-app-persona[data-presence='thinking'] .persona-mouth { scale: 0.55 0.8; }
-app-persona[data-presence='thinking'] .persona-sparks circle { animation: rise 1.8s ease-out infinite var(--loops, running); }
-app-persona[data-presence='thinking'] .persona-sparks circle:nth-child(2) { animation-delay: 0.6s; }
-app-persona[data-presence='thinking'] .persona-sparks circle:nth-child(3) { animation-delay: 1.2s; }
-app-persona[data-presence='answering']::before { opacity: 1; }
-app-persona[data-presence='answering'] .persona { animation: bob 0.8s ease-in-out infinite alternate var(--loops, running); }
-app-persona[data-presence='done']::before { opacity: 0.8; }
-app-persona[data-presence='done'] .persona { animation: hop 0.8s var(--ease); }
-app-persona[data-presence='done'] .persona-eyes { opacity: 0; }
-app-persona[data-presence='done'] .persona-happy { opacity: 1; }
-app-persona[data-presence='waiting']::before { animation-duration: 0.9s; }
-app-persona[data-presence='waiting'] .persona-face { translate: 2px 2.5px; }
-app-persona[data-presence='waiting'] .persona-mouth { scale: 0.7 1; }
-app-persona[data-presence='oops']::before { opacity: 0.25; }
-app-persona[data-presence='oops'] .persona-flame { scale: 1.03 0.94; animation-play-state: paused; }
-app-persona[data-presence='oops'] .persona-face { translate: -2px 2px; }
-app-persona[data-presence='oops'] .persona-mouth { scale: 0.6 -0.7; }
+app-persona[data-presence='listening'] .persona-wave { animation: voice 1.7s ease-in-out infinite var(--loops, running); }
+app-persona[data-presence='listening'] .persona-line { animation-duration: 1.5s; }
+app-persona[data-presence='thinking'] .persona-wave { scale: 1 0.45; }
+app-persona[data-presence='thinking'] .persona-line { animation-duration: 0.7s; }
+app-persona[data-presence='answering'] .persona-wave { animation: speak 1.2s ease-in-out infinite var(--loops, running); }
+app-persona[data-presence='answering'] .persona-line { animation-duration: 1.2s; }
+app-persona[data-presence='waiting'] .persona-wave { scale: 1 1.1; animation: waits 1.8s ease-in-out infinite var(--loops, running); }
+app-persona[data-presence='waiting'] .persona-line { animation-play-state: paused; }
+app-persona:is([data-presence='done'], [data-presence='oops']) .persona-wave { opacity: 0; }
+app-persona[data-presence='done'] .persona-smile { opacity: 1; animation: hop 0.8s var(--ease); }
+app-persona[data-presence='oops'] .persona-frown { opacity: 1; stroke: var(--ink-faint); }
 
-@keyframes glow { from { scale: 0.92; } to { scale: 1.06; } }
-@keyframes sway { from { transform: skewX(2deg) scale(1, 0.98); } to { transform: skewX(-2.5deg) scale(1, 1.03); } }
-@keyframes blink { 0%, 93%, 100% { scale: 1; } 96% { scale: 1 0.1; } }
-@keyframes ponder { from { translate: -3px -3.5px; } to { translate: 2px -3.5px; } }
-@keyframes rise { from { opacity: 0; translate: 0 4px; } 25% { opacity: 1; } to { opacity: 0; translate: 2px -16px; } }
-@keyframes bob { from { translate: 0 1%; } to { translate: 0 -3%; } }
+@keyframes travel { from { translate: -24px; } }
+@keyframes voice { 0%, 100% { scale: 1 0.75; } 20% { scale: 1 1.35; } 45% { scale: 1 0.9; } 70% { scale: 1 1.25; } }
+@keyframes speak { 0%, 100% { scale: 1 0.5; } 15% { scale: 1 1.15; } 30% { scale: 1 0.6; } 50% { scale: 1 1.05; } 65% { scale: 1 0.45; } 80% { scale: 1 0.95; } }
+@keyframes waits { 50% { opacity: 0.4; } }
 @keyframes hop { 40% { translate: 0 -12%; } }
 
 /* On the first screen it sits above the question; once the conversation begins it flies into the header. */
-.welcome app-persona { --persona-size: clamp(4.5rem, 11vw, 7rem); margin-block-end: -1rem; margin-inline-start: calc(var(--persona-size) * -0.17); }
-.wordmark app-persona { margin-block-start: -0.35rem; }
+.welcome app-persona { --persona-size: clamp(4.5rem, 11vw, 7rem); margin-block-end: -1rem; }
 app-shell:has(.welcome) .wordmark app-persona { display: none; }
 .welcome app-persona, .wordmark app-persona { view-transition-name: persona; }
-::view-transition-group(persona) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
 
 /* ─── Frame ─────────────────────────────────────────────────────────────── */
 
@@ -220,13 +193,15 @@ app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-s
   border: 0;
   background: none;
   padding: 0.1rem 0.25rem;
-  font: 400 1.9rem/1 var(--display);
+  font: 700 1.9rem/1 var(--display);
   letter-spacing: -0.01em;
   color: var(--ink);
   text-shadow: 0 0 1.4rem oklch(from var(--glow) l c h / 0.45);
   transition: text-shadow 0.6s var(--ease);
 }
 .wordmark:hover { text-shadow: 0 0 2rem oklch(from var(--glow) l c h / 0.8); }
+/* The name's box is its x-height, centred on the wave's. */
+:is(.wordmark, .print-mark) span { text-box: trim-both ex alphabetic; }
 
 .icon-button {
   display: inline-grid;
@@ -242,7 +217,8 @@ app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-s
 }
 .icon-button:hover, .icon-button.is-active { background: var(--line); color: var(--ink); }
 .icon-button.subtle { inline-size: 2.1rem; block-size: 2.1rem; }
-.icon { inline-size: 1.25rem; block-size: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.icon { inline-size: var(--glyph, var(--icon-m)); block-size: var(--glyph, var(--icon-m)); fill: none; stroke: currentColor; stroke-width: var(--pen); stroke-linecap: round; stroke-linejoin: round; }
+.icon * { vector-effect: non-scaling-stroke; }
 .flip-rtl:dir(rtl) { transform: scaleX(-1); }
 
 
@@ -252,16 +228,16 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 
 /* ─── Welcome ───────────────────────────────────────────────────────────── */
 
-.welcome { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2.5rem; padding-block: 8vh 4vh; }
+.welcome { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2.5rem; padding-block: 8vh 0; }
 .hero-question, .conversation-title { view-transition-name: hero; }
 .hero-question {
   /* background-clip: text paints only inside the box, which a 0.98 line height
-     would leave short of descenders and the italic overhang: pad, then cancel. */
+     would leave short of descenders: pad, then cancel. */
   margin-block: 0 -0.15em;
   margin-inline: 0 -0.15em;
   padding-block: 0 0.15em;
   padding-inline: 0 0.15em;
-  font: italic 400 clamp(2.8rem, 9vw, 6.2rem)/0.98 var(--display);
+  font: 700 clamp(2.8rem, 9vw, 6.2rem)/0.98 var(--display);
   letter-spacing: -0.02em;
   text-wrap: balance;
   background: linear-gradient(170deg, var(--ink) 35%, var(--flame) 115%);
@@ -271,8 +247,12 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
   transition: opacity 1.2s var(--ease), translate 1.2s var(--ease), filter 1.2s var(--ease);
   @starting-style { opacity: 0; translate: 0 0.6rem; filter: blur(8px); }
 }
-:is(:lang(ar), :lang(ja)) .hero-question { font-family: var(--sans); font-style: normal; font-weight: 300; line-height: 1.25; }
-.starters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+:is(:lang(ar), :lang(ja)) .hero-question { font-family: var(--sans); font-style: normal; font-weight: 300; line-height: 1.25; word-break: auto-phrase; }
+.pitch { display: grid; gap: 0.9rem; margin-block-start: -1rem; color: var(--ink-soft); }
+.pitch p { margin: 0; max-inline-size: 36rem; font-size: 1.1rem; text-wrap: balance; word-break: auto-phrase; }
+.pitch ul { display: flex; flex-wrap: wrap; gap: 0.3rem 1.25rem; margin: 0; padding: 0; list-style: none; font-size: 0.85rem; }
+.pitch li::before { content: '✓ ' / ''; color: var(--flame); }
+.starters { display: flex; flex-wrap: wrap; gap: 0.6rem; inline-size: var(--column); margin: 0.5rem auto 0; padding: 0; list-style: none; }
 .starter {
   padding: 0.55rem 1rem;
   border: 1px solid var(--line-strong);
@@ -285,7 +265,7 @@ main { flex: 1; display: flex; flex-direction: column; inline-size: var(--column
 
 /* ─── Conversation ──────────────────────────────────────────────────────── */
 
-.conversation-title { margin: 1.5rem 0 1rem; font: italic 400 clamp(1.7rem, 4vw, 2.4rem)/1.1 var(--display); color: var(--ink-soft); text-wrap: balance; }
+.conversation-title { margin: 1.5rem 0 1rem; font: 700 clamp(1.7rem, 4vw, 2.4rem)/1.1 var(--display); color: var(--ink-soft); text-wrap: balance; }
 :is(:lang(ar), :lang(ja)) .conversation-title { font-family: var(--sans); font-style: normal; font-weight: 400; }
 .turns { display: flex; flex-direction: column; gap: 1.75rem; margin: 0; padding: 0; list-style: none; }
 .turn { display: flex; flex-direction: column; gap: 1rem; }
@@ -382,7 +362,7 @@ app-made:not(:defined) { display: none; }
 }
 .file-chip:hover { border-color: oklch(from var(--flame) l c h / 0.6); }
 .file-chip span, .attachment-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.file-chip .icon, .attachment > .icon { inline-size: 1rem; block-size: 1rem; flex: none; color: var(--flame); }
+.file-chip .icon, .attachment > .icon { --glyph: var(--icon-s); flex: none; color: var(--flame); }
 .attachments { margin-block-end: 0.6rem; }
 .attachment { padding-inline-end: 0.15rem; }
 .attachment-note { flex: none; color: var(--ink-faint); font-size: 0.8rem; }
@@ -399,7 +379,7 @@ app-made:not(:defined) { display: none; }
 .read-list { font-size: 0.86rem; color: var(--ink-soft); }
 .read-list summary { display: inline-flex; align-items: center; gap: 0.45rem; list-style: none; cursor: pointer; border-radius: 0.5rem; }
 .read-list summary::-webkit-details-marker { display: none; }
-.read-list summary .icon { inline-size: 1rem; block-size: 1rem; }
+.read-list summary .icon { --glyph: var(--icon-s); }
 .read-list[open] summary .icon:last-child { rotate: 180deg; }
 .read-list ul { display: grid; gap: 0.25rem; margin: 0.4rem 0 0; padding-inline-start: 1.45rem; }
 .read-list li { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -419,7 +399,7 @@ app-made:not(:defined) { display: none; }
   line-height: 1;
   vertical-align: 0.15em;
 }
-a.cite { color: inherit; text-decoration: none; }
+a.cite, app-composer > p a { color: inherit; text-decoration: none; }
 :is(a, button).cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
 .read-list .cite { margin: 0; font-size: 0.8em; }
 /* A web source's site, above its chip while the pointer is on it or it has focus (D210). */
@@ -448,7 +428,7 @@ a.cite:is(:hover, :focus-visible) .cite-tip { display: grid; }
   animation: arrive 0.5s var(--ease) both;
 }
 .follow-up:hover { border-color: oklch(from var(--flame) l c h / 0.6); color: var(--ink); box-shadow: 0 0 1.2rem -0.4rem oklch(from var(--glow) l c h / 0.6); }
-.follow-up .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.follow-up .icon { --glyph: var(--icon-s); color: var(--flame); }
 html[data-dropping] .drop-zone { opacity: 1; }
 .drop-zone {
   position: fixed;
@@ -460,13 +440,13 @@ html[data-dropping] .drop-zone { opacity: 1; }
   border-radius: 2rem;
   background: oklch(from var(--room) l c h / 0.8);
   backdrop-filter: blur(6px);
-  font: italic 400 clamp(1.8rem, 5vw, 3rem)/1.1 var(--display);
+  font: 700 clamp(1.8rem, 5vw, 3rem)/1.1 var(--display);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.25s var(--ease);
 }
 :is(:lang(ar), :lang(ja)) .drop-zone { font-family: var(--sans); font-style: normal; }
-.offer { inline-size: var(--column); margin: 0.5rem auto 0; padding: 0.9rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.4); border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.07); }
+.offer { inline-size: var(--column); margin: 0.5rem auto 0; padding: 0.9rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.4); border-radius: var(--radius); background: color-mix(in srgb, var(--flame) 7%, var(--room)); }
 .offer p { margin: 0 0 0.6rem; }
 .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
@@ -476,7 +456,7 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .activity { font-size: 0.86rem; color: var(--ink-soft); }
 .activity summary { display: inline-flex; align-items: center; gap: 0.5rem; list-style: none; cursor: pointer; padding: 0.15rem 0.1rem; border-radius: 0.5rem; }
 .activity summary::-webkit-details-marker { display: none; }
-.activity summary .icon { inline-size: 1rem; block-size: 1rem; flex: none; transition: rotate 0.3s var(--ease); }
+.activity summary .icon { --glyph: var(--icon-s); flex: none; transition: rotate 0.3s var(--ease); }
 .activity[open] > summary .icon, .step[open] > summary .icon { rotate: 180deg; }
 .activity-list { margin: 0.5rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.2rem; }
 .activity-list li { min-inline-size: 0; }
@@ -485,7 +465,7 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .activity-list li[data-depth='3'] { padding-inline-start: 3.3rem; }
 /* Each line opens on what it was given and what came back. */
 .step > summary { display: flex; gap: 0.55rem; }
-.step > summary .icon { inline-size: 0.85rem; block-size: 0.85rem; opacity: 0.45; }
+.step > summary .icon { --glyph: var(--icon-s); opacity: 0.45; }
 .step > summary:hover .icon, .step[open] > summary .icon { opacity: 1; }
 .step-body { display: grid; gap: 0.3rem; margin: 0.2rem 0 0.6rem; padding-inline-start: 1.15rem; min-inline-size: 0; }
 .step-body p { margin: 0; }
@@ -511,12 +491,12 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 .approval-actions, .msg-error-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .approval input { inline-size: 100%; margin-block-end: 0.75rem; }
 .approval .approval-from { display: flex; align-items: center; gap: 0.4rem; margin-block-end: 0.4rem; font-size: 0.86rem; color: var(--ink-soft); }
-.approval-from .icon { inline-size: 1rem; block-size: 1rem; flex: none; }
+.approval-from .icon { --glyph: var(--icon-s); flex: none; }
 .approval-for { margin: 0 0 0.75rem; padding: 0.4rem 0.6rem; overflow-x: auto; border-radius: 0.5rem; background: var(--room); font: 0.82rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 .inbox { display: grid; gap: 0.6rem; }
 .since { display: flex; align-items: center; gap: 0.45rem; margin: 0; font-weight: 600; }
 button.since { padding: 0; border: 0; background: none; text-align: start; } button.since:hover > span { text-decoration: underline; }
-.since .icon { inline-size: 1.1rem; block-size: 1.1rem; color: var(--flame-deep); }
+.since .icon { --glyph: var(--icon-s); color: var(--flame-deep); }
 .since-note { margin: 0.2rem 0 0.8rem; font-size: 0.86rem; color: var(--ink-soft); }
 .inbox-count { margin: 0; font-size: 0.86rem; color: var(--ink-soft); }
 .msg-error { padding: 1rem 1.1rem; border: 1px solid oklch(from var(--danger) l c h / 0.5); border-radius: var(--radius); background: oklch(from var(--danger) l c h / 0.08); }
@@ -524,7 +504,13 @@ button.since { padding: 0; border: 0; background: none; text-align: start; } but
 
 /* ─── The box ───────────────────────────────────────────────────────────── */
 
-app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem 0 max(1rem, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--room) 45%); }
+app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem 0 max(1rem, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--room) 45%); view-transition-name: composer; }
+/* Where a new task fits a wide window, its box under the question, its ideas under it; elsewhere at the foot, under them and an offer (D366). */
+[data-centred] app-shell:has(.welcome) > app-composer { flex: 1; position: static; background: none; }
+[data-centred] .welcome { justify-content: flex-end; }
+[data-centred] app-shell:has(.welcome) app-composer > p { margin-block-start: auto; }
+:root:not([data-centred]) app-composer > :not(form, p) { order: -1; }
+:root:not([data-centred]) app-composer:has(> :not(form, p)) { background-size: 100% 160%; background-position: bottom; }
 .composer {
   inline-size: var(--column);
   margin-inline: auto;
@@ -555,9 +541,9 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; padding: 0.5rem
 .composer textarea::placeholder { color: var(--ink-faint); }
 .composer-row { display: flex; align-items: center; gap: 0.5rem; margin-block-start: 0.35rem; }
 .composer-tools { display: flex; flex: none; align-items: center; gap: 0.15rem; margin-inline-start: -0.45rem; }
-/* Once a task has started, under the box: {name} is AI and can make mistakes (D273). */
-app-composer:has(.ai-note) { padding-block-end: max(0.5rem, env(safe-area-inset-bottom)); }
-.ai-note { inline-size: var(--column); margin: 0.45rem auto 0; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
+/* Under the box: {name} is AI and can make mistakes (D273); before, legal links (D356). */
+app-composer:has(> p) { padding-block-end: max(0.5rem, env(safe-area-inset-bottom)); }
+app-composer > p { inline-size: var(--column); margin: 0 auto; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
 .is-working { animation: pulse 1.1s ease-in-out infinite var(--loops, running); }
 .is-listening { color: var(--flame); box-shadow: 0 0 1rem -0.2rem oklch(from var(--glow) l c h / 0.8); animation: pulse 1.6s ease-in-out infinite var(--loops, running); }
 .brain-chip {
@@ -575,8 +561,8 @@ app-composer:has(.ai-note) { padding-block-end: max(0.5rem, env(safe-area-inset-
   anchor-name: --brain;
 }
 .brain-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.brain-chip .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
-.brain-chip .icon:last-child { inline-size: 0.85rem; block-size: 0.85rem; color: inherit; margin-inline-start: -0.15rem; }
+.brain-chip .icon { --glyph: var(--icon-s); color: var(--flame); }
+.brain-chip .icon:last-child { --glyph: var(--icon-s); color: inherit; margin-inline-start: -0.15rem; }
 .brain-chip:hover { color: var(--ink); border-color: var(--line-strong); }
 .send {
   display: grid;
@@ -591,7 +577,7 @@ app-composer:has(.ai-note) { padding-block-end: max(0.5rem, env(safe-area-inset-
   box-shadow: 0 0 1.2rem -0.2rem oklch(from var(--glow) l c h / 0.7);
   transition: scale 0.2s var(--ease), opacity 0.3s, box-shadow 0.3s;
 }
-.send .icon { stroke-width: 2.2; }
+.send .icon { stroke-width: 2; }
 .send:hover:not(:disabled) { scale: 1.06; }
 .send:disabled { opacity: 0.25; box-shadow: none; cursor: default; }
 .send:is(.is-stop, .is-live) { background: var(--ink); }
@@ -644,7 +630,7 @@ app-composer:has(.ai-note) { padding-block-end: max(0.5rem, env(safe-area-inset-
 .button.primary:hover { background: oklch(from var(--flame) calc(l + 0.05) c h); }
 .button.subtle { border-color: transparent; color: var(--ink-soft); }
 .button.wide { inline-size: 100%; }
-.button .icon { inline-size: 1.05rem; block-size: 1.05rem; }
+.button .icon { --glyph: var(--icon-s); }
 .stack { display: grid; gap: 0.75rem; }
 label { display: grid; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-soft); }
 input:not([type='radio'], [type='checkbox'], .visually-hidden), select {
@@ -667,7 +653,7 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 :where(:root[data-sidebar]) app-shell { padding-inline-start: var(--list); }
 /* Sticky, in the room the shell leaves at its start, taking none of its own: fixed, Safari would
    place a menu anchored there (the user's, the project's, the folder's) as if it scrolled away. */
-:where(:root[data-sidebar]) :is(.bar, app-inbox) { align-self: flex-start; inline-size: var(--list); margin-inline-start: calc(-1 * var(--list)); border-inline-end: 1px solid var(--line); background: var(--room); }
+:where(:root[data-sidebar]) :is(.bar, app-inbox) { align-self: flex-start; inline-size: var(--list); margin-inline-start: calc(-1 * var(--list)); border-inline-end: 1px solid var(--line); background: var(--room); -webkit-user-select: none; user-select: none; }
 :where(:root[data-sidebar]) .bar { block-size: var(--top); margin-block-end: calc(-1 * var(--top)); padding: 0 0.75rem; }
 :where(:root[data-sidebar]) .wordmark { min-inline-size: 0; margin-inline-end: auto; }
 :where(:root[data-sidebar]) .sidebar-toggle { order: 1; }
@@ -675,35 +661,28 @@ input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: 
 :where(:root[data-sidebar] app-shell:has(> .views button)) main { padding-block-start: 0; }
 :where(:root[data-sidebar]) .toasts { inset-inline-start: var(--list); }
 /* It scrolls without a bar of its own, which stood at its edge like a handle to drag (D181), as Settings' menu does. */
-app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display: flex; flex-direction: column; block-size: calc(100dvh - var(--top)); margin-block: var(--top) -100dvh; padding: 0.25rem 0.75rem 0.75rem; overflow-y: auto; overscroll-behavior: none; scrollbar-width: none; }
+app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display: flex; flex-direction: column; block-size: calc(100dvh - var(--top)); margin-block: var(--top) -100dvh; padding: 0.25rem 0.75rem var(--foot); --foot: 0.75rem; overflow-y: auto; overscroll-behavior: none; scrollbar-width: none; }
 /* A new task, then where each capability found leads, as Manus' rows; the tasks under their heading. */
 .place { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.75rem; border: 0; border-radius: 0.9rem; background: none; color: var(--ink); text-align: start; }
 .place:hover { background: var(--line); }
-.place .icon { flex: none; inline-size: 1.15rem; block-size: 1.15rem; color: var(--ink-soft); }
+.place .icon { flex: none; --glyph: var(--icon-m); color: var(--ink-soft); }
 .sidebar-heading { margin: 1.25rem 0 0.25rem; padding-inline: 0.75rem; font: 500 0.8rem/1.4 var(--sans); color: var(--ink-soft); }
 .sidebar-heading + .muted { margin: 0; padding-inline: 0.75rem; font-size: 0.9rem; }
 
-/* At the foot of the drawer, as in the Claude apps (D115): the user (D150). */
-.sidebar-settings {
-  position: sticky;
-  inset-block-end: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  margin-block-start: auto;
-  padding: 0.6rem 0.75rem;
-  border: 0;
-  border-radius: 0.9rem;
-  background: inherit;
-  color: var(--ink-soft);
-  text-align: start;
+/* At the foot of the drawer, as in the Claude apps (D115): the user, their initial (or a silhouette) and their name, a menu above them (D150). */
+.sidebar-settings { position: sticky; inset-block-end: 0; flex: none; display: flex; align-items: center; gap: 0.65rem; margin-block-start: auto; padding: 0.45rem 0.75rem; border: 0; border-radius: 0.9rem; background: inherit; color: var(--ink); text-align: start; }
+.sidebar-settings:hover { box-shadow: inset 0 0 0 100vmax var(--line); }
+/* Under it, the drawer's padding, which the tasks scrolling past showed through. */
+.sidebar-settings::after { content: ''; position: absolute; inset: 100% 0 auto; block-size: var(--foot); background: inherit; }
+/* More tasks above or below fade out at the drawer's top or above the user, where scroll timelines are known (D348). */
+@supports (animation-timeline: scroll()) {
+  :is(app-inbox, .drawer, .sidebar-settings)::before { content: ''; position: sticky; z-index: 1; inset-block-start: -1rem; flex: none; block-size: 2.5rem; margin-block-end: -2.5rem; background: inherit; mask: linear-gradient(#000 1rem, #0000); opacity: 0; pointer-events: none; animation: tasks linear both; animation-timeline: scroll(); animation-range: 0 1.5rem; }
+  .sidebar-settings::before { position: absolute; inset: auto 0 100%; block-size: 1.5rem; margin: 0; mask: linear-gradient(#0000, #000); animation-direction: reverse; animation-range: calc(100% - 1.5rem) 100%; }
 }
-.sidebar-settings:hover { color: var(--ink); box-shadow: inset 0 0 0 100vmax var(--line); }
-/* The user, there: their initial (or a silhouette) and their name, a menu above them (D150). */
-.profile { flex: none; padding-block: 0.45rem; color: var(--ink); }
-.profile > .icon { flex: none; inline-size: 1.15rem; block-size: 1.15rem; margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
+@keyframes tasks { to { opacity: 1; } }
+.profile > .icon { flex: none; --glyph: var(--icon-m); margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
 .avatar { flex: none; display: grid; place-items: center; inline-size: 1.85rem; block-size: 1.85rem; border: 1px solid transparent; border-radius: 50%; background: oklch(from var(--flame) l c h / 0.2); font-size: 0.85rem; font-weight: 600; line-height: 1; }
-.avatar .icon { inline-size: 1.05rem; block-size: 1.05rem; }
+.avatar .icon { --glyph: var(--icon-s); }
 .profile-name { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .profile[popovertarget='profile-drawer'] { anchor-name: --profile-drawer; }
 .profile[popovertarget='profile-list'] { anchor-name: --profile-list; }
@@ -712,10 +691,9 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .profile-menu { min-inline-size: 15rem; min-inline-size: anchor-size(inline); max-block-size: min(70dvh, 34rem); overflow-y: auto; }
 @supports not (anchor-name: --add) { .profile-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
 .menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; }
-.submenu > .icon:last-child { inline-size: 1rem; rotate: -90deg; }
+.submenu > .icon:last-child { --glyph: var(--icon-s); rotate: -90deg; }
 .submenu > .icon + .icon { margin-inline-start: auto; }
 :dir(rtl) .submenu > .icon:last-child { rotate: 90deg; }
-.profile-menu .back > .icon { rotate: 180deg; }
 .profile-menu .back { font-weight: 600; }
 .profile-menu [aria-current='true'] { font-weight: 600; }
 .profile-menu [aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
@@ -741,10 +719,10 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .history-item .ember { inline-size: 0.375rem; block-size: 0.375rem; background: var(--flame); animation: pulse 1.6s ease-in-out infinite var(--loops, running); }
 .history-item .ember[data-unread] { animation: none; }
 .history-item .ember[data-waiting] { animation: none; box-shadow: 0 0 0 0.15rem oklch(from var(--flame) l c h / 0.3); }
-.history-item > .icon { flex: none; inline-size: 1rem; block-size: 1rem; opacity: 0.7; }
+.history-item > .icon { flex: none; --glyph: var(--icon-s); opacity: 0.7; }
 /* A routine's runs (D122): its newest named after it, with a count that unfolds the earlier ones under it, by date. */
 .runs-toggle { flex: none; display: inline-flex; align-items: center; gap: 0.1rem; padding: 0.3rem 0.45rem; border: 0; border-radius: 0.6rem; background: none; color: inherit; font-size: 0.8rem; }
-.runs-toggle:hover { background: var(--line-strong); } .runs-toggle .icon { inline-size: 0.9rem; block-size: 0.9rem; transition: rotate 0.25s var(--ease); } .runs-toggle[aria-expanded='true'] .icon { rotate: 180deg; }
+.runs-toggle:hover { background: var(--line-strong); } .runs-toggle .icon { --glyph: var(--icon-s); transition: rotate 0.25s var(--ease); } .runs-toggle[aria-expanded='true'] .icon { rotate: 180deg; }
 .history-list li.is-run .history-item { padding-inline-start: 2.25rem; font-size: 0.88rem; color: var(--ink-soft); }
 
 /* ─── Projects ──────────────────────────────────────────────────────────── */
@@ -752,8 +730,8 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 /* The header shows the room the user is in, and opens on a menu below it (D82). */
 app-projects { display: contents; }
 app-projects .wordmark { anchor-name: --project; min-inline-size: 0; }
-app-projects .wordmark span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--ink-soft); }
+app-projects .wordmark span { overflow-x: clip; text-overflow: ellipsis; white-space: nowrap; }
+app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(--ink-soft); }
 .project-menu { position-anchor: --project; position-area: block-end span-inline-end; margin: 0.25rem 0 0; max-block-size: 70dvh; overflow-y: auto; }
 :is(.project-menu, .task-menu):not(:popover-open) { translate: 0 -0.4rem; }
 :is(.project-menu, .task-menu):popover-open { @starting-style { translate: 0 -0.4rem; } }
@@ -780,9 +758,10 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
   animation: arrive 0.4s var(--ease) both;
 }
 .toast:not(:has(button)) { padding-inline-end: 1.1rem; }
+.toast button { flex: none; }
 
 .noscript { padding: 2rem; text-align: center; }
-::view-transition-group(hero) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
+::view-transition-group(persona), ::view-transition-group(hero), ::view-transition-group(composer) { animation-duration: 0.7s; animation-timing-function: var(--ease); }
 /* A new version comes in (index.html, ui/update.js): the page left holds, even with less motion. */
 :active-view-transition-type(update)::view-transition-old(*) { animation: hold 4s !important; }
 :active-view-transition-type(update)::view-transition-new(*) { animation: none; opacity: 0; }
@@ -790,35 +769,44 @@ app-projects .wordmark > .icon { flex: none; inline-size: 1.1rem; color: var(--i
 
 /* ─── Paper: print, or save as PDF ──────────────────────────────────────── */
 
+.print-mark { display: none; }
 @media print {
-  /* Also over a look's colours (ui/looks/), which outrank :root alone. */
-  :root, :root[data-look][data-theme] { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: #8a4a12; }
+  /* Also over a look's colours (ui/looks/) and an accent's; links in the project's colour. */
+  :root, :root[data-look][data-theme] { --ink: #111; --ink-soft: #333; --ink-faint: #555; --line: #ccc; --line-strong: #999; --flame: oklch(from var(--tint) 0.45 min(c, 0.13) h) !important; }
+  :root app-persona { --wave: oklch(from var(--tint) 0.56 min(c, 0.19) h); }
   html, body { background: #fff; }
+  /* The mark and Jean's address. */
+  .print-mark { display: flex; align-items: center; gap: 0.35rem; margin: 0 0 2rem; font: 700 1.25rem/1 var(--display); }
+  .print-mark app-persona { --persona-size: 1.6rem; }
+  .print-mark small { margin-inline: 0.4rem; font: 0.75rem/1 var(--sans); color: var(--ink-soft); }
   .room, .bar, app-inbox, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups { display: none !important; }
-  main { inline-size: auto; }
+  /* Without a look's frame. */
+  :is(html, :root[data-look]) main { inline-size: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+  :is(html, :root[data-look]) .conversation-title { margin: 0 0 1rem; padding: 0; background: none; color: var(--ink); }
   app-shell { padding: 0 !important; }
   .msg { animation: none; }
   .msg-user { background: none; border: 1px solid var(--line); }
   .prose pre { background: none; }
-  .read-list ul { display: grid; }
+  /* Sources open, with each page's site. */
+  .read-list::details-content { display: block; content-visibility: visible; }
+  .read-list summary .icon:last-child { display: none; }
+  .read-list [data-site]::after { content: attr(data-site); display: inline-block; margin-inline-start: 0.5em; color: var(--ink-soft); }
 }
 
 /* ─── Preferences ───────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
+  *, *::before, *::after, ::backdrop { animation: none !important; transition: none !important; }
   .room { --light: 0.42; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {
-  :root, :root[data-look][data-theme] { --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
-  app-persona { --persona-rim: var(--ink); }
+  :root, :root[data-look][data-theme] { --pen: 2; --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
+  :root app-persona { --wave: var(--ink); }
 }
 @media (forced-colors: active) {
-  .room, app-persona::before, .persona-inner, .persona-cheeks, .persona-eyes circle { display: none; }
-  app-persona { forced-color-adjust: none; color: CanvasText; }
-  .persona-body { fill: Canvas; stroke: CanvasText; }
-  .persona-sparks { fill: CanvasText; }
+  .room { display: none; }
+  .persona { stroke: CanvasText; }
   .send, .button.primary { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   :is(.history-item .ember, .ember:is([data-state='waking'], [data-state='working'], [data-state='ready'])) { forced-color-adjust: none; background: CanvasText; }
   .menu [role='switch']::after { forced-color-adjust: none; background-color: GrayText; }

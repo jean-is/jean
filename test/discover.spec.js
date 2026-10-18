@@ -1,19 +1,35 @@
-// Discovery (0.3): the first starter asks what Jean can do, the house lights up (Settings'
+// Discovery (0.3): the first idea shares a sample spreadsheet (D366), the house lights up (Settings'
 // Capabilities), "turn on everything" works, and the brain picker offers Auto, the connected brains
 // and "Keep on this device".
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, openSettings, ask, openTasks } from './helpers.js'
 
-test('the first starter asks what Jean can do, in a few plain words', async ({ page }) => {
+test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const first = page.locator('.starter').first()
-  await expect(first).toHaveText('What can you do?')
+  await expect(first).toHaveText('Try a spreadsheet')
   await first.click()
-  await expect(page.locator('#prompt')).toHaveValue('What can you do for me? Give me 3 examples I can try.')
+  await expect(page.locator('.attachment')).toContainText('sales.csv')
+  await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')
   await expect(page.locator('#prompt')).toBeFocused()
   await page.locator('#prompt').press('Enter')
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('What can you do for me?')
+  await expect(page.locator('.msg-files')).toContainText('sales.csv')
+  // A spreadsheet to chart: the brain offers the computer in its answer, which goes on once it is turned down.
+  await page.locator('.msg-jean').getByRole('button', { name: 'No thanks' }).click()
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+  expect(await page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('files'))).toBe(true)
+})
+
+test('the ideas for a tune and a quiz add Jean’s own skill for each before their request (D400)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.locator('.starter', { hasText: 'Compose a tune' }).click()
+  await expect(page.locator('#prompt')).toHaveValue('Compose a short lullaby, as sheet music I can play.')
+  await expect(page.locator('#prompt')).toBeFocused()
+  await page.locator('.starter', { hasText: 'Make a quiz' }).click()
+  await expect(page.locator('#prompt')).toHaveValue('Make a quiz on the planets of the solar system, for a ten-year-old.')
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'quiz'])
 })
 
 test('the house lights up as capabilities are turned on', async ({ page }) => {
@@ -35,26 +51,31 @@ test('the house lights up as capabilities are turned on', async ({ page }) => {
   expect(Number(warmth)).toBeGreaterThan(0)
   await settings.getByRole('button', { name: 'Turn on everything' }).click()
   await expect(settings.locator('.case > li:not(.is-lit)')).toHaveCount(0)
-  await expect(house.locator('.house-rank')).toHaveText('Daylight')
+  await expect(house.locator('.house-rank')).toHaveText('Ocean')
 })
 
-test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', async ({ page }) => {
-  await start(page)
-  await connectFakeBrain(page)
-  // Three tasks in another project: Backup and Intuition are about all of them, so they are due.
-  await page.evaluate(async () => {
+/** Tasks in another project, which offers count too (D281). @param {import('@playwright/test').Page} page @param {number} count */
+async function tasksElsewhere(page, count) {
+  await page.evaluate(async (count) => {
     const { app, refreshProjects } = await import('/ui/state.js')
     const { createProject } = await import('/core/settings.js')
     const { createConversation, appendRecords } = await import('/core/conversations.js')
     const { userRecords } = await import('/core/events.js')
     const projectDir = await createProject(app.fs, { name: 'Garden', by: 'test' })
-    for (let i = 1; i <= 3; i++) await appendRecords(app.fs, (await createConversation(app.fs, { projectDir, by: 'test' })).path, userRecords(`Garden note ${i}`, [], 'test'))
+    for (let i = 1; i <= count; i++) await appendRecords(app.fs, (await createConversation(app.fs, { projectDir, by: 'test' })).path, userRecords(`Garden note ${i}`, [], 'test'))
     await refreshProjects()
-  })
+  }, count)
+}
+
+test('offers count the tasks of every project, wait their turn when due, and give way to what the user does now', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Three tasks in another project: Backup and Intuition are about all of them, so they are due.
+  await tasksElsewhere(page, 3)
   // Intuition is due, and Backup too outside a private window (WebKit's here): whichever count came first shows first.
   const offer = page.locator('aside.offer')
   const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
-  let left = ['get a feel for what you need', ...(ephemeral ? [] : ['Keep a copy of everything'])]
+  let left = ['pick the right brain for each request', ...(ephemeral ? [] : ['Keep a copy of everything'])]
   await expect(offer).toContainText(new RegExp(left.join('|')))
   // A spreadsheet shared now takes its place.
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Sales.csv', mimeType: 'text/csv', buffer: Buffer.from('month,total\nJan,10\n') })
@@ -65,6 +86,24 @@ test('offers count the tasks of every project, wait their turn when due, and giv
     await expect(offer).toContainText(new RegExp(left.join('|')))
     const shown = (await offer.textContent()) ?? ''
     left = left.filter((text) => !shown.includes(text))
+  }
+})
+
+test('an offer on the first screen keeps above the ideas and the box, never under them, on a phone too', async ({ page }) => {
+  await start(page, 'fr')
+  await connectFakeBrain(page)
+  await tasksElsewhere(page, 2)
+  const offer = page.locator('aside.offer')
+  await expect(offer).toContainText('Télécharger')
+  // The page as it opens, not scrolled: what is at the centre of each of its buttons is that button, at every size.
+  const uncovered = () => offer.locator('button').evaluateAll((buttons) => buttons.map((button) => {
+    const { x, y, width, height } = button.getBoundingClientRect()
+    return button.contains(document.elementFromPoint(x + width / 2, y + height / 2))
+  }))
+  for (const [width, height] of [[390, 844], [360, 640], [1280, 600], [1440, 900]]) {
+    await page.setViewportSize({ width, height })
+    await expect.poll(uncovered).toEqual([true, true])
+    await expect(page.locator('.starter')).toHaveCount(4)
   }
 })
 
@@ -153,4 +192,19 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
   await expect(kept).toBeDisabled()
   await expect(kept).toHaveAttribute('title', 'This project is kept on this device')
   await expect(picker.getByRole('button', { name: /gpt-6-sol/ })).toHaveCount(0)
+  // Settings › Brains (D331): each brain says where it runs and its version, the rest under its button, the switch
+  // at the group's foot, and the ways to add one only once asked for, the keyboard on the first.
+  await page.keyboard.press('Escape')
+  const brains = await openSettings(page, 'Brains')
+  const cloud = brains.locator('.brains > div', { hasText: 'OpenAI' })
+  await expect(cloud.locator('.item small')).toHaveText('In the cloud · gpt-6-sol')
+  await expect(brains.getByLabel('Brain version')).toHaveCount(0)
+  await cloud.getByRole('button', { name: 'More options' }).click()
+  await expect(cloud.getByLabel('Brain version')).toHaveValue('gpt-6-sol')
+  await expect(cloud.getByRole('button', { name: 'Remove' })).toBeVisible()
+  await expect(brains.getByRole('switch', { name: 'Keep on this device' })).toBeDisabled()
+  await expect(brains.locator('.way')).toHaveCount(0)
+  await brains.getByRole('button', { name: 'Add a brain' }).click()
+  await expect(brains.locator('.way summary').first()).toBeFocused()
+  await expect(brains.getByRole('button', { name: 'Add a brain' })).toHaveCount(0)
 })

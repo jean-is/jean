@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "Tìm email",
+  "api.read_email": "Đọc email",
+  "api.create_draft": "Viết thư nháp",
+  "api.send_email": "Gửi email",
+  "api.list_calendars": "Xem các lịch",
+  "api.list_events": "Xem các sự kiện",
+  "api.create_event": "Thêm sự kiện",
+  "api.update_event": "Đổi sự kiện",
+  "api.delete_event": "Xoá sự kiện",
+  "api.search_files": "Tìm tệp",
+  "api.read_file": "Đọc tệp",
+  "api.create_document": "Tạo tài liệu"
+}

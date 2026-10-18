@@ -1,0 +1,6 @@
+{
+  "signin.needed": "回答を受け取るには、組織のアカウントでサインインしてください。",
+  "signin.in": "サインイン",
+  "signin.as": "{account} でサインイン中",
+  "signin.out": "サインアウト"
+}

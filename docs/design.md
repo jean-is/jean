@@ -2,72 +2,88 @@
 
 Minimal stack, epic result. The style has to be memorable enough that people retell it.
 
-## Concept: the room lights up
+## Concept: Tilde
 
-A nod to *A Dark Room*. **Jean is the light source.** Its presence is felt in how the room is lit, and when you look at the light, it looks back: a little flame with a face (see [The little light](#the-little-light)).
+Jean's identity is **Tilde** (D373, D376): a name everyone already has, a small wave for its mark and its presence, ink and paper, and one water blue. It is Jean's own look and the one it starts in; every other theme keeps the mark and the wave.
 
-- **First visit.** A dark, warm room, the little light, and one line of very large type: the question. Nothing else.
-- **Discovery lights the house.** Each discovered capability "catches the light": its surface warms in from the shadow, and the palette warms a step. When everything has been discovered, the house is in full daylight. People feel their progress instead of counting it.
-- **Each project is a room** with its own light colour. Switching project feels like walking into another room, with the ambient light cross-fading.
-- **What Jean can do is the house, kept as a case of trophies** (D113, D127, D316), drawn with Settings' own parts so it looks like the sections around it. In Settings' Capabilities section, the little light sits beside its rank, which rises a quarter of the case at a time: Spark, Candle, Lantern, Hearth, then Daylight once everything is found. The light grows a size with each rank, over a bar of how much is found, like Storage's. Below, each capability is a row of a list, in the case's order: its icon lit and On at its end once found, catching the light one after another as the section opens; a dashed silhouette until then, how to find it under its name, with pips when it is found by counting (two conversations, three dictations). A row opens to say what it does and to offer it: Turn on, a download, or Open. The next one to find is open as the section opens.
-- **Light mode tells the same story by day,** with paper and ink: progression shows as warmth and ink density. Jean follows the device's light or dark mode (Auto); Settings offer Light or Dark to keep one, and that choice is kept on the device (D85, D107, D135).
+- **The name.** Jean is the French form of John, a name nearly every language has its own of, and the everyday name for "anyone" in several of them. It is written with a capital J, in Latin script in every language. Its blue is water's, a light cyan, never denim's indigo, and nothing is stitched or riveted: in English, lowercase and in indigo, it would be trousers.
+- **The mark** is a tilde, a small wave. Seven of Jean's languages already write it: the madda over the alif in Arabic, Persian and Urdu (آ), the Japanese wave dash (〜), Vietnamese's ngã (Mỹ), Spanish's ñ and Portuguese's ã, as in João, Jean's own name there. The app's icon is the tilde over the name, set in Gentium, on ink (`icons/icon.svg`, inside the maskable safe zone); a browser's tab shows the tilde alone (`icons/favicon.svg`). Where the interface means a brain (the box's chip, Auto, Settings' Brains), the tilde sits in a circle (`icons.brain`), never a sparkle; the macOS disk image shows the wave's way from the app to Applications (`desktop/dmg-background.svg`). `npm run icons` draws the PNGs that Android and iOS install with (D131).
+- **Colour.** Ink and paper: near-black and white by day, a soft black and a warm white by night, with one water blue, `#42cce0` by night and deeper by day, as water is, for the wave, links, ticks and other small marks; red is left to what went wrong. Water is never a fill behind words and never a button: buttons and the open row are ink. The user's words sit on the margin's grey; what waits for the user, an approval or an offer, on foam by day and deep water by night. Never cream: a serif on cream is another assistant's.
+- **Type.** Gentium Book Plus Bold for the name and the big question, the system font for everything else (see [Typography](#typography)).
+- **Corners and frame** are Human's: a floating box, rounded panes and pills, the drawer beside the conversation; Tilde's sheet builds on Human's.
+- **First visit.** The wave above the question, the question in Gentium, and the box right under it, its ideas below; in a browser's tab, one sentence and three facts say what Jean is (D366). Nothing else.
+- **Each project has its own colour,** which tints the wave; walking into another project cross-fades it.
+- **What Jean can do is a case of trophies** (D113, D127, D316), drawn with Settings' own parts so it looks like the sections around it. In Settings' Capabilities section, the wave sits beside its rank, which rises a quarter of the case at a time: Ripple, Wave, Current, Tide, then Ocean once everything is found, things rather than people, so no rank takes a gender. The wave grows a size with each rank, as its names say, over a bar of how much is found, like Storage's. Below, each capability is a row of a list, in the case's order: its icon lit and On at its end once found, one after another as the section opens; a dashed silhouette until then, how to find it under its name, with pips when it is found by counting (two conversations, three dictations). A row opens to say what it does and to offer it: Turn on, a download, or Open. The next one to find is open as the section opens.
+- **Light or dark.** Jean follows the device's light or dark mode (Auto); Settings offer Light or Dark to keep one, and that choice is kept on the device (D85, D107, D135).
 - **Settings is a menu beside the section open,** like the Claude apps', in three groups: General, Brains, Appearance, Keyboard shortcuts; About you, then Skills, Routines, Connections, Web search, Computer and Plugins once each is found, then Capabilities; Approvals, Your data (D134). Each setting is a row, what it is on one side and its control on the other, with a thin line between rows; on and off are switches. A list (brains, services, skills, routines, what Jean noticed, what Jean can do) is one rounded group of rows, each an icon, a name and a line, then its controls; a row that opens shows the rest under it. Each item of the menu starts with an icon. On a phone the menu is a strip of pills above the section (D113). Brains is who answers, Auto or one of the brains, then the ways to add one, one open at a time, and opens whenever a brain is needed (D128, D134). Settings opens from the foot of the drawer; the header holds the drawer's button and the name (D117, D165).
-- **The drawer, after Manus** (D165): New task, a row for each place found (Skills, Routines, Connections), then the tasks under a small heading, and the user at the foot. On a wide window it stays open beside the conversation, the header's name, Search and the button that puts it away at its top, or is put away, as the user left it on that device; Human, the look Jean starts in, and Mail start with it open; the other themes put it away, leaving the box alone. On a phone it slides over the conversation.
-- **The user sits at the foot of the conversations** (D150): their initial in a round badge and their name, or a silhouette and "You" until Jean knows it. Their menu opens above them, as wide as they are, like the + menu above the box (D123): Settings, About you, the language and the theme (each a page of the menu that turns back, the themes as Settings' small pictures, D154), a switch for dark mode, then what Jean can do. Each key that does the same shows beside it, where there is a keyboard. A language or a theme picked there applies at once and the menu stays, the drawer open beside the conversation staying so (D153, D165).
+- **The drawer, after Manus** (D165): New task, a row for each place found (Skills, Routines, Connections), then the tasks under a small heading, and the user at the foot, who stays in view as the tasks scroll under them, never showing past them. Nothing in it can be selected, as in an app's own sidebar. On a wide window it stays open beside the conversation, the header's name, Search and the button that puts it away at its top, or is put away, as the user left it on that device; until then, Tilde, the look Jean starts in, Human and Mail open it once the room has a task, so a first visit has the window to itself (D369); the other themes put it away, leaving the box alone. On a phone it slides over the conversation.
+- **The user sits at the foot of the conversations** (D150): their initial in a round badge and their name, or a silhouette and "You" until Jean knows it. Their menu opens above them, as wide as they are, like the + menu above the box (D123): Settings, the language and the theme (each a page of the menu that turns back, the themes as Settings' small pictures, D154), a switch for dark mode, then what Jean can do. Each key that does the same shows beside it, where there is a keyboard. A language or a theme picked there applies at once and the menu stays, the drawer open beside the conversation staying so (D153, D165).
 
 ### How Jean's presence shows state
 
-| State | Light behaviour | The little light |
+| State | The wave | The Room theme's light |
 |---|---|---|
-| Idle | Slow ambient breathing | Sways and breathes, blinks now and then |
-| Listening (the user types or speaks) | Light leans toward the input | Looks down at the box, glows brighter |
-| Thinking | A subtle flicker | Looks up and from side to side; sparks rise from its tip |
-| Working | Light sweeps over the item being worked on (the file being read glows) | As when thinking |
-| Answering | Warms and widens | Bobs while the answer streams in, at its brightest |
-| Waiting for approval | Steady warm pulse on the approval card | Its glow pulses; its eyes turn to the card |
-| Done | Settles | Happy closed eyes and a little hop, then idle |
-| Something went wrong | — | Dims and droops, with a small sorry face, until the next message |
+| Idle | Ripples slowly, travelling the way the page reads | Slow ambient breathing |
+| Listening (the user dictates, or hands-free hears them) | Swells and settles, as a voice does | Leans toward the input |
+| Thinking and working | Small and quick | A subtle flicker |
+| Answering | Speaks in bursts | Warms and widens |
+| Waiting for approval | Holds still, tall, and pulses | Steady warm pulse on the approval card |
+| Done | Becomes a smile, with a little hop, then idle | Settles |
+| Something went wrong | Becomes a frown, in grey, until the next message | — |
 
-### The little light
+### The wave
 
-Jean's persona is the room's light, drawn small: a soft flame with a curled tip, a warm inner glow, two round eyes, rosy cheeks and a small smile. It is one inline SVG in `ui/persona.js` (`<app-persona>`, about 1 KB), and CSS does all of its moving: it reads `data-presence`, which mirrors `app.presence`, plus "waiting" while an approval is open and "oops" after an error.
+Jean's presence is the tilde of its mark, set moving. It is one inline SVG in `ui/persona.js` (`<app-persona>`): a long wave seen through a window whose ends fade out, a smile and a frown. CSS does all of its moving: it reads `data-presence`, which mirrors `app.presence`, plus "waiting" while an approval is open and "oops" after an error.
 
-- **Where it lives.** Above the question on the first screen, at the room's light. When the conversation begins it flies into the header beside the wordmark (a view transition), and stays there showing the state.
-- **By night and by day.** The same colours in both. By day it is drawn in ink (a `--flame-deep` rim) on paper, like the rest of the light mode; with `prefers-contrast: more` the rim is the ink colour.
-- **At every size.** From about 7 rem down to a 1.5 rem favicon-sized flame; below 2.6 rem the cheeks and the eye highlights drop out (a container query).
+- **Where it lives.** Above the question on the first screen. When the conversation begins it flies into the header beside the wordmark (a view transition), and stays there showing the state; it sits beside the rank in Settings' Capabilities and on each project's card. On paper, a printed task or one saved as PDF starts with it, still, before the name and, small, Jean's address, its links take the project's colour, deepened for paper, and its sources show open, each web page's site after its title. Beside the name in the header, the name's box is trimmed to its x-height, so that the wave sits on the middle of its lower-case letters in every look.
+- **It travels the way the page reads,** left to right, and right to left in Arabic, Hebrew, Persian and Urdu.
+- **At every size,** from about 7 rem on the first screen down to the header's 1.5 rem: one stroke, no detail to lose.
 - **It has no words and no gender.** It never speaks, never carries text, and nothing in the interface agrees with it grammatically. It is not tied to the name either, so it survives a rename.
-- **It is not in the prompt.** The base prompt stays free of personas (AGENTS.md); the little light is purely visual and decorative (`aria-hidden`).
-- **A project's light tints it.** Every colour of the little light comes from one custom property, `--tint`: Jean's amber by default, any CSS colour otherwise. Only the hue is taken, so the face keeps its contrast whatever the colour. Projects (0.4) set it from the `colour` in `project.md`: on the root for the room you are in, or on one `<app-persona>` (a project's card in the house).
-- **It is the app icon.** `icons/icon.svg` is the same drawing, idle, in the dark room, inside the maskable safe zone. `npm run icons` draws it as the PNGs that Android and iOS install with (D131).
+- **It is not in the prompt.** The base prompt stays free of personas (AGENTS.md); the wave is purely visual and decorative (`aria-hidden`).
+- **A project's colour tints it.** Its colour comes from one custom property, `--tint`: Jean's water by default, any CSS colour otherwise. Its hue is taken, and its chroma up to a limit, at the lightness each mode needs, so it reads by day and by night whatever the colour, and a grey stays grey. Projects (0.4) set it from the `colour` in `project.md`: on the root for the room you are in, or on one `<app-persona>` (a project's card).
 
 ## Looks
 
-The room is Jean's own look; Jean starts in Human (D174). Settings › Appearance, and the theme page of the user's menu, offer fifteen, each with a light and a dark palette, in system typefaces, shown as small pictures of themselves, Human first, then from the calmest to the most playful (D111, D120, D154, D174):
+Tilde is Jean's own look and the one it starts in (D373). Settings › Appearance, and the theme page of the user's menu, offer fifteen, each with a light and a dark palette, shown as small pictures of themselves, Tilde first, then Human, then from the calmest to the most playful (D111, D120, D154, D174). Each keeps the wave:
 
+- **Tilde:** Jean's own. Human's frame in ink and paper, Gentium for the name and the big question, the wave in water blue. Its sheet brings in Human's, whose rules apply to both.
 - **Human:** after today's desktop: frosted panes that float, the system's blue and typeface (D132).
 - **Mail:** after the devs.new task inbox: the tasks in a list beside the one open, as in an email client; neutral greys, one blue accent, flat surfaces.
 - **Minimal** (one grey scale) and **Swiss** (a strict grid, black and white with one red).
 - **Paper:** ink on paper, a serif for everything, the user's words set as a quotation in the margin's red, no glow.
-- **Room:** everything above. A dark, warm room lit by the little light, the display face, and the room warming with each discovery.
+- **Room:** a dark, warm room lit amber from where the wave sits, the display face, and the room warming a step with each discovery (D73); each project's room glows in its own colour.
 - **Fjord** (polar blues under a faint aurora) and **Velvet** (plum and gold, a Didone).
 - **Notebook** (squared paper and sticky notes; a blackboard by night), **Blueprint** (white lines on Prussian blue), **Classic** (a Nineties desktop) and **Mondrian** (thick lines and primaries).
-- **Terminal** (green phosphor; green-bar paper by day), **Neon** (an Eighties sun behind a grid) and **Depth** (a floor in true perspective that the camera circles while Jean works, D125).
+- **Terminal** (green phosphor; green-bar paper by day) and **Neon** (an Eighties sun behind a grid).
 
-Mail and Human start with the drawer open beside the conversation (D165). Names that are trademarks stay out of the UI, and `test/looks.test.js` checks every theme's text at AA by day and by night.
+Tilde, Human and Mail open the drawer beside the conversation once there is a task (D165, D369). Names that are trademarks stay out of the UI, and `test/looks.test.js` checks every theme's text at AA by day and by night.
 
-**Make it yours** adds an accent colour, a background colour, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change. Their CSS starts from Jean's main hooks, commented out (`ui/touches.css`): the background, text and accent by night and by day, the typeface, corners and width, their requests, the answers and the box. It is kept only once changed. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the little light and the room's glow, unless a project has a light of its own.
+**Make it yours** adds an accent colour, a background colour, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change. Their CSS starts from Jean's main hooks, commented out (`ui/touches.css`): the background, text and accent by night and by day, the typeface, corners and width, their requests, the answers and the box. It is kept only once changed. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the wave and the room's glow, unless a project has a colour of its own.
 
 ## Typography
 
-- **One expressive display face** for the name and big statements: OFL-licensed, Latin subset, ≤ 30 KB. Instrument Serif ships for now (D34); Fraunces will probably replace it, as a static instance (see [open-questions.md](open-questions.md)).
-- **The system UI font for everything else.** It covers every script with zero bytes, so there's no 10 MB CJK font.
+- **One display face** for the name and big statements: Gentium Book Plus Bold, by SIL, a book face drawn for the world's languages (D34). OFL-licensed; one Latin subset, within the 30 KB budget, declared for every weight so no bold or italic is ever made up, and renamed Display inside the file, as the OFL asks of a modified version (`fonts/OFL.txt`).
+- **The system UI font for everything else.** It covers every script with zero bytes, so there's no 10 MB CJK font; in Tilde, a question in Arabic, Japanese or any other script falls back to it.
 - **The wordmark is `BRAND.name` set in the display face,** so it survives a rename.
-- **Big editorial type at the start.** The first question is huge and shrinks into place once the conversation begins.
+- **Big type at the start.** The first question is large and shrinks into place once the conversation begins, as the box slides to the foot.
+
+## Icons
+
+Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, and each glyph has one meaning: a person learns an icon by what it did the last time (D393). The first screen's glyphs (the box, the answers, the header) are in `ui/icons.js`; the others that more than one module draws are in `ui/menu-icons.js`, which the drawer, the menus, Settings and the capabilities load; a glyph only one capability draws stays in its module. All are drawn with the same `icon()`, and `test/icons.test.js` checks the rules it can.
+
+- **One grid, four keylines.** 24 units with 3 of margin. A glyph fills one of four keylines, each 17 units on its long side: a circle 17 across, a square of 15, a portrait 13 × 17 and a landscape 17 × 13, centred on 12, 12. A glyph that points, like a bolt or a star, may reach a unit past, never outside 2–22.
+- **One pen, the text's.** Every stroke is 1.5 px at every size (`--pen`, with `vector-effect: non-scaling-stroke`), about the stem of the system font beside it; 2 px when the device asks for more contrast, 1.25 px in Minimal.
+- **Human's corners.** A shape 11 units or larger takes a radius of 2.5, a smaller one 1.5; every cap and join is round, like the ends of the tilde; two parallel strokes stay 3 units apart, so nothing fills in at 16 px.
+- **A frame says where, a mark says what.** The frames are a laptop for this device, a window for this tab and a lens for searching; the marks are the tilde for a brain, `>_` for commands and the globe for the web. A new capability's glyph combines two of them: Web search is the lens over the globe, a brain on this device the tilde on its laptop.
+- **The tilde means a brain, and only a brain:** any brain (in a circle), a brain on this device, Search by meaning and Live conversation, each half a wave 5 units across and 2 high, never mirrored. A brain is never a sparkle, a robot or a chip.
+- **Solid means a state.** Nothing is filled for decoration: a fill marks what is on (the case's lit tile, the unread dot, a menu's dots, a keyboard's keys), in the stroke's colour, never water.
+- **It turns with the page.** A glyph that points along the line (an arrow, the drawer, a list, a branch) has `flip-rtl`, mirrored in Arabic, Hebrew, Persian and Urdu; clocks, ticks, play, search and the tilde stay as drawn.
+- **Three sizes.** `--icon-s` (1rem) in menus, chips and inline with text, `--icon-m` (1.25rem) in buttons and Settings' menu, `--icon-l` (1.75rem) for a ready-made skill, a file Jean made and a picture on its way; a place sets `--glyph` to one of them.
 
 ## Techniques (pure CSS)
 
-- **Colour:** oklch colours with `color-mix()` and `light-dark()`
-- **Light:** `@property`-animated custom properties for the light (gradients, warmth, intensity)
+- **Colour:** oklch colours with `color-mix()` and relative colours (`oklch(from …)`)
+- **Light:** `@property`-animated custom properties for the Room theme's light (gradients, warmth, intensity)
 - **Transitions:**
   - View Transitions for unlocks and project switches
   - `@starting-style` for entry animations
@@ -75,22 +91,22 @@ Mail and Human start with the drawer open beside the conversation (D165). Names 
 - **Layout:**
   - `:has()` and container queries
   - Logical properties only, so right-to-left layouts are free
-- **What it doesn't use:** no canvas, no images, no animation library and no icon pack. There are about 20 inline SVG icons, and one inline SVG character.
+- **What it doesn't use:** no canvas, no images, no animation library and no icon pack: the icons are Jean's own set ([Icons](#icons)), and the wave one inline SVG more.
 
 ## Accessibility
 
-- **WCAG AA contrast at every stage.** "Dark" applies to ambient surfaces only; text is always high-contrast.
-- **`prefers-reduced-motion`:** a still glow, with no movement. The little light keeps its poses (where it looks, happy or sorry eyes), so each state still reads.
-- **`prefers-contrast: more`:** stronger borders and flat surfaces.
-- **`forced-colors`** is supported. The little light becomes an outline drawing in the system colours.
+- **WCAG AA contrast at every stage**, measured in pixels in every look, mood, warmth and project colour (D325). "Dark" applies to ambient surfaces only; text is always high-contrast.
+- **`prefers-reduced-motion`:** nothing moves (D325). The wave keeps its poses (small, tall, a smile, a frown), so each state still reads.
+- **`prefers-contrast: more`:** stronger borders and flat surfaces, the icons' pen at 2 px, and the wave in the ink's colour.
+- **`forced-colors`** is supported. The wave takes the system's text colour.
 - **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘/ its keyboard shortcuts, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme, ⌘⇧L to the next language, ⌘⇧S dictates, ⌘K opens search, ⌘⇧B the browser and ⌘⇧H talks hands-free once each is found, ⌘J the terminal, ⌘B the drawer, ⌘S saves a copy of the open task and ⌘⌫ deletes it after asking, Ctrl outside Apple's systems, and Escape stops an answer once nothing over it, or with the keyboard, takes it (D118, D313, D315).
 
 ## Budget
 
 | Item | Limit |
 |---|---|
-| CSS | ≤ 12.5 KB gzipped for the room; another look adds its own file only when chosen |
+| CSS | ≤ 12.6 KB gzipped for the room; another look adds its own file only when chosen |
 | Display font | ≤ 30 KB |
 | Images | 0 |
-| Icons | ~20 inline SVGs |
-| Persona | One inline SVG, animated with CSS only |
+| Icons | One set of inline SVGs, the first screen's glyphs alone in the first load ([Icons](#icons)) |
+| Presence | One inline SVG, animated with CSS only |

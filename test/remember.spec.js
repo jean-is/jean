@@ -1,17 +1,21 @@
 // Memory, projects and skills (0.4), the version's done-when: two projects keep separate
 // memories, and a skill is created from repeated requests. Plus "What Jean knows about you".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings } from './helpers.js'
 
-/** @param {import('@playwright/test').Page} page @param {string} name */
+/** Makes a project in a light other than Jean's own (the first swatch), and says which.
+ * @param {import('@playwright/test').Page} page @param {string} name */
 async function createProject(page, name) {
   const dialog = page.locator('app-project-dialog dialog[open]')
   await expect(dialog).toBeVisible()
   await dialog.locator('input[name="name"]').fill(name)
-  await dialog.locator('.swatch').nth(4).click()
+  const swatch = dialog.locator('.swatch').nth(4)
+  await swatch.click()
+  const light = await swatch.locator('input').inputValue()
   await dialog.locator('.button.primary').click()
   await expect(dialog).toBeHidden()
   await expect(page.locator('app-projects .wordmark')).toHaveText(name)
+  return light
 }
 
 /** Settings' About you, once it has read what Jean knows (D134). @param {import('@playwright/test').Page} page */
@@ -27,10 +31,10 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await turnOn(page, 'Memory')
   await page.keyboard.press('Escape')
   await turnOn(page, 'Projects')
-  await createProject(page, 'Bakery')
+  const light = await createProject(page, 'Bakery')
   await expect(page).toHaveURL(/#\/p\/[0-9A-Z]{26}\/$/)
   const tint = await page.evaluate(() => document.documentElement.style.getPropertyValue('--tint'))
-  expect(tint).toContain('255')
+  expect(tint).toBe(light)
 
   await ask(page, 'Remember: the bakery opens at 7')
   await expect(page.locator('.toast')).toContainText('Remembered: the bakery opens at 7')
@@ -47,11 +51,17 @@ test('two projects keep separate memories, each in its own light', async ({ page
   // Its section, not the toast that may still say what the bakery's remembered.
   const garden = await openKnows(page)
   await expect(garden.locator('.settings-panel')).not.toContainText('opens at 7')
-  await page.keyboard.press('Escape')
+  await closeSettings(page)
+  const left = page.url()
 
-  // Back in the bakery, it is there, on the page and in the brain's context.
+  // Back in the bakery, it is there, on the page and in the brain's context. Walked into in one
+  // step: Back returns to the garden's task, Forward to the bakery.
   await page.locator('app-projects .wordmark').click()
   await page.locator('#project-menu .project', { hasText: 'Bakery' }).click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
+  await page.goBack()
+  await expect(page).toHaveURL(left)
+  await page.goForward()
   await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
   await ask(page, 'What do you know?')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('the bakery opens at 7')
@@ -94,6 +104,7 @@ test('the projects’ assistants meet, each speaking for its project from what i
   // Held from home: both projects are asked for, and their memories are theirs, so the user allows it first.
   await page.locator('app-projects .wordmark').click()
   await page.locator('#project-menu .project', { hasText: 'Jean' }).click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Jean')
   await ask(page, 'Hold a meeting about Saturday')
   const card = page.locator('.inbox .approval')
   await expect(card).toContainText('A meeting with Bakery and Garden')
@@ -122,14 +133,15 @@ test('a brain kept to one project answers there, and isn’t offered in the othe
   await turnOn(page, 'Projects')
   await createProject(page, 'Bakery')
   const brain = (await openSettings(page, 'Brains')).locator('.brains > div').nth(1)
-  await brain.getByRole('button', { name: 'Used in' }).click()
+  // Its version, where it is used and Remove are under its button (D331).
+  await brain.getByRole('button', { name: 'More options' }).click()
   const where = brain.getByRole('group', { name: 'Used in' })
   await expect(where.getByLabel('Every project')).toBeChecked()
   await where.getByLabel('Every project').uncheck()
   // Kept to the project the user is in, which can't be unticked while it is the only one.
   await expect(where.getByLabel('Bakery')).toBeChecked()
   await expect(where.getByLabel('Bakery')).toBeDisabled()
-  await expect(brain.locator('.item small')).toHaveText('On your computer · Bakery')
+  await expect(brain.locator('.item small')).toHaveText('On your computer · fake-brain-1 · Bakery')
   await page.keyboard.press('Escape')
   await ask(page, 'Hello')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')

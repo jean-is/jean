@@ -1,20 +1,53 @@
-// The box. Enter sends (never while an IME is composing), Shift+Enter adds a line, ↑ from an empty box
-// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). Under it (D123):
+// The box. Enter sends (never while an IME is composing), steering a task at work (D365); Shift+Enter adds a line, ↑ from an empty box
+// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). At its top, the
+// questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343), after what a
+// capability draws there (a task paused between steps, D364). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
-// is an AI and can make mistakes (EU AI Act, art. 50; D273).
+// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to where files go (D381), the privacy policy and terms (D356).
 import { html, nothing } from 'lit-html'
-import { signal } from '@preact/signals-core'
+import { signal, effect } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
+import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, effective, send, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, SHORTCUTS } from './state.js'
-import { unlock, isDenied, loaded, slots } from './caps.js'
-import { t } from '../core/i18n.js'
+import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, firstVisit, SHORTCUTS } from './state.js'
+import { BRAND } from '../brand.js'
+import { SIZES, unlock, isDenied, loaded, slots } from './caps.js'
+import { t, locale, formatBytes } from '../core/i18n.js'
+import { serviceURL } from '../core/settings.js'
 import { requestsOf } from '../core/events.js'
 import { icons } from './icons.js'
 import { dictation, toggleDictation, live } from './dictation.js'
 
 const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening', thinking: 'activity.thinking', speaking: 'live.speaking' }
+// The ideas, a sample spreadsheet first, and the box under the question while all fits a wide window (D366).
+const STARTERS = ['sample', 'music', 'quiz', 'savings']
+// An idea, or a tile of jean.is's page, that asks for a tune, a quiz or a deck brings Jean's own skill for it (D366).
+const SKILLS = /** @type {Record<string, string>} */ ({ music: 'music-score', quiz: 'quiz', slides: 'slides' })
+const root = document.documentElement, wide = matchMedia('(min-width: 48rem)')
+// The room's own height, without jean.is's page under it, which About under the box asks for again (D397).
+const home = document.querySelector('body > .home')
+new ResizeObserver(() => root.toggleAttribute('data-centred', wide.matches && (document.querySelector('app-shell') ?? root).scrollHeight <= root.clientHeight)).observe(document.body)
+
+// The wave listens while dictation or hands-free does, not while the box merely has the keyboard.
+effect(() => {
+  const hearing = dictation.value.state === 'listening' || live.value === 'listening'
+  if (hearing && !app.busy.peek()) setPresence('listening')
+  else if (!hearing && app.presence.peek() === 'listening') setPresence('idle')
+})
+
+/** @param {string} key */
+export async function idea(key) {
+  await skillFor(key)
+  if (key === 'sample') await attachFiles([new File([await (await fetch('caps/files/sales.csv')).blob()], 'sales.csv', { type: 'text/csv' })])
+  app.draft.value = t(`starter.${key}.prompt`)
+  focusComposer()
+}
+
+/** The skill an idea or a tile needs, in the room before its request is sent, unless Skills is turned off. @param {string} key */
+export async function skillFor(key) {
+  if (SKILLS[key] && await unlock('skills')) await (await import('../caps/skills/skills.js')).bring([SKILLS[key]]).catch(console.warn)
+}
 
 /** The menu shown beside a row of +, the room's skills or connections (ui/plus.js, D292). @type {import('@preact/signals-core').Signal<{ id: string, view: () => unknown } | null>} */
 export const sub = signal(null)
@@ -26,6 +59,21 @@ export const subRow = (id, icon) => html`<button type="button" class="submenu" d
   ${icon}${t(`cap.${id}.name`)}${icons.chevron}</button>`
 /** @param {Event} event */
 const openSub = (event) => import('./plus.js').then((module) => module.open(event))
+
+/** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
+export function offerAside() {
+  const offer = app.offer.value
+  if (!offer || app.dialog.value === 'first') return nothing
+  const { id, progress } = offer
+  const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
+  return html`<aside class="offer" role="status">
+    <p>${t(`cap.${id}.offer`, params)}</p>
+    ${progress === undefined ? html`<div class="row">
+      <button class="button primary" @click=${() => import('./discovery.js').then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
+      <button class="button subtle" @click=${() => import('./discovery.js').then((module) => module.decline(id))}>${t('offer.no')}</button>
+    </div>` : html`<progress max="1" value=${progress} aria-label=${t(`cap.${id}.downloading`)}></progress>`}
+  </aside>`
+}
 
 class Composer extends Element {
   render() {
@@ -51,8 +99,14 @@ class Composer extends Element {
       .sort((a, b) => a.at - b.at).map((entry) => entry.draw(app.current.value)).filter((drawn) => drawn !== nothing)
     const menu = more.length > 0
     const add = t(menu ? 'composer.add' : 'files.attach')
+    const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
+    const legal = /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
+    const fresh = !app.current.value?.records.length
     return html`
+      ${fresh ? offerAside() : nothing}
       <form class="composer" @submit=${this.#submit} @mousedown=${this.#press} @click=${this.#press}>
+        ${slots('box').map((entry) => entry.draw())}
+        ${repeat(asked, (decision) => decision.id, (decision) => html`<app-ask .decision=${decision}></app-ask>`)}
         <app-complete></app-complete>
         ${attachments.length ? html`<ul class="attachments" aria-label=${t('files.attached')}>${attachments.map((item) => html`
           <li class="attachment" data-status=${item.status} title=${item.error ?? ''}>
@@ -66,11 +120,9 @@ class Composer extends Element {
           </li>`)}</ul>` : nothing}
         <label class="visually-hidden" for="prompt">${t('composer.label')}</label>
         <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby="ai-note"
-          placeholder=${status || t('composer.placeholder')}
+          placeholder=${status || t(asked.length ? 'inbox.answer' : 'composer.placeholder')}
           .value=${current(app.draft.value)}
-          @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}
-          @focus=${() => !busy && setPresence('listening')}
-          @blur=${() => app.presence.value === 'listening' && setPresence('idle')}></textarea>
+          @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}></textarea>
         <span class="visually-hidden" role="status">${status}</span>
         <div class="composer-row">
           <div class="composer-tools">
@@ -88,13 +140,17 @@ class Composer extends Element {
           </div>
           <app-seal></app-seal>
           <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
-            ${brain?.api === 'device' && !auto ? icons.chip : icons.spark}<span>${chipLabel.value}</span>${icons.chevron}
+            ${brain?.api === 'device' && !auto ? icons['brain-device'] : icons.brain}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
-          ${primary(busy, empty, hands)}
+          ${primary(busy && !app.draft.value.trim(), empty, hands)}
         </div>
         ${files ? html`<input type="file" multiple class="visually-hidden" tabindex="-1" aria-hidden="true" @change=${this.#pick}>` : nothing}
       </form>
-      ${app.current.value?.records.length ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>` : nothing}`
+      ${app.dialog.value === 'first' ? html`<app-first></app-first>` : fresh && !slots('main').some((main) => main.draw())
+        ? html`<ul class="starters">${STARTERS.filter((key) => files || key !== 'sample').map((key) => html`<li><button class="starter" @click=${() => idea(key)}>${t(`starter.${key}`)}</button></li>`)}</ul>` : nothing}
+      ${!fresh ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
+        : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${`${url}#${locale.value}`} target="_blank">${t(`welcome.${name}`)}</a>`)}${home && !firstVisit() && !app.about.value
+          ? html` · <a href="#home-range" @click=${(/** @type {Event} */ event) => { event.preventDefault(); app.about.value = true }}>${t('welcome.about', { name: BRAND.name })}</a>` : nothing}</p>` : nothing}`
   }
 
   connectedCallback() {
@@ -163,9 +219,9 @@ class Composer extends Element {
     attachFiles(files)
   }
 
-  /** A tap anywhere in the box but its buttons is for its words. @param {Event} event */
+  /** A tap anywhere in the box but its buttons and questions is for its words. @param {Event} event */
   #press = (event) => {
-    if (/** @type {Element} */ (event.target).closest('textarea, button')) return
+    if (/** @type {Element} */ (event.target).closest('textarea, button, app-ask')) return
     if (event.type === 'click') focusComposer()
     else event.preventDefault()
   }
@@ -182,21 +238,25 @@ class Composer extends Element {
   /** @param {Event} event */
   #submit = (event) => {
     event.preventDefault()
-    // send() waits for a page being turned, which frees the box, before it looks whether it is busy.
-    send(app.draft.value)
+    const asked = /** @type {(HTMLElement & { answer: (own: string) => void }) | null} */ (this.querySelector('app-ask'))
+    const words = app.draft.value.trim()
+    // While questions wait, the box's words answer the one on screen, else steer the task at work (D365); send() waits for a page
+    // being turned, which frees the box, before it looks whether it is busy.
+    if (asked && words) { asked.answer(app.draft.value); app.draft.value = '' } else if (words && app.busy.value) { app.draft.value = ''; steer(words) } else send(app.draft.value)
   }
 }
 
 /**
- * Stop, send, or, while the box is empty, start and end a live conversation (D123).
+ * Stop, while the box has no words (D365); send; or, while the box is empty, start and end a live conversation (D123).
  * @param {boolean} busy @param {boolean} empty @param {import('./dictation.js').Live} hands
  */
 function primary(busy, empty, hands) {
   const on = hands !== 'off'
   if (busy && !on) return html`<button type="button" class="send is-stop" @click=${stop} aria-keyshortcuts="Escape" aria-label=${t('action.stop')}>${icons.stop}</button>`
-  if (empty ? on || loaded.value.has('live') : on && busy) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
+  // While hands-free is on, the box fills as the user speaks: the button still ends it, and the turn sends itself.
+  if (on || (empty && loaded.value.has('live'))) return html`<button type="button" class="send ${on ? 'is-live' : ''}"
     aria-keyshortcuts=${SHORTCUTS.live} aria-label=${t(on ? 'live.stop' : 'live.start')}
-    @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.wave}</button>`
+    @click=${() => import('../caps/live/live.js').then((module) => module.toggle())}>${on ? icons.close : icons.voice}</button>`
   return html`<button class="send" ?disabled=${empty} aria-label=${t('action.send')}>${icons.send}</button>`
 }
 
@@ -213,9 +273,9 @@ function complete(area) {
 /** Whether this browser can share a screen (not phones, where + only adds files). */
 const CAPTURE = Boolean(navigator.mediaDevices?.getDisplayMedia)
 
-/** The brain picker, a menu above the chip, or choosing a first brain. */
+/** The brain picker, a menu above the chip, or the first brain's dialog (D329). */
 async function openPicker() {
-  if (!brainsHere.value.length) return (await import('./dialogs.js')).openSettings('brains')
+  if (!brainsHere.value.length) return (await import('../caps/first/first.js')).open()
   if (!customElements.get('app-picker')) (await import('./picker.js')).openPicker()
 }
 

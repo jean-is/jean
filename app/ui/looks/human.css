@@ -3,9 +3,9 @@
    in blue bubbles with a tail, a toolbar that the page scrolls under with the title in it, sheets that open with
    a spring, and panels (the file preview, the browser, the drawer) that float. System typefaces, sizes, focus
    ring and scroll bars. On a phone, or with the sidebar put away: a bar without an edge, a large title, the drawer. Over ui/style.css, which comes after it, so every rule here starts
-   with :root[data-look='human'], and its keyframes are named human-*. */
+   with :root:is() of Human and Tilde, which builds on it (ui/looks/tilde.css); its keyframes are named human-*. */
 
-:root[data-look='human'] {
+:root:is([data-look='human'], [data-look='tilde']) {
   --room: oklch(0.235 0 0);
   --room-2: oklch(0.285 0.003 286);
   --ink: oklch(0.93 0 0);
@@ -23,6 +23,7 @@
   --glow-alpha: 0.4;
   /* The system's blue as a fill under white text: the accent's hue, deep enough for AA. */
   --fill: oklch(from var(--flame) 0.55 min(c * 1.4, 0.2) h);
+  --on-fill: oklch(1 0 0);
   --side: oklch(0.26 0.004 286);
   --panel: oklch(from var(--room-2) l c h / 0.9);
   --well: var(--room);
@@ -41,7 +42,7 @@
   --list: 0rem;
   --top: 3.25rem;
 }
-:root[data-look='human'][data-theme='light'] {
+:root:is([data-look='human'], [data-look='tilde'])[data-theme='light'] {
   --room: oklch(1 0 0);
   --room-2: oklch(0.967 0.003 286);
   --ink: oklch(0.235 0 0);
@@ -67,164 +68,165 @@
   --raise: 0 0 0 0.5px oklch(0 0 0 / 0.16), 0 0.5px 1.5px oklch(0 0 0 / 0.12);
   --float: inset 0 0 0 1px oklch(1 0 0 / 0.5), 0 0 0 0.5px oklch(0 0 0 / 0.14), 0 1.25rem 3.5rem -0.75rem oklch(0 0 0 / 0.28);
 }
-:root[data-look='human'][dir='rtl'] { --side-to: 270deg; }
+:root:is([data-look='human'], [data-look='tilde'])[dir='rtl'] { --side-to: 270deg; }
 /* Reduce transparency, as the system offers: every pane opaque. */
 @media (prefers-reduced-transparency: reduce) {
-  :root[data-look='human'][data-theme] { --glass: var(--room-2); --side: var(--room-2); --panel: var(--room-2); }
+  :root:is([data-look='human'], [data-look='tilde'])[data-theme] { --glass: var(--room-2); --side: var(--room-2); --panel: var(--room-2); }
 }
 
 /* No room light. The system's type. */
-:root[data-look='human'] .room { display: none; }
-:root[data-look='human'] :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; letter-spacing: normal; text-shadow: none; }
-:root[data-look='human'] :is(.wordmark, .wordmark:hover) { font: 600 1.0625rem/1 var(--sans); text-shadow: none; }
-:root[data-look='human'] .wordmark app-persona { --persona-size: 1.5rem; margin-block-start: -0.2rem; }
-:root[data-look='human'] :focus-visible { outline: 3px solid oklch(from var(--fill) l c h / 0.6); outline-offset: 1px; }
-:root[data-look='human'] :is(input, progress) { accent-color: var(--fill); }
+:root:is([data-look='human'], [data-look='tilde']) .room { display: none; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.wordmark, .hero-question, .conversation-title, .dialog-head h2, .drop-zone) { font-style: normal; letter-spacing: normal; text-shadow: none; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.wordmark, .wordmark:hover) { font: 600 1.0625rem/1 var(--sans); text-shadow: none; }
+:root:is([data-look='human'], [data-look='tilde']) .wordmark app-persona { --persona-size: 1.5rem; }
+:root:is([data-look='human'], [data-look='tilde']) :focus-visible { outline: 3px solid oklch(from var(--fill) l c h / 0.6); outline-offset: 1px; }
+:root:is([data-look='human'], [data-look='tilde']) :is(input, progress) { accent-color: var(--fill); }
 
 /* The bar on a phone, or with the sidebar put away: no edge, the page's own colour that the
    conversation fades under, as beside the sidebar; with it open, it is the sidebar's top. */
-:root[data-look='human'] .bar { padding-block: 0.5rem; }
+:root:is([data-look='human'], [data-look='tilde']) .bar { padding-block: 0.5rem; }
 
 /* The first screen: centred, in the system's display face. */
-:root[data-look='human'] .welcome { align-items: center; gap: 1.75rem; text-align: center; }
-:root[data-look='human'] .welcome app-persona { --persona-size: 4.5rem; margin: 0 0 -0.75rem; }
-:root[data-look='human'] .hero-question { margin: 0; padding: 0; font: 700 clamp(1.75rem, 3.8vw, 2.5rem)/1.2 var(--display); background: none; color: var(--ink); }
-:root[data-look='human'] .starters { justify-content: center; }
-:root[data-look='human'] :is(.starter, .follow-up) { border: 0; border-radius: 0.75rem; background: var(--control); box-shadow: var(--raise); color: var(--ink); font-size: 0.875rem; }
-:root[data-look='human'] :is(.starter, .follow-up):hover { background: var(--control-hover); box-shadow: var(--raise); }
+:root:is([data-look='human'], [data-look='tilde']) .welcome { align-items: center; gap: 1.75rem; text-align: center; }
+:root:is([data-look='human'], [data-look='tilde']) .welcome app-persona { --persona-size: 4.5rem; margin: 0 0 -0.75rem; }
+:root:is([data-look='human'], [data-look='tilde']) .hero-question { margin: 0; padding: 0; font: 700 clamp(1.75rem, 3.8vw, 2.5rem)/1.2 var(--display); background: none; color: var(--ink); }
+:root:is([data-look='human'], [data-look='tilde']) :is(.starters, .pitch ul) { justify-content: center; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.starter, .follow-up) { border: 0; border-radius: 0.75rem; background: var(--control); box-shadow: var(--raise); color: var(--ink); font-size: 0.875rem; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.starter, .follow-up):hover { background: var(--control-hover); box-shadow: var(--raise); }
 
 /* The conversation: a large title, plain answers, the user's words in blue bubbles with a tail. */
-:root[data-look='human'] .conversation-title { margin: 0.75rem 0 1rem; font: 700 1.75rem/1.2 var(--display); color: var(--ink); }
-:root[data-look='human'] .prose { font-size: 1rem; line-height: 1.6; }
-:root[data-look='human'] .prose pre { border: 0; border-radius: 0.625rem; background: oklch(from var(--ink) l c h / 0.06); }
-:root[data-look='human'] .caret { inline-size: 0.125em; border-radius: 0; box-shadow: none; }
+:root:is([data-look='human'], [data-look='tilde']) .conversation-title { margin: 0.75rem 0 1.5rem; font: 700 1.75rem/1.2 var(--display); color: var(--ink); }
+:root:is([data-look='human'], [data-look='tilde']) .prose { font-size: 1rem; line-height: 1.6; }
+:root:is([data-look='human'], [data-look='tilde']) .prose pre { border: 0; border-radius: 0.625rem; background: oklch(from var(--ink) l c h / 0.06); }
+:root:is([data-look='human'], [data-look='tilde']) .caret { inline-size: 0.125em; border-radius: 0; box-shadow: none; }
 @media screen {
-  :root[data-look='human'] .msg-user { position: relative; max-inline-size: 75%; padding-block: 0.4375rem; padding-inline: 0.875rem; border-radius: var(--radius); background: var(--fill); color: oklch(1 0 0); line-height: 1.45; }
-  :root[data-look='human'] .msg-user::before, :root[data-look='human'] .msg-user::after { content: ''; position: absolute; inset-block-end: 0; block-size: 1.25rem; }
-  :root[data-look='human'] .msg-user::before { inset-inline-end: -0.4375rem; inline-size: 1.25rem; border-end-start-radius: 1rem 0.875rem; background: var(--fill); }
-  :root[data-look='human'] .msg-user::after { inset-inline-end: -0.625rem; inline-size: 0.625rem; border-end-start-radius: 0.625rem; background: var(--room); }
+  :root:is([data-look='human'], [data-look='tilde']) .msg-user { position: relative; max-inline-size: 75%; padding-block: 0.4375rem; padding-inline: 0.875rem; border-radius: var(--radius); background: var(--fill); color: var(--on-fill); line-height: 1.45; }
+  :root:is([data-look='human'], [data-look='tilde']) .msg-user::before, :root:is([data-look='human'], [data-look='tilde']) .msg-user::after { content: ''; position: absolute; inset-block-end: 0; block-size: 1.25rem; }
+  :root:is([data-look='human'], [data-look='tilde']) .msg-user::before { inset-inline-end: -0.4375rem; inline-size: 1.25rem; border-end-start-radius: 1rem 0.875rem; background: var(--fill); }
+  :root:is([data-look='human'], [data-look='tilde']) .msg-user::after { inset-inline-end: -0.625rem; inline-size: 0.625rem; border-end-start-radius: 0.625rem; background: var(--room); }
   /* Words written the other way round from the page (dir="auto") keep the tail on the page's side. */
-  :root[data-look='human'][dir='ltr'] .msg-user:dir(rtl)::before, :root[data-look='human'][dir='rtl'] .msg-user:dir(ltr)::before { inset-inline: -0.4375rem auto; border-radius: 0; border-end-end-radius: 1rem 0.875rem; }
-  :root[data-look='human'][dir='ltr'] .msg-user:dir(rtl)::after, :root[data-look='human'][dir='rtl'] .msg-user:dir(ltr)::after { inset-inline: -0.625rem auto; border-radius: 0; border-end-end-radius: 0.625rem; }
+  :root:is([data-look='human'], [data-look='tilde'])[dir='ltr'] .msg-user:dir(rtl)::before, :root:is([data-look='human'], [data-look='tilde'])[dir='rtl'] .msg-user:dir(ltr)::before { inset-inline: -0.4375rem auto; border-radius: 0; border-end-end-radius: 1rem 0.875rem; }
+  :root:is([data-look='human'], [data-look='tilde'])[dir='ltr'] .msg-user:dir(rtl)::after, :root:is([data-look='human'], [data-look='tilde'])[dir='rtl'] .msg-user:dir(ltr)::after { inset-inline: -0.625rem auto; border-radius: 0; border-end-end-radius: 0.625rem; }
 }
 
 /* The box: a floating glass capsule, the send button the system's blue. */
-:root[data-look='human'] app-composer { background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 70%); }
-:root[data-look='human'] .composer { padding-block: 0.625rem 0.5rem; padding-inline: 0.875rem 0.5rem; border: 1px solid var(--line); border-radius: 1.375rem; background: var(--glass); backdrop-filter: blur(24px) saturate(1.8); box-shadow: var(--float); }
-:root[data-look='human'] .composer:focus-within { border-color: oklch(from var(--fill) l c h / 0.6); box-shadow: var(--float), 0 0 0 3px oklch(from var(--fill) l c h / 0.3); }
-:root[data-look='human'] .composer textarea { font-size: 1rem; }
-:root[data-look='human'] .send { inline-size: 2.125rem; block-size: 2.125rem; background: var(--fill); color: oklch(1 0 0); box-shadow: none; }
-:root[data-look='human'] .send:is(.is-stop, .is-live) { background: var(--ink); color: var(--room); }
-:root[data-look='human'] .brain-chip { border: 0; background: var(--control); box-shadow: var(--raise); color: var(--ink); font-size: 0.8125rem; }
-:root[data-look='human'] .brain-chip:hover { background: var(--control-hover); }
+:root:is([data-look='human'], [data-look='tilde']) app-composer { background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 70%); }
+:root:is([data-look='human'], [data-look='tilde']) .composer { padding-block: 0.625rem 0.5rem; padding-inline: 0.875rem 0.5rem; border: 1px solid var(--line); border-radius: 1.375rem; background: var(--glass); backdrop-filter: blur(24px) saturate(1.8); box-shadow: var(--float); }
+:root:is([data-look='human'], [data-look='tilde']) .composer:focus-within { border-color: oklch(from var(--fill) l c h / 0.6); box-shadow: var(--float), 0 0 0 3px oklch(from var(--fill) l c h / 0.3); }
+:root:is([data-look='human'], [data-look='tilde']) .composer textarea { font-size: 1rem; }
+:root:is([data-look='human'], [data-look='tilde']) .send { inline-size: 2.125rem; block-size: 2.125rem; background: var(--fill); color: var(--on-fill); box-shadow: none; }
+:root:is([data-look='human'], [data-look='tilde']) .send:is(.is-stop, .is-live) { background: var(--ink); color: var(--room); }
+:root:is([data-look='human'], [data-look='tilde']) .brain-chip { border: 0; background: var(--control); box-shadow: var(--raise); color: var(--ink); font-size: 0.8125rem; }
+:root:is([data-look='human'], [data-look='tilde']) .brain-chip:hover { background: var(--control-hover); }
 
 /* Controls: push buttons, fields, a segmented control with a raised thumb, menus of glass. */
-:root[data-look='human'] .button { padding: 0.375rem 0.875rem; border: 0; background: var(--control); box-shadow: var(--raise); font-size: 0.875rem; }
-:root[data-look='human'] .button:hover { background: var(--control-hover); }
-:root[data-look='human'] .button.primary { background: var(--fill); color: oklch(1 0 0); box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2), 0 0.5px 1.5px oklch(0 0 0 / 0.25); }
-:root[data-look='human'] .button.primary:hover { background: oklch(from var(--fill) calc(l - 0.04) c h); }
-:root[data-look='human'] .button.subtle { background: transparent; box-shadow: none; }
-:root[data-look='human'] :is(input:not([type='radio'], [type='checkbox'], .visually-hidden), select) { border: 1px solid var(--line-strong); border-radius: 0.5rem; background-color: var(--field); }
-:root[data-look='human'] .segmented { border: 0; padding: 0.125rem; background: oklch(from var(--ink) l c h / 0.08); }
-:root[data-look='human'] .segmented span { padding: 0.25rem 0.875rem; color: var(--ink); font-size: 0.8125rem; }
-:root[data-look='human'] .segmented input:checked + span { background: var(--seg); color: var(--ink); font-weight: 500; box-shadow: 0 0.5px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06); }
-:root[data-look='human'] .menu { padding: 0.3125rem; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--panel); backdrop-filter: blur(30px) saturate(1.8); box-shadow: var(--float); }
-:root[data-look='human'] .menu :is(button, a) { gap: 0.5rem; padding: 0.25rem 0.625rem; border-radius: 0.4375rem; font-size: 0.8125rem; }
-:root[data-look='human'] .menu :is(button, a):hover { background: var(--fill); color: oklch(1 0 0); }
-:root[data-look='human'] .menu :is(button, a):hover .icon { color: inherit; }
-:root[data-look='human'] .menu .icon { inline-size: 1rem; block-size: 1rem; }
+:root:is([data-look='human'], [data-look='tilde']) .button { padding: 0.375rem 0.875rem; border: 0; background: var(--control); box-shadow: var(--raise); font-size: 0.875rem; }
+:root:is([data-look='human'], [data-look='tilde']) .button:hover { background: var(--control-hover); }
+:root:is([data-look='human'], [data-look='tilde']) .button.primary { background: var(--fill); color: var(--on-fill); box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2), 0 0.5px 1.5px oklch(0 0 0 / 0.25); }
+:root:is([data-look='human'], [data-look='tilde']) .button.primary:hover { background: oklch(from var(--fill) calc(l - 0.04) c h); }
+:root:is([data-look='human'], [data-look='tilde']) .button.subtle { background: transparent; box-shadow: none; }
+:root:is([data-look='human'], [data-look='tilde']) :is(input:not([type='radio'], [type='checkbox'], .visually-hidden), select) { border: 1px solid var(--line-strong); border-radius: 0.5rem; background-color: var(--field); }
+:root:is([data-look='human'], [data-look='tilde']) .segmented { border: 0; padding: 0.125rem; background: oklch(from var(--ink) l c h / 0.08); }
+:root:is([data-look='human'], [data-look='tilde']) .segmented span { padding: 0.25rem 0.875rem; color: var(--ink); font-size: 0.8125rem; }
+:root:is([data-look='human'], [data-look='tilde']) .segmented input:checked + span { background: var(--seg); color: var(--ink); font-weight: 500; box-shadow: 0 0.5px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06); }
+:root:is([data-look='human'], [data-look='tilde']) .menu { padding: 0.3125rem; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--panel); backdrop-filter: blur(30px) saturate(1.8); box-shadow: var(--float); }
+:root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a) { gap: 0.5rem; padding: 0.25rem 0.625rem; border-radius: 0.4375rem; font-size: 0.8125rem; }
+:root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a):hover { background: var(--fill); color: var(--on-fill); }
+:root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a):hover .icon { color: inherit; }
+:root:is([data-look='human'], [data-look='tilde']) .menu .icon { --glyph: var(--icon-s); }
 
 /* The conversations: rows in the sidebar or the drawer, the open one filled with blue. */
-:root[data-look='human'] :is(.place, .sidebar-settings) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
-:root[data-look='human'] :is(.place:hover, .history-list li:hover) { background: var(--hover); }
-:root[data-look='human'] :is(.place, .sidebar-settings) .icon { color: var(--flame); }
-:root[data-look='human'] .sidebar-heading { padding-inline: 0.625rem; font-size: 0.75rem; font-weight: 600; }
-:root[data-look='human'] .history-list { gap: 0.125rem; }
-:root[data-look='human'] .history-list li { border-radius: 0.625rem; }
-:root[data-look='human'] .history-list li.is-current { background: var(--fill); color: oklch(1 0 0); }
-:root[data-look='human'] .history-list li.is-current .icon-button { color: oklch(1 0 0); }
-:root[data-look='human'] .history-list li.is-current .ember { background: currentColor; }
-:root[data-look='human'] .history-item { padding: 0.4375rem 0.625rem; }
-:root[data-look='human'] .history-title { font-size: 0.875rem; font-weight: 500; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.place, .sidebar-settings) { justify-content: flex-start; gap: 0.5rem; padding: 0.4375rem 0.625rem; border-radius: 0.625rem; box-shadow: none; color: var(--ink); font-size: 0.875rem; font-weight: 400; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.place:hover, .history-list li:hover) { background: var(--hover); }
+:root:is([data-look='human'], [data-look='tilde']) :is(.place, .sidebar-settings) .icon { color: var(--flame); }
+:root:is([data-look='human'], [data-look='tilde']) .sidebar-heading { padding-inline: 0.625rem; font-size: 0.75rem; font-weight: 600; }
+:root:is([data-look='human'], [data-look='tilde']) .history-list { gap: 0.125rem; }
+:root:is([data-look='human'], [data-look='tilde']) .history-list li { border-radius: 0.625rem; }
+:root:is([data-look='human'], [data-look='tilde']) .history-list li.is-current { background: var(--fill); color: var(--on-fill); }
+:root:is([data-look='human'], [data-look='tilde']) .history-list li.is-current .icon-button { color: var(--on-fill); }
+:root:is([data-look='human'], [data-look='tilde']) .history-list li.is-current .ember { background: currentColor; }
+:root:is([data-look='human'], [data-look='tilde']) .history-item { padding: 0.4375rem 0.625rem; }
+:root:is([data-look='human'], [data-look='tilde']) .history-title { font-size: 0.875rem; font-weight: 500; }
 
 /* Notifications come in at the top corner, as the system's do. */
-:root[data-look='human'] .toasts { inset-block: 0.75rem auto; inset-inline: auto 0.75rem; justify-items: end; }
-:root[data-look='human'] .toast { max-inline-size: min(24rem, 100vw - 1.5rem); padding-block: 0.625rem; padding-inline: 1rem 0.5rem; border: 0; border-radius: 1.125rem; background: var(--panel); backdrop-filter: blur(30px) saturate(1.8); box-shadow: var(--float); font-size: 0.875rem; animation: human-banner 0.5s var(--spring) both; }
-:root[data-look='human'] .toast:not(:has(button)) { padding-inline-end: 1rem; }
+:root:is([data-look='human'], [data-look='tilde']) .toasts { inset-block: 0.75rem auto; inset-inline: auto 0.75rem; justify-items: end; }
+:root:is([data-look='human'], [data-look='tilde']) .toast { max-inline-size: min(24rem, 100vw - 1.5rem); padding-block: 0.625rem; padding-inline: 1rem 0.5rem; border: 0; border-radius: 1.125rem; background: var(--panel); backdrop-filter: blur(30px) saturate(1.8); box-shadow: var(--float); font-size: 0.875rem; animation: human-banner 0.5s var(--spring) both; }
+:root:is([data-look='human'], [data-look='tilde']) .toast:not(:has(button)) { padding-inline-end: 1rem; }
 @keyframes human-banner { from { opacity: 0; translate: 0 -0.75rem; scale: 0.95; } }
-:root[data-look='human'] .drop-zone { border-color: oklch(from var(--fill) l c h / 0.7); border-radius: 1.375rem; font: 600 clamp(1.5rem, 4vw, 2.2rem)/1.2 var(--display); }
+:root:is([data-look='human'], [data-look='tilde']) .drop-zone { border-color: oklch(from var(--fill) l c h / 0.7); border-radius: 1.375rem; font: 600 clamp(1.5rem, 4vw, 2.2rem)/1.2 var(--display); }
 
 /* Windows and sheets: frosted, with the system's shadow; they open with a spring. */
-:root[data-look='human'] dialog { border: 0; background: var(--panel); backdrop-filter: blur(40px) saturate(1.8); box-shadow: var(--float); transition: opacity 0.2s ease-out, scale 0.35s var(--spring), translate 0.35s var(--ease), display 0.35s allow-discrete, overlay 0.35s allow-discrete; }
-:root[data-look='human'] dialog::backdrop { background: oklch(0 0 0 / 0.3); backdrop-filter: none; }
-:root[data-look='human'][data-theme='light'] dialog::backdrop { background: oklch(0 0 0 / 0.16); }
-:root[data-look='human'] .sheet { border-radius: 1.375rem; }
-:root[data-look='human'] .sheet:not([open]) { scale: 0.97; }
-@starting-style { :root[data-look='human'] .sheet[open] { opacity: 0; translate: none; scale: 0.94; } }
-:root[data-look='human'] .dialog-head h2 { font: 700 1.0625rem/1.3 var(--sans); }
-:root[data-look='human'] :is(.dialog-head, .pane-head) .icon-button { inline-size: 2rem; block-size: 2rem; background: var(--control); box-shadow: var(--raise); }
-:root[data-look='human'] .settings-nav button { gap: 0.5rem; padding: 0.3125rem 0.625rem; border-radius: 0.5rem; color: var(--ink); font-size: 0.875rem; }
-:root[data-look='human'] .settings-nav .icon { color: var(--flame); }
-:root[data-look='human'] .settings-nav button:hover { background: var(--hover); }
-:root[data-look='human'] .settings-nav button[aria-current='page'] { background: var(--fill); color: oklch(1 0 0); font-weight: 500; }
-:root[data-look='human'] .settings-nav [aria-current='page'] .icon { color: inherit; }
+:root:is([data-look='human'], [data-look='tilde']) dialog { border: 0; background: var(--panel); backdrop-filter: blur(40px) saturate(1.8); box-shadow: var(--float); transition: opacity 0.2s ease-out, scale 0.35s var(--spring), translate 0.35s var(--ease), display 0.35s allow-discrete, overlay 0.35s allow-discrete; }
+:root:is([data-look='human'], [data-look='tilde']) dialog::backdrop { background: oklch(0 0 0 / 0.3); backdrop-filter: none; }
+:root:is([data-look='human'], [data-look='tilde'])[data-theme='light'] dialog::backdrop { background: oklch(0 0 0 / 0.16); }
+:root:is([data-look='human'], [data-look='tilde']) .sheet { border-radius: 1.375rem; }
+:root:is([data-look='human'], [data-look='tilde']) .sheet:not([open]) { scale: 0.97; }
+@starting-style { :root:is([data-look='human'], [data-look='tilde']) .sheet[open] { opacity: 0; translate: none; scale: 0.94; } }
+:root:is([data-look='human'], [data-look='tilde']) .dialog-head h2 { font: 700 1.0625rem/1.3 var(--sans); }
+:root:is([data-look='human'], [data-look='tilde']) :is(.dialog-head, .pane-head) .icon-button { inline-size: 2rem; block-size: 2rem; background: var(--control); box-shadow: var(--raise); }
+:root:is([data-look='human'], [data-look='tilde']) .settings-nav button { gap: 0.5rem; padding: 0.3125rem 0.625rem; border-radius: 0.5rem; color: var(--ink); font-size: 0.875rem; }
+:root:is([data-look='human'], [data-look='tilde']) .settings-nav .icon { color: var(--flame); }
+:root:is([data-look='human'], [data-look='tilde']) .settings-nav button:hover { background: var(--hover); }
+:root:is([data-look='human'], [data-look='tilde']) .settings-nav button[aria-current='page'] { background: var(--fill); color: var(--on-fill); font-weight: 500; }
+:root:is([data-look='human'], [data-look='tilde']) .settings-nav [aria-current='page'] .icon { color: inherit; }
 
 /* Panels float over the window, as the system's do: inset from its edges, frosted, rounded, with
    its shadow. The dock's panes (D144), a file's preview and the browser, sit beside the
    conversation, over the window's own colour, apart from each other; on a narrower screen they
    cover the conversation, which dims around them. The space between them is what resizes them.
    A pane full screen fills it. The drawer slides in from the side. */
-:root[data-look='human'] .dock { padding: max(0.625rem, env(safe-area-inset-top)) 0.625rem max(0.625rem, env(safe-area-inset-bottom)); background: oklch(0 0 0 / 0.3); }
-:root[data-look='human'][data-dock='beside'] .dock { border: 0; background: none; }
-:root[data-look='human'][data-dock='beside'] app-shell { margin-inline-end: 0; border-inline-end: var(--pane) solid var(--room); }
-:root[data-look='human'] .dock > .dock-divider { block-size: 0.625rem; background: none; }
-:root[data-look='human'] .dock.is-row > .dock-divider { inline-size: 0.625rem; }
-:root[data-look='human'] .dock > .dock-edge { inset-inline-start: 0; inline-size: 0.625rem; }
-:root[data-look='human'] .pane { overflow: hidden; border: 1px solid var(--line); border-radius: 1.25rem; background: var(--panel); backdrop-filter: blur(40px) saturate(1.8); box-shadow: var(--float); animation: human-panel 0.4s var(--spring) both; }
-:root[data-look='human'] .pane:is(:fullscreen, .is-full) { border: 0; border-radius: 0; }
+:root:is([data-look='human'], [data-look='tilde']) .dock { padding: max(0.625rem, env(safe-area-inset-top)) 0.625rem max(0.625rem, env(safe-area-inset-bottom)); background: oklch(0 0 0 / 0.3); }
+:root:is([data-look='human'], [data-look='tilde'])[data-dock='beside'] .dock { border: 0; background: none; }
+:root:is([data-look='human'], [data-look='tilde'])[data-dock='beside'] app-shell { margin-inline-end: 0; border-inline-end: var(--pane) solid var(--room); }
+:root:is([data-look='human'], [data-look='tilde']) .dock > .dock-divider { block-size: 0.625rem; background: none; }
+:root:is([data-look='human'], [data-look='tilde']) .dock.is-row > .dock-divider { inline-size: 0.625rem; }
+:root:is([data-look='human'], [data-look='tilde']) .dock > .dock-edge { inset-inline-start: 0; inline-size: 0.625rem; }
+:root:is([data-look='human'], [data-look='tilde']) .pane { overflow: hidden; border: 1px solid var(--line); border-radius: 1.25rem; background: var(--panel); backdrop-filter: blur(40px) saturate(1.8); box-shadow: var(--float); animation: human-panel 0.4s var(--spring) both; }
+:root:is([data-look='human'], [data-look='tilde']) .pane:is(:fullscreen, .is-full) { border: 0; border-radius: 0; }
 @keyframes human-panel { from { opacity: 0; scale: 0.94; } }
-:root[data-look='human'] .pane-head { padding-inline: 1rem 0.625rem; }
-:root[data-look='human'] .pane-head h2 { font-size: 0.9375rem; text-align: center; }
-:root[data-look='human'] .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; } :root[data-look='human'] .drawer .sidebar-settings { background: var(--room-2); }
+:root:is([data-look='human'], [data-look='tilde']) .pane-head { padding-inline: 1rem 0.625rem; }
+:root:is([data-look='human'], [data-look='tilde']) .pane-head h2 { font-size: 0.9375rem; text-align: center; }
+:root:is([data-look='human'], [data-look='tilde']) .drawer { margin-block: 0.625rem; margin-inline-start: 0.625rem; block-size: calc(100dvh - 1.25rem); border-radius: 1.25rem; } :root:is([data-look='human'], [data-look='tilde']) .drawer .sidebar-settings { background: var(--room-2); border-end-start-radius: 0; border-end-end-radius: 0; }
 
 @media (width > 40rem) {
   /* Settings is a window of its own: its sections in a sidebar, the open one's settings in groups. */
-  :root[data-look='human'] .settings { background: linear-gradient(var(--side-to), var(--side) 13rem, var(--line) 13rem calc(13rem + 1px), var(--well) calc(13rem + 1px)); }
-  :root[data-look='human'] .settings-nav { padding-inline: 0.625rem; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings { background: linear-gradient(var(--side-to), var(--side) 13rem, var(--line) 13rem calc(13rem + 1px), var(--well) calc(13rem + 1px)); }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-nav { padding-inline: 0.625rem; }
   /* The settings as far from the line beside the menu as from the window's edge. */
-  :root[data-look='human'] .settings-panel { padding-inline: 1.5rem; }
-  :root[data-look='human'] .settings-panel > section { margin-block-end: 0.75rem; padding: 0.875rem 1rem; border: 0; border-radius: 0.75rem; background: var(--group); box-shadow: 0 0 0 1px var(--line); }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel { padding-inline: 1.5rem; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel > section { margin-block-end: 0.75rem; padding: 0.875rem 1rem; border: 0; border-radius: 0.75rem; background: var(--group); box-shadow: 0 0 0 1px var(--line); }
   /* A list in a group is the group's rows, from edge to edge. */
-  :root[data-look='human'] .settings-panel > section > .list { margin-inline: -1rem; border-inline: 0; border-radius: 0; }
-  :root[data-look='human'] .settings-panel > section > .list:first-child { margin-block-start: -0.875rem; border-block-start: 0; border-start-start-radius: 0.75rem; border-start-end-radius: 0.75rem; }
-  :root[data-look='human'] .settings-panel > section > .list:last-child { margin-block-end: -0.875rem; border-block-end: 0; border-end-start-radius: 0.75rem; border-end-end-radius: 0.75rem; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel > section > .list { margin-inline: -1rem; border-inline: 0; border-radius: 0; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel > section > .list:first-child { margin-block-start: -0.875rem; border-block-start: 0; border-start-start-radius: 0.75rem; border-start-end-radius: 0.75rem; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel > section > .list:last-child { margin-block-end: -0.875rem; border-block-end: 0; border-end-start-radius: 0.75rem; border-end-end-radius: 0.75rem; }
   /* Its summaries' corners: the group's at its ends, none between. */
-  :root[data-look='human'] .settings-panel > section > .list { --corner-start: 0; --corner-end: 0; }
-  :root[data-look='human'] .settings-panel > section > .list:first-child { --corner-start: 0.75rem; }
-  :root[data-look='human'] .settings-panel > section > .list:last-child { --corner-end: 0.75rem; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel > section > .list { --corner-start: 0; --corner-end: 0; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel > section > .list:first-child { --corner-start: 0.75rem; }
+  :root:is([data-look='human'], [data-look='tilde']) .settings-panel > section > .list:last-child { --corner-end: 0.75rem; }
 }
 
 @media (width < 48rem) {
-  :root[data-look='human'] .toasts { inset-inline: 0.75rem; justify-items: center; }
+  :root:is([data-look='human'], [data-look='tilde']) .toasts { inset-inline: 0.75rem; justify-items: center; }
 }
 /* The sidebar, from edge to edge, open beside the conversation (D165): the name at its top, the
    conversations, the user at its foot. */
-:root[data-look='human'][data-sidebar] { --list: 17.5rem; }
-:root[data-look='human'][data-sidebar] app-shell { padding-inline-start: var(--list); background: var(--room) content-box; }
-:root[data-look='human'][data-sidebar] :is(.bar, app-inbox) { background: var(--side); }
-:root[data-look='human'][data-sidebar] .bar { padding-block: 0; }
-:root[data-look='human'][data-sidebar] .wordmark { font-size: 0.9375rem; }
-:root[data-look='human'][data-sidebar] app-inbox { padding: 0 0.625rem 0.625rem; }
-:root[data-look='human'][data-sidebar] main { padding-block-start: 0; }
-/* The toolbar over the conversation, which the page scrolls under; its title in it, centred. */
-:root[data-look='human'][data-sidebar] app-shell::before { content: ''; position: fixed; z-index: 2; inset-block-start: 0; inset-inline: var(--list) 0; block-size: var(--top); background: linear-gradient(var(--room) 40%, oklch(from var(--room) l c h / 0)); pointer-events: none; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] { --list: 17.5rem; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] app-shell { padding-inline-start: var(--list); background: var(--room) content-box; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] :is(.bar, app-inbox) { background: var(--side); }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] .bar { padding-block: 0; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] .wordmark { font-size: 0.9375rem; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] app-inbox { padding: 0 0.625rem var(--foot); --foot: 0.625rem; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] main { padding-block-start: 0; }
+/* The toolbar over the conversation, which the page scrolls under; its title in it, centred, with more room
+   under it than between two requests, so that the first starts the conversation instead of hanging from it. */
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] app-shell::before { content: ''; position: fixed; z-index: 2; inset-block-start: 0; inset-inline: var(--list) 0; block-size: var(--top); background: linear-gradient(var(--room) 40%, oklch(from var(--room) l c h / 0)); pointer-events: none; }
 /* The browser's and the terminal's buttons sit in it, at its end (D170), over the title, which reaches under them on a narrower window. */
-:root[data-look='human'] app-shell > .views { margin-block-end: calc(-1 * var(--top)); background: none; }
-:root[data-look='human'][data-sidebar] .conversation-title { position: sticky; z-index: 2; inset-block-start: 0; margin: 0 0 0.75rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
-:root[data-look='human'][data-sidebar] .notice { margin-block-start: var(--top); }
+:root:is([data-look='human'], [data-look='tilde']) app-shell > .views { margin-block-end: calc(-1 * var(--top)); background: none; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] .conversation-title { position: sticky; z-index: 2; inset-block-start: 0; margin: 0 0 2rem; overflow: hidden; font: 600 0.9375rem/var(--top) var(--sans); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+:root:is([data-look='human'], [data-look='tilde'])[data-sidebar] .notice { margin-block-start: var(--top); }
 
 @media print {
-  :root[data-look='human'] app-shell::before { display: none; }
-  :root[data-look='human'] app-shell { border: 0; background: none; }
-  :root[data-look='human'] .conversation-title { position: static; font: 700 1.5rem/1.2 var(--display); text-align: start; white-space: normal; }
+  :root:is([data-look='human'], [data-look='tilde']) app-shell::before { display: none; }
+  :root:is([data-look='human'], [data-look='tilde']) app-shell { border: 0; background: none; }
+  :root:is([data-look='human'], [data-look='tilde']) .conversation-title { position: static; font: 700 1.5rem/1.2 var(--display); text-align: start; white-space: normal; }
 }

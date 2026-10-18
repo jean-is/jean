@@ -23,6 +23,7 @@ import { ulid } from './ulid.js'
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
+ * @property {boolean} [notifications]        false: no notification when a task is done out of sight (D334)
  * @property {number} [stepped]                how many requests took several calls (Flows is offered, D218)
  * @property {boolean} [restored]             a backup was restored here (Sync is offered, D286)
  * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
@@ -42,15 +43,15 @@ import { ulid } from './ulid.js'
  */
 
 /**
- * A look by its id (Human when absent, D174), and what the user changed over it: colours as
+ * A look by its id (Tilde when absent, D373), and what the user changed over it: colours as
  * `#rrggbb`, a text size as a share of the browser's, a typeface, and their own CSS.
  * @typedef {{ id?: string, accent?: string, background?: string, size?: number, font?: string, css?: string }} Look
  */
 
 /**
- * A service connected (D21, D87): the projects it is used in, when not every one, and whether it
- * is reached through the gateway (D191).
- * @typedef {{ id: string, name: string, url: string, auth: 'none' | 'key' | 'oauth', projects?: string[], gateway?: boolean }} Connection
+ * A service connected (D21, D87): the further servers its one sign-in reaches (D344), the projects
+ * it is used in, when not every one, whether it is reached through the gateway (D191), and who signed in (D357).
+ * @typedef {{ id: string, name: string, url: string, servers?: string[], auth: 'none' | 'key' | 'oauth', projects?: string[], gateway?: boolean, account?: string }} Connection
  */
 
 /**
@@ -63,8 +64,12 @@ export const DEFAULT_URLS = Object.freeze({
   vikidia: 'https://{lang}.vikidia.org/w/api.php', kiwix: '',
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
-  // The gateway to the services a browser can't reach (D191): none until one is named.
-  gateway: '',
+  // What whoever serves Jean names: the gateway to the services a browser can't reach (D191), none until one is
+  // named; the privacy policy and terms linked under the box, by their addresses without .html (D356), and where
+  // files go (D381), linked there and from About this answer, jean.is's until then, none with ''.
+  gateway: '', privacy: 'privacy', terms: 'terms', files: 'files',
+  // The host shares go to (D361), none until one is named: jean.is's policy names hst.ing.
+  share: '',
   // A web source's site icon, shown with its domain on its chip (D210): none when ''.
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
   // Brains' prices (D255).
@@ -108,9 +113,10 @@ export function applyPolicy(settings, policy = {}) {
     effective.locale = policy.locale
     locked.add('locale')
   }
-  if (policy.brains?.length) {
+  // Even none: a child's profile has the brains a parent left it (D228).
+  if (policy.brains) {
     effective.brains = policy.brains
-    if (!policy.brains.some((brain) => brain.id === effective.activeBrain)) effective.activeBrain = policy.brains[0].id
+    if (!policy.brains.some((brain) => brain.id === effective.activeBrain)) effective.activeBrain = policy.brains[0]?.id ?? null
     locked.add('brains')
   }
   for (const [kind, value] of Object.entries(policy.rules ?? {})) {
@@ -147,6 +153,14 @@ export async function createProject(fs, { name, by, colour, home = false, now = 
 
 /** The default project, created on first run. Invisible until projects are discovered. @param {FS} fs @param {{ by: string, name?: string }} options */
 export const ensureHome = async (fs, { by, name = 'Home' }) => (await listProjects(fs)).find((project) => project.data.default === true)?.dir ?? createProject(fs, { name, by, home: true })
+
+/** The profile, of those folders, whose projects hold a project or a task by its ULID, as an address names it (D228). @param {FS} fs @param {string[]} dirs @param {string} id */
+export async function profileOf(fs, dirs, id) {
+  for (const dir of dirs) {
+    for (const { name } of await fs.list(`${dir}/projects`)) if (name.startsWith(id) || await fs.exists(`${dir}/projects/${name}/conversations/${id}.jsonl`)) return dir
+  }
+  return null
+}
 
 /** Lower-case Latin letters, digits and single hyphens, for folder names: "Été à Paris!" → "ete-a-paris". @param {string} text */
 export const slug = (text) => text.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64).replace(/-$/, '')

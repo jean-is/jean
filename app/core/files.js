@@ -22,6 +22,9 @@ const utf8 = (text) => encoder.encode(text).length
 /** Rough and deliberately high: UTF-8 bytes / 3 (about right for CJK, generous for Latin). @param {string} text */
 export const estimateTokens = (text) => Math.ceil(utf8(text) / 3)
 
+/** Roughly how much a request's messages take of a brain's window, pictures and replayed blocks aside (D359). @param {unknown} value */
+export const estimateMessages = (value) => estimateTokens(JSON.stringify(value, (key, part) => (key === 'image' || key === 'raw' ? undefined : part)) ?? '')
+
 /** @param {string[]} pages @param {number} [first] the first one's number */
 export const joinPages = (pages, first = 1) => pages.map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')
 

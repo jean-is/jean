@@ -1,0 +1,13 @@
+{
+  "plan.title": "Shiri",
+  "plan.done": "An gama {done} cikin {total}",
+  "plan.pending": "Ba a yi ba",
+  "plan.in_progress": "Ana yi",
+  "plan.completed": "An gama",
+  "plan.confirm": "A ci gaba da wannan shirin?",
+  "plan.go": "A fara",
+  "plan.always": "A fara koyaushe",
+  "plan.paused": "An dakata a mataki na {count}",
+  "plan.cost": "kusan {cost} zuwa yanzu",
+  "plan.keepGoing": "Ci gaba"
+}

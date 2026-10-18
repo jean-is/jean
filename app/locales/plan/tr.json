@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plan",
+  "plan.done": "{total} adımın {done} tanesi tamam",
+  "plan.pending": "Yapılacak",
+  "plan.in_progress": "Sürüyor",
+  "plan.completed": "Tamam",
+  "plan.confirm": "Bu planla devam edilsin mi?",
+  "plan.go": "Başla",
+  "plan.always": "Her zaman başla",
+  "plan.paused": "{count}. adımda duraklatıldı",
+  "plan.cost": "şimdiye dek yaklaşık {cost}",
+  "plan.keepGoing": "Devam et"
+}

@@ -6,6 +6,7 @@
 import { effect, signal } from '@preact/signals-core'
 import { app, openConversation, newConversation, enterProject } from './state.js'
 import { join } from '../core/fs.js'
+import { unlock } from './caps.js'
 
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 const ADDRESS = /^#\/(?:p\/([^/?#]+)\/?)?(?:c\/([^/?#]+)\/?)?(settings(?:\/([a-z]+))?)?/
@@ -104,9 +105,14 @@ function drafts() {
   }
 }
 
+/** A share opened in this Jean (D361), from its viewer's Continue: brought in, then the address is the task's (caps/share/share.js), which it follows. */
+const bringShared = async () => location.hash.startsWith('#/shared/') && unlock('share').then((ok) => ok && import('../caps/share/share.js').then((module) => module.fromAddress()).then(() => true))
+
 export async function startRouter() {
+  await bringShared()
   await follow()
-  addEventListener('hashchange', () => {
+  addEventListener('hashchange', async () => {
+    if (await bringShared()) return follow()
     if (!backing) return follow(!samePlace(location.hash, place()))
     backing = false
     write()

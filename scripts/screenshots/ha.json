@@ -1,0 +1,38 @@
+{
+  "description": "Ƙirƙirarriyar basira (AI) ta kowa, a cikin shafin burauza. Ka yi tambaya da kalmomi ko da fayil, ka sami abin da ka nema a shirye: amsa tare da tushenta, takarda, jadawali. Ka yi amfani da AI da ka zaɓa, ka ajiye aikinka a na’urarka. Babu abin da za a saka, kyauta kuma buɗaɗɗen tushe.",
+  "labels": {
+    "welcome": "Allon maraba: ra’ayoyin farawa, da akwatin yin kowace tambaya",
+    "chart": "Takardar lissafi da aka raba, da tallace-tallacenta a cikin jadawali",
+    "sources": "Yarjejeniyar haya da aka karanta, kowane sashe na amsar yana nuni gare ta",
+    "share": "Ɗawainiya da aka raba da aboki ta hanyar haɗi"
+  },
+  "chart": {
+    "title": "Tallace-tallace bisa yanki",
+    "file": "Tallace-tallace.csv",
+    "columns": [
+      "Yanki",
+      "Janairu",
+      "Faburairu",
+      "Maris"
+    ],
+    "regions": [
+      "Arewa",
+      "Kudu",
+      "Gabas"
+    ],
+    "ask": "Yi jadawalin tallace-tallace bisa yanki, wata-wata",
+    "before": "Ga tallace-tallacen kwata na farko, bisa yanki:",
+    "heading": "Tallace-tallace, kwata na farko",
+    "after": "**Arewa** ce ta fi sayarwa, kuma **Gabas** ce ta fi saurin bunƙasa: ƙarin 37% daga Janairu zuwa Maris."
+  },
+  "sources": {
+    "title": "Barin gida",
+    "file": "Yarjejeniyar haya.pdf",
+    "pages": [
+      "Yarjejeniyar hayar gida mai kayan daki\n\nSashe na 7. Sanarwa. Mai haya zai iya kawo ƙarshen yarjejeniyar a kowane lokaci da sanarwar wata ɗaya, ta wasiƙar rajista ko ta hannu tare da rasit.",
+      "Sashe na 9. Ajiya. Za a mayar da ajiyar da ta kai hayar wata ɗaya cikin wata ɗaya bayan mayar da makullai, bayan an cire kuɗin gyare-gyare idan akwai."
+    ],
+    "ask": "Sanarwar tsawon lokaci nawa zan bayar kafin in tashi, kuma yaushe zan karɓi ajiyata?",
+    "answer": "Ga abin da yarjejeniyar hayarka ta ce:\n\n- **Sanarwa:** wata ɗaya, ta wasiƙar rajista ko ta hannu tare da rasit [1].\n- **Ajiya:** za a mayar maka cikin wata ɗaya bayan ka mayar da makullai, bayan an cire kuɗin gyare-gyare idan akwai [1].\n\nDon haka idan ka aika da wasiƙar yau, za ka iya tashi bayan wata ɗaya."
+  }
+}

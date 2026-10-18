@@ -9,9 +9,9 @@ import { html } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, unlock } from '../../ui/caps.js'
 import { app, notify, refreshProjects, refreshConversations } from '../../ui/state.js'
-import { folderFS } from '../../ui/opfs.js'
+import { folderFS, mine } from '../../ui/opfs.js'
 import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
 import { t, tParts, useStrings, relativeTime, locale } from '../../core/i18n.js'
 import { claim, syncRound, settleHomes, BASE } from './mirror.js'
@@ -33,7 +33,7 @@ let mirror = null
 /** @type {Promise<IDBDatabase | null>} */
 const database = new Promise((resolve) => {
   if (!globalThis.indexedDB) return resolve(null)
-  const request = indexedDB.open('app-sync', 1)
+  const request = indexedDB.open(mine('app-sync'), 1)
   request.onupgradeneeded = () => request.result.createObjectStore('sync')
   request.onerror = () => resolve(null)
   request.onsuccess = () => resolve(request.result)
@@ -57,7 +57,7 @@ async function round() {
   const { folder, at } = state.peek()
   if (!folder) return
   if (!(await allowed(folder))) return void (state.value = { folder, status: 'waiting', at })
-  await navigator.locks.request('app-sync', { ifAvailable: true }, async (lock) => {
+  await navigator.locks.request(mine('app-sync'), { ifAvailable: true }, async (lock) => {
     if (!lock || folder !== state.peek().folder) return
     state.value = { folder, status: 'syncing', at }
     try {

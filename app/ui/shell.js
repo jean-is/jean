@@ -2,19 +2,27 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, APPLE, SHORTCUTS } from './state.js'
-import { SIZES, loaded, unlock, isDenied, slots } from './caps.js'
+import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, firstVisit, APPLE, SHORTCUTS } from './state.js'
+import { loaded, unlock, isDenied, slots } from './caps.js'
 import { BRAND } from '../brand.js'
-import { t, formatBytes } from '../core/i18n.js'
+import { t, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
-import { focusComposer } from './composer.js'
+import { focusComposer, offerAside } from './composer.js'
 import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
-const STARTERS = ['discover', 'summarize', 'email', 'explain', 'savings']
+// jean.is's page under the first screen (D397), hidden until the room is ready: on a first visit, or asked for again,
+// while the task has no request, in the app's language (ui/home.js).
+const under = /** @type {HTMLElement | null} */ (document.querySelector('body > .home'))
+if (under) under.hidden = true
 
 class Shell extends Element {
+  connectedCallback() {
+    super.connectedCallback()
+    if (under) effect(() => { const shown = (firstVisit() || app.about.value) && !app.current.value?.records.length, lang = locale.value; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
+  }
+
   render() {
     const current = app.current.value
     const open = sidebarOpen.value
@@ -33,13 +41,14 @@ class Shell extends Element {
         <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing} aria-keyshortcuts=${SHORTCUTS.sidebar}
           aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
-          : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona>${assistantName()}</button>`}
+          : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona><span dir="auto">${assistantName()}</span></button>`}
         ${open ? findButton() : views}
       </header>
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
+      <p class="print-mark"><app-persona still></app-persona><span>${BRAND.name}<small dir="auto">${BRAND.domain}</small></span></p>
       <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>
-      ${offerAside()}
+      ${current?.records.length ? offerAside() : nothing}
       ${slots('above').map((above) => above.draw())}
       <app-composer></app-composer>
       <app-history></app-history>
@@ -47,6 +56,7 @@ class Shell extends Element {
       <app-settings></app-settings>
       <app-picker></app-picker>
       <app-project-dialog></app-project-dialog>
+      ${slots('dialog').map((dialog) => dialog.draw())}
       <app-toasts class="toasts" role="status" aria-live="polite" popover="manual"></app-toasts>
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
@@ -62,16 +72,14 @@ effect(() => {
 export const findButton = () => (loaded.value.has('find') ? html`<button class="icon-button" aria-keyshortcuts=${SHORTCUTS.find}
   aria-label=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button>` : nothing)
 
-const discovery = () => import('./discovery.js')
-
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
 // As in the Claude apps, Ctrl outside Apple's systems (D118): ⌘, Settings, ⌘/ its shortcuts (D257), ⌘N and ⌘⇧O a new task (D236),
 // ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧L the next language, ⌘⇧S dictation, ⌘⇧H hands-free (D130, D238,
 // D253), ⌘K search (D133), ⌘⇧B the browser (D142), ⌘J the terminal (D166, D170, D184), ⌘B the drawer (D234),
-// ⌘S a copy of the open task and ⌘⌫ deleting it (D313).
+// ⌘S a copy of the open task and ⌘⌫ deleting it (D313), ⌘⇧U sharing it (D377).
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j', KeyU: 'u' })
 /** Whether the field with the keyboard has text, whose ⌘⌫ is then its own. @param {EventTarget | null} field */
 const hasText = (field) => field instanceof HTMLElement && field.matches(':read-write') && Boolean(/** @type {HTMLInputElement} */ (field).value ?? field.textContent)
 
@@ -119,11 +127,12 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault()
     app.dialog.value = null
     unlock('computer').then(async (ok) => ok && (await import('../caps/computer/terminal.js')).toggle(true))
-  } else if (key === 's' && !event.shiftKey) {
-    // The task, never the browser's copy of Jean's own page.
+  } else if ((key === 's' && !event.shiftKey) || (key === 'u' && event.shiftKey && loaded.value.has('share'))) {
+    // The task, never the browser's copy of Jean's own page; shared through the dialog that asks how first (D361).
     event.preventDefault()
     const task = app.conversations.value.find((item) => item.path === app.current.value?.path)
-    if (task) import('./inbox.js').then((module) => module.saveCopy(task))
+    if (task && key === 's') import('./inbox.js').then((module) => module.saveCopy(task))
+    else if (task && app.dialog.value !== 'share') import('../caps/share/share.js').then((module) => module.openShare({ path: task.path, title: task.title }))
   } else if (/^(Backspace|Delete)$/.test(event.key) && !event.shiftKey && app.current.value && [null, 'history'].includes(app.dialog.value) && !hasText(event.target)) {
     event.preventDefault()
     const { path } = app.current.value
@@ -131,28 +140,13 @@ document.addEventListener('keydown', (event) => {
   }
 })
 
-/** A capability offered in one sentence, above the box (docs/product.md, progressive discovery). */
-function offerAside() {
-  const offer = app.offer.value
-  if (!offer) return nothing
-  const { id, progress } = offer
-  const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
-  return html`<aside class="offer" role="status">
-    <p>${t(`cap.${id}.offer`, params)}</p>
-    ${progress === undefined ? html`<div class="row">
-      <button class="button primary" @click=${() => discovery().then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
-      <button class="button subtle" @click=${() => discovery().then((module) => module.decline(id))}>${t('offer.no')}</button>
-    </div>` : html`<progress max="1" value=${progress} aria-label=${t(`cap.${id}.downloading`)}></progress>`}
-  </aside>`
-}
-
+// Before any task, in a browser's tab: what Jean is (D366).
 function welcome() {
+  const pitch = firstVisit() && app.dialog.value !== 'first'
   return html`<section class="welcome">
     <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>
-    <ul class="starters">${STARTERS.map((key) => html`<li>
-      <button class="starter" @click=${() => { app.draft.value = t(`starter.${key}.prompt`); focusComposer() }}>${t(`starter.${key}`)}</button>
-    </li>`)}</ul>
+    ${pitch ? html`<div class="pitch"><p>${t('welcome.promise')}</p><ul>${['install', 'device', 'open'].map((key) => html`<li>${t(`welcome.${key}`)}</li>`)}</ul></div>` : nothing}
   </section>`
 }
 

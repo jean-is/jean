@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "メールを検索",
+  "api.read_email": "メールを読む",
+  "api.create_draft": "下書きを作成",
+  "api.send_email": "メールを送信",
+  "api.list_calendars": "カレンダーを一覧表示",
+  "api.list_events": "予定を一覧表示",
+  "api.create_event": "予定を追加",
+  "api.update_event": "予定を変更",
+  "api.delete_event": "予定を削除",
+  "api.search_files": "ファイルを検索",
+  "api.read_file": "ファイルを読む",
+  "api.create_document": "ドキュメントを作成"
+}

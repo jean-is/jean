@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "Шукати листи",
+  "api.read_email": "Прочитати лист",
+  "api.create_draft": "Написати чернетку",
+  "api.send_email": "Надіслати лист",
+  "api.list_calendars": "Показати календарі",
+  "api.list_events": "Показати події",
+  "api.create_event": "Додати подію",
+  "api.update_event": "Змінити подію",
+  "api.delete_event": "Видалити подію",
+  "api.search_files": "Шукати файли",
+  "api.read_file": "Прочитати файл",
+  "api.create_document": "Створити документ"
+}

@@ -3,6 +3,7 @@ import { test, describe, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { createServer, request } from 'node:http'
 import { generateKeyPairSync, createHash, sign } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import { mkdtemp, mkdir, readFile, writeFile, rm, realpath, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -112,10 +113,13 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
   let brain
   /** @type {string} */
   let folder
+  // Claude Code's own folder, which holds its settings: this test's, not the user's.
+  const config = process.env.CLAUDE_CONFIG_DIR
 
   before(async () => {
     llm = await import('../app/core/llm.js')
     folder = await realpath(await mkdtemp(join(tmpdir(), 'bridge-claude-')))
+    process.env.CLAUDE_CONFIG_DIR = folder
     server = createServer((req, res) => work.handle(req, res))
     await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
     const port = /** @type {import('node:net').AddressInfo} */ (server.address()).port
@@ -126,6 +130,8 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     server.close()
     await work.close()
     await rm(folder, { recursive: true, force: true })
+    if (config === undefined) delete process.env.CLAUDE_CONFIG_DIR
+    else process.env.CLAUDE_CONFIG_DIR = config
   })
 
   /** One step, as Jean's loop reads it. @param {any[]} messages @param {any[]} [tools] */
@@ -180,14 +186,62 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     const asked = await step(messages, [weather])
     assert.deepEqual(asked.calls, [{ id: asked.calls[0]?.id, name: 'weather', args: { city: 'Lyon' } }])
     assert.equal(asked.done.stopReason, 'tool_use')
-    // What the user said meanwhile comes with it.
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
+    assert.equal((await step(messages, [weather])).text, 'In Lyon: Sunny, 21°C')
+  })
+
+  test('what the user sent while a call ran (D365) is their next message, which Claude Code reads within its turn, apart from the result', async () => {
+    const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
     messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' }, { role: 'user', content: 'In Celsius' })
-    const answered = await step(messages, [weather])
-    assert.equal(answered.text, 'In Lyon: Sunny, 21°C / In Celsius')
+    assert.equal((await step(messages, [weather])).text, 'In Lyon: Sunny, 21°C, then heard: In Celsius')
   })
 
   test('a plan’s limit is the brain’s limit', async () => {
     await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /hit your limit/ })
+  })
+
+  test('beyond eight conversations, the least recently used idle one ends: the one used last and one in a step keep theirs', async () => {
+    /** @type {any[]} */
+    const first = [{ role: 'user', content: 'first' }]
+    first.push((await step(first)).done.message, { role: 'user', content: 'first, again' })
+    // A step under way until the file it made is gone.
+    const held = join(folder, 'held')
+    const holding = step([{ role: 'user', content: `hold ${held}` }])
+    while (!existsSync(held)) await new Promise((wait) => setTimeout(wait, 10))
+    /** @type {any[][]} */
+    const others = []
+    for (let i = 0; i < 8; i++) {
+      if (i === 6) first.push((await step(first)).done.message, { role: 'user', content: 'and on' })
+      others.push([{ role: 'user', content: `other ${i}` }])
+      others[i].push((await step(others[i])).done.message, { role: 'user', content: 'again' })
+    }
+    assert.equal((await step(first)).text, 'Heard (opus, You are Jean): and on')
+    await rm(held)
+    assert.equal((await holding).text, 'Held')
+    assert.match((await step(others[0])).text, /^Heard \(opus, You are Jean\): <earlier-conversation>/)
+  })
+
+  test('a gateway in Claude Code’s settings is reached, through their environment and key helpers, the rest left out', async () => {
+    const settings = { env: { ANTHROPIC_BASE_URL: 'https://gateway.example', ANTHROPIC_AUTH_TOKEN: 't0ken' }, apiKeyHelper: '~/bin/key', hooks: { Stop: [] }, model: 'haiku' }
+    await writeFile(join(folder, 'settings.json'), JSON.stringify(settings))
+    // The bridge's own environment wins, as it does in Claude Code: the one these tests run in has none.
+    const own = { ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN: process.env.ANTHROPIC_AUTH_TOKEN }
+    delete process.env.ANTHROPIC_BASE_URL
+    delete process.env.ANTHROPIC_AUTH_TOKEN
+    try {
+      assert.equal((await step([{ role: 'user', content: 'Which gateway?' }])).text, 'https://gateway.example {"apiKeyHelper":"~/bin/key"}')
+      // Claude Code says it isn't signed in when a gateway's token is all it has, which it sends as it is.
+      process.env.CLAUDE_SIGNED_OUT = '1'
+      const client = mcpClient({ url: brain.baseURL.replace('/v1', '/'), client: { name: 'Jean', version: 'test' }, authorization: async () => `Bearer ${KEY}` })
+      assert.equal((await client.callTool({ name: 'about' }, { claude: true })).structuredContent.claude, true)
+    } finally {
+      delete process.env.CLAUDE_SIGNED_OUT
+      for (const [name, value] of Object.entries(own)) if (value !== undefined) process.env[name] = value
+      await rm(join(folder, 'settings.json'))
+    }
   })
 })
 
@@ -283,14 +337,37 @@ describe('Copilot through the bridge (D262)', { skip: process.platform === 'win3
     assert.deepEqual(asked.calls, [{ id: asked.calls[0]?.id, name: 'weather', args: { city: 'Lyon' } }])
     assert.match(asked.calls[0].id, /^call_/)
     assert.deepEqual([asked.thinking, asked.done.stopReason], ['Lyon, then.', 'tool_use'])
-    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' }, { role: 'user', content: 'In Celsius' })
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
     const answered = await step(messages, [weather])
-    assert.equal(answered.text, 'In Lyon: Sunny, 21°C / In Celsius')
+    assert.equal(answered.text, 'In Lyon: Sunny, 21°C')
     assert.deepEqual(answered.done.usage, { inputTokens: 30, outputTokens: 5, cacheReadTokens: 10 })
+  })
+
+  test('what the user sent while a call ran (D365) is their next message: once the call has its result, Copilot ends that turn and answers it', async () => {
+    const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'The user declined this action.', isError: true },
+      { role: 'user', content: 'Actually, leave out Training' })
+    const answered = await step(messages, [weather])
+    // The result reached the call alone; what the turn it ended said is gone.
+    assert.equal(answered.text, 'Heard (gpt-5-mini, You are Jean, jean-weather), after The user declined this action. (an error): Actually, leave out Training')
+    assert.equal(answered.done.stopReason, 'end')
   })
 
   test('a plan’s limit is the brain’s limit', async () => {
     await assert.rejects(step([{ role: 'user', content: 'over the limit' }]), { code: 'rate_limit', message: /premium request quota/ })
+  })
+
+  test('beyond eight conversations, one whose call waits for Jean’s result keeps its Copilot', async () => {
+    const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
+    /** @type {any[]} */
+    const messages = [{ role: 'user', content: 'The weather in Lyon?' }]
+    const asked = await step(messages, [weather])
+    for (let i = 0; i < 8; i++) await step([{ role: 'user', content: `other ${i}` }])
+    messages.push(asked.done.message, { role: 'tool', toolCallId: asked.calls[0].id, name: 'weather', content: 'Sunny, 21°C' })
+    assert.equal((await step(messages, [weather])).text, 'In Lyon: Sunny, 21°C')
   })
 })
 

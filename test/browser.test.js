@@ -48,6 +48,10 @@ test('a page’s words, title and whether it installs as an app', () => {
   assert.ok(page.manifest)
   assert.equal(page.text, 'Home\nFresh bread\nOpen from 7 am.\nCroissants — 2€\nBaguette – 1€')
   assert.ok(!pageText('<p>x</p>').manifest)
+  // The picture a page gives for itself when shared, as written there, whatever the order of its attributes (D35).
+  assert.equal(pageText('<meta property="og:image:width" content="1200"><meta content="/p.jpg?a=1&amp;b=2" property="og:image">').picture, '/p.jpg?a=1&b=2')
+  assert.equal(pageText("<meta name='twitter:image' content='https://x.example/t.png'>").picture, 'https://x.example/t.png')
+  assert.equal(pageText('<p>x</p>').picture, '')
   assert.equal(pageText('<p>' + 'a'.repeat(50) + '</p>', 20).text, 'a'.repeat(20) + '…')
 })
 

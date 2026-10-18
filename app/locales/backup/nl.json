@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "De gesprekken, projecten en bestanden uit deze export ophalen? Hier wordt niets verwijderd.",
+  "backup.imported": {
+    "one": "{count} gesprek opgehaald.",
+    "other": "{count} gesprekken opgehaald."
+  },
+  "backup.chooseJson": "Deze export bevat je Gemini-activiteit als webpagina’s. Exporteer hem opnieuw via Google Takeout en kies JSON voor Mijn activiteit."
+}

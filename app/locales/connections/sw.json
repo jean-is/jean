@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "Tafuta barua pepe",
+  "api.read_email": "Soma barua pepe",
+  "api.create_draft": "Andika rasimu",
+  "api.send_email": "Tuma barua pepe",
+  "api.list_calendars": "Onyesha kalenda",
+  "api.list_events": "Onyesha matukio",
+  "api.create_event": "Ongeza tukio",
+  "api.update_event": "Badilisha tukio",
+  "api.delete_event": "Ondoa tukio",
+  "api.search_files": "Tafuta faili",
+  "api.read_file": "Soma faili",
+  "api.create_document": "Unda hati"
+}

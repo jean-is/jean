@@ -17,6 +17,12 @@ const checking = (logits, ...areas) => `let n = 0; const areas = ${JSON.stringif
 self.onmessage = ({ data }) => self.postMessage(data.type === 'watermark' ? { id: data.id, type: 'done', bytes: data.bytes }
   : { id: data.id, type: 'done', logits: ${JSON.stringify(logits)}, areas: areas[Math.min(n++, areas.length - 1)] })`
 test.beforeEach(({ page }) => page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: checking([5, 0, 0, 0]) })))
+/** What else the check refuses, folded under the cards (D331): opened, unless it is. @param {import('@playwright/test').Locator} settings */
+async function refused(settings) {
+  const fold = settings.locator('.pictures-device details')
+  if (!(await fold.evaluate((details) => /** @type {HTMLDetailsElement} */ (details).open))) await fold.getByText('What else is refused').click()
+  return settings
+}
 /** As if this device could make pictures, so Settings › Brains shows them. @param {import('@playwright/test').Page} page */
 const capable = (page) => page.addInitScript(() => {
   const adapter = { features: new Set(['shader-f16']) }
@@ -127,7 +133,7 @@ test('a suggestive picture shows, unless the user refuses those too, or the orga
   await ask(page, 'Draw a lighthouse at dusk')
   await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
   // Strict, the next one isn't made.
-  let settings = await openSettings(page, 'Brains')
+  let settings = await refused(await openSettings(page, 'Brains'))
   const strict = settings.getByRole('switch', { name: 'Refuse suggestive pictures too' })
   await expect(strict).not.toBeChecked()
   await expect(settings).toContainText('Nudity and sex are always refused.')
@@ -138,7 +144,7 @@ test('a suggestive picture shows, unless the user refuses those too, or the orga
   await expect(page.locator('.msg-jean .prose').last()).toContainText(/^No picture: .*Not made/)
   // The organisation's level wins over the user's, and can't be changed.
   await page.evaluate(async () => { (await import('/ui/state.js')).app.policy.pictureCheck = { suggestive: false } })
-  settings = await openSettings(page, 'Brains')
+  settings = await refused(await openSettings(page, 'Brains'))
   await expect(strict).not.toBeChecked()
   await expect(strict).toBeDisabled()
   await expect(settings).toContainText('Set by your organization')
@@ -244,7 +250,7 @@ test('graphic violence is refused unless the user allows it, self-harm whatever 
   await ask(page, 'Draw a lighthouse at dusk')
   await expect(page.locator('.msg-jean .prose').last()).toContainText(/^No picture: .*Not made: it showed graphic violence or injuries, .* unless allowed in Settings › Brains/)
   // Allowed, the next one shows.
-  let settings = await openSettings(page, 'Brains')
+  let settings = await refused(await openSettings(page, 'Brains'))
   const violence = settings.getByRole('switch', { name: 'Refuse graphic violence' })
   await expect(violence).toBeChecked()
   await expect(settings).toContainText('Battles and fights without them are allowed.')
@@ -260,7 +266,7 @@ test('graphic violence is refused unless the user allows it, self-harm whatever 
   await expect(page.locator('.msg-jean .prose').last()).toContainText(/Not made: it showed self-harm, which pictures made on this device or this computer don't show\. /)
   // The organisation allows symbols of hate, for its history teachers: no one changes it.
   await page.evaluate(async () => { (await import('/ui/state.js')).app.policy.pictureCheck = { hate: false } })
-  settings = await openSettings(page, 'Brains')
+  settings = await refused(await openSettings(page, 'Brains'))
   const hate = settings.getByRole('switch', { name: 'Refuse symbols of hate' })
   await expect(hate).not.toBeChecked()
   await expect(hate).toBeDisabled()

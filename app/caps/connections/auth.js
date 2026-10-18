@@ -9,7 +9,7 @@ import { createVerifier, challengeS256 } from '../../core/oauth.js'
 /**
  * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource?: string, scope?: string }} Metadata
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
- * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string }} Tokens
+ * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string }} Tokens  account: who signed in (D357)
  */
 
 /** `Bearer resource_metadata="…", scope="…"` → its parameters. @param {string | null | undefined} header @returns {Record<string, string>} */
@@ -25,21 +25,22 @@ const href = (url) => { try { return new URL(String(url)).href } catch { return 
 const getJSON = (fetch, url) => fetch(url, { headers: { accept: 'application/json' } }).then((res) => (res.ok ? res.json() : null)).catch(() => null)
 
 /**
- * Where and how to sign in to a service, from its 401's challenge when the browser could read it.
- * @param {string} server the service's address @param {{ challenge?: string | null, fetch?: typeof globalThis.fetch }} [options]
+ * Where and how to sign in to a service, from its 401's challenge when the browser could read it,
+ * or at the sign-in server Jean knows it has (`issuer`, an API's, D349).
+ * @param {string} server the service's address @param {{ challenge?: string | null, fetch?: typeof globalThis.fetch, issuer?: string }} [options]
  * @returns {Promise<Metadata>}
  */
-export async function discover(server, { challenge, fetch = globalThis.fetch } = {}) {
+export async function discover(server, { challenge, fetch = globalThis.fetch, issuer: known } = {}) {
   const asked = parseChallenge(challenge)
   const at = new URL(server)
   const path = at.pathname.replace(/\/$/, '')
   let resource = null
-  for (const url of [asked.resource_metadata, path && `${at.origin}/.well-known/oauth-protected-resource${path}`, `${at.origin}/.well-known/oauth-protected-resource`]) {
+  for (const url of known ? [] : [asked.resource_metadata, path && `${at.origin}/.well-known/oauth-protected-resource${path}`, `${at.origin}/.well-known/oauth-protected-resource`]) {
     if (url && (resource = await getJSON(fetch, url))?.authorization_servers?.length) break
   }
   // One that names none (Atlassian's /v1) has it at its own origin, and takes no resource indicator (D195).
   const named = Boolean(resource?.authorization_servers?.length)
-  const issuer = named ? resource.authorization_servers[0] : at.origin
+  const issuer = named ? resource.authorization_servers[0] : known ?? at.origin
   // One that names itself (ServiceNow) may have it at its origin, whose metadata it serves (D283).
   const issuers = named && href(issuer) === href(server) ? [issuer, at.origin] : [issuer]
   for (const each of issuers) {
@@ -49,9 +50,11 @@ export async function discover(server, { challenge, fetch = globalThis.fetch } =
     for (const url of candidates) {
       const metadata = await getJSON(fetch, url)
       // A document only counts for the issuer it was asked about (RFC 8414, section 3.3), as an
-      // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant".
-      if (metadata && href(metadata.issuer) === href(each) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
-        return { ...metadata, resource: named ? resource.resource ?? server.replace(/#.*$/, '') : undefined, scope: asked.scope ?? resource?.scopes_supported?.join(' ') }
+      // address: "https://otter.ai/" is "https://otter.ai", but "…/tenant/" isn't "…/tenant". Microsoft's
+      // for any account ("…/common/v2.0") names its issuer with {tenantid} in place of that tenant.
+      const issuer = String(metadata?.issuer).replace('{tenantid}', tenant.split('/')[1] ?? '')
+      if (metadata && href(issuer) === href(each) && safe(metadata.authorization_endpoint) && safe(metadata.token_endpoint) && (!metadata.registration_endpoint || safe(metadata.registration_endpoint))) {
+        return { ...metadata, issuer, resource: named ? resource.resource ?? server.replace(/#.*$/, '') : undefined, scope: asked.scope ?? resource?.scopes_supported?.join(' ') }
       }
     }
   }
@@ -81,14 +84,17 @@ export async function registerClient(metadata, { redirectURI, name, fetch = glob
 /**
  * Where to send the user, and what to keep until they come back. Signing in to another account of
  * a service asks which one (`prompt=select_account`, which a server that doesn't know it ignores).
- * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean }} options
+ * A service Jean knows may say what to ask for (`scopes`) and what more its sign-in wants (`params`, D344).
+ * Who signs in (an ID token, D357) and renewals are asked for too, where the sign-in server offers them.
+ * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string> }} options
  * @returns {Promise<{ url: string, pending: Pending }>}
  */
-export async function authorization(metadata, { clientId, redirectURI, another = false }) {
+export async function authorization(metadata, { clientId, redirectURI, another = false, scopes, params: more = {} }) {
   const [verifier, state] = [createVerifier(), createVerifier().slice(0, 32)]
-  const scope = [metadata.scope, metadata.scopes_supported?.includes('offline_access') && 'offline_access'].filter(Boolean).join(' ')
+  const scope = [...new Set([scopes?.join(' ') ?? metadata.scope, ...['openid', 'email', 'offline_access'].filter((one) => metadata.scopes_supported?.includes(one))].join(' ').split(' ').filter(Boolean))].join(' ')
   const url = new URL(metadata.authorization_endpoint)
-  const params = { response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, ...(metadata.resource && { resource: metadata.resource }), ...(scope && { scope }), ...(another && { prompt: 'select_account' }) }
+  const prompt = [more.prompt, another && 'select_account'].filter(Boolean).join(' ')
+  const params = { ...more, response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, ...(metadata.resource && { resource: metadata.resource }), ...(scope && { scope }), ...(prompt && { prompt }) }
   for (const [name, value] of Object.entries(params)) url.searchParams.set(name, value)
   const issRequired = metadata.authorization_response_iss_parameter_supported === true
   return { url: url.href, pending: { state, verifier, clientId, redirectURI, issuer: metadata.issuer, issRequired, tokenEndpoint: metadata.token_endpoint, resource: metadata.resource } }
@@ -121,5 +127,14 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.access_token) throw new Error(json?.error_description ?? json?.error ?? `HTTP ${res.status}`)
   const expiresAt = json.expires_in ? Date.now() + json.expires_in * 1000 : undefined
-  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(expiresAt && { expiresAt }), tokenEndpoint, clientId, resource }
+  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(expiresAt && { expiresAt }), tokenEndpoint, clientId, resource, ...(json.id_token && { account: await accountOf(json.id_token) }) }
 }
+
+/**
+ * Who signed in, as an ID token says, for display: the email, or else the login, kept only when it
+ * looks like one (no spaces or brackets), since the brain reads it too (D357). The token came from
+ * the sign-in server itself, over HTTPS, so its signature isn't checked (OpenID Connect, 3.1.3.7).
+ * @param {unknown} idToken @returns {Promise<string | undefined>}
+ */
+export const accountOf = (idToken) => Promise.resolve().then(() => new Response(Uint8Array.from(atob(String(idToken).split('.')[1].replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))).json())
+  .then((claims) => [claims.email, claims.preferred_username].find((said) => typeof said === 'string' && /^[\p{L}\p{N}._%+@-]{1,80}$/u.test(said))).catch(() => undefined)

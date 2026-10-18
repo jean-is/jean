@@ -9,18 +9,21 @@ import { effect, signal } from '@preact/signals-core'
 import { register, unlock, isDenied, loaded, contributions, WEIGHTS } from './caps.js'
 import { app, effective, answerOffer, notify, send, updateSettings, conversationOf, CITED } from './state.js'
 import { findTools, reach } from '../core/deferred.js'
-import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange } from '../caps/reflexes/questions.js'
+import { REFLEXES, CAPABILITIES, OFFERED, FOLLOW_UPS, YES, likeliest, exchange, dangerOf } from '../caps/reflexes/questions.js'
 import { words, alike, restated } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord, routineOf, isPicture } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 import { host } from './host.js'
+import { serviceURL } from '../core/settings.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 const gpu = 'gpu' in navigator // where search by meaning runs (D302)
+const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
+const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', 'names', 'live', 'backup', ...(folders ? ['sync'] : []), 'brain-local', 'plugins']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'plugins']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -93,7 +96,14 @@ register({
     { name: 'offer', line: 'suggest turning on something the user has not discovered yet' },
   ],
   rules: ['Offer at most one new thing per reply, and only when it clearly helps.'],
+  // A task done while the user was in another tab or app: as they come back, a notification could say so next time (D334).
+  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (told && e.answer && away()) addEventListener('focus', () => offerOnce('notifications', true), { once: true }); return next(e) } },
+    // A task of four calls or more, or one out of steps, finds plans, silently (D364).
+    { on: 'turn.end', run: (e, next) => { if (e.stopped || stepped(e.records)) unlock('plan'); return next(e) } }],
 })
+
+/** Whether the user is elsewhere: another tab, or another app. */
+export const away = () => document.hidden || !document.hasFocus()
 
 // ─── Offers above the box ────────────────────────────────────────────────────
 
@@ -108,8 +118,11 @@ export function offerOnce(id, now = false) {
   // Peeked: an effect that offers must not run again because the offer it showed went away.
   const shown = app.offer.peek()
   // Turned on before, it is still loading after first paint, so not loaded yet: never offered.
-  if ((shown && (shown.progress !== undefined || !now || shown.id === id)) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (id === 'backup' && app.ephemeral.value)) return
+  if ((shown && (shown.progress !== undefined || !now || shown.id === id)) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (['backup', 'lock'].includes(id) && app.ephemeral.value)) return
+  const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
   app.offer.value = { id }
+  // Read to the end of a task, the offer drawn under it comes into view above the box, which would cover it.
+  if (end) scrollTo({ top: document.documentElement.scrollHeight })
 }
 
 /** @param {string} id */
@@ -140,6 +153,7 @@ export async function begin(id) {
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
   if (id === 'find') app.dialog.value = 'find'
+  if (id === 'lock' && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings('data')
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()
   if (id === 'machine') (await import('../caps/machine/machine.js')).show()
@@ -219,6 +233,11 @@ effect(() => {
   if (everywhere.value >= FINDABLE) offerOnce('find')
 })
 effect(() => {
+  // Plenty kept, or a service's sign-in: it could open only to the person (D371). Policy may ask for it.
+  if (everywhere.value >= FINDABLE || (effective.value.settings.connections ?? []).length) offerOnce('lock')
+})
+if (app.policy.lock === 'required') unlock('lock')
+effect(() => {
   // Someone who dictates often may rather talk.
   if ((effective.value.settings.dictated ?? 0) >= 3) offerOnce('live')
 })
@@ -288,6 +307,7 @@ export async function sense(text, previous) {
       personal: REFLEXES.personal,
       ...(Object.keys(candidates).length && { capability: REFLEXES.capability(candidates) }),
       ...(open('memory') && { lasting: REFLEXES.lasting }),
+      ...(app.policy.child && { danger: REFLEXES.danger, home: REFLEXES.home }),
     })),
     previous ? quickly(decide(exchange(clip(previous), clip(text)), { unhappy: REFLEXES.unhappy })) : null,
   ])
@@ -299,6 +319,7 @@ export async function sense(text, previous) {
     ...(demand?.type === 'score' && { demand: likeliest(demand.probabilities) }),
     ...(personal?.type === 'noul' && { personal: personal.noul >= YES }),
     ...(after?.unhappy?.type === 'noul' && { unhappy: after.unhappy.noul >= YES }),
+    danger: dangerOf(about ?? {}),
   }
 }
 

@@ -13,7 +13,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { app, effective, updateSettings } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, locale, useStrings, languageName } from '../../core/i18n.js'
@@ -27,10 +27,10 @@ import { known, searchers, logoAt } from '../connections/directory.js'
 
 await useStrings('search')
 
-/** What the brain reads back: each page a numbered source. @param {Page[]} pages @param {import('../../core/loop.js').ToolContext} ctx */
+/** What the brain reads back: each page a numbered source, with its picture's address. @param {Page[]} pages @param {import('../../core/loop.js').ToolContext} ctx */
 function numbered(pages, ctx) {
-  const numbers = ctx.cite(pages.map((page) => ({ title: page.title, url: page.url, quote: page.extract.slice(0, 150) })))
-  return pages.map((page, i) => `Source [${numbers[i]}]: ${page.title} (${page.url})\n${page.extract}`).join('\n\n')
+  const numbers = ctx.cite(pages.map((page) => ({ title: page.title, url: page.url, quote: page.extract.slice(0, 150), picture: page.picture })))
+  return pages.map((page, i) => `Source [${numbers[i]}]: ${page.title} (${page.url})\n${page.picture ? `Picture: ${page.picture}\n` : ''}${page.extract}`).join('\n\n')
 }
 
 /** The sources on: the organisation's, else the user's, else Wikipedia alone. */
@@ -161,7 +161,7 @@ function kiwixForm(id) {
   return html`<form class="stack" @submit=${(/** @type {SubmitEvent} */ e) => connect(id, e)}>
       <label>${t('search.address')}<input name="address" type="url" required dir="ltr" placeholder="http://localhost:8080" autocomplete="off" spellcheck="false"
         .value=${saved} ?disabled=${locked}></label>
-      ${locked ? html`<p class="muted">${t('search.locked')}</p>` : html`<div class="row"><button class="button primary" ?disabled=${trying.value === id}>${t('search.connect')}</button>${id === 'wikipedia' && saved
+      ${locked ? html`<p class="muted">${t(app.policy.child ? 'search.parent' : 'search.locked')}</p>` : html`<div class="row"><button class="button primary" ?disabled=${trying.value === id}>${t('search.connect')}</button>${id === 'wikipedia' && saved
         ? html`<button type="button" class="button subtle" @click=${() => setAddress(id, '')}>${t('action.remove')}</button>` : nothing}</div>`}
     </form>
     ${reason ? html`<p class="status is-error" role="status">${t(`search.${reason}`)}${failure.value?.id !== id
@@ -219,7 +219,7 @@ function panel() {
     <section class="stack">
       <h3>${t('search.where')}</h3>
       <ul class="list">${SOURCES.map((id) => sourceRow(id, locked))}${searches().map(serviceRow)}${offers.map(offerRow)}</ul>
-      ${locked ? html`<p class="muted">${t('search.locked')}</p>` : nothing}
+      ${locked ? html`<p class="muted">${t(app.policy.child ? 'search.parent' : 'search.locked')}</p>` : nothing}
     </section>
     ${on.value.includes('kiwix') ? html`<section class="stack">${kiwixForm('kiwix')}</section>` : nothing}
     ${on.value.includes('wikipedia') ? html`<details class="other" ?open=${isKiwix(serviceURL('wikipedia', app.settings.value, app.policy))}>

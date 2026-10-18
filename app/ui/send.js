@@ -12,12 +12,12 @@ import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
 import { yes } from './yes.js'
 import { fire } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
-import { fileText, documentPart, pagesThatFit, preselect, estimateTokens, sourceNumber, nextSource } from '../core/files.js'
+import { fileText, documentPart, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { unlock, contributions, slots } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -30,8 +30,11 @@ const DEVICE_CONTEXT = 32768
 const DEFAULT_CONTEXT = 128000
 // Anthropic's default cache lifetime is 5 minutes (D49).
 const CACHE_TTL_MS = 5 * 60_000
-// Work in a folder takes more steps than a turn's usual 12 (D141).
+// A turn's block of steps, and in a folder, where work takes more (D141), before it stops or a moving plan goes on (D364).
+const STEPS = 12
 const FOLDER_STEPS = 40
+// Local servers whose window is asked of them, the smallest Ollama gives being 4,096 (D359).
+const SERVERS = ['ollama', 'lmstudio']
 
 // ─── Files ───────────────────────────────────────────────────────────────────
 
@@ -213,7 +216,7 @@ const lastAnswer = (records) => {
  * loads with the first message, not with the first screen (D140).
  * @param {string} text @param {Envelope[]} records @param {number} [boost] levels above the last one
  * @param {BrainConfig | 'auto'} [chosen] who answers whatever the box has: a routine's own brain, or Auto (D303)
- * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any> } | null>}
+ * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any>, signals: import('./auto.js').Signals } | null>}
  */
 async function pickBrain(text, records, boost = 0, chosen) {
   const { settings } = effective.value
@@ -221,7 +224,7 @@ async function pickBrain(text, records, boost = 0, chosen) {
   const signals = await sense(text, lastAnswer(records))
   if (chosen !== 'auto' && (chosen || !settings.auto)) {
     const brain = chosen || activeBrain.value
-    return brain && (cloudAllowed() || isLocal(brain)) ? { brain } : null
+    return brain && (cloudAllowed() || isLocal(brain)) ? { brain, signals } : null
   }
   const brains = brainsHere.value
   const [{ chooseBrain, TIERS }] = await Promise.all([import('./auto.js'), ...brains.filter((brain) => !isLocal(brain)).map(loadModels)])
@@ -237,7 +240,7 @@ async function pickBrain(text, records, boost = 0, chosen) {
     sees: seesPictures,
     tiers: app.policy.tiers ?? TIERS,
   })
-  return choice && { brain: choice.brain, meta: { auto: { level: choice.level, reason: choice.reason } } }
+  return choice && { brain: choice.brain, meta: { auto: { level: choice.level, reason: choice.reason } }, signals }
 }
 
 /**
@@ -253,7 +256,7 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) {
     app.draft.value = text
-    import('./dialogs.js').then((module) => module.openSettings('brains'))
+    import('../caps/first/first.js').then((module) => module.open())
     return
   }
   let current = app.current.value
@@ -267,10 +270,10 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     import('./picker.js').then((module) => module.openPicker())
     return
   }
-  const { brain, meta } = picked
+  const { brain, meta, signals } = picked
   const named = await mentioned(text)
-  // What the box's modes ask of it (Visual answers, D300), told just before it too.
-  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? []) ?? [])
+  // What the box's modes ask of it (Visual answers, D300), and what the reflexes read in it (a danger, D228), told just before it too.
+  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? [], signals) ?? [])
   const added = await prepare(text.trim(), brain, current, [...notes, ...named, ...modes], files)
   app.draft.value = ''
   if (files === app.attachments.value) app.attachments.value = []
@@ -281,19 +284,25 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id }, () => {})
   }
   await keepRecords(current.path, added)
-  // Listed at once, to come back to.
-  if (!current.records.length) refreshConversations()
+  // Listed at once, to come back to; the room's first as the page turns below, the drawer it opens with it (D369).
+  const first = !current.records.length && !app.conversations.value.length
+  if (!current.records.length && !first) refreshConversations()
   const next = { ...current, records: [...current.records, ...added] }
   // Each file it shares may set a routine off (D294), unless this is a routine's own run.
   const routine = routineOf(next.records)?.routine
   for (const file of linkedFiles(added)) fire(contributions().hooks, 'file.add', { task: next.path, file, routine }, () => {})
-  const show = () => { app.current.value = next }
+  const show = async () => {
+    if (first) await refreshConversations()
+    // Drawn before the new view is captured, as when it slides (D234).
+    if (first && sidebarOpen.peek()) await import('./inbox.js')
+    app.current.value = next
+  }
   // Unless the user went elsewhere meanwhile: then it is answered out of sight (D147).
   if (app.current.peek()?.path === from) {
     // The big welcome question morphs into the conversation title.
     if (!current.records.length && document.startViewTransition) await document.startViewTransition(show).updateCallbackDone
-    else show()
-  }
+    else await show()
+  } else if (first) refreshConversations()
   // The title is written alongside the answer (D112).
   if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
   await runAgent(next, brain, meta, call)
@@ -341,8 +350,9 @@ export async function rewind(upTo, text) {
   await new Promise((resolve) => { const done = effect(() => { if (!app.running.value.includes(path ?? '')) queueMicrotask(() => resolve(done())) }) })
   const current = app.current.value
   if (!current || current.path !== path || app.busy.value) return
-  // Edited, its words go too, and so does its note of what / and @ named (D199), unless the new words name all it did.
-  const from = text === undefined ? upTo : current.records.slice(0, upTo).findLastIndex((record) => record.update?.sessionUpdate !== 'user_message_chunk') + 1
+  // Edited, its words go too, with its files, which come just before them (a request before ends with its own words),
+  // and so does its note of what / and @ named (D199), unless the new words name all it did.
+  const from = text === undefined ? upTo : current.records.slice(0, upTo - 1).findLastIndex(({ update }) => update?.sessionUpdate !== 'user_message_chunk' || update.content.type !== 'resource_link') + 1
   const start = current.records.slice(0, from).findLastIndex((record) => record.update && record.update.sessionUpdate !== '_system_note') + 1
   const told = current.records.slice(start, from).find(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'mentions')
   const words = /** @type {string[]} */ (/** @type {any} */ (told?.update)?.data.words ?? [])
@@ -367,7 +377,7 @@ export async function fork(upTo) {
   const current = app.current.value
   if (!current) return
   // What led up to the request keeps its times, and its title, which may have come after it; the request is asked now.
-  const from = current.records.slice(0, upTo).findLastIndex((record) => record.update?.sessionUpdate !== 'user_message_chunk') + 1
+  const from = current.records.slice(0, upTo - 1).findLastIndex(({ update }) => update?.sessionUpdate !== 'user_message_chunk' || update.content.type !== 'resource_link') + 1
   const at = new Date().toISOString()
   const records = [...current.records.slice(0, from), ...current.records.slice(upTo).filter((record) => record.meta?.title),
     ...current.records.slice(from, upTo).map((record) => ({ ...record, at }))]
@@ -383,23 +393,77 @@ export async function fork(upTo) {
   await runAgent({ id: created.id, path: created.path, records }, picked.brain, picked.meta)
 }
 
+// ─── Steering (D365) ─────────────────────────────────────────────────────────
+
+/** The answers being written, by their conversation's path, for what the user sends meanwhile. @type {Map<string, Run>} */
+const working = new Map()
+
+/** Shows a run's waiting steers under its live answer, when it is on screen. @param {Run} run */
+const showSteers = (run) => app.current.peek()?.path === run.path && (app.live.value = { turn: run.turn, steers: run.steers })
+
+/** What the user sends while the task on screen works steers it: its brain reads it before the next step; until then it waits under the live answer. @param {string} text */
+export function steer(text) {
+  const run = working.get(app.current.peek()?.path ?? '')
+  if (!run) return void (app.draft.value = text)
+  run.steers = [...run.steers ?? [], text]
+  showSteers(run)
+}
+
+/** A steer taken back to the box before it was read. @param {number} i */
+export function takeBack(i) {
+  const run = working.get(app.current.peek()?.path ?? '')
+  const text = run?.steers?.[i]
+  if (!run || !text) return
+  run.steers = run.steers?.filter((_, j) => j !== i)
+  app.draft.value = [app.draft.peek().trim(), text].filter(Boolean).join('\n\n')
+  showSteers(run)
+}
+
+/** Steers not read yet go back to the box. @param {string[]} texts */
+const backToBox = (texts) => { app.draft.value = [app.draft.peek().trim(), ...texts].filter(Boolean).join('\n\n') }
+
+// A reload puts what the task on screen hasn't read back in the box, whose words the tab keeps (ui/router.js).
+addEventListener('pagehide', (event) => {
+  const steers = working.get(app.current.peek()?.path ?? '')?.steers
+  if (!event.persisted && steers?.length) backToBox(steers)
+})
+
+/**
+ * Goes on with the task on screen where it stopped between steps, at its limit or when its page closed (D364): the next
+ * block of steps, on the turn's own brain, whose thinking replays to the model that wrote it.
+ */
+export async function keepGoing() {
+  const current = app.current.value
+  if (!current || app.busy.value) return
+  const step = foldTurns(current.records).at(-1)?.steps.at(-1)
+  const { provider, model, auto } = step?.tools.findLast((tool) => tool.kind === 'think' && !tool.name && !tool._meta?.parent && !tool._meta?.compact)?.rawInput ?? {}
+  const own = brainsHere.value.find((brain) => brain.provider === provider && (cloudAllowed() || isLocal(brain)))
+  const picked = own ? { brain: { ...own, model }, meta: auto && { auto } } : await pickBrain('', current.records)
+  if (step && picked) await runAgent(current, picked.brain, picked.meta, undefined, step.index)
+}
+
 /**
  * Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation
  * @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it @param {{ name: string, args: any }} [call] the one call the turn is (D218)
+ * @param {number} [after] the step it goes on after, with a block of steps more (Keep going, D364)
  */
-async function runAgent(conversation, brain, meta, call) {
+async function runAgent(conversation, brain, meta, call, after) {
   /** @type {Run} */
   const run = { ...conversation, brain, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
-  const { path, records: sent, turn, settled } = run
+  const { path, records: sent } = run
+  /** @type {Envelope[]} everything the run kept, steers' work included */
+  const all = []
   const shown = () => app.current.peek()?.path === path
   let frame = 0
   const repaint = () => {
     frame ||= requestAnimationFrame(() => {
       frame = 0
-      if (shown()) app.live.value = { turn }
+      if (shown()) app.live.value = { turn: run.turn, steers: run.steers }
     })
   }
 
+  let [stopped, failed] = [false, false]
+  working.set(path, run)
   beginRun(run)
   try {
     // The loop and the brains' adapters load with the first message, not with the first screen.
@@ -407,13 +471,22 @@ async function runAgent(conversation, brain, meta, call) {
     const frozen = frozenPrompt(sent)
     // A turn the page closed on while it waited for the user goes on from there, asking again (D212); one that is a single call starts on it.
     const one = call && { id: `call-${Date.now().toString(36)}`, ...call }
-    const resume = one ? { step: 0, calls: [one] } : unanswered(sent)
+    const resume = one ? { step: 0, calls: [one] } : after === undefined ? unanswered(sent) : { step: after, calls: [] }
     const messages = toChatMessages(sent, await documents(sent, brain), resume)
     // The device's brain answers its steps itself, through its turn.step hook.
     if (brain.api === 'device') await unlock('brain-local')
+    // What the brain last read and wrote says how full its window is, unless a summary came since. Compaction comes in once
+    // the conversation passes half of it (D359), as a request counted it or Jean estimates it, with what each call brings in.
+    const window = contextTokens(brain)
+    const before = sent.findLast(({ update }) => update?.sessionUpdate === 'compaction_update' || (update?.sessionUpdate === 'tool_call' && !update.name && !update._meta?.parent && update.rawOutput?.usage))?.update
+    const usage = before?.sessionUpdate === 'tool_call' ? before.rawOutput.usage : undefined
+    const counted = (/** @type {import('../core/types.js').Usage | undefined} */ used) => (used?.inputTokens ?? 0) + (used?.outputTokens ?? 0)
+    let size = 0
+    const grown = (/** @type {number} */ now) => (size = now) > (SERVERS.includes(brain.provider) ? 4096 : window) / 2 && unlock('compact')
+    await grown(Math.max(estimateMessages([frozen?.system, messages]), counted(usage)))
     asked.set(path, Date.now())
     const { settings } = effective.value
-    await runTurn({
+    const ended = await runTurn({
       brain,
       apiKey: (await getSecret(app.fs, brain.id)) ?? undefined,
       system: frozen?.system ?? '',
@@ -425,8 +498,9 @@ async function runAgent(conversation, brain, meta, call) {
       label: brainLabel(brain),
       meta,
       firstSource: nextSource(sent),
-      ...(frozen?.state.sections?.folder && { maxSteps: FOLDER_STEPS }),
-      ...(one && { maxSteps: 1 }),
+      maxSteps: one ? 1 : (after ?? -1) + 1 + (frozen?.state.sections?.folder ? FOLDER_STEPS : STEPS),
+      window,
+      usage,
       signal: run.controller.signal,
       // The organisation's guards and the person's (D295), then the capabilities' hooks, with the task and the kinds of
       // note its turn came with (a brief of what's new since last time only reads).
@@ -436,49 +510,79 @@ async function runAgent(conversation, brain, meta, call) {
       askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
         if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
-        applyUpdate(turn, update, step)
+        if (update.sessionUpdate === 'tool_call_update' && update.status === 'completed' && !update._meta?.parent) grown(update.rawOutput?.usage ? counted(update.rawOutput.usage) : size + estimateMessages(update.rawOutput))
+        applyUpdate(run.turn, update, step)
         repaint()
       },
       persist: async (records) => {
-        settled.push(...records)
+        all.push(...records)
         await keepRecords(path, records)
+        if (!records.some(({ update }) => update?.sessionUpdate === 'user_message_chunk')) return void run.settled.push(...records)
+        // A steer read: what came before it is the conversation's now, and the live answer starts again under it (D365).
+        const before = [...run.settled, ...records]
+        ;[run.records, run.settled, run.turn] = [[...run.records, ...before], [], { user: null, notes: [], steps: [], at: new Date().toISOString() }]
+        const latest = app.current.peek()
+        if (latest?.path !== path) return
+        app.current.value = { ...latest, records: [...latest.records, ...before] }
+        showSteers(run)
+      },
+      // What the user sent meanwhile, read before the next step as one message of theirs, never before anything of the answer,
+      // where it would join the request's words (D365).
+      steer: () => {
+        const texts = all.length ? run.steers ?? [] : []
+        if (!texts.length) return []
+        run.steers = []
+        return [envelope(app.deviceId, { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: texts.join('\n\n') }, _meta: { steer: true } })]
       },
     })
+    stopped = ended.stopReason === 'max_steps'
     // What the one call gave for the user to read is the answer.
-    const gave = one && settled.findLast(({ update }) => update?.sessionUpdate === 'tool_call' && update.toolCallId === one.id)?.update
+    const gave = one && all.findLast(({ update }) => update?.sessionUpdate === 'tool_call' && update.toolCallId === one.id)?.update
     const text = gave?.sessionUpdate === 'tool_call' && gave.status === 'completed' ? String(gave._meta?.answer ?? '').trim() : ''
     if (text) {
       const answer = envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } }, 0)
-      settled.push(answer)
+      run.settled.push(answer)
+      all.push(answer)
       await keepRecords(path, [answer])
     }
     if (shown()) setPresence('done')
   } catch (error) {
+    failed = true
     if (shown()) {
       setPresence('idle')
       if (/** @type {any} */ (error)?.code !== 'aborted') showError(error)
     }
   } finally {
     cancelAnimationFrame(frame)
+    working.delete(path)
     endRun(run)
     // What was kept meanwhile, like the title, stays.
     const latest = app.current.peek()
-    const records = [...(latest?.path === path ? latest.records : sent), ...settled]
+    const records = [...(latest?.path === path ? latest.records : run.records), ...run.settled]
     if (shown()) {
       app.current.value = { ...conversation, records }
       app.busy.value = false
       app.live.value = null
     }
-    const answer = lastAnswer(settled)
-    // An answer that came while the user was elsewhere waits for them, unread (D288); not one stopped, or deleted.
-    if (answer && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
+    const answer = lastAnswer(all)
+    // An answer that came while the user was elsewhere waits for them, unread (D288), as does a task paused at its limit (D364); not one stopped, or deleted.
+    if ((answer || stopped) && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
     else await refreshConversations()
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const at = foldTurns(records).at(-1)?.at
     if (answer && at) suggestActions(at, answer, records, conversation)
-    if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted,
-      made: filesMade(callsIn(settled)), routine: routineOf(records)?.routine,
+    if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted, stopped,
+      made: filesMade(callsIn(all)), routine: routineOf(records)?.routine,
       cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
+    // What the user sent as the last step answered is the next request, on screen or not; stopped or failed, it goes back to the box (D365).
+    const left = run.steers ?? []
+    if (left.length && (run.controller.signal.aborted || failed)) { if (shown()) backToBox(left) }
+    else if (left.length && shown()) send(left.join('\n\n'))
+    else if (left.length) {
+      const added = await prepare(left.join('\n\n'), brain, { ...conversation, records }, [], [])
+      await keepRecords(path, added)
+      runAgent({ ...conversation, records: [...records, ...added] }, brain, meta)
+    }
   }
 }
 

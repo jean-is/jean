@@ -34,12 +34,16 @@ test('plain HTTP reaches this computer alone: index.html allows it, and ui/app.j
   assert.ok(narrowed > 0 && narrowed < boot.indexOf('opfsFS()') && narrowed < boot.indexOf('loadSettings(app.fs)'), 'the narrower policy comes first')
 })
 
-test('light or dark is set before the first paint, with the key ui/state.js uses', async () => {
+test('light or dark is set before the first paint, with the key ui/state.js uses, the profile’s own (D228)', async () => {
   const theme = /<script>([\s\S]*?)<\/script>/.exec(html)
   assert.ok(theme && theme.index < html.indexOf('<link rel="stylesheet"'), 'before the stylesheet, which would hold it back')
   const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
   const key = /THEME_KEY = '([^']+)'/.exec(state)?.[1]
-  assert.ok(key && theme[1].includes(`localStorage.getItem('${key}')`))
+  assert.ok(key && theme[1].includes(`mine('${key}')`))
+  // Keyed as ui/opfs.js keys them: this tab's profile, else the last opened here.
+  const opfs = await readFile(new URL('../app/ui/opfs.js', import.meta.url), 'utf8')
+  assert.ok(opfs.includes("const PROFILE = 'app.profile'") && opfs.includes('export const mine = (key) => `${key}:${here()}`'))
+  assert.ok(theme[1].includes("mine = (key) => localStorage.getItem(`${key}:${sessionStorage.getItem('app.profile') ?? localStorage.getItem('app.profile') ?? ''}`)"))
 })
 
 test('the CSP keeps its protections', () => {
@@ -187,4 +191,21 @@ test('only the browser’s frame keeps its site’s origin, and the site can nev
   assert.match(browser, /function frameTo\(url, click = false\) \{\n  if \(isLocal\(url\)\) return void folderTo\(url, click\)/)
   assert.match(browser, /const PAGE = new URL\('\.\.\/\.\.\/preview\.html', import\.meta\.url\)/)
   assert.match(browser, /element\.setAttribute\('sandbox', PAGE_SANDBOX\)\n  element\.setAttribute\('allow', allows\)\n  element\.addEventListener\('load', \(\) => element\.contentWindow\?\.postMessage\(\{ page: source, policy: rules \}, '\*'\), \{ once: true \}\)\n  element\.src = PAGE/)
+})
+
+test('the privacy policy, the terms and where files go run index.html’s theme line alone, and allow nothing else (D356, D381)', async () => {
+  const theme = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
+  for (const path of ['privacy.html', 'terms.html', 'files.html']) {
+    const page = await readFile(new URL(`../app/${path}`, import.meta.url), 'utf8')
+    const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(page)?.[1] ?? ''
+    const scripts = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((match) => match[1])
+    const styles = [...page.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((match) => match[1])
+    assert.deepEqual(scripts, [theme], `${path}: the one script is index.html's first, byte for byte`)
+    assert.equal(styles.length, 1, path)
+    const sha = (/** @type {string} */ text) => `'sha256-${createHash('sha256').update(text).digest('base64')}'`
+    assert.equal(policy, `default-src 'none'; script-src ${sha(theme)}; style-src 'self' ${sha(styles[0])}; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'`, path)
+    assert.ok(page.indexOf('Content-Security-Policy') < page.indexOf('<script'), path)
+    assert.ok(page.indexOf('<script>') < page.indexOf('<link rel="stylesheet"'), `${path}: the theme before the stylesheet`)
+    assert.deepEqual([...page.matchAll(/<article id="(\w+)" class="prose"(?: lang="(\w+)")?>/g)].map(([, id, lang]) => [id, lang ?? 'en']), [['en', 'en'], ['fr', 'fr']], path)
+  }
 })

@@ -37,8 +37,8 @@
 .prose .is-compare tr:last-child td { padding-block-end: 0.9rem; }
 .prose .is-compare tr:last-child td:not(:first-child) { border-end-start-radius: var(--card); border-end-end-radius: var(--card); }
 .prose .is-compare td.is-best { background: oklch(from var(--flame) l c h / 0.16); }
-.prose .is-compare .is-yes { color: oklch(from var(--flame) l max(c, 0.12) 150); }
-.prose .is-compare .is-no { color: var(--ink-faint); }
+.prose .is-compare .is-yes { --tone: oklch(from var(--flame) l max(c, 0.12) 150); color: var(--tone); }
+.prose .is-compare .is-no { color: var(--ink-soft); }
 /* The frame is drawn inside each cell, the line under it too, so that nothing breaks it. */
 .prose .is-compare .is-pick { --edge: inset 2px 0 var(--flame), inset -2px 0 var(--flame); border-block-end: 0; box-shadow: var(--edge), inset 0 -1px var(--line); }
 .prose .is-compare th.is-pick { box-shadow: var(--edge), inset 0 2px var(--flame), inset 0 -1px var(--line); }
@@ -56,12 +56,17 @@
   font-weight: 600;
   line-height: 1.6;
 }
+/* An option's picture, at the head of its card above its name (D35): as tall in every card, whole, on
+   white, as shops show what they sell, so that a photo on white and a cut-out look alike. */
+.prose .is-compare th .picture { --tall: 7rem; box-sizing: border-box; inline-size: 100%; block-size: var(--tall); max-block-size: none; margin-block: 0 0.6rem; padding: 0.35rem; background: white; }
+.prose .is-compare th app-shared.picture img { inline-size: 100%; block-size: 100%; }
 /* In a narrow column, as on a phone, the cards draw closer and the criteria get smaller, so that three fit. */
 @container (width < 34rem) {
   .prose .is-compare table { --gap: 0.3rem; --pad: 0.55rem; font-size: 0.88rem; }
   .prose .is-compare th { font-size: 0.95rem; }
   .prose .is-compare :is(th, td):first-child { font-size: 0.8rem; }
   .prose .is-compare th.is-pick::before { font-size: 0.68rem; }
+  .prose .is-compare th .picture { --tall: 4.5rem; padding: 0.2rem; }
 }
 
 /* Steps: each number in a ring, a line down to the next, its bold start a title on a line of its own. */
@@ -108,6 +113,8 @@
 .prose .callout.is-warning { --tone: oklch(from var(--flame) l max(c, 0.1) 75); }
 .prose .callout.is-caution { --tone: var(--danger); }
 .prose .callout-title { display: flex; align-items: center; gap: 0.45rem; margin-block-end: 0.3rem; color: var(--tone); font-weight: 650; }
+/* By day a tone keeps its hue, but no more lightness than reads at AA on any look's paper and in the light (test/contrast.spec.js). */
+[data-theme='light'] .prose :is(.callout-title, .is-compare .is-yes) { color: oklch(from var(--tone) min(l, 0.45) c h); }
 .prose .callout-title::before { content: ''; flex: none; inline-size: 1.1em; block-size: 1.1em; background: currentColor; mask: var(--icon) center / contain no-repeat; }
 .prose .is-note { --icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'><circle cx='12' cy='12' r='9'/><path d='M12 11v5M12 8h.01'/></svg>"); }
 .prose .is-tip { --icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1h5c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z'/></svg>"); }
@@ -143,6 +150,10 @@
 .prose .checklist input { flex: none; inline-size: 1.05rem; block-size: 1.05rem; margin: 0; accent-color: var(--flame); translate: 0 0.15rem; }
 .prose .checklist label > span { transition: color 0.2s; }
 .prose .checklist .is-done label > span { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--ink-faint); }
+
+/* A picture a source gave, or one the user shared (D35): whole, on a line of its own, never taller than half the window. */
+.prose .picture, .prose app-shared.picture img { display: block; max-inline-size: 100%; max-block-size: min(20rem, 50vh); border-radius: calc(var(--radius) * 0.5); object-fit: contain; }
+.prose .picture { margin-block: 0.75rem; }
 
 /* Where colours are forced, the cards, the frame, the rings and the notes keep their edges. */
 @media (forced-colors: active) {

@@ -1,0 +1,9 @@
+{
+  "backup.confirmImport": "Importer les conversations, les projets et les fichiers de cet export ? Rien ne sera supprimé ici.",
+  "backup.imported": {
+    "one": "{count} conversation importée.",
+    "many": "{count} conversations importées.",
+    "other": "{count} conversations importées."
+  },
+  "backup.chooseJson": "Cet export contient votre activité Gemini sous forme de pages web. Exportez-la à nouveau depuis Google Takeout en choisissant le format JSON pour Mon activité."
+}

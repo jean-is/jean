@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "Cari e-mel",
+  "api.read_email": "Baca e-mel",
+  "api.create_draft": "Tulis draf",
+  "api.send_email": "Hantar e-mel",
+  "api.list_calendars": "Tunjukkan kalendar",
+  "api.list_events": "Tunjukkan acara",
+  "api.create_event": "Tambah acara",
+  "api.update_event": "Ubah acara",
+  "api.delete_event": "Alih keluar acara",
+  "api.search_files": "Cari fail",
+  "api.read_file": "Baca fail",
+  "api.create_document": "Buat dokumen"
+}

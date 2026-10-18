@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "ఈమెయిల్‌లను వెతకండి",
+  "api.read_email": "ఈమెయిల్ చదవండి",
+  "api.create_draft": "డ్రాఫ్ట్ రాయండి",
+  "api.send_email": "ఈమెయిల్ పంపండి",
+  "api.list_calendars": "క్యాలెండర్‌లను చూపండి",
+  "api.list_events": "ఈవెంట్‌లను చూపండి",
+  "api.create_event": "ఈవెంట్ జోడించండి",
+  "api.update_event": "ఈవెంట్ మార్చండి",
+  "api.delete_event": "ఈవెంట్ తీసివేయండి",
+  "api.search_files": "ఫైల్‌లను వెతకండి",
+  "api.read_file": "ఫైల్ చదవండి",
+  "api.create_document": "పత్రాన్ని సృష్టించండి"
+}

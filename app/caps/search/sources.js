@@ -28,16 +28,34 @@ export function onSite(address, url) {
   return Boolean(site && host && (host === site || host.endsWith(`.${site}`)))
 }
 
-/** MediaWiki's search, its pages' introductions with them. @param {string} address @param {string} query @param {string} lang @param {Reach & { count?: number }} [options] @returns {Promise<Page[]>} */
-export async function searchWiki(address, query, lang, { fetch = globalThis.fetch, signal, count = 5 } = {}) {
-  const url = new URL(address.replace('{lang}', lang))
-  const params = { action: 'query', format: 'json', formatversion: '2', origin: '*', generator: 'search', gsrsearch: query, gsrlimit: String(count), prop: 'extracts|info', exintro: '1', explaintext: '1', exlimit: String(count), exchars: '1200', inprop: 'url' }
-  for (const [name, value] of Object.entries(params)) url.searchParams.set(name, value)
+/**
+ * MediaWiki's pages as a query of its API finds them, their text with them, and their lead pictures,
+ * which an answer may show (D35), without the tracking words Wikipedia adds to their addresses.
+ * @param {string} api @param {Record<string, string>} params @param {Reach} reach @returns {Promise<Page[]>}
+ */
+async function wikiPages(api, params, { fetch = globalThis.fetch, signal }) {
+  const url = new URL(api)
+  for (const [name, value] of Object.entries({ action: 'query', format: 'json', formatversion: '2', origin: '*', prop: 'extracts|info|pageimages', explaintext: '1', inprop: 'url', piprop: 'thumbnail', pithumbsize: '500', ...params })) url.searchParams.set(name, value)
   const response = await fetch(url, { signal })
   if (!response.ok) throw new Error(`The search answered ${response.status}.`)
-  /** @type {{ index: number, title: string, fullurl: string, extract?: string }[]} */
-  const pages = ((await response.json())?.query?.pages ?? []).sort((/** @type {any} */ a, /** @type {any} */ b) => a.index - b.index)
-  return pages.map((page) => ({ title: page.title, url: page.fullurl, extract: page.extract ?? '' }))
+  /** @type {{ index?: number, title: string, fullurl: string, extract?: string, missing?: boolean, invalid?: boolean, thumbnail?: { source: string } }[]} */
+  const pages = ((await response.json())?.query?.pages ?? []).filter((/** @type {any} */ page) => !page.missing && !page.invalid).sort((/** @type {any} */ a, /** @type {any} */ b) => a.index - b.index)
+  return pages.map((page) => ({ title: page.title, url: page.fullurl, extract: page.extract ?? '', ...(page.thumbnail && { picture: page.thumbnail.source.replace(/\?utm_.*/, '') }) }))
+}
+
+/** MediaWiki's search, its pages' introductions with them. @param {string} address @param {string} query @param {string} lang @param {Reach & { count?: number }} [options] */
+export const searchWiki = (address, query, lang, { count = 5, ...reach } = {}) => wikiPages(address.replace('{lang}', lang), { generator: 'search', gsrsearch: query, gsrlimit: String(count), exintro: '1', exlimit: String(count), exchars: '1200' }, reach)
+
+/**
+ * An article of a source's site, at its address there (…/wiki/Title, or ?title=Title), read through
+ * MediaWiki's API, since the site's pages refuse other sites' reads: its whole text and its picture.
+ * Null when it isn't there, or the address names none. @param {string} address the source's
+ * @param {string} url @param {Reach} [reach] @returns {Promise<Page | null>}
+ */
+export async function readWiki(address, url, reach = {}) {
+  const { hostname, pathname, searchParams } = new URL(url)
+  const title = searchParams.get('title') ?? (pathname.startsWith('/wiki/') ? decodeURIComponent(pathname.slice(6)) : '')
+  return title ? (await wikiPages(address.replace('{lang}', hostname.split('.')[0]), { titles: title, redirects: '1' }, reach))[0] ?? null : null
 }
 
 /**

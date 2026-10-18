@@ -140,16 +140,19 @@ export function changeNotes(known, now, sections = {}, off = []) {
 /**
  * The model's context: system notes and user messages, then per step one assistant
  * message followed by its tool results. Brain entries (kind "think", no name) are skipped,
- * except for the provider-native blocks they keep for replay.
+ * except for the provider-native blocks they keep for replay. A conversation summed up near
+ * its brain's window is read from its last summary on, which comes as the user's (D359).
  * @param {Envelope[]} records
  * @param {(link: ResourceLink) => DocumentPart} [document] the text the brain reads for a linked file
  * @param {{ step: number } | null} [resume] the last turn's step whose unended calls run again now, their results to come (D212)
  * @returns {ChatMessage[]}
  */
 export function toChatMessages(records, document = (link) => ({ name: link.name, text: '' }), resume = null) {
+  const from = records.findLastIndex(({ update }) => update?.sessionUpdate === 'compaction_update' && update.status === 'completed')
+  const summary = records[from]?.update
   /** @type {ChatMessage[]} */
-  const messages = []
-  const turns = foldTurns(records)
+  const messages = summary?.sessionUpdate === 'compaction_update' ? [{ role: 'user', content: summary._meta?.text ?? '' }] : []
+  const turns = foldTurns(records.slice(from + 1))
   for (const turn of turns) {
     for (const note of turn.notes) messages.push({ role: 'system', content: note.text })
     if (turn.user) {

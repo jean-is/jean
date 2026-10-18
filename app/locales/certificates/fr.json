@@ -29,7 +29,7 @@
   "certificates.logged": "Dans un registre public, entrée {index}",
   "certificates.notLogged": "Absent du registre public qu’il nomme",
   "certificates.credentials": "{name} porte un relevé signé de sa fabrication, inchangé depuis",
-  "certificates.credentialsBroken": "{name} porte un relevé de sa fabrication qui ne tient pas : modifié depuis, ou pas signé par la clé qu’il nomme",
+  "certificates.credentialsBroken": "{name} porte un relevé de sa fabrication qui ne tient pas : modifié depuis, ou pas signé par la clé qu’il nomme",
   "certificates.ai": "Il indique une création par une IA",
   "certificates.notAi": "Il n’indique pas de création par une IA",
   "certificates.unbound": "Une modification du fichier depuis n’est pas vérifiée ici",

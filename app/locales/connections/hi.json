@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "ईमेल खोजें",
+  "api.read_email": "ईमेल पढ़ें",
+  "api.create_draft": "ड्राफ़्ट लिखें",
+  "api.send_email": "ईमेल भेजें",
+  "api.list_calendars": "कैलेंडर दिखाएँ",
+  "api.list_events": "इवेंट दिखाएँ",
+  "api.create_event": "इवेंट जोड़ें",
+  "api.update_event": "इवेंट बदलें",
+  "api.delete_event": "इवेंट हटाएँ",
+  "api.search_files": "फ़ाइलें खोजें",
+  "api.read_file": "फ़ाइल पढ़ें",
+  "api.create_document": "दस्तावेज़ बनाएँ"
+}

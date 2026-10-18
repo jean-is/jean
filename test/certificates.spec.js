@@ -28,13 +28,14 @@ async function saved(page) {
 /** @param {string} name @param {string} text */
 const file = (name, text) => ({ name, mimeType: 'application/octet-stream', buffer: Buffer.from(text) })
 
-for (const [lang, intact, broken, notNamed] of [
-  ['en', 'Sealed, and unchanged since', 'Changed, or not sealed by the key it names', 'notes.txt isn’t a file it names'],
-  ['ar', 'مختومة، ولم تتغير منذ ذلك الحين', 'تغيّرت، أو لم تُختم بالمفتاح الذي تذكره', 'notes.txt ليس ملفًا تذكره'],
-  ['ja', '封印済みで、それ以降変更なし', '変更されているか、記された鍵で封印されていません', 'notes.txt は記載されたファイルではありません'],
-]) {
-  test(`the check page says whether a certificate’s seal holds, and with its proof shows the words (${lang})`, async ({ page, browser, baseURL }) => {
-    const { certificate, proof } = await saved(page)
+test('the check page says whether a certificate’s seal holds, and with its proof shows the words, in English, Arabic and Japanese', async ({ page, browser, baseURL }) => {
+  // One certificate, saved once, read by the check page in each language.
+  const { certificate, proof } = await saved(page)
+  for (const [lang, intact, broken, notNamed] of [
+    ['en', 'Sealed, and unchanged since', 'Changed, or not sealed by the key it names', 'notes.txt isn’t a file it names'],
+    ['ar', 'مختومة، ولم تتغير منذ ذلك الحين', 'تغيّرت، أو لم تُختم بالمفتاح الذي تذكره', 'notes.txt ليس ملفًا تذكره'],
+    ['ja', '封印済みで、それ以降変更なし', '変更されているか、記された鍵で封印されていません', 'notes.txt は記載されたファイルではありません'],
+  ]) {
     const context = await browser.newContext({ locale: lang, baseURL })
     const checker = await context.newPage()
     const reached = new Set()
@@ -58,8 +59,8 @@ for (const [lang, intact, broken, notNamed] of [
     // Nothing given, and no address in it, went anywhere but Jean's own files.
     expect([...reached]).toEqual([new URL(baseURL ?? '').host])
     await context.close()
-  })
-}
+  }
+})
 
 /** A picture C2PA's own tool signed with its test signer (test/c2pa.test.js), as given. @param {boolean} [changed] */
 const signedPicture = async (changed = false) => {

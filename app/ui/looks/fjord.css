@@ -18,7 +18,7 @@
   --danger: oklch(0.74 0.11 20);
   --tint: oklch(0.8 0.08 200);
   --glow: oklch(from var(--tint) 0.76 0.1 calc(h - 25));
-  --glow-alpha: 0.8;
+  --glow-alpha: 0.65;
   --display: 'Avenir Next', Avenir, 'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
   --radius: 1rem;
 }
@@ -26,7 +26,7 @@
   --room: oklch(0.955 0.007 264);
   --room-2: oklch(0.985 0.004 264);
   --ink: oklch(0.32 0.023 264);
-  --ink-soft: oklch(0.43 0.03 262);
+  --ink-soft: oklch(0.4 0.03 262);
   --ink-faint: oklch(0.5 0.03 262);
   --line: oklch(0.32 0.023 264 / 0.1);
   --line-strong: oklch(0.32 0.023 264 / 0.22);

@@ -1,0 +1,38 @@
+{
+  "description": "AI untuk semua orang, dalam tab pelayar. Tanya dengan kata-kata atau dengan fail, dan dapatkan apa yang anda minta dalam bentuk siap: jawapan bersama sumbernya, dokumen, graf. Gunakan AI pilihan anda, dan simpan kerja anda pada peranti anda sendiri. Tiada apa-apa untuk dipasang, percuma dan sumber terbuka.",
+  "labels": {
+    "welcome": "Skrin alu-aluan: idea untuk bermula, dan kotak untuk bertanya apa sahaja",
+    "chart": "Hamparan yang dikongsi, dengan jualannya dalam graf",
+    "sources": "Perjanjian sewa yang dibaca, dan setiap bahagian jawapan merujuk kepadanya",
+    "share": "Tugasan yang dikongsi dengan rakan melalui pautan"
+  },
+  "chart": {
+    "title": "Jualan mengikut wilayah",
+    "file": "Jualan.csv",
+    "columns": [
+      "Wilayah",
+      "Januari",
+      "Februari",
+      "Mac"
+    ],
+    "regions": [
+      "Utara",
+      "Selatan",
+      "Timur"
+    ],
+    "ask": "Buat graf jualan mengikut wilayah, bulan demi bulan",
+    "before": "Ini jualan suku pertama, mengikut wilayah:",
+    "heading": "Jualan, suku pertama",
+    "after": "**Utara** menjual paling banyak, dan **Timur** berkembang paling pantas: naik 37% dari Januari hingga Mac."
+  },
+  "sources": {
+    "title": "Keluar dari rumah sewa",
+    "file": "Perjanjian sewa.pdf",
+    "pages": [
+      "Perjanjian sewa pangsapuri berperabot\n\nFasal 7. Notis. Penyewa boleh menamatkan perjanjian pada bila-bila masa dengan notis sebulan, dihantar melalui surat berdaftar atau diserahkan sendiri dengan resit.",
+      "Fasal 9. Deposit. Deposit sebanyak sewa sebulan dipulangkan dalam tempoh sebulan selepas kunci diserahkan, ditolak kos pembaikan jika ada."
+    ],
+    "ask": "Berapa lama notis yang perlu saya beri untuk keluar, dan bila deposit saya dipulangkan?",
+    "answer": "Ini yang dinyatakan dalam perjanjian sewa anda:\n\n- **Notis:** sebulan, melalui surat berdaftar atau diserahkan sendiri dengan resit [1].\n- **Deposit:** dipulangkan dalam tempoh sebulan selepas anda menyerahkan kunci, ditolak kos pembaikan jika ada [1].\n\nJadi, jika anda menghantar surat hari ini, anda boleh keluar sebulan lagi."
+  }
+}

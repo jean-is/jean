@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "ای میلز تلاش کریں",
+  "api.read_email": "ای میل پڑھیں",
+  "api.create_draft": "مسودہ لکھیں",
+  "api.send_email": "ای میل بھیجیں",
+  "api.list_calendars": "کیلنڈرز دکھائیں",
+  "api.list_events": "ایونٹس دکھائیں",
+  "api.create_event": "ایونٹ شامل کریں",
+  "api.update_event": "ایونٹ تبدیل کریں",
+  "api.delete_event": "ایونٹ ہٹائیں",
+  "api.search_files": "فائلیں تلاش کریں",
+  "api.read_file": "فائل پڑھیں",
+  "api.create_document": "دستاویز بنائیں"
+}

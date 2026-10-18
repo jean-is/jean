@@ -36,7 +36,7 @@
   --ember-off: oklch(0.2 0 0 / 0.18);
 }
 
-:root[data-look='minimal'] .room, :root[data-look='minimal'] app-persona::before, :root[data-look='minimal'] .welcome app-persona { display: none; }
+:root[data-look='minimal'] .room, :root[data-look='minimal'] .welcome app-persona { display: none; }
 /* The little light keeps its place in the header, even on the first screen. */
 :root[data-look='minimal'] app-shell:has(.welcome) .wordmark app-persona { display: inline-block; }
 :root[data-look='minimal'] .wordmark app-persona { --persona-size: 1.4rem; margin-block-start: 0; }
@@ -57,6 +57,6 @@
 :root[data-look='minimal'] .composer:focus-within { border-color: var(--ink-faint); box-shadow: none; }
 :root[data-look='minimal'] .brain-chip { border-color: transparent; }
 :root[data-look='minimal'] :is(.send, .caret, .button.primary, .ember) { box-shadow: none; }
-:root[data-look='minimal'] .icon { stroke-width: 1.4; }
+:root[data-look='minimal'] { --pen: 1.25; }
 :root[data-look='minimal'] dialog { box-shadow: none; }
 :root[data-look='minimal'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .segmented, .toast, .notice, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .service, .sheet, .prose pre, .status, input, select, textarea, .composer) { border-radius: var(--radius); }

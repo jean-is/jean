@@ -1,0 +1,13 @@
+{
+  "plan.title": "Kế hoạch",
+  "plan.done": "Xong {done}/{total}",
+  "plan.pending": "Chưa làm",
+  "plan.in_progress": "Đang làm",
+  "plan.completed": "Xong",
+  "plan.confirm": "Làm theo kế hoạch này?",
+  "plan.go": "Bắt đầu",
+  "plan.always": "Luôn bắt đầu",
+  "plan.paused": "Tạm dừng ở bước {count}",
+  "plan.cost": "khoảng {cost} đến giờ",
+  "plan.keepGoing": "Tiếp tục"
+}

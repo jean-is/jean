@@ -1,6 +1,6 @@
 # Jean
 
-**An AI agent that runs in a browser tab.** Nothing to install. No account. Your files never leave your machine.
+**Everyone's AI, in a browser tab.** Anything in, anything out, with the AI you choose. Nothing to install. Kept on your device. Free and open source.
 
 ## Why
 
@@ -19,7 +19,7 @@ You give Jean a task and your files. Jean reads them, works things out — runni
 - **Simple first, deep later.** Jean starts as a single box. Everything else — files, calculations, memory, projects, voice — shows up when you need it, like a game that teaches itself.
 - **Yours to keep.** Everything Jean knows is stored as plain files you can read, back up and take elsewhere.
 - **For everyone.** Every language and every region, from the first screen to the last answer.
-- **Small on purpose.** Jean's code is short enough to read in an afternoon. That is a promise, and a feature.
+- **Small on purpose.** Jean's code is small enough to audit: no build step, three libraries loaded up front, and budgets checked on every change keep it that way. That is a promise, and a feature.
 
 ## What Jean won't do
 

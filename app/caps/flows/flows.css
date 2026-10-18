@@ -61,10 +61,10 @@
 .flow-step strong { font-size: 0.9rem; font-weight: 600; }
 .flow-step small { font-size: 0.78rem; color: var(--ink-soft); }
 .flow-kind { display: flex; align-items: center; gap: 0.3rem; min-inline-size: 0; font-size: 0.74rem; color: var(--ink-soft); }
-.flow-kind > .icon { flex: none; inline-size: 0.95rem; block-size: 0.95rem; }
+.flow-kind > .icon { flex: none; --glyph: var(--icon-s); }
 .flow-kind > span:not(.flow-state) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .flow-state { display: inline-flex; flex: none; margin-inline-start: auto; }
-.flow-state .icon { inline-size: 0.95rem; block-size: 0.95rem; }
+.flow-state .icon { --glyph: var(--icon-s); }
 
 /* What each became: running glows, done is lit, a failure is red, what didn't run is faint. */
 .flow-step[data-state='running'] { border-color: var(--flame); box-shadow: 0 0 0.9rem oklch(from var(--glow) l c h / 0.6); animation: glowing 1.1s ease-in-out infinite var(--loops, running); }

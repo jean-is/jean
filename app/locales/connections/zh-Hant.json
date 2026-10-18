@@ -1,0 +1,14 @@
+{
+  "api.search_emails": "搜尋郵件",
+  "api.read_email": "閱讀郵件",
+  "api.create_draft": "撰寫草稿",
+  "api.send_email": "傳送郵件",
+  "api.list_calendars": "列出日曆",
+  "api.list_events": "列出活動",
+  "api.create_event": "新增活動",
+  "api.update_event": "變更活動",
+  "api.delete_event": "刪除活動",
+  "api.search_files": "搜尋檔案",
+  "api.read_file": "讀取檔案",
+  "api.create_document": "建立文件"
+}

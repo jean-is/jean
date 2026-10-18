@@ -27,8 +27,8 @@
   --room: oklch(0.97 0.025 340);
   --room-2: oklch(0.995 0.008 340);
   --ink: oklch(0.27 0.09 300);
-  --ink-soft: oklch(0.4 0.09 300);
-  --ink-faint: oklch(0.49 0.08 300);
+  --ink-soft: oklch(0.37 0.09 300);
+  --ink-faint: oklch(0.44 0.08 300);
   --line: oklch(0.55 0.12 215 / 0.25);
   --line-strong: oklch(0.55 0.12 215 / 0.5);
   --glass: oklch(0.995 0.008 340 / 0.72);
@@ -89,7 +89,9 @@
 :root[data-look='neon'] .conversation-title { color: var(--ink); }
 :root[data-look='neon'] .prose a { color: var(--cyan); }
 :root[data-look='neon'] .msg-user { border: 1px solid oklch(from var(--flame) l c h / 0.5); background: oklch(from var(--flame) l c h / 0.14); }
-:root[data-look='neon'] .starter, :root[data-look='neon'] .follow-up { background: var(--glass); backdrop-filter: blur(10px); }
+:root[data-look='neon'] .starter, :root[data-look='neon'] .follow-up, :root[data-look='neon'] .pitch { background: var(--glass); backdrop-filter: blur(10px); }
+/* What Jean is, before any task, reads on glass as the ideas do, the sun brightening behind it (D366). */
+:root[data-look='neon'] .pitch { justify-self: start; padding: 0.8rem 1.1rem; border: 1px solid var(--line-strong); border-radius: 1rem; }
 :root[data-look='neon'] .starter:hover, :root[data-look='neon'] .follow-up:hover { border-color: var(--cyan); box-shadow: 0 0 1.3rem -0.3rem var(--cyan); }
 :root[data-look='neon'] .composer:focus-within { border-color: var(--cyan); box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.6), 0 0 1.8rem -0.5rem var(--cyan); }
 :root[data-look='neon'] :is(.send, .button.primary, .caret) { box-shadow: 0 0 1.2rem -0.2rem var(--flame); }

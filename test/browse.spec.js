@@ -211,6 +211,30 @@ test('the brain offers the browser, then opens a page there and reads it, asking
   expect(notes).toContain(`The <page> section is now:\nThe browser beside the conversation shows ${SITE}/bakery.html.`)
 })
 
+test('an article of Wikipedia’s, whose page refuses other sites’ reads, is read through its API, and the answer shows its picture (D35)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('browser')
+    await (await import('/ui/state.js')).updateSettings({ urls: { wikipedia: 'https://{lang}.wikipedia.test/w/api.php' } })
+  })
+  /** @type {URL[]} */
+  const asked = []
+  await page.route('https://en.wikipedia.test/w/api.php?*', (route) => {
+    asked.push(new URL(route.request().url()))
+    return route.fulfill({ headers: { 'Access-Control-Allow-Origin': '*' }, json: { query: { pages: [{ title: 'Lighthouse', fullurl: 'https://en.wikipedia.test/wiki/Lighthouse',
+      extract: 'A lighthouse is a tower that guides ships at night.', thumbnail: { source: 'https://upload.wikimedia.test/lighthouse.svg?utm_source=en.wikipedia.org' } }] } } })
+  })
+  await page.route('https://en.wikipedia.test/wiki/*', (route) => route.fulfill({ contentType: 'text/html', body: '<h1>Lighthouse</h1>' }))
+  await page.route('https://upload.wikimedia.test/*', (route) => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="30"/>' }))
+  await ask(page, 'Read me the lighthouse Wikipedia article')
+  await page.locator('.approval').getByRole('button', { name: 'Allow once' }).click()
+  const answer = page.locator('.msg-jean .prose').last()
+  await expect(answer).toContainText('A lighthouse is a tower that guides ships at night.')
+  await expect(answer.locator('img.picture')).toHaveAttribute('src', 'https://upload.wikimedia.test/lighthouse.svg')
+  expect(asked.map((url) => url.searchParams.get('titles'))).toEqual(['Lighthouse'])
+})
+
 test('No thanks is for good: the brain hears it again in a new task, and the user sees no card (D219)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
@@ -274,12 +298,13 @@ test('the browser and a file share the side of the window, neither covering the 
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await start(page)
   await connectFakeBrain(page)
-  // The drawer put away, the window is the conversation's and the dock's (D165).
-  await closeTasks(page)
   await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'sales.csv', mimeType: 'text/csv', buffer: Buffer.from(SALES) })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
   await ask(page, 'Here is my table')
+  // The drawer, open with the first task (D369), put away: the window is the conversation's and the dock's (D165).
+  await expect(page.locator('app-inbox')).toBeVisible()
+  await closeTasks(page)
   await page.locator('.msg-files .file-chip').click()
   const preview = page.locator('app-preview .preview')
   const pane = page.locator('app-browser .browser')

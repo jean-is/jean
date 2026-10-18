@@ -605,7 +605,8 @@ const isModule = (path, source) => path.endsWith('.mjs') || (!path.endsWith('.cj
 // ─── JavaScript (QuickJS) ────────────────────────────────────────────────────
 
 // What a script can use, besides plain JavaScript. Every call goes through __call, or __host for
-// the computer's files and the internet.
+// the computer's files and the internet. csv() reads a CSV as csvRows (caps/made/formats.js) does,
+// its header the first row of two filled cells or more, so a title line above the table is left out.
 const PRELUDE = `
 globalThis.tools = new Proxy({}, { get: (_, name) => (args = {}) => __call(String(name), JSON.stringify(args)) })
 globalThis.searchTools = (query) => tools.find_tools({ query })
@@ -638,24 +639,24 @@ globalThis.fetch = async (url, init = {}) => {
   return { ok: r.status >= 200 && r.status < 300, status: r.status, statusText: r.statusText, url: r.url, headers, text: async () => r.body, json: async () => JSON.parse(r.body) }
 }
 globalThis.csv = (text) => {
-  const lines = String(text).replace(/\\r\\n?/g, '\\n').split('\\n').filter((line) => line.trim())
-  const head = lines[0] ?? ''
-  const separator = [',', ';', '\\t'].map((s) => [s, head.split(s).length]).sort((a, b) => b[1] - a[1])[0][0]
-  const split = (line) => {
-    const cells = []
+  const rows = (source, separator) => {
+    const rows = [[]]
     let cell = '', quoted = false
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i]
-      if (quoted) { if (c === '"' && line[i + 1] === '"') { cell += c; i++ } else if (c === '"') quoted = false; else cell += c }
-      else if (c === '"') quoted = true
-      else if (c === separator) { cells.push(cell); cell = '' }
+    for (let i = 0; i < source.length; i++) {
+      const c = source[i]
+      if (quoted) { if (c === '"' && source[i + 1] === '"') cell += source[i++]; else if (c === '"') quoted = false; else cell += c }
+      else if (c === '"' && !cell.trim()) quoted = true
+      else if (c === separator || c === '\\n') { rows.at(-1).push(cell.trim()); cell = ''; if (c === '\\n') rows.push([]) }
       else cell += c
     }
-    cells.push(cell)
-    return cells.map((value) => value.trim()).map((value) => (/^-?\\d+(\\.\\d+)?$/.test(value) ? Number(value) : value))
+    rows.at(-1).push(cell.trim())
+    return rows.filter((row) => row.some(Boolean))
   }
-  const names = split(head).map(String)
-  return lines.slice(1).map((line) => Object.fromEntries(split(line).map((value, i) => [names[i] ?? 'column ' + (i + 1), value])))
+  const alike = (rows) => Math.max(0, ...rows.map((row) => (row.length > 1 ? rows.filter((other) => other.length === row.length).length : 0)))
+  const source = String(text).replace(/^\\ufeff/, '').replace(/\\r\\n?/g, '\\n'), named = /^"?sep=(.)"?\\n/i.exec(source)
+  const all = rows(source.slice(named?.[0].length ?? 0), named?.[1] ?? [...'\\t;,'].map((s) => [s, alike(rows(source.slice(0, 65536), s).slice(0, 100))]).reduce((a, b) => (b[1] > a[1] ? b : a))[0])
+  const [head, ...body] = all.slice(Math.max(0, all.findIndex((row) => row.filter(Boolean).length > 1)))
+  return body.map((row) => Object.fromEntries(row.map((value, i) => [head[i] ?? 'column ' + (i + 1), /^-?\\d+(\\.\\d+)?$/.test(value) ? Number(value) : value])))
 }
 `
 // require(), Node's way, from Node's own modules, the computer's files and node_modules (resolved by the worker).

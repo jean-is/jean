@@ -5,7 +5,7 @@
 // say AI made it. Drawn with About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
 import { t, locale } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { check } from '../receipt/certificate.js'
 import { credentialsOf, NONE } from '../receipt/c2pa.js'
 import { dataOf } from '../pictures/watermark.js'

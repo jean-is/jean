@@ -14,6 +14,7 @@
   "search.failed": "这个地址上没有 Kiwix 服务器响应。",
   "search.insecure": "从这里只能访问这台电脑上的 Kiwix 服务器，或以 https:// 开头的地址上的服务器。",
   "search.locked": "由你的组织设置",
+  "search.parent": "由家长设置",
   "search.books": {
     "other": "{count} 本书"
   },

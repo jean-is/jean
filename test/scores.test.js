@@ -1,18 +1,19 @@
-// Scores (D196), the part with no page in it: the notes abcjs reads from ABC notation, as the
-// seconds and frequencies Jean's synthesizer plays.
+// Scores (D196, D338), the part with no page in it: the notes abcjs reads from ABC notation, as the
+// seconds, pitches and instruments MS Basic plays, and the frequencies Jean's synthesizer does.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { notesOf, wholeNote } from '../app/caps/scores/notes.js'
 
-test('notes become sounds: when, how long, how high and how loud', () => {
+test('notes become sounds: when, how long, how high, how loud, on what and in which track', () => {
   const sequence = {
     tracks: [
-      [{ cmd: 'program', start: 0, duration: 0 }, { cmd: 'note', pitch: 69, volume: 127, start: 0.25, duration: 0.25 }, { cmd: 'note', pitch: 81, volume: 64, start: 0, duration: 0.25, gap: 0.05 }],
+      [{ cmd: 'program', start: 0, duration: 0 }, { cmd: 'note', pitch: 69, volume: 127, start: 0.25, duration: 0.25, instrument: 40 }, { cmd: 'note', pitch: 81, volume: 64, start: 0, duration: 0.25, gap: 0.05, instrument: 40 }],
       [{ cmd: 'note', pitch: 57, start: 0.5, duration: 0.5, cents: 50 }, { cmd: 'note', pitch: 60, start: 1, duration: 0 }],
     ],
   }
   const notes = notesOf(sequence, 2)
   assert.deepEqual(notes.map((note) => note.at), [0, 0.5, 1], 'by when they start, every track')
+  assert.deepEqual(notes.map((note) => [note.pitch, note.instrument, note.track]), [[81, 40, 0], [69, 40, 0], [57, 0, 1]], 'the piano when none is named')
   assert.deepEqual(notes.map((note) => Math.round(note.frequency * 100) / 100), [880, 440, 226.45])
   assert.deepEqual(notes.map((note) => Math.round(note.length * 1000) / 1000), [0.4, 0.5, 1], 'a gap shortens a note')
   assert.deepEqual(notes.map((note) => Math.round(note.volume * 100) / 100), [0.5, 1, 0.83])

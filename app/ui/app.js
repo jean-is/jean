@@ -5,8 +5,8 @@ import { memoryFS } from '../core/fs.js'
 import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
-import { opfsFS } from './opfs.js'
-import { app, effective, activeBrain, theme, sidebarOpen, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked } from './state.js'
+import { opfsFS, mine } from './opfs.js'
+import { app, effective, activeBrain, theme, sidebarOpen, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
 import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import './shell.js'
@@ -22,30 +22,46 @@ async function start() {
   // Plain HTTP reaches this computer alone (D260).
   const reach = ['localhost', '127.0.0.1', ...await nearby]
   document.head.append(Object.assign(document.createElement('meta'), { httpEquiv: 'Content-Security-Policy', content: `connect-src 'self' https: wss: ${reach.map((name) => `http://${name}:*`).join(' ')}` }))
+  setLoader(async (lang, part) => {
+    const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
+    return response.ok ? response.json() : null
+  })
   const fs = await opfsFS().catch(() => null)
   app.fs = fs ?? memoryFS()
+  app.whole = fs?.whole ?? null
   app.ephemeral.value = !fs
+  if (!fs) sessionStorage.removeItem('app.profile')
   app.deviceId = localStorage.getItem('app.device') ?? ulid()
   localStorage.setItem('app.device', app.deviceId)
   // Organisations opt in with <meta name="app-policy" content="policy.json"> (see docs/enterprise.md).
-  const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
-  app.policy = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response.json() : {})).catch(() => ({})) : {}
+  // The last one read is kept and holds while the site can't be reached: offline, or its server down,
+  // what an organisation set (its brains, locks, denied capabilities) doesn't come undone.
+  const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content') ?? ''
+  const kept = policyURL ? await globalThis.caches?.open('app-policy').catch(() => undefined) : undefined
+  const fresh = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response : null), () => null) : null
+  ;(fresh && kept?.put(policyURL, fresh.clone()))?.catch(() => {})
+  const policy = fresh ?? await kept?.match(policyURL)
+  app.policy = policy ? await policy.json().catch(() => ({})) : {}
+  // Several profiles here (D228): their menu, and in a child's, what a parent set, in policy's shape.
+  if (fs && (await fs.whole.list('profiles')).length > 1) await unlock('profiles')
   app.settings.value = await loadSettings(app.fs)
   // Policy names capabilities by today's ids: `routines` are the tasks on a schedule (D122).
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
   configureCapabilities({ deny, remember: rememberUnlocked })
 
-  setLoader(async (lang, part) => {
-    const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
-    return response.ok ? response.json() : null
-  })
-  await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, navigator.languages))
+  // On a language's own address on jean.is, its language, unless one was chosen (D397).
+  const asked = document.querySelector('meta[name="app-language"]')?.getAttribute('content')
+  await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, asked ? [asked] : navigator.languages))
+  // The organisation's sign-in (D385), then ee/ (D139).
+  if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
+  if (app.policy.key || app.policy.audit) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
 
   const root = document.documentElement
-  document.title = BRAND.name
   effect(() => {
-    root.lang = locale.value
-    root.dir = dir(locale.value)
+    Object.assign(root, { lang: locale.value, dir: dir(locale.value) })
+    // The install dialog's screenshots in Jean's language (D396): index.html names English's.
+    document.querySelector('link[rel="manifest"]')?.setAttribute('href', locale.value === 'en' ? 'manifest.webmanifest' : `manifests/${locale.value}.webmanifest`)
+    document.title = locale.value === (asked ?? 'en') && document.title || BRAND.name
   })
   effect(() => { root.dataset.presence = app.presence.value })
   // Light or dark: the device's mode, until the user picks the other one (index.html applies it
@@ -55,7 +71,7 @@ async function start() {
   const follow = () => { app.deviceTheme.value = daylight.matches ? 'light' : 'dark' }
   daylight.addEventListener('change', follow)
   follow()
-  const chosen = localStorage.getItem(THEME_KEY)
+  const chosen = localStorage.getItem(mine(THEME_KEY))
   app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
   const browserBar = document.querySelector('meta[name="theme-color"]')
   app.look.value = lookId(root.dataset.look ?? 'room')
@@ -73,17 +89,17 @@ async function start() {
   const measure = () => { app.wide.value = wide.matches }
   wide.addEventListener('change', measure)
   measure()
-  const side = localStorage.getItem(SIDEBAR_KEY)
+  const side = localStorage.getItem(mine(SIDEBAR_KEY))
   app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
   // stays on the device for index.html, the room's too, since a device without one starts in
-  // Human (D174); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
+  // Tilde (D373); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
   // allows), with their code loaded only once there are some.
   let dressing = Promise.resolve()
   effect(() => {
     const id = lookId(effective.value.settings.look?.id)
-    localStorage.setItem(LOOK_KEY, id)
+    localStorage.setItem(mine(LOOK_KEY), id)
     dressing = lookSheet(id).then(() => { if (id === lookId(app.settings.value.look?.id)) app.look.value = id })
   })
   const touches = new CSSStyleSheet()
@@ -101,7 +117,7 @@ async function start() {
   // conversation, then every capability, but not what is always there (CSSOM, which the CSP
   // allows; style attributes it doesn't).
   effect(() => {
-    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you'].includes(id)).length
+    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit'].includes(id)).length
     root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
   })
 
@@ -119,23 +135,25 @@ async function start() {
   app.fs.watch?.((path) => (path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
 
   // Opened after time away: "Since last time" (an event with no language). Each device keeps its own.
-  const seen = Number(localStorage.getItem(SEEN_KEY)) || 0
+  const seen = Number(localStorage.getItem(mine(SEEN_KEY))) || 0
   if (seen && Date.now() - seen > AWAY_MS) app.back.value = seen
-  const stamp = () => localStorage.setItem(SEEN_KEY, String(Date.now()))
+  const stamp = () => localStorage.setItem(mine(SEEN_KEY), String(Date.now()))
   stamp()
   addEventListener('pagehide', stamp)
   document.addEventListener('visibilitychange', stamp)
 
-  document.body.append(document.createElement('app-shell'))
+  // First, before what jean.is has under it (D397).
+  document.body.prepend(document.createElement('app-shell'))
   root.classList.add('is-ready')
   // The box has the keyboard from the start; not on a touchscreen, where it would raise one over the welcome.
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  // Back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
+  // A search from the browser's bar (D353) is sent. Or back from signing in: to a connection
+  // (?state=…), or to OpenRouter or ChatGPT.
   const back = new URLSearchParams(location.search)
-  const connected = back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()
-  if (!connected && back.size) await (await import('./brains.js')).finishSignIn()
+  if (back.has('q')) { history.replaceState(null, '', location.pathname + location.hash); send(back.get('q') ?? '') }
+  else if (!(back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()) && back.size) await (await import('./brains.js')).finishSignIn()
   // Watching for a new version, or finishing to bring one in.
   import('./update.js').then((update) => update.start())
 }

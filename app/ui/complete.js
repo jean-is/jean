@@ -14,7 +14,7 @@ import { app, effective } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
 import { ROOM_ICONS } from './dialogs.js'
 import { CATALOGUE } from './discovery.js'
-import { icons } from './icons.js'
+import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
 import { typing, searchable, matching, holds, digest, pointing } from './mentions.js'
 import { t, locale, relativeTime } from '../core/i18n.js'
@@ -192,7 +192,7 @@ async function canDo(show) {
     .sort((a, b) => CATALOGUE.indexOf(a.id) - CATALOGUE.indexOf(b.id))
   show({ heading: t('collection.title', { name: BRAND.name }), options: caps.map((cap) => {
     const label = t(`cap.${cap.id}.name`)
-    return { icon: icons[ROOM_ICONS[cap.id]] ?? icons.spark, label, words: words(label), pick: () => put(`/${label}`) }
+    return { icon: icons[ROOM_ICONS[cap.id]] ?? icons.brain, label, words: words(label), pick: () => put(`/${label}`) }
   }) })
 }
 
@@ -300,7 +300,7 @@ async function tasks(show) {
   const here = app.current.peek()?.path
   show({ heading: t('history.title'), options: app.conversations.value.filter((item) => item.path !== here).map((item) => {
     const title = item.title || t('conversation.untitled')
-    return { icon: icons.history, label: title, aside: relativeTime(item.updatedAt), words: searchable(title), pick: () => point(`@${title}`, { kind: 'task', path: item.path, title }) }
+    return { icon: icons.list, label: title, aside: relativeTime(item.updatedAt), words: searchable(title), pick: () => point(`@${title}`, { kind: 'task', path: item.path, title }) }
   }) })
 }
 

@@ -44,7 +44,7 @@ async function load(name, stored = {}) {
 
 test('examples: each plugin.json reads as Jean reads it, and each module hooks and draws only where plugins may, within its rights', async () => {
   const names = (await readdir(ROOT, { withFileTypes: true })).filter((entry) => entry.isDirectory()).map((entry) => entry.name)
-  assert.deepEqual(names.sort(), ['activity-log', 'quiet-hours', 'trusted-sites'])
+  assert.deepEqual(names.sort(), ['activity-log', 'glance', 'quiet-hours', 'trusted-sites'])
   for (const name of names) {
     const manifest = readManifest(await readFile(new URL(`${name}/plugin.json`, ROOT), 'utf8'))
     assert.equal(manifest.name, name)
@@ -98,4 +98,49 @@ test('examples: Trusted sites offers to trust a site Jean asks about, then lets 
   assert.deepEqual(await plugin.fire('tool.check', browse, { decision: 'never' }), { decision: 'never' })
   await plugin.press('forget:en.wikipedia.org')
   assert.deepEqual(await plugin.fire('tool.check', browse, { decision: 'ask' }), { decision: 'ask' })
+})
+
+test('examples: At a glance draws under a long answer how long it takes to read, a map of its parts and its links, each said in words too', async () => {
+  const plugin = await load('glance')
+  // Minutes in the language the plugin runs in, the browser's.
+  const minute = `◷ ${new Intl.NumberFormat(undefined, { style: 'unit', unit: 'minute', unitDisplay: 'short' }).format(1)}`
+  const answer = [
+    'Here are the two plans side by side, over the next two years, with what each one costs you in all.',
+    '',
+    '| Plan | Total |',
+    '|---|---|',
+    '| Orange | €360 |',
+    '| SFR | €600 |',
+    '',
+    '## What to do',
+    '',
+    'Orange fits you best: it is the cheapest over two years, it has enough data for what you do each month, and you can leave it when you like.',
+    '',
+    '1. Get your number’s code.',
+    '2. Order the SIM.',
+    '',
+    '```js',
+    'const total = 15 * 24',
+    '',
+    'console.log(total)',
+    '```',
+    '',
+    'Both are explained at https://example.com/orange and https://example.com/sfr, and again at https://example.com/orange.',
+  ].join('\n')
+  assert.deepEqual(plugin.slots.answer({ text: answer }), { row: [
+    { text: minute, label: '1 minute to read' },
+    // Each paragraph a bar as tall as it is long beside the longest, the heading a space, the code one part, blank line and all;
+    // first, the answer's direction, which the signs don't have.
+    { text: '\u200E▆▦ █☰⌗▇', label: 'Its parts, under 1 heading: 3 paragraphs, 1 table, 1 list, and 1 piece of code' },
+    { text: '↗ 2', label: '2 links' },
+  ] })
+  // A short answer is taken in at a glance already, unless asked for under every one.
+  assert.equal(plugin.slots.answer({ text: 'Yes, Orange.' }), null)
+  assert.match(JSON.stringify(plugin.slots.settings()), /answers of 80 words or more/)
+  await plugin.press('every')
+  assert.equal(plugin.stored.every, true)
+  assert.deepEqual(plugin.slots.answer({ text: 'Yes, Orange.' }), { row: [{ text: minute, label: '1 minute to read' }, { text: '\u200E█', label: 'Its parts: 1 paragraph' }] })
+  // An answer read from the right has its map read from the right too.
+  assert.equal(plugin.slots.answer({ text: '**أورنج** هي الأنسب لك.' }).row[1].text, '\u200F█')
+  assert.equal(plugin.slots.answer({ text: '' }), null)
 })

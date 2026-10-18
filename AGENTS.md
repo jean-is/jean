@@ -9,7 +9,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 ## Non-negotiables
 
 1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI, and by `npm run dev` after every change, which says as soon as one is over (D244). Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
-2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code runs exactly as written, from `app/`, which holds everything a deploy serves and nothing else; the root holds what never ships (D243). Paths to Jean's own files, here and in the docs (`core/fs.js`), are `app/`'s. There are three exceptions to "what is in the repo is what ships", and none is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `app/vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json` and `manifest.webmanifest` in `app/`, with a copy of `LICENSE`. The web's copy: `npm run build:web` puts `app/` in `dist/web/`, Jean's own code minified (never the service worker, the bridge, the pages or third-party code) and each file beside itself in brotli and gzip (D318). Deploying means `npm ci && npm run build:web`, then copying `dist/web/`, and publishing the render package when its version is new (`npm run render`, then `npm publish ./dist/render`, D305), which `npm run deploy` does first (D321).
+2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code runs exactly as written, from `app/`, which holds everything a deploy serves and nothing else; the root holds what never ships (D243). Paths to Jean's own files, here and in the docs (`core/fs.js`), are `app/`'s. There are three exceptions to "what is in the repo is what ships", and none is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `app/vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json`, `manifest.webmanifest` and one per language in `manifests/` in `app/`, with a copy of `LICENSE`. The web's copy: `npm run build:web` puts `app/` in `dist/web/`, Jean's own code minified (never the service worker, the bridge, the pages or third-party code) and each file beside itself in brotli and gzip (D318). Deploying means `npm ci && npm run build:web`, then copying `dist/web/`, and publishing the render package when its version is new (`npm run render`, then `npm publish ./dist/render`, D305), which `npm run deploy` does first (D321).
 3. **Three runtime dependencies are loaded upfront:** `@preact/signals-core`, `lit-html` and `marked` (lexer only). Everything else loads on demand inside a capability module. Adding a dependency requires an entry in [docs/decisions.md](docs/decisions.md).
 4. **Standards before inventions:**
    - **Model APIs:** OpenAI-compatible and Anthropic Messages.
@@ -32,7 +32,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Data rules
 
-- Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder).
+- Only `core/fs.js` touches storage. Data is plain files in OPFS (or a mirrored real folder), sealed at rest by the storage worker (D371): never write to OPFS around it.
 - **Files and names:**
   - One file per entity, named with a ULID and never renamed.
   - Conversations are append-only JSONL of ACP records, except when the user goes back to a request, which removes what came after it (D188).
@@ -46,7 +46,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 - Everything outside `ee/` is MIT. `ee/` holds the enterprise integrations, under the Elastic License 2.0 plus the grant in `ee/GRANT.md` (D139).
 - Only what an organisation's IT, security or compliance team asks for goes in `ee/`. Never the person's own security, a standard Jean speaks, or anything already open: features never move from open to `ee/`.
-- Every file in `ee/` starts with `// SPDX-FileCopyrightText: 2026 CODENAME SAS` and `// SPDX-License-Identifier: Elastic-2.0`. Never copy code across the line, in either direction.
+- Every file in `ee/` starts with `// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS` and `// SPDX-License-Identifier: Elastic-2.0`. Never copy code across the line, in either direction.
 - One module outside `ee/` loads it, with `import()`, and only when policy holds a key. The key check lives in `ee/`. Jean works completely with `ee/` deleted.
 
 ## UI rules
@@ -69,7 +69,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 The base prompt lives in `core/prompt.js` and stays within its 200-token budget. Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
 
-The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read, unless the user goes back to a request (D188).
+The prompt and the declared tools are frozen for the life of a conversation. Changes go into the transcript as system notes, and tools that arrive later are deferred (see [docs/architecture.md](docs/architecture.md#prompt-tools-and-caching)). Never edit or delete anything the brain has already read, unless the user goes back to a request (D188). When a conversation nears its brain's window, a summary is appended and the brain reads on from the last one, the file keeping everything (D359).
 
 ## Docs
 
@@ -88,21 +88,28 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 ```bash
 npm run dev     # build (vendor + manifest), then serve, checking the budgets after each change (npm start does the same)
 npm run dev:gateway  # the same, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
+npm run dev:share    # the same, with a share host on its own port (SHARE_PORT, 8788), already set for Jean, its viewer drawing from app/
+npm run dev:home     # the same, with jean.is's page under the first screen, and its pages in other languages at /ja, /ar… (D397)
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
-npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318)
+npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml (D353) and what search engines and shared links read (D355)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)
-npm run render  # build, then the package that draws a task saved as a web page, in dist/render/, for npm publish ./dist/render (D305)
+npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
+npm run host    # build, then the share host in dist/host/, its viewer from the render package of this version (D361)
+npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)
 npm run build:desktop  # build, then the desktop apps for macOS, Windows and Linux in dist/desktop/, with Neutralino (D155)
 npm run build:dmg      # the same, then the macOS disk image, on a Mac
 npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it
-npm run screenshots  # take the welcome screen's screenshots for the install dialog, after changing its look
+npm run screenshots  # take the install dialog's screenshots, four pages in each language (-- fr ja: only these), after changing Jean's look
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
+npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run concepts  # read the picture check's words into app/caps/pictures/concepts.json, after changing one (D280)
 npm run documents # the document evals: corpus, retrieval, answers through OpenRouter, benches (-- --report --write)
+npm run longtasks # Jean's long-task features against the same brain without them: GDPval, steering, checkpoints, summaries and plans (BRAIN=<provider>:<model>, -- --write)
 npm run directory # check from a browser's point of view which known services and sources of skills Jean can reach
+npm run csp     # the pages' policies in every browser here: Playwright's engines, Chrome and Edge themselves, then Safari and Firefox over WebDriver (D326)
 npm run serve   # serve app/ as it is
 ```

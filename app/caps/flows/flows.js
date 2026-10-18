@@ -19,7 +19,7 @@ import { fileText } from '../../core/files.js'
 import { listSkills } from '../../core/skills.js'
 import { metaRecord, splitSuggestions } from '../../core/events.js'
 import { t, useStrings } from '../../core/i18n.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { runFlow, fromSteps, askOf, fill, fillArgs, kindOf, result as resultOf } from './run.js'
 import { flowNamed } from './graph.js'
 import { keep } from '../../ui/windows.js'
@@ -31,8 +31,8 @@ await useStrings('flows')
 /** @typedef {import('./run.js').Step} Step */
 /** A flow as the room keeps it: its file's id (a ULID, never changed) and path. @typedef {Flow & { id: string, path: string }} Saved */
 
-/** Never a step of a flow: what runs or makes flows, offers, splits work or makes routines. */
-const NOT_STEPS = new Set(['run_flow', 'save_flow', 'flow_step', 'offer', 'find_tools', 'delegate', 'helper', 'schedule', 'save_name'])
+/** Never a step of a flow: what runs or makes flows, offers, splits work, plans or makes routines. */
+const NOT_STEPS = new Set(['run_flow', 'save_flow', 'flow_step', 'offer', 'find_tools', 'delegate', 'helper', 'schedule', 'save_name', 'plan'])
 /** And what an Ask step can't do on top: ask the user, who may not be there (a helper's rule, D98). */
 const NOT_ASKED = new Set([...NOT_STEPS, 'ask_user'])
 

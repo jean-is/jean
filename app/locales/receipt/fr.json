@@ -17,6 +17,7 @@
   "receipt.made": "Créé par",
   "receipt.here": "sur cet appareil",
   "receipt.reached": "Autres adresses contactées",
+  "receipt.files": "Où vont vos fichiers",
   "receipt.certificate": "Certificat",
   "receipt.save": "Enregistrer le certificat",
   "receipt.save.text": "Comment cette réponse a été faite, pas ce qui a été dit. Se partage sans risque.",
@@ -26,6 +27,6 @@
   "receipt.proof.file": "Preuve {date}",
   "receipt.checkAt": "Tout le monde peut les vérifier sur {address}.",
   "receipt.date": "Les faire dater par {hosts}",
-  "receipt.log": "Les inscrire dans un registre public, {host} : public et permanent",
+  "receipt.log": "Les inscrire dans un registre public, {host} : public et permanent",
   "receipt.unwitnessed": "{host} est injoignable"
 }

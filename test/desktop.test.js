@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { DESKTOP, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles } from '../scripts/desktop.js'
+import { DESKTOP, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles, shortCopies } from '../scripts/desktop.js'
 import { addressesIn } from '../app/ui/host.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -100,10 +100,14 @@ describe('desktop', () => {
 
   it('ships app/, what a web deploy serves, without its types (D243)', async () => {
     const files = await shippedFiles(join(ROOT, 'app'))
-    for (const path of ['index.html', 'sandbox.html', 'sw.js', 'ui/app.js', 'caps/browser/browser.html', 'locales/en.json', 'caps/skills/directory/chart/SKILL.md', 'bridge/bridge.js', 'screenshots/wide.jpg']) assert.ok(files.includes(path), path)
+    for (const path of ['index.html', 'sandbox.html', 'sw.js', 'ui/app.js', 'caps/browser/browser.html', 'locales/en.json', 'caps/skills/directory/chart/SKILL.md', 'bridge/bridge.js', 'screenshots/en/welcome-wide.webp']) assert.ok(files.includes(path), path)
     for (const path of files) {
       // No Markdown but the skills of Jean's own directory (D196).
       assert.doesNotMatch(path, /(?<!\/SKILL)\.md$|\.d\.ts$|(^|\/)\./, path)
     }
+  })
+
+  it('answers the privacy policy, the terms and where files go at their addresses without .html, from a folder of that name (D356, D381)', async () => {
+    assert.deepEqual(shortCopies(await shippedFiles(join(ROOT, 'app'))), [['privacy.html', 'privacy/index.html'], ['terms.html', 'terms/index.html'], ['files.html', 'files/index.html']])
   })
 })

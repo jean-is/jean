@@ -60,14 +60,14 @@ test('a large task is split among helpers, approved step by step, and checked ag
   expect(await system(page)).toContain('- delegate: hand independent parts of a large task to helpers')
 })
 
-test('a helper’s question waits in the inbox beside the approvals', async ({ page }) => {
+test('a helper’s question waits in the box, its approval in the inbox', async ({ page }) => {
   await start(page)
   await connect(page, `${MAIL_URL}/mcp`)
   await connectFakeBrain(page)
   await turnOn(page, 'Helpers')
   await page.keyboard.press('Escape')
   await ask(page, 'Plan the staff party')
-  const question = page.locator('.inbox form.approval')
+  const question = page.locator('.composer app-ask .ask')
   await expect(question).toContainText('How many people are coming?')
   await expect(question.locator('.approval-from')).toHaveText('Guests')
   await expect(page.locator('.inbox .approval', { hasText: 'Mail: Search emails' })).toBeVisible()
@@ -87,7 +87,8 @@ test('back after time away, Jean starts with a brief of what’s new, reading on
   await connectFakeBrain(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('since'))
   // Last on screen two days ago.
-  await page.addInitScript(() => localStorage.setItem('app.seen', String(Date.now() - 2 * 86_400_000)))
+  // Kept per profile (D228).
+  await page.addInitScript(() => localStorage.setItem(`app.seen:${sessionStorage.getItem('app.profile') ?? ''}`, String(Date.now() - 2 * 86_400_000)))
   await page.reload()
   await expect(page.locator('.since')).toHaveText('Since last time · 2 days ago')
   await expect(page.locator('.since-note')).toHaveText('Work stops while this tab is closed, so this was read just now.')

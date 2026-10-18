@@ -2,8 +2,10 @@
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
 // the conversation, in the address (D137), a reload comes back to the line being read, and an
 // earlier conversation opens at its end. A request whose connection drops before its answer starts
-// is asked again (D202), and a key connects though its service is too busy to list its models.
-// Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273).
+// is asked again (D202), one the page closed on before anything came stays apart from the next, and a
+// key connects though its service is too busy to list its models.
+// Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
+// task, the welcome says what Jean is, the box under the question on a wide window, at the foot on a phone (D366).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
@@ -26,10 +28,12 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
 
 test('once a task has started, a line under the box says the assistant is an AI, and the box says it to a screen reader (D273)', async ({ page }) => {
   await start(page)
-  // Not on the welcome: nothing has been asked yet.
+  // Not on the welcome: nothing has been asked yet. The line links to the privacy policy and the terms instead (D356).
   await expect(page.locator('.ai-note')).toHaveCount(0)
+  await expect(page.locator('.legal')).toBeInViewport()
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.legal')).toHaveCount(0)
   const said = { en: 'Jean is AI and can make mistakes', ar: 'Jean ذكاء اصطناعي، والأخطاء واردة', ja: 'JeanはAIのため、間違えることがあります' }
   for (const [lang, text] of Object.entries(said)) {
     if (lang !== 'en') {
@@ -45,7 +49,34 @@ test('once a task has started, a line under the box says the assistant is an AI,
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   await expect(page.locator('.hero-question')).toBeVisible()
   await expect(page.locator('.ai-note')).toHaveCount(0)
+  await expect(page.locator('.legal')).toBeVisible()
   await expect(page.locator('#prompt')).toHaveAccessibleDescription('')
+})
+
+test('before any task, the welcome says what Jean is; the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas (D366)', async ({ page }) => {
+  await start(page)
+  const pitch = page.locator('.pitch')
+  await expect(pitch.locator('p')).toHaveText('Ask for anything. Get back an answer, a document, a chart, a tune, a picture or a small app, right in this tab.')
+  await expect(pitch.locator('li')).toHaveText(['Nothing to install', 'Kept on this device', 'Free and open source'])
+  const top = async (/** @type {string} */ selector) => (await page.locator(selector).boundingBox())?.y ?? 0
+  const { width, height } = page.viewportSize() ?? { width: 1280, height: 720 }
+  expect(await top('.composer')).toBeLessThan(height * 0.7)
+  expect(await top('.starters')).toBeGreaterThan(await top('.composer'))
+  expect(await top('.legal')).toBeGreaterThan(height - 48)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await expect(async () => {
+    expect(await top('.composer')).toBeGreaterThan(844 * 0.7)
+    expect(await top('.starters')).toBeLessThan(await top('.composer'))
+  }).toPass()
+  await page.setViewportSize({ width, height })
+  // Once there is a task, a new one says nothing more.
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(pitch).toHaveCount(0)
+  await expect(page.locator('.starter')).toHaveCount(4)
 })
 
 test('a request whose connection drops before its answer starts is asked again after a moment, saying so (D202)', async ({ page }) => {
@@ -73,7 +104,8 @@ test('a key whose service is too busy to list its models connects all the same, 
   let listed = 0
   await page.route('https://generativelanguage.googleapis.com/**', (route) => (listed++, route.fulfill({ status: 429, json: { error: { code: 429, status: 'RESOURCE_EXHAUSTED' } } })))
   await page.locator('.brain-chip').click()
-  const dialog = page.locator('app-settings dialog[open]')
+  const dialog = page.locator('app-first .first')
+  await dialog.locator('.first-doors button').first().click()
   const way = dialog.locator('.way.is-key')
   await way.locator('summary').click()
   await way.locator('select[name="provider"]').selectOption('gemini')
@@ -116,7 +148,7 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
 
   // While a request is being answered, it can't be tried again; one before it can.
   await ask(page, 'Write a letter to my bank')
-  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(page.locator('.composer app-ask .ask')).toBeVisible()
   await expect(requests.last().getByRole('button', { name: 'Try again' })).toBeDisabled()
   const again = requests.first().getByRole('button', { name: 'Try again' })
   await expect(again).toBeEnabled()
@@ -124,7 +156,7 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
   page.once('dialog', (dialog) => dialog.dismiss())
   await again.click()
   await expect(page.locator('.msg-user')).toHaveCount(2)
-  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(page.locator('.composer app-ask .ask')).toBeVisible()
   // Then the answer being written stops, everything after the request goes, and it is answered again.
   page.once('dialog', (dialog) => {
     expect(dialog.message()).toContain('Everything after it in this task will be removed')
@@ -132,7 +164,7 @@ test('under a request, when it was asked, Copy and Try again; under an answer, w
   })
   await again.click()
   await expect(page.locator('.msg-user')).toHaveCount(1)
-  await expect(page.locator('.inbox app-ask form.approval')).toHaveCount(0)
+  await expect(page.locator('.composer app-ask .ask')).toHaveCount(0)
   await expect(page.locator('.msg-jean .prose')).toHaveCount(1)
   await expect(page.locator('.msg-jean .prose')).toContainText('Anything else?')
   await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
@@ -202,10 +234,44 @@ test('a double click or Enter puts a request in a box; Escape leaves it, Enter o
   await expect(page.locator('.msg-jean .prose')).toContainText('Anything else?')
   await expect(ended).toBeVisible()
   await ask(page, 'Write a letter to my bank')
-  await expect(page.locator('.inbox app-ask form.approval')).toBeVisible()
+  await expect(page.locator('.composer app-ask .ask')).toBeVisible()
   await expect(page.locator('p.msg-user').last()).not.toHaveAttribute('tabindex')
   await page.locator('p.msg-user').last().dblclick()
   await expect(box).toHaveCount(0)
+})
+
+test('a request the page closed on before anything came stays apart from the next one, on screen and for the brain, edited or not', async ({ page }) => {
+  await start(page)
+  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
+  test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
+  await connectFakeBrain(page)
+  await ask(page, 'Explain gravity')
+  await expect(page.locator('.msg-jean .prose')).toContainText('You asked: Explain gravity')
+  await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  // The brain never answers the next request: nothing after it is kept when the page closes.
+  let holding = true
+  /** @type {() => void} */
+  let asked = () => {}
+  const held = new Promise((resolve) => { asked = () => resolve(undefined) })
+  await page.route(`${BRAIN_URL}/chat/completions`, (route) => (holding ? asked() : route.fallback()))
+  await ask(page, 'Count slowly to five')
+  await held
+  await page.reload()
+  holding = false
+  const requests = page.locator('.msg-user')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five'])
+  await ask(page, 'Then count to three')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Then count to three'])
+  await expect(page.locator('.msg-jean .prose')).toHaveCount(2)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Then count to three')
+  await expect(page.locator('.send:not(.is-stop)')).toBeVisible()
+  // Edited, the last one goes alone; the one before stays.
+  await requests.last().dblclick()
+  await page.locator('app-edit textarea').fill('Then count to two')
+  page.once('dialog', (dialog) => dialog.accept())
+  await page.locator('app-edit textarea').press('Enter')
+  await expect(requests).toHaveText(['Explain gravity', 'Count slowly to five', 'Then count to two'])
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Then count to two')
 })
 
 test('Duplicate from here: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {
@@ -331,6 +397,8 @@ test('Settings opens over the conversation, in the address: Back closes it, a re
 
 test('a reload comes back to the same line of a long conversation, or to its end', async ({ page }) => {
   await start(page)
+  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
+  test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
   await connectFakeBrain(page)
   // Answers with a file's card (D119), above the line and in the last answer.
   const asked = ['Explain photosynthesis in simple words', 'Write the bakery plan as a Word document', 'Explain photosynthesis again', 'Write the cafe plan as a Word document']
@@ -339,8 +407,6 @@ test('a reload comes back to the same line of a long conversation, or to its end
     await expect(page.locator('.msg-jean .msg-actions')).toHaveCount(index + 1)
   }
   await expect(page.locator('app-file .file-card')).toHaveCount(2)
-  // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
-  test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
   // The cards come with their capability, after the conversation: here a second late.
   await page.route('**/caps/made/made.js', async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 1000))

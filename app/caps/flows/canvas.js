@@ -13,7 +13,7 @@ import { Element } from '../../ui/base.js'
 import * as dock from '../../ui/dock.js'
 import { app, notify } from '../../ui/state.js'
 import { loaded } from '../../ui/caps.js'
-import { icons } from '../../ui/icons.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { toolLabel, brainName } from '../../ui/chat.js'
 import { foldTurns } from '../../core/events.js'
@@ -36,14 +36,8 @@ const STRIDE = 40
 // Fields of a tool's that hold more than a line.
 const LONG = /^(content|code|text|body|request|task|prompt|message|description|query|old|new)$/
 
-const glyph = (/** @type {unknown} */ paths) => html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths}</svg>`
-const GLYPHS = {
-  full: glyph(svg`<path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15"/>`),
-  exit: glyph(svg`<path d="M9 4.5V9H4.5M19.5 9H15V4.5M15 19.5V15h4.5M4.5 15H9v4.5"/>`),
-  run: glyph(svg`<path d="M8 5.5v13l10.5-6.5Z"/>`),
-}
 /** Each kind of card, and each state, as a picture beside its words. */
-const KINDS = /** @type {Record<string, unknown>} */ ({ text: icons.note, file: icons.file, ask: icons.spark, tool: icons.bolt, request: icons.person, brain: icons.spark, answer: icons.check, call: icons.bolt })
+const KINDS = /** @type {Record<string, unknown>} */ ({ text: icons.note, file: icons.file, ask: icons.brain, tool: icons.bolt, request: icons.person, brain: icons.brain, answer: icons.check, call: icons.bolt })
 const MARKS = /** @type {Partial<Record<State, unknown>>} */ ({ done: icons.check, failed: icons.close, declined: icons.close, cut: icons.stop, asking: icons.person })
 
 /** The step whose form is open, a card being moved, a wire being drawn, and whether the pane fills the screen. */
@@ -328,7 +322,7 @@ const iconButton = (text, icon, run) => html`<button class="icon-button" aria-la
 function actions(one) {
   const next = room.value.next.get(one.id)
   const when = next ? t('flows.next', { when: relativeTime(next) }) : t('flows.schedule')
-  return html`<button class="button primary flows-run" ?disabled=${app.busy.value || !one.steps.length} @click=${() => runNow(one)}>${GLYPHS.run} ${t('flows.run')}</button>
+  return html`<button class="button primary flows-run" ?disabled=${app.busy.value || !one.steps.length} @click=${() => runNow(one)}>${icons.play} ${t('flows.run')}</button>
     <button class="button" title=${when} @click=${() => schedule(one).then(() => routineOf(one)).then((date) => {
       if (date) room.value = { ...room.peek(), next: new Map(room.peek().next).set(one.id, date) }
     })}>${icons.alarm}<span>${when}</span></button>`
@@ -414,7 +408,7 @@ export class Flows extends Element {
           ${choices.map((other) => html`<option value=${other.id} ?selected=${other.id === one?.id}>${other.name}</option>`)}
         </select><span class="flows-gap"></span>` : html`<h2>${t('flows.task')}</h2>`}
         ${one ? actions(one) : nothing}
-        ${iconButton(full.value ? t('flows.exitFullscreen') : t('flows.fullscreen'), full.value ? GLYPHS.exit : GLYPHS.full, fullscreen)}
+        ${iconButton(full.value ? t('flows.exitFullscreen') : t('flows.fullscreen'), full.value ? icons['exit-fullscreen'] : icons.fullscreen, fullscreen)}
         ${iconButton(t('action.close'), icons.close, close)}
       </header>
       ${board(one, drawingOf(one))}

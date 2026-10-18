@@ -2,17 +2,21 @@
   "name": "jean",
   "version": "0.8.0",
   "private": true,
-  "description": "An AI agent that runs in a browser tab. Nothing to install, no account, your files never leave your machine.",
+  "description": "Everyone’s AI, in a browser tab. Ask in words or with a file, and get back what you asked for, made: an answer with its sources, a document, a chart. Use the AI you choose, and keep your work on your device. Nothing to install, free and open source.",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "npm run build && node scripts/serve.js --budgets",
     "dev:gateway": "npm run build && node scripts/serve.js --gateway --budgets",
+    "dev:share": "npm run build && node scripts/serve.js --share --budgets",
+    "dev:home": "npm run build && node scripts/serve.js --home --budgets",
     "start": "npm run build && node scripts/serve.js --budgets",
     "build": "npm run vendor && npm run manifest",
     "build:web": "npm run build && node scripts/web.js",
     "deploy": "node scripts/deploy.js",
     "render": "npm run build && node scripts/render.js",
+    "host": "npm run build && node scripts/host.js",
+    "sounds": "node scripts/sounds.js",
     "build:desktop": "npm run build && node scripts/desktop.js",
     "build:dmg": "npm run build && node scripts/desktop.js dmg",
     "cli": "node scripts/cli.js",
@@ -28,9 +32,12 @@
     "e2e": "playwright test -c test",
     "reflexes": "node scripts/reflexes.js",
     "offers": "npm run build && node scripts/offers.js",
+    "tutor": "npm run build && node scripts/tutor.js",
     "concepts": "node scripts/concepts.js",
     "documents": "node scripts/documents.js",
-    "directory": "node scripts/directory.js"
+    "longtasks": "node scripts/longtasks.js",
+    "directory": "node scripts/directory.js",
+    "csp": "node scripts/csp.js"
   },
   "dependencies": {
     "@preact/signals-core": "^1.14.4",
@@ -48,6 +55,7 @@
     "node": ">=22"
   },
   "optionalDependencies": {
+    "@codename/jean-sounds": "1.0.0",
     "@huggingface/transformers": "4.3.1",
     "@jitl/quickjs-wasmfile-release-sync": "0.32.0",
     "@silurus/ooxml": "0.88.0",
@@ -60,6 +68,8 @@
     "pdfjs-dist": "6.4.299",
     "pyodide": "314.0.7",
     "quickjs-emscripten-core": "0.32.0",
+    "spessasynth_core": "4.3.22",
+    "stb-vorbis": "0.0.6",
     "temml": "0.13.5"
   },
   "overrides": {

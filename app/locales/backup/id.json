@@ -1,0 +1,7 @@
+{
+  "backup.confirmImport": "Bawa percakapan, proyek, dan file dari ekspor ini? Tidak ada yang dihapus di sini.",
+  "backup.imported": {
+    "other": "{count} percakapan dibawa masuk."
+  },
+  "backup.chooseJson": "Ekspor ini berisi aktivitas Gemini Anda sebagai halaman web. Ekspor lagi dari Google Takeout dengan memilih JSON untuk Aktivitas Saya."
+}

@@ -1,5 +1,5 @@
 // The user at the foot of the conversations (D150): "You" until their name is known, opening a
-// menu above them with Settings, About you, the language, the theme, dark mode and what Jean can do,
+// menu above them with Settings, the language, the theme, dark mode and what Jean can do,
 // the themes as thumbnails. A language or a theme picked there applies and the menu stays on its page,
 // the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user
 // gives for themselves in a conversation, while they have never set one, and says so with an
@@ -13,6 +13,7 @@ const savedName = (page) => page.evaluate(async () => JSON.parse(await (await im
 
 test('the user’s menu changes the theme, the language and the mode, staying open, and opens Settings', async ({ page }) => {
   await start(page)
+  await openTasks(page)
   await expect(page.locator('app-inbox .profile-name')).toHaveText('You')
   // A theme picked there shows at once; the drawer stays open beside the conversation, the menu on its page.
   const menu = await openProfile(page)
