@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Halaman ini tidak bisa dibuka: pengaturan organisasi Anda meminta fitur yang memerlukan kunci, dan tidak ada kunci di sini yang membukanya. Beri tahu tim TI Anda."
+  "enterprise.stopped": "Halaman ini tidak bisa dibuka: pengaturan organisasi Anda meminta fitur yang memerlukan kunci, dan tidak ada kunci di sini yang membukanya. Beri tahu tim TI Anda.",
+  "retention.title": "Disimpan untuk organisasi Anda",
+  "retention.text": "Organisasi Anda menyimpan setiap tugas, beserta sertifikatnya, setidaknya selama {duration}. Yang Anda hapus, atau singkirkan dengan menanyakan sesuatu lagi, tetap ada di perangkat ini sampai saat itu, tersembunyi.",
+  "retention.failed": "Tidak ada yang dihapus: organisasi Anda lebih dulu menyimpan salinan dari apa yang hilang, dan kali ini salinan itu tidak bisa dibuat.",
+  "retention.profile": "Profil ini tetap ada: organisasi Anda menyimpan setiap tugas setidaknya selama {duration}, dan menghapus profil akan menghapus tugas-tugasnya."
 }

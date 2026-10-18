@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "This page can’t open: your organization’s settings ask for features that need a key, and none here unlocks them. Tell your IT team."
+  "enterprise.stopped": "This page can’t open: your organization’s settings ask for features that need a key, and none here unlocks them. Tell your IT team.",
+  "retention.title": "Kept for your organization",
+  "retention.text": "Your organization keeps each task, with its certificates, for at least {duration}. What you delete, or remove by asking something again, stays on this device until then, out of sight.",
+  "retention.failed": "Nothing was removed: your organization keeps a copy of what goes first, and this time it couldn’t be made.",
+  "retention.profile": "This profile stays: your organization keeps each task for at least {duration}, and removing a profile would delete its tasks."
 }

@@ -313,6 +313,7 @@ export async function openConversation(path) {
 /** @param {string} path */
 export async function removeConversation(path) {
   halt(runs.get(path))
+  if (!(await removing({ task: path, all: true }))) return
   await deleteConversation(app.fs, path)
   if (app.current.value?.path === path) {
     app.current.value = null
@@ -441,6 +442,9 @@ export const rewind = async (upTo) => (await sending()).rewind(upTo)
 
 /** Duplicates the conversation up to a request into a new one, which answers it (D230). @param {number} upTo */
 export const fork = async (upTo) => (await sending()).fork(upTo)
+
+/** Whether records may leave for good, once the hooks on `remove` let them (D412). @param {Parameters<typeof import('./send.js').removing>[0]} e */
+export const removing = async (e) => (await sending()).removing(e)
 
 /** The box's words steer the task at work (D365). @param {string} text */
 export const steer = async (text) => (await sending()).steer(text)

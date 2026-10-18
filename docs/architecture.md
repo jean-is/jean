@@ -94,7 +94,8 @@ app/              what a deploy serves, as written (D243), which npm run build:w
   screenshots/    the install dialog's four pages in each language, from scripts/screenshots/<lang>.json, and a shared link's picture (D168, D355, D396)
   bridge/         bridge.js (Node): this computer, for the Computer's commands and the plans' brains, run by the user in a terminal (D198, D235 · D262)
   ee/             the enterprise integrations, Elastic-2.0 (D139): ee.js (its one door), key.js (the key, checked offline), audit.js and
-                  otlp.js (the audit stream to the organisation's OpenTelemetry collector, D386)
+                  otlp.js (the audit stream to the organisation's OpenTelemetry collector, D386), retention.js and kept.js (what
+                  leaves a task, kept first, D412)
 cli/              jean-cli (Node): main.js, acp.js (Jean in an editor, through ACP), tools.js, brain.js, rpc.js, fs.js; locales/, its strings; README.md, its page on npm (D241)
 gateway/          gateway.js (web-standard: Workers, Deno, Bun) and serve.js (Node): the services a browser can't reach (D191)
 host/             host.js (web-standard) and serve.js (Node): the share host, which keeps sealed copies it can't read (D361)
@@ -187,6 +188,7 @@ What Jean does passes through named events, and what the room draws for a capabi
 | `tool.check` | before a call runs, after the rules and the tool's `check` | `toolCallId`, `name`, `kind`, `args`, `title`, `service` (a connection's id), and the turn's `task` and the kinds of its `notes` | `{ decision, reason, meta }` or `{ refuse }` | Since last time, refusing what isn't reading (D101); guards, the organisation's and the person's (D295) |
 | `turn.end` | a turn ended (`ui/send.js`) | `task`, `at`, `answer`, `records`, `aborted`, `stopped` (out of steps, D364), `cites`, `made` (the files it made), `routine` (when it is a routine's run) | with `cites` false, once Double-check has it in hand | Double-check (D100); routines a file Jean made sets off (D294); Notifications, a task done or paused while the user is elsewhere, and the offer of them (D334; a card added to the inbox meanwhile, it hears from `app.decisions` itself); Plans, found by a task of four calls or more or out of steps (D364); the audit export, each turn's span (D386) |
 | `file.add` | a message shared a file (`send()`) | `task`, `file`, `routine` | | routines a shared file sets off (D294) |
+| `remove` | before records leave a task for good, Jean waiting: deleting it (`removeConversation()`) or its project, or asking a request again (`rewind()`, D188); and before a profile goes (`removing()`, `ui/send.js`) | `task`, `records` (those going, read from the file when not given), `all` (the whole task goes); or `profile` | `{ refuse }`: nothing goes, and a toast says why | retention, keeping a copy first, and refusing a profile's removal (`ee/`, D412) |
 | `record` | each record kept in a conversation, once it is: `keepRecords()` (`ui/state.js`) is the one way records reach the file; never a live delta. And once when going back to a request removes records (`rewind()`, D188) | `task`, `type` (its `sessionUpdate`, or `meta`), `record`; or `type` `removed`, with `records`, those left out | nothing: hooks only watch it, and nothing waits on them | plugins with `watch` (D299, D308); the audit export (`ee/`, D386) |
 
 No hook makes a reserved action (passwords, payments) less guarded than the rules left it. A refusal's reason is what the brain reads; without one, "The user declined this action." A call whose decision a hook gave keeps whose it was as `_meta.by` (a guard's id, a plugin's name, a capability's id) and what it was as `_meta.decision`, so the records say who refused, asked or allowed. The activity says it under the call's name ("Refused by Word count", D308): `ui/whose.js`, loaded the first time a call has one, names a guard as the person's rules or the organisation's, a capability by its name, and anything else by what the `by` slot gives (a plugin, by its title), or by its id once it is gone.
@@ -312,6 +314,7 @@ Follow-ups are one yes/no question each rather than one choice, because several 
   .secrets/                      never exported, synced or shared; vault.json, the vault's slots and the profile's name and
                                  parent, is the one file left unsealed (D371); family.json, a parent's key for what children tell
   .cache/                        disposable: search index, skills indexes (a day each), sync.json, brains' prices (a week, D255)
+  .kept/<ulid>.jsonl             with policy's retention: what left a task, kept its period, out of sight (ee/, D412)
 /family/<ulid>/                  beside the profiles: what a child's profile told the parent's of that ULID, sealed for it (D390)
 ```
 

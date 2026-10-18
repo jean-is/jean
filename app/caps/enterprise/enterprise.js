@@ -1,6 +1,6 @@
 // The one module outside ee/ that loads it (D139): only when policy holds a key, or on localhost,
 // where none is needed, and ee/ checks the key itself. A policy that asks for what ee/ does
-// (`audit`, D386) with no key, a key that doesn't unlock this version, or ee/ gone, stops Jean
+// (`audit`, D386; `retention`, D412) with no key, a key that doesn't unlock this version, or ee/ gone, stops Jean
 // with a message for IT before anything shows: its rules are never dropped silently, and taking
 // those sections out of policy gives back the open version.
 import { html, render } from 'lit-html'
@@ -19,7 +19,7 @@ export async function start() {
     try { navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id: 'enterprise' }) } catch {}
   } catch (error) {
     console.error('Enterprise features', error)
-    if (!policy.audit) return
+    if (!policy.audit && policy.retention === undefined) return
     await Promise.all([useStrings('enterprise'), styleSheet(new URL('../lock/lock.css', import.meta.url))])
     Object.assign(document.documentElement, { lang: locale.value, dir: dir(locale.value) })
     render(html`<h1 class="wordmark">${BRAND.name}</h1><p class="muted">${t('enterprise.stopped')}</p>`, document.body.appendChild(Object.assign(document.createElement('main'), { className: 'lock' })))

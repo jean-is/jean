@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Tej strony nie można otworzyć: ustawienia twojej organizacji wymagają funkcji, które potrzebują klucza, a żaden klucz tutaj ich nie odblokowuje. Powiadom swój dział IT."
+  "enterprise.stopped": "Tej strony nie można otworzyć: ustawienia twojej organizacji wymagają funkcji, które potrzebują klucza, a żaden klucz tutaj ich nie odblokowuje. Powiadom swój dział IT.",
+  "retention.title": "Przechowywane dla twojej organizacji",
+  "retention.text": "Twoja organizacja przechowuje każde zadanie wraz z jego certyfikatami przez co najmniej {duration}. To, co usuniesz albo odrzucisz, pytając o coś ponownie, zostaje do tego czasu na tym urządzeniu, niewidoczne.",
+  "retention.failed": "Nic nie usunięto: twoja organizacja najpierw zachowuje kopię tego, co znika, a tym razem nie udało się jej zrobić.",
+  "retention.profile": "Ten profil zostaje: twoja organizacja przechowuje każde zadanie przez co najmniej {duration}, a usunięcie profilu skasowałoby jego zadania."
 }

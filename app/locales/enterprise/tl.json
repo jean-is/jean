@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Hindi mabuksan ang page na ito: humihingi ang settings ng organisasyon mo ng mga feature na nangangailangan ng key, at walang key dito na nagbubukas sa mga ito. Sabihan ang IT team mo."
+  "enterprise.stopped": "Hindi mabuksan ang page na ito: humihingi ang settings ng organisasyon mo ng mga feature na nangangailangan ng key, at walang key dito na nagbubukas sa mga ito. Sabihan ang IT team mo.",
+  "retention.title": "Itinatago para sa organisasyon mo",
+  "retention.text": "Itinatago ng organisasyon mo ang bawat gawain, kasama ang mga sertipiko nito, nang hindi bababa sa {duration}. Ang buburahin mo, o aalisin sa muling pagtatanong ng isang bagay, ay mananatili sa device na ito hanggang doon, nakatago.",
+  "retention.failed": "Walang naalis: unang itinatago ng organisasyon mo ang kopya ng aalis, at hindi ito nagawa ngayon.",
+  "retention.profile": "Mananatili ang profile na ito: itinatago ng organisasyon mo ang bawat gawain nang hindi bababa sa {duration}, at mabubura ang mga gawain nito kapag inalis ang profile."
 }

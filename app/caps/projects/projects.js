@@ -9,7 +9,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
-import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage, SHORTCUTS } from '../../ui/state.js'
+import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage, removing, SHORTCUTS } from '../../ui/state.js'
 import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
 import { createProject, stringifyFrontMatter } from '../../core/settings.js'
 import { splitSuggestions } from '../../core/events.js'
@@ -103,9 +103,10 @@ async function save(event) {
   close()
 }
 
-/** Deleting a project deletes its folder: conversations, files, memory and skills. @param {Project} project */
+/** Deleting a project deletes its folder: conversations, files, memory and skills, each task asked about first (D412). @param {Project} project */
 async function remove(project) {
   if (!confirm(t('projects.confirmDelete', { name: String(project.data.name) }))) return
+  for (const { name } of await app.fs.list(`${project.dir}/conversations`)) if (!(await removing({ task: `${project.dir}/conversations/${name}`, all: true }))) return
   const home = app.projects.value.find((candidate) => candidate.data.default === true)
   if (home) await enterProject(home)
   await app.fs.remove(project.dir)

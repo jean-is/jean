@@ -5,7 +5,7 @@
 // routine's run out of sight (D317).
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
-import { createConversation, rewriteRecords } from '../core/conversations.js'
+import { createConversation, rewriteRecords, loadConversation } from '../core/conversations.js'
 import { envelope, userRecords, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered, routineOf, filesMade, callsIn } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes, toChatMessages } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
@@ -351,6 +351,20 @@ export async function retry(text = '') {
 }
 
 /**
+ * Asks before records leave for good (`remove`): a task's, all of them as it or its project goes, or those asking a request
+ * again leaves out (D188); or a profile, whose tasks this one can't read. A hook may keep them first, or refuse, which a toast
+ * says (D412). @param {{ task?: string, records?: Envelope[], all?: boolean, profile?: string }} e @returns {Promise<boolean>} whether to go on
+ */
+export async function removing(e) {
+  const hooks = contributions().hooks.filter((hook) => hook.on === 'remove')
+  if (!hooks.length) return true
+  const records = e.records ?? (e.task && (await loadConversation(app.fs, e.task).catch(() => null))?.records) ?? []
+  const refuse = (await fire(hooks, 'remove', { ...e, records }, () => ({})))?.refuse
+  if (refuse) notify(refuse)
+  return !refuse
+}
+
+/**
  * Goes back to a request: what came after it is gone from the conversation, but its title and pin, and the
  * request is answered again (D188); edited, it is asked now in its new words (D312).
  * @param {number} upTo how many records lead up to its end @param {string} [text] its new words
@@ -371,9 +385,11 @@ export async function rewind(upTo, text) {
   const kept = text === undefined || !told || (await import('./mentions.js')).holds(text, words).length === words.length
   const records = [...current.records.slice(0, from).filter((record) => kept || record !== told),
     ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
+  const left = current.records.filter((record) => !records.includes(record))
+  if (!(await removing({ task: current.path, records: left }))) return
   await rewriteRecords(app.fs, current.path, records)
   // Whoever follows the records hears once what was left out (D299), as keepRecords() tells what is kept: nothing waits on it.
-  fire(contributions().hooks, 'record', { task: current.path, type: 'removed', records: current.records.filter((record) => !records.includes(record)) }, () => {})
+  fire(contributions().hooks, 'record', { task: current.path, type: 'removed', records: left }, () => {})
   const named = text && /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text, kept ? words : [])) : []
   const added = text === undefined ? [] : [...named, ...userRecords(text, linkedFiles(current.records.slice(from, upTo)), app.deviceId)]
   await keepRecords(current.path, added)

@@ -147,7 +147,7 @@ Then:
 - [ ] **JAdES B-LT:** the chain and OCSP or CRL data in `xVals`/`rVals`.
 - [ ] **Trust anchors from policy** for the check page and `check_certificate`, the EU's List of Trusted Lists included. Today the card shows a chain's subjects and judges nothing.
 - [ ] **Data residency:** policy declares each cloud brain's `jurisdiction` and can refuse brains outside the allowed ones.
-- [ ] **AI Act high-risk use:** a minimum retention of conversations and certificates (6 months or more) that deletion respects, and a log export.
+- [x] **AI Act high-risk use:** a minimum retention of conversations and certificates that deletion respects (`retention`, D412), and a log export (D386).
 
 ### 4. AI Act marking (Art. 50(2) and (4)): blocks the public launch
 

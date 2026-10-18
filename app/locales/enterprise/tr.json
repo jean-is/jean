@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Bu sayfa açılamıyor: kuruluşunun ayarları anahtar gerektiren özellikler istiyor ve buradaki hiçbir anahtar bunların kilidini açmıyor. BT ekibine haber ver."
+  "enterprise.stopped": "Bu sayfa açılamıyor: kuruluşunun ayarları anahtar gerektiren özellikler istiyor ve buradaki hiçbir anahtar bunların kilidini açmıyor. BT ekibine haber ver.",
+  "retention.title": "Kuruluşun için saklanır",
+  "retention.text": "Kuruluşun her görevi sertifikalarıyla birlikte en az {duration} saklar. Sildiğin ya da bir şeyi yeniden sorarak kaldırdığın şeyler o zamana kadar bu cihazda, görünmeden kalır.",
+  "retention.failed": "Hiçbir şey kaldırılmadı: kuruluşun önce gidenin bir kopyasını saklar ve bu kez kopya yapılamadı.",
+  "retention.profile": "Bu profil kalır: kuruluşun her görevi en az {duration} saklar ve bir profili kaldırmak görevlerini silerdi."
 }

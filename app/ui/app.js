@@ -54,7 +54,7 @@ async function start() {
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
-  if (app.policy.key || app.policy.audit) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
+  if (app.policy.key || app.policy.audit || app.policy.retention !== undefined) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
 
   const root = document.documentElement
   effect(() => {

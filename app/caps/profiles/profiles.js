@@ -7,7 +7,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, computed } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { app, effective, notify } from '../../ui/state.js'
+import { app, effective, notify, removing } from '../../ui/state.js'
 import { here, switchTo, rpc, files } from '../../ui/opfs.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { VAULT, vaultKey, vaultId, close, slotKey, deviceKey, encode } from '../../ui/seal.js'
@@ -134,9 +134,9 @@ export async function make({ name, mine, born }, parentRaw) {
   switchTo(dir)
 }
 
-/** A profile gone, with what it told this one, once the person confirms; this one's opens another. @param {Profile} profile */
+/** A profile gone, with what it told this one, once the person confirms and nothing refuses (D412); this one's opens another. @param {Profile} profile */
 async function remove(profile) {
-  if (!confirm(t('profiles.removeConfirm', { name: nameOf(profile) }))) return
+  if (!confirm(t('profiles.removeConfirm', { name: nameOf(profile) })) || !(await removing({ profile: profile.dir }))) return
   for (const path of [profile.dir, inbox(profile.dir), `${inbox(here())}/time-${profile.dir.slice(9, 35)}.json`]) await app.whole?.remove(path)
   await deviceKey('forget', profile.dir)
   if (profile.dir === here()) return switchTo(all.peek().find((other) => other.dir !== here())?.dir ?? '')

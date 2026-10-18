@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Deze pagina kan niet openen: de instellingen van je organisatie vragen om functies die een sleutel nodig hebben, en geen sleutel hier ontgrendelt ze. Laat het je IT-team weten."
+  "enterprise.stopped": "Deze pagina kan niet openen: de instellingen van je organisatie vragen om functies die een sleutel nodig hebben, en geen sleutel hier ontgrendelt ze. Laat het je IT-team weten.",
+  "retention.title": "Bewaard voor je organisatie",
+  "retention.text": "Je organisatie bewaart elke taak, met de certificaten ervan, minstens {duration}. Wat je verwijdert, of weghaalt door iets opnieuw te vragen, blijft tot dan op dit apparaat, uit het zicht.",
+  "retention.failed": "Er is niets verwijderd: je organisatie bewaart eerst een kopie van wat weggaat, en die kon deze keer niet worden gemaakt.",
+  "retention.profile": "Dit profiel blijft: je organisatie bewaart elke taak minstens {duration}, en een profiel verwijderen zou de taken ervan wissen."
 }
