@@ -206,6 +206,8 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await brain.selectOption({ label: 'Auto' })
   await expect.poll(async () => (await routines(page)).map(({ brain, model }) => ({ brain, model }))).toEqual([{ brain: 'auto', model: undefined }])
   await brain.selectOption({ label: 'fake-brain-1' })
+  // Kept before the routine is changed behind the page's back below, or each change would write over the other.
+  await expect.poll(async () => (await routines(page)).map(({ brain, model }) => ({ brain: brain?.length, model }))).toEqual([{ brain: 26, model: 'fake-brain-1' }])
   await page.keyboard.press('Escape')
 
   // Due since midnight: on the welcome screen, with Jean free, it runs in a conversation of its own, on its own brain's version.
