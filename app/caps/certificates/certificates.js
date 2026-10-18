@@ -3,7 +3,7 @@
 // it found in the answer (`_meta.checked`), as the check page does: Jean's words never decide it.
 // A picture or a film that carries Content Credentials brings it too, and is read the same way, its
 // invisible watermark looked for when the user asks (D324); a file Jean made by what it says of itself
-// (D407); and words, for the watermark of the brain on this device, counted with its tokenizer alone in a
+// (D410); and words, for the watermark of the brain on this device, counted with its tokenizer alone in a
 // worker of its own (D402).
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'

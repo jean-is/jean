@@ -2,8 +2,8 @@
 // its proof and files, says whether its seal holds, who sealed it and what it says, and sends nothing
 // it is given anywhere; a certificate shared in a conversation brings check_certificate, whose card in
 // the answer says the same, and knows this device's own seal. A picture's Content Credentials, read the
-// same ways (D324), what a file Jean made says of itself (D407), and words, for the watermark of the
-// brain on a device (D402), whose readers a stranger's browser downloads once they agree (D407).
+// same ways (D324), what a file Jean made says of itself (D410), and words, for the watermark of the
+// brain on a device (D402), whose readers a stranger's browser downloads once they agree (D410).
 import { readFile } from 'node:fs/promises'
 import { deflateSync } from 'node:zlib'
 import { test, expect } from '@playwright/test'
@@ -174,7 +174,7 @@ async function stringsOf(lang) {
 }
 
 for (const lang of ['en', 'ar', 'ja']) {
-  test(`in a stranger’s browser the check page downloads a reader from the weights host once they agree, then reads a picture Jean made, words from the brain on a device and a Word document Jean made (D407, ${lang})`, async ({ browser, baseURL }) => {
+  test(`in a stranger’s browser the check page downloads a reader from the weights host once they agree, then reads a picture Jean made, words from the brain on a device and a Word document Jean made (D410, ${lang})`, async ({ browser, baseURL }) => {
     const { BRAND } = await import('../app/brand.js')
     const { strings, said } = await stringsOf(lang)
     const context = await browser.newContext({ locale: lang, baseURL })
@@ -220,7 +220,7 @@ for (const lang of ['en', 'ar', 'ja']) {
   })
 }
 
-test('the check page says when a reader couldn’t be downloaded, and offers it again (D407)', async ({ browser, baseURL }) => {
+test('the check page says when a reader couldn’t be downloaded, and offers it again (D410)', async ({ browser, baseURL }) => {
   const { strings, said } = await stringsOf('en')
   const context = await browser.newContext({ locale: 'en', baseURL })
   const checker = await context.newPage()
@@ -260,7 +260,7 @@ for (const lang of ['en', 'ar', 'ja']) {
   })
 }
 
-test('a Word document Jean made, shared in a conversation, brings what checks it, which reads what it says of itself (D407)', async ({ page }) => {
+test('a Word document Jean made, shared in a conversation, brings what checks it, which reads what it says of itself (D410)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles([await madeDocument()])

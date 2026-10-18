@@ -1,10 +1,10 @@
 // The check page (check.html, D274): a certificate of an answer, its proof and the files it may name,
 // any picture's or film's Content Credentials (D324), and what a file Jean made says of how it was made
-// (D407), dropped or chosen, checked here and kept nowhere: nothing given goes out, nor any address in it.
+// (D410), dropped or chosen, checked here and kept nowhere: nothing given goes out, nor any address in it.
 // A picture's invisible watermark is read too, and the watermark of the brain on a device in words pasted
 // or dropped, a Word document's included (D402), each with its reader, TrustMark's decoder or Gemma's
 // tokenizer: from the browser's cache where Jean keeps it on this device, else downloaded from the weights
-// host, the site's policy's or Jean's own, once the visitor agrees (D407). In the visitor's language.
+// host, the site's policy's or Jean's own, once the visitor agrees (D410). In the visitor's language.
 import { html, render, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { setLoader, useLocale, useStrings, pickLocale, locale, dir, t, formatBytes } from '../../core/i18n.js'
@@ -31,7 +31,7 @@ await useStrings('certificates')
 const policy = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
 const weights = String((policy && (await fetch(policy).then((response) => response.json()).catch(() => null))?.urls?.modelWeights) || DEFAULT_URLS.modelWeights)
 
-/** What was checked last, undefined until something is given; the pictures' and films' Content Credentials (D324), or what files say of themselves (D407). */
+/** What was checked last, undefined until something is given; the pictures' and films' Content Credentials (D324), or what files say of themselves (D410). */
 const checked = signal(/** @type {Checked | null | undefined} */ (undefined))
 const credentials = signal(/** @type {Credentials[]} */ ([]))
 /** Words' count (D402), null until words are given. */
@@ -44,7 +44,7 @@ const TEXT = /\.(txt|md)$/i
  * A look for a watermark, with its reader's file: what it does with the reader's host, and how far a download has come.
  * @typedef {{ file: readonly [string, string, number], then: (host: string, progress: (message: { loaded: number, total: number }) => void) => Promise<void>, loaded?: number, total?: number, failed?: boolean }} Look
  */
-/** The looks that wait for the visitor to agree to download their reader, or for it to come (D407), and the readers agreed to. */
+/** The looks that wait for the visitor to agree to download their reader, or for it to come (D410), and the readers agreed to. */
 const looks = signal(/** @type {Map<string, Look>} */ (new Map()))
 const agreed = new Set()
 /** @param {string} reader @param {Look} [look] */
@@ -70,7 +70,7 @@ const turbo = modelWorker(new URL('../pictures/device-worker.js', import.meta.ur
 const brain = modelWorker(new URL('../brain-local/brain-worker.js', import.meta.url), '')
 /** Words, counted (D402). @param {string} text */
 const count = (text) => withReader('words', { file: TOKENIZER, then: async (host, onMessage) => { words.value = await brain.call({ type: 'lean', host, model: BRAIN, text }, { onMessage }) } })
-/** A file's words, to count: a text's, or a Word document's (D407). @param {{ name: string, bytes: Uint8Array }} file */
+/** A file's words, to count: a text's, or a Word document's (D410). @param {{ name: string, bytes: Uint8Array }} file */
 const wordsIn = async ({ name, bytes }) => (TEXT.test(name) ? new TextDecoder().decode(bytes)
   : /\.docx$/i.test(name) ? ((await (await import('../files/extract.js')).extractPages(name, bytes).catch(() => null)) ?? []).join('\n') : '')
 

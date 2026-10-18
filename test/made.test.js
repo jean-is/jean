@@ -201,7 +201,7 @@ test('a Word document, a workbook, a drawing and a web page say a trained model 
   assert.equal(dec.decode((await makeFile('Notes.md', '# Notes')).bytes), '# Notes')
 })
 
-test('what Jean makes is read back as saying, unsigned, that AI made it and with what; a camera\'s mark says otherwise, and a file that says nothing gives nothing (D407)', async () => {
+test('what Jean makes is read back as saying, unsigned, that AI made it and with what; a camera\'s mark says otherwise, and a file that says nothing gives nothing (D410)', async () => {
   const { credentialsGiven } = await import('../app/caps/certificates/card.js')
   const { marked } = await import('../app/caps/pictures/mark.js')
   const enc = new TextEncoder()

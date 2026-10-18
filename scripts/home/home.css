@@ -8,8 +8,17 @@
 @media print { .home { display: none; } }
 @media (prefers-reduced-motion: no-preference) { html:has(> body > .home) { scroll-behavior: smooth; } }
 /* Once the drawer is open beside the room, as it is after a first request, the page sits beside it too, and
-   About Jean brings it into view under the main area's top. */
-@media (min-width: 48rem) { :root[data-sidebar] body > .home { margin-inline-start: var(--list); scroll-margin-block-start: var(--top); } }
+   About Jean brings it into view under the main area's top. The drawer is at the app's inline start, which is the
+   page's inline end when the app speaks a language that has no page and reads the other way (Hebrew, over English's).
+   The drawer stays where it is however far down the page is read: sticky in the app's shell, whose content reaches
+   over the page by its height (--home, ui/home.js) and takes no room for it; the box and the main area's top end stay put. */
+@media (min-width: 48rem) {
+  :root[data-sidebar] body > .home { margin-inline-start: var(--list); scroll-margin-block-start: var(--top); }
+  :root[data-sidebar][dir='rtl'] body > .home[dir='ltr'], :root[data-sidebar][dir='ltr'] body > .home[dir='rtl'] { margin-inline: 0 var(--list); }
+  :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell { min-block-size: calc(100dvh + var(--home, 0px)); margin-block-end: calc(-1 * var(--home, 0px)); }
+  :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell::after { content: ''; flex: none; block-size: var(--home, 0px); }
+  :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell > :is(.views, app-composer) { position: relative; }
+}
 
 .home {
   --home-side: var(--side, var(--room-2));

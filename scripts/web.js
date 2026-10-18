@@ -165,7 +165,7 @@ async function main () {
     return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base) : described
   }
   /**
-   * A page as the site serves it: index.html as above, check.html naming the policy too, for its weights host (D407),
+   * A page as the site serves it: index.html as above, check.html naming the policy too, for its weights host (D410),
    * and with ADDRESS, a listed page with its canonical address and any other unindexed. @param {string} path @param {string} html
    */
   const served = (path, html, named = policy && path === 'check.html' ? withPolicy(html) : html) => path === 'index.html' ? page(html) : !base ? named : LISTED.includes(path) ? withCanonical(named, addressOf(base, path)) : unindexed(named)

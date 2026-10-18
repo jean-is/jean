@@ -2,7 +2,7 @@
 // an answer when Jean is asked: whether its seal holds, which key sealed it and when, what it says,
 // and, with its proof, the words and which of the files given it names. A picture's or a film's
 // Content Credentials too (D324): whether they hold, who signed them and when, and whether they
-// say AI made it; what a file says of itself, unsigned, as those Jean makes do (D407); and whether
+// say AI made it; what a file says of itself, unsigned, as those Jean makes do (D410); and whether
 // words carry the watermark of the brain on a device (D402). Drawn with
 // About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
@@ -23,7 +23,7 @@ import { said } from '../brain-local/watermark.js'
  * A picture's or a film's Content Credentials as checked, kept as the call's `_meta.checked.credentials`:
  * its name, whether the device that checks them is the one that signed them, whether it has none, and its
  * watermark when looked for (D324): the one they name, another, one where they name none, or none; or,
- * `unsigned`, what the file says of itself in its metadata (D407).
+ * `unsigned`, what the file says of itself in its metadata (D410).
  * @typedef {NonNullable<Awaited<ReturnType<typeof credentialsOf>>> & { name: string, at: string | Date | null, own?: boolean, absent?: boolean, unsigned?: boolean, found?: 'match' | 'other' | 'found' | 'none' }} Credentials
  */
 
@@ -58,7 +58,7 @@ export async function checkGiven(given, known) {
   }
 }
 
-/** The Content Credentials of each picture or film given that has them (D324), else what a file says of itself (D407). @param {{ name: string, bytes: Uint8Array }[]} given @returns {Promise<Credentials[]>} */
+/** The Content Credentials of each picture or film given that has them (D324), else what a file says of itself (D410). @param {{ name: string, bytes: Uint8Array }[]} given @returns {Promise<Credentials[]>} */
 export async function credentialsGiven(given) {
   const read = await Promise.all(given.map(async ({ name, bytes }) => {
     const found = await credentialsOf(bytes)
@@ -97,7 +97,7 @@ const signer = ({ own, selfIssued, issuer }) => (own ? t('certificates.yours') :
 /** A key's fingerprint, in fours. @param {string} fingerprint */
 const grouped = (fingerprint) => html`<code class="receipt-host" dir="ltr">${fingerprint.match(/.{1,4}/g)?.join(' ')}</code>`
 
-/** A picture's or a film's Content Credentials, checked (D324), or what a file says of itself (D407). @param {Credentials} one */
+/** A picture's or a film's Content Credentials, checked (D324), or what a file says of itself (D410). @param {Credentials} one */
 export function credentialsCard(one) {
   const found = one.found ? t(`certificates.watermark.${one.found}`) : ''
   if (one.absent) return html`<div class="receipt receipt-checked"><div class="receipt-head ${one.found === 'found' ? 'is-local' : ''}">

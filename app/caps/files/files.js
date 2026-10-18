@@ -128,7 +128,7 @@ async function readOne(file) {
     const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType, bytes, pages, by: app.deviceId })
     rememberText(link, pages)
     // A certificate of an answer, or its proof, brings what checks it (D274); so does a picture or a film with Content Credentials (D324),
-    // and a file that says AI made it (D407). It is ready once that is here, so the message it goes with can ask for the check.
+    // and a file that says AI made it (D410). It is ready once that is here, so the message it goes with can ask for the check.
     const c2pa = /^(image|video)\/|\.(docx|xlsx|pptx|svg|html?)$/i.test(`${mimeType} ${name}`) && await import('../receipt/c2pa.js')
     if (/\.sd-jwt$/i.test(name) || (/\.json$/i.test(name) && /"protected"[\s\S]*"signature"/.test(pages.join('\n')))
       || (c2pa && (c2pa.storeIn(bytes) || (await c2pa.marksOf(name, bytes).catch(() => null))?.generated))) await unlock('certificates')
