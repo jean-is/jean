@@ -17,6 +17,8 @@
   "range.home": "At home",
   "range.family": "In a family",
   "range.work": "At work",
+  "range.back": "Previous examples",
+  "range.next": "More examples",
   "tile.music": "A lullaby in D major for Léa’s bedtime.",
   "tile.quiz": "A quiz on the planets for my son, ten questions.",
   "tile.quiz.question": "Which planet is the largest?",

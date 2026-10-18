@@ -17,6 +17,8 @@
   "range.home": "À la maison",
   "range.family": "En famille",
   "range.work": "Au travail",
+  "range.back": "Exemples précédents",
+  "range.next": "Plus d’exemples",
   "tile.music": "Une berceuse en ré majeur pour le coucher de Léa.",
   "tile.quiz": "Un quiz sur les planètes pour mon fils, dix questions.",
   "tile.quiz.question": "Quelle est la plus grande planète ?",

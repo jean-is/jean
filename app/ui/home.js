@@ -43,6 +43,25 @@ function slide(filter) {
   filter.classList.add('is-sliding')
 }
 
+/** The tiles' row turned a view at a time by its buttons, each hidden where the row ends, whichever way the page reads. @param {Element} home */
+function turning(home) {
+  const row = home.querySelector('.home-tiles')
+  const [back, next] = home.querySelectorAll('.home-turn')
+  if (!(row instanceof HTMLElement) || !(back instanceof HTMLButtonElement) || !(next instanceof HTMLButtonElement)) return () => {}
+  const ends = () => {
+    const at = Math.abs(row.scrollLeft)
+    back.disabled = at < 4
+    next.disabled = at + row.clientWidth >= row.scrollWidth - 4
+  }
+  const way = () => (getComputedStyle(row).direction === 'rtl' ? -1 : 1)
+  back.addEventListener('click', () => row.scrollBy({ left: -way() * row.clientWidth }))
+  next.addEventListener('click', () => row.scrollBy({ left: way() * row.clientWidth }))
+  row.addEventListener('scroll', ends, { passive: true })
+  new ResizeObserver(ends).observe(row)
+  row.parentElement?.classList.add('is-turning')
+  return () => { row.scrollTo({ left: 0 }); ends() }
+}
+
 /** @param {HTMLElement} home  the page @param {boolean} shown  whether it shows (ui/shell.js) @param {string} lang  the app's language */
 export function follow(home, shown, lang) {
   const menu = home.querySelector('select')
@@ -52,9 +71,10 @@ export function follow(home, shown, lang) {
     menu?.addEventListener('change', () => setLocale(menu.value))
     for (const type of ['pointerover', 'focusin']) home.addEventListener(type, (event) => event.target instanceof Element && event.target.closest('.home-tile') && activate(home, event.target.closest('.home-tile')))
     const filter = home.querySelector('.home-filter')
+    const back = turning(home)
     if (filter instanceof HTMLElement) {
       new ResizeObserver(() => slide(filter)).observe(filter)
-      filter.addEventListener('change', () => { slide(filter); activate(home, null) })
+      filter.addEventListener('change', () => { slide(filter); activate(home, null); back() })
     }
   }
   const there = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`) ?? document.querySelector('link[rel="alternate"][hreflang="en"]')

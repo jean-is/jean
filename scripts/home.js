@@ -80,6 +80,7 @@ const ICONS = {
   minus: '<svg class="icon is-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>',
 }
 const ARROW = '<span class="flip-rtl" aria-hidden="true">→</span>'
+const TURN = '<svg class="icon flip-rtl" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
 
 /** The tiles' pictures, drawn until each is a capture of its request done in that language. */
 const MUSIC = `<svg viewBox="0 0 200 100" aria-hidden="true"><path class="home-staff" d="M10 30H190M10 40H190M10 50H190M10 60H190M10 70H190"/>${
@@ -169,6 +170,8 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
       <span class="home-filter-mark" aria-hidden="true"></span>
       ${['all', 'home', 'family', 'work'].map((group) => `<input type="radio" name="home-for" id="home-for-${group}"${group === 'all' ? ' checked' : ''}><label for="home-for-${group}">${say(`range.${group}`)}</label>`).join('')}
     </fieldset>
+    <div class="home-row">
+    <button type="button" class="home-turn is-back" aria-label="${say('range.back')}" disabled>${TURN}</button>
     <ul class="home-tiles">${[
       tile('work', `${file} ${quoted(appSays('starter.sample.prompt'))}`, `<div class="home-art" aria-hidden="true"><span class="home-bars"><i></i><i></i><i></i><i></i></span><span class="home-badge">${grew}</span></div>`, `${tryIt('sample', true)}<a href="#home-how">${say('tile.how')}</a>`, true),
       tile('family', quoted(say('tile.music')), `<div class="home-art">${MUSIC}</div>`, tryIt('music')),
@@ -185,6 +188,8 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
       tile('work', quoted(say('tile.plan')), `<div class="home-art">${PLAN}</div>`, tryIt('plan')),
     ].join('')}
     </ul>
+    <button type="button" class="home-turn is-next" aria-label="${say('range.next')}">${TURN}</button>
+    </div>
     <ol id="home-how" class="home-replay" aria-label="${say('tile.how')}">
       <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="auto">${file}<span>${appSays('starter.sample.prompt')}</span></p></li>
       <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks"><li>${say('replay.read')}</li><li>${say('replay.calculated')}</li><li>${say('replay.drew')}</li></ul></li>

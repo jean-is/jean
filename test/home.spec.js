@@ -118,6 +118,17 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     await tiles.nth(3).locator('[data-try]').focus()
     await expect(tiles.nth(3)).toHaveAttribute('aria-current', 'true')
     await expect(tiles.nth(3)).toHaveClass(/is-active/)
+    // One row: four in view, the next four a turn away, whichever way the page reads; Back once turned.
+    const [back, next] = [home.locator('.home-turn.is-back'), home.locator('.home-turn.is-next')]
+    await expect(back).toBeHidden()
+    await expect(tiles.nth(4)).not.toBeInViewport({ ratio: 0.9 })
+    await next.click()
+    await expect(tiles.nth(4)).toBeInViewport({ ratio: 0.9 })
+    await expect(tiles.first()).not.toBeInViewport({ ratio: 0.5 })
+    await expect(back).toBeVisible()
+    await back.click()
+    await expect(tiles.first()).toBeInViewport({ ratio: 0.9 })
+    await expect(back).toBeHidden()
     // A filter that hides the active one moves it to the first one shown.
     await home.locator('label[for="home-for-family"]').click()
     await expect(tiles.nth(1)).toHaveAttribute('aria-current', 'true')
@@ -129,6 +140,8 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     }
     await expect(home.locator('.home-filter')).toHaveClass(/is-sliding/)
     await expect.poll(under).toBeLessThan(2)
+    // Its four fit: the row has nothing to turn to.
+    await expect(next).toBeHidden()
     await home.locator('label[for="home-for-all"]').click()
 
     // One question open at a time; opening one in a column leaves the other column where it was.
