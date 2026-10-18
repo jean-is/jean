@@ -43,8 +43,6 @@ function leave() {
   try {
     sessionStorage.setItem(HANDOVER, JSON.stringify({ place: location.hash, state: history.state, scroll: scrollY, caret }))
   } catch {}
-  // Captured whole, even in a look that turns its pages part by part (depth).
-  document.documentElement.style.setProperty('view-transition-name', 'root')
   // Another address: this one again, but for its hash, would only scroll. The new page drops it.
   location.replace(`${location.pathname}?${Date.now().toString(36)}${location.hash}`)
 }

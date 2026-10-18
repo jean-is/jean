@@ -44,7 +44,7 @@ Jean's presence is the tilde of its mark, set moving. It is one inline SVG in `u
 
 ## Looks
 
-Tilde is Jean's own look and the one it starts in (D373). Settings › Appearance, and the theme page of the user's menu, offer sixteen, each with a light and a dark palette, shown as small pictures of themselves, Tilde first, then Human, then from the calmest to the most playful (D111, D120, D154, D174). Each keeps the wave:
+Tilde is Jean's own look and the one it starts in (D373). Settings › Appearance, and the theme page of the user's menu, offer fifteen, each with a light and a dark palette, shown as small pictures of themselves, Tilde first, then Human, then from the calmest to the most playful (D111, D120, D154, D174). Each keeps the wave:
 
 - **Tilde:** Jean's own. Human's frame in ink and paper, Gentium for the name and the big question, the wave in water blue. Its sheet brings in Human's, whose rules apply to both.
 - **Human:** after today's desktop: frosted panes that float, the system's blue and typeface (D132).
@@ -54,7 +54,7 @@ Tilde is Jean's own look and the one it starts in (D373). Settings › Appearanc
 - **Room:** a dark, warm room lit amber from where the wave sits, the display face, and the room warming a step with each discovery (D73); each project's room glows in its own colour.
 - **Fjord** (polar blues under a faint aurora) and **Velvet** (plum and gold, a Didone).
 - **Notebook** (squared paper and sticky notes; a blackboard by night), **Blueprint** (white lines on Prussian blue), **Classic** (a Nineties desktop) and **Mondrian** (thick lines and primaries).
-- **Terminal** (green phosphor; green-bar paper by day), **Neon** (an Eighties sun behind a grid) and **Depth** (a floor in true perspective that the camera circles while Jean works, D125).
+- **Terminal** (green phosphor; green-bar paper by day) and **Neon** (an Eighties sun behind a grid).
 
 Tilde, Human and Mail open the drawer beside the conversation once there is a task (D165, D369). Names that are trademarks stay out of the UI, and `test/looks.test.js` checks every theme's text at AA by day and by night.
 

@@ -38,7 +38,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Sub-agent | Helper |
 | Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
-| Look (`ui/looks/`, D111, D120) | Theme (sixteen in a gallery, Tilde, Jean's own, first and to start); light or dark is separate |
+| Look (`ui/looks/`, D111, D120) | Theme (fifteen in a gallery, Tilde, Jean's own, first and to start); light or dark is separate |
 | Extension, add-on, mod | Plugin (D296) |
 | Account, user | Profile (D228); a child's is "set by a parent" (D389), never an account |
 

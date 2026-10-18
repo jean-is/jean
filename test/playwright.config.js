@@ -28,7 +28,7 @@ export default defineConfig({
   workers: '85%',
   reporter: 'list',
   // Without motion: Jean's light and face move for as long as a page is open, and with a few
-  // pages at once that alone kept the processor busy. Depth's test turns it back on for its pages.
+  // pages at once that alone kept the processor busy. A test that needs it turns it back on for its page.
   use: { baseURL: `http://127.0.0.1:${APP}/`, serviceWorkers: 'block', reducedMotion: 'reduce' },
   projects: [
     // Muted: a score's test plays music (WebKit has no such flag: start() in helpers.js silences it).

@@ -9,7 +9,7 @@
  * the conversations in view, beside the one open (`list`); Tilde builds on Human's sheet (`on`). In
  * the gallery's order: Tilde, the look Jean starts in, Human, then from the calmest to the most playful (D174, D373).
  */
-/** @typedef {'tilde' | 'human' | 'mail' | 'minimal' | 'swiss' | 'paper' | 'room' | 'fjord' | 'velvet' | 'notebook' | 'blueprint' | 'classic' | 'mondrian' | 'terminal' | 'neon' | 'depth'} LookId */
+/** @typedef {'tilde' | 'human' | 'mail' | 'minimal' | 'swiss' | 'paper' | 'room' | 'fjord' | 'velvet' | 'notebook' | 'blueprint' | 'classic' | 'mondrian' | 'terminal' | 'neon'} LookId */
 /** @type {Readonly<Record<LookId, { bar: [string, string], accent: string, list?: boolean, on?: LookId }>>} */
 export const LOOKS = Object.freeze({
   tilde: { bar: ['#131313', '#ffffff'], accent: '#42cce0', list: true, on: 'human' },
@@ -27,7 +27,6 @@ export const LOOKS = Object.freeze({
   mondrian: { bar: ['#100f0d', '#fbfaf6'], accent: '#d01e1c' },
   terminal: { bar: ['#07120a', '#f8fbf6'], accent: '#9aff81' },
   neon: { bar: ['#13062a', '#ffeffa'], accent: '#ff62be' },
-  depth: { bar: ['#060b18', '#f1f3f7'], accent: '#fca942' },
 })
 
 /** The look's id, also kept on this device: index.html applies it before the first paint, like light or dark (D85). */
