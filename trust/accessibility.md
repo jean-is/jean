@@ -19,6 +19,11 @@ Jean as this repository serves it from `app/`: at jean.is, in a copy an organisa
 | What | How |
 |---|---|
 | Contrast of text (1.4.3) | Every word on screen against the pixels actually drawn behind it, in every look, by night and by day, at every stage of the light, and with more contrast asked for: `test/contrast.spec.js`, in CI (D325) |
+| Contrast of controls (1.4.11) | An icon that is all a button shows, a text box's frame (at rest and while it has the keyboard), the mark on the Settings section and the task open, and every focus ring, at 3:1 against what is beside them, measured in pixels in every look, by night and by day, at rest and with the light at its brightest, in English, Arabic and Japanese: `test/nontext.spec.js`, in CI (D420) |
+| Reflow (1.4.10) | At 320 by 256 CSS pixels, a 1280 by 1024 screen zoomed to 400%, the page never scrolls sideways (a table, or Settings' strip of sections, scrolls in a box of its own), no words are cut, and every line can be scrolled into view, out from under the header and the box: on the first screen, a conversation with an answer, Settings and the tasks, in every look, in English, Arabic and Japanese, `test/reflow.spec.js`, in CI (D420). At that width the name of the brain in the box may end with an ellipsis: the button's name keeps it whole, and what it opens shows it |
+| Text at 200% (1.4.4) | The same, with the browser's text size at 200%, and with the window zoomed to 200%: `test/reflow.spec.js`, in CI (D420) |
+| Target size (2.5.8) | Everything the pointer can press is at least 24 by 24 CSS pixels, or spaced so that a 24-pixel circle on it meets no other target, without the exception for links in a line of text: on the first screen, an answer, its + menu, the user's menu, Settings and the tasks, in every look, on a laptop and a phone, `test/targets.spec.js`, in CI (D420) |
+| Pause, stop, hide (2.2.2) | At rest nothing on the page moves for more than five seconds, in any look: the wave in Jean's mark travels and the room's light breathes only while Jean works on what was asked, which Stop ends, and a wave waiting for an answer pulses twice: `test/motion.spec.js`, in CI (D420) |
 | Motion (2.3.3) | With the system's reduced motion, nothing on the page moves, in any look, while Jean answers, while Settings and the drawer open, while day turns to night: `test/motion.spec.js`, in CI (D325) |
 | More contrast and forced colours | `prefers-contrast: more` gives stronger borders, flat surfaces and a heavier pen for icons; forced colours (Windows' contrast themes) are followed, the presence mark taking the system's text colour |
 | Keyboard (2.1.1, 2.4.7) | Everything is reached with the keyboard, focus always shown, with shortcuts for the main actions, listed with ⌘/ (Ctrl+/ outside Apple's systems) ([design.md](../docs/design.md#accessibility)); checked by hand |
@@ -35,7 +40,6 @@ The checks were made by WAREHOUSE SAS itself, through the automated tests above 
 - **Screen readers haven't been taken through every journey:** the inbox, as cards arrive while another has focus; moving between the dock's panes and the box; search's results; the box's / and @ menus, and which option Enter picks; a change's diff. Some of these may not be announced as they should.
 - **Charts** are named by their title, but their numbers aren't given as text beside them (1.1.1). Asking Jean for the same figures "as a table" gives them as text.
 - **Maps and music scores** are drawn as pictures: a score is named, a map's places are named on it but not described in text (1.1.1).
-- **Not yet checked:** reflow at 320 pixels wide and text at 200% (1.4.4, 1.4.10), contrast of controls and graphics against what is behind them (1.4.11), target sizes (2.5.8), and whether the light's slow movement, without reduced motion asked for, needs a control of its own (2.2.2).
 
 ## What comes next
 
@@ -49,4 +53,4 @@ If something in Jean stops you, or this statement is wrong, write to [arnaud@jea
 
 An organisation that must publish a statement for its own deployment, as public sector bodies in the EU do, may build it on this one. It adds what only it knows: the address it serves Jean from, what its policy turns off, its own contact for feedback, and the enforcement procedure its country names. Its date is the date it checked its own deployment.
 
-Prepared on 18 October 2026.
+Prepared on 18 October 2026, and brought up to date on 19 October 2026.

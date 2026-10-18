@@ -108,7 +108,8 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 **Accessibility**
 - [ ] A screen reader on the inbox (cards arriving while another has focus), between the dock's panes and the box, through search's results, through the box's / and @ menu (the option Enter picks), and on a change's diff
 - [ ] A project's light at every stage of the room's warmth, by day and by night, with `prefers-contrast: more`
-- [ ] What the accessibility statement lists as unchecked (D419): reflow at 320 pixels and text at 200%, contrast of controls and graphics, target sizes, the light's movement without reduced motion; then an outside audit against WCAG 2.2 AA
+- [x] What the accessibility statement listed as unchecked (D419), measured in every look and held in CI: reflow at 320 pixels and text at 200%, target sizes, contrast of controls and graphics, and nothing moving for long at rest (D420)
+- [ ] An outside audit against WCAG 2.2 AA
 
 ## Before the public launch
 
@@ -120,7 +121,6 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] CSP verified in Chrome, Edge, Firefox and Safari, the sandbox document included (D326: `npm run csp` passes in Chromium, WebKit, Chrome and Safari; Edge and Firefox themselves still to run)
 - [ ] Tested on a managed Windows laptop with a weak graphics chip, and on Safari 16.4+
 - [x] Contrast audited at every lighting stage; reduced motion checked (D325)
-- [x] Reflow at 320 pixels, text at 200% and target sizes checked in every look (D420)
 - [ ] Demo video recorded: the CSV-to-report flow, in about 15 seconds
 - [ ] Manifesto and README published, with the line count
 - [ ] What Jean generates marked as AI's (AI Act Art. 50(2), by launch or 2 Dec 2026): pictures made on the device or this computer carry IPTC's mark in their XMP (D279) and Content Credentials the device signs, which the check page reads, and the files Jean makes say so where their format can, a picture saves labelled for deployers, and TrustMark's watermark is in its pixels, which the check reads when asked (D324); what the brain on this device writes carries a watermark, which Jean and the check page count (D402); the check page reads all of these for anyone, downloading a watermark's reader once the visitor agrees (D410); and the terms ask that no mark be removed ([certificates.md](certificates.md#4-ai-act-marking-art-502-and-4-blocks-the-public-launch))

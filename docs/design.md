@@ -23,11 +23,11 @@ Jean's identity is **Tilde** (D373, D376): a name everyone already has, a small 
 
 | State | The wave | The Room theme's light |
 |---|---|---|
-| Idle | Ripples slowly, travelling the way the page reads | Slow ambient breathing |
+| Idle | Still, its ripples held (D420) | Still (D420) |
 | Listening (the user dictates, or hands-free hears them) | Swells and settles, as a voice does | Leans toward the input |
 | Thinking and working | Small and quick | A subtle flicker |
 | Answering | Speaks in bursts | Warms and widens |
-| Waiting for approval | Holds still, tall, and pulses | Steady warm pulse on the approval card |
+| Waiting for approval | Holds still, tall, and pulses twice | Steady warm pulse on the approval card |
 | Done | Becomes a smile, with a little hop, then idle | Settles |
 | Something went wrong | Becomes a frown, in grey, until the next message | — |
 
@@ -36,7 +36,7 @@ Jean's identity is **Tilde** (D373, D376): a name everyone already has, a small 
 Jean's presence is the tilde of its mark, set moving. It is one inline SVG in `ui/persona.js` (`<app-persona>`): a long wave seen through a window whose ends fade out, a smile and a frown. CSS does all of its moving: it reads `data-presence`, which mirrors `app.presence`, plus "waiting" while an approval is open and "oops" after an error.
 
 - **Where it lives.** Above the question on the first screen. When the conversation begins it flies into the header beside the wordmark (a view transition), and stays there showing the state; it sits beside the rank in Settings' Capabilities and on each project's card. On paper, a printed task or one saved as PDF starts with it, still, before the name and, small, Jean's address, its links take the project's colour, deepened for paper, and its sources show open, each web page's site after its title. Beside the name in the header, the name's box is trimmed to its x-height, so that the wave sits on the middle of its lower-case letters in every look.
-- **It travels the way the page reads,** left to right, and right to left in Arabic, Hebrew, Persian and Urdu.
+- **While Jean works it travels the way the page reads,** left to right, and right to left in Arabic, Hebrew, Persian and Urdu; at rest it is still, so nothing on the page moves for long unasked (D420).
 - **At every size,** from about 7 rem on the first screen down to the header's 1.5 rem: one stroke, no detail to lose.
 - **It has no words and no gender.** It never speaks, never carries text, and nothing in the interface agrees with it grammatically. It is not tied to the name either, so it survives a rename.
 - **It is not in the prompt.** The base prompt stays free of personas (AGENTS.md); the wave is purely visual and decorative (`aria-hidden`).
@@ -99,6 +99,7 @@ Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, an
 - **`prefers-reduced-motion`:** nothing moves (D325). The wave keeps its poses (small, tall, a smile, a frown), so each state still reads.
 - **Zoom and large text:** at 320 pixels wide or with text at 200%, nothing is cut or hidden and the page never scrolls sideways; under 20rem tall the box stays in the page's flow rather than at the window's foot (D420).
 - **Targets** are at least 24 by 24 pixels, or spaced as far (D420).
+- **Controls at 3:1** (D420): a text box's frame in the soft or faint ink, the section and task open ringed, an icon that names a button, and focus rings drawn whole, in every look by night and by day.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces, the icons' pen at 2 px, and the wave in the ink's colour.
 - **`forced-colors`** is supported. The wave takes the system's text colour.
 - **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘/ its keyboard shortcuts, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme, ⌘⇧L to the next language, ⌘⇧S dictates, ⌘K opens search, ⌘⇧B the browser and ⌘⇧H talks hands-free once each is found, ⌘J the terminal, ⌘B the drawer, ⌘S saves a copy of the open task and ⌘⌫ deletes it after asking, Ctrl outside Apple's systems, and Escape stops an answer once nothing over it, or with the keyboard, takes it (D118, D313, D315).
