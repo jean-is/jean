@@ -184,6 +184,7 @@ register({
   id: 'skills',
   tools: [saveTool, suggestTool],
   lines: [{ name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' }],
+  rules: ['When a request matches a skill, read it and follow its steps.'],
   sections: async () => {
     const text = skillLines(await listed())
     return text ? { skills: text } : {}

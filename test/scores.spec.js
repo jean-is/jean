@@ -67,7 +67,7 @@ test('asked for sheet music, the brain reads Jean’s own Music score where <ski
   expect(JSON.stringify(await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records))).not.toContain('The <skills> section is now')
 })
 
-test('before Skills is found, <skills> names Jean’s own, and the brain reading Music score finds Skills, adds it and draws the tune (D406)', async ({ page }) => {
+test('before Skills is found, `skill`’s line names Jean’s own, and the brain reading Music score finds Skills, adds it and draws the tune (D406)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const unlocked = () => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.unlocked.includes('skills'))
@@ -79,7 +79,9 @@ test('before Skills is found, <skills> names Jean’s own, and the brain reading
   expect(await unlocked()).toBe(true)
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name))).toEqual(['music-score'])
   const prompt = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt)
-  expect(prompt.system).toMatch(/<skills>\n- plain-words\n- letter\n[^]*\n- music-score\n[^]*<\/skills>/)
+  expect(prompt.system).toMatch(/\n- skill: read the steps of a skill before following it: plain-words, letter, [^\n]*\bmusic-score\b/)
+  expect(prompt.system).not.toContain('<skills>')
+  expect(prompt.system).not.toContain('When a request matches a skill')
   expect(prompt.state.tools).toContain('skill')
   expect(prompt.state.tools).not.toContain('save_skill')
   // The prompt stays as the brain read it: the next message brings Skills' list in a note, its other tools deferred.

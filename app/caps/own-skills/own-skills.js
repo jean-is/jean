@@ -1,6 +1,7 @@
-// Jean's own skills for the brain, Skills found or not (D406): until it is, <skills> names each of the directory's
+// Jean's own skills for the brain, Skills found or not (D406): until it is, `skill`'s line names each of the directory's
 // (D196), and `skill` reads one of those, which finds Skills, adds the skill and gives its steps (D401); another name
-// finds nothing. Once found, Skills lists them with the user's, in their few words, and `skill` reads any of the room's.
+// finds nothing. Once found, Skills lists them with the user's, in their few words, with the rule to read the one a
+// request matches, and `skill` reads any of the room's.
 // Loaded with the first message, like questions (D146), with no trophy: nothing of it shows (D281).
 import { register, isDenied, loaded, unlock } from '../../ui/caps.js'
 import { app } from '../../ui/state.js'
@@ -8,12 +9,13 @@ import { DIRECTORY } from '../skills/directory.js'
 
 /** Their names, unless policy keeps to the organisation's sources. */
 const own = app.policy.skills?.only ? [] : DIRECTORY.map((entry) => entry.name)
+const LINE = 'read the steps of a skill before following it'
 
 /** @type {import('../../core/loop.js').Tool} */
 const skillTool = {
   spec: {
     name: 'skill',
-    description: 'Read the steps of one of the skills listed in <skills>.',
+    description: 'Read the steps of a skill.',
     parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
   },
   kind: 'read',
@@ -29,8 +31,8 @@ if (!isDenied('skills')) {
   register({
     id: 'own-skills',
     tools: [skillTool],
-    lines: [{ name: 'skill', line: 'read the steps of a skill before following it' }],
-    rules: ['When a request matches a skill, read it and follow its steps.'],
-    sections: async () => (loaded.value.has('skills') || !own.length ? {} : { skills: own.map((name) => `- ${name}`).join('\n') }),
+    // Read as a conversation starts: in the line, a small brain reads one as often as from a <skills> list, and
+    // offers what else a request needs as often as without them (D406).
+    lines: [{ name: 'skill', get line() { return loaded.value.has('skills') || !own.length ? LINE : `${LINE}: ${own.join(', ')}` } }],
   })
 }

@@ -673,8 +673,8 @@ createServer(async (req, res) => {
   else if (/^chart\b/i.test(question) && last.role === 'user') answer = CHART
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   // Asked for sheet music (or a partition), it reads Jean's own Music score where <skills> lists it, then writes a tune as its steps say (D401),
-  // Skills found or not (D406).
-  else if (/sheet music|partition/i.test(question) && last.role === 'user' && declared.has('skill') && /^- music-score\b/m.test(system)) call = { name: 'skill', args: { name: 'music-score' } }
+  // or where `skill`'s line names it, before Skills is found (D406).
+  else if (/sheet music|partition/i.test(question) && last.role === 'user' && declared.has('skill') && /^- (skill: .*\b)?music-score\b/m.test(system)) call = { name: 'skill', args: { name: 'music-score' } }
   else if (toolName === 'skill' && /ABC notation/.test(last.content)) answer = JIG
   else if (/\bslides\b/i.test(question) && last.role === 'user') answer = DECK
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
