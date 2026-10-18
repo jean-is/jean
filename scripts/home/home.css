@@ -109,6 +109,27 @@
 .home-route { fill: none; stroke: var(--flame); stroke-width: 3.5; stroke-linecap: round; }
 .home-start { fill: var(--ink); }
 .home-end { fill: var(--room); stroke: var(--ink); stroke-width: 2.5; }
+.home-grid { stroke: var(--line); stroke-width: 1; }
+.home-wash { fill: oklch(from var(--flame) l c h / 0.14); }
+.home-wash-strong { fill: oklch(from var(--flame) l c h / 0.45); }
+.home-curve { fill: none; stroke: var(--flame); stroke-width: 3; stroke-linecap: round; }
+.home-water { fill: var(--flame); }
+.home-soft { fill: oklch(from var(--ink) l c h / 0.16); }
+.home-ink { fill: var(--ink); }
+.home-ink-soft { fill: oklch(from var(--ink) l c h / 0.55); }
+.home-card { fill: var(--room); stroke: var(--line-strong); stroke-width: 1; }
+.home-shadow { opacity: 0.7; }
+.home-box { fill: none; stroke: var(--ink-soft); stroke-width: 1.4; }
+.home-tick { fill: none; stroke: var(--flame); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.home-bar { fill: oklch(from var(--ink) l c h / 0.28); }
+.home-today { stroke: var(--flame); stroke-width: 1.4; stroke-dasharray: 3 3; }
+.home-link-line { fill: none; stroke: var(--line-strong); stroke-width: 1.6; }
+.home-string { fill: none; stroke: var(--ink-soft); stroke-width: 1.2; }
+.home-sun { fill: oklch(from var(--flame) l c h / 0.35); }
+.home-house { fill: oklch(from var(--ink) l c h / 0.22); }
+.home-leaf { fill: oklch(from var(--flame) l c h / 0.3); }
+.home-trunk { stroke: var(--ink-soft); stroke-width: 3; }
+.home-blossom { fill: var(--room); }
 
 /* How it went: the first tile's request, replayed. */
 .home-replay { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); scroll-margin-block-start: 5rem; }
@@ -207,7 +228,8 @@
   .home-formats > div { justify-content: flex-start; }
   .home-formats dt { min-inline-size: 2.25rem; text-align: start; }
   .home-filter { align-self: flex-start; }
-  .home-tiles { display: flex; gap: 0.75rem; margin-inline-end: calc(-1 * var(--home-gutter)); padding-inline-end: var(--home-gutter); overflow-x: auto; scroll-snap-type: inline mandatory; scrollbar-width: none; }
+  /* Room for the active tile's ring, which the scrolling row would clip. */
+  .home-tiles { display: flex; gap: 0.75rem; margin-block: -0.3rem; margin-inline: -0.3rem calc(-1 * var(--home-gutter)); padding-block: 0.3rem; padding-inline: 0.3rem var(--home-gutter); overflow-x: auto; scroll-snap-type: inline mandatory; scroll-padding-inline-start: 0.3rem; scrollbar-width: none; }
   .home-tile { flex: none; inline-size: 13.5rem; min-block-size: 18.5rem; scroll-snap-align: start; }
   .home-replay, .home-doors, .home-questions, .home-foot { grid-template-columns: minmax(0, 1fr); }
   .home-replay { gap: 0.75rem; padding: 1rem; }

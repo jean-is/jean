@@ -44,7 +44,8 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
     assert.doesNotMatch(text, /\b(agents?|models?|MCP|tokens?|tutors?)\b/i, lang)
     assert.doesNotMatch(page, /\sstyle=|<script|\son[a-z]+=/i, lang)
     assert.doesNotMatch(page, /\{\w+\}/, `${lang}: every {param} is filled`)
-    assert.equal(page.match(/data-try="/g)?.length, 5, `${lang}: four tiles and the replay try an idea`)
+    assert.equal(page.match(/data-try="/g)?.length, 13, `${lang}: twelve tiles and the replay try an idea`)
+    for (const group of ['home', 'family', 'work']) assert.equal(page.match(new RegExp(`data-for="${group}"`, 'g'))?.length, 4, `${lang}: four tiles ${group}`)
     assert.ok(page.startsWith(`<div class="home" lang="${lang}"`), lang)
   }
 })

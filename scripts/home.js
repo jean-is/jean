@@ -38,7 +38,7 @@ export const homeWords = async (lang) => JSON.parse(await readFile(join(HOME, `$
 export const homeStyle = () => readFile(join(HOME, 'home.css'), 'utf8')
 
 /** The app's own words the page repeats, in a language, English's where it has none (as t() does). */
-const APP_WORDS = [['', ['starter.sample.prompt', 'welcome.files', 'welcome.privacy', 'welcome.terms', 'cap.memory.offer', 'cap.memory.yes', 'offer.no', 'action.copy', 'composer.placeholder', 'settings.language']],
+const APP_WORDS = [['', ['starter.sample.prompt', 'starter.savings.prompt', 'welcome.files', 'welcome.privacy', 'welcome.terms', 'cap.memory.offer', 'cap.memory.yes', 'offer.no', 'action.copy', 'composer.placeholder', 'settings.language']],
   ['receipt', ['receipt.inCloud', 'receipt.certificate']], ['first', ['first.free']]]
 
 /** @param {string} lang @returns {Promise<Record<string, string>>} */
@@ -85,6 +85,22 @@ const ARROW = '<span class="flip-rtl" aria-hidden="true">→</span>'
 const MUSIC = `<svg viewBox="0 0 200 100" aria-hidden="true"><path class="home-staff" d="M10 30H190M10 40H190M10 50H190M10 60H190M10 70H190"/>${
   [[38, 65], [72, 55], [106, 45], [140, 50], [172, 60]].map(([x, y], i) => `<ellipse class="home-note-head${i === 2 ? ' is-lit' : ''}" cx="${x}" cy="${y}" rx="6.5" ry="5" transform="rotate(-20 ${x} ${y})"/><path class="home-note-stem${i === 2 ? ' is-lit' : ''}" d="M${x + 6} ${y - 1}V${y - 29}"/>`).join('')}</svg>`
 const MAP = '<svg viewBox="0 0 200 130" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path class="home-road" d="M-10 40C40 30 70 60 120 50S200 20 220 30M30-10C40 40 20 80 50 140M150-10C140 50 170 90 150 140M-10 100C60 90 120 110 220 95"/><path class="home-route" d="M44 104C40 70 70 52 104 52S152 30 150 70 120 104 92 100"/><circle class="home-start" cx="44" cy="104" r="5.5"/><circle class="home-end" cx="92" cy="100" r="5.5"/></svg>'
+/** Savings growing month by month, the end of the curve marked. */
+const SAVINGS = '<svg viewBox="0 0 200 110" aria-hidden="true"><path class="home-grid" d="M14 22H190M14 50H190M14 78H190M14 100H190"/><path class="home-wash" d="M14 100C60 96 110 80 186 24V100Z"/><path class="home-curve" d="M14 100C60 96 110 80 186 24"/><circle class="home-water" cx="186" cy="24" r="5"/></svg>'
+/** A week of dinners, a plate a day. */
+const WEEK = `<svg viewBox="0 0 210 100" aria-hidden="true">${[0, 1, 2, 3, 4, 5, 6].map((day) => `<rect class="home-card" x="${6 + day * 29}" y="14" width="25" height="72" rx="5"/><circle class="${day === 3 ? 'home-water' : 'home-soft'}" cx="${18.5 + day * 29}" cy="38" r="8"/><rect class="home-soft" x="${11 + day * 29}" y="56" width="15" height="4" rx="2"/><rect class="home-soft" x="${11 + day * 29}" y="66" width="10" height="4" rx="2"/>`).join('')}</svg>`
+/** A street in spring, in washes of water colour. */
+const STREET = '<svg viewBox="0 0 200 130" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect class="home-wash" width="200" height="130"/><circle class="home-sun" cx="160" cy="30" r="14"/><path class="home-soft" d="M0 104H200V130H0Z"/><path class="home-house" d="M20 104V64L44 44 68 64V104ZM76 104V72L96 56 116 72V104Z"/><path class="home-ink-soft" d="M36 104V84H52V104ZM90 104V88H102V104Z"/><circle class="home-leaf" cx="146" cy="76" r="22"/><path class="home-trunk" d="M146 98V104"/><circle class="home-blossom" cx="138" cy="70" r="3"/><circle class="home-blossom" cx="154" cy="80" r="3"/><circle class="home-blossom" cx="148" cy="64" r="3"/></svg>'
+/** A family tree: grandparents, their children, the grandchildren. */
+const TREE = '<svg viewBox="0 0 200 120" aria-hidden="true"><path class="home-link-line" d="M100 26V44M54 44H146M54 44V62M146 44V62M54 62V76M146 62V76M32 76H76M124 76H168M32 76V90M76 76V90M124 76V90M168 76V90"/><circle class="home-ink" cx="100" cy="18" r="9"/><circle class="home-card" cx="54" cy="62" r="9"/><circle class="home-card" cx="146" cy="62" r="9"/><circle class="home-soft" cx="32" cy="100" r="9"/><circle class="home-soft" cx="76" cy="100" r="9"/><circle class="home-water" cx="124" cy="100" r="9"/><circle class="home-soft" cx="168" cy="100" r="9"/></svg>'
+/** An invitation card, a balloon beside it. */
+const CARD = '<svg viewBox="0 0 200 120" aria-hidden="true"><g transform="rotate(-6 92 62)"><rect class="home-card" x="46" y="18" width="92" height="88" rx="6"/><path class="home-water" d="M92 30 98 50H86Z"/><rect class="home-ink-soft" x="62" y="60" width="60" height="7" rx="3.5"/><rect class="home-soft" x="70" y="74" width="44" height="5" rx="2.5"/><rect class="home-soft" x="76" y="86" width="32" height="5" rx="2.5"/></g><ellipse class="home-wash-strong" cx="162" cy="40" rx="14" ry="17"/><path class="home-string" d="M162 57C158 70 168 80 160 100"/></svg>'
+/** Meeting minutes as a document, its tasks ticked or not yet. */
+const MINUTES = '<svg viewBox="0 0 200 120" aria-hidden="true"><rect class="home-card" x="46" y="8" width="108" height="108" rx="5"/><rect class="home-ink-soft" x="58" y="20" width="56" height="7" rx="3.5"/><rect class="home-soft" x="58" y="34" width="84" height="4" rx="2"/><rect class="home-soft" x="58" y="43" width="72" height="4" rx="2"/><rect class="home-soft" x="58" y="52" width="80" height="4" rx="2"/><rect class="home-box" x="58" y="66" width="9" height="9" rx="2"/><path class="home-tick" d="M60 70.5 62.5 73 66 68"/><rect class="home-soft" x="73" y="68" width="56" height="4" rx="2"/><rect class="home-box" x="58" y="82" width="9" height="9" rx="2"/><path class="home-tick" d="M60 86.5 62.5 89 66 84"/><rect class="home-soft" x="73" y="84" width="48" height="4" rx="2"/><rect class="home-box" x="58" y="98" width="9" height="9" rx="2"/><rect class="home-soft" x="73" y="100" width="62" height="4" rx="2"/></svg>'
+/** Slides, the front one with its chart. */
+const DECK = '<svg viewBox="0 0 200 120" aria-hidden="true"><rect class="home-card home-shadow" x="56" y="10" width="104" height="62" rx="4"/><rect class="home-card home-shadow" x="48" y="24" width="104" height="62" rx="4"/><rect class="home-card" x="40" y="38" width="104" height="62" rx="4"/><rect class="home-ink-soft" x="50" y="47" width="46" height="6" rx="3"/><rect class="home-soft" x="54" y="76" width="12" height="16"/><rect class="home-soft" x="72" y="70" width="12" height="22"/><rect class="home-soft" x="90" y="66" width="12" height="26"/><rect class="home-water" x="108" y="58" width="12" height="34"/></svg>'
+/** A plan as a timeline: who does what, and when, today marked. */
+const PLAN = `<svg viewBox="0 0 200 110" aria-hidden="true"><path class="home-grid" d="M64 10V100M106 10V100M148 10V100"/>${[[18, 62, 44], [38, 84, 52], [58, 118, 46], [78, 150, 38]].map(([y, x, w], i) => `<rect class="home-soft" x="12" y="${y}" width="40" height="6" rx="3"/><rect class="${i === 2 ? 'home-water' : 'home-bar'}" x="${x}" y="${y - 3}" width="${w}" height="12" rx="6"/>`).join('')}<path class="home-today" d="M118 6V104"/></svg>`
 
 /**
  * The page, in one language.
@@ -158,6 +174,15 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
       tile('family', quoted(say('tile.music')), `<div class="home-art">${MUSIC}</div>`, tryIt('music')),
       tile('family', quoted(say('tile.quiz')), `<div class="home-art" aria-hidden="true"><span class="home-quiz"><b>${say('tile.quiz.question')}</b>${list('tile.quiz.answers').map((answer) => `<span>${answer}</span>`).join('')}</span></div>`, tryIt('quiz')),
       tile('home', quoted(say('tile.map')), `<div class="home-art is-map">${MAP}</div>`, tryIt('map')),
+      // Four for each, three rows of four mixed, a row each once filtered: what Jean makes and shows, never homework.
+      tile('work', quoted(say('tile.slides')), `<div class="home-art">${DECK}</div>`, tryIt('slides')),
+      tile('home', quoted(appSays('starter.savings.prompt')), `<div class="home-art">${SAVINGS}</div>`, tryIt('savings')),
+      tile('family', quoted(say('tile.tree')), `<div class="home-art">${TREE}</div>`, tryIt('tree')),
+      tile('home', quoted(say('tile.dinners')), `<div class="home-art">${WEEK}</div>`, tryIt('dinners')),
+      tile('work', quoted(say('tile.minutes')), `<div class="home-art">${MINUTES}</div>`, tryIt('minutes')),
+      tile('family', quoted(say('tile.invitation')), `<div class="home-art">${CARD}</div>`, tryIt('invitation')),
+      tile('home', quoted(say('tile.picture')), `<div class="home-art is-map">${STREET}</div>`, tryIt('picture')),
+      tile('work', quoted(say('tile.plan')), `<div class="home-art">${PLAN}</div>`, tryIt('plan')),
     ].join('')}
     </ul>
     <ol id="home-how" class="home-replay" aria-label="${say('tile.how')}">
