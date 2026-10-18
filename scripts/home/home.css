@@ -102,7 +102,7 @@
 .home-ask { font-size: 0.95rem; font-weight: 500; line-height: 1.45; }
 .home-file { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.1rem 0.55rem 0.1rem 0.4rem; border-radius: 0.4375rem; background: var(--room-2); color: var(--ink); font-size: 0.8125rem; font-weight: 400; vertical-align: middle; }
 .home-file .icon { inline-size: 0.95rem; block-size: 0.95rem; color: var(--flame); }
-.home-go { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin-block-start: auto; font-size: 0.8125rem; }
+.home-go { display: flex; margin-block-start: auto; font-size: 0.8125rem; }
 .home-go .button { white-space: nowrap; }
 
 /* The tiles' pictures, drawn until each is a capture of its request done in that language. */

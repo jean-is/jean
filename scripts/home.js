@@ -179,12 +179,12 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
       <span class="home-where">${say(`range.${use.group}`)}</span>
       <p class="home-ask">${use.ask}</p>
       ${use.art}
-      <p class="home-go">${tryIt(use.key, !i)}<a href="#home-how">${say('tile.how')}</a></p>
+      <p class="home-go">${tryIt(use.key, !i)}</p>
     </li>`
   const replay = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => {
     const [first, second, third, got, chip] = replayOf(use.key)
     return `
-      <ol class="home-replay" data-replay="${use.key}" aria-label="${say('tile.how')}"${i ? ' inert' : ''}>
+      <ol class="home-replay" data-replay="${use.key}" aria-label="${say('replay.how')}"${i ? ' inert' : ''}>
         <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="auto">${use.said}</p></li>
         <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks">${[first, second, third].map((step) => `<li>${step}</li>`).join('')}</ul></li>
         <li><span class="home-step">${say('replay.get')}</span><p>${got}</p><span class="home-file" dir="auto">${ICONS[/** @type {keyof typeof ICONS} */ (use.chip)]}${chip}</span></li>
