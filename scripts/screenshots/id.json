@@ -1,4 +1,5 @@
 {
+  "description": "AI untuk semua orang, di tab browser. Bertanyalah dengan kata-kata atau dengan file, lalu dapatkan yang Anda minta dalam bentuk jadi: jawaban beserta sumbernya, dokumen, grafik. Gunakan AI pilihan Anda, dan simpan pekerjaan Anda di perangkat Anda sendiri. Tanpa instalasi, gratis dan sumber terbuka.",
   "labels": {
     "welcome": "Layar sambutan: ide untuk memulai, dan kotak untuk menanyakan apa saja",
     "chart": "Spreadsheet yang dibagikan, dengan penjualannya dalam grafik",

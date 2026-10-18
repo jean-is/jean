@@ -1,4 +1,5 @@
 {
+  "description": "AI para sa lahat, sa isang tab ng browser. Magtanong sa salita o gamit ang isang file, at makuha nang yari na ang hiningi mo: sagot na may mga pinagmulan, dokumento, chart. Gamitin ang AI na pinili mo, at itago ang gawa mo sa sarili mong device. Walang kailangang i-install, libre at open source.",
   "labels": {
     "welcome": "Ang welcome screen: mga ideyang mapagsisimulan, at kahon para magtanong ng kahit ano",
     "chart": "Isang ibinahaging spreadsheet, at ang benta nito sa isang chart",

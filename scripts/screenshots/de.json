@@ -1,4 +1,5 @@
 {
+  "description": "KI für alle, in einem Browser-Tab. Frag mit Worten oder mit einer Datei und bekomm fertig zurück, was du wolltest: eine Antwort mit Quellen, ein Dokument, ein Diagramm. Nutze die KI deiner Wahl und behalte deine Arbeit auf deinem Gerät. Nichts zu installieren, kostenlos und Open Source.",
   "labels": {
     "welcome": "Der Startbildschirm: Ideen zum Loslegen und ein Feld, um alles zu fragen",
     "chart": "Eine geteilte Tabelle, ihre Verkäufe als Diagramm",

@@ -201,6 +201,8 @@ describe('manifest: outputs', () => {
     assert.equal(manifest.scope, '../')
     assert.equal(manifest.icons[0].src, '../icons/icon.svg')
     assert.deepEqual(manifest.screenshots[0], { src: '../screenshots/fr/welcome-wide.webp', sizes: '1440x900', type: 'image/webp', form_factor: 'wide', label: 'Accueil' })
+    assert.deepEqual([manifest.lang, manifest.dir], ['fr', 'ltr'])
+    assert.equal(JSON.parse(buildWebmanifest({ name: 'Test' }, undefined, 'ar', {})).dir, 'rtl')
   })
 
   it('lists PNG icons Android can install with, one of them maskable, and none "any maskable"', () => {
@@ -286,6 +288,18 @@ describe('manifest: icons', () => {
 })
 
 describe('manifest: screenshots', () => {
+  it('describes Jean in every language’s own words, English’s being index.html’s (D396)', async () => {
+    const english = /<meta name="description" content="([^"]*)">/.exec((await read('index.html')).toString('utf8'))?.[1]
+    assert.ok(english)
+    assert.equal((await shotsOf('en')).description, undefined, 'English’s is index.html’s')
+    for (const lang of LOCALES.filter((code) => code !== 'en')) {
+      const { description } = await shotsOf(lang)
+      assert.ok(description && description !== english, `${lang}: no description of its own in scripts/screenshots/${lang}.json`)
+    }
+    const { outputs } = await plan(await fixture({ 'brand.js': 'export const BRAND = { name: "P" }\n', 'sw.js': "const VERSION = 'dev'\n" }))
+    assert.equal(JSON.parse(outputs[manifestOf('ja')]).description, (await shotsOf('ja')).description)
+  })
+
   it('takes each page wide and narrow in every language, at the size its manifest says, in a shape Chromium shows (D396)', async () => {
     for (const lang of LOCALES) {
       const shots = await shotsOf(lang)

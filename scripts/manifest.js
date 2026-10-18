@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { LOCALES } from '../app/core/i18n.js'
+import { LOCALES, dir } from '../app/core/i18n.js'
 import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 import { ENTRY as READER, renderListing } from './render.js'
 
@@ -55,9 +55,12 @@ export const ICONS = [
   { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
   { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
 ]
-/** What each language's screenshots show, and their labels: `scripts/screenshots/<lang>.json`, which only scripts read. */
+/**
+ * What each language's screenshots show, their labels and, but for English's, which is index.html's, the
+ * install's description: `scripts/screenshots/<lang>.json`, which only scripts read.
+ */
 export const SHOTS = fileURLToPath(new URL('screenshots/', import.meta.url))
-/** @param {string} lang @returns {Promise<{ labels: Record<string, string> } & Record<string, any>>} */
+/** @param {string} lang @returns {Promise<{ labels: Record<string, string>, description?: string } & Record<string, any>>} */
 export const shotsOf = async (lang) => JSON.parse(await readFile(join(SHOTS, `${lang}.json`), 'utf8'))
 /**
  * What the richer install dialog shows (D168, D396), in each of Jean's languages: the welcome screen, a
@@ -201,8 +204,8 @@ export function computeVersion (entries) {
  * read against the origin, so every language's manifest names the same app; their other addresses
  * climb back from manifests/ to app/.
  * @param {{ name: string }} brand
- * @param {string} [description]  index.html's, so the page and the install say the same sentence
- * @param {string} [lang]  the language of its screenshots
+ * @param {string} [description]  in that language: English's is index.html's, so the page and the install say the same sentence
+ * @param {string} [lang]  the language of its description and screenshots, which its `lang` and `dir` say
  * @param {Record<string, string>} [labels]  theirs, in that language
  */
 export function buildWebmanifest (brand, description, lang = 'en', labels = ENGLISH) {
@@ -212,6 +215,8 @@ export function buildWebmanifest (brand, description, lang = 'en', labels = ENGL
     name: brand.name,
     short_name: brand.name,
     ...(description ? { description } : {}),
+    lang,
+    dir: dir(lang),
     start_url: up || './',
     scope: up || './',
     display: 'standalone',
@@ -279,7 +284,10 @@ export async function plan (root = APP) {
   const description = html && /<meta name="description" content="([^"]*)">/.exec(html)?.[1]
   /** @type {Record<string, string>} */
   const generated = {}
-  for (const lang of LOCALES) generated[manifestOf(lang)] = buildWebmanifest(BRAND, description || undefined, lang, (await shotsOf(lang)).labels)
+  for (const lang of LOCALES) {
+    const shots = await shotsOf(lang)
+    generated[manifestOf(lang)] = buildWebmanifest(BRAND, lang === 'en' ? description || undefined : shots.description, lang, shots.labels)
+  }
   if (html) {
     /** @param {string} path */
     const read = async (path) => (await readOrNull(root, path))?.toString('utf8') ?? null

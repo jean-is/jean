@@ -1,4 +1,5 @@
 {
+  "description": "L’IA pour tous, dans un onglet du navigateur. Demandez avec des mots ou avec un fichier, et recevez ce que vous vouliez, déjà fait : une réponse avec ses sources, un document, un graphique. Utilisez l’IA de votre choix, et gardez votre travail sur votre appareil. Rien à installer, c’est gratuit et open source.",
   "labels": {
     "welcome": "L’écran d’accueil : des idées pour commencer, et une zone pour tout demander",
     "chart": "Un tableur partagé, et ses ventes tracées en graphique",

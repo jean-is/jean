@@ -1,4 +1,5 @@
 {
+  "description": "Sztuczna inteligencja dla każdego, w karcie przeglądarki. Zapytaj słowami albo dołącz plik i dostań gotowe to, o co prosisz: odpowiedź ze źródłami, dokument, wykres. Korzystaj z wybranej AI i trzymaj swoją pracę na swoim urządzeniu. Nic do instalowania, za darmo i z otwartym kodem źródłowym.",
   "labels": {
     "welcome": "Ekran powitalny: pomysły na początek i pole, w którym można zapytać o wszystko",
     "chart": "Udostępniony arkusz i jego sprzedaż na wykresie",

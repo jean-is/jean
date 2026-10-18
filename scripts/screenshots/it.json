@@ -1,4 +1,5 @@
 {
+  "description": "L’IA per tutti, in una scheda del browser. Chiedi a parole o con un file e ricevi già fatto ciò che hai chiesto: una risposta con le sue fonti, un documento, un grafico. Usa l’IA che preferisci e conserva il tuo lavoro sul tuo dispositivo. Niente da installare, gratis e open source.",
   "labels": {
     "welcome": "La schermata iniziale: idee da cui partire e un riquadro per chiedere qualsiasi cosa",
     "chart": "Un foglio di calcolo condiviso, e le sue vendite in un grafico",

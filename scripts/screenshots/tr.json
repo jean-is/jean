@@ -1,4 +1,5 @@
 {
+  "description": "Herkesin yapay zekâsı, bir tarayıcı sekmesinde. Sözle sor ya da bir dosya ver, istediğini hazır al: kaynaklarıyla bir yanıt, bir belge, bir grafik. Seçtiğin yapay zekâyı kullan, çalışmalarını kendi cihazında tut. Kurulacak bir şey yok, ücretsiz ve açık kaynak.",
   "labels": {
     "welcome": "Karşılama ekranı: başlamak için fikirler ve her şeyi sorabileceğin bir kutu",
     "chart": "Paylaşılan bir tablo ve satışlarının grafiği",
