@@ -535,7 +535,7 @@ const choice = (name, label, options, current, locked, set) => html`<span class=
 </span>`
 
 /** What the computer runs (D176), each with a line Try types in the terminal, for the user to run with Enter. Python's files are about 14 MB. */
-const ENGINES = /** @type {const} */ ([['shell', prompt, 'tree /workspace'], ['quickjs', 'JS', 'node -p "(1000 * 1.05 ** 10).toFixed(2)"'], ['pyodide', 'Py', 'python3 -c "print(2 ** 100)"']])
+const ENGINES = /** @type {const} */ ([['shell', icons.terminal, 'tree /workspace'], ['quickjs', 'JS', 'node -p "(1000 * 1.05 ** 10).toFixed(2)"'], ['pyodide', 'Py', 'python3 -c "print(2 ** 100)"']])
 
 /** Settings closes and the terminal opens, with a line typed on it if one is given. @param {string} [line] */
 function terminal(line) {

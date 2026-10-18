@@ -479,6 +479,8 @@ test('Settings › Computer: the sandbox, named (D248), itself (D176, D249), the
   await expect(panel.getByRole('button', { name: 'Restart the computer' })).toHaveCount(0)
   await expect(panel.locator('.filled')).toHaveText(/^0 MB of 256 MB$/)
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Asleep/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Asleep/])
+  await expect(panel.locator('.engines .item-icon')).toHaveText(['', 'JS', 'Py'])
+  await expect(panel.locator('.engines .item-icon svg')).toHaveCount(1)
   await panel.locator('.engines li', { hasText: 'Python' }).getByRole('button', { name: 'Try' }).click()
   await expect(settings).toBeHidden()
   const line = page.locator('app-terminal textarea')
