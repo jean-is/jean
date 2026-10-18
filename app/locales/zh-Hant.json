@@ -32,6 +32,8 @@
   "action.rename": "重新命名",
   "action.remove": "移除",
   "action.copy": "複製",
+  "action.print": "列印",
+  "action.share": "分享",
   "action.retry": "重試",
   "action.fork": "從此處建立副本",
   "action.readAloud": "朗讀",

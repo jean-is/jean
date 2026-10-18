@@ -32,6 +32,8 @@
   "action.rename": "تغییر نام",
   "action.remove": "برداشتن",
   "action.copy": "رونوشت",
+  "action.print": "چاپ",
+  "action.share": "هم‌رسانی",
   "action.retry": "تلاش دوباره",
   "action.fork": "تکثیر از اینجا",
   "action.readAloud": "خواندن با صدا",

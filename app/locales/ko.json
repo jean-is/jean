@@ -32,6 +32,8 @@
   "action.rename": "이름 바꾸기",
   "action.remove": "제거",
   "action.copy": "복사",
+  "action.print": "인쇄",
+  "action.share": "공유",
   "action.retry": "다시 시도",
   "action.fork": "여기서부터 복제",
   "action.readAloud": "소리 내어 읽기",

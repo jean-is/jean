@@ -17,3 +17,5 @@ app-file { display: block; }
 .file-card .button { border-color: transparent; background: var(--line); }
 .file-card .button:hover { background: var(--line-strong); }
 @media (max-width: 30rem) { .file-card { gap: 0.4rem; min-block-size: 5.25rem; padding-inline-end: 0.6rem; } .file-tile { inline-size: 3rem; block-size: 3.7rem; margin-inline-end: 0.3rem; } }
+/* An answer printed alone (Print, under it): after the mark, nothing else of the task. */
+@media print { main:has([data-printed]) :is(app-conversation > :not(.turns), .turn:not(:has([data-printed])), .turn > :not([data-printed])) { display: none !important; } }

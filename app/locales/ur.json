@@ -32,6 +32,8 @@
   "action.rename": "نام تبدیل کریں",
   "action.remove": "ہٹائیں",
   "action.copy": "کاپی کریں",
+  "action.print": "پرنٹ کریں",
+  "action.share": "شیئر کریں",
   "action.retry": "دوبارہ کوشش کریں",
   "action.fork": "یہاں سے نقل بنائیں",
   "action.readAloud": "بلند آواز سے پڑھیں",

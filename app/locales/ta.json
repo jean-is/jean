@@ -32,6 +32,8 @@
   "action.rename": "பெயர் மாற்று",
   "action.remove": "அகற்று",
   "action.copy": "நகலெடு",
+  "action.print": "அச்சிடு",
+  "action.share": "பகிர்",
   "action.retry": "மீண்டும் முயல்",
   "action.fork": "இங்கிருந்து நகலாக்கு",
   "action.readAloud": "உரக்கப் படி",

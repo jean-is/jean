@@ -32,6 +32,8 @@
   "action.rename": "Переименовать",
   "action.remove": "Убрать",
   "action.copy": "Копировать",
+  "action.print": "Распечатать",
+  "action.share": "Поделиться",
   "action.retry": "Повторить",
   "action.fork": "Дублировать отсюда",
   "action.readAloud": "Прочитать вслух",

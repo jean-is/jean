@@ -32,6 +32,8 @@
   "action.rename": "নাম বদলান",
   "action.remove": "সরান",
   "action.copy": "কপি করুন",
+  "action.print": "প্রিন্ট করুন",
+  "action.share": "শেয়ার করুন",
   "action.retry": "আবার চেষ্টা করুন",
   "action.fork": "এখান থেকে অনুলিপি করুন",
   "action.readAloud": "জোরে পড়ুন",

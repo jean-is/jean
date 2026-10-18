@@ -32,6 +32,8 @@
   "action.rename": "नाव बदला",
   "action.remove": "काढा",
   "action.copy": "कॉपी करा",
+  "action.print": "प्रिंट करा",
+  "action.share": "शेअर करा",
   "action.retry": "पुन्हा प्रयत्न करा",
   "action.fork": "येथून डुप्लिकेट करा",
   "action.readAloud": "मोठ्याने वाचा",

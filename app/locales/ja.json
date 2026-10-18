@@ -32,6 +32,8 @@
   "action.rename": "名前を変更",
   "action.remove": "外す",
   "action.copy": "コピー",
+  "action.print": "印刷",
+  "action.share": "共有",
   "action.retry": "もう一度試す",
   "action.fork": "ここから複製",
   "action.readAloud": "読み上げる",

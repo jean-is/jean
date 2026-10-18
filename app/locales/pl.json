@@ -32,6 +32,8 @@
   "action.rename": "Zmień nazwę",
   "action.remove": "Usuń",
   "action.copy": "Kopiuj",
+  "action.print": "Drukuj",
+  "action.share": "Udostępnij",
   "action.retry": "Spróbuj ponownie",
   "action.fork": "Duplikuj od tego miejsca",
   "action.readAloud": "Czytaj na głos",
