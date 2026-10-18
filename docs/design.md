@@ -97,6 +97,8 @@ Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, an
 
 - **WCAG AA contrast at every stage**, measured in pixels in every look, mood, warmth and project colour (D325). "Dark" applies to ambient surfaces only; text is always high-contrast.
 - **`prefers-reduced-motion`:** nothing moves (D325). The wave keeps its poses (small, tall, a smile, a frown), so each state still reads.
+- **Zoom and large text:** at 320 pixels wide or with text at 200%, nothing is cut or hidden and the page never scrolls sideways; under 20rem tall the box stays in the page's flow rather than at the window's foot (D420).
+- **Targets** are at least 24 by 24 pixels, or spaced as far (D420).
 - **`prefers-contrast: more`:** stronger borders and flat surfaces, the icons' pen at 2 px, and the wave in the ink's colour.
 - **`forced-colors`** is supported. The wave takes the system's text colour.
 - **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘/ its keyboard shortcuts, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme, ⌘⇧L to the next language, ⌘⇧S dictates, ⌘K opens search, ⌘⇧B the browser and ⌘⇧H talks hands-free once each is found, ⌘J the terminal, ⌘B the drawer, ⌘S saves a copy of the open task and ⌘⌫ deletes it after asking, Ctrl outside Apple's systems, and Escape stops an answer once nothing over it, or with the keyboard, takes it (D118, D313, D315).

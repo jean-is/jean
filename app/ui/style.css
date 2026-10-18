@@ -505,6 +505,7 @@ button.since { padding: 0; border: 0; background: none; text-align: start; } but
 /* ─── The box ───────────────────────────────────────────────────────────── */
 
 app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem 0 max(1rem, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--room) 45%); view-transition-name: composer; }
+@media (max-height: 20rem) { app-composer { position: static; } }
 /* Where a new task fits a wide window, its box under the question, its ideas under it; elsewhere at the foot, under them and an offer (D366). */
 [data-centred] app-shell:has(.welcome) > app-composer { flex: 1; position: static; background: none; }
 [data-centred] .welcome { justify-content: flex-end; }
