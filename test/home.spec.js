@@ -162,17 +162,31 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
 test.describe('in a Japanese browser', () => {
   test.use({ locale: 'ja-JP' })
 
-  test('one language: jean.is opens on its Japanese page, and the page’s menu sets the app’s language as Settings does', async ({ page, browserName }) => {
+  test('one language: jean.is opens on its Japanese page, the page’s menu sets the app’s language as Settings does, and the place read stays', async ({ page, browserName }) => {
     await page.goto(JEAN_IS)
     await expect.poll(() => new URL(page.url()).pathname).toBe('/ja')
     await expect(shown(page, 'ja')).toBeVisible()
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
-    // French has a page: the app speaks it, and the page is French, at its address.
-    await page.locator('.home-languages select').selectOption('fr')
+    // French has a page: the app speaks it, and the page is French, at its address, read from the same place,
+    // changed mid-page as Settings or ⌘⇧L would.
+    const door = () => page.locator('#home-shareable').evaluate((element) => element.getBoundingClientRect().top)
+    await page.evaluate(() => scrollBy({ top: (document.getElementById('home-shareable')?.getBoundingClientRect().top ?? 0) - 200, behavior: 'instant' }))
+    await page.locator('.home-languages select').evaluate((select) => {
+      if (select instanceof HTMLSelectElement) select.value = 'fr'
+      select.dispatchEvent(new Event('change', { bubbles: true }))
+    })
     await expect.poll(() => new URL(page.url()).pathname).toBe('/fr')
     await expect(shown(page, 'fr')).toBeVisible()
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
     await expect(page.locator('.home-languages select')).toHaveValue('fr')
+    await expect.poll(async () => Math.abs(await door() - 200)).toBeLessThan(40)
+    // From the page's own menu at its foot: back at the foot, the menu with the keyboard.
+    await page.locator('.home-languages select').focus()
+    await page.locator('.home-languages select').selectOption('ja')
+    await expect.poll(() => new URL(page.url()).pathname).toBe('/ja')
+    await expect(shown(page, 'ja')).toBeVisible()
+    await expect(page.locator('.home-languages select')).toBeInViewport()
+    await expect(page.locator('.home-languages select')).toBeFocused()
     // German has none: the app speaks it, and the page is English's, at the site's own address. (WebKit
     // forgets the choice at the new address, and goes back to the browser's Japanese.)
     if (browserName === 'webkit') return
