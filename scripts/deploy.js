@@ -72,19 +72,32 @@ function publishedVersions (cwd) {
 /** @param {string} command @param {string[]} args @param {string} [cwd] */
 const run = (command, args, cwd) => execFileSync(command, args, { cwd, stdio: 'inherit' })
 
+/** The commit a name gives, short, as git has it. @param {string} [name]  HEAD by default */
+export const commitOf = (name = 'HEAD') => execFileSync('git', ['-C', ROOT, 'rev-parse', '--short', `${name}^{commit}`], { encoding: 'utf8' }).trim()
+
+/**
+ * A commit built as git has it, never with the working tree's changes, and only with the packages its
+ * lockfile names: `npm run build:web` in `<work>/jean`, which it returns.
+ * @param {string} commit @param {string} work
+ */
+export async function build (commit, work) {
+  const source = join(work, 'jean')
+  run('git', ['-C', ROOT, 'archive', '--format=tar', '-o', join(work, 'jean.tar'), commit])
+  await mkdir(source)
+  run('tar', ['-xf', join(work, 'jean.tar'), '-C', source])
+  run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], source)
+  run('npm', ['run', 'build:web'], source)
+  return source
+}
+
 async function main () {
   const { host, folder } = parseTarget(process.env.DEPLOY_TO)
-  const commit = execFileSync('git', ['-C', ROOT, 'rev-parse', '--short', `${process.argv[2] ?? 'HEAD'}^{commit}`], { encoding: 'utf8' }).trim()
+  const commit = commitOf(process.argv[2])
   const release = releaseName(new Date(), commit)
   const work = await mkdtemp(join(tmpdir(), 'jean-deploy-'))
-  const source = join(work, 'jean')
   try {
     console.log(`deploy: building ${commit} as git has it, without the working tree's changes`)
-    run('git', ['-C', ROOT, 'archive', '--format=tar', '-o', join(work, 'jean.tar'), commit])
-    await mkdir(source)
-    run('tar', ['-xf', join(work, 'jean.tar'), '-C', source])
-    run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], source)
-    run('npm', ['run', 'build:web'], source)
+    const source = await build(commit, work)
     const version = unpublished(JSON.parse(await readFile(join(source, 'app', 'capabilities.json'), 'utf8')), publishedVersions(source))
     if (version) {
       console.log(`deploy: publishing ${NAME}@${version}, which pages saved from this release draw themselves with`)

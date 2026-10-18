@@ -108,6 +108,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 **Accessibility**
 - [ ] A screen reader on the inbox (cards arriving while another has focus), between the dock's panes and the box, through search's results, through the box's / and @ menu (the option Enter picks), and on a change's diff
 - [ ] A project's light at every stage of the room's warmth, by day and by night, with `prefers-contrast: more`
+- [ ] What the accessibility statement lists as unchecked (D419): reflow at 320 pixels and text at 200%, contrast of controls and graphics, target sizes, the light's movement without reduced motion; then an outside audit against WCAG 2.2 AA
 
 ## Before the public launch
 
@@ -124,4 +125,5 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] What Jean generates marked as AI's (AI Act Art. 50(2), by launch or 2 Dec 2026): pictures made on the device or this computer carry IPTC's mark in their XMP (D279) and Content Credentials the device signs, which the check page reads, and the files Jean makes say so where their format can, a picture saves labelled for deployers, and TrustMark's watermark is in its pixels, which the check reads when asked (D324); what the brain on this device writes carries a watermark, which Jean and the check page count (D402); the check page reads all of these for anyone, downloading a watermark's reader once the visitor agrees (D410); and the terms ask that no mark be removed ([certificates.md](certificates.md#4-ai-act-marking-art-502-and-4-blocks-the-public-launch))
 - [ ] At work, with a real Entra tenant (D385): Jean's single-page app, a gateway that checks its tokens (LiteLLM's JWT auth, Azure API Management), renewal after an hour and again after 24 hours; and the audit export (D386) into a real OpenTelemetry Collector, with its `oidc` authenticator and CORS
 - [ ] The pilot kit (D415) on real hosts, each checked with `policy.html`: IIS 10 with URL Rewrite and IIS Compression, Azure Static Web Apps (does it send the `.br` copies?), S3 behind CloudFront with `sync.sh`; Edge installing Jean through Intune on Windows and macOS, and its data kept with `ClearBrowsingDataOnExit` on
+- [ ] An outside penetration test, as [trust/pentest.md](../trust/pentest.md) scopes it, its high and critical findings fixed and retested; each version's tag signed with the release key, and a signed release deployed by a pilot from its zip alone, checked on Windows too (D419)
 - [ ] Mac app signed with a Developer ID and notarized, with the `allow-dyld-environment-variables` entitlement D160 needs; Windows app signed for SmartScreen

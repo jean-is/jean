@@ -8,6 +8,8 @@ npm ci && npm run build:web
 
 `POLICY="$(cat policy.json)" npm run build:web` adds the organisation's `policy.json` and has `index.html` name it ([enterprise.md](../docs/enterprise.md#policy-model-sketch)).
 
+Or take a release WAREHOUSE SAS signed, which needs no Node.js: check its signature and sums, then unzip it and add the `policy.json` and its `<meta>` by hand ([trust/releases.md](../trust/releases.md)).
+
 | Where | How |
 |---|---|
 | A server reached over SSH | `DEPLOY_TO=host:/path npm run deploy` ([README](../README.md)) |

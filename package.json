@@ -14,6 +14,7 @@
     "build": "npm run vendor && npm run manifest",
     "build:web": "npm run build && node scripts/web.js",
     "deploy": "node scripts/deploy.js",
+    "release": "node scripts/release.js",
     "render": "npm run build && node scripts/render.js",
     "host": "npm run build && node scripts/host.js",
     "sounds": "node scripts/sounds.js",
