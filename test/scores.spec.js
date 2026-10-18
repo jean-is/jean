@@ -48,3 +48,20 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await page.locator('.msg-jean').last().locator('app-made').getByRole('button', { name: 'Copy' }).click()
   expect((await whole.read())['text/html']).toMatch(/<img [^>]*src="data:image\/png;base64,[^"]+"[^>]*alt="The Legacy Jig"/)
 })
+
+test('asked for sheet music, the brain reads Jean’s own Music score where <skills> lists it, which adds it, and the tune is drawn (D401)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  await ask(page, 'Compose a short lullaby, as sheet music I can play.')
+  await expect(page.locator('.toast')).toContainText('Saved the skill “Music score”.')
+  await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Play it lightly.')
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name))).toEqual(['music-score'])
+  // Listed as before it came in: the next message tells the brain nothing new of <skills>.
+  await ask(page, 'Thank you')
+  await expect(page.locator('.msg-jean')).toHaveCount(2)
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.busy.value)).toBe(false)
+  expect(JSON.stringify(await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records))).not.toContain('The <skills> section is now')
+})

@@ -181,7 +181,7 @@ test('the third request of a kind becomes a skill', async ({ page }) => {
   await ask(page, 'Summarize the weekly sales by region')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   const system = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
-  expect(system).toContain('<skills>\n- weekly-sales-summary: When the user asks for a summary of the weekly sales by region.\n</skills>')
+  expect(system).toContain('<skills>\n- weekly-sales-summary: When the user asks for a summary of the weekly sales by region.\n- plain-words: ')
   await expect(page.locator('.follow-up', { hasText: 'Save this as a skill' })).toHaveCount(0)
 })
 

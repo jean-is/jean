@@ -65,7 +65,7 @@ export async function skillSteps(fs, skills, named) {
   return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
 }
 
-/** The <skills> section. @param {Skill[]} skills */
+/** The <skills> section. @param {{ name: string, description: string }[]} skills */
 export const skillLines = (skills) => skills.map((skill) => `- ${skill.name}: ${skill.description}`).join('\n')
 
 /**
