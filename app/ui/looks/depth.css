@@ -10,7 +10,7 @@
   --room: oklch(0.15 0.03 265);
   --room-2: oklch(0.2 0.035 265);
   --ink: oklch(0.96 0.01 260);
-  --ink-soft: oklch(0.84 0.02 260);
+  --ink-soft: oklch(0.86 0.02 260);
   --ink-faint: oklch(0.82 0.025 260);
   --line: oklch(0.85 0.06 250 / 0.12);
   --line-strong: oklch(0.85 0.06 250 / 0.26);
