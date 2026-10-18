@@ -92,7 +92,20 @@ Turn a goal and a deadline into tasks, dates and who does what, and say what can
 3. **The dates,** worked out on the computer: each task's earliest start and end from what it waits for, the critical path (the chain of tasks with no slack, which sets the end date) and every other task's slack. With ranges, take (best + 4 × most likely + worst) / 6 for each task and say how likely the deadline is. Count working days in the user's country, and say which holidays you assumed.
 4. **When the end comes after the deadline,** say by how much, and weigh the options in a table, its corner empty and a ★ after the one you recommend: more people on the critical path, tasks done side by side, less in scope, a later date.
 5. **Milestones:** the few dates that matter (decisions, deliveries, the day itself).
-6. **A Gantt chart** in an ```echarts block: the tasks on a category `yAxis` with `"inverse": true`, so the first is at the top; days from the start on a value `xAxis`; two `bar` series with the same `"stack"`, the first the days before the task starts, with `"itemStyle": { "opacity": 0 }` and `"tooltip": { "show": false }`, the second its duration, named in the user's language. Mark the tasks on the critical path with a ★ in their names.
+6. **A Gantt chart** in an ```echarts block, an ECharts option in strict JSON (double quotes, no functions): the tasks on a category `yAxis` with `"inverse": true`, so the first is at the top, each named with its dates written out in the user's language, and a ★ in the names of those on the critical path; working days from the start on a value `xAxis`; two `bar` series with the same `"stack"`, each `data` a list of plain numbers, one per task: the first the days before the task starts, with `"itemStyle": { "opacity": 0 }` and `"tooltip": { "show": false }`, the second its duration, named in the user's language. For a move starting on Monday 2 March:
+
+   ```echarts
+   {
+     "title": { "text": "Office move" },
+     "tooltip": {},
+     "xAxis": { "type": "value", "name": "Working days", "nameLocation": "middle", "nameGap": 30 },
+     "yAxis": { "type": "category", "inverse": true, "data": ["Choose the movers · 2–4 March", "★ Pack · 5–11 March", "★ Moving day · Thursday 12 March", "Set up the network · 12–13 March"] },
+     "series": [
+       { "type": "bar", "stack": "plan", "itemStyle": { "opacity": 0 }, "tooltip": { "show": false }, "data": [0, 3, 8, 8] },
+       { "type": "bar", "stack": "plan", "name": "Duration", "data": [3, 5, 1, 2] }
+     ]
+   }
+   ```
 7. **Risks and assumptions** to the plan, in a `> [!WARNING]` note.
 8. **Following it:** a short status each week (done, late, next, blocked), and at the end a review: what went well, what didn't, and what to do differently next time.
 

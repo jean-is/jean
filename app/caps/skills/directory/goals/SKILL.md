@@ -92,7 +92,7 @@ Turn what someone wants to achieve into goals that can be measured, the actions 
 4. **Two to four key results for each:** a measure, today's number and the target, with a date ("from 12% to 20% of quotes accepted by 30 June"). Results, not activities: "publish ten posts" is an action. When there is no number today, the first result is to measure it.
 5. **Actions,** or tactics: what will be done to move each result, by whom, by when and with what budget. Say what will not be done, so the goals stay few.
 6. **For Hoshin Kanri,** a table that links each objective to the year's priorities, their measures and their owners, which objective each team serves, and what to ask the teams before the plan is fixed.
-7. **Progress,** once there are numbers, drawn in an ```echarts block: a horizontal bar per key result, its share of the target.
+7. **Progress,** once there are numbers, drawn in an ```echarts block, an ECharts option in strict JSON: a horizontal bar per key result, its share of the target.
 8. **Check-ins:** when (each week or month) and what is looked at; at the end, a grade for each key result from 0 to 1, where 0.7 is good for an ambitious goal, and what was learned.
 
 ## Before you answer
