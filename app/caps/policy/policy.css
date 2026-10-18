@@ -1,0 +1,12 @@
+/* The page that checks a site (policy.html, D415), after ui/style.css. Logical properties only. */
+.site-page { display: grid; gap: 1.25rem; max-inline-size: 44rem; margin: 3rem auto; padding: 0 1rem; }
+.site-page section { display: grid; gap: 0.6rem; justify-items: start; }
+.site-page :is(h1, h2, p) { margin: 0; }
+.site-page h2 { font-size: 1.05rem; }
+.site-list { display: grid; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.site-list li { overflow-wrap: anywhere; }
+.site-list code { margin-inline-end: 0.4rem; }
+.site-ok::before { content: "✓ "; content: "✓ " / ""; }
+.site-bad { color: var(--danger); }
+.site-bad::before { content: "✗ "; content: "✗ " / ""; }
+.site-warn::before { content: "!"; content: "!" / ""; margin-inline-end: 0.35em; font-weight: 600; }

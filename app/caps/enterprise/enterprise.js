@@ -6,12 +6,11 @@
 import { html, render } from 'lit-html'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, locale, dir } from '../../core/i18n.js'
-import { app } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 /** @returns {Promise<void>} never, once Jean stops */
 export async function start() {
-  const { policy } = app
+  const { policy } = (await import('../../ui/state.js')).app
   try {
     if (!policy.key && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) throw new Error('policy.json holds no key')
     await (await import('../../ee/ee.js')).start(policy)
@@ -26,3 +25,10 @@ export async function start() {
     return new Promise(() => {})
   }
 }
+
+/**
+ * What policy.html says of ee/'s part of a policy (D415): whom the key unlocks this version for here, and
+ * until when; throws, saying why, when it doesn't, a section is wrong, or ee/ is gone.
+ * @param {Record<string, any>} policy @returns {Promise<{ organisation: string, until: number, trial: boolean }>}
+ */
+export const check = async (policy) => (await import('../../ee/ee.js')).check(policy)

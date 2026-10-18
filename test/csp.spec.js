@@ -12,7 +12,7 @@ const CSP_SERVER = 'http://127.0.0.1:4184/'
 
 test.use({ baseURL: CSP_SERVER })
 
-test('nothing Jean does is refused by its own policies: the room, an answer, a page in it, the sandbox, Python, the check page, the privacy policy and the terms', async ({ page, context }, info) => {
+test('nothing Jean does is refused by its own policies: the room, an answer, a page in it, the sandbox, Python, the check page, the site’s, the privacy policy and the terms', async ({ page, context }, info) => {
   test.setTimeout(180_000)
   // The cookie names this run's reports (scripts/serve.js), apart from other browsers' at the same time.
   const from = `${info.project.name}-${Date.now()}`
@@ -60,6 +60,10 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   // The check page, where a certificate is checked (D274).
   await page.goto('check.html')
   await expect(page.locator('body')).not.toBeEmpty()
+  await page.waitForLoadState('networkidle')
+  // The page that checks the site, its policy and how its server sends Jean (D415).
+  await page.goto('policy.html')
+  await expect(page.locator('.site-list li').first()).toBeVisible()
   await page.waitForLoadState('networkidle')
   // The privacy policy and the terms (D356), at their addresses without .html, with the person's look.
   await page.goto('privacy')

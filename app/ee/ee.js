@@ -11,3 +11,13 @@ export async function start(policy) {
   if (policy.audit?.otlpEndpoint) await (await import('./audit.js')).start(policy.audit)
   if (policy.retention !== undefined) await (await import('./retention.js')).start(policy.retention)
 }
+
+/**
+ * What policy.html shows of a policy's part here (D415): the key's verdict, and each section read as start()
+ * reads it, nothing started; throws, saying why, at the first that fails. @param {Record<string, any>} policy
+ */
+export async function check(policy) {
+  const key = await checkKey(policy.key, { origin: location.origin })
+  if (policy.retention !== undefined) (await import('./kept.js')).period(policy.retention)
+  return key
+}
