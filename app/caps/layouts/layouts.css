@@ -42,7 +42,7 @@
 /* The frame is drawn inside each cell, the line under it too, so that nothing breaks it. */
 .prose .is-compare .is-pick { --edge: inset 2px 0 var(--flame), inset -2px 0 var(--flame); border-block-end: 0; box-shadow: var(--edge), inset 0 -1px var(--line); }
 .prose .is-compare th.is-pick { box-shadow: var(--edge), inset 0 2px var(--flame), inset 0 -1px var(--line); }
-.prose .is-compare tr:last-child .is-pick { box-shadow: var(--edge), inset 0 -2px var(--flame); }
+.prose .is-compare tbody tr:last-child .is-pick { box-shadow: var(--edge), inset 0 -2px var(--flame); }
 .prose .is-compare th.is-pick::before {
   content: attr(data-pick);
   display: block;

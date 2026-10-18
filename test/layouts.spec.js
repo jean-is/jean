@@ -13,6 +13,9 @@ test('a comparison, steps and notes are laid out as what they are, and copy as t
   const compare = answer.locator('.table.is-compare')
   await expect(compare.locator('th.is-pick')).toHaveText('Orange ★')
   await expect(compare.locator('th.is-pick')).toHaveAttribute('data-pick', 'Recommended')
+  // Its frame closes over its head, the head's row being no last row of the table's.
+  await expect(compare.locator('th.is-pick')).toHaveCSS('box-shadow', / 0px 2px 0px 0px inset/)
+  await expect(compare.locator('th.is-pick')).not.toHaveCSS('box-shadow', / 0px -2px 0px 0px inset/)
   // The best of each row, in bold; the criteria, in bold too, are none.
   await expect(compare.locator('td.is-best')).toHaveText(['€360', '200 GB', 'None'])
   await expect(compare.locator('td.is-yes')).toHaveCount(2)
