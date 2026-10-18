@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Elastic-2.0
 
 // The audit export (D386): Jean's audit stream, each record kept (the `record` event, D299), each
-// turn's end and each task or profile removed (`remove`, D412), as OpenTelemetry traces (otlp.js),
-// sent to the collector policy names (`audit.otlpEndpoint`). Its credentials: the organisation's
-// sign-in (`auth: "oidc"`, D385), a sign-in of its own (`auth` naming its own issuer, client or
-// scopes, over the organisation's), or headers policy gives (`headers`), which whoever can open
-// Jean can read in policy.json.
+// turn's end, and what left for good once it is gone (`record` too, D412), as OpenTelemetry traces
+// (otlp.js), sent to the collector policy names (`audit.otlpEndpoint`). Its credentials: the
+// organisation's sign-in (`auth: "oidc"`, D385), a sign-in of its own (`auth` naming its own issuer,
+// client or scopes, over the organisation's), or headers policy gives (`headers`), which whoever can
+// open Jean can read in policy.json.
 import { register, contributions } from '../ui/caps.js'
 import { app } from '../ui/state.js'
 import { here } from '../ui/opfs.js'
@@ -38,12 +38,6 @@ export async function start(audit) {
     hooks: [
       { on: 'record', tier: 'policy', run: (e, next) => { follow.record(e); return next(e) } },
       { on: 'turn.end', tier: 'policy', run: (e, next) => { follow.end(e); return next(e) } },
-      // Told once the rest of the chain let it go: retention, further in, may refuse it, and then nothing went.
-      { on: 'remove', tier: 'policy', run: async (e, next) => {
-        const result = await next(e)
-        if (!result?.refuse) follow.remove(e)
-        return result
-      } },
     ],
   })
   // What waits goes as the page is hidden or closed, which may be the last chance.

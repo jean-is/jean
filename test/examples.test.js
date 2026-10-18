@@ -56,17 +56,19 @@ test('examples: each plugin.json reads as Jean reads it, and each module hooks a
   }
 })
 
-test('examples: Activity log follows the records, what going back removes, and a rule that refused, and says under an answer what was done for it', async () => {
+test('examples: Activity log follows the records, what went for good, and a rule that refused, and says under an answer what was done for it', async () => {
   const plugin = await load('activity-log')
   const call = { sessionUpdate: 'tool_call', toolCallId: 'a', name: 'write', title: 'Write Bakery.html', kind: 'edit', status: 'failed', _meta: { declined: true, by: 'word-count', decision: 'never' } }
   await plugin.fire('record', { task: 't', type: 'user_message_chunk', record: { update: { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: 'Make me a page' } } } })
   await plugin.fire('record', { task: 't', type: 'tool_call', record: { update: call } })
   await plugin.fire('record', { task: 't', type: 'removed', records: [{}, {}, {}] })
+  await plugin.fire('record', { task: 'u', type: 'removed', records: [{}, {}], all: true })
   assert.deepEqual(plugin.notes, ['Write Bakery.html: refused by word-count.'])
   const rows = JSON.stringify(plugin.slots.settings())
   assert.match(rows, /You asked: “Make me a page”/)
   assert.match(rows, /Write Bakery.html: not done, refused by word-count/)
   assert.match(rows, /You went back to a request: 3 records removed/)
+  assert.match(rows, /You deleted a task: 2 records removed/)
   await plugin.fire('turn.end', { answer: 'I could not make it.', records: [{ update: { sessionUpdate: 'user_message_chunk' } }, { update: { sessionUpdate: 'tool_call', toolCallId: 'brain-0', title: 'Asked a brain', status: 'completed' } }, { update: call }] })
   assert.deepEqual(plugin.slots.answer({ text: 'I could not make it.' }), { text: '1 action · 1 not done · decided by word-count', muted: true })
   assert.equal(plugin.slots.answer({ text: 'Another answer' }), null)

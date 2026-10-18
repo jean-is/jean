@@ -1,11 +1,13 @@
 // The audit export (D386, ee/): each turn goes to the organisation's OpenTelemetry collector as
-// GenAI spans, metadata only unless policy asks for content, and so does each task deleted, once
-// nothing refused it (D412); on localhost no key is needed, and elsewhere a policy that asks for it
-// without one stops Jean with a message for IT (D139).
+// GenAI spans, metadata only unless policy asks for content, and so does each task deleted, once it
+// is gone, never one a refusal kept (D412); on localhost no key is needed, and elsewhere a policy that
+// asks for it without one stops Jean with a message for IT (D139).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn } from './helpers.js'
 import { POLICY, COLLECTOR, fakeIssuer, fakeGateway, fakeCollector } from './fixtures/fake-issuer.js'
 
+/** How many spans of a name reached it. @param {ReturnType<typeof fakeCollector> extends Promise<infer C> ? C : never} collector @param {string} name */
+const count = (collector, name) => collector.spans().filter((span) => span.name === name).length
 /** Spans come in batches, every few seconds. @param {ReturnType<typeof fakeCollector> extends Promise<infer C> ? C : never} collector @param {string} name */
 const sent = (collector, name) => expect.poll(() => collector.spans().some((span) => span.name === name), { timeout: 20_000 }).toBe(true)
 
@@ -64,6 +66,46 @@ test('a task deleted goes to the collector as a removal of its own, all of it, n
   expect(removed[0].attrs).toMatchObject({ 'gen_ai.conversation.id': task, 'jean.removed.all': true })
   expect(Number(removed[0].attrs['jean.records.removed'])).toBeGreaterThan(1)
   expect(removed[0].parentSpanId).toBeUndefined()
+})
+
+test('a project retention couldn’t keep all of stays, and none of its tasks goes to the collector as deleted', async ({ page }) => {
+  const collector = await fakeCollector(page)
+  await withPolicy(page, { audit: { otlpEndpoint: COLLECTOR }, retention: 'P6M' })
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Projects')
+  const dialog = page.locator('app-project-dialog dialog[open]')
+  await dialog.locator('input[name="name"]').fill('Bakery')
+  await dialog.locator('.button.primary').click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
+  const turns = (/** @type {number} */ many) => expect.poll(() => count(collector, 'invoke_agent'), { timeout: 20_000 }).toBe(many)
+  await ask(page, 'Hello')
+  await turns(1)
+  await (await openTasks(page)).locator('.place', { hasText: 'New task' }).click()
+  await expect(page).toHaveURL(/#\/p\/[0-9A-Z]{26}\/$/)
+  await ask(page, 'Hello again')
+  await turns(2)
+  // Retention keeps a copy of the first task it is asked about, and can't of the second, so nothing goes.
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const write = app.fs.write.bind(app.fs)
+    let copies = 0
+    app.fs.write = async (path, text) => {
+      if (path.startsWith('.kept/') && copies++) throw new Error('The disk is full.')
+      return write(path, text)
+    }
+  })
+  page.on('dialog', (asked) => asked.accept())
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu button', { hasText: 'Project settings' }).click()
+  await dialog.getByRole('button', { name: 'Delete this project' }).click()
+  await expect(page.locator('.toast')).toContainText('Nothing was removed')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
+  // What comes after it would follow it to the collector.
+  await ask(page, 'Hello once more')
+  await turns(3)
+  expect(count(collector, 'remove_records')).toBe(0)
 })
 
 test('a removal refused goes nowhere: a profile retention keeps, its id on every span', async ({ page }) => {

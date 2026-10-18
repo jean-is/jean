@@ -88,11 +88,11 @@ export async function register(on, $) {
 
 /**
  * A line for a record, or null for one not worth a line: a request, an answer, an action once it ended,
- * a task named, and what going back to a request removed.
- * @param {{ type: string, record?: any, records?: any[] }} e
+ * a task named, and what went for good: a task deleted, what going back to a request removed, a profile.
+ * @param {{ type: string, record?: any, records?: any[], all?: boolean, profile?: string }} e
  */
-function describe({ type, record, records }) {
-  if (type === 'removed') return `You went back to a request: ${records?.length ?? 0} records removed`
+function describe({ type, record, records, all, profile }) {
+  if (type === 'removed') return profile ? 'A profile was removed' : `${all ? 'You deleted a task' : 'You went back to a request'}: ${records?.length ?? 0} records removed`
   const update = record?.update
   if (type === 'user_message_chunk' && update.content?.type === 'text') return `You asked: “${cut(update.content.text)}”`
   if (type === 'agent_message_chunk') return `Answered in ${count(update.content?.text ?? '')} words`

@@ -136,9 +136,10 @@ export async function make({ name, mine, born }, parentRaw) {
 
 /** A profile gone, with what it told this one, once the person confirms and nothing refuses (D412); this one's opens another. @param {Profile} profile */
 async function remove(profile) {
-  if (!confirm(t('profiles.removeConfirm', { name: nameOf(profile) })) || !(await removing({ profile: profile.dir }))) return
-  for (const path of [profile.dir, inbox(profile.dir), `${inbox(here())}/time-${profile.dir.slice(9, 35)}.json`]) await app.whole?.remove(path)
-  await deviceKey('forget', profile.dir)
+  if (!confirm(t('profiles.removeConfirm', { name: nameOf(profile) })) || !(await removing([{ profile: profile.dir }], async () => {
+    for (const path of [profile.dir, inbox(profile.dir), `${inbox(here())}/time-${profile.dir.slice(9, 35)}.json`]) await app.whole?.remove(path)
+    await deviceKey('forget', profile.dir)
+  }))) return
   if (profile.dir === here()) return switchTo(all.peek().find((other) => other.dir !== here())?.dir ?? '')
   notify(t('profiles.removed', { name: nameOf(profile) }))
   await refresh()
