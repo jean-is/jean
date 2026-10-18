@@ -90,7 +90,7 @@
   "open.title": "Open, all the way.",
   "open.text": "MIT, about 28,000 lines. Open standards, any AI, plain files.",
   "open.source": "Source code",
-  "open.it": "For your IT",
+  "open.it": "Enterprise",
   "catch.name": "The catch",
   "catch.why": "Every tool has one. Here’s {name}’s.",
   "catch.title": "The catch, plainly.",
@@ -110,5 +110,5 @@
   "foot.made": "Made in France. Free and open source.",
   "foot.for": "For",
   "foot.families": "Families",
-  "foot.it": "Your IT"
+  "foot.it": "Enterprise"
 }

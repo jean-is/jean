@@ -1,6 +1,7 @@
 // jean.is's family page (D424): what a child's profile is, for the parent who reads before setting one
-// up, as a page of its own beside the app, family.html at /family in English and famille.html at
-// /famille in French, each naming the other for search engines. build:web writes them only for the site whose
+// up, as a page of its own beside the app, family.html at /family in English and fr/famille.html at
+// /fr/famille in French, each naming the other for search engines, a page under a language's folder reaching
+// the site's own files one folder up. build:web writes them only for the site whose
 // address is the brand's own domain, as it does the page under the app's first screen (scripts/home.js, D397).
 // It promises the profile (D389, D390) and shows how often the brains a child's profile asks give the answer
 // anyway, never the tutor itself, until its gate passes (D394). Its words are scripts/family/<lang>.json, the
@@ -19,8 +20,8 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const HERE = join(ROOT, 'scripts', 'family')
 const APP = join(ROOT, 'app')
 
-/** Each language's address for the page, at the site's root: its own word for family. */
-export const ADDRESSES = /** @type {Record<string, string>} */ ({ en: 'family', fr: 'famille' })
+/** Each language's address for the page, from the site's root: English's at the root, others under their own folder. */
+export const ADDRESSES = /** @type {Record<string, string>} */ ({ en: 'family', fr: 'fr/famille' })
 
 /** The page's address in a language, English's where it has none, as the homepage's door links it. @param {string} lang */
 export const familyAddress = (lang) => ADDRESSES[lang] ?? ADDRESSES.en
@@ -98,10 +99,22 @@ export async function theme () {
   return { script, hash: `'sha256-${createHash('sha256').update(script).digest('base64')}'` }
 }
 
+/**
+ * The theme script for a page `up` folders below the site's root: the app's documents' own, whose look's style
+ * sheet it names from the root, and the hash its policy allows it by.
+ * @param {Awaited<ReturnType<typeof theme>>} root  theme()'s @param {string} up  '' or '../', once a folder
+ */
+export function themeFor ({ script, hash }, up) {
+  if (!up) return { script, hash }
+  const below = script.replace('href: `ui/looks/', `href: \`${up}ui/looks/`)
+  if (below === script) throw new Error('app/privacy.html’s theme script no longer names ui/looks/ as it did')
+  return { script: below, hash: `'sha256-${createHash('sha256').update(below).digest('base64')}'` }
+}
+
 /** A text with its {params} filled. @param {string} text @param {Record<string, string>} params */
 const fill = (text, params) => text.replace(/\{(\w+)\}/g, (whole, key) => params[key] ?? whole)
 
-const ICONS = {
+export const ICONS = {
   lock: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>',
   plus: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg>',
   bell: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>',
@@ -118,7 +131,7 @@ const ICONS = {
   minus: '<svg class="icon is-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>',
   globe: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.5 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.5-3.6-8.5s1.1-5.9 3.6-8.5z"/></svg>',
 }
-const WAVE = '<app-persona data-presence="idle" aria-hidden="true"><svg class="persona" viewBox="12 18 40 28" focusable="false"><g class="persona-wave"><path class="persona-line" d="M-28 32q6-11 12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0"/></g></svg></app-persona>'
+export const WAVE = '<app-persona data-presence="idle" aria-hidden="true"><svg class="persona" viewBox="12 18 40 28" focusable="false"><g class="persona-wave"><path class="persona-line" d="M-28 32q6-11 12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0"/></g></svg></app-persona>'
 /** A week of a child's minutes, the last day today, as the parent's profile counts them. */
 const WEEK = [40, 55, 20, 65, 30, 0, 35]
 
@@ -129,7 +142,7 @@ const WEEK = [40, 55, 20, 65, 30, 0, 35]
  * @param {Record<string, unknown>} home  the homepage's words in the same language, for the family's tiles
  * @param {{ lang: string, brand: { name: string, domain: string }, base: string, languages: string[], rows: Awaited<ReturnType<typeof measured>>, theme: Awaited<ReturnType<typeof theme>>, now?: Date }} context
  */
-export function familyOf (words, app, home, { lang, brand, base, languages, rows, theme: { script, hash }, now = new Date() }) {
+export function familyOf (words, app, home, { lang, brand, base, languages, rows, theme: root, now = new Date() }) {
   const params = { name: brand.name, domain: brand.domain, free: app['first.free'] ?? '', tier: app['profiles.tier'] ?? '', forChild: app['profiles.forChild'] ?? '' }
   /** One of the page's strings, filled and escaped. @param {string} key */
   const say = (key) => {
@@ -155,8 +168,12 @@ export function familyOf (words, app, home, { lang, brand, base, languages, rows
   const homeSays = (key) => xml(fill(String(home[key] ?? ''), params))
   const dirOf = dir(lang)
   const address = (/** @type {string} */ code) => base + ADDRESSES[code]
+  // From a page under a language's folder, the site's own files are one folder up.
+  const up = '../'.repeat(ADDRESSES[lang].split('/').length - 1)
+  const site = (/** @type {string} */ path) => up + path
+  const { script, hash } = themeFor(root, up)
   // The app in this language: its address at the site's root for English, a language's own otherwise (D397).
-  const jean = lang === 'en' ? './' : lang
+  const jean = lang === 'en' ? up || './' : site(lang)
   const percent = new Intl.NumberFormat(lang, { style: 'percent' })
   const span = (/** @type {number} */ minutes) => new Intl.DurationFormat(lang, { style: 'short', minutesDisplay: 'always' }).format({ hours: Math.floor(minutes / 60), minutes: minutes % 60 })
   const days = WEEK.map((_, i) => new Intl.DateTimeFormat(lang, { weekday: 'narrow' }).format(new Date(now.getTime() - (WEEK.length - 1 - i) * 86_400_000)))
@@ -192,9 +209,9 @@ export function familyOf (words, app, home, { lang, brand, base, languages, rows
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="${description}">
 <title>${title}</title>
-<link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="ui/style.css">
-<link rel="stylesheet" href="family.css">
+<link rel="icon" href="${site('icons/favicon.svg')}" type="image/svg+xml">
+<link rel="stylesheet" href="${site('ui/style.css')}">
+<link rel="stylesheet" href="${site('family.css')}">
 <link rel="canonical" href="${xml(address(lang))}">
 ${languages.map((code) => `<link rel="alternate" hreflang="${code}" href="${xml(address(code))}">`).join('\n')}
 <link rel="alternate" hreflang="x-default" href="${xml(address(languages[0]))}">
@@ -204,7 +221,7 @@ ${Object.entries(card).map(([property, content]) => `<meta property="${property}
 <body class="fam">
 <header class="fam-top">
   <a class="wordmark" href="${jean}">${WAVE}${xml(brand.name)}</a><span class="fam-for">${say('for')}</span>
-  <nav class="fam-langs" aria-label="${say('languages')}">${ICONS.globe}${languages.map((code) => code === lang ? `<span lang="${code}" aria-current="page">${xml(languageName(code))}</span>` : `<a href="${ADDRESSES[code]}" hreflang="${code}" lang="${code}">${xml(languageName(code))}</a>`).join('')}</nav>
+  <nav class="fam-langs" aria-label="${say('languages')}">${ICONS.globe}${languages.map((code) => code === lang ? `<span lang="${code}" aria-current="page">${xml(languageName(code))}</span>` : `<a href="${site(ADDRESSES[code])}" hreflang="${code}" lang="${code}">${xml(languageName(code))}</a>`).join('')}</nav>
   <a class="button" href="${jean}">${say('open')}</a>
 </header>
 <main>
@@ -296,7 +313,7 @@ ${Object.entries(card).map(([property, content]) => `<meta property="${property}
 <section class="fam-section" aria-labelledby="fam-where">
   <header><h2 id="fam-where">${say('where.title')}</h2><p class="fam-why">${say('where.why')}</p></header>
   <div class="fam-where">${table('where.cards').map(([name, text], i) => `<div${i === 2 ? ' class="is-never"' : ''}>${[ICONS.computer, ICONS.key, ICONS.never][i]}<h3>${name}</h3><p>${text}</p></div>`).join('')}</div>
-  <p><a href="files">${appSays('welcome.files')}</a></p>
+  <p><a href="${site('files')}">${appSays('welcome.files')}</a></p>
 </section>
 
 <section class="fam-section is-side" aria-labelledby="fam-family">
@@ -327,7 +344,7 @@ ${Object.entries(card).map(([property, content]) => `<meta property="${property}
 </main>
 <footer class="fam-foot">
   <p>${say('foot.tagline')}</p>
-  <nav><a href="${jean}">${xml(brand.domain)}</a><a href="files">${appSays('welcome.files')}</a><a href="source">${say('foot.source')}</a><a href="privacy">${appSays('welcome.privacy')}</a><a href="terms">${appSays('welcome.terms')}</a></nav>
+  <nav><a href="${jean}">${xml(brand.domain)}</a><a href="${site('files')}">${appSays('welcome.files')}</a><a href="${site('source')}">${say('foot.source')}</a><a href="${site('privacy')}">${appSays('welcome.privacy')}</a><a href="${site('terms')}">${appSays('welcome.terms')}</a></nav>
   <p class="fam-made">${say('foot.made')}</p>
 </footer>
 </body>

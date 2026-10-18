@@ -90,7 +90,7 @@
   "open.title": "Tout est ouvert.",
   "open.text": "Licence MIT, environ 28 000 lignes. Standards ouverts, n’importe quelle IA, fichiers ordinaires.",
   "open.source": "Code source",
-  "open.it": "Pour votre DSI",
+  "open.it": "Entreprise",
   "catch.name": "Les limites",
   "catch.why": "Tout outil a les siennes. Voici celles de {name}.",
   "catch.title": "Les limites, franchement.",
@@ -110,5 +110,5 @@
   "foot.made": "Fabrication française. Logiciel libre et gratuit.",
   "foot.for": "Pour",
   "foot.families": "Familles",
-  "foot.it": "Votre DSI"
+  "foot.it": "Entreprise"
 }

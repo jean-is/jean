@@ -58,7 +58,8 @@ The trust pack is open ([trust/](../trust/README.md), D419): a threat model, a D
 - A subscription key unlocks every version released before its end date, forever. When a subscription lapses, a running deployment keeps working; only upgrades of `ee/` stop.
 - A trial key is free for 30 days. An organisation generates one on a page WAREHOUSE SAS runs. It is bound to the deployment's addresses, one trial per address, and has no fallback.
 - A policy that asks for enterprise features without a valid key stops Jean with a message for IT. Its rules are never dropped silently; removing those sections gives back the open version.
-- On `localhost`, no key is needed. Small organisations, non-profits and schools get free keys.
+- On `localhost`, no key is needed. Small organisations (up to 50 people), non-profits and schools get free keys.
+- A subscription is priced per organisation by the number of people who can use Jean, never per seat, since Jean can't count them: €3,900 a year up to 250 people, €9,900 up to 1,000, €19,900 up to 5,000, on quote above or for a shared provider serving many organisations, excl. VAT (D428). jean.is's page for IT says so, at `/enterprise` and `/fr/entreprise`.
 - If no key can be bought for twelve consecutive months, every version of `ee/` published until then becomes MIT.
 
 ## Policy model (sketch)

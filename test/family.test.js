@@ -1,4 +1,5 @@
-// jean.is's family page (D424): a page of its own in each language with words, at that language's word,
+// jean.is's family page (D424): a page of its own in each language with words, English's at the root and the others
+// under their language's folder,
 // which promises a child's profile and shows the tutor's measurement, never the tutor, and runs nothing but the
 // theme script its policy names.
 import assert from 'node:assert/strict'
@@ -11,10 +12,10 @@ import { ADDRESSES, appWords, familyAddress, familyFiles, familyLanguages, famil
 const BASE = 'https://jean.is/'
 const NOW = new Date('2026-10-19T10:00:00')
 
-test('each language with words has a page at its own word, English first', async () => {
+test('each language with words has a page at its address, English first', async () => {
   assert.deepEqual(await familyLanguages(), ['en', 'fr'])
-  assert.deepEqual(Object.keys(await familyFiles(BASE, BRAND, NOW)).sort(), ['famille.html', 'family.css', 'family.html'])
-  assert.equal(familyAddress('fr'), 'famille')
+  assert.deepEqual(Object.keys(await familyFiles(BASE, BRAND, NOW)).sort(), ['family.css', 'family.html', 'fr/famille.html'])
+  assert.equal(familyAddress('fr'), 'fr/famille')
   assert.equal(familyAddress('ja'), 'family', 'a language without a page links English’s')
 })
 
@@ -55,10 +56,13 @@ test('the page says what a search engine and a shared link read, and names its o
 
 test('its policy runs the theme script and nothing else, with no style but the site’s own sheets', async () => {
   const { script } = await theme()
-  const hash = `'sha256-${createHash('sha256').update(script).digest('base64')}'`
   const files = await familyFiles(BASE, BRAND, NOW)
   for (const word of Object.values(ADDRESSES)) {
     const page = files[`${word}.html`]
+    const ran = /<script>([^<]*)<\/script>/.exec(page)?.[1] ?? ''
+    const up = '../'.repeat(word.split('/').length - 1)
+    assert.equal(ran, script.replace('href: `ui/looks/', `href: \`${up}ui/looks/`), `${word}: the app’s theme script, its looks named from the site’s root`)
+    const hash = `'sha256-${createHash('sha256').update(ran).digest('base64')}'`
     assert.match(page, new RegExp(`script-src ${hash.replace(/[+/]/g, '\\$&')};`))
     assert.equal(page.match(/<script\b/g)?.length, 1, 'one script, the theme’s')
     assert.doesNotMatch(page, /\sstyle="|<style\b|\son\w+=/, 'no inline style or handler for the policy to refuse')
@@ -69,7 +73,15 @@ test('its policy runs the theme script and nothing else, with no style but the s
 test('the button begins a child’s profile in the app, in the page’s language', async () => {
   const files = await familyFiles(BASE, BRAND, NOW)
   assert.match(files['family.html'], /<a class="button primary" href="\.\/\?child">/)
-  assert.match(files['famille.html'], /<a class="button primary" href="fr\?child">/)
+  assert.match(files['fr/famille.html'], /<a class="button primary" href="\.\.\/fr\?child">/)
+})
+
+test('a page under a language’s folder reaches the site’s own files one folder up', async () => {
+  const files = await familyFiles(BASE, BRAND, NOW)
+  assert.match(files['family.html'], /<link rel="stylesheet" href="family\.css">/)
+  assert.match(files['fr/famille.html'], /<link rel="stylesheet" href="\.\.\/family\.css">/)
+  assert.match(files['fr/famille.html'], /<a href="\.\.\/family" hreflang="en"/)
+  assert.doesNotMatch(files['fr/famille.html'], /href="(?!\.\.\/|https?:|mailto:|#)[^"]+"/, 'every relative link climbs out of fr/')
 })
 
 test('it promises the profile and shows the measurement, never the tutor, until the gate passes', async () => {

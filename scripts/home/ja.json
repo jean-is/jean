@@ -90,7 +90,7 @@
   "open.title": "すべてオープン。",
   "open.text": "MITライセンス、約2万8000⁠行。オープンな標準、どのAIでも、ふつうのファイル。",
   "open.source": "ソースコード",
-  "open.it": "情報システム部門の方へ",
+  "open.it": "法人向け",
   "catch.name": "注意点",
   "catch.why": "どんな道具にも注意点があります。{name}の場合は、これです。",
   "catch.title": "注意点を、正直に。",
@@ -110,5 +110,5 @@
   "foot.made": "フランス製。無料・オープンソース。",
   "foot.for": "対象",
   "foot.families": "家族",
-  "foot.it": "情報システム部門"
+  "foot.it": "法人向け"
 }

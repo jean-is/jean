@@ -1,0 +1,444 @@
+{
+  "title": "{name} Enterprise",
+  "description": "Everyone’s AI, deployed like a web page: a folder of static files served from your own address, answering only through your AI gateway and your sign-in, with no server of ours and no price per seat.",
+  "for": "Enterprise",
+  "languages": "Languages",
+  "open": "Open {name}",
+  "eyebrow": "For IT, security and purchasing teams",
+  "h1": "Everyone’s AI, deployed like a web page.",
+  "lede": "{name} is a folder of static files you serve from your own address. It answers only through your AI gateway, signs people in with your identity provider, and needs no server of ours. Nothing to install, no price per seat.",
+  "cta": "Get the pilot kit",
+  "see": "Read the answers",
+  "try": "Try {name} yourself first",
+  "facts": [
+    "No {name} server",
+    "One header enforces it",
+    "Your gateway, your sign-in",
+    "Free per seat",
+    "Open source, MIT"
+  ],
+  "path.label": "How a request travels",
+  "path.nodes": [
+    [
+      "A browser tab",
+      "{name}, served from your own address"
+    ],
+    [
+      "Your AI gateway",
+      "LiteLLM, Portkey, Cloudflare, Azure API Management, Albert…"
+    ],
+    [
+      "Your models",
+      "In your cloud, on premises, or at a provider you chose"
+    ]
+  ],
+  "path.sides": [
+    [
+      "Your identity provider",
+      "Entra ID or any OpenID Connect: the sign-in goes to the gateway"
+    ],
+    [
+      "Your OpenTelemetry collector",
+      "The audit, with a key"
+    ],
+    [
+      "Servers of ours",
+      "None in the path"
+    ]
+  ],
+  "path.caption": "Each person’s work stays in their browser, sealed. Requests go only where your policy and your header allow.",
+  "why.title": "Your people already use AI. The question is where it goes.",
+  "why.facts": [
+    [
+      "of people who use AI at work bring their own tools.",
+      "Microsoft and LinkedIn, Work Trend Index 2024"
+    ],
+    [
+      "of Microsoft 365 seats have paid Copilot: {paid} of {total}.",
+      "Microsoft, January 2026"
+    ],
+    [
+      "of organisations have banned generative AI at least once. People kept using it.",
+      "Cisco Data Privacy Benchmark 2024"
+    ]
+  ],
+  "why.line": "Your AI gateway is where you govern models, costs and data. {name} gives everyone a front end that keeps it there.",
+  "pilot.title": "A pilot in an afternoon",
+  "pilot.steps": [
+    [
+      "Serve the folder",
+      "Take a release signed by WAREHOUSE SAS, or build one, and serve it from IIS, Azure Static Web Apps, S3, a container or any static host."
+    ],
+    [
+      "Point it at your gateway",
+      "One policy.json beside index.html names your brains, your rules and every address {name} may use."
+    ],
+    [
+      "Send one header",
+      "The browser then refuses every other address, whatever {name}’s own settings say."
+    ],
+    [
+      "Check it",
+      "Open policy.html at your address. It reads your policy and headers, tries each address, and says what’s wrong."
+    ]
+  ],
+  "pilot.after": "Then people open the address, sign in with their work account and start. Edge and Chrome can install it as an app through Intune.",
+  "pilot.kit": "The pilot kit: the recipes, the policy, the header set and the trust pack",
+  "people.title": "One box, for everyone",
+  "people.body": "A question, a file or a folder goes in; back comes an answer with its sources, a Word document, a spreadsheet, a deck or a chart. Numbers are worked out by code, not guessed. In 33 languages, right to left included. It asks before sending, sharing or deleting anything.",
+  "people.more": "See what {name} does for everyone",
+  "people.brand": "Acme Assistant",
+  "people.ask": "Turn this into a one-page summary for the board.",
+  "people.file": "Q3 sales.xlsx",
+  "people.answer": "Sales grew 12% on the quarter, led by the north. The summary and a chart are in Q3 summary.docx.",
+  "answers.title": "What your teams will ask",
+  "answers.why": "One line per question, with its status today. The documents to attach to your review are in the trust pack.",
+  "answers.show": "Show the answers for",
+  "status.built": "Built",
+  "status.key": "With a key",
+  "status.design": "By design",
+  "status.not": "Not yet",
+  "roles": [
+    [
+      "security",
+      "Security"
+    ],
+    [
+      "privacy",
+      "Privacy and legal"
+    ],
+    [
+      "it",
+      "IT operations"
+    ],
+    [
+      "purchasing",
+      "Purchasing"
+    ],
+    [
+      "staff",
+      "Staff representatives"
+    ],
+    [
+      "ai",
+      "AI and data team"
+    ]
+  ],
+  "answers.security": [
+    [
+      "Where do prompts and files go?",
+      "To your gateway and nowhere else. Your header makes the browser enforce it.",
+      "built"
+    ],
+    [
+      "What can code the AI writes reach?",
+      "It runs in a sandboxed worker with an opaque origin and no network. The page enforces Trusted Types and a strict policy.",
+      "built"
+    ],
+    [
+      "What stays on laptops?",
+      "Each person’s work, sealed with AES-256-GCM. Policy can require a passkey or password lock.",
+      "built"
+    ],
+    [
+      "Is every action logged?",
+      "Each turn, brain call and tool use goes to your OpenTelemetry collector. Your gateway’s log stays the authoritative one.",
+      "key"
+    ],
+    [
+      "How do we trust a release?",
+      "Releases are signed and come with a CycloneDX bill of materials, checked with OpenSSH. Three libraries load up front.",
+      "built"
+    ],
+    [
+      "Does it follow ANSSI’s guide?",
+      "Each of its 35 recommendations for generative AI systems is mapped in the trust pack: what {name} does, what is left to you, what isn’t built.",
+      "built"
+    ],
+    [
+      "Has it been tested from outside?",
+      "The brief for the test is published. The test isn’t done yet.",
+      "not"
+    ]
+  ],
+  "answers.privacy": [
+    [
+      "Is WAREHOUSE SAS a processor?",
+      "Not for your deployment: nothing of yours passes through our servers.",
+      "design"
+    ],
+    [
+      "Is there a DPIA?",
+      "A template, filled in for what {name} does and left blank for what you decide.",
+      "built"
+    ],
+    [
+      "Can we keep records for a set time?",
+      "Each task is kept at least as long as you set, six months for the AI Act, with its certificates.",
+      "key"
+    ],
+    [
+      "Is generated content marked?",
+      "Pictures and files {name} makes are marked, and each answer has a certificate saying where it was done.",
+      "built"
+    ],
+    [
+      "Is our data used to train models?",
+      "We never receive it. The terms of your gateway’s providers apply.",
+      "design"
+    ]
+  ],
+  "answers.it": [
+    [
+      "How do people sign in?",
+      "With Entra ID or any OpenID Connect provider. Their sign-in goes to your gateway as its key.",
+      "built"
+    ],
+    [
+      "Which gateways and models?",
+      "Any OpenAI-compatible or Anthropic endpoint: LiteLLM, Portkey, Cloudflare, Azure API Management, Albert, SAIA, a server on premises.",
+      "built"
+    ],
+    [
+      "Microsoft 365 and Google?",
+      "Mail, calendar and files, through your own app registration.",
+      "built"
+    ],
+    [
+      "Proxies and mirrors?",
+      "Every address can be replaced: model weights, Wikipedia, package registries.",
+      "built"
+    ],
+    [
+      "Updates?",
+      "Signed releases. Long-term support releases come with a subscription.",
+      "key"
+    ],
+    [
+      "An admin console?",
+      "None. You govern in your gateway, your identity provider and your collector.",
+      "design"
+    ]
+  ],
+  "answers.purchasing": [
+    [
+      "What is the licence?",
+      "MIT. The audit export and retention are under Elastic 2.0 with a key, and become MIT if no key can be bought for 12 months.",
+      "built"
+    ],
+    [
+      "What does it cost?",
+      "Nothing per seat. A subscription per organisation for keys, long-term support and filled-in questionnaires.",
+      "design"
+    ],
+    [
+      "Is it accessible?",
+      "A statement for WCAG 2.2 AA, what EN 301 549 asks of web content.",
+      "built"
+    ],
+    [
+      "Can we leave?",
+      "Everything is plain files and open standards, and nothing sits on our servers.",
+      "design"
+    ],
+    [
+      "Who is the vendor?",
+      "WAREHOUSE SAS, a French company.",
+      "built"
+    ]
+  ],
+  "answers.staff": [
+    [
+      "Does it record what people do?",
+      "Nothing reaches us. Your audit is off unless you turn it on.",
+      "design"
+    ],
+    [
+      "What would the audit hold?",
+      "Metadata only by default: which brain, which tool, when. Content only if you add it.",
+      "key"
+    ],
+    [
+      "Does it name people?",
+      "When the audit is on, yes, by their work address. Your agreement with staff representatives decides.",
+      "key"
+    ]
+  ],
+  "answers.ai": [
+    [
+      "Which brains can people use?",
+      "Only those your policy names. Auto picks among them.",
+      "built"
+    ],
+    [
+      "Can it reach our systems?",
+      "MCP connections that sign in from the browser, named or denied by policy.",
+      "built"
+    ],
+    [
+      "Our own skills and templates?",
+      "Skills from your own source only, and project templates with locked instructions, skills and rules.",
+      "built"
+    ],
+    [
+      "Our documents?",
+      "Search over files and folders on the device, and your knowledge bases through connections.",
+      "built"
+    ]
+  ],
+  "compare.title": "How it compares",
+  "compare.note": "Kinds of answer, not products.",
+  "compare.head": [
+    "",
+    "{name}",
+    "Per-seat cloud assistants",
+    "Assistant platforms",
+    "Self-hosted open-source chat"
+  ],
+  "compare.rows": [
+    [
+      "Where it runs",
+      "Each person’s browser, from your address",
+      "The vendor’s cloud",
+      "The vendor’s cloud, EU options",
+      "Your servers"
+    ],
+    [
+      "What you operate",
+      "A static folder",
+      "Nothing",
+      "Nothing, or their on-premises edition",
+      "App servers, a database, storage"
+    ],
+    [
+      "Who handles prompts",
+      "Your gateway only",
+      "The vendor",
+      "The vendor",
+      "Your servers"
+    ],
+    [
+      "Models",
+      "Any, behind your gateway",
+      "The vendor’s",
+      "Many, through the vendor",
+      "Any"
+    ],
+    [
+      "Price",
+      "Free per seat; a subscription per organisation",
+      "Per seat, per month",
+      "Per seat, per month",
+      "Free, plus running it"
+    ],
+    [
+      "Certifications",
+      "A trust pack: nothing of yours on our servers",
+      "SOC 2, ISO 27001",
+      "SOC 2, ISO 27001",
+      "Yours to obtain"
+    ]
+  ],
+  "limits.title": "What {name} doesn’t do",
+  "limits.items": [
+    "It can’t guarantee anything on unmanaged devices. Enforcement comes from your header, your network and your gateway.",
+    "It can’t wipe a device remotely.",
+    "It has no admin console, by design.",
+    "Routines run only while {name} is open.",
+    "Clearing the browser’s data deletes a person’s work, unless they back it up or sync a folder.",
+    "Data-loss checks before sending aren’t built yet. Your gateway’s filters apply."
+  ],
+  "trust.title": "Everything your review asks for, in the open",
+  "trust.docs": [
+    [
+      "Threat model",
+      "What {name} protects, from whom, and what’s left to you"
+    ],
+    [
+      "ANSSI’s 35 recommendations",
+      "Each one: what {name} does, what’s left to you"
+    ],
+    [
+      "DPIA template",
+      "Filled in for what {name} does"
+    ],
+    [
+      "Accessibility statement",
+      "WCAG 2.2 AA: what’s checked and what isn’t"
+    ],
+    [
+      "Penetration test brief",
+      "What an outside test covers. Not done yet"
+    ],
+    [
+      "Signed releases",
+      "Deploy without building, and check what you deploy"
+    ],
+    [
+      "Where your files go",
+      "Every address a copy of {name} contacts, and when"
+    ],
+    [
+      "Deploying",
+      "IIS, Azure, S3, containers, Intune, one header set"
+    ],
+    [
+      "Enterprise readiness",
+      "The policy, sign-in, audit, retention, and the limits"
+    ]
+  ],
+  "trust.verify": "Check a release with the OpenSSH every system has:",
+  "trust.ci": "Every change passes type checks, unit tests, size budgets, browser tests in Chromium and WebKit, registry signatures and known advisories.",
+  "price.title": "Free for every person. A subscription for the organisation.",
+  "price.cards": [
+    [
+      "Open",
+      "Free",
+      "Everything a person or a team uses: sign-in to your gateway, the policy, encryption, the recipes and the trust pack.",
+      "Get the pilot kit"
+    ],
+    [
+      "Subscription",
+      "From {from} a year",
+      "The audit export and retention, long-term support releases, filled-in security questionnaires and the outside test’s report. Never per seat.",
+      "Ask for a 30-day trial key"
+    ],
+    [
+      "Free key",
+      "Free",
+      "For schools, non-profits and organisations of up to {small} people.",
+      "Ask for a key"
+    ]
+  ],
+  "price.bandsTitle": "Per organisation, per year, excl. VAT",
+  "price.band": "Up to {people} people",
+  "price.more": "More, or a shared provider for many organisations",
+  "price.quote": "On quote",
+  "price.note": "A key unlocks every version released before its end date, forever. {name} checks it offline and never calls home.",
+  "faq.title": "Questions",
+  "faq.items": [
+    [
+      "Can it sit alongside Microsoft 365 Copilot?",
+      "Yes. It serves the people without a Copilot licence, on any device with a browser, and reads and writes Microsoft 365 through your own app registration."
+    ],
+    [
+      "Can it run without the internet?",
+      "With your gateway on premises and the header limited to it, nothing leaves your network. On a capable computer, {name} can also answer on the device."
+    ],
+    [
+      "Which gateways work?",
+      "Any OpenAI-compatible endpoint: LiteLLM, Portkey, Cloudflare AI Gateway, Azure API Management, and public services such as Albert or GWDG’s SAIA."
+    ],
+    [
+      "Can we put our name on it?",
+      "Yes: your name and colours, and your own privacy page and terms."
+    ],
+    [
+      "What if WAREHOUSE SAS stops?",
+      "You keep the releases and the code under MIT, and people keep their files. If no key can be bought for 12 months, the enterprise code becomes MIT."
+    ]
+  ],
+  "share.title": "Share this page with your review team",
+  "share.body": "Security, privacy, purchasing and staff representatives each have their answers above. Send them this address:",
+  "share.write": "Questions or a trial key: {contact}"
+}

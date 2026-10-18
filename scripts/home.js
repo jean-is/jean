@@ -16,6 +16,7 @@ import { LOCALES, dir, languageName } from '../app/core/i18n.js'
 import { xml } from './desktop.js'
 import { shotsOf } from './manifest.js'
 import { familyAddress } from './family.js'
+import { enterpriseAddress } from './enterprise.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const HOME = join(ROOT, 'scripts', 'home')
@@ -254,7 +255,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
         <p class="home-note">${say('share.limits')}</p>
         ${more(say('door.more'), list('share.more'))}`),
       door('open', 'open', `<p>${say('open.text')}</p>
-        ${go([['source', say('open.source')], ['it', say('open.it')]])}`),
+        ${go([['source', say('open.source')], [enterpriseAddress(lang), say('open.it')]])}`),
       door('catch', 'catch', `<ul class="home-dots">${list('catch.items').map((item) => `<li>${item}</li>`).join('')}</ul>
         ${more(say('catch.more'), list('catch.rest'), true)}`),
     ].join('')}
@@ -272,7 +273,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
       <li><a href="files">${appSays('welcome.files')}</a></li><li><a href="privacy">${appSays('welcome.privacy')}</a></li><li><a href="terms">${appSays('welcome.terms')}</a></li><li><a href="source">${say('open.source')}</a></li>
     </ul></nav>
     <nav aria-labelledby="home-foot-for"><p id="home-foot-for" class="home-foot-head">${say('foot.for')}</p><ul>
-      <li><a href="${familyAddress(lang)}">${say('foot.families')}</a></li><li><a href="it">${say('foot.it')}</a></li>
+      <li><a href="${familyAddress(lang)}">${say('foot.families')}</a></li><li><a href="${enterpriseAddress(lang)}">${say('foot.it')}</a></li>
     </ul>
     <label class="home-languages"><span class="visually-hidden">${appSays('settings.language')}</span><select>${LOCALES.map((code) => `
       <option value="${code}" lang="${code}"${code === lang ? ' selected' : ''}>${xml(languageName(code))}</option>`).join('')}

@@ -10,7 +10,8 @@
 // address, cards and schema.org data, robots.txt and sitemap.xml, the privacy policy and the terms with
 // their canonical addresses (D356), every other page unindexed (D355). An ADDRESS on the brand's own
 // domain, jean.is's, adds its page under the app's first screen, in index.html and in one page per
-// language beside it (scripts/home.js, D397), and its family page at /family and /famille (scripts/family.js, D424).
+// language beside it (scripts/home.js, D397), its family page at /family and /fr/famille (scripts/family.js, D424),
+// and its page for IT at /enterprise and /fr/entreprise (scripts/enterprise.js, D428).
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
@@ -23,6 +24,7 @@ import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
 import { homeFiles, inLanguage, ownSite } from './home.js'
 import { familyFiles } from './family.js'
+import { enterpriseFiles } from './enterprise.js'
 import { LISTED, addressOf, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -180,12 +182,14 @@ async function main () {
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
   }
-  // jean.is's page under the app's first screen, in index.html and in its other languages' pages, and its family page (D424).
-  const home = base && ownSite(base, BRAND) ? { ...await homeFiles(base, BRAND, (said, address) => page(index, said, address)), ...await familyFiles(base, BRAND) } : {}
+  // jean.is's page under the app's first screen, in index.html and in its other languages' pages, its family page (D424)
+  // and its page for IT (D428).
+  const home = base && ownSite(base, BRAND) ? { ...await homeFiles(base, BRAND, (said, address) => page(index, said, address)), ...await familyFiles(base, BRAND), ...await enterpriseFiles(base, BRAND) } : {}
   const elsewhere = Object.keys(home).filter((path) => path.endsWith('.html') && path !== 'index.html').map((path) => addressOf(base ?? '', path))
   /** The files a deploy adds beside app/'s, or writes over them (index.html). @type {Record<string, string>} */
   const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base, elsewhere), ...home }
   for (const [path, text] of Object.entries(added)) {
+    await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), text)
     if (!files.includes(path)) files.push(path)
   }

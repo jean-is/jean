@@ -17,7 +17,8 @@
 // lists its files; a deploy never has them.
 // With --home (npm run dev:home), index.html, its pages in other languages (/ja, /ar…) and home.css are
 // jean.is's, its page under the app's first screen included (scripts/home.js, D397), and so are its family
-// page at /family and /famille and family.css (scripts/family.js, D424), made again for each
+// page at /family and /fr/famille and family.css (scripts/family.js, D424), and its page for IT at /enterprise and
+// /fr/entreprise and enterprise.css (scripts/enterprise.js, D428), made again for each
 // request from scripts/home/, at this server's own address; with --gateway or --share too (npm run
 // dev:gateway -- --home), each page names their policy, as jean.is's does.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
@@ -160,18 +161,22 @@ export async function handle (req, res) {
 }
 
 /**
- * jean.is's page that a path names, with --home: index.html, a language's own page, the family page, or a style sheet.
+ * jean.is's page that a path names, with --home: index.html, a language's own page, the family page, the page for IT,
+ * or a style sheet.
  * @param {string} pathname @param {string} at  this server's host and port, the site's address
  * @returns {Promise<{ path: string, text: string } | null>}
  */
 async function homePage (pathname, at) {
   const name = pathname.replace(/^\//, '').replace(/\.html$/, '') || 'index'
-  if (!/^[\w-]+(\.css)?$/.test(name)) return null
-  const [{ homeFiles, homeLanguages, inLanguage }, { withSite }, { BRAND }] = await Promise.all([import('./home.js'), import('./seo.js'), import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)])
   const path = name.endsWith('.css') ? name : `${name}.html`
-  // Its family page, in each language at its own word (scripts/family.js, D424).
-  const { familyFiles, ADDRESSES } = await import('./family.js')
-  if (name === 'family.css' || Object.values(ADDRESSES).includes(name)) return { path, text: (await familyFiles(`http://${at}/`, BRAND))[path] }
+  const brand = async () => (await import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)).BRAND
+  // Its family page and its page for IT, English's at the root and other languages' under their own folder
+  // (scripts/family.js, D424; scripts/enterprise.js, D428).
+  const [{ familyFiles, ADDRESSES: FAMILY }, { enterpriseFiles, ADDRESSES: FOR_IT }] = await Promise.all([import('./family.js'), import('./enterprise.js')])
+  if (name === 'family.css' || Object.values(FAMILY).includes(name)) return { path, text: (await familyFiles(`http://${at}/`, await brand()))[path] }
+  if (name === 'enterprise.css' || Object.values(FOR_IT).includes(name)) return { path, text: (await enterpriseFiles(`http://${at}/`, await brand()))[path] }
+  if (!/^[\w-]+(\.css)?$/.test(name)) return null
+  const [{ homeFiles, homeLanguages, inLanguage }, { withSite }, BRAND] = await Promise.all([import('./home.js'), import('./seo.js'), brand()])
   if (name !== 'index' && name !== 'home.css' && !(await homeLanguages()).includes(name)) return null
   const index = await readFile(join(ROOT, 'app', 'index.html'), 'utf8')
   const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
