@@ -2,14 +2,16 @@
 // the page stays responsive. Keeps one KV cache: when the next prompt continues the
 // previous one (the frozen prefix of D46 makes that the normal case), only the new
 // tokens are read, so a second question about the same document starts at once. A long
-// prompt is read a part at a time into that cache (D350).
+// prompt is read a part at a time into that cache (D350). What it writes carries a watermark (D402).
 //
 // { type: 'load', host, model, dtype }                → progress…, { type: 'ready' }
 // { type: 'generate', messages, tools, maxTokens }    → { type: 'chunk', text }…, { type: 'done', usage }
 // { type: 'abort', id }                                stops that generation, or drops it while it waits its turn
+// { type: 'lean', host, model, text }                 → { type: 'done', counted, z }: its watermark in words, with the tokenizer alone (D402)
 import { AutoTokenizer, Gemma4ForCausalLM, TextStreamer, InterruptableStoppingCriteria, Tensor } from '../../vendor/transformers/transformers.web.min.js'
 import { InferenceSession } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { weightsFrom } from '../../ui/model-worker.js'
+import { watermarker, lean } from './watermark.js'
 
 // Transformers.js gives each session the same options, the weights as their addresses in its cache:
 // each session reads only the file its graph names, as ONNX Runtime makes it, from a Blob, whose
@@ -30,6 +32,8 @@ const PART = 2048
 
 /** @type {Promise<{ tokenizer: any, model: any }> | null} */
 let loading = null
+/** The tokenizer alone, to count words (D402). @type {Promise<any> | null} */
+let tokenizing = null
 /** What the cache holds: the exact text and tokens read so far. */
 let cached = /** @type {{ text: string, ids: number[], cache: any } | null} */ (null)
 /** @type {any} */
@@ -56,9 +60,13 @@ async function handle(data) {
       current = id
       const usage = await generate(data, id).finally(() => { current = 0 })
       self.postMessage({ id, type: 'done', usage })
+    } else if (type === 'lean') {
+      tokenizing ??= AutoTokenizer.from_pretrained(data.model, { progress_callback: weightsFrom(data.host, id) })
+      self.postMessage({ id, type: 'done', ...lean((await tokenizing).encode(data.text, { add_special_tokens: false })) })
     }
   } catch (error) {
     if (type === 'load') loading = null
+    if (type === 'lean') tokenizing = null
     self.postMessage({ id, type: 'error', message: error?.message ?? String(error), code: error?.code })
   }
 }
@@ -148,7 +156,8 @@ async function generate({ messages, tools, maxTokens = 4096, contextTokens = 327
       if (stopping.interrupted) throw Object.assign(new Error('Request aborted'), { code: 'aborted' })
       ;({ past_key_values: cache } = await model.generate({ ...prompt(read), max_new_tokens: 1 }))
     }
-    result = await model.generate({ ...prompt(ids.length), max_new_tokens: Math.min(maxTokens, contextTokens - ids.length), streamer, stopping_criteria: [stopping] })
+    result = await model.generate({ ...prompt(ids.length), max_new_tokens: Math.min(maxTokens, contextTokens - ids.length), streamer, stopping_criteria: [stopping],
+      logits_processor: [watermarker(controls(tokenizer), ids.length)] })
   } catch (error) {
     await cache?.dispose() // it may be half updated
     throw error
@@ -166,6 +175,12 @@ async function forget() {
   cached = null
   await old?.cache?.dispose?.()
 }
+
+/** The tokens that open and close Gemma's thought and its tool calls, chosen greedily (D402). @param {any} tokenizer */
+const controls = (tokenizer) => ({
+  opens: new Set(tokenizer.convert_tokens_to_ids(['<|channel>', '<|tool_call>'])),
+  closes: new Set(tokenizer.convert_tokens_to_ids(['<channel|>', '<tool_call|>'])),
+})
 
 /** @param {number[]} values */
 const toTensor = (values) => new Tensor('int64', BigInt64Array.from(values, BigInt), [1, values.length])

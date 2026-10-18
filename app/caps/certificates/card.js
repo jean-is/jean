@@ -2,13 +2,15 @@
 // an answer when Jean is asked: whether its seal holds, which key sealed it and when, what it says,
 // and, with its proof, the words and which of the files given it names. A picture's or a film's
 // Content Credentials too (D324): whether they hold, who signed them and when, and whether they
-// say AI made it. Drawn with About this answer's card's look (caps/receipt/receipt.css).
+// say AI made it; and whether words carry the watermark of the brain on a device (D402). Drawn with
+// About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { check } from '../receipt/certificate.js'
 import { credentialsOf, NONE } from '../receipt/c2pa.js'
 import { dataOf } from '../pictures/watermark.js'
+import { said } from '../brain-local/watermark.js'
 
 /**
  * A certificate as checked, kept as the call's `_meta.checked`: when it was sealed as text, and each
@@ -110,6 +112,13 @@ export function credentialsCard(one) {
       ${one.at ? html`<div class="receipt-list"><dt>${t('certificates.dated', { name: [one.witness?.['2.5.4.3'], one.witness?.['2.5.4.6']].filter(Boolean).join(' · ') })}</dt><dd>${when(one.at)}</dd></div>` : nothing}
     </dl>
   </div>`
+}
+
+/** Whether words carry the watermark of the brain on a device, once counted (D402). @param {{ counted: number, z: number }} words */
+export function wordsCard(words) {
+  const marked = said(words) === 'marked'
+  return html`<div class="receipt receipt-checked"><div class="receipt-head ${marked ? 'is-local' : ''}">
+    <span class="receipt-mark">${marked ? icons.shield : icons.close}</span><p class="receipt-verdict">${t(`certificates.words.${said(words)}`)}</p></div></div>`
 }
 
 /** A certificate, checked; or that what was given isn't one. @param {Checked | null} [checked] */

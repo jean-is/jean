@@ -38,5 +38,10 @@
   "certificates.watermark.other": "Tanda air tak terlihatnya bukan yang disebutkan catatan ini",
   "certificates.watermark.found": "Ada tanda air tak terlihat di dalamnya",
   "certificates.watermark.none": "Tidak ditemukan tanda air tak terlihat",
-  "certificates.watermark.unread": "Setelah {name} pernah mencari tanda air tak terlihat di perangkat ini, halaman ini juga mencarinya"
+  "certificates.watermark.unread": "Setelah {name} pernah mencari tanda air tak terlihat di perangkat ini, halaman ini juga mencarinya",
+  "certificates.words": "Atau tempel kata-kata untuk mencari tanda air otak di perangkat di dalamnya",
+  "certificates.words.marked": "Kata-kata ini membawa tanda air otak di perangkat: ia yang menulisnya, atau seseorang membuatnya tampak begitu",
+  "certificates.words.none": "Tidak ada tanda air otak di perangkat dalam kata-kata ini: ia tidak menulisnya, atau kata-kata ini sudah ditulis ulang",
+  "certificates.words.short": "Terlalu sedikit kata untuk dipastikan: tempel sekitar satu halaman",
+  "certificates.words.unread": "Setelah {name} pernah mencari tanda air dalam kata-kata di perangkat ini, halaman ini juga mencarinya"
 }

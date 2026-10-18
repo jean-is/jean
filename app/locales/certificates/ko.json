@@ -38,5 +38,10 @@
   "certificates.watermark.other": "보이지 않는 워터마크가 이 기록에 적힌 것과 달라요",
   "certificates.watermark.found": "보이지 않는 워터마크가 있어요",
   "certificates.watermark.none": "보이지 않는 워터마크를 찾지 못했어요",
-  "certificates.watermark.unread": "{name}이 이 기기에서 보이지 않는 워터마크를 한 번 찾고 나면, 이 페이지에서도 찾아요"
+  "certificates.watermark.unread": "{name}이 이 기기에서 보이지 않는 워터마크를 한 번 찾고 나면, 이 페이지에서도 찾아요",
+  "certificates.words": "또는 기기의 두뇌가 남긴 워터마크를 찾으려면 글을 붙여 넣으세요",
+  "certificates.words.marked": "이 글에는 기기의 두뇌가 남긴 워터마크가 있어요. 두뇌가 썼거나, 누군가 그렇게 보이게 만들었어요",
+  "certificates.words.none": "이 글에는 기기의 두뇌가 남긴 워터마크가 없어요. 두뇌가 쓰지 않았거나, 그 뒤에 다시 쓰였어요",
+  "certificates.words.short": "판단하기엔 글이 너무 짧아요. 한 페이지쯤 붙여 넣으세요",
+  "certificates.words.unread": "{name}이 이 기기에서 글의 워터마크를 한 번 찾고 나면, 이 페이지에서도 찾아요"
 }

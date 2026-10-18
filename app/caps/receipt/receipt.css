@@ -58,5 +58,7 @@ app-receipt:has(.receipt:popover-open) .receipt-button { anchor-name: --receipt;
 .receipt.receipt-checked { inline-size: auto; max-inline-size: 30rem; margin: 0.75rem 0; opacity: 1; }
 .certificates-page { display: grid; gap: 1rem; justify-items: start; max-inline-size: 34rem; margin: 3rem auto; padding: 0 1rem; }
 .certificates-page .receipt-checked { inline-size: 100%; max-inline-size: none; }
+.certificates-words { display: grid; gap: 0.4rem; inline-size: 100%; }
+.certificates-words textarea { font: inherit; padding: 0.5rem; resize: vertical; }
 .receipt-checked q { white-space: pre-wrap; }
 @media (forced-colors: active) { .receipt, .receipt-stat, .receipt-mark { border: 1px solid CanvasText; } .receipt-hosts bdi { border-color: CanvasText; } }

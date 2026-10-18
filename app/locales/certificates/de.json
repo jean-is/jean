@@ -38,5 +38,10 @@
   "certificates.watermark.other": "Das unsichtbare Wasserzeichen ist nicht das, das diese Angaben nennen",
   "certificates.watermark.found": "Es trägt ein unsichtbares Wasserzeichen",
   "certificates.watermark.none": "Kein unsichtbares Wasserzeichen gefunden",
-  "certificates.watermark.unread": "Sobald {name} auf diesem Gerät nach einem unsichtbaren Wasserzeichen gesucht hat, sucht auch diese Seite danach"
+  "certificates.watermark.unread": "Sobald {name} auf diesem Gerät nach einem unsichtbaren Wasserzeichen gesucht hat, sucht auch diese Seite danach",
+  "certificates.words": "Oder füge Wörter ein, um darin nach dem Wasserzeichen des Gehirns auf einem Gerät zu suchen",
+  "certificates.words.marked": "Diese Wörter tragen das Wasserzeichen des Gehirns auf einem Gerät: Es hat sie geschrieben, oder jemand hat sie so aussehen lassen",
+  "certificates.words.none": "Kein Wasserzeichen des Gehirns auf einem Gerät in diesen Wörtern: Es hat sie nicht geschrieben, oder sie wurden seitdem umgeschrieben",
+  "certificates.words.short": "Zu wenige Wörter, um es zu sagen: Füge etwa eine Seite ein",
+  "certificates.words.unread": "Sobald {name} auf diesem Gerät in Wörtern nach einem Wasserzeichen gesucht hat, sucht auch diese Seite danach"
 }

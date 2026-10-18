@@ -38,5 +38,10 @@
   "certificates.watermark.other": "Son filigrane invisible n’est pas celui que nomme ce relevé",
   "certificates.watermark.found": "Il porte un filigrane invisible",
   "certificates.watermark.none": "Aucun filigrane invisible trouvé",
-  "certificates.watermark.unread": "Une fois que {name} a cherché un filigrane invisible sur cet appareil, cette page en cherche un aussi"
+  "certificates.watermark.unread": "Une fois que {name} a cherché un filigrane invisible sur cet appareil, cette page en cherche un aussi",
+  "certificates.words": "Ou collez des mots pour y chercher le filigrane du cerveau sur un appareil",
+  "certificates.words.marked": "Ces mots portent le filigrane du cerveau sur un appareil : il les a écrits, ou quelqu’un les a fait passer pour tels",
+  "certificates.words.none": "Aucun filigrane du cerveau sur un appareil dans ces mots : il ne les a pas écrits, ou ils ont été réécrits depuis",
+  "certificates.words.short": "Trop peu de mots pour le dire : collez-en une page environ",
+  "certificates.words.unread": "Une fois que {name} a cherché un filigrane dans des mots sur cet appareil, cette page en cherche un aussi"
 }

@@ -38,5 +38,10 @@
   "certificates.watermark.other": "Ang hindi nakikitang watermark nito ay hindi ang pinangangalanan ng talang ito",
   "certificates.watermark.found": "May hindi nakikitang watermark ito",
   "certificates.watermark.none": "Walang nakitang hindi nakikitang watermark",
-  "certificates.watermark.unread": "Kapag naghanap na ang {name} ng hindi nakikitang watermark sa device na ito, maghahanap din ang page na ito"
+  "certificates.watermark.unread": "Kapag naghanap na ang {name} ng hindi nakikitang watermark sa device na ito, maghahanap din ang page na ito",
+  "certificates.words": "O mag-paste ng mga salita para hanapin dito ang watermark ng utak sa isang device",
+  "certificates.words.marked": "May watermark ng utak sa isang device ang mga salitang ito: ito ang sumulat, o may nagpamukha sa mga ito na ganoon",
+  "certificates.words.none": "Walang watermark ng utak sa isang device sa mga salitang ito: hindi ito ang sumulat, o isinulat muli ang mga ito mula noon",
+  "certificates.words.short": "Masyadong kaunti ang mga salita para masabi: mag-paste ng mga isang pahina",
+  "certificates.words.unread": "Kapag naghanap na ang {name} ng watermark sa mga salita sa device na ito, maghahanap din ang page na ito"
 }

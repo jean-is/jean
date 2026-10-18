@@ -38,5 +38,10 @@
   "certificates.watermark.other": "La sua filigrana invisibile non è quella che nomina questo registro",
   "certificates.watermark.found": "Porta una filigrana invisibile",
   "certificates.watermark.none": "Nessuna filigrana invisibile trovata",
-  "certificates.watermark.unread": "Quando {name} avrà cercato una filigrana invisibile su questo dispositivo, anche questa pagina la cercherà"
+  "certificates.watermark.unread": "Quando {name} avrà cercato una filigrana invisibile su questo dispositivo, anche questa pagina la cercherà",
+  "certificates.words": "Oppure incolla delle parole per cercarvi la filigrana del cervello su un dispositivo",
+  "certificates.words.marked": "Queste parole portano la filigrana del cervello su un dispositivo: le ha scritte lui, o qualcuno le ha fatte sembrare tali",
+  "certificates.words.none": "Nessuna filigrana del cervello su un dispositivo in queste parole: non le ha scritte lui, o sono state riscritte da allora",
+  "certificates.words.short": "Troppe poche parole per dirlo: incollane circa una pagina",
+  "certificates.words.unread": "Quando {name} avrà cercato una filigrana nelle parole su questo dispositivo, anche questa pagina la cercherà"
 }

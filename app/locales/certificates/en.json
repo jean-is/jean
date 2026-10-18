@@ -38,5 +38,10 @@
   "certificates.watermark.other": "Its invisible watermark isn’t the one this record names",
   "certificates.watermark.found": "It carries an invisible watermark",
   "certificates.watermark.none": "No invisible watermark found",
-  "certificates.watermark.unread": "Once {name} has looked for an invisible watermark on this device, this page looks for one too"
+  "certificates.watermark.unread": "Once {name} has looked for an invisible watermark on this device, this page looks for one too",
+  "certificates.words": "Or paste words to look for the watermark of the brain on a device",
+  "certificates.words.marked": "These words carry the watermark of the brain on a device: it wrote them, or someone made them look so",
+  "certificates.words.none": "No watermark of the brain on a device in these words: it didn’t write them, or they were rewritten since",
+  "certificates.words.short": "Too few words to tell: paste a page or so",
+  "certificates.words.unread": "Once {name} has looked for a watermark in words on this device, this page looks for one too"
 }

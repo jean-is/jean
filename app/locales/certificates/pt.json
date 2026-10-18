@@ -38,5 +38,10 @@
   "certificates.watermark.other": "A sua marca de água invisível não é a que este registo nomeia",
   "certificates.watermark.found": "Traz uma marca de água invisível",
   "certificates.watermark.none": "Nenhuma marca de água invisível encontrada",
-  "certificates.watermark.unread": "Depois de {name} procurar uma marca de água invisível neste dispositivo, esta página também a procura"
+  "certificates.watermark.unread": "Depois de {name} procurar uma marca de água invisível neste dispositivo, esta página também a procura",
+  "certificates.words": "Ou cola palavras para procurar nelas a marca de água do cérebro num dispositivo",
+  "certificates.words.marked": "Estas palavras têm a marca de água do cérebro num dispositivo: foi ele que as escreveu, ou alguém as fez parecer assim",
+  "certificates.words.none": "Não há marca de água do cérebro num dispositivo nestas palavras: não foi ele que as escreveu, ou foram reescritas desde então",
+  "certificates.words.short": "Palavras a menos para o dizer: cola mais ou menos uma página",
+  "certificates.words.unread": "Depois de {name} procurar uma marca de água em palavras neste dispositivo, esta página também a procura"
 }

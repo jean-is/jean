@@ -43,6 +43,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   connections: 'connecting a service the user uses (email, documents, calendar…)',
   helpers: 'helpers doing the independent parts of a large task at the same time',
   plugins: "adding a plugin someone made, for what Jean doesn't do yet",
+  certificates: 'checking whether words, a picture or a certificate came from Jean, when asked',
   ...(folders && { sync: 'keeping their work the same on their other computers' }),
 })
 /** What policy leaves to offer: it is set before this module loads (ui/app.js). */

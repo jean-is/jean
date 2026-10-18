@@ -105,7 +105,8 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - EU DSS on a certificate (B-B, then B-T through a qualified authority and the gateway);
 - an SD-JWT library on a proof;
 - `cosign verify-blob` on a bundle;
-- the check page in Firefox and real Safari.
+- the check page in Firefox and real Safari;
+- the device's watermark on Gemma 4 E2B itself (D402): a few dozen answers in several languages counted at 200 tokens, and words pasted on the check page, in Chrome and Safari.
 
 ### 2. Gaps in what is built
 
@@ -155,21 +156,34 @@ Then:
   - **Order:** the pixels first, then the XMP and the manifest, all before the file is named by its hash.
   - **Detection in Jean:** asked, `check_certificate` reads it with TrustMark's decoder (47.4 MB, downloaded the first time), Jean's own BCH_5 decoding agreeing with TrustMark's data layer on every word tried, and says whether it is the one the credentials name; it read the bits back from a JPEG at 70 in Chromium and WebKit, and nothing from a picture without one. TrustMark's own decoders (Python, Rust, JavaScript) read it too.
 - [x] **Pictures and films from the cloud:** the providers' marks pass through untouched; `test/c2pa.test.js` checks the bytes are unchanged.
-- [ ] **Pictures people share:** one with a side over 1568 pixels is kept redrawn smaller, for brains (`caps/files/pictures.js`), which drops its metadata; a watermark would survive. Keep the file as given and send brains the smaller copy.
+- [x] **Pictures people share** (D324): kept as given, with whatever marks they carry; brains see a copy no side of which passes 1568 pixels, made as the message is sent (`seenBy()` in `caps/files/pictures.js`).
 - [x] **Files Jean makes** (`caps/made/formats.js`, D324): Word documents and workbooks in their custom properties (IPTC's `DigitalSourceType`, `AISystemUsed`), drawings in XMP, web pages in schema.org's JSON-LD; Markdown, CSV and other text carry none. C2PA in Office files waits for validators that open them.
-- [ ] **Answers:** free-form text can't carry metadata, so the code of practice asks one layer, a watermark above 200 tokens; the answer's certificate, when saved, is metadata beside it (D274, `trainedAlgorithmicMedia`). The guidelines let Jean rely on a brain's own watermark where it shows that it works and that a means of detection exists. What each does (2026-10-14, from the providers' announcements as reported; check their pages before relying on them):
+- [x] **Answers:** free-form text can't carry metadata, so the code of practice asks one layer, a watermark above 200 tokens; the answer's certificate, when saved, is metadata beside it (D274, `trainedAlgorithmicMedia`). The guidelines let Jean rely on a brain's own watermark where it shows that it works and that a means of detection exists. What each does (2026-10-18, from the providers' announcements as reported; check their pages before relying on them):
 
   | Brain | Text watermark | What Jean can do |
   |---|---|---|
   | Anthropic | On for models released from 2 Aug 2026, every surface and the API included, worldwide (SynthID-Text's method); older models in a transition; detection announced, not yet open | Nothing: it comes with the answer |
   | OpenAI | textGrain, off by default in the API since 5 Oct 2026, for select models; on in ChatGPT and Codex in the EU; detection for approved researchers | The key's owner turns on Allow text watermarking (Organization or Project settings › Data controls › Text provenance); no request parameter exists, so Settings › Brains could say so |
-  | Google Gemini | SynthID-Text in Google's Gemini apps since 2024; its API, to check | To check |
+  | Google Gemini | SynthID-Text in Google's Gemini apps since 2024; whether its API's answers carry it is reported both ways, and Google's documentation presents SynthID-Text as a logits processor for one's own model | To check on Google's own pages |
   | OpenRouter and gateways | Whatever the model's provider does | Same as that provider |
-  | Servers on this computer (Ollama, LM Studio), the device's brain | None: Jean is the only system between the model and the person | A statistical watermark in the device's own sampling (a green list keyed by the previous tokens, as SynthID-Text and Kirchenbauer et al.), detectable by anyone holding its key; an open key makes it forgeable and removable, a secret one leaves detection to whoever holds it. Ollama and LM Studio sample on their side, out of Jean's reach |
+  | The device's brain | Jean's own (D402): each word the winner of Aaronson's race among those Gemma's sampling considers, keyed by the four tokens before, with an open key | Anyone counts it with Gemma's tokenizer, in Jean or on the check page; a confident brain marks short answers weakly (below) |
+  | Servers on this computer (Ollama, LM Studio) | None: they sample on their side, out of Jean's reach | Nothing |
 
-  Left: check Gemini's API; the device's watermark (Transformers.js's sampling takes a logits processor), its key and its detector, measured on quality and on detection at 200 tokens; a line in Settings › Brains for OpenAI keys.
-- [ ] **Detection:** the check page and `check_certificate` read C2PA manifests and TrustMark's watermark (D324): `check_certificate` when asked, downloading the decoder the first time; the check page, which reaches nothing, with the decoder Jean keeps in the browser's cache on that device, else it says so. Left: interoperable through C2PA by 2 Feb 2027 (a soft-binding lookup has no server to ask, so the watermark recovers nothing a stripped picture lost but the fact of it).
-- [ ] **No stripping:** Jean never removes marks. Checked: a provider's picture or film is kept byte for byte (`test/c2pa.test.js`); answers' words are shown and copied as the brain wrote them, so a statistical watermark stays. Left: a shared picture over 1568 pixels (above); and terms that forbid removing them, though Jean has no account, so no terms of use ([open-questions.md](open-questions.md#answer-certificates)).
+  **The device's watermark, measured** (2026-10-18, D402). Gemma 4 E2B wasn't on this computer, so two brains on either side of it were, through MLX, with a Python copy of the race whose counts the JavaScript `lean()` matches to 1e-9 (`test/watermark.test.js` pins one): 24 requests in eight languages (English, French, German, Spanish, Japanese, Arabic, Chinese, Hindi), up to 320 tokens each, answered greedily, sampled and raced, beside 29 texts people wrote (the terms, the docs, the dialogs' strings in six languages). These runs keyed on one token; eight raced answers on Qwen3-0.6B with the four-token key counted 6.9 to 23.8, the shortest about 90 tokens.
+
+  | | Qwen3-0.6B | Gemma 4 26B-A4B |
+  |---|---|---|
+  | Deviations at 200 tokens, raced (mean) | 9.9 | 1.9 |
+  | Raced answers over 4 at 200 tokens | 15 of 17 | 1 of 24 |
+  | Whole raced answers over 4 | 22 of 24 | 4 of 24 |
+  | Highest unmarked (greedy, sampled, people's) | 1.75 | 2.37 |
+  | Log-loss a token: greedy, sampled, raced | 0.44, 1.23, 0.85 | 0.11, 0.22, 0.20 |
+
+  The watermark lives in a brain's doubt: a confident brain writes few words it could have written otherwise, and the 26B one is confident (0.2 nats a token); E2B, smaller, falls between. A green-list bias of 2 under greedy decoding, the first try, counted 2.4 and 0.05 on the 26B's first two answers.
+
+  Left: E2B itself, by hand (below); Google's API; a line in Settings › Brains for OpenAI keys, if Jean must tell their owners ([open-questions.md](open-questions.md#answer-certificates)).
+- [x] **Detection:** the check page and `check_certificate` read C2PA manifests and TrustMark's watermark (D324): `check_certificate` when asked, downloading the decoder the first time; the check page, which reaches nothing, with the decoder Jean keeps in the browser's cache on that device, else it says so. Words, for the device's brain's watermark, the same way (D402): `check_certificate { words }`, downloading Gemma's tokenizer (19 MB) the first time, and the check page, pasted or dropped as `.txt` or `.md`, where the tokenizer is kept. Anyone's C2PA tools read the manifests, and TrustMark's own decoders the watermark; a soft-binding lookup has no server to ask, so the watermark recovers nothing a stripped picture lost but the fact of it.
+- [x] **No stripping:** Jean never removes marks: a provider's picture or film is kept byte for byte (`test/c2pa.test.js`), a shared picture as given (above), and answers' words are shown and copied as the brain wrote them, so a watermark in them stays. The terms (`terms.html`, section 4, in English and French) ask users not to remove or alter marks, Jean's or the brains'.
 - [x] **Labels for deployers (Art. 50(4)), on pictures** (D324): a picture's second save draws the Commission's basic icon, which anyone may use without attribution, and "Made with AI" in the user's language in its corner, and marks the copy again. Left: films (re-encoded) and documents, if users ask; a provider's labelled picture keeps only Jean's marks, its own C2PA chain staying with the picture as first saved (an ingredient in the new manifest would carry it).
 
 ### 5. Open legal questions
@@ -185,7 +199,8 @@ On [open-questions.md](open-questions.md#answer-certificates).
   - D274: certificates and checking;
   - D275: picture safeguards, on its own branch;
   - D276: witnesses;
-  - D279 · D324: the XMP and Content Credentials on pictures made here.
+  - D279 · D324: the marks on what Jean makes, their check and the labelled save;
+  - D402: the device's brain's watermark.
 
   Find the highest in `docs/decisions.md` and every `.claude/worktrees/*` just before taking one.
 - **Shared checkout:** other sessions keep uncommitted edits in the shared checkout. Commit only your own hunks: rebuild shared files from `HEAD` plus your edits, test that snapshot, and commit it with a temporary index.

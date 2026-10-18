@@ -9,6 +9,7 @@ import { modelWorker, downloading, holdStill } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { t, formatBytes } from '../../core/i18n.js'
 import { gemmaParser } from './gemma.js'
+import { BRAIN } from './watermark.js'
 import './private.js'
 
 export { reveal, onDevice } from './private.js'
@@ -16,7 +17,7 @@ export { reveal, onDevice } from './private.js'
 /** @import { StreamEvent, ToolCall } from '../../core/types.js' */
 
 export const GEMMA = Object.freeze({
-  model: 'onnx-community/gemma-4-E2B-it-ONNX',
+  model: BRAIN,
   dtype: 'q4f16',
   bytes: 3.11e9, // decoder and embeddings; the image and audio encoders come later, when needed
   file: 'decoder_model_merged_q4f16.onnx_data',

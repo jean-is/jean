@@ -6,7 +6,6 @@ What is still undecided. An answered question becomes an entry in [decisions.md]
 
 What the certificates' next steps hang on ([certificates.md](certificates.md)):
 
-- **A text watermark for the device's brain:** feasible in its sampling, and how detected? An open key makes it detectable by anyone and as easily removed or forged; does that meet "robust and reliable", or is a secret key with a detection service of the maintainer's the only way, which Jean otherwise has no server for?
 - **Witnesses outside the US:** none found that answers browsers. Ship a gateway default, or leave each organisation to name its own?
 - **Which Settings** should name witnesses, the log and a brain's jurisdiction, and should policy lock them?
 

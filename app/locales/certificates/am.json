@@ -38,5 +38,10 @@
   "certificates.watermark.other": "የማይታየው የውሃ ምልክቱ ይህ መዝገብ የሚጠቅሰው አይደለም",
   "certificates.watermark.found": "የማይታይ የውሃ ምልክት አለው",
   "certificates.watermark.none": "የማይታይ የውሃ ምልክት አልተገኘም",
-  "certificates.watermark.unread": "በዚህ መሣሪያ ላይ በ{name} አንድ ጊዜ የማይታይ የውሃ ምልክት ከተፈለገ በኋላ ይህ ገጽም ይፈልጋል"
+  "certificates.watermark.unread": "በዚህ መሣሪያ ላይ በ{name} አንድ ጊዜ የማይታይ የውሃ ምልክት ከተፈለገ በኋላ ይህ ገጽም ይፈልጋል",
+  "certificates.words": "ወይም በአንድ መሣሪያ ላይ ያለውን አንጎል የውሃ ምልክት ለመፈለግ ቃላትን ይለጥፉ",
+  "certificates.words.marked": "እነዚህ ቃላት በአንድ መሣሪያ ላይ ያለው አንጎል የውሃ ምልክት አላቸው፦ እሱ ጽፏቸዋል፣ ወይም አንድ ሰው እንደዚያ እንዲመስሉ አድርጓል",
+  "certificates.words.none": "በእነዚህ ቃላት ውስጥ በአንድ መሣሪያ ላይ ያለው አንጎል የውሃ ምልክት የለም፦ እሱ አልጻፋቸውም፣ ወይም ከዚያ በኋላ እንደገና ተጽፈዋል",
+  "certificates.words.short": "ለመናገር ቃላቱ በጣም ጥቂት ናቸው፦ አንድ ገጽ ያህል ይለጥፉ",
+  "certificates.words.unread": "በዚህ መሣሪያ ላይ በ{name} አንድ ጊዜ በቃላት ውስጥ የውሃ ምልክት ከተፈለገ በኋላ ይህ ገጽም ይፈልጋል"
 }

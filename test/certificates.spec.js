@@ -2,7 +2,7 @@
 // its proof and files, says whether its seal holds, who sealed it and what it says, and reaches
 // nothing outside Jean's own files; a certificate shared in a conversation brings check_certificate,
 // whose card in the answer says the same, and knows this device's own seal. A picture's Content
-// Credentials, read the same ways (D324).
+// Credentials, read the same ways (D324), and words, for the watermark of the brain on a device (D402).
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
@@ -148,6 +148,33 @@ for (const lang of ['en', 'ar', 'ja']) {
     await input.setInputFiles([await signedPicture()])
     await expect(checker.locator('.receipt-checked .receipt-note')).toContainText(strings['certificates.watermark.found'])
     await expect(checker.locator('main > .receipt-note')).toHaveCount(1)
+    // Nothing went anywhere but Jean's own files.
+    expect([...reached]).toEqual([new URL(baseURL ?? '').host])
+    await context.close()
+  })
+}
+
+for (const lang of ['en', 'ar', 'ja']) {
+  test(`the check page counts pasted words for the watermark of the brain on a device, with the tokenizer this device keeps, never fetched (D402, ${lang})`, async ({ browser, baseURL }) => {
+    const { BRAIN } = await import('../app/caps/brain-local/watermark.js')
+    const { BRAND } = await import('../app/brand.js')
+    const strings = JSON.parse(await readFile(new URL(`../app/locales/certificates/${lang}.json`, import.meta.url), 'utf8'))
+    const context = await browser.newContext({ locale: lang, baseURL })
+    const reached = new Set()
+    context.on('request', (request) => reached.add(new URL(request.url()).host))
+    const checker = await context.newPage()
+    // The brain's worker, counting words with its tokenizer alone: these count as marked.
+    await checker.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
+      body: 'self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: \'done\', counted: 240, z: 9.5 })' }))
+    await checker.goto('check.html')
+    const words = checker.getByRole('textbox', { name: strings['certificates.words'] })
+    // Without the tokenizer on this device, what lets the page count.
+    await words.fill('Les feuilles changent de couleur en automne.')
+    await expect(checker.locator('main > .receipt-note').last()).toHaveText(strings['certificates.words.unread'].replace('{name}', BRAND.name))
+    // With it, kept where Jean keeps it, the words are counted.
+    await checker.evaluate(async (path) => (await caches.open('transformers-cache')).put(`https://huggingface.co/${path}`, new Response('{}')), `${BRAIN}/resolve/main/tokenizer.json`)
+    await words.fill('Les feuilles changent de couleur en automne, encore.')
+    await expect(checker.locator('.receipt-checked .receipt-verdict')).toHaveText(strings['certificates.words.marked'])
     // Nothing went anywhere but Jean's own files.
     expect([...reached]).toEqual([new URL(baseURL ?? '').host])
     await context.close()
