@@ -142,8 +142,12 @@
 .home-trunk { stroke: var(--ink-soft); stroke-width: 3; }
 .home-blossom { fill: var(--room); }
 
-/* How it went: the first tile's request, replayed. */
-.home-replay { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); scroll-margin-block-start: 5rem; }
+/* How it went: the active tile's request, replayed. Every replay is in the page, stacked in one place so the page
+   never moves as they change, the active tile's shown. */
+.home-replays { display: grid; scroll-margin-block-start: 5rem; }
+.home-replays > .home-replay { grid-area: 1 / 1; transition: opacity 0.25s var(--ease), visibility 0.25s; }
+.home-replays > .home-replay[inert] { visibility: hidden; opacity: 0; }
+.home-replay { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); }
 .home-replay > li { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; min-inline-size: 0; font-size: 0.875rem; }
 .home-replay > li + li { padding-inline-start: 1.25rem; border-inline-start: 1px solid var(--line); }
 .home-asked { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; padding: 0.45rem 0.8rem; border-radius: var(--radius); background: var(--room-2); line-height: 1.45; }

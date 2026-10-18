@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { BRAND } from '../app/brand.js'
-import { appWords, homeFiles, homeLanguages, homeOf, homeStyle, homeWords, inLanguage, ownSite, sampleAnswer, withHome } from '../scripts/home.js'
+import { appWords, homeFiles, homeLanguages, homeOf, homeStyle, homeWords, inLanguage, ownSite, sampleAnswer, savingsAnswer, withHome } from '../scripts/home.js'
 import { siteFiles, titleOf, withSite } from '../scripts/seo.js'
 
 const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
@@ -44,7 +44,9 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
     assert.doesNotMatch(text, /\b(agents?|models?|MCP|tokens?|tutors?)\b/i, lang)
     assert.doesNotMatch(page, /\sstyle=|<script|\son[a-z]+=/i, lang)
     assert.doesNotMatch(page, /\{\w+\}/, `${lang}: every {param} is filled`)
-    assert.equal(page.match(/data-try="/g)?.length, 13, `${lang}: twelve tiles and the replay try an idea`)
+    assert.equal(page.match(/data-try="/g)?.length, 24, `${lang}: twelve tiles and their replays try an idea`)
+    assert.equal(page.match(/class="home-replay" data-replay="/g)?.length, 12, `${lang}: a replay for each tile`)
+    assert.equal(page.match(/ inert>/g)?.length, 11, `${lang}: the first tile's replay shown, the others not`)
     for (const group of ['home', 'family', 'work']) assert.equal(page.match(new RegExp(`data-for="${group}"`, 'g'))?.length, 4, `${lang}: four tiles ${group}`)
     assert.ok(page.startsWith(`<div class="home" lang="${lang}"`), lang)
   }
@@ -52,11 +54,13 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
 
 test('the sample’s tile and replay say what the sample spreadsheet holds', async () => {
   const sample = await sampleAnswer()
-  assert.deepEqual([sample.products, sample.months], [4, 12], 'replay.read says 4 products over 12 months, in every language')
+  assert.deepEqual([sample.products, sample.months], [4, 12], 'replay.sample says 4 products over 12 months, in every language')
+  assert.deepEqual(savingsAnswer(), { total: 29450, put: 24000 }, 'replay.savings says what 200 a month at 4% comes to in ten years')
   assert.equal(sample.product, 'Juice')
   assert.ok(sample.growth > 1.6 && sample.growth < 1.7)
   const page = homeOf(await homeWords('en'), await appWords('en'), { lang: 'en', dir: 'ltr', brand: BRAND, sample })
   assert.match(page, /<bdi>Juice<\/bdi> grew the most: \+169%/)
+  assert.match(page, /About 29,450 after ten years, 24,000 of it put in/)
   assert.match(page, /“<span class="home-request">Which product grew the most over the year\? Show it as a chart\.<\/span>”/)
 })
 

@@ -29,7 +29,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await expect(about).toHaveCount(0)
 
   // A try puts its request in the box, back up at the top; the sample's comes with its file.
-  await home.locator('[data-try="music"]').click()
+  await home.locator('.home-tile [data-try="music"]').click()
   await expect(page.locator('#prompt')).toHaveValue('A lullaby in D major for Léa’s bedtime.')
   await expect(page.locator('#prompt')).toBeFocused()
   expect(await page.evaluate(() => scrollY)).toBe(0)
@@ -38,14 +38,14 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await expect(home.locator('.home-tile[data-for="family"]:visible')).toHaveCount(4)
   await expect(home.locator('.home-tile:visible')).toHaveCount(4)
   await home.locator('label[for="home-for-all"]').click()
-  await home.locator('.home-replay [data-try="sample"]').click()
+  await home.locator('.home-tile [data-try="sample"]').click()
   await expect(page.locator('.attachment-name')).toHaveText('sales.csv')
   await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')
   // Each Try starts from an empty box: the sample's file goes with the next one.
-  await home.locator('[data-try="quiz"]').click()
+  await home.locator('.home-tile [data-try="quiz"]').click()
   await expect(page.locator('.attachment-name')).toHaveCount(0)
   await expect(page.locator('#prompt')).toHaveValue('A quiz on the planets for my son, ten questions.')
-  await home.locator('.home-replay [data-try="sample"]').click()
+  await home.locator('.home-tile [data-try="sample"]').click()
   await expect(page.locator('.attachment-name')).toHaveCount(1)
 
   // A door unfolds in place, its words in the page all along.
@@ -86,7 +86,7 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${JEAN_IS}ja`)
   await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', JEAN_IS)
   expect(new URL(page.url()).pathname).toBe('/ja')
-  await page.locator('.home [data-try="quiz"]').click()
+  await page.locator('.home-tile [data-try="quiz"]').click()
   await expect(page.locator('#prompt')).toHaveValue('息子向けに、惑星クイズを10⁠問。')
 
   await connectFakeBrain(page)
@@ -119,6 +119,14 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     // The pointer picks one, and so does the keyboard; one stays active when the pointer leaves.
     await tiles.nth(2).hover()
     await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
+    // Its replay is the one shown, heard politely; its Try puts the tile's request in the box.
+    await expect(home.locator('.home-replays')).toHaveAttribute('aria-live', 'polite')
+    await expect(home.locator('.home-replay[data-replay="quiz"]')).toBeVisible()
+    await expect(home.locator('.home-replay:visible')).toHaveCount(1)
+    await expect(home.locator('.home-replay[data-replay="sample"]')).toBeHidden()
+    await home.locator('.home-replay[data-replay="quiz"] [data-try]').click()
+    await expect(page.locator('#prompt')).toHaveValue(lang === 'en' ? 'A quiz on the planets for my son, ten questions.' : /./)
+    await tiles.nth(2).hover()
     // Only the active tile's Try is the primary one.
     await expect(tiles.nth(2).locator('[data-try]')).toHaveClass(/primary/)
     await expect(tiles.first().locator('[data-try]')).not.toHaveClass(/primary/)

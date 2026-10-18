@@ -67,6 +67,15 @@ export async function sampleAnswer () {
   return { ...best, products: products.length, months: months.length }
 }
 
+/**
+ * What the savings idea comes to (starter.savings.prompt): 200 a month for ten years at 4% a year, interest
+ * added monthly; the total to the nearest ten, and what was put in.
+ */
+export function savingsAnswer (monthly = 200, rate = 0.04, years = 10) {
+  const [month, months] = [rate / 12, years * 12]
+  return { total: Math.round((monthly * ((1 + month) ** months - 1)) / month / 10) * 10, put: monthly * months }
+}
+
 /** A text with its {params} filled. @param {string} text @param {Record<string, string>} params */
 const fill = (text, params) => text.replace(/\{(\w+)\}/g, (whole, key) => params[key] ?? whole)
 
@@ -74,6 +83,12 @@ const ICONS = {
   file: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h6.5L18 8v12.5H7z"/><path d="M13.5 3.5V8H18"/></svg>',
   chart: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19.5V11M10 19.5V6M15 19.5v-6M20 19.5V9"/></svg>',
   brain: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M7.5 12.5c1.5-2.4 3-2.4 4.5 0s3 2.4 4.5 0"/></svg>',
+  note: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>',
+  app: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 9h17"/></svg>',
+  pin: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2"/></svg>',
+  tree: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M12 7v4M6 16v-3h12v3"/></svg>',
+  table: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/></svg>',
+  picture: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M20.5 16l-5-5-8 8.5"/></svg>',
   shield: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l7 2.5v5.5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/></svg>',
   down: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>',
   plus: '<svg class="icon is-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
@@ -107,9 +122,9 @@ const PLAN = `<svg viewBox="0 0 200 110" aria-hidden="true"><path class="home-gr
  * The page, in one language.
  * @param {Words} words  scripts/home/<lang>.json
  * @param {Record<string, string>} app  appWords()'s, in the same language
- * @param {{ lang: string, dir: string, brand: { name: string, domain: string }, sample: Awaited<ReturnType<typeof sampleAnswer>> }} context
+ * @param {{ lang: string, dir: string, brand: { name: string, domain: string }, sample: Awaited<ReturnType<typeof sampleAnswer>>, saved?: ReturnType<typeof savingsAnswer> }} context
  */
-export function homeOf (words, app, { lang, dir, brand, sample }) {
+export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsAnswer() }) {
   const params = { name: brand.name, domain: brand.domain, free: app['first.free'] ?? '' }
   /** One of the page's strings, filled and escaped. @param {string} key @param {Record<string, string>} [more] */
   const say = (key, more = {}) => {
@@ -127,17 +142,55 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
   const [open, close] = say('quote').split('{text}')
   const quoted = (/** @type {string} */ text) => `${open}<span class="home-request">${text}</span>${close}`
   const growth = new Intl.NumberFormat(lang, { style: 'percent', signDisplay: 'exceptZero' }).format(sample.growth)
-  const grew = say('replay.grew', { product: '\u0000', growth }).replace('\u0000', `<bdi>${xml(sample.product)}</bdi>`)
+  const number = new Intl.NumberFormat(lang, { maximumFractionDigits: 0 })
+  const results = { product: '\u0000', growth, total: number.format(saved.total), saved: number.format(saved.put) }
+  /** A replay's step or result, filled with what the sample and the savings come to, the product in its own direction. @param {string} text */
+  const fact = (text) => xml(fill(text, { ...params, ...results })).replace('\u0000', `<bdi>${xml(sample.product)}</bdi>`)
+  /** A tile's replay: three steps, what came back, its chip. @param {string} key @returns {string[]} */
+  const replayOf = (key) => {
+    const items = words[`replay.${key}`]
+    if (!Array.isArray(items) || items.length !== 5) throw new Error(`scripts/home/${lang}.json: replay.${key} is three steps, a result and a chip`)
+    return items.map((item) => fact(String(item)))
+  }
   const file = `<span class="home-file" dir="ltr">${ICONS.file}sales.csv</span>`
   const tryIt = (/** @type {string} */ key, primary = false) => `<button type="button" class="button${primary ? ' primary' : ''}" data-try="${key}">${say('tile.try')}</button>`
-  // One tile is the active one at all times, the first until the pointer, a tap or the keyboard picks another (ui/home.js).
-  const tile = (/** @type {string} */ group, /** @type {string} */ ask, /** @type {string} */ art, /** @type {string} */ go, active = false) => `
-    <li class="home-tile${active ? ' is-active' : ''}" data-for="${group}"${active ? ' aria-current="true"' : ''}>
-      <span class="home-where">${say(`range.${group}`)}</span>
-      <p class="home-ask">${ask}</p>
-      ${art}
-      <p class="home-go">${go}</p>
+  /** A use with no file: its request, quoted on the tile and as asked in its replay. @param {string} text */
+  const asking = (text) => ({ ask: quoted(text), said: `<span>${text}</span>` })
+  // Four for each, three rows of four mixed, a row each once filtered: what Jean makes and shows, never homework.
+  const uses = [
+    { key: 'sample', group: 'work', chip: 'chart', ask: `${file} ${quoted(appSays('starter.sample.prompt'))}`, said: `${file}<span>${appSays('starter.sample.prompt')}</span>`,
+      art: `<div class="home-art" aria-hidden="true"><span class="home-bars"><i></i><i></i><i></i><i></i></span><span class="home-badge">${replayOf('sample')[3]}</span></div>` },
+    { key: 'music', group: 'family', chip: 'note', ...asking(say('tile.music')), art: `<div class="home-art">${MUSIC}</div>` },
+    { key: 'quiz', group: 'family', chip: 'app', ...asking(say('tile.quiz')), art: `<div class="home-art" aria-hidden="true"><span class="home-quiz"><b>${say('tile.quiz.question')}</b>${list('tile.quiz.answers').map((answer) => `<span>${answer}</span>`).join('')}</span></div>` },
+    { key: 'map', group: 'home', chip: 'pin', ...asking(say('tile.map')), art: `<div class="home-art is-map">${MAP}</div>` },
+    { key: 'slides', group: 'work', chip: 'file', ...asking(say('tile.slides')), art: `<div class="home-art">${DECK}</div>` },
+    { key: 'savings', group: 'home', chip: 'chart', ...asking(appSays('starter.savings.prompt')), art: `<div class="home-art">${SAVINGS}</div>` },
+    { key: 'tree', group: 'family', chip: 'tree', ...asking(say('tile.tree')), art: `<div class="home-art">${TREE}</div>` },
+    { key: 'dinners', group: 'home', chip: 'table', ...asking(say('tile.dinners')), art: `<div class="home-art">${WEEK}</div>` },
+    { key: 'minutes', group: 'work', chip: 'file', ...asking(say('tile.minutes')), art: `<div class="home-art">${MINUTES}</div>` },
+    { key: 'invitation', group: 'family', chip: 'file', ...asking(say('tile.invitation')), art: `<div class="home-art">${CARD}</div>` },
+    { key: 'picture', group: 'home', chip: 'picture', ...asking(say('tile.picture')), art: `<div class="home-art is-map">${STREET}</div>` },
+    { key: 'plan', group: 'work', chip: 'file', ...asking(say('tile.plan')), art: `<div class="home-art">${PLAN}</div>` },
+  ]
+  // One tile is the active one at all times, the first until the pointer, a tap or the keyboard picks another, its Try the
+  // primary one and its replay the one shown (ui/home.js).
+  const tile = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => `
+    <li class="home-tile${i ? '' : ' is-active'}" data-for="${use.group}"${i ? '' : ' aria-current="true"'}>
+      <span class="home-where">${say(`range.${use.group}`)}</span>
+      <p class="home-ask">${use.ask}</p>
+      ${use.art}
+      <p class="home-go">${tryIt(use.key, !i)}<a href="#home-how">${say('tile.how')}</a></p>
     </li>`
+  const replay = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => {
+    const [first, second, third, got, chip] = replayOf(use.key)
+    return `
+      <ol class="home-replay" data-replay="${use.key}" aria-label="${say('tile.how')}"${i ? ' inert' : ''}>
+        <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="auto">${use.said}</p></li>
+        <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks">${[first, second, third].map((step) => `<li>${step}</li>`).join('')}</ul></li>
+        <li><span class="home-step">${say('replay.get')}</span><p>${got}</p><span class="home-file" dir="auto">${ICONS[/** @type {keyof typeof ICONS} */ (use.chip)]}${chip}</span></li>
+        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}${appSays('receipt.inCloud')}</b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi>openrouter.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p>${tryIt(use.key, true)}</li>
+      </ol>`
+  }
   const more = (/** @type {string} */ label, /** @type {string[]} */ items, dots = false) => `<details><summary>${label}${ICONS.down}</summary><ul${dots ? ' class="home-dots"' : ''}>${items.map((item) => `<li>${item}</li>`).join('')}</ul></details>`
   const door = (/** @type {string} */ id, /** @type {string} */ key, /** @type {string} */ body, featured = false) => `
       <article id="home-${id}" class="home-door${featured ? ' is-featured' : ''}" aria-labelledby="home-${id}-title">
@@ -172,30 +225,12 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
     </fieldset>
     <div class="home-row">
     <button type="button" class="home-turn is-back" aria-label="${say('range.back')}" disabled>${TURN}</button>
-    <ul class="home-tiles">${[
-      tile('work', `${file} ${quoted(appSays('starter.sample.prompt'))}`, `<div class="home-art" aria-hidden="true"><span class="home-bars"><i></i><i></i><i></i><i></i></span><span class="home-badge">${grew}</span></div>`, `${tryIt('sample', true)}<a href="#home-how">${say('tile.how')}</a>`, true),
-      tile('family', quoted(say('tile.music')), `<div class="home-art">${MUSIC}</div>`, tryIt('music')),
-      tile('family', quoted(say('tile.quiz')), `<div class="home-art" aria-hidden="true"><span class="home-quiz"><b>${say('tile.quiz.question')}</b>${list('tile.quiz.answers').map((answer) => `<span>${answer}</span>`).join('')}</span></div>`, tryIt('quiz')),
-      tile('home', quoted(say('tile.map')), `<div class="home-art is-map">${MAP}</div>`, tryIt('map')),
-      // Four for each, three rows of four mixed, a row each once filtered: what Jean makes and shows, never homework.
-      tile('work', quoted(say('tile.slides')), `<div class="home-art">${DECK}</div>`, tryIt('slides')),
-      tile('home', quoted(appSays('starter.savings.prompt')), `<div class="home-art">${SAVINGS}</div>`, tryIt('savings')),
-      tile('family', quoted(say('tile.tree')), `<div class="home-art">${TREE}</div>`, tryIt('tree')),
-      tile('home', quoted(say('tile.dinners')), `<div class="home-art">${WEEK}</div>`, tryIt('dinners')),
-      tile('work', quoted(say('tile.minutes')), `<div class="home-art">${MINUTES}</div>`, tryIt('minutes')),
-      tile('family', quoted(say('tile.invitation')), `<div class="home-art">${CARD}</div>`, tryIt('invitation')),
-      tile('home', quoted(say('tile.picture')), `<div class="home-art is-map">${STREET}</div>`, tryIt('picture')),
-      tile('work', quoted(say('tile.plan')), `<div class="home-art">${PLAN}</div>`, tryIt('plan')),
-    ].join('')}
+    <ul class="home-tiles">${uses.map(tile).join('')}
     </ul>
     <button type="button" class="home-turn is-next" aria-label="${say('range.next')}">${TURN}</button>
     </div>
-    <ol id="home-how" class="home-replay" aria-label="${say('tile.how')}">
-      <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="auto">${file}<span>${appSays('starter.sample.prompt')}</span></p></li>
-      <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks"><li>${say('replay.read')}</li><li>${say('replay.calculated')}</li><li>${say('replay.drew')}</li></ul></li>
-      <li><span class="home-step">${say('replay.get')}</span><p>${grew}</p><span class="home-file">${ICONS.chart}${say('replay.chart')}</span></li>
-      <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}${appSays('receipt.inCloud')}</b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi>openrouter.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p>${tryIt('sample', true)}</li>
-    </ol>
+    <div id="home-how" class="home-replays" aria-live="polite">${uses.map(replay).join('')}
+    </div>
   </section>
   <section id="home-why" class="home-section is-side" aria-labelledby="home-why-title">
     <header class="home-head">

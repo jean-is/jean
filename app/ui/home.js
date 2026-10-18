@@ -20,11 +20,16 @@ function tryIt(event) {
   app.attachments.value = []
   app.draft.value = ''
   if (button.dataset.try === 'sample') return idea('sample')
-  app.draft.value = button.closest('.home-tile')?.querySelector('.home-request')?.textContent ?? ''
+  // Its tile's request, from the tile or from its replay.
+  app.draft.value = document.querySelector(`.home-tile [data-try="${button.dataset.try}"]`)?.closest('.home-tile')?.querySelector('.home-request')?.textContent ?? ''
   focusComposer()
 }
 
-/** The active tile, which assistive technologies hear as the current one, its Try the primary one; one at all times, a visible one. @param {Element} home @param {Element | null | undefined} tile */
+/**
+ * The active tile, which assistive technologies hear as the current one, its Try the primary one and its replay
+ * the one shown (a polite live region, heard without moving the focus); one at all times, a visible one.
+ * @param {Element} home @param {Element | null | undefined} tile
+ */
 function activate(home, tile) {
   const tiles = [...home.querySelectorAll('.home-tile')]
   const active = tile && tile.checkVisibility() ? tile : tiles.find((one) => one.matches('.is-active') && one.checkVisibility()) ?? tiles.find((one) => one.checkVisibility())
@@ -34,6 +39,8 @@ function activate(home, tile) {
     if (one === active) one.setAttribute('aria-current', 'true')
     else one.removeAttribute('aria-current')
   }
+  const key = active?.querySelector('[data-try]')?.getAttribute('data-try')
+  for (const replay of home.querySelectorAll('.home-replay')) replay.toggleAttribute('inert', replay.getAttribute('data-replay') !== key)
 }
 
 /** The filter's mark under its choice, from the inline start in either direction. @param {HTMLElement} filter */
