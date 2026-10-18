@@ -193,7 +193,7 @@ function actions(id) {
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
     <button type="button" class="submenu" data-page="looks" @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
-      ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`)}</span>${icons.chevron}</button>
+      ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`, { name: BRAND.name })}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.moon}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
     <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>
@@ -239,7 +239,7 @@ export function nextLook() {
   const ids = Object.keys(LOOKS)
   const id = ids[(ids.indexOf(chosenLook()) + 1) % ids.length]
   setLook({ id })
-  notify(t(`look.${id}.name`))
+  notify(t(`look.${id}.name`, { name: BRAND.name }))
 }
 
 /** The next language, in the menu's order, the browser's first, its name shown in its own words, unless policy sets it (⌘⇧L, D253). */
