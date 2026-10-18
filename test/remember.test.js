@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { memoryFS } from '../app/core/fs.js'
 import { parseFrontMatter, stringifyFrontMatter, listProjects, createProject, ensureHome, slug } from '../app/core/settings.js'
 import { parseMemory, stringifyMemory, memoryText } from '../app/core/memory.js'
-import { parseSkill, listSkills, saveSkill, skillLines } from '../app/core/skills.js'
+import { parseSkill, listSkills, saveSkill, skillLines, skillNamed } from '../app/core/skills.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes } from '../app/core/prompt.js'
 import { alike, restated } from '../app/core/search.js'
 import { importBackup, exportBackup } from '../app/caps/backup/archive.js'
@@ -96,6 +96,12 @@ test('skills are SKILL.md folders: name and description up front, steps read whe
   assert.deepEqual(skills.map((s) => [s.name, s.description, s.path]), [['weekly-sales', 'The bakery’s version.', 'projects/p/skills/weekly-sales/SKILL.md']])
   assert.equal(skills[0].title, 'weekly sales', 'without a heading, the name')
   assert.equal(skillLines(skills), '- weekly-sales: The bakery’s version.')
+})
+
+test('a skill named with underscores is read by its name, a file beside it as it is (D406)', () => {
+  assert.equal(skillNamed(' process_improvement '), 'process-improvement')
+  assert.equal(skillNamed('music_score/reference_notes.md'), 'music-score/reference_notes.md')
+  assert.equal(skillNamed('music-score'), 'music-score')
 })
 
 test('the prompt holds project, instructions, memory and skills, frozen; changes come as notes', () => {

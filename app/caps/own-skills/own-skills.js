@@ -6,6 +6,7 @@
 import { register, isDenied, loaded, unlock } from '../../ui/caps.js'
 import { app } from '../../ui/state.js'
 import { DIRECTORY } from '../skills/directory.js'
+import { skillNamed } from '../../core/skills.js'
 
 /** Their names, unless policy keeps to the organisation's sources. */
 const own = app.policy.skills?.only ? [] : DIRECTORY.map((entry) => entry.name)
@@ -21,8 +22,8 @@ const skillTool = {
   kind: 'read',
   title: (args) => `Skill ${args?.name ?? ''}`,
   run: async (args) => {
-    const named = String(args?.name ?? '')
-    if (!loaded.value.has('skills') && !(own.includes(named.trim().split('/')[0]) && await unlock('skills'))) throw new Error(`There is no skill named "${named}".`)
+    const named = skillNamed(String(args?.name ?? ''))
+    if (!loaded.value.has('skills') && !(own.includes(named.split('/')[0]) && await unlock('skills'))) throw new Error(`There is no skill named "${named}".`)
     return (await import('../skills/skills.js')).read(named)
   },
 }
