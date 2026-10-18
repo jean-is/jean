@@ -1,6 +1,6 @@
 # Jean
 
-**AI for your files, in a browser tab.** Nothing to install. Kept on your device. Free and open source.
+**Everyone's AI, in a browser tab.** Anything in, anything out, with the AI you choose. Nothing to install. Kept on your device. Free and open source.
 
 ## Why
 
