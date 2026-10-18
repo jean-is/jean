@@ -67,6 +67,8 @@ export const app = {
   dialog: signal(null),
   section: signal('general'),
   draft: signal(''),
+  /** jean.is's page under the first screen asked for again from under the box, through a change of address too (D397). */
+  about: signal(globalThis.sessionStorage?.getItem('app.about') === 'true'),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
   decisions: signal(/** @type {Decision[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<ServiceWorker | null>} */
@@ -142,8 +144,9 @@ export function notify(message, action) {
 
 /** @param {string} lang */
 export async function setLocale(lang) {
-  await useLocale(lang)
+  // Kept first: on jean.is, the page under the first screen may follow it to another address (D397).
   await updateSettings({ locale: lang })
+  await useLocale(lang)
 }
 
 /** @param {string} kind @param {import('../core/types.js').RuleValue} value */
@@ -251,6 +254,9 @@ export async function enterProject(project) {
   // left to a new one there, never through a new one in the room left.
   batch(() => { newConversation(); app.project.value = project; app.conversations.value = conversations })
 }
+
+/** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
+export const firstVisit = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */
 export const assistantName = () => String(app.project.value.data.assistantName || BRAND.name)

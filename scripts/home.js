@@ -12,7 +12,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { dir } from '../app/core/i18n.js'
+import { LOCALES, dir, languageName } from '../app/core/i18n.js'
 import { xml } from './desktop.js'
 import { shotsOf } from './manifest.js'
 
@@ -21,7 +21,6 @@ const HOME = join(ROOT, 'scripts', 'home')
 const APP = join(ROOT, 'app')
 
 /** @typedef {Record<string, string | string[] | string[][]>} Words */
-/** @typedef {{ lang: string, name: string, href: string }} Language */
 
 /** Whether the site at `base` is the brand's own, the one site with the page. @param {string} base @param {{ domain: string }} brand */
 export const ownSite = (base, brand) => new URL(base).host === brand.domain
@@ -91,9 +90,9 @@ const MAP = '<svg viewBox="0 0 200 130" preserveAspectRatio="xMidYMid slice" ari
  * The page, in one language.
  * @param {Words} words  scripts/home/<lang>.json
  * @param {Record<string, string>} app  appWords()'s, in the same language
- * @param {{ lang: string, dir: string, brand: { name: string, domain: string }, sample: Awaited<ReturnType<typeof sampleAnswer>>, languages: Language[] }} context
+ * @param {{ lang: string, dir: string, brand: { name: string, domain: string }, sample: Awaited<ReturnType<typeof sampleAnswer>> }} context
  */
-export function homeOf (words, app, { lang, dir, brand, sample, languages }) {
+export function homeOf (words, app, { lang, dir, brand, sample }) {
   const params = { name: brand.name, domain: brand.domain, free: app['first.free'] ?? '' }
   /** One of the page's strings, filled and escaped. @param {string} key @param {Record<string, string>} [more] */
   const say = (key, more = {}) => {
@@ -131,7 +130,6 @@ export function homeOf (words, app, { lang, dir, brand, sample, languages }) {
       </article>`
   const go = (/** @type {Array<[string, string]>} */ links) => `<p class="home-door-go">${links.map(([href, label]) => `<a href="${href}">${label} ${ARROW}</a>`).join('')}</p>`
   const person = (/** @type {string} */ who, /** @type {string} */ how) => `<li><i aria-hidden="true">${xml([...fill(String(words[who]), params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
-  const here = languages.find((language) => language.lang === lang)
   return `<div class="home" lang="${lang}" dir="${dir}">
   <nav class="home-strip" aria-labelledby="home-for">
     <span id="home-for" class="home-strip-label">${say('strip.label')}</span>
@@ -206,9 +204,9 @@ export function homeOf (words, app, { lang, dir, brand, sample, languages }) {
     <nav aria-labelledby="home-foot-for"><p id="home-foot-for" class="home-foot-head">${say('foot.for')}</p><ul>
       <li><a href="families">${say('foot.families')}</a></li><li><a href="it">${say('foot.it')}</a></li>
     </ul>
-    <details class="home-languages"><summary><span class="visually-hidden">${appSays('settings.language')}</span>${xml(here?.name ?? lang)}${ICONS.down}</summary><ul>${languages.map((language) => `
-      <li><a href="${language.href}" hreflang="${language.lang}" lang="${language.lang}"${language.lang === lang ? ' aria-current="page"' : ''}>${xml(language.name)}</a></li>`).join('')}
-    </ul></details></nav>
+    <label class="home-languages"><span class="visually-hidden">${appSays('settings.language')}</span><select>${LOCALES.map((code) => `
+      <option value="${code}" lang="${code}"${code === lang ? ' selected' : ''}>${xml(languageName(code))}</option>`).join('')}
+    </select></label></nav>
   </footer>
 </div>`
 }
@@ -220,7 +218,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, languages }) {
  * app's root, which the app puts first in <body>.
  * @param {string} html  index.html, as the rest of build:web leaves it
  * @param {string} page  homeOf()'s
- * @param {{ lang: string, dir: string, own: boolean, languages: Array<Language & { address: string }> }} at  `own`: the page at a language's own address
+ * @param {{ lang: string, dir: string, own: boolean, languages: Array<{ lang: string, address: string }> }} at  `own`: the page at a language's own address
  */
 export function withHome (html, page, { lang, dir, own, languages }) {
   if (html.includes('class="home"') || !html.includes('</head>') || !html.includes('</body>') || !/<html lang="en" dir="ltr"/.test(html)) throw new Error('index.html has the page already, or no <html lang="en" dir="ltr">, </head> or </body>')
@@ -254,11 +252,11 @@ export function inLanguage (html, description) {
 export async function homeFiles (base, brand, pageAt) {
   const langs = await homeLanguages()
   const sample = await sampleAnswer()
-  const languages = langs.map((lang) => ({ lang, name: new Intl.DisplayNames(lang, { type: 'language' }).of(lang) ?? lang, href: lang === 'en' ? './' : lang, address: lang === 'en' ? base : base + lang }))
+  const languages = langs.map((lang) => ({ lang, address: lang === 'en' ? base : base + lang }))
   /** @type {Record<string, string>} */
   const files = { 'home.css': await homeStyle() }
   for (const { lang, address } of languages) {
-    const page = homeOf(await homeWords(lang), await appWords(lang), { lang, dir: dir(lang), brand, sample, languages })
+    const page = homeOf(await homeWords(lang), await appWords(lang), { lang, dir: dir(lang), brand, sample })
     const description = lang === 'en' ? null : (await shotsOf(lang)).description ?? null
     files[lang === 'en' ? 'index.html' : `${lang}.html`] = withHome(pageAt(description, address), page, { lang, dir: dir(lang), own: lang !== 'en', languages })
   }

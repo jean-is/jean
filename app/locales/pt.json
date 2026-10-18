@@ -3,6 +3,7 @@
   "welcome.question": "Em que posso ajudar?",
   "welcome.privacy": "Privacidade",
   "welcome.terms": "Termos",
+  "welcome.about": "Sobre {name}",
   "welcome.files": "Para onde vão os seus ficheiros",
   "welcome.promise": "Pede o que quiseres. Recebe uma resposta, um documento, um gráfico, uma melodia, uma imagem ou uma pequena aplicação, aqui mesmo neste separador.",
   "welcome.install": "Nada para instalar",

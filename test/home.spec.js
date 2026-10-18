@@ -1,21 +1,32 @@
 // jean.is's page under the first screen (D397), served as jean.is's deploy has it (scripts/serve.js --home):
 // the app's root first, the document scrolling on to the page, each Try putting its request in the box, the
-// doors unfolding in place, and the page gone with the first request, for good. At a language's own address
-// the page and the app speak it, and once the page is gone the address is the site's own, the language kept.
-// On a phone the box stays docked at the foot. Jean as written (app/, any other site) has no page at all.
+// doors unfolding in place; hidden with the first request, and asked for again by About Jean under a new
+// task's box. It speaks the app's one language: a language's address sets it, the page's menu sets it as
+// Settings does, and the page shown is that language's, at its address, or English's where it has none.
+// Once hidden, the address is the site's own, the language kept. On a phone the box stays docked at the
+// foot. Jean as written (app/, any other site) has no page at all. Playwright's WebKit keeps nothing over a
+// reload or a new address (no OPFS), so what a reload keeps is checked in Chromium.
 import { test, expect } from '@playwright/test'
 import { connectFakeBrain, ask } from './helpers.js'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
+/**
+ * The page as the app shows it, in a language: once the room is ready and ui/home.js has unhidden it (the DOM
+ * can be read before the style sheets apply, so a page just opened looks visible too soon).
+ * @param {import('@playwright/test').Page} page @param {string} [lang]
+ */
+const shown = (page, lang) => page.locator(`html.is-ready body > .home:not([hidden])${lang ? `[lang="${lang}"]` : ''}`)
 
-test('on jean.is, the page is under the first screen, its tries fill the box, and it goes with the first request', async ({ page, browserName }) => {
+test('on jean.is, the page is under the first screen, its tries fill the box, and About Jean brings it back after the first request', async ({ page, browserName }) => {
   await page.goto(JEAN_IS)
   const home = page.locator('body > .home')
-  await expect(home).toBeVisible()
+  await expect(shown(page, 'en')).toBeVisible()
   // The app's root first, its box under the question as ever, and the document scrolls on to the page.
   expect(await page.evaluate(() => document.body.firstElementChild?.localName)).toBe('app-shell')
   await expect(page.locator('html')).toHaveAttribute('data-centred', '')
   expect(await page.evaluate(() => document.documentElement.scrollHeight > 3 * innerHeight)).toBe(true)
+  const about = page.locator('app-composer .legal a', { hasText: 'About Jean' })
+  await expect(about).toHaveCount(0)
 
   // A try puts its request in the box, back up at the top; the sample's comes with its file.
   await home.locator('[data-try="music"]').click()
@@ -36,20 +47,32 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await more.locator('summary').click()
   await expect(more.locator('li').first()).toBeVisible()
 
-  // The first request takes it away (the first brain's step sends the one the box kept, D366), and a
-  // reload doesn't bring it back. Playwright's WebKit keeps nothing over a reload (no OPFS).
+  // The first request hides it (the first brain's step sends the one the box kept, D366).
   await connectFakeBrain(page)
   await ask(page, 'Hello')
-  await expect(home).toHaveCount(0)
-  if (browserName === 'webkit') return
-  await page.reload()
-  await expect(page.locator('html')).toHaveClass(/is-ready/)
-  await expect(page.locator('.home')).toHaveCount(0)
+  await expect(home).toBeHidden()
+  if (browserName !== 'webkit') {
+    await page.reload()
+    await expect(page.locator('html')).toHaveClass(/is-ready/)
+    await expect(home).toBeHidden()
+  }
+  // A new task's box has About Jean, which shows the page again, scrolled to; the next request hides it again.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await about.click()
+  await expect(home).toBeVisible()
+  await expect(home.locator('.home-strip')).toBeInViewport()
+  await expect(about).toHaveCount(0)
+  // Beside the drawer, which came in with the first request (D369), never under it.
+  await expect(page.locator('html')).toHaveAttribute('data-sidebar', '')
+  const drawer = await page.locator('app-inbox').boundingBox()
+  expect((await home.boundingBox())?.x).toBeGreaterThanOrEqual((drawer?.x ?? 0) + (drawer?.width ?? 0) - 1)
+  await ask(page, 'Hello again')
+  await expect(home).toBeHidden()
 })
 
-test('at a language’s own address, the page and the app speak it; once the page is gone, the address is the site’s own', async ({ page, browserName }) => {
+test('at a language’s own address, the page and the app speak it; once hidden, the address is the site’s own, and About Jean goes back there', async ({ page, browserName }) => {
   await page.goto(`${JEAN_IS}ja`)
-  await expect(page.locator('body > .home')).toHaveAttribute('lang', 'ja')
+  await expect(shown(page, 'ja')).toBeVisible()
   // The browser asks for English: the address wins, until the person picks a language.
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
   await expect(page).toHaveTitle('Jean · みんなのAIを、ブラウザのタブで')
@@ -61,18 +84,49 @@ test('at a language’s own address, the page and the app speak it; once the pag
 
   await connectFakeBrain(page)
   await ask(page, 'こんにちは')
-  await expect(page.locator('.home')).toHaveCount(0)
+  await expect(page.locator('.home')).toBeHidden()
   await expect.poll(() => new URL(page.url()).pathname).toBe('/')
-  if (browserName === 'webkit') return
-  await page.reload()
-  await expect(page.locator('html')).toHaveClass(/is-ready/)
-  await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
+  if (browserName !== 'webkit') {
+    await page.reload()
+    await expect(page.locator('html')).toHaveClass(/is-ready/)
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
+  }
+  // Asked for again, the page is the app's language's, at its address.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await page.locator('app-composer .legal a[href="#home-range"]').click()
+  await expect.poll(() => new URL(page.url()).pathname).toBe('/ja')
+  await expect(shown(page, 'ja')).toBeVisible()
+})
+
+test.describe('in a Japanese browser', () => {
+  test.use({ locale: 'ja-JP' })
+
+  test('one language: jean.is opens on its Japanese page, and the page’s menu sets the app’s language as Settings does', async ({ page, browserName }) => {
+    await page.goto(JEAN_IS)
+    await expect.poll(() => new URL(page.url()).pathname).toBe('/ja')
+    await expect(shown(page, 'ja')).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
+    // French has a page: the app speaks it, and the page is French, at its address.
+    await page.locator('.home-languages select').selectOption('fr')
+    await expect.poll(() => new URL(page.url()).pathname).toBe('/fr')
+    await expect(shown(page, 'fr')).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
+    await expect(page.locator('.home-languages select')).toHaveValue('fr')
+    // German has none: the app speaks it, and the page is English's, at the site's own address. (WebKit
+    // forgets the choice at the new address, and goes back to the browser's Japanese.)
+    if (browserName === 'webkit') return
+    await page.locator('.home-languages select').selectOption('de')
+    await expect.poll(() => new URL(page.url()).pathname).toBe('/')
+    await expect(shown(page, 'en')).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('lang', 'de')
+    await expect(page.locator('.home-languages select')).toHaveValue('de')
+  })
 })
 
 test('on a phone, the box stays docked at the foot while the page scrolls under it', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(JEAN_IS)
-  await expect(page.locator('.home')).toBeVisible()
+  await expect(shown(page)).toBeVisible()
   await page.locator('.home-foot').scrollIntoViewIfNeeded()
   await expect(page.locator('.home-foot')).toBeInViewport()
   await expect(page.locator('.starters')).not.toBeInViewport()
@@ -85,5 +139,6 @@ test('Jean as written, which any other site serves, has no page', async ({ page 
   await page.goto('./')
   await expect(page.locator('html')).toHaveClass(/is-ready/)
   await expect(page.locator('.home, link[href="home.css"], meta[name="app-language"]')).toHaveCount(0)
+  await expect(page.locator('app-composer .legal a[href="#home-range"]')).toHaveCount(0)
   expect((await page.request.get('ja')).status()).toBe(404)
 })

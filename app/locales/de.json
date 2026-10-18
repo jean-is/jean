@@ -3,6 +3,7 @@
   "welcome.question": "Was kann ich für dich tun?",
   "welcome.privacy": "Datenschutz",
   "welcome.terms": "Nutzungsbedingungen",
+  "welcome.about": "Über {name}",
   "welcome.files": "Wohin deine Dateien gehen",
   "welcome.promise": "Frag nach allem, was du brauchst. Bekomm eine Antwort, ein Dokument, ein Diagramm, eine Melodie, ein Bild oder eine kleine App, direkt in diesem Tab.",
   "welcome.install": "Nichts zu installieren",

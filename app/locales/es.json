@@ -3,6 +3,7 @@
   "welcome.question": "¿Qué puedo hacer por ti?",
   "welcome.privacy": "Privacidad",
   "welcome.terms": "Términos",
+  "welcome.about": "Acerca de {name}",
   "welcome.files": "Adónde van tus archivos",
   "welcome.promise": "Pide lo que quieras. Recibe una respuesta, un documento, un gráfico, una melodía, una imagen o una pequeña aplicación, aquí mismo en esta pestaña.",
   "welcome.install": "Nada que instalar",

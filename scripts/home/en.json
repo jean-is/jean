@@ -53,8 +53,8 @@
   "ai.ways": ["Your ChatGPT, Claude or Copilot plan", "A free one", "One on this computer", "Your company’s"],
   "ai.go": "{name} beside the others",
   "family.name": "Ready for a family",
-  "family.why": "53% of teens who use AI use it for homework; only 37% of their parents know they use it at all.",
-  "family.source": "Common Sense Media, 2024",
+  "family.why": "Over half of US teens use AI for help with schoolwork, yet only about half of parents say their teen uses it at all.",
+  "family.source": "Pew Research Center, 2026",
   "family.title": "A {name} for each child, set by you.",
   "family.younger": "Léa · 11",
   "family.withYou": "opens with you",
@@ -92,7 +92,7 @@
     ["Can I use it at work?", "If your company gives you nothing, it works as it is. If your computer is managed, ask your IT: {name} is deployed like a web page, behind your company’s gateway and sign-in."]
   ],
   "foot.tagline": "Everyone’s AI, in a browser tab.",
-  "foot.made": "Made in France by WAREHOUSE SAS. Free and open source.",
+  "foot.made": "Made in France. Free and open source.",
   "foot.for": "For",
   "foot.families": "Families",
   "foot.it": "Your IT"

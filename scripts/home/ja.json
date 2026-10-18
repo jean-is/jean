@@ -53,8 +53,8 @@
   "ai.ways": ["ChatGPT・Claude・Copilotの契約", "無料のAI", "このパソコンの中のAI", "会社のAI"],
   "ai.go": "ほかのAIとの比較",
   "family.name": "家族で使う",
-  "family.why": "AIを使う10代の53%が宿題に使っています。でも、AIを使っていること自体を知っている親は37%だけ。",
-  "family.source": "Common Sense Media、2024年",
+  "family.why": "アメリカの10代の半数以上が、宿題にAIを使っています。でも、子どもがAIを使っていると答えた親は約半数だけ。",
+  "family.source": "Pew Research Center、2026年",
   "family.title": "子どもごとに、あなたが設定する{name}。",
   "family.younger": "さくら · 11⁠歳",
   "family.withYou": "保護者と一緒に開く",
@@ -92,7 +92,7 @@
     ["仕事で使えますか？", "会社から何も用意されていなければ、そのまま使えます。会社が管理するパソコンなら、情報システム部門に聞いてください。{name}はウェブページと同じように、会社のゲートウェイとサインインの内側に導入できます。"]
   ],
   "foot.tagline": "みんなのAIを、ブラウザのタブで。",
-  "foot.made": "WAREHOUSE SAS（フランス）製。無料・オープンソース。",
+  "foot.made": "フランス製。無料・オープンソース。",
   "foot.for": "対象",
   "foot.families": "家族",
   "foot.it": "情報システム部門"

@@ -2,17 +2,27 @@
 import { html, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, APPLE, SHORTCUTS } from './state.js'
+import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, firstVisit, APPLE, SHORTCUTS } from './state.js'
 import { loaded, unlock, isDenied, slots } from './caps.js'
 import { BRAND } from '../brand.js'
-import { t } from '../core/i18n.js'
+import { t, locale } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { focusComposer, offerAside } from './composer.js'
 import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
+// jean.is's page under the first screen (D397), hidden until the room is ready: on a first visit, or asked for again,
+// while the task has no request, in the app's language (ui/home.js).
+const under = /** @type {HTMLElement | null} */ (document.querySelector('body > .home'))
+if (under) under.hidden = true
+
 class Shell extends Element {
+  connectedCallback() {
+    super.connectedCallback()
+    if (under) effect(() => { const shown = (firstVisit() || app.about.value) && !app.current.value?.records.length, lang = locale.value; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
+  }
+
   render() {
     const current = app.current.value
     const open = sidebarOpen.value
@@ -130,15 +140,9 @@ document.addEventListener('keydown', (event) => {
   }
 })
 
-/** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
-const first = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
-// jean.is's page under the first screen (D397) is only for then, and goes with the first request.
-const under = document.querySelector('body > .home')
-if (under) effect(() => { const shown = first() && !app.current.value?.records.length; if (!shown) under.remove(); import('./home.js').then((module) => module.follow(under, shown)) })
-
-// Then, what Jean is (D366).
+// Before any task, in a browser's tab: what Jean is (D366).
 function welcome() {
-  const pitch = first() && app.dialog.value !== 'first'
+  const pitch = firstVisit() && app.dialog.value !== 'first'
   return html`<section class="welcome">
     <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>

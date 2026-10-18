@@ -7,6 +7,9 @@
 @media (scripting: enabled) { :root:not(.is-ready) .home { display: none; } }
 @media print { .home { display: none; } }
 @media (prefers-reduced-motion: no-preference) { html:has(> body > .home) { scroll-behavior: smooth; } }
+/* Once the drawer is open beside the room, as it is after a first request, the page sits beside it too, and
+   About Jean brings it into view under the main area's top. */
+@media (min-width: 48rem) { :root[data-sidebar] body > .home { margin-inline-start: var(--list); scroll-margin-block-start: var(--top); } }
 
 .home {
   --home-side: var(--side, var(--room-2));
@@ -171,12 +174,8 @@
 .home-foot a:hover { text-decoration: underline; }
 .home-foot p { color: var(--ink-soft); }
 .home-foot .home-mark { color: var(--ink); font: 700 1.1875rem/1.2 var(--display); }
-.home-languages { align-self: flex-start; margin-block-start: 0.6rem; }
-.home-languages summary { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.75rem; border-radius: 999px; background: var(--home-control); box-shadow: var(--home-raise); font-size: 0.8125rem; cursor: pointer; list-style: none; }
-.home-languages summary::-webkit-details-marker { display: none; }
-.home-languages summary .icon { inline-size: 0.9rem; block-size: 0.9rem; }
-.home-languages ul { margin-block-start: 0.5rem; }
-.home-languages [aria-current] { font-weight: 600; }
+.home-languages { display: block; align-self: flex-start; margin-block-start: 0.6rem; }
+.home .home-foot .home-languages > select { inline-size: auto; padding-block: 0.3rem; padding-inline: 0.75rem 0.5rem; border: 0; border-radius: 999px; background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); font-size: 0.8125rem; cursor: pointer; }
 
 /* Two columns under 70rem, one on a phone. */
 @media not (min-width: 70rem) {

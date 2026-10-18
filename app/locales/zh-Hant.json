@@ -3,6 +3,7 @@
   "welcome.question": "有什麼可以幫你？",
   "welcome.privacy": "隱私權",
   "welcome.terms": "條款",
+  "welcome.about": "關於 {name}",
   "welcome.files": "你的檔案去了哪裡",
   "welcome.promise": "想要什麼儘管說。答案、文件、圖表、曲子、圖片或小應用程式，都能在這個分頁裡直接得到。",
   "welcome.install": "無需安裝",

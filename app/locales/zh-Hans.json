@@ -3,6 +3,7 @@
   "welcome.question": "有什么可以帮你？",
   "welcome.privacy": "隐私",
   "welcome.terms": "条款",
+  "welcome.about": "关于 {name}",
   "welcome.files": "你的文件去了哪里",
   "welcome.promise": "想要什么尽管说。答案、文档、图表、曲子、图片或小应用，都能在这个标签页里直接得到。",
   "welcome.install": "无需安装",
