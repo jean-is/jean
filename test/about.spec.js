@@ -1,0 +1,44 @@
+// What Jean knows of itself (D423): asked what it can do, the brain reads `about`, which says where each capability
+// stands for this person, in the case's own words and those of the screen, Settings' sections as they are now, and
+// leaves out what policy denies; asked about something, the parts that match come whole. In Arabic and Japanese, the
+// names of menus and how each capability is found are the screen's.
+import { test, expect } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+import { start, connectFakeBrain, ask, withPolicy } from './helpers.js'
+
+/** A language's strings, the room's and the dialogs'. @param {string} lang */
+const strings = (lang) => ({ ...JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8')), ...JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8')) })
+
+test('asked what it can do, Jean reads where each thing stands for this person, without what policy denies', async ({ page }) => {
+  await withPolicy(page, { capabilities: { deny: ['pictures'] } })
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'What can you do?')
+  const answer = page.locator('.msg-jean .prose').last()
+  await expect(answer).toContainText('Settings has these sections now: General, Brains, Appearance')
+  // What is always there, in the guide's words; a capability in the case's, found or not, with how it is found.
+  await expect(answer).toContainText('start: The box is where everything begins')
+  await expect(answer).toContainText('made (on): Ask for a Word document')
+  await expect(answer).toContainText('files (not found yet, found by: Share a file, or paste a long text.)')
+  await expect(answer).not.toContainText('pictures (')
+  await expect(page.locator('.activity-list')).toContainText('What Jean can do')
+  // A line for each part, at the fake brain's pace, which a busy machine slows.
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible({ timeout: 20_000 })
+
+  // Asked about something, its part comes whole, the menus named as the screen names them.
+  await ask(page, 'What can you do about a lock and a passkey?')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Set in Settings › Your data: a passkey or a password')
+})
+
+for (const lang of ['ar', 'ja']) {
+  test(`in ${lang}, the menus and how each thing is found are said as the screen says them`, async ({ page }) => {
+    const said = strings(lang)
+    await start(page, lang)
+    await connectFakeBrain(page)
+    await ask(page, 'What can you do?')
+    const answer = page.locator('.msg-jean .prose').last()
+    await expect(answer).toContainText(`${said['settings.title']} has these sections now: ${said['settings.general']}`)
+    await expect(answer).toContainText(`files (not found yet, found by: ${said['cap.files.hint']})`)
+    await expect(answer).toHaveAttribute('dir', 'auto')
+  })
+}

@@ -1,12 +1,15 @@
 // Jean's own skills for the brain, Skills found or not (D406): until it is, `skill`'s line names each of the directory's
 // (D196), and `skill` reads one of those, which finds Skills, adds the skill and gives its steps (D401); another name
 // finds nothing. Once found, Skills lists them with the user's, in their few words, with the rule to read the one a
-// request matches, and `skill` reads any of the room's.
+// request matches, and `skill` reads any of the room's. Beside them, what Jean knows of itself: `about` reads its guide,
+// with where each capability stands for this user (about.js, D423), policy denying Skills or not.
 // Loaded with the first message, like questions (D146), with no trophy: nothing of it shows (D281).
 import { register, isDenied, loaded, unlock } from '../../ui/caps.js'
 import { app } from '../../ui/state.js'
 import { DIRECTORY } from '../skills/directory.js'
 import { skillNamed } from '../../core/skills.js'
+import { t } from '../../core/i18n.js'
+import { BRAND } from '../../brand.js'
 
 /** Their names, unless policy keeps to the organisation's sources. */
 const own = app.policy.skills?.only ? [] : DIRECTORY.map((entry) => entry.name)
@@ -26,4 +29,8 @@ const skillTool = {
 // The line is read as a conversation starts: in it, a small brain reads one as often as from a <skills> list, and
 // offers what else a request needs as often as without them (D406).
 const line = { name: 'skill', get line() { return `read the steps of a skill before following it${loaded.value.has('skills') || !own.length ? '' : `: ${own.join(', ')}`}` } }
-if (!isDenied('skills')) register({ id: 'own-skills', tools: [skillTool], lines: [line] })
+
+/** @type {import('../../core/loop.js').Tool} The activity calls it as the user's menu does (D127). */
+const aboutTool = { spec: { name: 'about', description: 'What you can do in this app and how it is used, as it stands for this user: each part in a line, and those a topic matches whole.', parameters: { type: 'object', properties: { topic: { type: 'string', description: 'What the user asks about, in English, such as "share a task"; none for every part' } } } },
+  kind: 'read', title: () => t('collection.title', { name: BRAND.name }), run: async (args) => (await import('./about.js')).read(String(args?.topic ?? '')) }
+register({ id: 'own-skills', tools: [...(isDenied('skills') ? [] : [skillTool]), aboutTool], lines: [...(isDenied('skills') ? [] : [line]), { name: 'about', line: 'what you can do in this app and how it is used, read before answering a question about them' }] })

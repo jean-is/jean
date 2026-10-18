@@ -73,6 +73,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 
 ## Docs
 
+- What Jean tells people about itself comes from `caps/own-skills/guide.txt`, in plain English for the brain: a capability added or changed updates its part there (D423).
 - Docs describe Jean as it is now; history lives in git. No "as built in 0.x", "since Dnnn" or "until Dnnn" asides, no changelog, no budget snapshots (`npm run budgets` prints them).
 - A decision goes into [docs/decisions.md](docs/decisions.md) as its header says: short (what, why, what was rejected), merged with the entries it amends, under the section it belongs to. How a feature works goes into architecture.md or product.md, once.
 - The roadmap keeps one line per version and one checklist of what is still to check by hand.
