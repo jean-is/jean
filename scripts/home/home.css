@@ -28,8 +28,9 @@
   font-size: 1rem;
   line-height: 1.6;
 }
-.home :is(h2, h3, p, ul, ol, dl, dd, figure, fieldset) { margin: 0; }
-.home :is(ul, ol) { padding: 0; list-style: none; }
+/* Weightless, so every class of the page's own spaces its element as it says. */
+:where(.home) :where(h2, h3, p, ul, ol, dl, dd, figure, fieldset) { margin: 0; }
+:where(.home) :where(ul, ol) { padding: 0; list-style: none; }
 .home a { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
 .home a.button { color: var(--ink); text-decoration: none; }
 .home :is(h2, h3, .home-why, .home-sub, .home-door-why) { text-wrap: balance; }
@@ -60,10 +61,14 @@
 .home-formats dt { flex: none; min-inline-size: 3.5rem; margin-inline-end: 0.35rem; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; text-align: end; }
 .home-formats ul { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .home-formats li { padding: 0.15rem 0.7rem; border-radius: 999px; background: var(--room-2); font-size: 0.8125rem; }
-.home-filter { display: inline-flex; flex-wrap: wrap; align-self: center; gap: 0.25rem; padding: 0.2rem; border: 0; border-radius: 999px; background: var(--room-2); }
+.home-filter { position: relative; isolation: isolate; display: inline-flex; flex-wrap: wrap; align-self: center; gap: 0.25rem; padding: 0.2rem; border: 0; border-radius: 999px; background: var(--room-2); }
 .home-filter input { position: absolute; opacity: 0; pointer-events: none; }
-.home-filter label { display: block; padding: 0.3rem 0.9rem; border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; cursor: pointer; }
+.home-filter label { display: block; padding: 0.3rem 0.9rem; border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; cursor: pointer; transition: color 0.3s var(--ease); }
 .home-filter input:checked + label { background: var(--home-fill); color: var(--home-on-fill); }
+/* Once ui/home.js measures the choice, one mark slides from choice to choice under them. */
+.home-filter-mark { display: none; }
+.home-filter.is-sliding .home-filter-mark { position: absolute; z-index: -1; display: block; inset-block: 0.2rem; inset-inline-start: var(--at); inline-size: var(--size); border-radius: 999px; background: var(--home-fill); transition: inset-inline-start 0.35s var(--ease), inline-size 0.35s var(--ease); }
+.home-filter.is-sliding input:checked + label { background: none; }
 .home-filter input:focus-visible + label { outline: 2px solid var(--flame); outline-offset: 2px; }
 .home:has(#home-for-home:checked) .home-tile:not([data-for='home']),
 .home:has(#home-for-family:checked) .home-tile:not([data-for='family']),
@@ -71,7 +76,8 @@
 
 .home-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .home-tile { display: flex; flex-direction: column; gap: 0.7rem; min-block-size: 21rem; padding: 0.9rem; border: 1px solid var(--line); border-radius: var(--home-pane); background: var(--room); }
-.home-tile.is-open { border-color: oklch(from var(--home-fill) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--home-fill) l c h / 0.12); }
+.home-tile { transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+.home-tile.is-active { border-color: oklch(from var(--home-fill) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--home-fill) l c h / 0.12); }
 .home-where, .home-step, .home-door-name, .home-foot-head { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
 .home-ask { font-size: 0.95rem; font-weight: 500; line-height: 1.45; }
 .home-file { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.1rem 0.55rem 0.1rem 0.4rem; border-radius: 0.4375rem; background: var(--room-2); color: var(--ink); font-size: 0.8125rem; font-weight: 400; vertical-align: middle; }
@@ -159,6 +165,7 @@
 
 /* Questions, in the words people search with. */
 .home-questions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3.5rem; align-items: start; }
+.home-questions > div { display: flex; flex-direction: column; min-inline-size: 0; }
 .home-questions details { padding-block: 1rem; border-block-end: 1px solid var(--line); }
 .home-questions summary { display: flex; justify-content: space-between; gap: 1rem; font-weight: 500; cursor: pointer; list-style: none; }
 .home-questions summary::-webkit-details-marker { display: none; }
@@ -216,6 +223,8 @@
   .home-foot { gap: 1.25rem; padding: 2rem 1.25rem 9rem; }
 }
 @media (forced-colors: active) {
-  .home-filter input:checked + label { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .home-filter input:checked + label, .home-filter.is-sliding input:checked + label { forced-color-adjust: none; color: HighlightText; }
+  .home-filter:not(.is-sliding) input:checked + label, .home-filter-mark { forced-color-adjust: none; background: Highlight; }
+  .home-tile.is-active { outline: 2px solid Highlight; }
   .home-bars i:nth-child(4) { background: Highlight; }
 }

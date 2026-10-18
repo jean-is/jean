@@ -98,6 +98,53 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   await expect(shown(page, 'ja')).toBeVisible()
 })
 
+test('one tile is active at all times, the filter’s mark slides to its choice, and one question opens at a time without moving the other column', async ({ page }) => {
+  for (const [address, lang] of [[JEAN_IS, 'en'], [`${JEAN_IS}ar`, 'ar']]) {
+    await page.goto(address)
+    await expect(shown(page, lang)).toBeVisible()
+    const home = shown(page, lang)
+    // Every Try says the same, the sample's too.
+    expect(new Set(await home.locator('[data-try]').allTextContents()).size).toBe(1)
+    const tiles = home.locator('.home-tile')
+    const current = home.locator('.home-tile[aria-current="true"]')
+    await expect(current).toHaveCount(1)
+    await expect(tiles.first()).toHaveAttribute('aria-current', 'true')
+    // The pointer picks one, and so does the keyboard; one stays active when the pointer leaves.
+    await tiles.nth(2).hover()
+    await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
+    await page.mouse.move(0, 0)
+    await expect(current).toHaveCount(1)
+    await tiles.nth(3).locator('[data-try]').focus()
+    await expect(tiles.nth(3)).toHaveAttribute('aria-current', 'true')
+    await expect(tiles.nth(3)).toHaveClass(/is-active/)
+    // A filter that hides the active one moves it to the first one shown.
+    await home.locator('label[for="home-for-family"]').click()
+    await expect(tiles.nth(1)).toHaveAttribute('aria-current', 'true')
+    await expect(current).toHaveCount(1)
+    // The mark lies under the choice, whichever way the page reads.
+    const under = async () => {
+      const [mark, label] = await Promise.all([home.locator('.home-filter-mark').boundingBox(), home.locator('label[for="home-for-family"]').boundingBox()])
+      return Math.abs((mark?.x ?? 0) - (label?.x ?? 0)) + Math.abs((mark?.width ?? 0) - (label?.width ?? 0))
+    }
+    await expect(home.locator('.home-filter')).toHaveClass(/is-sliding/)
+    await expect.poll(under).toBeLessThan(2)
+    await home.locator('label[for="home-for-all"]').click()
+
+    // One question open at a time; opening one in a column leaves the other column where it was.
+    const [first, second] = [home.locator('.home-questions > div').first(), home.locator('.home-questions > div').last()]
+    await expect(first.locator('details').first()).toHaveAttribute('open', '')
+    const top = () => second.locator('summary').first().evaluate((summary) => summary.getBoundingClientRect().top - (summary.closest('.home-questions')?.getBoundingClientRect().top ?? 0))
+    const before = await top()
+    await first.locator('summary').nth(1).click()
+    await expect(home.locator('.home-questions details[open]')).toHaveCount(1)
+    await expect(first.locator('details').nth(1)).toHaveAttribute('open', '')
+    expect(await top()).toBe(before)
+    await second.locator('summary').first().click()
+    await expect(home.locator('.home-questions details[open]')).toHaveCount(1)
+    await expect(home.locator('.home-link')).toContainText('https://hst.ing/s/3f9a…#k=Qm7…')
+  }
+})
+
 test.describe('in a Japanese browser', () => {
   test.use({ locale: 'ja-JP' })
 

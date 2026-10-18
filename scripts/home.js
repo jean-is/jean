@@ -112,9 +112,10 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
   const growth = new Intl.NumberFormat(lang, { style: 'percent', signDisplay: 'exceptZero' }).format(sample.growth)
   const grew = say('replay.grew', { product: '\u0000', growth }).replace('\u0000', `<bdi>${xml(sample.product)}</bdi>`)
   const file = `<span class="home-file" dir="ltr">${ICONS.file}sales.csv</span>`
-  const tryIt = (/** @type {string} */ key, primary = false) => `<button type="button" class="button${primary ? ' primary' : ''}" data-try="${key}">${say(key === 'sample' ? 'tile.tryFile' : 'tile.try')}</button>`
-  const tile = (/** @type {string} */ group, /** @type {string} */ ask, /** @type {string} */ art, /** @type {string} */ go, open = false) => `
-    <li class="home-tile${open ? ' is-open' : ''}" data-for="${group}">
+  const tryIt = (/** @type {string} */ key, primary = false) => `<button type="button" class="button${primary ? ' primary' : ''}" data-try="${key}">${say('tile.try')}</button>`
+  // One tile is the active one at all times, the first until the pointer, a tap or the keyboard picks another (ui/home.js).
+  const tile = (/** @type {string} */ group, /** @type {string} */ ask, /** @type {string} */ art, /** @type {string} */ go, active = false) => `
+    <li class="home-tile${active ? ' is-active' : ''}" data-for="${group}"${active ? ' aria-current="true"' : ''}>
       <span class="home-where">${say(`range.${group}`)}</span>
       <p class="home-ask">${ask}</p>
       ${art}
@@ -129,6 +130,8 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
         ${body}
       </article>`
   const go = (/** @type {Array<[string, string]>} */ links) => `<p class="home-door-go">${links.map(([href, label]) => `<a href="${href}">${label} ${ARROW}</a>`).join('')}</p>`
+  // Two columns that lay out on their own, so a question opened in one never moves the other; one open at a time (name).
+  const columns = (/** @type {string[]} */ items) => [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))].map((half) => `<div>${half.join('')}</div>`).join('')
   const person = (/** @type {string} */ who, /** @type {string} */ how) => `<li><i aria-hidden="true">${xml([...fill(String(words[who]), params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
   return `<div class="home" lang="${lang}" dir="${dir}">
   <nav class="home-strip" aria-labelledby="home-for">
@@ -147,6 +150,7 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
     </dl>
     <fieldset class="home-filter">
       <legend class="visually-hidden">${say('strip.label')}</legend>
+      <span class="home-filter-mark" aria-hidden="true"></span>
       ${['all', 'home', 'family', 'work'].map((group) => `<input type="radio" name="home-for" id="home-for-${group}"${group === 'all' ? ' checked' : ''}><label for="home-for-${group}">${say(`range.${group}`)}</label>`).join('')}
     </fieldset>
     <ul class="home-tiles">${[
@@ -180,7 +184,7 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
         ${go([['families', say('family.go')]])}`),
       door('simple', 'simple', `<div class="home-offer" aria-hidden="true"><p>${appSays('cap.memory.offer')}</p><span><span class="button primary">${appSays('cap.memory.yes')}</span><span class="button subtle">${appSays('offer.no')}</span></span></div>
         ${more(say('door.more'), list('simple.more'))}`),
-      door('shareable', 'share', `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://…#k=…</span><span class="button">${appSays('action.copy')}</span></p>
+      door('shareable', 'share', `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/s/3f9a…#k=Qm7…</span><span class="button">${appSays('action.copy')}</span></p>
         <p class="home-note">${say('share.limits')}</p>
         ${more(say('door.more'), list('share.more'))}`),
       door('open', 'open', `<p>${say('open.text')}</p>
@@ -192,8 +196,8 @@ export function homeOf (words, app, { lang, dir, brand, sample }) {
   </section>
   <section id="home-questions" class="home-section" aria-labelledby="home-questions-title">
     <h2 id="home-questions-title" class="home-title is-small">${say('faq.title')}</h2>
-    <div class="home-questions">${/** @type {string[][]} */ (words['faq.items']).map(([question, answer], i) => `
-      <details${i ? '' : ' open'}><summary>${xml(fill(question, params))}${ICONS.plus}${ICONS.minus}</summary><p>${xml(fill(answer, params))}</p></details>`).join('')}
+    <div class="home-questions">${columns(/** @type {string[][]} */ (words['faq.items']).map(([question, answer], i) => `
+      <details name="home-questions"${i ? '' : ' open'}><summary>${xml(fill(question, params))}${ICONS.plus}${ICONS.minus}</summary><p>${xml(fill(answer, params))}</p></details>`))}
     </div>
   </section>
   <footer class="home-foot">
