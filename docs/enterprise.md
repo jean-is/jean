@@ -102,6 +102,7 @@ Policy's `signIn` names the organisation's identity provider and the app IT regi
 - **Where the tokens live:** in `.secrets/`, sealed at rest, behind the lock when there is one, and never in a backup, export, sync or share; the access token also as each such brain's key. The PKCE verifier waits in the tab's session storage during the sign-in.
 - **Renewal:** with the refresh token, five minutes before the access token ends, one tab at a time, and when the page shows again. Refused (Entra's refresh tokens for single-page apps last 24 hours), the tokens go and a toast asks to sign in again, keeping what was typed; unreachable, they stay for the next try. A sign-in that comes back refused asks from the same toast, never in a loop.
 - **Settings › Brains** says who is signed in, with Sign out, which signs out at the identity provider too and comes back to sign in afresh.
+- **The person's name:** the sign-in asks for `profile` too, and the foot of the drawer shows the name the ID token gives, or else its email or login, until the person sets a first name of their own in Settings › About you (D150).
 - **Entra ID**, for IT:
   1. Register an app for Jean as a *Single-page application*, with Jean's address as its redirect URI, which also comes back from signing out. The browser reaches the token endpoint only for such an app.
   2. On the gateway's own app, expose a scope (`api://<gateway-app>/chat`) with v2 access tokens (`accessTokenAcceptedVersion: 2`), and grant Jean's app consent for it.

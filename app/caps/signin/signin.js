@@ -22,8 +22,9 @@ const PENDING = 'app.signin'
 const AHEAD = 5 * 60_000
 await useStrings('signin')
 
-/** Who is signed in to the organisation, for Settings › Brains. */
+/** Who is signed in to the organisation, for Settings › Brains, and what the account calls them, for the person's menu (D150). */
 export const account = signal(/** @type {string | null} */ (null))
+const name = signal(/** @type {string | null} */ (null))
 /** Each sign-in started, by id: what policy names for it. @type {Map<string, SignIn>} */
 const named = new Map()
 /** Renewals under way, one a sign-in. @type {Map<string, Promise<string | null>>} */
@@ -40,7 +41,7 @@ const brainsOf = (id) => (id === 'signin' ? effective.value.settings.brains.filt
 
 /** Kept tokens in use: who signed in, the brains' key where it changed, the next renewal. @param {string} id @param {Kept} kept */
 async function use(id, kept) {
-  if (id === 'signin') account.value = kept.account ?? null
+  if (id === 'signin') [account.value, name.value] = [kept.account ?? null, kept.name ?? null]
   for (const brain of brainsOf(id)) if ((await getSecret(app.fs, brain.id)) !== kept.access) await setSecret(app.fs, brain.id, kept.access)
   clearTimeout(timers.get(id))
   // A minute apart at least, should one fail.
@@ -53,16 +54,17 @@ const keep = (id, kept) => setSecret(app.fs, id, JSON.stringify(kept)).then(() =
 /** @param {string} id */
 async function forget(id) {
   for (const each of [id, ...brainsOf(id).map((brain) => brain.id)]) await deleteSecret(app.fs, each)
-  if (id === 'signin') account.value = null
+  if (id === 'signin') account.value = name.value = null
 }
 
 /**
- * Leaves for the identity provider, with what the user had typed and shared (`leave()`), to come back here.
+ * Leaves for the identity provider, with what the user had typed and shared (`leave()`), to come back here,
+ * asking for the person's name too (`profile`).
  * @param {string} [id] @param {SignIn} [given]
  */
 export async function signIn(id = 'signin', given = named.get(id) ?? app.policy.signIn) {
   const metadata = await discover(given.issuer, { issuer: given.issuer })
-  const { url, pending } = await authorization(metadata, { clientId: given.clientId, redirectURI: location.origin + location.pathname, scopes: given.scopes })
+  const { url, pending } = await authorization(metadata, { clientId: given.clientId, redirectURI: location.origin + location.pathname, scopes: [...given.scopes ?? [], 'profile'] })
   sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, id, end: metadata.end_session_endpoint }))
   ;(await import('../../ui/brains.js')).leave(url)
 }
@@ -117,8 +119,7 @@ export async function start(id = 'signin', given = app.policy.signIn) {
     console.warn('Sign-in', error)
     offer(id)
   }
-  const kept = await read(id)
-  if (kept) await use(id, kept)
+  await read(id).then((kept) => kept && use(id, kept))
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') token(id) })
   if (id === 'signin') try { navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id: 'signin' }) } catch {}
 }
@@ -131,5 +132,6 @@ async function signOut() {
   else location.reload()
 }
 
-register({ id: 'signin', slots: { brains: { at: 0, draw: () => (account.value ? html`<section class="setting"><div><h3>${t('signin.as', { account: account.value })}</h3></div>
+// The person at the drawer's foot is named by the account, the first name they set coming first (D150).
+register({ id: 'signin', slots: { person: { at: 0, draw: () => name.value ?? account.value }, brains: { at: 0, draw: () => (account.value ? html`<section class="setting"><div><h3>${t('signin.as', { account: account.value })}</h3></div>
   <button class="button" @click=${signOut}>${t('signin.out')}</button></section>` : nothing) } } })

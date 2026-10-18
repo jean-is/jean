@@ -9,7 +9,7 @@ import { createVerifier, challengeS256 } from '../../core/oauth.js'
 /**
  * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource?: string, scope?: string }} Metadata
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
- * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string }} Tokens  account: who signed in (D357)
+ * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string }} Tokens  account: who signed in (D357), name: what they are called
  */
 
 /** `Bearer resource_metadata="…", scope="…"` → its parameters. @param {string | null | undefined} header @returns {Record<string, string>} */
@@ -127,14 +127,15 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.access_token) throw new Error(json?.error_description ?? json?.error ?? `HTTP ${res.status}`)
   const expiresAt = json.expires_in ? Date.now() + json.expires_in * 1000 : undefined
-  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(expiresAt && { expiresAt }), tokenEndpoint, clientId, resource, ...(json.id_token && { account: await accountOf(json.id_token) }) }
+  return { access: json.access_token, ...(json.refresh_token && { refresh: json.refresh_token }), ...(expiresAt && { expiresAt }), tokenEndpoint, clientId, resource, ...(json.id_token && await whoOf(json.id_token)) }
 }
 
 /**
  * Who signed in, as an ID token says, for display: the email, or else the login, kept only when it
- * looks like one (no spaces or brackets), since the brain reads it too (D357). The token came from
- * the sign-in server itself, over HTTPS, so its signature isn't checked (OpenID Connect, 3.1.3.7).
- * @param {unknown} idToken @returns {Promise<string | undefined>}
+ * looks like one (no spaces or brackets), since the brain reads it too (D357); and their name, on one
+ * line, which only the person's own menu shows (D150). The token came from the sign-in server itself,
+ * over HTTPS, so its signature isn't checked (OpenID Connect, 3.1.3.7).
+ * @param {unknown} idToken @returns {Promise<{ account?: string, name?: string }>}
  */
-export const accountOf = (idToken) => Promise.resolve().then(() => new Response(Uint8Array.from(atob(String(idToken).split('.')[1].replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))).json())
-  .then((claims) => [claims.email, claims.preferred_username].find((said) => typeof said === 'string' && /^[\p{L}\p{N}._%+@-]{1,80}$/u.test(said))).catch(() => undefined)
+export const whoOf = (idToken) => Promise.resolve().then(() => new Response(Uint8Array.from(atob(String(idToken).split('.')[1].replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))).json())
+  .then((claims) => ({ account: [claims.email, claims.preferred_username].find((said) => typeof said === 'string' && /^[\p{L}\p{N}._%+@-]{1,80}$/u.test(said)), name: typeof claims.name === 'string' && claims.name.replace(/\s+/g, ' ').trim().slice(0, 80) || undefined })).catch(() => ({}))

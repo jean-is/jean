@@ -2,7 +2,7 @@
 // the gateway's brain; Jean signs in at the first visit, the gateway gets the token, which renews,
 // and Settings › Brains says who is signed in, to sign out.
 import { test, expect } from '@playwright/test'
-import { start, ask, openSettings, withPolicy } from './helpers.js'
+import { start, ask, openSettings, closeSettings, openTasks, withPolicy } from './helpers.js'
 import { POLICY, fakeIssuer, fakeGateway, redirect } from './fixtures/fake-issuer.js'
 
 /** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */
@@ -24,23 +24,32 @@ test('Jean signs in with the organisation’s account at the first visit, and it
   const seen = await fakeGateway(page, issuer)
   await withPolicy(page, POLICY)
   await start(page)
-  // Jean left for the identity provider and came back, with PKCE, the gateway's scope and who signs in.
+  // Jean left for the identity provider and came back, with PKCE, the gateway's scope and who signs in, with their name.
   expect(issuer.authorized).toHaveLength(1)
   const [asked] = issuer.authorized
   expect(asked.get('client_id')).toBe('jean-at-acme')
   expect(asked.get('code_challenge_method')).toBe('S256')
-  expect(asked.get('scope')?.split(' ')).toEqual(['api://ai-gateway/chat', 'openid', 'email', 'offline_access'])
+  expect(asked.get('scope')?.split(' ')).toEqual(['api://ai-gateway/chat', 'profile', 'openid', 'email', 'offline_access'])
   expect(new URL(page.url()).search, 'the code and state are gone from the address').toBe('')
   // The gateway's brain needs no step before the first answer.
   await ask(page, 'Hello')
   await answered(page)
   expect(seen.length).toBeGreaterThan(0)
   expect(new Set(seen)).toEqual(new Set(['Bearer access-1']))
+  // The drawer's foot calls the person what the account does (D150).
+  await openTasks(page)
+  await expect(page.locator('app-inbox .profile-name')).toHaveText('Ana Martín')
   // Settings › Brains says who, and the brain is the organisation's.
   const settings = await openSettings(page, 'Brains')
   await expect(settings.getByText('Signed in as ana@acme.example')).toBeVisible()
+  // A first name of their own, set in About you, comes first.
+  await settings.locator('.settings-nav button', { hasText: 'About you' }).click()
+  await settings.locator('.you-name').fill('Annie')
+  await settings.locator('.you-name').press('Tab')
+  await closeSettings(page)
+  await expect(page.locator('app-inbox .profile-name')).toHaveText('Annie')
   // Signing out goes to the identity provider, which comes back to sign in afresh.
-  await settings.getByRole('button', { name: 'Sign out' }).click()
+  await (await openSettings(page, 'Brains')).getByRole('button', { name: 'Sign out' }).click()
   await expect.poll(() => issuer.authorized.length).toBe(2)
   const [out] = issuer.signedOut
   expect(out.get('client_id')).toBe('jean-at-acme')
