@@ -2,12 +2,24 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { tracer, exporter, attributes } from '../app/ee/otlp.js'
+import { removal } from '../app/core/hooks.js'
 
 const TASK = 'projects/01J00000000000000000000001-home/conversations/01J00000000000000000000002.jsonl'
 /** @param {string} at @param {any} update @param {number} [step] */
 const kept = (at, update, step) => ({ at, by: 'jean', ...(step !== undefined && { step }), update })
 /** @param {import('../app/ee/otlp.js').Span} span */
 const attrs = (span) => Object.fromEntries(span.attributes.map(({ key, value }) => [key, Object.values(value)[0]]))
+
+/** A collector that answers each request with the next status, then 200. @param {number[]} statuses */
+function collector(statuses) {
+  /** @type {{ url: string, init: any, body: any }[]} */
+  const calls = []
+  const fetch = /** @type {typeof globalThis.fetch} */ (/** @type {unknown} */ (async (/** @type {string} */ url, /** @type {any} */ init) => {
+    calls.push({ url, init, body: JSON.parse(init.body) })
+    return new Response(null, { status: statuses.shift() ?? 200 })
+  }))
+  return { fetch, calls }
+}
 
 /** A turn as Jean keeps it: a request, a brain step that calls a script, the script's own call, and the answer. */
 function turn(options = {}) {
@@ -97,12 +109,10 @@ describe('the tracer', () => {
     const spans = []
     const follow = tracer({ send: (span) => spans.push(span), now: () => Date.parse('2026-10-17T10:00:09Z') })
     const records = [kept('2026-10-17T10:00:00Z', {}), kept('2026-10-17T10:00:01Z', {}), kept('2026-10-17T10:00:02Z', {})]
-    // Going back to a request asks too, but record tells it, once its records are gone.
-    follow.remove({ task: TASK, records: records.slice(1) })
-    assert.equal(spans.length, 0)
+    // Told on record once each is gone: what going back to a request left out, a task, a profile.
     follow.record({ task: TASK, type: 'removed', records: records.slice(1) })
-    follow.remove({ task: TASK, records, all: true })
-    follow.remove({ profile: 'profiles/01J00000000000000000000003-work' })
+    follow.record({ task: TASK, type: 'removed', records, all: true })
+    follow.record({ type: 'removed', profile: 'profiles/01J00000000000000000000003-work' })
     assert.deepEqual(spans.map((span) => span.name), ['remove_records', 'remove_records', 'remove_profile'])
     const [back, deleted, profile] = spans
     assert.deepEqual(attrs(back), { 'gen_ai.conversation.id': '01J00000000000000000000002', 'gen_ai.agent.id': '01J00000000000000000000001', 'jean.records.removed': '2', 'jean.removed.all': false })
@@ -131,17 +141,35 @@ describe('the tracer', () => {
   })
 })
 
+describe('removals, as Jean asks and tells them (D412)', () => {
+  test('a project whose deletion retention refuses partway reaches the collector not at all; a task deleted, once it is gone', async () => {
+    const { fetch, calls } = collector([])
+    const out = exporter({ endpoint: 'https://otel', resource: () => ({}), fetch, every: 60_000 })
+    const follow = tracer({ send: out.add })
+    // As ee/audit.js and ee/retention.js hook them, retention unable to keep the project's second task.
+    /** @type {import('../app/core/hooks.js').Hook[]} */
+    const hooks = [
+      { on: 'record', tier: 'policy', run: (e, next) => { follow.record(e); return next(e) } },
+      { on: 'remove', tier: 'policy', run: (e, next) => (e.task.endsWith('3.jsonl') ? { refuse: 'No copy could be kept.' } : next(e)) },
+    ]
+    const tasks = ['2', '3'].map((last) => ({ task: TASK.replace(/2\.jsonl$/, `${last}.jsonl`), all: true }))
+    const read = async () => [kept('2026-10-17T10:00:00Z', {}), kept('2026-10-17T10:00:01Z', {})]
+    let gone = 0
+    const act = async () => { gone++ }
+    assert.equal(await removal(hooks, tasks, act, read), 'No copy could be kept.')
+    await out.flush()
+    assert.equal(gone, 0)
+    assert.equal(calls.length, 0)
+    assert.equal(await removal(hooks, tasks.slice(0, 1), act, read), undefined)
+    await out.flush()
+    assert.equal(gone, 1)
+    const spans = calls.flatMap(({ body }) => body.resourceSpans[0].scopeSpans[0].spans)
+    assert.deepEqual(spans.map((/** @type {any} */ span) => span.name), ['remove_records'])
+    assert.deepEqual(attrs(spans[0]), { 'gen_ai.conversation.id': '01J00000000000000000000002', 'gen_ai.agent.id': '01J00000000000000000000001', 'jean.records.removed': '2', 'jean.removed.all': true })
+  })
+})
+
 describe('the exporter', () => {
-  /** @param {number[]} statuses one a request */
-  function collector(statuses) {
-    /** @type {{ url: string, init: any, body: any }[]} */
-    const calls = []
-    const fetch = /** @type {typeof globalThis.fetch} */ (/** @type {unknown} */ (async (/** @type {string} */ url, /** @type {any} */ init) => {
-      calls.push({ url, init, body: JSON.parse(init.body) })
-      return new Response(null, { status: statuses.shift() ?? 200 })
-    }))
-    return { fetch, calls }
-  }
   const span = (/** @type {string} */ name) => /** @type {any} */ ({ name, traceId: '0'.repeat(32), spanId: '0'.repeat(16), kind: 1, startTimeUnixNano: '0', endTimeUnixNano: '0', attributes: [], status: { code: 1 } })
   const resource = () => ({ 'service.name': 'jean', 'device.id': '01JDEVICE', 'user.email': 'ana@acme.example' })
 

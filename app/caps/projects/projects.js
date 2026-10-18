@@ -106,10 +106,9 @@ async function save(event) {
 /** Deleting a project deletes its folder: conversations, files, memory and skills, each task asked about first (D412). @param {Project} project */
 async function remove(project) {
   if (!confirm(t('projects.confirmDelete', { name: String(project.data.name) }))) return
-  for (const { name } of await app.fs.list(`${project.dir}/conversations`)) if (!(await removing({ task: `${project.dir}/conversations/${name}`, all: true }))) return
+  const tasks = (await app.fs.list(`${project.dir}/conversations`)).map(({ name }) => ({ task: `${project.dir}/conversations/${name}`, all: true }))
   const home = app.projects.value.find((candidate) => candidate.data.default === true)
-  if (home) await enterProject(home)
-  await app.fs.remove(project.dir)
+  if (!(await removing(tasks, async () => { if (home) await enterProject(home); await app.fs.remove(project.dir) }))) return
   await refreshProjects()
   close()
 }

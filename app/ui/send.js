@@ -10,7 +10,7 @@ import { envelope, userRecords, applyUpdate, titleOf, linkedFiles, foldTurns, is
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes, toChatMessages } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
 import { yes } from './yes.js'
-import { fire } from '../core/hooks.js'
+import { fire, removal } from '../core/hooks.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
@@ -351,15 +351,13 @@ export async function retry(text = '') {
 }
 
 /**
- * Asks before records leave for good (`remove`): a task's, all of them as it or its project goes, or those asking a request
- * again leaves out (D188); or a profile, whose tasks this one can't read. A hook may keep them first, or refuse, which a toast
- * says (D412). @param {{ task?: string, records?: Envelope[], all?: boolean, profile?: string }} e @returns {Promise<boolean>} whether to go on
+ * Records leave for good once the hooks on `remove` let them (D412): a task's, all of them as it or its project goes, or those
+ * asking a request again leaves out (D188); or a profile, whose tasks this one can't read. A hook may keep them first, or refuse,
+ * which a toast says; `act` removes them, and only then does `record` tell whoever follows the records.
+ * @param {Parameters<typeof removal>[1]} removals @param {() => Promise<unknown>} act @returns {Promise<boolean>} whether they went
  */
-export async function removing(e) {
-  const hooks = contributions().hooks.filter((hook) => hook.on === 'remove')
-  if (!hooks.length) return true
-  const records = e.records ?? (e.task && (await loadConversation(app.fs, e.task).catch(() => null))?.records) ?? []
-  const refuse = (await fire(hooks, 'remove', { ...e, records }, () => ({})))?.refuse
+export async function removing(removals, act) {
+  const refuse = await removal(contributions().hooks, removals, act, async (task) => (await loadConversation(app.fs, task).catch(() => null))?.records ?? [])
   if (refuse) notify(refuse)
   return !refuse
 }
@@ -386,10 +384,7 @@ export async function rewind(upTo, text) {
   const records = [...current.records.slice(0, from).filter((record) => kept || record !== told),
     ...current.records.slice(upTo).filter((record) => record.meta?.title || typeof record.meta?.pinned === 'boolean')]
   const left = current.records.filter((record) => !records.includes(record))
-  if (!(await removing({ task: current.path, records: left }))) return
-  await rewriteRecords(app.fs, current.path, records)
-  // Whoever follows the records hears once what was left out (D299), as keepRecords() tells what is kept: nothing waits on it.
-  fire(contributions().hooks, 'record', { task: current.path, type: 'removed', records: left }, () => {})
+  if (!(await removing([{ task: current.path, records: left }], () => rewriteRecords(app.fs, current.path, records)))) return
   const named = text && /(?:^|\s)[/@]\S/u.test(text) ? await import('./complete.js').then((module) => module.pointed(text, kept ? words : [])) : []
   const added = text === undefined ? [] : [...named, ...userRecords(text, linkedFiles(current.records.slice(from, upTo)), app.deviceId)]
   await keepRecords(current.path, added)

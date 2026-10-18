@@ -4,7 +4,7 @@ Four plugins to play with Jean's hooks: the events a plugin watches or answers, 
 
 | Plugin | Hooks | Draws in | Rights | To see it work |
 |---|---|---|---|---|
-| [Activity log](activity-log/) | `record` (what going back to a request removes too), `task.start`, `file.add`, `turn.end` | `answer`, `settings` | watch, draw, notify | Ask anything, then go back to a request with Try again, and open Settings › Plugins |
+| [Activity log](activity-log/) | `record` (what went for good too: a task deleted, what going back to a request removed), `task.start`, `file.add`, `turn.end` | `answer`, `settings` | watch, draw, notify | Ask anything, then go back to a request with Try again, and open Settings › Plugins |
 | [Quiet hours](quiet-hours/) | `tool.check`, more careful only | `above`, `settings` | watch, draw, notify, refuse | Pick "All the time" in its row, then ask Jean to make a web page: it asks first |
 | [Trusted sites](trusted-sites/) | `tool.check`, looser for the sites trusted | `above`, `settings` | watch, draw, loosen | Turn the Browser on, ask Jean to open a site, then press Trust it above the box: the next time it opens without asking |
 | [At a glance](glance/) | none | `answer`, `settings` | draw | Ask for something long, a comparison or a plan: under the answer, how long it takes to read, a map of its parts and its links. Its row says what each sign stands for |
