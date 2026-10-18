@@ -17,7 +17,8 @@
 // lists its files; a deploy never has them.
 // With --home (npm run dev:home), index.html, its pages in other languages (/ja, /ar…) and home.css are
 // jean.is's, its page under the app's first screen included (scripts/home.js, D397), made again for each
-// request from scripts/home/, at this server's own address.
+// request from scripts/home/, at this server's own address; with --gateway or --share too (npm run
+// dev:gateway -- --home), each page names their policy, as jean.is's does.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
 // sends what it blocks to /csp-reports, where GET lists them: every browser says what the policy
 // refused, without a hook into it (test/csp.spec.js). A `csp` cookie names whose they are.
@@ -171,7 +172,8 @@ async function homePage (pathname, at) {
   const index = await readFile(join(ROOT, 'app', 'index.html'), 'utf8')
   const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
   const base = `http://${at}/`
-  const files = await homeFiles(base, BRAND, (said, address) => withSite(said ? inLanguage(index, said) : index, base, BRAND, said ?? description, [], address))
+  const named = GATEWAY || SHARE_PORT ? index.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>') : index
+  const files = await homeFiles(base, BRAND, (said, address) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address))
   return files[path] === undefined ? null : { path, text: files[path] }
 }
 
