@@ -345,6 +345,14 @@ describe('streamChat (OpenAI-compatible)', () => {
     assert.ok(!('reasoning_effort' in (await run(brains.ollama, ok)).request.body))
   })
 
+  test('LM Studio is asked for none rather than low, the one value its brains whose thinking is only on or off obey (D414)', async () => {
+    const ok = openaiSSE([{ choices: [{ delta: { content: 'x' }, finish_reason: 'stop' }] }])
+    const lmstudio = { ...brains.ollama, id: 'b10', provider: 'lmstudio', baseURL: 'http://localhost:1234/v1', model: 'qwen3.8-27b' }
+    assert.equal((await run(lmstudio, ok, { effort: 'low' })).request.body.reasoning_effort, 'none')
+    assert.equal((await run(lmstudio, ok, { effort: 'medium' })).request.body.reasoning_effort, 'medium')
+    assert.equal((await run(brains.ollama, ok, { effort: 'low' })).request.body.reasoning_effort, 'low')
+  })
+
   test('a server that refuses how much to think is asked again without it, and not told again; other refusals stand (D414)', async () => {
     const brain = { ...brains.ollama, id: 'b9', model: 'llama3' }
     const refused = { error: { message: '"llama3" does not support thinking' } }

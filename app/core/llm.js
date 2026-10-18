@@ -180,7 +180,9 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens,
   // OpenAI's own API rejects max_tokens on its reasoning models; other servers only know max_tokens.
   if (maxTokens != null) body[brain.provider === 'openai' ? 'max_completion_tokens' : 'max_tokens'] = maxTokens
   // How much it thinks (D414): OpenRouter's own field, and OpenAI's, which other providers and local servers read too.
-  if (effort && !UNTHINKING.has(`${brain.baseURL} ${brain.model}`)) Object.assign(body, brain.provider === 'openrouter' ? { reasoning: { effort } } : { reasoning_effort: effort })
+  // LM Studio's brains whose thinking is only on or off obey none alone, and those with levels read it as their lowest.
+  const level = effort === 'low' && brain.provider === 'lmstudio' ? 'none' : effort
+  if (level && !UNTHINKING.has(`${brain.baseURL} ${brain.model}`)) Object.assign(body, brain.provider === 'openrouter' ? { reasoning: { effort: level } } : { reasoning_effort: level })
   // Local servers say how much they read too, which tells how full their window is (D359).
   if (['openrouter', 'openai', 'ollama', 'lmstudio'].includes(brain.provider)) body.stream_options = { include_usage: true }
   return { url: endpoint(brain, '/chat/completions'), headers: headersFor(brain, apiKey), body }
