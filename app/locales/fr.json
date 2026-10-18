@@ -32,6 +32,8 @@
   "action.rename": "Renommer",
   "action.remove": "Retirer",
   "action.copy": "Copier",
+  "action.print": "Imprimer",
+  "action.share": "Partager",
   "action.retry": "Réessayer",
   "action.fork": "Dupliquer à partir d’ici",
   "action.readAloud": "Lire à voix haute",

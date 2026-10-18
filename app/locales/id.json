@@ -32,6 +32,8 @@
   "action.rename": "Ganti nama",
   "action.remove": "Buang",
   "action.copy": "Salin",
+  "action.print": "Cetak",
+  "action.share": "Bagikan",
   "action.retry": "Coba lagi",
   "action.fork": "Duplikat dari sini",
   "action.readAloud": "Bacakan",

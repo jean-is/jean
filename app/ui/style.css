@@ -779,7 +779,7 @@ app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(
   .print-mark { display: flex; align-items: center; gap: 0.35rem; margin: 0 0 2rem; font: 700 1.25rem/1 var(--display); }
   .print-mark app-persona { --persona-size: 1.6rem; }
   .print-mark small { margin-inline: 0.4rem; font: 0.75rem/1 var(--sans); color: var(--ink-soft); }
-  .room, .bar, app-inbox, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups { display: none !important; }
+  .room, .bar, app-inbox, app-composer, .toasts, .drop-zone, .offer, .notice, .msg-actions, .activity, .approval, .msg-error-actions, .skip, .follow-ups, .no-print { display: none !important; }
   /* Without a look's frame. */
   :is(html, :root[data-look]) main { inline-size: auto; margin: 0; padding: 0; border: 0; background: none; box-shadow: none; }
   :is(html, :root[data-look]) .conversation-title { margin: 0 0 1rem; padding: 0; background: none; color: var(--ink); }

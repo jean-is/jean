@@ -32,6 +32,8 @@
   "action.rename": "Đổi tên",
   "action.remove": "Gỡ bỏ",
   "action.copy": "Sao chép",
+  "action.print": "In",
+  "action.share": "Chia sẻ",
   "action.retry": "Thử lại",
   "action.fork": "Nhân bản từ đây",
   "action.readAloud": "Đọc to",

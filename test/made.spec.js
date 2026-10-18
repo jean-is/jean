@@ -1,16 +1,20 @@
-// Things Jean made (0.2): an answer copied as rich text, and its table downloaded as CSV the way
-// this locale's spreadsheets read it. Files the brain writes (D119): a Word document from the
-// first message on, changed in place, and a spreadsheet written from a script.
+// Things Jean made (0.2): an answer copied as rich text, its table downloaded as CSV the way this
+// locale's spreadsheets read it, printed alone and shared (D404). Files the brain writes (D119): a
+// Word document from the first message on, changed in place, and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
 import { start, connectFakeBrain, ask, turnOn, SALES } from './helpers.js'
 import { extractPages } from '../app/caps/files/extract.js'
 
 test.beforeEach(async ({ page }) => {
-  // The clipboard is the browser's: record what reaches it.
+  // The clipboard, the printer and the share sheet are the browser's: record what reaches them.
   await page.addInitScript(() => {
     const seen = /** @type {any} */ (window)
     seen.copied = null
+    seen.printed = null
+    seen.shared = null
+    seen.print = () => { seen.printed = document.querySelectorAll('.no-print').length }
+    Object.defineProperty(navigator, 'share', { value: async (/** @type {ShareData} */ data) => { seen.shared = data } })
     Object.defineProperty(navigator.clipboard, 'write', {
       value: async (/** @type {ClipboardItem[]} */ items) => {
         const item = items[0]
@@ -27,7 +31,7 @@ test('an answer copied with its formatting, and its table as CSV', async ({ page
   const answer = page.locator('.msg-jean').last()
   await expect(answer.locator('.prose')).toContainText('Anything else?')
   const made = answer.locator('app-made')
-  await expect(made.locator('button')).toHaveCount(2)
+  await expect(made.locator('button')).toHaveCount(4)
 
   await made.getByRole('button', { name: 'Copy' }).click()
   await expect(page.locator('.toast')).toContainText('Copied')
@@ -44,6 +48,35 @@ test('an answer copied with its formatting, and its table as CSV', async ({ page
   expect(download.suggestedFilename()).toBe('Table 1.csv')
   const csv = await streamText(download)
   expect(csv).toBe('﻿Step,Status\r\nRead,done\r\nAnswer,done\r\n')
+
+  // Printed alone: on paper, the answer after the mark, without its request or the task's title, until the print dialog closes.
+  // Printing says light, as Chromium's does, and a dark screen stays dark.
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.evaluate(() => {
+    const seen = /** @type {any} */ (window)
+    seen.themes = []
+    new MutationObserver(() => seen.themes.push(document.documentElement.dataset.theme)).observe(document.documentElement, { attributeFilter: ['data-theme'] })
+  })
+  await made.getByRole('button', { name: 'Print' }).click()
+  expect(await page.evaluate(() => /** @type {any} */ (window).printed)).toBeGreaterThan(0)
+  await page.emulateMedia({ media: 'print', colorScheme: 'light' })
+  await expect(answer).toBeVisible()
+  await expect(page.locator('.msg-user')).toBeHidden()
+  await expect(page.locator('.conversation-title')).toBeHidden()
+  await expect(page.locator('.print-mark')).toBeVisible()
+  await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+  await expect(page.locator('.no-print')).toHaveCount(0)
+  await expect(page.locator('.msg-user')).toBeVisible()
+  await page.emulateMedia({ media: 'screen', colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  expect(await page.evaluate(() => /** @type {any} */ (window).themes)).not.toContain('light')
+
+  // Shared through the system's sheet, as Copy's text, with the task's title.
+  await made.getByRole('button', { name: 'Share', exact: true }).click()
+  const shared = await page.evaluate(() => /** @type {any} */ (window).shared)
+  expect(shared.text).toContain('| Read | done |')
+  expect(shared.title).toBeTruthy()
 })
 
 test('in French, a table downloads with semicolons, as Excel reads it there', async ({ page }) => {

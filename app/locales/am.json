@@ -32,6 +32,8 @@
   "action.rename": "እንደገና ሰይም",
   "action.remove": "ያስወግዱ",
   "action.copy": "ይቅዱ",
+  "action.print": "አትም",
+  "action.share": "አጋራ",
   "action.retry": "እንደገና ይሞክሩ",
   "action.fork": "ከዚህ ጀምሮ አባዛ",
   "action.readAloud": "በድምፅ ማንበብ",

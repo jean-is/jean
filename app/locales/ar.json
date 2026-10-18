@@ -32,6 +32,8 @@
   "action.rename": "إعادة التسمية",
   "action.remove": "إزالة",
   "action.copy": "نسخ",
+  "action.print": "طباعة",
+  "action.share": "مشاركة",
   "action.retry": "حاول مرة أخرى",
   "action.fork": "تكرار من هنا",
   "action.readAloud": "قراءة بصوت عالٍ",

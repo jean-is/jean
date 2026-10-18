@@ -32,6 +32,8 @@
   "action.rename": "Yeniden adlandır",
   "action.remove": "Kaldır",
   "action.copy": "Kopyala",
+  "action.print": "Yazdır",
+  "action.share": "Paylaş",
   "action.retry": "Tekrar dene",
   "action.fork": "Buradan çoğalt",
   "action.readAloud": "Sesli oku",

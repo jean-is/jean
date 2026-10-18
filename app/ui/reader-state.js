@@ -15,10 +15,11 @@ await useLocale(document.documentElement.lang || 'en')
 /** What the page was saved with (ui/export.js). */
 const saved = JSON.parse(document.getElementById('settings')?.textContent || '{}')
 const dark = matchMedia('(prefers-color-scheme: dark)')
+const printing = matchMedia('print')
 
-/** Light or dark, as the system is, and as it changes. */
+/** Light or dark, as the system is, and as it changes; printing, which says light, leaves it as it was. */
 export const theme = signal(dark.matches ? 'dark' : 'light')
-dark.addEventListener('change', () => { theme.value = dark.matches ? 'dark' : 'light' })
+dark.addEventListener('change', () => { if (!printing.matches) theme.value = dark.matches ? 'dark' : 'light' })
 
 export const app = {
   /** The task, which ui/reader.js reads from the page; a box ticked in it stays ticked until the page closes. */

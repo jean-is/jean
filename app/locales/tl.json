@@ -32,6 +32,8 @@
   "action.rename": "Palitan ang pangalan",
   "action.remove": "Alisin",
   "action.copy": "Kopyahin",
+  "action.print": "I-print",
+  "action.share": "Ibahagi",
   "action.retry": "Subukang muli",
   "action.fork": "I-duplicate mula rito",
   "action.readAloud": "Basahin nang malakas",

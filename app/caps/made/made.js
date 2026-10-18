@@ -1,11 +1,11 @@
 // Things Jean made: files the brain writes (a Word document, a spreadsheet, a text file),
 // kept in the project's files and shown under the answer, ready to save (D119); an answer
-// copied as rich text (pastes formatted into Word, Outlook and Google Docs), or its tables as
-// CSV (opens in Excel). Browser features only; no file-format library.
+// copied as rich text (pastes formatted into Word, Outlook and Google Docs), its tables as CSV
+// (opens in Excel), printed alone or shared. Browser features only; no file-format library.
 import { html, nothing, render, svg } from 'lit-html'
 import { lexer } from 'marked'
 import { Element, define } from '../../ui/base.js'
-import { register, loaded } from '../../ui/caps.js'
+import { register, loaded, slots } from '../../ui/caps.js'
 import { app, notify, conversationOf } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
 import { markdown } from '../../ui/markdown.js'
@@ -222,17 +222,41 @@ class FileMade extends Element {
   }
 }
 
+/**
+ * Under an answer: Copy, its tables as CSV, Print, and Share (D404): a link to it once sharing by link
+ * is found (D361), else the system's share sheet where there is one.
+ */
 class Made extends Element {
   render() {
     const source = /** @type {string} */ (/** @type {any} */ (this).source ?? '')
     if (!source) return nothing
     const tables = tablesIn(source)
+    const linked = slots('drawn')
     return html`
       <button class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>
       ${tables.map((table, i) => html`<button class="icon-button subtle"
         aria-label=${tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle')}
-        @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}`
+        @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}
+      <button class="icon-button subtle" aria-label=${t('action.print')} @click=${() => printAlone(this.closest('.msg-jean'))}>${icons.print}</button>
+      ${linked.length ? linked.map((part) => part.draw({ text: source })) : 'share' in navigator ? html`<button class="icon-button subtle" aria-label=${t('action.share')}
+        @click=${() => navigator.share({ title: app.conversations.peek().find((one) => one.path === app.current.peek()?.path)?.title, text: source })
+          .catch((/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))}>${icons.share}</button>` : nothing}`
   }
+}
+
+/**
+ * Prints the answer alone, after the mark that starts every print: what is beside it, and beside
+ * each of its parents up to the page's main part, is `no-print` until the print dialog closes.
+ * @param {globalThis.Element | null} answer
+ */
+function printAlone(answer) {
+  const beside = /** @type {globalThis.Element[]} */ ([])
+  for (let node = answer; node?.parentElement && node.localName !== 'main'; node = node.parentElement) {
+    beside.push(...[...node.parentElement.children].filter((other) => other !== node && !other.classList.contains('no-print')))
+  }
+  for (const other of beside) other.classList.add('no-print')
+  addEventListener('afterprint', () => { for (const other of beside) other.classList.remove('no-print') }, { once: true })
+  print()
 }
 
 // ─── Rich text ───────────────────────────────────────────────────────────────

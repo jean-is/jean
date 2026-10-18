@@ -32,6 +32,8 @@
   "action.rename": "Naam wijzigen",
   "action.remove": "Weghalen",
   "action.copy": "Kopiëren",
+  "action.print": "Afdrukken",
+  "action.share": "Delen",
   "action.retry": "Opnieuw proberen",
   "action.fork": "Vanaf hier dupliceren",
   "action.readAloud": "Voorlezen",

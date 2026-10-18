@@ -60,4 +60,5 @@ export const icons = {
   fullscreen: icon(svg`<path d="M4.5 9V6.5a2 2 0 0 1 2-2H9M15 4.5h2.5a2 2 0 0 1 2 2V9M19.5 15v2.5a2 2 0 0 1-2 2H15M9 19.5H6.5a2 2 0 0 1-2-2V15"/>`),
   'exit-fullscreen': icon(svg`<path d="M9 4.5V7a2 2 0 0 1-2 2H4.5M19.5 9H17a2 2 0 0 1-2-2V4.5M15 19.5V17a2 2 0 0 1 2-2h2.5M4.5 15H7a2 2 0 0 1 2 2v2.5"/>`),
   play: icon(svg`<path d="M8.5 5.5v13L19 12Z"/>`),
+  print: icon(svg`<path d="M7.5 9V5.5a1.5 1.5 0 0 1 1.5-1.5h6a1.5 1.5 0 0 1 1.5 1.5V9M7.5 17H6a2.5 2.5 0 0 1-2.5-2.5v-3A2.5 2.5 0 0 1 6 9h12a2.5 2.5 0 0 1 2.5 2.5v3A2.5 2.5 0 0 1 18 17h-1.5M7.5 14h9v6.5h-9Z"/><circle cx="17" cy="12" r="1" fill="currentColor" stroke="none"/>`),
 }

@@ -32,6 +32,8 @@
   "action.rename": "שינוי שם",
   "action.remove": "הסרה",
   "action.copy": "העתקה",
+  "action.print": "הדפסה",
+  "action.share": "שיתוף",
   "action.retry": "ניסיון חוזר",
   "action.fork": "שכפול מכאן",
   "action.readAloud": "הקראה",

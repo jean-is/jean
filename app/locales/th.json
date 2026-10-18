@@ -32,6 +32,8 @@
   "action.rename": "เปลี่ยนชื่อ",
   "action.remove": "นำออก",
   "action.copy": "คัดลอก",
+  "action.print": "พิมพ์",
+  "action.share": "แชร์",
   "action.retry": "ลองอีกครั้ง",
   "action.fork": "ทำสำเนาจากตรงนี้",
   "action.readAloud": "อ่านออกเสียง",
