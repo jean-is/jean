@@ -171,7 +171,8 @@ register({
   id: 'profiles',
   ...(parts && { tools: parts.tools, lines: parts.lines }),
   slots: {
-    profiles: { at: 0, draw: menu },
+    // The person at the drawer's foot is named by this profile, the first name they set coming first (D150).
+    profiles: { at: 0, draw: menu }, person: { at: 0, draw: () => self.value?.name },
     dialog: { at: 2, draw: () => html`<app-profile-dialog></app-profile-dialog>` },
     settings: [{ id: 'profiles', at: 15, label: 'profiles.title', icon: icons.person, draw: section, when: () => all.value.length > 1 }, ...(parts ? [parts.settings] : [])],
     above: [{ at: 0, draw: banner }, ...(parts ? [parts.above] : [])],

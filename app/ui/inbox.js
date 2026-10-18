@@ -256,13 +256,14 @@ export async function nextLanguage() {
 
 /**
  * The user at the foot of the drawer, open beside the conversation or over it (D150, D165): their
- * initial and their name, the first name they set or else what the account they signed in with
- * calls them (a capability's `person` slot), or "You" until one is known, opening a menu above them.
+ * initial and their name, the first name they set or else the first that capabilities' `person` slot
+ * gives (the profile's, then what the account they signed in with calls them), or "You" until one is
+ * known, opening a menu above them.
  * It goes back to its actions once closed.
  * @param {'drawer' | 'list'} where
  */
 export function profileEntry(where) {
-  const name = effective.value.settings.name || /** @type {string | null | undefined} */ (slots('person')[0]?.draw())
+  const name = effective.value.settings.name || /** @type {string | undefined} */ (slots('person').map((part) => part.draw()).find(Boolean))
   const id = `profile-${where}`
   const shown = page.value
   return html`<button class="sidebar-settings profile" popovertarget=${id}>

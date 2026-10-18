@@ -2,7 +2,7 @@
 // afresh; a child's, set by a parent and opened by them under 13, whose concerns reach the parent's
 // profile, its kind and when, never the words, unless the danger is at home.
 import { test, expect } from '@playwright/test'
-import { start, openProfile, openSettings, closeSettings, ask, BRAIN_URL } from './helpers.js'
+import { start, openProfile, openSettings, closeSettings, openTasks, ask, BRAIN_URL } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 
@@ -57,6 +57,8 @@ test('a second profile is a Jean of its own: listed in the menu, opened afresh, 
   await (await add(page, 'Work', 'Ana')).getByRole('button', { name: 'Add it' }).click()
   await expect.poll(() => here(page)).toMatch(/-work$/)
   expect(await read(page, 'memory.md')).toBeNull()
+  // With no first name set here, the drawer's foot calls the person by the profile's name (D150).
+  await expect((await openTasks(page)).locator('.profile-name')).toHaveText('Work')
 
   // The menu lists both, this one first marked, and opens the other.
   const menu = await openProfile(page)
