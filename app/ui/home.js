@@ -2,24 +2,25 @@
 // one per language at its own address. It speaks the app's one language: when that changes, from Settings,
 // ⌘⇧L or the page's own menu (which sets it as Settings does), the page shown is that language's, at its
 // address, or English's where it has none. Each Try puts its request in the box as the ideas do, the sample
-// spreadsheet's with its file; one tile is the active one, the one pointed at, tapped or reached by the keyboard,
-// and the filter's mark slides to the choice. Shown, the page is at its own address, the place read kept over a
+// spreadsheet's with its file, a tune's, a quiz's or a deck's with Jean's skill for it; one tile is the active
+// one, the one pointed at, tapped or reached by the keyboard, and the filter's mark slides to the choice. Shown, the page is at its own address, the place read kept over a
 // change of language; hidden, a language's address gives way to the site's, as every other one is, its language kept.
 import { app, effective, setLocale, updateSettings, LOCALES } from './state.js'
 import { locale, pickLocale } from '../core/i18n.js'
-import { idea, focusComposer } from './composer.js'
+import { idea, skillFor, focusComposer } from './composer.js'
 
 let started = false
 let showing = false
 
 /** A Try: back up to the box on a wide window (on a phone it is docked at the foot already), emptied, its request in it. @param {Event} event */
-function tryIt(event) {
+async function tryIt(event) {
   const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
   if (!(button instanceof HTMLElement)) return
   if (matchMedia('(min-width: 48rem)').matches) scrollTo({ top: 0, behavior: 'instant' })
   app.attachments.value = []
   app.draft.value = ''
   if (button.dataset.try === 'sample') return idea('sample')
+  await skillFor(button.dataset.try ?? '')
   // Its tile's request, from the tile or from its replay.
   app.draft.value = document.querySelector(`.home-tile [data-try="${button.dataset.try}"]`)?.closest('.home-tile')?.querySelector('.home-request')?.textContent ?? ''
   focusComposer()

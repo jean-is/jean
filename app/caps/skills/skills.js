@@ -134,15 +134,23 @@ export async function adopt(entry, { body, files, blocks, metadata }) {
 const DRAWS = /** @type {Record<string, string>} */ ({ echarts: 'chart', abc: 'music-score', marp: 'slides' })
 
 /**
+ * Jean's own skills by name, added as the user adds one, unless a skill of the room has the name: what a task brought
+ * in draws needs (D378), or an idea asks for (D366). Their names, in the user's language. @param {string[]} names
+ */
+export async function bring(names) {
+  const have = await skills()
+  const ready = (await directory()).filter((entry) => names.includes(entry.name) && !have.some((skill) => skill.name === entry.name))
+  for (const entry of ready) await adopt(entry, await fetchSkill(entry))
+  return ready.map((entry) => shownIn(entry, locale.peek()).title)
+}
+
+/**
  * What a task brought in from elsewhere holds is drawn here (a share, D378): a kind of block no skill of the room
- * declares comes with Jean's own skill that does, added as the user adds one, unless a skill of the room has its
- * name. Their names, in the user's language. @param {string[]} kinds the kinds of block the task holds
+ * declares comes with Jean's own skill that does. @param {string[]} kinds the kinds of block the task holds
  */
 export async function drawWith(kinds) {
   const have = await skills()
-  const ready = (await directory()).filter((entry) => kinds.some((kind) => DRAWS[kind] === entry.name && !have.some((skill) => skill.name === entry.name || skill.blocks?.includes(kind))))
-  for (const entry of ready) await adopt(entry, await fetchSkill(entry))
-  return ready.map((entry) => shownIn(entry, locale.peek()).title)
+  return bring(kinds.filter((kind) => DRAWS[kind] && !have.some((skill) => skill.blocks?.includes(kind))).map((kind) => DRAWS[kind]))
 }
 
 /** @type {import('../../core/loop.js').Tool} */

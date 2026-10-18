@@ -21,6 +21,17 @@ test('the first idea shares a sample spreadsheet with a request about it, and Fi
   expect(await page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('files'))).toBe(true)
 })
 
+test('the ideas for a tune and a quiz add Jean’s own skill for each before their request (D400)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.locator('.starter', { hasText: 'Compose a tune' }).click()
+  await expect(page.locator('#prompt')).toHaveValue('Compose a short lullaby, as sheet music I can play.')
+  await expect(page.locator('#prompt')).toBeFocused()
+  await page.locator('.starter', { hasText: 'Make a quiz' }).click()
+  await expect(page.locator('#prompt')).toHaveValue('Make a quiz on the planets of the solar system, for a ten-year-old.')
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'quiz'])
+})
+
 test('the house lights up as capabilities are turned on', async ({ page }) => {
   await start(page)
   const settings = await openSettings(page, 'Capabilities')

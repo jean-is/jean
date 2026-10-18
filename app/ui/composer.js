@@ -21,7 +21,9 @@ import { dictation, toggleDictation, live } from './dictation.js'
 
 const LIVE = { preparing: 'dictation.preparing', listening: 'dictation.listening', thinking: 'activity.thinking', speaking: 'live.speaking' }
 // The ideas, a sample spreadsheet first, and the box under the question while all fits a wide window (D366).
-const STARTERS = ['sample', 'email', 'summarize', 'savings']
+const STARTERS = ['sample', 'music', 'quiz', 'savings']
+// An idea, or a tile of jean.is's page, that asks for a tune, a quiz or a deck brings Jean's own skill for it (D366).
+const SKILLS = /** @type {Record<string, string>} */ ({ music: 'music-score', quiz: 'quiz', slides: 'slides' })
 const root = document.documentElement, wide = matchMedia('(min-width: 48rem)')
 // The room's own height, without jean.is's page under it, which About under the box asks for again (D397).
 const home = document.querySelector('body > .home')
@@ -36,9 +38,15 @@ effect(() => {
 
 /** @param {string} key */
 export async function idea(key) {
+  await skillFor(key)
   if (key === 'sample') await attachFiles([new File([await (await fetch('caps/files/sales.csv')).blob()], 'sales.csv', { type: 'text/csv' })])
   app.draft.value = t(`starter.${key}.prompt`)
   focusComposer()
+}
+
+/** The skill an idea or a tile needs, in the room before its request is sent, unless Skills is turned off. @param {string} key */
+export async function skillFor(key) {
+  if (SKILLS[key] && await unlock('skills')) await (await import('../caps/skills/skills.js')).bring([SKILLS[key]]).catch(console.warn)
 }
 
 /** The menu shown beside a row of +, the room's skills or connections (ui/plus.js, D292). @type {import('@preact/signals-core').Signal<{ id: string, view: () => unknown } | null>} */
