@@ -1,6 +1,6 @@
 # Jean
 
-> AI for your files, in a browser tab. Give Jean a spreadsheet, a PDF or a folder of documents, and get back the chart, the table or the report. Nothing to install, kept on your device, free and open source.
+> Everyone's AI, in a browser tab. Ask in words or with a file, and get back what you asked for, made: an answer with its sources, a document, a chart. Use the AI you choose, and keep your work on your device. Nothing to install, free and open source.
 
 Jean is for people who will never open a terminal. You open a page, give it a task and your files, and it reads them, works things out with real calculations, and hands back something you can use: a summary, a table, a document. It shows what it is doing while it works, and it asks before anything that matters.
 

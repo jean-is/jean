@@ -56,7 +56,7 @@ test('once a task has started, a line under the box says the assistant is an AI,
 test('before any task, the welcome says what Jean is; the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas (D366)', async ({ page }) => {
   await start(page)
   const pitch = page.locator('.pitch')
-  await expect(pitch.locator('p')).toHaveText('Bring your files and questions. Get back answers, documents and charts, right in this tab.')
+  await expect(pitch.locator('p')).toHaveText('Ask for anything. Get back an answer, a document, a chart, a tune, a picture or a small app, right in this tab.')
   await expect(pitch.locator('li')).toHaveText(['Nothing to install', 'Kept on this device', 'Free and open source'])
   const top = async (/** @type {string} */ selector) => (await page.locator(selector).boundingBox())?.y ?? 0
   const { width, height } = page.viewportSize() ?? { width: 1280, height: 720 }

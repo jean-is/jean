@@ -2,9 +2,21 @@
 
 ## Who and what
 
-- **One sentence:** AI for your files, in a browser tab. Nothing to install, kept on your device, free and open source. Give Jean a spreadsheet, a PDF or a folder of documents, and get back the chart, the table or the report.
-- **First user:** a non-technical knowledge worker. Assume a managed Windows laptop running Edge or Chrome, a weak graphics chip and IT policies.
-- **The job:** drop in files (CSVs, PDFs, a folder of invoices). Jean reads them, works things out by running real code, and hands back files: a report, a spreadsheet, a chart.
+- **One sentence:** everyone's AI, in a browser tab. It starts as one box, takes anything in and gives anything back, with the AI you choose, and keeps what it holds on your device. Nothing to install, free and open source (D2 · D395).
+- **Who:** everyone, non-technical people first, in three places:
+  - **at home:** a person with a question, a letter, a budget, a trip, a song to write;
+  - **in a family:** a profile for each child, set by a parent (D228, D389);
+  - **at work:** a knowledge worker, often on a managed laptop, and the IT team that deploys Jean like a web page ([enterprise.md](enterprise.md)).
+- **Design for the weakest device:** a managed Windows laptop running Edge or Chrome, a weak graphics chip and IT policies; a family's shared computer; a phone.
+- **What it does:** people ask in words, aloud, or with a file, a folder, a picture or another assistant's export, and get back what they asked for, made: an answer with its sources, a Word document, a spreadsheet, a deck, a chart, a score that plays, a picture, a page that works, a map, a routine. Numbers are worked out by code Jean runs, not guessed. Files in, files out is the job people search for most, so it leads the examples, never the identity.
+- **What sets it apart,** in this order:
+  1. **Simple.** One box. The rest is offered when a moment calls for it, and the first load stays small ([Progressive discovery](#progressive-discovery)).
+  2. **Universal.** Anything in, anything out, with any brain: one on the device, a free one, a plan already paid for, or a company's gateway. In 33 languages, in any recent browser, a phone's included.
+  3. **Confidential.** What Jean keeps is encrypted on the device, and there is no Jean server. On a computer with 12 GB of memory and a recent graphics chip, the answers can be written there too, offline (D319, D371).
+  4. **Ready for a family.** A profile per child, set by a parent: topics by age, an under-13 lock and a danger notice (D389, D390). Learning's skills help a child learn rather than do the work (D394). The tutor is promised only once `npm run tutor` shows that the brains offered to a child rarely give the answer.
+  5. **Open.** MIT, open standards (MCP, `SKILL.md`, ACP, the OpenAI-compatible and Anthropic APIs), plain files readable without Jean, plugins, and a static folder anyone can host.
+  6. **Shareable.** A task, or anything Jean made, goes out as a link sealed in the browser, which the host can't read, with a password and an end date if wanted, and its answers' certificates (D361); or as a web page that opens anywhere (D305).
+- **Behind those six:** honest (each answer says where it was done, with a certificate, D252, D274), careful (Do it, Ask me first or Never, and a sandbox for code), multilingual (right to left included, voice on the device), accessible (WCAG AA, with dictation and read-aloud always there).
 - **The browser is the security model.** The category's biggest problem is agents with shell access on your laptop. Jean stays inside the most battle-tested sandbox there is.
 - **Open source and reputation come first.** Revenue is secondary. Everything a person or a team uses is MIT. Organisations pay only for the enterprise integrations their IT, security or compliance teams ask for, in `ee/` (open core, D139).
 
