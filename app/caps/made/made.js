@@ -245,12 +245,17 @@ class Made extends Element {
 }
 
 /**
- * Prints the answer alone, after the mark that starts every print: the rest of the task stays off
- * the paper (made.css) until the print dialog closes. @param {globalThis.Element | null} answer
+ * Prints the answer alone, after the mark that starts every print: what is beside it, and beside
+ * each of its parents up to the page's main part, is `no-print` until the print dialog closes.
+ * @param {globalThis.Element | null} answer
  */
 function printAlone(answer) {
-  answer?.setAttribute('data-printed', '')
-  addEventListener('afterprint', () => answer?.removeAttribute('data-printed'), { once: true })
+  const beside = /** @type {globalThis.Element[]} */ ([])
+  for (let node = answer; node?.parentElement && node.localName !== 'main'; node = node.parentElement) {
+    beside.push(...[...node.parentElement.children].filter((other) => other !== node && !other.classList.contains('no-print')))
+  }
+  for (const other of beside) other.classList.add('no-print')
+  addEventListener('afterprint', () => { for (const other of beside) other.classList.remove('no-print') }, { once: true })
   print()
 }
 

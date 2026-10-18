@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
     seen.copied = null
     seen.printed = null
     seen.shared = null
-    seen.print = () => { seen.printed = [...document.querySelectorAll('[data-printed]')].length }
+    seen.print = () => { seen.printed = document.querySelectorAll('.no-print').length }
     Object.defineProperty(navigator, 'share', { value: async (/** @type {ShareData} */ data) => { seen.shared = data } })
     Object.defineProperty(navigator.clipboard, 'write', {
       value: async (/** @type {ClipboardItem[]} */ items) => {
@@ -59,13 +59,14 @@ test('an answer copied with its formatting, and its table as CSV', async ({ page
     new MutationObserver(() => seen.themes.push(document.documentElement.dataset.theme)).observe(document.documentElement, { attributeFilter: ['data-theme'] })
   })
   await made.getByRole('button', { name: 'Print' }).click()
-  expect(await page.evaluate(() => /** @type {any} */ (window).printed)).toBe(1)
+  expect(await page.evaluate(() => /** @type {any} */ (window).printed)).toBeGreaterThan(0)
   await page.emulateMedia({ media: 'print', colorScheme: 'light' })
   await expect(answer).toBeVisible()
   await expect(page.locator('.msg-user')).toBeHidden()
   await expect(page.locator('.conversation-title')).toBeHidden()
   await expect(page.locator('.print-mark')).toBeVisible()
   await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+  await expect(page.locator('.no-print')).toHaveCount(0)
   await expect(page.locator('.msg-user')).toBeVisible()
   await page.emulateMedia({ media: 'screen', colorScheme: 'dark' })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
