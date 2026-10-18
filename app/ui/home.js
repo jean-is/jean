@@ -105,6 +105,8 @@ export function follow(home, shown, lang) {
     started = true
     home.addEventListener('click', tryIt)
     menu?.addEventListener('change', () => setLocale(menu.value))
+    // Its height, which the app's shell reaches over so that the drawer beside it stays put (home.css).
+    new ResizeObserver(([entry]) => document.body.style.setProperty('--home', `${entry.borderBoxSize[0].blockSize}px`)).observe(home)
     for (const type of ['pointerover', 'focusin']) home.addEventListener(type, (event) => event.target instanceof Element && event.target.closest('.home-tile') && activate(home, event.target.closest('.home-tile')))
     const filter = home.querySelector('.home-filter')
     const back = turning(home)
