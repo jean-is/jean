@@ -66,9 +66,11 @@ async function start() {
   effect(() => { root.dataset.presence = app.presence.value })
   // Light or dark: the device's mode, until the user picks the other one (index.html applies it
   // before the first paint). It switches at once: the room's slow fade is for its warmth, and
-  // the text would change colour two seconds before its background.
+  // the text would change colour two seconds before its background. Printing says light whatever
+  // the device's mode, and the print sheet makes the paper light: the screen stays as it was.
   const daylight = matchMedia('(prefers-color-scheme: light)')
-  const follow = () => { app.deviceTheme.value = daylight.matches ? 'light' : 'dark' }
+  const printing = matchMedia('print')
+  const follow = () => { if (!printing.matches) app.deviceTheme.value = daylight.matches ? 'light' : 'dark' }
   daylight.addEventListener('change', follow)
   follow()
   const chosen = localStorage.getItem(mine(THEME_KEY))

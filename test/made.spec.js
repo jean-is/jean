@@ -50,16 +50,26 @@ test('an answer copied with its formatting, and its table as CSV', async ({ page
   expect(csv).toBe('﻿Step,Status\r\nRead,done\r\nAnswer,done\r\n')
 
   // Printed alone: on paper, the answer after the mark, without its request or the task's title, until the print dialog closes.
+  // Printing says light, as Chromium's does, and a dark screen stays dark.
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.evaluate(() => {
+    const seen = /** @type {any} */ (window)
+    seen.themes = []
+    new MutationObserver(() => seen.themes.push(document.documentElement.dataset.theme)).observe(document.documentElement, { attributeFilter: ['data-theme'] })
+  })
   await made.getByRole('button', { name: 'Print' }).click()
   expect(await page.evaluate(() => /** @type {any} */ (window).printed)).toBe(1)
-  await page.emulateMedia({ media: 'print' })
+  await page.emulateMedia({ media: 'print', colorScheme: 'light' })
   await expect(answer).toBeVisible()
   await expect(page.locator('.msg-user')).toBeHidden()
   await expect(page.locator('.conversation-title')).toBeHidden()
   await expect(page.locator('.print-mark')).toBeVisible()
   await page.evaluate(() => dispatchEvent(new Event('afterprint')))
   await expect(page.locator('.msg-user')).toBeVisible()
-  await page.emulateMedia({ media: 'screen' })
+  await page.emulateMedia({ media: 'screen', colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  expect(await page.evaluate(() => /** @type {any} */ (window).themes)).not.toContain('light')
 
   // Shared through the system's sheet, as Copy's text, with the task's title.
   await made.getByRole('button', { name: 'Share', exact: true }).click()
