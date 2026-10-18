@@ -9,6 +9,7 @@ import { Element, define } from '../../ui/base.js'
 import { register, loaded, slots } from '../../ui/caps.js'
 import { app, notify, conversationOf } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
+import { act } from '../../ui/acts.js'
 import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
@@ -218,8 +219,9 @@ class FileMade extends Element {
   /** @param {string} name @param {string} type */
   async #save(name, type) {
     const bytes = await this.#bytes()
-    if (bytes) save(new Blob([/** @type {BlobPart} */ (bytes)], { type }), name)
-    else notify(t('files.missing', { name }))
+    if (!bytes) return notify(t('files.missing', { name }))
+    save(new Blob([/** @type {BlobPart} */ (bytes)], { type }), name)
+    act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() })
   }
 }
 
@@ -245,18 +247,23 @@ class Made extends Element {
     const tables = tablesIn(source)
     const linked = slots('drawn')
     const sharing = linked.length || 'share' in navigator
-    /** One of the menu's items, which closes it. @param {unknown} icon @param {string} label @param {() => unknown} act */
-    const item = (icon, label, act) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
+    const task = app.current.value?.path
+    /**
+     * One of the menu's items, which closes it, and once done tells what it did, if it says (D421).
+     * @param {unknown} icon @param {string} label @param {() => unknown} run @param {string} [type] @param {string} [format]
+     */
+    const item = (icon, label, run, type, format) => html`<button type="button" popovertarget=${id} popovertargetaction="hide"
+      @click=${async () => { await run(); if (type) act(type, { task, format }) }}>${icon}${label}</button>`
     return html`<button class="icon-button subtle" popovertarget=${id} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${id} class="menu answer-menu" popover>
         ${linked.length ? linked.map((part) => part.draw({ text: source }, item)) : sharing ? item(icons.share, t('made.share'),
-          () => navigator.share({ title, text: source }).catch((/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))) : nothing}
+          () => navigator.share({ title, text: source }).then(() => act('answer.share', { task }), (/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))) : nothing}
         ${sharing ? html`<hr>` : nothing}
-        ${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)))}
-        ${item(icons.file, t('made.docxTitle'), () => downloadWord(source, name))}
-        ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1)))}
+        ${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}
+        ${item(icons.file, t('made.docxTitle'), () => downloadWord(source, name), 'answer.save', 'docx')}
+        ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1), 'answer.save', 'csv'))}
         <hr>
-        ${item(icons.print, t('made.print'), () => printAlone(this.closest('.msg-jean')))}
+        ${item(icons.print, t('made.print'), () => printAlone(this.closest('.msg-jean')), 'answer.print')}
       </div>`
   }
 }
@@ -300,6 +307,7 @@ export async function copyRich(source, answer) {
     } else await navigator.clipboard.writeText(source)
     // Some apps leave out pictures pasted in rich text (Notion), but take a widget's own copy (D196).
     notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-slides .slide, .prose app-latex .latex-page, .prose app-diagram') ? 'made.copiedPictures' : 'toast.copied'))
+    act('answer.copy', { task: app.current.peek()?.path })
   } catch (error) {
     console.warn('Copy', error)
     notify(t('made.copyFailed'))

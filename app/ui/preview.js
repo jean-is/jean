@@ -10,6 +10,7 @@ import { Element, define } from './base.js'
 import * as dock from './dock.js'
 import { app, effective, notify } from './state.js'
 import { save, savePage } from './save.js'
+import { act } from './acts.js'
 import { icons } from './menu-icons.js'
 import { addFile, fileMeta, fileText, splitPages } from '../core/files.js'
 import { callsIn, filesMade, latestOf, versionsOf } from '../core/events.js'
@@ -107,8 +108,9 @@ function picker() {
 /** @param {Shown} file */
 async function download(file) {
   const bytes = await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
-  if (bytes) save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), file.name)
-  else notify(t('files.missing', { name: file.name }))
+  if (!bytes) return notify(t('files.missing', { name: file.name }))
+  save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), file.name)
+  act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(file.name)?.[1].toLowerCase() })
 }
 
 // What the file shows as, read again when another file (or a new version) is shown, or when what

@@ -25,7 +25,7 @@ function collector(statuses) {
 function turn(options = {}) {
   /** @type {import('../app/ee/otlp.js').Span[]} */
   const spans = []
-  const follow = tracer({ send: (span) => spans.push(span), serviceOf: (name) => (name === 'crm_search' ? '01JCRM' : undefined), now: () => Date.parse('2026-10-17T10:00:09Z'), ...options })
+  const follow = tracer({ send: (span) => spans.push(span), serviceOf: (name) => (name === 'crm_search' ? { id: '01JCRM', address: 'crm.acme.example' } : undefined), now: () => Date.parse('2026-10-17T10:00:09Z'), ...options })
   const record = (/** @type {any} */ envelope) => follow.record({ task: TASK, type: envelope.update.sessionUpdate, record: envelope })
   record({ at: '2026-10-17T10:00:00Z', by: 'user', update: { sessionUpdate: 'user_message_chunk', content: { type: 'text', text: 'Who are our top clients?' } } })
   const brain = { toolCallId: 'brain-0-abc', title: 'gpt-5', kind: 'think', rawInput: { provider: 'openai', model: 'gpt-5', local: false } }
@@ -71,7 +71,8 @@ describe('the tracer', () => {
     })
     assert.deepEqual(attrs(search), {
       'gen_ai.operation.name': 'execute_tool', 'gen_ai.tool.name': 'crm_search', 'gen_ai.tool.call.id': 'call_1/a', 'gen_ai.tool.type': 'extension',
-      'gen_ai.conversation.id': '01J00000000000000000000002', 'jean.tool.kind': 'fetch', 'jean.tool.service': '01JCRM', 'jean.decision': 'ask', 'jean.decided_by': 'clients',
+      'gen_ai.conversation.id': '01J00000000000000000000002', 'jean.tool.kind': 'fetch', 'jean.tool.service': '01JCRM', 'server.address': 'crm.acme.example',
+      'jean.decision': 'ask', 'jean.decided_by': 'clients',
     })
     assert.equal(attrs(script)['gen_ai.tool.type'], 'function')
     // Declined is no error.
@@ -138,6 +139,102 @@ describe('the tracer', () => {
     follow.record({ task: TASK, type: 'tool_call', record: kept('2026-10-17T10:00:02Z', { sessionUpdate: 'tool_call', toolCallId: 'b', name: 'read', kind: 'read', status: 'completed', rawOutput: '' }, 1) })
     follow.end({ task: TASK, at: '2026-10-17T10:00:00Z' })
     assert.equal(new Set(spans.map((span) => span.traceId)).size, 1)
+  })
+})
+
+describe('skills, connections, routines and what is taken away (D421)', () => {
+  const ROUTINE = 'projects/01J00000000000000000000001-home/routines/01J00000000000000000000005.md'
+  /** @param {any} data */
+  const note = (data) => ({ at: '2026-10-17T10:00:00Z', by: 'jean', update: { sessionUpdate: '_system_note', text: '…', data } })
+  /** @param {string} text */
+  const asked = (text) => ({ at: '2026-10-17T10:00:00Z', by: 'user', update: { sessionUpdate: 'user_message_chunk', content: { type: 'text', text } } })
+  /** @param {string} id @param {string} name @param {string} [status] */
+  const read = (id, name, status = 'completed') => kept('2026-10-17T10:00:02Z', { sessionUpdate: 'tool_call', toolCallId: id, name: 'skill', kind: 'read', rawInput: { name }, status, rawOutput: '' }, 0)
+  function follow(options = {}) {
+    /** @type {import('../app/ee/otlp.js').Span[]} */
+    const spans = []
+    const tracing = tracer({ send: (span) => spans.push(span), now: () => Date.parse('2026-10-17T10:00:09Z'), ...options })
+    return { spans, tracing, record: (/** @type {any} */ envelope, task = TASK) => tracing.record({ task, type: envelope.update.sessionUpdate, record: envelope }) }
+  }
+
+  test('each skill used is a span in its turn: read by the brain under its call, named with / or followed by a mode of the box under the turn', () => {
+    const { spans, tracing, record } = follow()
+    record(note({ kind: 'mentions', words: ['/weekly-report', '/Notion'], skills: ['weekly-report'] }))
+    record(note({ kind: 'mode', mode: 'visual-answers' }))
+    record(asked('/weekly-report for Notion'))
+    // The brain's name, its underscores read as hyphens (D406); a file beside the steps, or a skill there isn't, is no use of one.
+    record(read('call_1', 'process_improvement'))
+    record(read('call_2', 'weekly-report/forms.md'))
+    record(read('call_3', 'nowhere', 'failed'))
+    tracing.end({ task: TASK, at: '2026-10-17T10:00:00Z' })
+    const root = /** @type {import('../app/ee/otlp.js').Span} */ (spans.find((span) => span.name === 'invoke_agent'))
+    const call = spans.find((span) => attrs(span)['gen_ai.tool.call.id'] === 'call_1')
+    const uses = spans.filter((span) => span.name === 'use_skill')
+    assert.deepEqual(uses.map(attrs), [
+      { 'gen_ai.conversation.id': '01J00000000000000000000002', 'jean.skill.name': 'process-improvement', 'jean.skill.via': 'call' },
+      { 'gen_ai.conversation.id': '01J00000000000000000000002', 'jean.skill.name': 'weekly-report', 'jean.skill.via': 'name' },
+      { 'gen_ai.conversation.id': '01J00000000000000000000002', 'jean.skill.name': 'visual-answers', 'jean.skill.via': 'mode' },
+    ])
+    assert.deepEqual(uses.map((span) => span.parentSpanId), [call?.spanId, root.spanId, root.spanId])
+    for (const span of uses) assert.equal(span.traceId, root.traceId)
+    // Named in the box, at its request's time.
+    assert.equal(uses[1].startTimeUnixNano, String(Date.parse('2026-10-17T10:00:00Z') * 1e6))
+    // The next turn names none.
+    record(asked('Thanks'))
+    tracing.end({ task: TASK, at: '2026-10-17T10:00:10Z' })
+    assert.equal(spans.filter((span) => span.name === 'use_skill').length, 3)
+  })
+
+  test('a routine’s run says which routine it is and what set it off; a later turn in its task, only that it is one', () => {
+    const { spans, tracing, record } = follow()
+    const run = (/** @type {Record<string, unknown>} */ data, task = TASK) => {
+      record(note({ kind: 'routine', routine: ROUTINE, title: 'Weekly report', due: '2026-10-17T10:00:00Z', ...data }), task)
+      record(asked('The weekly report'), task)
+      tracing.end({ task, at: '2026-10-17T10:00:00Z', routine: ROUTINE })
+    }
+    run({})
+    run({ asked: true }, TASK.replace(/2\.jsonl$/, '3.jsonl'))
+    run({ file: 'invoice.pdf' }, TASK.replace(/2\.jsonl$/, '4.jsonl'))
+    record(asked('And last week?'))
+    tracing.end({ task: TASK, at: '2026-10-17T10:00:10Z', routine: ROUTINE })
+    assert.deepEqual(spans.map(attrs).map((given) => [given['jean.routine'], given['jean.routine.id'], given['jean.routine.trigger']]), [
+      [true, '01J00000000000000000000005', 'schedule'], [true, '01J00000000000000000000005', 'person'], [true, '01J00000000000000000000005', 'file'], [true, undefined, undefined],
+    ])
+  })
+
+  test('what was done outside the records is a span of its own named for it, its file by its id, its host alone, its title only with content', () => {
+    const { spans, tracing } = follow()
+    tracing.act({ type: 'skill.add', name: 'weekly-report', source: 'elsewhere', address: 'raw.githubusercontent.com', digest: 'sha256-abc' })
+    tracing.act({ type: 'routine.add', path: ROUTINE, title: 'Weekly report', every: 'week' })
+    tracing.act({ type: 'connection.remove', id: '01JCRM', address: 'crm.acme.example' })
+    tracing.act({ type: 'answer.save', task: TASK, format: 'docx' })
+    tracing.act({ type: 'nothing' })
+    assert.deepEqual(spans.map((span) => span.name), ['add_skill', 'add_routine', 'remove_connection', 'save_answer'])
+    assert.deepEqual(spans.map(attrs), [
+      { 'jean.skill.name': 'weekly-report', 'jean.skill.source': 'elsewhere', 'server.address': 'raw.githubusercontent.com', 'jean.skill.digest': 'sha256-abc' },
+      { 'jean.routine.id': '01J00000000000000000000005', 'jean.routine.every': 'week' },
+      { 'jean.connection.id': '01JCRM', 'server.address': 'crm.acme.example' },
+      { 'gen_ai.conversation.id': '01J00000000000000000000002', 'gen_ai.agent.id': '01J00000000000000000000001', 'jean.answer.format': 'docx' },
+    ])
+    for (const span of spans) {
+      assert.equal(span.parentSpanId, undefined)
+      assert.equal(span.startTimeUnixNano, String(Date.parse('2026-10-17T10:00:09Z') * 1e6))
+    }
+    assert.equal(new Set(spans.map((span) => span.traceId)).size, 4)
+    const told = follow({ content: true })
+    told.tracing.act({ type: 'routine.add', path: ROUTINE, title: 'Weekly report', every: 'week' })
+    assert.equal(attrs(told.spans[0])['jean.routine.title'], 'Weekly report')
+  })
+
+  test('done in a task while its turn is under way, it is in the turn', () => {
+    const { spans, tracing, record } = follow()
+    record(asked('Save this as a skill'))
+    tracing.act({ type: 'skill.add', task: TASK, name: 'weekly-report', source: 'made' })
+    tracing.end({ task: TASK, at: '2026-10-17T10:00:00Z' })
+    const [added, root] = spans
+    assert.equal(added.name, 'add_skill')
+    assert.equal(added.traceId, root.traceId)
+    assert.equal(added.parentSpanId, root.spanId)
   })
 })
 

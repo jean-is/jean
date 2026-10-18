@@ -11,7 +11,8 @@
 // each file, but never in a routine's own run, so a routine never sets another off.
 import { effect } from '@preact/signals-core'
 import { register, loaded, unlock } from '../../ui/caps.js'
-import { app, brainsHere, newConversation, notify, send } from '../../ui/state.js'
+import { app, brainsHere, newConversation, notify, send, conversationOf } from '../../ui/state.js'
+import { act } from '../../ui/acts.js'
 import { yes } from '../../ui/yes.js'
 import { fileText, splitPages } from '../../core/files.js'
 import { loadConversation } from '../../core/conversations.js'
@@ -59,7 +60,7 @@ const scheduleTool = {
   },
   kind: 'edit',
   title: (args) => `Make the routine ${args?.title ?? ''}`,
-  run: async (args) => {
+  run: async (args, ctx) => {
     const plan = schedule(args ?? {}) ?? trigger(args ?? {})
     const title = String(args?.title ?? '').trim()
     // A flow it runs, by name (D218): its request is then the flow's name.
@@ -69,7 +70,9 @@ const scheduleTool = {
     if (!plan) throw new Error('A routine needs every (once, hour, day, weekday, week or month), at (HH:MM), and on for a week (monday…sunday), a month (1–31) or once (YYYY-MM-DD); or when (file or made).')
     if (!title || !request) throw new Error('A routine needs a title and a request.')
     if ('every' in plan && !dueTime(plan, new Date(), week().weekend, 1)) throw new Error(`${inEnglish(plan)} has passed: it is ${localStamp(new Date())}.`)
-    await writeRoutine(app.fs, newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: /** @type {any} */ (flow).id }), ...plan }))
+    const routine = newRoutine(folder(), { title, request, by: 'jean', ...(flow && { flow: /** @type {any} */ (flow).id }), ...plan })
+    await writeRoutine(app.fs, routine)
+    act('routine.add', { task: conversationOf(ctx.signal)?.path, path: routine.path, title, flow: Boolean(flow) || undefined, ...('every' in plan ? { every: plan.every } : { when: plan.when }) })
     notify(t('routines.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('routines')) })
     return `Made the routine "${title}": ${inEnglish(plan)}. It runs while the user has you open${'when' in plan ? '.' : `, or as soon as they open you after it falls due.${plan.every === 'once' ? ''
       : ' Suggest they run it once now with Run now in Settings › Routines, to allow what it needs while they watch.'}`}`

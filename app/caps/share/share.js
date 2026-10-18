@@ -9,6 +9,7 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { walkTokens } from 'marked'
 import { register, unlock } from '../../ui/caps.js'
+import { act } from '../../ui/acts.js'
 import { lex, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
@@ -153,6 +154,7 @@ export async function create(what, { password = '', days = 30, read: reading = f
   await setSecret(app.fs, `share:${share.id}`, JSON.stringify({ token, ...(password && { material: base64url(material) }) }))
   await app.fs.write(fileOf(share.id), `${JSON.stringify(share, null, 2)}\n`)
   shares.value = [share, ...shares.peek()]
+  act('share.add', { task: what.path, id: share.id, address: new URL(host).hostname, days, password: Boolean(password), part: Boolean(what.item) || undefined })
   return share
 }
 
@@ -211,6 +213,7 @@ export async function stop(share) {
     if (!(response && (response.ok || response.status === 404 || response.status === 410))) return notify(t(token ? 'share.unreachable' : 'share.notHere'))
     await Promise.all([app.fs.remove(fileOf(share.id)), deleteSecret(app.fs, `share:${share.id}`)])
     shares.value = shares.peek().filter((one) => one.id !== share.id)
+    act('share.remove', { task: share.task, id: share.id, address: new URL(share.host).hostname })
     notify(t('share.stopped'))
   })
 }

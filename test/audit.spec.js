@@ -1,9 +1,9 @@
 // The audit export (D386, ee/): each turn goes to the organisation's OpenTelemetry collector as
 // GenAI spans, metadata only unless policy asks for content, and so does each task deleted, once it
-// is gone, never one a refusal kept (D412); on localhost no key is needed, and elsewhere a policy that
-// asks for it without one stops Jean with a message for IT (D139).
+// is gone, never one a refusal kept (D412), and what is done outside the records (D421); on localhost
+// no key is needed, and elsewhere a policy that asks for it without one stops Jean with a message for IT (D139).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn, connect, MAIL_URL } from './helpers.js'
 import { POLICY, COLLECTOR, fakeIssuer, fakeGateway, fakeCollector } from './fixtures/fake-issuer.js'
 
 /** How many spans of a name reached it. @param {ReturnType<typeof fakeCollector> extends Promise<infer C> ? C : never} collector @param {string} name */
@@ -131,6 +131,63 @@ test('a removal refused goes nowhere: a profile retention keeps, its id on every
   expect(collector.spans().map((span) => span.name)).not.toContain('remove_profile')
   const [{ resource }] = collector.sent.at(-1)?.body.resourceSpans
   expect(resource.attributes).toContainEqual({ key: 'jean.profile.id', value: { stringValue: String(await here()).slice(9, 35) } })
+})
+
+test('what is done outside the records goes as a span each: a skill added, used and deleted, a connection added, an answer copied, downloaded and printed (D421)', async ({ page }) => {
+  const collector = await fakeCollector(page)
+  await withPolicy(page, { audit: { otlpEndpoint: COLLECTOR } })
+  // The clipboard and the printer are the browser's.
+  await page.addInitScript(() => {
+    window.print = () => {}
+    Object.defineProperty(navigator.clipboard, 'write', { value: async () => {} })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  const answer = page.locator('.msg-jean').last()
+  await expect(answer.locator('.prose')).toContainText('Anything else?')
+  const actions = answer.locator('.msg-actions')
+  await actions.getByRole('button', { name: 'Copy' }).click()
+  await expect(page.locator('.toast')).toContainText('Copied')
+  for (const name of ['Download as a Word document', 'Print']) {
+    await actions.getByRole('button', { name: 'More options' }).click()
+    await answer.locator('.answer-menu').getByRole('button', { name }).click()
+  }
+  await sent(collector, 'print_answer')
+  const task = collector.spans().find((span) => span.name === 'invoke_agent').attrs['gen_ai.conversation.id']
+  const named = (/** @type {string} */ name) => collector.spans().filter((span) => span.name === name)
+  expect(named('copy_answer').map((span) => span.attrs)).toEqual([{ 'gen_ai.conversation.id': task, 'gen_ai.agent.id': expect.stringMatching(/^[0-9A-Z]{26}$/) }])
+  expect(named('save_answer').map((span) => span.attrs['jean.answer.format'])).toEqual(['docx'])
+  expect(named('print_answer')[0].attrs['gen_ai.conversation.id']).toBe(task)
+
+  // A skill from a file, named in the box, then deleted.
+  await turnOn(page, 'Skills')
+  await closeSettings(page)
+  let knows = await openSettings(page, 'Skills')
+  await knows.locator('input[type="file"]').setInputFiles({ name: 'SKILL.md', mimeType: 'text/markdown', buffer: Buffer.from('---\nname: weekly-report\ndescription: Write the weekly report.\n---\n# Weekly report\n\n1. List what was done.\n') })
+  await expect(page.locator('.toast')).toContainText('Added the skill “Weekly report”.')
+  await closeSettings(page)
+  await ask(page, '/weekly-report for this week')
+  await sent(collector, 'use_skill')
+  const use = named('use_skill').find((span) => span.attrs['jean.skill.via'] === 'name')
+  expect(use.attrs).toEqual({ 'gen_ai.conversation.id': task, 'jean.skill.name': 'weekly-report', 'jean.skill.via': 'name' })
+  expect(named('invoke_agent').map((span) => span.spanId)).toContain(use.parentSpanId)
+  page.on('dialog', (dialog) => dialog.accept())
+  knows = await openSettings(page, 'Skills')
+  await knows.locator('.list summary', { hasText: 'Weekly report' }).click()
+  await knows.getByRole('button', { name: 'Delete' }).click()
+  await expect(knows.locator('.list summary', { hasText: 'Weekly report' })).toHaveCount(0)
+  await closeSettings(page)
+  // Before the connection's sign-in takes the page away.
+  await sent(collector, 'remove_skill')
+  expect(named('add_skill').map((span) => span.attrs)).toEqual([{ 'jean.skill.name': 'weekly-report', 'jean.skill.source': 'file' }])
+  expect(named('remove_skill').map((span) => span.attrs)).toEqual([{ 'jean.skill.name': 'weekly-report' }])
+
+  // A connection, by its host alone, its name only with content.
+  await connect(page, `${MAIL_URL}/mcp`)
+  await sent(collector, 'add_connection')
+  expect(named('add_connection').map((span) => span.attrs)).toEqual([{ 'jean.connection.id': expect.stringMatching(/^[0-9A-Z]{26}$/), 'server.address': '127.0.0.1', 'jean.connection.auth': 'oauth' }])
+  for (const name of ['add_skill', 'remove_skill', 'add_connection']) expect(named(name)[0].parentSpanId).toBeUndefined()
 })
 
 test('served from elsewhere, a policy that asks for the audit without a key stops Jean with a message for IT', async ({ page, baseURL }) => {
