@@ -116,8 +116,10 @@ With a key, or on localhost, `audit` sends the audit stream to the organisation'
 - **Traces, in OpenTelemetry's GenAI conventions:** one a turn, its `invoke_agent` span holding the conversation's and the project's ids. Under it:
   - a `chat {model}` span for each request to a brain: the provider, the model, the tokens read, written and read from the cache, why it stopped, and its error;
   - an `execute_tool {tool}` span for each call: its id and kind, the connection it reached, and `jean.decision`, `jean.decided_by` and `jean.declined` when a rule or the person decided it (D308). A script's or a helper's calls go under theirs.
-  - Going back to a request sends `remove_records`, with how many went.
-- **The resource:** `service.name` (`jean`, or `audit.service`), Jean's version, `device.id`, and `user.email` from the sign-in.
+- **Removals**, once nothing refused them (retention may, D412), are spans of their own, in no turn:
+  - `remove_records` when a task is deleted, alone or with its project (`jean.removed.all` true), or going back to a request leaves records out (false), with the conversation's and the project's ids and how many records went (`jean.records.removed`);
+  - `remove_profile` when a profile is removed, with its `jean.profile.id`, so the collector knows whose tasks went with it; how many isn't said, since another profile's tasks can't be read.
+- **The resource:** `service.name` (`jean`, or `audit.service`), Jean's version, `device.id`, `jean.profile.id` (D228), and `user.email` from the sign-in.
 - **Metadata only**, unless `"content": true`: then what was asked and answered, what each brain wrote, its reasoning too, and each call's arguments and result, as JSON strings.
 - **Credentials:** `"auth": "oidc"` sends the organisation's sign-in's token, which the collector's `oidc` authenticator checks. `"auth"` with its own `scopes`, `issuer` or `clientId` makes a sign-in of its own, at the first visit too. `headers` are fixed, and whoever can open Jean reads them in `policy.json`.
 - **Sending:** OTLP/HTTP JSON, in batches every five seconds or of 500, again later while the collector is unreachable or busy, at most 5,000 waiting, and what fits in one request as the page is hidden. The collector allows Jean's origin (`cors.allowed_origins` on its OTLP HTTP receiver). Best effort: the gateway's log stays the authoritative one.

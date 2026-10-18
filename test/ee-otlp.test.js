@@ -92,6 +92,31 @@ describe('the tracer', () => {
     assert.equal(attrs(spans[1])['jean.records.removed'], '2')
   })
 
+  test('a task deleted, alone or with its project, is a removal of its own, and so is a profile, by its id alone (D412)', () => {
+    /** @type {import('../app/ee/otlp.js').Span[]} */
+    const spans = []
+    const follow = tracer({ send: (span) => spans.push(span), now: () => Date.parse('2026-10-17T10:00:09Z') })
+    const records = [kept('2026-10-17T10:00:00Z', {}), kept('2026-10-17T10:00:01Z', {}), kept('2026-10-17T10:00:02Z', {})]
+    // Going back to a request asks too, but record tells it, once its records are gone.
+    follow.remove({ task: TASK, records: records.slice(1) })
+    assert.equal(spans.length, 0)
+    follow.record({ task: TASK, type: 'removed', records: records.slice(1) })
+    follow.remove({ task: TASK, records, all: true })
+    follow.remove({ profile: 'profiles/01J00000000000000000000003-work' })
+    assert.deepEqual(spans.map((span) => span.name), ['remove_records', 'remove_records', 'remove_profile'])
+    const [back, deleted, profile] = spans
+    assert.deepEqual(attrs(back), { 'gen_ai.conversation.id': '01J00000000000000000000002', 'gen_ai.agent.id': '01J00000000000000000000001', 'jean.records.removed': '2', 'jean.removed.all': false })
+    assert.deepEqual(attrs(deleted), { 'gen_ai.conversation.id': '01J00000000000000000000002', 'gen_ai.agent.id': '01J00000000000000000000001', 'jean.records.removed': '3', 'jean.removed.all': true })
+    assert.deepEqual(attrs(profile), { 'jean.profile.id': '01J00000000000000000000003' })
+    // Each a moment, a trace of its own.
+    assert.equal(new Set(spans.map((span) => span.traceId)).size, 3)
+    for (const span of spans) {
+      assert.equal(span.parentSpanId, undefined)
+      assert.equal(span.startTimeUnixNano, String(Date.parse('2026-10-17T10:00:09Z') * 1e6))
+      assert.equal(span.endTimeUnixNano, span.startTimeUnixNano)
+    }
+  })
+
   test('a request sent while the brain works stays in its turn', () => {
     /** @type {import('../app/ee/otlp.js').Span[]} */
     const spans = []
