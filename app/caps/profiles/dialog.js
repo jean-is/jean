@@ -16,11 +16,11 @@ const form = signal(/** @type {{ child: boolean, chosen?: { name: string, mine: 
 /** The lock, for a child's: the parent's way in. @type {typeof import('../lock/lock.js') | null} */
 let lock = null
 
-/** Opens it, with the profiles as they are now: this one may have been locked since. */
-export async function open() {
-  form.value = { child: false }
+/** Opens it, with the profiles as they are now (this one may have been locked since), as a child's when the family page asks (?child), never from one. @param {boolean} [child] */
+export async function open(child = false) {
+  form.value = { child }
   await refresh()
-  app.dialog.value = 'profile'
+  if (!(child && self.peek()?.parent)) app.dialog.value = 'profile'
 }
 
 /** @param {SubmitEvent} event */

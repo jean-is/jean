@@ -48,6 +48,17 @@ test('where nothing is kept there is no profile to add; elsewhere the menu adds 
   await expect(menu.getByRole('button', { name: 'Add a profile' })).toHaveCount(await ephemeral(page) ? 0 : 1)
 })
 
+test('the family page’s address opens Add a profile as a child’s, where profiles are kept (D424)', async ({ page }) => {
+  await start(page)
+  await page.goto('./?child')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(page).not.toHaveURL(/child/)
+  const dialog = page.locator('.profile-dialog[open]')
+  if (await ephemeral(page)) return expect(dialog).toHaveCount(0)
+  await expect(dialog.getByLabel('For a child')).toBeChecked()
+  await expect(dialog.getByLabel('Year of birth')).toBeVisible()
+})
+
 test('a second profile is a Jean of its own: listed in the menu, opened afresh, and found by an address', async ({ page }) => {
   await start(page)
   test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')

@@ -19,6 +19,7 @@ Each version is deployed as soon as it is ready. The loud public launch waits fo
 Everything above is checked end to end with `npm run e2e` in Chromium and WebKit against the fake brain, and under `node --test`, and each screen by eye in English, Arabic and Japanese.
 
 ## Still to check by hand
+- [ ] The family page (D424) once deployed: /famille and /family by day and by night and on a phone, the button on a device that keeps profiles, and both in Search Console
 - [ ] Profiles (D228, D389, D390): a parent's passkey opening a child's profile and Set by a parent (PRF, a different credential per profile); a child's concern as a notification on Android, the parent's tab open and closed; whether strong brains and the device's call `raise_concern` for a danger and not for a story or a quarrel, and set `home` when it is, in French, English, Arabic and Japanese; Kev fine-tuned on the danger question, as D328 did for the others
 
 **With real brains**

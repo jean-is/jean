@@ -16,7 +16,8 @@
 // plugins at http://127.0.0.1:<port>/examples/plugins/<name>/, and a folder there opened in a browser
 // lists its files; a deploy never has them.
 // With --home (npm run dev:home), index.html, its pages in other languages (/ja, /ar…) and home.css are
-// jean.is's, its page under the app's first screen included (scripts/home.js, D397), made again for each
+// jean.is's, its page under the app's first screen included (scripts/home.js, D397), and so are its family
+// page at /family and /famille and family.css (scripts/family.js, D424), made again for each
 // request from scripts/home/, at this server's own address; with --gateway or --share too (npm run
 // dev:gateway -- --home), each page names their policy, as jean.is's does.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
@@ -159,7 +160,7 @@ export async function handle (req, res) {
 }
 
 /**
- * jean.is's page that a path names, with --home: index.html, a language's own page, or the style sheet.
+ * jean.is's page that a path names, with --home: index.html, a language's own page, the family page, or a style sheet.
  * @param {string} pathname @param {string} at  this server's host and port, the site's address
  * @returns {Promise<{ path: string, text: string } | null>}
  */
@@ -167,7 +168,10 @@ async function homePage (pathname, at) {
   const name = pathname.replace(/^\//, '').replace(/\.html$/, '') || 'index'
   if (!/^[\w-]+(\.css)?$/.test(name)) return null
   const [{ homeFiles, homeLanguages, inLanguage }, { withSite }, { BRAND }] = await Promise.all([import('./home.js'), import('./seo.js'), import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)])
-  const path = name === 'home.css' ? name : `${name}.html`
+  const path = name.endsWith('.css') ? name : `${name}.html`
+  // Its family page, in each language at its own word (scripts/family.js, D424).
+  const { familyFiles, ADDRESSES } = await import('./family.js')
+  if (name === 'family.css' || Object.values(ADDRESSES).includes(name)) return { path, text: (await familyFiles(`http://${at}/`, BRAND))[path] }
   if (name !== 'index' && name !== 'home.css' && !(await homeLanguages()).includes(name)) return null
   const index = await readFile(join(ROOT, 'app', 'index.html'), 'utf8')
   const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''

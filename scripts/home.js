@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url'
 import { LOCALES, dir, languageName } from '../app/core/i18n.js'
 import { xml } from './desktop.js'
 import { shotsOf } from './manifest.js'
+import { familyAddress } from './family.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const HOME = join(ROOT, 'scripts', 'home')
@@ -246,7 +247,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
         ${go([['compare', say('ai.go')]])}`),
       door('family', 'family', `<ul class="home-people">${person('family.younger', 'family.withYou')}${person('family.older', 'family.alone')}</ul>
         <p class="home-source">${say('family.source')}</p>
-        ${go([['families', say('family.go')]])}`),
+        ${go([[familyAddress(lang), say('family.go')]])}`),
       door('simple', 'simple', `<div class="home-offer" aria-hidden="true"><p>${appSays('cap.memory.offer')}</p><span><span class="button primary">${appSays('cap.memory.yes')}</span><span class="button subtle">${appSays('offer.no')}</span></span></div>
         ${more(say('door.more'), list('simple.more'))}`),
       door('shareable', 'share', `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/s/3f9a…#k=Qm7…</span><span class="button">${appSays('action.copy')}</span></p>
@@ -271,7 +272,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
       <li><a href="files">${appSays('welcome.files')}</a></li><li><a href="privacy">${appSays('welcome.privacy')}</a></li><li><a href="terms">${appSays('welcome.terms')}</a></li><li><a href="source">${say('open.source')}</a></li>
     </ul></nav>
     <nav aria-labelledby="home-foot-for"><p id="home-foot-for" class="home-foot-head">${say('foot.for')}</p><ul>
-      <li><a href="families">${say('foot.families')}</a></li><li><a href="it">${say('foot.it')}</a></li>
+      <li><a href="${familyAddress(lang)}">${say('foot.families')}</a></li><li><a href="it">${say('foot.it')}</a></li>
     </ul>
     <label class="home-languages"><span class="visually-hidden">${appSays('settings.language')}</span><select>${LOCALES.map((code) => `
       <option value="${code}" lang="${code}"${code === lang ? ' selected' : ''}>${xml(languageName(code))}</option>`).join('')}

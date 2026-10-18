@@ -75,7 +75,7 @@
   "family.withYou": "opens with you",
   "family.older": "Tom · 14",
   "family.alone": "opens alone",
-  "family.go": "{domain}/families",
+  "family.go": "{domain}/family",
   "simple.name": "Simple",
   "simple.why": "Most AI apps make you learn them first.",
   "simple.title": "One box. The rest when you need it.",

@@ -151,10 +151,11 @@ async function start() {
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  // A search from the browser's bar (D353) is sent. Or back from signing in: to a connection
-  // (?state=…), or to OpenRouter or ChatGPT.
+  // A search from the browser's bar (D353) is sent; the family page begins a child's profile (?child, D424). Or back
+  // from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
   const back = new URLSearchParams(location.search)
   if (back.has('q')) { history.replaceState(null, '', location.pathname + location.hash); send(back.get('q') ?? '') }
+  else if (back.has('child')) { history.replaceState(null, '', location.pathname + location.hash); if (!app.ephemeral.value && await unlock('profiles')) (await import('../caps/profiles/dialog.js')).open(true) }
   else if (!(back.has('state') && await (await import('../caps/connections/connections.js')).finishSignIn()) && back.size) await (await import('./brains.js')).finishSignIn()
   // Watching for a new version, or finishing to bring one in.
   import('./update.js').then((update) => update.start())
