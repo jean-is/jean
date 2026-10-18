@@ -10,7 +10,6 @@ import { skillNamed } from '../../core/skills.js'
 
 /** Their names, unless policy keeps to the organisation's sources. */
 const own = app.policy.skills?.only ? [] : DIRECTORY.map((entry) => entry.name)
-const LINE = 'read the steps of a skill before following it'
 
 /** @type {import('../../core/loop.js').Tool} */
 const skillTool = {
@@ -26,5 +25,5 @@ const skillTool = {
 
 // The line is read as a conversation starts: in it, a small brain reads one as often as from a <skills> list, and
 // offers what else a request needs as often as without them (D406).
-const line = { name: 'skill', get line() { return loaded.value.has('skills') || !own.length ? LINE : `${LINE}: ${own.join(', ')}` } }
+const line = { name: 'skill', get line() { return `read the steps of a skill before following it${loaded.value.has('skills') || !own.length ? '' : `: ${own.join(', ')}`}` } }
 if (!isDenied('skills')) register({ id: 'own-skills', tools: [skillTool], lines: [line] })

@@ -8,6 +8,7 @@ import { sub } from './composer.js'
 import { drawn, logoOf } from './complete.js'
 import { openSettings } from './dialogs.js'
 import { t, locale } from '../core/i18n.js'
+import { byName } from '../core/search.js'
 import { icons } from './icons.js'
 
 /** @typedef {'skills' | 'connections'} Id */
@@ -21,12 +22,11 @@ const WAIT = 150
 async function skills() {
   const [module, { shownIn }] = await Promise.all([import('../caps/skills/skills.js'), import('../caps/skills/directory.js')])
   const [list, own] = await Promise.all([module.skills(), module.directory()])
-  const order = new Intl.Collator(locale.value)
-  return list.map((skill) => ({ icon: drawn(skill.source ? undefined : own.find((entry) => entry.name === skill.name)?.icon), label: shownIn(skill, locale.value).title, word: `/${skill.name}` }))
-    .sort((a, b) => order.compare(a.label, b.label))
+  return byName(list.map((skill) => ({ icon: drawn(skill.source ? undefined : own.find((entry) => entry.name === skill.name)?.icon), label: shownIn(skill, locale.value).title, word: `/${skill.name}` })),
+    (item) => item.label, locale.value)
 }
 
-/** The room's connections, as Settings lists them. @returns {Promise<Item[]>} */
+/** The room's connections, by name, as Settings lists them. @returns {Promise<Item[]>} */
 const connections = async () => (await import('../caps/connections/connections.js')).offered().map(({ name, logo }) => ({ icon: logoOf(name, logo), label: name, word: `/${name}` }))
 
 let timer = 0

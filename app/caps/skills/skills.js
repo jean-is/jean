@@ -43,11 +43,7 @@ effect(() => {
 })
 
 /** A skill's steps for `skill`: one of Jean's own the room doesn't have yet comes in as it is read, and the toast says so (D401). @param {string} named */
-export async function read(named) {
-  const [added] = await bring([named.trim().split('/')[0]])
-  if (added) saved(added)
-  return steps(named)
-}
+export const read = async (named) => { for (const title of await bring([named.trim().split('/')[0]])) saved(title); return steps(named) }
 
 /** Says a skill is in the room now, with a way to see it. @param {string} title */
 const saved = (title) => notify(t('skills.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('skills')) })
