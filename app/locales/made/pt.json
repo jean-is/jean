@@ -1,0 +1,14 @@
+{
+  "made.open": "Abrir",
+  "made.kind.document": "Documento do Word",
+  "made.kind.sheet": "Planilha",
+  "made.kind.page": "Página da web",
+  "made.kind.drawing": "Desenho",
+  "made.kind.text": "Texto",
+  "made.copiedPictures": "Copiado. Se as imagens não forem coladas, copia cada uma com o seu próprio «Copiar».",
+  "made.share": "Partilhar",
+  "made.csvTitle": "Transferir como folha de cálculo (CSV)",
+  "made.csvNumbered": "Transferir a tabela {count} como folha de cálculo (CSV)",
+  "made.tableFile": "Tabela {count}",
+  "made.print": "Imprimir"
+}

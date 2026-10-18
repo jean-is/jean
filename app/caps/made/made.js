@@ -12,13 +12,13 @@ import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf } from '../../core/events.js'
-import { t, locale, formatBytes } from '../../core/i18n.js'
+import { t, locale, formatBytes, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
 
-// The cards' style sheet comes with them, not with the first screen (D126).
-await styleSheet(new URL('made.css', import.meta.url))
+// The cards' style sheet and Things Jean made's own words come with them, not with the first screen (D126).
+await Promise.all([useStrings('made'), styleSheet(new URL('made.css', import.meta.url))])
 
 // ─── Writing files ───────────────────────────────────────────────────────────
 
@@ -237,8 +237,8 @@ class Made extends Element {
       ${tables.map((table, i) => html`<button class="icon-button subtle"
         aria-label=${tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle')}
         @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}
-      <button class="icon-button subtle" aria-label=${t('action.print')} @click=${() => printAlone(this.closest('.msg-jean'))}>${icons.print}</button>
-      ${linked.length ? linked.map((part) => part.draw({ text: source })) : 'share' in navigator ? html`<button class="icon-button subtle" aria-label=${t('action.share')}
+      <button class="icon-button subtle" aria-label=${t('made.print')} @click=${() => printAlone(this.closest('.msg-jean'))}>${icons.print}</button>
+      ${linked.length ? linked.map((part) => part.draw({ text: source })) : 'share' in navigator ? html`<button class="icon-button subtle" aria-label=${t('made.share')}
         @click=${() => navigator.share({ title: app.conversations.peek().find((one) => one.path === app.current.peek()?.path)?.title, text: source })
           .catch((/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))}>${icons.share}</button>` : nothing}`
   }
@@ -275,7 +275,7 @@ export async function copyRich(source, answer) {
       })])
     } else await navigator.clipboard.writeText(source)
     // Some apps leave out pictures pasted in rich text (Notion), but take a widget's own copy (D196).
-    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-slides .slide, .prose app-latex .latex-page, .prose app-diagram') ? 'toast.copiedPictures' : 'toast.copied'))
+    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-slides .slide, .prose app-latex .latex-page, .prose app-diagram') ? 'made.copiedPictures' : 'toast.copied'))
   } catch (error) {
     console.warn('Copy', error)
     notify(t('made.copyFailed'))

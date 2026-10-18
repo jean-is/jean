@@ -1,0 +1,14 @@
+{
+  "made.open": "Fungua",
+  "made.kind.document": "Hati ya Word",
+  "made.kind.sheet": "Lahajedwali",
+  "made.kind.page": "Ukurasa wa wavuti",
+  "made.kind.drawing": "Mchoro",
+  "made.kind.text": "Maandishi",
+  "made.copiedPictures": "Imenakiliwa. Picha zisipobandikwa, nakili kila moja kwa kitufe chake cha “Nakili”.",
+  "made.share": "Shiriki",
+  "made.csvTitle": "Pakua kama lahajedwali (CSV)",
+  "made.csvNumbered": "Pakua jedwali {count} kama lahajedwali (CSV)",
+  "made.tableFile": "Jedwali {count}",
+  "made.print": "Chapisha"
+}

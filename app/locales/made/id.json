@@ -1,0 +1,14 @@
+{
+  "made.open": "Buka",
+  "made.kind.document": "Dokumen Word",
+  "made.kind.sheet": "Spreadsheet",
+  "made.kind.page": "Halaman web",
+  "made.kind.drawing": "Gambar",
+  "made.kind.text": "Teks",
+  "made.copiedPictures": "Disalin. Jika gambarnya tidak ikut tertempel, salin masing-masing dengan tombol “Salin” miliknya.",
+  "made.share": "Bagikan",
+  "made.csvTitle": "Unduh sebagai spreadsheet (CSV)",
+  "made.csvNumbered": "Unduh tabel {count} sebagai spreadsheet (CSV)",
+  "made.tableFile": "Tabel {count}",
+  "made.print": "Cetak"
+}

@@ -1,0 +1,14 @@
+{
+  "made.open": "Mở",
+  "made.kind.document": "Tài liệu Word",
+  "made.kind.sheet": "Bảng tính",
+  "made.kind.page": "Trang web",
+  "made.kind.drawing": "Hình vẽ",
+  "made.kind.text": "Văn bản",
+  "made.copiedPictures": "Đã sao chép. Nếu hình ảnh không được dán, hãy sao chép từng hình bằng nút “Sao chép” riêng của nó.",
+  "made.share": "Chia sẻ",
+  "made.csvTitle": "Tải xuống dạng bảng tính (CSV)",
+  "made.csvNumbered": "Tải bảng {count} xuống dạng bảng tính (CSV)",
+  "made.tableFile": "Bảng {count}",
+  "made.print": "In"
+}

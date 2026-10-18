@@ -1,0 +1,14 @@
+{
+  "made.open": "Öffnen",
+  "made.kind.document": "Word-Dokument",
+  "made.kind.sheet": "Tabelle",
+  "made.kind.page": "Webseite",
+  "made.kind.drawing": "Zeichnung",
+  "made.kind.text": "Text",
+  "made.copiedPictures": "Kopiert. Wenn die Bilder nicht mitkommen, kopiere jedes mit seinem eigenen „Kopieren“.",
+  "made.share": "Teilen",
+  "made.csvTitle": "Als Tabelle herunterladen (CSV)",
+  "made.csvNumbered": "Tabelle {count} als Tabellendatei herunterladen (CSV)",
+  "made.tableFile": "Tabelle {count}",
+  "made.print": "Drucken"
+}

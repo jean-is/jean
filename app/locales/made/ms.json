@@ -1,0 +1,14 @@
+{
+  "made.open": "Buka",
+  "made.kind.document": "Dokumen Word",
+  "made.kind.sheet": "Hamparan",
+  "made.kind.page": "Halaman web",
+  "made.kind.drawing": "Lukisan",
+  "made.kind.text": "Teks",
+  "made.copiedPictures": "Disalin. Jika gambarnya tidak ditampal, salin setiap satu dengan butang “Salin” sendiri.",
+  "made.share": "Kongsi",
+  "made.csvTitle": "Muat turun sebagai hamparan (CSV)",
+  "made.csvNumbered": "Muat turun jadual {count} sebagai hamparan (CSV)",
+  "made.tableFile": "Jadual {count}",
+  "made.print": "Cetak"
+}

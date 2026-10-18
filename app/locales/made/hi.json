@@ -1,0 +1,14 @@
+{
+  "made.open": "खोलें",
+  "made.kind.document": "Word दस्तावेज़",
+  "made.kind.sheet": "स्प्रेडशीट",
+  "made.kind.page": "वेब पेज",
+  "made.kind.drawing": "चित्र",
+  "made.kind.text": "टेक्स्ट",
+  "made.copiedPictures": "कॉपी हो गया। अगर इसकी तस्वीरें पेस्ट न हों, तो हर एक को उसके अपने “कॉपी करें” से कॉपी करें।",
+  "made.share": "शेयर करें",
+  "made.csvTitle": "स्प्रेडशीट के रूप में डाउनलोड करें (CSV)",
+  "made.csvNumbered": "तालिका {count} को स्प्रेडशीट के रूप में डाउनलोड करें (CSV)",
+  "made.tableFile": "तालिका {count}",
+  "made.print": "प्रिंट करें"
+}

@@ -1,0 +1,14 @@
+{
+  "made.open": "उघडा",
+  "made.kind.document": "Word दस्तऐवज",
+  "made.kind.sheet": "स्प्रेडशीट",
+  "made.kind.page": "वेब पेज",
+  "made.kind.drawing": "रेखाचित्र",
+  "made.kind.text": "मजकूर",
+  "made.copiedPictures": "कॉपी झाले. चित्रे पेस्ट न झाल्यास, प्रत्येक त्याच्या स्वतःच्या “कॉपी करा” ने कॉपी करा.",
+  "made.share": "शेअर करा",
+  "made.csvTitle": "स्प्रेडशीट म्हणून डाउनलोड करा (CSV)",
+  "made.csvNumbered": "तक्ता {count} स्प्रेडशीट म्हणून डाउनलोड करा (CSV)",
+  "made.tableFile": "तक्ता {count}",
+  "made.print": "प्रिंट करा"
+}

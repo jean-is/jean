@@ -1,0 +1,14 @@
+{
+  "made.open": "فتح",
+  "made.kind.document": "مستند Word",
+  "made.kind.sheet": "جدول بيانات",
+  "made.kind.page": "صفحة ويب",
+  "made.kind.drawing": "رسم",
+  "made.kind.text": "نص",
+  "made.copiedPictures": "تم النسخ. إن لم تُلصق صوره، انسخ كلًّا منها بزر «نسخ» الخاص بها.",
+  "made.share": "مشاركة",
+  "made.csvTitle": "تنزيل كجدول بيانات (CSV)",
+  "made.csvNumbered": "تنزيل الجدول {count} كجدول بيانات (CSV)",
+  "made.tableFile": "جدول {count}",
+  "made.print": "طباعة"
+}

@@ -1,0 +1,14 @@
+{
+  "made.open": "باز کردن",
+  "made.kind.document": "سند Word",
+  "made.kind.sheet": "صفحه‌گسترده",
+  "made.kind.page": "صفحهٔ وب",
+  "made.kind.drawing": "طرح",
+  "made.kind.text": "متن",
+  "made.copiedPictures": "رونوشت شد. اگر تصویرهایش جای‌گذاری نشدند، هر کدام را با «رونوشت» خودش رونوشت کنید.",
+  "made.share": "هم‌رسانی",
+  "made.csvTitle": "بارگیری به‌صورت صفحه‌گسترده (CSV)",
+  "made.csvNumbered": "بارگیری جدول {count} به‌صورت صفحه‌گسترده (CSV)",
+  "made.tableFile": "جدول {count}",
+  "made.print": "چاپ"
+}

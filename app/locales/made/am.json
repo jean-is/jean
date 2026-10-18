@@ -1,0 +1,14 @@
+{
+  "made.open": "ክፈት",
+  "made.kind.document": "የWord ሰነድ",
+  "made.kind.sheet": "የቀመር ሉህ",
+  "made.kind.page": "ድረ-ገጽ",
+  "made.kind.drawing": "ሥዕል",
+  "made.kind.text": "ጽሑፍ",
+  "made.copiedPictures": "ተቀድቷል። ምስሎቹ ካልተለጠፉ፣ እያንዳንዱን በራሱ «ይቅዱ» ይቅዱት።",
+  "made.share": "አጋራ",
+  "made.csvTitle": "በተመን ሉህ መልክ ያውርዱ (CSV)",
+  "made.csvNumbered": "ሰንጠረዥ {count} በተመን ሉህ መልክ ያውርዱ (CSV)",
+  "made.tableFile": "ሰንጠረዥ {count}",
+  "made.print": "አትም"
+}
