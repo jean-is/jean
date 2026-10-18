@@ -118,7 +118,7 @@ const ICONS = {
   minus: '<svg class="icon is-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>',
   globe: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.5 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.5-3.6-8.5s1.1-5.9 3.6-8.5z"/></svg>',
 }
-const WAVE = '<app-persona data-presence="idle" aria-hidden="true"><svg class="persona" viewBox="12 18 40 28" focusable="false"><g class="persona-wave"><path class="persona-line" d="M-34 32q6-11 12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0"/></g></svg></app-persona>'
+const WAVE = '<app-persona data-presence="idle" aria-hidden="true"><svg class="persona" viewBox="12 18 40 28" focusable="false"><g class="persona-wave"><path class="persona-line" d="M-28 32q6-11 12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0"/></g></svg></app-persona>'
 /** A week of a child's minutes, the last day today, as the parent's profile counts them. */
 const WEEK = [40, 55, 20, 65, 30, 0, 35]
 
