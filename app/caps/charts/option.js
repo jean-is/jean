@@ -1,7 +1,8 @@
 // A chart an answer holds (D196): an ECharts option written as JSON in a ```echarts block. It is
-// data, never code: read with JSON.parse, then kept to what draws inside the chart. The toolbox
-// goes (its data view writes markup), tooltips are drawn on the canvas rather than as markup, a
-// title's links go, and the chart takes the room's background. Pure, so Node's tests run it.
+// data, never code: read with JSON.parse, or as the JavaScript ECharts' own examples are written in,
+// its functions left out (D418), then kept to what draws inside the chart. The toolbox goes (its
+// data view writes markup), tooltips are drawn on the canvas rather than as markup, a title's links
+// go, and the chart takes the room's background. Pure, so Node's tests run it.
 
 /** @typedef {Record<string, any>} Option */
 
@@ -14,15 +15,21 @@ const all = (value) => (Array.isArray(value) ? value : value && typeof value ===
  * their type. @param {string} source @param {boolean} [open] @returns {Option | null}
  */
 export function readOption(source, open = false) {
-  let option
-  try {
-    option = JSON.parse(open ? soFar(source) : source)
-  } catch {
-    return null
+  const read = (/** @type {string} */ json) => {
+    try {
+      return JSON.parse(open ? soFar(json) : json)
+    } catch {
+      return null
+    }
   }
+  const option = read(source) ?? read(fromScript(source))
   if (!option || typeof option !== 'object' || Array.isArray(option)) return null
   if (open) option.series = all(option.series).filter((series) => series?.type)
   if (!all(option.series).length) return null
+  // A value alone in a list, [7] or { "value": [7] }, is that value in bars and lines, where
+  // ECharts would read a point with no category and draw nothing there.
+  const one = (/** @type {any} */ item) => (Array.isArray(item) && item.length === 1 ? item[0] : Array.isArray(item?.value) && item.value.length === 1 ? { ...item, value: item.value[0] } : item)
+  for (const series of all(option.series)) if (/^(bar|line)$/.test(series?.type) && Array.isArray(series.data)) series.data = series.data.map(one)
   delete option.toolbox
   option.backgroundColor = 'transparent'
   for (const title of all(option.title)) {
@@ -32,6 +39,39 @@ export function readOption(source, open = false) {
   const tooltip = (/** @type {Option} */ given) => ({ ...given, renderMode: 'richText' })
   option.tooltip = Array.isArray(option.tooltip) ? option.tooltip.map(tooltip) : tooltip(option.tooltip)
   return option
+}
+
+/**
+ * An option written as JavaScript, as JSON: names unquoted, strings in single quotes, comments,
+ * a comma before a closing bracket, `option =` before it. What is code, such as a function, goes
+ * with the member that holds it, and ECharts does as it does without it. @param {string} source
+ */
+export function fromScript(source) {
+  const tokens = source.replace(/^\s*(?:(?:var|let|const)\s+)?option\s*=|;\s*$/g, '').match(/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\/\/.*|\/\*[\s\S]*?\*\/|=>|[\w$.+-]+|\S/g) ?? []
+  /** @type {string[]} */
+  const out = []
+  const put = (/** @type {string} */ token) => {
+    if (token === ',' && /^[[{,]?$/.test(out.at(-1) ?? '')) return
+    if (/^[\]}]$/.test(token) && out.at(-1) === ',') out.pop()
+    out.push(token)
+  }
+  const text = (/** @type {string} */ token) => (token[0] === "'" ? `"${token.slice(1, -1).replace(/\\(.)|"/g, (all, c) => (c === "'" ? c : c ? all : '\\"'))}"` : token[0] === '"' ? token : JSON.stringify(token))
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i]
+    if (/^\/[/*]/.test(token)) continue
+    if (tokens[i + 1] === ':' || /^(["']).*\1$/s.test(token)) put(text(token))
+    else if (/^[-+.\d]/.test(token) && Number.isFinite(Number(token))) put(String(Number(token)))
+    else if (/^[\w$(]/.test(token) && !/^(true|false|null)$/.test(token)) {
+      // Code, to the comma or the bracket that ends it.
+      for (let depth = 0; i < tokens.length; i++) {
+        if (/^[([{]$/.test(tokens[i])) depth++
+        else if (/^[)\]}]$/.test(tokens[i]) ? --depth < 0 : tokens[i] === ',' && !depth) break
+      }
+      i--
+      if (out.at(-1) === ':') out.splice(-2)
+    } else put(token)
+  }
+  return out.join('')
 }
 
 /**

@@ -117,7 +117,7 @@ button { cursor: pointer; }
 /* ─── The wave (ui/persona.js) ─────────────────────────────────────────── */
 /* Jean's presence, the tilde of its mark. Its colour is --tint's hue and chroma, Jean's sunflower or a
    project's own, at the lightness each mode needs; while Jean works it travels the way the page
-   reads, its ends fading out (D420). */
+   reads, its ends fading out. */
 
 /* Jean's sunflower (by day its lightest shade at AA, 3:1), and the room's own warm light, as other looks keep theirs; an accent or a project's colour wins, on each wave. */
 :where(:root) { --tint: oklch(0.845 0.161 88); }

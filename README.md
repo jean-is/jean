@@ -124,6 +124,7 @@ That is all Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Qo
 | `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
 | `npm run offers` | Measures how often a brain offers what a request needs, and what it doesn't, on a multilingual test set (`BRAIN=<provider>:<model>`) |
 | `npm run build:web` | Builds, then what a web deploy serves in `dist/web/`: Jean's own code minified, each file beside itself in brotli and gzip; `ADDRESS=<its address>` makes the site a search engine for browsers' address bars, and gives search engines and shared links its title, cards and sitemap |
+| `npm run release` | Builds a commit as `npm run deploy` does, then in `dist/release/` the zip an organisation deploys without building, its bill of materials, and their `SHA256SUMS` signed with `RELEASE_KEY` ([trust/releases.md](trust/releases.md)) |
 | `npm run render` | Builds, then the package that draws a task saved as a web page, `@codename/jean-render`, in `dist/render/` |
 | `npm run sounds -- <folder>` | The instruments scores play, `@codename/jean-sounds`, made of MS Basic as MuseScore's repository holds it, in `dist/sounds/` |
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
@@ -145,6 +146,7 @@ CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on 
 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
 | [docs/design.md](docs/design.md) | Jean's identity, Tilde, its wave, and the themes |
 | [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, what is open and what is enterprise, and what the architecture allows later |
+| [trust/](trust/README.md) | For an organisation's IT, security and privacy teams: the threat model, signed releases, a DPIA template, the accessibility statement |
 | [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
 | [docs/decisions.md](docs/decisions.md) | Every decision as it stands, by topic, with the alternatives that were rejected |
 | [docs/open-questions.md](docs/open-questions.md) | What is still undecided |

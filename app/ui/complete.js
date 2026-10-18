@@ -18,6 +18,7 @@ import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
 import { typing, searchable, matching, holds, digest, pointing } from './mentions.js'
 import { t, locale, relativeTime } from '../core/i18n.js'
+import { byName } from '../core/search.js'
 import { join, readJSON } from '../core/fs.js'
 import { fileText, splitPages } from '../core/files.js'
 import { loadConversation } from '../core/conversations.js'
@@ -162,7 +163,7 @@ const directory = async () => (await import('../caps/skills/skills.js')).directo
 async function skillsHere(show) {
   if (!loaded.value.has('skills')) return
   const [list, own, { shownIn }] = await Promise.all([(await import('../caps/skills/skills.js')).skills(), directory(), import('../caps/skills/directory.js')])
-  show({ heading: t('cap.skills.name'), options: list.map((skill) => {
+  show({ heading: t('cap.skills.name'), options: byName(list, (skill) => shownIn(skill, locale.value).title, locale.value).map((skill) => {
     const mine = !skill.source && own.find((entry) => entry.name === skill.name)
     const { title: label, text: detail } = shownIn(skill, locale.value)
     return { icon: drawn(mine ? mine.icon : undefined), label, detail, words: words(`${skill.name} ${label}`, detail), pick: () => put(`/${skill.name}`) }
@@ -221,8 +222,9 @@ async function readySkills(show) {
     }
     return { heading: t('skills.directory'), options: list }
   }
-  show(group(own))
-  show(group([...own, ...(await skills.offered()).flatMap((index) => index.skills)]))
+  const mine = byName(own, (entry) => shownIn(entry, locale.value).title, locale.value)
+  show(group(mine))
+  show(group([...mine, ...(await skills.offered()).flatMap((index) => index.skills)]))
 }
 
 /**

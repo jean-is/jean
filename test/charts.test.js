@@ -9,11 +9,43 @@ const BARS = { title: { text: 'Sales' }, xAxis: { type: 'category', data: ['Jan'
 test('an option is JSON with series; anything else, or a block still being written, is none', () => {
   assert.deepEqual(readOption(JSON.stringify(BARS))?.series, BARS.series)
   assert.equal(readOption(JSON.stringify(BARS).slice(0, -12)), null, 'cut short while it streams')
-  assert.equal(readOption('{ xAxis: {}, series: [] }'), null, 'JavaScript, not JSON')
+  assert.equal(readOption('{ xAxis: {}, series: [] }'), null, 'nothing to draw, in JavaScript too')
   assert.equal(readOption('[{"type":"bar"}]'), null)
   assert.equal(readOption('{"title":{"text":"Nothing to draw"}}'), null)
   assert.equal(readOption('null'), null)
   assert.ok(readOption('{"series":{"type":"pie","data":[{"name":"A","value":1}]}}'), 'one series, not in a list')
+})
+
+test('an option written as JavaScript, as ECharts’ examples are, is read as its data, its code left out', () => {
+  const script = String.raw`option = {
+    // Sales, by month
+    title: { text: 'Ventes d\'avril', subtext: 'en "k€"' },
+    xAxis: { type: 'category', data: ['Jan', 'Feb',], },
+    yAxis: { type: 'value', axisLabel: { formatter: (value) => value + ' k€', rotate: 30 } },
+    /* one series */
+    series: [{ type: 'bar', data: [1200, .5, -3e2], itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#fff' }]) } }],
+  };`
+  const option = readOption(script)
+  assert.deepEqual(option?.title, { text: 'Ventes d\'avril', subtext: 'en "k€"' })
+  assert.deepEqual(option?.xAxis, { type: 'category', data: ['Jan', 'Feb'] })
+  assert.deepEqual(option?.yAxis, { type: 'value', axisLabel: { rotate: 30 } }, 'a function goes, with its member')
+  assert.deepEqual(option?.series, [{ type: 'bar', data: [1200, 0.5, -300], itemStyle: {} }])
+  // A Gantt chart a brain wrote, whose formatters work out dates.
+  const gantt = readOption(`{
+    tooltip: { formatter: function(p){ return p.data ? p.data.t : ""; } },
+    xAxis: { type: "value", axisLabel: { formatter: function(v){ var c=new Date(2026,2,2); while(v-->0){ if(c.getDay()===5) { c.setDate(c.getDate()+3) } else c.setDate(c.getDate()+1) } return c.getDate()+"/"+(c.getMonth()+1); } }, name: "jours" },
+    yAxis: { type: "category", inverse: true, data: ["Plan d'implantation", "★ Jour J"] },
+    series: [{ type: "bar", stack: "g", itemStyle: { opacity: 0 }, data: [0, 3] }, { type: "bar", stack: "g", data: [{ value: 3, t: "2-4 mars" }, 1] }]
+  }`)
+  assert.deepEqual(gantt?.tooltip, { renderMode: 'richText' })
+  assert.deepEqual(gantt?.xAxis, { type: 'value', axisLabel: {}, name: 'jours' })
+  assert.deepEqual(gantt?.series[1].data, [{ value: 3, t: '2-4 mars' }, 1])
+  // Each value alone in a list, as this one wrote the days before each task: in bars and lines, the value.
+  const listed = readOption('{"series":[{"type":"bar","data":[[7],{"value":[2],"name":"A"},[1,2]]},{"type":"radar","data":[{"value":[5]}]}]}')
+  assert.deepEqual(listed?.series[0].data, [7, { value: 2, name: 'A' }, [1, 2]])
+  assert.deepEqual(listed?.series[1].data, [{ value: [5] }], 'a radar’s values are a list whatever their number')
+  assert.equal(readOption(`{ series: [{ type: 'bar', data: [7, 9].map(function (o) { return [o] }) }] }`), null, 'data worked out by code')
+  assert.deepEqual(readOption(`{ series: [{ type: 'bar', data: [1200, 34`, true)?.series, [{ type: 'bar', data: [1200] }], 'while it is written')
 })
 
 test('what is written so far is whole values only, closed: never half a number, a name or a word', () => {

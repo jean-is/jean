@@ -24,6 +24,7 @@ import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, locale } from '../../core/i18n.js'
+import { byName } from '../../core/search.js'
 import { icons } from '../../ui/menu-icons.js'
 import { subRow } from '../../ui/composer.js'
 
@@ -222,8 +223,8 @@ effect(() => register({
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()
 
-/** The room's connections as the box's / names them (D199): each with its logo and its tools' names. */
-export const offered = () => here().map((connection) => ({
+/** The room's connections as the box's / names them (D199), by name: each with its logo and its tools' names. */
+export const offered = () => byName(here(), called, locale.value).map((connection) => ({
   name: called(connection),
   logo: logoOf(connection),
   tools: (status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name)),
@@ -477,7 +478,7 @@ function panel() {
         }}>${icons.plus}</button>
     </header>
     ${open ? other(said) : nothing}
-    ${all().length ? html`<section><h3>${t('connections.yours')}</h3><ul class="list connections">${all().map(row)}</ul></section>` : nothing}
+    ${all().length ? html`<section><h3>${t('connections.yours')}</h3><ul class="list connections">${byName(all(), called, locale.value).map(row)}</ul></section>` : nothing}
     ${place === 'top' ? said : nothing}
     ${services.length ? html`<section>
       <h3>${t('cap.connections.yes')}</h3>

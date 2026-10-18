@@ -48,6 +48,12 @@ export async function listSkills(fs, dirs) {
 }
 
 /**
+ * A skill as a brain names it, its name's underscores read as hyphens, which a name never has: a small brain
+ * asked for process_improvement (D406). A file after "/" is kept as it is. @param {string} named
+ */
+export const skillNamed = (named) => named.trim().replace(/^[^/]*/, (name) => name.replaceAll('_', '-'))
+
+/**
  * A skill's steps, naming the files beside them, or one of those files ("name/references/forms.md").
  * @param {FS} fs @param {Skill[]} skills those it is looked for in @param {string} named
  */
@@ -65,7 +71,7 @@ export async function skillSteps(fs, skills, named) {
   return beside.length ? `${skill.body}\n\nFiles beside these steps: ${beside.join(', ')}. Read one with skill({ name: "${name}/<file>" }).` : skill.body
 }
 
-/** The <skills> section. @param {Skill[]} skills */
+/** The <skills> section. @param {{ name: string, description: string }[]} skills */
 export const skillLines = (skills) => skills.map((skill) => `- ${skill.name}: ${skill.description}`).join('\n')
 
 /**

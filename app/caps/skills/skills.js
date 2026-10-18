@@ -1,13 +1,14 @@
 // Skills (docs/product.md): the way a task the user keeps asking for is done, saved as an
 // Agent Skill (core/skills.js), so it is done the same way every time. The prompt lists each
-// skill's name and when to use it; `skill` reads its steps when a request matches, and
+// skill's name and when to use it; `skill` (../own-skills/) reads its steps when a request matches, and
 // `save_skill` writes one when the user asks for it, typically after "Save this as a skill",
 // suggested when the same kind of request comes up a third time (ui/discovery.js), or once the
 // brain has asked what a new one needs; its example becomes the answer's first suggestion (D322).
 // Skills from elsewhere (D121): the indexes and repositories in settings and policy are read on
 // the device (./sources.js), and Jean's own directory with them (./directory.js, D196); the third
 // request of a kind looks there first, and `suggest_skill` lets the brain look. Either way the user
-// reads the steps and adds the skill (./ready.js), or not.
+// reads the steps and adds the skill (./ready.js), or not. Jean's own are listed with the room's,
+// and one the brain reads is added as it reads it (D401), which before Skills is found finds it (D406).
 // A skill declares the kinds of block it writes (D196); answers draw those as widgets while one
 // of the room's skills declares them.
 import { effect } from '@preact/signals-core'
@@ -41,17 +42,11 @@ effect(() => {
   void redeclare()
 })
 
-/** @type {import('../../core/loop.js').Tool} */
-const skillTool = {
-  spec: {
-    name: 'skill',
-    description: 'Read the steps of one of the skills listed in <skills>.',
-    parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
-  },
-  kind: 'read',
-  title: (args) => `Skill ${args?.name ?? ''}`,
-  run: (args) => steps(String(args?.name ?? '')),
-}
+/** A skill's steps for `skill`: one of Jean's own the room doesn't have yet comes in as it is read, and the toast says so (D401). @param {string} named */
+export const read = async (named) => { for (const title of await bring([named.trim().split('/')[0]])) saved(title); return steps(named) }
+
+/** Says a skill is in the room now, with a way to see it. @param {string} title */
+const saved = (title) => notify(t('skills.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('skills')) })
 
 /** A skill's steps, or one of the files beside them, for `skill` and for a skill named in the box (D199). @param {string} named */
 export const steps = async (named) => skillSteps(app.fs, await skills(), named)
@@ -76,8 +71,7 @@ const saveTool = {
     const [description, steps, example] = [args?.description, String(args?.steps ?? '').split(/<\/(?:parameter|steps|invoke)>|<parameter name=/)[0], args?.example].map((value) => String(value ?? '').trim())
     if (!description || !steps) throw new Error('A skill needs a description and steps.')
     await saveSkill(app.fs, folders().at(-1) ?? '', { name, description, body: steps, by: 'jean' })
-    const title = /^#\s+(.+)$/m.exec(steps)?.[1].trim() ?? name
-    notify(t('skills.saved', { title }), { label: t('skills.open'), run: () => import('../../ui/dialogs.js').then((dialogs) => dialogs.openSettings('skills')) })
+    saved(/^#\s+(.+)$/m.exec(steps)?.[1].trim() ?? name)
     // In the room at once: the next message's note lists it, and /name in the box reads its steps. Saved without
     // an example too, which the answer gives: a call made again for it would write the steps again (D322).
     return `Saved the skill "${name}". From the user's next message on, it is in <skills>, and /${name} in their box uses it. Tell them it is ready and how to use it, in their own words or with /${name}, and give ${example ? 'your' : 'an'} example. Make it your first suggestion, so one click tries it: /${name} ${example || '<the example>'}`
@@ -105,6 +99,16 @@ export const offered = (options) => readIndexes(app.fs, sources(), options)
 let shelf = null
 /** Jean's own ready-made skills (D196), read once, unless policy keeps to the organisation's sources. */
 export const directory = async () => (app.policy.skills?.only ? [] : (shelf ??= readDirectory()))
+
+/**
+ * The skills <skills> lists: the room's, then Jean's own in the directory's order, the room's of that name in its place,
+ * each in its few English words, whether the room has it yet or not, so one added changes nothing the brain read (D401).
+ */
+async function listed() {
+  const [have, own] = await Promise.all([skills(), directory()])
+  return [...have.filter((skill) => !own.some((entry) => entry.name === skill.name)),
+    ...own.map((entry) => ({ name: entry.name, description: shownIn(have.find((skill) => skill.name === entry.name) ?? entry, 'en').text }))]
+}
 
 /** A skill from elsewhere suggested in a conversation, by the conversation's path, shown under its answers. @type {Map<string, Entry>} */
 export const suggested = new Map()
@@ -135,7 +139,7 @@ const DRAWS = /** @type {Record<string, string>} */ ({ echarts: 'chart', abc: 'm
 
 /**
  * Jean's own skills by name, added as the user adds one, unless a skill of the room has the name: what a task brought
- * in draws needs (D378), or an idea asks for (D366). Their names, in the user's language. @param {string[]} names
+ * in draws needs (D378), an idea asks for (D366), or the brain reads (D401). Their names, in the user's language. @param {string[]} names
  */
 export async function bring(names) {
   const have = await skills()
@@ -174,14 +178,11 @@ const suggestTool = {
 
 register({
   id: 'skills',
-  tools: [skillTool, saveTool, suggestTool],
-  lines: [
-    { name: 'skill', line: 'read the steps of a skill before following it' },
-    { name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' },
-  ],
+  tools: [saveTool, suggestTool],
+  lines: [{ name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' }],
   rules: ['When a request matches a skill, read it and follow its steps.'],
   sections: async () => {
-    const text = skillLines(await skills())
+    const text = skillLines(await listed())
     return text ? { skills: text } : {}
   },
   // In +, a row whose menu beside it holds the room's skills (D292).
