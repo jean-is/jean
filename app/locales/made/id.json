@@ -7,7 +7,9 @@
   "made.kind.text": "Teks",
   "made.copiedPictures": "Disalin. Jika gambarnya tidak ikut tertempel, salin masing-masing dengan tombol “Salin” miliknya.",
   "made.share": "Bagikan",
-  "made.csvTitle": "Unduh sebagai spreadsheet (CSV)",
+  "made.htmlTitle": "Unduh sebagai halaman web",
+  "made.docxTitle": "Unduh sebagai dokumen Word",
+  "made.csvTitle": "Unduh tabel sebagai spreadsheet (CSV)",
   "made.csvNumbered": "Unduh tabel {count} sebagai spreadsheet (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Cetak"

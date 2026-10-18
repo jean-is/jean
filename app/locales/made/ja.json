@@ -7,7 +7,9 @@
   "made.kind.text": "テキスト",
   "made.copiedPictures": "コピーしました。画像が貼り付けられない場合は、それぞれの「コピー」でコピーしてください。",
   "made.share": "共有",
-  "made.csvTitle": "表計算ファイル（CSV）としてダウンロード",
+  "made.htmlTitle": "ウェブページとしてダウンロード",
+  "made.docxTitle": "Word 文書としてダウンロード",
+  "made.csvTitle": "表を表計算ファイル（CSV）としてダウンロード",
   "made.csvNumbered": "表 {count} を表計算ファイル（CSV）としてダウンロード",
   "made.tableFile": "表 {count}",
   "made.print": "印刷"

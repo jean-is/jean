@@ -1,7 +1,8 @@
 // Things Jean made: files the brain writes (a Word document, a spreadsheet, a text file),
 // kept in the project's files and shown under the answer, ready to save (D119); an answer
-// copied as rich text (pastes formatted into Word, Outlook and Google Docs), its tables as CSV
-// (opens in Excel), printed alone or shared. Browser features only; no file-format library.
+// copied as rich text (pastes formatted into Word, Outlook and Google Docs), shared, downloaded as a
+// web page or a Word document, its tables as CSV (opens in Excel), or printed alone. Browser features
+// only; no file-format library.
 import { html, nothing, render, svg } from 'lit-html'
 import { lexer } from 'marked'
 import { Element, define } from '../../ui/base.js'
@@ -11,7 +12,7 @@ import { save } from '../../ui/save.js'
 import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
-import { callsIn, filesMade, latestOf, nextVersion, versionsOf } from '../../core/events.js'
+import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
 import { t, locale, formatBytes, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 
@@ -222,26 +223,49 @@ class FileMade extends Element {
   }
 }
 
+/** How many answers' menus there are, each with its own id. */
+let menus = 0
+
 /**
- * Under an answer: Copy, its tables as CSV, Print, and Share (D404): a link to it once sharing by link
- * is found (D361), else the system's share sheet where there is one.
+ * Under an answer (D409): Copy, the most used, before Read aloud and About this answer; then, as
+ * `menu`, More options, with the other ways to take it away: Share, a link to it once sharing by link
+ * is found (D361), else the system's share sheet where there is one; Download as a web page, drawn as
+ * Jean draws it, as a Word document, and each table as CSV; Print.
  */
 class Made extends Element {
+  #menu = `answer-menu-${++menus}`
+
   render() {
     const source = /** @type {string} */ (/** @type {any} */ (this).source ?? '')
     if (!source) return nothing
+    if (!this.hasAttribute('menu')) return html`<button class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>`
+    const id = this.#menu
+    const title = titleOf(app.current.value?.records ?? [])
+    const name = title || t('conversation.untitled')
     const tables = tablesIn(source)
     const linked = slots('drawn')
-    return html`
-      <button class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>
-      ${tables.map((table, i) => html`<button class="icon-button subtle"
-        aria-label=${tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle')}
-        @click=${() => downloadCSV(table, i + 1)}>${icons.table}</button>`)}
-      <button class="icon-button subtle" aria-label=${t('made.print')} @click=${() => printAlone(this.closest('.msg-jean'))}>${icons.print}</button>
-      ${linked.length ? linked.map((part) => part.draw({ text: source })) : 'share' in navigator ? html`<button class="icon-button subtle" aria-label=${t('made.share')}
-        @click=${() => navigator.share({ title: app.conversations.peek().find((one) => one.path === app.current.peek()?.path)?.title, text: source })
-          .catch((/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))}>${icons.share}</button>` : nothing}`
+    const sharing = linked.length || 'share' in navigator
+    /** One of the menu's items, which closes it. @param {unknown} icon @param {string} label @param {() => unknown} act */
+    const item = (icon, label, act) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
+    return html`<button class="icon-button subtle" popovertarget=${id} aria-label=${t('action.more')}>${icons.more}</button>
+      <div id=${id} class="menu answer-menu" popover>
+        ${linked.length ? linked.map((part) => part.draw({ text: source }, item)) : sharing ? item(icons.share, t('made.share'),
+          () => navigator.share({ title, text: source }).catch((/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))) : nothing}
+        ${sharing ? html`<hr>` : nothing}
+        ${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)))}
+        ${item(icons.file, t('made.docxTitle'), () => downloadWord(source, name))}
+        ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1)))}
+        <hr>
+        ${item(icons.print, t('made.print'), () => printAlone(this.closest('.msg-jean')))}
+      </div>`
   }
+}
+
+/** The answer as a Word document named after its task, on the paper of the user's country. @param {string} source @param {string} title */
+async function downloadWord(source, title) {
+  const { makeFile, paperFor } = await import('./formats.js')
+  const { name, mimeType, bytes } = await makeFile(`${title}.docx`, source, { paper: paperFor(navigator.language) })
+  save(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType }), name)
 }
 
 /**

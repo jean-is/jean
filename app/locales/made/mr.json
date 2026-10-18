@@ -7,7 +7,9 @@
   "made.kind.text": "मजकूर",
   "made.copiedPictures": "कॉपी झाले. चित्रे पेस्ट न झाल्यास, प्रत्येक त्याच्या स्वतःच्या “कॉपी करा” ने कॉपी करा.",
   "made.share": "शेअर करा",
-  "made.csvTitle": "स्प्रेडशीट म्हणून डाउनलोड करा (CSV)",
+  "made.htmlTitle": "वेब पेज म्हणून डाउनलोड करा",
+  "made.docxTitle": "Word दस्तऐवज म्हणून डाउनलोड करा",
+  "made.csvTitle": "तक्ता स्प्रेडशीट म्हणून डाउनलोड करा (CSV)",
   "made.csvNumbered": "तक्ता {count} स्प्रेडशीट म्हणून डाउनलोड करा (CSV)",
   "made.tableFile": "तक्ता {count}",
   "made.print": "प्रिंट करा"

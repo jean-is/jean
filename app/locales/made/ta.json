@@ -7,7 +7,9 @@
   "made.kind.text": "உரை",
   "made.copiedPictures": "நகலெடுக்கப்பட்டது. படங்கள் ஒட்டப்படாவிட்டால், ஒவ்வொன்றையும் அதன் சொந்த “நகலெடு” மூலம் நகலெடுக்கவும்.",
   "made.share": "பகிர்",
-  "made.csvTitle": "விரிதாளாகப் பதிவிறக்கு (CSV)",
+  "made.htmlTitle": "வலைப்பக்கமாகப் பதிவிறக்கு",
+  "made.docxTitle": "Word ஆவணமாகப் பதிவிறக்கு",
+  "made.csvTitle": "அட்டவணையை விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.csvNumbered": "அட்டவணை {count} ஐ விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.tableFile": "அட்டவணை {count}",
   "made.print": "அச்சிடு"

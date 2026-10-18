@@ -7,7 +7,9 @@
   "made.kind.text": "Teksto",
   "made.copiedPictures": "Nakopya. Kung hindi sumama ang mga larawan, kopyahin ang bawat isa gamit ang sarili nitong “Kopyahin”.",
   "made.share": "Ibahagi",
-  "made.csvTitle": "I-download bilang spreadsheet (CSV)",
+  "made.htmlTitle": "I-download bilang web page",
+  "made.docxTitle": "I-download bilang dokumento ng Word",
+  "made.csvTitle": "I-download ang talahanayan bilang spreadsheet (CSV)",
   "made.csvNumbered": "I-download ang talahanayan {count} bilang spreadsheet (CSV)",
   "made.tableFile": "Talahanayan {count}",
   "made.print": "I-print"

@@ -7,7 +7,9 @@
   "made.kind.text": "متن",
   "made.copiedPictures": "کاپی ہو گیا۔ اگر تصویریں پیسٹ نہ ہوں تو ہر ایک کو اس کے اپنے «کاپی کریں» سے کاپی کریں۔",
   "made.share": "شیئر کریں",
-  "made.csvTitle": "اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",
+  "made.htmlTitle": "ویب صفحے کے طور پر ڈاؤن لوڈ کریں",
+  "made.docxTitle": "Word دستاویز کے طور پر ڈاؤن لوڈ کریں",
+  "made.csvTitle": "جدول کو اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",
   "made.csvNumbered": "جدول {count} کو اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",
   "made.tableFile": "جدول {count}",
   "made.print": "پرنٹ کریں"

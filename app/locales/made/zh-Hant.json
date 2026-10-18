@@ -7,7 +7,9 @@
   "made.kind.text": "文字",
   "made.copiedPictures": "已複製。如果圖片沒有貼上，請用各自的「複製」分別複製。",
   "made.share": "分享",
-  "made.csvTitle": "下載為試算表（CSV）",
+  "made.htmlTitle": "下載為網頁",
+  "made.docxTitle": "下載為 Word 文件",
+  "made.csvTitle": "將表格下載為試算表（CSV）",
   "made.csvNumbered": "將表格 {count} 下載為試算表（CSV）",
   "made.tableFile": "表格 {count}",
   "made.print": "列印"

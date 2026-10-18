@@ -7,7 +7,9 @@
   "made.kind.text": "Text",
   "made.copiedPictures": "Copied. If its pictures don’t paste, copy each one with its own Copy.",
   "made.share": "Share",
-  "made.csvTitle": "Download as a spreadsheet (CSV)",
+  "made.htmlTitle": "Download as a web page",
+  "made.docxTitle": "Download as a Word document",
+  "made.csvTitle": "Download the table as a spreadsheet (CSV)",
   "made.csvNumbered": "Download table {count} as a spreadsheet (CSV)",
   "made.tableFile": "Table {count}",
   "made.print": "Print"

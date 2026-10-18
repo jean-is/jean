@@ -7,7 +7,9 @@
   "made.kind.text": "Texte",
   "made.copiedPictures": "Copié. Si ses images ne suivent pas, copiez chacune avec son propre « Copier ».",
   "made.share": "Partager",
-  "made.csvTitle": "Télécharger comme tableur (CSV)",
+  "made.htmlTitle": "Télécharger comme page web",
+  "made.docxTitle": "Télécharger comme document Word",
+  "made.csvTitle": "Télécharger le tableau comme tableur (CSV)",
   "made.csvNumbered": "Télécharger le tableau {count} comme tableur (CSV)",
   "made.tableFile": "Tableau {count}",
   "made.print": "Imprimer"

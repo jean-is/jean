@@ -7,7 +7,9 @@
   "made.kind.text": "텍스트",
   "made.copiedPictures": "복사됨. 그림이 붙여넣어지지 않으면 각 그림의 ‘복사’로 따로 복사하세요.",
   "made.share": "공유",
-  "made.csvTitle": "스프레드시트로 다운로드(CSV)",
+  "made.htmlTitle": "웹 페이지로 다운로드",
+  "made.docxTitle": "Word 문서로 다운로드",
+  "made.csvTitle": "표를 스프레드시트로 다운로드(CSV)",
   "made.csvNumbered": "표 {count}을(를) 스프레드시트로 다운로드(CSV)",
   "made.tableFile": "표 {count}",
   "made.print": "인쇄"

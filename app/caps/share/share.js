@@ -327,9 +327,12 @@ if (allowed()) {
       // In a task's ⋮ menu (ui/inbox.js), after Save a copy, drawn as the menu's own actions: ⌘⇧U on the open task's (D377).
       task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown, shortcut: string) => unknown} */ action) =>
         action(icons.share, t('share.menu'), () => openShare({ path: item.path, title: item.title }), SHORTCUTS.share) },
-      // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made.
-      drawn: { at: 1, draw: (/** @type {Item} */ item) => (app.current.value ? html`<button class="icon-button subtle" aria-label=${t('share.menu')}
-        @click=${() => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item })}>${icons.share}</button>` : nothing) },
+      // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made; first in an answer's More options, as its item (D409).
+      drawn: { at: 1, draw: (/** @type {Item} */ item, /** @type {((icon: unknown, label: string, act: () => unknown) => unknown) | undefined} */ action) => {
+        if (!app.current.value) return nothing
+        const act = () => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item })
+        return action ? action(icons.share, t('share.menu'), act) : html`<button class="icon-button subtle" aria-label=${t('share.menu')} @click=${act}>${icons.share}</button>`
+      } },
       views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current.path) : nothing) },
       data: { at: 3, draw: panel },
       dialog: { at: 1, draw: () => html`<app-share-dialog></app-share-dialog>` },

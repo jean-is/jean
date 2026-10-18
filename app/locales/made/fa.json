@@ -7,7 +7,9 @@
   "made.kind.text": "متن",
   "made.copiedPictures": "رونوشت شد. اگر تصویرهایش جای‌گذاری نشدند، هر کدام را با «رونوشت» خودش رونوشت کنید.",
   "made.share": "هم‌رسانی",
-  "made.csvTitle": "بارگیری به‌صورت صفحه‌گسترده (CSV)",
+  "made.htmlTitle": "بارگیری به‌صورت صفحهٔ وب",
+  "made.docxTitle": "بارگیری به‌صورت سند Word",
+  "made.csvTitle": "بارگیری جدول به‌صورت صفحه‌گسترده (CSV)",
   "made.csvNumbered": "بارگیری جدول {count} به‌صورت صفحه‌گسترده (CSV)",
   "made.tableFile": "جدول {count}",
   "made.print": "چاپ"

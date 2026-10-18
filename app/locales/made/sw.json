@@ -7,7 +7,9 @@
   "made.kind.text": "Maandishi",
   "made.copiedPictures": "Imenakiliwa. Picha zisipobandikwa, nakili kila moja kwa kitufe chake cha “Nakili”.",
   "made.share": "Shiriki",
-  "made.csvTitle": "Pakua kama lahajedwali (CSV)",
+  "made.htmlTitle": "Pakua kama ukurasa wa wavuti",
+  "made.docxTitle": "Pakua kama hati ya Word",
+  "made.csvTitle": "Pakua jedwali kama lahajedwali (CSV)",
   "made.csvNumbered": "Pakua jedwali {count} kama lahajedwali (CSV)",
   "made.tableFile": "Jedwali {count}",
   "made.print": "Chapisha"

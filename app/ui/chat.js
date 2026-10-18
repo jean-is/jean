@@ -504,7 +504,7 @@ function requestActions({ text, at, upTo }, answered) {
 /** @param {Turn} turn @param {string} text */
 function actions(turn, text) {
   const isSpeaking = speaking.value === turn.at
-  // Copy and CSV belong to "Things Jean made", which loads with the first answer.
+  // Copy and More options belong to "Things Jean made", which loads with the first answer (D409).
   unlock('made')
   unlock('receipt')
   return html`<div class="msg-actions">
@@ -514,6 +514,7 @@ function actions(turn, text) {
       @click=${() => toggleSpeech(turn.at, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
     <app-receipt .turn=${turn} .text=${text}></app-receipt>
     ${slots('answer').map((entry) => entry.draw({ text, at: turn.at }))}
+    <app-made .source=${text} menu></app-made>
     ${when(turn.end ?? turn.at)}
   </div>`
 }

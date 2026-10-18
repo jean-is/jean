@@ -7,7 +7,9 @@
   "made.kind.text": "Текст",
   "made.copiedPictures": "Скопійовано. Якщо зображення не вставилися, скопіюйте кожне його власною кнопкою «Копіювати».",
   "made.share": "Поділитися",
-  "made.csvTitle": "Завантажити як таблицю (CSV)",
+  "made.htmlTitle": "Завантажити як вебсторінку",
+  "made.docxTitle": "Завантажити як документ Word",
+  "made.csvTitle": "Завантажити таблицю (CSV)",
   "made.csvNumbered": "Завантажити таблицю {count} (CSV)",
   "made.tableFile": "Таблиця {count}",
   "made.print": "Надрукувати"

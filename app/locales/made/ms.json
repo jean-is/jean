@@ -7,7 +7,9 @@
   "made.kind.text": "Teks",
   "made.copiedPictures": "Disalin. Jika gambarnya tidak ditampal, salin setiap satu dengan butang “Salin” sendiri.",
   "made.share": "Kongsi",
-  "made.csvTitle": "Muat turun sebagai hamparan (CSV)",
+  "made.htmlTitle": "Muat turun sebagai halaman web",
+  "made.docxTitle": "Muat turun sebagai dokumen Word",
+  "made.csvTitle": "Muat turun jadual sebagai hamparan (CSV)",
   "made.csvNumbered": "Muat turun jadual {count} sebagai hamparan (CSV)",
   "made.tableFile": "Jadual {count}",
   "made.print": "Cetak"

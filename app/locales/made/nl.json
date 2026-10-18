@@ -7,7 +7,9 @@
   "made.kind.text": "Tekst",
   "made.copiedPictures": "Gekopieerd. Komen de afbeeldingen niet mee, kopieer dan elk met zijn eigen ‘Kopiëren’.",
   "made.share": "Delen",
-  "made.csvTitle": "Downloaden als spreadsheet (CSV)",
+  "made.htmlTitle": "Downloaden als webpagina",
+  "made.docxTitle": "Downloaden als Word-document",
+  "made.csvTitle": "Tabel downloaden als spreadsheet (CSV)",
   "made.csvNumbered": "Tabel {count} downloaden als spreadsheet (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Afdrukken"

@@ -7,7 +7,9 @@
   "made.kind.text": "ጽሑፍ",
   "made.copiedPictures": "ተቀድቷል። ምስሎቹ ካልተለጠፉ፣ እያንዳንዱን በራሱ «ይቅዱ» ይቅዱት።",
   "made.share": "አጋራ",
-  "made.csvTitle": "በተመን ሉህ መልክ ያውርዱ (CSV)",
+  "made.htmlTitle": "በድረ-ገጽ መልክ ያውርዱ",
+  "made.docxTitle": "በWord ሰነድ መልክ ያውርዱ",
+  "made.csvTitle": "ሰንጠረዡን በተመን ሉህ መልክ ያውርዱ (CSV)",
   "made.csvNumbered": "ሰንጠረዥ {count} በተመን ሉህ መልክ ያውርዱ (CSV)",
   "made.tableFile": "ሰንጠረዥ {count}",
   "made.print": "አትም"

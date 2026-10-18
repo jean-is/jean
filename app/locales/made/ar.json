@@ -7,7 +7,9 @@
   "made.kind.text": "نص",
   "made.copiedPictures": "تم النسخ. إن لم تُلصق صوره، انسخ كلًّا منها بزر «نسخ» الخاص بها.",
   "made.share": "مشاركة",
-  "made.csvTitle": "تنزيل كجدول بيانات (CSV)",
+  "made.htmlTitle": "تنزيل كصفحة ويب",
+  "made.docxTitle": "تنزيل كمستند Word",
+  "made.csvTitle": "تنزيل الجدول كجدول بيانات (CSV)",
   "made.csvNumbered": "تنزيل الجدول {count} كجدول بيانات (CSV)",
   "made.tableFile": "جدول {count}",
   "made.print": "طباعة"

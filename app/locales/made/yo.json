@@ -7,7 +7,9 @@
   "made.kind.text": "Ọ̀rọ̀",
   "made.copiedPictures": "A ti ṣe ẹ̀dà rẹ̀. Bí àwọn àwòrán kò bá lẹ̀ mọ́, ẹ ṣe ẹ̀dà ọ̀kọ̀ọ̀kan pẹ̀lú bọ́tìnnì “Ṣe ẹ̀dà” tirẹ̀.",
   "made.share": "Pín in",
-  "made.csvTitle": "Gbà á sílẹ̀ bí ìwé ìṣirò (CSV)",
+  "made.htmlTitle": "Gbà á sílẹ̀ bí ojú-ìwé wẹ́ẹ̀bù",
+  "made.docxTitle": "Gbà á sílẹ̀ bí ìwé Word",
+  "made.csvTitle": "Gba tábìlì náà sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.csvNumbered": "Gba tábìlì {count} sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.tableFile": "Tábìlì {count}",
   "made.print": "Tẹ̀ ẹ́ jáde"

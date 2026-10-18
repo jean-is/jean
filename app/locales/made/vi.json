@@ -7,7 +7,9 @@
   "made.kind.text": "Văn bản",
   "made.copiedPictures": "Đã sao chép. Nếu hình ảnh không được dán, hãy sao chép từng hình bằng nút “Sao chép” riêng của nó.",
   "made.share": "Chia sẻ",
-  "made.csvTitle": "Tải xuống dạng bảng tính (CSV)",
+  "made.htmlTitle": "Tải xuống dạng trang web",
+  "made.docxTitle": "Tải xuống dạng tài liệu Word",
+  "made.csvTitle": "Tải bảng xuống dạng bảng tính (CSV)",
   "made.csvNumbered": "Tải bảng {count} xuống dạng bảng tính (CSV)",
   "made.tableFile": "Bảng {count}",
   "made.print": "In"

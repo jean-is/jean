@@ -7,7 +7,9 @@
   "made.kind.text": "Metin",
   "made.copiedPictures": "Kopyalandı. Resimler yapışmazsa, her birini kendi “Kopyala” düğmesiyle kopyala.",
   "made.share": "Paylaş",
-  "made.csvTitle": "Tablo olarak indir (CSV)",
+  "made.htmlTitle": "Web sayfası olarak indir",
+  "made.docxTitle": "Word belgesi olarak indir",
+  "made.csvTitle": "Tabloyu indir (CSV)",
   "made.csvNumbered": "{count}. tabloyu indir (CSV)",
   "made.tableFile": "Tablo {count}",
   "made.print": "Yazdır"

@@ -7,7 +7,9 @@
   "made.kind.text": "ข้อความ",
   "made.copiedPictures": "คัดลอกแล้ว หากรูปภาพไม่ถูกวาง ให้คัดลอกแต่ละรูปด้วยปุ่ม “คัดลอก” ของรูปนั้น",
   "made.share": "แชร์",
-  "made.csvTitle": "ดาวน์โหลดเป็นสเปรดชีต (CSV)",
+  "made.htmlTitle": "ดาวน์โหลดเป็นหน้าเว็บ",
+  "made.docxTitle": "ดาวน์โหลดเป็นเอกสาร Word",
+  "made.csvTitle": "ดาวน์โหลดตารางเป็นสเปรดชีต (CSV)",
   "made.csvNumbered": "ดาวน์โหลดตาราง {count} เป็นสเปรดชีต (CSV)",
   "made.tableFile": "ตาราง {count}",
   "made.print": "พิมพ์"
