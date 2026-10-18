@@ -1,9 +1,9 @@
 /* A request edited where it is (D312): loaded with ui/edit.js, after ui/style.css. Its bubble as wide as the look lets a request be, its words in a box that grows with them, Close and Send under them in the bubble's own colour, Send faded while the box is empty. */
-app-edit { display: flex; flex-direction: column; gap: 0.25rem; inline-size: 100%; }
+app-edit { display: flex; flex-direction: column; gap: 0.25rem; inline-size: 100%; cursor: text; }
 app-edit:focus-within { outline: 2px solid var(--flame); outline-offset: 3px; }
 app-edit textarea { display: block; inline-size: 100%; max-block-size: 40vh; field-sizing: content; resize: none; padding: 0; border: 0; background: transparent; }
-/* The bubble is ringed instead (:focus-within); :root outweighs a look's own :focus-visible ring, and the icons' hover colour. */
-:root app-edit textarea:focus-visible { outline: 0; }
+/* The bubble is ringed instead (:focus-within); :root and a class outweigh a look's own :focus-visible ring, and the icons' hover colour. */
+:root .msg-user textarea:focus-visible { outline: 0; }
 app-edit div { display: flex; justify-content: flex-end; align-items: center; gap: 0.25rem; margin-inline-end: -0.5rem; }
 :root app-edit .icon-button { color: inherit; }
 app-edit:has(:invalid) .icon-button:last-child { opacity: 0.4; background: none; cursor: default; }

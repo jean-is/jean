@@ -206,6 +206,18 @@ test('a double click or Enter puts a request in a box; Escape leaves it, Enter o
   await first.press('Enter')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Explain photosynthesis in simple words')
+  // A press anywhere in the bubble but its buttons is for its words, the caret by the nearest of them.
+  const edit = page.locator('app-edit')
+  const caret = () => box.evaluate((element) => /** @type {HTMLTextAreaElement} */ (element).selectionStart)
+  const [bubble, words] = /** @type {{ x: number, y: number, width: number, height: number }[]} */ (await Promise.all([edit.boundingBox(), box.boundingBox()]))
+  const line = words.y - bubble.y + words.height / 2
+  await edit.click({ position: { x: 3, y: line } })
+  expect(await caret()).toBe(0)
+  await box.blur()
+  await edit.locator('div').click({ position: { x: 2, y: 2 } })
+  await expect(box).toBeFocused()
+  await edit.click({ position: { x: bubble.width - 4, y: line } })
+  expect(await caret()).toBe('Explain photosynthesis in simple words'.length)
   // Until the user agrees, the new words stay in the box and nothing is removed.
   await box.fill('Explain photosynthesis to a child')
   page.once('dialog', (dialog) => dialog.dismiss())
