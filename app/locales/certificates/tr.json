@@ -1,8 +1,8 @@
 {
   "certificates.title": "Bir sertifikayı doğrula",
-  "certificates.text": "Bu yanıt hakkında üzerinden kaydedilmiş bir sertifikayı, kanıtını ya da ikisini, adını verebileceği dosyalarla birlikte bırak. Ya da nasıl yapıldığını okumak için bir resim ya da video bırak. Hiçbir şey bu sayfadan çıkmaz.",
+  "certificates.text": "Bu yanıt hakkında üzerinden kaydedilmiş bir sertifikayı, kanıtını ya da ikisini, adını verebileceği dosyalarla birlikte bırak. Ya da nasıl yapıldığını okumak için bir resim, video ya da belge bırak. Verdiğin hiçbir şey bu sayfadan çıkmaz.",
   "certificates.choose": "Dosya seç",
-  "certificates.unreadable": "Bu, bir yanıtın sertifikası, kanıtı ya da nasıl yapıldığını söyleyen bir resim veya video değil.",
+  "certificates.unreadable": "Bu, bir yanıtın sertifikası, kanıtı ya da nasıl yapıldığını söyleyen bir dosya değil.",
   "certificates.intact": "Mühürlü ve o zamandan beri değişmemiş",
   "certificates.broken": "Değiştirilmiş ya da adını verdiği anahtarla mühürlenmemiş",
   "certificates.where.device": "Onu mühürleyen cihazda yapıldı",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Kayıt yapay zekânın yaptığını söylemiyor",
   "certificates.unbound": "Dosyanın o zamandan beri değişip değişmediği burada denetlenmez",
   "certificates.noRecord": "{name}, nasıl yapıldığına dair bir kayıt taşımıyor",
+  "certificates.marks": "{name} nasıl yapıldığını söylüyor, ama imzasız: bunu herkes yazmış olabilir",
   "certificates.watermark.match": "Görünmez filigranı, bu kaydın adını verdiği filigran",
   "certificates.watermark.other": "Görünmez filigranı, bu kaydın adını verdiği filigran değil",
   "certificates.watermark.found": "Görünmez bir filigran taşıyor",
   "certificates.watermark.none": "Görünmez filigran bulunamadı",
-  "certificates.watermark.unread": "{name} bu cihazda bir kez görünmez filigran aradıktan sonra bu sayfa da arar",
+  "certificates.watermark.fetch": "Görünmez filigran aramak için bu sayfa önce okuyucusunu {host} adresinden indirir, sonra bu tarayıcıda saklar",
   "certificates.words": "Ya da bir cihazdaki beynin filigranını aramak için metin yapıştır",
   "certificates.words.marked": "Bu metin bir cihazdaki beynin filigranını taşıyor: onu o yazdı ya da biri öyle görünmesini sağladı",
   "certificates.words.none": "Bu metinde bir cihazdaki beynin filigranı bulunamadı; bu, onu onun yazmadığını kanıtlamaz",
   "certificates.words.short": "Söylemek için çok az kelime var: bir sayfa kadar yapıştır",
-  "certificates.words.unread": "{name} bu cihazda bir kez metinde filigran aradıktan sonra bu sayfa da arar"
+  "certificates.words.fetch": "Metinde filigran aramak için bu sayfa önce okuyucusunu {host} adresinden indirir, sonra bu tarayıcıda saklar",
+  "certificates.fetch": "İndir ({size})",
+  "certificates.failed": "Okuyucu {host} adresinden indirilemedi. Daha sonra tekrar dene."
 }

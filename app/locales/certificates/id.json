@@ -1,8 +1,8 @@
 {
   "certificates.title": "Periksa sertifikat",
-  "certificates.text": "Letakkan sertifikat yang disimpan dari Tentang jawaban ini, buktinya, atau keduanya, beserta file apa pun yang mungkin disebutkannya. Atau letakkan gambar atau video untuk membaca cara pembuatannya. Tidak ada yang keluar dari halaman ini.",
+  "certificates.text": "Letakkan sertifikat yang disimpan dari Tentang jawaban ini, buktinya, atau keduanya, beserta file apa pun yang mungkin disebutkannya. Atau letakkan gambar, video, atau dokumen untuk membaca cara pembuatannya. Tidak ada yang Anda berikan yang keluar dari halaman ini.",
   "certificates.choose": "Pilih file",
-  "certificates.unreadable": "Ini bukan sertifikat sebuah jawaban, bukan buktinya, juga bukan gambar atau video yang menyebutkan cara pembuatannya.",
+  "certificates.unreadable": "Ini bukan sertifikat sebuah jawaban, bukan buktinya, juga bukan file yang menyebutkan cara pembuatannya.",
   "certificates.intact": "Tersegel, dan tidak berubah sejak itu",
   "certificates.broken": "Berubah, atau tidak disegel dengan kunci yang disebutkannya",
   "certificates.where.device": "Dikerjakan di perangkat yang menyegelnya",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Catatannya tidak menyebutkan AI yang membuatnya",
   "certificates.unbound": "Apakah file berubah sejak itu tidak diperiksa di sini",
   "certificates.noRecord": "{name} tidak membawa catatan cara pembuatannya",
+  "certificates.marks": "{name} menyebutkan cara pembuatannya, tanpa tanda tangan: siapa pun bisa menuliskannya",
   "certificates.watermark.match": "Tanda air tak terlihatnya adalah yang disebutkan catatan ini",
   "certificates.watermark.other": "Tanda air tak terlihatnya bukan yang disebutkan catatan ini",
   "certificates.watermark.found": "Ada tanda air tak terlihat di dalamnya",
   "certificates.watermark.none": "Tidak ditemukan tanda air tak terlihat",
-  "certificates.watermark.unread": "Setelah {name} pernah mencari tanda air tak terlihat di perangkat ini, halaman ini juga mencarinya",
+  "certificates.watermark.fetch": "Untuk mencari tanda air tak terlihat, halaman ini lebih dulu mengunduh pembacanya dari {host}, lalu menyimpannya di browser ini",
   "certificates.words": "Atau tempel kata-kata untuk mencari tanda air otak di perangkat di dalamnya",
   "certificates.words.marked": "Kata-kata ini membawa tanda air otak di perangkat: ia yang menulisnya, atau seseorang membuatnya tampak begitu",
   "certificates.words.none": "Tanda air otak di perangkat tidak ditemukan dalam kata-kata ini, tetapi itu tidak membuktikan ia tidak menulisnya",
   "certificates.words.short": "Terlalu sedikit kata untuk dipastikan: tempel sekitar satu halaman",
-  "certificates.words.unread": "Setelah {name} pernah mencari tanda air dalam kata-kata di perangkat ini, halaman ini juga mencarinya"
+  "certificates.words.fetch": "Untuk mencari tanda air dalam kata-kata, halaman ini lebih dulu mengunduh pembacanya dari {host}, lalu menyimpannya di browser ini",
+  "certificates.fetch": "Unduh ({size})",
+  "certificates.failed": "Pembaca tidak bisa diunduh dari {host}. Coba lagi nanti."
 }

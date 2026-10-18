@@ -1,8 +1,8 @@
 {
   "certificates.title": "Ein Zertifikat prüfen",
-  "certificates.text": "Lege ein über „Über diese Antwort“ gespeichertes Zertifikat ab, seinen Nachweis oder beides, mit jeder Datei, die es nennen kann. Oder lege ein Bild oder einen Film ab, um seine Herkunft zu lesen. Nichts verlässt diese Seite.",
+  "certificates.text": "Lege ein über „Über diese Antwort“ gespeichertes Zertifikat ab, seinen Nachweis oder beides, mit jeder Datei, die es nennen kann. Oder lege ein Bild, einen Film oder ein Dokument ab, um seine Herkunft zu lesen. Nichts, was du hier ablegst, verlässt diese Seite.",
   "certificates.choose": "Dateien auswählen",
-  "certificates.unreadable": "Das ist weder das Zertifikat einer Antwort noch sein Nachweis, noch ein Bild oder Film mit Angaben zu seiner Herkunft.",
+  "certificates.unreadable": "Das ist weder das Zertifikat einer Antwort noch sein Nachweis, noch eine Datei mit Angaben zu ihrer Herkunft.",
   "certificates.intact": "Versiegelt und seitdem unverändert",
   "certificates.broken": "Verändert oder nicht mit dem Schlüssel versiegelt, den es nennt",
   "certificates.where.device": "Auf dem Gerät erledigt, das es versiegelt hat",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Die Angaben nennen keine KI als Urheber",
   "certificates.unbound": "Ob die Datei seither verändert wurde, wird hier nicht geprüft",
   "certificates.noRecord": "{name}: keine Angaben zur Herkunft",
+  "certificates.marks": "{name} macht Angaben zur Herkunft, unsigniert: Jeder hätte sie schreiben können",
   "certificates.watermark.match": "Das unsichtbare Wasserzeichen ist das, das diese Angaben nennen",
   "certificates.watermark.other": "Das unsichtbare Wasserzeichen ist nicht das, das diese Angaben nennen",
   "certificates.watermark.found": "Es trägt ein unsichtbares Wasserzeichen",
   "certificates.watermark.none": "Kein unsichtbares Wasserzeichen gefunden",
-  "certificates.watermark.unread": "Sobald {name} auf diesem Gerät nach einem unsichtbaren Wasserzeichen gesucht hat, sucht auch diese Seite danach",
+  "certificates.watermark.fetch": "Um nach einem unsichtbaren Wasserzeichen zu suchen, lädt diese Seite zuerst das Lesewerkzeug von {host} herunter und behält es dann in diesem Browser",
   "certificates.words": "Oder füge Wörter ein, um darin nach dem Wasserzeichen des Gehirns auf einem Gerät zu suchen",
   "certificates.words.marked": "Diese Wörter tragen das Wasserzeichen des Gehirns auf einem Gerät: Es hat sie geschrieben, oder jemand hat sie so aussehen lassen",
   "certificates.words.none": "Kein Wasserzeichen des Gehirns auf einem Gerät in diesen Wörtern gefunden, was nicht beweist, dass es sie nicht geschrieben hat",
   "certificates.words.short": "Zu wenige Wörter, um es zu sagen: Füge etwa eine Seite ein",
-  "certificates.words.unread": "Sobald {name} auf diesem Gerät in Wörtern nach einem Wasserzeichen gesucht hat, sucht auch diese Seite danach"
+  "certificates.words.fetch": "Um in Wörtern nach dem Wasserzeichen zu suchen, lädt diese Seite zuerst das Lesewerkzeug von {host} herunter und behält es dann in diesem Browser",
+  "certificates.fetch": "Herunterladen ({size})",
+  "certificates.failed": "Das Lesewerkzeug konnte nicht von {host} heruntergeladen werden. Versuche es später erneut."
 }

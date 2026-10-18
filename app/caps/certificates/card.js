@@ -2,13 +2,14 @@
 // an answer when Jean is asked: whether its seal holds, which key sealed it and when, what it says,
 // and, with its proof, the words and which of the files given it names. A picture's or a film's
 // Content Credentials too (D324): whether they hold, who signed them and when, and whether they
-// say AI made it; and whether words carry the watermark of the brain on a device (D402). Drawn with
+// say AI made it; what a file says of itself, unsigned, as those Jean makes do (D407); and whether
+// words carry the watermark of the brain on a device (D402). Drawn with
 // About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { check } from '../receipt/certificate.js'
-import { credentialsOf, NONE } from '../receipt/c2pa.js'
+import { credentialsOf, marksOf, NONE } from '../receipt/c2pa.js'
 import { dataOf } from '../pictures/watermark.js'
 import { said } from '../brain-local/watermark.js'
 
@@ -21,8 +22,9 @@ import { said } from '../brain-local/watermark.js'
 /**
  * A picture's or a film's Content Credentials as checked, kept as the call's `_meta.checked.credentials`:
  * its name, whether the device that checks them is the one that signed them, whether it has none, and its
- * watermark when looked for (D324): the one they name, another, one where they name none, or none.
- * @typedef {NonNullable<Awaited<ReturnType<typeof credentialsOf>>> & { name: string, at: string | Date | null, own?: boolean, absent?: boolean, found?: 'match' | 'other' | 'found' | 'none' }} Credentials
+ * watermark when looked for (D324): the one they name, another, one where they name none, or none; or,
+ * `unsigned`, what the file says of itself in its metadata (D407).
+ * @typedef {NonNullable<Awaited<ReturnType<typeof credentialsOf>>> & { name: string, at: string | Date | null, own?: boolean, absent?: boolean, unsigned?: boolean, found?: 'match' | 'other' | 'found' | 'none' }} Credentials
  */
 
 /** @import { Reading } from '../receipt/certificate.js' */
@@ -56,11 +58,12 @@ export async function checkGiven(given, known) {
   }
 }
 
-/** The Content Credentials of each picture or film given that has them (D324). @param {{ name: string, bytes: Uint8Array }[]} given @returns {Promise<Credentials[]>} */
+/** The Content Credentials of each picture or film given that has them (D324), else what a file says of itself (D407). @param {{ name: string, bytes: Uint8Array }[]} given @returns {Promise<Credentials[]>} */
 export async function credentialsGiven(given) {
   const read = await Promise.all(given.map(async ({ name, bytes }) => {
     const found = await credentialsOf(bytes)
-    return found ? [{ ...found, name, at: found.at?.toISOString() ?? null }] : []
+    const marks = found ? null : await marksOf(name, bytes).catch(() => null)
+    return found ? [{ ...found, name, at: found.at?.toISOString() ?? null }] : marks ? [marks] : []
   }))
   return read.flat()
 }
@@ -94,7 +97,7 @@ const signer = ({ own, selfIssued, issuer }) => (own ? t('certificates.yours') :
 /** A key's fingerprint, in fours. @param {string} fingerprint */
 const grouped = (fingerprint) => html`<code class="receipt-host" dir="ltr">${fingerprint.match(/.{1,4}/g)?.join(' ')}</code>`
 
-/** A picture's or a film's Content Credentials, checked (D324). @param {Credentials} one */
+/** A picture's or a film's Content Credentials, checked (D324), or what a file says of itself (D407). @param {Credentials} one */
 export function credentialsCard(one) {
   const found = one.found ? t(`certificates.watermark.${one.found}`) : ''
   if (one.absent) return html`<div class="receipt receipt-checked"><div class="receipt-head ${one.found === 'found' ? 'is-local' : ''}">
@@ -102,12 +105,12 @@ export function credentialsCard(one) {
     <div><p class="receipt-verdict">${t('certificates.noRecord', { name: one.name })}</p><p class="receipt-note">${found}</p></div></div></div>`
   return html`<div class="receipt receipt-checked">
     <div class="receipt-head ${one.intact ? 'is-local' : ''}">
-      <span class="receipt-mark">${one.intact ? icons.shield : icons.close}</span>
-      <div><p class="receipt-verdict">${t(one.intact ? 'certificates.credentials' : 'certificates.credentialsBroken', { name: one.name })}</p>
+      <span class="receipt-mark">${one.intact || one.unsigned ? icons.shield : icons.close}</span>
+      <div><p class="receipt-verdict">${t(one.unsigned ? 'certificates.marks' : one.intact ? 'certificates.credentials' : 'certificates.credentialsBroken', { name: one.name })}</p>
         <p class="receipt-note">${t(one.generated ? 'certificates.ai' : 'certificates.notAi')}${one.bound === undefined && one.intact ? html`<br>${t('certificates.unbound')}` : nothing}${found ? html`<br>${found}` : nothing}</p></div>
     </div>
     <dl>
-      <div class="receipt-list"><dt>${t('certificates.by')}</dt><dd>${signer(one)} ${one.selfIssued ? grouped(one.subject['2.5.4.3'] ?? '') : html`<bdi class="receipt-host">${one.subject['2.5.4.10'] ?? one.subject['2.5.4.3'] ?? ''}</bdi>`}</dd></div>
+      ${one.unsigned ? nothing : html`<div class="receipt-list"><dt>${t('certificates.by')}</dt><dd>${signer(one)} ${one.selfIssued ? grouped(one.subject['2.5.4.3'] ?? '') : html`<bdi class="receipt-host">${one.subject['2.5.4.10'] ?? one.subject['2.5.4.3'] ?? ''}</bdi>`}</dd></div>`}
       ${one.maker || one.generator ? html`<div class="receipt-list"><dt>${t('certificates.made')}</dt><dd class="receipt-brain"><bdi>${one.maker || one.generator}</bdi>${one.maker && one.generator ? html`<bdi class="receipt-host">${one.generator}</bdi>` : nothing}</dd></div>` : nothing}
       ${one.at ? html`<div class="receipt-list"><dt>${t('certificates.dated', { name: [one.witness?.['2.5.4.3'], one.witness?.['2.5.4.6']].filter(Boolean).join(' · ') })}</dt><dd>${when(one.at)}</dd></div>` : nothing}
     </dl>

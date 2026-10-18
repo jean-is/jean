@@ -1,9 +1,11 @@
 // Checking certificates (D274): the check page, which anyone opens, reads a certificate of an answer,
-// its proof and files, says whether its seal holds, who sealed it and what it says, and reaches
-// nothing outside Jean's own files; a certificate shared in a conversation brings check_certificate,
-// whose card in the answer says the same, and knows this device's own seal. A picture's Content
-// Credentials, read the same ways (D324), and words, for the watermark of the brain on a device (D402).
+// its proof and files, says whether its seal holds, who sealed it and what it says, and sends nothing
+// it is given anywhere; a certificate shared in a conversation brings check_certificate, whose card in
+// the answer says the same, and knows this device's own seal. A picture's Content Credentials, read the
+// same ways (D324), what a file Jean made says of itself (D407), and words, for the watermark of the
+// brain on a device (D402), whose readers a stranger's browser downloads once they agree (D407).
 import { readFile } from 'node:fs/promises'
+import { deflateSync } from 'node:zlib'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
 import { reply, logged, logPem } from './fixtures/tsa.js'
@@ -125,61 +127,150 @@ for (const [lang, watermarked, said] of [['en', true, 'It carries an invisible w
   })
 }
 
+/** A picture made on this device, as Jean saves it: a PNG of one pixel, its XMP saying SD-Turbo made it (D279). */
+async function madePicture() {
+  const { crc32 } = await import('../app/core/zip.js')
+  const { marked } = await import('../app/caps/pictures/mark.js')
+  const chunk = (/** @type {string} */ type, /** @type {Buffer} */ data) => {
+    const body = Buffer.concat([Buffer.from(type), data])
+    const out = Buffer.alloc(body.length + 8)
+    out.writeUInt32BE(data.length)
+    body.copy(out, 4)
+    out.writeUInt32BE(crc32(body), body.length + 4)
+    return out
+  }
+  const png = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', Buffer.from([0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 0, 0, 0])), chunk('IDAT', deflateSync(Buffer.from([0, 200, 120, 40]))), chunk('IEND', Buffer.alloc(0))])
+  return { name: 'Picture.png', mimeType: 'image/png', buffer: Buffer.from(marked(new Uint8Array(png), 'SD-Turbo')) }
+}
+
+/** A Word document Jean made, in French. */
+async function madeDocument() {
+  const { makeFile } = await import('../app/caps/made/formats.js')
+  const { name, mimeType, bytes } = await makeFile('Report.docx', '# Automne\n\nLes feuilles changent de couleur en automne.')
+  return { name, mimeType, buffer: Buffer.from(bytes) }
+}
+
+/**
+ * The readers' workers, told only from where their readers come, which must be the weights host: SD-Turbo's,
+ * where TrustMark's decoder reads its 100 bits for 61, and the brain's, counting words with Gemma's tokenizer
+ * alone, which count words about autumn in French as marked. Each says how far its reader has come first.
+ * @param {import('@playwright/test').Page} page @param {boolean} [failing]
+ */
+async function readers(page, failing = false) {
+  const { payloadOf } = await import('../app/caps/pictures/watermark.js')
+  const worker = (/** @type {string} */ done) => `self.onmessage = ({ data }) => {
+    if (${failing} || data.host !== 'https://huggingface.co/') return self.postMessage({ id: data.id, type: 'error', message: data.host })
+    self.postMessage({ id: data.id, type: 'progress', loaded: 1, total: 2 })
+    self.postMessage({ id: data.id, type: 'done', ${done} })
+  }`
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker(`bits: ${JSON.stringify(payloadOf(WATERMARKED))}`) }))
+  await page.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker('counted: 400, z: data.text.includes(\'automne\') ? 9.5 : 0') }))
+}
+
+/** A language's strings for the check page, and one with its values. @param {string} lang */
+async function stringsOf(lang) {
+  const strings = JSON.parse(await readFile(new URL(`../app/locales/certificates/${lang}.json`, import.meta.url), 'utf8'))
+  return { strings, said: (/** @type {string} */ key, /** @type {Record<string, string>} */ values) => Object.entries(values).reduce((text, [name, value]) => text.replace(`{${name}}`, value), strings[key]) }
+}
+
 for (const lang of ['en', 'ar', 'ja']) {
-  test(`the check page reads a picture’s watermark with the decoder this device keeps, never fetched, and says when it can’t (D324, ${lang})`, async ({ browser, baseURL }) => {
-    const { payloadOf, DECODER } = await import('../app/caps/pictures/watermark.js')
+  test(`in a stranger’s browser the check page downloads a reader from the weights host once they agree, then reads a picture Jean made, words from the brain on a device and a Word document Jean made (D407, ${lang})`, async ({ browser, baseURL }) => {
     const { BRAND } = await import('../app/brand.js')
-    const strings = JSON.parse(await readFile(new URL(`../app/locales/certificates/${lang}.json`, import.meta.url), 'utf8'))
+    const { strings, said } = await stringsOf(lang)
     const context = await browser.newContext({ locale: lang, baseURL })
     const reached = new Set()
     context.on('request', (request) => reached.add(new URL(request.url()).host))
     const checker = await context.newPage()
-    // SD-Turbo's worker, where the decoder runs, reading TrustMark's 100 bits for 61.
-    const bits = payloadOf(WATERMARKED)
-    await checker.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
-      body: `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', bits: ${JSON.stringify(bits)} })` }))
+    await readers(checker)
     await checker.goto('check.html')
     const input = checker.locator('input[type="file"]')
-    // Without the decoder on this device, what lets the page look.
-    await input.setInputFiles([await signedPicture()])
-    await expect(checker.locator('main > .receipt-note').last()).toHaveText(strings['certificates.watermark.unread'].replace('{name}', BRAND.name))
-    // With it, kept where Jean keeps it, the watermark is read.
-    await checker.evaluate(async (path) => (await caches.open('transformers-cache')).put(`https://huggingface.co/${path}`, new Response('kept')), DECODER[0])
-    await input.setInputFiles([await signedPicture()])
-    await expect(checker.locator('.receipt-checked .receipt-note')).toContainText(strings['certificates.watermark.found'])
+    const note = checker.locator('main > .receipt-note').last()
+    const download = checker.locator('main > button')
+    // A picture Jean made: what its file says, and what the page needs to look for its watermark, nothing fetched yet.
+    await input.setInputFiles([await madePicture()])
+    const card = checker.locator('.receipt-checked')
+    await expect(card.locator('.receipt-verdict')).toHaveText(said('certificates.marks', { name: 'Picture.png' }))
+    await expect(card.locator('.receipt-note')).toHaveText(strings['certificates.ai'])
+    await expect(card).toContainText('SD-Turbo')
+    await expect(note).toHaveText(said('certificates.watermark.fetch', { host: 'huggingface.co' }))
+    await expect(download).toContainText(said('certificates.fetch', { size: '' }).replace(/[()（）]/g, '').trim())
+    expect([...reached]).toEqual([new URL(baseURL ?? '').host])
+    // Agreed to, the reader comes from the weights host, and the watermark is read.
+    await download.click()
+    await expect(card.locator('.receipt-note')).toContainText(strings['certificates.watermark.found'])
     await expect(checker.locator('main > .receipt-note')).toHaveCount(1)
-    // Nothing went anywhere but Jean's own files.
+    // Words from the brain on a device: what the page needs to count them, then, agreed to, the count.
+    const words = checker.getByRole('textbox', { name: strings['certificates.words'] })
+    await words.fill('Les feuilles changent de couleur en automne.')
+    await expect(note).toHaveText(said('certificates.words.fetch', { host: 'huggingface.co' }))
+    await download.click()
+    const counted = checker.locator('.receipt-head > .receipt-verdict')
+    await expect(counted).toHaveText(strings['certificates.words.marked'])
+    await words.fill('')
+    await expect(counted).toHaveCount(0)
+    // A Word document Jean made: what it says, and its words counted at once, both readers agreed to.
+    await input.setInputFiles([await madeDocument()])
+    await expect(card.first().locator('.receipt-verdict')).toHaveText(said('certificates.marks', { name: 'Report.docx' }))
+    await expect(card.first()).toContainText(BRAND.name)
+    await expect(counted).toHaveText(strings['certificates.words.marked'])
+    await expect(download).toHaveCount(0)
+    // Nothing given went anywhere.
     expect([...reached]).toEqual([new URL(baseURL ?? '').host])
     await context.close()
   })
 }
 
+test('the check page says when a reader couldn’t be downloaded, and offers it again (D407)', async ({ browser, baseURL }) => {
+  const { strings, said } = await stringsOf('en')
+  const context = await browser.newContext({ locale: 'en', baseURL })
+  const checker = await context.newPage()
+  await readers(checker, true)
+  await checker.goto('check.html')
+  await checker.locator('input[type="file"]').setInputFiles([await madePicture()])
+  await checker.locator('main > button').click()
+  await expect(checker.locator('main > .receipt-note').last()).toHaveText(said('certificates.failed', { host: 'huggingface.co' }))
+  await expect(checker.locator('main > button')).toHaveText(said('certificates.fetch', { size: '47.4 MB' }))
+  await expect(checker.locator('.receipt-checked .receipt-note')).toHaveText(strings['certificates.ai'])
+  await context.close()
+})
+
 for (const lang of ['en', 'ar', 'ja']) {
-  test(`the check page counts pasted words for the watermark of the brain on a device, with the tokenizer this device keeps, never fetched (D402, ${lang})`, async ({ browser, baseURL }) => {
+  test(`where Jean keeps the readers on this device, the check page reads a picture’s watermark and counts words with them, asking nothing and reaching nothing (D324, D402, ${lang})`, async ({ browser, baseURL }) => {
+    const { DECODER } = await import('../app/caps/pictures/watermark.js')
     const { BRAIN } = await import('../app/caps/brain-local/watermark.js')
-    const { BRAND } = await import('../app/brand.js')
-    const strings = JSON.parse(await readFile(new URL(`../app/locales/certificates/${lang}.json`, import.meta.url), 'utf8'))
+    const { strings } = await stringsOf(lang)
     const context = await browser.newContext({ locale: lang, baseURL })
     const reached = new Set()
     context.on('request', (request) => reached.add(new URL(request.url()).host))
     const checker = await context.newPage()
-    // The brain's worker, counting words with its tokenizer alone: these count as marked.
-    await checker.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
-      body: 'self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: \'done\', counted: 240, z: 9.5 })' }))
+    await readers(checker)
     await checker.goto('check.html')
-    const words = checker.getByRole('textbox', { name: strings['certificates.words'] })
-    // Without the tokenizer on this device, what lets the page count.
-    await words.fill('Les feuilles changent de couleur en automne.')
-    await expect(checker.locator('main > .receipt-note').last()).toHaveText(strings['certificates.words.unread'].replace('{name}', BRAND.name))
-    // With it, kept where Jean keeps it, the words are counted.
-    await checker.evaluate(async (path) => (await caches.open('transformers-cache')).put(`https://huggingface.co/${path}`, new Response('{}')), `${BRAIN}/resolve/main/tokenizer.json`)
-    await words.fill('Les feuilles changent de couleur en automne, encore.')
-    await expect(checker.locator('.receipt-checked .receipt-verdict')).toHaveText(strings['certificates.words.marked'])
-    // Nothing went anywhere but Jean's own files.
+    // Both readers, kept where Jean keeps them.
+    await checker.evaluate(async (paths) => {
+      const cache = await caches.open('transformers-cache')
+      for (const path of paths) await cache.put(`https://huggingface.co/${path}`, new Response('kept'))
+    }, [DECODER[0], `${BRAIN}/resolve/main/tokenizer.json`])
+    await checker.locator('input[type="file"]').setInputFiles([await signedPicture()])
+    await expect(checker.locator('.receipt-checked .receipt-note')).toContainText(strings['certificates.watermark.found'])
+    await checker.getByRole('textbox', { name: strings['certificates.words'] }).fill('Les feuilles changent de couleur en automne.')
+    await expect(checker.locator('.receipt-head > .receipt-verdict')).toHaveText(strings['certificates.words.marked'])
+    await expect(checker.locator('main > button')).toHaveCount(0)
     expect([...reached]).toEqual([new URL(baseURL ?? '').host])
     await context.close()
   })
 }
+
+test('a Word document Jean made, shared in a conversation, brings what checks it, which reads what it says of itself (D407)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.locator('.composer input[type="file"]').setInputFiles([await madeDocument()])
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Does this document carry a certificate?')
+  const card = page.locator('app-certificate .receipt-checked')
+  await expect(card.locator('.receipt-verdict')).toHaveText('Report.docx says how it was made, unsigned: anyone could have written it')
+  await expect(card.locator('.receipt-note')).toHaveText('It says AI made it')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Report.docx: no Content Credentials, but its file says, unsigned, that AI made it, with Jean.')
+})
 
 test('a certificate shared in a conversation brings what checks it, and its card knows this device’s seal', async ({ page }) => {
   const { certificate, proof } = await saved(page)

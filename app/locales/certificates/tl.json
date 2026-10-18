@@ -1,8 +1,8 @@
 {
   "certificates.title": "Suriin ang isang sertipiko",
-  "certificates.text": "Ilagay dito ang sertipikong na-save mula sa Tungkol sa sagot na ito, ang patunay nito, o pareho, kasama ang anumang file na maaari nitong pangalanan. O maglagay ng larawan o video para mabasa kung paano ito ginawa. Walang lumalabas sa page na ito.",
+  "certificates.text": "Ilagay dito ang sertipikong na-save mula sa Tungkol sa sagot na ito, ang patunay nito, o pareho, kasama ang anumang file na maaari nitong pangalanan. O maglagay ng larawan, video o dokumento para mabasa kung paano ito ginawa. Walang anumang ibinibigay mo na lumalabas sa page na ito.",
   "certificates.choose": "Pumili ng mga file",
-  "certificates.unreadable": "Hindi ito sertipiko ng isang sagot, hindi ang patunay nito, at hindi rin larawan o video na nagsasabi kung paano ito ginawa.",
+  "certificates.unreadable": "Hindi ito sertipiko ng isang sagot, hindi ang patunay nito, at hindi rin file na nagsasabi kung paano ito ginawa.",
   "certificates.intact": "Selyado, at hindi nagbago mula noon",
   "certificates.broken": "Binago, o hindi sineselyuhan ng susing pinangangalanan nito",
   "certificates.where.device": "Ginawa sa device na nag-selyo nito",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Hindi sinasabi ng tala na AI ang gumawa nito",
   "certificates.unbound": "Hindi sinusuri dito kung nagbago ang file mula noon",
   "certificates.noRecord": "Walang tala ang {name} kung paano ito ginawa",
+  "certificates.marks": "Sinasabi ng {name} kung paano ito ginawa, nang walang pirma: kahit sino ay maaaring sumulat nito",
   "certificates.watermark.match": "Ang hindi nakikitang watermark nito ang pinangangalanan ng talang ito",
   "certificates.watermark.other": "Ang hindi nakikitang watermark nito ay hindi ang pinangangalanan ng talang ito",
   "certificates.watermark.found": "May hindi nakikitang watermark ito",
   "certificates.watermark.none": "Walang nakitang hindi nakikitang watermark",
-  "certificates.watermark.unread": "Kapag naghanap na ang {name} ng hindi nakikitang watermark sa device na ito, maghahanap din ang page na ito",
+  "certificates.watermark.fetch": "Para maghanap ng hindi nakikitang watermark, dina-download muna ng page na ito ang reader nito mula sa {host}, saka itinatabi sa browser na ito",
   "certificates.words": "O mag-paste ng mga salita para hanapin dito ang watermark ng utak sa isang device",
   "certificates.words.marked": "May watermark ng utak sa isang device ang mga salitang ito: ito ang sumulat, o may nagpamukha sa mga ito na ganoon",
   "certificates.words.none": "Walang nakitang watermark ng utak sa isang device sa mga salitang ito, pero hindi nito napapatunayang hindi ito ang sumulat",
   "certificates.words.short": "Masyadong kaunti ang mga salita para masabi: mag-paste ng mga isang pahina",
-  "certificates.words.unread": "Kapag naghanap na ang {name} ng watermark sa mga salita sa device na ito, maghahanap din ang page na ito"
+  "certificates.words.fetch": "Para maghanap ng watermark sa mga salita, dina-download muna ng page na ito ang reader nito mula sa {host}, saka itinatabi sa browser na ito",
+  "certificates.fetch": "I-download ({size})",
+  "certificates.failed": "Hindi ma-download ang reader mula sa {host}. Subukang muli mamaya."
 }

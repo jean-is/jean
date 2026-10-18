@@ -59,10 +59,10 @@ export async function minify (path, source) {
 }
 
 /**
- * index.html naming the policy beside it, once. @param {string} html
+ * index.html, or check.html, naming the policy beside it, once. @param {string} html
  */
 export function withPolicy (html) {
-  if (html.includes('name="app-policy"') || !html.includes('</head>')) throw new Error('index.html already names a policy, or has no </head>')
+  if (html.includes('name="app-policy"') || !html.includes('</head>')) throw new Error('The page already names a policy, or has no </head>')
   return html.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>')
 }
 
@@ -164,8 +164,11 @@ async function main () {
     const described = said ? inLanguage(searched, said) : searched
     return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base) : described
   }
-  /** A page as the site serves it: index.html as above, and with ADDRESS, a listed page with its canonical address and any other unindexed. @param {string} path @param {string} html */
-  const served = (path, html) => path === 'index.html' ? page(html) : !base ? html : LISTED.includes(path) ? withCanonical(html, addressOf(base, path)) : unindexed(html)
+  /**
+   * A page as the site serves it: index.html as above, check.html naming the policy too, for its weights host (D407),
+   * and with ADDRESS, a listed page with its canonical address and any other unindexed. @param {string} path @param {string} html
+   */
+  const served = (path, html, named = policy && path === 'check.html' ? withPolicy(html) : html) => path === 'index.html' ? page(html) : !base ? named : LISTED.includes(path) ? withCanonical(named, addressOf(base, path)) : unindexed(named)
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0

@@ -17,7 +17,7 @@ About this answer's certificates: the legal ground they stand on, what Jean has 
 3. **Plural, replaceable witnesses.** Timestamps from authorities in several countries, plus an optional public log, all chosen by settings, policy or the gateway. No Jean server.
 4. **The key never leaves the device.** It is non-extractable and never escrowed.
 5. **The words stay private.** Every digest of what was said, shared or made is salted (128 bits, SD-JWT). Only the proof, which the user hands over, discloses the words.
-6. **Anyone can check.** The check page works offline, in every language. Standard tools also work (JOSE and SD-JWT libraries, OpenSSL, EU DSS, cosign), and a published JSON Schema describes the format.
+6. **Anyone can check.** The check page works offline, in every language, but for a watermark's reader, downloaded once the visitor agrees (D407). Standard tools also work (JOSE and SD-JWT libraries, OpenSSL, EU DSS, cosign), and a published JSON Schema describes the format.
 7. **Say where data went.** Name the host each cloud brain or maker was reached at, and its jurisdiction when settings or policy declare one.
 
 ## The legal ground (2026-10-11)
@@ -79,7 +79,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - the schema is `caps/receipt/certificate.schema.json`;
   - Settings › Approvals shows the seal's fingerprint.
 - **Checking** (D274):
-  - `check.html` (its policy reaches Jean's own files only);
+  - `check.html` (its policy reaches Jean's own files only; a watermark's reader comes from the weights host once the visitor agrees, D407);
   - the `certificates` capability, whose `check_certificate` is unlocked by a shared certificate or proof and shows the same card in the answer.
 - **Witnesses** (D276): opt-in, on the card.
   - RFC 3161 tokens as JAdES `sigTst`, checked before they are kept;
@@ -112,10 +112,10 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 
 - [ ] **Settings to name witnesses, the log and a brain's jurisdiction.** Today only policy, the settings file or the gateway can set `urls.timestamp`, `urls.transparencyLog` or a brain's `jurisdiction`. Add them to Settings › Approvals, beside the seal, with strings in every language.
 - [ ] **Dating a certificate already saved.** The plan said the check card in Jean would offer it; it isn't built. `witness()` can add a `sigTst` to a saved file without re-sealing.
-- [ ] **The log's promise on the check page.** The page reaches nothing, so it leaves the promise unchecked. Options:
+- [ ] **The log's promise on the check page.** The page reaches nothing a certificate names, so it leaves the promise unchecked. Options:
   - known logs' keys shipped with policy;
   - a key the visitor pastes;
-  - the page allowed to reach the default log's host only.
+  - the default log's key fetched once the visitor agrees, as a watermark's reader is (D407).
 - [ ] **Inclusion proof:** verify the RFC 6962 inclusion proof against the checkpoint's signed note. Without the checkpoint's signature, the proof shows nothing.
 - [ ] **A proof that carries its dates.** A proof is SD-JWT compact and has no `etsiU`, so a dated proof needs the certificate file beside it. Consider SD-JWT's JSON serialization, kept apart from the JAdES file.
 - [ ] **The device brain's weights** (Transformers.js `from_pretrained`) aren't pinned, so `brains` names the repository only. Pin a revision, as `caps/pictures/device.js` does.
@@ -157,7 +157,7 @@ Then:
   - **Detection in Jean:** asked, `check_certificate` reads it with TrustMark's decoder (47.4 MB, downloaded the first time), Jean's own BCH_5 decoding agreeing with TrustMark's data layer on every word tried, and says whether it is the one the credentials name; it read the bits back from a JPEG at 70 in Chromium and WebKit, and nothing from a picture without one. TrustMark's own decoders (Python, Rust, JavaScript) read it too.
 - [x] **Pictures and films from the cloud:** the providers' marks pass through untouched; `test/c2pa.test.js` checks the bytes are unchanged.
 - [x] **Pictures people share** (D324): kept as given, with whatever marks they carry; brains see a copy no side of which passes 1568 pixels, made as the message is sent (`seenBy()` in `caps/files/pictures.js`).
-- [x] **Files Jean makes** (`caps/made/formats.js`, D324): Word documents and workbooks in their custom properties (IPTC's `DigitalSourceType`, `AISystemUsed`), drawings in XMP, web pages in schema.org's JSON-LD; Markdown, CSV and other text carry none. C2PA in Office files waits for validators that open them.
+- [x] **Files Jean makes** (`caps/made/formats.js`, D324): Word documents and workbooks in their custom properties (IPTC's `DigitalSourceType`, `AISystemUsed`), drawings in XMP, web pages in schema.org's JSON-LD; Markdown, CSV and other text carry none. C2PA in Office files waits for validators that open them. The check page and `check_certificate` read these back (D407), as unsigned, since anyone can write or remove them. What the device's brain writes in a file comes through a tool call, chosen greedily, so its words carry no watermark: the metadata is the file's mark.
 - [x] **Answers:** free-form text can't carry metadata, so the code of practice asks one layer, a watermark above 200 tokens; the answer's certificate, when saved, is metadata beside it (D274, `trainedAlgorithmicMedia`). The guidelines let Jean rely on a brain's own watermark where it shows that it works and that a means of detection exists. What each does (2026-10-18, from the providers' announcements as reported; check their pages before relying on them):
 
   | Brain | Text watermark | What Jean can do |
@@ -182,7 +182,7 @@ Then:
   The watermark lives in a brain's doubt: a confident brain writes few words it could have written otherwise, and E2B is confident (0.25 nats a token). Each answer's strength per token, carried to longer texts, puts E2B's answers over 4 in about 1 in 6 at 200 tokens, 3 in 10 at 300, half at 500 and two thirds at 1,000; an answer as predictable as a list never shows it. So `said()` calls fewer than 300 tokens too short to tell, and the check never says words weren't written here. By language, E2B's raced answers counted 5.6 in Spanish, 3.2 to 3.5 in English, German, Japanese and Chinese, 2.5 in French, 2.0 in Hindi and 1.8 in Arabic over their whole length. A green-list bias of 2 under greedy decoding, the first try, counted 2.4 and 0.05 on the 26B's first two answers; on Qwen3-0.6B, eight raced answers with the four-token key counted 6.9 to 23.8.
 
   Left: E2B in real browsers, by hand (below); Google's API; a line in Settings › Brains for OpenAI keys, if Jean must tell their owners ([open-questions.md](open-questions.md#answer-certificates)).
-- [x] **Detection:** the check page and `check_certificate` read C2PA manifests and TrustMark's watermark (D324): `check_certificate` when asked, downloading the decoder the first time; the check page, which reaches nothing, with the decoder Jean keeps in the browser's cache on that device, else it says so. Words, for the device's brain's watermark, the same way (D402): `check_certificate { words }`, downloading Gemma's tokenizer (19 MB) the first time, and the check page, pasted or dropped as `.txt` or `.md`, where the tokenizer is kept. Anyone's C2PA tools read the manifests, and TrustMark's own decoders the watermark; a soft-binding lookup has no server to ask, so the watermark recovers nothing a stripped picture lost but the fact of it.
+- [x] **Detection, for anyone** (D324, D402, D407): the check page and `check_certificate` read C2PA manifests, what a file says of itself (an Office file's custom properties, XMP in a drawing, a PNG or a JPEG, a web page's JSON-LD), TrustMark's watermark, and the device's brain's watermark in words: `check_certificate { words }`, and on the check page words pasted or a dropped `.txt`, `.md` or `.docx`. Their readers, TrustMark's decoder (47.4 MB) and Gemma's tokenizer (19.4 MB), come from the browser's cache where Jean keeps them, else from the weights host: `check_certificate` downloads one the first time it is asked to look, the check page once the visitor agrees, saying from where and how much. Nothing given leaves the page, whose own policy reaches Jean's files only. Measured 2026-10-18 in fresh headless Chromium and WebKit, nothing of Jean's kept: a picture Jean's encoder watermarked, read in 2 to 12 s with the download; a Spanish answer of the device's brain (7.8 deviations), marked, pasted and in a Word document Jean made, whose marks were read too; only huggingface.co and its CDN reached. Anyone's C2PA tools read the manifests, and TrustMark's own decoders the watermark; a soft-binding lookup has no server to ask, so the watermark recovers nothing a stripped picture lost but the fact of it.
 - [x] **No stripping:** Jean never removes marks: a provider's picture or film is kept byte for byte (`test/c2pa.test.js`), a shared picture as given (above), and answers' words are shown and copied as the brain wrote them, so a watermark in them stays. The terms (`terms.html`, section 4, in English and French) ask users not to remove or alter marks, Jean's or the brains'.
 - [x] **Labels for deployers (Art. 50(4)), on pictures** (D324): a picture's second save draws the Commission's basic icon, which anyone may use without attribution, and "Made with AI" in the user's language in its corner, and marks the copy again. Left: films (re-encoded) and documents, if users ask; a provider's labelled picture keeps only Jean's marks, its own C2PA chain staying with the picture as first saved (an ingredient in the new manifest would carry it).
 
@@ -200,7 +200,8 @@ On [open-questions.md](open-questions.md#answer-certificates).
   - D275: picture safeguards, on its own branch;
   - D276: witnesses;
   - D279 · D324: the marks on what Jean makes, their check and the labelled save;
-  - D402: the device's brain's watermark.
+  - D402: the device's brain's watermark;
+  - D407: detection for anyone, files' own marks and the readers downloaded once the visitor agrees.
 
   Find the highest in `docs/decisions.md` and every `.claude/worktrees/*` just before taking one.
 - **Shared checkout:** other sessions keep uncommitted edits in the shared checkout. Commit only your own hunks: rebuild shared files from `HEAD` plus your edits, test that snapshot, and commit it with a temporary index.

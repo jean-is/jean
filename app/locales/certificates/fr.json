@@ -1,8 +1,8 @@
 {
   "certificates.title": "Vérifier un certificat",
-  "certificates.text": "Déposez un certificat enregistré depuis À propos de cette réponse, sa preuve, ou les deux, avec tout fichier qu’il peut nommer. Ou déposez une image ou une vidéo pour lire comment elle a été faite. Rien ne quitte cette page.",
+  "certificates.text": "Déposez un certificat enregistré depuis À propos de cette réponse, sa preuve, ou les deux, avec tout fichier qu’il peut nommer. Ou déposez une image, une vidéo ou un document pour lire comment il a été fait. Rien de ce que vous donnez ne quitte cette page.",
   "certificates.choose": "Choisir des fichiers",
-  "certificates.unreadable": "Ce n’est ni le certificat d’une réponse, ni sa preuve, ni une image ou une vidéo qui dit comment elle a été faite.",
+  "certificates.unreadable": "Ce n’est ni le certificat d’une réponse, ni sa preuve, ni un fichier qui dit comment il a été fait.",
   "certificates.intact": "Scellé, et inchangé depuis",
   "certificates.broken": "Modifié, ou pas scellé par la clé qu’il nomme",
   "certificates.where.device": "Fait sur l’appareil qui l’a scellé",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Il n’indique pas de création par une IA",
   "certificates.unbound": "Une modification du fichier depuis n’est pas vérifiée ici",
   "certificates.noRecord": "{name} ne porte aucun relevé de sa fabrication",
+  "certificates.marks": "{name} dit comment il a été fait, sans signature : n’importe qui aurait pu l’écrire",
   "certificates.watermark.match": "Son filigrane invisible est celui que nomme ce relevé",
   "certificates.watermark.other": "Son filigrane invisible n’est pas celui que nomme ce relevé",
   "certificates.watermark.found": "Il porte un filigrane invisible",
   "certificates.watermark.none": "Aucun filigrane invisible trouvé",
-  "certificates.watermark.unread": "Une fois que {name} a cherché un filigrane invisible sur cet appareil, cette page en cherche un aussi",
+  "certificates.watermark.fetch": "Pour chercher un filigrane invisible, cette page télécharge d’abord son lecteur depuis {host}, puis le garde dans ce navigateur",
   "certificates.words": "Ou collez des mots pour y chercher le filigrane du cerveau sur un appareil",
   "certificates.words.marked": "Ces mots portent le filigrane du cerveau sur un appareil : il les a écrits, ou quelqu’un les a fait passer pour tels",
   "certificates.words.none": "Aucun filigrane du cerveau sur un appareil trouvé dans ces mots, ce qui ne prouve pas qu’il ne les a pas écrits",
   "certificates.words.short": "Trop peu de mots pour le dire : collez-en une page environ",
-  "certificates.words.unread": "Une fois que {name} a cherché un filigrane dans des mots sur cet appareil, cette page en cherche un aussi"
+  "certificates.words.fetch": "Pour chercher le filigrane dans des mots, cette page télécharge d’abord son lecteur depuis {host}, puis le garde dans ce navigateur",
+  "certificates.fetch": "Télécharger ({size})",
+  "certificates.failed": "Le lecteur n’a pas pu être téléchargé depuis {host}. Réessayez plus tard."
 }

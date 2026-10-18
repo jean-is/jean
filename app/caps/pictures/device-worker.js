@@ -10,7 +10,7 @@
 // { type: 'unload' }              → { type: 'done' }, its sessions let go, as its files are removed (D263)
 // { type: 'check', host, bytes }  → { type: 'done', logits, areas }, its four levels of nudity, and the other areas it shows
 // { type: 'watermark', host, bytes, bits } → { type: 'done', bytes }, the PNG with TrustMark's watermark of those 100 bits
-// { type: 'detect', host, bytes }  → { type: 'done', bits }, the 100 TrustMark's decoder reads in a picture
+// { type: 'detect', host, bytes }  → progress…, { type: 'done', bits }, the 100 TrustMark's decoder reads in a picture
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { AutoTokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../../ui/model-worker.js'
@@ -60,7 +60,7 @@ async function handle({ id, type, ...data }) {
       const bytes = await watermarked(data)
       self.postMessage({ id, type: 'done', bytes }, { transfer: [bytes] })
     } else if (type === 'detect') {
-      self.postMessage({ id, type: 'done', bits: await detected(data) })
+      self.postMessage({ id, type: 'done', bits: await detected(data, id) })
     }
   } catch (error) {
     if (type === 'load') loading = null
@@ -140,9 +140,9 @@ async function checked({ host, bytes }) {
  * One of TrustMark's sessions (D324), its file downloaded first if it isn't here: on WebGPU with its tensors
  * laid out channels first, where ONNX Runtime's convolution reads the encoder's 6 input channels right (laid
  * out channels last, it misreads any count that is a multiple of 3 but not of 4, in every browser), else
- * WebAssembly. @param {string} host @param {string[]} file
+ * WebAssembly; how far its download has come told to the request whose id is given. @param {string} host @param {[string, string, number]} file @param {number} [id]
  */
-const sessionOf = (host, [path, hash]) => download(new URL(path, host).href, hash, () => {})
+const sessionOf = (host, [path, hash, total], id) => download(new URL(path, host).href, hash, (loaded) => id && self.postMessage({ id, type: 'progress', loaded, total }))
   .then((model) => InferenceSession.create(new Uint8Array(model), { executionProviders: [{ name: 'webgpu', preferredLayout: 'NCHW' }, 'wasm'] }))
 /**
  * A picture squashed to TrustMark's square, −1…1; to be read, its centre's square when one side is more than
@@ -170,9 +170,9 @@ async function watermarked({ host, bytes, bits }) {
   return (await whole.canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()
 }
 
-/** The 100 bits TrustMark's decoder reads in a picture (D324), each set where its output is above 0. @param {{ host: string, bytes: Uint8Array }} data */
-async function detected({ host, bytes }) {
-  const decoder = await (reader ??= sessionOf(host, watermark.DECODER).catch((error) => { reader = null; throw error }))
+/** The 100 bits TrustMark's decoder reads in a picture (D324), each set where its output is above 0. @param {{ host: string, bytes: Uint8Array }} data @param {number} id */
+async function detected({ host, bytes }, id) {
+  const decoder = await (reader ??= sessionOf(host, watermark.DECODER, id).catch((error) => { reader = null; throw error }))
   const { output } = await decoder.run({ image: new Tensor('float32', squared(await createImageBitmap(new Blob([bytes])), true), [1, 3, watermark.SIDE, watermark.SIDE]) })
   return Array.from(/** @type {Float32Array} */ (output.data), (value) => (value > 0 ? 1 : 0))
 }

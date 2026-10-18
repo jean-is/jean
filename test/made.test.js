@@ -201,6 +201,21 @@ test('a Word document, a workbook, a drawing and a web page say a trained model 
   assert.equal(dec.decode((await makeFile('Notes.md', '# Notes')).bytes), '# Notes')
 })
 
+test('what Jean makes is read back as saying, unsigned, that AI made it and with what; a camera\'s mark says otherwise, and a file that says nothing gives nothing (D407)', async () => {
+  const { credentialsGiven } = await import('../app/caps/certificates/card.js')
+  const { marked } = await import('../app/caps/pictures/mark.js')
+  const enc = new TextEncoder()
+  const png = Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, ...enc.encode('IHDR'), ...new Array(17).fill(0), 0, 0, 0, 0, ...enc.encode('IEND'), 0, 0, 0, 0])
+  const camera = '<svg><metadata><x:xmpmeta><rdf:RDF><rdf:Description><Iptc4xmpExt:DigitalSourceType>http://cv.iptc.org/newscodes/digitalsourcetype/digitalCapture</Iptc4xmpExt:DigitalSourceType></rdf:Description></rdf:RDF></x:xmpmeta></metadata></svg>'
+  const made = await Promise.all([['Report.docx', '# Report'], ['Budget.xlsx', 'Item,Cost\nRent,1200'], ['Plan.svg', '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>'], ['Page.html', '<p>Hi</p>'], ['Notes.md', '# Notes']].map(([name, content]) => makeFile(name, content)))
+  const read = await credentialsGiven([...made, { name: 'Picture.png', bytes: marked(png, 'SD-Turbo', 'abc') }, { name: 'Photo.png', bytes: png }, { name: 'Photo.svg', bytes: enc.encode(camera) }])
+  assert.deepEqual(read.map(({ name, unsigned, generated, maker }) => ({ name, unsigned, generated, maker })), [
+    ...['Report.docx', 'Budget.xlsx', 'Plan.svg', 'Page.html'].map((name) => ({ name, unsigned: true, generated: true, maker: BRAND.name })),
+    { name: 'Picture.png', unsigned: true, generated: true, maker: 'SD-Turbo' },
+    { name: 'Photo.svg', unsigned: true, generated: false, maker: '' },
+  ])
+})
+
 test('replaceOnce: one passage changed as written; quoted twice or not at all, it says so', () => {
   assert.equal(replaceOnce('Total: 10 $', '10 $', '12 $ and $&', 'a.md'), 'Total: 12 $ and $&')
   assert.throws(() => replaceOnce('a b a', 'a', 'c', 'a.md'), /in a.md 2 times: quote more/)
