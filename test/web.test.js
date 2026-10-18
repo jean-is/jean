@@ -55,7 +55,7 @@ test('each file is beside itself in brotli and gzip, only when smaller, and neve
   assert.deepEqual(brotliDecompressSync(copies['.br']), text)
   assert.deepEqual(gunzipSync(copies['.gz']), text)
   assert.deepEqual(await precompress('ui/b.js', Buffer.from('a')), [])
-  for (const path of ['fonts/display.woff2', 'icons/icon-512.png', 'screenshots/wide.jpg', 'vendor/pyodide/python_stdlib.zip']) assert.deepEqual(await precompress(path, text), [], path)
+  for (const path of ['fonts/display.woff2', 'icons/icon-512.png', 'screenshots/en/welcome-wide.webp', 'vendor/pyodide/python_stdlib.zip']) assert.deepEqual(await precompress(path, text), [], path)
 })
 
 test('a deploy’s policy: index.html names the policy.json beside it, once, as an organisation would by hand (D344)', async () => {

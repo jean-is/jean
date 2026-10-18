@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "welcome": "Ekran powitalny: pomysły na początek i pole, w którym można zapytać o wszystko",
+    "chart": "Udostępniony arkusz i jego sprzedaż na wykresie",
+    "sources": "Przeczytana umowa najmu i odpowiedź, której każda część do niej odsyła",
+    "share": "Zadanie udostępnione znajomemu przez link"
+  },
+  "chart": {
+    "title": "Sprzedaż według regionów",
+    "file": "Sprzedaż.csv",
+    "columns": [
+      "Region",
+      "Styczeń",
+      "Luty",
+      "Marzec"
+    ],
+    "regions": [
+      "Północ",
+      "Południe",
+      "Wschód"
+    ],
+    "ask": "Zrób wykres sprzedaży według regionów, miesiąc po miesiącu",
+    "before": "Oto sprzedaż w pierwszym kwartale, według regionów:",
+    "heading": "Sprzedaż, pierwszy kwartał",
+    "after": "**Północ** sprzedaje najwięcej, a **Wschód** rośnie najszybciej: o 37% od stycznia do marca."
+  },
+  "sources": {
+    "title": "Wyprowadzka z mieszkania",
+    "file": "Umowa najmu.pdf",
+    "pages": [
+      "Umowa najmu umeblowanego mieszkania\n\n§ 7. Wypowiedzenie. Najemca może w każdej chwili rozwiązać umowę z miesięcznym okresem wypowiedzenia, przesłanym listem poleconym lub doręczonym osobiście za potwierdzeniem odbioru.",
+      "§ 9. Kaucja. Kaucja w wysokości jednomiesięcznego czynszu zostaje zwrócona w ciągu miesiąca od oddania kluczy, po potrąceniu kosztów ewentualnych napraw."
+    ],
+    "ask": "Z jakim wyprzedzeniem muszę wypowiedzieć umowę i kiedy dostanę zwrot kaucji?",
+    "answer": "Oto, co mówi Twoja umowa:\n\n- **Wypowiedzenie:** miesiąc, listem poleconym lub doręczone osobiście za potwierdzeniem odbioru [1].\n- **Kaucja:** wraca w ciągu miesiąca od oddania kluczy, po potrąceniu kosztów ewentualnych napraw [1].\n\nJeśli wyślesz pismo dziś, możesz się wyprowadzić za miesiąc."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "welcome": "La pantalla de inicio: ideas para empezar y un cuadro para preguntar lo que quieras",
+    "chart": "Una hoja de cálculo compartida y sus ventas en un gráfico",
+    "sources": "Un contrato de alquiler leído, y cada parte de la respuesta remitiendo a él",
+    "share": "Una tarea compartida con un amigo mediante un enlace"
+  },
+  "chart": {
+    "title": "Ventas por región",
+    "file": "Ventas.csv",
+    "columns": [
+      "Región",
+      "Enero",
+      "Febrero",
+      "Marzo"
+    ],
+    "regions": [
+      "Norte",
+      "Sur",
+      "Este"
+    ],
+    "ask": "Haz un gráfico de las ventas por región, mes a mes",
+    "before": "Estas son las ventas del primer trimestre, por región:",
+    "heading": "Ventas del primer trimestre",
+    "after": "El **Norte** es el que más vende, y el **Este** el que más ha crecido: un 37 % de enero a marzo."
+  },
+  "sources": {
+    "title": "Dejar el piso",
+    "file": "Contrato de alquiler.pdf",
+    "pages": [
+      "Contrato de alquiler de vivienda amueblada\n\nCláusula 7. Preaviso. El inquilino puede poner fin al contrato en cualquier momento con un mes de preaviso, enviado por carta certificada o entregado en mano contra recibo.",
+      "Cláusula 9. Fianza. La fianza, de una mensualidad, se devuelve en el plazo de un mes desde la entrega de las llaves, descontando el coste de las reparaciones necesarias."
+    ],
+    "ask": "¿Con cuánta antelación tengo que avisar para irme, y cuándo me devuelven la fianza?",
+    "answer": "Esto es lo que dice tu contrato:\n\n- **Preaviso:** un mes, por carta certificada o entregado en mano contra recibo [1].\n- **Fianza:** te la devuelven en el plazo de un mes desde que entregas las llaves, descontando las reparaciones [1].\n\nAsí que, si envías la carta hoy, puedes irte dentro de un mes."
+  }
+}

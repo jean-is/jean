@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "welcome": "Der Startbildschirm: Ideen zum Loslegen und ein Feld, um alles zu fragen",
+    "chart": "Eine geteilte Tabelle, ihre Verkäufe als Diagramm",
+    "sources": "Ein gelesener Mietvertrag, jeder Teil der Antwort mit Verweis darauf",
+    "share": "Eine Aufgabe, per Link mit einem Freund geteilt"
+  },
+  "chart": {
+    "title": "Verkäufe nach Region",
+    "file": "Verkäufe.csv",
+    "columns": [
+      "Region",
+      "Januar",
+      "Februar",
+      "März"
+    ],
+    "regions": [
+      "Nord",
+      "Süd",
+      "Ost"
+    ],
+    "ask": "Mach ein Diagramm der Verkäufe nach Region, Monat für Monat",
+    "before": "Hier sind die Verkäufe des ersten Quartals, nach Region:",
+    "heading": "Verkäufe, erstes Quartal",
+    "after": "**Nord** verkauft am meisten, und **Ost** wächst am schnellsten: plus 37 % von Januar bis März."
+  },
+  "sources": {
+    "title": "Auszug aus der Wohnung",
+    "file": "Mietvertrag.pdf",
+    "pages": [
+      "Mietvertrag über eine möblierte Wohnung\n\n§ 7 Kündigung. Der Mieter kann den Vertrag jederzeit mit einer Frist von einem Monat kündigen, per Einschreiben oder durch persönliche Übergabe gegen Empfangsbestätigung.",
+      "§ 9 Kaution. Die Kaution in Höhe einer Monatsmiete wird innerhalb eines Monats nach Rückgabe der Schlüssel zurückgezahlt, abzüglich der Kosten etwaiger Reparaturen."
+    ],
+    "ask": "Mit welcher Frist muss ich kündigen, und wann bekomme ich meine Kaution zurück?",
+    "answer": "Das steht in deinem Mietvertrag:\n\n- **Kündigung:** ein Monat, per Einschreiben oder persönlich gegen Empfangsbestätigung [1].\n- **Kaution:** zurück innerhalb eines Monats nach der Schlüsselübergabe, abzüglich etwaiger Reparaturkosten [1].\n\nWenn du den Brief heute abschickst, kannst du also in einem Monat ausziehen."
+  }
+}

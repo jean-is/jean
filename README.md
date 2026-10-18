@@ -129,7 +129,7 @@ That is all Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Qo
 | `npm run build:desktop` | Builds, then makes the desktop apps in `dist/desktop/` (Neutralino's binaries are downloaded once per version) |
 | `npm run build:dmg` | The same, then the macOS disk image to hand out, on a Mac |
 | `npm run icons` | Draws the PNG icons that Android and iOS install with from `app/icons/icon.svg`, after changing it |
-| `npm run screenshots` | Takes the welcome screen's screenshots that the install dialog shows, after changing how it looks |
+| `npm run screenshots` | Takes the screenshots that the install dialog shows, four pages in each language (`-- fr ja` for only these), after changing how Jean looks |
 | `npm run directory` | Checks, from a browser's point of view, which known services Jean can connect to and which sources of skills it can read |
 
 Jean itself, everything a deploy serves, is in `app/`; the root holds what never ships: jean-cli, the gateway, the desktop and container builds, the scripts, the tests and the docs.

@@ -5,6 +5,7 @@ node_modules/
 # Written by npm run manifest from the files above, with a copy of the licence, never committed (D74, D243)
 /app/capabilities.json
 /app/manifest.webmanifest
+/app/manifests/
 /app/LICENSE
 # Playwright output (npm run e2e)
 test-results/

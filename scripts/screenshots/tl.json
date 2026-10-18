@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "welcome": "Ang welcome screen: mga ideyang mapagsisimulan, at kahon para magtanong ng kahit ano",
+    "chart": "Isang ibinahaging spreadsheet, at ang benta nito sa isang chart",
+    "sources": "Isang binasang kontrata ng upa, at bawat bahagi ng sagot ay tumutukoy dito",
+    "share": "Isang gawaing ibinahagi sa kaibigan sa pamamagitan ng link"
+  },
+  "chart": {
+    "title": "Benta ayon sa rehiyon",
+    "file": "Benta.csv",
+    "columns": [
+      "Rehiyon",
+      "Enero",
+      "Pebrero",
+      "Marso"
+    ],
+    "regions": [
+      "Hilaga",
+      "Timog",
+      "Silangan"
+    ],
+    "ask": "Gumawa ka ng chart ng benta ayon sa rehiyon, buwan-buwan",
+    "before": "Narito ang benta sa unang quarter, ayon sa rehiyon:",
+    "heading": "Benta, unang quarter",
+    "after": "Ang **Hilaga** ang may pinakamaraming benta, at ang **Silangan** ang pinakamabilis lumago: tumaas nang 37% mula Enero hanggang Marso."
+  },
+  "sources": {
+    "title": "Pag-alis sa apartment",
+    "file": "Kontrata ng upa.pdf",
+    "pages": [
+      "Kontrata ng upa ng apartment na may kasangkapan\n\nArtikulo 7. Abiso. Maaaring tapusin ng umuupa ang kontrata anumang oras nang may isang buwang abiso, na ipinadala sa rehistradong sulat o iniabot nang personal kapalit ng resibo.",
+      "Artikulo 9. Deposito. Ibabalik ang depositong katumbas ng isang buwang upa sa loob ng isang buwan matapos isauli ang mga susi, bawas ang gastos sa anumang pagkukumpuni."
+    ],
+    "ask": "Gaano kaaga ako dapat magpaalam bago umalis, at kailan ko makukuha ulit ang deposito ko?",
+    "answer": "Ito ang sinasabi ng kontrata mo:\n\n- **Abiso:** isang buwan, sa rehistradong sulat o iniabot nang personal kapalit ng resibo [1].\n- **Deposito:** ibabalik sa loob ng isang buwan matapos mong isauli ang mga susi, bawas ang gastos sa anumang pagkukumpuni [1].\n\nKaya kung ipapadala mo ang sulat ngayon, makakaalis ka sa loob ng isang buwan."
+  }
+}

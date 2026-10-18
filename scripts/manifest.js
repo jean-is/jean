@@ -6,9 +6,10 @@
 // Usage: npm run manifest              write the outputs
 //        npm run manifest -- --check   exit 1 if a committed output is stale (CI)
 import { createHash } from 'node:crypto'
-import { readFile, readdir, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { LOCALES } from '../app/core/i18n.js'
 import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 import { ENTRY as READER, renderListing } from './render.js'
 
@@ -19,7 +20,7 @@ export const SHELL_FILES = ['index.html', 'sandbox.html', 'preview.html', 'brand
 export const SHELL_DIRS = ['core', 'ui', 'vendor', 'fonts', 'icons']
 export const WEBMANIFEST = 'manifest.webmanifest'
 /** Outputs that are entirely generated and never committed (D74); `--check` skips them. */
-export const UNCOMMITTED = [WEBMANIFEST, 'capabilities.json', 'LICENSE']
+export const UNCOMMITTED = [...LOCALES.map((lang) => manifestOf(lang)), 'capabilities.json', 'LICENSE']
 export const ENTRY = 'ui/app.js'
 /** On-demand runtimes (D52) belong to the capabilities that use them, never to the shell. */
 export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
@@ -54,21 +55,36 @@ export const ICONS = [
   { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
   { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
 ]
-const SCREENSHOT_LABEL = 'The welcome screen: ideas to start from, and a box to ask anything'
+/** What each language's screenshots show, and their labels: `scripts/screenshots/<lang>.json`, which only scripts read. */
+export const SHOTS = fileURLToPath(new URL('screenshots/', import.meta.url))
+/** @param {string} lang @returns {Promise<{ labels: Record<string, string> } & Record<string, any>>} */
+export const shotsOf = async (lang) => JSON.parse(await readFile(join(SHOTS, `${lang}.json`), 'utf8'))
 /**
- * What the richer install dialog shows (D168): the welcome screen, wide for desktops and narrow
- * for phones (`npm run screenshots` takes them). JPEGs, as the glow makes PNGs five times heavier.
- * Like the install icons, only the browser fetches them, so the shell doesn't precache them.
+ * What the richer install dialog shows (D168, D396), in each of Jean's languages: the welcome screen, a
+ * spreadsheet drawn as a chart, a document answered with its sources and a task shared by a link, wide
+ * for desktops and narrow for phones (`npm run screenshots` takes them). WebP, which Chromium decodes
+ * here as anywhere: half a JPEG's weight. Like the install icons, only the browser fetches them, so
+ * the shell doesn't precache them.
  */
-export const SCREENSHOTS = [
-  { src: 'screenshots/wide.jpg', sizes: '1280x800', type: 'image/jpeg', form_factor: 'wide', label: SCREENSHOT_LABEL },
-  { src: 'screenshots/narrow.jpg', sizes: '824x1784', type: 'image/jpeg', form_factor: 'narrow', label: SCREENSHOT_LABEL },
-]
+export const PAGES = ['welcome', 'chart', 'sources', 'share']
+export const FORMS = /** @type {Record<string, string>} */ ({ wide: '1440x900', narrow: '824x1784' })
+/** @param {string} lang @param {Record<string, string>} labels @param {string} [up] the way back to app/ */
+export const screenshotsOf = (lang, labels, up = '') => Object.entries(FORMS).flatMap(([form, sizes]) => PAGES.map((page) =>
+  ({ src: `${up}screenshots/${lang}/${page}-${form}.webp`, sizes, type: 'image/webp', form_factor: form, label: labels[page] })))
+const ENGLISH = (await shotsOf('en')).labels
+/**
+ * The manifest for a language: English's is the one index.html names; Jean points to its own
+ * language's once it knows it, so a browser's install dialog shows it in that language (D396).
+ * @param {string} lang
+ */
+export function manifestOf (lang) {
+  return lang === 'en' ? WEBMANIFEST : `manifests/${lang}.webmanifest`
+}
 /**
  * What a link to the site shows where it is shared (D355): the welcome screen again, at Open Graph's
  * 1200 × 630, its drawer closed, so the question stands in the middle. Only those sites fetch it.
  */
-export const SHARE = { src: 'screenshots/share.jpg', width: 1200, height: 630, alt: SCREENSHOT_LABEL }
+export const SHARE = { src: 'screenshots/share.jpg', width: 1200, height: 630, alt: ENGLISH.welcome }
 export const VERSION_LINE = /^const VERSION = '.*'$/m
 
 /** @param {unknown} error */
@@ -181,23 +197,28 @@ export function computeVersion (entries) {
 }
 
 /**
- * `id` is what browsers already derive from `start_url`, so installs made before it keep theirs.
+ * `id` is what browsers already derive from `start_url`, so installs made before it keep theirs. It is
+ * read against the origin, so every language's manifest names the same app; their other addresses
+ * climb back from manifests/ to app/.
  * @param {{ name: string }} brand
  * @param {string} [description]  index.html's, so the page and the install say the same sentence
+ * @param {string} [lang]  the language of its screenshots
+ * @param {Record<string, string>} [labels]  theirs, in that language
  */
-export function buildWebmanifest (brand, description) {
+export function buildWebmanifest (brand, description, lang = 'en', labels = ENGLISH) {
+  const up = lang === 'en' ? '' : '../'
   const manifest = {
     id: './',
     name: brand.name,
     short_name: brand.name,
     ...(description ? { description } : {}),
-    start_url: './',
-    scope: './',
+    start_url: up || './',
+    scope: up || './',
     display: 'standalone',
     background_color: '#131313',
     theme_color: '#131313',
-    icons: ICONS,
-    screenshots: SCREENSHOTS,
+    icons: ICONS.map((icon) => ({ ...icon, src: up + icon.src })),
+    screenshots: screenshotsOf(lang, labels, up),
   }
   return `${JSON.stringify(manifest, null, 2)}\n`
 }
@@ -257,7 +278,8 @@ export async function plan (root = APP) {
   const html = (await readOrNull(root, 'index.html'))?.toString('utf8')
   const description = html && /<meta name="description" content="([^"]*)">/.exec(html)?.[1]
   /** @type {Record<string, string>} */
-  const generated = { [WEBMANIFEST]: buildWebmanifest(BRAND, description || undefined) }
+  const generated = {}
+  for (const lang of LOCALES) generated[manifestOf(lang)] = buildWebmanifest(BRAND, description || undefined, lang, (await shotsOf(lang)).labels)
   if (html) {
     /** @param {string} path */
     const read = async (path) => (await readOrNull(root, path))?.toString('utf8') ?? null
@@ -307,7 +329,7 @@ async function main (argv) {
     const current = await readOrNull(APP, path)
     if (current?.toString('utf8') === content) continue
     stale.push(path)
-    if (!check) await writeFile(join(APP, path), content)
+    if (!check) await mkdir(dirname(join(APP, path)), { recursive: true }).then(() => writeFile(join(APP, path), content))
   }
   if (check && stale.length) {
     console.error(`manifest: out of date: ${stale.join(', ')}. Run \`npm run manifest\` and commit the result.`)

@@ -37,7 +37,7 @@ const SHOWN = ['ui/touches.css']
 export const minifies = (path) => (/^(core|ui|caps|ee)\/.+\.(js|css)$/.test(path) || path === 'brand.js') && !SHOWN.includes(path)
 
 /** Formats that are compressed already, which brotli and gzip only make bigger. */
-const PACKED = /\.(woff2|png|jpe?g|zip|sf3)$/
+const PACKED = /\.(woff2|png|jpe?g|webp|zip|sf3)$/
 
 /**
  * A file of Jean's as it ships: no comments, whitespace or long local names, and nothing else changed.

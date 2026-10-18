@@ -56,8 +56,9 @@ async function start() {
 
   const root = document.documentElement
   effect(() => {
-    root.lang = locale.value
-    root.dir = dir(locale.value)
+    Object.assign(root, { lang: locale.value, dir: dir(locale.value) })
+    // The install dialog's screenshots in Jean's language (D396): index.html names English's.
+    document.querySelector('link[rel="manifest"]')?.setAttribute('href', locale.value === 'en' ? 'manifest.webmanifest' : `manifests/${locale.value}.webmanifest`)
     document.title = locale.value === 'en' && document.title || BRAND.name
   })
   effect(() => { root.dataset.presence = app.presence.value })

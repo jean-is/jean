@@ -43,7 +43,7 @@ How Jean is built, as it is now. Why each choice was made, and what was rejected
 | `buffer` (feross's, with `base64-js` and `ieee754`) | The Computer's `node`'s `Buffer` (D178); one classic script, `vendor/quickjs/buffer.js` |
 | No MCP SDK | Connections: Jean's own client, `caps/connections/mcp.js` (D87) |
 
-`vendor/`, `capabilities.json`, `manifest.webmanifest` and a copy of `LICENSE`, all in `app/`, are made by `npm run dev`, `start`, `build` and `check` from Jean's own `node_modules` and the root's licence, and never committed (D43, D51, D52, D74, D243).
+`vendor/`, `capabilities.json`, `manifest.webmanifest`, one per language in `manifests/` (D396) and a copy of `LICENSE`, all in `app/`, are made by `npm run dev`, `start`, `build` and `check` from Jean's own `node_modules` and the root's licence, and never committed (D43, D51, D52, D74, D243).
 
 **Vendoring** (`scripts/vendor.js`). The three upfront libraries (only the lit-html files Jean imports) and the on-demand runtimes (`optionalDependencies`) are copied, as `package-lock.json` pins them, from Jean's own `node_modules` into `app/vendor/`, their bare specifiers rewritten where import maps don't reach (workers), and what Trusted Types and the CSP refuse patched, each patch found exactly as often as expected or the copy stops. A runtime is listed under the capabilities that use it, never in the shell, and nothing comes from a CDN (Transformers.js gets `wasmPaths`). `npm install` also fetches Transformers.js's Node backends (~300 MB), which never ship.
 
@@ -91,7 +91,7 @@ app/              what a deploy serves, as written (D243), which npm run build:w
                   browser/ ask/ folders/ sync/ computer/ charts/ scores/ machine/ slides/ flows/ layouts/ receipt/ certificates/ search/ plugins/ notifications/ compact/ plan/ lock/ share/ signin/ enterprise/ profiles/ (D97)
   fonts/          the display font
   icons/          the icon, and the PNGs installs need, drawn from it (D131)
-  screenshots/    the welcome screen, for the install dialog (D168)
+  screenshots/    the install dialog's four pages in each language, from scripts/screenshots/<lang>.json, and a shared link's picture (D168, D355, D396)
   bridge/         bridge.js (Node): this computer, for the Computer's commands and the plans' brains, run by the user in a terminal (D198, D235 · D262)
   ee/             the enterprise integrations, Elastic-2.0 (D139): ee.js (its one door), key.js (the key, checked offline), audit.js and
                   otlp.js (the audit stream to the organisation's OpenTelemetry collector, D386)

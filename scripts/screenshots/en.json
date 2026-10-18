@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "welcome": "The welcome screen: ideas to start from, and a box to ask anything",
+    "chart": "A spreadsheet shared, and its sales drawn as a chart",
+    "sources": "A lease read, and each part of the answer pointing to it",
+    "share": "A task shared with a friend by a link"
+  },
+  "chart": {
+    "title": "Sales by region",
+    "file": "Sales.csv",
+    "columns": [
+      "Region",
+      "January",
+      "February",
+      "March"
+    ],
+    "regions": [
+      "North",
+      "South",
+      "East"
+    ],
+    "ask": "Make a chart of the sales by region, month by month",
+    "before": "Here are the first quarter’s sales, by region:",
+    "heading": "Sales, first quarter",
+    "after": "**North** sells the most, and **East** grew the fastest: up 37% from January to March."
+  },
+  "sources": {
+    "title": "Leaving the flat",
+    "file": "Lease.pdf",
+    "pages": [
+      "Lease of a furnished flat\n\nArticle 7. Notice. The tenant may end the lease at any time with one month’s notice, sent by registered letter or handed over against a receipt.",
+      "Article 9. Deposit. The deposit of one month’s rent is returned within one month of the keys being handed back, less the cost of any repairs."
+    ],
+    "ask": "How much notice do I give to leave, and when do I get my deposit back?",
+    "answer": "Here is what your lease says:\n\n- **Notice:** one month, by registered letter or handed over against a receipt [1].\n- **Deposit:** back within a month of handing back the keys, less the cost of any repairs [1].\n\nSo if you send the letter today, you can leave in a month."
+  }
+}

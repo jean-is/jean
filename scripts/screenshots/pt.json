@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "welcome": "O ecrã inicial: ideias para começar e uma caixa para perguntar o que quiseres",
+    "chart": "Uma folha de cálculo partilhada, e as suas vendas num gráfico",
+    "sources": "Um contrato de arrendamento lido, e cada parte da resposta a remeter para ele",
+    "share": "Uma tarefa partilhada com um amigo através de uma ligação"
+  },
+  "chart": {
+    "title": "Vendas por região",
+    "file": "Vendas.csv",
+    "columns": [
+      "Região",
+      "Janeiro",
+      "Fevereiro",
+      "Março"
+    ],
+    "regions": [
+      "Norte",
+      "Sul",
+      "Este"
+    ],
+    "ask": "Faz um gráfico das vendas por região, mês a mês",
+    "before": "Aqui estão as vendas do primeiro trimestre, por região:",
+    "heading": "Vendas do primeiro trimestre",
+    "after": "O **Norte** é o que mais vende, e o **Este** o que mais cresceu: +37% de janeiro a março."
+  },
+  "sources": {
+    "title": "Sair do apartamento",
+    "file": "Contrato de arrendamento.pdf",
+    "pages": [
+      "Contrato de arrendamento de apartamento mobilado\n\nCláusula 7.ª Aviso prévio. O arrendatário pode pôr termo ao contrato a qualquer momento, com um mês de aviso prévio, enviado por carta registada ou entregue em mão contra recibo.",
+      "Cláusula 9.ª Caução. A caução, equivalente a um mês de renda, é devolvida no prazo de um mês após a entrega das chaves, deduzido o custo de eventuais reparações."
+    ],
+    "ask": "Com quanta antecedência tenho de avisar para sair, e quando recebo a caução de volta?",
+    "answer": "Eis o que diz o teu contrato:\n\n- **Aviso prévio:** um mês, por carta registada ou entregue em mão contra recibo [1].\n- **Caução:** devolvida no prazo de um mês após entregares as chaves, menos o custo de eventuais reparações [1].\n\nPor isso, se enviares a carta hoje, podes sair daqui a um mês."
+  }
+}

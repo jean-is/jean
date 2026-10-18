@@ -1,0 +1,37 @@
+{
+  "labels": {
+    "welcome": "Het welkomstscherm: ideeën om mee te beginnen en een vak om alles te vragen",
+    "chart": "Een gedeelde spreadsheet, met de verkoop in een grafiek",
+    "sources": "Een gelezen huurcontract, met in elk deel van het antwoord een verwijzing ernaar",
+    "share": "Een taak die via een link met een vriend is gedeeld"
+  },
+  "chart": {
+    "title": "Verkoop per regio",
+    "file": "Verkoop.csv",
+    "columns": [
+      "Regio",
+      "Januari",
+      "Februari",
+      "Maart"
+    ],
+    "regions": [
+      "Noord",
+      "Zuid",
+      "Oost"
+    ],
+    "ask": "Maak een grafiek van de verkoop per regio, maand per maand",
+    "before": "Dit is de verkoop van het eerste kwartaal, per regio:",
+    "heading": "Verkoop, eerste kwartaal",
+    "after": "**Noord** verkoopt het meest, en **Oost** groeide het snelst: 37% meer van januari tot maart."
+  },
+  "sources": {
+    "title": "Het appartement uit",
+    "file": "Huurcontract.pdf",
+    "pages": [
+      "Huurovereenkomst voor een gemeubileerd appartement\n\nArtikel 7. Opzegging. De huurder kan de huur op elk moment opzeggen met een opzegtermijn van één maand, per aangetekende brief of persoonlijk overhandigd tegen ontvangstbewijs.",
+      "Artikel 9. Borg. De borg van één maand huur wordt binnen een maand na het inleveren van de sleutels terugbetaald, verminderd met de kosten van eventuele reparaties."
+    ],
+    "ask": "Hoe lang van tevoren moet ik opzeggen, en wanneer krijg ik mijn borg terug?",
+    "answer": "Dit staat er in je huurcontract:\n\n- **Opzegging:** één maand, per aangetekende brief of persoonlijk overhandigd tegen ontvangstbewijs [1].\n- **Borg:** terug binnen een maand nadat je de sleutels inlevert, min de kosten van eventuele reparaties [1].\n\nAls je de brief vandaag verstuurt, kun je dus over een maand weg."
+  }
+}
