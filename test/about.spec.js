@@ -1,7 +1,8 @@
 // What Jean knows of itself (D423): asked what it can do, the brain reads `about`, which says where each capability
-// stands for this person, in the case's own words and those of the screen, Settings' sections as they are now, and
-// leaves out what policy denies; asked about something, the parts that match come whole. In Arabic and Japanese, the
-// names of menus and how each capability is found are the screen's.
+// stands for this person, in the case's own words and those of the screen, and leaves out what policy denies; from the
+// code, Settings' sections, the keyboard's shortcuts, what the organisation locked, and once Connections is found, the
+// services reached here and those not yet; asked about something, the parts that match come whole. In Arabic and
+// Japanese, the names of menus, shortcuts and how each capability is found are the screen's.
 import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
 import { start, connectFakeBrain, ask, withPolicy } from './helpers.js'
@@ -10,12 +11,15 @@ import { start, connectFakeBrain, ask, withPolicy } from './helpers.js'
 const strings = (lang) => ({ ...JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8')), ...JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8')) })
 
 test('asked what it can do, Jean reads where each thing stands for this person, without what policy denies', async ({ page }) => {
-  await withPolicy(page, { capabilities: { deny: ['pictures'] } })
+  await withPolicy(page, { capabilities: { deny: ['pictures'] }, rules: { fetch: 'ask' } })
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'What can you do?')
   const answer = page.locator('.msg-jean .prose').last()
   await expect(answer).toContainText('Settings has these sections now: General, Brains, Appearance')
+  await expect(answer).toContainText(/Keyboard shortcuts, as this keyboard writes them: New task (⌘⇧O|Ctrl\+Shift\+O), /)
+  await expect(answer).toContainText("Set by your organization, so the user can't change it: Approvals › Using the internet.")
+  await expect(answer).not.toContainText('Services that can be connected')
   // What is always there, in the guide's words; a capability in the case's, found or not, with how it is found.
   await expect(answer).toContainText('start: The box is where everything begins')
   await expect(answer).toContainText('made (on): Ask for a Word document')
@@ -28,6 +32,14 @@ test('asked what it can do, Jean reads where each thing stands for this person, 
   // Asked about something, its part comes whole, the menus named as the screen names them.
   await ask(page, 'What can you do about a lock and a passkey?')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Set in Settings › Your data: a passkey or a password')
+  await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
+
+  // Once Connections is found, the services it reaches here, and those it doesn't yet, with no gateway; once Search is, its shortcut.
+  await page.evaluate(async () => { for (const id of ['connections', 'find']) await (await import('/ui/caps.js')).unlock(id) })
+  await ask(page, 'What can you do?')
+  const again = page.locator('.msg-jean .prose').last()
+  await expect(again).toContainText(/Services that can be connected here: .*?Notion.*? Shown, but not reachable here yet: .*?Google Workspace \(Gmail/)
+  await expect(again).toContainText(/, Search (⌘K|Ctrl\+K), /)
 })
 
 for (const lang of ['ar', 'ja']) {
@@ -38,6 +50,7 @@ for (const lang of ['ar', 'ja']) {
     await ask(page, 'What can you do?')
     const answer = page.locator('.msg-jean .prose').last()
     await expect(answer).toContainText(`${said['settings.title']} has these sections now: ${said['settings.general']}`)
+    await expect(answer).toContainText(`${said['settings.keyboard']}, as this keyboard writes them: ${said['action.new']} `)
     await expect(answer).toContainText(`files (not found yet, found by: ${said['cap.files.hint']})`)
     await expect(answer).toHaveAttribute('dir', 'auto')
   })

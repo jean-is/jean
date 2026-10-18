@@ -511,10 +511,10 @@ const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
 /**
  * The shortcuts in groups, the most used first, each under a name the user already knows: the tasks', in their ⋮ menu's
  * words, the box's, then the rest under the section of Settings where each is set (D313). Each with the capability it
- * waits for, or dictation, which this browser may not have, or the language, which policy may set.
+ * waits for, or dictation, which this browser may not have, or the language, which policy may set. `about` reads them too (D423).
  * @type {[string, [string, string, string?][]][]}
  */
-const KEYS = [
+export const KEYS = [
   ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['cap.share.name', SHORTCUTS.share, 'share'], ['action.delete', SHORTCUTS.delete]]],
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
@@ -522,7 +522,7 @@ const KEYS = [
   ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look]]]]
 
 /** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language unless policy sets it. @param {string} [id] */
-const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id))
+export const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id))
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
 const keyboard = () => KEYS.map(([heading, keys]) => html`<section><h3>${t(heading)}</h3><dl class="list keyboard">${keys.filter(([, , id]) => offered(id))

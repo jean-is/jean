@@ -36,6 +36,11 @@ test('every menu or button the guide names is a string the room or the dialogs h
   assert.doesNotMatch(guide, /\bD\d+\b/)
 })
 
+// They come from Settings' own list, as this keyboard writes them, those of a capability once it is found.
+test('the guide writes no shortcut of its own', () => {
+  assert.doesNotMatch(guide, /[⌘⇧⌥⌫]|\bCtrl\+(?!C\b)/)
+})
+
 test('a part that is always there opens with a paragraph of its own, which the overview gives', () => {
   for (const part of guide.split(/^## /m).slice(1)) {
     const [id, ...lines] = part.trim().split('\n')

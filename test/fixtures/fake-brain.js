@@ -26,7 +26,7 @@
 // what the letter asks for, several at once, and who signs it; then it says what it was told.
 // Told "I'm Marie" (or "je m'appelle Marie"), it saves the name while it may (D150).
 // Asked what it can do, it reads `about`, on what follows "about" if anything does, and answers with the first line of
-// each part it read whole, or else with the lines that say where things stand (D423).
+// each part it read whole, or else with what stands now and the lines that say where each thing stands (D423).
 // In a conversation opened on a folder (D141), it finds which files mention something, lists the
 // folder, and changes a file when asked to change "this" to "that" in it: it opens the file first,
 // then changes it, and asks again when told the folder is open now. Asked to make a page "saying"
@@ -728,11 +728,12 @@ createServer(async (req, res) => {
   else if (toolName === 'skill') answer = 'Followed its steps.'
   else if (introduced && last.role === 'user' && declared.has('save_name')) call = { name: 'save_name', args: { name: introduced[1] } }
   else if (/^what can you do\b/i.test(question.trim()) && last.role === 'user' && declared.has('about')) call = { name: 'about', args: { topic: /\babout ([^?\n]+)/i.exec(question)?.[1] ?? '' } }
-  // The first line of each part read whole, or else Settings' sections and a line for each part, each cut short.
+  // The first line of each part read whole, or else what stands now and a line for each part, the parts' cut short.
   else if (toolName === 'about') {
     const lines = last.content.split('\n')
-    const whole = lines.filter((_, i) => /^## /.test(lines[i - 1] ?? ''))
-    answer = (whole.length ? whole : lines.filter((line) => /^- [a-z-]+(?: \(.*?\))?: | has these sections now: /.test(line))).map((line) => line.slice(0, 90)).join('\n')
+    const whole = lines.filter((_, i) => /^## /.test(lines[i - 1] ?? '')).map((line) => line.slice(0, 90))
+    const now = lines.filter((line) => / has these sections now: |, as this keyboard writes them: |, so the user can't change it: |^Services that can be connected here: /.test(line))
+    answer = (whole.length ? whole : [...now, ...lines.filter((line) => /^- [a-z-]+(?: \(.*?\))?: /.test(line)).map((line) => line.slice(0, 90))]).join('\n')
   }
   // In a child's profile (D228), a danger told: it raises a concern, its kind alone, and says at home when it is.
   else if (declared.has('raise_concern') && last.role === 'user' && /\b(bullied|hits me)\b/i.test(question)) call = { name: 'raise_concern', args: { kind: /hits me/i.test(question) ? 'abuse' : 'bullying', home: /\bat home\b/i.test(question) } }
