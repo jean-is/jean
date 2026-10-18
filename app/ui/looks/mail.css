@@ -49,7 +49,7 @@
 :root[data-look='mail'] .welcome app-persona { --persona-size: 3.5rem; margin-block-end: 0; }
 :root[data-look='mail'] .msg-user { border: 1px solid var(--line); background: var(--room-2); border-end-end-radius: var(--radius); }
 :root[data-look='mail'] .composer { border-radius: var(--radius); background: var(--room-2); backdrop-filter: none; box-shadow: 0 0.75rem 1.5rem -1.25rem oklch(0 0 0 / 0.5); }
-:root[data-look='mail'] .composer:focus-within { border-color: oklch(from var(--flame) l c h / 0.6); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.18); }
+:root[data-look='mail'] .composer:focus-within { border-color: var(--flame); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.18); }
 :root[data-look='mail'] :is(.send, .caret) { box-shadow: none; }
 
 /* The list: the drawer, open beside the conversation (D165), under the header's name. */

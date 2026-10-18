@@ -12,8 +12,8 @@ import { LOOKS } from '../app/ui/looks.js'
 test.skip(({ browserName }) => browserName !== 'chromium', 'pixels are compared in one engine')
 test.use({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1 })
 
-/** Jean's moods, each with its light at the brightest its animation reaches (ui/style.css). */
-const MOODS = { idle: 0.46, listening: 0.62, thinking: 0.7, answering: 0.78 }
+/** Jean's moods, each with its light at the brightest its animation reaches, and still at rest (ui/style.css). */
+const MOODS = { idle: 0.42, listening: 0.62, thinking: 0.7, answering: 0.78 }
 /** The projects' lights (caps/projects/projects.js): Jean's sunflower, its former water, Tilde's grey, then only the hue changes. */
 const TINTS = ['oklch(0.845 0.161 88)', 'oklch(0.781 0.118 209)', 'oklch(0.74 0.012 90)', ...[150, 260, 295, 325, 355].map((hue) => `oklch(0.74 0.17 ${hue})`)]
 

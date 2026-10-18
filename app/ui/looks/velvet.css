@@ -57,6 +57,5 @@
 :root[data-look='velvet'] .msg-user { border: 1px solid var(--line-strong); background: oklch(from var(--flame) l c h / 0.07); }
 :root[data-look='velvet'] .starter, :root[data-look='velvet'] .follow-up { background: none; }
 :root[data-look='velvet'] .starter:hover, :root[data-look='velvet'] .follow-up:hover { border-color: var(--flame); box-shadow: 0 0 1.5rem -0.6rem oklch(from var(--flame) l c h / 0.7); }
-:root[data-look='velvet'] .composer { border-color: var(--line-strong); }
-:root[data-look='velvet'] .composer:focus-within { border-color: oklch(from var(--flame) l c h / 0.7); }
+:root[data-look='velvet'] .composer:focus-within { border-color: var(--flame); }
 :root[data-look='velvet'] dialog { border-color: var(--line-strong); }

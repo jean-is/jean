@@ -94,5 +94,7 @@
 :root[data-look='neon'] .pitch { justify-self: start; padding: 0.8rem 1.1rem; border: 1px solid var(--line-strong); border-radius: 1rem; }
 :root[data-look='neon'] .starter:hover, :root[data-look='neon'] .follow-up:hover { border-color: var(--cyan); box-shadow: 0 0 1.3rem -0.3rem var(--cyan); }
 :root[data-look='neon'] .composer:focus-within { border-color: var(--cyan); box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.6), 0 0 1.8rem -0.5rem var(--cyan); }
+/* By day the halo would hide the line it lights: the line alone, over the box's shadow (D420). */
+:root[data-look='neon'][data-theme='light'] .composer:focus-within { box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.4); }
 :root[data-look='neon'] :is(.send, .button.primary, .caret) { box-shadow: 0 0 1.2rem -0.2rem var(--flame); }
 :root[data-look='neon'] :focus-visible { outline-color: var(--cyan); }

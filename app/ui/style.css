@@ -3,7 +3,7 @@
 /* Gentium Book Plus Bold (fonts/OFL.txt), every weight, so no bold is ever made up. */
 @font-face { font-family: Display; font-weight: 100 900; src: url(../fonts/display.woff2) format('woff2'); font-display: swap; }
 
-@property --light { syntax: '<number>'; inherits: true; initial-value: 0.4; }
+@property --light { syntax: '<number>'; inherits: true; initial-value: 0.42; }
 @property --light-x { syntax: '<percentage>'; inherits: true; initial-value: 50%; }
 @property --light-y { syntax: '<percentage>'; inherits: true; initial-value: 34%; }
 @property --light-size { syntax: '<length>'; inherits: true; initial-value: 70vmax; }
@@ -100,14 +100,12 @@ button { cursor: pointer; }
       oklch(from var(--glow) l c h / calc(var(--light) * var(--glow-alpha))), transparent 62%),
     radial-gradient(140% 70% at 50% 115%, oklch(from var(--flame-deep) l c h / calc(var(--light) * 0.32)), transparent 70%);
   transition: --light-x 1.6s var(--ease), --light-y 1.6s var(--ease), --light-size 1.6s var(--ease);
-  animation: breathe 7s ease-in-out infinite alternate var(--loops, running);
 }
 [data-presence='listening'] .room { --light-y: 88%; --light-size: 60vmax; animation: lean 3s ease-in-out infinite alternate var(--loops, running); }
 [data-presence='thinking'] .room { --light-y: 46%; animation: flicker 1.7s linear infinite var(--loops, running); }
 [data-presence='answering'] .room { --light-y: 30%; --light-size: 85vmax; animation: warm 2.4s ease-in-out infinite alternate var(--loops, running); }
 [data-presence='done'] .room { animation: settle 1.8s var(--ease) forwards; }
 
-@keyframes breathe { from { --light: 0.3; } to { --light: 0.46; } }
 @keyframes lean { from { --light: 0.5; } to { --light: 0.62; } }
 @keyframes flicker {
   0% { --light: 0.46; } 14% { --light: 0.62; } 27% { --light: 0.5; } 41% { --light: 0.7; }
@@ -118,8 +116,8 @@ button { cursor: pointer; }
 
 /* ─── The wave (ui/persona.js) ─────────────────────────────────────────── */
 /* Jean's presence, the tilde of its mark. Its colour is --tint's hue and chroma, Jean's sunflower or a
-   project's own, at the lightness each mode needs; it travels the way the page reads, its ends
-   fading out. */
+   project's own, at the lightness each mode needs; while Jean works it travels the way the page
+   reads, its ends fading out (D420). */
 
 /* Jean's sunflower (by day its lightest shade at AA, 3:1), and the room's own warm light, as other looks keep theirs; an accent or a project's colour wins, on each wave. */
 :where(:root) { --tint: oklch(0.845 0.161 88); }
@@ -136,18 +134,16 @@ app-persona {
 }
 .persona { display: block; inline-size: 100%; block-size: 100%; fill: none; stroke: var(--wave); stroke-width: 5; stroke-linecap: round; }
 .persona-wave { transform-box: fill-box; transform-origin: center; scale: 1 0.9; transition: scale 0.4s var(--ease), opacity 0.3s; }
-.persona-line { animation: travel 4.5s linear infinite var(--loops, running); }
 [dir='rtl'] .persona-line { animation-direction: reverse; }
 .persona-smile, .persona-frown { opacity: 0; transition: opacity 0.3s; }
 
+app-persona:is([data-presence='listening'], [data-presence='thinking'], [data-presence='answering']) .persona-line { animation: travel 1.2s linear infinite var(--loops, running); }
 app-persona[data-presence='listening'] .persona-wave { animation: voice 1.7s ease-in-out infinite var(--loops, running); }
 app-persona[data-presence='listening'] .persona-line { animation-duration: 1.5s; }
 app-persona[data-presence='thinking'] .persona-wave { scale: 1 0.45; }
 app-persona[data-presence='thinking'] .persona-line { animation-duration: 0.7s; }
 app-persona[data-presence='answering'] .persona-wave { animation: speak 1.2s ease-in-out infinite var(--loops, running); }
-app-persona[data-presence='answering'] .persona-line { animation-duration: 1.2s; }
-app-persona[data-presence='waiting'] .persona-wave { scale: 1 1.1; animation: waits 1.8s ease-in-out infinite var(--loops, running); }
-app-persona[data-presence='waiting'] .persona-line { animation-play-state: paused; }
+app-persona[data-presence='waiting'] .persona-wave { scale: 1 1.1; animation: waits 1.8s ease-in-out 2; }
 app-persona:is([data-presence='done'], [data-presence='oops']) .persona-wave { opacity: 0; }
 app-persona[data-presence='done'] .persona-smile { opacity: 1; animation: hop 0.8s var(--ease); }
 app-persona[data-presence='oops'] .persona-frown { opacity: 1; stroke: var(--ink-faint); }
@@ -337,7 +333,7 @@ app-latex:not(:defined) { white-space: pre-wrap; font: 0.86rem var(--mono); }
 
 .msg-actions, app-made { display: flex; align-items: center; gap: 0.15rem; }
 .msg-actions { margin-inline-start: -0.5rem; }
-.msg-actions .icon-button { opacity: 0.55; transition: opacity 0.3s; }
+.msg-actions .icon-button { opacity: 0.75; transition: opacity 0.3s; }
 app-made:not(:defined) { display: none; }
 .msg-actions:is(.msg-jean:hover *, .msg-user:hover + *, :hover, :focus-within) .icon-button:enabled { opacity: 1; }
 @media (hover: none) { .msg-actions .icon-button:enabled { opacity: 1; } }
@@ -516,15 +512,15 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; 
   inline-size: var(--column);
   margin-inline: auto;
   padding: 0.9rem 0.9rem 0.6rem 1.1rem;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--ink-soft);
   border-radius: 1.6rem;
   background: var(--glass);
   backdrop-filter: blur(18px) saturate(1.3);
-  box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.6);
+  box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.4);
   transition: border-color 0.4s, box-shadow 0.4s;
   cursor: text;
 }
-.composer:focus-within { border-color: oklch(from var(--flame) l c h / 0.55); box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.6), 0 0 2.5rem -0.8rem oklch(from var(--glow) l c h / 0.55); }
+.composer:focus-within { border-color: var(--flame); box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.4), 0 0 2.5rem -0.8rem oklch(from var(--glow) l c h / 0.55); }
 .composer textarea {
   display: block;
   inline-size: 100%;
@@ -637,7 +633,7 @@ label { display: grid; gap: 0.3rem; font-size: 0.9rem; color: var(--ink-soft); }
 input:not([type='radio'], [type='checkbox'], .visually-hidden), select {
   inline-size: 100%;
   padding: 0.6rem 0.8rem;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--ink-faint);
   border-radius: 0.8rem;
   background: oklch(from var(--room) l c h / 0.6);
   color: var(--ink);
@@ -711,6 +707,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .history-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.15rem; margin: 0; padding: 0; list-style: none; }
 .history-list li { display: flex; align-items: center; border-radius: 0.9rem; }
 .history-list li:hover, .history-list li.is-current { background: var(--line); }
+.history-list li.is-current { box-shadow: inset 0 0 0 1px var(--ink-faint); }
 .history-item { flex: 1; display: flex; align-items: center; gap: 0.5rem; min-inline-size: 0; padding: 0.55rem 0.75rem; border: 0; background: none; text-align: start; }
 .history-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* A task's menu (D181), below its button, shows under the pointer or the keyboard, as in Manus (D165), its title whole until then; always on a touchscreen. */
@@ -798,7 +795,6 @@ app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after, ::backdrop { animation: none !important; transition: none !important; }
-  .room { --light: 0.42; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 @media (prefers-contrast: more) {

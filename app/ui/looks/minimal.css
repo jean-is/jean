@@ -53,8 +53,8 @@
 :root[data-look='minimal'] :is(.starter, .follow-up):hover { border-color: transparent; color: var(--ink); text-decoration: underline; text-underline-offset: 0.25em; box-shadow: none; }
 :root[data-look='minimal'] .follow-up .icon { color: var(--ink-faint); }
 :root[data-look='minimal'] .msg-user { padding: 0; background: none; color: var(--ink-soft); }
-:root[data-look='minimal'] .composer { border-color: var(--line-strong); background: var(--room); backdrop-filter: none; box-shadow: none; }
-:root[data-look='minimal'] .composer:focus-within { border-color: var(--ink-faint); box-shadow: none; }
+:root[data-look='minimal'] .composer { background: var(--room); backdrop-filter: none; box-shadow: none; }
+:root[data-look='minimal'] .composer:focus-within { border-color: var(--ink); box-shadow: none; }
 :root[data-look='minimal'] .brain-chip { border-color: transparent; }
 :root[data-look='minimal'] :is(.send, .caret, .button.primary, .ember) { box-shadow: none; }
 :root[data-look='minimal'] { --pen: 1.25; }

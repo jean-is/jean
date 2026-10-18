@@ -27,7 +27,9 @@
   --title-dir: 90deg;
   --title: linear-gradient(var(--title-dir), oklch(0.3 0.13 265), oklch(0.46 0.13 250));
   --raised: inset -1px -1px var(--lo), inset 1px 1px var(--hi), inset -2px -2px var(--lo-2), inset 2px 2px var(--hi-2);
-  --sunken: inset -1px -1px var(--hi), inset 1px 1px var(--lo-2), inset -2px -2px var(--hi-2), inset 2px 2px var(--lo);
+  --sunken: var(--edge), inset -1px -1px var(--hi), inset 1px 1px var(--lo-2), inset -2px -2px var(--hi-2), inset 2px 2px var(--lo);
+  /* A sunken field's edges alone part it from the grey on two sides: a line round it, in the faint ink, does on four (D420). */
+  --edge: 0 0 0 1px var(--ink-faint);
   --sans: Tahoma, 'MS Sans Serif', 'Microsoft Sans Serif', Geneva, Verdana, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
   --display: var(--sans);
   --radius: 0;
@@ -82,7 +84,7 @@
 :root[data-look='classic'] .segmented { border: 0; padding: 0; gap: 0.3rem; }
 :root[data-look='classic'] .segmented input:checked + span { background: var(--room); color: var(--ink); font-weight: 700; box-shadow: var(--sunken); }
 :root[data-look='classic'] :is(input:not([type='radio'], [type='checkbox'], [type='range']), select, .sheet textarea, .prose pre) { border: 0; background-color: var(--field); box-shadow: var(--sunken); }
-:root[data-look='classic'] :focus-visible { outline: 2px dotted var(--ink); outline-offset: -5px; }
+:root[data-look='classic'] :focus-visible { outline: 2px dotted; outline-offset: -5px; }
 /* A selected line: white on blue. */
 :root[data-look='classic'] :is(.settings-nav [aria-current='page'], .history-list li.is-current) { background: var(--flame-deep); color: oklch(1 0 0); }
 :root[data-look='classic'] .history-list li.is-current :is(.history-item, .icon-button) { color: oklch(1 0 0); }

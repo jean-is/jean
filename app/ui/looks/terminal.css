@@ -67,7 +67,7 @@
 :root[data-look='terminal'] .conversation-title { font-size: 1.3rem; font-weight: 700; }
 :root[data-look='terminal'] .dialog-head h2 { font-size: 1.3rem; }
 /* A block cursor after the question, and while Jean writes. */
-:root[data-look='terminal'] .hero-question::after { content: ''; display: inline-block; inline-size: 0.55em; block-size: 0.9em; margin-inline-start: 0.2em; vertical-align: -0.08em; background: var(--ink); animation: caret 1.1s steps(1) infinite var(--loops, running); }
+:root[data-look='terminal'] .hero-question::after { content: ''; display: inline-block; inline-size: 0.55em; block-size: 0.9em; margin-inline-start: 0.2em; vertical-align: -0.08em; background: var(--ink); }
 :root[data-look='terminal'] .caret { inline-size: 0.6em; block-size: 1.15em; vertical-align: -0.2em; border-radius: 0; background: var(--ink); box-shadow: none; animation-timing-function: steps(1); }
 /* What the user typed: a command at the prompt. */
 :root[data-look='terminal'] .msg-user { align-self: stretch; max-inline-size: none; padding: 0; background: none; color: var(--ink-soft); }
