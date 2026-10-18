@@ -195,10 +195,11 @@ async function context(task) {
 async function prepare(text, brain, task, notes = [], items = app.attachments.value) {
   const records = task?.records ?? []
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
-  // so do questions, so the brain can ask from the start (D146), noting the user's name (D150), and
-  // the receipt, so the browser's record of what the page reached covers the first answer (D252), and
-  // pages, for their rule (D289); each comes back at the next visit, so pages already written show again.
-  await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('receipt'), unlock('interactive')])
+  // so do questions, so the brain can ask from the start (D146), noting the user's name (D150), Jean's
+  // own skills, which the brain may read before Skills is found (D406), and the receipt, so the browser's
+  // record of what the page reached covers the first answer (D252), and pages, for their rule (D289);
+  // each comes back at the next visit, so pages already written show again.
+  await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('own-skills'), unlock('receipt'), unlock('interactive')])
   const { tools, lines, rules } = contributions()
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47); one the user turned off isn't either (D304).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred && !tool.off).map((tool) => tool.spec.name)

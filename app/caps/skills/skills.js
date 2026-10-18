@@ -1,6 +1,6 @@
 // Skills (docs/product.md): the way a task the user keeps asking for is done, saved as an
 // Agent Skill (core/skills.js), so it is done the same way every time. The prompt lists each
-// skill's name and when to use it; `skill` reads its steps when a request matches, and
+// skill's name and when to use it; `skill` (../own-skills/) reads its steps when a request matches, and
 // `save_skill` writes one when the user asks for it, typically after "Save this as a skill",
 // suggested when the same kind of request comes up a third time (ui/discovery.js), or once the
 // brain has asked what a new one needs; its example becomes the answer's first suggestion (D322).
@@ -8,7 +8,7 @@
 // the device (./sources.js), and Jean's own directory with them (./directory.js, D196); the third
 // request of a kind looks there first, and `suggest_skill` lets the brain look. Either way the user
 // reads the steps and adds the skill (./ready.js), or not. Jean's own are listed with the room's,
-// and one the brain reads is added as it reads it (D401).
+// and one the brain reads is added as it reads it (D401), which before Skills is found finds it (D406).
 // A skill declares the kinds of block it writes (D196); answers draw those as widgets while one
 // of the room's skills declares them.
 import { effect } from '@preact/signals-core'
@@ -42,22 +42,11 @@ effect(() => {
   void redeclare()
 })
 
-/** @type {import('../../core/loop.js').Tool} */
-const skillTool = {
-  spec: {
-    name: 'skill',
-    description: 'Read the steps of one of the skills listed in <skills>.',
-    parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
-  },
-  kind: 'read',
-  title: (args) => `Skill ${args?.name ?? ''}`,
-  run: async (args) => {
-    const named = String(args?.name ?? '')
-    // One of Jean's own the room doesn't have yet comes in as it is read, and the toast says so (D401).
-    const [added] = await bring([named.trim().split('/')[0]])
-    if (added) saved(added)
-    return steps(named)
-  },
+/** A skill's steps for `skill`: one of Jean's own the room doesn't have yet comes in as it is read, and the toast says so (D401). @param {string} named */
+export async function read(named) {
+  const [added] = await bring([named.trim().split('/')[0]])
+  if (added) saved(added)
+  return steps(named)
 }
 
 /** Says a skill is in the room now, with a way to see it. @param {string} title */
@@ -193,12 +182,8 @@ const suggestTool = {
 
 register({
   id: 'skills',
-  tools: [skillTool, saveTool, suggestTool],
-  lines: [
-    { name: 'skill', line: 'read the steps of a skill before following it' },
-    { name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' },
-  ],
-  rules: ['When a request matches a skill, read it and follow its steps.'],
+  tools: [saveTool, suggestTool],
+  lines: [{ name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' }],
   sections: async () => {
     const text = skillLines(await listed())
     return text ? { skills: text } : {}
