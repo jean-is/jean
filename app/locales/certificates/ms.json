@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "Setelah {name} pernah mencari tera air halimunan pada peranti ini, halaman ini juga mencarinya",
   "certificates.words": "Atau tampal perkataan untuk mencari tera air otak pada peranti di dalamnya",
   "certificates.words.marked": "Perkataan ini membawa tera air otak pada peranti: ia yang menulisnya, atau seseorang menjadikannya kelihatan begitu",
-  "certificates.words.none": "Tiada tera air otak pada peranti dalam perkataan ini: ia tidak menulisnya, atau perkataan ini telah ditulis semula",
+  "certificates.words.none": "Tera air otak pada peranti tidak ditemui dalam perkataan ini, tetapi itu tidak membuktikan ia tidak menulisnya",
   "certificates.words.short": "Terlalu sedikit perkataan untuk dipastikan: tampal kira-kira satu halaman",
   "certificates.words.unread": "Setelah {name} pernah mencari tera air dalam perkataan pada peranti ini, halaman ini juga mencarinya"
 }

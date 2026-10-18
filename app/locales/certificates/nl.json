@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "Zodra {name} op dit apparaat naar een onzichtbaar watermerk heeft gezocht, zoekt deze pagina er ook naar",
   "certificates.words": "Of plak woorden om er het watermerk van het brein op een apparaat in te zoeken",
   "certificates.words.marked": "Deze woorden dragen het watermerk van het brein op een apparaat: het heeft ze geschreven, of iemand liet ze zo lijken",
-  "certificates.words.none": "Geen watermerk van het brein op een apparaat in deze woorden: het heeft ze niet geschreven, of ze zijn sindsdien herschreven",
+  "certificates.words.none": "Geen watermerk van het brein op een apparaat gevonden in deze woorden, wat niet bewijst dat het ze niet heeft geschreven",
   "certificates.words.short": "Te weinig woorden om het te zeggen: plak er ongeveer een pagina",
   "certificates.words.unread": "Zodra {name} op dit apparaat in woorden naar een watermerk heeft gezocht, zoekt deze pagina er ook naar"
 }

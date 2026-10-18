@@ -106,7 +106,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - an SD-JWT library on a proof;
 - `cosign verify-blob` on a bundle;
 - the check page in Firefox and real Safari;
-- the device's watermark on Gemma 4 E2B itself (D402): a few dozen answers in several languages counted at 200 tokens, and words pasted on the check page, in Chrome and Safari.
+- the device's watermark (D402) in Chrome and Safari on WebGPU (q4f16): answers counted as in Node, and words pasted on the check page.
 
 ### 2. Gaps in what is built
 
@@ -166,22 +166,22 @@ Then:
   | OpenAI | textGrain, off by default in the API since 5 Oct 2026, for select models; on in ChatGPT and Codex in the EU; detection for approved researchers | The key's owner turns on Allow text watermarking (Organization or Project settings › Data controls › Text provenance); no request parameter exists, so Settings › Brains could say so |
   | Google Gemini | SynthID-Text in Google's Gemini apps since 2024; whether its API's answers carry it is reported both ways, and Google's documentation presents SynthID-Text as a logits processor for one's own model | To check on Google's own pages |
   | OpenRouter and gateways | Whatever the model's provider does | Same as that provider |
-  | The device's brain | Jean's own (D402): each word the winner of Aaronson's race among those Gemma's sampling considers, keyed by the four tokens before, with an open key | Anyone counts it with Gemma's tokenizer, in Jean or on the check page; a confident brain marks short answers weakly (below) |
+  | The device's brain | Jean's own (D402): each word the winner of Aaronson's race among those Gemma's sampling considers, keyed by the four tokens before, with an open key | Anyone counts it with Gemma's tokenizer, in Jean or on the check page; about half its answers show it at 500 tokens (below) |
   | Servers on this computer (Ollama, LM Studio) | None: they sample on their side, out of Jean's reach | Nothing |
 
-  **The device's watermark, measured** (2026-10-18, D402). Gemma 4 E2B wasn't on this computer, so two brains on either side of it were, through MLX, with a Python copy of the race whose counts the JavaScript `lean()` matches to 1e-9 (`test/watermark.test.js` pins one): 24 requests in eight languages (English, French, German, Spanish, Japanese, Arabic, Chinese, Hindi), up to 320 tokens each, answered greedily, sampled and raced, beside 29 texts people wrote (the terms, the docs, the dialogs' strings in six languages). These runs keyed on one token; eight raced answers on Qwen3-0.6B with the four-token key counted 6.9 to 23.8, the shortest about 90 tokens.
+  **The device's watermark, measured** (2026-10-18, D402). 24 requests in eight languages (English, French, German, Spanish, Japanese, Arabic, Chinese, Hindi), up to 320 tokens each, beside 29 texts people wrote (the terms, the docs, the dialogs' strings in six languages). Gemma 4 E2B itself (q4, Transformers.js in Node, `watermarker()` and `lean()` as Jean runs them), greedy and raced; and, for comparison, a brain smaller and one larger, through MLX with a Python copy of the race whose counts `lean()` matches to 1e-9 (`test/watermark.test.js` pins one), keyed on one token there.
 
-  | | Qwen3-0.6B | Gemma 4 26B-A4B |
-  |---|---|---|
-  | Deviations at 200 tokens, raced (mean) | 9.9 | 1.9 |
-  | Raced answers over 4 at 200 tokens | 15 of 17 | 1 of 24 |
-  | Whole raced answers over 4 | 22 of 24 | 4 of 24 |
-  | Highest unmarked (greedy, sampled, people's) | 1.75 | 2.37 |
-  | Log-loss a token: greedy, sampled, raced | 0.44, 1.23, 0.85 | 0.11, 0.22, 0.20 |
+  | | Gemma 4 E2B | Qwen3-0.6B | Gemma 4 26B-A4B |
+  |---|---|---|---|
+  | Deviations at 200 tokens, raced (mean) | 2.4 | 9.9 | 1.9 |
+  | Raced answers over 4 at 200 tokens | 3 of 23 | 15 of 17 | 1 of 24 |
+  | Whole raced answers (about 300 tokens) over 4 | 7 of 24 | 22 of 24 | 4 of 24 |
+  | Highest unmarked (greedy or sampled answers, people's texts) | 3.09 (a French text of the terms) | 1.75 | 2.37 |
+  | Log-loss a token: greedy, raced | 0.13, 0.25 | 0.44, 0.85 | 0.11, 0.20 |
 
-  The watermark lives in a brain's doubt: a confident brain writes few words it could have written otherwise, and the 26B one is confident (0.2 nats a token); E2B, smaller, falls between. A green-list bias of 2 under greedy decoding, the first try, counted 2.4 and 0.05 on the 26B's first two answers.
+  The watermark lives in a brain's doubt: a confident brain writes few words it could have written otherwise, and E2B is confident (0.25 nats a token). Each answer's strength per token, carried to longer texts, puts E2B's answers over 4 in about 1 in 6 at 200 tokens, 3 in 10 at 300, half at 500 and two thirds at 1,000; an answer as predictable as a list never shows it. So `said()` calls fewer than 300 tokens too short to tell, and the check never says words weren't written here. By language, E2B's raced answers counted 5.6 in Spanish, 3.2 to 3.5 in English, German, Japanese and Chinese, 2.5 in French, 2.0 in Hindi and 1.8 in Arabic over their whole length. A green-list bias of 2 under greedy decoding, the first try, counted 2.4 and 0.05 on the 26B's first two answers; on Qwen3-0.6B, eight raced answers with the four-token key counted 6.9 to 23.8.
 
-  Left: E2B itself, by hand (below); Google's API; a line in Settings › Brains for OpenAI keys, if Jean must tell their owners ([open-questions.md](open-questions.md#answer-certificates)).
+  Left: E2B in real browsers, by hand (below); Google's API; a line in Settings › Brains for OpenAI keys, if Jean must tell their owners ([open-questions.md](open-questions.md#answer-certificates)).
 - [x] **Detection:** the check page and `check_certificate` read C2PA manifests and TrustMark's watermark (D324): `check_certificate` when asked, downloading the decoder the first time; the check page, which reaches nothing, with the decoder Jean keeps in the browser's cache on that device, else it says so. Words, for the device's brain's watermark, the same way (D402): `check_certificate { words }`, downloading Gemma's tokenizer (19 MB) the first time, and the check page, pasted or dropped as `.txt` or `.md`, where the tokenizer is kept. Anyone's C2PA tools read the manifests, and TrustMark's own decoders the watermark; a soft-binding lookup has no server to ask, so the watermark recovers nothing a stripped picture lost but the fact of it.
 - [x] **No stripping:** Jean never removes marks: a provider's picture or film is kept byte for byte (`test/c2pa.test.js`), a shared picture as given (above), and answers' words are shown and copied as the brain wrote them, so a watermark in them stays. The terms (`terms.html`, section 4, in English and French) ask users not to remove or alter marks, Jean's or the brains'.
 - [x] **Labels for deployers (Art. 50(4)), on pictures** (D324): a picture's second save draws the Commission's basic icon, which anyone may use without attribution, and "Made with AI" in the user's language in its corner, and marks the copy again. Left: films (re-encoded) and documents, if users ask; a provider's labelled picture keeps only Jean's marks, its own C2PA chain staying with the picture as first saved (an ingredient in the new manifest would carry it).

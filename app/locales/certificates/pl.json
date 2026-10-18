@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "Gdy {name} raz poszuka niewidocznego znaku wodnego na tym urządzeniu, ta strona też będzie go szukać",
   "certificates.words": "Albo wklej słowa, by poszukać w nich znaku wodnego mózgu na urządzeniu",
   "certificates.words.marked": "Te słowa noszą znak wodny mózgu na urządzeniu: to on je napisał albo ktoś sprawił, że tak wyglądają",
-  "certificates.words.none": "W tych słowach nie ma znaku wodnego mózgu na urządzeniu: nie napisał ich albo zostały od tego czasu przepisane",
+  "certificates.words.none": "Nie znaleziono w tych słowach znaku wodnego mózgu na urządzeniu, co nie dowodzi, że ich nie napisał",
   "certificates.words.short": "Za mało słów, by to stwierdzić: wklej mniej więcej stronę",
   "certificates.words.unread": "Gdy {name} raz poszuka znaku wodnego w słowach na tym urządzeniu, ta strona też będzie go szukać"
 }

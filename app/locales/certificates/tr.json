@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "{name} bu cihazda bir kez görünmez filigran aradıktan sonra bu sayfa da arar",
   "certificates.words": "Ya da bir cihazdaki beynin filigranını aramak için metin yapıştır",
   "certificates.words.marked": "Bu metin bir cihazdaki beynin filigranını taşıyor: onu o yazdı ya da biri öyle görünmesini sağladı",
-  "certificates.words.none": "Bu metinde bir cihazdaki beynin filigranı yok: onu o yazmadı ya da metin sonradan yeniden yazıldı",
+  "certificates.words.none": "Bu metinde bir cihazdaki beynin filigranı bulunamadı; bu, onu onun yazmadığını kanıtlamaz",
   "certificates.words.short": "Söylemek için çok az kelime var: bir sayfa kadar yapıştır",
   "certificates.words.unread": "{name} bu cihazda bir kez metinde filigran aradıktan sonra bu sayfa da arar"
 }

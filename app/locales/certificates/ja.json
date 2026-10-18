@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "{name} がこの端末で一度見えない透かしを探すと、このページでも探せるようになります",
   "certificates.words": "または、端末の頭脳の透かしを探すために文章を貼り付けてください",
   "certificates.words.marked": "この文章には端末の頭脳の透かしがあります。頭脳が書いたか、誰かがそう見せかけました",
-  "certificates.words.none": "この文章に端末の頭脳の透かしはありません。頭脳が書いたものではないか、その後書き直されました",
+  "certificates.words.none": "この文章に端末の頭脳の透かしは見つかりませんでした。ただし、頭脳が書いていないという証明にはなりません",
   "certificates.words.short": "判断するには文章が短すぎます。1ページほど貼り付けてください",
   "certificates.words.unread": "{name} がこの端末で一度文章の透かしを探すと、このページでも探せるようになります"
 }

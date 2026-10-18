@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "Khi {name} đã tìm hình mờ ẩn trên thiết bị này một lần, trang này cũng sẽ tìm",
   "certificates.words": "Hoặc dán văn bản để tìm hình mờ của bộ não trên thiết bị trong đó",
   "certificates.words.marked": "Văn bản này mang hình mờ của bộ não trên thiết bị: nó đã viết ra, hoặc ai đó làm cho trông như vậy",
-  "certificates.words.none": "Không có hình mờ của bộ não trên thiết bị trong văn bản này: nó không viết ra, hoặc văn bản đã được viết lại từ đó",
+  "certificates.words.none": "Không tìm thấy hình mờ của bộ não trên thiết bị trong văn bản này, nhưng điều đó không chứng minh nó không viết ra",
   "certificates.words.short": "Quá ít chữ để biết: hãy dán khoảng một trang",
   "certificates.words.unread": "Khi {name} đã tìm hình mờ trong văn bản trên thiết bị này một lần, trang này cũng sẽ tìm"
 }

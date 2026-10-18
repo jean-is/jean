@@ -41,7 +41,7 @@ const toldOf = (one) => [one.absent ? `${one.name}: no Content Credentials` : `$
 
 const counter = modelWorker(new URL('../brain-local/brain-worker.js', import.meta.url), 'The words could not be counted')
 /** What the brain is told of words counted (D402). @param {{ counted: number, z: number }} words */
-const toldWords = (words) => `The words: ${{ marked: 'they carry the watermark of the brain on a device (Gemma 4 E2B): it wrote them, or someone made them look so', short: 'too few to tell', none: 'no watermark of the brain on a device; rewritten words lose it' }[said(words)]} (${words.counted} tokens counted, ${words.z.toFixed(1)} standard deviations above chance).`
+const toldWords = (words) => `The words: ${{ marked: 'they carry the watermark of the brain on a device (Gemma 4 E2B): it wrote them, or someone made them look so', short: 'too few to tell', none: 'no watermark of the brain on a device found, which doesn\'t prove it didn\'t write them: a short or predictable answer carries little of it, and rewritten words lose it' }[said(words)]} (${words.counted} tokens counted, ${words.z.toFixed(1)} standard deviations above chance).`
 
 /** The public log's key, from the address settings or policy name (D276), to check its promise. */
 async function logKey() {

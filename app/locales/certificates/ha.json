@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "Bayan an nemi alamar ruwa marar ganuwa da {name} a wannan na’ura, wannan shafi ma zai nema",
   "certificates.words": "Ko liƙa kalmomi don neman alamar ruwa ta ƙwaƙwalwar da ke kan na’ura a cikinsu",
   "certificates.words.marked": "Waɗannan kalmomi suna da alamar ruwa ta ƙwaƙwalwar da ke kan na’ura: ita ta rubuta su, ko wani ya sa su yi kama da haka",
-  "certificates.words.none": "Babu alamar ruwa ta ƙwaƙwalwar da ke kan na’ura a cikin waɗannan kalmomi: ba ita ta rubuta su ba, ko an sake rubuta su tun daga lokacin",
+  "certificates.words.none": "Ba a sami alamar ruwa ta ƙwaƙwalwar da ke kan na’ura a cikin waɗannan kalmomi ba, amma hakan bai tabbatar da cewa ba ita ta rubuta su ba",
   "certificates.words.short": "Kalmomin sun yi kaɗan don a faɗa: liƙa kusan shafi ɗaya",
   "certificates.words.unread": "Bayan an nemi alamar ruwa a cikin kalmomi da {name} a wannan na’ura, wannan shafi ma zai nema"
 }

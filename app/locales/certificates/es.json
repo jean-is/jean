@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "Cuando {name} haya buscado una marca de agua invisible en este dispositivo, esta página también la buscará",
   "certificates.words": "O pega palabras para buscar en ellas la marca de agua del cerebro en un dispositivo",
   "certificates.words.marked": "Estas palabras llevan la marca de agua del cerebro en un dispositivo: las escribió él, o alguien las hizo parecer así",
-  "certificates.words.none": "No hay marca de agua del cerebro en un dispositivo en estas palabras: no las escribió él, o se reescribieron después",
+  "certificates.words.none": "No se encontró la marca de agua del cerebro en un dispositivo en estas palabras, lo que no prueba que no las escribiera él",
   "certificates.words.short": "Muy pocas palabras para saberlo: pega una página o así",
   "certificates.words.unread": "Cuando {name} haya buscado una marca de agua en palabras en este dispositivo, esta página también la buscará"
 }

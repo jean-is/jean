@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "{name} 在这台设备上查找过一次隐形水印后，这个页面也会查找",
   "certificates.words": "或粘贴文字，查找设备上的大脑留下的水印",
   "certificates.words.marked": "这些文字带有设备上的大脑留下的水印：是它写的，或者有人让它们看起来如此",
-  "certificates.words.none": "这些文字中没有设备上的大脑留下的水印：不是它写的，或者之后被改写过",
+  "certificates.words.none": "这些文字中未发现设备上的大脑留下的水印，但这不能证明不是它写的",
   "certificates.words.short": "文字太少，无法判断：请粘贴一页左右",
   "certificates.words.unread": "{name} 在这台设备上查找过一次文字水印后，这个页面也会查找"
 }

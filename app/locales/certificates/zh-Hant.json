@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "{name} 在這台裝置上尋找過一次隱形浮水印後，這個頁面也會尋找",
   "certificates.words": "或貼上文字，尋找裝置上的大腦留下的浮水印",
   "certificates.words.marked": "這些文字帶有裝置上的大腦留下的浮水印：是它寫的，或者有人讓它們看起來如此",
-  "certificates.words.none": "這些文字中沒有裝置上的大腦留下的浮水印：不是它寫的，或者之後被改寫過",
+  "certificates.words.none": "這些文字中未發現裝置上的大腦留下的浮水印，但這不能證明不是它寫的",
   "certificates.words.short": "文字太少，無法判斷：請貼上一頁左右",
   "certificates.words.unread": "{name} 在這台裝置上尋找過一次文字浮水印後，這個頁面也會尋找"
 }

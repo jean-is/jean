@@ -41,7 +41,7 @@
   "certificates.watermark.unread": "Baada ya {name} kutafuta alama fiche kwenye kifaa hiki mara moja, ukurasa huu nao utaitafuta",
   "certificates.words": "Au bandika maneno ili kutafuta ndani yake alama fiche ya ubongo ulio kwenye kifaa",
   "certificates.words.marked": "Maneno haya yana alama fiche ya ubongo ulio kwenye kifaa: ndio uliyaandika, au mtu aliyafanya yaonekane hivyo",
-  "certificates.words.none": "Hakuna alama fiche ya ubongo ulio kwenye kifaa katika maneno haya: haukuyaandika, au yameandikwa upya tangu hapo",
+  "certificates.words.none": "Alama fiche ya ubongo ulio kwenye kifaa haikupatikana katika maneno haya, lakini hilo halithibitishi kwamba haukuyaandika",
   "certificates.words.short": "Maneno ni machache mno kusema: bandika karibu ukurasa mmoja",
   "certificates.words.unread": "Baada ya {name} kutafuta alama fiche katika maneno kwenye kifaa hiki mara moja, ukurasa huu nao utaitafuta"
 }

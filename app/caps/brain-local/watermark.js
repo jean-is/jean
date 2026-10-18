@@ -15,8 +15,8 @@ const [TEMPERATURE, TOP_K, TOP_P] = [1, 64, 0.95]
 export const CONTEXT = 4
 /** How many standard deviations above chance a text's numbers must be to say it is marked: about 1 in 30,000 for a person's. */
 const MARKED = 4
-/** Below how many counted tokens an unmarked text is too short to tell. */
-const ENOUGH = 100
+/** Below how many counted tokens an unmarked text is too short to tell: Gemma 4 E2B's answers show it in about 1 in 6 at 200, half at 500 (D402). */
+const ENOUGH = 300
 const KEY = 0x4a45414e
 
 /** MurmurHash3's end: 32 bits, well mixed. @param {number} h */
