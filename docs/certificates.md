@@ -106,7 +106,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - an SD-JWT library on a proof;
 - `cosign verify-blob` on a bundle;
 - the check page in Firefox and real Safari;
-- the device's watermark (D402) in Chrome and Safari on WebGPU (q4f16): answers counted as in Node, and words pasted on the check page.
+- the device's watermark (D402) in real Safari, which should load the brain as Playwright's WebKit does (D408): answers counted as in Chromium and WebKit, and words pasted on the check page.
 
 ### 2. Gaps in what is built
 
