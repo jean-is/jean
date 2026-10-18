@@ -25,7 +25,12 @@ export interface BrainConfig {
   jurisdiction?: string
   /** A policy brain whose key is the organisation's sign-in (D385) */
   auth?: 'oidc'
+  /** How much it thinks before answering, as the user or policy set it; without it, Auto decides (D414) */
+  effort?: Effort
 }
+
+/** How much a brain thinks before answering, as providers name it (D414). */
+export type Effort = 'low' | 'medium' | 'high'
 
 // ─── Provider-neutral chat ───────────────────────────────────────────────────
 
@@ -69,7 +74,7 @@ export type ModelInfo = { id: string, name?: string, contextLength?: number, pri
 // Requests made by llm.js and anthropic.js.
 export type LLMErrorCode = 'auth' | 'credits' | 'rate_limit' | 'network' | 'cors_or_offline' | 'bad_request' | 'not_found' | 'server' | 'aborted' | 'bad_response' | 'refusal' | 'too_long'
 export type Connection = { brain: BrainConfig, apiKey?: string, signal?: AbortSignal, fetch?: typeof globalThis.fetch }
-export type Prompt = { system?: string, messages: ChatMessage[], tools?: ToolSpec[], maxTokens?: number }
+export type Prompt = { system?: string, messages: ChatMessage[], tools?: ToolSpec[], maxTokens?: number, effort?: Effort }
 export type WireRequest = { url: string, headers: Record<string, string>, body: Record<string, any> }
 
 // ─── Storage ─────────────────────────────────────────────────────────────────

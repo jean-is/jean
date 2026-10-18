@@ -10,7 +10,7 @@ import { bm25, words } from '../app/core/search.js'
 import { KEV, pack, answers, render } from '../app/core/decide.js'
 import { documentPart, sourceNumber } from '../app/core/files.js'
 import { openaiMessages } from '../app/core/llm.js'
-import { chooseBrain, isLocal, tierFor } from '../app/ui/auto.js'
+import { chooseBrain, chooseEffort, isLocal, tierFor } from '../app/ui/auto.js'
 import { REFLEXES, CAPABILITIES } from '../app/caps/reflexes/questions.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'm' }
@@ -224,6 +224,17 @@ test('Auto: cheapest brain that can do it, private when personal, never steps do
   assert.deepEqual([0, 1, 2, 3].map(tierFor), [0, 1, 1, 2])
   assert.ok(isLocal({ ...brain, baseURL: 'http://127.0.0.1:11434/v1' }))
   assert.ok(!isLocal(brain))
+})
+
+test('Auto: as much thinking as the request demands, a step more when the user is unhappy, never less; the brain’s own setting first (D414)', () => {
+  assert.deepEqual([0, 1, 2, 3].map((demand) => chooseEffort({ signals: { demand } })), ['low', 'medium', 'medium', 'high'])
+  assert.equal(chooseEffort({ signals: { demand: 0, unhappy: true } }), 'medium')
+  assert.equal(chooseEffort({ signals: { demand: 3, unhappy: true } }), 'high')
+  assert.equal(chooseEffort({ signals: { demand: 0 }, floor: 2 }), 'high')
+  assert.equal(chooseEffort({ floor: 1 }), 'medium')
+  // Without Intuition, nothing asked yet: the brain decides as it would.
+  assert.equal(chooseEffort({}), undefined)
+  assert.equal(chooseEffort({ setting: 'low', signals: { demand: 3 }, floor: 2 }), 'low')
 })
 
 test('suggestions are hidden from the reply, even while the block streams in', () => {

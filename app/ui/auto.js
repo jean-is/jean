@@ -4,6 +4,7 @@
 import { isLocal } from '../core/settings.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
+/** @typedef {import('../core/types.js').Effort} Effort */
 /** @typedef {'only' | 'private' | 'offline' | 'personal' | 'demand' | 'unhappy' | 'default'} Reason */
 /**
  * What the reflexes made of a message, when they're on (ui/discovery.js), and whether it shares a picture; in a child's profile, a danger (D228).
@@ -33,6 +34,21 @@ export { isLocal }
 
 /** Demand (0 chat → 3 expert) to a tier: fast, smart, smart, best. @param {number} demand */
 export const tierFor = (demand) => [0, 1, 1, 2][Math.min(3, Math.max(0, Math.round(demand)))]
+
+/** How much a brain thinks, from least to most (D414). @type {readonly Effort[]} */
+export const EFFORTS = ['low', 'medium', 'high']
+
+/**
+ * How much the brain thinks for a message (D414): the brain's own setting, or as much as the request demands, read as
+ * Auto's tiers are, a step more when the user seems unhappy, never less than before in the conversation; without
+ * Intuition and before anything was asked, the brain's own default.
+ * @param {{ setting?: Effort, signals?: Signals, floor?: number }} input floor: the most asked so far, by EFFORTS' index
+ * @returns {Effort | undefined}
+ */
+export function chooseEffort({ setting, signals = {}, floor = -1 }) {
+  const asked = signals.demand === undefined ? -1 : tierFor(signals.demand) + (signals.unhappy ? 1 : 0)
+  return setting ?? EFFORTS[Math.min(2, Math.max(floor, asked))]
+}
 
 /**
  * @param {{ brains: BrainConfig[], preferred?: string | null, cloud?: boolean, online?: boolean, signals?: Signals,

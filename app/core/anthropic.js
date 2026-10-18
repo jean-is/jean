@@ -11,6 +11,8 @@ import { LLMError, headersFor, post, endpoint, sseEvents, parseData, parseArgs, 
 const ADAPTIVE_THINKING = /^claude-(fable|mythos|opus|sonnet)-(5|4-[6-9])/
 // Models that accept role "system" messages mid-conversation; others get a tagged block.
 const MID_SYSTEM = /^claude-(opus-5|opus-4-8|fable-5|mythos-5|sonnet-5-5)/
+// Models that take how much to think (D414); Claude Code's and Copilot's names for them are their own.
+const EFFORT = /^claude-(fable|mythos|opus|sonnet|haiku)-(5|4-[6-9])/
 // Models that accept server-side refusal fallbacks routed by refusal category.
 const FALLBACK_MODELS = new Set(['claude-fable-5-1', 'claude-opus-5-5', 'claude-opus-5', 'claude-sonnet-5-5'])
 const FALLBACK_BETA = 'server-side-fallback-2026-07-01'
@@ -77,7 +79,7 @@ export function minimumCacheable(model) {
 }
 
 /** @param {Connection & Prompt} options @returns {WireRequest} */
-function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxTokens }) {
+function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxTokens, effort }) {
   const headers = headersFor(brain, apiKey)
   /** @type {Record<string, any>} */
   const body = { model: brain.model, max_tokens: maxTokens ?? 64000, stream: true }
@@ -87,6 +89,7 @@ function anthropicRequest({ brain, apiKey, system, messages, tools = [], maxToke
   body.cache_control = { type: 'ephemeral' }
   // Summaries are shown to the user. budget_tokens and {type:'disabled'} are rejected by current models.
   if (ADAPTIVE_THINKING.test(brain.model)) body.thinking = { type: 'adaptive', display: 'summarized' }
+  if (effort && EFFORT.test(brain.model)) body.output_config = { effort }
   if (FALLBACK_MODELS.has(brain.model)) {
     // On a safety refusal, the API continues on a fallback model inside the same stream.
     body.fallbacks = 'default'

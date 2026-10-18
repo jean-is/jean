@@ -216,6 +216,9 @@ async function prepare(text, brain, task, notes = [], items = app.attachments.va
 /** The highest level Auto used in a conversation: it never steps down within one. @param {Envelope[]} records */
 const autoLevel = (records) => Math.max(0, ...records.map((record) => /** @type {any} */ (record.update)?.rawInput?.auto?.level ?? 0))
 
+/** The most thinking asked of a brain in a conversation, by its index among `efforts`: Auto never asks for less within one (D414). @param {Envelope[]} records @param {readonly string[]} efforts */
+const effortLevel = (records, efforts) => Math.max(-1, ...records.map((record) => efforts.indexOf(/** @type {any} */ (record.update)?.rawInput?.effort)))
+
 /** The last answer's text, for "is the user unhappy with it?". @param {Envelope[]} records */
 const lastAnswer = (records) => {
   const update = records.findLast((record) => record.update?.sessionUpdate === 'agent_message_chunk')?.update
@@ -232,14 +235,17 @@ const lastAnswer = (records) => {
  */
 async function pickBrain(text, records, boost = 0, chosen) {
   const { settings } = effective.value
-  const { sense } = await import('./discovery.js')
+  const [{ sense }, { chooseBrain, chooseEffort, EFFORTS, TIERS }] = await Promise.all([import('./discovery.js'), import('./auto.js')])
   const signals = await sense(text, lastAnswer(records))
+  // How much it thinks: the brain's own setting, or as much as the request demands, never less than before (D414).
+  const floor = effortLevel(records, EFFORTS)
+  const meta = (/** @type {BrainConfig} */ brain, /** @type {Record<string, any>} */ more = {}) => ({ ...more, effort: chooseEffort({ setting: brain.effort, signals: { ...signals, unhappy: signals.unhappy || boost > 0 }, floor }) })
   if (chosen !== 'auto' && (chosen || !settings.auto)) {
     const brain = chosen || activeBrain.value
-    return brain && (cloudAllowed() || isLocal(brain)) ? { brain, signals } : null
+    return brain && (cloudAllowed() || isLocal(brain)) ? { brain, meta: meta(brain), signals } : null
   }
   const brains = brainsHere.value
-  const [{ chooseBrain, TIERS }] = await Promise.all([import('./auto.js'), ...brains.filter((brain) => !isLocal(brain)).map(loadModels)])
+  await Promise.all(brains.filter((brain) => !isLocal(brain)).map(loadModels))
   const choice = chooseBrain({
     brains,
     preferred: settings.activeBrain,
@@ -252,7 +258,7 @@ async function pickBrain(text, records, boost = 0, chosen) {
     sees: seesPictures,
     tiers: app.policy.tiers ?? TIERS,
   })
-  return choice && { brain: choice.brain, meta: { auto: { level: choice.level, reason: choice.reason } }, signals }
+  return choice && { brain: choice.brain, meta: meta(choice.brain, { auto: { level: choice.level, reason: choice.reason } }), signals }
 }
 
 /**
@@ -464,10 +470,26 @@ export async function keepGoing() {
   const current = app.current.value
   if (!current || app.busy.value) return
   const step = foldTurns(current.records).at(-1)?.steps.at(-1)
-  const { provider, model, auto } = step?.tools.findLast((tool) => tool.kind === 'think' && !tool.name && !tool._meta?.parent && !tool._meta?.compact)?.rawInput ?? {}
+  const { provider, model, auto, effort } = step?.tools.findLast((tool) => tool.kind === 'think' && !tool.name && !tool._meta?.parent && !tool._meta?.compact)?.rawInput ?? {}
   const own = brainsHere.value.find((brain) => brain.provider === provider && (cloudAllowed() || isLocal(brain)))
-  const picked = own ? { brain: { ...own, model }, meta: auto && { auto } } : await pickBrain('', current.records)
+  const picked = own ? { brain: { ...own, model }, meta: { auto, effort } } : await pickBrain('', current.records)
   if (step && picked) await runAgent(current, picked.brain, picked.meta, undefined, step.index)
+}
+
+// ─── Answer now (D414) ───────────────────────────────────────────────────────
+
+/** What tells the brain answering each task to answer now while it thinks, by the task's path. @type {Map<string, { now?: () => void }>} */
+const hurries = new Map()
+
+/** Tells the brain answering the task on screen to answer now, from what it thought so far. */
+export const answerNow = () => hurries.get(app.current.peek()?.path ?? '')?.now?.()
+
+/** The first time a brain is told to answer now, the user hears that how much each brain thinks can be set, unless policy keeps the brains. */
+async function hurried() {
+  const { settings, locked } = effective.value
+  if (settings.hurried) return
+  await updateSettings({ hurried: true })
+  if (!locked.has('brains')) notify(t('thinking.found'), { label: t('settings.title'), run: () => import('./dialogs.js').then((dialogs) => dialogs.openSettings('brains')) })
 }
 
 /**
@@ -491,6 +513,8 @@ async function runAgent(conversation, brain, meta, call, after) {
   }
 
   let [stopped, failed] = [false, false]
+  const hurry = /** @type {{ now?: () => void }} */ ({})
+  hurries.set(path, hurry)
   working.set(path, run)
   beginRun(run)
   try {
@@ -525,6 +549,8 @@ async function runAgent(conversation, brain, meta, call, after) {
       declared: frozen?.state.tools ?? [],
       label: brainLabel(brain),
       meta,
+      effort: meta?.effort,
+      hurry,
       firstSource: nextSource(sent),
       maxSteps: one ? 1 : (after ?? -1) + 1 + (frozen?.state.sections?.folder ? FOLDER_STEPS : STEPS),
       window,
@@ -538,6 +564,7 @@ async function runAgent(conversation, brain, meta, call, after) {
       askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
         if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
+        if (update.sessionUpdate === 'tool_call_update' && update._meta?.hurried) hurried()
         if (update.sessionUpdate === 'tool_call_update' && update.status === 'completed' && !update._meta?.parent) grown(update.rawOutput?.usage ? counted(update.rawOutput.usage) : size + estimateMessages(update.rawOutput))
         applyUpdate(run.turn, update, step)
         repaint()
@@ -583,6 +610,7 @@ async function runAgent(conversation, brain, meta, call, after) {
   } finally {
     cancelAnimationFrame(frame)
     working.delete(path)
+    hurries.delete(path)
     endRun(run)
     // What was kept meanwhile, like the title, stays.
     const latest = app.current.peek()
@@ -668,8 +696,10 @@ export async function warm() {
     const declared = frozen?.state.tools ?? []
     const tools = contributions().tools.filter((tool) => declared.includes(tool.spec.name)).map((tool) => tool.spec)
     const messages = toChatMessages(all, await documents(all, brain))
-    const { warmCache } = await import('../core/llm.js')
-    await warmCache({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined, system: frozen?.system, messages, tools })
+    const [{ warmCache }, { EFFORTS }] = await Promise.all([import('../core/llm.js'), import('./auto.js')])
+    // How much it thinks is part of what the cache holds: the brain's own setting, or as much as Auto asked so far (D414).
+    const effort = brain.effort ?? EFFORTS[effortLevel(records, EFFORTS)]
+    await warmCache({ brain, apiKey: (await getSecret(app.fs, brain.id)) ?? undefined, system: frozen?.system, messages, tools, effort })
   } catch (error) {
     console.debug('Cache warm-up skipped', error)
   }

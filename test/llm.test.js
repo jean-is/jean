@@ -334,6 +334,30 @@ describe('streamChat (OpenAI-compatible)', () => {
     assert.equal(request.body.max_tokens, undefined)
     assert.deepEqual(request.body.stream_options, { include_usage: true })
   })
+
+  test('how much the brain thinks: OpenRouter’s own field, OpenAI’s elsewhere, nothing when not asked (D414)', async () => {
+    const ok = openaiSSE([{ choices: [{ delta: { content: 'x' }, finish_reason: 'stop' }] }])
+    assert.deepEqual((await run(brains.openrouter, ok, { effort: 'low' })).request.body.reasoning, { effort: 'low' })
+    const local = (await run(brains.ollama, ok, { effort: 'high' })).request.body
+    assert.equal(local.reasoning_effort, 'high')
+    assert.equal(local.reasoning, undefined)
+    assert.equal((await run(brains.openai, ok, { effort: 'medium' })).request.body.reasoning_effort, 'medium')
+    assert.ok(!('reasoning_effort' in (await run(brains.ollama, ok)).request.body))
+  })
+
+  test('a server that refuses how much to think is asked again without it, and not told again; other refusals stand (D414)', async () => {
+    const brain = { ...brains.ollama, id: 'b9', model: 'llama3' }
+    const refused = { error: { message: '"llama3" does not support thinking' } }
+    const { fetch, calls } = mockFetch((_, init) => ('reasoning_effort' in JSON.parse(String(init.body))
+      ? new Response(JSON.stringify(refused), { status: 400 }) : sseResponse(openaiSSE([{ choices: [{ delta: { content: 'ok' }, finish_reason: 'stop' }] }]))()))
+    const events = await collect(streamChat({ brain, messages: [{ role: 'user', content: 'Hi' }], effort: 'low', fetch }))
+    assert.equal(events.at(-1).message.content, 'ok')
+    await collect(streamChat({ brain, messages: [{ role: 'user', content: 'Again' }], effort: 'high', fetch }))
+    assert.deepEqual(calls.map((call) => call.body.reasoning_effort), ['low', undefined, undefined])
+    const other = mockFetch(() => new Response(JSON.stringify({ error: { message: 'tools are not supported' } }), { status: 400 }))
+    await rejectsWith(collect(streamChat({ brain: brains.ollama, messages: [], effort: 'low', fetch: other.fetch })), { code: 'bad_request' })
+    assert.equal(other.calls.length, 1)
+  })
 })
 
 // ─── Anthropic ───────────────────────────────────────────────────────────────
@@ -563,6 +587,15 @@ describe('streamChat (Anthropic)', () => {
       assert.equal(request.body.max_tokens, 1000)
       assert.ok(!('budget_tokens' in (request.body.thinking ?? {})))
     }
+  })
+
+  test('how much it thinks goes to the models that take it, in output_config (D414)', async () => {
+    const cases = { 'claude-opus-5-5': true, 'claude-sonnet-5-5': true, 'claude-haiku-5-5': true, 'claude-fable-5-1': true, 'claude-opus-4-6': true, 'claude-haiku-4-5': false, 'claude-sonnet-4-5': false, opus: false }
+    for (const [model, takes] of Object.entries(cases)) {
+      const { request } = await run(anthropicWith(model), textTurn(), { effort: 'low' })
+      assert.deepEqual(request.body.output_config, takes ? { effort: 'low' } : undefined, model)
+    }
+    assert.equal((await run(brains.anthropic, textTurn())).request.body.output_config, undefined)
   })
 
   test('omits system and tools when empty', async () => {
