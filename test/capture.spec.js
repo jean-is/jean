@@ -48,7 +48,7 @@ for (const lang of ['en', 'ar', 'ja']) {
     await start(page, lang)
     await connectFakeBrain(page)
 
-    // A big picture is scaled down to 1568 pixels on its longer side.
+    // A big picture is kept as it is, and brains see it scaled down to 1568 pixels on its longer side.
     await page.locator('.composer input[type="file"]').setInputFiles({ name: 'chart.png', mimeType: 'image/png', buffer: png(2000, 1000) })
     const chip = page.locator('.attachment[data-status="ready"]')
     await expect(chip.locator('.attachment-preview img')).toBeVisible()
@@ -59,7 +59,7 @@ for (const lang of ['en', 'ar', 'ja']) {
     // Sent, it shows itself in the request, named after it, and opens whole.
     const shared = page.locator('.msg-files .is-picture')
     await expect(shared).toHaveAccessibleName('chart.png')
-    await expect(shared.locator('img')).toHaveJSProperty('naturalWidth', 1568)
+    await expect(shared.locator('img')).toHaveJSProperty('naturalWidth', 2000)
     expect((await shared.boundingBox())?.height).toBeGreaterThan(150)
     await shared.click()
     await expect(page.locator('app-preview .view-picture')).toBeVisible()

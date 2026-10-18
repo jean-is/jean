@@ -46,7 +46,7 @@ export function rememberText(link, pages) {
   texts.set(link.uri, pages.map((page, i) => `[[page ${i + 1}]]\n${page}`).join('\n\n'))
 }
 
-/** @type {Map<string, string | undefined>} uri → a picture's bytes, base64, for brains that can see */
+/** @type {Map<string, { mimeType: string, data: string | undefined }>} uri → a picture as brains that can see take it, base64 */
 const pictures = new Map()
 
 /** What the brain reads for each linked file, and the pictures it sees if it can. @param {Envelope[]} records @param {BrainConfig} brain */
@@ -54,9 +54,21 @@ async function documents(records, brain) {
   const sees = seesPictures(brain)
   for (const link of linkedFiles(records)) {
     if (!texts.has(link.uri)) texts.set(link.uri, await fileText(app.fs, app.projectDir, link.uri))
-    if (sees && isPicture(link) && !pictures.has(link.uri)) pictures.set(link.uri, await base64(await app.fs.readBytes(`${app.projectDir}/${link.uri}`)))
+    if (sees && isPicture(link) && !pictures.has(link.uri)) pictures.set(link.uri, await seen(link))
   }
-  return (/** @type {ResourceLink} */ link) => documentPart(link, texts.get(link.uri) ?? null, sees ? pictures.get(link.uri) : undefined)
+  return (/** @type {ResourceLink} */ link) => {
+    const picture = sees ? pictures.get(link.uri) : undefined
+    return documentPart(picture ? { ...link, mimeType: picture.mimeType } : link, texts.get(link.uri) ?? null, picture?.data)
+  }
+}
+
+/** A shared picture, kept as given, as brains see it: smaller when it is large (D324). @param {ResourceLink} link */
+async function seen(link) {
+  const bytes = await app.fs.readBytes(`${app.projectDir}/${link.uri}`)
+  if (!bytes) return { mimeType: String(link.mimeType), data: undefined }
+  const { seenBy } = await import('../caps/files/pictures.js')
+  const picture = await seenBy(bytes, String(link.mimeType))
+  return { mimeType: picture.mimeType, data: await base64(picture.bytes) }
 }
 
 /** @param {Uint8Array | null} bytes @returns {Promise<string | undefined>} */

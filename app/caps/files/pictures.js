@@ -1,23 +1,40 @@
 // Pictures, as brains that can see take them: a shared picture, or one frame of a screen the
-// user shares. No side is longer than 1568 pixels: providers scale larger ones down anyway,
+// user shares. Brains see no side longer than 1568 pixels: providers scale larger ones down anyway,
 // after they have been sent whole, and every later message in the conversation sends them again.
+// A shared picture is kept as it was given all the same, with whatever marks it carries (D324).
 import { t, locale } from '../../core/i18n.js'
 
 const MAX_SIDE = 1568
 const TAKEN = /^image\/(png|jpeg|webp|gif)$/
 
 /**
- * A shared picture: kept as it is when brains take it, otherwise redrawn smaller as PNG (JPEG
- * for a photo). Null when the browser can't open it (HEIC outside Safari, SVG).
+ * A shared picture: kept as it is when brains take its format, whatever its size, otherwise redrawn
+ * smaller as PNG. Null when the browser can't open it (HEIC outside Safari, SVG).
  * @param {File} file @returns {Promise<{ name: string, mimeType: string, bytes: Uint8Array } | null>}
  */
 export async function fitPicture(file) {
   const bitmap = await createImageBitmap(file).catch(() => null)
   if (!bitmap) return null
   try {
-    if (TAKEN.test(file.type) && Math.max(bitmap.width, bitmap.height) <= MAX_SIDE) return { name: file.name, mimeType: file.type, bytes: new Uint8Array(await file.arrayBuffer()) }
-    const mimeType = file.type === 'image/jpeg' ? 'image/jpeg' : 'image/png'
-    return { name: file.name.replace(/(\.[^.]*)?$/, mimeType === 'image/jpeg' ? '.jpg' : '.png'), mimeType, bytes: await draw(bitmap, bitmap.width, bitmap.height, mimeType) }
+    if (TAKEN.test(file.type)) return { name: file.name, mimeType: file.type, bytes: new Uint8Array(await file.arrayBuffer()) }
+    return { name: file.name.replace(/(\.[^.]*)?$/, '.png'), mimeType: 'image/png', bytes: await draw(bitmap, bitmap.width, bitmap.height, 'image/png') }
+  } finally {
+    bitmap.close()
+  }
+}
+
+/**
+ * A kept picture as brains see it: as it is, or a smaller copy (JPEG for a photo) when a side is
+ * longer than they take. @param {Uint8Array} bytes @param {string} mimeType
+ * @returns {Promise<{ mimeType: string, bytes: Uint8Array }>}
+ */
+export async function seenBy(bytes, mimeType) {
+  const bitmap = await createImageBitmap(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType })).catch(() => null)
+  if (!bitmap) return { mimeType, bytes }
+  try {
+    if (Math.max(bitmap.width, bitmap.height) <= MAX_SIDE) return { mimeType, bytes }
+    const type = mimeType === 'image/jpeg' ? 'image/jpeg' : 'image/png'
+    return { mimeType: type, bytes: await draw(bitmap, bitmap.width, bitmap.height, type) }
   } finally {
     bitmap.close()
   }
