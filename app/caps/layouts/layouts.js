@@ -4,6 +4,7 @@
 // sources gave (D35). Loaded with the first answer, never offered; until then, and for the others,
 // ui/markdown.js shows them as they are. The same Markdown copies as it was.
 import { html, nothing } from 'lit-html'
+import { ref } from 'lit-html/directives/ref.js'
 import { shapes, blocks, inline, lex, cited } from '../../ui/markdown.js'
 import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
@@ -13,12 +14,32 @@ import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, ti
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
 
+// A table that fits lets its head stay in view while its rows scroll by (D426, data-whole): one
+// wider than the room scrolls sideways, and a box that scrolls holds a sticky head in. Each table is
+// watched once (lit hands a shared ref every table again at each render), and both watching and telling
+// wait for the next frame, so that neither happens while sizes are being told.
+const fitting = new ResizeObserver((seen) => requestAnimationFrame(() => seen.forEach(({ target }) => {
+  const box = /** @type {HTMLElement} */ (target.closest('.table'))
+  if (!target.isConnected) fitting.unobserve(target)
+  else box.toggleAttribute('data-whole', /** @type {HTMLElement} */ (box.firstElementChild).getBoundingClientRect().width < box.clientWidth + 1)
+})))
+// The head stays under the bar, as tall as each look and window make it.
+const bar = document.querySelector('app-shell > .bar')
+if (bar) new ResizeObserver(() => requestAnimationFrame(() => document.documentElement.style.setProperty('--stick', `${bar.getBoundingClientRect().height}px`))).observe(bar)
+const watched = new WeakSet()
+/** @param {Element | undefined} box */
+function fits(box) {
+  if (!box || watched.has(box)) return
+  watched.add(box)
+  requestAnimationFrame(() => [box, box.firstElementChild].forEach((part) => part && fitting.observe(part)))
+}
+
 /** Options as cards, the best of each row lit, the one recommended framed under its badge; any other table as it is, its amounts at the end. @param {any} token */
 function table(token) {
   const shape = compared(token)
   if (!shape) {
     const align = aligned(token).map((side) => side && `align-${side}`)
-    return html`<div class="table" tabindex="0"><table>
+    return html`<div class="table" tabindex="0" ${ref(fits)}><table>
       <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th class=${align[i]}>${inline(cell.tokens)}</th>`)}</tr></thead>
       <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => html`<td class=${align[i]}>${inline(cell.tokens)}</td>`)}</tr>`)}</tbody>
     </table></div>`
@@ -26,7 +47,7 @@ function table(token) {
   // The criteria, often in bold, are no option's best.
   /** @param {any} cell @param {number} i @param {boolean} [head] */
   const classes = (cell, i, head) => [token.align[i] && `align-${token.align[i]}`, i === shape.pick && 'is-pick', !head && i > 0 && marked(cell)].filter(Boolean).join(' ')
-  return html`<div class="table is-compare ${roomy(token) ? 'is-roomy' : ''}" tabindex="0"><table>
+  return html`<div class="table is-compare ${roomy(token) ? 'is-roomy' : ''}" tabindex="0" ${ref(fits)}><table>
     <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th class=${classes(cell, i, true)} data-pick=${i === shape.pick ? t('layouts.recommended') : nothing}>${inline(cell.tokens)}</th>`)}</tr></thead>
     <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => html`<td class=${classes(cell, i)}>${inline(cell.tokens)}</td>`)}</tr>`)}</tbody>
   </table></div>`

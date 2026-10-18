@@ -11,6 +11,17 @@
   main .prose > .table:where(:has(th:nth-child(3))) { --wide: max(100cqi, min(var(--shell) - 2.5rem, 70rem)); margin-inline: calc((100cqi - var(--wide)) / 2); }
   main .prose > .table:where(:has(th:nth-child(3))) > table { inline-size: max-content; min-inline-size: 100cqi; max-inline-size: 100%; margin-inline: auto; overflow-wrap: break-word; }
 }
+/* A head that stays (D426): in the conversation, a table that fits (data-whole, as layouts.js tells)
+   keeps its head in view under the bar (--stick, its height) while its rows scroll by; one wider scrolls
+   sideways, its head with it. The head's ground is opaque and reaches up to the room's top, so that rows
+   gone by show neither through it nor above it, and the table clips it, so that it never hides what
+   comes before. Every table's cells draw their own rules, which a collapsed table would leave behind. */
+@media screen {
+  .prose .table:not(.is-compare) > table { border-collapse: separate; border-spacing: 0; }
+  main .prose .table[data-whole] { overflow: clip; }
+  :where(main .prose .table[data-whole]) th { --above: 0 calc(-1 * var(--stick, 0px)) var(--room), 0 calc(var(--stick, 0px) / -2) var(--room); position: sticky; z-index: 1; inset-block-start: var(--stick, 0px); background-color: var(--room); box-shadow: var(--above); }
+  main .prose .is-compare[data-whole] th:not(:first-child) { background: color-mix(in srgb, var(--ink) 4.5%, var(--room)); }
+}
 
 /* A comparison: each option a card, side by side, its criteria down the start, in line with the
    answer's text; the best of each row lit, the recommended option framed, under its badge. */
@@ -41,7 +52,7 @@
 .prose .is-compare .is-no { color: var(--ink-soft); }
 /* The frame is drawn inside each cell, the line under it too, so that nothing breaks it. */
 .prose .is-compare .is-pick { --edge: inset 2px 0 var(--flame), inset -2px 0 var(--flame); border-block-end: 0; box-shadow: var(--edge), inset 0 -1px var(--line); }
-.prose .is-compare th.is-pick { box-shadow: var(--edge), inset 0 2px var(--flame), inset 0 -1px var(--line); }
+.prose .is-compare th.is-pick { box-shadow: var(--edge), inset 0 2px var(--flame), inset 0 -1px var(--line), var(--above, 0 0 #0000); }
 .prose .is-compare tbody tr:last-child .is-pick { box-shadow: var(--edge), inset 0 -2px var(--flame); }
 .prose .is-compare th.is-pick::before {
   content: attr(data-pick);

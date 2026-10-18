@@ -31,6 +31,11 @@ test('a comparison, steps and notes are laid out as what they are, and copy as t
   expect(Math.abs((cards?.width ?? 0) - 16 - (text?.width ?? 0))).toBeLessThan(2)
   const widths = await compare.locator('th').evaluateAll((cells) => cells.slice(1).map((cell) => cell.getBoundingClientRect().width))
   expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1)
+  // While its rows scroll by, its head stays under the bar (D426).
+  await expect(compare).toHaveAttribute('data-whole', '')
+  await compare.evaluate((box) => window.scrollBy(0, box.getBoundingClientRect().top + 40))
+  const [bar, head] = await Promise.all([page.locator('app-shell > .bar').boundingBox(), compare.locator('th.is-pick').boundingBox()])
+  expect(Math.abs((head?.y ?? 0) - (bar?.height ?? 0))).toBeLessThan(1)
   // Steps: a title on a line of its own where a colon or a dash follows it, the words that start a sentence in it.
   const steps = answer.locator('ol.steps > li')
   await expect(steps).toHaveCount(3)
@@ -77,9 +82,11 @@ test('a table wider than the text takes the room beside it on a wide screen, cen
   const wide = await box(answer.locator('table'))
   expect(wide.width).toBeGreaterThan(text.width + 40)
   expect(Math.abs(wide.x + wide.width / 2 - (text.x + text.width / 2))).toBeLessThan(2)
-  // On a phone, the table stays in the column and scrolls, its numbers whole.
+  await expect(answer.locator('.table')).toHaveAttribute('data-whole', '')
+  // On a phone, the table stays in the column and scrolls, its numbers whole, its head with it.
   await page.setViewportSize({ width: 390, height: 800 })
   await expect(page.locator('html')).not.toHaveAttribute('data-sidebar')
+  await expect(answer.locator('.table')).not.toHaveAttribute('data-whole')
   const narrow = await box(answer)
   expect(Math.abs((await box(answer.locator('.table'))).width - narrow.width)).toBeLessThan(2)
   expect((await box(answer.locator('table'))).width).toBeGreaterThan(narrow.width)
