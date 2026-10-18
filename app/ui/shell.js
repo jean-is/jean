@@ -130,9 +130,15 @@ document.addEventListener('keydown', (event) => {
   }
 })
 
-// Before any task, in a browser's tab (not the desktop app, whose key the tab keeps): what Jean is (D366).
+/** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
+const first = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
+// jean.is's page under the first screen (D397) is only for then, and goes with the first request.
+const under = document.querySelector('body > .home')
+if (under) effect(() => { const shown = first() && !app.current.value?.records.length; if (!shown) under.remove(); import('./home.js').then((module) => module.follow(under, shown)) })
+
+// Then, what Jean is (D366).
 function welcome() {
-  const pitch = !app.conversations.value.length && app.dialog.value !== 'first' && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
+  const pitch = first() && app.dialog.value !== 'first'
   return html`<section class="welcome">
     <app-persona></app-persona>
     <h1 class="hero-question">${t('welcome.question')}</h1>

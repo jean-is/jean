@@ -49,7 +49,9 @@ async function start() {
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
   configureCapabilities({ deny, remember: rememberUnlocked })
 
-  await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, navigator.languages))
+  // On a language's own address on jean.is, its language, unless one was chosen (D397).
+  const asked = document.querySelector('meta[name="app-language"]')?.getAttribute('content')
+  await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
   if (app.policy.key || app.policy.audit) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
@@ -59,7 +61,7 @@ async function start() {
     Object.assign(root, { lang: locale.value, dir: dir(locale.value) })
     // The install dialog's screenshots in Jean's language (D396): index.html names English's.
     document.querySelector('link[rel="manifest"]')?.setAttribute('href', locale.value === 'en' ? 'manifest.webmanifest' : `manifests/${locale.value}.webmanifest`)
-    document.title = locale.value === 'en' && document.title || BRAND.name
+    document.title = locale.value === (asked ?? 'en') && document.title || BRAND.name
   })
   effect(() => { root.dataset.presence = app.presence.value })
   // Light or dark: the device's mode, until the user picks the other one (index.html applies it
@@ -140,7 +142,8 @@ async function start() {
   addEventListener('pagehide', stamp)
   document.addEventListener('visibilitychange', stamp)
 
-  document.body.append(document.createElement('app-shell'))
+  // First, before what jean.is has under it (D397).
+  document.body.prepend(document.createElement('app-shell'))
   root.classList.add('is-ready')
   // The box has the keyboard from the start; not on a touchscreen, where it would raise one over the welcome.
   if (matchMedia('(pointer: fine)').matches) focusComposer()

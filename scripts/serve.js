@@ -15,6 +15,9 @@
 // It serves examples/ too, at /examples/, to any page, so that Settings › Plugins reads the example
 // plugins at http://127.0.0.1:<port>/examples/plugins/<name>/, and a folder there opened in a browser
 // lists its files; a deploy never has them.
+// With --home (npm run dev:home), index.html, its pages in other languages (/ja, /ar…) and home.css are
+// jean.is's, its page under the app's first screen included (scripts/home.js, D397), made again for each
+// request from scripts/home/, at this server's own address.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
 // sends what it blocks to /csp-reports, where GET lists them: every browser says what the policy
 // refused, without a hook into it (test/csp.spec.js). A `csp` cookie names whose they are.
@@ -44,6 +47,8 @@ const SHARE_PORT = process.argv.includes('--share') ? Number(process.env.SHARE_P
  * there, the share host on the same name. @param {string} at
  */
 const named = (at) => ({ ...(GATEWAY && { gateway: `http://${at}/gateway` }), ...(SHARE_PORT && { share: `http://${new URL(`http://${at}`).hostname}:${SHARE_PORT}/` }) })
+/** With --home, jean.is's own pages, made as build:web makes them for it. */
+const HOME = process.argv.includes('--home')
 /** What the pages' policies refused, with --csp-reports, by whose they are. @type {{ from: string, report: unknown }[] | null} */
 const reports = process.argv.includes('--csp-reports') ? [] : null
 
@@ -116,6 +121,10 @@ export async function handle (req, res) {
   if (relay && pathname === '/gateway') return relay(req, res)
   if (reports && pathname === '/csp-reports') return cspReports(req, res, reports)
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
+  if (HOME) {
+    const made = await homePage(pathname, req.headers.host ?? `${HOST}:${PORT}`)
+    if (made) return send(res, req, extname(made.path), Buffer.from(made.text))
+  }
   if ((GATEWAY || SHARE_PORT) && pathname === '/policy.json') return send(res, req, '.json', Buffer.from(JSON.stringify({ urls: named(req.headers.host ?? `${HOST}:${PORT}`) })))
   const example = pathname.startsWith('/examples/')
   const asked = example ? resolveRequest(pathname.slice('/examples'.length), EXAMPLES) : resolveRequest(req.url ?? '/')
@@ -146,6 +155,24 @@ export async function handle (req, res) {
   })
   if (req.method === 'HEAD') return res.end()
   createReadStream(file).on('error', () => res.destroy()).pipe(res)
+}
+
+/**
+ * jean.is's page that a path names, with --home: index.html, a language's own page, or the style sheet.
+ * @param {string} pathname @param {string} at  this server's host and port, the site's address
+ * @returns {Promise<{ path: string, text: string } | null>}
+ */
+async function homePage (pathname, at) {
+  const name = pathname.replace(/^\//, '').replace(/\.html$/, '') || 'index'
+  if (!/^[\w-]+(\.css)?$/.test(name)) return null
+  const [{ homeFiles, homeLanguages, inLanguage }, { withSite }, { BRAND }] = await Promise.all([import('./home.js'), import('./seo.js'), import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)])
+  const path = name === 'home.css' ? name : `${name}.html`
+  if (name !== 'index' && name !== 'home.css' && !(await homeLanguages()).includes(name)) return null
+  const index = await readFile(join(ROOT, 'app', 'index.html'), 'utf8')
+  const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
+  const base = `http://${at}/`
+  const files = await homeFiles(base, BRAND, (said, address) => withSite(said ? inLanguage(index, said) : index, base, BRAND, said ?? description, [], address))
+  return files[path] === undefined ? null : { path, text: files[path] }
 }
 
 /**

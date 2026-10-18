@@ -8,7 +8,9 @@
 // the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
 // a search engine (D353), and what search engines and shared links read: index.html's title, canonical
 // address, cards and schema.org data, robots.txt and sitemap.xml, the privacy policy and the terms with
-// their canonical addresses (D356), every other page unindexed (D355).
+// their canonical addresses (D356), every other page unindexed (D355). An ADDRESS on the brand's own
+// domain, jean.is's, adds its page under the app's first screen, in index.html and in one page per
+// language beside it (scripts/home.js, D397).
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
@@ -19,6 +21,7 @@ import { brotliCompress, constants, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
 import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
+import { homeFiles, inLanguage, ownSite } from './home.js'
 import { LISTED, addressOf, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -145,15 +148,21 @@ async function main () {
   const files = await shippedFiles(APP)
   const policy = process.env.POLICY ? `${JSON.stringify(JSON.parse(process.env.POLICY), null, 2)}\n` : null
   const { BRAND } = await import(pathToFileURL(join(APP, 'brand.js')).href)
-  const description = /<meta name="description" content="([^"]*)">/.exec(await readFile(join(APP, 'index.html'), 'utf8'))?.[1] ?? ''
+  const index = await readFile(join(APP, 'index.html'), 'utf8')
+  const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
   const search = process.env.ADDRESS ? openSearch(process.env.ADDRESS, BRAND, description) : null
   const base = process.env.ADDRESS ? siteBase(process.env.ADDRESS) : null
   const languages = (await readdir(join(APP, 'locales'))).filter((name) => name.endsWith('.json')).map((name) => name.slice(0, -'.json'.length)).sort()
-  /** index.html naming the policy and the search the site has, and as search engines read it. @param {string} html */
-  const page = (html) => {
+  /**
+   * index.html naming the policy and the search the site has, and as search engines read it: at the
+   * site's address, or in another language at its own (D397).
+   * @param {string} html @param {string | null} [said]  its description in that language @param {string | null} [address]
+   */
+  const page = (html, said = null, address = base) => {
     const named = policy ? withPolicy(html) : html
     const searched = search ? withSearch(named, BRAND) : named
-    return base ? withSite(searched, base, BRAND, description, languages) : searched
+    const described = said ? inLanguage(searched, said) : searched
+    return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base) : described
   }
   /** A page as the site serves it: index.html as above, and with ADDRESS, a listed page with its canonical address and any other unindexed. @param {string} path @param {string} html */
   const served = (path, html) => path === 'index.html' ? page(html) : !base ? html : LISTED.includes(path) ? withCanonical(html, addressOf(base, path)) : unindexed(html)
@@ -167,11 +176,14 @@ async function main () {
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
   }
-  /** The files a deploy adds beside app/'s. @type {Record<string, string>} */
-  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base) }
+  // jean.is's page under the app's first screen, in index.html and in its other languages' pages.
+  const home = base && ownSite(base, BRAND) ? await homeFiles(base, BRAND, (said, address) => page(index, said, address)) : {}
+  const elsewhere = Object.keys(home).filter((path) => path.endsWith('.html') && path !== 'index.html').map((path) => addressOf(base ?? '', path))
+  /** The files a deploy adds beside app/'s, or writes over them (index.html). @type {Record<string, string>} */
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base, elsewhere), ...home }
   for (const [path, text] of Object.entries(added)) {
     await writeFile(join(OUT, path), text)
-    files.push(path)
+    if (!files.includes(path)) files.push(path)
   }
   const read = (/** @type {string} */ path) => readFile(join(OUT, path))
   const { version, listing, worker } = await restamp((await read('capabilities.json')).toString('utf8'), (await read('sw.js')).toString('utf8'), read)

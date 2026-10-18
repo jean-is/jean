@@ -89,6 +89,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 npm run dev     # build (vendor + manifest), then serve, checking the budgets after each change (npm start does the same)
 npm run dev:gateway  # the same, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
 npm run dev:share    # the same, with a share host on its own port (SHARE_PORT, 8788), already set for Jean, its viewer drawing from app/
+npm run dev:home     # the same, with jean.is's page under the first screen, and its pages in other languages at /ja, /ar… (D397)
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
 npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml (D353) and what search engines and shared links read (D355)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)
