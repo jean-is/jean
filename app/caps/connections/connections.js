@@ -11,6 +11,7 @@ import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
+import { act } from '../../ui/acts.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { openSettings, placeable, where } from '../../ui/dialogs.js'
@@ -242,10 +243,13 @@ function nameFor(url) {
 
 /** @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
 async function save(connection, tools) {
+  const again = (app.settings.value.connections ?? []).some((other) => other.id === connection.id)
   await updateSettings({ connections: [...(app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), connection] })
   status.value = { ...status.value, [connection.id]: { tools } }
   message.value = null
   notify(t('connections.connected', { service: called(connection) }))
+  // Its host, never its whole address, which may hold a key; signed in again, it was there already (D421).
+  if (!again) act('connection.add', { id: connection.id, address: new URL(connection.url).hostname, auth: connection.auth, title: connection.name })
 }
 
 /** Changes the user's own connection: what it is called, or the projects it is used in. @param {Connection} connection @param {Partial<Connection>} patch */
@@ -351,6 +355,7 @@ async function remove(connection) {
   if (!confirm(t('connections.confirmRemove', { service: called(connection) }))) return
   await deleteSecret(app.fs, connection.id)
   await updateSettings({ connections: (app.settings.value.connections ?? []).filter((other) => other.id !== connection.id) })
+  act('connection.remove', { id: connection.id, address: new URL(connection.url).hostname })
 }
 
 /** Opens Settings on Connections; resolves when it closes (the brain's offer waits for it). */

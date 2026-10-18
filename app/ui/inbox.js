@@ -11,6 +11,7 @@ import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
 import { loaded, slots, unlock, isDenied } from './caps.js'
+import { act } from './acts.js'
 import { BRAND } from '../brand.js'
 import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
@@ -85,6 +86,7 @@ const action = (menu, icon, label, act, shortcut) => html`<button type="button" 
 /** Saves a copy of a task as a web page (D305), from its menu or ⌘S; sharing it by link is found then, where a host is named (D361). @param {{ path: string, title: string }} task */
 export const saveCopy = async (task) => {
   await import('./export.js').then((module) => module.saveTask(app.fs, task))
+  act('task.save', { task: task.path })
   if (serviceURL('share', app.settings.value, app.policy) && app.policy.rules?.share !== 'never') unlock('share')
 }
 

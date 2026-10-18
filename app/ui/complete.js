@@ -321,11 +321,11 @@ function point(word, what) {
  * @param {string} text @param {string[]} [told] words a note already says, before an edited request (D312) @returns {Promise<Envelope[]>}
  */
 export async function pointed(text, told = []) {
-  /** @type {Map<string, () => Promise<{ means: string, body?: string }>>} */
+  /** @type {Map<string, () => Promise<{ means: string, body?: string, skill?: string }>>} */
   const meanings = new Map()
   if (loaded.value.has('skills')) {
     const { skills, steps } = await import('../caps/skills/skills.js')
-    for (const { name } of await skills()) meanings.set(`/${name}`, async () => ({ means: `is the skill ${name}: follow its steps for this message`, body: await steps(name) }))
+    for (const { name } of await skills()) meanings.set(`/${name}`, async () => ({ means: `is the skill ${name}: follow its steps for this message`, body: await steps(name), skill: name }))
   }
   if (loaded.value.has('connections')) {
     for (const { name, tools } of (await import('../caps/connections/connections.js')).offered()) {
@@ -344,8 +344,9 @@ export async function pointed(text, told = []) {
   const lower = text.toLowerCase()
   const found = holds(text, [...meanings.keys()]).filter((word) => !told.includes(word)).sort((a, b) => lower.indexOf(a.toLowerCase()) - lower.indexOf(b.toLowerCase()))
   if (!found.length) return []
-  const named = await Promise.all(found.map(async (word) => ({ word, ...await /** @type {() => Promise<{ means: string, body?: string }>} */ (meanings.get(word))() })))
-  return [noteRecord(pointing(named), { kind: 'mentions', words: found })]
+  const named = await Promise.all(found.map(async (word) => ({ word, ...await /** @type {() => Promise<{ means: string, body?: string, skill?: string }>} */ (meanings.get(word))() })))
+  // The skills it names, each one used (D421).
+  return [noteRecord(pointing(named), { kind: 'mentions', words: found, skills: named.flatMap(({ skill }) => (skill ? [skill] : [])) })]
 }
 
 // ─── The menu ────────────────────────────────────────────────────────────────

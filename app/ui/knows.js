@@ -9,6 +9,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { app, effective, brainsHere, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
+import { act } from './acts.js'
 import { openSettings, setting, lockedBy } from './dialogs.js'
 import { choices } from './picker.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
@@ -107,6 +108,7 @@ async function addSkill(event) {
   const skill = file && parseSkill(await file.text(), file.name)
   if (!skill) return notify(t('skills.invalid'))
   await saveSkill(app.fs, folders().at(-1) ?? '', { ...skill, by: app.deviceId })
+  act('skill.add', { name: skill.name, source: 'file' })
   await refresh()
   notify(t('skills.added', { title: skill.title }))
 }
@@ -121,6 +123,7 @@ async function editSkill(skill, body) {
 async function removeSkill(skill) {
   if (!confirm(t('skills.confirmDelete', { title: skill.title }))) return
   await app.fs.remove(dirname(skill.path))
+  act('skill.remove', { name: skill.name })
   await refresh()
 }
 
@@ -235,6 +238,7 @@ function changeRoutine(routine, change) {
 async function removeRoutine(routine) {
   if (!confirm(t('routines.confirmDelete', { title: routine.title }))) return
   await app.fs.remove(routine.path)
+  act('routine.remove', { path: routine.path })
   await refresh()
 }
 

@@ -182,8 +182,8 @@ export type SystemNoteData =
   | { kind: 'routine', routine: string, title: string, due: string, asked?: boolean, file?: string }
   /** when requests like this one were made before, for a routine to fit the habit (D122) */
   | { kind: 'habit', at: string[] }
-  /** what / and @ named in the user's next message, by the words in it (D199) */
-  | { kind: 'mentions', words: string[] }
+  /** what / and @ named in the user's next message, by the words in it (D199), and the skills among them, each used (D421) */
+  | { kind: 'mentions', words: string[], skills: string[] }
   /** a mode of the box was on for the user's next message: Visual answers, by its skill's name */
   | { kind: 'mode', mode: string }
   /** the user undid a change made in their folder, by its call (D141) */

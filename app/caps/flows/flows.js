@@ -11,6 +11,7 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, contributions, unlock } from '../../ui/caps.js'
 import { define } from '../../ui/base.js'
+import { act } from '../../ui/acts.js'
 import * as dock from '../../ui/dock.js'
 import { app, assistantName, newConversation, send, turnPage } from '../../ui/state.js'
 import { join, readJSON, writeJSON } from '../../core/fs.js'
@@ -289,6 +290,7 @@ export async function schedule(flow) {
     const at = new Date(Date.now() + 3600_000)
     routine = newRoutine(folder(), { title: flow.name, request: flow.name, flow: flow.id, by: app.deviceId, every: 'weekday', at: `${String(at.getHours()).padStart(2, '0')}:00` })
     await writeRoutine(app.fs, routine)
+    act('routine.add', { path: routine.path, title: flow.name, flow: true, every: 'weekday' })
   }
   ;(await import('../../ui/knows.js')).showRoutine(routine.path)
 }

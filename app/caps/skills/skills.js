@@ -18,6 +18,7 @@ import { subRow } from '../../ui/composer.js'
 import { icons } from '../../ui/menu-icons.js'
 import { app, effective, notify, conversationOf } from '../../ui/state.js'
 import { SAME_KIND } from '../../ui/discovery.js'
+import { act } from '../../ui/acts.js'
 import { listSkills, saveSkill, skillLines, skillSteps } from '../../core/skills.js'
 import { slug } from '../../core/settings.js'
 import { join } from '../../core/fs.js'
@@ -65,12 +66,13 @@ const saveTool = {
   },
   kind: 'edit',
   title: (args) => `Save the skill ${args?.name ?? ''}`,
-  run: async (args) => {
+  run: async (args, ctx) => {
     const name = slug(String(args?.name ?? '')) || 'skill'
     // Steps cut where a brain that closed them badly went on with the markup of its call (D322).
     const [description, steps, example] = [args?.description, String(args?.steps ?? '').split(/<\/(?:parameter|steps|invoke)>|<parameter name=/)[0], args?.example].map((value) => String(value ?? '').trim())
     if (!description || !steps) throw new Error('A skill needs a description and steps.')
     await saveSkill(app.fs, folders().at(-1) ?? '', { name, description, body: steps, by: 'jean' })
+    act('skill.add', { task: conversationOf(ctx.signal)?.path, name, source: 'made' })
     saved(/^#\s+(.+)$/m.exec(steps)?.[1].trim() ?? name)
     // In the room at once: the next message's note lists it, and /name in the box reads its steps. Saved without
     // an example too, which the answer gives: a call made again for it would write the steps again (D322).
@@ -129,6 +131,7 @@ export async function adopt(entry, { body, files, blocks, metadata }) {
   const dir = folders().at(-1) ?? ''
   for (const file of files) await app.fs.write(join(dir, 'skills', entry.name, file.path), file.text)
   await saveSkill(app.fs, dir, { name: entry.name, description: entry.description, body, by: app.deviceId, blocks, metadata, ...(entry.digest && { source: entry.url, digest: entry.digest }) })
+  act('skill.add', { name: entry.name, source: entry.digest ? 'elsewhere' : 'directory', ...(entry.digest && { address: new URL(entry.url).hostname, digest: entry.digest }) })
   await redeclare()
   for (const [path, other] of suggested) if (other.name === entry.name) suggested.delete(path)
   app.actions.value = Object.fromEntries(Object.entries(app.actions.value).map(([at, ids]) => [at, ids.filter((id) => id !== 'ready')]))
