@@ -3,5 +3,12 @@
   "retention.title": "An ajiye don ƙungiyarka",
   "retention.text": "Ƙungiyarka tana ajiye kowace ɗawainiya tare da takardun shaidarta aƙalla na {duration}. Abin da ka goge, ko ka cire ta hanyar sake tambayar wani abu, yana zama a wannan na’ura har zuwa lokacin, a ɓoye.",
   "retention.failed": "Ba a cire komai ba: ƙungiyarka tana fara ajiye kwafin abin da zai tafi, kuma wannan karon ba a iya yin sa ba.",
-  "retention.profile": "Wannan bayanin martaba zai zauna: ƙungiyarka tana ajiye kowace ɗawainiya aƙalla na {duration}, kuma cire bayanin martaba zai goge ɗawainiyoyinsa."
+  "retention.profile": "Wannan bayanin martaba zai zauna: ƙungiyarka tana ajiye kowace ɗawainiya aƙalla na {duration}, kuma cire bayanin martaba zai goge ɗawainiyoyinsa.",
+  "audit.title": "Ana aika wa ƙungiyarka",
+  "audit.text": "Ƙungiyarka tana karɓar bayanan abin da kake yi a nan: kowace buƙata, wace ƙwaƙwalwa ta amsa da abin da ta yi, da abin da kake ƙarawa, cirewa, rabawa ko adanawa, amma ba abin da kake tambaya ko amsoshin da kake samu ba.",
+  "audit.content": "Ƙungiyarka tana karɓar bayanan abin da kake yi a nan: kowace buƙata, wace ƙwaƙwalwa ta amsa da abin da ta yi, da abin da kake ƙarawa, cirewa, rabawa ko adanawa, tare da abin da kake tambaya da amsoshin da kake samu, waɗanda za su iya nuna ko kai wane ne.",
+  "audit.email": "Bayanan suna kiranka da {account}.",
+  "audit.device": "Bayanan suna nuna wannan na’ura, ba kai ba.",
+  "audit.pseudonym": "Bayanan suna kiranka da sunan bazata da aka ƙirƙira a wannan na’ura, wanda ba ya faɗin komai game da ko kai wane ne.",
+  "audit.sealed": "Bayanan suna kiranka da sunan bazata da aka ƙirƙira a wannan na’ura. Sai wanda ke riƙe da makullin da ƙungiyarka ta zaɓa ne kaɗai zai iya gane daga gare shi cewa kai ne."
 }

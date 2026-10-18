@@ -18,6 +18,7 @@ export async function start(policy) {
  */
 export async function check(policy) {
   const key = await checkKey(policy.key, { origin: location.origin })
+  if (policy.audit?.otlpEndpoint) await (await import('./person.js')).check(policy.audit)
   if (policy.retention !== undefined) (await import('./kept.js')).period(policy.retention)
   return key
 }

@@ -3,5 +3,12 @@
   "retention.title": "Disimpan untuk organisasi Anda",
   "retention.text": "Organisasi Anda menyimpan setiap tugas, beserta sertifikatnya, setidaknya selama {duration}. Yang Anda hapus, atau singkirkan dengan menanyakan sesuatu lagi, tetap ada di perangkat ini sampai saat itu, tersembunyi.",
   "retention.failed": "Tidak ada yang dihapus: organisasi Anda lebih dulu menyimpan salinan dari apa yang hilang, dan kali ini salinan itu tidak bisa dibuat.",
-  "retention.profile": "Profil ini tetap ada: organisasi Anda menyimpan setiap tugas setidaknya selama {duration}, dan menghapus profil akan menghapus tugas-tugasnya."
+  "retention.profile": "Profil ini tetap ada: organisasi Anda menyimpan setiap tugas setidaknya selama {duration}, dan menghapus profil akan menghapus tugas-tugasnya.",
+  "audit.title": "Dikirim ke organisasi Anda",
+  "audit.text": "Organisasi Anda menerima catatan tentang apa yang Anda lakukan di sini: setiap permintaan, otak mana yang menjawab dan apa yang dilakukannya, serta apa yang Anda tambahkan, hapus, bagikan, atau simpan, tetapi tidak apa yang Anda tanyakan maupun jawaban yang Anda terima.",
+  "audit.content": "Organisasi Anda menerima catatan tentang apa yang Anda lakukan di sini: setiap permintaan, otak mana yang menjawab dan apa yang dilakukannya, serta apa yang Anda tambahkan, hapus, bagikan, atau simpan, beserta apa yang Anda tanyakan dan jawaban yang Anda terima, yang dapat menunjukkan siapa Anda.",
+  "audit.email": "Catatan itu menyebut Anda sebagai {account}.",
+  "audit.device": "Catatan itu menyebut perangkat ini, bukan Anda.",
+  "audit.pseudonym": "Catatan itu menyebut Anda dengan nama acak yang dibuat di perangkat ini, yang tidak mengatakan apa pun tentang siapa Anda.",
+  "audit.sealed": "Catatan itu menyebut Anda dengan nama acak yang dibuat di perangkat ini. Hanya pemegang kunci yang dipilih organisasi Anda yang dapat mengetahui dari catatan itu bahwa itu Anda."
 }

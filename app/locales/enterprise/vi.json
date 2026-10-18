@@ -3,5 +3,12 @@
   "retention.title": "Được giữ cho tổ chức của bạn",
   "retention.text": "Tổ chức của bạn giữ mỗi nhiệm vụ, cùng các chứng nhận của nó, trong ít nhất {duration}. Những gì bạn xóa, hoặc bỏ đi khi hỏi lại điều gì đó, vẫn ở trên thiết bị này đến lúc đó, nhưng không hiện ra.",
   "retention.failed": "Không có gì bị bỏ đi: tổ chức của bạn giữ trước một bản sao của những gì sắp mất, và lần này không tạo được bản sao đó.",
-  "retention.profile": "Hồ sơ này vẫn ở lại: tổ chức của bạn giữ mỗi nhiệm vụ trong ít nhất {duration}, và xóa một hồ sơ sẽ xóa các nhiệm vụ của nó."
+  "retention.profile": "Hồ sơ này vẫn ở lại: tổ chức của bạn giữ mỗi nhiệm vụ trong ít nhất {duration}, và xóa một hồ sơ sẽ xóa các nhiệm vụ của nó.",
+  "audit.title": "Được gửi cho tổ chức của bạn",
+  "audit.text": "Tổ chức của bạn nhận được bản ghi những gì bạn làm ở đây: mỗi yêu cầu, bộ não nào đã trả lời và đã làm gì, và những gì bạn thêm, xóa, chia sẻ hay lưu, nhưng không có những gì bạn hỏi và các câu trả lời bạn nhận được.",
+  "audit.content": "Tổ chức của bạn nhận được bản ghi những gì bạn làm ở đây: mỗi yêu cầu, bộ não nào đã trả lời và đã làm gì, và những gì bạn thêm, xóa, chia sẻ hay lưu, cùng với những gì bạn hỏi và các câu trả lời bạn nhận được, vốn có thể cho biết bạn là ai.",
+  "audit.email": "Bản ghi gọi bạn là {account}.",
+  "audit.device": "Bản ghi gọi tên thiết bị này, không phải bạn.",
+  "audit.pseudonym": "Bản ghi gọi bạn bằng một tên ngẫu nhiên được tạo trên thiết bị này, tên đó không nói gì về việc bạn là ai.",
+  "audit.sealed": "Bản ghi gọi bạn bằng một tên ngẫu nhiên được tạo trên thiết bị này. Chỉ người giữ khóa do tổ chức của bạn chọn mới biết được từ đó rằng đó là bạn."
 }

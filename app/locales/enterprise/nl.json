@@ -3,5 +3,12 @@
   "retention.title": "Bewaard voor je organisatie",
   "retention.text": "Je organisatie bewaart elke taak, met de certificaten ervan, minstens {duration}. Wat je verwijdert, of weghaalt door iets opnieuw te vragen, blijft tot dan op dit apparaat, uit het zicht.",
   "retention.failed": "Er is niets verwijderd: je organisatie bewaart eerst een kopie van wat weggaat, en die kon deze keer niet worden gemaakt.",
-  "retention.profile": "Dit profiel blijft: je organisatie bewaart elke taak minstens {duration}, en een profiel verwijderen zou de taken ervan wissen."
+  "retention.profile": "Dit profiel blijft: je organisatie bewaart elke taak minstens {duration}, en een profiel verwijderen zou de taken ervan wissen.",
+  "audit.title": "Naar je organisatie gestuurd",
+  "audit.text": "Je organisatie krijgt een verslag van wat je hier doet: elke vraag, welk brein antwoordde en wat het deed, en wat je toevoegt, verwijdert, deelt of bewaart, maar niet wat je vraagt of de antwoorden die je krijgt.",
+  "audit.content": "Je organisatie krijgt een verslag van wat je hier doet: elke vraag, welk brein antwoordde en wat het deed, en wat je toevoegt, verwijdert, deelt of bewaart, met wat je vraagt en de antwoorden die je krijgt, die kunnen verraden wie je bent.",
+  "audit.email": "Het noemt je {account}.",
+  "audit.device": "Het noemt dit apparaat, niet jou.",
+  "audit.pseudonym": "Het noemt je bij een willekeurige naam die op dit apparaat is gemaakt en niets zegt over wie je bent.",
+  "audit.sealed": "Het noemt je bij een willekeurige naam die op dit apparaat is gemaakt. Alleen wie een sleutel heeft die je organisatie koos, kan eruit opmaken dat jij het bent."
 }

@@ -3,5 +3,12 @@
   "retention.title": "Kimehifadhiwa kwa ajili ya shirika lako",
   "retention.text": "Shirika lako huhifadhi kila kazi pamoja na vyeti vyake kwa angalau {duration}. Unachofuta, au unachoondoa kwa kuuliza kitu tena, hubaki kwenye kifaa hiki hadi wakati huo, bila kuonekana.",
   "retention.failed": "Hakuna kilichoondolewa: shirika lako huhifadhi kwanza nakala ya kinachoondoka, na safari hii haikuweza kufanywa.",
-  "retention.profile": "Wasifu huu unabaki: shirika lako huhifadhi kila kazi kwa angalau {duration}, na kuondoa wasifu kungefuta kazi zake."
+  "retention.profile": "Wasifu huu unabaki: shirika lako huhifadhi kila kazi kwa angalau {duration}, na kuondoa wasifu kungefuta kazi zake.",
+  "audit.title": "Hutumwa kwa shirika lako",
+  "audit.text": "Shirika lako hupokea rekodi ya unachofanya hapa: kila ombi, ubongo upi ulijibu na ulifanya nini, na unachoongeza, kuondoa, kushiriki au kuhifadhi, lakini si unachouliza wala majibu unayopata.",
+  "audit.content": "Shirika lako hupokea rekodi ya unachofanya hapa: kila ombi, ubongo upi ulijibu na ulifanya nini, na unachoongeza, kuondoa, kushiriki au kuhifadhi, pamoja na unachouliza na majibu unayopata, ambayo yanaweza kuonyesha wewe ni nani.",
+  "audit.email": "Rekodi inakutaja kama {account}.",
+  "audit.device": "Rekodi inataja kifaa hiki, si wewe.",
+  "audit.pseudonym": "Rekodi inakutaja kwa jina la nasibu lililoundwa kwenye kifaa hiki, ambalo halisemi chochote kuhusu wewe ni nani.",
+  "audit.sealed": "Rekodi inakutaja kwa jina la nasibu lililoundwa kwenye kifaa hiki. Ni mwenye ufunguo uliochaguliwa na shirika lako pekee anayeweza kujua kutoka kwake kwamba ni wewe."
 }

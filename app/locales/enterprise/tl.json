@@ -3,5 +3,12 @@
   "retention.title": "Itinatago para sa organisasyon mo",
   "retention.text": "Itinatago ng organisasyon mo ang bawat gawain, kasama ang mga sertipiko nito, nang hindi bababa sa {duration}. Ang buburahin mo, o aalisin sa muling pagtatanong ng isang bagay, ay mananatili sa device na ito hanggang doon, nakatago.",
   "retention.failed": "Walang naalis: unang itinatago ng organisasyon mo ang kopya ng aalis, at hindi ito nagawa ngayon.",
-  "retention.profile": "Mananatili ang profile na ito: itinatago ng organisasyon mo ang bawat gawain nang hindi bababa sa {duration}, at mabubura ang mga gawain nito kapag inalis ang profile."
+  "retention.profile": "Mananatili ang profile na ito: itinatago ng organisasyon mo ang bawat gawain nang hindi bababa sa {duration}, at mabubura ang mga gawain nito kapag inalis ang profile.",
+  "audit.title": "Ipinapadala sa organisasyon mo",
+  "audit.text": "Tumatanggap ang organisasyon mo ng tala ng ginagawa mo rito: bawat hiling, kung aling utak ang sumagot at ano ang ginawa nito, at ang idinadagdag, inaalis, ibinabahagi o sine-save mo, pero hindi ang itinatanong mo o ang mga sagot na natatanggap mo.",
+  "audit.content": "Tumatanggap ang organisasyon mo ng tala ng ginagawa mo rito: bawat hiling, kung aling utak ang sumagot at ano ang ginawa nito, at ang idinadagdag, inaalis, ibinabahagi o sine-save mo, kasama ang itinatanong mo at ang mga sagot na natatanggap mo, na maaaring magsabi kung sino ka.",
+  "audit.email": "Sa tala, tinutukoy ka bilang {account}.",
+  "audit.device": "Sa tala, ang device na ito ang tinutukoy, hindi ikaw.",
+  "audit.pseudonym": "Sa tala, tinutukoy ka sa isang random na pangalang ginawa sa device na ito, na walang sinasabi kung sino ka.",
+  "audit.sealed": "Sa tala, tinutukoy ka sa isang random na pangalang ginawa sa device na ito. Ang may hawak lang ng susing pinili ng organisasyon mo ang makakaalam mula rito na ikaw iyon."
 }

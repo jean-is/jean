@@ -92,13 +92,17 @@ describe('the tracer', () => {
     assert.deepEqual(JSON.parse(String(attrs(root)['gen_ai.output.messages'])), [{ role: 'assistant', parts: [{ type: 'text', content: 'Acme and Globex.' }], finish_reason: 'stop' }])
   })
 
-  test('a failed request is an error; going back to a request says how many records went', () => {
+  test('a failed request is an error, its words only with content; going back to a request says how many records went', () => {
     /** @type {import('../app/ee/otlp.js').Span[]} */
     const spans = []
+    const failed = (/** @type {ReturnType<typeof tracer>} */ follow) => follow.record({ task: TASK, type: 'tool_call', record: kept('2026-10-17T10:00:03Z', { sessionUpdate: 'tool_call', toolCallId: 'brain-0-x', kind: 'think', rawInput: { provider: 'custom', model: 'corp' }, status: 'failed', rawOutput: { error: 'No mailbox for ada@acme.example', code: 'auth', status: 401 }, _meta: { ms: 100 } }, 0) })
     const follow = tracer({ send: (span) => spans.push(span) })
-    follow.record({ task: TASK, type: 'tool_call', record: kept('2026-10-17T10:00:03Z', { sessionUpdate: 'tool_call', toolCallId: 'brain-0-x', kind: 'think', rawInput: { provider: 'custom', model: 'corp' }, status: 'failed', rawOutput: { error: 'Unauthorized', code: 'auth', status: 401 }, _meta: { ms: 100 } }, 0) })
+    failed(follow)
     follow.record({ task: TASK, type: 'removed', records: [kept('2026-10-17T10:00:00Z', {}), kept('2026-10-17T10:00:01Z', {})] })
-    assert.deepEqual(spans[0].status, { code: 2, message: 'Unauthorized' })
+    failed(tracer({ send: (span) => spans.push(span), content: true }))
+    // A tool's or a server's words may name anyone (D427).
+    assert.deepEqual(spans[0].status, { code: 2 })
+    assert.deepEqual(spans[2].status, { code: 2, message: 'No mailbox for ada@acme.example' })
     assert.equal(attrs(spans[0])['error.type'], 'auth')
     assert.equal(attrs(spans[0])['gen_ai.provider.name'], 'custom')
     assert.equal(spans[1].name, 'remove_records')

@@ -3,5 +3,12 @@
   "retention.title": "A pa á mọ́ fún àjọ yín",
   "retention.text": "Àjọ yín ń pa iṣẹ́ kọ̀ọ̀kan mọ́ pẹ̀lú àwọn ìwé ẹ̀rí rẹ̀ fún ó kéré tán {duration}. Ohun tí ẹ bá pa rẹ́, tàbí tí ẹ bá yọ kúrò nípa bíbéèrè nǹkan lẹ́ẹ̀kan sí i, yóò wà lórí ẹ̀rọ yìí títí di ìgbà náà, láìhàn.",
   "retention.failed": "Kò sí ohun tí a yọ kúrò: àjọ yín máa ń kọ́kọ́ pa ẹ̀dà ohun tí ń lọ mọ́, ṣùgbọ́n a kò lè ṣe é lọ́tẹ̀ yìí.",
-  "retention.profile": "Profaili yìí yóò dúró: àjọ yín ń pa iṣẹ́ kọ̀ọ̀kan mọ́ fún ó kéré tán {duration}, yíyọ profaili kúrò yóò sì pa àwọn iṣẹ́ rẹ̀ rẹ́."
+  "retention.profile": "Profaili yìí yóò dúró: àjọ yín ń pa iṣẹ́ kọ̀ọ̀kan mọ́ fún ó kéré tán {duration}, yíyọ profaili kúrò yóò sì pa àwọn iṣẹ́ rẹ̀ rẹ́.",
+  "audit.title": "A ń fi ránṣẹ́ sí àjọ yín",
+  "audit.text": "Àjọ yín ń gba àkọsílẹ̀ ohun tí ẹ ń ṣe níbí: gbogbo ìbéèrè, ọpọlọ wo ló dáhùn àti ohun tó ṣe, àti ohun tí ẹ fi kún, tí ẹ yọ kúrò, tí ẹ pín tàbí tí ẹ fi pamọ́, ṣùgbọ́n kì í ṣe ohun tí ẹ béèrè tàbí àwọn ìdáhùn tí ẹ gbà.",
+  "audit.content": "Àjọ yín ń gba àkọsílẹ̀ ohun tí ẹ ń ṣe níbí: gbogbo ìbéèrè, ọpọlọ wo ló dáhùn àti ohun tó ṣe, àti ohun tí ẹ fi kún, tí ẹ yọ kúrò, tí ẹ pín tàbí tí ẹ fi pamọ́, pẹ̀lú ohun tí ẹ béèrè àti àwọn ìdáhùn tí ẹ gbà, èyí tó lè fi hàn ẹni tí ẹ jẹ́.",
+  "audit.email": "Àkọsílẹ̀ náà pè yín ní {account}.",
+  "audit.device": "Àkọsílẹ̀ náà dárúkọ ẹ̀rọ yìí, kì í ṣe ẹ̀yin.",
+  "audit.pseudonym": "Àkọsílẹ̀ náà pè yín ní orúkọ àìròtẹ́lẹ̀ tí a ṣe lórí ẹ̀rọ yìí, tí kò sọ nǹkankan nípa ẹni tí ẹ jẹ́.",
+  "audit.sealed": "Àkọsílẹ̀ náà pè yín ní orúkọ àìròtẹ́lẹ̀ tí a ṣe lórí ẹ̀rọ yìí. Ẹni tó ní kọ́kọ́rọ́ tí àjọ yín yàn nìkan ló lè mọ̀ láti inú rẹ̀ pé ẹ̀yin ni."
 }

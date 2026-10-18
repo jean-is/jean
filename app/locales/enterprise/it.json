@@ -3,5 +3,12 @@
   "retention.title": "Conservato per la tua organizzazione",
   "retention.text": "La tua organizzazione conserva ogni attività, con i suoi certificati, per almeno {duration}. Ciò che elimini, o togli chiedendo di nuovo qualcosa, resta su questo dispositivo fino ad allora, nascosto.",
   "retention.failed": "Non è stato tolto nulla: la tua organizzazione conserva prima una copia di ciò che va via, e questa volta non è stato possibile farla.",
-  "retention.profile": "Questo profilo resta: la tua organizzazione conserva ogni attività per almeno {duration}, e rimuovere un profilo ne cancellerebbe le attività."
+  "retention.profile": "Questo profilo resta: la tua organizzazione conserva ogni attività per almeno {duration}, e rimuovere un profilo ne cancellerebbe le attività.",
+  "audit.title": "Inviato alla tua organizzazione",
+  "audit.text": "La tua organizzazione riceve un registro di ciò che fai qui: ogni richiesta, quale cervello ha risposto e cosa ha fatto, e ciò che aggiungi, rimuovi, condividi o salvi, ma non ciò che chiedi né le risposte che ricevi.",
+  "audit.content": "La tua organizzazione riceve un registro di ciò che fai qui: ogni richiesta, quale cervello ha risposto e cosa ha fatto, e ciò che aggiungi, rimuovi, condividi o salvi, insieme a ciò che chiedi e alle risposte che ricevi, che possono dire chi sei.",
+  "audit.email": "Ti indica come {account}.",
+  "audit.device": "Indica questo dispositivo, non te.",
+  "audit.pseudonym": "Ti indica con un nome casuale creato su questo dispositivo, che non dice nulla di chi sei.",
+  "audit.sealed": "Ti indica con un nome casuale creato su questo dispositivo. Solo chi ha una chiave scelta dalla tua organizzazione può capire da esso che sei tu."
 }

@@ -56,7 +56,8 @@ export const SCHEMA = {
   lock: new Set(['required']),
   child: 'flag',
   key: 'text',
-  audit: { 'otlpEndpoint!': 'address', auth: 'any', content: 'flag', headers: { '*': 'text' }, service: 'text' },
+  audit: { 'otlpEndpoint!': 'address', auth: 'any', content: 'flag', headers: { '*': 'text' }, service: 'text', person: new Set(['email', 'pseudonym']),
+    trustee: { 'kty!': new Set(['EC']), 'crv!': new Set(['P-256']), 'x!': 'text', 'y!': 'text', kid: 'text', '*': 'any' } },
   retention: 'text',
 }
 

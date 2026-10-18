@@ -3,5 +3,12 @@
   "retention.title": "Przechowywane dla twojej organizacji",
   "retention.text": "Twoja organizacja przechowuje każde zadanie wraz z jego certyfikatami przez co najmniej {duration}. To, co usuniesz albo odrzucisz, pytając o coś ponownie, zostaje do tego czasu na tym urządzeniu, niewidoczne.",
   "retention.failed": "Nic nie usunięto: twoja organizacja najpierw zachowuje kopię tego, co znika, a tym razem nie udało się jej zrobić.",
-  "retention.profile": "Ten profil zostaje: twoja organizacja przechowuje każde zadanie przez co najmniej {duration}, a usunięcie profilu skasowałoby jego zadania."
+  "retention.profile": "Ten profil zostaje: twoja organizacja przechowuje każde zadanie przez co najmniej {duration}, a usunięcie profilu skasowałoby jego zadania.",
+  "audit.title": "Wysyłane do twojej organizacji",
+  "audit.text": "Twoja organizacja otrzymuje zapis tego, co tu robisz: każdą prośbę, który mózg odpowiedział i co zrobił, oraz to, co dodajesz, usuwasz, udostępniasz lub zapisujesz, ale nie to, o co pytasz, ani odpowiedzi, które dostajesz.",
+  "audit.content": "Twoja organizacja otrzymuje zapis tego, co tu robisz: każdą prośbę, który mózg odpowiedział i co zrobił, oraz to, co dodajesz, usuwasz, udostępniasz lub zapisujesz, wraz z tym, o co pytasz, i odpowiedziami, które dostajesz, a te mogą zdradzić, kim jesteś.",
+  "audit.email": "Wskazuje cię jako {account}.",
+  "audit.device": "Wskazuje to urządzenie, nie ciebie.",
+  "audit.pseudonym": "Wskazuje cię losową nazwą utworzoną na tym urządzeniu, która nic nie mówi o tym, kim jesteś.",
+  "audit.sealed": "Wskazuje cię losową nazwą utworzoną na tym urządzeniu. Tylko ten, kto ma klucz wybrany przez twoją organizację, może z niego poznać, że to ty."
 }

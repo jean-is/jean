@@ -144,7 +144,8 @@ export function tracer({ send, content = false, serviceOf = () => undefined, now
         'error.type': failed ? 'tool_error' : undefined,
         ...(content && { 'gen_ai.tool.call.arguments': call.rawInput, 'gen_ai.tool.call.result': failed ? undefined : call.rawOutput }),
       }),
-      status: failed ? { code: STATUS.error, message: String(call.rawOutput?.error ?? '').slice(0, 200) || undefined } : { code: STATUS.ok },
+      // An error's words are a tool's or a server's, which may name anyone: content (D427).
+      status: failed ? { code: STATUS.error, ...(content && { message: String(call.rawOutput?.error ?? '').slice(0, 200) || undefined }) } : { code: STATUS.ok },
     }
     if (brain) turn.last = { span, parts: [], finish }
     return span

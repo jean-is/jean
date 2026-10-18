@@ -2,9 +2,11 @@
 // GenAI spans, metadata only unless policy asks for content, and so does each task deleted, once it
 // is gone, never one a refusal kept (D412), and what is done outside the records (D421); on localhost
 // no key is needed, and elsewhere a policy that asks for it without one stops Jean with a message for IT (D139).
+// Settings › Your data says what goes, and who it names: the account, or a pseudonym (D427).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn, connect, MAIL_URL } from './helpers.js'
 import { POLICY, COLLECTOR, fakeIssuer, fakeGateway, fakeCollector } from './fixtures/fake-issuer.js'
+import { open, trusteePair } from './fixtures/trustee.js'
 
 /** How many spans of a name reached it. @param {ReturnType<typeof fakeCollector> extends Promise<infer C> ? C : never} collector @param {string} name */
 const count = (collector, name) => collector.spans().filter((span) => span.name === name).length
@@ -47,6 +49,26 @@ test('with the organisation’s sign-in, the collector gets its token, who signe
   expect(JSON.parse(root.attrs['gen_ai.output.messages'])[0].role).toBe('assistant')
   const [{ resource }] = collector.sent.at(-1)?.body.resourceSpans
   expect(resource.attributes).toContainEqual({ key: 'user.email', value: { stringValue: 'ana@acme.example' } })
+  await expect(await openSettings(page, 'Your data')).toContainText('It names you by ana@acme.example.')
+})
+
+test('as a pseudonym, the collector gets neither the email nor the device, only the account sealed for the trustee, and Settings says so (D427)', async ({ page }) => {
+  const trustee = trusteePair()
+  const issuer = await fakeIssuer(page)
+  await fakeGateway(page, issuer)
+  const collector = await fakeCollector(page)
+  await withPolicy(page, { ...POLICY, audit: { otlpEndpoint: COLLECTOR, auth: 'oidc', person: 'pseudonym', trustee: trustee.public } })
+  await start(page)
+  await ask(page, 'Hello')
+  await sent(collector, 'invoke_agent')
+  const [{ resource }] = collector.sent.at(-1)?.body.resourceSpans
+  const named = Object.fromEntries(resource.attributes.map((/** @type {any} */ { key, value }) => [key, Object.values(value)[0]]))
+  for (const key of ['user.email', 'user.name', 'device.id']) expect(named[key], key).toBeUndefined()
+  // This browser's Web Crypto sealed it as RFC 7516 says: the trustee's private key opens it.
+  expect(JSON.parse(open(named['jean.user.sealed'], trustee.private).text)).toEqual({ 'user.email': 'ana@acme.example' })
+  const settings = await openSettings(page, 'Your data')
+  await expect(settings).toContainText('It names you by a random name made on this device. Only whoever holds a key your organization chose can tell from it that it’s you.')
+  await expect(settings).not.toContainText('ana@acme.example')
 })
 
 test('a task deleted goes to the collector as a removal of its own, all of it, not as going back to a request', async ({ page }) => {

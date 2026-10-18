@@ -3,5 +3,12 @@
   "retention.title": "Disimpan untuk organisasi anda",
   "retention.text": "Organisasi anda menyimpan setiap tugasan, bersama sijilnya, sekurang-kurangnya selama {duration}. Apa yang anda padam, atau buang dengan bertanya sesuatu sekali lagi, kekal pada peranti ini sehingga masa itu, tersembunyi.",
   "retention.failed": "Tiada apa yang dibuang: organisasi anda menyimpan salinan perkara yang hilang dahulu, dan kali ini salinan itu tidak dapat dibuat.",
-  "retention.profile": "Profil ini kekal: organisasi anda menyimpan setiap tugasan sekurang-kurangnya selama {duration}, dan membuang profil akan memadam tugasannya."
+  "retention.profile": "Profil ini kekal: organisasi anda menyimpan setiap tugasan sekurang-kurangnya selama {duration}, dan membuang profil akan memadam tugasannya.",
+  "audit.title": "Dihantar kepada organisasi anda",
+  "audit.text": "Organisasi anda menerima rekod tentang apa yang anda lakukan di sini: setiap permintaan, otak mana yang menjawab dan apa yang dilakukannya, serta apa yang anda tambah, alih keluar, kongsi atau simpan, tetapi bukan apa yang anda tanya atau jawapan yang anda terima.",
+  "audit.content": "Organisasi anda menerima rekod tentang apa yang anda lakukan di sini: setiap permintaan, otak mana yang menjawab dan apa yang dilakukannya, serta apa yang anda tambah, alih keluar, kongsi atau simpan, berserta apa yang anda tanya dan jawapan yang anda terima, yang boleh menunjukkan siapa anda.",
+  "audit.email": "Rekod itu menamakan anda sebagai {account}.",
+  "audit.device": "Rekod itu menamakan peranti ini, bukan anda.",
+  "audit.pseudonym": "Rekod itu menamakan anda dengan nama rawak yang dibuat pada peranti ini, yang tidak menyatakan apa-apa tentang siapa anda.",
+  "audit.sealed": "Rekod itu menamakan anda dengan nama rawak yang dibuat pada peranti ini. Hanya pemegang kunci yang dipilih oleh organisasi anda dapat mengetahui daripadanya bahawa itu anda."
 }

@@ -3,5 +3,12 @@
   "retention.title": "Guardado para a tua organização",
   "retention.text": "A tua organização guarda cada tarefa, com os seus certificados, durante pelo menos {duration}. O que apagares, ou retirares ao perguntar algo de novo, fica neste dispositivo até lá, fora de vista.",
   "retention.failed": "Nada foi retirado: a tua organização guarda primeiro uma cópia do que sai, e desta vez não foi possível fazê-la.",
-  "retention.profile": "Este perfil fica: a tua organização guarda cada tarefa durante pelo menos {duration}, e remover um perfil apagaria as suas tarefas."
+  "retention.profile": "Este perfil fica: a tua organização guarda cada tarefa durante pelo menos {duration}, e remover um perfil apagaria as suas tarefas.",
+  "audit.title": "Enviado para a tua organização",
+  "audit.text": "A tua organização recebe um registo do que fazes aqui: cada pedido, que cérebro respondeu e o que fez, e o que adicionas, removes, partilhas ou guardas, mas não o que perguntas nem as respostas que recebes.",
+  "audit.content": "A tua organização recebe um registo do que fazes aqui: cada pedido, que cérebro respondeu e o que fez, e o que adicionas, removes, partilhas ou guardas, com o que perguntas e as respostas que recebes, que podem dizer quem és.",
+  "audit.email": "Identifica-te como {account}.",
+  "audit.device": "Identifica este dispositivo, não a ti.",
+  "audit.pseudonym": "Identifica-te com um nome aleatório criado neste dispositivo, que nada diz sobre quem és.",
+  "audit.sealed": "Identifica-te com um nome aleatório criado neste dispositivo. Só quem tiver uma chave escolhida pela tua organização pode saber por ele que és tu."
 }

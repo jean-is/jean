@@ -3,5 +3,12 @@
   "retention.title": "Kept for your organization",
   "retention.text": "Your organization keeps each task, with its certificates, for at least {duration}. What you delete, or remove by asking something again, stays on this device until then, out of sight.",
   "retention.failed": "Nothing was removed: your organization keeps a copy of what goes first, and this time it couldn’t be made.",
-  "retention.profile": "This profile stays: your organization keeps each task for at least {duration}, and removing a profile would delete its tasks."
+  "retention.profile": "This profile stays: your organization keeps each task for at least {duration}, and removing a profile would delete its tasks.",
+  "audit.title": "Sent to your organization",
+  "audit.text": "Your organization receives a record of what you do here: each request, which brain answered and what it did, and what you add, remove, share or save, but not what you ask or the answers you get.",
+  "audit.content": "Your organization receives a record of what you do here: each request, which brain answered and what it did, and what you add, remove, share or save, with what you ask and the answers you get, which can say who you are.",
+  "audit.email": "It names you by {account}.",
+  "audit.device": "It names this device, not you.",
+  "audit.pseudonym": "It names you by a random name made on this device, which says nothing about who you are.",
+  "audit.sealed": "It names you by a random name made on this device. Only whoever holds a key your organization chose can tell from it that it’s you."
 }
