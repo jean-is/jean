@@ -12,22 +12,25 @@ import { idea, focusComposer } from './composer.js'
 let started = false
 let showing = false
 
-/** A Try: back up to the box on a wide window (on a phone it is docked at the foot already), its request in it. @param {Event} event */
+/** A Try: back up to the box on a wide window (on a phone it is docked at the foot already), emptied, its request in it. @param {Event} event */
 function tryIt(event) {
   const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
   if (!(button instanceof HTMLElement)) return
   if (matchMedia('(min-width: 48rem)').matches) scrollTo({ top: 0, behavior: 'instant' })
+  app.attachments.value = []
+  app.draft.value = ''
   if (button.dataset.try === 'sample') return idea('sample')
   app.draft.value = button.closest('.home-tile')?.querySelector('.home-request')?.textContent ?? ''
   focusComposer()
 }
 
-/** The active tile, which assistive technologies hear as the current one; one at all times, a visible one. @param {Element} home @param {Element | null | undefined} tile */
+/** The active tile, which assistive technologies hear as the current one, its Try the primary one; one at all times, a visible one. @param {Element} home @param {Element | null | undefined} tile */
 function activate(home, tile) {
   const tiles = [...home.querySelectorAll('.home-tile')]
   const active = tile && tile.checkVisibility() ? tile : tiles.find((one) => one.matches('.is-active') && one.checkVisibility()) ?? tiles.find((one) => one.checkVisibility())
   for (const one of tiles) {
     one.classList.toggle('is-active', one === active)
+    one.querySelector('[data-try]')?.classList.toggle('primary', one === active)
     if (one === active) one.setAttribute('aria-current', 'true')
     else one.removeAttribute('aria-current')
   }

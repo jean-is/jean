@@ -41,6 +41,12 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await home.locator('.home-replay [data-try="sample"]').click()
   await expect(page.locator('.attachment-name')).toHaveText('sales.csv')
   await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')
+  // Each Try starts from an empty box: the sample's file goes with the next one.
+  await home.locator('[data-try="quiz"]').click()
+  await expect(page.locator('.attachment-name')).toHaveCount(0)
+  await expect(page.locator('#prompt')).toHaveValue('A quiz on the planets for my son, ten questions.')
+  await home.locator('.home-replay [data-try="sample"]').click()
+  await expect(page.locator('.attachment-name')).toHaveCount(1)
 
   // A door unfolds in place, its words in the page all along.
   const more = home.locator('#home-shareable details')
@@ -113,6 +119,10 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     // The pointer picks one, and so does the keyboard; one stays active when the pointer leaves.
     await tiles.nth(2).hover()
     await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
+    // Only the active tile's Try is the primary one.
+    await expect(tiles.nth(2).locator('[data-try]')).toHaveClass(/primary/)
+    await expect(tiles.first().locator('[data-try]')).not.toHaveClass(/primary/)
+    await expect(home.locator('.home-tile [data-try].primary')).toHaveCount(1)
     await page.mouse.move(0, 0)
     await expect(current).toHaveCount(1)
     await tiles.nth(3).locator('[data-try]').focus()
