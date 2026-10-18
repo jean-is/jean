@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fire, removal } from '../app/core/hooks.js'
+import { fire } from '../app/core/hooks.js'
+import { removal } from '../app/ui/removal.js'
 import { guardHooks } from '../app/core/rules.js'
 
 /** Jean's own behaviour in these tests: it says what it was given, and counts its runs. */

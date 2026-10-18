@@ -2,7 +2,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { tracer, exporter, attributes } from '../app/ee/otlp.js'
-import { removal } from '../app/core/hooks.js'
+import { removal } from '../app/ui/removal.js'
 
 const TASK = 'projects/01J00000000000000000000001-home/conversations/01J00000000000000000000002.jsonl'
 /** @param {string} at @param {any} update @param {number} [step] */
